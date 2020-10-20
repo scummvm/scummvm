@@ -58,6 +58,8 @@ public:
 
 protected:
 	void readNextPacket() override;
+	bool supportsAudioTrackSwitching() const override { return true; }
+	AudioTrack *getAudioTrack(int index) override;
 
 private:
 	int32 _streamVideoOffset; /* current stream offset for video decoding */
@@ -95,10 +97,12 @@ private:
 
 	class StreamAudioTrack : public AudioTrack {
 	public:
-		StreamAudioTrack(uint32 codecTag, uint32 sampleRate, uint32 channels, Audio::Mixer::SoundType soundType);
+		StreamAudioTrack(uint32 codecTag, uint32 sampleRate, uint32 channels, Audio::Mixer::SoundType soundType, uint32 trackId);
 		~StreamAudioTrack() override;
 
 		void queueAudio(Common::SeekableReadStream *stream, uint32 size);
+
+		bool matchesId(uint trackId);
 
 	protected:
 		Audio::AudioStream *getAudioStream() const override;
@@ -116,6 +120,7 @@ private:
 		uint32 _codecTag;
 		uint16 _sampleRate;
 		bool   _stereo;
+		uint32 _trackId;
 
 		Audio::audio_3DO_ADP4_PersistentSpace _ADP4_PersistentSpace;
 		Audio::audio_3DO_SDX2_PersistentSpace _SDX2_PersistentSpace;
@@ -123,7 +128,7 @@ private:
 
 	Common::SeekableReadStream *_stream;
 	StreamVideoTrack *_videoTrack;
-	StreamAudioTrack *_audioTrack;
+	Common::Array<StreamAudioTrack *> _audioTracks;
 };
 
 } // End of namespace Sherlock

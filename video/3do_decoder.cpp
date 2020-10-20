@@ -43,13 +43,17 @@
 namespace Video {
 
 ThreeDOMovieDecoder::ThreeDOMovieDecoder()
-	: _stream(0), _videoTrack(0), _audioTrack(0) {
+	: _stream(0), _videoTrack(0) {
 	_streamVideoOffset = 0;
 	_streamAudioOffset = 0;
 }
 
 ThreeDOMovieDecoder::~ThreeDOMovieDecoder() {
 	close();
+}
+
+VideoDecoder::AudioTrack* ThreeDOMovieDecoder::getAudioTrack(int index) {
+	return _audioTracks[index];
 }
 
 bool ThreeDOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
@@ -62,6 +66,7 @@ bool ThreeDOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint32 audioCodecTag   = 0;
 	uint32 audioChannels   = 0;
 	uint32 audioSampleRate = 0;
+	uint32 audioTrackId  = 0;
 
 	close();
 
@@ -119,19 +124,13 @@ bool ThreeDOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 		}
 
 		case MKTAG('S','N','D','S'): {
-			_stream->skip(8);
+			_stream->readUint32BE(); // Unknown
+			audioTrackId = _stream->readUint32BE();
 			audioSubType = _stream->readUint32BE();
 
 			switch (audioSubType) {
-			case MKTAG('S', 'H', 'D', 'R'):
+			case MKTAG('S', 'H', 'D', 'R'): {
 				// Audio header
-
-				// Bail if we already have a track
-				if (_audioTrack) {
-					warning("3DO movie: Multiple SNDS headers found");
-					close();
-					return false;
-				}
 
 				// OK, this is the start of a audio stream
 				_stream->readUint32BE(); // Version, always 0x00000000
@@ -146,9 +145,12 @@ bool ThreeDOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 				_stream->readUint32BE(); // Unknown 0x00000004 compression ratio?
 				_stream->readUint32BE(); // Unknown 0x00000A2C
 
-				_audioTrack = new StreamAudioTrack(audioCodecTag, audioSampleRate, audioChannels, getSoundType());
-				addTrack(_audioTrack);
+				StreamAudioTrack *track = new StreamAudioTrack(audioCodecTag, audioSampleRate, audioChannels,
+									       getSoundType(), audioTrackId);
+				addTrack(track);
+				_audioTracks.push_back(track);
 				break;
+			}
 
 			case MKTAG('S', 'S', 'M', 'P'):
 				// Audio data
@@ -178,7 +180,7 @@ bool ThreeDOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 			return false;
 		}
 
-		if ((_videoTrack) && (_audioTrack))
+		if ((_videoTrack) && (!_audioTracks.empty()))
 			break;
 
 		// Seek to next chunk
@@ -186,7 +188,7 @@ bool ThreeDOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 	}
 
 	// Bail if we didn't find video + audio
-	if ((!_videoTrack) || (!_audioTrack)) {
+	if ((!_videoTrack) || (_audioTracks.empty())) {
 		close();
 		return false;
 	}
@@ -221,6 +223,7 @@ void ThreeDOMovieDecoder::readNextPacket() {
 	uint32 videoFrameSize = 0;
 	uint32 audioSubType   = 0;
 	uint32 audioBytes     = 0;
+	uint32 audioTrackId   = 0;
 	bool videoGotFrame = false;
 	bool videoDone     = false;
 	bool audioDone     = false;
@@ -232,7 +235,7 @@ void ThreeDOMovieDecoder::readNextPacket() {
 		_stream->seek(_streamAudioOffset);
 	}
 
-	if (wantedAudioQueued <= _audioTrack->getTotalAudioQueued()) {
+	if (wantedAudioQueued <= _audioTracks[0]->getTotalAudioQueued()) {
 		// already got enough audio queued up
 		audioDone = true;
 	}
@@ -306,7 +309,8 @@ void ThreeDOMovieDecoder::readNextPacket() {
 			break;
 
 		case MKTAG('S','N','D','S'):
-			_stream->skip(8);
+			_stream->readUint32BE();
+			audioTrackId = _stream->readUint32BE();
 			audioSubType = _stream->readUint32BE();
 
 			switch (audioSubType) {
@@ -319,11 +323,16 @@ void ThreeDOMovieDecoder::readNextPacket() {
 				if (_streamAudioOffset <= chunkOffset) {
 					// We are at an offset that is still relevant to audio decoding
 					if (!audioDone) {
+						uint queued = 0;
 						audioBytes = _stream->readUint32BE();
-						_audioTrack->queueAudio(_stream, audioBytes);
+						for (uint i = 0; i < _audioTracks.size(); i++)
+							if (_audioTracks[i]->matchesId(audioTrackId)) {
+								_audioTracks[i]->queueAudio(_stream, audioBytes);
+								queued = _audioTracks[i]->getTotalAudioQueued();
+							}
 
 						_streamAudioOffset = nextChunkOffset;
-						if (wantedAudioQueued <= _audioTrack->getTotalAudioQueued()) {
+						if (wantedAudioQueued <= queued) {
 							// Got enough audio
 							audioDone = true;
 						}
@@ -393,7 +402,7 @@ void ThreeDOMovieDecoder::StreamVideoTrack::decodeFrame(Common::SeekableReadStre
 	_curFrame++;
 }
 
-ThreeDOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint32 sampleRate, uint32 channels, Audio::Mixer::SoundType soundType) :
+ThreeDOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint32 sampleRate, uint32 channels, Audio::Mixer::SoundType soundType, uint32 trackId) :
 		AudioTrack(soundType) {
 	switch (codecTag) {
 	case MKTAG('A','D','P','4'):
@@ -409,6 +418,7 @@ ThreeDOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint32 
 
 	_codecTag    = codecTag;
 	_sampleRate  = sampleRate;
+	_trackId     = trackId;
 	switch (channels) {
 	case 1:
 		_stereo = false;
@@ -431,6 +441,10 @@ ThreeDOMovieDecoder::StreamAudioTrack::~StreamAudioTrack() {
 	delete _audioStream;
 //	free(_ADP4_PersistentSpace);
 //	free(_SDX2_PersistentSpace);
+}
+
+bool ThreeDOMovieDecoder::StreamAudioTrack::matchesId(uint tid) {
+	return _trackId == tid;
 }
 
 void ThreeDOMovieDecoder::StreamAudioTrack::queueAudio(Common::SeekableReadStream *stream, uint32 size) {
