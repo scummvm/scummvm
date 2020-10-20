@@ -810,18 +810,14 @@ void TwinEEngine::flip() {
 
 void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom) {
 	// TODO: fix this
-	//g_system->copyRectToScreen(frontVideoBuffer, SCREEN_WIDTH, left, top, right - left + 1, bottom - top + 1);
-	g_system->updateScreen();
-}
-
-void TwinEEngine::crossFade(const uint8 *buffer, uint8 *palette) {
-	// TODO: implement cross fading
-	g_system->copyRectToScreen(buffer, SCREEN_WIDTH, 0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	g_system->copyRectToScreen(frontVideoBuffer.getPixels(), frontVideoBuffer.pitch, left, top, right - left + 1, bottom - top + 1);
 	g_system->updateScreen();
 }
 
 void TwinEEngine::crossFade(const Graphics::Surface &buffer, uint8 *palette) {
-	crossFade((const uint8*)buffer.getPixels(), palette);
+	// TODO: implement cross fading
+	g_system->copyRectToScreen(buffer.getPixels(), buffer.pitch, 0, 0, buffer.w, buffer.h);
+	g_system->updateScreen();
 }
 
 void TwinEEngine::toggleFullscreen() {
