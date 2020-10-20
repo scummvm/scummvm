@@ -280,7 +280,6 @@ public:
 	 * @param buffer screen buffer
 	 * @param palette new palette to cross fade
 	 */
-	void crossFade(const uint8 *buffer, uint8 *palette);
 	void crossFade(const Graphics::Surface &buffer, uint8 *palette);
 
 	/** Switch between window and fullscreen modes */
