@@ -66,7 +66,7 @@ public:
 	}
 
 	Common::SeekableReadStream *createReadStreamForMember(const Common::String &name) const override {
-		Common::FSNode fsNode = _fileMap[name];
+		Common::FSNode fsNode = _fileMap.getValOrDefault(name);
 		return fsNode.createReadStream();
 	}
 
