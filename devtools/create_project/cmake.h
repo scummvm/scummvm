@@ -64,6 +64,7 @@ private:
 	 */
 	struct Library {
 		const char *feature;
+		const char *pkgConfig;
 		SDLVersion sdlVersion;
 		const char *module;
 		const char *package;

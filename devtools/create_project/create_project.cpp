@@ -1151,8 +1151,8 @@ bool setFeatureBuildState(const std::string &name, FeatureList &features, bool e
 	}
 }
 
-bool getFeatureBuildState(const std::string &name, FeatureList &features) {
-	FeatureList::iterator i = std::find(features.begin(), features.end(), name);
+bool getFeatureBuildState(const std::string &name, const FeatureList &features) {
+	FeatureList::const_iterator i = std::find(features.begin(), features.end(), name);
 	if (i != features.end()) {
 		return i->enable;
 	} else {

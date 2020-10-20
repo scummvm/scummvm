@@ -211,7 +211,7 @@ bool setFeatureBuildState(const std::string &name, FeatureList &features, bool e
  * @param features List of features to operate on.
  * @return "true", when the feature is enabled, "false" otherwise.
  */
-bool getFeatureBuildState(const std::string &name, FeatureList &features);
+bool getFeatureBuildState(const std::string &name, const FeatureList &features);
 
 /**
  * Structure to describe a build setup.
