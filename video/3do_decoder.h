@@ -39,12 +39,19 @@ namespace Image {
 class Codec;
 }
 
-namespace Sherlock {
+namespace Video {
 
-class Scalpel3DOMovieDecoder : public Video::VideoDecoder {
+/**
+ * Decoder for 3DO videos.
+ *
+ * Video decoder used in engines:
+ *  - sherlock
+ *  - plumbers
+ */
+class ThreeDOMovieDecoder : public Video::VideoDecoder {
 public:
-	Scalpel3DOMovieDecoder();
-	~Scalpel3DOMovieDecoder() override;
+	ThreeDOMovieDecoder();
+	~ThreeDOMovieDecoder() override;
 
 	bool loadStream(Common::SeekableReadStream *stream) override;
 	void close() override;

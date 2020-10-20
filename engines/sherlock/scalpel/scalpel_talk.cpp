@@ -30,7 +30,6 @@
 #include "sherlock/scalpel/scalpel_user_interface.h"
 #include "sherlock/scalpel/scalpel.h"
 #include "sherlock/screen.h"
-#include "sherlock/scalpel/3do/movie_decoder.h"
 
 namespace Sherlock {
 
