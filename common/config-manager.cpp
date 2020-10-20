@@ -458,7 +458,7 @@ const String &ConfigManager::get(const String &key) const {
 	else if (_appDomain.contains(key))
 		return _appDomain[key];
 
-	return _defaultsDomain.getVal(key);
+	return _defaultsDomain.getValOrDefault(key);
 }
 
 const String &ConfigManager::get(const String &key, const String &domName) const {
@@ -477,7 +477,7 @@ const String &ConfigManager::get(const String &key, const String &domName) const
 	if (domain->contains(key))
 		return (*domain)[key];
 
-	return _defaultsDomain.getVal(key);
+	return _defaultsDomain.getValOrDefault(key);
 }
 
 int ConfigManager::getInt(const String &key, const String &domName) const {
