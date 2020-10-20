@@ -54,7 +54,7 @@ public:
 		return _application;
 	};
 
-	virtual void runGame() = 0;
+	virtual bool runGame() = 0;
 	virtual void paint() = 0; // probably shouldn't exist
 	virtual bool isPainting() {
 		return false;

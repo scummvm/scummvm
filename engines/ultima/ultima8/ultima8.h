@@ -179,10 +179,10 @@ public:
 		return dynamic_cast<Ultima8Engine *>(_application);
 	}
 
-	void startup();
+	bool startup();
 	void shutdown();
 
-	void startupGame();
+	bool startupGame();
 	void startupPentagramMenu();
 	void shutdownGame(bool reloading = true);
 	void changeGame(istring newgame);
@@ -199,7 +199,7 @@ public:
 
 	Graphics::Screen *getScreen() const override;
 
-	void runGame() override;
+	bool runGame() override;
 	virtual void handleEvent(const Common::Event &event);
 
 	void paint() override;
