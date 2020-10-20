@@ -1086,7 +1086,7 @@ void TwinEEngine::readKeys() {
 
 		int find = 0;
 		bool found = false;
-		for (int i = 0; i < 28; i++) {
+		for (int i = 0; i < ARRAYSIZE(pressedKeyMap); i++) {
 			if (pressedKeyMap[i] == localKey) {
 				find = i;
 				found = true;
