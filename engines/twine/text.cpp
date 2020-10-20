@@ -402,20 +402,16 @@ Text::WordSize Text::getWordSize(const char *arg1, char *arg2) {
 }
 
 void Text::processTextLine() {
-	int16 var4;
-	char *buffer;
-	char *temp;
-
-	buffer = printText8Var8;
+	char *buffer = printText8Var8;
 	dialCharSpace = 7;
-	var4 = 1;
+	int16 var4 = 1;
 
 	addLineBreakX = 0;
 	printText8PrepareBufferVar2 = 0;
 	buf2[0] = 0;
 
 	for (;;) {
-		if (*buffer == 0x20) {
+		if (*buffer == ' ') {
 			buffer++;
 			continue;
 		}
@@ -424,7 +420,7 @@ void Text::processTextLine() {
 			printText8Var8 = buffer;
 			WordSize wordSize = getWordSize(buffer, buf1);
 			if (addLineBreakX + dialCharSpace + wordSize.inPixel < dialTextBoxParam2) {
-				temp = buffer + 1;
+				char *temp = buffer + 1;
 				if (*buffer == 1) {
 					var4 = 0;
 					buffer = temp;
@@ -462,7 +458,7 @@ void Text::processTextLine() {
 	if (printText8PrepareBufferVar2 != 0)
 		printText8PrepareBufferVar2--;
 
-	if (*printText8Var8 != 0 && var4 == 1) {
+	if (*printText8Var8 != '\0' && var4 == 1) {
 		dialCharSpace += (dialTextBoxParam2 - addLineBreakX) / printText8PrepareBufferVar2;
 		printText10Var1 = dialTextBoxParam2 - addLineBreakX - dialTextBoxParam2 - addLineBreakX; // stupid... recheck
 	}
@@ -494,51 +490,38 @@ void Text::printText10Sub() {
 }
 
 void Text::printText10Sub2() {
-	int32 currentLetter;
-	int32 currentIndex;
-	int32 counter;
-	int32 counter2;
-	int16 *ptr;
-
-	currentLetter = printText8Var3;
-	currentLetter--;
-
-	currentIndex = currentLetter * 3;
-
-	ptr = pt8s4 + currentIndex;
+	const int32 currentLetter = printText8Var3 - 1;
+	const int32 currentIndex = currentLetter * 3;
+	int16 *ptr = pt8s4 + currentIndex;
+	int32 counter = printText8Var3;
+	int32 fontColor = dialTextStartColor;
 
 	_engine->_system->delayMillis(15);
 
-	counter = printText8Var3;
-	counter2 = dialTextStartColor;
-
 	while (--counter >= 0) {
-		setFontColor(counter2);
-		drawCharacterShadow(*(ptr + 1), *(ptr + 2), (uint8)*ptr, counter2);
-		counter2 -= dialTextStepSize;
-		if (counter2 > dialTextStopColor)
-			counter2 = dialTextStopColor;
+		setFontColor(fontColor);
+		drawCharacterShadow(*(ptr + 1), *(ptr + 2), (uint8)*ptr, fontColor);
+		fontColor -= dialTextStepSize;
+		if (fontColor > dialTextStopColor) {
+			fontColor = dialTextStopColor;
+		}
 		ptr -= 3;
 	};
 }
 
 void Text::TEXT_GetLetterSize(uint8 character, int32 *pLetterWidth, int32 *pLetterHeight, uint8 *pFont) { // TEXT_GetLetterSize
-	uint8 *temp;
-
-	temp = (uint8 *)(pFont + *((int16 *)(pFont + character * 4)));
+	uint8 *temp = (uint8 *)(pFont + *((int16 *)(pFont + character * 4)));
 	*pLetterWidth = *(temp);
 	*pLetterHeight = *(temp + 1);
 }
 
 // TODO: refactor this code
 int Text::printText10() {
-	int32 charWidth, charHeight; // a, b
-
 	if (printTextVar13 == 0) {
 		return 0;
 	}
 
-	if (*(printText8Ptr2) == 0) {
+	if (*printText8Ptr2 == '\0') {
 		if (printText8Var5 != 0) {
 			if (newGameVar5 != 0) {
 				printText10Sub();
@@ -554,7 +537,7 @@ int Text::printText10() {
 			TEXT_CurrentLetterX = dialTextBoxLeft + 8;
 			TEXT_CurrentLetterY = dialTextBoxTop + 8;
 		}
-		if (*(printText8Var8) == 0) {
+		if (*printText8Var8 == '\0') {
 			initProgressiveTextBuffer();
 			printText8Var5 = 1;
 			return 1;
@@ -563,15 +546,17 @@ int Text::printText10() {
 	}
 
 	// RECHECK this later
-	if (*(printText8Ptr2) == 0) {
+	if (*printText8Ptr2 == '\0') {
 		return 1;
 	}
 
 	printText8Sub4(TEXT_CurrentLetterX, TEXT_CurrentLetterY, *printText8Ptr2);
 	printText10Sub2();
+	int32 charWidth;
+	int32 charHeight;
 	TEXT_GetLetterSize(*printText8Ptr2, &charWidth, &charHeight, (uint8 *)fontPtr);
 
-	if (*(printText8Ptr2) != 0x20) {
+	if (*printText8Ptr2 != ' ') {
 		TEXT_CurrentLetterX += charWidth + 2;
 	} else {
 		if (printText10Var1 != 0) {
@@ -584,7 +569,7 @@ int Text::printText10() {
 	// next character
 	printText8Ptr2++;
 
-	if (*(printText8Ptr2) != 0)
+	if (*printText8Ptr2 != '\0')
 		return 1;
 
 	TEXT_CurrentLetterY += 38;
@@ -603,7 +588,7 @@ int Text::printText10() {
 	initProgressiveTextBuffer();
 	printText8Var6 = 1;
 
-	if (*(printText8Var8) == 0) {
+	if (*printText8Var8 == '\0') {
 		printText8Var5 = 1;
 	}
 
@@ -777,8 +762,9 @@ bool Text::getText(int32 index) { // findString
 	// choose right text from order index
 	do {
 		orderIdx = *(localOrderBuf++);
-		if (orderIdx == index)
+		if (orderIdx == index) {
 			break;
+		}
 		currIdx++;
 	} while (currIdx < numDialTextEntries);
 
@@ -801,8 +787,9 @@ bool Text::getText(int32 index) { // findString
 
 void Text::copyText(const char *src, char *dst, int32 size) { // copyStringToString
 	int32 i;
-	for (i = 0; i < size; i++)
+	for (i = 0; i < size; i++) {
 		*(dst++) = *(src++);
+	}
 }
 
 void Text::getMenuText(int32 index, char *text, uint32 textSize) { // GetMultiText
