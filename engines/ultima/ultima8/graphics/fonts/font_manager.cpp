@@ -109,6 +109,7 @@ Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int points
 		return nullptr;
 	}
 
+#ifdef USE_FREETYPE2
 	// open font using ScummVM TTF API
 	// Note: The RWops and ReadStream will be deleted by the TTF_Font
 	Graphics::Font *font = Graphics::loadTTFFont(*fontids, pointsize);
@@ -125,6 +126,9 @@ Graphics::Font *FontManager::getTTF_Font(const Std::string &filename, int points
 #endif
 
 	return font;
+#else // !USE_FREETYPE2
+	return nullptr;
+#endif
 }
 
 void FontManager::setOverride(unsigned int fontnum, Font *newFont) {
