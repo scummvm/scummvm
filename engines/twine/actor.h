@@ -240,7 +240,7 @@ public:
 
 	HeroBehaviourType heroBehaviour = kNormal;
 	/** Hero auto agressive mode */
-	int16 autoAgressive = 0;
+	int16 autoAgressive = 1;
 	/** Previous Hero behaviour */
 	HeroBehaviourType previousHeroBehaviour = kNormal;
 	/** Previous Hero angle */
