@@ -44,7 +44,6 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 
-	/*
 	// Plumbers 3DO version
 	{
 		"plumbers",
@@ -55,7 +54,6 @@ static const ADGameDescription gameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NOMIDI)
 	},
-	*/
 
 	AD_TABLE_END_MARKER
 };
