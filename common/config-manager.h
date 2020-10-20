@@ -89,6 +89,7 @@ public:
           * @return True if the key exists, false otherwise.
           * You can use this method if you frequently attempt to access keys that do not exist.
           */
+		const String &getValOrDefault(const String &key) const { return _entries.getValOrDefault(key); }
 		bool tryGetVal(const String &key, String &out) const { return _entries.tryGetVal(key, out); }
 
 		void           clear() { _entries.clear(); } /*!< Clear all configuration entries in the domain. */
