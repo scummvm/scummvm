@@ -265,8 +265,19 @@ void LauncherDialog::updateListing() {
 	const ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
 	bool scanEntries = numEntries == -1 ? true : (domains.size() <= numEntries);
 
-	ConfigManager::DomainMap::const_iterator iter;
-	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+	// Turn it into a list of pointers
+	struct Entry {
+		String key;
+		String description;
+		const Common::ConfigManager::Domain *domain;
+
+		Entry(Common::String k, Common::String d, const Common::ConfigManager::Domain *v) {
+			key = k; description = d, domain = v;
+		}
+	};
+
+	Common::List<Entry> domainList;
+	for (ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
 #ifdef __DS__
 		// DS port uses an extra section called 'ds'.  This prevents the section from being
 		// detected as a game.
@@ -275,11 +286,7 @@ void LauncherDialog::updateListing() {
 		}
 #endif
 
-		String gameid(iter->_value.getVal("gameid"));
 		String description(iter->_value.getVal("description"));
-
-		if (gameid.empty())
-			gameid = iter->_key;
 
 		if (description.empty()) {
 			QualifiedGameDescriptor g = EngineMan.findTarget(iter->_key);
@@ -288,34 +295,46 @@ void LauncherDialog::updateListing() {
 		}
 
 		if (description.empty()) {
+			String gameid(iter->_value.getVal("gameid"));
+
+			if (gameid.empty())
+				gameid = iter->_key;
+
 			description = Common::String::format("Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
 		}
 
-		if (!gameid.empty() && !description.empty()) {
-			// Insert the game into the launcher list
-			int pos = 0, size = l.size();
+		if (!description.empty())
+			domainList.push_back(Entry(iter->_key, description, &iter->_value));
+	}
 
-			while (pos < size && (scumm_compareDictionary(description.c_str(), l[pos].encode().c_str()) > 0))
-				pos++;
+	// Now sort the list in dictionary order
+	struct EntryComparator {
+        bool operator()(const Entry &x, const Entry &y) const {
+                return scumm_compareDictionary(x.description.c_str(), y.description.c_str()) < 0;
+        }
+	};
 
-			color = ThemeEngine::kFontColorNormal;
+	Common::sort(domainList.begin(), domainList.end(), EntryComparator());
 
-			if (scanEntries) {
-				Common::FSNode path(iter->_value.getVal("path"));
-				if (!path.isDirectory()) {
-					color = ThemeEngine::kFontColorAlternate;
-					// If more conditions which grey out entries are added we should consider
-					// enabling this so that it is easy to spot why a certain game entry cannot
-					// be started.
+	// And fill out our structures
+	for (Common::List<Entry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
+		color = ThemeEngine::kFontColorNormal;
 
-					// description += Common::String::format(" (%s)", _("Not found"));
-				}
+		if (scanEntries) {
+			Common::FSNode path(iter->domain->getVal("path"));
+			if (!path.isDirectory()) {
+				color = ThemeEngine::kFontColorAlternate;
+				// If more conditions which grey out entries are added we should consider
+				// enabling this so that it is easy to spot why a certain game entry cannot
+				// be started.
+
+				// description += Common::String::format(" (%s)", _("Not found"));
 			}
-
-			l.insert_at(pos, description);
-			colors.insert_at(pos, color);
-			_domains.insert_at(pos, iter->_key);
 		}
+
+		l.push_back(iter->description);
+		colors.push_back(color);
+		_domains.push_back(iter->key);
 	}
 
 	const int oldSel = _list->getSelected();
