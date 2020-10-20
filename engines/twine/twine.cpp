@@ -1009,7 +1009,9 @@ void TwinEEngine::readKeys() {
 			break;
 		}
 	}
-
+#if 1
+	{
+#else
 	int32 size = 0;
 	uint8 *keyboard = nullptr; // TODO: SDL_GetKeyState(&size);
 	for (int32 j = 0; j < size; j++) {
@@ -1083,7 +1085,7 @@ void TwinEEngine::readKeys() {
 				}
 			}
 		}
-
+#endif
 		int find = 0;
 		bool found = false;
 		for (int i = 0; i < ARRAYSIZE(pressedKeyMap); i++) {

@@ -252,6 +252,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 	_fadeOut = -1;
 	fadeOutFrames = 0;
 
+	file.close();
 	if (!file.open(fileNamePath)) {
 		warning("Failed to open fla movie '%s'", fileNamePath.c_str());
 		return;
