@@ -350,7 +350,6 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				freezeTime();
 				_gameState->saveGame(); // auto save game
 				quitGame = 0;
-				cfgfile.Quit = 0;
 				unfreezeTime();
 				return 0;
 			}

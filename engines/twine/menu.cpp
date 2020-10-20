@@ -24,6 +24,7 @@
 #include "audio/mixer.h"
 #include "backends/audiocd/audiocd.h"
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "twine/actor.h"
@@ -688,7 +689,7 @@ void Menu::mainMenu() {
 	memset(plasmaEffectPtr, 0, kPlasmaEffectFilesize);
 	_engine->_hqrdepack->hqrGetEntry(plasmaEffectPtr, Resources::HQR_RESS_FILE, RESSHQR_PLASMAEFFECT);
 
-	while (!_engine->cfgfile.Quit) {
+	while (!_engine->shouldQuit()) {
 		_engine->_text->initTextBank(0);
 
 		_engine->_music->playTrackMusic(9); // LBA's Theme
@@ -711,7 +712,9 @@ void Menu::mainMenu() {
 			break;
 		}
 		case kQuit: {
-			_engine->cfgfile.Quit = 1;
+			Common::Event event;
+			event.type = Common::EVENT_QUIT;
+			_engine->_system->getEventManager()->pushEvent(event);
 			break;
 		}
 		case kBackground: {

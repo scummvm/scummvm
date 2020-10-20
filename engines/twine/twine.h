@@ -107,8 +107,6 @@ typedef struct ConfigFile {
 	int32 AutoAgressive = 0;
 	/** SceZoom mode type */
 	int32 SceZoom = 0;
-	/** Flag to quit the game */
-	int32 Quit = 0;
 	/** Flag to toggle Wall Collision */
 	int32 WallCollision = 0;
 } ConfigFile;
@@ -205,8 +203,10 @@ public:
 	/** Initialize all needed stuffs at first time running engine */
 	void initAll();
 	void processActorSamplePosition(int32 actorIdx);
-	/** Game engine main loop
-	@return true if we want to show credit sequence */
+	/**
+	 * Game engine main loop
+	 * @return true if we want to show credit sequence
+	 */
 	int32 runGameEngine();
 	/** Allocate video memory, both front and back buffers */
 	void allocVideoMemory();
