@@ -104,7 +104,7 @@ public:
 	Text(TwinEEngine *engine) : _engine(engine) {}
 
 	/** Current text bank */
-	int32 currentTextBank = 0;
+	int32 currentTextBank = -1;
 	/** Current dialogue text size */
 	int32 currDialTextSize = 0;
 	/** Current dialogue text pointer */
@@ -151,7 +151,7 @@ public:
 	int32 nextDialTextEntry = 0; // ordered entry
 	Common::String currentVoxBankFile;
 
-	int32 showDialogueBubble = 0;
+	int32 showDialogueBubble = 1;
 
 	/**
 	 * Initialize dialogue

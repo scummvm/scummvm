@@ -278,25 +278,13 @@ void TwinEEngine::initAll() {
 	memset(_menu->itemAngle, 256, sizeof(_menu->itemAngle)); // reset inventory items angles
 
 	_redraw->bubbleSpriteIndex = SPRITEHQR_DIAG_BUBBLE_LEFT;
-	_redraw->bubbleActor = -1;
-	_text->showDialogueBubble = 1;
-
-	_text->currentTextBank = -1;
-	_menu->currMenuTextIndex = -1;
-	_menu->currMenuTextBank = -1;
-	_actor->autoAgressive = 1;
 
 	_scene->sceneHero = &_scene->sceneActors[0];
 
-	_redraw->renderLeft = 0;
-	_redraw->renderTop = 0;
 	_redraw->renderRight = SCREEN_TEXTLIMIT_RIGHT;
 	_redraw->renderBottom = SCREEN_TEXTLIMIT_BOTTOM;
 	// Set clip to fullscreen by default, allows main menu to render properly after load
 	_interface->resetClip();
-
-	rightMouse = 0;
-	leftMouse = 0;
 
 	_resources->initResources();
 
@@ -308,21 +296,22 @@ int TwinEEngine::getRandomNumber(uint max) {
 }
 
 void TwinEEngine::freezeTime() {
-	if (!isTimeFreezed)
+	if (!isTimeFreezed) {
 		saveFreezedTime = lbaTime;
+	}
 	isTimeFreezed++;
 }
 
 void TwinEEngine::unfreezeTime() {
 	--isTimeFreezed;
-	if (isTimeFreezed == 0)
+	if (isTimeFreezed == 0) {
 		lbaTime = saveFreezedTime;
+	}
 }
 
 void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
-	int32 channelIdx;
-	ActorStruct *actor = &_scene->sceneActors[actorIdx];
-	channelIdx = _sound->getActorChannel(actorIdx);
+	const ActorStruct *actor = &_scene->sceneActors[actorIdx];
+	const int32 channelIdx = _sound->getActorChannel(actorIdx);
 	_sound->setSamplePosition(channelIdx, actor->x, actor->y, actor->z);
 }
 

@@ -20,13 +20,13 @@
  *
  */
 
+#include "twine/renderer.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "twine/interface.h"
 #include "twine/menu.h"
 #include "twine/movements.h"
 #include "twine/redraw.h"
-#include "twine/renderer.h"
 #include "twine/shadeangletab.h"
 #include "twine/twine.h"
 
@@ -64,24 +64,23 @@ int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 			projPosY = (-cY * cameraPosZ) / posZ + orthoProjY;
 			projPosZ = posZ;
 			return -1;
-		} else {
-			projPosX = 0;
-			projPosY = 0;
-			projPosZ = 0;
-			return 0;
 		}
-	} else {
-		projPosX = ((cX - cZ) * 24) / 512 + orthoProjX;
-		projPosY = (((cX + cZ) * 12) - cY * 30) / 512 + orthoProjY;
-		projPosZ = cZ - cY - cX;
+
+		projPosX = 0;
+		projPosY = 0;
+		projPosZ = 0;
+		return 0;
 	}
+	projPosX = ((cX - cZ) * 24) / 512 + orthoProjX;
+	projPosY = (((cX + cZ) * 12) - cY * 30) / 512 + orthoProjY;
+	projPosZ = cZ - cY - cX;
 
 	return 1;
 }
 
-void Renderer::setCameraPosition(int32 X, int32 Y, int32 cX, int32 cY, int32 cZ) {
-	orthoProjX = X;
-	orthoProjY = Y;
+void Renderer::setCameraPosition(int32 x, int32 y, int32 cX, int32 cY, int32 cZ) {
+	orthoProjX = x;
+	orthoProjY = y;
 
 	cameraPosX = cX;
 	cameraPosY = cY;
@@ -90,10 +89,10 @@ void Renderer::setCameraPosition(int32 X, int32 Y, int32 cX, int32 cY, int32 cZ)
 	isUsingOrhoProjection = 0;
 }
 
-void Renderer::setBaseTranslation(int32 X, int32 Y, int32 Z) {
-	baseTransPosX = X;
-	baseTransPosY = Y;
-	baseTransPosZ = Z;
+void Renderer::setBaseTranslation(int32 x, int32 y, int32 z) {
+	baseTransPosX = x;
+	baseTransPosY = y;
+	baseTransPosZ = z;
 }
 
 void Renderer::setOrthoProjection(int32 X, int32 Y, int32 Z) {
@@ -104,25 +103,22 @@ void Renderer::setOrthoProjection(int32 X, int32 Y, int32 Z) {
 	isUsingOrhoProjection = 1;
 }
 
-void Renderer::getBaseRotationPosition(int32 X, int32 Y, int32 Z) {
-	destX = (baseMatrix[0] * X + baseMatrix[1] * Y + baseMatrix[2] * Z) >> 14;
-	destY = (baseMatrix[3] * X + baseMatrix[4] * Y + baseMatrix[5] * Z) >> 14;
-	destZ = (baseMatrix[6] * X + baseMatrix[7] * Y + baseMatrix[8] * Z) >> 14;
+void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
+	destX = (baseMatrix[0] * x + baseMatrix[1] * y + baseMatrix[2] * z) >> 14;
+	destY = (baseMatrix[3] * x + baseMatrix[4] * y + baseMatrix[5] * z) >> 14;
+	destZ = (baseMatrix[6] * x + baseMatrix[7] * y + baseMatrix[8] * z) >> 14;
 }
 
-void Renderer::setBaseRotation(int32 X, int32 Y, int32 Z) {
-	int32 matrixElem;
-	double Xradians, Yradians, Zradians;
-
+void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
 	shadeAngleTab3 = &shadeAngleTable[384];
 
-	baseMatrixRotationX = X & 0x3FF;
-	baseMatrixRotationY = Y & 0x3FF;
-	baseMatrixRotationZ = Z & 0x3FF;
+	baseMatrixRotationX = x & 0x3FF;
+	baseMatrixRotationY = y & 0x3FF;
+	baseMatrixRotationZ = z & 0x3FF;
 
-	Xradians = (double)((256 - X) % 1024) * 2 * M_PI / 1024;
-	Yradians = (double)((256 - Y) % 1024) * 2 * M_PI / 1024;
-	Zradians = (double)((256 - Z) % 1024) * 2 * M_PI / 1024;
+	double Xradians = (double)((256 - x) % 1024) * 2 * M_PI / 1024;
+	double Yradians = (double)((256 - y) % 1024) * 2 * M_PI / 1024;
+	double Zradians = (double)((256 - z) % 1024) * 2 * M_PI / 1024;
 
 	baseMatrix[0] = (int32)(sin(Zradians) * sin(Yradians) * 16384);
 	baseMatrix[1] = (int32)(-cos(Zradians) * 16384);
@@ -132,7 +128,7 @@ void Renderer::setBaseRotation(int32 X, int32 Y, int32 Z) {
 	baseMatrix[6] = (int32)(cos(Zradians) * cos(Xradians) * 16384);
 	baseMatrix[7] = (int32)(sin(Zradians) * cos(Xradians) * 16384);
 
-	matrixElem = baseMatrix[3];
+	int32 matrixElem = baseMatrix[3];
 
 	baseMatrix[3] = (int32)(sin(Yradians) * matrixElem + 16384 * cos(Yradians) * cos(Xradians));
 	baseMatrix[5] = (int32)(cos(Yradians) * matrixElem - 16384 * sin(Yradians) * cos(Xradians));
@@ -149,10 +145,10 @@ void Renderer::setBaseRotation(int32 X, int32 Y, int32 Z) {
 	baseRotPosZ = destZ;
 }
 
-void Renderer::getCameraAnglePositions(int32 X, int32 Y, int32 Z) {
-	destX = (baseMatrix[0] * X + baseMatrix[3] * Y + baseMatrix[6] * Z) >> 14;
-	destY = (baseMatrix[1] * X + baseMatrix[4] * Y + baseMatrix[7] * Z) >> 14;
-	destZ = (baseMatrix[2] * X + baseMatrix[5] * Y + baseMatrix[8] * Z) >> 14;
+void Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
+	destX = (baseMatrix[0] * x + baseMatrix[3] * y + baseMatrix[6] * z) >> 14;
+	destY = (baseMatrix[1] * x + baseMatrix[4] * y + baseMatrix[7] * z) >> 14;
+	destZ = (baseMatrix[2] * x + baseMatrix[5] * y + baseMatrix[8] * z) >> 14;
 }
 
 void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6) {
@@ -172,19 +168,14 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 }
 
 void Renderer::applyRotation(int32 *tempMatrix, int32 *currentMatrix) {
-	int32 i;
-	int32 angle;
-	int32 angleVar1; // esi
-	int32 angleVar2; // ecx
-
 	int32 matrix1[9];
 	int32 matrix2[9];
 
 	if (renderAngleX) {
-		angle = renderAngleX;
-		angleVar2 = shadeAngleTable[angle & 0x3FF];
+		int32 angle = renderAngleX;
+		int32 angleVar2 = shadeAngleTable[angle & 0x3FF];
 		angle += 0x100;
-		angleVar1 = shadeAngleTable[angle & 0x3FF];
+		int32 angleVar1 = shadeAngleTable[angle & 0x3FF];
 
 		matrix1[0] = currentMatrix[0];
 		matrix1[3] = currentMatrix[3];
@@ -197,15 +188,15 @@ void Renderer::applyRotation(int32 *tempMatrix, int32 *currentMatrix) {
 		matrix1[7] = (currentMatrix[8] * angleVar2 + currentMatrix[7] * angleVar1) >> 14;
 		matrix1[8] = (currentMatrix[8] * angleVar1 - currentMatrix[7] * angleVar2) >> 14;
 	} else {
-		for (i = 0; i < 9; i++)
+		for (int32 i = 0; i < 9; i++)
 			matrix1[i] = currentMatrix[i];
 	}
 
 	if (renderAngleZ) {
-		angle = renderAngleZ;
-		angleVar2 = shadeAngleTable[angle & 0x3FF];
+		int32 angle = renderAngleZ;
+		int32 angleVar2 = shadeAngleTable[angle & 0x3FF];
 		angle += 0x100;
-		angleVar1 = shadeAngleTable[angle & 0x3FF];
+		int32 angleVar1 = shadeAngleTable[angle & 0x3FF];
 
 		matrix2[2] = matrix1[2];
 		matrix2[5] = matrix1[5];
@@ -218,15 +209,15 @@ void Renderer::applyRotation(int32 *tempMatrix, int32 *currentMatrix) {
 		matrix2[6] = (matrix1[7] * angleVar2 + matrix1[6] * angleVar1) >> 14;
 		matrix2[7] = (matrix1[7] * angleVar1 - matrix1[6] * angleVar2) >> 14;
 	} else {
-		for (i = 0; i < 9; i++)
+		for (int32 i = 0; i < 9; i++)
 			matrix2[i] = matrix1[i];
 	}
 
 	if (renderAngleY) {
-		angle = renderAngleY;
-		angleVar2 = shadeAngleTable[angle & 0x3FF]; // esi
+		int32 angle = renderAngleY;
+		int32 angleVar2 = shadeAngleTable[angle & 0x3FF]; // esi
 		angle += 0x100;
-		angleVar1 = shadeAngleTable[angle & 0x3FF]; // ecx
+		int32 angleVar1 = shadeAngleTable[angle & 0x3FF]; // ecx
 
 		tempMatrix[1] = matrix2[1];
 		tempMatrix[4] = matrix2[4];
@@ -240,28 +231,21 @@ void Renderer::applyRotation(int32 *tempMatrix, int32 *currentMatrix) {
 		tempMatrix[6] = (matrix2[6] * angleVar1 - matrix2[8] * angleVar2) >> 14;
 		tempMatrix[8] = (matrix2[6] * angleVar2 + matrix2[8] * angleVar1) >> 14;
 	} else {
-		for (i = 0; i < 9; i++)
+		for (int32 i = 0; i < 9; i++)
 			tempMatrix[i] = matrix2[i];
 	}
 }
 
 void Renderer::applyPointsRotation(uint8 *firstPointsPtr, int32 numPoints, pointTab *destPoints, int32 *rotationMatrix) {
-	int16 tmpX;
-	int16 tmpY;
-	int16 tmpZ;
-
-	int16 *tempPtr;
-
 	int32 numOfPoints2 = numPoints;
-	uint8 *pointsPtr2;
 
 	do {
-		pointsPtr2 = firstPointsPtr;
-		tempPtr = (int16 *)(firstPointsPtr);
+		uint8 *pointsPtr2 = firstPointsPtr;
+		const int16 *tempPtr = (int16 *)(firstPointsPtr);
 
-		tmpX = tempPtr[0];
-		tmpY = tempPtr[1];
-		tmpZ = tempPtr[2];
+		const int16 tmpX = tempPtr[0];
+		const int16 tmpY = tempPtr[1];
+		const int16 tmpZ = tempPtr[2];
 
 		destPoints->X = ((rotationMatrix[0] * tmpX + rotationMatrix[1] * tmpY + rotationMatrix[2] * tmpZ) >> 14) + destX;
 		destPoints->Y = ((rotationMatrix[3] * tmpX + rotationMatrix[4] * tmpY + rotationMatrix[5] * tmpZ) >> 14) + destY;
@@ -273,9 +257,6 @@ void Renderer::applyPointsRotation(uint8 *firstPointsPtr, int32 numPoints, point
 }
 
 void Renderer::processRotatedElement(int32 rotZ, int32 rotY, int32 rotX, elementEntry *elemPtr) { // unsigned char * elemPtr) // loadPart
-	int32 *currentMatrix;
-	int16 baseElement;
-
 	int32 firstPoint = elemPtr->firstPoint;
 	int32 numOfPoints2 = elemPtr->numOfPoints;
 
@@ -288,8 +269,9 @@ void Renderer::processRotatedElement(int32 rotZ, int32 rotY, int32 rotX, element
 	}
 
 	//baseElement = *((unsigned short int*)elemPtr+6);
-	baseElement = elemPtr->baseElement;
+	const int16 baseElement = elemPtr->baseElement;
 
+	int32 *currentMatrix;
 	// if its the first point
 	if (baseElement == -1) {
 		currentMatrix = baseMatrix;
@@ -316,22 +298,15 @@ void Renderer::processRotatedElement(int32 rotZ, int32 rotY, int32 rotX, element
 }
 
 void Renderer::applyPointsTranslation(uint8 *firstPointsPtr, int32 numPoints, pointTab *destPoints, int32 *translationMatrix) {
-	int16 tmpX;
-	int16 tmpY;
-	int16 tmpZ;
-
-	int16 *tempPtr;
-
 	int32 numOfPoints2 = numPoints;
-	uint8 *pointsPtr2;
 
 	do {
-		pointsPtr2 = firstPointsPtr;
-		tempPtr = (int16 *)(firstPointsPtr);
+		uint8 *pointsPtr2 = firstPointsPtr;
+		int16 *tempPtr = (int16 *)(firstPointsPtr);
 
-		tmpX = tempPtr[0] + renderAngleZ;
-		tmpY = tempPtr[1] + renderAngleY;
-		tmpZ = tempPtr[2] + renderAngleX;
+		const int16 tmpX = tempPtr[0] + renderAngleZ;
+		const int16 tmpY = tempPtr[1] + renderAngleY;
+		const int16 tmpZ = tempPtr[2] + renderAngleX;
 
 		destPoints->X = ((translationMatrix[0] * tmpX + translationMatrix[1] * tmpY + translationMatrix[2] * tmpZ) >> 14) + destX;
 		destPoints->Y = ((translationMatrix[3] * tmpX + translationMatrix[4] * tmpY + translationMatrix[5] * tmpZ) >> 14) + destY;
@@ -343,35 +318,28 @@ void Renderer::applyPointsTranslation(uint8 *firstPointsPtr, int32 numPoints, po
 }
 
 void Renderer::processTranslatedElement(int32 rotX, int32 rotY, int32 rotZ, elementEntry *elemPtr) {
-	int32 *dest;
-	int32 *source;
-
 	renderAngleX = rotX;
 	renderAngleY = rotY;
 	renderAngleZ = rotZ;
 
 	if (elemPtr->baseElement == -1) { // base point
-		int32 i;
-
 		destX = 0;
 		destY = 0;
 		destZ = 0;
 
-		dest = (int32 *)currentMatrixTableEntry;
+		int32 *dest = (int32 *)currentMatrixTableEntry;
 
-		for (i = 0; i < 9; i++)
+		for (int32 i = 0; i < 9; i++)
 			dest[i] = baseMatrix[i];
 	} else { // dependent
-		int32 i;
-
 		destX = computedPoints[(elemPtr->basePoint) / 6].X;
 		destY = computedPoints[(elemPtr->basePoint) / 6].Y;
 		destZ = computedPoints[(elemPtr->basePoint) / 6].Z;
 
-		source = (int32 *)((uint8 *)matricesTable + elemPtr->baseElement);
-		dest = (int32 *)currentMatrixTableEntry;
+		const int32 *source = (const int32 *)((const uint8 *)matricesTable + elemPtr->baseElement);
+		int32 *dest = (int32 *)currentMatrixTableEntry;
 
-		for (i = 0; i < 9; i++)
+		for (int32 i = 0; i < 9; i++)
 			dest[i] = source[i];
 	}
 
@@ -379,18 +347,12 @@ void Renderer::processTranslatedElement(int32 rotX, int32 rotY, int32 rotZ, elem
 }
 
 void Renderer::translateGroup(int16 ax, int16 bx, int16 cx) {
-	int32 ebp;
-	int32 ebx;
-	int32 ecx;
-	int32 eax;
-	int32 edi;
+	int32 ebp = ax;
+	int32 ebx = bx;
+	int32 ecx = cx;
 
-	ebp = ax;
-	ebx = bx;
-	ecx = cx;
-
-	edi = shadeMatrix[0];
-	eax = shadeMatrix[1];
+	int32 edi = shadeMatrix[0];
+	int32 eax = shadeMatrix[1];
 	edi *= ebp;
 	eax *= ebx;
 	edi += eax;
@@ -439,21 +401,15 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	lightZ = destZ;
 }
 
-// TODO: remove me - use scummvm function
 FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
 }
 
 int Renderer::computePolygons() {
-	int16 vertexX, vertexY;
 	int16 *outPtr;
 	int32 i, nVertex;
 	int8 direction, up;
-	int16 oldVertexX, oldVertexY;
-	int16 currentVertexX, currentVertexY;
-	int16 vsize, hsize, ypos;
-	int16 cvalue, cdelta;
-	int64 slope, xpos;
+	int64 slope;
 	vertexData *vertices;
 
 	pRenderV1 = vertexCoordinates;
@@ -466,7 +422,7 @@ int Renderer::computePolygons() {
 
 	for (i = 0; i < numOfVertex; i++) {
 		vertices[i].x = clamp(vertices[i].x, 0, SCREEN_WIDTH - 1);
-		vertexX = vertices[i].x;
+		int16 vertexX = vertices[i].x;
 
 		if (vertexX < vleft)
 			vleft = vertexX;
@@ -474,7 +430,7 @@ int Renderer::computePolygons() {
 			vright = vertexX;
 
 		vertices[i].y = clamp(vertices[i].y, 0, SCREEN_HEIGHT - 1);
-		vertexY = vertices[i].y;
+		int16 vertexY = vertices[i].y;
 		if (vertexY < vtop)
 			vtop = vertexY;
 		if (vertexY > vbottom)
@@ -482,12 +438,12 @@ int Renderer::computePolygons() {
 	}
 
 	vertexParam1 = vertexParam2 = vertices[numOfVertex - 1].param;
-	currentVertexX = vertices[numOfVertex - 1].x;
-	currentVertexY = vertices[numOfVertex - 1].y;
+	int16 currentVertexX = vertices[numOfVertex - 1].x;
+	int16 currentVertexY = vertices[numOfVertex - 1].y;
 
 	for (nVertex = 0; nVertex < numOfVertex; nVertex++) {
-		oldVertexY = currentVertexY;
-		oldVertexX = currentVertexX;
+		int16 oldVertexY = currentVertexY;
+		int16 oldVertexX = currentVertexX;
 		oldVertexParam = vertexParam1;
 
 		vertexParam1 = vertexParam2 = vertices[nVertex].param;
@@ -502,9 +458,13 @@ int Renderer::computePolygons() {
 		up = currentVertexY < oldVertexY;
 		direction = up ? -1 : 1;
 
-		vsize = ABS(currentVertexY - oldVertexY);
-		hsize = ABS(currentVertexX - oldVertexX);
+		int16 vsize = ABS(currentVertexY - oldVertexY);
+		int16 hsize = ABS(currentVertexX - oldVertexX);
 
+		int16 cvalue;
+		int16 cdelta;
+		int16 ypos;
+		int16 xpos;
 		if (direction * oldVertexX > direction * currentVertexX) { // if we are going up right
 			xpos = currentVertexX;
 			ypos = currentVertexY;
@@ -525,7 +485,7 @@ int Renderer::computePolygons() {
 		for (i = 0; i < vsize + 2; i++) {
 			if ((outPtr - polyTab) < 960)
 				if ((outPtr - polyTab) > 0)
-					*(outPtr) = (int16)xpos;
+					*(outPtr) = xpos;
 			outPtr += direction;
 			xpos += slope;
 		}
@@ -1659,11 +1619,10 @@ void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
 
 	// This function should only be called ONCE, otherwise it corrupts the model data.
 	// The following code implements an unused flag to indicate that a model was already processed.
-	if (!(bodyHeader->bodyFlag & 0x80)) {
-		bodyHeader->bodyFlag |= 0x80;
-	} else {
+	if ((bodyHeader->bodyFlag & 0x80)) {
 		return;
 	}
+	bodyHeader->bodyFlag |= 0x80;
 
 	if (!(bodyHeader->bodyFlag & 2)) { // no animation applicable
 		return;
@@ -1732,10 +1691,6 @@ int Renderer::renderIsoModel(int32 X, int32 Y, int32 Z, int32 angleX, int32 angl
 }
 
 void Renderer::copyActorInternAnim(uint8 *bodyPtrSrc, uint8 *bodyPtrDest) {
-	int16 cx;
-	int16 ax;
-	int32 i;
-
 	// check if both characters allow animation
 	if (!(*((int16 *)bodyPtrSrc) & 2))
 		return;
@@ -1752,11 +1707,11 @@ void Renderer::copyActorInternAnim(uint8 *bodyPtrSrc, uint8 *bodyPtrDest) {
 
 	bodyPtrSrc = bodyPtrSrc + *((int16 *)(bodyPtrSrc - 2));
 	bodyPtrSrc = bodyPtrSrc + (*((int16 *)bodyPtrSrc)) * 6 + 2;
-	cx = *((int16 *)bodyPtrSrc);
+	int16 cx = *((int16 *)bodyPtrSrc);
 
 	bodyPtrDest = bodyPtrDest + *((int16 *)(bodyPtrDest - 2));
 	bodyPtrDest = bodyPtrDest + (*((int16 *)bodyPtrDest)) * 6 + 2;
-	ax = *((int16 *)bodyPtrDest);
+	int16 ax = *((int16 *)bodyPtrDest);
 
 	if (cx > ax)
 		cx = ax;
@@ -1764,7 +1719,7 @@ void Renderer::copyActorInternAnim(uint8 *bodyPtrSrc, uint8 *bodyPtrDest) {
 	bodyPtrSrc += 10;
 	bodyPtrDest += 10;
 
-	for (i = 0; i < cx; i++) {
+	for (int32 i = 0; i < cx; i++) {
 		*((uint32 *)bodyPtrDest) = *((uint32 *)bodyPtrSrc);
 		*((uint32 *)(bodyPtrDest + 4)) = *((uint32 *)(bodyPtrSrc + 4));
 

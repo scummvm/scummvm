@@ -55,7 +55,7 @@ private:
 		int32 numOfShades = 0; // field_10
 		int32 field_14 = 0;
 		int32 field_18 = 0;
-		int32 Y = 0;
+		int32 y = 0;
 		int32 field_20 = 0;
 		int16 field_24 = 0;
 	} elementEntry;

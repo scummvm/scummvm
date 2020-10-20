@@ -60,13 +60,12 @@ static const struct TwinELanguage {
 	const char *name;
 	const char *id;
 } LanguageTypes[] = {
-	{"English", "EN_"},
-	{"Francais", "FR_"},
-	{"Deutsch", "DE_"},
-	{"Espanol", "SP_"},
-	{"Italiano", "IT_"},
-	{"Portugues", ""}
-};
+    {"English", "EN_"},
+    {"Francais", "FR_"},
+    {"Deutsch", "DE_"},
+    {"Espanol", "SP_"},
+    {"Italiano", "IT_"},
+    {"Portugues", ""}};
 
 /** Configuration file structure
 
@@ -153,6 +152,7 @@ class TwinEEngine : public Engine {
 private:
 	int32 isTimeFreezed = 0;
 	int32 saveFreezedTime = 0;
+	ActorMoveStruct loopMovePtr; // mainLoopVar1
 
 public:
 	TwinEEngine(OSystem *system, Common::Language language, uint32 flags);
@@ -194,7 +194,7 @@ public:
 	ConfigFile cfgfile;
 
 	/** CD Game directory */
-	const char *cdDir;
+	const char *cdDir = "";
 
 	/** Initialize LBA engine */
 	void initEngine();
@@ -211,11 +211,11 @@ public:
 	/** Allocate video memory, both front and back buffers */
 	void allocVideoMemory();
 	int getRandomNumber(uint max = 0x7FFF);
-	int32 quitGame;
-	int32 lbaTime;
+	int32 quitGame = 0;
+	int32 lbaTime = 0;
 
-	int16 leftMouse;
-	int16 rightMouse;
+	int16 leftMouse = 0;
+	int16 rightMouse = 0;
 
 	/** Work video buffer */
 	uint8 *workVideoBuffer = nullptr;
@@ -223,21 +223,18 @@ public:
 	uint8 *frontVideoBuffer = nullptr;
 
 	/** temporary screen table */
-	int32 screenLookupTable[2000];
+	int32 screenLookupTable[2000]{0};
 
-	ActorMoveStruct loopMovePtr; // mainLoopVar1
-
-	int32 loopPressedKey;         // mainLoopVar5
-	int32 previousLoopPressedKey; // mainLoopVar6
-	int32 loopCurrentKey;         // mainLoopVar7
-	int32 loopInventoryItem;      // mainLoopVar9
-
-	int32 loopActorStep; // mainLoopVar17
+	int32 loopPressedKey = 0;         // mainLoopVar5
+	int32 previousLoopPressedKey = 0; // mainLoopVar6
+	int32 loopCurrentKey = 0;         // mainLoopVar7
+	int32 loopInventoryItem = 0;      // mainLoopVar9
+	int32 loopActorStep = 0;          // mainLoopVar17
 
 	/** Disable screen recenter */
-	int16 disableScreenRecenter;
+	int16 disableScreenRecenter = 0;
 
-	int32 zoomScreen;
+	int32 zoomScreen = 0;
 
 	void freezeTime();
 	void unfreezeTime();

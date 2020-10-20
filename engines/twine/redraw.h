@@ -46,8 +46,8 @@ enum OverlayPosType {
 typedef struct OverlayListStruct {
 	int16 type = 0;
 	int16 info0 = 0; // sprite/3d model entry | number | number range
-	int16 X = 0;
-	int16 Y = 0;
+	int16 x = 0;
+	int16 y = 0;
 	int16 info1 = 0; // followed actor | total coins
 	int16 posType = 0;
 	int16 lifeTime = 0;
@@ -60,9 +60,9 @@ private:
 	typedef struct DrawListStruct {
 		int16 posValue = 0;
 		uint16 index = 0; // field_2
-		uint16 X = 0;
-		uint16 Y = 0;
-		uint16 Z = 0;
+		uint16 x = 0;
+		uint16 y = 0;
+		uint16 z = 0;
 		uint16 field_A = 0;
 		uint16 field_C = 0;
 		uint16 field_E = 0;
@@ -124,7 +124,7 @@ public:
 	int32 numOfRedrawBox = 0;
 
 	/** Save last actor that bubble dialog icon */
-	int32 bubbleActor = 0;
+	int32 bubbleActor = -1;
 	int32 bubbleSpriteIndex = 0;
 
 	OverlayListStruct overlayList[OVERLAY_MAX_ENTRIES];

@@ -80,8 +80,8 @@ private:
 public:
 	Menu(TwinEEngine *engine);
 
-	int32 currMenuTextIndex = 0;
-	int32 currMenuTextBank = 0;
+	int32 currMenuTextIndex = -1;
+	int32 currMenuTextBank = -1;
 	char currMenuTextBuffer[256] = "";
 
 	int16 itemAngle[255]{0}; // objectRotation
