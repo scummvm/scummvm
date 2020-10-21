@@ -265,48 +265,6 @@
 	kFeatures640x480,
 	0, 0, 0
 },
-{ // Supplied by Hkz on #scummvm
-	{
-		"woodruff",
-		"",
-		AD_ENTRY1s("intro.stk", "f4c344023b073782d2fddd9d8b515318", 7069736),
-		IT_ITA,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
-	},
-	kGameTypeWoodruff,
-	kFeatures640x480,
-	0, 0, 0
-},
-{ // Supplied by Hkz on #scummvm
-	{
-		"woodruff",
-		"",
-		AD_ENTRY1s("intro.stk", "f4c344023b073782d2fddd9d8b515318", 7069736),
-		DE_DEU,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
-	},
-	kGameTypeWoodruff,
-	kFeatures640x480,
-	0, 0, 0
-},
-{ // Supplied by Hkz on #scummvm
-	{
-		"woodruff",
-		"",
-		AD_ENTRY1s("intro.stk", "f4c344023b073782d2fddd9d8b515318", 7069736),
-		FR_FRA,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
-	},
-	kGameTypeWoodruff,
-	kFeatures640x480,
-	0, 0, 0
-},
 { // Supplied by DjDiabolik in bug report #1971294
 	{
 		"woodruff",
