@@ -263,6 +263,12 @@ struct LauncherEntry {
 	}
 };
 
+struct LauncherEntryComparator {
+	bool operator()(const LauncherEntry &x, const LauncherEntry &y) const {
+			return scumm_compareDictionary(x.description.c_str(), y.description.c_str()) < 0;
+	}
+};
+
 void LauncherDialog::updateListing() {
 	U32StringArray l;
 	ListWidget::ColorList colors;
@@ -307,12 +313,6 @@ void LauncherDialog::updateListing() {
 	}
 
 	// Now sort the list in dictionary order
-	struct LauncherEntryComparator {
-        bool operator()(const LauncherEntry &x, const LauncherEntry &y) const {
-                return scumm_compareDictionary(x.description.c_str(), y.description.c_str()) < 0;
-        }
-	};
-
 	Common::sort(domainList.begin(), domainList.end(), LauncherEntryComparator());
 
 	// And fill out our structures
