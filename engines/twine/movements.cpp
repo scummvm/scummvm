@@ -296,7 +296,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 				heroAction = 0;
 
 				// If press W for action
-				if (_engine->_keyboard.skipIntro == 0x11) {
+				if (_engine->_keyboard.internalKeyCode == 0x11) {
 					heroAction = 1;
 				}
 

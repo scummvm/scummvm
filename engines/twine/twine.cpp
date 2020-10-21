@@ -325,13 +325,13 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	previousLoopPressedKey = loopPressedKey;
 	_keyboard.key = _keyboard.pressedKey;
 	loopPressedKey = _keyboard.skippedKey;
-	loopCurrentKey = _keyboard.skipIntro;
+	loopCurrentKey = _keyboard.internalKeyCode;
 
 	_debug->processDebug(loopCurrentKey);
 
 	if (_menuOptions->canShowCredits != 0) {
 		// TODO: if current music playing != 8, than play_track(8);
-		if (_keyboard.skipIntro != 0) {
+		if (_keyboard.internalKeyCode != 0) {
 			return 0;
 		}
 		if (_keyboard.pressedKey != 0) {
@@ -342,7 +342,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 	} else {
 		// Process give up menu - Press ESC
-		if (_keyboard.skipIntro == 1 && _scene->sceneHero->life > 0 && _scene->sceneHero->entity != -1 && !_scene->sceneHero->staticFlags.bIsHidden) {
+		if (_keyboard.internalKeyCode == 1 && _scene->sceneHero->life > 0 && _scene->sceneHero->entity != -1 && !_scene->sceneHero->staticFlags.bIsHidden) {
 			freezeTime();
 			if (_menu->giveupMenu()) {
 				unfreezeTime();
@@ -554,7 +554,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					break;
 				}
 				g_system->delayMillis(10);
-			} while (_keyboard.skipIntro != 0x19 && !_keyboard.pressedKey);
+			} while (_keyboard.internalKeyCode != 0x19 && !_keyboard.pressedKey);
 			unfreezeTime();
 			_redraw->redrawEngineActions(1);
 		}
@@ -780,10 +780,10 @@ bool TwinEEngine::gameEngineLoop() { // mainLoop
 void TwinEEngine::delaySkip(uint32 time) {
 	uint32 startTicks = _system->getMillis();
 	uint32 stopTicks = 0;
-	_keyboard.skipIntro = 0;
+	_keyboard.internalKeyCode = 0;
 	do {
 		readKeys();
-		if (_keyboard.skipIntro == 1) {
+		if (_keyboard.internalKeyCode == 1) {
 			break;
 		}
 		if (shouldQuit()) {
@@ -903,12 +903,12 @@ static_assert(ARRAYSIZE(pressedKeyCharMap) == 31, "Expected size of key char map
 
 void TwinEEngine::readKeys() {
 	if (shouldQuit()) {
-		_keyboard.skipIntro = 1;
+		_keyboard.internalKeyCode = 1;
 		_keyboard.skippedKey = 1;
 		return;
 	}
 	_keyboard.skippedKey = 0;
-	_keyboard.skipIntro = 0;
+	_keyboard.internalKeyCode = 0;
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -943,7 +943,7 @@ void TwinEEngine::readKeys() {
 		case Common::EVENT_KEYDOWN: {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				_keyboard.skipIntro = 1;
+				_keyboard.internalKeyCode = 1;
 				break;
 			case Common::KEYCODE_PAGEUP:
 				localKey = 0x49;
@@ -980,7 +980,7 @@ void TwinEEngine::readKeys() {
 				break;
 			}
 		}
-		_keyboard.skipIntro = localKey;
+		_keyboard.internalKeyCode = localKey;
 	}
 }
 

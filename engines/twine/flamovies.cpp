@@ -314,7 +314,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 				break;
 			}
 
-			if (_engine->_keyboard.skipIntro) {
+			if (_engine->_keyboard.internalKeyCode) {
 				break;
 			}
 		} while (true);

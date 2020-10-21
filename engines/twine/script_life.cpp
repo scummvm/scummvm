@@ -1362,7 +1362,7 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, int32 actorIdx, ActorStruct *
 
 	do {
 		engine->readKeys();
-	} while (engine->_keyboard.skipIntro || engine->_keyboard.skippedKey);
+	} while (engine->_keyboard.internalKeyCode || engine->_keyboard.skippedKey);
 
 	engine->unfreezeTime();
 
