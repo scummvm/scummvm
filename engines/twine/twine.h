@@ -27,6 +27,7 @@
 #include "common/random.h"
 #include "engines/engine.h"
 
+#include "graphics/managed_surface.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "twine/actor.h"
@@ -220,9 +221,9 @@ public:
 	int16 rightMouse = 0;
 
 	/** Work video buffer */
-	Graphics::Surface workVideoBuffer;
+	Graphics::ManagedSurface workVideoBuffer;
 	/** Main game video buffer */
-	Graphics::Surface frontVideoBuffer;
+	Graphics::ManagedSurface frontVideoBuffer;
 
 	/** temporary screen table */
 	int32 screenLookupTable[2000]{0};
@@ -282,7 +283,7 @@ public:
 	 * @param buffer screen buffer
 	 * @param palette new palette to cross fade
 	 */
-	void crossFade(const Graphics::Surface &buffer, uint8 *palette);
+	void crossFade(const Graphics::ManagedSurface &buffer, uint8 *palette);
 
 	/** Handle keyboard pressed keys */
 	void readKeys();

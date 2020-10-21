@@ -24,6 +24,7 @@
 #define TWINE_SCREENS_H
 
 #include "common/scummsys.h"
+#include "graphics/managed_surface.h"
 #include "graphics/surface.h"
 #include "twine/twine.h"
 
@@ -167,7 +168,7 @@ public:
 	 * @param destination screen buffer
 	 */
 	void copyScreen(const uint8 *source, uint8 *destination);
-	void copyScreen(const Graphics::Surface &source, Graphics::Surface &destination);
+	void copyScreen(const Graphics::ManagedSurface &source, Graphics::ManagedSurface &destination);
 
 	/** Clear front buffer screen */
 	void clearScreen();
