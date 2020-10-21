@@ -165,7 +165,7 @@ void MenuOptions::drawSelectableCharacters() {
 }
 
 // 0001F18C
-void MenuOptions::drawPlayerName(int32 centerx, int32 top, int8 * /*playerName*/, int32 type) {
+void MenuOptions::drawPlayerName(int32 centerx, int32 top, const char * /*playerName*/, int32 type) {
 	/*
 	int v4; // ebp@0
   int v6; // [sp+0h] [bp-14h]@0
