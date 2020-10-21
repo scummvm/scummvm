@@ -253,6 +253,15 @@ void LauncherDialog::close() {
 	ConfMan.flushToDisk();
 	Dialog::close();
 }
+struct LauncherEntry {
+	Common::String key;
+	Common::String description;
+	const Common::ConfigManager::Domain *domain;
+
+	LauncherEntry(Common::String k, Common::String d, const Common::ConfigManager::Domain *v) {
+		key = k; description = d, domain = v;
+	}
+};
 
 void LauncherDialog::updateListing() {
 	U32StringArray l;
@@ -266,17 +275,7 @@ void LauncherDialog::updateListing() {
 	bool scanEntries = numEntries == -1 ? true : (domains.size() <= numEntries);
 
 	// Turn it into a list of pointers
-	struct Entry {
-		String key;
-		String description;
-		const Common::ConfigManager::Domain *domain;
-
-		Entry(Common::String k, Common::String d, const Common::ConfigManager::Domain *v) {
-			key = k; description = d, domain = v;
-		}
-	};
-
-	Common::List<Entry> domainList;
+	Common::List<LauncherEntry> domainList;
 	for (ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
 #ifdef __DS__
 		// DS port uses an extra section called 'ds'.  This prevents the section from being
@@ -304,20 +303,20 @@ void LauncherDialog::updateListing() {
 		}
 
 		if (!description.empty())
-			domainList.push_back(Entry(iter->_key, description, &iter->_value));
+			domainList.push_back(LauncherEntry(iter->_key, description, &iter->_value));
 	}
 
 	// Now sort the list in dictionary order
-	struct EntryComparator {
-        bool operator()(const Entry &x, const Entry &y) const {
+	struct LauncherEntryComparator {
+        bool operator()(const LauncherEntry &x, const LauncherEntry &y) const {
                 return scumm_compareDictionary(x.description.c_str(), y.description.c_str()) < 0;
         }
 	};
 
-	Common::sort(domainList.begin(), domainList.end(), EntryComparator());
+	Common::sort(domainList.begin(), domainList.end(), LauncherEntryComparator());
 
 	// And fill out our structures
-	for (Common::List<Entry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
+	for (Common::List<LauncherEntry>::const_iterator iter = domainList.begin(); iter != domainList.end(); ++iter) {
 		color = ThemeEngine::kFontColorNormal;
 
 		if (scanEntries) {
