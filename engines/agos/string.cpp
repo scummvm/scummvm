@@ -323,10 +323,6 @@ void AGOSEngine::loadTextIntoMem(uint16 stringId) {
 			filename += *p++;
 		p++;
 
-		if (getPlatform() == Common::kPlatformAcorn) {
-			filename += ".DAT";
-		}
-
 		baseMax = (p[0] * 256) | p[1];
 		p += 2;
 

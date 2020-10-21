@@ -354,10 +354,6 @@ bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subrId) {
 			filename += *p++;
 		p++;
 
-		if (getPlatform() == Common::kPlatformAcorn) {
-			filename += ".DAT";
-		}
-
 		for (;;) {
 			min_num = READ_BE_UINT16(p); p += 2;
 			if (min_num == 0)

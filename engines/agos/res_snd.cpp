@@ -200,8 +200,6 @@ void AGOSEngine::playModule(uint16 music) {
 
 	if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO)
 		Common::sprintf_s(filename, "elvira2");
-	else if (getPlatform() == Common::kPlatformAcorn)
-		Common::sprintf_s(filename, "%dtune.DAT", music);
 	else
 		Common::sprintf_s(filename, "%dtune", music);
 

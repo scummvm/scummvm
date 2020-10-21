@@ -780,6 +780,8 @@ void AGOSEngine::loadVGABeardFile(uint16 id) {
 				Common::sprintf_s(filename, "0%d.out", id);
 			else
 				Common::sprintf_s(filename, "0%d.pkd", id);
+		} else if (getPlatform() == Common::kPlatformAcorn) {
+			Common::sprintf_s(filename, "%.2d/0%d", id / 100, id);
 		} else {
 			Common::sprintf_s(filename, "0%d.VGA", id);
 		}
@@ -932,7 +934,7 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 		decompressData(filename, dst, offs, srcSize, dstSize);
 	} else if (getFeatures() & GF_OLD_BUNDLE) {
 		if (getPlatform() == Common::kPlatformAcorn) {
-			Common::sprintf_s(filename, "%.3d%d.DAT", id, type);
+			Common::sprintf_s(filename, "%.2d/%.3d%d", id / 10, id, type);
 		} else if (getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST) {
 			if (getFeatures() & GF_TALKIE) {
 				Common::sprintf_s(filename, "%.3d%d.out", id, type);
