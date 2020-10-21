@@ -32,6 +32,7 @@
 #include "engines/util.h"
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
+#include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "gui/debugger.h"
 #include "twine/actor.h"
@@ -402,7 +403,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				}
 				break;
 			case kiBookOfBu: {
-				_screens->fadeToBlack(_screens->paletteRGB);
+				_screens->fadeToBlack(_screens->paletteRGBA);
 				_screens->loadImage(RESSHQR_INTROSCREEN1IMG);
 				_text->initTextBank(2);
 				_text->newGameVar4 = 0;
@@ -415,10 +416,10 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				_text->textClipSmall();
 				_text->newGameVar4 = 1;
 				_text->initTextBank(_text->currentTextBank + 3);
-				_screens->fadeToBlack(_screens->paletteRGBCustom);
+				_screens->fadeToBlack(_screens->paletteRGBACustom);
 				_screens->clearScreen();
 				flip();
-				setPalette(_screens->paletteRGB);
+				setPalette(_screens->paletteRGBA);
 				_screens->lockPalette = 1;
 			} break;
 			case kiProtoPack:
@@ -794,20 +795,24 @@ void TwinEEngine::delaySkip(uint32 time) {
 	} while (stopTicks <= time);
 }
 
-void TwinEEngine::setPalette(uint8 *palette) {
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
-	flip();
-}
-
-void TwinEEngine::fadeBlackToWhite() {
-#if 0
-	SDL_Color colorPtr[256];
-	SDL_UpdateRect(screen, 0, 0, 0, 0);
-	for (int32 i = 0; i < 256; i += 3) {
-		memset(colorPtr, i, sizeof(colorPtr));
-		SDL_SetPalette(screen, SDL_PHYSPAL, colorPtr, 0, 256);
+void TwinEEngine::setPalette(const uint32 *palette) {
+#if 1
+	uint8 pal[NUMOFCOLORS * 3];
+	uint8* out = pal;
+	const uint8* in = (const uint8*)palette;
+	for (int i = 0; i < NUMOFCOLORS; i++) {
+		out[0] = in[0];
+		out[1] = in[1];
+		out[2] = in[2];
+		out += 3;
+		in += 4;
 	}
+	g_system->getPaletteManager()->setPalette(pal, 0, 256);
+#else
+	frontVideoBuffer.setPalette(palette, 0, 256);
+	workVideoBuffer.setPalette(palette, 0, 256);
 #endif
+	flip();
 }
 
 void TwinEEngine::flip() {
@@ -823,11 +828,38 @@ void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom
 	g_system->updateScreen();
 }
 
-void TwinEEngine::crossFade(const Graphics::ManagedSurface &buffer, uint8 *palette) {
-	g_system->getPaletteManager()->setPalette(palette, 0, 256);
-	// TODO: implement cross fading
-	g_system->copyRectToScreen(buffer.getPixels(), buffer.pitch, 0, 0, buffer.w, buffer.h);
-	g_system->updateScreen();
+void TwinEEngine::crossFade(const Graphics::ManagedSurface &buffer, const uint32 *palette) {
+	Graphics::ManagedSurface backupSurface;
+	Graphics::ManagedSurface newSurface;
+	Graphics::ManagedSurface tempSurface;
+	Graphics::ManagedSurface surfaceTable;
+
+	Graphics::PixelFormat fmt(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	backupSurface.create(frontVideoBuffer.w, frontVideoBuffer.h, fmt);
+	newSurface.create(frontVideoBuffer.w, frontVideoBuffer.h, fmt);
+	tempSurface.create(frontVideoBuffer.w, frontVideoBuffer.h, Graphics::PixelFormat::createFormatCLUT8());
+	tempSurface.setPalette(palette, 0, 256);
+
+	surfaceTable.create(frontVideoBuffer.w, frontVideoBuffer.h, fmt);
+
+	backupSurface.transBlitFrom(frontVideoBuffer);
+	newSurface.transBlitFrom(tempSurface);
+
+	for (int32 i = 0; i < 8; i++) {
+		surfaceTable.blitFrom(backupSurface);
+		surfaceTable.transBlitFrom(newSurface, 0, false, 0, i * 32);
+		frontVideoBuffer.blitFrom(surfaceTable);
+		flip();
+		delaySkip(50);
+	}
+
+	frontVideoBuffer.blitFrom(newSurface);
+	flip();
+
+	backupSurface.free();
+	newSurface.free();
+	tempSurface.free();
+	surfaceTable.free();
 }
 
 /** Pressed key map - scanCodeTab1 */

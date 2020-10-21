@@ -211,15 +211,15 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 	if (bgRedraw) {
 		_engine->freezeTime();
 		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2)
-			_engine->_screens->fadeOut(_engine->_screens->paletteRGB);
+			_engine->_screens->fadeOut(_engine->_screens->paletteRGBA);
 		_engine->_screens->clearScreen();
 		_engine->_grid->redrawGrid();
 		updateOverlayTypePosition(tmp_projPosX, tmp_projPosY, _engine->_renderer->projPosXScreen, _engine->_renderer->projPosYScreen);
 		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
 		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2) {
-			_engine->_screens->fadeIn(_engine->_screens->paletteRGB);
-			_engine->setPalette(_engine->_screens->paletteRGB);
+			_engine->_screens->fadeIn(_engine->_screens->paletteRGBA);
+			_engine->setPalette(_engine->_screens->paletteRGBA);
 		}
 	} else {
 		blitBackgroundAreas();
@@ -701,7 +701,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 	// make celling grid fade
 	// need to be here to fade after drawing all actors in scene
 	if (_engine->_scene->needChangeScene == -2) {
-		_engine->crossFade(_engine->frontVideoBuffer, _engine->_screens->paletteRGB);
+		_engine->crossFade(_engine->frontVideoBuffer, _engine->_screens->paletteRGBA);
 		_engine->_scene->needChangeScene = -1;
 	}
 
@@ -715,9 +715,9 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 
 	if (_engine->_screens->lockPalette) {
 		if (_engine->_screens->useAlternatePalette) {
-			_engine->_screens->fadeToPal(_engine->_screens->paletteRGB);
+			_engine->_screens->fadeToPal(_engine->_screens->paletteRGBA);
 		} else {
-			_engine->_screens->fadeToPal(_engine->_screens->mainPaletteRGB);
+			_engine->_screens->fadeToPal(_engine->_screens->mainPaletteRGBA);
 		}
 		_engine->_screens->lockPalette = 0;
 	}

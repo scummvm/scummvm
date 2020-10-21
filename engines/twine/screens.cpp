@@ -35,7 +35,7 @@ void Screens::adelineLogo() {
 
 	loadImage(RESSHQR_ADELINEIMG);
 	_engine->delaySkip(7000);
-	fadeOut(paletteRGBCustom);
+	fadeOut(paletteRGBACustom);
 	palCustom = 1;
 }
 
@@ -43,9 +43,9 @@ void Screens::loadMenuImage(bool fade_in) {
 	_engine->_hqrdepack->hqrGetEntry((uint8*)_engine->workVideoBuffer.getPixels(), Resources::HQR_RESS_FILE, RESSHQR_MENUIMG);
 	copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	if (fade_in) {
-		fadeToPal(paletteRGB);
+		fadeToPal(paletteRGBA);
 	} else {
-		_engine->setPalette(paletteRGB);
+		_engine->setPalette(paletteRGBA);
 	}
 
 	palCustom = 0;
@@ -53,11 +53,18 @@ void Screens::loadMenuImage(bool fade_in) {
 
 void Screens::loadCustomPalette(int32 index) {
 	_engine->_hqrdepack->hqrGetEntry(palette, Resources::HQR_RESS_FILE, index);
-	copyPal(palette, paletteRGBCustom);
+	convertPalToRGBA(palette, paletteRGBACustom);
 }
 
-void Screens::copyPal(const uint8* in, uint8* out) {
-	memcpy(out, in, NUMOFCOLORS * 3);
+void Screens::convertPalToRGBA(const uint8* in, uint32* out) {
+	uint8* palDest = (uint8*)out;
+	for (int i = 0; i < NUMOFCOLORS; i++) {
+		palDest[0] = in[0];
+		palDest[1] = in[1];
+		palDest[2] = in[2];
+		palDest += 4;
+		in += 3;
+	}
 }
 
 void Screens::loadImage(int32 index, bool fade_in) {
@@ -65,9 +72,9 @@ void Screens::loadImage(int32 index, bool fade_in) {
 	copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	loadCustomPalette(index + 1);
 	if (fade_in) {
-		fadeToPal(paletteRGBCustom);
+		fadeToPal(paletteRGBACustom);
 	} else {
-		_engine->setPalette(paletteRGBCustom);
+		_engine->setPalette(paletteRGBACustom);
 	}
 
 	palCustom = 1;
@@ -76,10 +83,10 @@ void Screens::loadImage(int32 index, bool fade_in) {
 void Screens::loadImageDelay(int32 index, int32 time) {
 	loadImage(index);
 	_engine->delaySkip(1000 * time);
-	fadeOut(paletteRGBCustom);
+	fadeOut(paletteRGBACustom);
 }
 
-void Screens::fadeIn(uint8 *pal) {
+void Screens::fadeIn(uint32 *pal) {
 	if (_engine->cfgfile.CrossFade)
 		_engine->crossFade(_engine->frontVideoBuffer, pal);
 	else
@@ -88,7 +95,7 @@ void Screens::fadeIn(uint8 *pal) {
 	_engine->setPalette(pal);
 }
 
-void Screens::fadeOut(uint8 *pal) {
+void Screens::fadeOut(uint32 *pal) {
 	/*if(cfgfile.CrossFade)
 		crossFade(frontVideoBuffer, palette);
 	else
@@ -99,58 +106,61 @@ void Screens::fadeOut(uint8 *pal) {
 
 int32 Screens::crossDot(int32 modifier, int32 color, int32 param, int32 intensity) {
 	if (!param)
-		return (color);
+		return color;
 	return (((color - modifier) * intensity) / param) + modifier;
 }
 
-void Screens::adjustPalette(uint8 R, uint8 G, uint8 B, uint8 *pal, int32 intensity) {
-	uint8 localPalette[NUMOFCOLORS * 3];
+void Screens::adjustPalette(uint8 R, uint8 G, uint8 B, const uint32 *rgbaPal, int32 intensity) {
+	uint32 pal2[NUMOFCOLORS];
 
 	int32 counter = 0;
 
+	const uint8 *pal = (const uint8*)rgbaPal;
+	uint8 *localPalette = (uint8*)pal2;
 	uint8 *newR = &localPalette[0];
 	uint8 *newG = &localPalette[1];
 	uint8 *newB = &localPalette[2];
+	uint8 *newA = &localPalette[3];
 
 	for (int32 i = 0; i < NUMOFCOLORS; i++) {
 		*newR = crossDot(R, pal[counter], 100, intensity);
 		*newG = crossDot(G, pal[counter + 1], 100, intensity);
 		*newB = crossDot(B, pal[counter + 2], 100, intensity);
+		*newA = 0;
 
-		newR += 3;
-		newG += 3;
-		newB += 3;
+		newR += 4;
+		newG += 4;
+		newB += 4;
+		newA += 4;
 
-		counter += 3;
+		counter += 4;
 	}
 
-	_engine->setPalette(localPalette);
+	_engine->setPalette(pal2);
 }
 
-void Screens::adjustCrossPalette(uint8 *pal1, uint8 *pal2) {
-	uint8 localPalette[NUMOFCOLORS * 4];
-
-	uint8 *newR;
-	uint8 *newG;
-	uint8 *newB;
-	uint8 *newA;
+void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
+	uint32 pal[NUMOFCOLORS];
 
 	int32 i;
 	int32 counter = 0;
 	int32 intensity = 0;
 
+	const uint8 *pal1p = (const uint8*)pal1;
+	const uint8 *pal2p = (const uint8*)pal2;
+	uint8 *localPalette = (uint8*)pal;
 	do {
 		counter = 0;
 
-		newR = &localPalette[counter];
-		newG = &localPalette[counter + 1];
-		newB = &localPalette[counter + 2];
-		newA = &localPalette[counter + 3];
+		uint8 *newR = &localPalette[counter];
+		uint8 *newG = &localPalette[counter + 1];
+		uint8 *newB = &localPalette[counter + 2];
+		uint8 *newA = &localPalette[counter + 3];
 
 		for (i = 0; i < NUMOFCOLORS; i++) {
-			*newR = crossDot(pal1[counter], pal2[counter], 100, intensity);
-			*newG = crossDot(pal1[counter + 1], pal2[counter + 1], 100, intensity);
-			*newB = crossDot(pal1[counter + 2], pal2[counter + 2], 100, intensity);
+			*newR = crossDot(pal1p[counter], pal2p[counter], 100, intensity);
+			*newG = crossDot(pal1p[counter + 1], pal2p[counter + 1], 100, intensity);
+			*newB = crossDot(pal1p[counter + 2], pal2p[counter + 2], 100, intensity);
 			*newA = 0;
 
 			newR += 4;
@@ -161,19 +171,19 @@ void Screens::adjustCrossPalette(uint8 *pal1, uint8 *pal2) {
 			counter += 4;
 		}
 
-		_engine->setPalette(localPalette);
+		_engine->setPalette(pal);
 		_engine->_system->delayMillis(1000 / 50);
 
 		intensity++;
 	} while (intensity <= 100);
 }
 
-void Screens::fadeToBlack(uint8 *pal) {
+void Screens::fadeToBlack(uint32 *pal) {
 	int32 i = 0;
 
 	if (palReseted == 0) {
 		for (i = 100; i >= 0; i -= 3) {
-			adjustPalette(0, 0, 0, (uint8 *)pal, i);
+			adjustPalette(0, 0, 0, pal, i);
 			_engine->_system->delayMillis(1000 / 50);
 		}
 	}
@@ -181,21 +191,21 @@ void Screens::fadeToBlack(uint8 *pal) {
 	palReseted = 1;
 }
 
-void Screens::fadeToPal(uint8 *pal) {
+void Screens::fadeToPal(uint32 *pal) {
 	int32 i = 100;
 
 	for (i = 0; i <= 100; i += 3) {
-		adjustPalette(0, 0, 0, (uint8 *)pal, i);
+		adjustPalette(0, 0, 0, pal, i);
 		_engine->_system->delayMillis(1000 / 50);
 	}
 
-	_engine->setPalette((uint8 *)pal);
+	_engine->setPalette(pal);
 
 	palReseted = 0;
 }
 
 void Screens::blackToWhite() {
-	uint8 pal[NUMOFCOLORS * 4];
+	uint32 pal[NUMOFCOLORS];
 
 	for (int32 i = 0; i < NUMOFCOLORS; i += 3) {
 		memset(pal, i, sizeof(pal));
@@ -206,27 +216,27 @@ void Screens::blackToWhite() {
 
 void Screens::setBackPal() {
 	memset(palette, 0, sizeof(palette));
-	memset(paletteRGB, 0, sizeof(paletteRGB));
+	memset(paletteRGBA, 0, sizeof(paletteRGBA));
 
-	_engine->setPalette(paletteRGB);
+	_engine->setPalette(paletteRGBA);
 
 	palReseted = 1;
 }
 
-void Screens::fadePalRed(uint8 *pal) {
+void Screens::fadePalRed(uint32 *pal) {
 	int32 i = 100;
 
 	for (i = 100; i >= 0; i -= 2) {
-		adjustPalette(0xFF, 0, 0, (uint8 *)pal, i);
+		adjustPalette(0xFF, 0, 0, pal, i);
 		_engine->_system->delayMillis(1000 / 50);
 	}
 }
 
-void Screens::fadeRedPal(uint8 *pal) {
+void Screens::fadeRedPal(uint32 *pal) {
 	int32 i = 0;
 
 	for (i = 0; i <= 100; i += 2) {
-		adjustPalette(0xFF, 0, 0, (uint8 *)pal, i);
+		adjustPalette(0xFF, 0, 0, pal, i);
 		_engine->_system->delayMillis(1000 / 50);
 	}
 }

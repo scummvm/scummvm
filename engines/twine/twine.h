@@ -262,10 +262,7 @@ public:
 	 * Set a new palette in the SDL screen buffer
 	 * @param palette palette to set
 	 */
-	void setPalette(uint8 *palette);
-
-	/** Fade screen from black to white */
-	void fadeBlackToWhite();
+	void setPalette(const uint32 *palette);
 
 	/** Blit surface in the screen */
 	void flip();
@@ -283,7 +280,7 @@ public:
 	 * @param buffer screen buffer
 	 * @param palette new palette to cross fade
 	 */
-	void crossFade(const Graphics::ManagedSurface &buffer, uint8 *palette);
+	void crossFade(const Graphics::ManagedSurface &buffer, const uint32 *palette);
 
 	/** Handle keyboard pressed keys */
 	void readKeys();

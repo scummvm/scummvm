@@ -188,8 +188,8 @@ void FlaMovies::processFrame() {
 			// FLA movies don't use cross fade
 			// fade out tricky
 			if (_fadeOut != 1) {
-				_engine->_screens->copyPal(_engine->_screens->palette, _engine->_screens->paletteRGBCustom);
-				_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBCustom);
+				_engine->_screens->convertPalToRGBA(_engine->_screens->palette, _engine->_screens->paletteRGBACustom);
+				_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBACustom);
 				_fadeOut = 1;
 			}
 			break;
@@ -288,18 +288,18 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 
 			// Only blit to screen if isn't a fade
 			if (_fadeOut == -1) {
-				_engine->_screens->copyPal(_engine->_screens->palette, _engine->_screens->paletteRGBCustom);
+				_engine->_screens->convertPalToRGBA(_engine->_screens->palette, _engine->_screens->paletteRGBACustom);
 				if (!currentFrame) // fade in the first frame
-					_engine->_screens->fadeIn(_engine->_screens->paletteRGBCustom);
+					_engine->_screens->fadeIn(_engine->_screens->paletteRGBACustom);
 				else
-					_engine->setPalette(_engine->_screens->paletteRGBCustom);
+					_engine->setPalette(_engine->_screens->paletteRGBACustom);
 			}
 
 			// TRICKY: fade in tricky
 			if (fadeOutFrames >= 2) {
 				_engine->flip();
-				_engine->_screens->copyPal(_engine->_screens->palette, _engine->_screens->paletteRGBCustom);
-				_engine->_screens->fadeToPal(_engine->_screens->paletteRGBCustom);
+				_engine->_screens->convertPalToRGBA(_engine->_screens->palette, _engine->_screens->paletteRGBACustom);
+				_engine->_screens->fadeToPal(_engine->_screens->paletteRGBACustom);
 				_fadeOut = -1;
 				fadeOutFrames = 0;
 			}
@@ -321,9 +321,9 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 	}
 
 	if (_engine->cfgfile.CrossFade) {
-		_engine->crossFade(_engine->frontVideoBuffer, _engine->_screens->paletteRGBCustom);
+		_engine->crossFade(_engine->frontVideoBuffer, _engine->_screens->paletteRGBACustom);
 	} else {
-		_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBCustom);
+		_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBACustom);
 	}
 
 	_engine->_sound->stopSamples();

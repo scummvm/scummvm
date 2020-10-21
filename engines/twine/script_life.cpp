@@ -942,12 +942,12 @@ static int32 lZOOM(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	engine->zoomScreen = *(scriptPtr++);
 
 	if (engine->zoomScreen && !engine->_redraw->drawInGameTransBox && engine->cfgfile.SceZoom) {
-		engine->_screens->fadeToBlack(engine->_screens->mainPaletteRGB);
+		engine->_screens->fadeToBlack(engine->_screens->mainPaletteRGBA);
 		engine->initMCGA();
 		engine->_screens->setBackPal();
 		engine->_screens->lockPalette = 1;
 	} else if (!engine->zoomScreen && engine->_redraw->drawInGameTransBox) {
-		engine->_screens->fadeToBlack(engine->_screens->mainPaletteRGB);
+		engine->_screens->fadeToBlack(engine->_screens->mainPaletteRGBA);
 		engine->initSVGA();
 		engine->_screens->setBackPal();
 		engine->_screens->lockPalette = 1;
@@ -1027,7 +1027,7 @@ static int32 lPLAY_FLA(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) 
 	scriptPtr += nameSize + 1;
 
 	engine->_flaMovies->playFlaMovie(movie);
-	engine->setPalette(engine->_screens->paletteRGB);
+	engine->setPalette(engine->_screens->paletteRGBA);
 	engine->_screens->clearScreen();
 	engine->flip();
 
@@ -1218,7 +1218,7 @@ static int32 lGRM_OFF(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 /*0x52*/
 static int32 lFADE_PAL_RED(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	engine->freezeTime();
-	engine->_screens->fadePalRed(engine->_screens->mainPaletteRGB);
+	engine->_screens->fadePalRed(engine->_screens->mainPaletteRGBA);
 	engine->_screens->useAlternatePalette = 0;
 	engine->unfreezeTime();
 	return 0;
@@ -1228,8 +1228,8 @@ static int32 lFADE_PAL_RED(TwinEEngine *engine, int32 actorIdx, ActorStruct *act
 static int32 lFADE_ALARM_RED(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	engine->freezeTime();
 	engine->_hqrdepack->hqrGetEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
-	engine->_screens->copyPal(engine->_screens->palette, engine->_screens->paletteRGB);
-	engine->_screens->fadePalRed(engine->_screens->paletteRGB);
+	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
+	engine->_screens->fadePalRed(engine->_screens->paletteRGBA);
 	engine->_screens->useAlternatePalette = 1;
 	engine->unfreezeTime();
 	return 0;
@@ -1239,8 +1239,8 @@ static int32 lFADE_ALARM_RED(TwinEEngine *engine, int32 actorIdx, ActorStruct *a
 static int32 lFADE_ALARM_PAL(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	engine->freezeTime();
 	engine->_hqrdepack->hqrGetEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
-	engine->_screens->copyPal(engine->_screens->palette, engine->_screens->paletteRGB);
-	engine->_screens->adjustCrossPalette(engine->_screens->paletteRGB, engine->_screens->mainPaletteRGB);
+	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
+	engine->_screens->adjustCrossPalette(engine->_screens->paletteRGBA, engine->_screens->mainPaletteRGBA);
 	engine->_screens->useAlternatePalette = 0;
 	engine->unfreezeTime();
 	return 0;
@@ -1249,7 +1249,7 @@ static int32 lFADE_ALARM_PAL(TwinEEngine *engine, int32 actorIdx, ActorStruct *a
 /*0x55*/
 static int32 lFADE_RED_PAL(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	engine->freezeTime();
-	engine->_screens->fadeRedPal(engine->_screens->mainPaletteRGB);
+	engine->_screens->fadeRedPal(engine->_screens->mainPaletteRGBA);
 	engine->_screens->useAlternatePalette = 0;
 	engine->unfreezeTime();
 	return 0;
@@ -1259,8 +1259,8 @@ static int32 lFADE_RED_PAL(TwinEEngine *engine, int32 actorIdx, ActorStruct *act
 static int32 lFADE_RED_ALARM(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	engine->freezeTime();
 	engine->_hqrdepack->hqrGetEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
-	engine->_screens->copyPal(engine->_screens->palette, engine->_screens->paletteRGB);
-	engine->_screens->fadeRedPal(engine->_screens->paletteRGB);
+	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
+	engine->_screens->fadeRedPal(engine->_screens->paletteRGBA);
 	engine->_screens->useAlternatePalette = 1;
 	engine->unfreezeTime();
 	return 0;
@@ -1270,8 +1270,8 @@ static int32 lFADE_RED_ALARM(TwinEEngine *engine, int32 actorIdx, ActorStruct *a
 static int32 lFADE_PAL_ALARM(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	engine->freezeTime();
 	engine->_hqrdepack->hqrGetEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
-	engine->_screens->copyPal(engine->_screens->palette, engine->_screens->paletteRGB);
-	engine->_screens->adjustCrossPalette(engine->_screens->mainPaletteRGB, engine->_screens->paletteRGB);
+	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
+	engine->_screens->adjustCrossPalette(engine->_screens->mainPaletteRGBA, engine->_screens->paletteRGBA);
 	engine->_screens->useAlternatePalette = 1;
 	engine->unfreezeTime();
 	return 0;
@@ -1323,8 +1323,8 @@ static int32 lSET_DARK_PAL(TwinEEngine *engine, int32 actorIdx, ActorStruct *act
 	engine->freezeTime();
 	engine->_hqrdepack->hqrGetEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL);
 	if (!engine->_screens->lockPalette) {
-		engine->_screens->copyPal(engine->_screens->palette, engine->_screens->paletteRGB);
-		engine->setPalette(engine->_screens->paletteRGB);
+		engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
+		engine->setPalette(engine->_screens->paletteRGBA);
 	}
 	engine->_screens->useAlternatePalette = 1;
 	engine->unfreezeTime();
@@ -1335,7 +1335,7 @@ static int32 lSET_DARK_PAL(TwinEEngine *engine, int32 actorIdx, ActorStruct *act
 static int32 lSET_NORMAL_PAL(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	engine->_screens->useAlternatePalette = 0;
 	if (!engine->_screens->lockPalette) {
-		engine->setPalette(engine->_screens->mainPaletteRGB);
+		engine->setPalette(engine->_screens->mainPaletteRGBA);
 	}
 	return 0;
 }
@@ -1345,7 +1345,7 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, int32 actorIdx, ActorStruct *
 	int32 tmpFlagDisplayText;
 
 	engine->freezeTime();
-	engine->_screens->fadeToBlack(engine->_screens->paletteRGB);
+	engine->_screens->fadeToBlack(engine->_screens->paletteRGBA);
 	engine->_screens->loadImage(25);
 	engine->_text->textClipFull();
 	engine->_text->setFontCrossColor(15);
@@ -1355,9 +1355,9 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, int32 actorIdx, ActorStruct *
 	engine->_text->drawTextFullscreen(6);
 	engine->_text->newGameVar4 = 1;
 	engine->_text->textClipSmall();
-	engine->_screens->fadeToBlack(engine->_screens->paletteRGBCustom);
+	engine->_screens->fadeToBlack(engine->_screens->paletteRGBACustom);
 	engine->_screens->clearScreen();
-	engine->setPalette(engine->_screens->paletteRGB);
+	engine->setPalette(engine->_screens->paletteRGBA);
 	engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
 
 	do {

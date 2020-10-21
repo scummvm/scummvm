@@ -32,12 +32,12 @@ namespace TwinE {
 void Resources::initPalettes() {
 	// Init standard palette
 	_engine->_hqrdepack->hqrGetallocEntry(&_engine->_screens->mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL);
-	_engine->_screens->copyPal(_engine->_screens->mainPalette, _engine->_screens->mainPaletteRGB);
+	_engine->_screens->convertPalToRGBA(_engine->_screens->mainPalette, _engine->_screens->mainPaletteRGBA);
 
 	memcpy(_engine->_screens->palette, _engine->_screens->mainPalette, NUMOFCOLORS * 3);
 
-	_engine->_screens->copyPal(_engine->_screens->palette, _engine->_screens->paletteRGB);
-	_engine->setPalette(_engine->_screens->paletteRGB);
+	_engine->_screens->convertPalToRGBA(_engine->_screens->palette, _engine->_screens->paletteRGBA);
+	_engine->setPalette(_engine->_screens->paletteRGBA);
 
 	// We use it now
 	_engine->_screens->palCustom = 0;

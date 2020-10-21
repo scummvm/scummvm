@@ -79,7 +79,7 @@ void MenuOptions::newGame() {
 	_engine->_text->textClipSmall();
 	_engine->_text->newGameVar4 = 1;
 
-	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBCustom);
+	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBACustom);
 	_engine->_screens->clearScreen();
 	_engine->flip();
 
@@ -90,7 +90,7 @@ void MenuOptions::newGame() {
 	_engine->flip();
 
 	// set main palette back
-	_engine->setPalette(_engine->_screens->paletteRGB);
+	_engine->setPalette(_engine->_screens->paletteRGBA);
 
 	_engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
 }
@@ -120,7 +120,7 @@ void MenuOptions::showCredits() {
 
 	_engine->_screens->clearScreen();
 	_engine->flip();
-	_engine->setPalette(_engine->_screens->paletteRGB);
+	_engine->setPalette(_engine->_screens->paletteRGBA);
 }
 
 void MenuOptions::drawSelectableCharacter(int32 x, int32 y, int32 arg) {
