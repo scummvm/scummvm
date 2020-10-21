@@ -150,6 +150,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// AGI Demo 2 (PC 5.25") 01/88 [v2] [AGI 2.917]
 	GAME("agidemo", "Demo 2 1987-11-25 [version 2] 5.25\"", "1503f02086ea9f388e7e041c039eaa69", 0x2917, GID_AGIDEMO),
 
+	// AGI Demo 2 Tandy
+	GAME("agidemo", "Demo 2 Tandy", "94eca021fe7da8f8572c2edcc631bbc6", 0x2917, GID_AGIDEMO),
+
 	// AGI Demo 3 (PC) 09/88 [AGI 3.002.102]
 	GAME3("agidemo", "Demo 3 1988-09-13", "dmdir", "289c7a2c881f1d973661e961ced77d74", 0x3149, GID_AGIDEMO),
 
@@ -277,6 +280,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Gold Rush!  2.01 12/22/88 - pirated copy, according to https://bugs.scummvm.org/ticket/3220
 	GAME3_PIRATED("goldrush", "2.01 1988-12-22", "grdir", "3ae052117feb483f01a9017025fbb366", 2399, GID_GOLDRUSH),
+	GAME3_PIRATED("goldrush", "2.01 1988-12-22", "grdir", "1ef85c37fcf7224f9731f20f169c8c53", 2399, GID_GOLDRUSH),
 
 	// Gold Rush! (PC 3.5", bought from The Software Farm) 3.0 1998-12-22 [AGI 3.002.149]
 	GAME3("goldrush", "3.0 1998-12-22 3.5\"", "grdir", "6882b6090473209da4cd78bb59f78dbe", 0x3149, GID_GOLDRUSH),
@@ -502,12 +506,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Preagi game
 	GAMEpre_P("mickey", "", "1.pic", "b6ec04c91a05df374792872c4d4ce66d", 0x0000, GID_MICKEY, Common::kPlatformDOS),
 
-#if 0
 	// Mixed-Up Mother Goose (Amiga) 1.1
 	// Problematic: crashes
 	// Menus not tested
 	GAME3_PSO("mixedup", "1.1 1986-12-10", "dirs", "5c1295fe6daaf95831195ba12894dbd9", 2021, 0x3086, 0, GID_MIXEDUP, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
-#endif
 
 	// Mixed Up Mother Goose (IIgs)
 	GAME_PO("mixedup", "1987", "3541954a7303467c6df87665312ffb6a", 0x2917, GID_MIXEDUP, Common::kPlatformApple2GS, GAMEOPTIONS_APPLE2GS),
@@ -708,6 +710,8 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Al Pond 1 - Al Lives Forever (v1.0)", "e8921c3043b749b056ff51f56d1b451b"),
 	FANMADE("Al Pond 1 - Al Lives Forever (v1.3)", "fb4699474054962e0dbfb4cf12ca52f6"),
 	FANMADE("Apocalyptic Quest (v0.03 Teaser)", "42ced528b67965d3bc3b52c635f94a57"),
+	FANMADE("Apocalyptic Quest Demo 2003-06-24", "c68c49a37eaac73e5aa80ce7f05bbd72"),
+	FANMADE("Apocalyptic Quest 4.00 Alpha 2", "30c74d194840abc3fb1341b567743ac3"),
 	FANMADE_FO("Apocalyptic Quest (v4.00 Alpha 1)", "e15581628d84949b8d352d224ec3184b", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE_FO("Apocalyptic Quest (v4.00 Alpha 2)", "0eee850005860e46345b38fea093d194", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
 	FANMADE_FO("Band Quest (Demo)", "7326abefd793571cc17ed0db647bdf34", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
