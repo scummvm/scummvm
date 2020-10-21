@@ -680,6 +680,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_PS("xmascard", "", "25ad35e9628fc77e5e0dd35852a272b6", 768, 0x2440, GID_XMASCARD, Common::kPlatformCoCo3),
 
 	FANMADE_FO("2 Player Demo", "4279f46b3cebd855132496476b1d2cca", GF_AGIMOUSE, GAMEOPTIONS_FANMADE_MOUSE),
+	FANMADE("Advanced Epic Fighting", "6454e8c82a7351c8eef5927ad306af4f"),
 	FANMADE("AGI Combat", "0be6a8a9e19203dcca0067d280798871"),
 	FANMADE("AGI Combat (Beta)", "341a47d07be8490a488d0c709578dd10"),
 	FANMADE("AGI Contest 1 Template", "d879aed25da6fc655564b29567358ae2"),
