@@ -62,7 +62,7 @@ enum TwinEActionType {
 
 static constexpr const struct ActionMapping {
 	TwinEActionType action;
-	uint16 localKey;
+	uint8 localKey;
 } twineactions[] = {
 	{Pause, 0x19},
 	{NextRoom, 0x13},
@@ -83,7 +83,7 @@ static constexpr const struct ActionMapping {
 	{OptionsMenu, 0x40},
 	{RecenterScreenOnTwinsen, 0x1C},
 	{UseSelectedObject, 0x1C},
-	{ThrowMagicBall, 0xDEAD}, // TODO:
+	{ThrowMagicBall, 0x38},
 	{MoveForward, 0x48},
 	{MoveBackward, 0x50},
 	{TurnRight, 0x4D},

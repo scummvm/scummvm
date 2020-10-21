@@ -253,20 +253,18 @@ void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color) {
 }
 
 void Text::drawText(int32 x, int32 y, const char *dialogue) { // Font
-	uint8 currChar;
-
 	if (fontPtr == 0) // if the font is not defined
 		return;
 
 	do {
-		currChar = (uint8) * (dialogue++); // read the next char from the string
+		uint8 currChar = (uint8) *(dialogue++); // read the next char from the string
 
 		if (currChar == 0) // if the char is 0x0, -> end of string
 			break;
 
-		if (currChar == 0x20) // if it's a space char
+		if (currChar == ' ') {
 			x += dialCharSpace;
-		else {
+		} else {
 			dialTextSize = *(fontPtr + (*((int16 *)(fontPtr + currChar * 4)))); // get the length of the character
 			drawCharacter(x, y, currChar);                                      // draw the character on screen
 			// add the length of the space between 2 characters
@@ -278,16 +276,14 @@ void Text::drawText(int32 x, int32 y, const char *dialogue) { // Font
 }
 
 int32 Text::getTextSize(const char *dialogue) { // SizeFont
-	uint8 currChar;
 	dialTextSize = 0;
 
 	do {
-		currChar = (uint8) * (dialogue++);
-
+		uint8 currChar = (uint8) * (dialogue++);
 		if (currChar == 0)
 			break;
 
-		if (currChar == 0x20) {
+		if (currChar == ' ') {
 			dialTextSize += dialCharSpace;
 		} else {
 			dialTextSize += dialSpaceBetween;
