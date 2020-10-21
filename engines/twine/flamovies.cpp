@@ -213,7 +213,7 @@ void FlaMovies::processFrame() {
 			break;
 		}
 		default: {
-			return;
+			break;
 		}
 		}
 

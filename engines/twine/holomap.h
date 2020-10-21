@@ -24,6 +24,7 @@
 #define TWINE_HOLOMAP_H
 
 #include "common/scummsys.h"
+#include "twine/twine.h"
 
 namespace TwinE {
 
@@ -32,16 +33,54 @@ class TwinEEngine;
 class Holomap {
 private:
 	TwinEEngine *_engine;
+
+	int32 needToLoadHolomapGFX = 0;
+	uint8 paletteHolomap[NUMOFCOLORS * 3]{0};
+
+	uint8 *videoPtr1 = nullptr;
+	uint8 *videoPtr2 = nullptr;
+	uint8 *videoPtr3 = nullptr;
+	uint8 *videoPtr4 = nullptr;
+	uint8 *videoPtr5 = nullptr;
+	uint8 *videoPtr6 = nullptr;
+	uint8 *videoPtr7 = nullptr;
+	uint8 *videoPtr8 = nullptr;
+	uint8 *videoPtr9 = nullptr;
+	uint8 *videoPtr10 = nullptr;
+	uint8 *videoPtr11 = nullptr;
+	uint8 *videoPtr12 = nullptr;
+	uint8 *videoPtr13 = nullptr;
+
 public:
 	Holomap(TwinEEngine *engine);
 
-	/** Set Holomap location position
-	@location Scene where position must be set */
-	void setHolomapPosition(int32 location);
+	/**
+	 * Set Holomap location position
+	 * @param locationIdx Scene where position must be set
+	 */
+	void setHolomapPosition(int32 locationIdx);
 
-	/** Clear Holomap location position
-	@location Scene where position must be cleared */
-	void clearHolomapPosition(int32 location);
+	/**
+	 * Clear Holomap location position
+	 * @param locationIdx Scene where position must be cleared
+	 */
+	void clearHolomapPosition(int32 locationIdx);
+
+	/** Draw Holomap Title */
+	void drawHolomapTitle(int32 width, int32 height);
+
+	/** Draw Holomap Trajectory */
+	void drawHolomapTrajectory(int32 trajectoryIndex);
+
+	void loadGfxSub(uint8 *modelPtr);
+	void loadGfxSub1();
+	void loadGfxSub2();
+
+	/** Load Holomap content */
+	void loadHolomapGFX();
+
+	/** Main holomap process loop */
+	void processHolomap();
 };
 
 } // namespace TwinE

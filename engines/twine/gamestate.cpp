@@ -51,7 +51,7 @@ namespace TwinE {
 
 GameState::GameState(TwinEEngine *engine) : _engine(engine) {}
 
-void GameState::initEngineProjections() { // reinitAll1
+void GameState::initEngineProjections() {
 	_engine->_renderer->setOrthoProjection(311, 240, 512);
 	_engine->_renderer->setBaseTranslation(0, 0, 0);
 	_engine->_renderer->setBaseRotation(0, 0, 0);
@@ -105,7 +105,7 @@ void GameState::initSceneVars() {
 	_engine->_actor->currentPositionInBodyPtrTab = 0;
 }
 
-void GameState::initHeroVars() {    // reinitAll3
+void GameState::initHeroVars() {
 	_engine->_actor->resetActor(0); // reset Hero
 
 	magicBallIdx = -1;
@@ -123,7 +123,7 @@ void GameState::initHeroVars() {    // reinitAll3
 	_engine->_scene->sceneHero->talkColor = 4;
 }
 
-void GameState::initEngineVars() { // reinitAll
+void GameState::initEngineVars() {
 	_engine->_interface->resetClip();
 
 	_engine->_scene->alphaLight = 896;
