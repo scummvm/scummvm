@@ -425,9 +425,9 @@ void Menu::drawButton(const int16 *menuSettings, int32 mode) {
 int32 Menu::processMenu(int16 *menuSettings) {
 	int16 *localData = menuSettings;
 	int16 currentButton = 0; // localData[0];
-	int32 buttonReleased = 1;
-	int32 musicChanged = 0;
-	int32 buttonNeedRedraw = 1;
+	bool buttonReleased = true;
+	bool buttonNeedRedraw = true;
+	bool musicChanged = false;
 	int32 numEntry = localData[1];
 	int32 localTime = _engine->lbaTime;
 	int32 maxButton = numEntry - 1;
@@ -448,7 +448,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		}
 
 		if (_engine->_keyboard.pressedKey == 0) {
-			buttonReleased = 1;
+			buttonReleased = true;
 		}
 
 		if (buttonReleased) {
@@ -459,8 +459,8 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				if (currentButton == numEntry) { // if current button is the last, than next button is the first
 					currentButton = 0;
 				}
-				buttonNeedRedraw = 1;
-				buttonReleased = 0;
+				buttonNeedRedraw = true;
+				buttonReleased = false;
 			}
 
 			if (((uint8)_engine->_keyboard.key & 1)) { // on arrow key up
@@ -468,8 +468,8 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				if (currentButton < 0) { // if current button is the first, than previous button is the last
 					currentButton = maxButton;
 				}
-				buttonNeedRedraw = 1;
-				buttonReleased = 0;
+				buttonNeedRedraw = true;
+				buttonReleased = false;
 			}
 
 			if (*(localData + 8) <= 5) {                               // if its a volume button
@@ -538,7 +538,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 		}
 
-		if (buttonNeedRedraw == 1) {
+		if (buttonNeedRedraw) {
 			*localData = currentButton;
 
 			drawButton(localData, 0); // current button
@@ -546,13 +546,12 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				_engine->readKeys();
 				drawButton(localData, 1);
 			} while (_engine->_keyboard.pressedKey == 0 && _engine->_keyboard.skippedKey == 0 && _engine->_keyboard.internalKeyCode == 0);
-			buttonNeedRedraw = 0;
+			buttonNeedRedraw = false;
 		} else {
 			if (musicChanged) {
 				// TODO: update volume settings
 			}
 
-			buttonNeedRedraw = 0;
 			drawButton(localData, 1);
 			_engine->readKeys();
 			// WARNING: this is here to prevent a fade bug while quit the menu
