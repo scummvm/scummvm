@@ -365,6 +365,14 @@ Item *ComprehendGame::get_item_by_noun(byte noun) {
 	return NULL;
 }
 
+int ComprehendGame::get_item_id(byte noun) {
+	for (int i = 0; i < (int)_items.size(); i++)
+		if (_items[i]._word == noun)
+			return i;
+
+	return -1;
+}
+
 void ComprehendGame::update_graphics() {
 	Item *item;
 	Room *room;

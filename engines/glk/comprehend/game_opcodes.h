@@ -38,7 +38,7 @@ protected:
 
 	void execute_opcode(const Instruction *instr, const Sentence *sentence, FunctionState *func_state) override;
 
-	virtual Item *getItem(const Instruction *instr, const Sentence *sentence) = 0;
+	Item *getItem(const Instruction *instr);
 
 	void func_set_test_result(FunctionState *func_state, bool value);
 	bool isItemPresent(Item *item) const;
@@ -60,7 +60,6 @@ public:
 class ComprehendGameV1 : public ComprehendGameOpcodes {
 protected:
 	void execute_opcode(const Instruction *instr, const Sentence *sentence, FunctionState *func_state) override;
-	Item *getItem(const Instruction *instr, const Sentence *sentence) override;
 public:
 	ComprehendGameV1();
 };
@@ -71,7 +70,6 @@ public:
 class ComprehendGameV2 : public ComprehendGameOpcodes {
 protected:
 	void execute_opcode(const Instruction *instr, const Sentence *sentence, FunctionState *func_state) override;
-	Item *getItem(const Instruction *instr, const Sentence *sentence) override;
 public:
 	ComprehendGameV2();
 

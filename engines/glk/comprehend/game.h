@@ -113,6 +113,7 @@ protected:
 	}
 
 	Item *get_item_by_noun(byte noun);
+	int get_item_id(byte noun);
 	void weighInventory();
 	size_t num_objects_in_room(int room);
 	void doMovementVerb(uint verbNum);
