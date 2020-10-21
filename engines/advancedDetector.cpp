@@ -74,12 +74,14 @@ private:
 	const AdvancedMetaEngineDetection::FileMap &_fileMap;
 };
 
-static Common::String sanitizeName(const char *name) {
+static Common::String sanitizeName(const char *name, int maxLen) {
 	Common::String res;
 
-	while (*name) {
-		if (Common::isAlnum(*name))
+	while (*name && maxLen > 0) {
+		if (Common::isAlnum(*name)) {
 			res += tolower(*name);
+			maxLen--;
+		}
 		name++;
 	}
 
@@ -92,11 +94,11 @@ static Common::String sanitizeName(const char *name) {
  * or (if ADGF_DEMO has been set)
  *   GAMEID-demo-PLAFORM-LANG
  */
-static Common::String generatePreferredTarget(const ADGameDescription *desc) {
+static Common::String generatePreferredTarget(const ADGameDescription *desc, int maxLen) {
 	Common::String res;
 
 	if (desc->flags & ADGF_AUTOGENTARGET && desc->extra && *desc->extra) {
-		res = sanitizeName(desc->extra);
+		res = sanitizeName(desc->extra, maxLen);
 	} else {
 		res = desc->gameId;
 	}
@@ -145,7 +147,7 @@ DetectedGame AdvancedMetaEngineDetection::toDetectedGame(const ADDetectedGame &a
 	DetectedGame game(getEngineId(), desc->gameId, title, desc->language, desc->platform, extra);
 	game.hasUnknownFiles = adGame.hasUnknownFiles;
 	game.matchedFiles = adGame.matchedFiles;
-	game.preferredTarget = generatePreferredTarget(desc);
+	game.preferredTarget = generatePreferredTarget(desc, _maxAutogenLength);
 
 	game.gameSupportLevel = kStableGame;
 	if (desc->flags & ADGF_UNSTABLE)
@@ -672,6 +674,7 @@ AdvancedMetaEngineDetection::AdvancedMetaEngineDetection(const void *descs, uint
 	_maxScanDepth = 1;
 	_directoryGlobs = NULL;
 	_matchFullPaths = false;
+	_maxAutogenLength = 15;
 }
 
 void AdvancedMetaEngineDetection::initSubSystems(const ADGameDescription *gameDesc) const {
