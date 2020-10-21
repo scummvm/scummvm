@@ -440,7 +440,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			if (_engine->lbaTime - localTime > 11650) {
 				return kBackground;
 			}
-			if (_engine->_keyboard.skipIntro == '.') {
+			if (_engine->_keyboard.internalKeyCode == '.') {
 				if (_engine->_keyboard.skippedKey != ' ') {
 					return kBackground;
 				}
@@ -545,7 +545,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			do {
 				_engine->readKeys();
 				drawButton(localData, 1);
-			} while (_engine->_keyboard.pressedKey == 0 && _engine->_keyboard.skippedKey == 0 && _engine->_keyboard.skipIntro == 0);
+			} while (_engine->_keyboard.pressedKey == 0 && _engine->_keyboard.skippedKey == 0 && _engine->_keyboard.internalKeyCode == 0);
 			buttonNeedRedraw = 0;
 		} else {
 			if (musicChanged) {
@@ -936,7 +936,7 @@ void Menu::processBehaviourMenu() {
 
 	tmpTime = _engine->lbaTime;
 
-	while (_engine->_keyboard.skippedKey & 4 || (_engine->_keyboard.skipIntro >= twineactions[TwinEActionType::QuickBehaviourNormal].localKey && _engine->_keyboard.skipIntro <= twineactions[TwinEActionType::QuickBehaviourDiscreet].localKey)) {
+	while (_engine->_keyboard.skippedKey & 4 || (_engine->_keyboard.internalKeyCode >= twineactions[TwinEActionType::QuickBehaviourNormal].localKey && _engine->_keyboard.internalKeyCode <= twineactions[TwinEActionType::QuickBehaviourDiscreet].localKey)) {
 		_engine->readKeys();
 		_engine->_keyboard.key = _engine->_keyboard.pressedKey;
 
@@ -1068,14 +1068,14 @@ void Menu::processInventoryMenu() {
 	_engine->_text->setFontCrossColor(4);
 	_engine->_text->initDialogueBox();
 
-	while (_engine->_keyboard.skipIntro != 1) {
+	while (_engine->_keyboard.internalKeyCode != 1) {
 		_engine->readKeys();
 		prevSelectedItem = inventorySelectedItem;
 
 		if (!di) {
 			_engine->_keyboard.key = _engine->_keyboard.pressedKey;
 			_engine->loopPressedKey = _engine->_keyboard.skippedKey;
-			_engine->loopCurrentKey = _engine->_keyboard.skipIntro;
+			_engine->loopCurrentKey = _engine->_keyboard.internalKeyCode;
 
 			if (_engine->_keyboard.key != 0 || _engine->_keyboard.skippedKey != 0) {
 				di = 1;
@@ -1181,7 +1181,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
 
-	while (_engine->_keyboard.skipIntro != 0 && _engine->_keyboard.skippedKey != 0) {
+	while (_engine->_keyboard.internalKeyCode != 0 && _engine->_keyboard.skippedKey != 0) {
 		_engine->readKeys();
 		_engine->_system->delayMillis(1);
 		_engine->flip(); // TODO: needed?

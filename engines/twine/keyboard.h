@@ -97,18 +97,11 @@ static_assert(ARRAYSIZE(twineactions) == TwinEActionType::Max, "Unexpected actio
 
 struct Keyboard {
 	bool actionStates[TwinEActionType::Max] {false};
-	/** Skipped key - key1 */
 	int16 skippedKey = 0;
-	/** Pressed key - printTextVar12 */
 	int16 pressedKey = 0;
-	//int printTextVar13;
-	/** Skip intro variable */
-	int16 skipIntro = 0;
-	/** Current key value */
+	int16 internalKeyCode = 0;
 	int16 currentKey = 0;
-	/** Auxiliar key value */
 	int16 key = 0;
-
 	int32 heroPressedKey = 0;
 	int32 heroPressedKey2 = 0;
 };
