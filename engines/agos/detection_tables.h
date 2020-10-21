@@ -1074,10 +1074,10 @@ static const AGOSGameDescription gameDescriptions[] = {
 			"Floppy",
 
 			{
-				{ "gamebase.dat",	GAME_BASEFILE,	"c392e494dcabed797b98cbcfc687b33a", 36980},
-				{ "icondata.dat",	GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
-				{ "stripped.dat",	GAME_STRFILE,	"c95a0a1ee973e19c2a1c5d12026c139f", 252},
-				{ "tbllist.dat",	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
+				{ "gamebase",	GAME_BASEFILE,	"c392e494dcabed797b98cbcfc687b33a", 36980},
+				{ "icondata",	GAME_ICONFILE,	"22107c24dfb31b66ac503c28a6e20b19", 14361},
+				{ "stripped",	GAME_STRFILE,	"c95a0a1ee973e19c2a1c5d12026c139f", 252},
+				{ "tbllist",	GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
 				AD_LISTEND
 			},
 			Common::EN_ANY,

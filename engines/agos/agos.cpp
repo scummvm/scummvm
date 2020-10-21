@@ -571,6 +571,9 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 	// Add default file directories for Acorn version of
 	// Simon the Sorcerer 1
 	SearchMan.addSubDirectoryMatching(gameDataDir, "execute");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "tables");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "text");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "tunes");
 
 	// Add default file directories for Amiga/Macintosh
 	// versions of Simon the Sorcerer 2
