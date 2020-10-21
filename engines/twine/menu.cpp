@@ -936,7 +936,7 @@ void Menu::processBehaviourMenu() {
 
 	tmpTime = _engine->lbaTime;
 
-	while (_engine->_keyboard.skippedKey & 4 || (_engine->_keyboard.skipIntro >= 59 && _engine->_keyboard.skipIntro <= 62)) {
+	while (_engine->_keyboard.skippedKey & 4 || (_engine->_keyboard.skipIntro >= twineactions[TwinEActionType::QuickBehaviourNormal].localKey && _engine->_keyboard.skipIntro <= twineactions[TwinEActionType::QuickBehaviourDiscreet].localKey)) {
 		_engine->readKeys();
 		_engine->_keyboard.key = _engine->_keyboard.pressedKey;
 
