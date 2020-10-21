@@ -74,7 +74,7 @@ namespace Agi {
 			AD_ENTRY1s(fname,md5,size), \
 			lang, \
 			platform, \
-			ADGF_USEEXTRAASTITLE, \
+			ADGF_USEEXTRAASTITLE | ADGF_AUTOGENTARGET, \
 			guioptions \
 		}, \
 		gid, \
@@ -914,7 +914,7 @@ static const AGIGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("vdir", "c71f5c1e008d352ae9040b77fcf79327", 3080),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_USEEXTRAASTITLE,
+			ADGF_USEEXTRAASTITLE | ADGF_AUTOGENTARGET,
 			GAMEOPTIONS_DEFAULT
 		},
 		GID_FANMADE,
