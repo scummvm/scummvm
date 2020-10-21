@@ -153,7 +153,6 @@ private:
 	int32 isTimeFreezed = 0;
 	int32 saveFreezedTime = 0;
 	ActorMoveStruct loopMovePtr; // mainLoopVar1
-	bool actionStates[TwinEActionType::Max] {false};
 
 public:
 	TwinEEngine(OSystem *system, Common::Language language, uint32 flags);
