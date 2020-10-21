@@ -44,16 +44,16 @@ private:
 	Audio::SoundHandle samplesPlaying[NUM_CHANNELS];
 
 	/** Samples playing at a actors position */
-	int32 samplesPlayingActors[NUM_CHANNELS];
+	int32 samplesPlayingActors[NUM_CHANNELS]{0};
 
 public:
 	Sound(TwinEEngine *engine);
 
 	bool isChannelPlaying(int32 channel);
 	/** Table with all loaded samples */
-	uint8 *samplesTable[NUM_SAMPLES] {nullptr};
+	uint8 *samplesTable[NUM_SAMPLES]{nullptr};
 	/** Table with all loaded samples sizes */
-	uint32 samplesSizeTable[NUM_SAMPLES] {0};
+	uint32 samplesSizeTable[NUM_SAMPLES]{0};
 
 	/**
 	 * Sample volume
