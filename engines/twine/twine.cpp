@@ -233,9 +233,6 @@ void TwinEEngine::initEngine() {
 
 	_screens->clearScreen();
 
-	// Toggle fullscreen if Fullscreen flag is set
-	toggleFullscreen();
-
 	// Check if LBA CD-Rom is on drive
 	_music->initCdrom();
 
@@ -377,7 +374,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// inventory menu
 		loopInventoryItem = -1;
-		if (loopCurrentKey == Keys::InventoryMenu && _scene->sceneHero->entity != -1 && _scene->sceneHero->controlMode == kManual) {
+		if (loopCurrentKey == twineactions[TwinEActionType::InventoryMenu].localKey && _scene->sceneHero->entity != -1 && _scene->sceneHero->controlMode == kManual) {
 			freezeTime();
 			_menu->processInventoryMenu();
 
@@ -490,19 +487,19 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// Process behaviour menu - Press CTRL and F1..F4 Keys
-		if ((loopCurrentKey == Keys::BehaviourMenu
-		  || loopCurrentKey == Keys::QuickBehaviourNormal
-		  || loopCurrentKey == Keys::QuickBehaviourAthletic
-		  || loopCurrentKey == Keys::QuickBehaviourAggressive
-		  || loopCurrentKey == Keys::QuickBehaviourDiscreet)
-		  && _scene->sceneHero->entity != -1 && _scene->sceneHero->controlMode == kManual) {
-			if (loopCurrentKey == Keys::QuickBehaviourNormal) {
+		if ((loopCurrentKey == twineactions[TwinEActionType::BehaviourMenu].localKey ||
+		     loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourNormal].localKey ||
+		     loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourAthletic].localKey ||
+		     loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourAggressive].localKey ||
+		     loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourDiscreet].localKey) &&
+		    _scene->sceneHero->entity != -1 && _scene->sceneHero->controlMode == kManual) {
+			if (loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourNormal].localKey) {
 				_actor->heroBehaviour = HeroBehaviourType::kNormal;
-			} else if (loopCurrentKey == Keys::QuickBehaviourAthletic) {
+			} else if (loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourAthletic].localKey) {
 				_actor->heroBehaviour = HeroBehaviourType::kAthletic;
-			} else if (loopCurrentKey == Keys::QuickBehaviourAggressive) {
+			} else if (loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourAggressive].localKey) {
 				_actor->heroBehaviour = HeroBehaviourType::kAggressive;
-			} else if (loopCurrentKey == Keys::QuickBehaviourDiscreet) {
+			} else if (loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourDiscreet].localKey) {
 				_actor->heroBehaviour = HeroBehaviourType::kDiscrete;
 			}
 			freezeTime();
@@ -512,7 +509,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// use Proto-Pack
-		if (loopCurrentKey == Keys::UseProtoPack && _gameState->gameFlags[InventoryItems::kiProtoPack] == 1) {
+		if (loopCurrentKey == twineactions[TwinEActionType::UseProtoPack].localKey && _gameState->gameFlags[InventoryItems::kiProtoPack] == 1) {
 			if (_gameState->gameFlags[InventoryItems::kiBookOfBu]) {
 				_scene->sceneHero->body = 0;
 			} else {
@@ -545,7 +542,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// Process Pause - Press P
-		if (loopCurrentKey == Keys::Pause) {
+		if (loopCurrentKey == twineactions[TwinEActionType::Pause].localKey) {
 			freezeTime();
 			_text->setFontColor(15);
 			_text->drawText(5, 446, "Pause"); // no key for pause in Text Bank
@@ -830,12 +827,6 @@ void TwinEEngine::crossFade(const Graphics::Surface &buffer, uint8 *palette) {
 	g_system->updateScreen();
 }
 
-void TwinEEngine::toggleFullscreen() {
-	_redraw->reqBgRedraw = 1;
-	_system->setFeatureState(OSystem::kFeatureFullscreenMode, cfgfile.FullScreen);
-	cfgfile.FullScreen = !cfgfile.FullScreen;
-}
-
 /** Pressed key map - scanCodeTab1 */
 static const uint8 pressedKeyMap[] = {
     0x48, // 0
@@ -911,7 +902,6 @@ static const uint16 pressedKeyCharMap[] = {
 };
 static_assert(ARRAYSIZE(pressedKeyCharMap) == 31, "Expected size of key char map");
 
-/** Handle keyboard pressed keys */
 void TwinEEngine::readKeys() {
 	if (shouldQuit()) {
 		_keyboard.skipIntro = 1;
@@ -920,11 +910,34 @@ void TwinEEngine::readKeys() {
 	}
 	_keyboard.skippedKey = 0;
 	_keyboard.skipIntro = 0;
-	int32 localKey = 0;
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
+		int32 localKey = 0;
 		switch (event.type) {
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+			actionStates[event.customType] = false;
+			localKey = twineactions[event.customType].localKey | 0x80;
+			break;
+		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+			if (!cfgfile.Debug) {
+				switch (event.customType) {
+				case TwinEActionType::NextRoom:
+				case TwinEActionType::PreviousRoom:
+				case TwinEActionType::ApplyCellingGrid:
+				case TwinEActionType::IncreaseCellingGridIndex:
+				case TwinEActionType::DecreaseCellingGridIndex:
+					break;
+				default:
+					localKey = twineactions[event.customType].localKey;
+					actionStates[event.customType] = true;
+					break;
+				}
+			} else {
+				localKey = twineactions[event.customType].localKey;
+				actionStates[event.customType] = true;
+			}
+			break;
 		case Common::EVENT_KEYUP:
 			_keyboard.pressedKey = 0;
 			break;
@@ -933,81 +946,18 @@ void TwinEEngine::readKeys() {
 			case Common::KEYCODE_ESCAPE:
 				localKey = 0x1;
 				break;
-			case Common::KEYCODE_SPACE:
-				localKey = Keys::ExecuteBehaviourAction;
-				break;
-			case Common::KEYCODE_RETURN:
-			case Common::KEYCODE_KP_ENTER:
-				localKey = Keys::RecenterScreenOnTwinsen; // TODO: depends on the context
-				break;
-			case Common::KEYCODE_LSHIFT:
-			case Common::KEYCODE_RSHIFT:
-				localKey = Keys::InventoryMenu;
-				break;
 			case Common::KEYCODE_LALT:
 			case Common::KEYCODE_RALT:
 				localKey = 0x38;
 				break;
-			case Common::KEYCODE_LCTRL:
-			case Common::KEYCODE_RCTRL:
-				localKey = Keys::BehaviourMenu;
-				break;
 			case Common::KEYCODE_PAGEUP:
 				localKey = 0x49;
-				break;
-			case Common::KEYCODE_p: // pause
-				localKey = Keys::Pause;
-				break;
-			case Common::KEYCODE_h: // holomap
-				localKey = Keys::OpenHolomap;
-				break;
-			case Common::KEYCODE_j:
-				localKey = Keys::UseProtoPack;
 				break;
 			case Common::KEYCODE_w: // Especial key to do the action
 				localKey = 0x11;
 				break;
-			case Common::KEYCODE_F1:
-				localKey = Keys::QuickBehaviourNormal;
-				break;
-			case Common::KEYCODE_F2:
-				localKey = Keys::QuickBehaviourAthletic;
-				break;
-			case Common::KEYCODE_F3:
-				localKey = Keys::QuickBehaviourAggressive;
-				break;
-			case Common::KEYCODE_F4:
-				localKey = Keys::QuickBehaviourDiscreet;
-				break;
-			case Common::KEYCODE_F6:
-				localKey = Keys::OptionsMenu;
-				break;
-			case Common::KEYCODE_F12:
-				toggleFullscreen();
-				break;
 			default:
 				break;
-			}
-			if (cfgfile.Debug) {
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_r: // next room
-					localKey = Keys::NextRoom;
-					break;
-				case Common::KEYCODE_f: // previous room
-					localKey = Keys::PreviousRoom;
-					break;
-				case Common::KEYCODE_t: // apply celling grid
-					localKey = Keys::ApplyCellingGrid;
-					break;
-				case Common::KEYCODE_g: // increase celling grid index
-					localKey = Keys::IncreaseCellingGridIndex;
-					break;
-				case Common::KEYCODE_b: // decrease celling grid index
-					localKey = Keys::DecreaseCellingGridIndex;
-					break;
-				default:
-					break;
-				}
 			}
 			break;
 		}
@@ -1020,109 +970,29 @@ void TwinEEngine::readKeys() {
 		default:
 			break;
 		}
-	}
-#if 1
-	{
-#else
-	int32 size = 0;
-	uint8 *keyboard = nullptr; // TODO: SDL_GetKeyState(&size);
-	for (int32 j = 0; j < size; j++) {
-		if (keyboard[j]) {
-			switch (j) {
-			case Common::KEYCODE_RETURN:
-			case Common::KEYCODE_KP_ENTER:
-				localKey = Keys::RecenterScreenOnTwinsen; // TODO: depends on the context
-				break;
-			case Common::KEYCODE_SPACE:
-				localKey = Keys::ExecuteBehaviourAction;
-				break;
-			case Common::KEYCODE_UP:
-			case Common::KEYCODE_KP8:
-				localKey = Keys::MoveForward;
-				break;
-			case Common::KEYCODE_DOWN:
-			case Common::KEYCODE_KP2:
-				localKey = Keys::MoveBackward;
-				break;
-			case Common::KEYCODE_LEFT:
-			case Common::KEYCODE_KP4:
-				localKey = Keys::TurnLeft;
-				break;
-			case Common::KEYCODE_RIGHT:
-			case Common::KEYCODE_KP6:
-				localKey = Keys::TurnRight;
-				break;
-			case Common::KEYCODE_LCTRL:
-			case Common::KEYCODE_RCTRL:
-				localKey = Keys::BehaviourMenu;
-				break;
-			/*case Common::KEYCODE_LSHIFT:
-			case Common::KEYCODE_RSHIFT:
-				localKey = 0x36;
-				break;*/
-			case Common::KEYCODE_LALT:
-			case Common::KEYCODE_RALT:
-				localKey = 0x38;
-				break;
-			case Common::KEYCODE_F1:
-				localKey = Keys::QuickBehaviourNormal;
-				break;
-			case Common::KEYCODE_F2:
-				localKey = Keys::QuickBehaviourAthletic;
-				break;
-			case Common::KEYCODE_F3:
-				localKey = Keys::QuickBehaviourAggressive;
-				break;
-			case Common::KEYCODE_F4:
-				localKey = Keys::QuickBehaviourDiscreet;
-				break;
-			default:
-				break;
-			}
-			if (cfgfile.Debug) {
-				switch (keyboard[j]) {
-				// change grid camera
-				case Common::KEYCODE_s:
-					localKey = 0x1F;
-					break;
-				case Common::KEYCODE_x:
-					localKey = 0x2D;
-					break;
-				case Common::KEYCODE_z:
-					localKey = 0x2C;
-					break;
-				case Common::KEYCODE_c:
-					localKey = 0x2E;
-					break;
-				}
-			}
+
+		if (localKey == 0) {
+			continue;
 		}
-#endif
-		int find = 0;
-		bool found = false;
+
 		for (int i = 0; i < ARRAYSIZE(pressedKeyMap); i++) {
 			if (pressedKeyMap[i] == localKey) {
-				find = i;
-				found = true;
-				break;
-			}
-		}
+				int16 temp = pressedKeyCharMap[i];
+				uint8 temp2 = temp & 0x00FF;
 
-		if (found) {
-			int16 temp = pressedKeyCharMap[find];
-			uint8 temp2 = temp & 0x00FF;
-
-			if (temp2 == 0) {
-				// pressed valid keys
-				if (!(localKey & 0x80)) {
-					_keyboard.pressedKey |= (temp & 0xFF00) >> 8;
-				} else {
-					_keyboard.pressedKey &= -((temp & 0xFF00) >> 8);
+				if (temp2 == 0) {
+					// pressed valid keys
+					if (!(localKey & 0x80)) {
+						_keyboard.pressedKey |= (temp & 0xFF00) >> 8;
+					} else {
+						_keyboard.pressedKey &= -((temp & 0xFF00) >> 8);
+					}
 				}
-			}
-			// pressed inactive keys
-			else {
-				_keyboard.skippedKey |= (temp & 0xFF00) >> 8;
+				// pressed inactive keys
+				else {
+					_keyboard.skippedKey |= (temp & 0xFF00) >> 8;
+				}
+				break;
 			}
 		}
 

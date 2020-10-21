@@ -23,6 +23,7 @@
 #ifndef TWINE_TWINE_H
 #define TWINE_TWINE_H
 
+#include "backends/keymapper/keymap.h"
 #include "common/random.h"
 #include "engines/engine.h"
 
@@ -151,6 +152,7 @@ private:
 	int32 isTimeFreezed = 0;
 	int32 saveFreezedTime = 0;
 	ActorMoveStruct loopMovePtr; // mainLoopVar1
+	bool actionStates[TwinEActionType::Max] {false};
 
 public:
 	TwinEEngine(OSystem *system, Common::Language language, uint32 flags);
@@ -281,9 +283,6 @@ public:
 	 * @param palette new palette to cross fade
 	 */
 	void crossFade(const Graphics::Surface &buffer, uint8 *palette);
-
-	/** Switch between window and fullscreen modes */
-	void toggleFullscreen();
 
 	/** Handle keyboard pressed keys */
 	void readKeys();
