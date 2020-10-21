@@ -31,19 +31,19 @@ class Renderer {
 private:
 	TwinEEngine *_engine;
 
-	typedef struct renderTabEntry {
+	struct renderTabEntry {
 		int16 depth = 0;
 		int16 renderType = 0;
 		uint8 *dataPtr = nullptr;
-	} renderTabEntry;
+	};
 
-	typedef struct pointTab {
+	struct pointTab {
 		int16 X = 0;
 		int16 Y = 0;
 		int16 Z = 0;
-	} pointTab;
+	};
 
-	typedef struct elementEntry {
+	struct elementEntry {
 		int16 firstPoint = 0;  // data1
 		int16 numOfPoints = 0; // data2
 		int16 basePoint = 0;   // data3
@@ -58,40 +58,40 @@ private:
 		int32 y = 0;
 		int32 field_20 = 0;
 		int16 field_24 = 0;
-	} elementEntry;
+	};
 
-	typedef struct lineCoordinates {
+	struct lineCoordinates {
 		int32 data = 0;
 		int16 x1 = 0;
 		int16 y1 = 0;
 		int16 x2 = 0;
 		int16 y2 = 0;
-	} lineCoordinates;
+	};
 
-	typedef struct lineData {
+	struct lineData {
 		int32 data = 0;
 		int16 p1 = 0;
 		int16 p2 = 0;
-	} lineData;
+	};
 
-	typedef struct polyHeader {
+	struct polyHeader {
 		uint8 renderType = 0; //FillVertic_AType
 		uint8 numOfVertex = 0;
 		int16 colorIndex = 0;
-	} polyHeader;
+	};
 
-	typedef struct polyVertexHeader {
+	struct polyVertexHeader {
 		int16 shadeEntry = 0;
 		int16 dataOffset = 0;
-	} polyVertexHeader;
+	};
 
-	typedef struct computedVertex {
+	struct computedVertex {
 		int16 shadeValue = 0;
 		int16 x = 0;
 		int16 y = 0;
-	} computedVertex;
+	};
 
-	typedef struct bodyHeaderStruct {
+	struct bodyHeaderStruct {
 		int16 bodyFlag = 0;
 		int16 unk0 = 0;
 		int16 unk1 = 0;
@@ -102,21 +102,21 @@ private:
 		int16 offsetToData = 0;
 		int8 *ptrToKeyFrame = nullptr;
 		int32 keyFrameTime = 0;
-	} bodyHeaderStruct;
+	};
 
-	typedef struct vertexData {
+	struct vertexData {
 		uint8 param = 0;
 		int16 x = 0;
 		int16 y = 0;
-	} vertexData;
+	};
 
-	typedef union packed16 {
+	union packed16 {
 		struct {
 			uint8 al = 0;
 			uint8 ah = 0;
 		} bit;
 		uint16 temp = 0;
-	} packed16;
+	};
 
 	int32 renderAnimatedModel(uint8 *bodyPtr);
 	void circleFill(int32 x, int32 y, int32 radius, int8 color);

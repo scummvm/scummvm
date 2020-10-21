@@ -42,10 +42,10 @@ static int32 numRepeatSample = 1;
 
 typedef int32 ScriptMoveFunc(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor);
 
-typedef struct ScriptMoveFunction {
+struct ScriptMoveFunction {
 	const char *name;
 	ScriptMoveFunc *function;
-} ScriptMoveFunction;
+};
 
 #define MAPFUNC(name, func) \
 	{ name, func }

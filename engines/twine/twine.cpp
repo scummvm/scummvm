@@ -1145,8 +1145,8 @@ void TwinEEngine::drawText(int32 x, int32 y, const char *string, int32 center) {
 
 void TwinEEngine::getMousePositions(MouseStatusStruct *mouseData) {
 	Common::Point point = g_system->getEventManager()->getMousePos();
-	mouseData->X = point.x;
-	mouseData->Y = point.y;
+	mouseData->x = point.x;
+	mouseData->y = point.y;
 	mouseData->left = leftMouse;
 	mouseData->right = rightMouse;
 	leftMouse = 0;

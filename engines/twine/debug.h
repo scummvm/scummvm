@@ -49,7 +49,7 @@ enum WindowType {
 	ZONES_MENU
 };
 
-typedef struct DebugButtonStruct {
+struct DebugButtonStruct {
 	int32 left = 0;
 	int32 top = 0;
 	int32 right = 0;
@@ -62,9 +62,9 @@ typedef struct DebugButtonStruct {
 	int32 activeColor = 0;
 	int32 submenu = 0;
 	int32 type = 0;
-} DebugButtonStruct;
+};
 
-typedef struct DebugWindowStruct {
+struct DebugWindowStruct {
 	int32 left = 0;
 	int32 top = 0;
 	int32 right = 0;
@@ -75,7 +75,7 @@ typedef struct DebugWindowStruct {
 	const char *text[20] {0};
 	int32 numButtons = 0;
 	DebugButtonStruct debugButtons[50];
-} DebugWindowStruct;
+};
 
 class TwinEEngine;
 

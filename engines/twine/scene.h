@@ -46,13 +46,13 @@ enum ScenePositionType {
 
 // ZONES
 
-typedef struct ScenePoint {
+struct ScenePoint {
 	int16 x = 0;
 	int16 y = 0;
 	int16 z = 0;
-} ScenePoint;
+};
 
-typedef struct ZoneStruct {
+struct ZoneStruct {
 	ScenePoint bottomLeft;
 	ScenePoint topRight;
 	int16 type = 0;
@@ -87,7 +87,7 @@ typedef struct ZoneStruct {
 		} generic;
 	} infoData;
 	int16 snap = 0;
-} ZoneStruct;
+};
 
 enum ZoneType {
 	kCube = 0,     // Change to another scene

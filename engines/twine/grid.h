@@ -55,7 +55,7 @@ struct BlockEntry {
 	uint8 brickBlockIdx = 0;
 };
 /** Brick entry data */
-typedef struct BrickEntry {
+struct BrickEntry {
 	/** Brick X position in screen */
 	int16 x = 0; //z
 	/** Brick Y position in screen */
@@ -72,7 +72,7 @@ typedef struct BrickEntry {
 	uint8 shape = 0;
 	/** Brick sound type */
 	uint8 sound = 0;
-} BrickEntry;
+};
 
 /** Total number of bricks allowed in the game */
 #define NUM_BRICKS 9000

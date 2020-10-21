@@ -54,10 +54,10 @@ static char textStr[256]; // string
 		1 - Break script */
 typedef int32 ScriptLifeFunc(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor);
 
-typedef struct ScriptLifeFunction {
+struct ScriptLifeFunction {
 	const char *name;
 	ScriptLifeFunc *function;
-} ScriptLifeFunction;
+};
 
 #define MAPFUNC(name, func) \
 	{ name, func }

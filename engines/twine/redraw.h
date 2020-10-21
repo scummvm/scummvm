@@ -43,7 +43,7 @@ enum OverlayPosType {
 };
 
 /** Overlay list structure */
-typedef struct OverlayListStruct {
+struct OverlayListStruct {
 	int16 type = 0;
 	int16 info0 = 0; // sprite/3d model entry | number | number range
 	int16 x = 0;
@@ -51,13 +51,13 @@ typedef struct OverlayListStruct {
 	int16 info1 = 0; // followed actor | total coins
 	int16 posType = 0;
 	int16 lifeTime = 0;
-} OverlayListStruct;
+};
 
 class TwinEEngine;
 class Redraw {
 private:
 	TwinEEngine *_engine;
-	typedef struct DrawListStruct {
+	struct DrawListStruct {
 		int16 posValue = 0;
 		uint16 index = 0; // field_2
 		uint16 x = 0;
@@ -67,17 +67,17 @@ private:
 		uint16 field_C = 0;
 		uint16 field_E = 0;
 		uint16 field_10 = 0;
-	} DrawListStruct;
+	};
 
 	/** Draw list array to grab the necessary */
 	DrawListStruct drawList[150];
 
-	typedef struct RedrawStruct {
+	struct RedrawStruct {
 		uint16 left = 0;
 		uint16 top = 0;
 		uint16 right = 0;
 		uint16 bottom = 0;
-	} RedrawStruct;
+	};
 
 	RedrawStruct currentRedrawList[300];
 	RedrawStruct nextRedrawList[300];
