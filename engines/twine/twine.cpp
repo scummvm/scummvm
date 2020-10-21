@@ -862,82 +862,43 @@ void TwinEEngine::crossFade(const Graphics::ManagedSurface &buffer, const uint32
 	surfaceTable.free();
 }
 
-/** Pressed key map - scanCodeTab1 */
-static const uint8 pressedKeyMap[] = {
-    0x48, // 0
-    0x50,
-    0x4B,
-    0x4D,
-    0x47,
-    0x49,
-    0x51,
-    0x4F, // 7
-
-    0x39, // 8
-    0x1C,
-    0x1D,
-    0x38,
-    0x53,
-    0x2A,
-    0x36, // 14
-
-    0x3B, // 15
-    0x3C,
-    0x3D,
-    0x3E,
-    0x3F,
-    0x40, // LBAKEY_F6
-    0x41,
-    0x42,
-    0x43,
-    0x44,
-    0x57,
-    0x58,
-    0x2A,
-    0x0, // 28
-};
-static_assert(ARRAYSIZE(pressedKeyMap) == 29, "Expected size of key map");
-
 /** Pressed key char map - scanCodeTab2 */
-static const union KeyProperties {
-	struct {
-		uint8 high;
-		uint8 low; // defines whether this is pressed or skipped key
-	} details;
-	uint16 mask;
+static const struct KeyProperties {
+	uint8 high;
+	bool pressed;
+	uint8 key;
 } pressedKeyCharMap[] = {
-    {{0x01,0x00}}, // up
-    {{0x02,0x00}}, // down
-    {{0x04,0x00}}, // left
-    {{0x08,0x00}}, // right
-    {{0x05,0x00}}, // home
-    {{0x09,0x00}}, // pageup
-    {{0x0A,0x00}}, // pagedown
-    {{0x06,0x00}}, // end
-    {{0x01,0x01}}, // space bar
-    {{0x02,0x01}}, // enter
-    {{0x04,0x01}}, // ctrl
-    {{0x08,0x01}}, // alt
-    {{0x10,0x01}}, // del
-    {{0x20,0x01}}, // left shift
-    {{0x20,0x01}}, // right shift
-    {{0x01,0x02}}, // F1
-    {{0x02,0x02}}, // F2
-    {{0x04,0x02}}, // F3
-    {{0x08,0x02}}, // F4
-    {{0x10,0x02}}, // F5
-    {{0x20,0x02}}, // F6
-    {{0x40,0x02}}, // F7
-    {{0x80,0x02}}, // F8
-    {{0x01,0x03}}, // F9
-    {{0x02,0x03}}, // F10
-    {{0x04,0x03}}, // ?
-    {{0x08,0x03}}, // ?
-    {{0x00,0xFF}}, // left shift
-    {{0x00,0xFF}},
-    {{0x00,0x00}},
-    {{0x00,0x00}}
-};
+    {0x01, false, 0x48}, // up
+    {0x02, false, 0x50}, // down
+    {0x04, false, 0x4B}, // left
+    {0x08, false, 0x4D}, // right
+    {0x05, false, 0x47}, // home
+    {0x09, false, 0x49}, // pageup
+    {0x0A, false, 0x51}, // pagedown
+    {0x06, false, 0x4F}, // end
+    {0x01, true,  0x39}, // space bar
+    {0x02, true,  0x1C}, // enter
+    {0x04, true,  0x1D}, // ctrl
+    {0x08, true,  0x38}, // alt
+    {0x10, true,  0x53}, // del
+    {0x20, true,  0x2A}, // left shift
+    {0x20, true,  0x36}, // right shift
+    {0x01, true,  0x3B}, // F1
+    {0x02, true,  0x3C}, // F2
+    {0x04, true,  0x3D}, // F3
+    {0x08, true,  0x3E}, // F4
+    {0x10, true,  0x3F}, // F5
+    {0x20, true,  0x40}, // F6
+    {0x40, true,  0x41}, // F7
+    {0x80, true,  0x42}, // F8
+    {0x01, true,  0x43}, // F9
+    {0x02, true,  0x44}, // F10
+    {0x04, true,  0x57}, // ?
+    {0x08, true,  0x58}, // ?
+    {0x00, true,  0x2A}, // left shift
+    {0x00, true,  0x00},
+    {0x00, false, 0x00},
+    {0x00, false, 0x00}};
 static_assert(ARRAYSIZE(pressedKeyCharMap) == 31, "Expected size of key char map");
 
 void TwinEEngine::readKeys() {
@@ -1009,14 +970,12 @@ void TwinEEngine::readKeys() {
 			continue;
 		}
 
-		for (int i = 0; i < ARRAYSIZE(pressedKeyMap); i++) {
-			if (pressedKeyMap[i] == localKey) {
-				if (pressedKeyCharMap[i].details.low == 0) {
-					// pressed valid keys
-					_keyboard.pressedKey |= pressedKeyCharMap[i].details.high;
+		for (int i = 0; i < ARRAYSIZE(pressedKeyCharMap); i++) {
+			if (pressedKeyCharMap[i].key == localKey) {
+				if (pressedKeyCharMap[i].pressed) {
+					_keyboard.pressedKey |= pressedKeyCharMap[i].high;
 				} else {
-					// pressed inactive keys
-					_keyboard.skippedKey |= pressedKeyCharMap[i].details.high;
+					_keyboard.skippedKey |= pressedKeyCharMap[i].high;
 				}
 				break;
 			}
