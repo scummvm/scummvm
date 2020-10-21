@@ -160,7 +160,8 @@ void FlaMovies::processFrame() {
 	file.read(&frameData.videoSize, 1);
 	file.read(&frameData.dummy, 1);
 	file.read(&frameData.frameVar0, 4);
-	if (frameData.frameVar0 > _engine->workVideoBuffer.w * _engine->workVideoBuffer.h * _engine->workVideoBuffer.format.bpp()) {
+	if (frameData.frameVar0 > _engine->workVideoBuffer.w * _engine->workVideoBuffer.h) {
+		warning("Skipping video frame - it would exceed the screen buffer: %i", frameData.frameVar0);
 		return;
 	}
 
