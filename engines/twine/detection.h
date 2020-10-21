@@ -25,10 +25,6 @@
 
 namespace TwinE {
 
-enum GameFlag {
-	kGameFlagDemo = 1 << 0
-};
-
 } // End of namespace TwinE
 
 #endif // TWINE_DETECTION_H
