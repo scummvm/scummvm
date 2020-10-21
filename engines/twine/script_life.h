@@ -38,8 +38,10 @@ private:
 public:
 	ScriptLife(TwinEEngine *engine);
 
-	/** Process actor life script
-	@param actorIdx Current processed actor index */
+	/**
+	 * Process actor life script
+	 * @param actorIdx Current processed actor index
+	 */
 	void processLifeScript(int32 actorIdx);
 };
 
