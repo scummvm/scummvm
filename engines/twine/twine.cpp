@@ -821,6 +821,7 @@ void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom
 }
 
 void TwinEEngine::crossFade(const Graphics::Surface &buffer, uint8 *palette) {
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	// TODO: implement cross fading
 	g_system->copyRectToScreen(buffer.getPixels(), buffer.pitch, 0, 0, buffer.w, buffer.h);
 	g_system->updateScreen();

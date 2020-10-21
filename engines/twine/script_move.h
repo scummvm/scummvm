@@ -35,8 +35,10 @@ private:
 public:
 	ScriptMove(TwinEEngine *engine);
 
-	/** Process actor move script
-	@param actorIdx Current processed actor index */
+	/**
+	 * Process actor move script
+	 * @param actorIdx Current processed actor index
+	 */
 	void processMoveScript(int32 actorIdx);
 };
 
