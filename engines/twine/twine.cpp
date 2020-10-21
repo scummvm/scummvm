@@ -355,8 +355,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			_redraw->redrawEngineActions(1);
 		}
 
-		// Process options menu - Press F6
-		if (loopCurrentKey == 0x40) {
+		if (loopCurrentKey == twineactions[TwinEActionType::OptionsMenu].localKey) {
 			int tmpLangCD = cfgfile.LanguageCDId;
 			freezeTime();
 			_sound->pauseSamples();
@@ -917,7 +916,7 @@ void TwinEEngine::readKeys() {
 		switch (event.type) {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
 			actionStates[event.customType] = false;
-			localKey = twineactions[event.customType].localKey | 0x80;
+			localKey = twineactions[event.customType].localKey;
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			if (!cfgfile.Debug) {
@@ -944,11 +943,7 @@ void TwinEEngine::readKeys() {
 		case Common::EVENT_KEYDOWN: {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				localKey = 0x1;
-				break;
-			case Common::KEYCODE_LALT:
-			case Common::KEYCODE_RALT:
-				localKey = 0x38;
+				_keyboard.skipIntro = 1;
 				break;
 			case Common::KEYCODE_PAGEUP:
 				localKey = 0x49;

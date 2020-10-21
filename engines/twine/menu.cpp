@@ -273,7 +273,7 @@ void Menu::processPlasmaEffect(int32 top, int32 color) {
 	plasmaEffectRenderFrame();
 
 	in = plasmaEffectPtr + 5 * PLASMA_WIDTH;
-	out = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top];
+	out = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top];
 
 	for (i = 0; i < 25; i++) {
 		for (j = 0; j < kMainMenuButtonWidth; j++) {
@@ -355,7 +355,7 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 id, int32 value, in
 			}
 		}
 	} else {
-		_engine->_interface->blitBox(left, top, right, bottom, (const int8*)_engine->workVideoBuffer.getPixels(), left, top, (int8*)_engine->frontVideoBuffer.getPixels());
+		_engine->_interface->blitBox(left, top, right, bottom, (const int8 *)_engine->workVideoBuffer.getPixels(), left, top, (int8 *)_engine->frontVideoBuffer.getPixels());
 		_engine->_interface->drawTransparentBox(left, top, right, bottom2, 4);
 	}
 
@@ -440,8 +440,8 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			if (_engine->lbaTime - localTime > 11650) {
 				return kBackground;
 			}
-			if (_engine->_keyboard.skipIntro == 46) {
-				if (_engine->_keyboard.skippedKey != 32) {
+			if (_engine->_keyboard.skipIntro == '.') {
+				if (_engine->_keyboard.skippedKey != ' ') {
 					return kBackground;
 				}
 			}
@@ -472,12 +472,13 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				buttonReleased = 0;
 			}
 
-			if (*(localData + 8) <= 5) {                         // if its a volume button
-				int16 id = *(localData + currentButton * 2 + 4); // get button parameters from settings array
+			if (*(localData + 8) <= 5) {                               // if its a volume button
+				const int16 id = *(localData + currentButton * 2 + 4); // get button parameters from settings array
 
+				Audio::Mixer *mixer = _engine->_system->getMixer();
 				switch (id) {
 				case kMusicVolume: {
-					int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
+					int volume = mixer->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
 					if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
 						volume -= 4;
 					}
@@ -488,14 +489,14 @@ int32 Menu::processMenu(int16 *menuSettings) {
 					break;
 				}
 				case kSoundVolume: {
-					int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
+					int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
 					if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
 						volume -= 4;
 					}
 					if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
 						volume += 4;
 					}
-					_engine->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
+					mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
 					break;
 				}
 				case kCDVolume: {
@@ -510,25 +511,25 @@ int32 Menu::processMenu(int16 *menuSettings) {
 					break;
 				}
 				case kLineVolume: {
-					int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
+					int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
 					if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
 						volume -= 4;
 					}
 					if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
 						volume += 4;
 					}
-					_engine->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
+					mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
 					break;
 				}
 				case kMasterVolume: {
-					int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
+					int volume = mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
 					if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
 						volume -= 4;
 					}
 					if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
 						volume += 4;
 					}
-					_engine->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
+					mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
 					break;
 				}
 				default:
