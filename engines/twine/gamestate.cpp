@@ -426,12 +426,12 @@ void GameState::processFoundItem(int32 item) {
 	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
 
 	/*do {
-		readKeys();
+		_engine->readKeys();
 		if (_engine->shouldQuit()) {
 			break;
 		}
 		delaySkip(1);
-	} while (!skipIntro);*/
+	} while (!_engine->_keyboard.skipIntro);*/
 
 	if (_engine->cfgfile.LanguageCDId && _engine->_sound->isSamplePlaying(_engine->_text->currDialTextEntry)) {
 		_engine->_text->stopVox(_engine->_text->currDialTextEntry);
@@ -499,7 +499,7 @@ void GameState::processGameoverAnimation() { // makeGameOver
 		int32 startLbaTime = _engine->lbaTime;
 		_engine->_interface->setClip(120, 120, 519, 359);
 
-		while (_engine->_keyboard.skipIntro != 1 && (_engine->lbaTime - startLbaTime) <= 0x1F4) {
+		while (_engine->_keyboard.skipIntro != 1 && (_engine->lbaTime - startLbaTime) <= 500) {
 			_engine->readKeys();
 
 			avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);
