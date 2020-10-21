@@ -28,38 +28,72 @@
 
 namespace TwinE {
 
-namespace Keys {
+enum TwinEActionType {
+	Pause,
+	NextRoom,
+	PreviousRoom,
+	ApplyCellingGrid,
+	IncreaseCellingGridIndex,
+	DecreaseCellingGridIndex,
+	DebugGridCameraPressUp,
+	DebugGridCameraPressDown,
+	DebugGridCameraPressLeft,
+	DebugGridCameraPressRight,
+	QuickBehaviourNormal,
+	QuickBehaviourAthletic,
+	QuickBehaviourAggressive,
+	QuickBehaviourDiscreet,
+	ExecuteBehaviourAction,
+	BehaviourMenu,
+	OptionsMenu,
+	RecenterScreenOnTwinsen,
+	UseSelectedObject,
+	ThrowMagicBall,
+	MoveForward,
+	MoveBackward,
+	TurnRight,
+	TurnLeft,
+	UseProtoPack,
+	OpenHolomap,
+	InventoryMenu,
 
-enum _Keys {
-	Pause = 0x19,
-	NextRoom = 0x13,
-	PreviousRoom = 0x21,
-	ApplyCellingGrid = 0x14,
-	IncreaseCellingGridIndex = 0x22,
-	DecreaseCellingGridIndex = 0x30,
-	DebugGridCameraPressUp = 0x2E,
-	DebugGridCameraPressDown = 0x2C,
-	DebugGridCameraPressLeft = 0x1F,
-	DebugGridCameraPressRight = 0x2D,
-	QuickBehaviourNormal = 0x3B,
-	QuickBehaviourAthletic = 0x3C,
-	QuickBehaviourAggressive = 0x3D,
-	QuickBehaviourDiscreet = 0x3E,
-	ExecuteBehaviourAction = 0x39,
-	BehaviourMenu = 0x1D,
-	OptionsMenu = 0x40,
-	RecenterScreenOnTwinsen = 0x1C,
-	UseSelectedObject = 0x1C,
-	MoveForward = 0x48,
-	MoveBackward = 0x50,
-	TurnRight = 0x4D,
-	TurnLeft = 0x4B,
-	UseProtoPack = 0x24,
-	OpenHolomap = 0x23,
-	InventoryMenu = 0x36
+	Max
 };
 
-}
+static constexpr const struct ActionMapping {
+	TwinEActionType action;
+	uint16 localKey;
+} twineactions[] = {
+	{Pause, 0x19},
+	{NextRoom, 0x13},
+	{PreviousRoom, 0x21},
+	{ApplyCellingGrid, 0x14},
+	{IncreaseCellingGridIndex, 0x22},
+	{DecreaseCellingGridIndex, 0x30},
+	{DebugGridCameraPressUp, 0x2E},
+	{DebugGridCameraPressDown, 0x2C},
+	{DebugGridCameraPressLeft, 0x1F},
+	{DebugGridCameraPressRight, 0x2D},
+	{QuickBehaviourNormal, 0x3B},
+	{QuickBehaviourAthletic, 0x3C},
+	{QuickBehaviourAggressive, 0x3D},
+	{QuickBehaviourDiscreet, 0x3E},
+	{ExecuteBehaviourAction, 0x39},
+	{BehaviourMenu, 0x1D},
+	{OptionsMenu, 0x40},
+	{RecenterScreenOnTwinsen, 0x1C},
+	{UseSelectedObject, 0x1C},
+	{ThrowMagicBall, 0xDEAD}, // TODO:
+	{MoveForward, 0x48},
+	{MoveBackward, 0x50},
+	{TurnRight, 0x4D},
+	{TurnLeft, 0x4B},
+	{UseProtoPack, 0x24},
+	{OpenHolomap, 0x23},
+	{InventoryMenu, 0x36}
+};
+
+static_assert(ARRAYSIZE(twineactions) == TwinEActionType::Max, "Unexpected action mapping array size");
 
 struct Keyboard {
 	/** Skipped key - key1 */

@@ -37,25 +37,25 @@ DebugGrid::DebugGrid(TwinEEngine *engine) : _engine(engine) {
 void DebugGrid::changeGridCamera(int16 pKey) {
 	if (useFreeCamera) {
 		// Press up - more X positions
-		if (pKey == Keys::DebugGridCameraPressUp) {
+		if (pKey == twineactions[TwinEActionType::DebugGridCameraPressUp].localKey) {
 			_engine->_grid->newCameraZ--;
 			_engine->_redraw->reqBgRedraw = 1;
 		}
 
 		// Press down - less X positions
-		else if (pKey == Keys::DebugGridCameraPressDown) {
+		else if (pKey == twineactions[TwinEActionType::DebugGridCameraPressDown].localKey) {
 			_engine->_grid->newCameraZ++;
 			_engine->_redraw->reqBgRedraw = 1;
 		}
 
 		// Press left - less Z positions
-		else if (pKey == Keys::DebugGridCameraPressLeft) {
+		else if (pKey == twineactions[TwinEActionType::DebugGridCameraPressLeft].localKey) {
 			_engine->_grid->newCameraX--;
 			_engine->_redraw->reqBgRedraw = 1;
 		}
 
 		// Press right - more Z positions
-		else if (pKey == Keys::DebugGridCameraPressRight) {
+		else if (pKey == twineactions[TwinEActionType::DebugGridCameraPressRight].localKey) {
 			_engine->_grid->newCameraX++;
 			_engine->_redraw->reqBgRedraw = 1;
 		}
@@ -67,7 +67,7 @@ void DebugGrid::changeGrid(int16 pKey) {
 		return;
 	}
 	// Press up - more X positions
-	if (pKey == Keys::NextRoom) {
+	if (pKey == twineactions[TwinEActionType::NextRoom].localKey) {
 		_engine->_scene->currentSceneIdx++;
 		if (_engine->_scene->currentSceneIdx > NUM_SCENES)
 			_engine->_scene->currentSceneIdx = 0;
@@ -76,34 +76,30 @@ void DebugGrid::changeGrid(int16 pKey) {
 	}
 
 	// Press down - less X positions
-	if (pKey == Keys::PreviousRoom) {
+	if (pKey == twineactions[TwinEActionType::PreviousRoom].localKey) {
 		_engine->_scene->currentSceneIdx--;
 		if (_engine->_scene->currentSceneIdx < 0)
 			_engine->_scene->currentSceneIdx = NUM_SCENES;
 		_engine->_scene->needChangeScene = _engine->_scene->currentSceneIdx;
 		_engine->_redraw->reqBgRedraw = 1;
 	}
-
-	if (_engine->cfgfile.Debug && (pKey == 'f' || pKey == 'r')) {
-		debug("Grid index changed: %d", _engine->_scene->needChangeScene);
-	}
 }
 
 void DebugGrid::applyCellingGrid(int16 pKey) {
 	// Increase celling grid index
-	if (pKey == Keys::IncreaseCellingGridIndex) {
+	if (pKey == twineactions[TwinEActionType::IncreaseCellingGridIndex].localKey) {
 		_engine->_grid->cellingGridIdx++;
 		if (_engine->_grid->cellingGridIdx > 133)
 			_engine->_grid->cellingGridIdx = 133;
 	}
 	// Decrease celling grid index
-	else if (pKey == Keys::DecreaseCellingGridIndex) {
+	else if (pKey == twineactions[TwinEActionType::DecreaseCellingGridIndex].localKey) {
 		_engine->_grid->cellingGridIdx--;
 		if (_engine->_grid->cellingGridIdx < 0)
 			_engine->_grid->cellingGridIdx = 0;
 	}
 	// Enable/disable celling grid
-	else if (pKey == Keys::ApplyCellingGrid) {
+	else if (pKey == twineactions[TwinEActionType::ApplyCellingGrid].localKey) {
 		if (_engine->_grid->useCellingGrid == -1) {
 			_engine->_grid->useCellingGrid = 1;
 			//createGridMap();
