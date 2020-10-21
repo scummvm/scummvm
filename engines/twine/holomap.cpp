@@ -22,21 +22,139 @@
 
 #include "twine/holomap.h"
 #include "twine/gamestate.h"
+#include "twine/interface.h"
+#include "twine/renderer.h"
+#include "twine/resources.h"
+#include "twine/scene.h"
+#include "twine/screens.h"
+#include "twine/sound.h"
+#include "twine/text.h"
 #include "twine/twine.h"
 
 namespace TwinE {
 
 Holomap::Holomap(TwinEEngine *engine) : _engine(engine) {}
 
-void Holomap::setHolomapPosition(int32 location) {
-	assert(location >= 0 && location <= ARRAYSIZE(_engine->_gameState->holomapFlags));
-	_engine->_gameState->holomapFlags[location] = 0x81;
+void Holomap::setHolomapPosition(int32 locationIdx) {
+	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->holomapFlags));
+	_engine->_gameState->holomapFlags[locationIdx] = 0x81;
 }
 
-void Holomap::clearHolomapPosition(int32 location) {
-	assert(location >= 0 && location <= ARRAYSIZE(_engine->_gameState->holomapFlags));
-	_engine->_gameState->holomapFlags[location] &= 0x7E;
-	_engine->_gameState->holomapFlags[location] |= 0x40;
+void Holomap::clearHolomapPosition(int32 locationIdx) {
+	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->holomapFlags));
+	_engine->_gameState->holomapFlags[locationIdx] &= 0x7E;
+	_engine->_gameState->holomapFlags[locationIdx] |= 0x40;
+}
+
+void Holomap::loadGfxSub(uint8 *modelPtr) {
+	// TODO
+}
+
+void Holomap::loadGfxSub1() {
+	// TODO
+}
+
+void Holomap::loadGfxSub2() {
+	// TODO
+}
+
+void Holomap::loadHolomapGFX() {
+	videoPtr1 = (uint8 *)_engine->workVideoBuffer.getPixels();
+	videoPtr2 = videoPtr1 + 4488;
+	videoPtr3 = videoPtr1 + 7854;
+	videoPtr4 = videoPtr1 + 8398;
+
+	videoPtr5 = videoPtr1 + 73934;
+
+	_engine->_hqrdepack->hqrGetEntry(videoPtr3, Resources::HQR_RESS_FILE, RESSHQR_HOLOSURFACE);
+	_engine->_hqrdepack->hqrGetEntry(videoPtr4, Resources::HQR_RESS_FILE, RESSHQR_HOLOIMG);
+
+	videoPtr6 = videoPtr5 + _engine->_hqrdepack->hqrGetEntry(videoPtr5, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL);
+	videoPtr7 = videoPtr6 + _engine->_hqrdepack->hqrGetEntry(videoPtr6, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL);
+	videoPtr8 = videoPtr7 + _engine->_hqrdepack->hqrGetEntry(videoPtr7, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL);
+	videoPtr11 = videoPtr8 + _engine->_hqrdepack->hqrGetEntry(videoPtr8, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL);
+
+	loadGfxSub(videoPtr5);
+	loadGfxSub(videoPtr6);
+	loadGfxSub(videoPtr7);
+
+	loadGfxSub(videoPtr8);
+
+	videoPtr10 = videoPtr11 + 4488;
+	videoPtr12 = videoPtr10 + _engine->_hqrdepack->hqrGetEntry(videoPtr10, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWINFO);
+	videoPtr13 = videoPtr12 + _engine->_hqrdepack->hqrGetEntry(videoPtr12, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM);
+
+	_engine->_screens->loadCustomPalette(RESSHQR_HOLOPAL);
+
+	int32 j = 576;
+	for (int32 i = 0; i < 96; i += 3, j += 3) {
+		paletteHolomap[i] = _engine->_screens->palette[j];
+		paletteHolomap[i + 1] = _engine->_screens->palette[j + 1];
+		paletteHolomap[i + 2] = _engine->_screens->palette[j + 2];
+	}
+
+	j = 576;
+	for (int32 i = 96; i < 189; i += 3, j += 3) {
+		paletteHolomap[i] = _engine->_screens->palette[j];
+		paletteHolomap[i + 1] = _engine->_screens->palette[j + 1];
+		paletteHolomap[i + 2] = _engine->_screens->palette[j + 2];
+	}
+
+	loadGfxSub1();
+	loadGfxSub2();
+
+	needToLoadHolomapGFX = 0;
+}
+
+void Holomap::drawHolomapTitle(int32 width, int32 height) {
+	// TODO
+}
+
+void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
+	// TODO
+}
+
+void Holomap::processHolomap() {
+	int32 alphaLightTmp;
+	int32 betaLightTmp;
+
+	_engine->freezeTime();
+
+	// TODO memcopy palette
+
+	alphaLightTmp = _engine->_scene->alphaLight;
+	betaLightTmp = _engine->_scene->betaLight;
+
+	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGB);
+	_engine->_sound->stopSamples();
+	_engine->_interface->resetClip();
+	_engine->_screens->clearScreen();
+	_engine->flip();
+	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
+
+	loadHolomapGFX();
+	drawHolomapTitle(320, 25);
+	_engine->_renderer->setCameraPosition(320, 190, 128, 1024, 1024);
+
+	const int32 tmpLanguageCDId = _engine->cfgfile.LanguageCDId;
+	_engine->cfgfile.LanguageCDId = 0;
+	_engine->_text->initTextBank(2);
+	_engine->_text->setFontCrossColor(9);
+
+	// TODO
+
+	_engine->_text->newGameVar4 = 1;
+	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGB);
+	_engine->_scene->alphaLight = alphaLightTmp;
+	_engine->_scene->betaLight = betaLightTmp;
+	_engine->_gameState->initEngineVars();
+
+	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+
+	// TODO memcopy reset palette
+
+	_engine->cfgfile.LanguageCDId = tmpLanguageCDId;
+	_engine->unfreezeTime();
 }
 
 } // namespace TwinE

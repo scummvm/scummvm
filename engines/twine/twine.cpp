@@ -220,7 +220,7 @@ void TwinEEngine::initEngine() {
 	initConfigurations();
 
 	/** Engine current version */
-	const char *ENGINE_VERSION = "0.2.0";
+	const char *ENGINE_VERSION = "0.2.2";
 
 	// Show engine information
 	debug("TwinEngine v%s", ENGINE_VERSION);
@@ -383,7 +383,9 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 			switch (loopInventoryItem) {
 			case kiHolomap:
-				warning("Use Inventory [kiHolomap] not implemented!\n");
+				_holomap->processHolomap();
+				_screens->lockPalette = 1;
+				warning("Use inventory [kiHolomap] not implemented!\n");
 				break;
 			case kiMagicBall:
 				if (_gameState->usingSabre == 1) {
@@ -532,7 +534,15 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			_redraw->reqBgRedraw = 1;
 		}
 
-		// TODO: draw holomap
+		// Draw holomap
+		if (loopCurrentKey == 35 && _gameState->gameFlags[InventoryItems::kiHolomap] == 1 && !_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
+			freezeTime();
+			//TestRestoreModeSVGA(1);
+			_holomap->processHolomap();
+			_screens->lockPalette = 1;
+			unfreezeTime();
+			_redraw->redrawEngineActions(1);
+		}
 
 		// Process Pause - Press P
 		if (loopCurrentKey == Keys::Pause) {
