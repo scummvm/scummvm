@@ -248,7 +248,7 @@ void Screens::copyScreen(const uint8 *source, uint8 *destination) {
 	}
 }
 
-void Screens::copyScreen(const Graphics::Surface& source, Graphics::Surface &destination) {
+void Screens::copyScreen(const Graphics::ManagedSurface& source, Graphics::ManagedSurface &destination) {
 	copyScreen((const uint8 *)source.getPixels(), (uint8 *)destination.getPixels());
 }
 

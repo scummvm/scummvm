@@ -30,6 +30,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "engines/util.h"
+#include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "gui/debugger.h"
@@ -815,12 +816,14 @@ void TwinEEngine::flip() {
 }
 
 void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom) {
-	// TODO: fix this
+	assert(left < right);
+	assert(top < bottom);
+	// TODO: fix this - looks like the palette includes a color key at pos 0
 	g_system->copyRectToScreen(frontVideoBuffer.getPixels(), frontVideoBuffer.pitch, left, top, right - left + 1, bottom - top + 1);
 	g_system->updateScreen();
 }
 
-void TwinEEngine::crossFade(const Graphics::Surface &buffer, uint8 *palette) {
+void TwinEEngine::crossFade(const Graphics::ManagedSurface &buffer, uint8 *palette) {
 	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	// TODO: implement cross fading
 	g_system->copyRectToScreen(buffer.getPixels(), buffer.pitch, 0, 0, buffer.w, buffer.h);
@@ -1003,7 +1006,7 @@ void TwinEEngine::drawText(int32 x, int32 y, const char *string, int32 center) {
 	SDL_Color white = {0xFF, 0xFF, 0xFF, 0};
 	SDL_Color *forecol = &white;
 	SDL_Rect rectangle;
-	Graphics::Surface *text = TTF_RenderText_Solid(font, string, *forecol);
+	Graphics::ManagedSurface *text = TTF_RenderText_Solid(font, string, *forecol);
 
 	if (center) {
 		rectangle.x = x - (text->w / 2);

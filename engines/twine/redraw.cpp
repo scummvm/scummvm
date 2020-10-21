@@ -764,7 +764,7 @@ void Redraw::drawBubble(int32 actorIdx) {
 }
 
 void Redraw::zoomScreenScale() {
-	Graphics::Surface zoomWorkVideoBuffer;
+	Graphics::ManagedSurface zoomWorkVideoBuffer;
 	zoomWorkVideoBuffer.copyFrom(_engine->workVideoBuffer);
 
 	// TODO: this is broken
