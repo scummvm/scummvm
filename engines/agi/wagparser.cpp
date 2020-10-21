@@ -54,7 +54,6 @@ void WagProperty::deepCopy(const WagProperty &other) {
 	_propNum  = other._propNum;
 	_propSize = other._propSize;
 
-	deleteData(); // Delete old data (If any) and set _propData to NULL
 	if (other._propData != NULL) {
 		_propData = new char[other._propSize + 1UL]; // Allocate space for property's data plus trailing zero
 		memcpy(_propData, other._propData, other._propSize + 1UL); // Copy the whole thing
@@ -63,8 +62,8 @@ void WagProperty::deepCopy(const WagProperty &other) {
 
 bool WagProperty::read(Common::SeekableReadStream &stream) {
 	// First read the property's header
-	_propCode = (enum WagPropertyCode) stream.readByte();
-	_propType = (enum WagPropertyType) stream.readByte();
+	_propCode = (enum WagPropertyCode)stream.readByte();
+	_propType = (enum WagPropertyType)stream.readByte();
 	_propNum  = stream.readByte();
 	_propSize = stream.readUint16LE();
 
@@ -74,7 +73,6 @@ bool WagProperty::read(Common::SeekableReadStream &stream) {
 	}
 
 	// Then read the property's data
-	deleteData(); // Delete old data (If any)
 	_propData = new char[_propSize + 1UL]; // Allocate space for property's data plus trailing zero
 	uint32 readBytes = stream.read(_propData, _propSize); // Read the data in
 	_propData[_propSize] = 0; // Set the trailing zero for easy C-style string access
@@ -98,7 +96,8 @@ void WagProperty::setDefaults() {
 }
 
 void WagProperty::deleteData() {
-	delete[] _propData;
+	if (_propData)
+		delete[] _propData;
 	_propData = NULL;
 }
 
