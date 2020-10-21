@@ -76,14 +76,25 @@ private:
 
 static Common::String sanitizeName(const char *name, int maxLen) {
 	Common::String res;
+	Common::String word;
 
-	while (*name && maxLen > 0) {
+	do {
 		if (Common::isAlnum(*name)) {
-			res += tolower(*name);
-			maxLen--;
+			word += tolower(*name);
+		} else {
+			// Skipping short words and "the"
+			if ((word.size() > 2 && !word.equals("the")) || (!word.empty() && Common::isDigit(word[0]))) {
+				// Adding first word, or when word fits
+				if (res.empty() || word.size() < maxLen)
+					res += word;
+
+				maxLen -= word.size();
+			}
+			word.clear();
 		}
-		name++;
-	}
+		if (*name)
+			name++;
+	} while (*name && maxLen > 0);
 
 	return res;
 }
