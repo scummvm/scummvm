@@ -227,11 +227,11 @@ public:
 	/** temporary screen table */
 	int32 screenLookupTable[2000]{0};
 
-	int32 loopPressedKey = 0;         // mainLoopVar5
-	int32 previousLoopPressedKey = 0; // mainLoopVar6
-	int32 loopCurrentKey = 0;         // mainLoopVar7
-	int32 loopInventoryItem = 0;      // mainLoopVar9
-	int32 loopActorStep = 0;          // mainLoopVar17
+	int32 loopPressedKey = 0;
+	int32 previousLoopPressedKey = 0;
+	int32 loopCurrentKey = 0;
+	int32 loopInventoryItem = 0;
+	int32 loopActorStep = 0;
 
 	/** Disable screen recenter */
 	int16 disableScreenRecenter = 0;

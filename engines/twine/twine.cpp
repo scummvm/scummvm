@@ -940,22 +940,6 @@ void TwinEEngine::readKeys() {
 		case Common::EVENT_KEYUP:
 			_keyboard.pressedKey = 0;
 			break;
-		case Common::EVENT_KEYDOWN: {
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_ESCAPE:
-				_keyboard.internalKeyCode = 1;
-				break;
-			case Common::KEYCODE_PAGEUP:
-				localKey = 0x49;
-				break;
-			case Common::KEYCODE_w: // Especial key to do the action
-				localKey = 0x11;
-				break;
-			default:
-				break;
-			}
-			break;
-		}
 		case Common::EVENT_LBUTTONDOWN:
 			leftMouse = 1;
 			break;
