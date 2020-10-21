@@ -93,22 +93,23 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 
 	act = new Action("DEBUGGRIDCAMERAPRESSUP", _("Debug Grid Camera Up"));
 	act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressUp);
-	act->addDefaultInputMapping("w");
+	act->addDefaultInputMapping("s");
 	engineKeyMap->addAction(act);
 
 	act = new Action("DEBUGGRIDCAMERAPRESSDOWN", _("Debug Grid Camera Down"));
 	act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressDown);
-	act->addDefaultInputMapping("s");
+	act->addDefaultInputMapping("x");
 	engineKeyMap->addAction(act);
 
 	act = new Action("DEBUGGRIDCAMERAPRESSLEFT", _("Debug Grid Camera Left"));
 	act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressLeft);
-	act->addDefaultInputMapping("a");
+	act->addDefaultInputMapping("y");
+	act->addDefaultInputMapping("z");
 	engineKeyMap->addAction(act);
 
 	act = new Action("DEBUGGRIDCAMERAPRESSRIGHT", _("Debug Grid Camera Right"));
 	act->setCustomEngineActionEvent(TwinEActionType::DebugGridCameraPressRight);
-	act->addDefaultInputMapping("d");
+	act->addDefaultInputMapping("c");
 	engineKeyMap->addAction(act);
 
 	act = new Action("NORMALBEHAVIOUR", _("Normal Behaviour"));
@@ -203,6 +204,21 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 	act->addDefaultInputMapping("LSHIFT");
 	act->addDefaultInputMapping("RSHIFT");
 	act->addDefaultInputMapping("i");
+	engineKeyMap->addAction(act);
+
+	act = new Action("SPECIALACTION", _("Special Action"));
+	act->setCustomEngineActionEvent(TwinEActionType::SpecialAction);
+	act->addDefaultInputMapping("w");
+	engineKeyMap->addAction(act);
+
+	act = new Action("ESCAPE", _("Escape"));
+	act->setCustomEngineActionEvent(TwinEActionType::Escape);
+	act->addDefaultInputMapping("ESC");
+	engineKeyMap->addAction(act);
+
+	act = new Action("PAGEUP", _("Page Up"));
+	act->setCustomEngineActionEvent(TwinEActionType::PageUp);
+	act->addDefaultInputMapping("PAGEUP");
 	engineKeyMap->addAction(act);
 
 	const int delta = (int)TwinEActionType::Max - (int)engineKeyMap->getActions().size();

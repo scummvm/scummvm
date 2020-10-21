@@ -56,6 +56,9 @@ enum TwinEActionType {
 	UseProtoPack,
 	OpenHolomap,
 	InventoryMenu,
+	SpecialAction,
+	Escape,
+	PageUp,
 
 	Max
 };
@@ -90,7 +93,10 @@ static constexpr const struct ActionMapping {
 	{TurnLeft, 0x4B},
 	{UseProtoPack, 0x24},
 	{OpenHolomap, 0x23},
-	{InventoryMenu, 0x36}
+	{InventoryMenu, 0x36},
+	{SpecialAction, 0x11},
+	{Escape, 0x01},
+	{PageUp, 0x49} // TODO: used for what?
 };
 
 static_assert(ARRAYSIZE(twineactions) == TwinEActionType::Max, "Unexpected action mapping array size");
