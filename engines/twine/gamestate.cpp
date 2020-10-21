@@ -484,7 +484,7 @@ void GameState::processGameoverAnimation() { // makeGameOver
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 0;
 
 	// TODO: drawInGameTransBox
-	_engine->setPalette(_engine->_screens->paletteRGB);
+	_engine->setPalette(_engine->_screens->paletteRGBA);
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 	uint8 *gameOverPtr = (uint8 *)malloc(_engine->_hqrdepack->hqrEntrySize(Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL));
 	_engine->_hqrdepack->hqrGetEntry(gameOverPtr, Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL);

@@ -42,10 +42,10 @@ public:
 	uint8 palette[NUMOFCOLORS * 3]{0};
 
 	/** converted in-game palette */
-	uint8 paletteRGB[NUMOFCOLORS * 3]{0};
+	uint32 paletteRGBA[NUMOFCOLORS]{0};
 
 	/** converted custom palette */
-	uint8 paletteRGBCustom[NUMOFCOLORS * 3]{0};
+	uint32 paletteRGBACustom[NUMOFCOLORS]{0};
 
 	/** flag to check if a custom palette is in use */
 	int16 palCustom = 0;
@@ -63,12 +63,12 @@ public:
 	uint8 *mainPalette = nullptr;
 
 	/** converted in-game palette */
-	uint8 mainPaletteRGB[NUMOFCOLORS * 3]{0};
+	uint32 mainPaletteRGBA[NUMOFCOLORS]{0};
 
 	/** Load and display Adeline Logo */
 	void adelineLogo();
 
-	void copyPal(const uint8 *in, uint8 *out);
+	void convertPalToRGBA(const uint8 *in, uint32 *out);
 
 	/**
 	 * Load a custom palette
@@ -97,13 +97,13 @@ public:
 	 * Fade image in
 	 * @param palette current palette to fade in
 	 */
-	void fadeIn(uint8 *palette);
+	void fadeIn(uint32 *palette);
 
 	/**
 	 * Fade image out
 	 * @param palette current palette to fade out
 	 */
-	void fadeOut(uint8 *palette);
+	void fadeOut(uint32 *palette);
 
 	/**
 	 * Calculate a new color component according with an intensity
@@ -123,26 +123,26 @@ public:
 	 * @param palette palette to adjust
 	 * @param intensity intensity value to adjust
 	 */
-	void adjustPalette(uint8 R, uint8 G, uint8 B, uint8 *palette, int32 intensity);
+	void adjustPalette(uint8 R, uint8 G, uint8 B, const uint32 *palette, int32 intensity);
 
 	/**
 	 * Adjust between two palettes
 	 * @param pal1 palette from adjust
 	 * @param pal2 palette to adjust
 	 */
-	void adjustCrossPalette(uint8 *pal1, uint8 *pal2);
+	void adjustCrossPalette(const uint32 *pal1, const uint32 *pal2);
 
 	/**
 	 * Fade image to black
 	 * @param palette current palette to fade
 	 */
-	void fadeToBlack(uint8 *palette);
+	void fadeToBlack(uint32 *palette);
 
 	/**
 	 * Fade image with another palette source
 	 * @param palette current palette to fade
 	 */
-	void fadeToPal(uint8 *palette);
+	void fadeToPal(uint32 *palette);
 
 	/** Fade black palette to white palette */
 	void blackToWhite();
@@ -154,13 +154,13 @@ public:
 	 * Fade palette to red palette
 	 * @param palette current palette to fade
 	 */
-	void fadePalRed(uint8 *palette);
+	void fadePalRed(uint32 *palette);
 
 	/**
 	 * Fade red to palette
 	 * @param palette current palette to fade
 	 */
-	void fadeRedPal(uint8 *palette);
+	void fadeRedPal(uint32 *palette);
 
 	/**
 	 * Copy a determinate screen buffer to another
