@@ -505,10 +505,9 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 	return 0;
 }
 
-struct _DataReader {
+struct DataReader {
 	uint8 *ptr;
 };
-typedef struct _DataReader DataReader;
 
 int8 readByte(DataReader *data) {
 	return *(data->ptr++);

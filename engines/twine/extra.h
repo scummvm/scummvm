@@ -30,7 +30,7 @@ namespace TwinE {
 
 #define EXTRA_MAX_ENTRIES 50
 
-typedef struct ExtraListStruct {
+struct ExtraListStruct {
 	int16 info0 = 0; // field_0
 	int16 x = 0;
 	int16 y = 0;
@@ -51,7 +51,7 @@ typedef struct ExtraListStruct {
 	int16 actorIdx = 0;      // field_ 1C
 	int16 strengthOfHit = 0; // field_1E
 	int16 info1 = 0;         // field_20
-} ExtraListStruct;
+};
 
 enum ExtraSpecialType {
 	kHitStars = 0,

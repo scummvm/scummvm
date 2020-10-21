@@ -352,6 +352,8 @@ void Movements::processActorMovements(int32 actorIdx) {
 						_engine->_animations->initAnim(kHide, 0, 255, actorIdx);
 					}
 					break;
+				case kProtoPack:
+					break;
 				}
 			}
 

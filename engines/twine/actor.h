@@ -52,31 +52,31 @@ enum HeroBehaviourType {
 };
 
 /** Actors move structure */
-typedef struct ActorMoveStruct {
+struct ActorMoveStruct {
 	int16 from = 0;
 	int16 to = 0;
 	int16 numOfStep = 0;
 	int32 timeOfChange = 0;
-} ActorMoveStruct;
+};
 
 /** Actors zone volumique points structure */
-typedef struct ZVPoint {
+struct ZVPoint {
 	int16 bottomLeft = 0;
 	int16 topRight = 0;
-} ZVPoint;
+};
 
 /** Actors zone volumique box structure */
-typedef struct ZVBox {
+struct ZVBox {
 	ZVPoint x;
 	ZVPoint y;
 	ZVPoint z;
-} ZVBox;
+};
 
 /** Actors animation timer structure */
-typedef struct AnimTimerDataStruct {
+struct AnimTimerDataStruct {
 	uint8 *ptr = nullptr;
 	int32 time = 0;
-} AnimTimerDataStruct;
+};
 
 enum AnimationTypes {
 	kAnimNone = -1,
@@ -108,7 +108,7 @@ enum AnimationTypes {
 };
 
 /** Actors static flags structure */
-typedef struct StaticFlagsStruct {
+struct StaticFlagsStruct {
 	uint16 bComputeCollisionWithObj : 1;    // 0x0001
 	uint16 bComputeCollisionWithBricks : 1; // 0x0002
 	uint16 bIsZonable : 1;                  // 0x0004
@@ -125,10 +125,10 @@ typedef struct StaticFlagsStruct {
 	uint16 bIsBackgrounded : 1;             // 0x2000
 	uint16 bIsCarrierActor : 1;             // 0x4000
 	uint16 bUseMiniZv : 1;                  // 0x8000
-} StaticFlagsStruct;
+};
 
 /** Actors dynamic flags structure */
-typedef struct DynamicFlagsStruct {
+struct DynamicFlagsStruct {
 	uint16 bWaitHitFrame : 1;     // 0x0001 wait for hit frame
 	uint16 bIsHitting : 1;        // 0x0002 hit frame anim
 	uint16 bAnimEnded : 1;        // 0x0004 anim ended in the current loop (will be looped in the next engine loop)
@@ -145,10 +145,10 @@ typedef struct DynamicFlagsStruct {
 	uint16 bUnk2000 : 1;          // 0x2000 unused
 	uint16 bUnk4000 : 1;          // 0x4000 unused
 	uint16 bUnk8000 : 1;          // 0x8000 unused
-} DynamicFlagsStruct;
+};
 
 /** Actors structure */
-typedef struct ActorStruct {
+struct ActorStruct {
 	StaticFlagsStruct staticFlags;
 	DynamicFlagsStruct dynamicFlags;
 
@@ -213,7 +213,7 @@ typedef struct ActorStruct {
 	ZVBox boudingBox;
 	ActorMoveStruct move;
 	AnimTimerDataStruct animTimerData;
-} ActorStruct;
+};
 
 class TwinEEngine;
 

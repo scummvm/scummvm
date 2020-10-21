@@ -72,7 +72,7 @@ static const struct TwinELanguage {
 	Used in the engine to load/use certain parts of code according with
 	this settings. Check \a lba.cfg file for valid values for each settings.\n
 	All the settings with (*) means they are new and only exist in this engine. */
-typedef struct ConfigFile {
+struct ConfigFile {
 	/** Index into the LanguageTypes array. */
 	int32 LanguageId = 0;
 	/** Index into the LanguageTypes array. */
@@ -109,14 +109,14 @@ typedef struct ConfigFile {
 	int32 SceZoom = 0;
 	/** Flag to toggle Wall Collision */
 	int32 WallCollision = 0;
-} ConfigFile;
+};
 
-typedef struct MouseStatusStruct {
+struct MouseStatusStruct {
 	int32 left = 0;
 	int32 right = 0;
-	int32 X = 0;
-	int32 Y = 0;
-} MouseStatusStruct;
+	int32 x = 0;
+	int32 y = 0;
+};
 
 class Actor;
 class Animations;

@@ -450,7 +450,7 @@ void Debug::debugProcessWindow() {
 
 			if (mouseData.left) {
 				int type = 0;
-				if ((type = debugProcessButton(mouseData.X, mouseData.Y)) != NO_ACTION) { // process menu item
+				if ((type = debugProcessButton(mouseData.x, mouseData.y)) != NO_ACTION) { // process menu item
 					if (debugTypeUseMenu(type)) {
 						_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 						_engine->copyBlockPhys(205, 55, 634, 474);

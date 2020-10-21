@@ -36,7 +36,7 @@ namespace TwinE {
 #define FLASCREEN_HEIGHT 200
 
 /** FLA movie header structure */
-typedef struct FLAHeaderStruct {
+struct FLAHeaderStruct {
 	/** FLA version */
 	int8 version[6] {0};
 	/** Number of frames */
@@ -49,20 +49,20 @@ typedef struct FLAHeaderStruct {
 	int16 xsize = 0;
 	/** Frame height */
 	int16 ysize = 0;
-} FLAHeaderStruct;
+};
 
 /** FLA movie frame structure */
-typedef struct FLAFrameDataStruct {
+struct FLAFrameDataStruct {
 	/** Current frame size */
 	int8 videoSize = 0;
 	/** Dummy variable */
 	int8 dummy = 0;
 	/** Unknown frameVar0 */
 	int32 frameVar0 = 0;
-} FLAFrameDataStruct;
+};
 
 /** FLA movie sample structure */
-typedef struct FLASampleStruct {
+struct FLASampleStruct {
 	/** Number os samples */
 	int16 sampleNum = 0;
 	/** Sample frequency */
@@ -75,7 +75,7 @@ typedef struct FLASampleStruct {
 	uint8 x = 0;
 	/** Unknown y */
 	uint8 y = 0;
-} FLASampleStruct;
+};
 
 /** FLA Frame Opcode types */
 enum FlaFrameOpcode {
