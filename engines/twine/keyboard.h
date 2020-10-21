@@ -96,6 +96,7 @@ static constexpr const struct ActionMapping {
 static_assert(ARRAYSIZE(twineactions) == TwinEActionType::Max, "Unexpected action mapping array size");
 
 struct Keyboard {
+	bool actionStates[TwinEActionType::Max] {false};
 	/** Skipped key - key1 */
 	int16 skippedKey = 0;
 	/** Pressed key - printTextVar12 */

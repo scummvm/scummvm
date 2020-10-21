@@ -915,7 +915,7 @@ void TwinEEngine::readKeys() {
 		uint8 localKey = 0;
 		switch (event.type) {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-			actionStates[event.customType] = false;
+			_keyboard.actionStates[event.customType] = false;
 			localKey = twineactions[event.customType].localKey;
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
@@ -929,12 +929,12 @@ void TwinEEngine::readKeys() {
 					break;
 				default:
 					localKey = twineactions[event.customType].localKey;
-					actionStates[event.customType] = true;
+					_keyboard.actionStates[event.customType] = true;
 					break;
 				}
 			} else {
 				localKey = twineactions[event.customType].localKey;
-				actionStates[event.customType] = true;
+				_keyboard.actionStates[event.customType] = true;
 			}
 			break;
 		case Common::EVENT_KEYUP:
