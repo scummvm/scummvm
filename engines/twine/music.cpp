@@ -35,32 +35,51 @@ namespace TwinE {
 
 /** MP3 music folder */
 #define MUSIC_FOLDER "music"
-/** LBA1 default number of tracks */
+/**
+ * LBA1 default number of tracks
+ * <pre>
+ *  TRACK 01 MODE1/2352
+ *    INDEX 01 00:00:00
+ *  TRACK 02 AUDIO
+ *    INDEX 01 10:47:52
+ *  TRACK 03 AUDIO
+ *    INDEX 01 14:02:01
+ *  TRACK 04 AUDIO
+ *    INDEX 01 17:02:19
+ *  TRACK 05 AUDIO
+ *    INDEX 01 19:34:45
+ *  TRACK 06 AUDIO
+ *    INDEX 01 22:22:34
+ *  TRACK 07 AUDIO
+ *    INDEX 01 25:09:32
+ *  TRACK 08 AUDIO
+ *    INDEX 01 26:47:72
+ *  TRACK 09 AUDIO
+ *    INDEX 01 30:29:07
+ *  TRACK 10 AUDIO
+ *    INDEX 01 32:04:62
+ * </pre>
+ */
 #define NUM_CD_TRACKS 10
 /** Number of miliseconds to fade music */
 #define FADE_MS 500
-
-#if 0 // TODO
-/** SDL_Mixer track variable interface */
-Mix_Music *current_track;
-#endif
 
 void Music::musicVolume(int32 volume) {
 	_engine->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType, volume);
 }
 
-void Music::musicFadeIn(int32 loops, int32 ms) {
+void Music::musicFadeIn() {
 	int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
 #if 0 // TODO
-	Mix_FadeInMusic(current_track, loops, ms);
+	Mix_FadeInMusic(current_track, 1, FADE_MS);
 #endif
 	musicVolume(volume);
 }
 
-void Music::musicFadeOut(int32 ms) {
+void Music::musicFadeOut() {
 	int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
 #if 0 // TODO
-	while (!Mix_FadeOutMusic(ms) && Mix_PlayingMusic()) {
+	while (!Mix_FadeOutMusic(FADE_MS) && Mix_PlayingMusic()) {
 		SDL_Delay(100);
 	}
 	Mix_HaltMusic();
@@ -104,13 +123,11 @@ void Music::stopTrackMusic() {
 		return;
 	}
 
-	musicFadeOut(FADE_MS);
+	musicFadeOut();
 	stopTrackMusicCd();
 }
 
 void Music::playMidiMusic(int32 midiIdx, int32 loop) {
-	uint8 *dos_midi_ptr;
-	int32 midiSize;
 
 	if (!_engine->cfgfile.Sound) {
 		return;
@@ -124,19 +141,20 @@ void Music::playMidiMusic(int32 midiIdx, int32 loop) {
 	currentMusic = midiIdx;
 
 	char filename[256];
-	if (_engine->cfgfile.MidiType == 0)
+	if (_engine->cfgfile.MidiType == MIDIFILE_DOS)
 		snprintf(filename, sizeof(filename), "%s", Resources::HQR_MIDI_MI_DOS_FILE);
 	else
 		snprintf(filename, sizeof(filename), "%s", Resources::HQR_MIDI_MI_WIN_FILE);
 
 	if (midiPtr) {
-		musicFadeOut(FADE_MS / 2);
+		musicFadeOut();
 		stopMidiMusic();
 	}
 
-	midiSize = _engine->_hqrdepack->hqrGetallocEntry(&midiPtr, filename, midiIdx);
+	int32 midiSize = _engine->_hqrdepack->hqrGetallocEntry(&midiPtr, filename, midiIdx);
 
 	if (_engine->cfgfile.Sound == 1 && _engine->cfgfile.MidiType == 0) {
+		uint8 *dos_midi_ptr;
 		midiSize = convert_to_midi(midiPtr, midiSize, &dos_midi_ptr);
 		free(midiPtr);
 		midiPtr = dos_midi_ptr;
@@ -146,7 +164,7 @@ void Music::playMidiMusic(int32 midiIdx, int32 loop) {
 	SDL_RWops *rw = SDL_RWFromMem(midiPtr, midiSize);
 	current_track = Mix_LoadMUS_RW(rw, 0);
 
-	musicFadeIn(1, FADE_MS);
+	musicFadeIn();
 
 	if (Mix_PlayMusic(current_track, loop) == -1)
 		warning("Error while playing music: %d \n", midiIdx);

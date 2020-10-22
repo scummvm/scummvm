@@ -69,6 +69,20 @@ static const struct TwinELanguage {
     {"Italiano", "IT_"},
     {"Portugues", ""}};
 
+enum MidiFileType {
+	MIDIFILE_NONE,
+	MIDIFILE_DOS,
+	MIDIFILE_WIN
+};
+
+/** Config movie types */
+enum MovieType {
+	CONF_MOVIE_NONE = 0,
+	CONF_MOVIE_FLA = 1,
+	CONF_MOVIE_FLAWIDE = 2,
+	CONF_MOVIE_FLAPCX = 3
+};
+
 /** Configuration file structure
 
 	Used in the engine to load/use certain parts of code according with
@@ -84,7 +98,7 @@ struct ConfigFile {
 	/** Save voice files on hard disk */
 	bool FlagKeepVoice = false;
 	/** Type of music file to be used */
-	int8 MidiType = 0;
+	MidiFileType MidiType = MIDIFILE_NONE;
 	/** *Game version */
 	int32 Version = 0;
 	/** To allow fullscreen or window mode. */
@@ -94,7 +108,7 @@ struct ConfigFile {
 	/** Allow various sound types */
 	int32 Sound = 0;
 	/** Allow various movie types */
-	int32 Movie = 0;
+	int32 Movie = CONF_MOVIE_FLA;
 	/** Use cross fade effect while changing images, or be as the original */
 	int32 CrossFade = 0;
 	/** Flag used to keep the game frames per second */
