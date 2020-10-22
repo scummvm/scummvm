@@ -24,6 +24,7 @@
 
 #ifdef ENABLE_VKEYBD
 
+#include "gui/gui-manager.h"
 #include "backends/vkeybd/virtual-keyboard.h"
 
 #include "backends/keymapper/keymapper.h"
@@ -223,6 +224,21 @@ void VirtualKeyboard::handleMouseUp(int16 x, int16 y) {
 	_kbdGUI->endDrag();
 }
 
+// If no GUI opened before the virtual keyboard, kKeymapTypeGui is not yet initialized
+// Check and do it if needed
+void VirtualKeyboard::initKeymap() {
+        using namespace Common;
+
+        Keymapper *mapper = _system->getEventManager()->getKeymapper();
+
+        // Do not try to recreate same keymap over again
+        if (mapper->getKeymap(kGuiKeymapName) != 0)
+                return;
+
+        Keymap *guiMap = g_gui.getKeymap();
+        mapper->addGlobalKeymap(guiMap);
+}
+
 void VirtualKeyboard::show() {
 	if (!_loaded) {
 		debug(1, "VirtualKeyboard::show() - Virtual keyboard not loaded");
@@ -234,6 +250,7 @@ void VirtualKeyboard::show() {
 	switchMode(_initialMode);
 
 	{
+		initKeymap();
 		KeymapTypeEnabler guiKeymap(_system->getEventManager()->getKeymapper(), Keymap::kKeymapTypeGui);
 		_kbdGUI->run();
 	}
