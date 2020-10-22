@@ -113,10 +113,10 @@ public:
 	/** Auxiliar object render bottom position on screen */
 	int32 renderBottom = 0;
 
-	int16 drawInGameTransBox = 0;
+	bool drawInGameTransBox = false;
 
 	/** Request background redraw */
-	int16 reqBgRedraw = 0;
+	bool reqBgRedraw = false;
 
 	/** Current number of redraw regions in the screen */
 	int32 currNumOfRedrawBox = 0; // fullRedrawVar8

@@ -39,25 +39,25 @@ void DebugGrid::changeGridCamera(int16 pKey) {
 		// Press up - more X positions
 		if (pKey == twineactions[TwinEActionType::DebugGridCameraPressUp].localKey) {
 			_engine->_grid->newCameraZ--;
-			_engine->_redraw->reqBgRedraw = 1;
+			_engine->_redraw->reqBgRedraw = true;
 		}
 
 		// Press down - less X positions
 		else if (pKey == twineactions[TwinEActionType::DebugGridCameraPressDown].localKey) {
 			_engine->_grid->newCameraZ++;
-			_engine->_redraw->reqBgRedraw = 1;
+			_engine->_redraw->reqBgRedraw = true;
 		}
 
 		// Press left - less Z positions
 		else if (pKey == twineactions[TwinEActionType::DebugGridCameraPressLeft].localKey) {
 			_engine->_grid->newCameraX--;
-			_engine->_redraw->reqBgRedraw = 1;
+			_engine->_redraw->reqBgRedraw = true;
 		}
 
 		// Press right - more Z positions
 		else if (pKey == twineactions[TwinEActionType::DebugGridCameraPressRight].localKey) {
 			_engine->_grid->newCameraX++;
-			_engine->_redraw->reqBgRedraw = 1;
+			_engine->_redraw->reqBgRedraw = true;
 		}
 	}
 }
@@ -72,7 +72,7 @@ void DebugGrid::changeGrid(int16 pKey) {
 		if (_engine->_scene->currentSceneIdx > NUM_SCENES)
 			_engine->_scene->currentSceneIdx = 0;
 		_engine->_scene->needChangeScene = _engine->_scene->currentSceneIdx;
-		_engine->_redraw->reqBgRedraw = 1;
+		_engine->_redraw->reqBgRedraw = true;
 	}
 
 	// Press down - less X positions
@@ -81,7 +81,7 @@ void DebugGrid::changeGrid(int16 pKey) {
 		if (_engine->_scene->currentSceneIdx < 0)
 			_engine->_scene->currentSceneIdx = NUM_SCENES;
 		_engine->_scene->needChangeScene = _engine->_scene->currentSceneIdx;
-		_engine->_redraw->reqBgRedraw = 1;
+		_engine->_redraw->reqBgRedraw = true;
 	}
 }
 
@@ -109,7 +109,7 @@ void DebugGrid::applyCellingGrid(int16 pKey) {
 		} else if (_engine->_grid->useCellingGrid == 1) {
 			_engine->_grid->useCellingGrid = -1;
 			_engine->_grid->createGridMap();
-			_engine->_redraw->reqBgRedraw = 1;
+			_engine->_redraw->reqBgRedraw = true;
 			debug("Disable Celling Grid index: %d", _engine->_grid->cellingGridIdx);
 			_engine->_scene->needChangeScene = -2; // tricky to make the fade
 		}

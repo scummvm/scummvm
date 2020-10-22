@@ -439,7 +439,7 @@ int32 Grid::initCellingGrid(int32 index) {
 	if (gridPtr)
 		free(gridPtr);
 
-	_engine->_redraw->reqBgRedraw = 1;
+	_engine->_redraw->reqBgRedraw = true;
 
 	return 0;
 }

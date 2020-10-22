@@ -719,7 +719,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 		} else {
 			_engine->_screens->fadeToPal(_engine->_screens->mainPaletteRGBA);
 		}
-		_engine->_screens->lockPalette = 0;
+		_engine->_screens->lockPalette = false;
 	}
 
 	if (_engine->zoomScreen) {

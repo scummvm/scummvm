@@ -299,7 +299,7 @@ void Scene::resetScene() {
 	}
 
 	_engine->_actor->currentPositionInBodyPtrTab = 0;
-	_engine->_screens->useAlternatePalette = 0;
+	_engine->_screens->useAlternatePalette = false;
 }
 
 void Scene::changeScene() {
@@ -377,8 +377,8 @@ void Scene::changeScene() {
 	_engine->_movements->heroMoved = 1;
 	_engine->_grid->useCellingGrid = -1;
 	_engine->_grid->cellingGridIdx = -1;
-	_engine->_redraw->reqBgRedraw = 1;
-	_engine->_screens->lockPalette = 0;
+	_engine->_redraw->reqBgRedraw = true;
+	_engine->_screens->lockPalette = false;
 
 	needChangeScene = -1;
 	changeRoomVar10 = 1;
@@ -500,7 +500,7 @@ void Scene::processActorZones(int32 actorIdx) {
 						_engine->_grid->newCameraX = zone->infoData.CameraView.x;
 						_engine->_grid->newCameraY = zone->infoData.CameraView.y;
 						_engine->_grid->newCameraZ = zone->infoData.CameraView.z;
-						_engine->_redraw->reqBgRedraw = 1;
+						_engine->_redraw->reqBgRedraw = true;
 					}
 				}
 				break;
@@ -565,7 +565,7 @@ void Scene::processActorZones(int32 actorIdx) {
 		_engine->_grid->useCellingGrid = -1;
 		_engine->_grid->cellingGridIdx = -1;
 		_engine->_grid->createGridMap();
-		_engine->_redraw->reqBgRedraw = 1;
+		_engine->_redraw->reqBgRedraw = true;
 	}
 }
 

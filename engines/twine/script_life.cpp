@@ -625,7 +625,7 @@ static int32 lCAM_FOLLOW(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor
 		engine->_grid->newCameraZ = engine->_scene->sceneActors[followedActorIdx].z >> 9;
 
 		engine->_scene->currentlyFollowedActor = followedActorIdx;
-		engine->_redraw->reqBgRedraw = 1;
+		engine->_redraw->reqBgRedraw = true;
 	}
 
 	return 0;
@@ -945,13 +945,13 @@ static int32 lZOOM(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 		engine->_screens->fadeToBlack(engine->_screens->mainPaletteRGBA);
 		engine->initMCGA();
 		engine->_screens->setBackPal();
-		engine->_screens->lockPalette = 1;
+		engine->_screens->lockPalette = true;
 	} else if (!engine->zoomScreen && engine->_redraw->drawInGameTransBox) {
 		engine->_screens->fadeToBlack(engine->_screens->mainPaletteRGBA);
 		engine->initSVGA();
 		engine->_screens->setBackPal();
-		engine->_screens->lockPalette = 1;
-		engine->_redraw->reqBgRedraw = 1;
+		engine->_screens->lockPalette = true;
+		engine->_redraw->reqBgRedraw = true;
 	}
 
 	return 0;
@@ -1219,7 +1219,7 @@ static int32 lGRM_OFF(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 static int32 lFADE_PAL_RED(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	engine->freezeTime();
 	engine->_screens->fadePalRed(engine->_screens->mainPaletteRGBA);
-	engine->_screens->useAlternatePalette = 0;
+	engine->_screens->useAlternatePalette = false;
 	engine->unfreezeTime();
 	return 0;
 }
@@ -1230,7 +1230,7 @@ static int32 lFADE_ALARM_RED(TwinEEngine *engine, int32 actorIdx, ActorStruct *a
 	engine->_hqrdepack->hqrGetEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
 	engine->_screens->fadePalRed(engine->_screens->paletteRGBA);
-	engine->_screens->useAlternatePalette = 1;
+	engine->_screens->useAlternatePalette = true;
 	engine->unfreezeTime();
 	return 0;
 }
@@ -1241,7 +1241,7 @@ static int32 lFADE_ALARM_PAL(TwinEEngine *engine, int32 actorIdx, ActorStruct *a
 	engine->_hqrdepack->hqrGetEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
 	engine->_screens->adjustCrossPalette(engine->_screens->paletteRGBA, engine->_screens->mainPaletteRGBA);
-	engine->_screens->useAlternatePalette = 0;
+	engine->_screens->useAlternatePalette = false;
 	engine->unfreezeTime();
 	return 0;
 }
@@ -1250,7 +1250,7 @@ static int32 lFADE_ALARM_PAL(TwinEEngine *engine, int32 actorIdx, ActorStruct *a
 static int32 lFADE_RED_PAL(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	engine->freezeTime();
 	engine->_screens->fadeRedPal(engine->_screens->mainPaletteRGBA);
-	engine->_screens->useAlternatePalette = 0;
+	engine->_screens->useAlternatePalette = false;
 	engine->unfreezeTime();
 	return 0;
 }
@@ -1261,7 +1261,7 @@ static int32 lFADE_RED_ALARM(TwinEEngine *engine, int32 actorIdx, ActorStruct *a
 	engine->_hqrdepack->hqrGetEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
 	engine->_screens->fadeRedPal(engine->_screens->paletteRGBA);
-	engine->_screens->useAlternatePalette = 1;
+	engine->_screens->useAlternatePalette = true;
 	engine->unfreezeTime();
 	return 0;
 }
@@ -1272,7 +1272,7 @@ static int32 lFADE_PAL_ALARM(TwinEEngine *engine, int32 actorIdx, ActorStruct *a
 	engine->_hqrdepack->hqrGetEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
 	engine->_screens->adjustCrossPalette(engine->_screens->mainPaletteRGBA, engine->_screens->paletteRGBA);
-	engine->_screens->useAlternatePalette = 1;
+	engine->_screens->useAlternatePalette = true;
 	engine->unfreezeTime();
 	return 0;
 }
@@ -1326,14 +1326,14 @@ static int32 lSET_DARK_PAL(TwinEEngine *engine, int32 actorIdx, ActorStruct *act
 		engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
 		engine->setPalette(engine->_screens->paletteRGBA);
 	}
-	engine->_screens->useAlternatePalette = 1;
+	engine->_screens->useAlternatePalette = true;
 	engine->unfreezeTime();
 	return 0;
 }
 
 /*0x5D*/
 static int32 lSET_NORMAL_PAL(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	engine->_screens->useAlternatePalette = 0;
+	engine->_screens->useAlternatePalette = false;
 	if (!engine->_screens->lockPalette) {
 		engine->setPalette(engine->_screens->mainPaletteRGBA);
 	}

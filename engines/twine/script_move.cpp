@@ -298,14 +298,14 @@ static int32 mBACKGROUND(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor
 		if (!actor->staticFlags.bIsBackgrounded) {
 			actor->staticFlags.bIsBackgrounded = 1;
 			if (actor->dynamicFlags.bIsVisible) {
-				engine->_redraw->reqBgRedraw = 1;
+				engine->_redraw->reqBgRedraw = true;
 			}
 		}
 	} else {
 		if (actor->staticFlags.bIsBackgrounded) {
 			actor->staticFlags.bIsBackgrounded = 0;
 			if (actor->dynamicFlags.bIsVisible) {
-				engine->_redraw->reqBgRedraw = 1;
+				engine->_redraw->reqBgRedraw = true;
 			}
 		}
 	}

@@ -36,7 +36,7 @@ void Screens::adelineLogo() {
 	loadImage(RESSHQR_ADELINEIMG);
 	_engine->delaySkip(7000);
 	fadeOut(paletteRGBACustom);
-	palCustom = 1;
+	palCustom = true;
 }
 
 void Screens::loadMenuImage(bool fade_in) {
@@ -48,7 +48,7 @@ void Screens::loadMenuImage(bool fade_in) {
 		_engine->setPalette(paletteRGBA);
 	}
 
-	palCustom = 0;
+	palCustom = false;
 }
 
 void Screens::loadCustomPalette(int32 index) {
@@ -77,7 +77,7 @@ void Screens::loadImage(int32 index, bool fade_in) {
 		_engine->setPalette(paletteRGBACustom);
 	}
 
-	palCustom = 1;
+	palCustom = true;
 }
 
 void Screens::loadImageDelay(int32 index, int32 time) {
@@ -181,14 +181,14 @@ void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 void Screens::fadeToBlack(uint32 *pal) {
 	int32 i = 0;
 
-	if (palReseted == 0) {
+	if (!palResetted) {
 		for (i = 100; i >= 0; i -= 3) {
 			adjustPalette(0, 0, 0, pal, i);
 			_engine->_system->delayMillis(1000 / 50);
 		}
 	}
 
-	palReseted = 1;
+	palResetted = true;
 }
 
 void Screens::fadeToPal(uint32 *pal) {
@@ -201,7 +201,7 @@ void Screens::fadeToPal(uint32 *pal) {
 
 	_engine->setPalette(pal);
 
-	palReseted = 0;
+	palResetted = false;
 }
 
 void Screens::blackToWhite() {
@@ -220,7 +220,7 @@ void Screens::setBackPal() {
 
 	_engine->setPalette(paletteRGBA);
 
-	palReseted = 1;
+	palResetted = true;
 }
 
 void Screens::fadePalRed(uint32 *pal) {

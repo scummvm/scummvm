@@ -40,7 +40,7 @@ void Resources::initPalettes() {
 	_engine->setPalette(_engine->_screens->paletteRGBA);
 
 	// We use it now
-	_engine->_screens->palCustom = 0;
+	_engine->_screens->palCustom = false;
 }
 
 void Resources::preloadSprites() {
