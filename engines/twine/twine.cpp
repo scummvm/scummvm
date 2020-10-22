@@ -897,7 +897,7 @@ static const struct KeyProperties {
     {0x08, true,  0x58}, // ?
     {0x00, true,  0x2A}, // left shift
     {0x00, true,  0x00},
-    {0x00, false, 0x00},
+    {0x01, false, 0x01}, // esc
     {0x00, false, 0x00}};
 static_assert(ARRAYSIZE(pressedKeyCharMap) == 31, "Expected size of key char map");
 
