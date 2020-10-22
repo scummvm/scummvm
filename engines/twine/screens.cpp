@@ -31,7 +31,7 @@
 namespace TwinE {
 
 void Screens::adelineLogo() {
-	_engine->_music->playMidiMusic(31, 0);
+	_engine->_music->playMidiMusic(31);
 
 	loadImage(RESSHQR_ADELINEIMG);
 	_engine->delaySkip(7000);

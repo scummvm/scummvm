@@ -1037,7 +1037,7 @@ static int32 lPLAY_FLA(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) 
 /*0x41*/
 static int32 lPLAY_MIDI(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	int32 midiIdx = *(scriptPtr++);
-	engine->_music->playMidiMusic(midiIdx, 0); // TODO: improve this
+	engine->_music->playMidiMusic(midiIdx); // TODO: improve this
 	return 0;
 }
 
