@@ -121,25 +121,22 @@ void Text::stopVox(int32 index) {
 }
 
 void Text::initTextBank(int32 bankIdx) { // InitDial
-	int32 langIdx;
-	int32 hqrSize;
-
 	// don't load if we already have the dialogue text bank loaded
-	if (bankIdx == currentBankIdx)
+	if (bankIdx == currentBankIdx) {
 		return;
+	}
 
 	currentBankIdx = bankIdx;
-	// RECHECK THIS LATER
-	textVar2[0] = textVar3;
+	textVar2[0] = '\0';
 
 	// get index according with language
-	langIdx = (_engine->cfgfile.LanguageId * 14) * 2 + bankIdx * 2;
-
-	hqrSize = _engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialOrderPtr, Resources::HQR_TEXT_FILE, langIdx);
+	const int32 size = 28; // lba2 is 30
+	const int32 languageIndex = _engine->cfgfile.LanguageId * size + bankIdx * 2;
+	const int32 hqrSize = _engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex);
 
 	numDialTextEntries = hqrSize / 2;
 
-	hqrSize = _engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialTextPtr, Resources::HQR_TEXT_FILE, ++langIdx);
+	_engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialTextPtr, Resources::HQR_TEXT_FILE, languageIndex + 1);
 
 	if (_engine->cfgfile.LanguageCDId) {
 		initVoxBank(bankIdx);
