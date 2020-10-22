@@ -63,11 +63,11 @@ static const struct TwinELanguage {
 	const char *id;
 } LanguageTypes[] = {
     {"English", "EN_"},
-    {"Francais", "FR_"},
-    {"Deutsch", "DE_"},
-    {"Espanol", "SP_"},
-    {"Italiano", "IT_"},
-    {"Portugues", ""}};
+    {"French", "FR_"},
+    {"German", "DE_"},
+    {"Spanish", "SP_"},
+    {"Italian", "IT_"},
+    {"Portuguese", ""}};
 
 enum MidiFileType {
 	MIDIFILE_NONE,
@@ -101,8 +101,6 @@ struct ConfigFile {
 	MidiFileType MidiType = MIDIFILE_NONE;
 	/** *Game version */
 	int32 Version = 0;
-	/** To allow fullscreen or window mode. */
-	bool FullScreen = false;
 	/** If you want to use the LBA CD or not */
 	int32 UseCD = 0;
 	/** Allow various sound types */
