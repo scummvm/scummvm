@@ -38,7 +38,7 @@ private:
 	int32 checkZoneType(int32 type);
 public:
 	DebugScene(TwinEEngine *engine);
-	int32 showingZones = 0;
+	bool showingZones = false;
 	int32 typeZones = 127; // all zones on as default
 
 	void displayZones(int16 pKey);

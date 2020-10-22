@@ -36,8 +36,8 @@ private:
 public:
 	DebugGrid(TwinEEngine *engine);
 
-	int32 useFreeCamera = 0;
-	int32 canChangeScenes = 0;
+	bool useFreeCamera = false;
+	bool canChangeScenes = false;
 
 	/** Change scenario camera positions */
 	void changeGridCamera(int16 pKey);

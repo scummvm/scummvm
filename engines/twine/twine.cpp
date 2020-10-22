@@ -226,7 +226,7 @@ void TwinEEngine::initConfigurations() {
 	cfgfile.Movie = ConfGetIntOrDefault("Movie", CONF_MOVIE_FLA);
 	cfgfile.CrossFade = ConfGetIntOrDefault("CrossFade", 0);
 	cfgfile.Fps = ConfGetIntOrDefault("Fps", DEFAULT_FRAMES_PER_SECOND);
-	cfgfile.Debug = ConfGetIntOrDefault("Debug", 0);
+	cfgfile.Debug = ConfGetIntOrDefault("Debug", 0) == 1;
 	cfgfile.UseAutoSaving = ConfGetIntOrDefault("UseAutoSaving", 0);
 	cfgfile.AutoAgressive = ConfGetIntOrDefault("CombatAuto", 0);
 	cfgfile.ShadowMode = ConfGetIntOrDefault("Shadow", 0);

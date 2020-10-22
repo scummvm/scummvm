@@ -259,13 +259,13 @@ int32 MenuOptions::enterPlayerName(int32 textIdx) {
 
 	enterPlayerNameVar2 = 0;
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip(); // frontVideoBuffer
+	_engine->flip();
 
 	return 1;
 }
 
 void MenuOptions::newGameMenu() {
-	//TODO: process players name
+	// TODO: process players name
 	if (enterPlayerName(MAINMENU_ENTERPLAYERNAME)) {
 		_engine->_gameState->initEngineVars();
 		newGame();

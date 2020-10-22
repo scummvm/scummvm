@@ -203,13 +203,13 @@ int32 Debug::debugGetActionsState(int32 type) {
 
 	switch (type) {
 	case FREE_CAMERA:
-		state = _engine->_debugGrid->useFreeCamera;
+		state = _engine->_debugGrid->useFreeCamera ? 1 : 0;
 		break;
 	case CHANGE_SCENE:
-		state = _engine->_debugGrid->canChangeScenes;
+		state = _engine->_debugGrid->canChangeScenes ? 1 : 0;
 		break;
 	case SHOW_ZONES:
-		state = _engine->_debugScene->showingZones;
+		state = _engine->_debugScene->showingZones ? 1 : 0;
 		break;
 	case SHOW_ZONE_CUBE:
 	case SHOW_ZONE_CAMERA:
