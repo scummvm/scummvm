@@ -91,12 +91,9 @@ enum MovieType {
 struct ConfigFile {
 	/** Index into the LanguageTypes array. */
 	int32 LanguageId = 0;
-	/** Index into the LanguageTypes array. */
-	int32 LanguageCDId = 0;
+	bool Voice = true;
 	/** Enable/Disable game dialogues */
 	bool FlagDisplayText = false;
-	/** Save voice files on hard disk */
-	bool FlagKeepVoice = false;
 	/** Type of music file to be used */
 	MidiFileType MidiType = MIDIFILE_NONE;
 	/** *Game version */

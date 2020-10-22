@@ -66,10 +66,9 @@ void Text::initVoxBank(int32 bankIdx) {
 
 	// TODO check the rest to reverse
 }
-int32 Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
-	int32 i = 0;
+
+bool Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
 	int32 currIdx = 0;
-	int32 orderIdx = 0;
 
 	int16 *localOrderBuf = (int16 *)dialOrderPtr;
 
@@ -77,8 +76,8 @@ int32 Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
 	hasHiddenVox = 0;
 
 	// choose right text from order index
-	for (i = 0; i < numDialTextEntries; i++) {
-		orderIdx = *(localOrderBuf++);
+	for (int32 i = 0; i < numDialTextEntries; i++) {
+		int32 orderIdx = *(localOrderBuf++);
 		if (orderIdx == index) {
 			currIdx = i;
 			break;
@@ -89,35 +88,35 @@ int32 Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
 
 	_engine->_sound->playVoxSample(currDialTextEntry);
 
-	return 1;
+	return true;
 }
 
-int32 Text::playVox(int32 index) {
-	if (_engine->cfgfile.LanguageCDId && index) {
-		if (hasHiddenVox && !_engine->_sound->isSamplePlaying(index)) {
-			_engine->_sound->playVoxSample(index);
-			return 1;
-		}
+bool Text::playVox(int32 index) {
+	if (!_engine->cfgfile.Voice) {
+		return false;
+	}
+	if (hasHiddenVox && !_engine->_sound->isSamplePlaying(index)) {
+		_engine->_sound->playVoxSample(index);
+		return true;
 	}
 
-	return 0;
+	return false;
 }
 
-int32 Text::playVoxSimple(int32 index) {
-	if (_engine->cfgfile.LanguageCDId && index) {
-		playVox(index);
-
-		if (_engine->_sound->isSamplePlaying(index)) {
-			return 1;
-		}
+bool Text::playVoxSimple(int32 index) {
+	if (_engine->_sound->isSamplePlaying(index)) {
+		return true;
 	}
-
-	return 0;
+	return playVox(index);
 }
 
-void Text::stopVox(int32 index) {
+bool Text::stopVox(int32 index) {
+	if (!_engine->_sound->isSamplePlaying(index)) {
+		return false;
+	}
 	hasHiddenVox = 0;
 	_engine->_sound->stopSample(index);
+	return true;
 }
 
 void Text::initTextBank(int32 bankIdx) { // InitDial
@@ -138,9 +137,7 @@ void Text::initTextBank(int32 bankIdx) { // InitDial
 
 	_engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialTextPtr, Resources::HQR_TEXT_FILE, languageIndex + 1);
 
-	if (_engine->cfgfile.LanguageCDId) {
-		initVoxBank(bankIdx);
-	}
+	initVoxBank(bankIdx);
 }
 
 void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
@@ -598,9 +595,7 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
 	// get right VOX entry index
-	if (_engine->cfgfile.LanguageCDId) {
-		initVoxToPlay(index);
-	}
+	initVoxToPlay(index);
 
 	// if we don't display text, than still plays vox file
 	if (_engine->cfgfile.FlagDisplayText) {
@@ -654,9 +649,7 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 
 		hasHiddenVox = 0;
 
-		if (_engine->cfgfile.LanguageCDId && _engine->_sound->isSamplePlaying(currDialTextEntry)) {
-			stopVox(currDialTextEntry);
-		}
+		stopVox(currDialTextEntry);
 
 		printTextVar13 = 0;
 
@@ -707,9 +700,7 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 		voxHiddenIndex = 0;
 	}
 
-	if (_engine->cfgfile.LanguageCDId && _engine->_sound->isSamplePlaying(currDialTextEntry)) {
-		stopVox(currDialTextEntry);
-	}
+	stopVox(currDialTextEntry);
 
 	_engine->_interface->loadClip();
 }
@@ -833,9 +824,7 @@ void Text::drawAskQuestion(int32 index) { // MyDial
 	int32 textStatus = 1;
 
 	// get right VOX entry index
-	if (_engine->cfgfile.LanguageCDId) {
-		initVoxToPlay(index);
-	}
+	initVoxToPlay(index);
 
 	initText(index);
 	initDialogueBox();
@@ -867,19 +856,17 @@ void Text::drawAskQuestion(int32 index) { // MyDial
 		_engine->_system->delayMillis(1);
 	} while (textStatus);
 
-	if (_engine->cfgfile.LanguageCDId) {
-		while (playVoxSimple(currDialTextEntry)) {
-			if (_engine->shouldQuit()) {
-				break;
-			}
+	while (playVoxSimple(currDialTextEntry)) {
+		if (_engine->shouldQuit()) {
+			break;
 		}
+	}
 
-		hasHiddenVox = 0;
-		voxHiddenIndex = 0;
+	hasHiddenVox = 0;
+	voxHiddenIndex = 0;
 
-		if (_engine->_sound->isSamplePlaying(currDialTextEntry)) {
-			stopVox(currDialTextEntry);
-		}
+	if (_engine->_sound->isSamplePlaying(currDialTextEntry)) {
+		stopVox(currDialTextEntry);
 	}
 
 	printTextVar13 = 0;

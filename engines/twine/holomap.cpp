@@ -136,8 +136,6 @@ void Holomap::processHolomap() {
 	drawHolomapTitle(320, 25);
 	_engine->_renderer->setCameraPosition(320, 190, 128, 1024, 1024);
 
-	const int32 tmpLanguageCDId = _engine->cfgfile.LanguageCDId;
-	_engine->cfgfile.LanguageCDId = 0;
 	_engine->_text->initTextBank(2);
 	_engine->_text->setFontCrossColor(9);
 
@@ -153,7 +151,6 @@ void Holomap::processHolomap() {
 
 	// TODO memcopy reset palette
 
-	_engine->cfgfile.LanguageCDId = tmpLanguageCDId;
 	_engine->unfreezeTime();
 }
 
