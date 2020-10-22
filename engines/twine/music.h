@@ -23,15 +23,23 @@
 #ifndef TWINE_MUSIC_H
 #define TWINE_MUSIC_H
 
+#include "audio/midiplayer.h"
 #include "common/scummsys.h"
 
 namespace TwinE {
 
 class TwinEEngine;
 
+class TwinEMidiPlayer : public Audio::MidiPlayer {
+public:
+	TwinEMidiPlayer();
+	void play(byte *buf, int size);
+};
+
 class Music {
 private:
 	TwinEEngine *_engine;
+	TwinEMidiPlayer _midiPlayer;
 
 	void musicFadeIn();
 	void musicFadeOut();
@@ -67,12 +75,12 @@ public:
 	 * Play MIDI music
 	 * @param midiIdx music index under mini_mi_win.hqr
 	 */
-	void playMidiMusic(int32 midiIdx, int32 loop);
+	void playMidiMusic(int32 midiIdx, int32 loop = 0);
 	/** Stop MIDI music */
 	void stopMidiMusic();
 
 	/** Initialize CD-Rom */
-	int32 initCdrom();
+	bool initCdrom();
 
 	/** Stop MIDI and Track music */
 	void stopMusic();

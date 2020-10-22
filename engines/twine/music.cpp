@@ -20,13 +20,14 @@
  *
  */
 
+#include "twine/music.h"
 #include "audio/midiparser.h"
+#include "audio/midiplayer.h"
 #include "backends/audiocd/audiocd.h"
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "twine/hqrdepack.h"
-#include "twine/music.h"
 #include "twine/resources.h"
 #include "twine/twine.h"
 #include "twine/xmidi.h"
@@ -61,30 +62,52 @@ namespace TwinE {
  * </pre>
  */
 #define NUM_CD_TRACKS 10
-/** Number of miliseconds to fade music */
-#define FADE_MS 500
+
+TwinEMidiPlayer::TwinEMidiPlayer() {
+	MidiPlayer::createDriver();
+
+	int ret = _driver->open();
+	if (ret == 0) {
+		if (_nativeMT32)
+			_driver->sendMT32Reset();
+		else
+			_driver->sendGMReset();
+		_driver->setTimerCallback(this, &timerCallback);
+	}
+}
+
+void TwinEMidiPlayer::play(byte *buf, int size) {
+	MidiParser *parser = MidiParser::createParser_SMF();
+	if (parser->loadMusic(buf, size)) {
+		parser->setTrack(0);
+		parser->setMidiDriver(this);
+		parser->setTimerRate(_driver->getBaseTempo());
+		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+
+		_parser = parser;
+
+		syncVolume();
+
+		// All the tracks are supposed to loop
+		_isLooping = true;
+		_isPlaying = true;
+	}
+}
 
 void Music::musicVolume(int32 volume) {
 	_engine->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType, volume);
+	_midiPlayer.setVolume(volume);
 }
 
 void Music::musicFadeIn() {
 	int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
-#if 0 // TODO
-	Mix_FadeInMusic(current_track, 1, FADE_MS);
-#endif
+	// TODO implement fade in
 	musicVolume(volume);
 }
 
 void Music::musicFadeOut() {
 	int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
-#if 0 // TODO
-	while (!Mix_FadeOutMusic(FADE_MS) && Mix_PlayingMusic()) {
-		SDL_Delay(100);
-	}
-	Mix_HaltMusic();
-	Mix_RewindMusic();
-#endif
+	// TODO implement fade out
 	musicVolume(volume);
 }
 
@@ -110,8 +133,9 @@ void Music::playTrackMusic(int32 track) {
 		return;
 	}
 
-	if (track == currentMusic)
+	if (track == currentMusic) {
 		return;
+	}
 	currentMusic = track;
 
 	stopMusic();
@@ -128,8 +152,7 @@ void Music::stopTrackMusic() {
 }
 
 void Music::playMidiMusic(int32 midiIdx, int32 loop) {
-
-	if (!_engine->cfgfile.Sound) {
+	if (!_engine->cfgfile.Sound || _engine->cfgfile.MidiType == MIDIFILE_NONE) {
 		return;
 	}
 
@@ -140,11 +163,12 @@ void Music::playMidiMusic(int32 midiIdx, int32 loop) {
 	stopMusic();
 	currentMusic = midiIdx;
 
-	char filename[256];
-	if (_engine->cfgfile.MidiType == MIDIFILE_DOS)
-		snprintf(filename, sizeof(filename), "%s", Resources::HQR_MIDI_MI_DOS_FILE);
-	else
-		snprintf(filename, sizeof(filename), "%s", Resources::HQR_MIDI_MI_WIN_FILE);
+	const char *filename;
+	if (_engine->cfgfile.MidiType == MIDIFILE_DOS) {
+		filename = Resources::HQR_MIDI_MI_DOS_FILE;
+	} else {
+		filename = Resources::HQR_MIDI_MI_WIN_FILE;
+	}
 
 	if (midiPtr) {
 		musicFadeOut();
@@ -153,22 +177,14 @@ void Music::playMidiMusic(int32 midiIdx, int32 loop) {
 
 	int32 midiSize = _engine->_hqrdepack->hqrGetallocEntry(&midiPtr, filename, midiIdx);
 
-	if (_engine->cfgfile.Sound == 1 && _engine->cfgfile.MidiType == 0) {
+	if (_engine->cfgfile.MidiType == MIDIFILE_DOS) {
 		uint8 *dos_midi_ptr;
 		midiSize = convert_to_midi(midiPtr, midiSize, &dos_midi_ptr);
 		free(midiPtr);
 		midiPtr = dos_midi_ptr;
 	}
 
-#if 0
-	SDL_RWops *rw = SDL_RWFromMem(midiPtr, midiSize);
-	current_track = Mix_LoadMUS_RW(rw, 0);
-
-	musicFadeIn();
-
-	if (Mix_PlayMusic(current_track, loop) == -1)
-		warning("Error while playing music: %d \n", midiIdx);
-#endif
+	_midiPlayer.play(midiPtr, midiSize);
 }
 
 void Music::stopMidiMusic() {
@@ -176,31 +192,25 @@ void Music::stopMidiMusic() {
 		return;
 	}
 
-#if 0 // TODO
-	if (current_track != NULL) {
-		Mix_FreeMusic(current_track);
-		current_track = NULL;
-		if (midiPtr != NULL)
-			free(midiPtr);
-	}
-#endif
+	_midiPlayer.stop();
+	free(midiPtr);
 }
 
-int Music::initCdrom() {
+bool Music::initCdrom() {
 	if (!_engine->cfgfile.Sound) {
-		return 0;
+		return false;
 	}
 #if 0 // TODO: mgerhardy
 	AudioCDManager* cdrom = g_system->getAudioCDManager();
 	if (cdrom->numtracks == NUM_CD_TRACKS) {
 		_engine->cdDir = "LBA";
 		_engine->cfgfile.UseCD = 1;
-		return 1;
+		return true;
 	}
 #endif
 	// not found the right CD
 	_engine->cfgfile.UseCD = 0;
-	return 0;
+	return false;
 }
 
 void Music::stopMusic() {

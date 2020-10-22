@@ -83,7 +83,7 @@ void MenuOptions::newGame() {
 	_engine->_screens->clearScreen();
 	_engine->flip();
 
-	_engine->_music->playMidiMusic(1, 0);
+	_engine->_music->playMidiMusic(1);
 	_engine->_flaMovies->playFlaMovie(FLA_INTROD);
 
 	_engine->_screens->clearScreen();
