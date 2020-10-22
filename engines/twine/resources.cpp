@@ -45,6 +45,10 @@ void Resources::initPalettes() {
 
 void Resources::preloadSprites() {
 	const int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_SPRITES_FILE);
+	if (numEntries > NUM_SPRITES) {
+		error("Max allowed sprites exceeded: %i/%i", numEntries, NUM_SPRITES);
+	}
+	debug("preload %i sprites", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		_engine->_actor->spriteSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&_engine->_actor->spriteTable[i], Resources::HQR_SPRITES_FILE, i);
 	}
@@ -52,6 +56,10 @@ void Resources::preloadSprites() {
 
 void Resources::preloadAnimations() {
 	const int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_ANIM_FILE);
+	if (numEntries > NUM_ANIMS) {
+		error("Max allowed animations exceeded: %i/%i", numEntries, NUM_ANIMS);
+	}
+	debug("preload %i animations", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		_engine->_animations->animSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&_engine->_animations->animTable[i], Resources::HQR_ANIM_FILE, i);
 	}
@@ -59,6 +67,10 @@ void Resources::preloadAnimations() {
 
 void Resources::preloadSamples() {
 	const int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_SAMPLES_FILE);
+	if (numEntries > NUM_SAMPLES) {
+		error("Max allowed samples exceeded: %i/%i", numEntries, NUM_SAMPLES);
+	}
+	debug("preload %i samples", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		_engine->_sound->samplesSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&_engine->_sound->samplesTable[i], Resources::HQR_SAMPLES_FILE, i);
 	}
@@ -66,6 +78,10 @@ void Resources::preloadSamples() {
 
 void Resources::preloadInventoryItems() {
 	const int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_INVOBJ_FILE);
+	if (numEntries > NUM_INVENTORY_ITEMS) {
+		error("Max allowed inventory items exceeded: %i/%i", numEntries, NUM_INVENTORY_ITEMS);
+	}
+	debug("preload %i inventory items", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		inventorySizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&inventoryTable[i], Resources::HQR_INVOBJ_FILE, i);
 	}
@@ -93,7 +109,7 @@ void Resources::initResources() {
 
 	preloadSprites();
 	preloadAnimations();
-	//preloadSamples();
+	preloadSamples();
 	preloadInventoryItems();
 }
 
