@@ -213,10 +213,14 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const Math::Vector3d 
 	glEnable(GL_TEXTURE_2D);
 	static_cast<BaseSurfaceOpenGL3D *>(shadowImage)->setTexture();
 
-	#ifndef __MORPHOS__
-	glInterleavedArrays(GL_T2F_N3F_V3F, 0, _simpleShadow);
-	#endif
-	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, sizeof(SimpleShadowVertex), &_simpleShadow[0].x);
+	glNormalPointer(GL_FLOAT, sizeof(SimpleShadowVertex), &_simpleShadow[0].nx);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(SimpleShadowVertex), &_simpleShadow[0].u);
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glDepthMask(true);
@@ -721,11 +725,12 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
 
-#ifndef __MORPHOS__
-	glInterleavedArrays(GL_T2F_C4UB_V3F, 0, vertices);
-#endif
-	
+	glVertexPointer(3, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].x);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].u);
+	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SpriteVertex), &vertices[0].r);
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	if (alphaDisable) {
