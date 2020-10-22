@@ -132,11 +132,17 @@ void Text::initTextBank(int32 bankIdx) { // InitDial
 	const int32 size = 28; // lba2 is 30
 	const int32 languageIndex = _engine->cfgfile.LanguageId * size + bankIdx * 2;
 	const int32 hqrSize = _engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex);
+	if (hqrSize == 0) {
+		warning("Failed to initialize text bank %i from file %s", languageIndex, Resources::HQR_TEXT_FILE);
+		return;
+	}
 
 	numDialTextEntries = hqrSize / 2;
 
-	_engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialTextPtr, Resources::HQR_TEXT_FILE, languageIndex + 1);
-
+	if (_engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialTextPtr, Resources::HQR_TEXT_FILE, languageIndex + 1) == 0) {
+		warning("Failed to initialize additional text bank %i from file %s", languageIndex + 1, Resources::HQR_TEXT_FILE);
+		return;
+	}
 	initVoxBank(bankIdx);
 }
 
@@ -227,7 +233,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color) { // drawDoubleLetter
 	int32 left, top, right, bottom;
 
-	if (character != 0x20) {
+	if (character != ' ') {
 		// shadow color
 		setFontColor(0);
 		drawCharacter(x + 2, y + 4, character);
