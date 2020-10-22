@@ -787,8 +787,7 @@ void ComprehendGame::doBeforeTurn() {
 	beforeTurn();
 
 	// Run the each turn functions
-	// TODO: Re-enable turn processing
-	//	eval_function(0, nullptr);
+	eval_function(0, nullptr);
 
 	update();
 }

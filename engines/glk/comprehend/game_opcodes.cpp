@@ -121,6 +121,11 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 			move_to(instr->_operand[0]);
 		break;
 
+	case OPCODE_OBJECT_IN_ROOM:
+		item = getItem(instr);
+		func_set_test_result(func_state, item->_room == instr->_operand[1]);
+		break;
+
 	case OPCODE_OBJECT_IS_NOWHERE:
 		item = getItem(instr);
 		func_set_test_result(func_state, item->_room == ROOM_NOWHERE);
@@ -455,12 +460,6 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		move_object(item, _currentRoom);
 		break;
 
-	case OPCODE_OBJECT_IN_ROOM:
-		item = getItem(instr);
-		func_set_test_result(func_state,
-			item->_room == instr->_operand[1]);
-		break;
-
 	case OPCODE_OBJECT_NOT_IN_ROOM:
 		item = getItem(instr);
 		func_set_test_result(func_state, !item || item->_room != _currentRoom);
@@ -684,6 +683,7 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x1d] = OPCODE_TEST_ROOM_FLAG;
 	_opcodeMap[0x20] = OPCODE_HAVE_CURRENT_OBJECT;
 	_opcodeMap[0x21] = OPCODE_OBJECT_PRESENT;
+	_opcodeMap[0x22] = OPCODE_OBJECT_IN_ROOM;
 	_opcodeMap[0x25] = OPCODE_OBJECT_TAKEABLE;
 	_opcodeMap[0x29] = OPCODE_INVENTORY_FULL;
 	_opcodeMap[0x2d] = OPCODE_OBJECT_CAN_TAKE;
@@ -718,7 +718,6 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x09] = OPCODE_VAR_GT1;
 	_opcodeMap[0x0a] = OPCODE_VAR_GTE2;
 	_opcodeMap[0x0d] = OPCODE_VAR_EQ1;
-	_opcodeMap[0x22] = OPCODE_OBJECT_IN_ROOM;
 	_opcodeMap[0x30] = OPCODE_CURRENT_OBJECT_PRESENT;
 	_opcodeMap[0x41] = OPCODE_NOT_HAVE_OBJECT;
 	_opcodeMap[0x45] = OPCODE_NOT_IN_ROOM;
