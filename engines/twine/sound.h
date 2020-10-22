@@ -46,6 +46,8 @@ private:
 	/** Samples playing at a actors position */
 	int32 samplesPlayingActors[NUM_CHANNELS]{0};
 
+	bool playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize, int32 loop, const char *name);
+
 public:
 	Sound(TwinEEngine *engine);
 
