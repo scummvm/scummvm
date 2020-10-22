@@ -295,7 +295,7 @@ void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
 	_engine->_interface->drawLine(++left, bottom, right, bottom, 73); // bottom line
 }
 
-void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 textId, int32 mode) {
+void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 textId, bool hover) {
 	/*
 	 * int CDvolumeRemaped;
 	 * int musicVolumeRemaped;
@@ -312,7 +312,7 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 	int32 bottom = topheight + 25;
 	int32 bottom2 = bottom;
 
-	if (mode != 0) {
+	if (hover != 0) {
 		if (buttonId <= kMasterVolume && buttonId >= kMusicVolume) {
 			int32 newWidth = 0;
 			switch (buttonId) {
@@ -374,14 +374,10 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 }
 
 void Menu::drawButton(const int16 *menuSettings, int32 mode) {
-	const int16 *localData = menuSettings;
 
-	int32 buttonNumber = *localData;
-	localData += 1;
-	int32 maxButton = *localData;
-	localData += 1;
-	int32 topHeight = *localData;
-	localData += 2;
+	int16 buttonNumber = menuSettings[MenuSettings_CurrentLoadedButton];
+	const int32 maxButton = menuSettings[MenuSettings_NumberOfButtons];
+	int32 topHeight = menuSettings[MenuSettings_ButtonsBoxHeight];
 
 	if (topHeight == 0) {
 		topHeight = 35;
@@ -395,6 +391,8 @@ void Menu::drawButton(const int16 *menuSettings, int32 mode) {
 
 	uint8 currentButton = 0;
 
+	const int16 *localData = menuSettings;
+	localData += 4;
 	do {
 		// get menu item settings
 		uint8 menuItemId = (uint8)*localData;
@@ -404,13 +402,13 @@ void Menu::drawButton(const int16 *menuSettings, int32 mode) {
 		localData += 1;
 		if (mode != 0) {
 			if (currentButton == buttonNumber) {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, menuItemValue, 1);
+				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, menuItemValue, true);
 			}
 		} else {
 			if (currentButton == buttonNumber) {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, menuItemValue, 1);
+				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, menuItemValue, true);
 			} else {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, menuItemValue, 0);
+				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, menuItemValue, false);
 			}
 		}
 
