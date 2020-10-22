@@ -172,6 +172,7 @@ static int getLanguageTypeIndex(const char *languageName) {
 		}
 	}
 
+	debug("Failed to detect language %s - falling back to english", languageName);
 	return 0; // English
 }
 
@@ -181,12 +182,9 @@ static int getLanguageTypeIndex(const char *languageName) {
 void TwinEEngine::initConfigurations() {
 	// TODO: use existing entries for some of the settings - like volume and so on.
 
-	Common::String language = ConfGetOrDefault("Language", Common::getLanguageDescription(_gameLang));
-	cfgfile.LanguageId = getLanguageTypeIndex(language.c_str()) + 1;
-
-	Common::String languageCD = ConfGetOrDefault("LanguageCD", "None");
-	cfgfile.LanguageCDId = getLanguageTypeIndex(languageCD.c_str()) + 1;
-
+	const char *lng = Common::getLanguageDescription(_gameLang);
+	cfgfile.LanguageId = getLanguageTypeIndex(lng) + 1;
+	cfgfile.LanguageCDId = getLanguageTypeIndex(lng) + 1;
 	cfgfile.FlagDisplayText = ConfGetOrDefault("FlagDisplayText", "ON") == "ON";
 	cfgfile.FlagKeepVoice = ConfGetOrDefault("FlagKeepVoice", "OFF") == "ON";
 	const Common::String midiType = ConfGetOrDefault("MidiType", "auto");
@@ -206,7 +204,6 @@ void TwinEEngine::initConfigurations() {
 		}
 	}
 	cfgfile.Version = ConfGetIntOrDefault("Version", EUROPE_VERSION);
-	cfgfile.FullScreen = ConfGetIntOrDefault("FullScreen", 1) == 1;
 	cfgfile.UseCD = ConfGetIntOrDefault("UseCD", 0);
 	cfgfile.Sound = ConfGetIntOrDefault("Sound", 1);
 	cfgfile.Movie = ConfGetIntOrDefault("Movie", CONF_MOVIE_FLA);
@@ -221,9 +218,6 @@ void TwinEEngine::initConfigurations() {
 }
 
 void TwinEEngine::initEngine() {
-	// getting configuration file
-	initConfigurations();
-
 	/** Engine current version */
 	const char *ENGINE_VERSION = "0.2.2";
 
@@ -235,6 +229,9 @@ void TwinEEngine::initEngine() {
 	debug("Released under the terms of the GNU GPL license version 2 (or, at your opinion, any later). See COPYING file.");
 	debug("The original Little Big Adventure game is:");
 	debug("(c)1994 by Adeline Software International, All Rights Reserved.");
+
+	// getting configuration file
+	initConfigurations();
 
 	_screens->clearScreen();
 
