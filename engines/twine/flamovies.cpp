@@ -238,7 +238,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 
 	_engine->_music->stopMusic();
 
-	Common::String fileNamePath = Common::String::format(FLA_DIR "%s", flaName);
+	Common::String fileNamePath = Common::String::format("%s", flaName);
 	const size_t n = fileNamePath.findLastOf(".");
 	if (n != Common::String::npos) {
 		fileNamePath.erase(n);
@@ -249,9 +249,11 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 	fadeOutFrames = 0;
 
 	file.close();
-	if (!file.open(fileNamePath)) {
-		warning("Failed to open fla movie '%s'", fileNamePath.c_str());
-		return;
+	if (!file.open(FLA_DIR + fileNamePath)) {
+		if (!file.open(fileNamePath)) {
+			warning("Failed to open fla movie '%s'", fileNamePath.c_str());
+			return;
+		}
 	}
 
 	file.read(&flaHeaderData.version, 6);
