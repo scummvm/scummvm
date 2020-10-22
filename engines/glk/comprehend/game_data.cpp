@@ -668,7 +668,11 @@ void GameData::load_extra_string_file(const StringFile &stringFile) {
 
 void GameData::load_extra_string_files() {
 	_strings2.clear();
-	_strings2.reserve(STRING_FILE_COUNT * _stringFiles.size());
+	_strings2.reserve(STRING_FILE_COUNT * _stringFiles.size() + 1);
+
+	// TODO: Is this needed for other than OO-Topos?
+	if (_comprehendVersion == 2)
+		_strings2.push_back("");
 
 	for (uint i = 0; i < _stringFiles.size(); i++)
 		load_extra_string_file(_stringFiles[i]);
