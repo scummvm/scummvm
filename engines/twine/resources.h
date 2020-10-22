@@ -119,23 +119,36 @@ public:
 	/** Initialize resource pointers */
 	void initResources();
 
+	// main palette
 	static constexpr const char *HQR_RESS_FILE = "ress.hqr";
+	// dialoges
 	static constexpr const char *HQR_TEXT_FILE = "text.hqr";
+	// samples
+	static constexpr const char *HQR_SAMPLES_FILE = "samples.hqr";
+	// isometric grids
+	static constexpr const char *HQR_LBA_GRI_FILE = "lba_gri.hqr";
+	// isometric libraries
+	static constexpr const char *HQR_LBA_BLL_FILE = "lba_bll.hqr";
+	// isometric bricks
+	static constexpr const char *HQR_LBA_BRK_FILE = "lba_brk.hqr";
+	// scenes
+	static constexpr const char *HQR_SCENE_FILE = "scene.hqr";
+	// sprites
+	static constexpr const char *HQR_SPRITES_FILE = "sprites.hqr";
+	// model/animation entities
+	static constexpr const char *HQR_FILE3D_FILE = "file3d.hqr";
+	// 3d model data
+	static constexpr const char *HQR_BODY_FILE = "body.hqr";
+	// animations
+	static constexpr const char *HQR_ANIM_FILE = "anim.hqr";
+	// inventory objects
+	static constexpr const char *HQR_INVOBJ_FILE = "invobj.hqr";
+
 	static constexpr const char *HQR_FLASAMP_FILE = "flasamp.hqr";
 	static constexpr const char *HQR_MIDI_MI_DOS_FILE = "midi_mi.hqr";
 	static constexpr const char *HQR_MIDI_MI_WIN_FILE = "midi_mi_win.hqr";
 	static constexpr const char *HQR_MIDI_MI_WIN_MP3_FILE = "midi_mi_win_mp3.hqr";
 	static constexpr const char *HQR_MIDI_MI_WIN_OGG_FILE = "midi_mi_win_ogg.hqr";
-	static constexpr const char *HQR_SAMPLES_FILE = "samples.hqr";
-	static constexpr const char *HQR_LBA_GRI_FILE = "lba_gri.hqr";
-	static constexpr const char *HQR_LBA_BLL_FILE = "lba_bll.hqr";
-	static constexpr const char *HQR_LBA_BRK_FILE = "lba_brk.hqr";
-	static constexpr const char *HQR_SCENE_FILE = "scene.hqr";
-	static constexpr const char *HQR_SPRITES_FILE = "sprites.hqr";
-	static constexpr const char *HQR_FILE3D_FILE = "file3d.hqr";
-	static constexpr const char *HQR_BODY_FILE = "body.hqr";
-	static constexpr const char *HQR_ANIM_FILE = "anim.hqr";
-	static constexpr const char *HQR_INVOBJ_FILE = "invobj.hqr";
 };
 
 } // namespace TwinE

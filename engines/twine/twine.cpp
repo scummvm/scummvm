@@ -183,8 +183,8 @@ void TwinEEngine::initConfigurations() {
 	// TODO: use existing entries for some of the settings - like volume and so on.
 
 	const char *lng = Common::getLanguageDescription(_gameLang);
-	cfgfile.LanguageId = getLanguageTypeIndex(lng) + 1;
-	cfgfile.LanguageCDId = getLanguageTypeIndex(lng) + 1;
+	cfgfile.LanguageId = getLanguageTypeIndex(lng);
+	cfgfile.LanguageCDId = getLanguageTypeIndex(lng);
 	cfgfile.FlagDisplayText = ConfGetOrDefault("FlagDisplayText", "ON") == "ON";
 	cfgfile.FlagKeepVoice = ConfGetOrDefault("FlagKeepVoice", "OFF") == "ON";
 	const Common::String midiType = ConfGetOrDefault("MidiType", "auto");

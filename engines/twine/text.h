@@ -71,7 +71,6 @@ private:
 	// RECHECK THIS LATER
 	int32 currentBankIdx = -1; // textVar1
 	char textVar2[256] = "";
-	uint8 textVar3 = 0u;
 
 	/** Dialogue text pointer */
 	char *dialTextPtr = nullptr; // bufText
