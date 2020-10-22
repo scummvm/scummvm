@@ -44,37 +44,29 @@ void Resources::initPalettes() {
 }
 
 void Resources::preloadSprites() {
-	int32 i;
-	int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_SPRITES_FILE) - 1;
-
-	for (i = 0; i < numEntries; i++) {
+	const int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_SPRITES_FILE);
+	for (int32 i = 0; i < numEntries; i++) {
 		_engine->_actor->spriteSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&_engine->_actor->spriteTable[i], Resources::HQR_SPRITES_FILE, i);
 	}
 }
 
 void Resources::preloadAnimations() {
-	int32 i;
-	int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_ANIM_FILE) - 1;
-
-	for (i = 0; i < numEntries; i++) {
+	const int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_ANIM_FILE);
+	for (int32 i = 0; i < numEntries; i++) {
 		_engine->_animations->animSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&_engine->_animations->animTable[i], Resources::HQR_ANIM_FILE, i);
 	}
 }
 
 void Resources::preloadSamples() {
-	int32 i;
-	int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_SAMPLES_FILE) - 1;
-
-	for (i = 0; i < numEntries; i++) {
+	const int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_SAMPLES_FILE);
+	for (int32 i = 0; i < numEntries; i++) {
 		_engine->_sound->samplesSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&_engine->_sound->samplesTable[i], Resources::HQR_SAMPLES_FILE, i);
 	}
 }
 
 void Resources::preloadInventoryItems() {
-	int32 i;
-	int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_INVOBJ_FILE) - 1;
-
-	for (i = 0; i < numEntries; i++) {
+	const int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_INVOBJ_FILE);
+	for (int32 i = 0; i < numEntries; i++) {
 		inventorySizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&inventoryTable[i], Resources::HQR_INVOBJ_FILE, i);
 	}
 }
@@ -83,17 +75,21 @@ void Resources::initResources() {
 	// Menu and in-game palette
 	initPalettes();
 
-	// load LBA font
-	_engine->_hqrdepack->hqrGetallocEntry(&_engine->_text->fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT);
+	if (_engine->_hqrdepack->hqrGetallocEntry(&_engine->_text->fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT) == 0) {
+		error("Failed to load font");
+	}
 
 	_engine->_text->setFontParameters(2, 8);
 	_engine->_text->setFontColor(14);
 	_engine->_text->setTextCrossColor(136, 143, 2);
 
-	_engine->_hqrdepack->hqrGetallocEntry(&_engine->_scene->spriteShadowPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW);
+	if (_engine->_hqrdepack->hqrGetallocEntry(&_engine->_scene->spriteShadowPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW) == 0) {
+		error("Failed to load sprite shadow");
+	}
 
-	// load sprite actors bounding box data
-	_engine->_hqrdepack->hqrGetallocEntry(&_engine->_scene->spriteBoundingBoxPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA);
+	if (_engine->_hqrdepack->hqrGetallocEntry(&_engine->_scene->spriteBoundingBoxPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA) == 0) {
+		error("Failed to load actors bounding box data");
+	}
 
 	preloadSprites();
 	preloadAnimations();

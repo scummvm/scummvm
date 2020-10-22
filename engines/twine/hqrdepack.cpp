@@ -175,7 +175,7 @@ int HQRDepack::hqrNumEntries(const char *filename) {
 
 	uint32 headerSize;
 	wrap(file.read(&headerSize, 4))
-	return (int)headerSize / 4;
+	return ((int)headerSize / 4) - 1;
 }
 
 int32 HQRDepack::hqrGetallocEntry(uint8 **ptr, const char *filename, int32 index) {
