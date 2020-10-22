@@ -56,11 +56,11 @@ private:
 	 * Draws main menu button
 	 * @param width menu button width
 	 * @param topheight is the height between the top of the screen and the first button
-	 * @param id current button identification from menu settings
-	 * @param value current button key pressed value
-	 * @param mode flag to know if should draw as a hover button or not
+	 * @param buttonId current button identification from menu settings
+	 * @param textId
+	 * @param hover flag to know if should draw as a hover button or not
 	 */
-	void drawButtonGfx(int32 width, int32 topheight, int32 id, int32 value, int32 mode);
+	void drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 textId, bool hover);
 	void plasmaEffectRenderFrame();
 	/**
 	 * Process the menu button draw
