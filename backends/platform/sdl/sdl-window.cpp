@@ -32,13 +32,12 @@
 static const uint32 fullscreenMask = SDL_WINDOW_FULLSCREEN_DESKTOP | SDL_WINDOW_FULLSCREEN;
 #endif
 
-SdlWindow::SdlWindow()
+SdlWindow::SdlWindow() :
 #if SDL_VERSION_ATLEAST(2, 0, 0)
-	: _window(nullptr), _windowCaption("ScummVM"),
-	_lastFlags(0), _lastX(SDL_WINDOWPOS_UNDEFINED), _lastY(SDL_WINDOWPOS_UNDEFINED)
-#else
-	: _inputGrabState(false), _inputLockState(false)
+	_window(nullptr), _windowCaption("ScummVM"),
+	_lastFlags(0), _lastX(SDL_WINDOWPOS_UNDEFINED), _lastY(SDL_WINDOWPOS_UNDEFINED),
 #endif
+	_inputGrabState(false), _inputLockState(false)
 	{
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
@@ -152,6 +151,7 @@ void SdlWindow::grabMouse(bool grab) {
 	if (_window) {
 		SDL_SetWindowGrab(_window, grab ? SDL_TRUE : SDL_FALSE);
 	}
+	_inputGrabState = grab;
 #else
 	if (grab) {
 		_inputGrabState = true;
@@ -167,6 +167,7 @@ void SdlWindow::grabMouse(bool grab) {
 bool SdlWindow::lockMouse(bool lock) {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_SetRelativeMouseMode(lock ? SDL_TRUE : SDL_FALSE);
+	_inputLockState = lock;
 #else
 	if (lock) {
 		_inputLockState = true;
@@ -265,7 +266,7 @@ SDL_Surface *copySDLSurface(SDL_Surface *src) {
 }
 
 bool SdlWindow::createOrUpdateWindow(int width, int height, uint32 flags) {
-	if (mouseIsGrabbed()) {
+	if (_inputGrabState) {
 		flags |= SDL_WINDOW_INPUT_GRABBED;
 	}
 

@@ -92,10 +92,8 @@ public:
 		if (_window) {
 			return SDL_GetWindowGrab(_window) == SDL_TRUE;
 		}
-		return false;
-#else
-		return _inputGrabState;
 #endif
+		return _inputGrabState;
 	}
 
 	bool mouseIsLocked() const {
@@ -108,6 +106,7 @@ public:
 
 private:
 	Common::Rect _desktopRes;
+	bool _inputGrabState, _inputLockState;
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 public:
@@ -145,8 +144,6 @@ private:
 	int _lastX, _lastY;
 
 	Common::String _windowCaption;
-#else
-	bool _inputGrabState, _inputLockState;
 #endif
 };
 
