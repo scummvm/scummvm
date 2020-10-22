@@ -96,13 +96,11 @@ void MenuOptions::newGame() {
 }
 
 void MenuOptions::showCredits() {
-	int32 tmpShadowMode, tmpLanguageCDIdx;
+	int32 tmpShadowMode;
 
 	canShowCredits = 1;
 	tmpShadowMode = _engine->cfgfile.ShadowMode;
-	tmpLanguageCDIdx = _engine->cfgfile.LanguageCDId;
 	_engine->cfgfile.ShadowMode = 0;
-	_engine->cfgfile.LanguageCDId = 0;
 	_engine->_gameState->initEngineVars();
 	_engine->_scene->currentSceneIdx = 119;
 	_engine->_scene->needChangeScene = 119;
@@ -111,7 +109,6 @@ void MenuOptions::showCredits() {
 
 	canShowCredits = 0;
 	_engine->cfgfile.ShadowMode = tmpShadowMode;
-	_engine->cfgfile.LanguageCDId = tmpLanguageCDIdx;
 
 	_engine->_screens->clearScreen();
 	_engine->flip();

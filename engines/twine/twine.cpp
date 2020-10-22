@@ -184,9 +184,8 @@ void TwinEEngine::initConfigurations() {
 
 	const char *lng = Common::getLanguageDescription(_gameLang);
 	cfgfile.LanguageId = getLanguageTypeIndex(lng);
-	cfgfile.LanguageCDId = getLanguageTypeIndex(lng);
+	cfgfile.Voice = ConfGetOrDefault("Voice", "ON") == "ON";
 	cfgfile.FlagDisplayText = ConfGetOrDefault("FlagDisplayText", "ON") == "ON";
-	cfgfile.FlagKeepVoice = ConfGetOrDefault("FlagKeepVoice", "OFF") == "ON";
 	const Common::String midiType = ConfGetOrDefault("MidiType", "auto");
 	if (midiType == "None") {
 		cfgfile.MidiType = MIDIFILE_NONE;
@@ -358,14 +357,11 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		if (loopCurrentKey == twineactions[TwinEActionType::OptionsMenu].localKey) {
-			int tmpLangCD = cfgfile.LanguageCDId;
 			freezeTime();
 			_sound->pauseSamples();
 			_menu->OptionsMenuSettings[5] = 15;
-			cfgfile.LanguageCDId = 0;
 			_text->initTextBank(0);
 			_menu->optionsMenu();
-			cfgfile.LanguageCDId = tmpLangCD;
 			_text->initTextBank(_text->currentTextBank + 3);
 			//TODO: play music
 			_sound->resumeSamples();
@@ -457,18 +453,14 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				}
 			} break;
 			case kiBonusList: {
-				int32 tmpLanguageCDIdx;
-				tmpLanguageCDIdx = cfgfile.LanguageCDId;
 				unfreezeTime();
 				_redraw->redrawEngineActions(1);
 				freezeTime();
-				cfgfile.LanguageCDId = 0;
 				_text->initTextBank(2);
 				_text->textClipFull();
 				_text->setFontCrossColor(15);
 				_text->drawTextFullscreen(162);
 				_text->textClipSmall();
-				cfgfile.LanguageCDId = tmpLanguageCDIdx;
 				_text->initTextBank(_text->currentTextBank + 3);
 			} break;
 			case kiCloverLeaf:

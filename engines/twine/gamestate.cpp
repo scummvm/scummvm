@@ -326,14 +326,8 @@ void GameState::processFoundItem(int32 item) {
 	_engine->_sound->playSample(41, 0x1000, 1, 0x80, 0x80, 0x80, -1);
 
 	// process vox play
-	{
-		int32 tmpLanguageCDId;
-		_engine->_music->stopMusic();
-		tmpLanguageCDId = _engine->cfgfile.LanguageCDId;
-		//_engine->cfgfile.LanguageCDId = 0; // comented so we can init vox bank
-		_engine->_text->initTextBank(2);
-		_engine->cfgfile.LanguageCDId = tmpLanguageCDId;
-	}
+	_engine->_music->stopMusic();
+	_engine->_text->initTextBank(2);
 
 	_engine->_interface->resetClip();
 	_engine->_text->initText(item);
@@ -342,9 +336,7 @@ void GameState::processFoundItem(int32 item) {
 	textState = 1;
 	quitItem = 0;
 
-	if (_engine->cfgfile.LanguageCDId) {
-		_engine->_text->initVoxToPlay(item);
-	}
+	_engine->_text->initVoxToPlay(item);
 
 	currentAnim = _engine->_animations->animTable[_engine->_animations->getBodyAnimIndex(kFoundItem, 0)];
 
@@ -433,9 +425,7 @@ void GameState::processFoundItem(int32 item) {
 		delaySkip(1);
 	} while (!_engine->_keyboard.internalKeyCode);*/
 
-	if (_engine->cfgfile.LanguageCDId && _engine->_sound->isSamplePlaying(_engine->_text->currDialTextEntry)) {
-		_engine->_text->stopVox(_engine->_text->currDialTextEntry);
-	}
+	_engine->_text->stopVox(_engine->_text->currDialTextEntry);
 
 	_engine->_scene->sceneHero->animTimerData = tmpAnimTimer;
 }
@@ -461,8 +451,7 @@ void GameState::processGameChoices(int32 choiceIdx) {
 	choiceAnswer = gameChoices[gameChoicesSettings[0]];
 
 	// get right VOX entry index
-	if (_engine->cfgfile.LanguageCDId) {
-		_engine->_text->initVoxToPlay(choiceAnswer);
+	if (_engine->_text->initVoxToPlay(choiceAnswer)) {
 		while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
 			if (_engine->shouldQuit()) {
 				break;

@@ -897,10 +897,6 @@ void Menu::drawBehaviourMenu(int32 angle) {
 }
 
 void Menu::processBehaviourMenu() {
-	int32 tmpLanguageCD;
-	int32 tmpTextBank;
-	int32 tmpTime;
-
 	if (_engine->_actor->heroBehaviour == kProtoPack) {
 		_engine->_sound->stopSamples();
 		_engine->_actor->setBehaviour(kNormal);
@@ -917,10 +913,7 @@ void Menu::processBehaviourMenu() {
 
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-	tmpLanguageCD = _engine->cfgfile.LanguageCDId;
-	_engine->cfgfile.LanguageCDId = 0;
-
-	tmpTextBank = _engine->_text->currentTextBank;
+	int32 tmpTextBank = _engine->_text->currentTextBank;
 	_engine->_text->currentTextBank = -1;
 
 	_engine->_text->initTextBank(0);
@@ -933,7 +926,7 @@ void Menu::processBehaviourMenu() {
 
 	_engine->readKeys();
 
-	tmpTime = _engine->lbaTime;
+	int32 tmpTime = _engine->lbaTime;
 
 	while (_engine->_keyboard.skippedKey & 4 || (_engine->_keyboard.internalKeyCode >= twineactions[TwinEActionType::QuickBehaviourNormal].localKey && _engine->_keyboard.internalKeyCode <= twineactions[TwinEActionType::QuickBehaviourDiscreet].localKey)) {
 		_engine->readKeys();
@@ -986,8 +979,6 @@ void Menu::processBehaviourMenu() {
 
 	_engine->_text->currentTextBank = tmpTextBank;
 	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
-
-	_engine->cfgfile.LanguageCDId = tmpLanguageCD;
 }
 
 void Menu::drawMagicItemsBox(int32 left, int32 top, int32 right, int32 bottom, int32 color) { // Rect
@@ -1040,10 +1031,9 @@ void Menu::drawInventoryItems() {
 
 void Menu::processInventoryMenu() {
 	int32 di = 1;
-	int32 prevSelectedItem, tmpLanguageCD, bx, tmpAlphaLight, tmpBetaLight;
 
-	tmpAlphaLight = _engine->_scene->alphaLight;
-	tmpBetaLight = _engine->_scene->betaLight;
+	int32 tmpAlphaLight = _engine->_scene->alphaLight;
+	int32 tmpBetaLight = _engine->_scene->betaLight;
 
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
@@ -1057,19 +1047,16 @@ void Menu::processInventoryMenu() {
 
 	drawInventoryItems();
 
-	tmpLanguageCD = _engine->cfgfile.LanguageCDId;
-	_engine->cfgfile.LanguageCDId = 0;
-
 	_engine->_text->initTextBank(2);
 
-	bx = 3;
+	int32 bx = 3;
 
 	_engine->_text->setFontCrossColor(4);
 	_engine->_text->initDialogueBox();
 
 	while (_engine->_keyboard.internalKeyCode != 1) {
 		_engine->readKeys();
-		prevSelectedItem = inventorySelectedItem;
+		int32 prevSelectedItem = inventorySelectedItem;
 
 		if (!di) {
 			_engine->_keyboard.key = _engine->_keyboard.pressedKey;
@@ -1175,8 +1162,6 @@ void Menu::processInventoryMenu() {
 	_engine->_scene->betaLight = tmpBetaLight;
 
 	_engine->_gameState->initEngineProjections();
-
-	_engine->cfgfile.LanguageCDId = tmpLanguageCD;
 
 	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
 

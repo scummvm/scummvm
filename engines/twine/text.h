@@ -228,10 +228,10 @@ public:
 
 	void drawAskQuestion(int32 index);
 
-	int32 playVox(int32 index);
-	int32 playVoxSimple(int32 index);
-	void stopVox(int32 index);
-	int32 initVoxToPlay(int32 index);
+	bool playVox(int32 index);
+	bool playVoxSimple(int32 index);
+	bool stopVox(int32 index);
+	bool initVoxToPlay(int32 index);
 };
 
 } // namespace TwinE
