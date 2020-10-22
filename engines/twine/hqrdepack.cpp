@@ -30,6 +30,8 @@ namespace TwinE {
 
 HQRDepack::HQRDepack(TwinEEngine *engine) : _engine(engine) {}
 
+#define wrap(cmd) if ((cmd) == 0) { warning("Failed to execute " #cmd ); return 0; }
+
 void HQRDepack::hqrDecompressEntry(uint8 *dst, uint8 *src, int32 decompsize, int32 mode) {
 	do {
 		uint8 b = *(src++);
@@ -108,23 +110,23 @@ int32 HQRDepack::hqrGetEntry(uint8 *ptr, const char *filename, int32 index) {
 		return 0;
 	}
 
-	file.seek(index * 4);
+	wrap(file.seek(index * 4))
 	uint32 offsetToData = file.readUint32LE();
 
-	file.seek(offsetToData);
+	wrap(file.seek(offsetToData))
 	uint32 realSize = file.readUint32LE();
 	uint32 compSize = file.readUint32LE();
 	uint16 mode = file.readUint16LE();
 
 	// uncompressed
 	if (mode == 0) {
-		file.read(ptr, realSize);
+		wrap(file.read(ptr, realSize))
 	}
 	// compressed: modes (1 & 2)
 	else if (mode == 1 || mode == 2) {
 		uint8 *compDataPtr = 0;
 		compDataPtr = (uint8 *)malloc(compSize);
-		file.read(compDataPtr, compSize);
+		wrap(file.read(compDataPtr, compSize))
 		hqrDecompressEntry(ptr, compDataPtr, realSize, mode);
 		free(compDataPtr);
 	}
@@ -143,20 +145,20 @@ int HQRDepack::hqrEntrySize(const char *filename, int32 index) {
 	}
 
 	uint32 headerSize;
-	file.read(&headerSize, 4);
+	wrap(file.read(&headerSize, 4))
 
 	if ((uint32)index >= headerSize / 4) {
 		warning("HQR WARNING: Invalid entry index!!");
 		return 0;
 	}
 
-	file.seek(index * 4);
+	wrap(file.seek(index * 4))
 	uint32 offsetToData;
-	file.read(&offsetToData, 4);
+	wrap(file.read(&offsetToData, 4))
 
-	file.seek(offsetToData);
+	wrap(file.seek(offsetToData))
 	uint32 realSize;
-	file.read(&realSize, 4);
+	wrap(file.read(&realSize, 4))
 
 	return realSize;
 }
@@ -172,7 +174,7 @@ int HQRDepack::hqrNumEntries(const char *filename) {
 	}
 
 	uint32 headerSize;
-	file.read(&headerSize, 4);
+	wrap(file.read(&headerSize, 4))
 	return (int)headerSize / 4;
 }
 
@@ -202,44 +204,44 @@ int32 HQRDepack::hqrGetVoxEntry(uint8 *ptr, const char *filename, int32 index, i
 	}
 
 	uint32 headerSize;
-	file.read(&headerSize, 4);
+	wrap(file.read(&headerSize, 4))
 
 	if ((uint32)index >= headerSize / 4) {
 		warning("HQR WARNING: Invalid entry index!!");
 		return 0;
 	}
 
-	file.seek(index * 4);
+	wrap(file.seek(index * 4))
 	uint32 offsetToData;
-	file.read(&offsetToData, 4);
+	wrap(file.read(&offsetToData, 4))
 
-	file.seek(offsetToData);
+	wrap(file.seek(offsetToData))
 	uint32 realSize;
-	file.read(&realSize, 4);
+	wrap(file.read(&realSize, 4))
 	uint32 compSize;
-	file.read(&compSize, 4);
+	wrap(file.read(&compSize, 4))
 	uint16 mode;
-	file.read(&mode, 2);
+	wrap(file.read(&mode, 2))
 
 	// exist hidden entries
 	for (int32 i = 0; i < hiddenIndex; i++) {
-		file.seek(offsetToData + compSize + 10);   // hidden entry
+		wrap(file.seek(offsetToData + compSize + 10))   // hidden entry
 		offsetToData = offsetToData + compSize + 10; // current hidden offset
 
-		file.read(&realSize, 4);
-		file.read(&compSize, 4);
-		file.read(&mode, 2);
+		wrap(file.read(&realSize, 4))
+		wrap(file.read(&compSize, 4))
+		wrap(file.read(&mode, 2))
 	}
 
 	// uncompressed
 	if (mode == 0) {
-		file.read(ptr, realSize);
+		wrap(file.read(ptr, realSize))
 	}
 	// compressed: modes (1 & 2)
 	else if (mode == 1 || mode == 2) {
 		uint8 *compDataPtr = 0;
 		compDataPtr = (uint8 *)malloc(compSize);
-		file.read(compDataPtr, compSize);
+		wrap(file.read(compDataPtr, compSize))
 		hqrDecompressEntry(ptr, compDataPtr, realSize, mode);
 		free(compDataPtr);
 	}
@@ -258,30 +260,30 @@ int HQRDepack::hqrVoxEntrySize(const char *filename, int32 index, int32 hiddenIn
 	}
 
 	uint32 headerSize;
-	file.read(&headerSize, 4);
+	wrap(file.read(&headerSize, 4))
 
 	if ((uint32)index >= headerSize / 4) {
 		warning("HQR WARNING: Invalid entry index!!");
 		return 0;
 	}
 
-	file.seek(index * 4);
+	wrap(file.seek(index * 4))
 	uint32 offsetToData;
-	file.read(&offsetToData, 4);
+	wrap(file.read(&offsetToData, 4))
 
-	file.seek(offsetToData);
+	wrap(file.seek(offsetToData))
 	uint32 realSize;
-	file.read(&realSize, 4);
+	wrap(file.read(&realSize, 4))
 	uint32 compSize;
-	file.read(&compSize, 4);
+	wrap(file.read(&compSize, 4))
 
 	// exist hidden entries
 	for (int32 i = 0; i < hiddenIndex; i++) {
-		file.seek(offsetToData + compSize + 10);   // hidden entry
+		wrap(file.seek(offsetToData + compSize + 10))   // hidden entry
 		offsetToData = offsetToData + compSize + 10; // current hidden offset
 
-		file.read(&realSize, 4);
-		file.read(&compSize, 4);
+		wrap(file.read(&realSize, 4))
+		wrap(file.read(&compSize, 4))
 	}
 
 	return realSize;
@@ -299,5 +301,7 @@ int32 HQRDepack::hqrGetallocVoxEntry(uint8 **ptr, const char *filename, int32 in
 
 	return size;
 }
+
+#undef wrap
 
 } // namespace TwinE
