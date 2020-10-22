@@ -31,7 +31,7 @@
 namespace TwinE {
 
 DebugGrid::DebugGrid(TwinEEngine *engine) : _engine(engine) {
-	canChangeScenes = _engine->cfgfile.Debug ? 1 : 0;
+	canChangeScenes = _engine->cfgfile.Debug;
 }
 
 void DebugGrid::changeGridCamera(int16 pKey) {

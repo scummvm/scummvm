@@ -109,7 +109,7 @@ struct ConfigFile {
 	/** Flag used to keep the game frames per second */
 	int32 Fps = 0;
 	/** Flag to display game debug */
-	int32 Debug = 0;
+	bool Debug = false;
 	/** Use original autosaving system or save when you want */
 	int32 UseAutoSaving = 0;
 	/** Shadow mode type */

@@ -173,8 +173,8 @@ void Collision::reajustActorPosition(int32 brickShape) {
 			}
 			break;
 		default:
-			if (_engine->cfgfile.Debug == 1) {
-				debug("Brick Shape %d unsupported\n", brickShape);
+			if (_engine->cfgfile.Debug) {
+				debug("Brick Shape %d unsupported", brickShape);
 			}
 			break;
 		}

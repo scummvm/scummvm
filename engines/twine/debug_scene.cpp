@@ -45,7 +45,7 @@ void DebugScene::drawBoundingBoxProjectPoints(ScenePoint *pPoint3d, ScenePoint *
 	if (_engine->_redraw->renderRight < _engine->_renderer->projPosX)
 		_engine->_redraw->renderRight = _engine->_renderer->projPosX;
 
-	if (_engine->_redraw->renderTop >_engine->_renderer->projPosY)
+	if (_engine->_redraw->renderTop > _engine->_renderer->projPosY)
 		_engine->_redraw->renderTop = _engine->_renderer->projPosY;
 
 	if (_engine->_redraw->renderBottom < _engine->_renderer->projPosY)
@@ -90,113 +90,113 @@ int32 DebugScene::checkZoneType(int32 type) {
 }
 
 void DebugScene::displayZones(int16 pKey) {
-	if (showingZones == 1) {
-		int z;
-		ZoneStruct *zonePtr = _engine->_scene->sceneZones;
-		for (z = 0; z < _engine->_scene->sceneNumZones; z++) {
-			zonePtr = &_engine->_scene->sceneZones[z];
+	if (!showingZones) {
+		return;
+	}
+	for (int z = 0; z < _engine->_scene->sceneNumZones; z++) {
+		const ZoneStruct *zonePtr = &_engine->_scene->sceneZones[z];
 
-			if (checkZoneType(zonePtr->type)) {
-				ScenePoint frontBottomLeftPoint;
-				ScenePoint frontBottomRightPoint;
-
-				ScenePoint frontTopLeftPoint;
-				ScenePoint frontTopRightPoint;
-
-				ScenePoint backBottomLeftPoint;
-				ScenePoint backBottomRightPoint;
-
-				ScenePoint backTopLeftPoint;
-				ScenePoint backTopRightPoint;
-
-				ScenePoint frontBottomLeftPoint2D;
-				ScenePoint frontBottomRightPoint2D;
-
-				ScenePoint frontTopLeftPoint2D;
-				ScenePoint frontTopRightPoint2D;
-
-				ScenePoint backBottomLeftPoint2D;
-				ScenePoint backBottomRightPoint2D;
-
-				ScenePoint backTopLeftPoint2D;
-				ScenePoint backTopRightPoint2D;
-
-				uint8 color;
-
-				// compute the points in 3D
-
-				frontBottomLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->cameraX;
-				frontBottomLeftPoint.y = zonePtr->bottomLeft.y - _engine->_grid->cameraY;
-				frontBottomLeftPoint.z = zonePtr->topRight.z - _engine->_grid->cameraZ;
-
-				frontBottomRightPoint.x = zonePtr->topRight.x - _engine->_grid->cameraX;
-				frontBottomRightPoint.y = zonePtr->bottomLeft.y - _engine->_grid->cameraY;
-				frontBottomRightPoint.z = zonePtr->topRight.z - _engine->_grid->cameraZ;
-
-				frontTopLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->cameraX;
-				frontTopLeftPoint.y = zonePtr->topRight.y - _engine->_grid->cameraY;
-				frontTopLeftPoint.z = zonePtr->topRight.z - _engine->_grid->cameraZ;
-
-				frontTopRightPoint.x = zonePtr->topRight.x - _engine->_grid->cameraX;
-				frontTopRightPoint.y = zonePtr->topRight.y - _engine->_grid->cameraY;
-				frontTopRightPoint.z = zonePtr->topRight.z - _engine->_grid->cameraZ;
-
-				backBottomLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->cameraX;
-				backBottomLeftPoint.y = zonePtr->bottomLeft.y - _engine->_grid->cameraY;
-				backBottomLeftPoint.z = zonePtr->bottomLeft.z - _engine->_grid->cameraZ;
-
-				backBottomRightPoint.x = zonePtr->topRight.x - _engine->_grid->cameraX;
-				backBottomRightPoint.y = zonePtr->bottomLeft.y - _engine->_grid->cameraY;
-				backBottomRightPoint.z = zonePtr->bottomLeft.z - _engine->_grid->cameraZ;
-
-				backTopLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->cameraX;
-				backTopLeftPoint.y = zonePtr->topRight.y - _engine->_grid->cameraY;
-				backTopLeftPoint.z = zonePtr->bottomLeft.z - _engine->_grid->cameraZ;
-
-				backTopRightPoint.x = zonePtr->topRight.x - _engine->_grid->cameraX;
-				backTopRightPoint.y = zonePtr->topRight.y - _engine->_grid->cameraY;
-				backTopRightPoint.z = zonePtr->bottomLeft.z - _engine->_grid->cameraZ;
-
-				// project all points
-
-				drawBoundingBoxProjectPoints(&frontBottomLeftPoint, &frontBottomLeftPoint2D);
-				drawBoundingBoxProjectPoints(&frontBottomRightPoint, &frontBottomRightPoint2D);
-				drawBoundingBoxProjectPoints(&frontTopLeftPoint, &frontTopLeftPoint2D);
-				drawBoundingBoxProjectPoints(&frontTopRightPoint, &frontTopRightPoint2D);
-				drawBoundingBoxProjectPoints(&backBottomLeftPoint, &backBottomLeftPoint2D);
-				drawBoundingBoxProjectPoints(&backBottomRightPoint, &backBottomRightPoint2D);
-				drawBoundingBoxProjectPoints(&backTopLeftPoint, &backTopLeftPoint2D);
-				drawBoundingBoxProjectPoints(&backTopRightPoint, &backTopRightPoint2D);
-
-				// draw all lines
-
-				color = 15 * 3 + zonePtr->type * 16;
-
-				// draw front part
-				_engine->_interface->drawLine(frontBottomLeftPoint2D.x, frontBottomLeftPoint2D.y, frontTopLeftPoint2D.x, frontTopLeftPoint2D.y, color);
-				_engine->_interface->drawLine(frontTopLeftPoint2D.x, frontTopLeftPoint2D.y, frontTopRightPoint2D.x, frontTopRightPoint2D.y, color);
-				_engine->_interface->drawLine(frontTopRightPoint2D.x, frontTopRightPoint2D.y, frontBottomRightPoint2D.x, frontBottomRightPoint2D.y, color);
-				_engine->_interface->drawLine(frontBottomRightPoint2D.x, frontBottomRightPoint2D.y, frontBottomLeftPoint2D.x, frontBottomLeftPoint2D.y, color);
-
-				// draw top part
-				_engine->_interface->drawLine(frontTopLeftPoint2D.x, frontTopLeftPoint2D.y, backTopLeftPoint2D.x, backTopLeftPoint2D.y, color);
-				_engine->_interface->drawLine(backTopLeftPoint2D.x, backTopLeftPoint2D.y, backTopRightPoint2D.x, backTopRightPoint2D.y, color);
-				_engine->_interface->drawLine(backTopRightPoint2D.x, backTopRightPoint2D.y, frontTopRightPoint2D.x, frontTopRightPoint2D.y, color);
-				_engine->_interface->drawLine(frontTopRightPoint2D.x, frontTopRightPoint2D.y, frontTopLeftPoint2D.x, frontTopLeftPoint2D.y, color);
-
-				// draw back part
-				_engine->_interface->drawLine(backBottomLeftPoint2D.x, backBottomLeftPoint2D.y, backTopLeftPoint2D.x, backTopLeftPoint2D.y, color);
-				_engine->_interface->drawLine(backTopLeftPoint2D.x, backTopLeftPoint2D.y, backTopRightPoint2D.x, backTopRightPoint2D.y, color);
-				_engine->_interface->drawLine(backTopRightPoint2D.x, backTopRightPoint2D.y, backBottomRightPoint2D.x, backBottomRightPoint2D.y, color);
-				_engine->_interface->drawLine(backBottomRightPoint2D.x, backBottomRightPoint2D.y, backBottomLeftPoint2D.x, backBottomLeftPoint2D.y, color);
-
-				// draw bottom part
-				_engine->_interface->drawLine(frontBottomLeftPoint2D.x, frontBottomLeftPoint2D.y, backBottomLeftPoint2D.x, backBottomLeftPoint2D.y, color);
-				_engine->_interface->drawLine(backBottomLeftPoint2D.x, backBottomLeftPoint2D.y, backBottomRightPoint2D.x, backBottomRightPoint2D.y, color);
-				_engine->_interface->drawLine(backBottomRightPoint2D.x, backBottomRightPoint2D.y, frontBottomRightPoint2D.x, frontBottomRightPoint2D.y, color);
-				_engine->_interface->drawLine(frontBottomRightPoint2D.x, frontBottomRightPoint2D.y, frontBottomLeftPoint2D.x, frontBottomLeftPoint2D.y, color);
-			}
+		if (!checkZoneType(zonePtr->type)) {
+			continue;
 		}
+		ScenePoint frontBottomLeftPoint;
+		ScenePoint frontBottomRightPoint;
+
+		ScenePoint frontTopLeftPoint;
+		ScenePoint frontTopRightPoint;
+
+		ScenePoint backBottomLeftPoint;
+		ScenePoint backBottomRightPoint;
+
+		ScenePoint backTopLeftPoint;
+		ScenePoint backTopRightPoint;
+
+		ScenePoint frontBottomLeftPoint2D;
+		ScenePoint frontBottomRightPoint2D;
+
+		ScenePoint frontTopLeftPoint2D;
+		ScenePoint frontTopRightPoint2D;
+
+		ScenePoint backBottomLeftPoint2D;
+		ScenePoint backBottomRightPoint2D;
+
+		ScenePoint backTopLeftPoint2D;
+		ScenePoint backTopRightPoint2D;
+
+		uint8 color;
+
+		// compute the points in 3D
+
+		frontBottomLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->cameraX;
+		frontBottomLeftPoint.y = zonePtr->bottomLeft.y - _engine->_grid->cameraY;
+		frontBottomLeftPoint.z = zonePtr->topRight.z - _engine->_grid->cameraZ;
+
+		frontBottomRightPoint.x = zonePtr->topRight.x - _engine->_grid->cameraX;
+		frontBottomRightPoint.y = zonePtr->bottomLeft.y - _engine->_grid->cameraY;
+		frontBottomRightPoint.z = zonePtr->topRight.z - _engine->_grid->cameraZ;
+
+		frontTopLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->cameraX;
+		frontTopLeftPoint.y = zonePtr->topRight.y - _engine->_grid->cameraY;
+		frontTopLeftPoint.z = zonePtr->topRight.z - _engine->_grid->cameraZ;
+
+		frontTopRightPoint.x = zonePtr->topRight.x - _engine->_grid->cameraX;
+		frontTopRightPoint.y = zonePtr->topRight.y - _engine->_grid->cameraY;
+		frontTopRightPoint.z = zonePtr->topRight.z - _engine->_grid->cameraZ;
+
+		backBottomLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->cameraX;
+		backBottomLeftPoint.y = zonePtr->bottomLeft.y - _engine->_grid->cameraY;
+		backBottomLeftPoint.z = zonePtr->bottomLeft.z - _engine->_grid->cameraZ;
+
+		backBottomRightPoint.x = zonePtr->topRight.x - _engine->_grid->cameraX;
+		backBottomRightPoint.y = zonePtr->bottomLeft.y - _engine->_grid->cameraY;
+		backBottomRightPoint.z = zonePtr->bottomLeft.z - _engine->_grid->cameraZ;
+
+		backTopLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->cameraX;
+		backTopLeftPoint.y = zonePtr->topRight.y - _engine->_grid->cameraY;
+		backTopLeftPoint.z = zonePtr->bottomLeft.z - _engine->_grid->cameraZ;
+
+		backTopRightPoint.x = zonePtr->topRight.x - _engine->_grid->cameraX;
+		backTopRightPoint.y = zonePtr->topRight.y - _engine->_grid->cameraY;
+		backTopRightPoint.z = zonePtr->bottomLeft.z - _engine->_grid->cameraZ;
+
+		// project all points
+
+		drawBoundingBoxProjectPoints(&frontBottomLeftPoint, &frontBottomLeftPoint2D);
+		drawBoundingBoxProjectPoints(&frontBottomRightPoint, &frontBottomRightPoint2D);
+		drawBoundingBoxProjectPoints(&frontTopLeftPoint, &frontTopLeftPoint2D);
+		drawBoundingBoxProjectPoints(&frontTopRightPoint, &frontTopRightPoint2D);
+		drawBoundingBoxProjectPoints(&backBottomLeftPoint, &backBottomLeftPoint2D);
+		drawBoundingBoxProjectPoints(&backBottomRightPoint, &backBottomRightPoint2D);
+		drawBoundingBoxProjectPoints(&backTopLeftPoint, &backTopLeftPoint2D);
+		drawBoundingBoxProjectPoints(&backTopRightPoint, &backTopRightPoint2D);
+
+		// draw all lines
+
+		color = 15 * 3 + zonePtr->type * 16;
+
+		// draw front part
+		_engine->_interface->drawLine(frontBottomLeftPoint2D.x, frontBottomLeftPoint2D.y, frontTopLeftPoint2D.x, frontTopLeftPoint2D.y, color);
+		_engine->_interface->drawLine(frontTopLeftPoint2D.x, frontTopLeftPoint2D.y, frontTopRightPoint2D.x, frontTopRightPoint2D.y, color);
+		_engine->_interface->drawLine(frontTopRightPoint2D.x, frontTopRightPoint2D.y, frontBottomRightPoint2D.x, frontBottomRightPoint2D.y, color);
+		_engine->_interface->drawLine(frontBottomRightPoint2D.x, frontBottomRightPoint2D.y, frontBottomLeftPoint2D.x, frontBottomLeftPoint2D.y, color);
+
+		// draw top part
+		_engine->_interface->drawLine(frontTopLeftPoint2D.x, frontTopLeftPoint2D.y, backTopLeftPoint2D.x, backTopLeftPoint2D.y, color);
+		_engine->_interface->drawLine(backTopLeftPoint2D.x, backTopLeftPoint2D.y, backTopRightPoint2D.x, backTopRightPoint2D.y, color);
+		_engine->_interface->drawLine(backTopRightPoint2D.x, backTopRightPoint2D.y, frontTopRightPoint2D.x, frontTopRightPoint2D.y, color);
+		_engine->_interface->drawLine(frontTopRightPoint2D.x, frontTopRightPoint2D.y, frontTopLeftPoint2D.x, frontTopLeftPoint2D.y, color);
+
+		// draw back part
+		_engine->_interface->drawLine(backBottomLeftPoint2D.x, backBottomLeftPoint2D.y, backTopLeftPoint2D.x, backTopLeftPoint2D.y, color);
+		_engine->_interface->drawLine(backTopLeftPoint2D.x, backTopLeftPoint2D.y, backTopRightPoint2D.x, backTopRightPoint2D.y, color);
+		_engine->_interface->drawLine(backTopRightPoint2D.x, backTopRightPoint2D.y, backBottomRightPoint2D.x, backBottomRightPoint2D.y, color);
+		_engine->_interface->drawLine(backBottomRightPoint2D.x, backBottomRightPoint2D.y, backBottomLeftPoint2D.x, backBottomLeftPoint2D.y, color);
+
+		// draw bottom part
+		_engine->_interface->drawLine(frontBottomLeftPoint2D.x, frontBottomLeftPoint2D.y, backBottomLeftPoint2D.x, backBottomLeftPoint2D.y, color);
+		_engine->_interface->drawLine(backBottomLeftPoint2D.x, backBottomLeftPoint2D.y, backBottomRightPoint2D.x, backBottomRightPoint2D.y, color);
+		_engine->_interface->drawLine(backBottomRightPoint2D.x, backBottomRightPoint2D.y, frontBottomRightPoint2D.x, frontBottomRightPoint2D.y, color);
+		_engine->_interface->drawLine(frontBottomRightPoint2D.x, frontBottomRightPoint2D.y, frontBottomLeftPoint2D.x, frontBottomLeftPoint2D.y, color);
 	}
 }
 
