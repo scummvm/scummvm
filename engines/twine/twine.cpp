@@ -937,9 +937,6 @@ void TwinEEngine::readKeys() {
 				_keyboard.actionStates[event.customType] = true;
 			}
 			break;
-		case Common::EVENT_KEYUP:
-			_keyboard.pressedKey = 0;
-			break;
 		case Common::EVENT_LBUTTONDOWN:
 			leftMouse = 1;
 			break;
@@ -957,7 +954,11 @@ void TwinEEngine::readKeys() {
 		for (int i = 0; i < ARRAYSIZE(pressedKeyCharMap); i++) {
 			if (pressedKeyCharMap[i].key == localKey) {
 				if (pressedKeyCharMap[i].pressed) {
-					_keyboard.pressedKey |= pressedKeyCharMap[i].high;
+					if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
+						_keyboard.pressedKey &= ~pressedKeyCharMap[i].high;
+					} else {
+						_keyboard.pressedKey |= pressedKeyCharMap[i].high;
+					}
 				} else {
 					_keyboard.skippedKey |= pressedKeyCharMap[i].high;
 				}
