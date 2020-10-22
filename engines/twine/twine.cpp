@@ -142,6 +142,13 @@ Common::Error TwinEEngine::run() {
 	allocVideoMemory();
 	initAll();
 	initEngine();
+	_sound->stopSamples();
+	_screens->copyScreen(frontVideoBuffer, workVideoBuffer);
+
+	_menu->init();
+	while (!shouldQuit()) {
+		_menu->run();
+	}
 	_music->stopTrackMusic();
 	_music->stopMidiMusic();
 	return Common::kNoError;
@@ -258,8 +265,6 @@ void TwinEEngine::initEngine() {
 	_flaMovies->playFlaMovie(FLA_DRAGON3);
 
 	_screens->loadMenuImage();
-
-	_menu->mainMenu();
 }
 
 void TwinEEngine::initMCGA() {
@@ -358,7 +363,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		if (loopCurrentKey == twineactions[TwinEActionType::OptionsMenu].localKey) {
 			freezeTime();
 			_sound->pauseSamples();
-			_menu->OptionsMenuSettings[5] = 15;
+			_menu->OptionsMenuSettings[MenuSettings_FirstButton] = 15;
 			_text->initTextBank(0);
 			_menu->optionsMenu();
 			_text->initTextBank(_text->currentTextBank + 3);
@@ -478,7 +483,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			_redraw->redrawEngineActions(1);
 		}
 
-		// Process behaviour menu - Press CTRL and F1..F4 Keys
+		// Process behaviour menu
 		if ((loopCurrentKey == twineactions[TwinEActionType::BehaviourMenu].localKey ||
 		     loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourNormal].localKey ||
 		     loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourAthletic].localKey ||
@@ -515,7 +520,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			}
 		}
 
-		// Press Enter to Recenter Screen
+		// Recenter Screen
 		if ((loopPressedKey & 2) && !disableScreenRecenter) {
 			_grid->newCameraX = _scene->sceneActors[_scene->currentlyFollowedActor].x >> 9;
 			_grid->newCameraY = _scene->sceneActors[_scene->currentlyFollowedActor].y >> 8;
@@ -533,7 +538,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			_redraw->redrawEngineActions(1);
 		}
 
-		// Process Pause - Press P
+		// Process Pause
 		if (loopCurrentKey == twineactions[TwinEActionType::Pause].localKey) {
 			freezeTime();
 			_text->setFontColor(15);
