@@ -479,7 +479,7 @@ void Debug::debugProcessWindow() {
 
 			count++;
 		} while (!quit);
-		_engine->_redraw->reqBgRedraw = 1;
+		_engine->_redraw->reqBgRedraw = true;
 	}
 }
 

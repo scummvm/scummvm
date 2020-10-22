@@ -48,16 +48,16 @@ public:
 	uint32 paletteRGBACustom[NUMOFCOLORS]{0};
 
 	/** flag to check if a custom palette is in use */
-	int16 palCustom = 0;
+	bool palCustom = false;
 
 	/** flag to check in the game palette was changed */
-	int16 palReseted = 0;
+	bool palResetted = false;
 
 	/** flag to check if the main flag is locked */
-	int16 lockPalette = 0;
+	bool lockPalette = false;
 
 	/** flag to check if we are using a different palette than the main one */
-	int16 useAlternatePalette = 0;
+	bool useAlternatePalette = false;
 
 	/** main game palette */
 	uint8 *mainPalette = nullptr;

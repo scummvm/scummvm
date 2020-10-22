@@ -265,11 +265,11 @@ void TwinEEngine::initEngine() {
 }
 
 void TwinEEngine::initMCGA() {
-	_redraw->drawInGameTransBox = 1;
+	_redraw->drawInGameTransBox = true;
 }
 
 void TwinEEngine::initSVGA() {
-	_redraw->drawInGameTransBox = 0;
+	_redraw->drawInGameTransBox = false;
 }
 
 void TwinEEngine::initAll() {
@@ -382,7 +382,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			switch (loopInventoryItem) {
 			case kiHolomap:
 				_holomap->processHolomap();
-				_screens->lockPalette = 1;
+				_screens->lockPalette = true;
 				warning("Use inventory [kiHolomap] not implemented!\n");
 				break;
 			case kiMagicBall:
@@ -420,7 +420,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				_screens->clearScreen();
 				flip();
 				setPalette(_screens->paletteRGBA);
-				_screens->lockPalette = 1;
+				_screens->lockPalette = true;
 			} break;
 			case kiProtoPack:
 				if (_gameState->gameFlags[InventoryItems::kiBookOfBu]) {
@@ -529,7 +529,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			_grid->newCameraX = _scene->sceneActors[_scene->currentlyFollowedActor].x >> 9;
 			_grid->newCameraY = _scene->sceneActors[_scene->currentlyFollowedActor].y >> 8;
 			_grid->newCameraZ = _scene->sceneActors[_scene->currentlyFollowedActor].z >> 9;
-			_redraw->reqBgRedraw = 1;
+			_redraw->reqBgRedraw = true;
 		}
 
 		// Draw holomap
@@ -537,7 +537,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			freezeTime();
 			//TestRestoreModeSVGA(1);
 			_holomap->processHolomap();
-			_screens->lockPalette = 1;
+			_screens->lockPalette = true;
 			unfreezeTime();
 			_redraw->redrawEngineActions(1);
 		}
@@ -676,8 +676,8 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 							_scene->heroPositionType = kReborn;
 
 							_scene->sceneHero->life = 50;
-							_redraw->reqBgRedraw = 1;
-							_screens->lockPalette = 1;
+							_redraw->reqBgRedraw = true;
+							_screens->lockPalette = true;
 							_gameState->inventoryNumLeafs--;
 							_actor->cropBottomScreen = 0;
 						} else { // game over
@@ -734,7 +734,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				_grid->newCameraZ = 63;
 			}
 
-			_redraw->reqBgRedraw = 1;
+			_redraw->reqBgRedraw = true;
 		}
 	}
 
@@ -756,8 +756,8 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 bool TwinEEngine::gameEngineLoop() { // mainLoop
 	uint32 start;
 
-	_redraw->reqBgRedraw = 1;
-	_screens->lockPalette = 1;
+	_redraw->reqBgRedraw = true;
+	_screens->lockPalette = true;
 	_movements->setActorAngle(0, -256, 5, &loopMovePtr);
 
 	while (quitGame == -1) {
