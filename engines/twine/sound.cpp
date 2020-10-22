@@ -62,10 +62,17 @@ void Sound::playFlaSample(int32 index, int32 frequency, int32 repeat, int32 x, i
 		return;
 	}
 
-	const Common::String& sampfile = Common::String::format(FLA_DIR "%s", Resources::HQR_FLASAMP_FILE);
-
 	uint8 *sampPtr;
-	int32 sampSize = _engine->_hqrdepack->hqrGetallocEntry(&sampPtr, sampfile.c_str(), index);
+	int32 sampSize;
+	Common::String sampfile = Common::String::format("%s", Resources::HQR_FLASAMP_FILE);
+	sampSize = _engine->_hqrdepack->hqrGetallocEntry(&sampPtr, sampfile.c_str(), index);
+	if (sampSize == 0) {
+		sampfile = Common::String::format(FLA_DIR "%s", Resources::HQR_FLASAMP_FILE);
+		sampSize = _engine->_hqrdepack->hqrGetallocEntry(&sampPtr, sampfile.c_str(), index);
+		if (sampSize == 0) {
+			return;
+		}
+	}
 	// Fix incorrect sample files first byte
 	if (*sampPtr != 'C') {
 		*sampPtr = 'C';

@@ -21,6 +21,7 @@
  */
 
 #include "twine/hqrdepack.h"
+#include "common/debug.h"
 #include "common/file.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -96,7 +97,8 @@ int32 HQRDepack::hqrGetEntry(uint8 *ptr, const char *filename, int32 index) {
 
 	Common::File file;
 	if (!file.open(filename)) {
-		error("HQR: %s can't be found!", filename);
+		debug("Could not open %s", filename);
+		return 0;
 	}
 
 	uint32 headerSize = file.readUint32LE();
