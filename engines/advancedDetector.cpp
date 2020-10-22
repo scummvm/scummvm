@@ -91,10 +91,13 @@ static Common::String sanitizeName(const char *name, int maxLen) {
 				maxLen -= word.size();
 			}
 			word.clear();
+
+			if (!*name)
+				break;
 		}
 		if (*name)
 			name++;
-	} while (*name && maxLen > 0);
+	} while (maxLen > 0);
 
 	return res;
 }
