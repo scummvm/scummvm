@@ -308,7 +308,7 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 id, int32 value, in
 	int32 right = width + kMainMenuButtonSpan / 2;
 
 	// topheight is the center Y pos of the button
-	int32 top = topheight - 25;    // this makes the button be 50 height
+	int32 top = topheight - 25; // this makes the button be 50 height
 	int32 bottom = topheight + 25;
 	int32 bottom2 = bottom;
 
@@ -474,7 +474,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 
 			// if its a volume button
-			if ((menuSettings == OptionsMenuSettings || menuSettings == VolumeMenuSettings) && *(menuSettings + 8) <= 5) {
+			if (menuSettings == VolumeMenuSettings && *(menuSettings + 8) <= 5) {
 				const int16 id = *(menuSettings + currentButton * 2 + MenuSettings_FirstButtonState); // get button parameters from settings array
 
 				Audio::Mixer *mixer = _engine->_system->getMixer();
@@ -718,6 +718,7 @@ void Menu::run() {
 	}
 	case kBackground: {
 		_engine->_screens->loadMenuImage();
+		break;
 	}
 	}
 	_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
