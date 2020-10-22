@@ -32,12 +32,6 @@
 
 namespace TwinE {
 
-/** Config movie types */
-#define CONF_MOVIE_NONE 0
-#define CONF_MOVIE_FLA 1
-#define CONF_MOVIE_FLAWIDE 2
-#define CONF_MOVIE_FLAPCX 3
-
 /** FLA movie extension */
 #define FLA_EXT ".fla"
 

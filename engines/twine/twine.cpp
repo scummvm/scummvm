@@ -190,23 +190,26 @@ void TwinEEngine::initConfigurations() {
 	cfgfile.FlagDisplayText = ConfGetOrDefault("FlagDisplayText", "ON") == "ON";
 	cfgfile.FlagKeepVoice = ConfGetOrDefault("FlagKeepVoice", "OFF") == "ON";
 	const Common::String midiType = ConfGetOrDefault("MidiType", "auto");
-	if (midiType == "auto") {
+	if (midiType == "None") {
+		cfgfile.MidiType = MIDIFILE_NONE;
+	} else {
 		Common::File midiHqr;
 		if (midiHqr.exists(Resources::HQR_MIDI_MI_WIN_FILE)) {
-			cfgfile.MidiType = 1;
+			cfgfile.MidiType = MIDIFILE_WIN;
+			debug("Use %s for midi", Resources::HQR_MIDI_MI_WIN_FILE);
+		} else if (midiHqr.exists(Resources::HQR_MIDI_MI_DOS_FILE)) {
+			cfgfile.MidiType = MIDIFILE_DOS;
+			debug("Use %s for midi", Resources::HQR_MIDI_MI_DOS_FILE);
 		} else {
-			cfgfile.MidiType = 0;
+			cfgfile.MidiType = MIDIFILE_NONE;
+			debug("Could not find midi hqr file");
 		}
-	} else if (midiType == "midi") {
-		cfgfile.MidiType = 1;
-	} else {
-		cfgfile.MidiType = 0;
 	}
 	cfgfile.Version = ConfGetIntOrDefault("Version", EUROPE_VERSION);
 	cfgfile.FullScreen = ConfGetIntOrDefault("FullScreen", 1) == 1;
 	cfgfile.UseCD = ConfGetIntOrDefault("UseCD", 0);
-	cfgfile.Sound = ConfGetIntOrDefault("Sound", 0);
-	cfgfile.Movie = ConfGetIntOrDefault("Movie", 0);
+	cfgfile.Sound = ConfGetIntOrDefault("Sound", 1);
+	cfgfile.Movie = ConfGetIntOrDefault("Movie", CONF_MOVIE_FLA);
 	cfgfile.CrossFade = ConfGetIntOrDefault("CrossFade", 0);
 	cfgfile.Fps = ConfGetIntOrDefault("Fps", DEFAULT_FRAMES_PER_SECOND);
 	cfgfile.Debug = ConfGetIntOrDefault("Debug", 0);

@@ -33,8 +33,8 @@ class Music {
 private:
 	TwinEEngine *_engine;
 
-	void musicFadeIn(int32 loops, int32 ms);
-	void musicFadeOut(int32 ms);
+	void musicFadeIn();
+	void musicFadeOut();
 
 	/** Auxiliar midi pointer to  */
 	uint8 *midiPtr = nullptr;
