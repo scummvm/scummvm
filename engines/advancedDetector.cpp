@@ -93,7 +93,7 @@ static Common::String sanitizeName(const char *name, int maxLen) {
 				maxLen -= word.size();
 			}
 
-			if (*name && *(name + 1) == 0) {
+			if ((*name && *(name + 1) == 0) || !*name) {
 				if (res.empty()) // Make sure that we add at least something
 					res += word.empty() ? lastWord : word;
 
