@@ -125,7 +125,18 @@ TwinEEngine::~TwinEEngine() {
 }
 
 Common::Error TwinEEngine::run() {
-	debug("Starting twine");
+	/** Engine current version */
+	const char *ENGINE_VERSION = "0.2.2";
+
+	// Show engine information
+	debug("TwinEngine v%s", ENGINE_VERSION);
+	debug("(c)2002 The TwinEngine team.");
+	debug("(c)2020 The ScummVM team.");
+	debug("Refer to the credits for further details.");
+	debug("Released under the terms of the GNU GPL license version 2 (or, at your opinion, any later). See COPYING file.");
+	debug("The original Little Big Adventure game is:");
+	debug("(c)1994 by Adeline Software International, All Rights Reserved.");
+
 	syncSoundSettings();
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	allocVideoMemory();
@@ -217,18 +228,6 @@ void TwinEEngine::initConfigurations() {
 }
 
 void TwinEEngine::initEngine() {
-	/** Engine current version */
-	const char *ENGINE_VERSION = "0.2.2";
-
-	// Show engine information
-	debug("TwinEngine v%s", ENGINE_VERSION);
-	debug("(c)2002 The TwinEngine team.");
-	debug("(c)2020 The ScummVM team.");
-	debug("Refer to the credits for further details.");
-	debug("Released under the terms of the GNU GPL license version 2 (or, at your opinion, any later). See COPYING file.");
-	debug("The original Little Big Adventure game is:");
-	debug("(c)1994 by Adeline Software International, All Rights Reserved.");
-
 	// getting configuration file
 	initConfigurations();
 
