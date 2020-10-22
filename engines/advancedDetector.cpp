@@ -77,6 +77,8 @@ private:
 static Common::String sanitizeName(const char *name, int maxLen) {
 	Common::String res;
 	Common::String word;
+	Common::String lastWord;
+	const char *origname = name;
 
 	do {
 		if (Common::isAlnum(*name)) {
@@ -90,14 +92,25 @@ static Common::String sanitizeName(const char *name, int maxLen) {
 
 				maxLen -= word.size();
 			}
-			word.clear();
 
-			if (!*name)
+			if (*name && *(name + 1) == 0) {
+				if (res.empty()) // Make sure that we add at least something
+					res += word.empty() ? lastWord : word;
+
 				break;
+			}
+
+			if (!word.empty())
+				lastWord = word;
+
+			word.clear();
 		}
 		if (*name)
 			name++;
 	} while (maxLen > 0);
+
+	if (res.empty())
+		error("AdvancedDetector: Incorrect extra in game: \"%s\"", origname);
 
 	return res;
 }
