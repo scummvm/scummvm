@@ -40,7 +40,7 @@ protected:
 
 	Item *getItem(const Instruction *instr);
 
-	void func_set_test_result(FunctionState *func_state, bool value);
+	virtual void func_set_test_result(FunctionState *func_state, bool value);
 	bool isItemPresent(Item *item) const;
 public:
 	ComprehendGameOpcodes();
@@ -74,6 +74,7 @@ public:
 	ComprehendGameV2();
 
 	byte getOpcode(const Instruction *instr) override;
+	void func_set_test_result(FunctionState *func_state, bool value) override;
 };
 
 } // namespace Comprehend

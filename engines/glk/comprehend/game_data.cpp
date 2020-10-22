@@ -43,6 +43,7 @@ void FunctionState::clear() {
 	_and = false;
 	_inCommand = false;
 	_executed = false;
+	_notComparison = false;
 }
 
 /*-------------------------------------------------------*/
