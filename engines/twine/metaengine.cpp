@@ -213,7 +213,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 
 	act = new Action("ESCAPE", _("Escape"));
 	act->setCustomEngineActionEvent(TwinEActionType::Escape);
-	act->addDefaultInputMapping("ESC");
+	act->addDefaultInputMapping("ESCAPE");
 	engineKeyMap->addAction(act);
 
 	act = new Action("PAGEUP", _("Page Up"));
