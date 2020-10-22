@@ -22,7 +22,7 @@
 
 #include "twine/sound.h"
 #include "audio/audiostream.h"
-#include "audio/decoders/wave.h"
+#include "audio/decoders/voc.h"
 #include "common/memstream.h"
 #include "common/system.h"
 #include "common/types.h"
@@ -52,6 +52,19 @@ void Sound::sampleVolume(int32 chan, int32 volume) {
 	_engine->_system->getMixer()->setChannelVolume(samplesPlaying[chan], volume / 2);
 }
 
+void Sound::setSamplePosition(int32 chan, int32 x, int32 y, int32 z) {
+	int32 distance;
+	distance = ABS(_engine->_movements->getDistance3D(_engine->_grid->newCameraX << 9, _engine->_grid->newCameraY << 8, _engine->_grid->newCameraZ << 9, x, y, z));
+	distance = _engine->_collision->getAverageValue(0, distance, 10000, 255);
+	if (distance > 255) { // don't play it if its to far away
+		distance = 255;
+	}
+
+#if 0 // TODO
+	Mix_SetDistance(chan, distance);
+#endif
+}
+
 void Sound::playFlaSample(int32 index, int32 frequency, int32 repeat, int32 x, int32 y) {
 	if (!_engine->cfgfile.Sound) {
 		return;
@@ -73,28 +86,8 @@ void Sound::playFlaSample(int32 index, int32 frequency, int32 repeat, int32 x, i
 			return;
 		}
 	}
-	// Fix incorrect sample files first byte
-	if (*sampPtr != 'C') {
-		*sampPtr = 'C';
-	}
 
-	Common::MemoryReadStream stream(sampPtr, sampSize, DisposeAfterUse::YES);
-	Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(&stream, DisposeAfterUse::NO);
-	// TODO: mgerhardy repeat flag
-	_engine->_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &samplesPlaying[channelIdx], audioStream, index);
-}
-
-void Sound::setSamplePosition(int32 chan, int32 x, int32 y, int32 z) {
-	int32 distance;
-	distance = ABS(_engine->_movements->getDistance3D(_engine->_grid->newCameraX << 9, _engine->_grid->newCameraY << 8, _engine->_grid->newCameraZ << 9, x, y, z));
-	distance = _engine->_collision->getAverageValue(0, distance, 10000, 255);
-	if (distance > 255) { // don't play it if its to far away
-		distance = 255;
-	}
-
-#if 0 // TODO
-	Mix_SetDistance(chan, distance);
-#endif
+	playSample(channelIdx, index, sampPtr, sampSize, repeat, sampfile.c_str());
 }
 
 void Sound::playSample(int32 index, int32 frequency, int32 repeat, int32 x, int32 y, int32 z, int32 actorIdx) {
@@ -108,22 +101,50 @@ void Sound::playSample(int32 index, int32 frequency, int32 repeat, int32 x, int3
 	}
 	uint8 *sampPtr;
 	int32 sampSize = _engine->_hqrdepack->hqrGetallocEntry(&sampPtr, Resources::HQR_SAMPLES_FILE, index);
-	// Fix incorrect sample files first byte
-	if (*sampPtr != 'C') {
-		*sampPtr = 'C';
-	}
-
 	if (actorIdx != -1) {
 		setSamplePosition(channelIdx, x, y, z);
-
 		// save the actor index for the channel so we can check the position
 		samplesPlayingActors[channelIdx] = actorIdx;
 	}
 
-	Common::MemoryReadStream stream(sampPtr, sampSize, DisposeAfterUse::YES);
-	Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(&stream, DisposeAfterUse::NO);
-	// TODO: mgerhardy repeat flag
+	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_SAMPLES_FILE);
+}
+
+void Sound::playVoxSample(int32 index) {
+	if (!_engine->cfgfile.Sound) {
+		return;
+	}
+
+	int channelIdx = getFreeSampleChannelIndex();
+	if (channelIdx != -1) {
+		return;
+	}
+
+	uint8 *sampPtr = nullptr;
+	int32 sampSize = _engine->_hqrdepack->hqrGetallocVoxEntry(&sampPtr, _engine->_text->currentVoxBankFile.c_str(), index, _engine->_text->voxHiddenIndex);
+
+	// Fix incorrect sample files first byte
+	if (*sampPtr != 'C') {
+		_engine->_text->hasHiddenVox = *sampPtr;
+		_engine->_text->voxHiddenIndex++;
+	}
+
+	playSample(channelIdx, index, sampPtr, sampSize, 1, _engine->_text->currentVoxBankFile.c_str());
+}
+
+bool Sound::playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize, int32 loop, const char *name) {
+	// Fix incorrect sample files first byte
+	if (*sampPtr != 'C') {
+		*sampPtr = 'C';
+	}
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(sampPtr, sampSize, DisposeAfterUse::YES);
+	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(stream, DisposeAfterUse::YES);
+	if (audioStream == nullptr) {
+		warning("Failed to create voc audio stream for %s", name);
+		return false;
+	}
 	_engine->_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &samplesPlaying[channelIdx], audioStream, index);
+	return true;
 }
 
 void Sound::resumeSamples() {
@@ -175,7 +196,7 @@ void Sound::stopSample(int32 index) {
 	if (!_engine->cfgfile.Sound) {
 		return;
 	}
-	int32 stopChannel = getSampleChannel(index);
+	const int32 stopChannel = getSampleChannel(index);
 	if (stopChannel != -1) {
 		_engine->_system->getMixer()->stopID(index);
 		removeSampleChannel(stopChannel);
@@ -204,31 +225,6 @@ int32 Sound::getFreeSampleChannelIndex() {
 		}
 	}
 	return -1;
-}
-
-void Sound::playVoxSample(int32 index) {
-	if (!_engine->cfgfile.Sound) {
-		return;
-	}
-
-	int channelIdx = getFreeSampleChannelIndex();
-	if (channelIdx != -1) {
-		return;
-	}
-
-	uint8 *sampPtr = nullptr;
-	int32 sampSize = _engine->_hqrdepack->hqrGetallocVoxEntry(&sampPtr, _engine->_text->currentVoxBankFile.c_str(), index, _engine->_text->voxHiddenIndex);
-
-	// Fix incorrect sample files first byte
-	if (*sampPtr != 'C') {
-		_engine->_text->hasHiddenVox = *sampPtr;
-		_engine->_text->voxHiddenIndex++;
-		*sampPtr = 'C';
-	}
-
-	Common::MemoryReadStream stream(sampPtr, sampSize, DisposeAfterUse::YES);
-	Audio::SeekableAudioStream *audioStream = Audio::makeWAVStream(&stream, DisposeAfterUse::NO);
-	_engine->_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &samplesPlaying[channelIdx], audioStream, index);
 }
 
 } // namespace TwinE
