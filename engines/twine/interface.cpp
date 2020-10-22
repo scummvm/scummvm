@@ -48,19 +48,12 @@ int32 Interface::checkClipping(int32 x, int32 y) {
 
 // TODO: check if Graphics::drawLine() works here
 void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, int32 lineColor) {
-	int32 temp;
-	int32 flag2;
-	uint8 *out;
-	int16 color;
-	int16 var2;
-	int16 xchg;
-	int32 outcode0, outcode1;
-	int32 x, y, outcodeOut;
 	int32 currentLineColor = lineColor;
+	uint8 *out;
 
 	// draw line from left to right
 	if (startWidth > endWidth) {
-		temp = endWidth;
+		int32 temp = endWidth;
 		endWidth = startWidth;
 		startWidth = temp;
 
@@ -70,16 +63,18 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 	}
 
 	// Perform proper clipping (CohenSutherland algorithm)
-	outcode0 = checkClipping(startWidth, startHeight);
-	outcode1 = checkClipping(endWidth, endHeight);
+	int32 outcode0 = checkClipping(startWidth, startHeight);
+	int32 outcode1 = checkClipping(endWidth, endHeight);
 
 	while ((outcode0 | outcode1) != 0) {
 		if (((outcode0 & outcode1) != 0) && (outcode0 != INSIDE))
 			return; // Reject lines which are behind one clipping plane
 
 		// At least one endpoint is outside the clip rectangle; pick it.
-		outcodeOut = outcode0 ? outcode0 : outcode1;
+		int32 outcodeOut = outcode0 ? outcode0 : outcode1;
 
+		int32 x = 0;
+		int32 y = 0;
 		if (outcodeOut & TOP) { // point is above the clip rectangle
 			x = startWidth + (int)((endWidth - startWidth) * (float)(textWindowTop - startHeight) / (float)(endHeight - startHeight));
 			y = textWindowTop;
@@ -106,7 +101,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		}
 	}
 
-	flag2 = 640; //SCREEN_WIDTH;
+	int32 flag2 = DEFAULT_SCREEN_WIDTH;
 	endWidth -= startWidth;
 	endHeight -= startHeight;
 	if (endHeight < 0) {
@@ -116,12 +111,12 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 
 	out = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[startHeight] + startWidth;
 
-	color = currentLineColor;
+	int16 color = currentLineColor;
 	if (endWidth < endHeight) { // significant slope
-		xchg = endWidth;
+		int16 xchg = endWidth;
 		endWidth = endHeight;
 		endHeight = xchg;
-		var2 = endWidth;
+		int16 var2 = endWidth;
 		var2 <<= 1;
 		startHeight = endWidth;
 		endHeight <<= 1;
@@ -137,7 +132,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 			}
 		} while (--endWidth);
 	} else { // reduced slope
-		var2 = endWidth;
+		int16 var2 = endWidth;
 		var2 <<= 1;
 		startHeight = endWidth;
 		endHeight <<= 1;
@@ -155,29 +150,20 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 }
 
 void Interface::blitBox(int32 left, int32 top, int32 right, int32 bottom, const int8 *source, int32 leftDest, int32 topDest, int8 *dest) {
-	int32 width;
-	int32 height;
-	const int8 *s;
-	int8 *d;
-	int32 insideLine;
-	int32 temp3;
-	int32 i;
-	int32 j;
+	const int8 *s = _engine->screenLookupTable[top] + source + left;
+	int8 *d = _engine->screenLookupTable[topDest] + dest + leftDest;
 
-	s = _engine->screenLookupTable[top] + source + left;
-	d = _engine->screenLookupTable[topDest] + dest + leftDest;
+	int32 width = right - left + 1;
+	int32 height = bottom - top + 1;
 
-	width = right - left + 1;
-	height = bottom - top + 1;
-
-	insideLine = SCREEN_WIDTH - width;
-	temp3 = left;
+	int32 insideLine = SCREEN_WIDTH - width;
+	int32 temp3 = left;
 
 	left >>= 2;
 	temp3 &= 3;
 
-	for (j = 0; j < height; j++) {
-		for (i = 0; i < width; i++) {
+	for (int32 j = 0; j < height; j++) {
+		for (int32 i = 0; i < width; i++) {
 			*(d++) = *(s++);
 		}
 
@@ -187,16 +173,6 @@ void Interface::blitBox(int32 left, int32 top, int32 right, int32 bottom, const 
 }
 
 void Interface::drawTransparentBox(int32 left, int32 top, int32 right, int32 bottom, int32 colorAdj) {
-	uint8 *pos;
-	int32 width;
-	int32 height;
-	int32 height2;
-	int32 temp;
-	int32 localMode;
-	int32 var1;
-	int8 color;
-	int8 color2;
-
 	if (left > SCREEN_TEXTLIMIT_RIGHT)
 		return;
 	if (right < SCREEN_TEXTLIMIT_LEFT)
@@ -215,42 +191,33 @@ void Interface::drawTransparentBox(int32 left, int32 top, int32 right, int32 bot
 	if (bottom > SCREEN_TEXTLIMIT_BOTTOM)
 		bottom = SCREEN_TEXTLIMIT_BOTTOM;
 
-	pos = _engine->screenLookupTable[top] + (uint8*)_engine->frontVideoBuffer.getPixels() + left;
-	height2 = height = bottom - top;
-	height2++;
-
-	width = right - left + 1;
-
-	temp = 640 - width; // SCREEN_WIDTH
-	localMode = colorAdj;
+	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
+	int32 height = bottom - top;
+	int32 height2 = height + 1;
+	int32 width = right - left + 1;
+	int32 pitch = DEFAULT_SCREEN_WIDTH - width;
+	int32 localMode = colorAdj;
 
 	do {
-		var1 = width;
+		int32 var1 = width;
 		do {
-			color2 = color = *pos;
-			color2 &= 0xF0;
-			color &= 0x0F;
+			int8 color = *pos & 0x0F;
+			const int8 color2 = *pos & 0xF0;
 			color -= localMode;
-			if (color < 0)
+			if (color < 0) {
 				color = color2;
-			else
+			} else {
 				color += color2;
+			}
 			*pos++ = color;
 			var1--;
 		} while (var1 > 0);
-		pos += temp;
+		pos += pitch;
 		height2--;
 	} while (height2 > 0);
 }
 
 void Interface::drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom, uint8 e) { // Box
-	uint8 *ptr;
-
-	int32 offset;
-
-	int32 x;
-	int32 y;
-
 	if (left > SCREEN_TEXTLIMIT_RIGHT)
 		return;
 	if (right < SCREEN_TEXTLIMIT_LEFT)
@@ -261,12 +228,12 @@ void Interface::drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom
 		return;
 
 	// cropping
-	offset = -((right - left) - SCREEN_WIDTH);
+	int32 offset = -((right - left) - SCREEN_WIDTH);
 
-	ptr = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
+	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
 
-	for (x = top; x < bottom; x++) {
-		for (y = left; y < right; y++) {
+	for (int32 x = top; x < bottom; x++) {
+		for (int32 y = left; y < right; y++) {
 			*(ptr++) = e;
 		}
 		ptr += offset;

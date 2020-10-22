@@ -230,7 +230,7 @@ void Menu::plasmaEffectRenderFrame() {
 
 	for (j = 1; j < PLASMA_HEIGHT - 1; j++) {
 		for (i = 1; i < PLASMA_WIDTH - 1; i++) {
-			/*Here we calculate the average of all 8 neighbour pixel values*/
+			/* Here we calculate the average of all 8 neighbour pixel values */
 
 			c = plasmaEffectPtr[(i - 1) + (j - 1) * PLASMA_WIDTH];  //top-left
 			c += plasmaEffectPtr[(i + 0) + (j - 1) * PLASMA_WIDTH]; //top
@@ -243,8 +243,9 @@ void Menu::plasmaEffectRenderFrame() {
 			c += plasmaEffectPtr[(i + 0) + (j + 1) * PLASMA_WIDTH]; // bottom
 			c += plasmaEffectPtr[(i + 1) + (j + 1) * PLASMA_WIDTH]; // bottom-right
 
-			c = (c >> 3) | ((c & 0x0003) << 13); /* And the 2 least significant bits are used as a
-              randomizing parameter for statistically fading the flames */
+			/* And the 2 least significant bits are used as a
+			 * randomizing parameter for statistically fading the flames */
+			c = (c >> 3) | ((c & 0x0003) << 13);
 
 			if (!(c & 0x6500) &&
 			    (j >= (PLASMA_HEIGHT - 4) || c > 0)) {
@@ -264,25 +265,21 @@ void Menu::plasmaEffectRenderFrame() {
 }
 
 void Menu::processPlasmaEffect(int32 top, int32 color) {
-	uint8 *in;
-	uint8 *out;
-	int32 i, j, target;
-	uint8 c;
-	uint8 max_value = color + 15;
+	const uint8 max_value = color + 15;
 
 	plasmaEffectRenderFrame();
 
-	in = plasmaEffectPtr + 5 * PLASMA_WIDTH;
-	out = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top];
+	uint8 *in = plasmaEffectPtr + 5 * PLASMA_WIDTH;
+	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top];
 
-	for (i = 0; i < 25; i++) {
-		for (j = 0; j < kMainMenuButtonWidth; j++) {
-			c = in[i * kMainMenuButtonWidth + j] / 2 + color;
+	for (int32 i = 0; i < 25; i++) {
+		for (int32 j = 0; j < kMainMenuButtonWidth; j++) {
+			uint8 c = in[i * kMainMenuButtonWidth + j] / 2 + color;
 			if (c > max_value)
 				c = max_value;
 
 			/* 2x2 squares sharing the same pixel color: */
-			target = 2 * (i * SCREEN_W + j);
+			int32 target = 2 * (i * SCREEN_W + j);
 			out[target] = c;
 			out[target + 1] = c;
 			out[target + SCREEN_W] = c;
@@ -300,16 +297,19 @@ void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
 
 void Menu::drawButtonGfx(int32 width, int32 topheight, int32 id, int32 value, int32 mode) {
 	/*
-	 * int CDvolumeRemaped; int musicVolumeRemaped; int masterVolumeRemaped; int lineVolumeRemaped;
+	 * int CDvolumeRemaped;
+	 * int musicVolumeRemaped;
+	 * int masterVolumeRemaped;
+	 * int lineVolumeRemaped;
 	 * int waveVolumeRemaped;
 	 */
 
 	int32 left = width - kMainMenuButtonSpan / 2;
 	int32 right = width + kMainMenuButtonSpan / 2;
 
-	// topheigh is the center Y pos of the button
+	// topheight is the center Y pos of the button
 	int32 top = topheight - 25;    // this makes the button be 50 height
-	int32 bottom = topheight + 25; // ||
+	int32 bottom = topheight + 25;
 	int32 bottom2 = bottom;
 
 	if (mode != 0) {
@@ -423,12 +423,11 @@ void Menu::drawButton(const int16 *menuSettings, int32 mode) {
 }
 
 int32 Menu::processMenu(int16 *menuSettings) {
-	int16 *localData = menuSettings;
-	int16 currentButton = 0; // localData[0];
+	int16 currentButton = menuSettings[MenuSettings_CurrentLoadedButton];
 	bool buttonReleased = true;
 	bool buttonNeedRedraw = true;
 	bool musicChanged = false;
-	int32 numEntry = localData[1];
+	const int32 numEntry = menuSettings[MenuSettings_NumberOfButtons];
 	int32 localTime = _engine->lbaTime;
 	int32 maxButton = numEntry - 1;
 
@@ -436,7 +435,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 
 	do {
 		// if its on main menu
-		if (localData == MainMenuSettings) {
+		if (menuSettings == MainMenuSettings) {
 			if (_engine->lbaTime - localTime > 11650) {
 				return kBackground;
 			}
@@ -455,6 +454,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			_engine->_keyboard.key = _engine->_keyboard.pressedKey;
 
 			if (((uint8)_engine->_keyboard.key & 2)) { // on arrow key down
+				debug("pressed down");
 				currentButton++;
 				if (currentButton == numEntry) { // if current button is the last, than next button is the first
 					currentButton = 0;
@@ -464,6 +464,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 
 			if (((uint8)_engine->_keyboard.key & 1)) { // on arrow key up
+				debug("pressed up");
 				currentButton--;
 				if (currentButton < 0) { // if current button is the first, than previous button is the last
 					currentButton = maxButton;
@@ -472,8 +473,9 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				buttonReleased = false;
 			}
 
-			if (*(localData + 8) <= 5) {                               // if its a volume button
-				const int16 id = *(localData + currentButton * 2 + 4); // get button parameters from settings array
+			// if its a volume button
+			if ((menuSettings == OptionsMenuSettings || menuSettings == VolumeMenuSettings) && *(menuSettings + 8) <= 5) {
+				const int16 id = *(menuSettings + currentButton * 2 + MenuSettings_FirstButtonState); // get button parameters from settings array
 
 				Audio::Mixer *mixer = _engine->_system->getMixer();
 				switch (id) {
@@ -539,12 +541,12 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		}
 
 		if (buttonNeedRedraw) {
-			*localData = currentButton;
+			menuSettings[MenuSettings_CurrentLoadedButton] = currentButton;
 
-			drawButton(localData, 0); // current button
+			drawButton(menuSettings, 0); // current button
 			do {
 				_engine->readKeys();
-				drawButton(localData, 1);
+				drawButton(menuSettings, 1);
 			} while (_engine->_keyboard.pressedKey == 0 && _engine->_keyboard.skippedKey == 0 && _engine->_keyboard.internalKeyCode == 0);
 			buttonNeedRedraw = false;
 		} else {
@@ -552,14 +554,14 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				// TODO: update volume settings
 			}
 
-			drawButton(localData, 1);
+			drawButton(menuSettings, 1);
 			_engine->readKeys();
 			// WARNING: this is here to prevent a fade bug while quit the menu
 			_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 		}
 	} while (!(_engine->_keyboard.skippedKey & 2) && !(_engine->_keyboard.skippedKey & 1));
 
-	currentButton = *(localData + 5 + currentButton * 2); // get current browsed button
+	currentButton = *(menuSettings + MenuSettings_FirstButton + currentButton * 2); // get current browsed button
 
 	_engine->readKeys();
 
@@ -679,50 +681,46 @@ int32 Menu::optionsMenu() {
 	return 0;
 }
 
-void Menu::mainMenu() {
-	_engine->_sound->stopSamples();
-
-	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
-
+bool Menu::init() {
 	// load menu effect file only once
 	plasmaEffectPtr = (uint8 *)malloc(kPlasmaEffectFilesize);
 	memset(plasmaEffectPtr, 0, kPlasmaEffectFilesize);
-	_engine->_hqrdepack->hqrGetEntry(plasmaEffectPtr, Resources::HQR_RESS_FILE, RESSHQR_PLASMAEFFECT);
+	return _engine->_hqrdepack->hqrGetEntry(plasmaEffectPtr, Resources::HQR_RESS_FILE, RESSHQR_PLASMAEFFECT) > 0;
+}
 
-	while (!_engine->shouldQuit()) {
-		_engine->_text->initTextBank(0);
+void Menu::run() {
+	_engine->_text->initTextBank(0);
 
-		_engine->_music->playTrackMusic(9); // LBA's Theme
-		_engine->_sound->stopSamples();
+	_engine->_music->playTrackMusic(9); // LBA's Theme
+	_engine->_sound->stopSamples();
 
-		switch (processMenu(MainMenuSettings)) {
-		case kNewGame: {
-			_engine->_menuOptions->newGameMenu();
-			break;
-		}
-		case kContinueGame: {
-			_engine->_menuOptions->continueGameMenu();
-			break;
-		}
-		case kOptions: {
-			_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-			_engine->flip();
-			OptionsMenuSettings[5] = kReturnMenu;
-			optionsMenu();
-			break;
-		}
-		case kQuit: {
-			Common::Event event;
-			event.type = Common::EVENT_QUIT;
-			_engine->_system->getEventManager()->pushEvent(event);
-			break;
-		}
-		case kBackground: {
-			_engine->_screens->loadMenuImage();
-		}
-		}
-		_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
+	switch (processMenu(MainMenuSettings)) {
+	case kNewGame: {
+		_engine->_menuOptions->newGameMenu();
+		break;
 	}
+	case kContinueGame: {
+		_engine->_menuOptions->continueGameMenu();
+		break;
+	}
+	case kOptions: {
+		_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+		_engine->flip();
+		OptionsMenuSettings[5] = kReturnMenu;
+		optionsMenu();
+		break;
+	}
+	case kQuit: {
+		Common::Event event;
+		event.type = Common::EVENT_QUIT;
+		_engine->_system->getEventManager()->pushEvent(event);
+		break;
+	}
+	case kBackground: {
+		_engine->_screens->loadMenuImage();
+	}
+	}
+	_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
 }
 
 int32 Menu::giveupMenu() {

@@ -257,10 +257,11 @@ void Text::drawText(int32 x, int32 y, const char *dialogue) { // Font
 		return;
 
 	do {
-		uint8 currChar = (uint8) *(dialogue++); // read the next char from the string
+		const uint8 currChar = (uint8) *(dialogue++); // read the next char from the string
 
-		if (currChar == 0) // if the char is 0x0, -> end of string
+		if (currChar == '\0') {
 			break;
+		}
 
 		if (currChar == ' ') {
 			x += dialCharSpace;

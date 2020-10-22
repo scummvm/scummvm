@@ -27,6 +27,17 @@
 
 namespace TwinE {
 
+enum MenuSettingsType {
+	// button number
+	MenuSettings_CurrentLoadedButton = 0,
+	// is used to calc the height where the first button will appear
+	MenuSettings_NumberOfButtons = 1,
+	MenuSettings_ButtonsBoxHeight = 2,
+	MenuSettings_HeaderEnd = 3, // TODO: unknown
+	MenuSettings_FirstButtonState = 4,
+	MenuSettings_FirstButton = 5
+};
+
 class Menu {
 private:
 	TwinEEngine *_engine;
@@ -124,8 +135,10 @@ public:
 	 */
 	int32 processMenu(int16 *menuSettings);
 
+	bool init();
+
 	/** Used to run the main menu */
-	void mainMenu();
+	void run();
 
 	/** Used to run the in-game give-up menu */
 	int32 giveupMenu();
