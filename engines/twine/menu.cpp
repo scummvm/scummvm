@@ -295,7 +295,7 @@ void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
 	_engine->_interface->drawLine(++left, bottom, right, bottom, 73); // bottom line
 }
 
-void Menu::drawButtonGfx(int32 width, int32 topheight, int32 id, int32 value, int32 mode) {
+void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 textId, int32 mode) {
 	/*
 	 * int CDvolumeRemaped;
 	 * int musicVolumeRemaped;
@@ -313,9 +313,9 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 id, int32 value, in
 	int32 bottom2 = bottom;
 
 	if (mode != 0) {
-		if (id <= kMasterVolume && id >= kMusicVolume) {
+		if (buttonId <= kMasterVolume && buttonId >= kMusicVolume) {
 			int32 newWidth = 0;
-			switch (id) {
+			switch (buttonId) {
 			case kMusicVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
 				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
@@ -364,7 +364,7 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 id, int32 value, in
 	_engine->_text->setFontColor(15);
 	_engine->_text->setFontParameters(2, 8);
 	char dialText[256];
-	_engine->_text->getMenuText(value, dialText, sizeof(dialText));
+	_engine->_text->getMenuText(textId, dialText, sizeof(dialText));
 	const int32 textSize = _engine->_text->getTextSize(dialText);
 	_engine->_text->drawText(width - (textSize / 2), topheight - 18, dialText);
 
