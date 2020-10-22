@@ -66,23 +66,33 @@ void Actor::restartHeroScene() {
 }
 
 void Actor::loadHeroEntities() {
-	_engine->_hqrdepack->hqrGetallocEntry(&heroEntityATHLETIC, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROATHLETIC);
+	if (_engine->_hqrdepack->hqrGetallocEntry(&heroEntityATHLETIC, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROATHLETIC) == 0) {
+		error("Failed to load actor athletic 3d data");
+	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityATHLETIC;
 	heroAnimIdxATHLETIC = _engine->_animations->getBodyAnimIndex(0, 0);
 
-	_engine->_hqrdepack->hqrGetallocEntry(&heroEntityAGGRESSIVE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROAGGRESSIVE);
+	if (_engine->_hqrdepack->hqrGetallocEntry(&heroEntityAGGRESSIVE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROAGGRESSIVE) == 0) {
+		error("Failed to load actor aggressive 3d data");
+	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityAGGRESSIVE;
 	heroAnimIdxAGGRESSIVE = _engine->_animations->getBodyAnimIndex(0, 0);
 
-	_engine->_hqrdepack->hqrGetallocEntry(&heroEntityDISCRETE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERODISCRETE);
+	if (_engine->_hqrdepack->hqrGetallocEntry(&heroEntityDISCRETE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERODISCRETE) == 0) {
+		error("Failed to load actor discrete 3d data");
+	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityDISCRETE;
 	heroAnimIdxDISCRETE = _engine->_animations->getBodyAnimIndex(0, 0);
 
-	_engine->_hqrdepack->hqrGetallocEntry(&heroEntityPROTOPACK, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROPROTOPACK);
+	if (_engine->_hqrdepack->hqrGetallocEntry(&heroEntityPROTOPACK, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROPROTOPACK) == 0) {
+		error("Failed to load actor protopack 3d data");
+	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityPROTOPACK;
 	heroAnimIdxPROTOPACK = _engine->_animations->getBodyAnimIndex(0, 0);
 
-	_engine->_hqrdepack->hqrGetallocEntry(&heroEntityNORMAL, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERONORMAL);
+	if (_engine->_hqrdepack->hqrGetallocEntry(&heroEntityNORMAL, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERONORMAL) == 0) {
+		error("Failed to load actor normal 3d data");
+	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityNORMAL;
 	heroAnimIdxNORMAL = _engine->_animations->getBodyAnimIndex(0, 0);
 
