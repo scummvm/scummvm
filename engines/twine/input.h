@@ -131,11 +131,18 @@ struct MouseStatusStruct {
 	int32 y = 0;
 };
 
+/**
+ * @brief Whenever text input is needed (like the playername)
+ * you have to disable the keymaps
+ */
 struct ScopedKeyMapperDisable {
 	ScopedKeyMapperDisable();
 	~ScopedKeyMapperDisable();
 };
 
+/**
+ * @brief Activates the given key map id that is registered in the meta engine
+ */
 class ScopedKeyMap {
 private:
 	TwinEEngine* _engine;
@@ -148,7 +155,6 @@ public:
 class Input {
 private:
 	TwinEEngine *_engine;
-	int _tickCounter = 0;
 	uint8 _pressed[Common::KEYCODE_LAST]{0};
 	Common::String _currentKeyMap;
 

@@ -246,7 +246,9 @@ void TwinEEngine::initEngine() {
 	// Check if LBA CD-Rom is on drive
 	_music->initCdrom();
 
-#if 0
+#define TWINE_PLAY_INTROS 1
+#if TWINE_PLAY_INTROS
+	_input->enabledKeyMap(cutsceneKeyMapId);
 	// Display company logo
 	_screens->adelineLogo();
 
@@ -267,6 +269,8 @@ void TwinEEngine::initEngine() {
 	}
 
 	_flaMovies->playFlaMovie(FLA_DRAGON3);
+#else
+	_input->enabledKeyMap(uiKeyMapId);
 #endif
 
 	_screens->loadMenuImage();
@@ -763,7 +767,6 @@ bool TwinEEngine::gameEngineLoop() { // mainLoop
 	_screens->lockPalette = true;
 	_movements->setActorAngle(0, -256, 5, &loopMovePtr);
 
-
 	while (quitGame == -1) {
 		start = g_system->getMillis();
 
@@ -787,7 +790,7 @@ void TwinEEngine::delaySkip(uint32 time) {
 	_input->internalKeyCode = 0;
 	do {
 		readKeys();
-		if (_input->internalKeyCode == 1) {
+		if (_input->isActionActive(TwinEActionType::CutsceneAbort) || _input->isActionActive(TwinEActionType::UIAbort)) {
 			break;
 		}
 		if (shouldQuit()) {
