@@ -706,29 +706,22 @@ void Menu::run() {
 }
 
 int32 Menu::giveupMenu() {
-	//int32 saveLangue=0;
-	int32 menuId;
-	int16 *localMenu;
 
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 	_engine->_sound->pauseSamples();
 
-	if (_engine->cfgfile.UseAutoSaving == 1)
+	int16 *localMenu;
+	if (_engine->cfgfile.UseAutoSaving == 1) {
 		localMenu = GiveUpMenuSettings;
-	else
+	} else {
 		localMenu = GiveUpMenuSettingsWithSave;
+	}
 
+	int32 menuId;
 	do {
-		//saveLangue = languageCD1;
-		//languageCD1 = 0;
 		_engine->_text->initTextBank(0);
-
 		menuId = processMenu(localMenu);
-
-		//languageCD1 = saveLangue;
-
 		_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
-
 		_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
 	} while (menuId != kGiveUp && menuId != kContinue);
 
