@@ -255,13 +255,25 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 	// KQ7 - Upscale videos to double their size (The in-game "Full screen" video setting)
 	{
 		GAMEOPTION_UPSCALE_VIDEOS,
-	{
-		_s("Upscale videos"),
-		_s("Upscale videos to double their size"),
-		"enable_video_upscale",
-		true
-	}
+		{
+			_s("Upscale videos"),
+			_s("Upscale videos to double their size"),
+			"enable_video_upscale",
+			true
+		}
 	},
+	
+	// SCI16 games: use RGB renderer instead of indexed
+	{
+		GAMEOPTION_RGB_RENDERING,
+		{
+			_s("Use RGB rendering"),
+			_s("Use RGB rendering to improve screen transitions"),
+			"rgb_rendering",
+			false
+		}
+	},
+
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };
 
