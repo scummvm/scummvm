@@ -37,20 +37,6 @@ private:
 	int32 needToLoadHolomapGFX = 0;
 	uint8 paletteHolomap[NUMOFCOLORS * 3]{0};
 
-	uint8 *videoPtr1 = nullptr;
-	uint8 *videoPtr2 = nullptr;
-	uint8 *videoPtr3 = nullptr;
-	uint8 *videoPtr4 = nullptr;
-	uint8 *videoPtr5 = nullptr;
-	uint8 *videoPtr6 = nullptr;
-	uint8 *videoPtr7 = nullptr;
-	uint8 *videoPtr8 = nullptr;
-	uint8 *videoPtr9 = nullptr;
-	uint8 *videoPtr10 = nullptr;
-	uint8 *videoPtr11 = nullptr;
-	uint8 *videoPtr12 = nullptr;
-	uint8 *videoPtr13 = nullptr;
-
 public:
 	Holomap(TwinEEngine *engine);
 
