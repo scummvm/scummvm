@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: 2020-09-14 15:43+0000\n"
-"Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
+"PO-Revision-Date: 2020-10-23 14:36+0000\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -995,19 +995,20 @@ msgstr "Volledig-scherm modus"
 
 #: gui/options.cpp:1305
 msgid "V-Sync in 3D Games"
-msgstr ""
+msgstr "V-Sync in 3D Spellen"
 
 #: gui/options.cpp:1305
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgstr ""
+"Wacht op verticale sync voordat het scherm ververst wordt bij 3D spellen"
 
 #: gui/options.cpp:1307
 msgid "Game 3D Renderer:"
-msgstr ""
+msgstr "3D Renderer Spel:"
 
 #: gui/options.cpp:1316
 msgid "3D Anti-aliasing:"
-msgstr ""
+msgstr "3D Anti-aliasing:"
 
 #: gui/options.cpp:1320 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
@@ -1027,7 +1028,7 @@ msgstr "Pixelverhoudingcorrectie"
 
 #: gui/options.cpp:1335
 msgid "Correct aspect ratio for games"
-msgstr ""
+msgstr "Corrigeer beeld ratio voor spellen"
 
 #: gui/options.cpp:1343
 msgid "Preferred device:"
@@ -4489,15 +4490,14 @@ msgstr "Bestand verwijderen niet gelukt."
 
 #: engines/grim/detection.cpp:45
 msgid "Load user patch (unsupported)"
-msgstr ""
+msgstr "Laad gebruikers patch (niet ondersteund)"
 
 #: engines/grim/detection.cpp:46
-#, fuzzy
 msgid ""
 "Load an user patch. Please note that the ScummVM team doesn't provide "
 "support for using such patches."
 msgstr ""
-"Bezig met laden van datausr.lab. Merk op dat het ScummVM team geen "
+"Bezig met laden van gebruikers patch. Merk op dat het ScummVM team geen "
 "ondersteuning biedt voor zulke patches"
 
 #: engines/grim/detection.cpp:54
@@ -4506,22 +4506,22 @@ msgstr "Toon FPS"
 
 #: engines/grim/detection.cpp:55
 msgid "Show the current FPS-rate, while you play."
-msgstr ""
+msgstr "Toon huidige FPS tijdens spelen"
 
 #: engines/grim/grim.cpp:344
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "ScummVM found some problems with your game data files.\n"
 "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
 "Do you still want to run %s?"
 msgstr ""
 "ScummVM heeft enkele problemen gevonden in uw spelbestanden.\n"
-"Nu opstarten kan leiden tot bugs of crashes.\n"
-"Wilt u %s alsnog opstarten?"
+"Nu opstarten kan leiden tot bugs of zelfs crashes.\n"
+"Wilt u %s toch opstarten?"
 
 #: engines/grim/grim.cpp:467 engines/grim/grim.cpp:559
 msgid "Run"
-msgstr ""
+msgstr "Uitvoeren"
 
 #: engines/grim/grim.cpp:472 engines/scumm/help.cpp:239
 #: engines/scumm/help.cpp:247
@@ -4530,11 +4530,11 @@ msgstr "Onderzoek"
 
 #: engines/grim/grim.cpp:477 engines/grim/grim.cpp:574
 msgid "Use/Talk"
-msgstr ""
+msgstr "Gebruik/Praat"
 
 #: engines/grim/grim.cpp:482 engines/grim/grim.cpp:579
 msgid "Pick up/Put away"
-msgstr ""
+msgstr "Pak op/Zet weg"
 
 #: engines/grim/grim.cpp:487 engines/grim/grim.cpp:584
 #: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
@@ -4544,7 +4544,7 @@ msgstr "Inventaris"
 
 #: engines/grim/grim.cpp:492 engines/grim/grim.cpp:589
 msgid "Skip dialog lines"
-msgstr ""
+msgstr "Sla gespreksregels over"
 
 #: engines/grim/grim.cpp:510 engines/grim/grim.cpp:607
 msgid "Menu"
@@ -4560,15 +4560,15 @@ msgstr ""
 
 #: engines/grim/grim.cpp:564
 msgid "Quick Room Exit"
-msgstr ""
+msgstr "Snel Kamer Verlaten"
 
 #: engines/grim/grim.cpp:569
 msgid "Examine/Look"
-msgstr ""
+msgstr "Onderzoeken/Kijken"
 
 #: engines/grim/grim.cpp:1339
 msgid "Error: the game could not be saved."
-msgstr ""
+msgstr "Fout: het spel kon niet worden opgeslagen"
 
 #: engines/grim/md5check.cpp:547
 #, c-format
@@ -4586,7 +4586,7 @@ msgstr ""
 "%s"
 
 #: engines/grim/md5check.cpp:554
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Could not open the file %s for checking.\n"
 "It may be missing or you may not have the rights to open it.\n"
@@ -4594,9 +4594,10 @@ msgid ""
 "needed files."
 msgstr ""
 "Kon bestand %s niet openen voor integriteitscontrole.\n"
-"Misschien ontbreekt het of u heeft niet de juiste permissies om het te "
-"openen. Ga naar https://wiki.residualvm.org/index.php/Datafiles voor een "
-"overzicht van de benodigde bestanden en bestandsstructuur"
+"Misschien ontbreekt het of heeft u niet de juiste permissies om het te "
+"openen.\n"
+"Ga naar https://wiki.residualvm.org/index.php/Datafiles voor een overzicht "
+"van de benodigde bestanden."
 
 #: engines/grim/md5checkdialog.cpp:42
 msgid ""
@@ -4644,6 +4645,15 @@ msgid ""
 "\n"
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
+"FOUT: Niet genoeg muziekbestanden gevonden!\n"
+"Escape from Monkey Island heeft twee versies van FullMonkeyMap.imt,\n"
+"u moet allebei deze bestanden van beide CDs  kopiëren naar Textures/,\n"
+"en ze als volgt hernoemen om muziek in het spel te hebben:\n"
+"CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
+"CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
+"\n"
+"De versies van dit spel op Steam en GOG hebben een gecombineerde "
+"FullMonkeyMap.imt"
 
 #: engines/groovie/detection.cpp:320
 msgid "Fast movie speed"
@@ -5247,11 +5257,11 @@ msgstr "Kon de '%s' engine data file niet vinden"
 
 #: engines/myst3/detection.cpp:182
 msgid "Widescreen mod"
-msgstr ""
+msgstr "Breedbeeld aanpassing"
 
 #: engines/myst3/detection.cpp:183
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr ""
+msgstr "Zet breedbeeld rendering in volscherm modus aan."
 
 #: engines/myst3/myst3.cpp:361
 msgid ""
@@ -5261,6 +5271,12 @@ msgid ""
 "The updates can be downloaded from:\n"
 "https://www.scummvm.org/frs/extras/patches/"
 msgstr ""
+"Deze versie van Myst III is niet bijgewerkt met de nieuwste officiële patch."
+"\n"
+"Installeer alstublieft de officiële update die overeenkomt met de taal van "
+"uw spel.\n"
+"De update kan gevonden worden op:\n"
+"https://www.scummvm.org/frs/extras/patches/"
 
 #: engines/myst3/myst3.cpp:1575 engines/pegasus/pegasus.cpp:701
 msgid "Invalid file name for saving"
@@ -6499,11 +6515,11 @@ msgstr "Gebruik de floppy versie van de intro (alleen voor de CD versie)"
 
 #: engines/stark/detection.cpp:340
 msgid "Load modded assets"
-msgstr ""
+msgstr "Laad bewerkte bestanden"
 
 #: engines/stark/detection.cpp:341
 msgid "Enable loading of external replacement assets."
-msgstr ""
+msgstr "Zet het laden van externe vervangende spelbestanden aan."
 
 #: engines/stark/detection.cpp:349
 msgid "Enable linear filtering of the backgrounds images"
@@ -6525,7 +6541,7 @@ msgstr ""
 
 #: engines/stark/stark.cpp:291
 msgid "You are missing recommended data files:"
-msgstr ""
+msgstr "U mist aangeraden data bestanden:"
 
 #: engines/stark/stark.cpp:305
 msgid ""
@@ -6533,20 +6549,25 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
+"De 'fonts' map is nodig om het tekst-ontwerp te zien zoals het bedoeld is. "
+"De Steam versie mist deze map. U kunt de lettertypes uit een demo versie van "
+"het spel halen."
 
 #: engines/stark/stark.cpp:312
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
 msgstr ""
+"'gui.ini' is aangeraden om de juiste instellingen voor lettertypes te "
+"krijgen voor vertaalde spellen."
 
 #: engines/stark/stark.cpp:318
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
-msgstr ""
+msgstr "'language.ini' is aangeraden om bevestigingsschermen vertaald te zien."
 
 #: engines/stark/stark.cpp:324
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
-msgstr ""
+msgstr "'game.exe' is aangeraden om opgemaakte bevestigingsschermen te zien."
 
 #: engines/supernova/supernova.cpp:187
 #, c-format
@@ -7205,7 +7226,7 @@ msgstr "Shift"
 
 #: engines/wintermute/keymapper_tables.h:1214
 msgid "Use Chapayev"
-msgstr ""
+msgstr "Gebruik Chapayev"
 
 #: engines/wintermute/keymapper_tables.h:1234
 #: engines/wintermute/keymapper_tables.h:1639
