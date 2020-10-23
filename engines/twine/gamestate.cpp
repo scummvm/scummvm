@@ -433,22 +433,21 @@ void GameState::processFoundItem(int32 item) {
 void GameState::processGameChoices(int32 choiceIdx) {
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-	gameChoicesSettings[0] = 0;          // Current loaded button (button number)
-	gameChoicesSettings[1] = numChoices; // Num of buttons
-	gameChoicesSettings[2] = 0;          // Buttons box height
-	gameChoicesSettings[3] = _engine->_text->currentTextBank + 3;
+	gameChoicesSettings[MenuSettings_CurrentLoadedButton] = 0;      // Current loaded button (button number)
+	gameChoicesSettings[MenuSettings_NumberOfButtons] = numChoices; // Num of buttons
+	gameChoicesSettings[MenuSettings_ButtonsBoxHeight] = 0;         // Buttons box height
+	gameChoicesSettings[MenuSettings_HeaderEnd] = _engine->_text->currentTextBank + 3;
 
-	if (numChoices > 0) {
-		for (int32 i = 0; i < numChoices; i++) {
-			gameChoicesSettings[i * 2 + 4] = 0;
-			gameChoicesSettings[i * 2 + 5] = gameChoices[i];
-		}
+	// filled via script
+	for (int32 i = 0; i < numChoices; i++) {
+		gameChoicesSettings[i * 2 + MenuSettings_FirstButtonState] = 0;
+		gameChoicesSettings[i * 2 + MenuSettings_FirstButton] = gameChoices[i];
 	}
 
 	_engine->_text->drawAskQuestion(choiceIdx);
 
 	_engine->_menu->processMenu(gameChoicesSettings);
-	choiceAnswer = gameChoices[gameChoicesSettings[0]];
+	choiceAnswer = gameChoices[gameChoicesSettings[MenuSettings_CurrentLoadedButton]];
 
 	// get right VOX entry index
 	if (_engine->_text->initVoxToPlay(choiceAnswer)) {
@@ -479,8 +478,6 @@ void GameState::processGameoverAnimation() { // makeGameOver
 	_engine->_hqrdepack->hqrGetEntry(gameOverPtr, Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL);
 
 	if (gameOverPtr) {
-		int32 avg, cdot;
-
 		_engine->_renderer->prepareIsoModel(gameOverPtr);
 		_engine->_sound->stopSamples();
 		_engine->_music->stopMidiMusic(); // stop fade music
@@ -491,8 +488,8 @@ void GameState::processGameoverAnimation() { // makeGameOver
 		while (_engine->_keyboard.internalKeyCode != 1 && (_engine->lbaTime - startLbaTime) <= 500) {
 			_engine->readKeys();
 
-			avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);
-			cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 0x64);
+			int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);
+			int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 0x64);
 			_engine->_interface->blitBox(120, 120, 519, 359, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
 			_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);
 			_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
