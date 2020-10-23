@@ -310,7 +310,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 				break;
 			}
 
-			if (_engine->_keyboard.internalKeyCode) {
+			if (_engine->_keyboard.isAnyKeyPressed()) {
 				break;
 			}
 		} while (true);
