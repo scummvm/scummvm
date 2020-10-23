@@ -223,15 +223,11 @@ int16 Menu::VolumeMenuSettings[] = {
 Menu::Menu(TwinEEngine *engine) : _engine(engine) {}
 
 void Menu::plasmaEffectRenderFrame() {
-	int16 c;
-	int32 i, j;
-	uint8 *dest;
-	uint8 *src;
-
-	for (j = 1; j < PLASMA_HEIGHT - 1; j++) {
-		for (i = 1; i < PLASMA_WIDTH - 1; i++) {
+	for (int32 j = 1; j < PLASMA_HEIGHT - 1; j++) {
+		for (int32 i = 1; i < PLASMA_WIDTH - 1; i++) {
 			/* Here we calculate the average of all 8 neighbour pixel values */
 
+			int16 c;
 			c = plasmaEffectPtr[(i - 1) + (j - 1) * PLASMA_WIDTH];  //top-left
 			c += plasmaEffectPtr[(i + 0) + (j - 1) * PLASMA_WIDTH]; //top
 			c += plasmaEffectPtr[(i + 1) + (j - 1) * PLASMA_WIDTH]; //top-right
@@ -258,14 +254,14 @@ void Menu::plasmaEffectRenderFrame() {
 	}
 
 	// flip the double-buffer while scrolling the effect vertically:
-	dest = plasmaEffectPtr;
-	src = plasmaEffectPtr + (PLASMA_HEIGHT + 1) * PLASMA_WIDTH;
-	for (i = 0; i < PLASMA_HEIGHT * PLASMA_WIDTH; i++)
+	uint8 *dest = plasmaEffectPtr;
+	uint8 *src = plasmaEffectPtr + (PLASMA_HEIGHT + 1) * PLASMA_WIDTH;
+	for (int32 i = 0; i < PLASMA_HEIGHT * PLASMA_WIDTH; i++)
 		*(dest++) = *(src++);
 }
 
 void Menu::processPlasmaEffect(int32 top, int32 color) {
-	const uint8 max_value = color + 15;
+	const int32 max_value = color + 15;
 
 	plasmaEffectRenderFrame();
 
@@ -274,15 +270,12 @@ void Menu::processPlasmaEffect(int32 top, int32 color) {
 
 	for (int32 i = 0; i < 25; i++) {
 		for (int32 j = 0; j < kMainMenuButtonWidth; j++) {
-			uint8 c = in[i * kMainMenuButtonWidth + j] / 2 + color;
-			if (c > max_value)
-				c = max_value;
-
+			const uint8 c = MIN(in[i * kMainMenuButtonWidth + j] / 2 + color, max_value);
 			/* 2x2 squares sharing the same pixel color: */
-			int32 target = 2 * (i * SCREEN_W + j);
-			out[target] = c;
+			const int32 target = 2 * (i * SCREEN_W + j);
+			out[target + 0] = c;
 			out[target + 1] = c;
-			out[target + SCREEN_W] = c;
+			out[target + SCREEN_W + 0] = c;
 			out[target + SCREEN_W + 1] = c;
 		}
 	}
@@ -291,8 +284,8 @@ void Menu::processPlasmaEffect(int32 top, int32 color) {
 void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
 	_engine->_interface->drawLine(left, top, right, top, 79);         // top line
 	_engine->_interface->drawLine(left, top, left, bottom, 79);       // left line
-	_engine->_interface->drawLine(right, ++top, right, bottom, 73);   // right line
-	_engine->_interface->drawLine(++left, bottom, right, bottom, 73); // bottom line
+	_engine->_interface->drawLine(right, top + 1, right, bottom, 73);   // right line
+	_engine->_interface->drawLine(left + 1, bottom, right, bottom, 73); // bottom line
 }
 
 void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 textId, bool hover) {
@@ -304,25 +297,24 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 	 * int waveVolumeRemaped;
 	 */
 
-	int32 left = width - kMainMenuButtonSpan / 2;
-	int32 right = width + kMainMenuButtonSpan / 2;
+	const int32 left = width - kMainMenuButtonSpan / 2;
+	const int32 right = width + kMainMenuButtonSpan / 2;
 
 	// topheight is the center Y pos of the button
-	int32 top = topheight - 25; // this makes the button be 50 height
-	int32 bottom = topheight + 25;
-	int32 bottom2 = bottom;
+	const int32 top = topheight - 25; // this makes the button be 50 height
+	const int32 bottom = topheight + 25;
 
 	if (hover != 0) {
 		if (buttonId <= kMasterVolume && buttonId >= kMusicVolume) {
 			int32 newWidth = 0;
 			switch (buttonId) {
 			case kMusicVolume: {
-				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
+				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
 			case kSoundVolume: {
-				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::SoundType::kSFXSoundType);
+				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
 				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
@@ -332,12 +324,12 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 				break;
 			}
 			case kLineVolume: {
-				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::SoundType::kSpeechSoundType);
+				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
 				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
 			case kMasterVolume: {
-				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::SoundType::kPlainSoundType);
+				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
 				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
@@ -356,7 +348,7 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 		}
 	} else {
 		_engine->_interface->blitBox(left, top, right, bottom, (const int8 *)_engine->workVideoBuffer.getPixels(), left, top, (int8 *)_engine->frontVideoBuffer.getPixels());
-		_engine->_interface->drawTransparentBox(left, top, right, bottom2, 4);
+		_engine->_interface->drawTransparentBox(left, top, right, bottom, 4);
 	}
 
 	drawBox(left, top, right, bottom);
