@@ -33,9 +33,7 @@ namespace TwinE {
 void Screens::adelineLogo() {
 	_engine->_music->playMidiMusic(31);
 
-	loadImage(RESSHQR_ADELINEIMG);
-	_engine->delaySkip(7000);
-	fadeOut(paletteRGBACustom);
+	loadImageDelay(RESSHQR_ADELINEIMG, 7);
 	palCustom = true;
 }
 
@@ -78,6 +76,7 @@ void Screens::loadImage(int32 index, bool fade_in) {
 		warning("Failed to load image with index %i", index);
 		return;
 	}
+	debug("Load image: %i", index);
 	copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	loadCustomPalette(index + 1);
 	if (fade_in) {

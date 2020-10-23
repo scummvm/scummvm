@@ -594,8 +594,9 @@ int Text::printText10() {
 
 // TODO: refactor this code
 void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
-	int32 printedText;
 	int32 skipText = 0;
+
+	ScopedKeyMap scopedKeyMap(_engine, cutsceneKeyMapId);
 
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
@@ -609,50 +610,21 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 		initText(index);
 		initDialogueBox();
 
+		int32 printedText;
 		do {
 			_engine->readKeys();
 			printedText = printText10();
 			playVox(currDialTextEntry);
 
-			if (printedText == 2) {
-				do {
-					_engine->readKeys();
-					if (_engine->shouldQuit()) {
-						break;
-					}
-					if (_engine->_input->internalKeyCode == 0 && _engine->_input->skippedKey == 0 && _engine->_input->pressedKey == 0) {
-						break;
-					}
-					playVox(currDialTextEntry);
-					_engine->_system->delayMillis(1);
-				} while (1);
-
-				do {
-					_engine->readKeys();
-					if (_engine->shouldQuit()) {
-						break;
-					}
-					if (_engine->_input->internalKeyCode != 0 || _engine->_input->skippedKey != 0 || _engine->_input->pressedKey != 0) {
-						break;
-					}
-					playVox(currDialTextEntry);
-					_engine->_system->delayMillis(1);
-				} while (1);
-			}
-
-			if (_engine->_input->internalKeyCode == 1) {
-				skipText = 1;
-			}
-
-			if (!printedText && !_engine->_sound->isSamplePlaying(currDialTextEntry)) {
+			if (!_engine->_sound->isSamplePlaying(currDialTextEntry)) {
 				break;
 			}
 
 			if (_engine->shouldQuit()) {
-				skipText = 1;
+				break;
 			}
 			_engine->_system->delayMillis(1);
-		} while (!skipText);
+		} while (!_engine->_input->isActionActive(TwinEActionType::CutsceneAbort));
 
 		hasHiddenVox = 0;
 
@@ -660,12 +632,7 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 
 		printTextVar13 = 0;
 
-		if (printedText != 0) {
-			_engine->_interface->loadClip();
-			return;
-		}
-
-		if (skipText != 0) {
+		if (printedText != 0 || skipText != 0) {
 			_engine->_interface->loadClip();
 			return;
 		}
@@ -678,7 +645,7 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 				break;
 			}
 			_engine->_system->delayMillis(1);
-		} while (_engine->_input->internalKeyCode || _engine->_input->skippedKey || _engine->_input->pressedKey);
+		} while (_engine->_input->isActionActive(TwinEActionType::CutsceneAbort));
 
 		// RECHECK this later
 		// wait key to display next text
@@ -696,10 +663,14 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 				break;
 			}
 			_engine->_system->delayMillis(1);
-		} while (!_engine->_input->pressedKey);
+		} while (!_engine->_input->isActionActive(TwinEActionType::CutsceneAbort));
 	} else { // RECHECK THIS
 		while (playVox(currDialTextEntry) && _engine->_input->internalKeyCode != 1) {
+			_engine->readKeys();
 			if (_engine->shouldQuit()) {
+				break;
+			}
+			if (_engine->_input->isActionActive(TwinEActionType::CutsceneAbort)) {
 				break;
 			}
 		}

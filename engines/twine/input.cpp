@@ -119,16 +119,23 @@ bool Input::isQuickBehaviourActionActive() const {
 }
 
 void Input::enabledKeyMap(const char *id) {
+	if (_currentKeyMap == id) {
+		return;
+	}
+
+	// switching the keymap must also disable all other action keys
+	memset(_pressed, 0, sizeof(_pressed));
+
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	const Common::KeymapArray &keymaps = keymapper->getKeymaps();
 	for (Common::Keymap *keymap : keymaps) {
 		keymap->setEnabled(keymap->getId() == id);
 	}
 	_currentKeyMap = id;
+	debug("enable keymap %s", id);
 }
 
 void Input::readKeys() {
-	++_tickCounter;
 	skippedKey = 0;
 	internalKeyCode = 0;
 
@@ -151,13 +158,11 @@ void Input::readKeys() {
 					break;
 				default:
 					localKey = twineactions[event.customType].localKey;
-					debug("repeat: %i", event.kbdRepeat);
 					actionStates[event.customType] = 1 + event.kbdRepeat;
 					break;
 				}
 			} else {
 				localKey = twineactions[event.customType].localKey;
-				debug("repeat: %i", event.kbdRepeat);
 				actionStates[event.customType] = 1 + event.kbdRepeat;
 			}
 			break;

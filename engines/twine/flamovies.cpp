@@ -274,6 +274,8 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 	if (!strcmp((const char *)flaHeaderData.version, "V1.3")) {
 		int32 currentFrame = 0;
 
+		debug("Play fla: %s", flaName);
+
 		ScopedKeyMap scopedKeyMap(_engine, cutsceneKeyMapId);
 
 		do {
