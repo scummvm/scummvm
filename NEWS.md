@@ -37,6 +37,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  SAGA:
    - Added support for ITE GOG Mac CD v1.1.
 
+ SCI:
+   - Added RGB rendering mode (16/32bpp) for SCI0 - SCI1.1 games, which addresses palette
+     issues in screen transitions and avoids mode changes when playing Mac QuickTime videos.
+
  Tinsel:
    - Enabled the Return to Launcher feature.
 
