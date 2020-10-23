@@ -149,11 +149,11 @@ int16 Menu::OptionsMenuSettings[] = {
     0,
     24, // return to previous menu
     0,
-    30, // volume settings
+    kVolume, // volume settings
     0,
-    46, // save game management
+    kSaveManage, // save game management
     0,
-    47, // advanced options
+    kAdvanced, // advanced options
 };
 
 /** Advanced Options Menu Settings
@@ -202,15 +202,15 @@ int16 Menu::VolumeMenuSettings[] = {
     0, // unused
     0,
     26, // return to main menu
-    1,
+    kMusicVolume,
     10, // music volume
-    2,
+    kSoundVolume,
     11, // sfx volume
-    3,
+    kCDVolume,
     12, // cd volume
-    4,
+    kLineVolume,
     13, // line-in volume
-    5,
+    kMasterVolume,
     14, // master volume
     0,
     16, // save parameters
@@ -381,7 +381,7 @@ void Menu::drawButton(const int16 *menuSettings, bool hover) {
 	if (topHeight == 0) {
 		topHeight = 35;
 	} else {
-		topHeight = topHeight - (((maxButton - 1) * 6) + ((maxButton)*50)) / 2;
+		topHeight = topHeight - (((maxButton - 1) * 6) + (maxButton * 50)) / 2;
 	}
 
 	if (maxButton <= 0) {
@@ -391,23 +391,23 @@ void Menu::drawButton(const int16 *menuSettings, bool hover) {
 	uint8 currentButton = 0;
 
 	const int16 *localData = menuSettings;
-	localData += 4;
+	localData += MenuSettings_FirstButtonState;
 	do {
 		// get menu item settings
 		uint8 menuItemId = (uint8)*localData;
 		localData += 1;
 		// applicable for sound menus, to save the volume/sound bar
-		uint16 menuItemValue = *localData;
+		uint16 textId = *localData;
 		localData += 1;
 		if (hover) {
 			if (currentButton == buttonNumber) {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, menuItemValue, hover);
+				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, textId, hover);
 			}
 		} else {
 			if (currentButton == buttonNumber) {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, menuItemValue, true);
+				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, textId, true);
 			} else {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, menuItemValue, false);
+				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, textId, false);
 			}
 		}
 
@@ -540,10 +540,10 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		if (buttonNeedRedraw) {
 			menuSettings[MenuSettings_CurrentLoadedButton] = currentButton;
 
-			drawButton(menuSettings, 0); // current button
+			drawButton(menuSettings, false); // current button
 			do {
 				_engine->readKeys();
-				drawButton(menuSettings, 1);
+				drawButton(menuSettings, true);
 			} while (_engine->_keyboard.pressedKey == 0 && _engine->_keyboard.skippedKey == 0 && _engine->_keyboard.internalKeyCode == 0);
 			buttonNeedRedraw = false;
 		} else {
@@ -551,7 +551,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				// TODO: update volume settings
 			}
 
-			drawButton(menuSettings, 1);
+			drawButton(menuSettings, true);
 			_engine->readKeys();
 			// WARNING: this is here to prevent a fade bug while quit the menu
 			_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
