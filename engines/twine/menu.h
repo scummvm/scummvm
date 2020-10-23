@@ -87,23 +87,22 @@ private:
 	 */
 	void drawMagicItemsBox(int32 left, int32 top, int32 right, int32 bottom, int32 color);
 
+	int16 *GiveUpMenuWithSaveState;
+	int16 *VolumeMenuState;
+	int16 *SaveManageMenuState;
+	int16 *GiveUpMenuState;
+	int16 *MainMenuState;
+	int16 *AdvOptionsMenuState;
+
 public:
 	Menu(TwinEEngine *engine);
+	int16 *OptionsMenuState;
 
 	int32 currMenuTextIndex = -1;
 	int32 currMenuTextBank = -1;
 	char currMenuTextBuffer[256] = "";
 
 	int16 itemAngle[255]{0}; // objectRotation
-
-	// TODO: these should be const - or the state might not get reset on an engine restart
-	static int16 OptionsMenuSettings[];
-	static int16 GiveUpMenuSettingsWithSave[];
-	static int16 VolumeMenuSettings[];
-	static int16 SaveManageMenuSettings[];
-	static int16 GiveUpMenuSettings[];
-	static int16 MainMenuSettings[];
-	static int16 AdvOptionsMenuSettings[];
 
 	/** Behaviour menu move pointer */
 	ActorMoveStruct moveMenu;

@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "common/util.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
 #include "twine/gamestate.h"
@@ -90,10 +91,11 @@ enum VolumeMenuType {
 	kMasterVolume = 5
 };
 
+namespace _priv {
 /** Main Menu Settings
 
 	Used to create the game main menu. */
-int16 Menu::MainMenuSettings[] = {
+static const int16 MainMenuSettings[] = {
     0,   // Current loaded button (button number)
     4,   // Num of buttons
     200, // Buttons box height ( is used to calc the height where the first button will appear )
@@ -111,7 +113,7 @@ int16 Menu::MainMenuSettings[] = {
 /** Give Up Menu Settings
 
 	Used to create the in-game menu. */
-int16 Menu::GiveUpMenuSettings[] = {
+static const int16 GiveUpMenuSettings[] = {
     0,   // Current loaded button (button number)
     2,   // Num of buttons
     240, // Buttons box height ( is used to calc the height where the first button will appear )
@@ -125,7 +127,7 @@ int16 Menu::GiveUpMenuSettings[] = {
 /** Give Up Menu Settings
 
 	Used to create the in-game menu. This menu have one extra item to save the game */
-int16 Menu::GiveUpMenuSettingsWithSave[] = {
+static const int16 GiveUpMenuWithSaveSettings[] = {
     0,   // Current loaded button (button number)
     3,   // Num of buttons
     240, // Buttons box height ( is used to calc the height where the first button will appear )
@@ -141,7 +143,7 @@ int16 Menu::GiveUpMenuSettingsWithSave[] = {
 /** Options Menu Settings
 
 	Used to create the options menu. */
-int16 Menu::OptionsMenuSettings[] = {
+static const int16 OptionsMenuSettings[] = {
     0, // Current loaded button (button number)
     4, // Num of buttons
     0, // Buttons box height ( is used to calc the height where the first button will appear )
@@ -159,7 +161,7 @@ int16 Menu::OptionsMenuSettings[] = {
 /** Advanced Options Menu Settings
 
 	Used to create the advanced options menu. */
-int16 Menu::AdvOptionsMenuSettings[] = {
+static const int16 AdvOptionsMenuSettings[] = {
     0, // Current loaded button (button number)
     5, // Num of buttons
     0, // Buttons box height ( is used to calc the height where the first button will appear )
@@ -179,7 +181,7 @@ int16 Menu::AdvOptionsMenuSettings[] = {
 /** Save Game Management Menu Settings
 
 	Used to create the save game management menu. */
-int16 Menu::SaveManageMenuSettings[] = {
+static const int16 SaveManageMenuSettings[] = {
     0, // Current loaded button (button number)
     3, // Num of buttons
     0, // Buttons box height ( is used to calc the height where the first button will appear )
@@ -195,7 +197,7 @@ int16 Menu::SaveManageMenuSettings[] = {
 /** Volume Menu Settings
 
 	Used to create the volume menu. */
-int16 Menu::VolumeMenuSettings[] = {
+static const int16 VolumeMenuSettings[] = {
     0, // Current loaded button (button number)
     7, // Num of buttons
     0, // Buttons box height ( is used to calc the height where the first button will appear )
@@ -215,12 +217,30 @@ int16 Menu::VolumeMenuSettings[] = {
     0,
     16, // save parameters
 };
+} // namespace _priv
 
 #define PLASMA_WIDTH 320
 #define PLASMA_HEIGHT 50
 #define SCREEN_W 640
 
-Menu::Menu(TwinEEngine *engine) : _engine(engine) {}
+static int16* copySettings(const int16* settings, size_t size) {
+	int16 *buf = (int16 *)malloc(size);
+	if (buf == nullptr) {
+		error("Failed to allocate menu state memory");
+	}
+	memcpy(buf, settings, size);
+	return buf;
+}
+
+Menu::Menu(TwinEEngine *engine) : _engine(engine) {
+	OptionsMenuState = copySettings(_priv::OptionsMenuSettings, sizeof(_priv::OptionsMenuSettings));
+	GiveUpMenuWithSaveState = copySettings(_priv::GiveUpMenuWithSaveSettings, sizeof(_priv::GiveUpMenuWithSaveSettings));
+	VolumeMenuState = copySettings(_priv::VolumeMenuSettings, sizeof(_priv::VolumeMenuSettings));
+	SaveManageMenuState = copySettings(_priv::SaveManageMenuSettings, sizeof(_priv::SaveManageMenuSettings));
+	GiveUpMenuState = copySettings(_priv::GiveUpMenuSettings, sizeof(_priv::GiveUpMenuSettings));
+	MainMenuState = copySettings(_priv::MainMenuSettings, sizeof(_priv::MainMenuSettings));
+	AdvOptionsMenuState = copySettings(_priv::AdvOptionsMenuSettings, sizeof(_priv::AdvOptionsMenuSettings));
+}
 
 void Menu::plasmaEffectRenderFrame() {
 	for (int32 j = 1; j < PLASMA_HEIGHT - 1; j++) {
@@ -416,7 +436,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 
 	do {
 		// if its on main menu
-		if (menuSettings == MainMenuSettings) {
+		if (menuSettings == MainMenuState) {
 			if (_engine->lbaTime - localTime > 11650) {
 				return kBackground;
 			}
@@ -455,7 +475,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 
 			// if its a volume button
-			if (menuSettings == VolumeMenuSettings) {
+			if (menuSettings == VolumeMenuState) {
 				const int16 id = *(&menuSettings[MenuSettings_FirstButtonState] + currentButton * 2); // get button parameters from settings array
 
 				Audio::Mixer *mixer = _engine->_system->getMixer();
@@ -555,7 +575,7 @@ int32 Menu::advoptionsMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 
 	do {
-		switch (processMenu(AdvOptionsMenuSettings)) {
+		switch (processMenu(AdvOptionsMenuState)) {
 		case kReturnMenu: {
 			ret = 1; // quit option menu
 			break;
@@ -578,7 +598,7 @@ int32 Menu::savemanageMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 
 	do {
-		switch (processMenu(SaveManageMenuSettings)) {
+		switch (processMenu(SaveManageMenuState)) {
 		case kReturnMenu: {
 			ret = 1; // quit option menu
 			break;
@@ -601,7 +621,7 @@ int32 Menu::volumeMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 
 	do {
-		switch (processMenu(VolumeMenuSettings)) {
+		switch (processMenu(VolumeMenuState)) {
 		case kReturnMenu: {
 			ret = 1; // quit option menu
 			break;
@@ -627,7 +647,7 @@ int32 Menu::optionsMenu() {
 	//_engine->_music->playCDtrack(9);
 
 	do {
-		switch (processMenu(OptionsMenuSettings)) {
+		switch (processMenu(OptionsMenuState)) {
 		case kReturnGame:
 		case kReturnMenu: {
 			ret = 1; // quit option menu
@@ -675,7 +695,7 @@ void Menu::run() {
 	_engine->_music->playTrackMusic(9); // LBA's Theme
 	_engine->_sound->stopSamples();
 
-	switch (processMenu(MainMenuSettings)) {
+	switch (processMenu(MainMenuState)) {
 	case kNewGame: {
 		_engine->_menuOptions->newGameMenu();
 		break;
@@ -687,7 +707,7 @@ void Menu::run() {
 	case kOptions: {
 		_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 		_engine->flip();
-		OptionsMenuSettings[5] = kReturnMenu;
+		OptionsMenuState[MenuSettings_FirstButton] = kReturnMenu;
 		optionsMenu();
 		break;
 	}
@@ -712,9 +732,9 @@ int32 Menu::giveupMenu() {
 
 	int16 *localMenu;
 	if (_engine->cfgfile.UseAutoSaving == 1) {
-		localMenu = GiveUpMenuSettings;
+		localMenu = GiveUpMenuState;
 	} else {
-		localMenu = GiveUpMenuSettingsWithSave;
+		localMenu = GiveUpMenuWithSaveState;
 	}
 
 	int32 menuId;
