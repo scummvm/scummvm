@@ -41,7 +41,6 @@ enum MenuSettingsType {
 class Menu {
 private:
 	TwinEEngine *_engine;
-
 	/** Hero behaviour menu entity */
 	uint8 *behaviourEntity = 0;
 	/** Behaviour menu anim state */
