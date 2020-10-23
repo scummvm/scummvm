@@ -616,7 +616,7 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 			printedText = printText10();
 			playVox(currDialTextEntry);
 
-			if (!_engine->_sound->isSamplePlaying(currDialTextEntry)) {
+			if (!printedText && !_engine->_sound->isSamplePlaying(currDialTextEntry)) {
 				break;
 			}
 
@@ -624,8 +624,7 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 				break;
 			}
 			_engine->_system->delayMillis(1);
-		} while (!_engine->_input->isActionActive(TwinEActionType::CutsceneAbort));
-
+		} while (!_engine->_input->toggleActionIfActive(TwinEActionType::CutsceneAbort));
 		hasHiddenVox = 0;
 
 		stopVox(currDialTextEntry);
@@ -645,7 +644,7 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 				break;
 			}
 			_engine->_system->delayMillis(1);
-		} while (_engine->_input->isActionActive(TwinEActionType::CutsceneAbort));
+		} while (_engine->_input->toggleActionIfActive(TwinEActionType::CutsceneAbort));
 
 		// RECHECK this later
 		// wait key to display next text
@@ -663,14 +662,14 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 				break;
 			}
 			_engine->_system->delayMillis(1);
-		} while (!_engine->_input->isActionActive(TwinEActionType::CutsceneAbort));
+		} while (!_engine->_input->toggleActionIfActive(TwinEActionType::CutsceneAbort));
 	} else { // RECHECK THIS
 		while (playVox(currDialTextEntry) && _engine->_input->internalKeyCode != 1) {
 			_engine->readKeys();
 			if (_engine->shouldQuit()) {
 				break;
 			}
-			if (_engine->_input->isActionActive(TwinEActionType::CutsceneAbort)) {
+			if (_engine->_input->toggleActionIfActive(TwinEActionType::CutsceneAbort)) {
 				break;
 			}
 		}

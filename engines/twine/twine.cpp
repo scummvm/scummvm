@@ -790,7 +790,7 @@ void TwinEEngine::delaySkip(uint32 time) {
 	_input->internalKeyCode = 0;
 	do {
 		readKeys();
-		if (_input->isActionActive(TwinEActionType::CutsceneAbort) || _input->isActionActive(TwinEActionType::UIAbort)) {
+		if (_input->toggleActionIfActive(TwinEActionType::CutsceneAbort) || _input->toggleActionIfActive(TwinEActionType::UIAbort)) {
 			break;
 		}
 		if (shouldQuit()) {

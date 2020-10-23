@@ -64,17 +64,13 @@ void MenuOptions::newGame() {
 	_engine->_text->drawTextFullscreen(150);
 	_engine->readKeys();
 
-	if (_engine->_input->internalKeyCode != 1) {
-		// intro screen 1 - twinsun
-		_engine->_screens->loadImage(RESSHQR_INTROSCREEN2IMG);
-		_engine->_text->drawTextFullscreen(151);
-		_engine->readKeys();
+	// intro screen 1 - twinsun
+	_engine->_screens->loadImage(RESSHQR_INTROSCREEN2IMG);
+	_engine->_text->drawTextFullscreen(151);
+	_engine->readKeys();
 
-		if (_engine->_input->internalKeyCode != 1) {
-			_engine->_screens->loadImage(RESSHQR_INTROSCREEN3IMG);
-			_engine->_text->drawTextFullscreen(152);
-		}
-	}
+	_engine->_screens->loadImage(RESSHQR_INTROSCREEN3IMG);
+	_engine->_text->drawTextFullscreen(152);
 
 	_engine->_text->newGameVar5 = 0;
 	_engine->_text->textClipSmall();
