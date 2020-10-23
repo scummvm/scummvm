@@ -243,6 +243,17 @@ Menu::Menu(TwinEEngine *engine) : _engine(engine) {
 	AdvOptionsMenuState = copySettings(_priv::AdvOptionsMenuSettings, sizeof(_priv::AdvOptionsMenuSettings));
 }
 
+Menu::~Menu() {
+	free(plasmaEffectPtr);
+	free(OptionsMenuState);
+	free(GiveUpMenuWithSaveState);
+	free(VolumeMenuState);
+	free(SaveManageMenuState);
+	free(GiveUpMenuState);
+	free(MainMenuState);
+	free(AdvOptionsMenuState);
+}
+
 void Menu::plasmaEffectRenderFrame() {
 	for (int32 j = 1; j < PLASMA_HEIGHT - 1; j++) {
 		for (int32 i = 1; i < PLASMA_WIDTH - 1; i++) {

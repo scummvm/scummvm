@@ -96,6 +96,7 @@ private:
 
 public:
 	Menu(TwinEEngine *engine);
+	~Menu();
 	int16 *OptionsMenuState;
 
 	int32 currMenuTextIndex = -1;
