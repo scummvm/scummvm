@@ -373,8 +373,7 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
-void Menu::drawButton(const int16 *menuSettings, int32 mode) {
-
+void Menu::drawButton(const int16 *menuSettings, bool hover) {
 	int16 buttonNumber = menuSettings[MenuSettings_CurrentLoadedButton];
 	const int32 maxButton = menuSettings[MenuSettings_NumberOfButtons];
 	int32 topHeight = menuSettings[MenuSettings_ButtonsBoxHeight];
@@ -400,9 +399,9 @@ void Menu::drawButton(const int16 *menuSettings, int32 mode) {
 		// applicable for sound menus, to save the volume/sound bar
 		uint16 menuItemValue = *localData;
 		localData += 1;
-		if (mode != 0) {
+		if (hover) {
 			if (currentButton == buttonNumber) {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, menuItemValue, true);
+				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, menuItemValue, hover);
 			}
 		} else {
 			if (currentButton == buttonNumber) {
