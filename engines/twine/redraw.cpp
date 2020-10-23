@@ -198,6 +198,7 @@ void Redraw::updateOverlayTypePosition(int16 X1, int16 Y1, int16 X2, int16 Y2) {
 	}
 }
 
+// TODO: convert to bool and check if this isn't always true...
 void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 	int16 tmp_projPosX;
 	int16 tmp_projPosY;

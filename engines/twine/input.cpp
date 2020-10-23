@@ -21,10 +21,18 @@
  */
 
 #include "twine/input.h"
+#include "backends/keymapper/keymapper.h"
+#include "common/events.h"
+#include "common/keyboard.h"
 #include "common/system.h"
+#include "twine/actor.h"
 #include "twine/twine.h"
 
 namespace TwinE {
+
+const char *mainKeyMapId = "mainKeyMap";
+const char *uiKeyMapId = "uiKeyMap";
+const char *cutsceneKeyMapId = "cutsceneKeyMap";
 
 /** Pressed key char map - scanCodeTab2 */
 static const struct KeyProperties {
@@ -65,22 +73,62 @@ static const struct KeyProperties {
     {0x00, false, 0x00}};
 static_assert(ARRAYSIZE(pressedKeyCharMap) == 31, "Expected size of key char map");
 
-Input::Input(TwinEEngine *engine) : _engine(engine) {}
-
-bool Input::isAnyKeyPressed() const {
-	return internalKeyCode != 0;
+ScopedKeyMapperDisable::ScopedKeyMapperDisable() {
+	g_system->getEventManager()->getKeymapper()->setEnabled(false);
 }
 
-bool Input::isPressed(Common::KeyCode keycode) const {
-	return false; // TODO:
+ScopedKeyMapperDisable::~ScopedKeyMapperDisable() {
+	g_system->getEventManager()->getKeymapper()->setEnabled(true);
+}
+
+ScopedKeyMap::ScopedKeyMap(TwinEEngine* engine, const char *id) : _engine(engine) {
+	_prevKeyMap = _engine->_input->currentKeyMap();
+	_engine->_input->enabledKeyMap(cutsceneKeyMapId);
+}
+
+ScopedKeyMap::~ScopedKeyMap() {
+	_engine->_input->enabledKeyMap(_prevKeyMap.c_str());
+}
+
+Input::Input(TwinEEngine *engine) : _engine(engine) {}
+
+bool Input::isPressed(Common::KeyCode keycode, bool onlyFirstTime) const {
+	if (onlyFirstTime) {
+		return _pressed[keycode] == 1;
+	}
+	return _pressed[keycode] > 0;
+}
+
+bool Input::isActionActive(TwinEActionType actionType, bool onlyFirstTime) const {
+	if (onlyFirstTime) {
+		return actionStates[actionType] == 1;
+	}
+	return actionStates[actionType] > 0;
+}
+
+bool Input::toggleActionIfActive(TwinEActionType actionType) {
+	if (actionStates[actionType] > 0) {
+		actionStates[actionType] = 0;
+		return true;
+	}
+	return false;
+}
+
+bool Input::isQuickBehaviourActionActive() const {
+	return isActionActive(TwinEActionType::QuickBehaviourNormal) || isActionActive(TwinEActionType::QuickBehaviourAthletic) || isActionActive(TwinEActionType::QuickBehaviourAggressive) || isActionActive(TwinEActionType::QuickBehaviourDiscreet);
+}
+
+void Input::enabledKeyMap(const char *id) {
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	const Common::KeymapArray &keymaps = keymapper->getKeymaps();
+	for (Common::Keymap *keymap : keymaps) {
+		keymap->setEnabled(keymap->getId() == id);
+	}
+	_currentKeyMap = id;
 }
 
 void Input::readKeys() {
-	if (_engine->shouldQuit()) {
-		internalKeyCode = 1;
-		skippedKey = 1;
-		return;
-	}
+	++_tickCounter;
 	skippedKey = 0;
 	internalKeyCode = 0;
 
@@ -89,7 +137,7 @@ void Input::readKeys() {
 		uint8 localKey = 0;
 		switch (event.type) {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-			actionStates[event.customType] = false;
+			actionStates[event.customType] = 0;
 			localKey = twineactions[event.customType].localKey;
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
@@ -103,29 +151,25 @@ void Input::readKeys() {
 					break;
 				default:
 					localKey = twineactions[event.customType].localKey;
-					actionStates[event.customType] = true;
+					debug("repeat: %i", event.kbdRepeat);
+					actionStates[event.customType] = 1 + event.kbdRepeat;
 					break;
 				}
 			} else {
 				localKey = twineactions[event.customType].localKey;
-				actionStates[event.customType] = true;
+				debug("repeat: %i", event.kbdRepeat);
+				actionStates[event.customType] = 1 + event.kbdRepeat;
 			}
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			leftMouse = 1;
 			break;
-		case Common::EVENT_KEYDOWN: {
-			if (event.kbd.keycode == Common::KeyCode::KEYCODE_RETURN || event.kbd.keycode == Common::KeyCode::KEYCODE_KP_ENTER) {
-				_hitEnter = true;
-			}
+		case Common::EVENT_KEYDOWN:
+			_pressed[event.kbd.keycode] = 1 + event.kbdRepeat;
 			break;
-		}
-		case Common::EVENT_KEYUP: {
-			if (event.kbd.keycode == Common::KeyCode::KEYCODE_RETURN || event.kbd.keycode == Common::KeyCode::KEYCODE_KP_ENTER) {
-				_hitEnter = false;
-			}
+		case Common::EVENT_KEYUP:
+			_pressed[event.kbd.keycode] = 0;
 			break;
-		}
 		case Common::EVENT_RBUTTONDOWN:
 			rightMouse = 1;
 			break;

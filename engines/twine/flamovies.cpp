@@ -274,7 +274,13 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 	if (!strcmp((const char *)flaHeaderData.version, "V1.3")) {
 		int32 currentFrame = 0;
 
+		ScopedKeyMap scopedKeyMap(_engine, cutsceneKeyMapId);
+
 		do {
+			_engine->readKeys();
+			if (_engine->shouldQuit()) {
+				break;
+			}
 			if (currentFrame == flaHeaderData.numOfFrames) {
 				break;
 			}
@@ -303,17 +309,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 			currentFrame++;
 
 			_engine->_system->delayMillis(1000 / flaHeaderData.speed + 1);
-
-			_engine->readKeys();
-
-			if (_engine->shouldQuit()) {
-				break;
-			}
-
-			if (_engine->_input->isAnyKeyPressed()) {
-				break;
-			}
-		} while (true);
+		} while (!_engine->_input->isActionActive(TwinEActionType::CutsceneAbort));
 	}
 
 	if (_engine->cfgfile.CrossFade) {

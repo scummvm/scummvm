@@ -34,8 +34,8 @@
 #include "twine/gamestate.h"
 #include "twine/grid.h"
 #include "twine/hqrdepack.h"
-#include "twine/interface.h"
 #include "twine/input.h"
+#include "twine/interface.h"
 #include "twine/menuoptions.h"
 #include "twine/movements.h"
 #include "twine/music.h"
@@ -281,13 +281,13 @@ void Menu::plasmaEffectRenderFrame() {
 		*(dest++) = *(src++);
 }
 
-void Menu::processPlasmaEffect(int32 top, int32 color) {
+void Menu::processPlasmaEffect(int32 left, int32 top, int32 right, int32 color) {
 	const int32 max_value = color + 15;
 
 	plasmaEffectRenderFrame();
 
 	const uint8 *in = plasmaEffectPtr + 5 * PLASMA_WIDTH;
-	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top];
+	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
 
 	for (int32 i = 0; i < 25; i++) {
 		for (int32 j = 0; j < kMainMenuButtonWidth; j++) {
@@ -348,13 +348,13 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 			}
 			};
 
-			processPlasmaEffect(top, 80);
+			processPlasmaEffect(left, top, right, 80);
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
 			}
 			_engine->_interface->drawSplittedBox(newWidth, top, right, bottom, 68);
 		} else {
-			processPlasmaEffect(top, 64);
+			processPlasmaEffect(left, top, right, 64);
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % 320 * 10 + 6400] = 255;
 			}
@@ -431,21 +431,20 @@ int32 Menu::processMenu(int16 *menuSettings) {
 	const int32 numEntry = menuSettings[MenuSettings_NumberOfButtons];
 	int32 maxButton = numEntry - 1;
 
+	_engine->_input->enabledKeyMap(uiKeyMapId);
+
+	_engine->_screens->loadMenuImage(false);
 	do {
 		_engine->readKeys();
 		_engine->_input->key = _engine->_input->pressedKey;
 
-		if (_engine->_input->isPressed(Common::KeyCode::KEYCODE_DOWN)) { // on arrow key down
-			debug("pressed down");
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIDown)) {
 			currentButton++;
 			if (currentButton == numEntry) { // if current button is the last, than next button is the first
 				currentButton = 0;
 			}
 			buttonsNeedRedraw = true;
-		}
-
-		if (((uint8)_engine->_input->key & 1)) { // on arrow key up
-			debug("pressed up");
+		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIUp)) {
 			currentButton--;
 			if (currentButton < 0) { // if current button is the first, than previous button is the last
 				currentButton = maxButton;
@@ -461,10 +460,10 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			switch (id) {
 			case kMusicVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
-				if (((uint8)_engine->_input->key & 4)) { // on arrow key left
+				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
 				}
-				if (((uint8)_engine->_input->key & 8)) { // on arrow key right
+				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UIRight))) { // on arrow key right
 					volume += 4;
 				}
 				_engine->_music->musicVolume(volume);
@@ -472,10 +471,10 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 			case kSoundVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
-				if (((uint8)_engine->_input->key & 4)) { // on arrow key left
+				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UILeft))) { // on arrow key left
 					volume -= 4;
 				}
-				if (((uint8)_engine->_input->key & 8)) { // on arrow key right
+				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UIRight))) { // on arrow key right
 					volume += 4;
 				}
 				mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
@@ -483,10 +482,10 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 			case kCDVolume: {
 				AudioCDManager::Status status = _engine->_system->getAudioCDManager()->getStatus();
-				if (((uint8)_engine->_input->key & 4)) { // on arrow key left
+				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UILeft))) { // on arrow key left
 					status.volume -= 4;
 				}
-				if (((uint8)_engine->_input->key & 8)) { // on arrow key right
+				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UIRight))) { // on arrow key right
 					status.volume += 4;
 				}
 				_engine->_system->getAudioCDManager()->setVolume(status.volume);
@@ -494,10 +493,10 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 			case kLineVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-				if (((uint8)_engine->_input->key & 4)) { // on arrow key left
+				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UILeft))) { // on arrow key left
 					volume -= 4;
 				}
-				if (((uint8)_engine->_input->key & 8)) { // on arrow key right
+				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UIRight))) { // on arrow key right
 					volume += 4;
 				}
 				mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
@@ -505,10 +504,10 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 			case kMasterVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
-				if (((uint8)_engine->_input->key & 4)) { // on arrow key left
+				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UILeft))) { // on arrow key left
 					volume -= 4;
 				}
-				if (((uint8)_engine->_input->key & 8)) { // on arrow key right
+				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UIRight))) { // on arrow key right
 					volume += 4;
 				}
 				mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
@@ -532,7 +531,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		if (musicChanged) {
 			// TODO: update volume settings
 		}
-	} while (!(_engine->_input->skippedKey & 2) && !(_engine->_input->skippedKey & 1));
+	} while (!_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter));
 
 	currentButton = *(menuSettings + MenuSettings_FirstButton + currentButton * 2); // get current browsed button
 
@@ -872,20 +871,18 @@ void Menu::processBehaviourMenu() {
 
 	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[_engine->_actor->heroBehaviour], _engine->_animations->animTable[_engine->_actor->heroAnimIdx[_engine->_actor->heroBehaviour]], behaviourEntity, &behaviourAnimData[_engine->_actor->heroBehaviour]);
 
-	_engine->readKeys();
-
 	int32 tmpTime = _engine->lbaTime;
 
-	while (_engine->_input->skippedKey & 4 || (_engine->_input->internalKeyCode >= twineactions[TwinEActionType::QuickBehaviourNormal].localKey && _engine->_input->internalKeyCode <= twineactions[TwinEActionType::QuickBehaviourDiscreet].localKey)) {
+	while (_engine->_input->isActionActive(TwinEActionType::BehaviourMenu) || _engine->_input->isQuickBehaviourActionActive()) {
 		_engine->readKeys();
 		_engine->_input->key = _engine->_input->pressedKey;
 
 		int heroBehaviour = (int)_engine->_actor->heroBehaviour;
-		if (_engine->_input->key & 8) {
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
 			heroBehaviour++;
 		}
 
-		if (_engine->_input->key & 4) {
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 			heroBehaviour--;
 		}
 
@@ -965,14 +962,12 @@ void Menu::drawItem(int32 item) {
 }
 
 void Menu::drawInventoryItems() {
-	int32 item;
-
 	_engine->_interface->drawTransparentBox(17, 10, 622, 320, 4);
 	drawBox(17, 10, 622, 320);
 	drawMagicItemsBox(110, 18, 188, 311, 75);
 	_engine->copyBlockPhys(17, 10, 622, 320);
 
-	for (item = 0; item < NUM_INVENTORY_ITEMS; item++) {
+	for (int32 item = 0; item < NUM_INVENTORY_ITEMS; item++) {
 		drawItem(item);
 	}
 }
@@ -1002,7 +997,7 @@ void Menu::processInventoryMenu() {
 	_engine->_text->setFontCrossColor(4);
 	_engine->_text->initDialogueBox();
 
-	while (_engine->_input->internalKeyCode != 1) {
+	while (_engine->_input->isActionActive(TwinEActionType::InventoryMenu)) {
 		_engine->readKeys();
 		int32 prevSelectedItem = inventorySelectedItem;
 
@@ -1026,7 +1021,7 @@ void Menu::processInventoryMenu() {
 		if (_engine->loopCurrentKey == 1 || _engine->loopPressedKey & 0x20)
 			break;
 
-		if (_engine->_input->key & 2) { // down
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIDown)) {
 			inventorySelectedItem++;
 			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
 				inventorySelectedItem = 0;
@@ -1035,7 +1030,7 @@ void Menu::processInventoryMenu() {
 			bx = 3;
 		}
 
-		if (_engine->_input->key & 1) { // up
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIUp)) {
 			inventorySelectedItem--;
 			if (inventorySelectedItem < 0) {
 				inventorySelectedItem = NUM_INVENTORY_ITEMS - 1;
@@ -1044,7 +1039,7 @@ void Menu::processInventoryMenu() {
 			bx = 3;
 		}
 
-		if (_engine->_input->key & 4) { // left
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 			inventorySelectedItem -= 4;
 			if (inventorySelectedItem < 0) {
 				inventorySelectedItem += NUM_INVENTORY_ITEMS;
@@ -1053,7 +1048,7 @@ void Menu::processInventoryMenu() {
 			bx = 3;
 		}
 
-		if (_engine->_input->key & 8) { // right
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
 			inventorySelectedItem += 4;
 			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
 				inventorySelectedItem -= NUM_INVENTORY_ITEMS;
