@@ -34,7 +34,7 @@ private:
 
 	int32 enterPlayerName(int32 textIdx);
 	void drawSelectableCharacters();
-	void drawPlayerName(int32 centerx, int32 top, const char *playerName, int32 type);
+	void drawPlayerName(int32 centerx, int32 top, int32 type);
 	void drawSelectableCharacter(int32 x, int32 y, int32 arg);
 	void showCredits();
 	void newGame();
@@ -45,8 +45,6 @@ public:
 	int32 canShowCredits = 0;
 
 	char playerName[256] = "";
-	int8 enterPlayerNameVar1 = 0;
-	int32 enterPlayerNameVar2 = 0;
 
 	/** Main menu new game options */
 	void newGameMenu();

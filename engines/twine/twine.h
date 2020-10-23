@@ -225,9 +225,6 @@ public:
 	int32 quitGame = 0;
 	int32 lbaTime = 0;
 
-	int16 leftMouse = 0;
-	int16 rightMouse = 0;
-
 	/** Work video buffer */
 	Graphics::ManagedSurface workVideoBuffer;
 	/** Main game video buffer */

@@ -152,112 +152,53 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y, int32 arg) {
 }
 
 void MenuOptions::drawSelectableCharacters() {
-	int8 x, y;
-
-	for (x = 0; x < 5; x++) {
-		for (y = 0; y < 14; y++) {
+	for (int8 x = 0; x < 5; x++) {
+		for (int8 y = 0; y < 14; y++) {
 			drawSelectableCharacter(x, y, 0);
 		}
 	}
 }
 
 // 0001F18C
-void MenuOptions::drawPlayerName(int32 centerx, int32 top, const char * /*playerName*/, int32 type) {
-	/*
-	int v4; // ebp@0
-  int v6; // [sp+0h] [bp-14h]@0
-  int v7; // [sp+0h] [bp-14h]@4
-  int v8; // [sp+4h] [bp-10h]@0
-  int v9; // [sp+4h] [bp-10h]@4
-
-  LOWORD(v8) = a1 - buttonDrawVar1 / 2;
-  if ( !a4 )
-  {
-    v6 = (signed __int16)(a2 + 25);
-    blitRectangle(v4);
-    drawBoxInsideTrans(v4);
-  }
-  if ( a4 == 1 )
-  {
-    makeFireEffect(v4);
-    if ( !(rand(v6, v8) % 5) )
-      *(_BYTE *)(10 * rand(v7, v9) % 320 + bufSpeak + 6400) = -1;
-  }
-  if ( a4 == 2 )
-    Box(v4);
-  DrawCadre();
-  CoulFont(0xFu);
-  SizeFont(a3);
-  Font(v4);
-  return CopyBlockPhys(v4);
-	*/
-
-	// TODO: implement the other types (don't seam to be used)
-	/*if (type == 1) {
-		processPlasmaEffect(top, 1);
+void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
+	if (type == 1) {
+		_engine->_menu->processPlasmaEffect(top, 1);
 	}
 
-	drawBox(x, top, dialTextBoxRight, dialTextBoxBottom);
-	drawTransparentBox(dialTextBoxLeft + 1, dialTextBoxTop + 1, dialTextBoxRight - 1, dialTextBoxBottom - 1, 3);
+	const int left = _engine->_text->dialTextBoxLeft;
+	const int right = _engine->_text->dialTextBoxRight;
+	const int bottom = _engine->_text->dialTextBoxBottom;
+	_engine->_menu->drawBox(left, top, right, bottom);
+	_engine->_interface->drawTransparentBox(left + 1, top + 1, right - 1, bottom - 1, 3);
 
-	setFontColor(15);
-	drawText(centerX - getTextSize(playerName) / 2, top, playerName);
+	_engine->_text->drawText(centerx - _engine->_text->getTextSize(playerName) / 2, top, playerName);
 
-	copyBlockPhys(x, y, x + 320, y + 25);*/
+	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
 int32 MenuOptions::enterPlayerName(int32 textIdx) {
-	char buffer[256];
-
+	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
+	playerName[0] = '\0'; // TODO: read from settings?
 	while (1) {
-		_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-		_engine->flip(); //frontVideoBuffer
 		_engine->_text->initTextBank(0);
+		char buffer[256];
 		_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
 		_engine->_text->setFontColor(15);
-		_engine->_text->drawText(320 - (_engine->_text->getTextSize(buffer) / 2), 20, buffer);
-		_engine->copyBlockPhys(0, 0, 639, 99);
-		playerName[0] = enterPlayerNameVar1;
-		drawPlayerName(320, 100, playerName, 1);
+		const int halfScreenWidth = (SCREEN_WIDTH / 2);
+		_engine->_text->drawText(halfScreenWidth - (_engine->_text->getTextSize(buffer) / 2), 20, buffer);
+		_engine->copyBlockPhys(0, 0, SCREEN_WIDTH - 1, 99);
+		drawPlayerName(halfScreenWidth, 100, 1);
 		drawSelectableCharacters();
 
 		do {
 			_engine->readKeys();
-			do {
-				_engine->readKeys();
-				if (_engine->shouldQuit()) {
-					break;
-				}
-			} while (_engine->_keyboard.internalKeyCode);
 			if (_engine->shouldQuit()) {
 				break;
 			}
-		} while (_engine->_keyboard.skippedKey);
-
-		enterPlayerNameVar2 = 1;
-
-		do {
-			_engine->readKeys();
-			if (_engine->shouldQuit()) {
-				break;
-			}
-		} while (_engine->_keyboard.pressedKey);
-
-		while (!_engine->_keyboard.internalKeyCode) {
-			_engine->readKeys();
-			if (_engine->shouldQuit()) {
-				break;
-			}
-			// TODO
-			drawPlayerName(320, 100, playerName, 1);
-		}
-
-		// FIXME: remove this lines after implementing everything
-		if (_engine->_keyboard.internalKeyCode)
-			break;
+		} while (_engine->_keyboard.hitEnter());
 	}
 
-	enterPlayerNameVar2 = 0;
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
 

@@ -243,6 +243,7 @@ void TwinEEngine::initEngine() {
 	// Check if LBA CD-Rom is on drive
 	_music->initCdrom();
 
+#if 0
 	// Display company logo
 	_screens->adelineLogo();
 
@@ -263,6 +264,7 @@ void TwinEEngine::initEngine() {
 	}
 
 	_flaMovies->playFlaMovie(FLA_DRAGON3);
+#endif
 
 	_screens->loadMenuImage();
 }
@@ -902,71 +904,7 @@ static const struct KeyProperties {
 static_assert(ARRAYSIZE(pressedKeyCharMap) == 31, "Expected size of key char map");
 
 void TwinEEngine::readKeys() {
-	if (shouldQuit()) {
-		_keyboard.internalKeyCode = 1;
-		_keyboard.skippedKey = 1;
-		return;
-	}
-	_keyboard.skippedKey = 0;
-	_keyboard.internalKeyCode = 0;
-
-	Common::Event event;
-	while (g_system->getEventManager()->pollEvent(event)) {
-		uint8 localKey = 0;
-		switch (event.type) {
-		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-			_keyboard.actionStates[event.customType] = false;
-			localKey = twineactions[event.customType].localKey;
-			break;
-		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-			if (!cfgfile.Debug) {
-				switch (event.customType) {
-				case TwinEActionType::NextRoom:
-				case TwinEActionType::PreviousRoom:
-				case TwinEActionType::ApplyCellingGrid:
-				case TwinEActionType::IncreaseCellingGridIndex:
-				case TwinEActionType::DecreaseCellingGridIndex:
-					break;
-				default:
-					localKey = twineactions[event.customType].localKey;
-					_keyboard.actionStates[event.customType] = true;
-					break;
-				}
-			} else {
-				localKey = twineactions[event.customType].localKey;
-				_keyboard.actionStates[event.customType] = true;
-			}
-			break;
-		case Common::EVENT_LBUTTONDOWN:
-			leftMouse = 1;
-			break;
-		case Common::EVENT_RBUTTONDOWN:
-			rightMouse = 1;
-			break;
-		default:
-			break;
-		}
-
-		if (localKey == 0) {
-			continue;
-		}
-
-		for (int i = 0; i < ARRAYSIZE(pressedKeyCharMap); i++) {
-			if (pressedKeyCharMap[i].key == localKey) {
-				if (pressedKeyCharMap[i].pressed) {
-					if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
-						_keyboard.pressedKey &= ~pressedKeyCharMap[i].high;
-					} else {
-						_keyboard.pressedKey |= pressedKeyCharMap[i].high;
-					}
-				} else {
-					_keyboard.skippedKey |= pressedKeyCharMap[i].high;
-				}
-				break;
-			}
-		}
-		_keyboard.internalKeyCode = localKey;
-	}
+	_keyboard.readKeys();
 }
 
 void TwinEEngine::drawText(int32 x, int32 y, const char *string, int32 center) {
