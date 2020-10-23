@@ -255,7 +255,7 @@ void Menu::plasmaEffectRenderFrame() {
 
 	// flip the double-buffer while scrolling the effect vertically:
 	uint8 *dest = plasmaEffectPtr;
-	uint8 *src = plasmaEffectPtr + (PLASMA_HEIGHT + 1) * PLASMA_WIDTH;
+	const uint8 *src = plasmaEffectPtr + (PLASMA_HEIGHT + 1) * PLASMA_WIDTH;
 	for (int32 i = 0; i < PLASMA_HEIGHT * PLASMA_WIDTH; i++)
 		*(dest++) = *(src++);
 }
@@ -265,7 +265,7 @@ void Menu::processPlasmaEffect(int32 top, int32 color) {
 
 	plasmaEffectRenderFrame();
 
-	uint8 *in = plasmaEffectPtr + 5 * PLASMA_WIDTH;
+	const uint8 *in = plasmaEffectPtr + 5 * PLASMA_WIDTH;
 	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top];
 
 	for (int32 i = 0; i < 25; i++) {
@@ -289,14 +289,6 @@ void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
 }
 
 void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 textId, bool hover) {
-	/*
-	 * int CDvolumeRemaped;
-	 * int musicVolumeRemaped;
-	 * int masterVolumeRemaped;
-	 * int lineVolumeRemaped;
-	 * int waveVolumeRemaped;
-	 */
-
 	const int32 left = width - kMainMenuButtonSpan / 2;
 	const int32 right = width + kMainMenuButtonSpan / 2;
 
