@@ -316,7 +316,7 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 	const int32 top = topheight - 25; // this makes the button be 50 height
 	const int32 bottom = topheight + 25;
 
-	if (hover != 0) {
+	if (hover) {
 		if (buttonId <= kMasterVolume && buttonId >= kMusicVolume) {
 			int32 newWidth = 0;
 			switch (buttonId) {
