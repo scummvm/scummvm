@@ -471,8 +471,8 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 
 			// if its a volume button
-			if (menuSettings == VolumeMenuSettings && *(menuSettings + 8) <= 5) {
-				const int16 id = *(menuSettings + currentButton * 2 + MenuSettings_FirstButtonState); // get button parameters from settings array
+			if (menuSettings == VolumeMenuSettings) {
+				const int16 id = *(&menuSettings[MenuSettings_FirstButtonState] + currentButton * 2); // get button parameters from settings array
 
 				Audio::Mixer *mixer = _engine->_system->getMixer();
 				switch (id) {
