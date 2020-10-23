@@ -29,6 +29,12 @@
 
 namespace TwinE {
 
+class TwinEEngine;
+
+extern const char *mainKeyMapId;
+extern const char *uiKeyMapId;
+extern const char *cutsceneKeyMapId;
+
 enum TwinEActionType {
 	Pause,
 	NextRoom,
@@ -61,9 +67,19 @@ enum TwinEActionType {
 	Escape,
 	PageUp,
 
+	UIEnter,
+	UIAbort,
+	UILeft,
+	UIRight,
+	UIUp,
+	UIDown,
+
+	CutsceneAbort,
+
 	Max
 };
 
+// TODO: get rid of this table
 static constexpr const struct ActionMapping {
 	TwinEActionType action;
 	uint8 localKey;
@@ -97,8 +113,14 @@ static constexpr const struct ActionMapping {
     {InventoryMenu, 0x36},
     {SpecialAction, 0x11},
     {Escape, 0x01},
-    {PageUp, 0x49} // TODO: used for what?
-};
+    {PageUp, 0x49}, // TODO: used for what?
+    {UIEnter, 0x00},
+    {UIAbort, 0x00},
+    {UILeft, 0x00},
+    {UIRight, 0x00},
+    {UIUp, 0x00},
+    {UIDown, 0x00},
+    {CutsceneAbort, 0x00}};
 
 static_assert(ARRAYSIZE(twineactions) == TwinEActionType::Max, "Unexpected action mapping array size");
 
@@ -109,17 +131,31 @@ struct MouseStatusStruct {
 	int32 y = 0;
 };
 
-class TwinEEngine;
+struct ScopedKeyMapperDisable {
+	ScopedKeyMapperDisable();
+	~ScopedKeyMapperDisable();
+};
+
+class ScopedKeyMap {
+private:
+	TwinEEngine* _engine;
+	Common::String _prevKeyMap;
+public:
+	ScopedKeyMap(TwinEEngine* engine, const char *id);
+	~ScopedKeyMap();
+};
 
 class Input {
 private:
 	TwinEEngine *_engine;
-	bool _hitEnter = false;
+	int _tickCounter = 0;
+	uint8 _pressed[Common::KEYCODE_LAST]{0};
+	Common::String _currentKeyMap;
 
 public:
 	Input(TwinEEngine *engine);
 
-	bool actionStates[TwinEActionType::Max]{false};
+	uint8 actionStates[TwinEActionType::Max]{false};
 	int16 skippedKey = 0;
 	int16 pressedKey = 0;
 	int16 internalKeyCode = 0;
@@ -130,13 +166,44 @@ public:
 	int16 leftMouse = 0;
 	int16 rightMouse = 0;
 
-	bool isAnyKeyPressed() const;
+	/**
+	 * @brief Dependent on the context we are currently in the game, we might want to disable certain keymaps.
+	 * Like disabling ui keymaps when we are in-game - or vice versa.
+	 */
+	void enabledKeyMap(const char *id);
 
-	bool isPressed(Common::KeyCode keycode) const;
+	const Common::String currentKeyMap() const;
 
-	inline bool isPressedEnter() const {
-		return isPressed(Common::KEYCODE_RETURN) || isPressed(Common::KEYCODE_KP_ENTER);
+	/**
+	 * @param onlyFirstTime If this is set to @c true, repeating key press events are not taken into account here
+	 * This means, that even if the key is held down, this will return @c false. @c false as value for this parameter
+	 * will return @c true also for repeating key presses.
+	 *
+	 * @sa isPressed()
+	 */
+	bool isActionActive(TwinEActionType actionType, bool onlyFirstTime = true) const;
+
+	/**
+	 * @brief If the action is active, the internal state is reset and a following call of this method won't return
+	 * @c true anymore
+	 */
+	bool toggleActionIfActive(TwinEActionType actionType);
+
+	/**
+	 * @param onlyFirstTime If this is set to @c true, repeating key press events are not taken into account here
+	 * This means, that even if the key is held down, this will return @c false. @c false as value for this parameter
+	 * will return @c true also for repeating key presses.
+	 *
+	 * @note You won't receive any pressed events if you have that key bound to a @c TwinEActionType value.
+	 * @sa isActionActive()
+	 */
+	bool isPressed(Common::KeyCode keycode, bool onlyFirstTime = true) const;
+
+	inline bool isPressedEnter(bool onlyFirstTime = true) const {
+		return isPressed(Common::KEYCODE_RETURN, onlyFirstTime) || isPressed(Common::KEYCODE_KP_ENTER, onlyFirstTime);
 	}
+
+	bool isQuickBehaviourActionActive() const;
 
 	/**
 	 * Gets mouse positions
@@ -146,6 +213,10 @@ public:
 
 	void readKeys();
 };
+
+inline const Common::String Input::currentKeyMap() const {
+	return _currentKeyMap;
+}
 
 } // namespace TwinE
 

@@ -29,6 +29,7 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 #include "engines/util.h"
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
@@ -47,8 +48,8 @@
 #include "twine/grid.h"
 #include "twine/holomap.h"
 #include "twine/hqrdepack.h"
-#include "twine/interface.h"
 #include "twine/input.h"
+#include "twine/interface.h"
 #include "twine/menu.h"
 #include "twine/menuoptions.h"
 #include "twine/movements.h"
@@ -323,6 +324,8 @@ void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
 }
 
 int32 TwinEEngine::runGameEngine() { // mainLoopInteration
+	_input->enabledKeyMap(mainKeyMapId);
+
 	readKeys();
 
 	if (_scene->needChangeScene > -1) {
@@ -364,7 +367,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			_redraw->redrawEngineActions(1);
 		}
 
-		if (loopCurrentKey == twineactions[TwinEActionType::OptionsMenu].localKey) {
+		if (_input->toggleActionIfActive(TwinEActionType::OptionsMenu)) {
 			freezeTime();
 			_sound->pauseSamples();
 			_menu->OptionsMenuState[MenuSettings_FirstButton] = 15; // TODO: why? - where is the reset? kReturnGame
@@ -379,7 +382,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// inventory menu
 		loopInventoryItem = -1;
-		if (loopCurrentKey == twineactions[TwinEActionType::InventoryMenu].localKey && _scene->sceneHero->entity != -1 && _scene->sceneHero->controlMode == kManual) {
+		if (_input->isActionActive(TwinEActionType::InventoryMenu) && _scene->sceneHero->entity != -1 && _scene->sceneHero->controlMode == kManual) {
 			freezeTime();
 			_menu->processInventoryMenu();
 
@@ -488,19 +491,19 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// Process behaviour menu
-		if ((loopCurrentKey == twineactions[TwinEActionType::BehaviourMenu].localKey ||
-		     loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourNormal].localKey ||
-		     loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourAthletic].localKey ||
-		     loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourAggressive].localKey ||
-		     loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourDiscreet].localKey) &&
+		if ((_input->isActionActive(TwinEActionType::BehaviourMenu, false) ||
+		     _input->isActionActive(TwinEActionType::QuickBehaviourNormal, false) ||
+		     _input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false) ||
+		     _input->isActionActive(TwinEActionType::QuickBehaviourAggressive, false) ||
+		     _input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) &&
 		    _scene->sceneHero->entity != -1 && _scene->sceneHero->controlMode == kManual) {
-			if (loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourNormal].localKey) {
+			if (_input->isActionActive(TwinEActionType::QuickBehaviourNormal, false)) {
 				_actor->heroBehaviour = HeroBehaviourType::kNormal;
-			} else if (loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourAthletic].localKey) {
+			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false)) {
 				_actor->heroBehaviour = HeroBehaviourType::kAthletic;
-			} else if (loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourAggressive].localKey) {
+			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourAggressive, false)) {
 				_actor->heroBehaviour = HeroBehaviourType::kAggressive;
-			} else if (loopCurrentKey == twineactions[TwinEActionType::QuickBehaviourDiscreet].localKey) {
+			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) {
 				_actor->heroBehaviour = HeroBehaviourType::kDiscrete;
 			}
 			freezeTime();
@@ -510,7 +513,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// use Proto-Pack
-		if (loopCurrentKey == twineactions[TwinEActionType::UseProtoPack].localKey && _gameState->gameFlags[InventoryItems::kiProtoPack] == 1) {
+		if (_input->isActionActive(TwinEActionType::UseProtoPack, false) && _gameState->gameFlags[InventoryItems::kiProtoPack] == 1) {
 			if (_gameState->gameFlags[InventoryItems::kiBookOfBu]) {
 				_scene->sceneHero->body = 0;
 			} else {
@@ -543,7 +546,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// Process Pause
-		if (loopCurrentKey == twineactions[TwinEActionType::Pause].localKey) {
+		if (_input->toggleActionIfActive(TwinEActionType::Pause)) {
 			freezeTime();
 			_text->setFontColor(15);
 			_text->drawText(5, 446, "Pause"); // no key for pause in Text Bank
@@ -554,7 +557,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					break;
 				}
 				g_system->delayMillis(10);
-			} while (_input->internalKeyCode != 0x19 && !_input->pressedKey);
+			} while (!_input->toggleActionIfActive(TwinEActionType::Pause));
 			unfreezeTime();
 			_redraw->redrawEngineActions(1);
 		}
@@ -759,6 +762,7 @@ bool TwinEEngine::gameEngineLoop() { // mainLoop
 	_redraw->reqBgRedraw = true;
 	_screens->lockPalette = true;
 	_movements->setActorAngle(0, -256, 5, &loopMovePtr);
+
 
 	while (quitGame == -1) {
 		start = g_system->getMillis();

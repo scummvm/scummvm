@@ -44,7 +44,7 @@ public:
 
 	int32 canShowCredits = 0;
 
-	char playerName[256] = "";
+	char playerName[32] = "";
 
 	/** Main menu new game options */
 	void newGameMenu();

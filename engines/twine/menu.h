@@ -115,7 +115,7 @@ public:
 	 * @param top top height where the effect will be draw in the front buffer
 	 * @param color plasma effect start color
 	 */
-	void processPlasmaEffect(int32 top, int32 color);
+	void processPlasmaEffect(int32 left, int32 top, int32 right, int32 color);
 
 	/**
 	 * Draw the entire button box

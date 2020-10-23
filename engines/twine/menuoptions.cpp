@@ -21,11 +21,11 @@
  */
 
 #include "twine/menuoptions.h"
-#include "common/keyboard.h"
+#include "common/system.h"
 #include "twine/flamovies.h"
 #include "twine/gamestate.h"
-#include "twine/interface.h"
 #include "twine/input.h"
+#include "twine/interface.h"
 #include "twine/menu.h"
 #include "twine/music.h"
 #include "twine/resources.h"
@@ -138,7 +138,7 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y, int32 arg) {
 	if (arg != 0) {
 		_engine->_interface->drawSplittedBox(left, top, right, bottom, 91);
 	} else {
-		_engine->_interface->blitBox(left, top, right, bottom, (const int8*)_engine->workVideoBuffer.getPixels(), left, top, (int8*)_engine->frontVideoBuffer.getPixels());
+		_engine->_interface->blitBox(left, top, right, bottom, (const int8 *)_engine->workVideoBuffer.getPixels(), left, top, (int8 *)_engine->frontVideoBuffer.getPixels());
 		right2 = right;
 		_engine->_interface->drawTransparentBox(left, top, right2, bottom, 4);
 	}
@@ -162,19 +162,20 @@ void MenuOptions::drawSelectableCharacters() {
 
 // 0001F18C
 void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
-	if (type == 1) {
-		_engine->_menu->processPlasmaEffect(top, 1);
-	}
-
 	const int left = _engine->_text->dialTextBoxLeft;
 	const int right = _engine->_text->dialTextBoxRight;
+	if (type == 1) {
+		_engine->_menu->processPlasmaEffect(left, top, right, 1);
+	}
+
 	const int bottom = _engine->_text->dialTextBoxBottom;
 	_engine->_menu->drawBox(left, top, right, bottom);
 	_engine->_interface->drawTransparentBox(left + 1, top + 1, right - 1, bottom - 1, 3);
 
 	_engine->_text->drawText(centerx - _engine->_text->getTextSize(playerName) / 2, top, playerName);
 
-	_engine->copyBlockPhys(left, top, right, bottom);
+	_engine->flip();
+	// TODO: _engine->copyBlockPhys(left, top, right, bottom);
 }
 
 int32 MenuOptions::enterPlayerName(int32 textIdx) {
@@ -191,18 +192,35 @@ int32 MenuOptions::enterPlayerName(int32 textIdx) {
 		_engine->copyBlockPhys(0, 0, SCREEN_WIDTH - 1, 99);
 		drawPlayerName(halfScreenWidth, 100, 1);
 		drawSelectableCharacters();
+		_engine->flip();
 
-		do {
-			_engine->readKeys();
+		// we don't want custom events here - as we are entering the player name
+		ScopedKeyMapperDisable scopedKeyMapperDisable;
+		for (;;) {
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				if (event.type == Common::EVENT_KEYDOWN) {
+					if (event.kbd.keycode == Common::KEYCODE_KP_ENTER || event.kbd.keycode == Common::KEYCODE_RETURN) {
+						return 1;
+					}
+					const size_t size = strlen(playerName);
+					if (size >= sizeof(playerName) - 1) {
+						return 1;
+					}
+					playerName[size] = event.kbd.ascii;
+					playerName[size + 1] = '\0';
+					debug("name: %s", playerName);
+
+					drawPlayerName(halfScreenWidth, 100, 1);
+					_engine->flip();
+				}
+			}
 			if (_engine->shouldQuit()) {
 				break;
 			}
-		} while (_engine->_input->isPressedEnter());
+			_engine->_system->delayMillis(1);
+		};
 	}
-
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
-
 	return 1;
 }
 
