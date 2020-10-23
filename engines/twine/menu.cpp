@@ -544,9 +544,12 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		if (buttonNeedRedraw) {
 			menuSettings[MenuSettings_CurrentLoadedButton] = currentButton;
 
-			drawButton(menuSettings, false); // current button
+			// draw all buttons
+			drawButton(menuSettings, false);
 			do {
 				_engine->readKeys();
+				// draw plasma effect for the current selected button
+				// .. until a key was pressed
 				drawButton(menuSettings, true);
 			} while (_engine->_keyboard.pressedKey == 0 && _engine->_keyboard.skippedKey == 0 && _engine->_keyboard.internalKeyCode == 0);
 			buttonNeedRedraw = false;
