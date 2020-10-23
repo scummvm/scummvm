@@ -542,7 +542,7 @@ bool Synth::loadPCMROM(const ROMImage &pcmROMImage) {
 		int order[16] = {0, 9, 1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 8};
 
 		Bit16s log = 0;
-		for (int u = 0; u < 15; u++) {
+		for (int u = 0; u < 16; u++) {
 			int bit;
 			if (order[u] < 8) {
 				bit = (s >> (7 - order[u])) & 0x1;

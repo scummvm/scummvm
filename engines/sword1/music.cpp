@@ -121,7 +121,12 @@ bool MusicHandle::playPSX(uint16 id, bool loop) {
 	if (!tableFile.open("tunes.tab"))
 		return false;
 
-	tableFile.seek((id - 1) * 8, SEEK_SET);
+	// The PSX demo has a broken/truncated tunes.tab. So we check here that the offset is not
+	// beyond the end of the file.
+	int32 tableOffset = (id - 1) * 8;
+	if (tableOffset >= tableFile.size())
+		return false;
+	tableFile.seek(tableOffset, SEEK_SET);
 	uint32 offset = tableFile.readUint32LE() * 0x800;
 	uint32 size = tableFile.readUint32LE();
 

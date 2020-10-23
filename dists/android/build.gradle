@@ -36,10 +36,12 @@ android {
         targetSdkVersion 28
 
         versionName "2.3.0git"
-        versionCode 61
+        versionCode 65
         // versioncode must be incremented for each market upload
-        // ScummVM 2.3.0: 61-64 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.3.0: 65-68 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
         // Historical version codes:
+        // ScummVM 2.2.1: 61-64 *Reserved for 2.2.1 stable/release* (arm-v7a, arm64-v8a, x86, x86_64 respectively)
+        // ScummVM 2.2.1: 57-60 Beta 3 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
         // ScummVM 2.2.1: 57-60 *Reserved for 2.2.1 stable/release* (arm-v7a, arm64-v8a, x86, x86_64 respectively)
         // ScummVM 2.2.1: 53-56 Beta 2 (arm-v7a, arm64-v8a, x86, x86_64 respectively)
         // ScummVM 2.2.1: 49-52 Beta 1 (29 Sep 2020) (arm-v7a, arm64-v8a, x86, x86_64 respectively)
@@ -53,8 +55,14 @@ android {
 
     }
     buildTypes {
+        debug{
+            debuggable true
+        }
         release {
+            debuggable false
             minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            zipAlignEnabled true
         }
     }
     sourceSets {

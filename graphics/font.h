@@ -46,6 +46,13 @@ enum TextAlign {
 	kTextAlignRight     ///< Text should be aligned to the right
 };
 
+/** Word wrapping modes */
+enum WordWrapMode {
+	kWordWrapDefault			= 0,
+	kWordWrapEvenWidthLines 	= 1 << 0,	///< Make the resulting line segments close to the same width
+	kWordWrapOnExplicitNewLines	= 1 << 1	///< Text is wrapped on new lines, otherwise treats them as single white space. Disables kWordWrapEvenWidthLines
+};
+
 /**
  * Converts virtual text alignments (start + end)
  * to actual text alignment (left + right + center) for drawing,
@@ -182,12 +189,11 @@ public:
 	 * @param maxWidth  the maximum width a line may have
 	 * @param lines     the string list to which the text lines from str are appended
 	 * @param initWidth the starting width of the first line, for partially filled lines (optional)
-	 * @param evenWidthLinesModeEnabled if enabled, the resulting line segments will be close to the same width (optional)
-	 * @param wrapOnExplicitNewLines if enabled, forces wrapping on new line characters, otherwise treats them as single white space (optional)
+	 * @param mode		the wrapping mode. A bitfield of @ref WordWrapMode values
 	 * @return the maximal width of any of the lines added to lines
 	 */
-	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0, bool evenWidthLinesModeEnabled = false, bool wrapOnExplicitNewLines = true) const;
-	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth = 0, bool evenWidthLinesModeEnabled = false, bool wrapOnExplicitNewLines = true) const;
+	int wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
+	int wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth = 0, uint32 mode = kWordWrapOnExplicitNewLines) const;
 
 };
 

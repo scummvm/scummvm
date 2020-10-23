@@ -78,6 +78,7 @@
 		[menuItem release];
 	}
 
+	CFRelease(array);
 	return recentGamesMenu;
 }
 

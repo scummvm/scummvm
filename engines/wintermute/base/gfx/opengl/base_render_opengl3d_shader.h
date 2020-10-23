@@ -33,7 +33,7 @@
 #include "math/matrix4.h"
 #include "math/ray.h"
 
-#if defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 
 #include "graphics/opengl/shader.h"
 
@@ -76,7 +76,6 @@ public:
 
 	bool setProjection() override;
 	bool setProjection2D() override;
-	void resetModelViewTransform() override;
 	void setWorldTransform(const Math::Matrix4 &transform) override;
 
 	bool windowedBlt() override;

@@ -30,16 +30,112 @@ namespace Glk {
 namespace Comprehend {
 
 ComprehendGameOpcodes::ComprehendGameOpcodes() {
-	Common::fill(&_opcodeMap[0], &_opcodeMap[0x100], 0);
+	Common::fill(&_opcodeMap[0], &_opcodeMap[0x100], OPCODE_UNKNOWN);
 }
 
 void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sentence *sentence,
-		FunctionState *func_state, Room *room, Item *&item) {
-	byte verb = sentence ? sentence->_formattedWords[0] : 0;
+		FunctionState *func_state) {
+//	byte verb = sentence ? sentence->_formattedWords[0] : 0;
 	byte noun = sentence ? sentence->_formattedWords[2] : 0;
+	Room *room = get_room(_currentRoom);
+	Item *item;
 	uint index;
 
-	switch (_opcodeMap[instr->_opcode]) {
+	byte opcode = getOpcode(instr);
+	switch (_opcodeMap[opcode]) {
+	case OPCODE_CALL_FUNC:
+		index = instr->_operand[0];
+		if (instr->_operand[1] == 0x81)
+			index += 256;
+		if (index >= _functions.size())
+			error("Bad function %.4x >= %.4x\n", index, _functions.size());
+
+		eval_function(index, sentence);
+		break;
+
+	case OPCODE_CLEAR_CAN_TAKE:
+		item = get_item_by_noun(noun);
+		item->_flags &= ~ITEMF_CAN_TAKE;
+		break;
+
+	case OPCODE_CLEAR_FLAG:
+		_flags[instr->_operand[0]] = false;
+		break;
+
+	case OPCODE_CLEAR_FLAG40:
+		item = get_item_by_noun(noun);
+		item->_flags &= ~ITEMF_UNKNOWN;
+		break;
+
+	case OPCODE_CLEAR_INVISIBLE:
+		item = get_item_by_noun(noun);
+		item->_flags &= ~ITEMF_INVISIBLE;
+		break;
+
+	case OPCODE_CURRENT_OBJECT_NOT_VALID:
+		func_set_test_result(func_state, !noun);
+		break;
+
+	case OPCODE_CURRENT_IS_OBJECT:
+		item = get_item_by_noun(noun);
+		func_set_test_result(func_state, item != nullptr);
+		break;
+
+	case OPCODE_ELSE:
+		func_state->_testResult = func_state->_elseResult;
+		break;
+
+	case OPCODE_HAVE_CURRENT_OBJECT:
+		item = get_item_by_noun(noun);
+		func_set_test_result(func_state, item->_room == ROOM_INVENTORY);
+		break;
+
+	case OPCODE_HAVE_OBJECT:
+		item = getItem(instr);
+		func_set_test_result(func_state, item->_room == ROOM_INVENTORY);
+		break;
+
+	case OPCODE_IN_ROOM:
+		func_set_test_result(func_state, _currentRoom == instr->_operand[0]);
+		break;
+
+	case OPCODE_INVENTORY: {
+		uint count = num_objects_in_room(ROOM_INVENTORY);
+		if (count == 0) {
+			console_println(stringLookup(STRING_INVENTORY_EMPTY).c_str());
+			break;
+		}
+
+		console_println(stringLookup(STRING_INVENTORY).c_str());
+		for (uint i = 0; i < _items.size(); i++) {
+			item = &_items[i];
+			if (item->_room == ROOM_INVENTORY)
+				g_comprehend->print("%s\n",
+					stringLookup(item->_stringDesc).c_str());
+		}
+		break;
+	}
+
+	case OPCODE_MOVE_TO_ROOM:
+		if (instr->_operand[0] != 0xff)
+			move_to(instr->_operand[0]);
+		break;
+
+	case OPCODE_OBJECT_IN_ROOM:
+		item = getItem(instr);
+		func_set_test_result(func_state, item->_room == instr->_operand[1]);
+		break;
+
+	case OPCODE_OBJECT_IS_NOWHERE:
+		item = getItem(instr);
+		func_set_test_result(func_state, item->_room == ROOM_NOWHERE);
+		break;
+
+	case OPCODE_OBJECT_PRESENT:
+		item = getItem(instr);
+		func_set_test_result(func_state, item->_room == _currentRoom);
+		break;
+
 	case OPCODE_OR:
 		if (func_state->_orCount) {
 			func_state->_orCount += 2;
@@ -49,28 +145,45 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		}
 		break;
 
-	case OPCODE_IN_ROOM:
-		func_set_test_result(func_state,
-			_currentRoom == instr->_operand[0]);
+	case OPCODE_PRINT:
+		console_println(instrStringLookup(instr->_operand[0], instr->_operand[1]).c_str());
 		break;
 
-	case OPCODE_VAR_EQ2:
-		func_set_test_result(func_state,
-			_variables[instr->_operand[0]] ==
-			_variables[instr->_operand[1]]);
+	case OPCODE_REMOVE_OBJECT:
+		item = getItem(instr);
+		move_object(item, ROOM_NOWHERE);
 		break;
 
-	case OPCODE_ELSE:
-		func_state->_testResult = func_state->_elseResult;
+	case OPCODE_SAVE_ACTION:
+		/*
+		 * FIXME - This saves the current verb and allows the next
+		 * command to use just the noun. This is used to allow
+		 * responses to ask the player what they meant, e.g:
+		 *
+		 *   > drop
+		 *   I don't understand what you want to drop.
+		 *   > gun
+		 *   Okay.
+		 */
 		break;
 
-	case OPCODE_CURRENT_OBJECT_NOT_VALID:
-		func_set_test_result(func_state, !noun);
+	case OPCODE_SET_CAN_TAKE:
+		item = get_item_by_noun(noun);
+		item->_flags |= ITEMF_CAN_TAKE;
 		break;
 
-	case OPCODE_TEST_FLAG:
-		func_set_test_result(func_state,
-			_flags[instr->_operand[0]]);
+	case OPCODE_SET_FLAG:
+		_flags[instr->_operand[0]] = true;
+		break;
+
+	case OPCODE_SET_FLAG40:
+		item = get_item_by_noun(noun);
+		item->_flags |= ITEMF_UNKNOWN;
+		break;
+
+	case OPCODE_SET_INVISIBLE:
+		item = get_item_by_noun(noun);
+		item->_flags |= ITEMF_INVISIBLE;
 		break;
 
 	case OPCODE_SET_ROOM_DESCRIPTION:
@@ -86,29 +199,76 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 			room->_stringDesc = instr->_operand[1] + 0x200;
 			break;
 		default:
-			error("Bad string desc %.2x:%.2x\n",
-				instr->_operand[1], instr->_operand[2]);
+			error("Bad string desc %.2x:%.2x\n", instr->_operand[1], instr->_operand[2]);
 			break;
 		}
 		break;
 
-	case OPCODE_CALL_FUNC:
-		index = instr->_operand[0];
-		if (instr->_operand[1] == 0x81)
-			index += 256;
-		if (index >= _functions.size())
-			error("Bad function %.4x >= %.4x\n",
-				index, _functions.size());
+	case OPCODE_SET_STRING_REPLACEMENT1:
+		_currentReplaceWord = (instr->_operand[0] & 0x80) - 1;
+		break;
 
-		eval_function(index, sentence);
+	case OPCODE_SET_STRING_REPLACEMENT2:
+		_currentReplaceWord = instr->_operand[0] - 1;
+		break;
+
+	case OPCODE_SPECIAL:
+		// Game specific opcode
+		handleSpecialOpcode(instr->_operand[0]);
+		break;
+
+	case OPCODE_TAKE_CURRENT_OBJECT:
+		item = get_item_by_noun(noun);
+		if (!item)
+			error("Attempt to take object failed\n");
+
+		move_object(item, ROOM_INVENTORY);
+		break;
+
+	case OPCODE_TAKE_OBJECT:
+		item = getItem(instr);
+		move_object(item, ROOM_INVENTORY);
+		break;
+
+	case OPCODE_TEST_FLAG:
+		func_set_test_result(func_state, _flags[instr->_operand[0]]);
+		break;
+
+	case OPCODE_TEST_ROOM_FLAG:
+		func_set_test_result(func_state, room->_flags & instr->_operand[0]);
+		break;
+
+	case OPCODE_VAR_ADD:
+		_variables[instr->_operand[0]] += _variables[instr->_operand[1]];
+		break;
+
+	case OPCODE_VAR_DEC:
+		_variables[instr->_operand[0]]--;
+		break;
+
+	case OPCODE_VAR_EQ2:
+		func_set_test_result(func_state,
+			_variables[instr->_operand[0]] == _variables[instr->_operand[1]]);
+		break;
+
+	case OPCODE_VAR_GT2:
+		func_set_test_result(func_state, _variables[instr->_operand[0]] >
+			_variables[instr->_operand[1]]);
+		break;
+
+	case OPCODE_VAR_INC:
+		_variables[instr->_operand[0]]++;
+		break;
+
+	case OPCODE_VAR_SUB:
+		_variables[instr->_operand[0]] -= _variables[instr->_operand[1]];
 		break;
 
 	default:
 		if (instr->_opcode & 0x80) {
-			warning("Unhandled command opcode %.2x", instr->_opcode);
+			warning("Unhandled command opcode %.2x", opcode);
 		} else {
-			warning("Unhandled test opcode %.2x - returning false",
-				instr->_opcode);
+			warning("Unhandled test opcode %.2x - returning false", opcode);
 			func_set_test_result(func_state, false);
 		}
 		break;
@@ -140,6 +300,10 @@ bool ComprehendGameOpcodes::isItemPresent(Item *item) const {
 		);
 }
 
+Item *ComprehendGameOpcodes::getItem(const Instruction *instr) {
+	return get_item(instr->_operand[0] - 1);
+}
+
 /*-------------------------------------------------------*/
 
 ComprehendGameV1::ComprehendGameV1() {
@@ -148,7 +312,7 @@ ComprehendGameV1::ComprehendGameV1() {
 	_opcodeMap[0x04] = OPCODE_OR;
 	_opcodeMap[0x05] = OPCODE_IN_ROOM;
 	_opcodeMap[0x06] = OPCODE_VAR_EQ2;
-	_opcodeMap[0x08] = OPCODE_CURRENT_OBJECT_TAKEABLE;
+	_opcodeMap[0x08] = OPCODE_CURRENT_IS_OBJECT;
 	_opcodeMap[0x09] = OPCODE_OBJECT_PRESENT;
 	_opcodeMap[0x0a] = OPCODE_VAR_GTE2;
 	_opcodeMap[0x0c] = OPCODE_ELSE;
@@ -188,7 +352,9 @@ ComprehendGameV1::ComprehendGameV1() {
 	_opcodeMap[0x8a] = OPCODE_VAR_SUB;
 	_opcodeMap[0x8b] = OPCODE_SET_OBJECT_DESCRIPTION;
 	_opcodeMap[0x8c] = OPCODE_MOVE_DEFAULT;
+	_opcodeMap[0x8d] = OPCODE_SET_CAN_TAKE;
 	_opcodeMap[0x8e] = OPCODE_PRINT;
+	_opcodeMap[0x91] = OPCODE_CLEAR_CAN_TAKE;
 	_opcodeMap[0x95] = OPCODE_REMOVE_OBJECT;
 	_opcodeMap[0x99] = OPCODE_SET_FLAG;
 	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
@@ -201,36 +367,44 @@ ComprehendGameV1::ComprehendGameV1() {
 	_opcodeMap[0xa2] = OPCODE_SET_ROOM_GRAPHIC;
 	_opcodeMap[0xb0] = OPCODE_REMOVE_CURRENT_OBJECT;
 	_opcodeMap[0xb1] = OPCODE_MOVE_DIR;
-	_opcodeMap[0xb9] = OPCODE_SET_STRING_REPLACEMENT;
+	_opcodeMap[0xb5] = OPCODE_SET_STRING_REPLACEMENT1;
+	_opcodeMap[0xb9] = OPCODE_SET_STRING_REPLACEMENT2;
 	_opcodeMap[0xbd] = OPCODE_VAR_INC;
 	_opcodeMap[0xc1] = OPCODE_VAR_DEC;
+	_opcodeMap[0xc5] = OPCODE_SET_STRING_REPLACEMENT3;
 	_opcodeMap[0xc9] = OPCODE_MOVE_CURRENT_OBJECT_TO_ROOM;
+	_opcodeMap[0xcd] = OPCODE_CLEAR_INVISIBLE;
+	_opcodeMap[0xd1] = OPCODE_SET_INVISIBLE;
+	_opcodeMap[0xd5] = OPCODE_CLEAR_FLAG40;
+	_opcodeMap[0xd9] = OPCODE_SET_FLAG40;
 }
 
 void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *sentence,
-		FunctionState *func_state, Room *room, Item *&item) {
+		FunctionState *func_state) {
 	byte verb = sentence ? sentence->_formattedWords[0] : 0;
 	byte noun = sentence ? sentence->_formattedWords[2] : 0;
+	Room *room = get_room(_currentRoom);
+	Item *item;
 	uint count;
 
-	switch (_opcodeMap[instr->_opcode]) {
-	case OPCODE_VAR_ADD:
-		_variables[instr->_operand[0]] +=
-			_variables[instr->_operand[1]];
+	switch (_opcodeMap[getOpcode(instr)]) {
+	case OPCODE_INVENTORY_FULL:
+		item = get_item_by_noun(noun);
+
+		func_set_test_result(func_state, _variables[VAR_INVENTORY_WEIGHT] +
+			(item->_flags & ITEMF_WEIGHT_MASK) > _variables[VAR_INVENTORY_LIMIT]);
 		break;
 
-	case OPCODE_VAR_SUB:
-		_variables[instr->_operand[0]] -=
-			_variables[instr->_operand[1]];
+	case OPCODE_OBJECT_NOT_PRESENT:
+		item = getItem(instr);
+		func_set_test_result(func_state, !isItemPresent(item));
 		break;
 
-	case OPCODE_VAR_INC:
-		_variables[instr->_operand[0]]++;
+	case OPCODE_SET_STRING_REPLACEMENT3:
+		_currentReplaceWord = instr->_operand[0] - 1;
 		break;
 
-	case OPCODE_VAR_DEC:
-		_variables[instr->_operand[0]]--;
-		break;
+	/*--------------------------------------*/
 
 	case OPCODE_VAR_EQ1:
 		func_set_test_result(func_state,
@@ -242,12 +416,6 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		func_set_test_result(func_state,
 			_variables[0] >
 			_variables[instr->_operand[0]]);
-		break;
-
-	case OPCODE_VAR_GT2:
-		func_set_test_result(func_state,
-			_variables[instr->_operand[0]] >
-			_variables[instr->_operand[1]]);
 		break;
 
 	case OPCODE_VAR_GTE1:
@@ -266,30 +434,14 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		_variables[VAR_TURN_COUNT]++;
 		break;
 
-	case OPCODE_PRINT:
-		console_println(instrStringLookup(
-			instr->_operand[0], instr->_operand[1])
-			.c_str());
-		break;
-
 	case OPCODE_TEST_NOT_ROOM_FLAG:
 		func_set_test_result(func_state,
 			!(room->_flags & instr->_operand[0]));
 		break;
 
-	case OPCODE_TEST_ROOM_FLAG:
-		func_set_test_result(func_state,
-			room->_flags & instr->_operand[0]);
-		break;
-
 	case OPCODE_NOT_IN_ROOM:
 		func_set_test_result(func_state,
 			_currentRoom != instr->_operand[0]);
-		break;
-
-	case OPCODE_MOVE_TO_ROOM:
-		if (instr->_operand[0] != 0xff)
-			move_to(instr->_operand[0]);
 		break;
 
 	case OPCODE_MOVE_DEFAULT:
@@ -303,32 +455,14 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 			console_println(stringLookup(STRING_CANT_GO).c_str());
 		break;
 
-	case OPCODE_MOVE_DIRECTION:
-		if (room->_direction[instr->_operand[0] - 1])
-			move_to(room->_direction[instr->_operand[0] - 1]);
-		else
-			console_println(stringLookup(STRING_CANT_GO).c_str());
-		break;
-
 	case OPCODE_MOVE_OBJECT_TO_CURRENT_ROOM:
-		item = get_item(instr->_operand[0] - 1);
+		item = getItem(instr);
 		move_object(item, _currentRoom);
 		break;
 
-	case OPCODE_OBJECT_IN_ROOM:
-		item = get_item(instr->_operand[0] - 1);
-		func_set_test_result(func_state,
-			item->_room == instr->_operand[1]);
-		break;
-
 	case OPCODE_OBJECT_NOT_IN_ROOM:
-		item = get_item(instr->_operand[0] - 1);
+		item = getItem(instr);
 		func_set_test_result(func_state, !item || item->_room != _currentRoom);
-		break;
-
-	case OPCODE_OBJECT_CAN_TAKE:
-		item = get_item(instr->_operand[0] - 1);
-		func_set_test_result(func_state, item->_flags & ITEMF_CAN_TAKE);
 		break;
 
 	case OPCODE_CURRENT_OBJECT_NOT_IN_ROOM:
@@ -337,17 +471,8 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		break;
 
 	case OPCODE_MOVE_OBJECT_TO_ROOM:
-		item = get_item(instr->_operand[0] - 1);
+		item = getItem(instr);
 		move_object(item, instr->_operand[1]);
-		break;
-
-	case OPCODE_INVENTORY_FULL:
-		item = get_item_by_noun(noun);
-
-		func_set_test_result(func_state,
-			_variables[VAR_INVENTORY_WEIGHT] +
-			(item->_flags & ITEMF_WEIGHT_MASK) >
-			_variables[VAR_INVENTORY_LIMIT]);
 		break;
 
 	case OPCODE_DESCRIBE_CURRENT_OBJECT:
@@ -387,37 +512,16 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 			func_set_test_result(func_state, false);
 		break;
 
-	case OPCODE_HAVE_OBJECT:
-		item = get_item(instr->_operand[0] - 1);
-		func_set_test_result(func_state,
-			item->_room == ROOM_INVENTORY);
-		break;
-
 	case OPCODE_NOT_HAVE_CURRENT_OBJECT:
 		item = get_item_by_noun(noun);
 		func_set_test_result(func_state,
 			!item || item->_room != ROOM_INVENTORY);
 		break;
 
-	case OPCODE_HAVE_CURRENT_OBJECT:
-		item = get_item_by_noun(noun);
-		func_set_test_result(func_state,
-			item->_room == ROOM_INVENTORY);
-		break;
-
 	case OPCODE_NOT_HAVE_OBJECT:
-		item = get_item(instr->_operand[0] - 1);
+		item = getItem(instr);
 		func_set_test_result(func_state,
 			item->_room != ROOM_INVENTORY);
-		break;
-
-	case OPCODE_CURRENT_OBJECT_TAKEABLE:
-		item = get_item_by_noun(noun);
-		if (!item)
-			func_set_test_result(func_state, false);
-		else
-			func_set_test_result(func_state,
-			(item->_flags & ITEMF_CAN_TAKE));
 		break;
 
 	case OPCODE_CURRENT_OBJECT_NOT_TAKEABLE:
@@ -429,18 +533,13 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 				!(item->_flags & ITEMF_CAN_TAKE));
 		break;
 
-	case OPCODE_OBJECT_IS_NOWHERE:
-		item = get_item(instr->_operand[0] - 1);
-		func_set_test_result(func_state, item->_room == ROOM_NOWHERE);
-		break;
-
 	case OPCODE_CURRENT_OBJECT_IS_NOWHERE:
 		item = get_item_by_noun(noun);
 		func_set_test_result(func_state, item && item->_room == ROOM_NOWHERE);
 		break;
 
 	case OPCODE_OBJECT_IS_NOT_NOWHERE:
-		item = get_item(instr->_operand[0] - 1);
+		item = getItem(instr);
 		func_set_test_result(func_state, item->_room != ROOM_NOWHERE);
 		break;
 
@@ -449,51 +548,9 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		func_set_test_result(func_state, !isItemPresent(item));
 		break;
 
-	case OPCODE_OBJECT_NOT_PRESENT:
-		item = get_item(instr->_operand[0] - 1);
-		func_set_test_result(func_state, !isItemPresent(item));
-		break;
-
-	case OPCODE_OBJECT_PRESENT:
-		item = get_item(instr->_operand[0] - 1);
-		func_set_test_result(func_state,
-			item->_room == _currentRoom);
-		break;
-
-	case OPCODE_CURRENT_IS_OBJECT:
-		func_set_test_result(func_state,
-			get_item_by_noun(noun) != NULL);
-		break;
-
-	case OPCODE_CURRENT_NOT_OBJECT:
-		func_set_test_result(func_state,
-			get_item_by_noun(noun) == NULL);
-		break;
-
-	case OPCODE_REMOVE_OBJECT:
-		item = get_item(instr->_operand[0] - 1);
-		move_object(item, ROOM_NOWHERE);
-		break;
-
 	case OPCODE_REMOVE_CURRENT_OBJECT:
 		item = get_item_by_noun(noun);
 		move_object(item, ROOM_NOWHERE);
-		break;
-
-	case OPCODE_INVENTORY:
-		count = num_objects_in_room(ROOM_INVENTORY);
-		if (count == 0) {
-			console_println(stringLookup(STRING_INVENTORY_EMPTY).c_str());
-			break;
-		}
-
-		console_println(stringLookup(STRING_INVENTORY).c_str());
-		for (uint i = 0; i < _items.size(); i++) {
-			item = &_items[i];
-			if (item->_room == ROOM_INVENTORY)
-				g_comprehend->print("%s\n",
-					stringLookup(item->_stringDesc).c_str());
-		}
 		break;
 
 	case OPCODE_INVENTORY_ROOM:
@@ -521,7 +578,7 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		break;
 
 	case OPCODE_DROP_OBJECT:
-		item = get_item(instr->_operand[0] - 1);
+		item = getItem(instr);
 		move_object(item, _currentRoom);
 		break;
 
@@ -533,44 +590,23 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		move_object(item, _currentRoom);
 		break;
 
-	case OPCODE_TAKE_CURRENT_OBJECT:
-		item = get_item_by_noun(noun);
-		if (!item)
-			error("Attempt to take object failed\n");
-
-		move_object(item, ROOM_INVENTORY);
-		break;
-
-	case OPCODE_TAKE_OBJECT:
-		item = get_item(instr->_operand[0] - 1);
-		move_object(item, ROOM_INVENTORY);
-		break;
-
 	case OPCODE_TEST_NOT_FLAG:
 		func_set_test_result(func_state,
 			!_flags[instr->_operand[0]]);
 		break;
 
-	case OPCODE_CLEAR_FLAG:
-		_flags[instr->_operand[0]] = false;
-		break;
-
-	case OPCODE_SET_FLAG:
-		_flags[instr->_operand[0]] = true;
-		break;
-
 	case OPCODE_SET_OBJECT_DESCRIPTION:
-		item = get_item(instr->_operand[0] - 1);
+		item = getItem(instr);
 		item->_stringDesc = (instr->_operand[2] << 8) | instr->_operand[1];
 		break;
 
 	case OPCODE_SET_OBJECT_LONG_DESCRIPTION:
-		item = get_item(instr->_operand[0] - 1);
+		item = getItem(instr);
 		item->_longString = (instr->_operand[2] << 8) | instr->_operand[1];
 		break;
 
 	case OPCODE_SET_OBJECT_GRAPHIC:
-		item = get_item(instr->_operand[0] - 1);
+		item = getItem(instr);
 		item->_graphic = instr->_operand[1];
 		if (item->_room == _currentRoom)
 			_updateFlags |= UPDATE_GRAPHICS;
@@ -587,23 +623,6 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		// The original had two opcodes mapped to the same code that does
 		// a test, but ignores the result, and is always false
 		func_set_test_result(func_state, false);
-		break;
-
-	case OPCODE_SAVE_ACTION:
-		/*
-		 * FIXME - This saves the current verb and allows the next
-		 * command to use just the noun. This is used to allow
-		 * responses to ask the player what they meant, e.g:
-		 *
-		 *   > drop
-		 *   I don't understand what you want to drop.
-		 *   > gun
-		 *   Okay.
-		 */
-		break;
-
-	case OPCODE_SET_STRING_REPLACEMENT:
-		_currentReplaceWord = instr->_operand[0] - 1;
 		break;
 
 	case OPCODE_SET_CURRENT_NOUN_STRING_REPLACEMENT:
@@ -637,17 +656,12 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 		console_get_key();
 		break;
 
-	case OPCODE_SPECIAL:
-		// Game specific opcode
-		handleSpecialOpcode(instr->_operand[0]);
-		break;
-
 	case OPCODE_MOVE_DIR:
 		doMovementVerb(instr->_operand[0]);
 		break;
 
 	default:
-		ComprehendGameOpcodes::execute_opcode(instr, sentence, func_state, room, item);
+		ComprehendGameOpcodes::execute_opcode(instr, sentence, func_state);
 		break;
 	}
 }
@@ -655,113 +669,166 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 /*-------------------------------------------------------*/
 
 ComprehendGameV2::ComprehendGameV2() {
+	_opcodeMap[0x01] = OPCODE_HAVE_OBJECT;
+	_opcodeMap[0x02] = OPCODE_VAR_GT2;
 	_opcodeMap[0x04] = OPCODE_OR;
 	_opcodeMap[0x05] = OPCODE_IN_ROOM;
 	_opcodeMap[0x06] = OPCODE_VAR_EQ2;
-	_opcodeMap[0x0c] = OPCODE_ELSE;
-	_opcodeMap[0x14] = OPCODE_CURRENT_OBJECT_NOT_VALID;
-	_opcodeMap[0x19] = OPCODE_TEST_FLAG;
-	_opcodeMap[0x87] = OPCODE_SET_ROOM_DESCRIPTION;
-	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
-	_opcodeMap[0xa9] = OPCODE_CLEAR_INVISIBLE;
-
-#if 0
-	_opcodeMap[0x01] = OPCODE_HAVE_OBJECT;
-	_opcodeMap[0x02] = OPCODE_VAR_GT2;
 	_opcodeMap[0x08] = OPCODE_CURRENT_IS_OBJECT;
-	_opcodeMap[0x09] = OPCODE_VAR_GT1;
-	_opcodeMap[0x0a] = OPCODE_VAR_GTE2;
-	_opcodeMap[0x0d] = OPCODE_VAR_EQ1;
+	_opcodeMap[0x0c] = OPCODE_ELSE;
 	_opcodeMap[0x11] = OPCODE_OBJECT_IS_NOWHERE;
+	_opcodeMap[0x14] = OPCODE_CURRENT_OBJECT_NOT_VALID;
+	_opcodeMap[0x15] = OPCODE_INVENTORY_FULL_X;
+	_opcodeMap[0x19] = OPCODE_TEST_FLAG;
 	_opcodeMap[0x1d] = OPCODE_TEST_ROOM_FLAG;
 	_opcodeMap[0x20] = OPCODE_HAVE_CURRENT_OBJECT;
 	_opcodeMap[0x21] = OPCODE_OBJECT_PRESENT;
 	_opcodeMap[0x22] = OPCODE_OBJECT_IN_ROOM;
+	_opcodeMap[0x25] = OPCODE_OBJECT_TAKEABLE;
+	_opcodeMap[0x29] = OPCODE_INVENTORY_FULL;
 	_opcodeMap[0x2d] = OPCODE_OBJECT_CAN_TAKE;
+	_opcodeMap[0x80] = OPCODE_INVENTORY;
+	_opcodeMap[0x81] = OPCODE_TAKE_OBJECT;
+	_opcodeMap[0x84] = OPCODE_SAVE_ACTION;
+	_opcodeMap[0x85] = OPCODE_MOVE_TO_ROOM;
+	_opcodeMap[0x86] = OPCODE_VAR_ADD;
+	_opcodeMap[0x87] = OPCODE_SET_ROOM_DESCRIPTION;
+	_opcodeMap[0x89] = OPCODE_SPECIAL;
+	_opcodeMap[0x8a] = OPCODE_VAR_SUB;
+	_opcodeMap[0x8e] = OPCODE_PRINT;
+	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
+	_opcodeMap[0x99] = OPCODE_SET_FLAG;
+	_opcodeMap[0x9d] = OPCODE_CLEAR_FLAG;
+	_opcodeMap[0xa0] = OPCODE_TAKE_CURRENT_OBJECT;
+	_opcodeMap[0xa1] = OPCODE_CLEAR_FLAG40;
+	_opcodeMap[0xa5] = OPCODE_SET_FLAG40;
+	_opcodeMap[0xa9] = OPCODE_CLEAR_INVISIBLE;
+	_opcodeMap[0xad] = OPCODE_SET_INVISIBLE;
+	_opcodeMap[0xc1] = OPCODE_VAR_DEC;
+	_opcodeMap[0xc5] = OPCODE_SET_STRING_REPLACEMENT3;
+	_opcodeMap[0xc9] = OPCODE_SET_STRING_REPLACEMENT1;
+	_opcodeMap[0xcd] = OPCODE_SET_STRING_REPLACEMENT2;
+	_opcodeMap[0xd1] = OPCODE_MOVE_DIR;
+	_opcodeMap[0xdd] = OPCODE_VAR_INC;
+	_opcodeMap[0xe5] = OPCODE_SET_CAN_TAKE;
+	_opcodeMap[0xe9] = OPCODE_CLEAR_CAN_TAKE;
+	_opcodeMap[0xed] = OPCODE_REMOVE_OBJECT;
+
+#if 0
+	_opcodeMap[0x09] = OPCODE_VAR_GT1;
+	_opcodeMap[0x0a] = OPCODE_VAR_GTE2;
+	_opcodeMap[0x0d] = OPCODE_VAR_EQ1;
 	_opcodeMap[0x30] = OPCODE_CURRENT_OBJECT_PRESENT;
-	_opcodeMap[0x31] = OPCODE_TEST_ROOM_FLAG;
 	_opcodeMap[0x41] = OPCODE_NOT_HAVE_OBJECT;
 	_opcodeMap[0x45] = OPCODE_NOT_IN_ROOM;
 	_opcodeMap[0x48] = OPCODE_CURRENT_OBJECT_NOT_PRESENT;
 	_opcodeMap[0x43] = OPCODE_OBJECT_NOT_IN_ROOM;
-	_opcodeMap[0x51] = OPCODE_OBJECT_IS_NOWHERE;
 	_opcodeMap[0x59] = OPCODE_TEST_NOT_FLAG;
 	_opcodeMap[0x5d] = OPCODE_TEST_NOT_ROOM_FLAG;
 	_opcodeMap[0x60] = OPCODE_NOT_HAVE_CURRENT_OBJECT;
-	_opcodeMap[0x61] = OPCODE_OBJECT_NOT_PRESENT;
 	_opcodeMap[0x70] = OPCODE_CURRENT_OBJECT_NOT_PRESENT;
-	_opcodeMap[0x74] = OPCODE_CURRENT_NOT_OBJECT;
-	_opcodeMap[0x80] = OPCODE_INVENTORY;
-	_opcodeMap[0x81] = OPCODE_TAKE_OBJECT;
 	_opcodeMap[0x82] = OPCODE_MOVE_OBJECT_TO_ROOM;
-	_opcodeMap[0x84] = OPCODE_SAVE_ACTION;
-	_opcodeMap[0x85] = OPCODE_MOVE_TO_ROOM;
-	_opcodeMap[0x86] = OPCODE_VAR_ADD;
-	_opcodeMap[0x89] = OPCODE_SPECIAL;
-	_opcodeMap[0x8a] = OPCODE_VAR_SUB;
 	_opcodeMap[0x8b] = OPCODE_SET_OBJECT_DESCRIPTION;
 	_opcodeMap[0x8c] = OPCODE_MOVE_DEFAULT;
-	_opcodeMap[0x8e] = OPCODE_PRINT;
 	_opcodeMap[0x8f] = OPCODE_SET_OBJECT_LONG_DESCRIPTION;
 	_opcodeMap[0x90] = OPCODE_WAIT_KEY;
-	_opcodeMap[0x95] = OPCODE_REMOVE_OBJECT;
 	_opcodeMap[0x98] = OPCODE_TURN_TICK;
-	_opcodeMap[0x99] = OPCODE_SET_FLAG;
-	_opcodeMap[0x9d] = OPCODE_CLEAR_FLAG;
 	_opcodeMap[0x9e] = OPCODE_INVENTORY_ROOM;
-	_opcodeMap[0xa0] = OPCODE_TAKE_CURRENT_OBJECT;
 	_opcodeMap[0xa2] = OPCODE_SET_OBJECT_GRAPHIC;
-	_opcodeMap[0xa9] = OPCODE_INVENTORY_FULL;
-	_opcodeMap[0xb1] = OPCODE_MOVE_DIR;
-	_opcodeMap[0xb5] = OPCODE_DESCRIBE_CURRENT_OBJECT;
-	_opcodeMap[0xc1] = OPCODE_VAR_DEC;
 	_opcodeMap[0xc2] = OPCODE_SET_ROOM_GRAPHIC;
-	_opcodeMap[0xc5] = OPCODE_SET_CURRENT_NOUN_STRING_REPLACEMENT;
 	_opcodeMap[0xc6] = OPCODE_SET_OBJECT_GRAPHIC;
-	_opcodeMap[0xc9] = OPCODE_MOVE_CURRENT_OBJECT_TO_ROOM;
-	_opcodeMap[0xcd] = OPCODE_SET_STRING_REPLACEMENT;
-	_opcodeMap[0xd1] = OPCODE_MOVE_DIRECTION;
 	_opcodeMap[0xd5] = OPCODE_DRAW_ROOM;
 	_opcodeMap[0xd9] = OPCODE_DRAW_OBJECT;
-	_opcodeMap[0xdd] = OPCODE_VAR_INC;
 	_opcodeMap[0xe1] = OPCODE_MOVE_OBJECT_TO_CURRENT_ROOM;
-	_opcodeMap[0xed] = OPCODE_REMOVE_OBJECT;
 	_opcodeMap[0xf0] = OPCODE_DROP_CURRENT_OBJECT;
 	_opcodeMap[0xfc] = OPCODE_REMOVE_CURRENT_OBJECT;
 #endif
 }
 
 void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *sentence,
-		FunctionState *func_state, Room *room, Item *&item) {
+		FunctionState *func_state) {
+	Instruction instrCopy;
 	byte noun = sentence ? sentence->_formattedWords[2] : 0;
+	Room *room = get_room(_currentRoom);
+	Item *item;
 
-	// Special pre-processing for opcodes
-	byte opcode = instr->_opcode;
-	if ((opcode & 0x30) == 0x30) {
-		// TODO: Check if getCurrentObjectRoom call in original is needed in ScummVM
-		opcode = (opcode & ~0x10) + 1;
+	if ((instr->_opcode & 0x30) == 0x30) {
+		// First operand comes from entered sentence noun, shifting out existing operands
+		instrCopy = *instr;
+		instrCopy._operand[2] = instrCopy._operand[1];
+		instrCopy._operand[1] = instrCopy._operand[0];
+		instrCopy._operand[0] = get_item_id(noun) + 1;
+		instr = &instrCopy;
 	}
 
-	switch (_opcodeMap[opcode]) {
-	case OPCODE_INVENTORY_FULL:
-		item = get_item_by_noun(noun);
+	func_state->_notComparison = (instr->_opcode & 0x40) != 0;
 
-		weighInventory();
-		func_set_test_result(func_state,
-			_totalInventoryWeight + (item->_flags & ITEMF_WEIGHT_MASK) <
-			_variables[VAR_INVENTORY_LIMIT]);
-		break;
-
+	switch (_opcodeMap[getOpcode(instr)]) {
 	case OPCODE_CLEAR_INVISIBLE:
 		item = get_item_by_noun(noun);
 		item->_flags &= ~ITEMF_INVISIBLE;
 		break;
 
+	case OPCODE_INVENTORY_FULL:
+		item = get_item_by_noun(noun);
+
+		weighInventory();
+		func_set_test_result(func_state, _totalInventoryWeight + (item->_flags & ITEMF_WEIGHT_MASK) >
+			_variables[VAR_INVENTORY_LIMIT]);
+		break;
+
+	case OPCODE_INVENTORY_FULL_X:
+		item = get_item_by_noun(noun);
+
+		weighInventory();
+		func_set_test_result(func_state, _totalInventoryWeight + (item->_flags & ITEMF_WEIGHT_MASK) >
+			_variables[instr->_operand[1]]);
+		break;
+
+	case OPCODE_MOVE_DIR:
+		if (room->_direction[instr->_operand[0] - 1])
+			move_to(room->_direction[instr->_operand[0] - 1]);
+		else
+			console_println(stringLookup(STRING_CANT_GO).c_str());
+		break;
+
+	case OPCODE_OBJECT_TAKEABLE:
+		item = getItem(instr);
+		func_set_test_result(func_state, (item->_flags & ITEMF_WEIGHT_MASK) != ITEMF_WEIGHT_MASK);
+		break;
+
+	case OPCODE_OBJECT_CAN_TAKE:
+		item = getItem(instr);
+		func_set_test_result(func_state, item->_flags & ITEMF_CAN_TAKE);
+		break;
+
+	case OPCODE_SET_STRING_REPLACEMENT3:
+		warning("TODO: Figure out OPCODE_SET_STRING_REPLACEMENT3 offset");
+		_currentReplaceWord = instr->_operand[0] - 1;
+		break;
+
 	default:
-		ComprehendGameOpcodes::execute_opcode(instr, sentence, func_state, room, item);
+		ComprehendGameOpcodes::execute_opcode(instr, sentence, func_state);
 		break;
 	}
 }
+
+byte ComprehendGameV2::getOpcode(const Instruction *instr) {
+	// Special pre-processing for opcodes
+	byte opcode = instr->_opcode;
+	if (!(opcode & 0x80))
+		opcode &= 0x3f;
+	if ((opcode & 0x30) == 0x30) {
+		opcode = (opcode & ~0x10) + 1;
+	}
+
+	return opcode;
+}
+
+void ComprehendGameV2::func_set_test_result(FunctionState *func_state, bool value) {
+	ComprehendGameOpcodes::func_set_test_result(func_state, value ^ func_state->_notComparison);
+}
+
 
 } // namespace Comprehend
 } // namespace Glk

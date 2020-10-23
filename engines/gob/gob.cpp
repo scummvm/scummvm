@@ -355,7 +355,7 @@ Common::Error GobEngine::run() {
 		_global->_language = kLanguageJapanese;
 		break;
 	case Common::RU_RUS:
-		if (_gameType == kGameTypeWoodruff)
+		if (_gameType == kGameTypeWoodruff || _gameType == kGameTypeBargon)
 			_global->_language = kLanguageBritish;
 		else
 			_global->_language = kLanguageFrench;

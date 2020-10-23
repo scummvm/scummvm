@@ -386,6 +386,20 @@
 	kFeaturesAdLib,
 	0, 0, 0
 },
+{
+	{
+		"gob1",
+		"",
+		AD_ENTRY1s("intro.stk", "acdda40f4b20a87d4cfd760d3833a6e1", 453404),
+		JA_JPN,
+		kPlatformMacintosh,
+		ADGF_UNSTABLE,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGob1,
+	kFeaturesAdLib,
+	0, 0, 0
+},
 
 // -- Windows --
 
@@ -712,14 +726,28 @@
 	kFeaturesAdLib,
 	0, "AVT003.TOT", 0
 },
-{ // Found on ADI Accompagnement Scolaire - Francais-Maths
+{ // Found on ADI Accompagnement Scolaire - Francais-Maths CE1/CE2
 	{
 		"gob1",
-		"",
+		"CE1/CE2",
+		AD_ENTRY1s("intro.stk", "ae38e1dac63576b9a7d34a96fd6eb37c", 5731374),
+		FR_FRA,
+		kPlatformCDi,
+		ADGF_DEMO | ADGF_UNSTABLE,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeGob1,
+	kFeaturesAdLib,
+	0, "AVT008.TOT", 0
+},
+{ // Found on ADI Accompagnement Scolaire - Francais-Maths CM1/CM2
+	{
+		"gob1",
+		"CM1/CM2",
 		AD_ENTRY1s("intro.stk", "ca15cc119fea5ee432083e7f6b873c38", 2441216),
 		FR_FRA,
 		kPlatformCDi,
-		ADGF_NO_FLAGS,
+		ADGF_DEMO | ADGF_UNSTABLE,
 		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
 	},
 	kGameTypeGob1,

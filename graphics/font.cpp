@@ -150,7 +150,7 @@ struct WordWrapper {
 };
 
 template<class StringType>
-int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Common::Array<StringType> &lines, int initWidth, bool evenWidthLinesModeEnabled, bool wrapOnExplicitNewLines) {
+int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Common::Array<StringType> &lines, int initWidth, uint32 mode) {
 	WordWrapper<StringType> wrapper(lines);
 	StringType line;
 	StringType tmpStr;
@@ -180,7 +180,7 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 	// If both are set to true and there are new line characters in the text,
 	// then "Even Width Lines" mode is disabled.
 	//
-	if (evenWidthLinesModeEnabled) {
+	if (mode & kWordWrapEvenWidthLines) {
 		// Early loop to get the full width of the text
 		for (typename StringType::const_iterator x = str.begin(); x != str.end(); ++x) {
 			typename StringType::unsigned_type c = *x;
@@ -194,10 +194,10 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 			}
 
 			if (c == '\n') {
-				if (!wrapOnExplicitNewLines) {
+				if (!(mode & kWordWrapOnExplicitNewLines)) {
 					c = ' ';
 				} else {
-					evenWidthLinesModeEnabled = false;
+					mode &= ~kWordWrapEvenWidthLines;
 					break;
 				}
 			}
@@ -211,7 +211,7 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 	int targetTotalLinesNumberEWL = 0;
 	int targetMaxLineWidth = 0;
 	do {
-		if (evenWidthLinesModeEnabled) {
+		if (mode & kWordWrapEvenWidthLines) {
 			wrapper.clear();
 			targetTotalLinesNumberEWL += 1;
 			// We add +2 to the fullTextWidthEWL to account for possible shadow pixels
@@ -240,7 +240,7 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 				c = '\n';
 			}
 			// if wrapping on explicit new lines is disabled, then new line characters should be treated as a single white space char
-			if (!wrapOnExplicitNewLines && c == '\n')  {
+			if (!(mode & kWordWrapOnExplicitNewLines) && c == '\n')  {
 				c = ' ';
 			}
 
@@ -262,7 +262,7 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 
 				// If we encounter a line break (\n), or if the new space would
 				// cause the line to overflow: start a new line
-				if ((wrapOnExplicitNewLines && c == '\n') || wouldExceedWidth) {
+				if (((mode & kWordWrapOnExplicitNewLines) && c == '\n') || wouldExceedWidth) {
 					wrapper.add(line, lineWidth);
 					continue;
 				}
@@ -307,7 +307,7 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 		if (lineWidth > 0) {
 			wrapper.add(line, lineWidth);
 		}
-	} while (evenWidthLinesModeEnabled
+	} while ((mode & kWordWrapEvenWidthLines)
 	         && (targetMaxLineWidth > maxWidth));
 	return wrapper.actualMaxLineWidth;
 }
@@ -472,12 +472,12 @@ void Font::drawString(ManagedSurface *dst, const Common::U32String &str, int x, 
 	}
 }
 
-int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth, bool evenWidthLinesModeEnabled, bool wrapOnExplicitNewLines) const {
-	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth, evenWidthLinesModeEnabled, wrapOnExplicitNewLines);
+int Font::wordWrapText(const Common::String &str, int maxWidth, Common::Array<Common::String> &lines, int initWidth, uint32 mode) const {
+	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth, mode);
 }
 
-int Font::wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth, bool evenWidthLinesModeEnabled, bool wrapOnExplicitNewLines) const {
-	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth, evenWidthLinesModeEnabled, wrapOnExplicitNewLines);
+int Font::wordWrapText(const Common::U32String &str, int maxWidth, Common::Array<Common::U32String> &lines, int initWidth, uint32 mode) const {
+	return wordWrapTextImpl(*this, str, maxWidth, lines, initWidth, mode);
 }
 
 TextAlign convertTextAlignH(TextAlign alignH, bool rtl) {

@@ -32,7 +32,7 @@ namespace Sci {
 	{"sci-fanmade", name, { \
 		{"resource.map", 0, resMapMd5, resMapSize}, \
 		{resVol, 0, resMd5, resSize}, \
-		AD_LISTEND}, lang, Common::kPlatformDOS, 0, GUIO_STD16 \
+		AD_LISTEND}, lang, Common::kPlatformDOS, ADGF_USEEXTRAASTITLE | ADGF_AUTOGENTARGET, GUIO_STD16 \
 	}
 
 #define FANMADE(name, resMapMd5, resMapSize, resMd5, resSize) FANMADE_L(name, resMapMd5, resMapSize, resMd5, resSize, "resource.001", Common::EN_ANY)

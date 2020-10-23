@@ -275,9 +275,13 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 		initGraphics(screenW, screenH, nullptr);
 	}
 
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
+#endif
+
 #if defined(USE_OPENGL_GAME)
 	// Check the OpenGL context actually supports shaders
-	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
+	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
 		matchingRendererType = Graphics::kRendererTypeOpenGL;
 	}
 #endif
@@ -289,12 +293,12 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 
 	GfxBase *renderer = nullptr;
 #if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		renderer = CreateGfxOpenGLShader();
 	}
 #endif
 #if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
-	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
+	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		renderer = CreateGfxOpenGL();
 	}
 #endif
@@ -567,22 +571,22 @@ Common::KeymapArray GrimEngine::initKeymapsEMI(const char *target) {
 	engineKeyMap->addAction(act);
 
 	act = new Action("EXAM", _("Examine/Look"));
-	act->setKeyEvent(KeyState(KEYCODE_s, 'e'));
+	act->setKeyEvent(KeyState(KEYCODE_l, 'e'));
 	act->addDefaultInputMapping("JOY_X");
 	engineKeyMap->addAction(act);
 
 	act = new Action("BUSE", _("Use/Talk"));
-	act->setKeyEvent(KeyState(KEYCODE_w, 'u'));
+	act->setKeyEvent(KeyState(KEYCODE_u, 'u'));
 	act->addDefaultInputMapping("JOY_A");
 	engineKeyMap->addAction(act);
 
 	act = new Action("PICK", _("Pick up/Put away"));
-	act->setKeyEvent(KeyState(KEYCODE_a, 'p'));
+	act->setKeyEvent(KeyState(KEYCODE_KP_PLUS, 'p'));
 	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
 	act = new Action("INVT", _("Inventory"));
-	act->setKeyEvent(KeyState(KEYCODE_d, 'i'));
+	act->setKeyEvent(KeyState(KEYCODE_INSERT, 'i'));
 	act->addDefaultInputMapping("JOY_Y");
 	engineKeyMap->addAction(act);
 

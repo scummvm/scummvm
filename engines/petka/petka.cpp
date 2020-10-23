@@ -222,6 +222,10 @@ bool PetkaEngine::isDemo() const {
 	return strcmp(_desc->gameId, "petka_demo") == 0;
 }
 
+bool PetkaEngine::isPetka2() const {
+	return strcmp(_desc->gameId, "petka2") == 0;
+}
+
 SoundMgr *PetkaEngine::soundMgr() const {
 	return _soundMgr.get();
 }

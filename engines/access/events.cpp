@@ -81,7 +81,7 @@ void EventsManager::setCursor(CursorType cursorId) {
 
 		// Create a surface to build up the cursor on
 		Graphics::Surface cursorSurface;
-		cursorSurface.create(16, 16, Graphics::PixelFormat::createFormatCLUT8());
+		cursorSurface.create(CURSOR_WIDTH, CURSOR_HEIGHT, Graphics::PixelFormat::createFormatCLUT8());
 		byte *destP = (byte *)cursorSurface.getPixels();
 		Common::fill(destP, destP + CURSOR_WIDTH * CURSOR_HEIGHT, 0);
 

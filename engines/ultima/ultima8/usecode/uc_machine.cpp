@@ -620,7 +620,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// subtract two 16 bit integers
 			si16a = static_cast<int16>(p->_stack.pop2());
 			si16b = static_cast<int16>(p->_stack.pop2());
-			p->_stack.push2(static_cast<uint16>(si16b - si16a)); // !! order?
+			p->_stack.push2(static_cast<uint16>(si16b - si16a));
 			LOGPF(("sub\n"));
 			break;
 
@@ -629,7 +629,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			// subtract two 32 bit integers
 			si32a = static_cast<int16>(p->_stack.pop4());
 			si32b = static_cast<int16>(p->_stack.pop4());
-			p->_stack.push4(static_cast<uint32>(si32b - si32a)); // !! order?
+			p->_stack.push4(static_cast<uint32>(si32b - si32a));
 			LOGPF(("sub long\n"));
 			break;
 
@@ -653,7 +653,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x20:
 			// 20
-			// divide two 16 bit integers    (order?)
+			// divide two 16 bit integers
 			si16a = static_cast<int16>(p->_stack.pop2());
 			si16b = static_cast<int16>(p->_stack.pop2());
 			if (si16a != 0) {
@@ -667,7 +667,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x21:
 			// 21
-			// divide two 32 bit integers    (order?)
+			// divide two 32 bit integers
 			si32a = static_cast<int16>(p->_stack.pop4());
 			si32b = static_cast<int16>(p->_stack.pop4());
 			if (si32a != 0) {
@@ -1026,22 +1026,32 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x3C:
 			// 3C
 			// 16 bit left shift
-			// operand order?
-			si16a = static_cast<int16>(p->_stack.pop2());
-			ui16b = static_cast<int16>(p->_stack.pop2());
+			// operand order is different between U8 and crusader!
+			if (GAME_IS_U8) {
+				si16a = static_cast<int16>(p->_stack.pop2());
+				ui16b = static_cast<int16>(p->_stack.pop2());
+			} else {
+				ui16b = static_cast<int16>(p->_stack.pop2());
+				si16a = static_cast<int16>(p->_stack.pop2());
+			}
 			p->_stack.push2(static_cast<uint16>(si16a << ui16b));
-			LOGPF(("lsh\n"));
+			LOGPF(("lsh\t%04Xh >> %xh = %xh\n", si16a, ui16b, si16a << ui16b));
 			break;
 
 		case 0x3D:
 			// 3D
 			// 16 bit right shift
 			// !! sign-extend or not?
-			// operand order?
-			si16a = static_cast<int16>(p->_stack.pop2());
-			ui16b = static_cast<int16>(p->_stack.pop2());
+			// operand order is different between U8 and crusader!
+			if (GAME_IS_U8) {
+				si16a = static_cast<int16>(p->_stack.pop2());
+				ui16b = static_cast<int16>(p->_stack.pop2());
+			} else {
+				ui16b = static_cast<int16>(p->_stack.pop2());
+				si16a = static_cast<int16>(p->_stack.pop2());
+			}
 			p->_stack.push2(static_cast<uint16>(si16a >> ui16b));
-			LOGPF(("rsh\n"));
+			LOGPF(("rsh\t%04Xh >> %xh = %xh\n", si16a, ui16b, si16a >> ui16b));
 			break;
 
 		case 0x3E:

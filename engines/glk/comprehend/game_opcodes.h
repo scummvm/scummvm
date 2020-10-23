@@ -34,15 +34,23 @@ namespace Comprehend {
  */
 class ComprehendGameOpcodes : public ComprehendGame {
 protected:
-	byte _opcodeMap[0x100];
+	ScriptOpcode _opcodeMap[0x100];
 
-	void execute_opcode(const Instruction *instr, const Sentence *sentence,
-		FunctionState *func_state, Room *room, Item *&item) override;
+	void execute_opcode(const Instruction *instr, const Sentence *sentence, FunctionState *func_state) override;
 
-	void func_set_test_result(FunctionState *func_state, bool value);
+	Item *getItem(const Instruction *instr);
+
+	virtual void func_set_test_result(FunctionState *func_state, bool value);
 	bool isItemPresent(Item *item) const;
 public:
 	ComprehendGameOpcodes();
+
+	virtual byte getOpcode(const Instruction *instr) {
+		return instr->_opcode;
+	}
+	ScriptOpcode getScriptOpcode(const Instruction *instr) override {
+		return _opcodeMap[getOpcode(instr)];
+	}
 };
 
 
@@ -51,8 +59,7 @@ public:
  */
 class ComprehendGameV1 : public ComprehendGameOpcodes {
 protected:
-	void execute_opcode(const Instruction *instr, const Sentence *sentence,
-		FunctionState *func_state, Room *room, Item *&item) override;
+	void execute_opcode(const Instruction *instr, const Sentence *sentence, FunctionState *func_state) override;
 public:
 	ComprehendGameV1();
 };
@@ -62,10 +69,12 @@ public:
  */
 class ComprehendGameV2 : public ComprehendGameOpcodes {
 protected:
-	void execute_opcode(const Instruction *instr, const Sentence *sentence,
-		FunctionState *func_state, Room *room, Item *&item) override;
+	void execute_opcode(const Instruction *instr, const Sentence *sentence, FunctionState *func_state) override;
 public:
 	ComprehendGameV2();
+
+	byte getOpcode(const Instruction *instr) override;
+	void func_set_test_result(FunctionState *func_state, bool value) override;
 };
 
 } // namespace Comprehend

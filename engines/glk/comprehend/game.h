@@ -91,7 +91,7 @@ protected:
 	virtual bool handle_restart();
 
 	virtual void execute_opcode(const Instruction *instr, const Sentence *sentence,
-		FunctionState *func_state, Room *room, Item *&item) = 0;
+		FunctionState *func_state) = 0;
 
 	int console_get_key();
 	void console_println(const char *text);
@@ -113,6 +113,7 @@ protected:
 	}
 
 	Item *get_item_by_noun(byte noun);
+	int get_item_id(byte noun);
 	void weighInventory();
 	size_t num_objects_in_room(int room);
 	void doMovementVerb(uint verbNum);
@@ -133,6 +134,8 @@ public:
 	virtual void handleSpecialOpcode(uint8 operand) {}
 
 	virtual void synchronizeSave(Common::Serializer &s);
+
+	virtual ScriptOpcode getScriptOpcode(const Instruction *instr) = 0;
 
 	Common::String stringLookup(uint16 index);
 	Common::String instrStringLookup(uint8 index, uint8 table);

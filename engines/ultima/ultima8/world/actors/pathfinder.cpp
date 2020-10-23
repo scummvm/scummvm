@@ -269,17 +269,17 @@ static void drawbox(const Item *item) {
 
 	int32 x0, y0, x1, y1, x2, y2, x3, y3;
 
-	x0 = (d.w / 2) + (ix - iy) / 2;
-	y0 = (d.h / 2) + (ix + iy) / 4 - iz * 2;
+	x0 = (d.width() / 2) + (ix - iy) / 2;
+	y0 = (d.height() / 2) + (ix + iy) / 4 - iz * 2;
 
-	x1 = (d.w / 2) + (ix - iy) / 2;
-	y1 = (d.h / 2) + (ix + iy) / 4 - (iz + zd) * 2;
+	x1 = (d.width() / 2) + (ix - iy) / 2;
+	y1 = (d.height() / 2) + (ix + iy) / 4 - (iz + zd) * 2;
 
-	x2 = (d.w / 2) + (ix - xd - iy) / 2;
-	y2 = (d.h / 2) + (ix - xd + iy) / 4 - iz * 2;
+	x2 = (d.width() / 2) + (ix - xd - iy) / 2;
+	y2 = (d.height() / 2) + (ix - xd + iy) / 4 - iz * 2;
 
-	x3 = (d.w / 2) + (ix - iy + yd) / 2;
-	y3 = (d.h / 2) + (ix + iy - yd) / 4 - iz * 2;
+	x3 = (d.width() / 2) + (ix - iy + yd) / 2;
+	y3 = (d.height() / 2) + (ix + iy - yd) / 4 - iz * 2;
 
 	screen->Fill32(0xFF0000FF, x0 - 1, y0 - 1, 3, 3);
 
@@ -300,12 +300,12 @@ static void drawdot(int32 x, int32 y, int32 Z, int size, uint32 rgb) {
 	y -= cy;
 	Z -= cz;
 	int32 x0, y0;
-	x0 = (d.w / 2) + (x - y) / 2;
-	y0 = (d.h / 2) + (x + y) / 4 - Z * 2;
+	x0 = (d.width() / 2) + (x - y) / 2;
+	y0 = (d.height() / 2) + (x + y) / 4 - Z * 2;
 	screen->Fill32(rgb, x0 - size, y0 - size, 2 * size + 1, 2 * size + 1);
 }
 
-static void drawedge(PathNode *from, PathNode *to, uint32 rgb) {
+static void drawedge(const PathNode *from, const PathNode *to, uint32 rgb) {
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	int32 cx, cy, cz;
 
@@ -320,8 +320,8 @@ static void drawedge(PathNode *from, PathNode *to, uint32 rgb) {
 	cy = from->state._y - cy;
 	cz = from->state._z - cz;
 
-	x0 = (d.w / 2) + (cx - cy) / 2;
-	y0 = (d.h / 2) + (cx + cy) / 4 - cz * 2;
+	x0 = (d.width() / 2) + (cx - cy) / 2;
+	y0 = (d.height() / 2) + (cx + cy) / 4 - cz * 2;
 
 	Ultima8Engine::get_instance()->getGameMapGump()->GetCameraLocation(cx, cy, cz);
 
@@ -329,8 +329,8 @@ static void drawedge(PathNode *from, PathNode *to, uint32 rgb) {
 	cy = to->state._y - cy;
 	cz = to->state._z - cz;
 
-	x1 = (d.w / 2) + (cx - cy) / 2;
-	y1 = (d.h / 2) + (cx + cy) / 4 - cz * 2;
+	x1 = (d.width() / 2) + (cx - cy) / 2;
+	y1 = (d.height() / 2) + (cx + cy) / 4 - cz * 2;
 
 	screen->DrawLine32(rgb, x0, y0, x1, y1);
 }

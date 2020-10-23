@@ -28,7 +28,7 @@
 #include "graphics/opengl/system_headers.h"
 #include "math/glmath.h"
 
-#if defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d_shader.h"
 #include "engines/wintermute/base/gfx/opengl/base_surface_opengl3d.h"
@@ -308,11 +308,6 @@ bool BaseRenderOpenGL3DShader::setProjection2D() {
 	return true;
 }
 
-void BaseRenderOpenGL3DShader::resetModelViewTransform() {
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-}
-
 void BaseRenderOpenGL3DShader::setWorldTransform(const Math::Matrix4 &transform) {
 	Math::Matrix4 tmp = transform;
 	tmp.transpose();
@@ -558,11 +553,8 @@ bool BaseRenderOpenGL3DShader::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wint
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	// might as well provide getters for those
-	int texWidth;
-	int texHeight;
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &texWidth);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texHeight);
+	int texWidth = tex.getGLTextureWidth();
+	int texHeight = tex.getGLTextureHeight();
 
 	float texLeft = (float)rect.left / (float)texWidth;
 	float texTop = (float)rect.top / (float)texHeight;
@@ -651,7 +643,6 @@ void BaseRenderOpenGL3DShader::renderSceneGeometry(const BaseArray<AdWalkplane *
 }
 
 void BaseRenderOpenGL3DShader::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
-	resetModelViewTransform();
 	setup3D(camera, true);
 
 	// disable color write

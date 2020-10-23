@@ -66,10 +66,18 @@ public:
 		return _tex;
 	}
 
+	uint getGLTextureWidth() const {
+		return _texWidth;
+	}
+
+	uint getGLTextureHeight() const {
+		return _texHeight;
+	}
+
 private:
 	GLuint _tex;
 	BaseRenderer3D *_renderer;
-	uint8 *_imageData;
+	Graphics::Surface *_imageData;
 	uint _texWidth;
 	uint _texHeight;
 };

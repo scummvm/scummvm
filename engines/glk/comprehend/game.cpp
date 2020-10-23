@@ -365,6 +365,14 @@ Item *ComprehendGame::get_item_by_noun(byte noun) {
 	return NULL;
 }
 
+int ComprehendGame::get_item_id(byte noun) {
+	for (int i = 0; i < (int)_items.size(); i++)
+		if (_items[i]._word == noun)
+			return i;
+
+	return -1;
+}
+
 void ComprehendGame::update_graphics() {
 	Item *item;
 	Room *room;
@@ -505,11 +513,8 @@ void ComprehendGame::move_object(Item *item, int new_room) {
 
 void ComprehendGame::eval_instruction(FunctionState *func_state,
 		const Function &func, uint functionOffset, const Sentence *sentence) {
-	Room *room = nullptr;
-	Item *item = nullptr;
 
 	const Instruction *instr = &func[functionOffset];
-	room = get_room(_currentRoom);
 
 	if (DebugMan.isDebugChannelEnabled(kDebugScripts)) {
 		Common::String line;
@@ -556,7 +561,7 @@ void ComprehendGame::eval_instruction(FunctionState *func_state,
 		}
 	}
 
-	execute_opcode(instr, sentence, func_state, room, item);
+	execute_opcode(instr, sentence, func_state);
 }
 
 void ComprehendGame::eval_function(uint functionNum, const Sentence *sentence) {
@@ -781,9 +786,8 @@ void ComprehendGame::doBeforeTurn() {
 	// Run the game specific before turn bits
 	beforeTurn();
 
-	if (_comprehendVersion == 1)
-		// Run the each turn functions
-		eval_function(0, nullptr);
+	// Run the each turn functions
+	eval_function(0, nullptr);
 
 	update();
 }

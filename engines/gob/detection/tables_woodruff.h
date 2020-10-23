@@ -97,6 +97,20 @@
 	kFeatures640x480,
 	0, 0, 0
 },
+{ // Russian Akella version
+	{
+		"woodruff",
+		"",
+		AD_ENTRY1s("intro.stk", "dccf9d31cb720b34d75487408821b77e", 20296390),
+		RU_RUS,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
+	},
+	kGameTypeWoodruff,
+	kFeatures640x480,
+	0, 0, 0
+},
 {
 	{
 		"woodruff",
@@ -243,48 +257,6 @@
 		"",
 		AD_ENTRY1s("intro.stk", "270529d9b8cce770b1575908a3800b52", 20296452),
 		IT_ITA,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
-	},
-	kGameTypeWoodruff,
-	kFeatures640x480,
-	0, 0, 0
-},
-{ // Supplied by Hkz on #scummvm
-	{
-		"woodruff",
-		"",
-		AD_ENTRY1s("intro.stk", "f4c344023b073782d2fddd9d8b515318", 7069736),
-		IT_ITA,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
-	},
-	kGameTypeWoodruff,
-	kFeatures640x480,
-	0, 0, 0
-},
-{ // Supplied by Hkz on #scummvm
-	{
-		"woodruff",
-		"",
-		AD_ENTRY1s("intro.stk", "f4c344023b073782d2fddd9d8b515318", 7069736),
-		DE_DEU,
-		kPlatformDOS,
-		ADGF_NO_FLAGS,
-		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)
-	},
-	kGameTypeWoodruff,
-	kFeatures640x480,
-	0, 0, 0
-},
-{ // Supplied by Hkz on #scummvm
-	{
-		"woodruff",
-		"",
-		AD_ENTRY1s("intro.stk", "f4c344023b073782d2fddd9d8b515318", 7069736),
-		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
 		GUIO2(GUIO_NOSPEECH, GUIO_NOASPECT)

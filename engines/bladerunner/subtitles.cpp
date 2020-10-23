@@ -368,7 +368,7 @@ void Subtitles::draw(Graphics::Surface &s) {
 	if (_currentText != _prevText) {
 		lines.clear();
 		_prevText = _currentText;
-		_font->wordWrapText(_currentText, kTextMaxWidth, lines, 0, true, true);
+		_font->wordWrapText(_currentText, kTextMaxWidth, lines, 0, Graphics::kWordWrapEvenWidthLines | Graphics::kWordWrapOnExplicitNewLines);
 	}
 
 	int y = s.h - (kMarginBottom + MAX(kPreferedLine, lines.size()) * _font->getFontHeight());

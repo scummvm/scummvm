@@ -213,10 +213,14 @@ void BaseRenderOpenGL3D::displayShadow(BaseObject *object, const Math::Vector3d 
 	glEnable(GL_TEXTURE_2D);
 	static_cast<BaseSurfaceOpenGL3D *>(shadowImage)->setTexture();
 
-	#ifndef __MORPHOS__
-	glInterleavedArrays(GL_T2F_N3F_V3F, 0, _simpleShadow);
-	#endif
-	
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_NORMAL_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glVertexPointer(3, GL_FLOAT, sizeof(SimpleShadowVertex), &_simpleShadow[0].x);
+	glNormalPointer(GL_FLOAT, sizeof(SimpleShadowVertex), &_simpleShadow[0].nx);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(SimpleShadowVertex), &_simpleShadow[0].u);
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	glDepthMask(true);
@@ -363,11 +367,6 @@ bool BaseRenderOpenGL3D::setProjection2D() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	return true;
-}
-
-void BaseRenderOpenGL3D::resetModelViewTransform() {
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 }
 
 void BaseRenderOpenGL3D::setWorldTransform(const Math::Matrix4 &transform) {
@@ -638,11 +637,8 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	// might as well provide getters for those
-	GLint texWidth;
-	GLint texHeight;
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_WIDTH, &texWidth);
-	glGetTexLevelParameteriv(GL_TEXTURE_2D, 0, GL_TEXTURE_HEIGHT, &texHeight);
+	int texWidth = tex.getGLTextureWidth();
+	int texHeight = tex.getGLTextureHeight();
 
 	float texLeft = (float)rect.left / (float)texWidth;
 	float texTop = (float)rect.top / (float)texHeight;
@@ -729,11 +725,12 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
 
-#ifndef __MORPHOS__
-	glInterleavedArrays(GL_T2F_C4UB_V3F, 0, vertices);
-#endif
-	
+	glVertexPointer(3, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].x);
+	glTexCoordPointer(2, GL_FLOAT, sizeof(SpriteVertex), &vertices[0].u);
+	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(SpriteVertex), &vertices[0].r);
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	if (alphaDisable) {
@@ -745,7 +742,8 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
 
 void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
                                              const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) {
-	_gameRef->_renderer3D->resetModelViewTransform();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 	_gameRef->_renderer3D->setup3D(camera, true);
 
 	glDisable(GL_LIGHTING);
@@ -811,7 +809,8 @@ void BaseRenderOpenGL3D::renderSceneGeometry(const BaseArray<AdWalkplane *> &pla
 }
 
 void BaseRenderOpenGL3D::renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) {
-	resetModelViewTransform();
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 	setup3D(camera, true);
 
 	// disable color write

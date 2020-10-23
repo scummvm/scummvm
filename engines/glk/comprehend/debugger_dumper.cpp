@@ -28,8 +28,6 @@ namespace Glk {
 namespace Comprehend {
 
 DebuggerDumper::DebuggerDumper() : _game(nullptr) {
-	_opcodes[OPCODE_UNKNOWN] = "unknown";
-
 	_opcodes[OPCODE_HAVE_OBJECT] = "have_object";
 	_opcodes[OPCODE_NOT_HAVE_OBJECT] = "not_have_object";
 	_opcodes[OPCODE_HAVE_CURRENT_OBJECT] = "have_current_object";
@@ -37,7 +35,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 
 	_opcodes[OPCODE_OBJECT_IS_NOT_NOWHERE] = "object_is_not_nowhere";
 
-	_opcodes[OPCODE_CURRENT_OBJECT_TAKEABLE] = "current_object_takeable";
+	_opcodes[OPCODE_CURRENT_IS_OBJECT] = "current_is_object";
 	_opcodes[OPCODE_CURRENT_OBJECT_NOT_TAKEABLE] = "current_object_not_takeable";
 
 	_opcodes[OPCODE_CURRENT_OBJECT_NOT_IN_ROOM] = "current_object_not_in_room";
@@ -60,6 +58,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_VAR_GTE2] = "var_gte2";
 	_opcodes[OPCODE_CURRENT_OBJECT_NOT_VALID] = "current_object_not_valid";
 	_opcodes[OPCODE_INVENTORY_FULL] = "inventory_full";
+	_opcodes[OPCODE_INVENTORY_FULL_X] = "inventory_full_x";
 	_opcodes[OPCODE_OBJECT_PRESENT] = "object_present";
 	_opcodes[OPCODE_ELSE] = "else";
 	_opcodes[OPCODE_OBJECT_IN_ROOM] = "object_in_room";
@@ -100,23 +99,29 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_VAR_DEC] = "var_dec";
 	_opcodes[OPCODE_MOVE_CURRENT_OBJECT_TO_ROOM] = "move_current_object_to_room";
 	_opcodes[OPCODE_DESCRIBE_CURRENT_OBJECT] = "describe_current_object";
-	_opcodes[OPCODE_SET_STRING_REPLACEMENT] = "set_string_replacement";
+	_opcodes[OPCODE_SET_STRING_REPLACEMENT1] = "set_string_replacement1";
+	_opcodes[OPCODE_SET_STRING_REPLACEMENT2] = "set_string_replacement2";
+	_opcodes[OPCODE_SET_STRING_REPLACEMENT3] = "set_string_replacement3";
 	_opcodes[OPCODE_SET_CURRENT_NOUN_STRING_REPLACEMENT] = "set_current_noun_string_replacement";
-	_opcodes[OPCODE_CURRENT_NOT_OBJECT] = "current_not_object";
-	_opcodes[OPCODE_CURRENT_IS_OBJECT] = "current_is_object";
 	_opcodes[OPCODE_DRAW_ROOM] = "draw_room";
 	_opcodes[OPCODE_DRAW_OBJECT] = "draw_object";
 	_opcodes[OPCODE_WAIT_KEY] = "wait_key";
 	_opcodes[OPCODE_TEST_FALSE] = "test_false";
 	_opcodes[OPCODE_OBJECT_CAN_TAKE] = "object_can_take";
+	_opcodes[OPCODE_OBJECT_TAKEABLE] = "object_takeable";
 	_opcodes[OPCODE_CLEAR_INVISIBLE] = "clear_invisible";
+	_opcodes[OPCODE_SET_INVISIBLE] = "set_invisible";
+	_opcodes[OPCODE_CLEAR_CAN_TAKE] = "clear_can_take";
+	_opcodes[OPCODE_SET_CAN_TAKE] = "set_can_take";
+	_opcodes[OPCODE_SET_FLAG40] = "set_flag40";
+	_opcodes[OPCODE_CLEAR_FLAG40] = "clear_flag40";
 }
 
 Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
         const FunctionState *func_state, const Instruction *instr) {
 	uint i;
 	int str_index, str_table;
-	uint8 *opcode_map, opcode;
+	ScriptOpcode opcode = _game->getScriptOpcode(instr);
 	Common::String line;
 
 	if (func_state)
@@ -125,10 +130,13 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 		                              func_state->_testResult, func_state->_elseResult);
 
 	line += Common::String::format("  [%.2x] ", instr->_opcode);
-	if (_opcodes.contains(opcode))
+	if (_opcodes.contains(opcode)) {
+		if (_game->_comprehendVersion == 2 && (instr->_opcode & 0x40) != 0)
+			line += "!";
 		line += _opcodes[opcode];
-	else
+	} else {
 		line += "unknown";
+	}
 
 	if (instr->_nr_operands) {
 		line += "(";
@@ -155,8 +163,13 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 		line += Common::String::format(" %s", game->instrStringLookup(str_index, str_table).c_str());
 		break;
 
-	case OPCODE_SET_STRING_REPLACEMENT:
+	case OPCODE_SET_STRING_REPLACEMENT1:
+	case OPCODE_SET_STRING_REPLACEMENT2:
+	case OPCODE_SET_STRING_REPLACEMENT3:
 		line += Common::String::format(" %s", game->_replaceWords[instr->_operand[0] - 1].c_str());
+		break;
+
+	default:
 		break;
 	}
 

@@ -255,6 +255,9 @@ void QMessageObject::processMessage(const QMessage &msg) {
 		case kChapter:
 			g_vm->loadChapter(msg.arg1);
 			break;
+		case kToMap:
+			g_vm->getQSystem()->toggleMapInterface();
+			break;
 		default:
 			break;
 		}

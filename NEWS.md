@@ -11,6 +11,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
    - Switched ScummVM GUI output to UTF-32.
+   - Updated the Roland MT-32 emulation code to Munt 2.4.1.
 
  Glk:
    - Fix savegame issues with several subengines.
@@ -25,6 +26,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Grim:
    - Added support for Brazillian Portuguese Grim Fandango.
    - Added support for Russian EMI.
+
+ Kyra:
+   - Added support for Russian fan translation of The Legend of Kyrandia (translation by Siberian GRemlin).
+   - Fixed Russian fan translation of The Legend of Kyrandia 2 - Hand of Fate (added Russian subtitles for intro and credits).
 
  Lure:
    - Fix fire animation in first room when loading saves.

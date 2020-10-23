@@ -97,7 +97,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Item::I_receiveHit(Item *, other, dir, damage, damagetype)", // based on disasm
 	"byte Actor::I_isBusy(4 bytes)", // same code as U8
 	"int16 Item::I_getDirFromTo16(x1, y1, x2, y2)",
-	"byte Actor::I_getSomeFlagProbablyCrouch(Item *)",
+	"byte Actor::I_getIsKneeling(Item *)",
 	"int16 Actor::I_doAnim(12 bytes)", // v. similar code to U8
 	"byte MainActor::I_addItemCru(4 bytes)", // same coff as 0B8
 	"void AudioProcess::I_stopSFXCru(Item *, int16 sndno)",

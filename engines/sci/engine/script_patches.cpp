@@ -2548,6 +2548,33 @@ static const uint16 gk1Day6PoliceSleepPatch[] = {
 	PATCH_END
 };
 
+// The beignet vendor's speed at the police station is CPU dependent, causing
+//  him to zoom to his position in room 230 on modern machines at an unintended
+//  high speed that's inconsistent with the room. Unlike the other actors,
+//  theVendor:moveSpeed is set to 0, which advances his motion on every game
+//  cycle instead of tethering his speed to ticks. On a machine from 1993 this
+//  was much slower which is why his movement sound effect is five seconds long.
+//
+// We fix this by setting theVendor:moveSpeed to a time-based speed that matches
+//  the room scene. This doesn't affect puzzle timing, it's just cosmetic.
+//
+// Applies to: All versions
+// Responsible method: heap in script 231
+// Fixes bug: #11892
+static const uint16 gk1BeignetVendorSpeedSignature[] = {
+	SIG_MAGICDWORD,             // theVendor
+	SIG_UINT16(0x0006),         // xStep = 6
+	SIG_UINT16(0x0302),         // origStep = 770
+	SIG_UINT16(0x0000),         // moveSpeed = 0
+	SIG_END
+};
+
+static const uint16 gk1BeignetVendorSpeedPatch[] = {
+	PATCH_ADDTOOFFSET(+4),
+	PATCH_UINT16(0x0006),       // moveSpeed = 6
+	PATCH_END
+};
+
 // At the start of day 5, when the player already has the veve but still needs
 // to get the drum book, the drum book dialogue with Grace is played twice in
 // a row, and then the veve dialogue gets played again even though it was
@@ -3792,6 +3819,7 @@ static const SciScriptPatcherEntry gk1Signatures[] = {
 	{  true,   230, "fix day 6 police beignet timer issue (2/2)",  1, gk1Day6PoliceBeignetSignature2,   gk1Day6PoliceBeignetPatch2 },
 	{  true,   230, "fix day 6 police sleep timer issue",          1, gk1Day6PoliceSleepSignature,      gk1Day6PoliceSleepPatch },
 	{  true,   230, "fix police station ego speed",                1, gk1PoliceEgoSpeedFixSignature,    gk1PoliceEgoSpeedFixPatch },
+	{  true,   231, "fix beignet vendor speed",                    1, gk1BeignetVendorSpeedSignature,   gk1BeignetVendorSpeedPatch },
 	{  true,   240, "fix day 5 mosely veve missing points",        1, gk1Day5MoselyVevePointsSignature, gk1Day5MoselyVevePointsPatch },
 	{  true,   250, "fix ego speed when exiting drug store",       1, gk1DrugStoreEgoSpeedFixSignature, gk1DrugStoreEgoSpeedFixPatch },
 	{  true,   260, "fix air conditioner speech timing",           1, gk1AirConditionerSpeechSignature, gk1AirConditionerSpeechPatch },

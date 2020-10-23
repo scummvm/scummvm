@@ -30,7 +30,7 @@
 #include "engines/wintermute/dcgf.h"
 #include "graphics/opengl/system_headers.h"
 
-#if defined(USE_OPENGL_SHADERS)// || defined(USE_GLES2)
+#if defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
 #include "engines/wintermute/base/gfx/opengl/shadow_volume_opengl_shader.h"
@@ -107,8 +107,6 @@ bool ShadowVolumeOpenGLShader::renderToStencilBuffer() {
 	// renderstate is really not needed.
 	glStencilFunc(GL_ALWAYS, 0x1, 0xFFFFFFFF);
 
-	glShadeModel(GL_FLAT);
-
 	// Make sure that no pixels get drawn to the frame buffer
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ZERO, GL_ONE);
@@ -128,7 +126,6 @@ bool ShadowVolumeOpenGLShader::renderToStencilBuffer() {
 
 	// Restore render states
 	glFrontFace(GL_CCW);
-	glShadeModel(GL_SMOOTH);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_STENCIL_TEST);
 	glDisable(GL_BLEND);

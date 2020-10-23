@@ -75,15 +75,11 @@ Common::DialogManager::DialogResult GtkDialogManager::showFileBrowser(const Comm
 		// Get the selection from the user
 		char *path = gtk_file_chooser_get_filename(chooser);
 		choice = Common::FSNode(path);
+		ConfMan.set("browser_lastpath", path);
 		result = kDialogOk;
 		g_free(path);
-
-		// Save last path
-		char *last = gtk_file_chooser_get_current_folder(chooser);
-		ConfMan.set("browser_lastpath", last);
-		g_free(last);
 	}
-	
+
 #if GTK_CHECK_VERSION(3,20,0)
 	g_object_unref(native);
 #else

@@ -36,17 +36,15 @@ For full release notes see http://scummvm.org/frs/scummvm/2.0.0/ReleaseNotes.htm
 
 *** Beta release name:
 
-2.2.1beta
+2.2.1c (beta)
 
 *** Beta release notes:
 <de-DE>
-- Die Android-Version wurde in großen Teilen neu geschrieben.
-- Unterstützung für zahlreiche neue Engines und Spiele - der Umfang entspricht nun der offiziellen ScummVM-Version
-- Unterstützung für FluidSynth
-- Unterstützung für Cloud-Integration
-- Unterstützung für Dateiaustausch im LAN
-- Unterstützung für Tastenkürzel (Keymapper)
-- Korrektur aller gemeldeten und bekannten Fehler
-- Verbesserung der Ordner-Navigation
-- Getestet auf aktuellen Android-Geräten
+- Verbesserte Behandlung von Installationen auf einer SD-Karte
+- Halbtransparente In-App-Tastatur hinzugefügt
+- Die bilineare Filterung ist standardmäßig deaktiviert
+- Die Korrektur des Seitenverhältnisses ist jetzt standardmäßig aktiviert
+- Die ScummVM-Grafikoptionen geben nun den aktuellen Status der Einstellungen korrekt wieder
+- Fehler in der Upload-Funktion des LAN-Server-Modus behoben
+- Die Zurück-Taste fungiert nun als standardmäßig aktive "Überspringen"-Taste in einem Spiel
 </de-DE>

@@ -28,6 +28,7 @@
 #include "graphics/surface.h"
 
 #include "petka/flc.h"
+#include "petka/walk.h"
 #include "petka/petka.h"
 #include "petka/video.h"
 #include "petka/q_system.h"
@@ -38,8 +39,6 @@
 #include "petka/objects/heroes.h"
 
 namespace Petka {
-
-// COMPLETED
 
 QObjectBG::QObjectBG() {
 	_x = 0;
@@ -55,9 +54,24 @@ QObjectBG::QObjectBG() {
 void QObjectBG::processMessage(const QMessage &msg) {
 	QMessageObject::processMessage(msg);
 	switch (msg.opcode) {
-	case kSet:
+	case kSet: {
 		_resourceId = msg.arg1;
-		break;
+
+		QSystem *sys = g_vm->getQSystem();
+		if (g_vm->isPetka2() && !sys->_totalInit && sys->_mainInterface->_roomId == _id) {
+			auto petka = sys->getPetka();
+			auto chapay = sys->getChapay();
+
+			auto bkgName = g_vm->resMgr()->findResourceName(_resourceId);
+
+			petka->_walk->setBackground(bkgName);
+			chapay->_walk->setBackground(bkgName);
+
+			petka->setPos(Common::Point(petka->_x_, petka->_y_), false);
+			chapay->setPos(Common::Point(chapay->_x_, chapay->_y_), false);
+			break;
+		}
+	}
 	case kMusic:
 		_musicId = msg.arg1;
 		break;

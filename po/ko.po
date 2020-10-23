@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: 2020-09-26 21:06+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-10-21 21:28+0000\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -302,7 +302,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:246 gui/options.cpp:1821 engines/dialogs.cpp:301
 msgid "Audio"
-msgstr ""
+msgstr "오디오"
 
 #: gui/editgamedialog.cpp:249
 msgid "Override global audio settings"
@@ -315,12 +315,12 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:260 gui/options.cpp:1826
 msgid "Volume"
-msgstr ""
+msgstr "볼륨"
 
 #: gui/editgamedialog.cpp:262 gui/options.cpp:1828
 msgctxt "lowres"
 msgid "Volume"
-msgstr ""
+msgstr "볼륨"
 
 #: gui/editgamedialog.cpp:265
 msgid "Override global volume settings"
@@ -333,7 +333,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:278 gui/options.cpp:1836
 msgid "MIDI"
-msgstr ""
+msgstr "미디"
 
 #: gui/editgamedialog.cpp:281
 msgid "Override global MIDI settings"
@@ -346,7 +346,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:293 gui/options.cpp:1842
 msgid "MT-32"
-msgstr ""
+msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:296
 msgid "Override global MT-32 settings"
@@ -359,21 +359,21 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:307 gui/options.cpp:1849
 msgid "Paths"
-msgstr ""
+msgstr "경로"
 
 #: gui/editgamedialog.cpp:309 gui/options.cpp:1851
 msgctxt "lowres"
 msgid "Paths"
-msgstr ""
+msgstr "경로"
 
 #: gui/editgamedialog.cpp:316
 msgid "Game Path:"
-msgstr ""
+msgstr "게임 경로:"
 
 #: gui/editgamedialog.cpp:318
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr ""
+msgstr "게임 경로:"
 
 #: gui/editgamedialog.cpp:323 gui/options.cpp:2027
 msgid "Extra Path:"
@@ -391,7 +391,7 @@ msgstr ""
 
 #: gui/editgamedialog.cpp:332 gui/options.cpp:2011
 msgid "Save Path:"
-msgstr ""
+msgstr "저장 경로:"
 
 #: gui/editgamedialog.cpp:332 gui/editgamedialog.cpp:334
 #: gui/editgamedialog.cpp:335 gui/options.cpp:2011 gui/options.cpp:2013

@@ -252,6 +252,7 @@ public:
 	Val &getVal(const Key &key);
 	const Val &getVal(const Key &key) const;
 	const Val &getVal(const Key &key, const Val &defaultVal) const;
+	bool tryGetVal(const Key &key, Val &out) const;
 	void setVal(const Key &key, const Val &val);
 
 	void clear(bool shrinkArray = 0);
@@ -590,6 +591,17 @@ const Val &HashMap<Key, Val, HashFunc, EqualFunc>::getVal(const Key &key, const 
 		return _storage[ctr]->_value;
 	else
 		return defaultVal;
+}
+
+template<class Key, class Val, class HashFunc, class EqualFunc>
+bool HashMap<Key, Val, HashFunc, EqualFunc>::tryGetVal(const Key &key, Val &out) const {
+	size_type ctr = lookup(key);
+	if (_storage[ctr] != nullptr) {
+		out = _storage[ctr]->_value;
+		return true;
+	} else {
+		return false;
+	}
 }
 
 template<class Key, class Val, class HashFunc, class EqualFunc>

@@ -1997,7 +1997,7 @@ void Item::receiveHitCru(uint16 other, Direction dir, int damage, uint16 type) {
 	uint8 shouldCallUsecode = 1;
 
 	if (shouldCallUsecode)
-		callUsecodeEvent_gotHit(other, 0);
+		callUsecodeEvent_gotHit(0x4000, (type << 8) | (damage & 0xff));
 
 	if (damageInfo) {
 		bool wasbroken = damageInfo->applyToItem(this, damage);

@@ -36,17 +36,15 @@ For full release notes see http://scummvm.org/frs/scummvm/2.0.0/ReleaseNotes.htm
 
 *** Beta release name:
 
-2.2.1beta
+2.2.1c (beta)
 
 *** Beta release notes:
 <en-US>
-- Rewrote a major portion of the port from scratch
-- Support for new engines and games, matching the ones in the current official version of ScummVM
-- Fluidsynth support
-- Cloud saves support
-- LAN file access support
-- Keymapper support
-- Fixes for any reported major issues
-- Improved folder navigation
-- Tested on modern Android devices
+- additional fix for upgrading the app when installed on external SD card
+- in-app semi-transparent keyboard with more keys available
+- "Filtered graphics" setting is disabled by default and affects the UI
+- "Keep Aspect Ratio" is enabled by default
+- Graphics Options now accurately reflect the state of the settings
+- Fix for the create folder and uploading functionality of the LAN server mode
+- Android Back button used as the default "skip" button in a game
 </en-US>

@@ -133,11 +133,12 @@ bool ShadowVolumeOpenGL::renderToScene() {
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
 
 	// Draw a big, gray square
-#ifndef __MORPHOS__	
-	glInterleavedArrays(GL_C4UB_V3F, 0, _shadowMask);
-#endif
+	glVertexPointer(3, GL_FLOAT, sizeof(ShadowVertex), &_shadowMask[0].x);
+	glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ShadowVertex), &_shadowMask[0].r);
+
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
 	// Restore render states
