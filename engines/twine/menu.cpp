@@ -25,6 +25,7 @@
 #include "backends/audiocd/audiocd.h"
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/keyboard.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/util.h"
@@ -101,13 +102,13 @@ static const int16 MainMenuSettings[] = {
     200, // Buttons box height ( is used to calc the height where the first button will appear )
     0,   // unused
     0,
-    20, // new game
+    kNewGame, // new game
     0,
-    21, // continue game
+    kContinueGame, // continue game
     0,
-    23, // options
+    kOptions, // options
     0,
-    22, // quit
+    kQuit, // quit
 };
 
 /** Give Up Menu Settings
@@ -223,7 +224,7 @@ static const int16 VolumeMenuSettings[] = {
 #define PLASMA_HEIGHT 50
 #define SCREEN_W 640
 
-static int16* copySettings(const int16* settings, size_t size) {
+static int16 *copySettings(const int16 *settings, size_t size) {
 	int16 *buf = (int16 *)malloc(size);
 	if (buf == nullptr) {
 		error("Failed to allocate menu state memory");
@@ -425,143 +426,111 @@ void Menu::drawButton(const int16 *menuSettings, bool hover) {
 
 int32 Menu::processMenu(int16 *menuSettings) {
 	int16 currentButton = menuSettings[MenuSettings_CurrentLoadedButton];
-	bool buttonReleased = true;
-	bool buttonNeedRedraw = true;
+	bool buttonsNeedRedraw = true;
 	bool musicChanged = false;
 	const int32 numEntry = menuSettings[MenuSettings_NumberOfButtons];
-	int32 localTime = _engine->lbaTime;
 	int32 maxButton = numEntry - 1;
 
-	_engine->readKeys();
-
 	do {
-		// if its on main menu
-		if (menuSettings == MainMenuState) {
-			if (_engine->lbaTime - localTime > 11650) {
-				return kBackground;
+		_engine->readKeys();
+		_engine->_keyboard.key = _engine->_keyboard.pressedKey;
+
+		if (_engine->_keyboard.isPressed(Common::KeyCode::KEYCODE_DOWN)) { // on arrow key down
+			debug("pressed down");
+			currentButton++;
+			if (currentButton == numEntry) { // if current button is the last, than next button is the first
+				currentButton = 0;
 			}
-			if (_engine->_keyboard.internalKeyCode == '.') {
-				if (_engine->_keyboard.skippedKey != ' ') {
-					return kBackground;
+			buttonsNeedRedraw = true;
+		}
+
+		if (((uint8)_engine->_keyboard.key & 1)) { // on arrow key up
+			debug("pressed up");
+			currentButton--;
+			if (currentButton < 0) { // if current button is the first, than previous button is the last
+				currentButton = maxButton;
+			}
+			buttonsNeedRedraw = true;
+		}
+
+		// if its a volume button
+		if (menuSettings == VolumeMenuState) {
+			const int16 id = *(&menuSettings[MenuSettings_FirstButtonState] + currentButton * 2); // get button parameters from settings array
+
+			Audio::Mixer *mixer = _engine->_system->getMixer();
+			switch (id) {
+			case kMusicVolume: {
+				int volume = mixer->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
+				if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
+					volume -= 4;
 				}
+				if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
+					volume += 4;
+				}
+				_engine->_music->musicVolume(volume);
+				break;
+			}
+			case kSoundVolume: {
+				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
+				if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
+					volume -= 4;
+				}
+				if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
+					volume += 4;
+				}
+				mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
+				break;
+			}
+			case kCDVolume: {
+				AudioCDManager::Status status = _engine->_system->getAudioCDManager()->getStatus();
+				if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
+					status.volume -= 4;
+				}
+				if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
+					status.volume += 4;
+				}
+				_engine->_system->getAudioCDManager()->setVolume(status.volume);
+				break;
+			}
+			case kLineVolume: {
+				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
+				if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
+					volume -= 4;
+				}
+				if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
+					volume += 4;
+				}
+				mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
+				break;
+			}
+			case kMasterVolume: {
+				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
+				if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
+					volume -= 4;
+				}
+				if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
+					volume += 4;
+				}
+				mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
+				break;
+			}
+			default:
+				break;
 			}
 		}
 
-		if (_engine->_keyboard.pressedKey == 0) {
-			buttonReleased = true;
-		}
-
-		if (buttonReleased) {
-			_engine->_keyboard.key = _engine->_keyboard.pressedKey;
-
-			if (((uint8)_engine->_keyboard.key & 2)) { // on arrow key down
-				debug("pressed down");
-				currentButton++;
-				if (currentButton == numEntry) { // if current button is the last, than next button is the first
-					currentButton = 0;
-				}
-				buttonNeedRedraw = true;
-				buttonReleased = false;
-			}
-
-			if (((uint8)_engine->_keyboard.key & 1)) { // on arrow key up
-				debug("pressed up");
-				currentButton--;
-				if (currentButton < 0) { // if current button is the first, than previous button is the last
-					currentButton = maxButton;
-				}
-				buttonNeedRedraw = true;
-				buttonReleased = false;
-			}
-
-			// if its a volume button
-			if (menuSettings == VolumeMenuState) {
-				const int16 id = *(&menuSettings[MenuSettings_FirstButtonState] + currentButton * 2); // get button parameters from settings array
-
-				Audio::Mixer *mixer = _engine->_system->getMixer();
-				switch (id) {
-				case kMusicVolume: {
-					int volume = mixer->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
-					if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
-						volume -= 4;
-					}
-					if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
-						volume += 4;
-					}
-					_engine->_music->musicVolume(volume);
-					break;
-				}
-				case kSoundVolume: {
-					int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
-					if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
-						volume -= 4;
-					}
-					if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
-						volume += 4;
-					}
-					mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
-					break;
-				}
-				case kCDVolume: {
-					AudioCDManager::Status status = _engine->_system->getAudioCDManager()->getStatus();
-					if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
-						status.volume -= 4;
-					}
-					if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
-						status.volume += 4;
-					}
-					_engine->_system->getAudioCDManager()->setVolume(status.volume);
-					break;
-				}
-				case kLineVolume: {
-					int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-					if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
-						volume -= 4;
-					}
-					if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
-						volume += 4;
-					}
-					mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
-					break;
-				}
-				case kMasterVolume: {
-					int volume = mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
-					if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
-						volume -= 4;
-					}
-					if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
-						volume += 4;
-					}
-					mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
-					break;
-				}
-				default:
-					break;
-				}
-			}
-		}
-
-		if (buttonNeedRedraw) {
+		if (buttonsNeedRedraw) {
 			menuSettings[MenuSettings_CurrentLoadedButton] = currentButton;
 
 			// draw all buttons
 			drawButton(menuSettings, false);
-			do {
-				_engine->readKeys();
-				// draw plasma effect for the current selected button
-				// .. until a key was pressed
-				drawButton(menuSettings, true);
-			} while (_engine->_keyboard.pressedKey == 0 && _engine->_keyboard.skippedKey == 0 && _engine->_keyboard.internalKeyCode == 0);
-			buttonNeedRedraw = false;
-		} else {
-			if (musicChanged) {
-				// TODO: update volume settings
-			}
+			buttonsNeedRedraw = false;
+		}
 
-			drawButton(menuSettings, true);
-			_engine->readKeys();
-			// WARNING: this is here to prevent a fade bug while quit the menu
-			_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+		// draw plasma effect for the current selected button
+		drawButton(menuSettings, true);
+		if (musicChanged) {
+			// TODO: update volume settings
 		}
 	} while (!(_engine->_keyboard.skippedKey & 2) && !(_engine->_keyboard.skippedKey & 1));
 
@@ -576,6 +545,7 @@ int32 Menu::advoptionsMenu() {
 	int32 ret = 0;
 
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
 
 	do {
 		switch (processMenu(AdvOptionsMenuState)) {
@@ -589,9 +559,6 @@ int32 Menu::advoptionsMenu() {
 		}
 	} while (ret != 1);
 
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
-
 	return 0;
 }
 
@@ -599,6 +566,7 @@ int32 Menu::savemanageMenu() {
 	int32 ret = 0;
 
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
 
 	do {
 		switch (processMenu(SaveManageMenuState)) {
@@ -612,9 +580,6 @@ int32 Menu::savemanageMenu() {
 		}
 	} while (ret != 1);
 
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
-
 	return 0;
 }
 
@@ -622,6 +587,7 @@ int32 Menu::volumeMenu() {
 	int32 ret = 0;
 
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
 
 	do {
 		switch (processMenu(VolumeMenuState)) {
@@ -635,9 +601,6 @@ int32 Menu::volumeMenu() {
 		}
 	} while (ret != 1);
 
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
-
 	return 0;
 }
 
@@ -645,6 +608,7 @@ int32 Menu::optionsMenu() {
 	int32 ret = 0;
 
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
 
 	_engine->_sound->stopSamples();
 	//_engine->_music->playCDtrack(9);
@@ -657,20 +621,14 @@ int32 Menu::optionsMenu() {
 			break;
 		}
 		case kVolume: {
-			_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-			_engine->flip();
 			volumeMenu();
 			break;
 		}
 		case kSaveManage: {
-			_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-			_engine->flip();
 			savemanageMenu();
 			break;
 		}
 		case kAdvanced: {
-			_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-			_engine->flip();
 			advoptionsMenu();
 			break;
 		}
@@ -678,9 +636,6 @@ int32 Menu::optionsMenu() {
 			break;
 		}
 	} while (ret != 1);
-
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
 
 	return 0;
 }
@@ -708,8 +663,6 @@ void Menu::run() {
 		break;
 	}
 	case kOptions: {
-		_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-		_engine->flip();
 		OptionsMenuState[MenuSettings_FirstButton] = kReturnMenu;
 		optionsMenu();
 		break;
@@ -729,7 +682,6 @@ void Menu::run() {
 }
 
 int32 Menu::giveupMenu() {
-
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 	_engine->_sound->pauseSamples();
 
