@@ -282,8 +282,8 @@ void Menu::processPlasmaEffect(int32 top, int32 color) {
 }
 
 void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
-	_engine->_interface->drawLine(left, top, right, top, 79);         // top line
-	_engine->_interface->drawLine(left, top, left, bottom, 79);       // left line
+	_engine->_interface->drawLine(left, top, right, top, 79);           // top line
+	_engine->_interface->drawLine(left, top, left, bottom, 79);         // left line
 	_engine->_interface->drawLine(right, top + 1, right, bottom, 73);   // right line
 	_engine->_interface->drawLine(left + 1, bottom, right, bottom, 73); // bottom line
 }
