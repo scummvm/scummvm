@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: 2020-10-23 14:36+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-10-23 14:38+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
 "Language: nl_NL\n"
@@ -4498,7 +4498,7 @@ msgid ""
 "support for using such patches."
 msgstr ""
 "Bezig met laden van gebruikers patch. Merk op dat het ScummVM team geen "
-"ondersteuning biedt voor zulke patches"
+"ondersteuning biedt voor zulke patches."
 
 #: engines/grim/detection.cpp:54
 msgid "Show FPS"
@@ -4506,7 +4506,7 @@ msgstr "Toon FPS"
 
 #: engines/grim/detection.cpp:55
 msgid "Show the current FPS-rate, while you play."
-msgstr "Toon huidige FPS tijdens spelen"
+msgstr "Toon huidige FPS tijdens spelen."
 
 #: engines/grim/grim.cpp:344
 #, c-format
@@ -4568,7 +4568,7 @@ msgstr "Onderzoeken/Kijken"
 
 #: engines/grim/grim.cpp:1339
 msgid "Error: the game could not be saved."
-msgstr "Fout: het spel kon niet worden opgeslagen"
+msgstr "Fout: het spel kon niet worden opgeslagen."
 
 #: engines/grim/md5check.cpp:547
 #, c-format
@@ -4608,7 +4608,8 @@ msgid ""
 msgstr ""
 "ScummVM zal nu de integriteit van uw spelbestanden nagaan, voor de beste "
 "spelervaring.\n"
-"Dit kan eventjes duren, maar is slechts eenmalig."
+"Dit kan eventjes duren\n"
+" maar is slechts eenmalig."
 
 #: engines/grim/resource.cpp:100
 msgid ""
@@ -4618,8 +4619,9 @@ msgid ""
 "and put it in the game data files directory"
 msgstr ""
 "De originele patch voor Grim Fandango ontbreekt.\n"
-"Download deze van https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
-"en plaats deze bij de spelbestanden."
+"Download deze van\n"
+"https://scummvm.org/frs/extras/patches/gfupd101.exe\n"
+"en plaats deze bij de spelbestanden"
 
 #: engines/grim/resource.cpp:105
 msgid ""
@@ -4632,7 +4634,7 @@ msgstr ""
 "De originele patch voor Escape from Monkey Island ontbreekt. \n"
 "Download deze van https://scummvm.org/frs/extras/patches/ \n"
 "en plaats deze bij de spelbestanden. \n"
-"Let erop dat u de versie downloadt voor de correcte taal."
+"Let erop dat u de versie downloadt voor de correcte taal"
 
 #: engines/grim/emi/sound/emisound.cpp:650
 msgid ""
@@ -4647,7 +4649,7 @@ msgid ""
 msgstr ""
 "FOUT: Niet genoeg muziekbestanden gevonden!\n"
 "Escape from Monkey Island heeft twee versies van FullMonkeyMap.imt,\n"
-"u moet allebei deze bestanden van beide CDs  kopiëren naar Textures/,\n"
+"u moet allebei deze bestanden van beide CDs kopiëren naar Textures/,\n"
 "en ze als volgt hernoemen om muziek in het spel te hebben:\n"
 "CD 1: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap1.imt\"\n"
 "CD 2: \"FullMonkeyMap.imt\" -> \"FullMonkeyMap2.imt\"\n"
