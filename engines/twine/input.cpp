@@ -20,13 +20,50 @@
  *
  */
 
-#ifndef TWINE_KEYBOARD_H
-#define TWINE_KEYBOARD_H
-
 #include "twine/input.h"
 #include "common/system.h"
+#include "twine/twine.h"
 
 namespace TwinE {
+
+/** Pressed key char map - scanCodeTab2 */
+static const struct KeyProperties {
+	uint8 high;
+	bool pressed;
+	uint8 key;
+} pressedKeyCharMap[] = {
+    {0x01, false, 0x48}, // up
+    {0x02, false, 0x50}, // down
+    {0x04, false, 0x4B}, // left
+    {0x08, false, 0x4D}, // right
+    {0x05, false, 0x47}, // home
+    {0x09, false, 0x49}, // pageup
+    {0x0A, false, 0x51}, // pagedown
+    {0x06, false, 0x4F}, // end
+    {0x01, true, 0x39},  // space bar
+    {0x02, true, 0x1C},  // enter
+    {0x04, true, 0x1D},  // ctrl
+    {0x08, true, 0x38},  // alt
+    {0x10, true, 0x53},  // del
+    {0x20, true, 0x2A},  // left shift
+    {0x20, true, 0x36},  // right shift
+    {0x01, true, 0x3B},  // F1
+    {0x02, true, 0x3C},  // F2
+    {0x04, true, 0x3D},  // F3
+    {0x08, true, 0x3E},  // F4
+    {0x10, true, 0x3F},  // F5
+    {0x20, true, 0x40},  // F6
+    {0x40, true, 0x41},  // F7
+    {0x80, true, 0x42},  // F8
+    {0x01, true, 0x43},  // F9
+    {0x02, true, 0x44},  // F10
+    {0x04, true, 0x57},  // ?
+    {0x08, true, 0x58},  // ?
+    {0x00, true, 0x2A},  // left shift
+    {0x00, true, 0x00},
+    {0x01, false, 0x01}, // esc
+    {0x00, false, 0x00}};
+static_assert(ARRAYSIZE(pressedKeyCharMap) == 31, "Expected size of key char map");
 
 Input::Input(TwinEEngine *engine) : _engine(engine) {}
 
@@ -34,7 +71,8 @@ bool Input::isAnyKeyPressed() const {
 	return internalKeyCode != 0;
 }
 
-bool Input::isPressed(Common::KeyCode keycode) {
+bool Input::isPressed(Common::KeyCode keycode) const {
+	return false; // TODO:
 }
 
 void Input::readKeys() {
@@ -55,7 +93,7 @@ void Input::readKeys() {
 			localKey = twineactions[event.customType].localKey;
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-			if (!cfgfile.Debug) {
+			if (!_engine->cfgfile.Debug) {
 				switch (event.customType) {
 				case TwinEActionType::NextRoom:
 				case TwinEActionType::PreviousRoom:
@@ -116,8 +154,15 @@ void Input::readKeys() {
 		internalKeyCode = localKey;
 	}
 }
-}; // namespace TwinE
+
+void Input::getMousePositions(MouseStatusStruct *mouseData) {
+	Common::Point point = g_system->getEventManager()->getMousePos();
+	mouseData->x = point.x;
+	mouseData->y = point.y;
+	mouseData->left = leftMouse;
+	mouseData->right = rightMouse;
+	leftMouse = 0;
+	rightMouse = 0;
+}
 
 } // namespace TwinE
-
-#endif

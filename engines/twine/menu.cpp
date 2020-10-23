@@ -35,7 +35,7 @@
 #include "twine/grid.h"
 #include "twine/hqrdepack.h"
 #include "twine/interface.h"
-#include "twine/keyboard.h"
+#include "twine/input.h"
 #include "twine/menuoptions.h"
 #include "twine/movements.h"
 #include "twine/music.h"
@@ -433,9 +433,9 @@ int32 Menu::processMenu(int16 *menuSettings) {
 
 	do {
 		_engine->readKeys();
-		_engine->_keyboard.key = _engine->_keyboard.pressedKey;
+		_engine->_input->key = _engine->_input->pressedKey;
 
-		if (_engine->_keyboard.isPressed(Common::KeyCode::KEYCODE_DOWN)) { // on arrow key down
+		if (_engine->_input->isPressed(Common::KeyCode::KEYCODE_DOWN)) { // on arrow key down
 			debug("pressed down");
 			currentButton++;
 			if (currentButton == numEntry) { // if current button is the last, than next button is the first
@@ -444,7 +444,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			buttonsNeedRedraw = true;
 		}
 
-		if (((uint8)_engine->_keyboard.key & 1)) { // on arrow key up
+		if (((uint8)_engine->_input->key & 1)) { // on arrow key up
 			debug("pressed up");
 			currentButton--;
 			if (currentButton < 0) { // if current button is the first, than previous button is the last
@@ -461,10 +461,10 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			switch (id) {
 			case kMusicVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
-				if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
+				if (((uint8)_engine->_input->key & 4)) { // on arrow key left
 					volume -= 4;
 				}
-				if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
+				if (((uint8)_engine->_input->key & 8)) { // on arrow key right
 					volume += 4;
 				}
 				_engine->_music->musicVolume(volume);
@@ -472,10 +472,10 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 			case kSoundVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
-				if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
+				if (((uint8)_engine->_input->key & 4)) { // on arrow key left
 					volume -= 4;
 				}
-				if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
+				if (((uint8)_engine->_input->key & 8)) { // on arrow key right
 					volume += 4;
 				}
 				mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
@@ -483,10 +483,10 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 			case kCDVolume: {
 				AudioCDManager::Status status = _engine->_system->getAudioCDManager()->getStatus();
-				if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
+				if (((uint8)_engine->_input->key & 4)) { // on arrow key left
 					status.volume -= 4;
 				}
-				if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
+				if (((uint8)_engine->_input->key & 8)) { // on arrow key right
 					status.volume += 4;
 				}
 				_engine->_system->getAudioCDManager()->setVolume(status.volume);
@@ -494,10 +494,10 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 			case kLineVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-				if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
+				if (((uint8)_engine->_input->key & 4)) { // on arrow key left
 					volume -= 4;
 				}
-				if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
+				if (((uint8)_engine->_input->key & 8)) { // on arrow key right
 					volume += 4;
 				}
 				mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
@@ -505,10 +505,10 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 			case kMasterVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
-				if (((uint8)_engine->_keyboard.key & 4)) { // on arrow key left
+				if (((uint8)_engine->_input->key & 4)) { // on arrow key left
 					volume -= 4;
 				}
-				if (((uint8)_engine->_keyboard.key & 8)) { // on arrow key right
+				if (((uint8)_engine->_input->key & 8)) { // on arrow key right
 					volume += 4;
 				}
 				mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
@@ -532,7 +532,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		if (musicChanged) {
 			// TODO: update volume settings
 		}
-	} while (!(_engine->_keyboard.skippedKey & 2) && !(_engine->_keyboard.skippedKey & 1));
+	} while (!(_engine->_input->skippedKey & 2) && !(_engine->_input->skippedKey & 1));
 
 	currentButton = *(menuSettings + MenuSettings_FirstButton + currentButton * 2); // get current browsed button
 
@@ -876,16 +876,16 @@ void Menu::processBehaviourMenu() {
 
 	int32 tmpTime = _engine->lbaTime;
 
-	while (_engine->_keyboard.skippedKey & 4 || (_engine->_keyboard.internalKeyCode >= twineactions[TwinEActionType::QuickBehaviourNormal].localKey && _engine->_keyboard.internalKeyCode <= twineactions[TwinEActionType::QuickBehaviourDiscreet].localKey)) {
+	while (_engine->_input->skippedKey & 4 || (_engine->_input->internalKeyCode >= twineactions[TwinEActionType::QuickBehaviourNormal].localKey && _engine->_input->internalKeyCode <= twineactions[TwinEActionType::QuickBehaviourDiscreet].localKey)) {
 		_engine->readKeys();
-		_engine->_keyboard.key = _engine->_keyboard.pressedKey;
+		_engine->_input->key = _engine->_input->pressedKey;
 
 		int heroBehaviour = (int)_engine->_actor->heroBehaviour;
-		if (_engine->_keyboard.key & 8) {
+		if (_engine->_input->key & 8) {
 			heroBehaviour++;
 		}
 
-		if (_engine->_keyboard.key & 4) {
+		if (_engine->_input->key & 4) {
 			heroBehaviour--;
 		}
 
@@ -905,7 +905,7 @@ void Menu::processBehaviourMenu() {
 			_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - 256, 50, &moveMenu);
 			_engine->_animations->setAnimAtKeyframe(behaviourAnimState[_engine->_actor->heroBehaviour], _engine->_animations->animTable[_engine->_actor->heroAnimIdx[_engine->_actor->heroBehaviour]], behaviourEntity, &behaviourAnimData[_engine->_actor->heroBehaviour]);
 
-			while (_engine->_keyboard.pressedKey) {
+			while (_engine->_input->pressedKey) {
 				_engine->readKeys();
 				if (_engine->shouldQuit()) {
 					break;
@@ -1002,23 +1002,23 @@ void Menu::processInventoryMenu() {
 	_engine->_text->setFontCrossColor(4);
 	_engine->_text->initDialogueBox();
 
-	while (_engine->_keyboard.internalKeyCode != 1) {
+	while (_engine->_input->internalKeyCode != 1) {
 		_engine->readKeys();
 		int32 prevSelectedItem = inventorySelectedItem;
 
 		if (!di) {
-			_engine->_keyboard.key = _engine->_keyboard.pressedKey;
-			_engine->loopPressedKey = _engine->_keyboard.skippedKey;
-			_engine->loopCurrentKey = _engine->_keyboard.internalKeyCode;
+			_engine->_input->key = _engine->_input->pressedKey;
+			_engine->loopPressedKey = _engine->_input->skippedKey;
+			_engine->loopCurrentKey = _engine->_input->internalKeyCode;
 
-			if (_engine->_keyboard.key != 0 || _engine->_keyboard.skippedKey != 0) {
+			if (_engine->_input->key != 0 || _engine->_input->skippedKey != 0) {
 				di = 1;
 			}
 		} else {
 			_engine->loopCurrentKey = 0;
-			_engine->_keyboard.key = 0;
+			_engine->_input->key = 0;
 			_engine->loopPressedKey = 0;
-			if (!_engine->_keyboard.pressedKey && !_engine->_keyboard.skippedKey) {
+			if (!_engine->_input->pressedKey && !_engine->_input->skippedKey) {
 				di = 0;
 			}
 		}
@@ -1026,7 +1026,7 @@ void Menu::processInventoryMenu() {
 		if (_engine->loopCurrentKey == 1 || _engine->loopPressedKey & 0x20)
 			break;
 
-		if (_engine->_keyboard.key & 2) { // down
+		if (_engine->_input->key & 2) { // down
 			inventorySelectedItem++;
 			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
 				inventorySelectedItem = 0;
@@ -1035,7 +1035,7 @@ void Menu::processInventoryMenu() {
 			bx = 3;
 		}
 
-		if (_engine->_keyboard.key & 1) { // up
+		if (_engine->_input->key & 1) { // up
 			inventorySelectedItem--;
 			if (inventorySelectedItem < 0) {
 				inventorySelectedItem = NUM_INVENTORY_ITEMS - 1;
@@ -1044,7 +1044,7 @@ void Menu::processInventoryMenu() {
 			bx = 3;
 		}
 
-		if (_engine->_keyboard.key & 4) { // left
+		if (_engine->_input->key & 4) { // left
 			inventorySelectedItem -= 4;
 			if (inventorySelectedItem < 0) {
 				inventorySelectedItem += NUM_INVENTORY_ITEMS;
@@ -1053,7 +1053,7 @@ void Menu::processInventoryMenu() {
 			bx = 3;
 		}
 
-		if (_engine->_keyboard.key & 8) { // right
+		if (_engine->_input->key & 8) { // right
 			inventorySelectedItem += 4;
 			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
 				inventorySelectedItem -= NUM_INVENTORY_ITEMS;
@@ -1113,7 +1113,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
 
-	while (_engine->_keyboard.internalKeyCode != 0 && _engine->_keyboard.skippedKey != 0) {
+	while (_engine->_input->internalKeyCode != 0 && _engine->_input->skippedKey != 0) {
 		_engine->readKeys();
 		_engine->_system->delayMillis(1);
 		_engine->flip(); // TODO: needed?

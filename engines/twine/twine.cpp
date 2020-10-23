@@ -48,7 +48,7 @@
 #include "twine/holomap.h"
 #include "twine/hqrdepack.h"
 #include "twine/interface.h"
-#include "twine/keyboard.h"
+#include "twine/input.h"
 #include "twine/menu.h"
 #include "twine/menuoptions.h"
 #include "twine/movements.h"
@@ -92,6 +92,7 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	_sound = new Sound(this);
 	_text = new Text(this);
 	_debugGrid = new DebugGrid(this);
+	_input = new Input(this);
 	_debug = new Debug(this);
 	_debugScene = new DebugScene(this);
 }
@@ -120,6 +121,7 @@ TwinEEngine::~TwinEEngine() {
 	delete _sound;
 	delete _text;
 	delete _debugGrid;
+	delete _input;
 	delete _debug;
 	delete _debugScene;
 }
@@ -328,26 +330,26 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	}
 
 	previousLoopPressedKey = loopPressedKey;
-	_keyboard.key = _keyboard.pressedKey;
-	loopPressedKey = _keyboard.skippedKey;
-	loopCurrentKey = _keyboard.internalKeyCode;
+	_input->key = _input->pressedKey;
+	loopPressedKey = _input->skippedKey;
+	loopCurrentKey = _input->internalKeyCode;
 
 	_debug->processDebug(loopCurrentKey);
 
 	if (_menuOptions->canShowCredits != 0) {
 		// TODO: if current music playing != 8, than play_track(8);
-		if (_keyboard.internalKeyCode != 0) {
+		if (_input->internalKeyCode != 0) {
 			return 0;
 		}
-		if (_keyboard.pressedKey != 0) {
+		if (_input->pressedKey != 0) {
 			return 0;
 		}
-		if (_keyboard.skippedKey != 0) {
+		if (_input->skippedKey != 0) {
 			return 0;
 		}
 	} else {
 		// Process give up menu - Press ESC
-		if (_keyboard.internalKeyCode == 1 && _scene->sceneHero->life > 0 && _scene->sceneHero->entity != -1 && !_scene->sceneHero->staticFlags.bIsHidden) {
+		if (_input->internalKeyCode == 1 && _scene->sceneHero->life > 0 && _scene->sceneHero->entity != -1 && !_scene->sceneHero->staticFlags.bIsHidden) {
 			freezeTime();
 			if (_menu->giveupMenu()) {
 				unfreezeTime();
@@ -552,7 +554,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					break;
 				}
 				g_system->delayMillis(10);
-			} while (_keyboard.internalKeyCode != 0x19 && !_keyboard.pressedKey);
+			} while (_input->internalKeyCode != 0x19 && !_input->pressedKey);
 			unfreezeTime();
 			_redraw->redrawEngineActions(1);
 		}
@@ -778,10 +780,10 @@ bool TwinEEngine::gameEngineLoop() { // mainLoop
 void TwinEEngine::delaySkip(uint32 time) {
 	uint32 startTicks = _system->getMillis();
 	uint32 stopTicks = 0;
-	_keyboard.internalKeyCode = 0;
+	_input->internalKeyCode = 0;
 	do {
 		readKeys();
-		if (_keyboard.internalKeyCode == 1) {
+		if (_input->internalKeyCode == 1) {
 			break;
 		}
 		if (shouldQuit()) {
@@ -864,47 +866,8 @@ void TwinEEngine::crossFade(const Graphics::ManagedSurface &buffer, const uint32
 	surfaceTable.free();
 }
 
-/** Pressed key char map - scanCodeTab2 */
-static const struct KeyProperties {
-	uint8 high;
-	bool pressed;
-	uint8 key;
-} pressedKeyCharMap[] = {
-    {0x01, false, 0x48}, // up
-    {0x02, false, 0x50}, // down
-    {0x04, false, 0x4B}, // left
-    {0x08, false, 0x4D}, // right
-    {0x05, false, 0x47}, // home
-    {0x09, false, 0x49}, // pageup
-    {0x0A, false, 0x51}, // pagedown
-    {0x06, false, 0x4F}, // end
-    {0x01, true,  0x39}, // space bar
-    {0x02, true,  0x1C}, // enter
-    {0x04, true,  0x1D}, // ctrl
-    {0x08, true,  0x38}, // alt
-    {0x10, true,  0x53}, // del
-    {0x20, true,  0x2A}, // left shift
-    {0x20, true,  0x36}, // right shift
-    {0x01, true,  0x3B}, // F1
-    {0x02, true,  0x3C}, // F2
-    {0x04, true,  0x3D}, // F3
-    {0x08, true,  0x3E}, // F4
-    {0x10, true,  0x3F}, // F5
-    {0x20, true,  0x40}, // F6
-    {0x40, true,  0x41}, // F7
-    {0x80, true,  0x42}, // F8
-    {0x01, true,  0x43}, // F9
-    {0x02, true,  0x44}, // F10
-    {0x04, true,  0x57}, // ?
-    {0x08, true,  0x58}, // ?
-    {0x00, true,  0x2A}, // left shift
-    {0x00, true,  0x00},
-    {0x01, false, 0x01}, // esc
-    {0x00, false, 0x00}};
-static_assert(ARRAYSIZE(pressedKeyCharMap) == 31, "Expected size of key char map");
-
 void TwinEEngine::readKeys() {
-	_keyboard.readKeys();
+	_input->readKeys();
 }
 
 void TwinEEngine::drawText(int32 x, int32 y, const char *string, int32 center) {
@@ -926,16 +889,6 @@ void TwinEEngine::drawText(int32 x, int32 y, const char *string, int32 center) {
 	SDL_BlitSurface(text, NULL, screenBuffer, &rectangle);
 	SDL_FreeSurface(text);
 #endif
-}
-
-void TwinEEngine::getMousePositions(MouseStatusStruct *mouseData) {
-	Common::Point point = g_system->getEventManager()->getMousePos();
-	mouseData->x = point.x;
-	mouseData->y = point.y;
-	mouseData->left = leftMouse;
-	mouseData->right = rightMouse;
-	leftMouse = 0;
-	rightMouse = 0;
 }
 
 } // namespace TwinE

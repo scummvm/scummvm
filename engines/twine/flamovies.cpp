@@ -24,7 +24,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "twine/grid.h"
-#include "twine/keyboard.h"
+#include "twine/input.h"
 #include "twine/music.h"
 #include "twine/screens.h"
 #include "twine/sound.h"
@@ -310,7 +310,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 				break;
 			}
 
-			if (_engine->_keyboard.isAnyKeyPressed()) {
+			if (_engine->_input->isAnyKeyPressed()) {
 				break;
 			}
 		} while (true);

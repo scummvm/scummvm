@@ -32,7 +32,7 @@
 #include "twine/extra.h"
 #include "twine/grid.h"
 #include "twine/interface.h"
-#include "twine/keyboard.h"
+#include "twine/input.h"
 #include "twine/menu.h"
 #include "twine/menuoptions.h"
 #include "twine/music.h"
@@ -393,7 +393,7 @@ void GameState::processFoundItem(int32 item) {
 		_engine->_redraw->flipRedrawAreas();
 
 		_engine->readKeys();
-		if (_engine->_keyboard.skippedKey) {
+		if (_engine->_input->skippedKey) {
 			if (!textState) {
 				quitItem = 1;
 			}
@@ -408,7 +408,7 @@ void GameState::processFoundItem(int32 item) {
 
 	while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
 		_engine->readKeys();
-		if (_engine->_keyboard.internalKeyCode == 1) {
+		if (_engine->_input->internalKeyCode == 1) {
 			break;
 		}
 		_engine->delaySkip(1);
@@ -423,7 +423,7 @@ void GameState::processFoundItem(int32 item) {
 			break;
 		}
 		delaySkip(1);
-	} while (!_engine->_keyboard.internalKeyCode);*/
+	} while (!_engine->_input->internalKeyCode);*/
 
 	_engine->_text->stopVox(_engine->_text->currDialTextEntry);
 
@@ -485,7 +485,7 @@ void GameState::processGameoverAnimation() { // makeGameOver
 		int32 startLbaTime = _engine->lbaTime;
 		_engine->_interface->setClip(120, 120, 519, 359);
 
-		while (_engine->_keyboard.internalKeyCode != 1 && (_engine->lbaTime - startLbaTime) <= 500) {
+		while (_engine->_input->internalKeyCode != 1 && (_engine->lbaTime - startLbaTime) <= 500) {
 			_engine->readKeys();
 
 			int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);

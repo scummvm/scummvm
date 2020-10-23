@@ -420,15 +420,15 @@ void Debug::debugPlasmaWindow(const char *text, int32 color) {
 }
 
 void Debug::debugProcessWindow() {
-	if (_engine->rightMouse) {
+	if (_engine->_input->rightMouse) {
 		int32 quit = 0;
 		const char *text = "Game Debug Window";
 		int32 color = 64;
 		int32 colorIdx = 4;
 		int32 count = 0;
 		MouseStatusStruct mouseData;
-		_engine->rightMouse = 0;
-		_engine->leftMouse = 0;
+		_engine->_input->rightMouse = 0;
+		_engine->_input->leftMouse = 0;
 
 		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
@@ -442,7 +442,7 @@ void Debug::debugProcessWindow() {
 			if (_engine->shouldQuit()) {
 				quit = 1;
 			}
-			_engine->getMousePositions(&mouseData);
+			_engine->_input->getMousePositions(&mouseData);
 
 			if (mouseData.left) {
 				int type = 0;

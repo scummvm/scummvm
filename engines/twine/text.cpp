@@ -26,7 +26,7 @@
 #include "common/system.h"
 #include "twine/hqrdepack.h"
 #include "twine/interface.h"
-#include "twine/keyboard.h"
+#include "twine/input.h"
 #include "twine/menu.h"
 #include "twine/renderer.h"
 #include "twine/resources.h"
@@ -620,7 +620,7 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 					if (_engine->shouldQuit()) {
 						break;
 					}
-					if (_engine->_keyboard.internalKeyCode == 0 && _engine->_keyboard.skippedKey == 0 && _engine->_keyboard.pressedKey == 0) {
+					if (_engine->_input->internalKeyCode == 0 && _engine->_input->skippedKey == 0 && _engine->_input->pressedKey == 0) {
 						break;
 					}
 					playVox(currDialTextEntry);
@@ -632,7 +632,7 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 					if (_engine->shouldQuit()) {
 						break;
 					}
-					if (_engine->_keyboard.internalKeyCode != 0 || _engine->_keyboard.skippedKey != 0 || _engine->_keyboard.pressedKey != 0) {
+					if (_engine->_input->internalKeyCode != 0 || _engine->_input->skippedKey != 0 || _engine->_input->pressedKey != 0) {
 						break;
 					}
 					playVox(currDialTextEntry);
@@ -640,7 +640,7 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 				} while (1);
 			}
 
-			if (_engine->_keyboard.internalKeyCode == 1) {
+			if (_engine->_input->internalKeyCode == 1) {
 				skipText = 1;
 			}
 
@@ -678,17 +678,17 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 				break;
 			}
 			_engine->_system->delayMillis(1);
-		} while (_engine->_keyboard.internalKeyCode || _engine->_keyboard.skippedKey || _engine->_keyboard.pressedKey);
+		} while (_engine->_input->internalKeyCode || _engine->_input->skippedKey || _engine->_input->pressedKey);
 
 		// RECHECK this later
 		// wait key to display next text
 		do {
 			_engine->readKeys();
-			if (_engine->_keyboard.internalKeyCode != 0) {
+			if (_engine->_input->internalKeyCode != 0) {
 				_engine->_interface->loadClip();
 				return;
 			}
-			if (_engine->_keyboard.skippedKey != 0) {
+			if (_engine->_input->skippedKey != 0) {
 				_engine->_interface->loadClip();
 				return;
 			}
@@ -696,9 +696,9 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 				break;
 			}
 			_engine->_system->delayMillis(1);
-		} while (!_engine->_keyboard.pressedKey);
+		} while (!_engine->_input->pressedKey);
 	} else { // RECHECK THIS
-		while (playVox(currDialTextEntry) && _engine->_keyboard.internalKeyCode != 1) {
+		while (playVox(currDialTextEntry) && _engine->_input->internalKeyCode != 1) {
 			if (_engine->shouldQuit()) {
 				break;
 			}
@@ -848,7 +848,7 @@ void Text::drawAskQuestion(int32 index) { // MyDial
 				}
 				playVox(currDialTextEntry);
 				_engine->_system->delayMillis(1);
-			} while (_engine->_keyboard.internalKeyCode || _engine->_keyboard.skippedKey || _engine->_keyboard.pressedKey);
+			} while (_engine->_input->internalKeyCode || _engine->_input->skippedKey || _engine->_input->pressedKey);
 
 			do {
 				_engine->readKeys();
@@ -857,7 +857,7 @@ void Text::drawAskQuestion(int32 index) { // MyDial
 				}
 				playVox(currDialTextEntry);
 				_engine->_system->delayMillis(1);
-			} while (!_engine->_keyboard.internalKeyCode && !_engine->_keyboard.skippedKey && !_engine->_keyboard.pressedKey);
+			} while (!_engine->_input->internalKeyCode && !_engine->_input->skippedKey && !_engine->_input->pressedKey);
 		}
 
 		_engine->_system->delayMillis(1);

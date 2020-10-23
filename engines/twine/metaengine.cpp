@@ -29,7 +29,7 @@
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
 
-#include "twine/keyboard.h"
+#include "twine/input.h"
 #include "twine/twine.h"
 
 namespace TwinE {
