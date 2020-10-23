@@ -194,6 +194,7 @@ void Music::stopMidiMusic() {
 
 	_midiPlayer.stop();
 	free(midiPtr);
+	midiPtr = nullptr;
 }
 
 bool Music::initCdrom() {
