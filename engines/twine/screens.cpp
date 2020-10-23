@@ -96,10 +96,11 @@ void Screens::loadImageDelay(int32 index, int32 time) {
 }
 
 void Screens::fadeIn(uint32 *pal) {
-	if (_engine->cfgfile.CrossFade)
+	if (_engine->cfgfile.CrossFade) {
 		_engine->crossFade(_engine->frontVideoBuffer, pal);
-	else
+	} else {
 		fadeToPal(pal);
+	}
 
 	_engine->setPalette(pal);
 }
@@ -109,13 +110,15 @@ void Screens::fadeOut(uint32 *pal) {
 		crossFade(frontVideoBuffer, palette);
 	else
 		fadeToBlack(palette);*/
-	if (!_engine->cfgfile.CrossFade)
+	if (!_engine->cfgfile.CrossFade) {
 		fadeToBlack(pal);
+	}
 }
 
 int32 Screens::crossDot(int32 modifier, int32 color, int32 param, int32 intensity) {
-	if (!param)
+	if (!param) {
 		return color;
+	}
 	return (((color - modifier) * intensity) / param) + modifier;
 }
 
@@ -188,22 +191,20 @@ void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 }
 
 void Screens::fadeToBlack(uint32 *pal) {
-	int32 i = 0;
+	if (palResetted) {
+		return;
+	}
 
-	if (!palResetted) {
-		for (i = 100; i >= 0; i -= 3) {
-			adjustPalette(0, 0, 0, pal, i);
-			_engine->_system->delayMillis(1000 / 50);
-		}
+	for (int32 i = 100; i >= 0; i -= 3) {
+		adjustPalette(0, 0, 0, pal, i);
+		_engine->_system->delayMillis(1000 / 50);
 	}
 
 	palResetted = true;
 }
 
 void Screens::fadeToPal(uint32 *pal) {
-	int32 i = 100;
-
-	for (i = 0; i <= 100; i += 3) {
+	for (int32 i = 0; i <= 100; i += 3) {
 		adjustPalette(0, 0, 0, pal, i);
 		_engine->_system->delayMillis(1000 / 50);
 	}
@@ -233,31 +234,25 @@ void Screens::setBackPal() {
 }
 
 void Screens::fadePalRed(uint32 *pal) {
-	int32 i = 100;
-
-	for (i = 100; i >= 0; i -= 2) {
+	for (int32 i = 100; i >= 0; i -= 2) {
 		adjustPalette(0xFF, 0, 0, pal, i);
 		_engine->_system->delayMillis(1000 / 50);
 	}
 }
 
 void Screens::fadeRedPal(uint32 *pal) {
-	int32 i = 0;
-
-	for (i = 0; i <= 100; i += 2) {
+	for (int32 i = 0; i <= 100; i += 2) {
 		adjustPalette(0xFF, 0, 0, pal, i);
 		_engine->_system->delayMillis(1000 / 50);
 	}
 }
 
 void Screens::copyScreen(const uint8 *source, uint8 *destination) {
-	int32 w, h;
-
 	if (SCALE == 1) {
 		memcpy(destination, source, SCREEN_WIDTH * SCREEN_HEIGHT);
 	} else if (SCALE == 2) {
-		for (h = 0; h < SCREEN_HEIGHT / SCALE; h++) {
-			for (w = 0; w < SCREEN_WIDTH / SCALE; w++) {
+		for (int32 h = 0; h < SCREEN_HEIGHT / SCALE; h++) {
+			for (int32 w = 0; w < SCREEN_WIDTH / SCALE; w++) {
 				*destination++ = *source;
 				*destination++ = *source++;
 			}
