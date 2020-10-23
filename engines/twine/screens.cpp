@@ -40,7 +40,10 @@ void Screens::adelineLogo() {
 }
 
 void Screens::loadMenuImage(bool fade_in) {
-	_engine->_hqrdepack->hqrGetEntry((uint8*)_engine->workVideoBuffer.getPixels(), Resources::HQR_RESS_FILE, RESSHQR_MENUIMG);
+	if (_engine->_hqrdepack->hqrGetEntry((uint8*)_engine->workVideoBuffer.getPixels(), Resources::HQR_RESS_FILE, RESSHQR_MENUIMG) == 0) {
+		warning("Failed to load menu image");
+		return;
+	}
 	copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	if (fade_in) {
 		fadeToPal(paletteRGBA);
@@ -52,7 +55,10 @@ void Screens::loadMenuImage(bool fade_in) {
 }
 
 void Screens::loadCustomPalette(int32 index) {
-	_engine->_hqrdepack->hqrGetEntry(palette, Resources::HQR_RESS_FILE, index);
+	if (_engine->_hqrdepack->hqrGetEntry(palette, Resources::HQR_RESS_FILE, index) == 0) {
+		warning("Failed to load custom palette %i", index);
+		return;
+	}
 	convertPalToRGBA(palette, paletteRGBACustom);
 }
 
@@ -68,7 +74,10 @@ void Screens::convertPalToRGBA(const uint8* in, uint32* out) {
 }
 
 void Screens::loadImage(int32 index, bool fade_in) {
-	_engine->_hqrdepack->hqrGetEntry((uint8*)_engine->workVideoBuffer.getPixels(), Resources::HQR_RESS_FILE, index);
+	if (_engine->_hqrdepack->hqrGetEntry((uint8*)_engine->workVideoBuffer.getPixels(), Resources::HQR_RESS_FILE, index) == 0) {
+		warning("Failed to load image with index %i", index);
+		return;
+	}
 	copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	loadCustomPalette(index + 1);
 	if (fade_in) {
