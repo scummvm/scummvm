@@ -363,11 +363,11 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		if (loopCurrentKey == twineactions[TwinEActionType::OptionsMenu].localKey) {
 			freezeTime();
 			_sound->pauseSamples();
-			_menu->OptionsMenuSettings[MenuSettings_FirstButton] = 15;
+			_menu->OptionsMenuSettings[MenuSettings_FirstButton] = 15; // TODO: why? - where is the reset? kReturnGame
 			_text->initTextBank(0);
 			_menu->optionsMenu();
 			_text->initTextBank(_text->currentTextBank + 3);
-			//TODO: play music
+			// TODO: play music
 			_sound->resumeSamples();
 			unfreezeTime();
 			_redraw->redrawEngineActions(1);
