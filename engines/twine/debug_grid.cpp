@@ -23,7 +23,7 @@
 #include "twine/debug_grid.h"
 #include "common/debug.h"
 #include "twine/grid.h"
-#include "twine/keyboard.h"
+#include "twine/input.h"
 #include "twine/redraw.h"
 #include "twine/scene.h"
 #include "twine/twine.h"

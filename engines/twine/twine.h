@@ -31,7 +31,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "twine/actor.h"
-#include "twine/keyboard.h"
+#include "twine/input.h"
 
 namespace TwinE {
 
@@ -122,13 +122,6 @@ struct ConfigFile {
 	int32 WallCollision = 0;
 };
 
-struct MouseStatusStruct {
-	int32 left = 0;
-	int32 right = 0;
-	int32 x = 0;
-	int32 y = 0;
-};
-
 class Actor;
 class Animations;
 class Collision;
@@ -194,7 +187,7 @@ public:
 	Sound *_sound;
 	Text *_text;
 	DebugGrid *_debugGrid;
-	Keyboard _keyboard;
+	Input *_input;
 	Debug *_debug;
 	DebugScene *_debugScene;
 
@@ -298,12 +291,6 @@ public:
 	 * @param center if the text should be centered accoding with the giving positions
 	 */
 	void drawText(int32 x, int32 y, const char *string, int32 center);
-
-	/**
-	 * Gets mouse positions
-	 * @param mouseData structure that contains mouse position info
-	 */
-	void getMousePositions(MouseStatusStruct *mouseData);
 };
 
 } // namespace TwinE

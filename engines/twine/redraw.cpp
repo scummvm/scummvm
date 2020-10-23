@@ -29,7 +29,7 @@
 #include "twine/grid.h"
 #include "twine/hqrdepack.h"
 #include "twine/interface.h"
-#include "twine/keyboard.h"
+#include "twine/input.h"
 #include "twine/menu.h"
 #include "twine/movements.h"
 #include "twine/renderer.h"
@@ -534,7 +534,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 	}
 
 	if (_engine->cfgfile.Debug) {
-		_engine->_debugScene->displayZones(_engine->_keyboard.internalKeyCode);
+		_engine->_debugScene->displayZones(_engine->_input->internalKeyCode);
 	}
 
 	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {

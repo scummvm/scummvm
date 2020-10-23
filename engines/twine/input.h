@@ -102,11 +102,17 @@ static constexpr const struct ActionMapping {
 
 static_assert(ARRAYSIZE(twineactions) == TwinEActionType::Max, "Unexpected action mapping array size");
 
+struct MouseStatusStruct {
+	int32 left = 0;
+	int32 right = 0;
+	int32 x = 0;
+	int32 y = 0;
+};
+
 class TwinEEngine;
 
 class Input {
 private:
-	friend class TwinEEngine;
 	TwinEEngine *_engine;
 	bool _hitEnter = false;
 
@@ -126,7 +132,17 @@ public:
 
 	bool isAnyKeyPressed() const;
 
-	bool isPressed(Common::KeyCode keycode);
+	bool isPressed(Common::KeyCode keycode) const;
+
+	inline bool isPressedEnter() const {
+		return isPressed(Common::KEYCODE_RETURN) || isPressed(Common::KEYCODE_KP_ENTER);
+	}
+
+	/**
+	 * Gets mouse positions
+	 * @param mouseData structure that contains mouse position info
+	 */
+	void getMousePositions(MouseStatusStruct *mouseData);
 
 	void readKeys();
 };

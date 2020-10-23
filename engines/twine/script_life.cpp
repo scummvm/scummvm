@@ -28,7 +28,7 @@
 #include "twine/grid.h"
 #include "twine/holomap.h"
 #include "twine/interface.h"
-#include "twine/keyboard.h"
+#include "twine/input.h"
 #include "twine/movements.h"
 #include "twine/music.h"
 #include "twine/redraw.h"
@@ -1362,7 +1362,7 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, int32 actorIdx, ActorStruct *
 
 	do {
 		engine->readKeys();
-	} while (engine->_keyboard.internalKeyCode || engine->_keyboard.skippedKey);
+	} while (engine->_input->internalKeyCode || engine->_input->skippedKey);
 
 	engine->unfreezeTime();
 

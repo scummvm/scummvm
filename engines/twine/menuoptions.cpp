@@ -21,10 +21,11 @@
  */
 
 #include "twine/menuoptions.h"
+#include "common/keyboard.h"
 #include "twine/flamovies.h"
 #include "twine/gamestate.h"
 #include "twine/interface.h"
-#include "twine/keyboard.h"
+#include "twine/input.h"
 #include "twine/menu.h"
 #include "twine/music.h"
 #include "twine/resources.h"
@@ -63,13 +64,13 @@ void MenuOptions::newGame() {
 	_engine->_text->drawTextFullscreen(150);
 	_engine->readKeys();
 
-	if (_engine->_keyboard.internalKeyCode != 1) {
+	if (_engine->_input->internalKeyCode != 1) {
 		// intro screen 1 - twinsun
 		_engine->_screens->loadImage(RESSHQR_INTROSCREEN2IMG);
 		_engine->_text->drawTextFullscreen(151);
 		_engine->readKeys();
 
-		if (_engine->_keyboard.internalKeyCode != 1) {
+		if (_engine->_input->internalKeyCode != 1) {
 			_engine->_screens->loadImage(RESSHQR_INTROSCREEN3IMG);
 			_engine->_text->drawTextFullscreen(152);
 		}
@@ -196,7 +197,7 @@ int32 MenuOptions::enterPlayerName(int32 textIdx) {
 			if (_engine->shouldQuit()) {
 				break;
 			}
-		} while (_engine->_keyboard.hitEnter());
+		} while (_engine->_input->isPressedEnter());
 	}
 
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
@@ -224,11 +225,11 @@ void MenuOptions::newGameMenu() {
 				if (_engine->shouldQuit()) {
 					break;
 				}
-			} while (_engine->_keyboard.skippedKey != 0);
+			} while (_engine->_input->skippedKey != 0);
 			if (_engine->shouldQuit()) {
 				break;
 			}
-		} while (_engine->_keyboard.internalKeyCode != 0);
+		} while (_engine->_input->internalKeyCode != 0);
 	}
 }
 
@@ -262,11 +263,11 @@ void MenuOptions::continueGameMenu() {
 				if (_engine->shouldQuit()) {
 					break;
 				}
-			} while (_engine->_keyboard.skippedKey != 0);
+			} while (_engine->_input->skippedKey != 0);
 			if (_engine->shouldQuit()) {
 				break;
 			}
-		} while (_engine->_keyboard.internalKeyCode != 0);
+		} while (_engine->_input->internalKeyCode != 0);
 	}
 }
 
