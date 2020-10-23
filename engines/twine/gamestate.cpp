@@ -323,7 +323,7 @@ void GameState::processFoundItem(int32 item) {
 	boxBottomRightX = _engine->_renderer->projPosX + 65;
 	boxBottomRightY = _engine->_renderer->projPosY + 65;
 
-	_engine->_sound->playSample(41, 0x1000, 1, 0x80, 0x80, 0x80, -1);
+	_engine->_sound->playSample(41);
 
 	// process vox play
 	_engine->_music->stopMusic();
@@ -502,7 +502,7 @@ void GameState::processGameoverAnimation() { // makeGameOver
 			_engine->_system->delayMillis(15);
 		}
 
-		_engine->_sound->playSample(37, _engine->getRandomNumber(2000) + 3096, 1, 0x80, 0x80, 0x80, -1);
+		_engine->_sound->playSample(37, _engine->getRandomNumber(2000) + 3096);
 		_engine->_interface->blitBox(120, 120, 519, 359, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
 		_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);

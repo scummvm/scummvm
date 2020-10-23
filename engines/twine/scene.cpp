@@ -411,7 +411,7 @@ void Scene::processEnvironmentSound() {
 					decal = sampleRound[currentAmb];
 					repeat = sampleRepeat[currentAmb];
 
-					_engine->_sound->playSample(sampleIdx, (0x1000 + _engine->getRandomNumber(decal) - (decal / 2)), repeat, 110, -1, 110, -1);
+					_engine->_sound->playSample(sampleIdx, (0x1000 + _engine->getRandomNumber(decal) - (decal / 2)), repeat, 110, -1, 110);
 					break;
 				}
 			}

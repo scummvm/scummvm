@@ -112,7 +112,7 @@ struct ConfigFile {
 	bool Debug = false;
 	/** Use original autosaving system or save when you want */
 	int32 UseAutoSaving = 0;
-	/** Shadow mode type */
+	/** Shadow mode type, value: all, character only, none */
 	int32 ShadowMode = 0;
 	/** AutoAgressive mode type */
 	int32 AutoAgressive = 0;

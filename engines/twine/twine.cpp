@@ -629,7 +629,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					if ((brickSound & 0xF) == 1) {
 						if (a) { // all other actors
 							int32 rnd = getRandomNumber(2000) + 3096;
-							_sound->playSample(0x25, rnd, 1, actor->x, actor->y, actor->z, a);
+							_sound->playSample(37, rnd, 1, actor->x, actor->y, actor->z, a);
 							if (actor->bonusParameter & 0x1F0) {
 								if (!(actor->bonusParameter & 1)) {
 									_actor->processActorExtraBonus(a);
