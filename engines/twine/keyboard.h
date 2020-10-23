@@ -110,6 +110,10 @@ struct Keyboard {
 	int16 key = 0;
 	int32 heroPressedKey = 0;
 	int32 heroPressedKey2 = 0;
+
+	bool isAnyKeyPressed() const {
+		return internalKeyCode != 0;
+	}
 };
 
 } // namespace TwinE
