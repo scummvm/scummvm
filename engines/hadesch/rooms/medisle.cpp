@@ -91,97 +91,45 @@ static const char *perseusItemSounds[] = {
 	"m1230na0"
 };
 
-static const int kBagPuzzleNumElements = 10;
+struct StatuePiece {
+	const char *name;
+	const char *fullElement;
+	const char *emptyElement;
+	int statuex;
+	int statuey;
+	int statuez;
+	int brokenx;
+	int brokeny;
+	int hotspotx;
+	int hotspoty;
+	int dep1;
+	int dep2;
 
-static const char *statueFullElements[kBagPuzzleNumElements] = {
-	  "m1010or0",
-	  "m1010or1",
-	  "m1010ov0",
-	  "m1010ow0",
-	  "m1010os0",
-	  "m1010ot0",
-	  "m1010ou0",
-	  "m1010op0",
-	  "m1010oq0",
-	  "m1010oo0"
+	Common::Point getStatueOffset() const {
+		return Common::Point(statuex, statuey);
+	}
+
+	Common::Point getBrokenOffset() const {
+		return Common::Point(brokenx, brokeny);
+	}
+
+	Common::Point getHotspot() const {
+		return Common::Point(hotspotx, hotspoty);
+	}
 };
+    
+static const StatuePiece statuePieces[] = {
+	{"LowerLeg1", "m1010or0", "m1010or2", 519, 282, 2009, 461, 395, 26, 28, -1, -1 },
+	{"LowerLeg2", "m1010or1", "m1010or3", 571, 276, 2008, 339, 358, 15, 30, -1, -1 },
+	{"UpperLeg1", "m1010ov0", "m1010ov1", 528, 225, 2010, 590, 356, 11, 24,  0, -1 },
+	{"UpperLeg2", "m1010ow0", "m1010ow1", 547, 225, 2006, 298, 415, 15, 25,  1, -1 },
+	{"Torso"    , "m1010os0", "m1010os1", 518, 159, 2007, 517, 407, 23, 26,  2,  3 },
+	{"UpperArm1", "m1010ot0", "m1010ot1", 500, 161, 2005, 582, 453, 13, 10,  4, -1 },
+	{"UpperArm2", "m1010ou0", "m1010ou1", 563, 173, 2004, 381, 362, 10, 13,  4, -1 },
+	{"LowerArm1", "m1010op0", "m1010op1", 471, 132, 2002, 483, 357, 20, 24,  5, -1 },
+	{"LowerArm2", "m1010oq0", "m1010oq1", 565, 193, 2001, 426, 360, 25, 35,  6, -1 },
+	{"Head"     , "m1010oo0", "m1010oo1", 539, 107, 2003, 406, 307, 24, 32,  4, -1 }
 
-static const char *statueEmptyElements[kBagPuzzleNumElements] = {
-	  "m1010or2",
-	  "m1010or3",
-	  "m1010ov1",
-	  "m1010ow1",
-	  "m1010os1",
-	  "m1010ot1",
-	  "m1010ou1",
-	  "m1010op1",
-	  "m1010oq1",
-	  "m1010oo1"
-};
-
-static const int statuesZvals1[kBagPuzzleNumElements] = {
-	2009,
-	2008,
-	2010,
-	2006,
-	2007,
-	2005,
-	2004,
-	2002,
-	2001,
-	2003
-};
-
-static Common::Point statuesOffsets1[kBagPuzzleNumElements] = {
-	Common::Point(519, 282),
-	Common::Point(571, 276),
-	Common::Point(528, 225),
-	Common::Point(547, 225),
-	Common::Point(518, 159),
-	Common::Point(500, 161),
-	Common::Point(563, 173),
-	Common::Point(471, 132),
-	Common::Point(565, 193),
-	Common::Point(539, 107)
-};
-
-static Common::Point statueBrokenPiecesOffsets[kBagPuzzleNumElements] = {
-	Common::Point(461, 395),
-	Common::Point(339, 358),
-	Common::Point(590, 356),
-	Common::Point(298, 415),
-	Common::Point(517, 407),
-	Common::Point(582, 453),
-	Common::Point(381, 362),
-	Common::Point(483, 357),
-	Common::Point(426, 360),
-	Common::Point(406, 307)
-};
-
-static Common::Point statuePieceHotspot[kBagPuzzleNumElements] = {
-	Common::Point(26, 28),
-	Common::Point(15, 30),
-	Common::Point(11, 24),
-	Common::Point(15, 25),
-	Common::Point(23, 26),
-	Common::Point(13, 10),
-	Common::Point(10, 13),
-	Common::Point(20, 24),
-	Common::Point(25, 35),
-	Common::Point(24, 32)
-};
-
-static const char *statuePieceNames[kBagPuzzleNumElements] = {
-	"LowerLeg1",
-	"LowerLeg2",
-	"UpperLeg1",
-	"UpperLeg2",
-	"Torso",
-	"UpperArm1",
-	"UpperArm2",
-	"LowerArm1",
-	"LowerArm2",
-	"Head"
 };
 
 static const char *fatesHotzoneNames[kNumFates] = {
@@ -196,19 +144,6 @@ static const char *itemNames[] = {
 	"bag",
 	"helmet",
 	"sandals"
-};
-
-static const int statuePiecesDepMap[kBagPuzzleNumElements][2] = {
-	{ -1, -1 },
-	{ -1, -1 },
-	{  0, -1 },
-	{  1, -1 },
-	{  2,  3 },
-	{  4, -1 },
-	{  4, -1 },
-	{  5, -1 },
-	{  6, -1 },
-	{  4, -1 }
 };
 
 static const struct {
@@ -290,12 +225,12 @@ public:
 		Persistent *persistent = g_vm->getPersistent();
 		Quest quest = persistent->_quest;
 
-		for (int i = 0; i < kBagPuzzleNumElements; i++) {
-			if (name == Common::String("D") + statuePieceNames[i]) {
+		for (int i = 0; i < ARRAYSIZE(statuePieces); i++) {
+			if (name == Common::String("D") + statuePieces[i].name) {
 				statueDClick(i);
 				return;
 			}
-			if (name == Common::String("S") + statuePieceNames[i]) {
+			if (name == Common::String("S") + statuePieces[i].name) {
 				statueSClick(i);
 				return;
 			}
@@ -914,7 +849,7 @@ TODO (medusa quest):
 			room->enableHotzone("FatesLair");
 
 		if (quest == kMedusaQuest && persistent->_medisleBagPuzzleState == 2) {
-			for (int i = 0; i < kBagPuzzleNumElements; i++) {
+			for (int i = 0; i < ARRAYSIZE(statuePieces); i++) {
 				_statueState[i] = true;
 			}
 			renderStatue();
@@ -923,7 +858,7 @@ TODO (medusa quest):
 		} else if (quest == kMedusaQuest && persistent->_medisleBagPuzzleState == 1) {
 			startBagPuzzle();
 		} else {
-			for (int i = 0; i < kBagPuzzleNumElements; i++) {
+			for (int i = 0; i < ARRAYSIZE(statuePieces); i++) {
 				_statueState[i] = true;
 			}
 			renderStatue();
@@ -1152,25 +1087,25 @@ private:
 
 	void renderStatue() {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
-		for (int i = 0; i < kBagPuzzleNumElements; i++) {
+		for (int i = 0; i < ARRAYSIZE(statuePieces); i++) {
 			if (_statueState[i]) {
-				room->stopAnim(statueEmptyElements[i]);
-				room->selectFrame(statueFullElements[i], statuesZvals1[i], 0, statuesOffsets1[i]);
-				room->disableHotzone(Common::String("D") + statuePieceNames[i]);
+				room->stopAnim(statuePieces[i].emptyElement);
+				room->selectFrame(statuePieces[i].fullElement, statuePieces[i].statuez, 0, statuePieces[i].getStatueOffset());
+				room->disableHotzone(Common::String("D") + statuePieces[i].name);
 			} else if (_statueDrag == i) {
-				room->stopAnim(statueFullElements[i]);
-				room->selectFrame(statueEmptyElements[i], statuesZvals1[i], 0, statuesOffsets1[i]);
-				room->disableHotzone(Common::String("D") + statuePieceNames[i]);
+				room->stopAnim(statuePieces[i].fullElement);
+				room->selectFrame(statuePieces[i].emptyElement, statuePieces[i].statuez, 0, statuePieces[i].getStatueOffset());
+				room->disableHotzone(Common::String("D") + statuePieces[i].name);
 			} else {
-				room->selectFrame(statueEmptyElements[i], statuesZvals1[i], 0, statuesOffsets1[i]);
-				room->selectFrame(statueFullElements[i], kStatuesZVal2, 0, statueBrokenPiecesOffsets[i]);
-				room->enableHotzone(Common::String("D") + statuePieceNames[i]);
-				room->setHotZoneOffset(Common::String("D") + statuePieceNames[i], statueBrokenPiecesOffsets[i]);
+				room->selectFrame(statuePieces[i].emptyElement, statuePieces[i].statuez, 0, statuePieces[i].getStatueOffset());
+				room->selectFrame(statuePieces[i].fullElement, kStatuesZVal2, 0, statuePieces[i].getBrokenOffset());
+				room->enableHotzone(Common::String("D") + statuePieces[i].name);
+				room->setHotZoneOffset(Common::String("D") + statuePieces[i].name, statuePieces[i].getBrokenOffset());
 			}
 		}
 
 		if (_statueDrag >= 0) {
-			room->drag(statueFullElements[_statueDrag], 0, statuePieceHotspot[_statueDrag]);
+			room->drag(statuePieces[_statueDrag].fullElement, 0, statuePieces[_statueDrag].getHotspot());
 			room->setPannable(false);
 		} else {
 			room->clearDrag();
@@ -1180,13 +1115,13 @@ private:
 
 	void startBagPuzzle() {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
-		for (int i = 0; i < kBagPuzzleNumElements; i++) {
+		for (int i = 0; i < ARRAYSIZE(statuePieces); i++) {
 			_statueState[i] = false;
 		}
 		renderStatue();
-		for (int i = 0; i < kBagPuzzleNumElements; i++) {
-			room->enableHotzone(Common::String("D") + statuePieceNames[i]);
-			room->enableHotzone(Common::String("S") + statuePieceNames[i]);
+		for (int i = 0; i < ARRAYSIZE(statuePieces); i++) {
+			room->enableHotzone(Common::String("D") + statuePieces[i].name);
+			room->enableHotzone(Common::String("S") + statuePieces[i].name);
 		}
 	}
 
@@ -1197,11 +1132,11 @@ private:
 	}
 
 	bool checkDep(int pieceNum) {
-		if (statuePiecesDepMap[pieceNum][0] >= 0
-		    && !_statueState[statuePiecesDepMap[pieceNum][0]])
+		if (statuePieces[pieceNum].dep1 >= 0
+		    && !_statueState[statuePieces[pieceNum].dep1])
 			return false;
-		if (statuePiecesDepMap[pieceNum][1] >= 0
-		    && !_statueState[statuePiecesDepMap[pieceNum][1]])
+		if (statuePieces[pieceNum].dep2 >= 0
+		    && !_statueState[statuePieces[pieceNum].dep2])
 			return false;
 		return true;
 	}
@@ -1222,7 +1157,7 @@ private:
 	}
 
 	bool isAllPlaced() {
-		for (int i = 0; i < kBagPuzzleNumElements; i++) {
+		for (int i = 0; i < ARRAYSIZE(statuePieces); i++) {
 			if (!_statueState[i])
 				return false;
 		}
@@ -1235,9 +1170,9 @@ private:
 		room->playAnimLoop("m1270bg0", 500);
 		room->enableHotzone("MagicBag");
 		renderStatue();
-		for (int i = 0; i < kBagPuzzleNumElements; i++) {
-			room->disableHotzone(Common::String("D") + statuePieceNames[i]);
-			room->disableHotzone(Common::String("S") + statuePieceNames[i]);
+		for (int i = 0; i < ARRAYSIZE(statuePieces); i++) {
+			room->disableHotzone(Common::String("D") + statuePieces[i].name);
+			room->disableHotzone(Common::String("S") + statuePieces[i].name);
 		}
 	}
 
