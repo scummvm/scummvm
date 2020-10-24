@@ -1070,8 +1070,8 @@ TODO:
 			if (quest != kCreteQuest && quest != kTroyQuest)
 				toughGuyPosition = 1;
 			else
-				toughGuyPosition = g_vm->getRnd().getRandomNumberRng(0, 1);
-			womanSmellPosition = g_vm->getRnd().getRandomNumberRng(0, 1);
+				toughGuyPosition = g_vm->getRnd().getRandomBit();
+			womanSmellPosition = g_vm->getRnd().getRandomBit();
 			break;
 		case 6:
 			showWomanGraffiti = true;
@@ -1079,7 +1079,7 @@ TODO:
 			if (quest != kCreteQuest && quest != kTroyQuest)
 				toughGuyPosition = 1;
 			else 
-				toughGuyPosition = g_vm->getRnd().getRandomNumberRng(0, 1);
+				toughGuyPosition = g_vm->getRnd().getRandomBit();
 			break;
 		case 7:
 			womanSmellPosition = g_vm->getRnd().getRandomNumberRng(0, 2);
@@ -1400,7 +1400,7 @@ private:
 	}
 
 	bool randomBool() const {
-		return g_vm->getRnd().getRandomNumberRng(0, 1);
+		return g_vm->getRnd().getRandomBit();
 	}
 
 	void renderAtlantisDisks() {

@@ -337,9 +337,9 @@ public:
 		_shrinkLevel = 0;
 		_hadesCancelableVideo = false;
 		memset(_frames, 0, sizeof (_frames));
-		_hades_dislike_counter = g_vm->getRnd().getRandomNumberRng(0, 1);
-		_hades_like_counter = g_vm->getRnd().getRandomNumberRng(0, 1);
-		_naggingCounter = g_vm->getRnd().getRandomNumberRng(0, 1);
+		_hades_dislike_counter = g_vm->getRnd().getRandomBit();
+		_hades_like_counter = g_vm->getRnd().getRandomBit();
+		_naggingCounter = g_vm->getRnd().getRandomBit();
 		g_vm->addTimer(kHadesNagging, 5000, -1);
 		_rightAnswerCount = 0;
 		_wrongAnswerCount = 0;

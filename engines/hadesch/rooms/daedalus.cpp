@@ -145,7 +145,7 @@ public:
 				playDaedalusVideo("daedalus exclaims", 13008, Common::Point(0, 2));
 			else {
 				// Original goes to event 4009
-				if (g_vm->getRnd().getRandomNumberRng(0, 1))
+				if (g_vm->getRnd().getRandomBit())
 					playDaedalusVideo("daedalus congrats 1", 4009, Common::Point(70, 30));
 				else
 					playDaedalusVideo("daedalus congrats 2", 4009, Common::Point(68, 32));

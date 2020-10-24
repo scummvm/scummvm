@@ -669,7 +669,7 @@ TODO (medusa quest):
 
 			if (!showFate(fate) && fate == kLachesis) {
 				room->playSound(
-					g_vm->getRnd().getRandomNumberRng(0, 1) ? "m2160wb0" : "m2160wa0", 11616);
+					g_vm->getRnd().getRandomBit() ? "m2160wb0" : "m2160wa0", 11616);
 				break;
 			}
 
@@ -689,7 +689,7 @@ TODO (medusa quest):
 					break;
 				}
 
-				int off = variants == 1 ? 0 : g_vm->getRnd().getRandomNumberRng(0, 1);
+				int off = variants == 1 ? 0 : g_vm->getRnd().getRandomBit();
 
 				FateId moveTo = kLachesis;
 				int j = 0;
@@ -710,7 +710,7 @@ TODO (medusa quest):
 			switch (fate) {
 			case kLachesis:
 				room->stopAnim("m2140od0");
-				if (g_vm->getRnd().getRandomNumberRng(0, 1)) {
+				if (g_vm->getRnd().getRandomBit()) {
 					room->playAnimWithSound("m2140ba0", "m2140ea0", 1500,
 								PlayAnimParams::disappear(), 11617, kOffsetRightRoom);
 				} else {
@@ -1189,7 +1189,7 @@ private:
 	}
 
 	void playFatesLairBackupSound() {
-		if (g_vm->getRnd().getRandomNumberRng(0, 1))
+		if (g_vm->getRnd().getRandomBit())
 			fatesShadowSound("m2190wb0", 11629);
 		else
 			fatesShadowSound("m2190wd0", 11630);

@@ -539,6 +539,7 @@ public:
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		Persistent *persistent = g_vm->getPersistent();
 		Quest quest = persistent->_quest;
+		Common::RandomSource &rnd = g_vm->getRnd();
 		room->loadHotZones("troy.HOT", false);
 		room->addStaticLayer("t1010pa0", kBackgroundZ);
 		room->setPannable(true);
@@ -581,9 +582,9 @@ public:
 				room->disableMouse();
 				showIdleOdysseus();
 			}
-			_soldier1IsCrazy = randomBool();
-			_soldier2IsCrazy = randomBool();
-			_soldier3IsCrazy = randomBool();
+			_soldier1IsCrazy = rnd.getRandomBit();
+			_soldier2IsCrazy = rnd.getRandomBit();
+			_soldier3IsCrazy = rnd.getRandomBit();
 			room->addStaticLayer("t1010pd0", 121, Common::Point(712, 187));
 			room->setLayerParallax("t1010pd0", -160);
 			soldiersDisplay();
@@ -630,7 +631,7 @@ public:
 			room->selectFrame("t2070bb0", kMenelausZ, 0, kOffsetRightRoom);
 
 			room->selectFrame(Common::String::format("t2010o%c0",
-								 g_vm->getRnd().getRandomNumberRng('g', 'i')),
+								 rnd.getRandomNumberRng('g', 'i')),
 					  141, 0, kOffsetRightRoom);
 
 			if (!persistent->_troyMessageIsDelivered) {
@@ -755,10 +756,6 @@ private:
 		} else {
 			room->selectFrame("t1010of0", 421, 0);
 		}
-	}
-
-	bool randomBool() const {
-		return g_vm->getRnd().getRandomNumberRng(0, 1);
 	}
 
 	void soldiersDisplay() {

@@ -161,19 +161,20 @@ FlightPosition Bird::getFlightPosition(double t) {
 }
 
 void Bird::makeFlightParams() {
+	Common::RandomSource &rnd = g_vm->getRnd();
 	_startPos = Common::Point(
-		g_vm->getRnd().getRandomNumberRng(250, 350),
-		g_vm->getRnd().getRandomNumberRng(160, 310));
+		rnd.getRandomNumberRng(250, 350),
+		rnd.getRandomNumberRng(160, 310));
 
-	if (g_vm->getRnd().getRandomNumberRng(0, 1)) {
+	if (rnd.getRandomBit()) {
 		_targetPos = Common::Point(
-			650, g_vm->getRnd().getRandomNumberRng(100, 300));
+			650, rnd.getRandomNumberRng(100, 300));
 		_field84 = 1;
-		_birdType = g_vm->getRnd().getRandomNumberRng(0, 3);
+		_birdType = rnd.getRandomNumberRng(0, 3);
 	} else {
-		_targetPos = Common::Point(-50, g_vm->getRnd().getRandomNumberRng(100, 300));
+		_targetPos = Common::Point(-50, rnd.getRandomNumberRng(100, 300));
 		_field84 = -1;
-		_birdType = 4 + g_vm->getRnd().getRandomNumberRng(0, 3);
+		_birdType = 4 + rnd.getRandomNumberRng(0, 3);
 	}
 
 	int _flightLengthFrames;
@@ -186,11 +187,11 @@ void Bird::makeFlightParams() {
 	_flightLengthMs = _flightLengthFrames * 100;
 		
 	_attractor1 = Common::Point(
-		g_vm->getRnd().getRandomNumberRngSigned(-600, 600),
-		g_vm->getRnd().getRandomNumberRngSigned(-600, 600));
+		rnd.getRandomNumberRngSigned(-600, 600),
+		rnd.getRandomNumberRngSigned(-600, 600));
 	_attractor2 = Common::Point(
-		g_vm->getRnd().getRandomNumberRngSigned(-600, 600),
-		g_vm->getRnd().getRandomNumberRngSigned(-600, 600));
+		rnd.getRandomNumberRngSigned(-600, 600),
+		rnd.getRandomNumberRngSigned(-600, 600));
 
 	unsigned lastGoodShootFrame = 11;
 	for (; (int) lastGoodShootFrame < _flightLengthFrames; lastGoodShootFrame++) {
@@ -199,7 +200,7 @@ void Bird::makeFlightParams() {
 			break;
 	}
 	lastGoodShootFrame--;
-	_flightShootAnimFrame = g_vm->getRnd().getRandomNumberRng(10, lastGoodShootFrame);
+	_flightShootAnimFrame = rnd.getRandomNumberRng(10, lastGoodShootFrame);
 	_flightShootProjectileFrame = _flightShootAnimFrame + birdInfo[_birdType]._projectileFrame;
 	_flightShootEndFrame = _flightShootAnimFrame + (birdInfo[_birdType]._projectileFrame == 6 ? 13 : 18);
 	_hasShot = false;
