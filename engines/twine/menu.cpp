@@ -474,7 +474,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			case kAgressiveMode:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
 					_engine->cfgfile.AutoAgressive = !_engine->cfgfile.AutoAgressive;
-					// TODO: set into actor
+					_engine->_actor->autoAgressive = _engine->cfgfile.AutoAgressive;
 				}
 				break;
 			case kPolygonDetails:
