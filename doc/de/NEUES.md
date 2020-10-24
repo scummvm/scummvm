@@ -9,6 +9,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Escape from Monkey Island hinzugefügt.
    - Unterstützung für The Longest Journey hinzugefügt.
    - Unterstützung für Myst 3: Exile hinzugefügt.
+   - Unterstützung für Hades' Challenge hinzugefügt.
 
  Allgemein:
    - Die ScummVM-Benutzeroberfläche unterstützt nun UTF-32.
