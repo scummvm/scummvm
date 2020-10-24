@@ -62,6 +62,8 @@ static const int16 FIRESOUND_7[] = { 0x48, 0x5 };
 static const int16 FIRESHAPE_3[] = { 0x326, 0x320, 0x321 };
 static const int16 FIRESHAPE_10[] = { 0x31c, 0x31f, 0x322 };
 
+#define RANDOM_ELEM(array) (array[getRandom() % ARRAYSIZE(array)])
+
 void FireType::makeBulletSplashShapeAndPlaySound(int32 x, int32 y, int32 z) const {
 	int16 sfxno = 0;
 	int16 shape = 0;
@@ -71,15 +73,15 @@ void FireType::makeBulletSplashShapeAndPlaySound(int32 x, int32 y, int32 z) cons
 		case 1:
 		case 0xb:
 			shape = 0x1d8;
-			sfxno = FIRESOUND_1[getRandom() % 6];
+			sfxno = RANDOM_ELEM(FIRESOUND_1);
 			break;
 		case 2:
 			shape = 0x1d8;
 			break;
 		case 3:
 		case 4:
-			shape = FIRESHAPE_3[getRandom() % 3];
-			sfxno = FIRESOUND_3[getRandom() % 3];
+			shape = RANDOM_ELEM(FIRESHAPE_3);
+			sfxno = RANDOM_ELEM(FIRESOUND_3);
 			break;
 		case 5:
 			shape = 0x573;
@@ -89,22 +91,22 @@ void FireType::makeBulletSplashShapeAndPlaySound(int32 x, int32 y, int32 z) cons
 			break;
 		case 7:
 			shape = 0x537;
-			sfxno = FIRESOUND_7[getRandom() % 2];
+			sfxno = RANDOM_ELEM(FIRESOUND_7);
 			break;
 		case 10:
-			shape = FIRESHAPE_10[getRandom() % 3];
-			sfxno = FIRESOUND_3[getRandom() % 3];
+			shape = RANDOM_ELEM(FIRESHAPE_10);
+			sfxno = RANDOM_ELEM(FIRESOUND_3);
 			break;
 		case 0xd:
 			shape = 0x1d8;
-			sfxno = FIRESOUND_1[getRandom() % 6];
+			sfxno = RANDOM_ELEM(FIRESOUND_1);
 			break;
 		case 0xe:
 			shape = 0x56b;
 			break;
 		case 0xf:
 			shape = 0x59b;
-			sfxno = FIRESOUND_7[getRandom() % 2];
+			sfxno = RANDOM_ELEM(FIRESOUND_7);
 			break;
 		case 9:
 		default:

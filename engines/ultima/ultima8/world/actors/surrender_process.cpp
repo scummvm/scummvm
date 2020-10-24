@@ -45,11 +45,7 @@ static const uint16 SCIENTIST_SUR_SNDS[] = {0xe3, 0xe4, 0xec, 0xf6};
 static const uint16 HARDHAT_SUR_SNDS[] = {0xde, 0xdf, 0x8a, 0x8b};
 static const uint16 FEMALE_SUR_SNDS[] = {0xd6, 0xff, 0xd7};
 
-static const uint16 NUM_SUIT_SUR_SNDS = 5;
-static const uint16 NUM_CHEMSUIT_SUR_SNDS = 4;
-static const uint16 NUM_SCIENTIST_SUR_SNDS = 4;
-static const uint16 NUM_HARDHAT_SUR_SNDS = 4;
-static const uint16 NUM_FEMALE_SUR_SNDS = 3;
+#define RANDOM_ELEM(array) (array[getRandom() % ARRAYSIZE(array)])
 
 SurrenderProcess::SurrenderProcess() : Process(), _playedSound(false) {
 }
@@ -99,19 +95,19 @@ void SurrenderProcess::run() {
 
 	switch (a->getShape()) {
 	case 0x2f7: // suit
-		soundno = SUIT_SUR_SNDS[getRandom() % NUM_SUIT_SUR_SNDS];
+		soundno = RANDOM_ELEM(SUIT_SUR_SNDS);
 		break;
 	case 0x2f5: // hardhat
-		soundno = HARDHAT_SUR_SNDS[getRandom() % NUM_HARDHAT_SUR_SNDS];
+		soundno = RANDOM_ELEM(HARDHAT_SUR_SNDS);
 		break;
 	case 0x2f6: // chemsuit
-		soundno = CHEMSUIT_SUR_SNDS[getRandom() % NUM_CHEMSUIT_SUR_SNDS];
+		soundno = RANDOM_ELEM(CHEMSUIT_SUR_SNDS);
 		break;
 	case 0x344: // chemsuit
-		soundno = SCIENTIST_SUR_SNDS[getRandom() % NUM_SCIENTIST_SUR_SNDS];
+		soundno = RANDOM_ELEM(SCIENTIST_SUR_SNDS);
 		break;
 	case 0x597: // female office worker
-		soundno = FEMALE_SUR_SNDS[getRandom() % NUM_FEMALE_SUR_SNDS];
+		soundno = RANDOM_ELEM(FEMALE_SUR_SNDS);
 		break;
 	}
 
