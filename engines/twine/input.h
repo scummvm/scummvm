@@ -195,6 +195,8 @@ public:
 	 */
 	bool toggleActionIfActive(TwinEActionType actionType);
 
+	bool toggleAbortAction();
+
 	/**
 	 * @param onlyFirstTime If this is set to @c true, repeating key press events are not taken into account here
 	 * This means, that even if the key is held down, this will return @c false. @c false as value for this parameter

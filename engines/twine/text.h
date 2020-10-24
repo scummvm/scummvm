@@ -142,7 +142,7 @@ public:
 	int32 printTextVar13 = 0;
 	int32 newGameVar4 = 0;
 	int32 newGameVar5 = 0;
-	int32 hasHiddenVox = 0; // printTextVar5
+	bool hasHiddenVox = false; // printTextVar5
 	int32 voxHiddenIndex = 0;
 	// ---
 
