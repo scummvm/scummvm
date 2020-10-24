@@ -393,7 +393,7 @@ void GameState::processFoundItem(int32 item) {
 		_engine->_redraw->flipRedrawAreas();
 
 		_engine->readKeys();
-		if (_engine->_input->skippedKey) {
+		if (_engine->_input->toggleAbortAction()) {
 			if (!textState) {
 				quitItem = 1;
 			}
