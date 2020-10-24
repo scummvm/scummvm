@@ -311,7 +311,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 			currentFrame++;
 
 			_engine->_system->delayMillis(1000 / flaHeaderData.speed + 1);
-		} while (!_engine->_input->isActionActive(TwinEActionType::CutsceneAbort));
+		} while (!_engine->_input->toggleAbortAction());
 	}
 
 	if (_engine->cfgfile.CrossFade) {
