@@ -49,8 +49,14 @@ namespace TwinE {
 
 #define SAVE_DIR "save/"
 
-GameState::GameState(TwinEEngine *engine) {
-	_engine = engine;
+GameState::GameState(TwinEEngine *engine) : _engine(engine) {
+	Common::fill(&gameFlags[0], &gameFlags[256], 0);
+	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
+	Common::fill(&holomapFlags[0], &holomapFlags[150], 0);
+	playerName[0] = 0;
+	Common::fill(&gameChoices[0], &gameChoices[10], 0);
+	Common::fill(&gameChoicesSettings[0], &gameChoicesSettings[18], 0);
+
 }
 
 void GameState::initEngineProjections() {

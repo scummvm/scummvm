@@ -68,7 +68,7 @@ public:
 
 	/** LBA engine game flags to save quest states */
 	// TODO: why not NUM_GAME_FLAGS?
-	uint8 gameFlags[256]{0};
+	uint8 gameFlags[256];
 
 	/** LBA engine chapter */
 	int16 gameChapter = 0;
@@ -99,15 +99,15 @@ public:
 	int16 usingSabre = 0;
 
 	/** Inventory used flags */
-	uint8 inventoryFlags[NUM_INVENTORY_ITEMS]{0};
+	uint8 inventoryFlags[NUM_INVENTORY_ITEMS];
 
-	uint8 holomapFlags[150]{0}; // GV14
+	uint8 holomapFlags[150]; // GV14
 
-	char playerName[30] = "";
+	char playerName[30];
 
-	int32 gameChoices[10]{0};         // inGameMenuData
+	int32 gameChoices[10];         // inGameMenuData
 	int32 numChoices = 0;             // numOfOptionsInChoice
-	int16 gameChoicesSettings[18]{0}; // choiceTab -  same structure as menu settings
+	int16 gameChoicesSettings[18]; // choiceTab -  same structure as menu settings
 	int32 choiceAnswer = 0;           // inGameMenuAnswer
 
 	/** Initialize all engine variables */
