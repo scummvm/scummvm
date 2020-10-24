@@ -32,32 +32,39 @@ enum {
 	kTyphoonZ = 500
 };
 
-static const struct {
+struct TyphoonHeadInfo {
 	const char *_animDie;
 	const char *_animRespawn;
 	const char * _animNormal;
 	const char * _hotZone;
-	Common::Point _position;
+	int _xVal;
+	int _yVal;
 	int _zVal;
-} typhonHeadInfo[] = {
-	{"V7210BO1", "V7210BS1", "V7210BC1", "head00c1", Common::Point(275, 186), 480},
-	{"V7210BO0", "V7210BS0", "V7210BC0", "head01c0", Common::Point(320, 166), 481},
-	{"V7210BO0", "V7210BS0", "V7210BC0", "head02c0", Common::Point(313, 221), 482},
-	{"V7210BO1", "V7210BS1", "V7210BC1", "head03c1", Common::Point(279, 223), 483},
-	{"V7210BP1", "V7210BT1", "V7210BD1", "head04d1", Common::Point(237, 221), 484},
-	{"V7210BP0", "V7210BT0", "V7210BD0", "head05d0", Common::Point(234, 189), 485},
-	{"V7210BP1", "V7210BT1", "V7210BD1", "head06d1", Common::Point(234, 160), 486},
-	{"V7210BP0", "V7210BT0", "V7210BD0", "head07d0", Common::Point(289, 137), 487},
-	{"V7210BO0", "V7210BS0", "V7210BC0", "head08c0", Common::Point(253, 135), 488},
-	{"V7210BP0", "V7210BT0", "V7210BD0", "head09d0", Common::Point(355, 219), 489},
-	{"V7210BP0", "V7210BT0", "V7210BD0", "head10d0", Common::Point(368, 182), 490},
-	{"V7210BP0", "V7210BT0", "V7210BD0", "head11d0", Common::Point(351, 152), 491},
-	{"V7210BP0", "V7210BT0", "V7210BD0", "head12d0", Common::Point(329, 126), 492},
-	{"V7210BO0", "V7210BS0", "V7210BC0", "head13c0", Common::Point(289,  99), 493},
-	{"V7210BP0", "V7210BT0", "V7210BD0", "head14d0", Common::Point(333, 107), 494},
-	{"V7210BO0", "V7210BS0", "V7210BC0", "head15c0", Common::Point(360, 135), 495},
-	{"V7210BO1", "V7210BS1", "V7210BC1", "head16c1", Common::Point(226, 147), 496},
-	{"V7210BP0", "V7210BT0", "V7210BD0", "head17d0", Common::Point(257, 107), 497}
+
+	Common::Point getPosition() const {
+		return Common::Point(_xVal, _yVal);
+	}
+};
+
+static const TyphoonHeadInfo typhonHeadInfo[] = {
+	{"V7210BO1", "V7210BS1", "V7210BC1", "head00c1", 275, 186, 480},
+	{"V7210BO0", "V7210BS0", "V7210BC0", "head01c0", 320, 166, 481},
+	{"V7210BO0", "V7210BS0", "V7210BC0", "head02c0", 313, 221, 482},
+	{"V7210BO1", "V7210BS1", "V7210BC1", "head03c1", 279, 223, 483},
+	{"V7210BP1", "V7210BT1", "V7210BD1", "head04d1", 237, 221, 484},
+	{"V7210BP0", "V7210BT0", "V7210BD0", "head05d0", 234, 189, 485},
+	{"V7210BP1", "V7210BT1", "V7210BD1", "head06d1", 234, 160, 486},
+	{"V7210BP0", "V7210BT0", "V7210BD0", "head07d0", 289, 137, 487},
+	{"V7210BO0", "V7210BS0", "V7210BC0", "head08c0", 253, 135, 488},
+	{"V7210BP0", "V7210BT0", "V7210BD0", "head09d0", 355, 219, 489},
+	{"V7210BP0", "V7210BT0", "V7210BD0", "head10d0", 368, 182, 490},
+	{"V7210BP0", "V7210BT0", "V7210BD0", "head11d0", 351, 152, 491},
+	{"V7210BP0", "V7210BT0", "V7210BD0", "head12d0", 329, 126, 492},
+	{"V7210BO0", "V7210BS0", "V7210BC0", "head13c0", 289,  99, 493},
+	{"V7210BP0", "V7210BT0", "V7210BD0", "head14d0", 333, 107, 494},
+	{"V7210BO0", "V7210BS0", "V7210BC0", "head15c0", 360, 135, 495},
+	{"V7210BO1", "V7210BS1", "V7210BC1", "head16c1", 226, 147, 496},
+	{"V7210BP0", "V7210BT0", "V7210BD0", "head17d0", 257, 107, 497}
 };
 
 Typhoon::Typhoon(Common::SharedPtr<Battleground> battleground) {
@@ -142,7 +149,7 @@ void Typhoon::enterTyphoon(int level) {
 	room->playSound("v7050eb0");
 	for (unsigned i = 0; i < ARRAYSIZE(typhonHeadInfo); i++) {
 		room->enableHotzone(typhonHeadInfo[i]._hotZone);
-		room->setHotZoneOffset(typhonHeadInfo[i]._hotZone, typhonHeadInfo[i]._position);
+		room->setHotZoneOffset(typhonHeadInfo[i]._hotZone, typhonHeadInfo[i].getPosition());
 	}
 	for (unsigned i = 0; i < 6; i++)
 		room->disableHotzone(Common::String::format("Phil%d", i));
@@ -208,7 +215,7 @@ void Typhoon::showHeadNormal(int idx) {
 	hideHead(idx);
 	room->playAnimLoop(LayerId(typhonHeadInfo[idx]._animNormal, idx, "head"),
 			   typhonHeadInfo[idx]._zVal,
-			   typhonHeadInfo[idx]._position);
+			   typhonHeadInfo[idx].getPosition());
 }
 
 // 15103
@@ -245,7 +252,7 @@ public:
 			       typhonHeadInfo[_idx]._zVal,
 			       PlayAnimParams::disappear(),
 			       Common::SharedPtr<EventHandler>(new TyphoonHeadRespawnComplete(_typhoon, _idx)),
-			       typhonHeadInfo[_idx]._position);
+			       typhonHeadInfo[_idx].getPosition());
 	}
 
 	TyphoonHeadRespawnEvent(Common::SharedPtr<Typhoon> typhoon, int idx) {
@@ -309,7 +316,7 @@ void Typhoon::hitTyphoonHead(Common::SharedPtr<Typhoon> backRef, int idx) {
 	room->playAnimKeepLastFrame(LayerId(typhonHeadInfo[idx]._animDie, idx, "head"),
 				    typhonHeadInfo[idx]._zVal,
 				    Common::SharedPtr<EventHandler>(new TyphoonHeadDieAnimFinishedEvent(backRef, idx, _battleground->_level)),
-				    typhonHeadInfo[idx]._position);
+				    typhonHeadInfo[idx].getPosition());
 	room->disableHotzone(typhonHeadInfo[idx]._hotZone);
 	bool isKilled = true;
 	for (unsigned i = 0; i < ARRAYSIZE(_headIsAlive); i++) {
