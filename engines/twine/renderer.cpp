@@ -343,7 +343,7 @@ void Renderer::processTranslatedElement(int32 rotX, int32 rotY, int32 rotZ, elem
 			dest[i] = source[i];
 	}
 
-	applyPointsTranslation(pointsPtr + elemPtr->firstPoint, elemPtr->numOfPoints, &computedPoints[elemPtr->firstPoint / 6], (int *)currentMatrixTableEntry);
+	applyPointsTranslation(pointsPtr + elemPtr->firstPoint, elemPtr->numOfPoints, &computedPoints[elemPtr->firstPoint / 6], (int32 *)currentMatrixTableEntry);
 }
 
 void Renderer::translateGroup(int16 ax, int16 bx, int16 cx) {
@@ -1645,7 +1645,7 @@ void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
 	}
 }
 
-int Renderer::renderIsoModel(int32 X, int32 Y, int32 Z, int32 angleX, int32 angleY, int32 angleZ, uint8 *bodyPtr) { // AffObjetIso
+int32 Renderer::renderIsoModel(int32 X, int32 Y, int32 Z, int32 angleX, int32 angleY, int32 angleZ, uint8 *bodyPtr) { // AffObjetIso
 	uint8 *ptr;
 	int16 bodyHeader;
 
