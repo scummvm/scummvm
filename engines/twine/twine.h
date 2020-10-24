@@ -228,7 +228,6 @@ public:
 
 	int32 loopPressedKey = 0;
 	int32 previousLoopPressedKey = 0;
-	int32 loopCurrentKey = 0;
 	int32 loopInventoryItem = 0;
 	int32 loopActorStep = 0;
 

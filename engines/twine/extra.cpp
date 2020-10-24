@@ -25,6 +25,7 @@
 #include "twine/collision.h"
 #include "twine/gamestate.h"
 #include "twine/grid.h"
+#include "twine/input.h"
 #include "twine/interface.h"
 #include "twine/movements.h"
 #include "twine/redraw.h"
@@ -861,9 +862,9 @@ void Extra::processExtras() {
 				// if hero touch extra
 				if (_engine->_collision->checkExtraCollisionWithActors(extra, -1) == 0) {
 					// FIXME: add constant for sample index
-					_engine->_sound->playSample(97, 0x1000, 1, extra->x, extra->y, extra->z, -1);
+					_engine->_sound->playSample(97, 4096, 1, extra->x, extra->y, extra->z);
 
-					if (extra->info1 > 1 && !(_engine->loopPressedKey & 2)) {
+					if (extra->info1 > 1 && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 						_engine->_renderer->projectPositionOnScreen(extra->x - _engine->_grid->cameraX, extra->y - _engine->_grid->cameraY, extra->z - _engine->_grid->cameraZ);
 						_engine->_redraw->addOverlay(koNumber, extra->info1, _engine->_renderer->projPosX, _engine->_renderer->projPosY, 158, koNormal, 2);
 					}

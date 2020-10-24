@@ -167,8 +167,6 @@ public:
 	int16 internalKeyCode = 0;
 	int16 currentKey = 0;
 	int16 key = 0;
-	int32 heroPressedKey = 0;
-	int32 heroPressedKey2 = 0;
 	int16 leftMouse = 0;
 	int16 rightMouse = 0;
 
