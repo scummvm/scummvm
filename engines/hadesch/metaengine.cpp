@@ -29,7 +29,7 @@
 
 class HadeschMetaEngine : public AdvancedMetaEngine {
 public:
-	bool hasFeature(MetaEngineFeature f) const {
+	bool hasFeature(MetaEngineFeature f) const override {
 		return
 			(f == kSupportsListSaves) ||
 			(f == kSupportsDeleteSave) ||
@@ -40,7 +40,7 @@ public:
 			(f == kSavesUseExtendedFormat);
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc)
 			*engine = new Hadesch::HadeschEngine(syst, desc);
 		
