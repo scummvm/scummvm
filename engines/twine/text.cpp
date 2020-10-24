@@ -594,8 +594,6 @@ int Text::printText10() {
 
 // TODO: refactor this code
 void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
-	int32 skipText = 0;
-
 	ScopedKeyMap scopedKeyMap(_engine, cutsceneKeyMapId);
 
 	_engine->_interface->saveClip();
@@ -631,7 +629,7 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 
 		printTextVar13 = 0;
 
-		if (printedText != 0 || skipText != 0) {
+		if (printedText != 0) {
 			_engine->_interface->loadClip();
 			return;
 		}
