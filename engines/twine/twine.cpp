@@ -68,6 +68,11 @@ namespace TwinE {
 
 TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags)
     : Engine(system), _gameLang(language), _gameFlags(flags), _rnd("twine") {
+	// Add default file directories
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "fla");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "vox");
+
 	setDebugger(new GUI::Debugger());
 	_actor = new Actor(this);
 	_animations = new Animations(this);
