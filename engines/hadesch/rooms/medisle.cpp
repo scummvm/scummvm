@@ -1011,8 +1011,6 @@ private:
 	void enforceEyeConsistency() {
 		Persistent *persistent = g_vm->getPersistent();
 
-		if (persistent->_medisleEyePosition < 0)
-			return;
 		if (showFate(persistent->_medisleEyePosition))
 			return;
 
@@ -1027,7 +1025,7 @@ private:
  		Persistent *persistent = g_vm->getPersistent();
 		static const InventoryItem mapping[3] = {kHelmet, kBag, kSandals};
 
-		if (persistent->_quest != kMedusaQuest || !persistent->_medisleShowFates)
+		if (persistent->_quest != kMedusaQuest || !persistent->_medisleShowFates || fate >= kNumFates)
 			return false;
 
 		InventoryItem mapped = mapping[fate];
