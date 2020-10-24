@@ -358,5 +358,13 @@ static const int kVideoHeight = 480;
 #define kOffsetRightRoom (Common::Point(kVideoWidth, 0))
 #define kZeroPoint (Common::Point(10, 50))
 
+struct PrePoint {
+	int x, y;
+
+	Common::Point get() const {
+		return Common::Point(x, y);
+	}
+};
+
 }
 #endif

@@ -105,26 +105,26 @@ enum {
 	kSandalsPlaced = 1012011
 };
 
-static const Common::Point strongBoxSideDotOffsets[] = {
-	Common::Point(1060, 278),
-	Common::Point(1090, 310),
-	Common::Point(1060, 339),
-	Common::Point(1032, 305)
+static const PrePoint strongBoxSideDotOffsets[] = {
+	{1060, 278},
+	{1090, 310},
+	{1060, 339},
+	{1032, 305}
 };
 
-static const Common::Point strongBoxTileOffsets[] = {
-	Common::Point(1005, 274),
-	Common::Point(1035, 276),
-	Common::Point(1064, 278),
-	Common::Point(1093, 280),
-	Common::Point(1005, 304),
-	Common::Point(1035, 306),
-	Common::Point(1064, 308),
-	Common::Point(1093, 310),
-	Common::Point(1035, 246),
-	Common::Point(1064, 248),
-	Common::Point(1035, 337),
-	Common::Point(1064, 339)
+static const PrePoint strongBoxTileOffsets[] = {
+	{1005, 274},
+	{1035, 276},
+	{1064, 278},
+	{1093, 280},
+	{1005, 304},
+	{1035, 306},
+	{1064, 308},
+	{1093, 310},
+	{1035, 246},
+	{1064, 248},
+	{1035, 337},
+	{1064, 339}
 };
 
 static const int baseFrame[4][8] = {
@@ -162,10 +162,10 @@ public:
 			_position = _nextPosition;
 			_nextPosition = -1;
 		}
-		Common::Point pos = strongBoxTileOffsets[_position];
+		Common::Point pos = strongBoxTileOffsets[_position].get();
 		if (_nextPosition != -1) {
 			double frac = (g_vm->getCurrentTime() - _movementStartTime + 0.0) / kTileMovementTime;
-			pos = strongBoxTileOffsets[_position] * (1-frac) + strongBoxTileOffsets[_nextPosition] * frac;
+			pos = strongBoxTileOffsets[_position].get() * (1-frac) + strongBoxTileOffsets[_nextPosition].get() * frac;
 		}
 		int zVal = 500;
 		switch (_rotationPhase) {
@@ -1497,7 +1497,7 @@ private:
 			room->selectFrame(LayerId("r2010om1", 0, "center"), 400, 0, Common::Point(1060, 308));
 			for (int i = 0; i < 4; i++) {
 				room->selectFrame(LayerId("r2010om1", i, "side"), 400, 1,
-						  strongBoxSideDotOffsets[i]);
+						  strongBoxSideDotOffsets[i].get());
 			}
 			{
 				bool wasMoving = strongBoxIsBusy();
@@ -1514,7 +1514,7 @@ private:
 			room->selectFrame(LayerId("r2010om1", 0, "center"), 400, 0, Common::Point(1060, 308));
 			for (int i = 0; i < 4; i++) {
 				room->selectFrame(LayerId("r2010om1", i, "side"), 400, 1,
-						  strongBoxSideDotOffsets[i]);
+						  strongBoxSideDotOffsets[i].get());
 			}
 			for (int i = 0; i < 12; i++) {
 				_strongBoxTiles[i].show();

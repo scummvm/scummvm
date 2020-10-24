@@ -34,39 +34,39 @@ enum {
 	kCyclopsZ = 500
 };
 
-static const Common::Point cyclopsEyePositions[21] = {
-	Common::Point(247, 175),
-	Common::Point(235, 187),
-	Common::Point(227, 183),
-	Common::Point(221, 178),
-	Common::Point(220, 170),
-	Common::Point(230, 168),
-	Common::Point(230, 168),
-	Common::Point(224, 170),
-	Common::Point(0, 0),
-	Common::Point(0, 0),
-	Common::Point(0, 0),
-	Common::Point(281, 175),
-	Common::Point(282, 170),
-	Common::Point(282, 170),
-	Common::Point(284, 175),
-	Common::Point(270, 178),
-	Common::Point(257, 179),
-	Common::Point(250, 176),
-	Common::Point(249, 176),
-	Common::Point(248, 176),
-	Common::Point(246, 176)
+static const PrePoint cyclopsEyePositions[21] = {
+	{247, 175},
+	{235, 187},
+	{227, 183},
+	{221, 178},
+	{220, 170},
+	{230, 168},
+	{230, 168},
+	{224, 170},
+	{0, 0},
+	{0, 0},
+	{0, 0},
+	{281, 175},
+	{282, 170},
+	{282, 170},
+	{284, 175},
+	{270, 178},
+	{257, 179},
+	{250, 176},
+	{249, 176},
+	{248, 176},
+	{246, 176}
 };
 
-static const Common::Point cyclopsEyePositionsBA0[8] = {
-	Common::Point(246, 176),
-	Common::Point(248, 174),
-	Common::Point(249, 166),
-	Common::Point(248, 171),
-	Common::Point(0, 0),
-	Common::Point(241, 183),
-	Common::Point(244, 181),
-	Common::Point(246, 176)
+static const PrePoint cyclopsEyePositionsBA0[8] = {
+	{246, 176},
+	{248, 174},
+	{249, 166},
+	{248, 171},
+	{0, 0},
+	{241, 183},
+	{244, 181},
+	{246, 176}
 };
 
 void Cyclops::handleClick(Common::Point p) {
@@ -95,15 +95,15 @@ void Cyclops::handleClick(Common::Point p) {
 }
 
 bool Cyclops::cyclopsIsHit(Common::Point p, int frame) {
-	if (frame < 0 || frame >= ARRAYSIZE(cyclopsEyePositions) || cyclopsEyePositions[frame] == Common::Point(0, 0))
+	if (frame < 0 || frame >= ARRAYSIZE(cyclopsEyePositions) || cyclopsEyePositions[frame].get() == Common::Point(0, 0))
 		return false;
-	return cyclopsEyePositions[frame].sqrDist(p) <= getSquareOfPrecision();
+	return cyclopsEyePositions[frame].get().sqrDist(p) <= getSquareOfPrecision();
 }
 
 bool Cyclops::cyclopsIsHitBA0(Common::Point p, int frame) {
-	if (frame < 0 || frame >= ARRAYSIZE(cyclopsEyePositionsBA0) || cyclopsEyePositionsBA0[frame] == Common::Point(0, 0))
+	if (frame < 0 || frame >= ARRAYSIZE(cyclopsEyePositionsBA0) || cyclopsEyePositionsBA0[frame].get() == Common::Point(0, 0))
 		return false;
-	return cyclopsEyePositionsBA0[frame].sqrDist(p) <= getSquareOfPrecision();
+	return cyclopsEyePositionsBA0[frame].get().sqrDist(p) <= getSquareOfPrecision();
 }
 
 unsigned Cyclops::getSquareOfPrecision() {
