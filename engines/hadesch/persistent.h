@@ -85,13 +85,14 @@ struct Persistent {
 	bool _creteIntroAtlantisBoat;
 	bool _creteIntroAtlantisWood;
 	bool _creteAlchemistExploded;
-	enum {
+	enum CreteSandalsState {
 		SANDALS_NOT_SOLVED,
 		SANDALS_SOLVED,
 		SANDALS_TAKEN
 	} _creteSandalsState;
-	enum { BOX_CLOSED, BOX_OPEN,
-	       BOX_OPEN_POTION, BOX_OPEN_NO_POTION } _creteStrongBoxState;
+	enum CreteStrongBoxState {
+	    BOX_CLOSED, BOX_OPEN,
+	    BOX_OPEN_POTION, BOX_OPEN_NO_POTION } _creteStrongBoxState;
 	bool _cretePlayedPhilAlchemist;
 	bool _cretePlayedZeusCheckOutThatBox;
 	bool _creteHadesPusnishesPainAndPanic;
@@ -123,7 +124,7 @@ struct Persistent {
 	bool _medisleShowFatesIntro;
 	bool _medisleEyeballIsActive;
 	FateId _medisleEyePosition;
-	enum {
+	enum MedisleBagPuzzleState {
 		BAG_NOT_STARTED,
 		BAG_STARTED,
 		BAG_SOLVED,
@@ -138,7 +139,7 @@ struct Persistent {
 	bool _troyIsDefeated;
 	bool _troyPlayOdysseus;
 	bool _troyMessageIsDelivered;
-	enum {
+	enum TroyKeyAndDecreeState {
 		KEY_AND_DECREE_NOT_GIVEN,
 		KEY_AND_DECREE_THROWN,
 		KEY_AND_DECREE_TAKEN
@@ -159,7 +160,7 @@ struct Persistent {
 	// Volcano
 	bool _volcanoPainAndPanicIntroDone;
 	bool _volcanoHeyKid;
-	enum {
+	enum VolcanoPuzzleState {
 		VOLCANO_NO_BOULDERS_THROWN,
 		VOLCANO_SQUASHED_PANIC,
 		VOLCANO_BOULDER_ON_VOLCANO,
