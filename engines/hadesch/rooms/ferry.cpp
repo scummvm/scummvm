@@ -60,7 +60,7 @@ enum {
 	kDog            = 1 << 26
 };
 
-static const struct {
+struct ShadowInfo {
 	const char *image;
 	const char *nameImage;
 	const char *name;
@@ -68,103 +68,120 @@ static const struct {
 	int priorityleft;
 	int priorityright;
 	int attributes;
-	Common::Point waitBubble;
-	Common::Point starboardBubble;
-	Common::Point portBubble;
+	int waitBubbleX;
+	int waitBubbleY;
+	int starboardBubbleX;
+	int starboardBubbleY;
+	int portBubbleX;
+	int portBubbleY;
 	int portFrame;
 	int starboardFrame;
 	const char *animSound;
 	int animPlayCount;
-} shadows[] = {
+
+	Common::Point getWaitBubblePos() const {
+		return Common::Point(waitBubbleX, waitBubbleY);
+	}
+
+	Common::Point getPortBubblePos() const {
+		return Common::Point(portBubbleX, portBubbleY);
+	}
+
+	Common::Point getStarboardBubblePos() const {
+		return Common::Point(starboardBubbleX, starboardBubbleY);
+	}
+};
+
+static const ShadowInfo shadows[] = {
 	{
 	 "xxxxxxxx", ""        , "Chariot Wheel Guy" ,   0,  0, 0   , kHuman   | kFlat | kCrushed,
-	 Common::Point(0, 0), Common::Point(0, 0), Common::Point(0, 0), 2, 3,
+	 0, 0, 0, 0, 0, 0, 2, 3,
 	 nullptr, 0
 	},
 	{"V9070bD0", "V9520tD0", "Chariot Wheel Dog" ,  40, 20, 5   , kAnimal  | kFlat | kCrushed | kDog,
-	 Common::Point(113, 177), Common::Point(66, 134), Common::Point(106, 176), 16, 32,
+	 113, 177, 66, 134, 106, 176, 16, 32,
 	 nullptr, 0
 	},
 	{"V9070bE0", "V9520tE0", "Drowned Guy"       ,   0, 10, 15  , kHuman   | kWet | kDrownedGuy,
-	 Common::Point(124, 84), Common::Point(78, 67), Common::Point(104, 80), 19, 35,
+	 124, 84, 78, 67, 104, 80, 19, 35,
 	 "V9070eE0", 1
 	},
 	{"V9070bI0", "V9520tI0", "Holey Guy"         ,   0, 15, 20  , kHuman   | kPierced | kWeaponInjury | kWithHoles,
-	 Common::Point(84, 107), Common::Point(68, 66), Common::Point(92, 100), 6, 13,
+	 84, 107, 68, 66, 92, 100, 6, 13,
 	 nullptr, 0
 	},
 	{"V9070bP0", "V9520tO0", "Cyclops"           ,  14, 50, 50  , kMonster | kPierced | kWeaponInjury | kHeadInjury | kCrushed | kTwoHeaded,
-	 Common::Point(77, 64), Common::Point(73, 72), Common::Point(63, 68), 14, 33,
+	 77, 64, 73, 72, 63, 68, 14, 33,
 	 nullptr, 0
 	},
 	{"V9070bM0", "V9520tM0", "Toasted Guy"       , -13, 40, 50  , kHuman   | kSmoking | kHot,
-	 Common::Point(115, 89), Common::Point(78, 71), Common::Point(104, 73), 14, 28,
+	 115, 89, 78, 71, 104, 73, 14, 28,
 	 nullptr, 0
 	},
 	{"V9070bJ0", "V9520tJ0", "Minotaur"          ,   0, 25, 20  , kMonster | kHorned,
-	 Common::Point(111, 100), Common::Point(63, 79), Common::Point(106, 111), 12, 45,
+	 111, 100, 63, 79, 106, 111, 12, 45,
 	 nullptr, 0
 	},
 	{"V9070bA0", "V9520tA0", "Ball Chain Monster",   0, 20, 20  , kMonster | kWeaponInjury | kHeadInjury | kHeadless,
-	 Common::Point(79, 92), Common::Point(85, 91), Common::Point(83, 102), 13, 26,
+	 79, 92, 85, 91, 83, 102, 13, 26,
 	 nullptr, 0
 	},
 	{"V9070bL0", "V9520tL0", "Snake Man"         ,   0, 25, 40  , kHuman   | kAnimal | kCrushed | kSnakeKilled,
-	 Common::Point(82, 65), Common::Point(93, 62), Common::Point(74, 45), 4, 8,
+	 82, 65, 93, 62, 74, 45, 4, 8,
 	 "V9070eL0", 3
 	},
 	{"xxxxxxxx", ""	       , "Arrow Guy"         ,   0,  0, 0   , kHuman   | kPierced | kWeaponInjury,
-	 Common::Point(0, 0), Common::Point(0, 0), Common::Point(0, 0), 0, 0,
+	 0, 0, 0, 0, 0, 0, 0, 0,
 	 nullptr, 0 },
 	// 10
 	{"V9070bC0", "V9520tC0", "Choked Dog"        ,  46, 30, 5   , kAnimal  | kDog | kChokedDog,
-	 Common::Point(97, 91), Common::Point(83, 85), Common::Point(81, 85), 11, 22,
+	 97, 91, 83, 85, 81, 85, 11, 22,
 	 "V9070eC0", 2
 	},
 	{"V9070bK0", "V9520tK0", "Mounted Aries"     ,  23, 35, 40  , kAnimal  | kHeadInjury | kHorned,
-	 Common::Point(121, 62), Common::Point(75, 54), Common::Point(113, 52), 6, 12,
+	 121, 62, 75, 54, 113, 52, 6, 12,
 	 "V9070eK0", 1
 	},
 	{"V9070bF0", "V9520tF0", "Flat Cat"          ,  43, 40, 5   , kAnimal  | kFlat | kCrushed | kCat,
-	 Common::Point(75, 142), Common::Point(72, 142), Common::Point(72, 142), 5, 19,
+	 75, 142, 72, 142, 72, 142, 5, 19,
 	 nullptr, 0
 	},
 	{"V9070bH0", "V9520tH0", "Headless Guy"      , -14,  5, 15  , kHuman   | kDismembered | kWeaponInjury | kHeadInjury | kHeadless,
-	 Common::Point(110, 119), Common::Point(50, 98), Common::Point(115, 117), 26, 52,
+	 110, 119, 50, 98, 115, 117, 26, 52,
 	 nullptr, 0
 	},
 	{"V9070bG0", "V9520tG0", "Frozen Guy"        ,   0, 15, 40  , kHuman   | kCold | kWet | kFrozen,
-	 Common::Point(71, 67), Common::Point(91, 80), Common::Point(74, 58), 9, 18,
+	 71, 67, 91, 80, 74, 58, 9, 18,
 	 "V9070eG0", 2
 	},
 	// 15
 	{"xxxxxxxx", ""	       , "Caesar"            ,   0,  0, 0   , kHuman   | kPierced | kWeaponInjury,
-	 Common::Point(0, 0), Common::Point(0, 0), Common::Point(0, 0), 0, 0,
+	 0, 0, 0, 0, 0, 0, 0, 0,
 	 nullptr, 0 },
 	{"V9070bN0", "V9520tN0", "Trident Guy"       ,   9,  5, 10  , kHuman   | kPierced | kWeaponInjury | kHeadInjury | kTridentInjured,
-	 Common::Point(89, 91), Common::Point(81, 88), Common::Point(94, 88), 5, 10,
+	 89, 91, 81, 88, 94, 88, 5, 10,
 	 nullptr, 0
 	},
 	{"xxxxxxxx", ""	       , "BeeSting Guy"      ,   0,  0, 0   , kHuman   | kPierced,
-	 Common::Point(0, 0), Common::Point(0, 0), Common::Point(0, 0), 0, 0,
+	 0, 0, 0, 0, 0, 0, 0, 0,
 	 nullptr, 0 },
 	{"xxxxxxxx", ""	       , "Half Man"          ,   0,  0, 0   , kHuman   | kDismembered,
-	 Common::Point(0, 0), Common::Point(0, 0), Common::Point(0, 0), 0, 0,
+	 0, 0, 0, 0, 0, 0, 0, 0,
 	 nullptr, 0 },
 	{"V9070bQ0", "V9520tP0", "Toasted Cat"       ,  41, 45, 5   , kAnimal  | kSmoking | kHot | kCat,
-	 Common::Point(111, 158), Common::Point(59, 135), Common::Point(105, 161), 6, 12,
+	 111, 158, 59, 135, 105, 161, 6, 12,
 	 "V9070eQ0", 3
 	},
 	// 20
 	{"V9070bR0", "V9520tQ0", "Pillar Guy"        ,   0, 15, 10  , kHuman   | kFlat | kHeadInjury | kCrushed,
-	 Common::Point(86, 188), Common::Point(78, 186), Common::Point(92, 186), 15, 30,
+	 86, 188, 78, 186, 92, 186, 15, 30,
 	 "V9070eR0", 1
 	},
 	{"xxxxxxxx", ""	       , "Ax-Head Guy"       ,   0,  0, 0   , kHuman   | kWeaponInjury | kHeadInjury,
-	 Common::Point(0, 0), Common::Point(0, 0), Common::Point(0, 0), 0, 0,
+	 0, 0, 0, 0, 0, 0, 0, 0,
 	 nullptr, 0 },
 	{"V9070bB0", "V9520tB0", "Boiled Guy"        ,  45,  5, 10  , kHuman   | kHot | kWet,
-	 Common::Point(80, 62), Common::Point(81, 68), Common::Point(79, 60), 13, 42,
+	 80, 62, 81, 68, 79, 60, 13, 42,
 	 nullptr, 0
 	}
 };
@@ -289,12 +306,19 @@ static const char *charonAnims[] = {
 	"V9140BC0"
 };
 
-static struct {
+struct CharonIdleVideoInfo {
 	const char *name;
-	Common::Point offset;
-} charonIdleVideos[] = {
-	{"V9140BD0", Common::Point(418, 40)},
-	{"V9140BE0", Common::Point(370, 64)}
+	int offsetX;
+	int offsetY;
+
+	Common::Point getOffset() const {
+		return Common::Point(offsetX, offsetY);
+	}
+};
+
+static CharonIdleVideoInfo charonIdleVideos[] = {
+	{"V9140BD0", 418, 40},
+	{"V9140BE0", 370, 64}
 };
 
 struct Shade {
@@ -564,7 +588,7 @@ public:
 			hideCharon();
 			int vid = g_vm->getRnd().getRandomNumberRng(0, ARRAYSIZE(charonIdleVideos) - 1);
 			room->playVideo(charonIdleVideos[vid].name,
-					kCharonZ, 24811, charonIdleVideos[vid].offset);
+					kCharonZ, 24811, charonIdleVideos[vid].getOffset());
 			break;
 		}
 		case k24801_arg1:
@@ -718,11 +742,11 @@ private:
 		hideThought();
 		bubblePos = getShadowPos(id) - Common::Point(71, 71);
 		if (_shades[id].currentPos >= 0 && _shades[id].currentPos <= 4) {
-			bubblePos += shadows[_shades[id].shadowId].starboardBubble;
+			bubblePos += shadows[_shades[id].shadowId].getStarboardBubblePos();
 		} else if (_shades[id].currentPos >= 5) {
-			bubblePos += shadows[_shades[id].shadowId].portBubble;
+			bubblePos += shadows[_shades[id].shadowId].getPortBubblePos();
 		} else
-			bubblePos += shadows[_shades[id].shadowId].waitBubble;
+			bubblePos += shadows[_shades[id].shadowId].getWaitBubblePos();
 		bubblePos.x = MAX<int>(bubblePos.x, -10);
 		bubblePos.y = MAX<int>(bubblePos.y, 0);
 		if (!silent) {
