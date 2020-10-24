@@ -718,7 +718,8 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 						*(out2) = (*(out2)&0x0F0F) | bx;
 					}
 				} else {
-					*(out2++) = (*(out2)&0x0F) | color;
+					*(out2) = (*(out2)&0x0F) | color;
+					out2++;
 				}
 			}
 			out += 640;
