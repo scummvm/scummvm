@@ -89,7 +89,7 @@ void Redraw::addRedrawCurrentArea(int32 left, int32 top, int32 right, int32 bott
 	currentRedrawList[i].left = left;
 	currentRedrawList[i].top = top;
 	currentRedrawList[i].right = right;
-	currentRedrawList[i].bottom = MIN(SCREEN_TEXTLIMIT_BOTTOM, bottom);
+	currentRedrawList[i].bottom = MIN<int32>(SCREEN_TEXTLIMIT_BOTTOM, bottom);
 
 	assert(currentRedrawList[i].left <= currentRedrawList[i].right);
 	assert(currentRedrawList[i].top <= currentRedrawList[i].bottom);
