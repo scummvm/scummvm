@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/util.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
 #include "twine/extra.h"
@@ -290,7 +291,7 @@ void Scene::resetScene() {
 
 	_engine->_extra->resetExtras();
 
-	for (i = 0; i < NUM_SCENES_FLAGS; i++) {
+	for (i = 0; i < ARRAYSIZE(sceneFlags); i++) {
 		sceneFlags[i] = 0;
 	}
 
@@ -335,13 +336,13 @@ void Scene::changeScene() {
 	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
 	_engine->_grid->initGrid(needChangeScene);
 
-	if (heroPositionType == kZone) {
+	if (heroPositionType == ScenePositionType::kZone) {
 		newHeroX = zoneHeroX;
 		newHeroY = zoneHeroY;
 		newHeroZ = zoneHeroZ;
 	}
 
-	if (heroPositionType == kScene || heroPositionType == kNoPosition) {
+	if (heroPositionType == ScenePositionType::kScene || heroPositionType == ScenePositionType::kNoPosition) {
 		newHeroX = sceneHeroX;
 		newHeroY = sceneHeroY;
 		newHeroZ = sceneHeroZ;
@@ -367,7 +368,7 @@ void Scene::changeScene() {
 
 	_engine->_gameState->inventoryNumKeys = 0;
 	_engine->disableScreenRecenter = 0;
-	heroPositionType = kNoPosition;
+	heroPositionType = ScenePositionType::kNoPosition;
 	sampleAmbienceTime = 0;
 
 	_engine->_grid->newCameraX = sceneActors[currentlyFollowedActor].x >> 9;
@@ -375,7 +376,7 @@ void Scene::changeScene() {
 	_engine->_grid->newCameraZ = sceneActors[currentlyFollowedActor].z >> 9;
 
 	_engine->_gameState->magicBallIdx = -1;
-	_engine->_movements->heroMoved = 1;
+	_engine->_movements->heroMoved = true;
 	_engine->_grid->useCellingGrid = -1;
 	_engine->_grid->cellingGridIdx = -1;
 	_engine->_redraw->reqBgRedraw = true;
@@ -491,7 +492,7 @@ void Scene::processActorZones(int32 actorIdx) {
 					zoneHeroX = actor->x - zone->bottomLeft.x + zone->infoData.ChangeScene.x;
 					zoneHeroY = actor->y - zone->bottomLeft.y + zone->infoData.ChangeScene.y;
 					zoneHeroZ = actor->z - zone->bottomLeft.z + zone->infoData.ChangeScene.z;
-					heroPositionType = kZone;
+					heroPositionType = ScenePositionType::kZone;
 				}
 				break;
 			case kCamera:

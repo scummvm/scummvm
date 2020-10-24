@@ -42,7 +42,7 @@ private:
 public:
 	MenuOptions(TwinEEngine *engine) : _engine(engine) {}
 
-	int32 canShowCredits = 0;
+	bool canShowCredits = false;
 
 	char playerName[32] {'\0'};
 

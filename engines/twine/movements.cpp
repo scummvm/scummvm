@@ -314,8 +314,9 @@ void Movements::processActorMovements(int32 actorIdx) {
 				case kAggressive:
 					if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
 						if (_engine->_actor->autoAgressive) {
-							heroMoved = 1;
+							heroMoved = true;
 							actor->angle = getRealAngle(&actor->move);
+							// TODO: previousLoopPressedKey must be handled properly
 							if (!(_engine->previousLoopPressedKey & 1) || !actor->anim) {
 								int32 aggresiveMode = _engine->getRandomNumber(3);
 
@@ -363,20 +364,18 @@ void Movements::processActorMovements(int32 actorIdx) {
 							_engine->_animations->initAnim(kThrowBall, 1, 0, actorIdx);
 						}
 
-						heroMoved = 1;
+						heroMoved = true;
 						actor->angle = getRealAngle(&actor->move);
 					}
-				} else {
-					if (_engine->_gameState->gameFlags[InventoryItems::kiUseSabre]) {
-						if (actor->body != InventoryItems::kiUseSabre) {
-							_engine->_actor->initModelActor(InventoryItems::kiUseSabre, actorIdx);
-						}
-
-						_engine->_animations->initAnim(kSabreAttack, 1, 0, actorIdx);
-
-						heroMoved = 1;
-						actor->angle = getRealAngle(&actor->move);
+				} else if (_engine->_gameState->gameFlags[InventoryItems::kiUseSabre]) {
+					if (actor->body != InventoryItems::kiUseSabre) {
+						_engine->_actor->initModelActor(InventoryItems::kiUseSabre, actorIdx);
 					}
+
+					_engine->_animations->initAnim(kSabreAttack, 1, 0, actorIdx);
+
+					heroMoved = true;
+					actor->angle = getRealAngle(&actor->move);
 				}
 			}
 
@@ -384,7 +383,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 			if (!_engine->loopPressedKey || heroAction) {
 				// if continue walking
 				if (_engine->_input->isActionActive(TwinEActionType::MoveForward) || _engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
-					heroMoved = 0; // don't break animation
+					heroMoved = false; // don't break animation
 				}
 
 				if (_engine->_input->key != heroPressedKey || _engine->loopPressedKey != heroPressedKey2) {
@@ -393,20 +392,20 @@ void Movements::processActorMovements(int32 actorIdx) {
 					}
 				}
 
-				heroMoved = 0;
+				heroMoved = false;
 
 				if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) { // walk forward
 					if (!_engine->_scene->currentActorInZone) {
 						_engine->_animations->initAnim(kForward, 0, 255, actorIdx);
 					}
-					heroMoved = 1;
+					heroMoved = true;
 				} else if (_engine->_input->isActionActive(TwinEActionType::MoveBackward)) { // walk backward
 					_engine->_animations->initAnim(kBackward, 0, 255, actorIdx);
-					heroMoved = 1;
+					heroMoved = true;
 				}
 
 				if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-					heroMoved = 1;
+					heroMoved = true;
 					if (actor->anim == 0) {
 						_engine->_animations->initAnim(kTurnLeft, 0, 255, actorIdx);
 					} else {
@@ -415,7 +414,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 						}
 					}
 				} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-					heroMoved = 1;
+					heroMoved = true;
 					if (actor->anim == 0) {
 						_engine->_animations->initAnim(kTurnRight, 0, 255, actorIdx);
 					} else {
@@ -484,6 +483,6 @@ void Movements::processActorMovements(int32 actorIdx) {
 			break;
 		}
 	}
-}
+} // namespace TwinE
 
 } // namespace TwinE

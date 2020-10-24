@@ -441,7 +441,7 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 		_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, kHitStars);
 
 		if (!actorIdxAttacked) {
-			_engine->_movements->heroMoved = 1;
+			_engine->_movements->heroMoved = true;
 		}
 
 		actor->life -= strengthOfHit;

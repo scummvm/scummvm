@@ -117,8 +117,6 @@ struct ConfigFile {
 	int32 UseAutoSaving = 0;
 	/** Shadow mode type, value: all, character only, none */
 	int32 ShadowMode = 0;
-	/** AutoAgressive mode type */
-	int32 AutoAgressive = 0;
 	/** SceZoom mode type */
 	bool SceZoom = false;
 	/** Flag to toggle Wall Collision */

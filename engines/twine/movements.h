@@ -52,7 +52,7 @@ private:
 public:
 	Movements(TwinEEngine *engine);
 	/** Hero moved */
-	int16 heroMoved = 0; // twinsenMove
+	bool heroMoved = false; // twinsenMove
 	/** Hero Action */
 	int16 heroAction = 0; // action
 

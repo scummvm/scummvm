@@ -888,7 +888,7 @@ static int32 lGIVE_BONUS(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor
 static int32 lCHANGE_CUBE(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	int32 sceneIdx = *(scriptPtr++);
 	engine->_scene->needChangeScene = sceneIdx;
-	engine->_scene->heroPositionType = kScene;
+	engine->_scene->heroPositionType = ScenePositionType::kScene;
 	return 0;
 }
 

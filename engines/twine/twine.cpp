@@ -236,7 +236,7 @@ void TwinEEngine::initConfigurations() {
 	cfgfile.Fps = ConfGetIntOrDefault("Fps", DEFAULT_FRAMES_PER_SECOND);
 	cfgfile.Debug = ConfGetIntOrDefault("Debug", 0) == 1;
 	cfgfile.UseAutoSaving = ConfGetIntOrDefault("UseAutoSaving", 0);
-	cfgfile.AutoAgressive = ConfGetIntOrDefault("CombatAuto", 0);
+	_actor->autoAgressive = ConfGetIntOrDefault("CombatAuto", 1) == 1;
 	cfgfile.ShadowMode = ConfGetIntOrDefault("Shadow", 0);
 	cfgfile.SceZoom = ConfGetIntOrDefault("SceZoom", 0) == 0;
 	cfgfile.WallCollision = ConfGetIntOrDefault("WallCollision", 0);
@@ -346,7 +346,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 	_debug->processDebug();
 
-	if (_menuOptions->canShowCredits != 0) {
+	if (_menuOptions->canShowCredits) {
 		// TODO: if current music playing != 8, than play_track(8);
 		if (_input->toggleAbortAction()) {
 			return 0;
@@ -677,7 +677,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 							_grid->newCameraY = (_scene->sceneHero->y >> 8);
 							_grid->newCameraZ = (_scene->sceneHero->z >> 9);
 
-							_scene->heroPositionType = kReborn;
+							_scene->heroPositionType = ScenePositionType::kReborn;
 
 							_scene->sceneHero->life = 50;
 							_redraw->reqBgRedraw = true;

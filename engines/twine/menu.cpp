@@ -479,8 +479,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			switch (id) {
 			case kAgressiveMode:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
-					_engine->cfgfile.AutoAgressive = !_engine->cfgfile.AutoAgressive;
-					_engine->_actor->autoAgressive = _engine->cfgfile.AutoAgressive;
+					_engine->_actor->autoAgressive = !_engine->_actor->autoAgressive;
 				}
 				break;
 			case kPolygonDetails:
@@ -846,7 +845,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDra
 		_engine->_text->setFontColor(15);
 
 		char dialText[256];
-		if (_engine->_actor->heroBehaviour == kAggressive && _engine->_actor->autoAgressive == 1) {
+		if (_engine->_actor->heroBehaviour == kAggressive && _engine->_actor->autoAgressive) {
 			_engine->_text->getMenuText(4, dialText, sizeof(dialText));
 		} else {
 			_engine->_text->getMenuText(_engine->_actor->heroBehaviour, dialText, sizeof(dialText));

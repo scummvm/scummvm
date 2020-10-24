@@ -93,7 +93,7 @@ void MenuOptions::newGame() {
 }
 
 void MenuOptions::showCredits() {
-	canShowCredits = 1;
+	canShowCredits = true;
 	int32 tmpShadowMode = _engine->cfgfile.ShadowMode;
 	_engine->cfgfile.ShadowMode = 0;
 	_engine->_gameState->initEngineVars();
@@ -102,7 +102,7 @@ void MenuOptions::showCredits() {
 
 	_engine->gameEngineLoop();
 
-	canShowCredits = 0;
+	canShowCredits = false;
 	_engine->cfgfile.ShadowMode = tmpShadowMode;
 
 	_engine->_screens->clearScreen();
@@ -237,7 +237,7 @@ void MenuOptions::continueGameMenu() {
 		_engine->_gameState->initEngineVars();
 		_engine->_gameState->loadGame();
 		if (_engine->_scene->newHeroX == -1) {
-			_engine->_scene->heroPositionType = kNoPosition;
+			_engine->_scene->heroPositionType = ScenePositionType::kNoPosition;
 		}
 		if (_engine->_gameState->gameChapter == 0 && _engine->_scene->currentSceneIdx == 0) {
 			newGame();

@@ -67,23 +67,21 @@ void GameState::initEngineProjections() {
 }
 
 void GameState::initSceneVars() {
-	int32 i;
-
 	_engine->_extra->resetExtras();
 
-	for (i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
+	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		_engine->_redraw->overlayList[i].info0 = -1;
 	}
 
-	for (i = 0; i < NUM_SCENES_FLAGS; i++) {
+	for (int32 i = 0; i < ARRAYSIZE(_engine->_scene->sceneFlags); i++) {
 		_engine->_scene->sceneFlags[i] = 0;
 	}
 
-	for (i = 0; i < NUM_GAME_FLAGS; i++) {
+	for (int32 i = 0; i < ARRAYSIZE(gameFlags); i++) {
 		gameFlags[i] = 0;
 	}
 
-	for (i = 0; i < NUM_INVENTORY_ITEMS; i++) {
+	for (int32 i = 0; i < ARRAYSIZE(inventoryFlags); i++) {
 		inventoryFlags[i] = 0;
 	}
 
@@ -102,7 +100,7 @@ void GameState::initSceneVars() {
 	_engine->_scene->sampleRound[2] = 0;
 	_engine->_scene->sampleRound[3] = 0;
 
-	for (i = 0; i < ARRAYSIZE(holomapFlags); i++) {
+	for (int32 i = 0; i < ARRAYSIZE(holomapFlags); i++) {
 		holomapFlags[i] = 0;
 	}
 
@@ -148,7 +146,7 @@ void GameState::initEngineVars() {
 	_engine->_scene->needChangeScene = 0;
 	_engine->quitGame = -1;
 	_engine->_scene->mecaPinguinIdx = -1;
-	_engine->_menuOptions->canShowCredits = 0;
+	_engine->_menuOptions->canShowCredits = false;
 
 	inventoryNumLeafs = 0;
 	inventoryNumLeafsBox = 2;
@@ -238,7 +236,7 @@ bool GameState::loadGame() {
 	usingSabre = file.readByte();
 
 	_engine->_scene->currentSceneIdx = -1;
-	_engine->_scene->heroPositionType = kReborn;
+	_engine->_scene->heroPositionType = ScenePositionType::kReborn;
 	return true;
 }
 

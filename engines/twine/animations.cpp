@@ -1112,7 +1112,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 					initAnim(kBigHit, 2, 0, currentlyProcessedActorIdx);
 
 					if (currentlyProcessedActorIdx == 0) {
-						_engine->_movements->heroMoved = 1;
+						_engine->_movements->heroMoved = true;
 					}
 
 					actor->life--;
@@ -1134,7 +1134,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 						initAnim(kBigHit, 2, 0, currentlyProcessedActorIdx);
 
 						if (!actorIdx) {
-							_engine->_movements->heroMoved = 1;
+							_engine->_movements->heroMoved = true;
 						}
 
 						actor->life--;

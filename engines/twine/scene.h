@@ -37,7 +37,7 @@ namespace TwinE {
 #define NUM_MAX_ZONES 100
 #define NUM_MAX_TRACKS 200
 
-enum ScenePositionType {
+enum class ScenePositionType {
 	kNoPosition = 0,
 	kZone = 1,
 	kScene = 2,
@@ -158,7 +158,7 @@ public:
 	int16 heroYBeforeFall = 0;
 
 	/** Hero type of position in scene */
-	int16 heroPositionType = 0; // twinsenPositionModeInNewCube
+	ScenePositionType heroPositionType = ScenePositionType::kNoPosition; // twinsenPositionModeInNewCube
 
 	// ACTORS
 	int32 sceneNumActors = 0;
