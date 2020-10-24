@@ -130,7 +130,7 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, uint8 *buffer) {
 	} while (--vSize);
 }
 
-void Grid::drawOverModelActor(int32 X, int32 Y, int32 Z) {
+void Grid::drawOverModelActor(int32 x, int32 y, int32 z) {
 	const int32 copyBlockPhysLeft = ((_engine->_interface->textWindowLeft + 24) / 24) - 1;
 	const int32 copyBlockPhysRight = ((_engine->_interface->textWindowRight + 24) / 24);
 
@@ -138,8 +138,8 @@ void Grid::drawOverModelActor(int32 X, int32 Y, int32 Z) {
 		for (int32 i = 0; i < brickInfoBuffer[j]; i++) {
 			BrickEntry *currBrickEntry = &bricksDataBuffer[j][i];
 
-			if (currBrickEntry->posY + 38 > _engine->_interface->textWindowTop && currBrickEntry->posY <= _engine->_interface->textWindowBottom && currBrickEntry->y >= Y) {
-				if (currBrickEntry->x + currBrickEntry->z > Z + X) {
+			if (currBrickEntry->posY + 38 > _engine->_interface->textWindowTop && currBrickEntry->posY <= _engine->_interface->textWindowBottom && currBrickEntry->y >= y) {
+				if (currBrickEntry->x + currBrickEntry->z > z + x) {
 					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, (uint8 *)_engine->workVideoBuffer.getPixels());
 				}
 			}
@@ -147,26 +147,20 @@ void Grid::drawOverModelActor(int32 X, int32 Y, int32 Z) {
 	}
 }
 
-void Grid::drawOverSpriteActor(int32 X, int32 Y, int32 Z) {
-	int32 copyBlockPhysLeft;
-	int32 copyBlockPhysRight;
-	int32 i;
-	int32 j;
-	BrickEntry *currBrickEntry;
+void Grid::drawOverSpriteActor(int32 x, int32 y, int32 z) {
+	const int32 copyBlockPhysLeft = ((_engine->_interface->textWindowLeft + 24) / 24) - 1;
+	const int32 copyBlockPhysRight = (_engine->_interface->textWindowRight + 24) / 24;
 
-	copyBlockPhysLeft = ((_engine->_interface->textWindowLeft + 24) / 24) - 1;
-	copyBlockPhysRight = (_engine->_interface->textWindowRight + 24) / 24;
+	for (int32 j = copyBlockPhysLeft; j <= copyBlockPhysRight; j++) {
+		for (int32 i = 0; i < brickInfoBuffer[j]; i++) {
+			BrickEntry *currBrickEntry = &bricksDataBuffer[j][i];
 
-	for (j = copyBlockPhysLeft; j <= copyBlockPhysRight; j++) {
-		for (i = 0; i < brickInfoBuffer[j]; i++) {
-			currBrickEntry = &bricksDataBuffer[j][i];
-
-			if (currBrickEntry->posY + 38 > _engine->_interface->textWindowTop && currBrickEntry->posY <= _engine->_interface->textWindowBottom && currBrickEntry->y >= Y) {
-				if ((currBrickEntry->x == X) && (currBrickEntry->z == Z)) {
+			if (currBrickEntry->posY + 38 > _engine->_interface->textWindowTop && currBrickEntry->posY <= _engine->_interface->textWindowBottom && currBrickEntry->y >= y) {
+				if ((currBrickEntry->x == x) && (currBrickEntry->z == z)) {
 					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, (uint8 *)_engine->workVideoBuffer.getPixels());
 				}
 
-				if ((currBrickEntry->x > X) || (currBrickEntry->z > Z)) {
+				if ((currBrickEntry->x > x) || (currBrickEntry->z > z)) {
 					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, (uint8 *)_engine->workVideoBuffer.getPixels());
 				}
 			}
@@ -391,15 +385,12 @@ void Grid::createGridMap() {
 void Grid::createCellingGridMap(uint8 *gridPtr) {
 	int32 currGridOffset = 0;
 	int32 currOffset = 0;
-	int32 blockOffset;
-	int32 z, x;
-	uint8 *tempGridPtr;
 
-	for (z = 0; z < GRID_SIZE_Z; z++) {
-		blockOffset = currOffset;
-		tempGridPtr = gridPtr + currGridOffset;
+	for (int32 z = 0; z < GRID_SIZE_Z; z++) {
+		int32 blockOffset = currOffset;
+		uint8 *tempGridPtr = gridPtr + currGridOffset;
 
-		for (x = 0; x < GRID_SIZE_X; x++) {
+		for (int32 x = 0; x < GRID_SIZE_X; x++) {
 			int gridOffset = *((uint16 *)tempGridPtr);
 			tempGridPtr += 2;
 			createCellingGridColumn(gridPtr + gridOffset, blockBuffer + blockOffset);
@@ -410,9 +401,13 @@ void Grid::createCellingGridMap(uint8 *gridPtr) {
 	}
 }
 
-int32 Grid::initGrid(int32 index) {
+bool Grid::initGrid(int32 index) {
 	// load grids from file
-	int32 gridSize = _engine->_hqrdepack->hqrGetallocEntry(&currentGrid, Resources::HQR_LBA_GRI_FILE, index);
+	const int32 gridSize = _engine->_hqrdepack->hqrGetallocEntry(&currentGrid, Resources::HQR_LBA_GRI_FILE, index);
+	if (gridSize == 0) {
+		warning("Failed to load grid index: %i", index);
+		return false;
+	}
 
 	// load layouts from file
 	_engine->_hqrdepack->hqrGetallocEntry(&currentBll, Resources::HQR_LBA_BLL_FILE, index);
@@ -425,7 +420,7 @@ int32 Grid::initGrid(int32 index) {
 
 	createGridMap();
 
-	return 1;
+	return true;
 }
 
 int32 Grid::initCellingGrid(int32 index) {

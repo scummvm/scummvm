@@ -198,19 +198,19 @@ public:
 
 	/**
 	 * Draw 3D actor over bricks
-	 * @param X actor.x coordinate
-	 * @param Y actor.y coordinate
-	 * @param Z actor.z coordinate
+	 * @param x actor.x coordinate
+	 * @param y actor.y coordinate
+	 * @param z actor.z coordinate
 	 */
-	void drawOverModelActor(int32 X, int32 Y, int32 Z);
+	void drawOverModelActor(int32 x, int32 y, int32 z);
 
 	/**
 	 * Draw sprite actor over bricks
-	 * @param X actor.x coordinate
-	 * @param Y actor.y coordinate
-	 * @param Z actor.z coordinate
+	 * @param x actor.x coordinate
+	 * @param y actor.y coordinate
+	 * @param z actor.z coordinate
 	 */
-	void drawOverSpriteActor(int32 X, int32 Y, int32 Z);
+	void drawOverSpriteActor(int32 x, int32 y, int32 z);
 
 	/**
 	 * Get sprite width and height sizes
@@ -262,7 +262,7 @@ public:
 	 * Initialize grid (background scenearios)
 	 * @param index grid index number
 	 */
-	int32 initGrid(int32 index);
+	bool initGrid(int32 index);
 
 	/**
 	 * Initialize celling grid (background scenearios)
