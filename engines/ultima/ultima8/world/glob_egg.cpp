@@ -52,7 +52,7 @@ void GlobEgg::enterFastArea() {
 	}
 
 	// Expand it
-	if (!(_flags & FLG_FASTAREA)) {
+	if (!hasFlags(FLG_FASTAREA)) {
 		const MapGlob *glob = GameData::get_instance()->getGlob(_quality);
 		if (!glob) return;
 
@@ -82,9 +82,7 @@ void GlobEgg::saveData(Common::WriteStream *ws) {
 }
 
 bool GlobEgg::loadData(Common::ReadStream *rs, uint32 version) {
-	if (!Item::loadData(rs, version)) return false;
-
-	return true;
+	return Item::loadData(rs, version);
 }
 
 } // End of namespace Ultima8
