@@ -405,7 +405,7 @@ FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
 }
 
-int Renderer::computePolygons() {
+int32 Renderer::computePolygons() {
 	int16 *outPtr;
 	int32 i, nVertex;
 	int8 direction, up;
