@@ -4,7 +4,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.content.Context;
 //import android.util.Log;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.KeyCharacterMap;
 import android.view.MotionEvent;
@@ -328,6 +327,13 @@ public class ScummVMEventsBase implements
 		case KeyEvent.KEYCODE_BUTTON_MODE:
 			type = JE_GAMEPAD;
 			break;
+		case KeyEvent.KEYCODE_BUTTON_1:
+		case KeyEvent.KEYCODE_BUTTON_2:
+		case KeyEvent.KEYCODE_BUTTON_3:
+		case KeyEvent.KEYCODE_BUTTON_4:
+			// These are oddly detected with SOURCE_KEYBOARD for joystick so don't bother checking the e.getSource()
+			type = JE_JOYSTICK;
+			break;
 		default:
 			if (e.isSystem()) {
 				type = JE_SYS_KEY;
@@ -337,7 +343,7 @@ public class ScummVMEventsBase implements
 			break;
 		}
 
-//		_scummvm.displayMessageOnOSD("GetKey: " + keyCode + " unic=" + eventUnicodeChar+ " arg3= " + (eventUnicodeChar& KeyCharacterMap.COMBINING_ACCENT_MASK));
+		//_scummvm.displayMessageOnOSD("GetKey: " + keyCode + " unic=" + eventUnicodeChar+ " arg3= " + (eventUnicodeChar& KeyCharacterMap.COMBINING_ACCENT_MASK));
 
 		// look in events.cpp for how this is handled
 		_scummvm.pushEvent(type,

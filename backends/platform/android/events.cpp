@@ -902,10 +902,11 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		break;
 
 	case JE_JOYSTICK:
-		e.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 
 		switch (arg1) {
+		// AMOTION_EVENT_ACTION_MOVE is 2 in NDK (https://developer.android.com/ndk/reference/group/input)
 		case AMOTION_EVENT_ACTION_MOVE:
+			e.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 			e.type = Common::EVENT_MOUSEMOVE;
 
 			// already multiplied by 100
@@ -913,9 +914,51 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			e.mouse.y += arg3 * _joystick_scale / _eventScaleY;
 
 			break;
+		case AKEY_EVENT_ACTION_DOWN:
+			e.type = Common::EVENT_KEYDOWN;
+			break;
+		case AKEY_EVENT_ACTION_UP:
+			e.type = Common::EVENT_KEYUP;
+			break;
 		default:
 			LOGE("unhandled jaction on joystick: %d", arg1);
 			return;
+		}
+
+		if (arg1 != AMOTION_EVENT_ACTION_MOVE) {
+			switch (arg2) {
+			case AKEYCODE_BUTTON_1:
+			case AKEYCODE_BUTTON_2:
+				switch (arg1) {
+				case AKEY_EVENT_ACTION_DOWN:
+					e.type = (arg2 == AKEYCODE_BUTTON_1?
+						  Common::EVENT_LBUTTONDOWN :
+						  Common::EVENT_RBUTTONDOWN);
+					break;
+				case AKEY_EVENT_ACTION_UP:
+					e.type = (arg2 == AKEYCODE_BUTTON_1?
+						  Common::EVENT_LBUTTONUP :
+						  Common::EVENT_RBUTTONUP);
+					break;
+				}
+
+				e.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
+
+				break;
+
+			case AKEYCODE_BUTTON_3:
+				e.kbd.keycode = Common::KEYCODE_ESCAPE;
+				e.kbd.ascii = Common::ASCII_ESCAPE;
+				break;
+
+			case AKEYCODE_BUTTON_4:
+				e.type = Common::EVENT_MAINMENU;
+				break;
+
+			default:
+				LOGW("unmapped gamepad key: %d", arg2);
+				return;
+			}
 		}
 
 		pushEvent(e);

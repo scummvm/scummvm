@@ -404,6 +404,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 								public void onText(CharSequence p1) {}
 
+								// TODO - "Swipe" behavior does not seem to work currently. Should we support it?
 								public void swipeLeft() {
 									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeLeft");
 								}
@@ -451,7 +452,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 							_screenKeyboard = builtinKeyboard;
 							// TODO better to have specific dimensions in dp and not adjusted to parent
 							//		it may resolve the issue of resizing the keyboard wrongly (smaller) when returning to the suspended Activity in low resolution
-							FrameLayout.LayoutParams sKeyboardLayout = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL | Gravity.FILL_HORIZONTAL);
+							FrameLayout.LayoutParams sKeyboardLayout = new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.WRAP_CONTENT, Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
 
 							_videoLayout.addView(_screenKeyboard, sKeyboardLayout);
 							_videoLayout.bringChildToFront(_screenKeyboard);
