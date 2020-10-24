@@ -34,13 +34,6 @@
 
 namespace TwinE {
 
-/** Grip X size */
-#define GRID_SIZE_X 64
-/** Grip Y size */
-#define GRID_SIZE_Y 25
-/** Grip Z size */
-#define GRID_SIZE_Z GRID_SIZE_X
-
 Grid::Grid(TwinEEngine *engine) : _engine(engine) {}
 
 void Grid::copyGridMask(int32 index, int32 x, int32 y, uint8 *buffer) {
@@ -237,8 +230,9 @@ void Grid::createGridMask() {
 		if (!brickUsageTable[b]) {
 			continue;
 		}
-		if (brickMaskTable[b])
+		if (brickMaskTable[b]) {
 			free(brickMaskTable[b]);
+		}
 		brickMaskTable[b] = (uint8 *)malloc(brickSizeTable[b]);
 		processGridMask(brickTable[b], brickMaskTable[b]);
 	}
@@ -612,7 +606,7 @@ int32 Grid::getBrickShape(int32 x, int32 y, int32 z) {
 	_engine->_collision->collisionY = y >> 8;
 	_engine->_collision->collisionZ = (z + 0x100) >> 9;
 
-	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= 64) {
+	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= GRID_SIZE_X) {
 		return 0;
 	}
 
@@ -620,13 +614,13 @@ int32 Grid::getBrickShape(int32 x, int32 y, int32 z) {
 		return 1;
 	}
 
-	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY > 24 || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= 64) {
+	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY >= GRID_SIZE_Y || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= GRID_SIZE_Z) {
 		return 0;
 	}
 
 	blockBufferPtr += _engine->_collision->collisionX * 50;
 	blockBufferPtr += _engine->_collision->collisionY * 2;
-	blockBufferPtr += (_engine->_collision->collisionZ << 7) * 25;
+	blockBufferPtr += (_engine->_collision->collisionZ << 7) * GRID_SIZE_Y;
 
 	uint8 blockIdx = *blockBufferPtr;
 
@@ -654,7 +648,7 @@ int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 	_engine->_collision->collisionY = y >> 8;
 	_engine->_collision->collisionZ = (z + 0x100) >> 9;
 
-	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= 64) {
+	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= GRID_SIZE_X) {
 		return 0;
 	}
 
@@ -662,13 +656,13 @@ int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 		return 1;
 	}
 
-	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY > 24 || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= 64) {
+	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY >= GRID_SIZE_Y || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= GRID_SIZE_Z) {
 		return 0;
 	}
 
 	blockBufferPtr += _engine->_collision->collisionX * 50;
 	blockBufferPtr += _engine->_collision->collisionY * 2;
-	blockBufferPtr += (_engine->_collision->collisionZ << 7) * 25;
+	blockBufferPtr += (_engine->_collision->collisionZ << 7) * GRID_SIZE_Y;
 
 	uint8 blockIdx = *blockBufferPtr;
 
@@ -687,7 +681,7 @@ int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 		int32 currY = _engine->_collision->collisionY;
 
 		for (int32 i = 0; i < newY; i++) {
-			if (currY > 24) {
+			if (currY >= GRID_SIZE_Y) {
 				return brickShape;
 			}
 
@@ -707,7 +701,7 @@ int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 	int32 currY = _engine->_collision->collisionY;
 
 	for (int32 i = 0; i < newY; i++) {
-		if (currY > 24) {
+		if (currY >= GRID_SIZE_Y) {
 			return brickShape;
 		}
 
@@ -729,7 +723,7 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) { // getPos2
 	_engine->_collision->collisionY = y >> 8;
 	_engine->_collision->collisionZ = (z + 0x100) >> 9;
 
-	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= 64) {
+	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= GRID_SIZE_X) {
 		return 0;
 	}
 
@@ -737,13 +731,13 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) { // getPos2
 		return 1;
 	}
 
-	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY > 24 || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= 64) {
+	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY >= GRID_SIZE_Y || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= GRID_SIZE_Z) {
 		return 0;
 	}
 
 	blockBufferPtr += _engine->_collision->collisionX * 50;
 	blockBufferPtr += _engine->_collision->collisionY * 2;
-	blockBufferPtr += (_engine->_collision->collisionZ << 7) * 25;
+	blockBufferPtr += (_engine->_collision->collisionZ << 7) * GRID_SIZE_Y;
 
 	uint8 blockIdx = *blockBufferPtr;
 

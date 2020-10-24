@@ -80,6 +80,13 @@ struct BrickEntry {
 /** Total number of bricks allowed in the game */
 #define CELLING_GRIDS_START_INDEX 120
 
+/** Grip X size */
+#define GRID_SIZE_X 64
+/** Grip Y size */
+#define GRID_SIZE_Y 25
+/** Grip Z size */
+#define GRID_SIZE_Z GRID_SIZE_X
+
 class TwinEEngine;
 
 class Grid {
@@ -162,7 +169,7 @@ public:
 	int32 numberOfBll = 0;
 
 	/** Grid block entry types */
-	typedef struct BlockEntry blockMap[64][64][25];
+	typedef struct BlockEntry blockMap[GRID_SIZE_X][GRID_SIZE_Z][GRID_SIZE_Y];
 
 	/** Brick data buffer */
 	BrickEntry bricksDataBuffer[28][150];
