@@ -122,7 +122,7 @@ void ScummEngine::loadCJKFont() {
 				fp.seek(2, SEEK_CUR);
 				_2byteWidth = fp.readByte();
 				_2byteHeight = fp.readByte();
-				_newLineCharacter = 0xff;
+				_newLineCharacter = (_game.id == GID_CMI) ? 0xff : 0xfe;
 				break;
 			case Common::JA_JPN:
 				_2byteWidth = 16;
