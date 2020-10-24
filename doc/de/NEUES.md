@@ -38,6 +38,10 @@ Programmcodes finden Sie auf Englisch unter:
  SAGA:
    - Unterstützung für ITE GOG Mac CD v1.1 hinzugefügt.
 
+ SCI:
+   - Unterstützung für RGB-Rendering (16/32bpp) für SCI0 - SCI1.1-Spiele hinzugefügt. Dadurch werden Probleme
+     mit der Farbpalette während Bildschirmübergängen und Probleme bei der Darstellung von Mac-QuickTime-Videos korrigiert.
+
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
 
