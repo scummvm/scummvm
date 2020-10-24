@@ -62,10 +62,6 @@ private:
 
 	int _level;
 	bool _isMiss;
-	int _minStartX;
-	int _maxStartX;
-	int _minStartY;
-	int _maxStartY;
 	int _flightCounterMs;
 	int _flightStart;
 	int _projectileId;
