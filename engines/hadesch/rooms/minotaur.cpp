@@ -313,6 +313,9 @@ private:
 			room->enableMouse();
 			setDialogState(kMinotaur0);
 			return;
+		default:
+			// TODO: implement this;
+			return;
 		}
 	}
 
@@ -499,7 +502,7 @@ private:
 			int numWalls = line.substr(cur).asUint64();
 			cur = line.findFirstNotOf(kDigits, cur);
 			cur = line.findFirstOf(kDigits, cur);
-			int rotatable = line.substr(cur).asUint64();
+			/*int rotatable =*/ line.substr(cur).asUint64();
 			cur = line.findFirstNotOf(kDigits, cur);
 			cur = line.findFirstOf(kDigits, cur);
 			for (int j = 0; j < numWalls; j++) {
