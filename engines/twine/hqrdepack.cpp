@@ -134,7 +134,7 @@ int32 HQRDepack::hqrGetEntry(uint8 *ptr, const char *filename, int32 index) {
 	return realSize;
 }
 
-int HQRDepack::hqrEntrySize(const char *filename, int32 index) {
+int32 HQRDepack::hqrEntrySize(const char *filename, int32 index) {
 	if (!filename) {
 		return 0;
 	}
@@ -163,7 +163,7 @@ int HQRDepack::hqrEntrySize(const char *filename, int32 index) {
 	return realSize;
 }
 
-int HQRDepack::hqrNumEntries(const char *filename) {
+int32 HQRDepack::hqrNumEntries(const char *filename) {
 	if (!filename) {
 		return 0;
 	}
