@@ -303,6 +303,9 @@ int32 Grid::loadGridBricks(int32 gridSize) {
 	for (uint32 i = firstBrick; i <= lastBrick; i++) {
 		if (brickUsageTable[i]) {
 			brickSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&brickTable[i], Resources::HQR_LBA_BRK_FILE, i);
+			if (brickSizeTable[i] == 0) {
+				warning("Failed to load isometric brick index %i", i);
+			}
 		}
 	}
 
@@ -423,20 +426,20 @@ bool Grid::initGrid(int32 index) {
 	return true;
 }
 
-int32 Grid::initCellingGrid(int32 index) {
-	uint8 *gridPtr;
+bool Grid::initCellingGrid(int32 index) {
+	uint8 *gridPtr = nullptr;
 
 	// load grids from file
-	_engine->_hqrdepack->hqrGetallocEntry(&gridPtr, Resources::HQR_LBA_GRI_FILE, index + CELLING_GRIDS_START_INDEX);
+	const int realIndex = index + CELLING_GRIDS_START_INDEX;
+	if (_engine->_hqrdepack->hqrGetallocEntry(&gridPtr, Resources::HQR_LBA_GRI_FILE, realIndex) == 0) {
+		warning("Failed to load grid index %i", realIndex);
+		return false;
+	}
 
 	createCellingGridMap(gridPtr);
-
-	if (gridPtr)
-		free(gridPtr);
-
+	free(gridPtr);
 	_engine->_redraw->reqBgRedraw = true;
-
-	return 0;
+	return true;
 }
 
 void Grid::drawBrick(int32 index, int32 posX, int32 posY) {
