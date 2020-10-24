@@ -240,7 +240,9 @@ static int16 *copySettings(const int16 *settings, size_t size) {
 	return buf;
 }
 
-Menu::Menu(TwinEEngine *engine) : _engine(engine) {
+Menu::Menu(TwinEEngine *engine) {
+	_engine = engine;
+
 	OptionsMenuState = copySettings(_priv::OptionsMenuSettings, sizeof(_priv::OptionsMenuSettings));
 	GiveUpMenuWithSaveState = copySettings(_priv::GiveUpMenuWithSaveSettings, sizeof(_priv::GiveUpMenuWithSaveSettings));
 	VolumeMenuState = copySettings(_priv::VolumeMenuSettings, sizeof(_priv::VolumeMenuSettings));
