@@ -96,7 +96,7 @@ Persistent::Persistent() {
 	_medislePlayedPerseusIntro = false;
 	_medisleShowFates = false;
 	_medisleShowFatesIntro = false;
-	for (unsigned i = 0; i < ARRAYSIZE(_statuePhase); i++)
+	for (unsigned i = 0; i < ARRAYSIZE(_medislePlacedItems); i++)
 		_medislePlacedItems[i] = false;
 	_medisleEyeballIsActive = false;
 	_medisleEyePosition = kLachesis;
