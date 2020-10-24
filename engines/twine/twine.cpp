@@ -246,7 +246,7 @@ void TwinEEngine::initEngine() {
 	// Check if LBA CD-Rom is on drive
 	_music->initCdrom();
 
-#define TWINE_PLAY_INTROS 1
+#define TWINE_PLAY_INTROS 0
 #if TWINE_PLAY_INTROS
 	_input->enabledKeyMap(cutsceneKeyMapId);
 	// Display company logo
@@ -532,7 +532,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// Recenter Screen
-		if ((loopPressedKey & 2) && !disableScreenRecenter) {
+		if (_input->isActionActive(TwinEActionType::RecenterScreenOnTwinsen) && !disableScreenRecenter) {
 			_grid->newCameraX = _scene->sceneActors[_scene->currentlyFollowedActor].x >> 9;
 			_grid->newCameraY = _scene->sceneActors[_scene->currentlyFollowedActor].y >> 8;
 			_grid->newCameraZ = _scene->sceneActors[_scene->currentlyFollowedActor].z >> 9;
@@ -540,7 +540,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// Draw holomap
-		if (loopCurrentKey == 35 && _gameState->gameFlags[InventoryItems::kiHolomap] == 1 && !_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
+		if (_input->isActionActive(TwinEActionType::OpenHolomap) && _gameState->gameFlags[InventoryItems::kiHolomap] == 1 && !_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
 			freezeTime();
 			//TestRestoreModeSVGA(1);
 			_holomap->processHolomap();
@@ -790,7 +790,7 @@ void TwinEEngine::delaySkip(uint32 time) {
 	_input->internalKeyCode = 0;
 	do {
 		readKeys();
-		if (_input->toggleActionIfActive(TwinEActionType::CutsceneAbort) || _input->toggleActionIfActive(TwinEActionType::UIAbort)) {
+		if (_input->toggleAbortAction()) {
 			break;
 		}
 		if (shouldQuit()) {

@@ -125,7 +125,7 @@ void Sound::playVoxSample(int32 index) {
 
 	// Fix incorrect sample files first byte
 	if (*sampPtr != 'C') {
-		_engine->_text->hasHiddenVox = *sampPtr;
+		_engine->_text->hasHiddenVox = *sampPtr != '\0';
 		_engine->_text->voxHiddenIndex++;
 	}
 

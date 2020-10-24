@@ -25,8 +25,8 @@
 #include "common/str.h"
 #include "common/system.h"
 #include "twine/hqrdepack.h"
-#include "twine/interface.h"
 #include "twine/input.h"
+#include "twine/interface.h"
 #include "twine/menu.h"
 #include "twine/renderer.h"
 #include "twine/resources.h"
@@ -73,7 +73,7 @@ bool Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
 	int16 *localOrderBuf = (int16 *)dialOrderPtr;
 
 	voxHiddenIndex = 0;
-	hasHiddenVox = 0;
+	hasHiddenVox = false;
 
 	// choose right text from order index
 	for (int32 i = 0; i < numDialTextEntries; i++) {
@@ -114,7 +114,7 @@ bool Text::stopVox(int32 index) {
 	if (!_engine->_sound->isSamplePlaying(index)) {
 		return false;
 	}
-	hasHiddenVox = 0;
+	hasHiddenVox = false;
 	_engine->_sound->stopSample(index);
 	return true;
 }
@@ -181,7 +181,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 
 	usedColor = dialTextColor;
 
-	screen2 = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[y] + x;
+	screen2 = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[y] + x;
 
 	tempX = x;
 	tempY = y;
@@ -207,7 +207,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 				number = *(data++);
 				for (i = 0; i < number; i++) {
 					if (tempX >= SCREEN_TEXTLIMIT_LEFT && tempX < SCREEN_TEXTLIMIT_RIGHT && tempY >= SCREEN_TEXTLIMIT_TOP && tempY < SCREEN_TEXTLIMIT_BOTTOM) {
-						*((uint8*)_engine->frontVideoBuffer.getBasePtr(tempX, tempY)) = usedColor;
+						*((uint8 *)_engine->frontVideoBuffer.getBasePtr(tempX, tempY)) = usedColor;
 					}
 
 					screen2++;
@@ -253,11 +253,11 @@ void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color) {
 }
 
 void Text::drawText(int32 x, int32 y, const char *dialogue) { // Font
-	if (fontPtr == 0) // if the font is not defined
+	if (fontPtr == 0)                                         // if the font is not defined
 		return;
 
 	do {
-		const uint8 currChar = (uint8) *(dialogue++); // read the next char from the string
+		const uint8 currChar = (uint8) * (dialogue++); // read the next char from the string
 
 		if (currChar == '\0') {
 			break;
@@ -624,8 +624,8 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 				break;
 			}
 			_engine->_system->delayMillis(1);
-		} while (!_engine->_input->toggleActionIfActive(TwinEActionType::CutsceneAbort));
-		hasHiddenVox = 0;
+		} while (!_engine->_input->toggleAbortAction());
+		hasHiddenVox = false;
 
 		stopVox(currDialTextEntry);
 
@@ -636,7 +636,6 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 			return;
 		}
 
-		// RECHECK this later
 		// wait displaying text
 		do {
 			_engine->readKeys();
@@ -644,17 +643,12 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 				break;
 			}
 			_engine->_system->delayMillis(1);
-		} while (_engine->_input->toggleActionIfActive(TwinEActionType::CutsceneAbort));
+		} while (!_engine->_input->toggleAbortAction());
 
-		// RECHECK this later
 		// wait key to display next text
 		do {
 			_engine->readKeys();
-			if (_engine->_input->internalKeyCode != 0) {
-				_engine->_interface->loadClip();
-				return;
-			}
-			if (_engine->_input->skippedKey != 0) {
+			if (_engine->_input->internalKeyCode != 0 || _engine->_input->skippedKey != 0) {
 				_engine->_interface->loadClip();
 				return;
 			}
@@ -662,18 +656,19 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 				break;
 			}
 			_engine->_system->delayMillis(1);
-		} while (!_engine->_input->toggleActionIfActive(TwinEActionType::CutsceneAbort));
+		} while (!_engine->_input->toggleAbortAction());
 	} else { // RECHECK THIS
-		while (playVox(currDialTextEntry) && _engine->_input->internalKeyCode != 1) {
+		while (playVox(currDialTextEntry)) {
 			_engine->readKeys();
 			if (_engine->shouldQuit()) {
 				break;
 			}
-			if (_engine->_input->toggleActionIfActive(TwinEActionType::CutsceneAbort)) {
+			if (_engine->_input->toggleAbortAction()) {
 				break;
 			}
+			_engine->_system->delayMillis(1);
 		}
-		hasHiddenVox = 0;
+		hasHiddenVox = false;
 		voxHiddenIndex = 0;
 	}
 
@@ -797,7 +792,7 @@ void Text::textClipSmall() { // newGame4
 	dialTextBoxParam2 = 591;
 }
 
-void Text::drawAskQuestion(int32 index) { // MyDial
+void Text::drawAskQuestion(int32 index) {
 	int32 textStatus = 1;
 
 	// get right VOX entry index
@@ -816,36 +811,26 @@ void Text::drawAskQuestion(int32 index) { // MyDial
 				if (_engine->shouldQuit()) {
 					break;
 				}
-				playVox(currDialTextEntry);
-				_engine->_system->delayMillis(1);
-			} while (_engine->_input->internalKeyCode || _engine->_input->skippedKey || _engine->_input->pressedKey);
-
-			do {
-				_engine->readKeys();
-				if (_engine->shouldQuit()) {
+				if (!playVoxSimple(currDialTextEntry)) {
 					break;
 				}
-				playVox(currDialTextEntry);
 				_engine->_system->delayMillis(1);
-			} while (!_engine->_input->internalKeyCode && !_engine->_input->skippedKey && !_engine->_input->pressedKey);
+			} while (!_engine->_input->toggleAbortAction());
 		}
 
 		_engine->_system->delayMillis(1);
 	} while (textStatus);
 
 	while (playVoxSimple(currDialTextEntry)) {
-		if (_engine->shouldQuit()) {
+		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
+			stopVox(currDialTextEntry);
 			break;
 		}
+		_engine->_system->delayMillis(1);
 	}
 
-	hasHiddenVox = 0;
+	hasHiddenVox = false;
 	voxHiddenIndex = 0;
-
-	if (_engine->_sound->isSamplePlaying(currDialTextEntry)) {
-		stopVox(currDialTextEntry);
-	}
-
 	printTextVar13 = 0;
 }
 

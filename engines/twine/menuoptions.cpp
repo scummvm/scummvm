@@ -64,7 +64,7 @@ void MenuOptions::newGame() {
 	_engine->_text->drawTextFullscreen(150);
 	_engine->readKeys();
 
-	// intro screen 1 - twinsun
+	// intro screen 2
 	_engine->_screens->loadImage(RESSHQR_INTROSCREEN2IMG);
 	_engine->_text->drawTextFullscreen(151);
 	_engine->readKeys();

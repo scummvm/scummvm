@@ -114,6 +114,10 @@ bool Input::toggleActionIfActive(TwinEActionType actionType) {
 	return false;
 }
 
+bool Input::toggleAbortAction() {
+	return toggleActionIfActive(TwinEActionType::CutsceneAbort) || toggleActionIfActive(TwinEActionType::UIAbort) || toggleActionIfActive(TwinEActionType::Escape);
+}
+
 bool Input::isQuickBehaviourActionActive() const {
 	return isActionActive(TwinEActionType::QuickBehaviourNormal) || isActionActive(TwinEActionType::QuickBehaviourAthletic) || isActionActive(TwinEActionType::QuickBehaviourAggressive) || isActionActive(TwinEActionType::QuickBehaviourDiscreet);
 }

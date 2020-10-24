@@ -43,31 +43,30 @@
 namespace TwinE {
 
 void Redraw::addRedrawCurrentArea(int32 left, int32 top, int32 right, int32 bottom) {
-	int32 area;
 	int32 i = 0;
-	int32 leftValue;
-	int32 rightValue;
-	int32 topValue;
-	int32 bottomValue;
 
-	area = (right - left) * (bottom - top);
+	const int32 area = (right - left) * (bottom - top);
 
 	while (i < numOfRedrawBox) {
+		int32 leftValue;
 		if (currentRedrawList[i].left >= left)
 			leftValue = left;
 		else
 			leftValue = currentRedrawList[i].left;
 
+		int32 rightValue;
 		if (currentRedrawList[i].right <= right)
 			rightValue = right;
 		else
 			rightValue = currentRedrawList[i].right;
 
+		int32 topValue;
 		if (currentRedrawList[i].top >= top)
 			topValue = top;
 		else
 			topValue = currentRedrawList[i].top;
 
+		int32 bottomValue;
 		if (currentRedrawList[i].bottom <= bottom)
 			bottomValue = bottom;
 		else
@@ -77,23 +76,23 @@ void Redraw::addRedrawCurrentArea(int32 left, int32 top, int32 right, int32 bott
 			currentRedrawList[i].left = leftValue;
 			currentRedrawList[i].top = topValue;
 			currentRedrawList[i].right = rightValue;
-			currentRedrawList[i].bottom = bottomValue;
+			currentRedrawList[i].bottom = MIN(SCREEN_TEXTLIMIT_BOTTOM, bottomValue);
 
-			if (currentRedrawList[i].bottom >= SCREEN_WIDTH)
-				currentRedrawList[i].bottom = SCREEN_TEXTLIMIT_BOTTOM;
+			assert(currentRedrawList[i].left < currentRedrawList[i].right);
+			assert(currentRedrawList[i].top < currentRedrawList[i].bottom);
 			return;
 		}
 
 		i++;
-	};
+	}
 
 	currentRedrawList[i].left = left;
 	currentRedrawList[i].top = top;
 	currentRedrawList[i].right = right;
-	currentRedrawList[i].bottom = bottom;
+	currentRedrawList[i].bottom = MIN(SCREEN_TEXTLIMIT_BOTTOM, bottom);
 
-	if (currentRedrawList[i].bottom >= SCREEN_WIDTH)
-		currentRedrawList[i].bottom = SCREEN_TEXTLIMIT_BOTTOM;
+	assert(currentRedrawList[i].left < currentRedrawList[i].right);
+	assert(currentRedrawList[i].top < currentRedrawList[i].bottom);
 
 	numOfRedrawBox++;
 }

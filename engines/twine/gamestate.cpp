@@ -458,7 +458,7 @@ void GameState::processGameChoices(int32 choiceIdx) {
 		}
 		_engine->_text->stopVox(_engine->_text->currDialTextEntry);
 
-		_engine->_text->hasHiddenVox = 0;
+		_engine->_text->hasHiddenVox = false;
 		_engine->_text->voxHiddenIndex = 0;
 	}
 }

@@ -780,6 +780,7 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 	_engine->copyBlockPhys(left, top, left + 450, top + 135);
 }
 
+// TODO: convert cantDrawBox to bool
 void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDrawBox) {
 	int32 boxLeft = behaviour * 110 + 110;
 	int32 boxRight = boxLeft + 99;
@@ -886,22 +887,17 @@ void Menu::processBehaviourMenu() {
 
 	while (_engine->_input->isActionActive(TwinEActionType::BehaviourMenu) || _engine->_input->isQuickBehaviourActionActive()) {
 		_engine->readKeys();
-		_engine->_input->key = _engine->_input->pressedKey;
 
 		int heroBehaviour = (int)_engine->_actor->heroBehaviour;
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::TurnLeft)) {
 			heroBehaviour++;
-		}
-
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
+		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::TurnRight)) {
 			heroBehaviour--;
 		}
 
 		if (heroBehaviour < kNormal) {
 			heroBehaviour = kDiscrete;
-		}
-
-		if (heroBehaviour >= kProtoPack) {
+		} else if (heroBehaviour >= kProtoPack) {
 			heroBehaviour = kNormal;
 		}
 
@@ -912,14 +908,6 @@ void Menu::processBehaviourMenu() {
 			tmpHeroBehaviour = _engine->_actor->heroBehaviour;
 			_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - 256, 50, &moveMenu);
 			_engine->_animations->setAnimAtKeyframe(behaviourAnimState[_engine->_actor->heroBehaviour], _engine->_animations->animTable[_engine->_actor->heroAnimIdx[_engine->_actor->heroBehaviour]], behaviourEntity, &behaviourAnimData[_engine->_actor->heroBehaviour]);
-
-			while (_engine->_input->pressedKey) {
-				_engine->readKeys();
-				if (_engine->shouldQuit()) {
-					break;
-				}
-				drawBehaviour(_engine->_actor->heroBehaviour, -1, 1);
-			}
 		}
 
 		drawBehaviour(_engine->_actor->heroBehaviour, -1, 1);
