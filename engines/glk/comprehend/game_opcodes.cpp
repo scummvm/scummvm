@@ -72,6 +72,11 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		item->_flags &= ~ITEMF_INVISIBLE;
 		break;
 
+	case OPCODE_CLEAR_WORD:
+		item = get_item(instr->_operand[0]);
+		item->_word = 0;
+		break;
+
 	case OPCODE_CURRENT_OBJECT_NOT_VALID:
 		func_set_test_result(func_state, !noun);
 		break;
@@ -232,12 +237,24 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		}
 		break;
 
+	case OPCODE_SET_ROOM_GRAPHIC:
+		room = get_room(instr->_operand[0]);
+		room->_graphic = instr->_operand[1];
+		if (instr->_operand[0] == _currentRoom)
+			_updateFlags |= UPDATE_GRAPHICS;
+		break;
+
 	case OPCODE_SET_STRING_REPLACEMENT1:
 		_currentReplaceWord = (instr->_operand[0] & 0x80) - 1;
 		break;
 
 	case OPCODE_SET_STRING_REPLACEMENT2:
 		_currentReplaceWord = instr->_operand[0] - 1;
+		break;
+
+	case OPCODE_SET_WORD:
+		item = get_item(instr->_operand[0]);
+		item->_word = instr->_operand[1];
 		break;
 
 	case OPCODE_SPECIAL:
@@ -388,12 +405,14 @@ ComprehendGameV1::ComprehendGameV1() {
 	_opcodeMap[0x99] = OPCODE_SET_FLAG;
 	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
 	_opcodeMap[0x98] = OPCODE_TURN_TICK;
+	_opcodeMap[0x9a] = OPCODE_SET_WORD;
 	_opcodeMap[0x9d] = OPCODE_CLEAR_FLAG;
 	_opcodeMap[0x9e] = OPCODE_INVENTORY_ROOM;
 	_opcodeMap[0xa0] = OPCODE_TAKE_CURRENT_OBJECT;
 	_opcodeMap[0xa1] = OPCODE_SPECIAL;
 	_opcodeMap[0xa4] = OPCODE_DROP_CURRENT_OBJECT;
 	_opcodeMap[0xa2] = OPCODE_SET_ROOM_GRAPHIC;
+	_opcodeMap[0xad] = OPCODE_CLEAR_WORD;
 	_opcodeMap[0xb0] = OPCODE_REMOVE_CURRENT_OBJECT;
 	_opcodeMap[0xb1] = OPCODE_MOVE_DIR;
 	_opcodeMap[0xb5] = OPCODE_SET_STRING_REPLACEMENT1;
@@ -614,13 +633,6 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 			_updateFlags |= UPDATE_GRAPHICS;
 		break;
 
-	case OPCODE_SET_ROOM_GRAPHIC:
-		room = get_room(instr->_operand[0]);
-		room->_graphic = instr->_operand[1];
-		if (instr->_operand[0] == _currentRoom)
-			_updateFlags |= UPDATE_GRAPHICS;
-		break;
-
 	case OPCODE_TEST_FALSE:
 		// The original had two opcodes mapped to the same code that does
 		// a test, but ignores the result, and is always false
@@ -698,7 +710,9 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x8e] = OPCODE_PRINT;
 	_opcodeMap[0x8f] = OPCODE_SET_OBJECT_LONG_DESCRIPTION;
 	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
+	_opcodeMap[0x95] = OPCODE_CLEAR_WORD;
 	_opcodeMap[0x99] = OPCODE_SET_FLAG;
+	_opcodeMap[0x9a] = OPCODE_SET_WORD;
 	_opcodeMap[0x9d] = OPCODE_CLEAR_FLAG;
 	_opcodeMap[0xa0] = OPCODE_TAKE_CURRENT_OBJECT;
 	_opcodeMap[0xa1] = OPCODE_CLEAR_FLAG40;
@@ -707,6 +721,7 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0xa9] = OPCODE_CLEAR_INVISIBLE;
 	_opcodeMap[0xad] = OPCODE_SET_INVISIBLE;
 	_opcodeMap[0xc1] = OPCODE_VAR_DEC;
+	_opcodeMap[0xc2] = OPCODE_SET_ROOM_GRAPHIC;
 	_opcodeMap[0xc5] = OPCODE_SET_STRING_REPLACEMENT3;
 	_opcodeMap[0xc9] = OPCODE_SET_STRING_REPLACEMENT1;
 	_opcodeMap[0xcd] = OPCODE_SET_STRING_REPLACEMENT2;
@@ -735,7 +750,6 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x90] = OPCODE_WAIT_KEY;
 	_opcodeMap[0x98] = OPCODE_TURN_TICK;
 	_opcodeMap[0x9e] = OPCODE_INVENTORY_ROOM;
-	_opcodeMap[0xc2] = OPCODE_SET_ROOM_GRAPHIC;
 	_opcodeMap[0xc6] = OPCODE_SET_OBJECT_GRAPHIC;
 	_opcodeMap[0xd9] = OPCODE_DRAW_OBJECT;
 	_opcodeMap[0xf0] = OPCODE_DROP_CURRENT_OBJECT;

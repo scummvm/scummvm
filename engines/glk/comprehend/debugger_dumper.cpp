@@ -116,6 +116,8 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_SET_FLAG40] = "set_flag40";
 	_opcodes[OPCODE_CLEAR_FLAG40] = "clear_flag40";
 	_opcodes[OPCODE_RANDOM_MSG] = "random_msg";
+	_opcodes[OPCODE_SET_WORD] = "set_word";
+	_opcodes[OPCODE_CLEAR_WORD] = "clear_word";
 }
 
 Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
