@@ -1262,10 +1262,8 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 					   int32 flags, const char *formatString, const char *strng) {
 	SmushFont *sf = _player->getFont(0);
 	int color = 1;
-	int32 top = 0;
 	char *str = NULL, *string;
 	int len = strlen(formatString) + strlen(strng) + 16;
-
 	string = (char *)malloc(len);
 	str = string;
 
@@ -1299,23 +1297,20 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 	sf->setColor(color);
 
 	// flags:
-	// bit 0 - center       1
-	// bit 1 - not used     2
-	// bit 2 - ???          4
-	// bit 3 - wrap around  8
-	switch (flags) {
-	case 0:
-		sf->drawString(str, renderBitmap, _player->_width, _player->_height, pos_x, pos_y, false);
-		break;
-	case 1:
-		sf->drawString(str, renderBitmap, _player->_width, _player->_height, pos_x, MAX(pos_y, top), true);
-		break;
-	case 5:
-		sf->drawStringWrap(str, renderBitmap, _player->_width, _player->_height, pos_x, pos_y, 10, 300, true);
-		break;
-	default:
-		error("Insane::smlayer_showStatusMsg. Not handled flags: %d", flags);
+	// bit 0 - center                  0x01
+	// bit 1 - not used (align right)  0x02
+	// bit 2 - word wrap               0x04
+	// bit 3 - switchable              0x08
+	// bit 4 - fill background         0x10
+	if (flags & 4) {
+		Common::Rect clipRect(0, 0, _player->_width, _player->_height);
+		sf->drawStringWrap(str, renderBitmap, clipRect, pos_x, pos_y, flags & 1);
+	} else {
+		Common::Rect clipRect(10, 0, 310, _player->_height);
+		sf->drawString(str, renderBitmap, clipRect, pos_x, pos_y, flags & 1);
 	}
+
+
 	free (string);
 }
 

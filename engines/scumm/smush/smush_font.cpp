@@ -77,7 +77,7 @@ int SmushFont::getStringHeight(const char *str, uint numBytesMax) {
 		if (*str == '\n') {
 			totalHeight += (lineHeight ? lineHeight : _fontHeight) + 1;
 			lineHeight = 0;
-		} else if (*str != '\r' || *str != _vm->_newLineCharacter) {
+		} else if (*str != '\r' && *str != _vm->_newLineCharacter) {
 			lineHeight = MAX<int>(lineHeight, getCharHeight(*str));
 			if (is2ByteCharacter(_vm->_language, *str)) {
 				++str;
@@ -227,8 +227,8 @@ void SmushFont::drawSubstring(const char *str, uint numBytesMax, byte *buffer, i
 #define MAX_STRINGS		80
 
 
-void SmushFont::drawString(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, bool center) {
-	debugC(DEBUG_SMUSH, "SmushFont::drawString(%s, %d, %d, %d)", str, x, y, center);
+void SmushFont::drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, bool center) {
+	debugC(DEBUG_SMUSH, "SmushFont::drawString(str: '%s', x: %d, y: %d, clipRect: (%d, %d, %d, %d), center: %d)", str, x, y, clipRect.left, clipRect.top, clipRect.right, clipRect.bottom, center);
 
 	int totalLen = (int)strlen(str);
 	int lineStart = 0;
@@ -248,8 +248,8 @@ void SmushFont::drawString(const char *str, byte *buffer, int dst_width, int dst
 
 		int len = pos - lineStart;
 		int height = getStringHeight(str + lineStart, len);
-		if (y < dst_height) {
-			drawSubstring(str + lineStart, len, buffer, dst_width, center ? (x - getStringWidth(str + lineStart, len) / 2) : x, y);
+		if (y < clipRect.bottom) {
+			drawSubstring(str + lineStart, len, buffer, _vm->_screenWidth, center ? (x - getStringWidth(str + lineStart, len) / 2) : x, y);
 			y += height;
 		}
 
@@ -257,15 +257,14 @@ void SmushFont::drawString(const char *str, byte *buffer, int dst_width, int dst
 	}
 }
 
-void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right, bool center) {
-	debugC(DEBUG_SMUSH, "SmushFont::drawStringWrap(%s, %d, %d, %d, %d, %d)", str, x, y, left, right, center);
-
+void SmushFont::drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, bool center) {
+	debugC(DEBUG_SMUSH, "SmushFont::drawStringWrap(str: '%s', x: %d, y: %d, clipRect: (%d, %d, %d, %d), center: %d)", str, x, y, clipRect.left, clipRect.top, clipRect.right, clipRect.bottom, center);
 	// This implementation is from COMI. Things are done a bit differently than in the older implementations.
 	// In particular, the older version would insert '\0' chars into the string to cut off the sub strings
 	// before calling getStringWidth(), getStringHeight() or drawSubstring() and replace these chars with the
 	// original values afterwards. COMI allows a byte length limitation in all the functions so that the sub
 	// string length can be passed and no cut off '\0' chars are needed.
-	const int width = right - left;
+
 	int len = (int)strlen(str);
 	Common::String spaceSeparators(Common::String::format(" %c", (char)_vm->_newLineCharacter));
 	Common::String breakSeparators(Common::String::format(" \n%c", (char)_vm->_newLineCharacter));
@@ -284,7 +283,7 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 	int curWidth = 0;
 	int curPos = -1;
 
-	// COMI does this for CJK strings (before any other possible yPos fixes, see lines 348 - 356).
+	// COMI does this for CJK strings (before any other possible yPos fixes, see lines 343 - 355).
 	if (_vm->_game.id == GID_CMI && _vm->_useCJKMode)
 		y += 2;
 
@@ -304,7 +303,7 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 		int wordWidth = getStringWidth(str + textStart, nextSeparatorPos - textStart);
 		int newWidth = curWidth + separatorWidth + wordWidth;
 
-		if (newWidth > width) {
+		if (curWidth && newWidth > clipRect.width()) {
 			if (numSubstrings < MAX_STRINGS) {
 				substrWidths[numSubstrings] = curWidth;
 				substrByteLength[numSubstrings] = curPos - substrStart[numSubstrings];
@@ -316,13 +315,13 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 		curWidth = newWidth;
 
 		curPos = nextSeparatorPos;
-		if (!spaceSeparators.contains(str[nextSeparatorPos])) {
+		if (!spaceSeparators.contains(str[curPos])) {
 			// This one is only triggered by '\n' (which frequently happens in COMI/English).
 			if (numSubstrings < MAX_STRINGS) {
 				substrWidths[numSubstrings] = curWidth;
-				substrByteLength[numSubstrings] = nextSeparatorPos - substrStart[numSubstrings];
+				substrByteLength[numSubstrings] = curPos - substrStart[numSubstrings];
 				numSubstrings++;
-				substrStart[numSubstrings] = nextSeparatorPos + 1;
+				substrStart[numSubstrings] = curPos + 1;
 			}
 			curWidth = 0;
 		}
@@ -340,38 +339,34 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, int dst_width, int
 		height += lastSubstrHeight;
 	}
 
-	// I have verified this for DIG and COMI (English and Chinese), so I limit this fix to that. In
-	// COMI this is actually more complicated, since there seem to be more text flags which we don't
-	// support. E. g. for a flag of 0x40 we'd substract another (lastHeight / 2) from y here (without
-	// any condition). And for flag 0x100 we'd actually skip this step. No idea yet whether the flags
-	// are relevant (they can't be too relevant or someone would have implemented them, but I'll check).
-	int clipHeight = height;
-	if (_vm->_game.id == GID_DIG || (_vm->_game.id == GID_CMI))
-		clipHeight += (lastSubstrHeight / 2);
+	// I have verified these y-corrections for DIG (English and Chinese), COMI (English and Chinese) and FT (English).
+	// In COMI there seem to be more text flags which we don't support and for which I haven't seen use cases yet. I
+	// put some commented-out code in here as a reminder...
+	int clipHeight = height + lastSubstrHeight / 2;
 
 	/*if (_vm->_game.id == GID_CMI && (flags & 0x40))
 		y -= (lastSubstrHeight / 2);*/
 
-	if (y > dst_height - clipHeight /*&& !(_vm->_game.id == GID_CMI && (flags & 0x100))*/)
-		y = dst_height - clipHeight;
+	if (y > clipRect.bottom - clipHeight /*&& !(_vm->_game.id == GID_CMI && (flags & 0x100))*/)
+		y = clipRect.bottom - clipHeight;
+
+	if (y < clipRect.top)
+		y = clipRect.top;
 
 	if (center) {
-		maxWidth = (maxWidth + 1) / 2;
-		x = left + width / 2;
-
-		if (x < left + maxWidth)
-			x = left + maxWidth;
-		if (x > right - maxWidth)
-			x = right - maxWidth;
+		if (x + (maxWidth >> 1) > clipRect.right)
+			x = clipRect.right - (maxWidth >> 1);
+		if (x - (maxWidth >> 1) < clipRect.left)
+			x = clipRect.left + (maxWidth >> 1);
 	} else {
-		if (x > dst_width - maxWidth)
-			x = dst_width - maxWidth;
+		if (x > clipRect.right - maxWidth)
+			x = clipRect.right - maxWidth;
 	}
 
 	for (int i = 0; i < numSubstrings; i++) {
 		int xpos = center ? x - substrWidths[i] / 2 : x;
 		len = substrByteLength[i] > 0 ? substrByteLength[i] : 0;
-		drawSubstring(str + substrStart[i], len, buffer, dst_width, xpos, y);
+		drawSubstring(str + substrStart[i], len, buffer, _vm->_screenWidth, xpos, y);
 		y += getStringHeight(str + substrStart[i], len);
 	}
 }
