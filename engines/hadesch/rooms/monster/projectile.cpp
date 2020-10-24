@@ -87,15 +87,15 @@ void Projectile::makeFlightParams(int xmomentum) {
 		switch (rnd.getRandomNumberRng(0, 2)) {
 		case 0:
 			_target = Common::Point(
-				-50, rnd.getRandomNumberRng(-50, 400));
+				-50, rnd.getRandomNumberRngSigned(-50, 400));
 			break;
 		case 1:
 			_target = Common::Point(
-				rnd.getRandomNumberRng(-50, 650), -50);
+				rnd.getRandomNumberRngSigned(-50, 650), -50);
 			break;
 		case 2:
 			_target = Common::Point(
-				650, rnd.getRandomNumberRng(-50, 400));
+				650, rnd.getRandomNumberRngSigned(-50, 400));
 			break;
 		}
 	} else {
@@ -112,17 +112,17 @@ void Projectile::makeFlightParams(int xmomentum) {
 		break;
 	case -1:
 		_attractor1 = Common::Point(
-			rnd.getRandomNumberRng(-600, 0),
+			rnd.getRandomNumberRngSigned(-600, 0),
 			rnd.getRandomNumberRng(0, 300));
 		break;
 	case 0:
 		_attractor1 = Common::Point(
-			rnd.getRandomNumberRng(-600, 600),
-			rnd.getRandomNumberRng(-600, 600));
+			rnd.getRandomNumberRngSigned(-600, 600),
+			rnd.getRandomNumberRngSigned(-600, 600));
 		break;
 	}
 	_attractor2 = Common::Point(
-		rnd.getRandomNumberRng(-600, 600),
+		rnd.getRandomNumberRngSigned(-600, 600),
 		rnd.getRandomNumberRng(0, 600));
 }
 

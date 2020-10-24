@@ -186,11 +186,11 @@ void Bird::makeFlightParams() {
 	_flightLengthMs = _flightLengthFrames * 100;
 		
 	_attractor1 = Common::Point(
-		g_vm->getRnd().getRandomNumberRng(-600, 600),
-		g_vm->getRnd().getRandomNumberRng(-600, 600));
+		g_vm->getRnd().getRandomNumberRngSigned(-600, 600),
+		g_vm->getRnd().getRandomNumberRngSigned(-600, 600));
 	_attractor2 = Common::Point(
-		g_vm->getRnd().getRandomNumberRng(-600, 600),
-		g_vm->getRnd().getRandomNumberRng(-600, 600));
+		g_vm->getRnd().getRandomNumberRngSigned(-600, 600),
+		g_vm->getRnd().getRandomNumberRngSigned(-600, 600));
 
 	unsigned lastGoodShootFrame = 11;
 	for (; (int) lastGoodShootFrame < _flightLengthFrames; lastGoodShootFrame++) {
