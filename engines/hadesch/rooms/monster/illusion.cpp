@@ -28,77 +28,89 @@
 
 namespace Hadesch {
 
-static const struct {
+struct BirdInfo {
 	int _projectileFrame;
 	const char *_flyAnim;
-	Common::Point _birdSize;
+	int _birdWidth;
+	int _birdHeight;
 	const char *_interceptAnim;
 	const char *_shootAnim;
-	Common::Point _birdShootSize;
-} birdInfo[] = {
+	int _birdShootWidth;
+	int _birdShootHeight;	
+
+	Common::Point getBirdSize() const {
+		return Common::Point(_birdWidth, _birdHeight);
+	}
+
+	Common::Point getBirdShootSize() const {
+		return Common::Point(_birdShootWidth, _birdShootHeight);
+	}
+};
+
+static const BirdInfo birdInfo[] = {
 	{		
 		10,
 		"v7220bh2",
-		Common::Point(151, 111),
+		151, 111,
 		"v7220bp2",
 		"v7220bl2",
-		Common::Point(154, 192),
+		154, 192,
 	},
 	{
 		6,
 		"v7220bi2",
-		Common::Point(167, 175),
+		167, 175,
 		"v7220bq2",
 		"v7220bm2",
-		Common::Point(190, 233),
+		190, 233,
 	},
 	{
 		10,
 		"v7220bh3",
-		Common::Point(151, 111),
+		151, 111,
 		"v7220bp3",
 		"v7220bl3",
-		Common::Point(154, 192),
+		154, 192,
 	},
 	{
 		6,
 		"v7220bi3",
-		Common::Point(167, 175),
+		167, 175,
 		"v7220bq3",
 		"v7220bm3",
-		Common::Point(190, 233),
+		190, 233,
 	},
 	{
 		10,
 		"v7220bh0",
-		Common::Point(141, 109),
+		141, 109,
 		"v7220bp0",
 		"v7220bl0",
-		Common::Point(141, 192),
+		141, 192,
 	},
 	{
 		6,
 		"v7220bi0",
-		Common::Point(110, 172),
+		110, 172,
 		"v7220bq0",
 		"v7220bm0",
-		Common::Point(94, 233),
+		94, 233,
 	},
 	{
 		10,
 		"v7220bh1",
-		Common::Point(141, 109),
+		141, 109,
 		"v7220bp1",
 		"v7220bl1",
-		Common::Point(141, 192),
+		141, 192,
 	},
 	{
 		6,
 		"v7220bi1",
-		Common::Point(110, 172),
+		110, 172,
 		"v7220bq1",
 		"v7220bm1",
-		Common::Point(94, 233),
+		94, 233,
 	}
 };
 
@@ -207,19 +219,19 @@ void Bird::tick(Common::SharedPtr<Bird> backRef, Common::SharedPtr<Battleground>
 		int scale = fp.scale;
 		if (frame < _flightShootAnimFrame) {
 			Common::Point cornerPos = fp.centerPos - (scale / 100.0)
-				* birdInfo[_birdType]._birdSize;
+				* birdInfo[_birdType].getBirdSize();
 			room->selectFrame(flyLayer, 500, frame % 5, cornerPos);
 			room->setScale(flyLayer, scale);
 			room->stopAnim(shootLayer);
 		} else if (frame < _flightShootEndFrame) {
 			Common::Point cornerPos = fp.centerPos - (scale / 100.0)
-				* birdInfo[_birdType]._birdShootSize;
+				* birdInfo[_birdType].getBirdShootSize();
 			room->selectFrame(shootLayer, 500, frame - _flightShootAnimFrame, cornerPos);
 			room->setScale(shootLayer, scale);
 			room->stopAnim(flyLayer);
 		} else { // 15204
 			Common::Point cornerPos = fp.centerPos - (scale / 100.0)
-				* birdInfo[_birdType]._birdSize;
+				* birdInfo[_birdType].getBirdSize();
 			room->selectFrame(flyLayer, 500, (frame - _flightShootEndFrame) % 5, cornerPos);
 			room->setScale(flyLayer, scale);
 			room->stopAnim(shootLayer);
@@ -251,8 +263,9 @@ void Bird::handleAbsoluteClick(Common::Point p) {
 	_isActive = false;
 	LayerId l = LayerId(birdInfo[_birdType]._interceptAnim, _id, "bird");
 	room->playAnimWithSound(l, "v7220ec0", 500, PlayAnimParams::disappear(),
-		EventHandlerWrapper(),
-		fp.centerPos - birdInfo[_birdType]._birdSize * (fp.scale / 100.0));
+				EventHandlerWrapper(),
+				fp.centerPos - birdInfo[_birdType].getBirdSize()
+				* (fp.scale / 100.0));
 }
 
 Illusion::Illusion(Common::SharedPtr<Battleground> battleground) {
