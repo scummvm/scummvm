@@ -82,6 +82,14 @@ public:
 	 * @return	a random number in the interval [min, max]
 	 */
 	uint getRandomNumberRng(uint min, uint max);
+
+	/**
+	 * Generates a random signed integer in the interval [min, max].
+	 * @param min	the lower bound
+	 * @param max	the upper bound
+	 * @return	a random number in the interval [min, max]
+	 */
+	int getRandomNumberRngSigned(int min, int max);
 };
 
 /** @} */
