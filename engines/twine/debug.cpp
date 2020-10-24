@@ -483,15 +483,15 @@ void Debug::debugProcessWindow() {
 	}
 }
 
-void Debug::processDebug(int16 pKey) {
+void Debug::processDebug() {
 	if (!_engine->cfgfile.Debug) {
 		return;
 	}
 	debugProcessWindow();
 
-	_engine->_debugGrid->changeGrid(pKey);
-	_engine->_debugGrid->changeGridCamera(pKey);
-	_engine->_debugGrid->applyCellingGrid(pKey);
+	_engine->_debugGrid->changeGrid();
+	_engine->_debugGrid->changeGridCamera();
+	_engine->_debugGrid->applyCellingGrid();
 }
 
 } // namespace TwinE

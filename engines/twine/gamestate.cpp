@@ -408,7 +408,7 @@ void GameState::processFoundItem(int32 item) {
 
 	while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
 		_engine->readKeys();
-		if (_engine->_input->internalKeyCode == 1) {
+		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
 			break;
 		}
 		_engine->delaySkip(1);
@@ -485,8 +485,11 @@ void GameState::processGameoverAnimation() { // makeGameOver
 		int32 startLbaTime = _engine->lbaTime;
 		_engine->_interface->setClip(120, 120, 519, 359);
 
-		while (_engine->_input->internalKeyCode != 1 && (_engine->lbaTime - startLbaTime) <= 500) {
+		while (!_engine->_input->toggleAbortAction() && (_engine->lbaTime - startLbaTime) <= 500) {
 			_engine->readKeys();
+			if (_engine->shouldQuit()) {
+				return;
+			}
 
 			int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);
 			int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 0x64);

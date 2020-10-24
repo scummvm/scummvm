@@ -89,7 +89,7 @@ int32 DebugScene::checkZoneType(int32 type) {
 	return 0;
 }
 
-void DebugScene::displayZones(int16 pKey) {
+void DebugScene::displayZones() {
 	if (!showingZones) {
 		return;
 	}

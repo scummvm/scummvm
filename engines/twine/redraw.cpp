@@ -528,7 +528,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 	}
 
 	if (_engine->cfgfile.Debug) {
-		_engine->_debugScene->displayZones(_engine->_input->internalKeyCode);
+		_engine->_debugScene->displayZones();
 	}
 
 	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {

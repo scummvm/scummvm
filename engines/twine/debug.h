@@ -108,7 +108,7 @@ private:
 
 public:
 	Debug(TwinEEngine *engine) : _engine(engine) {}
-	void processDebug(int16 pKey);
+	void processDebug();
 };
 
 } // namespace TwinE

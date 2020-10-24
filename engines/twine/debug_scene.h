@@ -41,7 +41,7 @@ public:
 	bool showingZones = false;
 	int32 typeZones = 127; // all zones on as default
 
-	void displayZones(int16 pKey);
+	void displayZones();
 };
 
 } // namespace TwinE

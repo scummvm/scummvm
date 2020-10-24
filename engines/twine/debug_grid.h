@@ -40,11 +40,11 @@ public:
 	bool canChangeScenes = false;
 
 	/** Change scenario camera positions */
-	void changeGridCamera(int16 pKey);
+	void changeGridCamera();
 	/** Change grid index */
-	void changeGrid(int16 pKey);
+	void changeGrid();
 	/** Apply and change disappear celling grid */
-	void applyCellingGrid(int16 pKey);
+	void applyCellingGrid();
 };
 
 } // namespace TwinE
