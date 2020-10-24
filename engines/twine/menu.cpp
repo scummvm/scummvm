@@ -250,6 +250,8 @@ Menu::Menu(TwinEEngine *engine) {
 	GiveUpMenuState = copySettings(_priv::GiveUpMenuSettings, sizeof(_priv::GiveUpMenuSettings));
 	MainMenuState = copySettings(_priv::MainMenuSettings, sizeof(_priv::MainMenuSettings));
 	AdvOptionsMenuState = copySettings(_priv::AdvOptionsMenuSettings, sizeof(_priv::AdvOptionsMenuSettings));
+
+	Common::fill(&behaviourAnimState[0], &behaviourAnimState[4], 0);
 }
 
 Menu::~Menu() {
