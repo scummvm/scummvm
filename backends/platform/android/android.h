@@ -115,6 +115,8 @@ private:
 
 public:
 	virtual bool pollEvent(Common::Event &event) override;
+	virtual Common::HardwareInputSet *getHardwareInputSet() override;
+	virtual Common::KeymapArray getGlobalKeymaps() override;
 	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
 	virtual uint32 getMillis(bool skipRecord = false) override;

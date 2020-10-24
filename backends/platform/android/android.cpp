@@ -499,6 +499,24 @@ bool OSystem_Android::getFeatureState(Feature f) {
 	}
 }
 
+// TODO Re-eval if we need this here
+Common::HardwareInputSet *OSystem_Android::getHardwareInputSet() {
+	using namespace Common;
+
+	CompositeHardwareInputSet *inputSet = new CompositeHardwareInputSet();
+	inputSet->addHardwareInputSet(new MouseHardwareInputSet(defaultMouseButtons));
+	inputSet->addHardwareInputSet(new KeyboardHardwareInputSet(defaultKeys, defaultModifiers));
+	inputSet->addHardwareInputSet(new JoystickHardwareInputSet(defaultJoystickButtons, defaultJoystickAxes));
+
+	return inputSet;
+}
+
+// TODO Re-eval if we need this here
+Common::KeymapArray OSystem_Android::getGlobalKeymaps() {
+	Common::KeymapArray globalMaps = BaseBackend::getGlobalKeymaps();
+	return globalMaps;
+}
+
 Common::KeymapperDefaultBindings *OSystem_Android::getKeymapperDefaultBindings() {
 	Common::KeymapperDefaultBindings *keymapperDefaultBindings = new Common::KeymapperDefaultBindings();
 
