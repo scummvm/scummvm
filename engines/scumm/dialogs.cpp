@@ -382,16 +382,23 @@ void HelpDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 da
 #pragma mark -
 
 InfoDialog::InfoDialog(ScummEngine *scumm, int res)
-: ScummDialog(0, 0, 0, 0), _vm(scumm) { // dummy x and w
+: ScummDialog(0, 0, 0, 0), _vm(scumm), _style(GUI::ThemeEngine::kFontStyleBold) { // dummy x and w
 
 	_message = queryResString(res);
 
+	Common::Language lang = (_vm->_language == Common::KO_KOR || _vm->_language == Common::JA_JPN ||
+		_vm->_language == Common::ZH_TWN || _vm->_language == Common::ZH_CNA) ? _vm->_language : Common::UNK_LANG;
+
 	// Width and height are dummy
-	_text = new GUI::StaticTextWidget(this, 0, 0, 10, 10, _message, kTextAlignCenter);
+	_text = new GUI::StaticTextWidget(this, 0, 0, 10, 10, _message, kTextAlignCenter, Common::U32String(), GUI::ThemeEngine::kFontStyleBold, lang);
+
+	// Store this for the calls to getStringWidth() and getStringHeight() in reflowLayout().
+	if (lang != Common::UNK_LANG)
+		_style = GUI::ThemeEngine::kFontStyleLangExtra;
 }
 
 InfoDialog::InfoDialog(ScummEngine *scumm, const U32String &message)
-: ScummDialog(0, 0, 0, 0), _vm(scumm) { // dummy x and w
+: ScummDialog(0, 0, 0, 0), _vm(scumm), _style(GUI::ThemeEngine::kFontStyleBold) { // dummy x and w
 
 	_message = message;
 
@@ -409,8 +416,8 @@ void InfoDialog::reflowLayout() {
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	int width = g_gui.getStringWidth(_message) + 16;
-	int height = g_gui.getFontHeight() + 8;
+	int width = g_gui.getStringWidth(_message, _style) + 16;
+	int height = g_gui.getFontHeight(_style) + 8;
 
 	_w = width;
 	_h = height;

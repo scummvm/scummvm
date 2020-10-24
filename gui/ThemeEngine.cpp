@@ -553,7 +553,7 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 		Common::String localized = FontMan.genLocalizedFontFilename(file);
 		const Common::String charset
 #ifdef USE_TRANSLATION
-		                            (TransMan.getCurrentCharset())
+		                            (textId == kTextDataExtraLang ? "" : TransMan.getCurrentCharset())
 #endif
 		                            ;
 
@@ -596,6 +596,63 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 
 	return true;
 
+}
+
+// This should work independently of the translation manager, since it is is just about displaying
+// correct ingame messages in Chinese, Korean and Japanese games, even if the launcher is set to
+// English and/or the translations are disabled.
+Common::Array<Common::Language> getLangIdentifiers(const Common::String &language) {
+	struct IdStr2Lang {
+		const char strId[6];
+		Common::Language lang;
+	};
+
+	// I have added only the languages that currently make sense (the only other extra font that we
+	// currently have is for Hindi, but that language is only supported in the launcher, there are
+	// no games in Hindi).
+	IdStr2Lang matchPairs[] = {
+	//  { "hi", Common::UNK_LANG },
+		{ "ja", Common::JA_JPN },
+		{ "ko", Common::KO_KOR },
+		{ "zh", Common::ZH_ANY },
+		{ "zh", Common::ZH_CNA },
+		{ "zh", Common::ZH_TWN }
+	};
+
+	Common::Array<Common::Language> result;
+
+	for (int i = 0; i < ARRAYSIZE(matchPairs); ++i) {
+		if (language.contains(matchPairs[i].strId))
+			result.push_back(matchPairs[i].lang);
+	}
+
+	return result;
+}
+
+void ThemeEngine::storeFontNames(TextData textId, const Common::String &language, const Common::String &file, const Common::String &scalableFile, const int pointsize) {
+	if (language.empty())
+		return;
+
+	Common::Array<Common::Language> langs = getLangIdentifiers(language);
+	if (langs.empty())
+		return;
+
+	Common::Array<LangExtraFont>::iterator entry = Common::find(_langExtraFonts.begin(), _langExtraFonts.end(), langs[0]);
+	if (entry == _langExtraFonts.end())
+		_langExtraFonts.push_back(LangExtraFont(textId, langs, file, scalableFile, pointsize));
+	else
+		entry->storeFileNames(textId, file, scalableFile, pointsize);
+}
+
+bool ThemeEngine::loadExtraFont(FontStyle style, Common::Language lang) {
+	if (style >= kFontStyleMax)
+		return false;
+
+	Common::Array<LangExtraFont>::iterator entry = Common::find(_langExtraFonts.begin(), _langExtraFonts.end(), lang);
+	if (entry == _langExtraFonts.end())
+		return false;
+	TextData td = fontStyleToData(style);
+	return addFont(GUI::TextData::kTextDataExtraLang, Common::String(), entry->file(td), entry->sclFile(td), entry->fntSize(td));
 }
 
 bool ThemeEngine::addTextColor(TextColor colorId, int r, int g, int b) {

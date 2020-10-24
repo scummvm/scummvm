@@ -72,6 +72,7 @@ protected:
 	ScummEngine		*_vm;
 	U32String _message;
 	GUI::StaticTextWidget *_text;
+	GUI::ThemeEngine::FontStyle _style;
 
 public:
 	// arbitrary message

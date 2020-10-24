@@ -200,9 +200,10 @@ protected:
 	Common::U32String		_label;
 	Graphics::TextAlign		_align;
 	ThemeEngine::FontStyle	_font;
+
 public:
-	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, Graphics::TextAlign align, const Common::U32String &tooltip = Common::U32String(""), ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
-	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String(""), ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold);
+	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &text, Graphics::TextAlign align, const Common::U32String &tooltip = Common::U32String(""), ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold, Common::Language lang = Common::UNK_LANG);
+	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String(""), ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold, Common::Language lang = Common::UNK_LANG);
 	void setValue(int value);
 	void setLabel(const Common::U32String &label);
 	void handleMouseEntered(int button) override	{ readLabel(); }
@@ -213,6 +214,7 @@ public:
 
 protected:
 	void drawWidget() override;
+	void setFont(ThemeEngine::FontStyle font, Common::Language lang);
 };
 
 /* ButtonWidget */
