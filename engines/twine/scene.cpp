@@ -326,10 +326,11 @@ void Scene::changeScene() {
 
 	initScene(needChangeScene);
 
-	//TODO: treat holomap trajectories
+	// TODO: treat holomap trajectories
 
-	if (needChangeScene == 116 || needChangeScene == 117)
+	if (needChangeScene == 116 || needChangeScene == 117) {
 		_engine->_text->currentTextBank = 10;
+	}
 
 	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
 	_engine->_grid->initGrid(needChangeScene);
