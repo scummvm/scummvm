@@ -890,9 +890,9 @@ void Menu::processBehaviourMenu() {
 
 		int heroBehaviour = (int)_engine->_actor->heroBehaviour;
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::TurnLeft)) {
-			heroBehaviour++;
-		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::TurnRight)) {
 			heroBehaviour--;
+		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::TurnRight)) {
+			heroBehaviour++;
 		}
 
 		if (heroBehaviour < kNormal) {
@@ -1076,7 +1076,7 @@ void Menu::processInventoryMenu() {
 			_engine->_system->delayMillis(15);
 		}
 
-		if (_engine->loopPressedKey & 1) {
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIUp)) {
 			if (bx == 2) {
 				_engine->_text->initInventoryDialogueBox();
 				bx = 0;
@@ -1090,7 +1090,7 @@ void Menu::processInventoryMenu() {
 
 		drawItem(inventorySelectedItem);
 
-		if ((_engine->loopPressedKey & 2) && _engine->_gameState->gameFlags[inventorySelectedItem] == 1 && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && inventorySelectedItem < NUM_INVENTORY_ITEMS) {
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIDown) && _engine->_gameState->gameFlags[inventorySelectedItem] == 1 && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && inventorySelectedItem < NUM_INVENTORY_ITEMS) {
 			_engine->loopInventoryItem = inventorySelectedItem;
 			inventorySelectedColor = 91;
 			drawItem(inventorySelectedItem);

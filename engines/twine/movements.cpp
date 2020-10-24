@@ -265,23 +265,22 @@ void Movements::processActorMovements(int32 actorIdx) {
 		return;
 
 	if (actor->dynamicFlags.bIsFalling) {
-		int16 tempAngle = 0;
 
-		if (actor->controlMode != 1)
+		if (actor->controlMode != 1) {
 			return;
+		}
 
-		if (_engine->_input->key & 4)
+		int16 tempAngle = 0;
+		if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 			tempAngle = 0x100;
-
-		if (_engine->_input->key & 8)
+		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 			tempAngle = -0x100;
+		}
 
 		moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
 
 		_engine->_input->heroPressedKey = _engine->_input->key;
 	} else {
-		int16 tempAngle;
-
 		if (!actor->staticFlags.bIsSpriteActor) {
 			if (actor->controlMode != kManual) {
 				actor->angle = getRealAngle(&actor->move);
@@ -296,24 +295,24 @@ void Movements::processActorMovements(int32 actorIdx) {
 				heroAction = 0;
 
 				// If press W for action
-				if (_engine->_input->internalKeyCode == 0x11) {
+				if (_engine->_input->isActionActive(TwinEActionType::SpecialAction)) {
 					heroAction = 1;
 				}
 
 				// Process hero actions
 				switch (_engine->_actor->heroBehaviour) {
 				case kNormal:
-					if (_engine->loopPressedKey & 1) {
+					if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
 						heroAction = 1;
 					}
 					break;
 				case kAthletic:
-					if (_engine->loopPressedKey & 1) {
+					if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
 						_engine->_animations->initAnim(kJump, 1, 0, actorIdx);
 					}
 					break;
 				case kAggressive:
-					if (_engine->loopPressedKey & 1) {
+					if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
 						if (_engine->_actor->autoAgressive) {
 							heroMoved = 1;
 							actor->angle = getRealAngle(&actor->move);
@@ -333,22 +332,22 @@ void Movements::processActorMovements(int32 actorIdx) {
 								}
 							}
 						} else {
-							if (_engine->_input->key & 8) {
+							if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 								_engine->_animations->initAnim(kRightPunch, 1, 0, actorIdx);
 							}
 
-							if (_engine->_input->key & 4) {
+							if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 								_engine->_animations->initAnim(kLeftPunch, 1, 0, actorIdx);
 							}
 
-							if (_engine->_input->key & 1) {
+							if (_engine->_input->toggleActionIfActive(TwinEActionType::MoveForward)) {
 								_engine->_animations->initAnim(kKick, 1, 0, actorIdx);
 							}
 						}
 					}
 					break;
 				case kDiscrete:
-					if (_engine->loopPressedKey & 1) {
+					if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
 						_engine->_animations->initAnim(kHide, 0, 255, actorIdx);
 					}
 					break;
@@ -357,7 +356,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 				}
 			}
 
-			if ((_engine->loopPressedKey & 8) && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
+			if (_engine->_input->isActionActive(TwinEActionType::ThrowMagicBall) && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
 				if (_engine->_gameState->usingSabre == 0) { // Use Magic Ball
 					if (_engine->_gameState->gameFlags[InventoryItems::kiMagicBall]) {
 						if (_engine->_gameState->magicBallIdx == -1) {
@@ -382,8 +381,8 @@ void Movements::processActorMovements(int32 actorIdx) {
 			}
 
 			if (!_engine->loopPressedKey || heroAction) {
-
-				if (_engine->_input->key & 3) {     // if continue walking
+				// if continue walking
+				if (_engine->_input->isActionActive(TwinEActionType::MoveForward) || _engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 					heroMoved = 0; // don't break animation
 				}
 
@@ -395,19 +394,17 @@ void Movements::processActorMovements(int32 actorIdx) {
 
 				heroMoved = 0;
 
-				if (_engine->_input->key & 1) { // walk forward
+				if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) { // walk forward
 					if (!_engine->_scene->currentActorInZone) {
 						_engine->_animations->initAnim(kForward, 0, 255, actorIdx);
 					}
 					heroMoved = 1;
-				}
-
-				if (_engine->_input->key & 2 && !(_engine->_input->key & 1)) { // walk backward
+				} else if (_engine->_input->isActionActive(TwinEActionType::MoveBackward)) { // walk backward
 					_engine->_animations->initAnim(kBackward, 0, 255, actorIdx);
 					heroMoved = 1;
 				}
 
-				if (_engine->_input->key & 4) { // turn left
+				if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 					heroMoved = 1;
 					if (actor->anim == 0) {
 						_engine->_animations->initAnim(kTurnLeft, 0, 255, actorIdx);
@@ -416,9 +413,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 							actor->angle = getRealAngle(&actor->move);
 						}
 					}
-				}
-
-				if (_engine->_input->key & 8) { // turn right
+				} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 					heroMoved = 1;
 					if (actor->anim == 0) {
 						_engine->_animations->initAnim(kTurnRight, 0, 255, actorIdx);
@@ -430,14 +425,13 @@ void Movements::processActorMovements(int32 actorIdx) {
 				}
 			}
 
-			tempAngle = 0;
-
-			if (_engine->_input->key & 4) {
+			int16 tempAngle;
+			if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 				tempAngle = 0x100;
-			}
-
-			if (_engine->_input->key & 8) {
+			} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 				tempAngle = -0x100;
+			} else {
+				tempAngle = 0;
 			}
 
 			moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
@@ -482,7 +476,8 @@ void Movements::processActorMovements(int32 actorIdx) {
 					}
 				}
 			}
-		} break;
+			break;
+		}
 		default:
 			warning("Unknown Control mode %d\n", actor->controlMode);
 			break;
