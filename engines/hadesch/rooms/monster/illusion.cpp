@@ -256,7 +256,7 @@ void Bird::handleAbsoluteClick(Common::Point p) {
 		return;
 	FlightPosition fp = getFlightPosition(_flightCounterMs / (double) _flightLengthMs);
 	int r = fp.scale * 40 / 100;
-	if (p.sqrDist(fp.centerPos) > r * r)
+	if ((int) p.sqrDist(fp.centerPos) > r * r)
 		return;
 	room->stopAnim(LayerId(birdInfo[_birdType]._flyAnim, _id, "bird"));
 	room->stopAnim(LayerId(birdInfo[_birdType]._shootAnim, _id, "bird"));

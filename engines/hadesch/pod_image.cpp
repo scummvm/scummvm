@@ -103,8 +103,8 @@ bool PodImage::loadImage(const PodFile &col, int index) {
 	}
 
 	infoTagStream->skip(0xc);
-	int x = -infoTagStream->readUint32BE();
-	int y = -infoTagStream->readUint32BE();
+	int x = -(int32)infoTagStream->readUint32BE();
+	int y = -(int32)infoTagStream->readUint32BE();
 	_pos = Common::Point(x,y);
 	_w = infoTagStream->readUint32BE();
 	_h = infoTagStream->readUint32BE();
