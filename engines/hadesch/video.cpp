@@ -101,9 +101,9 @@ PlayAnimParams PlayAnimParams::backwards() const {
 	return ret;
 }
 
-PlayAnimParams::PlayAnimParams(bool loop, bool keepLastFrame) {
-	_loop = loop;
-	_keepLastFrame = keepLastFrame;
+PlayAnimParams::PlayAnimParams(bool isLoop, bool isKeepLastFrame) {
+	_loop = isLoop;
+	_keepLastFrame = isKeepLastFrame;
 	_firstFrame = 0;
 	_lastFrame = -1;
 	_msperframe = kDefaultSpeed;
