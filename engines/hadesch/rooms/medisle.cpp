@@ -1202,7 +1202,6 @@ private:
 	int _eyeInsistCounter;
 	bool _eyeIsGivenBack, _eyeIsPickedUp;
 	bool _fatesShadowIsActive;
-	bool _fates[3];
 	bool _isFirstFates;
 	bool _statueState[10];
 	bool _fatesAreBusy;

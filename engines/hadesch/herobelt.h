@@ -119,7 +119,6 @@ private:
 	int _animateItemStartTime;
 	int _currentTime;
 	int _animItemTime;
-	int _cursor;
 	int _hotZone;
 	int _startHotTime;
 	int _branchOfLifeFrame;
