@@ -41,7 +41,7 @@ class ImageDecoder;
 }
 
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 
 namespace Plumbers {
