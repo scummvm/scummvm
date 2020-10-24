@@ -233,7 +233,7 @@ void TwinEEngine::initConfigurations() {
 	cfgfile.UseAutoSaving = ConfGetIntOrDefault("UseAutoSaving", 0);
 	cfgfile.AutoAgressive = ConfGetIntOrDefault("CombatAuto", 0);
 	cfgfile.ShadowMode = ConfGetIntOrDefault("Shadow", 0);
-	cfgfile.SceZoom = ConfGetIntOrDefault("SceZoom", 0);
+	cfgfile.SceZoom = ConfGetIntOrDefault("SceZoom", 0) == 0;
 	cfgfile.WallCollision = ConfGetIntOrDefault("WallCollision", 0);
 }
 
@@ -412,8 +412,8 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				_text->newGameVar4 = 0;
 				_text->textClipFull();
 				_text->setFontCrossColor(15);
-				int32 tmpFlagDisplayText = cfgfile.FlagDisplayText;
-				cfgfile.FlagDisplayText = 1;
+				const bool tmpFlagDisplayText = cfgfile.FlagDisplayText;
+				cfgfile.FlagDisplayText = true;
 				_text->drawTextFullscreen(161);
 				cfgfile.FlagDisplayText = tmpFlagDisplayText;
 				_text->textClipSmall();

@@ -44,12 +44,11 @@ namespace TwinE {
 static const char allowedCharIndex[] = " ABCDEFGHIJKLM.NOPQRSTUVWXYZ-abcdefghijklm?nopqrstuvwxyz!0123456789\040\b\r\0";
 
 void MenuOptions::newGame() {
-	int32 tmpFlagDisplayText;
-
+#if TWINE_PLAY_INTROS
 	_engine->_music->stopMusic();
 
-	tmpFlagDisplayText = _engine->cfgfile.FlagDisplayText;
-	_engine->cfgfile.FlagDisplayText = 1;
+	int32 tmpFlagDisplayText = _engine->cfgfile.FlagDisplayText;
+	_engine->cfgfile.FlagDisplayText = true;
 
 	// intro screen 1 - twinsun
 	_engine->_screens->loadImage(RESSHQR_INTROSCREEN1IMG);
@@ -90,6 +89,7 @@ void MenuOptions::newGame() {
 	_engine->setPalette(_engine->_screens->paletteRGBA);
 
 	_engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
+#endif
 }
 
 void MenuOptions::showCredits() {

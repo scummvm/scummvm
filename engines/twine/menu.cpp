@@ -92,6 +92,13 @@ enum VolumeMenuType {
 	kMasterVolume = 5
 };
 
+enum AdvOptionsMenuType {
+	kAgressiveMode = 0,
+	kPolygonDetails = 6,
+	kShadowSettings = 7,
+	kSceneryZoom = 8
+};
+
 namespace _priv {
 /** Main Menu Settings
 
@@ -169,13 +176,13 @@ static const int16 AdvOptionsMenuSettings[] = {
     0, // unused
     0,
     26, // return to main menu
-    0,
+    kAgressiveMode,
     4, // aggressive mode (manual|auto)
-    6,
+    kPolygonDetails,
     31, // Polygon detail (full|medium|low)
-    7,
+    kShadowSettings,
     32, // Shadows (all|character|no)
-    8,
+    kSceneryZoom,
     33, // scenary zoon (on|off)
 };
 
@@ -438,7 +445,6 @@ void Menu::drawButton(const int16 *menuSettings, bool hover) {
 int32 Menu::processMenu(int16 *menuSettings) {
 	int16 currentButton = menuSettings[MenuSettings_CurrentLoadedButton];
 	bool buttonsNeedRedraw = true;
-	bool musicChanged = false;
 	const int32 numEntry = menuSettings[MenuSettings_NumberOfButtons];
 	int32 maxButton = numEntry - 1;
 
@@ -462,18 +468,42 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			buttonsNeedRedraw = true;
 		}
 
-		// if its a volume button
-		if (menuSettings == VolumeMenuState) {
-			const int16 id = *(&menuSettings[MenuSettings_FirstButtonState] + currentButton * 2); // get button parameters from settings array
-
+		const int16 id = *(&menuSettings[MenuSettings_FirstButtonState] + currentButton * 2); // get button parameters from settings array
+		if (menuSettings == AdvOptionsMenuState) {
+			switch (id) {
+			case kAgressiveMode:
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+					_engine->cfgfile.AutoAgressive = !_engine->cfgfile.AutoAgressive;
+					// TODO: set into actor
+				}
+				break;
+			case kPolygonDetails:
+				// TODO:
+				break;
+			case kShadowSettings:
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
+					_engine->cfgfile.ShadowMode--;
+				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+					_engine->cfgfile.ShadowMode++;
+				}
+				_engine->cfgfile.ShadowMode %= 3;
+				break;
+			case kSceneryZoom:
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+					_engine->cfgfile.SceZoom = !_engine->cfgfile.SceZoom;
+				}
+				break;
+			default:
+				break;
+			}
+		} else if (menuSettings == VolumeMenuState) {
 			Audio::Mixer *mixer = _engine->_system->getMixer();
 			switch (id) {
 			case kMusicVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
-				}
-				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UIRight))) { // on arrow key right
+				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					volume += 4;
 				}
 				_engine->_music->musicVolume(volume);
@@ -481,10 +511,9 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 			case kSoundVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
-				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UILeft))) { // on arrow key left
+				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
-				}
-				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UIRight))) { // on arrow key right
+				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					volume += 4;
 				}
 				mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
@@ -492,10 +521,9 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 			case kCDVolume: {
 				AudioCDManager::Status status = _engine->_system->getAudioCDManager()->getStatus();
-				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UILeft))) { // on arrow key left
+				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					status.volume -= 4;
-				}
-				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UIRight))) { // on arrow key right
+				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					status.volume += 4;
 				}
 				_engine->_system->getAudioCDManager()->setVolume(status.volume);
@@ -503,10 +531,9 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 			case kLineVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UILeft))) { // on arrow key left
+				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
-				}
-				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UIRight))) { // on arrow key right
+				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					volume += 4;
 				}
 				mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
@@ -514,10 +541,9 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			}
 			case kMasterVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
-				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UILeft))) { // on arrow key left
+				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
-				}
-				if (((uint8)_engine->_input->toggleActionIfActive(TwinEActionType::UIRight))) { // on arrow key right
+				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					volume += 4;
 				}
 				mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
@@ -538,9 +564,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 
 		// draw plasma effect for the current selected button
 		drawButton(menuSettings, true);
-		if (musicChanged) {
-			// TODO: update volume settings
-		}
+		// TODO: update volume settings
 	} while (!_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter));
 
 	currentButton = *(menuSettings + MenuSettings_FirstButton + currentButton * 2); // get current browsed button
@@ -816,7 +840,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDra
 		_engine->_text->setFontColor(15);
 
 		char dialText[256];
-		if (_engine->_actor->heroBehaviour == 2 && _engine->_actor->autoAgressive == 1) {
+		if (_engine->_actor->heroBehaviour == kAggressive && _engine->_actor->autoAgressive == 1) {
 			_engine->_text->getMenuText(4, dialText, sizeof(dialText));
 		} else {
 			_engine->_text->getMenuText(_engine->_actor->heroBehaviour, dialText, sizeof(dialText));
