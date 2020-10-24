@@ -64,13 +64,13 @@ static const char *kHadesBurstsIn = "hades bursts in";
 static const char *kHadesNoMoreHeroes = "hades no more heroes got it";
 static const char *kHadesNoMoreHeroines = "hades no more heroines got it";
 
-static const char *kPhilWalksCenterToLeft = "phil walks center to left";
-static const char *kPhilSighsLeft = "phil sighs left";
+#define kPhilWalksCenterToLeft "phil walks center to left"
+#define kPhilSighsLeft "phil sighs left"
 
-static const char *kPhilSnores = "phil snores";
+#define kPhilSnores "phil snores"
 static const char *kPhilSnoresSound = "phil snores sound";
-static const char *kPhilRollsOver = "phil rolls over";
-static const char *kPhilJumpsOffPillow = "phil jumps off pillow";
+#define kPhilRollsOver "phil rolls over"
+#define kPhilJumpsOffPillow "phil jumps off pillow"
 static const char *kPhilOfCourseIdo = "phil of course i do";
 static const char *kPhilWhatAHothead = "phil what a hothead";
 static const char *kPhilTimeToGetStarted = "phil time to get started";
@@ -87,20 +87,20 @@ static const char *kPhilRightNotches = "phil right notches";
 static const char *kPhilEyeOfFates = "phil eye of fates";
 static const char *kPhilBadNews = "phil bad news";
 static const char *kPhilFirstQuest = "phil first quest";
-static const char *kPhilTakesScroll = "phil takes scroll";
-static const char *kPhilDropsScroll = "phil drops scroll";
+#define kPhilTakesScroll "phil takes scroll"
+#define kPhilDropsScroll "phil drops scroll"
 static const char *kPhilDaedalusNeedsHelp = "phil daedalus needs help";
 static const char *kPhilOffToCrete = "phil off to crete";
 static const char *kPhilArgo = "phil argo";
 
-static const char *kPhilYapsWithoutSound = "phil yaps without sound";
+#define kPhilYapsWithoutSound "phil yaps without sound"
 
 static const char *kMugshot = "mug shot";
 static const char *kMugshotSound = "mug shot sound";
 static const char *kPanicAndPainSting = "pain and panic sting";
 
-static const char *kHeroStatue = "hero statue";
-static const char *kHeroineStatue = "heroine statue";
+#define kHeroStatue "hero statue"
+#define kHeroineStatue "heroine statue"
 static const char *kScroll = "scroll";
 static const char *kScrollSound = "scroll sound";
 	

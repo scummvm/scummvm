@@ -355,8 +355,8 @@ private:
 
 static const int kVideoWidth = 640;
 static const int kVideoHeight = 480;
-static const Common::Point kOffsetRightRoom = Common::Point(kVideoWidth, 0);
-static const Common::Point kZeroPoint = Common::Point(10, 50);
+#define kOffsetRightRoom (Common::Point(kVideoWidth, 0))
+#define kZeroPoint (Common::Point(10, 50))
 
 }
 #endif
