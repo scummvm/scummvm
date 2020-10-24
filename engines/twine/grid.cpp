@@ -301,11 +301,12 @@ int32 Grid::loadGridBricks(int32 gridSize) {
 	}
 
 	for (uint32 i = firstBrick; i <= lastBrick; i++) {
-		if (brickUsageTable[i]) {
-			brickSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&brickTable[i], Resources::HQR_LBA_BRK_FILE, i);
-			if (brickSizeTable[i] == 0) {
-				warning("Failed to load isometric brick index %i", i);
-			}
+		if (!brickUsageTable[i]) {
+			continue;
+		}
+		brickSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&brickTable[i], Resources::HQR_LBA_BRK_FILE, i);
+		if (brickSizeTable[i] == 0) {
+			warning("Failed to load isometric brick index %i", i);
 		}
 	}
 
@@ -452,11 +453,9 @@ void Grid::drawSprite(int32 index, int32 posX, int32 posY, uint8 *ptr) {
 
 // WARNING: Rewrite this function to have better performance
 void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, uint8 *ptr, bool isSprite) {
-	//unsigned char *ptr;
-	uint8 *outPtr;
-
-	if (isSprite)
+	if (isSprite) {
 		ptr = ptr + *((uint32 *)(ptr + index * 4));
+	}
 
 	int32 left = posX + *(ptr + 2);
 	int32 top = posY + *(ptr + 3);
@@ -473,7 +472,7 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, uint8 *ptr, bool
 		right++;
 		bottom++;
 
-		outPtr = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
+		uint8 *outPtr = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
 
 		int32 offset = -((right - left) - SCREEN_WIDTH);
 
@@ -528,44 +527,41 @@ void Grid::getBrickPos(int32 x, int32 y, int32 z) {
 }
 
 void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y, int32 z) {
-	uint8 *blockPtr;
-	uint16 brickIdx;
-	uint8 brickShape;
-	uint8 brickSound;
-	int32 brickBuffIdx;
-	BrickEntry *currBrickEntry;
+	uint8 *blockPtr = getBlockLibrary(blockIdx) + 3 + brickBlockIdx * 4;
 
-	blockPtr = getBlockLibrary(blockIdx) + 3 + brickBlockIdx * 4;
-
-	brickShape = *((uint8 *)(blockPtr));
-	brickSound = *((uint8 *)(blockPtr + 1));
-	brickIdx = *((uint16 *)(blockPtr + 2));
-
-	if (!brickIdx)
+	uint8 brickShape = *((uint8 *)(blockPtr + 0));
+	uint8 brickSound = *((uint8 *)(blockPtr + 1));
+	uint16 brickIdx = *((uint16 *)(blockPtr + 2));
+	if (!brickIdx) {
 		return;
+	}
 
 	getBrickPos(x - newCameraX, y - newCameraY, z - newCameraZ);
 
-	if (brickPixelPosX < -24)
+	if (brickPixelPosX < -24) {
 		return;
-	if (brickPixelPosX >= SCREEN_WIDTH)
+	}
+	if (brickPixelPosX >= SCREEN_WIDTH) {
 		return;
-	if (brickPixelPosY < -38)
+	}
+	if (brickPixelPosY < -38) {
 		return;
-	if (brickPixelPosY >= SCREEN_HEIGHT)
+	}
+	if (brickPixelPosY >= SCREEN_HEIGHT) {
 		return;
+	}
 
 	// draw the background brick
 	drawBrick(brickIdx - 1, brickPixelPosX, brickPixelPosY);
 
-	brickBuffIdx = (brickPixelPosX + 24) / 24;
+	int32 brickBuffIdx = (brickPixelPosX + 24) / 24;
 
 	if (brickInfoBuffer[brickBuffIdx] >= 150) {
-		warning("\nGRID WARNING: brick buffer exceeded! \n");
+		warning("GRID WARNING: brick buffer exceeded");
 		return;
 	}
 
-	currBrickEntry = &bricksDataBuffer[brickBuffIdx][brickInfoBuffer[brickBuffIdx]];
+	BrickEntry *currBrickEntry = &bricksDataBuffer[brickBuffIdx][brickInfoBuffer[brickBuffIdx]];
 
 	currBrickEntry->x = x;
 	currBrickEntry->y = y;
@@ -591,12 +587,11 @@ void Grid::redrawGrid() {
 	_engine->_renderer->projPosXScreen = _engine->_renderer->projPosX;
 	_engine->_renderer->projPosYScreen = _engine->_renderer->projPosY;
 
-	for (int32 i = 0; i < 28; i++) {
-		brickInfoBuffer[i] = 0;
-	}
+	memset(brickInfoBuffer, 0, sizeof(brickInfoBuffer));
 
-	if (_engine->_scene->changeRoomVar10 == 0)
+	if (_engine->_scene->changeRoomVar10 == 0) {
 		return;
+	}
 
 	for (int32 z = 0; z < GRID_SIZE_Z; z++) {
 		for (int32 x = 0; x < GRID_SIZE_X; x++) {
@@ -610,30 +605,30 @@ void Grid::redrawGrid() {
 	}
 }
 
-int32 Grid::getBrickShape(int32 x, int32 y, int32 z) { // WorldColBrick
-	uint8 blockIdx;
-	uint8 *blockBufferPtr;
-
-	blockBufferPtr = blockBuffer;
+int32 Grid::getBrickShape(int32 x, int32 y, int32 z) {
+	uint8 *blockBufferPtr = blockBuffer;
 
 	_engine->_collision->collisionX = (x + 0x100) >> 9;
 	_engine->_collision->collisionY = y >> 8;
 	_engine->_collision->collisionZ = (z + 0x100) >> 9;
 
-	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= 64)
+	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= 64) {
 		return 0;
+	}
 
-	if (_engine->_collision->collisionY <= -1)
+	if (_engine->_collision->collisionY <= -1) {
 		return 1;
+	}
 
-	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY > 24 || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= 64)
+	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY > 24 || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= 64) {
 		return 0;
+	}
 
 	blockBufferPtr += _engine->_collision->collisionX * 50;
 	blockBufferPtr += _engine->_collision->collisionY * 2;
 	blockBufferPtr += (_engine->_collision->collisionZ << 7) * 25;
 
-	blockIdx = *blockBufferPtr;
+	uint8 blockIdx = *blockBufferPtr;
 
 	if (blockIdx) {
 		uint8 *blockPtr;
@@ -653,30 +648,29 @@ int32 Grid::getBrickShape(int32 x, int32 y, int32 z) { // WorldColBrick
 }
 
 int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
-	int32 newY, currY, i;
-	uint8 blockIdx, brickShape;
-	uint8 *blockBufferPtr;
-
-	blockBufferPtr = blockBuffer;
+	uint8 *blockBufferPtr = blockBuffer;
 
 	_engine->_collision->collisionX = (x + 0x100) >> 9;
 	_engine->_collision->collisionY = y >> 8;
 	_engine->_collision->collisionZ = (z + 0x100) >> 9;
 
-	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= 64)
+	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= 64) {
 		return 0;
+	}
 
-	if (_engine->_collision->collisionY <= -1)
+	if (_engine->_collision->collisionY <= -1) {
 		return 1;
+	}
 
-	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY > 24 || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= 64)
+	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY > 24 || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= 64) {
 		return 0;
+	}
 
 	blockBufferPtr += _engine->_collision->collisionX * 50;
 	blockBufferPtr += _engine->_collision->collisionY * 2;
 	blockBufferPtr += (_engine->_collision->collisionZ << 7) * 25;
 
-	blockIdx = *blockBufferPtr;
+	uint8 blockIdx = *blockBufferPtr;
 
 	if (blockIdx) {
 		uint8 *blockPtr = currentBll;
@@ -687,12 +681,12 @@ int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 		uint8 tmpBrickIdx = *(blockBufferPtr + 1);
 		blockPtr = blockPtr + tmpBrickIdx * 4;
 
-		brickShape = *blockPtr;
+		uint8 brickShape = *blockPtr;
 
-		newY = (y2 + 255) >> 8;
-		currY = _engine->_collision->collisionY;
+		int32 newY = (y2 + 255) >> 8;
+		int32 currY = _engine->_collision->collisionY;
 
-		for (i = 0; i < newY; i++) {
+		for (int32 i = 0; i < newY; i++) {
 			if (currY > 24) {
 				return brickShape;
 			}
@@ -707,12 +701,12 @@ int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 
 		return brickShape;
 	}
-	brickShape = *(blockBufferPtr + 1);
+	uint8 brickShape = *(blockBufferPtr + 1);
 
-	newY = (y2 + 255) >> 8;
-	currY = _engine->_collision->collisionY;
+	int32 newY = (y2 + 255) >> 8;
+	int32 currY = _engine->_collision->collisionY;
 
-	for (i = 0; i < newY; i++) {
+	for (int32 i = 0; i < newY; i++) {
 		if (currY > 24) {
 			return brickShape;
 		}
@@ -729,29 +723,29 @@ int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 }
 
 int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) { // getPos2
-	uint8 blockIdx;
-	uint8 *blockBufferPtr;
-
-	blockBufferPtr = blockBuffer;
+	uint8 *blockBufferPtr = blockBuffer;
 
 	_engine->_collision->collisionX = (x + 0x100) >> 9;
 	_engine->_collision->collisionY = y >> 8;
 	_engine->_collision->collisionZ = (z + 0x100) >> 9;
 
-	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= 64)
+	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= 64) {
 		return 0;
+	}
 
-	if (_engine->_collision->collisionY <= -1)
+	if (_engine->_collision->collisionY <= -1) {
 		return 1;
+	}
 
-	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY > 24 || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= 64)
+	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY > 24 || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= 64) {
 		return 0;
+	}
 
 	blockBufferPtr += _engine->_collision->collisionX * 50;
 	blockBufferPtr += _engine->_collision->collisionY * 2;
 	blockBufferPtr += (_engine->_collision->collisionZ << 7) * 25;
 
-	blockIdx = *blockBufferPtr;
+	uint8 blockIdx = *blockBufferPtr;
 
 	if (blockIdx) {
 		uint8 *blockPtr;
