@@ -70,7 +70,7 @@ private:
 
 	// RECHECK THIS LATER
 	int32 currentBankIdx = -1; // textVar1
-	char textVar2[256] = "";
+	char textVar2[256] {'\0'};
 
 	/** Dialogue text pointer */
 	char *dialTextPtr = nullptr; // bufText
@@ -82,8 +82,8 @@ private:
 	const int16 spaceChar = 0x20;
 
 	// TODO: refactor all this variables and related functions
-	char buf1[256] = "";
-	char buf2[256] = "";
+	char buf1[256] {'\0'};
+	char buf2[256] {'\0'};
 	char *printText8Ptr1 = nullptr;
 	char *printText8Ptr2 = nullptr;
 	int32 printText8Var1 = 0;
@@ -96,7 +96,7 @@ private:
 	char *printText8Var8 = nullptr;
 	int32 printText10Var1 = 0;
 	int32 addLineBreakX = 0;
-	int16 pt8s4[96];
+	int16 pt8s4[96] {0};
 	int32 printText8PrepareBufferVar2 = 0;
 	// ---
 public:
