@@ -49,7 +49,9 @@ namespace TwinE {
 
 #define SAVE_DIR "save/"
 
-GameState::GameState(TwinEEngine *engine) : _engine(engine) {}
+GameState::GameState(TwinEEngine *engine) {
+	_engine = engine;
+}
 
 void GameState::initEngineProjections() {
 	_engine->_renderer->setOrthoProjection(311, 240, 512);
