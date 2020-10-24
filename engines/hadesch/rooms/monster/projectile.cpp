@@ -290,7 +290,7 @@ void Projectile::handleAbsoluteClick(Common::SharedPtr <Projectile> backRef, Com
 		return;
 	FlightPosition fp = getFlightPosition(_flightCounterMs / (double) _flightLengthMs);
 	int r = fp.scale * 40 / 100;
-	if (p.sqrDist(fp.centerPos) > r * r)
+	if ((int) p.sqrDist(fp.centerPos) > r * r)
 		return;
 	room->stopAnim(LayerId(_flyAnim, _projectileId, "projectile"));
 	_isFlightFinished = true;
