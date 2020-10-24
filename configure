@@ -3624,7 +3624,7 @@ if test -n "$_host"; then
 			# graphics. But OpenGL works when it is enabled from the start.
 			# This might be related to a known crash on OpenGL de-init due
 			# to the OpenGL implementation on this platform.
-			_opengl_mode=gles2
+			_opengl_mode=any
 			_vkeybd=yes
 			_port_mk="backends/platform/sdl/switch/switch.mk"
 			;;
@@ -5386,7 +5386,7 @@ echocheck "OpenGL for game"
 
 if test "$_opengl_game" = auto ; then
 	_opengl_game=no
-	if (test "$_backend" = "sdl" && test "$_opengl" = yes) || test "$_backend" = "android3d"; then
+	if (test "$_backend" = "sdl" && test "$_opengl" = yes) || test "$_backend" = "android3d" || test "$_backend" = "switch"; then
 		# Try different header filenames
 		# 1) GL/gl.h         This is usually used on POSIX and Windows systems
 		# 2) OpenGL/gl.h     This is used on Mac OS X
@@ -5440,6 +5440,9 @@ EOF
 		mingw*)
 			OPENGL_LIBS="-lopengl32"
 			;;
+		switch)
+			OPENGL_LIBS="-lEGL"
+			;;
 		*)
 			OPENGL_LIBS="-lGL"
 			;;
@@ -5461,6 +5464,9 @@ EOF
 		if test "$_opengl_game_shaders" = yes && test "$_opengl_game_es2" = no && test "$_glew" = no; then
 			echo "WARNING: OpenGL Shader support requires GLEW!"
 			_opengl_game_shaders=no
+		fi
+		if test "$_host_os" = "switch"; then
+			_opengl_game_shaders=yes
 		fi
 	else
 		_opengl_game_shaders=no

@@ -218,7 +218,9 @@ void OSystem_SDL::initBackend() {
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 	detectFramebufferSupport();
+#ifndef NINTENDO_SWITCH
 	detectAntiAliasingSupport();
+#endif
 #endif
 
 	// Create the default event source, in case a custom backend
@@ -309,7 +311,7 @@ void OSystem_SDL::initBackend() {
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 void OSystem_SDL::detectFramebufferSupport() {
 	_capabilities.openGLFrameBuffer = false;
-#if defined(USE_GLES2)
+#if defined(USE_GLES2) || defined(NINTENDO_SWITCH)
 	// Framebuffers are always available with GLES2
 	_capabilities.openGLFrameBuffer = true;
 #elif !defined(AMIGAOS)

@@ -39,6 +39,7 @@ static const Common::HardwareInputTableEntry switchJoystickButtons[] = {
     { "JOY_Y",              Common::JOYSTICK_BUTTON_Y,              _s("X")           },
     { "JOY_BACK",           Common::JOYSTICK_BUTTON_BACK,           _s("Minus")       },
     { "JOY_START",          Common::JOYSTICK_BUTTON_START,          _s("Plus")        },
+    { "JOY_GUIDE",          Common::JOYSTICK_BUTTON_START,          _s("Plus")        },
     { "JOY_LEFT_STICK",     Common::JOYSTICK_BUTTON_LEFT_STICK,     _s("L3")          },
     { "JOY_RIGHT_STICK",    Common::JOYSTICK_BUTTON_RIGHT_STICK,    _s("R3")          },
     { "JOY_LEFT_SHOULDER",  Common::JOYSTICK_BUTTON_LEFT_SHOULDER,  _s("L")           },
