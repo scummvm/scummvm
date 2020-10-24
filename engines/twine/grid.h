@@ -268,7 +268,7 @@ public:
 	 * Initialize celling grid (background scenearios)
 	 * @param index grid index number
 	 */
-	int32 initCellingGrid(int32 index);
+	bool initCellingGrid(int32 index);
 
 	/** Redraw grid background */
 	void redrawGrid();
