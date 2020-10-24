@@ -93,10 +93,8 @@ void MenuOptions::newGame() {
 }
 
 void MenuOptions::showCredits() {
-	int32 tmpShadowMode;
-
 	canShowCredits = 1;
-	tmpShadowMode = _engine->cfgfile.ShadowMode;
+	int32 tmpShadowMode = _engine->cfgfile.ShadowMode;
 	_engine->cfgfile.ShadowMode = 0;
 	_engine->_gameState->initEngineVars();
 	_engine->_scene->currentSceneIdx = 119;
@@ -229,21 +227,6 @@ void MenuOptions::newGameMenu() {
 		if (_engine->gameEngineLoop()) {
 			showCredits();
 		}
-
-		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
-		// TODO: recheck this
-		do {
-			_engine->readKeys();
-			do {
-				_engine->readKeys();
-				if (_engine->shouldQuit()) {
-					break;
-				}
-			} while (_engine->_input->skippedKey != 0);
-			if (_engine->shouldQuit()) {
-				break;
-			}
-		} while (_engine->_input->internalKeyCode != 0);
 	}
 }
 

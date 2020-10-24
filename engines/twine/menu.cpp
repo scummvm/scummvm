@@ -447,7 +447,6 @@ int32 Menu::processMenu(int16 *menuSettings) {
 	_engine->_screens->loadMenuImage(false);
 	do {
 		_engine->readKeys();
-		_engine->_input->key = _engine->_input->pressedKey;
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIDown)) {
 			currentButton++;
@@ -972,7 +971,6 @@ void Menu::drawInventoryItems() {
 }
 
 void Menu::processInventoryMenu() {
-	int32 di = 1;
 
 	int32 tmpAlphaLight = _engine->_scene->alphaLight;
 	int32 tmpBetaLight = _engine->_scene->betaLight;
@@ -1000,25 +998,9 @@ void Menu::processInventoryMenu() {
 		_engine->readKeys();
 		int32 prevSelectedItem = inventorySelectedItem;
 
-		if (!di) {
-			_engine->_input->key = _engine->_input->pressedKey;
-			_engine->loopPressedKey = _engine->_input->skippedKey;
-			_engine->loopCurrentKey = _engine->_input->internalKeyCode;
-
-			if (_engine->_input->key != 0 || _engine->_input->skippedKey != 0) {
-				di = 1;
-			}
-		} else {
-			_engine->loopCurrentKey = 0;
-			_engine->_input->key = 0;
-			_engine->loopPressedKey = 0;
-			if (!_engine->_input->pressedKey && !_engine->_input->skippedKey) {
-				di = 0;
-			}
-		}
-
-		if (_engine->loopCurrentKey == 1 || _engine->loopPressedKey & 0x20)
+		if (_engine->_input->toggleAbortAction() || _engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
 			break;
+		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIDown)) {
 			inventorySelectedItem++;
@@ -1107,7 +1089,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
 
-	while (_engine->_input->internalKeyCode != 0 && _engine->_input->skippedKey != 0) {
+	while (!_engine->_input->toggleAbortAction()) {
 		_engine->readKeys();
 		_engine->_system->delayMillis(1);
 		_engine->flip(); // TODO: needed?

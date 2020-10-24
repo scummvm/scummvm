@@ -45,6 +45,10 @@ class TwinEEngine;
 class Movements {
 private:
 	TwinEEngine *_engine;
+
+	int32 heroPressedKey = 0;
+	int32 heroPressedKey2 = 0;
+
 public:
 	Movements(TwinEEngine *engine);
 	/** Hero moved */

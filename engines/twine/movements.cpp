@@ -279,7 +279,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 
 		moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
 
-		_engine->_input->heroPressedKey = _engine->_input->key;
+		heroPressedKey = _engine->_input->key;
 	} else {
 		if (!actor->staticFlags.bIsSpriteActor) {
 			if (actor->controlMode != kManual) {
@@ -386,7 +386,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 					heroMoved = 0; // don't break animation
 				}
 
-				if (_engine->_input->key != _engine->_input->heroPressedKey || _engine->loopPressedKey != _engine->_input->heroPressedKey2) {
+				if (_engine->_input->key != heroPressedKey || _engine->loopPressedKey != heroPressedKey2) {
 					if (heroMoved) {
 						_engine->_animations->initAnim(kStanding, 0, 255, actorIdx);
 					}
@@ -436,8 +436,8 @@ void Movements::processActorMovements(int32 actorIdx) {
 
 			moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
 
-			_engine->_input->heroPressedKey = _engine->_input->key;
-			_engine->_input->heroPressedKey2 = _engine->loopPressedKey;
+			heroPressedKey = _engine->_input->key;
+			heroPressedKey2 = _engine->loopPressedKey;
 
 			break;
 		case kFollow: {

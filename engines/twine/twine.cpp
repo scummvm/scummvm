@@ -339,9 +339,8 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	previousLoopPressedKey = loopPressedKey;
 	_input->key = _input->pressedKey;
 	loopPressedKey = _input->skippedKey;
-	loopCurrentKey = _input->internalKeyCode;
 
-	_debug->processDebug(loopCurrentKey);
+	_debug->processDebug(_input->internalKeyCode);
 
 	if (_menuOptions->canShowCredits != 0) {
 		// TODO: if current music playing != 8, than play_track(8);
