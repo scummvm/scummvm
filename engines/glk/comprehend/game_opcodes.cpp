@@ -35,7 +35,7 @@ ComprehendGameOpcodes::ComprehendGameOpcodes() {
 
 void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sentence *sentence,
 		FunctionState *func_state) {
-//	byte verb = sentence ? sentence->_formattedWords[0] : 0;
+	byte verb = sentence ? sentence->_formattedWords[0] : 0;
 	byte noun = sentence ? sentence->_formattedWords[2] : 0;
 	Room *room = get_room(_currentRoom);
 	Item *item;
@@ -115,6 +115,27 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		}
 		break;
 	}
+
+	case OPCODE_MOVE_DEFAULT:
+		// Move in the direction dictated by the current verb
+		if (verb - 1 >= NR_DIRECTIONS)
+			error("Bad verb %d in move", verb);
+
+		if (room->_direction[verb - 1])
+			move_to(room->_direction[verb - 1]);
+		else
+			console_println(stringLookup(STRING_CANT_GO).c_str());
+		break;
+
+	case OPCODE_MOVE_OBJECT_TO_CURRENT_ROOM:
+		item = getItem(instr);
+		move_object(item, _currentRoom);
+		break;
+
+	case OPCODE_MOVE_OBJECT_TO_ROOM:
+		item = getItem(instr);
+		move_object(item, instr->_operand[1]);
+		break;
 
 	case OPCODE_MOVE_TO_ROOM:
 		if (instr->_operand[0] != 0xff)
@@ -381,7 +402,6 @@ ComprehendGameV1::ComprehendGameV1() {
 
 void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *sentence,
 		FunctionState *func_state) {
-	byte verb = sentence ? sentence->_formattedWords[0] : 0;
 	byte noun = sentence ? sentence->_formattedWords[2] : 0;
 	Room *room = get_room(_currentRoom);
 	Item *item;
@@ -444,22 +464,6 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 			_currentRoom != instr->_operand[0]);
 		break;
 
-	case OPCODE_MOVE_DEFAULT:
-		// Move in the direction dictated by the current verb
-		if (verb - 1 >= NR_DIRECTIONS)
-			error("Bad verb %d in move", verb);
-
-		if (room->_direction[verb - 1])
-			move_to(room->_direction[verb - 1]);
-		else
-			console_println(stringLookup(STRING_CANT_GO).c_str());
-		break;
-
-	case OPCODE_MOVE_OBJECT_TO_CURRENT_ROOM:
-		item = getItem(instr);
-		move_object(item, _currentRoom);
-		break;
-
 	case OPCODE_OBJECT_NOT_IN_ROOM:
 		item = getItem(instr);
 		func_set_test_result(func_state, !item || item->_room != _currentRoom);
@@ -468,11 +472,6 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 	case OPCODE_CURRENT_OBJECT_NOT_IN_ROOM:
 		item = get_item_by_noun(noun);
 		func_set_test_result(func_state, !item || item->_room != _currentRoom);
-		break;
-
-	case OPCODE_MOVE_OBJECT_TO_ROOM:
-		item = getItem(instr);
-		move_object(item, instr->_operand[1]);
 		break;
 
 	case OPCODE_DESCRIBE_CURRENT_OBJECT:
@@ -695,12 +694,14 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x87] = OPCODE_SET_ROOM_DESCRIPTION;
 	_opcodeMap[0x89] = OPCODE_SPECIAL;
 	_opcodeMap[0x8a] = OPCODE_VAR_SUB;
+	_opcodeMap[0x8c] = OPCODE_MOVE_DEFAULT;
 	_opcodeMap[0x8e] = OPCODE_PRINT;
 	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
 	_opcodeMap[0x99] = OPCODE_SET_FLAG;
 	_opcodeMap[0x9d] = OPCODE_CLEAR_FLAG;
 	_opcodeMap[0xa0] = OPCODE_TAKE_CURRENT_OBJECT;
 	_opcodeMap[0xa1] = OPCODE_CLEAR_FLAG40;
+	_opcodeMap[0xa2] = OPCODE_MOVE_OBJECT_TO_ROOM;
 	_opcodeMap[0xa5] = OPCODE_SET_FLAG40;
 	_opcodeMap[0xa9] = OPCODE_CLEAR_INVISIBLE;
 	_opcodeMap[0xad] = OPCODE_SET_INVISIBLE;
@@ -710,6 +711,7 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0xcd] = OPCODE_SET_STRING_REPLACEMENT2;
 	_opcodeMap[0xd1] = OPCODE_MOVE_DIR;
 	_opcodeMap[0xdd] = OPCODE_VAR_INC;
+	_opcodeMap[0xe1] = OPCODE_MOVE_OBJECT_TO_CURRENT_ROOM;
 	_opcodeMap[0xe5] = OPCODE_SET_CAN_TAKE;
 	_opcodeMap[0xe9] = OPCODE_CLEAR_CAN_TAKE;
 	_opcodeMap[0xed] = OPCODE_REMOVE_OBJECT;
@@ -727,19 +729,15 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x5d] = OPCODE_TEST_NOT_ROOM_FLAG;
 	_opcodeMap[0x60] = OPCODE_NOT_HAVE_CURRENT_OBJECT;
 	_opcodeMap[0x70] = OPCODE_CURRENT_OBJECT_NOT_PRESENT;
-	_opcodeMap[0x82] = OPCODE_MOVE_OBJECT_TO_ROOM;
 	_opcodeMap[0x8b] = OPCODE_SET_OBJECT_DESCRIPTION;
-	_opcodeMap[0x8c] = OPCODE_MOVE_DEFAULT;
 	_opcodeMap[0x8f] = OPCODE_SET_OBJECT_LONG_DESCRIPTION;
 	_opcodeMap[0x90] = OPCODE_WAIT_KEY;
 	_opcodeMap[0x98] = OPCODE_TURN_TICK;
 	_opcodeMap[0x9e] = OPCODE_INVENTORY_ROOM;
-	_opcodeMap[0xa2] = OPCODE_SET_OBJECT_GRAPHIC;
 	_opcodeMap[0xc2] = OPCODE_SET_ROOM_GRAPHIC;
 	_opcodeMap[0xc6] = OPCODE_SET_OBJECT_GRAPHIC;
 	_opcodeMap[0xd5] = OPCODE_DRAW_ROOM;
 	_opcodeMap[0xd9] = OPCODE_DRAW_OBJECT;
-	_opcodeMap[0xe1] = OPCODE_MOVE_OBJECT_TO_CURRENT_ROOM;
 	_opcodeMap[0xf0] = OPCODE_DROP_CURRENT_OBJECT;
 	_opcodeMap[0xfc] = OPCODE_REMOVE_CURRENT_OBJECT;
 #endif
