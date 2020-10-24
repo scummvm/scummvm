@@ -644,19 +644,6 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 			}
 			_engine->_system->delayMillis(1);
 		} while (!_engine->_input->toggleAbortAction());
-
-		// wait key to display next text
-		do {
-			_engine->readKeys();
-			if (_engine->_input->internalKeyCode != 0 || _engine->_input->skippedKey != 0) {
-				_engine->_interface->loadClip();
-				return;
-			}
-			if (_engine->shouldQuit()) {
-				break;
-			}
-			_engine->_system->delayMillis(1);
-		} while (!_engine->_input->toggleAbortAction());
 	} else { // RECHECK THIS
 		while (playVox(currDialTextEntry)) {
 			_engine->readKeys();

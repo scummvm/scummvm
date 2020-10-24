@@ -1362,7 +1362,8 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, int32 actorIdx, ActorStruct *
 
 	do {
 		engine->readKeys();
-	} while (engine->_input->internalKeyCode || engine->_input->skippedKey);
+		engine->_system->delayMillis(1);
+	} while (engine->_input->toggleAbortAction());
 
 	engine->unfreezeTime();
 

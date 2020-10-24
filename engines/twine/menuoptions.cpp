@@ -252,19 +252,10 @@ void MenuOptions::continueGameMenu() {
 		}
 
 		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
-		// TODO: recheck this
 		do {
 			_engine->readKeys();
-			do {
-				_engine->readKeys();
-				if (_engine->shouldQuit()) {
-					break;
-				}
-			} while (_engine->_input->skippedKey != 0);
-			if (_engine->shouldQuit()) {
-				break;
-			}
-		} while (_engine->_input->internalKeyCode != 0);
+			_engine->_system->delayMillis(1);
+		} while (!_engine->shouldQuit() && !_engine->_input->toggleAbortAction());
 	}
 }
 

@@ -158,15 +158,15 @@ private:
 	uint8 _pressed[Common::KEYCODE_LAST]{0};
 	Common::String _currentKeyMap;
 
+	uint8 actionStates[TwinEActionType::Max]{false};
+	int16 internalKeyCode = 0;
+	int16 currentKey = 0;
 public:
 	Input(TwinEEngine *engine);
 
-	uint8 actionStates[TwinEActionType::Max]{false};
+	int16 key = 0;
 	int16 skippedKey = 0;
 	int16 pressedKey = 0;
-	int16 internalKeyCode = 0;
-	int16 currentKey = 0;
-	int16 key = 0;
 	int16 leftMouse = 0;
 	int16 rightMouse = 0;
 

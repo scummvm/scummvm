@@ -246,7 +246,6 @@ void TwinEEngine::initEngine() {
 	// Check if LBA CD-Rom is on drive
 	_music->initCdrom();
 
-#define TWINE_PLAY_INTROS 0
 #if TWINE_PLAY_INTROS
 	_input->enabledKeyMap(cutsceneKeyMapId);
 	// Display company logo
@@ -340,22 +339,16 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	_input->key = _input->pressedKey;
 	loopPressedKey = _input->skippedKey;
 
-	_debug->processDebug(_input->internalKeyCode);
+	_debug->processDebug();
 
 	if (_menuOptions->canShowCredits != 0) {
 		// TODO: if current music playing != 8, than play_track(8);
-		if (_input->internalKeyCode != 0) {
-			return 0;
-		}
-		if (_input->pressedKey != 0) {
-			return 0;
-		}
-		if (_input->skippedKey != 0) {
+		if (_input->toggleAbortAction()) {
 			return 0;
 		}
 	} else {
 		// Process give up menu - Press ESC
-		if (_input->internalKeyCode == 1 && _scene->sceneHero->life > 0 && _scene->sceneHero->entity != -1 && !_scene->sceneHero->staticFlags.bIsHidden) {
+		if (_input->toggleAbortAction() && _scene->sceneHero->life > 0 && _scene->sceneHero->entity != -1 && !_scene->sceneHero->staticFlags.bIsHidden) {
 			freezeTime();
 			if (_menu->giveupMenu()) {
 				unfreezeTime();
@@ -760,14 +753,12 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 }
 
 bool TwinEEngine::gameEngineLoop() { // mainLoop
-	uint32 start;
-
 	_redraw->reqBgRedraw = true;
 	_screens->lockPalette = true;
 	_movements->setActorAngle(0, -256, 5, &loopMovePtr);
 
 	while (quitGame == -1) {
-		start = g_system->getMillis();
+		uint32 start = g_system->getMillis();
 
 		while (g_system->getMillis() < start + cfgfile.Fps) {
 			if (runGameEngine()) {
@@ -786,7 +777,6 @@ bool TwinEEngine::gameEngineLoop() { // mainLoop
 void TwinEEngine::delaySkip(uint32 time) {
 	uint32 startTicks = _system->getMillis();
 	uint32 stopTicks = 0;
-	_input->internalKeyCode = 0;
 	do {
 		readKeys();
 		if (_input->toggleAbortAction()) {
