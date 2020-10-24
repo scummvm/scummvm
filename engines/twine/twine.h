@@ -156,6 +156,7 @@ private:
 	int32 isTimeFreezed = 0;
 	int32 saveFreezedTime = 0;
 	ActorMoveStruct loopMovePtr; // mainLoopVar1
+	PauseToken _pauseToken;
 
 public:
 	TwinEEngine(OSystem *system, Common::Language language, uint32 flags);

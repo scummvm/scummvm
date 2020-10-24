@@ -314,6 +314,7 @@ int TwinEEngine::getRandomNumber(uint max) {
 void TwinEEngine::freezeTime() {
 	if (!isTimeFreezed) {
 		saveFreezedTime = lbaTime;
+		_pauseToken = pauseEngine();
 	}
 	isTimeFreezed++;
 }
@@ -322,6 +323,7 @@ void TwinEEngine::unfreezeTime() {
 	--isTimeFreezed;
 	if (isTimeFreezed == 0) {
 		lbaTime = saveFreezedTime;
+		_pauseToken.clear();
 	}
 }
 
