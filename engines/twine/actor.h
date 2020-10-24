@@ -298,36 +298,48 @@ public:
 	/** Load hero 3D body and animations */
 	void loadHeroEntities();
 
-	/** Set hero behaviour
-	@param behaviour behaviour value to set */
+	/**
+	 * Set hero behaviour
+	 * @param behaviour behaviour value to set
+	 */
 	void setBehaviour(int32 behaviour);
 
-	/** Initialize 3D actor body
-	@param bodyIdx 3D actor body index
-	@param actorIdx 3D actor index */
+	/**
+	 * Initialize 3D actor body
+	 * @param bodyIdx 3D actor body index
+	 * @param actorIdx 3D actor index
+	 */
 	int32 initBody(int32 bodyIdx, int32 actorIdx);
 
 	/** Preload all sprites */
 	void preloadSprites();
 
-	/** Initialize 3D actor
-	@param bodyIdx 3D actor body index
-	@param actorIdx 3D actor index */
+	/**
+	 * Initialize 3D actor
+	 * @param bodyIdx 3D actor body index
+	 * @param actorIdx 3D actor index
+	 */
 	void initModelActor(int32 bodyIdx, int16 actorIdx);
 
-	/** Initialize actors
-	@param actorIdx actor index to init */
+	/**
+	 * Initialize actors
+	 * @param actorIdx actor index to init
+	 */
 	void initActor(int16 actorIdx);
 
-	/** Reset actor
-	@param actorIdx actor index to init */
+	/**
+	 * Reset actor
+	 * @param actorIdx actor index to init
+	 */
 	void resetActor(int16 actorIdx);
 
-	/** Process hit actor
-	@param actorIdx actor hitting index
-	@param actorIdxAttacked actor attacked index
-	@param strengthOfHit actor hitting strength of hit
-	@param angle angle of actor hitting */
+	/**
+	 * Process hit actor
+	 * @param actorIdx actor hitting index
+	 * @param actorIdxAttacked actor attacked index
+	 * @param strengthOfHit actor hitting strength of hit
+	 * @param angle angle of actor hitting
+	 */
 	void hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, int32 angle);
 
 	/** Process actor carrier */
