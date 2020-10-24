@@ -50,7 +50,7 @@ class PEResources;
 
 namespace Graphics {
 struct WinCursorGroup;
-struct MacCursor;
+class MacCursor;
 }
 
 namespace Hadesch {
