@@ -97,7 +97,7 @@ public:
 			room->playVideo("V7180BB0", 0, 15361, Common::Point(0, 216));
 			break;
 		case 15357:
-			room->playSkippableSound(g_vm->getRnd().getRandomNumberRng(0, 1)
+			room->playSkippableSound(g_vm->getRnd().getRandomBit()
 						 ? "V7150WC0" : "V7150WB0",
 						 15353);
 			break;
@@ -152,7 +152,7 @@ public:
 						15375);
 			break;
 		case 15375:
-			room->playSound(g_vm->getRnd().getRandomNumberRng(0, 1) ? "v7150wd0" : "v7150we0",
+			room->playSound(g_vm->getRnd().getRandomBit() ? "v7150wd0" : "v7150we0",
 				15376);
 			replenishPowers();
 			break;
@@ -168,7 +168,7 @@ public:
 			handleEvent(15390);
 			break;
 		case 15379:
-			room->playSound(g_vm->getRnd().getRandomNumberRng(0, 1) ? "v7150wd0" : "v7150we0",
+			room->playSound(g_vm->getRnd().getRandomBit() ? "v7150wd0" : "v7150we0",
 				15380);
 			replenishPowers();
 			break;

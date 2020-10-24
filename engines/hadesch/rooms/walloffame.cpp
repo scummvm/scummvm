@@ -762,7 +762,7 @@ public:
 				break;
 			}
 
-			if (g_vm->getRnd().getRandomNumberRng(0, 1)) {
+			if (g_vm->getRnd().getRandomBit()) {
 				room->playVideo("phil not a mind reader", 0, 19901);
 			} else {
 				room->playVideo("phil type in your name", 0, 19901);

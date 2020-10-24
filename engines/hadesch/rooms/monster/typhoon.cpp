@@ -181,7 +181,7 @@ void Typhoon::typhoonA() {
 
 	if (g_vm->getRnd().getRandomNumberRng(0, 3)) {
 		room->playAnim("v7050ba0", 500, PlayAnimParams::disappear(), 15153);
-	} else if (g_vm->getRnd().getRandomNumberRng(0, 1)) {
+	} else if (g_vm->getRnd().getRandomBit()) {
 		room->playAnim("v7210bi0", 500, PlayAnimParams::disappear().partial(0, 6), 15160);
 		room->playSound("v7140ec0");
 	}
