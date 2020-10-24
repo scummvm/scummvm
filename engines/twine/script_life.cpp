@@ -1342,16 +1342,14 @@ static int32 lSET_NORMAL_PAL(TwinEEngine *engine, int32 actorIdx, ActorStruct *a
 
 /*0x5E*/
 static int32 lMESSAGE_SENDELL(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 tmpFlagDisplayText;
-
 	engine->freezeTime();
 	engine->_screens->fadeToBlack(engine->_screens->paletteRGBA);
 	engine->_screens->loadImage(25);
 	engine->_text->textClipFull();
 	engine->_text->setFontCrossColor(15);
 	engine->_text->newGameVar4 = 0;
-	tmpFlagDisplayText = engine->cfgfile.FlagDisplayText;
-	engine->cfgfile.FlagDisplayText = 1;
+	const bool tmpFlagDisplayText = engine->cfgfile.FlagDisplayText;
+	engine->cfgfile.FlagDisplayText = true;
 	engine->_text->drawTextFullscreen(6);
 	engine->_text->newGameVar4 = 1;
 	engine->_text->textClipSmall();

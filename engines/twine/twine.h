@@ -86,6 +86,7 @@ enum MovieType {
 	CONF_MOVIE_FLAPCX = 3
 };
 
+// TODO: persist on shutdown
 /** Configuration file structure
 
 	Used in the engine to load/use certain parts of code according with
@@ -120,7 +121,7 @@ struct ConfigFile {
 	/** AutoAgressive mode type */
 	int32 AutoAgressive = 0;
 	/** SceZoom mode type */
-	int32 SceZoom = 0;
+	bool SceZoom = false;
 	/** Flag to toggle Wall Collision */
 	int32 WallCollision = 0;
 };

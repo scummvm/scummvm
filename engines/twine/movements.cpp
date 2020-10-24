@@ -380,6 +380,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 				}
 			}
 
+			// TODO: remove loopPressedKey here
 			if (!_engine->loopPressedKey || heroAction) {
 				// if continue walking
 				if (_engine->_input->isActionActive(TwinEActionType::MoveForward) || _engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
