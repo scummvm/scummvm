@@ -237,15 +237,13 @@ bool Scene::initScene(int32 index) {
 }
 
 void Scene::resetScene() {
-	int32 i;
-
 	_engine->_extra->resetExtras();
 
-	for (i = 0; i < ARRAYSIZE(sceneFlags); i++) {
+	for (int32 i = 0; i < ARRAYSIZE(sceneFlags); i++) {
 		sceneFlags[i] = 0;
 	}
 
-	for (i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
+	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		_engine->_redraw->overlayList[i].info0 = -1;
 	}
 
@@ -254,8 +252,6 @@ void Scene::resetScene() {
 }
 
 void Scene::changeScene() {
-	int32 a;
-
 	// change twinsen house destroyed hard-coded
 	if (needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->gameFlags[30] != 0) {
 		needChangeScene = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;
@@ -313,7 +309,7 @@ void Scene::changeScene() {
 
 	_engine->_actor->restartHeroScene();
 
-	for (a = 1; a < sceneNumActors; a++) {
+	for (int32 a = 1; a < sceneNumActors; a++) {
 		_engine->_actor->initActor(a);
 	}
 

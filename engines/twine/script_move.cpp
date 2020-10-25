@@ -84,8 +84,6 @@ static int32 mANIM(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 
 /*0x04*/
 static int32 mGOTO_POINT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 newAngle;
-
 	actor->positionInMoveScript++;
 	engine->_scene->currentScriptValue = *(scriptPtr);
 
@@ -94,7 +92,7 @@ static int32 mGOTO_POINT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor
 	engine->_renderer->destY = sp.y;
 	engine->_renderer->destZ = sp.z;
 
-	newAngle = engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, sp.x, sp.z);
+	const int32 newAngle = engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, sp.x, sp.z);
 
 	if (actor->staticFlags.bIsSpriteActor) {
 		actor->angle = newAngle;
@@ -112,11 +110,10 @@ static int32 mGOTO_POINT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor
 
 /*0x05*/
 static int32 mWAIT_ANIM(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
+	continueMove = 0;
 	if (!actor->dynamicFlags.bAnimEnded) {
-		continueMove = 0;
 		actor->positionInMoveScript--;
 	} else {
-		continueMove = 0;
 		engine->_movements->clearRealAngle(actor);
 	}
 	return 0;
@@ -506,7 +503,6 @@ static int32 mFACE_HERO(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor)
 
 /*0x22*/
 static int32 mANGLE_RND(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 newAngle;
 
 	actor->positionInMoveScript += 4;
 	if (!actor->staticFlags.bIsSpriteActor) {
@@ -515,11 +511,11 @@ static int32 mANGLE_RND(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor)
 		if (engine->_scene->currentScriptValue == -1 && actor->move.numOfStep == 0) {
 			if (engine->getRandomNumber() & 1) {
 				engine->_scene->currentScriptValue = *((int16 *)scriptPtr);
-				newAngle = actor->angle + 0x100 + (ABS(engine->_scene->currentScriptValue) >> 1);
+				const int32 newAngle = actor->angle + 0x100 + (ABS(engine->_scene->currentScriptValue) >> 1);
 				engine->_scene->currentScriptValue = (newAngle - engine->getRandomNumber(engine->_scene->currentScriptValue)) & 0x3FF;
 			} else {
 				engine->_scene->currentScriptValue = *((int16 *)scriptPtr);
-				newAngle = actor->angle - 0x100 + (ABS(engine->_scene->currentScriptValue) >> 1);
+				const int32 newAngle = actor->angle - 0x100 + (ABS(engine->_scene->currentScriptValue) >> 1);
 				engine->_scene->currentScriptValue = (newAngle - engine->getRandomNumber(engine->_scene->currentScriptValue)) & 0x3FF;
 			}
 

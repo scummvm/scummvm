@@ -1443,7 +1443,6 @@ static int32 lPROJ_3D(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 
 /*0x67*/
 static int32 lTEXT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 textSize, textBoxRight;
 	int32 textIdx = *((int16 *)scriptPtr);
 	scriptPtr += 2;
 
@@ -1455,7 +1454,8 @@ static int32 lTEXT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 		}
 
 		engine->_text->getMenuText(textIdx, textStr, sizeof(textStr));
-		textSize = textBoxRight = engine->_text->getTextSize(textStr);
+		int32 textSize = engine->_text->getTextSize(textStr);
+		int32 textBoxRight = textSize;
 		engine->_text->setFontColor(15);
 		engine->_text->drawText(0, drawVar1, textStr);
 		if (textSize > 639) {
@@ -1612,11 +1612,11 @@ void ScriptLife::processLifeScript(int32 actorIdx) {
 		if (scriptOpcode >= 0 && scriptOpcode < ARRAYSIZE(function_map)) {
 			end = function_map[scriptOpcode].function(_engine, actorIdx, actor);
 		} else {
-			error("Actor %d with wrong offset/opcode - Offset: %d\n", actorIdx, actor->positionInLifeScript);
+			error("Actor %d with wrong offset/opcode - Offset: %d", actorIdx, actor->positionInLifeScript);
 		}
 
 		if (end < 0) { // show error message
-			warning("Actor %d Life script [%s] not implemented\n", actorIdx, function_map[scriptOpcode].name);
+			warning("Actor %d Life script [%s] not implemented", actorIdx, function_map[scriptOpcode].name);
 		}
 
 	} while (end != 1);
