@@ -23,6 +23,7 @@
 #include "twine/menu.h"
 #include "audio/mixer.h"
 #include "backends/audiocd/audiocd.h"
+#include "backends/keymapper/keymapper.h"
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/keyboard.h"
@@ -1024,6 +1025,9 @@ void Menu::processInventoryMenu() {
 	_engine->_text->setFontCrossColor(4);
 	_engine->_text->initDialogueBox();
 
+	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
+	keymapper->getKeymap(uiKeyMapId)->setEnabled(true);
+
 	while (_engine->_input->isActionActive(TwinEActionType::InventoryMenu)) {
 		_engine->readKeys();
 		int32 prevSelectedItem = inventorySelectedItem;
@@ -1109,6 +1113,8 @@ void Menu::processInventoryMenu() {
 			break;
 		}
 	}
+
+	keymapper->getKeymap(uiKeyMapId)->setEnabled(false);
 
 	_engine->_text->printTextVar13 = 0;
 
