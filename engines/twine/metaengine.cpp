@@ -271,6 +271,12 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("KP4");
 		uiKeyMap->addAction(act);
 
+		act = new Action("NEXTPAGE", _("Next Page"));
+		act->setCustomEngineActionEvent(TwinEActionType::UINextPage);
+		act->addDefaultInputMapping("SPACE");
+		act->addDefaultInputMapping("PAGEDOWN");
+		uiKeyMap->addAction(act);
+
 		array[1] = uiKeyMap;
 	}
 

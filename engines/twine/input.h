@@ -73,6 +73,7 @@ enum TwinEActionType {
 	UIRight,
 	UIUp,
 	UIDown,
+	UINextPage,
 
 	CutsceneAbort,
 
@@ -120,6 +121,7 @@ static constexpr const struct ActionMapping {
     {UIRight, 0x00},
     {UIUp, 0x00},
     {UIDown, 0x00},
+    {UINextPage, 0x00},
     {CutsceneAbort, 0x00}};
 
 static_assert(ARRAYSIZE(twineactions) == TwinEActionType::Max, "Unexpected action mapping array size");
