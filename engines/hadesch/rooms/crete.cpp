@@ -1285,7 +1285,7 @@ TODO:
 			if (persistent->_creteIntroAtlantisBoat) {
 				persistent->_creteIntroAtlantisBoat = false;
 				room->disableMouse();
-				room->playVideo("r1180ba0", 1000, 12134, Common::Point(640, 216));
+				room->playVideo("r1180ba0", 0, 12134, Common::Point(640, 216));
 			}
 
 		}
@@ -1312,8 +1312,7 @@ TODO:
 
 		switch (persistent->_quest) {
 		case kCreteQuest:
-			if (!persistent->_roomVisited[kMinosPalaceRoom]
-			    || persistent->_creteShowAtlantisBoat) {
+			if (!persistent->_roomVisited[kMinosPalaceRoom]) {
 				room->playVideo("r1260ma0", 0);
 				break;
 			}
