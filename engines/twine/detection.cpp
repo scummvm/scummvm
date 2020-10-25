@@ -37,7 +37,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// LBA.EXE
 	// 8 August 1994 at 19:30
 	{
-		"twine",
+		"lba",
 		"Preview Version",
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 294025),
 		Common::EN_ANY,
@@ -46,7 +46,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"Preview Version",
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 294025),
 		Common::FR_FRA,
@@ -59,7 +59,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// RELENT.EXE
 	// 14 October 1994 at 10:18
 	{
-		"twine",
+		"lba",
 		"Demo Version",
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::EN_ANY,
@@ -68,7 +68,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"Demo Version",
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::FR_FRA,
@@ -77,7 +77,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"Demo Version",
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::DE_DEU,
@@ -86,7 +86,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"Demo Version",
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::IT_ITA,
@@ -95,7 +95,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"Demo Version",
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::ES_ESP,
@@ -108,7 +108,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// LBA.EXE
 	// 14 Oct 1994 at 12:45
 	{
-		"twine",
+		"lba",
 		"CD Original European Version",
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::EN_ANY,
@@ -117,7 +117,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"CD Original European Version",
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::FR_FRA,
@@ -126,7 +126,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"CD Original European Version",
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::DE_DEU,
@@ -135,7 +135,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"CD Original European Version",
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::IT_ITA,
@@ -144,7 +144,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"CD Original European Version",
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::ES_ESP,
@@ -157,7 +157,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// RELENT.EXE
 	// 14 Oct 1994 at 13:22
 	{
-		"twine",
+		"lba",
 		"Relentless: Twinsen's Adventure - CD Original North America Version",
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::EN_ANY,
@@ -166,7 +166,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"Relentless: Twinsen's Adventure - CD Original North America Version",
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::FR_FRA,
@@ -175,7 +175,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"Relentless: Twinsen's Adventure - CD Original North America Version",
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::DE_DEU,
@@ -184,7 +184,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"Relentless: Twinsen's Adventure - CD Original North America Version",
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::IT_ITA,
@@ -193,7 +193,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"Relentless: Twinsen's Adventure - CD Original North America Version",
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::ES_ESP,
@@ -206,7 +206,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// FLA_GIF.HQR
 	// 11 August 1995 at 23:28
 	{
-		"twine",
+		"lba",
 		"Floppy Disk Version",
 		AD_ENTRY1s("FLA_GIF.HQR", "3f7383f65afa212e3eec430627828b64", 1784466),
 		Common::EN_ANY,
@@ -219,7 +219,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// LBAJ.EXE
 	// 15 Oct 1995 at 13:28
 	{
-		"twine",
+		"lba",
 		"Original Japanese Version",
 		AD_ENTRY1s("LBAJ.EXE", "54a1e8749448e08086a1929510ec4b6a", 278043),
 		Common::JA_JPN,
@@ -232,7 +232,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// LBA.DOT
 	// 11 October 2011 at 17:30
 	{
-		"twine",
+		"lba",
 		"DotEmu Version (Steam)",
 		AD_ENTRY1s("LBA.DOT", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::EN_ANY,
@@ -241,7 +241,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"DotEmu Version (Steam)",
 		AD_ENTRY1s("LBA.DOT", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::FR_FRA,
@@ -250,7 +250,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"DotEmu Version (Steam)",
 		AD_ENTRY1s("LBA.DOT", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::DE_DEU,
@@ -259,7 +259,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"DotEmu Version (Steam)",
 		AD_ENTRY1s("LBA.DOT", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::IT_ITA,
@@ -268,7 +268,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"DotEmu Version (Steam)",
 		AD_ENTRY1s("LBA.DOT", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::ES_ESP,
@@ -281,7 +281,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// LBA.exe
 	// 27 February 2018 at 08:10
 	{
-		"twine",
+		"lba",
 		"DotEmu Enhanced Version (Steam)",
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::EN_ANY,
@@ -290,7 +290,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"DotEmu Enhanced Version (Steam)",
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::FR_FRA,
@@ -299,7 +299,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"DotEmu Enhanced Version (Steam)",
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::DE_DEU,
@@ -308,7 +308,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"DotEmu Enhanced Version (Steam)",
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::IT_ITA,
@@ -317,7 +317,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"DotEmu Enhanced Version (Steam)",
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::ES_ESP,
@@ -330,7 +330,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// LBA.GOG
 	// 11 October 2011 at 17:30
 	{
-		"twine",
+		"lba",
 		"GOG Version",
 		AD_ENTRY1s("LBA.GOG", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::EN_ANY,
@@ -339,7 +339,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"GOG Version",
 		AD_ENTRY1s("LBA.GOG", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::FR_FRA,
@@ -348,7 +348,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"GOG Version",
 		AD_ENTRY1s("LBA.GOG", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::DE_DEU,
@@ -357,7 +357,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"GOG Version",
 		AD_ENTRY1s("LBA.GOG", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::IT_ITA,
@@ -366,7 +366,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 	{
-		"twine",
+		"lba",
 		"GOG Version",
 		AD_ENTRY1s("LBA.GOG", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::ES_ESP,
@@ -379,7 +379,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 
 	// Portuguese by xesf (alexfont)
 	{
-		"twine",
+		"lba",
 		"Fan Translation by xesf",
 		AD_ENTRY1s("TEXT.HQR", "2a8df71946aa9ee4c777a9d6414b89ce", 282308),
 		Common::PT_POR,
@@ -390,7 +390,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 
 	// Polish by Zink
 	{
-		"twine",
+		"lba",
 		"Fan Translation by Zink",
 		AD_ENTRY1s("text.hqr", "7f41b5e8efb07dd413f59377e03b1b04", 413920),
 		Common::PL_POL,
@@ -401,7 +401,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 
 	// Hungarian by Gregorius
 	{
-		"twine",
+		"lba",
 		"Fan Translation by Gregorius",
 		AD_ENTRY1s("TEXT.HQR", "31d760b41a424ec2926f494d7ecac14a", 410709),
 		Common::HU_HUN,
@@ -412,7 +412,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 
 	// Hebrew by ChaosFish
 	{
-		"twine",
+		"lba",
 		"Fan Translation by ChaosFish",
 		AD_ENTRY1s("TEXT.HQR", "c1adf48ea71fead82d91c5b062eeeb99", 75866),
 		Common::HE_ISR,
@@ -423,7 +423,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 
 	// Brazilian Portuguese by spider_ruler33
 	{
-		"twine",
+		"lba",
 		"Fan Translation by spider_ruler33",
 		AD_ENTRY1s("TEXT.HQR", "2bf227f9e8fcdc7397372b68786c446e", 283631),
 		Common::PT_BRA,
@@ -434,7 +434,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 
 	// Russian by Cody
 	{
-		"twine",
+		"lba",
 		"Fan Translation by Cody",
 		AD_ENTRY1s("TEXT.HQR", "93b1a29711f0750156280012e53fdcd2", 280306),
 		Common::RU_RUS,
