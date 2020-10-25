@@ -51,15 +51,9 @@ bool TwinEConsole::doChangeScene(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
-	_engine->_gameState->gameFlags[InventoryItems::kiHolomap] = 1;
-	_engine->_gameState->gameFlags[InventoryItems::kiMagicBall] = 1;
-	_engine->_gameState->gameFlags[InventoryItems::kiUseSabre] = 1;
-	_engine->_gameState->gameFlags[InventoryItems::kiTunic] = 1;
-	_engine->_gameState->gameFlags[InventoryItems::kiBookOfBu] = 1;
-	_engine->_gameState->gameFlags[InventoryItems::kiProtoPack ] = 1;
-	_engine->_gameState->gameFlags[InventoryItems::kiPinguin ] = 1;
-	_engine->_gameState->gameFlags[InventoryItems::kiBonusList ] = 1;
-	_engine->_gameState->gameFlags[InventoryItems::kiCloverLeaf] = 1;
+	for (int32 i = 0; i < NUM_INVENTORY_ITEMS; ++i) {
+		_engine->_gameState->gameFlags[i] = 1;
+	}
 	int amount = 10;
 	if (argc > 1) {
 		amount = atoi(argv[1]);
