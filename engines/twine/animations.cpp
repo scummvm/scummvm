@@ -360,7 +360,7 @@ int32 Animations::getBodyAnimIndex(int32 animIdx, int32 actorIdx) {
 	uint8 *costumePtr = NULL;
 	ActorStruct *actor;
 
-	actor = &_engine->_scene->sceneActors[actorIdx];
+	actor = _engine->_scene->getActor(actorIdx);
 	bodyPtr = actor->entityDataPtr;
 
 	do {
@@ -529,7 +529,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 	ActorStruct *actor;
 	DataReader *data;
 
-	actor = &_engine->_scene->sceneActors[actorIdx];
+	actor = _engine->_scene->getActor(actorIdx);
 	if (!actor->animExtraPtr) {
 		return; // avoid null pointers
 	}
@@ -774,27 +774,28 @@ void Animations::processAnimActions(int32 actorIdx) {
 }
 
 int32 Animations::initAnim(AnimationTypes newAnim, int16 animType, uint8 animExtra, int32 actorIdx) {
-	ActorStruct *actor;
-	int32 animIndex;
-
-	actor = &_engine->_scene->sceneActors[actorIdx];
-
-	if (actor->entity == -1)
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	if (actor->entity == -1) {
 		return 0;
+	}
 
-	if (actor->staticFlags.bIsSpriteActor)
+	if (actor->staticFlags.bIsSpriteActor) {
 		return 0;
+	}
 
-	if (newAnim == actor->anim && actor->previousAnimIdx != -1)
+	if (newAnim == actor->anim && actor->previousAnimIdx != -1) {
 		return 1;
+	}
 
-	if (animExtra == 255 && actor->animType != 2)
+	if (animExtra == 255 && actor->animType != 2) {
 		animExtra = (uint8)actor->anim;
+	}
 
-	animIndex = getBodyAnimIndex(newAnim, actorIdx);
+	int32 animIndex = getBodyAnimIndex(newAnim, actorIdx);
 
-	if (animIndex == -1)
+	if (animIndex == -1) {
 		animIndex = getBodyAnimIndex(0, actorIdx);
+	}
 
 	if (animType != 4 && actor->animType == 2) {
 		actor->animExtra = newAnim;
@@ -811,15 +812,17 @@ int32 Animations::initAnim(AnimationTypes newAnim, int16 animType, uint8 animExt
 		}
 	}
 
-	if (animType == 4)
+	if (animType == 4) {
 		animType = 2;
+	}
 
 	if (actor->previousAnimIdx == -1) { // if no previous animation
 		setAnimAtKeyframe(0, animTable[animIndex], _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 	} else { // interpolation between animations
 		animBuffer2 += stockAnimation(animBuffer2, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
-		if (animBuffer1 + 4488 < animBuffer2)
+		if (animBuffer1 + 4488 < animBuffer2) {
 			animBuffer2 = animBuffer1;
+		}
 	}
 
 	actor->previousAnimIdx = animIndex;
@@ -845,17 +848,14 @@ int32 Animations::initAnim(AnimationTypes newAnim, int16 animType, uint8 animExt
 }
 
 void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
-	int16 numKeyframe;
-	uint8 *animPtr;
-	ActorStruct *actor;
-
-	actor = &_engine->_scene->sceneActors[actorIdx];
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	currentlyProcessedActorIdx = actorIdx;
 	_engine->_movements->processActorPtr = actor;
 
-	if (actor->entity == -1)
+	if (actor->entity == -1) {
 		return;
+	}
 
 	_engine->_movements->previousActorX = actor->collisionX;
 	_engine->_movements->previousActorY = actor->collisionY;
@@ -959,7 +959,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 	} else { // 3D actor
 		if (actor->previousAnimIdx != -1) {
 			int32 keyFramePassed;
-			animPtr = animTable[actor->previousAnimIdx];
+			uint8 *animPtr = animTable[actor->previousAnimIdx];
 
 			keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animPtr, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 
@@ -996,7 +996,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 					processAnimActions(actorIdx);
 				}
 
-				numKeyframe = actor->animPosition;
+				int16 numKeyframe = actor->animPosition;
 				if (numKeyframe == getNumKeyframes(animPtr)) {
 					actor->dynamicFlags.bIsHitting = 0;
 
@@ -1036,13 +1036,13 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 	// actor standing on another actor
 	if (actor->standOn != -1) {
-		_engine->_movements->processActorX -= _engine->_scene->sceneActors[actor->standOn].collisionX;
-		_engine->_movements->processActorY -= _engine->_scene->sceneActors[actor->standOn].collisionY;
-		_engine->_movements->processActorZ -= _engine->_scene->sceneActors[actor->standOn].collisionZ;
+		_engine->_movements->processActorX -= _engine->_scene->getActor(actor->standOn)->collisionX;
+		_engine->_movements->processActorY -= _engine->_scene->getActor(actor->standOn)->collisionY;
+		_engine->_movements->processActorZ -= _engine->_scene->getActor(actor->standOn)->collisionZ;
 
-		_engine->_movements->processActorX += _engine->_scene->sceneActors[actor->standOn].x;
-		_engine->_movements->processActorY += _engine->_scene->sceneActors[actor->standOn].y;
-		_engine->_movements->processActorZ += _engine->_scene->sceneActors[actor->standOn].z;
+		_engine->_movements->processActorX += _engine->_scene->getActor(actor->standOn)->x;
+		_engine->_movements->processActorY += _engine->_scene->getActor(actor->standOn)->y;
+		_engine->_movements->processActorZ += _engine->_scene->getActor(actor->standOn)->z;
 
 		if (!_engine->_collision->standingOnActor(actorIdx, actor->standOn)) {
 			actor->standOn = -1; // no longer standing on other actor

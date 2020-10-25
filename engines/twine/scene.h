@@ -99,6 +99,8 @@ enum ZoneType {
 	kLadder = 6    // Hero can climb on it
 };
 
+#define OWN_ACTOR_SCENE_INDEX 0
+
 class TwinEEngine;
 class Scene {
 private:
@@ -112,6 +114,9 @@ private:
 	int32 initScene(int32 index);
 	/** Reset scene */
 	void resetScene();
+
+	// the first actor is the own hero
+	ActorStruct sceneActors[NUM_MAX_ACTORS];
 
 public:
 	Scene(TwinEEngine *engine) : _engine(engine) {}
@@ -162,9 +167,8 @@ public:
 
 	// ACTORS
 	int32 sceneNumActors = 0;
-	// the first actor is the own hero
-	ActorStruct sceneActors[NUM_MAX_ACTORS];
 	ActorStruct *sceneHero = nullptr;
+	ActorStruct* getActor(int32 actorIdx);
 
 	/** Meca pinguin actor index */
 	int16 mecaPinguinIdx = 0; // currentPingouin

@@ -26,10 +26,11 @@
 #include "twine/actor.h"
 #include "twine/animations.h"
 #include "twine/collision.h"
+#include "twine/debug_scene.h"
 #include "twine/grid.h"
 #include "twine/hqrdepack.h"
-#include "twine/interface.h"
 #include "twine/input.h"
+#include "twine/interface.h"
 #include "twine/menu.h"
 #include "twine/movements.h"
 #include "twine/renderer.h"
@@ -38,7 +39,6 @@
 #include "twine/screens.h"
 #include "twine/sound.h"
 #include "twine/text.h"
-#include "twine/debug_scene.h"
 
 namespace TwinE {
 
@@ -149,7 +149,7 @@ void Redraw::blitBackgroundAreas() {
 	const RedrawStruct *currentArea = currentRedrawList;
 
 	for (int32 i = 0; i < numOfRedrawBox; i++) {
-		_engine->_interface->blitBox(currentArea->left, currentArea->top, currentArea->right, currentArea->bottom, (const int8*)_engine->workVideoBuffer.getPixels(), currentArea->left, currentArea->top, (int8*)_engine->frontVideoBuffer.getPixels());
+		_engine->_interface->blitBox(currentArea->left, currentArea->top, currentArea->right, currentArea->bottom, (const int8 *)_engine->workVideoBuffer.getPixels(), currentArea->left, currentArea->top, (int8 *)_engine->frontVideoBuffer.getPixels());
 		currentArea++;
 	}
 }
@@ -233,10 +233,10 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 
 	// Process actors drawing list
 	for (modelActorPos = 0; modelActorPos < _engine->_scene->sceneNumActors; modelActorPos++, spriteActorPos++, shadowActorPos++) {
-		actor = &_engine->_scene->sceneActors[modelActorPos];
+		actor = _engine->_scene->getActor(modelActorPos);
 		actor->dynamicFlags.bIsVisible = 0; // reset visible state
 
-		if ((_engine->_grid->useCellingGrid == -1) || actor->y <= (*(int16 *)(_engine->_grid->cellingGridIdx * 24 + (int8 *)_engine->_scene->sceneZones + 8))) {
+		if (_engine->_grid->useCellingGrid == -1 || actor->y <= (*(int16 *)(_engine->_grid->cellingGridIdx * 24 + (int8 *)_engine->_scene->sceneZones + 8))) {
 			// no redraw required
 			if (actor->staticFlags.bIsBackgrounded && bgRedraw == 0) {
 				// get actor position on screen
@@ -259,7 +259,8 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 
 						// if actor is above another actor
 						if (actor->standOn != -1) {
-							tmpVal = _engine->_scene->sceneActors[actor->standOn].x - _engine->_grid->cameraX + _engine->_scene->sceneActors[actor->standOn].z - _engine->_grid->cameraZ + 2;
+							const ActorStruct *standOnActor = _engine->_scene->getActor(actor->standOn);
+							tmpVal = standOnActor->x - _engine->_grid->cameraX + standOnActor->z - _engine->_grid->cameraZ + 2;
 						}
 
 						if (actor->staticFlags.bIsSpriteActor) {
@@ -346,7 +347,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 
 		do {
 			int32 actorIdx = drawList[pos].index & 0x3FF;
-			ActorStruct *actor2 = &_engine->_scene->sceneActors[actorIdx];
+			ActorStruct *actor2 = _engine->_scene->getActor(actorIdx);
 			uint32 flags = ((uint32)drawList[pos].index) & 0xFC00;
 
 			// Drawing actors
@@ -393,7 +394,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 							addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 
 							if (actor2->staticFlags.bIsBackgrounded && bgRedraw == 1) {
-								_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom, (const int8*)_engine->frontVideoBuffer.getPixels(), _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8*)_engine->workVideoBuffer.getPixels());
+								_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom, (const int8 *)_engine->frontVideoBuffer.getPixels(), _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8 *)_engine->workVideoBuffer.getPixels());
 							}
 						}
 					}
@@ -479,7 +480,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom);
 
 					if (actor2->staticFlags.bIsBackgrounded && bgRedraw == 1) {
-						_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom, (const int8*)_engine->frontVideoBuffer.getPixels(), _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8*)_engine->workVideoBuffer.getPixels());
+						_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom, (const int8 *)_engine->frontVideoBuffer.getPixels(), _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8 *)_engine->workVideoBuffer.getPixels());
 					}
 
 					// show clipping area
@@ -543,7 +544,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				}
 				break;
 			case koFollowActor: {
-				ActorStruct *actor2 = &_engine->_scene->sceneActors[overlay->info1];
+				ActorStruct *actor2 = _engine->_scene->getActor(overlay->info1);
 
 				_engine->_renderer->projectPositionOnScreen(actor2->x - _engine->_grid->cameraX, actor2->y + actor2->boudingBox.y.topRight - _engine->_grid->cameraY, actor2->z - _engine->_grid->cameraZ);
 
@@ -554,7 +555,8 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 					overlay->info0 = -1;
 					continue;
 				}
-			} break;
+				break;
+			}
 			}
 
 			// process overlay type
@@ -579,8 +581,8 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
 					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 				}
-
-			} break;
+				break;
+			}
 			case koNumber: {
 				int32 textLength, textHeight;
 				char text[10];
@@ -603,7 +605,8 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
 					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 				}
-			} break;
+				break;
+			}
 			case koNumberRange: {
 				int32 textLength, textHeight, range;
 				char text[10];
@@ -629,7 +632,8 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
 					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 				}
-			} break;
+				break;
+			}
 			case koInventoryItem: {
 				int32 item = overlay->info0;
 
@@ -646,7 +650,8 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				_engine->_menu->drawBox(10, 10, 69, 69);
 				addRedrawArea(10, 10, 69, 69);
 				_engine->_gameState->initEngineProjections();
-			} break;
+				break;
+			}
 			case koText: {
 				char text[256];
 
@@ -678,14 +683,15 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 
 				_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
 
-				_engine->_text->setFontColor(_engine->_scene->sceneActors[overlay->info1].talkColor);
+				_engine->_text->setFontColor(_engine->_scene->getActor(overlay->info1)->talkColor);
 
 				_engine->_text->drawText(renderLeft, renderTop, text);
 
 				if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
 					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 				}
-			} break;
+				break;
+			}
 			}
 		}
 	}
@@ -724,7 +730,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 void Redraw::drawBubble(int32 actorIdx) {
 	int32 spriteWidth, spriteHeight;
 	uint8 *spritePtr;
-	ActorStruct *actor = &_engine->_scene->sceneActors[actorIdx];
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	// get actor position on screen
 	_engine->_renderer->projectPositionOnScreen(actor->x - _engine->_grid->cameraX, actor->y + actor->boudingBox.y.topRight - _engine->_grid->cameraY, actor->z - _engine->_grid->cameraZ);
@@ -762,8 +768,8 @@ void Redraw::zoomScreenScale() {
 	zoomWorkVideoBuffer.copyFrom(_engine->workVideoBuffer);
 
 	// TODO: this is broken
-	const uint8 *src = (const uint8*)zoomWorkVideoBuffer.getPixels();
-	uint8 *dest = (uint8*)_engine->workVideoBuffer.getPixels();
+	const uint8 *src = (const uint8 *)zoomWorkVideoBuffer.getPixels();
+	uint8 *dest = (uint8 *)_engine->workVideoBuffer.getPixels();
 	for (int h = 0; h < zoomWorkVideoBuffer.h; h++) {
 		for (int w = 0; w < zoomWorkVideoBuffer.w; w++) {
 			*dest++ = *src;

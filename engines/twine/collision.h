@@ -53,11 +53,11 @@ public:
 	int32 causeActorDamage = 0; //fieldCauseDamage
 
 	/**
-	 * Check if actor 1 is standing in actor2
+	 * Check if actor 1 is standing in actor 2
 	 * @param actorIdx1 Actor 1 index
 	 * @param actorIdx2 Actor 2 index
 	 */
-	int32 standingOnActor(int32 actorIdx1, int32 actorIdx2);
+	bool standingOnActor(int32 actorIdx1, int32 actorIdx2);
 
 	int32 getAverageValue(int32 var0, int32 var1, int32 var2, int32 var3);
 

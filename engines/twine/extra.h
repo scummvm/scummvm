@@ -65,33 +65,33 @@ private:
 	TwinEEngine *_engine;
 
 	void throwExtra(ExtraListStruct *extra, int32 var1, int32 var2, int32 var3, int32 var4);
-	void processMagicballBounce(ExtraListStruct *extra, int32 X, int32 Y, int32 Z);
+	void processMagicballBounce(ExtraListStruct *extra, int32 x, int32 y, int32 z);
 	int32 findExtraKey();
-	int32 addExtraAimingAtKey(int32 actorIdx, int32 X, int32 Y, int32 Z, int32 spriteIdx, int32 extraIdx);
-	void drawSpecialShape(const int16 *shapeTable, int32 X, int32 Y, int32 color, int32 angle, int32 size);
+	int32 addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx);
+	void drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size);
 
 public:
 	Extra(TwinEEngine *engine);
 	ExtraListStruct extraList[EXTRA_MAX_ENTRIES];
 
-	int32 addExtra(int32 actorIdx, int32 X, int32 Y, int32 Z, int32 info0, int32 targetActor, int32 maxSpeed, int32 strengthOfHit);
+	int32 addExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 info0, int32 targetActor, int32 maxSpeed, int32 strengthOfHit);
 
 	/** Add extra explosion
-	@param X Explostion X coordinate
-	@param Y Explostion Y coordinate
-	@param Z Explostion Z coordinate */
-	int32 addExtraExplode(int32 X, int32 Y, int32 Z);
+	@param x Explostion X coordinate
+	@param y Explostion Y coordinate
+	@param z Explostion Z coordinate */
+	int32 addExtraExplode(int32 x, int32 y, int32 z);
 
 	/** Reset all used extras */
 	void resetExtras();
 
-	void addExtraSpecial(int32 X, int32 Y, int32 Z, int32 type);
-	int32 addExtraBonus(int32 X, int32 Y, int32 Z, int32 param, int32 angle, int32 type, int32 bonusAmount);
-	int32 addExtraThrow(int32 actorIdx, int32 X, int32 Y, int32 Z, int32 sprite, int32 var2, int32 var3, int32 var4, int32 var5, int32 strengthOfHit);
-	int32 addExtraAiming(int32 actorIdx, int32 X, int32 Y, int32 Z, int32 spriteIdx, int32 targetActorIdx, int32 maxSpeed, int32 strengthOfHit);
-	void addExtraThrowMagicball(int32 X, int32 Y, int32 Z, int32 param1, int32 angle, int32 param2, int32 param3);
+	void addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type);
+	int32 addExtraBonus(int32 x, int32 y, int32 z, int32 param, int32 angle, int32 type, int32 bonusAmount);
+	int32 addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 sprite, int32 var2, int32 var3, int32 var4, int32 var5, int32 strengthOfHit);
+	int32 addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActorIdx, int32 maxSpeed, int32 strengthOfHit);
+	void addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 param1, int32 angle, int32 param2, int32 param3);
 
-	void drawExtraSpecial(int32 extraIdx, int32 X, int32 Y);
+	void drawExtraSpecial(int32 extraIdx, int32 x, int32 y);
 
 	/** Process extras */
 	void processExtras();

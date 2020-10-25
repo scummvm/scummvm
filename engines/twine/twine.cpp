@@ -295,7 +295,7 @@ void TwinEEngine::initAll() {
 
 	_redraw->bubbleSpriteIndex = SPRITEHQR_DIAG_BUBBLE_LEFT;
 
-	_scene->sceneHero = &_scene->sceneActors[0];
+	_scene->sceneHero = _scene->getActor(OWN_ACTOR_SCENE_INDEX);
 
 	_redraw->renderRight = SCREEN_TEXTLIMIT_RIGHT;
 	_redraw->renderBottom = SCREEN_TEXTLIMIT_BOTTOM;
@@ -328,7 +328,7 @@ void TwinEEngine::unfreezeTime() {
 }
 
 void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
-	const ActorStruct *actor = &_scene->sceneActors[actorIdx];
+	const ActorStruct *actor = _scene->getActor(actorIdx);
 	const int32 channelIdx = _sound->getActorChannel(actorIdx);
 	_sound->setSamplePosition(channelIdx, actor->x, actor->y, actor->z);
 }
@@ -446,7 +446,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				}
 				break;
 			case kiPinguin: {
-				ActorStruct *pinguin = &_scene->sceneActors[_scene->mecaPinguinIdx];
+				ActorStruct *pinguin = _scene->getActor(_scene->mecaPinguinIdx);
 
 				pinguin->x = _renderer->destX + _scene->sceneHero->x;
 				pinguin->y = _scene->sceneHero->y;
@@ -532,9 +532,10 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// Recenter Screen
 		if (_input->isActionActive(TwinEActionType::RecenterScreenOnTwinsen) && !disableScreenRecenter) {
-			_grid->newCameraX = _scene->sceneActors[_scene->currentlyFollowedActor].x >> 9;
-			_grid->newCameraY = _scene->sceneActors[_scene->currentlyFollowedActor].y >> 8;
-			_grid->newCameraZ = _scene->sceneActors[_scene->currentlyFollowedActor].z >> 9;
+			const ActorStruct* currentlyFollowedActor = _scene->getActor(_scene->currentlyFollowedActor);
+			_grid->newCameraX = currentlyFollowedActor->x >> 9;
+			_grid->newCameraY = currentlyFollowedActor->y >> 8;
+			_grid->newCameraZ = currentlyFollowedActor->z >> 9;
 			_redraw->reqBgRedraw = true;
 		}
 
@@ -578,13 +579,13 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 	// Reset HitBy state
 	for (int32 a = 0; a < _scene->sceneNumActors; a++) {
-		_scene->sceneActors[a].hitBy = -1;
+		_scene->getActor(a)->hitBy = -1;
 	}
 
 	_extra->processExtras();
 
 	for (int32 a = 0; a < _scene->sceneNumActors; a++) {
-		ActorStruct *actor = &_scene->sceneActors[a];
+		ActorStruct *actor = _scene->getActor(a);
 
 		if (!actor->dynamicFlags.bIsDead) {
 			if (actor->life == 0) {
@@ -723,7 +724,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 	// recenter screen automatically
 	if (!disableScreenRecenter && !_debugGrid->useFreeCamera) {
-		ActorStruct *actor = &_scene->sceneActors[_scene->currentlyFollowedActor];
+		ActorStruct *actor = _scene->getActor(_scene->currentlyFollowedActor);
 		_renderer->projectPositionOnScreen(actor->x - (_grid->newCameraX << 9),
 		                                   actor->y - (_grid->newCameraY << 8),
 		                                   actor->z - (_grid->newCameraZ << 9));

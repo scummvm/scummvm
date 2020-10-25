@@ -583,17 +583,14 @@ ScriptMove::ScriptMove(TwinEEngine *engine) : _engine(engine) {
 }
 
 void ScriptMove::processMoveScript(int32 actorIdx) {
-	int32 scriptOpcode;
-	ActorStruct *actor;
-
 	continueMove = 1;
-	actor = &_engine->_scene->sceneActors[actorIdx];
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	move = &actor->move;
 
 	do {
 		scriptPosition = actor->positionInMoveScript;
 		scriptPtr = actor->moveScript + scriptPosition;
-		scriptOpcode = *(scriptPtr++);
+		int32 scriptOpcode = *(scriptPtr++);
 
 		actor->positionInMoveScript++;
 

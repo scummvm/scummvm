@@ -137,7 +137,7 @@ void Actor::setBehaviour(int32 behaviour) {
 }
 
 void Actor::initSpriteActor(int32 actorIdx) {
-	ActorStruct *localActor = &_engine->_scene->sceneActors[actorIdx];
+	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 
 	if (localActor->staticFlags.bIsSpriteActor && localActor->sprite != -1 && localActor->entity != localActor->sprite) {
 		const int16 *ptr = (const int16 *)(_engine->_scene->spriteBoundingBoxPtr + localActor->sprite * 16 + 4);
@@ -153,7 +153,7 @@ void Actor::initSpriteActor(int32 actorIdx) {
 }
 
 int32 Actor::initBody(int32 bodyIdx, int32 actorIdx) {
-	ActorStruct *localActor = &_engine->_scene->sceneActors[actorIdx];
+	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 	uint8 *bodyPtr = localActor->entityDataPtr;
 
 	do {
@@ -230,7 +230,7 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx) {
 }
 
 void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
-	ActorStruct *localActor = &_engine->_scene->sceneActors[actorIdx];
+	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 	if (localActor->staticFlags.bIsSpriteActor) {
 		return;
 	}
@@ -320,7 +320,7 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 }
 
 void Actor::initActor(int16 actorIdx) {
-	ActorStruct *actor = &_engine->_scene->sceneActors[actorIdx];
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	if (actor->staticFlags.bIsSpriteActor) { // if sprite actor
 		if (actor->strengthOfHit != 0) {
@@ -359,7 +359,7 @@ void Actor::initActor(int16 actorIdx) {
 }
 
 void Actor::resetActor(int16 actorIdx) {
-	ActorStruct *actor = &_engine->_scene->sceneActors[actorIdx];
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	actor->body = 0;
 	actor->anim = kStanding;
@@ -410,8 +410,7 @@ void Actor::resetActor(int16 actorIdx) {
 }
 
 void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, int32 angle) {
-	ActorStruct *actor = &_engine->_scene->sceneActors[actorIdxAttacked];
-
+	ActorStruct *actor = _engine->_scene->getActor(actorIdxAttacked);
 	if (actor->life <= 0) {
 		return;
 	}
@@ -455,7 +454,7 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 }
 
 void Actor::processActorCarrier(int32 actorIdx) { // CheckCarrier
-	ActorStruct *actor = &_engine->_scene->sceneActors[actorIdx];
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (!actor->staticFlags.bIsCarrierActor) {
 		return;
 	}
@@ -467,7 +466,7 @@ void Actor::processActorCarrier(int32 actorIdx) { // CheckCarrier
 }
 
 void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
-	ActorStruct *actor = &_engine->_scene->sceneActors[actorIdx];
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	int32 numBonus = 0;
 

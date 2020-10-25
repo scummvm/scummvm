@@ -393,6 +393,12 @@ void Scene::changeScene() {
 	}
 }
 
+ActorStruct* Scene::getActor(int32 actorIdx) {
+	assert(actorIdx >= 0);
+	assert(actorIdx < NUM_MAX_ACTORS);
+	return &sceneActors[actorIdx];
+}
+
 void Scene::processEnvironmentSound() {
 	int16 s, currentAmb, decal, repeat;
 	int16 sampleIdx = -1;

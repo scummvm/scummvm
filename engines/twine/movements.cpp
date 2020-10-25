@@ -259,13 +259,12 @@ void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMove
 }
 
 void Movements::processActorMovements(int32 actorIdx) {
-	ActorStruct *actor = &_engine->_scene->sceneActors[actorIdx];
-
-	if (actor->entity == -1)
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	if (actor->entity == -1) {
 		return;
+	}
 
 	if (actor->dynamicFlags.bIsFalling) {
-
 		if (actor->controlMode != 1) {
 			return;
 		}
@@ -291,7 +290,8 @@ void Movements::processActorMovements(int32 actorIdx) {
 		case kNoMove:
 			break;
 		case kManual:
-			if (!actorIdx) { // take this out when we want to give manual movements to other characters than Hero
+			// take this out when we want to give manual movements to other characters than Hero
+			if (actor == _engine->_scene->sceneHero) {
 				heroAction = 0;
 
 				// If press W for action
@@ -333,12 +333,10 @@ void Movements::processActorMovements(int32 actorIdx) {
 								}
 							}
 						} else {
-							if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-								_engine->_animations->initAnim(kRightPunch, 1, 0, actorIdx);
-							}
-
 							if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 								_engine->_animations->initAnim(kLeftPunch, 1, 0, actorIdx);
+							} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
+								_engine->_animations->initAnim(kRightPunch, 1, 0, actorIdx);
 							}
 
 							if (_engine->_input->toggleActionIfActive(TwinEActionType::MoveForward)) {
@@ -441,13 +439,15 @@ void Movements::processActorMovements(int32 actorIdx) {
 
 			break;
 		case kFollow: {
-			int32 newAngle = getAngleAndSetTargetActorDistance(actor->x, actor->z, _engine->_scene->sceneActors[actor->followedActor].x, _engine->_scene->sceneActors[actor->followedActor].z);
+			const ActorStruct* followedActor = _engine->_scene->getActor(actor->followedActor);
+			int32 newAngle = getAngleAndSetTargetActorDistance(actor->x, actor->z, followedActor->x, followedActor->z);
 			if (actor->staticFlags.bIsSpriteActor) {
 				actor->angle = newAngle;
 			} else {
 				moveActor(actor->angle, newAngle, actor->speed, &actor->move);
 			}
-		} break;
+			break;
+		}
 		case kTrack:
 			if (actor->positionInMoveScript == -1) {
 				actor->positionInMoveScript = 0;
@@ -456,10 +456,12 @@ void Movements::processActorMovements(int32 actorIdx) {
 		case kFollow2:     // unused
 		case kTrackAttack: // unused
 			break;
-		case kSameXZ:
-			actor->x = _engine->_scene->sceneActors[actor->followedActor].x;
-			actor->z = _engine->_scene->sceneActors[actor->followedActor].z;
+		case kSameXZ: {
+			const ActorStruct* followedActor = _engine->_scene->getActor(actor->followedActor);
+			actor->x = followedActor->x;
+			actor->z = followedActor->z;
 			break;
+		}
 		case kRandom: {
 			if (!actor->dynamicFlags.bIsRotationByAnim) {
 				if (actor->brickShape & 0x80) {
