@@ -131,7 +131,7 @@ public:
 			_decoderPosition = 0;
 			renderDecoder();
 			if (!_philBangPlayed) {
-				_philBangPlayed = false;
+				_philBangPlayed = true;
 				room->playSound("SndBigBang", 22012);
 			}
 			return;
@@ -148,6 +148,11 @@ public:
 			_decoderPosition--;
 			renderDecoder();
 			room->playAnim("AnimDecoderArrows", 149, PlayAnimParams::disappear().partial(1, 1));
+			return;
+		}
+
+		if (name == "DecoderDone") {
+			removeDecoder();
 			return;
 		}
 	}
@@ -384,6 +389,19 @@ private:
 		room->enableHotzone("DecoderDone");
 		room->enableHotzone("DecoderDown");
 		room->enableHotzone("DecoderUp");
+	}
+
+	void removeDecoder() {
+		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
+		Persistent *persistent = g_vm->getPersistent();
+		room->stopAnim("AnimDecoderScroll");
+		room->stopAnim("AnimDecoderSymbols");
+		room->selectFrame(
+			caVariantGet(persistent->_catacombDecoderSkullPosition, "SkullDecoder"), 450, 1);
+		room->stopAnim("AnimDecoderArrows");
+		room->disableHotzone("DecoderDone");
+		room->disableHotzone("DecoderDown");
+		room->disableHotzone("DecoderUp");
 	}
 
 	void handleExit(CatacombsPosition side) {
