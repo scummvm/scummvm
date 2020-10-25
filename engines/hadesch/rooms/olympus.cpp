@@ -41,7 +41,6 @@ public:
 	void handleClick(const Common::String &hotname) override {
 		if (hotname == "new") {
 			g_vm->newGame();
-			g_vm->moveToRoom(kWallOfFameRoom);
 			return;
 		}
 

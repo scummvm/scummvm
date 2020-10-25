@@ -115,6 +115,7 @@ Persistent::Persistent() {
 	_troyCatacombsUnlocked = false;
 	_troyPlayedOdysseusCongrats = false;
 	_troyPlayFinish = false;
+	_doQuestIntro = false;
 
 	for (unsigned i = 0; i < ARRAYSIZE(_catacombVariants); i++)
 		for (unsigned j = 0; j < ARRAYSIZE(_catacombVariants[0]); j++)

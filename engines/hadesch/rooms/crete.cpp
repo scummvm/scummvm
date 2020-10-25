@@ -843,7 +843,7 @@ TODO:
 
 			// Originally event 12123
 			room->playSound("r2035wa0", 12124);
-			g_vm->moveToRoom(kDaedalusRoom);
+			persistent->_creteHadesPusnishesPainAndPanic = false;
 			return;
 		}
 		
