@@ -29,6 +29,11 @@ namespace TwinE {
 
 class TwinEEngine;
 
+/**
+ * High Quality Resource
+ *
+ * http://lbafileinfo.kazekr.net/index.php?title=High_quality_resource
+ */
 class HQRDepack {
 private:
 	TwinEEngine *_engine;
