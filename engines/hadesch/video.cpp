@@ -748,7 +748,6 @@ void VideoRoom::playVideo(const Common::String &name, int zValue,
 	}
 	if (!file->open(_smkPath + "/" + mappedName + ".SMK") || !decoder->loadStream(file)) {
 		debug("Video file %s can't be opened", name.c_str());
-		delete file;
 		g_vm->handleEvent(callbackEvent);
 		return;
 	}
