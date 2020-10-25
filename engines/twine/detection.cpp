@@ -68,6 +68,24 @@ static const ADGameDescription twineGameDescriptions[] = {
 		ADGF_UNSTABLE,
 		GUIO1(GUIO_NONE)
 	},
+	{
+		"twine",
+		"",
+		AD_ENTRY1s("text.hqr", "31d880f658cc6cc6d6cf70df732aec4f", 248829),
+		Common::FR_FRA,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"twine",
+		"",
+		AD_ENTRY1s("text.hqr", "31d880f658cc6cc6d6cf70df732aec4f", 248829),
+		Common::DE_DEU,
+		Common::kPlatformDOS,
+		ADGF_UNSTABLE,
+		GUIO1(GUIO_NONE)
+	},
 	AD_TABLE_END_MARKER
 };
 
