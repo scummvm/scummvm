@@ -91,9 +91,7 @@ void Scene::setActorStaticFlags(int32 actorIdx, uint16 staticFlags) {
 	}
 }
 
-void Scene::loadScene() {
-	int32 i;
-	int32 scriptSize = 0;
+void Scene::loadSceneLBA1() {
 	uint8 *localScene = currentScene;
 
 	// load scene ambience properties
@@ -153,20 +151,20 @@ void Scene::loadScene() {
 	sceneHeroZ = *((uint16 *)localScene);
 	localScene += 2;
 
-	scriptSize = *((uint16 *)localScene);
+	sceneHero->moveScriptSize = *((uint16 *)localScene);
 	localScene += 2;
 	sceneHero->moveScript = localScene;
-	localScene += scriptSize;
+	localScene += sceneHero->moveScriptSize;
 
-	scriptSize = *((uint16 *)localScene);
+	sceneHero->lifeScriptSize = *((uint16 *)localScene);
 	localScene += 2;
 	sceneHero->lifeScript = localScene;
-	localScene += scriptSize;
+	localScene += sceneHero->lifeScriptSize;
 
 	sceneNumActors = *((uint16 *)localScene);
 	localScene += 2;
 
-	for (i = 1; i < sceneNumActors; i++) {
+	for (int32 i = 1; i < sceneNumActors; i++) {
 		uint16 staticFlags;
 
 		_engine->_actor->resetActor(i);
@@ -219,21 +217,21 @@ void Scene::loadScene() {
 		sceneActors[i].armor = *(localScene++);
 		sceneActors[i].life = *(localScene++);
 
-		scriptSize = *((uint16 *)localScene);
+		sceneActors[i].moveScriptSize = *((uint16 *)localScene);
 		localScene += 2;
 		sceneActors[i].moveScript = localScene;
-		localScene += scriptSize;
+		localScene += sceneActors[i].moveScriptSize;
 
-		scriptSize = *((uint16 *)localScene);
+		sceneActors[i].lifeScriptSize = *((uint16 *)localScene);
 		localScene += 2;
 		sceneActors[i].lifeScript = localScene;
-		localScene += scriptSize;
+		localScene += sceneActors[i].lifeScriptSize;
 	}
 
 	sceneNumZones = *((uint16 *)localScene);
 	localScene += 2;
 
-	for (i = 0; i < sceneNumZones; i++) {
+	for (int32 i = 0; i < sceneNumZones; i++) {
 		sceneZones[i].bottomLeft.x = *((uint16 *)localScene);
 		localScene += 2;
 		sceneZones[i].bottomLeft.y = *((uint16 *)localScene);
@@ -267,7 +265,7 @@ void Scene::loadScene() {
 	sceneNumTracks = *((uint16 *)localScene);
 	localScene += 2;
 
-	for (i = 0; i < sceneNumTracks; i++) {
+	for (int32 i = 0; i < sceneNumTracks; i++) {
 		sceneTracks[i].x = *((uint16 *)localScene);
 		localScene += 2;
 		sceneTracks[i].y = *((uint16 *)localScene);
@@ -281,7 +279,9 @@ int32 Scene::initScene(int32 index) {
 	// load scene from file
 	_engine->_hqrdepack->hqrGetallocEntry(&currentScene, Resources::HQR_SCENE_FILE, index);
 
-	loadScene();
+	if (_engine->isLBA1()) {
+		loadSceneLBA1();
+	}
 
 	return 1;
 }

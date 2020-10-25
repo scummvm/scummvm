@@ -186,9 +186,11 @@ struct ActorStruct {
 
 	int32 positionInMoveScript = 0;
 	uint8 *moveScript = nullptr;
+	int32 moveScriptSize = 0;
 
 	int32 positionInLifeScript = 0;
 	uint8 *lifeScript = nullptr;
+	int32 lifeScriptSize = 0;
 
 	int32 labelIdx = 0;        // script label index
 	int32 currentLabelPtr = 0; // pointer to LABEL offset

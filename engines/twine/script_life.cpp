@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/stream.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
 #include "twine/collision.h"
@@ -1599,6 +1600,7 @@ ScriptLife::ScriptLife(TwinEEngine *engine) : _engine(engine) {
 
 void ScriptLife::processLifeScript(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	// TODO: use Common::MemoryReadStream for the script parsing
 	scriptPtr = actor->lifeScript + actor->positionInLifeScript;
 
 	int32 end = -2;

@@ -232,7 +232,7 @@ private:
 /** Process zone extra bonus */
 	void processZoneExtraBonus(ZoneStruct *zone);
 	void setActorStaticFlags(int32 actorIdx, uint16 staticFlags);
-	void loadScene();
+	void loadSceneLBA1();
 	/** Initialize new scene */
 	int32 initScene(int32 index);
 	/** Reset scene */
