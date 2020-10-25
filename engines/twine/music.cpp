@@ -30,7 +30,6 @@
 #include "twine/hqrdepack.h"
 #include "twine/resources.h"
 #include "twine/twine.h"
-#include "twine/xmidi.h"
 
 namespace TwinE {
 
@@ -63,35 +62,46 @@ namespace TwinE {
  */
 #define NUM_CD_TRACKS 10
 
-TwinEMidiPlayer::TwinEMidiPlayer() {
+TwinEMidiPlayer::TwinEMidiPlayer(TwinEEngine* engine) : _engine(engine) {
 	MidiPlayer::createDriver();
 
 	int ret = _driver->open();
 	if (ret == 0) {
-		if (_nativeMT32)
+		if (_nativeMT32) {
 			_driver->sendMT32Reset();
-		else
+		} else {
 			_driver->sendGMReset();
+		}
 		_driver->setTimerCallback(this, &timerCallback);
 	}
 }
 
 void TwinEMidiPlayer::play(byte *buf, int size) {
-	MidiParser *parser = MidiParser::createParser_SMF();
-	if (parser->loadMusic(buf, size)) {
-		parser->setTrack(0);
-		parser->setMidiDriver(this);
-		parser->setTimerRate(_driver->getBaseTempo());
-		parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-
-		_parser = parser;
-
-		syncVolume();
-
-		// All the tracks are supposed to loop
-		_isLooping = true;
-		_isPlaying = true;
+	if (_parser == nullptr) {
+		if (_engine->cfgfile.MidiType == MIDIFILE_DOS) {
+			_parser = MidiParser::createParser_XMIDI();
+		} else {
+			_parser = MidiParser::createParser_SMF();
+		}
 	}
+
+	if (!_parser->loadMusic(buf, size)) {
+		warning("Failed to load midi music");
+		return;
+	}
+	_parser->setTrack(0);
+	_parser->setMidiDriver(this);
+	_parser->setTimerRate(_driver->getBaseTempo());
+	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
+
+	syncVolume();
+
+	// All the tracks are supposed to loop
+	_isLooping = true;
+	_isPlaying = true;
+}
+
+Music::Music(TwinEEngine *engine) : _engine(engine), _midiPlayer(engine) {
 }
 
 void Music::musicVolume(int32 volume) {
@@ -176,14 +186,6 @@ void Music::playMidiMusic(int32 midiIdx, int32 loop) {
 	}
 
 	int32 midiSize = _engine->_hqrdepack->hqrGetallocEntry(&midiPtr, filename, midiIdx);
-
-	if (_engine->cfgfile.MidiType == MIDIFILE_DOS) {
-		uint8 *dos_midi_ptr;
-		midiSize = convert_to_midi(midiPtr, midiSize, &dos_midi_ptr);
-		free(midiPtr);
-		midiPtr = dos_midi_ptr;
-	}
-
 	_midiPlayer.play(midiPtr, midiSize);
 }
 

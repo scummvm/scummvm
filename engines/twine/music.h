@@ -31,8 +31,10 @@ namespace TwinE {
 class TwinEEngine;
 
 class TwinEMidiPlayer : public Audio::MidiPlayer {
+private:
+	TwinEEngine *_engine;
 public:
-	TwinEMidiPlayer();
+	TwinEMidiPlayer(TwinEEngine *engine);
 	void play(byte *buf, int size);
 };
 
@@ -48,7 +50,7 @@ private:
 	uint8 *midiPtr = nullptr;
 
 public:
-	Music(TwinEEngine *engine) : _engine(engine) {}
+	Music(TwinEEngine *engine);
 	/** Track number of the current playing music */
 	int32 currentMusic = 0;
 

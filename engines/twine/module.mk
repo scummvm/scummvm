@@ -30,8 +30,7 @@ MODULE_OBJS := \
 	script_move.o \
 	sound.o \
 	text.o \
-	twine.o \
-	xmidi.o
+	twine.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TWINE), DYNAMIC_PLUGIN)
