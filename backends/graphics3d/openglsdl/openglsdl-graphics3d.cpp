@@ -262,7 +262,7 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 		g_system->quit();
 	}
 
-#ifdef USE_GLEW
+#if defined(USE_GLEW) && !defined(NINTENDO_SWITCH)
 	GLenum err = glewInit();
 #ifdef GLEW_ERROR_NO_GLX_DISPLAY
 	if (err == GLEW_ERROR_NO_GLX_DISPLAY) {
@@ -467,7 +467,11 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 			if (!_glContext) {
 				_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
 #ifdef NINTENDO_SWITCH
-				gladLoadGLLoader(SDL_GL_GetProcAddress);
+				GLenum err = glewInit();
+				if (err != GLEW_OK) {
+					warning("Error: %s", glewGetErrorString(err));
+					g_system->quit();
+				}
 #endif
 				if (_glContext) {
 					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);

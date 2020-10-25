@@ -48,8 +48,6 @@
 
 #elif defined(USE_GLEW)
 #include <GL/glew.h>
-#elif defined(NINTENDO_SWITCH)
-#include "graphics/glad/glad.h"
 #elif defined(SDL_BACKEND) && defined(USE_OPENGL_GAME)
 #include <SDL_opengl.h>
 #elif defined(USE_OPENGL_GAME)

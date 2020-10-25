@@ -110,10 +110,5 @@ endif
 
 endif
 
-ifeq ($(BACKEND),switch)
-MODULE_OBJS += \
-	glad/glad.o
-endif
-
 # Include common rules
 include $(srcdir)/rules.mk

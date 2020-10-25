@@ -5350,6 +5350,10 @@ else
 		_GLEW_CFLAGS="-DGLEW_STATIC"
 		_GLEW_LIBS="-lglew32 -lopengl32"
 		;;
+	switch)
+		_GLEW_CFLAGS="-DGLEW_STATIC -DGLEW_NO_GLU"
+		_GLEW_LIBS="-lGLEW"
+		;;
 	*)
 		_GLEW_LIBS="-lGLEW"
 		;;
@@ -5364,7 +5368,7 @@ int main(void) {
 	return 0;
 }
 EOF
-		cc_check $DEFINES $GLEW_CFLAGS $_GLEW_CFLAGS $GLEW_LIBS $_GLEW_LIBS && _glew=yes
+		cc_check $DEFINES $GLEW_CFLAGS $_GLEW_CFLAGS $GLEW_LIBS $_GLEW_LIBS $LIBS && _glew=yes
 	fi
 
 	if test "$_glew" = yes ; then
