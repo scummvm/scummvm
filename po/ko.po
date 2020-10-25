@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: 2020-10-25 14:55+0000\n"
-"Last-Translator: wonst719 <wonst719@gmail.com>\n"
+"PO-Revision-Date: 2020-10-25 14:59+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -3030,7 +3030,7 @@ msgstr ""
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
 msgid "Invalid request: headers are too long!"
-msgstr "Invalid request: headers are too long!"
+msgstr ""
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:155
 msgid "Failed to upload the file!"
