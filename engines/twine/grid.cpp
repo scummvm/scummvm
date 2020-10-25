@@ -600,8 +600,6 @@ void Grid::redrawGrid() {
 }
 
 int32 Grid::getBrickShape(int32 x, int32 y, int32 z) {
-	uint8 *blockBufferPtr = blockBuffer;
-
 	_engine->_collision->collisionX = (x + 0x100) >> 9;
 	_engine->_collision->collisionY = y >> 8;
 	_engine->_collision->collisionZ = (z + 0x100) >> 9;
@@ -618,6 +616,7 @@ int32 Grid::getBrickShape(int32 x, int32 y, int32 z) {
 		return 0;
 	}
 
+	uint8 *blockBufferPtr = blockBuffer;
 	blockBufferPtr += _engine->_collision->collisionX * 50;
 	blockBufferPtr += _engine->_collision->collisionY * 2;
 	blockBufferPtr += (_engine->_collision->collisionZ << 7) * GRID_SIZE_Y;
@@ -625,15 +624,12 @@ int32 Grid::getBrickShape(int32 x, int32 y, int32 z) {
 	uint8 blockIdx = *blockBufferPtr;
 
 	if (blockIdx) {
-		uint8 *blockPtr;
-		uint8 tmpBrickIdx;
-
-		blockPtr = currentBll;
+		uint8 *blockPtr = currentBll;
 
 		blockPtr += *(uint32 *)(blockPtr + blockIdx * 4 - 4);
 		blockPtr += 3;
 
-		tmpBrickIdx = *(blockBufferPtr + 1);
+		const uint8 tmpBrickIdx = *(blockBufferPtr + 1);
 		blockPtr = blockPtr + tmpBrickIdx * 4;
 
 		return *blockPtr;
@@ -642,8 +638,6 @@ int32 Grid::getBrickShape(int32 x, int32 y, int32 z) {
 }
 
 int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
-	uint8 *blockBufferPtr = blockBuffer;
-
 	_engine->_collision->collisionX = (x + 0x100) >> 9;
 	_engine->_collision->collisionY = y >> 8;
 	_engine->_collision->collisionZ = (z + 0x100) >> 9;
@@ -660,6 +654,7 @@ int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 		return 0;
 	}
 
+	uint8 *blockBufferPtr = blockBuffer;
 	blockBufferPtr += _engine->_collision->collisionX * 50;
 	blockBufferPtr += _engine->_collision->collisionY * 2;
 	blockBufferPtr += (_engine->_collision->collisionZ << 7) * GRID_SIZE_Y;
@@ -717,8 +712,6 @@ int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 }
 
 int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) { // getPos2
-	uint8 *blockBufferPtr = blockBuffer;
-
 	_engine->_collision->collisionX = (x + 0x100) >> 9;
 	_engine->_collision->collisionY = y >> 8;
 	_engine->_collision->collisionZ = (z + 0x100) >> 9;
@@ -735,6 +728,7 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) { // getPos2
 		return 0;
 	}
 
+	uint8 *blockBufferPtr = blockBuffer;
 	blockBufferPtr += _engine->_collision->collisionX * 50;
 	blockBufferPtr += _engine->_collision->collisionY * 2;
 	blockBufferPtr += (_engine->_collision->collisionZ << 7) * GRID_SIZE_Y;
@@ -742,15 +736,12 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) { // getPos2
 	uint8 blockIdx = *blockBufferPtr;
 
 	if (blockIdx) {
-		uint8 *blockPtr;
-		uint8 tmpBrickIdx;
-
-		blockPtr = currentBll;
+		uint8 *blockPtr = currentBll;
 
 		blockPtr += *(uint32 *)(blockPtr + blockIdx * 4 - 4);
 		blockPtr += 3;
 
-		tmpBrickIdx = *(blockBufferPtr + 1);
+		uint8 tmpBrickIdx = *(blockBufferPtr + 1);
 		blockPtr = blockPtr + tmpBrickIdx * 4;
 		blockPtr++;
 
