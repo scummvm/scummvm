@@ -961,13 +961,13 @@ void Menu::drawMagicItemsBox(int32 left, int32 top, int32 right, int32 bottom, i
 }
 
 void Menu::drawItem(int32 item) {
-	int32 itemX = (item / 4) * 85 + 64;
-	int32 itemY = (item & 3) * 75 + 52;
+	const int32 itemX = (item / 4) * 85 + 64;
+	const int32 itemY = (item & 3) * 75 + 52;
 
-	int32 left = itemX - 37;
-	int32 right = itemX + 37;
-	int32 top = itemY - 32;
-	int32 bottom = itemY + 32;
+	const int32 left = itemX - 37;
+	const int32 right = itemX + 37;
+	const int32 top = itemY - 32;
+	const int32 bottom = itemY + 32;
 
 	_engine->_interface->drawSplittedBox(left, top, right, bottom,
 	                                     inventorySelectedItem == item ? inventorySelectedColor : 0);
@@ -977,7 +977,7 @@ void Menu::drawItem(int32 item) {
 		itemAngle[item] += 8;
 		_engine->_renderer->renderInventoryItem(itemX, itemY, _engine->_resources->inventoryTable[item], itemAngle[item], 15000);
 
-		if (item == 15) { // has GAS
+		if (item == InventoryItems::kGasItem) { // has GAS
 			_engine->_text->setFontColor(15);
 			Common::String inventoryNumGas = Common::String::format("%d", _engine->_gameState->inventoryNumGas);
 			_engine->_text->drawText(left + 3, top + 32, inventoryNumGas.c_str());

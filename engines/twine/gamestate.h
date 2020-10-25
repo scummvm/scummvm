@@ -41,6 +41,7 @@ enum InventoryItems {
 	kiBookOfBu = 5,
 	kiProtoPack = 12,
 	kiPinguin = 14,
+	kGasItem = 15,
 	kiBonusList = 26,
 	kiCloverLeaf = 27
 };

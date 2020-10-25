@@ -143,7 +143,7 @@ void GameState::initEngineVars() {
 	_engine->_scene->newHeroZ = 0x2000;
 
 	_engine->_scene->currentSceneIdx = -1;
-	_engine->_scene->needChangeScene = 0;
+	_engine->_scene->needChangeScene = LBA1SceneId::Citadel_Island_Prison;
 	_engine->quitGame = -1;
 	_engine->_scene->mecaPinguinIdx = -1;
 	_engine->_menuOptions->canShowCredits = false;
