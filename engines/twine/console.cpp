@@ -53,6 +53,7 @@ bool TwinEConsole::doChangeScene(int argc, const char **argv) {
 bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
 	for (int32 i = 0; i < NUM_INVENTORY_ITEMS; ++i) {
 		_engine->_gameState->gameFlags[i] = 1;
+		_engine->_gameState->inventoryFlags[i] = 1;
 	}
 	int amount = 10;
 	if (argc > 1) {

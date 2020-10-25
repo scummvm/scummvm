@@ -26,11 +26,14 @@
 #include "common/error.h"
 #include "common/events.h"
 #include "common/keyboard.h"
+#include "common/savefile.h"
 #include "common/str.h"
+#include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
 #include "engines/util.h"
+#include "engines/metaengine.h"
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
@@ -165,6 +168,36 @@ Common::Error TwinEEngine::run() {
 
 bool TwinEEngine::hasFeature(EngineFeature f) const {
 	return false;
+}
+
+bool TwinEEngine::hasSavedSlots() {
+	Common::SaveFileManager *saveFileMan = getSaveFileManager();
+	const Common::String pattern(getMetaEngine().getSavegameFilePattern(_targetName.c_str()));
+	return !saveFileMan->listSavefiles(pattern).empty();
+}
+
+void TwinEEngine::wipeSaveSlot(int slot) {
+	Common::SaveFileManager *saveFileMan = getSaveFileManager();
+	const Common::String& saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
+	saveFileMan->removeSavefile(saveFile);
+}
+
+bool TwinEEngine::loadSaveSlot(int slot) {
+	Common::SaveFileManager *saveFileMan = getSaveFileManager();
+	const Common::String& saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
+	Common::InSaveFile* file = saveFileMan->openForLoading(saveFile);
+	return _gameState->loadGame(file);
+}
+
+bool TwinEEngine::saveSlot(int slot) {
+	Common::SaveFileManager *saveFileMan = getSaveFileManager();
+	const Common::String& saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
+	Common::OutSaveFile* file =  saveFileMan->openForSaving(saveFile);
+	return _gameState->saveGame(file);
+}
+
+void TwinEEngine::autoSave() {
+	// TODO:
 }
 
 void TwinEEngine::allocVideoMemory() {
@@ -362,7 +395,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				unfreezeTime();
 				_redraw->redrawEngineActions(1);
 				freezeTime();
-				_gameState->saveGame(); // auto save game
+				autoSave();
 				quitGame = 0;
 				unfreezeTime();
 				return 0;
@@ -705,7 +738,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 								_scene->currentSceneIdx = _scene->previousSceneIdx;
 							}
 
-							_gameState->saveGame();
+							autoSave();
 							_gameState->processGameoverAnimation();
 							quitGame = 0;
 							return 0;

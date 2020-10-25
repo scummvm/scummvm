@@ -23,6 +23,7 @@
 #ifndef TWINE_GAMESTATE_H
 #define TWINE_GAMESTATE_H
 
+#include "common/savefile.h"
 #include "common/scummsys.h"
 #include "twine/actor.h"
 
@@ -119,8 +120,8 @@ public:
 
 	void processFoundItem(int32 item);
 
-	bool loadGame();
-	bool saveGame();
+	bool loadGame(Common::InSaveFile* file);
+	bool saveGame(Common::OutSaveFile* file);
 
 	void processGameChoices(int32 choiceIdx);
 

@@ -23,6 +23,7 @@
 #ifndef TWINE_KEYBOARD_H
 #define TWINE_KEYBOARD_H
 
+#include "common/events.h"
 #include "common/keyboard.h"
 #include "common/scummsys.h"
 #include "common/util.h"
@@ -219,6 +220,8 @@ public:
 	void getMousePositions(MouseStatusStruct *mouseData);
 
 	void readKeys();
+	uint8 processCustomEngineEventStart(const Common::Event& event);
+	uint8 processCustomEngineEventEnd(const Common::Event& event);
 };
 
 inline const Common::String Input::currentKeyMap() const {

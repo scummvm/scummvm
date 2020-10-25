@@ -169,19 +169,16 @@ void GameState::initEngineVars() {
 	_engine->_actor->previousHeroBehaviour = kNormal;
 }
 
-bool GameState::loadGame() {
-	Common::File file;
-	// TODO: the filename must be handled properly
-	if (!file.open(SAVE_DIR "S9999.LBA")) {
-		warning("Could not load the gamestate");
+bool GameState::loadGame(Common::InSaveFile* file) {
+	if (file == nullptr) {
 		return false;
 	}
 
-	file.skip(1); // skip save game id
+	file->skip(1); // skip save game id
 
 	int playerNameIdx = 0;
 	do {
-		const byte c = file.readByte();
+		const byte c = file->readByte();
 		if (c == '\0') {
 			break;
 		}
@@ -193,94 +190,87 @@ bool GameState::loadGame() {
 	} while (true);
 	playerName[playerNameIdx] = '\0';
 
-	byte numGameFlags = file.readByte();
+	byte numGameFlags = file->readByte();
 	if (numGameFlags != NUM_GAME_FLAGS) {
 		warning("Failed to load gameflags");
 		return false;
 	}
-	file.read(gameFlags, numGameFlags);
-	_engine->_scene->needChangeScene = file.readByte(); // scene index
-	gameChapter = file.readByte();
+	file->read(gameFlags, numGameFlags);
+	_engine->_scene->needChangeScene = file->readByte(); // scene index
+	gameChapter = file->readByte();
 
-	_engine->_actor->heroBehaviour = (HeroBehaviourType)file.readByte();
+	_engine->_actor->heroBehaviour = (HeroBehaviourType)file->readByte();
 	_engine->_actor->previousHeroBehaviour = _engine->_actor->heroBehaviour;
-	_engine->_scene->sceneHero->life = file.readByte();
-	inventoryNumKashes = file.readSint16LE();
-	magicLevelIdx = file.readByte();
-	inventoryMagicPoints = file.readByte();
-	inventoryNumLeafsBox = file.readByte();
-	_engine->_scene->newHeroX = file.readSint16LE();
-	_engine->_scene->newHeroY = file.readSint16LE();
-	_engine->_scene->newHeroZ = file.readSint16LE();
-	_engine->_scene->sceneHero->angle = file.readSint16LE();
+	_engine->_scene->sceneHero->life = file->readByte();
+	inventoryNumKashes = file->readSint16LE();
+	magicLevelIdx = file->readByte();
+	inventoryMagicPoints = file->readByte();
+	inventoryNumLeafsBox = file->readByte();
+	_engine->_scene->newHeroX = file->readSint16LE();
+	_engine->_scene->newHeroY = file->readSint16LE();
+	_engine->_scene->newHeroZ = file->readSint16LE();
+	_engine->_scene->sceneHero->angle = file->readSint16LE();
 	_engine->_actor->previousHeroAngle = _engine->_scene->sceneHero->angle;
-	_engine->_scene->sceneHero->body = file.readByte();
+	_engine->_scene->sceneHero->body = file->readByte();
 
-	const byte numHolemapFlags = file.readByte(); // number of holomap locations, always 150
+	const byte numHolemapFlags = file->readByte(); // number of holomap locations, always 150
 	if (numHolemapFlags != ARRAYSIZE(holomapFlags)) {
 		warning("Failed to load holomapflags");
 		return false;
 	}
-	file.read(holomapFlags, numHolemapFlags);
+	file->read(holomapFlags, numHolemapFlags);
 
-	inventoryNumGas = file.readByte();
+	inventoryNumGas = file->readByte();
 
-	const byte numInventoryFlags = file.readByte(); // number of used inventory items, always 28
+	const byte numInventoryFlags = file->readByte(); // number of used inventory items, always 28
 	if (numInventoryFlags != NUM_INVENTORY_ITEMS) {
 		warning("Failed to load inventoryFlags");
 		return false;
 	}
-	file.read(inventoryFlags, numInventoryFlags);
+	file->read(inventoryFlags, numInventoryFlags);
 
-	inventoryNumLeafs = file.readByte();
-	usingSabre = file.readByte();
+	inventoryNumLeafs = file->readByte();
+	usingSabre = file->readByte();
 
 	_engine->_scene->currentSceneIdx = -1;
 	_engine->_scene->heroPositionType = ScenePositionType::kReborn;
 	return true;
 }
 
-bool GameState::saveGame() {
-	Common::DumpFile file;
-	// TODO: the filename must be handled properly
-	if (!file.open(SAVE_DIR "S9999.LBA")) {
-		warning("Could not save the game");
-		return false;
-	}
-
+bool GameState::saveGame(Common::OutSaveFile* file) {
 	// TODO: the player name must be handled properly
 	Common::strlcpy(playerName, "TwinEngineSave", sizeof(playerName));
 
-	file.writeByte(0x03);
-	file.writeString(playerName);
-	file.writeByte(NUM_GAME_FLAGS);
-	file.write(gameFlags, sizeof(gameFlags));
-	file.writeByte(_engine->_scene->currentSceneIdx);
-	file.writeByte(gameChapter);
-	file.writeByte(_engine->_actor->heroBehaviour);
-	file.writeByte(_engine->_scene->sceneHero->life);
-	file.writeSint16LE(inventoryNumKashes);
-	file.writeByte(magicLevelIdx);
-	file.writeByte(inventoryMagicPoints);
-	file.writeByte(inventoryNumLeafsBox);
-	file.writeSint16LE(_engine->_scene->newHeroX);
-	file.writeSint16LE(_engine->_scene->newHeroY);
-	file.writeSint16LE(_engine->_scene->newHeroZ);
-	file.writeSint16LE(_engine->_scene->sceneHero->angle);
-	file.writeByte(_engine->_scene->sceneHero->body);
+	file->writeByte(0x03);
+	file->writeString(playerName);
+	file->writeByte(NUM_GAME_FLAGS);
+	file->write(gameFlags, sizeof(gameFlags));
+	file->writeByte(_engine->_scene->currentSceneIdx);
+	file->writeByte(gameChapter);
+	file->writeByte(_engine->_actor->heroBehaviour);
+	file->writeByte(_engine->_scene->sceneHero->life);
+	file->writeSint16LE(inventoryNumKashes);
+	file->writeByte(magicLevelIdx);
+	file->writeByte(inventoryMagicPoints);
+	file->writeByte(inventoryNumLeafsBox);
+	file->writeSint16LE(_engine->_scene->newHeroX);
+	file->writeSint16LE(_engine->_scene->newHeroY);
+	file->writeSint16LE(_engine->_scene->newHeroZ);
+	file->writeSint16LE(_engine->_scene->sceneHero->angle);
+	file->writeByte(_engine->_scene->sceneHero->body);
 
 	// number of holomap locations
-	file.writeByte(ARRAYSIZE(holomapFlags));
-	file.write(holomapFlags, sizeof(holomapFlags));
+	file->writeByte(ARRAYSIZE(holomapFlags));
+	file->write(holomapFlags, sizeof(holomapFlags));
 
-	file.writeByte(inventoryNumGas);
+	file->writeByte(inventoryNumGas);
 
 	// number of inventory items
-	file.writeByte(ARRAYSIZE(inventoryFlags));
-	file.write(inventoryFlags, sizeof(inventoryFlags));
+	file->writeByte(ARRAYSIZE(inventoryFlags));
+	file->write(inventoryFlags, sizeof(inventoryFlags));
 
-	file.writeByte(inventoryNumLeafs);
-	file.writeByte(usingSabre);
+	file->writeByte(inventoryNumLeafs);
+	file->writeByte(usingSabre);
 
 	return true;
 }

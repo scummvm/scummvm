@@ -443,9 +443,6 @@ void Menu::drawButton(const int16 *menuSettings, bool hover) {
 
 		currentButton++;
 		topHeight += 56; // increase button top height
-
-		// slow down the CPU
-		_engine->_system->delayMillis(1);
 	} while (currentButton < maxButton);
 }
 
@@ -571,6 +568,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		// draw plasma effect for the current selected button
 		drawButton(menuSettings, true);
 		// TODO: update volume settings
+		_engine->_system->delayMillis(10);
 	} while (!_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter));
 
 	currentButton = *(menuSettings + MenuSettings_FirstButton + currentButton * 2); // get current browsed button

@@ -32,12 +32,17 @@ class MenuOptions {
 private:
 	TwinEEngine *_engine;
 
-	int32 enterPlayerName(int32 textIdx);
+	int _onScreenKeyboardX = 0;
+	int _onScreenKeyboardY = 0;
+	bool _onScreenKeyboardLeaveViaOkButton = false;
+
+	bool enterPlayerName(int32 textIdx);
 	void drawSelectableCharacters();
 	void drawPlayerName(int32 centerx, int32 top, int32 type);
-	void drawSelectableCharacter(int32 x, int32 y, int32 arg);
+	void drawSelectableCharacter(int32 x, int32 y, bool selected);
 	void showCredits();
 	void newGame();
+	int chooseSave(int textIdx);
 
 public:
 	MenuOptions(TwinEEngine *engine) : _engine(engine) {}

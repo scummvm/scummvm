@@ -30,6 +30,7 @@
 #include "graphics/managed_surface.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
+#include "metaengine.h"
 #include "twine/actor.h"
 #include "twine/input.h"
 #include "twine/detection.h"
@@ -166,6 +167,12 @@ public:
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
+
+	void wipeSaveSlot(int slot);
+	bool hasSavedSlots();
+	bool loadSaveSlot(int slot);
+	bool saveSlot(int slot);
+	void autoSave();
 
 	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; };
 	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; };

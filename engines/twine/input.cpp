@@ -142,6 +142,31 @@ void Input::enableKeyMap(const char *id) {
 	debug("enable keymap %s", id);
 }
 
+uint8 Input::processCustomEngineEventStart(const Common::Event &event) {
+	if (!_engine->cfgfile.Debug) {
+		switch (event.customType) {
+		case TwinEActionType::NextRoom:
+		case TwinEActionType::PreviousRoom:
+		case TwinEActionType::ApplyCellingGrid:
+		case TwinEActionType::IncreaseCellingGridIndex:
+		case TwinEActionType::DecreaseCellingGridIndex:
+			break;
+		default:
+			actionStates[event.customType] = 1 + event.kbdRepeat;
+			return twineactions[event.customType].localKey;
+		}
+	} else {
+		actionStates[event.customType] = 1 + event.kbdRepeat;
+		return twineactions[event.customType].localKey;
+	}
+	return 0;
+}
+
+uint8 Input::processCustomEngineEventEnd(const Common::Event &event) {
+	actionStates[event.customType] = 0;
+	return twineactions[event.customType].localKey;
+}
+
 void Input::readKeys() {
 	skippedKey = 0;
 
@@ -150,27 +175,10 @@ void Input::readKeys() {
 		uint8 localKey = 0;
 		switch (event.type) {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-			actionStates[event.customType] = 0;
-			localKey = twineactions[event.customType].localKey;
+			localKey = processCustomEngineEventEnd(event);
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-			if (!_engine->cfgfile.Debug) {
-				switch (event.customType) {
-				case TwinEActionType::NextRoom:
-				case TwinEActionType::PreviousRoom:
-				case TwinEActionType::ApplyCellingGrid:
-				case TwinEActionType::IncreaseCellingGridIndex:
-				case TwinEActionType::DecreaseCellingGridIndex:
-					break;
-				default:
-					localKey = twineactions[event.customType].localKey;
-					actionStates[event.customType] = 1 + event.kbdRepeat;
-					break;
-				}
-			} else {
-				localKey = twineactions[event.customType].localKey;
-				actionStates[event.customType] = 1 + event.kbdRepeat;
-			}
+			localKey = processCustomEngineEventStart(event);
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			leftMouse = 1;

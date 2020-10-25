@@ -1396,11 +1396,11 @@ static int32 lTHE_END(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	engine->_gameState->inventoryNumLeafs = 0;
 	engine->_scene->sceneHero->life = 50;
 	engine->_gameState->inventoryMagicPoints = 80;
-	engine->_scene->currentSceneIdx = 113;
+	engine->_scene->currentSceneIdx = LBA1SceneId::Polar_Island_Final_Battle;
 	engine->_actor->heroBehaviour = engine->_actor->previousHeroBehaviour;
 	engine->_scene->newHeroX = -1;
 	engine->_scene->sceneHero->angle = engine->_actor->previousHeroAngle;
-	engine->_gameState->saveGame();
+	engine->autoSave();
 	return 1; // break;
 }
 

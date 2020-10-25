@@ -21,7 +21,9 @@
  */
 
 #include "twine/menuoptions.h"
+#include "common/keyboard.h"
 #include "common/system.h"
+#include "common/util.h"
 #include "twine/flamovies.h"
 #include "twine/gamestate.h"
 #include "twine/input.h"
@@ -40,6 +42,9 @@ namespace TwinE {
 #define MAINMENU_CONTINUEGAME 21
 /** Main menu enter players name */
 #define MAINMENU_ENTERPLAYERNAME 42
+
+#define ONSCREENKEYBOARD_WIDTH 14
+#define ONSCREENKEYBOARD_HEIGHT 5
 
 static const char allowedCharIndex[] = " ABCDEFGHIJKLM.NOPQRSTUVWXYZ-abcdefghijklm?nopqrstuvwxyz!0123456789\040\b\r\0";
 
@@ -113,10 +118,10 @@ void MenuOptions::showCredits() {
 	_engine->setPalette(_engine->_screens->paletteRGBA);
 }
 
-void MenuOptions::drawSelectableCharacter(int32 x, int32 y, int32 arg) {
+void MenuOptions::drawSelectableCharacter(int32 x, int32 y, bool selected) {
 	char buffer[2];
 
-	buffer[0] = allowedCharIndex[y + x * 14];
+	buffer[0] = allowedCharIndex[y + x * ONSCREENKEYBOARD_WIDTH];
 	buffer[1] = '\0';
 
 	const int32 centerX = y * 45 + 25;
@@ -126,7 +131,7 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y, int32 arg) {
 	const int32 centerY = x * 56 + 200;
 	const int32 bottom = x * 56 + 200 + 25;
 
-	if (arg != 0) {
+	if (selected) {
 		_engine->_interface->drawSplittedBox(left, top, right, bottom, 91);
 	} else {
 		_engine->_interface->blitBox(left, top, right, bottom, (const int8 *)_engine->workVideoBuffer.getPixels(), left, top, (int8 *)_engine->frontVideoBuffer.getPixels());
@@ -142,9 +147,9 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y, int32 arg) {
 }
 
 void MenuOptions::drawSelectableCharacters() {
-	for (int8 x = 0; x < 5; x++) {
-		for (int8 y = 0; y < 14; y++) {
-			drawSelectableCharacter(x, y, 0);
+	for (int8 x = 0; x < ONSCREENKEYBOARD_HEIGHT; x++) {
+		for (int8 y = 0; y < ONSCREENKEYBOARD_WIDTH; y++) {
+			drawSelectableCharacter(x, y, _onScreenKeyboardY == x && _onScreenKeyboardX == y);
 		}
 	}
 }
@@ -154,7 +159,7 @@ void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
 	const int left = _engine->_text->dialTextBoxLeft;
 	const int right = _engine->_text->dialTextBoxRight;
 	if (type == 1) {
-		_engine->_menu->processPlasmaEffect(left, top, right, 1);
+		_engine->_menu->processPlasmaEffect(left, top, right, 32);
 	}
 
 	const int bottom = _engine->_text->dialTextBoxBottom;
@@ -167,54 +172,120 @@ void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
 	// TODO: _engine->copyBlockPhys(left, top, right, bottom);
 }
 
-int32 MenuOptions::enterPlayerName(int32 textIdx) {
+bool MenuOptions::enterPlayerName(int32 textIdx) {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
 	playerName[0] = '\0'; // TODO: read from settings?
-	while (1) {
-		_engine->_text->initTextBank(0);
-		char buffer[256];
-		_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
-		_engine->_text->setFontColor(15);
-		const int halfScreenWidth = (SCREEN_WIDTH / 2);
-		_engine->_text->drawText(halfScreenWidth - (_engine->_text->getTextSize(buffer) / 2), 20, buffer);
-		_engine->copyBlockPhys(0, 0, SCREEN_WIDTH - 1, 99);
-		drawPlayerName(halfScreenWidth, 100, 1);
-		drawSelectableCharacters();
-		_engine->flip();
+	_engine->_text->initTextBank(0);
+	char buffer[256];
+	_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
+	_engine->_text->setFontColor(15);
+	const int halfScreenWidth = (SCREEN_WIDTH / 2);
+	_engine->_text->drawText(halfScreenWidth - (_engine->_text->getTextSize(buffer) / 2), 20, buffer);
+	_engine->copyBlockPhys(0, 0, SCREEN_WIDTH - 1, 99);
+	_engine->flip();
 
-		// we don't want custom events here - as we are entering the player name
-		ScopedKeyMapperDisable scopedKeyMapperDisable;
-		for (;;) {
-			Common::Event event;
-			while (g_system->getEventManager()->pollEvent(event)) {
-				if (event.type == Common::EVENT_KEYDOWN) {
-					if (event.kbd.keycode == Common::KEYCODE_KP_ENTER || event.kbd.keycode == Common::KEYCODE_RETURN) {
-						return 1;
+	for (;;) {
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
+				_engine->_input->processCustomEngineEventEnd(event);
+				break;
+			case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+				_engine->_input->processCustomEngineEventStart(event);
+
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
+					if (_onScreenKeyboardLeaveViaOkButton) {
+						if (_onScreenKeyboardX == ONSCREENKEYBOARD_WIDTH - 1 && _onScreenKeyboardY == ONSCREENKEYBOARD_HEIGHT - 1) {
+							return true;
+						}
+						const size_t size = strlen(playerName);
+						if (_onScreenKeyboardX == ONSCREENKEYBOARD_WIDTH - 2 && _onScreenKeyboardY == ONSCREENKEYBOARD_HEIGHT - 1) {
+							if (size >= 1) {
+								playerName[size - 1] = '\0';
+							}
+							continue;
+						}
+						const char chr = allowedCharIndex[_onScreenKeyboardX + _onScreenKeyboardY * ONSCREENKEYBOARD_WIDTH];
+						playerName[size] = chr;
+						playerName[size + 1] = '\0';
+						if (size + 1 >= sizeof(playerName) - 1) {
+							return true;
+						}
+						continue;
 					}
-					const size_t size = strlen(playerName);
-					if (size >= sizeof(playerName) - 1) {
-						return 1;
+					return true;
+				}
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UIAbort)) {
+					return false;
+				}
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
+					--_onScreenKeyboardX;
+					if (_onScreenKeyboardX < 0) {
+						_onScreenKeyboardX = ONSCREENKEYBOARD_WIDTH - 1;
 					}
+					_onScreenKeyboardLeaveViaOkButton = true;
+				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+					++_onScreenKeyboardX;
+					if (_onScreenKeyboardX >= ONSCREENKEYBOARD_WIDTH) {
+						_onScreenKeyboardX = 0;
+					}
+					_onScreenKeyboardLeaveViaOkButton = true;
+				}
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UIUp)) {
+					--_onScreenKeyboardY;
+					if (_onScreenKeyboardY < 0) {
+						_onScreenKeyboardY = ONSCREENKEYBOARD_HEIGHT - 1;
+					}
+					_onScreenKeyboardLeaveViaOkButton = true;
+				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIDown)) {
+					++_onScreenKeyboardY;
+					if (_onScreenKeyboardY >= ONSCREENKEYBOARD_HEIGHT) {
+						_onScreenKeyboardY = 0;
+					}
+					_onScreenKeyboardLeaveViaOkButton = true;
+				}
+
+				break;
+			case Common::EVENT_KEYDOWN: {
+				const size_t size = strlen(playerName);
+				if (!Common::isPrint(event.kbd.ascii)) {
+					if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+						if (size >= 1) {
+							playerName[size - 1] = '\0';
+							_onScreenKeyboardLeaveViaOkButton = false;
+						}
+					}
+					continue;
+				}
+				if (size >= sizeof(playerName) - 1) {
+					return true;
+				}
+				if (strchr(allowedCharIndex, event.kbd.ascii)) {
 					playerName[size] = event.kbd.ascii;
 					playerName[size + 1] = '\0';
-					debug("name: %s", playerName);
-
-					drawPlayerName(halfScreenWidth, 100, 1);
-					_engine->flip();
+					_onScreenKeyboardLeaveViaOkButton = false;
 				}
-			}
-			if (_engine->shouldQuit()) {
+
+				_engine->flip();
 				break;
 			}
-			_engine->_system->delayMillis(1);
-		};
+			default:
+				break;
+			}
+		}
+		if (_engine->shouldQuit()) {
+			break;
+		}
+		_engine->_system->delayMillis(10);
+		drawPlayerName(halfScreenWidth, 100, 1);
+		drawSelectableCharacters();
 	}
-	return 1;
+	return false;
 }
 
 void MenuOptions::newGameMenu() {
-	// TODO: process players name
 	if (enterPlayerName(MAINMENU_ENTERPLAYERNAME)) {
 		_engine->_gameState->initEngineVars();
 		newGame();
@@ -225,16 +296,41 @@ void MenuOptions::newGameMenu() {
 	}
 }
 
+int MenuOptions::chooseSave(int textIdx) {
+	if (!_engine->hasSavedSlots()) {
+		return -1;
+	}
+	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
+	do {
+		// TODO: assemble menu with save slots and make then loadable.
+		_engine->_text->initTextBank(0);
+		char buffer[256];
+		_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
+		_engine->_text->setFontColor(15);
+		const int halfScreenWidth = (SCREEN_WIDTH / 2);
+		_engine->_text->drawText(halfScreenWidth - (_engine->_text->getTextSize(buffer) / 2), 20, buffer);
+		_engine->copyBlockPhys(0, 0, SCREEN_WIDTH - 1, 99);
+		_engine->flip();
+
+		if (_engine->shouldQuit()) {
+			break;
+		}
+		_engine->_system->delayMillis(1);
+	} while (_engine->_input->toggleAbortAction());
+
+	return 0;
+}
+
 void MenuOptions::continueGameMenu() {
-	//TODO: get list of saved games
-	//if(chooseSave(MAINMENU_CONTINUEGAME))
-	{
+	const int slot = chooseSave(MAINMENU_CONTINUEGAME);
+	if (slot >= 0) {
 		_engine->_gameState->initEngineVars();
-		_engine->_gameState->loadGame();
+		_engine->loadSaveSlot(slot);
 		if (_engine->_scene->newHeroX == -1) {
 			_engine->_scene->heroPositionType = ScenePositionType::kNoPosition;
 		}
-		if (_engine->_gameState->gameChapter == 0 && _engine->_scene->currentSceneIdx == 0) {
+		if (_engine->_gameState->gameChapter == 0 && _engine->_scene->currentSceneIdx == LBA1SceneId::Citadel_Island_Prison) {
 			newGame();
 		} else {
 			_engine->_text->newGameVar5 = 0;

@@ -304,7 +304,7 @@ void Scene::changeScene() {
 	if (previousSceneIdx != needChangeScene) {
 		_engine->_actor->previousHeroBehaviour = _engine->_actor->heroBehaviour;
 		_engine->_actor->previousHeroAngle = sceneHero->angle;
-		_engine->_gameState->saveGame();
+		_engine->autoSave();
 	}
 
 	_engine->_actor->restartHeroScene();
