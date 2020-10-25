@@ -108,7 +108,7 @@ Persistent::Persistent() {
 	_troyShowBricks = false;
 	_troyShowBricks = false;
 	_troyIsDefeated = false;
-	_troyPlayOdysseus = false;
+	_troyPlayedOdysseus = false;
 	_troyKeyAndDecreeState = KEY_AND_DECREE_NOT_GIVEN;
 	_troyMessageIsDelivered = false;
 	_troyCatacombCounter = 0;
@@ -249,7 +249,7 @@ bool Persistent::syncGameStream(Common::Serializer &s) {
 	s.syncAsByte(_troyShowBricks);
 	s.syncAsByte(_troyShowBricks);
 	s.syncAsByte(_troyIsDefeated);
-	s.syncAsByte(_troyPlayOdysseus);
+	s.syncAsByte(_troyPlayedOdysseus);
 	s.syncAsByte(_troyKeyAndDecreeState);
 	s.syncAsByte(_troyMessageIsDelivered);
 	s.syncAsByte(_troyCatacombCounter);

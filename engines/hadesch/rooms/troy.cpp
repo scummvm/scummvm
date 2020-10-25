@@ -576,12 +576,13 @@ public:
 						 AmbientAnim::PAN_RIGHT);
 		_bgSoldiersAmbient.start();
 
+		if (!persistent->_troyPlayedOdysseus && quest == kTroyQuest) {
+		    room->panRightAnim(10044);
+		    room->disableMouse();
+		    showIdleOdysseus();
+		}
+
 		if (quest <= kTroyQuest) {
-			if (persistent->_troyPlayOdysseus) {
-				room->panRightAnim(10044);
-				room->disableMouse();
-				showIdleOdysseus();
-			}
 			_soldier1IsCrazy = rnd.getRandomBit();
 			_soldier2IsCrazy = rnd.getRandomBit();
 			_soldier3IsCrazy = rnd.getRandomBit();
@@ -648,8 +649,8 @@ public:
 
 		if (quest == kTroyQuest) {
 			room->enableHotzone("Prisoner");
-			if (persistent->_troyPlayOdysseus) {
-				persistent->_troyPlayOdysseus = false;
+			if (!persistent->_troyPlayedOdysseus) {
+				persistent->_troyPlayedOdysseus = true;
 			}
 
 			room->selectFrame(kPrisoner, kPrisonerZ, 0, kOffsetRightRoom);

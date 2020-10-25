@@ -137,7 +137,7 @@ struct Persistent {
 	bool _troyWallDamaged;
 	bool _troyShowBricks;
 	bool _troyIsDefeated;
-	bool _troyPlayOdysseus;
+	bool _troyPlayedOdysseus;
 	bool _troyMessageIsDelivered;
 	enum TroyKeyAndDecreeState {
 		KEY_AND_DECREE_NOT_GIVEN,
