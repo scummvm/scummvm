@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: 2020-10-25 14:59+0000\n"
+"PO-Revision-Date: 2020-10-26 00:43+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -734,7 +734,7 @@ msgstr "대량 추가..."
 #: gui/launcher.cpp:171
 msgctxt "lowres"
 msgid "~E~dit Game..."
-msgstr "게임 편집(~E~)"
+msgstr "게임 편집(~E~)..."
 
 #: gui/launcher.cpp:173
 msgctxt "lowres"
@@ -2392,14 +2392,12 @@ msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
 msgstr ""
-"FluidSynth는 사운드폰트 설정이 필요합니다. ScummVM GUI의 MIDI 탭에서 설정해 "
-"주세요. 음악이 꺼집니다."
+"FluidSynth는 SoundFont 설정이 필요합니다. ScummVM GUI의 MIDI 탭에서 설정해 주세요. 음악이 꺼집니다."
 
 #: audio/softsynth/fluidsynth.cpp:279
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
-msgstr ""
-"FluidSynth: 사운드폰트 '%s'를 불러오는데 실패했습니다. 음악이 꺼집니다."
+msgstr "FluidSynth: SoundFont '%s'를 불러오는데 실패했습니다. 음악이 꺼집니다."
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
@@ -3521,7 +3519,7 @@ msgstr "Circle"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
 msgid "Square"
-msgstr "□"
+msgstr "Square"
 
 #: backends/platform/sdl/ps3/ps3.cpp:46
 msgid "PS"
