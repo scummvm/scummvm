@@ -26,8 +26,8 @@
 namespace TwinE {
 
 enum TwineGameType {
-	GType_LBA = (1 << 1),
-	GType_LBA2 = (1 << 2)
+	GType_LBA = 1,
+	GType_LBA2 = 2
 };
 
 } // End of namespace TwinE

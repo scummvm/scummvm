@@ -158,16 +158,17 @@ private:
 	int32 saveFreezedTime = 0;
 	ActorMoveStruct loopMovePtr; // mainLoopVar1
 	PauseToken _pauseToken;
+	TwineGameType _gameType;
 
 public:
-	TwinEEngine(OSystem *system, Common::Language language, uint32 flags);
+	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, TwineGameType gameType);
 	~TwinEEngine() override;
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 
-	bool isLBA1() const { return _gameFlags & TwineGameType::GType_LBA;};
-	bool isLBA2() const { return _gameFlags & TwineGameType::GType_LBA2;};
+	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; };
+	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; };
 
 	Actor *_actor;
 	Animations *_animations;

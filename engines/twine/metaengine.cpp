@@ -47,7 +47,14 @@ public:
 
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc) {
-			*engine = new TwinE::TwinEEngine(syst, desc->language, desc->flags);
+			TwineGameType gameType = TwineGameType::GType_LBA;
+			const Common::String gameId = desc->gameId;
+			if (gameId == "lba") {
+				gameType = TwineGameType::GType_LBA;
+			} else if (gameId == "lba2") {
+				gameType = TwineGameType::GType_LBA2;
+			}
+			*engine = new TwinE::TwinEEngine(syst, desc->language, desc->flags, gameType);
 		}
 		return desc != nullptr;
 	}
