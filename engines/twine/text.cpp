@@ -450,8 +450,9 @@ void Text::processTextLine() {
 		break;
 	}
 
-	if (printText8PrepareBufferVar2 != 0)
+	if (printText8PrepareBufferVar2 != 0) {
 		printText8PrepareBufferVar2--;
+	}
 
 	if (*printText8Var8 != '\0' && var4 == 1) {
 		dialCharSpace += (dialTextBoxParam2 - addLineBreakX) / printText8PrepareBufferVar2;

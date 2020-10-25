@@ -1124,12 +1124,6 @@ void Menu::processInventoryMenu() {
 	_engine->_gameState->initEngineProjections();
 
 	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
-
-	while (!_engine->_input->toggleAbortAction()) {
-		_engine->readKeys();
-		_engine->_system->delayMillis(1);
-		_engine->flip(); // TODO: needed?
-	}
 }
 
 } // namespace TwinE
