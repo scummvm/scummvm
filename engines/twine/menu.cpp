@@ -228,10 +228,6 @@ static const int16 VolumeMenuSettings[] = {
 };
 } // namespace _priv
 
-#define PLASMA_WIDTH 320
-#define PLASMA_HEIGHT 50
-#define SCREEN_W 640
-
 static int16 *copySettings(const int16 *settings, size_t size) {
 	int16 *buf = (int16 *)malloc(size);
 	if (buf == nullptr) {
@@ -306,7 +302,7 @@ void Menu::plasmaEffectRenderFrame() {
 		*(dest++) = *(src++);
 }
 
-void Menu::processPlasmaEffect(int32 left, int32 top, int32 right, int32 color) {
+void Menu::processPlasmaEffect(int32 left, int32 top, int32 color) {
 	const int32 max_value = color + 15;
 
 	plasmaEffectRenderFrame();
@@ -318,11 +314,11 @@ void Menu::processPlasmaEffect(int32 left, int32 top, int32 right, int32 color) 
 		for (int32 j = 0; j < kMainMenuButtonWidth; j++) {
 			const uint8 c = MIN(in[i * kMainMenuButtonWidth + j] / 2 + color, max_value);
 			/* 2x2 squares sharing the same pixel color: */
-			const int32 target = 2 * (i * SCREEN_W + j);
+			const int32 target = 2 * (i * DEFAULT_SCREEN_WIDTH + j);
 			out[target + 0] = c;
 			out[target + 1] = c;
-			out[target + SCREEN_W + 0] = c;
-			out[target + SCREEN_W + 1] = c;
+			out[target + DEFAULT_SCREEN_WIDTH + 0] = c;
+			out[target + DEFAULT_SCREEN_WIDTH + 1] = c;
 		}
 	}
 }
@@ -373,13 +369,13 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 			}
 			};
 
-			processPlasmaEffect(left, top, right, 80);
+			processPlasmaEffect(left, top, 80);
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
 			}
 			_engine->_interface->drawSplittedBox(newWidth, top, right, bottom, 68);
 		} else {
-			processPlasmaEffect(left, top, right, 64);
+			processPlasmaEffect(left, top, 64);
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % 320 * 10 + 6400] = 255;
 			}

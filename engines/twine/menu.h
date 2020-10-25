@@ -38,6 +38,9 @@ enum MenuSettingsType {
 	MenuSettings_FirstButton = 5
 };
 
+#define PLASMA_WIDTH 320
+#define PLASMA_HEIGHT 50
+
 class Menu {
 private:
 	TwinEEngine *_engine;
@@ -116,7 +119,7 @@ public:
 	 * @param top top height where the effect will be draw in the front buffer
 	 * @param color plasma effect start color
 	 */
-	void processPlasmaEffect(int32 left, int32 top, int32 right, int32 color);
+	void processPlasmaEffect(int32 left, int32 top, int32 color);
 
 	/**
 	 * Draw the entire button box

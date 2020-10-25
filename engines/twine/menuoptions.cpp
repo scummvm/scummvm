@@ -154,22 +154,19 @@ void MenuOptions::drawSelectableCharacters() {
 	}
 }
 
-// 0001F18C
 void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
 	const int left = _engine->_text->dialTextBoxLeft;
-	const int right = _engine->_text->dialTextBoxRight;
 	if (type == 1) {
-		_engine->_menu->processPlasmaEffect(left, top, right, 32);
+		_engine->_menu->processPlasmaEffect(left, top, 32);
 	}
 
+	const int right = SCREEN_WIDTH - 1; //_engine->_text->dialTextBoxRight; // FIXME: dialTextBoxRight is 0 here
 	const int bottom = _engine->_text->dialTextBoxBottom;
 	_engine->_menu->drawBox(left, top, right, bottom);
 	_engine->_interface->drawTransparentBox(left + 1, top + 1, right - 1, bottom - 1, 3);
 
 	_engine->_text->drawText(centerx - _engine->_text->getTextSize(playerName) / 2, top, playerName);
-
-	_engine->flip();
-	// TODO: _engine->copyBlockPhys(left, top, right, bottom);
+	_engine->copyBlockPhys(left, top, right, top + PLASMA_HEIGHT);
 }
 
 bool MenuOptions::enterPlayerName(int32 textIdx) {
@@ -278,9 +275,9 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 		if (_engine->shouldQuit()) {
 			break;
 		}
-		_engine->_system->delayMillis(10);
 		drawPlayerName(halfScreenWidth, 100, 1);
 		drawSelectableCharacters();
+		_engine->_system->delayMillis(1);
 	}
 	return false;
 }
