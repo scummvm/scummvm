@@ -1612,13 +1612,12 @@ void ScriptLife::processLifeScript(int32 actorIdx) {
 		if (scriptOpcode >= 0 && scriptOpcode < ARRAYSIZE(function_map)) {
 			end = function_map[scriptOpcode].function(_engine, actorIdx, actor);
 		} else {
-			error("Actor %d with wrong offset/opcode - Offset: %d", actorIdx, actor->positionInLifeScript);
+			error("Actor %d with wrong offset/opcode - Offset: %d (opcode: %i)", actorIdx, actor->positionInLifeScript, scriptOpcode);
 		}
 
 		if (end < 0) { // show error message
 			warning("Actor %d Life script [%s] not implemented", actorIdx, function_map[scriptOpcode].name);
 		}
-
 	} while (end != 1);
 }
 

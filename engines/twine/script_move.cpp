@@ -503,7 +503,6 @@ static int32 mFACE_HERO(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor)
 
 /*0x22*/
 static int32 mANGLE_RND(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-
 	actor->positionInMoveScript += 4;
 	if (!actor->staticFlags.bIsSpriteActor) {
 		engine->_scene->currentScriptValue = *((int16 *)scriptPtr + 2);
@@ -593,9 +592,11 @@ void ScriptMove::processMoveScript(int32 actorIdx) {
 		actor->positionInMoveScript++;
 
 		if (scriptOpcode >= 0 && scriptOpcode < ARRAYSIZE(function_map)) {
-			function_map[scriptOpcode].function(_engine, actorIdx, actor);
+			if (function_map[scriptOpcode].function(_engine, actorIdx, actor) < 0) {
+				warning("Actor %d Move script [%s] not implemented", actorIdx, function_map[scriptOpcode].name);
+			}
 		} else {
-			error("Wrong opcode %i", scriptOpcode);
+			error("Actor %d with wrong offset/opcode - Offset: %d (opcode: %i)", actorIdx, actor->positionInLifeScript, scriptOpcode);
 		}
 	} while (continueMove);
 }
