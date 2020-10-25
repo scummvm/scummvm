@@ -237,7 +237,7 @@ static int32 processLifeConditions(TwinEEngine *engine, ActorStruct *actor) {
 		engine->_scene->currentScriptValue = actor->hitBy;
 		break;
 	case kcACTION:
-		engine->_scene->currentScriptValue = engine->_movements->heroAction;
+		engine->_scene->currentScriptValue = engine->_movements->heroAction ? 1 : 0;
 		break;
 	case kcFLAG_GAME: {
 		int32 flagIdx = *(scriptPtr++);

@@ -292,18 +292,18 @@ void Movements::processActorMovements(int32 actorIdx) {
 		case kManual:
 			// take this out when we want to give manual movements to other characters than Hero
 			if (actor == _engine->_scene->sceneHero) {
-				heroAction = 0;
+				heroAction = false;
 
 				// If press W for action
 				if (_engine->_input->isActionActive(TwinEActionType::SpecialAction)) {
-					heroAction = 1;
+					heroAction = true;
 				}
 
 				// Process hero actions
 				switch (_engine->_actor->heroBehaviour) {
 				case kNormal:
 					if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
-						heroAction = 1;
+						heroAction = true;
 					}
 					break;
 				case kAthletic:

@@ -42,7 +42,7 @@ public:
 	/** Hero moved */
 	bool heroMoved = false; // twinsenMove
 	/** Hero Action */
-	int16 heroAction = 0; // action
+	bool heroAction = false; // action
 
 	/** Process actor.x coordinate */
 	int16 processActorX = 0;
