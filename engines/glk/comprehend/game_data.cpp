@@ -156,8 +156,6 @@ void GameData::clearGame() {
 	_comprehendVersion = 0;
 	_startRoom = 0;
 	_currentRoom = 0;
-	_words = nullptr;
-	_nr_words = 0;
 	_currentReplaceWord = 0;
 	_updateFlags = 0;
 	_colorTable = 0;
@@ -273,13 +271,9 @@ void GameData::parse_action_tables(FileBuffer *fb) {
 }
 
 void GameData::parse_dictionary(FileBuffer *fb) {
-	uint i;
-
-	// FIXME - fixed size 0xff array?
-	_words = (Word *)malloc(_nr_words * sizeof(Word));
-
 	fb->seek(_header.addr_dictionary);
-	for (i = 0; i < _nr_words; i++)
+
+	for (uint i = 0; i < _words.size(); i++)
 		_words[i].load(fb);
 }
 
@@ -621,9 +615,7 @@ void GameData::parse_header(FileBuffer *fb) {
 	_rooms.resize(header->room_direction_table[DIRECTION_SOUTH] -
 	                    header->room_direction_table[DIRECTION_NORTH] + 1);
 
-	_nr_words = (addr_dictionary_end -
-	                   header->addr_dictionary) /
-	                  8;
+	_words.resize((addr_dictionary_end - header->addr_dictionary) / 8);
 }
 
 void GameData::load_extra_string_file(const StringFile &stringFile) {

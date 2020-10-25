@@ -387,9 +387,7 @@ public:
 	uint8 _totalInventoryWeight;
 
 	Common::Array<Item> _items;
-
-	Word *_words;
-	size_t _nr_words;
+	Common::Array<Word> _words;
 
 	StringTable _strings;
 	StringTable _strings2;

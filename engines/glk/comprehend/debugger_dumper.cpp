@@ -222,36 +222,26 @@ void DebuggerDumper::dumpActionTable() {
 	}
 }
 
-int DebuggerDumper::wordIndexCompare(const void *a, const void *b) {
-	const Word *word_a = (const Word *)a, *word_b = (const Word *)b;
-
-	if (word_a->_index > word_b->_index)
+int DebuggerDumper::wordIndexCompare(const Word &a, const Word &b) {
+	if (a._index > b._index)
 		return 1;
-	if (word_a->_index < word_b->_index)
+	if (a._index < b._index)
 		return -1;
 	return 0;
 }
 
 void DebuggerDumper::dumpDictionary() {
-	Word *dictionary;
-	Word *words;
-	uint i;
+	Common::Array<Word> dictionary;
 
 	/* Sort the dictionary by index */
-	dictionary = (Word *)malloc(sizeof(*words) * _game->_nr_words);
-	memcpy(dictionary, _game->_words,
-	       sizeof(*words) * _game->_nr_words);
-	qsort(dictionary, _game->_nr_words, sizeof(*words),
-	      wordIndexCompare);
+	dictionary = _game->_words;
+	Common::sort(dictionary.begin(), dictionary.end(), wordIndexCompare);
 
-	print("Dictionary (%u words)\n", (uint)_game->_nr_words);
-	for (i = 0; i < _game->_nr_words; i++) {
-		words = &dictionary[i];
-		print("  [%.2x] %.2x %s\n", words->_index, words->_type,
-		      words->_word);
+	print("Dictionary (%u words)\n", dictionary.size());
+	for (uint i = 0; i < dictionary.size(); i++) {
+		const Word &word = dictionary[i];
+		print("  [%.2x] %.2x %s\n", word._index, word._type, word._word);
 	}
-
-	free(dictionary);
 }
 
 void DebuggerDumper::dumpWordMap() {
@@ -321,7 +311,7 @@ void DebuggerDumper::dumpItems() {
 			      _game->stringLookup(item->_longString).c_str());
 
 		print("    words: ");
-		for (j = 0; j < _game->_nr_words; j++)
+		for (j = 0; j < _game->_words.size(); j++)
 			if (_game->_words[j]._index == item->_word &&
 			        (_game->_words[j]._type & WORD_TYPE_NOUN_MASK))
 				print("%s ", _game->_words[j]._word);
