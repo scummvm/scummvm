@@ -124,6 +124,52 @@ void Input::enableKeyMap(const char *id) {
 	debug("enable keymap %s", id);
 }
 
+// TODO: get rid of this table
+static constexpr const struct ActionMapping {
+	TwinEActionType action;
+	uint8 localKey;
+} twineactions[] = {
+    {Pause, 0x19},
+    {NextRoom, 0x13},
+    {PreviousRoom, 0x21},
+    {ApplyCellingGrid, 0x14},
+    {IncreaseCellingGridIndex, 0x22},
+    {DecreaseCellingGridIndex, 0x30},
+    {DebugGridCameraPressUp, 0x2E},
+    {DebugGridCameraPressDown, 0x2C},
+    {DebugGridCameraPressLeft, 0x1F},
+    {DebugGridCameraPressRight, 0x2D},
+    {QuickBehaviourNormal, 0x3B},
+    {QuickBehaviourAthletic, 0x3C},
+    {QuickBehaviourAggressive, 0x3D},
+    {QuickBehaviourDiscreet, 0x3E},
+    {ExecuteBehaviourAction, 0x39},
+    {BehaviourMenu, 0x1D},
+    {OptionsMenu, 0x40},
+    {RecenterScreenOnTwinsen, 0x1C},
+    {UseSelectedObject, 0x1C},
+    {ThrowMagicBall, 0x38},
+    {MoveForward, 0x48},
+    {MoveBackward, 0x50},
+    {TurnRight, 0x4D},
+    {TurnLeft, 0x4B},
+    {UseProtoPack, 0x24},
+    {OpenHolomap, 0x23},
+    {InventoryMenu, 0x36},
+    {SpecialAction, 0x11},
+    {Escape, 0x01},
+    {PageUp, 0x49}, // TODO: used for what?
+    {UIEnter, 0x00},
+    {UIAbort, 0x00},
+    {UILeft, 0x00},
+    {UIRight, 0x00},
+    {UIUp, 0x00},
+    {UIDown, 0x00},
+    {UINextPage, 0x00},
+    {CutsceneAbort, 0x00}};
+
+static_assert(ARRAYSIZE(twineactions) == TwinEActionType::Max, "Unexpected action mapping array size");
+
 uint8 Input::processCustomEngineEventStart(const Common::Event &event) {
 	if (!_engine->cfgfile.Debug) {
 		switch (event.customType) {
@@ -185,6 +231,7 @@ void Input::readKeys() {
 						pressedKey |= pressedKeyCharMap[i].high;
 					}
 				} else {
+					// they are handled as loop keys
 					skippedKey |= pressedKeyCharMap[i].high;
 				}
 				break;
