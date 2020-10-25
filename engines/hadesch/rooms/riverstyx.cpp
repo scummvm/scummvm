@@ -35,8 +35,8 @@ enum {
 	kDeadManEndAnim = 28014
 };
 
-struct ShadeInternal {
-	ShadeInternal(Common::String name) {
+struct StyxShadeInternal {
+	StyxShadeInternal(Common::String name) {
 		_name = name;
 		_counter = 0;
 	}
@@ -53,36 +53,36 @@ struct ShadeInternal {
 	Common::Array<Common::String> _sounds;
 };
 
-class ShadeEndSound : public EventHandler {
+class StyxShadeEndSound : public EventHandler {
 public:
-	ShadeEndSound(Common::SharedPtr<ShadeInternal> internal) {
+	StyxShadeEndSound(Common::SharedPtr<StyxShadeInternal> internal) {
 		_internal = internal;
 	}
 	void operator()() {
 		_internal->resume();
 	}
 private:
-	Common::SharedPtr<ShadeInternal> _internal;
+	Common::SharedPtr<StyxShadeInternal> _internal;
 };
 
 // TODO: transparency and shimmering
-class Shade {
+class StyxShade {
 public:
-	Shade(const Common::String &name, int zVal, int minInt, int maxInt,
-	      const Common::String &ambient) {
+	StyxShade(const Common::String &name, int zVal, int minInt, int maxInt,
+		  const Common::String &ambient) {
 		_internal = makeInternal(name, zVal, minInt, maxInt, ambient);
 	}
 
-	Shade(const Common::String &name, int zVal, int minInt, int maxInt) {
+	StyxShade(const Common::String &name, int zVal, int minInt, int maxInt) {
 		_internal = makeInternal(name, zVal, minInt, maxInt, name + " ambient");
 	}
 
-	Shade() {
+	StyxShade() {
 	}
 
-	static Common::SharedPtr<ShadeInternal> makeInternal(const Common::String &name, int zVal, int minInt, int maxInt,
+	static Common::SharedPtr<StyxShadeInternal> makeInternal(const Common::String &name, int zVal, int minInt, int maxInt,
 							     const Common::String &ambient) {
-		Common::SharedPtr<ShadeInternal> ret(new ShadeInternal(name));
+		Common::SharedPtr<StyxShadeInternal> ret(new StyxShadeInternal(name));
 		ret->_ambient = AmbientAnim(ambient, ambient + " sound", zVal, minInt, maxInt,
 					    AmbientAnim::KEEP_LOOP, Common::Point(0, 0), AmbientAnim::PAN_ANY);
 		return ret;
@@ -100,7 +100,7 @@ public:
 			return;
 		_internal->_ambient.pause();
 		room->playVideo(_internal->_sounds[_internal->_counter % _internal->_sounds.size()],
-				800, EventHandlerWrapper(Common::SharedPtr<EventHandler>(new ShadeEndSound(_internal))));
+				800, EventHandlerWrapper(Common::SharedPtr<EventHandler>(new StyxShadeEndSound(_internal))));
 		_internal->_counter++;
 		room->disableMouse();
 	}
@@ -109,7 +109,7 @@ public:
 		_internal->_sounds.push_back(snd);
 	}
 private:
-	Common::SharedPtr<ShadeInternal> _internal;
+	Common::SharedPtr<StyxShadeInternal> _internal;
 };
 
 class RiverStyxHandler : public Handler {
@@ -300,14 +300,14 @@ public:
 		}
 
 		room->playSoundLoop(quest == kRescuePhilQuest ? "V4010eB0" : "V4010eA0");
-		_axHead = Shade("ax head", 800, 5000, 10000);
+		_axHead = StyxShade("ax head", 800, 5000, 10000);
 		_axHead.addSound("ax head click sound 1");
 		_axHead.addSound("ax head click sound 2");
 		_axHead.addSound("ax head click sound 3");
 		_axHead.start();
 
 		if (quest == kRescuePhilQuest || quest == kCreteQuest) {
-			_pillar = Shade("pillar", 550, 8000, 12000);
+			_pillar = StyxShade("pillar", 550, 8000, 12000);
 			if (quest == kRescuePhilQuest)
 				_pillar.addSound("pillar quest speech");
 			_pillar.addSound("pillar click sound");
@@ -315,7 +315,7 @@ public:
 		}
 
 		if (quest == kCreteQuest || quest == kTroyQuest || quest == kMedusaQuest) {
-			_dog = Shade("dog", 600, 5000, 10000);
+			_dog = StyxShade("dog", 600, 5000, 10000);
 			if (quest == kCreteQuest)
 				_dog.addSound("dog quest speech");
 			_dog.addSound("dog click sound 1");
@@ -324,7 +324,7 @@ public:
 		}
 
 		if (quest == kCreteQuest || quest == kTroyQuest) {
-			_greekSoldier = Shade("greek soldier", 550, 5000, 10000);
+			_greekSoldier = StyxShade("greek soldier", 550, 5000, 10000);
 			if (quest == kTroyQuest)
 				_greekSoldier.addSound("greek soldier quest speech");
 			_greekSoldier.addSound("greek soldier click sound");
@@ -332,24 +332,24 @@ public:
 		}
 
 		if (quest == kTroyQuest) {
-			_trojanSoldier = Shade("trojan soldier", 650, 5000, 10000);
+			_trojanSoldier = StyxShade("trojan soldier", 650, 5000, 10000);
 			_trojanSoldier.addSound("trojan soldier quest speech");
 			_trojanSoldier.start();
 		}
 
 		if (quest == kMedusaQuest) {
-			_statue = Shade("statue", 700, 5000, 10000);
+			_statue = StyxShade("statue", 700, 5000, 10000);
 			_statue.addSound("statue quest speech");
 			_statue.start();
 
-			_drownedMan = Shade("drowned man", 550, 5000, 10000);
+			_drownedMan = StyxShade("drowned man", 550, 5000, 10000);
 			_drownedMan.addSound("drowned man click sound 1");
 			_drownedMan.addSound("drowned man click sound 2");
 			_drownedMan.start();
 		}
 
 		if (quest == kRescuePhilQuest) {
-			_alchemist = Shade("alchemist", 750, 5000, 10000, "alchemist");
+			_alchemist = StyxShade("alchemist", 750, 5000, 10000, "alchemist");
                         if (!persistent->_styxAlchemistSaidIntro)
 				_alchemist.addSound("alchemist intro");
 			if (persistent->_hintsAreEnabled) {
@@ -419,14 +419,14 @@ private:
 	bool _cameraMovingUp;
 	int _cameraMovingStart;
 
-	Shade _axHead;
-	Shade _pillar;
-	Shade _dog;
-	Shade _drownedMan;
-	Shade _statue;
-	Shade _greekSoldier;
-	Shade _trojanSoldier;
-	Shade _alchemist;
+	StyxShade _axHead;
+	StyxShade _pillar;
+	StyxShade _dog;
+	StyxShade _drownedMan;
+	StyxShade _statue;
+	StyxShade _greekSoldier;
+	StyxShade _trojanSoldier;
+	StyxShade _alchemist;
 };
 
 Common::SharedPtr<Hadesch::Handler> makeRiverStyxHandler() {
