@@ -125,7 +125,7 @@ public:
 	Common::SharedPtr<VideoRoom> getVideoRoom();
 
 	void moveToRoom(RoomId id) {
-		_nextRoom = id;
+		_nextRoom.push_back(id);
 		_heroBelt->clearHold();
 	}
 
@@ -216,7 +216,7 @@ private:
 	Common::Point _mousePos;
 
 	Persistent _persistent;
-	RoomId _nextRoom;
+	Common::Array<RoomId> _nextRoom;
 	bool _isRestoring;
   	bool _isQuitting;
 

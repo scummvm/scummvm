@@ -517,7 +517,8 @@ Common::Error HadeschEngine::run() {
 	_isInOptions = false;
 
 	debug("HadeschEngine: moving to main loop");
-	_nextRoom = kIntroRoom;
+	_nextRoom.clear();
+	_nextRoom.push_back(kIntroRoom);
 
 	while (true) {
 		if (_isRestoring) {
@@ -525,9 +526,8 @@ Common::Error HadeschEngine::run() {
 			_isRestoring = false;
 			CursorMan.showMouse(true);
 			CursorMan.replaceCursor(_cursors[3]);
-		} else if (_nextRoom != kInvalidRoom) {
-			moveToRoomReal(_nextRoom);
-			_nextRoom = kInvalidRoom;
+		} else if (!_nextRoom.empty()) {
+			moveToRoomReal(_nextRoom.remove_at(0));
 			CursorMan.showMouse(true);
 			CursorMan.replaceCursor(_cursors[3]);
 		}
