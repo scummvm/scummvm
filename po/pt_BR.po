@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: 2020-10-23 03:43+0000\n"
+"PO-Revision-Date: 2020-10-26 00:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -1006,11 +1006,11 @@ msgstr ""
 
 #: gui/options.cpp:1307
 msgid "Game 3D Renderer:"
-msgstr "Renderizador 3D do Jogo:"
+msgstr "Render. 3D de Jogo:"
 
 #: gui/options.cpp:1316
 msgid "3D Anti-aliasing:"
-msgstr "Anti-serrilhamento 3D:"
+msgstr "Anti-aliasing 3D:"
 
 #: gui/options.cpp:1320 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
@@ -2251,7 +2251,7 @@ msgstr ""
 
 #: engines/engine.cpp:650 engines/wintermute/wintermute.cpp:214
 msgid "Start anyway"
-msgstr "Iniciar mesmo assim"
+msgstr "Iniciar"
 
 #: engines/engine.cpp:789
 msgid "Loading game is currently unavailable"
