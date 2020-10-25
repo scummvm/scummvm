@@ -47,10 +47,10 @@ enum InventoryItems {
 
 /** Magicball strength*/
 enum MagicballStrengthType {
-	kNoBallStrenght = 2,
-	kYellowBallStrenght = 3,
-	kGreenBallStrenght = 4,
-	kRedBallStrenght = 6,
+	kNoBallStrength = 2,
+	kYellowBallStrength = 3,
+	kGreenBallStrength = 4,
+	kRedBallStrength = 6,
 	kFireBallStrength = 8
 };
 

@@ -307,8 +307,9 @@ void Scene::changeScene() {
 	int32 a;
 
 	// change twinsen house destroyed hard-coded
-	if (needChangeScene == 4 && _engine->_gameState->gameFlags[30] != 0)
+	if (needChangeScene == 4 && _engine->_gameState->gameFlags[30] != 0) {
 		needChangeScene = 118;
+	}
 
 	// local backup previous scene
 	previousSceneIdx = currentSceneIdx;

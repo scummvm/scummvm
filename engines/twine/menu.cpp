@@ -1000,7 +1000,6 @@ void Menu::drawInventoryItems() {
 }
 
 void Menu::processInventoryMenu() {
-
 	int32 tmpAlphaLight = _engine->_scene->alphaLight;
 	int32 tmpBetaLight = _engine->_scene->betaLight;
 
@@ -1012,6 +1011,8 @@ void Menu::processInventoryMenu() {
 
 	if (_engine->_gameState->inventoryNumLeafs > 0) {
 		_engine->_gameState->gameFlags[InventoryItems::kiCloverLeaf] = 1;
+	// TODO: shouldn't this get reset? } else {
+	//	_engine->_gameState->gameFlags[InventoryItems::kiCloverLeaf] = 0;
 	}
 
 	drawInventoryItems();

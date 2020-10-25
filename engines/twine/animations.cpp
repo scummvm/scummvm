@@ -38,12 +38,13 @@
 namespace TwinE {
 
 static const int32 magicLevelStrengthOfHit[] = {
-    kNoBallStrenght,
-    kYellowBallStrenght,
-    kGreenBallStrenght,
-    kRedBallStrenght,
-    kFireBallStrength,
-    0};
+	kNoBallStrength,
+	kYellowBallStrength,
+	kGreenBallStrength,
+	kRedBallStrength,
+	kFireBallStrength,
+	0
+};
 
 enum ActionType {
 	ACTION_HITTING = 0,

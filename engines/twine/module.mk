@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	actor.o \
 	animations.o \
 	collision.o \
+	console.o \
 	debug.o \
 	debug_grid.o \
 	debug_scene.o \

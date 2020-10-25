@@ -39,6 +39,7 @@
 #include "twine/actor.h"
 #include "twine/animations.h"
 #include "twine/collision.h"
+#include "twine/console.h"
 #include "twine/debug.h"
 #include "twine/debug_grid.h"
 #include "twine/debug_scene.h"
@@ -73,7 +74,7 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	SearchMan.addSubDirectoryMatching(gameDataDir, "fla");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "vox");
 
-	setDebugger(new GUI::Debugger());
+	setDebugger(new TwinEConsole(this));
 	_actor = new Actor(this);
 	_animations = new Animations(this);
 	_collision = new Collision(this);
@@ -465,7 +466,8 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					_gameState->gameFlags[InventoryItems::kiPinguin] = 0; // byte_50D89 = 0;
 					pinguin->info0 = lbaTime + 1500;
 				}
-			} break;
+				break;
+			}
 			case kiBonusList: {
 				unfreezeTime();
 				_redraw->redrawEngineActions(1);
@@ -476,7 +478,8 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				_text->drawTextFullscreen(162);
 				_text->textClipSmall();
 				_text->initTextBank(_text->currentTextBank + 3);
-			} break;
+				break;
+			}
 			case kiCloverLeaf:
 				if (_scene->sceneHero->life < 50) {
 					if (_gameState->inventoryNumLeafs > 0) {
