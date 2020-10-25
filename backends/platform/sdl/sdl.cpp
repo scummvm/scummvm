@@ -218,9 +218,7 @@ void OSystem_SDL::initBackend() {
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
 	detectFramebufferSupport();
-#ifndef NINTENDO_SWITCH
 	detectAntiAliasingSupport();
-#endif
 #endif
 
 	// Create the default event source, in case a custom backend
@@ -340,6 +338,7 @@ void OSystem_SDL::detectFramebufferSupport() {
 }
 
 void OSystem_SDL::detectAntiAliasingSupport() {
+#ifndef NINTENDO_SWITCH
 	_capabilities.openGLAntiAliasLevels.clear();
 
 	int requestedSamples = 2;
@@ -382,6 +381,7 @@ void OSystem_SDL::detectAntiAliasingSupport() {
 
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
 	SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
+#endif
 }
 
 #endif // defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
