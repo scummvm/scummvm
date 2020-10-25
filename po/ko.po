@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
 "PO-Revision-Date: 2020-10-25 14:59+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -3521,7 +3521,7 @@ msgstr "Circle"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
 msgid "Square"
-msgstr "Square"
+msgstr "□"
 
 #: backends/platform/sdl/ps3/ps3.cpp:46
 msgid "PS"
