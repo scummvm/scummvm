@@ -292,7 +292,7 @@ void TwinEEngine::initSVGA() {
 void TwinEEngine::initAll() {
 	_grid->blockBuffer = (uint8 *)malloc(GRID_SIZE_X * GRID_SIZE_Z * GRID_SIZE_Y * 2 * sizeof(uint8));
 	_animations->animBuffer1 = _animations->animBuffer2 = (uint8 *)malloc(5000 * sizeof(uint8));
-	memset(_menu->itemAngle, 256, sizeof(_menu->itemAngle)); // reset inventory items angles
+	memset(_menu->itemAngle, 0, sizeof(_menu->itemAngle)); // reset inventory items angles
 
 	_redraw->bubbleSpriteIndex = SPRITEHQR_DIAG_BUBBLE_LEFT;
 
@@ -803,7 +803,6 @@ void TwinEEngine::delaySkip(uint32 time) {
 }
 
 void TwinEEngine::setPalette(const uint32 *palette) {
-#if 1
 	uint8 pal[NUMOFCOLORS * 3];
 	uint8 *out = pal;
 	const uint8 *in = (const uint8 *)palette;
@@ -815,10 +814,6 @@ void TwinEEngine::setPalette(const uint32 *palette) {
 		in += 4;
 	}
 	g_system->getPaletteManager()->setPalette(pal, 0, 256);
-#else
-	frontVideoBuffer.setPalette(palette, 0, 256);
-	workVideoBuffer.setPalette(palette, 0, 256);
-#endif
 	flip();
 }
 
