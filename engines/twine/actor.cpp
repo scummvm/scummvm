@@ -42,7 +42,7 @@ Actor::Actor(TwinEEngine *engine) : _engine(engine) {
 }
 
 void Actor::restartHeroScene() {
-	_engine->_scene->sceneHero->controlMode = 1;
+	_engine->_scene->sceneHero->controlMode = ControlMode::kManual;
 	memset(&_engine->_scene->sceneHero->dynamicFlags, 0, sizeof(_engine->_scene->sceneHero->dynamicFlags));
 	memset(&_engine->_scene->sceneHero->staticFlags, 0, sizeof(_engine->_scene->sceneHero->staticFlags));
 
@@ -387,7 +387,7 @@ void Actor::resetActor(int16 actorIdx) {
 
 	actor->angle = 0;
 	actor->speed = 40;
-	actor->controlMode = 0;
+	actor->controlMode = ControlMode::kNoMove;
 
 	actor->info0 = 0;
 	actor->info1 = 0;

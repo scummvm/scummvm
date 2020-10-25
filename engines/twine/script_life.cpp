@@ -589,8 +589,8 @@ static int32 lFALLABLE(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) 
 static int32 lSET_DIRMODE(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	int32 controlMode = *(scriptPtr++);
 
-	actor->controlMode = controlMode;
-	if (controlMode == kFollow) {
+	actor->controlMode = (ControlMode)controlMode;
+	if (actor->controlMode == ControlMode::kFollow) {
 		actor->followedActor = *(scriptPtr++);
 	}
 
@@ -602,9 +602,10 @@ static int32 lSET_DIRMODE_OBJ(TwinEEngine *engine, int32 actorIdx, ActorStruct *
 	int32 otherActorIdx = *(scriptPtr++);
 	int32 controlMode = *(scriptPtr++);
 
-	engine->_scene->getActor(otherActorIdx)->controlMode = controlMode;
-	if (controlMode == kFollow) {
-		engine->_scene->getActor(otherActorIdx)->followedActor = *(scriptPtr++);
+	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
+	otherActor->controlMode = (ControlMode)controlMode;
+	if (otherActor->controlMode == ControlMode::kFollow) {
+		otherActor->followedActor = *(scriptPtr++);
 	}
 
 	return 0;

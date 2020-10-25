@@ -135,15 +135,6 @@ struct MouseStatusStruct {
 };
 
 /**
- * @brief Whenever text input is needed (like the playername)
- * you have to disable the keymaps
- */
-struct ScopedKeyMapperDisable {
-	ScopedKeyMapperDisable();
-	~ScopedKeyMapperDisable();
-};
-
-/**
  * @brief Activates the given key map id that is registered in the meta engine
  */
 class ScopedKeyMap {
@@ -158,7 +149,6 @@ public:
 class Input {
 private:
 	TwinEEngine *_engine;
-	uint8 _pressed[Common::KEYCODE_LAST]{0};
 	Common::String _currentKeyMap;
 
 	uint8 actionStates[TwinEActionType::Max]{false};
@@ -196,20 +186,6 @@ public:
 	bool toggleActionIfActive(TwinEActionType actionType);
 
 	bool toggleAbortAction();
-
-	/**
-	 * @param onlyFirstTime If this is set to @c true, repeating key press events are not taken into account here
-	 * This means, that even if the key is held down, this will return @c false. @c false as value for this parameter
-	 * will return @c true also for repeating key presses.
-	 *
-	 * @note You won't receive any pressed events if you have that key bound to a @c TwinEActionType value.
-	 * @sa isActionActive()
-	 */
-	bool isPressed(Common::KeyCode keycode, bool onlyFirstTime = true) const;
-
-	inline bool isPressedEnter(bool onlyFirstTime = true) const {
-		return isPressed(Common::KEYCODE_RETURN, onlyFirstTime) || isPressed(Common::KEYCODE_KP_ENTER, onlyFirstTime);
-	}
 
 	bool isQuickBehaviourActionActive() const;
 

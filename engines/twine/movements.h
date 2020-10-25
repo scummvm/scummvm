@@ -28,18 +28,6 @@
 
 namespace TwinE {
 
-/** Control mode types */
-enum ControlMode {
-	kNoMove = 0,
-	kManual = 1,
-	kFollow = 2,
-	kTrack = 3,
-	kFollow2 = 4,
-	kTrackAttack = 5,
-	kSameXZ = 6,
-	kRandom = 7
-};
-
 class TwinEEngine;
 
 class Movements {

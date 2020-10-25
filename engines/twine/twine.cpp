@@ -419,7 +419,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// inventory menu
 		loopInventoryItem = -1;
-		if (_input->isActionActive(TwinEActionType::InventoryMenu) && _scene->sceneHero->entity != -1 && _scene->sceneHero->controlMode == kManual) {
+		if (_input->isActionActive(TwinEActionType::InventoryMenu) && _scene->sceneHero->entity != -1 && _scene->sceneHero->controlMode == ControlMode::kManual) {
 			freezeTime();
 			_menu->processInventoryMenu();
 
@@ -535,7 +535,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		     _input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false) ||
 		     _input->isActionActive(TwinEActionType::QuickBehaviourAggressive, false) ||
 		     _input->isActionActive(TwinEActionType::QuickBehaviourDiscreet, false)) &&
-		    _scene->sceneHero->entity != -1 && _scene->sceneHero->controlMode == kManual) {
+		    _scene->sceneHero->entity != -1 && _scene->sceneHero->controlMode == ControlMode::kManual) {
 			if (_input->isActionActive(TwinEActionType::QuickBehaviourNormal, false)) {
 				_actor->heroBehaviour = HeroBehaviourType::kNormal;
 			} else if (_input->isActionActive(TwinEActionType::QuickBehaviourAthletic, false)) {
@@ -627,7 +627,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			if (actor->life == 0) {
 				if (a == 0) { // if its hero who died
 					_animations->initAnim(kLandDeath, 4, 0, 0);
-					actor->controlMode = 0;
+					actor->controlMode = ControlMode::kNoMove;
 				} else {
 					_sound->playSample(37, getRandomNumber(2000) + 3096, 1, actor->x, actor->y, actor->z, a);
 
@@ -691,7 +691,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 									_actor->cropBottomScreen = _renderer->projPosY;
 								}
 								_renderer->projectPositionOnScreen(actor->x - _grid->cameraX, actor->y - _grid->cameraY, actor->z - _grid->cameraZ);
-								actor->controlMode = 0;
+								actor->controlMode = ControlMode::kNoMove;
 								actor->life = -1;
 								_actor->cropBottomScreen = _renderer->projPosY;
 								actor->staticFlags.bCanDrown |= 0x10;

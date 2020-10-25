@@ -170,7 +170,7 @@ bool Scene::loadSceneLBA1() {
 		act->bonusParameter &= 0xFE;
 		act->angle = stream.readUint16LE();
 		act->speed = stream.readUint16LE();
-		act->controlMode = stream.readUint16LE();
+		act->controlMode = (ControlMode)stream.readUint16LE();
 		act->info0 = stream.readUint16LE();
 		act->info1 = stream.readUint16LE();
 		act->info2 = stream.readUint16LE();
@@ -266,7 +266,7 @@ void Scene::changeScene() {
 	resetScene();
 	_engine->_actor->loadHeroEntities();
 
-	sceneHero->controlMode = 1;
+	sceneHero->controlMode = ControlMode::kManual;
 	sceneHero->zone = -1;
 	sceneHero->positionInLifeScript = 0;
 	sceneHero->positionInMoveScript = -1;

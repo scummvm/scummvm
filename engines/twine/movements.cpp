@@ -281,7 +281,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 		heroPressedKey = _engine->_input->key;
 	} else {
 		if (!actor->staticFlags.bIsSpriteActor) {
-			if (actor->controlMode != kManual) {
+			if (actor->controlMode != ControlMode::kManual) {
 				actor->angle = getRealAngle(&actor->move);
 			}
 		}

@@ -73,14 +73,6 @@ static const struct KeyProperties {
     {0x00, false, 0x00}};
 static_assert(ARRAYSIZE(pressedKeyCharMap) == 31, "Expected size of key char map");
 
-ScopedKeyMapperDisable::ScopedKeyMapperDisable() {
-	g_system->getEventManager()->getKeymapper()->setEnabled(false);
-}
-
-ScopedKeyMapperDisable::~ScopedKeyMapperDisable() {
-	g_system->getEventManager()->getKeymapper()->setEnabled(true);
-}
-
 ScopedKeyMap::ScopedKeyMap(TwinEEngine* engine, const char *id) : _engine(engine) {
 	_prevKeyMap = _engine->_input->currentKeyMap();
 	_engine->_input->enableKeyMap(cutsceneKeyMapId);
@@ -91,13 +83,6 @@ ScopedKeyMap::~ScopedKeyMap() {
 }
 
 Input::Input(TwinEEngine *engine) : _engine(engine) {}
-
-bool Input::isPressed(Common::KeyCode keycode, bool onlyFirstTime) const {
-	if (onlyFirstTime) {
-		return _pressed[keycode] == 1;
-	}
-	return _pressed[keycode] > 0;
-}
 
 bool Input::isActionActive(TwinEActionType actionType, bool onlyFirstTime) const {
 	if (onlyFirstTime) {
@@ -126,9 +111,6 @@ void Input::enableKeyMap(const char *id) {
 	if (_currentKeyMap == id) {
 		return;
 	}
-
-	// switching the keymap must also disable all other action keys
-	memset(_pressed, 0, sizeof(_pressed));
 
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	const Common::KeymapArray &keymaps = keymapper->getKeymaps();
@@ -182,12 +164,6 @@ void Input::readKeys() {
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			leftMouse = 1;
-			break;
-		case Common::EVENT_KEYDOWN:
-			_pressed[event.kbd.keycode] = 1 + event.kbdRepeat;
-			break;
-		case Common::EVENT_KEYUP:
-			_pressed[event.kbd.keycode] = 0;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 			rightMouse = 1;

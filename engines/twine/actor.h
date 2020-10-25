@@ -147,6 +147,18 @@ struct DynamicFlagsStruct {
 	uint16 bUnk8000 : 1;          // 0x8000 unused
 };
 
+/** Control mode types */
+enum ControlMode {
+	kNoMove = 0,
+	kManual = 1,
+	kFollow = 2,
+	kTrack = 3,
+	kFollow2 = 4,
+	kTrackAttack = 5,
+	kSameXZ = 6,
+	kRandom = 7
+};
+
 /** Actors structure */
 struct ActorStruct {
 	StaticFlagsStruct staticFlags;
@@ -170,7 +182,7 @@ struct ActorStruct {
 	int32 bonusParameter = 0; // field_10
 	int32 angle = 0;
 	int32 speed = 0;
-	int32 controlMode = 0;
+	ControlMode controlMode = ControlMode::kNoMove;
 	int32 info0 = 0;         // cropLeft
 	int32 info1 = 0;         // cropTop
 	int32 info2 = 0;         // cropRight
