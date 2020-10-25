@@ -830,13 +830,10 @@ void TwinEEngine::flip() {
 void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom) {
 	assert(left <= right);
 	assert(top <= bottom);
-#if 0
-	// TODO: fix this - looks like the palette includes a color key at pos 0
-	g_system->copyRectToScreen(frontVideoBuffer.getPixels(), frontVideoBuffer.pitch, left, top, right - left + 1, bottom - top + 1);
+	const int32 width = right - left + 1;
+	const int32 height = bottom - top + 1;
+	g_system->copyRectToScreen(frontVideoBuffer.getBasePtr(left, top), frontVideoBuffer.pitch, left, top, width, height);
 	g_system->updateScreen();
-#else
-	flip();
-#endif
 }
 
 void TwinEEngine::crossFade(const Graphics::ManagedSurface &buffer, const uint32 *palette) {
