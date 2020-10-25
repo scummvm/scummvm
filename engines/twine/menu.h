@@ -101,9 +101,9 @@ public:
 
 	int32 currMenuTextIndex = -1;
 	int32 currMenuTextBank = -1;
-	char currMenuTextBuffer[256] = "";
+	char currMenuTextBuffer[256];
 
-	int16 itemAngle[255]{0}; // objectRotation
+	int16 itemAngle[255]; // objectRotation
 
 	/** Behaviour menu move pointer */
 	ActorMoveStruct moveMenu;
