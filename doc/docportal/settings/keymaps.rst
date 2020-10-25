@@ -8,6 +8,8 @@ Overview
 The Keymaps tab
 ----------------
 
+To change settings globally, go to **Options > Keymaps**. To change settings for a game, select the game, then go to **Edit Game > Keymaps**. 
+
 Use the keymaps tab to assign actions to keyboard keys or shortcuts, or mouse or joystick buttons. 
 
 .. figure:: ../images/settings/keymaps.png

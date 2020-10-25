@@ -8,6 +8,8 @@ Overview
 The Game tab
 ---------------
 
+Choose a game, then go to **Edit Game**.
+
 Use the game tab to display and change information about how the game is
 identified by ScummVM.
 

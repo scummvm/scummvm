@@ -8,6 +8,8 @@ Overview
 The Graphics tab
 -----------------
 
+To change settings globally, go to **Options > Graphics**. To change settings for a game, select the game, then go to **Edit Game > Graphics**. 
+
 Use the graphics tab to change how games look when they are played. 
 
 

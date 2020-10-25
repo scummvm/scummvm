@@ -11,6 +11,8 @@ ScummVM currently supports Dropbox, OneDrive, Google Drive and Box. Connecting S
 The Cloud tab
 ----------------
 
+From the Launcher, go to **Options**, click the red **>** button until the Cloud tab is visible, then go to **Cloud**.
+
 Use the cloud tab to manage connected cloud storage services.
 
 .. figure:: ../images/settings/cloud.png
@@ -41,8 +43,12 @@ Disconnect
 Further reading
 ====================
 
+.. _howtocloud:
+
 How to connect ScummVM to cloud storage
 ----------------------------------------
+
+From the Launcher, go to **Options > Cloud**.
 
 To connect your chosen cloud storage service to ScummVM, select it from the **Active storage** dropdown. 
 

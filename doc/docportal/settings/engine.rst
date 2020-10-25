@@ -14,6 +14,8 @@ Engines: ADL_ | AGI_ | BLADERUNNER_ | CGE_ | CINE_ | DRASCULA_ | DREAMWEB_ | HDB
 The Engine tab
 --------------
 
+Choose a game, then go to **Edit Game > Engine**. Note that this tab may not be available for all games. 
+
 Use the engine tab to change settings that are unique to the game being played. Only available settings are shown. 
 
 .. figure:: ../images/settings/engine.png

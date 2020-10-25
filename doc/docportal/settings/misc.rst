@@ -5,8 +5,10 @@ Miscellaneous
 Overview
 ==========
 
-The Misc tab
---------------
+The Miscellaneous tab
+--------------------------
+
+From the Launcher, go to **Options**, click the red **>** button, and then go to **Misc**.
 
 The Misc tab contains options that don’t belong on any of the other tabs.
 

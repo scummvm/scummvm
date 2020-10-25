@@ -10,6 +10,8 @@ ScummVM can run local network web server which allows browser-based file managem
 The LAN tab
 ------------
 
+From the Launcher, go to **Options**, click the red **>** button until the LAN tab is visible, then go to **LAN**.
+
 Use the LAN tab to control the web server. 
 
 
