@@ -34,6 +34,13 @@ For games downloaded from digital distributors such as `GOG.com  <gog.com>`__, `
 - Run the installer or
 - If the data files are supplied as a .zip file, extract the archive.
 
+.. tip::
+
+   A great way to share game files and automatically back up and sync your saved game states between devices running ScummVM is to connect a Cloud storage service such as Dropbox or Google Drive. Detailed instructions for setting this up can be found on the :ref:`Cloud settings page <howtocloud>`.
+
+   For devices on the same local network, ScummVM can run a web server to allow the transfer of files. Detailed instructions can be found on the :doc:`LAN settings page <../settings/lan>`. This is a good option if you do not wish to connect a Cloud service, although it doesn't offer as much functionality. 
+
+
 Multi-disc games
 *****************
 
@@ -49,7 +56,7 @@ ScummVM needs access to all the data files, so it will not be able to run direct
 .. _cd:
 
 CD audio
-^^^^^^^^^^
+**********
 
 Some games contain one or more separate audio tracks on CD. To use these with ScummVM, they need to be extracted from the CD in .wav or .aiff format, and then converted to either .mp3, .flac or .ogg file formats. 
 
@@ -73,7 +80,7 @@ Mac uses a different file system to other systems (HFS+), so if you are accessin
 
 For Windows, HFSExplorer is a basic free option, which allows read-only access to HFS drives. `Download the installer <http://www.catacombae.org/hfsexplorer/>`_ rather than the ZIP file, to ensure it is installed correctly. 
 
-For Linux, hfsplus allows read-only access to HFS drives. To use hfsplus:
+For Linux, hfsplus allows read-only access to HFS drives. To use hfsplus, use the command line: 
 
    1. Install hfsplus using the software manager. On Debian-based distributions, use ``sudo apt install hfsplus``.
    2. Find the game disc by running ``sudo fdisk -l`` and finding the one with type ``Apple HFS/HFS+``. In this example we will say this is ``/dev/fd0``.
