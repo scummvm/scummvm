@@ -28,8 +28,6 @@
 
 namespace TwinE {
 
-/** FLA movie directory */
-#define FLA_DIR "fla/"
 /** Original FLA screen width */
 #define FLASCREEN_WIDTH 320
 /** Original FLA screen height */

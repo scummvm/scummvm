@@ -38,8 +38,6 @@ namespace TwinE {
 
 /** FLA movie extension */
 #define VOX_EXT ".vox"
-/** Common movie directory */
-#define VOX_DIR "vox/"
 
 void Text::initVoxBank(int32 bankIdx) {
 	static const char *LanguageSufixTypes[] = {
@@ -62,7 +60,7 @@ void Text::initVoxBank(int32 bankIdx) {
 		error("bankIdx is out of bounds: %i", bankIdx);
 	}
 	// get the correct vox hqr file
-	currentVoxBankFile = Common::String::format(VOX_DIR "%s%s" VOX_EXT, LanguageTypes[_engine->cfgfile.LanguageId].id, LanguageSufixTypes[bankIdx]);
+	currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[_engine->cfgfile.LanguageId].id, LanguageSufixTypes[bankIdx]);
 
 	// TODO check the rest to reverse
 }

@@ -76,18 +76,13 @@ void Sound::playFlaSample(int32 index, int32 frequency, int32 repeat, int32 x, i
 	}
 
 	uint8 *sampPtr;
-	int32 sampSize;
-	Common::String sampfile = Common::String::format("%s", Resources::HQR_FLASAMP_FILE);
-	sampSize = _engine->_hqrdepack->hqrGetallocEntry(&sampPtr, sampfile.c_str(), index);
+	const int32 sampSize = _engine->_hqrdepack->hqrGetallocEntry(&sampPtr, Resources::HQR_FLASAMP_FILE, index);
 	if (sampSize == 0) {
-		sampfile = Common::String::format(FLA_DIR "%s", Resources::HQR_FLASAMP_FILE);
-		sampSize = _engine->_hqrdepack->hqrGetallocEntry(&sampPtr, sampfile.c_str(), index);
-		if (sampSize == 0) {
-			return;
-		}
+		warning("Failed to load %s", Resources::HQR_FLASAMP_FILE);
+		return;
 	}
 
-	playSample(channelIdx, index, sampPtr, sampSize, repeat, sampfile.c_str());
+	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_FLASAMP_FILE);
 }
 
 void Sound::playSample(int32 index, int32 frequency, int32 repeat, int32 x, int32 y, int32 z, int32 actorIdx) {
