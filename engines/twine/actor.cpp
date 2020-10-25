@@ -66,34 +66,40 @@ void Actor::restartHeroScene() {
 }
 
 void Actor::loadHeroEntities() {
-	if (_engine->_hqrdepack->hqrGetallocEntry(&heroEntityATHLETIC, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROATHLETIC) == 0) {
+	heroEntityATHLETICSize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityATHLETIC, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROATHLETIC);
+	if (heroEntityATHLETICSize == 0) {
 		error("Failed to load actor athletic 3d data");
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityATHLETIC;
 	heroAnimIdxATHLETIC = _engine->_animations->getBodyAnimIndex(0, 0);
 
-	if (_engine->_hqrdepack->hqrGetallocEntry(&heroEntityAGGRESSIVE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROAGGRESSIVE) == 0) {
+	heroEntityAGGRESSIVESize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityAGGRESSIVE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROAGGRESSIVE);
+	if (heroEntityAGGRESSIVESize == 0) {
 		error("Failed to load actor aggressive 3d data");
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityAGGRESSIVE;
 	heroAnimIdxAGGRESSIVE = _engine->_animations->getBodyAnimIndex(0, 0);
 
-	if (_engine->_hqrdepack->hqrGetallocEntry(&heroEntityDISCRETE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERODISCRETE) == 0) {
+	heroEntityDISCRETESize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityDISCRETE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERODISCRETE);
+	if (heroEntityDISCRETESize == 0) {
 		error("Failed to load actor discrete 3d data");
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityDISCRETE;
 	heroAnimIdxDISCRETE = _engine->_animations->getBodyAnimIndex(0, 0);
 
-	if (_engine->_hqrdepack->hqrGetallocEntry(&heroEntityPROTOPACK, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROPROTOPACK) == 0) {
+	heroEntityPROTOPACKSize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityPROTOPACK, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROPROTOPACK);
+	if (heroEntityPROTOPACKSize == 0) {
 		error("Failed to load actor protopack 3d data");
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityPROTOPACK;
 	heroAnimIdxPROTOPACK = _engine->_animations->getBodyAnimIndex(0, 0);
 
-	if (_engine->_hqrdepack->hqrGetallocEntry(&heroEntityNORMAL, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERONORMAL) == 0) {
+	heroEntityNORMALSize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityNORMAL, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERONORMAL);
+	if (heroEntityNORMALSize == 0) {
 		error("Failed to load actor normal 3d data");
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityNORMAL;
+	_engine->_scene->sceneHero->entityDataSize = heroEntityNORMALSize;
 	heroAnimIdxNORMAL = _engine->_animations->getBodyAnimIndex(0, 0);
 
 	_engine->_scene->sceneHero->animExtraPtr = _engine->_animations->currentActorAnimExtraPtr;
@@ -104,22 +110,27 @@ void Actor::setBehaviour(int32 behaviour) {
 	case kNormal:
 		heroBehaviour = kNormal;
 		_engine->_scene->sceneHero->entityDataPtr = heroEntityNORMAL;
+		_engine->_scene->sceneHero->entityDataSize = heroEntityNORMALSize;
 		break;
 	case kAthletic:
 		heroBehaviour = kAthletic;
 		_engine->_scene->sceneHero->entityDataPtr = heroEntityATHLETIC;
+		_engine->_scene->sceneHero->entityDataSize = heroEntityATHLETICSize;
 		break;
 	case kAggressive:
 		heroBehaviour = kAggressive;
 		_engine->_scene->sceneHero->entityDataPtr = heroEntityAGGRESSIVE;
+		_engine->_scene->sceneHero->entityDataSize = heroEntityAGGRESSIVESize;
 		break;
 	case kDiscrete:
 		heroBehaviour = kDiscrete;
 		_engine->_scene->sceneHero->entityDataPtr = heroEntityDISCRETE;
+		_engine->_scene->sceneHero->entityDataSize = heroEntityDISCRETESize;
 		break;
 	case kProtoPack:
 		heroBehaviour = kProtoPack;
 		_engine->_scene->sceneHero->entityDataPtr = heroEntityPROTOPACK;
+		_engine->_scene->sceneHero->entityDataSize = heroEntityPROTOPACKSize;
 		break;
 	};
 

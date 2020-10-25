@@ -160,6 +160,7 @@ struct ActorStruct {
 	uint8 *animExtraPtr = nullptr;
 	int32 sprite = 0; // field_8
 	uint8 *entityDataPtr = nullptr;
+	int32 entityDataSize = 0;
 
 	int32 x = 0;
 	int32 y = 0;
@@ -252,14 +253,19 @@ public:
 
 	/** Hero 3D entity for normal behaviour */
 	uint8 *heroEntityNORMAL = nullptr; // file3D0
+	int32 heroEntityNORMALSize = 0;
 	/** Hero 3D entity for athletic behaviour */
 	uint8 *heroEntityATHLETIC = nullptr; // file3D1
+	int32 heroEntityATHLETICSize = 0;
 	/** Hero 3D entity for aggressive behaviour */
 	uint8 *heroEntityAGGRESSIVE = nullptr; // file3D2
+	int32 heroEntityAGGRESSIVESize = 0;
 	/** Hero 3D entity for discrete behaviour */
 	uint8 *heroEntityDISCRETE = nullptr; // file3D3
+	int32 heroEntityDISCRETESize = 0;
 	/** Hero 3D entity for protopack behaviour */
 	uint8 *heroEntityPROTOPACK = nullptr; // file3D4
+	int32 heroEntityPROTOPACKSize = 0;
 
 	/** Hero current anim for normal behaviour */
 	int16 heroAnimIdxNORMAL = 0; // TCos0Init
