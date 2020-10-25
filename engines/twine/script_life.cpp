@@ -956,13 +956,14 @@ static int32 lZOOM(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 static int32 lPOS_POINT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	int32 trackIdx = *(scriptPtr++);
 
-	engine->_renderer->destX = engine->_scene->sceneTracks[trackIdx].x;
-	engine->_renderer->destY = engine->_scene->sceneTracks[trackIdx].y;
-	engine->_renderer->destZ = engine->_scene->sceneTracks[trackIdx].z;
+	const ScenePoint& sp = engine->_scene->sceneTracks[trackIdx];
+	engine->_renderer->destX = sp.x;
+	engine->_renderer->destY = sp.y;
+	engine->_renderer->destZ = sp.z;
 
-	actor->x = engine->_renderer->destX;
-	actor->y = engine->_renderer->destY;
-	actor->z = engine->_renderer->destZ;
+	actor->x = sp.x;
+	actor->y = sp.y;
+	actor->z = sp.z;
 
 	return 0;
 }

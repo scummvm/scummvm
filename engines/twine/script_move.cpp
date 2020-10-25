@@ -89,11 +89,12 @@ static int32 mGOTO_POINT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor
 	actor->positionInMoveScript++;
 	engine->_scene->currentScriptValue = *(scriptPtr);
 
-	engine->_renderer->destX = engine->_scene->sceneTracks[engine->_scene->currentScriptValue].x;
-	engine->_renderer->destY = engine->_scene->sceneTracks[engine->_scene->currentScriptValue].y;
-	engine->_renderer->destZ = engine->_scene->sceneTracks[engine->_scene->currentScriptValue].z;
+	const ScenePoint& sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
+	engine->_renderer->destX = sp.x;
+	engine->_renderer->destY = sp.y;
+	engine->_renderer->destZ = sp.z;
 
-	newAngle = engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, engine->_renderer->destX, engine->_renderer->destZ);
+	newAngle = engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, sp.x, sp.z);
 
 	if (actor->staticFlags.bIsSpriteActor) {
 		actor->angle = newAngle;
@@ -150,17 +151,18 @@ static int32 mPOS_POINT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor)
 	actor->positionInMoveScript++;
 	engine->_scene->currentScriptValue = *(scriptPtr);
 
-	engine->_renderer->destX = engine->_scene->sceneTracks[engine->_scene->currentScriptValue].x;
-	engine->_renderer->destY = engine->_scene->sceneTracks[engine->_scene->currentScriptValue].y;
-	engine->_renderer->destZ = engine->_scene->sceneTracks[engine->_scene->currentScriptValue].z;
+	const ScenePoint& sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
+	engine->_renderer->destX = sp.x;
+	engine->_renderer->destY = sp.y;
+	engine->_renderer->destZ = sp.z;
 
 	if (actor->staticFlags.bIsSpriteActor) {
 		actor->speed = 0;
 	}
 
-	actor->x = engine->_renderer->destX;
-	actor->y = engine->_renderer->destY;
-	actor->z = engine->_renderer->destZ;
+	actor->x = sp.x;
+	actor->y = sp.y;
+	actor->z = sp.z;
 
 	return 0;
 }
@@ -188,16 +190,15 @@ static int32 mSTOP(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 
 /*0x0C*/
 static int32 mGOTO_SYM_POINT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 newAngle;
-
 	actor->positionInMoveScript++;
 	engine->_scene->currentScriptValue = *(scriptPtr);
 
-	engine->_renderer->destX = engine->_scene->sceneTracks[engine->_scene->currentScriptValue].x;
-	engine->_renderer->destY = engine->_scene->sceneTracks[engine->_scene->currentScriptValue].y;
-	engine->_renderer->destZ = engine->_scene->sceneTracks[engine->_scene->currentScriptValue].z;
+	const ScenePoint& sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
+	engine->_renderer->destX = sp.x;
+	engine->_renderer->destY = sp.y;
+	engine->_renderer->destZ = sp.z;
 
-	newAngle = 0x200 + engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, engine->_renderer->destX, engine->_renderer->destZ);
+	const int32 newAngle = 0x200 + engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, sp.x, sp.z);
 
 	if (actor->staticFlags.bIsSpriteActor) {
 		actor->angle = newAngle;
@@ -255,24 +256,27 @@ static int32 mSAMPLE(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 static int32 mGOTO_POINT_3D(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	actor->positionInMoveScript++;
 
-	if (actor->staticFlags.bIsSpriteActor) {
-		engine->_scene->currentScriptValue = *(scriptPtr);
+	if (!actor->staticFlags.bIsSpriteActor) {
+		return 0;
+	}
 
-		engine->_renderer->destX = engine->_scene->sceneTracks[engine->_scene->currentScriptValue].x;
-		engine->_renderer->destY = engine->_scene->sceneTracks[engine->_scene->currentScriptValue].y;
-		engine->_renderer->destZ = engine->_scene->sceneTracks[engine->_scene->currentScriptValue].z;
+	engine->_scene->currentScriptValue = *(scriptPtr);
 
-		actor->angle = engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, engine->_renderer->destX, engine->_renderer->destZ);
-		actor->animType = engine->_movements->getAngleAndSetTargetActorDistance(actor->y, 0, engine->_renderer->destY, engine->_movements->targetActorDistance);
+	const ScenePoint& sp = engine->_scene->sceneTracks[engine->_scene->currentScriptValue];
+	engine->_renderer->destX = sp.x;
+	engine->_renderer->destY = sp.y;
+	engine->_renderer->destZ = sp.z;
 
-		if (engine->_movements->targetActorDistance > 100) {
-			continueMove = 0;
-			actor->positionInMoveScript -= 2;
-		} else {
-			actor->x = engine->_renderer->destX;
-			actor->y = engine->_renderer->destY;
-			actor->z = engine->_renderer->destZ;
-		}
+	actor->angle = engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, sp.x, sp.z);
+	actor->animType = engine->_movements->getAngleAndSetTargetActorDistance(actor->y, 0, sp.y, engine->_movements->targetActorDistance);
+
+	if (engine->_movements->targetActorDistance > 100) {
+		continueMove = 0;
+		actor->positionInMoveScript -= 2;
+	} else {
+		actor->x = sp.x;
+		actor->y = sp.y;
+		actor->z = sp.z;
 	}
 
 	return 0;
@@ -294,7 +298,7 @@ static int32 mSPEED(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 static int32 mBACKGROUND(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	actor->positionInMoveScript++;
 
-	if (*(scriptPtr) != 0) {
+	if (*scriptPtr != 0) {
 		if (!actor->staticFlags.bIsBackgrounded) {
 			actor->staticFlags.bIsBackgrounded = 1;
 			if (actor->dynamicFlags.bIsVisible) {
@@ -315,11 +319,10 @@ static int32 mBACKGROUND(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor
 
 /*0x12*/
 static int32 mWAIT_NUM_SECOND(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 numSeconds, currentTime;
 	actor->positionInMoveScript += 5;
 
-	numSeconds = *(scriptPtr++);
-	currentTime = *((int32 *)scriptPtr);
+	int32 numSeconds = *(scriptPtr++);
+	int32 currentTime = *((int32 *)scriptPtr);
 
 	if (currentTime == 0) {
 		currentTime = engine->lbaTime + numSeconds * 50;
@@ -344,9 +347,7 @@ static int32 mNO_BODY(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 
 /*0x14*/
 static int32 mBETA(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int16 beta;
-
-	beta = *((int16 *)scriptPtr);
+	const int16 beta = *((int16 *)scriptPtr);
 	actor->positionInMoveScript += 2;
 
 	actor->angle = beta;
