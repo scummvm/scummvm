@@ -262,9 +262,7 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 		g_system->quit();
 	}
 
-	// Nintendo Switch's GLEW is initialized in createOrUpdateGLContext to prevent crashes
-	// due to call of OpenGL 1.1 functions before entering this method
-#if defined(USE_GLEW) && !defined(NINTENDO_SWITCH)
+#ifdef USE_GLEW
 	GLenum err = glewInit();
 #ifdef GLEW_ERROR_NO_GLX_DISPLAY
 	if (err == GLEW_ERROR_NO_GLX_DISPLAY) {
@@ -434,9 +432,6 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
 			SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
 		#endif
-		#ifdef NINTENDO_SWITCH
-			SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_COMPATIBILITY);
-		#endif
 #endif
 #endif
 
@@ -468,16 +463,6 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 			_glContext = SDL_GL_GetCurrentContext();
 			if (!_glContext) {
 				_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
-#ifdef NINTENDO_SWITCH
-				// Nintendo Switch's GLEW wrangles OpenGL 1.1 functions, so we need to
-				// call glewInit() earlier for this platform otherwise the subsequent
-				// call to glClear will result in a crash
-				GLenum err = glewInit();
-				if (err != GLEW_OK) {
-					warning("Error: %s", glewGetErrorString(err));
-					g_system->quit();
-				}
-#endif
 				if (_glContext) {
 					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 				}
