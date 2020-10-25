@@ -183,7 +183,7 @@ void Scene::loadScene() {
 		}
 
 		sceneActors[i].body = *(localScene++);
-		sceneActors[i].anim = (AnimationTypes)*(localScene++);
+		sceneActors[i].anim = (AnimationTypes) * (localScene++);
 		sceneActors[i].sprite = *((uint16 *)localScene);
 		localScene += 2;
 		sceneActors[i].x = *((uint16 *)localScene);
@@ -307,8 +307,8 @@ void Scene::changeScene() {
 	int32 a;
 
 	// change twinsen house destroyed hard-coded
-	if (needChangeScene == 4 && _engine->_gameState->gameFlags[30] != 0) {
-		needChangeScene = 118;
+	if (needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->gameFlags[30] != 0) {
+		needChangeScene = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;
 	}
 
 	// local backup previous scene
@@ -330,7 +330,7 @@ void Scene::changeScene() {
 
 	// TODO: treat holomap trajectories
 
-	if (needChangeScene == 116 || needChangeScene == 117) {
+	if (needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_1 || needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_2) {
 		_engine->_text->currentTextBank = 10;
 	}
 
@@ -394,7 +394,7 @@ void Scene::changeScene() {
 	}
 }
 
-ActorStruct* Scene::getActor(int32 actorIdx) {
+ActorStruct *Scene::getActor(int32 actorIdx) {
 	assert(actorIdx >= 0);
 	assert(actorIdx < NUM_MAX_ACTORS);
 	return &sceneActors[actorIdx];

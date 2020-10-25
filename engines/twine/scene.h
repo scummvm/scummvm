@@ -246,7 +246,7 @@ public:
 
 	uint8 *currentScene = nullptr;
 
-	int32 needChangeScene = 0;
+	int32 needChangeScene = LBA1SceneId::Citadel_Island_Prison;
 	int32 currentSceneIdx = 0;
 	int32 previousSceneIdx = 0;
 
