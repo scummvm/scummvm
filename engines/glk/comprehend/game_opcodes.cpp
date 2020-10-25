@@ -73,7 +73,7 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		break;
 
 	case OPCODE_CLEAR_WORD:
-		item = get_item(instr->_operand[0]);
+		item = get_item(instr->_operand[0] - 1);
 		item->_word = 0;
 		break;
 
@@ -253,7 +253,7 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		break;
 
 	case OPCODE_SET_WORD:
-		item = get_item(instr->_operand[0]);
+		item = get_item(instr->_operand[0] - 1);
 		item->_word = instr->_operand[1];
 		break;
 
