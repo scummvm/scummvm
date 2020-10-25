@@ -61,12 +61,12 @@ void Screens::loadCustomPalette(int32 index) {
 }
 
 void Screens::convertPalToRGBA(const uint8* in, uint32* out) {
-	uint8* palDest = (uint8*)out;
+	uint8* paletteOut = (uint8*)out;
 	for (int i = 0; i < NUMOFCOLORS; i++) {
-		palDest[0] = in[0];
-		palDest[1] = in[1];
-		palDest[2] = in[2];
-		palDest += 4;
+		paletteOut[0] = in[0];
+		paletteOut[1] = in[1];
+		paletteOut[2] = in[2];
+		paletteOut += 4;
 		in += 3;
 	}
 }
@@ -122,21 +122,21 @@ int32 Screens::crossDot(int32 modifier, int32 color, int32 param, int32 intensit
 }
 
 void Screens::adjustPalette(uint8 R, uint8 G, uint8 B, const uint32 *rgbaPal, int32 intensity) {
-	uint32 pal2[NUMOFCOLORS];
+	uint32 pal[NUMOFCOLORS];
 
 	int32 counter = 0;
 
-	const uint8 *pal = (const uint8*)rgbaPal;
-	uint8 *localPalette = (uint8*)pal2;
-	uint8 *newR = &localPalette[0];
-	uint8 *newG = &localPalette[1];
-	uint8 *newB = &localPalette[2];
-	uint8 *newA = &localPalette[3];
+	const uint8 *paletteIn = (const uint8*)rgbaPal;
+	uint8 *paletteOut = (uint8*)pal;
+	uint8 *newR = &paletteOut[0];
+	uint8 *newG = &paletteOut[1];
+	uint8 *newB = &paletteOut[2];
+	uint8 *newA = &paletteOut[3];
 
 	for (int32 i = 0; i < NUMOFCOLORS; i++) {
-		*newR = crossDot(R, pal[counter], 100, intensity);
-		*newG = crossDot(G, pal[counter + 1], 100, intensity);
-		*newB = crossDot(B, pal[counter + 2], 100, intensity);
+		*newR = crossDot(R, paletteIn[counter], 100, intensity);
+		*newG = crossDot(G, paletteIn[counter + 1], 100, intensity);
+		*newB = crossDot(B, paletteIn[counter + 2], 100, intensity);
 		*newA = 0;
 
 		newR += 4;
@@ -147,29 +147,28 @@ void Screens::adjustPalette(uint8 R, uint8 G, uint8 B, const uint32 *rgbaPal, in
 		counter += 4;
 	}
 
-	_engine->setPalette(pal2);
+	_engine->setPalette(pal);
 }
 
 void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 	uint32 pal[NUMOFCOLORS];
 
-	int32 i;
 	int32 counter = 0;
 	int32 intensity = 0;
 
 	const uint8 *pal1p = (const uint8*)pal1;
 	const uint8 *pal2p = (const uint8*)pal2;
-	uint8 *localPalette = (uint8*)pal;
+	uint8 *paletteOut = (uint8*)pal;
 	do {
 		counter = 0;
 
-		uint8 *newR = &localPalette[counter];
-		uint8 *newG = &localPalette[counter + 1];
-		uint8 *newB = &localPalette[counter + 2];
-		uint8 *newA = &localPalette[counter + 3];
+		uint8 *newR = &paletteOut[counter];
+		uint8 *newG = &paletteOut[counter + 1];
+		uint8 *newB = &paletteOut[counter + 2];
+		uint8 *newA = &paletteOut[counter + 3];
 
-		for (i = 0; i < NUMOFCOLORS; i++) {
-			*newR = crossDot(pal1p[counter], pal2p[counter], 100, intensity);
+		for (int32 i = 0; i < NUMOFCOLORS; i++) {
+			*newR = crossDot(pal1p[counter + 0], pal2p[counter + 0], 100, intensity);
 			*newG = crossDot(pal1p[counter + 1], pal2p[counter + 1], 100, intensity);
 			*newB = crossDot(pal1p[counter + 2], pal2p[counter + 2], 100, intensity);
 			*newA = 0;
