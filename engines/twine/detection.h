@@ -25,6 +25,11 @@
 
 namespace TwinE {
 
+enum TwineGameType {
+	GType_LBA = (1 << 1),
+	GType_LBA2 = (1 << 2)
+};
+
 } // End of namespace TwinE
 
 #endif // TWINE_DETECTION_H

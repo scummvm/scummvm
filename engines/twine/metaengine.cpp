@@ -28,6 +28,7 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
+#include "twine/detection.h"
 
 #include "twine/input.h"
 #include "twine/twine.h"

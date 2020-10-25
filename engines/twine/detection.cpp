@@ -27,7 +27,8 @@
 #include "twine/detection.h"
 
 static const PlainGameDescriptor twineGames[] = {
-	{ "twine", "Little Big Adventure" },
+	{ "lba", "Little Big Adventure" },
+	{ "lba2", "Little Big Adventure 2" },
 	{ nullptr,  nullptr }
 };
 

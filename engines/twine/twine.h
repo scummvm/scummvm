@@ -32,6 +32,7 @@
 #include "graphics/surface.h"
 #include "twine/actor.h"
 #include "twine/input.h"
+#include "twine/detection.h"
 
 namespace TwinE {
 
@@ -164,6 +165,9 @@ public:
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
+
+	bool isLBA1() const { return _gameFlags & TwineGameType::GType_LBA;};
+	bool isLBA2() const { return _gameFlags & TwineGameType::GType_LBA2;};
 
 	Actor *_actor;
 	Animations *_animations;
