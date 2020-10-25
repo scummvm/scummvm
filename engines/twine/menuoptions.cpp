@@ -44,9 +44,9 @@ namespace TwinE {
 static const char allowedCharIndex[] = " ABCDEFGHIJKLM.NOPQRSTUVWXYZ-abcdefghijklm?nopqrstuvwxyz!0123456789\040\b\r\0";
 
 void MenuOptions::newGame() {
-#if TWINE_PLAY_INTROS
 	_engine->_music->stopMusic();
 
+#if TWINE_PLAY_INTROS
 	int32 tmpFlagDisplayText = _engine->cfgfile.FlagDisplayText;
 	_engine->cfgfile.FlagDisplayText = true;
 
@@ -61,35 +61,33 @@ void MenuOptions::newGame() {
 	_engine->_text->setFontCrossColor(15);
 
 	_engine->_text->drawTextFullscreen(150);
-	_engine->readKeys();
 
 	// intro screen 2
 	_engine->_screens->loadImage(RESSHQR_INTROSCREEN2IMG);
 	_engine->_text->drawTextFullscreen(151);
-	_engine->readKeys();
 
 	_engine->_screens->loadImage(RESSHQR_INTROSCREEN3IMG);
 	_engine->_text->drawTextFullscreen(152);
 
-	_engine->_text->newGameVar5 = 0;
-	_engine->_text->textClipSmall();
-	_engine->_text->newGameVar4 = 1;
+	_engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
 
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBACustom);
 	_engine->_screens->clearScreen();
 	_engine->flip();
 
-	_engine->_music->playMidiMusic(1);
+	// _engine->_music->playMidiMusic(1);
 	_engine->_flaMovies->playFlaMovie(FLA_INTROD);
+#endif
 
+	_engine->_text->textClipSmall();
 	_engine->_screens->clearScreen();
 	_engine->flip();
 
+	_engine->_text->newGameVar4 = 1;
+	_engine->_text->newGameVar5 = 0;
+
 	// set main palette back
 	_engine->setPalette(_engine->_screens->paletteRGBA);
-
-	_engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
-#endif
 }
 
 void MenuOptions::showCredits() {
