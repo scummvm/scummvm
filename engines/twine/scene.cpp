@@ -20,6 +20,7 @@
  *
  */
 
+#include "twine/scene.h"
 #include "common/util.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
@@ -31,7 +32,6 @@
 #include "twine/redraw.h"
 #include "twine/renderer.h"
 #include "twine/resources.h"
-#include "twine/scene.h"
 #include "twine/screens.h"
 #include "twine/sound.h"
 #include "twine/text.h"
@@ -435,57 +435,52 @@ void Scene::processEnvironmentSound() {
 }
 
 void Scene::processZoneExtraBonus(ZoneStruct *zone) {
-	int32 a, numBonus;
-	int8 bonusTable[8], currentBonus;
-
-	numBonus = 0;
-
 	// bonus not used yet
-	if (!zone->infoData.generic.info3) {
-		for (a = 0; a < 5; a++) {
-			if (zone->infoData.generic.info1 & (1 << (a + 4))) {
-				bonusTable[numBonus++] = a;
-			}
+	if (zone->infoData.generic.info3) {
+		return;
+	}
+	int8 bonusTable[8];
+	int32 numBonus = 0;
+	for (int32 a = 0; a < 5; a++) {
+		if (zone->infoData.generic.info1 & (1 << (a + 4))) {
+			bonusTable[numBonus++] = a;
+		}
+	}
+
+	if (numBonus) {
+		int32 angle, index;
+		int8 currentBonus = bonusTable[_engine->getRandomNumber(numBonus)];
+
+		// if bonus is magic an no magic level yet, then give life points
+		if (!_engine->_gameState->magicLevelIdx && currentBonus == 2) {
+			currentBonus = 1;
 		}
 
-		if (numBonus) {
-			int32 angle, index;
-			currentBonus = bonusTable[_engine->getRandomNumber(numBonus)];
+		angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, sceneHero->x, sceneHero->z);
+		index = _engine->_extra->addExtraBonus(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, zone->topRight.y, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, 180, angle, currentBonus + 3, zone->infoData.generic.info2);
 
-			// if bonus is magic an no magic level yet, then give life points
-			if (!_engine->_gameState->magicLevelIdx && currentBonus == 2) {
-				currentBonus = 1;
-			}
-
-			angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, sceneHero->x, sceneHero->z);
-			index = _engine->_extra->addExtraBonus(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, zone->topRight.y, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, 180, angle, currentBonus + 3, zone->infoData.generic.info2);
-
-			if (index != -1) {
-				_engine->_extra->extraList[index].type |= 0x400;
-				zone->infoData.generic.info3 = 1; // set as used
-			}
+		if (index != -1) {
+			_engine->_extra->extraList[index].type |= 0x400;
+			zone->infoData.generic.info3 = 1; // set as used
 		}
 	}
 }
 
 void Scene::processActorZones(int32 actorIdx) {
-	int32 currentX, currentY, currentZ, z, tmpCellingGrid;
-	ActorStruct *actor;
+	ActorStruct *actor = &sceneActors[actorIdx];
 
-	actor = &sceneActors[actorIdx];
-
-	currentX = actor->x;
-	currentY = actor->y;
-	currentZ = actor->z;
+	int32 currentX = actor->x;
+	int32 currentY = actor->y;
+	int32 currentZ = actor->z;
 
 	actor->zone = -1;
-	tmpCellingGrid = 0;
+	int32 tmpCellingGrid = 0;
 
 	if (!actorIdx) {
 		currentActorInZone = actorIdx;
 	}
 
-	for (z = 0; z < sceneNumZones; z++) {
+	for (int32 z = 0; z < sceneNumZones; z++) {
 		ZoneStruct *zone = &sceneZones[z];
 
 		// check if actor is in zone

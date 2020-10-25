@@ -116,34 +116,31 @@ void MenuOptions::showCredits() {
 }
 
 void MenuOptions::drawSelectableCharacter(int32 x, int32 y, int32 arg) {
-	char buffer[256];
-	int32 centerX, left, top, centerY, bottom, right, right2;
+	char buffer[2];
 
 	buffer[0] = allowedCharIndex[y + x * 14];
+	buffer[1] = '\0';
 
-	centerX = y * 45 + 25;
-	left = centerX - 20;
-	right = centerX + 20;
-	top = x * 56 + 200 - 25;
-	buffer[1] = 0;
-	centerY = x * 56 + 200;
-	bottom = x * 56 + 200 + 25;
+	const int32 centerX = y * 45 + 25;
+	const int32 left = centerX - 20;
+	const int32 right = centerX + 20;
+	const int32 top = x * 56 + 200 - 25;
+	const int32 centerY = x * 56 + 200;
+	const int32 bottom = x * 56 + 200 + 25;
 
 	if (arg != 0) {
 		_engine->_interface->drawSplittedBox(left, top, right, bottom, 91);
 	} else {
 		_engine->_interface->blitBox(left, top, right, bottom, (const int8 *)_engine->workVideoBuffer.getPixels(), left, top, (int8 *)_engine->frontVideoBuffer.getPixels());
-		right2 = right;
-		_engine->_interface->drawTransparentBox(left, top, right2, bottom, 4);
+		_engine->_interface->drawTransparentBox(left, top, right, bottom, 4);
 	}
 
 	_engine->_menu->drawBox(left, top, right, bottom);
-	right2 = right;
 
 	_engine->_text->setFontColor(15);
 	_engine->_text->drawText(centerX - _engine->_text->getTextSize(buffer) / 2, centerY - 18, buffer);
 
-	_engine->copyBlockPhys(left, top, right2, bottom);
+	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
 void MenuOptions::drawSelectableCharacters() {
