@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: 2020-10-24 23:33+0900\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-10-25 14:55+0000\n"
+"Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
 "Language: ko\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 2.4.1\n"
+"X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Korean\n"
 
 #: gui/about.cpp:102
@@ -89,7 +89,7 @@ msgstr "선택"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr "게임 데이터를 다운로드할 디텍토리를 선택"
+msgstr "게임 데이터를 다운로드할 디렉토리를 선택"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:540 gui/launcher.cpp:207
 msgid "Select directory with game data"
@@ -1367,9 +1367,7 @@ msgstr ""
 #: gui/options.cpp:2158
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr ""
-"4. 스토리지가 활성화되지 않았습니다. 유저 이름이 정확한지 확인한 뒤 활성화해 "
-"주세요:"
+msgstr "4. 스토리지가 아직 활성화되지 않았습니다. 유저 이름이 정확한지 확인한 뒤 활성화해 주세요:"
 
 #: gui/options.cpp:2159
 msgid "Enable storage"
@@ -1903,7 +1901,7 @@ msgstr "게임 실행 에러:"
 
 #: base/main.cpp:662
 msgid "Could not find any engine capable of running the selected game"
-msgstr "선택된 게임을 실행할 수 있는 엔진을 찾을 수 없었습니다."
+msgstr "선택된 게임을 실행할 수 있는 엔진을 찾지 못 했습니다."
 
 #: common/achievements.cpp:93
 msgid "Achievement unlocked!"
@@ -1915,11 +1913,11 @@ msgstr "에러 없음"
 
 #: common/error.cpp:40
 msgid "Game data not found"
-msgstr "게임 데이터를 찾을 수 없음"
+msgstr "게임 데이터를 찾을 수 없습니다."
 
 #: common/error.cpp:42
 msgid "Game id not supported"
-msgstr "게임 ID가 지원되지 않음"
+msgstr "게임 ID가 지원되지 않습니다."
 
 #: common/error.cpp:44
 msgid "Unsupported color mode"
@@ -2340,7 +2338,7 @@ msgstr ""
 #: audio/mididrv.cpp:260 audio/mididrv.cpp:274 audio/mididrv.cpp:312
 #: audio/mididrv.cpp:329
 msgid "Attempting to fall back to the next available device..."
-msgstr "다음 사용 가능한 장치로 폴백을 시도합니다..."
+msgstr "다음 사용 가능한 장치로 폴백을 시도합니다."
 
 #: audio/mididrv.cpp:273
 #, c-format
@@ -2375,7 +2373,7 @@ msgstr "MIDI 덤프를 시작합니다."
 
 #: audio/mods/paula.cpp:303
 msgid "Amiga Audio emulator"
-msgstr "Amiga 오디오 에뮬레이터"
+msgstr "Amiga Audio 에뮬레이터"
 
 #: audio/null.h:44
 msgid "No music"
@@ -2405,15 +2403,15 @@ msgstr ""
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
-msgstr "FM-Towns 오디오"
+msgstr "FM-Towns Audio"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:57
 msgid "PC-98 Audio"
-msgstr "PC-98 오디오"
+msgstr "PC-98 Audio"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:82
 msgid "SegaCD Audio"
-msgstr "SegaCD 오디오"
+msgstr "SegaCD Audio"
 
 #: audio/softsynth/mt32.cpp:175
 msgid "Initializing MT-32 Emulator"
@@ -3031,7 +3029,6 @@ msgstr ""
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
-#, fuzzy
 msgid "Invalid request: headers are too long!"
 msgstr "Invalid request: headers are too long!"
 
