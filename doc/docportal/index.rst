@@ -68,8 +68,9 @@
       :glob:
       :hidden:
 
-      help/contact
       help/reporting_bugs
+      help/contact
+      help/faq
 
 ====================
 Welcome to ScummVM!
@@ -102,9 +103,9 @@ So you have ScummVM installed, but now you need to know how to add and play some
 The games!
 ============
 
-One of the most commonly asked questions we get is, "Where do I get the games??". If you still have your old floppy discs and CDs lying around (and have a way to read them!), then you can use the game files from these original discs. 
+One of the most commonly asked questions we get is, "Where do I get the games??". If you still have your old floppy discs and CDs lying around (and have a way to read them!), then you can use the game files from these original discs. For a list of which files you need for each game, check out the `Datafiles page <https://wiki.scummvm.org/index.php?title=Datafiles>`__ on our wiki. 
 
-If you haven't had a floppy disc or even a CD in your possession for a while, there are a few freeware games available for download `on our website <scummvm.org/downloads>`_, or there are digital distributors such as `GOG.com <gog.com>`_ and `Steam <https://store.steampowered.com/>`_. See the compatibility list on our `website <https://www.scummvm.org/compatibility/>`_ and the Supported Games section on our `wiki <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ before you buy a game, to ensure it can run with ScummVM. 
+If you haven't had a floppy disc or even a CD in your possession for a while, there are a few freeware games available for download on our website's `Downloads page <scummvm.org/downloads>`_, or there are digital distributors such as `GOG.com <gog.com>`_ and `Steam <https://store.steampowered.com/>`_. See the `compatibility list <https://www.scummvm.org/compatibility/>`_ on our website and the `Supported Games page <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ on our wiki before you buy a game, to ensure it can run with ScummVM. 
 
 
 Advanced options
