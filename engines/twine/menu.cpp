@@ -1028,20 +1028,22 @@ void Menu::processInventoryMenu() {
 		_engine->readKeys();
 		int32 prevSelectedItem = inventorySelectedItem;
 
-		if (_engine->_input->toggleAbortAction() || _engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
+		if (_engine->_input->toggleAbortAction()) {
 			break;
 		}
 
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIDown)) {
+		const bool cursorDown = _engine->_input->toggleActionIfActive(TwinEActionType::UIDown);
+		const bool cursorUp = _engine->_input->toggleActionIfActive(TwinEActionType::UIUp);
+		const bool cursorLeft = _engine->_input->toggleActionIfActive(TwinEActionType::UILeft);
+		const bool cursorRight = _engine->_input->toggleActionIfActive(TwinEActionType::UIRight);
+		if (cursorDown) {
 			inventorySelectedItem++;
 			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
 				inventorySelectedItem = 0;
 			}
 			drawItem(prevSelectedItem);
 			bx = 3;
-		}
-
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIUp)) {
+		} else if (cursorUp) {
 			inventorySelectedItem--;
 			if (inventorySelectedItem < 0) {
 				inventorySelectedItem = NUM_INVENTORY_ITEMS - 1;
@@ -1050,16 +1052,14 @@ void Menu::processInventoryMenu() {
 			bx = 3;
 		}
 
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
+		if (cursorLeft) {
 			inventorySelectedItem -= 4;
 			if (inventorySelectedItem < 0) {
 				inventorySelectedItem += NUM_INVENTORY_ITEMS;
 			}
 			drawItem(prevSelectedItem);
 			bx = 3;
-		}
-
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+		} else if (cursorRight) {
 			inventorySelectedItem += 4;
 			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
 				inventorySelectedItem -= NUM_INVENTORY_ITEMS;
@@ -1088,7 +1088,7 @@ void Menu::processInventoryMenu() {
 			_engine->_system->delayMillis(15);
 		}
 
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIUp)) {
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
 			if (bx == 2) {
 				_engine->_text->initInventoryDialogueBox();
 				bx = 0;
@@ -1102,7 +1102,7 @@ void Menu::processInventoryMenu() {
 
 		drawItem(inventorySelectedItem);
 
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIDown) && _engine->_gameState->gameFlags[inventorySelectedItem] == 1 && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && inventorySelectedItem < NUM_INVENTORY_ITEMS) {
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter) && _engine->_gameState->gameFlags[inventorySelectedItem] == 1 && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && inventorySelectedItem < NUM_INVENTORY_ITEMS) {
 			_engine->loopInventoryItem = inventorySelectedItem;
 			inventorySelectedColor = 91;
 			drawItem(inventorySelectedItem);
