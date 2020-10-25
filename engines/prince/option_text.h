@@ -92,7 +92,7 @@ const char *invOptionsTextRU[] = {
 };
 
 const char *optionsTextRU[] = {
-	"Gjlevfnm",
+	"Gjljqnb",
 	"Jcvjnhtnm",
 	"Dpznm ",
 	"Bcgjkmp.",
