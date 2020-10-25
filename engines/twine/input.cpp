@@ -133,7 +133,10 @@ void Input::enabledKeyMap(const char *id) {
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	const Common::KeymapArray &keymaps = keymapper->getKeymaps();
 	for (Common::Keymap *keymap : keymaps) {
-		keymap->setEnabled(keymap->getId() == id);
+		const Common::String& keymapId = keymap->getId();
+		if (keymapId == mainKeyMapId || keymapId == uiKeyMapId || keymapId == cutsceneKeyMapId) {
+			keymap->setEnabled(keymapId == id);
+		}
 	}
 	_currentKeyMap = id;
 	debug("enable keymap %s", id);
