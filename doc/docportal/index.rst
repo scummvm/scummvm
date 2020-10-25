@@ -35,7 +35,16 @@
       :hidden:
 
       settings/how_to
-      settings/*
+      settings/game
+      settings/engine
+      settings/graphics
+      settings/keymaps
+      settings/audio
+      settings/paths
+      settings/misc
+      settings/cloud
+      settings/lan
+      settings/accessibility
 
 .. toctree::
       :caption: Games
@@ -74,45 +83,46 @@ While ScummVM was originally designed to run LucasArts' SCUMM games, over time s
 
 First steps
 ================
-We have guides available to show you how to get your games up and running with ScummVM on many different platforms:
+We have guides available to show you how to get ScummVM up and running: 
 
-- **Computers**: :doc:`getting_started/mac_linux_windows`
+- :doc:`getting_started/mac_linux_windows`
 - **Phones and Tablets**: :doc:`getting_started/ios` | :doc:`getting_started/android`
-- **Other Platforms:** 
+
 
 
 How do I...?
 =============
 
-If you have ScummVM installed, but you have questions about how to use it, our **Using ScummVM** section has lots of useful information to help you out:
+So you have ScummVM installed, but now you need to know how to add and play some games! We have lots of useful information to help you out:
 
 - **Understanding the interface**: :doc:`using_scummvm/the_launcher` 
-- **Playing games**: :doc:`using_scummvm/adding_games` | :doc:`using_scummvm/save_load_games` 
-- **Changing settings**: :doc:`using_scummvm/global_settings` | :doc:`using_scummvm/game_settings` | :doc:`advanced_options/configuration_file`
-- **In-game shortcuts**: :doc:`using_scummvm/keyboard_shortcuts`
+- **Playing games**: :doc:`using_scummvm/adding_games` | :doc:`using_scummvm/save_load_games` | :doc:`using_scummvm/keyboard_shortcuts`
+- **Settings**: :doc:`settings/how_to` 
+ 
+The games!
+============
+
+One of the most commonly asked questions we get is, "Where do I get the games??". If you still have your old floppy discs and CDs lying around (and have a way to read them!), then you can use the game files from these original discs. 
+
+If you haven't had a floppy disc or even a CD in your possession for a while, there are a few freeware games available for download `on our website <scummvm.org/downloads>`_, or there are digital distributors such as `GOG.com <gog.com>`_ and `Steam <https://store.steampowered.com/>`_. See the compatibility list on our `website <https://www.scummvm.org/compatibility/>`_ and the Supported Games section on our `wiki <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ before you buy a game, to ensure it can run with ScummVM. 
 
 
-Advanced features
+Advanced options
 ============================
 
-For our more experienced users, ScummVM has many cool advanced options.
-But don't worry, even if you're a beginner, our documentation will take you through how to optimize your game playing experience.
+For our more experienced users, ScummVM has a command line interface, as well as the ability to edit settings directly in a configuration file. 
 
--  **Advanced settings**: :doc:`advanced_options/graphics` | :doc:`advanced_options/audio`
--  **The command line interface**: :doc:`advanced_options/command_line`
+:doc:`advanced_options/configuration_file` | :doc:`advanced_options/command_line`
 
 
 Getting help
 =============
 
-ScummVM is still under development. While we do our best to make sure that as many games as possible can be completed with no major bugs, crashes can happen and we offer no warranty.
+ScummVM is still under development. While we do our best to make sure that as many games as possible can be completed with no major bugs, crashes can happen!
 
 If you are having problems with any aspect of ScummVM, take a look at our help section.
 
-- **Games**: `Compatibility <https://www.scummvm.org/compatibility/>`__
-- **Frequently Asked Questions**: `FAQ <#>`__
-- **Bugs**: `Known problems <#>`__ | `Reporting a Bug <#>`__
-- **How to contact us**: `Contact page <#>`__
+:doc:`help/faq` | :doc:`How to report a bug <help/reporting_bugs>` | :doc:`help/contact`
 
 
 The ScummVM Project
