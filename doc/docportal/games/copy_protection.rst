@@ -10,7 +10,7 @@ In some cases ScummVM still shows the copy protection screen. Try entering any a
 ScummVM skips copy protection in the following games:
 
 - Beneath a Steel Sky. Bypassed with kind permission from Revolution Software.
-- Dreamweb. A list of available commands in the in-game terminals is now shown when the player uses the help command.
+- Dreamweb. 
 - Inherit the Earth: Quest for the Orb (Floppy version). Bypassed with kind permission from Wyrmkeep Entertainment, since it was bypassed in all CD releases of the game.
 - Loom (EGA DOS)
 - Lure of the Temptress
