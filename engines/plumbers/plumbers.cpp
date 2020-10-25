@@ -659,8 +659,25 @@ void PlumbersGame::onTimer(void *arg) {
 }
 
 void PlumbersGame::initTables() {
-	memset(_scenes, 0, sizeof(_scenes));
-	memset(_bitmaps, 0, sizeof(_bitmaps));
+	for (uint i = 0; i < ARRAYSIZE(_scenes); i++) {
+		_scenes[i]._bitmapNum = 0;
+		_scenes[i]._startBitmap = 0;
+		_scenes[i]._decisionChoices = 0;
+		_scenes[i]._sceneName = "";
+		_scenes[i]._waveFilename = "";
+		_scenes[i]._decisionBitmap = "";
+		_scenes[i]._style = Scene::STYLE_PC;
+		for (uint j = 0; j < ARRAYSIZE(_scenes[i]._choices); j++) {
+			_scenes[i]._choices[j]._points = 0;
+			_scenes[i]._choices[j]._skipScene = 0;
+			_scenes[i]._choices[j]._region = Common::Rect(0, 0, 0, 0);
+			_scenes[i]._choices[j]._sceneName = "";
+		}
+	}
+	for (uint i = 0; i < ARRAYSIZE(_bitmaps); i++) {
+		_bitmaps[i]._duration = 0;
+		_bitmaps[i]._filename = "";
+	}
 }
 
 void PlumbersGame::readTablesPC(const Common::String &fileName) {
