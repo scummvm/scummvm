@@ -455,6 +455,9 @@ void Text::processTextLine() {
 	}
 
 	if (*printText8Var8 != '\0' && var4 == 1) {
+		if (printText8PrepareBufferVar2 == 0) {
+			printText8PrepareBufferVar2 = 1;
+		}
 		dialCharSpace += (dialTextBoxParam2 - addLineBreakX) / printText8PrepareBufferVar2;
 		printText10Var1 = dialTextBoxParam2 - addLineBreakX - dialTextBoxParam2 - addLineBreakX; // stupid... recheck
 	}
