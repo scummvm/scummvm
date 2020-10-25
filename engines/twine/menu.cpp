@@ -454,7 +454,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 	const int32 numEntry = menuSettings[MenuSettings_NumberOfButtons];
 	int32 maxButton = numEntry - 1;
 
-	_engine->_input->enabledKeyMap(uiKeyMapId);
+	_engine->_input->enableKeyMap(uiKeyMapId);
 
 	_engine->_screens->loadMenuImage(false);
 	do {

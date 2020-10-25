@@ -174,7 +174,7 @@ public:
 	 * @brief Dependent on the context we are currently in the game, we might want to disable certain keymaps.
 	 * Like disabling ui keymaps when we are in-game - or vice versa.
 	 */
-	void enabledKeyMap(const char *id);
+	void enableKeyMap(const char *id);
 
 	const Common::String currentKeyMap() const;
 

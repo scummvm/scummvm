@@ -83,11 +83,11 @@ ScopedKeyMapperDisable::~ScopedKeyMapperDisable() {
 
 ScopedKeyMap::ScopedKeyMap(TwinEEngine* engine, const char *id) : _engine(engine) {
 	_prevKeyMap = _engine->_input->currentKeyMap();
-	_engine->_input->enabledKeyMap(cutsceneKeyMapId);
+	_engine->_input->enableKeyMap(cutsceneKeyMapId);
 }
 
 ScopedKeyMap::~ScopedKeyMap() {
-	_engine->_input->enabledKeyMap(_prevKeyMap.c_str());
+	_engine->_input->enableKeyMap(_prevKeyMap.c_str());
 }
 
 Input::Input(TwinEEngine *engine) : _engine(engine) {}
@@ -122,7 +122,7 @@ bool Input::isQuickBehaviourActionActive() const {
 	return isActionActive(TwinEActionType::QuickBehaviourNormal) || isActionActive(TwinEActionType::QuickBehaviourAthletic) || isActionActive(TwinEActionType::QuickBehaviourAggressive) || isActionActive(TwinEActionType::QuickBehaviourDiscreet);
 }
 
-void Input::enabledKeyMap(const char *id) {
+void Input::enableKeyMap(const char *id) {
 	if (_currentKeyMap == id) {
 		return;
 	}

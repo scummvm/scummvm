@@ -253,7 +253,7 @@ void TwinEEngine::initEngine() {
 	_music->initCdrom();
 
 #if TWINE_PLAY_INTROS
-	_input->enabledKeyMap(cutsceneKeyMapId);
+	_input->enableKeyMap(cutsceneKeyMapId);
 	// Display company logo
 	_screens->adelineLogo();
 
@@ -275,7 +275,7 @@ void TwinEEngine::initEngine() {
 
 	_flaMovies->playFlaMovie(FLA_DRAGON3);
 #else
-	_input->enabledKeyMap(uiKeyMapId);
+	_input->enableKeyMap(uiKeyMapId);
 #endif
 
 	_screens->loadMenuImage();
@@ -335,7 +335,7 @@ void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
 }
 
 int32 TwinEEngine::runGameEngine() { // mainLoopInteration
-	_input->enabledKeyMap(mainKeyMapId);
+	_input->enableKeyMap(mainKeyMapId);
 
 	readKeys();
 
