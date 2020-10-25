@@ -3164,6 +3164,10 @@ EOF
 		;;
 	psp)
 		_optimization_level=-O2
+		_freetypepath="$PSPDEV/psp/bin"
+		if test -z "$PKG_CONFIG_LIBDIR"; then
+			export PKG_CONFIG_LIBDIR="$PSPDEV/psp/lib/pkgconfig"
+		fi
 		append_var CXXFLAGS "-I$PSPSDK/include"
 		# FIXME: Why is the following in CXXFLAGS and not in DEFINES? Change or document this.
 		append_var CXXFLAGS "-D_PSP_FW_VERSION=150"
