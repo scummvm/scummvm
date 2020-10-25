@@ -29,7 +29,7 @@
 
 #ifdef USE_GLEW
 #include <GL/glew.h>
-#elif defined (NINTENDO_SWITCH)
+#elif defined (SDL_BACKEND) && !defined(__amigaos4__)
 #include <SDL_opengl.h>
 #undef ARRAYSIZE
 #else
