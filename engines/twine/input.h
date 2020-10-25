@@ -161,7 +161,6 @@ private:
 	Common::String _currentKeyMap;
 
 	uint8 actionStates[TwinEActionType::Max]{false};
-	int16 internalKeyCode = 0;
 	int16 currentKey = 0;
 public:
 	Input(TwinEEngine *engine);

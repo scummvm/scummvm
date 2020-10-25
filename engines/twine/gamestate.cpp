@@ -422,15 +422,6 @@ void GameState::processFoundItem(int32 item) {
 
 	initEngineProjections();
 	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
-
-	/*do {
-		_engine->readKeys();
-		if (_engine->shouldQuit()) {
-			break;
-		}
-		delaySkip(1);
-	} while (!_engine->_input->internalKeyCode);*/
-
 	_engine->_text->stopVox(_engine->_text->currDialTextEntry);
 
 	_engine->_scene->sceneHero->animTimerData = tmpAnimTimer;

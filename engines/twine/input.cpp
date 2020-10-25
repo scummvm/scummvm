@@ -144,7 +144,6 @@ void Input::enableKeyMap(const char *id) {
 
 void Input::readKeys() {
 	skippedKey = 0;
-	internalKeyCode = 0;
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -207,7 +206,6 @@ void Input::readKeys() {
 				break;
 			}
 		}
-		internalKeyCode = localKey;
 	}
 }
 
