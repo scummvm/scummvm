@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: 2020-09-26 21:13+0000\n"
+"PO-Revision-Date: 2020-10-25 14:59+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/sv/>\n"
@@ -295,20 +295,17 @@ msgid "Shader"
 msgstr "Shader"
 
 #: gui/editgamedialog.cpp:223
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "Överskrid globala ljudinställningar"
+msgstr "Åsidosätt globala shaderinställningar"
 
 #: gui/editgamedialog.cpp:225
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Överskrid globala ljudinställningar"
+msgstr "Åsidosätt globala shaderinställningar"
 
 #: gui/editgamedialog.cpp:239 gui/options.cpp:1814 engines/dialogs.cpp:326
-#, fuzzy
 msgid "Keymaps"
-msgstr "Tangenter:"
+msgstr "Tangentuppsättningar"
 
 #: gui/editgamedialog.cpp:246 gui/options.cpp:1821 engines/dialogs.cpp:301
 msgid "Audio"
@@ -316,7 +313,7 @@ msgstr "Ljud"
 
 #: gui/editgamedialog.cpp:249
 msgid "Override global audio settings"
-msgstr "Överskrid globala ljudinställningar"
+msgstr "Åsidosätt globala ljudinställningar"
 
 #: gui/editgamedialog.cpp:251
 msgctxt "lowres"
@@ -334,12 +331,12 @@ msgstr "Volym"
 
 #: gui/editgamedialog.cpp:265
 msgid "Override global volume settings"
-msgstr "Överskrid globala volyminställningar"
+msgstr "Åsidosätt globala volyminställningar"
 
 #: gui/editgamedialog.cpp:267
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "Överskrid globala volyminställningar"
+msgstr "Åsidosätt globala volyminställningar"
 
 #: gui/editgamedialog.cpp:278 gui/options.cpp:1836
 msgid "MIDI"
@@ -347,12 +344,12 @@ msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:281
 msgid "Override global MIDI settings"
-msgstr "Överskrid globala MIDI-inställningar"
+msgstr "Åsidosätt globala MIDI-inställningar"
 
 #: gui/editgamedialog.cpp:283
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "Överskrid globala MIDI-inställningar"
+msgstr "Åsidosätt globala MIDI-inställningar"
 
 #: gui/editgamedialog.cpp:293 gui/options.cpp:1842
 msgid "MT-32"
@@ -360,12 +357,12 @@ msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:296
 msgid "Override global MT-32 settings"
-msgstr "Överskrid globala MT-32 inställningar"
+msgstr "Överskrid globala MT-32-inställningar"
 
 #: gui/editgamedialog.cpp:298
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr "Överskrid globala MT-32 inställningar"
+msgstr "Överskrid globala MT-32-inställningar"
 
 #: gui/editgamedialog.cpp:307 gui/options.cpp:1849
 msgid "Paths"
@@ -378,36 +375,36 @@ msgstr "Sökvägar"
 
 #: gui/editgamedialog.cpp:316
 msgid "Game Path:"
-msgstr "Sökv. spel:"
+msgstr "Spelsökväg:"
 
 #: gui/editgamedialog.cpp:318
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr "Sökv. spel:"
+msgstr "Spelsökväg:"
 
 #: gui/editgamedialog.cpp:323 gui/options.cpp:2027
 msgid "Extra Path:"
-msgstr "Sökv. extra:"
+msgstr "Extrasökväg:"
 
 #: gui/editgamedialog.cpp:323 gui/editgamedialog.cpp:325
 #: gui/editgamedialog.cpp:326
 msgid "Specifies path to additional data used by the game"
-msgstr "Bestämmer sökvägen till ytterligare data som spelet använder"
+msgstr "Anger sökvägen till ytterligare data som spelet använder"
 
 #: gui/editgamedialog.cpp:325 gui/options.cpp:2029
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr "Sökv. extra:"
+msgstr "Extrasökväg:"
 
 #: gui/editgamedialog.cpp:332 gui/options.cpp:2011
 msgid "Save Path:"
-msgstr "Sökv. sparat:"
+msgstr "Sparsökväg:"
 
 #: gui/editgamedialog.cpp:332 gui/editgamedialog.cpp:334
 #: gui/editgamedialog.cpp:335 gui/options.cpp:2011 gui/options.cpp:2013
 #: gui/options.cpp:2014
 msgid "Specifies where your saved games are put"
-msgstr "Bestämmer var dina spardata lagras"
+msgstr "Anger var dina sparade spel lagras"
 
 #: gui/editgamedialog.cpp:334 gui/options.cpp:2013
 msgctxt "lowres"
@@ -416,7 +413,7 @@ msgstr "Sökv. sparat:"
 
 #: gui/editgamedialog.cpp:346 engines/dialogs.cpp:335
 msgid "Achievements"
-msgstr ""
+msgstr "Achievements"
 
 #: gui/editgamedialog.cpp:370 gui/editgamedialog.cpp:465
 #: gui/editgamedialog.cpp:527 gui/editgamedialog.cpp:588 gui/options.cpp:1936
@@ -583,9 +580,8 @@ msgstr "GUI"
 
 #: gui/gui-manager.cpp:126 engines/mohawk/myst.cpp:570
 #: engines/mohawk/riven.cpp:840
-#, fuzzy
 msgid "Interact"
-msgstr "Interpolering:"
+msgstr "Använd"
 
 #: gui/gui-manager.cpp:131 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
@@ -952,12 +948,12 @@ msgstr "Dödzon för joystick:"
 #: gui/options.cpp:1218
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "%d dolda achievements återstår"
 
 #: gui/options.cpp:1223
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Achievements upplåsta: 1%d/2%d"
 
 #: gui/options.cpp:1242
 msgid "HW Shader:"
@@ -998,21 +994,19 @@ msgstr "Fullskärmsläge"
 
 #: gui/options.cpp:1305
 msgid "V-Sync in 3D Games"
-msgstr ""
+msgstr "V-Sync i 3D-spel"
 
 #: gui/options.cpp:1305
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
-msgstr ""
+msgstr "Uppdatera inte skärmen innan bildrutan är färdigritad"
 
 #: gui/options.cpp:1307
-#, fuzzy
 msgid "Game 3D Renderer:"
-msgstr "GUI-rendering:"
+msgstr "3D-rendering för spel:"
 
 #: gui/options.cpp:1316
-#, fuzzy
 msgid "3D Anti-aliasing:"
-msgstr "Antialiserad"
+msgstr "Kantutjämning i 3D"
 
 #: gui/options.cpp:1320 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
@@ -1259,16 +1253,16 @@ msgstr "LAN"
 #: gui/options.cpp:1890
 msgctxt "lowres"
 msgid "LAN"
-msgstr ""
+msgstr "lokalt nätverk"
 
 #: gui/options.cpp:1898
 msgid "Accessibility"
-msgstr ""
+msgstr "Hjälpmedel"
 
 #: gui/options.cpp:1900
 msgctxt "lowres"
 msgid "Accessibility"
-msgstr ""
+msgstr "Hjälpmedel"
 
 #: gui/options.cpp:1910
 msgid "Apply"
@@ -1332,7 +1326,7 @@ msgstr "Språk för ScummVM:s användargränssnitt"
 
 #: gui/options.cpp:2106
 msgid "Switch the ScummVM GUI language to the game language"
-msgstr ""
+msgstr "Ändra ScummVMs gränssnittsspråk till spelets språk"
 
 #: gui/options.cpp:2107
 msgid ""
@@ -1343,7 +1337,7 @@ msgstr ""
 
 #: gui/options.cpp:2120
 msgid "Use native system file browser"
-msgstr ""
+msgstr "Använd systemets egen filhanterare"
 
 #: gui/options.cpp:2121
 msgid ""
