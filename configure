@@ -1838,6 +1838,7 @@ psp)
 	_host_os=psp
 	_host_cpu=mipsallegrexel
 	_host_alias=psp
+	append_var CXXFLAGS "-G0"
 	;;
 samsungtv)
 	_host_os=linux
