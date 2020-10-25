@@ -376,9 +376,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		_scene->changeScene();
 	}
 
-	previousLoopPressedKey = loopPressedKey;
-	_input->key = _input->pressedKey;
-	loopPressedKey = _input->skippedKey;
+	_movements->update();
 
 	_debug->processDebug();
 

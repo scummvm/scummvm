@@ -258,6 +258,12 @@ void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMove
 	movePtr->timeOfChange = _engine->lbaTime;
 }
 
+void Movements::update() {
+	previousLoopCursorKeys = loopCursorKeys;
+	heroActionKey = _engine->_input->pressedKey;
+	loopCursorKeys = _engine->_input->cursorKeys;
+}
+
 void Movements::processActorMovements(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->entity == -1) {
@@ -278,7 +284,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 
 		moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
 
-		heroPressedKey = _engine->_input->key;
+		heroPressedKey = heroActionKey;
 	} else {
 		if (!actor->staticFlags.bIsSpriteActor) {
 			if (actor->controlMode != ControlMode::kManual) {
@@ -316,8 +322,8 @@ void Movements::processActorMovements(int32 actorIdx) {
 						if (_engine->_actor->autoAgressive) {
 							heroMoved = true;
 							actor->angle = getRealAngle(&actor->move);
-							// TODO: previousLoopPressedKey must be handled properly
-							if (!(_engine->previousLoopPressedKey & 1) || !actor->anim) {
+							// TODO: previousLoopCursorKeys must be handled properly
+							if (!(previousLoopCursorKeys & 1) || !actor->anim) {
 								int32 aggresiveMode = _engine->getRandomNumber(3);
 
 								switch (aggresiveMode) {
@@ -377,14 +383,14 @@ void Movements::processActorMovements(int32 actorIdx) {
 				}
 			}
 
-			// TODO: remove loopPressedKey here
-			if (!_engine->loopPressedKey || heroAction) {
+			// TODO: remove loopCursorKeys here
+			if (!loopCursorKeys || heroAction) {
 				// if continue walking
 				if (_engine->_input->isActionActive(TwinEActionType::MoveForward) || _engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 					heroMoved = false; // don't break animation
 				}
 
-				if (_engine->_input->key != heroPressedKey || _engine->loopPressedKey != heroPressedKey2) {
+				if (heroActionKey != heroPressedKey || loopCursorKeys != heroPressedKey2) {
 					if (heroMoved) {
 						_engine->_animations->initAnim(kStanding, 0, 255, actorIdx);
 					}
@@ -434,8 +440,8 @@ void Movements::processActorMovements(int32 actorIdx) {
 
 			moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
 
-			heroPressedKey = _engine->_input->key;
-			heroPressedKey2 = _engine->loopPressedKey;
+			heroPressedKey = heroActionKey;
+			heroPressedKey2 = loopCursorKeys;
 
 			break;
 		case kFollow: {

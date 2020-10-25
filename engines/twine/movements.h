@@ -34,11 +34,22 @@ class Movements {
 private:
 	TwinEEngine *_engine;
 
+	// enter, space, ...
 	int32 heroPressedKey = 0;
+	// cursor buttons
 	int32 heroPressedKey2 = 0;
+	// enter, space, ...
+	int16 heroActionKey = 0;
+	// enter, space, ...
+	int32 loopCursorKeys = 0;
+	// cursor keys
+	int32 previousLoopCursorKeys = 0;
 
 public:
 	Movements(TwinEEngine *engine);
+
+	void update();
+
 	/** Hero moved */
 	bool heroMoved = false; // twinsenMove
 	/** Hero Action */

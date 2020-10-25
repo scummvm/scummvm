@@ -110,8 +110,7 @@ private:
 public:
 	Input(TwinEEngine *engine);
 
-	int16 key = 0;
-	int16 skippedKey = 0;
+	int16 cursorKeys = 0;
 	int16 pressedKey = 0;
 	int16 leftMouse = 0;
 	int16 rightMouse = 0;

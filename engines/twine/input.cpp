@@ -37,41 +37,44 @@ const char *cutsceneKeyMapId = "cutsceneKeyMap";
 /** Pressed key char map - scanCodeTab2 */
 static const struct KeyProperties {
 	uint8 high;
-	bool pressed;
+	bool cursor;
 	uint8 key;
 } pressedKeyCharMap[] = {
-    {0x01, false, 0x48}, // up
-    {0x02, false, 0x50}, // down
-    {0x04, false, 0x4B}, // left
-    {0x08, false, 0x4D}, // right
-    {0x05, false, 0x47}, // home
-    {0x09, false, 0x49}, // pageup
-    {0x0A, false, 0x51}, // pagedown
-    {0x06, false, 0x4F}, // end
-    {0x01, true, 0x39},  // space bar
-    {0x02, true, 0x1C},  // enter
-    {0x04, true, 0x1D},  // ctrl
-    {0x08, true, 0x38},  // alt
-    {0x10, true, 0x53},  // del
-    {0x20, true, 0x2A},  // left shift
-    {0x20, true, 0x36},  // right shift
-    {0x01, true, 0x3B},  // F1
-    {0x02, true, 0x3C},  // F2
-    {0x04, true, 0x3D},  // F3
-    {0x08, true, 0x3E},  // F4
-    {0x10, true, 0x3F},  // F5
-    {0x20, true, 0x40},  // F6
-    {0x40, true, 0x41},  // F7
-    {0x80, true, 0x42},  // F8
-    {0x01, true, 0x43},  // F9
-    {0x02, true, 0x44},  // F10
-    {0x04, true, 0x57},  // ?
-    {0x08, true, 0x58},  // ?
-    {0x00, true, 0x2A},  // left shift
-    {0x00, true, 0x00},
-    {0x01, false, 0x01}, // esc
-    {0x00, false, 0x00}};
-static_assert(ARRAYSIZE(pressedKeyCharMap) == 31, "Expected size of key char map");
+    {0x01, true, 0x48}, // up
+    {0x02, true, 0x50}, // down
+    {0x04, true, 0x4B}, // left
+    {0x08, true, 0x4D}, // right
+	#if 0
+    {0x05, true, 0x47}, // home
+    {0x09, true, 0x49}, // pageup
+    {0x0A, true, 0x51}, // pagedown
+    {0x06, true, 0x4F}, // end
+	#endif
+    {0x01, false, 0x39},  // space bar
+    {0x02, false, 0x1C},  // enter
+    {0x04, false, 0x1D},  // ctrl
+    {0x08, false, 0x38},  // alt
+    {0x10, false, 0x53},  // del
+    {0x20, false, 0x2A},  // left shift
+    {0x20, false, 0x36},  // right shift
+	#if 0
+    {0x01, false, 0x3B},  // F1
+    {0x02, false, 0x3C},  // F2
+    {0x04, false, 0x3D},  // F3
+    {0x08, false, 0x3E},  // F4
+    {0x10, false, 0x3F},  // F5
+    {0x20, false, 0x40},  // F6
+    {0x40, false, 0x41},  // F7
+    {0x80, false, 0x42},  // F8
+    {0x01, false, 0x43},  // F9
+    {0x02, false, 0x44},  // F10
+    {0x04, false, 0x57},  // ?
+    {0x08, false, 0x58},  // ?
+    {0x00, false, 0x2A},  // left shift
+    {0x00, false, 0x00},
+	#endif
+    {0x01, true, 0x01}, // esc
+    {0x00, true, 0x00}};
 
 ScopedKeyMap::ScopedKeyMap(TwinEEngine* engine, const char *id) : _engine(engine) {
 	_prevKeyMap = _engine->_input->currentKeyMap();
@@ -196,7 +199,7 @@ uint8 Input::processCustomEngineEventEnd(const Common::Event &event) {
 }
 
 void Input::readKeys() {
-	skippedKey = 0;
+	cursorKeys = 0;
 
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
@@ -224,15 +227,14 @@ void Input::readKeys() {
 
 		for (int i = 0; i < ARRAYSIZE(pressedKeyCharMap); i++) {
 			if (pressedKeyCharMap[i].key == localKey) {
-				if (pressedKeyCharMap[i].pressed) {
+				if (pressedKeyCharMap[i].cursor) {
+					cursorKeys |= pressedKeyCharMap[i].high;
+				} else {
 					if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
 						pressedKey &= ~pressedKeyCharMap[i].high;
 					} else {
 						pressedKey |= pressedKeyCharMap[i].high;
 					}
-				} else {
-					// they are handled as loop keys
-					skippedKey |= pressedKeyCharMap[i].high;
 				}
 				break;
 			}
