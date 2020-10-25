@@ -31,15 +31,16 @@ Click on the correct package to start the download. Once it has downloaded, go t
 .. note:: 
 
     The downloaded APK package is treated as an app from an unknown source, since it doesn't originate in the Google Play store. If you are having any problems with the install, you will need to allow unknown apps. 
-        - For Android 7 or earlier, go to **Settings > Security > Device Administration**, scroll down to **Device Administration** and enable **Unknown Sources**.
-        - For Android 8 or later, go to **Settings > Apps and Notification** and select **Install Unknown Apps**. 
+
+    - For Android 7 or earlier, go to **Settings > Security > Device Administration**, scroll down to **Device Administration** and enable **Unknown Sources**.
+    - For Android 8 or later, go to **Settings > Apps and Notification** and select **Install Unknown Apps**. 
     
 Transferring game files to your device
 *****************************************
 
-You will need to transfer all the required game data files to your device, into a folder accessible by the ScummVM app. 
+You need to transfer all the required game data files to your device, into a folder accessible by the ScummVM app. 
 
-ScummVM has built-in Cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`cloud_and_lan` page. 
+ScummVM has built-in Cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../settings/cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../settings/lan` page. 
 
 There are a few other options for transferring the game files:
 

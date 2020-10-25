@@ -35,7 +35,7 @@ The first step is to download the repository containing the code we'll need to b
 
     .. code-block::
 
-        git checkout branch-2-1-1
+        git checkout branch-2-2-0
 
 If you haven't done so before now, open Xcode from the Applications folder, and accept the End User License Agreement. Starting Xcode for the first time will also install the command line tools we require for the next steps.
 
@@ -134,17 +134,19 @@ You will need to restart your device for the install to complete.
 
 Transferring game files to your device
 =======================================
+
 There are multiple ways to transfer game files to your iOS device. 
 
-ScummVM has built-in Cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`cloud_and_lan` page. 
+ScummVM has built-in Cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../settings/cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../settings/lan` page. 
 
 .. note:
+
  ScummVM's Cloud functionality does not currently support iCloud, however it is possible to upload game folders to your iCloud and then use the Files app on your iOS device to copy these folders into the local ScummVM folder.
 
 Another way to transfer files to your device is by using the Finder while your device is connected to your Mac. In the Finder app on your Mac, navigate to **Locations** in the left pane, and click on the connected device. Click on **Files**, then drag and drop the folder containing the game files into the **ScummVM** folder. 
 
 .. image:: ../images/ios/ios_transfer_files.gif
-   :class: with-shadow
+   
 
 For more information on which files ScummVM requires, and how to add and play games, see `adding and playing games <adding_games>`_.
 
