@@ -23,6 +23,7 @@
 #include "common/savefile.h"
 #include "common/stream.h"
 #include "common/memstream.h"
+#include "common/unicode-bidi.h"
 
 #include "sci/sci.h"
 #include "sci/engine/file.h"
@@ -333,9 +334,15 @@ bool fillSavegameDesc(const Common::String &filename, SavegameDesc &desc) {
 	if (meta.name.lastChar() == '\n')
 		meta.name.deleteLastChar();
 
+	Common::String nameString = meta.name;
+	if (g_sci->getLanguage() == Common::HE_ISR) {
+		Common::U32String nameU32String = meta.name.decode(Common::kUtf8);
+		nameString = nameU32String.encode(Common::kWindows1255);
+	}
+	
 	// At least Phant2 requires use of strncpy, since it creates save game
 	// names of exactly kMaxSaveNameLength
-	strncpy(desc.name, meta.name.c_str(), kMaxSaveNameLength);
+	strncpy(desc.name, nameString.c_str(), kMaxSaveNameLength);
 
 	return true;
 }

@@ -30,6 +30,7 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/memstream.h"
+#include "common/str-enc.h"
 
 #include "gui/saveload.h"
 
@@ -1087,6 +1088,11 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		if (argv[2].isNull())
 			error("kSaveGame: called with description being NULL");
 		game_description = s->_segMan->getString(argv[2]);
+		if (g_sci->getLanguage() == Common::HE_ISR) {
+			Common::U32String u32string = game_description.decode(Common::kWindows1255);
+			game_description = u32string.encode(Common::kUtf8);
+		};
+
 
 		debug(3, "kSaveGame(%s,%d,%s,%s)", game_id.c_str(), virtualId, game_description.c_str(), version.c_str());
 
