@@ -716,6 +716,18 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 			_overrideFreq = 0;
 		}
 
+		Common::File musicFileOverride;
+		Common::String mfoBuf(Common::String::format("music%d.wav", soundID));
+
+		if (musicFileOverride.exists(mfoBuf) && musicFileOverride.open(mfoBuf)) {
+			musicFileOverride.seek(0, SEEK_SET);
+			Common::SeekableReadStream *oStr =
+			    musicFileOverride.readStream(musicFileOverride.size());
+			musicFileOverride.close();
+
+			stream = Audio::makeWAVStream(oStr, DisposeAfterUse::YES);
+		}
+
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
 		_heChannel[heChannel].priority = priority;
@@ -733,7 +745,9 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
 
-		stream = Audio::makeRawStream(ptr + heOffset + 8, size, rate, flags, DisposeAfterUse::NO);
+		if (!stream) {
+			stream = Audio::makeRawStream(ptr + heOffset + 8, size, rate, flags, DisposeAfterUse::NO);
+		}
 		_mixer->playStream(type, &_heSoundChannels[heChannel],
 						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
 	}
