@@ -60,47 +60,21 @@ static const uint16 kMainMenuButtonWidth = 320;
 /** Used to calculate the spanning between button and screen */
 static const uint16 kMainMenuButtonSpan = 550;
 
-/** Main menu types */
-enum MainMenuType {
-	kNewGame = 20,
-	kContinueGame = 21,
-	kOptions = 23,
-	kQuit = 22,
-	kBackground = 9999
-};
-
-/** Give up menu types */
-enum GiveUpMenuType {
-	kContinue = 28,
-	kGiveUp = 27 // quit
-};
-
-/** Options menu types */
-enum OptionsMenuType {
-	kReturnGame = 15,
-	kReturnMenu = 26,
-	kVolume = 30,
-	kSaveManage = 46,
-	kAdvanced = 47
-};
-
-/** Volume menu types */
-enum VolumeMenuType {
+namespace MenuButtonTypes {
+enum _MenuButtonTypes {
 	kMusicVolume = 1,
 	kSoundVolume = 2,
 	kCDVolume = 3,
 	kLineVolume = 4,
-	kMasterVolume = 5
+	kMasterVolume = 5,
+	kAgressiveMode = 6,
+	kPolygonDetails = 7,
+	kShadowSettings = 8,
+	kSceneryZoom = 9
 };
+}
 
-enum AdvOptionsMenuType {
-	kAgressiveMode = 0,
-	kPolygonDetails = 6,
-	kShadowSettings = 7,
-	kSceneryZoom = 8
-};
-
-#define kQuitEngine -1
+#define kBackground 9999
 
 namespace _priv {
 /** Main Menu Settings
@@ -112,13 +86,13 @@ static const int16 MainMenuSettings[] = {
     200, // Buttons box height ( is used to calc the height where the first button will appear )
     0,   // unused
     0,
-    kNewGame, // new game
+    TextId::kNewGame, // new game
     0,
-    kContinueGame, // continue game
+    TextId::kContinueGame, // continue game
     0,
-    kOptions, // options
+    TextId::kOptions, // options
     0,
-    kQuit, // quit
+    TextId::kQuit, // quit
 };
 
 /** Give Up Menu Settings
@@ -130,9 +104,9 @@ static const int16 GiveUpMenuSettings[] = {
     240, // Buttons box height ( is used to calc the height where the first button will appear )
     0,   // unused
     0,
-    28, // continue game
+    TextId::kContinue, // continue game
     0,
-    27, // quit game
+    TextId::kGiveUp, // quit game
 };
 
 /** Give Up Menu Settings
@@ -144,11 +118,11 @@ static const int16 GiveUpMenuWithSaveSettings[] = {
     240, // Buttons box height ( is used to calc the height where the first button will appear )
     0,   // unused
     0,
-    28, // continue game
+    TextId::kContinue, // continue game
     0,
-    16, // save game
+    TextId::kCreateSaveGame, // save game
     0,
-    27, // quit game
+    TextId::kGiveUp, // quit game
 };
 
 /** Options Menu Settings
@@ -160,13 +134,13 @@ static const int16 OptionsMenuSettings[] = {
     0, // Buttons box height ( is used to calc the height where the first button will appear )
     0, // unused
     0,
-    24, // return to previous menu
+    TextId::kReturnMenu, // return to previous menu
     0,
-    kVolume, // volume settings
+    TextId::kVolumeSettings, // volume settings
     0,
-    kSaveManage, // save game management
+    TextId::kSaveManage, // save game management
     0,
-    kAdvanced, // advanced options
+    TextId::kAdvanced, // advanced options
 };
 
 /** Advanced Options Menu Settings
@@ -178,15 +152,15 @@ static const int16 AdvOptionsMenuSettings[] = {
     0, // Buttons box height ( is used to calc the height where the first button will appear )
     0, // unused
     0,
-    26, // return to main menu
-    kAgressiveMode,
-    4, // aggressive mode (manual|auto)
-    kPolygonDetails,
-    31, // Polygon detail (full|medium|low)
-    kShadowSettings,
-    32, // Shadows (all|character|no)
-    kSceneryZoom,
-    33, // scenary zoon (on|off)
+    TextId::kReturnMenu, // return to main menu
+    MenuButtonTypes::kAgressiveMode,
+    TextId::kBehaviourAgressiveManual, // aggressive mode (manual|auto)
+    MenuButtonTypes::kPolygonDetails,
+    TextId::kDetailsPolygonsHigh, // Polygon detail (full|medium|low)
+    MenuButtonTypes::kShadowSettings,
+    TextId::kDetailsShadowHigh, // Shadows (all|character|no)
+    MenuButtonTypes::kSceneryZoom,
+    TextId::kScenaryZoomOn, // scenary zoon (on|off)
 };
 
 /** Save Game Management Menu Settings
@@ -198,11 +172,11 @@ static const int16 SaveManageMenuSettings[] = {
     0, // Buttons box height ( is used to calc the height where the first button will appear )
     0, // unused
     0,
-    26, // return to main menu
+    TextId::kReturnMenu, // return to main menu
     0,
-    41, // copy saved game
+    TextId::kCreateSaveGame, // copy saved game
     0,
-    45, // delete saved game
+    TextId::kDeleteSaveGame, // delete saved game
 };
 
 /** Volume Menu Settings
@@ -214,19 +188,19 @@ static const int16 VolumeMenuSettings[] = {
     0, // Buttons box height ( is used to calc the height where the first button will appear )
     0, // unused
     0,
-    26, // return to main menu
-    kMusicVolume,
-    10, // music volume
-    kSoundVolume,
-    11, // sfx volume
-    kCDVolume,
-    12, // cd volume
-    kLineVolume,
-    13, // line-in volume
-    kMasterVolume,
-    14, // master volume
+    TextId::kReturnMenu, // return to main menu
+    MenuButtonTypes::kMusicVolume,
+    TextId::kMusicVolume, // music volume
+    MenuButtonTypes::kSoundVolume,
+    TextId::kSoundVolume, // sfx volume
+    MenuButtonTypes::kCDVolume,
+    TextId::kCDVolume, // cd volume
+    MenuButtonTypes::kLineVolume,
+    TextId::kLineInVolume, // line-in volume
+    MenuButtonTypes::kMasterVolume,
+    TextId::kMasterVolume, // master volume
     0,
-    16, // save parameters
+    TextId::kSaveSettings, // save parameters
 };
 } // namespace _priv
 
@@ -341,30 +315,30 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 	const int32 bottom = topheight + 25;
 
 	if (hover) {
-		if (buttonId <= kMasterVolume && buttonId >= kMusicVolume) {
+		if (buttonId <= MenuButtonTypes::kMasterVolume && buttonId >= MenuButtonTypes::kMusicVolume) {
 			int32 newWidth = 0;
 			switch (buttonId) {
-			case kMusicVolume: {
+			case MenuButtonTypes::kMusicVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
 				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
-			case kSoundVolume: {
+			case MenuButtonTypes::kSoundVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
 				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
-			case kCDVolume: {
+			case MenuButtonTypes::kCDVolume: {
 				const AudioCDManager::Status status = _engine->_system->getAudioCDManager()->getStatus();
 				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, status.volume);
 				break;
 			}
-			case kLineVolume: {
+			case MenuButtonTypes::kLineVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
 				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
-			case kMasterVolume: {
+			case MenuButtonTypes::kMasterVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
 				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
@@ -472,18 +446,18 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		int16 *textId = menuStatePtr + 1; // to store the changed values
 		if (menuSettings == AdvOptionsMenuState) {
 			switch (id) {
-			case kAgressiveMode:
+			case MenuButtonTypes::kAgressiveMode:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
 					if (_engine->_actor->autoAgressive) {
 						_engine->_actor->autoAgressive = false;
-						*textId = 2;
+						*textId = TextId::kBehaviourAgressiveManual;
 					} else {
 						_engine->_actor->autoAgressive = true;
-						*textId = 4;
+						*textId = TextId::kBehaviourAgressiveAuto;
 					}
 				}
 				break;
-			case kPolygonDetails:
+			case MenuButtonTypes::kPolygonDetails:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 					_engine->cfgfile.PolygonDetails--;
 				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
@@ -491,14 +465,14 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				}
 				_engine->cfgfile.PolygonDetails %= 3;
 				if (_engine->cfgfile.PolygonDetails == 0) {
-					*textId = 231;
+					*textId = TextId::kDetailsPolygonsLow;
 				} else if (_engine->cfgfile.PolygonDetails == 1) {
-					*textId = 131;
+					*textId = TextId::kDetailsPolygonsMiddle;
 				} else {
-					*textId = 31;
+					*textId = TextId::kDetailsPolygonsHigh;
 				}
 				break;
-			case kShadowSettings:
+			case MenuButtonTypes::kShadowSettings:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 					_engine->cfgfile.ShadowMode--;
 				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
@@ -506,21 +480,21 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				}
 				_engine->cfgfile.ShadowMode %= 3;
 				if (_engine->cfgfile.ShadowMode == 0) {
-					*textId = 232;
+					*textId = TextId::kShadowsDisabled;
 				} else if (_engine->cfgfile.ShadowMode == 1) {
-					*textId = 132;
+					*textId = TextId::kShadowsFigures;
 				} else {
-					*textId = 32;
+					*textId = TextId::kDetailsShadowHigh;
 				}
 				break;
-			case kSceneryZoom:
+			case MenuButtonTypes::kSceneryZoom:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
 					if (_engine->cfgfile.SceZoom) {
 						_engine->cfgfile.SceZoom = false;
-						*textId = 233;
+						*textId = TextId::kNoScenaryZoom;
 					} else {
 						_engine->cfgfile.SceZoom = true;
-						*textId = 133;
+						*textId = TextId::kScenaryZoomOn;
 					}
 				}
 				break;
@@ -530,7 +504,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		} else if (menuSettings == VolumeMenuState) {
 			Audio::Mixer *mixer = _engine->_system->getMixer();
 			switch (id) {
-			case kMusicVolume: {
+			case MenuButtonTypes::kMusicVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::SoundType::kMusicSoundType);
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
@@ -540,7 +514,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				_engine->_music->musicVolume(volume);
 				break;
 			}
-			case kSoundVolume: {
+			case MenuButtonTypes::kSoundVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
@@ -550,7 +524,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, volume);
 				break;
 			}
-			case kCDVolume: {
+			case MenuButtonTypes::kCDVolume: {
 				AudioCDManager::Status status = _engine->_system->getAudioCDManager()->getStatus();
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					status.volume -= 4;
@@ -560,7 +534,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				_engine->_system->getAudioCDManager()->setVolume(status.volume);
 				break;
 			}
-			case kLineVolume: {
+			case MenuButtonTypes::kLineVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
@@ -570,7 +544,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume);
 				break;
 			}
-			case kMasterVolume: {
+			case MenuButtonTypes::kMasterVolume: {
 				int volume = mixer->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
 				if (_engine->_input->isActionActive(TwinEActionType::UILeft)) {
 					volume -= 4;
@@ -602,116 +576,117 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		_engine->_system->delayMillis(10);
 	} while (!_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter));
 
-	currentButton = *(menuSettings + MenuSettings_FirstButton + currentButton * 2); // get current browsed button
-
-	_engine->readKeys();
-
-	return currentButton;
+	const int buttonTextId = *(menuSettings + MenuSettings_FirstButton + currentButton * 2); // get current browsed button
+	return buttonTextId;
 }
 
 int32 Menu::advoptionsMenu() {
-	int32 ret = 0;
-
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
 
-	do {
+	for (;;) {
 		switch (processMenu(AdvOptionsMenuState)) {
-		case kReturnMenu: {
-			ret = 1; // quit option menu
-			break;
+		case TextId::kReturnMenu: {
+			return 0;
 		}
 		case kQuitEngine:
 			return kQuitEngine;
-		//TODO: add other options
+		case TextId::kBehaviourAgressiveManual:
+		case TextId::kDetailsPolygonsHigh:
+		case TextId::kDetailsShadowHigh:
+		case TextId::kScenaryZoomOn:
 		default:
+			warning("Unknown menu button handled");
 			break;
 		}
-	} while (ret != 1);
+	}
 
 	return 0;
 }
 
 int32 Menu::savemanageMenu() {
-	int32 ret = 0;
-
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
 
-	do {
+	for (;;) {
 		switch (processMenu(SaveManageMenuState)) {
-		case kReturnMenu: {
-			ret = 1; // quit option menu
+		case TextId::kReturnMenu:
+			return 0;
+		case TextId::kCreateSaveGame:
+			// TODO: implement save game handling and slot rendering
 			break;
-		}
+		case TextId::kDeleteSaveGame:
+			// TODO: implement save game deletion and slot rendering
+			break;
 		case kQuitEngine:
 			return kQuitEngine;
-		//TODO: add other options
 		default:
+			warning("Unknown menu button handled");
 			break;
 		}
-	} while (ret != 1);
+	}
 
 	return 0;
 }
 
 int32 Menu::volumeMenu() {
-	int32 ret = 0;
-
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
 
-	do {
+	for (;;) {
 		switch (processMenu(VolumeMenuState)) {
-		case kReturnMenu: {
-			ret = 1; // quit option menu
+		case TextId::kReturnMenu:
+			return 0;
+		case TextId::kSaveSettings:
+			// TODO: implement setting persisting
 			break;
-		}
 		case kQuitEngine:
 			return kQuitEngine;
-		//TODO: add other options
+		case TextId::kMusicVolume:
+		case TextId::kSoundVolume:
+		case TextId::kCDVolume:
+		case TextId::kLineInVolume:
+		case TextId::kMasterVolume:
 		default:
+			warning("Unknown menu button handled");
 			break;
 		}
-	} while (ret != 1);
+	}
 
 	return 0;
 }
 
 int32 Menu::optionsMenu() {
-	int32 ret = 0;
-
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
 
 	_engine->_sound->stopSamples();
 	//_engine->_music->playCDtrack(9);
 
-	do {
+	for (;;) {
 		switch (processMenu(OptionsMenuState)) {
-		case kQuitEngine:
-			return kQuitEngine;
-		case kReturnGame:
-		case kReturnMenu: {
-			ret = 1; // quit option menu
-			break;
+		case TextId::kReturnGame:
+		case TextId::kReturnMenu: {
+			return 0;
 		}
-		case kVolume: {
+		case TextId::kVolumeSettings: {
 			volumeMenu();
 			break;
 		}
-		case kSaveManage: {
+		case TextId::kSaveManage: {
 			savemanageMenu();
 			break;
 		}
-		case kAdvanced: {
+		case TextId::kAdvanced: {
 			advoptionsMenu();
 			break;
 		}
+		case kQuitEngine:
+			return kQuitEngine;
 		default:
 			break;
 		}
-	} while (ret != 1);
+	}
 
 	return 0;
 }
@@ -730,20 +705,19 @@ void Menu::run() {
 	_engine->_sound->stopSamples();
 
 	switch (processMenu(MainMenuState)) {
-	case kNewGame: {
+	case TextId::kNewGame: {
 		_engine->_menuOptions->newGameMenu();
 		break;
 	}
-	case kContinueGame: {
+	case TextId::kContinueGame: {
 		_engine->_menuOptions->continueGameMenu();
 		break;
 	}
-	case kOptions: {
-		OptionsMenuState[MenuSettings_FirstButton] = kReturnMenu;
+	case TextId::kOptions: {
 		optionsMenu();
 		break;
 	}
-	case kQuit: {
+	case TextId::kQuit: {
 		Common::Event event;
 		event.type = Common::EVENT_QUIT;
 		_engine->_system->getEventManager()->pushEvent(event);
@@ -774,19 +748,25 @@ int32 Menu::giveupMenu() {
 	do {
 		_engine->_text->initTextBank(0);
 		menuId = processMenu(localMenu);
-		if (menuId == kQuitEngine) {
+		switch (menuId) {
+		case TextId::kContinue:
+			_engine->_sound->resumeSamples();
+			break;
+		case TextId::kGiveUp:
+			_engine->_sound->stopSamples();
+			return 1;
+		case TextId::kCreateSaveGame:
+			// TODO: handle save game creation
+			break;
+		case kQuitEngine:
 			return kQuitEngine;
+		default:
+			warning("Unknown menu button handled: %i", menuId);
 		}
 		_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
 		_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
-	} while (menuId != kGiveUp && menuId != kContinue);
+	} while (menuId != TextId::kGiveUp && menuId != TextId::kContinue);
 
-	if (menuId == kGiveUp) {
-		_engine->_sound->stopSamples();
-		return 1;
-	}
-
-	_engine->_sound->resumeSamples();
 	return 0;
 }
 

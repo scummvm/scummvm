@@ -38,8 +38,58 @@ enum MenuSettingsType {
 	MenuSettings_FirstButton = 5
 };
 
+/** menu text ids */
+namespace TextId {
+enum _TextId {
+	kBehaviourNormal = 0,
+	kBehaviourSporty = 1,
+	kBehaviourAgressiveManual = 2,
+	kBehaviourHiding = 3,
+	kBehaviourAgressiveAuto = 4,
+	kUseProtopack = 5,
+	kMusicVolume = 10,
+	kSoundVolume = 11,
+	kCDVolume = 12,
+	kLineInVolume = 13,
+	kMasterVolume = 14,
+	kReturnGame = 15,
+	kSaveSettings = 16,
+	kNewGame = 20,
+	kContinueGame = 21,
+	kQuit = 22,
+	kOptions = 23,
+	kDelete = 24,
+	kReturnMenu = 26,
+	kGiveUp = 27,
+	kContinue = 28,
+	kVolumeSettings = 30,
+	kDetailsPolygonsHigh = 31,
+	kDetailsShadowHigh = 32,
+	//kScenaryZoomOn = 33, // duplicate with 133 - TODO check if this is the same in all languages
+	kCreateNewPlayer = 40,
+	kCreateSaveGame = 41,
+	kEnterYourName = 42,
+	kPlayerAlreadyExists = 43,
+	kEnterYourNewName = 44,
+	kDeleteSaveGame = 45,
+	kSaveManage = 46,
+	kAdvanced = 47,
+	kDelete2 = 48, // difference between 24 and 48?
+	kTransferVoices = 49,
+	kPleaseWaitWhileVoicesAreSaved = 50,
+	kRemoveProtoPack = 105,
+	kDetailsPolygonsMiddle = 131,
+	kShadowsFigures = 132,
+	kScenaryZoomOn = 133,
+	kDetailsPolygonsLow = 231,
+	kShadowsDisabled = 232,
+	kNoScenaryZoom = 233
+};
+}
+
 #define PLASMA_WIDTH 320
 #define PLASMA_HEIGHT 50
+#define kQuitEngine 9998
 
 class Menu {
 private:

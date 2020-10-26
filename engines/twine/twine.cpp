@@ -388,7 +388,11 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		// Process give up menu - Press ESC
 		if (_input->toggleAbortAction() && _scene->sceneHero->life > 0 && _scene->sceneHero->entity != -1 && !_scene->sceneHero->staticFlags.bIsHidden) {
 			freezeTime();
-			if (_menu->giveupMenu()) {
+			const int giveUp = _menu->giveupMenu();
+			if (giveUp == kQuitEngine) {
+				return 0;
+			}
+			if (giveUp == 1) {
 				unfreezeTime();
 				_redraw->redrawEngineActions(1);
 				freezeTime();
@@ -404,10 +408,11 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		if (_input->toggleActionIfActive(TwinEActionType::OptionsMenu)) {
 			freezeTime();
 			_sound->pauseSamples();
-			_menu->OptionsMenuState[MenuSettings_FirstButton] = 15; // TODO: why? - where is the reset? kReturnGame
+			_menu->OptionsMenuState[MenuSettings_FirstButton] = TextId::kReturnGame;
 			_text->initTextBank(0);
 			_menu->optionsMenu();
 			_text->initTextBank(_text->currentTextBank + 3);
+			_menu->OptionsMenuState[MenuSettings_FirstButton] = TextId::kReturnMenu;
 			// TODO: play music
 			_sound->resumeSamples();
 			unfreezeTime();

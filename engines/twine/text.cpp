@@ -721,23 +721,23 @@ bool Text::getText(int32 index) { // findString
 	return true;
 }
 
-void Text::copyText(const char *src, char *dst, int32 size) { // copyStringToString
+void Text::copyText(const char *src, char *dst, int32 size) {
 	for (int32 i = 0; i < size; i++) {
 		*(dst++) = *(src++);
 	}
 }
 
-void Text::getMenuText(int32 index, char *text, uint32 textSize) { // GetMultiText
+bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 	if (index == _engine->_menu->currMenuTextIndex) {
 		if (_engine->_menu->currMenuTextBank == currentTextBank) {
 			Common::strlcpy(text, _engine->_menu->currMenuTextBuffer, textSize);
-			return;
+			return true;
 		}
 	}
 	if (!getText(index)) {
 		// if doesn't have text
 		text[0] = '\0';
-		return;
+		return false;
 	}
 
 	if ((currDialTextSize - 1) > 0xFF) {
@@ -750,6 +750,7 @@ void Text::getMenuText(int32 index, char *text, uint32 textSize) { // GetMultiTe
 
 	_engine->_menu->currMenuTextIndex = index;
 	_engine->_menu->currMenuTextBank = currentTextBank;
+	return true;
 }
 
 void Text::textClipFull() { // newGame2

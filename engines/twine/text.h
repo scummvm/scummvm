@@ -216,7 +216,7 @@ public:
 	 * @param text dialogue text buffer to display
 	 * @param textSize The size of the text buffer
 	 */
-	void getMenuText(int32 index, char *text, uint32 textSize);
+	bool getMenuText(int32 index, char *text, uint32 textSize);
 
 	void textClipFull();
 	void textClipSmall();
