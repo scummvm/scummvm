@@ -91,9 +91,6 @@ public:
 
 	ThemeEval *xmlEval() { return _theme->getEvaluator(); }
 
-	int getWidth() const { return _width; }
-	int getHeight() const { return _height; }
-
 	int getBaseWidth() const { return _baseWidth; }
 	int getBaseHeight() const { return _baseHeight; }
 
@@ -146,7 +143,6 @@ protected:
 //	bool		_needRedraw;
 	RedrawStatus _redrawStatus;
 	int			_lastScreenChangeID;
-	int			_width, _height;
 	int16		_baseWidth, _baseHeight;
 	DialogStack	_dialogStack;
 

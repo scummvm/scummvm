@@ -113,7 +113,7 @@ SaveLoadChooserType getRequestedSaveLoadDialog(const MetaEngine *metaEngine) {
 	// possible to use it.
 	g_gui.checkScreenChange();
 
-	if (g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400
+	if (g_gui.getBaseWidth() >= 640 && g_gui.getBaseHeight() >= 400
 		&& metaEngine->hasFeature(MetaEngine::kSavesSupportMetaInfo)
 		&& metaEngine->hasFeature(MetaEngine::kSavesSupportThumbnail)
 		&& userConfig.equalsIgnoreCase("grid")) {
@@ -342,7 +342,7 @@ void SaveLoadChooserDialog::addChooserButtons() {
 
 	_listButton = createSwitchButton("SaveLoadChooser.ListSwitch", Common::U32String("L"), _("List view"), ThemeEngine::kImageList, kListSwitchCmd);
 	_gridButton = createSwitchButton("SaveLoadChooser.GridSwitch", Common::U32String("G"), _("Grid view"), ThemeEngine::kImageGrid, kGridSwitchCmd);
-	if (!_metaInfoSupport || !_thumbnailSupport || !(g_gui.getWidth() >= 640 && g_gui.getHeight() >= 400)) {
+	if (!_metaInfoSupport || !_thumbnailSupport || !(g_gui.getBaseWidth() >= 640 && g_gui.getBaseHeight() >= 400)) {
 		_gridButton->setEnabled(false);
 		_listButton->setEnabled(false);
 	}
