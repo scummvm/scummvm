@@ -319,8 +319,8 @@ public:
 			room->disableHotzone("Catacomb PopUp");
 			room->stopAnim("t1010oe0");
 			room->stopAnim("t1290bb0");
-			room->enableHotzone("Link To Catacombs");
-			room->enableHotzone("Catacomb PopUp Grate");
+			room->disableHotzone("Link To Catacombs");
+			room->disableHotzone("Catacomb PopUp Grate");
 			// TODO: schedule 10023
 			return;
 		}
