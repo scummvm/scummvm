@@ -39,6 +39,9 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/wave.h"
+#include "audio/decoders/mp3.h"
+#include "audio/decoders/vorbis.h"
+#include "audio/decoders/flac.h"
 
 namespace Scumm {
 
@@ -716,17 +719,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 			_overrideFreq = 0;
 		}
 
-		Common::File musicFileOverride;
-		Common::String mfoBuf(Common::String::format("music%d.wav", soundID));
-
-		if (musicFileOverride.exists(mfoBuf) && musicFileOverride.open(mfoBuf)) {
-			musicFileOverride.seek(0, SEEK_SET);
-			Common::SeekableReadStream *oStr =
-			    musicFileOverride.readStream(musicFileOverride.size());
-			musicFileOverride.close();
-
-			stream = Audio::makeWAVStream(oStr, DisposeAfterUse::YES);
-		}
+		tryLoadSoundOverride(soundID, &stream);
 
 		_vm->setHETimer(heChannel + 4);
 		_heChannel[heChannel].sound = soundID;
@@ -785,6 +778,55 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags,
 			_vm->_musicEngine->startSoundWithTrackID(soundID, heOffset);
 		}
 	}
+}
+
+void SoundHE::tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **stream) {
+	const char *formats[] = {
+#ifdef USE_FLAC
+	    "flac",
+#endif
+	    "wav",
+#ifdef USE_VORBIS
+		"ogg",
+#endif
+#ifdef USE_MAD
+	    "mp3",
+#endif
+	};
+
+	Audio::SeekableAudioStream *(*formatDecoders[])(Common::SeekableReadStream *, DisposeAfterUse::Flag) = {
+#ifdef USE_FLAC
+	    Audio::makeFLACStream,
+#endif
+	    Audio::makeWAVStream,
+#ifdef USE_VORBIS
+	    Audio::makeVorbisStream,
+#endif
+#ifdef USE_MAD
+	    Audio::makeMP3Stream,
+#endif
+	};
+
+	for (size_t i = 0; i < sizeof(formats) / sizeof(formats[0]); i++) {
+		debug(5, "tryLoadSoundOverride: %d %s", soundID, formats[i]);
+
+		Common::File soundFileOverride;
+		Common::String buf(Common::String::format("sound%d.%s", soundID, formats[i]));
+
+		// First check if the file exists before opening it to
+		// reduce the amount of "opening %s failed" in the console.
+		if (soundFileOverride.exists(buf) && soundFileOverride.open(buf)) {
+			soundFileOverride.seek(0, SEEK_SET);
+			Common::SeekableReadStream *oStr = soundFileOverride.readStream(soundFileOverride.size());
+			soundFileOverride.close();
+
+			*stream = formatDecoders[i](oStr, DisposeAfterUse::YES);
+			debug(5, "tryLoadSoundOverride: %s loaded", formats[i]);
+			return;
+		}
+	}
+
+	debug(5, "tryLoadSoundOverride: file not found");
 }
 
 void SoundHE::startHETalkSound(uint32 offset) {
