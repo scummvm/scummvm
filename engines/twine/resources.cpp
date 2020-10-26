@@ -73,6 +73,15 @@ void Resources::preloadSamples() {
 	debug("preload %i samples", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		samplesSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&samplesTable[i], Resources::HQR_SAMPLES_FILE, i);
+		if (samplesSizeTable[i] == 0) {
+			warning("Failed to load sample %i", i);
+			continue;
+		}
+		// Fix incorrect sample files first byte
+		if (*samplesTable[i] != 'C') {
+			debug(0, "Sample %i has incorrect magic id", i);
+			*samplesTable[i] = 'C';
+		}
 	}
 }
 

@@ -25,6 +25,7 @@
 
 #include "audio/mixer.h"
 #include "common/scummsys.h"
+#include "common/types.h"
 
 namespace TwinE {
 
@@ -44,7 +45,7 @@ private:
 	/** Samples playing at a actors position */
 	int32 samplesPlayingActors[NUM_CHANNELS]{0};
 
-	bool playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize, int32 loop, const char *name);
+	bool playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize, int32 loop, const char *name, DisposeAfterUse::Flag disposeFlag = DisposeAfterUse::YES);
 
 public:
 	Sound(TwinEEngine *engine);

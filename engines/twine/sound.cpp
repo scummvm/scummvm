@@ -95,16 +95,16 @@ void Sound::playSample(int32 index, int32 frequency, int32 repeat, int32 x, int3
 		return;
 	}
 
-	// TODO: use Resources class
-	uint8 *sampPtr;
-	int32 sampSize = _engine->_hqrdepack->hqrGetallocEntry(&sampPtr, Resources::HQR_SAMPLES_FILE, index);
+
 	if (actorIdx != -1) {
 		setSamplePosition(channelIdx, x, y, z);
 		// save the actor index for the channel so we can check the position
 		samplesPlayingActors[channelIdx] = actorIdx;
 	}
 
-	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_SAMPLES_FILE);
+	uint8 *sampPtr = _engine->_resources->samplesTable[index];
+	int32 sampSize = _engine->_resources->samplesSizeTable[index];
+	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_SAMPLES_FILE, DisposeAfterUse::NO);
 }
 
 void Sound::playVoxSample(int32 index) {
@@ -129,15 +129,11 @@ void Sound::playVoxSample(int32 index) {
 	playSample(channelIdx, index, sampPtr, sampSize, 1, _engine->_text->currentVoxBankFile.c_str());
 }
 
-bool Sound::playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize, int32 loop, const char *name) {
-	// Fix incorrect sample files first byte
-	if (*sampPtr != 'C') {
-		*sampPtr = 'C';
-	}
-	Common::MemoryReadStream *stream = new Common::MemoryReadStream(sampPtr, sampSize, DisposeAfterUse::YES);
+bool Sound::playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize, int32 loop, const char *name, DisposeAfterUse::Flag disposeFlag) {
+	Common::MemoryReadStream *stream = new Common::MemoryReadStream(sampPtr, sampSize, disposeFlag);
 	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(stream, DisposeAfterUse::YES);
 	if (audioStream == nullptr) {
-		warning("Failed to create voc audio stream for %s", name);
+		warning("Failed to create audio stream for %s", name);
 		return false;
 	}
 	_engine->_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &samplesPlaying[channelIdx], audioStream, index);
