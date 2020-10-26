@@ -149,9 +149,6 @@ private:
 	 */
 	void copyGridMask(int32 index, int32 x, int32 y, uint8 *buffer);
 
-public:
-	Grid(TwinEEngine *engine);
-
 	/** Table with all loaded bricks */
 	uint8 *brickTable[NUM_BRICKS]{nullptr};
 	/** Table with all loaded bricks masks */
@@ -168,9 +165,6 @@ public:
 	/** Number of block libraries */
 	int32 numberOfBll = 0;
 
-	/** Grid block entry types */
-	typedef struct BlockEntry blockMap[GRID_SIZE_X][GRID_SIZE_Z][GRID_SIZE_Y];
-
 	/** Brick data buffer */
 	BrickEntry bricksDataBuffer[28][150];
 	/** Brick info buffer */
@@ -180,6 +174,13 @@ public:
 	int32 brickPixelPosX = 0;
 	/** Current brick pixel Y position */
 	int32 brickPixelPosY = 0;
+
+public:
+	Grid(TwinEEngine *engine);
+	~Grid();
+
+	/** Grid block entry types */
+	typedef struct BlockEntry blockMap[GRID_SIZE_X][GRID_SIZE_Z][GRID_SIZE_Y];
 
 	/** New grid camera X coordinates */
 	int32 newCameraX = 0;

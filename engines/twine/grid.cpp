@@ -36,6 +36,8 @@ namespace TwinE {
 
 Grid::Grid(TwinEEngine *engine) : _engine(engine) {}
 
+Grid::~Grid() {}
+
 void Grid::copyGridMask(int32 index, int32 x, int32 y, uint8 *buffer) {
 	uint8 *ptr = brickMaskTable[index];
 
