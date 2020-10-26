@@ -518,7 +518,12 @@ Common::Error HadeschEngine::run() {
 
 	debug("HadeschEngine: moving to main loop");
 	_nextRoom.clear();
-	_nextRoom.push_back(kIntroRoom);
+	int loadSlot = ConfMan.getInt("save_slot");
+	if (loadSlot >= 0) {
+		loadGameState(loadSlot);
+	} else {
+		_nextRoom.push_back(kIntroRoom);
+	}
 
 	while (true) {
 		if (_isRestoring) {
