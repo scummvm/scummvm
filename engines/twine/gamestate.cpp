@@ -398,7 +398,7 @@ void GameState::processFoundItem(int32 item) {
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
 			break;
 		}
-		_engine->delaySkip(1);
+		_engine->_system->delayMillis(1);
 	}
 
 	initEngineProjections();
