@@ -63,8 +63,8 @@
 #include "twine/resources.h"
 #include "twine/scene.h"
 #include "twine/screens.h"
-#include "twine/script_life.h"
-#include "twine/script_move.h"
+#include "twine/script_life_v1.h"
+#include "twine/script_move_v1.h"
 #include "twine/sound.h"
 #include "twine/text.h"
 

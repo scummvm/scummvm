@@ -20,7 +20,7 @@
  *
  */
 
-#include "twine/script_move.h"
+#include "twine/script_move_v1.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 #include "twine/actor.h"
@@ -583,6 +583,7 @@ ScriptMove::ScriptMove(TwinEEngine *engine) : _engine(engine) {
 void ScriptMove::processMoveScript(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	move = &actor->move;
+	numRepeatSample = 1;
 
 	int32 end = -2;
 

@@ -27,8 +27,8 @@ MODULE_OBJS := \
 	resources.o \
 	scene.o \
 	screens.o \
-	script_life.o \
-	script_move.o \
+	script_life_v1.o \
+	script_move_v1.o \
 	sound.o \
 	text.o \
 	twine.o

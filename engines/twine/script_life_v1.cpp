@@ -20,7 +20,7 @@
  *
  */
 
-#include "twine/script_life.h"
+#include "twine/script_life_v1.h"
 #include "common/stream.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
