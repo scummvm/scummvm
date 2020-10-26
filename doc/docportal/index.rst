@@ -80,8 +80,11 @@ SCUMM (Script Creation Utility for Maniac Mansion) is a utility that was used to
 
 While ScummVM was originally designed to run LucasArts' SCUMM games, over time support has been added for many other games.
 
+.. _firststeps:
+
 First steps
 ================
+
 We have guides available to show you how to get ScummVM up and running: 
 
 - **Quickstart**: :doc:`getting_started/mac_linux_windows`
@@ -97,13 +100,17 @@ So you have ScummVM installed, but now you need to know how to add and play some
 - **Understanding the interface**: :doc:`using_scummvm/the_launcher` 
 - **Playing games**: :doc:`using_scummvm/adding_games` | :doc:`using_scummvm/save_load_games` | :doc:`using_scummvm/keyboard_shortcuts`
 - **Settings**: :doc:`settings/how_to` 
- 
+
+
+
 The games!
 ============
 
 One of the most commonly asked questions we get is, "Where do I get the games??". If you still have your old floppy discs and CDs lying around (and have a way to read them!), then you can use the game files from these original discs. For a list of which files you need for each game, check out the `Datafiles page <https://wiki.scummvm.org/index.php?title=Datafiles>`__ on our wiki. 
 
-If you haven't had a floppy disc or even a CD in your possession for a while, there are a few freeware games available for download on our website's `Downloads page <scummvm.org/downloads>`_, or there are digital distributors such as `GOG.com <gog.com>`_ and `Steam <https://store.steampowered.com/>`_. See the `compatibility list <https://www.scummvm.org/compatibility/>`_ on our website and the `Supported Games page <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ on our wiki before you buy a game, to ensure it can run with ScummVM. 
+If you haven't had a floppy disc or even a CD in your possession for a while, we have a `wiki page <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games>`_ dedicated to helping you find some games to play. As a quick summary, there are a few freeware games available for download on our website's `Downloads page <scummvm.org/downloads>`_, or there are digital distributors such as `GOG.com <gog.com>`_ and `Steam <https://store.steampowered.com/>`_. 
+
+Make sure you check out the `compatibility list <https://www.scummvm.org/compatibility/>`_ on our website and the `Supported Games page <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ on our wiki before you buy a game, to ensure it can run with ScummVM. 
 
 
 Advanced options

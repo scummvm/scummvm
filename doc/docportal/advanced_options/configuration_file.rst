@@ -47,13 +47,10 @@ The configuration file saves to different default locations, depending on the pl
 
 		If ScummVM was installed using Snap, the configuration file can be found at ``~/snap/scummvm/current/.config/scummvm/scummvm.ini``
 
-	.. tab:: iOS
-
-		``/var/mobile/Library/ScummVM/Preferences`` or ``/Preferences`` for a sandboxed version.
-
 	.. tab:: Other
 
-		``scummvm.ini`` in the ScummVM directory. 
+		See the relevant Platform page for details. 
+
 
 Using the configuration file
 ==================================

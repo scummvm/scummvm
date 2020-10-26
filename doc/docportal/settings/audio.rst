@@ -37,7 +37,7 @@ Use the audio tab to change the sound output for games.
 
 .. _opl:
 
-**AdLib Emulator**
+:ref:`AdLib Emulator <AdLib>`
 	Chooses which emulator is used by ScummVM when the AdLib emulator is chosen as the preferred device.
 
 	*opl_driver* 
@@ -108,8 +108,8 @@ Use the volume tab to set the relative volumes for various sounds.
 .. _miditab:
 
 
-The MIDI tab
---------------------
+:ref:`The MIDI tab <MIDI>`
+------------------------------
 
 Use the MIDI tab to change the settings of General MIDI devices.
 
@@ -136,7 +136,7 @@ Use the MIDI tab to change the settings of General MIDI devices.
 
 .. _multi:
 
-**Mixed AdLib/MIDI mode**
+`Mixed AdLib/MIDI mode`_
 	Combines MIDI music with AdLib sound effects. 
 
 	*multi_midi* 
@@ -151,8 +151,8 @@ Use the MIDI tab to change the settings of General MIDI devices.
 .. _fluid:
 
 
-FluidSynth
-******************
+:ref:`FluidSynth <FS>`
+************************************************************************
 
 Opens a new dialog, with three further tabs:
 `Reverb`_ | `Chorus`_ | `Misc`_
@@ -268,8 +268,8 @@ Interpolation
 
 .. _mt32tab:
 
-The MT-32 tab 
---------------------
+:ref:`The MT-32 tab <MT-32>`
+----------------------------------------------------
 
 Use the MT-32 tab to change the settings of MT-32 devices.
 
@@ -355,6 +355,7 @@ Many of these old-school audio devices can be emulated by ScummVM:
 To find out which emulation is compatible with the game you're playing, have a look at the manual that comes with the game.
 
 
+.. _MIDI:
 
 MIDI 
 -------
@@ -378,6 +379,7 @@ What is MT-32?
 The MT-32 is a `Roland sound module <https://en.wikipedia.org/wiki/Roland_MT-32>`_, although the term also commonly refers to a range of devices that are fully compatible with the MT-32. MT-32 devices also use MIDI as the communications protocol.
 
 
+.. _FS:
 
 General MIDI device emulation (FluidSynth)
 *****************************************************
@@ -388,9 +390,9 @@ You will have to specify a SoundFont in the MIDI tab for ScummVM to use FluidSyn
 
 Since the default output volume from FluidSynth can be fairly low, ScummVM will automatically set the gain to get a stronger signal. This can be further adjusted using the :ref:`MIDI gain <gain>` setting. 
 
-See :doc:`MIDI` page for more information about FluidSynth settings.
-
 The processor requirements for FluidSynth are quite high; a fast CPU is recommended.
+
+.. _MT-32:
 
 MT-32 device emulation
 **************************
@@ -459,11 +461,12 @@ Here are a couple of helpful articles from the Ubuntu community documentation to
 `How to: Hardware synthesizer soundcard setup <https://help.ubuntu.com/community/Midi/HardwareSynthesisSetup?action=show&redirect=MidiHardwareSynthesisSetup>`_
 
 
+.. _adlib:
 
 AdLib 
 -----------
 
-AdLib devices do not use MIDI. They instead have a chip that produces sound via FM synthesis. While some games do store their audio data using a MIDI-derived format, this is converted by the game to work with the AdLib chip. ScummVM emulates a few different AdLib configuations, and selects the most appropriate for the game:
+AdLib devices do not use MIDI. They instead have a chip that produces sound via FM synthesis. While some games do store their audio data using a MIDI-derived format, this is converted by the game to work with the AdLib chip. ScummVM emulates a few different AdLib configurations, and selects the most appropriate for the game:
 
 - The original AdLib and SoundBlaster card had one OPL2 chip. 
 - The SoundBlaster Pro 1 had two OPL2 chips

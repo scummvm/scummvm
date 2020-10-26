@@ -20,3 +20,25 @@ Please include the following information in the bug report:
 - If this bug only occurred recently, please note the last version without the bug, and the first version including the bug. That way we can fix it quicker by looking at the changes made.
 
 Finally, please report each issue separately; do not file multiple issues on the same ticket. It gets difficult to track the status of each individual bug when they aren't on their own tickets. 
+
+.. _logfile: 
+
+The ScummVM log file
+=====================
+
+You can find error messages in the ScummVM log file. The location of this file varies depending on your operating system. 
+
+.. tabs::
+
+	.. tab:: macOS
+
+		``~/Library/Logs/scummvm.log``, where ``~`` is your Home directory. 
+    
+    .. tab:: Linux
+
+        We use the XDG Base Directory Specification, so by default the file will be ``~/.cache/scummvm/logs/scummvm.log`` but its location may vary depending on the value of the ``XDG_CACHE_HOME`` environment variable. 
+
+    .. tab:: Windows
+
+        ``%appdata%\ScummVM\Logs\scummvm.log``
+	

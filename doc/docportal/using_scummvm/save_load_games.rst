@@ -27,6 +27,10 @@ There are two views: list view and tile view. Toggle between the two by clicking
 
 	Saving a game, list view.  
 
+.. caution::
+
+	Saving via the Global Main Menu does not work for all games. Some games have support for saving and loading games using the in-game menu. 
+
 
 Autosave
 ------------
@@ -64,9 +68,11 @@ Saved games can also be loaded from the Global Main Menu, which can be accessed 
 
 
 .. caution::
-  - In some games you can still access the original game menu by using :kbd:`Alt` + :kbd:`F5`. You can save and load games this way, however it is not intended for this purpose and may crash ScummVM in some games. 
+  	
+	Not all games support saving and loading games via the Global Main Menu. 
 
-  - There are games that do not support the save game feature, or whose saved states lack information such as playtime or screenshots. 
+	In some games you can still access the original game menu by using :kbd:`Alt` + :kbd:`F5`. You can save and load games this way, however this may crash ScummVM in some games. 
+
 
 
 
@@ -103,4 +109,51 @@ The save directory can be changed via the savepath setting in the Paths tab of t
 
 		If ScummVM was installed using Snap, the saves can be found at ``~/snap/scummvm/current/.local/share/scummvm/saves/``
 
+.. _originalsaves:
 
+Using saved games from original versions
+-------------------------------------------
+
+This is only supported by a small selection of games.
+
+For the file names shown below, ``xxx`` is the saved game slot ScummVM uses, for example ``001`` for slot 1. 
+
+- Blade Runner
+
+	- Use the debugger console and command "save" to save the game to the original format, and command "load" to load a game from the original format. 
+	- Saved games between different languages are interchangeable
+	- It is not recommended to convert saved games from the version with restored content. They may cause game breaking bugs. 
+
+- Elvira 1 and 2
+	
+	- Edit the saved game file. Add an 8-letter saved game name to the start of the saved game file. 
+	- Elvira 1: rename the saved game to ``elvira1.xxx``.
+	- Elvira 2: rename the saved game to ``elvira2-pc.xxx`` for the DOS version, and ``elvira2.xxx`` for other versions. 
+
+- Myst
+
+	- Rename the saved game to ``myst-xxx.mys``.
+
+- Riven
+
+	- Rename the saved game to ``riven-xxx.rvn``.
+	- Saved games from the CD and DVD edition are not interchangeable.
+
+- Simon the Sorcerer 1 and 2
+
+	- For Simon 1: rename the saved game to ``simon1.xxx``
+	- For SImon 2: rename the saved game to ``simon2.xxx``
+
+- Starship Titanic
+
+	- Rename the saved game to ``titanic-win.xxx`` for the English version, and ``titanic-wind-de.xxx`` for the German version. 
+	- Saved games from different languages are not interchangeable.
+
+- The Feeble Files
+
+	- Rename the saved game to ``feeble.xxx``
+
+- Waxworks
+
+	- Edit the saved game file. Add an 8-letter saved game name to the start of the saved game file. 
+	- Rename the saved game to ``waxworks-pc.xxx`` for the DOS version, and ``waxworks.xxx`` for other versions. 
