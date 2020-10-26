@@ -196,15 +196,15 @@ void InventoryWindow::onMouseMove(const Common::Point &pos) {
 		} else if ((canScrollDown() && _scrollDownArrowRect.contains(pos))
 		           || (canScrollUp() && _scrollUpArrowRect.contains(pos))) {
 			_cursor->setCursorType(Cursor::kActive);
-			_cursor->setFading(false);
+			_cursor->setItemActive(false);
 		} else {
 			_cursor->setCursorType(Cursor::kDefault);
 		}
-		_cursor->setFading(false);
+		_cursor->setItemActive(false);
 	} else {
 		VisualImageXMG *cursorImage = StarkGameInterface->getCursorImage(_selectedInventoryItem);
 		_cursor->setCursorImage(cursorImage);
-		_cursor->setFading(hoveredItemAction == _selectedInventoryItem);
+		_cursor->setItemActive(hoveredItemAction == _selectedInventoryItem);
 	}
 
 	if (hoveredItem) {
