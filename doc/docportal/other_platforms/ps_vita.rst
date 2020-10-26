@@ -33,9 +33,12 @@ If you're using SD2Vita:
     
     - Transfer the files directly to the microSD card. 
 
-Folders containing game files should be copied into ``ux0:/data/scummvm/``.
+Folders containing game files can be copied into any folder.
 
-For more information, see the :doc:`../using_scummvm/adding_games` page.
+ScummVM on the PS Vita supports :doc:`Cloud functionality <howtocloud>`. 
+
+For more information on how to add and play games, see the :doc:`../using_scummvm/adding_games` page.
+
 
 Controls
 =================

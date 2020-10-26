@@ -122,10 +122,12 @@ Paths
 Saved games
 ************
 
+``ms0://scummvm_savegames/``
+
 Configuration file
 ********************
 
-``scummvm.ini`` is found in the root directory of the Memory Stick. 
+``ms0:/scummvm.ini``
 
 Known issues
 ==============

@@ -26,7 +26,9 @@ Transferring game files
 
 Copy the folders containing game files into the ``/switch/scummvm/`` folder on the microSD card. 
 
-For more information, see the :doc:`../using_scummvm/adding_games` page.
+ScummVM on the Nintendo switch supports :doc:`Cloud functionality <howtocloud>`. 
+
+For more information on how to add and play games, see the :doc:`../using_scummvm/adding_games` page.
 
 Controls
 =================

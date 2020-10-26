@@ -84,9 +84,9 @@ First steps
 ================
 We have guides available to show you how to get ScummVM up and running: 
 
-- :doc:`getting_started/mac_linux_windows`
+- **Quickstart**: :doc:`getting_started/mac_linux_windows`
 - **Phones and Tablets**: :doc:`getting_started/ios` | :doc:`getting_started/android`
-
+- **Consoles**: :doc:`other_platforms/ps_vita` | :doc:`other_platforms/psp` | :doc:`other_platforms/nintendo_switch`
 
 
 How do I...?
