@@ -357,9 +357,6 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	           << "<Project DefaultTargets=\"Build\" ToolsVersion=\"" << _msvcVersion.project << "\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	           << "\t<PropertyGroup>\n"
 	           << "\t\t<_PropertySheetDisplayName>" << setup.projectDescription << "_Global</_PropertySheetDisplayName>\n"
-	           << "\t\t<ExecutablePath>$(" << LIBS_DEFINE << ")\\bin;$(" << LIBS_DEFINE << ")\\bin\\" << getMSVCArchName(arch) << ";$(" << LIBS_DEFINE << ")\\$(Configuration)\\bin;$(ExecutablePath)</ExecutablePath>\n"
-	           << "\t\t<LibraryPath>$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << ";$(" << LIBS_DEFINE << ")\\lib\\" << getMSVCArchName(arch) << "\\$(Configuration);$(" << LIBS_DEFINE << ")\\lib;$(" << LIBS_DEFINE << ")\\$(Configuration)\\lib;$(LibraryPath)</LibraryPath>\n"
-	           << "\t\t<IncludePath>$(" << LIBS_DEFINE << ")\\include;$(" << LIBS_DEFINE << ")\\include\\" << (setup.useSDL2 ? "SDL2" : "SDL") << ";$(IncludePath)</IncludePath>\n"
 	           << "\t\t<OutDir>$(Configuration)" << getMSVCArchName(arch) << "\\</OutDir>\n"
 	           << "\t\t<IntDir>$(Configuration)" << getMSVCArchName(arch) << "\\$(ProjectName)\\</IntDir>\n"
 	           << "\t</PropertyGroup>\n"
@@ -367,7 +364,7 @@ void MSBuildProvider::outputGlobalPropFile(const BuildSetup &setup, std::ofstrea
 	           << "\t\t<ClCompile>\n"
 	           << "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
 	           << "\t\t\t<DisableSpecificWarnings>" << warnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
-	           << "\t\t\t<AdditionalIncludeDirectories>.;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	           << "\t\t\t<AdditionalIncludeDirectories>.;" << prefix << ";" << prefix << "\\engines;" << (setup.tests ? prefix + "\\test\\cxxtest;" : "") << "$(VcpkgCurrentInstalledDir)include\\" << (setup.useSDL2 ? "SDL2" : "SDL") << "%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
 	           << "\t\t\t<PreprocessorDefinitions>" << definesList << "%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
 	           << "\t\t\t<ExceptionHandling>" << ((setup.devTools || setup.tests) ? "Sync" : "") << "</ExceptionHandling>\n";
 
