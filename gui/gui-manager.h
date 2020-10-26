@@ -91,8 +91,9 @@ public:
 
 	ThemeEval *xmlEval() { return _theme->getEvaluator(); }
 
-	int getBaseWidth() const { return _baseWidth; }
-	int getBaseHeight() const { return _baseHeight; }
+	int16 getBaseWidth() const { return _baseWidth; }
+	int16 getBaseHeight() const { return _baseHeight; }
+	float getScaleFactor() const { return _scaleFactor; }
 
 	bool useRTL() const { return _useRTL; }
 	void setLanguageRTL();
@@ -144,6 +145,7 @@ protected:
 	RedrawStatus _redrawStatus;
 	int			_lastScreenChangeID;
 	int16		_baseWidth, _baseHeight;
+	float		_scaleFactor;
 	DialogStack	_dialogStack;
 
 	bool		_stateIsSaved;

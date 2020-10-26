@@ -124,9 +124,9 @@ void GuiManager::computeScaleFactor() {
 		_baseHeight = 720;
 	}
 
-	float scaleFactor = (float)h / (float)_baseHeight;
+	_scaleFactor = (float)h / (float)_baseHeight;
 
-	_baseWidth = (int16)((float)w / scaleFactor);
+	_baseWidth = (int16)((float)w / _scaleFactor);
 
 	warning("Setting %d x %d -> %d x %d", w, h, _baseWidth, _baseHeight);
 }

@@ -225,13 +225,13 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 	if (_overlays == "screen") {
 		_x = 0;
 		_y = 0;
-		_w = g_system->getOverlayWidth();
-		_h = g_system->getOverlayHeight();
+		_w = g_gui.getBaseWidth();
+		_h = g_gui.getBaseHeight();
 	} else if (_overlays == "screen_center") {
 		_x = -1;
 		_y = -1;
-		_w = _defaultW > 0 ? MIN(_defaultW, g_system->getOverlayWidth()) : -1;
-		_h = _defaultH > 0 ? MIN(_defaultH, g_system->getOverlayHeight()) : -1;
+		_w = _defaultW > 0 ? MIN(_defaultW, g_gui.getBaseWidth()) : -1;
+		_h = _defaultH > 0 ? MIN(_defaultH, g_gui.getBaseHeight()) : -1;
 	} else {
 		if (!g_gui.xmlEval()->getWidgetData(_overlays, _x, _y, _w, _h)) {
 			warning("Unable to retrieve overlayed dialog position %s", _overlays.c_str());
@@ -239,10 +239,10 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 
 		if (_w == -1 || _h == -1) {
 			warning("The overlayed dialog %s has not been sized, using a default size for %s", _overlays.c_str(), _name.c_str());
-			_x = g_system->getOverlayWidth()      / 10;
-			_y = g_system->getOverlayHeight()     / 10;
-			_w = g_system->getOverlayWidth()  * 8 / 10;
-			_h = g_system->getOverlayHeight() * 8 / 10;
+			_x = g_gui.getBaseWidth()      / 10;
+			_y = g_gui.getBaseHeight()     / 10;
+			_w = g_gui.getBaseWidth()  * 8 / 10;
+			_h = g_gui.getBaseHeight() * 8 / 10;
 		}
 	}
 
@@ -254,7 +254,7 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 				add them here and in Widget::draw() to enable RTL support for that particular dialog
 			*/
 			int oldX = _x;
-			_x = g_system->getOverlayWidth() - _w - _x;
+			_x = g_gui.getBaseWidth() - _w - _x;
 			g_gui.setDialogPaddings(oldX, _x);
 		}
 	}
@@ -276,10 +276,10 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 			_h = _children[0]->getHeight();
 
 		if (_y == -1)
-			_y = (g_system->getOverlayHeight() >> 1) - (_h >> 1);
+			_y = (g_gui.getBaseHeight() >> 1) - (_h >> 1);
 
 		if (_x == -1)
-			_x = (g_system->getOverlayWidth() >> 1) - (_w >> 1);
+			_x = (g_gui.getBaseWidth() >> 1) - (_w >> 1);
 	}
 }
 
