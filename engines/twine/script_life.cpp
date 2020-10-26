@@ -20,6 +20,7 @@
  *
  */
 
+#include "twine/script_life.h"
 #include "common/stream.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
@@ -28,8 +29,8 @@
 #include "twine/gamestate.h"
 #include "twine/grid.h"
 #include "twine/holomap.h"
-#include "twine/interface.h"
 #include "twine/input.h"
+#include "twine/interface.h"
 #include "twine/movements.h"
 #include "twine/music.h"
 #include "twine/redraw.h"
@@ -37,9 +38,9 @@
 #include "twine/resources.h"
 #include "twine/scene.h"
 #include "twine/screens.h"
-#include "twine/script_life.h"
 #include "twine/sound.h"
 #include "twine/text.h"
+#include "twine/twine.h"
 
 namespace TwinE {
 
@@ -112,10 +113,8 @@ enum LifeScriptConditions {
 		1 - Condition value size (1 byte)
 		2 - Condition value size (2 byes) */
 static int32 processLifeConditions(TwinEEngine *engine, ActorStruct *actor) {
-	int32 conditionOpcode, conditionValueSize;
-
-	conditionValueSize = 1;
-	conditionOpcode = *(scriptPtr++);
+	int32 conditionValueSize = 1;
+	int32 conditionOpcode = *(scriptPtr++);
 
 	switch (conditionOpcode) {
 	case kcCOL:
@@ -132,7 +131,8 @@ static int32 processLifeConditions(TwinEEngine *engine, ActorStruct *actor) {
 		} else {
 			engine->_scene->currentScriptValue = engine->_scene->getActor(actorIdx)->collision;
 		}
-	} break;
+		break;
+	}
 	case kcDISTANCE: {
 		int32 actorIdx = *(scriptPtr++);
 		conditionValueSize = 2;
@@ -152,39 +152,45 @@ static int32 processLifeConditions(TwinEEngine *engine, ActorStruct *actor) {
 		} else {
 			engine->_scene->currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 		}
-	} break;
+		break;
+	}
 	case kcZONE:
 		engine->_scene->currentScriptValue = actor->zone;
 		break;
 	case kcZONE_OBJ: {
 		int32 actorIdx = *(scriptPtr++);
 		engine->_scene->currentScriptValue = engine->_scene->getActor(actorIdx)->zone;
-	} break;
+		break;
+	}
 	case kcBODY:
 		engine->_scene->currentScriptValue = actor->body;
 		break;
 	case kcBODY_OBJ: {
 		int32 actorIdx = *(scriptPtr++);
 		engine->_scene->currentScriptValue = engine->_scene->getActor(actorIdx)->body;
-	} break;
+		break;
+	}
 	case kcANIM:
 		engine->_scene->currentScriptValue = actor->anim;
 		break;
 	case kcANIM_OBJ: {
 		int32 actorIdx = *(scriptPtr++);
 		engine->_scene->currentScriptValue = engine->_scene->getActor(actorIdx)->anim;
-	} break;
+		break;
+	}
 	case kcL_TRACK:
 		engine->_scene->currentScriptValue = actor->labelIdx;
 		break;
 	case kcL_TRACK_OBJ: {
 		int32 actorIdx = *(scriptPtr++);
 		engine->_scene->currentScriptValue = engine->_scene->getActor(actorIdx)->labelIdx;
-	} break;
+		break;
+	}
 	case kcFLAG_CUBE: {
 		int32 flagIdx = *(scriptPtr++);
 		engine->_scene->currentScriptValue = engine->_scene->sceneFlags[flagIdx];
-	} break;
+		break;
+	}
 	case kcCONE_VIEW: {
 		int32 newAngle = 0;
 		int32 targetActorIdx = *(scriptPtr++);
@@ -251,14 +257,16 @@ static int32 processLifeConditions(TwinEEngine *engine, ActorStruct *actor) {
 				engine->_scene->currentScriptValue = 0;
 			}
 		}
-	} break;
+		break;
+	}
 	case kcLIFE_POINT:
 		engine->_scene->currentScriptValue = actor->life;
 		break;
 	case kcLIFE_POINT_OBJ: {
 		int32 actorIdx = *(scriptPtr++);
 		engine->_scene->currentScriptValue = engine->_scene->getActor(actorIdx)->life;
-	} break;
+		break;
+	}
 	case kcNUM_LITTLE_KEYS:
 		engine->_scene->currentScriptValue = engine->_gameState->inventoryNumKeys;
 		break;
@@ -292,7 +300,8 @@ static int32 processLifeConditions(TwinEEngine *engine, ActorStruct *actor) {
 		} else {
 			engine->_scene->currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 		}
-	} break;
+		break;
+	}
 	case 23: // unused
 	case 24:
 		break;
@@ -316,7 +325,8 @@ static int32 processLifeConditions(TwinEEngine *engine, ActorStruct *actor) {
 		} else {
 			engine->_scene->currentScriptValue = 0;
 		}
-	} break;
+		break;
+	}
 	case kcCHOICE:
 		conditionValueSize = 2;
 		engine->_scene->currentScriptValue = engine->_gameState->choiceAnswer;
@@ -331,7 +341,7 @@ static int32 processLifeConditions(TwinEEngine *engine, ActorStruct *actor) {
 		engine->_scene->currentScriptValue = 1;
 		break;
 	default:
-		error("Actor condition opcode %d\n", conditionOpcode);
+		error("Actor condition opcode %d", conditionOpcode);
 		break;
 	}
 
@@ -343,10 +353,9 @@ static int32 processLifeConditions(TwinEEngine *engine, ActorStruct *actor) {
 		0 - Condition false
 		1 - Condition true */
 static int32 processLifeOperators(TwinEEngine *engine, int32 valueSize) {
-	int32 operatorCode, conditionValue;
+	int32 operatorCode = *(scriptPtr++);
 
-	operatorCode = *(scriptPtr++);
-
+	int32 conditionValue;
 	if (valueSize == 1) {
 		conditionValue = *(scriptPtr++);
 	} else if (valueSize == 2) {
@@ -616,7 +625,7 @@ static int32 lCAM_FOLLOW(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor
 	int32 followedActorIdx = *(scriptPtr++);
 
 	if (engine->_scene->currentlyFollowedActor != followedActorIdx) {
-		const ActorStruct* followedActor = engine->_scene->getActor(followedActorIdx);
+		const ActorStruct *followedActor = engine->_scene->getActor(followedActorIdx);
 		engine->_grid->newCameraX = followedActor->x >> 9;
 		engine->_grid->newCameraY = followedActor->y >> 8;
 		engine->_grid->newCameraZ = followedActor->z >> 9;
@@ -958,7 +967,7 @@ static int32 lZOOM(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 static int32 lPOS_POINT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	int32 trackIdx = *(scriptPtr++);
 
-	const ScenePoint& sp = engine->_scene->sceneTracks[trackIdx];
+	const ScenePoint &sp = engine->_scene->sceneTracks[trackIdx];
 	engine->_renderer->destX = sp.x;
 	engine->_renderer->destY = sp.y;
 	engine->_renderer->destZ = sp.z;
@@ -1106,7 +1115,7 @@ static int32 lBIG_MESSAGE(TwinEEngine *engine, int32 actorIdx, ActorStruct *acto
 static int32 lINIT_PINGOUIN(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	int32 pingouinActor = *(scriptPtr++);
 	engine->_scene->mecaPinguinIdx = pingouinActor;
-	ActorStruct* mecaPinguin = engine->_scene->getActor(pingouinActor);
+	ActorStruct *mecaPinguin = engine->_scene->getActor(pingouinActor);
 	mecaPinguin->dynamicFlags.bIsDead = 1;
 	mecaPinguin->entity = -1;
 	mecaPinguin->zone = -1;
@@ -1459,8 +1468,8 @@ static int32 lTEXT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 		int32 textBoxRight = textSize;
 		engine->_text->setFontColor(15);
 		engine->_text->drawText(0, drawVar1, textStr);
-		if (textSize > 639) {
-			textBoxRight = 639;
+		if (textSize > DEFAULT_SCREEN_WIDTH - 1) {
+			textBoxRight = DEFAULT_SCREEN_WIDTH - 1;
 		}
 
 		drawVar1 += 40;
