@@ -40,6 +40,9 @@ Grid::Grid(TwinEEngine *engine) : _engine(engine) {
 
 Grid::~Grid() {
 	free(blockBuffer);
+	for (int32 b = 0; b < NUM_BRICKS; b++) {
+		free(brickMaskTable[b]);
+	}
 }
 
 void Grid::copyGridMask(int32 index, int32 x, int32 y, uint8 *buffer) {

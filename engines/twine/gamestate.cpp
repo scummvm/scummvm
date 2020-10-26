@@ -332,10 +332,7 @@ void GameState::processFoundItem(int32 item) {
 
 	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->sceneHero->animTimerData;
 
-	_engine->_animations->animBuffer2 += _engine->_animations->stockAnimation(_engine->_animations->animBuffer2, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity], &_engine->_scene->sceneHero->animTimerData);
-	if (_engine->_animations->animBuffer1 + 4488 < _engine->_animations->animBuffer2) {
-		_engine->_animations->animBuffer2 = _engine->_animations->animBuffer1;
-	}
+	_engine->_animations->stockAnimation(_engine->_actor->bodyTable[_engine->_scene->sceneHero->entity], &_engine->_scene->sceneHero->animTimerData);
 
 	int32 currentAnimState = 0;
 
@@ -444,7 +441,7 @@ void GameState::processGameChoices(int32 choiceIdx) {
 	}
 }
 
-void GameState::processGameoverAnimation() { // makeGameOver
+void GameState::processGameoverAnimation() {
 	int32 tmpLbaTime = _engine->lbaTime;
 
 	// workaround to fix hero redraw after drowning

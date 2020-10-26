@@ -41,19 +41,13 @@ private:
 	int32 getAnimMode(uint8 **ptr);
 	void applyAnimStep(uint8 **ptr, int32 bp, int32 bx);
 
-public:
-	Animations(TwinEEngine *engine);
-	/** Table with all loaded animations */
-	uint8 *animTable[NUM_ANIMS]{nullptr};
-	/** Table with all loaded animations sizes */
-	uint32 animSizeTable[NUM_ANIMS]{0};
+	uint8 *animBuffer1 = nullptr;
+	uint8 *animBuffer2 = nullptr;
 
 	/** Rotation by anim and not by engine */
 	int16 processRotationByAnim = 0; // processActorVar5
 	/** Last rotation angle */
 	int16 processLastRotationAngle = 0; // processActorVar6
-	/** Current process actor index */
-	int16 currentlyProcessedActorIdx = 0;
 
 	/** Current step X coornidate */
 	int16 currentStepX = 0;
@@ -61,16 +55,23 @@ public:
 	int16 currentStepY = 0;
 	/** Current step Z coornidate */
 	int16 currentStepZ = 0;
-	/** Current actor anim extra pointer */
-	uint8 *currentActorAnimExtraPtr = nullptr;
 
 	/** Pointer to current animation keyframe */
 	uint8 *keyFramePtr = nullptr;
 	/** Pointer to last animation keyframe */
 	uint8 *lastKeyFramePtr = nullptr;
 
-	uint8 *animBuffer1 = nullptr;
-	uint8 *animBuffer2 = nullptr;
+public:
+	Animations(TwinEEngine *engine);
+	~Animations();
+	/** Table with all loaded animations */
+	uint8 *animTable[NUM_ANIMS]{nullptr};
+	/** Table with all loaded animations sizes */
+	uint32 animSizeTable[NUM_ANIMS]{0};
+	/** Current process actor index */
+	int16 currentlyProcessedActorIdx = 0;
+	/** Current actor anim extra pointer */
+	uint8 *currentActorAnimExtraPtr = nullptr;
 
 	/**
 	 * Set animation keyframe
@@ -111,11 +112,10 @@ public:
 
 	/**
 	 * Stock animation - copy the next keyFrame from a different buffer
-	 * @param animPtr Animation pointer
 	 * @param bodyPtr Body model poitner
 	 * @param animTimerDataPtr Animation time data
 	 */
-	int32 stockAnimation(uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	int32 stockAnimation(uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Verify animation at keyframe
