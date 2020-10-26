@@ -3,10 +3,12 @@
 iOS
 ==============
 
+Installing ScummVM
+=====================
 There are two methods to install ScummVM onto your iOS device, and the method you use depends on whether or not your device is jailbroken. 
 
 No Jailbreak
-==============
+^^^^^^^^^^^^^^^^
 
 This method is a little complex, however it is currently the only way to install ScummVM to an iOS device that is not jailbroken. While a rudimentary knowledge of the command line would be useful, the following instructions, if followed carefully, can be completed by anyone. 
 
@@ -110,7 +112,7 @@ In the upper left-hand corner, press the play button to start building ScummVM. 
 
 
 Jailbreak
-==========
+^^^^^^^^^^^^
 
 How to jailbreak an iOS device is outside the scope of this documentation. However, should you have a device that is jailbroken, iOS .deb and .ipa packages are available for install from the `ScummVM downloads page <https://www.scummvm.org/downloads>`_.
 
@@ -132,7 +134,7 @@ The .ipa package can be installed in the same way.
 
 You will need to restart your device for the install to complete. 
 
-Transferring game files to your device
+Transferring game files 
 =======================================
 
 There are multiple ways to transfer game files to your iOS device. 

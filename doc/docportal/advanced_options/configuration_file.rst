@@ -177,6 +177,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`fluidsynth_reverb_roomsize <revroom>`",number,20,"- 0 - 100"
 		":ref:`fluidsynth_reverb_width <revwidth>`",number,1,"- 0 - 100"
 		":ref:`frames_per_secondfl <fpsfl>`",boolean,false,
+		:ref:`frontpanel_touchpad_mode <frontpanel>`,boolean, false
 		":ref:`fullscreen <fullscreen>`",boolean,false,
 		":ref:`gameid <gameid>`",string,,
 		":ref:`gamepath <gamepath>`",string,,

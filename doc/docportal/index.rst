@@ -1,22 +1,20 @@
 .. toctree::
       :glob:
-      :caption: Getting Started
+      :caption: Quickstart Guide
       :maxdepth: 2
       :hidden:
 
       getting_started/mac_linux_windows
-      getting_started/ios
-      getting_started/android
-       
-   
-
+      
 .. toctree::
-      :caption: Installing ScummVM
       :glob:
+      :caption: Other Platforms
       :maxdepth: 2
       :hidden:
 
-      installing_scummvm/*
+      getting_started/ios
+      getting_started/android
+      other_platforms/*
 
 .. toctree::
       :caption: Using ScummVM
