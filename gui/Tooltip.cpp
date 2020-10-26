@@ -52,8 +52,8 @@ void Tooltip::setup(Dialog *parent, Widget *widget, int x, int y) {
 	_w = tooltipFont->wordWrapText(widget->getTooltip(), _maxWidth - 4, _wrappedLines) + 4;
 	_h = (tooltipFont->getFontHeight() + 2) * _wrappedLines.size() + 4;
 
-	_x = MIN<int16>(parent->_x + x + _xdelta, g_gui.getWidth() - _w - 3);
-	_y = MIN<int16>(parent->_y + y + _ydelta, g_gui.getHeight() - _h - 3);
+	_x = MIN<int16>(parent->_x + x + _xdelta, g_gui.getBaseWidth() - _w - 3);
+	_y = MIN<int16>(parent->_y + y + _ydelta, g_gui.getBaseHeight() - _h - 3);
 
 	if (g_gui.useRTL())
 		_x = g_system->getOverlayWidth() - _w - _x + g_gui.getOverlayOffset();
