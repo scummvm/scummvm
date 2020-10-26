@@ -29,6 +29,7 @@
 #include "twine/grid.h"
 #include "twine/movements.h"
 #include "twine/renderer.h"
+#include "twine/resources.h"
 #include "twine/scene.h"
 #include "twine/twine.h"
 
@@ -477,7 +478,7 @@ void Collision::stopFalling() { // ReceptionObj()
 }
 
 int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 actorIdx) {
-	int16 *spriteBounding = (int16 *)(_engine->_scene->spriteBoundingBoxPtr + extra->info0 * 16 + 4);
+	int16 *spriteBounding = (int16 *)(_engine->_resources->spriteBoundingBoxPtr + extra->info0 * 16 + 4);
 
 	int32 xLeft = *(spriteBounding++) + extra->x;
 	int32 xRight = *(spriteBounding++) + extra->x;
@@ -539,7 +540,7 @@ int32 Collision::checkExtraCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 
 }
 
 int32 Collision::checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extraIdx) {
-	int16 *spriteBounding = (int16 *)(_engine->_scene->spriteBoundingBoxPtr + extra->info0 * 16 + 4);
+	int16 *spriteBounding = (int16 *)(_engine->_resources->spriteBoundingBoxPtr + extra->info0 * 16 + 4);
 
 	int32 xLeft = *(spriteBounding++) + extra->x;
 	int32 xRight = *(spriteBounding++) + extra->x;
@@ -554,7 +555,7 @@ int32 Collision::checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extr
 		ExtraListStruct *extraTest = &_engine->_extra->extraList[i];
 		if (i != extraIdx && extraTest->info0 != -1) {
 			//            int16 * spriteBoundingTest;
-			//	        spriteBoundingTest = (int16*)(_engine->_scene->spriteBoundingBoxPtr + extraTest->info0 * 16 + 4);
+			//	        spriteBoundingTest = (int16*)(_engine->_resources->spriteBoundingBoxPtr + extraTest->info0 * 16 + 4);
 
 			int32 xLeftTest = *(spriteBounding++) + extraTest->x;
 			int32 xRightTest = *(spriteBounding++) + extraTest->x;

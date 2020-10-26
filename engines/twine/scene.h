@@ -251,9 +251,6 @@ public:
 	int32 currentSceneIdx = LBA1SceneId::Citadel_Island_Prison;
 	int32 previousSceneIdx = LBA1SceneId::Citadel_Island_Prison;
 
-	uint8 *spriteShadowPtr = nullptr;
-	uint8 *spriteBoundingBoxPtr = nullptr;
-
 	int32 currentGameOverScene = 0;
 	int32 alphaLight = 0;
 	int32 betaLight = 0;

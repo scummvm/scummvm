@@ -99,11 +99,11 @@ void Resources::initResources() {
 	_engine->_text->setFontColor(14);
 	_engine->_text->setTextCrossColor(136, 143, 2);
 
-	if (_engine->_hqrdepack->hqrGetallocEntry(&_engine->_scene->spriteShadowPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW) == 0) {
+	if (_engine->_hqrdepack->hqrGetallocEntry(&spriteShadowPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW) == 0) {
 		error("Failed to load sprite shadow");
 	}
 
-	if (_engine->_hqrdepack->hqrGetallocEntry(&_engine->_scene->spriteBoundingBoxPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA) == 0) {
+	if (_engine->_hqrdepack->hqrGetallocEntry(&spriteBoundingBoxPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA) == 0) {
 		error("Failed to load actors bounding box data");
 	}
 

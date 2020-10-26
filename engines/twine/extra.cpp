@@ -842,9 +842,7 @@ void Extra::processExtras() {
 				}
 
 				if (process) {
-					int16 *spriteBounds;
-
-					spriteBounds = (int16 *)(_engine->_scene->spriteBoundingBoxPtr + extra->info0 * 16 + 8);
+					const int16 *spriteBounds = (const int16 *)(_engine->_resources->spriteBoundingBoxPtr + extra->info0 * 16 + 8);
 					extra->y = (_engine->_collision->collisionY << 8) + 0x100 - *(spriteBounds);
 					extra->type &= 0xFFED;
 					continue;

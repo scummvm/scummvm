@@ -140,6 +140,9 @@ public:
 	/** Font buffer pointer */
 	uint8 *fontPtr = nullptr;
 
+	uint8 *spriteShadowPtr = nullptr;
+	uint8 *spriteBoundingBoxPtr = nullptr;
+
 	/** Initialize resource pointers */
 	void initResources();
 
