@@ -33,7 +33,7 @@ The first step is to download the repository containing the code we'll need to b
     git clone https://github.com/scummvm/scummvm.git
 
 .. note::
-    The default branch of the ScummVM repository will be the master branch. To build a specific version, checkout the appropriate branch. For example, to build version 2.1.1, use the following command:
+    The default branch of the ScummVM repository will be the master branch. To build a specific version, checkout the appropriate branch. For example, to build version 2.2.0, use the following command:
 
     .. code-block::
 
