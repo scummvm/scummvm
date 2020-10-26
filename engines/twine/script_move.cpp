@@ -35,7 +35,6 @@
 namespace TwinE {
 
 static uint8 *scriptPtr = nullptr;
-static int32 continueMove = 0;
 static int32 scriptPosition = 0;
 static ActorMoveStruct *move = nullptr;
 static int32 numRepeatSample = 1;
@@ -56,9 +55,8 @@ struct ScriptMoveFunction {
 
 /*0x00*/
 static int32 mEND(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	continueMove = 0;
 	actor->positionInMoveScript = -1;
-	return 0;
+	return 1;
 }
 
 /*0x01*/
@@ -81,7 +79,7 @@ static int32 mANIM(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 		actor->positionInMoveScript++;
 	} else {
 		actor->positionInMoveScript = scriptPosition;
-		continueMove = 0;
+		return 1;
 	}
 	return 0;
 }
@@ -105,8 +103,8 @@ static int32 mGOTO_POINT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor
 	}
 
 	if (engine->_movements->targetActorDistance > 500) {
-		continueMove = 0;
 		actor->positionInMoveScript -= 2;
+		return 1;
 	}
 
 	return 0;
@@ -114,13 +112,12 @@ static int32 mGOTO_POINT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor
 
 /*0x05*/
 static int32 mWAIT_ANIM(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	continueMove = 0;
 	if (!actor->dynamicFlags.bAnimEnded) {
 		actor->positionInMoveScript--;
 	} else {
 		engine->_movements->clearRealAngle(actor);
 	}
-	return 0;
+	return 1;
 }
 
 /*0x06*/
@@ -143,9 +140,8 @@ static int32 mANGLE(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 		engine->_movements->clearRealAngle(actor);
 		return 0;
 	}
-	continueMove = 0;
 	actor->positionInMoveScript -= 3;
-	return 0;
+	return 1;
 }
 
 /*0x08*/
@@ -185,9 +181,8 @@ static int32 mGOTO(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 
 /*0x0B*/
 static int32 mSTOP(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	continueMove = 0;
 	actor->positionInMoveScript = -1;
-	return 0;
+	return 1;
 }
 
 /*0x0C*/
@@ -209,8 +204,8 @@ static int32 mGOTO_SYM_POINT(TwinEEngine *engine, int32 actorIdx, ActorStruct *a
 	}
 
 	if (engine->_movements->targetActorDistance > 500) {
-		continueMove = 0;
 		actor->positionInMoveScript -= 2;
+		return 1;
 	}
 
 	return 0;
@@ -220,6 +215,7 @@ static int32 mGOTO_SYM_POINT(TwinEEngine *engine, int32 actorIdx, ActorStruct *a
 static int32 mWAIT_NUM_ANIM(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	actor->positionInMoveScript += 2;
 
+	bool abortMove = 0;
 	if (actor->dynamicFlags.bAnimEnded) {
 		int32 animPos, animRepeats;
 
@@ -231,19 +227,19 @@ static int32 mWAIT_NUM_ANIM(TwinEEngine *engine, int32 actorIdx, ActorStruct *ac
 		if (animPos == animRepeats) {
 			animPos = 0;
 		} else {
-			continueMove = 0;
+			abortMove = 1;
 		}
 
 		*(scriptPtr + 1) = animPos;
 	} else {
-		continueMove = 0;
+		abortMove = 1;
 	}
 
-	if (continueMove == 0) {
+	if (abortMove == 1) {
 		actor->positionInMoveScript -= 3;
 	}
 
-	return 0;
+	return abortMove;
 }
 
 /*0x0E*/
@@ -273,8 +269,8 @@ static int32 mGOTO_POINT_3D(TwinEEngine *engine, int32 actorIdx, ActorStruct *ac
 	actor->animType = engine->_movements->getAngleAndSetTargetActorDistance(actor->y, 0, sp.y, engine->_movements->targetActorDistance);
 
 	if (engine->_movements->targetActorDistance > 100) {
-		continueMove = 0;
 		actor->positionInMoveScript -= 2;
+		return 1;
 	} else {
 		actor->x = sp.x;
 		actor->y = sp.y;
@@ -332,8 +328,8 @@ static int32 mWAIT_NUM_SECOND(TwinEEngine *engine, int32 actorIdx, ActorStruct *
 	}
 
 	if (engine->lbaTime < currentTime) {
-		continueMove = 0;
 		actor->positionInMoveScript -= 6;
+		return 1;
 	} else {
 		*((int32 *)scriptPtr) = 0;
 	}
@@ -428,8 +424,8 @@ static int32 mCLOSE(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 static int32 mWAIT_DOOR(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	if (actor->staticFlags.bIsSpriteActor && actor->staticFlags.bUsesClipping) {
 		if (actor->speed) {
-			continueMove = 0;
 			actor->positionInMoveScript--;
+			return 1;
 		}
 	}
 	return 0;
@@ -498,8 +494,8 @@ static int32 mFACE_HERO(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor)
 	}
 
 	if (actor->angle != engine->_scene->currentScriptValue) {
-		continueMove = 0;
 		actor->positionInMoveScript -= 3;
+		return 1;
 	} else {
 		engine->_movements->clearRealAngle(actor);
 		*((int16 *)scriptPtr) = -1;
@@ -531,8 +527,8 @@ static int32 mANGLE_RND(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor)
 	}
 
 	if (actor->angle != engine->_scene->currentScriptValue) {
-		continueMove = 0;
 		actor->positionInMoveScript -= 5;
+		return 1;
 	} else {
 		engine->_movements->clearRealAngle(actor);
 		*((int16 *)scriptPtr + 2) = -1;
@@ -579,16 +575,16 @@ static const ScriptMoveFunction function_map[] = {
 
 ScriptMove::ScriptMove(TwinEEngine *engine) : _engine(engine) {
 	scriptPtr = nullptr;
-	continueMove = 0;
 	scriptPosition = 0;
 	move = nullptr;
 	numRepeatSample = 1;
 }
 
 void ScriptMove::processMoveScript(int32 actorIdx) {
-	continueMove = 1;
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	move = &actor->move;
+
+	int32 end = -2;
 
 	do {
 		scriptPosition = actor->positionInMoveScript;
@@ -599,13 +595,15 @@ void ScriptMove::processMoveScript(int32 actorIdx) {
 		actor->positionInMoveScript++;
 
 		if (scriptOpcode >= 0 && scriptOpcode < ARRAYSIZE(function_map)) {
-			if (function_map[scriptOpcode].function(_engine, actorIdx, actor) < 0) {
-				warning("Actor %d Move script [%s] not implemented", actorIdx, function_map[scriptOpcode].name);
-			}
+			end = function_map[scriptOpcode].function(_engine, actorIdx, actor);
 		} else {
 			error("Actor %d with wrong offset/opcode - Offset: %d (opcode: %i)", actorIdx, actor->positionInLifeScript, scriptOpcode);
 		}
-	} while (continueMove);
+
+		if (end < 0) { // show error message
+			warning("Actor %d Life script [%s] not implemented", actorIdx, function_map[scriptOpcode].name);
+		}
+	} while (end != 1);
 }
 
 } // namespace TwinE
