@@ -510,31 +510,32 @@ static int32 mFACE_HERO(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor)
 /*0x22*/
 static int32 mANGLE_RND(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 	actor->positionInMoveScript += 4;
-	if (!actor->staticFlags.bIsSpriteActor) {
-		engine->_scene->currentScriptValue = *((int16 *)scriptPtr + 2);
+	if (actor->staticFlags.bIsSpriteActor) {
+		return 0;
+	}
+	engine->_scene->currentScriptValue = *((int16 *)scriptPtr + 2);
 
-		if (engine->_scene->currentScriptValue == -1 && actor->move.numOfStep == 0) {
-			if (engine->getRandomNumber() & 1) {
-				engine->_scene->currentScriptValue = *((int16 *)scriptPtr);
-				const int32 newAngle = actor->angle + 0x100 + (ABS(engine->_scene->currentScriptValue) >> 1);
-				engine->_scene->currentScriptValue = (newAngle - engine->getRandomNumber(engine->_scene->currentScriptValue)) & 0x3FF;
-			} else {
-				engine->_scene->currentScriptValue = *((int16 *)scriptPtr);
-				const int32 newAngle = actor->angle - 0x100 + (ABS(engine->_scene->currentScriptValue) >> 1);
-				engine->_scene->currentScriptValue = (newAngle - engine->getRandomNumber(engine->_scene->currentScriptValue)) & 0x3FF;
-			}
-
-			engine->_movements->moveActor(actor->angle, engine->_scene->currentScriptValue, actor->speed, &actor->move);
-			*((int16 *)scriptPtr + 2) = engine->_scene->currentScriptValue;
-		}
-
-		if (actor->angle != engine->_scene->currentScriptValue) {
-			continueMove = 0;
-			actor->positionInMoveScript -= 5;
+	if (engine->_scene->currentScriptValue == -1 && actor->move.numOfStep == 0) {
+		if (engine->getRandomNumber() & 1) {
+			engine->_scene->currentScriptValue = *((int16 *)scriptPtr);
+			const int32 newAngle = actor->angle + 0x100 + (ABS(engine->_scene->currentScriptValue) >> 1);
+			engine->_scene->currentScriptValue = (newAngle - engine->getRandomNumber(engine->_scene->currentScriptValue)) & 0x3FF;
 		} else {
-			engine->_movements->clearRealAngle(actor);
-			*((int16 *)scriptPtr + 2) = -1;
+			engine->_scene->currentScriptValue = *((int16 *)scriptPtr);
+			const int32 newAngle = actor->angle - 0x100 + (ABS(engine->_scene->currentScriptValue) >> 1);
+			engine->_scene->currentScriptValue = (newAngle - engine->getRandomNumber(engine->_scene->currentScriptValue)) & 0x3FF;
 		}
+
+		engine->_movements->moveActor(actor->angle, engine->_scene->currentScriptValue, actor->speed, &actor->move);
+		*((int16 *)scriptPtr + 2) = engine->_scene->currentScriptValue;
+	}
+
+	if (actor->angle != engine->_scene->currentScriptValue) {
+		continueMove = 0;
+		actor->positionInMoveScript -= 5;
+	} else {
+		engine->_movements->clearRealAngle(actor);
+		*((int16 *)scriptPtr + 2) = -1;
 	}
 	return 0;
 }
