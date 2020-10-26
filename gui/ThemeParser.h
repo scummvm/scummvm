@@ -36,6 +36,11 @@ public:
 
 	~ThemeParser() override;
 
+	void setBaseResolution(int w, int h) {
+		_baseWidth = w;
+		_baseHeight = h;
+	}
+
 	bool getPaletteColor(const Common::String &name, int &r, int &g, int &b) {
 		if (!_palette.contains(name))
 			return false;
@@ -265,6 +270,8 @@ protected:
 
 	Graphics::DrawStep *_defaultStepGlobal;
 	Graphics::DrawStep *_defaultStepLocal;
+
+	int16 _baseWidth, _baseHeight;
 
 	struct PaletteColor {
 		uint8 r, g, b;

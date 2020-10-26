@@ -352,7 +352,7 @@ public:
 	bool init();
 	void clearAll();
 
-	void refresh();
+	void refresh(int16 baseWidth, int16 baseHeight);
 	void enable();
 
 	void showCursor();
