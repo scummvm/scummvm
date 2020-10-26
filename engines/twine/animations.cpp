@@ -353,33 +353,28 @@ int32 Animations::setModelAnimation(int32 animState, uint8 *animPtr, uint8 *body
 	return 0;
 }
 
-int32 Animations::getBodyAnimIndex(int32 animIdx, int32 actorIdx) {
-	int8 type;
-	uint16 realAnimIdx;
-	uint8 *bodyPtr;
-	uint8 *ptr, *ptr2;
+int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 	uint8 *costumePtr = NULL;
-	ActorStruct *actor;
 
-	actor = _engine->_scene->getActor(actorIdx);
-	bodyPtr = actor->entityDataPtr;
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	uint8 *bodyPtr = actor->entityDataPtr;
 
 	do {
-		type = *(bodyPtr++);
+		int8 type = *(bodyPtr++);
 
 		if (type == -1) {
 			currentActorAnimExtraPtr = NULL;
 			return -1;
 		}
 
-		ptr = (bodyPtr + 1);
+		uint8 *ptr = (bodyPtr + 1);
 
 		if (type == 3) {
 			if (animIdx == *bodyPtr) {
 				ptr++;
-				realAnimIdx = *(int16 *)(ptr);
+				uint16 realAnimIdx = *(int16 *)(ptr);
 				ptr += 2;
-				ptr2 = ptr;
+				uint8 *ptr2 = ptr;
 				ptr++;
 				if (*ptr2 != 0) {
 					costumePtr = ptr - 1;
@@ -397,37 +392,28 @@ int32 Animations::getBodyAnimIndex(int32 animIdx, int32 actorIdx) {
 }
 
 int32 Animations::stockAnimation(uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	int32 playAnim;
-	uint8 *ptr;
-	int32 *edi;
-	int32 *esi;
-	int32 var0;
-	int32 var1;
-	int32 var2;
-	int32 counter;
-
-	playAnim = *(int16 *)(bodyPtr);
+	int32 playAnim = *(int16 *)(bodyPtr);
 
 	if (playAnim & 2) {
-		ptr = (bodyPtr + 0x10);
+		uint8 *ptr = (bodyPtr + 0x10);
 
 		animTimerDataPtr->time = _engine->lbaTime;
 		animTimerDataPtr->ptr = animPtr;
 
-		var0 = *(int16 *)(ptr - 2);
+		int32 var0 = *(int16 *)(ptr - 2);
 		ptr = ptr + var0;
 
-		var1 = *(int16 *)(ptr);
+		int32 var1 = *(int16 *)(ptr);
 		var1 = var1 + var1 * 2;
 
 		ptr = ptr + var1 * 2 + 2;
 
-		var2 = *(int16 *)(ptr);
-		counter = var2;
+		int32 var2 = *(int16 *)(ptr);
+		int32 counter = var2;
 		var2 = (var2 * 8) + 8;
 
-		edi = (int32 *)(animPtr + 8);
-		esi = (int32 *)(ptr + 10);
+		int32* edi = (int32 *)(animPtr + 8);
+		int32* esi = (int32 *)(ptr + 10);
 
 		do {
 			*(edi++) = *(esi++);
@@ -442,29 +428,16 @@ int32 Animations::stockAnimation(uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataSt
 }
 
 int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	int16 bodyHeader;
-
-	uint8 *ebx;
-	int32 ebp;
-	int32 eax;
-	int32 keyFrameLength;
-	int32 numOfPointInAnim = -1;
-	uint8 *keyFramePtrOld;
-
-	numOfPointInAnim = *(int16 *)(animPtr + 2);
-
+	int32 numOfPointInAnim = *(int16 *)(animPtr + 2);
 	keyFramePtr = ((numOfPointInAnim * 8 + 8) * animIdx) + animPtr + 8;
-
-	keyFrameLength = *(int16 *)(keyFramePtr);
-
-	bodyHeader = *(int16 *)(bodyPtr);
-
+	int32 keyFrameLength = *(int16 *)(keyFramePtr);
+	int16 bodyHeader = *(int16 *)(bodyPtr);
 	if (!(bodyHeader & 2)) {
 		return 0;
 	}
 
-	ebx = animTimerDataPtr->ptr;
-	ebp = animTimerDataPtr->time;
+	uint8 *ebx = animTimerDataPtr->ptr;
+	int32 ebp = animTimerDataPtr->time;
 
 	if (!ebx) {
 		ebx = keyFramePtr;
@@ -473,7 +446,7 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 
 	lastKeyFramePtr = ebx;
 
-	eax = _engine->lbaTime - ebp;
+	int32 eax = _engine->lbaTime - ebp;
 
 	if (eax >= keyFrameLength) {
 		animTimerDataPtr->ptr = keyFramePtr;
@@ -488,7 +461,7 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 
 		return 1;
 	}
-	keyFramePtrOld = keyFramePtr;
+	uint8 *keyFramePtrOld = keyFramePtr;
 
 	lastKeyFramePtr += 8;
 	keyFramePtr += 8;
@@ -795,7 +768,7 @@ int32 Animations::initAnim(AnimationTypes newAnim, int16 animType, uint8 animExt
 	int32 animIndex = getBodyAnimIndex(newAnim, actorIdx);
 
 	if (animIndex == -1) {
-		animIndex = getBodyAnimIndex(0, actorIdx);
+		animIndex = getBodyAnimIndex(AnimationTypes::kStanding, actorIdx);
 	}
 
 	if (animType != 4 && actor->animType == 2) {
@@ -1008,8 +981,8 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 						actor->previousAnimIdx = getBodyAnimIndex(actor->anim, actorIdx);
 
 						if (actor->previousAnimIdx == -1) {
-							actor->previousAnimIdx = getBodyAnimIndex(0, actorIdx);
-							actor->anim = kStanding;
+							actor->previousAnimIdx = getBodyAnimIndex(AnimationTypes::kStanding, actorIdx);
+							actor->anim = AnimationTypes::kStanding;
 						}
 
 						actor->animExtraPtr = currentActorAnimExtraPtr;

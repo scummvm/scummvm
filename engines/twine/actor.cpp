@@ -71,28 +71,28 @@ void Actor::loadHeroEntities() {
 		error("Failed to load actor athletic 3d data");
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityATHLETIC;
-	heroAnimIdxATHLETIC = _engine->_animations->getBodyAnimIndex(0, 0);
+	heroAnimIdxATHLETIC = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
 	heroEntityAGGRESSIVESize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityAGGRESSIVE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROAGGRESSIVE);
 	if (heroEntityAGGRESSIVESize == 0) {
 		error("Failed to load actor aggressive 3d data");
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityAGGRESSIVE;
-	heroAnimIdxAGGRESSIVE = _engine->_animations->getBodyAnimIndex(0, 0);
+	heroAnimIdxAGGRESSIVE = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
 	heroEntityDISCRETESize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityDISCRETE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERODISCRETE);
 	if (heroEntityDISCRETESize == 0) {
 		error("Failed to load actor discrete 3d data");
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityDISCRETE;
-	heroAnimIdxDISCRETE = _engine->_animations->getBodyAnimIndex(0, 0);
+	heroAnimIdxDISCRETE = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
 	heroEntityPROTOPACKSize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityPROTOPACK, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROPROTOPACK);
 	if (heroEntityPROTOPACKSize == 0) {
 		error("Failed to load actor protopack 3d data");
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityPROTOPACK;
-	heroAnimIdxPROTOPACK = _engine->_animations->getBodyAnimIndex(0, 0);
+	heroAnimIdxPROTOPACK = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
 	heroEntityNORMALSize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityNORMAL, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERONORMAL);
 	if (heroEntityNORMALSize == 0) {
@@ -100,7 +100,7 @@ void Actor::loadHeroEntities() {
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityNORMAL;
 	_engine->_scene->sceneHero->entityDataSize = heroEntityNORMALSize;
-	heroAnimIdxNORMAL = _engine->_animations->getBodyAnimIndex(0, 0);
+	heroAnimIdxNORMAL = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
 	_engine->_scene->sceneHero->animExtraPtr = _engine->_animations->currentActorAnimExtraPtr;
 }

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "twine/actor.h"
+#include "twine/scene.h"
 
 namespace TwinE {
 
@@ -106,7 +107,7 @@ public:
 	 * @param animIdx Entity animation index
 	 * @param actorIdx Actor index
 	 */
-	int32 getBodyAnimIndex(int32 animIdx, int32 actorIdx);
+	int32 getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx = OWN_ACTOR_SCENE_INDEX);
 
 	/**
 	 * Stock animation - copy the next keyFrame from a different buffer

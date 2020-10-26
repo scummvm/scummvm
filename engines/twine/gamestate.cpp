@@ -327,7 +327,8 @@ void GameState::processFoundItem(int32 item) {
 
 	_engine->_text->initVoxToPlay(item);
 
-	uint8 *currentAnim = _engine->_animations->animTable[_engine->_animations->getBodyAnimIndex(kFoundItem, 0)];
+	const int32 bodyAnimIdx = _engine->_animations->getBodyAnimIndex(AnimationTypes::kFoundItem);
+	uint8 *currentAnim = _engine->_animations->animTable[bodyAnimIdx];
 
 	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->sceneHero->animTimerData;
 
