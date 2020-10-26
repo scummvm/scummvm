@@ -810,7 +810,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDra
 	int32 boxTop = 110;
 	int32 boxBottom = 229;
 
-	uint8 *currentAnim = _engine->_animations->animTable[_engine->_actor->heroAnimIdx[behaviour]];
+	uint8 *currentAnim = _engine->_resources->animTable[_engine->_actor->heroAnimIdx[behaviour]];
 	int32 currentAnimState = behaviourAnimState[behaviour];
 
 	if (_engine->_animations->setModelAnimation(currentAnimState, currentAnim, behaviourEntity, &behaviourAnimData[behaviour])) {
@@ -861,16 +861,16 @@ void Menu::drawBehaviourMenu(int32 angle) {
 	drawBox(100, 100, 550, 290);
 	_engine->_interface->drawTransparentBox(101, 101, 549, 289, 2);
 
-	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[kNormal], _engine->_animations->animTable[_engine->_actor->heroAnimIdx[kNormal]], behaviourEntity, &behaviourAnimData[kNormal]);
+	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[kNormal], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[kNormal]], behaviourEntity, &behaviourAnimData[kNormal]);
 	drawBehaviour(kNormal, angle, 0);
 
-	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[kAthletic], _engine->_animations->animTable[_engine->_actor->heroAnimIdx[kAthletic]], behaviourEntity, &behaviourAnimData[kAthletic]);
+	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[kAthletic], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[kAthletic]], behaviourEntity, &behaviourAnimData[kAthletic]);
 	drawBehaviour(kAthletic, angle, 0);
 
-	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[kAggressive], _engine->_animations->animTable[_engine->_actor->heroAnimIdx[kAggressive]], behaviourEntity, &behaviourAnimData[kAggressive]);
+	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[kAggressive], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[kAggressive]], behaviourEntity, &behaviourAnimData[kAggressive]);
 	drawBehaviour(kAggressive, angle, 0);
 
-	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[kDiscrete], _engine->_animations->animTable[_engine->_actor->heroAnimIdx[kDiscrete]], behaviourEntity, &behaviourAnimData[kDiscrete]);
+	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[kDiscrete], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[kDiscrete]], behaviourEntity, &behaviourAnimData[kDiscrete]);
 	drawBehaviour(kDiscrete, angle, 0);
 
 	drawInfoMenu(100, 300);
@@ -904,7 +904,7 @@ void Menu::processBehaviourMenu() {
 
 	HeroBehaviourType tmpHeroBehaviour = _engine->_actor->heroBehaviour;
 
-	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[_engine->_actor->heroBehaviour], _engine->_animations->animTable[_engine->_actor->heroAnimIdx[_engine->_actor->heroBehaviour]], behaviourEntity, &behaviourAnimData[_engine->_actor->heroBehaviour]);
+	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[_engine->_actor->heroBehaviour], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[_engine->_actor->heroBehaviour]], behaviourEntity, &behaviourAnimData[_engine->_actor->heroBehaviour]);
 
 	int32 tmpTime = _engine->lbaTime;
 
@@ -930,7 +930,7 @@ void Menu::processBehaviourMenu() {
 			drawBehaviour(tmpHeroBehaviour, _engine->_scene->sceneHero->angle, 1);
 			tmpHeroBehaviour = _engine->_actor->heroBehaviour;
 			_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - 256, 50, &moveMenu);
-			_engine->_animations->setAnimAtKeyframe(behaviourAnimState[_engine->_actor->heroBehaviour], _engine->_animations->animTable[_engine->_actor->heroAnimIdx[_engine->_actor->heroBehaviour]], behaviourEntity, &behaviourAnimData[_engine->_actor->heroBehaviour]);
+			_engine->_animations->setAnimAtKeyframe(behaviourAnimState[_engine->_actor->heroBehaviour], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[_engine->_actor->heroBehaviour]], behaviourEntity, &behaviourAnimData[_engine->_actor->heroBehaviour]);
 		}
 
 		drawBehaviour(_engine->_actor->heroBehaviour, -1, 1);

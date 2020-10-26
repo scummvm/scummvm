@@ -61,7 +61,7 @@ void Resources::preloadAnimations() {
 	}
 	debug("preload %i animations", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		_engine->_animations->animSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&_engine->_animations->animTable[i], Resources::HQR_ANIM_FILE, i);
+		animSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&animTable[i], Resources::HQR_ANIM_FILE, i);
 	}
 }
 

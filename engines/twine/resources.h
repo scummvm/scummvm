@@ -95,6 +95,9 @@ namespace TwinE {
 #define SPRITEHQR_DIAG_BUBBLE_RIGHT 90
 #define SPRITEHQR_DIAG_BUBBLE_LEFT 91
 
+/** Total number of animations allowed in the game */
+#define NUM_ANIMS 600
+
 class TwinEEngine;
 class Resources {
 private:
@@ -120,6 +123,11 @@ public:
 	uint8 *spriteTable[NUM_SPRITES] {nullptr};
 	/** Table with all loaded sprite sizes */
 	uint32 spriteSizeTable[NUM_SPRITES] {0};
+
+	/** Table with all loaded animations */
+	uint8 *animTable[NUM_ANIMS]{nullptr};
+	/** Table with all loaded animations sizes */
+	uint32 animSizeTable[NUM_ANIMS]{0};
 
 	/** Initialize resource pointers */
 	void initResources();

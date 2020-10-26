@@ -748,7 +748,7 @@ int32 Animations::initAnim(AnimationTypes newAnim, int16 animType, uint8 animExt
 	}
 
 	if (actor->previousAnimIdx == -1) { // if no previous animation
-		setAnimAtKeyframe(0, animTable[animIndex], _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+		setAnimAtKeyframe(0, _engine->_resources->animTable[animIndex], _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 	} else { // interpolation between animations
 		animBuffer2 += stockAnimation(_engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 		if (animBuffer1 + 4488 < animBuffer2) {
@@ -890,7 +890,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 	} else { // 3D actor
 		if (actor->previousAnimIdx != -1) {
 			int32 keyFramePassed;
-			uint8 *animPtr = animTable[actor->previousAnimIdx];
+			uint8 *animPtr = _engine->_resources->animTable[actor->previousAnimIdx];
 
 			keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animPtr, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 

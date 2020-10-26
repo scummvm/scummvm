@@ -29,9 +29,6 @@
 
 namespace TwinE {
 
-/** Total number of animations allowed in the game */
-#define NUM_ANIMS 600
-
 class TwinEEngine;
 
 class Animations {
@@ -64,10 +61,7 @@ private:
 public:
 	Animations(TwinEEngine *engine);
 	~Animations();
-	/** Table with all loaded animations */
-	uint8 *animTable[NUM_ANIMS]{nullptr};
-	/** Table with all loaded animations sizes */
-	uint32 animSizeTable[NUM_ANIMS]{0};
+
 	/** Current process actor index */
 	int16 currentlyProcessedActorIdx = 0;
 	/** Current actor anim extra pointer */
