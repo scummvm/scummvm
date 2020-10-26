@@ -15,7 +15,7 @@ This method is a little complex, however it is currently the only way to install
 Prerequisites
 ****************
 
-- A computer running MacOSX with Xcode installed. Xcode is a free App, available from the Mac App Store.
+- A Mac computer with Xcode installed. Xcode is a free App, available from the Mac App Store.
 - An Apple Developer account. You can sign up for a free account on the `Apple Developer Member Center <https://developer.apple.com/membercenter/>`_ with your Apple ID. 
 - The ScummVM `iOS Libraries <https://www.scummvm.org/frs/build/scummvm-ios7-libs-v2.zip>`_ downloaded. 
 
@@ -99,16 +99,23 @@ Building ScummVM
 
 Once Xcode is open, connect the device you are installing ScummVM onto. At the top of the window, select **ScummVM-iOS** and then the device you connected. You will need to trust the device before it will show up on the list of connected devices. 
 
+.. figure:: ../images/ios/choose_device.gif
+
+   
 The last step before building the app is to change the bundle identifier and manage signing. Click on the **scummvm** project in the left pane, and then click on **ScummVM - iOS** under **TARGETS**. On the menu bar above, click on **General**. Under **Identity** you should see a field labeled **Bundle Identifier**. Here you will need to input a unique identifier in reverse-DNS format. This can be as simple as com.\ *yournamehere*. 
 
-Next to **General**, click on **Signing & Capabilities**. Under **Signing**, tick the **Automatically manage signing** box, and select your developer account from the **Team** dropdown menu. If you have not added your developer account to Xcode, do this now by clicking **Add an Account...** in the dropdown menu.
+.. figure:: ../images/ios/identifier.gif
+
+
+Next to **General**, click on **Signing & Capabilities**. Under **Signing**, tick the **Automatically manage signing** box, and select your developer account from the **Team** dropdown menu. 
+
+.. figure:: ../images/ios/signing.gif
+
+   
+
+If you have not added your developer account to Xcode, do this now by clicking **Add an Account...** in the dropdown menu.
 
 In the upper left-hand corner, press the play button to start building ScummVM. When the build has finished, it will launch on your connected device. 
-
-.. image:: ../images/ios/ios_xcode_build.gif
-   :class: with-shadow
-
-
 
 
 Jailbreak
@@ -145,14 +152,66 @@ ScummVM has built-in Cloud functionality, which allows you to connect your Googl
 
  ScummVM's Cloud functionality does not currently support iCloud, however it is possible to upload game folders to your iCloud and then use the Files app on your iOS device to copy these folders into the local ScummVM folder.
 
-Another way to transfer files to your device is by using the Finder while your device is connected to your Mac. In the Finder app on your Mac, navigate to **Locations** in the left pane, and click on the connected device. Click on **Files**, then drag and drop the folder containing the game files into the **ScummVM** folder. 
+Another way to transfer files (for macOS Catalina and newer) to your device is by using the Finder while your device is connected to your Mac. In the Finder app on your Mac, navigate to **Locations** in the left pane, and click on the connected device. Click on **Files**, then drag and drop the folder containing the game files into the **ScummVM** folder. 
 
 .. image:: ../images/ios/ios_transfer_files.gif
    
+For older versions of macOS, and for Windows users, file transfer can be done in iTunes. 
 
 For more information on which files ScummVM requires, and how to add and play games, see `adding and playing games <adding_games>`_.
 
+Controls
+============
 
+.. csv-table:: 
+  	:widths: 40 60 
+  	:header-rows: 2
+
+        Game Controller Mapping,
+        Action,Touch screen control
+        Left click,Single tap
+        Right click,"Hold one finger on screen where you want to click, single tap another"
+        Arrow keys,Use a three finger swipe in the direction of the arrow key you want. You can also use the arrow buttons in the bar above the keyboard. You may need to scroll across on smaller screens to see these.  
+        ESC,"Hold one finger on screen, double tap another, or use the Esc key in the bar above the keyboard."
+        Tab,The Tab button in the bar above the keyboard.
+        Return,The Return button in the bar above the keyboard.
+        Global Main Menu,"Swipe two fingers down from top to bottom, or the left-most button in the bar above the keyboard."
+        Enable/disable keyboard,"The pinch gesture enables or disables the keyboard. If no external keyboard is connected, this shows and hides the On Screen keyboard. When an external keyboard is connected, instead of showing/hiding the On Screen keyboard this enables/disables inputs from the external keyboard."
+        F 0-9 keys,The F-bar above the keyboard.
+        Pause,Keyboard spacebar
+        Toggle `Click and drag mode`_,Swipe two fingers up from bottom to top. 
+        Toggle `Touchpad mode`_,Swipe two fingers from left to right.  
+
+Click and drag mode
+^^^^^^^^^^^^^^^^^^^^
+
+In this mode, a mouse click is sent immediately when you touch the screen, drags to wherever you slide your finger, and releases where you lift your finger. If you press down a second finger in this mode, you effectively release the left mouse button, and press down the right one, which is then released when you lift your finger again. 
+
+This is especially useful for Monkey Island 3: The Curse of Monkey Island and Full Throttle.
+
+Touchpad mode
+^^^^^^^^^^^^^^^^
+
+In this mode, the cursor doesn't stay underneath your finger, but is rather moved around from its current position depending on the direction of your finger movement, just like a touchpad on a laptop.
+
+Settings
+============
+
+
+Paths
+=======
+
+Saved games
+***************
+``/var/mobile/Library/ScummVM/Savegames/`` or ``/ScummVM/Savegames/`` for a sandboxed version.
+
+Configuration file
+********************
+
+``/var/mobile/Library/ScummVM/Preferences`` or ``/Preferences`` for a sandboxed version.
+
+Known issues
+===============
 
 
 
