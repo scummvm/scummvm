@@ -36,46 +36,19 @@ namespace TwinE {
 
 Movements::Movements(TwinEEngine *engine) : _engine(engine) {}
 
-void Movements::getShadowPosition(int32 X, int32 Y, int32 Z) {
-	int32 tempX;
-	int32 tempY;
-	int32 tempZ;
-	uint8 *ptr;
+void Movements::getShadowPosition(int32 x, int32 y, int32 z) {
+	const uint8 *ptr = _engine->_grid->getBlockBufferGround(x, y, z, processActorY);
+	processActorX = x;
+	processActorZ = z;
 
-	tempX = (X + 0x100) >> 9;
-	tempY = Y >> 8;
-	tempZ = (Z + 0x100) >> 9;
-
-	ptr = _engine->_grid->blockBuffer + tempY * 2 + tempX * 25 * 2 + (tempZ << 6) * 25 * 2;
-
-	while (tempY) {        // search down until either ground is found or lower border of the cube is reached
-		if (*(int16 *)ptr) // found the ground
-			break;
-
-		tempY--;
-		ptr -= 2;
-	}
-
-	_engine->_actor->shadowCollisionType = 0;
-
-	_engine->_collision->collisionX = tempX;
-	_engine->_collision->collisionY = tempY;
-	_engine->_collision->collisionZ = tempZ;
-
-	processActorX = X;
-	processActorY = (tempY + 1) << 8;
-	processActorZ = Z;
-
-	if (*ptr) { //*((uint8 *)(blockPtr))
-		uint8 *blockPtr;
-		uint8 brickShape;
-
-		blockPtr = _engine->_grid->getBlockLibrary(*(ptr)-1) + 3 + *(ptr + 1) * 4;
-		brickShape = *((uint8 *)(blockPtr));
-
+	if (*ptr) {
+		uint8 *blockPtr = _engine->_grid->getBlockLibrary(*ptr - 1) + 3 + *(ptr + 1) * 4;
+		uint8 brickShape = *((uint8 *)(blockPtr));
 		_engine->_actor->shadowCollisionType = brickShape;
-		_engine->_collision->reajustActorPosition(_engine->_actor->shadowCollisionType);
+	} else {
+		_engine->_actor->shadowCollisionType = 0;
 	}
+	_engine->_collision->reajustActorPosition(_engine->_actor->shadowCollisionType);
 
 	_engine->_actor->shadowX = processActorX;
 	_engine->_actor->shadowY = processActorY;
@@ -168,18 +141,15 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 }
 
 int32 Movements::getRealAngle(ActorMoveStruct *movePtr) {
-	int32 timePassed;
-	int32 remainingAngle;
-
 	if (movePtr->numOfStep) {
-		timePassed = _engine->lbaTime - movePtr->timeOfChange;
+		int32 timePassed = _engine->lbaTime - movePtr->timeOfChange;
 
 		if (timePassed >= movePtr->numOfStep) { // rotation is finished
 			movePtr->numOfStep = 0;
 			return movePtr->to;
 		}
 
-		remainingAngle = movePtr->to - movePtr->from;
+		int32 remainingAngle = movePtr->to - movePtr->from;
 
 		if (remainingAngle < -0x200) {
 			remainingAngle += 0x400;
@@ -198,8 +168,6 @@ int32 Movements::getRealAngle(ActorMoveStruct *movePtr) {
 }
 
 int32 Movements::getRealValue(ActorMoveStruct *movePtr) {
-	int32 tempStep;
-
 	if (!movePtr->numOfStep) {
 		return movePtr->to;
 	}
@@ -209,7 +177,7 @@ int32 Movements::getRealValue(ActorMoveStruct *movePtr) {
 		return movePtr->to;
 	}
 
-	tempStep = movePtr->to - movePtr->from;
+	int32 tempStep = movePtr->to - movePtr->from;
 	tempStep *= _engine->lbaTime - movePtr->timeOfChange;
 	tempStep /= movePtr->numOfStep;
 

@@ -175,12 +175,23 @@ private:
 	/** Current brick pixel Y position */
 	int32 brickPixelPosY = 0;
 
+	/** Celling grid brick block buffer */
+	uint8 *blockBuffer = nullptr;
+
 public:
 	Grid(TwinEEngine *engine);
 	~Grid();
 
 	/** Grid block entry types */
 	typedef struct BlockEntry blockMap[GRID_SIZE_X][GRID_SIZE_Z][GRID_SIZE_Y];
+
+	uint8* getBlockBuffer(int32 x, int32 y, int32 z);
+	/**
+	 * search down until either ground is found or lower border of the cube is reached
+	 */
+	const uint8* getBlockBufferGround(int32 x, int32 y, int32 z, int16 &ground) const;
+
+	void updateCollisionCoordinates(int32 x, int32 y, int32 z);
 
 	/** New grid camera X coordinates */
 	int32 newCameraX = 0;
@@ -195,9 +206,6 @@ public:
 	int32 cameraY = 0;
 	/** Current grid camera Z coordinates */
 	int32 cameraZ = 0;
-
-	/** Celling grid brick block buffer */
-	uint8 *blockBuffer = nullptr;
 
 	/** Flag to know if the engine is using celling grids */
 	int16 useCellingGrid = 0; // useAnotherGrm

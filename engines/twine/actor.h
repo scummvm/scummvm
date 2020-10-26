@@ -252,7 +252,7 @@ public:
 	int32 shadowY = 0;
 	/** Actor shadow Z coordinate */
 	int32 shadowZ = 0;
-	/** Actor shadow collition type */
+	/** Actor shadow collition type - brick shape */
 	int8 shadowCollisionType = 0; // shadowVar
 
 	HeroBehaviourType heroBehaviour = kNormal;
