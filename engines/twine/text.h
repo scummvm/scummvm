@@ -59,7 +59,7 @@ private:
 	// draw next page arrow polygon
 	void printText10Sub();
 	void printText10Sub2();
-	void TEXT_GetLetterSize(uint8 character, int32 *pLetterWidth, int32 *pLetterHeight, uint8 *pFont);
+	int32 getCharWidth(uint8 chr) const;
 	/**
 	 * Copy dialogue text
 	 * @param src source text buffer
@@ -108,9 +108,6 @@ public:
 	int32 currDialTextSize = 0;
 	/** Current dialogue text pointer */
 	char *currDialTextPtr = nullptr;
-
-	/** Font buffer pointer */
-	uint8 *fontPtr = nullptr;
 
 	/** Dialogue text size */
 	int32 dialTextSize = 0;
@@ -179,8 +176,6 @@ public:
 
 	void initText(int32 index);
 	int printText10();
-
-	void setFont(uint8 *font, int32 spaceBetween, int32 charSpace);
 
 	/**
 	 * Set font type parameters

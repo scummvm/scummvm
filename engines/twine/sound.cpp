@@ -94,6 +94,8 @@ void Sound::playSample(int32 index, int32 frequency, int32 repeat, int32 x, int3
 	if (channelIdx == -1) {
 		return;
 	}
+
+	// TODO: use Resources class
 	uint8 *sampPtr;
 	int32 sampSize = _engine->_hqrdepack->hqrGetallocEntry(&sampPtr, Resources::HQR_SAMPLES_FILE, index);
 	if (actorIdx != -1) {

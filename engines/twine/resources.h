@@ -98,6 +98,9 @@ namespace TwinE {
 /** Total number of animations allowed in the game */
 #define NUM_ANIMS 600
 
+/** Total number of samples allowed in the game */
+#define NUM_SAMPLES 243
+
 class TwinEEngine;
 class Resources {
 private:
@@ -128,6 +131,14 @@ public:
 	uint8 *animTable[NUM_ANIMS]{nullptr};
 	/** Table with all loaded animations sizes */
 	uint32 animSizeTable[NUM_ANIMS]{0};
+
+	/** Table with all loaded samples */
+	uint8 *samplesTable[NUM_SAMPLES]{nullptr};
+	/** Table with all loaded samples sizes */
+	uint32 samplesSizeTable[NUM_SAMPLES]{0};
+
+	/** Font buffer pointer */
+	uint8 *fontPtr = nullptr;
 
 	/** Initialize resource pointers */
 	void initResources();

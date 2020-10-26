@@ -68,7 +68,7 @@ void Text::initVoxBank(int32 bankIdx) {
 bool Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
 	int32 currIdx = 0;
 
-	int16 *localOrderBuf = (int16 *)dialOrderPtr;
+	const int16 *localOrderBuf = (const int16 *)dialOrderPtr;
 
 	voxHiddenIndex = 0;
 	hasHiddenVox = false;
@@ -166,7 +166,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 	int32 tempX;
 	int32 tempY;
 
-	data = fontPtr + *((int16 *)(fontPtr + character * 4));
+	data = _engine->_resources->fontPtr + *((const int16 *)(_engine->_resources->fontPtr + character * 4));
 
 	dialTextSize = sizeX = *(data++);
 	sizeY = *(data++);
@@ -251,8 +251,10 @@ void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color) {
 }
 
 void Text::drawText(int32 x, int32 y, const char *dialogue) { // Font
-	if (fontPtr == 0)                                         // if the font is not defined
+	                                                          // if the font is not defined
+	if (_engine->_resources->fontPtr == nullptr) {
 		return;
+	}
 
 	do {
 		const uint8 currChar = (uint8) * (dialogue++); // read the next char from the string
@@ -264,7 +266,7 @@ void Text::drawText(int32 x, int32 y, const char *dialogue) { // Font
 		if (currChar == ' ') {
 			x += dialCharSpace;
 		} else {
-			dialTextSize = *(fontPtr + (*((int16 *)(fontPtr + currChar * 4)))); // get the length of the character
+			dialTextSize = getCharWidth(currChar);
 			drawCharacter(x, y, currChar);                                      // draw the character on screen
 			// add the length of the space between 2 characters
 			x += dialSpaceBetween;
@@ -286,7 +288,7 @@ int32 Text::getTextSize(const char *dialogue) { // SizeFont
 			dialTextSize += dialCharSpace;
 		} else {
 			dialTextSize += dialSpaceBetween;
-			dialTextSize += *(fontPtr + *((int16 *)(fontPtr + currChar * 4)));
+			dialTextSize += getCharWidth(currChar);
 		}
 	} while (1);
 
@@ -508,10 +510,8 @@ void Text::printText10Sub2() {
 	};
 }
 
-void Text::TEXT_GetLetterSize(uint8 character, int32 *pLetterWidth, int32 *pLetterHeight, uint8 *pFont) { // TEXT_GetLetterSize
-	uint8 *temp = (uint8 *)(pFont + *((int16 *)(pFont + character * 4)));
-	*pLetterWidth = *(temp);
-	*pLetterHeight = *(temp + 1);
+int32 Text::getCharWidth(uint8 chr) const {
+	return *(_engine->_resources->fontPtr + *((const int16 *)(_engine->_resources->fontPtr + chr * 4)));
 }
 
 // TODO: refactor this code
@@ -551,9 +551,7 @@ int Text::printText10() {
 
 	printText8Sub4(TEXT_CurrentLetterX, TEXT_CurrentLetterY, *printText8Ptr2);
 	printText10Sub2();
-	int32 charWidth;
-	int32 charHeight;
-	TEXT_GetLetterSize(*printText8Ptr2, &charWidth, &charHeight, (uint8 *)fontPtr);
+	int8 charWidth = getCharWidth(*printText8Ptr2);
 
 	if (*printText8Ptr2 != ' ') {
 		TEXT_CurrentLetterX += charWidth + 2;
@@ -568,8 +566,9 @@ int Text::printText10() {
 	// next character
 	printText8Ptr2++;
 
-	if (*printText8Ptr2 != '\0')
+	if (*printText8Ptr2 != '\0') {
 		return 1;
+	}
 
 	TEXT_CurrentLetterY += 38;
 	TEXT_CurrentLetterX = dialTextBoxLeft + 8;
@@ -664,12 +663,6 @@ void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
 	_engine->_interface->loadClip();
 }
 
-void Text::setFont(uint8 *font, int32 spaceBetween, int32 charSpace) {
-	fontPtr = font;
-	dialCharSpace = charSpace;
-	dialSpaceBetween = spaceBetween;
-}
-
 void Text::setFontParameters(int32 spaceBetween, int32 charSpace) {
 	dialSpaceBetween = spaceBetween;
 	dialCharSpace = charSpace;
@@ -697,8 +690,8 @@ bool Text::getText(int32 index) { // findString
 	int32 currIdx = 0;
 	int32 orderIdx = 0;
 
-	int16 *localTextBuf = (int16 *)dialTextPtr;
-	int16 *localOrderBuf = (int16 *)dialOrderPtr;
+	const int16 *localTextBuf = (const int16 *)dialTextPtr;
+	const int16 *localOrderBuf = (const int16 *)dialOrderPtr;
 
 	int32 numEntries = numDialTextEntries;
 
@@ -729,8 +722,7 @@ bool Text::getText(int32 index) { // findString
 }
 
 void Text::copyText(const char *src, char *dst, int32 size) { // copyStringToString
-	int32 i;
-	for (i = 0; i < size; i++) {
+	for (int32 i = 0; i < size; i++) {
 		*(dst++) = *(src++);
 	}
 }

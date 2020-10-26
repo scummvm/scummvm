@@ -72,7 +72,7 @@ void Resources::preloadSamples() {
 	}
 	debug("preload %i samples", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		_engine->_sound->samplesSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&_engine->_sound->samplesTable[i], Resources::HQR_SAMPLES_FILE, i);
+		samplesSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&samplesTable[i], Resources::HQR_SAMPLES_FILE, i);
 	}
 }
 
@@ -91,7 +91,7 @@ void Resources::initResources() {
 	// Menu and in-game palette
 	initPalettes();
 
-	if (_engine->_hqrdepack->hqrGetallocEntry(&_engine->_text->fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT) == 0) {
+	if (_engine->_hqrdepack->hqrGetallocEntry(&fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT) == 0) {
 		error("Failed to load font");
 	}
 

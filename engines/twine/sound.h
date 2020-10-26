@@ -28,8 +28,6 @@
 
 namespace TwinE {
 
-/** Total number of samples allowed in the game */
-#define NUM_SAMPLES 243
 #define NUM_CHANNELS 32
 
 class TwinEEngine;
@@ -52,10 +50,6 @@ public:
 	Sound(TwinEEngine *engine);
 
 	bool isChannelPlaying(int32 channel);
-	/** Table with all loaded samples */
-	uint8 *samplesTable[NUM_SAMPLES]{nullptr};
-	/** Table with all loaded samples sizes */
-	uint32 samplesSizeTable[NUM_SAMPLES]{0};
 
 	/**
 	 * Sample volume
