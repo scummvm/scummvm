@@ -161,6 +161,7 @@ Common::Error TwinEEngine::run() {
 	while (!shouldQuit()) {
 		_menu->run();
 	}
+	_sound->stopSamples();
 	_music->stopTrackMusic();
 	_music->stopMidiMusic();
 	return Common::kNoError;

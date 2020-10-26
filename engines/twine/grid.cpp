@@ -40,8 +40,11 @@ Grid::Grid(TwinEEngine *engine) : _engine(engine) {
 
 Grid::~Grid() {
 	free(blockBuffer);
-	for (int32 b = 0; b < NUM_BRICKS; b++) {
-		free(brickMaskTable[b]);
+	for (int32 i = 0; i < ARRAYSIZE(brickMaskTable); i++) {
+		free(brickMaskTable[i]);
+	}
+	for (int32 i = 0; i < ARRAYSIZE(brickTable); i++) {
+		free(brickTable[i]);
 	}
 }
 
@@ -306,6 +309,9 @@ int32 Grid::loadGridBricks(int32 gridSize) {
 	for (uint32 i = firstBrick; i <= lastBrick; i++) {
 		if (!brickUsageTable[i]) {
 			continue;
+		}
+		if (brickTable[i]) {
+			free(brickTable[i]);
 		}
 		brickSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&brickTable[i], Resources::HQR_LBA_BRK_FILE, i);
 		if (brickSizeTable[i] == 0) {
