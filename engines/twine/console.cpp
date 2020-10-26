@@ -24,15 +24,27 @@
 #include "twine/twine.h"
 #include "twine/gamestate.h"
 #include "twine/scene.h"
+#include "twine/text.h"
 
 namespace TwinE {
 
 TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger() {
 	registerCmd("give_allitems", WRAP_METHOD(TwinEConsole, doGiveAllItems));
 	registerCmd("change_scene", WRAP_METHOD(TwinEConsole, doChangeScene));
+	registerCmd("list_menutext", WRAP_METHOD(TwinEConsole, doListMenuText));
 }
 
 TwinEConsole::~TwinEConsole() {
+}
+
+bool TwinEConsole::doListMenuText(int argc, const char **argv) {
+	for (int32 i = 0; i < 1000; ++i) {
+		char buf[256];
+		if (_engine->_text->getMenuText(i, buf, sizeof(buf))) {
+			debug("%4i: %s", i, buf);
+		}
+	}
+	return true;
 }
 
 bool TwinEConsole::doChangeScene(int argc, const char **argv) {
