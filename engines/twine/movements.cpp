@@ -200,8 +200,9 @@ int32 Movements::getRealAngle(ActorMoveStruct *movePtr) {
 int32 Movements::getRealValue(ActorMoveStruct *movePtr) {
 	int32 tempStep;
 
-	if (!movePtr->numOfStep)
+	if (!movePtr->numOfStep) {
 		return movePtr->to;
+	}
 
 	if (!(_engine->lbaTime - movePtr->timeOfChange < movePtr->numOfStep)) {
 		movePtr->numOfStep = 0;
@@ -215,10 +216,10 @@ int32 Movements::getRealValue(ActorMoveStruct *movePtr) {
 	return tempStep + movePtr->from;
 }
 
-void Movements::rotateActor(int32 X, int32 Z, int32 angle) {
+void Movements::rotateActor(int32 x, int32 z, int32 angle) {
 	const double radians = 2 * M_PI * angle / 0x400;
-	_engine->_renderer->destX = (int32)(X * cos(radians) + Z * sin(radians));
-	_engine->_renderer->destZ = (int32)(-X * sin(radians) + Z * cos(radians));
+	_engine->_renderer->destX = (int32)(x * cos(radians) + z * sin(radians));
+	_engine->_renderer->destZ = (int32)(-x * sin(radians) + z * cos(radians));
 }
 
 int32 Movements::getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) {
@@ -230,19 +231,15 @@ int32 Movements::getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2,
 }
 
 void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) { // ManualRealAngle
-	int32 numOfStepInt;
-	int16 numOfStep;
-	int16 from;
-	int16 to;
-
-	from = angleFrom & 0x3FF;
-	to = angleTo & 0x3FF;
+	const int16 from = angleFrom & 0x3FF;
+	const int16 to = angleTo & 0x3FF;
 
 	movePtr->from = from;
 	movePtr->to = to;
 
-	numOfStep = (from - to) << 6;
+	const int16 numOfStep = (from - to) << 6;
 
+	int32 numOfStepInt;
 	if (numOfStep < 0) {
 		numOfStepInt = -numOfStep;
 	} else {
