@@ -114,6 +114,10 @@ bool Input::isMoveOrTurnActionActive() const {
 	return isActionActive(TwinEActionType::TurnLeft) || isActionActive(TwinEActionType::TurnRight) || isActionActive(TwinEActionType::MoveBackward) || isActionActive(TwinEActionType::MoveForward);
 }
 
+bool Input::isHeroActionActive() const {
+	return isActionActive(TwinEActionType::ExecuteBehaviourAction) || isActionActive(TwinEActionType::SpecialAction);
+}
+
 void Input::enableKeyMap(const char *id) {
 	if (_currentKeyMap == id) {
 		return;
