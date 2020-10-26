@@ -271,7 +271,7 @@ void TwinEEngine::initConfigurations() {
 	cfgfile.Debug = ConfGetIntOrDefault("Debug", 0) == 1;
 	cfgfile.UseAutoSaving = ConfGetIntOrDefault("UseAutoSaving", 0);
 	_actor->autoAgressive = ConfGetIntOrDefault("CombatAuto", 1) == 1;
-	cfgfile.ShadowMode = ConfGetIntOrDefault("Shadow", 0);
+	cfgfile.ShadowMode = ConfGetIntOrDefault("Shadow", 2);
 	cfgfile.SceZoom = ConfGetIntOrDefault("SceZoom", 0) == 0;
 	cfgfile.WallCollision = ConfGetIntOrDefault("WallCollision", 0);
 }
