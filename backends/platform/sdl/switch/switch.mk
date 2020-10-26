@@ -16,6 +16,10 @@ endif
 ifdef DIST_FILES_VKEYBD
 	cp $(DIST_FILES_VKEYBD) ./switch_release/scummvm/data
 endif
+ifdef DIST_FILES_SHADERS
+	mkdir -p ./switch_release/scummvm/data/shaders
+	cp $(DIST_FILES_SHADERS) ./switch_release/scummvm/data/shaders
+endif
 	cp $(DIST_FILES_DOCS) ./switch_release/scummvm/doc/
 	cp $(srcdir)/backends/platform/sdl/switch/README.SWITCH ./switch_release/scummvm/doc/
 
