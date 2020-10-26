@@ -271,7 +271,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 	}
 
 	if (actor->dynamicFlags.bIsFalling) {
-		if (actor->controlMode != 1) {
+		if (actor->controlMode != ControlMode::kManual) {
 			return;
 		}
 
