@@ -76,6 +76,8 @@ public:
 	};
 
 	enum UISound {
+		kActionMouthHover = 0,
+		kActionHover = 1,
 		kInventoryNewItem = 2
 	};
 
