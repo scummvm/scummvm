@@ -58,7 +58,7 @@ ScummVM needs access to all the data files, so it will not be able to run direct
 CD audio
 **********
 
-Some games contain one or more separate audio tracks on CD. To use these with ScummVM, they need to be extracted from the CD in .wav or .aiff format, and then converted to either .mp3, .flac or .ogg file formats. 
+Some games contain one or more separate audio tracks on CD. To use these with ScummVM, they need to be extracted from the CD in ``.wav`` or ``.aiff`` format, and then converted to either ``.mp3``, ``.flac`` or ``.ogg`` file formats. 
 
 .. tip::
 
@@ -66,7 +66,7 @@ Some games contain one or more separate audio tracks on CD. To use these with Sc
 
     `fre:ac <https://www.freac.org/>`_ is a multi-platform, open-source software, with the ability to both rip CDs and convert audio between .mp3, .ogg, .flac and .wav formats. 
 
-
+Place the converted audio files in the same folder that contains the other game datafiles. 
 
 
 .. _macgames:
