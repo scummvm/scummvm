@@ -193,7 +193,7 @@ public:
 		case 23007:
 			handleEvent(23010);
 			_hintTimerLength = 40000;
-			rescheduleHintTimer();
+			rescheduleHintTimer(true);
 			break;
 		case 23008:
 			room->playAnim("c8140ba0", 1101, PlayAnimParams::disappear(), 23015);
@@ -327,10 +327,11 @@ public:
 		g_vm->getHeroBelt()->setColour(HeroBelt::kCool);
 	}
 private:
-	void rescheduleHintTimer() {
+	void rescheduleHintTimer(bool isInHandler = false) {
 		Persistent *persistent = g_vm->getPersistent();
 
-		g_vm->cancelTimer(23007);
+		if (!isInHandler)
+			g_vm->cancelTimer(23007);
 		if (!persistent->_athenaPuzzleSolved)
 			g_vm->addTimer(23007, _hintTimerLength);
 	}
