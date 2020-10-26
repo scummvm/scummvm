@@ -256,7 +256,7 @@ void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMove
 }
 
 void Movements::update() {
-	previousLoopCursorKeys = loopCursorKeys;
+	previousLoopActionKey = heroActionKey;
 	heroActionKey = _engine->_input->pressedKey;
 	loopCursorKeys = _engine->_input->cursorKeys;
 }
@@ -319,9 +319,9 @@ void Movements::processActorMovements(int32 actorIdx) {
 						if (_engine->_actor->autoAgressive) {
 							heroMoved = true;
 							actor->angle = getRealAngle(&actor->move);
-							// TODO: previousLoopCursorKeys must be handled properly
-							if (!(previousLoopCursorKeys & 1) || !actor->anim) {
-								int32 aggresiveMode = _engine->getRandomNumber(3);
+							// TODO: previousLoopActionKey must be handled properly
+							if (!previousLoopActionKey || !actor->anim) {
+								const int32 aggresiveMode = _engine->getRandomNumber(3);
 
 								switch (aggresiveMode) {
 								case 0:

@@ -43,7 +43,7 @@ private:
 	// enter, space, ...
 	int32 loopCursorKeys = 0;
 	// cursor keys
-	int32 previousLoopCursorKeys = 0;
+	int32 previousLoopActionKey = 0;
 
 public:
 	Movements(TwinEEngine *engine);
