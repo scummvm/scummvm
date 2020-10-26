@@ -117,6 +117,8 @@ private:
 
 public:
 	Resources(TwinEEngine *engine) : _engine(engine) {}
+	~Resources();
+
 	/** Table with all loaded samples */
 	uint8 *inventoryTable[NUM_INVENTORY_ITEMS] {nullptr};
 	/** Table with all loaded samples sizes */

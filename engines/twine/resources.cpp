@@ -21,6 +21,7 @@
  */
 
 #include "twine/resources.h"
+#include "common/util.h"
 #include "twine/animations.h"
 #include "twine/scene.h"
 #include "twine/screens.h"
@@ -28,6 +29,24 @@
 #include "twine/text.h"
 
 namespace TwinE {
+
+Resources::~Resources() {
+	for (size_t i = 0; i < ARRAYSIZE(inventoryTable); ++i) {
+		free(inventoryTable[i]);
+	}
+	for (size_t i = 0; i < ARRAYSIZE(spriteTable); ++i) {
+		free(spriteTable[i]);
+	}
+	for (size_t i = 0; i < ARRAYSIZE(animTable); ++i) {
+		free(animTable[i]);
+	}
+	for (size_t i = 0; i < ARRAYSIZE(samplesTable); ++i) {
+		free(samplesTable[i]);
+	}
+	free(fontPtr);
+	free(spriteShadowPtr);
+	free(spriteBoundingBoxPtr);
+}
 
 void Resources::initPalettes() {
 	// Init standard palette
