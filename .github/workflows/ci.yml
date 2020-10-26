@@ -63,9 +63,9 @@ jobs:
           cd build-scummvm
           ../devtools/create_project/cmake/Debug/create_project.exe .. --msvc --enable-all-engines ${{ matrix.configflags }} --use-canonical-lib-names
           ls
-      - name: set SCUMMVM_LIBS env variable
+      - name: Install vcpkg integration
         run: |
-          echo "::set-env name=SCUMMVM_LIBS::${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}"
+          ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}/vcpkg integrate install
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.0.0
       - name: Build scummvm
