@@ -236,6 +236,35 @@ class Actor {
 private:
 	TwinEEngine* _engine;
 
+	/** Hero 3D entity for normal behaviour */
+	uint8 *heroEntityNORMAL = nullptr; // file3D0
+	int32 heroEntityNORMALSize = 0;
+	/** Hero 3D entity for athletic behaviour */
+	uint8 *heroEntityATHLETIC = nullptr; // file3D1
+	int32 heroEntityATHLETICSize = 0;
+	/** Hero 3D entity for aggressive behaviour */
+	uint8 *heroEntityAGGRESSIVE = nullptr; // file3D2
+	int32 heroEntityAGGRESSIVESize = 0;
+	/** Hero 3D entity for discrete behaviour */
+	uint8 *heroEntityDISCRETE = nullptr; // file3D3
+	int32 heroEntityDISCRETESize = 0;
+	/** Hero 3D entity for protopack behaviour */
+	uint8 *heroEntityPROTOPACK = nullptr; // file3D4
+	int32 heroEntityPROTOPACKSize = 0;
+
+	/** Actor bounding box bottom left X coordinate */
+	int16 bottomLeftX; // loadCostumeVar
+	/** Actor bounding box bottom left Y coordinate */
+	int16 bottomLeftY; // loadCostumeVar2
+	/** Actor bounding box bottom left Z coordinate */
+	int16 bottomLeftZ; // loadCostumeVar3
+	/** Actor bounding box top left X coordinate */
+	int16 topRightX; // loadCostumeVar4
+	/** Actor bounding box top left Y coordinate */
+	int16 topRightY; // loadCostumeVar5
+	/** Actor bounding box top left Z coordinate */
+	int16 topRightZ; // loadCostumeVar6
+
 	void initSpriteActor(int32 actorIdx);
 public:
 	Actor(TwinEEngine* engine);
@@ -262,22 +291,6 @@ public:
 
 	int16 cropBottomScreen = 0;
 
-	/** Hero 3D entity for normal behaviour */
-	uint8 *heroEntityNORMAL = nullptr; // file3D0
-	int32 heroEntityNORMALSize = 0;
-	/** Hero 3D entity for athletic behaviour */
-	uint8 *heroEntityATHLETIC = nullptr; // file3D1
-	int32 heroEntityATHLETICSize = 0;
-	/** Hero 3D entity for aggressive behaviour */
-	uint8 *heroEntityAGGRESSIVE = nullptr; // file3D2
-	int32 heroEntityAGGRESSIVESize = 0;
-	/** Hero 3D entity for discrete behaviour */
-	uint8 *heroEntityDISCRETE = nullptr; // file3D3
-	int32 heroEntityDISCRETESize = 0;
-	/** Hero 3D entity for protopack behaviour */
-	uint8 *heroEntityPROTOPACK = nullptr; // file3D4
-	int32 heroEntityPROTOPACKSize = 0;
-
 	/** Hero current anim for normal behaviour */
 	int16 heroAnimIdxNORMAL = 0; // TCos0Init
 	/** Hero current anim for athletic behaviour */
@@ -293,23 +306,10 @@ public:
 	int16 heroAnimIdx[4]; // TCOS
 
 	/** Actors 3D body table - size of NUM_BODIES */
-	uint8 *bodyTable[NUM_BODIES];
+	uint8 *bodyTable[NUM_BODIES]{nullptr};
 
 	/** Current position in body table */
 	int32 currentPositionInBodyPtrTab;
-
-	/** Actor bounding box bottom left X coordinate */
-	int16 bottomLeftX; // loadCostumeVar
-	/** Actor bounding box bottom left Y coordinate */
-	int16 bottomLeftY; // loadCostumeVar2
-	/** Actor bounding box bottom left Z coordinate */
-	int16 bottomLeftZ; // loadCostumeVar3
-	/** Actor bounding box top left X coordinate */
-	int16 topRightX; // loadCostumeVar4
-	/** Actor bounding box top left Y coordinate */
-	int16 topRightY; // loadCostumeVar5
-	/** Actor bounding box top left Z coordinate */
-	int16 topRightZ; // loadCostumeVar6
 
 	/** Restart hero variables while opening new scenes */
 	void restartHeroScene();

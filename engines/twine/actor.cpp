@@ -47,6 +47,10 @@ Actor::~Actor() {
 	free(heroEntityAGGRESSIVE);
 	free(heroEntityDISCRETE);
 	free(heroEntityPROTOPACK);
+
+	for (size_t i = 0; i < ARRAYSIZE(bodyTable); ++i) {
+		free(bodyTable[i]);
+	}
 }
 
 void Actor::restartHeroScene() {
@@ -193,6 +197,9 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx) {
 				int16 flag = *((uint16 *)bodyPtr3);
 
 				if (!(flag & 0x8000)) {
+					if (bodyTable[currentPositionInBodyPtrTab]) {
+						free(bodyTable[currentPositionInBodyPtrTab]);
+					}
 					_engine->_hqrdepack->hqrGetallocEntry(&bodyTable[currentPositionInBodyPtrTab], Resources::HQR_BODY_FILE, flag & 0xFFFF);
 
 					if (!bodyTable[currentPositionInBodyPtrTab]) {
