@@ -240,6 +240,7 @@ static int getLanguageTypeIndex(const char *languageName) {
 	}
 
 	debug("Failed to detect language %s - falling back to english", languageName);
+	// select english for the fan translations
 	return 0; // English
 }
 
