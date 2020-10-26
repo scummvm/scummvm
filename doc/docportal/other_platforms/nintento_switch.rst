@@ -122,8 +122,8 @@ Three finger drag
 The three finger drag works in a similar way to the `Two finger drag`_, except that instead of holding down a single second finger, you hold down two extra fingers. Holding down the three fingers for a while initiates a drag and drop feature, where the right mouse button is being held down.
 
 
-Platform-specific paths 
-============================
+Paths 
+=======
 
 Saved games 
 *******************
@@ -134,8 +134,10 @@ Configuration file
 ``/switch/scummvm/scummvm.ini``
 
 
-Platform-specific settings
-===========================
+Settings
+==========
+
+For more information, see the Settings section of the documentation. Only platform-specific differences are listed here. 
 
 Audio
 ******

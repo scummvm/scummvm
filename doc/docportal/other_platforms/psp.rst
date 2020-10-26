@@ -100,8 +100,10 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
         Square + Select,Image Viewer
         Square + Start,Esc 
 
-Platform-specific settings
+Settings
 ===========================
+
+For more information, see the Settings section of the documentation. Only platform-specific differences are listed here. 
 
 Audio
 *******
@@ -114,7 +116,7 @@ Supported audio file formats:
 Games will generally run faster if audio files are in the ``.mp3`` file format.
 
 
-Platform-specific paths
+Paths
 ========================
 
 Saved games
