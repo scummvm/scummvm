@@ -73,7 +73,9 @@ void VisualActor::setNewFace(char shape) {
 
 const Gfx::Texture *VisualActor::resolveTexture(const Material *material) const {
 	const Gfx::Texture *texture = nullptr;
-	if (_textureSetFacial && material->name == "face") {
+	// Emma's face material is incorrectly named "faceEmma".
+	// This workaround enables Emma's lipsync, which does not work in the original game engine.
+	if (_textureSetFacial && (material->name == "face" || material->name == "faceEmma")) {
 		texture = _textureSetFacial->getTexture(Common::String::format("%c.bmp", _faceTextureName));
 
 		if (!texture) {
