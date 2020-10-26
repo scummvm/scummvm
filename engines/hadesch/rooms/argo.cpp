@@ -82,7 +82,8 @@ enum {
 	kReturnToIdleEvent = 27003,
 	kIdleEvent = 27008,
 	kOutroFinished = 27009,
-	kOutroFinishedCounter = 1027001
+	kOutroFinishedCounter = 1027001,
+	kMastSoundFinished = 1027002
 };
 
 static Common::String
@@ -145,6 +146,7 @@ public:
 	ArgoHandler() {
 		_prevId = kInvalidRoom;
 		_destination = kInvalidRoom;
+		_mastHeadIsBusy = false;
 	}
 	void handleClick(const Common::String &name) override {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
@@ -188,6 +190,7 @@ public:
 			playMastSound("intro3", kReturnToIdleEvent);
 			break;
 		case kReturnToIdleEvent:
+			_mastHeadIsBusy = false;
 			room->enableMouse();
 			break;
 		case kOutroFinishedCounter:
@@ -199,9 +202,11 @@ public:
 			g_vm->moveToRoom(_destination);
 			break;
 		case kIdleEvent:
-			playMastSound("idlesound");
-			room->selectFrame(kMastHeadAnim, kMastHeadZ, 1);
 			g_vm->addTimer(kIdleEvent, 30000);
+			if (_mastHeadIsBusy)
+				break;
+			playMastSound("idlesound", kMastSoundFinished);
+			room->selectFrame(kMastHeadAnim, kMastHeadZ, 1);
 			break;
 		case 27301:
 			room->playAnimWithSound(kMastHeadAnim, _mastSoundName, kMastHeadZ,
@@ -211,6 +216,9 @@ public:
 		case 27303:
 			room->playAnim(kMastHeadAnim, kMastHeadZ,
 				       PlayAnimParams::keepLastFrame().partial(8, 0), _mastHeadEndEvent);
+			break;
+		case kMastSoundFinished:
+			_mastHeadIsBusy = false;
 			break;
 		}
 	}
@@ -323,10 +331,11 @@ public:
 	}
 	
 private:
-	void playMastSound(const Common::String &name, int event = -1) {
+	void playMastSound(const Common::String &name, int event = kMastSoundFinished) {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		_mastSoundName = name;
 		_mastHeadEndEvent = event;
+		_mastHeadIsBusy = true;
 		room->playAnim(kMastHeadAnim, kMastHeadZ, PlayAnimParams::keepLastFrame().partial(1, 8), 27301);
 	}
 
@@ -336,6 +345,7 @@ private:
 	int _cloudsMoveStart;
 	bool _cloudsMoving;
 	int _mastHeadEndEvent;
+	bool _mastHeadIsBusy;
 	Common::String _mastSoundName;
 };
 
