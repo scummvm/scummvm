@@ -467,16 +467,36 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			buttonsNeedRedraw = true;
 		}
 
-		const int16 id = *(&menuSettings[MenuSettings_FirstButtonState] + currentButton * 2); // get button parameters from settings array
+		int16 *menuStatePtr = &menuSettings[MenuSettings_FirstButtonState] + currentButton * 2;
+		const int16 id = *menuStatePtr; // get button parameters from settings array
+		int16 *textId = menuStatePtr + 1; // to store the changed values
 		if (menuSettings == AdvOptionsMenuState) {
 			switch (id) {
 			case kAgressiveMode:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
-					_engine->_actor->autoAgressive = !_engine->_actor->autoAgressive;
+					if (_engine->_actor->autoAgressive) {
+						_engine->_actor->autoAgressive = false;
+						*textId = 2;
+					} else {
+						_engine->_actor->autoAgressive = true;
+						*textId = 4;
+					}
 				}
 				break;
 			case kPolygonDetails:
-				// TODO:
+				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
+					_engine->cfgfile.PolygonDetails--;
+				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
+					_engine->cfgfile.PolygonDetails++;
+				}
+				_engine->cfgfile.PolygonDetails %= 3;
+				if (_engine->cfgfile.PolygonDetails == 0) {
+					*textId = 231;
+				} else if (_engine->cfgfile.PolygonDetails == 1) {
+					*textId = 131;
+				} else {
+					*textId = 31;
+				}
 				break;
 			case kShadowSettings:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
@@ -485,10 +505,23 @@ int32 Menu::processMenu(int16 *menuSettings) {
 					_engine->cfgfile.ShadowMode++;
 				}
 				_engine->cfgfile.ShadowMode %= 3;
+				if (_engine->cfgfile.ShadowMode == 0) {
+					*textId = 232;
+				} else if (_engine->cfgfile.ShadowMode == 1) {
+					*textId = 132;
+				} else {
+					*textId = 32;
+				}
 				break;
 			case kSceneryZoom:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
-					_engine->cfgfile.SceZoom = !_engine->cfgfile.SceZoom;
+					if (_engine->cfgfile.SceZoom) {
+						_engine->cfgfile.SceZoom = false;
+						*textId = 233;
+					} else {
+						_engine->cfgfile.SceZoom = true;
+						*textId = 133;
+					}
 				}
 				break;
 			default:

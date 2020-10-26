@@ -119,6 +119,7 @@ struct ConfigFile {
 	int32 UseAutoSaving = 0;
 	/** Shadow mode type, value: all, character only, none */
 	int32 ShadowMode = 0;
+	int32 PolygonDetails = 2;
 	/** SceZoom mode type */
 	bool SceZoom = false;
 	/** Flag to toggle Wall Collision */
