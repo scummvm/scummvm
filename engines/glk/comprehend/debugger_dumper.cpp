@@ -169,7 +169,11 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 	case OPCODE_SET_STRING_REPLACEMENT1:
 	case OPCODE_SET_STRING_REPLACEMENT2:
 	case OPCODE_SET_STRING_REPLACEMENT3:
-		line += Common::String::format(" %s", game->_replaceWords[instr->_operand[0] - 1].c_str());
+		str_index = instr->_operand[0] - 1;
+		if (str_index < 0 || str_index >= (int)game->_replaceWords.size())
+			warning("invalid string replacement index - %d", str_index);
+		else
+			line += Common::String::format(" %s", game->_replaceWords[str_index].c_str());
 		break;
 
 	default:

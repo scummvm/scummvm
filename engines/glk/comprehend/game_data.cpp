@@ -94,8 +94,12 @@ void Word::load(FileBuffer *fb) {
 
 	// Decode
 	for (int j = 0; j < 6; j++)
-		_word[j] ^= 0x8a;
+		_word[j] = tolower((char)(_word[j] ^ 0xaa));
+
+	// Strip off trailing spaces
 	_word[6] = '\0';
+	for (int j = 5; j > 0 && _word[j] == ' '; --j)
+		_word[j] = '\0';
 
 	_index = fb->readByte();
 	_type = fb->readByte();
@@ -157,6 +161,7 @@ void GameData::clearGame() {
 	_startRoom = 0;
 	_currentRoom = 0;
 	_currentReplaceWord = 0;
+	_wordFlags = 0;
 	_updateFlags = 0;
 	_colorTable = 0;
 	_itemCount = 0;

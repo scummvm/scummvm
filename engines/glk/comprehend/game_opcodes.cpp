@@ -823,10 +823,18 @@ void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *
 		item->_longString = (instr->_operand[2] << 8) | instr->_operand[1];
 		break;
 
-	case OPCODE_SET_STRING_REPLACEMENT3:
-		warning("TODO: Figure out OPCODE_SET_STRING_REPLACEMENT3 offset");
-		_currentReplaceWord = instr->_operand[0] - 1;
+	case OPCODE_SET_STRING_REPLACEMENT3: {
+		int articleNum, bits = _wordFlags;
+		for (articleNum = 3; articleNum >= 0; --articleNum, bits <<= 1) {
+			if (bits >= 0x100)
+				break;
+		}
+		if (articleNum == -1)
+			articleNum = 2;
+
+		_currentReplaceWord = instr->_operand[0] + articleNum - 1;
 		break;
+	}
 
 	default:
 		ComprehendGameOpcodes::execute_opcode(instr, sentence, func_state);

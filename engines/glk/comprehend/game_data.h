@@ -396,6 +396,7 @@ public:
 	uint16 _variables[MAX_VARIABLES];
 
 	uint8 _currentReplaceWord;
+	uint8 _wordFlags;
 	uint _updateFlags;
 
 	Common::Array<WordMap> _wordMaps;
