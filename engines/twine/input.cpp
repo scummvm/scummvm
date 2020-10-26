@@ -110,6 +110,10 @@ bool Input::isQuickBehaviourActionActive() const {
 	return isActionActive(TwinEActionType::QuickBehaviourNormal) || isActionActive(TwinEActionType::QuickBehaviourAthletic) || isActionActive(TwinEActionType::QuickBehaviourAggressive) || isActionActive(TwinEActionType::QuickBehaviourDiscreet);
 }
 
+bool Input::isMoveOrTurnActionActive() const {
+	return isActionActive(TwinEActionType::TurnLeft) || isActionActive(TwinEActionType::TurnRight) || isActionActive(TwinEActionType::MoveBackward) || isActionActive(TwinEActionType::MoveForward);
+}
+
 void Input::enableKeyMap(const char *id) {
 	if (_currentKeyMap == id) {
 		return;

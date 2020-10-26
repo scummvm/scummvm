@@ -141,6 +141,7 @@ public:
 	bool toggleAbortAction();
 
 	bool isQuickBehaviourActionActive() const;
+	bool isMoveOrTurnActionActive() const;
 
 	/**
 	 * Gets mouse positions
