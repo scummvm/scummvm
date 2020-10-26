@@ -440,7 +440,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 			// Drawing sprite actors
 			else if (flags == 0x1000) {
 				int32 spriteWidth, spriteHeight;
-				uint8 *spritePtr = _engine->_actor->spriteTable[actor2->entity];
+				uint8 *spritePtr = _engine->_resources->spriteTable[actor2->entity];
 
 				// get actor position on screen
 				_engine->_renderer->projectPositionOnScreen(actor2->x - _engine->_grid->cameraX, actor2->y - _engine->_grid->cameraY, actor2->z - _engine->_grid->cameraZ);
@@ -497,15 +497,15 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 					_engine->_extra->drawExtraSpecial(actorIdx, _engine->_renderer->projPosX, _engine->_renderer->projPosY);
 				} else {
 					int32 spriteWidth, spriteHeight;
-					_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, _engine->_actor->spriteTable[extra->info0]);
+					_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, _engine->_resources->spriteTable[extra->info0]);
 
 					// calculate sprite position on screen
-					renderLeft = _engine->_renderer->projPosX + *(int16 *)(_engine->_scene->spriteBoundingBoxPtr + extra->info0 * 16);
-					renderTop = _engine->_renderer->projPosY + *(int16 *)(_engine->_scene->spriteBoundingBoxPtr + extra->info0 * 16 + 2);
+					renderLeft = _engine->_renderer->projPosX + *(const int16 *)(_engine->_scene->spriteBoundingBoxPtr + extra->info0 * 16);
+					renderTop = _engine->_renderer->projPosY + *(const int16 *)(_engine->_scene->spriteBoundingBoxPtr + extra->info0 * 16 + 2);
 					renderRight = renderLeft + spriteWidth;
 					renderBottom = renderTop + spriteHeight;
 
-					_engine->_grid->drawSprite(0, renderLeft, renderTop, _engine->_actor->spriteTable[extra->info0]);
+					_engine->_grid->drawSprite(0, renderLeft, renderTop, _engine->_resources->spriteTable[extra->info0]);
 				}
 
 				_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
@@ -564,12 +564,12 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 			case koSprite: {
 				int16 offsetX, offsetY;
 				int32 spriteWidth, spriteHeight;
-				uint8 *spritePtr = _engine->_actor->spriteTable[overlay->info0];
+				uint8 *spritePtr = _engine->_resources->spriteTable[overlay->info0];
 
 				_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
 
-				offsetX = *((int16 *)(_engine->_scene->spriteBoundingBoxPtr + (overlay->info0 * 16)));
-				offsetY = *((int16 *)(_engine->_scene->spriteBoundingBoxPtr + (overlay->info0 * 16) + 2));
+				offsetX = *((const int16 *)(_engine->_scene->spriteBoundingBoxPtr + (overlay->info0 * 16)));
+				offsetY = *((const int16 *)(_engine->_scene->spriteBoundingBoxPtr + (overlay->info0 * 16) + 2));
 
 				renderLeft = offsetX + overlay->x;
 				renderTop = offsetY + overlay->y;
@@ -740,7 +740,7 @@ void Redraw::drawBubble(int32 actorIdx) {
 		bubbleActor = actorIdx;
 	}
 
-	spritePtr = _engine->_actor->spriteTable[bubbleSpriteIndex];
+	spritePtr = _engine->_resources->spriteTable[bubbleSpriteIndex];
 	_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
 
 	// calculate sprite position on screen

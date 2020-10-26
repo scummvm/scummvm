@@ -241,11 +241,6 @@ public:
 	Actor(TwinEEngine* engine);
 	~Actor();
 
-	/** Table with all loaded sprites */
-	uint8 *spriteTable[NUM_SPRITES] {nullptr};
-	/** Table with all loaded sprite sizes */
-	uint32 spriteSizeTable[NUM_SPRITES] {0};
-
 	ActorStruct *processActorPtr = nullptr; // processActorVar1
 
 	/** Actor shadow X coordinate */

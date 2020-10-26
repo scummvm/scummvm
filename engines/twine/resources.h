@@ -116,6 +116,11 @@ public:
 	/** Table with all loaded samples sizes */
 	uint32 inventorySizeTable[NUM_INVENTORY_ITEMS] {0};
 
+	/** Table with all loaded sprites */
+	uint8 *spriteTable[NUM_SPRITES] {nullptr};
+	/** Table with all loaded sprite sizes */
+	uint32 spriteSizeTable[NUM_SPRITES] {0};
+
 	/** Initialize resource pointers */
 	void initResources();
 

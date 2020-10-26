@@ -752,7 +752,7 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 
 	newBoxLeft2 = left + 9;
 
-	_engine->_grid->drawSprite(0, newBoxLeft2, top + 13, _engine->_actor->spriteTable[SPRITEHQR_LIFEPOINTS]);
+	_engine->_grid->drawSprite(0, newBoxLeft2, top + 13, _engine->_resources->spriteTable[SPRITEHQR_LIFEPOINTS]);
 
 	boxRight = left + 325;
 	newBoxLeft = left + 25;
@@ -764,7 +764,7 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 	drawBox(left + 25, top + 10, left + 324, top + 10 + 14);
 
 	if (!_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && _engine->_gameState->gameFlags[InventoryItems::kiTunic]) {
-		_engine->_grid->drawSprite(0, newBoxLeft2, top + 36, _engine->_actor->spriteTable[SPRITEHQR_MAGICPOINTS]);
+		_engine->_grid->drawSprite(0, newBoxLeft2, top + 36, _engine->_resources->spriteTable[SPRITEHQR_MAGICPOINTS]);
 		if (_engine->_gameState->magicLevelIdx > 0) {
 			_engine->_interface->drawSplittedBox(newBoxLeft, top + 35, _engine->_screens->crossDot(newBoxLeft, boxRight, 80, _engine->_gameState->inventoryMagicPoints), top + 50, 75);
 		}
@@ -774,13 +774,13 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 	boxLeft = left + 340;
 
 	/** draw coin sprite */
-	_engine->_grid->drawSprite(0, boxLeft, top + 15, _engine->_actor->spriteTable[SPRITEHQR_KASHES]);
+	_engine->_grid->drawSprite(0, boxLeft, top + 15, _engine->_resources->spriteTable[SPRITEHQR_KASHES]);
 	_engine->_text->setFontColor(155);
 	Common::String inventoryNumKashes = Common::String::format("%d", _engine->_gameState->inventoryNumKashes);
 	_engine->_text->drawText(left + 370, top + 5, inventoryNumKashes.c_str());
 
 	/** draw key sprite */
-	_engine->_grid->drawSprite(0, boxLeft, top + 55, _engine->_actor->spriteTable[SPRITEHQR_KEY]);
+	_engine->_grid->drawSprite(0, boxLeft, top + 55, _engine->_resources->spriteTable[SPRITEHQR_KEY]);
 	_engine->_text->setFontColor(155);
 	Common::String inventoryNumKeys = Common::String::format("%d", _engine->_gameState->inventoryNumKeys);
 	_engine->_text->drawText(left + 370, top + 40, inventoryNumKeys.c_str());
@@ -792,12 +792,12 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 
 	// Clover leaf boxes
 	for (i = 0; i < _engine->_gameState->inventoryNumLeafsBox; i++) {
-		_engine->_grid->drawSprite(0, _engine->_screens->crossDot(left + 25, left + 325, 10, i), top + 58, _engine->_actor->spriteTable[SPRITEHQR_CLOVERLEAFBOX]);
+		_engine->_grid->drawSprite(0, _engine->_screens->crossDot(left + 25, left + 325, 10, i), top + 58, _engine->_resources->spriteTable[SPRITEHQR_CLOVERLEAFBOX]);
 	}
 
 	// Clover leafs
 	for (i = 0; i < _engine->_gameState->inventoryNumLeafs; i++) {
-		_engine->_grid->drawSprite(0, _engine->_screens->crossDot(left + 25, left + 325, 10, i) + 2, top + 60, _engine->_actor->spriteTable[SPRITEHQR_CLOVERLEAF]);
+		_engine->_grid->drawSprite(0, _engine->_screens->crossDot(left + 25, left + 325, 10, i) + 2, top + 60, _engine->_resources->spriteTable[SPRITEHQR_CLOVERLEAF]);
 	}
 
 	_engine->copyBlockPhys(left, top, left + 450, top + 135);

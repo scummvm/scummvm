@@ -50,7 +50,7 @@ void Resources::preloadSprites() {
 	}
 	debug("preload %i sprites", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		_engine->_actor->spriteSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&_engine->_actor->spriteTable[i], Resources::HQR_SPRITES_FILE, i);
+		spriteSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&spriteTable[i], Resources::HQR_SPRITES_FILE, i);
 	}
 }
 
