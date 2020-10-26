@@ -563,6 +563,9 @@ int32 Menu::processMenu(int16 *menuSettings) {
 
 		// draw plasma effect for the current selected button
 		drawButton(menuSettings, true);
+		if (_engine->shouldQuit()) {
+			break;
+		}
 		// TODO: update volume settings
 		_engine->_system->delayMillis(10);
 	} while (!_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter));
@@ -666,6 +669,9 @@ int32 Menu::optionsMenu() {
 			break;
 		}
 		default:
+			break;
+		}
+		if (_engine->shouldQuit()) {
 			break;
 		}
 	} while (ret != 1);
