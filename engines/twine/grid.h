@@ -252,7 +252,7 @@ public:
 	 * @param posY sprite Y position to draw
 	 * @param ptr sprite buffer pointer to draw
 	 */
-	void drawSprite(int32 index, int32 posX, int32 posY, uint8 *spritePtr);
+	void drawSprite(int32 index, int32 posX, int32 posY, const uint8 *spritePtr);
 
 	/**
 	 * Draw sprite or bricks in the screen according with the type
@@ -262,7 +262,7 @@ public:
 	 * @param ptr sprite buffer pointer to draw
 	 * @param isSprite allows to identify if the sprite to display is brick or a single sprite
 	 */
-	void drawBrickSprite(int32 index, int32 posX, int32 posY, uint8 *spritePtr, bool isSprite);
+	void drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *spritePtr, bool isSprite);
 
 	/**
 	 * Get block library

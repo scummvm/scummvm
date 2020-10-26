@@ -450,14 +450,14 @@ void Grid::drawBrick(int32 index, int32 posX, int32 posY) {
 	drawBrickSprite(index, posX, posY, brickTable[index], false);
 }
 
-void Grid::drawSprite(int32 index, int32 posX, int32 posY, uint8 *ptr) {
+void Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) {
 	drawBrickSprite(index, posX, posY, ptr, true);
 }
 
 // WARNING: Rewrite this function to have better performance
-void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, uint8 *ptr, bool isSprite) {
+void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
 	if (isSprite) {
-		ptr = ptr + *((uint32 *)(ptr + index * 4));
+		ptr = ptr + *((const uint32 *)(ptr + index * 4));
 	}
 
 	int32 left = posX + *(ptr + 2);
