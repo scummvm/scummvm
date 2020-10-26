@@ -258,7 +258,7 @@ void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMove
 void Movements::update() {
 	previousLoopCursorKeys = loopCursorKeys;
 	heroActionKey = _engine->_input->pressedKey;
-	loopCursorKeys = _engine->_input->isMoveOrTurnActionActive();
+	loopCursorKeys = _engine->_input->cursorKeys;
 }
 
 void Movements::processActorMovements(int32 actorIdx) {
