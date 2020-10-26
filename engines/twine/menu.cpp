@@ -74,6 +74,7 @@ enum _MenuButtonTypes {
 };
 }
 
+#define checkMenuQuit(callMenu) if ((callMenu) == kQuitEngine) { return kQuitEngine; }
 #define kBackground 9999
 
 namespace _priv {
@@ -670,15 +671,15 @@ int32 Menu::optionsMenu() {
 			return 0;
 		}
 		case TextId::kVolumeSettings: {
-			volumeMenu();
+			checkMenuQuit(volumeMenu())
 			break;
 		}
 		case TextId::kSaveManage: {
-			savemanageMenu();
+			checkMenuQuit(savemanageMenu())
 			break;
 		}
 		case TextId::kAdvanced: {
-			advoptionsMenu();
+			checkMenuQuit(advoptionsMenu())
 			break;
 		}
 		case kQuitEngine:

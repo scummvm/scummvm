@@ -99,15 +99,16 @@ private:
 	int16 pt8s4[96] {0};
 	int32 printText8PrepareBufferVar2 = 0;
 	// ---
+
+	/** Current dialogue text pointer */
+	char *currDialTextPtr = nullptr;
+	/** Current dialogue text size */
+	int32 currDialTextSize = 0;
 public:
 	Text(TwinEEngine *engine) : _engine(engine) {}
 
 	/** Current text bank */
 	int32 currentTextBank = -1;
-	/** Current dialogue text size */
-	int32 currDialTextSize = 0;
-	/** Current dialogue text pointer */
-	char *currDialTextPtr = nullptr;
 
 	/** Dialogue text size */
 	int32 dialTextSize = 0;

@@ -38,11 +38,6 @@
 
 namespace TwinE {
 
-/** Main menu continue game option key */
-#define MAINMENU_CONTINUEGAME 21
-/** Main menu enter players name */
-#define MAINMENU_ENTERPLAYERNAME 42
-
 #define ONSCREENKEYBOARD_WIDTH 14
 #define ONSCREENKEYBOARD_HEIGHT 5
 
@@ -283,7 +278,7 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 }
 
 void MenuOptions::newGameMenu() {
-	if (enterPlayerName(MAINMENU_ENTERPLAYERNAME)) {
+	if (enterPlayerName(TextId::kEnterYourName)) {
 		_engine->_gameState->initEngineVars();
 		newGame();
 
@@ -320,7 +315,7 @@ int MenuOptions::chooseSave(int textIdx) {
 }
 
 void MenuOptions::continueGameMenu() {
-	const int slot = chooseSave(MAINMENU_CONTINUEGAME);
+	const int slot = chooseSave(TextId::kContinueGame);
 	if (slot >= 0) {
 		_engine->_gameState->initEngineVars();
 		_engine->loadSaveSlot(slot);

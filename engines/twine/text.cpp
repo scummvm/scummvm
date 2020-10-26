@@ -594,7 +594,7 @@ int Text::printText10() {
 }
 
 // TODO: refactor this code
-void Text::drawTextFullscreen(int32 index) { // printTextFullScreen
+void Text::drawTextFullscreen(int32 index) {
 	ScopedKeyMap scopedKeyMap(_engine, cutsceneKeyMapId);
 
 	_engine->_interface->saveClip();
@@ -668,7 +668,7 @@ void Text::setFontParameters(int32 spaceBetween, int32 charSpace) {
 	dialCharSpace = charSpace;
 }
 
-void Text::setFontCrossColor(int32 color) { // TestCoulDial
+void Text::setFontCrossColor(int32 color) {
 	dialTextStepSize = -1;
 	dialTextBufferSize = 14;
 	dialTextStartColor = color << 4;
@@ -686,7 +686,7 @@ void Text::setTextCrossColor(int32 stopColor, int32 startColor, int32 stepSize) 
 	dialTextBufferSize = ((startColor - stopColor) + 1) / stepSize;
 }
 
-bool Text::getText(int32 index) { // findString
+bool Text::getText(int32 index) {
 	int32 currIdx = 0;
 	int32 orderIdx = 0;
 
