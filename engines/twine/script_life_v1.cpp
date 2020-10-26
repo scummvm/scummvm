@@ -353,7 +353,7 @@ static int32 processLifeConditions(TwinEEngine *engine, ActorStruct *actor) {
 		0 - Condition false
 		1 - Condition true */
 static int32 processLifeOperators(TwinEEngine *engine, int32 valueSize) {
-	int32 operatorCode = *(scriptPtr++);
+	const int32 operatorCode = *(scriptPtr++);
 
 	int32 conditionValue;
 	if (valueSize == 1) {
@@ -398,7 +398,7 @@ static int32 processLifeOperators(TwinEEngine *engine, int32 valueSize) {
 		}
 		break;
 	default:
-		error("Actor operator opcode %d\n", operatorCode);
+		warning("Unknown life script operator opcode %d", operatorCode);
 		break;
 	}
 
@@ -426,9 +426,9 @@ static int32 lNOP(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 
 /*0x02*/
 static int32 lSNIF(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 valueSize = processLifeConditions(engine, actor);
+	const int32 valueSize = processLifeConditions(engine, actor);
 	if (!processLifeOperators(engine, valueSize)) {
-		*opcodePtr = 13; // SWIF
+		*opcodePtr = 0x0D; // SWIF
 	}
 	scriptPtr = actor->lifeScript + *((int16 *)scriptPtr); // condition offset
 	return 0;
@@ -483,7 +483,7 @@ static int32 lSWIF(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 		scriptPtr = actor->lifeScript + *((int16 *)scriptPtr); // condition offset
 	} else {
 		scriptPtr += 2;
-		*opcodePtr = 2; // SNIF
+		*opcodePtr = 0x02; // SNIF
 	}
 
 	return 0;
@@ -496,7 +496,7 @@ static int32 lONEIF(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 		scriptPtr = actor->lifeScript + *((int16 *)scriptPtr); // condition offset
 	} else {
 		scriptPtr += 2;
-		*opcodePtr = 4; // NEVERIF
+		*opcodePtr = 0x04; // NEVERIF
 	}
 
 	return 0;
@@ -571,7 +571,7 @@ static int32 lSET_TRACK_OBJ(TwinEEngine *engine, int32 actorIdx, ActorStruct *ac
 
 /*0x19*/
 static int32 lMESSAGE(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 textIdx = *((int16 *)scriptPtr);
+	const int32 textIdx = *((int16 *)scriptPtr);
 	scriptPtr += 2;
 
 	engine->freezeTime();
@@ -589,14 +589,14 @@ static int32 lMESSAGE(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
 
 /*0x1A*/
 static int32 lFALLABLE(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 flag = *(scriptPtr++);
+	const int32 flag = *(scriptPtr++);
 	actor->staticFlags.bCanFall = flag & 1;
 	return 0;
 }
 
 /*0x1B*/
 static int32 lSET_DIRMODE(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 controlMode = *(scriptPtr++);
+	const int32 controlMode = *(scriptPtr++);
 
 	actor->controlMode = (ControlMode)controlMode;
 	if (actor->controlMode == ControlMode::kFollow) {
@@ -608,8 +608,8 @@ static int32 lSET_DIRMODE(TwinEEngine *engine, int32 actorIdx, ActorStruct *acto
 
 /*0x1C*/
 static int32 lSET_DIRMODE_OBJ(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 otherActorIdx = *(scriptPtr++);
-	int32 controlMode = *(scriptPtr++);
+	const int32 otherActorIdx = *(scriptPtr++);
+	const int32 controlMode = *(scriptPtr++);
 
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 	otherActor->controlMode = (ControlMode)controlMode;
@@ -622,7 +622,7 @@ static int32 lSET_DIRMODE_OBJ(TwinEEngine *engine, int32 actorIdx, ActorStruct *
 
 /*0x1D*/
 static int32 lCAM_FOLLOW(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 followedActorIdx = *(scriptPtr++);
+	const int32 followedActorIdx = *(scriptPtr++);
 
 	if (engine->_scene->currentlyFollowedActor != followedActorIdx) {
 		const ActorStruct *followedActor = engine->_scene->getActor(followedActorIdx);
@@ -639,7 +639,7 @@ static int32 lCAM_FOLLOW(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor
 
 /*0x1E*/
 static int32 lSET_BEHAVIOUR(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 behavior = *(scriptPtr++);
+	const int32 behavior = *(scriptPtr++);
 
 	engine->_animations->initAnim(kStanding, 0, 255, 0);
 	engine->_actor->setBehaviour(behavior);
@@ -649,8 +649,8 @@ static int32 lSET_BEHAVIOUR(TwinEEngine *engine, int32 actorIdx, ActorStruct *ac
 
 /*0x1F*/
 static int32 lSET_FLAG_CUBE(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 flagIdx = *(scriptPtr++);
-	int32 flagValue = *(scriptPtr++);
+	const int32 flagIdx = *(scriptPtr++);
+	const int32 flagValue = *(scriptPtr++);
 
 	engine->_scene->sceneFlags[flagIdx] = flagValue;
 
@@ -672,7 +672,7 @@ static int32 lSET_COMPORTEMENT(TwinEEngine *engine, int32 actorIdx, ActorStruct 
 
 /*0x22*/
 static int32 lSET_COMPORTEMENT_OBJ(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 otherActorIdx = *(scriptPtr++);
+	const int32 otherActorIdx = *(scriptPtr++);
 
 	engine->_scene->getActor(otherActorIdx)->positionInLifeScript = *((int16 *)scriptPtr);
 	scriptPtr += 2;
@@ -687,8 +687,8 @@ static int32 lEND_COMPORTEMENT(TwinEEngine *engine, int32 actorIdx, ActorStruct 
 
 /*0x24*/
 static int32 lSET_FLAG_GAME(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 flagIdx = *(scriptPtr++);
-	int32 flagValue = *(scriptPtr++);
+	const int32 flagIdx = *(scriptPtr++);
+	const int32 flagValue = *(scriptPtr++);
 
 	engine->_gameState->gameFlags[flagIdx] = flagValue;
 
@@ -697,13 +697,14 @@ static int32 lSET_FLAG_GAME(TwinEEngine *engine, int32 actorIdx, ActorStruct *ac
 
 /*0x25*/
 static int32 lKILL_OBJ(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 otherActorIdx = *(scriptPtr++);
+	const int32 otherActorIdx = *(scriptPtr++);
 
 	engine->_actor->processActorCarrier(otherActorIdx);
-	engine->_scene->getActor(otherActorIdx)->dynamicFlags.bIsDead = 1;
-	engine->_scene->getActor(otherActorIdx)->entity = -1;
-	engine->_scene->getActor(otherActorIdx)->zone = -1;
-	engine->_scene->getActor(otherActorIdx)->life = 0;
+	ActorStruct* otherActor = engine->_scene->getActor(otherActorIdx);
+	otherActor->dynamicFlags.bIsDead = 1;
+	otherActor->entity = -1;
+	otherActor->zone = -1;
+	otherActor->life = 0;
 
 	return 0;
 }
@@ -734,12 +735,9 @@ static int32 lUSE_ONE_LITTLE_KEY(TwinEEngine *engine, int32 actorIdx, ActorStruc
 
 /*0x28*/
 static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int16 kashes, i, hideRange;
 	int16 oldNumKashes = engine->_gameState->inventoryNumKashes;
-
-	hideRange = 0;
-
-	kashes = *((int16 *)scriptPtr);
+	int16 hideRange = 0;
+	int16 kashes = *((int16 *)scriptPtr);
 	scriptPtr += 2;
 
 	engine->_gameState->inventoryNumKashes -= kashes;
@@ -749,7 +747,7 @@ static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, int32 actorIdx, ActorStruct 
 
 	engine->_redraw->addOverlay(koSprite, SPRITEHQR_KASHES, 10, 15, 0, koNormal, 3);
 
-	for (i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
+	for (int16 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		OverlayListStruct *overlay = &engine->_redraw->overlayList[i];
 		if (overlay->info0 != -1 && overlay->type == koNumberRange) {
 			overlay->info0 = engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - engine->lbaTime - 50);
@@ -788,8 +786,8 @@ static int32 lRESTORE_L_TRACK(TwinEEngine *engine, int32 actorIdx, ActorStruct *
 
 /*0x2C*/
 static int32 lMESSAGE_OBJ(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 otherActorIdx = *(scriptPtr++);
-	int32 textIdx = *((int16 *)scriptPtr);
+	const int32 otherActorIdx = *(scriptPtr++);
+	const int32 textIdx = *((int16 *)scriptPtr);
 	scriptPtr += 2;
 
 	engine->freezeTime();
@@ -813,7 +811,7 @@ static int32 lINC_CHAPTER(TwinEEngine *engine, int32 actorIdx, ActorStruct *acto
 
 /*0x2E*/
 static int32 lFOUND_OBJECT(TwinEEngine *engine, int32 actorIdx, ActorStruct *actor) {
-	int32 item = *(scriptPtr++);
+	const int32 item = *(scriptPtr++);
 
 	engine->freezeTime();
 	engine->_gameState->processFoundItem(item);

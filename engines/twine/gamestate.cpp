@@ -276,12 +276,6 @@ bool GameState::saveGame(Common::OutSaveFile* file) {
 }
 
 void GameState::processFoundItem(int32 item) {
-	int32 itemX, itemY, itemZ; // object2XYZ
-	int32 boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY;
-	int32 textState, quitItem, currentAnimState;
-	uint8 *currentAnim;
-	AnimTimerDataStruct tmpAnimTimer;
-
 	_engine->_grid->newCameraX = (_engine->_scene->sceneHero->x + 0x100) >> 9;
 	_engine->_grid->newCameraY = (_engine->_scene->sceneHero->y + 0x100) >> 8;
 	_engine->_grid->newCameraZ = (_engine->_scene->sceneHero->z + 0x100) >> 9;
@@ -293,19 +287,19 @@ void GameState::processFoundItem(int32 item) {
 
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-	int32 itemCameraX = _engine->_grid->newCameraX << 9;
-	int32 itemCameraY = _engine->_grid->newCameraY << 8;
-	int32 itemCameraZ = _engine->_grid->newCameraZ << 9;
+	const int32 itemCameraX = _engine->_grid->newCameraX << 9;
+	const int32 itemCameraY = _engine->_grid->newCameraY << 8;
+	const int32 itemCameraZ = _engine->_grid->newCameraZ << 9;
 
 	_engine->_renderer->renderIsoModel(_engine->_scene->sceneHero->x - itemCameraX, _engine->_scene->sceneHero->y - itemCameraY, _engine->_scene->sceneHero->z - itemCameraZ, 0, 0x80, 0, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity]);
 	_engine->_interface->setClip(_engine->_redraw->renderLeft, _engine->_redraw->renderTop, _engine->_redraw->renderRight, _engine->_redraw->renderBottom);
 
-	itemX = (_engine->_scene->sceneHero->x + 0x100) >> 9;
-	itemY = _engine->_scene->sceneHero->y >> 8;
+	const int32 itemX = (_engine->_scene->sceneHero->x + 0x100) >> 9;
+	int32 itemY = _engine->_scene->sceneHero->y >> 8;
 	if (_engine->_scene->sceneHero->brickShape & 0x7F) {
 		itemY++;
 	}
-	itemZ = (_engine->_scene->sceneHero->z + 0x100) >> 9;
+	const int32 itemZ = (_engine->_scene->sceneHero->z + 0x100) >> 9;
 
 	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 	_engine->flip();
@@ -313,11 +307,10 @@ void GameState::processFoundItem(int32 item) {
 	_engine->_renderer->projectPositionOnScreen(_engine->_scene->sceneHero->x - itemCameraX, _engine->_scene->sceneHero->y - itemCameraY, _engine->_scene->sceneHero->z - itemCameraZ);
 	_engine->_renderer->projPosY -= 150;
 
-	boxTopLeftX = _engine->_renderer->projPosX - 65;
-	boxTopLeftY = _engine->_renderer->projPosY - 65;
-
-	boxBottomRightX = _engine->_renderer->projPosX + 65;
-	boxBottomRightY = _engine->_renderer->projPosY + 65;
+	const int32 boxTopLeftX = _engine->_renderer->projPosX - 65;
+	const int32 boxTopLeftY = _engine->_renderer->projPosY - 65;
+	const int32 boxBottomRightX = _engine->_renderer->projPosX + 65;
+	const int32 boxBottomRightY = _engine->_renderer->projPosY + 65;
 
 	_engine->_sound->playSample(41);
 
@@ -329,21 +322,21 @@ void GameState::processFoundItem(int32 item) {
 	_engine->_text->initText(item);
 	_engine->_text->initDialogueBox();
 
-	textState = 1;
-	quitItem = 0;
+	int32 textState = 1;
+	int32 quitItem = 0;
 
 	_engine->_text->initVoxToPlay(item);
 
-	currentAnim = _engine->_animations->animTable[_engine->_animations->getBodyAnimIndex(kFoundItem, 0)];
+	uint8 *currentAnim = _engine->_animations->animTable[_engine->_animations->getBodyAnimIndex(kFoundItem, 0)];
 
-	tmpAnimTimer = _engine->_scene->sceneHero->animTimerData;
+	AnimTimerDataStruct tmpAnimTimer = _engine->_scene->sceneHero->animTimerData;
 
 	_engine->_animations->animBuffer2 += _engine->_animations->stockAnimation(_engine->_animations->animBuffer2, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity], &_engine->_scene->sceneHero->animTimerData);
 	if (_engine->_animations->animBuffer1 + 4488 < _engine->_animations->animBuffer2) {
 		_engine->_animations->animBuffer2 = _engine->_animations->animBuffer1;
 	}
 
-	currentAnimState = 0;
+	int32 currentAnimState = 0;
 
 	_engine->_renderer->prepareIsoModel(_engine->_resources->inventoryTable[item]);
 	_engine->_redraw->numOfRedrawBox = 0;
@@ -465,12 +458,16 @@ void GameState::processGameoverAnimation() { // makeGameOver
 	_engine->_hqrdepack->hqrGetEntry(gameOverPtr, Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL);
 
 	if (gameOverPtr) {
+		const int32 left = 120;
+		const int32 top = 120;
+		const int32 right = 519;
+		const int32 bottom = 359;
 		_engine->_renderer->prepareIsoModel(gameOverPtr);
 		_engine->_sound->stopSamples();
 		_engine->_music->stopMidiMusic(); // stop fade music
 		_engine->_renderer->setCameraPosition(320, 240, 128, 200, 200);
 		int32 startLbaTime = _engine->lbaTime;
-		_engine->_interface->setClip(120, 120, 519, 359);
+		_engine->_interface->setClip(left, top, right, bottom);
 
 		while (!_engine->_input->toggleAbortAction() && (_engine->lbaTime - startLbaTime) <= 500) {
 			_engine->readKeys();
@@ -478,22 +475,23 @@ void GameState::processGameoverAnimation() { // makeGameOver
 				return;
 			}
 
-			int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);
-			int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 0x64);
-			_engine->_interface->blitBox(120, 120, 519, 359, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
+			const int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);
+			const int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 0x64);
+
+			_engine->_interface->blitBox(left, top, right, bottom, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
 			_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);
 			_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
-			_engine->copyBlockPhys(120, 120, 519, 359);
+			_engine->copyBlockPhys(left, top, right, bottom);
 
 			_engine->lbaTime++;
 			_engine->_system->delayMillis(15);
 		}
 
 		_engine->_sound->playSample(37, _engine->getRandomNumber(2000) + 3096);
-		_engine->_interface->blitBox(120, 120, 519, 359, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
+		_engine->_interface->blitBox(left, top, right, bottom, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
 		_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
-		_engine->copyBlockPhys(120, 120, 519, 359);
+		_engine->copyBlockPhys(left, top, right, bottom);
 
 		_engine->delaySkip(2000);
 
