@@ -376,7 +376,7 @@ void ThemeEngine::clearAll() {
 	}
 }
 
-void ThemeEngine::refresh() {
+void ThemeEngine::refresh(int16 baseWidth, int16 baseHeight) {
 
 	// Flush all bitmaps if the overlay pixel format changed.
 	if (_overlayFormat != _system->getOverlayFormat()) {
@@ -398,6 +398,8 @@ void ThemeEngine::refresh() {
 		}
 		_abitmaps.clear();
 	}
+
+	_parser->setBaseResolution(baseWidth, baseHeight);
 
 	init();
 

@@ -94,6 +94,9 @@ public:
 	int getWidth() const { return _width; }
 	int getHeight() const { return _height; }
 
+	int getBaseWidth() const { return _baseWidth; }
+	int getBaseHeight() const { return _baseHeight; }
+
 	bool useRTL() const { return _useRTL; }
 	void setLanguageRTL();
 
@@ -144,6 +147,7 @@ protected:
 	RedrawStatus _redrawStatus;
 	int			_lastScreenChangeID;
 	int			_width, _height;
+	int16		_baseWidth, _baseHeight;
 	DialogStack	_dialogStack;
 
 	bool		_stateIsSaved;
@@ -174,6 +178,8 @@ protected:
 		Dialog* parent;
 	};
 	Common::List<GuiObjectTrashItem> _guiObjectTrash;
+
+	void computeScaleFactor();
 
 	void initKeymap();
 	void enableKeymap(bool enabled);

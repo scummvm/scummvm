@@ -67,6 +67,8 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 	_width = _system->getOverlayWidth();
 	_height = _system->getOverlayHeight();
 
+	computeScaleFactor();
+
 	_launched = false;
 
 	_useRTL = false;
@@ -105,6 +107,30 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _stateIsSaved(false),
 
 GuiManager::~GuiManager() {
 	delete _theme;
+}
+
+void GuiManager::computeScaleFactor() {
+	int16 w = g_system->getOverlayWidth();
+	int16 h = g_system->getOverlayHeight();
+
+	// Hardcoding for now
+	if (h < 240) {	// 320 x 200
+		_baseHeight = MIN<int16>(200, h);
+	} else if (h < 400) {	// 320 x 240
+		_baseHeight = 240;
+	} else if (h < 480) {	// 640 x 400
+		_baseHeight = 400;
+	} else if (h < 720) {	// 640 x 480
+		_baseHeight = 480;
+	} else {				// 960 x 720
+		_baseHeight = 720;
+	}
+
+	float scaleFactor = (float)h / (float)_baseHeight;
+
+	_baseWidth = (int16)((float)w / scaleFactor);
+
+	warning("Setting %d x %d -> %d x %d", w, h, _baseWidth, _baseHeight);
 }
 
 Common::Keymap *GuiManager::getKeymap() const {
@@ -558,8 +584,10 @@ void GuiManager::screenChange() {
 	_width = _system->getOverlayWidth();
 	_height = _system->getOverlayHeight();
 
+	computeScaleFactor();
+
 	// reinit the whole theme
-	_theme->refresh();
+	_theme->refresh(_baseWidth, _baseHeight);
 
 	// refresh all dialogs
 	for (DialogStack::size_type i = 0; i < _dialogStack.size(); ++i) {
