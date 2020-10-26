@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "scumm/sound.h"
+#include "audio/audiostream.h"
 
 namespace Scumm {
 
@@ -85,6 +86,9 @@ public:
 
 protected:
 	void processSoundQueues() override;
+
+private:
+	void tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **stream);
 };
 
 
