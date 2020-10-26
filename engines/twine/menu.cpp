@@ -100,6 +100,8 @@ enum AdvOptionsMenuType {
 	kSceneryZoom = 8
 };
 
+#define kQuitEngine -1
+
 namespace _priv {
 /** Main Menu Settings
 
@@ -367,7 +369,7 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
-			};
+			}
 
 			processPlasmaEffect(left, top, 80);
 			if (!(_engine->getRandomNumber() % 5)) {
@@ -393,8 +395,6 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 	_engine->_text->getMenuText(textId, dialText, sizeof(dialText));
 	const int32 textSize = _engine->_text->getTextSize(dialText);
 	_engine->_text->drawText(width - (textSize / 2), topheight - 18, dialText);
-
-	// TODO: make volume buttons
 
 	_engine->copyBlockPhys(left, top, right, bottom);
 }
@@ -422,7 +422,6 @@ void Menu::drawButton(const int16 *menuSettings, bool hover) {
 		// get menu item settings
 		uint8 menuItemId = (uint8)*localData;
 		localData += 1;
-		// applicable for sound menus, to save the volume/sound bar
 		uint16 textId = *localData;
 		localData += 1;
 		if (hover) {
@@ -564,7 +563,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		// draw plasma effect for the current selected button
 		drawButton(menuSettings, true);
 		if (_engine->shouldQuit()) {
-			break;
+			return kQuitEngine;
 		}
 		// TODO: update volume settings
 		_engine->_system->delayMillis(10);
@@ -589,6 +588,8 @@ int32 Menu::advoptionsMenu() {
 			ret = 1; // quit option menu
 			break;
 		}
+		case kQuitEngine:
+			return kQuitEngine;
 		//TODO: add other options
 		default:
 			break;
@@ -610,6 +611,8 @@ int32 Menu::savemanageMenu() {
 			ret = 1; // quit option menu
 			break;
 		}
+		case kQuitEngine:
+			return kQuitEngine;
 		//TODO: add other options
 		default:
 			break;
@@ -631,6 +634,8 @@ int32 Menu::volumeMenu() {
 			ret = 1; // quit option menu
 			break;
 		}
+		case kQuitEngine:
+			return kQuitEngine;
 		//TODO: add other options
 		default:
 			break;
@@ -651,6 +656,8 @@ int32 Menu::optionsMenu() {
 
 	do {
 		switch (processMenu(OptionsMenuState)) {
+		case kQuitEngine:
+			return kQuitEngine;
 		case kReturnGame:
 		case kReturnMenu: {
 			ret = 1; // quit option menu
@@ -669,9 +676,6 @@ int32 Menu::optionsMenu() {
 			break;
 		}
 		default:
-			break;
-		}
-		if (_engine->shouldQuit()) {
 			break;
 		}
 	} while (ret != 1);
@@ -716,6 +720,8 @@ void Menu::run() {
 		_engine->_screens->loadMenuImage();
 		break;
 	}
+	case kQuitEngine:
+		return;
 	}
 	_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
 }
@@ -735,6 +741,9 @@ int32 Menu::giveupMenu() {
 	do {
 		_engine->_text->initTextBank(0);
 		menuId = processMenu(localMenu);
+		if (menuId == kQuitEngine) {
+			return kQuitEngine;
+		}
 		_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
 		_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
 	} while (menuId != kGiveUp && menuId != kContinue);
