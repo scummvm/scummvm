@@ -41,6 +41,14 @@ namespace TwinE {
 Actor::Actor(TwinEEngine *engine) : _engine(engine) {
 }
 
+Actor::~Actor() {
+	free(heroEntityNORMAL);
+	free(heroEntityATHLETIC);
+	free(heroEntityAGGRESSIVE);
+	free(heroEntityDISCRETE);
+	free(heroEntityPROTOPACK);
+}
+
 void Actor::restartHeroScene() {
 	_engine->_scene->sceneHero->controlMode = ControlMode::kManual;
 	memset(&_engine->_scene->sceneHero->dynamicFlags, 0, sizeof(_engine->_scene->sceneHero->dynamicFlags));

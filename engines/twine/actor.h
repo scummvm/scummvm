@@ -239,6 +239,8 @@ private:
 	void initSpriteActor(int32 actorIdx);
 public:
 	Actor(TwinEEngine* engine);
+	~Actor();
+
 	/** Table with all loaded sprites */
 	uint8 *spriteTable[NUM_SPRITES] {nullptr};
 	/** Table with all loaded sprite sizes */
