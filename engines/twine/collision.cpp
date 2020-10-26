@@ -390,14 +390,14 @@ void Collision::checkHeroCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 da
 
 	if (_engine->_movements->processActorX >= 0 && _engine->_movements->processActorZ >= 0 && _engine->_movements->processActorX <= 0x7E00 && _engine->_movements->processActorZ <= 0x7E00) {
 		reajustActorPosition(brickShape);
-		brickShape = _engine->_grid->getBrickShapeFull(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ, _engine->_movements->processActorPtr->boudingBox.y.topRight);
+		brickShape = _engine->_grid->getBrickShapeFull(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ, _engine->_actor->processActorPtr->boudingBox.y.topRight);
 
 		if (brickShape == kSolid) {
 			causeActorDamage |= damageMask;
-			brickShape = _engine->_grid->getBrickShapeFull(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->previousActorZ + Z, _engine->_movements->processActorPtr->boudingBox.y.topRight);
+			brickShape = _engine->_grid->getBrickShapeFull(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->previousActorZ + Z, _engine->_actor->processActorPtr->boudingBox.y.topRight);
 
 			if (brickShape == kSolid) {
-				brickShape = _engine->_grid->getBrickShapeFull(X + _engine->_movements->previousActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ, _engine->_movements->processActorPtr->boudingBox.y.topRight);
+				brickShape = _engine->_grid->getBrickShapeFull(X + _engine->_movements->previousActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ, _engine->_actor->processActorPtr->boudingBox.y.topRight);
 
 				if (brickShape != kSolid) {
 					processCollisionX = _engine->_movements->previousActorX;
@@ -454,12 +454,13 @@ void Collision::stopFalling() { // ReceptionObj()
 		fall = _engine->_scene->heroYBeforeFall - _engine->_movements->processActorY;
 
 		if (fall >= 0x1000) {
-			_engine->_extra->addExtraSpecial(_engine->_movements->processActorPtr->x, _engine->_movements->processActorPtr->y + 1000, _engine->_movements->processActorPtr->z, kHitStars);
-			_engine->_movements->processActorPtr->life--;
+			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->x, _engine->_actor->processActorPtr->y + 1000, _engine->_actor->processActorPtr->z, kHitStars);
+			_engine->_actor->processActorPtr->life--;
 			_engine->_animations->initAnim(kLandingHit, 2, 0, _engine->_animations->currentlyProcessedActorIdx);
 		} else if (fall >= 0x800) {
-			_engine->_extra->addExtraSpecial(_engine->_movements->processActorPtr->x, _engine->_movements->processActorPtr->y + 1000, _engine->_movements->processActorPtr->z, kHitStars);
-			_engine->_movements->processActorPtr->life--;
+			// TODO: the same as the other branch?
+			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->x, _engine->_actor->processActorPtr->y + 1000, _engine->_actor->processActorPtr->z, kHitStars);
+			_engine->_actor->processActorPtr->life--;
 			_engine->_animations->initAnim(kLandingHit, 2, 0, _engine->_animations->currentlyProcessedActorIdx);
 		} else if (fall > 10) {
 			_engine->_animations->initAnim(kLanding, 2, 0, _engine->_animations->currentlyProcessedActorIdx);
@@ -469,10 +470,10 @@ void Collision::stopFalling() { // ReceptionObj()
 
 		_engine->_scene->heroYBeforeFall = 0;
 	} else {
-		_engine->_animations->initAnim(kLanding, 2, _engine->_movements->processActorPtr->animExtra, _engine->_animations->currentlyProcessedActorIdx);
+		_engine->_animations->initAnim(kLanding, 2, _engine->_actor->processActorPtr->animExtra, _engine->_animations->currentlyProcessedActorIdx);
 	}
 
-	_engine->_movements->processActorPtr->dynamicFlags.bIsFalling = 0;
+	_engine->_actor->processActorPtr->dynamicFlags.bIsFalling = 0;
 }
 
 int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 actorIdx) {

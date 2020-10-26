@@ -62,8 +62,6 @@ public:
 	/** Process actor.z coordinate */
 	int16 processActorZ = 0;
 
-	ActorStruct *processActorPtr = nullptr; // processActorVar1
-
 	/** Previous process actor.x coordinate */
 	int16 previousActorX = 0; // processActorVar2
 	/** Previous process actor.y coordinate */

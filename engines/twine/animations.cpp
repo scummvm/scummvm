@@ -852,7 +852,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	currentlyProcessedActorIdx = actorIdx;
-	_engine->_movements->processActorPtr = actor;
+	_engine->_actor->processActorPtr = actor;
 
 	if (actor->entity == -1) {
 		return;

@@ -244,6 +244,8 @@ public:
 	/** Table with all loaded sprite sizes */
 	uint32 spriteSizeTable[NUM_SPRITES] {0};
 
+	ActorStruct *processActorPtr = nullptr; // processActorVar1
+
 	/** Actor shadow X coordinate */
 	int32 shadowX = 0;
 	/** Actor shadow Y coordinate */
