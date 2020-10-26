@@ -592,7 +592,7 @@ void ScriptMove::processMoveScript(int32 actorIdx) {
 	do {
 		scriptPosition = actor->positionInMoveScript;
 		// TODO: use Common::MemoryReadStream for the script parsing
-		scriptPtr = actor->moveScript + scriptPosition;
+		scriptPtr = actor->moveScript + actor->positionInMoveScript;
 		int32 scriptOpcode = *(scriptPtr++);
 
 		actor->positionInMoveScript++;

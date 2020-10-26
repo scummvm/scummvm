@@ -49,7 +49,7 @@ namespace TwinE {
 /** Original screen height */
 #define DEFAULT_SCREEN_HEIGHT 480
 /** Scale screen to double size */
-#define SCALE 1
+#define SCALE 1 // TODO: remove me or support me
 /** Original screen width */
 #define SCREEN_WIDTH DEFAULT_SCREEN_WIDTH *SCALE
 /** Original screen height */
