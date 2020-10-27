@@ -103,7 +103,11 @@ bool Input::toggleActionIfActive(TwinEActionType actionType) {
 }
 
 bool Input::toggleAbortAction() {
-	return toggleActionIfActive(TwinEActionType::CutsceneAbort) || toggleActionIfActive(TwinEActionType::UIAbort) || toggleActionIfActive(TwinEActionType::Escape);
+	bool abortState = false;
+	abortState |= toggleActionIfActive(TwinEActionType::CutsceneAbort);
+	abortState |= toggleActionIfActive(TwinEActionType::UIAbort);
+	abortState |= toggleActionIfActive(TwinEActionType::Escape);
+	return abortState;
 }
 
 bool Input::isQuickBehaviourActionActive() const {
