@@ -20,49 +20,19 @@
  *
  */
 
-#include "common/scummsys.h"
+#ifndef BACKEND_MORPHOS_DIALOGS_H
+#define BACKEND_MORPHOS_DIALOGS_H
 
-#ifdef __MORPHOS__
+#if defined(__MORPHOS__) && defined(USE_SYSDIALOGS) 
 
-#include "backends/platform/sdl/morphos/morphos.h"
-#include "backends/fs/morphos/morphos-fs-factory.h"
-#include "backends/dialogs/morphos/morphos-dialogs.h"
-#include <proto/openurl.h>
+#include "common/fs.h"
+#include "common/dialogs.h"
 
-void OSystem_MorphOS::init() {
-	// Initialze File System Factory
-	_fsFactory = new MorphOSFilesystemFactory();
+class MorphosDialogManager : public Common::DialogManager {
+public:
+	virtual DialogResult showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser);
+};
 
-	// Invoke parent implementation of this method
-	OSystem_SDL::init();
-	
-#if defined(USE_SYSDIALOGS)
-	_dialogManager = new MorphosDialogManager();
 #endif
-}
 
-bool OSystem_MorphOS::hasFeature(Feature f) {
-	if (f == kFeatureOpenUrl)
-		return true;
-	
-#if defined(USE_SYSDIALOGS)
-	if (f == kFeatureSystemBrowserDialog)
-		return true;
-#endif
-	
-	return OSystem_SDL::hasFeature(f);
-}
-
-bool OSystem_MorphOS::openUrl(const Common::String &url) {
-
-	static struct TagItem URLTags[] = {{TAG_DONE, (ULONG) NULL}};
-
-	if (OpenURLBase){
-		URL_OpenA((STRPTR)url.c_str(), (struct TagItem*) URLTags);
-		return true;
-	}
-
-	return false;
-
-}
-#endif
+#endif // BACKEND_MORPHOS_DIALOGS_H

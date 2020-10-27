@@ -5820,6 +5820,10 @@ if test "$_dialogs" = "no"; then
 	echo "no"
 else
 	case $_host_os in
+	morphos*)
+		echo "morphos"
+		_dialogs=yes
+		;;
 	mingw*)
 		append_var LIBS "-lole32 -luuid"
 		echo "win32"
