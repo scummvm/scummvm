@@ -296,7 +296,6 @@ void TwinEEngine::initEngine() {
 	// Check if LBA CD-Rom is on drive
 	_music->initCdrom();
 
-#if TWINE_PLAY_INTROS
 	_input->enableKeyMap(cutsceneKeyMapId);
 	// Display company logo
 	bool abort = false;
@@ -325,7 +324,6 @@ void TwinEEngine::initEngine() {
 	if (!abort) {
 		_flaMovies->playFlaMovie(FLA_DRAGON3);
 	}
-#endif
 	_input->enableKeyMap(uiKeyMapId);
 
 	_screens->loadMenuImage();

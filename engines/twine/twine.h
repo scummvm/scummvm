@@ -60,8 +60,6 @@ namespace TwinE {
 /** Number of colors used in the game */
 #define NUMOFCOLORS 256
 
-#define TWINE_PLAY_INTROS 1
-
 static const struct TwinELanguage {
 	const char *name;
 	const char *id;
