@@ -71,6 +71,13 @@
       help/contact
       help/faq
 
+.. toctree::
+      :caption: Release Notes
+      :glob:
+      :hidden:
+
+      release_notes/*  
+
 ====================
 Welcome to ScummVM!
 ====================
@@ -130,6 +137,11 @@ ScummVM is still under development. While we do our best to make sure that as ma
 If you are having problems with any aspect of ScummVM, take a look at our help section.
 
 :doc:`help/faq` | :doc:`How to report a bug <help/reporting_bugs>` | :doc:`help/contact`
+
+What's changed since I was last here?
+======================================
+
+For a quick recap on what's been happening with the latest release, check out our Release Notes section. 
 
 
 The ScummVM Project
