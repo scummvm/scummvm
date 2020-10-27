@@ -60,7 +60,7 @@ GlkAPI::GlkAPI(OSystem *syst, const GlkGameDescription &gameDesc) :
 }
 
 void GlkAPI::glk_exit(void) {
-	glk_put_string_uni(_("[ press any key to exit ]").c_str());
+	glk_put_string_uni(_("[ press any key to exit ]").u32_str());
 	_events->waitForPress();
 
 	// Trigger a ScumMVM shutdown of game

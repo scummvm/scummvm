@@ -142,7 +142,7 @@ Common::Error ZCode::saveGameState(int slot, const Common::String &desc, bool is
 	file->close();
 
 	if (!success)
-		print_string_uni(_("Error writing save file\n").c_str());
+		print_string_uni(_("Error writing save file\n").u32_str());
 
 	return Common::kNoError;
 

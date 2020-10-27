@@ -3,6 +3,7 @@ MODULE := common
 MODULE_OBJS := \
 	achievements.o \
 	archive.o \
+	base-str.o \
 	config-manager.o \
 	coroutines.o \
 	dcl.o \

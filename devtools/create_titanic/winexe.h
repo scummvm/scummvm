@@ -25,7 +25,7 @@
 
 #include "file.h"
 #include "hash-str.h"
-#include "str.h"
+#include "common/str.h"
 
 namespace Common {
 

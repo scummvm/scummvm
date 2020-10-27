@@ -24,7 +24,7 @@
 #define COMMON_HASH_STR_H
 
 #include "hashmap.h"
-#include "str.h"
+#include "common/str.h"
 
 namespace Common {
 

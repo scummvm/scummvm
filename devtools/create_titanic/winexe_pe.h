@@ -26,7 +26,7 @@
 #include "file.h"
 #include "hash-str.h"
 #include "hashmap.h"
-#include "str.h"
+#include "common/str.h"
 #include "winexe.h"
 
 namespace Common {

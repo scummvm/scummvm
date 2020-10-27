@@ -9,6 +9,7 @@ MODULE_OBJS := \
 	map.o \
 	memorypool.o \
 	str.o \
+	base-str.o \
 	swords.o
 
 # Set the name of the executable

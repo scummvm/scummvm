@@ -23,7 +23,7 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "file.h"
-#include "str.h"
+#include "common/str.h"
 #include "winexe_pe.h"
 #include "common/array.h"
 #include "common/endian.h"
