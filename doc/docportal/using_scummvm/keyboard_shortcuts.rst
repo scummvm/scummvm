@@ -2,7 +2,7 @@
 Keyboard shortcuts
 ===================
 
-ScummVM supports various in-game keyboard and mouse shortcuts, and since version 2.2.0 these can be manually configured in the :ref:`global settings <keyglobal>` or the :ref:`game settings <keygame>` Keymaps tab, or in the :doc:`configuration file <../advanced_options/configuration_file>`.
+ScummVM supports various in-game keyboard and mouse shortcuts, and since version 2.2.0 these can be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`, or in the :doc:`configuration file <../advanced_options/configuration_file>`.
 
 The shortcuts listed below are the defaults. 
 

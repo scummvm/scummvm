@@ -202,11 +202,12 @@ Paths
 =======
 
 Saved games
-***************
+^^^^^^^^^^^^^^^^^
+
 ``/var/mobile/Library/ScummVM/Savegames/`` or ``/ScummVM/Savegames/`` for a sandboxed version.
 
 Configuration file
-********************
+^^^^^^^^^^^^^^^^^^^^^^^
 
 ``/var/mobile/Library/ScummVM/Preferences`` or ``/Preferences`` for a sandboxed version.
 

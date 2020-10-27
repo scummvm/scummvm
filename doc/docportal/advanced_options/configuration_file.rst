@@ -5,7 +5,7 @@ The configuration file
 
 The configuration file provides a way to edit both global and game-specific settings by using a text file containing configuration keywords and parameters. 
 
-Settings are also accessible directly from :doc:`the Launcher <../using_scummvm/the_launcher>` . To edit :doc:`global settings <../using_scummvm/global_settings>`, click **Options**. To edit :doc:`game-specific settings <../using_scummvm/game_settings>`, highlight a game and then click **Edit Game**.
+Settings are also accessible directly from :doc:`the Launcher <../settings/the_launcher>` . To edit global settings, click **Options**. To edit game-specific settings, highlight a game and then click **Edit Game**.
 
 Location
 ==========
@@ -55,7 +55,7 @@ The configuration file saves to different default locations, depending on the pl
 Using the configuration file
 ==================================
 
-Global settings are listed under the ``[scummvm]`` heading. Global keymap settings are listed under the ``[keymapper]`` heading. Game-specific settings, including keymaps, are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keywords_ to change settings. 
+Global settings are listed under the ``[scummvm]`` heading. Global ../settings/keymaps settings are listed under the ``[keymapper]`` heading. Game-specific settings, including keymaps, are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keywords_ to change settings. 
 
 
 Example of a configuration file
@@ -102,7 +102,7 @@ Example of a configuration file
 Keywords
 ===========
 
-There are many recognized configuration keywords. In the table below, each keyword is linked to an explanatory description on either the :doc:`../using_scummvm/global_settings` or :doc:`../using_scummvm/game_settings` page. 
+There are many recognized configuration keywords. In the table below, each keyword is linked to an explanatory description in the Settings pages. 
 
 .. csv-table:: 
   	:widths: 25, 25, 15, 35
@@ -212,50 +212,50 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`joystick_deadzone <deadzone>`",integer, 3
 		joystick_num,number,,
 		":ref:`kbdmouse_speed <mousespeed>`", integer, 10
-		":ref:`keymap_engine-default_DOWN <keygame>`",string,JOY_DOWN
-		":ref:`keymap_engine-default_LCLK <keygame>`",string,MOUSE_LEFT JOY_A
-		":ref:`keymap_engine-default_LEFT <keygame>`",string,JOY_LEFT
-		":ref:`keymap_engine-default_MCLK <keygame>`",string,MOUSE_MIDDLE
-		":ref:`keymap_engine-default_MENU <keygame>`",string,F5 JOY_LEFT_SHOULDER
-		":ref:`keymap_engine-default_PAUSE <keygame>`",string,SPACE
-		":ref:`keymap_engine-default_PIND <keygame>`",string,
-		":ref:`keymap_engine-default_RCLK <keygame>`",string,MOUSE_RIGHT JOY_B
-		":ref:`keymap_engine-default_RETURN <keygame>`",string,RETURN
-		":ref:`keymap_engine-default_RIGHT <keygame>`",string,JOY_RIGHT
-		":ref:`keymap_engine-default_SKIP <keygame>`",string,ESCAPE JOY
-		":ref:`keymap_engine-default_SKLI <keygame>`",string,PERIOD JOY_X
-		":ref:`keymap_engine-default_UP <keygame>`",string,JOY_UP 
-		":ref:`keymap_global_DEBUGGER <keyglobal>`",string,C+A+d 
-		":ref:`keymap_global_MENU <keyglobal>`",string,C+F5 JOY_START
-		":ref:`keymap_global_MUTE <keyglobal>`",string,C+u 
-		":ref:`keymap_global_QUIT <keyglobal>`",string,C+q 
-		":ref:`keymap_global_VMOUSEDOWN <keyglobal>`",string,JOY_LEFT_STICK_Y+
-		":ref:`keymap_global_VMOUSELEFT <keyglobal>`",string,JOY_LEFT_STICK_X-
-		":ref:`keymap_global_VMOUSERIGHT <keyglobal>`",string,JOY_LEFT_STICK_X+
-		":ref:`keymap_global_VMOUSESLOW <keyglobal>`",string,JOY_RIGHT_SHOULDER
-		":ref:`keymap_global_VMOUSEUP <keyglobal>`",string,JOY_LEFT_STICK_Y-
-		":ref:`keymap_gui_CLOS <keyglobal>`",string,ESCAPE JOY_Y
-		":ref:`keymap_gui_DOWN <keyglobal>`",string,JOY_DOWN
-		":ref:`keymap_gui_INTRCT <keyglobal>`",string,JOY_A
-		":ref:`keymap_gui_LEFT <keyglobal>`",string,
-		":ref:`keymap_gui_RIGHT <keyglobal>`",string,JOY_RIGHT
-		":ref:`keymap_gui_UP <keyglobal>`",string,JOY_UP
-		":ref:`keymap_sdl-graphics_ASPT <keyglobal>`",string,C+A+a
-		":ref:`keymap_sdl-graphics_CAPT <keyglobal>`",string,C+m
-		":ref:`keymap_sdl-graphics_FILT <keyglobal>`",string,C+A+f
-		":ref:`keymap_sdl-graphics_FLT1 <keyglobal>`",string,C+A+1 
-		":ref:`keymap_sdl-graphics_FLT2 <keyglobal>`",string,C+A+2
-		":ref:`keymap_sdl-graphics_FLT3 <keyglobal>`",string,C+A+3 
-		":ref:`keymap_sdl-graphics_FLT4 <keyglobal>`",string,C+A+4 
-		":ref:`keymap_sdl-graphics_FLT5 <keyglobal>`",string,C+A+5 
-		":ref:`keymap_sdl-graphics_FLT6 <keyglobal>`",string, C+A+6
-		":ref:`keymap_sdl-graphics_FLT7 <keyglobal>`",string,C+A+7
-		":ref:`keymap_sdl-graphics_FLT8 <keyglobal>`",string,C+A+8
-		":ref:`keymap_sdl-graphics_FULS <keyglobal>`",string,A+RETURN
-		":ref:`keymap_sdl-graphics_SCL- <keyglobal>`",string,C+A+MINUS 
-		":ref:`keymap_sdl-graphics_SCL+ <keyglobal>`",string,C+A+PLUS 
-		":ref:`keymap_sdl-graphics_SCRS <keyglobal>`",string,A+s 
-		":ref:`keymap_sdl-graphics_STCH <keyglobal>`",string,C+A+s 
+		":doc:`keymap_engine-default_DOWN <../settings/keymaps>`",string,JOY_DOWN
+		":doc:`keymap_engine-default_LCLK <../settings/keymaps>`",string,MOUSE_LEFT JOY_A
+		":doc:`keymap_engine-default_LEFT <../settings/keymaps>`",string,JOY_LEFT
+		":doc:`keymap_engine-default_MCLK <../settings/keymaps>`",string,MOUSE_MIDDLE
+		":doc:`keymap_engine-default_MENU <../settings/keymaps>`",string,F5 JOY_LEFT_SHOULDER
+		":doc:`keymap_engine-default_PAUSE <../settings/keymaps>`",string,SPACE
+		":doc:`keymap_engine-default_PIND <../settings/keymaps>`",string,
+		":doc:`keymap_engine-default_RCLK <../settings/keymaps>`",string,MOUSE_RIGHT JOY_B
+		":doc:`keymap_engine-default_RETURN <../settings/keymaps>`",string,RETURN
+		":doc:`keymap_engine-default_RIGHT <../settings/keymaps>`",string,JOY_RIGHT
+		":doc:`keymap_engine-default_SKIP <../settings/keymaps>`",string,ESCAPE JOY
+		":doc:`keymap_engine-default_SKLI <../settings/keymaps>`",string,PERIOD JOY_X
+		":doc:`keymap_engine-default_UP <../settings/keymaps>`",string,JOY_UP 
+		":doc:`keymap_global_DEBUGGER <../settings/keymaps>`",string,C+A+d 
+		":doc:`keymap_global_MENU <../settings/keymaps>`",string,C+F5 JOY_START
+		":doc:`keymap_global_MUTE <../settings/keymaps>`",string,C+u 
+		":doc:`keymap_global_QUIT <../settings/keymaps>`",string,C+q 
+		":doc:`keymap_global_VMOUSEDOWN <../settings/keymaps>`",string,JOY_LEFT_STICK_Y+
+		":doc:`keymap_global_VMOUSELEFT <../settings/keymaps>`",string,JOY_LEFT_STICK_X-
+		":doc:`keymap_global_VMOUSERIGHT <../settings/keymaps>`",string,JOY_LEFT_STICK_X+
+		":doc:`keymap_global_VMOUSESLOW <../settings/keymaps>`",string,JOY_RIGHT_SHOULDER
+		":doc:`keymap_global_VMOUSEUP <../settings/keymaps>`",string,JOY_LEFT_STICK_Y-
+		":doc:`keymap_gui_CLOS <../settings/keymaps>`",string,ESCAPE JOY_Y
+		":doc:`keymap_gui_DOWN <../settings/keymaps>`",string,JOY_DOWN
+		":doc:`keymap_gui_INTRCT <../settings/keymaps>`",string,JOY_A
+		":doc:`keymap_gui_LEFT <../settings/keymaps>`",string,
+		":doc:`keymap_gui_RIGHT <../settings/keymaps>`",string,JOY_RIGHT
+		":doc:`keymap_gui_UP <../settings/keymaps>`",string,JOY_UP
+		":doc:`keymap_sdl-graphics_ASPT <../settings/keymaps>`",string,C+A+a
+		":doc:`keymap_sdl-graphics_CAPT <../settings/keymaps>`",string,C+m
+		":doc:`keymap_sdl-graphics_FILT <../settings/keymaps>`",string,C+A+f
+		":doc:`keymap_sdl-graphics_FLT1 <../settings/keymaps>`",string,C+A+1 
+		":doc:`keymap_sdl-graphics_FLT2 <../settings/keymaps>`",string,C+A+2
+		":doc:`keymap_sdl-graphics_FLT3 <../settings/keymaps>`",string,C+A+3 
+		":doc:`keymap_sdl-graphics_FLT4 <../settings/keymaps>`",string,C+A+4 
+		":doc:`keymap_sdl-graphics_FLT5 <../settings/keymaps>`",string,C+A+5 
+		":doc:`keymap_sdl-graphics_FLT6 <../settings/keymaps>`",string, C+A+6
+		":doc:`keymap_sdl-graphics_FLT7 <../settings/keymaps>`",string,C+A+7
+		":doc:`keymap_sdl-graphics_FLT8 <../settings/keymaps>`",string,C+A+8
+		":doc:`keymap_sdl-graphics_FULS <../settings/keymaps>`",string,A+RETURN
+		":doc:`keymap_sdl-graphics_SCL- <../settings/keymaps>`",string,C+A+MINUS 
+		":doc:`keymap_sdl-graphics_SCL+ <../settings/keymaps>`",string,C+A+PLUS 
+		":doc:`keymap_sdl-graphics_SCRS <../settings/keymaps>`",string,A+s 
+		":doc:`keymap_sdl-graphics_STCH <../settings/keymaps>`",string,C+A+s 
 		":ref:`language <lang>`",string,,
 		":ref:`local_server_port <serverport>`",integer,12345,
 		":ref:`midi_gain <gain>`",number,,"- 0 - 1000"

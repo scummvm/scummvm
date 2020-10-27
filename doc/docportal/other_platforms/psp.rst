@@ -38,7 +38,7 @@ Controls
 Default control mapping
 *********************************
 
-These controls can also be manually configured in the :ref:`global settings <keyglobal>` or the :ref:`game settings <keygame>` Keymaps tab.
+These controls can also be manually configured in the :doc:`Keymaps tab<../settings/keymaps>`.
 
 See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
 

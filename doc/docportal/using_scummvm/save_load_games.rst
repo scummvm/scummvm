@@ -81,7 +81,7 @@ Location of saved game files
 
 Saved game files can be found in the current ScummVM directory for some platforms, and in default directories for others. The defaults for Windows, Mac and Linux/Unix are shown below. 
 
-The save directory can be changed via the savepath setting in the Paths tab of the :ref:`global settings <savepath>` or it can be changed for a specific game in the :ref:`game settings <savepathgame>`. It can also be changed in the :doc:`configuration file <../advanced_options/configuration_file>`.
+The save directory can be changed via the savepath setting in the :doc:`Paths tab <../sett>. It can also be changed in the :doc:`configuration file <../advanced_options/configuration_file>`.
 
 .. tabs::
 

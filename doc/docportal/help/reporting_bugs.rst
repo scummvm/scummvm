@@ -30,15 +30,17 @@ You can find error messages in the ScummVM log file. The location of this file v
 
 .. tabs::
 
-	.. tab:: macOS
-
-		``~/Library/Logs/scummvm.log``, where ``~`` is your Home directory. 
-    
     .. tab:: Linux
 
-        We use the XDG Base Directory Specification, so by default the file will be ``~/.cache/scummvm/logs/scummvm.log`` but its location may vary depending on the value of the ``XDG_CACHE_HOME`` environment variable. 
+            We use the XDG Base Directory Specification, so by default the file will be ``~/.cache/scummvm/logs/scummvm.log`` but its location may vary depending on the value of the ``XDG_CACHE_HOME`` environment variable. 
+
 
     .. tab:: Windows
 
-        ``%appdata%\ScummVM\Logs\scummvm.log``
+            ``%appdata%\ScummVM\Logs\scummvm.log``
+
+    
+	.. tab:: macOS
+		``~/Library/Logs/scummvm.log``, where ``~`` is your Home directory. 
+    
 	

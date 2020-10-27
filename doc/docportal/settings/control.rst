@@ -8,7 +8,7 @@ Overview
 The Control tab
 ----------------
 
-Use the control tab to change aspects of the mouse and joystick controls.
+Use the control tab to change aspects of the mouse and joystick controls. 
 
 .. figure:: ../images/settings/control.png
 

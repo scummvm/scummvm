@@ -35,7 +35,7 @@ If you're using SD2Vita:
 
 Folders containing game files can be copied into any folder.
 
-ScummVM on the PS Vita supports :doc:`Cloud functionality <howtocloud>`. 
+ScummVM on the PS Vita supports :ref:`Cloud functionality <howtocloud>`. 
 
 For more information on how to add and play games, see the :doc:`../using_scummvm/adding_games` page.
 
@@ -46,7 +46,7 @@ Controls
 Default control mapping
 *********************************
 
-These controls can also be manually configured in the :ref:`global settings <keyglobal>` or the :ref:`game settings <keygame>` Keymaps tab.
+These controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>.
 
 See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
 

@@ -40,6 +40,8 @@ Q: Where do I get the games?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **A:** See `Where to get the games <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games>`_ on our wiki. 
 
+.. _installgames:
+
 Q: How do I install games from my floppy discs/CDs?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **A:** Generally speaking, you do not need to install the games. You only need to point ScummVM to the game files contained on these discs. See :doc:`../using_scummvm/adding_games`. 
@@ -78,6 +80,27 @@ Q: I think I found a bug. What do I do?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **A:** See :doc:`reporting_bugs`. 
 
+Games
+********
+
+Q: Help! My game won't run! 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A: First, make sure your game is supported. See the `Compatibility page <https://www.scummvm.org/compatibility/>`_ on our website. 
+
+Check that you have all the required datafiles. See :doc:`../using_scummvm/adding_games`.
+
+Ask on the forums or on Discord whether your game is supported on the platform you're trying to play it on. See :doc:`contact`.
+
+If you think the game should run, and it doesn't, report it as a bug. See :doc:`reporting_bugs`. 
+
+Q: I installed my game but ScummVM can't find it... What do I do?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Installing the game does not necessarily provide ScummVM with the files it needs. See :ref:`installgames`. 
+
+Q: Why are the subtitles in my non-English game messed up?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**A:** You need to specify the correct :ref:`language <lang>` in the game-specific settings.  
 
 Audio
 *******
@@ -117,10 +140,13 @@ Q: There are so many options... How do I know what to pick?
 **A:** Start by checking out our :doc:`../settings/graphics` settings page. It has comprehensive information on how it all works. 
 
 Q: Can I just make the image larger (for example, 1 pixel becomes 4 pixels) without any smoothing or antialiasing?
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 **A:** Yes. Using the **Normal (no scaling)** graphics mode in conjunction with pixel-perfect scaling will result in a larger image without any smoothing. The **2x** and **3x** graphics modes also do not involve any filtering.  
 
 Ensure **Filter graphics** is not enabled. 
 
 See the :doc:`../settings/graphics` settings for a more detailed explanation. 
 
+Q: The game colors are messed up, how do I fix them?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**A:** Ensure the correct game has been detected. For example, with Amiga game files, check that the :ref:`platform <platform>` is set to Amiga. 

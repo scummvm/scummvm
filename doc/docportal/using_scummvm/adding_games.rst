@@ -108,7 +108,7 @@ Adding the games to the Launcher
 
 .. note::
 
-   You may choose which file browser to use by setting the **Use Native file browser  option in the :doc:`Misc <..settings/misc>` tab of the global settings. 
+   You may choose which file browser to use by setting the **Use Native file browser  option in the :doc:`Misc <../settings/misc>` tab of the global settings. 
 
 5.  A dialog opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should work at the default settings. Click **Ok**. 
 
