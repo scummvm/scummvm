@@ -87,9 +87,7 @@ enum MovieType {
 	CONF_MOVIE_FLAPCX = 3
 };
 
-// TODO: persist on shutdown
 /** Configuration file structure
-
 	Used in the engine to load/use certain parts of code according with
 	this settings. Check \a lba.cfg file for valid values for each settings.\n
 	All the settings with (*) means they are new and only exist in this engine. */
@@ -109,21 +107,26 @@ struct ConfigFile {
 	int32 Sound = 0;
 	/** Allow various movie types */
 	int32 Movie = CONF_MOVIE_FLA;
-	/** Use cross fade effect while changing images, or be as the original */
-	int32 CrossFade = 0;
 	/** Flag used to keep the game frames per second */
 	int32 Fps = 0;
 	/** Flag to display game debug */
 	bool Debug = false;
-	/** Use original autosaving system or save when you want */
-	int32 UseAutoSaving = 0;
-	/** Shadow mode type, value: all, character only, none */
-	int32 ShadowMode = 0;
-	int32 PolygonDetails = 2;
-	/** SceZoom mode type */
-	bool SceZoom = false;
+
+	// these settings are not available in the original version
+	/** Use cross fade effect while changing images, or be as the original */
+	int32 CrossFade = 0;
 	/** Flag to toggle Wall Collision */
 	int32 WallCollision = 0;
+	/** Use original autosaving system or save when you want */
+	int32 UseAutoSaving = 0;
+
+	// these settings can be changed in-game - and must be persisted
+	/** Shadow mode type, value: all, character only, none */
+	int32 ShadowMode = 0;
+	// TODO: currently unused
+	int32 PolygonDetails = 2;
+	/** Scenery Zoom */
+	bool SceZoom = false;
 };
 
 class Actor;

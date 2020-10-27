@@ -274,14 +274,17 @@ void TwinEEngine::initConfigurations() {
 	cfgfile.UseCD = ConfGetIntOrDefault("UseCD", 0);
 	cfgfile.Sound = ConfGetIntOrDefault("Sound", 1);
 	cfgfile.Movie = ConfGetIntOrDefault("Movie", CONF_MOVIE_FLA);
-	cfgfile.CrossFade = ConfGetIntOrDefault("CrossFade", 0);
 	cfgfile.Fps = ConfGetIntOrDefault("Fps", DEFAULT_FRAMES_PER_SECOND);
 	cfgfile.Debug = ConfGetIntOrDefault("Debug", 0) == 1;
+
 	cfgfile.UseAutoSaving = ConfGetIntOrDefault("UseAutoSaving", 0);
+	cfgfile.CrossFade = ConfGetIntOrDefault("CrossFade", 0);
+	cfgfile.WallCollision = ConfGetIntOrDefault("WallCollision", 0);
+
 	_actor->autoAgressive = ConfGetIntOrDefault("CombatAuto", 1) == 1;
 	cfgfile.ShadowMode = ConfGetIntOrDefault("Shadow", 2);
 	cfgfile.SceZoom = ConfGetIntOrDefault("SceZoom", 0) == 0;
-	cfgfile.WallCollision = ConfGetIntOrDefault("WallCollision", 0);
+	cfgfile.PolygonDetails = ConfGetIntOrDefault("PolygonDetails", 2);
 }
 
 void TwinEEngine::initEngine() {
