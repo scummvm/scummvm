@@ -63,6 +63,9 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 			_upscaledHires = GFX_SCREEN_UPSCALED_640x440;
 	}
 
+	// Korean versions of games use hi-res font on upscaled version of the game.
+	if ((g_sci->getLanguage() == Common::KO_KOR) && (getSciVersion() <= SCI_VERSION_1_1))
+		_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
 	// Japanese versions of games use hi-res font on upscaled version of the game.
 	if ((g_sci->getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
 		_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
@@ -625,6 +628,14 @@ void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte 
 			vectorPutLinePixel(left, top, drawMask, color, priority, control);
 		}
 	}
+}
+
+// We put hires hangul chars onto upscaled background, so we need to adjust
+// coordinates. Caller gives use low-res ones.
+void GfxScreen::putHangulChar(Graphics::FontKorean *commonFont, int16 x, int16 y, uint16 chr, byte color) {
+	byte *displayPtr = _displayScreen + y * _displayWidth * 2 + x * 2;
+	// we don't use outline, so color 0 is actually not used
+	commonFont->drawChar(displayPtr, chr, _displayWidth, 1, color, 0, -1, -1);
 }
 
 // We put hires kanji chars onto upscaled background, so we need to adjust

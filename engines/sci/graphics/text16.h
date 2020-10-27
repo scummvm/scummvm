@@ -78,6 +78,7 @@ public:
 
 private:
 	void init();
+	bool SwitchToFont1001OnKorean(const char *text, uint16 languageSplitter);
 	bool SwitchToFont900OnSjis(const char *text, uint16 languageSplitter);
 
 	GfxCache *_cache;
