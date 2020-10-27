@@ -406,21 +406,15 @@ FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 }
 
 int32 Renderer::computePolygons() {
-	int16 *outPtr;
-	int32 i, nVertex;
-	int8 direction, up;
-	int64 slope;
-	vertexData *vertices;
-
 	pRenderV1 = vertexCoordinates;
 	pRenderV2 = pRenderV3;
 
-	vertices = (vertexData *)vertexCoordinates;
+	vertexData *vertices = (vertexData *)vertexCoordinates;
 
 	vleft = vtop = 32767;
 	vright = vbottom = -32768;
 
-	for (i = 0; i < numOfVertex; i++) {
+	for (int32 i = 0; i < numOfVertex; i++) {
 		vertices[i].x = clamp(vertices[i].x, 0, SCREEN_WIDTH - 1);
 		int16 vertexX = vertices[i].x;
 
@@ -441,7 +435,7 @@ int32 Renderer::computePolygons() {
 	int16 currentVertexX = vertices[numOfVertex - 1].x;
 	int16 currentVertexY = vertices[numOfVertex - 1].y;
 
-	for (nVertex = 0; nVertex < numOfVertex; nVertex++) {
+	for (int32 nVertex = 0; nVertex < numOfVertex; nVertex++) {
 		int16 oldVertexY = currentVertexY;
 		int16 oldVertexX = currentVertexX;
 		oldVertexParam = vertexParam1;
@@ -452,11 +446,12 @@ int32 Renderer::computePolygons() {
 
 		// drawLine(oldVertexX,oldVertexY,currentVertexX,currentVertexY,255);
 
-		if (currentVertexY == oldVertexY)
+		if (currentVertexY == oldVertexY) {
 			continue;
+		}
 
-		up = currentVertexY < oldVertexY;
-		direction = up ? -1 : 1;
+		int8 up = currentVertexY < oldVertexY;
+		int8 direction = up ? -1 : 1;
 
 		int16 vsize = ABS(currentVertexY - oldVertexY);
 		int16 hsize = ABS(currentVertexX - oldVertexX);
@@ -477,15 +472,17 @@ int32 Renderer::computePolygons() {
 			cvalue = (oldVertexParam << 8) + ((vertexParam2 - oldVertexParam) << 8) % vsize;
 			cdelta = ((vertexParam2 - oldVertexParam) << 8) / vsize;
 		}
-		outPtr = &polyTab[ypos + (up ? 480 : 0)]; // outPtr is the output ptr in the renderTab
+		int16 *outPtr = &polyTab[ypos + (up ? 480 : 0)]; // outPtr is the output ptr in the renderTab
 
-		slope = (int64)hsize / (int64)vsize;
+		int64 slope = (int64)hsize / (int64)vsize;
 		slope = up ? -slope : slope;
 
-		for (i = 0; i < vsize + 2; i++) {
-			if ((outPtr - polyTab) < 960)
-				if ((outPtr - polyTab) > 0)
-					*(outPtr) = xpos;
+		for (int32  i = 0; i < vsize + 2; i++) {
+			if (outPtr - polyTab < 960) {
+				if (outPtr - polyTab > 0) {
+					*outPtr = xpos;
+				}
+			}
 			outPtr += direction;
 			xpos += slope;
 		}
@@ -493,35 +490,35 @@ int32 Renderer::computePolygons() {
 		if (polyRenderType >= 7) { // we must compute the color progression
 			int16 *outPtr2 = &polyTab2[ypos + (up ? 480 : 0)];
 
-			for (i = 0; i < vsize + 2; i++) {
-				if ((outPtr2 - polyTab2) < 960)
-					if ((outPtr2 - polyTab2) > 0)
-						*(outPtr2) = cvalue;
+			for (int32 i = 0; i < vsize + 2; i++) {
+				if (outPtr2 - polyTab2 < 960) {
+					if (outPtr2 - polyTab2 > 0) {
+						*outPtr2 = cvalue;
+					}
+				}
 				outPtr2 += direction;
 				cvalue += cdelta;
 			}
 		}
 	}
 
-	return (1);
+	return 1;
 }
 
 void Renderer::renderPolygons(int32 renderType, int32 color) {
-	uint8 *out, *out2;
-	int16 *ptr1;
-	int16 *ptr2;
-	int32 vsize, hsize;
+	uint8 *out2;
+	int32 hsize;
 	int32 j;
 	int32 currentLine;
 
 	int16 start, stop;
 
-	out = (uint8*)_engine->frontVideoBuffer.getPixels() + 640 * vtop;
+	uint8 *out = (uint8*)_engine->frontVideoBuffer.getPixels() + 640 * vtop;
 
-	ptr1 = &polyTab[vtop];
-	ptr2 = &polyTab2[vtop];
+	int16 *ptr1 = &polyTab[vtop];
+	int16 *ptr2 = &polyTab2[vtop];
 
-	vsize = vbottom - vtop;
+	int32 vsize = vbottom - vtop;
 	vsize++;
 
 	switch (renderType) {
@@ -637,7 +634,7 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 					break;
 
 				out2 = start + out;
-				*(out2) = ((unsigned short)(bx >> 0x18)) & 0x0F;
+				*out2 = ((unsigned short)(bx >> 0x18)) & 0x0F;
 
 				color = *(out2 + 1);
 
@@ -682,8 +679,9 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 					ax += dx;
 
 					--j;
-					if (!j)
+					if (!j) {
 						break;
+					}
 
 					*(out2++) = ax & 0x0F;
 					ax += dx;

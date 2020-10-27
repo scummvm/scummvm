@@ -214,10 +214,10 @@ private:
 	int32 renderLoop = 0;
 	// end render polygon vars
 
+	int32 isUsingOrhoProjection = 0;
+
 public:
 	Renderer(TwinEEngine *engine) : _engine(engine) {}
-
-	int32 isUsingOrhoProjection = 0;
 
 	int16 projPosXScreen = 0; // fullRedrawVar1
 	int16 projPosYScreen = 0; // fullRedrawVar2
