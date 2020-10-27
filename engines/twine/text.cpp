@@ -132,7 +132,7 @@ void Text::initTextBank(int32 bankIdx) {
 	textVar2[0] = '\0';
 
 	// get index according with language
-	const int32 size = 28; // lba2 is 30
+	const int32 size = _engine->isLBA1() ? 28 : 30;
 	const int32 languageIndex = _engine->cfgfile.LanguageId * size + bankIdx * 2;
 	const int32 hqrSize = _engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex + INDEXOFFSET);
 	if (hqrSize == 0) {
