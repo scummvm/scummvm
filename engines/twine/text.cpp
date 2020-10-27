@@ -577,7 +577,7 @@ int Text::printText10() {
 }
 
 // TODO: refactor this code
-void Text::drawTextFullscreen(int32 index) {
+bool Text::drawTextFullscreen(int32 index) {
 	ScopedKeyMap scopedKeyMap(_engine, cutsceneKeyMapId);
 
 	_engine->_interface->saveClip();
@@ -587,13 +587,15 @@ void Text::drawTextFullscreen(int32 index) {
 	// get right VOX entry index
 	initVoxToPlay(index);
 
+	bool aborted = false;
+
 	// if we don't display text, than still plays vox file
 	if (_engine->cfgfile.FlagDisplayText) {
 		initText(index);
 		initDialogueBox();
 
 		int32 printedText;
-		do {
+		for (;;) {
 			_engine->readKeys();
 			printedText = printText10();
 			playVox(currDialTextEntry);
@@ -602,11 +604,12 @@ void Text::drawTextFullscreen(int32 index) {
 				break;
 			}
 
-			if (_engine->shouldQuit()) {
+			if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
+				aborted = true;
 				break;
 			}
 			_engine->_system->delayMillis(1);
-		} while (!_engine->_input->toggleAbortAction());
+		}
 		hasHiddenVox = false;
 
 		stopVox(currDialTextEntry);
@@ -615,24 +618,23 @@ void Text::drawTextFullscreen(int32 index) {
 
 		if (printedText != 0) {
 			_engine->_interface->loadClip();
-			return;
+			return aborted;
 		}
 
 		// wait displaying text
-		do {
+		for (;;) {
 			_engine->readKeys();
-			if (_engine->shouldQuit()) {
+			if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
+				aborted = true;
 				break;
 			}
 			_engine->_system->delayMillis(1);
-		} while (!_engine->_input->toggleAbortAction());
+		}
 	} else { // RECHECK THIS
 		while (playVox(currDialTextEntry)) {
 			_engine->readKeys();
-			if (_engine->shouldQuit()) {
-				break;
-			}
-			if (_engine->_input->toggleAbortAction()) {
+			if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
+				aborted = true;
 				break;
 			}
 			_engine->_system->delayMillis(1);
@@ -644,6 +646,7 @@ void Text::drawTextFullscreen(int32 index) {
 	stopVox(currDialTextEntry);
 
 	_engine->_interface->loadClip();
+	return aborted;
 }
 
 void Text::setFontParameters(int32 spaceBetween, int32 charSpace) {

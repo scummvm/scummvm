@@ -60,23 +60,28 @@ void MenuOptions::newGame() {
 	_engine->_text->textClipFull();
 	_engine->_text->setFontCrossColor(15);
 
-	_engine->_text->drawTextFullscreen(150);
+	bool aborted = _engine->_text->drawTextFullscreen(150);
 
 	// intro screen 2
-	_engine->_screens->loadImage(RESSHQR_INTROSCREEN2IMG);
-	_engine->_text->drawTextFullscreen(151);
+	if (!aborted) {
+		_engine->_screens->loadImage(RESSHQR_INTROSCREEN2IMG);
+		aborted |= _engine->_text->drawTextFullscreen(151);
 
-	_engine->_screens->loadImage(RESSHQR_INTROSCREEN3IMG);
-	_engine->_text->drawTextFullscreen(152);
-
+		if (!aborted) {
+			_engine->_screens->loadImage(RESSHQR_INTROSCREEN3IMG);
+			aborted |= _engine->_text->drawTextFullscreen(152);
+		}
+	}
 	_engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
 
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBACustom);
 	_engine->_screens->clearScreen();
 	_engine->flip();
 
-	// _engine->_music->playMidiMusic(1);
-	_engine->_flaMovies->playFlaMovie(FLA_INTROD);
+	if (!aborted) {
+		// _engine->_music->playMidiMusic(1);
+		_engine->_flaMovies->playFlaMovie(FLA_INTROD);
+	}
 #endif
 
 	_engine->_text->textClipSmall();

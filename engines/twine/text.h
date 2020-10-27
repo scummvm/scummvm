@@ -165,7 +165,7 @@ public:
 	 */
 	void drawText(int32 x, int32 y, const char *dialogue);
 
-	void drawTextFullscreen(int32 index);
+	bool drawTextFullscreen(int32 index);
 
 	/**
 	 * Gets dialogue text width size
