@@ -46,7 +46,7 @@ Controls
 Default control mapping
 *********************************
 
-These controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>.
+These controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`.
 
 See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
 
@@ -122,7 +122,7 @@ The touch control scheme can be switched in the global settings. Go to **Options
     - When **Touchpad mouse mode** is on:
         
         - The touch controls are indirect. The finger can be far away from the pointer and still move it, like on a laptop touchpad. 
-        - The pointer speed setting in the :doc:`Controls tab <../settings/controls>` affects how far the pointer moves in response to a finger movement.
+        - The pointer speed setting in the :doc:`Controls tab <../settings/control>` affects how far the pointer moves in response to a finger movement.
         - The rear touchpad is enabled. 
 
 

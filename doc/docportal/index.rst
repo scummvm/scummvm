@@ -36,6 +36,7 @@
       settings/game
       settings/engine
       settings/graphics
+      settings/control
       settings/keymaps
       settings/audio
       settings/paths

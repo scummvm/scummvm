@@ -102,7 +102,7 @@ The touch control scheme can be switched in the global settings. Go to **Options
     - When touchpad mouse mode is off (default), the touch controls are direct. The pointer always jumps to the finger.
 
     - When touchpad mouse mode is on, the touch controls are indirect. The finger can be far away from the pointer and still move it, like on a laptop touchpad. 
-    - The pointer speed setting in the :doc:`Controls tab <../settings/controls>` affects how far the pointer moves in response to a finger movement.
+    - The pointer speed setting in the :doc:`Controls tab <../settings/control>` affects how far the pointer moves in response to a finger movement.
 
 Two finger drag
 ^^^^^^^^^^^^^^^^^^^

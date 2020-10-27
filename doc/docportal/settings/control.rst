@@ -8,7 +8,7 @@ Overview
 The Control tab
 ----------------
 
-Use the control tab to change aspects of the mouse and joystick controls. 
+Use the control tab to change aspects of joystick controls. This tab is only available when a joystick or game controller is connected, or for certain touch screen enabled platforms. 
 
 .. figure:: ../images/settings/control.png
 
@@ -20,7 +20,7 @@ Use the control tab to change aspects of the mouse and joystick controls.
 .. _mousespeed:
 
 Pointer Speed	
-	Sets the speed for the keyboard, joystick or mouse pointer. 
+	Sets the speed for the mouse pointer, when it is controlled by the keyboard or a joystick. 
 
 	*kbdmouse_speed*
 

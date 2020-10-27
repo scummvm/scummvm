@@ -5,7 +5,7 @@ The configuration file
 
 The configuration file provides a way to edit both global and game-specific settings by using a text file containing configuration keywords and parameters. 
 
-Settings are also accessible directly from :doc:`the Launcher <../settings/the_launcher>` . To edit global settings, click **Options**. To edit game-specific settings, highlight a game and then click **Edit Game**.
+Settings are also accessible directly from :doc:`the Launcher <../using_scummvm/the_launcher>` . To edit global settings, click **Options**. To edit game-specific settings, highlight a game and then click **Edit Game**.
 
 Location
 ==========
@@ -177,7 +177,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		:ref:`frontpanel_touchpad_mode <frontpanel>`,boolean, false
 		":ref:`fullscreen <fullscreen>`",boolean,false,
 		":ref:`gameid <gameid>`",string,,
-		":ref:`gamepath <gamepath>`",string,,
+		gamepath,string,,
 		":ref:`gfx_mode <gfxmode>`",string,2x,"
 	- 1x
 	- 2x
@@ -292,7 +292,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 	- cms
 	- timidity
 	"
-		":ref:`music_driver [game] <gamedevice>`",string, auto, "
+		"music_driver [game]",string, auto, "
 	The same options as 
 	
 	``music_driver in [scummvm]`` 
@@ -368,7 +368,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`subtitles <speechmute>`",boolean,false,
 		":ref:`talkspeed <talkspeed>`",number,60,"- 0 - 255 "
 		tempo,number,100,"- 50-200"
-		":ref:`TextWindowAnimated <textanimated>`",boolean,true,
+		":ref:`TextWindowAnimated <windowanimated>`",boolean,true,
 		":ref:`themepath <themepath>`",string,none,
 		":ref:`transparent_windows <transparentwindows>`",boolean,true,
 		":ref:`transparentdialogboxes <transparentdialog>`",boolean,false,
