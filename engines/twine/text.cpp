@@ -150,51 +150,26 @@ void Text::initTextBank(int32 bankIdx) {
 }
 
 void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
-	uint8 sizeX;
-	uint8 sizeY;
-	uint8 param1;
-	uint8 param2;
-	uint8 *data;
-	uint8 *screen2;
+	const uint8 sizeX = getCharWidth(character);
+	uint8 sizeY = getCharHeight(character);
+	uint8 *data = _engine->_resources->fontPtr + *((const int16 *)(_engine->_resources->fontPtr + character * 4));
+	data += 2;
+	x += *(data++);
+	y += *(data++);
 
-	// int temp=0;
-	int32 toNextLine;
-	uint8 index;
+	const uint8 usedColor = dialTextColor;
 
-	// char color;
-	uint8 usedColor;
-	uint8 number;
-	uint8 jump;
+	uint8 *screen2 = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[y] + x;
 
-	int32 i;
+	int32 tempX = x;
+	int32 tempY = y;
 
-	int32 tempX;
-	int32 tempY;
-
-	data = _engine->_resources->fontPtr + *((const int16 *)(_engine->_resources->fontPtr + character * 4));
-
-	dialTextSize = sizeX = *(data++);
-	sizeY = *(data++);
-
-	param1 = *(data++);
-	param2 = *(data++);
-
-	x += param1;
-	y += param2;
-
-	usedColor = dialTextColor;
-
-	screen2 = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[y] + x;
-
-	tempX = x;
-	tempY = y;
-
-	toNextLine = SCREEN_WIDTH - sizeX;
+	const int32 toNextLine = SCREEN_WIDTH - sizeX;
 
 	do {
-		index = *(data++);
+		uint8 index = *(data++);
 		do {
-			jump = *(data++);
+			const uint8 jump = *(data++);
 			screen2 += jump;
 			tempX += jump;
 			if (--index == 0) {
@@ -206,28 +181,27 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 					return;
 				}
 				break;
-			} else {
-				number = *(data++);
-				for (i = 0; i < number; i++) {
-					if (tempX >= SCREEN_TEXTLIMIT_LEFT && tempX < SCREEN_TEXTLIMIT_RIGHT && tempY >= SCREEN_TEXTLIMIT_TOP && tempY < SCREEN_TEXTLIMIT_BOTTOM) {
-						*((uint8 *)_engine->frontVideoBuffer.getBasePtr(tempX, tempY)) = usedColor;
-					}
-
-					screen2++;
-					tempX++;
+			}
+			uint8 number = *(data++);
+			for (uint8 i = 0; i < number; i++) {
+				if (tempX >= SCREEN_TEXTLIMIT_LEFT && tempX < SCREEN_TEXTLIMIT_RIGHT && tempY >= SCREEN_TEXTLIMIT_TOP && tempY < SCREEN_TEXTLIMIT_BOTTOM) {
+					*((uint8 *)_engine->frontVideoBuffer.getBasePtr(tempX, tempY)) = usedColor;
 				}
 
-				if (--index == 0) {
-					screen2 += toNextLine;
-					tempY++;
-					tempX = x;
+				screen2++;
+				tempX++;
+			}
 
-					sizeY--;
-					if (sizeY <= 0) {
-						return;
-					}
-					break;
+			if (--index == 0) {
+				screen2 += toNextLine;
+				tempY++;
+				tempX = x;
+
+				sizeY--;
+				if (sizeY <= 0) {
+					return;
 				}
+				break;
 			}
 		} while (1);
 	} while (1);
@@ -272,7 +246,7 @@ void Text::drawText(int32 x, int32 y, const char *dialogue) { // Font
 			x += dialCharSpace;
 		} else {
 			dialTextSize = getCharWidth(currChar);
-			drawCharacter(x, y, currChar);                                      // draw the character on screen
+			drawCharacter(x, y, currChar); // draw the character on screen
 			// add the length of the space between 2 characters
 			x += dialSpaceBetween;
 			// add the length of the current character
@@ -517,6 +491,10 @@ void Text::printText10Sub2() {
 
 int32 Text::getCharWidth(uint8 chr) const {
 	return *(_engine->_resources->fontPtr + *((const int16 *)(_engine->_resources->fontPtr + chr * 4)));
+}
+
+int32 Text::getCharHeight(uint8 chr) const {
+	return *(_engine->_resources->fontPtr + 1 + *((const int16 *)(_engine->_resources->fontPtr + chr * 4)));
 }
 
 // TODO: refactor this code

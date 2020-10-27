@@ -60,6 +60,7 @@ private:
 	void printText10Sub();
 	void printText10Sub2();
 	int32 getCharWidth(uint8 chr) const;
+	int32 getCharHeight(uint8 chr) const;
 	/**
 	 * Copy dialogue text
 	 * @param src source text buffer
