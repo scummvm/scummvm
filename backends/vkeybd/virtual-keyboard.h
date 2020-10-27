@@ -242,6 +242,7 @@ protected:
 	bool checkModeResolutions();
 	void switchMode(Mode *newMode);
 	void switchMode(const String &newMode);
+	void initKeymap();
 	void handleMouseDown(int16 x, int16 y);
 	void handleMouseUp(int16 x, int16 y);
 	String findArea(int16 x, int16 y);

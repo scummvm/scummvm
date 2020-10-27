@@ -35,18 +35,28 @@ protected:
 	bool _original;
 
 
-	int getStringWidth(const char *str);
-	int getStringHeight(const char *str);
+	int getStringWidth(const char *str, uint numBytesMax);
+	int getStringHeight(const char *str, uint numBytesMax);
 	int draw2byte(byte *buffer, int dst_width, int x, int y, int idx);
 	int drawChar(byte *buffer, int dst_width, int x, int y, byte chr);
-	void drawSubstring(const char *str, byte *buffer, int dst_width, int x, int y);
+	void drawSubstring(const char *str, uint numBytesMax, byte *buffer, int dst_width, int x, int y);
 
 public:
 	SmushFont(ScummEngine *vm, const char *filename, bool use_original_colors, bool new_colors);
 
 	void setColor(byte c) { _color = c; }
-	void drawString    (const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, bool center);
-	void drawStringWrap(const char *str, byte *buffer, int dst_width, int dst_height, int x, int y, int left, int right, bool center);
+	void drawString    (const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, bool center);
+	void drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, bool center);
+
+	static inline bool is2ByteCharacter(Common::Language lang, byte c) {
+		if (lang == Common::JA_JPN)
+			return (c >= 0x80 && c <= 0x9F) || (c >= 0xE0 && c <= 0xFD);
+		else if (lang == Common::KO_KOR)
+			return (c >= 0xB0 && c <= 0xD0);
+		else if (lang == Common::ZH_TWN || lang == Common::ZH_CNA)
+			return (c >= 0x80);
+		return false;
+	}
 };
 
 } // End of namespace Scumm

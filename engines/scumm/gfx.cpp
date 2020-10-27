@@ -1023,7 +1023,7 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 	VirtScreen *vs;
 	byte *screenBuf;
 
- 	if (rect.top < 0)
+	if (rect.top < 0)
 		rect.top = 0;
 	if (rect.left >= rect.right || rect.top >= rect.bottom)
 		return;

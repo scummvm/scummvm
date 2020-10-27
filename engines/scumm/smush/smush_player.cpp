@@ -24,6 +24,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "common/rect.h"
 
 #include "audio/mixer.h"
 
@@ -513,8 +514,8 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	int flags = b.readSint16LE();
 	int left = b.readSint16LE();
 	int top = b.readSint16LE();
-	int right = b.readSint16LE();
-	/*int32 height =*/ b.readSint16LE();
+	int width = b.readSint16LE();
+	int height = b.readSint16LE();
 	/*int32 unk2 =*/ b.readUint16LE();
 
 	const char *str;
@@ -561,18 +562,18 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	while (str[0] == '^') {
 		switch (str[1]) {
 		case 'f':
-			{
-				int id = str[3] - '0';
-				str += 4;
-				sf = getFont(id);
-			}
-			break;
+		{
+			int id = str[3] - '0';
+			str += 4;
+			sf = getFont(id);
+		}
+		break;
 		case 'c':
-			{
-				color = str[4] - '0' + 10 *(str[3] - '0');
-				str += 5;
-			}
-			break;
+		{
+			color = str[4] - '0' + 10 *(str[3] - '0');
+			str += 5;
+		}
+		break;
 		default:
 			error("invalid escape code in text string");
 		}
@@ -613,6 +614,8 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 					error("invalid escape code in text string");
 				}
 			} else {
+				if (SmushFont::is2ByteCharacter(_vm->_language, *sptr))
+					*sptr2++ = *sptr++;
 				*sptr2++ = *sptr++;
 			}
 		}
@@ -628,36 +631,33 @@ void SmushPlayer::handleTextResource(uint32 subType, int32 subSize, Common::Seek
 	}
 
 	// flags:
-	// bit 0 - center       1
-	// bit 1 - not used     2
-	// bit 2 - ???          4
-	// bit 3 - wrap around  8
-	switch (flags & 9) {
-	case 0:
-		sf->drawString(str, _dst, _width, _height, pos_x, pos_y, false);
-		break;
-	case 1:
-		sf->drawString(str, _dst, _width, _height, pos_x, MAX(pos_y, top), true);
-		break;
-	case 8:
-		// FIXME: Is 'right' the maximum line width here, just
-		// as it is in the next case? It's used several times
-		// in The Dig's intro, where 'left' and 'right' are
-		// always 0 and 321 respectively, and apparently we
-		// handle that correctly.
-		sf->drawStringWrap(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, right, false);
-		break;
-	case 9:
-		// In this case, the 'right' parameter is actually the
-		// maximum line width. This explains why it's sometimes
-		// smaller than 'left'.
-		//
-		// Note that in The Dig's "Spacetime Six" movie it's
-		// 621. I have no idea what that means.
-		sf->drawStringWrap(str, _dst, _width, _height, pos_x, MAX(pos_y, top), left, MIN(left + right, _width), true);
-		break;
-	default:
-		error("SmushPlayer::handleTextResource. Not handled flags: %d", flags);
+	// bit 0 - center                  0x01
+	// bit 1 - not used (align right)  0x02
+	// bit 2 - word wrap               0x04
+	// bit 3 - switchable              0x08
+	// bit 4 - fill background         0x10
+	// bit 5 - outline/shadow          0x20        (apparently only set by the text renderer itself, not from the smush data)
+	// bit 6 - vertical fix (COMI)     0x40        (COMI handles this in the printing method, but I haven't seen a case where it is used)
+	// bit 7 - skip ^ codes (COMI)     0x80        (should be irrelevant for Smush, we strip these commands anyway)
+	// bit 8 - no vertical fix (COMI)  0x100       (COMI handles this in the printing method, but I haven't seen a case where it is used)
+
+	if (flags & 4) {
+		// COMI has to do it all a bit different, of course. SCUMM7 games immediately render the text from here and actually use the clipping data
+		// provided by the text resource. COMI does not render directly, but enqueues a blast string (which is then drawn through the usual main
+		// loop routines). During that process the rect data will get dumped and replaced with the following default values. It's hard to tell
+		// whether this is on purpose or not (the text looks not necessarily better or worse, just different), so we follow the original...
+		if (_vm->_game.id == GID_CMI) {
+			left = top = 10;
+			width = _width - 20;
+			height = _height - 20;
+		}
+		Common::Rect clipRect(MAX<int>(0, left), MAX<int>(0, top), MIN<int>(left + width, _width), MIN<int>(top + height, _height));
+		sf->drawStringWrap(str, _dst, clipRect, pos_x, pos_y, flags & 1);
+	} else {
+		// Similiar to the wrapped text, COMI will pass on rect coords here, which will later be lost. Unlike with the wrapped text, it will
+		// finally use the full screen dimenstions. SCUMM7 renders directly from here (see comment above), but also with the full screen.
+		Common::Rect clipRect(0, 0, _width, _height);
+		sf->drawString(str, _dst, clipRect, pos_x, pos_y, flags & 1);
 	}
 
 	free(string);

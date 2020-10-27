@@ -68,7 +68,7 @@ private:
 
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
-	
+
 	int32 _ticker;
 	bool _isOpen;
 

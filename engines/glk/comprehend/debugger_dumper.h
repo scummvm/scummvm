@@ -32,6 +32,7 @@ namespace Comprehend {
 class ComprehendGame;
 struct FunctionState;
 struct Instruction;
+struct Word;
 
 class DebuggerDumper {
 private:
@@ -42,7 +43,7 @@ private:
 	void dumpFunctions();
 	void dumpFunction(uint functionNum);
 	void dumpActionTable();
-	static int wordIndexCompare(const void *a, const void *b);
+	static int wordIndexCompare(const Word &a, const Word &b);
 	void dumpDictionary();
 	void dumpWordMap();
 	void dumpRooms();

@@ -789,7 +789,8 @@ void ComprehendGame::doBeforeTurn() {
 	// Run the each turn functions
 	eval_function(0, nullptr);
 
-	update();
+	if (!_ended)
+		update();
 }
 
 void ComprehendGame::doAfterTurn() {

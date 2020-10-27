@@ -41,6 +41,7 @@ protected:
 	ScummEngine *_vm;
 	int _numChars;
 	int _maxCharSize;
+	int _fontHeight;
 	byte *_charBuffer;
 	byte *_decodedData;
 	byte *_paletteMap;

@@ -35,6 +35,10 @@ namespace Gfx {
 class Driver;
 }
 
+namespace Resources {
+class Sound;
+}
+
 /**
  * Manager for the current game Cursor
  */
@@ -49,8 +53,8 @@ public:
 	/** Update the mouse position */
 	void setMousePosition(const Common::Point &pos);
 
-	/** Make cycle the cursor's brightness */
-	void setFading(bool fading);
+	/** Make cycle the cursor's brightness and play sound */
+	void setItemActive(bool fading);
 
 	/** Update when the screen resolution has changed */
 	void onScreenChanged();
@@ -87,7 +91,9 @@ private:
 	VisualText *_mouseText;
 	CursorType _currentCursorType;
 
-	bool _fading;
+	Resources::Sound *_actionHoverSound;
+
+	bool _itemActive;
 	float _fadeLevel;
 	bool _fadeLevelIncreasing;
 	static const float _fadeValueMax;

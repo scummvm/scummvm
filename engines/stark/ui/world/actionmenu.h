@@ -35,6 +35,7 @@ class GameWindow;
 
 namespace Resources {
 class ItemVisual;
+class Sound;
 }
 
 class ActionMenu : public Window {
@@ -60,11 +61,13 @@ protected:
 private:
 	void clearActions();
 	void enableAction(uint32 action);
+	void updateActionSound();
 
 	enum ActionMenuType {
-		kActionHand  = 0,
-		kActionEye   = 1,
-		kActionMouth = 2
+		kActionNone  = -1,
+		kActionHand  =  0,
+		kActionEye   =  1,
+		kActionMouth =  2
 	};
 
 	struct ActionButton {
@@ -85,6 +88,11 @@ private:
 	InventoryWindow *_inventory;
 
 	int32 _autoCloseTimeRemaining;
+
+	int32 _activeMenuType;
+
+	Resources::Sound *_actionMouthHoverSound;
+	Resources::Sound *_actionHoverSound;
 };
 
 } // End of namespace Stark

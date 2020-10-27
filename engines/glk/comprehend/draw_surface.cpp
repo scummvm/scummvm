@@ -290,11 +290,21 @@ void Surface::drawLine(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
 }
 
 void Surface::drawBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
+	if (x1 > x2)
+		SWAP(x1, x2);
+	if (y1 > y2)
+		SWAP(y1, y2);
+
 	Common::Rect r(x1, y1, x2 + 1, y2 + 1);
 	frameRect(r, color);
 }
 
 void Surface::drawFilledBox(int16 x1, int16 y1, int16 x2, int16 y2, uint32 color) {
+	if (x1 > x2)
+		SWAP(x1, x2);
+	if (y1 > y2)
+		SWAP(y1, y2);
+
 	Common::Rect r(x1, y1, x2 + 1, y2 + 1);
 	fillRect(r, color);
 }

@@ -32,6 +32,7 @@ NutRenderer::NutRenderer(ScummEngine *vm, const char *filename) :
 	_vm(vm),
 	_numChars(0),
 	_maxCharSize(0),
+	_fontHeight(0),
 	_charBuffer(0),
 	_decodedData(0) {
 	memset(_chars, 0, sizeof(_chars));
@@ -125,8 +126,8 @@ void NutRenderer::loadFont(const char *filename) {
 	for (l = 0; l < _numChars; l++) {
 		offset += READ_BE_UINT32(dataSrc + offset + 4) + 16;
 		int width = READ_LE_UINT16(dataSrc + offset + 14);
-		int height = READ_LE_UINT16(dataSrc + offset + 16);
-		int size = width * height;
+		_fontHeight = READ_LE_UINT16(dataSrc + offset + 16);
+		int size = width * _fontHeight;
 		decodedLength += size;
 		if (size > _maxCharSize)
 			_maxCharSize = size;
@@ -404,24 +405,10 @@ void NutRenderer::draw2byte(const Graphics::Surface &s, int c, int x, int y, byt
 		return;
 	}
 
-	enum ShadowMode {
-		kNone,
-		kKoreanV8ShadowMode
-	};
-
-	ShadowMode shadowMode = kNone;
-
-	if (_vm->_language == Common::KO_KOR && _vm->_game.version == 8) {
-		shadowMode = kKoreanV8ShadowMode;
-	}
-
 	int shadowOffsetXTable[4] = {-1, 0, 1, 0};
 	int shadowOffsetYTable[4] = {0, 1, 0, 0};
 	int shadowOffsetColorTable[4] = {0, 0, 0, color};
-
-	int shadowIdx = 3;
-	if (shadowMode == kKoreanV8ShadowMode)
-		shadowIdx = 0;
+	int shadowIdx = (_vm->_useCJKMode && _vm->_game.id == GID_CMI) ? 0 : 3;
 
 	const byte *origSrc = src;
 

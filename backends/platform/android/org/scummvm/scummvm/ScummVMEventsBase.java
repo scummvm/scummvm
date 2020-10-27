@@ -4,7 +4,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.content.Context;
 //import android.util.Log;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.KeyCharacterMap;
 import android.view.MotionEvent;
@@ -156,7 +155,23 @@ public class ScummVMEventsBase implements
 	// OnKeyListener
 	@Override
 	final public boolean onKey(View v, int keyCode, KeyEvent e) {
-//		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onKEY:::" + keyCode); // Called
+
+//		String actionStr = "";
+//		switch (e.getAction()) {
+//			case KeyEvent.ACTION_UP:
+//				actionStr = "KeyEvent.ACTION_UP";
+//				break;
+//			case KeyEvent.ACTION_DOWN:
+//				actionStr = "KeyEvent.ACTION_DOWN";
+//				break;
+//			case KeyEvent.ACTION_MULTIPLE:
+//				actionStr = "KeyEvent.ACTION_MULTIPLE";
+//				break;
+//			default:
+//				actionStr = e.toString();
+//		}
+//		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onKEY:::" + keyCode + " Action::" + actionStr + " View:: " + actionView); // Called
+
 		final int action = e.getAction();
 
 		int eventUnicodeChar = e.getUnicodeChar();
@@ -191,8 +206,10 @@ public class ScummVMEventsBase implements
 				if (action == KeyEvent.ACTION_DOWN) {
 					return true;
 				} else if (action == KeyEvent.ACTION_UP) {
-					// Hide keyboard (the argument here (0) does not matter)
-					((ScummVMActivity) _context).showScreenKeyboardWithoutTextInputField(0);
+					// Hide keyboard
+					if (((ScummVMActivity) _context).isScreenKeyboardShown()) {
+						((ScummVMActivity) _context).hideScreenKeyboard();
+					}
 					return true;
 				}
 			}
@@ -200,8 +217,9 @@ public class ScummVMEventsBase implements
 
 		if (e.isSystem()) {
 			// no repeats for system keys
-			if (e.getRepeatCount() > 0)
+			if (e.getRepeatCount() > 0) {
 				return false;
+			}
 
 			// Have to reimplement hold-down-menu-brings-up-softkeybd
 			// ourselves, since we are otherwise hijacking the menu key :(
@@ -309,6 +327,13 @@ public class ScummVMEventsBase implements
 		case KeyEvent.KEYCODE_BUTTON_MODE:
 			type = JE_GAMEPAD;
 			break;
+		case KeyEvent.KEYCODE_BUTTON_1:
+		case KeyEvent.KEYCODE_BUTTON_2:
+		case KeyEvent.KEYCODE_BUTTON_3:
+		case KeyEvent.KEYCODE_BUTTON_4:
+			// These are oddly detected with SOURCE_KEYBOARD for joystick so don't bother checking the e.getSource()
+			type = JE_JOYSTICK;
+			break;
 		default:
 			if (e.isSystem()) {
 				type = JE_SYS_KEY;
@@ -318,7 +343,7 @@ public class ScummVMEventsBase implements
 			break;
 		}
 
-//		_scummvm.displayMessageOnOSD("GetKey: " + keyCode + " unic=" + eventUnicodeChar+ " arg3= " + (eventUnicodeChar& KeyCharacterMap.COMBINING_ACCENT_MASK));
+		//_scummvm.displayMessageOnOSD("GetKey: " + keyCode + " unic=" + eventUnicodeChar+ " arg3= " + (eventUnicodeChar& KeyCharacterMap.COMBINING_ACCENT_MASK));
 
 		// look in events.cpp for how this is handled
 		_scummvm.pushEvent(type,
@@ -335,7 +360,18 @@ public class ScummVMEventsBase implements
 	// OnTouchListener
 	@Override
 	final public boolean onTouch(View v, final MotionEvent event) {
-		//Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onTOUCH");
+//		String actionStr = "";
+//		switch (event.getAction()) {
+//			case MotionEvent.ACTION_UP:
+//				actionStr = "MotionEvent.ACTION_UP";
+//				break;
+//			case MotionEvent.ACTION_DOWN:
+//				actionStr = "MotionEvent.ACTION_DOWN";
+//				break;
+//			default:
+//				actionStr = event.toString();
+//		}
+//		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onTOUCH event" + actionStr);
 
 		if (ScummVMActivity.keyboardWithoutTextInputShown
 		    && ((ScummVMActivity) _context).isScreenKeyboardShown()
@@ -383,7 +419,7 @@ public class ScummVMEventsBase implements
 	// OnGestureListener
 	@Override
 	final public boolean onDown(MotionEvent e) {
-		//Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onDONW");
+		//Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onDOWN MotionEvent");
 		_scummvm.pushEvent(JE_DOWN, (int)e.getX(), (int)e.getY(), 0, 0, 0, 0);
 		return true;
 	}

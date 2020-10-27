@@ -133,7 +133,10 @@ enum ScriptOpcode {
 	OPCODE_CLEAR_CAN_TAKE,
 	OPCODE_SET_CAN_TAKE,
 	OPCODE_CLEAR_FLAG40,
-	OPCODE_SET_FLAG40
+	OPCODE_SET_FLAG40,
+	OPCODE_RANDOM_MSG,
+	OPCODE_SET_WORD,
+	OPCODE_CLEAR_WORD
 };
 
 /* Game state update flags */
@@ -384,9 +387,7 @@ public:
 	uint8 _totalInventoryWeight;
 
 	Common::Array<Item> _items;
-
-	Word *_words;
-	size_t _nr_words;
+	Common::Array<Word> _words;
 
 	StringTable _strings;
 	StringTable _strings2;
@@ -395,6 +396,7 @@ public:
 	uint16 _variables[MAX_VARIABLES];
 
 	uint8 _currentReplaceWord;
+	uint8 _wordFlags;
 	uint _updateFlags;
 
 	Common::Array<WordMap> _wordMaps;

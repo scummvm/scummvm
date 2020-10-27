@@ -313,7 +313,7 @@ int CharsetRendererCommon::getFontHeight() {
 int CharsetRendererClassic::getCharWidth(uint16 chr) {
 	int spacing = 0;
 
- 	if (_vm->_useCJKMode && chr >= 0x80)
+	if (_vm->_useCJKMode && chr >= 0x80)
 		return _vm->_2byteWidth / 2;
 
 	int offs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
@@ -331,8 +331,11 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
 
 	while ((chr = text[pos++]) != 0) {
-		if (chr == '\n' || chr == '\r' || chr == _vm->_newLineCharacter)
+		if (_vm->_game.version == 7 && chr == _vm->_newLineCharacter)
+			continue;
+		else if (chr == '\n' || chr == '\r' || chr == _vm->_newLineCharacter)
 			break;
+
 		if (_vm->_game.heversion >= 72) {
 			if (chr == code) {
 				chr = text[pos++];
@@ -488,7 +491,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 				if (_vm->_language == Common::KO_KOR || _vm->_language == Common::ZH_TWN) {
 					curw++;
 				}
-			} else {
+			} else if (chr != _vm->_newLineCharacter) {
 				curw += getCharWidth(chr);
 			}
 		} else {
@@ -523,7 +526,7 @@ void CharsetRendererPC::enableShadow(bool enable) {
 	_shadowColor = 0;
 	_enableShadow = enable;
 
-	if (_vm->_game.version >= 7 && _vm->_language == Common::KO_KOR)
+	if (_vm->_game.version >= 7 && _vm->_useCJKMode)
 		_shadowType = kHorizontalShadowType;
 	else
 		_shadowType = kNormalShadowType;
@@ -865,7 +868,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		}
 
 		if (is2byte && _vm->_game.platform != Common::kPlatformFMTowns)
-			drawBits1(dstSurface, _left, drawTop, charPtr, drawTop, origWidth, origHeight);
+			drawBits1(dstSurface, _left + vs->xstart, drawTop, charPtr, drawTop, origWidth, origHeight);
 		else
 			drawBitsN(dstSurface, dstPtr, charPtr, *_fontPtr, drawTop, origWidth, origHeight);
 
@@ -909,7 +912,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 bool CharsetRendererClassic::prepareDraw(uint16 chr) {
 	bool is2byte = (chr >= 256 && _vm->_useCJKMode);
 	if (is2byte) {
-		if (_vm->_language == Common::KO_KOR)
+		if (_vm->_game.version >= 7)
 			enableShadow(true);
 
 		_charPtr = _vm->get2byteCharPtr(chr);
@@ -923,6 +926,8 @@ bool CharsetRendererClassic::prepareDraw(uint16 chr) {
 		}
 
 		return true;
+	} else {
+		enableShadow(false);
 	}
 
 	uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
@@ -1275,8 +1280,11 @@ void CharsetRendererNut::printChar(int chr, bool ignoreCharsetMask) {
 	int height = _current->getCharHeight(chr);
 
 	bool is2byte = chr >= 256 && _vm->_useCJKMode;
-	if (is2byte)
+	if (is2byte) {
 		width = _vm->_2byteWidth;
+		if (_vm->_game.id == GID_CMI)
+			height++; // One extra pixel for the shadow
+	}
 
 	shadow.right = _left + width;
 	shadow.bottom = _top + height;
@@ -1405,7 +1413,7 @@ CharsetRendererTownsClassic::CharsetRendererTownsClassic(ScummEngine *vm) : Char
 int CharsetRendererTownsClassic::getCharWidth(uint16 chr) {
 	int spacing = 0;
 
- 	if (_vm->_useCJKMode) {
+	if (_vm->_useCJKMode) {
 		if ((chr & 0xff00) == 0xfd00) {
 			chr &= 0xff;
 		} else if (chr >= 256) {

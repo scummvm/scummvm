@@ -10,8 +10,6 @@ Runs many old point-and-click adventures and RPGs
 
 *** Full description:
 
-NOT WORKING ON ANDROID 8 or higher. You will not be able to navigate directories. Try the daily build instead.
-
 NO GAME DATA FILES ARE INCLUDED.
 
 ScummVM provides a way to play many classic graphical point-and-click adventure games and RPGs - such as SCUMM games (like Monkey Island and Day of the Tentacle), Revolution's Beneath A Steel Sky, and many more. NO GAME DATA FILES ARE INCLUDED; you must supply your own.
@@ -23,16 +21,15 @@ You can find a quick-start guide on our website at http://wiki.scummvm.org/index
 http://forums.scummvm.org/viewforum.php?f=17 is our web forum where you can discuss the Android version.
 
 *** Current release:
-2.0.0
+2.2.1
 
 *** Release notes:
-* Added support for 23 new games, including Riven, Starship Titanic, Gabriel Knight 1 & 2 and Full Pipe
-* Fixed bugs in AGOS, Kyra, MADE, MADS, MOHAWK, Neverhood, Pegasus, SAGA, SCI, SCUMM, Sky, Sword1, Tinsel, and other engines
-* Major improvements in SCI engine sound handling
-* Major improvements in Maniac Mansion V0 and V1
-* Bumped MT-32 emulation code to Munt 2.0.3
-  .
-For full release notes see http://scummvm.org/frs/scummvm/2.0.0/ReleaseNotes.html
+- Tested on modern devices up to Android 10+
+- Support more engines & games incl. Blade Runner, Quest for Glory IV
+- Fixed folder navigation
+- Fluidsynth, Cloud Saves & LAN File Server
+
+For full release notes see https://scummvm.org/frs/scummvm/2.2.0/ReleaseNotes.html
 
 *** Beta release name:
 

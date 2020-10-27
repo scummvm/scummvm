@@ -436,7 +436,7 @@ OSX_STATIC_LIBS += -framework Sparkle -Wl,-rpath,@loader_path/../Frameworks
 endif
 endif
 ifdef USE_GLEW
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libglew.a
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libGLEW.a
 endif
 
 # Special target to create a static linked binary for Mac OS X.

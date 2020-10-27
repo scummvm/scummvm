@@ -94,8 +94,12 @@ void Word::load(FileBuffer *fb) {
 
 	// Decode
 	for (int j = 0; j < 6; j++)
-		_word[j] ^= 0x8a;
+		_word[j] = tolower((char)(_word[j] ^ 0xaa));
+
+	// Strip off trailing spaces
 	_word[6] = '\0';
+	for (int j = 5; j > 0 && _word[j] == ' '; --j)
+		_word[j] = '\0';
 
 	_index = fb->readByte();
 	_type = fb->readByte();
@@ -156,9 +160,8 @@ void GameData::clearGame() {
 	_comprehendVersion = 0;
 	_startRoom = 0;
 	_currentRoom = 0;
-	_words = nullptr;
-	_nr_words = 0;
 	_currentReplaceWord = 0;
+	_wordFlags = 0;
 	_updateFlags = 0;
 	_colorTable = 0;
 	_itemCount = 0;
@@ -273,13 +276,9 @@ void GameData::parse_action_tables(FileBuffer *fb) {
 }
 
 void GameData::parse_dictionary(FileBuffer *fb) {
-	uint i;
-
-	// FIXME - fixed size 0xff array?
-	_words = (Word *)malloc(_nr_words * sizeof(Word));
-
 	fb->seek(_header.addr_dictionary);
-	for (i = 0; i < _nr_words; i++)
+
+	for (uint i = 0; i < _words.size(); i++)
 		_words[i].load(fb);
 }
 
@@ -621,9 +620,7 @@ void GameData::parse_header(FileBuffer *fb) {
 	_rooms.resize(header->room_direction_table[DIRECTION_SOUTH] -
 	                    header->room_direction_table[DIRECTION_NORTH] + 1);
 
-	_nr_words = (addr_dictionary_end -
-	                   header->addr_dictionary) /
-	                  8;
+	_words.resize((addr_dictionary_end - header->addr_dictionary) / 8);
 }
 
 void GameData::load_extra_string_file(const StringFile &stringFile) {
@@ -670,12 +667,13 @@ void GameData::load_extra_string_files() {
 	_strings2.clear();
 	_strings2.reserve(STRING_FILE_COUNT * _stringFiles.size() + 1);
 
-	// TODO: Is this needed for other than OO-Topos?
-	if (_comprehendVersion == 2)
-		_strings2.push_back("");
+	for (uint i = 0; i < _stringFiles.size(); i++) {
+		// TODO: Is this needed for other than OO-Topos?
+		if (_comprehendVersion == 2 && (i == 0 || i == 4))
+			_strings2.push_back("");
 
-	for (uint i = 0; i < _stringFiles.size(); i++)
 		load_extra_string_file(_stringFiles[i]);
+	}
 }
 
 void GameData::loadGameData() {

@@ -33,6 +33,7 @@
 #include "engines/stark/resources/knowledgeset.h"
 #include "engines/stark/resources/level.h"
 #include "engines/stark/resources/pattable.h"
+#include "engines/stark/resources/sound.h"
 
 #include "engines/stark/services/services.h"
 #include "engines/stark/services/gameinterface.h"
@@ -57,6 +58,7 @@ ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
 		_itemDescription(nullptr),
 		_item(nullptr),
 		_inventory(nullptr),
+		_activeMenuType(kActionNone),
 		_autoCloseTimeRemaining(kAutoCloseDisabled) {
 
 	_background = StarkStaticProvider->getUIElement(StaticProvider::kActionMenuBg);
@@ -73,6 +75,10 @@ ActionMenu::ActionMenu(Gfx::Driver *gfx, Cursor *cursor) :
 	_buttons[kActionEye].rect = Common::Rect(5, 77, 51, 110);
 	_buttons[kActionMouth].action = Resources::PATTable::kActionTalk;
 	_buttons[kActionMouth].rect = Common::Rect(42, 35, 83, 74);
+
+	_actionMouthHoverSound = StarkStaticProvider->getUISound(StaticProvider::kActionMouthHover);
+	_actionMouthHoverSound->setLooping(false);
+	_actionHoverSound = StarkStaticProvider->getUISound(StaticProvider::kActionHover);
 
 	clearActions();
 }
@@ -122,6 +128,8 @@ void ActionMenu::open(Resources::ItemVisual *item, const Common::Point &itemRela
 void ActionMenu::close() {
 	_visible = false;
 	_item = nullptr;
+	_activeMenuType = kActionNone;
+	_actionHoverSound->stop();
 }
 
 Common::Rect ActionMenu::computePosition(const Common::Point &mouse) const {
@@ -139,14 +147,11 @@ Common::Rect ActionMenu::computePosition(const Common::Point &mouse) const {
 }
 
 void ActionMenu::onRender() {
-	Common::Point mousePos = getRelativeMousePosition();
-
 	_background->render(Common::Point(0, 0), false);
 
 	for (uint i = 0; i < ARRAYSIZE(_buttons); i++) {
 		if (_buttons[i].enabled) {
-			bool active = _buttons[i].rect.contains(mousePos);
-			VisualImageXMG *visual = StarkGameInterface->getActionImage(_buttons[i].action, active);
+			VisualImageXMG *visual = StarkGameInterface->getActionImage(_buttons[i].action, i == _activeMenuType);
 			visual->render(Common::Point(_buttons[i].rect.left, _buttons[i].rect.top), false);
 		}
 	}
@@ -173,18 +178,34 @@ void ActionMenu::enableAction(uint32 action) {
 	}
 }
 
+void ActionMenu::updateActionSound() {
+	if (_activeMenuType == kActionNone) {
+		_actionHoverSound->stop();
+		return;
+	}
+	_actionHoverSound->play();
+	if (_activeMenuType == kActionMouth) {
+		_actionMouthHoverSound->play();
+	}
+}
+
 void ActionMenu::onMouseMove(const Common::Point &pos) {
-	bool hoveringAction = false;
+	int32 prevActive = _activeMenuType;
+	int32 newActive  = kActionNone;
 	for (uint i = 0; i < ARRAYSIZE(_buttons); i++) {
 		if (_buttons[i].enabled && _buttons[i].rect.contains(pos)) {
-			hoveringAction = true;
+			newActive = i;
 		}
 	}
 
-	if (hoveringAction) {
-		_cursor->setCursorType(Cursor::kActive);
-	} else {
-		_cursor->setCursorType(Cursor::kDefault);
+	if (newActive != prevActive) {
+		_activeMenuType = newActive;
+		if (_activeMenuType == kActionNone) {
+			_cursor->setCursorType(Cursor::kDefault);
+		} else {
+			_cursor->setCursorType(Cursor::kActive);
+		}
+		updateActionSound();
 	}
 
 	_autoCloseTimeRemaining = kAutoCloseSuspended;

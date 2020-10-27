@@ -43,7 +43,7 @@ Word *dict_find_word_by_string(ComprehendGame *game,
 	if (!string)
 		return NULL;
 
-	for (i = 0; i < game->_nr_words; i++)
+	for (i = 0; i < game->_words.size(); i++)
 		if (word_match(&game->_words[i], string))
 			return &game->_words[i];
 
@@ -54,7 +54,7 @@ Word *dict_find_word_by_index_type(ComprehendGame *game,
                                    uint8 index, uint8 type) {
 	uint i;
 
-	for (i = 0; i < game->_nr_words; i++) {
+	for (i = 0; i < game->_words.size(); i++) {
 		if (game->_words[i]._index == index &&
 		        game->_words[i]._type == type)
 			return &game->_words[i];
@@ -67,7 +67,7 @@ Word *find_dict_word_by_index(ComprehendGame *game,
                               uint8 index, uint8 type_mask) {
 	uint i;
 
-	for (i = 0; i < game->_nr_words; i++) {
+	for (i = 0; i < game->_words.size(); i++) {
 		if (game->_words[i]._index == index &&
 		        (game->_words[i]._type & type_mask) != 0)
 			return &game->_words[i];
@@ -80,7 +80,7 @@ bool dict_match_index_type(ComprehendGame *game, const char *word,
                            uint8 index, uint8 type_mask) {
 	uint i;
 
-	for (i = 0; i < game->_nr_words; i++)
+	for (i = 0; i < game->_words.size(); i++)
 		if (game->_words[i]._index == index &&
 		        ((game->_words[i]._type & type_mask) != 0) &&
 		        word_match(&game->_words[i], word))

@@ -145,7 +145,7 @@ void Part::set_pan(int8 pan) {
 
 void Part::set_transpose(int8 transpose) {
 	_transpose = transpose;
-	
+
 	if (_se->_isAmiga) {
 		// The Amiga version does a check like this. While this is probably a bug (a signed int8 can never be 128),
 		// the playback depends on this being implemented exactly like in the original driver. I found this bug with
@@ -155,7 +155,7 @@ void Part::set_transpose(int8 transpose) {
 	} else {
 		_transpose_eff = (_transpose == -128) ? 0 : transpose_clamp(_transpose + _player->getTranspose(), -24, 24);
 		sendPitchBend();
-	}	
+	}
 }
 
 void Part::sustain(bool value) {
@@ -368,9 +368,9 @@ void Part::sendPitchBend() {
 	// so we'll do the scaling ourselves.
 	if (_player->_se->isNativeMT32())
 		bend = bend * _pitchbend_factor / 12;
-	
+
 	// We send the transpose value separately for Amiga (which is more like the original handles this).
-	// Some rhythm instruments depend on this. 
+	// Some rhythm instruments depend on this.
 	int8 transpose = _se->_isAmiga ? 0 : _transpose_eff;
 	_mc->pitchBend(clamp(bend + (_detune_eff * 64 / 12) + (transpose * 8192 / 12), -8192, 8191));
 }
@@ -384,7 +384,7 @@ void Part::sendTranspose() {
 	// such functions.
 	if (!_se->_isAmiga)
 		return;
-	
+
 	_mc->transpose(_transpose_eff);
 }
 

@@ -949,6 +949,19 @@ begin_credits("Credits");
 				add_person("Gregory Montoir", "cyx", "(retired)");
 			end_section();
 
+			begin_section("TwinE");
+				add_person("Alexandre Fontoura", "xesf", "(retired)");
+				add_person("Vincent Hamm", "yaz0r", "(retired)");
+				add_person("Felipe Sanches", "jucablues", "(retired)");
+				add_person("Nikita Tereshin", "rumkex", "(retired)");
+				add_person("Patrik Dahlstr&ouml;m", "risca", "(retired)");
+				add_person("Arthur Blot", "arthur.blot78", "(retired)");
+				add_person("Kyuubu", "wett", "(retired)");
+				add_person("To&euml;l Hartmann", "toel__", "(retired)");
+				add_person("Seb&aacute;stien Viannay", "", "(retired)");
+				add_person("Martin Gerhardy", "mgerhardy", "");
+			end_section();
+
 			begin_section("Ultima");
 				add_person("Paul Gilbert", "dreammaster", "");
 				add_person("Matthew Duggan", "stauff", "");
@@ -1527,7 +1540,14 @@ begin_credits("Credits");
 				add_person("", "Faalagorn", "Few code improvements");
 				add_person("", "orangeforest11", "Few engine improvements");
 			end_persons();
+                end_section();
+
+		begin_section("Hades' Challenge", "hadesch_contrib");
+			begin_persons();
+				add_person("Vladimir Serbinenko/Google", "phcoder", "Engine implementation");
+			end_persons();
 		end_section();
+
 
 		add_paragraph("And to all the contributors, users, and beta testers we've missed. Thanks!");
 

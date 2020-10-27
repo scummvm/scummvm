@@ -115,6 +115,9 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_SET_CAN_TAKE] = "set_can_take";
 	_opcodes[OPCODE_SET_FLAG40] = "set_flag40";
 	_opcodes[OPCODE_CLEAR_FLAG40] = "clear_flag40";
+	_opcodes[OPCODE_RANDOM_MSG] = "random_msg";
+	_opcodes[OPCODE_SET_WORD] = "set_word";
+	_opcodes[OPCODE_CLEAR_WORD] = "clear_word";
 }
 
 Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
@@ -166,7 +169,11 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 	case OPCODE_SET_STRING_REPLACEMENT1:
 	case OPCODE_SET_STRING_REPLACEMENT2:
 	case OPCODE_SET_STRING_REPLACEMENT3:
-		line += Common::String::format(" %s", game->_replaceWords[instr->_operand[0] - 1].c_str());
+		str_index = instr->_operand[0] - 1;
+		if (str_index < 0 || str_index >= (int)game->_replaceWords.size())
+			warning("invalid string replacement index - %d", str_index);
+		else
+			line += Common::String::format(" %s", game->_replaceWords[str_index].c_str());
 		break;
 
 	default:
@@ -219,36 +226,26 @@ void DebuggerDumper::dumpActionTable() {
 	}
 }
 
-int DebuggerDumper::wordIndexCompare(const void *a, const void *b) {
-	const Word *word_a = (const Word *)a, *word_b = (const Word *)b;
-
-	if (word_a->_index > word_b->_index)
+int DebuggerDumper::wordIndexCompare(const Word &a, const Word &b) {
+	if (a._index > b._index)
 		return 1;
-	if (word_a->_index < word_b->_index)
+	if (a._index < b._index)
 		return -1;
 	return 0;
 }
 
 void DebuggerDumper::dumpDictionary() {
-	Word *dictionary;
-	Word *words;
-	uint i;
+	Common::Array<Word> dictionary;
 
 	/* Sort the dictionary by index */
-	dictionary = (Word *)malloc(sizeof(*words) * _game->_nr_words);
-	memcpy(dictionary, _game->_words,
-	       sizeof(*words) * _game->_nr_words);
-	qsort(dictionary, _game->_nr_words, sizeof(*words),
-	      wordIndexCompare);
+	dictionary = _game->_words;
+	Common::sort(dictionary.begin(), dictionary.end(), wordIndexCompare);
 
-	print("Dictionary (%u words)\n", (uint)_game->_nr_words);
-	for (i = 0; i < _game->_nr_words; i++) {
-		words = &dictionary[i];
-		print("  [%.2x] %.2x %s\n", words->_index, words->_type,
-		      words->_word);
+	print("Dictionary (%u words)\n", dictionary.size());
+	for (uint i = 0; i < dictionary.size(); i++) {
+		const Word &word = dictionary[i];
+		print("  [%.2x] %.2x %s\n", word._index, word._type, word._word);
 	}
-
-	free(dictionary);
 }
 
 void DebuggerDumper::dumpWordMap() {
@@ -318,7 +315,7 @@ void DebuggerDumper::dumpItems() {
 			      _game->stringLookup(item->_longString).c_str());
 
 		print("    words: ");
-		for (j = 0; j < _game->_nr_words; j++)
+		for (j = 0; j < _game->_words.size(); j++)
 			if (_game->_words[j]._index == item->_word &&
 			        (_game->_words[j]._type & WORD_TYPE_NOUN_MASK))
 				print("%s ", _game->_words[j]._word);

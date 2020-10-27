@@ -164,19 +164,20 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 								public boolean shift = false;
 								public boolean alt = false;
 								public final TreeSet<Integer> stickyKeys = new TreeSet<>();
-								public long mEventTime = -1;
+								public long mEventPressTime = -1;
+								public int mKeyRepeatedCount = 0;
 
 								public BuiltInKeyboardView(Context context, android.util.AttributeSet attrs) {
 									super(context, attrs);
 								}
 
 								public boolean onKeyDown(int key, final KeyEvent event) {
-									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onKeyDown()" );
+									//Log.d(ScummVM.LOG_TAG, "BuiltInKeyboardView- 001 - onKeyDown()" );
 									return false;
 								}
 
 								public boolean onKeyUp(int key, final KeyEvent event) {
-									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onKeyUp()" );
+									//Log.d(ScummVM.LOG_TAG, "BuiltInKeyboardView - 001 - onKeyUp()" );
 									return false;
 								}
 
@@ -265,6 +266,12 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 									//ScummVMActivity.this._scummvm.displayMessageOnOSD ("NEW KEYBOARD LAYOUT: QWERTY"
 									//	+ (alt ? " ALT " : "") + (shift? " SHIFT" : ""));
 								}
+
+								public void resetEventAndTimestamps() {
+									// clear event timestamps and repetition counts
+									mEventPressTime = -1;
+									mKeyRepeatedCount = -1;
+								}
 							}
 
 							final BuiltInKeyboardView builtinKeyboard = new BuiltInKeyboardView(ScummVMActivity.this, null);
@@ -273,7 +280,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 							builtinKeyboard.setOnKeyboardActionListener(new CustomKeyboardView.OnKeyboardActionListener() {
 
 								public void onPress(int key) {
-									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onPress key: " + key ); // CALLED
+									builtinKeyboard.resetEventAndTimestamps();
+
+//									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onPress key: " + key );
 									if (key == KeyEvent.KEYCODE_BACK) {
 										return;
 									}
@@ -288,35 +297,21 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 										}
 									}
 
-									int compiledMetaState = builtinKeyboard.getCompiledMetaState();
-
-									// keys with keyCode greater than 100000, should be submitted with a LEFT_SHIFT_ modifier (and decreased by 100000 to get their proper code)
-									if (key > 100000) {
-										key -= 100000;
-										compiledMetaState |= KeyEvent.META_SHIFT_LEFT_ON;
-									}
-
 									//
 									// downTime (long) - The time (in SystemClock.uptimeMillis()) at which this key code originally went down.
 									// ** Since this is a down event, this will be the same as getEventTime(). **
 									// Note that when chording keys, this value is the down time of the most recently pressed key, which may not be the same physical key of this event.
 									// eventTime (long) -  The time (in SystemClock.uptimeMillis()) at which this event happened.
 									// TODO update repeat and event time? with
-									builtinKeyboard.mEventTime = SystemClock.uptimeMillis();
-									KeyEvent compiledKeyEvent = new KeyEvent(builtinKeyboard.mEventTime,
-									                                         builtinKeyboard.mEventTime,
-									                                         KeyEvent.ACTION_DOWN,
-									                                         key,
-									                                         0,
-									                                         compiledMetaState);
+									builtinKeyboard.mEventPressTime =  SystemClock.uptimeMillis();
 
-									_main_surface.dispatchKeyEvent(compiledKeyEvent);
 								}
 
 								public void onRelease(int key) {
-									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onRelease key: " + key );
+//									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onRelease key: " + key );
 									if (key == KeyEvent.KEYCODE_BACK) {
 										builtinKeyboard.setOnKeyboardActionListener(null);
+										builtinKeyboard.resetEventAndTimestamps();
 										showScreenKeyboardWithoutTextInputField(0); // Hide keyboard
 										return;
 									}
@@ -327,6 +322,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 									if (key == CustomKeyboard.KEYCODE_SHIFT) {
 										builtinKeyboard.shift = !builtinKeyboard.shift;
 										builtinKeyboard.ChangeKeyboard();
+										builtinKeyboard.resetEventAndTimestamps();
 										return;
 									}
 
@@ -336,10 +332,12 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 											builtinKeyboard.shift = false;
 										}
 										builtinKeyboard.ChangeKeyboard();
+										builtinKeyboard.resetEventAndTimestamps();
 										return;
 									}
 
 									if (key <= 0) {
+										builtinKeyboard.resetEventAndTimestamps();
 										return;
 									}
 
@@ -358,6 +356,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 												builtinKeyboard.stickyKeys.add(key);
 											}
 											builtinKeyboard.recheckStickyKeys();
+											builtinKeyboard.resetEventAndTimestamps();
 											return;
 										}
 									}
@@ -371,16 +370,18 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 										compiledMetaState |= KeyEvent.META_SHIFT_LEFT_ON;
 									}
 
-									// TODO properly set repeat value?
-									KeyEvent compiledKeyEvent = new KeyEvent(builtinKeyboard.mEventTime,
+ 									// The repeat argument (int) is:
+									// A repeat count for down events (> 0 if this is after the  initial down)
+									// or event count for multiple events.
+									KeyEvent compiledKeyEvent = new KeyEvent(builtinKeyboard.mEventPressTime,
 										SystemClock.uptimeMillis(),
 										KeyEvent.ACTION_UP,
 										key,
-										0,
+										builtinKeyboard.mKeyRepeatedCount,
 										compiledMetaState);
 
 									_main_surface.dispatchKeyEvent(compiledKeyEvent);
-									builtinKeyboard.mEventTime = -1; // reset event time
+									builtinKeyboard.resetEventAndTimestamps();
 
 									// Excluding the CAPS LOCK NUM LOCK AND SCROLL LOCK keys,
 									// clear the state of all other sticky keys that are used in a key combo
@@ -402,11 +403,50 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 								}
 
 								public void onText(CharSequence p1) {}
-								public void swipeLeft() {}
-								public void swipeRight() {}
-								public void swipeDown() {}
-								public void swipeUp() {}
-								public void onKey(int p1, int[] p2) {}
+
+								// TODO - "Swipe" behavior does not seem to work currently. Should we support it?
+								public void swipeLeft() {
+									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeLeft");
+								}
+
+								public void swipeRight() {
+									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeRight" );
+								}
+
+								public void swipeDown() {
+									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeDown" );
+								}
+
+								public void swipeUp() {
+									//Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - swipeUp ");
+								}
+								public void onKey(int key, int[] keysAround) {
+//									Log.d(ScummVM.LOG_TAG, "SHOW KEYBOARD - 001 - onKey key: " + key );
+									if (builtinKeyboard.mEventPressTime == -1) {
+										return;
+									}
+
+									if (builtinKeyboard.mKeyRepeatedCount < Integer.MAX_VALUE) {
+										++builtinKeyboard.mKeyRepeatedCount;
+									}
+									int compiledMetaState = builtinKeyboard.getCompiledMetaState();
+
+									// keys with keyCode greater than 100000, should be submitted with a LEFT_SHIFT_ modifier (and decreased by 100000 to get their proper code)
+									if (key > 100000) {
+										key -= 100000;
+										compiledMetaState |= KeyEvent.META_SHIFT_LEFT_ON;
+									}
+
+									// update the eventTime after the above check for first time "hit"
+									KeyEvent compiledKeyEvent = new KeyEvent(builtinKeyboard.mEventPressTime,
+										SystemClock.uptimeMillis(),
+										KeyEvent.ACTION_DOWN,
+										key,
+										builtinKeyboard.mKeyRepeatedCount,
+										compiledMetaState);
+
+									_main_surface.dispatchKeyEvent(compiledKeyEvent);
+								}
 							});
 
 							_screenKeyboard = builtinKeyboard;
@@ -492,9 +532,13 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		return _screenKeyboard != null;
 	}
 
-	public View getScreenKeyboard () {
+	public View getScreenKeyboard() {
 		return _screenKeyboard;
 	}
+
+//	public View getMainSurfaceView() {
+//		return _main_surface;
+//	}
 
 	//
 	// END OF new screenKeyboardCode

@@ -31,6 +31,7 @@
 #include "engines/stark/services/staticprovider.h"
 
 #include "engines/stark/resources/item.h"
+#include "engines/stark/resources/sound.h"
 
 #include "engines/stark/visual/image.h"
 #include "engines/stark/visual/text.h"
@@ -44,11 +45,12 @@ Cursor::Cursor(Gfx::Driver *gfx) :
 		_cursorImage(nullptr),
 		_mouseText(nullptr),
 		_currentCursorType(kImage),
-		_fading(false),
+		_itemActive(false),
 		_fadeLevelIncreasing(true),
 		_fadeLevel(0),
 		_hintDisplayDelay(150) {
 	setCursorType(kDefault);
+	_actionHoverSound = StarkStaticProvider->getUISound(StaticProvider::kActionHover);
 }
 
 Cursor::~Cursor() {
@@ -74,8 +76,16 @@ void Cursor::setMousePosition(const Common::Point &pos) {
 	_hintDisplayDelay = 150;
 }
 
-void Cursor::setFading(bool fading) {
-	_fading = fading;
+void Cursor::setItemActive(bool itemActive) {
+	if (_itemActive == itemActive) {
+		return;
+	}
+	if (itemActive) {
+		_actionHoverSound->play();
+	} else {
+		_actionHoverSound->stop();
+	}
+	_itemActive = itemActive;
 }
 
 void Cursor::onScreenChanged() {
@@ -85,7 +95,7 @@ void Cursor::onScreenChanged() {
 }
 
 void Cursor::updateFadeLevel() {
-	if (_fading) {
+	if (_itemActive) {
 		if (_fadeLevelIncreasing) {
 			_fadeLevel += 0.001f * StarkGlobal->getMillisecondsPerGameloop();
 		} else {

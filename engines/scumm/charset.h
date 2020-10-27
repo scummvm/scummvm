@@ -41,6 +41,15 @@ static inline bool checkSJISCode(byte c) {
 	return false;
 }
 
+static inline bool is2ByteCharacter(Common::Language lang, byte c) {
+	if (lang == Common::JA_JPN)
+		return (c >= 0x80 && c <= 0x9F) || (c >= 0xE0 && c <= 0xFD);
+	else if (lang == Common::KO_KOR)
+		return (c >= 0xB0 && c <= 0xD0);
+	else if (lang == Common::ZH_TWN || lang == Common::ZH_CNA)
+		return (c >= 0x80);
+	return false;
+}
 
 class CharsetRenderer {
 public:

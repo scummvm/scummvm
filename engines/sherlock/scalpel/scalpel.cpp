@@ -34,7 +34,7 @@
 #include "sherlock/sherlock.h"
 #include "sherlock/music.h"
 #include "sherlock/animation.h"
-#include "sherlock/scalpel/3do/movie_decoder.h"
+#include "video/3do_decoder.h"
 
 namespace Sherlock {
 
@@ -1272,7 +1272,7 @@ void ScalpelEngine::showScummVMRestoreDialog() {
 
 bool ScalpelEngine::play3doMovie(const Common::String &filename, const Common::Point &pos, bool isPortrait) {
 	Scalpel3DOScreen &screen = *(Scalpel3DOScreen *)_screen;
-	Scalpel3DOMovieDecoder *videoDecoder = new Scalpel3DOMovieDecoder();
+	Video::ThreeDOMovieDecoder *videoDecoder = new Video::ThreeDOMovieDecoder();
 	Graphics::ManagedSurface tempSurface;
 
 	Common::Point framePos(pos.x, pos.y);

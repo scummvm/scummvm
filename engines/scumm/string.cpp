@@ -129,6 +129,17 @@ void ScummEngine_v6::enqueueText(const byte *text, int x, int y, byte color, byt
 	BlastText &bt = _blastTextQueue[_blastTextQueuePos++];
 	assert(_blastTextQueuePos <= ARRAYSIZE(_blastTextQueue));
 
+	if (_useCJKMode) {
+		// The Dig expressly checks for x == 160 && y == 189 && charset == 3. Usually, if the game wants to print CJK text at the bottom
+		// of the screen it will use y = 183. So maybe this is a hack to fix some script texts that weren forgotten in the CJK converting
+		// process.
+		if (_game.id == GID_DIG && x == 160 && y == 189 && charset == 3)
+			y -= 6;
+		// COMI always adds a y-offset of 2 in CJK mode.
+		if (_game.id == GID_CMI)
+			y += 2;
+	}
+
 	convertMessageToString(text, bt.text, sizeof(bt.text));
 	bt.xpos = x;
 	bt.ypos = y;
@@ -180,7 +191,7 @@ void ScummEngine_v6::drawBlastTexts() {
 
 				// Some localizations may override colors
 				// See credits in Chinese COMI
-				if (_game.id == GID_CMI &&	_language == Common::ZH_TWN &&
+				if (_game.id == GID_CMI && _language == Common::ZH_TWN &&
 				      c == '^' && (buf == _blastTextQueue[i].text + 1)) {
 					if (*buf == 'c') {
 						int color = buf[3] - '0' + 10 *(buf[2] - '0');
@@ -191,7 +202,7 @@ void ScummEngine_v6::drawBlastTexts() {
 					}
 				}
 
-				if (c != 0 && c != 0xFF && c != '\n') {
+				if (c != 0 && c != 0xFF && c != '\n' && c != _newLineCharacter) {
 					if (c & 0x80 && _useCJKMode) {
 						if (_language == Common::JA_JPN && !checkSJISCode(c)) {
 							c = 0x20; //not in S-JIS
@@ -1302,7 +1313,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				num += (_game.version == 8) ? 4 : 2;
 			}
 		} else {
-			if ((chr != '@') || (_game.id == GID_CMI && _language == Common::ZH_TWN) ||
+			if ((chr != '@') || (_game.version >= 7 && is2ByteCharacter(_language, lastChr)) ||
 				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN) ||
 				(_game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN && checkSJISCode(lastChr))) {
 				*dst++ = chr;

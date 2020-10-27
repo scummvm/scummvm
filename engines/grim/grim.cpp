@@ -516,11 +516,6 @@ Common::KeymapArray GrimEngine::initKeymapsGrim(const char *target) {
 	act->addDefaultInputMapping("JOY_GUIDE");
 	engineKeyMap->addAction(act);
 
-	act = new Action("QUIT", _("Quit"));
-	act->setKeyEvent(KeyState(KEYCODE_q, 'q'));
-	act->addDefaultInputMapping("JOY_BACK");
-	engineKeyMap->addAction(act);
-
 	return Keymap::arrayOf(engineKeyMap);
 }
 
@@ -611,11 +606,6 @@ Common::KeymapArray GrimEngine::initKeymapsEMI(const char *target) {
 	act = new Action("GMNU", _("Menu"));
 	act->setKeyEvent(KeyState(KEYCODE_F1, 0));
 	act->addDefaultInputMapping("JOY_GUIDE");
-	engineKeyMap->addAction(act);
-
-	act = new Action("QUIT", _("Quit"));
-	act->setKeyEvent(KeyState(KEYCODE_q, 'q'));
-	act->addDefaultInputMapping("JOY_BACK");
 	engineKeyMap->addAction(act);
 
 	return Keymap::arrayOf(engineKeyMap);

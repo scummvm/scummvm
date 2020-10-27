@@ -27,7 +27,7 @@
 #include "audio/audiostream.h"
 #include "audio/decoders/3do.h"
 
-#include "sherlock/scalpel/3do/movie_decoder.h"
+#include "video/3do_decoder.h"
 #include "image/codecs/cinepak.h"
 
 // for Test-Code
@@ -40,19 +40,23 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
-namespace Sherlock {
+namespace Video {
 
-Scalpel3DOMovieDecoder::Scalpel3DOMovieDecoder()
-	: _stream(0), _videoTrack(0), _audioTrack(0) {
+ThreeDOMovieDecoder::ThreeDOMovieDecoder()
+	: _stream(0), _videoTrack(0) {
 	_streamVideoOffset = 0;
 	_streamAudioOffset = 0;
 }
 
-Scalpel3DOMovieDecoder::~Scalpel3DOMovieDecoder() {
+ThreeDOMovieDecoder::~ThreeDOMovieDecoder() {
 	close();
 }
 
-bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
+VideoDecoder::AudioTrack* ThreeDOMovieDecoder::getAudioTrack(int index) {
+	return _audioTracks[index];
+}
+
+bool ThreeDOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint32 videoSubType    = 0;
 	uint32 videoCodecTag   = 0;
 	uint32 videoHeight     = 0;
@@ -62,6 +66,7 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 	uint32 audioCodecTag   = 0;
 	uint32 audioChannels   = 0;
 	uint32 audioSampleRate = 0;
+	uint32 audioTrackId  = 0;
 
 	close();
 
@@ -92,7 +97,7 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 			case MKTAG('F', 'H', 'D', 'R'):
 				// FILM header found
 				if (_videoTrack) {
-					warning("Sherlock 3DO movie: Multiple FILM headers found");
+					warning("3DO movie: Multiple FILM headers found");
 					close();
 					return false;
 				}
@@ -111,7 +116,7 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 				break;
 
 			default:
-				warning("Sherlock 3DO movie: Unknown subtype inside FILM packet");
+				warning("3DO movie: Unknown subtype inside FILM packet");
 				close();
 				return false;
 			}
@@ -119,19 +124,13 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 		}
 
 		case MKTAG('S','N','D','S'): {
-			_stream->skip(8);
+			_stream->readUint32BE(); // Unknown
+			audioTrackId = _stream->readUint32BE();
 			audioSubType = _stream->readUint32BE();
 
 			switch (audioSubType) {
-			case MKTAG('S', 'H', 'D', 'R'):
+			case MKTAG('S', 'H', 'D', 'R'): {
 				// Audio header
-
-				// Bail if we already have a track
-				if (_audioTrack) {
-					warning("Sherlock 3DO movie: Multiple SNDS headers found");
-					close();
-					return false;
-				}
 
 				// OK, this is the start of a audio stream
 				_stream->readUint32BE(); // Version, always 0x00000000
@@ -146,15 +145,18 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 				_stream->readUint32BE(); // Unknown 0x00000004 compression ratio?
 				_stream->readUint32BE(); // Unknown 0x00000A2C
 
-				_audioTrack = new StreamAudioTrack(audioCodecTag, audioSampleRate, audioChannels, getSoundType());
-				addTrack(_audioTrack);
+				StreamAudioTrack *track = new StreamAudioTrack(audioCodecTag, audioSampleRate, audioChannels,
+									       getSoundType(), audioTrackId);
+				addTrack(track);
+				_audioTracks.push_back(track);
 				break;
+			}
 
 			case MKTAG('S', 'S', 'M', 'P'):
 				// Audio data
 				break;
 			default:
-				warning("Sherlock 3DO movie: Unknown subtype inside FILM packet");
+				warning("3DO movie: Unknown subtype inside FILM packet");
 				close();
 				return false;
 			}
@@ -173,12 +175,12 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 			break;
 
 		default:
-			warning("Unknown chunk-tag '%s' inside Sherlock 3DO movie", tag2str(chunkTag));
+			warning("Unknown chunk-tag '%s' inside 3DO movie", tag2str(chunkTag));
 			close();
 			return false;
 		}
 
-		if ((_videoTrack) && (_audioTrack))
+		if ((_videoTrack) && (!_audioTracks.empty()))
 			break;
 
 		// Seek to next chunk
@@ -186,7 +188,7 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 	}
 
 	// Bail if we didn't find video + audio
-	if ((!_videoTrack) || (!_audioTrack)) {
+	if ((!_videoTrack) || (_audioTracks.empty())) {
 		close();
 		return false;
 	}
@@ -197,7 +199,7 @@ bool Scalpel3DOMovieDecoder::loadStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-void Scalpel3DOMovieDecoder::close() {
+void ThreeDOMovieDecoder::close() {
 	Video::VideoDecoder::close();
 
 	delete _stream; _stream = 0;
@@ -206,7 +208,7 @@ void Scalpel3DOMovieDecoder::close() {
 
 // We try to at least decode 1 frame
 // and also try to get at least 0.5 seconds of audio queued up
-void Scalpel3DOMovieDecoder::readNextPacket() {
+void ThreeDOMovieDecoder::readNextPacket() {
 	uint32 currentMovieTime = getTime();
 	uint32 wantedAudioQueued  = currentMovieTime + 500; // always try to be 0.500 seconds in front of movie time
 
@@ -221,6 +223,7 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 	uint32 videoFrameSize = 0;
 	uint32 audioSubType   = 0;
 	uint32 audioBytes     = 0;
+	uint32 audioTrackId   = 0;
 	bool videoGotFrame = false;
 	bool videoDone     = false;
 	bool audioDone     = false;
@@ -232,7 +235,7 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 		_stream->seek(_streamAudioOffset);
 	}
 
-	if (wantedAudioQueued <= _audioTrack->getTotalAudioQueued()) {
+	if (wantedAudioQueued <= _audioTracks[0]->getTotalAudioQueued()) {
 		// already got enough audio queued up
 		audioDone = true;
 	}
@@ -300,13 +303,14 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 				break;
 
 			default:
-				error("Sherlock 3DO movie: Unknown subtype inside FILM packet");
+				error("3DO movie: Unknown subtype inside FILM packet");
 				break;
 			}
 			break;
 
 		case MKTAG('S','N','D','S'):
-			_stream->skip(8);
+			_stream->readUint32BE();
+			audioTrackId = _stream->readUint32BE();
 			audioSubType = _stream->readUint32BE();
 
 			switch (audioSubType) {
@@ -319,11 +323,16 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 				if (_streamAudioOffset <= chunkOffset) {
 					// We are at an offset that is still relevant to audio decoding
 					if (!audioDone) {
+						uint queued = 0;
 						audioBytes = _stream->readUint32BE();
-						_audioTrack->queueAudio(_stream, audioBytes);
+						for (uint i = 0; i < _audioTracks.size(); i++)
+							if (_audioTracks[i]->matchesId(audioTrackId)) {
+								_audioTracks[i]->queueAudio(_stream, audioBytes);
+								queued = _audioTracks[i]->getTotalAudioQueued();
+							}
 
 						_streamAudioOffset = nextChunkOffset;
-						if (wantedAudioQueued <= _audioTrack->getTotalAudioQueued()) {
+						if (wantedAudioQueued <= queued) {
 							// Got enough audio
 							audioDone = true;
 						}
@@ -332,7 +341,7 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 				break;
 
 			default:
-				error("Sherlock 3DO movie: Unknown subtype inside SNDS packet");
+				error("3DO movie: Unknown subtype inside SNDS packet");
 				break;
 			}
 			break;
@@ -349,7 +358,7 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 			break;
 
 		default:
-			error("Unknown chunk-tag '%s' inside Sherlock 3DO movie", tag2str(chunkTag));
+			error("Unknown chunk-tag '%s' inside 3DO movie", tag2str(chunkTag));
 		}
 
 		// Always seek to end of chunk
@@ -362,7 +371,7 @@ void Scalpel3DOMovieDecoder::readNextPacket() {
 	}
 }
 
-Scalpel3DOMovieDecoder::StreamVideoTrack::StreamVideoTrack(uint32 width, uint32 height, uint32 codecTag, uint32 frameCount) {
+ThreeDOMovieDecoder::StreamVideoTrack::StreamVideoTrack(uint32 width, uint32 height, uint32 codecTag, uint32 frameCount) {
 	_width = width;
 	_height = height;
 	_frameCount = frameCount;
@@ -373,27 +382,27 @@ Scalpel3DOMovieDecoder::StreamVideoTrack::StreamVideoTrack(uint32 width, uint32 
 	if (codecTag == MKTAG('c', 'v', 'i', 'd'))
 		_codec = new Image::CinepakDecoder();
 	else
-		error("Unsupported Sherlock 3DO movie video codec tag '%s'", tag2str(codecTag));
+		error("Unsupported 3DO movie video codec tag '%s'", tag2str(codecTag));
 }
 
-Scalpel3DOMovieDecoder::StreamVideoTrack::~StreamVideoTrack() {
+ThreeDOMovieDecoder::StreamVideoTrack::~StreamVideoTrack() {
 	delete _codec;
 }
 
-bool Scalpel3DOMovieDecoder::StreamVideoTrack::endOfTrack() const {
+bool ThreeDOMovieDecoder::StreamVideoTrack::endOfTrack() const {
 	return getCurFrame() >= getFrameCount() - 1;
 }
 
-Graphics::PixelFormat Scalpel3DOMovieDecoder::StreamVideoTrack::getPixelFormat() const {
+Graphics::PixelFormat ThreeDOMovieDecoder::StreamVideoTrack::getPixelFormat() const {
 	return _codec->getPixelFormat();
 }
 
-void Scalpel3DOMovieDecoder::StreamVideoTrack::decodeFrame(Common::SeekableReadStream *stream, uint32 videoTimeStamp) {
+void ThreeDOMovieDecoder::StreamVideoTrack::decodeFrame(Common::SeekableReadStream *stream, uint32 videoTimeStamp) {
 	_surface = _codec->decodeFrame(*stream);
 	_curFrame++;
 }
 
-Scalpel3DOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint32 sampleRate, uint32 channels, Audio::Mixer::SoundType soundType) :
+ThreeDOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint32 sampleRate, uint32 channels, Audio::Mixer::SoundType soundType, uint32 trackId) :
 		AudioTrack(soundType) {
 	switch (codecTag) {
 	case MKTAG('A','D','P','4'):
@@ -402,13 +411,14 @@ Scalpel3DOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint
 		break;
 
 	default:
-		error("Unsupported Sherlock 3DO movie audio codec tag '%s'", tag2str(codecTag));
+		error("Unsupported 3DO movie audio codec tag '%s'", tag2str(codecTag));
 	}
 
 	_totalAudioQueued = 0; // currently 0 milliseconds queued
 
 	_codecTag    = codecTag;
 	_sampleRate  = sampleRate;
+	_trackId     = trackId;
 	switch (channels) {
 	case 1:
 		_stereo = false;
@@ -417,7 +427,7 @@ Scalpel3DOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint
 		_stereo = true;
 		break;
 	default:
-		error("Unsupported Sherlock 3DO movie audio channels %d", channels);
+		error("Unsupported 3DO movie audio channels %d", channels);
 	}
 
 	_audioStream = Audio::makeQueuingAudioStream(sampleRate, _stereo);
@@ -427,13 +437,17 @@ Scalpel3DOMovieDecoder::StreamAudioTrack::StreamAudioTrack(uint32 codecTag, uint
 	memset(&_SDX2_PersistentSpace, 0, sizeof(_SDX2_PersistentSpace));
 }
 
-Scalpel3DOMovieDecoder::StreamAudioTrack::~StreamAudioTrack() {
+ThreeDOMovieDecoder::StreamAudioTrack::~StreamAudioTrack() {
 	delete _audioStream;
 //	free(_ADP4_PersistentSpace);
 //	free(_SDX2_PersistentSpace);
 }
 
-void Scalpel3DOMovieDecoder::StreamAudioTrack::queueAudio(Common::SeekableReadStream *stream, uint32 size) {
+bool ThreeDOMovieDecoder::StreamAudioTrack::matchesId(uint tid) {
+	return _trackId == tid;
+}
+
+void ThreeDOMovieDecoder::StreamAudioTrack::queueAudio(Common::SeekableReadStream *stream, uint32 size) {
 	Common::SeekableReadStream *compressedAudioStream = 0;
 	Audio::RewindableAudioStream *audioStream = 0;
 	uint32 audioLengthMSecs = 0;
@@ -460,8 +474,8 @@ void Scalpel3DOMovieDecoder::StreamAudioTrack::queueAudio(Common::SeekableReadSt
 	}
 }
 
-Audio::AudioStream *Scalpel3DOMovieDecoder::StreamAudioTrack::getAudioStream() const {
+Audio::AudioStream *ThreeDOMovieDecoder::StreamAudioTrack::getAudioStream() const {
 	return _audioStream;
 }
 
-} // End of namespace Sherlock
+} // End of namespace Video
