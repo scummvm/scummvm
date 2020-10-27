@@ -877,10 +877,16 @@ void TwinEEngine::flip() {
 void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom) {
 	assert(left <= right);
 	assert(top <= bottom);
-	const int32 width = right - left + 1;
-	const int32 height = bottom - top + 1;
+	int32 width = right - left + 1;
+	int32 height = bottom - top + 1;
 	if (width <= 0 || height <= 0) {
 		return;
+	}
+	if (width > SCREEN_WIDTH) {
+		width = SCREEN_WIDTH;
+	}
+	if (height > SCREEN_HEIGHT) {
+		height = SCREEN_HEIGHT;
 	}
 	g_system->copyRectToScreen(frontVideoBuffer.getBasePtr(left, top), frontVideoBuffer.pitch, left, top, width, height);
 	g_system->updateScreen();
