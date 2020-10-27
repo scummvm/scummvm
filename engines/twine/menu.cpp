@@ -449,22 +449,22 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			switch (id) {
 			case MenuButtonTypes::kAgressiveMode:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
-					if (_engine->_actor->autoAgressive) {
-						_engine->_actor->autoAgressive = false;
-						*textId = TextId::kBehaviourAgressiveManual;
-					} else {
-						_engine->_actor->autoAgressive = true;
-						*textId = TextId::kBehaviourAgressiveAuto;
-					}
+					_engine->_actor->autoAgressive = !_engine->_actor->autoAgressive;
+				}
+				if (_engine->_actor->autoAgressive) {
+					*textId = TextId::kBehaviourAgressiveManual;
+				} else {
+					*textId = TextId::kBehaviourAgressiveAuto;
 				}
 				break;
 			case MenuButtonTypes::kPolygonDetails:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 					_engine->cfgfile.PolygonDetails--;
+					_engine->cfgfile.PolygonDetails %= 3;
 				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
 					_engine->cfgfile.PolygonDetails++;
+					_engine->cfgfile.PolygonDetails %= 3;
 				}
-				_engine->cfgfile.PolygonDetails %= 3;
 				if (_engine->cfgfile.PolygonDetails == 0) {
 					*textId = TextId::kDetailsPolygonsLow;
 				} else if (_engine->cfgfile.PolygonDetails == 1) {
@@ -476,10 +476,11 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			case MenuButtonTypes::kShadowSettings:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 					_engine->cfgfile.ShadowMode--;
+					_engine->cfgfile.ShadowMode %= 3;
 				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
 					_engine->cfgfile.ShadowMode++;
+					_engine->cfgfile.ShadowMode %= 3;
 				}
-				_engine->cfgfile.ShadowMode %= 3;
 				if (_engine->cfgfile.ShadowMode == 0) {
 					*textId = TextId::kShadowsDisabled;
 				} else if (_engine->cfgfile.ShadowMode == 1) {
@@ -490,13 +491,12 @@ int32 Menu::processMenu(int16 *menuSettings) {
 				break;
 			case MenuButtonTypes::kSceneryZoom:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
-					if (_engine->cfgfile.SceZoom) {
-						_engine->cfgfile.SceZoom = false;
-						*textId = TextId::kNoScenaryZoom;
-					} else {
-						_engine->cfgfile.SceZoom = true;
-						*textId = TextId::kScenaryZoomOn;
-					}
+					_engine->cfgfile.SceZoom = !_engine->cfgfile.SceZoom;
+				}
+				if (_engine->cfgfile.SceZoom) {
+					*textId = TextId::kNoScenaryZoom;
+				} else {
+					*textId = TextId::kScenaryZoomOn;
 				}
 				break;
 			default:
