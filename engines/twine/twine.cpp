@@ -161,6 +161,12 @@ Common::Error TwinEEngine::run() {
 	while (!shouldQuit()) {
 		_menu->run();
 	}
+
+	ConfMan.setInt("CombatAuto", _actor->autoAgressive ? 1 : 0);
+	ConfMan.setInt("Shadow", cfgfile.ShadowMode);
+	ConfMan.setInt("SceZoom", cfgfile.SceZoom ? 1 : 0);
+	ConfMan.setInt("PolygonDetails", cfgfile.PolygonDetails);
+
 	_sound->stopSamples();
 	_music->stopTrackMusic();
 	_music->stopMidiMusic();
