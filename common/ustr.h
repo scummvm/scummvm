@@ -289,6 +289,7 @@ private:
 };
 
 U32String operator+(const U32String &x, const U32String &y);
+U32String operator+(const U32String &x, U32String::value_type y);
 
 /** @} */
 

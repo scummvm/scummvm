@@ -559,6 +559,12 @@ U32String operator+(const U32String &x, const U32String &y) {
 	return temp;
 }
 
+U32String operator+(const U32String &x, U32String::value_type y) {
+	U32String temp(x);
+	temp += y;
+	return temp;
+}
+
 void U32String::wordWrap(const uint32 maxLength) {
 	if (_size < maxLength) {
 		return;
