@@ -35,7 +35,7 @@ There are two views: list view and tile view. Toggle between the two by clicking
 Autosave
 ------------
 
-For some games, ScummVM will automatically save the game every 5 minutes. The :ref:`autosave period <autosave>` can be changed in the :doc:`Misc tab <../settings/misc>` or in the :doc:`configuration file <../advanced_options/configuration_file>`.
+ScummVM will automatically save the game every 5 minutes. The :ref:`autosave period <autosave>` can be changed in the :doc:`Misc tab <../settings/misc>` or in the :doc:`configuration file <../advanced_options/configuration_file>`.
 
 
 
