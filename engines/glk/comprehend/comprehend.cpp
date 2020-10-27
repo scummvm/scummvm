@@ -139,7 +139,7 @@ void Comprehend::print(const Common::U32String fmt, ...) {
 	va_end(argp);
 
 	glk_put_string_stream_uni(glk_window_get_stream(_bottomWindow),
-	                          outputMsg.c_str());
+	                          outputMsg.u32_str());
 }
 
 void Comprehend::readLine(char *buffer, size_t maxLen) {

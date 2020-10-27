@@ -22,7 +22,7 @@
 
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "str.h"
+#include "common/str.h"
 #include "winexe.h"
 
 namespace Common {

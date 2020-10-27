@@ -475,7 +475,7 @@ void PopUpWidget::handleMouseWheel(int x, int y, int direction) {
 
 		// Skip separator entries
 		while ((newSelection >= 0) && (newSelection < (int)_entries.size()) &&
-			_entries[newSelection].name.equals("")) {
+		       _entries[newSelection].name.empty()) {
 			newSelection += direction;
 		}
 

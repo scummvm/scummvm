@@ -1304,7 +1304,7 @@ void TextBufferWindow::acceptReadLine(uint32 arg) {
 		if (_historyPos < 0)
 			_historyPos += HISTORYLEN;
 		s = _history[_historyPos];
-		putTextUni(s.c_str(), s.size(), _inFence, _numChars - _inFence);
+		putTextUni(s.u32_str(), s.size(), _inFence, _numChars - _inFence);
 		break;
 
 	case keycode_Down:
@@ -1314,7 +1314,7 @@ void TextBufferWindow::acceptReadLine(uint32 arg) {
 		if (_historyPos >= HISTORYLEN)
 			_historyPos -= HISTORYLEN;
 		s = _history[_historyPos];
-		putTextUni(s.c_str(), s.size(), _inFence, _numChars - _inFence);
+		putTextUni(s.u32_str(), s.size(), _inFence, _numChars - _inFence);
 		break;
 
 	// Cursor movement keys, during line input.

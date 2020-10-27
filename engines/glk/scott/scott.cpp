@@ -176,7 +176,7 @@ void Scott::display(winid_t w, const Common::U32String fmt, ...) {
 	Common::U32String::vformat(fmt.begin(), fmt.end(), msg, ap);
 	va_end(ap);
 
-	glk_put_string_stream_uni(glk_window_get_stream(w), msg.c_str());
+	glk_put_string_stream_uni(glk_window_get_stream(w), msg.u32_str());
 }
 
 void Scott::delay(int seconds) {

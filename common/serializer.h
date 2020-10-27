@@ -264,6 +264,29 @@ public:
 		}
 	}
 
+	/**
+	 * Sync a U32-string
+	 */
+	void syncString32(U32String &str, Version minVersion = 0, Version maxVersion = kLastVersion) {
+		if (_version < minVersion || _version > maxVersion)
+			return; // Ignore anything which is not supposed to be present in this save game version
+
+		uint32 len = str.size();
+
+		syncAsUint32LE(len);
+
+		if (isLoading()) {
+			U32String::value_type *sl = new U32String::value_type[len];
+			for (uint i = 0; i < len; i++)
+				syncAsUint32LE(sl[i]);
+			str = U32String(sl, len);
+		} else {
+			for (uint i = 0; i < len; i++)
+				_saveStream->writeUint32LE(str[i]);
+			_bytesSynced += 4 * len;
+		}
+	}
+
 	template <typename T>
 	void syncArray(T *arr, size_t entries, void (*serializer)(Serializer &, T &), Version minVersion = 0, Version maxVersion = kLastVersion) {
 		if (_version < minVersion || _version > maxVersion)

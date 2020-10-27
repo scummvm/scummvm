@@ -30,7 +30,6 @@ namespace Common {
 
 uint hashit(const char *str);
 uint hashit_lower(const char *str); // Generate a hash based on the lowercase version of the string
-inline uint hashit(const String &str) { return hashit(str.c_str()); }
 inline uint hashit_lower(const String &str) { return hashit_lower(str.c_str()); }
 
 // FIXME: The following functors obviously are not consistently named
@@ -40,7 +39,7 @@ struct CaseSensitiveString_EqualTo {
 };
 
 struct CaseSensitiveString_Hash {
-	uint operator()(const String& x) const { return hashit(x.c_str()); }
+	uint operator()(const String& x) const { return x.hash(); }
 };
 
 
@@ -61,7 +60,14 @@ struct IgnoreCase_Hash {
 template<>
 struct Hash<String> {
 	uint operator()(const String& s) const {
-		return hashit(s.c_str());
+		return s.hash();
+	}
+};
+
+template<>
+struct Hash<U32String> {
+	uint operator()(const U32String& s) const {
+		return s.hash();
 	}
 };
 

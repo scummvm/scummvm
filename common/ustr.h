@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/str-enc.h"
+#include "common/base-str.h"
 
 namespace Common {
 
@@ -52,66 +53,36 @@ class UnicodeBiDiText;
  * The presence of \0 characters in the string will cause undefined
  * behavior in some operations.
  */
-class U32String {
+#ifdef USE_CXX11
+typedef char32_t u32char_type_t;
+#else
+typedef uint32 u32char_type_t;
+#endif
+
+class U32String : public BaseString<u32char_type_t> {
 public:
-	static const uint32 npos = 0xFFFFFFFF;
-
-	typedef uint32 value_type;
 	typedef uint32 unsigned_type;
-private:
-	/**
-	 * The size of the internal storage. Increasing this means less heap
-	 * allocations are needed, at the cost of more stack memory usage,
-	 * and of course lots of wasted memory.
-	 */
-	static const uint32 _builtinCapacity = 32;
-
-	/**
-	 * Length of the string.
-	 */
-	uint32 _size;
-
-	/**
-	 * Pointer to the actual string storage. Either points to _storage,
-	 * or to a block allocated on the heap via malloc.
-	 */
-	value_type  *_str;
-
-
-	union {
-		/**
-		 * Internal string storage.
-		 */
-		value_type _storage[_builtinCapacity];
-		/**
-		 * External string storage data -- the refcounter, and the
-		 * capacity of the string _str points to.
-		 */
-		struct {
-			mutable int *_refCount;
-			uint32       _capacity;
-		} _extern;
-	};
-
-	inline bool isStorageIntern() const {
-		return _str == _storage;
-	}
-
 public:
 	/** Construct a new empty string. */
-	U32String() : _size(0), _str(_storage) { _storage[0] = 0; }
+	U32String() : BaseString() {}
 
 	/** Construct a new string from the given NULL-terminated C string. */
-	explicit U32String(const value_type *str);
+	explicit U32String(const value_type *str) : BaseString(str) {}
 
 	/** Construct a new string containing exactly len characters read from address str. */
-	U32String(const value_type *str, uint32 len);
+	U32String(const value_type *str, uint32 len) : BaseString(str, len) {}
+
+#ifdef USE_CXX11
+	explicit U32String(const uint32 *str) : BaseString((const value_type *) str) {}
+	U32String(const uint32 *str, uint32 len) : BaseString((const value_type *) str, len) {}
+    	U32String(const uint32 *beginP, const uint32 *endP) : BaseString((const value_type *) beginP, (const value_type *) endP) {}
+#endif
 
 	/** Construct a new string containing the characters between beginP (including) and endP (excluding). */
-	U32String(const value_type *beginP, const value_type *endP);
+	U32String(const value_type *beginP, const value_type *endP) : BaseString(beginP, endP) {}
 
 	/** Construct a copy of the given string. */
-	U32String(const U32String &str);
+	U32String(const U32String &str) : BaseString(str) {}
 
 	/** Construct a copy of the given unicode BiDi converted string. */
 	U32String(const UnicodeBiDiText &txt);
@@ -136,127 +107,15 @@ public:
 	U32String &operator=(const char *str);
 	U32String &operator+=(const U32String &str);
 	U32String &operator+=(value_type c);
-	bool operator==(const U32String &x) const;
+	using BaseString<value_type>::operator==;
+	using BaseString<value_type>::operator!=;
 	bool operator==(const String &x) const;
-	bool operator==(const value_type *x) const;
 	bool operator==(const char *x) const;
-	bool operator!=(const U32String &x) const;
 	bool operator!=(const String &x) const;
-	bool operator!=(const value_type *x) const;
 	bool operator!=(const char *x) const;
-
-	bool operator<(const U32String &x) const;
-	bool operator<=(const U32String &x) const;
-	bool operator>(const U32String &x) const;
-	bool operator>=(const U32String &x) const;
-
-	/**
-	 * Compares whether two U32String are the same based on memory comparison.
-	 * This does *not* do comparison based on canonical equivalence.
-	 */
-	bool equals(const U32String &x) const;
-
-	/**
-	 * Compares whether two U32String are the same based on memory comparison.
-	 * This does *not* do comparison based on canonical equivalence.
-	 */
-	bool equals(const String &x) const;
-
-	bool contains(value_type x) const;
-
-	/**
-	 * Checks if a given string is present in the internal string or not.
-	 */
-	bool contains(const U32String &otherString) const;
-
-	inline const value_type *c_str() const { return _str; }
-	inline uint32 size() const             { return _size; }
-
-	inline bool empty() const { return (_size == 0); }
-
-	value_type operator[](int idx) const {
-		assert(_str && idx >= 0 && idx < (int)_size);
-		return _str[idx];
-	}
-
-	/** Set character c at position p, replacing the previous character there. */
-	void setChar(value_type c, uint32 p) {
-		_str[p] = c;
-	}
-
-	/** Insert character c before position p. */
-	void insertChar(value_type c, uint32 p);
-	void insertString(String s, uint32 p);
-	void insertString(value_type *s, uint32 p);
-
-	/**
-	 * Removes the value at position p from the string.
-	 * Using this on decomposed characters will not remove the whole
-	 * character!
-	 */
-	void deleteChar(uint32 p);
-
-	/** Remove the last character from the string. */
-	void deleteLastChar();
-
-	/** Remove all characters from position p to the p + len. If len = String::npos, removes all characters to the end */
-	void erase(uint32 p, uint32 len = npos);
-
-	/** Clears the string, making it empty. */
-	void clear();
-
-	/**
-	 * Convert all characters in the string to lowercase.
-	 *
-	 * Be aware that this only affects the case of ASCII characters. All
-	 * other characters will not be touched at all.
-	 */
-	void toLowercase();
-
-	/**
-	 * Convert all characters in the string to uppercase.
-	 *
-	 * Be aware that this only affects the case of ASCII characters. All
-	 * other characters will not be touched at all.
-	 */
-	void toUppercase();
-
-	uint32 find(value_type x, uint32 pos = 0) const;
-	uint32 find(const U32String &str, uint32 pos = 0) const;
-
-	typedef value_type *        iterator;
-	typedef const value_type *  const_iterator;
-
-	iterator begin() {
-		// Since the user could potentially
-		// change the string via the returned
-		// iterator we have to assure we are
-		// pointing to a unique storage.
-		makeUnique();
-
-		return _str;
-	}
-
-	iterator end() {
-		return begin() + size();
-	}
-
-	const_iterator begin() const {
-		return _str;
-	}
-
-	const_iterator end() const {
-		return begin() + size();
-	}
 
     /** Python-like method **/
     String encode(CodePage page = kUtf8) const;
-
-	void wordWrap(const uint32 maxLength);
-
-	uint64 asUint64() const;
-
-	void trim();
 
 	/**
 	 * Print formatted data into a U32String object.
@@ -268,7 +127,7 @@ public:
 	 * Print formatted data into a U32String object. It takes in the
 	 * output by reference and works with iterators.
 	 */
-	static int vformat(U32String::const_iterator fmt, const U32String::const_iterator inputItrEnd, U32String &output, va_list args);
+	static int vformat(const value_type *fmt, const value_type *fmtEnd, U32String &output, va_list args);
 
 	/**
 	 * Helper function for vformat, convert an int to string
@@ -276,19 +135,21 @@ public:
 	*/
 	static char* itoa(int num, char* str, int base);
 
-private:
-	void makeUnique();
-	void ensureCapacity(uint32 new_size, bool keep_old);
-	void incRefCount() const;
-	void decRefCount(int *oldRefCount);
-	void initWithCStr(const value_type *str, uint32 len);
-	void initWithCStr(const char *str, uint32 len);
+	using BaseString<value_type>::insertString;
+	void insertString(const char *s, uint32 p);
+	void insertString(const String &s, uint32 p);
 
+	const uint32 *u32_str() const {
+		return (const uint32 *) _str;
+	}
+
+private:
 	void encodeUTF8(String &dst) const;
 	void encodeOneByte(String &dst, CodePage page) const;
 };
 
 U32String operator+(const U32String &x, const U32String &y);
+U32String operator+(const U32String &x, U32String::value_type y);
 
 /** @} */
 

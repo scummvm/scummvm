@@ -12,6 +12,7 @@ MODULE_OBJS := \
 	script_ranges.o \
 	script_responses.o \
 	script_states.o \
+	base-str.o \
 	str.o \
 	tag_maps.o \
 	winexe.o \

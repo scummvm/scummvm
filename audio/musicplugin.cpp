@@ -57,5 +57,5 @@ Common::String MusicDevice::getCompleteId() {
 }
 
 MidiDriver::DeviceHandle MusicDevice::getHandle() {
-	return (MidiDriver::DeviceHandle)Common::hashit(getCompleteId());
+	return (MidiDriver::DeviceHandle)getCompleteId().hash();
 }
