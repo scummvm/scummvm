@@ -79,7 +79,7 @@ void Screens::loadImage(int32 index, bool fade_in) {
 		warning("Failed to load image with index %i", index);
 		return;
 	}
-	debug("Load image: %i", index);
+	debug(0, "Load image: %i", index);
 	copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	loadCustomPalette(index + 1);
 	if (fade_in) {
