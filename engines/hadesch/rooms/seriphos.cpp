@@ -213,6 +213,7 @@ public:
 			room->playVideo("c7380ba0", kPhilZ, kStrawTakenCleanup, Common::Point(0, 216));
 			break;
 		case 26022:
+		case 26023:
 		case kStrawTakenCleanup:
 			room->enableMouse();
 			break;
