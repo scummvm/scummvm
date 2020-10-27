@@ -81,11 +81,10 @@ static int32 mANIM(TwinEEngine *engine, ScriptContext& ctx) {
 	AnimationTypes animIdx = (AnimationTypes) * (scriptPtr++);
 	if (engine->_animations->initAnim(animIdx, 0, 0, ctx.actorIdx)) {
 		ctx.actor->positionInMoveScript++;
-	} else {
-		ctx.actor->positionInMoveScript = scriptPosition;
-		return 1;
+		return 0;
 	}
-	return 0;
+	ctx.actor->positionInMoveScript = scriptPosition;
+	return 1;
 }
 
 /*0x04*/
@@ -138,7 +137,7 @@ static int32 mANGLE(TwinEEngine *engine, ScriptContext& ctx) {
 	}
 	engine->_scene->currentScriptValue = *((int16 *)scriptPtr);
 	if (ctx.actor->move.numOfStep == 0) {
-		engine->_movements->moveActor(ctx.actor->angle, engine->_scene->currentScriptValue, ctx.actor->speed, move);
+		engine->_movements->moveActor(ctx.actor->angle, engine->_scene->currentScriptValue, ctx.actor->speed, &ctx.actor->move);
 	}
 	if (ctx.actor->angle == engine->_scene->currentScriptValue) {
 		engine->_movements->clearRealAngle(ctx.actor);

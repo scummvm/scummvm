@@ -704,6 +704,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 	}
 }
 
+// TODO: convert to boolean
 int32 Animations::initAnim(AnimationTypes newAnim, int16 animType, uint8 animExtra, int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->entity == -1) {
