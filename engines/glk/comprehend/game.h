@@ -62,7 +62,7 @@ struct Sentence {
 };
 
 class ComprehendGame : public GameData {
-private:
+protected:
 	bool _ended;
 public:
 	const GameStrings *_gameStrings;

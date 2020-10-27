@@ -34,7 +34,11 @@ namespace Comprehend {
 #define OO_FLAG_WEARING_GOGGLES 0x1b
 #define OO_FLAG_FLASHLIGHT_ON 0x27
 
-OOToposGame::OOToposGame() : ComprehendGameV2() {
+static const GameStrings OO_STRINGS = {
+	EXTRA_STRING_TABLE(154)
+};
+
+OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE) {
 	_gameDataFile = "g0";
 
 	// Extra strings are (annoyingly) stored in the game binary
@@ -54,6 +58,7 @@ OOToposGame::OOToposGame() : ComprehendGameV2() {
 	_itemGraphicFiles.push_back("OD");
 
 	_colorTable = 1;
+	_gameStrings = &OO_STRINGS;
 }
 
 int OOToposGame::roomIsSpecial(unsigned room_index,
@@ -107,27 +112,90 @@ void OOToposGame::beforeTurn() {
 
 void OOToposGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
-	case 0x03:
-	// Game over - failure
-	// fall through
-	case 0x05:
-	// Won the game
-	// fall through
-	case 0x04:
-		// Restart game
+	case 1:
+		// Update guard location
+		randomizeGuardLocation();
+		break;
+
+	case 2:
+		_restartMode = RESTART_IMMEDIATE;
 		game_restart();
 		break;
 
-	case 0x06:
+	case 3:
+		_restartMode = RESTART_WITH_MSG;
+		game_restart();
+		break;
+
+	case 4:
+		_restartMode = RESTART_WITHOUT_MSG;
+		game_restart();
+		break;
+
+	case 5:
+		// Won the game, or fall-through from case 3
+		game_restart();
+		break;
+
+	case 6:
 		// Save game
 		game_save();
 		break;
 
-	case 0x07:
+	case 7:
 		// Restore game
 		game_restore();
 		break;
+
+	case 8:
+		// Computer response
+		computerResponse();
+		randomizeGuardLocation();
+		break;
+
+	case 9:
+		error("TODO: Special 9");
+
+	case 10:
+		error("TODO: Special 10");
+
+	default:
+		break;
 	}
+}
+
+bool OOToposGame::handle_restart() {
+	_ended = false;
+
+	if (_restartMode != RESTART_IMMEDIATE) {
+		if (_restartMode == RESTART_WITH_MSG)
+			console_println(stringLookup(_gameStrings->game_restart).c_str());
+
+		if (tolower(console_get_key()) != 'r') {
+			g_comprehend->quitGame();
+			return false;
+		}
+	}
+
+	loadGame();
+	_updateFlags = UPDATE_ALL;
+	return true;
+}
+
+void OOToposGame::randomizeGuardLocation() {
+	Item *item = get_item(22);
+	if (_flags[13] && item->_room != _currentRoom) {
+		if (getRandomNumber(255) > 128 && (_currentRoom == 3 || _currentRoom == 6))
+			item->_room = _currentRoom;
+	}
+}
+
+void OOToposGame::computerResponse() {
+	console_println(_strings2[145].c_str());
+	if (_flags[43])
+		console_println(_strings2[144].c_str());
+	else
+		console_println(_strings2[152].c_str());
 }
 
 } // namespace Comprehend
