@@ -40,6 +40,18 @@ uint hashit(const char *p) {
 	return hash ^ size;
 }
 
+// Hash function for strings, taken from CPython.
+uint hashit32(const uint32 *p) {
+	uint hash = *p << 7;
+	uint32 c;
+	int size = 0;
+	while ((c = *p++)) {
+		hash = (1000003 * hash) ^ c;
+		size++;
+	}
+	return hash ^ size;
+}
+
 // Like hashit, but converts every char to lowercase before hashing.
 uint hashit_lower(const char *p) {
 	uint hash = tolower(*p) << 7;

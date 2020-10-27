@@ -29,6 +29,7 @@
 namespace Common {
 
 uint hashit(const char *str);
+uint hashit32(const uint32 *p);
 uint hashit_lower(const char *str); // Generate a hash based on the lowercase version of the string
 inline uint hashit(const String &str) { return hashit(str.c_str()); }
 inline uint hashit_lower(const String &str) { return hashit_lower(str.c_str()); }
@@ -62,6 +63,19 @@ template<>
 struct Hash<String> {
 	uint operator()(const String& s) const {
 		return hashit(s.c_str());
+	}
+};
+
+// Specalization of the Hash functor for String objects.
+// We do case sensitve hashing here, because that is what
+// the default EqualTo is compatible with. If one wants to use
+// case insensitve hashing, then only because one wants to use
+// IgnoreCase_EqualTo, and then one has to specify a custom
+// hash anyway.
+template<>
+struct Hash<U32String> {
+	uint operator()(const U32String& s) const {
+		return hashit32(s.c_str());
 	}
 };
 
