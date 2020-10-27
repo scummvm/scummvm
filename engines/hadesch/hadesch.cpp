@@ -72,7 +72,7 @@ static const uint32 cursorids[] = {
 };
 
 HadeschEngine::HadeschEngine(OSystem *system, const ADGameDescription *desc)
-	: Engine(system), _desc(desc), _rnd("hadesch") {
+	: Engine(system), _desc(desc), _rnd("hadesch"), _cheatsEnabled(false) {
 
 	DebugMan.addDebugChannel(kHadeschDebugGeneral, "general", "General issues");
 	DebugMan.addDebugChannel(kHadeschDebugMessagingSystem, "resources", "Resources");
