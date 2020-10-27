@@ -695,6 +695,8 @@ Common::Error HadeschEngine::saveGameStream(Common::WriteStream *stream, bool is
 	Common::Serializer s(nullptr, stream);
 	if (isAutosave)
 		_persistent._slotDescription = "Autosave";
+	if(_persistent._currentRoomId == 0)
+		return Common::kUnknownError;
 	bool res = _persistent.syncGameStream(s);
 	_persistent._slotDescription = "";
 	return res ? Common::kNoError
