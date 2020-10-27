@@ -31,8 +31,8 @@
 #include "twine/collision.h"
 #include "twine/extra.h"
 #include "twine/grid.h"
-#include "twine/interface.h"
 #include "twine/input.h"
+#include "twine/interface.h"
 #include "twine/menu.h"
 #include "twine/menuoptions.h"
 #include "twine/music.h"
@@ -56,7 +56,6 @@ GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 	playerName[0] = 0;
 	Common::fill(&gameChoices[0], &gameChoices[10], 0);
 	Common::fill(&gameChoicesSettings[0], &gameChoicesSettings[18], 0);
-
 }
 
 void GameState::initEngineProjections() {
@@ -169,7 +168,7 @@ void GameState::initEngineVars() {
 	_engine->_actor->previousHeroBehaviour = kNormal;
 }
 
-bool GameState::loadGame(Common::InSaveFile* file) {
+bool GameState::loadGame(Common::InSaveFile *file) {
 	if (file == nullptr) {
 		return false;
 	}
@@ -237,7 +236,7 @@ bool GameState::loadGame(Common::InSaveFile* file) {
 	return true;
 }
 
-bool GameState::saveGame(Common::OutSaveFile* file) {
+bool GameState::saveGame(Common::OutSaveFile *file) {
 	// TODO: the player name must be handled properly
 	Common::strlcpy(playerName, "TwinEngineSave", sizeof(playerName));
 
@@ -452,55 +451,55 @@ void GameState::processGameoverAnimation() {
 	// TODO: drawInGameTransBox
 	_engine->setPalette(_engine->_screens->paletteRGBA);
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
-	uint8 *gameOverPtr = (uint8 *)malloc(_engine->_hqrdepack->hqrEntrySize(Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL));
-	_engine->_hqrdepack->hqrGetEntry(gameOverPtr, Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL);
+	uint8 *gameOverPtr = nullptr;
+	if (_engine->_hqrdepack->hqrGetallocEntry(&gameOverPtr, Resources::HQR_RESS_FILE, RESSHQR_GAMEOVERMDL) == 0) {
+		return;
+	}
 
-	if (gameOverPtr) {
-		const int32 left = 120;
-		const int32 top = 120;
-		const int32 right = 519;
-		const int32 bottom = 359;
-		_engine->_renderer->prepareIsoModel(gameOverPtr);
-		_engine->_sound->stopSamples();
-		_engine->_music->stopMidiMusic(); // stop fade music
-		_engine->_renderer->setCameraPosition(320, 240, 128, 200, 200);
-		int32 startLbaTime = _engine->lbaTime;
-		_engine->_interface->setClip(left, top, right, bottom);
+	const int32 left = 120;
+	const int32 top = 120;
+	const int32 right = 519;
+	const int32 bottom = 359;
+	_engine->_renderer->prepareIsoModel(gameOverPtr);
+	_engine->_sound->stopSamples();
+	_engine->_music->stopMidiMusic(); // stop fade music
+	_engine->_renderer->setCameraPosition(320, 240, 128, 200, 200);
+	int32 startLbaTime = _engine->lbaTime;
+	_engine->_interface->setClip(left, top, right, bottom);
 
-		while (!_engine->_input->toggleAbortAction() && (_engine->lbaTime - startLbaTime) <= 500) {
-			_engine->readKeys();
-			if (_engine->shouldQuit()) {
-				return;
-			}
-
-			const int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);
-			const int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 0x64);
-
-			_engine->_interface->blitBox(left, top, right, bottom, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
-			_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);
-			_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
-			_engine->copyBlockPhys(left, top, right, bottom);
-
-			_engine->lbaTime++;
-			_engine->_system->delayMillis(15);
+	while (!_engine->_input->toggleAbortAction() && (_engine->lbaTime - startLbaTime) <= 500) {
+		_engine->readKeys();
+		if (_engine->shouldQuit()) {
+			return;
 		}
 
-		_engine->_sound->playSample(37, _engine->getRandomNumber(2000) + 3096);
+		const int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);
+		const int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 0x64);
+
 		_engine->_interface->blitBox(left, top, right, bottom, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
-		_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
+		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);
 		_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
 		_engine->copyBlockPhys(left, top, right, bottom);
 
-		_engine->delaySkip(2000);
-
-		_engine->_interface->resetClip();
-		free(gameOverPtr);
-		_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-		_engine->flip();
-		initEngineProjections();
-
-		_engine->lbaTime = tmpLbaTime;
+		_engine->lbaTime++;
+		_engine->_system->delayMillis(15);
 	}
+
+	_engine->_sound->playSample(37, _engine->getRandomNumber(2000) + 3096);
+	_engine->_interface->blitBox(left, top, right, bottom, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
+	_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
+	_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
+	_engine->copyBlockPhys(left, top, right, bottom);
+
+	_engine->delaySkip(2000);
+
+	_engine->_interface->resetClip();
+	free(gameOverPtr);
+	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
+	initEngineProjections();
+
+	_engine->lbaTime = tmpLbaTime;
 }
 
 } // namespace TwinE

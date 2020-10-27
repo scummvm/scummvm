@@ -32,9 +32,21 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("give_allitems", WRAP_METHOD(TwinEConsole, doGiveAllItems));
 	registerCmd("change_scene", WRAP_METHOD(TwinEConsole, doChangeScene));
 	registerCmd("list_menutext", WRAP_METHOD(TwinEConsole, doListMenuText));
+	registerCmd("toggle_debug", WRAP_METHOD(TwinEConsole, doToggleDebug));
 }
 
 TwinEConsole::~TwinEConsole() {
+}
+
+bool TwinEConsole::doToggleDebug(int argc, const char **argv) {
+	if (_engine->cfgfile.Debug) {
+		debug("Disabling debug mode");
+		_engine->cfgfile.Debug = false;
+	} else {
+		debug("Enabling debug mode");
+		_engine->cfgfile.Debug = true;
+	}
+	return true;
 }
 
 bool TwinEConsole::doListMenuText(int argc, const char **argv) {

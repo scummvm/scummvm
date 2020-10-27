@@ -36,6 +36,7 @@ private:
 	bool doGiveAllItems(int argc, const char **argv);
 	bool doChangeScene(int argc, const char **argv);
 	bool doListMenuText(int argc, const char **argv);
+	bool doToggleDebug(int argc, const char **argv);
 public:
 	TwinEConsole(TwinEEngine *engine);
 	~TwinEConsole() override;
