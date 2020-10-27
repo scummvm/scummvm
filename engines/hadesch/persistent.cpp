@@ -116,6 +116,7 @@ Persistent::Persistent() {
 	_troyPlayedOdysseusCongrats = false;
 	_troyPlayFinish = false;
 	_doQuestIntro = false;
+	_gender = kUnknown;
 
 	for (unsigned i = 0; i < ARRAYSIZE(_catacombVariants); i++)
 		for (unsigned j = 0; j < ARRAYSIZE(_catacombVariants[0]); j++)
@@ -162,7 +163,7 @@ bool Persistent::isInInventory(InventoryItem item) {
 
 HadeschSaveDescriptor::HadeschSaveDescriptor(Common::Serializer &s, int slot) {
 	s.matchBytes("hadesch", 7);
-	s.syncVersion(0);
+	s.syncVersion(1);
 	s.syncString(_heroName);
 	s.syncString(_slotName);
 	s.syncAsByte(_room);
@@ -172,7 +173,7 @@ HadeschSaveDescriptor::HadeschSaveDescriptor(Common::Serializer &s, int slot) {
 bool Persistent::syncGameStream(Common::Serializer &s) {
 	if(!s.matchBytes("hadesch", 7))
 		return false;
-	if (!s.syncVersion(0))
+	if (!s.syncVersion(1))
 		return false;
 
 	s.syncString(_heroName);
@@ -285,6 +286,8 @@ bool Persistent::syncGameStream(Common::Serializer &s) {
 
 	for (unsigned i = 0; i < ARRAYSIZE(_inventory); i++)
 		s.syncAsByte(_inventory[i]);
+
+	s.syncAsByte(_gender, 1);
 
 	debug("serialized");
 
