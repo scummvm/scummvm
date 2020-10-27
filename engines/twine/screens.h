@@ -66,7 +66,7 @@ public:
 	uint32 mainPaletteRGBA[NUMOFCOLORS]{0};
 
 	/** Load and display Adeline Logo */
-	void adelineLogo();
+	bool adelineLogo();
 
 	void convertPalToRGBA(const uint8 *in, uint32 *out);
 
@@ -89,9 +89,9 @@ public:
 	/**
 	 * Load and display a particulary image on \a RESS.HQR file with cross fade effect and delay
 	 * @param index \a RESS.HQR entry index (starting from 0)
-	 * @param time number of seconds to delay
+	 * @param seconds number of seconds to delay
 	 */
-	void loadImageDelay(int32 index, int32 time);
+	bool loadImageDelay(int32 index, int32 seconds);
 
 	/**
 	 * Fade image in

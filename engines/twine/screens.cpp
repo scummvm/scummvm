@@ -30,11 +30,14 @@
 
 namespace TwinE {
 
-void Screens::adelineLogo() {
+bool Screens::adelineLogo() {
 	_engine->_music->playMidiMusic(31);
 
-	loadImageDelay(RESSHQR_ADELINEIMG, 7);
+	if (loadImageDelay(RESSHQR_ADELINEIMG, 7)) {
+		return true;
+	}
 	palCustom = true;
+	return false;
 }
 
 void Screens::loadMenuImage(bool fade_in) {
@@ -88,10 +91,14 @@ void Screens::loadImage(int32 index, bool fade_in) {
 	palCustom = true;
 }
 
-void Screens::loadImageDelay(int32 index, int32 time) {
+bool Screens::loadImageDelay(int32 index, int32 seconds) {
 	loadImage(index);
-	_engine->delaySkip(1000 * time);
+	if (_engine->delaySkip(1000 * seconds)) {
+		adjustPalette(0, 0, 0, paletteRGBACustom, 100);
+		return true;
+	}
 	fadeOut(paletteRGBACustom);
+	return false;
 }
 
 void Screens::fadeIn(uint32 *pal) {

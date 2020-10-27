@@ -299,28 +299,34 @@ void TwinEEngine::initEngine() {
 #if TWINE_PLAY_INTROS
 	_input->enableKeyMap(cutsceneKeyMapId);
 	// Display company logo
-	_screens->adelineLogo();
+	bool abort = false;
+	abort |= _screens->adelineLogo();
 
 	// verify game version screens
-	if (cfgfile.Version == EUROPE_VERSION) {
+	if (!abort && cfgfile.Version == EUROPE_VERSION) {
 		// Little Big Adventure screen
-		_screens->loadImageDelay(RESSHQR_LBAIMG, 3);
-		// Electronic Arts Logo
-		_screens->loadImageDelay(RESSHQR_EAIMG, 2);
-	} else if (cfgfile.Version == USA_VERSION) {
+		abort |= _screens->loadImageDelay(RESSHQR_LBAIMG, 3);
+		if (!abort) {
+			// Electronic Arts Logo
+			abort |= _screens->loadImageDelay(RESSHQR_EAIMG, 2);
+		}
+	} else if (!abort && cfgfile.Version == USA_VERSION) {
 		// Relentless screen
-		_screens->loadImageDelay(RESSHQR_RELLENTIMG, 3);
-		// Electronic Arts Logo
-		_screens->loadImageDelay(RESSHQR_EAIMG, 2);
-	} else if (cfgfile.Version == MODIFICATION_VERSION) {
+		abort |= _screens->loadImageDelay(RESSHQR_RELLENTIMG, 3);
+		if (!abort) {
+			// Electronic Arts Logo
+			abort |= _screens->loadImageDelay(RESSHQR_EAIMG, 2);
+		}
+	} else if (!abort && cfgfile.Version == MODIFICATION_VERSION) {
 		// Modification screen
-		_screens->loadImageDelay(RESSHQR_RELLENTIMG, 2);
+		abort |= _screens->loadImageDelay(RESSHQR_RELLENTIMG, 2);
 	}
 
-	_flaMovies->playFlaMovie(FLA_DRAGON3);
-#else
-	_input->enableKeyMap(uiKeyMapId);
+	if (!abort) {
+		_flaMovies->playFlaMovie(FLA_DRAGON3);
+	}
 #endif
+	_input->enableKeyMap(uiKeyMapId);
 
 	_screens->loadMenuImage();
 }
@@ -830,21 +836,22 @@ bool TwinEEngine::gameEngineLoop() { // mainLoop
 	return false;
 }
 
-void TwinEEngine::delaySkip(uint32 time) {
+bool TwinEEngine::delaySkip(uint32 time) {
 	uint32 startTicks = _system->getMillis();
 	uint32 stopTicks = 0;
 	do {
 		readKeys();
 		if (_input->toggleAbortAction()) {
-			break;
+			return true;
 		}
 		if (shouldQuit()) {
-			break;
+			return true;
 		}
 		stopTicks = _system->getMillis() - startTicks;
 		_system->delayMillis(1);
 		//lbaTime++;
 	} while (stopTicks <= time);
+	return false;
 }
 
 void TwinEEngine::setPalette(const uint32 *palette) {

@@ -269,7 +269,7 @@ public:
 	 * Deplay certain seconds till proceed - Can also Skip this delay
 	 * @param time time in seconds to delay
 	 */
-	void delaySkip(uint32 time);
+	bool delaySkip(uint32 time);
 
 	/**
 	 * Set a new palette in the SDL screen buffer
