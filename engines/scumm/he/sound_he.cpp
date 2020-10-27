@@ -807,7 +807,12 @@ void SoundHE::tryLoadSoundOverride(int soundID, Audio::RewindableAudioStream **s
 #endif
 	};
 
-	for (size_t i = 0; i < sizeof(formats) / sizeof(formats[0]); i++) {
+	STATIC_ASSERT(
+	    ARRAYSIZE(formats) == ARRAYSIZE(formatDecoders),
+	    formats_formatDecoders_must_have_same_size
+	);
+
+	for (int i = 0; i < ARRAYSIZE(formats); i++) {
 		debug(5, "tryLoadSoundOverride: %d %s", soundID, formats[i]);
 
 		Common::File soundFileOverride;
