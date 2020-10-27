@@ -39,28 +39,33 @@ namespace TwinE {
 /** FLA movie extension */
 #define VOX_EXT ".vox"
 
+#define INDEXOFFSET 0
+#define DIALOGSOFFSET 1
+
 void Text::initVoxBank(int32 bankIdx) {
 	static const char *LanguageSufixTypes[] = {
 	    "sys",
 	    "cre",
-	    "gam",
-	    "000",
-	    "001",
-	    "002",
-	    "003",
-	    "004",
-	    "005",
-	    "006",
-	    "007",
-	    "008",
-	    "009",
-	    "010",
-	    "011"};
+	    "gam", // global game voices (e.g. inventory descriptions)
+	    "000", // Citadel Island voices
+	    "001", // Principal Island voices
+	    "002", // White Leaf Desert voices
+	    "003", // Proxima Island voices
+	    "004", // Rebellion Island voices
+	    "005", // Hamalayi Mountains - sourthern range voices
+	    "006", // Hamalayi Mountains - northern range voices
+	    "007", // Tippett Island voices
+	    "008", // Brundle Island voices
+	    "009", // Fortress Island voices
+	    "010", // Polar Island voices
+	    "011"  //
+	};
 	if (bankIdx < 0 || bankIdx >= ARRAYSIZE(LanguageSufixTypes)) {
 		error("bankIdx is out of bounds: %i", bankIdx);
 	}
 	// get the correct vox hqr file
 	currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[_engine->cfgfile.LanguageId].id, LanguageSufixTypes[bankIdx]);
+	// TODO: loop through other languages and take the scummvm settings regarding voices into account...
 
 	// TODO check the rest to reverse
 }
@@ -117,7 +122,7 @@ bool Text::stopVox(int32 index) {
 	return true;
 }
 
-void Text::initTextBank(int32 bankIdx) { // InitDial
+void Text::initTextBank(int32 bankIdx) {
 	// don't load if we already have the dialogue text bank loaded
 	if (bankIdx == currentBankIdx) {
 		return;
@@ -129,7 +134,7 @@ void Text::initTextBank(int32 bankIdx) { // InitDial
 	// get index according with language
 	const int32 size = 28; // lba2 is 30
 	const int32 languageIndex = _engine->cfgfile.LanguageId * size + bankIdx * 2;
-	const int32 hqrSize = _engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex);
+	const int32 hqrSize = _engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex + INDEXOFFSET);
 	if (hqrSize == 0) {
 		warning("Failed to initialize text bank %i from file %s", languageIndex, Resources::HQR_TEXT_FILE);
 		return;
@@ -137,7 +142,7 @@ void Text::initTextBank(int32 bankIdx) { // InitDial
 
 	numDialTextEntries = hqrSize / 2;
 
-	if (_engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialTextPtr, Resources::HQR_TEXT_FILE, languageIndex + 1) == 0) {
+	if (_engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialTextPtr, Resources::HQR_TEXT_FILE, languageIndex + DIALOGSOFFSET) == 0) {
 		warning("Failed to initialize additional text bank %i from file %s", languageIndex + 1, Resources::HQR_TEXT_FILE);
 		return;
 	}
