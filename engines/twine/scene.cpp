@@ -314,7 +314,7 @@ void Scene::changeScene() {
 	}
 
 	_engine->_gameState->inventoryNumKeys = 0;
-	_engine->disableScreenRecenter = 0;
+	_engine->disableScreenRecenter = false;
 	heroPositionType = ScenePositionType::kNoPosition;
 	sampleAmbienceTime = 0;
 
@@ -445,7 +445,7 @@ void Scene::processActorZones(int32 actorIdx) {
 				break;
 			case kCamera:
 				if (currentlyFollowedActor == actorIdx) {
-					_engine->disableScreenRecenter = 1;
+					_engine->disableScreenRecenter = true;
 					if (_engine->_grid->newCameraX != zone->infoData.CameraView.x || _engine->_grid->newCameraY != zone->infoData.CameraView.y || _engine->_grid->newCameraZ != zone->infoData.CameraView.z) {
 						_engine->_grid->newCameraX = zone->infoData.CameraView.x;
 						_engine->_grid->newCameraY = zone->infoData.CameraView.y;

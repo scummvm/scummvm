@@ -625,7 +625,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	}
 
 	_movements->setActorAngle(0, -256, 5, &loopMovePtr);
-	disableScreenRecenter = 0;
+	disableScreenRecenter = false;
 
 	_scene->processEnvironmentSound();
 
@@ -812,7 +812,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	return 0;
 }
 
-bool TwinEEngine::gameEngineLoop() { // mainLoop
+bool TwinEEngine::gameEngineLoop() {
 	_redraw->reqBgRedraw = true;
 	_screens->lockPalette = true;
 	_movements->setActorAngle(0, -256, 5, &loopMovePtr);

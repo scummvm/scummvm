@@ -246,7 +246,7 @@ public:
 	int32 loopActorStep = 0;
 
 	/** Disable screen recenter */
-	int16 disableScreenRecenter = 0;
+	bool disableScreenRecenter = false;
 
 	int32 zoomScreen = 0;
 
