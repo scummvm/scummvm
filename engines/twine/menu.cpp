@@ -1051,11 +1051,11 @@ void Menu::processInventoryMenu() {
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	keymapper->getKeymap(uiKeyMapId)->setEnabled(true);
 
-	while (_engine->_input->isActionActive(TwinEActionType::InventoryMenu)) {
+	for (;;) {
 		_engine->readKeys();
 		int32 prevSelectedItem = inventorySelectedItem;
 
-		if (_engine->_input->toggleAbortAction()) {
+		if (_engine->_input->toggleAbortAction() || _engine->shouldQuit()) {
 			break;
 		}
 
@@ -1135,6 +1135,8 @@ void Menu::processInventoryMenu() {
 			drawItem(inventorySelectedItem);
 			break;
 		}
+
+		_engine->_system->delayMillis(1);
 	}
 
 	keymapper->getKeymap(uiKeyMapId)->setEnabled(false);
