@@ -676,14 +676,16 @@ private:
 	void idleAnimShade(int shade, int z, int startFrame, int endFrame) {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		LayerId sl(shadows[_shades[shade].shadowId].image, shade, "shadow");
+		if (_isInAnim[shade])
+			return;
 		_isInAnim[shade] = true;
 		// TODO: play sound multiple times if needed
 		PlayAnimParams params(PlayAnimParams::keepLastFrame().partial(startFrame, endFrame));
 		const char *snd = shadows[_shades[shade].shadowId].animSound;
 		if (snd && snd[0] != 0)
-			room->playAnimWithSound(sl, snd, z, params, EventHandlerWrapper(), getShadowPos(shade));
+			room->playAnimWithSound(sl, snd, z, params, k24018_arg0 + shade, getShadowPos(shade));
 		else
-			room->playAnim(sl, z, params, EventHandlerWrapper(), getShadowPos(shade));
+			room->playAnim(sl, z, params, k24018_arg0 + shade, getShadowPos(shade));
 	}
 
 	void hideCharon() {
