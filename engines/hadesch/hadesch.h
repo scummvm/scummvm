@@ -112,7 +112,7 @@ public:
 	bool hasFeature(EngineFeature f) const override;
 
 	bool canLoadGameStateCurrently() override { return true; }
-	bool canSaveGameStateCurrently() override { return true; }
+	bool canSaveGameStateCurrently() override { return _persistent._currentRoomId != 0; }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 
