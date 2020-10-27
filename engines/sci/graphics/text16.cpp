@@ -288,6 +288,7 @@ int16 GfxText16::GetLongest(const char *&textPtr, int16 maxWidth, GuiResourceId 
 
 	} else {
 		// Break without spaces found, we split the very first word - may also be Kanji/Japanese
+
 		if (curChar > 0xFF) {
 			// current character is Japanese
 
@@ -435,6 +436,8 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, uint16 languageSplit
 	rect.top = rect.left = 0;
 
 	if (maxWidth < 0) { // force output as single line
+		if (g_sci->getLanguage() == Common::KO_KOR)
+			SwitchToFont1001OnKorean(text, languageSplitter);
 		if (g_sci->getLanguage() == Common::JA_JPN)
 			SwitchToFont900OnSjis(text, languageSplitter);
 
@@ -448,6 +451,9 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, uint16 languageSplit
 		const char *curTextPos = text; // in work position for GetLongest()
 		const char *curTextLine = text; // starting point of current line
 		while (*curTextPos) {
+			// We need to check for Korean-EUCKR every line
+			if (g_sci->getLanguage() == Common::KO_KOR)
+				SwitchToFont1001OnKorean(curTextPos, languageSplitter);
 			// We need to check for Shift-JIS every line
 			if (g_sci->getLanguage() == Common::JA_JPN)
 				SwitchToFont900OnSjis(curTextPos, languageSplitter);
@@ -548,6 +554,11 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 
 	maxTextWidth = 0;
 	while (*curTextPos) {
+		// We need to check for Korean-EUCKR every line
+		if (g_sci->getLanguage() == Common::KO_KOR) {
+			if (SwitchToFont1001OnKorean(curTextPos, languageSplitter))
+				doubleByteMode = true;
+		}
 		// We need to check for Shift-JIS every line
 		//  Police Quest 2 PC-9801 often draws English + Japanese text during the same call
 		if (g_sci->getLanguage() == Common::JA_JPN) {
@@ -680,6 +691,18 @@ void GfxText16::DrawStatus(const Common::String &strOrig) {
 			_ports->_curPort->curLeft += charWidth;
 		}
 	}
+}
+
+// korean and then switch to font 1001
+bool GfxText16::SwitchToFont1001OnKorean(const char *text, uint16 languageSplitter) {
+	byte firstChar = (*(const byte *)text++);
+	if (languageSplitter != 0x6b23) { // #k prefix as language splitter
+		if ((firstChar >= 0xA1) && (firstChar <= 0xFE)) {
+			SetFont(1001);
+			return true;
+		}
+	}
+	return false;
 }
 
 // Sierra did this in their PC98 interpreter only, they identify a text as being

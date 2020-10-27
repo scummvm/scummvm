@@ -76,6 +76,13 @@ GfxFrameout::GfxFrameout(SegManager *segMan, GfxPalette32 *palette, GfxTransitio
 	if (g_sci->getGameId() == GID_PHANTASMAGORIA) {
 		_currentBuffer.create(630, 450, Graphics::PixelFormat::createFormatCLUT8());
 	} else if (_isHiRes) {
+// #ifdef SCUMMVMKOR
+// 		// GK1 Korean pathed version
+// 		if (g_sci->getGameId() == GID_GK1 && g_sci->getLanguage() == Common::KO_KOR) {
+// 			_currentBuffer.create(640, 400, Graphics::PixelFormat::createFormatCLUT8());
+// 		}
+// 		else
+// #endif
 		_currentBuffer.create(640, 480, Graphics::PixelFormat::createFormatCLUT8());
 	} else {
 		_currentBuffer.create(320, 200, Graphics::PixelFormat::createFormatCLUT8());
@@ -144,6 +151,11 @@ bool GfxFrameout::detectHiRes() const {
 		g_sci->getPlatform() == Common::kPlatformDOS &&
 		!g_sci->isCD()) {
 		return false;
+	}
+
+	// GK1 Korean pathed version is high resolution only
+	if (g_sci->getGameId() == GID_GK1 && g_sci->getLanguage() == Common::KO_KOR) {
+		return true;
 	}
 
 	// GK1 DOS floppy is low resolution only, but GK1 Mac floppy is high
