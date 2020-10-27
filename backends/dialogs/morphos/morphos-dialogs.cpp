@@ -67,8 +67,8 @@ static char *utf8_to_local(const char *in) {
 					return out;
 				}
 				free(out);
-				
 			}
+			
 			
 		}	
 	}
@@ -81,7 +81,9 @@ Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const 
 	DialogResult result = kDialogCancel;
 
 	Common::String utf8Title = title.encode();
+	
 
+	
 	AslBase = OpenLibrary(AslName, 39);
 
     if (AslBase) {
@@ -96,8 +98,10 @@ Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const 
 		if (!fr) 
 			return result;
 		
+		char *newTitle = utf8_to_local(utf8Title.c_str());
+		
 		if (AslRequestTags(fr,
-				ASLFR_TitleText, (IPTR) utf8_to_local(utf8Title.c_str()),
+				ASLFR_TitleText, (IPTR)newTitle,
 				ASLFR_RejectIcons, TRUE,
 			//	ASLFR_SleepWindow, TRUE,
 				ASLFR_InitialDrawer, (IPTR)pathBuffer,
@@ -115,10 +119,12 @@ Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const 
 			}
 		}		
 
+		free(newTitle);
 		FreeAslRequest((APTR)fr);
 		CloseLibrary(AslBase);
 	}
 
+	
 	return result;
 }
 
