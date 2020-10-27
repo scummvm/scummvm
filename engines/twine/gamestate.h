@@ -38,11 +38,29 @@ enum InventoryItems {
 	kiHolomap = 0,
 	kiMagicBall = 1,
 	kiUseSabre = 2,
+	kiGawleysHorn = 3,
 	kiTunic = 4,
 	kiBookOfBu = 5,
+	kSendellsMedallion = 6,
+	kFlaskOfClearWater = 7,
+	kRedCard = 8,
+	kBlueCard = 9,
+	kIDCard = 10,
+	kMrMiesPass = 11,
 	kiProtoPack = 12,
+	kSnowboard = 13,
 	kiPinguin = 14,
 	kGasItem = 15,
+	kPirateFlag = 16,
+	kMagicFlute = 17,
+	kSpaceGuitar = 18,
+	kHairDryer = 19,
+	kAncesteralKey = 20,
+	kBottleOfSyrup = 21,
+	kEmptyBottle = 22,
+	kFerryTicket = 23,
+	kKeypad = 24,
+	kCoffeeCan  = 25,
 	kiBonusList = 26,
 	kiCloverLeaf = 27
 };
@@ -108,9 +126,9 @@ public:
 	char playerName[30];
 
 	int32 gameChoices[10];         // inGameMenuData
-	int32 numChoices = 0;             // numOfOptionsInChoice
+	int32 numChoices = 0;          // numOfOptionsInChoice
 	int16 gameChoicesSettings[18]; // choiceTab -  same structure as menu settings
-	int32 choiceAnswer = 0;           // inGameMenuAnswer
+	int32 choiceAnswer = 0;        // inGameMenuAnswer
 
 	/** Initialize all engine variables */
 	void initEngineVars();
@@ -120,8 +138,8 @@ public:
 
 	void processFoundItem(int32 item);
 
-	bool loadGame(Common::InSaveFile* file);
-	bool saveGame(Common::OutSaveFile* file);
+	bool loadGame(Common::InSaveFile *file);
+	bool saveGame(Common::OutSaveFile *file);
 
 	void processGameChoices(int32 choiceIdx);
 
