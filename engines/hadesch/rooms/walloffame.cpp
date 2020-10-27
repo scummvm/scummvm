@@ -92,6 +92,7 @@ static const char *kPhilFirstQuest = "phil first quest";
 static const char *kPhilDaedalusNeedsHelp = "phil daedalus needs help";
 static const char *kPhilOffToCrete = "phil off to crete";
 static const char *kPhilArgo = "phil argo";
+#define kPhilTapsFootLeft "phil taps foot left"
 
 #define kPhilYapsWithoutSound "phil yaps without sound"
 
@@ -129,7 +130,7 @@ static const char *allPhils[] = {
 	kPhilWalksCenterToLeft,
 	"phil faces backward left",
 	kPhilSighsLeft,
-	"phil taps foot left",
+	kPhilTapsFootLeft,
 	"phil dusts left",
 	"phil dusts center",
 	kPhilSnores,
@@ -645,7 +646,7 @@ public:
 				break;
 			case 9:
 				// state 48
-				playPhilAnim("phil taps foot left", kPhilJokeEventCleanup);
+				playPhilAnim(kPhilTapsFootLeft, kPhilJokeEventCleanup);
 				break;
 			case 10:
 				// state 49, dusts
@@ -1097,7 +1098,7 @@ private:
 	void cancelAllPhils() {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 
-		for (uint i = 0; i < sizeof(allPhils) / sizeof (allPhils[0]); i++)
+		for (uint i = 0; i < ARRAYSIZE(allPhils); i++)
 			room->stopAnim(allPhils[i]);
 	}
 
