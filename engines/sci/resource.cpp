@@ -2187,16 +2187,22 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 	// Update a patched resource, whether it exists or not
 	Resource *res = _resMap.getVal(resId, nullptr);
 
-	Common::SeekableReadStream *volumeFile = getVolumeFile(src);
-	if (volumeFile == nullptr) {
-		error("Could not open %s for reading", src->getLocationName().c_str());
+	// When pulling from resource the "main" file may not even
+	// exist as both forks may be combined into MacBin
+	Common::SeekableReadStream *volumeFile = nullptr;
+	if (src->getSourceType() != kSourceMacResourceFork) {
+		volumeFile = getVolumeFile(src);
+		if (volumeFile == nullptr) {
+			error("Could not open %s for reading", src->getLocationName().c_str());
+		}
 	}
 
 	AudioVolumeResourceSource *avSrc = dynamic_cast<AudioVolumeResourceSource *>(src);
 	if (avSrc != nullptr && !avSrc->relocateMapOffset(offset, size)) {
 		warning("Compressed volume %s does not contain a valid entry for %s (map offset %u)", src->getLocationName().c_str(), resId.toString().c_str(), offset);
 		_hasBadResources = true;
-		disposeVolumeFileStream(volumeFile, src);
+		if (volumeFile != nullptr)
+			disposeVolumeFileStream(volumeFile, src);
 		return res;
 	}
 
@@ -2220,7 +2226,8 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 		_hasBadResources = true;
 	}
 
-	disposeVolumeFileStream(volumeFile, src);
+	if (volumeFile != nullptr)
+		disposeVolumeFileStream(volumeFile, src);
 	return res;
 }
 
