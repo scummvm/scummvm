@@ -260,6 +260,7 @@ public:
 			room->disableMouse();
 			room->playSound("m2130ea0", 11027);
 			_eyeIsPickedUp = true;
+			persistent->_medisleEyePosition = kNumFates;
 			return;
 		}
 
@@ -1010,6 +1011,9 @@ private:
 
 	void enforceEyeConsistency() {
 		Persistent *persistent = g_vm->getPersistent();
+
+		if (persistent->_medisleEyePosition == kNumFates)
+			return;
 
 		if (showFate(persistent->_medisleEyePosition))
 			return;
