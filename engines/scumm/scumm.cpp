@@ -324,6 +324,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_costumeLoader = NULL;
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
+	_krStrPost = 0;
 	_V1TalkingActor = 0;
 	_NESStartStrip = 0;
 
