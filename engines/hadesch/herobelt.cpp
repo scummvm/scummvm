@@ -340,7 +340,7 @@ void HeroBelt::render(Common::SharedPtr<GfxContext> context, int time, Common::P
 				text = _scrollTextTroyFemale;
 			break;
 		case kMedusaQuest:
-			text = _scrollTextCrete;
+			text = _scrollTextMedusa;
 			break;
 		case kRescuePhilQuest:
 			text = _scrollTextHades;
