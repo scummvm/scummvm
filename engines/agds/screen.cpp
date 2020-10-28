@@ -26,6 +26,7 @@
 #include "agds/object.h"
 #include "agds/patch.h"
 #include "agds/region.h"
+#include "common/system.h"
 
 namespace AGDS {
 
@@ -38,13 +39,27 @@ int Screen::AnimationZCompare(const Animation *a, const Animation *b) {
 }
 
 Screen::Screen(ObjectPtr object) : _object(object), _name(object->getName()),
-	_children(&ObjectZCompare), _animations(&AnimationZCompare), _applyingPatch(false) {
+	_children(&ObjectZCompare), _animations(&AnimationZCompare), _applyingPatch(false),
+	_characterNear(g_system->getHeight()), _characterFar(g_system->getHeight()) {
 	add(object);
 }
 
 Screen::~Screen() {
 	_children.clear();
 }
+
+float Screen::getZScale(int y) const
+{
+	int dy = g_system->getHeight() - y;
+	if (dy > _characterNear) {
+		if (dy < _characterFar)
+			return 1.0f * (_characterFar - y) / (_characterFar - _characterNear);
+		else
+			return 0.0f;
+	} else
+		return 1.0f;
+}
+
 
 bool Screen::add(ObjectPtr object) {
 	if (object == NULL) {

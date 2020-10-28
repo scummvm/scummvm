@@ -92,7 +92,7 @@ enum Opcode {
 	kSetObjectZ						= 71,
 	kUpdateScreenHeightToDisplay	= 72,
 	kLoadTextFromObject				= 73,
-	kScreenSetHeight				= 74,
+	kScreenSetZNearFar				= 74,
 	kScreenLoadRegion				= 75,
 	kScreenLoadObject				= 76,
 	kScreenCloneObject				= 77,
@@ -349,7 +349,7 @@ enum Opcode {
 	OP(kSetObjectZ, setObjectZ) \
 	OP(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay) \
 	OP(kLoadTextFromObject, loadTextFromObject) \
-	OP(kScreenSetHeight, setScreenHeight) \
+	OP(kScreenSetZNearFar, screenSetZNearFar) \
 	OP(kScreenLoadObject, loadScreenObject) \
 	OP(kScreenLoadRegion, loadScreenRegion) \
 	OP(kScreenCloneObject, cloneObject) \

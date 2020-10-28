@@ -554,10 +554,11 @@ void Process::onObjectUserUse(uint16 size) {
 	_ip += size;
 }
 
-void Process::setScreenHeight() {
+void Process::screenSetZNearFar() {
 	int arg2 = pop();
 	int arg1 = pop();
-	debug("setScreenHeight: %d %d", arg1, arg2);
+	debug("screenSetCharacterZNearFar: %d %d", arg1, arg2);
+	_engine->getCurrentScreen()->setCharacterNearFar(arg1, arg2);
 }
 
 void Process::setDelay() {
