@@ -324,6 +324,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_costumeLoader = NULL;
 	_costumeRenderer = NULL;
 	_2byteFontPtr = 0;
+	_krStrPost = 0;
 	_V1TalkingActor = 0;
 	for (int i = 0; i < 20; i++)
 		_2byteMultiFontPtr[i] = NULL;

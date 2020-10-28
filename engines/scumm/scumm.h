@@ -1144,6 +1144,7 @@ public:
 
 	int _2byteHeight;
 	int _2byteWidth;
+	int _krStrPost;
 	byte _newLineCharacter;
 	byte *get2byteCharPtr(int idx);
 
