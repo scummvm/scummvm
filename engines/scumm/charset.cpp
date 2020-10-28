@@ -82,7 +82,8 @@ void ScummEngine::loadCJKFont() {
 		_2byteFontPtr = new byte[_2byteWidth * _2byteHeight * numChar / 8];
 		// set byte 0 to 0xFF (0x00 when loaded) to indicate that the font was not loaded
 		_2byteFontPtr[0] = 0xFF;
-	} else if ((_game.version >= 7 && (_language == Common::KO_KOR || _language == Common::JA_JPN || _language == Common::ZH_TWN)) ||
+	} else if (_language == Common::KO_KOR ||
+			   (_game.version >= 7 && (_language == Common::JA_JPN || _language == Common::ZH_TWN)) ||
 			   (_game.version >= 3 && _language == Common::ZH_CNA)) {
 		int numChar = 0;
 		const char *fontFile = NULL;
