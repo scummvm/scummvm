@@ -274,11 +274,11 @@ void CoreApp::setupGamePaths(GameInfo *ginfo) {
 	debugN(MM_INFO, "Savegame directory: %s\n", save.c_str());
 }
 
-void CoreApp::ParseArgs(const int argc_, const char *const *const argv_) {
-	_parameters.process(argc_, argv_);
+void CoreApp::ParseArgs(const int argc, const char *const *const argv) {
+	_parameters.process(argc, argv);
 }
 
-GameInfo *CoreApp::getGameInfo(istring game) const {
+GameInfo *CoreApp::getGameInfo(const istring &game) const {
 	GameMap::const_iterator i;
 	i = _games.find(game);
 

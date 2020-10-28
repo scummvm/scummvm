@@ -194,7 +194,7 @@ void Gump::CloseItemDependents() {
 	}
 }
 
-bool Gump::GetMouseCursor(int32 mx, int32 my, Shape &shape_, int32 &frame) {
+bool Gump::GetMouseCursor(int32 mx, int32 my, Shape &shape, int32 &frame) {
 	ParentToGump(mx, my);
 
 	bool ret = false;
@@ -210,7 +210,7 @@ bool Gump::GetMouseCursor(int32 mx, int32 my, Shape &shape_, int32 &frame) {
 
 		// It's got the point
 		if (g->PointOnGump(mx, my))
-			ret = g->GetMouseCursor(mx, my, shape_, frame);
+			ret = g->GetMouseCursor(mx, my, shape, frame);
 
 		if (ret) break;
 	}

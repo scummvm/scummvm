@@ -59,9 +59,9 @@ void PathfindingState::load(const Actor *_actor) {
 	_combat = _actor->isInCombat();
 }
 
-bool PathfindingState::checkPoint(int32 x_, int32 y_, int32 z_,
+bool PathfindingState::checkPoint(int32 x, int32 y, int32 z,
                                   int range) const {
-	int distance = (_x - x_) * (_x - x_) + (_y - y_) * (_y - y_) + (_z - z_) * (_z - z_);
+	int distance = (_x - x) * (_x - x) + (_y - y) * (_y - y) + (_z - z) * (_z - z);
 	return distance < range * range;
 }
 
@@ -135,8 +135,8 @@ Pathfinder::~Pathfinder() {
 	_cleanupNodes.clear();
 }
 
-void Pathfinder::init(Actor *actor_, PathfindingState *state) {
-	_actor = actor_;
+void Pathfinder::init(Actor *actor, PathfindingState *state) {
+	_actor = actor;
 
 	_actor->getFootpadWorld(_actorXd, _actorYd, _actorZd);
 

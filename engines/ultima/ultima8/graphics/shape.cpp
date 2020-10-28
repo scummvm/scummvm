@@ -225,22 +225,22 @@ const ConvertShapeFormat *Shape::DetectShapeFormat(const uint8 *data, uint32 siz
 	return Shape::DetectShapeFormat(&ds, size);
 }
 
-const ConvertShapeFormat *Shape::DetectShapeFormat(IDataSource *ds, uint32 size_) {
+const ConvertShapeFormat *Shape::DetectShapeFormat(IDataSource *ds, uint32 size) {
 	const ConvertShapeFormat *ret = nullptr;
 
-	if (ConvertShape::CheckUnsafe(ds, &PentagramShapeFormat, size_))
+	if (ConvertShape::CheckUnsafe(ds, &PentagramShapeFormat, size))
 		ret = &PentagramShapeFormat;
-	else if (ConvertShape::CheckUnsafe(ds, &U8SKFShapeFormat, size_))
+	else if (ConvertShape::CheckUnsafe(ds, &U8SKFShapeFormat, size))
 		ret = &U8SKFShapeFormat;
-	else if (ConvertShape::CheckUnsafe(ds, &U8ShapeFormat, size_))
+	else if (ConvertShape::CheckUnsafe(ds, &U8ShapeFormat, size))
 		ret = &U8ShapeFormat;
-	else if (ConvertShape::CheckUnsafe(ds, &U82DShapeFormat, size_))
+	else if (ConvertShape::CheckUnsafe(ds, &U82DShapeFormat, size))
 		ret = &U82DShapeFormat;
-	else if (ConvertShape::CheckUnsafe(ds, &CrusaderShapeFormat, size_))
+	else if (ConvertShape::CheckUnsafe(ds, &CrusaderShapeFormat, size))
 		ret = &CrusaderShapeFormat;
-	else if (ConvertShape::CheckUnsafe(ds, &Crusader2DShapeFormat, size_))
+	else if (ConvertShape::CheckUnsafe(ds, &Crusader2DShapeFormat, size))
 		ret = &Crusader2DShapeFormat;
-	else if (ConvertShape::CheckUnsafe(ds, &U8CMPShapeFormat, size_))
+	else if (ConvertShape::CheckUnsafe(ds, &U8CMPShapeFormat, size))
 		ret = &U8CMPShapeFormat;
 
 	return ret;

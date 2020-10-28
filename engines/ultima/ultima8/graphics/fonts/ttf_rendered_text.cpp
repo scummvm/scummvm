@@ -29,8 +29,8 @@
 namespace Ultima {
 namespace Ultima8 {
 
-TTFRenderedText::TTFRenderedText(Texture *texture_, int width, int height,
-		int vLead, TTFont *font) : _texture(texture_), _font(font) {
+TTFRenderedText::TTFRenderedText(Texture *texture, int width, int height,
+		int vLead, TTFont *font) : _texture(texture), _font(font) {
 	_width = width;
 	_height = height;
 	_vLead = vLead;

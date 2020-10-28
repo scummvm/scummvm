@@ -87,9 +87,9 @@ PaperdollGump::PaperdollGump() : ContainerGump(), _statButtonId(0),
 	Common::fill(_cachedVal, _cachedVal + 7, 0);
 }
 
-PaperdollGump::PaperdollGump(Shape *shape_, uint32 frameNum, uint16 owner,
+PaperdollGump::PaperdollGump(Shape *shape, uint32 frameNum, uint16 owner,
 		uint32 Flags, int32 layer)
-		: ContainerGump(shape_, frameNum, owner, Flags, layer),
+		: ContainerGump(shape, frameNum, owner, Flags, layer),
 		_statButtonId(0), _backpackRect(49, 25, 59, 50) {
 	_statButtonId = 0;
 

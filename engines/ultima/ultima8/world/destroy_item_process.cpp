@@ -36,9 +36,9 @@ DestroyItemProcess::DestroyItemProcess() : Process() {
 
 }
 
-DestroyItemProcess::DestroyItemProcess(Item *item_) {
-	if (item_)
-		_itemNum = item_->getObjId();
+DestroyItemProcess::DestroyItemProcess(Item *item) {
+	if (item)
+		_itemNum = item->getObjId();
 	else
 		_itemNum = 0;
 

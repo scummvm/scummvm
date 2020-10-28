@@ -41,9 +41,9 @@ TextWidget::TextWidget() : Gump(), _gameFont(false), _fontNum(0), _blendColour(0
 		_cachedText(nullptr), _textAlign(Font::TEXT_LEFT) {
 }
 
-TextWidget::TextWidget(int x, int y, const Std::string &txt, bool gamefont_, int font,
+TextWidget::TextWidget(int x, int y, const Std::string &txt, bool gamefont, int font,
                        int w, int h, Font::TextAlign align) :
-	Gump(x, y, w, h), _text(txt), _gameFont(gamefont_), _fontNum(font),
+	Gump(x, y, w, h), _text(txt), _gameFont(gamefont), _fontNum(font),
 	_blendColour(0), _currentStart(0), _currentEnd(0), _tx(0), _ty(0),
 	_targetWidth(w), _targetHeight(h), _cachedText(nullptr), _textAlign(align) {
 }
@@ -251,15 +251,15 @@ bool TextWidget::loadData(Common::ReadStream *rs, uint32 version) {
 	// after loading.
 	Font *font = getFont();
 
-	int32 tx_, ty_;
+	int32 tx, ty;
 	unsigned int remaining;
-	font->getTextSize(_text.substr(_currentStart), tx_, ty_, remaining,
+	font->getTextSize(_text.substr(_currentStart), tx, ty, remaining,
 	                  _targetWidth, _targetHeight, _textAlign, true);
 
 	// Y offset is always baseline
 	_dims.top = -font->getBaseline();
-	_dims.setWidth(tx_);
-	_dims.setHeight(ty_);
+	_dims.setWidth(tx);
+	_dims.setHeight(ty);
 	_currentEnd = _currentStart + remaining;
 
 	return true;

@@ -70,10 +70,10 @@ bool ModalGump::PointOnGump(int mx, int my) {
 }
 
 uint16 ModalGump::TraceObjId(int32 mx, int32 my) {
-	uint16 objId_ = Gump::TraceObjId(mx, my);
-	if (!objId_) objId_ = getObjId();
+	uint16 objId = Gump::TraceObjId(mx, my);
+	if (!objId) objId = getObjId();
 
-	return objId_;
+	return objId;
 }
 
 void ModalGump::Close(bool no_del) {

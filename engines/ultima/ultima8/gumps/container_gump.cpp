@@ -195,9 +195,9 @@ bool ContainerGump::GetLocationOfItem(uint16 itemid, int32 &gx, int32 &gy,
                                       int32 lerp_factor) {
 	Item *item = getItem(itemid);
 	if (!item) return false;
-	Item *parent_ = item->getParentAsContainer();
-	if (!parent_) return false;
-	if (parent_->getObjId() != _owner) return false;
+	Item *parent = item->getParentAsContainer();
+	if (!parent) return false;
+	if (parent->getObjId() != _owner) return false;
 
 	//!!! need to use lerp_factor
 
@@ -484,10 +484,10 @@ void ContainerGump::DropItem(Item *item, int mx, int my) {
 		                                        item->getQuality());
 		slidergump->InitGump(0);
 		slidergump->CreateNotifier(); // manually create notifier
-		Process *notifier_ = slidergump->GetNotifyProcess();
+		Process *notifier = slidergump->GetNotifyProcess();
 		SplitItemProcess *splitproc = new SplitItemProcess(item, splittarget);
 		Kernel::get_instance()->addProcess(splitproc);
-		splitproc->waitFor(notifier_);
+		splitproc->waitFor(notifier);
 
 		return;
 	}

@@ -70,7 +70,7 @@ public:
 	}
 
 	//! Get GameInfo for other configured game, or 0 for an invalid name.
-	GameInfo *getGameInfo(istring game) const;
+	GameInfo *getGameInfo(const istring &game) const;
 
 protected:
 	bool _isRunning;

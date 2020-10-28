@@ -304,23 +304,23 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 	return 0;
 }
 
-void MainActor::teleport(int mapNum_, int32 x_, int32 y_, int32 z_) {
+void MainActor::teleport(int mapNum, int32 x, int32 y, int32 z) {
 	World *world = World::get_instance();
 
 	// (attempt to) load the new map
-	if (!world->switchMap(mapNum_)) {
+	if (!world->switchMap(mapNum)) {
 		perr << "MainActor::teleport(): switchMap() failed!" << Std::endl;
 		return;
 	}
 
-	Actor::teleport(mapNum_, x_, y_, z_);
+	Actor::teleport(mapNum, x, y, z);
 	_justTeleported = true;
 }
 
 // teleport to TeleportEgg
 // NB: be careful when calling this from a process, as it might kill
 // all running processes
-void MainActor::teleport(int mapNum_, int teleport_id) {
+void MainActor::teleport(int mapNum, int teleport_id) {
 	int oldmap = getMapNum();
 	int32 oldx, oldy, oldz;
 	getLocation(oldx, oldy, oldz);
@@ -328,13 +328,13 @@ void MainActor::teleport(int mapNum_, int teleport_id) {
 	World *world = World::get_instance();
 	CurrentMap *currentmap = world->getCurrentMap();
 
-	pout << "MainActor::teleport(): teleporting to map " << mapNum_
+	pout << "MainActor::teleport(): teleporting to map " << mapNum
 	     << ", egg " << teleport_id << Std::endl;
 
-	setMapNum(mapNum_);
+	setMapNum(mapNum);
 
 	// (attempt to) load the new map
-	if (!world->switchMap(mapNum_)) {
+	if (!world->switchMap(mapNum)) {
 		perr << "MainActor::teleport(): switchMap() failed!" << Std::endl;
 		setMapNum(oldmap);
 		return;
@@ -354,7 +354,7 @@ void MainActor::teleport(int mapNum_, int teleport_id) {
 	pout << "Found destination: " << xv << "," << yv << "," << zv << Std::endl;
 	egg->dumpInfo();
 
-	Actor::teleport(mapNum_, xv, yv, zv);
+	Actor::teleport(mapNum, xv, yv, zv);
 	_justTeleported = true;
 }
 
@@ -567,9 +567,9 @@ void MainActor::accumulateInt(int n) {
 	}
 }
 
-void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shape_) {
-	shape_ = 0;
-	frame_ = 0;
+void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame, uint32 &shape) {
+	shape = 0;
+	frame = 0;
 
 	if (!isInCombat() && _lastAnim != Animation::unreadyWeapon) return;
 
@@ -590,13 +590,13 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame_, uint32 &shap
 	WeaponInfo *weaponinfo = shapeinfo->_weaponInfo;
 	if (!weaponinfo) return;
 
-	shape_ = weaponinfo->_overlayShape;
+	shape = weaponinfo->_overlayShape;
 
 	WpnOvlayDat *wpnovlay = GameData::get_instance()->getWeaponOverlay();
-	frame_ = wpnovlay->getOverlayFrame(action, weaponinfo->_overlayType,
+	frame = wpnovlay->getOverlayFrame(action, weaponinfo->_overlayType,
 	                                  _direction, _animFrame);
 
-	if (frame_ == 0) shape_ = 0;
+	if (frame == 0) shape = 0;
 }
 
 int16 MainActor::getMaxEnergy() {

@@ -100,15 +100,15 @@ uint32 SpeechFlex::getSpeechLength(const Std::string &phrase) {
 		int index = getIndexForPhrase(phrase, start, end);
 		if (!index) break;
 
-		AudioSample *sample = getSample(index);
+		const AudioSample *sample = getSample(index);
 		if (!sample) break;
 
-		uint32 samples_ = sample->getLength();
+		uint32 samples = sample->getLength();
 		uint32 rate = sample->getRate();
 		bool stereo = sample->isStereo();
 		if (stereo) rate *= 2;
 
-		length += (samples_ * 1000) / rate;
+		length += (samples * 1000) / rate;
 		length += 33; // one engine frame of overhead between speech samples_
 	}
 

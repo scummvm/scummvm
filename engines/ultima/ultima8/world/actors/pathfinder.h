@@ -45,7 +45,7 @@ struct PathfindingState {
 	bool _combat;
 
 	void load(const Actor *actor);
-	bool checkPoint(int32 x_, int32 y_, int32 z_, int range) const;
+	bool checkPoint(int32 x, int32 y, int32 z, int range) const;
 	bool checkItem(const Item *item, int xyRange, int zRange) const;
 	bool checkHit(const Actor *actor, const Actor *target) const;
 };

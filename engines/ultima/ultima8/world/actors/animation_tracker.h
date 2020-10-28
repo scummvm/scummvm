@@ -46,7 +46,7 @@ public:
 
 	//! evaluate the maximum distance the actor will travel if the current
 	//! animation runs to completion by incremental calls to step
-	void evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, Direction dir_);
+	void evaluateMaxAnimTravel(int32 &max_endx, int32 &max_endy, Direction dir);
 
 	//! do a single step of the animation
 	//! returns true if everything ok, false if not
@@ -71,7 +71,7 @@ public:
 		z = _z;
 	}
 
-	void getInterpolatedPosition(int32 &x_, int32 &y_, int32 &z_, int fc)
+	void getInterpolatedPosition(int32 &x, int32 &y, int32 &z, int fc)
             const;
 
 	//! get the difference between current position and previous position
@@ -90,7 +90,7 @@ public:
 	//! get the current AnimFrame
 	const AnimFrame *getAnimFrame() const;
 
-	void setTargetedMode(int32 x_, int32 y_, int32 z_);
+	void setTargetedMode(int32 x, int32 y, int32 z);
 
 	bool isDone() const {
 		return _done;

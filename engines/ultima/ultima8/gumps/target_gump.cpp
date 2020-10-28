@@ -38,8 +38,8 @@ TargetGump::TargetGump() : ModalGump(), _targetTracing(false) {
 }
 
 
-TargetGump::TargetGump(int x_, int y_)
-	: ModalGump(x_, y_, 0, 0), _targetTracing(false) {
+TargetGump::TargetGump(int x, int y)
+	: ModalGump(x, y, 0, 0), _targetTracing(false) {
 
 }
 
@@ -82,15 +82,15 @@ void TargetGump::onMouseUp(int button, int32 mx, int32 my) {
 	_parent->GumpToScreenSpace(mx, my);
 
 	Gump *desktopgump = _parent;
-	ObjId objId_ = desktopgump->TraceObjId(mx, my);
-	Item *item = getItem(objId_);
+	ObjId objId = desktopgump->TraceObjId(mx, my);
+	Item *item = getItem(objId);
 
 	if (item) {
 		// done
 		pout << "Target result: ";
 		item->dumpInfo();
 
-		_processResult = objId_;
+		_processResult = objId;
 		Close();
 	}
 

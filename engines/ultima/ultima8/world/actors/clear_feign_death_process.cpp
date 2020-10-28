@@ -37,9 +37,9 @@ ClearFeignDeathProcess::ClearFeignDeathProcess() : Process() {
 
 }
 
-ClearFeignDeathProcess::ClearFeignDeathProcess(Actor *actor_) {
-	assert(actor_);
-	_itemNum = actor_->getObjId();
+ClearFeignDeathProcess::ClearFeignDeathProcess(Actor *actor) {
+	assert(actor);
+	_itemNum = actor->getObjId();
 
 	_type = 0x243; // constant !
 }

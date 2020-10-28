@@ -194,7 +194,7 @@ public:
 	}
 
 	//! Set this Item's shape number
-	void setShape(uint32 shape_);
+	void setShape(uint32 shape);
 
 	//! Get this Item's frame number
 	uint32 getFrame() const {
@@ -202,8 +202,8 @@ public:
 	}
 
 	//! Set this Item's frame number
-	void setFrame(uint32 frame_) {
-		_frame = frame_;
+	void setFrame(uint32 frame) {
+		_frame = frame;
 	}
 
 	//! Get this Item's quality (a.k.a. 'Q')
@@ -212,8 +212,8 @@ public:
 	}
 
 	//! Set this Item's quality (a.k.a 'Q');
-	void setQuality(uint16 quality_) {
-		_quality = quality_;
+	void setQuality(uint16 quality) {
+		_quality = quality;
 	}
 
 	//! Get the 'NpcNum' of this Item. Note that this can represent various
@@ -224,8 +224,8 @@ public:
 
 	//! Set the 'NpcNum' of this Item. Note that this can represent various
 	//! things depending on the family of this Item.
-	void setNpcNum(uint16 npcnum_) {
-		_npcNum = npcnum_;
+	void setNpcNum(uint16 npcnum) {
+		_npcNum = npcnum;
 	}
 
 	//! Get the 'MapNum' of this Item. Note that this can represent various
@@ -236,8 +236,8 @@ public:
 
 	//! Set the 'MapNum' of this Item. Note that this can represent various
 	//! things depending on the family of this Item.
-	void setMapNum(uint16 mapnum_) {
-		_mapNum = mapnum_;
+	void setMapNum(uint16 mapnum) {
+		_mapNum = mapnum;
 	}
 
 	//! Get the ShapeInfo object for this Item. (The pointer will be cached.)
@@ -289,7 +289,7 @@ public:
 	bool isOnScreen() const;
 
 	//! Check if this item can exist at the given coordinates
-	bool canExistAt(int32 x_, int32 y_, int32 z_, bool needsupport = false) const;
+	bool canExistAt(int32 x, int32 y, int32 z, bool needsupport = false) const;
 
 	//! Get direction from centre to another item's centre.
 	//! Undefined if either item is contained or equipped.
@@ -401,7 +401,7 @@ public:
 	}
 
 	//! count nearby objects of a given shape
-	unsigned int countNearby(uint32 shape_, uint16 range);
+	unsigned int countNearby(uint32 shape, uint16 range);
 
 	//! can this item be dragged?
 	bool canDrag();

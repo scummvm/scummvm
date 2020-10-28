@@ -36,10 +36,10 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(EditWidget)
 
-EditWidget::EditWidget(int x, int y, Std::string txt, bool gamefont_, int font,
-                       int w, int h, unsigned int maxlength_, bool multiline_)
-	: Gump(x, y, w, h), _text(txt), _gameFont(gamefont_), _fontNum(font),
-	  _maxLength(maxlength_), _multiLine(multiline_),
+EditWidget::EditWidget(int x, int y, Std::string txt, bool gamefont, int font,
+                       int w, int h, unsigned int maxlength, bool multiline)
+	: Gump(x, y, w, h), _text(txt), _gameFont(gamefont), _fontNum(font),
+	  _maxLength(maxlength), _multiLine(multiline),
 	  _cursorChanged(0), _cursorVisible(true), _cachedText(nullptr) {
 	_cursor = _text.size();
 }
@@ -174,10 +174,10 @@ void EditWidget::PaintComposited(RenderSurface *surf, int32 lerp_factor, int32 s
 
 	if (!_gameFont || !font->isHighRes()) return;
 
-	int32 x_ = 0, y_ = 0;
-	GumpToScreenSpace(x_, y_, ROUND_BOTTOMRIGHT);
+	int32 x = 0, y = 0;
+	GumpToScreenSpace(x, y, ROUND_BOTTOMRIGHT);
 
-	_cachedText->draw(surf, x_, y_, true);
+	_cachedText->draw(surf, x, y, true);
 
 	Rect rect(_dims);
 	GumpRectToScreenSpace(rect, ROUND_OUTSIDE);

@@ -50,9 +50,9 @@ CombatProcess::CombatProcess() : Process(), _target(0), _fixedTarget(0), _combat
 
 }
 
-CombatProcess::CombatProcess(Actor *actor_) : _target(0), _fixedTarget(0), _combatMode(CM_WAITING) {
-	assert(actor_);
-	_itemNum = actor_->getObjId();
+CombatProcess::CombatProcess(Actor *actor) : _target(0), _fixedTarget(0), _combatMode(CM_WAITING) {
+	assert(actor);
+	_itemNum = actor->getObjId();
 
 	_type = 0x00F2; // CONSTANT !
 }
@@ -174,22 +174,22 @@ void CombatProcess::setTarget(ObjId newtarget) {
 	_target = newtarget;
 }
 
-bool CombatProcess::isValidTarget(const Actor *target_) const {
-	assert(target_);
+bool CombatProcess::isValidTarget(const Actor *target) const {
+	assert(target);
 	const Actor *a = getActor(_itemNum);
 	if (!a) return false; // uh oh
 
 	// don't target_ self
-	if (target_ == a) return false;
+	if (target == a) return false;
 
 	// not in the fastarea
-	if (!target_->hasFlags(Item::FLG_FASTAREA)) return false;
+	if (!target->hasFlags(Item::FLG_FASTAREA)) return false;
 
 	// dead actors don't make good targets
-	if (target_->isDead()) return false;
+	if (target->isDead()) return false;
 
 	// feign death only works on undead and demons
-	if (target_->hasActorFlags(Actor::ACT_FEIGNDEATH)) {
+	if (target->hasActorFlags(Actor::ACT_FEIGNDEATH)) {
 
 		if ((a->getDefenseType() & WeaponInfo::DMG_UNDEAD) ||
 		        (a->getShape() == 96)) return false; // CONSTANT!
@@ -199,13 +199,13 @@ bool CombatProcess::isValidTarget(const Actor *target_) const {
 	return true;
 }
 
-bool CombatProcess::isEnemy(const Actor *target_) const {
-	assert(target_);
+bool CombatProcess::isEnemy(const Actor *target) const {
+	assert(target);
 
 	const Actor *a = getActor(_itemNum);
 	if (!a) return false; // uh oh
 
-	return ((a->getEnemyAlignment() & target_->getAlignment()) != 0);
+	return ((a->getEnemyAlignment() & target->getAlignment()) != 0);
 }
 
 ObjId CombatProcess::seekTarget() {
@@ -224,7 +224,7 @@ ObjId CombatProcess::seekTarget() {
 	cm->areaSearch(&itemlist, script, sizeof(script), a, 768, false);
 
 	for (unsigned int i = 0; i < itemlist.getSize(); ++i) {
-		Actor *t = getActor(itemlist.getuint16(i));
+		const Actor *t = getActor(itemlist.getuint16(i));
 
 		if (t && isValidTarget(t) && isEnemy(t)) {
 			// found _target

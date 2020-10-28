@@ -40,7 +40,7 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	ScrollGump();
-	ScrollGump(ObjId owner, Std::string msg);
+	ScrollGump(ObjId owner, const Std::string &msg);
 	~ScrollGump() override;
 
 	// Go to the next page on mouse click

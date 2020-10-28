@@ -42,7 +42,7 @@ namespace Ultima8 {
 
 FontManager *FontManager::_fontManager = nullptr;
 
-FontManager::FontManager(bool ttf_antialiasing_) : _ttfAntialiasing(ttf_antialiasing_) {
+FontManager::FontManager(bool ttf_antialiasing) : _ttfAntialiasing(ttf_antialiasing) {
 	debugN(MM_INFO, "Creating Font Manager...\n");
 
 	_fontManager = this;

@@ -62,7 +62,7 @@ public:
 
 protected:
 
-	void extractLine(Std::string &text_, char &modifier, Std::string &line);
+	void extractLine(Std::string &text, char &modifier, Std::string &line);
 
 	Std::string _text;
 	int _parSkip;

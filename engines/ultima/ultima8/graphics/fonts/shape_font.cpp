@@ -30,12 +30,12 @@
 namespace Ultima {
 namespace Ultima8 {
 
-ShapeFont::ShapeFont(const uint8 *data_, uint32 size_,
+ShapeFont::ShapeFont(const uint8 *data, uint32 size,
                      const ConvertShapeFormat *format,
-                     const uint16 flexId_, const uint32 shapeNum_)
-	: Font(), Shape(data_, size_, format, flexId_, shapeNum_),
+                     const uint16 flexId, const uint32 shapeNum)
+	: Font(), Shape(data, size, format, flexId, shapeNum),
 	  _height(0), _baseLine(0), _vLead(-1), _hLead(0) {
-	_crusaderCharMap = GAME_IS_CRUSADER && shapeNum_ == 1;
+	_crusaderCharMap = GAME_IS_CRUSADER && shapeNum == 1;
 }
 
 ShapeFont::~ShapeFont() {
@@ -81,9 +81,9 @@ int ShapeFont::getBaselineSkip() {
 	return getHeight() + getVlead();
 }
 
-void ShapeFont::getStringSize(const Std::string &text, int32 &width, int32 &height_) {
+void ShapeFont::getStringSize(const Std::string &text, int32 &width, int32 &height) {
 	width = _hLead;
-	height_ = getHeight();
+	height = getHeight();
 
 	for (unsigned int i = 0; i < text.size(); ++i) {
 		if (text[i] == '\n' || text[i] == '\r') {
@@ -122,13 +122,13 @@ int ShapeFont::charToFrameNum(char c) const {
 
 RenderedText *ShapeFont::renderText(const Std::string &text,
                                     unsigned int &remaining,
-                                    int32 width, int32 height_, TextAlign align,
+                                    int32 width, int32 height, TextAlign align,
                                     bool u8specials,
                                     Std::string::size_type cursor) {
 	int32 resultwidth, resultheight;
 	Std::list<PositionedText> lines;
 	lines = typesetText<Traits>(this, text, remaining,
-	                            width, height_, align, u8specials,
+	                            width, height, align, u8specials,
 	                            resultwidth, resultheight, cursor);
 
 	return new ShapeRenderedText(lines, resultwidth, resultheight,

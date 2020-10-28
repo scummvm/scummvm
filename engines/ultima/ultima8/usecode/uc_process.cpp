@@ -37,20 +37,20 @@ UCProcess::UCProcess() : Process(), _classId(0xFFFF), _ip(0xFFFF),
 	_usecode = GameData::get_instance()->getMainUsecode();
 }
 
-UCProcess::UCProcess(uint16 classid_, uint16 offset_, uint32 this_ptr,
+UCProcess::UCProcess(uint16 classid, uint16 offset, uint32 this_ptr,
                      int thissize, const uint8 *args, int argsize)
 	: Process(), _classId(0xFFFF), _ip(0xFFFF), _bp(0x0000), _temp32(0) {
 	_usecode = GameData::get_instance()->getMainUsecode();
 
-	load(classid_, offset_, this_ptr, thissize, args, argsize);
+	load(classid, offset, this_ptr, thissize, args, argsize);
 }
 
 UCProcess::~UCProcess() {
 }
 
-void UCProcess::load(uint16 classid_, uint16 offset_, uint32 this_ptr,
+void UCProcess::load(uint16 classid, uint16 offset, uint32 this_ptr,
                      int thissize, const uint8 *args, int argsize) {
-	if (_usecode->get_class_size(classid_) == 0)
+	if (_usecode->get_class_size(classid) == 0)
 		perr << "Class is empty..." << Std::endl;
 
 	_classId = 0xFFFF;
@@ -74,7 +74,7 @@ void UCProcess::load(uint16 classid_, uint16 offset_, uint32 this_ptr,
 		_stack.push4(UCMachine::stackToPtr(_pid, thissp));
 
 	// finally, call the specified function
-	call(classid_, offset_);
+	call(classid, offset);
 }
 
 void UCProcess::run() {
@@ -85,13 +85,13 @@ void UCProcess::run() {
 	UCMachine::get_instance()->execProcess(this);
 }
 
-void UCProcess::call(uint16 classid_, uint16 offset_) {
+void UCProcess::call(uint16 classid, uint16 offset) {
 	_stack.push2(_classId); // BP+04 prev class
 	_stack.push2(_ip);      // BP+02 prev IP
 	_stack.push2(_bp);      // BP+00 prev BP
 
-	_classId = classid_;
-	_ip = offset_;
+	_classId = classid;
+	_ip = offset;
 	_bp = static_cast<uint16>(_stack.getSP()); // TRUNCATES!
 }
 
@@ -108,12 +108,12 @@ bool UCProcess::ret() {
 		return false;
 }
 
-void UCProcess::freeOnTerminate(uint16 index, int type_) {
-	assert(type_ >= 1 && type_ <= 3);
+void UCProcess::freeOnTerminate(uint16 index, int type) {
+	assert(type >= 1 && type <= 3);
 
 	Std::pair<uint16, int> p;
 	p.first = index;
-	p.second = type_;
+	p.second = type;
 
 	_freeOnTerminate.push_back(p);
 }

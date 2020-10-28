@@ -36,15 +36,15 @@ SplitItemProcess::SplitItemProcess() : Process(), _target(0) {
 
 }
 
-SplitItemProcess::SplitItemProcess(Item *original, Item *target_) {
+SplitItemProcess::SplitItemProcess(Item *original, Item *target) {
 	assert(original);
-	assert(target_);
+	assert(target);
 
 	assert(original->getShapeInfo()->hasQuantity());
-	assert(target_->getShapeInfo()->hasQuantity());
+	assert(target->getShapeInfo()->hasQuantity());
 
 	_itemNum = original->getObjId();
-	_target = target_->getObjId();
+	_target = target->getObjId();
 
 	// type = TODO
 }

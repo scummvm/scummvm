@@ -44,8 +44,8 @@ ScrollGump::ScrollGump()
 
 }
 
-ScrollGump::ScrollGump(ObjId owner_, Std::string msg) :
-	ModalGump(0, 0, 100, 100, owner_), _text(msg), _textWidget(0) {
+ScrollGump::ScrollGump(ObjId owner, const Std::string &msg) :
+	ModalGump(0, 0, 100, 100, owner), _text(msg), _textWidget(0) {
 }
 
 ScrollGump::~ScrollGump(void) {
@@ -61,9 +61,9 @@ void ScrollGump::InitGump(Gump *newparent, bool take_focus) {
 
 	_text.clear(); // no longer need this
 
-	Shape *shape_ = GameData::get_instance()->getGumps()->getShape(19);
+	Shape *shape = GameData::get_instance()->getGumps()->getShape(19);
 
-	SetShape(shape_, 0);
+	SetShape(shape, 0);
 	UpdateDimsFromShape();
 }
 

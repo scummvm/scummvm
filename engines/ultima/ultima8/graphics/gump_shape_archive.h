@@ -33,15 +33,15 @@ struct Rect;
 
 class GumpShapeArchive : public ShapeArchive {
 public:
-	GumpShapeArchive(uint16 id_, Palette *pal_ = 0,
-	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(id_, pal_, format_) { }
-	GumpShapeArchive(ArchiveFile *af, uint16 id_, Palette *pal_ = 0,
-	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(af, id_, pal_, format_) { }
-	GumpShapeArchive(Common::SeekableReadStream *rs, uint16 id_, Palette *pal_ = 0,
-	                 const ConvertShapeFormat *format_ = 0)
-		: ShapeArchive(rs, id_, pal_, format_) { }
+	GumpShapeArchive(uint16 id, Palette *pal = 0,
+	                 const ConvertShapeFormat *format = 0)
+		: ShapeArchive(id, pal, format) { }
+	GumpShapeArchive(ArchiveFile *af, uint16 id, Palette *pal = 0,
+	                 const ConvertShapeFormat *format = 0)
+		: ShapeArchive(af, id, pal, format) { }
+	GumpShapeArchive(Common::SeekableReadStream *rs, uint16 id, Palette *pal = 0,
+	                 const ConvertShapeFormat *format = 0)
+		: ShapeArchive(rs, id, pal, format) { }
 
 	~GumpShapeArchive() override;
 

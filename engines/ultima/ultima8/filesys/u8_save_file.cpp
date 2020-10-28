@@ -28,7 +28,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-U8SaveFile::U8SaveFile(Common::SeekableReadStream *rs_) : _rs(rs_), _count(0) {
+U8SaveFile::U8SaveFile(Common::SeekableReadStream *rs) : _rs(rs), _count(0) {
 	_valid = isU8SaveFile(_rs);
 
 	if (_valid)

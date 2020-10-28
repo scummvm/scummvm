@@ -39,7 +39,7 @@ PaletteFaderProcess::PaletteFaderProcess() : Process(), _priority(0),
 }
 
 PaletteFaderProcess::PaletteFaderProcess(PalTransforms trans,
-        int priority_, int frames) : _priority(priority_),
+        int priority, int frames) : _priority(priority),
 	_counter(frames), _maxCounter(frames) {
 	PaletteManager  *pm = PaletteManager::get_instance();
 	Palette *pal = pm->getPalette(PaletteManager::Pal_Game);
@@ -69,7 +69,7 @@ PaletteFaderProcess::PaletteFaderProcess(uint32 col32, bool from,
 }
 
 PaletteFaderProcess::PaletteFaderProcess(const int16 from[12], const int16 to[12],
-        int priority_, int frames) : _priority(priority_),
+        int priority, int frames) : _priority(priority),
 	_counter(frames), _maxCounter(frames) {
 	int i;
 	for (i = 0; i < 12; i++) _oldMatrix[i] = from[i];

@@ -52,9 +52,9 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(MenuGump)
 
-MenuGump::MenuGump(bool nameEntryMode_)
+MenuGump::MenuGump(bool nameEntryMode)
 	: ModalGump(0, 0, 5, 5, 0, FLAG_DONT_SAVE) {
-	_nameEntryMode = nameEntryMode_;
+	_nameEntryMode = nameEntryMode;
 
 	Mouse *mouse = Mouse::get_instance();
 	mouse->pushMouseCursor();
@@ -136,8 +136,8 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 		settingman->get("endgame", endgame);
 		settingman->get("quotes", quotes);
 
-		int x_ = _dims.width() / 2 + 14;
-		int y_ = 18;
+		int x = _dims.width() / 2 + 14;
+		int y = 18;
 		for (int i = 0; i < 8; ++i) {
 			if ((quotes || i != 6) && (endgame || i != 7)) {
 				FrameID frame_up(GameData::GUMPS, menuEntryShape, i * 2);
@@ -146,16 +146,16 @@ void MenuGump::InitGump(Gump *newparent, bool take_focus) {
 				frame_down = _TL_SHP_(frame_down);
 				Gump *widget;
 				if (frame_up._shapeNum) {
-					widget = new ButtonWidget(x_, y_, frame_up, frame_down, true);
+					widget = new ButtonWidget(x, y, frame_up, frame_down, true);
 				} else {
 					// JA U8 has text labels
-					widget = new ButtonWidget(x_, y_, _TL_(MENU_TXT[i]), true, 0);
+					widget = new ButtonWidget(x, y, _TL_(MENU_TXT[i]), true, 0);
 				}
 				widget->InitGump(this, false);
 				widget->SetIndex(i + 1);
 			}
 
-			y_ += 14;
+			y += 14;
 		}
 
 		const MainActor *av = getMainActor();

@@ -475,8 +475,8 @@ Box Item::getWorldBox() const {
 	return Box(_x, _y, _z, xd, yd, zd);
 }
 
-void Item::setShape(uint32 shape_) {
-	_shape = shape_;
+void Item::setShape(uint32 shape) {
+	_shape = shape;
 	_cachedShapeInfo = nullptr;
 	_cachedShape = nullptr;
 	// FIXME: In Crusader, here we should check if the shape
@@ -613,10 +613,10 @@ bool Item::isOnScreen() const {
 	return false;
 }
 
-bool Item::canExistAt(int32 x_, int32 y_, int32 z_, bool needsupport) const {
+bool Item::canExistAt(int32 x, int32 y, int32 z, bool needsupport) const {
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 	const Item *support;
-	bool valid = cm->isValidPosition(x_, y_, z_, getShape(), getObjId(),
+	bool valid = cm->isValidPosition(x, y, z, getShape(), getObjId(),
 	                                 &support, 0);
 	return valid && (!needsupport || support);
 }
@@ -1297,10 +1297,10 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 	return 0;
 }
 
-unsigned int Item::countNearby(uint32 shape_, uint16 range) {
+unsigned int Item::countNearby(uint32 shape, uint16 range) {
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
 	UCList itemlist(2);
-	LOOPSCRIPT(script, LS_SHAPE_EQUAL(shape_));
+	LOOPSCRIPT(script, LS_SHAPE_EQUAL(shape));
 	currentmap->areaSearch(&itemlist, script, sizeof(script),
 	                       this, range, false);
 	return itemlist.getSize();
