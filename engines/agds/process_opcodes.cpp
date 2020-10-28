@@ -836,6 +836,7 @@ void Process::restartAnimation() {
 			animation->rewind();
 		}
 		animation->resume();
+		animation->decodeNextFrameIfNoFrame(*_engine);
 		_engine->setGlobal(phaseVar, animation->frameIndex());
 	} else {
 		warning("no animation with phase var %s found", phaseVar.c_str());
