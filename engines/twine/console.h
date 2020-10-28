@@ -24,6 +24,7 @@
 #define TWINE_CONSOLE_H
 
 #include "gui/debugger.h"
+#include "twine/gamestate.h"
 
 namespace TwinE {
 
@@ -37,6 +38,7 @@ private:
 	bool doChangeScene(int argc, const char **argv);
 	bool doListMenuText(int argc, const char **argv);
 	bool doToggleDebug(int argc, const char **argv);
+	bool doGiveKey(int argc, const char **argv);
 public:
 	TwinEConsole(TwinEEngine *engine);
 	~TwinEConsole() override;

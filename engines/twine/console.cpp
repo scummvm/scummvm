@@ -30,12 +30,22 @@ namespace TwinE {
 
 TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger() {
 	registerCmd("give_allitems", WRAP_METHOD(TwinEConsole, doGiveAllItems));
+	registerCmd("give_key", WRAP_METHOD(TwinEConsole, doGiveKey));
 	registerCmd("change_scene", WRAP_METHOD(TwinEConsole, doChangeScene));
 	registerCmd("list_menutext", WRAP_METHOD(TwinEConsole, doListMenuText));
 	registerCmd("toggle_debug", WRAP_METHOD(TwinEConsole, doToggleDebug));
 }
 
 TwinEConsole::~TwinEConsole() {
+}
+
+bool TwinEConsole::doGiveKey(int argc, const char **argv) {
+	int amount = 1;
+	if (argc >= 1) {
+		amount = atoi(argv[1]);
+	}
+	_engine->_gameState->inventoryNumKeys += amount;
+	return true;
 }
 
 bool TwinEConsole::doToggleDebug(int argc, const char **argv) {
