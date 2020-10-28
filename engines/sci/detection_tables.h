@@ -1088,6 +1088,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAtariST, 0, GUIO_STD16	},
 
+	// Hoyle 1 - English Macintosh (supplied by Omer Mor)
+	// Executable scanning reports "x.yyy.zzz"
+	{"hoyle1", "", {
+		{"resource.map", 0, "e96963c2e34b21e2680fdaafb5d00a40", 8706},
+		{"resource.001", 0, "37b23afcf940ddbccfbe0b44080d9bc2", 611892},
+		{"resource.002", 0, "37b23afcf940ddbccfbe0b44080d9bc2", 591233},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_STD16_MAC_UNDITHER },
+
 	// Hoyle 2 - English DOS
 	// SCI interpreter version 0.000.572
 	{"hoyle2", "", {
