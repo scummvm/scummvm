@@ -31,6 +31,7 @@
 #include "twine/holomap.h"
 #include "twine/input.h"
 #include "twine/interface.h"
+#include "twine/menu.h"
 #include "twine/movements.h"
 #include "twine/music.h"
 #include "twine/redraw.h"
@@ -1462,7 +1463,7 @@ static int32 lTEXT(TwinEEngine *engine, ScriptContext& ctx) {
 	if (drawVar1 < 440) {
 		if (engine->cfgfile.Version == USA_VERSION) {
 			if (!textIdx) {
-				textIdx = 16;
+				textIdx = TextId::kSaveSettings;
 			}
 		}
 
