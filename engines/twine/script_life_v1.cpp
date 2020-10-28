@@ -254,7 +254,7 @@ static int32 processLifeConditions(TwinEEngine *engine, ScriptContext& ctx) {
 	case kcFLAG_GAME: {
 		int32 flagIdx = *(scriptPtr++);
 		if (!engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] ||
-		    (engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && flagIdx >= 28)) {
+		    (engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && flagIdx >= MaxInventoryItems)) {
 			engine->_scene->currentScriptValue = engine->_gameState->gameFlags[flagIdx];
 		} else {
 			if (flagIdx == GAMEFLAG_INVENTORY_DISABLED) {

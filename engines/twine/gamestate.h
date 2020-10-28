@@ -62,7 +62,8 @@ enum InventoryItems {
 	kKeypad = 24,
 	kCoffeeCan  = 25,
 	kiBonusList = 26,
-	kiCloverLeaf = 27
+	kiCloverLeaf = 27,
+	MaxInventoryItems = 28
 };
 
 /** Magicball strength*/
