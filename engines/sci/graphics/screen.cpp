@@ -65,7 +65,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 
 	// Macintosh SCI0 games used 480x300, while the scripts were running at 320x200
 	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
-		if (getSciVersion() <= SCI_VERSION_01) {
+		if (getSciVersion() <= SCI_VERSION_01 && g_sci->getGameId() != GID_SQ3) {
 			_upscaledHires = GFX_SCREEN_UPSCALED_480x300;
 			_width = 480;
 			_height = 300; // regular visual, priority and control map are 480x300 (this is different than other upscaled SCI games)
