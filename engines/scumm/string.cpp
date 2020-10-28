@@ -771,7 +771,7 @@ void ScummEngine::CHARSET_1() {
 #endif
 		} else {
 			if (c & 0x80 && _useCJKMode) {
-				if (checkSJISCode(c)) {
+				if (is2ByteCharacter(_language, c)) {
 					byte *buffer = _charsetBuffer + _charsetBufPos;
 					c += *buffer++ * 256; //LE
 					_charsetBufPos = buffer - _charsetBuffer;
@@ -1182,7 +1182,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				}
 			}
 			if (c & 0x80 && _useCJKMode) {
-				if (checkSJISCode(c))
+				if (is2ByteCharacter(_language, c))
 					c += buf[i++] * 256;
 			}
 			_charset->printChar(c, true);
