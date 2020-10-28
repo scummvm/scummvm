@@ -123,7 +123,7 @@ public:
 
 		if (name == kStrawCartHotzone) {
 			room->selectFrame(kStrawCartEmpty, kCartZ, 0);
-			room->stopAnim(kStrawCartFull);
+			_seIdles.hide(kStrawCartFull);
 			room->playSound("c7380mb0");
 			g_vm->getHeroBelt()->placeToInventory(kStraw, kStrawTaken);
 			room->disableHotzone(kStrawCartHotzone);
@@ -238,14 +238,6 @@ public:
 		Quest quest = persistent->_quest;
 		room->loadHotZones("Seriphos.HOT", true);
 		room->addStaticLayer("c7010pa0", kBackgroundZ);
-		if (quest == kCreteQuest && !persistent->_seriphosStrawCartTaken) {
-			room->selectFrame(kStrawCartFull, kCartZ, 0);
-			room->stopAnim(kStrawCartEmpty);
-		} else {
-			room->selectFrame(kStrawCartEmpty, kCartZ, 0);
-			room->stopAnim(kStrawCartFull);
-			room->disableHotzone(kStrawCartHotzone);
-		}
 
 		Common::String seAmbFn = quest > kMedusaQuest ? "SeAmb2.txt" : "SeAmb.txt";
 		TextTable seAmb = TextTable(
@@ -274,6 +266,15 @@ public:
 				Common::SharedPtr<Common::SeekableReadStream>(room->openFile("SeIdles.txt")), 14);
 		_seIdles.readTableFile(seIdles, AmbientAnim::PAN_ANY);
 		_seIdles.firstFrame();
+
+		if (quest == kCreteQuest && !persistent->_seriphosStrawCartTaken) {
+			_seIdles.unpauseAndFirstFrame(kStrawCartFull);
+			room->stopAnim(kStrawCartEmpty);
+		} else {
+			room->selectFrame(kStrawCartEmpty, kCartZ, 0);
+			_seIdles.hide(kStrawCartFull);
+			room->disableHotzone(kStrawCartHotzone);
+		}
 
 		room->playAnimLoop("c7110bb0", 2101);
 		room->playAnimLoop("c7110bc0", 2101);
