@@ -47,7 +47,6 @@ class Animation {
 	bool				_phaseVarControlled;
 	int					_frameIndex;
 	bool				_paused;
-	bool 				_resumed;
 	int					_speed;
 	int					_z;
 	int					_delay;
@@ -116,7 +115,6 @@ public:
 
 	void resume() {
 		_paused = false;
-		_resumed = true;
 	}
 
 	void rewind();
@@ -138,6 +136,12 @@ public:
 	int width() const;
 	int height() const;
 	bool tick(AGDSEngine &engine);
+
+	void decodeNextFrameIfNoFrame(AGDSEngine &engine) {
+		if (!_frame)
+			decodeNextFrame(engine);
+	}
+
 private:
 	void decodeNextFrame(AGDSEngine &engine);
 };
