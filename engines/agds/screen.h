@@ -57,6 +57,7 @@ class Screen {
 	AnimationsType	_animations;
 	RegionPtr		_region;
 	bool			_applyingPatch;
+	int				_characterNear, _characterFar;
 
 public:
 	struct KeyHandler {
@@ -69,6 +70,13 @@ public:
 
 	Screen(ObjectPtr object);
 	~Screen();
+
+	void setCharacterNearFar(int near, int far) {
+		_characterNear = near;
+		_characterFar = far;
+	}
+
+	float getZScale(int y) const;
 
 	bool applyingPatch() const {
 		return _applyingPatch;
