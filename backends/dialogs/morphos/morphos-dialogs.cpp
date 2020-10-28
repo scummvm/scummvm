@@ -41,35 +41,27 @@
 #include <proto/charsets.h>
 
 struct Library *AslBase = NULL;
-
-static char pathBuffer[4096];
+static char pathBuffer[MAX_PATH];
 
 static char *utf8_to_local(const char *in) {
 	
-	if (!in)
-	{
+	if (!in) {
 		return strdup("");
 	}
-	if (CharsetsBase)
-	{
+	
+	if (CharsetsBase) {
 		LONG dstmib = GetSystemCharset(NULL, 0);
-		if (dstmib != MIBENUM_INVALID)
-		{
+		if (dstmib != MIBENUM_INVALID) {
 			char *out = NULL;
 			LONG dstlen = GetByteSize((APTR) in, -1, MIBENUM_UTF_8, dstmib);
-			
 			out = (char *) malloc(dstlen +1);
 			
-			if (out) {
-			
-				if (ConvertTagList((APTR) in, -1, (APTR) out, -1, MIBENUM_UTF_8, dstmib, NULL) != -1)
-				{	
+			if (out) {		
+				if (ConvertTagList((APTR) in, -1, (APTR) out, -1, MIBENUM_UTF_8, dstmib, NULL) != -1) {	
 					return out;
 				}
 				free(out);
 			}
-			
-			
 		}	
 	}
 	
@@ -79,15 +71,10 @@ static char *utf8_to_local(const char *in) {
 Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser) {
 
 	DialogResult result = kDialogCancel;
-
-	Common::String utf8Title = title.encode();
-	
-
-	
+	Common::String utf8Title = title.encode();		
 	AslBase = OpenLibrary(AslName, 39);
 
-    if (AslBase) {
-		
+	if (AslBase) {
 		struct FileRequester *fr = NULL;
 			
 		if (ConfMan.hasKey("browser_lastpath")) {
@@ -95,19 +82,14 @@ Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const 
 		}
 	
 		fr = (struct FileRequester *)AllocAslRequestTags(ASL_FileRequest, TAG_DONE);
+		
 		if (!fr) 
 			return result;
 		
 		char *newTitle = utf8_to_local(utf8Title.c_str());
 		
-		if (AslRequestTags(fr,
-				ASLFR_TitleText, (IPTR)newTitle,
-				ASLFR_RejectIcons, TRUE,
-			//	ASLFR_SleepWindow, TRUE,
-				ASLFR_InitialDrawer, (IPTR)pathBuffer,
-				ASLFR_DrawersOnly, (isDirBrowser ? TRUE : FALSE),
-				TAG_DONE))
-		{
+		if (AslRequestTags(fr, ASLFR_TitleText, (IPTR)newTitle, ASLFR_RejectIcons, TRUE, ASLFR_InitialDrawer, (IPTR)pathBuffer, ASLFR_DrawersOnly, (isDirBrowser ? TRUE : FALSE), TAG_DONE)) {
+			
 			if (strlen(fr->fr_Drawer) < sizeof(pathBuffer)) {
 				strncpy(pathBuffer, fr->fr_Drawer, sizeof(pathBuffer));
 				if (!isDirBrowser) {
@@ -124,7 +106,6 @@ Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const 
 		CloseLibrary(AslBase);
 	}
 
-	
 	return result;
 }
 
