@@ -240,17 +240,14 @@ public:
 		}
 
 		// Set pixel for visual, priority and control map directly, those are not upscaled
-		int offset = y * _width + x;
+		const int offset = y * _width + x;
 
 		if (drawMask & GFX_SCREEN_MASK_VISUAL) {
 			_visualScreen[offset] = color;
 
-			int displayOffset = 0;
-
 			switch (_upscaledHires) {
 			case GFX_SCREEN_UPSCALED_DISABLED:
-				displayOffset = offset;
-				_displayScreen[displayOffset] = color;
+				_displayScreen[offset] = color;
 				break;
 
 			case GFX_SCREEN_UPSCALED_640x400:
@@ -271,7 +268,7 @@ public:
 	}
 
 	void putPixel480x300(int16 x, int16 y, byte drawMask, byte color, byte priority, byte control) {
-		int offset = ((y * 3) / 2 * _width) + ((x * 3) / 2);
+		const int offset = ((y * 3) / 2 * _width) + ((x * 3) / 2);
 
 		// All maps are upscaled
 		// TODO: figure out, what Sierra exactly did on Mac for these games
@@ -390,6 +387,11 @@ public:
 			// Do not scale ourselves, but put it on the display directly
 			putPixelOnDisplay(x, actualY, color);
 		} else {
+			if (_upscaledHires == GFX_SCREEN_UPSCALED_480x300) {
+				putPixel480x300(x, actualY, GFX_SCREEN_MASK_VISUAL, color, 0, 0);
+				return;
+			}
+
 			int offset = actualY * _width + x;
 
 			_visualScreen[offset] = color;
