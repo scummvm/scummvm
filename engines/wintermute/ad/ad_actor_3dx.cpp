@@ -83,7 +83,7 @@ AdActor3DX::AdActor3DX(BaseGame *inGame) : AdObject3D(inGame),
                                            _targetAngle(0.0f),
                                            _path3D(new AdPath3D(inGame)),
                                            _path2D(new AdPath(inGame)) {
-	//	m_Renderer->EnableShadows();
+	_gameRef->_renderer3D->enableShadows();
 }
 
 //////////////////////////////////////////////////////////////////////////
