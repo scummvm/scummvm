@@ -36,8 +36,6 @@ class TwinEEngine;
  */
 class HQRDepack {
 private:
-	TwinEEngine *_engine;
-
 	/**
 	 * Get a HQR entry pointer
 	 * @param filename HQR file name
@@ -63,8 +61,6 @@ private:
 	void hqrDecompressEntry(uint8 *dst, uint8 *src, int32 decompsize, int32 mode);
 
 public:
-	HQRDepack(TwinEEngine *engine);
-
 	/**
 	 * Get a HQR entry pointer
 	 * @param ptr pointer to save the entry

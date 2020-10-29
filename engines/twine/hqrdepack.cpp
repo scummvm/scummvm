@@ -28,8 +28,6 @@
 
 namespace TwinE {
 
-HQRDepack::HQRDepack(TwinEEngine *engine) : _engine(engine) {}
-
 #define wrap(cmd) if ((cmd) == 0) { warning("Failed to execute " #cmd ); return 0; }
 
 void HQRDepack::hqrDecompressEntry(uint8 *dst, uint8 *src, int32 decompsize, int32 mode) {
