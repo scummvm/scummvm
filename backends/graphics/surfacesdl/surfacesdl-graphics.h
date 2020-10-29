@@ -165,7 +165,7 @@ protected:
 		return _videoMode.scaleFactor;
 	}
 
-	virtual void handleResizeImpl(const int width, const int height, const int xdpi, const int ydpi) override;
+	virtual void handleResizeImpl(const int width, const int height) override;
 
 	virtual int getGraphicsModeScale(int mode) const override;
 
