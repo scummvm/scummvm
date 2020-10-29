@@ -128,7 +128,7 @@ void GuiManager::computeScaleFactor() {
 
 	_baseWidth = (int16)((float)w / _scaleFactor);
 
-	warning("Setting %d x %d -> %d x %d", w, h, _baseWidth, _baseHeight);
+	warning("Setting %d x %d -> %d x %d -- %g", w, h, _baseWidth, _baseHeight, _scaleFactor);
 }
 
 Common::Keymap *GuiManager::getKeymap() const {
@@ -583,7 +583,7 @@ void GuiManager::screenChange() {
 	computeScaleFactor();
 
 	// reinit the whole theme
-	_theme->refresh(_baseWidth, _baseHeight);
+	_theme->refresh(_baseWidth, _baseHeight, _scaleFactor);
 
 	// refresh all dialogs
 	for (DialogStack::size_type i = 0; i < _dialogStack.size(); ++i) {
