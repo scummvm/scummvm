@@ -23,7 +23,6 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
-#define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_strdup
 #include "common/scummsys.h"
 
@@ -52,10 +51,8 @@ static char *utf8_to_local(const char *in) {
 	if (CharsetsBase) {
 		LONG dstmib = GetSystemCharset(NULL, 0);
 		if (dstmib != MIBENUM_INVALID) {
-			char *out = NULL;
 			LONG dstlen = GetByteSize((APTR) in, -1, MIBENUM_UTF_8, dstmib);
-			out = (char *) malloc(dstlen +1);
-			
+			char *out = (char *)malloc(dstlen + 1);
 			if (out) {		
 				if (ConvertTagList((APTR) in, -1, (APTR) out, -1, MIBENUM_UTF_8, dstmib, NULL) != -1) {	
 					return out;
