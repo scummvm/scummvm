@@ -30,7 +30,10 @@
 
 namespace AGDS {
 
-Animation::Animation() : _flic(), _frame(), _frames(0), _loop(false), _cycles(1), _phaseVarControlled(false), _frameIndex(0), _paused(false), _speed(100), _z(0), _delay(-1), _random(0) {
+Animation::Animation() :
+	_flic(), _frame(), _frames(0), _loop(false), _cycles(1), _phaseVarControlled(false),
+	_frameIndex(0), _paused(false), _speed(100), _z(0),
+	_delay(-1), _random(0), _scale(1) {
 }
 
 Animation::~Animation() {
@@ -72,6 +75,13 @@ void Animation::decodeNextFrame(AGDSEngine &engine) {
 	}
 	freeFrame();
 	_frame = engine.convertToTransparent(frame->convertTo(engine.pixelFormat(), _flic->getPalette()));
+	if (_scale != 1) {
+		auto f = _frame->scale(_frame->w * _scale, _frame->h * _scale, true);
+		if (f) {
+			delete _frame;
+			_frame = f;
+		}
+	}
 	++_frameIndex;
 }
 

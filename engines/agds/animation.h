@@ -51,6 +51,7 @@ class Animation {
 	int					_z;
 	int					_delay;
 	int					_random;
+	float				_scale;
 
 public:
 	Animation();
@@ -129,6 +130,10 @@ public:
 
 	int z() const {
 		return _z;
+	}
+
+	void scale(float scale) {
+		_scale = scale;
 	}
 
 	bool load(Common::SeekableReadStream *stream);

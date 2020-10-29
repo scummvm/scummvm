@@ -53,7 +53,7 @@ float Screen::getZScale(int y) const
 	int dy = g_system->getHeight() - y;
 	if (dy > _characterNear) {
 		if (dy < _characterFar)
-			return 1.0f * (_characterFar - y) / (_characterFar - _characterNear);
+			return 1.0f * (_characterFar - dy) / (_characterFar - _characterNear);
 		else
 			return 0.0f;
 	} else
