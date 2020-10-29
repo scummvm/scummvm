@@ -332,6 +332,8 @@ public:
 
 	void resize(size_type newSize) {
 		reserve(newSize);
+		for (size_type i = newSize; i < _size; ++i)
+			_storage[i].~T();
 		for (size_type i = _size; i < newSize; ++i)
 			new ((void *)&_storage[i]) T();
 		_size = newSize;
