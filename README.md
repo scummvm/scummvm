@@ -38,7 +38,7 @@ page at: <https://www.scummvm.org/>
       - [3.13) Grim Fandango notes](#313-grim-fandango-notes)
       - [3.14) Inherit the Earth: Quest for the Orb
         notes](#314-inherit-the-earth-quest-for-the-orb-notes)
-      - [3.15) The Longest Journey notes](#315-the-longest-jouney-notes)
+      - [3.15) The Longest Journey notes](#315-the-longest-journey-notes)
           - [3.15.1) Input controls](#3151-input-controls)
           - [3.15.2) Modding The Longest Journey](#3152-modding-the-longest-journey)
       - [3.16) Mickey's Space Adventure
