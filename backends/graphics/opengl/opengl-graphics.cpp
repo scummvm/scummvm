@@ -955,17 +955,13 @@ void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height, 
 	overlayWidth = MAX<uint>(overlayWidth, 256);
 	overlayHeight = MAX<uint>(overlayHeight, 200);
 
-	// HACK: Reduce the size of the overlay on high DPI screens.
-	overlayWidth = fracToInt(overlayWidth * (intToFrac(90) / xdpi));
-	overlayHeight = fracToInt(overlayHeight * (intToFrac(90) / ydpi));
-
 	if (!_overlay || _overlay->getFormat() != _defaultFormatAlpha) {
 		delete _overlay;
 		_overlay = nullptr;
 
 		_overlay = createSurface(_defaultFormatAlpha);
 		assert(_overlay);
-		// We should NOT always filter the overlay with GL_LINEAR. 
+		// We should NOT always filter the overlay with GL_LINEAR.
 		// In previous versions we always did use GL_LINEAR to assure the UI
 		// would be readable in case it needed to be scaled -- it would not affect it otherwise.
 		// However in modern devices due to larger screen size the UI display looks blurry
