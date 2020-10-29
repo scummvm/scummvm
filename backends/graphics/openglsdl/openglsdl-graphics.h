@@ -60,7 +60,11 @@ protected:
 
 	virtual bool saveScreenshot(const Common::String &filename) const override;
 
-	virtual int getGraphicsModeScale(int mode) const override { return 1; }
+	virtual int getGraphicsModeScale(int mode) const override {
+		uint scale;
+		getDpiScalingFactor(&scale);
+		return scale;
+	}
 
 private:
 	bool setupMode(uint width, uint height);

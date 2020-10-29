@@ -208,6 +208,11 @@ bool SdlGraphicsManager::notifyMousePosition(Common::Point &mouse) {
 	mouse.y = CLIP<int16>(mouse.y, 0, _windowHeight - 1);
 
 	int showCursor = SDL_DISABLE;
+	// DPI aware scaling to mouse position
+	uint scale;
+	getDpiScalingFactor(&scale);
+	mouse.x *= scale;
+	mouse.y *= scale;
 	bool valid = true;
 	if (_activeArea.drawRect.contains(mouse)) {
 		_cursorLastInActiveArea = true;
@@ -266,6 +271,9 @@ bool SdlGraphicsManager::createOrUpdateWindow(int width, int height, const Uint3
 	if (!_window) {
 		return false;
 	}
+
+	// width *=3;
+	// height *=3;
 
 	// We only update the actual window when flags change (which usually means
 	// fullscreen mode is entered/exited), when updates are forced so that we

@@ -163,7 +163,8 @@ protected:
 	void getWindowSizeFromSdl(int *width, int *height) const {
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 		assert(_window);
-		SDL_GetWindowSize(_window->getSDLWindow(), width, height);
+		SDL_GL_GetDrawableSize(_window->getSDLWindow(), width, height);
+		// SDL_GetWindowSize(_window->getSDLWindow(), width, height);
 #else
 		assert(_hwScreen);
 
@@ -175,6 +176,57 @@ protected:
 			*height = _hwScreen->h;
 		}
 #endif
+	}
+	/**
+	 * Gets the display index that the ScummVM window is on
+	 */
+	void getWindowDisplayIndexFromSdl(int *index) const {
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		assert(_window);
+		*index = SDL_GetWindowDisplayIndex(_window->getSDLWindow());
+#else
+		*index = 0;
+#endif
+	}
+
+	void getDisplayDpiFromSdl(float *dpi, float *defaultDpi) const {
+		const float systemDpi =
+#ifdef __APPLE__
+		72.0f;
+#elif defined(_WIN32)
+		96.0f;
+#else
+		90.0f; // ScummVM default
+#endif
+		if (defaultDpi)
+			*defaultDpi = systemDpi;
+#if SDL_VERSION_ATLEAST(2, 0, 0)
+		int displayIndex = 0;
+		getWindowDisplayIndexFromSdl(&displayIndex);
+
+		if (SDL_GetDisplayDPI(displayIndex, NULL, dpi, NULL) != 0) {
+		if (dpi)
+			*dpi = systemDpi;
+		}
+#else
+		*dpi = systemDpi;
+#endif
+	}
+
+	/**
+	 * Returns the scaling mode based on the display DPI
+	 */
+	void getDpiScalingFactor(uint *scale) const {
+		float dpi, defaultDpi, ratio;
+
+		getDisplayDpiFromSdl(&dpi, &defaultDpi);
+		debug(4, "dpi: %g default: %g", dpi, defaultDpi);
+		ratio = dpi / defaultDpi;
+		if (ratio >= 2.0f) {
+			*scale = 2;
+		} else {
+			*scale = 1;
+		}
 	}
 
 	virtual void setSystemMousePosition(const int x, const int y) override;
