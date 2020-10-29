@@ -47,7 +47,7 @@ void main()
 		vec3 vertexToLight = lightPosition.xyz - viewCoords.xyz;
 		float dist = length(vertexToLight);
 
-		if (lights[i]._direction.w < 0) { // Spotlight
+		if (lights[i]._direction.w < 0.0) { // Spotlight
 			vec4 lightDirection = viewMatrix * vec4(lights[i]._direction.xyz, 0.0f);
 			// See DirectX spotlight documentation
 			float cosAngle = -dot(normalize(vertexToLight), normalize(lightDirection.xyz)); // rho
