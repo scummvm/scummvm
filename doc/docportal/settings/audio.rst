@@ -283,7 +283,7 @@ Use the MT-32 tab to change the settings of MT-32 devices.
 .. _mt32:
 
 MT-32 Device
-	Specifies a preferred MT-32 device, which ScummVM uses if the **Preferred device** is set to **<default>** and General MIDI playback is required. 
+	Specifies a preferred MT-32 device, which ScummVM uses if the **Preferred device** is set to **<default>** and MT-32 playback is required. 
 
 	*mt32_device*
 
