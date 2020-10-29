@@ -383,6 +383,26 @@ bool FrameNode::render(ModelX *model) {
 	return true;
 }
 
+bool FrameNode::renderFlatShadowModel() {
+	bool res = true;
+
+	for (uint32 i = 0; i < _meshes.size(); i++) {
+		res = _meshes[i]->renderFlatShadowModel();
+		if (!res) {
+			return res;
+		}
+	}
+
+	for (uint32 i = 0; i < _frames.size(); i++) {
+		res = _frames[i]->renderFlatShadowModel();
+		if (!res) {
+			return res;
+		}
+	}
+
+	return res;
+}
+
 //////////////////////////////////////////////////////////////////////////
 bool FrameNode::pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir) {
 	bool found = false;

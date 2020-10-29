@@ -146,6 +146,7 @@ public:
 
 	bool update() override;
 	bool render();
+	bool renderFlatShadowModel();
 	bool reset();
 
 	bool updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth);

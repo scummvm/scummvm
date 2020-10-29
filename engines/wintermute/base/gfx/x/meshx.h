@@ -61,6 +61,7 @@ public:
 	bool findBones(FrameNode *rootFrame);
 	virtual bool update(FrameNode *parentFrame);
 	virtual bool render(ModelX *model) = 0;
+	virtual bool renderFlatShadowModel() = 0;
 	bool updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth);
 
 	bool pickPoly(Math::Vector3d *pickRayOrig, Math::Vector3d *pickRayDir);

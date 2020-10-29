@@ -52,6 +52,7 @@ public:
 	bool updateMeshes();
 	bool resetMatrices();
 	bool render(ModelX *model);
+	bool renderFlatShadowModel();
 	bool updateShadowVol(ShadowVolume *shadow, Math::Matrix4 &modelMat, const Math::Vector3d &light, float extrusionDepth);
 
 	bool loadFromX(const Common::String &filename, XFileLexer &lexer, ModelX *model, Common::Array<MaterialReference> &materialReferences);
