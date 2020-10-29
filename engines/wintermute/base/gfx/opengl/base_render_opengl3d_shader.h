@@ -147,6 +147,7 @@ private:
 	OpenGL::ShaderGL *_shadowVolumeShader;
 	OpenGL::ShaderGL *_shadowMaskShader;
 	OpenGL::ShaderGL *_lineShader;
+	OpenGL::ShaderGL *_flatShadowModelXShader;
 };
 
 } // namespace Wintermute

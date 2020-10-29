@@ -1,0 +1,8 @@
+uniform vec4 shadowColor;
+
+OUTPUT
+
+void main()
+{
+	outColor = vec4(shadowColor.rgb, 1.0);
+}

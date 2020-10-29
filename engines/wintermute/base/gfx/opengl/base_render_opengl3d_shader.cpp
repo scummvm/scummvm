@@ -407,6 +407,9 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	_lineShader = OpenGL::ShaderGL::fromFiles("wme_line", lineAttributes);
 	_lineShader->enableVertexAttribute("position", _lineVBO, 2, GL_FLOAT, false, 8, 0);
 
+	static const char *flatShadowModelXAttributes[] = { "position", nullptr };
+	_flatShadowModelXShader = OpenGL::ShaderGL::fromFiles("wme_flat_shadow_modelx", flatShadowModelXAttributes);
+
 	_active = true;
 	// setup a proper state
 	setup2D(true);
@@ -680,7 +683,7 @@ Mesh3DS *BaseRenderOpenGL3DShader::createMesh3DS() {
 }
 
 MeshX *BaseRenderOpenGL3DShader::createMeshX() {
-	return new MeshXOpenGLShader(_gameRef, _modelXShader);
+	return new MeshXOpenGLShader(_gameRef, _modelXShader, _flatShadowModelXShader);
 }
 
 ShadowVolume *BaseRenderOpenGL3DShader::createShadowVolume() {

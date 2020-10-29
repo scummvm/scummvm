@@ -39,11 +39,12 @@ namespace Wintermute {
 
 class MeshXOpenGLShader : public MeshX {
 public:
-	MeshXOpenGLShader(BaseGame *inGame, OpenGL::ShaderGL *shader);
+	MeshXOpenGLShader(BaseGame *inGame, OpenGL::ShaderGL *shader, OpenGL::ShaderGL *flatShadowShader);
 	~MeshXOpenGLShader() override;
 
 	bool loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) override;
 	bool render(ModelX *model) override;
+	bool renderFlatShadowModel() override;
 	bool update(FrameNode *parentFrame) override;
 
 protected:
@@ -51,6 +52,7 @@ protected:
 	GLuint _indexBuffer;
 
 	OpenGL::ShaderGL *_shader;
+	OpenGL::ShaderGL *_flatShadowShader;
 };
 
 } // namespace Wintermute
