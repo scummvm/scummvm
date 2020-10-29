@@ -45,6 +45,7 @@ static const TextDataInfo kTextDataDefaults[] = {
 	{ kTextDataExtraLang,		"extra_lang" }
 };
 
+#define SCALEVALUE(val) (val > 0 ? val * _scaleFactor : val)
 
 static TextData parseTextDataId(const Common::String &name) {
 	for (int i = 0; i < kTextDataMAX; ++i)
@@ -128,6 +129,7 @@ ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {
 	_theme = parent;
 
 	_baseWidth = _baseHeight = 0;
+	_scaleFactor = 1.0f;
 }
 
 ThemeParser::~ThemeParser() {
@@ -220,6 +222,8 @@ bool ThemeParser::parserCallback_language(ParserNode *node) {
 		if (sscanf(ps.c_str(), "%d", &pointsize) != 1 || pointsize <= 0)
 			return parserError(Common::String::format("Font \"%s\" has invalid point size \"%s\"", node->values["id"].c_str(), ps.c_str()));
 	}
+
+	pointsize = SCALEVALUE(pointsize);
 
 	Common::String file;
 	if (node->values.contains("file")) {
@@ -469,6 +473,10 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		return parserError("Missing necessary key '" + Common::String(key_name) + "'."); \
 	}
 
+#define PARSER_ASSIGN_INT_SCALED(struct_name, key_name, force) \
+	PARSER_ASSIGN_INT(struct_name, key_name, force); \
+	drawstep->struct_name = SCALEVALUE(drawstep->struct_name);
+
 /**
  * Helper macro to sanitize and assign a RGB value from a key to the draw
  * step. RGB values have the following syntax: "R, G, B".
@@ -495,9 +503,9 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		drawstep->struct_name.set = true; \
 	}
 
-	PARSER_ASSIGN_INT(stroke, "stroke", false);
-	PARSER_ASSIGN_INT(bevel, "bevel", false);
-	PARSER_ASSIGN_INT(shadow, "shadow", false);
+	PARSER_ASSIGN_INT_SCALED(stroke, "stroke", false);
+	PARSER_ASSIGN_INT_SCALED(bevel, "bevel", false);
+	PARSER_ASSIGN_INT_SCALED(shadow, "shadow", false);
 	PARSER_ASSIGN_INT(factor, "gradient_factor", false);
 
 	PARSER_ASSIGN_RGB(fgColor, "fg_color");
@@ -545,7 +553,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 				val = stepNode->values["xpos"];
 
 				if (parseIntegerKey(val, 1, &x))
-					drawstep->x = x;
+					drawstep->x = SCALEVALUE(x);
 				else if (val == "center")
 					drawstep->xAlign = Graphics::DrawStep::kVectorAlignCenter;
 				else if (val == "left")
@@ -560,7 +568,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 				val = stepNode->values["ypos"];
 
 				if (parseIntegerKey(val, 1, &x))
-					drawstep->y = x;
+					drawstep->y = SCALEVALUE(x);
 				else if (val == "center")
 					drawstep->yAlign = Graphics::DrawStep::kVectorAlignCenter;
 				else if (val == "top")
@@ -576,7 +584,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			if (stepNode->values.contains("radius") && stepNode->values["radius"] == "auto") {
 				drawstep->radius = 0xFF;
 			} else {
-				PARSER_ASSIGN_INT(radius, "radius", true);
+				PARSER_ASSIGN_INT_SCALED(radius, "radius", true);
 			}
 		}
 
@@ -608,7 +616,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 
 			val = stepNode->values["width"];
 			if (parseIntegerKey(val, 1, &x))
-				drawstep->w = x;
+				drawstep->w = SCALEVALUE(x);
 			else if (val == "height")
 				drawstep->w = -1;
 			else return parserError("Invalid value for vector width.");
@@ -617,7 +625,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 				val = stepNode->values["xpos"];
 
 				if (parseIntegerKey(val, 1, &x))
-					drawstep->x = x;
+					drawstep->x = SCALEVALUE(x);
 				else if (val == "center")
 					drawstep->xAlign = Graphics::DrawStep::kVectorAlignCenter;
 				else if (val == "left")
@@ -636,7 +644,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 
 			val = stepNode->values["height"];
 			if (parseIntegerKey(val, 1, &x))
-				drawstep->h = x;
+				drawstep->h = SCALEVALUE(x);
 			else if (val == "width")
 				drawstep->h = -1;
 			else return parserError("Invalid value for vector height.");
@@ -645,7 +653,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 				val = stepNode->values["ypos"];
 
 				if (parseIntegerKey(val, 1, &x))
-					drawstep->y = x;
+					drawstep->y = SCALEVALUE(x);
 				else if (val == "center")
 					drawstep->yAlign = Graphics::DrawStep::kVectorAlignCenter;
 				else if (val == "top")
@@ -681,10 +689,10 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		val = stepNode->values["padding"];
 		int pr, pt, pl, pb;
 		if (parseIntegerKey(val, 4, &pl, &pt, &pr, &pb)) {
-			drawstep->padding.left = pl;
-			drawstep->padding.top = pt;
-			drawstep->padding.right = pr;
-			drawstep->padding.bottom = pb;
+			drawstep->padding.left = SCALEVALUE(pl);
+			drawstep->padding.top = SCALEVALUE(pt);
+			drawstep->padding.right = SCALEVALUE(pr);
+			drawstep->padding.bottom = SCALEVALUE(pb);
 		}
 	}
 
@@ -692,10 +700,10 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 		val = stepNode->values["clip"];
 		int cl, ct, cr, cb;
 		if (parseIntegerKey(val, 4, &cl, &ct, &cr, &cb)) {
-			drawstep->clip.left = cl;
-			drawstep->clip.top = ct;
-			drawstep->clip.right = cr;
-			drawstep->clip.bottom = cb;
+			drawstep->clip.left = SCALEVALUE(cl);
+			drawstep->clip.top = SCALEVALUE(ct);
+			drawstep->clip.right = SCALEVALUE(cr);
+			drawstep->clip.bottom = SCALEVALUE(cb);
 		}
 	}
 
@@ -771,7 +779,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 		if (node->values.contains("rtl"))
 			useRTL = parseBoolean(node->values["rtl"]);
 
-		_theme->getEvaluator()->addWidget(var, node->values["type"], width, height, alignH, useRTL);
+		_theme->getEvaluator()->addWidget(var, node->values["type"], SCALEVALUE(width), SCALEVALUE(height), alignH, useRTL);
 	}
 
 	return true;
@@ -808,7 +816,7 @@ bool ThemeParser::parserCallback_dialog(ParserNode *node) {
 			return false;
 	}
 
-	_theme->getEvaluator()->addDialog(name, overlays, width, height, inset);
+	_theme->getEvaluator()->addDialog(name, overlays, SCALEVALUE(width), SCALEVALUE(height), SCALEVALUE(inset));
 
 	if (node->values.contains("shading")) {
 		int shading = 0;
@@ -873,7 +881,7 @@ bool ThemeParser::parserCallback_layout(ParserNode *node) {
 		if (!parseIntegerKey(node->values["padding"], 4, &paddingL, &paddingR, &paddingT, &paddingB))
 			return false;
 
-		_theme->getEvaluator()->addPadding(paddingL, paddingR, paddingT, paddingB);
+		_theme->getEvaluator()->addPadding(SCALEVALUE(paddingL), SCALEVALUE(paddingR), SCALEVALUE(paddingT), SCALEVALUE(paddingB));
 	}
 
 	return true;
@@ -890,7 +898,7 @@ bool ThemeParser::parserCallback_space(ParserNode *node) {
 			return parserError("Invalid value for Spacing size.");
 	}
 
-	_theme->getEvaluator()->addSpace(size);
+	_theme->getEvaluator()->addSpace(SCALEVALUE(size));
 	return true;
 }
 
@@ -944,9 +952,8 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 				return false;
 		}
 
-
-		_theme->getEvaluator()->setVar(var + "Width", width);
-		_theme->getEvaluator()->setVar(var + "Height", height);
+		_theme->getEvaluator()->setVar(var + "Width", SCALEVALUE(width));
+		_theme->getEvaluator()->setVar(var + "Height", SCALEVALUE(height));
 	}
 
 	if (node->values.contains("pos")) {
@@ -1001,8 +1008,8 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 				return false;
 		}
 
-		_theme->getEvaluator()->setVar(var + "X", x);
-		_theme->getEvaluator()->setVar(var + "Y", y);
+		_theme->getEvaluator()->setVar(var + "X", SCALEVALUE(x));
+		_theme->getEvaluator()->setVar(var + "Y", SCALEVALUE(y));
 	}
 
 	if (node->values.contains("padding")) {
@@ -1011,10 +1018,10 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 		if (!parseIntegerKey(node->values["padding"], 4, &paddingL, &paddingR, &paddingT, &paddingB))
 			return false;
 
-		_theme->getEvaluator()->setVar(var + "Padding.Left", paddingL);
-		_theme->getEvaluator()->setVar(var + "Padding.Right", paddingR);
-		_theme->getEvaluator()->setVar(var + "Padding.Top", paddingT);
-		_theme->getEvaluator()->setVar(var + "Padding.Bottom", paddingB);
+		_theme->getEvaluator()->setVar(var + "Padding.Left", SCALEVALUE(paddingL));
+		_theme->getEvaluator()->setVar(var + "Padding.Right", SCALEVALUE(paddingR));
+		_theme->getEvaluator()->setVar(var + "Padding.Top", SCALEVALUE(paddingT));
+		_theme->getEvaluator()->setVar(var + "Padding.Bottom", SCALEVALUE(paddingB));
 	}
 
 
