@@ -190,7 +190,7 @@ public:
 			room->disableMouse();
 			g_vm->getHeroBelt()->removeFromInventory(item);
 			_charon.hide();
-			room->playVideo("charon glow", 549, 28005, Common::Point(516, 143));
+			room->playVideo("charon glow", 549, 28005, Common::Point(516, 93));
 			g_vm->addTimer(28006, 2000, 1);
 			persistent->_styxCharonUsedPotion = true;
 			return true;
@@ -200,7 +200,7 @@ public:
 			room->disableMouse();
 			g_vm->getHeroBelt()->removeFromInventory(item);
 			_charon.hide();
-			room->playVideo("change purse", 549, 28010, Common::Point(524, 150));
+			room->playVideo("change purse", 549, 28010, Common::Point(524, 100));
 			g_vm->addTimer(28008, 1000, 1);
 			persistent->_styxCharonUsedCoin = true;
 			return true;
@@ -217,7 +217,7 @@ public:
 			stopCharonTalk();
 			if (persistent->_styxCharonUsedPotion && persistent->_styxCharonUsedCoin) {
 				_charon.hide();
-				room->playVideo("charon asks for help", 549, 28011, Common::Point(452, 146));
+				room->playVideo("charon asks for help", 549, 28011, Common::Point(452, 96));
 			} else {
 				room->enableMouse();
 			}
