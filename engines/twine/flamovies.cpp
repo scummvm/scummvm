@@ -32,6 +32,32 @@
 
 namespace TwinE {
 
+/** FLA Frame Opcode types */
+enum FlaFrameOpcode {
+	kLoadPalette = 0,
+	kFade = 1,
+	kPlaySample = 2,
+	kStopSample = 4,
+	kDeltaFrame = 5,
+	kKeyFrame = 7
+};
+
+/** FLA movie sample structure */
+struct FLASampleStruct {
+	/** Number os samples */
+	int16 sampleNum = 0;
+	/** Sample frequency */
+	int16 freq = 0;
+	/** Numbers of time to repeat */
+	int16 repeat = 0;
+	/** Dummy variable */
+	int8 dummy = 0;
+	/** Unknown x */
+	uint8 x = 0;
+	/** Unknown y */
+	uint8 y = 0;
+};
+
 /** FLA movie extension */
 #define FLA_EXT ".fla"
 
@@ -264,10 +290,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 	samplesInFla = file.readUint16LE();
 	file.skip(2);
 
-	for (int32 i = 0; i < samplesInFla; i++) {
-		flaSampleTable[i] = file.readSint16LE();
-		file.skip(2);
-	}
+	file.skip(4 * samplesInFla);
 
 	if (!strcmp((const char *)flaHeaderData.version, "V1.3")) {
 		int32 currentFrame = 0;

@@ -59,32 +59,6 @@ struct FLAFrameDataStruct {
 	int32 frameVar0 = 0;
 };
 
-/** FLA movie sample structure */
-struct FLASampleStruct {
-	/** Number os samples */
-	int16 sampleNum = 0;
-	/** Sample frequency */
-	int16 freq = 0;
-	/** Numbers of time to repeat */
-	int16 repeat = 0;
-	/** Dummy variable */
-	int8 dummy = 0;
-	/** Unknown x */
-	uint8 x = 0;
-	/** Unknown y */
-	uint8 y = 0;
-};
-
-/** FLA Frame Opcode types */
-enum FlaFrameOpcode {
-	kLoadPalette = 0,
-	kFade = 1,
-	kPlaySample = 2,
-	kStopSample = 4,
-	kDeltaFrame = 5,
-	kKeyFrame = 7
-};
-
 class TwinEEngine;
 
 class FlaMovies {
@@ -98,8 +72,9 @@ private:
 	/** Auxiliar FLA fade out variable to count frames between the fade */
 	int32 fadeOutFrames = 0;
 
-	/** FLA movie sample auxiliar table */
-	int32 flaSampleTable[100] {0};
+	/** FLA movie file buffer */
+	uint8 flaBuffer[FLASCREEN_WIDTH * FLASCREEN_HEIGHT] {0};
+
 	/** Number of samples in FLA movie */
 	int32 samplesInFla = 0;
 	/** FLA movie header data */
@@ -119,9 +94,6 @@ private:
 
 public:
 	FlaMovies(TwinEEngine *engine);
-
-	/** FLA movie file buffer */
-	uint8 flaBuffer[FLASCREEN_WIDTH * FLASCREEN_HEIGHT] {0};
 
 	/**
 	 * Play FLA movies
