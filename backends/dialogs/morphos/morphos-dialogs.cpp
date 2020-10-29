@@ -41,7 +41,7 @@
 #include <proto/charsets.h>
 
 struct Library *AslBase = NULL;
-static char pathBuffer[MAX_PATH];
+static char pathBuffer[PATH_MAX];
 
 static char *utf8_to_local(const char *in) {
 	
