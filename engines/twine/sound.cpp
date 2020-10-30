@@ -41,17 +41,6 @@ namespace TwinE {
 Sound::Sound(TwinEEngine *engine) : _engine(engine) {
 }
 
-void Sound::sampleVolume(int32 chan, int32 volume) {
-	if (chan == -1) {
-		_engine->_system->getMixer()->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, volume);
-		return;
-	}
-	if (chan < 0 || chan > ARRAYSIZE(samplesPlaying)) {
-		error("Given channel index is out of bounds: %i", chan);
-	}
-	_engine->_system->getMixer()->setChannelVolume(samplesPlaying[chan], volume / 2);
-}
-
 void Sound::setSamplePosition(int32 chan, int32 x, int32 y, int32 z) {
 	int32 distance;
 	distance = ABS(_engine->_movements->getDistance3D(_engine->_grid->newCameraX << 9, _engine->_grid->newCameraY << 8, _engine->_grid->newCameraZ << 9, x, y, z));

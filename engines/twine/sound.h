@@ -52,12 +52,6 @@ public:
 
 	bool isChannelPlaying(int32 channel);
 
-	/**
-	 * Sample volume
-	 * @param channel sample channel
-	 * @param volume sample volume number
-	 */
-	void sampleVolume(int32 channel, int32 volume);
 
 	/**
 	 * Play FLA movie samples
