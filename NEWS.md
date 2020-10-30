@@ -42,6 +42,11 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added RGB rendering mode (16/32bpp) for SCI0 - SCI1.1 games, which addresses palette
      issues in screen transitions and avoids mode changes when playing Mac QuickTime videos.
 
+SCUMM:
+   - Fixed Chinese, Japanese and Korean text display for The Dig and for The Curse of Monkey Island. These fixes
+     also include some improvements to the common text display (mainly the formatting of wrapped texts).
+   - Fixed display of Chinese, Japanese and Korean pause and restart dialogs.
+
  Tinsel:
    - Enabled the Return to Launcher feature.
 
