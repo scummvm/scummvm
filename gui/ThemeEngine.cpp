@@ -652,7 +652,7 @@ bool ThemeEngine::loadExtraFont(FontStyle style, Common::Language lang) {
 	if (entry == _langExtraFonts.end())
 		return false;
 	TextData td = fontStyleToData(style);
-	return addFont(GUI::TextData::kTextDataExtraLang, Common::String(), entry->file(td), entry->sclFile(td), entry->fntSize(td));
+	return addFont(kTextDataExtraLang, Common::String(), entry->file(td), entry->sclFile(td), entry->fntSize(td));
 }
 
 bool ThemeEngine::addTextColor(TextColor colorId, int r, int g, int b) {
