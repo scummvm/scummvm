@@ -311,7 +311,7 @@ void GameState::processFoundItem(int32 item) {
 	const int32 boxBottomRightX = _engine->_renderer->projPosX + 65;
 	const int32 boxBottomRightY = _engine->_renderer->projPosY + 65;
 
-	_engine->_sound->playSample(41);
+	_engine->_sound->playSample(Samples::BitItemFound);
 
 	// process vox play
 	_engine->_music->stopMusic();
@@ -485,7 +485,7 @@ void GameState::processGameoverAnimation() {
 		_engine->_system->delayMillis(15);
 	}
 
-	_engine->_sound->playSample(37, _engine->getRandomNumber(2000) + 3096);
+	_engine->_sound->playSample(Samples::Explode, _engine->getRandomNumber(2000) + 3096);
 	_engine->_interface->blitBox(left, top, right, bottom, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
 	_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
 	_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);

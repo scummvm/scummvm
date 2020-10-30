@@ -31,6 +31,20 @@ namespace TwinE {
 
 #define NUM_CHANNELS 32
 
+namespace Samples {
+enum _Samples {
+	TwinsenHit = 0,
+	SoldierHit = 4,
+	ItemPopup = 11,
+	Explode = 37,
+	BitItemFound = 41,
+	TaskCompleted = 41,
+	Hit = 86,
+	ItemFound = 97,
+	WalkFloorBegin = 126
+};
+}
+
 class TwinEEngine;
 class Sound {
 private:
@@ -51,7 +65,6 @@ public:
 	Sound(TwinEEngine *engine);
 
 	bool isChannelPlaying(int32 channel);
-
 
 	/**
 	 * Play FLA movie samples

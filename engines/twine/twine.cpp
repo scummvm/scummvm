@@ -650,7 +650,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					_animations->initAnim(kLandDeath, 4, 0, 0);
 					actor->controlMode = ControlMode::kNoMove;
 				} else {
-					_sound->playSample(37, getRandomNumber(2000) + 3096, 1, actor->x, actor->y, actor->z, a);
+					_sound->playSample(Samples::Explode, getRandomNumber(2000) + 3096, 1, actor->x, actor->y, actor->z, a);
 
 					if (a == _scene->mecaPinguinIdx) {
 						_extra->addExtraExplode(actor->x, actor->y, actor->z);
@@ -697,7 +697,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					if ((brickSound & 0xF) == 1) {
 						if (a) { // all other actors
 							int32 rnd = getRandomNumber(2000) + 3096;
-							_sound->playSample(37, rnd, 1, actor->x, actor->y, actor->z, a);
+							_sound->playSample(Samples::Explode, rnd, 1, actor->x, actor->y, actor->z, a);
 							if (actor->bonusParameter & 0x1F0) {
 								if (!(actor->bonusParameter & 1)) {
 									_actor->processActorExtraBonus(a);

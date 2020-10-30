@@ -515,7 +515,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			const int16 sampleIdx = stream.readSint16LE();
 
 			if (animPos == actor->animPosition) {
-				_engine->_sound->playSample(sampleIdx, 0x1000, 1, actor->x, actor->y, actor->z, actorIdx);
+				_engine->_sound->playSample(sampleIdx, 4096, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
 		}
@@ -525,7 +525,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			int16 frequency = stream.readSint16LE();
 
 			if (animPos == actor->animPosition) {
-				frequency = _engine->getRandomNumber(frequency) + 0x1000 - (ABS(frequency) >> 1);
+				frequency = _engine->getRandomNumber(frequency) + 4096 - (ABS(frequency) >> 1);
 				_engine->_sound->playSample(sampleIdx, frequency, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
@@ -611,14 +611,14 @@ void Animations::processAnimActions(int32 actorIdx) {
 		case ACTION_SAMPLE_BRICK_1:
 			animPos = stream.readByte();
 			if (animPos == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
-				const int16 sampleIdx = (actor->brickSound & 0x0F) + 126;
+				const int16 sampleIdx = (actor->brickSound & 0x0F) + Samples::WalkFloorBegin;
 				_engine->_sound->playSample(sampleIdx, _engine->getRandomNumber(1000) + 3596, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
 		case ACTION_SAMPLE_BRICK_2:
 			animPos = stream.readByte();
 			if (animPos == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
-				const int16 sampleIdx = (actor->brickSound & 0x0F) + 126;
+				const int16 sampleIdx = (actor->brickSound & 0x0F) + Samples::WalkFloorBegin;
 				_engine->_sound->playSample(sampleIdx, _engine->getRandomNumber(1000) + 3596, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;

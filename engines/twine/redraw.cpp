@@ -309,8 +309,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				if (_engine->lbaTime - extra->lifeTime > 35) {
 					extra->lifeTime = _engine->lbaTime;
 					extra->type &= 0xFBFF;
-					// FIXME make constant for sample index
-					_engine->_sound->playSample(11, 4096, 1, extra->x, extra->y, extra->z);
+					_engine->_sound->playSample(Samples::ItemPopup, 4096, 1, extra->x, extra->y, extra->z);
 				}
 			} else {
 				if ((extra->type & 1) || (extra->type & 0x40) || (extra->actorIdx + extra->lifeTime - 150 < _engine->lbaTime) || (!((_engine->lbaTime + extra->lifeTime) & 8))) {

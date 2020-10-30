@@ -347,13 +347,10 @@ ActorStruct *Scene::getActor(int32 actorIdx) {
 }
 
 void Scene::processEnvironmentSound() {
-	int16 s, currentAmb, decal, repeat;
-	int16 sampleIdx = -1;
-
 	if (_engine->lbaTime >= sampleAmbienceTime) {
-		currentAmb = _engine->getRandomNumber(4); // random ambiance
+		int16 currentAmb = _engine->getRandomNumber(4); // random ambiance
 
-		for (s = 0; s < 4; s++) {
+		for (int32 s = 0; s < 4; s++) {
 			if (!(samplePlayed & (1 << currentAmb))) { // if not already played
 				samplePlayed |= (1 << currentAmb);     // make sample played
 
@@ -361,12 +358,12 @@ void Scene::processEnvironmentSound() {
 					samplePlayed = 0;
 				}
 
-				sampleIdx = sampleAmbiance[currentAmb];
+				int16 sampleIdx = sampleAmbiance[currentAmb];
 				if (sampleIdx != -1) {
-					decal = sampleRound[currentAmb];
-					repeat = sampleRepeat[currentAmb];
+					int16 decal = sampleRound[currentAmb];
+					int16 repeat = sampleRepeat[currentAmb];
 
-					_engine->_sound->playSample(sampleIdx, (0x1000 + _engine->getRandomNumber(decal) - (decal / 2)), repeat, 110, -1, 110);
+					_engine->_sound->playSample(sampleIdx, (4096 + _engine->getRandomNumber(decal) - (decal / 2)), repeat, 110, -1, 110);
 					break;
 				}
 			}
