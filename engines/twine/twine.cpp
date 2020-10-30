@@ -27,13 +27,14 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/savefile.h"
+#include "common/scummsys.h"
 #include "common/str.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "common/translation.h"
-#include "engines/util.h"
 #include "engines/metaengine.h"
+#include "engines/util.h"
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
@@ -174,6 +175,15 @@ Common::Error TwinEEngine::run() {
 }
 
 bool TwinEEngine::hasFeature(EngineFeature f) const {
+	switch (f) {
+	case EngineFeature::kSupportsReturnToLauncher:
+	case EngineFeature::kSupportsLoadingDuringRuntime:
+	case EngineFeature::kSupportsSavingDuringRuntime:
+	case EngineFeature::kSupportsChangingOptionsDuringRuntime:
+		return true;
+	default:
+		break;
+	}
 	return false;
 }
 
@@ -185,21 +195,21 @@ bool TwinEEngine::hasSavedSlots() {
 
 void TwinEEngine::wipeSaveSlot(int slot) {
 	Common::SaveFileManager *saveFileMan = getSaveFileManager();
-	const Common::String& saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
+	const Common::String &saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
 	saveFileMan->removeSavefile(saveFile);
 }
 
 bool TwinEEngine::loadSaveSlot(int slot) {
 	Common::SaveFileManager *saveFileMan = getSaveFileManager();
-	const Common::String& saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
-	Common::InSaveFile* file = saveFileMan->openForLoading(saveFile);
+	const Common::String &saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
+	Common::InSaveFile *file = saveFileMan->openForLoading(saveFile);
 	return _gameState->loadGame(file);
 }
 
 bool TwinEEngine::saveSlot(int slot) {
 	Common::SaveFileManager *saveFileMan = getSaveFileManager();
-	const Common::String& saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
-	Common::OutSaveFile* file =  saveFileMan->openForSaving(saveFile);
+	const Common::String &saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
+	Common::OutSaveFile *file = saveFileMan->openForSaving(saveFile);
 	return _gameState->saveGame(file);
 }
 
@@ -584,7 +594,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		// Recenter Screen
 		if (_input->isActionActive(TwinEActionType::RecenterScreenOnTwinsen) && !disableScreenRecenter) {
-			const ActorStruct* currentlyFollowedActor = _scene->getActor(_scene->currentlyFollowedActor);
+			const ActorStruct *currentlyFollowedActor = _scene->getActor(_scene->currentlyFollowedActor);
 			_grid->newCameraX = currentlyFollowedActor->x >> 9;
 			_grid->newCameraY = currentlyFollowedActor->y >> 8;
 			_grid->newCameraZ = currentlyFollowedActor->z >> 9;
