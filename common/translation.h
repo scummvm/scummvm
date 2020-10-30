@@ -174,7 +174,6 @@ public:
 	 * For LTR (Left To Right) languages, returns the original input
 	 * For RTL (Right To Left) languages, returns visual representation of a logical single-line input
 	 */
-	String convertBiDiString(const String &input);
 	U32String convertBiDiString(const U32String &input);
 
 private:

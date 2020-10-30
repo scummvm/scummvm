@@ -411,13 +411,6 @@ bool TranslationManager::checkHeader(File &in) {
 	return true;
 }
 
-String TranslationManager::convertBiDiString(const String &input) {
-	if (getCurrentLanguage() != "he")		//TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
-		return input;
-
-	return Common::convertBiDiString(input, HE_ISR);
-}
-
 U32String TranslationManager::convertBiDiString(const U32String &input) {
 	if (getCurrentLanguage() != "he")		//TODO: modify when we'll support other RTL languages, such as Arabic and Farsi
 		return input;
