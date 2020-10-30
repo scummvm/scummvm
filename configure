@@ -3403,7 +3403,7 @@ if test -n "$_host"; then
 			_timidity=no
 			;;
 		ios7)
-			append_var DEFINES "-DIPHONE"
+			append_var DEFINES "-DIPHONE -DIPHONE_IOS7 -DIPHONE_SANDBOXED"
 			_backend="ios7"
 			_seq_midi=no
 			_timidity=no
