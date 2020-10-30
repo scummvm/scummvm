@@ -882,14 +882,14 @@ void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom
 	assert(top <= bottom);
 	int32 width = right - left + 1;
 	int32 height = bottom - top + 1;
+	if (left + width > SCREEN_WIDTH) {
+		width = SCREEN_WIDTH - left;
+	}
+	if (top + height > SCREEN_HEIGHT) {
+		height = SCREEN_HEIGHT - top;
+	}
 	if (width <= 0 || height <= 0) {
 		return;
-	}
-	if (width > SCREEN_WIDTH) {
-		width = SCREEN_WIDTH;
-	}
-	if (height > SCREEN_HEIGHT) {
-		height = SCREEN_HEIGHT;
 	}
 	g_system->copyRectToScreen(frontVideoBuffer.getBasePtr(left, top), frontVideoBuffer.pitch, left, top, width, height);
 	g_system->updateScreen();
