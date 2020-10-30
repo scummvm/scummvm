@@ -24,7 +24,7 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/system.h"
-#include "twine/hqrdepack.h"
+#include "twine/hqr.h"
 #include "twine/input.h"
 #include "twine/interface.h"
 #include "twine/menu.h"
@@ -134,7 +134,7 @@ void Text::initTextBank(int32 bankIdx) {
 	// get index according with language
 	const int32 size = _engine->isLBA1() ? 28 : 30;
 	const int32 languageIndex = _engine->cfgfile.LanguageId * size + bankIdx * 2;
-	const int32 hqrSize = _engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex + INDEXOFFSET);
+	const int32 hqrSize = HQR::getAllocEntry((uint8 **)&dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex + INDEXOFFSET);
 	if (hqrSize == 0) {
 		warning("Failed to initialize text bank %i from file %s", languageIndex, Resources::HQR_TEXT_FILE);
 		return;
@@ -142,7 +142,7 @@ void Text::initTextBank(int32 bankIdx) {
 
 	numDialTextEntries = hqrSize / 2;
 
-	if (_engine->_hqrdepack->hqrGetallocEntry((uint8 **)&dialTextPtr, Resources::HQR_TEXT_FILE, languageIndex + DIALOGSOFFSET) == 0) {
+	if (HQR::getAllocEntry((uint8 **)&dialTextPtr, Resources::HQR_TEXT_FILE, languageIndex + DIALOGSOFFSET) == 0) {
 		warning("Failed to initialize additional text bank %i from file %s", languageIndex + 1, Resources::HQR_TEXT_FILE);
 		return;
 	}

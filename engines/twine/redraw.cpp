@@ -28,7 +28,7 @@
 #include "twine/collision.h"
 #include "twine/debug_scene.h"
 #include "twine/grid.h"
-#include "twine/hqrdepack.h"
+#include "twine/hqr.h"
 #include "twine/input.h"
 #include "twine/interface.h"
 #include "twine/menu.h"

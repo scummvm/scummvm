@@ -25,7 +25,7 @@
 
 #include "common/scummsys.h"
 #include "twine/gamestate.h"
-#include "twine/hqrdepack.h"
+#include "twine/hqr.h"
 
 namespace TwinE {
 

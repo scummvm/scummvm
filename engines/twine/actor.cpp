@@ -27,7 +27,7 @@
 #include "twine/extra.h"
 #include "twine/gamestate.h"
 #include "twine/grid.h"
-#include "twine/hqrdepack.h"
+#include "twine/hqr.h"
 #include "twine/movements.h"
 #include "twine/renderer.h"
 #include "twine/resources.h"
@@ -78,35 +78,35 @@ void Actor::restartHeroScene() {
 }
 
 void Actor::loadHeroEntities() {
-	heroEntityATHLETICSize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityATHLETIC, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROATHLETIC);
+	heroEntityATHLETICSize = HQR::getAllocEntry(&heroEntityATHLETIC, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROATHLETIC);
 	if (heroEntityATHLETICSize == 0) {
 		error("Failed to load actor athletic 3d data");
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityATHLETIC;
 	heroAnimIdxATHLETIC = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
-	heroEntityAGGRESSIVESize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityAGGRESSIVE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROAGGRESSIVE);
+	heroEntityAGGRESSIVESize = HQR::getAllocEntry(&heroEntityAGGRESSIVE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROAGGRESSIVE);
 	if (heroEntityAGGRESSIVESize == 0) {
 		error("Failed to load actor aggressive 3d data");
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityAGGRESSIVE;
 	heroAnimIdxAGGRESSIVE = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
-	heroEntityDISCRETESize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityDISCRETE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERODISCRETE);
+	heroEntityDISCRETESize = HQR::getAllocEntry(&heroEntityDISCRETE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERODISCRETE);
 	if (heroEntityDISCRETESize == 0) {
 		error("Failed to load actor discrete 3d data");
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityDISCRETE;
 	heroAnimIdxDISCRETE = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
-	heroEntityPROTOPACKSize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityPROTOPACK, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROPROTOPACK);
+	heroEntityPROTOPACKSize = HQR::getAllocEntry(&heroEntityPROTOPACK, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROPROTOPACK);
 	if (heroEntityPROTOPACKSize == 0) {
 		error("Failed to load actor protopack 3d data");
 	}
 	_engine->_scene->sceneHero->entityDataPtr = heroEntityPROTOPACK;
 	heroAnimIdxPROTOPACK = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
-	heroEntityNORMALSize = _engine->_hqrdepack->hqrGetallocEntry(&heroEntityNORMAL, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERONORMAL);
+	heroEntityNORMALSize = HQR::getAllocEntry(&heroEntityNORMAL, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERONORMAL);
 	if (heroEntityNORMALSize == 0) {
 		error("Failed to load actor normal 3d data");
 	}
@@ -200,7 +200,7 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx) {
 					if (bodyTable[currentPositionInBodyPtrTab]) {
 						free(bodyTable[currentPositionInBodyPtrTab]);
 					}
-					_engine->_hqrdepack->hqrGetallocEntry(&bodyTable[currentPositionInBodyPtrTab], Resources::HQR_BODY_FILE, flag & 0xFFFF);
+					HQR::getAllocEntry(&bodyTable[currentPositionInBodyPtrTab], Resources::HQR_BODY_FILE, flag & 0xFFFF);
 
 					if (!bodyTable[currentPositionInBodyPtrTab]) {
 						error("HQR ERROR: Loading body entities");

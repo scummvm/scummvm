@@ -20,7 +20,7 @@
  *
  */
 
-#include "twine/hqrdepack.h"
+#include "twine/hqr.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/system.h"
@@ -28,9 +28,22 @@
 
 namespace TwinE {
 
-#define wrap(cmd) if ((cmd) == 0) { warning("Failed to execute " #cmd ); return 0; }
+namespace HQR {
 
-void HQRDepack::hqrDecompressEntry(uint8 *dst, uint8 *src, int32 decompsize, int32 mode) {
+#define wrap(cmd)                           \
+	if ((cmd) == 0) {                       \
+		warning("Failed to execute " #cmd); \
+		return 0;                           \
+	}
+
+/**
+ * Decompress entry based in Yaz0r and Zink decompression code
+ * @param dst destination pointer where will be the decompressed entry
+ * @param src compressed data pointer
+ * @param decompsize real file size after decompression
+ * @param mode compression mode used
+ */
+static void decompressEntry(uint8 *dst, uint8 *src, int32 decompsize, int32 mode) {
 	do {
 		uint8 b = *(src++);
 		for (int32 d = 0; d < 8; d++) {
@@ -53,7 +66,53 @@ void HQRDepack::hqrDecompressEntry(uint8 *dst, uint8 *src, int32 decompsize, int
 	} while (decompsize);
 }
 
-int32 HQRDepack::hqrGetEntry(uint8 *ptr, const char *filename, int32 index) {
+/**
+ * Get a HQR entry pointer
+ * @param filename HQR file name
+ * @param index entry index to extract
+ * @return entry real size
+ */
+static int voxEntrySize(const char *filename, int32 index, int32 hiddenIndex) {
+	if (!filename) {
+		return 0;
+	}
+
+	Common::File file;
+	if (!file.open(filename)) {
+		error("HQR: Could not open %s", filename);
+	}
+
+	uint32 headerSize;
+	wrap(file.read(&headerSize, 4))
+
+	if ((uint32)index >= headerSize / 4) {
+		warning("HQR: Invalid entry index");
+		return 0;
+	}
+
+	wrap(file.seek(index * 4))
+	uint32 offsetToData;
+	wrap(file.read(&offsetToData, 4))
+
+	wrap(file.seek(offsetToData))
+	uint32 realSize;
+	wrap(file.read(&realSize, 4))
+	uint32 compSize;
+	wrap(file.read(&compSize, 4))
+
+	    // exist hidden entries
+	for (int32 i = 0; i < hiddenIndex; i++) {
+		wrap(file.seek(offsetToData + compSize + 10)) // hidden entry
+		offsetToData = offsetToData + compSize + 10;  // current hidden offset
+
+		wrap(file.read(&realSize, 4))
+		wrap(file.read(&compSize, 4))
+	}
+
+	return realSize;
+}
+
+int32 getEntry(uint8 *ptr, const char *filename, int32 index) {
 	if (!ptr) {
 		return 0;
 	}
@@ -91,14 +150,14 @@ int32 HQRDepack::hqrGetEntry(uint8 *ptr, const char *filename, int32 index) {
 		uint8 *compDataPtr = nullptr;
 		compDataPtr = (uint8 *)malloc(compSize);
 		wrap(file.read(compDataPtr, compSize))
-		hqrDecompressEntry(ptr, compDataPtr, realSize, mode);
+		decompressEntry(ptr, compDataPtr, realSize, mode);
 		free(compDataPtr);
 	}
 
 	return realSize;
 }
 
-int32 HQRDepack::hqrEntrySize(const char *filename, int32 index) {
+int32 entrySize(const char *filename, int32 index) {
 	if (!filename) {
 		return 0;
 	}
@@ -127,7 +186,7 @@ int32 HQRDepack::hqrEntrySize(const char *filename, int32 index) {
 	return realSize;
 }
 
-int32 HQRDepack::hqrNumEntries(const char *filename) {
+int32 numEntries(const char *filename) {
 	if (!filename) {
 		return 0;
 	}
@@ -138,23 +197,22 @@ int32 HQRDepack::hqrNumEntries(const char *filename) {
 	}
 
 	uint32 headerSize;
-	wrap(file.read(&headerSize, 4))
-	return ((int)headerSize / 4) - 1;
+	wrap(file.read(&headerSize, 4)) return ((int)headerSize / 4) - 1;
 }
 
-int32 HQRDepack::hqrGetallocEntry(uint8 **ptr, const char *filename, int32 index) {
-	const int32 size = hqrEntrySize(filename, index);
+int32 getAllocEntry(uint8 **ptr, const char *filename, int32 index) {
+	const int32 size = entrySize(filename, index);
 	*ptr = (uint8 *)malloc(size * sizeof(uint8));
 	if (!*ptr) {
 		warning("HQR: unable to allocate entry memory");
 		return 0;
 	}
-	hqrGetEntry(*ptr, filename, index);
+	getEntry(*ptr, filename, index);
 
 	return size;
 }
 
-int32 HQRDepack::hqrGetVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenIndex) {
+int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenIndex) {
 	if (!ptr) {
 		return 0;
 	}
@@ -189,12 +247,12 @@ int32 HQRDepack::hqrGetVoxEntry(uint8 *ptr, const char *filename, int32 index, i
 
 	// exist hidden entries
 	for (int32 i = 0; i < hiddenIndex; i++) {
-		wrap(file.seek(offsetToData + compSize + 10))   // hidden entry
-		offsetToData = offsetToData + compSize + 10; // current hidden offset
+		wrap(file.seek(offsetToData + compSize + 10)) // hidden entry
+		offsetToData = offsetToData + compSize + 10;  // current hidden offset
 
 		wrap(file.read(&realSize, 4))
 		wrap(file.read(&compSize, 4))
-		wrap(file.read(&mode, 2))
+			wrap(file.read(&mode, 2))
 	}
 
 	// uncompressed
@@ -206,66 +264,28 @@ int32 HQRDepack::hqrGetVoxEntry(uint8 *ptr, const char *filename, int32 index, i
 		uint8 *compDataPtr = 0;
 		compDataPtr = (uint8 *)malloc(compSize);
 		wrap(file.read(compDataPtr, compSize))
-		hqrDecompressEntry(ptr, compDataPtr, realSize, mode);
+		decompressEntry(ptr, compDataPtr, realSize, mode);
 		free(compDataPtr);
 	}
 
 	return realSize;
 }
 
-int HQRDepack::hqrVoxEntrySize(const char *filename, int32 index, int32 hiddenIndex) {
-	if (!filename) {
-		return 0;
-	}
-
-	Common::File file;
-	if (!file.open(filename)) {
-		error("HQR: Could not open %s", filename);
-	}
-
-	uint32 headerSize;
-	wrap(file.read(&headerSize, 4))
-
-	if ((uint32)index >= headerSize / 4) {
-		warning("HQR: Invalid entry index");
-		return 0;
-	}
-
-	wrap(file.seek(index * 4))
-	uint32 offsetToData;
-	wrap(file.read(&offsetToData, 4))
-
-	wrap(file.seek(offsetToData))
-	uint32 realSize;
-	wrap(file.read(&realSize, 4))
-	uint32 compSize;
-	wrap(file.read(&compSize, 4))
-
-	// exist hidden entries
-	for (int32 i = 0; i < hiddenIndex; i++) {
-		wrap(file.seek(offsetToData + compSize + 10))   // hidden entry
-		offsetToData = offsetToData + compSize + 10; // current hidden offset
-
-		wrap(file.read(&realSize, 4))
-		wrap(file.read(&compSize, 4))
-	}
-
-	return realSize;
-}
-
-int32 HQRDepack::hqrGetallocVoxEntry(uint8 **ptr, const char *filename, int32 index, int32 hiddenIndex) {
-	const int32 size = hqrVoxEntrySize(filename, index, hiddenIndex);
+int32 getAllocVoxEntry(uint8 **ptr, const char *filename, int32 index, int32 hiddenIndex) {
+	const int32 size = voxEntrySize(filename, index, hiddenIndex);
 
 	*ptr = (uint8 *)malloc(size * sizeof(uint8));
 	if (!*ptr) {
 		warning("HQR: unable to allocate entry memory");
 		return 0;
 	}
-	hqrGetVoxEntry(*ptr, filename, index, hiddenIndex);
+	getVoxEntry(*ptr, filename, index, hiddenIndex);
 
 	return size;
 }
 
 #undef wrap
+
+} // namespace HQR
 
 } // namespace TwinE

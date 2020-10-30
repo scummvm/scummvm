@@ -50,7 +50,7 @@ Resources::~Resources() {
 
 void Resources::initPalettes() {
 	// Init standard palette
-	_engine->_hqrdepack->hqrGetallocEntry(&_engine->_screens->mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL);
+	HQR::getAllocEntry(&_engine->_screens->mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL);
 	_engine->_screens->convertPalToRGBA(_engine->_screens->mainPalette, _engine->_screens->mainPaletteRGBA);
 
 	memcpy(_engine->_screens->palette, _engine->_screens->mainPalette, NUMOFCOLORS * 3);
@@ -63,35 +63,35 @@ void Resources::initPalettes() {
 }
 
 void Resources::preloadSprites() {
-	const int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_SPRITES_FILE);
+	const int32 numEntries = HQR::numEntries(Resources::HQR_SPRITES_FILE);
 	if (numEntries > NUM_SPRITES) {
 		error("Max allowed sprites exceeded: %i/%i", numEntries, NUM_SPRITES);
 	}
 	debug("preload %i sprites", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		spriteSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&spriteTable[i], Resources::HQR_SPRITES_FILE, i);
+		spriteSizeTable[i] = HQR::getAllocEntry(&spriteTable[i], Resources::HQR_SPRITES_FILE, i);
 	}
 }
 
 void Resources::preloadAnimations() {
-	const int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_ANIM_FILE);
+	const int32 numEntries = HQR::numEntries(Resources::HQR_ANIM_FILE);
 	if (numEntries > NUM_ANIMS) {
 		error("Max allowed animations exceeded: %i/%i", numEntries, NUM_ANIMS);
 	}
 	debug("preload %i animations", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		animSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&animTable[i], Resources::HQR_ANIM_FILE, i);
+		animSizeTable[i] = HQR::getAllocEntry(&animTable[i], Resources::HQR_ANIM_FILE, i);
 	}
 }
 
 void Resources::preloadSamples() {
-	const int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_SAMPLES_FILE);
+	const int32 numEntries = HQR::numEntries(Resources::HQR_SAMPLES_FILE);
 	if (numEntries > NUM_SAMPLES) {
 		error("Max allowed samples exceeded: %i/%i", numEntries, NUM_SAMPLES);
 	}
 	debug("preload %i samples", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		samplesSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&samplesTable[i], Resources::HQR_SAMPLES_FILE, i);
+		samplesSizeTable[i] = HQR::getAllocEntry(&samplesTable[i], Resources::HQR_SAMPLES_FILE, i);
 		if (samplesSizeTable[i] == 0) {
 			warning("Failed to load sample %i", i);
 			continue;
@@ -105,13 +105,13 @@ void Resources::preloadSamples() {
 }
 
 void Resources::preloadInventoryItems() {
-	const int32 numEntries = _engine->_hqrdepack->hqrNumEntries(Resources::HQR_INVOBJ_FILE);
+	const int32 numEntries = HQR::numEntries(Resources::HQR_INVOBJ_FILE);
 	if (numEntries > NUM_INVENTORY_ITEMS) {
 		error("Max allowed inventory items exceeded: %i/%i", numEntries, NUM_INVENTORY_ITEMS);
 	}
 	debug("preload %i inventory items", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
-		inventorySizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&inventoryTable[i], Resources::HQR_INVOBJ_FILE, i);
+		inventorySizeTable[i] = HQR::getAllocEntry(&inventoryTable[i], Resources::HQR_INVOBJ_FILE, i);
 	}
 }
 
@@ -119,7 +119,7 @@ void Resources::initResources() {
 	// Menu and in-game palette
 	initPalettes();
 
-	if (_engine->_hqrdepack->hqrGetallocEntry(&fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT) == 0) {
+	if (HQR::getAllocEntry(&fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT) == 0) {
 		error("Failed to load font");
 	}
 
@@ -127,11 +127,11 @@ void Resources::initResources() {
 	_engine->_text->setFontColor(14);
 	_engine->_text->setTextCrossColor(136, 143, 2);
 
-	if (_engine->_hqrdepack->hqrGetallocEntry(&spriteShadowPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW) == 0) {
+	if (HQR::getAllocEntry(&spriteShadowPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW) == 0) {
 		error("Failed to load sprite shadow");
 	}
 
-	if (_engine->_hqrdepack->hqrGetallocEntry(&spriteBoundingBoxPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA) == 0) {
+	if (HQR::getAllocEntry(&spriteBoundingBoxPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA) == 0) {
 		error("Failed to load actors bounding box data");
 	}
 

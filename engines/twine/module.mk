@@ -14,7 +14,7 @@ MODULE_OBJS := \
 	gamestate.o \
 	grid.o \
 	holomap.o \
-	hqrdepack.o \
+	hqr.o \
 	interface.o \
 	input.o \
 	menu.o \

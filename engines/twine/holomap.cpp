@@ -65,12 +65,12 @@ void Holomap::loadHolomapGFX() {
 
 	uint8 *videoPtr5 = videoPtr1 + 73934;
 
-	_engine->_hqrdepack->hqrGetEntry(videoPtr3, Resources::HQR_RESS_FILE, RESSHQR_HOLOSURFACE);
-	_engine->_hqrdepack->hqrGetEntry(videoPtr4, Resources::HQR_RESS_FILE, RESSHQR_HOLOIMG);
+	HQR::getEntry(videoPtr3, Resources::HQR_RESS_FILE, RESSHQR_HOLOSURFACE);
+	HQR::getEntry(videoPtr4, Resources::HQR_RESS_FILE, RESSHQR_HOLOIMG);
 
-	uint8 *videoPtr6 = videoPtr5 + _engine->_hqrdepack->hqrGetEntry(videoPtr5, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL);
-	uint8 *videoPtr7 = videoPtr6 + _engine->_hqrdepack->hqrGetEntry(videoPtr6, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL);
-	uint8 *videoPtr8 = videoPtr7 + _engine->_hqrdepack->hqrGetEntry(videoPtr7, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL);
+	uint8 *videoPtr6 = videoPtr5 + HQR::getEntry(videoPtr5, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL);
+	uint8 *videoPtr7 = videoPtr6 + HQR::getEntry(videoPtr6, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL);
+	uint8 *videoPtr8 = videoPtr7 + HQR::getEntry(videoPtr7, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL);
 
 	loadGfxSub(videoPtr5);
 	loadGfxSub(videoPtr6);
@@ -80,10 +80,10 @@ void Holomap::loadHolomapGFX() {
 
 	// TODO:
 	// uint8 *videoPtr2 = videoPtr1 + 4488;
-	// uint8 *videoPtr11 = videoPtr8 + _engine->_hqrdepack->hqrGetEntry(videoPtr8, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL);
+	// uint8 *videoPtr11 = videoPtr8 + HQR::getEntry(videoPtr8, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL);
 	// uint8 *videoPtr10 = videoPtr11 + 4488;
-	// uint8 *videoPtr12 = videoPtr10 + _engine->_hqrdepack->hqrGetEntry(videoPtr10, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWINFO);
-	// uint8 *videoPtr13 = videoPtr12 + _engine->_hqrdepack->hqrGetEntry(videoPtr12, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM);
+	// uint8 *videoPtr12 = videoPtr10 + HQR::getEntry(videoPtr10, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWINFO);
+	// uint8 *videoPtr13 = videoPtr12 + HQR::getEntry(videoPtr12, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTANIM);
 
 	_engine->_screens->loadCustomPalette(RESSHQR_HOLOPAL);
 

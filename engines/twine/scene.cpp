@@ -153,7 +153,7 @@ bool Scene::loadSceneLBA1() {
 		act->entity = stream.readUint16LE();
 
 		if (!act->staticFlags.bIsSpriteActor) {
-			act->entityDataSize = _engine->_hqrdepack->hqrGetallocEntry(&act->entityDataPtr, Resources::HQR_FILE3D_FILE, act->entity);
+			act->entityDataSize = HQR::getAllocEntry(&act->entityDataPtr, Resources::HQR_FILE3D_FILE, act->entity);
 		}
 
 		act->body = stream.readByte();
@@ -224,7 +224,7 @@ bool Scene::loadSceneLBA1() {
 
 bool Scene::initScene(int32 index) {
 	// load scene from file
-	_currentSceneSize = _engine->_hqrdepack->hqrGetallocEntry(&currentScene, Resources::HQR_SCENE_FILE, index);
+	_currentSceneSize = HQR::getAllocEntry(&currentScene, Resources::HQR_SCENE_FILE, index);
 	if (_currentSceneSize == 0) {
 		return false;
 	}

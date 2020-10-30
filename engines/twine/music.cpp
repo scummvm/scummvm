@@ -27,7 +27,7 @@
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "twine/hqrdepack.h"
+#include "twine/hqr.h"
 #include "twine/resources.h"
 #include "twine/twine.h"
 
@@ -185,7 +185,7 @@ void Music::playMidiMusic(int32 midiIdx, int32 loop) {
 		stopMidiMusic();
 	}
 
-	int32 midiSize = _engine->_hqrdepack->hqrGetallocEntry(&midiPtr, filename, midiIdx);
+	int32 midiSize = HQR::getAllocEntry(&midiPtr, filename, midiIdx);
 	_midiPlayer.play(midiPtr, midiSize);
 }
 

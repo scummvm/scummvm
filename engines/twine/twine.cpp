@@ -52,7 +52,7 @@
 #include "twine/gamestate.h"
 #include "twine/grid.h"
 #include "twine/holomap.h"
-#include "twine/hqrdepack.h"
+#include "twine/hqr.h"
 #include "twine/input.h"
 #include "twine/interface.h"
 #include "twine/menu.h"
@@ -86,7 +86,6 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	_gameState = new GameState(this);
 	_grid = new Grid(this);
 	_movements = new Movements(this);
-	_hqrdepack = new HQRDepack();
 	_interface = new Interface(this);
 	_menu = new Menu(this);
 	_flaMovies = new FlaMovies(this);
@@ -116,7 +115,6 @@ TwinEEngine::~TwinEEngine() {
 	delete _gameState;
 	delete _grid;
 	delete _movements;
-	delete _hqrdepack;
 	delete _interface;
 	delete _menu;
 	delete _flaMovies;

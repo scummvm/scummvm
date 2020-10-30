@@ -313,7 +313,7 @@ int32 Grid::loadGridBricks(int32 gridSize) {
 		if (brickTable[i]) {
 			free(brickTable[i]);
 		}
-		brickSizeTable[i] = _engine->_hqrdepack->hqrGetallocEntry(&brickTable[i], Resources::HQR_LBA_BRK_FILE, i);
+		brickSizeTable[i] = HQR::getAllocEntry(&brickTable[i], Resources::HQR_LBA_BRK_FILE, i);
 		if (brickSizeTable[i] == 0) {
 			warning("Failed to load isometric brick index %i", i);
 		}
@@ -416,14 +416,14 @@ void Grid::createCellingGridMap(uint8 *gridPtr) {
 
 bool Grid::initGrid(int32 index) {
 	// load grids from file
-	const int32 gridSize = _engine->_hqrdepack->hqrGetallocEntry(&currentGrid, Resources::HQR_LBA_GRI_FILE, index);
+	const int32 gridSize = HQR::getAllocEntry(&currentGrid, Resources::HQR_LBA_GRI_FILE, index);
 	if (gridSize == 0) {
 		warning("Failed to load grid index: %i", index);
 		return false;
 	}
 
 	// load layouts from file
-	_engine->_hqrdepack->hqrGetallocEntry(&currentBll, Resources::HQR_LBA_BLL_FILE, index);
+	HQR::getAllocEntry(&currentBll, Resources::HQR_LBA_BLL_FILE, index);
 
 	loadGridBricks(gridSize);
 
@@ -441,7 +441,7 @@ bool Grid::initCellingGrid(int32 index) {
 
 	// load grids from file
 	const int realIndex = index + CELLING_GRIDS_START_INDEX;
-	if (_engine->_hqrdepack->hqrGetallocEntry(&gridPtr, Resources::HQR_LBA_GRI_FILE, realIndex) == 0) {
+	if (HQR::getAllocEntry(&gridPtr, Resources::HQR_LBA_GRI_FILE, realIndex) == 0) {
 		warning("Failed to load grid index %i", realIndex);
 		return false;
 	}

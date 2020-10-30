@@ -134,7 +134,6 @@ class Extra;
 class GameState;
 class Grid;
 class Movements;
-class HQRDepack;
 class Interface;
 class Menu;
 class FlaMovies;
@@ -186,7 +185,6 @@ public:
 	GameState *_gameState;
 	Grid *_grid;
 	Movements *_movements;
-	HQRDepack *_hqrdepack;
 	Interface *_interface;
 	Menu *_menu;
 	FlaMovies *_flaMovies;
