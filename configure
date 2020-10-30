@@ -3829,14 +3829,18 @@ EOF
 	if test "$_sdlnet" = yes ; then
 		set_var SDL_NET_LIBS   "$SDL2_NET_LIBS"
 		set_var SDL_NET_CFLAGS "$SDL2_NET_CFLAGS"
+		add_line_to_config_mk "SDL_NET_MAJOR = 2"
 	else
 		cat > $TMPC << EOF
 #include "SDL_net.h"
 int main(int argc, char *argv[]) { SDLNet_Init(); return 0; }
 EOF
 		cc_check $SDL1_NET_LIBS $LIBS $INCLUDES $SDL1_NET_CFLAGS && _sdlnet=yes
-		set_var SDL_NET_LIBS   "$SDL1_NET_LIBS"
-		set_var SDL_NET_CFLAGS "$SDL1_NET_CFLAGS"
+		if test "$_sdlnet" = yes ; then
+			set_var SDL_NET_LIBS   "$SDL1_NET_LIBS"
+			set_var SDL_NET_CFLAGS "$SDL1_NET_CFLAGS"
+			add_line_to_config_mk "SDL_NET_MAJOR = 1"
+		fi
 	fi
 
 	if test "$_sdlnet" = yes ; then
@@ -3844,6 +3848,7 @@ EOF
 		prepend_var LIBS "$SDL_NET_LIBS"
 		append_var INCLUDES "$SDL_NET_CFLAGS"
 	fi
+	define_in_config_if_no "$_sdl" 'WITHOUT_SDL'
 	define_in_config_if_yes "$_sdlnet" 'USE_SDL_NET'
 	echo "$_sdlnet"
 fi
