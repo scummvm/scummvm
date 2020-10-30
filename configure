@@ -2907,7 +2907,7 @@ case $_host_os in
 		# to n/a (i.e. 0.0). See bug #11430 for details.
 		echocheck "macOS deployement target"
 		_macos_min_version=undefined
-		for _macos_min_version_check in 1030 140 1050 1060 1070 1080 1090 101000 101100 101200 101300 101400 101500 101600; do
+		for _macos_min_version_check in 1030 1040 1050 1060 1070 1080 1090 101000 101100 101200 101300 101400 101500 101600; do
 			cat > $TMPC << EOF
 #include "AvailabilityMacros.h"
 #if MAC_OS_X_VERSION_MIN_REQUIRED > ${_macos_min_version_check}
