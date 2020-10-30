@@ -33,6 +33,7 @@
 #include "twine/resources.h"
 #include "twine/scene.h"
 #include "twine/screens.h"
+#include "twine/sound.h"
 #include "twine/text.h"
 #include "twine/twine.h"
 
@@ -45,6 +46,7 @@ static const char allowedCharIndex[] = " ABCDEFGHIJKLM.NOPQRSTUVWXYZ-abcdefghijk
 
 void MenuOptions::newGame() {
 	_engine->_music->stopMusic();
+	_engine->_sound->stopSamples();
 
 	int32 tmpFlagDisplayText = _engine->cfgfile.FlagDisplayText;
 	_engine->cfgfile.FlagDisplayText = true;
