@@ -3369,6 +3369,7 @@ if test -n "$_host"; then
 			# The Raspberry Pi always supports OpenGL ES 2.0 contexts, thus we
 			# take advantage of those.
 			_opengl_mode=gles2
+			_opengl_game_es2=yes
 			;;
 		dreamcast)
 			append_var DEFINES "-DDISABLE_DEFAULT_SAVEFILEMANAGER"
@@ -5392,7 +5393,7 @@ echocheck "OpenGL for game"
 
 if test "$_opengl_game" = auto ; then
 	_opengl_game=no
-	if (test "$_backend" = "sdl" && test "$_opengl" = yes) || test "$_backend" = "android3d" || test "$_backend" = "switch"; then
+	if (test "$_backend" = "sdl" && test "$_opengl" = yes) || test "$_backend" = "android3d" || test "$_backend" = "switch" || test "$_backend" = "raspberrypi"; then
 		# Try different header filenames
 		# 1) GL/gl.h         This is usually used on POSIX and Windows systems
 		# 2) OpenGL/gl.h     This is used on Mac OS X
