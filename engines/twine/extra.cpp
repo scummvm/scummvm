@@ -612,18 +612,16 @@ void Extra::processExtras() {
 			}
 			// process actor target hit
 			if (extra->type & 0x80) {
-				int32 actorIdx, actorIdxAttacked, tmpAngle, angle;
-
-				actorIdxAttacked = extra->lifeTime;
-				actorIdx = extra->actorIdx;
+				int32 actorIdxAttacked = extra->lifeTime;
+				int32 actorIdx = extra->actorIdx;
 
 				const ActorStruct *actor = _engine->_scene->getActor(actorIdxAttacked);
 				currentExtraX = actor->x;
 				currentExtraY = actor->y + 1000;
 				currentExtraZ = actor->z;
 
-				tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->x, extra->z, currentExtraX, currentExtraZ);
-				angle = (tmpAngle - extra->angle) & 0x3FF;
+				int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->x, extra->z, currentExtraX, currentExtraZ);
+				int32 angle = (tmpAngle - extra->angle) & 0x3FF;
 
 				if (angle > 400 && angle < 600) {
 					if (extra->strengthOfHit) {
