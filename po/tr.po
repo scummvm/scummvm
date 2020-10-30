@@ -8,48 +8,51 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2020-10-31 01:43+0000\n"
+"Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
+"Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
+"scummvm/tr/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.0.4\n"
 
 #: gui/about.cpp:102
 #, c-format
 msgid "(built on %s)"
-msgstr ""
+msgstr "(%s üzerinde inşa edilmiş)"
 
 #: gui/about.cpp:109
 msgid "Features compiled in:"
-msgstr ""
+msgstr "Özellikler derlenmiştir:"
 
 #: gui/about.cpp:118
 msgid "Available engines:"
-msgstr ""
+msgstr "Desteklenen motorlar:"
 
 #: gui/browser.cpp:75 backends/dialogs/macosx/macosx-dialogs.mm:78
 msgid "Show hidden files"
-msgstr ""
+msgstr "Gizli dosyaları göster"
 
 #: gui/browser.cpp:75
 msgid "Show files marked with the hidden attribute"
-msgstr ""
+msgstr "Gizli olarak işaretlenmiş dosyaları göster"
 
 #: gui/browser.cpp:79 gui/remotebrowser.cpp:57
 msgid "Go up"
-msgstr ""
+msgstr "Yukarı git"
 
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
 msgid "Go to previous directory level"
-msgstr ""
+msgstr "Bir önceki klasör seviyesine git"
 
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
 msgctxt "lowres"
 msgid "Go up"
-msgstr ""
+msgstr "Yukarı git"
 
 #: gui/browser.cpp:82 gui/chooser.cpp:46 gui/editgamedialog.cpp:356
 #: gui/editrecorddialog.cpp:67 gui/filebrowser-dialog.cpp:65
@@ -73,7 +76,7 @@ msgstr ""
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:184
 #: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:214
 msgid "Cancel"
-msgstr ""
+msgstr "İptal"
 
 #: gui/browser.cpp:83 gui/chooser.cpp:47 gui/filebrowser-dialog.cpp:66
 #: gui/remotebrowser.cpp:61 gui/themebrowser.cpp:56
@@ -81,42 +84,42 @@ msgstr ""
 #: backends/dialogs/macosx/macosx-dialogs.mm:132
 #: backends/dialogs/win32/win32-dialogs.cpp:138
 msgid "Choose"
-msgstr ""
+msgstr "Seç"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr ""
+msgstr "Oyun verisini indireceğin klasörü seç"
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:540 gui/launcher.cpp:207
 msgid "Select directory with game data"
-msgstr ""
+msgstr "Oyun verisini içeren klasörü seç"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
-msgstr ""
+msgstr "Kimden:"
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:228
 msgid "To: "
-msgstr ""
+msgstr "Kime:"
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
-msgstr ""
+msgstr "İndirmeyi iptal et"
 
 #: gui/downloaddialog.cpp:66
 msgctxt "lowres"
 msgid "Cancel download"
-msgstr ""
+msgstr "İndirmeyi iptal et"
 
 #: gui/downloaddialog.cpp:68
 msgid "Hide"
-msgstr ""
+msgstr "Gizle"
 
 #: gui/downloaddialog.cpp:118
 msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
-msgstr ""
+msgstr "Bağlantınız kısıtlı gibi görünüyor. Yine de indirmek istiyor musun?"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -127,7 +130,7 @@ msgstr ""
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "Yes"
-msgstr ""
+msgstr "Evet"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -138,17 +141,19 @@ msgstr ""
 #: engines/kyra/gui/saveload_eob.cpp:629
 #: engines/sci/graphics/controls32.cpp:928
 msgid "No"
-msgstr ""
+msgstr "Hayır"
 
 #: gui/downloaddialog.cpp:137 gui/launcher.cpp:549
 msgid "ScummVM couldn't open the specified directory!"
-msgstr ""
+msgstr "ScummVM belirtilen klasörü açamadı!"
 
 #: gui/downloaddialog.cpp:147
 msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"İndirmek istediğin klasör yaratılamıyor - belirtilen klasör aynı isimde "
+"dosya içeriyor."
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:357
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:499
@@ -167,7 +172,7 @@ msgstr ""
 #: engines/sword2/animation.cpp:465 engines/sword2/animation.cpp:475
 #: engines/zvision/file/save_manager.cpp:226
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: gui/downloaddialog.cpp:152
 #, c-format
@@ -175,24 +180,26 @@ msgid ""
 "The \"%s\" already exists in the specified directory.\n"
 "Do you really want to download files into that directory?"
 msgstr ""
+"\"%s\" belirlenen klasörde zaten bulunuyor.\n"
+"Bu klasöre dosyaları indirmeyi gerçekten istiyor musun?"
 
 #: gui/downloaddialog.cpp:215
 #, c-format
 msgid "Downloaded %s %S / %s %S"
-msgstr ""
+msgstr "%s %S / %s %S indirildi."
 
 #: gui/downloaddialog.cpp:222
 #, c-format
 msgid "Download speed: %s %S"
-msgstr ""
+msgstr "İndirme hızı: %s %S"
 
 #: gui/editgamedialog.cpp:141 engines/dialogs.cpp:285
 msgid "Game"
-msgstr ""
+msgstr "Oyun"
 
 #: gui/editgamedialog.cpp:145
 msgid "ID:"
-msgstr ""
+msgstr "Kimlik:"
 
 #: gui/editgamedialog.cpp:145 gui/editgamedialog.cpp:147
 #: gui/editgamedialog.cpp:148
@@ -200,205 +207,211 @@ msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
 msgstr ""
+"Komut isteminden kaydedilen ve oynanan oyunları göstermek için kullanılan "
+"kısa oyun tanıtıcısı"
 
 #: gui/editgamedialog.cpp:147
 msgctxt "lowres"
 msgid "ID:"
-msgstr ""
+msgstr "Kimlik:"
 
 #: gui/editgamedialog.cpp:152 gui/editrecorddialog.cpp:59
 msgid "Name:"
-msgstr ""
+msgstr "İsim:"
 
 #: gui/editgamedialog.cpp:152 gui/editgamedialog.cpp:154
 #: gui/editgamedialog.cpp:155
 msgid "Full title of the game"
-msgstr ""
+msgstr "Oyunun tam ismi"
 
 #: gui/editgamedialog.cpp:154
 msgctxt "lowres"
 msgid "Name:"
-msgstr ""
+msgstr "İsim:"
 
 #: gui/editgamedialog.cpp:158 engines/mohawk/dialogs.cpp:140
 #: engines/mohawk/dialogs.cpp:341
 msgid "Language:"
-msgstr ""
+msgstr "Dil:"
 
 #: gui/editgamedialog.cpp:158 gui/editgamedialog.cpp:159
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
-msgstr ""
+msgstr "Oyunun dili. Bu ayar sizin İspanyolca oyununuzu İngilizce'ye çevirmez"
 
 #: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:174 gui/options.cpp:1248
 #: gui/options.cpp:1268 gui/options.cpp:1281 gui/options.cpp:1295
 #: gui/options.cpp:1309 gui/options.cpp:1318 gui/options.cpp:2083
 #: gui/options.cpp:2257 audio/null.cpp:41
 msgid "<default>"
-msgstr ""
+msgstr "<varsayılan>"
 
 #: gui/editgamedialog.cpp:170
+#, fuzzy
 msgid "Platform:"
-msgstr ""
+msgstr "Platform:"
 
 #: gui/editgamedialog.cpp:170 gui/editgamedialog.cpp:172
 #: gui/editgamedialog.cpp:173
 msgid "Platform the game was originally designed for"
-msgstr ""
+msgstr "Oyunun orijinal olarak dizayn edildiği platform"
 
 #: gui/editgamedialog.cpp:172
+#, fuzzy
 msgctxt "lowres"
 msgid "Platform:"
-msgstr ""
+msgstr "Platform:"
 
 #: gui/editgamedialog.cpp:186
 msgid "Engine"
-msgstr ""
+msgstr "Motor"
 
 #: gui/editgamedialog.cpp:202 gui/options.cpp:1638 gui/options.cpp:1769
 #: backends/graphics/sdl/sdl-graphics.cpp:374
 #: backends/platform/ds/arm9/source/dsoptions.cpp:97
 msgid "Graphics"
-msgstr ""
+msgstr "Grafik Ayarları"
 
 #: gui/editgamedialog.cpp:202 gui/options.cpp:1638 gui/options.cpp:1769
+#, fuzzy
 msgid "GFX"
-msgstr ""
+msgstr "GFX"
 
 #: gui/editgamedialog.cpp:208
 msgid "Override global graphic settings"
-msgstr ""
+msgstr "Global grafik ayarlarını bastırma"
 
 #: gui/editgamedialog.cpp:210
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr ""
+msgstr "Global grafik ayarlarını bastırma"
 
 #: gui/editgamedialog.cpp:220 gui/options.cpp:1780
 msgid "Shader"
-msgstr ""
+msgstr "Çizici"
 
 #: gui/editgamedialog.cpp:223
 msgid "Override global shader settings"
-msgstr ""
+msgstr "Global çizici ayarlarını bastırma"
 
 #: gui/editgamedialog.cpp:225
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr ""
+msgstr "Global çizici ayarlarını bastırma"
 
 #: gui/editgamedialog.cpp:239 gui/options.cpp:1814 engines/dialogs.cpp:326
 msgid "Keymaps"
-msgstr ""
+msgstr "Klavye haritası"
 
 #: gui/editgamedialog.cpp:246 gui/options.cpp:1821 engines/dialogs.cpp:301
 msgid "Audio"
-msgstr ""
+msgstr "Ses"
 
 #: gui/editgamedialog.cpp:249
 msgid "Override global audio settings"
-msgstr ""
+msgstr "Global ses ayarlarını bastırma"
 
 #: gui/editgamedialog.cpp:251
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr ""
+msgstr "Global ses ayarlarını bastırma"
 
 #: gui/editgamedialog.cpp:260 gui/options.cpp:1826
 msgid "Volume"
-msgstr ""
+msgstr "Ses"
 
 #: gui/editgamedialog.cpp:262 gui/options.cpp:1828
 msgctxt "lowres"
 msgid "Volume"
-msgstr ""
+msgstr "Ses"
 
 #: gui/editgamedialog.cpp:265
 msgid "Override global volume settings"
-msgstr ""
+msgstr "Global ses ayarlarını bastırma"
 
 #: gui/editgamedialog.cpp:267
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr ""
+msgstr "Global ses ayarlarını bastırma"
 
 #: gui/editgamedialog.cpp:278 gui/options.cpp:1836
+#, fuzzy
 msgid "MIDI"
-msgstr ""
+msgstr "MIDI"
 
 #: gui/editgamedialog.cpp:281
 msgid "Override global MIDI settings"
-msgstr ""
+msgstr "Global MIDI ayarlarını bastırma"
 
 #: gui/editgamedialog.cpp:283
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr ""
+msgstr "Global MIDI ayarlarını bastırma"
 
 #: gui/editgamedialog.cpp:293 gui/options.cpp:1842
 msgid "MT-32"
-msgstr ""
+msgstr "MT-32"
 
 #: gui/editgamedialog.cpp:296
 msgid "Override global MT-32 settings"
-msgstr ""
+msgstr "Global MT-32 ayarlarını bastırma"
 
 #: gui/editgamedialog.cpp:298
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
-msgstr ""
+msgstr "Global MT-32 ayarlarını bastırma"
 
 #: gui/editgamedialog.cpp:307 gui/options.cpp:1849
 msgid "Paths"
-msgstr ""
+msgstr "Yollar"
 
 #: gui/editgamedialog.cpp:309 gui/options.cpp:1851
 msgctxt "lowres"
 msgid "Paths"
-msgstr ""
+msgstr "Yollar"
 
 #: gui/editgamedialog.cpp:316
 msgid "Game Path:"
-msgstr ""
+msgstr "Oyun Yolu:"
 
 #: gui/editgamedialog.cpp:318
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr ""
+msgstr "Oyun Yolu:"
 
 #: gui/editgamedialog.cpp:323 gui/options.cpp:2027
 msgid "Extra Path:"
-msgstr ""
+msgstr "Ekstralar Yolu:"
 
 #: gui/editgamedialog.cpp:323 gui/editgamedialog.cpp:325
 #: gui/editgamedialog.cpp:326
 msgid "Specifies path to additional data used by the game"
-msgstr ""
+msgstr "Oyun tarafından kullanılan ek verinin yolunu belirler"
 
 #: gui/editgamedialog.cpp:325 gui/options.cpp:2029
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr ""
+msgstr "Ekstralar Yolu:"
 
 #: gui/editgamedialog.cpp:332 gui/options.cpp:2011
 msgid "Save Path:"
-msgstr ""
+msgstr "Kaydetme Yolu:"
 
 #: gui/editgamedialog.cpp:332 gui/editgamedialog.cpp:334
 #: gui/editgamedialog.cpp:335 gui/options.cpp:2011 gui/options.cpp:2013
 #: gui/options.cpp:2014
 msgid "Specifies where your saved games are put"
-msgstr ""
+msgstr "Kaydedilen oyunlarin konacağı yeri belirler"
 
 #: gui/editgamedialog.cpp:334 gui/options.cpp:2013
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr ""
+msgstr "Kaydetme Yolu:"
 
 #: gui/editgamedialog.cpp:346 engines/dialogs.cpp:335
 msgid "Achievements"
-msgstr ""
+msgstr "Başarılar"
 
 #: gui/editgamedialog.cpp:370 gui/editgamedialog.cpp:465
 #: gui/editgamedialog.cpp:527 gui/editgamedialog.cpp:588 gui/options.cpp:1936
@@ -409,17 +422,17 @@ msgstr ""
 #: gui/options.cpp:2547 gui/options.cpp:2553 gui/options.cpp:2564
 msgctxt "path"
 msgid "None"
-msgstr ""
+msgstr "Yok"
 
 #: gui/editgamedialog.cpp:375 gui/editgamedialog.cpp:471
 #: gui/editgamedialog.cpp:592 gui/options.cpp:1930 gui/options.cpp:2275
 #: gui/options.cpp:2543 backends/platform/wii/options.cpp:56
 msgid "Default"
-msgstr ""
+msgstr "Varsayılan"
 
 #: gui/editgamedialog.cpp:520 gui/options.cpp:2558
 msgid "Select SoundFont"
-msgstr ""
+msgstr "Soundfont Seç"
 
 #: gui/editgamedialog.cpp:559
 msgid "Select additional game directory"
