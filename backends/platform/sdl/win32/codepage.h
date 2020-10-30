@@ -63,9 +63,13 @@ const CodePageDescription g_cpDescriptions[] = {
 	{"windows-874", 874}, //ANSI/OEM Thai (ISO 8859-11); Thai (Windows)
 	{"cp875", 875}, //IBM EBCDIC Greek Modern
 	{"shift_jis", 932}, //ANSI/OEM Japanese; Japanese (Shift-JIS)
+	{"cp932", 932}, //ANSI/OEM Japanese; Japanese (Shift-JIS)
 	{"gb2312", 936}, //ANSI/OEM Simplified Chinese (PRC, Singapore); Chinese Simplified (GB2312)
 	{"ks_c_5601-1987", 949}, //ANSI/OEM Korean (Unified Hangul Code)
+	{"cp949", 949}, //ANSI/OEM Korean (Unified Hangul Code)
+	{"uhc", 949}, //ANSI/OEM Korean (Unified Hangul Code)
 	{"big5", 950}, //ANSI/OEM Traditional Chinese (Taiwan; Hong Kong SAR, PRC); Chinese Traditional (Big5)
+	{"cp950", 950}, //ANSI/OEM Traditional Chinese (Taiwan; Hong Kong SAR, PRC); Chinese Traditional (Big5)
 	{"ibm1026", 1026}, //IBM EBCDIC Turkish (Latin 5)
 	{"ibm01047", 1047}, //IBM EBCDIC Latin 1/Open System
 	{"ibm01140", 1140}, //IBM EBCDIC US-Canada (037 + Euro symbol); IBM EBCDIC (US-Canada-Euro)
@@ -188,7 +192,7 @@ const CodePageDescription g_cpDescriptions[] = {
 	{"x-iscii-gu", 57010}, //ISCII Gujarati
 	{"x-iscii-pa", 57011}, //ISCII Punjabi
 	{"utf-7", 65000}, //Unicode (UTF-7)
-	{"utf-8", 65001}, //Unicode (UTF-8) 
+	{"utf-8", 65001}, //Unicode (UTF-8)
 	{nullptr, 0}	  //End
 };
 
