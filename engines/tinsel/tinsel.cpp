@@ -970,7 +970,9 @@ Common::Error TinselEngine::run() {
 	_dialogs = new Dialogs();
 
 	// Initialize backend
-	if (getGameID() == GID_DW2) {
+	if (getGameID() == GID_NOIR) {
+		error("Discworld Noir is not yet supported");
+	} else if (getGameID() == GID_DW2) {
 #ifndef DW2_EXACT_SIZE
 		initGraphics(640, 480);
 #else
