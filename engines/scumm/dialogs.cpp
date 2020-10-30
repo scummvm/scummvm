@@ -469,7 +469,7 @@ const Common::U32String InfoDialog::queryResString(int stringno) {
 
 	Common::String convertFromCodePage;
 	if (_vm->_language == Common::KO_KOR)
-		convertFromCodePage = "ks_c_5601-1987";
+		convertFromCodePage = "cp949";
 	else if (_vm->_language == Common::JA_JPN)
 		convertFromCodePage = "shift_jis";
 	else if (_vm->_language == Common::ZH_TWN || _vm->_language == Common::ZH_CNA)
