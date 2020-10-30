@@ -29,7 +29,8 @@ namespace Tinsel {
 
 enum TinselGameID {
 	GID_DW1 = 0,
-	GID_DW2 = 1
+	GID_DW2 = 1,
+	GID_NOIR = 2
 };
 
 enum TinselGameFeatures {
@@ -59,7 +60,8 @@ enum TinselGameFeatures {
 enum TinselEngineVersion {
 	TINSEL_V0 = 0,
 	TINSEL_V1 = 1,
-	TINSEL_V2 = 2
+	TINSEL_V2 = 2,
+	TINSEL_V3 = 3
 };
 
 struct TinselGameDescription {

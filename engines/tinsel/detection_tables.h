@@ -807,6 +807,28 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V2,
 	},
 
+	// ==== Discworld Noir entries ===============================================
+	// Note: All Discworld Noir versions are CD only, therefore we don't add the ADGF_CD flag
+
+	{ // Discworld Noir, Windows 3CD version
+		{
+			"noir",
+			"CD",
+			{
+				{"dw3.scn", 0, "16104acdc66cda903f860acac02a96bd", -1},
+				{"english.smp", 0, "94e510fd33c5c4a67b274bf5c068a87a", -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE
+		},
+		GID_NOIR,
+		0,
+		GF_SCNFILES,
+		TINSEL_V3,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
