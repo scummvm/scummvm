@@ -66,7 +66,6 @@ enum TwinEActionType {
 	InventoryMenu,
 	SpecialAction,
 	Escape,
-	PageUp,
 
 	UIEnter,
 	UIAbort,

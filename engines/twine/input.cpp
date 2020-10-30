@@ -150,7 +150,6 @@ static constexpr const struct ActionMapping {
     {InventoryMenu, 0x36},
     {SpecialAction, 0x11},
     {Escape, 0x01},
-    {PageUp, 0x49}, // TODO: used for what?
     {UIEnter, 0x00},
     {UIAbort, 0x00},
     {UILeft, 0x00},

@@ -225,11 +225,6 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("ESCAPE");
 		gameKeyMap->addAction(act);
 
-		act = new Action("PAGEUP", _("Page Up"));
-		act->setCustomEngineActionEvent(TwinEActionType::PageUp);
-		act->addDefaultInputMapping("PAGEUP");
-		gameKeyMap->addAction(act);
-
 		array[0] = gameKeyMap;
 	}
 
