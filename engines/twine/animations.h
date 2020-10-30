@@ -56,7 +56,7 @@ private:
 	/** Pointer to current animation keyframe */
 	uint8 *keyFramePtr = nullptr;
 	/** Pointer to last animation keyframe */
-	uint8 *lastKeyFramePtr = nullptr;
+	const uint8 *lastKeyFramePtr = nullptr;
 
 public:
 	Animations(TwinEEngine *engine);
@@ -65,7 +65,7 @@ public:
 	/** Current process actor index */
 	int16 currentlyProcessedActorIdx = 0;
 	/** Current actor anim extra pointer */
-	uint8 *currentActorAnimExtraPtr = nullptr;
+	const uint8 *currentActorAnimExtraPtr = nullptr;
 
 	/**
 	 * Set animation keyframe

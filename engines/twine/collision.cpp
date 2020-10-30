@@ -449,10 +449,8 @@ void Collision::checkActorCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 d
 }
 
 void Collision::stopFalling() { // ReceptionObj()
-	int32 fall;
-
 	if (_engine->_animations->currentlyProcessedActorIdx == 0) {
-		fall = _engine->_scene->heroYBeforeFall - _engine->_movements->processActorY;
+		const int32 fall = _engine->_scene->heroYBeforeFall - _engine->_movements->processActorY;
 
 		if (fall >= 0x1000) {
 			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->x, _engine->_actor->processActorPtr->y + 1000, _engine->_actor->processActorPtr->z, kHitStars);
@@ -478,29 +476,25 @@ void Collision::stopFalling() { // ReceptionObj()
 }
 
 int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 actorIdx) {
-	int16 *spriteBounding = (int16 *)(_engine->_resources->spriteBoundingBoxPtr + extra->info0 * 16 + 4);
+	const int16 *spriteBounding = (const int16 *)(_engine->_resources->spriteBoundingBoxPtr + extra->info0 * 16 + 4);
 
-	int32 xLeft = *(spriteBounding++) + extra->x;
-	int32 xRight = *(spriteBounding++) + extra->x;
-
-	int32 yLeft = *(spriteBounding++) + extra->y;
-	int32 yRight = *(spriteBounding++) + extra->y;
-
-	int32 zLeft = *(spriteBounding++) + extra->z;
-	int32 zRight = *(spriteBounding++) + extra->z;
+	const int32 xLeft = *(spriteBounding++) + extra->x;
+	const int32 xRight = *(spriteBounding++) + extra->x;
+	const int32 yLeft = *(spriteBounding++) + extra->y;
+	const int32 yRight = *(spriteBounding++) + extra->y;
+	const int32 zLeft = *(spriteBounding++) + extra->z;
+	const int32 zRight = *(spriteBounding++) + extra->z;
 
 	for (int32 a = 0; a < _engine->_scene->sceneNumActors; a++) {
-		ActorStruct *actorTest = _engine->_scene->getActor(a);
+		const ActorStruct *actorTest = _engine->_scene->getActor(a);
 
 		if (a != actorIdx && actorTest->entity != -1) {
-			int32 xLeftTest = actorTest->x + actorTest->boudingBox.x.bottomLeft;
-			int32 xRightTest = actorTest->x + actorTest->boudingBox.x.topRight;
-
-			int32 yLeftTest = actorTest->y + actorTest->boudingBox.y.bottomLeft;
-			int32 yRightTest = actorTest->y + actorTest->boudingBox.y.topRight;
-
-			int32 zLeftTest = actorTest->z + actorTest->boudingBox.z.bottomLeft;
-			int32 zRightTest = actorTest->z + actorTest->boudingBox.z.topRight;
+			const int32 xLeftTest = actorTest->x + actorTest->boudingBox.x.bottomLeft;
+			const int32 xRightTest = actorTest->x + actorTest->boudingBox.x.topRight;
+			const int32 yLeftTest = actorTest->y + actorTest->boudingBox.y.bottomLeft;
+			const int32 yRightTest = actorTest->y + actorTest->boudingBox.y.topRight;
+			const int32 zLeftTest = actorTest->z + actorTest->boudingBox.z.bottomLeft;
+			const int32 zRightTest = actorTest->z + actorTest->boudingBox.z.topRight;
 
 			if (xLeft < xRightTest && xRight > xLeftTest && yLeft < yRightTest && yRight > yLeftTest && zLeft < zRightTest && zRight > zLeftTest) {
 				if (extra->strengthOfHit != 0) {
@@ -520,9 +514,9 @@ int32 Collision::checkExtraCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 
 		return 1;
 	}
 
-	int32 averageX = ABS(X + oldX) / 2;
-	int32 averageY = ABS(Y + oldY) / 2;
-	int32 averageZ = ABS(Z + oldZ) / 2;
+	const int32 averageX = ABS(X + oldX) / 2;
+	const int32 averageY = ABS(Y + oldY) / 2;
+	const int32 averageZ = ABS(Z + oldZ) / 2;
 
 	if (_engine->_grid->getBrickShape(averageX, averageY, averageZ)) {
 		return 1;
@@ -540,31 +534,27 @@ int32 Collision::checkExtraCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 
 }
 
 int32 Collision::checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extraIdx) {
-	int16 *spriteBounding = (int16 *)(_engine->_resources->spriteBoundingBoxPtr + extra->info0 * 16 + 4);
+	const int16 *spriteBounding = (const int16 *)(_engine->_resources->spriteBoundingBoxPtr + extra->info0 * 16 + 4);
 
-	int32 xLeft = *(spriteBounding++) + extra->x;
-	int32 xRight = *(spriteBounding++) + extra->x;
-
-	int32 yLeft = *(spriteBounding++) + extra->y;
-	int32 yRight = *(spriteBounding++) + extra->y;
-
-	int32 zLeft = *(spriteBounding++) + extra->z;
-	int32 zRight = *(spriteBounding++) + extra->z;
+	const int32 xLeft = *(spriteBounding++) + extra->x;
+	const int32 xRight = *(spriteBounding++) + extra->x;
+	const int32 yLeft = *(spriteBounding++) + extra->y;
+	const int32 yRight = *(spriteBounding++) + extra->y;
+	const int32 zLeft = *(spriteBounding++) + extra->z;
+	const int32 zRight = *(spriteBounding++) + extra->z;
 
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
-		ExtraListStruct *extraTest = &_engine->_extra->extraList[i];
+		const ExtraListStruct *extraTest = &_engine->_extra->extraList[i];
 		if (i != extraIdx && extraTest->info0 != -1) {
-			//            int16 * spriteBoundingTest;
-			//	        spriteBoundingTest = (int16*)(_engine->_resources->spriteBoundingBoxPtr + extraTest->info0 * 16 + 4);
+			//          const int16 * spriteBoundingTest;
+			//	        spriteBoundingTest = (const int16*)(_engine->_resources->spriteBoundingBoxPtr + extraTest->info0 * 16 + 4);
 
-			int32 xLeftTest = *(spriteBounding++) + extraTest->x;
-			int32 xRightTest = *(spriteBounding++) + extraTest->x;
-
-			int32 yLeftTest = *(spriteBounding++) + extraTest->y;
-			int32 yRightTest = *(spriteBounding++) + extraTest->y;
-
-			int32 zLeftTest = *(spriteBounding++) + extraTest->z;
-			int32 zRightTest = *(spriteBounding++) + extraTest->z;
+			const int32 xLeftTest = *(spriteBounding++) + extraTest->x;
+			const int32 xRightTest = *(spriteBounding++) + extraTest->x;
+			const int32 yLeftTest = *(spriteBounding++) + extraTest->y;
+			const int32 yRightTest = *(spriteBounding++) + extraTest->y;
+			const int32 zLeftTest = *(spriteBounding++) + extraTest->z;
+			const int32 zRightTest = *(spriteBounding++) + extraTest->z;
 
 			if (xLeft < xLeftTest) {
 				if (xLeft < xRightTest && xRight > xLeftTest && yLeft < yRightTest && yRight > yLeftTest && zLeft < zRightTest && zRight > zLeftTest) {

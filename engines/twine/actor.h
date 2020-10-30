@@ -169,7 +169,7 @@ struct ActorStruct {
 	AnimationTypes anim = kAnimNone;
 	int32 animExtra = 0;  //field_2
 	int32 brickShape = 0; // field_3
-	uint8 *animExtraPtr = nullptr;
+	const uint8 *animExtraPtr = nullptr;
 	int32 sprite = 0; // field_8
 	uint8 *entityDataPtr = nullptr;
 	int32 entityDataSize = 0;

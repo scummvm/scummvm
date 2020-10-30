@@ -49,28 +49,32 @@ void Redraw::addRedrawCurrentArea(int32 left, int32 top, int32 right, int32 bott
 
 	while (i < numOfRedrawBox) {
 		int32 leftValue;
-		if (currentRedrawList[i].left >= left)
+		if (currentRedrawList[i].left >= left) {
 			leftValue = left;
-		else
+		} else {
 			leftValue = currentRedrawList[i].left;
+		}
 
 		int32 rightValue;
-		if (currentRedrawList[i].right <= right)
+		if (currentRedrawList[i].right <= right) {
 			rightValue = right;
-		else
+		} else {
 			rightValue = currentRedrawList[i].right;
+		}
 
 		int32 topValue;
-		if (currentRedrawList[i].top >= top)
+		if (currentRedrawList[i].top >= top) {
 			topValue = top;
-		else
+		} else {
 			topValue = currentRedrawList[i].top;
+		}
 
 		int32 bottomValue;
-		if (currentRedrawList[i].bottom <= bottom)
+		if (currentRedrawList[i].bottom <= bottom) {
 			bottomValue = bottom;
-		else
+		} else {
 			bottomValue = currentRedrawList[i].bottom;
+		}
 
 		if ((rightValue - leftValue) * (bottomValue - topValue) < ((currentRedrawList[i].bottom - currentRedrawList[i].top) * (currentRedrawList[i].right - currentRedrawList[i].left) + area)) {
 			currentRedrawList[i].left = leftValue;
@@ -98,11 +102,11 @@ void Redraw::addRedrawCurrentArea(int32 left, int32 top, int32 right, int32 bott
 }
 
 void Redraw::addRedrawArea(int32 left, int32 top, int32 right, int32 bottom) {
-	if (left < 0) {
-		left = 0;
+	if (left < SCREEN_TEXTLIMIT_LEFT) {
+		left = SCREEN_TEXTLIMIT_LEFT;
 	}
-	if (top < 0) {
-		top = 0;
+	if (top < SCREEN_TEXTLIMIT_TOP) {
+		top = SCREEN_TEXTLIMIT_TOP;
 	}
 	if (right >= SCREEN_WIDTH) {
 		right = SCREEN_TEXTLIMIT_RIGHT;
@@ -198,19 +202,16 @@ void Redraw::updateOverlayTypePosition(int16 X1, int16 Y1, int16 X2, int16 Y2) {
 
 // TODO: convert to bool and check if this isn't always true...
 void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
-	int16 tmp_projPosX;
-	int16 tmp_projPosY;
-	ActorStruct *actor;
-
-	tmp_projPosX = _engine->_renderer->projPosXScreen;
-	tmp_projPosY = _engine->_renderer->projPosYScreen;
+	int16 tmp_projPosX = _engine->_renderer->projPosXScreen;
+	int16 tmp_projPosY = _engine->_renderer->projPosYScreen;
 
 	_engine->_interface->resetClip();
 
 	if (bgRedraw) {
 		_engine->freezeTime();
-		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2)
+		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2) {
 			_engine->_screens->fadeOut(_engine->_screens->paletteRGBA);
+		}
 		_engine->_screens->clearScreen();
 		_engine->_grid->redrawGrid();
 		updateOverlayTypePosition(tmp_projPosX, tmp_projPosY, _engine->_renderer->projPosXScreen, _engine->_renderer->projPosYScreen);
@@ -233,10 +234,10 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 
 	// Process actors drawing list
 	for (modelActorPos = 0; modelActorPos < _engine->_scene->sceneNumActors; modelActorPos++, spriteActorPos++, shadowActorPos++) {
-		actor = _engine->_scene->getActor(modelActorPos);
+		ActorStruct *actor = _engine->_scene->getActor(modelActorPos);
 		actor->dynamicFlags.bIsVisible = 0; // reset visible state
 
-		if (_engine->_grid->useCellingGrid == -1 || actor->y <= (*(int16 *)(_engine->_grid->cellingGridIdx * 24 + (int8 *)_engine->_scene->sceneZones + 8))) {
+		if (_engine->_grid->useCellingGrid == -1 || actor->y <= (*(const int16 *)(_engine->_grid->cellingGridIdx * 24 + (const int8 *)_engine->_scene->sceneZones + 8))) {
 			// no redraw required
 			if (actor->staticFlags.bIsBackgrounded && bgRedraw == 0) {
 				// get actor position on screen
@@ -355,11 +356,11 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 					_engine->_animations->setModelAnimation(actor2->animPosition, _engine->_resources->animTable[actor2->previousAnimIdx], _engine->_actor->bodyTable[actor2->entity], &actor2->animTimerData);
 
 					if (!_engine->_renderer->renderIsoModel(actor2->x - _engine->_grid->cameraX, actor2->y - _engine->_grid->cameraY, actor2->z - _engine->_grid->cameraZ, 0, actor2->angle, 0, _engine->_actor->bodyTable[actor2->entity])) {
-						if (renderLeft < 0) {
+						if (renderLeft < SCREEN_TEXTLIMIT_LEFT) {
 							renderLeft = SCREEN_TEXTLIMIT_LEFT;
 						}
 
-						if (renderTop < 0) {
+						if (renderTop < SCREEN_TEXTLIMIT_TOP) {
 							renderTop = SCREEN_TEXTLIMIT_TOP;
 						}
 
@@ -401,7 +402,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 			}
 			// Drawing shadows
 			else if (flags == 0xC00 && !_engine->_actor->cropBottomScreen) {
-				DrawListStruct shadow = drawList[pos];
+				const DrawListStruct& shadow = drawList[pos];
 
 				// get actor position on screen
 				_engine->_renderer->projectPositionOnScreen(shadow.x - _engine->_grid->cameraX, shadow.y - _engine->_grid->cameraY, shadow.z - _engine->_grid->cameraZ);
@@ -582,12 +583,11 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				break;
 			}
 			case koNumber: {
-				int32 textLength, textHeight;
 				char text[10];
 				snprintf(text, sizeof(text), "%d", overlay->info0);
 
-				textLength = _engine->_text->getTextSize(text);
-				textHeight = 48;
+				int32 textLength = _engine->_text->getTextSize(text);
+				int32 textHeight = 48;
 
 				renderLeft = overlay->x - (textLength / 2);
 				renderTop = overlay->y - 24;
@@ -606,15 +606,14 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				break;
 			}
 			case koNumberRange: {
-				int32 textLength, textHeight, range;
 				char text[10];
 
-				range = _engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->lbaTime - 50);
+				int32 range = _engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->lbaTime - 50);
 
 				sprintf(text, "%d", range);
 
-				textLength = _engine->_text->getTextSize(text);
-				textHeight = 48;
+				int32 textLength = _engine->_text->getTextSize(text);
+				int32 textHeight = 48;
 
 				renderLeft = overlay->x - (textLength / 2);
 				renderTop = overlay->y - 24;
@@ -663,12 +662,12 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				renderRight = overlay->x + (textLength / 2);
 				renderBottom = overlay->y + textHeight;
 
-				if (renderLeft < 0) {
-					renderLeft = 0;
+				if (renderLeft < SCREEN_TEXTLIMIT_LEFT) {
+					renderLeft = SCREEN_TEXTLIMIT_LEFT;
 				}
 
-				if (renderTop < 0) {
-					renderTop = 0;
+				if (renderTop < SCREEN_TEXTLIMIT_TOP) {
+					renderTop = SCREEN_TEXTLIMIT_TOP;
 				}
 
 				if (renderRight > SCREEN_TEXTLIMIT_RIGHT) {

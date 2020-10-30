@@ -160,10 +160,10 @@ void Animations::applyAnimStepRotation(uint8 **ptr, int32 bp, int32 bx) {
 	int16 angleDif;
 	int16 computedAngle;
 
-	lastAngle = *(int16 *)(lastKeyFramePtr);
+	lastAngle = *(const int16 *)(lastKeyFramePtr);
 	lastKeyFramePtr += 2;
 
-	newAngle = *(int16 *)(keyFramePtr);
+	newAngle = *(const int16 *)(keyFramePtr);
 	keyFramePtr += 2;
 
 	lastAngle &= 0x3FF;
@@ -195,10 +195,10 @@ void Animations::applyAnimStep(uint8 **ptr, int32 bp, int32 bx) {
 	int16 angleDif;
 	int16 computedAngle;
 
-	lastAngle = *(int16 *)lastKeyFramePtr;
+	lastAngle = *(const int16 *)lastKeyFramePtr;
 	lastKeyFramePtr += 2;
 
-	newAngle = *(int16 *)keyFramePtr;
+	newAngle = *(const int16 *)keyFramePtr;
 	keyFramePtr += 2;
 
 	angleDif = newAngle - lastAngle;
@@ -431,15 +431,15 @@ int32 Animations::stockAnimation(uint8 *bodyPtr, AnimTimerDataStruct *animTimerD
 }
 
 int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	int32 numOfPointInAnim = *(int16 *)(animPtr + 2);
+	const int32 numOfPointInAnim = *(const int16 *)(animPtr + 2);
 	keyFramePtr = ((numOfPointInAnim * 8 + 8) * animIdx) + animPtr + 8;
-	int32 keyFrameLength = *(int16 *)(keyFramePtr);
-	int16 bodyHeader = *(int16 *)(bodyPtr);
+	const int32 keyFrameLength = *(const int16 *)(keyFramePtr);
+	const int16 bodyHeader = *(const int16 *)(bodyPtr);
 	if (!(bodyHeader & 2)) {
 		return 0;
 	}
 
-	uint8 *ebx = animTimerDataPtr->ptr;
+	const uint8 *ebx = animTimerDataPtr->ptr;
 	int32 ebp = animTimerDataPtr->time;
 
 	if (!ebx) {
@@ -449,35 +449,35 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 
 	lastKeyFramePtr = ebx;
 
-	int32 eax = _engine->lbaTime - ebp;
+	const int32 eax = _engine->lbaTime - ebp;
 
 	if (eax >= keyFrameLength) {
 		animTimerDataPtr->ptr = keyFramePtr;
 		animTimerDataPtr->time = _engine->lbaTime;
 
-		currentStepX = *(int16 *)(keyFramePtr + 2);
-		currentStepY = *(int16 *)(keyFramePtr + 4);
-		currentStepZ = *(int16 *)(keyFramePtr + 6);
+		currentStepX = *(const int16 *)(keyFramePtr + 2);
+		currentStepY = *(const int16 *)(keyFramePtr + 4);
+		currentStepZ = *(const int16 *)(keyFramePtr + 6);
 
-		processRotationByAnim = *(int16 *)(keyFramePtr + 8);
-		processLastRotationAngle = *(int16 *)(keyFramePtr + 12);
+		processRotationByAnim = *(const int16 *)(keyFramePtr + 8);
+		processLastRotationAngle = *(const int16 *)(keyFramePtr + 12);
 
 		return 1;
 	}
-	uint8 *keyFramePtrOld = keyFramePtr;
+	const uint8 *keyFramePtrOld = keyFramePtr;
 
 	lastKeyFramePtr += 8;
 	keyFramePtr += 8;
 
-	processRotationByAnim = *(int16 *)(keyFramePtr);
-	processLastRotationAngle = (*(int16 *)(keyFramePtr + 4) * eax) / keyFrameLength;
+	processRotationByAnim = *(const int16 *)(keyFramePtr);
+	processLastRotationAngle = (*(const int16 *)(keyFramePtr + 4) * eax) / keyFrameLength;
 
 	lastKeyFramePtr += 8;
 	keyFramePtr += 8;
 
-	currentStepX = (*(int16 *)(keyFramePtrOld + 2) * eax) / keyFrameLength;
-	currentStepY = (*(int16 *)(keyFramePtrOld + 4) * eax) / keyFrameLength;
-	currentStepZ = (*(int16 *)(keyFramePtrOld + 6) * eax) / keyFrameLength;
+	currentStepX = (*(const int16 *)(keyFramePtrOld + 2) * eax) / keyFrameLength;
+	currentStepY = (*(const int16 *)(keyFramePtrOld + 4) * eax) / keyFrameLength;
+	currentStepZ = (*(const int16 *)(keyFramePtrOld + 6) * eax) / keyFrameLength;
 
 	return 0;
 }
@@ -493,7 +493,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 	int32 index = 0;
 	const int32 endAnimEntityIdx = stream.readByte();
 	while (index++ < endAnimEntityIdx) {
-		int32 actionType = stream.readByte() - 5;
+		const int32 actionType = stream.readByte() - 5;
 		if (actionType >= ACTION_LAST) {
 			return;
 		}

@@ -113,19 +113,19 @@ private:
 	 * Create celling grid map from celling grid to block library buffer
 	 * @param gridPtr celling grid buffer pointer
 	 */
-	void createCellingGridMap(uint8 *gridPtr);
+	void createCellingGridMap(const uint8 *gridPtr);
 	/**
 	 * Create grid Y column in block buffer
 	 * @param gridEntry current grid index
 	 * @param dest destination block buffer
 	 */
-	void createCellingGridColumn(uint8 *gridEntry, uint8 *dest);
+	void createCellingGridColumn(const uint8 *gridEntry, uint8 *dest);
 	/**
 	 * Create grid Y column in block buffer
 	 * @param gridEntry current grid index
 	 * @param dest destination block buffer
 	 */
-	void createGridColumn(uint8 *gridEntry, uint8 *dest);
+	void createGridColumn(const uint8 *gridEntry, uint8 *dest);
 	/**
 	 * Load grid bricks according with block librarie usage
 	 * @param gridSize size of the current grid
@@ -139,7 +139,7 @@ private:
 	 * @param buffer brick pointer buffer
 	 * @param ptr brick mask pointer buffer
 	 */
-	int processGridMask(uint8 *buffer, uint8 *ptr);
+	int processGridMask(const uint8 *buffer, uint8 *ptr);
 	/**
 	 * Copy grid mask to allow actors to display over the bricks
 	 * @param index current brick index
@@ -147,7 +147,7 @@ private:
 	 * @param y grid Y coordinate
 	 * @param buffer work video buffer
 	 */
-	void copyGridMask(int32 index, int32 x, int32 y, uint8 *buffer);
+	void copyGridMask(int32 index, int32 x, int32 y, const uint8 *buffer);
 
 	/** Table with all loaded bricks */
 	uint8 *brickTable[NUM_BRICKS]{nullptr};
@@ -235,7 +235,7 @@ public:
 	 * @param height sprite height size
 	 * @param spritePtr sprite buffer pointer
 	 */
-	void getSpriteSize(int32 offset, int32 *width, int32 *height, uint8 *spritePtr);
+	void getSpriteSize(int32 offset, int32 *width, int32 *height, const uint8 *spritePtr);
 
 	/**
 	 * Draw brick sprite in the screen
@@ -269,7 +269,7 @@ public:
 	 * @param index block library index
 	 * @return pointer to the current block index
 	 */
-	uint8 *getBlockLibrary(int32 index);
+	const uint8 *getBlockLibrary(int32 index);
 
 	/** Create grid map from current grid to block library buffer */
 	void createGridMap();

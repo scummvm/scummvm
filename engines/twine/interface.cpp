@@ -241,20 +241,24 @@ void Interface::drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom
 }
 
 void Interface::setClip(int32 left, int32 top, int32 right, int32 bottom) {
-	if (left < 0)
+	if (left < 0) {
 		left = 0;
+	}
 	textWindowLeft = left;
 
-	if (top < 0)
+	if (top < 0) {
 		top = 0;
+	}
 	textWindowTop = top;
 
-	if (right >= SCREEN_WIDTH)
+	if (right >= SCREEN_WIDTH) {
 		right = SCREEN_TEXTLIMIT_RIGHT;
+	}
 	textWindowRight = right;
 
-	if (bottom >= SCREEN_HEIGHT)
+	if (bottom >= SCREEN_HEIGHT) {
 		bottom = SCREEN_TEXTLIMIT_BOTTOM;
+	}
 	textWindowBottom = bottom;
 }
 

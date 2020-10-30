@@ -92,14 +92,16 @@ void DebugGrid::applyCellingGrid() {
 	// Increase celling grid index
 	if (_engine->_input->toggleActionIfActive(TwinEActionType::IncreaseCellingGridIndex)) {
 		_engine->_grid->cellingGridIdx++;
-		if (_engine->_grid->cellingGridIdx > 133)
+		if (_engine->_grid->cellingGridIdx > 133) {
 			_engine->_grid->cellingGridIdx = 133;
+		}
 	}
 	// Decrease celling grid index
 	else if (_engine->_input->toggleActionIfActive(TwinEActionType::DecreaseCellingGridIndex)) {
 		_engine->_grid->cellingGridIdx--;
-		if (_engine->_grid->cellingGridIdx < 0)
+		if (_engine->_grid->cellingGridIdx < 0) {
 			_engine->_grid->cellingGridIdx = 0;
+		}
 	}
 	// Enable/disable celling grid
 	else if (_engine->_input->toggleActionIfActive(TwinEActionType::ApplyCellingGrid)) {

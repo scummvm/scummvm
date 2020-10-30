@@ -42,8 +42,8 @@ void Movements::getShadowPosition(int32 x, int32 y, int32 z) {
 	processActorZ = z;
 
 	if (*ptr) {
-		uint8 *blockPtr = _engine->_grid->getBlockLibrary(*ptr - 1) + 3 + *(ptr + 1) * 4;
-		uint8 brickShape = *((uint8 *)(blockPtr));
+		const uint8 *blockPtr = _engine->_grid->getBlockLibrary(*ptr - 1) + 3 + *(ptr + 1) * 4;
+		const uint8 brickShape = *((const uint8 *)(blockPtr));
 		_engine->_actor->shadowCollisionType = brickShape;
 	} else {
 		_engine->_actor->shadowCollisionType = 0;

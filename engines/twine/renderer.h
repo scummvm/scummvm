@@ -121,13 +121,13 @@ private:
 	int32 renderAnimatedModel(uint8 *bodyPtr);
 	void circleFill(int32 x, int32 y, int32 radius, int8 color);
 	int32 renderModelElements(uint8 *pointer);
-	void getBaseRotationPosition(int32 X, int32 Y, int32 Z);
-	void getCameraAnglePositions(int32 X, int32 Y, int32 Z);
-	void applyRotation(int32 *tempMatrix, int32 *currentMatrix);
-	void applyPointsRotation(uint8 *firstPointsPtr, int32 numPoints, pointTab *destPoints, int32 *rotationMatrix);
-	void processRotatedElement(int32 rotZ, int32 rotY, int32 rotX, elementEntry *elemPtr);
-	void applyPointsTranslation(uint8 *firstPointsPtr, int32 numPoints, pointTab *destPoints, int32 *translationMatrix);
-	void processTranslatedElement(int32 rotX, int32 rotY, int32 rotZ, elementEntry *elemPtr);
+	void getBaseRotationPosition(int32 x, int32 y, int32 z);
+	void getCameraAnglePositions(int32 x, int32 y, int32 z);
+	void applyRotation(int32 *tempMatrix, const int32 *currentMatrix);
+	void applyPointsRotation(const uint8 *firstPointsPtr, int32 numPoints, pointTab *destPoints, const int32 *rotationMatrix);
+	void processRotatedElement(int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr);
+	void applyPointsTranslation(const uint8 *firstPointsPtr, int32 numPoints, pointTab *destPoints, const int32 *translationMatrix);
+	void processTranslatedElement(int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr);
 	void translateGroup(int16 ax, int16 bx, int16 cx);
 
 	// ---- variables ----
@@ -166,11 +166,11 @@ private:
 
 	int32 numOfPoints = 0;
 	int32 numOfElements = 0;
-	uint8 *pointsPtr = nullptr;
+	const uint8 *pointsPtr = nullptr;
 	uint8 *elementsPtr = nullptr;
 	uint8 *elementsPtr2 = nullptr;
 
-	uint8 *pri2Ptr2 = nullptr;
+	const uint8 *pri2Ptr2 = nullptr;
 
 	int32 matricesTable[271] {0};
 	uint8 *currentMatrixTableEntry = nullptr;
@@ -187,7 +187,7 @@ private:
 
 	int16 primitiveCounter = 0;
 	renderTabEntry *renderTabEntryPtr = nullptr;
-	renderTabEntry *renderTabEntryPtr2 = nullptr;
+	const renderTabEntry *renderTabEntryPtr2 = nullptr;
 	renderTabEntry *renderTabSortedPtr = nullptr;
 
 	renderTabEntry renderTab[1000];
@@ -198,7 +198,7 @@ private:
 
 	// render polygon vars
 	int16 pRenderV3[96] {0};
-	int16 *pRenderV2 = 0;
+	const int16 *pRenderV2 = 0;
 
 	int16 vleft = 0;
 	int16 vtop = 0;
@@ -249,13 +249,13 @@ public:
 	void prepareIsoModel(uint8 *bodyPtr); // loadGfxSub
 
 	int32 projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
-	void setCameraPosition(int32 X, int32 Y, int32 cX, int32 cY, int32 cZ);
+	void setCameraPosition(int32 x, int32 y, int32 cX, int32 cY, int32 cZ);
 	void setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6);
-	void setBaseTranslation(int32 X, int32 Y, int32 Z);
-	void setBaseRotation(int32 X, int32 Y, int32 Z);
-	void setOrthoProjection(int32 X, int32 Y, int32 Z);
+	void setBaseTranslation(int32 x, int32 y, int32 z);
+	void setBaseRotation(int32 x, int32 y, int32 z);
+	void setOrthoProjection(int32 x, int32 y, int32 z);
 
-	int32 renderIsoModel(int32 X, int32 Y, int32 Z, int32 angleX, int32 angleY, int32 angleZ, uint8 *bodyPtr);
+	int32 renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, uint8 *bodyPtr);
 
 	void copyActorInternAnim(uint8 *bodyPtrSrc, uint8 *bodyPtrDest);
 
