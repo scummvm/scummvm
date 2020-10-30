@@ -829,6 +829,25 @@ static const TinselGameDescription gameDescriptions[] = {
 		TINSEL_V3,
 	},
 
+	{ // Discworld Noir, Interactive Windows Demo
+		{
+			"noir",
+			"Demo",
+			{
+				{"english.smp", 0, "ecca3ec84ad6460bf289e6171ac32048", 73494004},
+				{"dw3.scn", 0, "f8e50c19b44a2c6eaee5f78654647878", 803781},
+				{NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE | ADGF_DEMO
+		},
+		GID_NOIR,
+		0,
+		GF_SCNFILES,
+		TINSEL_V3,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0, 0 }
 };
 
