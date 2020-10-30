@@ -37,7 +37,7 @@ enum _Samples {
 	SoldierHit = 4,
 	ItemPopup = 11,
 	Explode = 37,
-	BitItemFound = 41,
+	BigItemFound = 41,
 	TaskCompleted = 41,
 	Hit = 86,
 	ItemFound = 97,

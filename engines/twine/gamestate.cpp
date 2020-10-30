@@ -311,7 +311,7 @@ void GameState::processFoundItem(int32 item) {
 	const int32 boxBottomRightX = _engine->_renderer->projPosX + 65;
 	const int32 boxBottomRightY = _engine->_renderer->projPosY + 65;
 
-	_engine->_sound->playSample(Samples::BitItemFound);
+	_engine->_sound->playSample(Samples::BigItemFound);
 
 	// process vox play
 	_engine->_music->stopMusic();
