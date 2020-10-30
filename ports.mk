@@ -357,7 +357,7 @@ endif # WITHOUT_SDL
 endif # USE_SDL_NET
 
 ifdef USE_LIBCURL
-OSX_STATIC_LIBS += -lcurl
+OSX_STATIC_LIBS += -lcurl -framework Security
 endif
 
 ifdef USE_FREETYPE2
