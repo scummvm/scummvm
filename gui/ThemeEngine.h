@@ -420,8 +420,6 @@ public:
 
 	int getFontHeight(FontStyle font = kFontStyleBold) const;
 
-	int getStringWidth(const Common::String &str, FontStyle font = kFontStyleBold) const;
-
 	int getStringWidth(const Common::U32String &str, FontStyle font = kFontStyleBold) const;
 
 	int getCharWidth(byte c, FontStyle font = kFontStyleBold) const;
@@ -708,10 +706,6 @@ protected:
 	 * These functions are called from all the Widget drawing methods.
 	 */
 	void drawDD(DrawData type, const Common::Rect &r, uint32 dynamic = 0, bool forceRestore = false);
-	void drawDDText(TextData type, TextColor color, const Common::Rect &r, const Common::String &text, bool restoreBg,
-	                bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft,
-	                TextAlignVertical alignV = kTextAlignVTop, int deltax = 0,
-	                const Common::Rect &drawableTextArea = Common::Rect(0, 0, 0, 0));
 	void drawDDText(TextData type, TextColor color, const Common::Rect &r, const Common::U32String &text, bool restoreBg,
 	                bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft,
 	                TextAlignVertical alignV = kTextAlignVTop, int deltax = 0,

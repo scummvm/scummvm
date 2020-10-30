@@ -983,40 +983,6 @@ void ThemeEngine::drawDD(DrawData type, const Common::Rect &r, uint32 dynamic, b
 	}
 }
 
-void ThemeEngine::drawDDText(TextData type, TextColor color, const Common::Rect &r, const Common::String &text,
-                             bool restoreBg, bool ellipsis, Graphics::TextAlign alignH, TextAlignVertical alignV,
-                             int deltax, const Common::Rect &drawableTextArea) {
-
-	if (type == kTextDataNone || !_texts[type] || _layerToDraw == kDrawLayerBackground)
-		return;
-
-	Common::Rect area = r;
-	area.clip(_screen.w, _screen.h);
-
-	Common::Rect dirty = drawableTextArea;
-	if (dirty.isEmpty()) dirty = area;
-	else dirty.clip(area);
-
-	if (!_clip.isEmpty()) {
-		dirty.clip(_clip);
-	}
-
-	// HACK: One small pixel should be invisible enough
-	if (dirty.isEmpty()) dirty = Common::Rect(0, 0, 1, 1);
-
-	if (restoreBg)
-		restoreBackground(dirty);
-
-	_vectorRenderer->setFgColor(_textColors[color]->r, _textColors[color]->g, _textColors[color]->b);
-#ifdef USE_TRANSLATION
-	_vectorRenderer->drawString(_texts[type]->_fontPtr, TransMan.convertBiDiString(text), area, alignH, alignV, deltax, ellipsis, dirty);
-#else
-	_vectorRenderer->drawString(_texts[type]->_fontPtr, text, area, alignH, alignV, deltax, ellipsis, dirty);
-#endif
-
-	addDirtyRect(dirty);
-}
-
 void ThemeEngine::drawDDText(TextData type, TextColor color, const Common::Rect &r, const Common::U32String &text,
 	bool restoreBg, bool ellipsis, Graphics::TextAlign alignH, TextAlignVertical alignV,
 	int deltax, const Common::Rect &drawableTextArea) {
@@ -1660,10 +1626,6 @@ const Graphics::Font *ThemeEngine::getFont(FontStyle font) const {
 
 int ThemeEngine::getFontHeight(FontStyle font) const {
 	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getFontHeight() : 0;
-}
-
-int ThemeEngine::getStringWidth(const Common::String &str, FontStyle font) const {
-	return ready() ? _texts[fontStyleToData(font)]->_fontPtr->getStringWidth(str) : 0;
 }
 
 int ThemeEngine::getStringWidth(const Common::U32String &str, FontStyle font) const {
