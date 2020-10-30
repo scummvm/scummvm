@@ -44,14 +44,6 @@ private:
 	 * */
 	int hqrVoxEntrySize(const char *filename, int32 index, int32 hiddenIndex);
 	/**
-	 * Decompress entry based in the original expand lzss lba code
-	 * @param dst destination pointer where will be the decompressed entry
-	 * @param src compressed data pointer
-	 * @param decompsize real file size after decompression
-	 * @param mode compression mode used
-	 */
-	void hqrDecompressLZEntry(uint8 *dst, uint8 *src, int32 decompsize, int32 mode);
-	/**
 	 * Decompress entry based in Yaz0r and Zink decompression code
 	 * @param dst destination pointer where will be the decompressed entry
 	 * @param src compressed data pointer

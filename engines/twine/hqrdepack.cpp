@@ -53,40 +53,6 @@ void HQRDepack::hqrDecompressEntry(uint8 *dst, uint8 *src, int32 decompsize, int
 	} while (decompsize);
 }
 
-void HQRDepack::hqrDecompressLZEntry(uint8 *dst, uint8 *src, int32 decompsize, int32 mode) {
-	while (decompsize > 0) {
-		uint8 type = *(src++);
-		for (uint8 bits = 1; bits != 0; bits <<= 1) {
-			int32 length;
-			if (!(type & bits)) {
-				uint16 offset = *(uint16 *)(src);
-				src += 2;
-				length = (offset & 0x0F) + (mode + 1);
-				uint8 *ptr = dst - (offset >> 4) - 1;
-				if (offset == 0) {
-					memset(dst, *ptr, length);
-				} else {
-					if ((ptr + length) >= dst) {
-						uint8 *tmp = dst;
-						for (int32 n = 0; n < length; n++)
-							*tmp++ = *ptr++;
-					} else {
-						memcpy(dst, ptr, length);
-					}
-				}
-				dst += length;
-			} else {
-				length = 1;
-				*(dst++) = *(src++);
-			}
-			decompsize -= length;
-			if (decompsize <= 0) {
-				return;
-			}
-		}
-	}
-}
-
 int32 HQRDepack::hqrGetEntry(uint8 *ptr, const char *filename, int32 index) {
 	if (!ptr) {
 		return 0;
@@ -122,7 +88,7 @@ int32 HQRDepack::hqrGetEntry(uint8 *ptr, const char *filename, int32 index) {
 	}
 	// compressed: modes (1 & 2)
 	else if (mode == 1 || mode == 2) {
-		uint8 *compDataPtr = 0;
+		uint8 *compDataPtr = nullptr;
 		compDataPtr = (uint8 *)malloc(compSize);
 		wrap(file.read(compDataPtr, compSize))
 		hqrDecompressEntry(ptr, compDataPtr, realSize, mode);
