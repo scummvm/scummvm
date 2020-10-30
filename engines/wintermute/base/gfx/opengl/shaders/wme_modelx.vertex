@@ -28,7 +28,7 @@ out vec3 Normal;
 
 void main()
 {
-	vec4 viewCoords = viewMatrix * modelMatrix * vec4(position, 1.0f);
+	vec4 viewCoords = viewMatrix * modelMatrix * vec4(position, 1.0);
 	gl_Position = projMatrix * viewCoords;
 
 	Texcoord = texcoord;
@@ -38,7 +38,7 @@ void main()
 	vec3 normalEye = normalize((normalMatrix * vec4(normal, 0.0)).xyz);
 
 	for (int i = 0; i < maxLights; ++i) {
-		if (lights[i].enabled < 0.0f) {
+		if (lights[i].enabled < 0.0) {
 			continue;
 		}
 
@@ -48,7 +48,7 @@ void main()
 		float dist = length(vertexToLight);
 
 		if (lights[i]._direction.w < 0.0) { // Spotlight
-			vec4 lightDirection = viewMatrix * vec4(lights[i]._direction.xyz, 0.0f);
+			vec4 lightDirection = viewMatrix * vec4(lights[i]._direction.xyz, 0.0);
 			// See DirectX spotlight documentation
 			float cosAngle = -dot(normalize(vertexToLight), normalize(lightDirection.xyz)); // rho
 			float cosPenumbra = 0.968912; // cos(1 / 4)
