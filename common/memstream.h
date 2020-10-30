@@ -353,9 +353,17 @@ private:
 	uint32 _pos;
 	bool _err;
 	bool _eos;
+	DisposeAfterUse::Flag _disposeMemory;
 
 public:
-	MemorySeekableReadWriteStream(byte *buf, uint32 len) : _ptrOrig(buf), _ptr(buf), _bufSize(len), _pos(0), _err(false), _eos(false) {}
+	MemorySeekableReadWriteStream(byte *buf, uint32 len, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) :
+			_ptrOrig(buf), _ptr(buf), _bufSize(len), _pos(0), _err(false), _eos(false), _disposeMemory(disposeMemory) {}
+
+	~MemorySeekableReadWriteStream() {
+		if (_disposeMemory) {
+			free(_ptrOrig);
+		}
+	}
 
 	uint32 write(const void *dataPtr, uint32 dataSize) override {
 		// Write at most as many bytes as are still available...
@@ -428,6 +436,7 @@ public:
 			_ptr = _ptrOrig + _pos;
 		}
 
+		_eos = false;
 		return true;
 	}
 };
