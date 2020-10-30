@@ -61,10 +61,16 @@ private:
 
 	bool playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize, int32 loop, const char *name, DisposeAfterUse::Flag disposeFlag = DisposeAfterUse::YES);
 
+	bool isChannelPlaying(int32 channel);
+
+	/** Find a free channel slot to use */
+	int32 getFreeSampleChannelIndex();
+
+	/** Remove a sample from the channel usage list */
+	void removeSampleChannel(int32 index);
+
 public:
 	Sound(TwinEEngine *engine);
-
-	bool isChannelPlaying(int32 channel);
 
 	/**
 	 * Play FLA movie samples
@@ -87,6 +93,7 @@ public:
 	 * @param x sound generating entity x position
 	 * @param y sound generating entity y position
 	 * @param z sound generating entity z position
+	 * @param actorIdx
 	 */
 	void playSample(int32 index, int32 frequency = 4096, int32 repeat = 1, int32 x = 128, int32 y = 128, int32 z = 128, int32 actorIdx = -1);
 
@@ -104,12 +111,6 @@ public:
 
 	/** Stops a specific sample */
 	void stopSample(int32 index);
-
-	/** Find a free channel slot to use */
-	int32 getFreeSampleChannelIndex();
-
-	/** Remove a sample from the channel usage list */
-	void removeSampleChannel(int32 index);
 
 	/** Check if a sample is playing */
 	int32 isSamplePlaying(int32 index);
