@@ -44,37 +44,14 @@ static const struct KeyProperties {
     {0x02, true, 0x50}, // down
     {0x04, true, 0x4B}, // left
     {0x08, true, 0x4D}, // right
-	#if 0
-    {0x05, true, 0x47}, // home
-    {0x09, true, 0x49}, // pageup
-    {0x0A, true, 0x51}, // pagedown
-    {0x06, true, 0x4F}, // end
-	#endif
     {0x01, false, 0x39},  // space bar
     {0x02, false, 0x1C},  // enter
     {0x04, false, 0x1D},  // ctrl
     {0x08, false, 0x38},  // alt
     {0x10, false, 0x53},  // del
     {0x20, false, 0x2A},  // left shift
-    {0x20, false, 0x36},  // right shift
-	#if 0
-    {0x01, false, 0x3B},  // F1
-    {0x02, false, 0x3C},  // F2
-    {0x04, false, 0x3D},  // F3
-    {0x08, false, 0x3E},  // F4
-    {0x10, false, 0x3F},  // F5
-    {0x20, false, 0x40},  // F6
-    {0x40, false, 0x41},  // F7
-    {0x80, false, 0x42},  // F8
-    {0x01, false, 0x43},  // F9
-    {0x02, false, 0x44},  // F10
-    {0x04, false, 0x57},  // ?
-    {0x08, false, 0x58},  // ?
-    {0x00, false, 0x2A},  // left shift
-    {0x00, false, 0x00},
-	#endif
-    {0x01, true, 0x01}, // esc
-    {0x00, true, 0x00}};
+    {0x20, false, 0x36}  // right shift
+};
 
 ScopedKeyMap::ScopedKeyMap(TwinEEngine* engine, const char *id) : _engine(engine) {
 	_prevKeyMap = _engine->_input->currentKeyMap();
