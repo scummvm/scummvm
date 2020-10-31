@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-31 19:57+0100\n"
-"PO-Revision-Date: 2020-10-14 17:43+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-11-01 17:43+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -5498,19 +5498,19 @@ msgstr "Skaalaa videot tuplakokoisiksi"
 
 #: engines/sci/detection.cpp:270
 msgid "Use RGB rendering"
-msgstr ""
+msgstr "Käytä RGB-renderöintiä"
 
 #: engines/sci/detection.cpp:271
 msgid "Use RGB rendering to improve screen transitions"
-msgstr ""
+msgstr "RGB-renderöinti tekee kuvasiirtymistä paremman näköisiä"
 
 #: engines/sci/detection.cpp:281
 msgid "Use per-resource modified palettes"
-msgstr ""
+msgstr "Käytä resurssikohtaisia muokattuja väripaletteja"
 
 #: engines/sci/detection.cpp:282
 msgid "Use custom per-resource palettes to improve visuals"
-msgstr ""
+msgstr "Resurssikohtaiset väripaletit näyttävät paremmalta"
 
 #: engines/sci/detection.cpp:312
 msgid "MIDI mode:"
