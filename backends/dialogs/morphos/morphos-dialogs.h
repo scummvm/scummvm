@@ -33,7 +33,7 @@ public:
 	virtual DialogResult showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser);
 
 private:
-	char *utf8_to_local(char *in);
+	char *utf8ToLocal(char *in);
 };
 
 #endif
