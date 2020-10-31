@@ -248,12 +248,12 @@ public:
 	}
 
 	// Font
-	void renderString(const Common::String &font, const Common::String &str,
+	void renderString(const Common::String &font, const Common::U32String &str,
 			  Common::Point startPos, int zVal, int fontDelta = 0, const Common::String &extraId = "letter");
-	void renderStringCentered(const Common::String &font, const Common::String &str,
+	void renderStringCentered(const Common::String &font, const Common::U32String &str,
 				  Common::Point centerPos, int zVal, int fontDelta = 0, const Common::String &extraId = "letter");
 	void hideString(const Common::String &font, size_t maxLen, const Common::String &extraId = "letter");
-	int computeStringWidth(const Common::String &font, const Common::String &str, int fontDelta = 0);
+	int computeStringWidth(const Common::String &font, const Common::U32String &str, int fontDelta = 0);
 	
 	// Misc
 	void playSound(const Common::String &soundName,

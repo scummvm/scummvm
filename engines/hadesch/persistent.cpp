@@ -163,9 +163,17 @@ bool Persistent::isInInventory(InventoryItem item) {
 
 HadeschSaveDescriptor::HadeschSaveDescriptor(Common::Serializer &s, int slot) {
 	s.matchBytes("hadesch", 7);
-	s.syncVersion(1);
-	s.syncString(_heroName);
-	s.syncString(_slotName);
+	s.syncVersion(2);
+	if (s.getVersion() < 2) {
+		Common::String str;
+		s.syncString(str);
+		_heroName = str;
+		s.syncString(str);
+		_slotName = str;
+	} else {
+		s.syncString32(_heroName);
+		s.syncString32(_slotName);
+	}
 	s.syncAsByte(_room);
 	_slot = slot;
 }
@@ -173,11 +181,19 @@ HadeschSaveDescriptor::HadeschSaveDescriptor(Common::Serializer &s, int slot) {
 bool Persistent::syncGameStream(Common::Serializer &s) {
 	if(!s.matchBytes("hadesch", 7))
 		return false;
-	if (!s.syncVersion(1))
+	if (!s.syncVersion(2))
 		return false;
 
-	s.syncString(_heroName);
-	s.syncString(_slotDescription);
+	if (s.getVersion() < 2) {
+		Common::String str;
+		s.syncString(str);
+		_heroName = str;
+		s.syncString(str);
+		_slotDescription = str;
+	} else {
+		s.syncString32(_heroName);
+		s.syncString32(_slotDescription);
+	}
 
 	s.syncAsByte(_currentRoomId);
 	s.syncAsByte(_previousRoomId);

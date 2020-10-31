@@ -279,7 +279,7 @@ public:
 				saveMenu(_saveVariant);
 				break;
 			case kDeleteUser: {
-				Common::String username = _userNames[_selectedSave];
+				Common::U32String username = _userNames[_selectedSave];
 				for (unsigned i = 0; i < _saves.size(); i++)
 					if (_saves[i]._heroName == username)
 						g_vm->deleteSave(_saves[i]._slot);
@@ -373,7 +373,7 @@ public:
 		}
 	}
 
-	void handleKeypress(uint16 ucode) override {
+	void handleKeypress(uint32 ucode) override {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		if (_currentMenu == kSaveMenu) {
 			if (ucode == '\n' || ucode == '\r') {
@@ -382,7 +382,7 @@ public:
 			}
 
 			if (ucode == '\b' && _typedSlotName.size() > 0) {
-				_typedSlotName = _typedSlotName.substr(0, _typedSlotName.size() - 1);
+				_typedSlotName.deleteLastChar();
 				room->playSound("keyclick");
 				renderSaveName();
 				return;
@@ -416,9 +416,13 @@ private:
 	void performSave() {		
 		int slot = g_vm->firstAvailableSlot();
 		Persistent *persistent = g_vm->getPersistent();
-		Common::String desc = Common::String::format(
+		// UTF-8
+		Common::String descPos = Common::String::format(
 			saveDescs[persistent->_currentRoomId],
-			persistent->_heroName.c_str());
+			persistent->_heroName.encode(Common::kUtf8).c_str());
+		// UTF-8
+		Common::String desc = _typedSlotName.empty() ? descPos
+		    : _typedSlotName + " (" + descPos + ")";
 
 		persistent->_slotDescription = _typedSlotName;
 		Common::Error res = g_vm->saveGameState(slot, desc);
@@ -473,7 +477,7 @@ private:
 
   	void loadMenuUser() {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
-		Common::HashMap<Common::String, bool> userset;
+		Common::HashMap<Common::U32String, bool> userset;
 
 		loadSaves();
 		_currentMenu = kLoadUserMenu;
@@ -510,7 +514,7 @@ private:
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		bool selectedIsShown = false;
 		for (int i = 0; i < 6 && _showPos + i < (int) _userNames.size(); i++) {
-			Common::String name = _userNames[_showPos + i];
+			Common::U32String name = _userNames[_showPos + i];
 			if (name == "")
 				name = "No name";
 			room->renderString("largeascii", name,
@@ -697,7 +701,7 @@ private:
 		_saves = g_vm->getHadeschSavesList();
 	}
 
-	void loadFilteredSaves(const Common::String &heroname) {
+	void loadFilteredSaves(const Common::U32String &heroname) {
 		loadSaves();
 		_filteredSaves.clear();
 		for (unsigned i = 0; i < _saves.size(); i++)
@@ -716,9 +720,9 @@ private:
 
 	Common::Array<HadeschSaveDescriptor> _saves;
 	Common::Array<HadeschSaveDescriptor> _filteredSaves;
-	Common::Array<Common::String> _userNames;
-	Common::String _chosenName;
-	Common::String _typedSlotName;
+	Common::Array<Common::U32String> _userNames;
+	Common::U32String _chosenName;
+	Common::U32String _typedSlotName;
 	int _showPos;
 	int _selectedSave;
 	bool _savesLoaded;

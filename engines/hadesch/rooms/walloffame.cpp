@@ -755,10 +755,10 @@ public:
 			playPhilVideo("phil good work", kPhilNewQuestScroll, Common::Point(40, 324)); // state 35
 			break;
 		case 19900:
-			if (_gender != kUnknown && _heroName != "") {
+			if (_gender != kUnknown && !_heroName.empty()) {
 				break;
 			}
-			if (_heroName != "") {
+			if (!_heroName.empty()) {
 				room->playVideo("phil pick a statue", 0, 19901);
 				break;
 			}
@@ -775,7 +775,7 @@ public:
 		}
 	}
 
-	void handleKeypress(uint16 code) override {
+	void handleKeypress(uint32 code) override {
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		if (_applicationIsActive && room->isMouseEnabled()) {
 			if (_heroName.size() < 18 &&
@@ -791,7 +791,7 @@ public:
 			}
 
 			if (_heroName.size() > 0 && code == '\b') {
-				_heroName = _heroName.substr(0, _heroName.size() - 1);
+				_heroName.deleteLastChar();
 				room->playSound("application click");
 				renderNameInApplication();
 				computeEnter();
@@ -1118,7 +1118,7 @@ private:
 	bool _philIsOnTheRight;
 	int _philWalkPhase;
 	bool _philIsBusy;
-	Common::String _heroName;
+	Common::U32String _heroName;
 	AmbientAnim _hercules;
 	bool _endGameOutro;
 	bool _applicationIsActive;

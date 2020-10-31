@@ -68,7 +68,7 @@ public:
 	virtual void handleMouseOver(const Common::String &name) {}
 	virtual void handleMouseOut(const Common::String &name) {}
 	virtual void frameCallback() {}
-	virtual void handleKeypress(uint16 ucode) {}
+	virtual void handleKeypress(uint32 ucode) {}
 	virtual void prepareRoom() = 0;
 	virtual bool handleCheat(const Common::String &cheat) {
 		return false;

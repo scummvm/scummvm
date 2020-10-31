@@ -970,7 +970,7 @@ void VideoRoom::hideString(const Common::String &font, size_t maxLen, const Comm
 	}
 }
 
-void VideoRoom::renderString(const Common::String &font, const Common::String &str, Common::Point startPos, int zVal, int fontDelta, const Common::String &extraId) {
+void VideoRoom::renderString(const Common::String &font, const Common::U32String &str, Common::Point startPos, int zVal, int fontDelta, const Common::String &extraId) {
 	Common::Point curPos = startPos;
 	bool small = font == "smallascii";
 	for (unsigned i = 0; i < str.size(); i++) {
@@ -1008,7 +1008,7 @@ void VideoRoom::loadFontWidth(const Common::String &font) {
 		_fontWidths[font].push_back(pi[i].getWidth()+pi[i].getOffset().x + (small ? 1 : 3));
 }
 
-int VideoRoom::computeStringWidth(const Common::String &font, const Common::String &str, int fontDelta) {
+int VideoRoom::computeStringWidth(const Common::String &font, const Common::U32String &str, int fontDelta) {
 	int width = 0;
 	bool small = font == "smallascii";
 	if (!_fontWidths.contains(font)) {
@@ -1027,7 +1027,7 @@ int VideoRoom::computeStringWidth(const Common::String &font, const Common::Stri
 	return width;
 }
 
-void VideoRoom::renderStringCentered(const Common::String &font, const Common::String &str, Common::Point centerPos, int zVal, int fontDelta, const Common::String &extraId) {
+void VideoRoom::renderStringCentered(const Common::String &font, const Common::U32String &str, Common::Point centerPos, int zVal, int fontDelta, const Common::String &extraId) {
 	int width = computeStringWidth(font, str, fontDelta);
 	renderString(font, str, centerPos - Common::Point(width / 2, 0), zVal, fontDelta, extraId);
 }
