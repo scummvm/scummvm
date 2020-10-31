@@ -61,6 +61,7 @@ void Sound::playFlaSample(int32 index, int32 frequency, int32 repeat, int32 x, i
 
 	int channelIdx = getFreeSampleChannelIndex();
 	if (channelIdx == -1) {
+		warning("Failed to play fla sample for index: %i - no free channel", index);
 		return;
 	}
 
@@ -81,6 +82,7 @@ void Sound::playSample(int32 index, int32 frequency, int32 repeat, int32 x, int3
 
 	int channelIdx = getFreeSampleChannelIndex();
 	if (channelIdx == -1) {
+		warning("Failed to play sample for index: %i - no free channel", index);
 		return;
 	}
 
@@ -101,7 +103,7 @@ void Sound::playVoxSample(int32 index) {
 	}
 
 	int channelIdx = getFreeSampleChannelIndex();
-	if (channelIdx != -1) {
+	if (channelIdx == -1) {
 		warning("Failed to play vox sample for index: %i - no free channel", index);
 		return;
 	}
