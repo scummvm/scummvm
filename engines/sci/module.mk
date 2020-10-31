@@ -60,6 +60,7 @@ MODULE_OBJS := \
 	graphics/ports.o \
 	graphics/remap.o \
 	graphics/scifont.o \
+	graphics/scifx.o \
 	graphics/screen.o \
 	graphics/text16.o \
 	graphics/transitions.o \
