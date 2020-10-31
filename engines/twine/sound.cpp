@@ -119,6 +119,7 @@ void Sound::playVoxSample(int32 index) {
 	if (*sampPtr != 'C') {
 		_engine->_text->hasHiddenVox = *sampPtr != '\0';
 		_engine->_text->voxHiddenIndex++;
+		*sampPtr = 'C';
 	}
 
 	playSample(channelIdx, index, sampPtr, sampSize, 1, _engine->_text->currentVoxBankFile.c_str());
