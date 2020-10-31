@@ -833,8 +833,9 @@ void AttackProcess::pathfindToItemInNPCData() {
 	Actor *target = getActor(_target);
 
 	Process *pathproc = new PathfinderProcess(a, target->getObjId());
-	// In case pathfinding fails just delay for a bit to ensure we don't get stuck in a notification loop.
-	Process *delayproc = new DelayProcess(2);
+	// In case pathfinding fails delay for a bit to ensure we don't get
+	// stuck in a tight loop using all the cpu
+	Process *delayproc = new DelayProcess(10);
 	Kernel::get_instance()->addProcess(pathproc);
 	Kernel::get_instance()->addProcess(delayproc);
 	delayproc->waitFor(pathproc);
