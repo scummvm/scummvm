@@ -41,6 +41,8 @@ For a more comprehensive changelog of the latest experimental code, see:
  SCI:
    - Added RGB rendering mode (16/32bpp) for SCI0 - SCI1.1 games, which addresses palette
      issues in screen transitions and avoids mode changes when playing Mac QuickTime videos.
+   - Added custom palette mods for SQ3 and LSL2 from the FreeSCI project. When enabled, the mods improve the visuals
+     in these two games.
 
 SCUMM:
    - Fixed Chinese, Japanese and Korean text display for The Dig and for The Curse of Monkey Island. These fixes
