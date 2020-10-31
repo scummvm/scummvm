@@ -121,12 +121,12 @@ void Music::musicFadeOut() {
 	musicVolume(volume);
 }
 
-void Music::playTrackMusicCd(int32 track) {
+bool Music::playTrackMusicCd(int32 track) {
 	if (!_engine->cfgfile.UseCD) {
-		return;
+		return false;
 	}
 	AudioCDManager *cdrom = g_system->getAudioCDManager();
-	cdrom->play(track, 1, 0, 0);
+	return cdrom->play(track, 1, 0, 0);
 }
 
 void Music::stopTrackMusicCd() {
@@ -138,18 +138,18 @@ void Music::stopTrackMusicCd() {
 	cdrom->stop();
 }
 
-void Music::playTrackMusic(int32 track) {
+bool Music::playTrackMusic(int32 track) {
 	if (!_engine->cfgfile.Sound) {
-		return;
+		return false;
 	}
 
 	if (track == currentMusic) {
-		return;
+		return true;
 	}
 	currentMusic = track;
 
 	stopMusic();
-	playTrackMusicCd(track);
+	return playTrackMusicCd(track);
 }
 
 void Music::stopTrackMusic() {
@@ -161,13 +161,13 @@ void Music::stopTrackMusic() {
 	stopTrackMusicCd();
 }
 
-void Music::playMidiMusic(int32 midiIdx, int32 loop) {
+bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 	if (!_engine->cfgfile.Sound || _engine->cfgfile.MidiType == MIDIFILE_NONE) {
-		return;
+		return false;
 	}
 
 	if (midiIdx == currentMusic) {
-		return;
+		return true;
 	}
 
 	stopMusic();
@@ -187,6 +187,7 @@ void Music::playMidiMusic(int32 midiIdx, int32 loop) {
 
 	int32 midiSize = HQR::getAllocEntry(&midiPtr, filename, midiIdx);
 	_midiPlayer.play(midiPtr, midiSize);
+	return true;
 }
 
 void Music::stopMidiMusic() {

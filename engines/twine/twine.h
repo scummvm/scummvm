@@ -209,9 +209,6 @@ public:
 	 * Contains all the data used in the engine to configurated the game in particulary ways. */
 	ConfigFile cfgfile;
 
-	/** CD Game directory */
-	const char *cdDir = "";
-
 	/** Initialize LBA engine */
 	void initEngine();
 	void initMCGA();
