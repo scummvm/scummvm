@@ -345,7 +345,6 @@ public:
 	INTRINSIC(I_getLastActivityNo);
 	INTRINSIC(I_getCurrentActivityNo);
 	INTRINSIC(I_turnToward);
-	INTRINSIC(I_getField0x59Bit1);
 
 	enum ActorFlags {
 		ACT_INVINCIBLE     = 0x000001, // flags from npcdata byte 0x1B
@@ -357,7 +356,7 @@ public:
 		ACT_INCOMBAT       = 0x000800,
 		ACT_DEAD           = 0x001000,
 		ACT_SURRENDERED    = 0x002000, // not the same bit used in Crusader, but use this because it's empty.
-		ACT_CRU5ABIT1	   = 0x004000, // not the same bit used in Crusader, but use this because it's empty.
+		ACT_WEAPONREADY	   = 0x004000, // not the same bit used in Crusader, but use this because it's empty.
 		ACT_COMBATRUN      = 0x008000,
 
 		ACT_AIRWALK        = 0x010000, // flags from npcdata byte 0x30

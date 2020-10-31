@@ -480,10 +480,15 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 	}
 #endif
 
-	// HACK: When switching from 16-dir combat to 8-dir walking,
-	// fix the direction to only 8 dirs
-	if (GAME_IS_CRUSADER && anim == Animation::stand) {
-		dir = static_cast<Direction>(dir - (static_cast<uint32>(dir) % 2));
+	if (GAME_IS_CRUSADER) {
+		// HACK: When switching from 16-dir combat to 8-dir walking,
+		// fix the direction to only 8 dirs
+		if (anim == Animation::stand)
+			dir = static_cast<Direction>(dir - (static_cast<uint32>(dir) % 2));
+		else if (anim == Animation::readyWeapon)
+			setActorFlag(ACT_WEAPONREADY);
+		else if (anim == Animation::unreadyWeapon)
+			clearActorFlag(ACT_WEAPONREADY);
 	}
 
 	Process *p = new ActorAnimProcess(this, anim, dir, steps);
@@ -2123,14 +2128,30 @@ uint32 Actor::I_createActorCru(const uint8 *args, unsigned int /*argsize*/) {
 
 	newactor->setUnkByte(item->getQuality() & 0xff);
 
+	bool wpnflag = (item->getMapNum() & 4);
 	uint16 wpntype = npcData->getWpnType();
-	Item *weapon = ItemFactory::createItem(wpntype, 0, 0, 0, 0, newactor->getMapNum(), 0, true);
+	uint16 wpntype2 = npcData->getWpnType2();
+
 	if (World::get_instance()->getGameDifficulty() == 4) {
 	   wpntype = NPCDat::randomlyGetStrongerWeaponTypes(shape);
 	}
 
-	// TODO: should this be addItemCru? If so need to move it from MainActor.
-	weapon->moveToContainer(newactor, false);
+	if ((!wpntype || !wpnflag) && wpntype2) {
+		wpntype = wpntype2;
+	}
+
+	if (wpntype) {
+		// TODO: Nasty hard coded list.. use the ini file for this.
+		static const int WPNSHAPES[] = {0, 0x032E, 0x032F, 0x0330, 0x038C, 0x0332, 0x0333,
+			0x0334, 0x038E, 0x0388, 0x038A, 0x038D, 0x038B, 0x0386};
+		// wpntype is an offset into wpn table
+		Item *weapon = ItemFactory::createItem(WPNSHAPES[wpntype], 0, 0, 0, 0, newactor->getMapNum(), 0, true);
+		if (weapon) {
+			weapon->moveToContainer(newactor, false);
+			newactor->_activeWeapon = weapon->getObjId();
+		}
+	}
+
 	newactor->setCombatTactic(0);
 	newactor->setHomePosition(x, y, z);
 
@@ -2303,16 +2324,6 @@ uint32 Actor::I_turnToward(const uint8 *args, unsigned int /*argsize*/) {
 
 	return actor->turnTowardDir(Direction_FromUsecodeDir(dir));
 }
-
-uint32 Actor::I_getField0x59Bit1(const uint8 *args, unsigned int /*argsize*/) {
-	ARG_ACTOR_FROM_PTR(actor);
-	if (!actor) return 0;
-
-	if (actor->hasActorFlags(ACT_CRU5ABIT1))
-		return 1;
-	return 0;
-}
-
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

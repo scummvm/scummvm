@@ -63,7 +63,7 @@ static const int16 ATTACK_SFX_7[] = {0x9B, 0x9C, 0x9D, 0x9E, 0x9F};
 
 // If data is referenced in the metalang with an offset of this or greater,
 // read from the data array.
-static const int MAGIC_DATA_OFFSET = 33000;
+static const int MAGIC_DATA_OFF = 33000;
 
 
 static uint16 someSleepGlobal = 0;
@@ -90,6 +90,9 @@ _npcInitialDir(dir_invalid), _field57(0), _field59(0), _field7f(false), _field96
 _isActivity9orB(false), _isActivityAorB(false), _timer3set(false), _timer2set(false),
 _doubleDelay(false), _wpnField8(1), _wpnBasedTimeout(0), _difficultyBasedTimeout(0), _timer2(0),
 _timer3(0), _timer4(0), _timer5(0), _soundTimestamp(0), _fireTimestamp(0) {
+	for (int i = 0; i < ARRAYSIZE(_dataArray); i++) {
+		_dataArray[i] = 0;
+	}
 }
 
 AttackProcess::AttackProcess(Actor *actor) : _block(0), _target(1), _tactic(0), _tacticDat(nullptr),
@@ -101,6 +104,13 @@ _soundTimestamp(0), _fireTimestamp(0) {
 	assert(actor);
 	_itemNum = actor->getObjId();
 	_npcInitialDir = actor->getDir();
+
+	// Note: this isn't actually initialized in the original which
+	// suggests it can't ever get used before setting, but to make
+	// coverity etc happy clear it anyway.
+	for (int i = 0; i < ARRAYSIZE(_dataArray); i++) {
+		_dataArray[i] = 0;
+	}
 
 	const Item *wpn = getItem(actor->getActiveWeapon());
 	if (wpn) {
@@ -186,13 +196,13 @@ void AttackProcess::run() {
 	switch (opcode) {
 		case 0x81:
 			// Seems like field 0x53 is never used anywhere?
-			/*_field53 = */readNextWordWithGlobals();
+			/*_field53 = */readNextWordWithData();
 			return;
 		case 0x82:
 			/*_field53 = 0*/;
 			return;
 		case 0x84:
-			_target = readNextWordWithGlobals();
+			_target = readNextWordWithData();
 			// This is called in the original, but basically redundant.
 			// a->setActivity(5);
 			return;
@@ -279,7 +289,7 @@ void AttackProcess::run() {
 		case 0x93:
 		{
 			// Sleep for a random value scaled by difficult level
-			int ticks = readNextWordWithGlobals();
+			int ticks = readNextWordWithData();
 			if (ticks == someSleepGlobal) {
 				ticks = randomOf(0x32) + 0x14;
 			}
@@ -290,7 +300,7 @@ void AttackProcess::run() {
 		case 0x94:
 		{
 			// Loiter a bit..
-			uint16 data = readNextWordWithGlobals();
+			uint16 data = readNextWordWithData();
 			ProcId pid = Kernel::get_instance()->addProcess(new LoiterProcess(a, data));
 			waitFor(pid);
 			return;
@@ -303,11 +313,11 @@ void AttackProcess::run() {
 		}
 		case 0x96:
 			// do activity specified by next word
-			a->setActivity(readNextWordWithGlobals());
+			a->setActivity(readNextWordWithData());
 			return;
 		case 0x97:
 			// switch to tactic no specified by next word
-			setTacticNo(readNextWordWithGlobals());
+			setTacticNo(readNextWordWithData());
 			return;
 		case 0x98:
 		{
@@ -328,7 +338,7 @@ void AttackProcess::run() {
 			a->getLocation(apt);
 			target->getLocation(tpt);
 			int maxdiff = apt.maxDistXYZ(tpt);
-			int16 data = readNextWordWithGlobals();
+			int16 data = readNextWordWithData();
 			if (maxdiff < 481) {
 				_tacticDatReadStream->seek(data, SEEK_SET);
 			}
@@ -341,7 +351,7 @@ void AttackProcess::run() {
 			a->getLocation(apt);
 			target->getLocation(tpt);
 			int maxdiff = apt.maxDistXYZ(tpt);
-			int16 data = readNextWordWithGlobals();
+			int16 data = readNextWordWithData();
 			if (maxdiff > 160) {
 				_tacticDatReadStream->seek(data, SEEK_SET);
 			}
@@ -350,7 +360,7 @@ void AttackProcess::run() {
 		case 0x9c:
 		{
 			bool result = Intrinsic116(a, target, curdir, 0, 0, 0);
-			uint16 data = readNextWordWithGlobals();
+			uint16 data = readNextWordWithData();
 			if (!result) {
 				_tacticDatReadStream->seek(data, SEEK_SET);
 			}
@@ -359,7 +369,7 @@ void AttackProcess::run() {
 		case 0x9d:
 		{
 			bool result = Intrinsic116(a, target, curdir, 0, 0, 0);
-			uint16 data = readNextWordWithGlobals();
+			uint16 data = readNextWordWithData();
 			if (result) {
 				_tacticDatReadStream->seek(data, SEEK_SET);
 			}
@@ -367,21 +377,21 @@ void AttackProcess::run() {
 		}
 		case 0x9e:
 		{
-			uint16 maxval = readNextWordWithGlobals();
+			uint16 maxval = readNextWordWithData();
 			uint16 randval = randomOf(maxval);
-			uint16 offset = readNextWordWithGlobals();
+			uint16 offset = readNextWordWithData();
 			if (randval != 0) {
 				_tacticDatReadStream->seek(offset);
 			}
 			return;
 		}
 		case 0x9f:
-			_field57 = readNextWordWithGlobals();
+			_field57 = readNextWordWithData();
 			_field59 = _tacticDatReadStream->pos();
 			return;
 		case 0xa6:
 		{
-			const uint16 targetFrame = readNextWordWithGlobals();
+			const uint16 targetFrame = readNextWordWithData();
 			const uint16 targetQ = a->getUnkByte();
 
 			UCList uclist(2);
@@ -430,57 +440,57 @@ void AttackProcess::run() {
 			return;
 		case 0xaf:
 		{
-			uint16 next = readNextWordWithGlobals();
-			uint16 offset = readNextWord();
-			setAttackDataArray(offset, next);
+			uint16 next = readNextWordWithData();
+			uint16 offset = readNextWordRaw();
+			setAttackData(offset, next);
 			return;
 		}
 		case 0xb0:
 		{
-			uint16 offset = readNextWord();
-			uint16 val = getAttackDataArray(offset);
-			setAttackDataArray(opcode, val + readNextWordWithGlobals());
+			uint16 offset = readNextWordRaw();
+			uint16 val = getAttackData(offset);
+			setAttackData(opcode, val + readNextWordWithData());
 			return;
 		}
 		case 0xb1:
 		{
-			uint16 offset = readNextWord();
-			uint16 val = getAttackDataArray(offset);
-			setAttackDataArray(offset, val - readNextWordWithGlobals());
+			uint16 offset = readNextWordRaw();
+			uint16 val = getAttackData(offset);
+			setAttackData(offset, val - readNextWordWithData());
 			return;
 		}
 		case 0xb2:
 		{
-			uint16 offset = readNextWord();
-			uint16 val = getAttackDataArray(offset);
-			setAttackDataArray(offset, val * readNextWordWithGlobals());
+			uint16 offset = readNextWordRaw();
+			uint16 val = getAttackData(offset);
+			setAttackData(offset, val * readNextWordWithData());
 			return;
 		}
 		case 0xb3:
 		{
-			uint16 offset = readNextWord();
-			uint16 val = getAttackDataArray(offset);
-			setAttackDataArray(opcode, val / readNextWordWithGlobals());
+			uint16 offset = readNextWordRaw();
+			uint16 val = getAttackData(offset);
+			setAttackData(opcode, val / readNextWordWithData());
 			return;
 		}
 		case 0xb4:
 		{
 			uint16 dir = Direction_ToUsecodeDir(curdir);
-			uint16 offset = readNextWord();
-			setAttackDataArray(offset, dir);
+			uint16 offset = readNextWordRaw();
+			setAttackData(offset, dir);
 			return;
 		}
 		case 0xb5:
 		{
-			uint16 dir = readNextWordWithGlobals();
+			uint16 dir = readNextWordWithData();
 			a->setDir(Direction_FromUsecodeDir(dir));
 			return;
 		}
 		case 0xb6:
 		{
-			uint16 offset = readNextWord();
+			uint16 offset = readNextWordRaw();
 			uint16 dir = Direction_ToUsecodeDir(curdir);
-			setAttackDataArray(offset, dir);
+			setAttackData(offset, dir);
 			return;
 		}
 		case 0xb7:
@@ -493,7 +503,7 @@ void AttackProcess::run() {
 			a->doAnim(Animation::kneelingSlowRetreat, dir_current);
 			return;
 		case 0xc0:
-			_tacticDatReadStream->seek(readNextWordWithGlobals(), SEEK_SET);
+			_tacticDatReadStream->seek(readNextWordWithData(), SEEK_SET);
 			return;
 		case 0xc1:
 			_field57--;
@@ -669,7 +679,7 @@ void AttackProcess::genericAttack() {
 
 			checkRandomAttackSound(now, a->getShape());
 
-			if (!a->hasActorFlags(Actor::ACT_CRU5ABIT1)) {
+			if (!a->hasActorFlags(Actor::ACT_WEAPONREADY)) {
 				_timer4 = now;
 				a->doAnim(Animation::readyWeapon, dir_current); // ready small wpn
 				return;
@@ -733,7 +743,7 @@ void AttackProcess::genericAttack() {
 			}
 
 			// 5a flag 1 set?
-			if (!a->hasActorFlags(Actor::ACT_CRU5ABIT1) && local_1b) {
+			if (!a->hasActorFlags(Actor::ACT_WEAPONREADY) && local_1b) {
 				_timer4 = now;
 				a->doAnim(Animation::readyWeapon, dir_current); // ready SmallWpn
 				return;
@@ -776,7 +786,7 @@ void AttackProcess::checkRandomAttackSound(int now, uint32 shapeno) {
 			}
 		}
 	} else {
-		if (checkSoundTimeElapsed(now)) {
+		if (readyForNextSound(now)) {
 			if (shapeno == 0x2df)
 				attacksound = RANDOM_ELEM(ATTACK_SFX_6);
 			else if (shapeno == 899)
@@ -790,7 +800,7 @@ void AttackProcess::checkRandomAttackSound(int now, uint32 shapeno) {
 	}
 }
 
-bool AttackProcess::checkSoundTimeElapsed(int now) {
+bool AttackProcess::readyForNextSound(int now) {
 	if (_soundTimestamp == 0 || _soundTimestamp - now >= 480) {
 		_soundTimestamp = now;
 		return true;
@@ -805,18 +815,18 @@ bool AttackProcess::checkTimer2PlusDelayElapsed(int now) {
 	return (now > _timer2 + delay);
 }
 
-void AttackProcess::setAttackDataArray(uint16 offset, uint16 val) {
-	if (offset >= MAGIC_DATA_OFFSET && offset < MAGIC_DATA_OFFSET + 10)
-		_dataArray[offset] = val;
+void AttackProcess::setAttackData(uint16 off, uint16 val) {
+	if (off >= MAGIC_DATA_OFF && off < MAGIC_DATA_OFF + ARRAYSIZE(_dataArray))
+		_dataArray[off] = val;
 
-	warning("Invalid offset to setAttackDataArray %d %d", offset, val);
+	warning("Invalid offset to setAttackDataArray %d %d", off, val);
 }
 
-uint16 AttackProcess::getAttackDataArray(uint16 offset) const {
-	if (offset >= MAGIC_DATA_OFFSET && offset < MAGIC_DATA_OFFSET + 10)
-		return _dataArray[offset];
+uint16 AttackProcess::getAttackData(uint16 off) const {
+	if (off >= MAGIC_DATA_OFF && off < MAGIC_DATA_OFF + ARRAYSIZE(_dataArray))
+		return _dataArray[off];
 
-	warning("Invalid offset to getAttackDataArray: %d", offset);
+	warning("Invalid offset to getAttackDataArray: %d", off);
 	return 0;
 }
 
@@ -904,16 +914,16 @@ void AttackProcess::setBlockNo(int block) {
 	_tacticDatReadStream->seek(_tacticDatStartOffset, SEEK_SET);
 }
 
-uint16 AttackProcess::readNextWordWithGlobals() {
+uint16 AttackProcess::readNextWordWithData() {
 	uint16 data = _tacticDatReadStream->readUint16LE();
-	if (data >= MAGIC_DATA_OFFSET) {
-		data = getAttackDataArray(data);
+	if (data >= MAGIC_DATA_OFF) {
+		data = getAttackData(data);
 	}
 
 	return data;
 }
 
-uint16 AttackProcess::readNextWord() {
+uint16 AttackProcess::readNextWordRaw() {
 	assert(_tacticDatReadStream);
 	return _tacticDatReadStream->readUint16LE();
 }
@@ -949,7 +959,7 @@ void AttackProcess::saveData(Common::WriteStream *ws) {
 
 	ws->writeUint16LE(_wpnField8);
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < ARRAYSIZE(_dataArray); i++) {
 		ws->writeUint16LE(_dataArray[i]);
 	}
 
@@ -989,7 +999,7 @@ bool AttackProcess::loadData(Common::ReadStream *rs, uint32 version) {
 
 	_wpnField8 = rs->readUint16LE();
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < ARRAYSIZE(_dataArray); i++) {
 		_dataArray[i] = rs->readUint16LE();
 	}
 

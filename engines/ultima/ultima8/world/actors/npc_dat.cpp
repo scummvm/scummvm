@@ -39,7 +39,7 @@ NPCDat::NPCDat(Common::SeekableReadStream &rs, Common::SeekableReadStream &namer
 	//
 	rs.skip(20);
 	// offset 0x18 (24): wpntable offset
-	/*uint16 _wpnTableOffset =*/ rs.readUint16LE();
+	_wpnType2 = rs.readUint16LE();
 	// offset 0x1a (26): wpntype
 	_wpnType = rs.readUint16LE();
 	rs.skip(2);

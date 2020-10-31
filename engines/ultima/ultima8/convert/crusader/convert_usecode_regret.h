@@ -239,7 +239,7 @@ const char* const ConvertUsecodeRegret::_intrinsics[] = {
 	"Item::isOn(uint16)",
 	"Item::getFootpad(sint16&,sint16&,sint16&)",
 	"Actor::isDead(void)",
-	"Actor::createNPCCru()",
+	"Actor::I_createActorCru()",
 	"Actor::I_setActivity()",
 	"KeypadGump::I_showKeypad()",
 	"Item::andStatus(void)",
