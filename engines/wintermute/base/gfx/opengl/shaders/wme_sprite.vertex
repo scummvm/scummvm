@@ -11,8 +11,8 @@ out vec4 Color;
 
 void main()
 {
-	vec3 transformed_position = transform * vec3(position, 1.0f);
-	gl_Position = projMatrix * vec4(transformed_position.x, transformed_position.y, 0.9f, 1.0f);
+	vec3 transformed_position = transform * vec3(position, 1.0);
+	gl_Position = projMatrix * vec4(transformed_position.x, transformed_position.y, 0.9, 1.0);
 	Texcoord = texcoord;
 	Color = color;
 }

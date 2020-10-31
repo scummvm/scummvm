@@ -7,6 +7,6 @@ out vec4 Color;
 
 void main()
 {
-	gl_Position = projMatrix * vec4(position, 0.0f, 1.0f);
+	gl_Position = projMatrix * vec4(position, 0.0f, 1.0);
 	Color = color;
 }
