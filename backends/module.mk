@@ -249,7 +249,8 @@ endif
 ifdef MORPHOS
 MODULE_OBJS += \
 	fs/morphos/morphos-fs.o \
-	fs/morphos/morphos-fs-factory.o
+	fs/morphos/morphos-fs-factory.o \
+	dialogs/morphos/morphos-dialogs.o
 endif
 
 ifdef RISCOS
