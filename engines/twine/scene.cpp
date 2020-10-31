@@ -336,7 +336,7 @@ void Scene::changeScene() {
 	_engine->_renderer->setLightVector(alphaLight, betaLight, 0);
 
 	if (sceneMusic != -1) {
-		_engine->_music->playMidiMusic(sceneMusic); // TODO this should play midi or cd tracks
+		_engine->_music->playTrackMusic(sceneMusic);
 	}
 }
 

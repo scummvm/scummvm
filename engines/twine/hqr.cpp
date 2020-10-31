@@ -196,6 +196,10 @@ int32 numEntries(const char *filename) {
 
 int32 getAllocEntry(uint8 **ptr, const char *filename, int32 index) {
 	const int32 size = entrySize(filename, index);
+	if (size == 0) {
+		warning("HQR: failed to get entry for index %i from file: %s", index, filename);
+		return 0;
+	}
 	*ptr = (uint8 *)malloc(size * sizeof(uint8));
 	if (!*ptr) {
 		warning("HQR: unable to allocate entry memory");

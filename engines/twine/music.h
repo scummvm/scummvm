@@ -49,8 +49,14 @@ private:
 	/** Auxiliar midi pointer to  */
 	uint8 *midiPtr = nullptr;
 	/** Track number of the current playing music */
-	int32 currentMusic = 0;
-
+	int32 currentMusic = -1;
+	/**
+	 * Play CD music
+	 * @param track track number to play
+	 */
+	bool playTrackMusicCd(int32 track);
+	/** Stop CD music */
+	void stopTrackMusicCd();
 public:
 	Music(TwinEEngine *engine);
 
@@ -59,13 +65,7 @@ public:
 	 * @param current volume number
 	 */
 	void musicVolume(int32 volume);
-	/**
-	 * Play CD music
-	 * @param track track number to play
-	 */
-	bool playTrackMusicCd(int32 track);
-	/** Stop CD music */
-	void stopTrackMusicCd();
+
 	/**
 	 * Generic play music, according with settings it plays CD or high quality sounds instead
 	 * @param track track number to play

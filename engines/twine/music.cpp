@@ -149,7 +149,14 @@ bool Music::playTrackMusic(int32 track) {
 	currentMusic = track;
 
 	stopMusic();
-	return playTrackMusicCd(track);
+	if (playTrackMusicCd(track)) {
+		return true;
+	}
+	if (playMidiMusic(track)) {
+		return true;
+	}
+	warning("Failed to play track %i", track);
+	return false;
 }
 
 void Music::stopTrackMusic() {
@@ -186,7 +193,11 @@ bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 	}
 
 	int32 midiSize = HQR::getAllocEntry(&midiPtr, filename, midiIdx);
+	if (midiSize == 0) {
+		return false;
+	}
 	_midiPlayer.play(midiPtr, midiSize);
+	debug("Play midi music %i from %s", midiIdx, filename);
 	return true;
 }
 
@@ -212,6 +223,7 @@ bool Music::initCdrom() {
 void Music::stopMusic() {
 	stopTrackMusic();
 	stopMidiMusic();
+	currentMusic = -1;
 }
 
 } // namespace TwinE
