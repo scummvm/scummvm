@@ -28,6 +28,7 @@ namespace Wintermute {
 static const PlainGameDescriptor wintermuteGames[] = {
 	{"5ld",             "Five Lethal Demons"},
 	{"5ma",             "Five Magical Amulets"},
+	{"8squares",        "Eight Squares in The Garden"},
 	{"actualdest",      "Actual Destination"},
 	{"agustin",         "Boredom of Agustin Cordes"},
 	{"alavi",           "Informer Alavi - Murder of Miss Rojan"},
@@ -240,6 +241,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("5ma", "",
 		WME_ENTRY2s("polish.dcp", "bb877d48795471a17f25b0b5109100d1", 1132197,
 					"data.dcp", "0134e92bcd5fd2837df3971087e96067", 163316498), Common::PL_POL, ADGF_UNSTABLE, WME_1_3_3),
+
+	// Eight Squares in The Garden
+	WME_WINENTRY("8squares", "",
+		WME_ENTRY1s("data.dcp", "8788577bffe33ae059e13aa862dabd31", 29931982), Common::EN_ANY, ADGF_UNSTABLE, WME_1_8_6),
 
 	// Actual Destination
 	WME_WINENTRY("actualdest", "",
