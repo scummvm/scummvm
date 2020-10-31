@@ -64,25 +64,25 @@ public:
 	typedef uint32 unsigned_type;
 public:
 	/** Construct a new empty string. */
-	U32String() : BaseString() {}
+	U32String() : BaseString<u32char_type_t>() {}
 
 	/** Construct a new string from the given NULL-terminated C string. */
-	explicit U32String(const value_type *str) : BaseString(str) {}
+	explicit U32String(const value_type *str) : BaseString<u32char_type_t>(str) {}
 
 	/** Construct a new string containing exactly len characters read from address str. */
-	U32String(const value_type *str, uint32 len) : BaseString(str, len) {}
+	U32String(const value_type *str, uint32 len) : BaseString<u32char_type_t>(str, len) {}
 
 #ifdef USE_CXX11
-	explicit U32String(const uint32 *str) : BaseString((const value_type *) str) {}
-	U32String(const uint32 *str, uint32 len) : BaseString((const value_type *) str, len) {}
-    	U32String(const uint32 *beginP, const uint32 *endP) : BaseString((const value_type *) beginP, (const value_type *) endP) {}
+	explicit U32String(const uint32 *str) : BaseString<u32char_type_t>((const value_type *) str) {}
+	U32String(const uint32 *str, uint32 len) : BaseString<u32char_type_t>((const value_type *) str, len) {}
+	U32String(const uint32 *beginP, const uint32 *endP) : BaseString<u32char_type_t>((const value_type *) beginP, (const value_type *) endP) {}
 #endif
 
 	/** Construct a new string containing the characters between beginP (including) and endP (excluding). */
-	U32String(const value_type *beginP, const value_type *endP) : BaseString(beginP, endP) {}
+	U32String(const value_type *beginP, const value_type *endP) : BaseString<u32char_type_t>(beginP, endP) {}
 
 	/** Construct a copy of the given string. */
-	U32String(const U32String &str) : BaseString(str) {}
+	U32String(const U32String &str) : BaseString<u32char_type_t>(str) {}
 
 	/** Construct a copy of the given unicode BiDi converted string. */
 	U32String(const UnicodeBiDiText &txt);

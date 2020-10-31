@@ -67,19 +67,19 @@ public:
 	typedef unsigned char unsigned_type;
 
 	/** Construct a new empty string. */
-	String() : BaseString() {}
+	String() : BaseString<char>() {}
 
 	/** Construct a new string from the given NULL-terminated C string. */
-	String(const char *str) : BaseString(str) {}
+	String(const char *str) : BaseString<char>(str) {}
 
 	/** Construct a new string containing exactly len characters read from address str. */
-	String(const char *str, uint32 len) : BaseString(str, len) {}
+	String(const char *str, uint32 len) : BaseString<char>(str, len) {}
 
 	/** Construct a new string containing the characters between beginP (including) and endP (excluding). */
-	String(const char *beginP, const char *endP) : BaseString(beginP, endP) {}
+	String(const char *beginP, const char *endP) : BaseString<char>(beginP, endP) {}
 
 	/** Construct a copy of the given string. */
-	String(const String &str) : BaseString(str) {};
+	String(const String &str) : BaseString<char>(str) {};
 
 	/** Construct a string consisting of the given character. */
 	explicit String(char c);

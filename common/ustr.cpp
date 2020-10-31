@@ -28,7 +28,7 @@
 
 namespace Common {
 
-U32String::U32String(const char *str) : BaseString() {
+U32String::U32String(const char *str) : BaseString<u32char_type_t>() {
 	if (str == nullptr) {
 		_storage[0] = 0;
 		_size = 0;
@@ -37,20 +37,20 @@ U32String::U32String(const char *str) : BaseString() {
 	}
 }
 
-U32String::U32String(const char *str, uint32 len) : BaseString() {
+U32String::U32String(const char *str, uint32 len) : BaseString<u32char_type_t>() {
 	initWithCStr(str, len);
 }
 
-U32String::U32String(const char *beginP, const char *endP) : BaseString() {
+U32String::U32String(const char *beginP, const char *endP) : BaseString<u32char_type_t>() {
 	assert(endP >= beginP);
 	initWithCStr(beginP, endP - beginP);
 }
 
-U32String::U32String(const String &str) : BaseString() {
+U32String::U32String(const String &str) : BaseString<u32char_type_t>() {
 	initWithCStr(str.c_str(), str.size());
 }
 
-U32String::U32String(const UnicodeBiDiText &txt) : BaseString() {
+U32String::U32String(const UnicodeBiDiText &txt) : BaseString<u32char_type_t>() {
 	initWithValueTypeStr(txt.visual.c_str(), txt.visual.size());
 }
 
