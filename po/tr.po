@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-14 11:46+0200\n"
-"PO-Revision-Date: 2020-10-31 01:43+0000\n"
+"PO-Revision-Date: 2020-10-31 18:43+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/tr/>\n"
@@ -436,152 +436,158 @@ msgstr "Soundfont Seç"
 
 #: gui/editgamedialog.cpp:559
 msgid "Select additional game directory"
-msgstr ""
+msgstr "Oyun ek klasörünü seç"
 
 #: gui/editgamedialog.cpp:572 gui/options.cpp:2472
 msgid "Select directory for saved games"
-msgstr ""
+msgstr "Kaydedilmiş oyunların klasörünü seç"
 
 #: gui/editgamedialog.cpp:578
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
 msgstr ""
+"Varsayılan olmayan klasörler ile kaydedilmiş oyun senkronizasyonu çalışmaz. "
+"Lütfen varsayılan klasörü kullanın."
 
 #: gui/editgamedialog.cpp:604
 msgid "This game ID is already taken. Please choose another one."
-msgstr ""
+msgstr "Bu oyun kimliği önceden alınmış. Lütfen başkasını seçin."
 
 #: gui/editrecorddialog.cpp:58
 msgid "Author:"
-msgstr ""
+msgstr "Yazar:"
 
 #: gui/editrecorddialog.cpp:60
 msgid "Notes:"
-msgstr ""
+msgstr "Notlar:"
 
 #: gui/editrecorddialog.cpp:68 gui/predictivedialog.cpp:74
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Choose file for loading"
-msgstr ""
+msgstr "Yükleme için dosyayı seçin"
 
 #: gui/filebrowser-dialog.cpp:50
 msgid "Enter filename for saving"
-msgstr ""
+msgstr "Kaydetmek için dosya ismini girin"
 
 #: gui/filebrowser-dialog.cpp:133
 msgid "Do you really want to overwrite the file?"
-msgstr ""
+msgstr "Dosyanın üzerine yazmayı gerçekten istiyor musun?"
 
 #: gui/fluidsynth-dialog.cpp:69
 msgid "Reverb"
-msgstr ""
+msgstr "Yankı"
 
 #: gui/fluidsynth-dialog.cpp:71 gui/fluidsynth-dialog.cpp:103
 msgid "Active"
-msgstr ""
+msgstr "Aktif"
 
 #: gui/fluidsynth-dialog.cpp:73
 msgid "Room:"
-msgstr ""
+msgstr "Oda:"
 
 #: gui/fluidsynth-dialog.cpp:80
+#, fuzzy
 msgid "Damp:"
-msgstr ""
+msgstr "Nem:"
 
 #: gui/fluidsynth-dialog.cpp:87
 msgid "Width:"
-msgstr ""
+msgstr "Genişlik:"
 
 #: gui/fluidsynth-dialog.cpp:94 gui/fluidsynth-dialog.cpp:112
 msgid "Level:"
-msgstr ""
+msgstr "Seviye:"
 
 #: gui/fluidsynth-dialog.cpp:101
 msgid "Chorus"
-msgstr ""
+msgstr "Koro"
 
 #: gui/fluidsynth-dialog.cpp:105
 msgid "N:"
-msgstr ""
+msgstr "N:"
 
 #: gui/fluidsynth-dialog.cpp:119
 msgid "Speed:"
-msgstr ""
+msgstr "Hız:"
 
 #: gui/fluidsynth-dialog.cpp:126
 msgid "Depth:"
-msgstr ""
+msgstr "Derinlik:"
 
 #: gui/fluidsynth-dialog.cpp:133
 msgid "Type:"
-msgstr ""
+msgstr "Tip:"
 
 #: gui/fluidsynth-dialog.cpp:136
 msgid "Sine"
-msgstr ""
+msgstr "Sinüs"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
 #: backends/platform/sdl/psp2/psp2.cpp:48
 msgid "Triangle"
-msgstr ""
+msgstr "Üçgen"
 
 #: gui/fluidsynth-dialog.cpp:139 gui/options.cpp:1858
 msgid "Misc"
-msgstr ""
+msgstr "Diğer"
 
 #: gui/fluidsynth-dialog.cpp:141
 msgid "Interpolation:"
-msgstr ""
+msgstr "Enterpolasyon:"
 
 #: gui/fluidsynth-dialog.cpp:144
 msgid "None (fastest)"
-msgstr ""
+msgstr "Yok (En hızlı)"
 
 #: gui/fluidsynth-dialog.cpp:145
 msgid "Linear"
-msgstr ""
+msgstr "Doğrusal"
 
 #: gui/fluidsynth-dialog.cpp:146
+#, fuzzy
 msgid "Fourth-order"
-msgstr ""
+msgstr "Dördüncü-düzen"
 
 #: gui/fluidsynth-dialog.cpp:147
 msgid "Seventh-order"
-msgstr ""
+msgstr "Yedinci-düzen"
 
 #. I18N: Button to reset keymap mappings to defaults
 #: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:319
 msgid "Reset"
-msgstr ""
+msgstr "Sıfırla"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
-msgstr ""
+msgstr "Bütün FluidSynth ayarlarını varsayilan degerlerine döndür."
 
 #: gui/fluidsynth-dialog.cpp:218
 msgid ""
 "Do you really want to reset all FluidSynth settings to their default values?"
 msgstr ""
+"Bütün FluidSynth ayarlarını varsayilan degerlerine döndürmeyi gerçekten "
+"istiyor musun?"
 
 #: gui/gui-manager.cpp:122
 msgid "GUI"
-msgstr ""
+msgstr "GUI"
 
 #: gui/gui-manager.cpp:126 engines/mohawk/myst.cpp:570
 #: engines/mohawk/riven.cpp:840
 msgid "Interact"
-msgstr ""
+msgstr "Etkileşim"
 
 #: gui/gui-manager.cpp:131 gui/unknown-game-dialog.cpp:54
 #: engines/scumm/help.cpp:125 engines/scumm/help.cpp:140
 #: engines/scumm/help.cpp:165 engines/scumm/help.cpp:191
 #: engines/scumm/help.cpp:209
 msgid "Close"
-msgstr ""
+msgstr "Kapat"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
@@ -591,7 +597,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1474
 #: engines/wintermute/keymapper_tables.h:1704
 msgid "Up"
-msgstr ""
+msgstr "Yukarı"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
@@ -601,7 +607,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1480
 #: engines/wintermute/keymapper_tables.h:1710
 msgid "Down"
-msgstr ""
+msgstr "Aşağı"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
@@ -611,7 +617,7 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1570
 #: engines/wintermute/keymapper_tables.h:1692
 msgid "Left"
-msgstr ""
+msgstr "Sol"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
@@ -621,76 +627,77 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1578
 #: engines/wintermute/keymapper_tables.h:1698
 msgid "Right"
-msgstr ""
+msgstr "Sağ"
 
 #: gui/KeysDialog.cpp:42
+#, fuzzy
 msgid "Map"
-msgstr ""
+msgstr "Harita or Eşleştirme"
 
 #: gui/KeysDialog.cpp:50
 msgid "Select an action and click 'Map'"
-msgstr ""
+msgstr "Bir işlem seç ve 'Eşleştirme' ye tıkla"
 
 #: gui/KeysDialog.cpp:81 gui/KeysDialog.cpp:103 gui/KeysDialog.cpp:138
 #, c-format
 msgid "Associated key : %s"
-msgstr ""
+msgstr "Eşlenmiş tuş : %s"
 
 #: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:140
 msgid "Associated key : none"
-msgstr ""
+msgstr "Eşleştirilmiş : yok"
 
 #: gui/KeysDialog.cpp:91
 msgid "Please select an action"
-msgstr ""
+msgstr "Lütfen bir işlem seç"
 
 #: gui/KeysDialog.cpp:107
 msgid "Press the key to associate"
-msgstr ""
+msgstr "Eşleştirmek için bir tuşa basın"
 
 #: gui/KeysDialog.cpp:142 gui/KeysDialog.h:41
 msgid "Choose an action to map"
-msgstr ""
+msgstr "Eşleştirme için bir işlem seç"
 
 #: gui/launcher.cpp:140 engines/dialogs.cpp:99
 msgid "~Q~uit"
-msgstr ""
+msgstr "~Ç~ıkış"
 
 #: gui/launcher.cpp:140 backends/platform/sdl/macosx/appmenu_osx.mm:215
 msgid "Quit ScummVM"
-msgstr ""
+msgstr "ScummVM'den çık"
 
 #: gui/launcher.cpp:141
 msgid "A~b~out..."
-msgstr ""
+msgstr "H~a~kkında..."
 
 #: gui/launcher.cpp:141 backends/platform/sdl/macosx/appmenu_osx.mm:209
 msgid "About ScummVM"
-msgstr ""
+msgstr "ScummVM hakkında"
 
 #: gui/launcher.cpp:142
 msgid "~O~ptions..."
-msgstr ""
+msgstr "A~y~arlar..."
 
 #: gui/launcher.cpp:142
 msgid "Change global ScummVM options"
-msgstr ""
+msgstr "Global ScummVM ayarlarını değiştir"
 
 #: gui/launcher.cpp:144
 msgid "~S~tart"
-msgstr ""
+msgstr "~B~aşlat"
 
 #: gui/launcher.cpp:144
 msgid "Start selected game"
-msgstr ""
+msgstr "Seçilen oyunu başlatın"
 
 #: gui/launcher.cpp:147
 msgid "~L~oad..."
-msgstr ""
+msgstr "~Y~ükle..."
 
 #: gui/launcher.cpp:147
 msgid "Load saved game for selected game"
-msgstr ""
+msgstr "Seçilmiş oyun icin kaydedilmiş oyunu yükle"
 
 #: gui/launcher.cpp:149
 msgid "Record..."
