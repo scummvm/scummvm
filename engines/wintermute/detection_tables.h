@@ -493,6 +493,10 @@ static const WMEGameDescription gameDescriptions[] = {
 
 	// Carol Reed 5 - The Colour of Murder (1.0 Demo)
 	WME_WINENTRY("carolreed5", "Demo",
+		WME_ENTRY1s("data.dcp", "0b4cb2b9eb5322acb7d8701db95dc721", 92019500), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
+
+	// Carol Reed 5 - The Colour of Murder (1.0 Demo)
+	WME_WINENTRY("carolreed5", "Demo",
 		WME_ENTRY1s("data.dcp", "27b3efc018ade5ee8f4adf08b4e3c0dd", 92019500), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
 
 	// Carol Reed 6 - Black Circle
@@ -1278,6 +1282,15 @@ static const WMEGameDescription gameDescriptions[] = {
 					"parche9.dcp", "05363aa13cb8aa5a3fafc68adb4dda5a", 207640138,
 					"parche91e.dcp", "ee21819363fb32a38b9f5fcf8545e374", 72496832), Common::ES_ESP, ADGF_UNSTABLE, WME_1_9_3),
 
+
+	// James Peris: No License Nor Control (Older Demo) (English)
+	WME_WINENTRY("jamesperis", "Older Demo",
+		WME_ENTRY1s("data.dcp", "05d6e37f1078fac57a088f96da4a2ea1", 87340874), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
+
+	// James Peris: No License Nor Control (Older Demo) (Spanish)
+	WME_WINENTRY("jamesperis", "Older Demo",
+		WME_ENTRY1s("data.dcp", "c8c0e63bcc4dbfb76d1048bdc3a38248", 100274569), Common::ES_ESP, ADGF_UNSTABLE | ADGF_DEMO, WME_1_8_6),
+
 	// James Peris: No License Nor Control (Demo) (English)
 	WME_WINENTRY("jamesperis", "Demo",
 		WME_ENTRY1s("data.dcp", "edb9f9c7a08993c1e28f4e477b5f9830", 116113507), Common::EN_ANY, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
@@ -1408,9 +1421,13 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("kulivocko", "",
 		WME_ENTRY1s("data.dcp", "44306dc470e9b27474043932eccee02f", 155106392), Common::CZ_CZE, ADGF_UNSTABLE, WME_1_9_1),
 
-	// Kulivocko (Czech) (Demo)
-	WME_WINENTRY("kulivocko", "Demo",
+	// Kulivocko (Czech) (Demo 1)
+	WME_WINENTRY("kulivocko", "Demo 1",
 		WME_ENTRY1s("data.dcp", "63b164bdfadecbb0deb5da691afb8154", 48362234), Common::CZ_CZE, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
+
+	// Kulivocko (Czech) (Demo 2)
+	WME_WINENTRY("kulivocko", "Demo 2",
+		WME_ENTRY1s("data.dcp", "501c59ddb787646d87dead183199c8ed", 73601289), Common::CZ_CZE, ADGF_UNSTABLE | ADGF_DEMO, WME_1_9_1),
 
 	// Life In 3 Minutes
 	WME_WINENTRY("lifein3minutes", "",
