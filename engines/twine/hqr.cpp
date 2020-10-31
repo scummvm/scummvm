@@ -79,7 +79,8 @@ static int voxEntrySize(const char *filename, int32 index, int32 hiddenIndex) {
 
 	Common::File file;
 	if (!file.open(filename)) {
-		error("HQR: Could not open %s", filename);
+		warning("HQR: Could not open %s", filename);
+		return 0;
 	}
 
 	uint32 headerSize = file.readUint32LE();
@@ -117,7 +118,7 @@ int32 getEntry(uint8 *ptr, const char *filename, int32 index) {
 
 	Common::File file;
 	if (!file.open(filename)) {
-		debug("HQR: Could not open %s", filename);
+		warning("HQR: Could not open %s", filename);
 		return 0;
 	}
 
@@ -185,7 +186,8 @@ int32 numEntries(const char *filename) {
 
 	Common::File file;
 	if (!file.open(filename)) {
-		error("HQR: Could not open %s", filename);
+		warning("HQR: Could not open %s", filename);
+		return 0;
 	}
 
 	uint32 headerSize = file.readUint32LE();
@@ -214,7 +216,8 @@ int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenInd
 
 	Common::File file;
 	if (!file.open(filename)) {
-		error("HQR: Could not open %s", filename);
+		warning("HQR: Could not open %s", filename);
+		return 0;
 	}
 
 	uint32 headerSize = file.readUint32LE();
