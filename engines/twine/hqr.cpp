@@ -82,31 +82,26 @@ static int voxEntrySize(const char *filename, int32 index, int32 hiddenIndex) {
 		error("HQR: Could not open %s", filename);
 	}
 
-	uint32 headerSize;
-	wrap(file.read(&headerSize, 4))
-
+	uint32 headerSize = file.readUint32LE();
 	if ((uint32)index >= headerSize / 4) {
 		warning("HQR: Invalid entry index");
 		return 0;
 	}
 
 	wrap(file.seek(index * 4))
-	uint32 offsetToData;
-	wrap(file.read(&offsetToData, 4))
+	uint32 offsetToData = file.readUint32LE();
 
 	wrap(file.seek(offsetToData))
-	uint32 realSize;
-	wrap(file.read(&realSize, 4))
-	uint32 compSize;
-	wrap(file.read(&compSize, 4))
+	uint32 realSize = file.readUint32LE();
+	uint32 compSize = file.readUint32LE();
 
 	    // exist hidden entries
 	for (int32 i = 0; i < hiddenIndex; i++) {
 		wrap(file.seek(offsetToData + compSize + 10)) // hidden entry
 		offsetToData = offsetToData + compSize + 10;  // current hidden offset
 
-		wrap(file.read(&realSize, 4))
-		wrap(file.read(&compSize, 4))
+		realSize = file.readUint32LE();
+		compSize = file.readUint32LE();
 	}
 
 	return realSize;
@@ -168,21 +163,17 @@ int32 entrySize(const char *filename, int32 index) {
 		return 0;
 	}
 
-	uint32 headerSize;
-	wrap(file.read(&headerSize, 4))
-
+	uint32 headerSize = file.readUint32LE();
 	if ((uint32)index >= headerSize / 4) {
 		warning("HQR: Invalid entry index");
 		return 0;
 	}
 
 	wrap(file.seek(index * 4))
-	uint32 offsetToData;
-	wrap(file.read(&offsetToData, 4))
+	uint32 offsetToData = file.readUint32LE();
 
 	wrap(file.seek(offsetToData))
-	uint32 realSize;
-	wrap(file.read(&realSize, 4))
+	uint32 realSize = file.readUint32LE();
 
 	return realSize;
 }
@@ -197,8 +188,8 @@ int32 numEntries(const char *filename) {
 		error("HQR: Could not open %s", filename);
 	}
 
-	uint32 headerSize;
-	wrap(file.read(&headerSize, 4)) return ((int)headerSize / 4) - 1;
+	uint32 headerSize = file.readUint32LE();
+	return ((int)headerSize / 4) - 1;
 }
 
 int32 getAllocEntry(uint8 **ptr, const char *filename, int32 index) {
@@ -226,8 +217,7 @@ int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenInd
 		error("HQR: Could not open %s", filename);
 	}
 
-	uint32 headerSize;
-	wrap(file.read(&headerSize, 4))
+	uint32 headerSize = file.readUint32LE();
 
 	if ((uint32)index >= headerSize / 4) {
 		warning("HQR: Invalid entry index");
@@ -235,25 +225,21 @@ int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenInd
 	}
 
 	wrap(file.seek(index * 4))
-	uint32 offsetToData;
-	wrap(file.read(&offsetToData, 4))
+	uint32 offsetToData = file.readUint32LE();
 
 	wrap(file.seek(offsetToData))
-	uint32 realSize;
-	wrap(file.read(&realSize, 4))
-	uint32 compSize;
-	wrap(file.read(&compSize, 4))
-	uint16 mode;
-	wrap(file.read(&mode, 2))
+	uint32 realSize = file.readUint32LE();
+	uint32 compSize = file.readUint32LE();
+	uint16 mode = file.readSint16LE();
 
 	// exist hidden entries
 	for (int32 i = 0; i < hiddenIndex; i++) {
 		wrap(file.seek(offsetToData + compSize + 10)) // hidden entry
 		offsetToData = offsetToData + compSize + 10;  // current hidden offset
 
-		wrap(file.read(&realSize, 4))
-		wrap(file.read(&compSize, 4))
-			wrap(file.read(&mode, 2))
+		realSize = file.readUint32LE();
+		compSize = file.readUint32LE();
+		mode = file.readUint16LE();
 	}
 
 	// uncompressed
@@ -262,8 +248,7 @@ int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenInd
 	}
 	// compressed: modes (1 & 2)
 	else if (mode == 1 || mode == 2) {
-		uint8 *compDataPtr = 0;
-		compDataPtr = (uint8 *)malloc(compSize);
+		uint8 *compDataPtr = (uint8 *)malloc(compSize);
 		wrap(file.read(compDataPtr, compSize))
 		decompressEntry(ptr, compDataPtr, realSize, mode);
 		free(compDataPtr);
