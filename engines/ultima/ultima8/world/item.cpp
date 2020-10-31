@@ -1395,9 +1395,9 @@ uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 	        !(_flags & FLG_FAST_ONLY))
 		return 0;
 
-	// UnkEggs have _quality+0x47F
+	// UnkEggs have class quality + 0x47F in U8, +0x900 in Crusader
 	if (getFamily() == ShapeInfo::SF_UNKEGG)
-		class_id = _quality + 0x47F;
+		class_id = _quality + (GAME_IS_U8 ? 0x47F : 0x900);
 
 	Usecode *u = GameData::get_instance()->getMainUsecode();
 	uint32 offset = u->get_class_event(class_id, event);

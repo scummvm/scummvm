@@ -64,6 +64,8 @@ public:
 		SF_QUALITY     = 1,
 		SF_QUANTITY    = 2,
 		SF_GLOBEGG     = 3,
+		// "Unk" eggs are not "unknown", they are triggers for usecode
+		// (unk is the source language for usecode)
 		SF_UNKEGG      = 4,
 		SF_BREAKABLE   = 5,
 		SF_CONTAINER   = 6,
