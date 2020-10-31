@@ -39,10 +39,7 @@
 #include <proto/asl.h>
 #include <proto/charsets.h>
 
-struct Library *AslBase = NULL;
-static char pathBuffer[PATH_MAX];
-
-static char *utf8_to_local(const char *in) {
+char * MorphosDialogManager::utf8_to_local(char *in) {
 	
 	if (!in) {
 		return strdup("");
@@ -68,14 +65,15 @@ static char *utf8_to_local(const char *in) {
 Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser) {
 
 	DialogResult result = kDialogCancel;
-	Common::String utf8Title = title.encode();		
+	char pathBuffer[PATH_MAX];
+	Common::String utf8Title = title.encode();
 	AslBase = OpenLibrary(AslName, 39);
 
 	if (AslBase) {
 		struct FileRequester *fr = NULL;
 			
 		if (ConfMan.hasKey("browser_lastpath")) {
-			strncpy(pathBuffer, ConfMan.get("browser_lastpath").c_str(), sizeof(pathBuffer));
+			strncpy(pathBuffer, ConfMan.get("browser_lastpath").c_str(), sizeof(pathBuffer)-1);
 		}
 	
 		fr = (struct FileRequester *)AllocAslRequestTags(ASL_FileRequest, TAG_DONE);
@@ -83,7 +81,7 @@ Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const 
 		if (!fr) 
 			return result;
 		
-		char *newTitle = utf8_to_local(utf8Title.c_str());
+		char *newTitle = utf8_to_local(strdup(utf8Title.c_str()));
 		
 		if (AslRequestTags(fr, ASLFR_TitleText, (IPTR)newTitle, ASLFR_RejectIcons, TRUE, ASLFR_InitialDrawer, (IPTR)pathBuffer, ASLFR_DrawersOnly, (isDirBrowser ? TRUE : FALSE), TAG_DONE)) {
 			
