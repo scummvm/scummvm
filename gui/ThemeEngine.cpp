@@ -242,6 +242,7 @@ ThemeEngine::~ThemeEngine() {
 	_backBuffer.free();
 
 	unloadTheme();
+	unloadExtraFont();
 
 	// Release all graphics surfaces
 	for (ImagesMap::iterator i = _bitmaps.begin(); i != _bitmaps.end(); ++i) {
@@ -829,6 +830,9 @@ void ThemeEngine::unloadTheme() {
 	}
 
 	for (int i = 0; i < kTextDataMAX; ++i) {
+		// Don't unload the language specific extra font here or it will be lost after a refresh() call.
+		if (i == kTextDataExtraLang)
+			continue;
 		delete _texts[i];
 		_texts[i] = nullptr;
 	}
@@ -840,6 +844,11 @@ void ThemeEngine::unloadTheme() {
 
 	_themeEval->reset();
 	_themeOk = false;
+}
+
+void ThemeEngine::unloadExtraFont() {
+	delete _texts[kTextDataExtraLang];
+	_texts[kTextDataExtraLang] = nullptr;
 }
 
 bool ThemeEngine::loadDefaultXML() {

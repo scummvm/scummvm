@@ -686,6 +686,11 @@ protected:
 	 */
 	void unloadTheme();
 
+	/**
+	 * Unload the language specific font loaded via loadExtraFont()
+	*/
+	void unloadExtraFont();
+
 	const Graphics::Font *loadScalableFont(const Common::String &filename, const Common::String &charset, const int pointsize, Common::String &name);
 	const Graphics::Font *loadFont(const Common::String &filename, Common::String &name);
 	Common::String genCacheFilename(const Common::String &filename) const;
