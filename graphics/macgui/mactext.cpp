@@ -614,7 +614,7 @@ int MacText::getLineWidth(int line, bool enforce, int col) {
 			if (col >= (int)_textLines[line].chunks[i].text.size()) {
 				col -= _textLines[line].chunks[i].text.size();
 			} else {
-				Common::U32String tmp(_textLines[line].chunks[i].text.c_str(), col);
+				Common::U32String tmp = _textLines[line].chunks[i].text.substr(0, col);
 
 				width += _textLines[line].chunks[i].getFont()->getStringWidth(tmp);
 
@@ -1053,7 +1053,7 @@ void MacText::setSelection(int pos, bool start) {
 			if (pos < getLineCharWidth(row)) {
 				for (uint i = 0; i < _textLines[row].chunks.size(); i++) {
 					if ((uint)pos < _textLines[row].chunks[i].text.size()) {
-						colX += _textLines[row].chunks[i].getFont()->getStringWidth(Common::U32String(_textLines[row].chunks[i].text.c_str(), pos));
+						colX += _textLines[row].chunks[i].getFont()->getStringWidth(_textLines[row].chunks[i].text.substr(0, pos));
 						col += pos + 1;
 						pos = 0;
 						break;
@@ -1439,10 +1439,10 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 					if (endCol >= (int)_textLines[i].chunks[chunk].text.size())
 						res += _textLines[i].chunks[chunk].text;
 					else
-						res += Common::U32String(_textLines[i].chunks[chunk].text.c_str(), endCol);
+						res += _textLines[i].chunks[chunk].text.substr(0, endCol);
 				} else if ((int)_textLines[i].chunks[chunk].text.size() > startCol) {
 					ADDFORMATTING();
-					res += Common::U32String(_textLines[i].chunks[chunk].text.c_str() + startCol, endCol - startCol);
+					res += _textLines[i].chunks[chunk].text.substr(startCol, endCol - startCol);
 				}
 
 				startCol -= _textLines[i].chunks[chunk].text.size();
@@ -1462,7 +1462,7 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 					res += _textLines[i].chunks[chunk].text;
 				} else if ((int)_textLines[i].chunks[chunk].text.size() > startCol) {
 					ADDFORMATTING();
-					res += Common::U32String(_textLines[i].chunks[chunk].text.c_str() + startCol);
+					res += _textLines[i].chunks[chunk].text.substr(startCol);
 				}
 
 				startCol -= _textLines[i].chunks[chunk].text.size();
@@ -1482,7 +1482,7 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 				if (endCol >= (int)_textLines[i].chunks[chunk].text.size())
 					res += _textLines[i].chunks[chunk].text;
 				else
-					res += Common::U32String(_textLines[i].chunks[chunk].text.c_str(), endCol);
+					res += _textLines[i].chunks[chunk].text.substr(0, endCol);
 
 				endCol -= _textLines[i].chunks[chunk].text.size();
 
@@ -1605,8 +1605,8 @@ void MacText::addNewLine(int *row, int *col) {
 	MacFontRun newchunk = line->chunks[ch];
 	MacTextLine newline;
 
-	newchunk.text = &line->chunks[ch].text.c_str()[pos];
-	line->chunks[ch].text = Common::U32String(line->chunks[ch].text.c_str(), pos);
+	newchunk.text = line->chunks[ch].text.substr(pos);
+	line->chunks[ch].text = line->chunks[ch].text.substr(0, pos);
 	newline.chunks.push_back(newchunk);
 
 	for (uint i = ch + 1; i < line->chunks.size(); i++) {

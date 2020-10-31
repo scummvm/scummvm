@@ -121,7 +121,7 @@ int BaseFontTT::getTextWidth(const byte *text, int maxLength) {
 	}
 
 	if (maxLength >= 0 && textStr.size() > (uint32)maxLength) {
-		textStr = WideString(textStr.c_str(), (uint32)maxLength);
+		textStr = textStr.substr(0, (uint32)maxLength);
 	}
 	//text = text.substr(0, MaxLength); // TODO: Remove
 
@@ -167,7 +167,7 @@ void BaseFontTT::drawText(const byte *text, int x, int y, int width, TTextAlign 
 	}
 
 	if (maxLength >= 0 && textStr.size() > (uint32)maxLength) {
-		textStr = WideString(textStr.c_str(), (uint32)maxLength);
+		textStr = textStr.substr(0, (uint32)maxLength);
 	}
 	//text = text.substr(0, MaxLength); // TODO: Remove
 

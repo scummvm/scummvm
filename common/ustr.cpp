@@ -131,6 +131,15 @@ U32String operator+(const U32String &x, const U32String::value_type y) {
 	return temp;
 }
 
+U32String U32String::substr(size_t pos, size_t len) const {
+	if (pos >= _size)
+		return U32String();
+	else if (len == npos)
+		return U32String(_str + pos);
+	else
+		return U32String(_str + pos, MIN((size_t)_size - pos, len));
+}
+
 void U32String::insertString(const char *s, uint32 p) {
 	while (*s != '\0') {
 		BaseString<u32char_type_t>::insertChar(*s++, p++);

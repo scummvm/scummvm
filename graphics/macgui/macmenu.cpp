@@ -619,8 +619,8 @@ void MacMenu::processSubmenuTabs(MacMenuSubMenu *submenu) {
 
 			haveTabs = true;
 
-			Common::U32String start(item->unicodeText.c_str(), &item->unicodeText.c_str()[pos]);
-			Common::U32String end(&item->unicodeText.c_str()[pos + 1]);
+			Common::U32String start = item->unicodeText.substr(0, pos);
+			Common::U32String end = item->unicodeText.substr(pos + 1);
 
 			res = start;
 			res += Common::U32String("  ");
@@ -648,8 +648,8 @@ void MacMenu::processSubmenuTabs(MacMenuSubMenu *submenu) {
 		if (pos == Common::U32String::npos)
 			continue;
 
-		Common::U32String start(item->unicodeText.c_str(), &item->unicodeText.c_str()[pos]);
-		Common::U32String end(&item->unicodeText.c_str()[pos + 1]);
+		Common::U32String start = item->unicodeText.substr(0, pos);
+		Common::U32String end = item->unicodeText.substr(pos + 1);
 		Common::U32String res;
 		Common::U32String spaces(" ");
 		int width;
