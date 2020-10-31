@@ -42,6 +42,8 @@ Programmcodes finden Sie auf Englisch unter:
  SCI:
    - Unterstützung für RGB-Rendering (16/32bpp) für SCI0 - SCI1.1-Spiele hinzugefügt. Dadurch werden Probleme
      mit der Farbpalette während Bildschirmübergängen und Probleme bei der Darstellung von Mac-QuickTime-Videos korrigiert.
+   - Unterstützung für benutzerdefinierte Farbpaletten in SQ3 und LSL2 des FreeSCI-Projekts hinzugefügt.
+     Wenn diese Mods aktiviert werden, wird die grafische Darstellung in diesen beiden Spielen verbessert.
 
  SCUMM:
    - Textdarstellung in der chinesischen, japanischen und koreanischen Version von The Dig und
@@ -50,7 +52,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Darstellung des Pause- und Neustart-Dialogs in der chinesischen, japanischen und koreanischen Version
      der Benutzeroberfläche korrigiert.
 
- Tinsel:
+   Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
 
  Stark:
