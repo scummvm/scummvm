@@ -518,9 +518,12 @@ protected:
 
 	static const int8 _dosTrackMap[];
 	static const int _dosTrackMapSize;
-
 	static const int8 _amigaTrackMap[];
 	static const int _amigaTrackMapSize;
+	static const int8 _macHQTrackMap[];
+	static const int _macHQTrackMapSize;
+	static const int8 _macLQTrackMap[];
+	static const int _macLQTrackMapSize;
 
 	// TODO: get rid of all variables having pointers to the static resources if possible
 	// i.e. let them directly use the _staticres functions

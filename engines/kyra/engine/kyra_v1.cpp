@@ -95,6 +95,8 @@ Common::Error KyraEngine_v1::init() {
 				_sound = new SoundTownsPC98_v2(this, _mixer);
 		} else if (_flags.platform == Common::kPlatformAmiga) {
 			_sound = new SoundAmiga_LoK(this, _mixer);
+		} else if (_flags.platform == Common::kPlatformMacintosh && _flags.gameID == GI_KYRA1) {
+			_sound = new SoundMac(this, _mixer);
 		} else {
 			// In Kyra 1 users who have specified a default MT-32 device in the launcher settings
 			// will get MT-32 music, otherwise AdLib. In Kyra 2 and LoL users who have specified a

@@ -42,6 +42,10 @@ class PCSpeaker;
 class MaxTrax;
 } // End of namespace Audio
 
+namespace Common {
+class MacResManager;
+} // End of namespace Common
+
 namespace Kyra {
 
 class MidiOutput;
@@ -512,6 +516,56 @@ private:
 	bool _ready;
 
 	static const uint8 _fmTrackMap[140];
+};
+
+class SoundMacRes;
+class HalestormDriver;
+class SoundMac : public Sound {
+public:
+	SoundMac(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	~SoundMac() override;
+
+	kType getMusicType() const override;
+
+	bool init() override { return init(true); }
+	bool init(bool hiQuality);
+	void initAudioResourceInfo(int, void*) override {}
+	void selectAudioResourceSet(int set) override;
+	bool hasSoundFile(uint) const override { return true; }
+	void loadSoundFile(uint) override {}
+	void loadSoundFile(Common::String) override {}
+	void playTrack(uint8 track) override;
+	void haltTrack() override;
+	void playSoundEffect(uint16 track, uint8) override;
+	bool isPlaying() const override;
+	void beginFadeOut() override;
+	void updateVolumeSettings() override;
+
+private:
+	void setQuality(bool hi);
+
+	SoundMacRes *_res;
+	HalestormDriver *_driver;
+	bool _ready;
+
+	const uint16 *_resIDMusic;
+	int _currentResourceSet;
+
+	static const uint16 _resIDMusicIntro[4];
+	static const uint16 _resIDMusicIngame[35];
+	static const uint8 _musicLoopTable[35];
+	static const uint16 _resIDSfxIntro[39];
+	static const uint16 _resIDSfxIngame[39];
+
+	struct SoundEffectDef {
+		uint8 note;
+		uint8 number;
+		uint16 rate;
+		uint8 unk;
+	};
+
+	static const SoundEffectDef _soundEffectDefsIntro[16];
+	static const SoundEffectDef _soundEffectDefsIngame[120];
 };
 
 #endif

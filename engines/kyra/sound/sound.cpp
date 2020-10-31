@@ -284,11 +284,7 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 	if (!_trackMap || !_trackMapSize)
 		return;
 
-	//if (!_disableSound) {
-	//	XXX
-	//}
-
-	if (_flags.platform == Common::kPlatformDOS || _flags.platform == Common::kPlatformMacintosh) {
+	if (_flags.platform == Common::kPlatformDOS) {
 		assert(command * 2 + 1 < _trackMapSize);
 		if (_curMusicTheme != _trackMap[command * 2]) {
 			if (_trackMap[command * 2] != -1 && _trackMap[command * 2] != -2)
@@ -303,6 +299,7 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 		} else {
 			_sound->beginFadeOut();
 		}
+
 	} else if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		if (command == -1) {
 			_sound->haltTrack();
@@ -313,12 +310,12 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 				_sound->playTrack(command);
 			}
 		}
-	} else if (_flags.platform == Common::kPlatformAmiga) {
+	} else if (_flags.platform == Common::kPlatformMacintosh || _flags.platform == Common::kPlatformAmiga) {
 		if (_curMusicTheme != 1)
 			snd_playTheme(1, -1);
 
 		assert(command < _trackMapSize);
-		if (_trackMap[_lastMusicCommand] != _trackMap[command])
+		if (_lastMusicCommand == -1 || _trackMap[_lastMusicCommand] != _trackMap[command])
 			_sound->playTrack(_trackMap[command]);
 	}
 

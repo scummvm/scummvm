@@ -106,7 +106,7 @@ void KyraEngine_LoK::seq_intro() {
 
 	_seq->setCopyViewOffs(true);
 	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
-	if (_flags.platform != Common::kPlatformFMTowns && _flags.platform != Common::kPlatformPC98 && _flags.platform != Common::kPlatformAmiga)
+	if (_flags.platform == Common::kPlatformDOS || _flags.platform == Common::kPlatformMacintosh)
 		snd_playTheme(0, 2);
 	_text->setTalkCoords(144);
 
@@ -1039,9 +1039,9 @@ int KyraEngine_LoK::seq_playEnd() {
 		snd_playWanderScoreViaMap(50, 1);
 		setupPanPages();
 
-		if (_flags.platform == Common::kPlatformAmiga) {
+		if (_flags.platform == Common::kPlatformAmiga || _flags.platform == Common::kPlatformMacintosh) {
 			_sound->loadSoundFile(kMusicFinale);
-
+			_sound->selectAudioResourceSet(kMusicFinale);
 			// The original started song 0 directly here. Since our player
 			// uses 0, 1 for stop and fade we start song 0 with 2
 			_sound->playTrack(2);

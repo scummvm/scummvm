@@ -103,7 +103,8 @@ public:
 		kPCSpkr,
 		kPCjr,
 		kAmiga,
-		kSegaCD
+		kSegaCD,
+		kMac
 	};
 
 	virtual kType getMusicType() const = 0;

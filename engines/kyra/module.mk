@@ -62,6 +62,7 @@ MODULE_OBJS := \
 	sequence/sequences_mr.o \
 	sound/sound_amiga_lok.o \
 	sound/sound_digital_mr.o \
+	sound/sound_mac_lok.o \
 	sound/sound_pc_midi.o \
 	sound/sound_pc_v1.o \
 	sound/sound_pc98_lok.o \
@@ -71,6 +72,7 @@ MODULE_OBJS := \
 	sound/sound_lok.o \
 	sound/drivers/adlib.o \
 	sound/drivers/audstream.o \
+	sound/drivers/halestorm.o \
 	sound/drivers/pcspeaker_v2.o \
 	text/text.o \
 	text/text_lok.o \
