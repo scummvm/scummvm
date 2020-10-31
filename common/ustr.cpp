@@ -133,13 +133,13 @@ U32String operator+(const U32String &x, const uint32 y) {
 
 void U32String::insertString(const char *s, uint32 p) {
 	while (*s != '\0') {
-		BaseString::insertChar(*s++, p++);
+		BaseString<u32char_type_t>::insertChar(*s++, p++);
 	}
 }
 
 void U32String::insertString(const String &s, uint32 p) {
 	for (uint32 i = 0; i < s.size(); ++i) {
-		BaseString::insertChar(s[i], p++);
+		BaseString<u32char_type_t>::insertChar(s[i], p++);
 	}
 }
 
