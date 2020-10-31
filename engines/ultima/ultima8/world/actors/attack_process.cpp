@@ -68,12 +68,6 @@ static const int MAGIC_DATA_OFF = 33000;
 
 static uint16 someSleepGlobal = 0;
 
-// TODO: work out what this function does - probably like "can see" or "is facing"
-// Should probably be in Actor
-static bool Intrinsic116(Actor *, Actor *, Direction, uint16, uint16, uint16) {
-	return false;
-}
-
 // TODO: Implement me. Set timer for some avatar moves.
 static bool World_FinishedAvatarMoveTimeout() {
 	return true;
@@ -231,7 +225,7 @@ void AttackProcess::run() {
 		}
 		case 0x8a:
 		{
-			bool result = Intrinsic116(a, target, curdir, 0, 0, 0);
+			bool result = a->fireDistance(target, curdir, 0, 0, 0);
 			// Fire small weapon
 			if (result)
 				a->doAnim(Animation::attack, dir_current);
@@ -239,7 +233,7 @@ void AttackProcess::run() {
 		}
 		case 0x8b:
 		{
-			bool result = Intrinsic116(a, target, curdir, 0, 0, 0);
+			bool result = a->fireDistance(target, curdir, 0, 0, 0);
 			// Fire large weapon
 			if (result)
 				a->doAnim(Animation::attack, dir_current);
@@ -359,7 +353,7 @@ void AttackProcess::run() {
 		}
 		case 0x9c:
 		{
-			bool result = Intrinsic116(a, target, curdir, 0, 0, 0);
+			bool result = a->fireDistance(target, curdir, 0, 0, 0);
 			uint16 data = readNextWordWithData();
 			if (!result) {
 				_tacticDatReadStream->seek(data, SEEK_SET);
@@ -368,7 +362,7 @@ void AttackProcess::run() {
 		}
 		case 0x9d:
 		{
-			bool result = Intrinsic116(a, target, curdir, 0, 0, 0);
+			bool result = a->fireDistance(target, curdir, 0, 0, 0);
 			uint16 data = readNextWordWithData();
 			if (result) {
 				_tacticDatReadStream->seek(data, SEEK_SET);
@@ -733,7 +727,7 @@ void AttackProcess::genericAttack() {
 				if (standDirMode != dirmode_16dirs) {
 					targetdir = a->getDirToItemCentre(*target);
 				}
-				local_1b = Intrinsic116(a, target, targetdir, 0, 0, 0);
+				local_1b = a->fireDistance(target, targetdir, 0, 0, 0);
 				if (local_1b)
 					timeNowToTimerVal2(now);
 			} else {
@@ -874,7 +868,7 @@ bool AttackProcess::checkReady(int now, Direction targetdir) {
 	Actor *target = getActor(_target);
 	if (!a || !target)
 		return false;
-	return Intrinsic116(a, target, targetdir, 0, 0, 0);
+	return a->fireDistance(target, targetdir, 0, 0, 0) > 0;
 }
 
 void AttackProcess::timeNowToTimerVal2(int now) {

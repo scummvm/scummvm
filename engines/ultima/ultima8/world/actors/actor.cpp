@@ -481,6 +481,7 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 #endif
 
 	if (GAME_IS_CRUSADER) {
+		// Crusader sets some flags on animation start
 		// HACK: When switching from 16-dir combat to 8-dir walking,
 		// fix the direction to only 8 dirs
 		if (anim == Animation::stand)
@@ -489,6 +490,12 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 			setActorFlag(ACT_WEAPONREADY);
 		else if (anim == Animation::unreadyWeapon)
 			clearActorFlag(ACT_WEAPONREADY);
+		else if (anim == Animation::startKneeling || anim == Animation::kneelAndFire ||
+				 anim == Animation::kneelAndFireSmallWeapon ||
+				 anim == Animation::kneelAndFireLargeWeapon)
+			setActorFlag(ACT_KNEELING);
+		else if (anim == Animation::stopKneeling)
+			clearActorFlag(ACT_KNEELING);
 	}
 
 	Process *p = new ActorAnimProcess(this, anim, dir, steps);

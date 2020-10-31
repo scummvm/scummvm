@@ -390,6 +390,9 @@ public:
 	//! fire the given weapon type in the given direction from location x, y, z.
 	uint16 fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, char someflag);
 
+	//! get the distance (in map tiles) if we were to fire in this direction
+	uint16 fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, int16 zoff);
+
 	//! get damage points, used in Crusader for item damage.
 	uint8 getDamagePoints() const {
 		return _damagePoints;
@@ -592,6 +595,7 @@ public:
 	INTRINSIC(I_avatarStoleSomething);
 	INTRINSIC(I_isOnScreen);
 	INTRINSIC(I_fireWeapon);
+	INTRINSIC(I_fireDistance);
 
 private:
 	uint32 _shape;   // DO NOT modify this directly! Always use setShape()!

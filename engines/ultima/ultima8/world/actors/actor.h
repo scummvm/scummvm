@@ -352,6 +352,7 @@ public:
 		ACT_DESCENDING     = 0x000004,
 		ACT_ANIMLOCK       = 0x000008,
 
+		ACT_KNEELING	   = 0x000100, // not the same bit used in Crusader, but use this because it's empty.
 		ACT_FIRSTSTEP      = 0x000400, // flags from npcdata byte 0x2F
 		ACT_INCOMBAT       = 0x000800,
 		ACT_DEAD           = 0x001000,

@@ -97,7 +97,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Item::I_receiveHit(Item *, other, dir, damage, damagetype)", // based on disasm
 	"byte Actor::I_isBusy(4 bytes)", // same code as U8
 	"int16 Item::I_getDirFromTo16(x1, y1, x2, y2)",
-	"byte Actor::I_getIsKneeling(Item *)",
+	"byte Actor::I_isKneeling(Item *)",
 	"int16 Actor::I_doAnim(12 bytes)", // v. similar code to U8
 	"byte MainActor::I_addItemCru(4 bytes)", // same coff as 0B8
 	"void AudioProcess::I_stopSFXCru(Item *, int16 sndno)",
@@ -336,7 +336,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 UCMachine::I_numToStr(int16 num)", // based on VMAIL::func0A example usage
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getNPCNum(Item *)", // part of same coff set 067, 06D, 089, 08E, 0AD, 0F8, 100, 102, 105, 107, 109, 10B, 10D, 10F, 111, 115, 11C, 123, 129
-	"byte Intrinsic116(14 bytes)", // something like distance-to?
+	"byte Item::I_fireDistance(14 bytes)",
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_hurl(Item *,8 bytes)", // part of same coff set 028, 08D, 0BD, 0C0, 0C2, 0C8, 0F7, 0F9, 118, 11D
 	"void Item::I_setIsBroken(Item *)", // same coff as 08C, 12A
