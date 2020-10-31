@@ -176,6 +176,12 @@ bool String::contains(uint32 x) const {
 	return false;
 }
 
+#ifdef USE_CXX11
+bool String::contains(char32_t x) const {
+	return contains((uint32)x);
+}
+#endif
+
 #ifndef SCUMMVM_UTIL
 
 bool String::matchString(const char *pat, bool ignoreCase, bool pathMode) const {
