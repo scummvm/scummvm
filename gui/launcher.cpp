@@ -283,9 +283,9 @@ void LauncherDialog::updateListing() {
 	// Turn it into a list of pointers
 	Common::List<LauncherEntry> domainList;
 	for (ConfigManager::DomainMap::const_iterator iter = domains.begin(); iter != domains.end(); ++iter) {
-		String description(iter->_value.getVal("description"));
+		String description;
 
-		if (description.empty()) {
+		if (!iter->_value.tryGetVal("description", description)) {
 			QualifiedGameDescriptor g = EngineMan.findTarget(iter->_key);
 			if (!g.description.empty())
 				description = g.description;
