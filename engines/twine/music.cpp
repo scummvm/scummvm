@@ -204,17 +204,9 @@ bool Music::initCdrom() {
 	if (!_engine->cfgfile.Sound) {
 		return false;
 	}
-#if 0 // TODO: mgerhardy
 	AudioCDManager* cdrom = g_system->getAudioCDManager();
-	if (cdrom->numtracks == NUM_CD_TRACKS) {
-		_engine->cdDir = "LBA";
-		_engine->cfgfile.UseCD = 1;
-		return true;
-	}
-#endif
-	// not found the right CD
-	_engine->cfgfile.UseCD = 0;
-	return false;
+	_engine->cfgfile.UseCD = cdrom->open();
+	return _engine->cfgfile.UseCD;
 }
 
 void Music::stopMusic() {
