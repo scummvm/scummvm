@@ -445,7 +445,7 @@ bool OpenGLSdlGraphicsManager::setupMode(uint width, uint height) {
 		width  = _desiredFullscreenWidth;
 		height = _desiredFullscreenHeight;
 
-		flags |= SDL_WINDOW_FULLSCREEN;
+		flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
 
 	// Request a OpenGL (ES) context we can use.
