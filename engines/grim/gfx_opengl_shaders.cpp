@@ -535,10 +535,10 @@ void GfxOpenGLS::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, i
 	double bottom = -1000;
 
 	for (uint i = 0; i < model->_numFaces; i++) {
-		int *indices = (int *)model->_faces[i]._indexes;
+		uint16 *indices = (uint16 *)model->_faces[i]._indexes;
 
 		for (uint j = 0; j < model->_faces[i]._faceLength * 3; j++) {
-			int index = indices[j];
+			uint16 index = indices[j];
 			const Math::Vector3d &dv = model->_drawVertices[index];
 
 			Math::Vector4d v = Math::Vector4d(dv.x(), dv.y(), dv.z(), 1.0f);
@@ -960,7 +960,7 @@ void GfxOpenGLS::drawEMIModelFace(const EMIModel* model, const EMIMeshFace* face
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_indicesEBO);
 
-	glDrawElements(GL_TRIANGLES, 3 * face->_faceLength, GL_UNSIGNED_INT, 0);
+	glDrawElements(GL_TRIANGLES, 3 * face->_faceLength, GL_UNSIGNED_SHORT, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }
 
@@ -2015,7 +2015,7 @@ void GfxOpenGLS::createEMIModel(EMIModel *model) {
 
 	for (uint32 i = 0; i < model->_numFaces; ++i) {
 		EMIMeshFace * face = &model->_faces[i];
-		face->_indicesEBO = OpenGL::ShaderGL::createBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_faceLength * 3 * sizeof(uint32), face->_indexes, GL_STATIC_DRAW);
+		face->_indicesEBO = OpenGL::ShaderGL::createBuffer(GL_ELEMENT_ARRAY_BUFFER, face->_faceLength * 3 * sizeof(uint16), face->_indexes, GL_STATIC_DRAW);
 	}
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
