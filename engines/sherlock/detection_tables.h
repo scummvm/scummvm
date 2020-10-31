@@ -212,6 +212,21 @@ static const SherlockGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Case of the Serrated Scalpel - Traditional Chinese
+		// Provided by AquariumTroop
+		{
+			"scalpel",
+			0,
+			AD_ENTRY1s("talk.lib", "334c7d468860f20eafbcd002891f0c6b", 173935),
+			Common::ZH_CNA,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GType_SerratedScalpel,
+	},
+
+	{
 		// Case of the Rose Tattoo - French CD
 		// Provided by Strangerke
 		{
