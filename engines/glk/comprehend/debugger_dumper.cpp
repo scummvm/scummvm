@@ -75,6 +75,7 @@ DebuggerDumper::DebuggerDumper() : _game(nullptr) {
 	_opcodes[OPCODE_INVENTORY] = "inventory";
 	_opcodes[OPCODE_MOVE_OBJECT_TO_ROOM] = "move_object_to_room";
 	_opcodes[OPCODE_SAVE_ACTION] = "save_action";
+	_opcodes[OPCODE_CLEAR_LINE] = "clear_line";
 	_opcodes[OPCODE_MOVE_TO_ROOM] = "move_to_room";
 	_opcodes[OPCODE_VAR_ADD] = "var_add";
 	_opcodes[OPCODE_SET_ROOM_DESCRIPTION] = "set_room_description";

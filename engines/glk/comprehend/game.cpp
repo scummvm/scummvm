@@ -42,6 +42,11 @@ void Sentence::clear() {
 	_specialOpcodeVal2 = 0;
 }
 
+void Sentence::copyFrom(const Sentence &src, bool copyNoun) {
+	for (uint idx = (copyNoun ? 0 : 1); idx < 6; ++idx)
+		_formattedWords[idx] = src._formattedWords[idx];
+}
+
 void Sentence::format() {
 	for (uint idx = 0; idx < 6; ++idx)
 		_formattedWords[idx] = 0;
@@ -110,7 +115,8 @@ void Sentence::format() {
 /*-------------------------------------------------------*/
 
 
-ComprehendGame::ComprehendGame() : _gameStrings(nullptr), _ended(false) {
+ComprehendGame::ComprehendGame() : _gameStrings(nullptr), _ended(false),
+		_nounState(NOUNSTATE_INITIAL) {
 }
 
 ComprehendGame::~ComprehendGame() {
@@ -798,7 +804,7 @@ void ComprehendGame::doAfterTurn() {
 }
 
 void ComprehendGame::read_input() {
-	Sentence sentence;
+	Sentence tempSentence;
 	char *line = NULL, buffer[1024];
 	bool handled;
 
@@ -835,8 +841,13 @@ void ComprehendGame::read_input() {
 	line = &buffer[0];
 
 	while (1) {
-		read_sentence(&line, &sentence);
-		handled = handle_sentence(&sentence);
+		NounState prevNounState = _nounState;
+		_nounState = NOUNSTATE_STANDARD;
+
+		read_sentence(&line, &tempSentence);
+		_sentence.copyFrom(tempSentence, tempSentence._formattedWords[0] || prevNounState != NOUNSTATE_QUERY);
+
+		handled = handle_sentence(&_sentence);
 		if (handled)
 			doAfterTurn();
 

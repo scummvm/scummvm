@@ -34,6 +34,8 @@ namespace Comprehend {
 #define ROOM_IS_DARK 1
 #define ROOM_IS_TOO_BRIGHT 2
 
+enum NounState { NOUNSTATE_STANDARD = 0, NOUNSTATE_QUERY = 1, NOUNSTATE_INITIAL = 2 };
+
 struct GameStrings;
 struct Sentence;
 
@@ -48,10 +50,18 @@ struct Sentence {
 	}
 
 	bool empty() const {
-		return _nr_words == 0;
+		return !_formattedWords[0];
 	}
 
+	/**
+	 * Clears the sentence
+	 */
 	void clear();
+
+	/**
+	 * Copies from another sentence to this one
+	 */
+	void copyFrom(const Sentence &src, bool copyNoun = true);
 
 	/**
 	 * Splits up the array of _words into a _formattedWords
@@ -64,6 +74,8 @@ struct Sentence {
 class ComprehendGame : public GameData {
 protected:
 	bool _ended;
+	NounState _nounState;
+	Sentence _sentence;
 public:
 	const GameStrings *_gameStrings;
 

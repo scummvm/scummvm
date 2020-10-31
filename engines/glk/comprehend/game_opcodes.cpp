@@ -188,16 +188,14 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		break;
 
 	case OPCODE_SAVE_ACTION:
-		/*
-		 * FIXME - This saves the current verb and allows the next
-		 * command to use just the noun. This is used to allow
-		 * responses to ask the player what they meant, e.g:
-		 *
-		 *   > drop
-		 *   I don't understand what you want to drop.
-		 *   > gun
-		 *   Okay.
-		 */
+		// Causes the next sentence inputed to re-use the first word of the current one.
+		// As far as I'm aware, this is only used for handling responses to rhethorical questions
+		_nounState = NOUNSTATE_QUERY;
+		// fall-through
+
+	case OPCODE_CLEAR_LINE:
+		// Resets the input line, removing any pending further actions that were specified
+		// TODO: Make input line a class field, and reset it here
 		break;
 
 	case OPCODE_SET_CAN_TAKE:
@@ -394,6 +392,7 @@ ComprehendGameV1::ComprehendGameV1() {
 	_opcodeMap[0x85] = OPCODE_MOVE_TO_ROOM;
 	_opcodeMap[0x86] = OPCODE_VAR_ADD;
 	_opcodeMap[0x87] = OPCODE_SET_ROOM_DESCRIPTION;
+	_opcodeMap[0x88] = OPCODE_CLEAR_LINE;
 	_opcodeMap[0x89] = OPCODE_MOVE_OBJECT_TO_CURRENT_ROOM;
 	_opcodeMap[0x8a] = OPCODE_VAR_SUB;
 	_opcodeMap[0x8b] = OPCODE_SET_OBJECT_DESCRIPTION;
@@ -696,6 +695,7 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x85] = OPCODE_MOVE_TO_ROOM;
 	_opcodeMap[0x86] = OPCODE_VAR_ADD;
 	_opcodeMap[0x87] = OPCODE_SET_ROOM_DESCRIPTION;
+	_opcodeMap[0x88] = OPCODE_CLEAR_LINE;
 	_opcodeMap[0x89] = OPCODE_SPECIAL;
 	_opcodeMap[0x8a] = OPCODE_VAR_SUB;
 	_opcodeMap[0x8c] = OPCODE_MOVE_DEFAULT;
