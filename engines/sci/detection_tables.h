@@ -1333,20 +1333,20 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-#define GUIO_JONES_FLOPPY GUIO4(GUIO_NOSPEECH,            \
-							GAMEOPTION_PREFER_DIGITAL_SFX \
-		                    GAMEOPTION_MIDI_MODE,         \
+#define GUIO_JONES_FLOPPY GUIO4(GUIO_NOSPEECH,             \
+							GAMEOPTION_PREFER_DIGITAL_SFX, \
+		                    GAMEOPTION_MIDI_MODE,          \
 	                        GAMEOPTION_RGB_RENDERING)
 
-#define GUIO_JONES_CD GUIO4(GAMEOPTION_JONES_CDAUDIO,     \
-							GAMEOPTION_PREFER_DIGITAL_SFX \
-		                    GAMEOPTION_MIDI_MODE,         \
+#define GUIO_JONES_CD GUIO4(GAMEOPTION_JONES_CDAUDIO,      \
+							GAMEOPTION_PREFER_DIGITAL_SFX, \
+		                    GAMEOPTION_MIDI_MODE,          \
 	                        GAMEOPTION_RGB_RENDERING)
 
-#define GUIO_JONES_CD_WINDOWS GUIO5(GUIO_MIDIGM,                  \
-									GAMEOPTION_JONES_CDAUDIO,     \
-									GAMEOPTION_PREFER_DIGITAL_SFX \
-									GAMEOPTION_MIDI_MODE,         \
+#define GUIO_JONES_CD_WINDOWS GUIO5(GUIO_MIDIGM,                   \
+									GAMEOPTION_JONES_CDAUDIO,      \
+									GAMEOPTION_PREFER_DIGITAL_SFX, \
+									GAMEOPTION_MIDI_MODE,          \
 									GAMEOPTION_RGB_RENDERING)
 
 	// Jones in the Fast Lane EGA - English DOS
