@@ -53,4 +53,7 @@
 	<string name="customkeyboardview_keycode_enter">Enter</string>
 	<!-- End of copy from AOSP -->
 	<string name="customkeyboardview_popup_close">Close popup</string>
+
+	<string name="saf_request_prompt">Please select the *root* of your external (physical) SD card. This is required for ScummVM to access this path: </string>
+	<string name="preference_saf_tree_key" translatable="false">pref_key__saf_tree_uri</string>
 </resources>

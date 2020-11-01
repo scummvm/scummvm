@@ -55,7 +55,7 @@
 #include <os2.h>
 #endif
 
-#if defined(__ANDROID__) && !defined(ANDROIDSDL)
+#if defined(ANDROID_PLAIN_PORT)
 #include "backends/platform/android/jni-android.h"
 #endif
 
@@ -172,7 +172,7 @@ bool POSIXFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, boo
 	}
 #endif
 
-#if defined(__ANDROID__) && !defined(ANDROIDSDL)
+#if defined(ANDROID_PLAIN_PORT)
 	if (_path == "/") {
 		Common::Array<Common::String> list = JNI::getAllStorageLocations();
 		for (Common::Array<Common::String>::const_iterator it = list.begin(), end = list.end(); it != end; ++it) {
@@ -297,6 +297,17 @@ Common::WriteStream *POSIXFilesystemNode::createWriteStream() {
 bool POSIXFilesystemNode::createDirectory() {
 	if (mkdir(_path.c_str(), 0755) == 0)
 		setFlags();
+#if defined(ANDROID_PLAIN_PORT)
+	else {
+		// TODO eventually android specific stuff should be moved to an Android backend for fs
+		//      peterkohaut already has some work on that in his fork (moving the port to more native code)
+		//      However, I have not found a way to do this Storage Access Framework stuff natively yet.
+		if (JNI::createDirectoryWithSAF(_path)) {
+			setFlags();
+		}
+	}
+#endif // ANDROID_PLAIN_PORT
+
 
 	return _isValid && _isDirectory;
 }

@@ -456,7 +456,7 @@ public class ExternalStorage {
 		mMounts.clear();
 
 		if (Environment.getDataDirectory() != null
-		    && !Environment.getDataDirectory().getAbsolutePath().isEmpty()) {
+			&& !Environment.getDataDirectory().getAbsolutePath().isEmpty()) {
 			File dataFilePath = new File(Environment.getDataDirectory().getAbsolutePath());
 			if (dataFilePath.exists() && dataFilePath.isDirectory()) {
 				map.add(DATA_DIRECTORY);

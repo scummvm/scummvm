@@ -42,6 +42,8 @@ AbstractFSNode *POSIXFilesystemFactory::makeRootFileNode() const {
 
 AbstractFSNode *POSIXFilesystemFactory::makeCurrentDirectoryFileNode() const {
 #if defined(__ANDROID__)
+	// Keep this here if we still want to maintain support for the Android SDL port, since this affects that too
+	//
 	// For Android it does not make sense to have "." in Search Manager as a current directory file node, so we skip it here
 	// Otherwise this can potentially lead to a crash since, in Android getcwd() returns the root path "/"
 	// and when SearchMan is used (eg. SearchSet::createReadStreamForMember) and it tries to search root path (and calls POSIXFilesystemNode::getChildren())
