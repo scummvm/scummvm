@@ -1472,13 +1472,9 @@ public:
 	 * Set a window caption or any other comparable status display to the
 	 * given value.
 	 *
-	 * The caption must be a pure ISO LATIN 1 string. Passing a string
-	 * with a different encoding may lead to unexpected behavior,
-	 * even crashes.
-	 *
-	 * @param caption The window caption to use, as an ISO LATIN 1 string.
+	 * @param caption The window caption to use.
 	 */
-	virtual void setWindowCaption(const char *caption) {}
+	virtual void setWindowCaption(const Common::U32String &caption) {}
 
 	/**
 	 * Display a message in an 'on-screen display'.

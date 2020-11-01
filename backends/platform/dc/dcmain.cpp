@@ -37,7 +37,7 @@
 
 
 Icon icon;
-const char *gGameName;
+const char gGameName[32];
 
 
 OSystem_Dreamcast::OSystem_Dreamcast()
@@ -143,9 +143,9 @@ bool DCCDManager::isPlaying() const {
 	return getCdState() == 3;
 }
 
-void OSystem_Dreamcast::setWindowCaption(const char *caption)
+void OSystem_Dreamcast::setWindowCaption(const Common::U32String &caption)
 {
-  gGameName = caption;
+  Common::strlcpy(gGameName, cap.encode(Common::kISO8859_1).c_str(), 32);
 }
 
 void OSystem_Dreamcast::quit() {

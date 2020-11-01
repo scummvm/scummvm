@@ -175,7 +175,7 @@ public:
 
 	virtual void quit();
 
-	virtual void setWindowCaption(const char *caption);
+	virtual void setWindowCaption(const Common::U32String &caption);
 	virtual void showVirtualKeyboard(bool enable);
 
 	virtual Audio::Mixer *getMixer();
