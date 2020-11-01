@@ -580,7 +580,7 @@ int32 Menu::volumeMenu() {
 }
 
 void Menu::inGameOptionsMenu() {
-	_engine->_text->initTextBank(0);
+	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 	_engine->_menu->optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
 	_engine->_menu->optionsMenu();
 	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
@@ -630,7 +630,7 @@ bool Menu::init() {
 }
 
 EngineState Menu::run() {
-	_engine->_text->initTextBank(0);
+	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
 	_engine->_music->playTrackMusic(9); // LBA's Theme
 	_engine->_sound->stopSamples();
@@ -678,7 +678,7 @@ int32 Menu::giveupMenu() {
 
 	int32 menuId;
 	do {
-		_engine->_text->initTextBank(0);
+		_engine->_text->initTextBank(TextBankId::Options_and_menus);
 		menuId = processMenu(localMenu);
 		switch (menuId) {
 		case TextId::kContinue:
@@ -855,7 +855,7 @@ void Menu::processBehaviourMenu() {
 	int32 tmpTextBank = _engine->_text->currentTextBank;
 	_engine->_text->currentTextBank = -1;
 
-	_engine->_text->initTextBank(0);
+	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
 	drawBehaviourMenu(_engine->_scene->sceneHero->angle);
 
@@ -969,7 +969,7 @@ void Menu::processInventoryMenu() {
 
 	drawInventoryItems();
 
-	_engine->_text->initTextBank(2);
+	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 
 	int32 bx = 3;
 

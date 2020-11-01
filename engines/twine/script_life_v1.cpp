@@ -1450,7 +1450,7 @@ static int32 lPROJ_3D(TwinEEngine *engine, ScriptContext& ctx) {
 	engine->_renderer->setCameraAngle(0, 1500, 0, 25, -128, 0, 13000);
 	engine->_renderer->setLightVector(896, 950, 0);
 
-	engine->_text->initTextBank(1);
+	engine->_text->initTextBank(TextBankId::Credits);
 
 	return 0;
 }

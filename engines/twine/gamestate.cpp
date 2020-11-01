@@ -315,7 +315,7 @@ void GameState::processFoundItem(int32 item) {
 
 	// process vox play
 	_engine->_music->stopMusic();
-	_engine->_text->initTextBank(2);
+	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 
 	_engine->_interface->resetClip();
 	_engine->_text->initText(item);

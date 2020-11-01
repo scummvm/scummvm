@@ -496,7 +496,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			case kiBookOfBu: {
 				_screens->fadeToBlack(_screens->paletteRGBA);
 				_screens->loadImage(RESSHQR_INTROSCREEN1IMG);
-				_text->initTextBank(2);
+				_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 				_text->newGameVar4 = 0;
 				_text->textClipFull();
 				_text->setFontCrossColor(15);
@@ -552,7 +552,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				unfreezeTime();
 				_redraw->redrawEngineActions(1);
 				freezeTime();
-				_text->initTextBank(2);
+				_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 				_text->textClipFull();
 				_text->setFontCrossColor(15);
 				_text->drawTextFullscreen(162);

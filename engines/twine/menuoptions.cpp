@@ -59,7 +59,7 @@ void MenuOptions::newGame() {
 	_engine->_text->newGameVar4 = 0;
 	_engine->_text->newGameVar5 = 1;
 
-	_engine->_text->initTextBank(2);
+	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->textClipFull();
 	_engine->_text->setFontCrossColor(15);
 
@@ -194,7 +194,7 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
 	playerName[0] = '\0'; // TODO: read from settings?
-	_engine->_text->initTextBank(0);
+	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 	char buffer[256];
 	_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
 	_engine->_text->setFontColor(15);
@@ -329,7 +329,7 @@ int MenuOptions::chooseSave(int textIdx) {
 	_engine->flip();
 	do {
 		// TODO: assemble menu with save slots and make then loadable.
-		_engine->_text->initTextBank(0);
+		_engine->_text->initTextBank(TextBankId::Options_and_menus);
 		char buffer[256];
 		_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
 		_engine->_text->setFontColor(15);
