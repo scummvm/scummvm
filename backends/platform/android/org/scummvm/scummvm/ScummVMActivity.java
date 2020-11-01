@@ -1571,7 +1571,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				Log.d(ScummVM.LOG_TAG, "ScummVM Config file already exists!");
 				Log.d(ScummVM.LOG_TAG, "Existing ScummVM INI: " + _configScummvmFile.getPath());
 				String existingVersionInfo = getVersionInfoFromScummvmConfiguration(_configScummvmFile.getPath());
-				if (!existingVersionInfo.trim().isEmpty()) {
+				if (!TextUtils.isEmpty(existingVersionInfo) && !TextUtils.isEmpty(existingVersionInfo.trim()) ) {
 					Log.d(ScummVM.LOG_TAG, "Existing ScummVM Version: " + existingVersionInfo.trim());
 					Version tmpOldVersionFound = new Version(existingVersionInfo.trim());
 					if (tmpOldVersionFound.compareTo(maxOldVersionFound) > 0) {
@@ -1603,7 +1603,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 					if (oldCandidateScummVMConfig.exists() && oldCandidateScummVMConfig.isFile()) {
 						Log.d(ScummVM.LOG_TAG, "Old config " + oldConfigFileDescription + " ScummVM file was found!");
 						String existingVersionInfo = getVersionInfoFromScummvmConfiguration(oldCandidateScummVMConfig.getPath());
-						if (!existingVersionInfo.trim().isEmpty()) {
+						if (!TextUtils.isEmpty(existingVersionInfo) && !TextUtils.isEmpty(existingVersionInfo.trim())) {
 							Log.d(ScummVM.LOG_TAG, "Old config's ScummVM version: " + existingVersionInfo.trim());
 							Version tmpOldVersionFound = new Version(existingVersionInfo.trim());
 							//
@@ -1927,7 +1927,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		if (_configScummvmFile.exists() && _configScummvmFile.isFile()) {
 			Log.d(ScummVM.LOG_TAG, "Looking into config file for save path: " + _configScummvmFile.getPath());
 			String persistentGlobalSavePathStr = getSavepathInfoFromScummvmConfiguration(_configScummvmFile.getPath());
-			if (!persistentGlobalSavePathStr.trim().isEmpty()) {
+			if (!TextUtils.isEmpty(persistentGlobalSavePathStr) && !TextUtils.isEmpty(persistentGlobalSavePathStr.trim()) ) {
 				Log.d(ScummVM.LOG_TAG, "Found explicit save path: " + persistentGlobalSavePathStr);
 				persistentGlobalSavePath = new File(persistentGlobalSavePathStr);
 				if (persistentGlobalSavePath.exists() && persistentGlobalSavePath.isDirectory() && persistentGlobalSavePath.listFiles() != null) {
