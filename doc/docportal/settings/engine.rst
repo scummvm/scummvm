@@ -1,0 +1,649 @@
+=====================
+Engine
+=====================
+
+Overview
+=========
+
+Engine settings are those settings that are unique to a particular game or game engine. To find out which engine powers your game, have a look at the Supported Games `Wiki page
+<https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_. 
+
+Engines: ADL_ | AGI_ | BLADERUNNER_ | CGE_ | CINE_ | DRASCULA_ | DREAMWEB_ | HDB_ | HOPKINS_ | KYRA_ | LURE_ | MADS_ | NEVERHOOD_ | SCI_ | SCUMM_ | SHERLOCK_ | SKY_ | SUPERNOVA_ | TOLTECS_ | WINTERMUTE_ | XEEN_ |
+
+
+The Engine tab
+--------------
+
+Choose a game, then go to **Edit Game > Engine**. Note that this tab may not be available for all games. 
+
+Use the engine tab to change settings that are unique to the game being played. Only available settings are shown. 
+
+.. figure:: ../images/settings/engine.png
+
+    The Engine tab in the game-specific settings
+
+
+,,,,,,,,,,,,,,,,,,,,
+
+.. _ADL:
+
+ADL
+*****
+.. _ntsc:
+
+TV emulation
+	Emulate composite output to an NTSC TV.
+
+	*ntsc* 
+
+.. _color:
+
+Color Graphics
+	Use color graphics instead of monochrome.
+
+	*color* 
+
+.. _scan:
+
+Show scanlines
+	Darken every other scanline to mimic the look of CRT.
+
+	*scanlines* 
+
+.. _mono:
+
+Always use sharp monochrome text
+	Do not emulate NTSC artifacts for text
+
+	*monotext* 
+
+,,,,,,,,,
+
+.. _AGI:
+
+AGI
+******
+
+.. _osl:
+
+Use original save/load screens
+	Use the original save/load screens instead of the ScummVM ones
+
+	*originalsaveload* 
+
+.. _altamiga:
+
+Use an alternative palette
+	Use an alternative palette, common for all Amiga games. This was the old behavior
+
+	*altamigapalette* 
+
+.. _support:
+
+Mouse support
+	Enables mouse support. Allows to use mouse for movement and in game menus.
+
+	*mousesupport* 
+
+.. _herc:
+
+Use Hercules hires font
+	Uses Hercules hi-res font, when font file is available.
+
+	*herculesfont*
+
+.. _cmd:
+
+Pause when entering commands
+	Shows a command prompt window and pauses the game (like in SCI) instead of a real-time prompt.
+
+	*commandpromptwindow* 
+
+.. _2gs:
+
+Add speed menu
+	Add game speed menu (similar to PC version)
+
+	*apple2gs_speedmenu* 
+
+,,,,,,	
+
+.. _BLADERUNNER:
+
+BLADERUNNER
+******************
+
+.. _sitcom:
+
+Sitcom mode
+	Game will add laughter after actor's line or narration
+
+	*sitcom* 
+
+.. _shorty:
+
+Shorty mode
+	Game will shrink the actors and make their voices high pitched
+
+	*shorty* 
+
+.. _nodelay:
+
+Frame limiter high performance mode
+	This mode may result in high CPU usage! It avoids use of delayMillis() function.
+
+	*nodelaymillisfl* 
+
+.. _fpsfl:
+
+Max frames per second limit
+	This mode targets a maximum of 120 fps. When disabled, the game targets 60 fps
+
+	*frames_per_secondfl* 
+
+.. _stamina:
+
+Disable McCoy's quick stamina drain
+	When running, McCoy won't start slowing down as soon as the player stops clicking the mouse
+
+	*disable_stamina_drain* 
+
+,,,,,,,,
+
+.. _CGE:
+
+CGE
+*******
+
+.. _blind:
+
+Color Blind Mode
+	Enable Color Blind Mode by default
+
+	*enable_color_blind* 
+
+,,,,,,
+
+.. _CINE:
+
+CINE
+*********
+
+Use original save/load screen
+	Use the original save/load screens instead of the ScummVM one
+
+	*originalsaveload* 
+
+.. _transparentdialog:
+
+Use transparent dialog boxes in 16 color scenes
+	Use transparent dialog boxes in 16 color scenes even if the original game version did not support them
+
+	*transparentdialogboxes* 
+
+,,,,,,,,,
+
+.. _DRASCULA:
+
+DRASCULA
+*************
+
+Use original save/load screens
+	Use the original save/load screens instead of the ScummVM ones
+
+	*originalsaveload* 
+
+,,,,,,,,,,
+
+.. _DREAMWEB:
+
+DREAMWEB
+**********
+
+Use original save/load screens
+	Use the original save/load screens instead of the ScummVM ones
+
+	*originalsaveload* 
+
+.. _bright:
+
+Use bright palette mode
+	Display graphics using the game's bright palette
+
+	*bright_palette* 
+
+,,,,,,,,,,
+
+.. _HDB:
+
+HDB
+**********
+
+.. _hyper:
+
+Enable cheat mode
+	Debug info and level selection becomes available
+
+	*hypercheat* 
+
+,,,,,,,,,,
+
+.. _HOPKINS:
+
+HOPKINS
+*************
+
+.. _gore:
+
+Gore Mode
+	Enable Gore Mode when available
+
+	*enable_gore* 
+
+,,,,,,,,,,
+
+.. _KYRA:
+
+KYRA
+********
+
+.. _studio:
+
+Enable studio audience
+	Studio audience adds an applause and cheering sounds whenever Malcolm makes a joke
+
+	*studio_audience* 
+
+.. _skip:
+
+Skip support
+	This option allows the user to skip text and cutscenes.
+
+	*skip_support* 
+
+.. _helium:
+
+Enable helium mode
+	Helium mode makes people sound like they've inhaled Helium.
+
+	*helium_mode* 
+
+.. _smooth:
+
+Enable smooth scrolling when walking
+	When enabled, this option makes scrolling smoother when changing from one screen to another.
+
+	*smooth_scrolling* 
+
+.. _floating:
+
+Enable floating cursors
+	When enabled, this option changes the cursor when it floats to the  edge of the screen to a directional arrow. The player can then click to walk towards that direction.
+
+	*floating_cursors* 
+
+Suggest save names
+	When enabled, this option will fill in an autogenerated savegame escription into the input prompt.
+
+	*auto_savenames* 
+	
+.. _hp:
+
+HP bar graphs
+	Enable hit point bar graphs
+
+	*hpbargraphs* 
+
+.. _btswap:
+
+Fight Button L/R Swap
+	Left button to attack, right button to pick up items
+
+	*mousebtswap* 
+
+,,,,,,,,,,
+
+.. _LURE:
+
+LURE
+******
+
+
+.. _ttsnarrator:
+
+TTS Narrator
+	Use text-to-speech to read the descriptions, if test-to-speech is available)
+
+	*tts_narrator* 
+
+,,,,,,,,,,
+
+.. _MADS:
+
+MADS
+*******
+
+.. _easy:
+
+Easy mouse interface
+	Shows object names when hovering the mouse over them
+
+	*EasyMouse* 
+
+.. _objanimated:
+
+Animated inventory items
+	Animated inventory items
+
+	*InvObjectsAnimated* 
+
+.. _windowanimated:
+
+Animated game interface
+	Animated game interface
+
+	*TextWindowAnimated* 
+
+.. _naughty:
+
+Naughty game mode
+	Naughty game mode
+
+	*NaughtyMode* 
+
+.. _gdither:
+
+Graphics dithering
+	Graphics dithering
+
+	*GraphicsDithering* 
+
+,,,,,,,,,,
+
+.. _NEVERHOOD:
+
+NEVERHOOD
+************
+
+Use original save/load screens
+	Use the original save/load screens instead of the ScummVM ones
+
+	*originalsaveload* 
+
+.. _skiphall:
+
+Skip the Hall of Records storyboard scenes
+	Allows the player to skip past the Hall of Records storyboard scenes
+
+	*skiphallofrecordsscenes* 
+
+.. _scale:
+
+Scale the making of videos to full screen
+	Scale the making of videos, so that they use the whole screen
+
+	*scalemakingofvideos* 
+
+,,,,,,,,,,
+
+.. _QUEEN:
+
+QUEEN
+*****
+
+Alternate intro
+	Plays the alternate intro for Flight of the Amazon Queen.
+	
+	*alt_intro* 
+
+,,,,,,,,,,,,,,,
+
+.. _SCI:
+
+SCI
+******
+
+.. _dither:
+
+Skip EGA dithering pass (full color backgrounds)
+	Skip dithering pass in EGA games, graphics are shown with full colors
+
+	*disable_dithering* 
+
+.. _hires:
+
+Enable high resolution graphics
+	Enable high resolution graphics/content
+
+	*enable_high_resolution_graphics* 
+
+.. _blackline:
+
+Enable black-lined video
+	Draw black lines over videos to increase their apparent sharpness
+
+	*enable_black_lined_video* 
+
+.. _hq:
+
+Use high-quality video scaling
+	Use linear interpolation when upscaling videos, where possible
+
+	*enable_hq_video* 
+
+.. _larry:
+
+Use high-quality "LarryScale" cel scaling
+	Use special cartoon scaler for drawing character sprites
+
+	*enable_larryscale*
+
+.. _dsfx:
+
+Prefer digital sound effects
+	Prefer digital (sampled) sound effects instead of synthesized ones
+
+	*prefer_digitalsfx*
+
+Use original save/load screens
+	Use the original save/load screens instead of the ScummVM ones
+
+	*originalsaveload* 
+
+.. _fb01:
+
+Use IMF/Yamaha FB-01 for MIDI output
+	Use an IBM Music Feature card or a Yamaha FB-01 FM synth module for MIDI output
+
+	*native_fb01* 
+
+.. _cd:
+
+Use CD audio
+	Use CD audio instead of in-game audio, if available
+
+	*use_cdaudio* 
+
+.. _wincursors:
+
+Use Windows cursors
+	Use the Windows cursors (smaller and monochrome) instead of the DOS ones
+
+	*windows_cursors* 
+
+.. _silver:
+
+Use silver cursors
+	Use the alternate set of silver cursors instead of the normal golden ones
+
+	*silver_cursors* 
+
+.. _upscale:
+
+Upscale videos
+	Upscale videos to double their size
+
+	*enable_video_upscale* 
+
+.. _censor:
+
+Enable content censoring	
+	Enable the game's built-in optional content censoring"),
+		
+	*enable_censoring* 
+
+,,,,,,,,,,
+
+.. _SCUMM:
+
+SCUMM
+************
+
+.. _labels:
+
+Show Object Line
+	Show the names of objects at the bottom of the screen
+
+	*object_labels* 
+
+.. _classic:
+
+Use NES Classic Palette
+	Use a more neutral color palette that closely emulates the NES Classic
+
+	*mm_nes_classic_palette* 
+
+,,,,,,,,,,
+
+.. _SHERLOCK:
+
+SHERLOCK
+*********
+
+Use original load/save screens
+	Use the original save/load screens instead of the ScummVM ones"),
+	
+	*originalsaveload* 
+
+.. _fade:
+
+Pixellated scene transitions
+	When changing scenes, a randomized pixel transition is done
+
+	*fade_style* 
+
+.. _help:
+
+Don't show hotspots when moving mouse
+	Only show hotspot names after you actually click on a hotspot or action button
+
+	*help_style* 
+
+.. _portraits:
+
+Show character portraits
+	Show portraits for the characters when conversing
+
+	*portraits_on* 
+
+.. _style:
+
+Slide dialogs into view
+	Slide UI dialogs into view, rather than simply showing them immediately
+
+	*window_style* 
+
+.. _transparentwindows:
+
+Transparent windows
+	Show windows with a partially transparent background
+
+	*transparent_windows* 
+
+TTS Narrator
+	Use text-to-speech to read the descriptions, if text-to-speech is available.
+
+	*tts_narrator*
+	
+,,,,,,,,,,
+
+.. _SKY:
+
+SKY
+******
+
+.. _altintro:
+
+Floppy intro
+	Use the floppy version's intro (CD version only)
+
+	*alt_intro*
+
+,,,,,,,,,,
+
+.. _SUPERNOVA:
+
+SUPERNOVA
+**********
+
+.. _improved:
+
+Improved mode
+	Removes some repetitive actions, adds possibility to change verbs by keyboard.
+
+	*improved* 
+
+,,,,,,,,,,
+
+.. _TOLTECS:
+
+TOLTECS
+**************
+
+Use original save/load screens
+	Use the original save/load screens instead of the ScummVM ones
+
+	*originalsaveload* 
+	
+,,,,,,,,,,
+
+.. _WINTERMUTE:
+
+WINTERMUTE
+**************
+
+.. _fps:
+
+Show FPS-counter
+	Show the current number of frames per second in the upper left corner
+
+	*show_fps* 
+
+.. _bilinear:
+
+Sprite bilinear filtering (SLOW)
+	Apply bilinear filtering to individual sprites
+
+	*bilinear_filtering* 
+
+,,,,,,,,,,
+
+.. _XEEN:
+
+XEEN
+******
+
+.. _cost:
+
+Show item costs in standard inventory mode
+	Shows item costs in standard inventory mode, allowing the value of items to be compared
+
+	*ShowItemCosts* 
+
+.. _durable:
+
+More durable armor
+	Armor won't break until character is at -80HP, rather than merely -10HP
+
+	*DurableArmor* 
+
