@@ -94,7 +94,7 @@ void Sound::playSample(int32 index, int32 frequency, int32 repeat, int32 x, int3
 
 	uint8 *sampPtr = _engine->_resources->samplesTable[index];
 	int32 sampSize = _engine->_resources->samplesSizeTable[index];
-	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_SAMPLES_FILE, Audio::Mixer::kPlainSoundType, DisposeAfterUse::NO);
+	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_SAMPLES_FILE, Audio::Mixer::kSFXSoundType, DisposeAfterUse::NO);
 }
 
 void Sound::playVoxSample(int32 index) {
