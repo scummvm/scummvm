@@ -3,7 +3,7 @@
 Command line interface
 =======================
 
-Launching ScummVM from the command line allows you to pass a number of options, some of which override the applicable :doc:`global <../using_scummvm/global_settings>` or :doc:`game-specific <../using_scummvm/game_settings>` settings.
+Launching ScummVM from the command line allows you to pass a number of options, some of which override the applicable global or game-specific settings.
 
 Some other options, such as ``--help`` or ``--list-audio-devices``, allow you to view information about ScummVM directly on the command line without opening the Launcher or starting a game. 
 
@@ -63,7 +63,7 @@ Short options are listed where they are available.
 
         pt,es,jp,zh,kr,se,gb,hb,ru,cz)"
         \--list-audio-devices,,"List all available audio devices"
-        \--list-saves=TARGET,,"Display a list of saved games for the game (TARGET) specified"
+        \--list-saves --game=TARGET,,"Display a list of saved games for the game (TARGET) specified"
         \--list-targets,-t,"Display list of configured targets and exit"
         \--list-themes,,"Display list of all usable GUI themes"
         --midi-gain=NUM,,":ref:`Set the gain for MIDI playback <gain>`
@@ -88,7 +88,7 @@ Short options are listed where they are available.
         pce, segacd, wii, windows)"
         \--recursive,,"In combination with \--add or \--detect recurse down all subdirectories"
         \--render-mode=MODE,,":ref:`Enable additional render modes <render>`"
-        \--save-slot=NUM,-x,"Save game slot to load (default: autosave)"
+        \--save-slot=NUM,-x,"Saved game slot to load (default: autosave)"
         \--savepath=PATH,,":ref:`Path to where saved games are stored <savepath>`"
         \--sfx-volume=NUM,-s,":ref:`Set the sfx volume <sfx>`, 0-255 (default: 192)"
         \--soundfont=FILE,,":ref:`Select the SoundFont for MIDI playback. <soundfont>` 
