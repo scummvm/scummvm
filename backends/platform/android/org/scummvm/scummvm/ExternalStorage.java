@@ -322,7 +322,7 @@ public class ExternalStorage {
 	 */
 	private static void addPath(String strNew, Collection<File> paths) {
 		// If one of the arguments is null, fill it in from the other.
-		if (strNew != null && !strNew.isEmpty()) {
+		if (!TextUtils.isEmpty(strNew)) {
 			File fileNew = new File(strNew);
 
 			if (!paths.contains(fileNew) &&
@@ -456,7 +456,7 @@ public class ExternalStorage {
 		mMounts.clear();
 
 		if (Environment.getDataDirectory() != null
-			&& !Environment.getDataDirectory().getAbsolutePath().isEmpty()) {
+			&& !TextUtils.isEmpty(Environment.getDataDirectory().getAbsolutePath())) {
 			File dataFilePath = new File(Environment.getDataDirectory().getAbsolutePath());
 			if (dataFilePath.exists() && dataFilePath.isDirectory()) {
 				map.add(DATA_DIRECTORY);
