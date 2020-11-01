@@ -195,10 +195,10 @@ bool FileSystem::AddVirtualPath(const string &vpath, const string &realpath, con
 	string vp = vpath, rp = realpath;
 
 	// remove trailing slash
-	if (vp.rfind('/') == vp.size() - 1)
+	if (vp.size() && vp.rfind('/') == vp.size() - 1)
 		vp.erase(vp.rfind('/'));
 
-	if (rp.rfind('/') == rp.size() - 1)
+	if (rp.size() && rp.rfind('/') == rp.size() - 1)
 		rp.erase(rp.rfind('/'));
 
 	if (rp.find("..") != string::npos) {
@@ -242,7 +242,7 @@ bool FileSystem::RemoveVirtualPath(const string &vpath) {
 	string vp = vpath;
 
 	// remove trailing slash
-	if (vp.rfind('/') == vp.size() - 1)
+	if (vp.size() && vp.rfind('/') == vp.size() - 1)
 		vp.erase(vp.rfind('/'));
 
 	Std::map<Common::String, string>::iterator i = _virtualPaths.find(vp);
