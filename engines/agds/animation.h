@@ -45,7 +45,7 @@ class Animation {
 	bool				_loop;
 	int					_cycles;
 	bool				_phaseVarControlled;
-	int					_frameIndex;
+	int					_phase;
 	bool				_paused;
 	int					_speed;
 	int					_z;
@@ -73,9 +73,6 @@ public:
 
 	void phaseVar(const Common::String & phaseVar) {
 		_phaseVar = phaseVar;
-	}
-	int frameIndex() const {
-		return _frameIndex;
 	}
 
 	const Common::String & process() const {
@@ -134,6 +131,14 @@ public:
 
 	void scale(float scale) {
 		_scale = scale;
+	}
+
+	int phase() const {
+		return _phase;
+	}
+
+	int frameIndex(int delta = 0) const {
+		return (_phase + delta) * _speed / 100;
 	}
 
 	bool load(Common::SeekableReadStream *stream);
