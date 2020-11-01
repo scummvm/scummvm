@@ -33,6 +33,7 @@ namespace Comprehend {
 #define ROOM_IS_NORMAL 0
 #define ROOM_IS_DARK 1
 #define ROOM_IS_TOO_BRIGHT 2
+#define INPUT_LINE_SIZE 1024
 
 enum NounState { NOUNSTATE_STANDARD = 0, NOUNSTATE_QUERY = 1, NOUNSTATE_INITIAL = 2 };
 
@@ -76,6 +77,8 @@ protected:
 	bool _ended;
 	NounState _nounState;
 	Sentence _sentence;
+	char _inputLine[INPUT_LINE_SIZE];
+	int _inputLineIndex;
 public:
 	const GameStrings *_gameStrings;
 
@@ -84,11 +87,11 @@ private:
 	void eval_instruction(FunctionState *func_state,
 		const Function &func, uint functionOffset,
 		const Sentence *sentence);
-	void skip_whitespace(char **p);
-	void skip_non_whitespace(char **p);
+	void skip_whitespace(const char **p);
+	void skip_non_whitespace(const char **p);
 	bool handle_sentence(Sentence *sentence);
 	bool handle_sentence(uint tableNum, Sentence *sentence, Common::Array<byte> &words);
-	void read_sentence(char **line, Sentence *sentence);
+	void read_sentence(Sentence *sentence);
 	void parse_sentence_word_pairs(Sentence *sentence);
 	void doBeforeTurn();
 	void doAfterTurn();

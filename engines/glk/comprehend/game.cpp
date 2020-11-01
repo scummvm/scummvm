@@ -116,7 +116,8 @@ void Sentence::format() {
 
 
 ComprehendGame::ComprehendGame() : _gameStrings(nullptr), _ended(false),
-		_nounState(NOUNSTATE_INITIAL) {
+		_nounState(NOUNSTATE_INITIAL), _inputLineIndex(0) {
+	Common::fill(&_inputLine[0], &_inputLine[INPUT_LINE_SIZE], 0);
 }
 
 ComprehendGame::~ComprehendGame() {
@@ -595,12 +596,12 @@ void ComprehendGame::eval_function(uint functionNum, const Sentence *sentence) {
 	debugC(kDebugScripts, "End of function %.4x\n", functionNum);
 }
 
-void ComprehendGame::skip_whitespace(char **p) {
+void ComprehendGame::skip_whitespace(const char **p) {
 	while (**p && Common::isSpace(**p))
 		(*p)++;
 }
 
-void ComprehendGame::skip_non_whitespace(char **p) {
+void ComprehendGame::skip_non_whitespace(const char **p) {
 	while (**p && !Common::isSpace(**p) && **p != ',' && **p != '\n')
 		(*p)++;
 }
@@ -716,31 +717,31 @@ bool ComprehendGame::handle_sentence(uint tableNum, Sentence *sentence, Common::
 	return false;
 }
 
-void ComprehendGame::read_sentence(char **line,
-                          Sentence *sentence) {
+void ComprehendGame::read_sentence(Sentence *sentence) {
 	bool sentence_end = false;
-	char *word_string, *p = *line;
+	const char *word_string, *p = &_inputLine[_inputLineIndex];
 	Word *word;
 
 	sentence->clear();
-	while (1) {
+	for (;;) {
+		// Get the next word
 		skip_whitespace(&p);
 		word_string = p;
 		skip_non_whitespace(&p);
 
+		Common::String wordStr(word_string, p);
+
+		// Check for end of sentence
 		if (*p == ',' || *p == '\n') {
-			/* Sentence separator */
-			*p++ = '\0';
+			// Sentence separator
+			++p;
 			sentence_end = true;
-		} else {
-			if (*p == '\0')
-				sentence_end = true;
-			else
-				*p++ = '\0';
+		} else if (*p == '\0') {
+			sentence_end = true;
 		}
 
 		/* Find the dictionary word for this */
-		word = dict_find_word_by_string(this, word_string);
+		word = dict_find_word_by_string(this, wordStr.c_str());
 		if (!word)
 			sentence->_words[sentence->_nr_words].clear();
 		else
@@ -756,7 +757,7 @@ void ComprehendGame::read_sentence(char **line,
 	parse_sentence_word_pairs(sentence);
 	sentence->format();
 
-	*line = p;
+	_inputLineIndex = p - _inputLine;
 }
 
 void ComprehendGame::parse_sentence_word_pairs(Sentence *sentence) {
@@ -805,9 +806,7 @@ void ComprehendGame::doAfterTurn() {
 
 void ComprehendGame::read_input() {
 	Sentence tempSentence;
-	char *line = NULL, buffer[1024];
 	bool handled;
-
 
 	beforePrompt();
 	doBeforeTurn();
@@ -821,11 +820,12 @@ void ComprehendGame::read_input() {
 
 	for (;;) {
 		g_comprehend->print("> ");
-		g_comprehend->readLine(buffer, sizeof(buffer));
+		g_comprehend->readLine(_inputLine, INPUT_LINE_SIZE);
 		if (g_comprehend->shouldQuit())
 			return;
 
-		if (strlen(buffer) != 0)
+		_inputLineIndex = 0;
+		if (strlen(_inputLine) != 0)
 			break;
 
 		// Empty line, so toggle picture window visibility
@@ -837,14 +837,11 @@ void ComprehendGame::read_input() {
 		continue;
 	}
 
-	// Re-comprehend special commands start with '!'
-	line = &buffer[0];
-
-	while (1) {
+	for (;;) {
 		NounState prevNounState = _nounState;
 		_nounState = NOUNSTATE_STANDARD;
 
-		read_sentence(&line, &tempSentence);
+		read_sentence(&tempSentence);
 		_sentence.copyFrom(tempSentence, tempSentence._formattedWords[0] || prevNounState != NOUNSTATE_QUERY);
 
 		handled = handle_sentence(&_sentence);
@@ -852,9 +849,8 @@ void ComprehendGame::read_input() {
 			doAfterTurn();
 
 		/* FIXME - handle the 'before you can continue' case */
-		if (*line == '\0')
+		if (_inputLine[_inputLineIndex] == '\0')
 			break;
-		line++;
 
 		if (handled)
 			doBeforeTurn();

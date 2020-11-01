@@ -189,13 +189,14 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 
 	case OPCODE_SAVE_ACTION:
 		// Causes the next sentence inputed to re-use the first word of the current one.
-		// As far as I'm aware, this is only used for handling responses to rhethorical questions
+		// As far as I'm aware, this is only used for handling responses to questions
 		_nounState = NOUNSTATE_QUERY;
 		// fall-through
 
 	case OPCODE_CLEAR_LINE:
 		// Resets the input line, removing any pending further actions that were specified
-		// TODO: Make input line a class field, and reset it here
+		Common::fill(&_inputLine[0], &_inputLine[INPUT_LINE_SIZE], 0);
+		_inputLineIndex = 0;
 		break;
 
 	case OPCODE_SET_CAN_TAKE:
