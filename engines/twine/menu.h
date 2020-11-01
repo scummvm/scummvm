@@ -29,23 +29,23 @@
 
 namespace TwinE {
 
-enum MenuSettingsType {
-	// button number
-	MenuSettings_CurrentLoadedButton = 0,
-	// is used to calc the height where the first button will appear
-	MenuSettings_NumberOfButtons = 1,
-	MenuSettings_ButtonsBoxHeight = 2,
-	MenuSettings_HeaderEnd = 3, // TODO: unknown
-	MenuSettings_FirstButtonState = 4,
-	MenuSettings_FirstButton = 5
-};
-
 #define PLASMA_WIDTH 320
 #define PLASMA_HEIGHT 50
 #define kQuitEngine 9998
 
 class MenuSettings {
 private:
+	enum MenuSettingsType {
+		// button number
+		MenuSettings_CurrentLoadedButton = 0,
+		// is used to calc the height where the first button will appear
+		MenuSettings_NumberOfButtons = 1,
+		MenuSettings_ButtonsBoxHeight = 2,
+		MenuSettings_HeaderEnd = 3, // TODO: unknown
+		MenuSettings_FirstButtonState = 4,
+		MenuSettings_FirstButton = 5
+	};
+
 	int16 _settings[100] {0};
 	int8 _activeButtonIdx = 0;
 
