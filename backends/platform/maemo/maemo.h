@@ -31,19 +31,19 @@
 namespace Maemo {
 class MaemoSdlEventObserver;
 
-class OSystem_SDL_Maemo : public OSystem_POSIX {
+class OSystem_SDL_Maemo final : public OSystem_POSIX {
 public:
 	OSystem_SDL_Maemo();
 	~OSystem_SDL_Maemo();
 
-	virtual void init();
-	virtual void initBackend();
-	virtual void quit();
-	virtual void fatalError();
-	virtual void setWindowCaption(const char *caption);
-	virtual Common::HardwareInputSet *getHardwareInputSet();
-	Common::KeymapArray getGlobalKeymaps() override;
-	Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
+	virtual void init() override;
+	virtual void initBackend() override;
+	virtual void quit() override;
+	virtual void fatalError() override;
+	virtual void setWindowCaption(const char *caption) override;
+	virtual Common::HardwareInputSet *getHardwareInputSet() override;
+	virtual Common::KeymapArray getGlobalKeymaps() override;
+	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
 	Model getModel() { return _model; }
 

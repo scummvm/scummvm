@@ -32,24 +32,24 @@ namespace Maemo {
 /**
  * SDL events manager for Maemo
  */
-class MaemoSdlEventSource : public SdlEventSource {
+class MaemoSdlEventSource final : public SdlEventSource {
 public:
 	MaemoSdlEventSource();
 
 	bool toggleClickMode();
 protected:
-	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
-	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
+	virtual bool remapKey(SDL_Event &ev, Common::Event &event) override;
+	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event) override;
+	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event) override;
 
 	bool _clickEnabled;
 };
 
-class MaemoSdlEventObserver : public Common::EventObserver {
+class MaemoSdlEventObserver final : public Common::EventObserver {
 public:
 	MaemoSdlEventObserver(MaemoSdlEventSource *eventSource);
 
-	virtual bool notifyEvent(const Common::Event &event);
+	virtual bool notifyEvent(const Common::Event &event) override;
 private:
 	MaemoSdlEventSource *_eventSource;
 };
