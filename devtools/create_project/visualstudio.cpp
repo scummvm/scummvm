@@ -150,13 +150,13 @@ void VisualStudioProvider::outputConfiguration(const BuildSetup &setup, std::ost
 	        << "\t\t</Configuration>\n";
 }
 
-void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildSetup &setup, const MSVC_Architecture arch) {
+void VisualStudioProvider::outputBuildEvents(std::ostream &project, const BuildSetup &setup, bool isRelease) {
 	if (!setup.devTools && !setup.tests && setup.runBuildEvents) {
 		project << "\t\t\t<Tool\tName=\"VCPreBuildEventTool\"\n"
 		        << "\t\t\t\tCommandLine=\"" << getPreBuildEvent() << "\"\n"
 		        << "\t\t\t/>\n"
 		        << "\t\t\t<Tool\tName=\"VCPostBuildEventTool\"\n"
-		        << "\t\t\t\tCommandLine=\"" << getPostBuildEvent(arch, setup) << "\"\n"
+		        << "\t\t\t\tCommandLine=\"" << getPostBuildEvent(setup, isRelease) << "\"\n"
 		        << "\t\t\t/>\n";
 	}
 

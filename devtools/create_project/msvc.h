@@ -118,7 +118,7 @@ protected:
 	 *
 	 * @return	The post build event.
 	 */
-	std::string getPostBuildEvent(MSVC_Architecture arch, const BuildSetup &setup) const;
+	std::string getPostBuildEvent(const BuildSetup &setup, bool isRelease) const;
 };
 
 } // namespace CreateProjectTool

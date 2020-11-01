@@ -326,7 +326,7 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 			// Copy data files to the build folder
 			project << "\t\t<PostBuildEvent>\n"
 			        << "\t\t\t<Message>Copy data files to the build folder</Message>\n"
-			        << "\t\t\t<Command>" << getPostBuildEvent(arch, setup) << "</Command>\n"
+			        << "\t\t\t<Command>" << getPostBuildEvent(setup, isRelease) << "</Command>\n"
 			        << "\t\t</PostBuildEvent>\n";
 		} else if (setup.tests) {
 			project << "\t\t<PreBuildEvent>\n"

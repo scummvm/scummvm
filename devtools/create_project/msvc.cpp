@@ -275,7 +275,7 @@ std::string MSVCProvider::getTestPreBuildEvent(const BuildSetup &setup) const {
 	return "&quot;$(SolutionDir)../../test/cxxtest/cxxtestgen.py&quot; --runner=ParenPrinter --no-std --no-eh -o &quot;$(SolutionDir)test_runner.cpp&quot;" + target;
 }
 
-std::string MSVCProvider::getPostBuildEvent(MSVC_Architecture arch, const BuildSetup &setup) const {
+std::string MSVCProvider::getPostBuildEvent(const BuildSetup &setup, bool isRelease) const {
 	std::string cmdLine = "";
 
 	cmdLine = "@echo off\n"
@@ -285,9 +285,10 @@ std::string MSVCProvider::getPostBuildEvent(MSVC_Architecture arch, const BuildS
 
 	cmdLine += (setup.useSDL2) ? "SDL2" : "SDL";
 
-	cmdLine += " &quot;$(VcpkgCurrentInstalledDir)lib/";
-	cmdLine += getMSVCArchName(arch);
-	cmdLine += "/$(Configuration)&quot; ";
+	cmdLine += " &quot;$(VcpkgCurrentInstalledDir)";
+	if (!isRelease)
+		cmdLine += "debug/";
+	cmdLine += "bin/&quot; ";
 
 	// Specify if installer needs to be built or not
 	cmdLine += (setup.createInstaller ? "1" : "0");

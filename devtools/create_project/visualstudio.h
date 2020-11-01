@@ -52,7 +52,7 @@ protected:
 
 	void outputConfiguration(std::ostream &project, const BuildSetup &setup, bool isRelease, const std::string &config, const MSVC_Architecture arch);
 	void outputConfiguration(const BuildSetup &setup, std::ostream &project, const std::string &toolConfig, const std::string &config, const MSVC_Architecture arch);
-	void outputBuildEvents(std::ostream &project, const BuildSetup &setup, const MSVC_Architecture arch);
+	void outputBuildEvents(std::ostream &project, const BuildSetup &setup, bool isRelease);
 };
 
 } // namespace CreateProjectTool
