@@ -420,17 +420,17 @@ TEMPLATE bool BASESTRING::contains(const BaseString &otherString) const {
 		return false;
 	}
 
-	uint32 size = 0;
-	BaseString::const_iterator itr = otherString.begin();
+	uint32 sizeMatch = 0;
+	typename BASESTRING::const_iterator itr = otherString.begin();
 
-	for (BaseString::const_iterator itr2 = begin(); itr != otherString.end() && itr2 != end(); itr2++) {
+	for (typename BASESTRING::const_iterator itr2 = begin(); itr != otherString.end() && itr2 != end(); itr2++) {
 		if (*itr == *itr2) {
 			itr++;
-			size++;
-			if (size == otherString.size())
+			sizeMatch++;
+			if (sizeMatch == otherString.size())
 				return true;
 		} else {
-			size = 0;
+			sizeMatch = 0;
 			itr = otherString.begin();
 		}
 	}
@@ -790,11 +790,11 @@ TEMPLATE uint BASESTRING::getUnsignedValue(uint pos) const {
 
 // Hash function for strings, taken from CPython.
 TEMPLATE uint BASESTRING::hash() const {
-	uint hash = getUnsignedValue(0) << 7;
+	uint hashResult = getUnsignedValue(0) << 7;
 	for (uint i = 0; i < _size; i++) {
-		hash = (1000003 * hash) ^ getUnsignedValue(i);
+		hashResult = (1000003 * hashResult) ^ getUnsignedValue(i);
 	}
-	return hash ^ _size;
+	return hashResult ^ _size;
 }
 
 template class BaseString<char>;
