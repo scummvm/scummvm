@@ -146,6 +146,7 @@ OpenGL graphics mode works a little differently to the other graphics modes. Ins
 
 Output is controlled by your window size (or screen resolution if in full screen) and the stretch mode selected, as well as the Filter graphics option. 
 
+.. _aspect:
 
 Aspect ratio correction
 ------------------------------------
@@ -161,6 +162,8 @@ Older games were designed to be run at 320x200 pixels, but on systems where each
     Aspect ratio correction applied - notice the moon is actually round now.  
 
 To toggle aspect ratio on and off, use :kbd:`Ctrl` + :kbd:`Alt` + :kbd:`a`.
+
+.. _stretch:
 
 Stretch modes
 ----------------------
@@ -210,6 +213,6 @@ Below are some of the common render modes, to illustrate how the render mode set
 Filter graphics
 ----------------
 
-When enabled, ScummVM uses bilinear interpolation instead of nearest neighbor for the `aspect ratio <Aspect ratio>`_ and `stretch mode <Stretch mode>`_. It does not affect the graphics mode scaling unless OpenGL is selected, in which case it determines how the OpenGL scaling is done. 
+When enabled, ScummVM uses bilinear interpolation instead of nearest neighbor for the :ref:`aspect ratio <aspect>` and :ref:`stretch mode <stretch>`. It does not affect the graphics mode scaling unless OpenGL is selected, in which case it determines how the OpenGL scaling is done. 
 
 To toggle between bilinear interpolation and nearest neighbor, use :kbd:`Ctrl` + :kbd:`Alt` + :kbd:`f`.
