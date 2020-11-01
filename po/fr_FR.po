@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-31 19:57+0100\n"
 "PO-Revision-Date: 2020-11-01 18:16+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -5576,6 +5576,7 @@ msgstr "Utiliser des palettes modifiées par ressource"
 #: engines/sci/detection.cpp:282
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
+"Utilise des palettes personnalisées par ressource pour améliorer les visuels"
 
 #: engines/sci/detection.cpp:312
 msgid "MIDI mode:"
