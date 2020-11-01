@@ -171,6 +171,25 @@ void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
 	_engine->copyBlockPhys(left, top, right, top + PLASMA_HEIGHT);
 }
 
+/**
+ * @brief Toggle a given @c OSystem::Feature and restore the previous state on destruction
+ */
+class ScopedFeatureState {
+private:
+	OSystem::Feature _feature;
+	bool _changeTo;
+public:
+	ScopedFeatureState(OSystem::Feature feature, bool enable) : _feature(feature), _changeTo(enable) {
+		if (g_system->getFeatureState(feature) != enable) {
+			g_system->setFeatureState(feature, enable);
+			_changeTo = !g_system->getFeatureState(feature);
+		}
+	}
+	~ScopedFeatureState() {
+		g_system->setFeatureState(_feature, _changeTo);
+	}
+};
+
 bool MenuOptions::enterPlayerName(int32 textIdx) {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
@@ -184,6 +203,7 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 	_engine->copyBlockPhys(0, 0, SCREEN_WIDTH - 1, 99);
 	_engine->flip();
 
+	ScopedFeatureState scopedVirtualKeyboard(OSystem::kFeatureVirtualKeyboard, true);
 	for (;;) {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
