@@ -178,20 +178,19 @@ bool GameState::loadGame(Common::InSaveFile *file) {
 	int playerNameIdx = 0;
 	do {
 		const byte c = file->readByte();
+		playerName[playerNameIdx++] = c;
 		if (c == '\0') {
 			break;
 		}
-		playerName[playerNameIdx++] = c;
 		if (playerNameIdx >= ARRAYSIZE(playerName)) {
-			warning("Failed to load savegame");
+			warning("Failed to load savegame. Invalid playername.");
 			return false;
 		}
 	} while (true);
-	playerName[playerNameIdx] = '\0';
 
 	byte numGameFlags = file->readByte();
 	if (numGameFlags != NUM_GAME_FLAGS) {
-		warning("Failed to load gameflags");
+		warning("Failed to load gameflags. Expected %u, but got %u", NUM_GAME_FLAGS, numGameFlags);
 		return false;
 	}
 	file->read(gameFlags, numGameFlags);
@@ -242,6 +241,7 @@ bool GameState::saveGame(Common::OutSaveFile *file) {
 
 	file->writeByte(0x03);
 	file->writeString(playerName);
+	file->writeByte('\0');
 	file->writeByte(NUM_GAME_FLAGS);
 	file->write(gameFlags, sizeof(gameFlags));
 	file->writeByte(_engine->_scene->currentSceneIdx);
