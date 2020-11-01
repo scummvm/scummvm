@@ -91,6 +91,9 @@ jmethodID JNI::_MID_convertEncoding = 0;
 jmethodID JNI::_MID_getAllStorageLocations = 0;
 jmethodID JNI::_MID_initSurface = 0;
 jmethodID JNI::_MID_deinitSurface = 0;
+jmethodID JNI::_MID_createDirectoryWithSAF = 0;
+jmethodID JNI::_MID_createFileWithSAF = 0;
+jmethodID JNI::_MID_closeFileWithSAF = 0;
 
 jmethodID JNI::_MID_EGL10_eglSwapBuffers = 0;
 
@@ -583,6 +586,9 @@ void JNI::create(JNIEnv *env, jobject self, jobject asset_manager,
 	FIND_METHOD(, convertEncoding, "(Ljava/lang/String;Ljava/lang/String;[B)[B");
 	FIND_METHOD(, initSurface, "()Ljavax/microedition/khronos/egl/EGLSurface;");
 	FIND_METHOD(, deinitSurface, "()V");
+	FIND_METHOD(, createDirectoryWithSAF, "(Ljava/lang/String;)Z");
+	FIND_METHOD(, createFileWithSAF, "(Ljava/lang/String;)Ljava/lang/String;");
+	FIND_METHOD(, closeFileWithSAF, "(Ljava/lang/String;)V");
 
 	_jobj_egl = env->NewGlobalRef(egl);
 	_jobj_egl_display = env->NewGlobalRef(egl_display);
@@ -808,6 +814,63 @@ Common::Array<Common::String> JNI::getAllStorageLocations() {
 	}
 
 	return *res;
+}
+
+bool JNI::createDirectoryWithSAF(const Common::String &dirPath) {
+	JNIEnv *env = JNI::getEnv();
+	jstring javaDirPath = env->NewStringUTF(dirPath.c_str());
+
+	bool created = env->CallBooleanMethod(_jobj, _MID_createDirectoryWithSAF, javaDirPath);
+
+	if (env->ExceptionCheck()) {
+		LOGE("JNI - Failed to create directory with SAF enhanced method");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+		created = false;
+	}
+
+	return created;
+
+}
+
+Common::String JNI::createFileWithSAF(const Common::String &filePath) {
+	JNIEnv *env = JNI::getEnv();
+	jstring javaFilePath = env->NewStringUTF(filePath.c_str());
+
+	jstring hackyFilenameJSTR = (jstring)env->CallObjectMethod(_jobj, _MID_createFileWithSAF, javaFilePath);
+
+
+	if (env->ExceptionCheck()) {
+		LOGE("JNI - Failed to create file with SAF enhanced method");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+		hackyFilenameJSTR = env->NewStringUTF("");
+	}
+
+	Common::String hackyFilenameStr = convertFromJString(env, hackyFilenameJSTR, "UTF-8");
+
+	//LOGD("JNI - _MID_createFileWithSAF returned %s", hackyFilenameStr.c_str());
+	env->DeleteLocalRef(hackyFilenameJSTR);
+
+	return hackyFilenameStr;
+
+}
+
+void JNI::closeFileWithSAF(const Common::String &hackyFilename) {
+	JNIEnv *env = JNI::getEnv();
+	jstring javaHackyFilename = env->NewStringUTF(hackyFilename.c_str());
+
+	env->CallVoidMethod(_jobj, _MID_closeFileWithSAF, javaHackyFilename);
+
+	if (env->ExceptionCheck()) {
+		LOGE("JNI - Failed to close file with SAF enhanced method");
+
+		env->ExceptionDescribe();
+		env->ExceptionClear();
+	}
+
 }
 
 
