@@ -124,7 +124,7 @@ public:
 
 	virtual void quit() override;
 
-	virtual void setWindowCaption(const char *caption) override;
+	virtual void setWindowCaption(const Common::U32String &caption) override;
 
 	virtual Audio::Mixer *getMixer() override;
 	virtual void getTimeAndDate(TimeDate &t) const override;

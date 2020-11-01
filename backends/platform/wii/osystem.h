@@ -206,8 +206,6 @@ public:
 
 	virtual void quit() override;
 
-	virtual void setWindowCaption(const char *caption) override;
-
 	virtual Audio::Mixer *getMixer() override;
 	virtual FilesystemFactory *getFilesystemFactory() override;
 	virtual void getTimeAndDate(TimeDate &t) const override;

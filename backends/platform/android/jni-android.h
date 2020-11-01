@@ -58,7 +58,7 @@ public:
 
 	static void setReadyForEvents(bool ready);
 
-	static void setWindowCaption(const Common::String &caption);
+	static void setWindowCaption(const Common::U32String &caption);
 	static void getDPI(float *values);
 	static void displayMessageOnOSD(const Common::U32String &msg);
 	static bool openUrl(const Common::String &url);

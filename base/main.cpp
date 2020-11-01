@@ -237,7 +237,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	if (caption.empty())
 		caption = target;
 	if (!caption.empty())	{
-		system.setWindowCaption(caption.c_str());
+		system.setWindowCaption(caption.decode());
 	}
 
 	//
@@ -360,7 +360,7 @@ static void setupGraphics(OSystem &system) {
 	GUI::GuiManager::instance();
 
 	// Set initial window caption
-	system.setWindowCaption(gScummVMFullVersion);
+	system.setWindowCaption(Common::U32String(gScummVMFullVersion));
 
 	// Clear the main screen
 	system.fillScreen(0);
