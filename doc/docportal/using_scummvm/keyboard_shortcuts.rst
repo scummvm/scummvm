@@ -1,8 +1,10 @@
 ===================
-Keyboard Shortcuts
+Keyboard shortcuts
 ===================
 
-ScummVM supports various in-game keyboard and mouse shortcuts. 
+ScummVM supports various in-game keyboard and mouse shortcuts, and since version 2.2.0 these can be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`, or in the :doc:`configuration file <../advanced_options/configuration_file>`.
+
+The shortcuts listed below are the defaults. 
 
 Common shortcuts (all games)
 -------------------------------
@@ -17,16 +19,16 @@ Common shortcuts (all games)
         :kbd:`Ctrl + q` ,Quit (other unices including Linux)
         :kbd:`Alt + F4`,Quit (Windows)
         :kbd:`Ctrl + z`,Quit (other platforms)
-        :kbd:`Ctrl + u` ,Mute all sounds
-        :kbd:`Ctrl + m` ,Toggle mouse capture
-        :kbd:`Ctrl + Alt + 1-8` ,Switch between graphics filters
-        :kbd:`Ctrl + Alt` and :kbd:`+` or :kbd:`-`,Increase/Decrease the scale factor
-        :kbd:`Ctrl + Alt +  a` ,Toggle aspect-ratio correction on/off
-        :kbd:`Ctrl + Alt + f` ,Enable/disable graphics filtering
-        :kbd:`Ctrl + Alt + s` ,Cycle through scaling modes
+        :kbd:`Ctrl + u` ,Mutes all sounds
+        :kbd:`Ctrl + m` ,Toggles mouse capture
+        :kbd:`Ctrl + Alt + 1-8` ,Switches between graphics filters
+        :kbd:`Ctrl + Alt` and :kbd:`+` or :kbd:`-`,Increases/decreases the scale factor
+        :kbd:`Ctrl + Alt +  a` ,Toggles aspect ratio correction on/off
+        :kbd:`Ctrl + Alt + f` ,Toggles between nearest neighbor and bilinear interpolation (graphics filtering on/off)
+        :kbd:`Ctrl + Alt + s` ,Cycles through stretch modes
         :kbd:`Alt + Enter` ,Toggles full screen/windowed
-        :kbd:`Alt + s` ,Take a screenshot (SDL backend only)
-        :kbd:`Ctrl + F7`  ,"Open virtual keyboard (if enabled). 
+        :kbd:`Alt + s` ,Takes a screenshot (SDL backend only)
+        :kbd:`Ctrl + F7`,"Opens virtual keyboard (if enabled). 
         This can also be opened with a long press of the middle mouse button or wheel."
 
 SCUMM games
@@ -39,21 +41,21 @@ SCUMM games
 
         Shortcut, Description
         :kbd:`Alt + x` ,Quit
-        :kbd:`Ctrl + 0-9` ,Save game state
-        :kbd:`Alt + 0-9`,Load saved game state
+        :kbd:`Ctrl + 0-9` ,Saves game state
+        :kbd:`Alt + 0-9`,Loads saved game state
         :kbd:`Ctrl + d`  ,Starts the debugger
-        :kbd:`Ctrl + f` ,Toggle fast mode
+        :kbd:`Ctrl + f` ,Toggles fast mode
         :kbd:`Ctrl + g` ,Runs in really REALLY fast mode
-        :kbd:`Ctrl + t` ,"Switch between 'Speech only', 'Speech and Subtitles' and 'Subtitles only'"
-        :kbd:`~` ,Show/hide the debugging console
+        :kbd:`Ctrl + t` ,"Switches between 'Speech only', 'Speech and Subtitles' and 'Subtitles only'"
+        :kbd:`~` ,Shows/hides the debugging console
         :kbd:`[` and :kbd:`]`,"Music volume, down/up"
         :kbd:`-` and :kbd:`+` ,"Text speed, slower/faster"
         :kbd:`F5`  ,Displays a save/load box
         :kbd:`Alt + F5`  ,"Displays the original save/load box, if the game has one. May crash the game."
         :kbd:`Space` ,Pause
         :kbd:`.` ,Skips current line of text in some games
-        :kbd:`Enter` ,Simulate left mouse button press
-        :kbd:`Tab`,Simulate right mouse button press
+        :kbd:`Enter` ,Simulates left mouse button press
+        :kbd:`Tab`,Simulates right mouse button press
 
 Beneath a Steel Sky
 ---------------------
@@ -64,7 +66,7 @@ Beneath a Steel Sky
 
         Shortcut, Description
         :kbd:`Ctrl + d`  ,Starts the debugger
-        :kbd:`Ctrl + f` ,Toggle fast mode
+        :kbd:`Ctrl + f` ,Toggles fast mode
         :kbd:`Ctrl + g`  ,Runs in REALLY fast mode
         :kbd:`F5` ,Displays a save/load box
         :kbd:`Esc`  ,Skips the game intro
@@ -128,8 +130,8 @@ Dragon History
         right click,"Use, talk"
         "move mouse up, :kbd:`i`  ",Inventory
         "move mouse down, :kbd:`m`  ",Map
-        :kbd:`Esc` ,"Skip the intro, exit map/inventory"
-        any click ,Skip the currently dubbed sentence
+        :kbd:`Esc` ,"Skips the intro, exit map/inventory"
+        any click ,Skips the currently dubbed sentence
         :kbd:`q`  ,
 
 
@@ -188,6 +190,19 @@ Indiana Jones and the Last Crusade
         Shortcut, Description
         :kbd:`i` ,Displays IQ points
 
+Myst
+------
+
+.. csv-table::
+      :widths: 40 60
+      :header-rows: 1
+
+      Shortcut, Description
+      Left Click, Move/action 
+      :kbd:`Space`, Pause the game 
+      :kbd:`Esc`, Skip cutscene 
+      :kbd:`F5`, Menu
+
 Nippon Safes
 ---------------
 
@@ -200,6 +215,25 @@ Nippon Safes
         :kbd:`l`,Load game
         :kbd:`s`,Save game
 
+Riven
+------
+
+.. csv-table::
+      :widths: 40 60
+      :header-rows: 1
+
+      Shortcut, Description
+      Left Click, Move/action 
+      Arrow Keys, Movement 
+      :kbd:`PgUp`, Look up 
+      :kbd:`PgDn`, Look down 
+      :kbd:`Space`, Pause the game 
+      :kbd:`Esc`, Skip cutscene 
+      :kbd:`F5`, Menu 
+      :kbd:`Ctrl + o`, Load game 
+      :kbd:`Ctrl + s`, Save game
+
+
 
 Simon the Sorcerer 1 and 2
 ---------------------------
@@ -209,8 +243,8 @@ Simon the Sorcerer 1 and 2
   	:header-rows: 1
 
         Shortcut, Description
-        :kbd:`Ctrl + 0-9` ,Save game state
-        :kbd:`Alt + 0-9`, Load saved game state
+        :kbd:`Ctrl + 0-9` ,Saves game state
+        :kbd:`Alt + 0-9`, Loads saved game state
         :kbd:`Ctrl + d` ,Starts the debugger
         :kbd:`Ctrl + f` ,Toggles fast mode
         :kbd:`F1` and :kbd:`F3`  ,"Text speed, faster - slower"
@@ -299,8 +333,8 @@ The Legend of Kyrandia
   	:header-rows: 1
 
         Shortcut, Description
-        :kbd:`Ctrl + 0-9` ,Save game state
-        :kbd:`Alt + 0-9`, Load saved game state
+        :kbd:`Ctrl + 0-9` ,Saves game state
+        :kbd:`Alt + 0-9`, Loads saved game state
         :kbd:`Ctrl + d` ,Starts the debugger
 
 TeenAgent
