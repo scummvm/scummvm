@@ -6,7 +6,14 @@
 ######################################################################
 
 TESTS        := $(srcdir)/test/common/*.h $(srcdir)/test/audio/*.h $(srcdir)/test/math/*.h
-TEST_LIBS    := audio/libaudio.a math/libmath.a common/libcommon.a
+TEST_LIBS    := test/null_osystem.o \
+	backends/fs/posix/posix-fs-factory.o \
+	backends/fs/posix/posix-fs.o \
+	backends/fs/posix/posix-iostream.o \
+	backends/fs/stdiostream.o \
+	backends/modular-backend.o \
+	test/stubs.o \
+	audio/libaudio.a math/libmath.a common/libcommon.a
 
 ifeq ($(ENABLE_WINTERMUTE), STATIC_PLUGIN)
 	TESTS += $(srcdir)/test/engines/wintermute/*.h

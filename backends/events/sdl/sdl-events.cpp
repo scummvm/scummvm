@@ -38,22 +38,8 @@
 #define GAMECONTROLLERDB_FILE "gamecontrollerdb.txt"
 
 static uint32 convUTF8ToUTF32(const char *src) {
-	uint32 utf32 = 0;
-
-	char *dst = SDL_iconv_string(
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	                             "UTF-32BE",
-#else
-	                             "UTF-32LE",
-#endif
-                                 "UTF-8", src, SDL_strlen(src) + 1);
-
-	if (dst) {
-		utf32 = *((uint32 *)dst);
-		SDL_free(dst);
-	}
-
-	return utf32;
+	Common::U32String u32(src);
+	return u32[0];
 }
 
 void SdlEventSource::loadGameControllerMappingFile() {

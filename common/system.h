@@ -1735,24 +1735,7 @@ public:
 	 */
 	virtual bool isConnectionLimited();
 
-
-protected:
-
-	/**
-	 * This allows derived classes to implement encoding conversion using platform
-	 * specific API.
-	 * This method shouldn't be called directly. Use Common::Encoding instead.
-	 *
-	 * @param to Encoding to convert the string to
-	 * @param from Encoding to convert the string from
-	 * @param string The string that should be converted
-	 * @param length Size of the string in bytes
-	 *
-	 * @return Converted string, which must be freed by the caller (using free()
-	 * and not delete[]), or nullptr if the conversion isn't possible.
-	 */
-	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length) { return nullptr; }
-	/** @} */
+	//@}
 };
 
 

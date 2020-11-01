@@ -27,26 +27,26 @@
 
 namespace Common {
 
-U32String::U32String(const char *str) : BaseString<u32char_type_t>() {
+U32String::U32String(const char *str, Common::CodePage page) : BaseString<u32char_type_t>() {
 	if (str == nullptr) {
 		_storage[0] = 0;
 		_size = 0;
 	} else {
-		initWithCStr(str, strlen(str));
+		decodeInternal(str, strlen(str), page);
 	}
 }
 
-U32String::U32String(const char *str, uint32 len) : BaseString<u32char_type_t>() {
-	initWithCStr(str, len);
+U32String::U32String(const char *str, uint32 len, Common::CodePage page) : BaseString<u32char_type_t>() {
+	decodeInternal(str, len, page);
 }
 
-U32String::U32String(const char *beginP, const char *endP) : BaseString<u32char_type_t>() {
+U32String::U32String(const char *beginP, const char *endP, Common::CodePage page) : BaseString<u32char_type_t>() {
 	assert(endP >= beginP);
-	initWithCStr(beginP, endP - beginP);
+	decodeInternal(beginP, endP - beginP, page);
 }
 
-U32String::U32String(const String &str) : BaseString<u32char_type_t>() {
-	initWithCStr(str.c_str(), str.size());
+U32String::U32String(const String &str, Common::CodePage page) : BaseString<u32char_type_t>() {
+	decodeInternal(str.c_str(), str.size(), page);
 }
 
 U32String &U32String::operator=(const U32String &str) {
@@ -56,7 +56,7 @@ U32String &U32String::operator=(const U32String &str) {
 
 U32String &U32String::operator=(const String &str) {
 	clear();
-	initWithCStr(str.c_str(), str.size());
+	decodeInternal(str.c_str(), str.size(), Common::kUtf8);
 	return *this;
 }
 
@@ -66,7 +66,7 @@ U32String &U32String::operator=(const value_type *str) {
 
 U32String &U32String::operator=(const char *str) {
 	clear();
-	initWithCStr(str, strlen(str));
+	decodeInternal(str, strlen(str), Common::kUtf8);
 	return *this;
 }
 
@@ -131,16 +131,12 @@ U32String U32String::substr(size_t pos, size_t len) const {
 		return U32String(_str + pos, MIN((size_t)_size - pos, len));
 }
 
-void U32String::insertString(const char *s, uint32 p) {
-	while (*s != '\0') {
-		BaseString<u32char_type_t>::insertChar(*s++, p++);
-	}
+void U32String::insertString(const char *s, uint32 p, CodePage page) {
+	insertString(U32String(s, page), p);
 }
 
-void U32String::insertString(const String &s, uint32 p) {
-	for (uint32 i = 0; i < s.size(); ++i) {
-		BaseString<u32char_type_t>::insertChar(s[i], p++);
-	}
+void U32String::insertString(const String &s, uint32 p, CodePage page) {
+	insertString(U32String(s, page), p);
 }
 
 U32String U32String::format(U32String fmt, ...) {

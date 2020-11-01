@@ -805,7 +805,7 @@ void SoundManager::startSpeech(int rep, int character, int typ) {
 		}
 
 		_ttsMan->setPitch(pitch);
-		_ttsMan->say(_vm->getString(rep + kDialogStringIndex), "CP850");
+		_ttsMan->say(_vm->getString(rep + kDialogStringIndex), Common::kDos850);
 #endif // USE_TTS
 		return;
 	}

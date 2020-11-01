@@ -21,7 +21,6 @@
  */
 
 #include "common/config-manager.h"
-#include "common/encoding.h"
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/events.h"
@@ -467,15 +466,15 @@ const Common::U32String InfoDialog::queryResString(int stringno) {
 		}
 	}
 
-	Common::String convertFromCodePage;
+	Common::CodePage convertFromCodePage = Common::kCodePageInvalid;
 	if (_vm->_language == Common::KO_KOR)
-		convertFromCodePage = "cp949";
+		convertFromCodePage = Common::kWindows949;
 	else if (_vm->_language == Common::JA_JPN)
-		convertFromCodePage = "shift_jis";
+		convertFromCodePage = Common::kWindows932;
 	else if (_vm->_language == Common::ZH_TWN || _vm->_language == Common::ZH_CNA)
-		convertFromCodePage = "big5";
+		convertFromCodePage = Common::kWindows950;
 
-	return convertFromCodePage.empty() ? _(tmp) : U32String((const Common::U32String::value_type*)Common::Encoding::convert("utf-32", convertFromCodePage, tmp));
+	return convertFromCodePage == Common::kCodePageInvalid ? _(tmp) : U32String(tmp, convertFromCodePage);
 }
 
 #pragma mark -

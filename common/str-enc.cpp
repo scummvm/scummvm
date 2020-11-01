@@ -20,94 +20,567 @@
  *
  */
 
-#include "common/encoding.h"
 #include "common/str.h"
 #include "common/ustr.h"
 #include "common/util.h"
+#include "common/endian.h"
+#include "common/error.h"
+#include "common/system.h"
+#include "common/enc-internal.h"
+#include "common/file.h"
 
 namespace Common {
 
 // //TODO: This is a quick and dirty converter. Refactoring needed:
-// 1. This version is unsafe! There are no checks for end of buffer
-//    near i++ operations.
-// 2. Original version has an option for performing strict / nonstrict
+// 1. Original version has an option for performing strict / nonstrict
 //    conversion for the 0xD800...0xDFFF interval
-// 3. Original version returns a result code. This version does NOT
+// 2. Original version returns a result code. This version does NOT
 //    insert 'FFFD' on errors & does not inform caller on any errors
 //
 // More comprehensive one lives in wintermute/utils/convert_utf.cpp
-void String::decodeUTF8(U32String &dst) const {
+void U32String::decodeUTF8(const char *src, uint32 len) {
+	ensureCapacity(len, false);
+
 	// The String class, and therefore the Font class as well, assume one
 	// character is one byte, but in this case it's actually an UTF-8
 	// string with up to 4 bytes per character. To work around this,
 	// convert it to an U32String before drawing it, because our Font class
 	// can handle that.
-	uint i = 0;
-	while (i < _size) {
+	for (uint i = 0; i < len;) {
 		uint32 chr = 0;
 		uint num = 1;
 
-		if ((_str[i] & 0xF8) == 0xF0) {
+		if ((src[i] & 0xF8) == 0xF0) {
 			num = 4;
-		} else if ((_str[i] & 0xF0) == 0xE0) {
+		} else if ((src[i] & 0xF0) == 0xE0) {
 			num = 3;
-		} else if ((_str[i] & 0xE0) == 0xC0) {
+		} else if ((src[i] & 0xE0) == 0xC0) {
 			num = 2;
 		}
 
-		if (i - _size >= num) {
+		if (len - i >= num) {
 			switch (num) {
 			case 4:
-				chr |= (_str[i++] & 0x07) << 18;
-				chr |= (_str[i++] & 0x3F) << 12;
-				chr |= (_str[i++] & 0x3F) << 6;
-				chr |= (_str[i++] & 0x3F);
+				chr |= (src[i++] & 0x07) << 18;
+				chr |= (src[i++] & 0x3F) << 12;
+				chr |= (src[i++] & 0x3F) << 6;
+				chr |= (src[i++] & 0x3F);
 				break;
 
 			case 3:
-				chr |= (_str[i++] & 0x0F) << 12;
-				chr |= (_str[i++] & 0x3F) << 6;
-				chr |= (_str[i++] & 0x3F);
+				chr |= (src[i++] & 0x0F) << 12;
+				chr |= (src[i++] & 0x3F) << 6;
+				chr |= (src[i++] & 0x3F);
 				break;
 
 			case 2:
-				chr |= (_str[i++] & 0x1F) << 6;
-				chr |= (_str[i++] & 0x3F);
+				chr |= (src[i++] & 0x1F) << 6;
+				chr |= (src[i++] & 0x3F);
 				break;
 
 			default:
-				chr = (_str[i++] & 0x7F);
+				chr = (src[i++] & 0x7F);
 				break;
 			}
 		} else {
 			break;
 		}
 
-		dst += chr;
+		operator+=(chr);
+	}
+}
+
+const uint16 invalidCode = 0xFFFD;
+
+static bool cjk_tables_loaded = false;
+static const uint16 *windows932ConversionTable;
+static const uint16 *windows949ConversionTable;
+static const uint16 *windows950ConversionTable;
+
+static const uint16 *loadCJKTable(File &f, int idx, size_t sz) {
+	f.seek(16 + idx * 4);
+	uint32 off = f.readUint32LE();
+	f.seek(off);
+	uint16 *res = new uint16[sz];
+	f.read(res, 2 * sz);
+#ifndef SCUMM_LITTLE_ENDIAN
+	for (uint i = 0; i < sz; i++)
+		res[i] = FROM_LE_16(res[i]);
+#endif
+	return res;
+}
+
+static void loadCJKTables() {
+	File f;
+
+	cjk_tables_loaded = true;
+
+	if (!f.open("encoding.dat")) {
+		warning("encoding.dat is not found. Support for CJK is disabled");
+		return;
+	}
+
+	if (f.size() < 16 + 3 * 4) {
+		warning("encoding.dat is invalid. Support for CJK is disabled");
+		return;
+	}
+
+	if (f.readUint32BE() != MKTAG('S', 'C', 'V', 'M')
+	    || f.readUint32BE() != MKTAG('E', 'N', 'C', 'D')) {
+		warning("encoding.dat is invalid. Support for CJK is disabled");
+		return;
+	}
+
+	// Version and number of tables.
+	if (f.readUint32LE() != 0 || f.readUint32LE() < 3) {
+		warning("encoding.dat is of incompatible version. Support for CJK is disabled");
+		return;
+	}
+
+	windows932ConversionTable = loadCJKTable(f, 0, 47 * 192);
+	windows949ConversionTable = loadCJKTable(f, 1, 0x7e * 0xb2);
+	windows950ConversionTable = loadCJKTable(f, 2, 89 * 157);
+}
+
+void U32String::decodeWindows932(const char *src, uint32 len) {
+	ensureCapacity(len, false);
+
+	if (!cjk_tables_loaded)
+		loadCJKTables();
+
+	for (uint i = 0; i < len;) {
+		uint8 high = src[i++];
+
+		if ((high & 0x80) == 0x00) {
+			operator+=(high);
+			continue;
+		}
+
+		// Katakana
+		if (high >= 0xa1 && high <= 0xdf) {
+			operator+=(high - 0xa1 + 0xFF61);
+			continue;
+		}
+
+		if (i >= len) {
+			operator+=(invalidCode);
+			continue;
+		}
+
+		uint8 low = src[i++];
+		if (low < 0x40) {
+			operator+=(invalidCode);
+			continue;
+		}
+		uint8 lowidx = low - 0x40;
+		uint8 highidx;
+
+		if (high >= 0x81 && high <= 0x84)
+			highidx = high - 0x81;
+		else if (high >= 0x87 && high <= 0x9f)
+			highidx = high - 0x87 + 4;
+		else if (high >= 0xe0 && high <= 0xee)
+			highidx = high - 0xe0 + 29;
+		else {
+			operator+=(invalidCode);
+			continue;
+		}
+
+		if (!windows932ConversionTable) {
+			operator+=(invalidCode);
+			continue;
+		}
+
+		// Main range
+		uint16 val = windows932ConversionTable[highidx * 192 + lowidx];
+		operator+=(val ? val : invalidCode);
+	}
+}
+
+static uint16 convertUHCToUCSReal(uint8 high, uint8 low) {
+	uint lowidx = 0;
+	if (low >= 0x41 && low <= 0x5a)
+		lowidx = low - 0x41;
+	else if (low >= 0x61 && low <= 0x7a)
+		lowidx = low - 0x61 + 0x1a;
+	else if (low >= 0x81 && low <= 0xfe)
+		lowidx = low - 0x81 + 0x1a * 2;
+	else
+		return 0;
+	if (!windows949ConversionTable)
+		return 0;
+	uint16 idx = (high - 0x81) * 0xb2 + lowidx;
+	return windows949ConversionTable[idx];
+}
+
+uint16 convertUHCToUCS(uint8 high, uint8 low) {
+	if (!cjk_tables_loaded)
+		loadCJKTables();
+
+	return convertUHCToUCSReal(high, low);
+}
+
+
+void U32String::decodeWindows949(const char *src, uint32 len) {
+	ensureCapacity(len, false);
+
+	if (!cjk_tables_loaded)
+		loadCJKTables();
+
+	for (uint i = 0; i < len;) {
+		uint8 high = src[i++];
+
+		if ((high & 0x80) == 0x00) {
+			operator+=(high);
+			continue;
+		}
+
+		if (high == 0x80 || high == 0xff) {
+			operator+=(invalidCode);
+			continue;
+		}
+
+		if (i >= len) {
+			operator+=(invalidCode);
+			continue;
+		}
+
+		uint8 low = src[i++];
+		uint16 val = convertUHCToUCSReal(high, low);
+
+		operator+=(val ? val : invalidCode);
+	}
+}
+
+void U32String::decodeWindows950(const char *src, uint32 len) {
+	ensureCapacity(len, false);
+
+	if (!cjk_tables_loaded)
+		loadCJKTables();
+
+	for (uint i = 0; i < len;) {
+		uint8 high = src[i++];
+
+		if ((high & 0x80) == 0x00) {
+			operator+=(high);
+			continue;
+		}
+
+		// Euro symbol
+		if (high == 0x80) {
+			operator+=(0x20ac);
+			continue;
+		}
+
+		if (high == 0xff) {
+			operator+=(invalidCode);
+			continue;
+		}
+
+		if (i >= len) {
+			operator+=(invalidCode);
+			continue;
+		}
+
+		uint8 low = src[i++];
+		uint8 lowidx = low < 0x80 ? low - 0x40 : low - 0x62;
+
+		// Main range
+		if (high >= 0xa1 && high < 0xfa) {
+			uint16 val = windows950ConversionTable ?
+				windows950ConversionTable[(high - 0xa1) * 157 + lowidx] : 0;
+			operator+=(val ? val : invalidCode);
+			continue;
+		}
+
+		// PUA range
+		if (high <= 0x8d) {
+			operator+=(0xeeb8 + 157 * (high-0x81) + lowidx);
+			continue;
+		}
+		if (high <= 0xa0) {
+			operator+=(0xe311 + (157 * (high-0x8e)) + lowidx);
+			continue;
+		}
+		if (high >= 0xfa) {
+			operator+=(0xe000 + (157 * (high-0xfa)) + lowidx);
+			continue;
+		}
+	}
+}
+
+void String::encodeWindows932(const U32String &src) {
+	static uint16 *reverseTable;
+
+	ensureCapacity(src.size() * 2, false);
+
+	if (!cjk_tables_loaded)
+		loadCJKTables();
+
+	if (!reverseTable && windows932ConversionTable) {
+		uint16 *rt = new uint16[0x10000];
+		memset(rt, 0, sizeof(rt[0]) * 0x10000);
+		for (uint highidx = 0; highidx < 58; highidx++)
+			for (uint lowidx = 0; lowidx < 192; lowidx++) {
+				uint8 high = 0;
+				uint8 low = lowidx + 0x40;
+				uint16 unicode = windows932ConversionTable[highidx * 192 + lowidx];
+
+				if (highidx < 4)
+					high = highidx + 0x81;
+				else if (highidx < 29)
+					high = highidx + 0x87 - 4;
+				else
+					high = highidx + 0xe0 - 29;
+
+				rt[unicode] = (high << 8) | low;
+			}
+
+		reverseTable = rt;
+	}
+
+	for (uint i = 0; i < src.size();) {
+		uint32 point = src[i++];
+
+		if (point < 0x80) {
+			operator+=(point);
+			continue;
+		}
+
+		// Katakana
+		if (point >= 0xff61 && point <= 0xff9f) {
+			operator+=(0xa1 + (point - 0xFF61));
+			continue;
+		}
+
+		if (point > 0x10000) {
+			operator+=('?');
+			continue;
+		}
+
+		if (!reverseTable) {
+			operator+=('?');
+			continue;
+		}
+
+		uint16 rev = reverseTable[point];
+		if (rev != 0) {
+			operator+=(rev >> 8);
+			operator+=(rev & 0xff);
+			continue;
+		}
+
+		// This codepage contains cyrillic, so no need to transliterate
+
+		operator+=('?');
+		continue;
+	}
+}
+
+void String::encodeWindows949(const U32String &src) {
+	static const uint16 *reverseTable;
+
+	ensureCapacity(src.size() * 2, false);
+
+	if (!cjk_tables_loaded)
+		loadCJKTables();
+
+	if (!reverseTable && windows949ConversionTable) {
+		uint16 *rt = new uint16[0x10000];
+		memset(rt, 0, sizeof(rt[0]) * 0x10000);
+
+		for (uint highidx = 0; highidx < 0x7e; highidx++)
+			for (uint lowidx = 0; lowidx < 0xb2; lowidx++) {
+				uint8 high = highidx + 0x81;
+				uint8 low = 0;
+				uint16 unicode = windows949ConversionTable[highidx * 0xb2 + lowidx];
+
+				if (lowidx < 0x1a)
+					low = 0x41 + lowidx;
+				else if (lowidx < 0x1a * 2)
+					low = 0x61 + lowidx - 0x1a;
+				else
+					low = 0x81 + lowidx - 0x1a * 2;
+				rt[unicode] = (high << 8) | low;
+			}
+
+		reverseTable = rt;
+	}
+
+	for (uint i = 0; i < src.size();) {
+		uint32 point = src[i++];
+
+		if (point < 0x80) {
+			operator+=(point);
+			continue;
+		}
+
+		if (point > 0x10000 || !reverseTable) {
+			operator+=('?');
+			continue;
+		}
+
+		uint16 rev = reverseTable[point];
+		if (rev == 0) {
+			// This codepage contains cyrillic, so no need to transliterate
+			operator+=('?');
+			continue;
+		}
+
+		operator+=(rev >> 8);
+		operator+=(rev & 0xff);
+	}
+}
+
+static const char g_cyrillicTransliterationTable[] = {
+	' ', 'E', 'D', 'G', 'E', 'Z', 'I', 'I', 'J', 'L', 'N', 'C', 'K', 'I', 'U', 'D',
+	'A', 'B', 'V', 'G', 'D', 'E', 'Z', 'Z', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+	'R', 'S', 'T', 'U', 'F', 'H', 'C', 'C', 'S', 'S', '\"', 'Y', '\'', 'E', 'U', 'A',
+	'a', 'b', 'v', 'g', 'd', 'e', 'z', 'z', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
+	'r', 's', 't', 'u', 'f', 'h', 'c', 'c', 's', 's', '\"', 'y', '\'', 'e', 'u', 'a',
+	'e', 'e', 'd', 'g', 'e', 'z', 'i', 'i', 'j', 'l', 'n', 'c', 'k', 'i', 'u', 'd',
+};
+
+void String::translitChar(U32String::value_type point) {
+	if (point == 0xa0) {
+		operator+=(' ');
+		return;
+	}
+
+	if (point == 0xad) {
+		operator+=('-');
+		return;
+	}
+
+	if (point == 0x2116) {
+		operator+=('N');
+		return;
+	}
+
+	if (point >= 0x401 && point <= 0x45f) {
+		operator+=(g_cyrillicTransliterationTable[point - 0x400]);
+		return;
+	}
+
+	operator+=('?');
+}
+
+void String::encodeWindows950(const U32String &src, bool transliterate) {
+	static uint16 *reverseTable;
+
+	ensureCapacity(src.size() * 2, false);
+
+	if (!cjk_tables_loaded)
+		loadCJKTables();
+
+	if (!reverseTable && windows950ConversionTable) {
+		uint16 *rt = new uint16[0x10000];
+		memset(rt, 0, sizeof(rt[0]) * 0x10000);
+
+		for (uint highidx = 0; highidx < 90; highidx++)
+			for (uint lowidx = 0; lowidx < 157; lowidx++) {
+				uint8 high = highidx + 0xa1;
+				uint8 low = 0;
+				uint16 unicode = windows950ConversionTable[highidx * 157 + lowidx];
+
+				if (lowidx <= 0x3e)
+					low = 0x40 + lowidx;
+				else
+					low = 0x62 + lowidx;
+				rt[unicode] = (high << 8) | low;
+			}
+
+		reverseTable = rt;
+	}
+
+	for (uint i = 0; i < src.size();) {
+		uint32 point = src[i++];
+
+		if (point < 0x80) {
+			operator+=(point);
+			continue;
+		}
+
+		if (point > 0x10000) {
+			operator+=('?');
+			continue;
+		}
+
+		// Euro symbol
+		if (point == 0x20ac) {
+			operator+=((char) 0x80);
+			continue;
+		}
+
+		if (!reverseTable) {
+			operator+=('?');
+			continue;
+		}
+
+		uint16 rev = reverseTable[point];
+		if (rev != 0) {
+			operator+=(rev >> 8);
+			operator+=(rev & 0xff);
+			continue;
+		}
+
+		// PUA range
+		if (point >= 0xe000 && point <= 0xf848) {
+			byte lowidx = 0, high = 0, low = 0;
+			if (point <= 0xe310) {
+				high = (point - 0xe000) / 157 + 0xfa;
+				lowidx = (point - 0xe000) % 157;
+			} else if (point <= 0xeeb7) {
+				high = (point - 0xe311) / 157 + 0x8e;
+				lowidx = (point - 0xe311) % 157;
+			} else if (point <= 0xf6b0) {
+				high = (point - 0xeeb8) / 157 + 0x81;
+				lowidx = (point - 0xeeb8) % 157;
+			} else {
+				high = (point - 0xf672) / 157 + 0xc6;
+				lowidx = (point - 0xf672) % 157;
+			}
+
+			if (lowidx <= 0x3e)
+				low = 0x40 + lowidx;
+			else
+				low = 0x62 + lowidx;
+
+			operator+=(high);
+			operator+=(low);
+			reverseTable[point] = (high << 8) | low;
+			continue;
+		}
+
+		if (transliterate) {
+			translitChar(point);
+			continue;
+		}
+
+		operator+=('?');
+		continue;
 	}
 }
 
 // //TODO: This is a quick and dirty converter. Refactoring needed:
-// 1. Original version is more effective.
-//    This version features buffer = (char)(...) + buffer; pattern that causes
-//    unnecessary copying and reallocations, original code works with raw bytes
-// 2. Original version has an option for performing strict / nonstrict
+// 1. Original version has an option for performing strict / nonstrict
 //    conversion for the 0xD800...0xDFFF interval
-// 3. Original version returns a result code. This version inserts '0xFFFD' if
+// 2. Original version returns a result code. This version inserts '0xFFFD' if
 //    character does not fit in 4 bytes & does not inform caller on any errors
 //
 // More comprehensive one lives in wintermute/utils/convert_utf.cpp
-void U32String::encodeUTF8(String &dst) const {
+void String::encodeUTF8(const U32String &src) {
+	ensureCapacity(src.size(), false);
 	static const uint8 firstByteMark[5] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0 };
 	char writingBytes[5] = {0x00, 0x00, 0x00, 0x00, 0x00};
 
 	uint i = 0;
-	while (i < _size) {
+	while (i < src.size()) {
 		unsigned short bytesToWrite = 0;
 		const uint32 byteMask = 0xBF;
 		const uint32 byteMark = 0x80;
 
-		uint32 ch = _str[i++];
+		uint32 ch = src[i++];
 		if (ch < (uint32)0x80) {
 			bytesToWrite = 1;
 		} else if (ch < (uint32)0x800) {
@@ -118,7 +591,7 @@ void U32String::encodeUTF8(String &dst) const {
 			bytesToWrite = 4;
 		} else {
 			bytesToWrite = 3;
-			ch = 0x0000FFFD;
+			ch = invalidCode;
 		}
 
 		char *pBytes = writingBytes + (4 - bytesToWrite);
@@ -143,301 +616,238 @@ void U32String::encodeUTF8(String &dst) const {
 			break;
 		}
 
-		dst += pBytes;
+		operator+=(pBytes);
 	}
 }
 
-static const uint32 g_windows1250ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x0083, 0x201E, 0x2026, 0x2020, 0x2021,
-										 0x0088, 0x2030, 0x0160, 0x2039, 0x015A, 0x0164, 0x017D, 0x0179,
-										 0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
-										 0x0098, 0x2122, 0x0161, 0x203A, 0x015B, 0x0165, 0x017E, 0x017A,
-										 0x00A0, 0x02C7, 0x02D8, 0x0141, 0x00A4, 0x0104, 0x00A6, 0x00A7,
-										 0x00A8, 0x00A9, 0x015E, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x017B,
-										 0x00B0, 0x00B1, 0x02DB, 0x0142, 0x00B4, 0x00B5, 0x00B6, 0x00B7,
-										 0x00B8, 0x0105, 0x015F, 0x00BB, 0x013D, 0x02DD, 0x013E, 0x017C,
-										 0x0154, 0x00C1, 0x00C2, 0x0102, 0x00C4, 0x0139, 0x0106, 0x00C7,
-										 0x010C, 0x00C9, 0x0118, 0x00CB, 0x011A, 0x00CD, 0x00CE, 0x010E,
-										 0x0110, 0x0143, 0x0147, 0x00D3, 0x00D4, 0x0150, 0x00D6, 0x00D7,
-										 0x0158, 0x016E, 0x00DA, 0x0170, 0x00DC, 0x00DD, 0x0162, 0x00DF,
-										 0x0155, 0x00E1, 0x00E2, 0x0103, 0x00E4, 0x013A, 0x0107, 0x00E7,
-										 0x010D, 0x00E9, 0x0119, 0x00EB, 0x011B, 0x00ED, 0x00EE, 0x010F,
-										 0x0111, 0x0144, 0x0148, 0x00F3, 0x00F4, 0x0151, 0x00F6, 0x00F7,
-										 0x0159, 0x016F, 0x00FA, 0x0171, 0x00FC, 0x00FD, 0x0163, 0x02D9};
-
-static const uint32 g_windows1251ConversionTable[] = {0x0402, 0x0403, 0x201A, 0x0453, 0x201E, 0x2026, 0x2020, 0x2021,
-										 0x20AC, 0x2030, 0x0409, 0x2039, 0x040A, 0x040C, 0x040B, 0x040F,
-										 0x0452, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
-										 0x0098, 0x2122, 0x0459, 0x203A, 0x045A, 0x045C, 0x045B, 0x045F,
-										 0x00A0, 0x040E, 0x045E, 0x0408, 0x00A4, 0x0490, 0x00A6, 0x00A7,
-										 0x0401, 0x00A9, 0x0404, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x0407,
-										 0x00B0, 0x00B1, 0x0406, 0x0456, 0x0491, 0x00B5, 0x00B6, 0x00B7,
-										 0x0451, 0x2116, 0x0454, 0x00BB, 0x0458, 0x0405, 0x0455, 0x0457,
-										 0x0410, 0x0411, 0x0412, 0x0413, 0x0414, 0x0415, 0x0416, 0x0417,
-										 0x0418, 0x0419, 0x041A, 0x041B, 0x041C, 0x041D, 0x041E, 0x041F,
-										 0x0420, 0x0421, 0x0422, 0x0423, 0x0424, 0x0425, 0x0426, 0x0427,
-										 0x0428, 0x0429, 0x042A, 0x042B, 0x042C, 0x042D, 0x042E, 0x042F,
-										 0x0430, 0x0431, 0x0432, 0x0433, 0x0434, 0x0435, 0x0436, 0x0437,
-										 0x0438, 0x0439, 0x043A, 0x043B, 0x043C, 0x043D, 0x043E, 0x043F,
-										 0x0440, 0x0441, 0x0442, 0x0443, 0x0444, 0x0445, 0x0446, 0x0447,
-										 0x0448, 0x0449, 0x044A, 0x044B, 0x044C, 0x044D, 0x044E, 0x044F};
-
-static const uint32 g_windows1252ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
-										 0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x008D, 0x017D, 0x008F,
-										 0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
-										 0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x009D, 0x017E, 0x0178,
-										 0x00A0, 0x00A1, 0x00A2, 0x00A3, 0x00A4, 0x00A5, 0x00A6, 0x00A7,
-										 0x00A8, 0x00A9, 0x00AA, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x00AF,
-										 0x00B0, 0x00B1, 0x00B2, 0x00B3, 0x00B4, 0x00B5, 0x00B6, 0x00B7,
-										 0x00B8, 0x00B9, 0x00BA, 0x00BB, 0x00BC, 0x00BD, 0x00BE, 0x00BF,
-										 0x00C0, 0x00C1, 0x00C2, 0x00C3, 0x00C4, 0x00C5, 0x00C6, 0x00C7,
-										 0x00C8, 0x00C9, 0x00CA, 0x00CB, 0x00CC, 0x00CD, 0x00CE, 0x00CF,
-										 0x00D0, 0x00D1, 0x00D2, 0x00D3, 0x00D4, 0x00D5, 0x00D6, 0x00D7,
-										 0x00D8, 0x00D9, 0x00DA, 0x00DB, 0x00DC, 0x00DD, 0x00DE, 0x00DF,
-										 0x00E0, 0x00E1, 0x00E2, 0x00E3, 0x00E4, 0x00E5, 0x00E6, 0x00E7,
-										 0x00E8, 0x00E9, 0x00EA, 0x00EB, 0x00EC, 0x00ED, 0x00EE, 0x00EF,
-										 0x00F0, 0x00F1, 0x00F2, 0x00F3, 0x00F4, 0x00F5, 0x00F6, 0x00F7,
-										 0x00F8, 0x00F9, 0x00FA, 0x00FB, 0x00FC, 0x00FD, 0x00FE, 0x00FF};
-
-static const uint32 g_windows1253ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
-										 0x0088, 0x2030, 0x008A, 0x2039, 0x008C, 0x008D, 0x008E, 0x008F,
-										 0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
-										 0x0098, 0x2122, 0x009A, 0x203A, 0x009C, 0x009D, 0x009E, 0x009F,
-										 0x00A0, 0x0385, 0x0386, 0x00A3, 0x00A4, 0x00A5, 0x00A6, 0x00A7,
-										 0x00A8, 0x00A9, 0x00AA, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x2015,
-										 0x00B0, 0x00B1, 0x00B2, 0x00B3, 0x0384, 0x00B5, 0x00B6, 0x00B7,
-										 0x0388, 0x0389, 0x038A, 0x00BB, 0x038C, 0x00BD, 0x038E, 0x038F,
-										 0x0390, 0x0391, 0x0392, 0x0393, 0x0394, 0x0395, 0x0396, 0x0397,
-										 0x0398, 0x0399, 0x039A, 0x039B, 0x039C, 0x039D, 0x039E, 0x039F,
-										 0x03A0, 0x03A1, 0x00D2, 0x03A3, 0x03A4, 0x03A5, 0x03A6, 0x03A7,
-										 0x03A8, 0x03A9, 0x03AA, 0x03AB, 0x03AC, 0x03AD, 0x03AE, 0x03AF,
-										 0x03B0, 0x03B1, 0x03B2, 0x03B3, 0x03B4, 0x03B5, 0x03B6, 0x03B7,
-										 0x03B8, 0x03B9, 0x03BA, 0x03BB, 0x03BC, 0x03BD, 0x03BE, 0x03BF,
-										 0x03C0, 0x03C1, 0x03C2, 0x03C3, 0x03C4, 0x03C5, 0x03C6, 0x03C7,
-										 0x03C8, 0x03C9, 0x03CA, 0x03CB, 0x03CC, 0x03CD, 0x03CE, 0x00FF};
-
-static const uint32 g_windows1254ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
-										 0x02C6, 0x2030, 0x0160, 0x2039, 0x0152, 0x008D, 0x008E, 0x008F,
-										 0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
-										 0x02DC, 0x2122, 0x0161, 0x203A, 0x0153, 0x009D, 0x009E, 0x0178,
-										 0x00A0, 0x00A1, 0x00A2, 0x00A3, 0x00A4, 0x00A5, 0x00A6, 0x00A7,
-										 0x00A8, 0x00A9, 0x00AA, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x00AF,
-										 0x00B0, 0x00B1, 0x00B2, 0x00B3, 0x00B4, 0x00B5, 0x00B6, 0x00B7,
-										 0x00B8, 0x00B9, 0x00BA, 0x00BB, 0x00BC, 0x00BD, 0x00BE, 0x00BF,
-										 0x00C0, 0x00C1, 0x00C2, 0x00C3, 0x00C4, 0x00C5, 0x00C6, 0x00C7,
-										 0x00C8, 0x00C9, 0x00CA, 0x00CB, 0x00CC, 0x00CD, 0x00CE, 0x00CF,
-										 0x011E, 0x00D1, 0x00D2, 0x00D3, 0x00D4, 0x00D5, 0x00D6, 0x00D7,
-										 0x00D8, 0x00D9, 0x00DA, 0x00DB, 0x00DC, 0x0130, 0x015E, 0x00DF,
-										 0x00E0, 0x00E1, 0x00E2, 0x00E3, 0x00E4, 0x00E5, 0x00E6, 0x00E7,
-										 0x00E8, 0x00E9, 0x00EA, 0x00EB, 0x00EC, 0x00ED, 0x00EE, 0x00EF,
-										 0x011F, 0x00F1, 0x00F2, 0x00F3, 0x00F4, 0x00F5, 0x00F6, 0x00F7,
-										 0x00F8, 0x00F9, 0x00FA, 0x00FB, 0x00FC, 0x0131, 0x015F, 0x00FF};
-
-static const uint32 g_windows1255ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
-										 0x02C6, 0x2030, 0x008A, 0x2039, 0x008C, 0x008D, 0x008E, 0x008F,
-										 0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
-										 0x02DC, 0x2122, 0x009A, 0x203A, 0x009C, 0x009D, 0x009E, 0x009F,
-										 0x00A0, 0x00A1, 0x00A2, 0x00A3, 0x20AA, 0x00A5, 0x00A6, 0x00A7,
-										 0x00A8, 0x00A9, 0x00D7, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x00AF,
-										 0x00B0, 0x00B1, 0x00B2, 0x00B3, 0x00B4, 0x00B5, 0x00B6, 0x00B7,
-										 0x00B8, 0x00B9, 0x00F7, 0x00BB, 0x00BC, 0x00BD, 0x00BE, 0x00BF,
-										 0x05B0, 0x05B1, 0x05B2, 0x05B3, 0x05B4, 0x05B5, 0x05B6, 0x05B7,
-										 0x05B8, 0x05B9, 0x05BA, 0x05BB, 0x05BC, 0x05BD, 0x05BE, 0x05BF,
-										 0x05C0, 0x05C1, 0x05C2, 0x05C3, 0x05F0, 0x05F1, 0x05F2, 0x05F3,
-										 0x05F4, 0x00D9, 0x00DA, 0x00DB, 0x00DC, 0x00DD, 0x00DE, 0x00DF,
-										 0x05D0, 0x05D1, 0x05D2, 0x05D3, 0x05D4, 0x05D5, 0x05D6, 0x05D7,
-										 0x05D8, 0x05D9, 0x05DA, 0x05DB, 0x05DC, 0x05DD, 0x05DE, 0x05DF,
-										 0x05E0, 0x05E1, 0x05E2, 0x05E3, 0x05E4, 0x05E5, 0x05E6, 0x05E7,
-										 0x05E8, 0x05E9, 0x05EA, 0x00FB, 0x00FC, 0x200E, 0x200F, 0x00FF};
-
-static const uint32 g_windows1256ConversionTable[] = {0x20AC, 0x067E, 0x201A, 0x0192, 0x201E, 0x2026, 0x2020, 0x2021,
-										 0x02C6, 0x2030, 0x0679, 0x2039, 0x0152, 0x0686, 0x0698, 0x0688,
-										 0x06AF, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
-										 0x06A9, 0x2122, 0x0691, 0x203A, 0x0153, 0x200C, 0x200D, 0x06BA,
-										 0x00A0, 0x060C, 0x00A2, 0x00A3, 0x00A4, 0x00A5, 0x00A6, 0x00A7,
-										 0x00A8, 0x00A9, 0x06BE, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x00AF,
-										 0x00B0, 0x00B1, 0x00B2, 0x00B3, 0x00B4, 0x00B5, 0x00B6, 0x00B7,
-										 0x00B8, 0x00B9, 0x061B, 0x00BB, 0x00BC, 0x00BD, 0x00BE, 0x061F,
-										 0x06C1, 0x0621, 0x0622, 0x0623, 0x0624, 0x0625, 0x0626, 0x0627,
-										 0x0628, 0x0629, 0x062A, 0x062B, 0x062C, 0x062D, 0x062E, 0x062F,
-										 0x0630, 0x0631, 0x0632, 0x0633, 0x0634, 0x0635, 0x0636, 0x00D7,
-										 0x0637, 0x0638, 0x0639, 0x063A, 0x0640, 0x0641, 0x0642, 0x0643,
-										 0x00E0, 0x0644, 0x00E2, 0x0645, 0x0646, 0x0647, 0x0648, 0x00E7,
-										 0x00E8, 0x00E9, 0x00EA, 0x00EB, 0x0649, 0x064A, 0x00EE, 0x00EF,
-										 0x064B, 0x064C, 0x064D, 0x064E, 0x00F4, 0x064F, 0x0650, 0x00F7,
-										 0x0651, 0x00F9, 0x0652, 0x00FB, 0x00FC, 0x200E, 0x200F, 0x06D2};
-
-static const uint32 g_windows1257ConversionTable[] = {0x20AC, 0x0081, 0x201A, 0x0083, 0x201E, 0x2026, 0x2020, 0x2021,
-										 0x0088, 0x2030, 0x008A, 0x2039, 0x008C, 0x00A8, 0x02C7, 0x00B8,
-										 0x0090, 0x2018, 0x2019, 0x201C, 0x201D, 0x2022, 0x2013, 0x2014,
-										 0x0098, 0x2122, 0x009A, 0x203A, 0x009C, 0x00AF, 0x02DB, 0x009F,
-										 0x00A0, 0x00A1, 0x00A2, 0x00A3, 0x00A4, 0x00A5, 0x00A6, 0x00A7,
-										 0x00D8, 0x00A9, 0x0156, 0x00AB, 0x00AC, 0x00AD, 0x00AE, 0x00C6,
-										 0x00B0, 0x00B1, 0x00B2, 0x00B3, 0x00B4, 0x00B5, 0x00B6, 0x00B7,
-										 0x00F8, 0x00B9, 0x0157, 0x00BB, 0x00BC, 0x00BD, 0x00BE, 0x00E6,
-										 0x0104, 0x012E, 0x0100, 0x0106, 0x00C4, 0x00C5, 0x0118, 0x0112,
-										 0x010C, 0x00C9, 0x0179, 0x0116, 0x0122, 0x0136, 0x012A, 0x013B,
-										 0x0160, 0x0143, 0x0145, 0x00D3, 0x014C, 0x00D5, 0x00D6, 0x00D7,
-										 0x0172, 0x0141, 0x015A, 0x016A, 0x00DC, 0x017B, 0x017D, 0x00DF,
-										 0x0105, 0x012F, 0x0101, 0x0107, 0x00E4, 0x00E5, 0x0119, 0x0113,
-										 0x010D, 0x00E9, 0x017A, 0x0117, 0x0123, 0x0137, 0x012B, 0x013C,
-										 0x0161, 0x0144, 0x0146, 0x00F3, 0x014D, 0x00F5, 0x00F6, 0x00F7,
-										 0x0173, 0x0142, 0x015B, 0x016B, 0x00FC, 0x017C, 0x017E, 0x02D9};
-
-
-/* This array must match the enum defined in str-enc.h */
-static char const *const g_codePageMap[] = {
-	"UTF-8", /* kUtf8 */
-	"WINDOWS-1250", /* kWindows1250 */
-	"WINDOWS-1251", /* kWindows1251 */
-	"WINDOWS-1252", /* kWindows1252 */
-	"WINDOWS-1253", /* kWindows1253 */
-	"WINDOWS-1254", /* kWindows1254 */
-	"WINDOWS-1255", /* kWindows1255 */
-	"WINDOWS-1256", /* kWindows1256 */
-	"WINDOWS-1257", /* kWindows1257 */
-	"MS932", /* kWindows932 */
-	"MSCP949", /* kWindows949 */
-	"CP950"  /* kWindows950 */
-};
-
-void String::decodeOneByte(U32String &dst, CodePage page) const {
-	for (uint i = 0; i < _size; ++i) {
-		if ((byte)_str[i] <= 0x7F) {
-			dst += _str[i];
-			continue;
-		}
-
-		byte index = _str[i] - 0x80;
-
-		switch (page) {
-		case kWindows1250:
-			dst += g_windows1250ConversionTable[index];
-			break;
-		case kWindows1251:
-			dst += g_windows1251ConversionTable[index];
-			break;
-		case kWindows1252:
-			dst += g_windows1252ConversionTable[index];
-			break;
-		case kWindows1253:
-			dst += g_windows1253ConversionTable[index];
-			break;
-		case kWindows1254:
-			dst += g_windows1254ConversionTable[index];
-			break;
-		case kWindows1255:
-			dst += g_windows1255ConversionTable[index];
-			break;
-		case kWindows1256:
-			dst += g_windows1256ConversionTable[index];
-			break;
-		case kWindows1257:
-			dst += g_windows1257ConversionTable[index];
-			break;
-		default:
-			break;
-		}
-	}
+#define decodeUTF16Template(suffix, read)				\
+Common::U32String U32String::decodeUTF16 ## suffix (const uint16 *start, uint len) { \
+	const uint16 *ptr = start;					\
+	Common::U32String dst;						\
+	dst.ensureCapacity(len, false);					\
+									\
+	while (len-- > 0) {						\
+		uint16 c = read(ptr++);					\
+		if (c >= 0xD800 && c <= 0xDBFF && len > 0) {		\
+			uint16 low = read(ptr++);			\
+			if (low >= 0xDC00 && low <= 0xDFFF)		\
+				dst += ((c & 0x3ff) << 10)              \
+					| (low & 0x3ff);                \
+			else						\
+				dst += invalidCode;			\
+			continue;					\
+                }							\
+									\
+		if (c >= 0xD800 && c <= 0xDFFF) {			\
+			dst += invalidCode;				\
+			continue;					\
+		}							\
+		dst += c;						\
+	}								\
+									\
+	return dst;							\
 }
 
-U32String String::decode(CodePage page) const {
-	if (page == kCodePageInvalid ||
-			page >= ARRAYSIZE(g_codePageMap)) {
-		error("Invalid codepage");
-	}
-	char *result = Encoding::convert("UTF-32", g_codePageMap[page], *this);
-	if (result) {
-		U32String unicodeString((uint32 *)result);
-		free(result);
-		return unicodeString;
-	}
+decodeUTF16Template(BE, READ_BE_UINT16)
+decodeUTF16Template(LE, READ_LE_UINT16)
+decodeUTF16Template(Native, READ_UINT16)
 
-	U32String unicodeString;
-	if (page == kUtf8) {
-		decodeUTF8(unicodeString);
-	} else {
-		decodeOneByte(unicodeString, page);
-	}
-	return unicodeString;
+#define encodeUTF16Template(suffix, write)				\
+uint16 *U32String::encodeUTF16 ## suffix (uint *len) const {		\
+	uint16 *out = new uint16[_size * 2 + 1];			\
+	uint16 *ptr = out;						\
+									\
+	for (uint i = 0; i < _size; i++) {				\
+		uint32 c = _str[i];					\
+		if (c < 0x10000) {					\
+			write(ptr++, c);				\
+			continue;					\
+		}							\
+		write (ptr++, 0xD800 | ((c >> 10) & 0x3ff));		\
+		write (ptr++, 0xDC00 | (c & 0x3ff));			\
+	}								\
+									\
+	write(ptr, 0);							\
+        if (len)							\
+		*len = ptr - out;					\
+									\
+	return out;							\
 }
 
+encodeUTF16Template(BE, WRITE_BE_UINT16)
+encodeUTF16Template(LE, WRITE_LE_UINT16)
+encodeUTF16Template(Native, WRITE_UINT16)
+
+// Upper bound on unicode codepoint in any single-byte encoding. Must be divisible by 0x100 and be strictly above large codepoint
+static const int kMaxCharSingleByte = 0x3000;
 
 
-void U32String::encodeOneByte(String &dst, CodePage page) const {
-	const uint32 *conversionTable = NULL;
+static const uint16 *
+getConversionTable(CodePage page) {
 	switch (page) {
 	case kWindows1250:
-		conversionTable = g_windows1250ConversionTable;
-		break;
+		return kWindows1250ConversionTable;
 	case kWindows1251:
-		conversionTable = g_windows1251ConversionTable;
-		break;
+		return kWindows1251ConversionTable;
 	case kWindows1252:
-		conversionTable = g_windows1252ConversionTable;
-		break;
+		return kWindows1252ConversionTable;
 	case kWindows1253:
-		conversionTable = g_windows1253ConversionTable;
-		break;
+		return kWindows1253ConversionTable;
 	case kWindows1254:
-		conversionTable = g_windows1254ConversionTable;
-		break;
+		return kWindows1254ConversionTable;
 	case kWindows1255:
-		conversionTable = g_windows1255ConversionTable;
-		break;
+		return kWindows1255ConversionTable;
 	case kWindows1256:
-		conversionTable = g_windows1256ConversionTable;
-		break;
+		return kWindows1256ConversionTable;
 	case kWindows1257:
-		conversionTable = g_windows1257ConversionTable;
+		return kWindows1257ConversionTable;
+	case kMacCentralEurope:
+		return kMacCentralEuropeConversionTable;
+	case kISO8859_1:
+		return kLatin1ConversionTable;
+	case kISO8859_2:
+		return kLatin2ConversionTable;
+	case kISO8859_5:
+		return kISO5ConversionTable;
+	case kDos850:
+		return kDos850ConversionTable;
+	case kDos866:
+		return kDos866ConversionTable;
+	case kASCII:
+		return kASCIIConversionTable;
+
+	case kCodePageInvalid:
+	// Multibyte encodings. Can't be represented in simple table way
+	case kUtf8:
+	case kWindows932:
+	case kWindows949:
+	case kWindows950:
+		return nullptr;
+	}
+	return nullptr;
+}
+
+struct ReverseTablePrefixTreeLevel1 {
+	struct ReverseTablePrefixTreeLevel2 *next[kMaxCharSingleByte / 0x100];
+	bool valid;
+};
+
+struct ReverseTablePrefixTreeLevel2 {
+	uint8 end[256];
+
+	ReverseTablePrefixTreeLevel2() {
+		memset(end, 0, sizeof(end));
+	}
+};
+
+ReverseTablePrefixTreeLevel1 reverseTables[kLastEncoding + 1];
+
+static const ReverseTablePrefixTreeLevel1 *
+getReverseConversionTable(CodePage page) {
+	if (reverseTables[page].valid)
+		return &reverseTables[page];
+	const uint16 *conversionTable = getConversionTable(page);
+	if (!conversionTable)
+		return nullptr;
+	reverseTables[page].valid = true;
+	for (uint i = 0; i < 0x80; i++) {
+		uint32 c = conversionTable[i];
+		if (c == 0 || c >= kMaxCharSingleByte)
+			continue;
+		if (!reverseTables[page].next[c >> 8]) {
+			reverseTables[page].next[c >> 8] = new ReverseTablePrefixTreeLevel2();
+		}
+
+		reverseTables[page].next[c >> 8]->end[c&0xff] = i | 0x80;
+	}
+
+	return &reverseTables[page];
+}
+
+void U32String::decodeOneByte(const char *src, uint32 len, CodePage page) {
+    	const uint16 *conversionTable = getConversionTable(page);
+
+	if (conversionTable == nullptr) {
+		conversionTable = kASCIIConversionTable;
+	}
+
+	ensureCapacity(len, false);
+
+	for (uint i = 0; i < len; ++i) {
+		if ((src[i] & 0x80) == 0) {
+			operator+=(src[i]);
+			continue;
+		}
+
+		uint16 val = conversionTable[src[i] & 0x7f];
+		operator+=(val ? val : invalidCode);
+	}
+}
+
+void String::encodeOneByte(const U32String &src, CodePage page, bool transliterate) {
+	const ReverseTablePrefixTreeLevel1 *conversionTable = 
+		getReverseConversionTable(page);
+
+	ensureCapacity(src.size(), false);
+
+	if (conversionTable == nullptr) {
+		for (uint i = 0; i < src.size(); ++i) {
+			uint32 c = src[i];
+			if (c <= 0x7F) {
+				operator+=((char)c);
+				continue;
+			}
+
+			if (transliterate) {
+				translitChar(c);
+			} else
+				operator+=('?');
+		}
+		return;
+	}
+
+	for (uint i = 0; i < src.size(); ++i) {
+		uint32 c = src[i];
+		if (c <= 0x7F) {
+			operator+=((char)c);
+			continue;
+		}
+
+		if (c >= kMaxCharSingleByte)
+			continue;
+		ReverseTablePrefixTreeLevel2 *l2 = conversionTable->next[c>>8];
+		unsigned char uc = l2 ? l2->end[c&0xff] : 0;
+		if (uc != 0) {
+			operator+=((char)uc);
+			continue;
+		}
+
+		if (transliterate) {
+			translitChar(c);
+		} else
+			operator+=('?');
+	}
+}
+
+void String::encodeInternal(const U32String &src, CodePage page) {
+	switch(page) {
+	case kUtf8:
+		encodeUTF8(src);
+		break;
+	case kWindows932:
+		encodeWindows932(src);
+		break;		
+	case kWindows949:
+		encodeWindows949(src);
+		break;
+	case kWindows950:
+		encodeWindows950(src);
 		break;
 	default:
+		encodeOneByte(src, page);
 		break;
 	}
-
-	for (uint i = 0; i < _size; ++i) {
-		if (_str[i] <= 0x7F) {
-			dst += _str[i];
-			continue;
-		}
-
-		if (!conversionTable) {
-			continue;
-		}
-
-		for (uint j = 0; j < 128; ++j) {
-			if (conversionTable[j] == _str[i]) {
-				dst += (char)(j + 0x80);
-				break;
-			}
-		}
-	}
 }
-
-
-String U32String::encode(CodePage page) const {
-	if (page == kCodePageInvalid ||
-			page >= ARRAYSIZE(g_codePageMap)) {
-		error("Invalid codepage");
-	}
-	char *result = Encoding::convert(g_codePageMap[page], *this);
-	if (result) {
-		// Encodings in CodePage all use '\0' as string ending
-		// That would be problematic if CodePage has UTF-16 or UTF-32
-		String string(result);
-		free(result);
-		return string;
-	}
-
-	String string;
-	if (page == kUtf8) {
-		encodeUTF8(string);
-	} else {
-		encodeOneByte(string, page);
-	}
-	return string;
-}
-
-
 
 U32String convertToU32String(const char *str, CodePage page) {
 	return String(str).decode(page);
@@ -453,6 +863,53 @@ String convertFromU32String(const U32String &string, CodePage page) {
 
 String convertUtf32ToUtf8(const U32String &u32str) {
 	return u32str.encode(kUtf8);
+}
+
+void U32String::decodeInternal(const char *str, uint32 len, CodePage page) {
+	assert(str);
+
+	_storage[0] = 0;
+	_size = 0;
+
+	switch(page) {
+	case kUtf8:
+		decodeUTF8(str, len);
+		break;
+	case kWindows932:
+		decodeWindows932(str, len);
+		break;
+	case kWindows949:
+		decodeWindows949(str, len);
+		break;
+	case kWindows950:
+		decodeWindows950(str, len);
+		break;
+	default:
+		decodeOneByte(str, len, page);
+		break;
+	}
+}
+
+U32String String::decode(CodePage page) const {
+	if (page == kCodePageInvalid ||
+			page > kLastEncoding) {
+		error("Invalid codepage");
+	}
+
+	U32String unicodeString;
+	unicodeString.decodeInternal(_str, _size, page);
+	return unicodeString;
+}
+
+String U32String::encode(CodePage page) const {
+	if (page == kCodePageInvalid ||
+			page > kLastEncoding) {
+		error("Invalid codepage");
+	}
+
+	String string;
+	string.encodeInternal(*this, page);
+	return string;
 }
 
 } // End of namespace Common

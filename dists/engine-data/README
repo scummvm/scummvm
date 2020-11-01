@@ -15,6 +15,9 @@ Those informations were stored in the original executables.
 drascula.dat:
 This file contains essential game data used by Drascula engine.
 
+encoding.dat:
+This file contains character mapping for CJK encodings to unicode.
+
 fonts.dat:
 This file contains set of free TTF fonts used by Glk, ZVision, Wintermute engines and
 our GUI.

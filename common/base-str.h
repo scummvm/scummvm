@@ -243,7 +243,6 @@ protected:
 	void incRefCount() const;
 	void decRefCount(int *oldRefCount);
 	void initWithValueTypeStr(const value_type *str, uint32 len);
-	void initWithCStr(const char *str, uint32 len);
 
 	void assignAppend(const value_type *str);
 	void assignAppend(value_type c);

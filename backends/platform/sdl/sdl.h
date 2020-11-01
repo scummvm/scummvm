@@ -169,8 +169,6 @@ protected:
 	virtual bool setGraphicsMode(int mode, uint flags) override;
 	virtual int getGraphicsMode() const override;
 #endif
-protected:
-	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length) override;
 };
 
 #endif

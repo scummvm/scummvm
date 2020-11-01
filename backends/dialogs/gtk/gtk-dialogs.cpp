@@ -30,7 +30,6 @@
 #include "backends/dialogs/gtk/gtk-dialogs.h"
 
 #include "common/config-manager.h"
-#include "common/encoding.h"
 #include "common/translation.h"
 
 #include <gtk/gtk.h>

@@ -84,16 +84,16 @@ public:
 	U32String(const U32String &str) : BaseString<u32char_type_t>(str) {}
 
 	/** Construct a new string from the given NULL-terminated C string. */
-	explicit U32String(const char *str);
+	explicit U32String(const char *str, CodePage page = kUtf8);
 
 	/** Construct a new string containing exactly len characters read from address str. */
-	U32String(const char *str, uint32 len);
+	U32String(const char *str, uint32 len, CodePage page = kUtf8);
 
 	/** Construct a new string containing the characters between beginP (including) and endP (excluding). */
-	U32String(const char *beginP, const char *endP);
+	U32String(const char *beginP, const char *endP, CodePage page = kUtf8);
 
 	/** Construct a copy of the given string. */
-	U32String(const String &str);
+	U32String(const String &str, CodePage page = kUtf8);
 
 	U32String &operator=(const U32String &str);
 	U32String &operator=(const String &str);
@@ -130,8 +130,8 @@ public:
 	static char* itoa(int num, char* str, int base);
 
 	using BaseString<value_type>::insertString;
-	void insertString(const char *s, uint32 p);
-	void insertString(const String &s, uint32 p);
+	void insertString(const char *s, uint32 p, CodePage page = kUtf8);
+	void insertString(const String &s, uint32 p, CodePage page = kUtf8);
 
 	/** Return a substring of this string */
 	U32String substr(size_t pos = 0, size_t len = npos) const;
@@ -140,9 +140,24 @@ public:
 		return (const uint32 *) _str;
 	}
 
+	static Common::U32String decodeUTF16BE(const uint16 *start, uint len);
+	static Common::U32String decodeUTF16LE(const uint16 *start, uint len);
+	static Common::U32String decodeUTF16Native(const uint16 *start, uint len);
+
+	/* Transform U32String into UTF-16 representation. The result must be freed. */
+	uint16 *encodeUTF16BE(uint *len = nullptr) const;
+	uint16 *encodeUTF16LE(uint *len = nullptr) const;
+	uint16 *encodeUTF16Native(uint *len = nullptr) const;
+
 private:
-	void encodeUTF8(String &dst) const;
-	void encodeOneByte(String &dst, CodePage page) const;
+	void decodeInternal(const char *str, uint32 len, CodePage page);
+	void decodeOneByte(const char *str, uint32 len, CodePage page);
+    	void decodeWindows932(const char *src, uint32 len);
+	void decodeWindows949(const char *src, uint32 len);
+    	void decodeWindows950(const char *src, uint32 len);
+	void decodeUTF8(const char *str, uint32 len);
+		
+	friend class String;
 };
 
 U32String operator+(const U32String &x, const U32String &y);
