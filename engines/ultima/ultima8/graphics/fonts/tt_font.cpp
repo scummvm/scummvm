@@ -252,7 +252,7 @@ RenderedText *TTFont::renderText(const Std::string &text, unsigned int &remainin
 
 		if (iter->_cursor != Std::string::npos) {
 			assert(iter->_cursor <= iter->_text.size());
-			unicodeText = Common::U32String(unicodeText.c_str(), iter->_cursor);
+			unicodeText = unicodeText.substr(0, iter->_cursor);
 
 			int w = _ttfFont->getStringWidth(unicodeText);
 

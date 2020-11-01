@@ -139,6 +139,9 @@ public:
 	void insertString(const char *s, uint32 p);
 	void insertString(const String &s, uint32 p);
 
+    	/** Return a substring of this string */
+	U32String substr(size_t pos = 0, size_t len = npos) const;
+
 	const uint32 *u32_str() const {
 		return (const uint32 *) _str;
 	}

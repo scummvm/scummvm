@@ -128,8 +128,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			str = StringUtil::ansiToWide(_string);
 		}
 
-		//WideString subStr = str.substr(start, end - start + 1);
-		WideString subStr(str.c_str() + start, end - start + 1);
+		WideString subStr = str.substr(start, end - start + 1);
 
 		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			stack->pushString(StringUtil::wideToUtf8(subStr).c_str());
@@ -170,8 +169,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			str = StringUtil::ansiToWide(_string);
 		}
 
-//			WideString subStr = str.substr(start, len);
-		WideString subStr(str.c_str() + start, len);
+		WideString subStr = str.substr(start, len);
 
 		if (_gameRef->_textEncoding == TEXT_UTF8) {
 			stack->pushString(StringUtil::wideToUtf8(subStr).c_str());
@@ -323,7 +321,7 @@ bool SXString::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 			uint32 ch = (i == str.size()) ? '\0' : str[i];
 			if (ch =='\0' || delims.contains(ch)) {
 				if (i != start) {
-					parts.push_back(WideString(str.c_str() + start, i - start));
+					parts.push_back(str.substr(start, i - start));
 				} else {
 					parts.push_back(WideString());
 				}

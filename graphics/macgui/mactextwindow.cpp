@@ -286,7 +286,7 @@ Common::U32String MacTextWindow::cutSelection() {
 		return Common::U32String("");
 	}
 
-	Common::U32String newInput = Common::U32String(_inputText.c_str(), selPos) + Common::U32String(_inputText.c_str() + selPos + selection.size());
+	Common::U32String newInput = _inputText.substr(0, selPos) + _inputText.substr(selPos + selection.size());
 
 	clearSelection();
 	clearInput();
