@@ -78,7 +78,7 @@ public:
 	virtual bool setTextInClipboard(const Common::U32String &text) override;
 #endif
 
-	virtual void setWindowCaption(const char *caption) override;
+	virtual void setWindowCaption(const Common::U32String &caption) override;
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
 	virtual uint32 getMillis(bool skipRecord = false) override;
 	virtual void delayMillis(uint msecs) override;

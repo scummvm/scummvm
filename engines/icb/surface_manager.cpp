@@ -192,7 +192,7 @@ unsigned int _surface_manager::Init_direct_draw() {
 	// Debug info
 	Zdebug("*SURFACE_MANAGER* Initalizing the SDL video interface");
 
-	g_system->setWindowCaption("In Cold Blood (C)2000 Revolution Software Ltd");
+	g_system->setWindowCaption(Common::U32String("In Cold Blood (C)2000 Revolution Software Ltd"));
 	initGraphics(640, 480, nullptr);
 
 	_zb = new TinyGL::FrameBuffer(640, 480, g_system->getScreenFormat()); // TODO: delete

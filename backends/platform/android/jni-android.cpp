@@ -340,9 +340,9 @@ bool JNI::isConnectionLimited() {
 	return limited;
 }
 
-void JNI::setWindowCaption(const Common::String &caption) {
+void JNI::setWindowCaption(const Common::U32String &caption) {
 	JNIEnv *env = JNI::getEnv();
-	jstring java_caption = convertToJString(env, caption.decode(Common::kISO8859_1));
+	jstring java_caption = convertToJString(env, caption);
 
 	env->CallVoidMethod(_jobj, _MID_setWindowCaption, java_caption);
 

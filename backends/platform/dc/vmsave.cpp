@@ -340,7 +340,7 @@ public:
 
 void OutVMSave::finalize()
 {
-  extern const char *gGameName;
+  extern const char gGameName[32];
   extern Icon icon;
 
   if (committed >= _pos)

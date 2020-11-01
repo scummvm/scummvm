@@ -257,10 +257,6 @@ void OSystem_Wii::deleteMutex(MutexRef mutex) {
 	free(mutex);
 }
 
-void OSystem_Wii::setWindowCaption(const char *caption) {
-	printf("window caption: %s\n", caption);
-}
-
 Audio::Mixer *OSystem_Wii::getMixer() {
 	assert(_mixer);
 	return _mixer;

@@ -490,9 +490,7 @@ void OSystem_Android::quit() {
 	dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->deinitSurface();
 }
 
-void OSystem_Android::setWindowCaption(const char *caption) {
-	ENTER("%s", caption);
-
+void OSystem_Android::setWindowCaption(const Common::U32String &caption) {
 	JNI::setWindowCaption(caption);
 }
 
