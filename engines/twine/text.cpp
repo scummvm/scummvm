@@ -133,7 +133,9 @@ void Text::initTextBank(int32 bankIdx) {
 
 	// get index according with language
 	const int32 size = _engine->isLBA1() ? 28 : 30;
-	const int32 languageIndex = _engine->cfgfile.LanguageId * size + bankIdx * 2;
+	// the text banks indices are split into index and dialogs - each entry thus consists of two entries in the hqr
+	// every 28 entries starts a new language
+	const int32 languageIndex = _engine->cfgfile.LanguageId * size + (int)bankIdx * 2;
 	const int32 hqrSize = HQR::getAllocEntry((uint8 **)&dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex + INDEXOFFSET);
 	if (hqrSize == 0) {
 		warning("Failed to initialize text bank %i from file %s", languageIndex, Resources::HQR_TEXT_FILE);

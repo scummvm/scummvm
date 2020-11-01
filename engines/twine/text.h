@@ -28,6 +28,25 @@
 
 namespace TwinE {
 
+// lba1
+enum class TextBankId {
+	None = -1,
+	Options_and_menus = 0,
+	Credits = 1,
+	Inventory_Intro_and_Holomap = 2,
+	Citadel_Island = 3,
+	Principal_Island = 4,
+	White_Leaf_Desert = 5,
+	Proxima_Island = 6,
+	Rebellion_Island = 7,
+	Hamalayi_mountains_southern_range = 8,
+	Hamalayi_mountains_northern_range = 9,
+	Tippet_Island = 10,
+	Brundle_Island = 11,
+	Fortress_Island = 12,
+	Polar_Island = 13
+};
+
 class TwinEEngine;
 class Text {
 private:
