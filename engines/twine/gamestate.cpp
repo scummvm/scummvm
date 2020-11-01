@@ -55,7 +55,6 @@ GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 	Common::fill(&holomapFlags[0], &holomapFlags[150], 0);
 	playerName[0] = 0;
 	Common::fill(&gameChoices[0], &gameChoices[10], 0);
-	Common::fill(&gameChoicesSettings[0], &gameChoicesSettings[18], 0);
 }
 
 void GameState::initEngineProjections() {
@@ -411,21 +410,19 @@ void GameState::processFoundItem(int32 item) {
 void GameState::processGameChoices(int32 choiceIdx) {
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-	gameChoicesSettings[MenuSettings_CurrentLoadedButton] = 0;      // Current loaded button (button number)
-	gameChoicesSettings[MenuSettings_NumberOfButtons] = numChoices; // Num of buttons
-	gameChoicesSettings[MenuSettings_ButtonsBoxHeight] = 0;         // Buttons box height
-	gameChoicesSettings[MenuSettings_HeaderEnd] = _engine->_text->currentTextBank + 3;
+	gameChoicesSettings.reset();
+	gameChoicesSettings.setHeadlineTextId(_engine->_text->currentTextBank + 3);
 
 	// filled via script
 	for (int32 i = 0; i < numChoices; i++) {
-		gameChoicesSettings[i * 2 + MenuSettings_FirstButtonState] = 0;
-		gameChoicesSettings[i * 2 + MenuSettings_FirstButton] = gameChoices[i];
+		gameChoicesSettings.addButton(gameChoices[i], 0);
 	}
 
 	_engine->_text->drawAskQuestion(choiceIdx);
 
-	_engine->_menu->processMenu(gameChoicesSettings);
-	choiceAnswer = gameChoices[gameChoicesSettings[MenuSettings_CurrentLoadedButton]];
+	_engine->_menu->processMenu(&gameChoicesSettings);
+	const int16 activeButton = gameChoicesSettings.getActiveButton();
+	choiceAnswer = gameChoices[activeButton];
 
 	// get right VOX entry index
 	if (_engine->_text->initVoxToPlay(choiceAnswer)) {

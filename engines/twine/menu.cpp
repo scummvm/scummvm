@@ -78,152 +78,101 @@ enum _MenuButtonTypes {
 #define kBackground 9999
 
 namespace _priv {
-/** Main Menu Settings
 
-	Used to create the game main menu. */
-static const int16 MainMenuSettings[] = {
-    0,   // Current loaded button (button number)
-    4,   // Num of buttons
-    200, // Buttons box height ( is used to calc the height where the first button will appear )
-    0,   // unused
-    0,
-    TextId::kNewGame, // new game
-    0,
-    TextId::kContinueGame, // continue game
-    0,
-    TextId::kOptions, // options
-    0,
-    TextId::kQuit, // quit
-};
+static MenuSettings createMainMenu() {
+	MenuSettings settings;
+	settings.reset();
+	settings.setButtonsBoxHeight(200);
+	settings.addButton(TextId::kNewGame);
+	settings.addButton(TextId::kContinueGame);
+	settings.addButton(TextId::kOptions);
+	settings.addButton(TextId::kQuit);
+	return settings;
+}
 
-/** Give Up Menu Settings
+static MenuSettings createGiveUpMenu() {
+	MenuSettings settings;
+	settings.reset();
+	settings.setButtonsBoxHeight(240);
+	settings.addButton(TextId::kContinue);
+	settings.addButton(TextId::kGiveUp);
+	return settings;
+}
 
-	Used to create the in-game menu. */
-static const int16 GiveUpMenuSettings[] = {
-    0,   // Current loaded button (button number)
-    2,   // Num of buttons
-    240, // Buttons box height ( is used to calc the height where the first button will appear )
-    0,   // unused
-    0,
-    TextId::kContinue, // continue game
-    0,
-    TextId::kGiveUp, // quit game
-};
+static MenuSettings createGiveUpSaveMenu() {
+	MenuSettings settings;
+	settings.reset();
+	settings.setButtonsBoxHeight(240);
+	settings.addButton(TextId::kContinue);
+	settings.addButton(TextId::kCreateSaveGame);
+	settings.addButton(TextId::kGiveUp);
+	return settings;
+}
 
-/** Give Up Menu Settings
+static MenuSettings createOptionsMenu() {
+	MenuSettings settings;
+	settings.reset();
+	settings.addButton(TextId::kReturnMenu);
+	settings.addButton(TextId::kVolumeSettings);
+	settings.addButton(TextId::kSaveManage);
+	settings.addButton(TextId::kAdvanced);
+	return settings;
+}
 
-	Used to create the in-game menu. This menu have one extra item to save the game */
-static const int16 GiveUpMenuWithSaveSettings[] = {
-    0,   // Current loaded button (button number)
-    3,   // Num of buttons
-    240, // Buttons box height ( is used to calc the height where the first button will appear )
-    0,   // unused
-    0,
-    TextId::kContinue, // continue game
-    0,
-    TextId::kCreateSaveGame, // save game
-    0,
-    TextId::kGiveUp, // quit game
-};
+static MenuSettings createAdvancedOptionsMenu() {
+	MenuSettings settings;
+	settings.reset();
+	settings.addButton(TextId::kReturnMenu);
+	settings.addButton(TextId::kBehaviourAgressiveManual, MenuButtonTypes::kAgressiveMode);
+	settings.addButton(TextId::kDetailsPolygonsHigh, MenuButtonTypes::kPolygonDetails);
+	settings.addButton(TextId::kDetailsShadowHigh, MenuButtonTypes::kShadowSettings);
+	settings.addButton(TextId::kScenaryZoomOn, MenuButtonTypes::kSceneryZoom);
+	return settings;
+}
 
-/** Options Menu Settings
+static MenuSettings createSaveManageMenu() {
+	MenuSettings settings;
+	settings.reset();
+	settings.addButton(TextId::kReturnMenu);
+	settings.addButton(TextId::kCreateSaveGame);
+	settings.addButton(TextId::kDeleteSaveGame);
+	return settings;
+}
 
-	Used to create the options menu. */
-static const int16 OptionsMenuSettings[] = {
-    0, // Current loaded button (button number)
-    4, // Num of buttons
-    0, // Buttons box height ( is used to calc the height where the first button will appear )
-    0, // unused
-    0,
-    TextId::kReturnMenu, // return to previous menu
-    0,
-    TextId::kVolumeSettings, // volume settings
-    0,
-    TextId::kSaveManage, // save game management
-    0,
-    TextId::kAdvanced, // advanced options
-};
+static MenuSettings createVolumeMenu() {
+	MenuSettings settings;
+	settings.reset();
+	settings.addButton(TextId::kReturnMenu);
+	settings.addButton(TextId::kMusicVolume, MenuButtonTypes::kMusicVolume);
+	settings.addButton(TextId::kSoundVolume, MenuButtonTypes::kSoundVolume);
+	settings.addButton(TextId::kCDVolume, MenuButtonTypes::kCDVolume);
+	settings.addButton(TextId::kLineInVolume, MenuButtonTypes::kLineVolume);
+	settings.addButton(TextId::kMasterVolume, MenuButtonTypes::kMasterVolume);
+	settings.addButton(TextId::kSaveSettings);
+	return settings;
+}
 
-/** Advanced Options Menu Settings
-
-	Used to create the advanced options menu. */
-static const int16 AdvOptionsMenuSettings[] = {
-    0, // Current loaded button (button number)
-    5, // Num of buttons
-    0, // Buttons box height ( is used to calc the height where the first button will appear )
-    0, // unused
-    0,
-    TextId::kReturnMenu, // return to main menu
-    MenuButtonTypes::kAgressiveMode,
-    TextId::kBehaviourAgressiveManual, // aggressive mode (manual|auto)
-    MenuButtonTypes::kPolygonDetails,
-    TextId::kDetailsPolygonsHigh, // Polygon detail (full|medium|low)
-    MenuButtonTypes::kShadowSettings,
-    TextId::kDetailsShadowHigh, // Shadows (all|character|no)
-    MenuButtonTypes::kSceneryZoom,
-    TextId::kScenaryZoomOn, // scenary zoon (on|off)
-};
-
-/** Save Game Management Menu Settings
-
-	Used to create the save game management menu. */
-static const int16 SaveManageMenuSettings[] = {
-    0, // Current loaded button (button number)
-    3, // Num of buttons
-    0, // Buttons box height ( is used to calc the height where the first button will appear )
-    0, // unused
-    0,
-    TextId::kReturnMenu, // return to main menu
-    0,
-    TextId::kCreateSaveGame, // copy saved game
-    0,
-    TextId::kDeleteSaveGame, // delete saved game
-};
-
-/** Volume Menu Settings
-
-	Used to create the volume menu. */
-static const int16 VolumeMenuSettings[] = {
-    0, // Current loaded button (button number)
-    7, // Num of buttons
-    0, // Buttons box height ( is used to calc the height where the first button will appear )
-    0, // unused
-    0,
-    TextId::kReturnMenu, // return to main menu
-    MenuButtonTypes::kMusicVolume,
-    TextId::kMusicVolume, // music volume
-    MenuButtonTypes::kSoundVolume,
-    TextId::kSoundVolume, // sfx volume
-    MenuButtonTypes::kCDVolume,
-    TextId::kCDVolume, // cd volume
-    MenuButtonTypes::kLineVolume,
-    TextId::kLineInVolume, // line-in volume
-    MenuButtonTypes::kMasterVolume,
-    TextId::kMasterVolume, // master volume
-    0,
-    TextId::kSaveSettings, // save parameters
-};
 } // namespace _priv
 
-static int16 *copySettings(const int16 *settings, size_t size) {
-	int16 *buf = (int16 *)malloc(size);
+static MenuSettings *copySettings(const MenuSettings settings) {
+	MenuSettings *buf = (MenuSettings *)malloc(sizeof(MenuSettings));
 	if (buf == nullptr) {
 		error("Failed to allocate menu state memory");
 	}
-	memcpy(buf, settings, size);
+	*buf = settings;
 	return buf;
 }
 
 Menu::Menu(TwinEEngine *engine) {
 	_engine = engine;
 
-	OptionsMenuState = copySettings(_priv::OptionsMenuSettings, sizeof(_priv::OptionsMenuSettings));
-	GiveUpMenuWithSaveState = copySettings(_priv::GiveUpMenuWithSaveSettings, sizeof(_priv::GiveUpMenuWithSaveSettings));
-	VolumeMenuState = copySettings(_priv::VolumeMenuSettings, sizeof(_priv::VolumeMenuSettings));
-	SaveManageMenuState = copySettings(_priv::SaveManageMenuSettings, sizeof(_priv::SaveManageMenuSettings));
-	GiveUpMenuState = copySettings(_priv::GiveUpMenuSettings, sizeof(_priv::GiveUpMenuSettings));
-	MainMenuState = copySettings(_priv::MainMenuSettings, sizeof(_priv::MainMenuSettings));
-	AdvOptionsMenuState = copySettings(_priv::AdvOptionsMenuSettings, sizeof(_priv::AdvOptionsMenuSettings));
+	OptionsMenuState = copySettings(_priv::createOptionsMenu());
+	GiveUpMenuWithSaveState = copySettings(_priv::createGiveUpSaveMenu());
+	VolumeMenuState = copySettings(_priv::createVolumeMenu());
+	SaveManageMenuState = copySettings(_priv::createSaveManageMenu());
+	GiveUpMenuState = copySettings(_priv::createGiveUpMenu());
+	MainMenuState = copySettings(_priv::createMainMenu());
+	AdvOptionsMenuState = copySettings(_priv::createAdvancedOptionsMenu());
 
 	Common::fill(&behaviourAnimState[0], &behaviourAnimState[4], 0);
 	Common::fill(&itemAngle[0], &itemAngle[255], 0);
@@ -374,10 +323,10 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
-void Menu::drawButtons(const int16 *menuSettings, bool hover) {
-	int16 buttonNumber = menuSettings[MenuSettings_CurrentLoadedButton];
-	const int32 maxButton = menuSettings[MenuSettings_NumberOfButtons];
-	int32 topHeight = menuSettings[MenuSettings_ButtonsBoxHeight];
+void Menu::drawButtons(const MenuSettings *menuSettings, bool hover) {
+	int16 buttonNumber = menuSettings->getActiveButton();
+	const int32 maxButton = menuSettings->getButtonCount();
+	int32 topHeight = menuSettings->getButtonBoxHeight();
 
 	if (topHeight == 0) {
 		topHeight = 35;
@@ -389,35 +338,29 @@ void Menu::drawButtons(const int16 *menuSettings, bool hover) {
 		return;
 	}
 
-	uint8 currentButton = 0;
-
-	const int16 *localData = menuSettings;
-	localData += MenuSettings_FirstButtonState;
-	do {
-		// get menu item settings
-		int32 menuItemId = *localData++;
-		int32 textId = *localData++;
+	for (int16 i = 0; i < maxButton; ++i) {
+		const int32 menuItemId = menuSettings->getButtonState(i);
+		const int32 textId = menuSettings->getButtonTextId(i);
 		if (hover) {
-			if (currentButton == buttonNumber) {
+			if (i == buttonNumber) {
 				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, textId, hover);
 			}
 		} else {
-			if (currentButton == buttonNumber) {
+			if (i == buttonNumber) {
 				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, textId, true);
 			} else {
 				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, textId, false);
 			}
 		}
 
-		currentButton++;
 		topHeight += 56; // increase button top height
-	} while (currentButton < maxButton);
+	}
 }
 
-int32 Menu::processMenu(int16 *menuSettings) {
-	int16 currentButton = menuSettings[MenuSettings_CurrentLoadedButton];
+int32 Menu::processMenu(MenuSettings *menuSettings) {
+	int16 currentButton = menuSettings->getActiveButton();
 	bool buttonsNeedRedraw = true;
-	const int32 numEntry = menuSettings[MenuSettings_NumberOfButtons];
+	const int32 numEntry = menuSettings->getButtonCount();
 	int32 maxButton = numEntry - 1;
 
 	_engine->_input->enableKeyMap(uiKeyMapId);
@@ -440,9 +383,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			buttonsNeedRedraw = true;
 		}
 
-		int16 *menuStatePtr = &menuSettings[MenuSettings_FirstButtonState] + currentButton * 2;
-		const int16 id = *menuStatePtr; // get button parameters from settings array
-		int16 *textId = menuStatePtr + 1; // to store the changed values
+		const int16 id = menuSettings->getActiveButtonState();
 		if (menuSettings == AdvOptionsMenuState) {
 			switch (id) {
 			case MenuButtonTypes::kAgressiveMode:
@@ -450,9 +391,9 @@ int32 Menu::processMenu(int16 *menuSettings) {
 					_engine->_actor->autoAgressive = !_engine->_actor->autoAgressive;
 				}
 				if (_engine->_actor->autoAgressive) {
-					*textId = TextId::kBehaviourAgressiveManual;
+					menuSettings->setActiveButtonTextId(TextId::kBehaviourAgressiveManual);
 				} else {
-					*textId = TextId::kBehaviourAgressiveAuto;
+					menuSettings->setActiveButtonTextId(TextId::kBehaviourAgressiveAuto);
 				}
 				break;
 			case MenuButtonTypes::kPolygonDetails:
@@ -464,11 +405,11 @@ int32 Menu::processMenu(int16 *menuSettings) {
 					_engine->cfgfile.PolygonDetails %= 3;
 				}
 				if (_engine->cfgfile.PolygonDetails == 0) {
-					*textId = TextId::kDetailsPolygonsLow;
+					menuSettings->setActiveButtonTextId(TextId::kDetailsPolygonsLow);
 				} else if (_engine->cfgfile.PolygonDetails == 1) {
-					*textId = TextId::kDetailsPolygonsMiddle;
+					menuSettings->setActiveButtonTextId(TextId::kDetailsPolygonsMiddle);
 				} else {
-					*textId = TextId::kDetailsPolygonsHigh;
+					menuSettings->setActiveButtonTextId(TextId::kDetailsPolygonsHigh);
 				}
 				break;
 			case MenuButtonTypes::kShadowSettings:
@@ -480,11 +421,11 @@ int32 Menu::processMenu(int16 *menuSettings) {
 					_engine->cfgfile.ShadowMode %= 3;
 				}
 				if (_engine->cfgfile.ShadowMode == 0) {
-					*textId = TextId::kShadowsDisabled;
+					menuSettings->setActiveButtonTextId(TextId::kShadowsDisabled);
 				} else if (_engine->cfgfile.ShadowMode == 1) {
-					*textId = TextId::kShadowsFigures;
+					menuSettings->setActiveButtonTextId(TextId::kShadowsFigures);
 				} else {
-					*textId = TextId::kDetailsShadowHigh;
+					menuSettings->setActiveButtonTextId(TextId::kDetailsShadowHigh);
 				}
 				break;
 			case MenuButtonTypes::kSceneryZoom:
@@ -492,9 +433,9 @@ int32 Menu::processMenu(int16 *menuSettings) {
 					_engine->cfgfile.SceZoom = !_engine->cfgfile.SceZoom;
 				}
 				if (_engine->cfgfile.SceZoom) {
-					*textId = TextId::kNoScenaryZoom;
+					menuSettings->setActiveButtonTextId(TextId::kNoScenaryZoom);
 				} else {
-					*textId = TextId::kScenaryZoomOn;
+					menuSettings->setActiveButtonTextId(TextId::kScenaryZoomOn);
 				}
 				break;
 			default:
@@ -559,7 +500,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		}
 
 		if (buttonsNeedRedraw) {
-			menuSettings[MenuSettings_CurrentLoadedButton] = currentButton;
+			menuSettings->setActiveButton(currentButton);
 
 			// draw all buttons
 			drawButtons(menuSettings, false);
@@ -575,8 +516,7 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		_engine->_system->delayMillis(10);
 	} while (!_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter));
 
-	const int buttonTextId = *(menuSettings + MenuSettings_FirstButton + currentButton * 2); // get current browsed button
-	return buttonTextId;
+	return menuSettings->getActiveButtonTextId();
 }
 
 int32 Menu::advoptionsMenu() {
@@ -737,7 +677,7 @@ int32 Menu::giveupMenu() {
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 	_engine->_sound->pauseSamples();
 
-	int16 *localMenu;
+	MenuSettings *localMenu;
 	if (_engine->cfgfile.UseAutoSaving == 1) {
 		localMenu = GiveUpMenuState;
 	} else {

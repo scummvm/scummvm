@@ -92,6 +92,75 @@ enum _TextId {
 #define PLASMA_HEIGHT 50
 #define kQuitEngine 9998
 
+class MenuSettings {
+private:
+	int16 _settings[100] {0};
+	int8 _activeButtonIdx = 0;
+public:
+	void reset() {
+		_settings[MenuSettings_NumberOfButtons] = 0;
+		setButtonsBoxHeight(0);
+		setActiveButton(0);
+	}
+
+	// used to calc the height where the first button will appear
+	void setButtonsBoxHeight(int16 height) {
+		_settings[MenuSettings_ButtonsBoxHeight] = height;
+	}
+
+	void setActiveButton(int16 buttonIdx) {
+		_activeButtonIdx = buttonIdx;
+		_settings[MenuSettings_CurrentLoadedButton] = buttonIdx;
+	}
+
+	void setActiveButtonTextId(int16 textIndex) {
+		setButtonTextId(getActiveButton(), textIndex);
+	}
+
+	void setButtonTextId(int16 buttonIdx, int16 textIndex) {
+		_settings[MenuSettings_FirstButton + buttonIdx * 2] = textIndex;
+	}
+
+	int16 getActiveButtonTextId() const {
+		return getButtonTextId(getActiveButton());
+	}
+
+	int16 getActiveButtonState() const {
+		return getButtonState(getActiveButton());
+	}
+
+	int16 getButtonTextId(int buttonIndex) const {
+		return _settings[MenuSettings_FirstButton + buttonIndex * 2];
+	}
+
+	int16 getButtonState(int buttonIndex) const {
+		return _settings[MenuSettings_FirstButtonState + buttonIndex * 2];
+	}
+
+	int16 getActiveButton() const {
+		return _activeButtonIdx;
+	}
+
+	int16 getButtonBoxHeight() const {
+		return _settings[MenuSettings_ButtonsBoxHeight];
+	}
+
+	int16 getButtonCount() const {
+		return _settings[MenuSettings_NumberOfButtons];
+	}
+
+	void setHeadlineTextId(int16 textIndex) {
+		_settings[MenuSettings_HeaderEnd] = textIndex;
+	}
+
+	void addButton(int16 textId, int16 state = 0) {
+		const int16 i = _settings[MenuSettings_NumberOfButtons];
+		_settings[i * 2 + MenuSettings_FirstButtonState] = state;
+		_settings[i * 2 + MenuSettings_FirstButton] = textId;
+		++_settings[MenuSettings_NumberOfButtons];
+	}
+};
+
 class Menu {
 private:
 	TwinEEngine *_engine;
@@ -120,7 +189,7 @@ private:
 	 * @param data menu settings array
 	 * @param mode flag to know if should draw as a hover button or not
 	 */
-	void drawButtons(const int16 *menuSettings, bool hover);
+	void drawButtons(const MenuSettings *menuSettings, bool hover);
 	/** Used to run the advanced options menu */
 	int32 advoptionsMenu();
 	/** Used to run the volume menu */
@@ -141,17 +210,17 @@ private:
 	 */
 	void drawMagicItemsBox(int32 left, int32 top, int32 right, int32 bottom, int32 color);
 
-	int16 *GiveUpMenuWithSaveState;
-	int16 *VolumeMenuState;
-	int16 *SaveManageMenuState;
-	int16 *GiveUpMenuState;
-	int16 *MainMenuState;
-	int16 *AdvOptionsMenuState;
+	MenuSettings *GiveUpMenuWithSaveState;
+	MenuSettings *VolumeMenuState;
+	MenuSettings *SaveManageMenuState;
+	MenuSettings *GiveUpMenuState;
+	MenuSettings *MainMenuState;
+	MenuSettings *AdvOptionsMenuState;
 
 public:
 	Menu(TwinEEngine *engine);
 	~Menu();
-	int16 *OptionsMenuState;
+	MenuSettings *OptionsMenuState;
 
 	int32 currMenuTextIndex = -1;
 	int32 currMenuTextBank = -1;
@@ -186,7 +255,7 @@ public:
 	 * @param menuSettings menu settings array with the information to build the menu options
 	 * @return pressed menu button identification
 	 */
-	int32 processMenu(int16 *menuSettings);
+	int32 processMenu(MenuSettings *menuSettings);
 
 	bool init();
 

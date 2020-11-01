@@ -26,6 +26,7 @@
 #include "common/savefile.h"
 #include "common/scummsys.h"
 #include "twine/actor.h"
+#include "twine/menu.h"
 
 namespace TwinE {
 
@@ -128,7 +129,7 @@ public:
 
 	int32 gameChoices[10];         // inGameMenuData
 	int32 numChoices = 0;          // numOfOptionsInChoice
-	int16 gameChoicesSettings[18]; // choiceTab -  same structure as menu settings
+	MenuSettings gameChoicesSettings; // choiceTab -  same structure as menu settings
 	int32 choiceAnswer = 0;        // inGameMenuAnswer
 
 	/** Initialize all engine variables */
