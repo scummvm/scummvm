@@ -218,6 +218,11 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		item->_flags |= ITEMF_INVISIBLE;
 		break;
 
+	case OPCODE_SET_OBJECT_DESCRIPTION:
+		item = getItem(instr);
+		item->_stringDesc = (instr->_operand[2] << 8) | instr->_operand[1];
+		break;
+
 	case OPCODE_SET_ROOM_DESCRIPTION:
 		room = get_room(instr->_operand[0]);
 		switch (instr->_operand[2]) {
@@ -282,6 +287,10 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		func_set_test_result(func_state, room->_flags & instr->_operand[0]);
 		break;
 
+	case OPCODE_TURN_TICK:
+		_variables[VAR_TURN_COUNT]++;
+		break;
+
 	case OPCODE_VAR_ADD:
 		_variables[instr->_operand[0]] += _variables[instr->_operand[1]];
 		break;
@@ -295,9 +304,33 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 			_variables[instr->_operand[0]] == _variables[instr->_operand[1]]);
 		break;
 
+	case OPCODE_VAR_GT1:
+		func_set_test_result(func_state,
+			_variables[0] >
+			_variables[instr->_operand[0]]);
+		break;
+
 	case OPCODE_VAR_GT2:
 		func_set_test_result(func_state, _variables[instr->_operand[0]] >
 			_variables[instr->_operand[1]]);
+		break;
+
+	case OPCODE_VAR_GTE1:
+		func_set_test_result(func_state,
+			_variables[0] >=
+			_variables[instr->_operand[0]]);
+		break;
+
+	case OPCODE_VAR_GTE2:
+		func_set_test_result(func_state,
+			_variables[instr->_operand[0]] >=
+			_variables[instr->_operand[1]]);
+		break;
+
+	case OPCODE_VAR_EQ1:
+		func_set_test_result(func_state,
+			_variables[0] ==
+			_variables[instr->_operand[0]]);
 		break;
 
 	case OPCODE_VAR_INC:
@@ -453,34 +486,6 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 
 	/*--------------------------------------*/
 
-	case OPCODE_VAR_EQ1:
-		func_set_test_result(func_state,
-			_variables[0] ==
-			_variables[instr->_operand[0]]);
-		break;
-
-	case OPCODE_VAR_GT1:
-		func_set_test_result(func_state,
-			_variables[0] >
-			_variables[instr->_operand[0]]);
-		break;
-
-	case OPCODE_VAR_GTE1:
-		func_set_test_result(func_state,
-			_variables[0] >=
-			_variables[instr->_operand[0]]);
-		break;
-
-	case OPCODE_VAR_GTE2:
-		func_set_test_result(func_state,
-			_variables[instr->_operand[0]] >=
-			_variables[instr->_operand[1]]);
-		break;
-
-	case OPCODE_TURN_TICK:
-		_variables[VAR_TURN_COUNT]++;
-		break;
-
 	case OPCODE_TEST_NOT_ROOM_FLAG:
 		func_set_test_result(func_state,
 			!(room->_flags & instr->_operand[0]));
@@ -621,18 +626,6 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 			!_flags[instr->_operand[0]]);
 		break;
 
-	case OPCODE_SET_OBJECT_DESCRIPTION:
-		item = getItem(instr);
-		item->_stringDesc = (instr->_operand[2] << 8) | instr->_operand[1];
-		break;
-
-	case OPCODE_SET_OBJECT_GRAPHIC:
-		item = getItem(instr);
-		item->_graphic = instr->_operand[1];
-		if (item->_room == _currentRoom)
-			_updateFlags |= UPDATE_GRAPHICS;
-		break;
-
 	case OPCODE_TEST_FALSE:
 		// The original had two opcodes mapped to the same code that does
 		// a test, but ignores the result, and is always false
@@ -677,7 +670,10 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x05] = OPCODE_IN_ROOM;
 	_opcodeMap[0x06] = OPCODE_VAR_EQ2;
 	_opcodeMap[0x08] = OPCODE_CURRENT_IS_OBJECT;
+	_opcodeMap[0x09] = OPCODE_VAR_GT1;
+	_opcodeMap[0x0a] = OPCODE_VAR_GTE2;
 	_opcodeMap[0x0c] = OPCODE_ELSE;
+	_opcodeMap[0x0d] = OPCODE_VAR_EQ1;
 	_opcodeMap[0x11] = OPCODE_OBJECT_IS_NOWHERE;
 	_opcodeMap[0x14] = OPCODE_CURRENT_OBJECT_NOT_VALID;
 	_opcodeMap[0x15] = OPCODE_INVENTORY_FULL_X;
@@ -699,12 +695,14 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x88] = OPCODE_CLEAR_LINE;
 	_opcodeMap[0x89] = OPCODE_SPECIAL;
 	_opcodeMap[0x8a] = OPCODE_VAR_SUB;
+	_opcodeMap[0x8b] = OPCODE_SET_OBJECT_DESCRIPTION;
 	_opcodeMap[0x8c] = OPCODE_MOVE_DEFAULT;
 	_opcodeMap[0x8e] = OPCODE_PRINT;
 	_opcodeMap[0x8f] = OPCODE_SET_OBJECT_LONG_DESCRIPTION;
 	_opcodeMap[0x90] = OPCODE_WAIT_KEY;
 	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
 	_opcodeMap[0x95] = OPCODE_CLEAR_WORD;
+	_opcodeMap[0x98] = OPCODE_TURN_TICK;
 	_opcodeMap[0x99] = OPCODE_SET_FLAG;
 	_opcodeMap[0x9a] = OPCODE_SET_WORD;
 	_opcodeMap[0x9d] = OPCODE_CLEAR_FLAG;
@@ -729,20 +727,6 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0xed] = OPCODE_REMOVE_OBJECT;
 
 #if 0
-	_opcodeMap[0x09] = OPCODE_VAR_GT1;
-	_opcodeMap[0x0a] = OPCODE_VAR_GTE2;
-	_opcodeMap[0x0d] = OPCODE_VAR_EQ1;
-	_opcodeMap[0x30] = OPCODE_CURRENT_OBJECT_PRESENT;
-	_opcodeMap[0x41] = OPCODE_NOT_HAVE_OBJECT;
-	_opcodeMap[0x45] = OPCODE_NOT_IN_ROOM;
-	_opcodeMap[0x48] = OPCODE_CURRENT_OBJECT_NOT_PRESENT;
-	_opcodeMap[0x43] = OPCODE_OBJECT_NOT_IN_ROOM;
-	_opcodeMap[0x59] = OPCODE_TEST_NOT_FLAG;
-	_opcodeMap[0x5d] = OPCODE_TEST_NOT_ROOM_FLAG;
-	_opcodeMap[0x60] = OPCODE_NOT_HAVE_CURRENT_OBJECT;
-	_opcodeMap[0x70] = OPCODE_CURRENT_OBJECT_NOT_PRESENT;
-	_opcodeMap[0x8b] = OPCODE_SET_OBJECT_DESCRIPTION;
-	_opcodeMap[0x98] = OPCODE_TURN_TICK;
 	_opcodeMap[0x9e] = OPCODE_INVENTORY_ROOM;
 	_opcodeMap[0xc6] = OPCODE_SET_OBJECT_GRAPHIC;
 	_opcodeMap[0xf0] = OPCODE_DROP_CURRENT_OBJECT;
@@ -813,6 +797,13 @@ void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *
 	case OPCODE_OBJECT_CAN_TAKE:
 		item = getItem(instr);
 		func_set_test_result(func_state, item->_flags & ITEMF_CAN_TAKE);
+		break;
+
+	case OPCODE_SET_OBJECT_GRAPHIC:
+		item = getItem(instr);
+		item->_graphic = instr->_operand[1];
+		if (item->_room == _currentRoom)
+			_updateFlags |= UPDATE_GRAPHICS;
 		break;
 
 	case OPCODE_SET_OBJECT_LONG_DESCRIPTION:
