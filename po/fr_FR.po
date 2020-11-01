@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-31 19:57+0100\n"
 "PO-Revision-Date: 2020-11-01 18:16+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -5571,7 +5571,7 @@ msgstr "Utilise le rendu RGB pour améliorer les transitions entre écrans"
 
 #: engines/sci/detection.cpp:281
 msgid "Use per-resource modified palettes"
-msgstr "Utiliser des  palettes modifiées par ressource"
+msgstr "Utiliser des palettes modifiées par ressource"
 
 #: engines/sci/detection.cpp:282
 msgid "Use custom per-resource palettes to improve visuals"
