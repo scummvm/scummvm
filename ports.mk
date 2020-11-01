@@ -62,26 +62,26 @@ ifdef DYNAMIC_MODULES
 	rm -rf "$(DESTDIR)$(libdir)/scummvm/"
 endif
 
-# Special Linux target for generic simple archive
+# Special generic target for simple archive distribution
 
-linux-generic: $(EXECUTABLE)
-	mkdir -p ./linux-generic/scummvm/data
-	mkdir -p ./linux-generic/scummvm/doc
-	cp $(EXECUTABLE) ./linux-generic/scummvm
-	cp $(DIST_FILES_DOCS) ./linux-generic/scummvm/doc
-	cp $(DIST_FILES_THEMES) ./linux-generic/scummvm/data
+dist-generic: $(EXECUTABLE)
+	mkdir -p ./dist-generic/scummvm/data
+	mkdir -p ./dist-generic/scummvm/doc
+	cp $(EXECUTABLE) ./dist-generic/scummvm
+	cp $(DIST_FILES_DOCS) ./dist-generic/scummvm/doc
+	cp $(DIST_FILES_THEMES) ./dist-generic/scummvm/data
 ifdef DIST_FILES_ENGINEDATA
-	cp $(DIST_FILES_ENGINEDATA) ./linux-generic/scummvm/data
+	cp $(DIST_FILES_ENGINEDATA) ./dist-generic/scummvm/data
 endif
 ifdef DIST_FILES_NETWORKING
-	cp $(DIST_FILES_NETWORKING) ./linux-generic/scummvm/data
+	cp $(DIST_FILES_NETWORKING) ./dist-generic/scummvm/data
 endif
 ifdef DIST_FILES_VKEYBD
-	cp $(DIST_FILES_VKEYBD) ./linux-generic/scummvm/data
+	cp $(DIST_FILES_VKEYBD) ./dist-generic/scummvm/data
 endif
 ifdef DIST_FILES_SHADERS
-	mkdir -p ./linux-generic/scummvm/data/shaders
-	cp $(DIST_FILES_SHADERS) ./linux-generic/scummvm/data/shaders
+	mkdir -p ./dist-generic/scummvm/data/shaders
+	cp $(DIST_FILES_SHADERS) ./dist-generic/scummvm/data/shaders
 endif
 
 # Special target to create a application wrapper for Mac OS X
