@@ -32,7 +32,7 @@ namespace AGDS {
 
 Animation::Animation() :
 	_flic(), _frame(), _frames(0), _loop(false), _cycles(1), _phaseVarControlled(false),
-	_frameIndex(0), _paused(false), _speed(100), _z(0),
+	_phase(0), _paused(false), _speed(100), _z(0),
 	_delay(-1), _random(0), _scale(1) {
 }
 
@@ -82,12 +82,11 @@ void Animation::decodeNextFrame(AGDSEngine &engine) {
 			_frame = f;
 		}
 	}
-	++_frameIndex;
 }
 
 void Animation::rewind() {
 	freeFrame();
-	_frameIndex = 0;
+	_phase = 0;
 	_flic->rewind();
 }
 
@@ -108,7 +107,9 @@ bool Animation::tick(AGDSEngine &engine) {
 		debug("phase var %s signalled deleting of animation", _phaseVar.c_str());
 		return false;
 	}
-	if (_frameIndex >= _frames && !_loop) {
+
+	int frame = frameIndex();
+	if (frame >= _frames && !_loop) {
 		if (!_phaseVar.empty()) {
 			engine.setGlobal(_phaseVar, -1);
 		} else {
@@ -120,12 +121,17 @@ bool Animation::tick(AGDSEngine &engine) {
 		}
 		return false;
 	}
-	decodeNextFrame(engine);
+
+	for(int begin = frame, end = frameIndex(1); begin < end; ++begin) {
+		decodeNextFrame(engine);
+	}
+
 	if (!_process.empty()) {
 		if (!_phaseVar.empty()) {
-			engine.setGlobal(_phaseVar, _frameIndex - 1);
+			engine.setGlobal(_phaseVar, _phase);
 		}
 	}
+	++_phase;
 	return true;
 }
 

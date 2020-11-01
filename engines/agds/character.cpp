@@ -123,7 +123,9 @@ void Character::animate(Common::Point pos, int frames, int speed) {
 		_phase = -1;
 		_frames = 0;
 	}
+	_animation->speed(speed);
 	_animation->loop(true);
+	_animation->rewind();
 	_phase = 0;
 	_frames = frames;
 	_pos = pos;
