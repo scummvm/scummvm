@@ -120,7 +120,7 @@ private:
 	 * @param data menu settings array
 	 * @param mode flag to know if should draw as a hover button or not
 	 */
-	void drawButton(const int16 *menuSettings, bool hover);
+	void drawButtons(const int16 *menuSettings, bool hover);
 	/** Used to run the advanced options menu */
 	int32 advoptionsMenu();
 	/** Used to run the volume menu */

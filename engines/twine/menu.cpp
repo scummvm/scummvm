@@ -374,7 +374,7 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
-void Menu::drawButton(const int16 *menuSettings, bool hover) {
+void Menu::drawButtons(const int16 *menuSettings, bool hover) {
 	int16 buttonNumber = menuSettings[MenuSettings_CurrentLoadedButton];
 	const int32 maxButton = menuSettings[MenuSettings_NumberOfButtons];
 	int32 topHeight = menuSettings[MenuSettings_ButtonsBoxHeight];
@@ -395,10 +395,8 @@ void Menu::drawButton(const int16 *menuSettings, bool hover) {
 	localData += MenuSettings_FirstButtonState;
 	do {
 		// get menu item settings
-		uint8 menuItemId = (uint8)*localData;
-		localData += 1;
-		uint16 textId = *localData;
-		localData += 1;
+		int32 menuItemId = *localData++;
+		int32 textId = *localData++;
 		if (hover) {
 			if (currentButton == buttonNumber) {
 				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, textId, hover);
@@ -564,12 +562,12 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			menuSettings[MenuSettings_CurrentLoadedButton] = currentButton;
 
 			// draw all buttons
-			drawButton(menuSettings, false);
+			drawButtons(menuSettings, false);
 			buttonsNeedRedraw = false;
 		}
 
 		// draw plasma effect for the current selected button
-		drawButton(menuSettings, true);
+		drawButtons(menuSettings, true);
 		if (_engine->shouldQuit()) {
 			return kQuitEngine;
 		}
@@ -773,23 +771,20 @@ int32 Menu::giveupMenu() {
 }
 
 void Menu::drawInfoMenu(int16 left, int16 top) {
-	int32 boxLeft, boxTop, boxRight, boxBottom;
-	int32 newBoxLeft, newBoxLeft2, i;
-
 	_engine->_interface->resetClip();
 	drawBox(left, top, left + 450, top + 80);
 	_engine->_interface->drawSplittedBox(left + 1, top + 1, left + 449, top + 79, 0);
 
-	newBoxLeft2 = left + 9;
+	int32 newBoxLeft2 = left + 9;
 
 	_engine->_grid->drawSprite(0, newBoxLeft2, top + 13, _engine->_resources->spriteTable[SPRITEHQR_LIFEPOINTS]);
 
-	boxRight = left + 325;
-	newBoxLeft = left + 25;
-	boxLeft = _engine->_screens->crossDot(newBoxLeft, boxRight, 50, _engine->_scene->sceneHero->life);
+	int32 boxRight = left + 325;
+	int32 newBoxLeft = left + 25;
+	int32 boxLeft = _engine->_screens->crossDot(newBoxLeft, boxRight, 50, _engine->_scene->sceneHero->life);
 
-	boxTop = top + 10;
-	boxBottom = top + 25;
+	int32 boxTop = top + 10;
+	int32 boxBottom = top + 25;
 	_engine->_interface->drawSplittedBox(newBoxLeft, boxTop, boxLeft, boxBottom, 91);
 	drawBox(left + 25, top + 10, left + 324, top + 10 + 14);
 
@@ -821,12 +816,12 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 	}
 
 	// Clover leaf boxes
-	for (i = 0; i < _engine->_gameState->inventoryNumLeafsBox; i++) {
+	for (int32 i = 0; i < _engine->_gameState->inventoryNumLeafsBox; i++) {
 		_engine->_grid->drawSprite(0, _engine->_screens->crossDot(left + 25, left + 325, 10, i), top + 58, _engine->_resources->spriteTable[SPRITEHQR_CLOVERLEAFBOX]);
 	}
 
 	// Clover leafs
-	for (i = 0; i < _engine->_gameState->inventoryNumLeafs; i++) {
+	for (int32 i = 0; i < _engine->_gameState->inventoryNumLeafs; i++) {
 		_engine->_grid->drawSprite(0, _engine->_screens->crossDot(left + 25, left + 325, 10, i) + 2, top + 60, _engine->_resources->spriteTable[SPRITEHQR_CLOVERLEAF]);
 	}
 
