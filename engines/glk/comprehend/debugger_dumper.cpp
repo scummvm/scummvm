@@ -135,7 +135,7 @@ Common::String DebuggerDumper::dumpInstruction(ComprehendGame *game,
 
 	line += Common::String::format("  [%.2x] ", instr->_opcode);
 	if (_opcodes.contains(opcode)) {
-		if (_game->_comprehendVersion == 2 && (instr->_opcode & 0x40) != 0)
+		if (_game->_comprehendVersion == 2 && !instr->_isCommand && (instr->_opcode & 0x40) != 0)
 			line += "!";
 		line += _opcodes[opcode];
 	} else {

@@ -63,7 +63,7 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		break;
 
 	case OPCODE_CLEAR_FLAG40:
-		item = get_item_by_noun(noun);
+		item = getItem(instr);
 		item->_flags &= ~ITEMF_UNKNOWN;
 		break;
 
@@ -73,7 +73,7 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		break;
 
 	case OPCODE_CLEAR_WORD:
-		item = get_item(instr->_operand[0] - 1);
+		item = getItem(instr);
 		item->_word = 0;
 		break;
 
@@ -209,7 +209,7 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		break;
 
 	case OPCODE_SET_FLAG40:
-		item = get_item_by_noun(noun);
+		item = getItem(instr);
 		item->_flags |= ITEMF_UNKNOWN;
 		break;
 
@@ -252,7 +252,7 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 		break;
 
 	case OPCODE_SET_WORD:
-		item = get_item(instr->_operand[0] - 1);
+		item = getItem(instr);
 		item->_word = instr->_operand[1];
 		break;
 
