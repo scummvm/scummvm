@@ -168,7 +168,7 @@ void GameState::initEngineVars() {
 	_engine->_actor->previousHeroBehaviour = kNormal;
 }
 
-bool GameState::loadGame(Common::InSaveFile *file) {
+bool GameState::loadGame(Common::SeekableReadStream *file) {
 	if (file == nullptr) {
 		return false;
 	}
@@ -235,9 +235,10 @@ bool GameState::loadGame(Common::InSaveFile *file) {
 	return true;
 }
 
-bool GameState::saveGame(Common::OutSaveFile *file) {
-	// TODO: the player name must be handled properly
-	Common::strlcpy(playerName, "TwinEngineSave", sizeof(playerName));
+bool GameState::saveGame(Common::WriteStream *file) {
+	if (playerName[0] == '\0') {
+		Common::strlcpy(playerName, "TwinEngineSave", sizeof(playerName));
+	}
 
 	file->writeByte(0x03);
 	file->writeString(playerName);

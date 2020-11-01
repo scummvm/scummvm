@@ -41,10 +41,6 @@ public:
 		return "TwinE";
 	}
 
-	bool hasFeature(MetaEngineFeature f) const override {
-		return false;
-	}
-
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc) {
 			TwineGameType gameType = TwineGameType::GType_LBA;

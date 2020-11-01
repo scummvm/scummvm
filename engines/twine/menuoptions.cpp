@@ -21,7 +21,9 @@
  */
 
 #include "twine/menuoptions.h"
+#include "common/error.h"
 #include "common/keyboard.h"
+#include "common/str-array.h"
 #include "common/system.h"
 #include "common/util.h"
 #include "twine/flamovies.h"
@@ -282,19 +284,18 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 	return false;
 }
 
-void MenuOptions::newGameMenu() {
-	if (enterPlayerName(TextId::kEnterYourName)) {
-		_engine->_gameState->initEngineVars();
-		newGame();
-
-		if (_engine->gameEngineLoop()) {
-			showCredits();
-		}
+bool MenuOptions::newGameMenu() {
+	if (!enterPlayerName(TextId::kEnterYourName)) {
+		return false;
 	}
+	_engine->_gameState->initEngineVars();
+	newGame();
+	return true;
 }
 
 int MenuOptions::chooseSave(int textIdx) {
-	if (!_engine->hasSavedSlots()) {
+	const Common::StringArray& savegames = _engine->getSaveSlots();
+	if (savegames.empty()) {
 		return -1;
 	}
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
@@ -311,7 +312,7 @@ int MenuOptions::chooseSave(int textIdx) {
 		_engine->flip();
 
 		if (_engine->shouldQuit()) {
-			break;
+			return kQuitEngine;
 		}
 		_engine->_system->delayMillis(1);
 	} while (_engine->_input->toggleAbortAction());
@@ -319,32 +320,13 @@ int MenuOptions::chooseSave(int textIdx) {
 	return 0;
 }
 
-void MenuOptions::continueGameMenu() {
+bool MenuOptions::continueGameMenu() {
 	const int slot = chooseSave(TextId::kContinueGame);
 	if (slot >= 0) {
 		_engine->_gameState->initEngineVars();
-		_engine->loadSaveSlot(slot);
-		if (_engine->_scene->newHeroX == -1) {
-			_engine->_scene->heroPositionType = ScenePositionType::kNoPosition;
-		}
-		if (_engine->_gameState->gameChapter == 0 && _engine->_scene->currentSceneIdx == LBA1SceneId::Citadel_Island_Prison) {
-			newGame();
-		} else {
-			_engine->_text->newGameVar5 = 0;
-			_engine->_text->textClipSmall();
-			_engine->_text->newGameVar4 = 1;
-		}
-
-		if (_engine->gameEngineLoop()) {
-			showCredits();
-		}
-
-		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
-		do {
-			_engine->readKeys();
-			_engine->_system->delayMillis(1);
-		} while (!_engine->shouldQuit() && !_engine->_input->toggleAbortAction());
+		return _engine->loadGameState(slot).getCode() == Common::kNoError;
 	}
+	return false;
 }
 
 } // namespace TwinE

@@ -699,7 +699,7 @@ bool Menu::init() {
 	return HQR::getEntry(plasmaEffectPtr, Resources::HQR_RESS_FILE, RESSHQR_PLASMAEFFECT) > 0;
 }
 
-void Menu::run() {
+EngineState Menu::run() {
 	_engine->_text->initTextBank(0);
 
 	_engine->_music->playTrackMusic(9); // LBA's Theme
@@ -707,31 +707,32 @@ void Menu::run() {
 
 	switch (processMenu(MainMenuState)) {
 	case TextId::kNewGame: {
-		_engine->_menuOptions->newGameMenu();
+		if (_engine->_menuOptions->newGameMenu()) {
+			return EngineState::GameLoop;
+		}
 		break;
 	}
 	case TextId::kContinueGame: {
-		_engine->_menuOptions->continueGameMenu();
+		if (_engine->_menuOptions->continueGameMenu()) {
+			return EngineState::LoadedGame;
+		}
 		break;
 	}
 	case TextId::kOptions: {
 		optionsMenu();
 		break;
 	}
-	case TextId::kQuit: {
-		Common::Event event;
-		event.type = Common::EVENT_QUIT;
-		_engine->_system->getEventManager()->pushEvent(event);
-		break;
-	}
 	case kBackground: {
 		_engine->_screens->loadMenuImage();
 		break;
 	}
+	case TextId::kQuit:
 	case kQuitEngine:
-		return;
+		debug("quit the game");
+		return EngineState::QuitGame;
 	}
 	_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
+	return EngineState::Menu;
 }
 
 int32 Menu::giveupMenu() {

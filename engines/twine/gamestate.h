@@ -139,8 +139,8 @@ public:
 
 	void processFoundItem(int32 item);
 
-	bool loadGame(Common::InSaveFile *file);
-	bool saveGame(Common::OutSaveFile *file);
+	bool loadGame(Common::SeekableReadStream *file);
+	bool saveGame(Common::WriteStream *file);
 
 	void processGameChoices(int32 choiceIdx);
 

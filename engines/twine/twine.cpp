@@ -153,7 +153,34 @@ Common::Error TwinEEngine::run() {
 
 	_menu->init();
 	while (!shouldQuit()) {
-		_menu->run();
+		readKeys();
+		switch (_state) {
+		case EngineState::QuitGame: {
+			Common::Event event;
+			event.type = Common::EVENT_QUIT;
+			_system->getEventManager()->pushEvent(event);
+			break;
+		}
+		case EngineState::LoadedGame:
+			debug("Loaded game");
+			if (_scene->newHeroX == -1) {
+				_scene->heroPositionType = ScenePositionType::kNoPosition;
+			}
+			_text->newGameVar5 = 0;
+			_text->textClipSmall();
+			_text->newGameVar4 = 1;
+			_state = EngineState::GameLoop;
+			break;
+		case EngineState::GameLoop:
+			if (gameEngineLoop()) {
+				_menuOptions->showCredits();
+			}
+			_state = EngineState::Menu;
+			break;
+		case EngineState::Menu:
+			_state = _menu->run();
+			break;
+		}
 	}
 
 	ConfMan.setInt("CombatAuto", _actor->autoAgressive ? 1 : 0);
@@ -180,34 +207,39 @@ bool TwinEEngine::hasFeature(EngineFeature f) const {
 	return false;
 }
 
-bool TwinEEngine::hasSavedSlots() {
+Common::StringArray TwinEEngine::getSaveSlots() {
 	Common::SaveFileManager *saveFileMan = getSaveFileManager();
 	const Common::String pattern(getMetaEngine().getSavegameFilePattern(_targetName.c_str()));
-	return !saveFileMan->listSavefiles(pattern).empty();
+	return saveFileMan->listSavefiles(pattern);
 }
 
 void TwinEEngine::wipeSaveSlot(int slot) {
 	Common::SaveFileManager *saveFileMan = getSaveFileManager();
-	const Common::String &saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
+	const Common::String &saveFile = getSaveStateName(slot);
 	saveFileMan->removeSavefile(saveFile);
 }
 
-bool TwinEEngine::loadSaveSlot(int slot) {
-	Common::SaveFileManager *saveFileMan = getSaveFileManager();
-	const Common::String &saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
-	Common::InSaveFile *file = saveFileMan->openForLoading(saveFile);
-	return _gameState->loadGame(file);
+bool TwinEEngine::canSaveGameStateCurrently() { return _scene->currentScene != nullptr; }
+
+Common::Error TwinEEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	debug("load game stream");
+	if (!_gameState->loadGame(stream)) {
+		return Common::Error(Common::kReadingFailed);
+	}
+	_state = EngineState::LoadedGame;
+	return Common::Error(Common::kNoError);
 }
 
-bool TwinEEngine::saveSlot(int slot) {
-	Common::SaveFileManager *saveFileMan = getSaveFileManager();
-	const Common::String &saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
-	Common::OutSaveFile *file = saveFileMan->openForSaving(saveFile);
-	return _gameState->saveGame(file);
+Common::Error TwinEEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	if (!_gameState->saveGame(stream)) {
+		return Common::Error(Common::kWritingFailed);
+	}
+	return Common::Error(Common::kNoError);
 }
 
 void TwinEEngine::autoSave() {
-	// TODO:
+	// TODO: scene title, not player name
+	saveGameState(getAutosaveSlot(), _gameState->playerName, true);
 }
 
 void TwinEEngine::allocVideoMemory() {

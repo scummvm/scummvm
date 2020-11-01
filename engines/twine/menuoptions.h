@@ -40,22 +40,22 @@ private:
 	void drawSelectableCharacters();
 	void drawPlayerName(int32 centerx, int32 top, int32 type);
 	void drawSelectableCharacter(int32 x, int32 y, bool selected);
-	void showCredits();
-	void newGame();
 	int chooseSave(int textIdx);
 
 public:
 	MenuOptions(TwinEEngine *engine) : _engine(engine) {}
 
+	void showCredits();
 	bool canShowCredits = false;
 
 	char playerName[32] {'\0'};
 
 	/** Main menu new game options */
-	void newGameMenu();
+	bool newGameMenu();
+	void newGame();
 
 	/** Main menu continue game options */
-	void continueGameMenu();
+	bool continueGameMenu();
 };
 
 } // namespace TwinE

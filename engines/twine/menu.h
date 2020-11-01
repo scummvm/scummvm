@@ -24,6 +24,7 @@
 #define TWINE_MENU_H
 
 #include "twine/actor.h"
+#include "twine/twine.h"
 
 namespace TwinE {
 
@@ -190,7 +191,7 @@ public:
 	bool init();
 
 	/** Used to run the main menu */
-	void run();
+	EngineState run();
 
 	/** Used to run the in-game give-up menu */
 	int32 giveupMenu();

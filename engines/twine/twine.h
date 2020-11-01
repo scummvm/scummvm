@@ -154,6 +154,13 @@ struct Keyboard;
 class Debug;
 class DebugScene;
 
+enum class EngineState {
+	Menu,
+	GameLoop,
+	LoadedGame,
+	QuitGame
+};
+
 class TwinEEngine : public Engine {
 private:
 	int32 isTimeFreezed = 0;
@@ -161,6 +168,7 @@ private:
 	ActorMoveStruct loopMovePtr; // mainLoopVar1
 	PauseToken _pauseToken;
 	TwineGameType _gameType;
+	EngineState _state = EngineState::Menu;
 
 public:
 	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, TwineGameType gameType);
@@ -169,10 +177,14 @@ public:
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
 
+	bool canLoadGameStateCurrently() override { return true; }
+	bool canSaveGameStateCurrently() override;
+
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+
 	void wipeSaveSlot(int slot);
-	bool hasSavedSlots();
-	bool loadSaveSlot(int slot);
-	bool saveSlot(int slot);
+	Common::StringArray getSaveSlots();
 	void autoSave();
 
 	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; };
