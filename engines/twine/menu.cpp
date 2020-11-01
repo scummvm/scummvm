@@ -163,6 +163,15 @@ static MenuSettings *copySettings(const MenuSettings settings) {
 	return buf;
 }
 
+const char *MenuSettings::getButtonText(Text *text, int buttonIndex) const {
+	const int32 textId = getButtonTextId(buttonIndex);
+	static char dialText[256];
+	if (!text->getMenuText(textId, dialText, sizeof(dialText))) {
+		dialText[0] = '\0';
+	}
+	return dialText;
+}
+
 Menu::Menu(TwinEEngine *engine) {
 	_engine = engine;
 
@@ -256,7 +265,7 @@ void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
 	_engine->_interface->drawLine(left + 1, bottom, right, bottom, 73); // bottom line
 }
 
-void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 textId, bool hover) {
+void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, const char *dialText, bool hover) {
 	const int32 left = width - kMainMenuButtonSpan / 2;
 	const int32 right = width + kMainMenuButtonSpan / 2;
 
@@ -315,8 +324,6 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 
 	_engine->_text->setFontColor(15);
 	_engine->_text->setFontParameters(2, 8);
-	char dialText[256];
-	_engine->_text->getMenuText(textId, dialText, sizeof(dialText));
 	const int32 textSize = _engine->_text->getTextSize(dialText);
 	_engine->_text->drawText(width - (textSize / 2), topheight - 18, dialText);
 
@@ -340,16 +347,16 @@ void Menu::drawButtons(const MenuSettings *menuSettings, bool hover) {
 
 	for (int16 i = 0; i < maxButton; ++i) {
 		const int32 menuItemId = menuSettings->getButtonState(i);
-		const int32 textId = menuSettings->getButtonTextId(i);
+		const char *text = menuSettings->getButtonText(_engine->_text, i);
 		if (hover) {
 			if (i == buttonNumber) {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, textId, hover);
+				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, text, hover);
 			}
 		} else {
 			if (i == buttonNumber) {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, textId, true);
+				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, text, true);
 			} else {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, textId, false);
+				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, text, false);
 			}
 		}
 

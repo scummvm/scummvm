@@ -96,6 +96,11 @@ class MenuSettings {
 private:
 	int16 _settings[100] {0};
 	int8 _activeButtonIdx = 0;
+
+	int16 getButtonTextId(int buttonIndex) const {
+		return _settings[MenuSettings_FirstButton + buttonIndex * 2];
+	}
+
 public:
 	void reset() {
 		_settings[MenuSettings_NumberOfButtons] = 0;
@@ -129,13 +134,11 @@ public:
 		return getButtonState(getActiveButton());
 	}
 
-	int16 getButtonTextId(int buttonIndex) const {
-		return _settings[MenuSettings_FirstButton + buttonIndex * 2];
-	}
-
 	int16 getButtonState(int buttonIndex) const {
 		return _settings[MenuSettings_FirstButtonState + buttonIndex * 2];
 	}
+
+	const char *getButtonText(Text *text, int buttonIndex) const;
 
 	int16 getActiveButton() const {
 		return _activeButtonIdx;
@@ -179,10 +182,10 @@ private:
 	 * @param width menu button width
 	 * @param topheight is the height between the top of the screen and the first button
 	 * @param buttonId current button identification from menu settings
-	 * @param textId
+	 * @param dialText
 	 * @param hover flag to know if should draw as a hover button or not
 	 */
-	void drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 textId, bool hover);
+	void drawButtonGfx(int32 width, int32 topheight, int32 buttonId, const char *dialText, bool hover);
 	void plasmaEffectRenderFrame();
 	/**
 	 * Process the menu button draw
