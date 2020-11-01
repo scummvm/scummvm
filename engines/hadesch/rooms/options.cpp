@@ -416,10 +416,11 @@ private:
 	void performSave() {		
 		int slot = g_vm->firstAvailableSlot();
 		Persistent *persistent = g_vm->getPersistent();
+		Common::String heroNameUTF8 = persistent->_heroName.encode(Common::kUtf8);
 		// UTF-8
 		Common::String descPos = Common::String::format(
 			saveDescs[persistent->_currentRoomId],
-			persistent->_heroName.encode(Common::kUtf8).c_str());
+			heroNameUTF8.c_str());
 		// UTF-8
 		Common::String desc = _typedSlotName.empty() ? descPos
 		    : _typedSlotName + " (" + descPos + ")";
