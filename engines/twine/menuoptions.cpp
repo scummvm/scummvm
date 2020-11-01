@@ -217,6 +217,9 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					if (_onScreenKeyboardLeaveViaOkButton) {
 						if (_onScreenKeyboardX == ONSCREENKEYBOARD_WIDTH - 1 && _onScreenKeyboardY == ONSCREENKEYBOARD_HEIGHT - 1) {
+							if (playerName[0] == '\0') {
+								continue;
+							}
 							return true;
 						}
 						const size_t size = strlen(playerName);
@@ -234,6 +237,10 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 						}
 						continue;
 					}
+					if (playerName[0] == '\0') {
+						continue;
+					}
+
 					return true;
 				}
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UIAbort)) {
