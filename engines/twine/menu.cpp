@@ -147,13 +147,14 @@ static MenuSettings createVolumeMenu() {
 
 } // namespace _priv
 
-const char *MenuSettings::getButtonText(Text *text, int buttonIndex) const {
-	const int32 textId = getButtonTextId(buttonIndex);
-	static char dialText[256];
-	if (!text->getMenuText(textId, dialText, sizeof(dialText))) {
-		dialText[0] = '\0';
+const char *MenuSettings::getButtonText(Text *text, int buttonIndex) {
+	if (_buttonTexts[buttonIndex].empty()) {
+		const int32 textId = getButtonTextId(buttonIndex);
+		char dialText[256] = "";
+		text->getMenuText(textId, dialText, sizeof(dialText));
+		_buttonTexts[buttonIndex] = dialText;
 	}
-	return dialText;
+	return _buttonTexts[buttonIndex].c_str();
 }
 
 Menu::Menu(TwinEEngine *engine) {
@@ -307,7 +308,7 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, const cha
 	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
-void Menu::drawButtons(const MenuSettings *menuSettings, bool hover) {
+void Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 	int16 buttonNumber = menuSettings->getActiveButton();
 	const int32 maxButton = menuSettings->getButtonCount();
 	int32 topHeight = menuSettings->getButtonBoxHeight();
@@ -496,7 +497,6 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 		if (_engine->shouldQuit()) {
 			return kQuitEngine;
 		}
-		// TODO: update volume settings
 		_engine->_system->delayMillis(10);
 	} while (!_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter));
 
@@ -536,10 +536,10 @@ int32 Menu::savemanageMenu() {
 		case TextId::kReturnMenu:
 			return 0;
 		case TextId::kCreateSaveGame:
-			// TODO: implement save game handling and slot rendering
+			_engine->_menuOptions->saveGameMenu();
 			break;
 		case TextId::kDeleteSaveGame:
-			// TODO: implement save game deletion and slot rendering
+			_engine->_menuOptions->deleteSaveMenu();
 			break;
 		case kQuitEngine:
 			return kQuitEngine;
@@ -688,7 +688,7 @@ int32 Menu::giveupMenu() {
 			_engine->_sound->stopSamples();
 			return 1;
 		case TextId::kCreateSaveGame:
-			// TODO: handle save game creation
+			_engine->_menuOptions->saveGameMenu();
 			break;
 		case kQuitEngine:
 			return kQuitEngine;

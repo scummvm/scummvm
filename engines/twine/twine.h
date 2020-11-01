@@ -184,7 +184,7 @@ public:
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 
 	void wipeSaveSlot(int slot);
-	Common::StringArray getSaveSlots();
+	SaveStateList getSaveSlots() const;
 	void autoSave();
 
 	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; };

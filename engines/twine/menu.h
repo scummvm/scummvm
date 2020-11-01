@@ -29,6 +29,7 @@
 
 namespace TwinE {
 
+#define MAX_BUTTONS 10
 #define PLASMA_WIDTH 320
 #define PLASMA_HEIGHT 50
 #define kQuitEngine 9998
@@ -46,7 +47,8 @@ private:
 		MenuSettings_FirstButton = 5
 	};
 
-	int16 _settings[100] {0};
+	int16 _settings[4 + MAX_BUTTONS * 2] {0};
+	Common::String _buttonTexts[MAX_BUTTONS];
 	int8 _activeButtonIdx = 0;
 
 	int16 getButtonTextId(int buttonIndex) const {
@@ -55,6 +57,9 @@ private:
 
 public:
 	void reset() {
+		for (int32 i = 0; i < MAX_BUTTONS; ++i) {
+			_buttonTexts[i] = "";
+		}
 		_settings[MenuSettings_NumberOfButtons] = 0;
 		setButtonsBoxHeight(0);
 		setActiveButton(0);
@@ -90,7 +95,7 @@ public:
 		return _settings[MenuSettings_FirstButtonState + buttonIndex * 2];
 	}
 
-	const char *getButtonText(Text *text, int buttonIndex) const;
+	const char *getButtonText(Text *text, int buttonIndex);
 
 	int16 getActiveButton() const {
 		return _activeButtonIdx;
@@ -112,6 +117,15 @@ public:
 		const int16 i = _settings[MenuSettings_NumberOfButtons];
 		_settings[i * 2 + MenuSettings_FirstButtonState] = state;
 		_settings[i * 2 + MenuSettings_FirstButton] = textId;
+		++_settings[MenuSettings_NumberOfButtons];
+	}
+
+	void addButton(const char *text, int16 state = 0) {
+		const int16 i = _settings[MenuSettings_NumberOfButtons];
+		_settings[i * 2 + MenuSettings_FirstButtonState] = state;
+		// will return the button index
+		_settings[i * 2 + MenuSettings_FirstButton] = i;
+		_buttonTexts[i] = text;
 		++_settings[MenuSettings_NumberOfButtons];
 	}
 };
@@ -144,7 +158,7 @@ private:
 	 * @param data menu settings array
 	 * @param mode flag to know if should draw as a hover button or not
 	 */
-	void drawButtons(const MenuSettings *menuSettings, bool hover);
+	void drawButtons(MenuSettings *menuSettings, bool hover);
 	/** Used to run the advanced options menu */
 	int32 advoptionsMenu();
 	/** Used to run the volume menu */

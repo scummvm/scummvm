@@ -53,7 +53,7 @@ GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 	Common::fill(&gameFlags[0], &gameFlags[256], 0);
 	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
 	Common::fill(&holomapFlags[0], &holomapFlags[150], 0);
-	playerName[0] = 0;
+	playerName[0] = '\0';
 	Common::fill(&gameChoices[0], &gameChoices[10], 0);
 }
 
@@ -172,6 +172,8 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		return false;
 	}
 
+	initEngineVars();
+
 	file->skip(1); // skip save game id
 
 	int playerNameIdx = 0;
@@ -192,7 +194,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 		warning("Failed to load gameflags. Expected %u, but got %u", NUM_GAME_FLAGS, numGameFlags);
 		return false;
 	}
-	file->read(gameFlags, numGameFlags);
+	file->read(gameFlags, NUM_GAME_FLAGS);
 	_engine->_scene->needChangeScene = file->readByte(); // scene index
 	gameChapter = file->readByte();
 
@@ -210,21 +212,22 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	_engine->_actor->previousHeroAngle = _engine->_scene->sceneHero->angle;
 	_engine->_scene->sceneHero->body = file->readByte();
 
-	const byte numHolemapFlags = file->readByte(); // number of holomap locations, always 150
-	if (numHolemapFlags != ARRAYSIZE(holomapFlags)) {
-		warning("Failed to load holomapflags");
+	const byte numHolomapFlags = file->readByte(); // number of holomap locations, always 150
+	const int32 expectedHolomapFlagsSize = sizeof(holomapFlags);
+	if (numHolomapFlags != expectedHolomapFlagsSize) {
+		warning("Failed to load holomapflags. Got %u, expected %i", numHolomapFlags, expectedHolomapFlagsSize);
 		return false;
 	}
-	file->read(holomapFlags, numHolemapFlags);
+	file->read(holomapFlags, sizeof(holomapFlags));
 
 	inventoryNumGas = file->readByte();
 
 	const byte numInventoryFlags = file->readByte(); // number of used inventory items, always 28
 	if (numInventoryFlags != NUM_INVENTORY_ITEMS) {
-		warning("Failed to load inventoryFlags");
+		warning("Failed to load inventoryFlags. Got %u, expected %i", numInventoryFlags, NUM_INVENTORY_ITEMS);
 		return false;
 	}
-	file->read(inventoryFlags, numInventoryFlags);
+	file->read(inventoryFlags, NUM_INVENTORY_ITEMS);
 
 	inventoryNumLeafs = file->readByte();
 	usingSabre = file->readByte();
@@ -243,7 +246,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeString(playerName);
 	file->writeByte('\0');
 	file->writeByte(NUM_GAME_FLAGS);
-	file->write(gameFlags, sizeof(gameFlags));
+	file->write(gameFlags, NUM_GAME_FLAGS);
 	file->writeByte(_engine->_scene->currentSceneIdx);
 	file->writeByte(gameChapter);
 	file->writeByte(_engine->_actor->heroBehaviour);
@@ -259,14 +262,14 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeByte(_engine->_scene->sceneHero->body);
 
 	// number of holomap locations
-	file->writeByte(ARRAYSIZE(holomapFlags));
+	file->writeByte(sizeof(holomapFlags));
 	file->write(holomapFlags, sizeof(holomapFlags));
 
 	file->writeByte(inventoryNumGas);
 
 	// number of inventory items
-	file->writeByte(ARRAYSIZE(inventoryFlags));
-	file->write(inventoryFlags, sizeof(inventoryFlags));
+	file->writeByte(NUM_INVENTORY_ITEMS);
+	file->write(inventoryFlags, NUM_INVENTORY_ITEMS);
 
 	file->writeByte(inventoryNumLeafs);
 	file->writeByte(usingSabre);

@@ -152,6 +152,16 @@ Common::Error TwinEEngine::run() {
 	_screens->copyScreen(frontVideoBuffer, workVideoBuffer);
 
 	_menu->init();
+
+	if (ConfMan.hasKey("save_slot")) {
+		const int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0 && saveSlot <= 999) {
+			Common::Error state = loadGameState(saveSlot);
+			if (state.getCode() != Common::kNoError) {
+				return state;
+			}
+		}
+	}
 	while (!shouldQuit()) {
 		readKeys();
 		switch (_state) {
@@ -207,10 +217,8 @@ bool TwinEEngine::hasFeature(EngineFeature f) const {
 	return false;
 }
 
-Common::StringArray TwinEEngine::getSaveSlots() {
-	Common::SaveFileManager *saveFileMan = getSaveFileManager();
-	const Common::String pattern(getMetaEngine().getSavegameFilePattern(_targetName.c_str()));
-	return saveFileMan->listSavefiles(pattern);
+SaveStateList TwinEEngine::getSaveSlots() const {
+	return getMetaEngine().listSaves(_targetName.c_str());
 }
 
 void TwinEEngine::wipeSaveSlot(int slot) {

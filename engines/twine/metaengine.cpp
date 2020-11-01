@@ -41,6 +41,10 @@ public:
 		return "TwinE";
 	}
 
+	int getMaximumSaveSlot() const override {
+		return 6;
+	}
+
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
 		if (desc) {
 			TwineGameType gameType = TwineGameType::GType_LBA;

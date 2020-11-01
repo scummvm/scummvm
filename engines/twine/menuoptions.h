@@ -40,7 +40,7 @@ private:
 	void drawSelectableCharacters();
 	void drawPlayerName(int32 centerx, int32 top, int32 type);
 	void drawSelectableCharacter(int32 x, int32 y, bool selected);
-	int chooseSave(int textIdx);
+	int chooseSave(int textIdx, bool showEmptySlots = false);
 
 public:
 	MenuOptions(TwinEEngine *engine) : _engine(engine) {}
@@ -56,6 +56,8 @@ public:
 
 	/** Main menu continue game options */
 	bool continueGameMenu();
+	bool saveGameMenu();
+	bool deleteSaveMenu();
 };
 
 } // namespace TwinE

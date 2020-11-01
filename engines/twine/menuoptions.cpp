@@ -26,6 +26,7 @@
 #include "common/str-array.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "savestate.h"
 #include "twine/flamovies.h"
 #include "twine/gamestate.h"
 #include "twine/input.h"
@@ -191,8 +192,6 @@ public:
 };
 
 bool MenuOptions::enterPlayerName(int32 textIdx) {
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
 	playerName[0] = '\0'; // TODO: read from settings?
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 	char buffer[256];
@@ -312,6 +311,8 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 }
 
 bool MenuOptions::newGameMenu() {
+	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
 	if (!enterPlayerName(TextId::kEnterYourName)) {
 		return false;
 	}
@@ -320,38 +321,87 @@ bool MenuOptions::newGameMenu() {
 	return true;
 }
 
-int MenuOptions::chooseSave(int textIdx) {
-	const Common::StringArray& savegames = _engine->getSaveSlots();
-	if (savegames.empty()) {
+int MenuOptions::chooseSave(int textIdx, bool showEmptySlots) {
+	const SaveStateList& savegames = _engine->getSaveSlots();
+	if (savegames.empty() && !showEmptySlots) {
 		return -1;
 	}
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
-	do {
-		// TODO: assemble menu with save slots and make then loadable.
-		_engine->_text->initTextBank(TextBankId::Options_and_menus);
-		char buffer[256];
-		_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
-		_engine->_text->setFontColor(15);
-		const int halfScreenWidth = (SCREEN_WIDTH / 2);
-		_engine->_text->drawText(halfScreenWidth - (_engine->_text->getTextSize(buffer) / 2), 20, buffer);
-		_engine->copyBlockPhys(0, 0, SCREEN_WIDTH - 1, 99);
-		_engine->flip();
 
-		if (_engine->shouldQuit()) {
-			return kQuitEngine;
+	_engine->_text->initTextBank(TextBankId::Options_and_menus);
+
+	MenuSettings saveFiles;
+	saveFiles.addButton(TextId::kReturnMenu);
+
+	const int maxButtons = _engine->getMetaEngine().getMaximumSaveSlot() + 1;
+	for (const SaveStateDescriptor& savegame : savegames) {
+		saveFiles.addButton(savegame.getDescription().encode().c_str(), savegame.getSaveSlot());
+		if (saveFiles.getButtonCount() >= maxButtons) {
+			break;
 		}
-		_engine->_system->delayMillis(1);
-	} while (_engine->_input->toggleAbortAction());
+	}
 
-	return 0;
+	if (showEmptySlots) {
+		while (saveFiles.getButtonCount() < maxButtons) {
+			saveFiles.addButton("EMPTY");
+		}
+	}
+
+	for (;;) {
+		const int32 id = _engine->_menu->processMenu(&saveFiles);
+		switch (id) {
+		case kQuitEngine:
+		case TextId::kReturnMenu:
+			return -1;
+		default:
+			// the first button is the back button - to subtract that one again to get the real slot index
+			return saveFiles.getButtonState(id);
+		}
+	}
+
+	return -1;
 }
 
 bool MenuOptions::continueGameMenu() {
+	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
 	const int slot = chooseSave(TextId::kContinueGame);
 	if (slot >= 0) {
-		_engine->_gameState->initEngineVars();
-		return _engine->loadGameState(slot).getCode() == Common::kNoError;
+		debug("Load slot %i", slot);
+		Common::Error state = _engine->loadGameState(slot);
+		if (state.getCode() != Common::kNoError) {
+			error("Failed to load slot %i", slot);
+			return false;
+		}
+
+		return true;
+	}
+	return false;
+}
+
+bool MenuOptions::deleteSaveMenu() {
+	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
+	const int slot = chooseSave(TextId::kDeleteSaveGame);
+	if (slot >= 0) {
+		_engine->wipeSaveSlot(slot);
+		return true;
+	}
+	return false;
+}
+
+bool MenuOptions::saveGameMenu() {
+	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
+	const int slot = chooseSave(TextId::kCreateSaveGame, true);
+	if (slot >= 0) {
+		// TODO: enter description
+		Common::Error state = _engine->saveGameState(slot, "description", false);
+		if (state.getCode() != Common::kNoError) {
+			error("Failed to save slot %i", slot);
+			return false;
+		}
+
+		return true;
 	}
 	return false;
 }
