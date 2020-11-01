@@ -457,11 +457,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		if (_input->toggleActionIfActive(TwinEActionType::OptionsMenu)) {
 			freezeTime();
 			_sound->pauseSamples();
-			_menu->OptionsMenuState->setButtonTextId(0, TextId::kReturnGame);
-			_text->initTextBank(0);
-			_menu->optionsMenu();
-			_text->initTextBank(_text->currentTextBank + 3);
-			_menu->OptionsMenuState->setButtonTextId(0, TextId::kReturnMenu);
+			_menu->inGameOptionsMenu();
 			// TODO: play music
 			_sound->resumeSamples();
 			unfreezeTime();

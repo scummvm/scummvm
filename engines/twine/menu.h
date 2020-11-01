@@ -213,17 +213,17 @@ private:
 	 */
 	void drawMagicItemsBox(int32 left, int32 top, int32 right, int32 bottom, int32 color);
 
-	MenuSettings *GiveUpMenuWithSaveState;
-	MenuSettings *VolumeMenuState;
-	MenuSettings *SaveManageMenuState;
-	MenuSettings *GiveUpMenuState;
-	MenuSettings *MainMenuState;
-	MenuSettings *AdvOptionsMenuState;
+	MenuSettings giveUpMenuWithSaveState;
+	MenuSettings volumeMenuState;
+	MenuSettings saveManageMenuState;
+	MenuSettings giveUpMenuState;
+	MenuSettings mainMenuState;
+	MenuSettings advOptionsMenuState;
+	MenuSettings optionsMenuState;
 
 public:
 	Menu(TwinEEngine *engine);
 	~Menu();
-	MenuSettings *OptionsMenuState;
 
 	int32 currMenuTextIndex = -1;
 	int32 currMenuTextBank = -1;
@@ -267,6 +267,8 @@ public:
 
 	/** Used to run the in-game give-up menu */
 	int32 giveupMenu();
+
+	void inGameOptionsMenu();
 
 	/** Used to run the options menu */
 	int32 optionsMenu();

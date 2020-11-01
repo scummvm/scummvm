@@ -81,7 +81,6 @@ namespace _priv {
 
 static MenuSettings createMainMenu() {
 	MenuSettings settings;
-	settings.reset();
 	settings.setButtonsBoxHeight(200);
 	settings.addButton(TextId::kNewGame);
 	settings.addButton(TextId::kContinueGame);
@@ -92,7 +91,6 @@ static MenuSettings createMainMenu() {
 
 static MenuSettings createGiveUpMenu() {
 	MenuSettings settings;
-	settings.reset();
 	settings.setButtonsBoxHeight(240);
 	settings.addButton(TextId::kContinue);
 	settings.addButton(TextId::kGiveUp);
@@ -101,7 +99,6 @@ static MenuSettings createGiveUpMenu() {
 
 static MenuSettings createGiveUpSaveMenu() {
 	MenuSettings settings;
-	settings.reset();
 	settings.setButtonsBoxHeight(240);
 	settings.addButton(TextId::kContinue);
 	settings.addButton(TextId::kCreateSaveGame);
@@ -111,7 +108,6 @@ static MenuSettings createGiveUpSaveMenu() {
 
 static MenuSettings createOptionsMenu() {
 	MenuSettings settings;
-	settings.reset();
 	settings.addButton(TextId::kReturnMenu);
 	settings.addButton(TextId::kVolumeSettings);
 	settings.addButton(TextId::kSaveManage);
@@ -121,7 +117,6 @@ static MenuSettings createOptionsMenu() {
 
 static MenuSettings createAdvancedOptionsMenu() {
 	MenuSettings settings;
-	settings.reset();
 	settings.addButton(TextId::kReturnMenu);
 	settings.addButton(TextId::kBehaviourAgressiveManual, MenuButtonTypes::kAgressiveMode);
 	settings.addButton(TextId::kDetailsPolygonsHigh, MenuButtonTypes::kPolygonDetails);
@@ -132,7 +127,6 @@ static MenuSettings createAdvancedOptionsMenu() {
 
 static MenuSettings createSaveManageMenu() {
 	MenuSettings settings;
-	settings.reset();
 	settings.addButton(TextId::kReturnMenu);
 	settings.addButton(TextId::kCreateSaveGame);
 	settings.addButton(TextId::kDeleteSaveGame);
@@ -141,7 +135,6 @@ static MenuSettings createSaveManageMenu() {
 
 static MenuSettings createVolumeMenu() {
 	MenuSettings settings;
-	settings.reset();
 	settings.addButton(TextId::kReturnMenu);
 	settings.addButton(TextId::kMusicVolume, MenuButtonTypes::kMusicVolume);
 	settings.addButton(TextId::kSoundVolume, MenuButtonTypes::kSoundVolume);
@@ -153,15 +146,6 @@ static MenuSettings createVolumeMenu() {
 }
 
 } // namespace _priv
-
-static MenuSettings *copySettings(const MenuSettings settings) {
-	MenuSettings *buf = (MenuSettings *)malloc(sizeof(MenuSettings));
-	if (buf == nullptr) {
-		error("Failed to allocate menu state memory");
-	}
-	*buf = settings;
-	return buf;
-}
 
 const char *MenuSettings::getButtonText(Text *text, int buttonIndex) const {
 	const int32 textId = getButtonTextId(buttonIndex);
@@ -175,13 +159,13 @@ const char *MenuSettings::getButtonText(Text *text, int buttonIndex) const {
 Menu::Menu(TwinEEngine *engine) {
 	_engine = engine;
 
-	OptionsMenuState = copySettings(_priv::createOptionsMenu());
-	GiveUpMenuWithSaveState = copySettings(_priv::createGiveUpSaveMenu());
-	VolumeMenuState = copySettings(_priv::createVolumeMenu());
-	SaveManageMenuState = copySettings(_priv::createSaveManageMenu());
-	GiveUpMenuState = copySettings(_priv::createGiveUpMenu());
-	MainMenuState = copySettings(_priv::createMainMenu());
-	AdvOptionsMenuState = copySettings(_priv::createAdvancedOptionsMenu());
+	optionsMenuState = _priv::createOptionsMenu();
+	giveUpMenuWithSaveState = _priv::createGiveUpSaveMenu();
+	volumeMenuState = _priv::createVolumeMenu();
+	saveManageMenuState = _priv::createSaveManageMenu();
+	giveUpMenuState = _priv::createGiveUpMenu();
+	mainMenuState = _priv::createMainMenu();
+	advOptionsMenuState = _priv::createAdvancedOptionsMenu();
 
 	Common::fill(&behaviourAnimState[0], &behaviourAnimState[4], 0);
 	Common::fill(&itemAngle[0], &itemAngle[255], 0);
@@ -190,13 +174,6 @@ Menu::Menu(TwinEEngine *engine) {
 
 Menu::~Menu() {
 	free(plasmaEffectPtr);
-	free(OptionsMenuState);
-	free(GiveUpMenuWithSaveState);
-	free(VolumeMenuState);
-	free(SaveManageMenuState);
-	free(GiveUpMenuState);
-	free(MainMenuState);
-	free(AdvOptionsMenuState);
 }
 
 void Menu::plasmaEffectRenderFrame() {
@@ -391,7 +368,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 		}
 
 		const int16 id = menuSettings->getActiveButtonState();
-		if (menuSettings == AdvOptionsMenuState) {
+		if (menuSettings == &advOptionsMenuState) {
 			switch (id) {
 			case MenuButtonTypes::kAgressiveMode:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
@@ -448,7 +425,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 			default:
 				break;
 			}
-		} else if (menuSettings == VolumeMenuState) {
+		} else if (menuSettings == &volumeMenuState) {
 			Audio::Mixer *mixer = _engine->_system->getMixer();
 			switch (id) {
 			case MenuButtonTypes::kMusicVolume: {
@@ -531,7 +508,7 @@ int32 Menu::advoptionsMenu() {
 	_engine->flip();
 
 	for (;;) {
-		switch (processMenu(AdvOptionsMenuState)) {
+		switch (processMenu(&advOptionsMenuState)) {
 		case TextId::kReturnMenu: {
 			return 0;
 		}
@@ -555,7 +532,7 @@ int32 Menu::savemanageMenu() {
 	_engine->flip();
 
 	for (;;) {
-		switch (processMenu(SaveManageMenuState)) {
+		switch (processMenu(&saveManageMenuState)) {
 		case TextId::kReturnMenu:
 			return 0;
 		case TextId::kCreateSaveGame:
@@ -580,7 +557,7 @@ int32 Menu::volumeMenu() {
 	_engine->flip();
 
 	for (;;) {
-		switch (processMenu(VolumeMenuState)) {
+		switch (processMenu(&volumeMenuState)) {
 		case TextId::kReturnMenu:
 			return 0;
 		case TextId::kSaveSettings:
@@ -602,6 +579,14 @@ int32 Menu::volumeMenu() {
 	return 0;
 }
 
+void Menu::inGameOptionsMenu() {
+	_engine->_text->initTextBank(0);
+	_engine->_menu->optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
+	_engine->_menu->optionsMenu();
+	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+	optionsMenuState.setButtonTextId(0, TextId::kReturnMenu);
+}
+
 int32 Menu::optionsMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
@@ -610,7 +595,7 @@ int32 Menu::optionsMenu() {
 	//_engine->_music->playCDtrack(9);
 
 	for (;;) {
-		switch (processMenu(OptionsMenuState)) {
+		switch (processMenu(&optionsMenuState)) {
 		case TextId::kReturnGame:
 		case TextId::kReturnMenu: {
 			return 0;
@@ -650,7 +635,7 @@ EngineState Menu::run() {
 	_engine->_music->playTrackMusic(9); // LBA's Theme
 	_engine->_sound->stopSamples();
 
-	switch (processMenu(MainMenuState)) {
+	switch (processMenu(&mainMenuState)) {
 	case TextId::kNewGame: {
 		if (_engine->_menuOptions->newGameMenu()) {
 			return EngineState::GameLoop;
@@ -686,9 +671,9 @@ int32 Menu::giveupMenu() {
 
 	MenuSettings *localMenu;
 	if (_engine->cfgfile.UseAutoSaving == 1) {
-		localMenu = GiveUpMenuState;
+		localMenu = &giveUpMenuState;
 	} else {
-		localMenu = GiveUpMenuWithSaveState;
+		localMenu = &giveUpMenuWithSaveState;
 	}
 
 	int32 menuId;
