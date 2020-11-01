@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-31 19:57+0100\n"
-"PO-Revision-Date: 2020-10-31 18:43+0000\n"
+"PO-Revision-Date: 2020-11-01 17:44+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/tr/>\n"
@@ -701,304 +701,314 @@ msgstr "Seçilmiş oyun icin kaydedilmiş oyunu yükle"
 
 #: gui/launcher.cpp:149
 msgid "Record..."
-msgstr ""
+msgstr "Kayıt..."
 
 #: gui/launcher.cpp:156
+#, fuzzy
 msgid "~A~dd Game..."
-msgstr ""
+msgstr "~O~yun Ekle..."
 
 #: gui/launcher.cpp:156 gui/launcher.cpp:166
 msgid "Add games to the list"
-msgstr ""
+msgstr "Listeye oyunları ekle"
 
 #: gui/launcher.cpp:157
 msgid "Mass Add..."
-msgstr ""
+msgstr "Toplu Ekleme..."
 
 #: gui/launcher.cpp:161
+#, fuzzy
 msgid "~E~dit Game..."
-msgstr ""
+msgstr "~O~yun bazli ayarlari değiştir..."
 
 #: gui/launcher.cpp:161 gui/launcher.cpp:171
 msgid "Change game options"
-msgstr ""
+msgstr "Oyun seçeneklerini değiştirme"
 
 #: gui/launcher.cpp:163
+#, fuzzy
 msgid "~R~emove Game"
-msgstr ""
+msgstr "~O~yunu kaldır"
 
 #: gui/launcher.cpp:163 gui/launcher.cpp:173
 msgid "Remove game from the list. The game data files stay intact"
-msgstr ""
+msgstr "Listeden oyunu kaldır. Oyun verisi silinmeyecektir"
 
 #: gui/launcher.cpp:166
 msgctxt "lowres"
 msgid "~A~dd Game..."
-msgstr ""
+msgstr "~O~yun ekle..."
 
 #: gui/launcher.cpp:167
 msgctxt "lowres"
 msgid "Mass Add..."
-msgstr ""
+msgstr "Toplu Ekleme..."
 
 #: gui/launcher.cpp:171
+#, fuzzy
 msgctxt "lowres"
 msgid "~E~dit Game..."
-msgstr ""
+msgstr "~O~yun bazli ayarlari değiştir..."
 
 #: gui/launcher.cpp:173
+#, fuzzy
 msgctxt "lowres"
 msgid "~R~emove Game"
-msgstr ""
+msgstr "~O~yunu kaldır"
 
 #: gui/launcher.cpp:181
 msgid "Search in game list"
-msgstr ""
+msgstr "Oyun listesinde ara"
 
 #: gui/launcher.cpp:185 gui/launcher.cpp:786
 msgid "Search:"
-msgstr ""
+msgstr "Arama:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:794
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
-msgstr ""
+msgstr "Oyun yükle:"
 
 #: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:794
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:183 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load"
-msgstr ""
+msgstr "Yükleme"
 
 #: gui/launcher.cpp:386
 msgid "This directory cannot be used yet, it is being downloaded into!"
-msgstr ""
+msgstr "Bu klasör şu anda kullanılamaz, üzerine dosya indiriliyor!"
 
 #: gui/launcher.cpp:397
 msgid ""
 "Do you really want to run the mass game detector? This could potentially add "
 "a huge number of games."
 msgstr ""
+"Gerçekten toplu oyun tanıma özelliğini çalıştırmak istediğinden emin misin? "
+"Bu potansiyel olarak çok büyük sayıda oyun ekleyecektir."
 
 #: gui/launcher.cpp:419
 msgid "Do you really want to remove this game configuration?"
-msgstr ""
+msgstr "Bu oyun konfigürasyonunu kaldırmak istediğinizden emin misiniz?"
 
 #: gui/launcher.cpp:461
 msgid "Do you want to load saved game?"
-msgstr ""
+msgstr "Kaydedilmiş oyunu yüklemek istiyor musunuz?"
 
 #: gui/launcher.cpp:517
 msgid "This game does not support loading games from the launcher."
-msgstr ""
+msgstr "Bu oyun, başlatıcısan kaydedilmiş oyun yüklemeyi desteklemiyor."
 
 #: gui/launcher.cpp:521
 msgid "ScummVM could not find any engine capable of running the selected game!"
-msgstr ""
+msgstr "ScummVM bu oyunu çalıştırabilecek bir motor bulamadı!"
 
 #: gui/launcher.cpp:586
 msgid "ScummVM could not find any game in the specified directory!"
-msgstr ""
+msgstr "ScummVM belirlenen klasörde bir oyun bulamadı!"
 
 #: gui/launcher.cpp:601
+#, fuzzy
 msgid "Unknown variant"
-msgstr ""
+msgstr "Bilinmeyen varyant"
 
 #: gui/launcher.cpp:607
 msgid "Pick the game:"
-msgstr ""
+msgstr "Oyunu seç:"
 
 #: gui/massadd.cpp:76 gui/massadd.cpp:79
+#, fuzzy
 msgid "... progress ..."
-msgstr ""
+msgstr "... ilerliyor ..."
 
 #: gui/massadd.cpp:266
 msgid "Scan complete!"
-msgstr ""
+msgstr "Tarama tamamlandı!"
 
 #: gui/massadd.cpp:269
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
-msgstr ""
+msgstr "%d yeni oyun bulundu, new games, %d eskiden eklenmiş oyun önemsemedi."
 
 #: gui/massadd.cpp:273
 #, c-format
 msgid "Scanned %d directories ..."
-msgstr ""
+msgstr "%d sayıda klasör tarandı..."
 
 #: gui/massadd.cpp:276
 #, c-format
 msgid "Discovered %d new games, ignored %d previously added games ..."
-msgstr ""
+msgstr "%d yeni oyun bulundu, new games, %d eskiden eklenmiş oyun önemsemedi."
 
 #: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2192
 msgid "Open URL"
-msgstr ""
+msgstr "URL'yi aç"
 
 #: gui/onscreendialog.cpp:101 gui/onscreendialog.cpp:103
 msgid "Stop"
-msgstr ""
+msgstr "Dur"
 
 #: gui/onscreendialog.cpp:106
 msgid "Edit record description"
-msgstr ""
+msgstr "Kayıt tanımlamasını düzenle"
 
 #: gui/onscreendialog.cpp:108
 msgid "Switch to Game"
-msgstr ""
+msgstr "Oyunu seç"
 
 #: gui/onscreendialog.cpp:110
 msgid "Fast replay"
-msgstr ""
+msgstr "Hızlı yeniden oynatma"
 
 #: gui/options.cpp:135 common/updates.cpp:56
 msgid "Never"
-msgstr ""
+msgstr "Hiçbir zaman"
 
 #: gui/options.cpp:135
 msgid "Every 5 mins"
-msgstr ""
+msgstr "Her 5 dakika"
 
 #: gui/options.cpp:135
 msgid "Every 10 mins"
-msgstr ""
+msgstr "Her 10 dakika"
 
 #: gui/options.cpp:135
 msgid "Every 15 mins"
-msgstr ""
+msgstr "Her 15 dakika"
 
 #: gui/options.cpp:135
 msgid "Every 30 mins"
-msgstr ""
+msgstr "Her 30 dakika"
 
 #: gui/options.cpp:414 gui/options.cpp:788 gui/options.cpp:926
 #: gui/options.cpp:1037 gui/options.cpp:1423
 msgctxt "soundfont"
 msgid "None"
-msgstr ""
+msgstr "Yok"
 
 #: gui/options.cpp:653
 msgid "Failed to apply some of the graphic options changes:"
-msgstr ""
+msgstr "Bazı grafik ayarlarını uygulama başarılamadı:"
 
 #: gui/options.cpp:665
 msgid "the video mode could not be changed"
-msgstr ""
+msgstr "Görüntü modu değiştirilemedi"
 
 #: gui/options.cpp:678
 msgid "the stretch mode could not be changed"
-msgstr ""
+msgstr "Çekiştirme modu değiştirilemedi"
 
 #: gui/options.cpp:684
 msgid "the aspect ratio setting could not be changed"
-msgstr ""
+msgstr "Görüntü ekran oranı değiştirilemedi"
 
 #: gui/options.cpp:690
 msgid "the fullscreen setting could not be changed"
-msgstr ""
+msgstr "Tam ekran ayarı değiştirilemedi"
 
 #: gui/options.cpp:696
 msgid "the filtering setting could not be changed"
-msgstr ""
+msgstr "Filtreleme ayarı değiştirilemedi"
 
 #: gui/options.cpp:1116
 msgid "Show On-screen control"
-msgstr ""
+msgstr "Ekran üstü kontrolünü göster"
 
 #: gui/options.cpp:1120
 msgid "Touchpad mouse mode"
-msgstr ""
+msgstr "Touchpad fare modu"
 
 #: gui/options.cpp:1124
 msgid "Swap Menu and Back buttons"
-msgstr ""
+msgstr "Menu ve Geri tuşlarını aralarında değiştir"
 
 #: gui/options.cpp:1129
 msgid "Pointer Speed:"
-msgstr ""
+msgstr "İmleç hızı:"
 
 #: gui/options.cpp:1129 gui/options.cpp:1131 gui/options.cpp:1132
 msgid "Speed for keyboard/joystick mouse pointer control"
-msgstr ""
+msgstr "Klavye/Fare imleci hız kontrolü"
 
 #: gui/options.cpp:1131
 msgctxt "lowres"
 msgid "Pointer Speed:"
-msgstr ""
+msgstr "İmleç Hızı:"
 
 #: gui/options.cpp:1142
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Joystick Ölü Alanı:"
 
 #: gui/options.cpp:1142 gui/options.cpp:1144 gui/options.cpp:1145
 msgid "Analog joystick Deadzone"
-msgstr ""
+msgstr "Analog Joystick Ölü Alanı"
 
 #: gui/options.cpp:1144
 msgctxt "lowres"
 msgid "Joy Deadzone:"
-msgstr ""
+msgstr "Joystick Ölü Alanı:"
 
 #: gui/options.cpp:1218
 #, c-format
 msgid "%d hidden achievements remaining"
-msgstr ""
+msgstr "%d gizli başarımlar kaldı"
 
 #: gui/options.cpp:1223
 #, c-format
 msgid "Achievements unlocked: %d/%d"
-msgstr ""
+msgstr "Kilidi çözülen başarımlar: %d/%d"
 
 #: gui/options.cpp:1242
 msgid "HW Shader:"
-msgstr ""
+msgstr "Donanımsal Çizici:"
 
 #: gui/options.cpp:1242 gui/options.cpp:1244
 msgid "Different hardware shaders give different visual effects"
-msgstr ""
+msgstr "Farklı donanımsal çiziciler farklı görsel efektler verir"
 
 #: gui/options.cpp:1244
 msgctxt "lowres"
 msgid "HW Shader:"
-msgstr ""
+msgstr "Donanımsal Çizici:"
 
 #: gui/options.cpp:1245
 msgid "Different shaders give different visual effects"
-msgstr ""
+msgstr "Farklı çiziciler farklı görsel efektler verir"
 
 #: gui/options.cpp:1265
 msgid "Graphics mode:"
-msgstr ""
+msgstr "Grafik modu:"
 
 #: gui/options.cpp:1279
 msgid "Render mode:"
-msgstr ""
+msgstr "Render modu:"
 
 #: gui/options.cpp:1279 gui/options.cpp:1280
 msgid "Special dithering modes supported by some games"
-msgstr ""
+msgstr "Bazı oyunlar tarafından desteklenen özel titreme modları"
 
 #: gui/options.cpp:1292
 msgid "Stretch mode:"
-msgstr ""
+msgstr "Çekiştirme modu:"
 
 #: gui/options.cpp:1303 backends/graphics/sdl/sdl-graphics.cpp:365
 msgid "Fullscreen mode"
-msgstr ""
+msgstr "Tam ekran modu"
 
 #: gui/options.cpp:1305
 msgid "V-Sync in 3D Games"
-msgstr ""
+msgstr "3B oyunlarda Dikey Senkronizasyon"
 
 #: gui/options.cpp:1305
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgstr ""
+"3B renderlamada ekranı yenilemek için kullanılan dikey senkronizasyonu bekle"
 
 #: gui/options.cpp:1307
 msgid "Game 3D Renderer:"
-msgstr ""
+msgstr "Oyun 3B Renderlama:"
 
 #: gui/options.cpp:1316
 msgid "3D Anti-aliasing:"
