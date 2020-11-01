@@ -5,7 +5,7 @@ The configuration file
 
 The configuration file provides a way to edit both global and game-specific settings by using a text file containing configuration keywords and parameters. 
 
-Settings are also accessible directly from :doc:`the Launcher <../using_scummvm/the_launcher>` . To edit :doc:`global settings <../using_scummvm/global_settings>`, click **Options**. To edit :doc:`game-specific settings <../using_scummvm/game_settings>`, highlight a game and then click **Edit Game**.
+Settings are also accessible directly from :doc:`the Launcher <../using_scummvm/the_launcher>` . To edit global settings, click **Options**. To edit game-specific settings, highlight a game and then click **Edit Game**.
 
 Location
 ==========
@@ -18,7 +18,7 @@ The configuration file saves to different default locations, depending on the pl
 
 	.. tab:: Mac OSX
 
-		``~/Library/Preferences/ScummVM Preferences``, where ``~`` is your Home directory. 
+		``~/Library/Preferences/ScummVM Preferences``, where ``~`` is your Home directory. To see the Libraries folder you will need to view hidden files.
 
 		Note that if an earlier version of ScummVM was installed on your system, the previous default location of ``~/.scummvmrc`` will be kept.
 	
@@ -29,11 +29,13 @@ The configuration file saves to different default locations, depending on the pl
 
 		**Windows NT4**: ``<windir>\Profiles\username\Application Data\ScummVM\scummvm.ini``
 
+		``<windir>`` refers to the Windows directory. Most commonly, this is ``C:\WINDOWS``.
+        
 		**Windows 2000/XP**: ``\Documents and Settings\username\Application Data\ScummVM\scummvm.ini``
 
 		**Window 7/Vista**: ``\Users\username\AppData\Roaming\ScummVM\scummvm.ini``
 
-		Note that if an earlier version of ScummVM was installed under Windows, the previous default location of <windir>\scummvm.ini will be kept.
+		Note that if an earlier version of ScummVM was installed under Windows, the previous default location of ``<windir>\scummvm.ini`` will be kept.
 
 	.. tab:: Linux/Unix
 
@@ -43,18 +45,17 @@ The configuration file saves to different default locations, depending on the pl
 		
 		Note that ``.config`` is a hidden directory; to view it use ``ls -a`` on the command line. If you are using a GUI file manager, go to **View > Show Hidden Files**, or use the keyboard shortcut :kbd:`Ctrl + H`.
 
-	.. tab:: iOS
-
-		``/var/mobile/Library/ScummVM/Preferences`` or ``/Preferences`` for a sandboxed version.
+		If ScummVM was installed using Snap, the configuration file can be found at ``~/snap/scummvm/current/.config/scummvm/scummvm.ini``
 
 	.. tab:: Other
 
-		``scummvm.ini`` in the ScummVM directory. 
+		See the relevant Platform page for details. 
+
 
 Using the configuration file
 ==================================
 
-Global settings are listed under the ``[scummvm]`` heading. Game settings are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keywords_ to change settings. 
+Global settings are listed under the ``[scummvm]`` heading. Global ../settings/keymaps settings are listed under the ``[keymapper]`` heading. Game-specific settings, including keymaps, are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keywords_ to change settings. 
 
 
 Example of a configuration file
@@ -101,11 +102,11 @@ Example of a configuration file
 Keywords
 ===========
 
-There are many recognized configuration keywords. In the table below, each keyword is linked to an explanatory description on either the :doc:`../using_scummvm/global_settings` or :doc:`../using_scummvm/game_settings` page. 
+There are many recognized configuration keywords. In the table below, each keyword is linked to an explanatory description in the Settings pages. 
 
 .. csv-table:: 
   	:widths: 25, 25, 15, 35
-  	:header-rows: 1
+  	:header-rows: 1 
 
 		Keyword,Type,Default,Options
 		alsa_port,number,,
@@ -113,7 +114,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`altamigapalette <altamiga>`",boolean,false,
 		":ref:`apple2gs_speedmenu <2gs>`",boolean,false,
 		":ref:`aspect_ratio <ratio>`",boolean,false,
-		audio_buffer_size,number,"Calculated","
+		":ref:`audio_buffer_size <buffer>`",number,"Calculated","
 	- 256 
 	- 512 
 	- 1024 
@@ -121,9 +122,9 @@ There are many recognized configuration keywords. In the table below, each keywo
 	- 4096                             
 	- 8192 
 	- 16384 
-	- 32768" 
-		auto_savenames,boolean,false,
-		
+	- 32768"
+		":ref:`autosave_period <autosave>`", integer, 300s 
+		auto_savenames,boolean,false
 		":ref:`bilinear_filtering <bilinear>`",boolean,false,
 		boot_param,number,none,
 		":ref:`bright_palette <bright>`",boolean,true,
@@ -134,7 +135,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		console,boolean,true,
 		controller_map_db,string,,
 		copy_protection,boolean,false,
-		demo_mode,,false,
+		demo_mode,boolean,false,
 		":ref:`description <description>`",string,,
 		":ref:`disable_dithering <dither>`",boolean,false,
 		":ref:`disable_stamina_drain <stamina>`",boolean,false,
@@ -149,6 +150,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`enable_hq_video <hq>`",boolean,true,
 		":ref:`enable_larryscale <larry>`",boolean,true,
 		":ref:`enable_video_upscale <upscale>`",boolean,true,
+		":ref:`enable_tts <ttsenabled>`",boolean,false,
 		":ref:`extrapath <extra>`",string,None,"		path"
 		":ref:`fade_style <fade>`",boolean,true,
 		":ref:`filtering <filtering>`",boolean,false,
@@ -172,9 +174,10 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`fluidsynth_reverb_roomsize <revroom>`",number,20,"- 0 - 100"
 		":ref:`fluidsynth_reverb_width <revwidth>`",number,1,"- 0 - 100"
 		":ref:`frames_per_secondfl <fpsfl>`",boolean,false,
+		:ref:`frontpanel_touchpad_mode <frontpanel>`,boolean, false
 		":ref:`fullscreen <fullscreen>`",boolean,false,
 		":ref:`gameid <gameid>`",string,,
-		":ref:`gamepath <gamepath>`",string,,
+		gamepath,string,,
 		":ref:`gfx_mode <gfxmode>`",string,2x,"
 	- 1x
 	- 2x
@@ -191,21 +194,68 @@ There are many recognized configuration keywords. In the table below, each keywo
 	- opengl"
 		":ref:`gm_device <gm>`",string,null,"
 	- auto
-	- alsa_midi Through
+	- alsa
 	- seq 
 	- sndio
 	- fluidsynth 
 	- timidity"
-		":ref:`GraphicsDithering <gdither>`",,true,
-		":ref:`helium_mode <helium>`",,false,
-		":ref:`help_style <help>`",,false,
-		":ref:`herculesfont <herc>`",,false,
-		":ref:`hpbargraphs <hp>`",,true,
-		":ref:`hypercheat <hyper>`",,false,
+		":ref:`GraphicsDithering <gdither>`",boolean,true,
+		":ref:`gui_browser_native <guibrowser>`", boolean, true
+		":ref:`helium_mode <helium>`",boolean,false,
+		":ref:`help_style <help>`",boolean,false,
+		":ref:`herculesfont <herc>`",boolean,false,
+		":ref:`hpbargraphs <hp>`",boolean,true,
+		":ref:`hypercheat <hyper>`",boolean,false,
 		iconpath,string,,
-		":ref:`improved <improved>`",,true,
-		":ref:`InvObjectsAnimated <objanimated>`",,true,
+		":ref:`improved <improved>`",boolean,true,
+		":ref:`InvObjectsAnimated <objanimated>`",boolean,true,
+		":ref:`joystick_deadzone <deadzone>`",integer, 3
 		joystick_num,number,,
+		":ref:`kbdmouse_speed <mousespeed>`", integer, 10
+		":doc:`keymap_engine-default_DOWN <../settings/keymaps>`",string,JOY_DOWN
+		":doc:`keymap_engine-default_LCLK <../settings/keymaps>`",string,MOUSE_LEFT JOY_A
+		":doc:`keymap_engine-default_LEFT <../settings/keymaps>`",string,JOY_LEFT
+		":doc:`keymap_engine-default_MCLK <../settings/keymaps>`",string,MOUSE_MIDDLE
+		":doc:`keymap_engine-default_MENU <../settings/keymaps>`",string,F5 JOY_LEFT_SHOULDER
+		":doc:`keymap_engine-default_PAUSE <../settings/keymaps>`",string,SPACE
+		":doc:`keymap_engine-default_PIND <../settings/keymaps>`",string,
+		":doc:`keymap_engine-default_RCLK <../settings/keymaps>`",string,MOUSE_RIGHT JOY_B
+		":doc:`keymap_engine-default_RETURN <../settings/keymaps>`",string,RETURN
+		":doc:`keymap_engine-default_RIGHT <../settings/keymaps>`",string,JOY_RIGHT
+		":doc:`keymap_engine-default_SKIP <../settings/keymaps>`",string,ESCAPE JOY
+		":doc:`keymap_engine-default_SKLI <../settings/keymaps>`",string,PERIOD JOY_X
+		":doc:`keymap_engine-default_UP <../settings/keymaps>`",string,JOY_UP 
+		":doc:`keymap_global_DEBUGGER <../settings/keymaps>`",string,C+A+d 
+		":doc:`keymap_global_MENU <../settings/keymaps>`",string,C+F5 JOY_START
+		":doc:`keymap_global_MUTE <../settings/keymaps>`",string,C+u 
+		":doc:`keymap_global_QUIT <../settings/keymaps>`",string,C+q 
+		":doc:`keymap_global_VMOUSEDOWN <../settings/keymaps>`",string,JOY_LEFT_STICK_Y+
+		":doc:`keymap_global_VMOUSELEFT <../settings/keymaps>`",string,JOY_LEFT_STICK_X-
+		":doc:`keymap_global_VMOUSERIGHT <../settings/keymaps>`",string,JOY_LEFT_STICK_X+
+		":doc:`keymap_global_VMOUSESLOW <../settings/keymaps>`",string,JOY_RIGHT_SHOULDER
+		":doc:`keymap_global_VMOUSEUP <../settings/keymaps>`",string,JOY_LEFT_STICK_Y-
+		":doc:`keymap_gui_CLOS <../settings/keymaps>`",string,ESCAPE JOY_Y
+		":doc:`keymap_gui_DOWN <../settings/keymaps>`",string,JOY_DOWN
+		":doc:`keymap_gui_INTRCT <../settings/keymaps>`",string,JOY_A
+		":doc:`keymap_gui_LEFT <../settings/keymaps>`",string,
+		":doc:`keymap_gui_RIGHT <../settings/keymaps>`",string,JOY_RIGHT
+		":doc:`keymap_gui_UP <../settings/keymaps>`",string,JOY_UP
+		":doc:`keymap_sdl-graphics_ASPT <../settings/keymaps>`",string,C+A+a
+		":doc:`keymap_sdl-graphics_CAPT <../settings/keymaps>`",string,C+m
+		":doc:`keymap_sdl-graphics_FILT <../settings/keymaps>`",string,C+A+f
+		":doc:`keymap_sdl-graphics_FLT1 <../settings/keymaps>`",string,C+A+1 
+		":doc:`keymap_sdl-graphics_FLT2 <../settings/keymaps>`",string,C+A+2
+		":doc:`keymap_sdl-graphics_FLT3 <../settings/keymaps>`",string,C+A+3 
+		":doc:`keymap_sdl-graphics_FLT4 <../settings/keymaps>`",string,C+A+4 
+		":doc:`keymap_sdl-graphics_FLT5 <../settings/keymaps>`",string,C+A+5 
+		":doc:`keymap_sdl-graphics_FLT6 <../settings/keymaps>`",string, C+A+6
+		":doc:`keymap_sdl-graphics_FLT7 <../settings/keymaps>`",string,C+A+7
+		":doc:`keymap_sdl-graphics_FLT8 <../settings/keymaps>`",string,C+A+8
+		":doc:`keymap_sdl-graphics_FULS <../settings/keymaps>`",string,A+RETURN
+		":doc:`keymap_sdl-graphics_SCL- <../settings/keymaps>`",string,C+A+MINUS 
+		":doc:`keymap_sdl-graphics_SCL+ <../settings/keymaps>`",string,C+A+PLUS 
+		":doc:`keymap_sdl-graphics_SCRS <../settings/keymaps>`",string,A+s 
+		":doc:`keymap_sdl-graphics_STCH <../settings/keymaps>`",string,C+A+s 
 		":ref:`language <lang>`",string,,
 		":ref:`local_server_port <serverport>`",integer,12345,
 		":ref:`midi_gain <gain>`",number,,"- 0 - 1000"
@@ -215,34 +265,53 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`mousesupport <support>`",boolean,true,
 		":ref:`mt32_device <mt32>`",string,,"
 	- auto
-	- alsa_midi Through
+	- alsa
 	- seq 
-	- sndio
 	- fluidsynth
 	- mt32
 	- timidity "
 		":ref:`multi_midi <multi>`",boolean,,
-		":ref:`music_driver <device>`",string,auto,"	
+		":ref:`music_driver [scummvm] <device>`",string,auto,"	
 	- null
 	- auto
-	- alsa_Midi Through 
-	- seq
-	- sndio
+
+	- seq (Unix)
+	- sndio (Unix)
+	- alsa (Unix)
+	- CAMD (Amiga)
+	- core (Mac)
+	- coremidi (Mac - hardware)
+
+	- windows (Windows)
+
 	- fluidsynth 
 	- mt32
-	- timidity
+	- adlib
 	- pcspk 
 	- pcjr
 	- cms
-	- adlib "
+	- timidity
+	"
+		"music_driver [game]",string, auto, "
+	The same options as 
+	
+	``music_driver in [scummvm]`` 
+	
+	plus:
+
+	- towns
+	- C64
+	- pc98
+	- segacd
+	"
 		":ref:`music_volume <music>`",number,,"- 0-256 "
 		":ref:`mute <mute>`",boolean,false,
-		":ref:`native_fb01 <fb01>`",,false,
+		":ref:`native_fb01 <fb01>`",boolean,false,
 		":ref:`native_mt32 <nativemt32>`",boolean,false,
-		":ref:`NaughtyMode <naughty>`",,true,
-		":ref:`nodelaymillisfl <nodelay>`",,false,
-		":ref:`ntsc <ntsc>`",,?,
-		":ref:`object_labels <labels>`",,true,
+		":ref:`NaughtyMode <naughty>`",boolean,true,
+		":ref:`nodelaymillisfl <nodelay>`",boolean,false,
+		":ref:`ntsc <ntsc>`",boolean,,
+		":ref:`object_labels <labels>`",boolean,true,
 		":ref:`opl_driver <opl>`",string,,"
 	- auto
 	- mame
@@ -252,9 +321,9 @@ There are many recognized configuration keywords. In the table below, each keywo
 	- op2lpt
 	- op3lpt "
 		":ref:`originalsaveload <osl>`",boolean,false,
-		output_rate,number,,"
+		":ref:`output_rate <outputrate>`",number,,"
 	Sensible values are:
-	
+
 	- 11025 
 	- 22050
 	- 44100"
@@ -299,7 +368,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`subtitles <speechmute>`",boolean,false,
 		":ref:`talkspeed <talkspeed>`",number,60,"- 0 - 255 "
 		tempo,number,100,"- 50-200"
-		":ref:`TextWindowAnimated <textanimated>`",boolean,true,
+		":ref:`TextWindowAnimated <windowanimated>`",boolean,true,
 		":ref:`themepath <themepath>`",string,none,
 		":ref:`transparent_windows <transparentwindows>`",boolean,true,
 		":ref:`transparentdialogboxes <transparentdialog>`",boolean,false,
