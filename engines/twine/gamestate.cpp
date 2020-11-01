@@ -160,7 +160,7 @@ void GameState::initEngineVars() {
 
 	gameChapter = 0;
 
-	_engine->_text->currentTextBank = 0;
+	_engine->_scene->sceneTextBank = TextBankId::Options_and_menus;
 	_engine->_scene->currentlyFollowedActor = 0;
 	_engine->_actor->heroBehaviour = kNormal;
 	_engine->_actor->previousHeroAngle = 0;
@@ -401,7 +401,7 @@ void GameState::processFoundItem(int32 item) {
 	}
 
 	initEngineProjections();
-	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 	_engine->_text->stopVox(_engine->_text->currDialTextEntry);
 
 	_engine->_scene->sceneHero->animTimerData = tmpAnimTimer;
@@ -411,7 +411,7 @@ void GameState::processGameChoices(int32 choiceIdx) {
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
 	gameChoicesSettings.reset();
-	gameChoicesSettings.setHeadlineTextId(_engine->_text->currentTextBank + 3);
+	gameChoicesSettings.setTextBankId(_engine->_scene->sceneTextBank + 3);
 
 	// filled via script
 	for (int32 i = 0; i < numChoices; i++) {

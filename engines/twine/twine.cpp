@@ -506,7 +506,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				cfgfile.FlagDisplayText = tmpFlagDisplayText;
 				_text->textClipSmall();
 				_text->newGameVar4 = 1;
-				_text->initTextBank(_text->currentTextBank + 3);
+				_text->initTextBank(_scene->sceneTextBank + 3);
 				_screens->fadeToBlack(_screens->paletteRGBACustom);
 				_screens->clearScreen();
 				flip();
@@ -557,7 +557,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				_text->setFontCrossColor(15);
 				_text->drawTextFullscreen(162);
 				_text->textClipSmall();
-				_text->initTextBank(_text->currentTextBank + 3);
+				_text->initTextBank(_scene->sceneTextBank + 3);
 				break;
 			}
 			case kiCloverLeaf:

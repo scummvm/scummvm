@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 #include "twine/actor.h"
+#include "twine/text.h"
 
 namespace TwinE {
 
@@ -251,6 +252,7 @@ public:
 	int32 currentSceneIdx = LBA1SceneId::Citadel_Island_Prison;
 	int32 previousSceneIdx = LBA1SceneId::Citadel_Island_Prison;
 
+	int32 sceneTextBank = TextBankId::None;
 	int32 currentGameOverScene = 0;
 	int32 alphaLight = 0;
 	int32 betaLight = 0;

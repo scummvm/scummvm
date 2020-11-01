@@ -140,7 +140,7 @@ private:
 	void copyText(const char *src, char *dst, int32 size);
 
 	// RECHECK THIS LATER
-	int32 currentBankIdx = -1; // textVar1
+	int32 currentBankIdx = TextBankId::None; // textVar1
 	char textVar2[256] {'\0'};
 
 	/** Dialogue text pointer */
@@ -177,9 +177,6 @@ private:
 	int32 currDialTextSize = 0;
 public:
 	Text(TwinEEngine *engine) : _engine(engine) {}
-
-	/** Current text bank */
-	int32 currentTextBank = -1;
 
 	/** Dialogue text size */
 	int32 dialTextSize = 0;

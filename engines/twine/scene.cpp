@@ -97,7 +97,7 @@ bool Scene::loadSceneLBA1() {
 	Common::MemoryReadStream stream(currentScene, _currentSceneSize);
 
 	// load scene ambience properties
-	_engine->_text->currentTextBank = stream.readByte();
+	sceneTextBank = stream.readByte();
 	currentGameOverScene = stream.readByte();
 	stream.skip(4);
 
@@ -277,10 +277,10 @@ void Scene::changeScene() {
 	// TODO: treat holomap trajectories
 
 	if (needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_1 || needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_2) {
-		_engine->_text->currentTextBank = 10;
+		_engine->_scene->sceneTextBank = TextBankId::Tippet_Island;
 	}
 
-	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 	_engine->_grid->initGrid(needChangeScene);
 
 	if (heroPositionType == ScenePositionType::kZone) {

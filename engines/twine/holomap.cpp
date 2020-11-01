@@ -145,7 +145,7 @@ void Holomap::processHolomap() {
 	_engine->_scene->betaLight = betaLightTmp;
 	_engine->_gameState->initEngineVars();
 
-	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 
 	// TODO memcopy reset palette
 

@@ -104,8 +104,8 @@ public:
 		return _settings[MenuSettings_NumberOfButtons];
 	}
 
-	void setHeadlineTextId(int16 textIndex) {
-		_settings[MenuSettings_HeaderEnd] = textIndex;
+	void setTextBankId(int16 textBankIndex) {
+		_settings[MenuSettings_HeaderEnd] = textBankIndex;
 	}
 
 	void addButton(int16 textId, int16 state = 0) {

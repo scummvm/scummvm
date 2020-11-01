@@ -583,7 +583,7 @@ void Menu::inGameOptionsMenu() {
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 	_engine->_menu->optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
 	_engine->_menu->optionsMenu();
-	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 	optionsMenuState.setButtonTextId(0, TextId::kReturnMenu);
 }
 
@@ -695,7 +695,7 @@ int32 Menu::giveupMenu() {
 		default:
 			warning("Unknown menu button handled: %i", menuId);
 		}
-		_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+		_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 		_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
 	} while (menuId != TextId::kGiveUp && menuId != TextId::kContinue);
 
@@ -852,8 +852,8 @@ void Menu::processBehaviourMenu() {
 
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-	int32 tmpTextBank = _engine->_text->currentTextBank;
-	_engine->_text->currentTextBank = -1;
+	int32 tmpTextBank = _engine->_scene->sceneTextBank;
+	_engine->_scene->sceneTextBank = TextBankId::None;
 
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
@@ -901,8 +901,8 @@ void Menu::processBehaviourMenu() {
 	_engine->_actor->setBehaviour(_engine->_actor->heroBehaviour);
 	_engine->_gameState->initEngineProjections();
 
-	_engine->_text->currentTextBank = tmpTextBank;
-	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+	_engine->_scene->sceneTextBank = tmpTextBank;
+	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 }
 
 void Menu::drawMagicItemsBox(int32 left, int32 top, int32 right, int32 bottom, int32 color) { // Rect
@@ -1076,7 +1076,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->_gameState->initEngineProjections();
 
-	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 }
 
 } // namespace TwinE

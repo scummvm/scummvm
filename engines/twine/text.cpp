@@ -31,6 +31,7 @@
 #include "twine/renderer.h"
 #include "twine/resources.h"
 #include "twine/screens.h"
+#include "twine/scene.h"
 #include "twine/sound.h"
 #include "twine/twine.h"
 
@@ -717,7 +718,7 @@ void Text::copyText(const char *src, char *dst, int32 size) {
 
 bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 	if (index == _engine->_menu->currMenuTextIndex) {
-		if (_engine->_menu->currMenuTextBank == currentTextBank) {
+		if (_engine->_menu->currMenuTextBank == _engine->_scene->sceneTextBank) {
 			Common::strlcpy(text, _engine->_menu->currMenuTextBuffer, textSize);
 			return true;
 		}
@@ -737,7 +738,7 @@ bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 	copyText(text, _engine->_menu->currMenuTextBuffer, currDialTextSize);
 
 	_engine->_menu->currMenuTextIndex = index;
-	_engine->_menu->currMenuTextBank = currentTextBank;
+	_engine->_menu->currMenuTextBank = _engine->_scene->sceneTextBank;
 	return true;
 }
 
