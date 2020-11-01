@@ -425,10 +425,10 @@ DIST_FILES_ENGINEDATA+=fonts.dat
 endif
 DIST_FILES_ENGINEDATA+=macgui.dat
 ifdef ENABLE_GRIM
-DIST_FILES_ENGINEDATA+=residualvm-grim-patch.lab
+DIST_FILES_ENGINEDATA+=grim-patch.lab
 endif
 ifdef ENABLE_MONKEY4
-DIST_FILES_ENGINEDATA+=residualvm-emi-patch.m4b
+DIST_FILES_ENGINEDATA+=monkey4-patch.m4b
 endif
 ifdef ENABLE_MYST3
 DIST_FILES_ENGINEDATA+=myst3.dat

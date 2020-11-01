@@ -208,7 +208,7 @@ List of fixed bugs in GF scripts:
 	-Fix the missing dialogue with Domino at third year
 	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
 	prevents the correct load of this script.
-	See https://forums.residualvm.org/viewtopic.php?t=108
+	See https://forums.scummvm.org/viewtopic.php?t=108
 
 +Others modifications:
 	-The function si.set_up_actors (si.lua), calls "start_script(si.naranja_drinking)",
@@ -217,17 +217,17 @@ List of fixed bugs in GF scripts:
 	with "start_script(si.naranja_drink)", which does exists, but which can cause Naranja to stutter
 	when entering the set.
 
-Contents of residualvm-grim-patches.lab and its rebuild:
+Contents of grim-patches.lab and its rebuild:
 
-residualvm-grim-patches.lab contains all .patchr files in the
+grim-patches.lab contains all .patchr files in the
 dists/engine-data/patches/grim/ directory.
 If you add a new patch in that directory, you have to update this file
 with a detailed description of what that patch does.
 Then you have to rebuild residualvm-grim-patches.lab with mklab from the
-residualvm-tools repo. The rebuild command is (assuming that you are
+scummvm-tools repo. The rebuild command is (assuming that you are
 launching it in dists/engine-data/):
 
- $ mklab --grim patches/grim residualvm-grim-patch.lab
+ $ mklab --grim patches/grim grim-patch.lab
 
 Please check that there aren't any files different from .patchr inside
 that directory before the rebuild, so delete all junk, backup and system

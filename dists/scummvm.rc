@@ -25,8 +25,8 @@ residualvm.zip         FILE    "gui/themes/residualvm.zip"
 
 #ifdef BUILTIN_RESOURCES
 #if PLUGIN_ENABLED_STATIC(GRIM)
-residualvm-grim-patch.lab       FILE    "dists/engine-data/residualvm-grim-patch.lab"
-residualvm-emi-patch.m4b        FILE    "dists/engine-data/residualvm-emi-patch.m4b"
+grim-patch.lab         FILE    "dists/engine-data/grim-patch.lab"
+monkey4-patch.m4b      FILE    "dists/engine-data/monkey4-patch.m4b"
 #endif
 #if PLUGIN_ENABLED_STATIC(MYST3)
 myst3.dat                       FILE    "dists/engine-data/myst3.dat"

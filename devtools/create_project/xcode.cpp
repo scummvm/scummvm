@@ -828,8 +828,8 @@ XcodeProvider::ValueList& XcodeProvider::getResourceFiles() const {
 		files.push_back("dists/engine-data/lure.dat");
 		files.push_back("dists/engine-data/macgui.dat");
 		files.push_back("dists/engine-data/myst3.dat");
-		files.push_back("dists/engine-data/residualvm-emi-patch.m4b");
-		files.push_back("dists/engine-data/residualvm-grim-patch.lab");
+		files.push_back("dists/engine-data/monkey4-patch.m4b");
+		files.push_back("dists/engine-data/grim-patch.lab");
 		files.push_back("dists/engine-data/macventure.dat");
 		files.push_back("dists/engine-data/mort.dat");
 		files.push_back("dists/engine-data/neverhood.dat");

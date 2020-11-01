@@ -121,10 +121,10 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "sound001.lab");
 			SearchMan.listMatchingMembers(files, "voice001.lab");
 		} else {
-			if (!SearchMan.hasFile("residualvm-grim-patch.lab"))
-				error("%s", "residualvm-grim-patch.lab not found");
+			if (!SearchMan.hasFile("grim-patch.lab"))
+				error("%s", "grim-patch.lab not found");
 
-			SearchMan.listMatchingMembers(files, "residualvm-grim-patch.lab");
+			SearchMan.listMatchingMembers(files, "grim-patch.lab");
 			SearchMan.listMatchingMembers(files, "data005.lab");
 			SearchMan.listMatchingMembers(files, "data004.lab");
 			SearchMan.listMatchingMembers(files, "data003.lab");
@@ -153,7 +153,7 @@ ResourceLoader::ResourceLoader() {
 			}
 		}
 	} else if (g_grim->getGameType() == GType_MONKEY4) {
-		const char *emi_patches_filename = "residualvm-emi-patch.m4b";
+		const char *emi_patches_filename = "monkey4-patch.m4b";
 		if (!SearchMan.hasFile(emi_patches_filename))
 			error("%s not found", emi_patches_filename);
 
