@@ -562,8 +562,8 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 
 	private class MyScummVM extends ScummVM {
 
-		public MyScummVM(SurfaceHolder holder) {
-			super(ScummVMActivity.this.getAssets(), holder);
+		public MyScummVM(SurfaceHolder holder, final MyScummVMDestroyedCallback destroyedCallback) {
+			super(ScummVMActivity.this.getAssets(), holder, destroyedCallback);
 		}
 
 		@Override
@@ -915,7 +915,14 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//                            so app's internal space (which would be deleted on uninstall) was set as WORLD_READABLE which is no longer supported in newer versions of Android API
 		//                            In newer APIs we can set that path as Context.MODE_PRIVATE which is the default - but this makes the files inaccessible to other apps
 
-		_scummvm = new MyScummVM(_main_surface.getHolder());
+		_scummvm = new MyScummVM(_main_surface.getHolder(), new MyScummVMDestroyedCallback() {
+		                                                        @Override
+		                                                        public void handle(int exitResult) {
+		                                                        	Log.d(ScummVM.LOG_TAG, "Via callback: ScummVM native terminated with code: " + exitResult);
+		                                                        	// call onDestroy()
+		                                                        	finish();
+		                                                        }
+		                                                    });
 
 		//
 		// seekAndInitScummvmConfiguration() returns false if something went wrong
@@ -2359,4 +2366,9 @@ abstract class SetLayerType {
 // Used to define the interface for a callback after a write operation (via the method that is enhanced to use SAF if the normal way fails)
 interface MyWriteFileCallback {
 	public void handle(Boolean created, String hackyFilename);
+}
+
+// Used to define the interface for a callback after ScummVM thread has finished
+interface MyScummVMDestroyedCallback {
+	public void handle(int exitResult);
 }
