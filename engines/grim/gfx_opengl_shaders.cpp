@@ -2116,8 +2116,18 @@ static void readPixels(int x, int y, int width, int height, byte *buffer) {
 
 Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 	Graphics::PixelBuffer src(Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), _screenWidth * _screenHeight, DisposeAfterUse::YES);
-#ifndef USE_GLES2
 	if (useStored) {
+#ifdef USE_GLES2
+		GLuint frameBuffer;
+		glGenFramebuffers(1, &frameBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _storedDisplay, 0);
+
+		readPixels(0, 0, _screenWidth, _screenHeight, src.getRawBuffer());
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		glDeleteFramebuffers(1, &frameBuffer);
+#else
 		glBindTexture(GL_TEXTURE_2D, _storedDisplay);
 		char *buffer = new char[_screenWidth * _screenHeight * 4];
 
@@ -2127,9 +2137,8 @@ Bitmap *GfxOpenGLS::getScreenshot(int w, int h, bool useStored) {
 			memcpy(&(rawBuf[(_screenHeight - i - 1) * _screenWidth * 4]), &buffer[4 * _screenWidth * i], _screenWidth * 4);
 		}
 		delete[] buffer;
-	} else
 #endif
-	{
+	} else {
 		readPixels(0, 0, _screenWidth, _screenHeight, src.getRawBuffer());
 	}
 	return createScreenshotBitmap(src, w, h, true);
