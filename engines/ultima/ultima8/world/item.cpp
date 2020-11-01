@@ -1347,7 +1347,7 @@ uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, in
 		int32 ocx, ocy, ocz;
 		other->getCentre(ocx, ocy, ocz);
 		const int32 start[3] = {cx, cy, cz};
-		const int32 end[3] {ocx, ocy, cz};
+		const int32 end[3] = {ocx, ocy, cz};
 		const int32 dims[3] = { 2, 2, 2 };
 
 		Std::list<CurrentMap::SweepItem> collisions;
