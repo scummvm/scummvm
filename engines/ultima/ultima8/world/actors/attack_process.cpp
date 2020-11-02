@@ -182,6 +182,7 @@ void AttackProcess::run() {
 	if (!target || target->isDead()) {
 		warning("got into attack process with invalid target");
 		terminate();
+		return;
 	}
 
 	const Direction curdir = a->getDir();
