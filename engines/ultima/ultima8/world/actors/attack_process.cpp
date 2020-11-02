@@ -810,14 +810,14 @@ bool AttackProcess::checkTimer2PlusDelayElapsed(int now) {
 }
 
 void AttackProcess::setAttackData(uint16 off, uint16 val) {
-	if (off >= MAGIC_DATA_OFF && off < MAGIC_DATA_OFF + ARRAYSIZE(_dataArray))
+	if (off >= MAGIC_DATA_OFF && off < MAGIC_DATA_OFF + ARRAYSIZE(_dataArray) - 1)
 		_dataArray[off] = val;
 
 	warning("Invalid offset to setAttackDataArray %d %d", off, val);
 }
 
 uint16 AttackProcess::getAttackData(uint16 off) const {
-	if (off >= MAGIC_DATA_OFF && off < MAGIC_DATA_OFF + ARRAYSIZE(_dataArray))
+	if (off >= MAGIC_DATA_OFF && off < MAGIC_DATA_OFF + ARRAYSIZE(_dataArray) - 1)
 		return _dataArray[off];
 
 	warning("Invalid offset to getAttackDataArray: %d", off);
