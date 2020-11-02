@@ -42,6 +42,12 @@ The advantage will be cleaner coder (easier to debug, in particular), and a
 better separation of the various modules.
 */
 
+bool CharsetRenderer::isScummvmKorTarget() {
+	if (_vm->_language == Common::KO_KOR && (_vm->_game.version < 7 || _vm->_game.id == GID_FT)) {
+		return true;
+	}
+	return false;
+}
 
 void ScummEngine::loadCJKFont() {
 	Common::File fp;
@@ -414,6 +420,9 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 }
 
 void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
+	int lastKoreanLineBreak = -1;
+	char tmpStrBuf[512];
+	int origPos = pos;
 	int lastspace = -1;
 	int curw = 1;
 	int chr;
@@ -478,6 +487,11 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 		if (chr == _vm->_newLineCharacter)
 			lastspace = pos - 1;
 
+		if (_vm->_useCJKMode && isScummvmKorTarget()) {
+			if (_center == false && chr == '(' && pos - 3 >= origPos && checkKSCode(str[pos -3], str[pos -2]))
+				lastKoreanLineBreak = pos - 1;
+		}
+
 		if (_vm->_useCJKMode) {
 			if (_vm->_game.platform == Common::kPlatformFMTowns) {
 				if (checkSJISCode(chr))
@@ -488,6 +502,13 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 			} else if (chr & 0x80) {
 				pos++;
 				curw += _vm->_2byteWidth;
+				if (isScummvmKorTarget() && checkKSCode(chr, str[pos])) {
+					if (_center == false
+						&& !(pos - 4 >= origPos && str[pos - 3] == '`' && str[pos - 4] == ' ')	// prevents hanging quotation mark at the end of line
+						&& !(pos - 4 >= origPos && str[pos - 3] == '\'' && str[pos - 4] == ' ')	// prevents hanging single quotation mark at the end of line
+						&& !(pos -3 >= origPos && str[pos -3] == '('))	// prevents hanging parenthesis at the end of line
+						lastKoreanLineBreak = pos - 2;
+				}
 				// Original keeps glyph width and character dimensions separately
 				if (_vm->_language == Common::KO_KOR || _vm->_language == Common::ZH_TWN) {
 					curw++;
@@ -498,13 +519,32 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 		} else {
 			curw += getCharWidth(chr);
 		}
-		if (lastspace == -1)
-			continue;
+		if (lastspace == -1) {
+			if (!isScummvmKorTarget() || lastKoreanLineBreak == -1) {
+				continue;
+			}
+		}
 		if (curw > maxwidth) {
-			str[lastspace] = 0xD;
-			curw = 1;
-			pos = lastspace + 1;
-			lastspace = -1;
+			if (!isScummvmKorTarget()) {
+				str[lastspace] = 0xD;
+				curw = 1;
+				pos = lastspace + 1;
+				lastspace = -1;
+			} else if (lastspace >= lastKoreanLineBreak) {
+				str[lastspace] = 0xD;
+				curw = 1;
+				pos = lastspace + 1;
+				lastspace = -1;
+				lastKoreanLineBreak = -1;
+			} else {
+				strcpy(tmpStrBuf, (char*)(str + lastKoreanLineBreak));
+				strcpy((char*)(str + lastKoreanLineBreak + 1), tmpStrBuf);
+				str[lastKoreanLineBreak] = 0xD;
+				curw = 1;
+				pos = lastKoreanLineBreak + 1;
+				lastspace = -1;
+				lastKoreanLineBreak = -1;
+			}
 		}
 	}
 
