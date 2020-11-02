@@ -119,6 +119,10 @@ public:
 	virtual Common::KeymapArray getGlobalKeymaps() override;
 	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
+	virtual void registerDefaultSettings(const Common::String &target) const override;
+	virtual GUI::OptionsContainerWidget *buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	virtual void applyBackendSettings() override;
+
 	virtual uint32 getMillis(bool skipRecord = false) override;
 	virtual void delayMillis(uint msecs) override;
 

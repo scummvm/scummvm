@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	android.o \
 	graphics.o \
 	events.o \
+	options.o \
 	snprintf.o
 
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
