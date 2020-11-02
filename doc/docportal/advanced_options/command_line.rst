@@ -11,7 +11,8 @@ Short options are listed where they are available.
 
 .. csv-table:: 
   	:header-rows: 1
-
+    :width: 100% 
+    
 		Option,Short,Description
         \--add,-a,"Add all games from current or specified directory.
 
