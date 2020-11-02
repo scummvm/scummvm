@@ -359,7 +359,7 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 		int8 type = *(bodyPtr++);
 
 		if (type == -1) {
-			currentActorAnimExtraPtr = NULL;
+			currentActorAnimExtraPtr = nullptr;
 			return -1;
 		}
 
@@ -533,15 +533,15 @@ void Animations::processAnimActions(int32 actorIdx) {
 		case ACTION_THROW_EXTRA_BONUS: {
 			animPos = stream.readByte();
 			const int32 yHeight = stream.readSint16LE();
-			const int32 var_C = stream.readByte();
+			const int32 sprite = stream.readByte();
 			const int32 cx = stream.readSint16LE();
 			const int32 dx = actor->angle + stream.readSint16LE();
 			const int32 var_24 = stream.readSint16LE();
 			const int32 var_14 = stream.readByte();
-			const int32 var = stream.readByte();
+			const int32 strengthOfHit = stream.readByte();
 
 			if (animPos == actor->animPosition) {
-				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + yHeight, actor->z, var_C, cx, dx, var_24, var_14, var);
+				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + yHeight, actor->z, sprite, cx, dx, var_24, var_14, strengthOfHit);
 			}
 			break;
 		}

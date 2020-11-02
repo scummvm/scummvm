@@ -474,7 +474,7 @@ void GameState::processGameoverAnimation() {
 		}
 
 		const int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);
-		const int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 0x64);
+		const int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 100);
 
 		_engine->_interface->blitBox(left, top, right, bottom, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);

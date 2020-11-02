@@ -184,16 +184,16 @@ void Collision::reajustActorPosition(int32 brickShape) {
 	if (brickShape >= kStairsTopLeft && brickShape <= kStairsBottomRight) {
 		switch (brickShape) {
 		case kStairsTopLeft:
-			_engine->_movements->processActorY = brkY + getAverageValue(0, 0x100, 0x200, _engine->_movements->processActorX - brkX);
+			_engine->_movements->processActorY = brkY + getAverageValue(0, 256, 512, _engine->_movements->processActorX - brkX);
 			break;
 		case kStairsTopRight:
-			_engine->_movements->processActorY = brkY + getAverageValue(0, 0x100, 0x200, _engine->_movements->processActorZ - brkZ);
+			_engine->_movements->processActorY = brkY + getAverageValue(0, 256, 512, _engine->_movements->processActorZ - brkZ);
 			break;
 		case kStairsBottomLeft:
-			_engine->_movements->processActorY = brkY + getAverageValue(0x100, 0, 0x200, _engine->_movements->processActorZ - brkZ);
+			_engine->_movements->processActorY = brkY + getAverageValue(256, 0, 512, _engine->_movements->processActorZ - brkZ);
 			break;
 		case kStairsBottomRight:
-			_engine->_movements->processActorY = brkY + getAverageValue(0x100, 0, 0x200, _engine->_movements->processActorX - brkX);
+			_engine->_movements->processActorY = brkY + getAverageValue(256, 0, 512, _engine->_movements->processActorX - brkX);
 			break;
 		default:
 			break;
