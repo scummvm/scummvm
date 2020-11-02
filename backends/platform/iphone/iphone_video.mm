@@ -269,17 +269,7 @@ const char *iPhone_getDocumentsDir() {
 
 	glBindTexture(GL_TEXTURE_2D, tex); printOpenGLError();
 
-	GLint filter = GL_LINEAR;
-
-	switch (_videoContext.graphicsMode) {
-	case kGraphicsModeLinear:
-		filter = GL_LINEAR;
-		break;
-
-	case kGraphicsModeNone:
-		filter = GL_NEAREST;
-		break;
-	}
+	GLint filter = _videoContext.filtering ? GL_LINEAR : GL_NEAREST;
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter); printOpenGLError();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter); printOpenGLError();

@@ -44,12 +44,6 @@
 #include "backends/platform/iphone/osys_main.h"
 
 
-const OSystem::GraphicsMode OSystem_IPHONE::s_supportedGraphicsModes[] = {
-	{ "linear", "Linear filtering", kGraphicsModeLinear },
-	{ "none", "No filtering", kGraphicsModeNone },
-	{ 0, 0, 0 }
-};
-
 AQCallbackStruct OSystem_IPHONE::s_AudioQueue;
 SoundProc OSystem_IPHONE::s_soundCallback = NULL;
 void *OSystem_IPHONE::s_soundParam = NULL;
@@ -110,6 +104,7 @@ void OSystem_IPHONE::initBackend() {
 bool OSystem_IPHONE::hasFeature(Feature f) {
 	switch (f) {
 	case kFeatureCursorPalette:
+	case kFeatureFilteringMode:
 	case kFeatureNoQuit:
 		return true;
 
@@ -127,6 +122,9 @@ void OSystem_IPHONE::setFeatureState(Feature f, bool enable) {
 			_mouseCursorPaletteEnabled = enable;
 		}
 		break;
+	case kFeatureFilteringMode:
+		_videoContext->filtering = enable;
+		break;
 	case kFeatureAspectRatioCorrection:
 		_videoContext->asprectRatioCorrection = enable;
 		break;
@@ -140,6 +138,8 @@ bool OSystem_IPHONE::getFeatureState(Feature f) {
 	switch (f) {
 	case kFeatureCursorPalette:
 		return _mouseCursorPaletteEnabled;
+	case kFeatureFilteringMode:
+		return _videoContext->filtering;
 	case kFeatureAspectRatioCorrection:
 		return _videoContext->asprectRatioCorrection;
 
