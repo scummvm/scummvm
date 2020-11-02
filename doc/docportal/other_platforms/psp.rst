@@ -19,7 +19,7 @@ The PSP package is available for download on our website's `Downloads page <http
 
 Download the ``.zip`` archive to a computer, and extract the files. 
 
-Connect the PSP to the computer by USB cable. Go to **Settings > USB Connection** on the PSP. The computer should automatically open the root folder of the PSP. Alternatively, if you have a Memory Stick adapter, copy the files directly to the Memory Stick. 
+Connect the PSP to the computer by USB cable. Go to **Settings > USB Connection** on the PSP. Ensure the **USB Device** option is set to **Memory Stick**.  The computer should automatically open the root folder of the PSP. Alternatively, if you have a Memory Stick adapter, copy the files directly to the Memory Stick. 
 
 Copy the extracted ``scummvm`` folder to your PSP, into the ``/PSP/GAME/`` folder. 
 
@@ -42,63 +42,81 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
 
 See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
 
+
+.. |square| raw:: html
+
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="5 2 16 16" width="20" height="20"><path fill-rule="evenodd" d="M6 7.75C6 6.784 6.784 6 7.75 6h8.5c.966 0 1.75.784 1.75 1.75v8.5A1.75 1.75 0 0116.25 18h-8.5A1.75 1.75 0 016 16.25v-8.5zm1.75-.25a.25.25 0 00-.25.25v8.5c0 .138.112.25.25.25h8.5a.25.25 0 00.25-.25v-8.5a.25.25 0 00-.25-.25h-8.5z"></path></svg>
+
+.. |circle| raw:: html
+
+   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M3.404 3.404a6.5 6.5 0 109.192 9.192 6.5 6.5 0 00-9.192-9.192zm-1.06 10.253A8 8 0 1113.656 2.343 8 8 0 012.343 13.657z"></path></svg>
+
+.. |x| raw:: html
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M3.72 3.72a.75.75 0 011.06 0L8 6.94l3.22-3.22a.75.75 0 111.06 1.06L9.06 8l3.22 3.22a.75.75 0 11-1.06 1.06L8 9.06l-3.22 3.22a.75.75 0 01-1.06-1.06L6.94 8 3.72 4.78a.75.75 0 010-1.06z"></path></svg>
+
+.. |triangle| raw:: html
+
+   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path d="M11.574 3.712c.195-.323.662-.323.857 0l9.37 15.545c.2.333-.039.757-.429.757l-18.668-.006c-.385 0-.629-.422-.428-.758l9.298-15.538zm.429-2.483c-.76 0-1.521.37-1.966 1.111l-9.707 16.18c-.915 1.523.182 3.472 1.965 3.472h19.416c1.783 0 2.879-1.949 1.965-3.472l-9.707-16.18c-.446-.741-1.205-1.111-1.966-1.111z"/></svg>
+
+
 .. csv-table:: 
-  	:widths: 40 60 
+  	:width: 100% 
   	:header-rows: 2
 
         Game Controller Mapping,
         Button,Action
-        Right trigger,Modifier key 
-        Left trigger,ESC 
-        Analog,Mouse movement
-        Right trigger + Analog,Fine mouse movement
-        D-Pad,Arrow keys 
-        D-Pad + Right Trigger,Diagonal arrow keys 
-        Triangle,Enter 
-        Cross,Left Mouse Button 
-        Circle,Right Mouse Button 
-        Square,Period
-        Right trigger + Square,Spacebar
-        Right trigger + Start,F5 
-        Select,Show/Hide Virtual Keyboard. Hold down to move keyboard onscreen (with D-Pad).
-        Right trigger + Select,Show Image Viewer 
-        Start,Global main menu
+        R button,Modifier key 
+        L button,ESC 
+        Analog stick,Mouse movement
+        Analog stick + R button,Fine mouse movement
+        Directional buttons,Arrow keys 
+        Directional buttons + R button,Diagonal arrow keys 
+        |triangle|,Enter 
+        |x|,Left Mouse Button 
+        |circle|,Right Mouse Button 
+        |square|,Period
+        |square| + R button,Spacebar
+        SELECT,Show/Hide Virtual Keyboard. Hold down to move keyboard onscreen (with Directional buttons).
+        SELECT + R button ,Show Image Viewer 
+        START,Global main menu
+        START + R button,F5 
 
 .. csv-table:: 
-  	:widths: 40 60 
+  	:width: 100%  
   	:header-rows: 1
 
         Virtual Keyboard Mode,
-        Start,Enter. Also exits virtual keyboard mode
-        Select,Exit the virtual keyboard mode
-        Right trigger,Input: lowercase/uppercase letters (press to toggle)
-        Left trigger,Input: numbers/symbols (press to toggle)
-        D-Pad,"Select square of characters (up, down, left or right)"
-        Buttons/Triggers,Choose a specific character in the square. The four center characters are chosen by the button in the corresponding position. The 2 top characters are chosen by the triggers.
-        Analog,Moves in a direction (left/right/up/down) 
+        START,Enter. Also exits virtual keyboard mode
+        SELECT,Exit the virtual keyboard mode
+        R button,Input: lowercase/uppercase letters (press to toggle)
+        L button,Input: numbers/symbols (press to toggle)
+        Directional buttons,"Select square of characters (up, down, left or right)"
+        |triangle| |x| |circle| |square| and L/R buttons,Choose a specific character in the square. The four center characters are chosen by the button in the corresponding position. The 2 top characters are chosen by the L/R buttons.
+        Analog stick,Moves in a direction (left/right/up/down) 
 
 .. csv-table:: 
-  	:widths: 40 60 
+  	:width: 100% 
   	:header-rows: 1
 
         Image Viewer,
-        Left/Right,Previous/next image
-        Up/down,Zoom in/out
-        Analog,Move around the image
-        "Triggers, Start",Exit image viewer
+        Left/right directional buttons,Previous/next image
+        Up/down directional buttons ,Zoom in/out
+        Analog stick,Move around the image
+        "L/R buttons + START",Exit image viewer
 
 .. csv-table:: 
-  	:widths: 40 60 
+  	:width: 100%  
   	:header-rows: 1
 
         1st Person Game Mode ,
-        Right Trigger + Left Trigger + Square,Enable 1st Person Mode
-        Square,Modifier key (instead of Right Trigger)
-        Left/Right Trigger,Strafe left/right
-        D-Pad Left/Right,Turn left/right
-        Square + D-Pad,F1/F2/F3/F4
-        Square + Select,Image Viewer
-        Square + Start,Esc 
+        |square| + R button + L button,Enable 1st Person Mode
+        |square|,Modifier key (instead of R button)
+        L/R button,Strafe left/right
+        Directional buttons left/right,Turn left/right
+        |square| + Directional buttons,F1/F2/F3/F4
+        |square| + SELECT,Image Viewer
+        |square| + START,Esc 
 
 Settings
 ===========================
@@ -107,12 +125,6 @@ For more information, see the Settings section of the documentation. Only platfo
 
 Audio
 *******
-Supported audio file formats:
-
-- ``.mp3``
-- ``.ogg`` 
-- Uncompressed audio
-
 Games will generally run faster if audio files are in the ``.mp3`` file format.
 
 
@@ -133,5 +145,3 @@ Known issues
 ==============
 
 - Plugin files are not interchangeable between ScummVM versions.  You must copy all the plugin files found in the ``PSP/GAME/scummvm/plugin/`` folder for every new version you install. If ScummVM crashes on startup, delete the existing plugin files in the plugin directory and copy the new ones again.
-
-- The PSP does not support audio files in the ``.flac`` file format. For games with voice (talkies), ensure the ``monster.sou`` file is not compressed to ``monster.sof``.
