@@ -63,7 +63,7 @@ void Character::load(Common::SeekableReadStream *stream) {
 
 		AnimationDescription animation;
 		animation.filename = filename;
-		debug("animation %s, frames: %d, format: %d", animation.filename.c_str(), frames, format);
+		debug("%u: animation %s, frames: %d, format: %d", _animations.size(), animation.filename.c_str(), frames, format);
 		while (frames--) {
 			int x = stream->readSint16LE();
 			int y = stream->readSint16LE();
@@ -110,24 +110,26 @@ void Character::direction(int dir) {
 }
 
 void Character::moveTo(Common::Point dst, int frames) {
-	debug("move to %d,%d", dst.x, dst.y);
 	_dst = dst;
 	_phase = 0;
 	_frames = frames;
 }
 
-void Character::animate(Common::Point pos, int frames, int speed) {
-	_animation = _engine->loadAnimation(_animations[_direction].filename);
+void Character::animate(Common::Point pos, int direction, int speed) {
+	auto jokes = _engine->jokes();
+	auto animationDescription = jokes->animationDescription(direction);
+	_animation = animationDescription? _engine->loadAnimation(animationDescription->filename): nullptr;
 	if (!_animation) {
-		debug("no animation?");
+		warning("no jokes animation %d", direction);
 		_phase = -1;
 		_frames = 0;
+		return;
 	}
 	_animation->speed(speed);
 	_animation->loop(true);
 	_animation->rewind();
 	_phase = 0;
-	_frames = frames;
+	_frames = speed * _animation->frames() / 100;
 	_pos = pos;
 }
 

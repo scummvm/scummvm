@@ -69,6 +69,10 @@ public:
 		_engine(engine), _name(name), _object(object), _animation(nullptr), _enabled(true), _visible(true), _phase(-1), _frames(0), _direction(-1), _movementDirections(0) {
 	}
 
+	const AnimationDescription * animationDescription(uint index) const {
+		return index < _animations.size()? &_animations[index]: nullptr;
+	}
+
 	const Common::String & name() const {
 		return _name;
 	}
@@ -87,7 +91,7 @@ public:
 		_visible = visible;
 	}
 
-	void animate(Common::Point pos, int frames, int speed);
+	void animate(Common::Point pos, int direction, int speed);
 
 	void stop() {
 		_phase = 0;

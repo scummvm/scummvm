@@ -181,6 +181,9 @@ public:
 	Character * currentCharacter() const {
 		return _currentCharacter;
 	}
+	Character * jokes() const {
+		return _jokes;
+	}
 
 	void loadDefaultMouseCursor(const Common::String &name) {
 		_defaultMouseCursorName = name;
@@ -277,6 +280,7 @@ private:
 	Screen *					_currentScreen;
 	Common::String				_currentScreenName;
 	Character *					_currentCharacter;
+	Character *					_jokes;
 	Common::String				_currentCharacterName;
 	Common::String				_nextScreenName;
 	Common::String				_previousScreenName;

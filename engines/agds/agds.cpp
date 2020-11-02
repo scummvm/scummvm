@@ -63,6 +63,7 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 }
 
 AGDSEngine::~AGDSEngine() {
+	delete _jokes;
 	delete _currentCharacter;
 	delete _currentScreen;
 	for (PictureCacheType::iterator i = _pictureCache.begin(); i != _pictureCache.end(); ++i) {
@@ -121,12 +122,20 @@ bool AGDSEngine::load() {
 	initSystemVariables();
 	_nextScreenName = "main";
 
-	Common::File file;
-	file.open("patch.adb");
-	Database patch;
-	patch.open("patch.adb");
+	{
+		Common::File file;
+		file.open("patch.adb");
+		Database patch;
+		patch.open("patch.adb");
 
-	loadPatches(&file, patch);
+		loadPatches(&file, patch);
+	}
+	{
+		Common::File * file = new Common::File();
+		file->open("jokes.chr");
+		_jokes = new Character(this, "jokes", ObjectPtr());
+		_jokes->load(file);
+	}
 
 	return true;
 }
