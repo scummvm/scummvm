@@ -1,6 +1,7 @@
 #include "agds/textLayout.h"
 #include "agds/font.h"
 #include "agds/agds.h"
+#include "agds/character.h"
 #include "agds/object.h"
 #include "common/debug.h"
 
@@ -25,6 +26,9 @@ void TextLayout::reset(AGDSEngine &engine) {
 		Common::String &var = _npc? _npcNotifyVar: _charNotifyVar;
 		if (!var.empty()) {
 			engine.setGlobal(var, 0);
+		}
+		if (!_charDirectionNotifyVar.empty()) {
+			engine.setGlobal(_charDirectionNotifyVar, 0);
 		}
 		engine.reactivate(_process);
 	}
@@ -85,6 +89,16 @@ void TextLayout::layout(AGDSEngine &engine, const Common::String &process, const
 		if (!engine.getGlobal(var))
 			engine.setGlobal(var, 1);
 	}
+	auto character = engine.currentCharacter();
+	if (character) {
+		if (!_charDirectionNotifyVar.empty()) {
+			if (!engine.getGlobal(_charDirectionNotifyVar))
+				engine.setGlobal(_charDirectionNotifyVar, character->direction());
+		} else {
+			warning("fixme: playing jokes.chr animation for direction %d", character->direction());
+		}
+	} else
+		warning("no current character, skipping direction notification");
 }
 
 }

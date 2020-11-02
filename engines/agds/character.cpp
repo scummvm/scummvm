@@ -97,7 +97,7 @@ void Character::load(Common::SeekableReadStream *stream) {
 	delete stream;
 }
 
-void Character::setDirection(int dir) {
+void Character::direction(int dir) {
 	debug("setDirection %d", dir);
 	_direction = dir;
 	_animation = _engine->loadAnimation(_animations[dir].filename);

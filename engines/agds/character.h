@@ -108,7 +108,11 @@ public:
 
 	void moveTo(Common::Point dst, int frames);
 
-	void setDirection(int dir);
+	void direction(int dir);
+
+	int direction() const {
+		return _direction;
+	}
 
 	void paint(Graphics::Surface & backbuffer);
 

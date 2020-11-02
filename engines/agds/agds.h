@@ -178,6 +178,9 @@ public:
 	Character * getCharacter(const Common::String &name) {
 		return _currentCharacterName == name? _currentCharacter: nullptr;
 	}
+	Character * currentCharacter() const {
+		return _currentCharacter;
+	}
 
 	void loadDefaultMouseCursor(const Common::String &name) {
 		_defaultMouseCursorName = name;
