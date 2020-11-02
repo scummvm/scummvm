@@ -84,7 +84,8 @@ Common::String XARCMember::readString(Common::ReadStream &stream) {
 		c = stream.readByte();
 		if (stream.eos()) {
 			c = 0;
-		} else {
+		}
+		if (c != 0) {
 			str += c;
 		}
 	}
