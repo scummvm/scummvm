@@ -21,7 +21,9 @@
  */
 
 #include "twine/holomap.h"
+#include "common/memstream.h"
 #include "twine/gamestate.h"
+#include "twine/hqr.h"
 #include "twine/interface.h"
 #include "twine/renderer.h"
 #include "twine/resources.h"
@@ -34,6 +36,30 @@
 namespace TwinE {
 
 Holomap::Holomap(TwinEEngine *engine) : _engine(engine) {}
+
+bool Holomap::loadLocations() {
+	uint8 *locationsPtr;
+	const int32 locationsSize = HQR::getAllocEntry(&locationsPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWINFO);
+	if (locationsSize == 0) {
+		warning("Could not find holomap locations at index %i in %s", RESSHQR_HOLOARROWINFO, Resources::HQR_RESS_FILE);
+		return false;
+	}
+
+	Common::MemoryReadStream stream(locationsPtr, locationsSize);
+	_numLocations = locationsSize / sizeof(Location);
+	if (_numLocations > NUM_LOCATIONS) {
+		warning("Amount of locations (%i) exceeds the maximum of %i", _numLocations, NUM_LOCATIONS);
+		return false;
+	}
+
+	for (int i = 0; i < _numLocations; i++) {
+		_locations[i].x = stream.readUint16LE();
+		_locations[i].y = stream.readUint16LE();
+		_locations[i].z = stream.readUint16LE();
+		_locations[i].textIndex = stream.readUint16LE();
+	}
+	return true;
+}
 
 void Holomap::setHolomapPosition(int32 locationIdx) {
 	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->holomapFlags));
