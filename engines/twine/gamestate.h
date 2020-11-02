@@ -27,6 +27,7 @@
 #include "common/scummsys.h"
 #include "twine/actor.h"
 #include "twine/menu.h"
+#include "twine/holomap.h"
 
 namespace TwinE {
 
@@ -123,7 +124,7 @@ public:
 	/** Inventory used flags */
 	uint8 inventoryFlags[NUM_INVENTORY_ITEMS];
 
-	uint8 holomapFlags[150]; // GV14
+	uint8 holomapFlags[NUM_LOCATIONS]; // GV14
 
 	char playerName[30];
 
