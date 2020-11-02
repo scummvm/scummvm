@@ -250,6 +250,11 @@ bool BaseRenderOpenGL3DShader::disableShadows() {
 
 void BaseRenderOpenGL3DShader::displayShadow(BaseObject *object, const Math::Vector3d &lightPos, bool lightPosRelative) {
 	if (_flatShadowMaskShader) {
+		if (object->_shadowType <= SHADOW_SIMPLE) {
+			// TODO: Display simple shadow here
+			return;
+		}
+
 		Math::Vector3d position = lightPos;
 		Math::Vector3d target = object->_posVector;
 
