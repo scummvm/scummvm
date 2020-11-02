@@ -68,6 +68,10 @@ void SurrenderProcess::run() {
 		return;
 	}
 
+	// do nothing while we are not in the fast area
+	if (!a->hasFlags(Item::FLG_FASTAREA))
+		return;
+
 	int animating = Kernel::get_instance()->getNumProcesses(_itemNum, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE);
 	if (animating) {
 		// already busy.
