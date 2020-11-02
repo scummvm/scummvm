@@ -20,17 +20,16 @@
       :hidden:
 
       using_scummvm/the_launcher
-      using_scummvm/adding_games
+      using_scummvm/add_play_games
       using_scummvm/save_load_games
       using_scummvm/keyboard_shortcuts
-
+      using_scummvm/how_to_settings
 
 .. toctree::
       :caption: Settings
       :glob:
       :hidden:
 
-      settings/how_to
       settings/game
       settings/engine
       settings/graphics
@@ -42,6 +41,13 @@
       settings/cloud
       settings/lan
       settings/accessibility
+
+.. toctree::
+      :caption: Guides
+      :glob:
+      :hidden:
+
+      guides/*
 
 .. toctree::
       :caption: Games
@@ -65,7 +71,7 @@
       :glob:
       :hidden:
 
-      help/reporting_bugs
+      help/report_bugs
       help/contact
       help/faq
 
@@ -104,10 +110,15 @@ How do I...?
 So you have ScummVM installed, but now you need to know how to add and play some games! We have lots of useful information to help you out:
 
 - **Understanding the interface**: :doc:`using_scummvm/the_launcher` 
-- **Playing games**: :doc:`using_scummvm/adding_games` | :doc:`using_scummvm/save_load_games` | :doc:`using_scummvm/keyboard_shortcuts`
-- **Settings**: :doc:`settings/how_to` 
+- **Playing games**: :doc:`using_scummvm/add_play_games` | :doc:`using_scummvm/save_load_games` | :doc:`using_scummvm/keyboard_shortcuts`
+- **Settings**: :doc:`using_scummvm/how_to_settings` 
 
+Definitive guides
+=====================
 
+We do some deep dives into ScummVM features - from audio settings to our brand new Cloud functionality. Check out our Guides section!
+
+:doc:`guides/understand_audio` | :doc:`guides/understand_graphics` 
 
 The games!
 ============
@@ -134,7 +145,7 @@ ScummVM is still under development. While we do our best to make sure that as ma
 
 If you are having problems with any aspect of ScummVM, take a look at our help section.
 
-:doc:`help/faq` | :doc:`How to report a bug <help/reporting_bugs>` | :doc:`help/contact`
+:doc:`help/faq` | :doc:`How to report a bug <help/report_bugs>` | :doc:`help/contact`
 
 What's changed since I was last here?
 ======================================
