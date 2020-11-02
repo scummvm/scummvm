@@ -439,12 +439,12 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 			}
 			// Drawing sprite actors
 			else if (flags == 0x1000) {
-				int32 spriteWidth, spriteHeight;
-				uint8 *spritePtr = _engine->_resources->spriteTable[actor2->entity];
+				const uint8 *spritePtr = _engine->_resources->spriteTable[actor2->entity];
 
 				// get actor position on screen
 				_engine->_renderer->projectPositionOnScreen(actor2->x - _engine->_grid->cameraX, actor2->y - _engine->_grid->cameraY, actor2->z - _engine->_grid->cameraZ);
 
+				int32 spriteWidth, spriteHeight;
 				_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
 
 				// calculate sprite position on screen
@@ -562,9 +562,9 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 			// process overlay type
 			switch (overlay->type) {
 			case koSprite: {
-				int32 spriteWidth, spriteHeight;
-				uint8 *spritePtr = _engine->_resources->spriteTable[overlay->info0];
+				const uint8 *spritePtr = _engine->_resources->spriteTable[overlay->info0];
 
+				int32 spriteWidth, spriteHeight;
 				_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
 
 				const int16 offsetX = *((const int16 *)(_engine->_resources->spriteBoundingBoxPtr + (overlay->info0 * 16)));
@@ -586,8 +586,8 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				char text[10];
 				snprintf(text, sizeof(text), "%d", overlay->info0);
 
-				int32 textLength = _engine->_text->getTextSize(text);
-				int32 textHeight = 48;
+				const int32 textLength = _engine->_text->getTextSize(text);
+				const int32 textHeight = 48;
 
 				renderLeft = overlay->x - (textLength / 2);
 				renderTop = overlay->y - 24;
@@ -606,14 +606,13 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				break;
 			}
 			case koNumberRange: {
+				const int32 range = _engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->lbaTime - 50);
+
 				char text[10];
-
-				int32 range = _engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->lbaTime - 50);
-
 				sprintf(text, "%d", range);
 
-				int32 textLength = _engine->_text->getTextSize(text);
-				int32 textHeight = 48;
+				const int32 textLength = _engine->_text->getTextSize(text);
+				const int32 textHeight = 48;
 
 				renderLeft = overlay->x - (textLength / 2);
 				renderTop = overlay->y - 24;
@@ -632,7 +631,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				break;
 			}
 			case koInventoryItem: {
-				int32 item = overlay->info0;
+				const int32 item = overlay->info0;
 
 				_engine->_interface->drawSplittedBox(10, 10, 69, 69, 0);
 				_engine->_interface->setClip(10, 10, 69, 69);
@@ -651,11 +650,10 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 			}
 			case koText: {
 				char text[256];
-
 				_engine->_text->getMenuText(overlay->info0, text, sizeof(text));
 
-				int32 textLength = _engine->_text->getTextSize(text);
-				int32 textHeight = 48;
+				const int32 textLength = _engine->_text->getTextSize(text);
+				const int32 textHeight = 48;
 
 				renderLeft = overlay->x - (textLength / 2);
 				renderTop = overlay->y - 24;
@@ -725,8 +723,6 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 }
 
 void Redraw::drawBubble(int32 actorIdx) {
-	int32 spriteWidth, spriteHeight;
-	uint8 *spritePtr;
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	// get actor position on screen
@@ -737,7 +733,8 @@ void Redraw::drawBubble(int32 actorIdx) {
 		bubbleActor = actorIdx;
 	}
 
-	spritePtr = _engine->_resources->spriteTable[bubbleSpriteIndex];
+	const uint8 *spritePtr = _engine->_resources->spriteTable[bubbleSpriteIndex];
+	int32 spriteWidth, spriteHeight;
 	_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
 
 	// calculate sprite position on screen
