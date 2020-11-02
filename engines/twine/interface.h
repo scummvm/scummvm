@@ -42,17 +42,17 @@ class Interface {
 private:
 	TwinEEngine *_engine;
 	int32 checkClipping(int32 x, int32 y);
+	int32 textWindowTopSave = 0;
+	int32 textWindowLeftSave = 0;
+	int32 textWindowRightSave = 0;
+	int32 textWindowBottomSave = 0;
 
 public:
 	Interface(TwinEEngine *engine);
 	int32 textWindowTop = 0;
-	int32 textWindowTopSave = 0;
 	int32 textWindowLeft = 0;
-	int32 textWindowLeftSave = 0;
 	int32 textWindowRight = 0;
-	int32 textWindowRightSave = 0;
 	int32 textWindowBottom = 0;
-	int32 textWindowBottomSave = 0;
 
 	/**
 	 * Draw button line
