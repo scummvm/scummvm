@@ -52,16 +52,11 @@ enum UIViewSwipeDirection {
 	kUIViewSwipeRight = 8
 };
 
-enum GraphicsModes {
-	kGraphicsModeLinear = 0,
-	kGraphicsModeNone = 1
-};
-
 struct VideoContext {
 	VideoContext() : asprectRatioCorrection(), screenWidth(), screenHeight(), overlayVisible(false),
 	                 overlayWidth(), overlayHeight(), mouseX(), mouseY(),
 	                 mouseHotspotX(), mouseHotspotY(), mouseWidth(), mouseHeight(),
-	                 mouseIsVisible(), graphicsMode(kGraphicsModeLinear),
+	                 mouseIsVisible(), filtering(false),
 	                 shakeXOffset(), shakeYOffset() {
 	}
 
@@ -83,7 +78,7 @@ struct VideoContext {
 	Graphics::Surface mouseTexture;
 
 	// Misc state
-	GraphicsModes graphicsMode;
+	bool filtering;
 	int shakeXOffset;
 	int shakeYOffset;
 };

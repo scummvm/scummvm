@@ -44,30 +44,6 @@ void OSystem_IPHONE::initVideoContext() {
 	_videoContext = [g_iPhoneViewInstance getVideoContext];
 }
 
-const OSystem::GraphicsMode *OSystem_IPHONE::getSupportedGraphicsModes() const {
-	return s_supportedGraphicsModes;
-}
-
-int OSystem_IPHONE::getDefaultGraphicsMode() const {
-	return kGraphicsModeLinear;
-}
-
-bool OSystem_IPHONE::setGraphicsMode(int mode) {
-	switch (mode) {
-	case kGraphicsModeNone:
-	case kGraphicsModeLinear:
-		_videoContext->graphicsMode = (GraphicsModes)mode;
-		return true;
-
-	default:
-		return false;
-	}
-}
-
-int OSystem_IPHONE::getGraphicsMode() const {
-	return _videoContext->graphicsMode;
-}
-
 #ifdef USE_RGB_COLOR
 Common::List<Graphics::PixelFormat> OSystem_IPHONE::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> list;
