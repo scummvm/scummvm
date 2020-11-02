@@ -40,29 +40,37 @@ These controls can also be manually configured in the :doc:`Keymaps tab <../sett
 
 See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
 
+.. |plus| raw:: html
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M8 2a.75.75 0 01.75.75v4.5h4.5a.75.75 0 010 1.5h-4.5v4.5a.75.75 0 01-1.5 0v-4.5h-4.5a.75.75 0 010-1.5h4.5v-4.5A.75.75 0 018 2z"></path></svg>
+
+.. |minus| raw:: html
+
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M2 8a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H2.75A.75.75 0 012 8z"></path></svg>
+
 .. csv-table:: 
-  	:widths: 40 60 
+  	:width: 100%  
   	:header-rows: 1
 
         Button,Action
         Left stick,Mouse
-        R + Left stick,Slow Mouse
-        B,Left mouse button
-        A,Right mouse button
-        DPad,"Keypad 'Cursor' Keys"
-        R + DPad,"Diagonal Keypad 'Cursor' Keys"
-        L Trigger,Game menu (F5)
-        R Trigger,Shift 
-        Y,Period
-        R + Y,Space 
-        X,Escape 
-        R + X,Return
-        Plus,Global main menu (GMM)
-        Minus,Toggle virtual keyboard
-        R + Minus,AGI predictive input dialog
+        Left stick + R button,Slow Mouse
+        :kbd:`B`,Left mouse button
+        :kbd:`A`,Right mouse button
+        Directional buttons,"Keypad 'Cursor' Keys"
+        Directional buttons + R button ,"Diagonal Keypad 'Cursor' Keys"
+        L button,Game menu (F5)
+        R button,Shift 
+        :kbd:`Y`,Period
+        :kbd:`Y` + R button,Space 
+        :kbd:`X`,Escape 
+        :kbd:`X` + R button,Return
+        |plus|,Global main menu (GMM)
+        |minus|,Toggle virtual keyboard
+        |minus| + R button,AGI predictive input dialog
     
 .. csv-table::
-    :widths: 40 60
+    :width: 100% 
     :header-rows: 2
 
         "Touch Controls (Touchpad Mouse Mode Off, Default)",
@@ -74,7 +82,7 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
         `Three finger drag`_ ,Move pointer while right mouse button is held down (drag and drop). The pointer directly follows the first finger. The drag is ended when the last finger is removed.
     
 .. csv-table::
-    :widths: 40 60 
+    :width: 100%  
     :header-rows: 2
 
         Touch Controls (Touchpad Mouse Mode On),
@@ -97,7 +105,7 @@ Touch support
 
 For multi-touch gestures, the fingers have to be far enough apart from each other that the Switch will not erroneously recognize them as a single finger, otherwise the pointer will jump around.
 
-The touch control scheme can be switched in the global settings. Go to **Options > Controls > Touchpad mouse mode**.
+The touch control scheme can be switched in the global settings. Go to **Options > Control > Touchpad mouse mode**.
 
     - When touchpad mouse mode is off (default), the touch controls are direct. The pointer always jumps to the finger.
 
