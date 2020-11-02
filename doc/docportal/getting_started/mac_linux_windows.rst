@@ -95,4 +95,4 @@ Alternatively, you can download the Windows zipped file appropriate to your oper
 Next steps...
 -----------------------
 
-ScummVM is now installed and ready for you to :doc:`add your games <../using_scummvm/adding_games>`!
+ScummVM is now installed and ready for you to :doc:`add your games <../using_scummvm/add_play_games>`!

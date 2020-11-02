@@ -44,7 +44,7 @@ Q: Where do I get the games?
 
 Q: How do I install games from my floppy discs/CDs?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-**A:** Generally speaking, you do not need to install the games. You only need to point ScummVM to the game files contained on these discs. See :doc:`../using_scummvm/adding_games`. 
+**A:** Generally speaking, you do not need to install the games. You only need to point ScummVM to the game files contained on these discs. See :doc:`../using_scummvm/add_play_games`. 
 
 Q: Do I need the original game discs?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -56,11 +56,11 @@ The best place to check is the `Compatibility page <https://www.scummvm.org/comp
 
 Q: I have saved games from when I played the original game - can I use these with ScummVM?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-**A:** This is only supported for a select number of games. See :ref:`originalsaves`.
+**A:** This is only supported for a select number of games. See the `wiki <wiki.scummvm.org>`_. 
 
 Q: How do I launch a game from the game folder?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-**A:** Games must be added to and started from :doc:`../using_scummvm/the_launcher`, they cannot be started directly from the game files. See :doc:`../using_scummvm/adding_games`. 
+**A:** Games must be added to and started from :doc:`../using_scummvm/the_launcher`, they cannot be started directly from the game files. See :doc:`../using_scummvm/add_play_games`. 
 
 
 Troubleshooting
@@ -78,7 +78,7 @@ You can also find error messages in the ScummVM log file. See :ref:`logfile`.
 
 Q: I think I found a bug. What do I do?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-**A:** See :doc:`reporting_bugs`. 
+**A:** See :doc:`report_bugs`. 
 
 Games
 ********
@@ -88,11 +88,11 @@ Q: Help! My game won't run!
 
 A: First, make sure your game is supported. See the `Compatibility page <https://www.scummvm.org/compatibility/>`_ on our website. 
 
-Check that you have all the required datafiles. See :doc:`../using_scummvm/adding_games`.
+Check that you have all the required datafiles. See :doc:`../using_scummvm/add_play_games`.
 
 Ask on the forums or on Discord whether your game is supported on the platform you're trying to play it on. See :doc:`contact`.
 
-If you think the game should run, and it doesn't, report it as a bug. See :doc:`reporting_bugs`. 
+If you think the game should run, and it doesn't, report it as a bug. See :doc:`report_bugs`. 
 
 Q: I installed my game but ScummVM can't find it... What do I do?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -30,7 +30,7 @@ Transferring game files
 
 Transfer game files onto the PSP as described in the installation section above. They can be copied to any folder; location doesn't matter. 
 
-For more information, see :doc:`../using_scummvm/adding_games`. 
+For more information, see :doc:`../using_scummvm/add_play_games`. 
 
 Controls
 =================
@@ -38,7 +38,7 @@ Controls
 Default control mapping
 *********************************
 
-These controls can also be manually configured in the :doc:`Keymaps tab<../settings/keymaps>`.
+These controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`.
 
 See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
 
