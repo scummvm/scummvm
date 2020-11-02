@@ -63,7 +63,7 @@ bool TextManager::isInFont(const Common::String &theText) {
 	if (theText.empty())
 		return 0;
 
-	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
+	Common::U32String str32 = theText.decode(Common::kUtf8);
 
 	// We don't want to compare strings. Only single characters allowed!
 	if (str32.size() > 1)
@@ -72,11 +72,11 @@ bool TextManager::isInFont(const Common::String &theText) {
 	uint32 c = str32[0];
 
 	// check if font order contains the utf8 char
-	return _fontOrder.getU32String().contains(c);
+	return _fontOrder.contains(c);
 }
 
 int TextManager::stringLength(const Common::String &theText) {
-	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
+	Common::U32String str32 = theText.decode(Common::kUtf8);
 	return str32.size();
 }
 
@@ -86,7 +86,7 @@ int TextManager::stringWidth(const Common::String &theText) {
 	if (_fontTable.empty())
 		return 0;
 
-	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
+	Common::U32String str32 = theText.decode(Common::kUtf8);
 
 	for (uint i = 0; i < str32.size(); ++i) {
 		uint32 c = str32[i];
@@ -102,7 +102,7 @@ void TextManager::pasteString(const Common::String &theText, int xOff, int y, Sp
 
 	xOff += (int)((float)(_fontSpace >> 1) / g_sludge->_gfxMan->getCamZoom());
 
-	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
+	Common::U32String str32 = theText.decode(Common::kUtf8);
 
 	for (uint32 i = 0; i < str32.size(); ++i) {
 		uint32 c = str32[i];
@@ -116,7 +116,7 @@ void TextManager::pasteStringToBackdrop(const Common::String &theText, int xOff,
 	if (_fontTable.empty())
 		return;
 
-	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
+	Common::U32String str32 = theText.decode(Common::kUtf8);
 
 	xOff += _fontSpace >> 1;
 	for (uint32 i = 0; i < str32.size(); ++i) {
@@ -131,7 +131,7 @@ void TextManager::burnStringToBackdrop(const Common::String &theText, int xOff, 
 	if (_fontTable.empty())
 		return;
 
-	Common::U32String str32 = UTF8Converter::convertUtf8ToUtf32(theText);
+	Common::U32String str32 = theText.decode(Common::kUtf8);
 
 	xOff += _fontSpace >> 1;
 	for (uint i = 0; i < str32.size(); ++i) {
@@ -143,14 +143,14 @@ void TextManager::burnStringToBackdrop(const Common::String &theText, int xOff, 
 }
 
 bool TextManager::loadFont(int filenum, const Common::String &charOrder, int h) {
-	_fontOrder.setUTF8String(charOrder);
+	_fontOrder = charOrder.decode(Common::kUtf8);
 
 	g_sludge->_gfxMan->forgetSpriteBank(_theFont);
 
 	_loadedFontNum = filenum;
 
 	// get max value among all utf8 chars
-	Common::U32String fontOrderString = _fontOrder.getU32String();
+	Common::U32String fontOrderString = _fontOrder;
 
 	// create an index table from utf8 char to the index
 	if (!_fontTable.empty()) {
@@ -178,7 +178,7 @@ void TextManager::saveFont(Common::WriteStream *stream) {
 	if (!_fontTable.empty()) {
 		stream->writeUint16BE(_loadedFontNum);
 		stream->writeUint16BE(_fontHeight);
-		writeString(_fontOrder.getUTF8String(), stream);
+		writeString(_fontOrder.encode(Common::kUtf8), stream);
 	}
 	stream->writeSint16LE(_fontSpace);
 }
