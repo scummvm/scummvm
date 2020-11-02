@@ -1320,7 +1320,7 @@ void Process::setCharacter() {
 			character->position(region->center);
 		} else
 			warning("no region %s", regionName.c_str());
-		character->setDirection(dir);
+		character->direction(dir);
 	} else
 		warning("no character %s", id.c_str());
 }
@@ -1468,8 +1468,9 @@ void Process::setCharacterNotifyVars() {
 	Common::String arg1 = popString();
 
 	debug("setCharacterNotifyVars, tell: %s, direction: %s", arg1.c_str(), arg2.c_str());
+	auto character = _engine->currentCharacter();
 	_engine->setGlobal(arg1, 0);
-	_engine->setGlobal(arg2, 0); //FIXME: pass current direction
+	_engine->setGlobal(arg2, character? character->direction(): 0);
 	_engine->textLayout().setCharNotifyVar(arg1);
 	_engine->textLayout().setCharDirectionNotifyVar(arg2);
 }

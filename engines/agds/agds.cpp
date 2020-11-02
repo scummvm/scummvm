@@ -847,7 +847,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		auto character = getCharacter(id);
 		if (character) {
 			character->position(Common::Point(x, y));
-			character->setDirection(dir);
+			character->direction(dir);
 		} else
 			warning("no character");
 		int n = 2;
