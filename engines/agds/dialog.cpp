@@ -195,7 +195,7 @@ Common::String Dialog::getNextDialogSound() {
 	if (carry != 0)
 		warning("sample index overflow, %s", sample.c_str());
 
-	debug("returning sample name %s", sample.c_str());
+	debug("returning sample name %s", currentSample.c_str());
 	return currentSample + ".ogg";
 }
 
