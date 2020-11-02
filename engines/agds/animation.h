@@ -59,6 +59,10 @@ public:
 
 	void freeFrame();
 
+	int frames() const {
+		return _frames;
+	}
+
 	const Common::Point & position() const {
 		return _position;
 	}
