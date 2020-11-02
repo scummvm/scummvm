@@ -55,7 +55,7 @@ Edit Game
 
 Opens the game settings window. This window also opens whenever a game is added from the Launcher.
 
-Use this window to configure a game individually by overriding the default global game settings you have set via the **Options** window. You can also change the game's language and original platform, if applicable. For more information, see the :doc:`../settings/how_to` page. 
+Use this window to configure a game individually by overriding the default global game settings you have set via the **Options** window. You can also change the game's language and original platform, if applicable. For more information, see the :doc:`../using_scummvm/how_to_settings` page. 
 
 
 Remove Game
@@ -67,7 +67,7 @@ Removes the highlighted game from the list.
 Options
 -------
 
-Opens the global settings window. Use this window to define global game settings, as well as change a number of the ScummVM Launcher settings. For more information, see the :doc:`../settings/how_to` page
+Opens the global settings window. Use this window to define global game settings, as well as change a number of the ScummVM Launcher settings. For more information, see the :doc:`../using_scummvm/how_to_settings` page
 
 About
 -----

@@ -1,6 +1,6 @@
 
 =======================
-Reporting a bug
+Report a bug
 =======================
 
 To report a bug, go to the ScummVM `Issue Tracker <https://bugs.scummvm.org/>`_ and log in with your GitHub account. 

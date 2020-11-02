@@ -1,6 +1,6 @@
 
 =================================
-Adding and playing games
+Add and play games
 =================================
 
 Accessing the game files
@@ -36,9 +36,9 @@ For games downloaded from digital distributors such as `GOG.com  <gog.com>`__, `
 
 .. tip::
 
-   A great way to share game files and automatically back up and sync your saved game states between devices running ScummVM is to connect a Cloud storage service such as Dropbox or Google Drive. Detailed instructions for setting this up can be found on the :ref:`Cloud settings page <howtocloud>`.
+   A great way to share game files and automatically back up and sync your saved game states between devices running ScummVM is to connect a Cloud storage service such as Dropbox or Google Drive. Detailed instructions for setting this up can be found on the :doc:`../guides/connect_cloud` guide.
 
-   For devices on the same local network, ScummVM can run a web server to allow the transfer of files. Detailed instructions can be found on the :doc:`LAN settings page <../settings/lan>`. This is a good option if you do not wish to connect a Cloud service, although it doesn't offer as much functionality. 
+   For devices on the same local network, ScummVM can run a web server to allow the transfer of files. Detailed instructions can be found on the :doc:`../guides/local_webserver`. This is a good option if you do not wish to connect a Cloud service, although it doesn't offer as much functionality. 
 
 
 Multi-disc games
@@ -108,7 +108,7 @@ Adding the games to the Launcher
 
 .. note::
 
-   You may choose which file browser to use by setting the **Use Native file browser  option in the :doc:`Misc <../settings/misc>` tab of the global settings. 
+   You may choose which file browser to use by setting the **Use Native file browser**  option in the :doc:`Misc <../settings/misc>` tab of the global settings. 
 
 5.  A dialog opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should work at the default settings. Click **Ok**. 
 
