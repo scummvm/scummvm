@@ -2,9 +2,6 @@
 Control
 =================
 
-Overview
-==========
-
 The Control tab
 ----------------
 

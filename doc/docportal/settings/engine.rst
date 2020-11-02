@@ -2,9 +2,6 @@
 Engine
 =====================
 
-Overview
-=========
-
 Engine settings are those settings that are unique to a particular game or game engine. To find out which engine powers your game, have a look at the Supported Games `Wiki page
 <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_. 
 
