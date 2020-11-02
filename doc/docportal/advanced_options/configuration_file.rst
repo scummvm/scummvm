@@ -14,40 +14,83 @@ The configuration file saves to different default locations, depending on the pl
 
 
 
-.. tabs::
+.. tabbed:: macOS
 
-	.. tab:: Mac OSX
+	.. panels::
+		:column: col-lg-12 mb-2
 
-		``~/Library/Preferences/ScummVM Preferences``, where ``~`` is your Home directory. To see the Libraries folder you will need to view hidden files.
+		``~/Library/Preferences/ScummVM Preferences``, where ``~`` is your Home directory. 
 
-		Note that if an earlier version of ScummVM was installed on your system, the previous default location of ``~/.scummvmrc`` will be kept.
+		.. note::
+
+			If an earlier version of ScummVM was installed on your system, the configuration file remains in the previous default location of ``~/.scummvmrc``.
+		
+		.. tip::
+			
+			To see the Libraries folder you will need to view hidden files by using the keyboard shortcut :kbd:`Cmd + Shift + . ` 
+		
 	
-	.. tab:: Windows
+.. tabbed:: Windows
 
-		**95/98/ME**: 
+	.. panels::
+		:column: col-lg-12 mb-2
+
+		95/98/ME
+		^^^^^^^^^^ 
+	
 		``<windir>\scummvm.ini``
+	
+		---
+		:column: col-lg-12 mb-2
 
-		**Windows NT4**: ``<windir>\Profiles\username\Application Data\ScummVM\scummvm.ini``
+		Windows NT4 
+		^^^^^^^^^^^^
+
+		``<windir>\Profiles\username\Application Data\ScummVM\scummvm.ini``
+
+		---
+		:column: col-lg-12 mb-2
+
+		Windows 2000/XP
+		^^^^^^^^^^^^^^^^^
+		``\Documents and Settings\username\Application Data\ScummVM\scummvm.ini``
+
+		---
+		:column: col-lg-12 mb-2
+
+		Window 7/Vista
+		^^^^^^^^^^^^^^^^
+		``\Users\username\AppData\Roaming\ScummVM\scummvm.ini``
+
+	.. tip::
 
 		``<windir>`` refers to the Windows directory. Most commonly, this is ``C:\WINDOWS``.
-        
-		**Windows 2000/XP**: ``\Documents and Settings\username\Application Data\ScummVM\scummvm.ini``
 
-		**Window 7/Vista**: ``\Users\username\AppData\Roaming\ScummVM\scummvm.ini``
+	.. note::
+	
+		If an earlier version of ScummVM was installed under Windows, the configuration file remains in the previous default location of ``<windir>\scummvm.ini`` 
 
-		Note that if an earlier version of ScummVM was installed under Windows, the previous default location of ``<windir>\scummvm.ini`` will be kept.
+.. tabbed:: Linux/Unix
 
-	.. tab:: Linux/Unix
+	.. panels::
+		:column: col-lg-12 mb-2
 
 		We follow the XDG Base Directory Specification. This means our configuration can be found in ``$XDG_CONFIG_HOME/scummvm/scummvm.ini``
 
-		If XDG_CONFIG_HOME is not defined or empty, ``~/.config`` will be used, where ``~`` is your Home directory. 
+		If XDG_CONFIG_HOME is not defined or empty, ``~/.config`` is used, where ``~`` is your Home directory. 
 		
-		Note that ``.config`` is a hidden directory; to view it use ``ls -a`` on the command line. If you are using a GUI file manager, go to **View > Show Hidden Files**, or use the keyboard shortcut :kbd:`Ctrl + H`.
-
 		If ScummVM was installed using Snap, the configuration file can be found at ``~/snap/scummvm/current/.config/scummvm/scummvm.ini``
 
-	.. tab:: Other
+		.. note::
+			
+			``.config`` is a hidden directory. To view it use ``ls -a`` on the command line. If you are using a GUI file manager, go to **View > Show Hidden Files**, or use the keyboard shortcut :kbd:`Ctrl + H`.
+
+	
+
+.. tabbed:: Other
+
+	.. panels::
+		:column: col-lg-12 mb-2
 
 		See the relevant Platform page for details. 
 
@@ -55,7 +98,7 @@ The configuration file saves to different default locations, depending on the pl
 Using the configuration file
 ==================================
 
-Global settings are listed under the ``[scummvm]`` heading. Global ../settings/keymaps settings are listed under the ``[keymapper]`` heading. Game-specific settings, including keymaps, are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keywords_ to change settings. 
+Global settings are listed under the ``[scummvm]`` heading. Global :doc:`Keymaps settings <../settings/keymaps>` are listed under the ``[keymapper]`` heading. Game-specific settings, including keymaps, are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keywords_ to change settings. 
 
 
 Example of a configuration file
@@ -105,7 +148,8 @@ Keywords
 There are many recognized configuration keywords. In the table below, each keyword is linked to an explanatory description in the Settings pages. 
 
 .. csv-table:: 
-  	:widths: 25, 25, 15, 35
+  	:width: 100% 
+	:widths: 20 20 10 50
   	:header-rows: 1 
 
 		Keyword,Type,Default,Options
@@ -293,11 +337,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 	- timidity
 	"
 		"music_driver [game]",string, auto, "
-	The same options as 
-	
-	``music_driver in [scummvm]`` 
-	
-	plus:
+	The same options as ``music_driver in [scummvm]`` plus:
 
 	- towns
 	- C64
