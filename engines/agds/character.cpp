@@ -101,6 +101,7 @@ void Character::direction(int dir) {
 	debug("setDirection %d", dir);
 	_direction = dir;
 	_animation = _engine->loadAnimation(_animations[dir].filename);
+	_animationPos = Common::Point();
 	if (!_animation) {
 		debug("no animation?");
 		_phase = -1;
@@ -130,14 +131,14 @@ void Character::animate(Common::Point pos, int direction, int speed) {
 	_animation->rewind();
 	_phase = 0;
 	_frames = speed * _animation->frames() / 100;
-	_pos = pos;
+	_animationPos = pos;
 }
 
 void Character::paint(Graphics::Surface &backbuffer) {
 	if (!_enabled || !_visible || !_animation)
 		return;
 
-	Common::Point pos = _pos;
+	Common::Point pos = _pos + _animationPos;
 	if (_phase >= 0 && _phase < _frames) {
 		auto screen = _engine->getCurrentScreen();
 		_animation->scale(screen? screen->getZScale(_pos.y): 1);
