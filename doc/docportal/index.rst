@@ -99,26 +99,68 @@ First steps
 
 We have guides available to show you how to get ScummVM up and running: 
 
-- **Quickstart**: :doc:`getting_started/mac_linux_windows`
-- **Phones and Tablets**: :doc:`other_platforms/ios` | :doc:`other_platforms/android`
-- **Consoles**: :doc:`other_platforms/ps_vita` | :doc:`other_platforms/psp` | :doc:`other_platforms/nintendo_switch`
+.. panels::
+      :container: container-fluid text-center mb-4
+      
+
+      Getting started
+      ^^^^^^^^^^^^
+
+      :doc:`getting_started/mac_linux_windows`
+      ---
+
+      Phones and Tablets
+      ^^^^^^^^^^^^^^^^^^^
+      :doc:`other_platforms/ios` 
+      
+      :doc:`other_platforms/android`
+
+      ---
+
+      Consoles
+      ^^^^^^^^^^^^^^^^^^^
+      :doc:`other_platforms/ps_vita`
+      
+      :doc:`other_platforms/psp` 
+      
+      :doc:`other_platforms/nintendo_switch`
+
+      ---
+
+      Other systems
+      ^^^^^^^^^^^^^^^
 
 
-How do I...?
-=============
+
+How do I use ScummVM?
+=========================
 
 So you have ScummVM installed, but now you need to know how to add and play some games! We have lots of useful information to help you out:
 
-- **Understanding the interface**: :doc:`using_scummvm/the_launcher` 
-- **Playing games**: :doc:`using_scummvm/add_play_games` | :doc:`using_scummvm/save_load_games` | :doc:`using_scummvm/keyboard_shortcuts`
-- **Settings**: :doc:`using_scummvm/how_to_settings` 
+.. panels::
+      :container: text-center mb-4
 
-Definitive guides
-=====================
+      Understand the interface
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      :doc:`using_scummvm/the_launcher` 
 
-We do some deep dives into ScummVM features - from audio settings to our brand new Cloud functionality. Check out our Guides section!
+      ---
 
-:doc:`guides/understand_audio` | :doc:`guides/understand_graphics` 
+      Play games
+      ^^^^^^^^^^^^^^
+      :doc:`using_scummvm/add_play_games`
+
+      :doc:`using_scummvm/save_load_games`
+
+      :doc:`using_scummvm/keyboard_shortcuts`
+
+      ---
+      :column: col-lg-12
+
+      Change settings
+      ^^^^^^^^^^^^^^^^^^^^^
+      :doc:`using_scummvm/how_to_settings`
+
 
 The games!
 ============
@@ -130,12 +172,42 @@ If you haven't had a floppy disc or even a CD in your possession for a while, we
 Make sure you check out the `compatibility list <https://www.scummvm.org/compatibility/>`_ on our website and the `Supported Games page <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ on our wiki before you buy a game, to ensure it can run with ScummVM. 
 
 
+Definitive guides
+=====================
+
+In our Guides section, we do some deep dives into ScummVM features. 
+
+.. panels::
+      :container: text-center mb-4
+
+      Settings
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      :doc:`guides/understand_audio`
+
+      :doc:`guides/understand_graphics` 
+
+      ---
+
+      How to:
+      ^^^^^^^^^^^^^^
+      :doc:`guides/local_webserver`
+
+      :doc:`guides/connect_cloud`
+
+
 Advanced options
 ============================
 
 For our more experienced users, ScummVM has a command line interface, as well as the ability to edit settings directly in a configuration file. 
 
-:doc:`advanced_options/configuration_file` | :doc:`advanced_options/command_line`
+
+.. panels::
+      :container: text-center mb-4
+      :column: col-lg-12
+
+      :doc:`advanced_options/configuration_file` 
+      
+      :doc:`advanced_options/command_line`
 
 
 Getting help
@@ -145,7 +217,15 @@ ScummVM is still under development. While we do our best to make sure that as ma
 
 If you are having problems with any aspect of ScummVM, take a look at our help section.
 
-:doc:`help/faq` | :doc:`How to report a bug <help/report_bugs>` | :doc:`help/contact`
+.. panels::
+      :container: text-center mb-4
+      :column: col-lg-12
+
+      :doc:`help/faq` 
+     
+      :doc:`How to report a bug <help/report_bugs>` 
+      
+      :doc:`help/contact`
 
 What's changed since I was last here?
 ======================================
@@ -159,6 +239,6 @@ ScummVM is an open-source project.
 
 If you enjoy ScummVM, feel free to donate using the PayPal button on the `ScummVM homepage <https://www.scummvm.org>`__. This will help us buy the utilities to develop ScummVM faster and more efficiently.
 
-If you cannot donate but you have the skills, you can help us by contributing a patch!
+If you cannot donate but you have coding or writing skills, you can help us by contributing!
 
-- **Contributing Guidelines**: `Code <#>`__ | `Documentation <#>`__
+For more information, see the `Contribution guide <#>`_ on our wiki.
