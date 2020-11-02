@@ -97,6 +97,8 @@ public:
 
 	virtual void setColor(byte color) { _color = color; translateColor(); }
 
+	bool isScummvmKorTarget();
+
 	void saveLoadWithSerializer(Common::Serializer &ser);
 };
 

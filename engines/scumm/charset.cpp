@@ -42,12 +42,81 @@ The advantage will be cleaner coder (easier to debug, in particular), and a
 better separation of the various modules.
 */
 
+bool CharsetRenderer::isScummvmKorTarget() {
+	if (_vm->_language == Common::KO_KOR && (_vm->_game.version < 7 || _vm->_game.id == GID_FT)) {
+		return true;
+	}
+	return false;
+}
 
 void ScummEngine::loadCJKFont() {
 	Common::File fp;
 	_useCJKMode = false;
 	_textSurfaceMultiplier = 1;
 	_newLineCharacter = 0;
+
+	_useMultiFont = 0;	// Korean Multi-Font
+
+	// Special case for Korean
+	if (_language == Common::KO_KOR && (_game.version < 7 || _game.id == GID_FT)) {
+		int numChar = 2350;
+		_useCJKMode = true;
+
+		if (_game.version < 7 || _game.id == GID_FT)
+			_useMultiFont = 1;
+
+		if (_useMultiFont) {
+			debug("Loading Korean Multi Font System");
+			_numLoadedFont = 0;
+			_2byteFontPtr = NULL;
+			_2byteWidth = 0;
+			_2byteHeight = 0;
+			for (int i = 0; i < 20; i++) {
+				char fontFile[256];
+				sprintf(fontFile, "korean%02d.fnt", i);
+				_2byteMultiFontPtr[i] = NULL;
+				if (fp.open(fontFile)) {
+					_numLoadedFont++;
+					fp.readByte();
+					_2byteMultiShadow[i] = fp.readByte();
+					_2byteMultiWidth[i] = fp.readByte();
+					_2byteMultiHeight[i] = fp.readByte();
+
+					int fontSize = ((_2byteMultiWidth[i] + 7) / 8) * _2byteMultiHeight[i] * numChar;
+					_2byteMultiFontPtr[i] = new byte[fontSize];
+					warning("#%d, size %d, height =%d", i, fontSize, _2byteMultiHeight[i]);
+					fp.read(_2byteMultiFontPtr[i], fontSize);
+					fp.close();
+					if (_2byteFontPtr == NULL) {	// for non-initialized Smushplayer drawChar
+						_2byteFontPtr = _2byteMultiFontPtr[i];
+						_2byteWidth = _2byteMultiWidth[i];
+						_2byteHeight = _2byteMultiHeight[i];
+						_2byteShadow = _2byteMultiShadow[i];
+					}
+				}
+			}
+			if(_numLoadedFont == 0) {
+				warning("Cannot load any font for multi font");
+				_useMultiFont = 0;
+			} else
+				debug("%d fonts are loaded", _numLoadedFont);
+		}
+
+		if (!_useMultiFont) {
+			debug("Loading Korean Single Font System");
+			if (fp.open("korean.fnt")) {
+				fp.seek(2, SEEK_CUR);
+				_2byteWidth = fp.readByte();
+				_2byteHeight = fp.readByte();
+				_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
+				fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
+				fp.close();
+			} else {
+				error("Couldn't load any font: %s", fp.getName());
+			}
+		}
+		return;
+	}
 
 	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
 #if defined(DISABLE_TOWNS_DUAL_LAYER_MODE) || !defined(USE_RGB_COLOR)
@@ -280,6 +349,35 @@ void CharsetRendererCommon::setCurID(int32 id) {
 	_bytesPerPixel = _fontPtr[0];
 	_fontHeight = _fontPtr[1];
 	_numChars = READ_LE_UINT16(_fontPtr + 2);
+
+	if(_vm->_useMultiFont) {
+		if (id == 6) {	// HACK: Fix inventory font error
+			_vm->_2byteFontPtr = _vm->_2byteMultiFontPtr[0];
+			_vm->_2byteWidth = _vm->_2byteMultiWidth[0];
+			_vm->_2byteHeight = _vm->_2byteMultiHeight[0];
+			_vm->_2byteShadow = _vm->_2byteMultiShadow[0];
+		} else if (_vm->_2byteMultiFontPtr[id]) {
+			_vm->_2byteFontPtr = _vm->_2byteMultiFontPtr[id];
+			_vm->_2byteWidth = _vm->_2byteMultiWidth[id];
+			_vm->_2byteHeight = _vm->_2byteMultiHeight[id];
+			_vm->_2byteShadow = _vm->_2byteMultiShadow[id];
+		} else {
+			// Get nearest font set (by height)
+			debug(7, "Cannot find matching font set for charset #%d, use nearest font set", id);
+			int dstHeight = _fontHeight;
+			int nearest = 0;
+			for (int i = 0; i < _vm->_numLoadedFont; i++) {
+				if (ABS(_vm->_2byteMultiHeight[i] - dstHeight) <= ABS(_vm->_2byteMultiHeight[nearest] - dstHeight)) {
+					nearest = i;
+				}
+			}
+			debug(7, "Found #%d", nearest);
+			_vm->_2byteFontPtr = _vm->_2byteMultiFontPtr[nearest];
+			_vm->_2byteWidth = _vm->_2byteMultiWidth[nearest];
+			_vm->_2byteHeight = _vm->_2byteMultiHeight[nearest];
+			_vm->_2byteShadow = _vm->_2byteMultiShadow[nearest];
+		}
+	}
 }
 
 void CharsetRendererV3::setCurID(int32 id) {
@@ -301,6 +399,35 @@ void CharsetRendererV3::setCurID(int32 id) {
 	_fontPtr += 6;
 	_widthTable = _fontPtr;
 	_fontPtr += _numChars;
+
+	if(_vm->_useMultiFont) {
+		if (id == 6) {	// HACK: Fix inventory font error
+			_vm->_2byteFontPtr = _vm->_2byteMultiFontPtr[0];
+			_vm->_2byteWidth = _vm->_2byteMultiWidth[0];
+			_vm->_2byteHeight = _vm->_2byteMultiHeight[0];
+			_vm->_2byteShadow = _vm->_2byteMultiShadow[0];
+		} else if (_vm->_2byteMultiFontPtr[id]) {
+			_vm->_2byteFontPtr = _vm->_2byteMultiFontPtr[id];
+			_vm->_2byteWidth = _vm->_2byteMultiWidth[id];
+			_vm->_2byteHeight = _vm->_2byteMultiHeight[id];
+			_vm->_2byteShadow = _vm->_2byteMultiShadow[id];
+		} else {
+			// Get nearest font set (by height)
+			debug(7, "Cannot find matching font set for charset #%d, use nearest font set", id);
+			int dstHeight = _fontHeight;
+			int nearest = 0;
+			for (int i = 0; i < _vm->_numLoadedFont; i++) {
+				if (ABS(_vm->_2byteMultiHeight[i] - dstHeight) <= ABS(_vm->_2byteMultiHeight[nearest] - dstHeight)) {
+					nearest = i;
+				}
+			}
+			debug(7, "Found #%d", nearest);
+			_vm->_2byteFontPtr = _vm->_2byteMultiFontPtr[nearest];
+			_vm->_2byteWidth = _vm->_2byteMultiWidth[nearest];
+			_vm->_2byteHeight = _vm->_2byteMultiHeight[nearest];
+			_vm->_2byteShadow = _vm->_2byteMultiShadow[nearest];
+		}
+	}
 }
 
 int CharsetRendererCommon::getFontHeight() {
@@ -536,6 +663,64 @@ void CharsetRendererPC::enableShadow(bool enable) {
 void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height) {
 	byte *dst = (byte *)dest.getBasePtr(x, y);
 
+	if (_vm->_useCJKMode && isScummvmKorTarget()) {
+		int y, x;
+		byte bits = 0;
+
+		// HACK: Since Korean fonts don't have shadow/stroke information,
+		//	   we use NUT-Renderer-like shadow drawing method.
+		bool useOldShadow = false;
+
+		int offsetX[14] = {-2, -2, -2, -1, 0, -1, 0, 1, -1, 1, -1, 0, 1, 0};
+		int offsetY[14] = {0, 1, 2, 2, 2, -1, -1, -1, 0, 0, 1, 1, 1, 0};
+		int cTable[14] = {_shadowColor, _shadowColor, _shadowColor,
+		                  _shadowColor, _shadowColor, _shadowColor, _shadowColor,
+		                  _shadowColor, _shadowColor, _shadowColor, _shadowColor,
+		                  _shadowColor, _shadowColor, _color};
+		int i = 0;
+
+		switch (_vm->_2byteShadow) {
+		case 1: // No shadow
+			i = 13;
+			break;
+		case 2: // SE direction shadow
+			i = 12;
+			break;
+		case 3: // Stroke & SW direction shadow ("Monkey2", "Indy4")
+			i = 0;
+			break;
+		default: // Stroke
+			i = 5;
+		}
+
+		const byte *origSrc = src;
+		byte *origDst = dst;
+
+		for (; i < 14; i++) {
+			src = origSrc;
+			dst = origDst;
+
+			for (y = 0; y < height && y + drawTop + offsetY[i] < dest.h; y++) {
+				for (x = 0; x < width && x + offsetY[i] < dest.w; x++) {
+					if ((x % 8) == 0)
+						bits = *src++;
+					if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
+						if (_enableShadow) {
+							*(dst + 1) = _shadowColor;
+							*(dst + dest.pitch) = _shadowColor;
+							*(dst + dest.pitch + 1) = _shadowColor;
+						}
+						*(dst + (dest.pitch * offsetY[i]) + offsetX[i]) = cTable[i];
+					}
+					dst++;
+				}
+
+				dst += dest.pitch - width;
+			}
+		}
+		return;
+	}
+
 	byte bits = 0;
 	uint8 col = _color;
 	int pitch = dest.pitch - width * dest.format.bytesPerPixel;
@@ -628,9 +813,21 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	if (chr == '@')
 		return;
 
-	charPtr = (_vm->_useCJKMode && chr > 127) ? _vm->get2byteCharPtr(chr) : _fontPtr + chr * 8;
-	width = getDrawWidthIntern(chr);
-	height = getDrawHeightIntern(chr);
+	if (isScummvmKorTarget()) {
+		if (is2byte) {
+			charPtr = _vm->get2byteCharPtr(chr);
+			width = _vm->_2byteWidth;
+			height = _vm->_2byteHeight;
+		} else {
+			charPtr = _fontPtr + chr * 8;
+			width = getDrawWidthIntern(chr);
+			height = getDrawHeightIntern(chr);
+		}
+	} else {
+		charPtr = (_vm->_useCJKMode && chr > 127) ? _vm->get2byteCharPtr(chr) : _fontPtr + chr * 8;
+		width = getDrawWidthIntern(chr);
+		height = getDrawHeightIntern(chr);
+	}
 	setDrawCharIntern(chr);
 
 	origWidth = width;
@@ -692,9 +889,26 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 }
 
 void CharsetRendererV3::drawChar(int chr, Graphics::Surface &s, int x, int y) {
-	const byte *charPtr = (_vm->_useCJKMode && chr > 127) ? _vm->get2byteCharPtr(chr) : _fontPtr + chr * 8;
-	int width = getDrawWidthIntern(chr);
-	int height = getDrawHeightIntern(chr);
+	const byte *charPtr;
+	int width;
+	int height;
+	int is2byte = (chr > 0xff && _vm->_useCJKMode) ? 1 : 0;
+
+	if (isScummvmKorTarget()) {
+		if (is2byte) {
+			charPtr = _vm->get2byteCharPtr(chr);
+			width = _vm->_2byteWidth;
+			height = _vm->_2byteHeight;
+		} else {
+			charPtr = _fontPtr + chr * 8;
+			width = getDrawWidthIntern(chr);
+			height = getDrawHeightIntern(chr);
+		}
+	} else {
+		charPtr = (_vm->_useCJKMode && chr > 127) ? _vm->get2byteCharPtr(chr) : _fontPtr + chr * 8;
+		width = getDrawWidthIntern(chr);
+		height = getDrawHeightIntern(chr);
+	}
 	setDrawCharIntern(chr);
 	drawBits1(s, x, y, charPtr, y, width, height);
 }
@@ -740,9 +954,21 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	translateColor();
 
 	_vm->_charsetColorMap[1] = _color;
+	if (isScummvmKorTarget() && is2byte) {
+		enableShadow(true);
+		_charPtr = _vm->get2byteCharPtr(chr);
+		_width = _vm->_2byteWidth;
+		_height = _vm->_2byteHeight;
+		_offsX = _offsY = 0;
+	} else {
+		if (!prepareDraw(chr))
+			return;
+	}
 
-	if (!prepareDraw(chr))
-		return;
+	if (isScummvmKorTarget()) {
+		_origWidth = _width;
+		_origHeight = _height;
+	}
 
 	if (_firstChar) {
 		_str.left = 0;
@@ -1014,6 +1240,10 @@ CharsetRendererTownsV3::CharsetRendererTownsV3(ScummEngine *vm) : CharsetRendere
 }
 
 int CharsetRendererTownsV3::getCharWidth(uint16 chr) {
+	if (isScummvmKorTarget()) {
+		return CharsetRendererV3::getCharWidth(chr);
+	}
+
 	int spacing = 0;
 
 	if (_vm->_useCJKMode) {
@@ -1030,10 +1260,19 @@ int CharsetRendererTownsV3::getCharWidth(uint16 chr) {
 }
 
 int CharsetRendererTownsV3::getFontHeight() {
+	if (isScummvmKorTarget()) {
+		return CharsetRendererV3::getFontHeight();
+	}
+
 	return _vm->_useCJKMode ? 8 : _fontHeight;
 }
 
 void CharsetRendererTownsV3::enableShadow(bool enable) {
+	if (isScummvmKorTarget()) {
+		CharsetRendererV3::enableShadow(enable);
+		return;
+	}
+
 	_shadowColor = 8;
 	_enableShadow = enable;
 
@@ -1047,6 +1286,11 @@ void CharsetRendererTownsV3::enableShadow(bool enable) {
 }
 
 void CharsetRendererTownsV3::drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height) {
+	if (isScummvmKorTarget()) {
+		CharsetRendererV3::drawBits1(dest, x, y, src, drawTop, width, height);
+		return;
+	}
+
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 #ifdef USE_RGB_COLOR
 	if (_sjisCurChar) {
@@ -1127,6 +1371,10 @@ void CharsetRendererTownsV3::drawBits1(Graphics::Surface &dest, int x, int y, co
 }
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 int CharsetRendererTownsV3::getDrawWidthIntern(uint16 chr) {
+	if (isScummvmKorTarget()) {
+		return CharsetRendererV3::getDrawWidthIntern(chr);
+	}
+
 #ifdef USE_RGB_COLOR
 	if (_vm->_useCJKMode && chr > 127) {
 		assert(_vm->_cjkFont);
@@ -1137,6 +1385,10 @@ int CharsetRendererTownsV3::getDrawWidthIntern(uint16 chr) {
 }
 
 int CharsetRendererTownsV3::getDrawHeightIntern(uint16 chr) {
+	if (isScummvmKorTarget()) {
+		return CharsetRendererV3::getDrawHeightIntern(chr);
+	}
+
 #ifdef USE_RGB_COLOR
 	if (_vm->_useCJKMode && chr > 127) {
 		assert(_vm->_cjkFont);
