@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-31 19:57+0100\n"
-"PO-Revision-Date: 2020-11-01 18:16+0000\n"
+"PO-Revision-Date: 2020-11-03 01:43+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1000,14 +1000,12 @@ msgid "V-Sync in 3D Games"
 msgstr "V-Sync dans les jeux 3D"
 
 #: gui/options.cpp:1305
-#, fuzzy
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
 msgstr ""
 "Attend la synchronisation verticale pour rafraîchir l'écran dans le moteur "
 "de rendu 3D"
 
 #: gui/options.cpp:1307
-#, fuzzy
 msgid "Game 3D Renderer:"
 msgstr "Moteur de rendu 3D du jeu :"
 
@@ -4573,17 +4571,14 @@ msgid "Menu"
 msgstr "Menu"
 
 #: engines/grim/grim.cpp:548
-#, fuzzy
 msgid "Cycle Objects Up"
 msgstr "Objet suivant"
 
 #: engines/grim/grim.cpp:553
-#, fuzzy
 msgid "Cycle Objects Down"
 msgstr "Objet précédent"
 
 #: engines/grim/grim.cpp:563
-#, fuzzy
 msgid "Quick Room Exit"
 msgstr "Sortie rapide d'une pièce"
 
@@ -6574,7 +6569,6 @@ msgid "Use the floppy version's intro (CD version only)"
 msgstr "Utiliser l'intro de la version disquette (version CD uniquement)"
 
 #: engines/stark/detection.cpp:368
-#, fuzzy
 msgid "Load modded assets"
 msgstr "Charger des ressources modifiées"
 
@@ -7314,7 +7308,6 @@ msgid "Shift"
 msgstr "Majuscule"
 
 #: engines/wintermute/keymapper_tables.h:1214
-#, fuzzy
 msgid "Use Chapayev"
 msgstr "Utiliser Chapayev"
 
