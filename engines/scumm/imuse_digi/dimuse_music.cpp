@@ -321,8 +321,6 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		}
 		if (getCurMusicSoundId() == table->soundId)
 			return;
-		if (table->transitionType == 4)
-			_stopingSequence = 1;
 		if (table->transitionType == 2) {
 			fadeOutMusic(table->fadeOutDelay);
 			startMusic(table->filename, table->soundId, table->hookId, 127);
