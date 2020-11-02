@@ -534,7 +534,6 @@ void Extra::processMagicballBounce(ExtraListStruct *extra, int32 x, int32 y, int
 	extra->lifeTime = _engine->lbaTime;
 }
 
-/** Process extras */
 void Extra::processExtras() {
 	int32 currentExtraX = 0;
 	int32 currentExtraY = 0;

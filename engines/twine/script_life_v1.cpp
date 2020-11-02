@@ -1176,9 +1176,8 @@ static int32 lSAY_MESSAGE(TwinEEngine *engine, ScriptContext& ctx) {
 
 	engine->_redraw->addOverlay(koText, textEntry, 0, 0, ctx.actorIdx, koFollowActor, 2);
 
-	engine->freezeTime();
+	ScopedEngineFreeze scoped(engine);
 	engine->_text->initVoxToPlay(textEntry);
-	engine->unfreezeTime();
 
 	return 0;
 }
@@ -1191,9 +1190,8 @@ static int32 lSAY_MESSAGE_OBJ(TwinEEngine *engine, ScriptContext& ctx) {
 
 	engine->_redraw->addOverlay(koText, textEntry, 0, 0, otherActorIdx, koFollowActor, 2);
 
-	engine->freezeTime();
+	ScopedEngineFreeze scoped(engine);
 	engine->_text->initVoxToPlay(textEntry);
-	engine->unfreezeTime();
 
 	return 0;
 }
@@ -1228,63 +1226,57 @@ static int32 lGRM_OFF(TwinEEngine *engine, ScriptContext& ctx) {
 
 /*0x52*/
 static int32 lFADE_PAL_RED(TwinEEngine *engine, ScriptContext& ctx) {
-	engine->freezeTime();
+	ScopedEngineFreeze scoped(engine);
 	engine->_screens->fadePalRed(engine->_screens->mainPaletteRGBA);
 	engine->_screens->useAlternatePalette = false;
-	engine->unfreezeTime();
 	return 0;
 }
 
 /*0x53*/
 static int32 lFADE_ALARM_RED(TwinEEngine *engine, ScriptContext& ctx) {
-	engine->freezeTime();
+	ScopedEngineFreeze scoped(engine);
 	HQR::getEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
 	engine->_screens->fadePalRed(engine->_screens->paletteRGBA);
 	engine->_screens->useAlternatePalette = true;
-	engine->unfreezeTime();
 	return 0;
 }
 
 /*0x54*/
 static int32 lFADE_ALARM_PAL(TwinEEngine *engine, ScriptContext& ctx) {
-	engine->freezeTime();
+	ScopedEngineFreeze scoped(engine);
 	HQR::getEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
 	engine->_screens->adjustCrossPalette(engine->_screens->paletteRGBA, engine->_screens->mainPaletteRGBA);
 	engine->_screens->useAlternatePalette = false;
-	engine->unfreezeTime();
 	return 0;
 }
 
 /*0x55*/
 static int32 lFADE_RED_PAL(TwinEEngine *engine, ScriptContext& ctx) {
-	engine->freezeTime();
+	ScopedEngineFreeze scoped(engine);
 	engine->_screens->fadeRedPal(engine->_screens->mainPaletteRGBA);
 	engine->_screens->useAlternatePalette = false;
-	engine->unfreezeTime();
 	return 0;
 }
 
 /*0x56*/
 static int32 lFADE_RED_ALARM(TwinEEngine *engine, ScriptContext& ctx) {
-	engine->freezeTime();
+	ScopedEngineFreeze scoped(engine);
 	HQR::getEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
 	engine->_screens->fadeRedPal(engine->_screens->paletteRGBA);
 	engine->_screens->useAlternatePalette = true;
-	engine->unfreezeTime();
 	return 0;
 }
 
 /*0x57*/
 static int32 lFADE_PAL_ALARM(TwinEEngine *engine, ScriptContext& ctx) {
-	engine->freezeTime();
+	ScopedEngineFreeze scoped(engine);
 	HQR::getEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_ALARMREDPAL);
 	engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
 	engine->_screens->adjustCrossPalette(engine->_screens->mainPaletteRGBA, engine->_screens->paletteRGBA);
 	engine->_screens->useAlternatePalette = true;
-	engine->unfreezeTime();
 	return 0;
 }
 
@@ -1331,14 +1323,13 @@ static int32 lASK_CHOICE_OBJ(TwinEEngine *engine, ScriptContext& ctx) {
 
 /*0x5C*/
 static int32 lSET_DARK_PAL(TwinEEngine *engine, ScriptContext& ctx) {
-	engine->freezeTime();
+	ScopedEngineFreeze scoped(engine);
 	HQR::getEntry(engine->_screens->palette, Resources::HQR_RESS_FILE, RESSHQR_DARKPAL);
 	if (!engine->_screens->lockPalette) {
 		engine->_screens->convertPalToRGBA(engine->_screens->palette, engine->_screens->paletteRGBA);
 		engine->setPalette(engine->_screens->paletteRGBA);
 	}
 	engine->_screens->useAlternatePalette = true;
-	engine->unfreezeTime();
 	return 0;
 }
 
@@ -1353,7 +1344,7 @@ static int32 lSET_NORMAL_PAL(TwinEEngine *engine, ScriptContext& ctx) {
 
 /*0x5E*/
 static int32 lMESSAGE_SENDELL(TwinEEngine *engine, ScriptContext& ctx) {
-	engine->freezeTime();
+	ScopedEngineFreeze scoped(engine);
 	engine->_screens->fadeToBlack(engine->_screens->paletteRGBA);
 	engine->_screens->loadImage(25);
 	engine->_text->textClipFull();
@@ -1373,8 +1364,6 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, ScriptContext& ctx) {
 		engine->readKeys();
 		engine->_system->delayMillis(1);
 	} while (engine->_input->toggleAbortAction());
-
-	engine->unfreezeTime();
 
 	return 0;
 }

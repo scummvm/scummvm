@@ -161,6 +161,12 @@ enum class EngineState {
 	QuitGame
 };
 
+struct ScopedEngineFreeze {
+	TwinEEngine* _engine;
+	ScopedEngineFreeze(TwinEEngine* engine);
+	~ScopedEngineFreeze();
+};
+
 class TwinEEngine : public Engine {
 private:
 	int32 isTimeFreezed = 0;

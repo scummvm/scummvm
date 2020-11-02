@@ -464,9 +464,8 @@ void Scene::processActorZones(int32 actorIdx) {
 
 						_engine->_grid->useCellingGrid = zone->infoData.CeillingGrid.newGrid;
 						_engine->_grid->cellingGridIdx = z;
-						_engine->freezeTime();
+						ScopedEngineFreeze freeze(_engine);
 						_engine->_grid->initCellingGrid(_engine->_grid->useCellingGrid);
-						_engine->unfreezeTime();
 					}
 				}
 				break;

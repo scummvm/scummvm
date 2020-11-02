@@ -116,7 +116,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 }
 
 void Holomap::processHolomap() {
-	_engine->freezeTime();
+	ScopedEngineFreeze freeze(_engine);
 
 	// TODO memcopy palette
 
@@ -148,8 +148,6 @@ void Holomap::processHolomap() {
 	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 
 	// TODO memcopy reset palette
-
-	_engine->unfreezeTime();
 }
 
 } // namespace TwinE

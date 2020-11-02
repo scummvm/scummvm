@@ -71,6 +71,14 @@
 
 namespace TwinE {
 
+ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine* engine) : _engine(engine) {
+	_engine->freezeTime();
+}
+
+ScopedEngineFreeze::~ScopedEngineFreeze() {
+	_engine->unfreezeTime();
+}
+
 TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, TwineGameType gameType)
     : Engine(system), _gameType(gameType), _gameLang(language), _gameFlags(flags), _rnd("twine") {
 	// Add default file directories
@@ -452,10 +460,9 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			if (giveUp == 1) {
 				unfreezeTime();
 				_redraw->redrawEngineActions(1);
-				freezeTime();
+				ScopedEngineFreeze freeze(this);
 				autoSave();
 				quitGame = 0;
-				unfreezeTime();
 				return 0;
 			}
 			unfreezeTime();
