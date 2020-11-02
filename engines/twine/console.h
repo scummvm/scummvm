@@ -39,6 +39,9 @@ private:
 	bool doListMenuText(int argc, const char **argv);
 	bool doToggleDebug(int argc, const char **argv);
 	bool doGiveKey(int argc, const char **argv);
+	bool doToggleZoneRendering(int argc, const char **argv);
+	bool doToggleFreeCamera(int argc, const char **argv);
+	bool doToggleSceneChanges(int argc, const char **argv);
 public:
 	TwinEConsole(TwinEEngine *engine);
 	~TwinEConsole() override;

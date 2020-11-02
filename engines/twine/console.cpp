@@ -24,6 +24,8 @@
 #include "twine/twine.h"
 #include "twine/gamestate.h"
 #include "twine/scene.h"
+#include "twine/debug_scene.h"
+#include "twine/debug_grid.h"
 #include "twine/text.h"
 
 namespace TwinE {
@@ -34,9 +36,27 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("change_scene", WRAP_METHOD(TwinEConsole, doChangeScene));
 	registerCmd("list_menutext", WRAP_METHOD(TwinEConsole, doListMenuText));
 	registerCmd("toggle_debug", WRAP_METHOD(TwinEConsole, doToggleDebug));
+	registerCmd("toggle_zones", WRAP_METHOD(TwinEConsole, doToggleZoneRendering));
+	registerCmd("toggle_freecamera", WRAP_METHOD(TwinEConsole, doToggleFreeCamera));
+	registerCmd("toggle_scenechanges", WRAP_METHOD(TwinEConsole, doToggleSceneChanges));
 }
 
 TwinEConsole::~TwinEConsole() {
+}
+
+bool TwinEConsole::doToggleZoneRendering(int argc, const char **argv) {
+	_engine->_debugScene->showingZones = !_engine->_debugScene->showingZones;
+	return true;
+}
+
+bool TwinEConsole::doToggleFreeCamera(int argc, const char **argv) {
+	_engine->_debugGrid->useFreeCamera = !_engine->_debugGrid->useFreeCamera;
+	return true;
+}
+
+bool TwinEConsole::doToggleSceneChanges(int argc, const char **argv) {
+	_engine->_debugGrid->canChangeScenes = !_engine->_debugGrid->canChangeScenes;
+	return true;
 }
 
 bool TwinEConsole::doGiveKey(int argc, const char **argv) {
