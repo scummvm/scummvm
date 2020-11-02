@@ -173,7 +173,7 @@ Common::String Dialog::getNextDialogSound() {
 	uint it;
 	for(it = 0; it < _sounds.size(); ++it) {
 		auto & sound = _sounds[it];
-		if (_currentDef.hasPrefix(sound.Name))
+		if (_currentDef.hasPrefixIgnoreCase(sound.Name))
 			break;
 	}
 	if (it == _sounds.size())
