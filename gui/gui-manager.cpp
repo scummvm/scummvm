@@ -110,15 +110,16 @@ GuiManager::~GuiManager() {
 void GuiManager::computeScaleFactor() {
 	int16 w = g_system->getOverlayWidth();
 	int16 h = g_system->getOverlayHeight();
+	uint scale = g_system->getFeatureState(OSystem::kFeatureHiDPI) ? 2 : 1;
 
 	// Hardcoding for now
-	if (h < 240) {	// 320 x 200
+	if (h < 240 * scale) {	// 320 x 200
 		_baseHeight = MIN<int16>(200, h);
-	} else if (h < 400) {	// 320 x 240
+	} else if (h < 400 * scale) {	// 320 x 240
 		_baseHeight = 240;
-	} else if (h < 480) {	// 640 x 400
+	} else if (h < 480 * scale) {	// 640 x 400
 		_baseHeight = 400;
-	} else if (h < 720) {	// 640 x 480
+	} else if (h < 720 * scale) {	// 640 x 480
 		_baseHeight = 480;
 	} else {				// 960 x 720
 		_baseHeight = 720;
@@ -128,7 +129,7 @@ void GuiManager::computeScaleFactor() {
 
 	_baseWidth = (int16)((float)w / _scaleFactor);
 
-	warning("Setting %d x %d -> %d x %d -- %g", w, h, _baseWidth, _baseHeight, _scaleFactor);
+	debug(3, "Setting %d x %d -> %d x %d -- %g", w, h, _baseWidth, _baseHeight, _scaleFactor);
 }
 
 Common::Keymap *GuiManager::getKeymap() const {
