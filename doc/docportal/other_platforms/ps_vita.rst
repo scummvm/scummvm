@@ -35,9 +35,9 @@ If you're using SD2Vita:
 
 Folders containing game files can be copied into any folder.
 
-ScummVM on the PS Vita supports :ref:`Cloud functionality <howtocloud>`. 
+ScummVM on the PS Vita supports :doc:`Cloud functionality <../guides/connect_cloud>`. 
 
-For more information on how to add and play games, see the :doc:`../using_scummvm/adding_games` page.
+For more information on how to add and play games, see the :doc:`../using_scummvm/add_play_games` page.
 
 
 Controls
