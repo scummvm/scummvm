@@ -1512,7 +1512,11 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	// We also need to add the UUID of the main project file.
 	const std::string svmUUID = _allProjUuidMap[setup.projectName] = createUUID(setup.projectName);
 	// Add the uuid of the detection project
-	const std::string detUUID = _allProjUuidMap["scummvm-detection"] = createUUID("scummvm-detection");
+	const std::string detProject = setup.projectName + "-detection";
+	const std::string detUUID = createUUID(detProject);
+	if (setup.useStaticDetection) {
+		_allProjUuidMap[detProject] = _engineUuidMap[detProject] = detUUID;
+	}
 
 	createWorkspace(setup);
 
@@ -1520,7 +1524,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 
 	// Create project files
 	for (UUIDMap::const_iterator i = _engineUuidMap.begin(); i != _engineUuidMap.end(); ++i) {
-		if (i->first == setup.projectName)
+		if (i->first == detProject)
 			continue;
 		// Retain the files between engines if we're creating a single project
 		in.clear();
@@ -1533,7 +1537,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 	}
 
 	// Create engine-detection submodules.
-	{
+	if (setup.useStaticDetection) {
 		in.clear();
 		ex.clear();
 		std::vector<std::string> detectionModuleDirs;
@@ -1551,7 +1555,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 			createModuleList(str, setup.defines, setup.testDirs, in, ex, true);
 		}
 
-		createProjectFile("Detection", detUUID, setup, setup.srcDir, in, ex);
+		createProjectFile(detProject, detUUID, setup, setup.srcDir, in, ex);
 	}
 
 	if (setup.tests) {
