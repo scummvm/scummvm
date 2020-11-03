@@ -107,7 +107,6 @@ void Character::direction(int dir) {
 		_phase = -1;
 		_frames = 0;
 	}
-	_animation->loop(true);
 }
 
 void Character::moveTo(Common::Point dst, int frames) {
@@ -127,7 +126,6 @@ void Character::animate(Common::Point pos, int direction, int speed) {
 		return;
 	}
 	_animation->speed(speed);
-	_animation->loop(true);
 	_animation->rewind();
 	_phase = 0;
 	_frames = speed * _animation->frames() / 100;
