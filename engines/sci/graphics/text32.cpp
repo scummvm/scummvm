@@ -300,7 +300,7 @@ void GfxText32::drawFrame(const Common::Rect &rect, const int16 size, const uint
 	}
 }
 
-void GfxText32::drawChar(uint16 charIndex) {
+void GfxText32::drawChar(const uint16 charIndex) {
 	SciBitmap &bitmap = *_segMan->lookupBitmap(_bitmap);
 	byte *pixels = bitmap.getPixels();
 
@@ -313,7 +313,7 @@ int16 GfxText32::getScaledFontHeight() const {
 	return (_font->getHeight() * scriptHeight + _yResolution - 1) / _yResolution;
 }
 
-uint16 GfxText32::getCharWidth(uint16 charIndex, const bool doScaling) const {
+uint16 GfxText32::getCharWidth(const uint16 charIndex, const bool doScaling) const {
 	uint16 width = _font->getCharWidth(charIndex);
 	if (doScaling) {
 		width = scaleUpWidth(width);
