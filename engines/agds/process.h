@@ -64,6 +64,7 @@ private:
 	int				_animationRandom;
 	bool			_phaseVarControlled;
 	int				_animationSpeed;
+	bool			_samplePeriodic;
 	Common::Point	_mousePosition;
 
 private:
