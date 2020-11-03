@@ -60,6 +60,7 @@ public:
 	void saveData(Common::WriteStream *ws) override;
 
 	INTRINSIC(I_playMovieOverlay);
+	INTRINSIC(I_playMovieCutscene);
 
 protected:
 	MoviePlayer *_player;
