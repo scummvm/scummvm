@@ -153,6 +153,10 @@ shaders/stark_shadow.vertex          FILE    "engines/stark/shaders/stark_shadow
 #if PLUGIN_ENABLED_STATIC(WINTERMUTE)
 shaders/wme_fade.fragment            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.fragment"
 shaders/wme_fade.vertex              FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex"
+shaders/wme_flat_shadow_mask.fragment   FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.fragment"
+shaders/wme_flat_shadow_mask.vertex     FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.vertex"
+shaders/wme_flat_shadow_modelx.fragment FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.fragment"
+shaders/wme_flat_shadow_modelx.vertex   FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.vertex"
 shaders/wme_geometry.fragment        FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.fragment"
 shaders/wme_geometry.vertex          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.vertex"
 shaders/wme_line.fragment            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.fragment"
