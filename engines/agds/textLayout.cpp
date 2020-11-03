@@ -95,7 +95,18 @@ void TextLayout::layout(AGDSEngine &engine, const Common::String &process, const
 			if (!engine.getGlobal(_charDirectionNotifyVar))
 				engine.setGlobal(_charDirectionNotifyVar, character->direction());
 		} else {
-			warning("fixme: playing jokes.chr animation for direction %d", character->direction());
+			switch(character->direction()) {
+				case 0:
+				case 1:
+				case 2:
+				case 3:
+				case 13:
+				case 14:
+				case 15:
+					break;
+				default:
+					warning("implement replaying current jokes animation");
+			}
 		}
 	} else
 		warning("no current character, skipping direction notification");
