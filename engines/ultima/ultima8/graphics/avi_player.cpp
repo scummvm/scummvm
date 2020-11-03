@@ -20,6 +20,7 @@
  *
  */
 
+#include "ultima/ultima8/audio/music_process.h"
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/graphics/avi_player.h"
 #include "ultima/ultima8/graphics/render_surface.h"
@@ -35,7 +36,7 @@ namespace Ultima8 {
 
 AVIPlayer::AVIPlayer(Common::SeekableReadStream *rs, int width, int height, const byte *overridePal)
 	: MoviePlayer(), _playing(false), _width(width), _height(height),
-	  _doubleSize(false), _overridePal(overridePal) {
+	  _doubleSize(false), _pausedMusic(false), _overridePal(overridePal) {
 	_decoder = new Video::AVIDecoder();
 	_decoder->loadStream(rs);
 	uint32 vidWidth = _decoder->getWidth();
@@ -54,11 +55,23 @@ AVIPlayer::~AVIPlayer() {
 }
 
 void AVIPlayer::start() {
+	MusicProcess *music = MusicProcess::get_instance();
+	if (music && music->isPlaying()) {
+		music->pauseMusic();
+		_pausedMusic = true;
+	}
+
 	_playing = true;
 	_decoder->start();
 }
 
 void AVIPlayer::stop() {
+	MusicProcess *music = MusicProcess::get_instance();
+	if (music && _pausedMusic) {
+		music->unpauseMusic();
+		_pausedMusic = false;
+	}
+
 	_playing = false;
 	_decoder->stop();
 }

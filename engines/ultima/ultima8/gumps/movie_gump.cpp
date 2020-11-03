@@ -77,6 +77,8 @@ void MovieGump::InitGump(Gump *newparent, bool take_focus) {
 void MovieGump::Close(bool no_del) {
 	Mouse::get_instance()->popMouseCursor();
 
+	_player->stop();
+
 	ModalGump::Close(no_del);
 }
 

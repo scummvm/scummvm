@@ -113,6 +113,14 @@ public:
 
 	void setTrackState(const TrackState &state);
 
+	//! Is a track currently playing?
+	bool isPlaying() override;
+
+	//! Pause the currently playing track
+	void pauseMusic() override;
+	//! Resume the current track after pausing
+	void unpauseMusic() override;
+
 	void run() override;
 
 	bool loadData(Common::ReadStream *rs, uint32 version);

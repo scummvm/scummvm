@@ -61,6 +61,7 @@ private:
 	uint32 _yoff;
 	bool _doubleSize;
 	const byte *_overridePal;
+	bool _pausedMusic;
 
 };
 

@@ -285,5 +285,20 @@ bool U8MusicProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	return true;
 }
 
+bool U8MusicProcess::isPlaying() {
+	return _currentTrack != 0;
+}
+
+void U8MusicProcess::pauseMusic() {
+	// probably no real use for this?
+	warning("TODO: U8MusicProcess::pauseMusic Implement me.");
+}
+
+void U8MusicProcess::unpauseMusic() {
+	// probably no real use for this?
+	warning("TODO: U8MusicProcess::unpauseMusic Implement me.");
+}
+
+
 } // End of namespace Ultima8
 } // End of namespace Ultima
