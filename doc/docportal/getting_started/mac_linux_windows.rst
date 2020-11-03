@@ -5,8 +5,8 @@ Mac, Linux or Windows
 
 All downloads referenced on this page are available from the `ScummVM downloads page <https://www.scummvm.org/downloads/>`_.
 
-Mac OSX
----------
+macOS/Mac OSX
+------------------
 
 Download the Disk Image. Once the download has completed, double click the file to mount the Disk Image. A dialog will open with the ScummVM icon. Drag this icon into your Applications folder to install ScummVM.
 
