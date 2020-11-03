@@ -847,7 +847,22 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 		return;
 	}
 
-	_gfx.copyFrom(*gfx);
+	if (_w != gfx->w || _h != gfx->h) {
+		const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
+		Graphics::Surface tmp;
+
+		tmp.create(gfx->w, gfx->h, g_gui.theme()->getPixelFormat());
+		tmp.copyFrom(*gfx);
+		tmp.convertToInPlace(requiredFormat);
+
+		Graphics::Surface *tmp2 = tmp.scale(_w, _h, false);
+		_gfx.copyFrom(*tmp2);
+		tmp2->free();
+		delete tmp2;
+		tmp.free();
+	} else {
+		_gfx.copyFrom(*gfx);
+	}
 }
 
 void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
