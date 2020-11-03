@@ -28,10 +28,6 @@
 
 namespace Graphics {
 
-bool checkKorCode(byte hi, byte lo);
-int get_oem_code_page(uint16 code);
-uint16 _KS_to_unicode(uint16 ksc);
-
 /**
  * A font that is able to draw Korean encoded characters.
  */
