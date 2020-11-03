@@ -67,12 +67,9 @@ bool Animation::load(Common::SeekableReadStream *stream) {
 
 void Animation::decodeNextFrame(AGDSEngine &engine) {
 	auto frame = _flic->decodeNextFrame();
-	if (!frame) {
-		rewind();
-		frame = _flic->decodeNextFrame();
-		if (!frame)
-			error("failed decoding frame after rewind");
-	}
+	if (!frame)
+		return;
+
 	freeFrame();
 	_frame = engine.convertToTransparent(frame->convertTo(engine.pixelFormat(), _flic->getPalette()));
 	if (_scale != 1) {
