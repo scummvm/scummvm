@@ -137,7 +137,11 @@ jint JNI::onLoad(JavaVM *vm) {
 	if (_vm->GetEnv((void **)&env, JNI_VERSION_1_2))
 		return JNI_ERR;
 
+#ifdef BACKEND_ANDROID3D
+	jclass cls = env->FindClass("org/residualvm/residualvm/ResidualVM");
+#else
 	jclass cls = env->FindClass("org/scummvm/scummvm/ScummVM");
+#endif
 	if (cls == 0)
 		return JNI_ERR;
 
@@ -732,10 +736,12 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 		else
 			JNI::_pauseToken.clear();
 
-		/*if (value &&
+#ifdef BACKEND_ANDROID3D
+		if (value &&
 				g_engine->hasFeature(Engine::kSupportsSavingDuringRuntime) &&
 				g_engine->canSaveGameStateCurrently())
-			g_engine->saveGameState(0, "Android parachute");*/
+			g_engine->saveGameState(0, "Android parachute");
+#endif
 	}
 
 	pause = value;

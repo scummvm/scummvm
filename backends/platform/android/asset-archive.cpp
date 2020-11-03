@@ -132,15 +132,23 @@ int AndroidAssetArchive::listMembers(Common::ArchiveMemberList &member_list) con
 	}
 
 	int count = 0;
-	AAssetDir *dir = AAssetManager_openDir(_am, "");
-	const char *file = AAssetDir_getNextFileName(dir);
+	Common::List<Common::String> dirs;
+	dirs.push_back("");
+#ifdef BACKEND_ANDROID3D
+	// ResidualVM specific: multiple directories
+	dirs.push_back("shaders");
+#endif
+	for (const auto& currentDir : dirs) {
+		AAssetDir *dir = AAssetManager_openDir(_am, "");
+		const char *file = AAssetDir_getNextFileName(dir);
 
-	while (file) {
-		member_list.push_back(getMember(file));
-		++count;
-		file = AAssetDir_getNextFileName(dir);
+		while (file) {
+			member_list.push_back(getMember(currentDir + Common::String(file)));
+			++count;
+			file = AAssetDir_getNextFileName(dir);
+		}
+		AAssetDir_close(dir);
 	}
-	AAssetDir_close(dir);
 
 	_cachedMembers = Common::ArchiveMemberList(member_list);
 	_hasCached = true;
