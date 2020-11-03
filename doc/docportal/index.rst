@@ -125,11 +125,13 @@ We have guides available to show you how to get ScummVM up and running:
       
       :doc:`other_platforms/nintendo_switch`
 
+      :doc:`other_platforms/dreamcast`
+
       ---
 
       Other systems
       ^^^^^^^^^^^^^^^
-
+      
 
 
 How do I use ScummVM?
