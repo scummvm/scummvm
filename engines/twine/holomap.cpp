@@ -22,6 +22,7 @@
 
 #include "twine/holomap.h"
 #include "common/memstream.h"
+#include "common/types.h"
 #include "twine/gamestate.h"
 #include "twine/hqr.h"
 #include "twine/interface.h"
@@ -45,7 +46,7 @@ bool Holomap::loadLocations() {
 		return false;
 	}
 
-	Common::MemoryReadStream stream(locationsPtr, locationsSize);
+	Common::MemoryReadStream stream(locationsPtr, locationsSize, DisposeAfterUse::YES);
 	_numLocations = locationsSize / sizeof(Location);
 	if (_numLocations > NUM_LOCATIONS) {
 		warning("Amount of locations (%i) exceeds the maximum of %i", _numLocations, NUM_LOCATIONS);
