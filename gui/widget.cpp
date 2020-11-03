@@ -549,6 +549,20 @@ void DropdownButtonWidget::drawWidget() {
 
 #pragma mark -
 
+Graphics::Surface *scaleGfx(const Graphics::Surface *gfx, int w, int h) {
+	const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
+	Graphics::Surface tmp;
+
+	tmp.create(gfx->w, gfx->h, g_gui.theme()->getPixelFormat());
+	tmp.copyFrom(*gfx);
+	tmp.convertToInPlace(requiredFormat);
+
+	Graphics::Surface *tmp2 = tmp.scale(w, h, false);
+	tmp.free();
+
+	return tmp2;
+}
+
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
 	: ButtonWidget(boss, x, y, w, h, Common::U32String(), tooltip, cmd, hotkey),
 	  _alpha(255), _transparency(false), _showButton(true) {
@@ -580,7 +594,16 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum) {
 		return;
 	}
 
-	_gfx[statenum].copyFrom(*gfx);
+	float scale = g_gui.getScaleFactor();
+
+	if (scale != 1.0f) {
+		Graphics::Surface *tmp = scaleGfx(gfx, gfx->w * scale, gfx->h * scale);
+		_gfx[statenum].copyFrom(*tmp);
+		tmp->free();
+		delete tmp;
+	} else {
+		_gfx[statenum].copyFrom(*gfx);
+	}
 }
 
 void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
@@ -848,18 +871,10 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 	}
 
 	if (_w != gfx->w || _h != gfx->h) {
-		const Graphics::PixelFormat &requiredFormat = g_gui.theme()->getPixelFormat();
-		Graphics::Surface tmp;
-
-		tmp.create(gfx->w, gfx->h, g_gui.theme()->getPixelFormat());
-		tmp.copyFrom(*gfx);
-		tmp.convertToInPlace(requiredFormat);
-
-		Graphics::Surface *tmp2 = tmp.scale(_w, _h, false);
-		_gfx.copyFrom(*tmp2);
-		tmp2->free();
-		delete tmp2;
-		tmp.free();
+		Graphics::Surface *tmp = scaleGfx(gfx, _w, _h);
+		_gfx.copyFrom(*tmp);
+		tmp->free();
+		delete tmp;
 	} else {
 		_gfx.copyFrom(*gfx);
 	}
