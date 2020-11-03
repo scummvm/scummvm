@@ -61,7 +61,6 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
 
 
 .. csv-table:: 
-  	:width: 100% 
   	:header-rows: 2
 
         Game Controller Mapping,
@@ -83,7 +82,6 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
         START + R button,F5 
 
 .. csv-table:: 
-  	:width: 100%  
   	:header-rows: 1
 
         Virtual Keyboard Mode,
@@ -96,7 +94,6 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
         Analog stick,Moves in a direction (left/right/up/down) 
 
 .. csv-table:: 
-  	:width: 100% 
   	:header-rows: 1
 
         Image Viewer,
@@ -106,7 +103,6 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
         "L/R buttons + START",Exit image viewer
 
 .. csv-table:: 
-  	:width: 100%  
   	:header-rows: 1
 
         1st Person Game Mode ,
