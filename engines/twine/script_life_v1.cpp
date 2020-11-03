@@ -1063,7 +1063,7 @@ static int32 lINC_CLOVER_BOX(TwinEEngine *engine, ScriptContext& ctx) {
 /*0x43*/
 static int32 lSET_USED_INVENTORY(TwinEEngine *engine, ScriptContext& ctx) {
 	int32 item = *(scriptPtr++);
-	if (item < 24) {
+	if (item < InventoryItems::kKeypad) { // TODO: this looks wrong - why only up to keypad?
 		engine->_gameState->inventoryFlags[item] = 1;
 	}
 	return 0;
