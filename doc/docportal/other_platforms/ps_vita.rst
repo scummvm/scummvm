@@ -69,7 +69,6 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
 
 .. csv-table:: 
     :widths: 50 50
-    :width: 100%
     :header-rows: 2
 
         Game Controller Mapping,
@@ -102,7 +101,6 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
         `Three finger drag`_ ,Move pointer while right mouse button is held down (drag and drop). The pointer directly follows the first finger. The drag is ended when the last finger is removed.
 
 .. csv-table::  
-    :width: 100%
     :widths: 50 50
     :header-rows: 2
 
