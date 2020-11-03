@@ -148,7 +148,6 @@ Keywords
 There are many recognized configuration keywords. In the table below, each keyword is linked to an explanatory description in the Settings pages. 
 
 .. csv-table:: 
-  	:width: 100% 
 	:widths: 20 20 10 50
   	:header-rows: 1 
 
