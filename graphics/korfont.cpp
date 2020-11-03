@@ -1,7 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2005 The ScummVM project
- * ScummVM Kor. - Korean ScummVM Mod.
- * Copyright (C) 2002-2005 The ScummVM Kor Project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,12 +16,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header: /cvsroot/scummvm/scummvm/graphics/font.cpp,v 1.12 2005/06/04 13:19:53 fingolfin Exp $
  */
 
-#include "scumm/scumm.h"
 #include "graphics/font.h"
 #include "graphics/korfont.h"
 #include "graphics/cp949m.h"
@@ -28,18 +27,18 @@
 
 namespace Graphics {
 
-	bool checkKorCode(byte hi, byte lo)
-	{
-		// hi: xx
-		// lo: yy
-		if ((0xA1 > lo) || (0xFE < lo)) {
-			return false;
-		}
-		if ((hi >= 0xB0) && (hi <= 0xC8)) {
-			return true;
-		}
+bool checkKorCode(byte hi, byte lo)
+{
+	// hi: xx
+	// lo: yy
+	if ((0xA1 > lo) || (0xFE < lo)) {
 		return false;
 	}
+	if ((hi >= 0xB0) && (hi <= 0xC8)) {
+		return true;
+	}
+	return false;
+}
 
 int get_oem_code_page(uint16 code)
 {
