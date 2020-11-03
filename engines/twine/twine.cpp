@@ -35,6 +35,9 @@
 #include "common/translation.h"
 #include "engines/metaengine.h"
 #include "engines/util.h"
+#include "graphics/colormasks.h"
+#include "graphics/fontman.h"
+#include "graphics/font.h"
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
@@ -975,24 +978,16 @@ void TwinEEngine::readKeys() {
 }
 
 void TwinEEngine::drawText(int32 x, int32 y, const char *string, int32 center) {
-#if 0 // TODO
-	SDL_Color white = {0xFF, 0xFF, 0xFF, 0};
-	SDL_Color *forecol = &white;
-	SDL_Rect rectangle;
-	Graphics::ManagedSurface *text = TTF_RenderText_Solid(font, string, *forecol);
-
-	if (center) {
-		rectangle.x = x - (text->w / 2);
-	} else {
-		rectangle.x = x;
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	if (!font) {
+		return;
 	}
-	rectangle.y = y - 2;
-	rectangle.w = text->w;
-	rectangle.h = text->h;
-
-	SDL_BlitSurface(text, NULL, screenBuffer, &rectangle);
-	SDL_FreeSurface(text);
-#endif
+	int width = 100;
+	const Common::String text(string);
+	font->drawString(&frontVideoBuffer, text,
+	                 x, y, width,
+	                 frontVideoBuffer.format.RGBToColor(255, 255, 255),
+	                 center ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft);
 }
 
 } // namespace TwinE
