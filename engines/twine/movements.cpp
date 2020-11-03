@@ -362,12 +362,12 @@ void Movements::processActorMovements(int32 actorIdx) {
 
 				heroMoved = false;
 
-				if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) { // walk forward
+				if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
 					if (!_engine->_scene->currentActorInZone) {
 						_engine->_animations->initAnim(kForward, 0, 255, actorIdx);
 					}
 					heroMoved = true;
-				} else if (_engine->_input->isActionActive(TwinEActionType::MoveBackward)) { // walk backward
+				} else if (_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 					_engine->_animations->initAnim(kBackward, 0, 255, actorIdx);
 					heroMoved = true;
 				}
