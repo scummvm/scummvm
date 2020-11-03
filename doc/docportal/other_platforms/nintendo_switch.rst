@@ -49,7 +49,6 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="16" height="16"><path fill-rule="evenodd" d="M2 8a.75.75 0 01.75-.75h10.5a.75.75 0 010 1.5H2.75A.75.75 0 012 8z"></path></svg>
 
 .. csv-table:: 
-  	:width: 100%  
   	:header-rows: 1
 
         Button,Action
@@ -70,7 +69,6 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
         |minus| + R button,AGI predictive input dialog
     
 .. csv-table::
-    :width: 100% 
     :header-rows: 2
 
         "Touch Controls (Touchpad Mouse Mode Off, Default)",
@@ -82,7 +80,6 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
         `Three finger drag`_ ,Move pointer while right mouse button is held down (drag and drop). The pointer directly follows the first finger. The drag is ended when the last finger is removed.
     
 .. csv-table::
-    :width: 100%  
     :header-rows: 2
 
         Touch Controls (Touchpad Mouse Mode On),
