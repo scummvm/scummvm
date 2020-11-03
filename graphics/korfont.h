@@ -1,5 +1,8 @@
-/* ScummVM - Scumm Interpreter
- * Copyright (C) 2002-2005 The ScummVM project
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -13,10 +16,10 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $Header: /cvsroot/scummvm/scummvm/graphics/font.h,v 1.8 2005/05/15 16:13:52 fingolfin Exp $
  */
+
 #ifndef GRAPHICS_KORFONT_H
 #define GRAPHICS_KORFONT_H
 
@@ -24,15 +27,10 @@
 #include "graphics/surface.h"
 
 namespace Graphics {
-	
-	int getKorFontWidth();
-	int getKorFontHeight();
-	bool checkKorCode(byte hi, byte lo);
-	void loadKoreanGUIFont();
-	void unloadKoreanGUIFont();
-	void drawKorChar(Surface *dst, uint32 chr, int tx, int ty, uint32 color);
-	int get_oem_code_page(uint16 code);
-	uint16 _KS_to_unicode(uint16 ksc);
+
+bool checkKorCode(byte hi, byte lo);
+int get_oem_code_page(uint16 code);
+uint16 _KS_to_unicode(uint16 ksc);
 
 /**
  * A font that is able to draw Korean encoded characters.
@@ -160,7 +158,7 @@ protected:
 };
 
 /**
- * Our custom SJIS Korean FNT.
+ * Our custom Korean FNT.
  */
 class FontKoreanSVM : public FontKoreanBase {
 public:
@@ -194,8 +192,6 @@ private:
 
 /**
  * Korean Wansung compatible font.
- *
- * This is used in KYRA, SCUMM and SCI.
  */
 class FontKoreanWansung : public FontKoreanBase {
 public:
