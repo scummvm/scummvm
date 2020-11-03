@@ -368,6 +368,7 @@ enum Opcode {
 	OP(kSetAnimationZ, setAnimationZ) \
 	OP(kSetCycles, setCycles) \
 	OP(kSetRandom, setRandom) \
+	OP(kSetPeriodic, setPeriodic) \
 	OP(kSetPanAndVolume, setPanAndVolume) \
 	OP(kSetAnimationPosition, setAnimationPosition) \
 	OP(kSetPhaseVar, setPhaseVar) \

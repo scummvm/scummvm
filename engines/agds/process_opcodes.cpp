@@ -579,6 +579,12 @@ void Process::setRandom() {
 	_animationRandom = value;
 }
 
+void Process::setPeriodic() {
+	int value = pop();
+	debug("setPeriodic %d", value);
+	_samplePeriodic = value;
+}
+
 void Process::stub82() {
 	Common::String arg2 = popString();
 	Common::String arg1 = popString();
@@ -611,6 +617,8 @@ void Process::resetState() {
 	_animationZ = 0;
 	_animationRandom = 0;
 	_animationDelay = -1;
+	_animationSpeed = 100;
+	_samplePeriodic = false;
 
 	_tileWidth = 16;
 	_tileHeight = 16;
