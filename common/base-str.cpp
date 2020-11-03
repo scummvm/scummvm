@@ -731,6 +731,8 @@ TEMPLATE void BASESTRING::trim() {
 #endif
 
 TEMPLATE void BASESTRING::assignAppend(value_type c) {
+	if (c == 0)
+		return;
 	ensureCapacity(_size + 1, true);
 
 	_str[_size++] = c;
