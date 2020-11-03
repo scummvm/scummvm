@@ -25,6 +25,7 @@
 #include "ultima/shared/engine/ultima.h"
 #include "engines/metaengine.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 
 namespace Ultima {
 namespace Nuvie {
@@ -39,8 +40,21 @@ bool NuvieIOFileRead::open(const Common::String &filename) {
 		return false;
 
 	if (!_srcFile.open(filename)) {
-		DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename.c_str());
-		return false;
+		Common::FSNode node(ConfMan.get("path"));
+		Common::String fname = filename;
+
+		for (size_t sepPos = fname.findFirstOf(U6PATH_DELIMITER);
+				sepPos != Common::String::npos; sepPos = fname.findFirstOf(U6PATH_DELIMITER)) {
+			node = node.getChild(fname.substr(0, sepPos));
+			fname = fname.substr(sepPos + 1);
+		}
+
+		node = node.getChild(fname);
+
+		if (!_srcFile.open(node)) {
+			DEBUG(0, LEVEL_ERROR, "Failed opening '%s'\n", filename.c_str());
+			return false;
+		}
 	}
 
 	_file = &_srcFile;

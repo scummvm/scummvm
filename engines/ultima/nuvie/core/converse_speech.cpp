@@ -86,7 +86,7 @@ void ConverseSpeech::play_speech(uint16 actor_num, uint16 sample_num) {
 
 	sprintf(filename, "speech%cchar%u.sam", U6PATH_DELIMITER, actor_num);
 
-	config->pathFromValue("config/ultima6/townsdir", filename, sample_file);
+	config->pathFromValue("config/townsdir", filename, sample_file);
 
 	DEBUG(0, LEVEL_DEBUGGING, "Loading Speech Sample %s:%d\n", sample_file.c_str(), sample_num);
 

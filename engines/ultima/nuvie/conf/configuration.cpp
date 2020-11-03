@@ -175,8 +175,6 @@ void Configuration::pathFromValue(const Std::string &key, Std::string file, Std:
 		full_path += U6PATH_DELIMITER + file;
 	else
 		full_path += file;
-
-	return;
 }
 
 bool Configuration::set(const Std::string &key, const Std::string &value) {
@@ -414,6 +412,8 @@ void Configuration::setCommonDefaults(GameId gameType) {
 		Common::String::format("%d", bg_color[i]);
 	_settings["newscroll/border_color"] =
 		Common::String::format("%d", border_color[i]);
+
+	_settings["townsdir"] = "townsu6";
 
 	//	_settings["newgamedata/name"] = "Avatar";
 	//	_settings["newgamedata/gender"] = "0";

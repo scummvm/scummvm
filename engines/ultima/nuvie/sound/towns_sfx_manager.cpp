@@ -60,8 +60,9 @@ static const TownsSfxLookup sfx_lookup_tbl[] = {
 	{NUVIE_SFX_ATTACK_SWING, 2}
 };
 
-TownsSfxManager::TownsSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m) {
-	config->pathFromValue("config/ultima6/townsdir", "sounds2.dat", sounds2dat_filepath);
+TownsSfxManager::TownsSfxManager(Configuration *cfg, Audio::Mixer *m) : SfxManager(cfg, m),
+		fireStream(nullptr) {
+	config->pathFromValue("config/townsdir", "sounds2.dat", sounds2dat_filepath);
 	loadSound1Dat();
 }
 
@@ -78,7 +79,7 @@ void TownsSfxManager::loadSound1Dat() {
 	NuvieIOBuffer iobuf;
 	uint32 slib32_len = 0;
 
-	config->pathFromValue("config/ultima6/townsdir", "sounds1.dat", filename);
+	config->pathFromValue("config/townsdir", "sounds1.dat", filename);
 	unsigned char *slib32_data = decompressor.decompress_file(filename, slib32_len);
 
 	if (slib32_len == 0)
