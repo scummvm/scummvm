@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-31 19:57+0100\n"
-"PO-Revision-Date: 2020-10-06 12:21+0000\n"
+"PO-Revision-Date: 2020-11-03 12:06+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
@@ -23,7 +23,7 @@ msgstr ""
 #: gui/about.cpp:102
 #, c-format
 msgid "(built on %s)"
-msgstr ""
+msgstr "(编译于：%s)"
 
 #: gui/about.cpp:109
 msgid "Features compiled in:"
