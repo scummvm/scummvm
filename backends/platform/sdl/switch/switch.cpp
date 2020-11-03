@@ -22,6 +22,8 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_printf
 
+#include <switch.h>
+
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 #include "common/translation.h"
@@ -163,4 +165,30 @@ Common::HardwareInputSet *OSystem_Switch::getHardwareInputSet() {
 	inputSet->addHardwareInputSet(new JoystickHardwareInputSet(switchJoystickButtons, switchJoystickAxes));
 
 	return inputSet;
+}
+
+Common::String OSystem_Switch::getSystemLanguage() const {
+	u64 lang;
+	SetLanguage langcode;
+
+	setInitialize();
+	setGetSystemLanguage(&lang);
+	setMakeLanguage(lang, &langcode);
+
+	switch (langcode) {
+		case SetLanguage_JA:   return "ja_JP";
+		case SetLanguage_ENUS: return "en_US";
+		case SetLanguage_FR:   return "fr_FR";
+		case SetLanguage_FRCA: return "fr_FR";
+		case SetLanguage_DE:   return "de_DE";
+		case SetLanguage_IT:   return "it_IT";
+		case SetLanguage_ES:   return "es_ES";
+		case SetLanguage_ZHCN: return "zh_CN";
+		case SetLanguage_KO:   return "ko_KR";
+		case SetLanguage_NL:   return "nl_NL";
+		case SetLanguage_PT:   return "pt_PT";
+		case SetLanguage_RU:   return "ru_RU";
+		case SetLanguage_ZHTW: return "zh_HK";
+		default:               return "en_US";
+	}
 }
