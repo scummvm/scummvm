@@ -69,7 +69,7 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 		bool isavatar = (actor && actor->getShape() == 1);
 		if (isavatar && actor->getActiveWeapon()) {
 			const Item *wpn = getItem(actor->getActiveWeapon());
-			const ShapeInfo *shapeinfo = wpn->getShapeInfo();
+			const ShapeInfo *shapeinfo = (wpn ? wpn->getShapeInfo() : nullptr);
 			const WeaponInfo *wpninfo = (shapeinfo ? shapeinfo->_weaponInfo : nullptr);
 			smallwpn = (wpninfo && wpninfo->_small);
 			altfire = (wpninfo && (wpninfo->_overlayShape == 0x36e || wpninfo->_overlayShape == 0x33b));
