@@ -85,6 +85,10 @@ public:
 
 	static Common::Array<Common::String> getAllStorageLocations();
 
+	static bool createDirectoryWithSAF(const Common::String &dirPath);
+	static Common::String createFileWithSAF(const Common::String &filePath);
+	static void closeFileWithSAF(const Common::String &hackyFilename);
+
 private:
 	static JavaVM *_vm;
 	// back pointer to (java) peer instance
@@ -114,6 +118,9 @@ private:
 	static jmethodID _MID_getAllStorageLocations;
 	static jmethodID _MID_initSurface;
 	static jmethodID _MID_deinitSurface;
+	static jmethodID _MID_createDirectoryWithSAF;
+	static jmethodID _MID_createFileWithSAF;
+	static jmethodID _MID_closeFileWithSAF;
 
 	static jmethodID _MID_EGL10_eglSwapBuffers;
 
