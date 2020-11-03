@@ -27,9 +27,6 @@ void TextLayout::reset(AGDSEngine &engine) {
 		if (!var.empty()) {
 			engine.setGlobal(var, 0);
 		}
-		if (!_charDirectionNotifyVar.empty()) {
-			engine.setGlobal(_charDirectionNotifyVar, 0);
-		}
 		engine.reactivate(_process);
 	}
 }
