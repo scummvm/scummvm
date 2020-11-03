@@ -128,7 +128,7 @@ void Character::animate(Common::Point pos, int direction, int speed) {
 	_animation->speed(speed);
 	_animation->rewind();
 	_phase = 0;
-	_frames = speed * _animation->frames() / 100;
+	_frames = (100 * _animation->frames() + speed - 1) / speed;
 	_animationPos = pos;
 }
 
