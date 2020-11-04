@@ -22,6 +22,7 @@
 
 #include "twine/grid.h"
 #include "common/endian.h"
+#include "common/memstream.h"
 #include "common/textconsole.h"
 #include "twine/actor.h"
 #include "twine/collision.h"
@@ -331,65 +332,58 @@ int32 Grid::loadGridBricks(int32 gridSize) {
 }
 
 void Grid::createGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize) {
-	int32 brickCount = *(gridEntry++);
+	Common::MemoryReadStream stream(gridEntry, gridEntrySize);
+	Common::MemoryWriteStream outstream(dest, destSize);
+	int32 brickCount = stream.readByte();
 
 	do {
-		int32 flag = *(gridEntry++);
-		int32 blockCount = (flag & 0x3F) + 1;
-
-		const uint16 *gridBuffer = (const uint16 *)gridEntry;
-		uint16 *blockByffer = (uint16 *)dest;
+		const int32 flag = stream.readByte();
+		const int32 blockCount = (flag & 0x3F) + 1;
 
 		if (!(flag & 0xC0)) {
 			for (int32 i = 0; i < blockCount; i++) {
-				*(blockByffer++) = 0;
+				outstream.writeUint16LE(0);
 			}
 		} else if (flag & 0x40) {
 			for (int32 i = 0; i < blockCount; i++) {
-				*(blockByffer++) = *(gridBuffer++);
+				outstream.writeUint16LE(stream.readUint16LE());
 			}
 		} else {
-			int32 gridIdx = *(gridBuffer++);
+			int32 gridIdx = stream.readUint16LE();
 			for (int32 i = 0; i < blockCount; i++) {
-				*(blockByffer++) = gridIdx;
+				outstream.writeUint16LE(gridIdx);
 			}
 		}
-
-		gridEntry = (const uint8 *)gridBuffer;
-		dest = (uint8 *)blockByffer;
-
+		assert(!outstream.err());
+		assert(!stream.err());
 	} while (--brickCount);
 }
 
 void Grid::createCellingGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize) {
-	int32 brickCount = *(gridEntry++);
+	Common::MemoryReadStream stream(gridEntry, gridEntrySize);
+	Common::SeekableMemoryWriteStream outstream(dest, destSize);
+	int32 brickCount = stream.readByte();
 
 	do {
-		int32 flag = *(gridEntry++);
-
-		int32 blockCount = (flag & 0x3F) + 1;
-
-		const uint16 *gridBuffer = (const uint16 *)gridEntry;
-		uint16 *blockByffer = (uint16 *)dest;
+		const int32 flag = stream.readByte();
+		const int32 blockCount = (flag & 0x3F) + 1;
 
 		if (!(flag & 0xC0)) {
 			for (int32 i = 0; i < blockCount; i++) {
-				blockByffer++;
+				outstream.seek(outstream.pos() + 2);
 			}
 		} else if (flag & 0x40) {
 			for (int32 i = 0; i < blockCount; i++) {
-				*(blockByffer++) = *(gridBuffer++);
+				outstream.writeUint16LE(stream.readUint16LE());
 			}
 		} else {
-			int32 gridIdx = *(gridBuffer++);
+			int32 gridIdx = stream.readUint16LE();
 			for (int32 i = 0; i < blockCount; i++) {
-				*(blockByffer++) = gridIdx;
+				outstream.writeUint16LE(gridIdx);
 			}
 		}
-
-		gridEntry = (const uint8 *)gridBuffer;
-		dest = (uint8 *)blockByffer;
-
+		assert(!outstream.err());
+		assert(!stream.err());
 	} while (--brickCount);
 }
 
