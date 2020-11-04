@@ -72,7 +72,7 @@ bool Console::info(int argc, const char **argv) {
 			auto pos = animation->position();
 			debugPrintf("animation %s (process: %s, %s) at %d,%d,%d, frame: %d\n",
 				animation->phaseVar().c_str(), animation->process().c_str(), animation->paused()? "paused": "running",
-				pos.x, pos.y, animation->z(), animation->frameIndex());
+				pos.x, pos.y, animation->z(), animation->phase());
 		}
 	}
 	debugPrintf("processes:\n");

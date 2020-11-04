@@ -156,12 +156,6 @@ void Process::loadAnimation() {
 	debug("loadAnimation %s (phase: %s) %s", name.c_str(), _phaseVar.c_str(), _phaseVarControlled? "(phase-var)": "");
 	Animation *animation = _engine->loadAnimation(name);
 	if (animation) {
-		if (_phaseVarControlled) {
-			_animationLoop = false;
-			_animationCycles = 0;
-			_animationRandom = 0;
-			_animationDelay = 0;
-		}
 		setupAnimation(animation);
 		_engine->getCurrentScreen()->add(animation);
 	}
@@ -846,7 +840,7 @@ void Process::restartAnimation() {
 		}
 		animation->resume();
 		animation->decodeNextFrameIfNoFrame(*_engine);
-		_engine->setGlobal(phaseVar, animation->frameIndex());
+		_engine->setGlobal(phaseVar, animation->phase() - 1);
 	} else {
 		warning("no animation with phase var %s found", phaseVar.c_str());
 		_engine->setGlobal(phaseVar, -1);

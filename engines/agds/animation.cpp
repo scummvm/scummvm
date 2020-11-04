@@ -33,7 +33,7 @@ namespace AGDS {
 Animation::Animation() :
 	_flic(), _frame(), _frames(0), _loop(false), _cycles(1), _phaseVarControlled(false),
 	_phase(0), _paused(false), _speed(100), _z(0),
-	_delay(-1), _random(0), _scale(1) {
+	_delay(0), _random(0), _scale(1) {
 }
 
 Animation::~Animation() {
@@ -51,6 +51,29 @@ void Animation::freeFrame() {
 
 
 bool Animation::load(Common::SeekableReadStream *stream) {
+	if (_phaseVarControlled) {
+		if (_phaseVar.empty()) {
+			warning("phase var controlled animation with no phase var");
+			_phaseVarControlled = false;
+			return false;
+		}
+		if (_loop) {
+			warning("phase var controller animation with loop, resetting");
+			_loop = false;
+		}
+		if (_cycles > 1) {
+			warning("phase var controller animation with cycles, resetting");
+			_cycles = 1;
+		}
+		if (_random) {
+			warning("phase var controller animation with random, resetting");
+			_random = false;
+		}
+		if (_delay > 0) {
+			warning("phase var controller animation with delay, resetting");
+			_delay = 0;
+		}
+	}
 	delete _flic;
 	Video::FlicDecoder *flic = new Video::FlicDecoder;
 	if (flic->loadStream(stream)) {
@@ -67,10 +90,13 @@ bool Animation::load(Common::SeekableReadStream *stream) {
 
 void Animation::decodeNextFrame(AGDSEngine &engine) {
 	auto frame = _flic->decodeNextFrame();
-	if (!frame)
+	if (!frame) {
+		warning("frame couldn't be decoded");
 		return;
+	}
 
 	freeFrame();
+	_delay = _flic->getCurFrameDelay() * _speed / 4000; //40 == 1000 / 25, 25 fps
 	_frame = engine.convertToTransparent(frame->convertTo(engine.pixelFormat(), _flic->getPalette()));
 	if (_scale != 1) {
 		auto f = _frame->scale(_frame->w * _scale, _frame->h * _scale, true);
@@ -79,6 +105,7 @@ void Animation::decodeNextFrame(AGDSEngine &engine) {
 			_frame = f;
 		}
 	}
+	++_phase;
 }
 
 void Animation::rewind() {
@@ -88,47 +115,41 @@ void Animation::rewind() {
 }
 
 bool Animation::tick(AGDSEngine &engine) {
-	if (_paused) {
+	if (_paused || (_phaseVarControlled && !_frame)) {
 		return true;
 	}
 
-	if (!_frame && _phaseVarControlled)
-		return true;
+	if (_phaseVarControlled && engine.getGlobal(_phaseVar) == -2) {
+		debug("phase var %s signalled deleting of animation", _phaseVar.c_str());
+		return false;
+	}
 
 	if (_delay > 0) {
 		--_delay;
 		return true;
 	}
 
-	if (_phaseVarControlled && !_phaseVar.empty() && engine.getGlobal(_phaseVar) == -2) {
-		debug("phase var %s signalled deleting of animation", _phaseVar.c_str());
-		return false;
-	}
-
-	int frame = frameIndex();
-	if (frame >= _frames && !_loop) {
-		if (!_phaseVar.empty()) {
-			engine.setGlobal(_phaseVar, -1);
-		} else {
-			engine.reactivate(_process);
+	bool eov = _flic->endOfVideo();
+	if (eov) {
+		if (!_loop) {
+			if (!_phaseVar.empty())
+				engine.setGlobal(_phaseVar, -1);
 		}
+
 		if (_phaseVarControlled) {
 			freeFrame();
+			engine.reactivate(_process, true);
 			return true;
 		}
 		return false;
 	}
 
-	for(int begin = frame, end = frameIndex(1); begin < end; ++begin) {
-		decodeNextFrame(engine);
-	}
-
+	decodeNextFrame(engine);
 	if (!_process.empty()) {
 		if (!_phaseVar.empty()) {
-			engine.setGlobal(_phaseVar, _phase);
+			engine.setGlobal(_phaseVar, _phase - 1);
 		}
 	}
-	++_phase;
 	return true;
 }
 
