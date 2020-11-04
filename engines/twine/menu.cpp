@@ -223,11 +223,11 @@ void Menu::processPlasmaEffect(int32 left, int32 top, int32 color) {
 	const uint8 *in = plasmaEffectPtr + 5 * PLASMA_WIDTH;
 	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
 
-	for (int32 i = 0; i < 25; i++) {
-		for (int32 j = 0; j < kMainMenuButtonWidth; j++) {
-			const uint8 c = MIN(in[i * kMainMenuButtonWidth + j] / 2 + color, max_value);
+	for (int32 y = 0; y < PLASMA_HEIGHT / 2; y++) {
+		for (int32 x = 0; x < PLASMA_WIDTH; x++) {
+			const uint8 c = MIN(in[y * PLASMA_WIDTH + x] / 2 + color, max_value);
 			/* 2x2 squares sharing the same pixel color: */
-			const int32 target = 2 * (i * DEFAULT_SCREEN_WIDTH + j);
+			const int32 target = 2 * (y * DEFAULT_SCREEN_WIDTH + x);
 			out[target + 0] = c;
 			out[target + 1] = c;
 			out[target + DEFAULT_SCREEN_WIDTH + 0] = c;
