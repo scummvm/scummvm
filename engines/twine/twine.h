@@ -243,6 +243,9 @@ public:
 	int32 runGameEngine();
 	/** Allocate video memory, both front and back buffers */
 	void allocVideoMemory();
+	/**
+	 * @return A random value between [0-max)
+	 */
 	int getRandomNumber(uint max = 0x7FFF);
 	int32 quitGame = 0;
 	int32 lbaTime = 0;

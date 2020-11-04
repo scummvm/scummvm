@@ -507,7 +507,10 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 		return;
 	}
 
-	int8 currentBonus = bonusTable[_engine->getRandomNumber(numBonus)];
+	const int bonusIndex = _engine->getRandomNumber(numBonus);
+	assert(bonusIndex >= 0);
+	assert(bonusIndex < numBonus);
+	int8 currentBonus = bonusTable[bonusIndex];
 	// if bonus is magic an no magic level yet, then give life points
 	if (!_engine->_gameState->magicLevelIdx && currentBonus == 2) {
 		currentBonus = 1;

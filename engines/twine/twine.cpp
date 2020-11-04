@@ -409,7 +409,10 @@ void TwinEEngine::initAll() {
 }
 
 int TwinEEngine::getRandomNumber(uint max) {
-	return _rnd.getRandomNumber(max);
+	if (max == 0) {
+		return 0;
+	}
+	return _rnd.getRandomNumber(max - 1);
 }
 
 void TwinEEngine::freezeTime() {
