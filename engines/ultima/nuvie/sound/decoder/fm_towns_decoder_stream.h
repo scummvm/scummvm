@@ -79,6 +79,8 @@ protected:
 	uint32 buf_len;
 	uint32 buf_pos;
 
+private:
+	inline sint16 convertSample(uint16 rawSample) const;
 };
 
 } // End of namespace Nuvie
