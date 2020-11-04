@@ -24,7 +24,6 @@
 #include "common/str.h"
 #include "common/memorypool.h"
 #include "common/util.h"
-#include "unicode-bidi.h"
 
 namespace Common {
 
@@ -48,10 +47,6 @@ U32String::U32String(const char *beginP, const char *endP) : BaseString<u32char_
 
 U32String::U32String(const String &str) : BaseString<u32char_type_t>() {
 	initWithCStr(str.c_str(), str.size());
-}
-
-U32String::U32String(const UnicodeBiDiText &txt) : BaseString<u32char_type_t>() {
-	initWithValueTypeStr(txt.visual.c_str(), txt.visual.size());
 }
 
 U32String &U32String::operator=(const U32String &str) {

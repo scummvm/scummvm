@@ -42,6 +42,11 @@ public:
 	UnicodeBiDiText(const Common::String &str, const Common::CodePage page);
 	~UnicodeBiDiText();
 
+	/**
+	 * Implicit conversion to U32String to get the visual representation.
+	 */
+	operator const U32String &() const { return visual; }
+
 	uint32 getVisualPosition(uint32 logicalPos) const;
 	uint32 getLogicalPosition(uint32 visualPos) const;
 	uint32 size() const { return logical.size(); }
