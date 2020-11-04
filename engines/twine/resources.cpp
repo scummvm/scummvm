@@ -97,9 +97,9 @@ void Resources::preloadSamples() {
 			continue;
 		}
 		// Fix incorrect sample files first byte
-		if (*samplesTable[i] != 'C') {
+		if (*(samplesTable[i]) != 'C') {
 			debug(0, "Sample %i has incorrect magic id", i);
-			*samplesTable[i] = 'C';
+			*(samplesTable[i]) = 'C';
 		}
 	}
 }

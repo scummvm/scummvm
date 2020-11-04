@@ -23,6 +23,7 @@
 #include "twine/hqr.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/memstream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -39,18 +40,19 @@ namespace HQR {
 /**
  * Decompress entry based in Yaz0r and Zink decompression code
  * @param dst destination pointer where will be the decompressed entry
- * @param src compressed data pointer
+ * @param compBuf compressed data pointer
+ * @param compSize @p compBuf buffer size
  * @param decompsize real file size after decompression
  * @param mode compression mode used
  */
-static void decompressEntry(uint8 *dst, const uint8 *src, int32 decompsize, int32 mode) {
+static void decompressEntry(uint8 *dst, const uint8 *compBuf, uint32 compSize, int32 decompsize, int32 mode) {
+	Common::MemoryReadStream stream(compBuf, compSize);
 	do {
-		uint8 b = *(src++);
+		uint8 b = stream.readByte();
 		for (int32 d = 0; d < 8; d++) {
 			int32 length;
 			if (!(b & (1 << d))) {
-				const uint16 offset = *(const uint16 *)(src);
-				src += 2;
+				const uint16 offset = stream.readUint16LE();
 				length = (offset & 0x0F) + (mode + 1);
 				const uint8 *ptr = dst - (offset >> 4) - 1;
 				for (int32 i = 0; i < length; i++) {
@@ -58,7 +60,7 @@ static void decompressEntry(uint8 *dst, const uint8 *src, int32 decompsize, int3
 				}
 			} else {
 				length = 1;
-				*(dst++) = *(src++);
+				*(dst++) = stream.readByte();
 			}
 			decompsize -= length;
 			if (decompsize <= 0) {
@@ -147,7 +149,7 @@ int32 getEntry(uint8 *ptr, const char *filename, int32 index) {
 	else if (mode == 1 || mode == 2) {
 		uint8 *compDataPtr = (uint8 *)malloc(compSize);
 		wrap(file.read(compDataPtr, compSize))
-		decompressEntry(ptr, compDataPtr, realSize, mode);
+		decompressEntry(ptr, compDataPtr, compSize, realSize, mode);
 		free(compDataPtr);
 	}
 
@@ -258,7 +260,7 @@ int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenInd
 	else if (mode == 1 || mode == 2) {
 		uint8 *compDataPtr = (uint8 *)malloc(compSize);
 		wrap(file.read(compDataPtr, compSize))
-		decompressEntry(ptr, compDataPtr, realSize, mode);
+		decompressEntry(ptr, compDataPtr, compSize, realSize, mode);
 		free(compDataPtr);
 	}
 
