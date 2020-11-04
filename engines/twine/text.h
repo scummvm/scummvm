@@ -274,7 +274,8 @@ public:
 	void setTextCrossColor(int32 stopColor, int32 startColor, int32 stepSize);
 
 	/**
-	 * Get dialogue text into text buffer
+	 * Get dialogue text into text buffer from the currently loaded text bank
+	 * @sa initTextBank()
 	 * @param index dialogue index
 	 */
 	bool getText(int32 index);
