@@ -231,7 +231,7 @@ class Scene {
 private:
 	TwinEEngine *_engine;
 
-/** Process zone extra bonus */
+	/** Process zone extra bonus */
 	void processZoneExtraBonus(ZoneStruct *zone);
 	void setActorStaticFlags(int32 actorIdx, uint16 staticFlags);
 	bool loadSceneLBA1();
@@ -244,23 +244,8 @@ private:
 	ActorStruct _sceneActors[NUM_MAX_ACTORS];
 	int32 _currentSceneSize = 0;
 
-public:
-	Scene(TwinEEngine *engine) : _engine(engine) {}
-
-	uint8 *currentScene = nullptr;
-
-	int32 needChangeScene = LBA1SceneId::Citadel_Island_Prison;
-	int32 currentSceneIdx = LBA1SceneId::Citadel_Island_Prison;
-	int32 previousSceneIdx = LBA1SceneId::Citadel_Island_Prison;
-
-	int32 sceneTextBank = TextBankId::None;
-	int32 currentGameOverScene = 0;
-	int32 alphaLight = 0;
-	int32 betaLight = 0;
-
 	/** Timer for the next sample ambience in scene */
 	int32 sampleAmbienceTime = 0;
-
 	int16 sampleAmbiance[4] {0};
 	int16 sampleRepeat[4] {0};
 	int16 sampleRound[4] {0};
@@ -275,13 +260,27 @@ public:
 	int16 sceneHeroY = 0; // newTwinsenYByScene
 	int16 sceneHeroZ = 0; // newTwinsenZByScene
 
-	int16 newHeroX = 0; // newTwinsenX
-	int16 newHeroY = 0; // newTwinsenY
-	int16 newHeroZ = 0; // newTwinsenZ
-
 	int16 zoneHeroX = 0; // newTwinsenXByZone
 	int16 zoneHeroY = 0; // newTwinsenYByZone
 	int16 zoneHeroZ = 0; // newTwinsenZByZone
+	int32 currentGameOverScene = 0;
+
+public:
+	Scene(TwinEEngine *engine) : _engine(engine) {}
+
+	uint8 *currentScene = nullptr;
+
+	int32 needChangeScene = LBA1SceneId::Citadel_Island_Prison;
+	int32 currentSceneIdx = LBA1SceneId::Citadel_Island_Prison;
+	int32 previousSceneIdx = LBA1SceneId::Citadel_Island_Prison;
+
+	int32 sceneTextBank = TextBankId::None;
+	int32 alphaLight = 0;
+	int32 betaLight = 0;
+
+	int16 newHeroX = 0; // newTwinsenX
+	int16 newHeroY = 0; // newTwinsenY
+	int16 newHeroZ = 0; // newTwinsenZ
 
 	/** Hero Y coordinate before fall */
 	int16 heroYBeforeFall = 0;
@@ -325,6 +324,7 @@ public:
 
 	/** Process scene environment sound */
 	void processEnvironmentSound();
+	void initSceneVars();
 
 	/**
 	 * Process actor zones

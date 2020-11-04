@@ -83,28 +83,11 @@ void GameState::initSceneVars() {
 		inventoryFlags[i] = 0;
 	}
 
-	_engine->_scene->sampleAmbiance[0] = -1;
-	_engine->_scene->sampleAmbiance[1] = -1;
-	_engine->_scene->sampleAmbiance[2] = -1;
-	_engine->_scene->sampleAmbiance[3] = -1;
-
-	_engine->_scene->sampleRepeat[0] = 0;
-	_engine->_scene->sampleRepeat[1] = 0;
-	_engine->_scene->sampleRepeat[2] = 0;
-	_engine->_scene->sampleRepeat[3] = 0;
-
-	_engine->_scene->sampleRound[0] = 0;
-	_engine->_scene->sampleRound[1] = 0;
-	_engine->_scene->sampleRound[2] = 0;
-	_engine->_scene->sampleRound[3] = 0;
+	_engine->_scene->initSceneVars();
 
 	for (int32 i = 0; i < ARRAYSIZE(holomapFlags); i++) {
 		holomapFlags[i] = 0;
 	}
-
-	_engine->_scene->sceneNumActors = 0;
-	_engine->_scene->sceneNumZones = 0;
-	_engine->_scene->sceneNumTracks = 0;
 
 	_engine->_actor->currentPositionInBodyPtrTab = 0;
 }

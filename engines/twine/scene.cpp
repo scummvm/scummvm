@@ -277,10 +277,10 @@ void Scene::changeScene() {
 	// TODO: treat holomap trajectories
 
 	if (needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_1 || needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_2) {
-		_engine->_scene->sceneTextBank = TextBankId::Tippet_Island;
+		sceneTextBank = TextBankId::Tippet_Island;
 	}
 
-	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
+	_engine->_text->initTextBank(sceneTextBank + 3);
 	_engine->_grid->initGrid(needChangeScene);
 
 	if (heroPositionType == ScenePositionType::kZone) {
@@ -344,6 +344,27 @@ ActorStruct *Scene::getActor(int32 actorIdx) {
 	assert(actorIdx >= 0);
 	assert(actorIdx < NUM_MAX_ACTORS);
 	return &_sceneActors[actorIdx];
+}
+
+void Scene::initSceneVars() {
+	sampleAmbiance[0] = -1;
+	sampleAmbiance[1] = -1;
+	sampleAmbiance[2] = -1;
+	sampleAmbiance[3] = -1;
+
+	sampleRepeat[0] = 0;
+	sampleRepeat[1] = 0;
+	sampleRepeat[2] = 0;
+	sampleRepeat[3] = 0;
+
+	sampleRound[0] = 0;
+	sampleRound[1] = 0;
+	sampleRound[2] = 0;
+	sampleRound[3] = 0;
+
+	sceneNumActors = 0;
+	sceneNumZones = 0;
+	sceneNumTracks = 0;
 }
 
 void Scene::processEnvironmentSound() {
