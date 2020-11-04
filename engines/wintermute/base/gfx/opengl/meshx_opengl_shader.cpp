@@ -37,8 +37,8 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-MeshXOpenGLShader::MeshXOpenGLShader(BaseGame *inGame, OpenGL::ShaderGL *shader) :
-	MeshX(inGame), _shader(shader) {
+MeshXOpenGLShader::MeshXOpenGLShader(BaseGame *inGame, OpenGL::ShaderGL *shader, OpenGL::ShaderGL *flatShadowShader) :
+	MeshX(inGame), _shader(shader), _flatShadowShader(flatShadowShader) {
 	glGenBuffers(1, &_vertexBuffer);
 	glGenBuffers(1, &_indexBuffer);
 }
@@ -99,6 +99,24 @@ bool MeshXOpenGLShader::render(ModelX *model) {
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
+
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	return true;
+}
+
+bool MeshXOpenGLShader::renderFlatShadowModel() {
+	if (_vertexData == nullptr) {
+		return false;
+	}
+
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, _indexBuffer);
+
+	_flatShadowShader->enableVertexAttribute("position", _vertexBuffer, 3, GL_FLOAT, false, 4 * kVertexComponentCount, 4 * kPositionOffset);
+	_flatShadowShader->use(true);
+
+	glDrawElements(GL_TRIANGLES, _indexRanges.back(), GL_UNSIGNED_SHORT, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);

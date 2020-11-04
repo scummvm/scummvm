@@ -35,6 +35,9 @@
 #include "common/translation.h"
 #include "engines/metaengine.h"
 #include "engines/util.h"
+#include "graphics/colormasks.h"
+#include "graphics/fontman.h"
+#include "graphics/font.h"
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
@@ -70,6 +73,14 @@
 #include "twine/text.h"
 
 namespace TwinE {
+
+ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine* engine) : _engine(engine) {
+	_engine->freezeTime();
+}
+
+ScopedEngineFreeze::~ScopedEngineFreeze() {
+	_engine->unfreezeTime();
+}
 
 TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, TwineGameType gameType)
     : Engine(system), _gameType(gameType), _gameLang(language), _gameFlags(flags), _rnd("twine") {
@@ -152,8 +163,45 @@ Common::Error TwinEEngine::run() {
 	_screens->copyScreen(frontVideoBuffer, workVideoBuffer);
 
 	_menu->init();
+
+	if (ConfMan.hasKey("save_slot")) {
+		const int saveSlot = ConfMan.getInt("save_slot");
+		if (saveSlot >= 0 && saveSlot <= 999) {
+			Common::Error state = loadGameState(saveSlot);
+			if (state.getCode() != Common::kNoError) {
+				return state;
+			}
+		}
+	}
 	while (!shouldQuit()) {
-		_menu->run();
+		readKeys();
+		switch (_state) {
+		case EngineState::QuitGame: {
+			Common::Event event;
+			event.type = Common::EVENT_QUIT;
+			_system->getEventManager()->pushEvent(event);
+			break;
+		}
+		case EngineState::LoadedGame:
+			debug("Loaded game");
+			if (_scene->newHeroX == -1) {
+				_scene->heroPositionType = ScenePositionType::kNoPosition;
+			}
+			_text->newGameVar5 = 0;
+			_text->textClipSmall();
+			_text->newGameVar4 = 1;
+			_state = EngineState::GameLoop;
+			break;
+		case EngineState::GameLoop:
+			if (gameEngineLoop()) {
+				_menuOptions->showCredits();
+			}
+			_state = EngineState::Menu;
+			break;
+		case EngineState::Menu:
+			_state = _menu->run();
+			break;
+		}
 	}
 
 	ConfMan.setInt("CombatAuto", _actor->autoAgressive ? 1 : 0);
@@ -180,34 +228,37 @@ bool TwinEEngine::hasFeature(EngineFeature f) const {
 	return false;
 }
 
-bool TwinEEngine::hasSavedSlots() {
-	Common::SaveFileManager *saveFileMan = getSaveFileManager();
-	const Common::String pattern(getMetaEngine().getSavegameFilePattern(_targetName.c_str()));
-	return !saveFileMan->listSavefiles(pattern).empty();
+SaveStateList TwinEEngine::getSaveSlots() const {
+	return getMetaEngine().listSaves(_targetName.c_str());
 }
 
 void TwinEEngine::wipeSaveSlot(int slot) {
 	Common::SaveFileManager *saveFileMan = getSaveFileManager();
-	const Common::String &saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
+	const Common::String &saveFile = getSaveStateName(slot);
 	saveFileMan->removeSavefile(saveFile);
 }
 
-bool TwinEEngine::loadSaveSlot(int slot) {
-	Common::SaveFileManager *saveFileMan = getSaveFileManager();
-	const Common::String &saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
-	Common::InSaveFile *file = saveFileMan->openForLoading(saveFile);
-	return _gameState->loadGame(file);
+bool TwinEEngine::canSaveGameStateCurrently() { return _scene->currentScene != nullptr; }
+
+Common::Error TwinEEngine::loadGameStream(Common::SeekableReadStream *stream) {
+	debug("load game stream");
+	if (!_gameState->loadGame(stream)) {
+		return Common::Error(Common::kReadingFailed);
+	}
+	_state = EngineState::LoadedGame;
+	return Common::Error(Common::kNoError);
 }
 
-bool TwinEEngine::saveSlot(int slot) {
-	Common::SaveFileManager *saveFileMan = getSaveFileManager();
-	const Common::String &saveFile = getMetaEngine().getSavegameFile(slot, _targetName.c_str());
-	Common::OutSaveFile *file = saveFileMan->openForSaving(saveFile);
-	return _gameState->saveGame(file);
+Common::Error TwinEEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
+	if (!_gameState->saveGame(stream)) {
+		return Common::Error(Common::kWritingFailed);
+	}
+	return Common::Error(Common::kNoError);
 }
 
 void TwinEEngine::autoSave() {
-	// TODO:
+	// TODO: scene title, not player name
+	saveGameState(getAutosaveSlot(), _gameState->playerName, true);
 }
 
 void TwinEEngine::allocVideoMemory() {
@@ -412,10 +463,9 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			if (giveUp == 1) {
 				unfreezeTime();
 				_redraw->redrawEngineActions(1);
-				freezeTime();
+				ScopedEngineFreeze freeze(this);
 				autoSave();
 				quitGame = 0;
-				unfreezeTime();
 				return 0;
 			}
 			unfreezeTime();
@@ -425,11 +475,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		if (_input->toggleActionIfActive(TwinEActionType::OptionsMenu)) {
 			freezeTime();
 			_sound->pauseSamples();
-			_menu->OptionsMenuState[MenuSettings_FirstButton] = TextId::kReturnGame;
-			_text->initTextBank(0);
-			_menu->optionsMenu();
-			_text->initTextBank(_text->currentTextBank + 3);
-			_menu->OptionsMenuState[MenuSettings_FirstButton] = TextId::kReturnMenu;
+			_menu->inGameOptionsMenu();
 			// TODO: play music
 			_sound->resumeSamples();
 			unfreezeTime();
@@ -468,7 +514,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			case kiBookOfBu: {
 				_screens->fadeToBlack(_screens->paletteRGBA);
 				_screens->loadImage(RESSHQR_INTROSCREEN1IMG);
-				_text->initTextBank(2);
+				_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 				_text->newGameVar4 = 0;
 				_text->textClipFull();
 				_text->setFontCrossColor(15);
@@ -478,7 +524,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				cfgfile.FlagDisplayText = tmpFlagDisplayText;
 				_text->textClipSmall();
 				_text->newGameVar4 = 1;
-				_text->initTextBank(_text->currentTextBank + 3);
+				_text->initTextBank(_scene->sceneTextBank + 3);
 				_screens->fadeToBlack(_screens->paletteRGBACustom);
 				_screens->clearScreen();
 				flip();
@@ -524,12 +570,12 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				unfreezeTime();
 				_redraw->redrawEngineActions(1);
 				freezeTime();
-				_text->initTextBank(2);
+				_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 				_text->textClipFull();
 				_text->setFontCrossColor(15);
 				_text->drawTextFullscreen(162);
 				_text->textClipSmall();
-				_text->initTextBank(_text->currentTextBank + 3);
+				_text->initTextBank(_scene->sceneTextBank + 3);
 				break;
 			}
 			case kiCloverLeaf:
@@ -932,24 +978,16 @@ void TwinEEngine::readKeys() {
 }
 
 void TwinEEngine::drawText(int32 x, int32 y, const char *string, int32 center) {
-#if 0 // TODO
-	SDL_Color white = {0xFF, 0xFF, 0xFF, 0};
-	SDL_Color *forecol = &white;
-	SDL_Rect rectangle;
-	Graphics::ManagedSurface *text = TTF_RenderText_Solid(font, string, *forecol);
-
-	if (center) {
-		rectangle.x = x - (text->w / 2);
-	} else {
-		rectangle.x = x;
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kGUIFont);
+	if (!font) {
+		return;
 	}
-	rectangle.y = y - 2;
-	rectangle.w = text->w;
-	rectangle.h = text->h;
-
-	SDL_BlitSurface(text, NULL, screenBuffer, &rectangle);
-	SDL_FreeSurface(text);
-#endif
+	int width = 100;
+	const Common::String text(string);
+	font->drawString(&frontVideoBuffer, text,
+	                 x, y, width,
+	                 frontVideoBuffer.format.RGBToColor(255, 255, 255),
+	                 center ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft);
 }
 
 } // namespace TwinE

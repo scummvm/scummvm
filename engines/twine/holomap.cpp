@@ -21,7 +21,10 @@
  */
 
 #include "twine/holomap.h"
+#include "common/memstream.h"
+#include "common/types.h"
 #include "twine/gamestate.h"
+#include "twine/hqr.h"
 #include "twine/interface.h"
 #include "twine/renderer.h"
 #include "twine/resources.h"
@@ -34,6 +37,30 @@
 namespace TwinE {
 
 Holomap::Holomap(TwinEEngine *engine) : _engine(engine) {}
+
+bool Holomap::loadLocations() {
+	uint8 *locationsPtr;
+	const int32 locationsSize = HQR::getAllocEntry(&locationsPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWINFO);
+	if (locationsSize == 0) {
+		warning("Could not find holomap locations at index %i in %s", RESSHQR_HOLOARROWINFO, Resources::HQR_RESS_FILE);
+		return false;
+	}
+
+	Common::MemoryReadStream stream(locationsPtr, locationsSize, DisposeAfterUse::YES);
+	_numLocations = locationsSize / sizeof(Location);
+	if (_numLocations > NUM_LOCATIONS) {
+		warning("Amount of locations (%i) exceeds the maximum of %i", _numLocations, NUM_LOCATIONS);
+		return false;
+	}
+
+	for (int i = 0; i < _numLocations; i++) {
+		_locations[i].x = stream.readUint16LE();
+		_locations[i].y = stream.readUint16LE();
+		_locations[i].z = stream.readUint16LE();
+		_locations[i].textIndex = stream.readUint16LE();
+	}
+	return true;
+}
 
 void Holomap::setHolomapPosition(int32 locationIdx) {
 	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->holomapFlags));
@@ -116,7 +143,7 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 }
 
 void Holomap::processHolomap() {
-	_engine->freezeTime();
+	ScopedEngineFreeze freeze(_engine);
 
 	// TODO memcopy palette
 
@@ -134,7 +161,7 @@ void Holomap::processHolomap() {
 	drawHolomapTitle(320, 25);
 	_engine->_renderer->setCameraPosition(320, 190, 128, 1024, 1024);
 
-	_engine->_text->initTextBank(2);
+	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->setFontCrossColor(9);
 
 	// TODO
@@ -145,11 +172,9 @@ void Holomap::processHolomap() {
 	_engine->_scene->betaLight = betaLightTmp;
 	_engine->_gameState->initEngineVars();
 
-	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 
 	// TODO memcopy reset palette
-
-	_engine->unfreezeTime();
 }
 
 } // namespace TwinE

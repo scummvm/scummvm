@@ -28,11 +28,23 @@
 
 namespace TwinE {
 
+#define NUM_LOCATIONS 150
+
 class TwinEEngine;
 
 class Holomap {
 private:
 	TwinEEngine *_engine;
+
+	struct Location {
+		uint16 x = 0;
+		uint16 y = 0;
+		uint16 z = 0;
+		uint16 textIndex = 0;
+	};
+
+	int32 _numLocations = 0;
+	Location _locations[NUM_LOCATIONS];
 
 	int32 needToLoadHolomapGFX = 0;
 	uint8 paletteHolomap[NUMOFCOLORS * 3]{0};
@@ -45,6 +57,8 @@ public:
 	 * @param locationIdx Scene where position must be set
 	 */
 	void setHolomapPosition(int32 locationIdx);
+
+	bool loadLocations();
 
 	/**
 	 * Clear Holomap location position

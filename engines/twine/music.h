@@ -48,36 +48,36 @@ private:
 
 	/** Auxiliar midi pointer to  */
 	uint8 *midiPtr = nullptr;
-
+	/** Track number of the current playing music */
+	int32 currentMusic = -1;
+	/**
+	 * Play CD music
+	 * @param track track number to play
+	 */
+	bool playTrackMusicCd(int32 track);
+	/** Stop CD music */
+	void stopTrackMusicCd();
 public:
 	Music(TwinEEngine *engine);
-	/** Track number of the current playing music */
-	int32 currentMusic = 0;
 
 	/**
 	 * Music volume
 	 * @param current volume number
 	 */
 	void musicVolume(int32 volume);
-	/**
-	 * Play CD music
-	 * @param track track number to play
-	 */
-	void playTrackMusicCd(int32 track);
-	/** Stop CD music */
-	void stopTrackMusicCd();
+
 	/**
 	 * Generic play music, according with settings it plays CD or high quality sounds instead
 	 * @param track track number to play
 	 */
-	void playTrackMusic(int32 track);
+	bool playTrackMusic(int32 track);
 	/** Generic stop music according with settings */
 	void stopTrackMusic();
 	/**
 	 * Play MIDI music
 	 * @param midiIdx music index under mini_mi_win.hqr
 	 */
-	void playMidiMusic(int32 midiIdx, int32 loop = 0);
+	bool playMidiMusic(int32 midiIdx, int32 loop = 0);
 	/** Stop MIDI music */
 	void stopMidiMusic();
 

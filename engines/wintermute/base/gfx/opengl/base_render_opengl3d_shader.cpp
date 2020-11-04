@@ -57,12 +57,15 @@ struct SpriteVertexShader {
 #include "common/pack-end.h"
 
 BaseRenderOpenGL3DShader::BaseRenderOpenGL3DShader(BaseGame *inGame)
-    : BaseRenderer3D(inGame), _spriteBatchMode(false) {
+	: BaseRenderer3D(inGame), _spriteBatchMode(false), _flatShadowMaskShader(nullptr) {
     (void)_spriteBatchMode; // silence warning
 }
 
 BaseRenderOpenGL3DShader::~BaseRenderOpenGL3DShader() {
 	glDeleteBuffers(1, &_spriteVBO);
+	glDeleteTextures(1, &_flatShadowRenderTexture);
+	glDeleteRenderbuffers(1, &_flatShadowDepthBuffer);
+	glDeleteFramebuffers(1, &_flatShadowFrameBuffer);
 }
 
 void BaseRenderOpenGL3DShader::setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) {
@@ -164,7 +167,79 @@ void BaseRenderOpenGL3DShader::disableCulling() {
 }
 
 bool BaseRenderOpenGL3DShader::enableShadows() {
-	warning("BaseRenderOpenGL3DShader::enableShadows not implemented yet");
+	if (_flatShadowMaskShader == nullptr) {
+		_flatShadowColor = Math::Vector4d(0.0f, 0.0f, 0.0f, 0.5f);
+
+		_shadowTextureWidth = 512;
+		_shadowTextureHeight = 512;
+
+		float nearPlane = 1.0f;
+		float farPlane = 10000.0f;
+		float fovy = M_PI / 4.0f;
+
+		float top = nearPlane *  tanf(fovy * 0.5f);
+		float bottom = -top;
+		float right = top;
+		float left = -right;
+
+		float deltaX = (-0.5f * (right - left)) / _shadowTextureWidth;
+		float deltaY = (0.5f * (top - bottom)) / _shadowTextureHeight;
+
+		Math::Matrix4 lightProjection = Math::makeFrustumMatrix(left + deltaX, right + deltaX, bottom + deltaY, top + deltaY, nearPlane, farPlane);
+
+		_flatShadowModelXShader->use();
+		_flatShadowModelXShader->setUniform("projMatrix", lightProjection);
+
+		glGenTextures(1, &_flatShadowRenderTexture);
+		glBindTexture(GL_TEXTURE_2D, _flatShadowRenderTexture);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _shadowTextureWidth, _shadowTextureHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glGenRenderbuffers(1, &_flatShadowDepthBuffer);
+		glBindRenderbuffer(GL_RENDERBUFFER, _flatShadowDepthBuffer);
+		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, _shadowTextureWidth, _shadowTextureHeight);
+
+		glGenFramebuffers(1, &_flatShadowFrameBuffer);
+		glBindFramebuffer(GL_FRAMEBUFFER, _flatShadowFrameBuffer);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _flatShadowRenderTexture, 0);
+		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, _flatShadowDepthBuffer);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		float flatShadowMaskVertices[12];
+		flatShadowMaskVertices[0] = -250.0f;
+		flatShadowMaskVertices[1] = 0.0f;
+		flatShadowMaskVertices[2] = -250.0f;
+
+		flatShadowMaskVertices[3] = -250.0f;
+		flatShadowMaskVertices[4] = 0.0f;
+		flatShadowMaskVertices[5] = 250.0f;
+
+		flatShadowMaskVertices[6] = 250.0f;
+		flatShadowMaskVertices[7] = 0.0f;
+		flatShadowMaskVertices[8] = -250.0f;
+
+		flatShadowMaskVertices[9] = 250.0f;
+		flatShadowMaskVertices[10] = 0.0f;
+		flatShadowMaskVertices[11] = 250.0f;
+
+		glGenBuffers(1, &_flatShadowMaskVBO);
+		glBindBuffer(GL_ARRAY_BUFFER, _flatShadowMaskVBO);
+		glBufferData(GL_ARRAY_BUFFER, 4 * 12, flatShadowMaskVertices, GL_STATIC_DRAW);
+
+		static const char *flatShadowMaskAttributes[] = { "position", nullptr };
+		_flatShadowMaskShader = OpenGL::ShaderGL::fromFiles("wme_flat_shadow_mask", flatShadowMaskAttributes);
+		_flatShadowMaskShader->enableVertexAttribute("position", _flatShadowMaskVBO, 3, GL_FLOAT, false, 12, 0);
+
+		_flatShadowMaskShader->use();
+		_flatShadowMaskShader->setUniform("lightProjMatrix", lightProjection);
+
+		_gameRef->_supportsRealTimeShadows = true;
+	}
+
 	return true;
 }
 
@@ -174,7 +249,81 @@ bool BaseRenderOpenGL3DShader::disableShadows() {
 }
 
 void BaseRenderOpenGL3DShader::displayShadow(BaseObject *object, const Math::Vector3d &lightPos, bool lightPosRelative) {
-	warning("BaseRenderOpenGL3DShader::displayShadow not implemented yet");
+	if (_flatShadowMaskShader) {
+		if (object->_shadowType <= SHADOW_SIMPLE) {
+			// TODO: Display simple shadow here
+			return;
+		}
+
+		Math::Vector3d position = lightPos;
+		Math::Vector3d target = object->_posVector;
+
+		if (lightPosRelative) {
+			position = object->_posVector + lightPos;
+		}
+
+		Math::Matrix4 lightViewMatrix = Math::makeLookAtMatrix(position, target, Math::Vector3d(0.0f, 1.0f, 0.0f));
+		Math::Matrix4 translation;
+		translation.setPosition(-position);
+		translation.transpose();
+		lightViewMatrix = translation * lightViewMatrix;
+
+		_flatShadowModelXShader->use();
+		_flatShadowModelXShader->setUniform("viewMatrix", lightViewMatrix);
+
+		Math::Matrix4 tmp = object->_worldMatrix;
+		tmp.transpose();
+		_flatShadowModelXShader->setUniform("modelMatrix", tmp);
+
+		byte a = RGBCOLGetA(object->_shadowColor);
+		byte r = RGBCOLGetR(object->_shadowColor);
+		byte g = RGBCOLGetG(object->_shadowColor);
+		byte b = RGBCOLGetB(object->_shadowColor);
+
+		_flatShadowColor.x() = r / 255.0f;
+		_flatShadowColor.y() = g / 255.0f;
+		_flatShadowColor.z() = b / 255.0f;
+		_flatShadowColor.w() = a / 255.0f;
+		_flatShadowModelXShader->setUniform("shadowColor", _flatShadowColor);
+
+		glBindFramebuffer(GL_FRAMEBUFFER, _flatShadowFrameBuffer);
+
+		GLint currentViewport[4];
+		glGetIntegerv(GL_VIEWPORT, currentViewport);
+		glViewport(1, 1, _shadowTextureWidth - 2, _shadowTextureHeight - 2);
+
+		glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		object->_modelX->renderFlatShadowModel();
+
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+		glViewport(currentViewport[0], currentViewport[1], currentViewport[2], currentViewport[3]);
+
+		glDisable(GL_DEPTH_WRITEMASK);
+
+		Math::Matrix4 shadowPosition;
+		shadowPosition.setToIdentity();
+		shadowPosition.setPosition(object->_posVector);
+		shadowPosition.transpose();
+
+		_flatShadowMaskShader->use();
+		_flatShadowMaskShader->setUniform("lightViewMatrix", lightViewMatrix);
+		_flatShadowMaskShader->setUniform("worldMatrix", shadowPosition);
+		_flatShadowMaskShader->setUniform("viewMatrix", _lastViewMatrix);
+		_flatShadowMaskShader->setUniform("projMatrix", _projectionMatrix3d);
+		_flatShadowMaskShader->setUniform("shadowColor", _flatShadowColor);
+
+		glBindBuffer(GL_ARRAY_BUFFER, _flatShadowMaskVBO);
+		glBindTexture(GL_TEXTURE_2D, _flatShadowRenderTexture);
+
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glEnable(GL_DEPTH_WRITEMASK);
+	}
 }
 
 bool BaseRenderOpenGL3DShader::stencilSupported() {
@@ -406,6 +555,9 @@ bool BaseRenderOpenGL3DShader::initRenderer(int width, int height, bool windowed
 	static const char *lineAttributes[] = { "position", nullptr };
 	_lineShader = OpenGL::ShaderGL::fromFiles("wme_line", lineAttributes);
 	_lineShader->enableVertexAttribute("position", _lineVBO, 2, GL_FLOAT, false, 8, 0);
+
+	static const char *flatShadowModelXAttributes[] = { "position", nullptr };
+	_flatShadowModelXShader = OpenGL::ShaderGL::fromFiles("wme_flat_shadow_modelx", flatShadowModelXAttributes);
 
 	_active = true;
 	// setup a proper state
@@ -680,7 +832,7 @@ Mesh3DS *BaseRenderOpenGL3DShader::createMesh3DS() {
 }
 
 MeshX *BaseRenderOpenGL3DShader::createMeshX() {
-	return new MeshXOpenGLShader(_gameRef, _modelXShader);
+	return new MeshXOpenGLShader(_gameRef, _modelXShader, _flatShadowModelXShader);
 }
 
 ShadowVolume *BaseRenderOpenGL3DShader::createShadowVolume() {

@@ -501,6 +501,20 @@ bool ModelX::render() {
 	}
 }
 
+bool ModelX::renderFlatShadowModel() {
+	if (_rootFrame) {
+		if(_owner && !_owner->_drawBackfaces) {
+			_gameRef->_renderer3D->enableCulling();
+		} else {
+			_gameRef->_renderer3D->disableCulling();
+		}
+
+		return _rootFrame->renderFlatShadowModel();
+	} else {
+		return false;
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 Math::Matrix4 *ModelX::getBoneMatrix(const char *boneName) {
 	FrameNode *bone = _rootFrame->findFrame(boneName);

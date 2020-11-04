@@ -78,152 +78,95 @@ enum _MenuButtonTypes {
 #define kBackground 9999
 
 namespace _priv {
-/** Main Menu Settings
 
-	Used to create the game main menu. */
-static const int16 MainMenuSettings[] = {
-    0,   // Current loaded button (button number)
-    4,   // Num of buttons
-    200, // Buttons box height ( is used to calc the height where the first button will appear )
-    0,   // unused
-    0,
-    TextId::kNewGame, // new game
-    0,
-    TextId::kContinueGame, // continue game
-    0,
-    TextId::kOptions, // options
-    0,
-    TextId::kQuit, // quit
-};
+static MenuSettings createMainMenu() {
+	MenuSettings settings;
+	settings.setButtonsBoxHeight(200);
+	settings.addButton(TextId::kNewGame);
+	settings.addButton(TextId::kContinueGame);
+	settings.addButton(TextId::kOptions);
+	settings.addButton(TextId::kQuit);
+	return settings;
+}
 
-/** Give Up Menu Settings
+static MenuSettings createGiveUpMenu() {
+	MenuSettings settings;
+	settings.setButtonsBoxHeight(240);
+	settings.addButton(TextId::kContinue);
+	settings.addButton(TextId::kGiveUp);
+	return settings;
+}
 
-	Used to create the in-game menu. */
-static const int16 GiveUpMenuSettings[] = {
-    0,   // Current loaded button (button number)
-    2,   // Num of buttons
-    240, // Buttons box height ( is used to calc the height where the first button will appear )
-    0,   // unused
-    0,
-    TextId::kContinue, // continue game
-    0,
-    TextId::kGiveUp, // quit game
-};
+static MenuSettings createGiveUpSaveMenu() {
+	MenuSettings settings;
+	settings.setButtonsBoxHeight(240);
+	settings.addButton(TextId::kContinue);
+	settings.addButton(TextId::kCreateSaveGame);
+	settings.addButton(TextId::kGiveUp);
+	return settings;
+}
 
-/** Give Up Menu Settings
+static MenuSettings createOptionsMenu() {
+	MenuSettings settings;
+	settings.addButton(TextId::kReturnMenu);
+	settings.addButton(TextId::kVolumeSettings);
+	settings.addButton(TextId::kSaveManage);
+	settings.addButton(TextId::kAdvanced);
+	return settings;
+}
 
-	Used to create the in-game menu. This menu have one extra item to save the game */
-static const int16 GiveUpMenuWithSaveSettings[] = {
-    0,   // Current loaded button (button number)
-    3,   // Num of buttons
-    240, // Buttons box height ( is used to calc the height where the first button will appear )
-    0,   // unused
-    0,
-    TextId::kContinue, // continue game
-    0,
-    TextId::kCreateSaveGame, // save game
-    0,
-    TextId::kGiveUp, // quit game
-};
+static MenuSettings createAdvancedOptionsMenu() {
+	MenuSettings settings;
+	settings.addButton(TextId::kReturnMenu);
+	settings.addButton(TextId::kBehaviourAgressiveManual, MenuButtonTypes::kAgressiveMode);
+	settings.addButton(TextId::kDetailsPolygonsHigh, MenuButtonTypes::kPolygonDetails);
+	settings.addButton(TextId::kDetailsShadowHigh, MenuButtonTypes::kShadowSettings);
+	settings.addButton(TextId::kScenaryZoomOn, MenuButtonTypes::kSceneryZoom);
+	return settings;
+}
 
-/** Options Menu Settings
+static MenuSettings createSaveManageMenu() {
+	MenuSettings settings;
+	settings.addButton(TextId::kReturnMenu);
+	settings.addButton(TextId::kCreateSaveGame);
+	settings.addButton(TextId::kDeleteSaveGame);
+	return settings;
+}
 
-	Used to create the options menu. */
-static const int16 OptionsMenuSettings[] = {
-    0, // Current loaded button (button number)
-    4, // Num of buttons
-    0, // Buttons box height ( is used to calc the height where the first button will appear )
-    0, // unused
-    0,
-    TextId::kReturnMenu, // return to previous menu
-    0,
-    TextId::kVolumeSettings, // volume settings
-    0,
-    TextId::kSaveManage, // save game management
-    0,
-    TextId::kAdvanced, // advanced options
-};
+static MenuSettings createVolumeMenu() {
+	MenuSettings settings;
+	settings.addButton(TextId::kReturnMenu);
+	settings.addButton(TextId::kMusicVolume, MenuButtonTypes::kMusicVolume);
+	settings.addButton(TextId::kSoundVolume, MenuButtonTypes::kSoundVolume);
+	settings.addButton(TextId::kCDVolume, MenuButtonTypes::kCDVolume);
+	settings.addButton(TextId::kLineInVolume, MenuButtonTypes::kLineVolume);
+	settings.addButton(TextId::kMasterVolume, MenuButtonTypes::kMasterVolume);
+	settings.addButton(TextId::kSaveSettings);
+	return settings;
+}
 
-/** Advanced Options Menu Settings
-
-	Used to create the advanced options menu. */
-static const int16 AdvOptionsMenuSettings[] = {
-    0, // Current loaded button (button number)
-    5, // Num of buttons
-    0, // Buttons box height ( is used to calc the height where the first button will appear )
-    0, // unused
-    0,
-    TextId::kReturnMenu, // return to main menu
-    MenuButtonTypes::kAgressiveMode,
-    TextId::kBehaviourAgressiveManual, // aggressive mode (manual|auto)
-    MenuButtonTypes::kPolygonDetails,
-    TextId::kDetailsPolygonsHigh, // Polygon detail (full|medium|low)
-    MenuButtonTypes::kShadowSettings,
-    TextId::kDetailsShadowHigh, // Shadows (all|character|no)
-    MenuButtonTypes::kSceneryZoom,
-    TextId::kScenaryZoomOn, // scenary zoon (on|off)
-};
-
-/** Save Game Management Menu Settings
-
-	Used to create the save game management menu. */
-static const int16 SaveManageMenuSettings[] = {
-    0, // Current loaded button (button number)
-    3, // Num of buttons
-    0, // Buttons box height ( is used to calc the height where the first button will appear )
-    0, // unused
-    0,
-    TextId::kReturnMenu, // return to main menu
-    0,
-    TextId::kCreateSaveGame, // copy saved game
-    0,
-    TextId::kDeleteSaveGame, // delete saved game
-};
-
-/** Volume Menu Settings
-
-	Used to create the volume menu. */
-static const int16 VolumeMenuSettings[] = {
-    0, // Current loaded button (button number)
-    7, // Num of buttons
-    0, // Buttons box height ( is used to calc the height where the first button will appear )
-    0, // unused
-    0,
-    TextId::kReturnMenu, // return to main menu
-    MenuButtonTypes::kMusicVolume,
-    TextId::kMusicVolume, // music volume
-    MenuButtonTypes::kSoundVolume,
-    TextId::kSoundVolume, // sfx volume
-    MenuButtonTypes::kCDVolume,
-    TextId::kCDVolume, // cd volume
-    MenuButtonTypes::kLineVolume,
-    TextId::kLineInVolume, // line-in volume
-    MenuButtonTypes::kMasterVolume,
-    TextId::kMasterVolume, // master volume
-    0,
-    TextId::kSaveSettings, // save parameters
-};
 } // namespace _priv
 
-static int16 *copySettings(const int16 *settings, size_t size) {
-	int16 *buf = (int16 *)malloc(size);
-	if (buf == nullptr) {
-		error("Failed to allocate menu state memory");
+const char *MenuSettings::getButtonText(Text *text, int buttonIndex) {
+	if (_buttonTexts[buttonIndex].empty()) {
+		const int32 textId = getButtonTextId(buttonIndex);
+		char dialText[256] = "";
+		text->getMenuText(textId, dialText, sizeof(dialText));
+		_buttonTexts[buttonIndex] = dialText;
 	}
-	memcpy(buf, settings, size);
-	return buf;
+	return _buttonTexts[buttonIndex].c_str();
 }
 
 Menu::Menu(TwinEEngine *engine) {
 	_engine = engine;
 
-	OptionsMenuState = copySettings(_priv::OptionsMenuSettings, sizeof(_priv::OptionsMenuSettings));
-	GiveUpMenuWithSaveState = copySettings(_priv::GiveUpMenuWithSaveSettings, sizeof(_priv::GiveUpMenuWithSaveSettings));
-	VolumeMenuState = copySettings(_priv::VolumeMenuSettings, sizeof(_priv::VolumeMenuSettings));
-	SaveManageMenuState = copySettings(_priv::SaveManageMenuSettings, sizeof(_priv::SaveManageMenuSettings));
-	GiveUpMenuState = copySettings(_priv::GiveUpMenuSettings, sizeof(_priv::GiveUpMenuSettings));
-	MainMenuState = copySettings(_priv::MainMenuSettings, sizeof(_priv::MainMenuSettings));
-	AdvOptionsMenuState = copySettings(_priv::AdvOptionsMenuSettings, sizeof(_priv::AdvOptionsMenuSettings));
+	optionsMenuState = _priv::createOptionsMenu();
+	giveUpMenuWithSaveState = _priv::createGiveUpSaveMenu();
+	volumeMenuState = _priv::createVolumeMenu();
+	saveManageMenuState = _priv::createSaveManageMenu();
+	giveUpMenuState = _priv::createGiveUpMenu();
+	mainMenuState = _priv::createMainMenu();
+	advOptionsMenuState = _priv::createAdvancedOptionsMenu();
 
 	Common::fill(&behaviourAnimState[0], &behaviourAnimState[4], 0);
 	Common::fill(&itemAngle[0], &itemAngle[255], 0);
@@ -232,13 +175,6 @@ Menu::Menu(TwinEEngine *engine) {
 
 Menu::~Menu() {
 	free(plasmaEffectPtr);
-	free(OptionsMenuState);
-	free(GiveUpMenuWithSaveState);
-	free(VolumeMenuState);
-	free(SaveManageMenuState);
-	free(GiveUpMenuState);
-	free(MainMenuState);
-	free(AdvOptionsMenuState);
 }
 
 void Menu::plasmaEffectRenderFrame() {
@@ -307,7 +243,7 @@ void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
 	_engine->_interface->drawLine(left + 1, bottom, right, bottom, 73); // bottom line
 }
 
-void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 textId, bool hover) {
+void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, const char *dialText, bool hover) {
 	const int32 left = width - kMainMenuButtonSpan / 2;
 	const int32 right = width + kMainMenuButtonSpan / 2;
 
@@ -366,18 +302,16 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 tex
 
 	_engine->_text->setFontColor(15);
 	_engine->_text->setFontParameters(2, 8);
-	char dialText[256];
-	_engine->_text->getMenuText(textId, dialText, sizeof(dialText));
 	const int32 textSize = _engine->_text->getTextSize(dialText);
 	_engine->_text->drawText(width - (textSize / 2), topheight - 18, dialText);
 
 	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
-void Menu::drawButton(const int16 *menuSettings, bool hover) {
-	int16 buttonNumber = menuSettings[MenuSettings_CurrentLoadedButton];
-	const int32 maxButton = menuSettings[MenuSettings_NumberOfButtons];
-	int32 topHeight = menuSettings[MenuSettings_ButtonsBoxHeight];
+void Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
+	int16 buttonNumber = menuSettings->getActiveButton();
+	const int32 maxButton = menuSettings->getButtonCount();
+	int32 topHeight = menuSettings->getButtonBoxHeight();
 
 	if (topHeight == 0) {
 		topHeight = 35;
@@ -389,37 +323,29 @@ void Menu::drawButton(const int16 *menuSettings, bool hover) {
 		return;
 	}
 
-	uint8 currentButton = 0;
-
-	const int16 *localData = menuSettings;
-	localData += MenuSettings_FirstButtonState;
-	do {
-		// get menu item settings
-		uint8 menuItemId = (uint8)*localData;
-		localData += 1;
-		uint16 textId = *localData;
-		localData += 1;
+	for (int16 i = 0; i < maxButton; ++i) {
+		const int32 menuItemId = menuSettings->getButtonState(i);
+		const char *text = menuSettings->getButtonText(_engine->_text, i);
 		if (hover) {
-			if (currentButton == buttonNumber) {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, textId, hover);
+			if (i == buttonNumber) {
+				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, text, hover);
 			}
 		} else {
-			if (currentButton == buttonNumber) {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, textId, true);
+			if (i == buttonNumber) {
+				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, text, true);
 			} else {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, textId, false);
+				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, text, false);
 			}
 		}
 
-		currentButton++;
 		topHeight += 56; // increase button top height
-	} while (currentButton < maxButton);
+	}
 }
 
-int32 Menu::processMenu(int16 *menuSettings) {
-	int16 currentButton = menuSettings[MenuSettings_CurrentLoadedButton];
+int32 Menu::processMenu(MenuSettings *menuSettings) {
+	int16 currentButton = menuSettings->getActiveButton();
 	bool buttonsNeedRedraw = true;
-	const int32 numEntry = menuSettings[MenuSettings_NumberOfButtons];
+	const int32 numEntry = menuSettings->getButtonCount();
 	int32 maxButton = numEntry - 1;
 
 	_engine->_input->enableKeyMap(uiKeyMapId);
@@ -442,19 +368,17 @@ int32 Menu::processMenu(int16 *menuSettings) {
 			buttonsNeedRedraw = true;
 		}
 
-		int16 *menuStatePtr = &menuSettings[MenuSettings_FirstButtonState] + currentButton * 2;
-		const int16 id = *menuStatePtr; // get button parameters from settings array
-		int16 *textId = menuStatePtr + 1; // to store the changed values
-		if (menuSettings == AdvOptionsMenuState) {
+		const int16 id = menuSettings->getActiveButtonState();
+		if (menuSettings == &advOptionsMenuState) {
 			switch (id) {
 			case MenuButtonTypes::kAgressiveMode:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
 					_engine->_actor->autoAgressive = !_engine->_actor->autoAgressive;
 				}
 				if (_engine->_actor->autoAgressive) {
-					*textId = TextId::kBehaviourAgressiveManual;
+					menuSettings->setActiveButtonTextId(TextId::kBehaviourAgressiveManual);
 				} else {
-					*textId = TextId::kBehaviourAgressiveAuto;
+					menuSettings->setActiveButtonTextId(TextId::kBehaviourAgressiveAuto);
 				}
 				break;
 			case MenuButtonTypes::kPolygonDetails:
@@ -466,11 +390,11 @@ int32 Menu::processMenu(int16 *menuSettings) {
 					_engine->cfgfile.PolygonDetails %= 3;
 				}
 				if (_engine->cfgfile.PolygonDetails == 0) {
-					*textId = TextId::kDetailsPolygonsLow;
+					menuSettings->setActiveButtonTextId(TextId::kDetailsPolygonsLow);
 				} else if (_engine->cfgfile.PolygonDetails == 1) {
-					*textId = TextId::kDetailsPolygonsMiddle;
+					menuSettings->setActiveButtonTextId(TextId::kDetailsPolygonsMiddle);
 				} else {
-					*textId = TextId::kDetailsPolygonsHigh;
+					menuSettings->setActiveButtonTextId(TextId::kDetailsPolygonsHigh);
 				}
 				break;
 			case MenuButtonTypes::kShadowSettings:
@@ -482,11 +406,11 @@ int32 Menu::processMenu(int16 *menuSettings) {
 					_engine->cfgfile.ShadowMode %= 3;
 				}
 				if (_engine->cfgfile.ShadowMode == 0) {
-					*textId = TextId::kShadowsDisabled;
+					menuSettings->setActiveButtonTextId(TextId::kShadowsDisabled);
 				} else if (_engine->cfgfile.ShadowMode == 1) {
-					*textId = TextId::kShadowsFigures;
+					menuSettings->setActiveButtonTextId(TextId::kShadowsFigures);
 				} else {
-					*textId = TextId::kDetailsShadowHigh;
+					menuSettings->setActiveButtonTextId(TextId::kDetailsShadowHigh);
 				}
 				break;
 			case MenuButtonTypes::kSceneryZoom:
@@ -494,15 +418,15 @@ int32 Menu::processMenu(int16 *menuSettings) {
 					_engine->cfgfile.SceZoom = !_engine->cfgfile.SceZoom;
 				}
 				if (_engine->cfgfile.SceZoom) {
-					*textId = TextId::kNoScenaryZoom;
+					menuSettings->setActiveButtonTextId(TextId::kNoScenaryZoom);
 				} else {
-					*textId = TextId::kScenaryZoomOn;
+					menuSettings->setActiveButtonTextId(TextId::kScenaryZoomOn);
 				}
 				break;
 			default:
 				break;
 			}
-		} else if (menuSettings == VolumeMenuState) {
+		} else if (menuSettings == &volumeMenuState) {
 			Audio::Mixer *mixer = _engine->_system->getMixer();
 			switch (id) {
 			case MenuButtonTypes::kMusicVolume: {
@@ -561,24 +485,22 @@ int32 Menu::processMenu(int16 *menuSettings) {
 		}
 
 		if (buttonsNeedRedraw) {
-			menuSettings[MenuSettings_CurrentLoadedButton] = currentButton;
+			menuSettings->setActiveButton(currentButton);
 
 			// draw all buttons
-			drawButton(menuSettings, false);
+			drawButtons(menuSettings, false);
 			buttonsNeedRedraw = false;
 		}
 
 		// draw plasma effect for the current selected button
-		drawButton(menuSettings, true);
+		drawButtons(menuSettings, true);
 		if (_engine->shouldQuit()) {
 			return kQuitEngine;
 		}
-		// TODO: update volume settings
 		_engine->_system->delayMillis(10);
 	} while (!_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter));
 
-	const int buttonTextId = *(menuSettings + MenuSettings_FirstButton + currentButton * 2); // get current browsed button
-	return buttonTextId;
+	return menuSettings->getActiveButtonTextId();
 }
 
 int32 Menu::advoptionsMenu() {
@@ -586,7 +508,7 @@ int32 Menu::advoptionsMenu() {
 	_engine->flip();
 
 	for (;;) {
-		switch (processMenu(AdvOptionsMenuState)) {
+		switch (processMenu(&advOptionsMenuState)) {
 		case TextId::kReturnMenu: {
 			return 0;
 		}
@@ -610,14 +532,14 @@ int32 Menu::savemanageMenu() {
 	_engine->flip();
 
 	for (;;) {
-		switch (processMenu(SaveManageMenuState)) {
+		switch (processMenu(&saveManageMenuState)) {
 		case TextId::kReturnMenu:
 			return 0;
 		case TextId::kCreateSaveGame:
-			// TODO: implement save game handling and slot rendering
+			_engine->_menuOptions->saveGameMenu();
 			break;
 		case TextId::kDeleteSaveGame:
-			// TODO: implement save game deletion and slot rendering
+			_engine->_menuOptions->deleteSaveMenu();
 			break;
 		case kQuitEngine:
 			return kQuitEngine;
@@ -635,7 +557,7 @@ int32 Menu::volumeMenu() {
 	_engine->flip();
 
 	for (;;) {
-		switch (processMenu(VolumeMenuState)) {
+		switch (processMenu(&volumeMenuState)) {
 		case TextId::kReturnMenu:
 			return 0;
 		case TextId::kSaveSettings:
@@ -657,6 +579,14 @@ int32 Menu::volumeMenu() {
 	return 0;
 }
 
+void Menu::inGameOptionsMenu() {
+	_engine->_text->initTextBank(TextBankId::Options_and_menus);
+	_engine->_menu->optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
+	_engine->_menu->optionsMenu();
+	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
+	optionsMenuState.setButtonTextId(0, TextId::kReturnMenu);
+}
+
 int32 Menu::optionsMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
@@ -665,7 +595,7 @@ int32 Menu::optionsMenu() {
 	//_engine->_music->playCDtrack(9);
 
 	for (;;) {
-		switch (processMenu(OptionsMenuState)) {
+		switch (processMenu(&optionsMenuState)) {
 		case TextId::kReturnGame:
 		case TextId::kReturnMenu: {
 			return 0;
@@ -699,55 +629,56 @@ bool Menu::init() {
 	return HQR::getEntry(plasmaEffectPtr, Resources::HQR_RESS_FILE, RESSHQR_PLASMAEFFECT) > 0;
 }
 
-void Menu::run() {
-	_engine->_text->initTextBank(0);
+EngineState Menu::run() {
+	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
 	_engine->_music->playTrackMusic(9); // LBA's Theme
 	_engine->_sound->stopSamples();
 
-	switch (processMenu(MainMenuState)) {
+	switch (processMenu(&mainMenuState)) {
 	case TextId::kNewGame: {
-		_engine->_menuOptions->newGameMenu();
+		if (_engine->_menuOptions->newGameMenu()) {
+			return EngineState::GameLoop;
+		}
 		break;
 	}
 	case TextId::kContinueGame: {
-		_engine->_menuOptions->continueGameMenu();
+		if (_engine->_menuOptions->continueGameMenu()) {
+			return EngineState::LoadedGame;
+		}
 		break;
 	}
 	case TextId::kOptions: {
 		optionsMenu();
 		break;
 	}
-	case TextId::kQuit: {
-		Common::Event event;
-		event.type = Common::EVENT_QUIT;
-		_engine->_system->getEventManager()->pushEvent(event);
-		break;
-	}
 	case kBackground: {
 		_engine->_screens->loadMenuImage();
 		break;
 	}
+	case TextId::kQuit:
 	case kQuitEngine:
-		return;
+		debug("quit the game");
+		return EngineState::QuitGame;
 	}
 	_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
+	return EngineState::Menu;
 }
 
 int32 Menu::giveupMenu() {
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 	_engine->_sound->pauseSamples();
 
-	int16 *localMenu;
+	MenuSettings *localMenu;
 	if (_engine->cfgfile.UseAutoSaving == 1) {
-		localMenu = GiveUpMenuState;
+		localMenu = &giveUpMenuState;
 	} else {
-		localMenu = GiveUpMenuWithSaveState;
+		localMenu = &giveUpMenuWithSaveState;
 	}
 
 	int32 menuId;
 	do {
-		_engine->_text->initTextBank(0);
+		_engine->_text->initTextBank(TextBankId::Options_and_menus);
 		menuId = processMenu(localMenu);
 		switch (menuId) {
 		case TextId::kContinue:
@@ -757,14 +688,14 @@ int32 Menu::giveupMenu() {
 			_engine->_sound->stopSamples();
 			return 1;
 		case TextId::kCreateSaveGame:
-			// TODO: handle save game creation
+			_engine->_menuOptions->saveGameMenu();
 			break;
 		case kQuitEngine:
 			return kQuitEngine;
 		default:
 			warning("Unknown menu button handled: %i", menuId);
 		}
-		_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+		_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 		_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
 	} while (menuId != TextId::kGiveUp && menuId != TextId::kContinue);
 
@@ -772,23 +703,20 @@ int32 Menu::giveupMenu() {
 }
 
 void Menu::drawInfoMenu(int16 left, int16 top) {
-	int32 boxLeft, boxTop, boxRight, boxBottom;
-	int32 newBoxLeft, newBoxLeft2, i;
-
 	_engine->_interface->resetClip();
 	drawBox(left, top, left + 450, top + 80);
 	_engine->_interface->drawSplittedBox(left + 1, top + 1, left + 449, top + 79, 0);
 
-	newBoxLeft2 = left + 9;
+	int32 newBoxLeft2 = left + 9;
 
 	_engine->_grid->drawSprite(0, newBoxLeft2, top + 13, _engine->_resources->spriteTable[SPRITEHQR_LIFEPOINTS]);
 
-	boxRight = left + 325;
-	newBoxLeft = left + 25;
-	boxLeft = _engine->_screens->crossDot(newBoxLeft, boxRight, 50, _engine->_scene->sceneHero->life);
+	int32 boxRight = left + 325;
+	int32 newBoxLeft = left + 25;
+	int32 boxLeft = _engine->_screens->crossDot(newBoxLeft, boxRight, 50, _engine->_scene->sceneHero->life);
 
-	boxTop = top + 10;
-	boxBottom = top + 25;
+	int32 boxTop = top + 10;
+	int32 boxBottom = top + 25;
 	_engine->_interface->drawSplittedBox(newBoxLeft, boxTop, boxLeft, boxBottom, 91);
 	drawBox(left + 25, top + 10, left + 324, top + 10 + 14);
 
@@ -820,12 +748,12 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 	}
 
 	// Clover leaf boxes
-	for (i = 0; i < _engine->_gameState->inventoryNumLeafsBox; i++) {
+	for (int32 i = 0; i < _engine->_gameState->inventoryNumLeafsBox; i++) {
 		_engine->_grid->drawSprite(0, _engine->_screens->crossDot(left + 25, left + 325, 10, i), top + 58, _engine->_resources->spriteTable[SPRITEHQR_CLOVERLEAFBOX]);
 	}
 
 	// Clover leafs
-	for (i = 0; i < _engine->_gameState->inventoryNumLeafs; i++) {
+	for (int32 i = 0; i < _engine->_gameState->inventoryNumLeafs; i++) {
 		_engine->_grid->drawSprite(0, _engine->_screens->crossDot(left + 25, left + 325, 10, i) + 2, top + 60, _engine->_resources->spriteTable[SPRITEHQR_CLOVERLEAF]);
 	}
 
@@ -924,10 +852,10 @@ void Menu::processBehaviourMenu() {
 
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-	int32 tmpTextBank = _engine->_text->currentTextBank;
-	_engine->_text->currentTextBank = -1;
+	int32 tmpTextBank = _engine->_scene->sceneTextBank;
+	_engine->_scene->sceneTextBank = TextBankId::None;
 
-	_engine->_text->initTextBank(0);
+	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
 	drawBehaviourMenu(_engine->_scene->sceneHero->angle);
 
@@ -973,8 +901,8 @@ void Menu::processBehaviourMenu() {
 	_engine->_actor->setBehaviour(_engine->_actor->heroBehaviour);
 	_engine->_gameState->initEngineProjections();
 
-	_engine->_text->currentTextBank = tmpTextBank;
-	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+	_engine->_scene->sceneTextBank = tmpTextBank;
+	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 }
 
 void Menu::drawMagicItemsBox(int32 left, int32 top, int32 right, int32 bottom, int32 color) { // Rect
@@ -1041,7 +969,7 @@ void Menu::processInventoryMenu() {
 
 	drawInventoryItems();
 
-	_engine->_text->initTextBank(2);
+	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 
 	int32 bx = 3;
 
@@ -1148,7 +1076,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->_gameState->initEngineProjections();
 
-	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 }
 
 } // namespace TwinE

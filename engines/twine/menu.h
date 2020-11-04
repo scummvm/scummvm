@@ -24,72 +24,111 @@
 #define TWINE_MENU_H
 
 #include "twine/actor.h"
+#include "twine/twine.h"
+#include "twine/text.h"
 
 namespace TwinE {
 
-enum MenuSettingsType {
-	// button number
-	MenuSettings_CurrentLoadedButton = 0,
-	// is used to calc the height where the first button will appear
-	MenuSettings_NumberOfButtons = 1,
-	MenuSettings_ButtonsBoxHeight = 2,
-	MenuSettings_HeaderEnd = 3, // TODO: unknown
-	MenuSettings_FirstButtonState = 4,
-	MenuSettings_FirstButton = 5
-};
-
-/** menu text ids */
-namespace TextId {
-enum _TextId {
-	kBehaviourNormal = 0,
-	kBehaviourSporty = 1,
-	kBehaviourAgressiveManual = 2,
-	kBehaviourHiding = 3,
-	kBehaviourAgressiveAuto = 4,
-	kUseProtopack = 5,
-	kMusicVolume = 10,
-	kSoundVolume = 11,
-	kCDVolume = 12,
-	kLineInVolume = 13,
-	kMasterVolume = 14,
-	kReturnGame = 15,
-	kSaveSettings = 16,
-	kNewGame = 20,
-	kContinueGame = 21,
-	kQuit = 22,
-	kOptions = 23,
-	kDelete = 24,
-	kReturnMenu = 26,
-	kGiveUp = 27,
-	kContinue = 28,
-	kVolumeSettings = 30,
-	kDetailsPolygonsHigh = 31,
-	kDetailsShadowHigh = 32,
-	//kScenaryZoomOn = 33, // duplicate with 133 - TODO check if this is the same in all languages
-	kCreateNewPlayer = 40,
-	kCreateSaveGame = 41,
-	kEnterYourName = 42,
-	kPlayerAlreadyExists = 43,
-	kEnterYourNewName = 44,
-	kDeleteSaveGame = 45,
-	kSaveManage = 46,
-	kAdvanced = 47,
-	kDelete2 = 48, // difference between 24 and 48?
-	kTransferVoices = 49,
-	kPleaseWaitWhileVoicesAreSaved = 50,
-	kRemoveProtoPack = 105,
-	kDetailsPolygonsMiddle = 131,
-	kShadowsFigures = 132,
-	kScenaryZoomOn = 133,
-	kDetailsPolygonsLow = 231,
-	kShadowsDisabled = 232,
-	kNoScenaryZoom = 233
-};
-}
-
+#define MAX_BUTTONS 10
 #define PLASMA_WIDTH 320
 #define PLASMA_HEIGHT 50
 #define kQuitEngine 9998
+
+class MenuSettings {
+private:
+	enum MenuSettingsType {
+		// button number
+		MenuSettings_CurrentLoadedButton = 0,
+		// is used to calc the height where the first button will appear
+		MenuSettings_NumberOfButtons = 1,
+		MenuSettings_ButtonsBoxHeight = 2,
+		MenuSettings_HeaderEnd = 3, // TODO: unknown
+		MenuSettings_FirstButtonState = 4,
+		MenuSettings_FirstButton = 5
+	};
+
+	int16 _settings[4 + MAX_BUTTONS * 2] {0};
+	Common::String _buttonTexts[MAX_BUTTONS];
+	int8 _activeButtonIdx = 0;
+
+	int16 getButtonTextId(int buttonIndex) const {
+		return _settings[MenuSettings_FirstButton + buttonIndex * 2];
+	}
+
+public:
+	void reset() {
+		for (int32 i = 0; i < MAX_BUTTONS; ++i) {
+			_buttonTexts[i] = "";
+		}
+		_settings[MenuSettings_NumberOfButtons] = 0;
+		setButtonsBoxHeight(0);
+		setActiveButton(0);
+	}
+
+	// used to calc the height where the first button will appear
+	void setButtonsBoxHeight(int16 height) {
+		_settings[MenuSettings_ButtonsBoxHeight] = height;
+	}
+
+	void setActiveButton(int16 buttonIdx) {
+		_activeButtonIdx = buttonIdx;
+		_settings[MenuSettings_CurrentLoadedButton] = buttonIdx;
+	}
+
+	void setActiveButtonTextId(int16 textIndex) {
+		setButtonTextId(getActiveButton(), textIndex);
+	}
+
+	void setButtonTextId(int16 buttonIdx, int16 textIndex) {
+		_settings[MenuSettings_FirstButton + buttonIdx * 2] = textIndex;
+	}
+
+	int16 getActiveButtonTextId() const {
+		return getButtonTextId(getActiveButton());
+	}
+
+	int16 getActiveButtonState() const {
+		return getButtonState(getActiveButton());
+	}
+
+	int16 getButtonState(int buttonIndex) const {
+		return _settings[MenuSettings_FirstButtonState + buttonIndex * 2];
+	}
+
+	const char *getButtonText(Text *text, int buttonIndex);
+
+	int16 getActiveButton() const {
+		return _activeButtonIdx;
+	}
+
+	int16 getButtonBoxHeight() const {
+		return _settings[MenuSettings_ButtonsBoxHeight];
+	}
+
+	int16 getButtonCount() const {
+		return _settings[MenuSettings_NumberOfButtons];
+	}
+
+	void setTextBankId(int16 textBankIndex) {
+		_settings[MenuSettings_HeaderEnd] = textBankIndex;
+	}
+
+	void addButton(int16 textId, int16 state = 0) {
+		const int16 i = _settings[MenuSettings_NumberOfButtons];
+		_settings[i * 2 + MenuSettings_FirstButtonState] = state;
+		_settings[i * 2 + MenuSettings_FirstButton] = textId;
+		++_settings[MenuSettings_NumberOfButtons];
+	}
+
+	void addButton(const char *text, int16 state = 0) {
+		const int16 i = _settings[MenuSettings_NumberOfButtons];
+		_settings[i * 2 + MenuSettings_FirstButtonState] = state;
+		// will return the button index
+		_settings[i * 2 + MenuSettings_FirstButton] = i;
+		_buttonTexts[i] = text;
+		++_settings[MenuSettings_NumberOfButtons];
+	}
+};
 
 class Menu {
 private:
@@ -109,17 +148,17 @@ private:
 	 * @param width menu button width
 	 * @param topheight is the height between the top of the screen and the first button
 	 * @param buttonId current button identification from menu settings
-	 * @param textId
+	 * @param dialText
 	 * @param hover flag to know if should draw as a hover button or not
 	 */
-	void drawButtonGfx(int32 width, int32 topheight, int32 buttonId, int32 textId, bool hover);
+	void drawButtonGfx(int32 width, int32 topheight, int32 buttonId, const char *dialText, bool hover);
 	void plasmaEffectRenderFrame();
 	/**
 	 * Process the menu button draw
 	 * @param data menu settings array
 	 * @param mode flag to know if should draw as a hover button or not
 	 */
-	void drawButton(const int16 *menuSettings, bool hover);
+	void drawButtons(MenuSettings *menuSettings, bool hover);
 	/** Used to run the advanced options menu */
 	int32 advoptionsMenu();
 	/** Used to run the volume menu */
@@ -140,20 +179,20 @@ private:
 	 */
 	void drawMagicItemsBox(int32 left, int32 top, int32 right, int32 bottom, int32 color);
 
-	int16 *GiveUpMenuWithSaveState;
-	int16 *VolumeMenuState;
-	int16 *SaveManageMenuState;
-	int16 *GiveUpMenuState;
-	int16 *MainMenuState;
-	int16 *AdvOptionsMenuState;
+	MenuSettings giveUpMenuWithSaveState;
+	MenuSettings volumeMenuState;
+	MenuSettings saveManageMenuState;
+	MenuSettings giveUpMenuState;
+	MenuSettings mainMenuState;
+	MenuSettings advOptionsMenuState;
+	MenuSettings optionsMenuState;
 
 public:
 	Menu(TwinEEngine *engine);
 	~Menu();
-	int16 *OptionsMenuState;
 
 	int32 currMenuTextIndex = -1;
-	int32 currMenuTextBank = -1;
+	int32 currMenuTextBank = TextBankId::None;
 	char currMenuTextBuffer[256];
 
 	int16 itemAngle[255]; // objectRotation
@@ -185,15 +224,17 @@ public:
 	 * @param menuSettings menu settings array with the information to build the menu options
 	 * @return pressed menu button identification
 	 */
-	int32 processMenu(int16 *menuSettings);
+	int32 processMenu(MenuSettings *menuSettings);
 
 	bool init();
 
 	/** Used to run the main menu */
-	void run();
+	EngineState run();
 
 	/** Used to run the in-game give-up menu */
 	int32 giveupMenu();
+
+	void inGameOptionsMenu();
 
 	/** Used to run the options menu */
 	int32 optionsMenu();

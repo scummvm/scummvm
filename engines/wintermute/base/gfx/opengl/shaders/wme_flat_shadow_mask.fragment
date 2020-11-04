@@ -1,0 +1,14 @@
+in vec3 Texcoord;
+
+uniform sampler2D tex;
+uniform vec4 shadowColor;
+
+OUTPUT
+
+void main()
+{
+	vec2 projectedTexcoord = Texcoord.xy / Texcoord.z;
+
+	vec4 texColor = texture(tex, projectedTexcoord);
+	outColor = shadowColor * texColor;
+}

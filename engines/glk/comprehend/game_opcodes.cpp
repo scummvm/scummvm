@@ -790,8 +790,9 @@ void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *
 		break;
 
 	case OPCODE_OBJECT_TAKEABLE:
-		item = getItem(instr);
-		func_set_test_result(func_state, (item->_flags & ITEMF_WEIGHT_MASK) != ITEMF_WEIGHT_MASK);
+		// WORKAROUND: Trying to get non-items in OO-Topos
+		func_set_test_result(func_state, instr->_operand[0]
+			&& (getItem(instr)->_flags & ITEMF_WEIGHT_MASK) != ITEMF_WEIGHT_MASK);
 		break;
 
 	case OPCODE_OBJECT_CAN_TAKE:

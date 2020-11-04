@@ -344,10 +344,25 @@ endif
 	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-2208x1242.png $(bundle_name)/LaunchImage-800-Landscape-736h@3x.png
 	cp $(srcdir)/dists/ios7/Images.xcassets/LaunchImage.launchimage/ScummVM-splash-750x1334.png $(bundle_name)/LaunchImage-800-667h@2x.png
 
+
+ifndef WITHOUT_SDL
+OSX_STATIC_LIBS := `$(SDLCONFIG) --prefix=$(STATICLIBPATH) --static-libs`
+
+ifdef USE_SDL_NET
+ifdef USE_SDL2
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libSDL2_net.a
+else
+OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libSDL_net.a
+endif
+endif
+
+# With sdl2-config we don't always get the OpenGL framework
+OSX_STATIC_LIBS += -framework OpenGL
+
+else # WITHOUT_SDL
+
 # Special SDL_Net library without SDL (iPhone)
 ifdef USE_SDL_NET
-ifdef WITHOUT_SDL
-
 ifeq ($(SDL_NET_MAJOR),1)
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libSDL_net.a
 else
@@ -355,21 +370,9 @@ ifeq ($(SDL_NET_MAJOR),2)
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libSDL2_net.a
 endif
 endif
-
-else # WITHOUT_SDL
-
-# Static libaries, used for the scummvm-static target
-OSX_STATIC_LIBS := `$(SDLCONFIG) --prefix=$(STATICLIBPATH) --static-libs`
-ifdef USE_SDL2
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libSDL2_net.a
-else
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libSDL_net.a
-endif
-# With sdl2-config we don't always get the OpenGL framework
-OSX_STATIC_LIBS += -framework OpenGL
+endif # USE_SDL_NET
 
 endif # WITHOUT_SDL
-endif # USE_SDL_NET
 
 ifdef USE_LIBCURL
 OSX_STATIC_LIBS += -lcurl -framework Security

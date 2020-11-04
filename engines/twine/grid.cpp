@@ -573,9 +573,9 @@ void Grid::getBrickPos(int32 x, int32 y, int32 z) {
 void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y, int32 z) {
 	const uint8 *blockPtr = getBlockLibrary(blockIdx) + 3 + brickBlockIdx * 4;
 
-	uint8 brickShape = *((const uint8 *)(blockPtr + 0));
-	uint8 brickSound = *((const uint8 *)(blockPtr + 1));
-	uint16 brickIdx = *((const uint16 *)(blockPtr + 2));
+	const uint8 brickShape = *((const uint8 *)(blockPtr + 0));
+	const uint8 brickSound = *((const uint8 *)(blockPtr + 1));
+	const uint16 brickIdx = *((const uint16 *)(blockPtr + 2));
 	if (!brickIdx) {
 		return;
 	}

@@ -26,6 +26,8 @@
 #include "common/savefile.h"
 #include "common/scummsys.h"
 #include "twine/actor.h"
+#include "twine/menu.h"
+#include "twine/holomap.h"
 
 namespace TwinE {
 
@@ -122,13 +124,13 @@ public:
 	/** Inventory used flags */
 	uint8 inventoryFlags[NUM_INVENTORY_ITEMS];
 
-	uint8 holomapFlags[150]; // GV14
+	uint8 holomapFlags[NUM_LOCATIONS]; // GV14
 
 	char playerName[30];
 
 	int32 gameChoices[10];         // inGameMenuData
 	int32 numChoices = 0;          // numOfOptionsInChoice
-	int16 gameChoicesSettings[18]; // choiceTab -  same structure as menu settings
+	MenuSettings gameChoicesSettings; // choiceTab -  same structure as menu settings
 	int32 choiceAnswer = 0;        // inGameMenuAnswer
 
 	/** Initialize all engine variables */
@@ -139,8 +141,8 @@ public:
 
 	void processFoundItem(int32 item);
 
-	bool loadGame(Common::InSaveFile *file);
-	bool saveGame(Common::OutSaveFile *file);
+	bool loadGame(Common::SeekableReadStream *file);
+	bool saveGame(Common::WriteStream *file);
 
 	void processGameChoices(int32 choiceIdx);
 

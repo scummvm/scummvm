@@ -748,7 +748,7 @@ Sound *SoundManager::RequestSong(string group) {
 Audio::SoundHandle SoundManager::playTownsSound(Std::string filename, uint16 sample_num) {
 	FMtownsDecoderStream *stream = new FMtownsDecoderStream(filename, sample_num);
 	Audio::SoundHandle handle;
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, -1, music_volume);
+	_mixer->playStream(Audio::Mixer::kSpeechSoundType, &handle, stream, -1);
 
 	return handle;
 }

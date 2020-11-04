@@ -53,9 +53,8 @@ GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 	Common::fill(&gameFlags[0], &gameFlags[256], 0);
 	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
 	Common::fill(&holomapFlags[0], &holomapFlags[150], 0);
-	playerName[0] = 0;
+	playerName[0] = '\0';
 	Common::fill(&gameChoices[0], &gameChoices[10], 0);
-	Common::fill(&gameChoicesSettings[0], &gameChoicesSettings[18], 0);
 }
 
 void GameState::initEngineProjections() {
@@ -161,40 +160,41 @@ void GameState::initEngineVars() {
 
 	gameChapter = 0;
 
-	_engine->_text->currentTextBank = 0;
+	_engine->_scene->sceneTextBank = TextBankId::Options_and_menus;
 	_engine->_scene->currentlyFollowedActor = 0;
 	_engine->_actor->heroBehaviour = kNormal;
 	_engine->_actor->previousHeroAngle = 0;
 	_engine->_actor->previousHeroBehaviour = kNormal;
 }
 
-bool GameState::loadGame(Common::InSaveFile *file) {
+bool GameState::loadGame(Common::SeekableReadStream *file) {
 	if (file == nullptr) {
 		return false;
 	}
+
+	initEngineVars();
 
 	file->skip(1); // skip save game id
 
 	int playerNameIdx = 0;
 	do {
 		const byte c = file->readByte();
+		playerName[playerNameIdx++] = c;
 		if (c == '\0') {
 			break;
 		}
-		playerName[playerNameIdx++] = c;
 		if (playerNameIdx >= ARRAYSIZE(playerName)) {
-			warning("Failed to load savegame");
+			warning("Failed to load savegame. Invalid playername.");
 			return false;
 		}
 	} while (true);
-	playerName[playerNameIdx] = '\0';
 
 	byte numGameFlags = file->readByte();
 	if (numGameFlags != NUM_GAME_FLAGS) {
-		warning("Failed to load gameflags");
+		warning("Failed to load gameflags. Expected %u, but got %u", NUM_GAME_FLAGS, numGameFlags);
 		return false;
 	}
-	file->read(gameFlags, numGameFlags);
+	file->read(gameFlags, NUM_GAME_FLAGS);
 	_engine->_scene->needChangeScene = file->readByte(); // scene index
 	gameChapter = file->readByte();
 
@@ -212,21 +212,21 @@ bool GameState::loadGame(Common::InSaveFile *file) {
 	_engine->_actor->previousHeroAngle = _engine->_scene->sceneHero->angle;
 	_engine->_scene->sceneHero->body = file->readByte();
 
-	const byte numHolemapFlags = file->readByte(); // number of holomap locations, always 150
-	if (numHolemapFlags != ARRAYSIZE(holomapFlags)) {
-		warning("Failed to load holomapflags");
+	const byte numHolomapFlags = file->readByte(); // number of holomap locations
+	if (numHolomapFlags != NUM_LOCATIONS) {
+		warning("Failed to load holomapflags. Got %u, expected %i", numHolomapFlags, NUM_LOCATIONS);
 		return false;
 	}
-	file->read(holomapFlags, numHolemapFlags);
+	file->read(holomapFlags, NUM_LOCATIONS);
 
 	inventoryNumGas = file->readByte();
 
 	const byte numInventoryFlags = file->readByte(); // number of used inventory items, always 28
 	if (numInventoryFlags != NUM_INVENTORY_ITEMS) {
-		warning("Failed to load inventoryFlags");
+		warning("Failed to load inventoryFlags. Got %u, expected %i", numInventoryFlags, NUM_INVENTORY_ITEMS);
 		return false;
 	}
-	file->read(inventoryFlags, numInventoryFlags);
+	file->read(inventoryFlags, NUM_INVENTORY_ITEMS);
 
 	inventoryNumLeafs = file->readByte();
 	usingSabre = file->readByte();
@@ -236,14 +236,16 @@ bool GameState::loadGame(Common::InSaveFile *file) {
 	return true;
 }
 
-bool GameState::saveGame(Common::OutSaveFile *file) {
-	// TODO: the player name must be handled properly
-	Common::strlcpy(playerName, "TwinEngineSave", sizeof(playerName));
+bool GameState::saveGame(Common::WriteStream *file) {
+	if (playerName[0] == '\0') {
+		Common::strlcpy(playerName, "TwinEngineSave", sizeof(playerName));
+	}
 
 	file->writeByte(0x03);
 	file->writeString(playerName);
+	file->writeByte('\0');
 	file->writeByte(NUM_GAME_FLAGS);
-	file->write(gameFlags, sizeof(gameFlags));
+	file->write(gameFlags, NUM_GAME_FLAGS);
 	file->writeByte(_engine->_scene->currentSceneIdx);
 	file->writeByte(gameChapter);
 	file->writeByte(_engine->_actor->heroBehaviour);
@@ -259,14 +261,14 @@ bool GameState::saveGame(Common::OutSaveFile *file) {
 	file->writeByte(_engine->_scene->sceneHero->body);
 
 	// number of holomap locations
-	file->writeByte(ARRAYSIZE(holomapFlags));
-	file->write(holomapFlags, sizeof(holomapFlags));
+	file->writeByte(NUM_LOCATIONS);
+	file->write(holomapFlags, NUM_LOCATIONS);
 
 	file->writeByte(inventoryNumGas);
 
 	// number of inventory items
-	file->writeByte(ARRAYSIZE(inventoryFlags));
-	file->write(inventoryFlags, sizeof(inventoryFlags));
+	file->writeByte(NUM_INVENTORY_ITEMS);
+	file->write(inventoryFlags, NUM_INVENTORY_ITEMS);
 
 	file->writeByte(inventoryNumLeafs);
 	file->writeByte(usingSabre);
@@ -315,7 +317,7 @@ void GameState::processFoundItem(int32 item) {
 
 	// process vox play
 	_engine->_music->stopMusic();
-	_engine->_text->initTextBank(2);
+	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 
 	_engine->_interface->resetClip();
 	_engine->_text->initText(item);
@@ -401,7 +403,7 @@ void GameState::processFoundItem(int32 item) {
 	}
 
 	initEngineProjections();
-	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 	_engine->_text->stopVox(_engine->_text->currDialTextEntry);
 
 	_engine->_scene->sceneHero->animTimerData = tmpAnimTimer;
@@ -410,21 +412,19 @@ void GameState::processFoundItem(int32 item) {
 void GameState::processGameChoices(int32 choiceIdx) {
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-	gameChoicesSettings[MenuSettings_CurrentLoadedButton] = 0;      // Current loaded button (button number)
-	gameChoicesSettings[MenuSettings_NumberOfButtons] = numChoices; // Num of buttons
-	gameChoicesSettings[MenuSettings_ButtonsBoxHeight] = 0;         // Buttons box height
-	gameChoicesSettings[MenuSettings_HeaderEnd] = _engine->_text->currentTextBank + 3;
+	gameChoicesSettings.reset();
+	gameChoicesSettings.setTextBankId(_engine->_scene->sceneTextBank + 3);
 
 	// filled via script
 	for (int32 i = 0; i < numChoices; i++) {
-		gameChoicesSettings[i * 2 + MenuSettings_FirstButtonState] = 0;
-		gameChoicesSettings[i * 2 + MenuSettings_FirstButton] = gameChoices[i];
+		gameChoicesSettings.addButton(gameChoices[i], 0);
 	}
 
 	_engine->_text->drawAskQuestion(choiceIdx);
 
-	_engine->_menu->processMenu(gameChoicesSettings);
-	choiceAnswer = gameChoices[gameChoicesSettings[MenuSettings_CurrentLoadedButton]];
+	_engine->_menu->processMenu(&gameChoicesSettings);
+	const int16 activeButton = gameChoicesSettings.getActiveButton();
+	choiceAnswer = gameChoices[activeButton];
 
 	// get right VOX entry index
 	if (_engine->_text->initVoxToPlay(choiceAnswer)) {
@@ -474,7 +474,7 @@ void GameState::processGameoverAnimation() {
 		}
 
 		const int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);
-		const int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 0x64);
+		const int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 100);
 
 		_engine->_interface->blitBox(left, top, right, bottom, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);

@@ -39,17 +39,21 @@ void DebugScene::drawBoundingBoxProjectPoints(ScenePoint *pPoint3d, ScenePoint *
 	pPoint3dProjected->y = _engine->_renderer->projPosY;
 	pPoint3dProjected->z = _engine->_renderer->projPosZ;
 
-	if (_engine->_redraw->renderLeft > _engine->_renderer->projPosX)
+	if (_engine->_redraw->renderLeft > _engine->_renderer->projPosX) {
 		_engine->_redraw->renderLeft = _engine->_renderer->projPosX;
+	}
 
-	if (_engine->_redraw->renderRight < _engine->_renderer->projPosX)
+	if (_engine->_redraw->renderRight < _engine->_renderer->projPosX) {
 		_engine->_redraw->renderRight = _engine->_renderer->projPosX;
+	}
 
-	if (_engine->_redraw->renderTop > _engine->_renderer->projPosY)
+	if (_engine->_redraw->renderTop > _engine->_renderer->projPosY) {
 		_engine->_redraw->renderTop = _engine->_renderer->projPosY;
+	}
 
-	if (_engine->_redraw->renderBottom < _engine->_renderer->projPosY)
+	if (_engine->_redraw->renderBottom < _engine->_renderer->projPosY) {
 		_engine->_redraw->renderBottom = _engine->_renderer->projPosY;
+	}
 }
 
 int32 DebugScene::checkZoneType(int32 type) {
@@ -123,8 +127,6 @@ void DebugScene::displayZones() {
 		ScenePoint backTopLeftPoint2D;
 		ScenePoint backTopRightPoint2D;
 
-		uint8 color;
-
 		// compute the points in 3D
 
 		frontBottomLeftPoint.x = zonePtr->bottomLeft.x - _engine->_grid->cameraX;
@@ -172,7 +174,7 @@ void DebugScene::displayZones() {
 
 		// draw all lines
 
-		color = 15 * 3 + zonePtr->type * 16;
+		uint8 color = 15 * 3 + zonePtr->type * 16;
 
 		// draw front part
 		_engine->_interface->drawLine(frontBottomLeftPoint2D.x, frontBottomLeftPoint2D.y, frontTopLeftPoint2D.x, frontTopLeftPoint2D.y, color);
@@ -198,6 +200,7 @@ void DebugScene::displayZones() {
 		_engine->_interface->drawLine(backBottomRightPoint2D.x, backBottomRightPoint2D.y, frontBottomRightPoint2D.x, frontBottomRightPoint2D.y, color);
 		_engine->_interface->drawLine(frontBottomRightPoint2D.x, frontBottomRightPoint2D.y, frontBottomLeftPoint2D.x, frontBottomLeftPoint2D.y, color);
 	}
+	_engine->flip();
 }
 
 } // namespace TwinE

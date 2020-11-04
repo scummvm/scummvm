@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-31 19:57+0100\n"
-"PO-Revision-Date: 2020-10-14 17:43+0000\n"
+"PO-Revision-Date: 2020-11-03 18:43+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Українська\n"
 
@@ -5510,23 +5510,24 @@ msgstr "Висококласні відео"
 
 #: engines/sci/detection.cpp:260
 msgid "Upscale videos to double their size"
-msgstr "Невисокий розмір відео для подвоєння їх розміру"
+msgstr "Подвоїти розмір відео"
 
 #: engines/sci/detection.cpp:270
 msgid "Use RGB rendering"
-msgstr ""
+msgstr "Використовувати RGB для малювання"
 
 #: engines/sci/detection.cpp:271
 msgid "Use RGB rendering to improve screen transitions"
-msgstr ""
+msgstr "Використовувати RGB для покращення переходів між екранами"
 
 #: engines/sci/detection.cpp:281
 msgid "Use per-resource modified palettes"
-msgstr ""
+msgstr "Використовувати декілька палітр"
 
 #: engines/sci/detection.cpp:282
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
+"Використовувати палітри для кожного окремого ресурсу для покращення вигляду"
 
 #: engines/sci/detection.cpp:312
 msgid "MIDI mode:"

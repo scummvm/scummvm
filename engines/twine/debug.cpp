@@ -392,13 +392,10 @@ void Debug::debugLeftMenu() {
 	debugAddButton(ZONES_MENU, 205, 244, 350, 264, "Ladder Zones", 215, 249, 7, 87, 119, 0, SHOW_ZONE_LADDER);
 }
 
-int32 Debug::debugProcessButton(int32 X, int32 Y) {
-	int32 i;
-	int32 j;
-
-	for (i = 0; i < numDebugWindows; i++) {
-		for (j = 0; j < debugWindows[i].numButtons; j++) {
-			if (X > (debugWindows[i].debugButtons[j].left) && X < (debugWindows[i].debugButtons[j].right) && Y > (debugWindows[i].debugButtons[j].top) && Y < (debugWindows[i].debugButtons[j].bottom)) {
+int32 Debug::debugProcessButton(int32 x, int32 y) {
+	for (int32 i = 0; i < numDebugWindows; i++) {
+		for (int32 j = 0; j < debugWindows[i].numButtons; j++) {
+			if (x > (debugWindows[i].debugButtons[j].left) && x < (debugWindows[i].debugButtons[j].right) && y > (debugWindows[i].debugButtons[j].top) && y < (debugWindows[i].debugButtons[j].bottom)) {
 				return (debugWindows[i].debugButtons[j].type);
 			}
 		}
@@ -433,8 +430,9 @@ void Debug::debugProcessWindow() {
 		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
 		debugResetButtonsState();
-		if (numDebugWindows == 0)
+		if (numDebugWindows == 0) {
 			debugLeftMenu();
+		}
 		debugDrawWindows();
 
 		do {

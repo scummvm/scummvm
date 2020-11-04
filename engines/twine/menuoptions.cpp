@@ -21,9 +21,12 @@
  */
 
 #include "twine/menuoptions.h"
+#include "common/error.h"
 #include "common/keyboard.h"
+#include "common/str-array.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "savestate.h"
 #include "twine/flamovies.h"
 #include "twine/gamestate.h"
 #include "twine/input.h"
@@ -57,7 +60,7 @@ void MenuOptions::newGame() {
 	_engine->_text->newGameVar4 = 0;
 	_engine->_text->newGameVar5 = 1;
 
-	_engine->_text->initTextBank(2);
+	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->textClipFull();
 	_engine->_text->setFontCrossColor(15);
 
@@ -169,11 +172,28 @@ void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
 	_engine->copyBlockPhys(left, top, right, top + PLASMA_HEIGHT);
 }
 
+/**
+ * @brief Toggle a given @c OSystem::Feature and restore the previous state on destruction
+ */
+class ScopedFeatureState {
+private:
+	OSystem::Feature _feature;
+	bool _changeTo;
+public:
+	ScopedFeatureState(OSystem::Feature feature, bool enable) : _feature(feature), _changeTo(enable) {
+		if (g_system->getFeatureState(feature) != enable) {
+			g_system->setFeatureState(feature, enable);
+			_changeTo = !g_system->getFeatureState(feature);
+		}
+	}
+	~ScopedFeatureState() {
+		g_system->setFeatureState(_feature, _changeTo);
+	}
+};
+
 bool MenuOptions::enterPlayerName(int32 textIdx) {
-	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	_engine->flip();
 	playerName[0] = '\0'; // TODO: read from settings?
-	_engine->_text->initTextBank(0);
+	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 	char buffer[256];
 	_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
 	_engine->_text->setFontColor(15);
@@ -182,6 +202,7 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 	_engine->copyBlockPhys(0, 0, SCREEN_WIDTH - 1, 99);
 	_engine->flip();
 
+	ScopedFeatureState scopedVirtualKeyboard(OSystem::kFeatureVirtualKeyboard, true);
 	for (;;) {
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
@@ -195,6 +216,9 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter)) {
 					if (_onScreenKeyboardLeaveViaOkButton) {
 						if (_onScreenKeyboardX == ONSCREENKEYBOARD_WIDTH - 1 && _onScreenKeyboardY == ONSCREENKEYBOARD_HEIGHT - 1) {
+							if (playerName[0] == '\0') {
+								continue;
+							}
 							return true;
 						}
 						const size_t size = strlen(playerName);
@@ -212,6 +236,10 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 						}
 						continue;
 					}
+					if (playerName[0] == '\0') {
+						continue;
+					}
+
 					return true;
 				}
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UIAbort)) {
@@ -282,69 +310,100 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 	return false;
 }
 
-void MenuOptions::newGameMenu() {
-	if (enterPlayerName(TextId::kEnterYourName)) {
-		_engine->_gameState->initEngineVars();
-		newGame();
-
-		if (_engine->gameEngineLoop()) {
-			showCredits();
-		}
-	}
-}
-
-int MenuOptions::chooseSave(int textIdx) {
-	if (!_engine->hasSavedSlots()) {
-		return -1;
-	}
+bool MenuOptions::newGameMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
-	do {
-		// TODO: assemble menu with save slots and make then loadable.
-		_engine->_text->initTextBank(0);
-		char buffer[256];
-		_engine->_text->getMenuText(textIdx, buffer, sizeof(buffer));
-		_engine->_text->setFontColor(15);
-		const int halfScreenWidth = (SCREEN_WIDTH / 2);
-		_engine->_text->drawText(halfScreenWidth - (_engine->_text->getTextSize(buffer) / 2), 20, buffer);
-		_engine->copyBlockPhys(0, 0, SCREEN_WIDTH - 1, 99);
-		_engine->flip();
-
-		if (_engine->shouldQuit()) {
-			break;
-		}
-		_engine->_system->delayMillis(1);
-	} while (_engine->_input->toggleAbortAction());
-
-	return 0;
+	if (!enterPlayerName(TextId::kEnterYourName)) {
+		return false;
+	}
+	_engine->_gameState->initEngineVars();
+	newGame();
+	return true;
 }
 
-void MenuOptions::continueGameMenu() {
+int MenuOptions::chooseSave(int textIdx, bool showEmptySlots) {
+	const SaveStateList& savegames = _engine->getSaveSlots();
+	if (savegames.empty() && !showEmptySlots) {
+		return -1;
+	}
+
+	_engine->_text->initTextBank(TextBankId::Options_and_menus);
+
+	MenuSettings saveFiles;
+	saveFiles.addButton(TextId::kReturnMenu);
+
+	const int maxButtons = _engine->getMetaEngine().getMaximumSaveSlot() + 1;
+	for (const SaveStateDescriptor& savegame : savegames) {
+		saveFiles.addButton(savegame.getDescription().encode().c_str(), savegame.getSaveSlot());
+		if (saveFiles.getButtonCount() >= maxButtons) {
+			break;
+		}
+	}
+
+	if (showEmptySlots) {
+		while (saveFiles.getButtonCount() < maxButtons) {
+			saveFiles.addButton("EMPTY");
+		}
+	}
+
+	for (;;) {
+		const int32 id = _engine->_menu->processMenu(&saveFiles);
+		switch (id) {
+		case kQuitEngine:
+		case TextId::kReturnMenu:
+			return -1;
+		default:
+			// the first button is the back button - to subtract that one again to get the real slot index
+			return saveFiles.getButtonState(id);
+		}
+	}
+
+	return -1;
+}
+
+bool MenuOptions::continueGameMenu() {
+	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
 	const int slot = chooseSave(TextId::kContinueGame);
 	if (slot >= 0) {
-		_engine->_gameState->initEngineVars();
-		_engine->loadSaveSlot(slot);
-		if (_engine->_scene->newHeroX == -1) {
-			_engine->_scene->heroPositionType = ScenePositionType::kNoPosition;
-		}
-		if (_engine->_gameState->gameChapter == 0 && _engine->_scene->currentSceneIdx == LBA1SceneId::Citadel_Island_Prison) {
-			newGame();
-		} else {
-			_engine->_text->newGameVar5 = 0;
-			_engine->_text->textClipSmall();
-			_engine->_text->newGameVar4 = 1;
+		debug("Load slot %i", slot);
+		Common::Error state = _engine->loadGameState(slot);
+		if (state.getCode() != Common::kNoError) {
+			error("Failed to load slot %i", slot);
+			return false;
 		}
 
-		if (_engine->gameEngineLoop()) {
-			showCredits();
-		}
-
-		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
-		do {
-			_engine->readKeys();
-			_engine->_system->delayMillis(1);
-		} while (!_engine->shouldQuit() && !_engine->_input->toggleAbortAction());
+		return true;
 	}
+	return false;
+}
+
+bool MenuOptions::deleteSaveMenu() {
+	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
+	const int slot = chooseSave(TextId::kDeleteSaveGame);
+	if (slot >= 0) {
+		_engine->wipeSaveSlot(slot);
+		return true;
+	}
+	return false;
+}
+
+bool MenuOptions::saveGameMenu() {
+	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	_engine->flip();
+	const int slot = chooseSave(TextId::kCreateSaveGame, true);
+	if (slot >= 0) {
+		// TODO: enter description
+		Common::Error state = _engine->saveGameState(slot, "description", false);
+		if (state.getCode() != Common::kNoError) {
+			error("Failed to save slot %i", slot);
+			return false;
+		}
+
+		return true;
+	}
+	return false;
 }
 
 } // namespace TwinE

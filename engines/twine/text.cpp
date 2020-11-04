@@ -31,6 +31,7 @@
 #include "twine/renderer.h"
 #include "twine/resources.h"
 #include "twine/screens.h"
+#include "twine/scene.h"
 #include "twine/sound.h"
 #include "twine/twine.h"
 
@@ -133,7 +134,9 @@ void Text::initTextBank(int32 bankIdx) {
 
 	// get index according with language
 	const int32 size = _engine->isLBA1() ? 28 : 30;
-	const int32 languageIndex = _engine->cfgfile.LanguageId * size + bankIdx * 2;
+	// the text banks indices are split into index and dialogs - each entry thus consists of two entries in the hqr
+	// every 28 entries starts a new language
+	const int32 languageIndex = _engine->cfgfile.LanguageId * size + (int)bankIdx * 2;
 	const int32 hqrSize = HQR::getAllocEntry((uint8 **)&dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex + INDEXOFFSET);
 	if (hqrSize == 0) {
 		warning("Failed to initialize text bank %i from file %s", languageIndex, Resources::HQR_TEXT_FILE);
@@ -715,7 +718,7 @@ void Text::copyText(const char *src, char *dst, int32 size) {
 
 bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 	if (index == _engine->_menu->currMenuTextIndex) {
-		if (_engine->_menu->currMenuTextBank == currentTextBank) {
+		if (_engine->_menu->currMenuTextBank == _engine->_scene->sceneTextBank) {
 			Common::strlcpy(text, _engine->_menu->currMenuTextBuffer, textSize);
 			return true;
 		}
@@ -735,7 +738,7 @@ bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 	copyText(text, _engine->_menu->currMenuTextBuffer, currDialTextSize);
 
 	_engine->_menu->currMenuTextIndex = index;
-	_engine->_menu->currMenuTextBank = currentTextBank;
+	_engine->_menu->currMenuTextBank = _engine->_scene->sceneTextBank;
 	return true;
 }
 

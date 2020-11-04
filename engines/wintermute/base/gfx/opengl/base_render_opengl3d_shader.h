@@ -137,9 +137,17 @@ private:
 	TRendererState _renderState;
 	bool _spriteBatchMode;
 
+	Math::Vector4d _flatShadowColor;
+	int _shadowTextureWidth;
+	int _shadowTextureHeight;
+
 	GLuint _spriteVBO;
 	GLuint _fadeVBO;
 	GLuint _lineVBO;
+	GLuint _flatShadowMaskVBO;
+	GLuint _flatShadowFrameBuffer;
+	GLuint _flatShadowRenderTexture;
+	GLuint _flatShadowDepthBuffer;
 	OpenGL::ShaderGL *_spriteShader;
 	OpenGL::ShaderGL *_fadeShader;
 	OpenGL::ShaderGL *_modelXShader;
@@ -147,6 +155,8 @@ private:
 	OpenGL::ShaderGL *_shadowVolumeShader;
 	OpenGL::ShaderGL *_shadowMaskShader;
 	OpenGL::ShaderGL *_lineShader;
+	OpenGL::ShaderGL *_flatShadowModelXShader;
+	OpenGL::ShaderGL *_flatShadowMaskShader;
 };
 
 } // namespace Wintermute

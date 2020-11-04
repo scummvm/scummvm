@@ -87,17 +87,16 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
     return (256 + ((int32)floor((-1024 * atan2((int64)(z2-z1), (int32)(x2-x1))) / (2*M_PI)))) % 1024;
 	*/
 
-	int32 newX, newZ, difX, difZ, tmpX, tmpZ, tmpEx, flag, destAngle, startAngle, finalAngle;
+	int32 difZ = z2 - z1;
+	const int32 newZ = difZ * difZ;
 
-	difZ = tmpZ = z2 - z1;
-	newZ = tmpZ * tmpZ;
+	int32 difX = x2 - x1;
+	const int32 newX = difX * difX;
 
-	difX = tmpX = x2 - x1;
-	newX = tmpX * tmpX;
-
+	int32 flag;
 	// Exchange X and Z
 	if (newX < newZ) {
-		tmpEx = difX;
+		const int32 tmpEx = difX;
 		difX = difZ;
 		difZ = tmpEx;
 
@@ -112,9 +111,9 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 		return 0;
 	}
 
-	destAngle = (difZ << 14) / targetActorDistance;
+	const int32 destAngle = (difZ << 14) / targetActorDistance;
 
-	startAngle = 0;
+	int32 startAngle = 0;
 	//	stopAngle  = 0x100;
 
 	while (_engine->_renderer->shadeAngleTab3[startAngle] > destAngle) {
@@ -127,13 +126,13 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 		}
 	}
 
-	finalAngle = 128 + startAngle;
+	int32 finalAngle = 128 + startAngle;
 
 	if (difX <= 0) {
 		finalAngle = -finalAngle;
 	}
 
-	if (flag & 1) {
+	if (flag == 1) {
 		finalAngle = -finalAngle + 0x100;
 	}
 
@@ -142,7 +141,7 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 
 int32 Movements::getRealAngle(ActorMoveStruct *movePtr) {
 	if (movePtr->numOfStep) {
-		int32 timePassed = _engine->lbaTime - movePtr->timeOfChange;
+		const int32 timePassed = _engine->lbaTime - movePtr->timeOfChange;
 
 		if (timePassed >= movePtr->numOfStep) { // rotation is finished
 			movePtr->numOfStep = 0;
@@ -161,7 +160,7 @@ int32 Movements::getRealAngle(ActorMoveStruct *movePtr) {
 		remainingAngle /= movePtr->numOfStep;
 		remainingAngle += movePtr->from;
 
-		return (remainingAngle);
+		return remainingAngle;
 	}
 
 	return movePtr->to;
@@ -363,12 +362,12 @@ void Movements::processActorMovements(int32 actorIdx) {
 
 				heroMoved = false;
 
-				if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) { // walk forward
+				if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
 					if (!_engine->_scene->currentActorInZone) {
 						_engine->_animations->initAnim(kForward, 0, 255, actorIdx);
 					}
 					heroMoved = true;
-				} else if (_engine->_input->isActionActive(TwinEActionType::MoveBackward)) { // walk backward
+				} else if (_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 					_engine->_animations->initAnim(kBackward, 0, 255, actorIdx);
 					heroMoved = true;
 				}

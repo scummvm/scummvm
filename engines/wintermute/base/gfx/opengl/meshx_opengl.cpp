@@ -87,6 +87,10 @@ bool MeshXOpenGL::render(ModelX *model) {
 	return true;
 }
 
+bool MeshXOpenGL::renderFlatShadowModel() {
+	return true;
+}
+
 } // namespace Wintermute
 
 #endif // defined(USE_OPENGL_GAME) && !defined(USE_GLES2)

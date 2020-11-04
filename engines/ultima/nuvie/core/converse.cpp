@@ -95,7 +95,7 @@ Converse::init(Configuration *cfg, nuvie_game_t t, MsgScroll *s, ActorManager *a
 	cfg->value("config/cheats/party_all_the_time", party_all_the_time);
 	cfg->value("config/audio/conversations_stop_music", conversations_stop_music, false);
 
-	cfg->value("config/ultima6/townsdir", townsdir, "");
+	cfg->value("config/townsdir", townsdir, "");
 	if (townsdir != "" && directory_exists(townsdir.c_str()))
 		using_fmtowns = true;
 
@@ -147,7 +147,7 @@ void Converse::reset() {
 void Converse::load_conv(const Std::string &convfilename) {
 	string conv_lib_str;
 	if (gametype == NUVIE_GAME_U6 && using_fmtowns) {
-		config->pathFromValue("config/ultima6/townsdir", convfilename, conv_lib_str); //FIXME handle case insensitive filename here.
+		config->pathFromValue("config/townsdir", convfilename, conv_lib_str);
 	} else {
 		config_get_path(config, convfilename, conv_lib_str);
 	}

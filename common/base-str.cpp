@@ -463,6 +463,9 @@ TEMPLATE void BASESTRING::deleteLastChar() {
 }
 
 TEMPLATE void BASESTRING::erase(uint32 p, uint32 len) {
+	if (len == 0)
+		return;
+
 	assert(p < _size);
 
 	makeUnique();
@@ -728,6 +731,8 @@ TEMPLATE void BASESTRING::trim() {
 #endif
 
 TEMPLATE void BASESTRING::assignAppend(value_type c) {
+	if (c == 0)
+		return;
 	ensureCapacity(_size + 1, true);
 
 	_str[_size++] = c;

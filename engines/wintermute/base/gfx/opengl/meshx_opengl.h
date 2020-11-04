@@ -41,6 +41,7 @@ public:
 	~MeshXOpenGL() override;
 
 	bool render(ModelX *model) override;
+	bool renderFlatShadowModel() override;
 };
 
 } // namespace Wintermute

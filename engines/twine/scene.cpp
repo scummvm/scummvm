@@ -97,7 +97,7 @@ bool Scene::loadSceneLBA1() {
 	Common::MemoryReadStream stream(currentScene, _currentSceneSize);
 
 	// load scene ambience properties
-	_engine->_text->currentTextBank = stream.readByte();
+	sceneTextBank = stream.readByte();
 	currentGameOverScene = stream.readByte();
 	stream.skip(4);
 
@@ -277,10 +277,10 @@ void Scene::changeScene() {
 	// TODO: treat holomap trajectories
 
 	if (needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_1 || needChangeScene == LBA1SceneId::Citadel_Island_end_sequence_2) {
-		_engine->_text->currentTextBank = 10;
+		_engine->_scene->sceneTextBank = TextBankId::Tippet_Island;
 	}
 
-	_engine->_text->initTextBank(_engine->_text->currentTextBank + 3);
+	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 	_engine->_grid->initGrid(needChangeScene);
 
 	if (heroPositionType == ScenePositionType::kZone) {
@@ -336,7 +336,7 @@ void Scene::changeScene() {
 	_engine->_renderer->setLightVector(alphaLight, betaLight, 0);
 
 	if (sceneMusic != -1) {
-		_engine->_music->playMidiMusic(sceneMusic); // TODO this should play midi or cd tracks
+		_engine->_music->playTrackMusic(sceneMusic);
 	}
 }
 
@@ -464,9 +464,8 @@ void Scene::processActorZones(int32 actorIdx) {
 
 						_engine->_grid->useCellingGrid = zone->infoData.CeillingGrid.newGrid;
 						_engine->_grid->cellingGridIdx = z;
-						_engine->freezeTime();
+						ScopedEngineFreeze freeze(_engine);
 						_engine->_grid->initCellingGrid(_engine->_grid->useCellingGrid);
-						_engine->unfreezeTime();
 					}
 				}
 				break;

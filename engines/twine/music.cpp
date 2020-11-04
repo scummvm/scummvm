@@ -121,12 +121,12 @@ void Music::musicFadeOut() {
 	musicVolume(volume);
 }
 
-void Music::playTrackMusicCd(int32 track) {
+bool Music::playTrackMusicCd(int32 track) {
 	if (!_engine->cfgfile.UseCD) {
-		return;
+		return false;
 	}
 	AudioCDManager *cdrom = g_system->getAudioCDManager();
-	cdrom->play(track, 1, 0, 0);
+	return cdrom->play(track, 1, 0, 0);
 }
 
 void Music::stopTrackMusicCd() {
@@ -138,18 +138,25 @@ void Music::stopTrackMusicCd() {
 	cdrom->stop();
 }
 
-void Music::playTrackMusic(int32 track) {
+bool Music::playTrackMusic(int32 track) {
 	if (!_engine->cfgfile.Sound) {
-		return;
+		return false;
 	}
 
 	if (track == currentMusic) {
-		return;
+		return true;
 	}
 	currentMusic = track;
 
 	stopMusic();
-	playTrackMusicCd(track);
+	if (playTrackMusicCd(track)) {
+		return true;
+	}
+	if (playMidiMusic(track)) {
+		return true;
+	}
+	warning("Failed to play track %i", track);
+	return false;
 }
 
 void Music::stopTrackMusic() {
@@ -161,13 +168,13 @@ void Music::stopTrackMusic() {
 	stopTrackMusicCd();
 }
 
-void Music::playMidiMusic(int32 midiIdx, int32 loop) {
+bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 	if (!_engine->cfgfile.Sound || _engine->cfgfile.MidiType == MIDIFILE_NONE) {
-		return;
+		return false;
 	}
 
 	if (midiIdx == currentMusic) {
-		return;
+		return true;
 	}
 
 	stopMusic();
@@ -186,7 +193,12 @@ void Music::playMidiMusic(int32 midiIdx, int32 loop) {
 	}
 
 	int32 midiSize = HQR::getAllocEntry(&midiPtr, filename, midiIdx);
+	if (midiSize == 0) {
+		return false;
+	}
 	_midiPlayer.play(midiPtr, midiSize);
+	debug("Play midi music %i from %s", midiIdx, filename);
+	return true;
 }
 
 void Music::stopMidiMusic() {
@@ -203,22 +215,15 @@ bool Music::initCdrom() {
 	if (!_engine->cfgfile.Sound) {
 		return false;
 	}
-#if 0 // TODO: mgerhardy
 	AudioCDManager* cdrom = g_system->getAudioCDManager();
-	if (cdrom->numtracks == NUM_CD_TRACKS) {
-		_engine->cdDir = "LBA";
-		_engine->cfgfile.UseCD = 1;
-		return true;
-	}
-#endif
-	// not found the right CD
-	_engine->cfgfile.UseCD = 0;
-	return false;
+	_engine->cfgfile.UseCD = cdrom->open();
+	return _engine->cfgfile.UseCD;
 }
 
 void Music::stopMusic() {
 	stopTrackMusic();
 	stopMidiMusic();
+	currentMusic = -1;
 }
 
 } // namespace TwinE
