@@ -127,11 +127,13 @@ void Resources::initResources() {
 	_engine->_text->setFontColor(14);
 	_engine->_text->setTextCrossColor(136, 143, 2);
 
-	if (HQR::getAllocEntry(&spriteShadowPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW) == 0) {
+	spriteShadowSize = HQR::getAllocEntry(&spriteShadowPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITESHADOW);
+	if (spriteShadowSize == 0) {
 		error("Failed to load sprite shadow");
 	}
 
-	if (HQR::getAllocEntry(&spriteBoundingBoxPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA) == 0) {
+	spriteBoundingBoxSize = HQR::getAllocEntry(&spriteBoundingBoxPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA);
+	if (spriteBoundingBoxSize == 0) {
 		error("Failed to load actors bounding box data");
 	}
 

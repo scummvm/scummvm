@@ -142,7 +142,9 @@ public:
 	/** Font buffer pointer */
 	uint8 *fontPtr = nullptr;
 
+	uint32 spriteShadowSize = 0;
 	uint8 *spriteShadowPtr = nullptr;
+	uint32 spriteBoundingBoxSize = 0;
 	uint8 *spriteBoundingBoxPtr = nullptr;
 
 	/** Initialize resource pointers */
