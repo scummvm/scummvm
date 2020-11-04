@@ -97,7 +97,7 @@ void TownsSfxManager::loadSound1Dat() {
 		sounds1_dat[i].len = lib.get_item_size(i);
 	}
 
-	//Fire SFX is made up of three individual samples played in a random sequence
+	// Fire SFX is made up of three individual samples played in a random sequence
 	Std::vector<Audio::RewindableAudioStream *> streams;
 	streams.push_back(new FMtownsDecoderStream(sounds1_dat[6].buf, sounds1_dat[6].len));
 	streams.push_back(new FMtownsDecoderStream(sounds1_dat[7].buf, sounds1_dat[7].len));
@@ -126,7 +126,8 @@ void TownsSfxManager::playSoundSample(uint8 sample_num, Audio::SoundHandle *loop
 	Audio::AudioStream *stream = NULL;
 	Audio::SoundHandle handle;
 
-	if (sample_num > 5 && sample_num < 9) { //fire samples
+	if (sample_num > 5 && sample_num < 9) {
+		// Fire samples
 		mixer->playStream(Audio::Mixer::kPlainSoundType, looping_handle ? looping_handle : &handle, fireStream, -1, volume, 0, DisposeAfterUse::NO);
 		return;
 	}

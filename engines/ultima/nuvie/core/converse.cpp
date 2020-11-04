@@ -147,7 +147,7 @@ void Converse::reset() {
 void Converse::load_conv(const Std::string &convfilename) {
 	string conv_lib_str;
 	if (gametype == NUVIE_GAME_U6 && using_fmtowns) {
-		config->pathFromValue("config/townsdir", convfilename, conv_lib_str); //FIXME handle case insensitive filename here.
+		config->pathFromValue("config/townsdir", convfilename, conv_lib_str);
 	} else {
 		config_get_path(config, convfilename, conv_lib_str);
 	}
