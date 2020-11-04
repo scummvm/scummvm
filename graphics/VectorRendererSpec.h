@@ -65,9 +65,6 @@ public:
 			drawBevelSquareAlg(x, y, w, h, _bevel, _bevelColor, _fgColor);
 		}
 	}
-	void drawString(const Graphics::Font *font, const Common::String &text,
-		const Common::Rect &area, Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV,
-		int deltax, bool elipsis, const Common::Rect &textDrawableArea = Common::Rect(0, 0, 0, 0)) override;
 	void drawString(const Graphics::Font *font, const Common::U32String &text,
 		const Common::Rect &area, Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV,
 		int deltax, bool elipsis, const Common::Rect &textDrawableArea = Common::Rect(0, 0, 0, 0)) override;

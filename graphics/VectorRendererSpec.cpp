@@ -1024,59 +1024,6 @@ darkenFillClip(PixelType *ptr, PixelType *end, int x, int y) {
  ********************************************************************/
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
-drawString(const Graphics::Font *font, const Common::String &text, const Common::Rect &area,
-			Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool ellipsis, const Common::Rect &textDrawableArea) {
-
-	int offset = area.top;
-
-	if (font->getFontHeight() < area.height()) {
-		switch (alignV) {
-		case GUI::ThemeEngine::kTextAlignVCenter:
-			offset = area.top + ((area.height() - font->getFontHeight()) >> 1);
-			break;
-		case GUI::ThemeEngine::kTextAlignVBottom:
-			offset = area.bottom - font->getFontHeight();
-			break;
-		default:
-			break;
-		}
-	}
-
-	Common::Rect drawArea;
-	if (textDrawableArea.isEmpty()) {
-		// In case no special area to draw to is given we only draw in the
-		// area specified by the user.
-		drawArea = area;
-		// warning("there is no text drawable area. Please set this area for clipping");
-	} else {
-		// The area we can draw to is the intersection between the allowed
-		// drawing area (textDrawableArea) and the area where we try to draw
-		// the text (area).
-		drawArea = textDrawableArea.findIntersectingRect(area);
-	}
-
-	// Better safe than sorry. We intersect with the actual surface boundaries
-	// to avoid any ugly clipping in _activeSurface->getSubArea which messes
-	// up the calculation of the x and y coordinates where to draw the string.
-	drawArea = drawArea.findIntersectingRect(Common::Rect(0, 0, _activeSurface->w, _activeSurface->h));
-
-	if (!drawArea.isEmpty()) {
-		Common::Rect textArea(area);
-		textArea.right -= deltax;
-
-		Surface textAreaSurface = _activeSurface->getSubArea(drawArea);
-
-		if (deltax >= 0) {
-			textArea.left += deltax;
-			deltax = 0;
-		}
-
-		font->drawString(&textAreaSurface, text, textArea.left - drawArea.left, offset - drawArea.top, textArea.width(), _fgColor, alignH, deltax, ellipsis);
-	}
-}
-
-template<typename PixelType>
-void VectorRendererSpec<PixelType>::
 drawString(const Graphics::Font *font, const Common::U32String &text, const Common::Rect &area,
 			Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool ellipsis, const Common::Rect &textDrawableArea) {
 

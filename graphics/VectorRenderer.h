@@ -526,9 +526,6 @@ public:
 	 * Draws a string into the screen. Wrapper for the Graphics::Font string drawing
 	 * method.
 	 */
-	virtual void drawString(const Graphics::Font *font, const Common::String &text,
-	                        const Common::Rect &area, Graphics::TextAlign alignH,
-	                        GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool useEllipsis, const Common::Rect &textDrawableArea) = 0;
 	virtual void drawString(const Graphics::Font *font, const Common::U32String &text,
 	                        const Common::Rect &area, Graphics::TextAlign alignH,
 	                        GUI::ThemeEngine::TextAlignVertical alignV, int deltax, bool useEllipsis, const Common::Rect &textDrawableArea) = 0;
