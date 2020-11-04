@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-31 19:57+0100\n"
-"PO-Revision-Date: 2020-11-01 17:44+0000\n"
+"PO-Revision-Date: 2020-11-05 00:43+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/tr/>\n"
@@ -1012,27 +1012,27 @@ msgstr "Oyun 3B Renderlama:"
 
 #: gui/options.cpp:1316
 msgid "3D Anti-aliasing:"
-msgstr ""
+msgstr "3B Anti merdiven efekti:"
 
 #: gui/options.cpp:1320 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
-msgstr ""
+msgstr "Pasifleşmiş"
 
 #: gui/options.cpp:1332
 msgid "Filter graphics"
-msgstr ""
+msgstr "Grafik filtreleme"
 
 #: gui/options.cpp:1332
 msgid "Use linear filtering when scaling graphics"
-msgstr ""
+msgstr "Grafik orantılama yapılırken doğrusal filtreleme"
 
 #: gui/options.cpp:1335
 msgid "Aspect ratio correction"
-msgstr ""
+msgstr "Görüntü oranı düzeltme"
 
 #: gui/options.cpp:1335
 msgid "Correct aspect ratio for games"
-msgstr ""
+msgstr "Oyunlar için görüntü oranını düzeltme"
 
 #: gui/options.cpp:1343
 msgid "Preferred device:"
