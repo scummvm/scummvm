@@ -414,7 +414,6 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 				Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 				if (fadeTrack) {
 					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
-					fadeTrack->vol = 0;
 					fadeTrack->regionOffset = 0;
 					debug(5, "SwToNeReg(trackId:%d) - sound(%d) faded track, select region %d, curHookId: %d", fadeTrack->trackId, fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
 					fadeTrack->curHookId = 0;
