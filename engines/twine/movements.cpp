@@ -30,6 +30,7 @@
 #include "twine/input.h"
 #include "twine/renderer.h"
 #include "twine/scene.h"
+#include "twine/text.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -228,6 +229,196 @@ void Movements::update() {
 	loopCursorKeys = _engine->_input->cursorKeys;
 }
 
+void Movements::processManualAction(int actorIdx) {
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	// take this out when we want to give manual movements to other characters than Hero
+	if (actor == _engine->_scene->sceneHero) {
+		heroAction = false;
+
+		// If press W for action
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::SpecialAction)) {
+			heroAction = true;
+		}
+
+		// Process hero actions
+		if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
+			switch (_engine->_actor->heroBehaviour) {
+			case kNormal:
+				heroAction = true;
+				break;
+			case kAthletic:
+				_engine->_animations->initAnim(kJump, 1, 0, actorIdx);
+				break;
+			case kAggressive:
+				if (_engine->_actor->autoAgressive) {
+					heroMoved = true;
+					actor->angle = getRealAngle(&actor->move);
+					// TODO: previousLoopActionKey must be handled properly
+					if (!previousLoopActionKey || !actor->anim) {
+						const int32 aggresiveMode = _engine->getRandomNumber(3);
+
+						switch (aggresiveMode) {
+						case 0:
+							_engine->_animations->initAnim(kKick, 1, 0, actorIdx);
+							break;
+						case 1:
+							_engine->_animations->initAnim(kRightPunch, 1, 0, actorIdx);
+							break;
+						case 2:
+							_engine->_animations->initAnim(kLeftPunch, 1, 0, actorIdx);
+							break;
+						}
+					}
+				} else {
+					if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
+						_engine->_animations->initAnim(kLeftPunch, 1, 0, actorIdx);
+					} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
+						_engine->_animations->initAnim(kRightPunch, 1, 0, actorIdx);
+					}
+
+					if (_engine->_input->toggleActionIfActive(TwinEActionType::MoveForward)) {
+						_engine->_animations->initAnim(kKick, 1, 0, actorIdx);
+					}
+				}
+				break;
+			case kDiscrete:
+					_engine->_animations->initAnim(kHide, 0, 255, actorIdx);
+				break;
+			case kProtoPack:
+				break;
+			}
+		}
+	}
+
+	if (_engine->_input->isActionActive(TwinEActionType::ThrowMagicBall) && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
+		if (_engine->_gameState->usingSabre == 0) { // Use Magic Ball
+			if (_engine->_gameState->gameFlags[InventoryItems::kiMagicBall]) {
+				if (_engine->_gameState->magicBallIdx == -1) {
+					_engine->_animations->initAnim(kThrowBall, 1, 0, actorIdx);
+				}
+
+				heroMoved = true;
+				actor->angle = getRealAngle(&actor->move);
+			}
+		} else if (_engine->_gameState->gameFlags[InventoryItems::kiUseSabre]) {
+			if (actor->body != InventoryItems::kiUseSabre) {
+				_engine->_actor->initModelActor(InventoryItems::kiUseSabre, actorIdx);
+			}
+
+			_engine->_animations->initAnim(kSabreAttack, 1, 0, actorIdx);
+
+			heroMoved = true;
+			actor->angle = getRealAngle(&actor->move);
+		}
+	}
+
+	// TODO: remove loopCursorKeys here
+	if (!loopCursorKeys || heroAction) {
+		// if continue walking
+		if (_engine->_input->isActionActive(TwinEActionType::MoveForward) || _engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
+			heroMoved = false; // don't break animation
+		}
+
+		if (heroActionKey != heroPressedKey || loopCursorKeys != heroPressedKey2) {
+			if (heroMoved) {
+				_engine->_animations->initAnim(kStanding, 0, 255, actorIdx);
+			}
+		}
+
+		heroMoved = false;
+
+		if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
+			if (!_engine->_scene->currentActorInZone) {
+				_engine->_animations->initAnim(kForward, 0, 255, actorIdx);
+			}
+			heroMoved = true;
+		} else if (_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
+			_engine->_animations->initAnim(kBackward, 0, 255, actorIdx);
+			heroMoved = true;
+		}
+
+		if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
+			heroMoved = true;
+			if (actor->anim == 0) {
+				_engine->_animations->initAnim(kTurnLeft, 0, 255, actorIdx);
+			} else {
+				if (!actor->dynamicFlags.bIsRotationByAnim) {
+					actor->angle = getRealAngle(&actor->move);
+				}
+			}
+		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
+			heroMoved = true;
+			if (actor->anim == 0) {
+				_engine->_animations->initAnim(kTurnRight, 0, 255, actorIdx);
+			} else {
+				if (!actor->dynamicFlags.bIsRotationByAnim) {
+					actor->angle = getRealAngle(&actor->move);
+				}
+			}
+		}
+	}
+
+	int16 tempAngle;
+	if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
+		tempAngle = 0x100;
+	} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
+		tempAngle = -0x100;
+	} else {
+		tempAngle = 0;
+	}
+
+	moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
+
+	heroPressedKey = heroActionKey;
+	heroPressedKey2 = loopCursorKeys;
+}
+
+void Movements::processFollowAction(int actorIdx) {
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	const ActorStruct* followedActor = _engine->_scene->getActor(actor->followedActor);
+	int32 newAngle = getAngleAndSetTargetActorDistance(actor->x, actor->z, followedActor->x, followedActor->z);
+	if (actor->staticFlags.bIsSpriteActor) {
+		actor->angle = newAngle;
+	} else {
+		moveActor(actor->angle, newAngle, actor->speed, &actor->move);
+	}
+}
+
+void Movements::processRandomAction(int actorIdx) {
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	if (actor->dynamicFlags.bIsRotationByAnim) {
+		return;
+	}
+
+	if (actor->brickShape & 0x80) {
+		moveActor(actor->angle, (((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
+		actor->info0 = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
+		_engine->_animations->initAnim(kStanding, 0, 255, actorIdx);
+	}
+
+	if (!actor->move.numOfStep) {
+		_engine->_animations->initAnim(kForward, 0, 255, actorIdx);
+		if (_engine->lbaTime > actor->info0) {
+			moveActor(actor->angle, (((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
+			actor->info0 = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
+		}
+	}
+}
+
+void Movements::processTrackAction(int actorIdx) {
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	if (actor->positionInMoveScript == -1) {
+		actor->positionInMoveScript = 0;
+	}
+}
+
+void Movements::processSameXZAction(int actorIdx) {
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	const ActorStruct* followedActor = _engine->_scene->getActor(actor->followedActor);
+	actor->x = followedActor->x;
+	actor->z = followedActor->z;
+}
+
 void Movements::processActorMovements(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->entity == -1) {
@@ -249,212 +440,41 @@ void Movements::processActorMovements(int32 actorIdx) {
 		moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
 
 		heroPressedKey = heroActionKey;
-	} else {
-		if (!actor->staticFlags.bIsSpriteActor) {
-			if (actor->controlMode != ControlMode::kManual) {
-				actor->angle = getRealAngle(&actor->move);
-			}
-		}
-
-		switch (actor->controlMode) {
-		case kNoMove:
-			break;
-		case kManual:
-			// take this out when we want to give manual movements to other characters than Hero
-			if (actor == _engine->_scene->sceneHero) {
-				heroAction = false;
-
-				// If press W for action
-				if (_engine->_input->isActionActive(TwinEActionType::SpecialAction)) {
-					heroAction = true;
-				}
-
-				// Process hero actions
-				switch (_engine->_actor->heroBehaviour) {
-				case kNormal:
-					if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
-						heroAction = true;
-					}
-					break;
-				case kAthletic:
-					if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
-						_engine->_animations->initAnim(kJump, 1, 0, actorIdx);
-					}
-					break;
-				case kAggressive:
-					if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
-						if (_engine->_actor->autoAgressive) {
-							heroMoved = true;
-							actor->angle = getRealAngle(&actor->move);
-							// TODO: previousLoopActionKey must be handled properly
-							if (!previousLoopActionKey || !actor->anim) {
-								const int32 aggresiveMode = _engine->getRandomNumber(3);
-
-								switch (aggresiveMode) {
-								case 0:
-									_engine->_animations->initAnim(kKick, 1, 0, actorIdx);
-									break;
-								case 1:
-									_engine->_animations->initAnim(kRightPunch, 1, 0, actorIdx);
-									break;
-								case 2:
-									_engine->_animations->initAnim(kLeftPunch, 1, 0, actorIdx);
-									break;
-								}
-							}
-						} else {
-							if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-								_engine->_animations->initAnim(kLeftPunch, 1, 0, actorIdx);
-							} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-								_engine->_animations->initAnim(kRightPunch, 1, 0, actorIdx);
-							}
-
-							if (_engine->_input->toggleActionIfActive(TwinEActionType::MoveForward)) {
-								_engine->_animations->initAnim(kKick, 1, 0, actorIdx);
-							}
-						}
-					}
-					break;
-				case kDiscrete:
-					if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
-						_engine->_animations->initAnim(kHide, 0, 255, actorIdx);
-					}
-					break;
-				case kProtoPack:
-					break;
-				}
-			}
-
-			if (_engine->_input->isActionActive(TwinEActionType::ThrowMagicBall) && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
-				if (_engine->_gameState->usingSabre == 0) { // Use Magic Ball
-					if (_engine->_gameState->gameFlags[InventoryItems::kiMagicBall]) {
-						if (_engine->_gameState->magicBallIdx == -1) {
-							_engine->_animations->initAnim(kThrowBall, 1, 0, actorIdx);
-						}
-
-						heroMoved = true;
-						actor->angle = getRealAngle(&actor->move);
-					}
-				} else if (_engine->_gameState->gameFlags[InventoryItems::kiUseSabre]) {
-					if (actor->body != InventoryItems::kiUseSabre) {
-						_engine->_actor->initModelActor(InventoryItems::kiUseSabre, actorIdx);
-					}
-
-					_engine->_animations->initAnim(kSabreAttack, 1, 0, actorIdx);
-
-					heroMoved = true;
-					actor->angle = getRealAngle(&actor->move);
-				}
-			}
-
-			// TODO: remove loopCursorKeys here
-			if (!loopCursorKeys || heroAction) {
-				// if continue walking
-				if (_engine->_input->isActionActive(TwinEActionType::MoveForward) || _engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
-					heroMoved = false; // don't break animation
-				}
-
-				if (heroActionKey != heroPressedKey || loopCursorKeys != heroPressedKey2) {
-					if (heroMoved) {
-						_engine->_animations->initAnim(kStanding, 0, 255, actorIdx);
-					}
-				}
-
-				heroMoved = false;
-
-				if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
-					if (!_engine->_scene->currentActorInZone) {
-						_engine->_animations->initAnim(kForward, 0, 255, actorIdx);
-					}
-					heroMoved = true;
-				} else if (_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
-					_engine->_animations->initAnim(kBackward, 0, 255, actorIdx);
-					heroMoved = true;
-				}
-
-				if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-					heroMoved = true;
-					if (actor->anim == 0) {
-						_engine->_animations->initAnim(kTurnLeft, 0, 255, actorIdx);
-					} else {
-						if (!actor->dynamicFlags.bIsRotationByAnim) {
-							actor->angle = getRealAngle(&actor->move);
-						}
-					}
-				} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-					heroMoved = true;
-					if (actor->anim == 0) {
-						_engine->_animations->initAnim(kTurnRight, 0, 255, actorIdx);
-					} else {
-						if (!actor->dynamicFlags.bIsRotationByAnim) {
-							actor->angle = getRealAngle(&actor->move);
-						}
-					}
-				}
-			}
-
-			int16 tempAngle;
-			if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-				tempAngle = 0x100;
-			} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-				tempAngle = -0x100;
-			} else {
-				tempAngle = 0;
-			}
-
-			moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
-
-			heroPressedKey = heroActionKey;
-			heroPressedKey2 = loopCursorKeys;
-
-			break;
-		case kFollow: {
-			const ActorStruct* followedActor = _engine->_scene->getActor(actor->followedActor);
-			int32 newAngle = getAngleAndSetTargetActorDistance(actor->x, actor->z, followedActor->x, followedActor->z);
-			if (actor->staticFlags.bIsSpriteActor) {
-				actor->angle = newAngle;
-			} else {
-				moveActor(actor->angle, newAngle, actor->speed, &actor->move);
-			}
-			break;
-		}
-		case kTrack:
-			if (actor->positionInMoveScript == -1) {
-				actor->positionInMoveScript = 0;
-			}
-			break;
-		case kFollow2:     // unused
-		case kTrackAttack: // unused
-			break;
-		case kSameXZ: {
-			const ActorStruct* followedActor = _engine->_scene->getActor(actor->followedActor);
-			actor->x = followedActor->x;
-			actor->z = followedActor->z;
-			break;
-		}
-		case kRandom: {
-			if (!actor->dynamicFlags.bIsRotationByAnim) {
-				if (actor->brickShape & 0x80) {
-					moveActor(actor->angle, (((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
-					actor->info0 = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
-					_engine->_animations->initAnim(kStanding, 0, 255, actorIdx);
-				}
-
-				if (!actor->move.numOfStep) {
-					_engine->_animations->initAnim(kForward, 0, 255, actorIdx);
-					if (_engine->lbaTime > actor->info0) {
-						moveActor(actor->angle, (((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
-						actor->info0 = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
-					}
-				}
-			}
-			break;
-		}
-		default:
-			warning("Unknown Control mode %d\n", actor->controlMode);
-			break;
+		return;
+	}
+	if (!actor->staticFlags.bIsSpriteActor) {
+		if (actor->controlMode != ControlMode::kManual) {
+			actor->angle = getRealAngle(&actor->move);
 		}
 	}
-} // namespace TwinE
+
+	switch (actor->controlMode) {
+	case kNoMove:
+		break;
+	case kManual:
+		processManualAction(actorIdx);
+		break;
+	case kFollow:
+		processFollowAction(actorIdx);
+		break;
+	case kTrack:
+		processTrackAction(actorIdx);
+		break;
+	case kFollow2:     // unused
+	case kTrackAttack: // unused
+		break;
+	case kSameXZ: {
+		processSameXZAction(actorIdx);
+		break;
+	}
+	case kRandom: {
+		processRandomAction(actorIdx);
+		break;
+	}
+	default:
+		warning("Unknown Control mode %d\n", actor->controlMode);
+		break;
+	}
+}
 
 } // namespace TwinE

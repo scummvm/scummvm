@@ -45,6 +45,12 @@ private:
 	// cursor keys
 	int32 previousLoopActionKey = 0;
 
+	void processManualAction(int actorIdx);
+	void processFollowAction(int actorIdx);
+	void processRandomAction(int actorIdx);
+	void processTrackAction(int actorIdx);
+	void processSameXZAction(int actorIdx);
+
 public:
 	Movements(TwinEEngine *engine);
 
