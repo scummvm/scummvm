@@ -73,8 +73,9 @@ protected:
 		uint16 getWidth() const;
 		uint16 getHeight() const;
 		Graphics::PixelFormat getPixelFormat() const;
-		int getCurFrame() const { return _curFrame; }
-		int getFrameCount() const { return _frameCount; }
+		int getCurFrame() const override { return _curFrame; }
+		int getCurFrameDelay() const override { return _frameDelay; }
+		int getFrameCount() const override { return _frameCount; }
 		uint32 getNextFrameStartTime() const { return _nextFrameStartTime; }
 		virtual const Graphics::Surface *decodeNextFrame();
 		virtual void handleFrame();
