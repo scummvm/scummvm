@@ -82,6 +82,13 @@
 
       release_notes/*  
 
+.. toctree::
+      :caption: Contribute to Documentation
+      :glob:
+      :hidden:
+
+      contribute/*
+
 ====================
 Welcome to ScummVM!
 ====================
