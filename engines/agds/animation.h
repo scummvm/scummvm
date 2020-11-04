@@ -59,6 +59,10 @@ public:
 
 	void freeFrame();
 
+	bool hasFrame() const {
+		return _frame != nullptr;
+	}
+
 	int frames() const {
 		return _frames;
 	}
@@ -141,16 +145,11 @@ public:
 		return _phase;
 	}
 
-	int frameIndex(int delta = 0) const {
-		return (_phase + delta) * _speed / 100;
-	}
-
 	bool load(Common::SeekableReadStream *stream);
 	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Common::Point dst);
 	int width() const;
 	int height() const;
 	bool tick(AGDSEngine &engine);
-
 	void decodeNextFrameIfNoFrame(AGDSEngine &engine) {
 		if (!_frame)
 			decodeNextFrame(engine);
