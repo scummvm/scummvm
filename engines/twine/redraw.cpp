@@ -237,7 +237,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 		ActorStruct *actor = _engine->_scene->getActor(modelActorPos);
 		actor->dynamicFlags.bIsVisible = 0; // reset visible state
 
-		if (_engine->_grid->useCellingGrid == -1 || actor->y <= (*(const int16 *)(_engine->_grid->cellingGridIdx * 24 + (const int8 *)_engine->_scene->sceneZones + 8))) {
+		if (_engine->_grid->useCellingGrid == -1 || actor->y <= _engine->_scene->sceneZones[_engine->_grid->cellingGridIdx].topRight.y) {
 			// no redraw required
 			if (actor->staticFlags.bIsBackgrounded && bgRedraw == 0) {
 				// get actor position on screen
