@@ -113,19 +113,19 @@ private:
 	 * Create celling grid map from celling grid to block library buffer
 	 * @param gridPtr celling grid buffer pointer
 	 */
-	void createCellingGridMap(const uint8 *gridPtr);
+	void createCellingGridMap(const uint8 *gridPtr, int32 gridPtrSize);
 	/**
 	 * Create grid Y column in block buffer
 	 * @param gridEntry current grid index
 	 * @param dest destination block buffer
 	 */
-	void createCellingGridColumn(const uint8 *gridEntry, uint8 *dest);
+	void createCellingGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize);
 	/**
 	 * Create grid Y column in block buffer
 	 * @param gridEntry current grid index
 	 * @param dest destination block buffer
 	 */
-	void createGridColumn(const uint8 *gridEntry, uint8 *dest);
+	void createGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize);
 	/**
 	 * Load grid bricks according with block librarie usage
 	 * @param gridSize size of the current grid
@@ -159,6 +159,7 @@ private:
 	uint8 brickUsageTable[NUM_BRICKS]{0};
 
 	/** Current grid pointer */
+	int32 currentGridSize = 0;
 	uint8 *currentGrid = nullptr;
 	/** Current block library pointer */
 	uint8 *currentBll = nullptr;
@@ -176,6 +177,7 @@ private:
 	int32 brickPixelPosY = 0;
 
 	/** Celling grid brick block buffer */
+	int32 blockBufferSize = 0;
 	uint8 *blockBuffer = nullptr;
 
 public:

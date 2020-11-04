@@ -36,7 +36,8 @@
 namespace TwinE {
 
 Grid::Grid(TwinEEngine *engine) : _engine(engine) {
-	blockBuffer = (uint8 *)malloc(GRID_SIZE_X * GRID_SIZE_Z * GRID_SIZE_Y * 2 * sizeof(uint8));
+	blockBufferSize = GRID_SIZE_X * GRID_SIZE_Z * GRID_SIZE_Y * 2 * sizeof(uint8);
+	blockBuffer = (uint8 *)malloc(blockBufferSize);
 }
 
 Grid::~Grid() {
@@ -329,7 +330,7 @@ int32 Grid::loadGridBricks(int32 gridSize) {
 	return 1;
 }
 
-void Grid::createGridColumn(const uint8 *gridEntry, uint8 *dest) {
+void Grid::createGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize) {
 	int32 brickCount = *(gridEntry++);
 
 	do {
@@ -360,7 +361,7 @@ void Grid::createGridColumn(const uint8 *gridEntry, uint8 *dest) {
 	} while (--brickCount);
 }
 
-void Grid::createCellingGridColumn(const uint8 *gridEntry, uint8 *dest) {
+void Grid::createCellingGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 *dest, uint32 destSize) {
 	int32 brickCount = *(gridEntry++);
 
 	do {
@@ -401,14 +402,14 @@ void Grid::createGridMap() {
 
 		for (int32 x = 0; x < GRID_SIZE_X; x++) {
 			int32 gridOffset = READ_LE_UINT16(currentGrid + 2 * (x + gridIdx));
-			createGridColumn(currentGrid + gridOffset, blockBuffer + blockOffset);
+			createGridColumn(currentGrid + gridOffset, currentGridSize - gridOffset, blockBuffer + blockOffset, blockBufferSize - blockOffset);
 			blockOffset += 50;
 		}
 		currOffset += 3200;
 	}
 }
 
-void Grid::createCellingGridMap(const uint8 *gridPtr) {
+void Grid::createCellingGridMap(const uint8 *gridPtr, int32 gridPtrSize) {
 	int32 currGridOffset = 0;
 	int32 currOffset = 0;
 
@@ -419,7 +420,7 @@ void Grid::createCellingGridMap(const uint8 *gridPtr) {
 		for (int32 x = 0; x < GRID_SIZE_X; x++) {
 			int gridOffset = READ_LE_UINT16(tempGridPtr);
 			tempGridPtr += 2;
-			createCellingGridColumn(gridPtr + gridOffset, blockBuffer + blockOffset);
+			createCellingGridColumn(gridPtr + gridOffset, gridPtrSize - gridOffset, blockBuffer + blockOffset, blockBufferSize - blockOffset);
 			blockOffset += 50;
 		}
 		currGridOffset += 128;
@@ -429,8 +430,8 @@ void Grid::createCellingGridMap(const uint8 *gridPtr) {
 
 bool Grid::initGrid(int32 index) {
 	// load grids from file
-	const int32 gridSize = HQR::getAllocEntry(&currentGrid, Resources::HQR_LBA_GRI_FILE, index);
-	if (gridSize == 0) {
+	currentGridSize = HQR::getAllocEntry(&currentGrid, Resources::HQR_LBA_GRI_FILE, index);
+	if (currentGridSize == 0) {
 		warning("Failed to load grid index: %i", index);
 		return false;
 	}
@@ -438,7 +439,7 @@ bool Grid::initGrid(int32 index) {
 	// load layouts from file
 	HQR::getAllocEntry(&currentBll, Resources::HQR_LBA_BLL_FILE, index);
 
-	loadGridBricks(gridSize);
+	loadGridBricks(currentGridSize);
 
 	createGridMask();
 
@@ -454,12 +455,13 @@ bool Grid::initCellingGrid(int32 index) {
 
 	// load grids from file
 	const int realIndex = index + CELLING_GRIDS_START_INDEX;
-	if (HQR::getAllocEntry(&gridPtr, Resources::HQR_LBA_GRI_FILE, realIndex) == 0) {
+	const int32 gridSize = HQR::getAllocEntry(&gridPtr, Resources::HQR_LBA_GRI_FILE, realIndex);
+	if (gridSize == 0) {
 		warning("Failed to load grid index %i", realIndex);
 		return false;
 	}
 
-	createCellingGridMap(gridPtr);
+	createCellingGridMap(gridPtr, gridSize);
 	free(gridPtr);
 	_engine->_redraw->reqBgRedraw = true;
 	return true;
