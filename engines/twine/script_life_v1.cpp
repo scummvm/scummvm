@@ -1033,10 +1033,10 @@ static int32 lPLAY_FLA(TwinEEngine *engine, LifeScriptContext &ctx) {
 	char movie[64];
 	do {
 		const byte c = ctx.stream.readByte();
+		movie[strIdx++] = c;
 		if (c == '\0') {
 			break;
 		}
-		movie[strIdx++] = c;
 		if (strIdx >= ARRAYSIZE(movie)) {
 			error("Max string size exceeded for fla name");
 		}
