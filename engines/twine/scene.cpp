@@ -419,7 +419,7 @@ void Scene::processActorZones(int32 actorIdx) {
 	actor->zone = -1;
 	int32 tmpCellingGrid = 0;
 
-	if (!actorIdx) {
+	if (IS_HERO(actorIdx)) {
 		currentActorInZone = actorIdx;
 	}
 
@@ -432,7 +432,7 @@ void Scene::processActorZones(int32 actorIdx) {
 		    (currentZ >= zone->bottomLeft.z && currentZ <= zone->topRight.z)) {
 			switch (zone->type) {
 			case kCube:
-				if (!actorIdx && actor->life > 0) {
+				if (IS_HERO(actorIdx) && actor->life > 0) {
 					needChangeScene = zone->infoData.ChangeScene.newSceneIdx;
 					zoneHeroX = actor->x - zone->bottomLeft.x + zone->infoData.ChangeScene.x;
 					zoneHeroY = actor->y - zone->bottomLeft.y + zone->infoData.ChangeScene.y;
@@ -470,13 +470,13 @@ void Scene::processActorZones(int32 actorIdx) {
 				}
 				break;
 			case kObject:
-				if (!actorIdx && _engine->_movements->heroAction) {
+				if (IS_HERO(actorIdx) && _engine->_movements->heroAction) {
 					_engine->_animations->initAnim(kAction, 1, 0, 0);
 					processZoneExtraBonus(zone);
 				}
 				break;
 			case kText:
-				if (!actorIdx && _engine->_movements->heroAction) {
+				if (IS_HERO(actorIdx) && _engine->_movements->heroAction) {
 					_engine->freezeTime();
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);
 					talkingActor = actorIdx;
@@ -486,7 +486,7 @@ void Scene::processActorZones(int32 actorIdx) {
 				}
 				break;
 			case kLadder:
-				if (!actorIdx && _engine->_actor->heroBehaviour != kProtoPack && (actor->anim == kForward || actor->anim == kTopLadder || actor->anim == kClimbLadder)) {
+				if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour != kProtoPack && (actor->anim == kForward || actor->anim == kTopLadder || actor->anim == kClimbLadder)) {
 					_engine->_movements->rotateActor(actor->boudingBox.x.bottomLeft, actor->boudingBox.z.bottomLeft, actor->angle + 0x580);
 					_engine->_renderer->destX += _engine->_movements->processActorX;
 					_engine->_renderer->destZ += _engine->_movements->processActorZ;
