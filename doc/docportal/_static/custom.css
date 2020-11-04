@@ -1,14 +1,22 @@
 /* override table width restrictions */
-@media screen and (min-width: 1080px) {
 
+@media (min-width: 385px){
     .wy-table-responsive table td {
        /* !important prevents the common CSS stylesheets from overriding
           this as on RTD they are loaded after this stylesheet */
        white-space: normal !important;
+        
     }
  
     .wy-table-responsive {
        overflow: visible !important;
+      
     }
- }
- 
+    .wy-table-responsive table {
+
+      table-layout: fixed !important;
+      width: 100% !important;
+
+    }
+   }
+
