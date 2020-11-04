@@ -450,6 +450,8 @@ void Movements::processActorMovements(int32 actorIdx) {
 
 	switch (actor->controlMode) {
 	case kNoMove:
+	case kFollow2:     // unused
+	case kTrackAttack: // unused
 		break;
 	case kManual:
 		processManualAction(actorIdx);
@@ -460,17 +462,12 @@ void Movements::processActorMovements(int32 actorIdx) {
 	case kTrack:
 		processTrackAction(actorIdx);
 		break;
-	case kFollow2:     // unused
-	case kTrackAttack: // unused
-		break;
-	case kSameXZ: {
+	case kSameXZ:
 		processSameXZAction(actorIdx);
 		break;
-	}
-	case kRandom: {
+	case kRandom:
 		processRandomAction(actorIdx);
 		break;
-	}
 	default:
 		warning("Unknown Control mode %d\n", actor->controlMode);
 		break;
