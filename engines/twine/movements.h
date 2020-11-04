@@ -58,8 +58,10 @@ public:
 
 	/** Hero moved */
 	bool heroMoved = false; // twinsenMove
-	/** Hero Action */
-	bool heroAction = false; // action
+	/**
+	 * Hero executes the current action of the trigger zone
+	 */
+	bool heroAction = false;
 
 	/** Process actor.x coordinate */
 	int16 processActorX = 0;

@@ -258,7 +258,8 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		} else {
 			engine->_scene->currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 		}
-	} break;
+		break;
+	}
 	case kcHIT_BY:
 		engine->_scene->currentScriptValue = ctx.actor->hitBy;
 		break;
