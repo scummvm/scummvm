@@ -39,7 +39,6 @@ namespace Common {
  */
  
 class String;
-class UnicodeBiDiText;
 
 /**
  * Very simple string class for UTF-32 strings in ScummVM. The main intention
@@ -83,9 +82,6 @@ public:
 
 	/** Construct a copy of the given string. */
 	U32String(const U32String &str) : BaseString<u32char_type_t>(str) {}
-
-	/** Construct a copy of the given unicode BiDi converted string. */
-	U32String(const UnicodeBiDiText &txt);
 
 	/** Construct a new string from the given NULL-terminated C string. */
 	explicit U32String(const char *str);
