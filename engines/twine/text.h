@@ -175,8 +175,6 @@ private:
 	char *currDialTextPtr = nullptr;
 	/** Current dialogue text size */
 	int32 currDialTextSize = 0;
-public:
-	Text(TwinEEngine *engine) : _engine(engine) {}
 
 	/** Dialogue text size */
 	int32 dialTextSize = 0;
@@ -203,6 +201,8 @@ public:
 
 	int32 dialTextBoxParam1 = 0; // dialogueBoxParam1
 	int32 dialTextBoxParam2 = 0; // dialogueBoxParam2
+public:
+	Text(TwinEEngine *engine) : _engine(engine) {}
 
 	// TODO: refactor all this variables and related functions
 	int32 printTextVar13 = 0;
