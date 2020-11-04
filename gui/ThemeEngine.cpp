@@ -27,6 +27,7 @@
 #include "common/unzip.h"
 #include "common/tokenizer.h"
 #include "common/translation.h"
+#include "common/unicode-bidi.h"
 
 #include "graphics/conversion.h"
 #include "graphics/cursorman.h"
@@ -1017,8 +1018,8 @@ void ThemeEngine::drawDDText(TextData type, TextColor color, const Common::Rect 
 		restoreBackground(dirty);
 
 	_vectorRenderer->setFgColor(_textColors[color]->r, _textColors[color]->g, _textColors[color]->b);
-#ifdef USE_TRANSLATION
-	_vectorRenderer->drawString(_texts[type]->_fontPtr, TransMan.convertBiDiString(text), area, alignH, alignV, deltax, ellipsis, dirty);
+#ifdef USE_FRIBIDI
+	_vectorRenderer->drawString(_texts[type]->_fontPtr, Common::convertBiDiU32String(text), area, alignH, alignV, deltax, ellipsis, dirty);
 #else
 	_vectorRenderer->drawString(_texts[type]->_fontPtr, text, area, alignH, alignV, deltax, ellipsis, dirty);
 #endif

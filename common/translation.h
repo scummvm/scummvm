@@ -169,13 +169,6 @@ public:
 	 */
 	String getCurrentLanguage() const;
 
-	/*
-	 * Wrapper for GNU FriBidi implementation of the Unicode Bidirectional Algorithm
-	 * For LTR (Left To Right) languages, returns the original input
-	 * For RTL (Right To Left) languages, returns visual representation of a logical single-line input
-	 */
-	U32String convertBiDiString(const U32String &input);
-
 private:
 	/**
 	 * Tries to find the given language or a derivate of it.

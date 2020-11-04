@@ -411,10 +411,6 @@ bool TranslationManager::checkHeader(File &in) {
 	return true;
 }
 
-U32String TranslationManager::convertBiDiString(const U32String &input) {
-	return Common::convertBiDiU32String(input).visual;
-}
-
 } // End of namespace Common
 
 #endif // USE_TRANSLATION
