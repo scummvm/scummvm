@@ -218,10 +218,13 @@ void IMuseDigital::callback() {
 				return;
 
 			if (track->volFadeUsed) {
-				if (track->volFadeStep < 0) {
+				if (track->vol == track->volFadeDest) // Sanity check
+					track->volFadeUsed = false;
+
+				if (track->volFadeStep < 0) { // Fade out
 					if (track->vol > track->volFadeDest) {
 						track->vol += track->volFadeStep;
-						if (track->vol < track->volFadeDest) {
+						if (track->vol <= track->volFadeDest) {
 							track->vol = track->volFadeDest;
 							track->volFadeUsed = false;
 						}
@@ -231,16 +234,16 @@ void IMuseDigital::callback() {
 							continue;
 						}
 					}
-				} else if (track->volFadeStep > 0) {
+				} else if (track->volFadeStep > 0) { // Fade in
 					if (track->vol < track->volFadeDest) {
 						track->vol += track->volFadeStep;
-						if (track->vol > track->volFadeDest) {
+						if (track->vol >= track->volFadeDest) {
 							track->vol = track->volFadeDest;
 							track->volFadeUsed = false;
 						}
 					}
 				}
-				debug(5, "Fade: sound(%d), Vol(%d)", track->soundId, track->vol / 1000);
+ 				debug(5, "Fade: sound(%d), Vol(%d)", track->soundId, track->vol / 1000);
 			}
 
 			if (!track->souStreamUsed) {
@@ -411,10 +414,21 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 				Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
 				if (fadeTrack) {
 					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
+					fadeTrack->vol = 0;
 					fadeTrack->regionOffset = 0;
 					debug(5, "SwToNeReg(trackId:%d) - sound(%d) faded track, select region %d, curHookId: %d", fadeTrack->trackId, fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
 					fadeTrack->curHookId = 0;
+
+					// Fade in the next region if the fade out track from
+					// the previous region has been allocated
+					track->volFadeDest = 127 * 1000;
+					track->vol = 25000; // Empirical value which works well for now, accounting for the fade track apparent desync
+					track->volFadeDelay = fadeDelay;
+					track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * fadeDelay);
+					track->volFadeUsed = true;
 				}
+
+				
 			}
 			track->curRegion = region;
 			debug(5, "SwToNeReg(trackId:%d) - sound(%d) jump to region %d, curHookId: %d", track->trackId, track->soundId, track->curRegion, track->curHookId);

@@ -159,10 +159,17 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
 
 		if (otherTrack && otherTrack->used && !otherTrack->toBeRemoved) {
+			track->vol = 0;
 			track->curRegion = otherTrack->curRegion;
 			track->dataOffset = otherTrack->dataOffset;
 			track->regionOffset = otherTrack->regionOffset;
 			track->dataMod12Bit = otherTrack->dataMod12Bit;
+
+			// Fade in the new track
+			track->volFadeDelay = otherTrack->volFadeDelay != 0 ? otherTrack->volFadeDelay : 60;
+			track->volFadeDest = volume*1000;
+			track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * otherTrack->volFadeDelay);
+			track->volFadeUsed = true;
 		}
 
 		track->stream = Audio::makeQueuingAudioStream(freq, track->mixerFlags & kFlagStereo);
@@ -279,6 +286,7 @@ void IMuseDigital::fadeOutMusicAndStartNew(int fadeDelay, const char *filename, 
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			debug(5, "IMuseDigital::fadeOutMusicAndStartNew(sound:%d) - starting", soundId);
+			track->volFadeDelay = fadeDelay;
 			startMusicWithOtherPos(filename, soundId, 0, 127, track);
 			cloneToFadeOutTrack(track, fadeDelay);
 			flushTrack(track);
