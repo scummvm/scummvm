@@ -21,6 +21,7 @@
  */
 
 #include "twine/redraw.h"
+#include "common/memstream.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
 #include "twine/actor.h"
@@ -448,8 +449,10 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
 
 				// calculate sprite position on screen
-				renderLeft = _engine->_renderer->projPosX + *((const int16 *)(_engine->_resources->spriteBoundingBoxPtr + (actor2->entity * 16)));
-				renderTop = _engine->_renderer->projPosY + *((const int16 *)(_engine->_resources->spriteBoundingBoxPtr + (actor2->entity * 16) + 2));
+				Common::MemoryReadStream stream(_engine->_resources->spriteBoundingBoxPtr, _engine->_resources->spriteBoundingBoxSize);
+				stream.seek(actor2->entity * 16);
+				renderLeft = _engine->_renderer->projPosX + stream.readSint16LE();
+				renderTop = _engine->_renderer->projPosY + stream.readSint16LE();
 				renderRight = renderLeft + spriteWidth;
 				renderBottom = renderTop + spriteHeight;
 
@@ -500,8 +503,10 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 					_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, _engine->_resources->spriteTable[extra->info0]);
 
 					// calculate sprite position on screen
-					renderLeft = _engine->_renderer->projPosX + *(const int16 *)(_engine->_resources->spriteBoundingBoxPtr + extra->info0 * 16);
-					renderTop = _engine->_renderer->projPosY + *(const int16 *)(_engine->_resources->spriteBoundingBoxPtr + extra->info0 * 16 + 2);
+					Common::MemoryReadStream stream(_engine->_resources->spriteBoundingBoxPtr, _engine->_resources->spriteBoundingBoxSize);
+					stream.seek(extra->info0 * 16);
+					renderLeft = _engine->_renderer->projPosX + stream.readSint16LE();
+					renderTop = _engine->_renderer->projPosY + stream.readSint16LE();
 					renderRight = renderLeft + spriteWidth;
 					renderBottom = renderTop + spriteHeight;
 
@@ -567,8 +572,10 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				int32 spriteWidth, spriteHeight;
 				_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
 
-				const int16 offsetX = *((const int16 *)(_engine->_resources->spriteBoundingBoxPtr + (overlay->info0 * 16)));
-				const int16 offsetY = *((const int16 *)(_engine->_resources->spriteBoundingBoxPtr + (overlay->info0 * 16) + 2));
+				Common::MemoryReadStream stream(_engine->_resources->spriteBoundingBoxPtr, _engine->_resources->spriteBoundingBoxSize);
+				stream.seek(overlay->info0 * 16);
+				const int16 offsetX = stream.readSint16LE();
+				const int16 offsetY = stream.readSint16LE();
 
 				renderLeft = offsetX + overlay->x;
 				renderTop = offsetY + overlay->y;
