@@ -197,6 +197,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`enable_hq_video <hq>`",boolean,true,
 		":ref:`enable_larryscale <larry>`",boolean,true,
 		":ref:`enable_video_upscale <upscale>`",boolean,true,
+		":ref:`enable_reporter <reporter>`",boolean,false,RISC OS only. 
 		":ref:`enable_tts <ttsenabled>`",boolean,false,
 		":ref:`extrapath <extra>`",string,None,"		path"
 		":ref:`fade_style <fade>`",boolean,true,
