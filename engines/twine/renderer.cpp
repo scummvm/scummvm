@@ -1377,10 +1377,6 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 	elementEntry *elemEntryPtr;
 	const pointTab *pointPtr;
 	pointTab *pointPtrDest;
-	int32 coX;
-	int32 coY;
-	int32 coZ;
-	const uint8 *tmpElemPtr;
 	//	int32 *tmpLightMatrix;
 	const uint8 *tmpShadePtr;
 	int32 numOfShades;
@@ -1429,9 +1425,9 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 
 	if (isUsingOrhoProjection != 0) { // use standard projection
 		do {
-			coX = pointPtr->x + renderX;
-			coY = pointPtr->y + renderY;
-			coZ = -(pointPtr->z + renderZ);
+			const int32 coX = pointPtr->x + renderX;
+			const int32 coY = pointPtr->y + renderY;
+			const int32 coZ = -(pointPtr->z + renderZ);
 
 			pointPtrDest->x = (coX + coZ) * 24 / 512 + orthoProjX;
 			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / 512 + orthoProjY;
@@ -1456,9 +1452,9 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 		} while (--numOfPrimitives);
 	} else {
 		do {
-			coX = pointPtr->x + renderX;
-			coY = pointPtr->y + renderY;
-			coZ = -(pointPtr->z + renderZ);
+			int32 coX = pointPtr->x + renderX;
+			int32 coY = pointPtr->y + renderY;
+			int32 coZ = -(pointPtr->z + renderZ);
 
 			coZ += cameraPosX;
 
@@ -1523,7 +1519,6 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 
 	if (numOfShades) { // process normal data
 		int32 color;
-		int32 shade;
 
 		uint8 *currentShadeDestination = (uint8 *)shadeTable;
 		int32 *lightMatrix = matricesTable;
@@ -1531,7 +1526,7 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 
 		numOfPrimitives = numOfElements;
 
-		tmpElemPtr = pri2Ptr3 = elementsPtr2 + 18;
+		const uint8 *tmpElemPtr = pri2Ptr3 = elementsPtr2 + 18;
 
 		do { // for each element
 			numOfShades = *((const uint16 *)tmpElemPtr);
@@ -1552,23 +1547,17 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 				shadeMatrix[8] = (*(lightMatrix + 8)) * lightZ;
 
 				do { // for each normal
-					int16 col1;
-					int16 col2;
-					int16 col3;
+					const int16 *colPtr = (const int16 *)shadePtr;
 
-					const int16 *colPtr;
-
-					colPtr = (const int16 *)shadePtr;
-
-					col1 = *((const int16 *)colPtr++);
-					col2 = *((const int16 *)colPtr++);
-					col3 = *((const int16 *)colPtr++);
+					int16 col1 = *((const int16 *)colPtr++);
+					int16 col2 = *((const int16 *)colPtr++);
+					int16 col3 = *((const int16 *)colPtr++);
 
 					color = shadeMatrix[0] * col1 + shadeMatrix[1] * col2 + shadeMatrix[2] * col3;
 					color += shadeMatrix[3] * col1 + shadeMatrix[4] * col2 + shadeMatrix[5] * col3;
 					color += shadeMatrix[6] * col1 + shadeMatrix[7] * col2 + shadeMatrix[8] * col3;
 
-					shade = 0;
+					int32 shade = 0;
 
 					if (color > 0) {
 						color >>= 14;
