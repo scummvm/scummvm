@@ -30,8 +30,9 @@ namespace Kyra {
 struct MenuItem {
 	bool enabled;
 
-	const char *itemString;
+	Common::String itemString;
 	uint16 itemId;
+	bool useItemString;
 
 	int16 x, y;
 	uint16 width, height;
@@ -110,8 +111,8 @@ protected:
 	bool _displaySubMenu;
 	bool _cancelSubMenu;
 
-	virtual void printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2);
-	virtual int getMenuCenterStringX(const char *str, int x1, int x2);
+	virtual void printMenuText(const Common::String &str, int x, int y, uint8 c0, uint8 c1, uint8 c2);
+	virtual int getMenuCenterStringX(const Common::String &str, int x1, int x2);
 
 	Button::Callback _redrawShadedButtonFunctor;
 	Button::Callback _redrawButtonFunctor;
@@ -126,9 +127,9 @@ protected:
 	virtual uint8 defaultColor1() const = 0;
 	virtual uint8 defaultColor2() const = 0;
 
-	virtual const char *getMenuTitle(const Menu &menu) = 0;
-	virtual const char *getMenuItemTitle(const MenuItem &menuItem) = 0;
-	virtual const char *getMenuItemLabel(const MenuItem &menuItem) = 0;
+	virtual Common::String getMenuTitle(const Menu &menu) = 0;
+	virtual Common::String getMenuItemTitle(const MenuItem &menuItem) = 0;
+	virtual Common::String getMenuItemLabel(const MenuItem &menuItem) = 0;
 
 	void updateAllMenuButtons();
 	void updateMenuButton(Button *button);

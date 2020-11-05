@@ -343,7 +343,7 @@ protected:
 	// chat
 	int _vocHigh;
 
-	const char *_chatText;
+	Common::String _chatText;
 	int _chatObject;
 	uint32 _chatEndTime;
 	int _chatVocHigh, _chatVocLow;

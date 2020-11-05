@@ -1065,7 +1065,7 @@ void KyraEngine_MR::updateWithText() {
 
 	restorePage3();
 	drawAnimObjects();
-	if (_chatTextEnabled && _chatText) {
+	if (_chatTextEnabled && !_chatText.empty()) {
 		int curPage = _screen->_curPage;
 		_screen->_curPage = 2;
 		objectChatPrintText(_chatText, _chatObject);

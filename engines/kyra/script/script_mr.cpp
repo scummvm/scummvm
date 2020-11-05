@@ -1055,7 +1055,7 @@ int KyraEngine_MR::o3_customChat(EMCState *script) {
 int KyraEngine_MR::o3_customChatFinish(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_customChatFinish(%p) ()", (const void *)script);
 	_text->restoreScreen();
-	_chatText = 0;
+	_chatText = "";
 	_chatObject = -1;
 	return 0;
 }

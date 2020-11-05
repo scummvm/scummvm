@@ -125,7 +125,7 @@ int KyraEngine_v2::o2_delay(EMCState *script) {
 			if (inputFlag == 198 || inputFlag == 199)
 				return 1;
 
-			if (_chatText)
+			if (!_chatText.empty())
 				updateWithText();
 			else
 				update();
@@ -140,7 +140,7 @@ int KyraEngine_v2::o2_delay(EMCState *script) {
 int KyraEngine_v2::o2_update(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_update(%p) (%d)", (const void *)script, stackPos(0));
 	for (int times = stackPos(0); times != 0; --times) {
-		if (_chatText)
+		if (!_chatText.empty())
 			updateWithText();
 		else
 			update();

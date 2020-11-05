@@ -123,7 +123,7 @@ void GUI_v1::initMenu(Menu &menu) {
 		_screen->fillRect(x1, y1, x2, y2, menu.item[i].bkgdColor);
 		_screen->drawShadedBox(x1, y1, x2, y2, menu.item[i].color1, menu.item[i].color2);
 
-		if (getMenuItemTitle(menu.item[i])) {
+		if (!getMenuItemTitle(menu.item[i]).empty()) {
 			if (menu.item[i].titleX != -1)
 				textX = x1 + menu.item[i].titleX + 3;
 			else
@@ -155,7 +155,7 @@ void GUI_v1::initMenu(Menu &menu) {
 	}
 
 	for (int i = 0; i < menu.numberOfItems; ++i) {
-		if (getMenuItemLabel(menu.item[i])) {
+		if (!getMenuItemLabel(menu.item[i]).empty()) {
 			if (_vm->game() == GI_LOL) {
 				menu.item[i].labelX = menu.item[i].x - 1;
 				menu.item[i].labelY = menu.item[i].y + 3;
@@ -404,12 +404,12 @@ void GUI_v1::checkTextfieldInput() {
 	_vm->_system->delayMillis(3);
 }
 
-void GUI_v1::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
-	_text->printText(str, x, y, c0, c1, c2);
+void GUI_v1::printMenuText(const Common::String &str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
+	_text->printText(str.c_str(), x, y, c0, c1, c2);
 }
 
-int GUI_v1::getMenuCenterStringX(const char *str, int x1, int x2) {
-	return _text->getCenterStringX(str, x1, x2);
+int GUI_v1::getMenuCenterStringX(const Common::String &str, int x1, int x2) {
+	return _text->getCenterStringX(str.c_str(), x1, x2);
 }
 
 #pragma mark -

@@ -79,6 +79,7 @@ namespace Kyra {
 	do { \
 		item.enabled = a; \
 		item.itemId = b; \
+		item.useItemString = false; \
 		item.x = c; \
 		item.y = d; \
 		item.width = e; \
@@ -125,7 +126,7 @@ protected:
 	virtual void setupPalette() {}
 	virtual void restorePalette() {}
 
-	virtual char *getTableString(int id, bool decode = false) = 0;
+	virtual Common::String getTableString(int id, bool decode = false) = 0;
 
 	virtual uint8 textFieldColor1() const = 0;
 	virtual uint8 textFieldColor2() const = 0;

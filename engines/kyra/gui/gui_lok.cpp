@@ -745,7 +745,7 @@ int GUI_LoK::saveGame(Button *button) {
 	} else {
 		for (int i = 0; i < 5; i++) {
 			if (_menu[2].item[i].saveSlot == _vm->_gameToLoad) {
-				Common::strlcpy(_savegameName, _menu[2].item[i].itemString, 31);
+				Common::strlcpy(_savegameName, _menu[2].item[i].itemString.c_str(), 31);
 				break;
 			}
 		}

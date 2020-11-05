@@ -1155,8 +1155,7 @@ int KyraEngine_HoF::o2_mushroomEffect(EMCState *script) {
 
 int KyraEngine_HoF::o2_customChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_customChat(%p) ('%s', %d, %d)", (const void *)script, stackPosString(0), stackPos(1), stackPos(2));
-	strcpy((char *)_unkBuf500Bytes, stackPosString(0));
-	_chatText = (char *)_unkBuf500Bytes;
+	_chatText = stackPosString(0);
 	_chatObject = stackPos(1);
 
 	_chatVocHigh = _chatVocLow = -1;
@@ -1168,7 +1167,7 @@ int KyraEngine_HoF::o2_customChat(EMCState *script) {
 int KyraEngine_HoF::o2_customChatFinish(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_customChatFinish(%p) ()", (const void *)script);
 	_text->restoreScreen();
-	_chatText = 0;
+	_chatText = "";
 	_chatObject = -1;
 	return 0;
 }
@@ -1452,7 +1451,7 @@ int KyraEngine_HoF::t2_initChat(const TIM *tim, const uint16 *param) {
 
 	if (_flags.lang == Common::JA_JPN) {
 		for (int i = 0; i < _ingameTimJpStrSize; i += 2) {
-			if (!scumm_stricmp(_chatText, _ingameTimJpStr[i]))
+		    if (!scumm_stricmp(_chatText.c_str(), _ingameTimJpStr[i]))
 				_chatText = _ingameTimJpStr[i + 1];
 		}
 	}
@@ -1470,7 +1469,7 @@ int KyraEngine_HoF::t2_updateSceneAnim(const TIM *tim, const uint16 *param) {
 int KyraEngine_HoF::t2_resetChat(const TIM *tim, const uint16 *param) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::t2_resetChat(%p, %p) ()", (const void *)tim, (const void *)param);
 	_text->restoreScreen();
-	_chatText = 0;
+	_chatText = "";
 	_chatObject = -1;
 	return 0;
 }

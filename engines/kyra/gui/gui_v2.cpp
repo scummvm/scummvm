@@ -430,7 +430,8 @@ void GUI_v2::restorePage1(const uint8 *buffer) {
 
 void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	for (int i = 0; i < num; ++i) {
-		strcpy(getTableString(menu.item[i].itemId), "");
+		menu.item[i].useItemString = true;
+		menu.item[i].itemString = "";
 		menu.item[i].saveSlot = -1;
 		menu.item[i].enabled = false;
 	}
@@ -443,36 +444,35 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	Common::InSaveFile *in;
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != 0) {
-			char *s = getTableString(menu.item[i].itemId);
-			Common::strlcpy(s, header.description.c_str(), 80);
-			Util::convertISOToDOS(s);
+			Common::String s = header.description;
+			s = Util::convertISOToDOS(s);
 
 			// Trim long GMM save descriptions to fit our save slots
 			_screen->_charSpacing = -2;
-			int fC = _screen->getTextWidth(s);
-			while (s[0] && fC > 240) {
-				s[strlen(s) - 1]  = 0;
-				fC = _screen->getTextWidth(s);
+			int fC = _screen->getTextWidth(s.c_str());
+			while (!s.empty() && fC > 240) {
+				s.deleteLastChar();
+				fC = _screen->getTextWidth(s.c_str());
 			}
 			_screen->_charSpacing = 0;
 
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
 			menu.item[i].enabled = true;
+			menu.item[i].useItemString = true;
+			menu.item[i].itemString = s;
 			delete in;
 		}
 	}
 
 	if (_savegameOffset == 0) {
 		if (_isSaveMenu) {
-			char *dst = getTableString(menu.item[0].itemId);
-			const char *src = getTableString(_vm->gameFlags().isTalkie ? 10 : 18);
-			strcpy(dst, src);
 			menu.item[0].saveSlot = -2;
 			menu.item[0].enabled = true;
+			menu.item[0].useItemString = true;
+			menu.item[0].itemString = getTableString(_vm->gameFlags().isTalkie ? 10 : 18);
 		} else {
-			char *dst = getTableString(menu.item[0].itemId);
-			const char *src = getTableString(_vm->gameFlags().isTalkie ? 34 : 42, _vm->gameFlags().lang == Common::RU_RUS);
-			strcpy(dst, src);
+			menu.item[0].useItemString = true;
+			menu.item[0].itemString = getTableString(_vm->gameFlags().isTalkie ? 34 : 42, _vm->gameFlags().lang == Common::RU_RUS);
 		}
 	}
 }
@@ -644,7 +644,7 @@ int GUI_v2::clickSaveSlot(Button *caller) {
 			return 0;
 		} else {
 			_saveSlot = item.saveSlot;
-			strcpy(_saveDescription, getTableString(item.itemId));
+			strcpy(_saveDescription, getTableString(item.itemId).c_str());
 		}
 	} else if (item.saveSlot == -2) {
 		_saveSlot = getNextSavegameSlot();

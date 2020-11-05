@@ -43,9 +43,9 @@ void TextDisplayer::setTalkCoords(uint16 y) {
 	_talkCoords.y = y;
 }
 
-int TextDisplayer::getCenterStringX(const char *str, int x1, int x2) {
+int TextDisplayer::getCenterStringX(const Common::String &str, int x1, int x2) {
 	_screen->_charSpacing = -2;
-	int strWidth = _screen->getTextWidth(str);
+	int strWidth = _screen->getTextWidth(str.c_str());
 	_screen->_charSpacing = 0;
 	int w = x2 - x1 + 1;
 	return x1 + (w - strWidth) / 2;
@@ -203,12 +203,12 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 	_talkMessagePrinted = true;
 }
 
-void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
+void TextDisplayer::printText(const Common::String &str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
 	uint8 colorMap[] = { 0, 15, 12, 12 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
 	_screen->_charSpacing = -2;
-	_screen->printText(str, x, y, c0, c2);
+	_screen->printText(str.c_str(), x, y, c0, c2);
 	_screen->_charSpacing = 0;
 }
 
