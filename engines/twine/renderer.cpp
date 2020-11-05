@@ -250,9 +250,9 @@ void Renderer::applyPointsRotation(const uint8 *firstPointsPtr, int32 numPoints,
 		const int16 tmpY = tempPtr[1];
 		const int16 tmpZ = tempPtr[2];
 
-		destPoints->X = ((rotationMatrix[0] * tmpX + rotationMatrix[1] * tmpY + rotationMatrix[2] * tmpZ) >> 14) + destX;
-		destPoints->Y = ((rotationMatrix[3] * tmpX + rotationMatrix[4] * tmpY + rotationMatrix[5] * tmpZ) >> 14) + destY;
-		destPoints->Z = ((rotationMatrix[6] * tmpX + rotationMatrix[7] * tmpY + rotationMatrix[8] * tmpZ) >> 14) + destZ;
+		destPoints->x = ((rotationMatrix[0] * tmpX + rotationMatrix[1] * tmpY + rotationMatrix[2] * tmpZ) >> 14) + destX;
+		destPoints->y = ((rotationMatrix[3] * tmpX + rotationMatrix[4] * tmpY + rotationMatrix[5] * tmpZ) >> 14) + destY;
+		destPoints->z = ((rotationMatrix[6] * tmpX + rotationMatrix[7] * tmpY + rotationMatrix[8] * tmpZ) >> 14) + destZ;
 
 		destPoints++;
 		firstPointsPtr = pointsPtr2 + 6;
@@ -286,9 +286,9 @@ void Renderer::processRotatedElement(int32 rotZ, int32 rotY, int32 rotX, const e
 		int32 pointIdx = (elemPtr->basePoint) / 6;
 		currentMatrix = (const int32 *)((const uint8 *)matricesTable + baseElement);
 
-		destX = computedPoints[pointIdx].X;
-		destY = computedPoints[pointIdx].Y;
-		destZ = computedPoints[pointIdx].Z;
+		destX = computedPoints[pointIdx].x;
+		destY = computedPoints[pointIdx].y;
+		destZ = computedPoints[pointIdx].z;
 	}
 
 	applyRotation((int32 *)currentMatrixTableEntry, currentMatrix);
@@ -311,9 +311,9 @@ void Renderer::applyPointsTranslation(const uint8 *firstPointsPtr, int32 numPoin
 		const int16 tmpY = tempPtr[1] + renderAngleY;
 		const int16 tmpZ = tempPtr[2] + renderAngleX;
 
-		destPoints->X = ((translationMatrix[0] * tmpX + translationMatrix[1] * tmpY + translationMatrix[2] * tmpZ) >> 14) + destX;
-		destPoints->Y = ((translationMatrix[3] * tmpX + translationMatrix[4] * tmpY + translationMatrix[5] * tmpZ) >> 14) + destY;
-		destPoints->Z = ((translationMatrix[6] * tmpX + translationMatrix[7] * tmpY + translationMatrix[8] * tmpZ) >> 14) + destZ;
+		destPoints->x = ((translationMatrix[0] * tmpX + translationMatrix[1] * tmpY + translationMatrix[2] * tmpZ) >> 14) + destX;
+		destPoints->y = ((translationMatrix[3] * tmpX + translationMatrix[4] * tmpY + translationMatrix[5] * tmpZ) >> 14) + destY;
+		destPoints->z = ((translationMatrix[6] * tmpX + translationMatrix[7] * tmpY + translationMatrix[8] * tmpZ) >> 14) + destZ;
 
 		destPoints++;
 		firstPointsPtr = pointsPtr2 + 6;
@@ -336,9 +336,9 @@ void Renderer::processTranslatedElement(int32 rotX, int32 rotY, int32 rotZ, cons
 			dest[i] = baseMatrix[i];
 		}
 	} else { // dependent
-		destX = computedPoints[(elemPtr->basePoint) / 6].X;
-		destY = computedPoints[(elemPtr->basePoint) / 6].Y;
-		destZ = computedPoints[(elemPtr->basePoint) / 6].Z;
+		destX = computedPoints[(elemPtr->basePoint) / 6].x;
+		destY = computedPoints[(elemPtr->basePoint) / 6].y;
+		destZ = computedPoints[(elemPtr->basePoint) / 6].z;
 
 		const int32 *source = (const int32 *)((const uint8 *)matricesTable + elemPtr->baseElement);
 		int32 *dest = (int32 *)currentMatrixTableEntry;
@@ -1011,10 +1011,6 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 	uint8 *render23;
 	uint8 *render24;
 
-	polyVertexHeader *currentPolyVertex;
-	polyHeader *currentPolyHeader;
-	polyHeader *destinationHeader;
-	computedVertex *currentComputedVertex;
 	pointTab *currentVertex;
 	pointTab *destinationVertex;
 
@@ -1029,14 +1025,14 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 
 		do { // loop that load all the polygons
 			render23 = edi;
-			currentPolyHeader = (polyHeader *)pointer;
+			polyHeader *currentPolyHeader = (polyHeader *)pointer;
 			//ecx = *((int32*) pointer);
 			pointer += 2;
 			polyRenderType = currentPolyHeader->renderType;
 
 			// TODO: RECHECK coordinates axis
 			if (polyRenderType >= 9) {
-				destinationHeader = (polyHeader *)edi;
+				polyHeader *destinationHeader = (polyHeader *)edi;
 
 				destinationHeader->renderType = currentPolyHeader->renderType - 2;
 				destinationHeader->numOfVertex = currentPolyHeader->numOfVertex;
@@ -1051,31 +1047,31 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 				renderV19 = edi;
 
 				do {
-					currentPolyVertex = (polyVertexHeader *)pointer;
+					polyVertexHeader *currentPolyVertex = (polyVertexHeader *)pointer;
 
 					shadeValue = currentPolyHeader->colorIndex + shadeTable[currentPolyVertex->shadeEntry];
 
-					currentComputedVertex = (computedVertex *)edi;
+					computedVertex *currentComputedVertex = (computedVertex *)edi;
 
 					currentComputedVertex->shadeValue = shadeValue;
 
 					currentVertex = &flattenPoints[currentPolyVertex->dataOffset / 6];
 					destinationVertex = (pointTab *)(edi + 2);
 
-					destinationVertex->X = currentVertex->X;
-					destinationVertex->Y = currentVertex->Y;
+					destinationVertex->x = currentVertex->x;
+					destinationVertex->y = currentVertex->y;
 
 					edi += 6;
 					pointer += 4;
 
-					currentDepth = currentVertex->Z;
+					currentDepth = currentVertex->z;
 
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
 				} while (--counter);
 			} else if (polyRenderType >= 7) { // only 1 shade value is used
-				destinationHeader = (polyHeader *)edi;
+				polyHeader *destinationHeader = (polyHeader *)edi;
 
 				destinationHeader->renderType = currentPolyHeader->renderType - 7;
 				destinationHeader->numOfVertex = currentPolyHeader->numOfVertex;
@@ -1101,19 +1097,19 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 
 					destinationVertex = (pointTab *)(edi + 2);
 
-					destinationVertex->X = currentVertex->X;
-					destinationVertex->Y = currentVertex->Y;
+					destinationVertex->x = currentVertex->x;
+					destinationVertex->y = currentVertex->y;
 
 					edi += 6;
 
-					currentDepth = currentVertex->Z;
+					currentDepth = currentVertex->z;
 
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
 				} while (--counter);
 			} else { // no shade is used
-				destinationHeader = (polyHeader *)edi;
+				polyHeader *destinationHeader = (polyHeader *)edi;
 
 				destinationHeader->renderType = currentPolyHeader->renderType;
 				destinationHeader->numOfVertex = currentPolyHeader->numOfVertex;
@@ -1135,12 +1131,12 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 
 					destinationVertex = (pointTab *)(edi + 2);
 
-					destinationVertex->X = currentVertex->X;
-					destinationVertex->Y = currentVertex->Y;
+					destinationVertex->x = currentVertex->x;
+					destinationVertex->y = currentVertex->y;
 
 					edi += 6;
 
-					currentDepth = currentVertex->Z;
+					currentDepth = currentVertex->z;
 
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
@@ -1208,12 +1204,12 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 			const int32 point2 = *((const int16 *)&lineDataPtr->p2) / 6;
 			const int32 param = *((const int32 *)&lineDataPtr->data);
 			*((int32 *)&lineCoordinatesPtr->data) = param;
-			*((int16 *)&lineCoordinatesPtr->x1) = flattenPoints[point1].X;
-			*((int16 *)&lineCoordinatesPtr->y1) = flattenPoints[point1].Y;
-			*((int16 *)&lineCoordinatesPtr->x2) = flattenPoints[point2].X;
-			*((int16 *)&lineCoordinatesPtr->y2) = flattenPoints[point2].Y;
-			bestDepth = flattenPoints[point1].Z;
-			depth = flattenPoints[point2].Z;
+			*((int16 *)&lineCoordinatesPtr->x1) = flattenPoints[point1].x;
+			*((int16 *)&lineCoordinatesPtr->y1) = flattenPoints[point1].y;
+			*((int16 *)&lineCoordinatesPtr->x2) = flattenPoints[point2].x;
+			*((int16 *)&lineCoordinatesPtr->y2) = flattenPoints[point2].y;
+			bestDepth = flattenPoints[point1].z;
+			depth = flattenPoints[point2].z;
 
 			if (depth >= bestDepth) {
 				bestDepth = depth;
@@ -1241,11 +1237,11 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 			int16 size = *((uint16 *)(pointer + 4));
 
 			*(uint8 *)edi = color2;
-			*((int16 *)(edi + 1)) = flattenPoints[center / 6].X;
-			*((int16 *)(edi + 3)) = flattenPoints[center / 6].Y;
+			*((int16 *)(edi + 1)) = flattenPoints[center / 6].x;
+			*((int16 *)(edi + 3)) = flattenPoints[center / 6].y;
 			*((int16 *)(edi + 5)) = size;
 
-			renderTabEntryPtr->depth = flattenPoints[center / 6].Z;
+			renderTabEntryPtr->depth = flattenPoints[center / 6].z;
 			renderTabEntryPtr->renderType = 2;
 			renderTabEntryPtr->dataPtr = edi;
 			renderTabEntryPtr++;
@@ -1433,26 +1429,26 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 
 	if (isUsingOrhoProjection != 0) { // use standard projection
 		do {
-			coX = pointPtr->X + renderX;
-			coY = pointPtr->Y + renderY;
-			coZ = -(pointPtr->Z + renderZ);
+			coX = pointPtr->x + renderX;
+			coY = pointPtr->y + renderY;
+			coZ = -(pointPtr->z + renderZ);
 
-			pointPtrDest->X = (coX + coZ) * 24 / 512 + orthoProjX;
-			pointPtrDest->Y = (((coX - coZ) * 12) - coY * 30) / 512 + orthoProjY;
-			pointPtrDest->Z = coZ - coX - coY;
+			pointPtrDest->x = (coX + coZ) * 24 / 512 + orthoProjX;
+			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / 512 + orthoProjY;
+			pointPtrDest->z = coZ - coX - coY;
 
-			if (pointPtrDest->X < _engine->_redraw->renderLeft) {
-				_engine->_redraw->renderLeft = pointPtrDest->X;
+			if (pointPtrDest->x < _engine->_redraw->renderLeft) {
+				_engine->_redraw->renderLeft = pointPtrDest->x;
 			}
-			if (pointPtrDest->X > _engine->_redraw->renderRight) {
-				_engine->_redraw->renderRight = pointPtrDest->X;
+			if (pointPtrDest->x > _engine->_redraw->renderRight) {
+				_engine->_redraw->renderRight = pointPtrDest->x;
 			}
 
-			if (pointPtrDest->Y < _engine->_redraw->renderTop) {
-				_engine->_redraw->renderTop = pointPtrDest->Y;
+			if (pointPtrDest->y < _engine->_redraw->renderTop) {
+				_engine->_redraw->renderTop = pointPtrDest->y;
 			}
-			if (pointPtrDest->Y > _engine->_redraw->renderBottom) {
-				_engine->_redraw->renderBottom = pointPtrDest->Y;
+			if (pointPtrDest->y > _engine->_redraw->renderBottom) {
+				_engine->_redraw->renderBottom = pointPtrDest->y;
 			}
 
 			pointPtr++;
@@ -1460,9 +1456,9 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 		} while (--numOfPrimitives);
 	} else {
 		do {
-			coX = pointPtr->X + renderX;
-			coY = pointPtr->Y + renderY;
-			coZ = -(pointPtr->Z + renderZ);
+			coX = pointPtr->x + renderX;
+			coY = pointPtr->y + renderY;
+			coZ = -(pointPtr->z + renderZ);
 
 			coZ += cameraPosX;
 
@@ -1473,39 +1469,44 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 			{
 				coX = orthoProjX + ((coX * cameraPosY) / coZ);
 
-				if (coX > 0xFFFF)
+				if (coX > 0xFFFF) {
 					coX = 0x7FFF;
+				}
 
-				pointPtrDest->X = coX;
+				pointPtrDest->x = coX;
 
-				if (pointPtrDest->X < _engine->_redraw->renderLeft)
-					_engine->_redraw->renderLeft = pointPtrDest->X;
+				if (pointPtrDest->x < _engine->_redraw->renderLeft) {
+					_engine->_redraw->renderLeft = pointPtrDest->x;
+				}
 
-				if (pointPtrDest->X > _engine->_redraw->renderRight)
-					_engine->_redraw->renderRight = pointPtrDest->X;
+				if (pointPtrDest->x > _engine->_redraw->renderRight) {
+					_engine->_redraw->renderRight = pointPtrDest->x;
+				}
 			}
 
 			// Y projection
 			{
 				coY = orthoProjY + ((-coY * cameraPosZ) / coZ);
 
-				if (coY > 0xFFFF)
+				if (coY > 0xFFFF) {
 					coY = 0x7FFF;
+				}
 
-				pointPtrDest->Y = coY;
+				pointPtrDest->y = coY;
 
-				if (pointPtrDest->Y < _engine->_redraw->renderTop)
-					_engine->_redraw->renderTop = pointPtrDest->Y;
-				if (pointPtrDest->Y > _engine->_redraw->renderBottom)
-					_engine->_redraw->renderBottom = pointPtrDest->Y;
+				if (pointPtrDest->y < _engine->_redraw->renderTop)
+					_engine->_redraw->renderTop = pointPtrDest->y;
+				if (pointPtrDest->y > _engine->_redraw->renderBottom)
+					_engine->_redraw->renderBottom = pointPtrDest->y;
 			}
 
 			// Z projection
 			{
-				if (coZ > 0xFFFF)
+				if (coZ > 0xFFFF) {
 					coZ = 0x7FFF;
+				}
 
-				pointPtrDest->Z = coZ;
+				pointPtrDest->z = coZ;
 			}
 
 			pointPtr++;

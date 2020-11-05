@@ -38,9 +38,9 @@ private:
 	};
 
 	struct pointTab {
-		int16 X = 0;
-		int16 Y = 0;
-		int16 Z = 0;
+		int16 x = 0;
+		int16 y = 0;
+		int16 z = 0;
 	};
 
 	struct elementEntry {
