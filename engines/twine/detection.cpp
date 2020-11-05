@@ -42,7 +42,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 294025),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -51,7 +51,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 294025),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -64,7 +64,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -73,7 +73,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -82,7 +82,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -91,7 +91,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::IT_ITA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -100,7 +100,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 245961),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -113,7 +113,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -122,7 +122,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -131,7 +131,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -140,7 +140,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::IT_ITA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -149,7 +149,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -162,7 +162,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -171,7 +171,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -180,7 +180,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -189,7 +189,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::IT_ITA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -198,7 +198,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("RELENT.EXE", "c1a887e38283d43f271249ad9f2a73ef", 258513),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -211,7 +211,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("FLA_GIF.HQR", "3f7383f65afa212e3eec430627828b64", 1784466),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -224,7 +224,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBAJ.EXE", "54a1e8749448e08086a1929510ec4b6a", 278043),
 		Common::JA_JPN,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -237,7 +237,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.DOT", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -246,7 +246,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.DOT", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -255,7 +255,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.DOT", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -264,7 +264,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.DOT", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::IT_ITA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -273,7 +273,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.DOT", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -286,7 +286,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -295,7 +295,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -304,7 +304,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -313,7 +313,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -322,7 +322,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.exe", "1f176b4329fbc7efc8f9f30f97013c5f", 1165728),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -335,7 +335,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.GOG", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -344,7 +344,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.GOG", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::FR_FRA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -353,7 +353,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.GOG", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::DE_DEU,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -362,7 +362,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.GOG", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::IT_ITA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 	{
@@ -371,7 +371,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("LBA.GOG", "6dc00342c80bc41b4ff5a43c560c7abc", 380666496),
 		Common::ES_ESP,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -384,7 +384,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("TEXT.HQR", "2a8df71946aa9ee4c777a9d6414b89ce", 282308),
 		Common::PT_POR,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -395,7 +395,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("text.hqr", "7f41b5e8efb07dd413f59377e03b1b04", 413920),
 		Common::PL_POL,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -406,7 +406,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("TEXT.HQR", "31d760b41a424ec2926f494d7ecac14a", 410709),
 		Common::HU_HUN,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -417,7 +417,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("TEXT.HQR", "c1adf48ea71fead82d91c5b062eeeb99", 75866),
 		Common::HE_ISR,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -428,7 +428,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("TEXT.HQR", "2bf227f9e8fcdc7397372b68786c446e", 283631),
 		Common::PT_BRA,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -439,7 +439,7 @@ static const ADGameDescription twineGameDescriptions[] = {
 		AD_ENTRY1s("TEXT.HQR", "93b1a29711f0750156280012e53fdcd2", 280306),
 		Common::RU_RUS,
 		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
+		ADGF_TESTING,
 		GUIO1(GUIO_NONE)
 	},
 
