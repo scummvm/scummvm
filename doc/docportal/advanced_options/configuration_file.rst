@@ -27,7 +27,7 @@ The configuration file saves to different default locations, depending on the pl
 		
 		.. tip::
 			
-			To see the Libraries folder you will need to view hidden files by using the keyboard shortcut :kbd:`Cmd + Shift + . ` 
+			To see the Library folder you will need to view hidden files by using the keyboard shortcut :kbd:`Cmd + Shift + .` 
 		
 	
 .. tabbed:: Windows
@@ -38,7 +38,8 @@ The configuration file saves to different default locations, depending on the pl
 		95/98/ME
 		^^^^^^^^^^ 
 	
-		``<windir>\scummvm.ini``
+		``<windir>\scummvm.ini``, where ``<windir>`` is the Windows directory. Most commonly, this is ``C:\WINDOWS``.
+		
 	
 		---
 		:column: col-lg-12 mb-2
@@ -46,7 +47,7 @@ The configuration file saves to different default locations, depending on the pl
 		Windows NT4 
 		^^^^^^^^^^^^
 
-		``<windir>\Profiles\username\Application Data\ScummVM\scummvm.ini``
+		``<windir>\Profiles\username\Application Data\ScummVM\scummvm.ini``, where ``<windir>`` is the Windows directory. Most commonly, this is ``C:\WINDOWS``.
 
 		---
 		:column: col-lg-12 mb-2
@@ -58,13 +59,16 @@ The configuration file saves to different default locations, depending on the pl
 		---
 		:column: col-lg-12 mb-2
 
-		Window 7/Vista
-		^^^^^^^^^^^^^^^^
+		Window Vista/7/8/10
+		^^^^^^^^^^^^^^^^^^^^^^
 		``\Users\username\AppData\Roaming\ScummVM\scummvm.ini``
 
-	.. tip::
+		.. tip::
 
-		``<windir>`` refers to the Windows directory. Most commonly, this is ``C:\WINDOWS``.
+			The AppData folder is hidden. The steps to view hidden files and folders depends on the Windows version. 
+
+			For more information, see the `Windows support page <https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files>`_.
+
 
 	.. note::
 	
@@ -98,11 +102,11 @@ The configuration file saves to different default locations, depending on the pl
 Using the configuration file
 ==================================
 
-Global settings are listed under the ``[scummvm]`` heading. Global :doc:`Keymaps settings <../settings/keymaps>` are listed under the ``[keymapper]`` heading. Game-specific settings, including keymaps, are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keywords_ to change settings. 
+Global settings are listed under the ``[scummvm]`` heading. Global :doc:`keymaps settings <../settings/keymaps>` are listed under the ``[keymapper]`` heading. Game-specific settings, including keymaps, are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keywords_ to change settings. 
 
 
 Example of a configuration file
-=================================
+************************************
 
 .. code::
 
@@ -148,7 +152,7 @@ Keywords
 There are many recognized configuration keywords. In the table below, each keyword is linked to an explanatory description in the Settings pages. 
 
 .. csv-table:: 
-	:widths: 20 20 10 50
+	:widths: 35 15 25 25
   	:header-rows: 1 
 
 		Keyword,Type,Default,Options
