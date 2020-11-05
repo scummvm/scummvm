@@ -57,7 +57,7 @@ private:
 
 	void resetState(int item);
 
-	char *getTableString(int id, int decode) override;
+	char *getTableString(int id, bool decode) override;
 
 	KyraEngine_HoF *_vm;
 	Screen_HoF *_screen;

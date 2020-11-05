@@ -333,7 +333,7 @@ protected:
 	int _newChapterFile;
 
 	uint8 *getTableEntry(uint8 *buffer, int id);
-	char *getTableString(int id, uint8 *buffer, int decode);
+	char *getTableString(int id, uint8 *buffer, bool decode);
 	const char *getChapterString(int id);
 
 	void changeFileExtension(char *buffer);

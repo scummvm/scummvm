@@ -207,7 +207,7 @@ void KyraEngine_HoF::itemDropDown(int startX, int startY, int dstX, int dstY, in
 			updateCharFacing();
 			snd_playSoundEffect(0x2D);
 			removeHandItem();
-			objectChat(getTableString(0xFF, _cCodeBuffer, 1), 0, 0x83, 0xFF);
+			objectChat(getTableString(0xFF, _cCodeBuffer, true), 0, 0x83, 0xFF);
 		} else {
 			_itemList[itemSlot].x = dstX;
 			_itemList[itemSlot].y = dstY;
@@ -286,7 +286,7 @@ void KyraEngine_HoF::itemDropDown(int startX, int startY, int dstX, int dstY, in
 			snd_playSoundEffect(0x2D);
 			removeHandItem();
 			_screen->showMouse();
-			objectChat(getTableString(0xFF, _cCodeBuffer, 1), 0, 0x83, 0xFF);
+			objectChat(getTableString(0xFF, _cCodeBuffer, true), 0, 0x83, 0xFF);
 		} else {
 			_itemList[itemSlot].x = dstX;
 			_itemList[itemSlot].y = dstY;

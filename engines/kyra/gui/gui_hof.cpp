@@ -83,7 +83,7 @@ const char *GUI_HoF::getMenuTitle(const Menu &menu) {
 	if (!menu.menuNameId)
 		return 0;
 
-	return _vm->getTableString(menu.menuNameId, _vm->_optionsBuffer, 1);
+	return _vm->getTableString(menu.menuNameId, _vm->_optionsBuffer, true);
 }
 
 const char *GUI_HoF::getMenuItemTitle(const MenuItem &menuItem) {
@@ -92,9 +92,9 @@ const char *GUI_HoF::getMenuItemTitle(const MenuItem &menuItem) {
 
 	// Strings 41-45 are menu labels, those must be handled uncompressed!
 	if (menuItem.itemId >= 41 && menuItem.itemId <= 45)
-		return _vm->getTableString(menuItem.itemId, _vm->_optionsBuffer, 0);
+		return _vm->getTableString(menuItem.itemId, _vm->_optionsBuffer, false);
 	else
-		return _vm->getTableString(menuItem.itemId, _vm->_optionsBuffer, 1);
+		return _vm->getTableString(menuItem.itemId, _vm->_optionsBuffer, true);
 }
 
 const char *GUI_HoF::getMenuItemLabel(const MenuItem &menuItem) {
@@ -104,7 +104,7 @@ const char *GUI_HoF::getMenuItemLabel(const MenuItem &menuItem) {
 	return _vm->getTableString(menuItem.labelId, _vm->_optionsBuffer, 1);
 }
 
-char *GUI_HoF::getTableString(int id, int decode) {
+char *GUI_HoF::getTableString(int id, bool decode) {
 	return _vm->getTableString(id, _vm->_optionsBuffer, decode);
 }
 
@@ -293,7 +293,7 @@ void KyraEngine_HoF::scrollInventoryWheel() {
 
 int KyraEngine_HoF::bookButton(Button *button) {
 	if (!queryGameFlag(1)) {
-		objectChat(getTableString(0xEB, _cCodeBuffer, 1), 0, 0x83, 0xEB);
+		objectChat(getTableString(0xEB, _cCodeBuffer, true), 0, 0x83, 0xEB);
 		return 0;
 	}
 
@@ -368,10 +368,10 @@ int KyraEngine_HoF::bookButton(Button *button) {
 	_screen->showMouse();
 
 	if (!queryGameFlag(4) && !queryGameFlag(0xB8)) {
-		objectChat(getTableString(0xEC, _cCodeBuffer, 1), 0, 0x83, 0xEC);
-		objectChat(getTableString(0xED, _cCodeBuffer, 1), 0, 0x83, 0xED);
-		objectChat(getTableString(0xEE, _cCodeBuffer, 1), 0, 0x83, 0xEE);
-		objectChat(getTableString(0xEF, _cCodeBuffer, 1), 0, 0x83, 0xEF);
+		objectChat(getTableString(0xEC, _cCodeBuffer, true), 0, 0x83, 0xEC);
+		objectChat(getTableString(0xED, _cCodeBuffer, true), 0, 0x83, 0xED);
+		objectChat(getTableString(0xEE, _cCodeBuffer, true), 0, 0x83, 0xEE);
+		objectChat(getTableString(0xEF, _cCodeBuffer, true), 0, 0x83, 0xEF);
 		setGameFlag(4);
 	}
 
@@ -548,7 +548,7 @@ int KyraEngine_HoF::bookClose(Button *button) {
 int KyraEngine_HoF::cauldronClearButton(Button *button) {
 	if (!queryGameFlag(2)) {
 		updateCharFacing();
-		objectChat(getTableString(0xF0, _cCodeBuffer, 1), 0, 0x83, 0xF0);
+		objectChat(getTableString(0xF0, _cCodeBuffer, true), 0, 0x83, 0xF0);
 		return 0;
 	}
 
@@ -573,7 +573,7 @@ int KyraEngine_HoF::cauldronClearButton(Button *button) {
 
 int KyraEngine_HoF::cauldronButton(Button *button) {
 	if (!queryGameFlag(2)) {
-		objectChat(getTableString(0xF0, _cCodeBuffer, 1), 0, 0x83, 0xF0);
+		objectChat(getTableString(0xF0, _cCodeBuffer, true), 0, 0x83, 0xF0);
 		return 0;
 	}
 

@@ -471,7 +471,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 			menu.item[0].enabled = true;
 		} else {
 			char *dst = getTableString(menu.item[0].itemId);
-			const char *src = getTableString(_vm->gameFlags().isTalkie ? 34 : 42, _vm->gameFlags().lang == Common::RU_RUS ? 1 : 0);
+			const char *src = getTableString(_vm->gameFlags().isTalkie ? 34 : 42, _vm->gameFlags().lang == Common::RU_RUS);
 			strcpy(dst, src);
 		}
 	}

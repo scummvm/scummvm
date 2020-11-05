@@ -1083,7 +1083,7 @@ const char *GUI_MR::getMenuItemLabel(const MenuItem &menuItem) {
 	return (const char *)_vm->getTableEntry(_vm->_optionsFile, menuItem.labelId);
 }
 
-char *GUI_MR::getTableString(int id, int) {
+char *GUI_MR::getTableString(int id, bool) {
 	return (char *)_vm->getTableEntry(_vm->_optionsFile, id);
 }
 
