@@ -33,7 +33,7 @@
 
 
 .. toctree::
-      :caption: Using ScummVM
+      :caption: How to use ScummVM
       :glob:
       :hidden:
 
