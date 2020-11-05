@@ -6,10 +6,10 @@ ScummVM supports various in-game keyboard and mouse shortcuts, and since version
 
 For game-specific shortcuts, see the `wiki entry <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ for the game you are playing. 
 
-The shortcuts listed below are the defaults. 
 
-Common shortcuts (all games)
--------------------------------
+
+Default keyboard shortcuts
+============================
 
 .. csv-table:: 
       :width: 100%
