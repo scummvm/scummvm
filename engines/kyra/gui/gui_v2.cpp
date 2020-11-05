@@ -470,9 +470,12 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 			menu.item[0].saveSlot = -2;
 			menu.item[0].enabled = true;
 		} else {
+			int t = menu.item[0].labelId;
+			menu.item[0].labelId = _vm->gameFlags().isTalkie ? 34 : 42;
 			char *dst = getTableString(menu.item[0].itemId);
-			const char *src = getTableString(_vm->gameFlags().isTalkie ? 34 : 42);
+			const char *src = getMenuItemLabel(menu.item[0]);
 			strcpy(dst, src);
+			menu.item[0].labelId = t;
 		}
 	}
 }
