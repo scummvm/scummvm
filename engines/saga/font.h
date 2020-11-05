@@ -201,7 +201,7 @@ class DefaultFont : public Font {
 	DefaultFont(SagaEngine *vm);
 	~DefaultFont() override;
 
-	void setFontMapping(int mapping) {
+	void setFontMapping(int mapping) override {
 		_fontMapping = mapping;
 	}
 
