@@ -8,22 +8,36 @@ Install ScummVM
 Prerequisites
 ****************
 
-- A Nintendo 3DS with a Homebrew Launcher. Installing a Homebrew Launcher is outside the scope of this documentation. 
+- A Nintendo 3DS with a Homebrew Launcher or custom firmware. Enabling homebrew is outside the scope of this documentation. 
 
 Download and install ScummVM
 *********************************
 
-Download the Nintendo 3DS package from the `ScummVM Downloads page <https://www.scummvm.org/downloads/>`_.
+Download the Nintendo 3DS package from the `ScummVM Downloads page <https://www.scummvm.org/downloads/>`_. Extract the archive. 
 
-Extract the archive, and copy the extracted files to your SD card into the ``/3ds/scummvm`` directory. 
+There are two ways to install ScummVM: using the 3DSX format, or the CIA format. 
+
+3DSX
+^^^^^^
+Copy the extracted files to your SD card into the ``/3ds/scummvm`` directory. 
 
 Launch ScummVM using the Homebrew Launcher. 
 
+CIA
+^^^^^
+
+Use any CIA installation software to install the ``scummvm.cia`` file.
+
+The CIA format requires a DSP binary dump saved on your SD card as ``/3ds/dspfirm.cdc``. This is not an optional step, since without this you will not have proper audio support. Documenting this process is outside the scope of this documentation.  
 
 Transfer game files
 =======================
 
-See :doc:`../using_scummvm/add_play_games` for more information. 
+Transfer game folders onto the SD card. The exact location is not important. 
+
+ScummVM for the Nintendo 3DS also has Cloud functionality. See :doc:`../guides/connect_cloud`. 
+
+See :doc:`../using_scummvm/add_play_games` for more information about how to add games to ScummVM. 
 
 
 Controls
@@ -46,11 +60,11 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
     R + Circle Pad,Slow Mouse
     A,Left mouse button
     B,Right mouse button
-    X,Opens virtual keyboard
+    X,Opens the virtual keyboard
     Y,ESC 
-    Control Pad,Keypad Cursor Keys
+    Control Pad,Keypad cursor keys
     L Button,Toggles magnify mode on/off
-    R Button,Toggles hover/drag modes
+    R Button,Toggles between hover/drag modes
     START,Opens global main menu
     SELECT,Opens 3DS config menu
 
@@ -87,16 +101,37 @@ Paths
 Saved games 
 *******************
 
+``sdmc:/3ds/scummvm/saves/``
 
 Configuration file 
 **************************
 
+``sdmc:/3ds/scummvm/scummvm.ini``
 
 
 Settings
 ==========
 
+For more information about Settings, see the Settings section of the documentation. Only platform-specific differences are listed here. 
 
+.. figure:: ../images/3ds/config.png
+
+    The 3DS config menu. 
+
+Show mouse cursor
+    Toggles a visible mouse cursor on/off.
+
+Stretch to fit
+    Stretches the image to fit the screen
+
+Snap to edges
+    Makes it easier for mouse controls to reach the edge of the screen. 
+
+Use Screen:
+    Sets whether ScummVM uses the **Top**, **Bottom** or **Both** screens.
+    
+C-Pad Sensitivity
+    Sets the sensitivity of the Circle Pad. 
 
 Known issues
 ==============
