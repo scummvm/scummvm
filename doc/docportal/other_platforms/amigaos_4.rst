@@ -13,11 +13,17 @@ Prerequisites
 Download and install ScummVM
 *********************************
 
-There are three ways to install ScummVM on AmigaOS 4:
+ScummVM is available for download from the `ScummVM Downloads page <https://www.scummvm.org/downloads/>`_ or the `OS4 Depot <http://www.os4depot.net>`_. 
 
-- Use AmiUpdate 
-- Use the installer script that comes with every release
-- Download and unarchive the ``.lha`` file. It does not matter where the files are kept. 
+Download and extract the ``.lha`` file. 
+
+Run the extracted ``ScummVM_Install`` script. This installer guides you through the installation process. 
+
+.. figure:: ../images/amigaos_4/installer.png
+
+    The ScummVM installer. 
+
+To automatically keep ScummVM up to date through AmiUpdate, run the ``Autoinstall`` script. 
 
 
 Transfer game files
@@ -32,9 +38,7 @@ ScummVM for Amiga OS has Cloud and LAN functionality, to help manage the transfe
 Controls
 =================
 
-Controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`.
-
-See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
+Controls can be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../using_scummvm/keyboard_shortcuts` page for common default keyboard shortcuts. 
 
 
 Paths 
@@ -52,7 +56,7 @@ Configuration file
 Settings
 ==========
 
-For more information, see the Settings section of the documentation. Only platform-specific differences are listed here. 
+For more information about Settings, see the Settings section of the documentation. Only platform-specific differences are listed here. 
 
 Audio
 ******
