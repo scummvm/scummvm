@@ -1017,8 +1017,6 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 	int16 type;
 	int16 color;
 	int16 bestZ;
-	int16 shadeEntry;
-	int16 shadeValue;
 
 	int32 bestDepth;
 	int32 currentDepth;
@@ -1027,7 +1025,6 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 	//	int32 ecx;
 
 	pointTab *currentVertex;
-	pointTab *destinationVertex;
 
 	// prepare polygons
 
@@ -1064,14 +1061,14 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 				do {
 					polyVertexHeader *currentPolyVertex = (polyVertexHeader *)pointer;
 
-					shadeValue = currentPolyHeader->colorIndex + shadeTable[currentPolyVertex->shadeEntry];
+					int16 shadeValue = currentPolyHeader->colorIndex + shadeTable[currentPolyVertex->shadeEntry];
 
 					computedVertex *currentComputedVertex = (computedVertex *)edi;
 
 					currentComputedVertex->shadeValue = shadeValue;
 
 					currentVertex = &flattenPoints[currentPolyVertex->dataOffset / 6];
-					destinationVertex = (pointTab *)(edi + 2);
+					pointTab *destinationVertex = (pointTab *)(edi + 2);
 
 					destinationVertex->x = currentVertex->x;
 					destinationVertex->y = currentVertex->y;
@@ -1093,7 +1090,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 
 				color = currentPolyHeader->colorIndex;
 
-				shadeEntry = *((int16 *)(pointer + 2));
+				int16 shadeEntry = *((int16 *)(pointer + 2));
 
 				pointer += 4;
 
@@ -1110,7 +1107,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 
 					currentVertex = &flattenPoints[eax / 6];
 
-					destinationVertex = (pointTab *)(edi + 2);
+					pointTab *destinationVertex = (pointTab *)(edi + 2);
 
 					destinationVertex->x = currentVertex->x;
 					destinationVertex->y = currentVertex->y;
@@ -1144,7 +1141,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 
 					currentVertex = &flattenPoints[eax / 6];
 
-					destinationVertex = (pointTab *)(edi + 2);
+					pointTab *destinationVertex = (pointTab *)(edi + 2);
 
 					destinationVertex->x = currentVertex->x;
 					destinationVertex->y = currentVertex->y;
@@ -1289,95 +1286,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 
 	// prepare to render elements
 
-	if (numOfPrimitives) {
-		int16 primitiveCounter = numOfPrimitives;
-		renderV19 = pointer;
-
-		do {
-			type = renderTabEntryPtr2->renderType;
-			pointer = renderTabEntryPtr2->dataPtr;
-			renderV19 += 8;
-
-			switch (type) {
-			case RENDERTYPE_DRAWLINE: { // draw a line
-				lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)pointer;
-				color = (*((int32 *)&lineCoordinatesPtr->data) & 0xFF00) >> 8;
-
-				const int32 x1 = *((const int16 *)&lineCoordinatesPtr->x1);
-				const int32 y1 = *((const int16 *)&lineCoordinatesPtr->y1);
-				const int32 x2 = *((const int16 *)&lineCoordinatesPtr->x2);
-				const int32 y2 = *((const int16 *)&lineCoordinatesPtr->y2);
-
-				_engine->_interface->drawLine(x1, y1, x2, y2, color);
-				break;
-			}
-			case RENDERTYPE_DRAWPOLYGON: { // draw a polygon
-				eax = *((const int *)pointer);
-				pointer += 4;
-
-				polyRenderType = eax & 0xFF;
-				numOfVertex = (eax & 0xFF00) >> 8;
-				color = (eax & 0xFF0000) >> 16;
-
-				uint8 *destPtr = (uint8 *)vertexCoordinates;
-
-				for (int32 i = 0; i < (numOfVertex * 3); i++) {
-					*((int16 *)destPtr) = *((const int16 *)pointer);
-					destPtr += 2;
-					pointer += 2;
-				}
-
-				if (computePolygons() != ERROR_OUT_OF_SCREEN) {
-					renderPolygons(polyRenderType, color);
-				}
-
-				break;
-			}
-			case RENDERTYPE_DRAWSPHERE: { // draw a sphere
-				eax = *(const int *)pointer;
-
-				const int32 circleParam1 = *(const uint8 *)pointer;
-				const int32 circleParam4 = *((const int16 *)(pointer + 1));
-				const int32 circleParam5 = *((const int16 *)(pointer + 3));
-				int32 circleParam3 = *((const int16 *)(pointer + 5));
-
-				if (!isUsingOrhoProjection) {
-					circleParam3 = (circleParam3 * cameraPosY) / (cameraPosX + *(const int16 *)pointer);
-				} else {
-					circleParam3 = (circleParam3 * 34) >> 9;
-				}
-
-				circleParam3 += 3;
-
-				if (circleParam4 + circleParam3 > _engine->_redraw->renderRight) {
-					_engine->_redraw->renderRight = circleParam4 + circleParam3;
-				}
-
-				if (circleParam4 - circleParam3 < _engine->_redraw->renderLeft) {
-					_engine->_redraw->renderLeft = circleParam4 - circleParam3;
-				}
-
-				if (circleParam5 + circleParam3 > _engine->_redraw->renderBottom) {
-					_engine->_redraw->renderBottom = circleParam5 + circleParam3;
-				}
-
-				if (circleParam5 - circleParam3 < _engine->_redraw->renderTop) {
-					_engine->_redraw->renderTop = circleParam5 - circleParam3;
-				}
-
-				circleParam3 -= 3;
-
-				circleFill(circleParam4, circleParam5, circleParam3, circleParam1);
-				break;
-			}
-			default:
-				break;
-			}
-
-			pointer = renderV19;
-			renderTabEntryPtr2++;
-		} while (--primitiveCounter);
-	} else {
+	if (numOfPrimitives == 0) {
 		_engine->_redraw->renderRight = -1;
 		_engine->_redraw->renderBottom = -1;
 		_engine->_redraw->renderLeft = -1;
@@ -1385,6 +1294,93 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 		return -1;
 	}
 
+	int16 primitiveCounter = numOfPrimitives;
+	renderV19 = pointer;
+
+	do {
+		type = renderTabEntryPtr2->renderType;
+		pointer = renderTabEntryPtr2->dataPtr;
+		renderV19 += 8;
+
+		switch (type) {
+		case RENDERTYPE_DRAWLINE: { // draw a line
+			lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)pointer;
+			color = (*((int32 *)&lineCoordinatesPtr->data) & 0xFF00) >> 8;
+
+			const int32 x1 = *((const int16 *)&lineCoordinatesPtr->x1);
+			const int32 y1 = *((const int16 *)&lineCoordinatesPtr->y1);
+			const int32 x2 = *((const int16 *)&lineCoordinatesPtr->x2);
+			const int32 y2 = *((const int16 *)&lineCoordinatesPtr->y2);
+
+			_engine->_interface->drawLine(x1, y1, x2, y2, color);
+			break;
+		}
+		case RENDERTYPE_DRAWPOLYGON: { // draw a polygon
+			eax = *((const int *)pointer);
+			pointer += 4;
+
+			polyRenderType = eax & 0xFF;
+			numOfVertex = (eax & 0xFF00) >> 8;
+			color = (eax & 0xFF0000) >> 16;
+
+			uint8 *destPtr = (uint8 *)vertexCoordinates;
+
+			for (int32 i = 0; i < (numOfVertex * 3); i++) {
+				*((int16 *)destPtr) = *((const int16 *)pointer);
+				destPtr += 2;
+				pointer += 2;
+			}
+
+			if (computePolygons() != ERROR_OUT_OF_SCREEN) {
+				renderPolygons(polyRenderType, color);
+			}
+
+			break;
+		}
+		case RENDERTYPE_DRAWSPHERE: { // draw a sphere
+			eax = *(const int *)pointer;
+
+			const int32 circleParam1 = *(const uint8 *)pointer;
+			const int32 circleParam4 = *((const int16 *)(pointer + 1));
+			const int32 circleParam5 = *((const int16 *)(pointer + 3));
+			int32 circleParam3 = *((const int16 *)(pointer + 5));
+
+			if (!isUsingOrhoProjection) {
+				circleParam3 = (circleParam3 * cameraPosY) / (cameraPosX + *(const int16 *)pointer);
+			} else {
+				circleParam3 = (circleParam3 * 34) >> 9;
+			}
+
+			circleParam3 += 3;
+
+			if (circleParam4 + circleParam3 > _engine->_redraw->renderRight) {
+				_engine->_redraw->renderRight = circleParam4 + circleParam3;
+			}
+
+			if (circleParam4 - circleParam3 < _engine->_redraw->renderLeft) {
+				_engine->_redraw->renderLeft = circleParam4 - circleParam3;
+			}
+
+			if (circleParam5 + circleParam3 > _engine->_redraw->renderBottom) {
+				_engine->_redraw->renderBottom = circleParam5 + circleParam3;
+			}
+
+			if (circleParam5 - circleParam3 < _engine->_redraw->renderTop) {
+				_engine->_redraw->renderTop = circleParam5 - circleParam3;
+			}
+
+			circleParam3 -= 3;
+
+			circleFill(circleParam4, circleParam5, circleParam3, circleParam1);
+			break;
+		}
+		default:
+			break;
+		}
+
+		pointer = renderV19;
+		renderTabEntryPtr2++;
+	} while (--primitiveCounter);
 	return 0;
 }
 
