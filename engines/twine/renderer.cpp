@@ -1005,15 +1005,10 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 	const lineData *lineDataPtr;
 	lineCoordinates *lineCoordinatesPtr;
 
-	int32 point1;
-
-	int32 point2;
-
 	int32 depth;
 	int32 bestDepth;
 	int32 currentDepth;
 	int16 bestZ;
-	int32 j;
 	int32 bestPoly = 0;
 	int16 shadeEntry;
 	int16 shadeValue;
@@ -1021,7 +1016,6 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 	int16 ax, bx, cx;
 
 	uint8 *destPtr;
-	int32 i;
 
 	uint8 *render23;
 	uint8 *render24;
@@ -1086,8 +1080,9 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 
 					currentDepth = currentVertex->Z;
 
-					if (currentDepth > bestDepth)
+					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
+					}
 				} while (--counter);
 			} else if (polyRenderType >= 7) { // only 1 shade value is used
 				destinationHeader = (polyHeader *)edi;
@@ -1123,8 +1118,9 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 
 					currentDepth = currentVertex->Z;
 
-					if (currentDepth > bestDepth)
+					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
+					}
 				} while (--counter);
 			} else { // no shade is used
 				destinationHeader = (polyHeader *)edi;
@@ -1210,7 +1206,6 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 	if (temp) {
 		numOfPrimitives += temp;
 		do {
-			int32 param;
 			lineDataPtr = (const lineData *)pointer;
 			lineCoordinatesPtr = (lineCoordinates *)edi;
 
@@ -1218,9 +1213,9 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 				error("RENDER ERROR: lineDataPtr reference is malformed!");
 			}
 
-			point1 = *((const int16 *)&lineDataPtr->p1) / 6;
-			point2 = *((const int16 *)&lineDataPtr->p2) / 6;
-			param = *((const int32 *)&lineDataPtr->data);
+			const int32 point1 = *((const int16 *)&lineDataPtr->p1) / 6;
+			const int32 point2 = *((const int16 *)&lineDataPtr->p2) / 6;
+			const int32 param = *((const int32 *)&lineDataPtr->data);
 			*((int32 *)&lineCoordinatesPtr->data) = param;
 			*((int16 *)&lineCoordinatesPtr->x1) = flattenPoints[point1].X;
 			*((int16 *)&lineCoordinatesPtr->y1) = flattenPoints[point1].Y;
@@ -1229,8 +1224,9 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 			bestDepth = flattenPoints[point1].Z;
 			depth = flattenPoints[point2].Z;
 
-			if (depth >= bestDepth)
+			if (depth >= bestDepth) {
 				bestDepth = depth;
+			}
 
 			renderTabEntryPtr->depth = bestDepth;
 			renderTabEntryPtr->renderType = 0;
@@ -1271,10 +1267,10 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 	renderTabEntryPtr2 = renderTab;
 
 	renderTabSortedPtr = renderTabSorted;
-	for (i = 0; i < numOfPrimitives; i++) { // then we sort the polygones | WARNING: very slow | TODO: improve this
+	for (int32 i = 0; i < numOfPrimitives; i++) { // then we sort the polygones | WARNING: very slow | TODO: improve this
 		renderTabEntryPtr2 = renderTab;
 		bestZ = -0x7FFF;
-		for (j = 0; j < numOfPrimitives; j++) {
+		for (int32 j = 0; j < numOfPrimitives; j++) {
 			if (renderTabEntryPtr2->depth > bestZ) {
 				bestZ = renderTabEntryPtr2->depth;
 				bestPoly = j;
@@ -1302,18 +1298,13 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 
 			switch (type) {
 			case RENDERTYPE_DRAWLINE: { // draw a line
-				int32 x1;
-				int32 y1;
-				int32 x2;
-				int32 y2;
-
 				lineCoordinatesPtr = (lineCoordinates *)pointer;
 				color = (*((int32 *)&lineCoordinatesPtr->data) & 0xFF00) >> 8;
 
-				x1 = *((const int16 *)&lineCoordinatesPtr->x1);
-				y1 = *((const int16 *)&lineCoordinatesPtr->y1);
-				x2 = *((const int16 *)&lineCoordinatesPtr->x2);
-				y2 = *((const int16 *)&lineCoordinatesPtr->y2);
+				const int32 x1 = *((const int16 *)&lineCoordinatesPtr->x1);
+				const int32 y1 = *((const int16 *)&lineCoordinatesPtr->y1);
+				const int32 x2 = *((const int16 *)&lineCoordinatesPtr->x2);
+				const int32 y2 = *((const int16 *)&lineCoordinatesPtr->y2);
 
 				_engine->_interface->drawLine(x1, y1, x2, y2, color);
 				break;
@@ -1328,7 +1319,7 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 
 				destPtr = (uint8 *)vertexCoordinates;
 
-				for (i = 0; i < (numOfVertex * 3); i++) {
+				for (int32 i = 0; i < (numOfVertex * 3); i++) {
 					*((int16 *)destPtr) = *((const int16 *)pointer);
 					destPtr += 2;
 					pointer += 2;
@@ -1341,18 +1332,12 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 				break;
 			}
 			case RENDERTYPE_DRAWSPHERE: { // draw a sphere
-				int32 circleParam1;
-				//int32 circleParam2;
-				int32 circleParam3;
-				int32 circleParam4;
-				int32 circleParam5;
-
 				eax = *(const int *)pointer;
 
-				circleParam1 = *(const uint8 *)pointer;
-				circleParam4 = *((const int16 *)(pointer + 1));
-				circleParam5 = *((const int16 *)(pointer + 3));
-				circleParam3 = *((const int16 *)(pointer + 5));
+				const int32 circleParam1 = *(const uint8 *)pointer;
+				const int32 circleParam4 = *((const int16 *)(pointer + 1));
+				const int32 circleParam5 = *((const int16 *)(pointer + 3));
+				int32 circleParam3 = *((const int16 *)(pointer + 5));
 
 				if (!isUsingOrhoProjection) {
 					circleParam3 = (circleParam3 * cameraPosY) / (cameraPosX + *(const int16 *)pointer);
@@ -1362,25 +1347,29 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 
 				circleParam3 += 3;
 
-				if (circleParam4 + circleParam3 > _engine->_redraw->renderRight)
+				if (circleParam4 + circleParam3 > _engine->_redraw->renderRight) {
 					_engine->_redraw->renderRight = circleParam4 + circleParam3;
+				}
 
-				if (circleParam4 - circleParam3 < _engine->_redraw->renderLeft)
+				if (circleParam4 - circleParam3 < _engine->_redraw->renderLeft) {
 					_engine->_redraw->renderLeft = circleParam4 - circleParam3;
+				}
 
-				if (circleParam5 + circleParam3 > _engine->_redraw->renderBottom)
+				if (circleParam5 + circleParam3 > _engine->_redraw->renderBottom) {
 					_engine->_redraw->renderBottom = circleParam5 + circleParam3;
+				}
 
-				if (circleParam5 - circleParam3 < _engine->_redraw->renderTop)
+				if (circleParam5 - circleParam3 < _engine->_redraw->renderTop) {
 					_engine->_redraw->renderTop = circleParam5 - circleParam3;
+				}
 
 				circleParam3 -= 3;
 
 				circleFill(circleParam4, circleParam5, circleParam3, circleParam1);
-			}
-			default: {
 				break;
 			}
+			default:
+				break;
 			}
 
 			pointer = renderV19;
@@ -1391,10 +1380,10 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 		_engine->_redraw->renderBottom = -1;
 		_engine->_redraw->renderLeft = -1;
 		_engine->_redraw->renderTop = -1;
-		return (-1);
+		return -1;
 	}
 
-	return (0);
+	return 0;
 }
 
 int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
