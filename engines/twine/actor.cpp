@@ -178,6 +178,14 @@ void Actor::initSpriteActor(int32 actorIdx) {
 	}
 }
 
+int32 Actor::getTextIdForBehaviour() const {
+	if (_engine->_actor->heroBehaviour == kAggressive && _engine->_actor->autoAgressive) {
+		return TextId::kBehaviourAgressiveAuto;
+	}
+	// the other values are matching the text ids
+	return _engine->_actor->heroBehaviour;
+}
+
 int32 Actor::initBody(int32 bodyIdx, int32 actorIdx) {
 	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 	Common::MemorySeekableReadWriteStream stream(localActor->entityDataPtr, localActor->entityDataSize);

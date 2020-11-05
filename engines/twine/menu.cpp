@@ -797,11 +797,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDra
 		_engine->_text->setFontColor(15);
 
 		char dialText[256];
-		if (_engine->_actor->heroBehaviour == kAggressive && _engine->_actor->autoAgressive) {
-			_engine->_text->getMenuText(TextId::kBehaviourAgressiveAuto, dialText, sizeof(dialText));
-		} else {
-			_engine->_text->getMenuText(_engine->_actor->heroBehaviour, dialText, sizeof(dialText));
-		}
+		_engine->_text->getMenuText(_engine->_actor->getTextIdForBehaviour(), dialText, sizeof(dialText));
 
 		_engine->_text->drawText((650 - _engine->_text->getTextSize(dialText)) / 2, 240, dialText);
 	}

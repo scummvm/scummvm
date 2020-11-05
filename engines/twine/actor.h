@@ -320,6 +320,8 @@ public:
 	/** Load hero 3D body and animations */
 	void loadHeroEntities();
 
+	int32 getTextIdForBehaviour() const;
+
 	/**
 	 * Set hero behaviour
 	 * @param behaviour behaviour value to set
