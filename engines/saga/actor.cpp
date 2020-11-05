@@ -1177,11 +1177,11 @@ void Actor::actorSpeech(uint16 actorId, const char **strings, int stringsCount, 
 	_activeSpeech.speechBox.right = actor->_screenPosition.x + dist;
 
 	if (_activeSpeech.speechBox.left < 10) {
-		_activeSpeech.speechBox.right += 10 - _activeSpeech.speechBox.left;
+		_activeSpeech.speechBox.right += (10 - _activeSpeech.speechBox.left);
 		_activeSpeech.speechBox.left = 10;
 	}
 	if (_activeSpeech.speechBox.right > _vm->getDisplayInfo().width - 10) {
-		_activeSpeech.speechBox.left -= _activeSpeech.speechBox.right - _vm->getDisplayInfo().width - 10;
+		_activeSpeech.speechBox.left -= _activeSpeech.speechBox.right - (_vm->getDisplayInfo().width - 10);
 		_activeSpeech.speechBox.right = _vm->getDisplayInfo().width - 10;
 	}
 }
