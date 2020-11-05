@@ -114,8 +114,8 @@ public:
 	bool operator!=(const String &x) const;
 	bool operator!=(const char *x) const;
 
-    /** Python-like method **/
-    String encode(CodePage page = kUtf8) const;
+	/** Python-like method **/
+	String encode(CodePage page = kUtf8) const;
 
 	/**
 	 * Print formatted data into a U32String object.
@@ -139,7 +139,7 @@ public:
 	void insertString(const char *s, uint32 p);
 	void insertString(const String &s, uint32 p);
 
-    	/** Return a substring of this string */
+	/** Return a substring of this string */
 	U32String substr(size_t pos = 0, size_t len = npos) const;
 
 	const uint32 *u32_str() const {

@@ -542,7 +542,7 @@ TEMPLATE void BASESTRING::insertString(const value_type *s, uint32 p) {
 }
 
 TEMPLATE void BASESTRING::insertString(const BaseString &s, uint32 p) {
-    for (uint i = 0; i < s._size; i++) {
+	for (uint i = 0; i < s._size; i++) {
 		BaseString::insertChar(s[i], p+i);
 	}
 }
@@ -583,7 +583,7 @@ TEMPLATE uint32 BASESTRING::find(const BaseString &str, uint32 pos) const {
 }
 
 TEMPLATE size_t BASESTRING::find(const value_type *strP, uint32 pos) const {
-    	if (pos >= _size) {
+	if (pos >= _size) {
 		return npos;
 	}
 
@@ -699,7 +699,7 @@ TEMPLATE void BASESTRING::toLowercase() {
 TEMPLATE void BASESTRING::toUppercase() {
 	makeUnique();
 	for (uint32 i = 0; i < _size; ++i) {
-	    if (_str[i] > 0 && _str[i] < 128) {
+		if (_str[i] > 0 && _str[i] < 128) {
 			_str[i] = toupper(_str[i]);
 		}
 	}
@@ -740,7 +740,7 @@ TEMPLATE void BASESTRING::assignAppend(value_type c) {
 }
 
 TEMPLATE void BASESTRING::assignAppend(const BaseString &str) {
-    	if (&str == this) {
+	if (&str == this) {
 		assignAppend(BaseString(str));
 		return;
 	}

@@ -32,9 +32,9 @@ namespace Common {
 template<class T>
 class BaseString {
 public:
-    	static void releaseMemoryPoolMutex();
+	static void releaseMemoryPoolMutex();
 
-    	static const uint32 npos = 0xFFFFFFFF;
+	static const uint32 npos = 0xFFFFFFFF;
 	typedef T          value_type;
 	typedef T *        iterator;
 	typedef const T *  const_iterator;
@@ -119,7 +119,7 @@ public:
 	bool equalsC(const char *x) const;
 	int compareTo(const BaseString &x) const;           // strcmp clone
 	int compareTo(const value_type *x) const;             // strcmp clone
-    	int compareToC(const char *x) const;             // strcmp clone
+	int compareToC(const char *x) const;             // strcmp clone
 
 	/** Set character c at position p, replacing the previous character there. */
 	void setChar(value_type c, uint32 p);
@@ -165,7 +165,7 @@ public:
 		return begin() + size();
 	}
 
-    	inline const value_type *c_str() const { return _str; }
+	inline const value_type *c_str() const { return _str; }
 	inline uint size() const         { return _size; }
 
 	inline bool empty() const { return (_size == 0); }
@@ -185,16 +185,16 @@ public:
 
 	/** Insert character c before position p. */
 	void insertChar(value_type c, uint32 p);
-    	void insertString(const value_type *s, uint32 p);
+	void insertString(const value_type *s, uint32 p);
 	void insertString(const BaseString &s, uint32 p);
 
-    	/** Finds the index of a character in the string */
-    	uint32 find(value_type x, uint32 pos = 0) const;
-    	/** Does a find for the passed string */
+	/** Finds the index of a character in the string */
+	uint32 find(value_type x, uint32 pos = 0) const;
+	/** Does a find for the passed string */
 	size_t find(const value_type *s, uint32 pos = 0) const;
 	uint32 find(const BaseString &str, uint32 pos = 0) const;
 
-    	/**
+	/**
 	 * Wraps the text in the string to the given line maximum. Lines will be
 	 * broken at any whitespace character. New lines are assumed to be
 	 * represented using '\n'.
@@ -205,12 +205,12 @@ public:
 	 */
 	void wordWrap(const uint32 maxLength);
 
-    	/** Return uint64 corrensponding to String's contents. */
+	/** Return uint64 corrensponding to String's contents. */
 	uint64 asUint64() const;
 
-      	/** Return uint64 corrensponding to String's contents. This variant recognizes 0 (oct) and 0x (hex) prefixes. */
+	/** Return uint64 corrensponding to String's contents. This variant recognizes 0 (oct) and 0x (hex) prefixes. */
 	uint64 asUint64Ext() const;
-    
+
 	/**
 	 * Convert all characters in the string to lowercase.
 	 *
