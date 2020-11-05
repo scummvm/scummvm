@@ -120,17 +120,6 @@ Adding the games to the Launcher
 .. image:: ../images/Launcher/start_game.png
    :class: with-shadow
 
-Games can also be launched directly from the command line.
+Games can also be launched directly from the command line. For more information, see the `Command line options <../advanced_options/command_line>`_ page.
 
-- To launch a game with no additional options, run ``scummvm`` followed by the game id.   
-- To launch a game with options, run ``scummvm``, followed by any desired options, and then the game id. For more information, see the `Command line options <../advanced_options/command_line>`_ page.
-
-In the following example, Flight of the Amazon Queen will be launched in full screen:
-
-.. code:: 
-
-   scummvm -f queen
-
-.. image:: ../images/Launcher/start_game_cli.jpg
-   :class: with-shadow
 
