@@ -136,13 +136,13 @@ public:
 	 * Fade image to black
 	 * @param palette current palette to fade
 	 */
-	void fadeToBlack(uint32 *palette);
+	void fadeToBlack(const uint32 *palette);
 
 	/**
 	 * Fade image with another palette source
 	 * @param palette current palette to fade
 	 */
-	void fadeToPal(uint32 *palette);
+	void fadeToPal(const uint32 *palette);
 
 	/** Fade black palette to white palette */
 	void blackToWhite();
@@ -154,13 +154,13 @@ public:
 	 * Fade palette to red palette
 	 * @param palette current palette to fade
 	 */
-	void fadePalRed(uint32 *palette);
+	void fadePalRed(const uint32 *palette);
 
 	/**
 	 * Fade red to palette
 	 * @param palette current palette to fade
 	 */
-	void fadeRedPal(uint32 *palette);
+	void fadeRedPal(const uint32 *palette);
 
 	/**
 	 * Copy a determinate screen buffer to another

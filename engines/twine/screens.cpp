@@ -195,7 +195,7 @@ void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 	} while (intensity <= 100);
 }
 
-void Screens::fadeToBlack(uint32 *pal) {
+void Screens::fadeToBlack(const uint32 *pal) {
 	if (palResetted) {
 		return;
 	}
@@ -208,7 +208,7 @@ void Screens::fadeToBlack(uint32 *pal) {
 	palResetted = true;
 }
 
-void Screens::fadeToPal(uint32 *pal) {
+void Screens::fadeToPal(const uint32 *pal) {
 	for (int32 i = 0; i <= 100; i += 3) {
 		adjustPalette(0, 0, 0, pal, i);
 		_engine->_system->delayMillis(1000 / 50);
@@ -238,14 +238,14 @@ void Screens::setBackPal() {
 	palResetted = true;
 }
 
-void Screens::fadePalRed(uint32 *pal) {
+void Screens::fadePalRed(const uint32 *pal) {
 	for (int32 i = 100; i >= 0; i -= 2) {
 		adjustPalette(0xFF, 0, 0, pal, i);
 		_engine->_system->delayMillis(1000 / 50);
 	}
 }
 
-void Screens::fadeRedPal(uint32 *pal) {
+void Screens::fadeRedPal(const uint32 *pal) {
 	for (int32 i = 0; i <= 100; i += 2) {
 		adjustPalette(0xFF, 0, 0, pal, i);
 		_engine->_system->delayMillis(1000 / 50);

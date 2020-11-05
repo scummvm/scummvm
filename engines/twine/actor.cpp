@@ -187,8 +187,8 @@ int32 Actor::getTextIdForBehaviour() const {
 }
 
 int32 Actor::initBody(int32 bodyIdx, int32 actorIdx) {
-	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
-	Common::MemorySeekableReadWriteStream stream(localActor->entityDataPtr, localActor->entityDataSize);
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	Common::MemorySeekableReadWriteStream stream(actor->entityDataPtr, actor->entityDataSize);
 	do {
 		const uint8 type = stream.readByte();
 		if (type == 0xFF) {
@@ -272,6 +272,7 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		localActor->body = bodyIdx;
 		int currentIndex = localActor->entity;
 
+		// -32000 means no bounding box in the entity data
 		if (bottomLeftX == -32000) {
 			uint16 *ptr = (uint16 *)bodyTable[localActor->entity];
 			ptr++;
