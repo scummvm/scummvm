@@ -2,41 +2,44 @@
 Sega Dreamcast
 =============================
 
-Installing ScummVM
-===================
+Run ScummVM
+================
 
 Prerequisites
-****************
+****************************
+
 - A CD-R disc (80min/700mb).
 - A CD-RW drive.
-- A computer running Windows.  
-- CD burning software capable of creating a disc image, such as Bootdreams, Nero Burning ROM, or ImgBurn. 
+- A computer running Windows. 
+- Software to create a bootable disc image, such as `BootDreams <https://dcemulation.org/index.php?title=BootDreams>`_ 
+- CD burning software such as Nero Burning ROM, ImgBurn or Alcohol120%.  
 
-Installing ScummVM
-*******************
+Download the package
+*************************
+There are two ways to get ScummVM running on the Dreamcast:
 
-There are two ways to install ScummVM on the Dreamcast:
-
-1. Download a ready-to-go Nero Image and Demos package  and burn the extracted ``.nrg`` image to a CD-R using Nero Burning ROM or ImgBurn software.
+1. Download the ready-to-go Nero Image and Demos package and burn the extracted ``.nrg`` image to a CD-R using Nero Burning ROM. 
 2. Download the Dreamcast plain files package and use the extracted files to create a custom disc image to burn to a CD-R.
 
 Both packages are available from the ScummVM `Downloads page <https://www.scummvm.org/downloads/>`_
 
-Dreamcast Nero Image and Demos
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Use Nero Burning ROM or ImgBurn to burn the ``.nrg`` file contained in the package to a CD-R disc. 
+Create a disc from the Dreamcast Nero Image and Demos package
+********************************************************************
+Use Nero Burning ROM to burn the ``.nrg`` file contained in the package to a CD-R disc. 
 
-Dreamcast plain files
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-Create a directory on your computer. In this example, we will call the directory ``ScummVMDC``.
+Create a disc from the Dreamcast plain files package
+******************************************************
+Create a directory on your computer. In this example, the directory is called ``ScummVMDC``.
 
-Copy the downloaded ``SCUMMVM.BIN`` and ``IP.BIN`` files into the ScummVMDC directory. These are the main boot and engine files required for ScummVM to run.
+Copy the downloaded ``SCUMMVM.BIN`` and ``IP.BIN`` files into the ``ScummVMDC`` directory. These are the main boot and engine files required for ScummVM to run.
 
 The ``.PLG`` files in the plain files package are the plugins that are required to run the games. For the best performance, only include the plugins for games you want to play. For example, if you want to play LucasArts games, include ``SCUMM.PLG``. 
 
-These plugin files are also placed directly into the ScummVMDC directory. 
+In the plain files package there are also ``.DAT`` files. These files may be listed as required Datafiles on the `Datafiles wiki page <https://wiki.scummvm.org/index.php/Datafiles>`_.
 
-Next, make a new directory for each game. In this example, we will add Day of the Tentacle into a subdirectory named ``DOTT``. 
+Copy the required ``.PLG`` and ``.DAT`` files into the root of the ScummVMDC directory. 
+
+Next, make a new directory for each game. In this example, we will add all the required Day of the Tentacle data files into a subdirectory named ``DOTT``. 
 
 Our file structure now looks like this:
 
@@ -51,24 +54,38 @@ Our file structure now looks like this:
         |-- SCUMM.PLG
         `-- SCUMMVM.BIN
 
-Now that we have the ScummVMDC directory complete with all the required files, we need to create a disc image. The recommended disc image type is ``.cdi`` or ``.nrg``. A ``.iso`` image will not work.
+The next step is to create a bootable disc image from the ``ScummVMDC`` folder. 
 
-Bootdreams is the software often recommended for creating and burning a ``.cdi`` image. It's an old piece of software, but it is free and still available for download. 
+Use Bootdreams to create either a ``.dci``, ``.nrg`` or ``.mds``/``.mdf`` disc image. 
 
-ImgBurn is also free, and can also be used to create and burn ``.cdi`` images. It is compatible with all Windows operating systems. 
+.. figure:: ../images/dreamcast/bootdreams.png
 
-Alternatively, you can use Nero Burning ROM to create and burn a ``.nrg`` image.
+1. Choose the preferred disc image type by clicking on the corresponding icon at the top of the window. 
+2. Choose the ``ScummVMDC`` folder as the **Selfboot foler**
+3. Enter a title for the disc image in the **CD label** field. 
+4. Leave the **Disc format** as **Audio/Data**
+5. Click **Process** to create the disc image. 
+
+
+To burn the resulting image to disc, use any software capable of using those image formats, such as Nero Burning ROM for ``.nrg``, Alcohol120% for ``.mds``, and Padus DiscJuggler or ImgBurn for ``.cdi``. 
+
+.. tip::
+
+    The image created from the plain files package can also be used with Optical Disc Emulators and similar external hardware.
+
 
 .. caution::
 
-    Use a lower burning speed (4x) for best results; the Dreamcast is an older system and as such can have problems reading discs burned at high speeds.  
+    Use the lowest possible burning speed for best results; the Dreamcast is an older system and as such can have problems reading discs burned at high speeds.  If available, the 4x speed is ideal.
 
-Transferring game files
+    Ensure that you use good quality discs from a reputable manufacturer. If possible, use archival grade discs.  
+
+Transfer game files
 =======================
 
-Game files can be included on the same CD as the ScummVM binary file, or on separate CDs. 
+Game files can be included on the same CD as the ScummVM binary file, or on a separate disc
 
-The Dreamcast port uses its own custom Graphical User Interface, which automatically scans the disc for games, and adds the games to the list through ScummVM's built-in autodetection. 
+The Dreamcast port does not use the normal ScummVM Launcher. It uses its own custom graphical user interface, which automatically scans the disc for games, and adds the games to a games list through ScummVM's built-in autodetection. 
 
 ScummVM for the Dreamcast supports disc swapping from the GUI. It will rescan once a new disc is inserted and repopulate the games list. 
 
@@ -77,6 +94,7 @@ Controls
 
 The mouse cursor can be controlled with the standard Dreamcast controller. 
 There is a virtual keyboard that can be brought up by pressing the left trigger button, that will emulate keyboard input. 
+
 The Dreamcast mouse and keyboard peripherals are also supported. 
 
 .. csv-table::
@@ -106,15 +124,17 @@ Autosave is enabled on the Dreamcast, so each game will use some memory blocks (
 
 When a game is saved, the VMU beeps, and a prompt is displayed on the screen letting you know that the game has been saved.
 
+Games are saved and loaded through the native in-game menus. 
+
 Configuration file 
 *********************
 
-
+ScummVM for the Dreamcast does not use a configuration file. 
 
 Settings
 ==========
 
-
+There is no way to change ScummVM settings on the Dreamcast.
 
 Known issues
 ==============
