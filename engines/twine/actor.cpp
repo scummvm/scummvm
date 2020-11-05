@@ -186,7 +186,10 @@ int32 Actor::getTextIdForBehaviour() const {
 	return _engine->_actor->heroBehaviour;
 }
 
-int32 Actor::initBody(int32 bodyIdx, int32 actorIdx) {
+int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox) {
+	if (bodyIdx == -1) {
+		return -1;
+	}
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	Common::MemorySeekableReadWriteStream stream(actor->entityDataPtr, actor->entityDataSize);
 	do {
@@ -220,10 +223,8 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx) {
 					index = bodyIndex & 0x7FFF;
 				}
 
-				bottomLeftX = -32000;
-
-				const bool hasBox = stream.readByte();
-				if (!hasBox) {
+				actorBoundingBox.hasBoundingBox = stream.readByte();
+				if (!actorBoundingBox.hasBoundingBox) {
 					return index;
 				}
 
@@ -231,13 +232,13 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx) {
 					return index;
 				}
 
-				bottomLeftX = stream.readUint16LE();
-				bottomLeftY = stream.readUint16LE();
-				bottomLeftZ = stream.readUint16LE();
+				actorBoundingBox.bottomLeftX = stream.readUint16LE();
+				actorBoundingBox.bottomLeftY = stream.readUint16LE();
+				actorBoundingBox.bottomLeftZ = stream.readUint16LE();
 
-				topRightX = stream.readUint16LE();
-				topRightY = stream.readUint16LE();
-				topRightZ = stream.readUint16LE();
+				actorBoundingBox.topRightX = stream.readUint16LE();
+				actorBoundingBox.topRightY = stream.readUint16LE();
+				actorBoundingBox.topRightZ = stream.readUint16LE();
 
 				return index;
 			}
@@ -256,13 +257,8 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		setBehaviour(kNormal);
 	}
 
-	int32 entityIdx;
-	if (bodyIdx != -1) {
-		entityIdx = initBody(bodyIdx, actorIdx);
-	} else {
-		entityIdx = -1;
-	}
-
+	ActorBoundingBox actorBoundingBox;
+	const int32 entityIdx = initBody(bodyIdx, actorIdx, actorBoundingBox);
 	if (entityIdx != -1) {
 		if (localActor->entity == entityIdx) {
 			return;
@@ -272,8 +268,7 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		localActor->body = bodyIdx;
 		int currentIndex = localActor->entity;
 
-		// -32000 means no bounding box in the entity data
-		if (bottomLeftX == -32000) {
+		if (!actorBoundingBox.hasBoundingBox) {
 			uint16 *ptr = (uint16 *)bodyTable[localActor->entity];
 			ptr++;
 
@@ -307,12 +302,12 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 			localActor->boudingBox.z.bottomLeft = -result;
 			localActor->boudingBox.z.topRight = result;
 		} else {
-			localActor->boudingBox.x.bottomLeft = bottomLeftX;
-			localActor->boudingBox.x.topRight = topRightX;
-			localActor->boudingBox.y.bottomLeft = bottomLeftY;
-			localActor->boudingBox.y.topRight = topRightY;
-			localActor->boudingBox.z.bottomLeft = bottomLeftZ;
-			localActor->boudingBox.z.topRight = topRightZ;
+			localActor->boudingBox.x.bottomLeft = actorBoundingBox.bottomLeftX;
+			localActor->boudingBox.x.topRight = actorBoundingBox.topRightX;
+			localActor->boudingBox.y.bottomLeft = actorBoundingBox.bottomLeftY;
+			localActor->boudingBox.y.topRight = actorBoundingBox.topRightY;
+			localActor->boudingBox.z.bottomLeft = actorBoundingBox.bottomLeftZ;
+			localActor->boudingBox.z.topRight = actorBoundingBox.topRightZ;
 		}
 
 		if (currentIndex == -1)

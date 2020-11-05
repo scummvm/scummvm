@@ -254,20 +254,31 @@ private:
 	uint8 *heroEntityPROTOPACK = nullptr; // file3D4
 	int32 heroEntityPROTOPACKSize = 0;
 
-	/** Actor bounding box bottom left X coordinate */
-	int16 bottomLeftX; // loadCostumeVar
-	/** Actor bounding box bottom left Y coordinate */
-	int16 bottomLeftY; // loadCostumeVar2
-	/** Actor bounding box bottom left Z coordinate */
-	int16 bottomLeftZ; // loadCostumeVar3
-	/** Actor bounding box top left X coordinate */
-	int16 topRightX; // loadCostumeVar4
-	/** Actor bounding box top left Y coordinate */
-	int16 topRightY; // loadCostumeVar5
-	/** Actor bounding box top left Z coordinate */
-	int16 topRightZ; // loadCostumeVar6
+	struct ActorBoundingBox {
+		/** Bottom left X coordinate */
+		int16 bottomLeftX = 0;
+		/** Bottom left Y coordinate */
+		int16 bottomLeftY = 0;
+		/** Bottom left Z coordinate */
+		int16 bottomLeftZ = 0;
+		/** Top left X coordinate */
+		int16 topRightX = 0;
+		/** Top left Y coordinate */
+		int16 topRightY = 0;
+		/** Top left Z coordinate */
+		int16 topRightZ = 0;
+		bool hasBoundingBox = false;
+	};
 
 	void initSpriteActor(int32 actorIdx);
+
+	/**
+	 * Initialize 3D actor body
+	 * @param bodyIdx 3D actor body index
+	 * @param actorIdx 3D actor index
+	 */
+	int32 initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox);
+
 public:
 	Actor(TwinEEngine* engine);
 	~Actor();
@@ -327,13 +338,6 @@ public:
 	 * @param behaviour behaviour value to set
 	 */
 	void setBehaviour(int32 behaviour);
-
-	/**
-	 * Initialize 3D actor body
-	 * @param bodyIdx 3D actor body index
-	 * @param actorIdx 3D actor index
-	 */
-	int32 initBody(int32 bodyIdx, int32 actorIdx);
 
 	/** Preload all sprites */
 	void preloadSprites();
