@@ -197,7 +197,7 @@ private:
 	int16 polyTab2[960] {0};
 	// end render polygon vars
 
-	int32 isUsingOrhoProjection = 0;
+	bool isUsingOrhoProjection = false;
 
 public:
 	Renderer(TwinEEngine *engine) : _engine(engine) {}

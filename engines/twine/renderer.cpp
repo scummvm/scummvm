@@ -86,7 +86,7 @@ void Renderer::setCameraPosition(int32 x, int32 y, int32 cX, int32 cY, int32 cZ)
 	cameraPosY = cY;
 	cameraPosZ = cZ;
 
-	isUsingOrhoProjection = 0;
+	isUsingOrhoProjection = false;
 }
 
 void Renderer::setBaseTranslation(int32 x, int32 y, int32 z) {
@@ -100,7 +100,7 @@ void Renderer::setOrthoProjection(int32 X, int32 Y, int32 Z) {
 	orthoProjY = Y;
 	orthoProjZ = Z;
 
-	isUsingOrhoProjection = 1;
+	isUsingOrhoProjection = true;
 }
 
 void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
@@ -1442,7 +1442,7 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 	const pointTab *pointPtr = (pointTab *)computedPoints;
 	pointTab *pointPtrDest = (pointTab *)flattenPoints;
 
-	if (isUsingOrhoProjection != 0) { // use standard projection
+	if (isUsingOrhoProjection) { // use standard projection
 		do {
 			const int32 coX = pointPtr->x + renderX;
 			const int32 coY = pointPtr->y + renderY;
@@ -1642,10 +1642,7 @@ void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
 	}
 }
 
-int32 Renderer::renderIsoModel(int32 X, int32 Y, int32 Z, int32 angleX, int32 angleY, int32 angleZ, uint8 *bodyPtr) { // AffObjetIso
-	uint8 *ptr;
-	int16 bodyHeader;
-
+int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, uint8 *bodyPtr) { // AffObjetIso
 	renderAngleX = angleX;
 	renderAngleY = angleY;
 	renderAngleZ = angleZ;
@@ -1656,25 +1653,25 @@ int32 Renderer::renderIsoModel(int32 X, int32 Y, int32 Z, int32 angleX, int32 an
 	_engine->_redraw->renderRight = -32767;
 	_engine->_redraw->renderBottom = -32767;
 
-	if (isUsingOrhoProjection == 0) {
-		getBaseRotationPosition(X, Y, Z);
+	if (isUsingOrhoProjection) {
+		renderX = x;
+		renderY = y;
+		renderZ = z;
+	} else {
+		getBaseRotationPosition(x, y, z);
 
 		renderX = destX - baseRotPosX;
 		renderY = destY - baseRotPosY; // RECHECK
 		renderZ = destZ - baseRotPosZ;
-	} else {
-		renderX = X;
-		renderY = Y;
-		renderZ = Z;
 	}
 
 	// restart at the beginning of the renderTable
 	renderTabEntryPtr = renderTab;
 
-	bodyHeader = *((uint16 *)bodyPtr);
+	int16 bodyHeader = *((uint16 *)bodyPtr);
 
 	// jump after the header
-	ptr = bodyPtr + 16 + *((uint16 *)(bodyPtr + 14));
+	uint8 *ptr = bodyPtr + 16 + *((uint16 *)(bodyPtr + 14));
 
 	if (bodyHeader & 2) { // if animated
 		// the mostly used renderer code
@@ -1686,11 +1683,13 @@ int32 Renderer::renderIsoModel(int32 X, int32 Y, int32 Z, int32 angleX, int32 an
 
 void Renderer::copyActorInternAnim(uint8 *bodyPtrSrc, uint8 *bodyPtrDest) {
 	// check if both characters allow animation
-	if (!(*((int16 *)bodyPtrSrc) & 2))
+	if (!(*((int16 *)bodyPtrSrc) & 2)) {
 		return;
+	}
 
-	if (!(*((int16 *)bodyPtrDest) & 2))
+	if (!(*((int16 *)bodyPtrDest) & 2)) {
 		return;
+	}
 
 	// skip header
 	bodyPtrSrc += 16;
@@ -1707,8 +1706,9 @@ void Renderer::copyActorInternAnim(uint8 *bodyPtrSrc, uint8 *bodyPtrDest) {
 	bodyPtrDest = bodyPtrDest + (*((int16 *)bodyPtrDest)) * 6 + 2;
 	int16 ax = *((int16 *)bodyPtrDest);
 
-	if (cx > ax)
+	if (cx > ax) {
 		cx = ax;
+	}
 
 	bodyPtrSrc += 10;
 	bodyPtrDest += 10;
@@ -1750,7 +1750,7 @@ void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight,
 	}
 }
 
-void Renderer::renderInventoryItem(int32 X, int32 Y, uint8 *itemBodyPtr, int32 angle, int32 param) { // Draw3DObject
+void Renderer::renderInventoryItem(int32 X, int32 Y, uint8 *itemBodyPtr, int32 angle, int32 param) {
 	setCameraPosition(X, Y, 128, 200, 200);
 	setCameraAngle(0, 0, 0, 60, 0, 0, param);
 
