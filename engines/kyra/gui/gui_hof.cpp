@@ -104,8 +104,8 @@ const char *GUI_HoF::getMenuItemLabel(const MenuItem &menuItem) {
 	return _vm->getTableString(menuItem.labelId, _vm->_optionsBuffer, 1);
 }
 
-char *GUI_HoF::getTableString(int id) {
-	return _vm->getTableString(id, _vm->_optionsBuffer, 0);
+char *GUI_HoF::getTableString(int id, int decode) {
+	return _vm->getTableString(id, _vm->_optionsBuffer, decode);
 }
 
 #pragma mark -

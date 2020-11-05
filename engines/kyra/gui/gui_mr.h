@@ -50,7 +50,7 @@ private:
 	const char *getMenuTitle(const Menu &menu) override;
 	const char *getMenuItemTitle(const MenuItem &menuItem) override;
 	const char *getMenuItemLabel(const MenuItem &menuItem) override;
-	char *getTableString(int id) override;
+	char *getTableString(int id, int) override;
 
 	uint8 textFieldColor1() const override { return 0xFF; }
 	uint8 textFieldColor2() const override { return 0xCF; }
