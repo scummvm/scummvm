@@ -259,77 +259,76 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 
 	ActorBoundingBox actorBoundingBox;
 	const int32 entityIdx = initBody(bodyIdx, actorIdx, actorBoundingBox);
-	if (entityIdx != -1) {
-		if (localActor->entity == entityIdx) {
-			return;
-		}
+	if (entityIdx == -1) {
+		localActor->body = -1;
+		localActor->entity = -1;
 
-		localActor->entity = entityIdx;
-		localActor->body = bodyIdx;
-		int currentIndex = localActor->entity;
-
-		if (!actorBoundingBox.hasBoundingBox) {
-			uint16 *ptr = (uint16 *)bodyTable[localActor->entity];
-			ptr++;
-
-			int16 var1 = *((int16 *)ptr++);
-			int16 var2 = *((int16 *)ptr++);
-			localActor->boudingBox.y.bottomLeft = *((int16 *)ptr++);
-			localActor->boudingBox.y.topRight = *((int16 *)ptr++);
-			int16 var3 = *((int16 *)ptr++);
-			int16 var4 = *((int16 *)ptr++);
-
-			int32 result = 0;
-			if (localActor->staticFlags.bUseMiniZv) {
-				int32 result1 = var2 - var1; // take smaller for bound
-				int32 result2 = var4 - var3;
-
-				result = MIN(result1, result2);
-
-				result = ABS(result);
-				result >>= 1;
-			} else {
-				int32 result1 = var2 - var1; // take average for bound
-				int32 result2 = var4 - var3;
-
-				result = result2 + result1;
-				result = ABS(result);
-				result >>= 2;
-			}
-
-			localActor->boudingBox.x.bottomLeft = -result;
-			localActor->boudingBox.x.topRight = result;
-			localActor->boudingBox.z.bottomLeft = -result;
-			localActor->boudingBox.z.topRight = result;
-		} else {
-			localActor->boudingBox.x.bottomLeft = actorBoundingBox.bottomLeftX;
-			localActor->boudingBox.x.topRight = actorBoundingBox.topRightX;
-			localActor->boudingBox.y.bottomLeft = actorBoundingBox.bottomLeftY;
-			localActor->boudingBox.y.topRight = actorBoundingBox.topRightY;
-			localActor->boudingBox.z.bottomLeft = actorBoundingBox.bottomLeftZ;
-			localActor->boudingBox.z.topRight = actorBoundingBox.topRightZ;
-		}
-
-		if (currentIndex == -1)
-			return;
-
-		if (localActor->previousAnimIdx == -1)
-			return;
-
-		_engine->_renderer->copyActorInternAnim(bodyTable[currentIndex], bodyTable[localActor->entity]);
-
+		localActor->boudingBox.x.bottomLeft = 0;
+		localActor->boudingBox.x.topRight = 0;
+		localActor->boudingBox.y.bottomLeft = 0;
+		localActor->boudingBox.y.topRight = 0;
+		localActor->boudingBox.z.bottomLeft = 0;
+		localActor->boudingBox.z.topRight = 0;
 		return;
 	}
 
-	localActor->body = -1;
-	localActor->entity = -1;
+	if (localActor->entity == entityIdx) {
+		return;
+	}
 
-	localActor->boudingBox.x.bottomLeft = 0;
-	localActor->boudingBox.x.topRight = 0;
-	localActor->boudingBox.y.bottomLeft = 0;
-	localActor->boudingBox.y.topRight = 0;
-	localActor->boudingBox.z.bottomLeft = 0;
-	localActor->boudingBox.z.topRight = 0;
+	localActor->entity = entityIdx;
+	localActor->body = bodyIdx;
+	int currentIndex = localActor->entity;
+
+	if (actorBoundingBox.hasBoundingBox) {
+		localActor->boudingBox.x.bottomLeft = actorBoundingBox.bottomLeftX;
+		localActor->boudingBox.x.topRight = actorBoundingBox.topRightX;
+		localActor->boudingBox.y.bottomLeft = actorBoundingBox.bottomLeftY;
+		localActor->boudingBox.y.topRight = actorBoundingBox.topRightY;
+		localActor->boudingBox.z.bottomLeft = actorBoundingBox.bottomLeftZ;
+		localActor->boudingBox.z.topRight = actorBoundingBox.topRightZ;
+	} else {
+		uint16 *ptr = (uint16 *)bodyTable[localActor->entity];
+		ptr++;
+
+		int16 var1 = *((int16 *)ptr++);
+		int16 var2 = *((int16 *)ptr++);
+		localActor->boudingBox.y.bottomLeft = *((int16 *)ptr++);
+		localActor->boudingBox.y.topRight = *((int16 *)ptr++);
+		int16 var3 = *((int16 *)ptr++);
+		int16 var4 = *((int16 *)ptr++);
+
+		int32 result = 0;
+		if (localActor->staticFlags.bUseMiniZv) {
+			int32 result1 = var2 - var1; // take smaller for bound
+			int32 result2 = var4 - var3;
+
+			result = MIN(result1, result2);
+
+			result = ABS(result);
+			result >>= 1;
+		} else {
+			int32 result1 = var2 - var1; // take average for bound
+			int32 result2 = var4 - var3;
+
+			result = result2 + result1;
+			result = ABS(result);
+			result >>= 2;
+		}
+
+		localActor->boudingBox.x.bottomLeft = -result;
+		localActor->boudingBox.x.topRight = result;
+		localActor->boudingBox.z.bottomLeft = -result;
+		localActor->boudingBox.z.topRight = result;
+	}
+
+	if (currentIndex == -1)
+		return;
+
+	if (localActor->previousAnimIdx == -1)
+		return;
+
+	_engine->_renderer->copyActorInternAnim(bodyTable[currentIndex], bodyTable[localActor->entity]);
 }
 
 void Actor::initActor(int16 actorIdx) {
