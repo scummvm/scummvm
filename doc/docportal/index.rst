@@ -1,18 +1,36 @@
 .. toctree::
       :glob:
-      :caption: Quickstart Guide
+      :caption: Quickstart guide
       :maxdepth: 2
       :hidden:
 
       getting_started/mac_linux_windows
-      
+
+
 .. toctree::
       :glob:
-      :caption: Other Platforms
+      :caption:  Phones and tablets
+      :maxdepth: 2
+      :hidden:
+
+      phones_tablets/*
+
+.. toctree::
+      :glob:
+      :caption:  Consoles
+      :maxdepth: 2
+      :hidden:
+
+      consoles/*
+
+.. toctree::
+      :glob:
+      :caption:  Other platforms
       :maxdepth: 2
       :hidden:
 
       other_platforms/*
+
 
 .. toctree::
       :caption: Using ScummVM
@@ -58,7 +76,7 @@
 
 
 .. toctree::
-      :caption: Advanced Options
+      :caption: Advanced options
       :glob:
       :hidden:
 
@@ -83,7 +101,7 @@
       release_notes/*  
 
 .. toctree::
-      :caption: Contribute to Documentation
+      :caption: Contribute to documentation
       :glob:
       :hidden:
 
@@ -118,27 +136,27 @@ We have guides available to show you how to get ScummVM up and running:
 
       Phones and Tablets
       ^^^^^^^^^^^^^^^^^^^
-      :doc:`other_platforms/ios` 
+      :doc:`phones_tablets/ios` 
       
-      :doc:`other_platforms/android`
+      :doc:`phones_tablets/android`
 
       ---
 
       Consoles
       ^^^^^^^^^^^^^^^^^^^
-      :doc:`other_platforms/ps_vita`
+      :doc:`consoles/ps_vita`
       
-      :doc:`other_platforms/playstation_portable` 
+      :doc:`consoles/playstation_portable` 
       
-      :doc:`other_platforms/nintendo_switch`
+      :doc:`consoles/nintendo_switch`
 
-      :doc:`other_platforms/nintendo_3ds`
+      :doc:`consoles/nintendo_3ds`
 
-      :doc:`other_platforms/sega_dreamcast`
+      :doc:`consoles/sega_dreamcast`
 
       ---
 
-      Other systems
+      Other platforms
       ^^^^^^^^^^^^^^^
       :doc:`other_platforms/amigaos_4`
 
