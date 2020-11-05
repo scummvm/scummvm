@@ -134,11 +134,11 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bo
 	return 1;
 }
 
-int32 Animations::getNumKeyframes(uint8 *animPtr) {
+int32 Animations::getNumKeyframes(const uint8 *animPtr) {
 	return READ_LE_INT16(animPtr);
 }
 
-int32 Animations::getStartKeyframe(uint8 *animPtr) {
+int32 Animations::getStartKeyframe(const uint8 *animPtr) {
 	return READ_LE_INT16(animPtr + 4);
 }
 
@@ -814,15 +814,15 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 							if (_engine->_movements->processActorZ <= actor->lastZ) {
 								updatePos = 1;
 							}
-						} else if (actor->angle == 0x100) {
+						} else if (actor->angle == 256) {
 							if (_engine->_movements->processActorX <= actor->lastX) {
 								updatePos = 1;
 							}
-						} else if (actor->angle == 0x200) {
+						} else if (actor->angle == 512) {
 							if (_engine->_movements->processActorZ >= actor->lastZ) {
 								updatePos = 1;
 							}
-						} else if (actor->angle == 0x300) {
+						} else if (actor->angle == 768) {
 							if (_engine->_movements->processActorX >= actor->lastX) {
 								updatePos = 1;
 							}
@@ -1006,7 +1006,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			_engine->_renderer->destZ += _engine->_movements->processActorZ;
 
 			if (_engine->_renderer->destX >= 0 && _engine->_renderer->destZ >= 0 && _engine->_renderer->destX <= 0x7E00 && _engine->_renderer->destZ <= 0x7E00) {
-				if (_engine->_grid->getBrickShape(_engine->_renderer->destX, _engine->_movements->processActorY + 0x100, _engine->_renderer->destZ) && _engine->cfgfile.WallCollision == 1) { // avoid wall hit damage
+				if (_engine->_grid->getBrickShape(_engine->_renderer->destX, _engine->_movements->processActorY + 256, _engine->_renderer->destZ) && _engine->cfgfile.WallCollision == 1) { // avoid wall hit damage
 					_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, kHitStars);
 					initAnim(kBigHit, 2, 0, currentlyProcessedActorIdx);
 

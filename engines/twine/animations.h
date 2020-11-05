@@ -80,13 +80,13 @@ public:
 	 * Get total number of keyframes in animation
 	 * @param animPtr Pointer to animation
 	 */
-	int32 getNumKeyframes(uint8 *animPtr);
+	int32 getNumKeyframes(const uint8 *animPtr);
 
 	/**
 	 * Get first keyframes in animation
 	 * @param animPtr Pointer to animation
 	 */
-	int32 getStartKeyframe(uint8 *animPtr);
+	int32 getStartKeyframe(const uint8 *animPtr);
 
 	/**
 	 * Set new body animation
