@@ -376,9 +376,9 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 					_engine->_actor->autoAgressive = !_engine->_actor->autoAgressive;
 				}
 				if (_engine->_actor->autoAgressive) {
-					menuSettings->setActiveButtonTextId(TextId::kBehaviourAgressiveManual);
-				} else {
 					menuSettings->setActiveButtonTextId(TextId::kBehaviourAgressiveAuto);
+				} else {
+					menuSettings->setActiveButtonTextId(TextId::kBehaviourAgressiveManual);
 				}
 				break;
 			case MenuButtonTypes::kPolygonDetails:
@@ -798,7 +798,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDra
 
 		char dialText[256];
 		if (_engine->_actor->heroBehaviour == kAggressive && _engine->_actor->autoAgressive) {
-			_engine->_text->getMenuText(4, dialText, sizeof(dialText));
+			_engine->_text->getMenuText(TextId::kBehaviourAgressiveAuto, dialText, sizeof(dialText));
 		} else {
 			_engine->_text->getMenuText(_engine->_actor->heroBehaviour, dialText, sizeof(dialText));
 		}

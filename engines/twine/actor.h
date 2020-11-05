@@ -42,6 +42,8 @@ namespace TwinE {
  * 			UP / RIGHT / LEFT will manually select
  * 			different punch/kick options
  * <li> DISCREET: Kneel down to hide
+ *
+ * @note The values must match the @c TextId indices
  */
 enum HeroBehaviourType {
 	kNormal = 0,
