@@ -125,8 +125,8 @@ Stretch to fit
     Stretches the image to fit the screen
 
 Snap to edges
-    Makes it easier for mouse controls to reach the edge of the screen. 
-
+    The 3DS touch screen has difficulty reaching the very end of the screen. Enabling this options means that if you're within a few pixels of the edge, the cursor will snap to the edge. 
+    
 Use Screen:
     Sets whether ScummVM uses the **Top**, **Bottom** or **Both** screens.
     
