@@ -1020,11 +1020,9 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 	int16 shadeEntry;
 	int16 shadeValue;
 
-	int32 depth;
 	int32 bestDepth;
 	int32 currentDepth;
 	int32 bestPoly = 0;
-	int32 render25;
 	int32 eax;
 	//	int32 ecx;
 
@@ -1164,7 +1162,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 			uint8 *render24 = edi;
 			edi = renderV19;
 
-			render25 = bestDepth;
+			int32 render25 = bestDepth;
 
 			int16 ax = *((int16 *)(edi + 4));
 			int16 bx = *((int16 *)(edi + 8));
@@ -1226,7 +1224,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 			*((int16 *)&lineCoordinatesPtr->x2) = flattenPoints[point2].x;
 			*((int16 *)&lineCoordinatesPtr->y2) = flattenPoints[point2].y;
 			bestDepth = flattenPoints[point1].z;
-			depth = flattenPoints[point2].z;
+			int32 depth = flattenPoints[point2].z;
 
 			if (depth >= bestDepth) {
 				bestDepth = depth;
