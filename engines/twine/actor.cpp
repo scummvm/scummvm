@@ -288,15 +288,14 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		localActor->boudingBox.z.bottomLeft = actorBoundingBox.bottomLeftZ;
 		localActor->boudingBox.z.topRight = actorBoundingBox.topRightZ;
 	} else {
-		uint16 *ptr = (uint16 *)bodyTable[localActor->entity];
-		ptr++;
-
-		int16 var1 = *((int16 *)ptr++);
-		int16 var2 = *((int16 *)ptr++);
-		localActor->boudingBox.y.bottomLeft = *((int16 *)ptr++);
-		localActor->boudingBox.y.topRight = *((int16 *)ptr++);
-		int16 var3 = *((int16 *)ptr++);
-		int16 var4 = *((int16 *)ptr++);
+		Common::MemoryReadStream stream(bodyTable[localActor->entity], bodyTableSize[localActor->entity]);
+		stream.skip(2);
+		int16 var1 = stream.readSint16LE();
+		int16 var2 = stream.readSint16LE();
+		localActor->boudingBox.y.bottomLeft = stream.readSint16LE();
+		localActor->boudingBox.y.topRight = stream.readSint16LE();
+		int16 var3 = stream.readSint16LE();
+		int16 var4 = stream.readSint16LE();
 
 		int32 result = 0;
 		if (localActor->staticFlags.bUseMiniZv) {
