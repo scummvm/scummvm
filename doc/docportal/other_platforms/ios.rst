@@ -3,7 +3,7 @@
 iOS
 ==============
 
-Installing ScummVM
+Install ScummVM
 =====================
 There are two methods to install ScummVM onto your iOS device, and the method you use depends on whether or not your device is jailbroken. 
 
@@ -23,7 +23,7 @@ Prerequisites
 
     If you have a free Apple developer account, each build will only be valid for 7 days, which means you will need to repeat these steps and re-install ScummVM every week.
 
-Creating the Xcode project
+Create the Xcode project
 ***************************
 
 The first step is to download the repository containing the code we'll need to build the app with. The easiest way to do this is from the command line. Go to **Applications > Utilities > Terminal** and enter the following:
@@ -63,7 +63,7 @@ Your present working directory will now be the new ``build`` directory. Unzip th
     unzip ~/Downloads/scummvm-ios7-libs-v2.zip
 
 
-Generating the Xcode project
+Generate the Xcode project
 *****************************
 
 It's time to generate the Xcode project. Ensure your present working directory is still the ``build`` directory, and then run the following on the command line:
@@ -94,7 +94,7 @@ Open the ``scummvm.xcodeproj`` file from the Finder, or via the command line:
 
     open scummvm.xcodeproj
 
-Building ScummVM
+Build ScummVM
 *****************
 
 Once Xcode is open, connect the device you are installing ScummVM onto. At the top of the window, select **ScummVM-iOS** and then the device you connected. You will need to trust the device before it will show up on the list of connected devices. 
@@ -130,7 +130,7 @@ Prerequisites
 - A file manager app such as Filza on your iOS device
 
 
-Installing ScummVM
+Install ScummVM
 *******************
 
 Go to the `ScummVM downloads page <https://www.scummvm.org/downloads>`_ and download the recommended .deb package. Your device will ask how to open the file. Choose Filza.
@@ -141,14 +141,14 @@ The .ipa package can be installed in the same way.
 
 You will need to restart your device for the install to complete. 
 
-Transferring game files 
+Transfer game files 
 =======================================
 
 There are multiple ways to transfer game files to your iOS device. 
 
 ScummVM has built-in Cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../settings/cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../settings/lan` page. 
 
-.. note:
+.. note::
 
  ScummVM's Cloud functionality does not currently support iCloud, however it is possible to upload game folders to your iCloud and then use the Files app on your iOS device to copy these folders into the local ScummVM folder.
 
