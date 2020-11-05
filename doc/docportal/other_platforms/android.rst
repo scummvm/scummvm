@@ -3,7 +3,7 @@
 Android
 ===============
 
-Installing ScummVM
+Install ScummVM
 ====================================
 
 There are multiple ways to install ScummVM on your Android device depending on what version of Android you have.
@@ -35,7 +35,7 @@ Click on the correct package to start the download. Once it has downloaded, go t
     - For Android 7 or earlier, go to **Settings > Security > Device Administration**, scroll down to **Device Administration** and enable **Unknown Sources**.
     - For Android 8 or later, go to **Settings > Apps and Notification** and select **Install Unknown Apps**. 
     
-Transferring game files 
+Transfer game files 
 ========================================
 
 You need to transfer all the required game data files to your device, into a folder accessible by the ScummVM app. 
