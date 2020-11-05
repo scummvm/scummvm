@@ -247,10 +247,6 @@ void BaseRenderOpenGL3D::setWindowed(bool windowed) {
 }
 
 void BaseRenderOpenGL3D::fadeToColor(byte r, byte g, byte b, byte a) {
-#if defined(USE_OPENGL_SHADERS)
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-
 	setProjection2D();
 
 	const int vertexSize = 16;
@@ -435,6 +431,12 @@ bool BaseRenderOpenGL3D::initRenderer(int width, int height, bool windowed) {
 	_simpleShadow[3].u = 1.0f;
 	_simpleShadow[3].v = 0.0f;
 
+	// The ShaderSurfaceRenderer sets an array buffer which appearently conflicts with us
+	// Reset it!
+#if defined(USE_OPENGL_SHADERS)
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+
 	return true;
 }
 
@@ -616,12 +618,6 @@ bool BaseRenderOpenGL3D::drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Wintermute
                                       float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode,
                                       bool mirrorX, bool mirrorY) {
 	// original wme has a batch mode for sprites, we ignore this for the moment
-
-	// The ShaderSurfaceRenderer sets an array buffer which appearently conflicts with us
-	// Reset it!
-#if defined(USE_OPENGL_SHADERS)
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
 
 	if (_forceAlphaColor != 0) {
 		color = _forceAlphaColor;

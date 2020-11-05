@@ -48,9 +48,6 @@ ShadowVolumeOpenGL::~ShadowVolumeOpenGL() {
 //////////////////////////////////////////////////////////////////////////
 bool ShadowVolumeOpenGL::render() {
 	glBindTexture(GL_TEXTURE_2D, 0);
-#if defined(USE_OPENGL_SHADERS)
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_OPENGL_SHADERS)
 
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glDisableClientState(GL_COLOR_ARRAY);
@@ -126,9 +123,6 @@ bool ShadowVolumeOpenGL::renderToScene() {
 	_gameRef->_renderer3D->setProjection2D();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
-#if defined(USE_OPENGL_SHADERS)
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_OPENGL_SHADERS)
 
 	glEnableClientState(GL_COLOR_ARRAY);
 	glEnableClientState(GL_VERTEX_ARRAY);
