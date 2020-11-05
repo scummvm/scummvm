@@ -112,10 +112,6 @@ void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
 void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
 	shadeAngleTab3 = &shadeAngleTable[384];
 
-	baseMatrixRotationX = x & 0x3FF;
-	baseMatrixRotationY = y & 0x3FF;
-	baseMatrixRotationZ = z & 0x3FF;
-
 	double Xradians = (double)((256 - x) % 1024) * 2 * M_PI / 1024;
 	double Yradians = (double)((256 - y) % 1024) * 2 * M_PI / 1024;
 	double Zradians = (double)((256 - z) % 1024) * 2 * M_PI / 1024;
@@ -515,11 +511,7 @@ int32 Renderer::computePolygons() {
 
 void Renderer::renderPolygons(int32 renderType, int32 color) {
 	uint8 *out2;
-	int32 hsize;
-	int32 j;
 	int32 currentLine;
-
-	int16 start, stop;
 
 	uint8 *out = (uint8*)_engine->frontVideoBuffer.getPixels() + SCREEN_WIDTH * vtop;
 
@@ -534,17 +526,17 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 		currentLine = vtop;
 		do {
 			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				stop = ptr1[SCREEN_HEIGHT];
-				start = ptr1[0];
+				int16 stop = ptr1[SCREEN_HEIGHT];
+				int16 start = ptr1[0];
 
 				ptr1++;
-				hsize = stop - start;
+				int32 hsize = stop - start;
 
 				if (hsize >= 0) {
 					hsize++;
 					out2 = start + out;
 
-					for (j = start; j < hsize + start; j++) {
+					for (int32 j = start; j < hsize + start; j++) {
 						if (j >= 0 && j < SCREEN_WIDTH) {
 							out[j] = color;
 						}
@@ -560,11 +552,11 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 		currentLine = vtop;
 		do {
 			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				start = ptr1[0];
-				stop = ptr1[SCREEN_HEIGHT];
+				int16 start = ptr1[0];
+				int16 stop = ptr1[SCREEN_HEIGHT];
 
 				ptr1++;
-				hsize = stop - start;
+				int32 hsize = stop - start;
 
 				if (hsize >= 0) {
 					uint16 mask = 0x43DB;
@@ -578,7 +570,7 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 					out2 = start + out;
 					startCopy = start;
 
-					for (j = startCopy; j < hsize + startCopy; j++) {
+					for (int32 j = startCopy; j < hsize + startCopy; j++) {
 						start += mask;
 						start = (start & 0xFF00) | ((start & 0xFF) & (uint8)(dx >> 8));
 						start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
@@ -599,15 +591,15 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 		currentLine = vtop;
 		do {
 			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				start = ptr1[0];
-				stop = ptr1[SCREEN_HEIGHT];
+				int16 start = ptr1[0];
+				int16 stop = ptr1[SCREEN_HEIGHT];
 				ptr1++;
-				hsize = stop - start;
+				int32 hsize = stop - start;
 
 				if (hsize >= 0) {
 					hsize++;
 					out2 = start + out;
-					for (j = start; j < hsize + start; j++) {
+					for (int32 j = start; j < hsize + start; j++) {
 						if ((start + (vtop % 1)) & 1) {
 							if (j >= 0 && j < SCREEN_WIDTH) {
 								out[j] = color;
@@ -633,14 +625,18 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 		bx = (unsigned short)color << 0x10;
 		int32 renderLoop = vsize;
 		do {
+			int16 start;
+			int16 stop;
+			int32 hsize;
 			while (1) {
 				start = ptr1[0];
 				stop = ptr1[SCREEN_HEIGHT];
 				ptr1++;
 				hsize = stop - start;
 
-				if (hsize)
+				if (hsize) {
 					break;
+				}
 
 				out2 = start + out;
 				*out2 = ((unsigned short)(bx >> 0x18)) & 0x0F;
@@ -650,8 +646,9 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 				out += SCREEN_WIDTH;
 
 				--renderLoop;
-				if (!renderLoop)
+				if (!renderLoop) {
 					return;
+				}
 			}
 
 			if (stop >= start) {
@@ -681,7 +678,7 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 					ax = 0; // not sure about this
 				}
 
-				j = hsize >> 1;
+				int32 j = hsize >> 1;
 
 				while (1) {
 					*(out2++) = ax & 0x0F;
@@ -707,11 +704,11 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 		do {
 			unsigned short int bx;
 
-			start = ptr1[0];
-			stop = ptr1[SCREEN_HEIGHT];
+			int16 start = ptr1[0];
+			int16 stop = ptr1[SCREEN_HEIGHT];
 
 			ptr1++;
-			hsize = stop - start;
+			int32 hsize = stop - start;
 
 			if (hsize >= 0) {
 				hsize++;
@@ -721,7 +718,7 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 					bx = color & 0xFF;
 					bx = bx << 8;
 					bx += color & 0xFF;
-					for (j = 0; j < hsize; j++) {
+					for (int32 j = 0; j < hsize; j++) {
 						*(out2) = (*(out2)&0x0F0F) | bx;
 					}
 				} else {
@@ -739,10 +736,10 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 		currentLine = vtop;
 		do {
 			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				start = ptr1[0];
-				stop = ptr1[SCREEN_HEIGHT];
+				int16 start = ptr1[0];
+				int16 stop = ptr1[SCREEN_HEIGHT];
 				ptr1++;
-				hsize = stop - start;
+				int32 hsize = stop - start;
 
 				if (hsize >= 0) {
 					hsize++;
@@ -758,7 +755,7 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 							out2++;
 						}
 
-						for (j = 0; j < hsize; j++) {
+						for (int32 j = 0; j < hsize; j++) {
 							*(out2) = (uint8)color;
 							out2 += 2;
 						}
@@ -780,12 +777,12 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 
 				int16 colorSize = stopColor - startColor;
 
-				stop = ptr1[SCREEN_HEIGHT]; // stop
-				start = ptr1[0];  // start
+				int16 stop = ptr1[SCREEN_HEIGHT]; // stop
+				int16 start = ptr1[0];  // start
 
 				ptr1++;
 				out2 = start + out;
-				hsize = stop - start;
+				int32 hsize = stop - start;
 
 				//varf2 = ptr2[SCREEN_HEIGHT];
 				//varf3 = ptr2[0];
@@ -866,10 +863,10 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 		currentLine = vtop;
 		do {
 			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				stop = ptr1[SCREEN_HEIGHT]; // stop
-				start = ptr1[0];  // start
+				int16 stop = ptr1[SCREEN_HEIGHT]; // stop
+				int16 start = ptr1[0];  // start
 				ptr1++;
-				hsize = stop - start;
+				int32 hsize = stop - start;
 
 				if (hsize >= 0) {
 					uint16 startColor = ptr2[0];
@@ -948,8 +945,9 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 								currentColor &= 0xFF;
 								currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
 								currentColor += startColor;
-								if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH)
+								if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
 									*(out2) = currentColor >> 8;
+								}
 								out2++;
 								currentXPos++;
 							} else {

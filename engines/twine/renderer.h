@@ -132,10 +132,6 @@ private:
 
 	// ---- variables ----
 
-	int32 baseMatrixRotationX = 0;
-	int32 baseMatrixRotationY = 0;
-	int32 baseMatrixRotationZ = 0;
-
 	int32 baseTransPosX = 0; // setSomething2Var1
 	int32 baseTransPosY = 0; // setSomething2Var2
 	int32 baseTransPosZ = 0; // setSomething2Var3
