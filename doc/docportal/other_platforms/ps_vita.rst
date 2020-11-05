@@ -1,8 +1,8 @@
 =====================
-Playstation Vita
+PlayStation Vita
 =====================
 
-Installing ScummVM
+Install ScummVM
 =======================
 
 Prerequisites
@@ -11,15 +11,15 @@ Prerequisites
 - A homebrew-enabled PS Vita console with `Vitashell <https://github.com/TheOfficialFloW/VitaShell/releases/tag/v2.02>`_ installed. How to enable homebrew is outside the scope of this documentation.
 - At least one ScummVM supported game. See the `compatibility page <https://www.scummvm.org/compatibility/>`_ on our website for a list of compatible games. 
 
-Installing ScummVM
-*******************
+Download and install ScummVM
+******************************
 
 The PS Vita package is available for download on our website's `Downloads page <https://www.scummvm.org/downloads>`_.
 
 Copy the ``.vpk`` to the PS Vita and install it using VitaShell. 
 
 
-Transferring game files
+Transfer game files
 =======================
 
 There are a few ways to transfer game files to the PS Vita. 

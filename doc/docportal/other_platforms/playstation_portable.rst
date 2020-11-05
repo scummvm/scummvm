@@ -1,8 +1,8 @@
 =====================
-Playstation Portable
+PlayStation Portable
 =====================
 
-Installing ScummVM
+Install ScummVM
 ===================
 
 Prerequisites
@@ -11,8 +11,8 @@ Prerequisites
 - A homebrew-enabled PSP. How to enable homebrew is outside the scope of this documentation.
 - At least one ScummVM supported game. See the `compatibility page <https://www.scummvm.org/compatibility/>`_ on our website for a list of compatible games. 
 
-Installing ScummVM
-*******************
+Download and install ScummVM
+*******************************
 
 
 The PSP package is available for download on our website's `Downloads page <https://www.scummvm.org/downloads>`_.
@@ -25,7 +25,7 @@ Copy the extracted ``scummvm`` folder to your PSP, into the ``/PSP/GAME/`` folde
 
 Go to **Game > Memory Stick** and choose **ScummVM** to launch ScummVM!
 
-Transferring game files
+Transfer game files
 ==========================
 
 Transfer game files onto the PSP as described in the installation section above. They can be copied to any folder; location doesn't matter. 

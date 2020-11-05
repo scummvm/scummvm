@@ -128,19 +128,19 @@ We have guides available to show you how to get ScummVM up and running:
       ^^^^^^^^^^^^^^^^^^^
       :doc:`other_platforms/ps_vita`
       
-      :doc:`other_platforms/psp` 
+      :doc:`other_platforms/playstation_portable` 
       
       :doc:`other_platforms/nintendo_switch`
 
       :doc:`other_platforms/nintendo_3ds`
 
-      :doc:`other_platforms/dreamcast`
+      :doc:`other_platforms/sega_dreamcast`
 
       ---
 
       Other systems
       ^^^^^^^^^^^^^^^
-      :doc:`other_platforms/amigaos4`
+      :doc:`other_platforms/amigaos_4`
 
       
 
