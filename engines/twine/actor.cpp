@@ -253,7 +253,7 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		return;
 	}
 
-	if (actorIdx == 0 && heroBehaviour == kProtoPack && localActor->armor != 0 && localActor->armor != 1) { // if hero
+	if (IS_HERO(actorIdx) && heroBehaviour == kProtoPack && localActor->armor != 0 && localActor->armor != 1) {
 		setBehaviour(kNormal);
 	}
 
