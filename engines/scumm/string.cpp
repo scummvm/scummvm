@@ -1212,7 +1212,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	byte lastChr = 0;
 	const byte *src;
 	byte *end;
-	byte transBuf[384];
+	byte transBuf[2048];
 
 	assert(dst);
 	end = dst + dstSize;
@@ -1222,7 +1222,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 		return 0;
 	}
 
-	if (_game.version >= 7) {
+	if (_game.version >= 7 || _language == Common::KO_KOR) {
 		translateText(msg, transBuf);
 		src = transBuf;
 	} else {
@@ -1901,7 +1901,111 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 
 #endif
 
+void ScummEngine::loadLanguageBundle() {
+	// if game is manually set to English, don't try to load localized text
+	if ((_language == Common::EN_ANY) || (_language == Common::EN_USA) || (_language == Common::EN_GRB)) {
+		warning("Language file is forced to be ignored");
+
+		_existLanguageFile = false;
+		return;
+	}
+
+	ScummFile file;
+	openFile(file, "language.bnd");
+
+	if (!file.isOpen()) {
+		_existLanguageFile = false;
+		return;
+	}
+
+	_existLanguageFile = true;
+
+	int size = file.size();
+
+	uint32 magic1 = file.readUint32BE();
+	uint32 magic2 = file.readUint32BE();
+
+	if (magic1 != 'SCVM' || magic2 != 'TRS ') {
+		_existLanguageFile = false;
+		return;
+	}
+
+	_numTranslationEntry = file.readUint32LE();
+	_translationEntries = new TranslationEntry[_numTranslationEntry];
+	int key = 0;
+	int left = 0;
+	for (uint32 i = 0; i < _numTranslationEntry; i++) {
+		int curKey = file.readUint16LE();
+		_translationEntries[i].key = curKey;
+		_translationEntries[i].originalOffset = file.readUint32LE();
+		_translationEntries[i].translatedOffset = file.readUint32LE();
+
+		if (curKey != key) {
+			if (key != 0) {
+				_languageIndex.setVal(key, Range(left, i - 1));
+			}
+
+			key = curKey;
+			left = i;
+		}
+	}
+
+	_languageIndex.setVal(key, Range(left, _numTranslationEntry - 1));
+
+	int bodyPos = file.pos();
+
+	_languageBuffer = (byte *)calloc(1, size - bodyPos);
+	file.read(_languageBuffer, size - bodyPos);
+	file.close();
+
+	debugN("Loaded %d entries", _numTranslationEntry);
+}
+
 void ScummEngine::translateText(const byte *text, byte *trans_buff) {
+	if (_existLanguageFile) {
+		Range range;
+
+		int textLen = resStrLen(text);
+		if (_languageIndex.tryGetVal(vm.slot[_currentScript].number, range)) {
+			for (uint32 i = range.left; i <= range.right; i++) {
+				byte *originalText = &_languageBuffer[_translationEntries[i].originalOffset];
+				byte *translatedText = &_languageBuffer[_translationEntries[i].translatedOffset];
+				int originalLen = resStrLen(originalText);
+				if (textLen == originalLen && !memcmp(text, originalText, originalLen)) {
+					warning("Found in %d", i - range.left);
+					memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
+					_lastUsedTranslationEntry = i;
+					return;
+				}
+			}
+		}
+
+		warning("Full search! %d", _currentRoom);
+		for (uint32 i = _lastUsedTranslationEntry; i < _numTranslationEntry; i++) {
+			byte *originalText = &_languageBuffer[_translationEntries[i].originalOffset];
+			byte *translatedText = &_languageBuffer[_translationEntries[i].translatedOffset];
+			int originalLen = resStrLen(originalText);
+			if (textLen == originalLen && !memcmp(text, originalText, originalLen)) {
+				warning("Found in %d", i - _lastUsedTranslationEntry);
+				memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
+				_lastUsedTranslationEntry = i;
+				return;
+			}
+		}
+
+		for (uint32 i = 0; i < _lastUsedTranslationEntry; i++) {
+			byte *originalText = &_languageBuffer[_translationEntries[i].originalOffset];
+			byte *translatedText = &_languageBuffer[_translationEntries[i].translatedOffset];
+			int originalLen = resStrLen(originalText);
+			if (textLen == originalLen && !memcmp(text, originalText, originalLen)) {
+				warning("Found in %d", (_numTranslationEntry - _lastUsedTranslationEntry) + i);
+				memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
+				_lastUsedTranslationEntry = i;
+				return;
+			}
+		}
+	}
+
 	// Default: just copy the string
 	memcpy(trans_buff, text, resStrLen(text) + 1);
 }

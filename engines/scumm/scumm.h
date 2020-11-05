@@ -356,7 +356,7 @@ protected:
 	void setupCharsetRenderer();
 	void setupCostumeRenderer();
 
-	virtual void loadLanguageBundle() {}
+	virtual void loadLanguageBundle();
 	void loadCJKFont();
 	void loadKorFont();
 	void setupMusic(int midi);
@@ -1157,6 +1157,29 @@ public:
 	int _2byteMultiHeight[20];
 	int _2byteMultiWidth[20];
 	int _2byteMultiShadow[20];
+
+private:
+	bool _existLanguageFile;
+	byte *_languageBuffer;
+
+	struct TranslationEntry {
+		uint16 key;
+		uint32 originalOffset;
+		uint32 translatedOffset;
+	};
+
+	struct Range {
+		uint32 left;
+		uint32 right;
+
+		Range(uint32 left_, uint32 right_) : left(left_), right(right_) {}
+		Range() : left(0), right(0) {}
+	};
+
+	TranslationEntry *_translationEntries;
+	Common::HashMap<uint16, Range> _languageIndex;
+	int _numTranslationEntry;
+	int _lastUsedTranslationEntry;
 
 public:
 
