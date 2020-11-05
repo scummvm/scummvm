@@ -993,26 +993,23 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
 }
 
 int32 Renderer::renderModelElements(uint8 *pointer) {
-	uint8 *edi;
-	int16 temp;
-	int32 eax;
-	//	int32 ecx;
-
 	int16 counter;
 	int16 type;
 	int16 color;
+	int16 bestZ;
+	int16 shadeEntry;
+	int16 shadeValue;
 
 	int32 depth;
 	int32 bestDepth;
 	int32 currentDepth;
-	int16 bestZ;
 	int32 bestPoly = 0;
-	int16 shadeEntry;
-	int16 shadeValue;
+	int32 render25;
+	int32 eax;
+	//	int32 ecx;
 
 	uint8 *render23;
 	uint8 *render24;
-	int32 render25;
 
 	polyVertexHeader *currentPolyVertex;
 	polyHeader *currentPolyHeader;
@@ -1023,8 +1020,8 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 
 	// prepare polygons
 
-	edi = renderTab7;           // renderTab7 coordinates buffer
-	temp = *((int16 *)pointer); // we read the number of polygons
+	uint8 *edi = renderTab7;           // renderTab7 coordinates buffer
+	int16 temp = *((int16 *)pointer); // we read the number of polygons
 	pointer += 2;
 
 	if (temp) {
