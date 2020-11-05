@@ -8,9 +8,16 @@ All downloads referenced on this page are available from the `ScummVM downloads 
 macOS/Mac OSX
 ------------------
 
-Download the Disk Image. Once the download has completed, double click the file to mount the Disk Image. A dialog will open with the ScummVM icon. Drag this icon into your Applications folder to install ScummVM.
+Download the Disk Image. Once the download has completed, double click the file to mount the Disk Image. A window will open with the ScummVM icon. Drag this icon into your Applications folder to install ScummVM.
 
 To run ScummVM, click on the icon in the Applications folder.
+
+.. note::
+
+   macOS includes a technology called Gatekeeper, which checks to ensure only trusted software is run on your Mac. 
+
+   Since ScummVM is not available from the App Store, see this `Apple support page <https://support.apple.com/en-us/HT202491>`_ if you have any difficulty running ScummVM. 
+
 
 Linux
 --------
@@ -84,9 +91,6 @@ To run ScummVM, enter ``scummvm`` on the command line, or launch ScummVM through
 
 Windows
 ---------
-
-ScummVM requires Windows XP or higher. 
-
 
 The easiest way to install ScummVM is to download the Windows installer. This installer will guide you through the install process, as well as adding a shortcut to the Start Menu. There is also an option to add a shortcut to the desktop. To run ScummVM, navigate to desktop and double click the ScummVM shortcut. To run ScummVM from the Start menu, go to **Start > All Apps > ScummVM**. For Windows XP, go to **Start > All Programs > Games > ScummVM**.
 
