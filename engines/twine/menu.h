@@ -81,6 +81,7 @@ public:
 
 	void setButtonTextId(int16 buttonIdx, int16 textIndex) {
 		_settings[MenuSettings_FirstButton + buttonIdx * 2] = textIndex;
+		_buttonTexts[buttonIdx].clear();
 	}
 
 	int16 getActiveButtonTextId() const {
