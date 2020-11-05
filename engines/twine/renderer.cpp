@@ -1002,9 +1002,6 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 	int16 type;
 	int16 color;
 
-	const lineData *lineDataPtr;
-	lineCoordinates *lineCoordinatesPtr;
-
 	int32 depth;
 	int32 bestDepth;
 	int32 currentDepth;
@@ -1012,8 +1009,6 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 	int32 bestPoly = 0;
 	int16 shadeEntry;
 	int16 shadeValue;
-
-	uint8 *destPtr;
 
 	uint8 *render23;
 	uint8 *render24;
@@ -1150,8 +1145,9 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 
 					currentDepth = currentVertex->Z;
 
-					if (currentDepth > bestDepth)
+					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
+					}
 				} while (--(counter));
 			}
 
@@ -1204,8 +1200,8 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 	if (temp) {
 		numOfPrimitives += temp;
 		do {
-			lineDataPtr = (const lineData *)pointer;
-			lineCoordinatesPtr = (lineCoordinates *)edi;
+			const lineData *lineDataPtr = (const lineData *)pointer;
+			lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)edi;
 
 			if (*((const int16 *)&lineDataPtr->p1) % 6 != 0 || *((const int16 *)&lineDataPtr->p2) % 6 != 0) {
 				error("RENDER ERROR: lineDataPtr reference is malformed!");
@@ -1296,7 +1292,7 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 
 			switch (type) {
 			case RENDERTYPE_DRAWLINE: { // draw a line
-				lineCoordinatesPtr = (lineCoordinates *)pointer;
+				lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)pointer;
 				color = (*((int32 *)&lineCoordinatesPtr->data) & 0xFF00) >> 8;
 
 				const int32 x1 = *((const int16 *)&lineCoordinatesPtr->x1);
@@ -1315,7 +1311,7 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 				numOfVertex = (eax & 0xFF00) >> 8;
 				color = (eax & 0xFF0000) >> 16;
 
-				destPtr = (uint8 *)vertexCoordinates;
+				uint8 *destPtr = (uint8 *)vertexCoordinates;
 
 				for (int32 i = 0; i < (numOfVertex * 3); i++) {
 					*((int16 *)destPtr) = *((const int16 *)pointer);
