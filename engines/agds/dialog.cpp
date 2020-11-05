@@ -145,7 +145,7 @@ bool Dialog::tick() {
 				int value = it->_value;
 				debug("dialog value %s = %d (0x%04x)", line.c_str(), value, value);
 				_currentDef = line;
-				_engine->getSystemVariable("dialog_var")->setInteger(value);
+				dialog_var->setInteger(value);
 				_engine->reactivate(_dialogProcessName);
 			} else
 				warning("invalid dialog directive: %s", line.c_str());
@@ -159,7 +159,7 @@ bool Dialog::tick() {
 		_dialogProcessName.clear();
 
 		debug("end of dialog, running %s", process.c_str());
-		_engine->getSystemVariable("dialog_var")->setInteger(-2);
+		dialog_var->setInteger(-2);
 		_engine->reactivate(_dialogProcessName);
 		return false;
 	}
