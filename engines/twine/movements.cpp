@@ -106,7 +106,7 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 		flag = 0;
 	}
 
-	targetActorDistance = (int32)sqrt((int64)(newX + newZ));
+	targetActorDistance = (int32)sqrt((int64)newX + (int64)newZ);
 
 	if (!targetActorDistance) {
 		return 0;
@@ -191,11 +191,11 @@ void Movements::rotateActor(int32 x, int32 z, int32 angle) {
 }
 
 int32 Movements::getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) {
-	return (int32)sqrt((int64)((x2 - x1) * (x2 - x1) + (z2 - z1) * (z2 - z1)));
+	return (int32)sqrt(((int64)(x2 - x1) * (int64)(x2 - x1) + (int64)(z2 - z1) * (int64)(z2 - z1)));
 }
 
 int32 Movements::getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2, int32 z2) {
-	return (int32)sqrt((int64)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1)));
+	return (int32)sqrt(((int64)(x2 - x1) * (int64)(x2 - x1) + (int64)(y2 - y1) * (int64)(y2 - y1) + (int64)(z2 - z1) * (int64)(z2 - z1)));
 }
 
 void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) { // ManualRealAngle
