@@ -23,6 +23,7 @@
 #ifndef TWINE_FLAMOVIES_H
 #define TWINE_FLAMOVIES_H
 
+#include "common/memstream.h"
 #include "common/scummsys.h"
 #include "common/file.h"
 
@@ -82,8 +83,8 @@ private:
 	/** FLA movie header data */
 	FLAFrameDataStruct frameData;
 
-	void drawKeyFrame(uint8 *ptr, int32 width, int32 height);
-	void drawDeltaFrame(uint8 *ptr, int32 width);
+	void drawKeyFrame(Common::MemoryReadStream &stream, int32 width, int32 height);
+	void drawDeltaFrame(Common::MemoryReadStream &stream, int32 width);
 	/**
 	 * Scale FLA movie 2 times
 	 * According with the settins we can put the original aspect radio stretch

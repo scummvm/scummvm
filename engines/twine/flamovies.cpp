@@ -61,23 +61,23 @@ struct FLASampleStruct {
 /** FLA movie extension */
 #define FLA_EXT ".fla"
 
-void FlaMovies::drawKeyFrame(uint8 *ptr, int32 width, int32 height) {
+void FlaMovies::drawKeyFrame(Common::MemoryReadStream &stream, int32 width, int32 height) {
 	uint8 *destPtr = (uint8 *)flaBuffer;
 	uint8 *startOfLine = destPtr;
 
 	do {
-		int8 flag1 = *(ptr++);
+		int8 flag1 = stream.readByte();
 
 		for (int8 a = 0; a < flag1; a++) {
-			int8 flag2 = *(ptr++);
+			int8 flag2 = stream.readByte();
 
 			if (flag2 < 0) {
 				flag2 = -flag2;
 				for (int8 b = 0; b < flag2; b++) {
-					*(destPtr++) = *(ptr++);
+					*(destPtr++) = stream.readByte();
 				}
 			} else {
-				char colorFill = *(ptr++);
+				char colorFill = stream.readByte();
 
 				for (int8 b = 0; b < flag2; b++) {
 					*(destPtr++) = colorFill;
@@ -89,7 +89,7 @@ void FlaMovies::drawKeyFrame(uint8 *ptr, int32 width, int32 height) {
 	} while (--height);
 }
 
-void FlaMovies::drawDeltaFrame(uint8 *ptr, int32 width) {
+void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
 	int32 a, b;
 	uint16 skip;
 	uint8 *destPtr;
@@ -99,29 +99,27 @@ void FlaMovies::drawDeltaFrame(uint8 *ptr, int32 width) {
 	int8 flag1;
 	int8 flag2;
 
-	skip = *((uint16 *)ptr);
-	ptr += 2;
+	skip = stream.readUint16LE();
 	skip *= width;
 	startOfLine = destPtr = (uint8 *)flaBuffer + skip;
-	height = *((int16 *)ptr);
-	ptr += 2;
+	height = stream.readSint16LE();
 
 	do {
-		flag1 = *(ptr++);
+		flag1 = stream.readByte();
 
 		for (a = 0; a < flag1; a++) {
-			destPtr += (unsigned char)*(ptr++);
-			flag2 = *(ptr++);
+			destPtr += stream.readByte();
+			flag2 = stream.readByte();
 
 			if (flag2 > 0) {
 				for (b = 0; b < flag2; b++) {
-					*(destPtr++) = *(ptr++);
+					*(destPtr++) = stream.readByte();
 				}
 			} else {
 				char colorFill;
 				flag2 = -flag2;
 
-				colorFill = *(ptr++);
+				colorFill = stream.readByte();
 
 				for (b = 0; b < flag2; b++) {
 					*(destPtr++) = colorFill;
@@ -185,23 +183,26 @@ void FlaMovies::processFrame() {
 		return;
 	}
 
-	uint8 *ptr = (uint8*)_engine->workVideoBuffer.getPixels();
-	file.read(ptr, frameData.frameVar0);
+	uint8 *outBuf = (uint8*)_engine->workVideoBuffer.getPixels();
+	file.read(outBuf, frameData.frameVar0);
 
-	if ((int32)frameData.videoSize <= 0)
+	if ((int32)frameData.videoSize <= 0) {
 		return;
+	}
 
+	Common::MemoryReadStream stream(outBuf, frameData.frameVar0);
 	do {
-		opcode = *((uint8 *)ptr);
-		ptr += 2;
-		opcodeBlockSize = *((uint16 *)ptr);
-		ptr += 2;
+		opcode = stream.readByte();
+		stream.skip(1);
+		opcodeBlockSize = stream.readUint16LE();
+		const int32 pos = stream.pos();
 
 		switch (opcode - 1) {
 		case kLoadPalette: {
-			int16 numOfColor = *((int16 *)ptr);
-			int16 startColor = *((int16 *)(ptr + 2));
-			memcpy((_engine->_screens->palette + (startColor * 3)), (ptr + 4), numOfColor * 3);
+			int16 numOfColor = stream.readSint16LE();
+			int16 startColor = stream.readSint16LE();
+			uint8 *dest = _engine->_screens->palette + (startColor * 3);
+			stream.read(dest, numOfColor * 3);
 			break;
 		}
 		case kFade: {
@@ -215,7 +216,12 @@ void FlaMovies::processFrame() {
 			break;
 		}
 		case kPlaySample: {
-			memcpy(&sample, ptr, sizeof(FLASampleStruct));
+			sample.sampleNum = stream.readSint16LE();
+			sample.freq = stream.readSint16LE();
+			sample.repeat = stream.readSint16LE();
+			sample.dummy = stream.readSByte();
+			sample.x = stream.readByte();
+			sample.y = stream.readByte();
 			_engine->_sound->playFlaSample(sample.sampleNum, sample.freq, sample.repeat, sample.x, sample.y);
 			break;
 		}
@@ -224,13 +230,13 @@ void FlaMovies::processFrame() {
 			break;
 		}
 		case kDeltaFrame: {
-			drawDeltaFrame(ptr, FLASCREEN_WIDTH);
+			drawDeltaFrame(stream, FLASCREEN_WIDTH);
 			if (_fadeOut == 1)
 				fadeOutFrames++;
 			break;
 		}
 		case kKeyFrame: {
-			drawKeyFrame(ptr, FLASCREEN_WIDTH, FLASCREEN_HEIGHT);
+			drawKeyFrame(stream, FLASCREEN_WIDTH, FLASCREEN_HEIGHT);
 			break;
 		}
 		default: {
@@ -239,7 +245,7 @@ void FlaMovies::processFrame() {
 		}
 
 		aux++;
-		ptr += opcodeBlockSize;
+		stream.seek(pos + opcodeBlockSize);
 
 	} while (aux < (int32)frameData.videoSize);
 	//free(workVideoBufferCopy);
