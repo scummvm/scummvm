@@ -1004,8 +1004,9 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
 
 		width *= radius;
 
-		if (width < 0)
+		if (width < 0) {
 			width = -width;
+		}
 
 		_engine->_interface->drawLine((int32)(x - width), currentLine + y, (int32)(x + width), currentLine + y, color);
 	}
@@ -1027,9 +1028,6 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 	int32 eax;
 	//	int32 ecx;
 
-	uint8 *render23;
-	uint8 *render24;
-
 	pointTab *currentVertex;
 	pointTab *destinationVertex;
 
@@ -1043,7 +1041,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 		int16 primitiveCounter = temp; // the number of primitives = the number of polygons
 
 		do { // loop that load all the polygons
-			render23 = edi;
+			uint8 *render23 = edi;
 			polyHeader *currentPolyHeader = (polyHeader *)pointer;
 			//ecx = *((int32*) pointer);
 			pointer += 2;
@@ -1163,7 +1161,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 				} while (--(counter));
 			}
 
-			render24 = edi;
+			uint8 *render24 = edi;
 			edi = renderV19;
 
 			render25 = bestDepth;
