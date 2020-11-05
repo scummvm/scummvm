@@ -54,10 +54,6 @@ U32String::U32String(const UnicodeBiDiText &txt) : BaseString<u32char_type_t>() 
 	initWithValueTypeStr(txt.visual.c_str(), txt.visual.size());
 }
 
-U32String::~U32String() {
-	decRefCount(_extern._refCount);
-}
-
 U32String &U32String::operator=(const U32String &str) {
 	assign(str);
 	return *this;

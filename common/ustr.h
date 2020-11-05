@@ -99,8 +99,6 @@ public:
 	/** Construct a copy of the given string. */
 	U32String(const String &str);
 
-	~U32String();
-
 	U32String &operator=(const U32String &str);
 	U32String &operator=(const String &str);
 	U32String &operator=(const value_type *str);

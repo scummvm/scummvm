@@ -107,6 +107,10 @@ TEMPLATE BASESTRING::BaseString(const value_type *beginP, const value_type *endP
 	initWithValueTypeStr(beginP, endP - beginP);
 }
 
+TEMPLATE BASESTRING::~BaseString() {
+	decRefCount(_extern._refCount);
+}
+
 TEMPLATE void BASESTRING::makeUnique() {
 	ensureCapacity(_size, true);
 }

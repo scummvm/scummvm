@@ -46,10 +46,6 @@ String::String(const U32String &str)
 }
 #endif
 
-String::~String() {
-	decRefCount(_extern._refCount);
-}
-
 String &String::operator=(const char *str) {
 	assign(str);
 	return *this;

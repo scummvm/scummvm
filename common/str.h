@@ -87,8 +87,6 @@ public:
 	/** Construct a new string from the given u32 string. */
 	String(const U32String &str);
 
-	~String();
-
 	String &operator=(const char *str);
 	String &operator=(const String &str);
 	String &operator=(char c);

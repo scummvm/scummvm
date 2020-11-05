@@ -236,6 +236,8 @@ public:
 	uint hash() const;
 
 protected:
+	~BaseString();
+
 	void makeUnique();
 	void ensureCapacity(uint32 new_size, bool keep_old);
 	void incRefCount() const;
