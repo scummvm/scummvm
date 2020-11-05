@@ -1013,8 +1013,6 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 	int16 shadeEntry;
 	int16 shadeValue;
 
-	int16 ax, bx, cx;
-
 	uint8 *destPtr;
 
 	uint8 *render23;
@@ -1162,8 +1160,8 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 
 			render25 = bestDepth;
 
-			ax = *((int16 *)(edi + 4));
-			bx = *((int16 *)(edi + 8));
+			int16 ax = *((int16 *)(edi + 4));
+			int16 bx = *((int16 *)(edi + 8));
 
 			ax -= *((int16 *)(edi + 16));
 			bx -= *((int16 *)(edi + 2));
@@ -1174,7 +1172,7 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 			bx = currentDepth;
 
 			ax = *((int16 *)(edi + 2));
-			cx = *((int16 *)(edi + 10));
+			int16 cx = *((int16 *)(edi + 10));
 
 			ax -= *((int16 *)(edi + 14));
 			cx -= *((int16 *)(edi + 4));
