@@ -259,7 +259,7 @@ void Renderer::applyPointsRotation(const uint8 *firstPointsPtr, int32 numPoints,
 	} while (--numOfPoints2);
 }
 
-void Renderer::processRotatedElement(int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr) { // unsigned char * elemPtr) // loadPart
+void Renderer::processRotatedElement(const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr) { // unsigned char * elemPtr) // loadPart
 	int32 firstPoint = elemPtr->firstPoint;
 	int32 numOfPoints2 = elemPtr->numOfPoints;
 
@@ -320,7 +320,7 @@ void Renderer::applyPointsTranslation(const uint8 *firstPointsPtr, int32 numPoin
 	} while (--numOfPoints2);
 }
 
-void Renderer::processTranslatedElement(int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr) {
+void Renderer::processTranslatedElement(const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr) {
 	renderAngleX = rotX;
 	renderAngleY = rotY;
 	renderAngleZ = rotZ;
@@ -412,7 +412,6 @@ FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 
 int32 Renderer::computePolygons() {
 	pRenderV1 = vertexCoordinates;
-	pRenderV2 = pRenderV3;
 
 	vertexData *vertices = (vertexData *)vertexCoordinates;
 
@@ -627,7 +626,7 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 		unsigned short int dx;
 		unsigned short int temp;
 		bx = (unsigned short)color << 0x10;
-		renderLoop = vsize;
+		int32 renderLoop = vsize;
 		do {
 			while (1) {
 				start = ptr1[0];
@@ -767,7 +766,7 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 		break;
 	}
 	case POLYGONTYPE_GOURAUD: {
-		renderLoop = vsize;
+		int32 renderLoop = vsize;
 		currentLine = vtop;
 		do {
 			if (currentLine >= 0 && currentLine < 480) {
@@ -848,7 +847,7 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 		break;
 	}
 	case POLYGONTYPE_DITHER: { // dithering
-		renderLoop = vsize;
+		int32 renderLoop = vsize;
 
 		currentLine = vtop;
 		do {
@@ -992,7 +991,7 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
 	}
 }
 
-int32 Renderer::renderModelElements(uint8 *pointer) {
+int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 	int16 counter;
 	int16 type;
 	int16 color;
@@ -1021,7 +1020,7 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 	pointer += 2;
 
 	if (temp) {
-		primitiveCounter = temp; // the number of primitives = the number of polygons
+		int16 primitiveCounter = temp; // the number of primitives = the number of polygons
 
 		do { // loop that load all the polygons
 			render23 = edi;
@@ -1251,7 +1250,7 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 		} while (--temp);
 	}
 
-	renderTabEntryPtr2 = renderTab;
+	const renderTabEntry *renderTabEntryPtr2 = renderTab;
 
 	renderTabSortedPtr = renderTabSorted;
 	for (int32 i = 0; i < numOfPrimitives; i++) { // then we sort the polygones | WARNING: very slow | TODO: improve this
@@ -1275,7 +1274,7 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 	// prepare to render elements
 
 	if (numOfPrimitives) {
-		primitiveCounter = numOfPrimitives;
+		int16 primitiveCounter = numOfPrimitives;
 		renderV19 = pointer;
 
 		do {
@@ -1374,30 +1373,28 @@ int32 Renderer::renderModelElements(uint8 *pointer) {
 }
 
 int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
-	elementEntry *elemEntryPtr;
-	const pointTab *pointPtr;
-	pointTab *pointPtrDest;
 	//	int32 *tmpLightMatrix;
-	const uint8 *tmpShadePtr;
-	int32 numOfShades;
-
-	numOfPoints = *((const uint16 *)bodyPtr);
+	int32 numOfPoints = *((const uint16 *)bodyPtr);
 	bodyPtr += 2;
-	pointsPtr = bodyPtr;
+	const uint8 *pointsPtr = bodyPtr;
 
 	bodyPtr += numOfPoints * 6;
 
-	numOfElements = *((const uint16 *)bodyPtr);
+	int32 numOfElements = *((const uint16 *)bodyPtr);
 	bodyPtr += 2;
-	elementsPtr = elementsPtr2 = bodyPtr;
+
+	uint8 *elementsPtr = bodyPtr;
+	uint8 *elementsPtr2 = elementsPtr;
 
 	currentMatrixTableEntry = (uint8 *)matricesTable;
 
-	processRotatedElement(renderAngleX, renderAngleY, renderAngleZ, (const elementEntry *)elementsPtr);
+	processRotatedElement(pointsPtr, renderAngleX, renderAngleY, renderAngleZ, (const elementEntry *)elementsPtr);
 
 	elementsPtr += 38;
 
-	elemEntryPtr = (elementEntry *)elementsPtr;
+	elementEntry *elemEntryPtr = (elementEntry *)elementsPtr;
+
+	int32 numOfPrimitives = 0;
 
 	if (numOfElements - 1 != 0) {
 		numOfPrimitives = numOfElements - 1;
@@ -1407,9 +1404,9 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 			int16 boneType = elemEntryPtr->flag;
 
 			if (boneType == 0) {
-				processRotatedElement(elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr); // rotation
+				processRotatedElement(pointsPtr, elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr); // rotation
 			} else if (boneType == 1) {
-				processTranslatedElement(elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr); // translation
+				processTranslatedElement(pointsPtr, elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr); // translation
 			}
 
 			currentMatrixTableEntry += 36;
@@ -1420,8 +1417,8 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 
 	numOfPrimitives = numOfPoints;
 
-	pointPtr = (pointTab *)computedPoints;
-	pointPtrDest = (pointTab *)flattenPoints;
+	const pointTab *pointPtr = (pointTab *)computedPoints;
+	pointTab *pointPtrDest = (pointTab *)flattenPoints;
 
 	if (isUsingOrhoProjection != 0) { // use standard projection
 		do {
@@ -1513,7 +1510,7 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 
 	shadePtr = (int32 *)elementsPtr;
 
-	numOfShades = *((const uint16 *)shadePtr);
+	int32 numOfShades = *((const uint16 *)shadePtr);
 
 	shadePtr = (int32 *)(((uint8 *)shadePtr) + 2);
 
@@ -1561,7 +1558,7 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 
 					if (color > 0) {
 						color >>= 14;
-						tmpShadePtr = (const uint8 *)shadePtr;
+						const uint8 *tmpShadePtr = (const uint8 *)shadePtr;
 						color /= *((const uint16 *)(tmpShadePtr + 6));
 						shade = (uint16)color;
 					}
@@ -1578,7 +1575,7 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 		} while (--numOfPrimitives);
 	}
 
-	return renderModelElements((uint8 *)shadePtr);
+	return renderModelElements(numOfPrimitives, (uint8 *)shadePtr);
 }
 
 void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
@@ -1648,9 +1645,6 @@ int32 Renderer::renderIsoModel(int32 X, int32 Y, int32 Z, int32 angleX, int32 an
 		renderY = Y;
 		renderZ = Z;
 	}
-
-	// reset the number of primitives in the model
-	numOfPrimitives = 0;
 
 	// restart at the beginning of the renderTable
 	renderTabEntryPtr = renderTab;
