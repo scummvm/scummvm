@@ -80,6 +80,25 @@ struct ZoneStruct {
 		} DisplayText;
 		struct {
 			int16 info0;
+			/**
+			 * Bonus type flags - a bitfield value, of which the bits mean:
+			 * bit 8: clover leaf,
+			 * bit 7: small key,
+			 * bit 6: magic,
+			 * bit 5: life,
+			 * bit 4: money,
+			 * If more than one type of bonus is selected, the actual type of bonus
+			 * will be chosen randomly each time player uses Action.
+			 */
+			int16 typesFlag;
+			int16 amount;
+			/**
+			 * Already used
+			 */
+			int16 used;
+		} Bonus;
+		struct {
+			int16 info0;
 			int16 info1;
 			int16 info2;
 			int16 info3;

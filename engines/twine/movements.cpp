@@ -449,6 +449,12 @@ void Movements::processActorMovements(int32 actorIdx) {
 	}
 
 	switch (actor->controlMode) {
+	/**
+	 * The Actor's Track Script is stopped. Track Script execution may be started with Life Script of
+	 * the Actor or other Actors (with SET_TRACK(_OBJ) command). This mode does not mean the Actor
+	 * will literally not move, but rather that it's Track Script (also called Move Script) is
+	 * initially stopped. The Actor may move if it is assigned a moving animation.
+	 */
 	case kNoMove:
 	case kFollow2:     // unused
 	case kTrackAttack: // unused

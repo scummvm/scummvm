@@ -45,10 +45,41 @@ private:
 	// cursor keys
 	int32 previousLoopActionKey = 0;
 
+	/**
+	 * The Actor is controlled by the player. This works well only for the Hero Actor in general.
+	 * To use it for other Actors they would have to have necessary animations that would be also
+	 * correctly indexed. The primary purpose for this mode is to re-enable player's control over
+	 * the Hero after it has been disabled for some reasons.
+	 */
 	void processManualAction(int actorIdx);
+	/**
+	 * The Actor tries to move towards the target Actor. This only means that it will always face
+	 * in its direction (as fast as the Rotation delay property allows). To make it really follow
+	 * anything it must be assigned a moving Animation first, and the Actor will not stop by itself
+	 * after reaching the target. To make a real following, the Actor's animation must be changed
+	 * for example to standing animation when the Actor is near the target, and changed back to a
+	 * moving animation when it's far from it. The Follow mode handles only the facing angle.
+	 */
 	void processFollowAction(int actorIdx);
+	/**
+	 * Makes the Actor walk and turn by random angles and at random moments. In original game it is
+	 * only used for Nitro-Mecha-Penguins, but it can be used for any 3-D Actor that has standing
+	 * and walking animation (with virtual indexes 0 and 1 respectively). This mode requires the
+	 * Randomize interval (Info1) property to be less or equal to 117, otherwise the Actor will just
+	 * walk without turning. Exact meaning of the property is not known.
+	 */
 	void processRandomAction(int actorIdx);
+	/**
+	 * The Actor's Track Script is run from the first command, and when it reaches END or STOP it
+	 * starts over again.
+	 */
 	void processTrackAction(int actorIdx);
+	/**
+	 * This mode is used to make an Actor follow specified Actor's X and Z (horizontal) coordinates.
+	 * This is mainly used for Sprite Actors to be always above other Sprite Actors (like platforms).
+	 * Unlike the Follow mode, this mode sets the Actor's position. If the Actor is a Sprite Actor,
+	 * its speed is not taken into consideration in this mode.
+	 */
 	void processSameXZAction(int actorIdx);
 
 public:

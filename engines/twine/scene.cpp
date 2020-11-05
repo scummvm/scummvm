@@ -400,19 +400,18 @@ void Scene::processEnvironmentSound() {
 
 void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 	// bonus not used yet
-	if (zone->infoData.generic.info3) {
+	if (zone->infoData.Bonus.used) {
 		return;
 	}
 	int8 bonusTable[8];
 	int32 numBonus = 0;
 	for (int32 a = 0; a < 5; a++) {
-		if (zone->infoData.generic.info1 & (1 << (a + 4))) {
+		if (zone->infoData.Bonus.typesFlag & (1 << (a + 4))) {
 			bonusTable[numBonus++] = a;
 		}
 	}
 
 	if (numBonus) {
-		int32 angle, index;
 		int8 currentBonus = bonusTable[_engine->getRandomNumber(numBonus)];
 
 		// if bonus is magic an no magic level yet, then give life points
@@ -420,12 +419,13 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 			currentBonus = 1;
 		}
 
-		angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, sceneHero->x, sceneHero->z);
-		index = _engine->_extra->addExtraBonus(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, zone->topRight.y, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, 180, angle, currentBonus + 3, zone->infoData.generic.info2);
+		const int16 amount = zone->infoData.Bonus.amount;
+		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, sceneHero->x, sceneHero->z);
+		const int32 index = _engine->_extra->addExtraBonus(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, zone->topRight.y, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, 180, angle, currentBonus + 3, amount);
 
 		if (index != -1) {
 			_engine->_extra->extraList[index].type |= 0x400;
-			zone->infoData.generic.info3 = 1; // set as used
+			zone->infoData.Bonus.used = 1; // set as used
 		}
 	}
 }
