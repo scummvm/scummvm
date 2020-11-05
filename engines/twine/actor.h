@@ -307,6 +307,7 @@ public:
 
 	/** Actors 3D body table - size of NUM_BODIES */
 	uint8 *bodyTable[NUM_BODIES]{nullptr};
+	int32 bodyTableSize[NUM_BODIES]{0};
 
 	/** Current position in body table */
 	int32 currentPositionInBodyPtrTab;

@@ -180,81 +180,61 @@ void Actor::initSpriteActor(int32 actorIdx) {
 
 int32 Actor::initBody(int32 bodyIdx, int32 actorIdx) {
 	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
-	uint8 *bodyPtr = localActor->entityDataPtr;
-
+	Common::MemorySeekableReadWriteStream stream(localActor->entityDataPtr, localActor->entityDataSize);
 	do {
-		uint8 var1 = *(bodyPtr++);
-
-		if (var1 == 0xFF) {
+		const uint8 type = stream.readByte();
+		if (type == 0xFF) {
 			return -1;
 		}
 
-		uint8 *bodyPtr2 = bodyPtr + 1;
+		uint8 idx = stream.readByte();
+		const int32 pos = stream.pos();
+		const uint8 size = stream.readByte();
+		if (type == 1) { // 1 = body data - 3 is animdata
+			if (idx == bodyIdx) {
+				const int16 bodyIndex = stream.readUint16LE();
 
-		if (var1 == 1) {
-			uint8 var2 = *(bodyPtr);
-
-			if (var2 == bodyIdx) {
 				int32 index;
-				uint8 *bodyPtr3 = bodyPtr2 + 1;
-				int16 flag = *((uint16 *)bodyPtr3);
-
-				if (!(flag & 0x8000)) {
-					if (bodyTable[currentPositionInBodyPtrTab]) {
-						free(bodyTable[currentPositionInBodyPtrTab]);
-					}
-					HQR::getAllocEntry(&bodyTable[currentPositionInBodyPtrTab], Resources::HQR_BODY_FILE, flag & 0xFFFF);
-
-					if (!bodyTable[currentPositionInBodyPtrTab]) {
-						error("HQR ERROR: Loading body entities");
-					}
-					_engine->_renderer->prepareIsoModel(bodyTable[currentPositionInBodyPtrTab]);
-					*((uint16 *)bodyPtr3) = currentPositionInBodyPtrTab + 0x8000;
+				if (!(bodyIndex & 0x8000)) {
 					index = currentPositionInBodyPtrTab;
 					currentPositionInBodyPtrTab++;
+					if (bodyTable[index]) {
+						free(bodyTable[index]);
+					}
+					bodyTableSize[index] = HQR::getAllocEntry(&bodyTable[index], Resources::HQR_BODY_FILE, bodyIndex & 0xFFFF);
+					if (bodyTableSize[index] == 0) {
+						error("HQR ERROR: Loading body entities");
+					}
+					_engine->_renderer->prepareIsoModel(bodyTable[index]);
+					stream.seek(stream.pos() - sizeof(uint16));
+					stream.writeUint16LE(index + 0x8000);
 				} else {
-					flag &= 0x7FFF;
-					index = flag;
+					index = bodyIndex & 0x7FFF;
 				}
 
-				bodyPtr3 += 2;
 				bottomLeftX = -32000;
 
-				uint8 *bodyPtr4 = bodyPtr3;
-				bodyPtr3++;
-
-				if (!*bodyPtr4) {
+				const bool hasBox = stream.readByte();
+				if (!hasBox) {
 					return index;
 				}
 
-				bodyPtr4 = bodyPtr3;
-				bodyPtr3++;
-
-				if (*bodyPtr4 != 14) {
+				if (stream.readByte() != 14) {
 					return index;
 				}
 
-				// bodyPtr5 = (int16 *) bodyPtr3;
+				bottomLeftX = stream.readUint16LE();
+				bottomLeftY = stream.readUint16LE();
+				bottomLeftZ = stream.readUint16LE();
 
-				bottomLeftX = *((uint16 *)bodyPtr3);
-				bodyPtr3 += 2;
-				bottomLeftY = *((uint16 *)bodyPtr3);
-				bodyPtr3 += 2;
-				bottomLeftZ = *((uint16 *)bodyPtr3);
-				bodyPtr3 += 2;
-
-				topRightX = *((uint16 *)bodyPtr3);
-				bodyPtr3 += 2;
-				topRightY = *((uint16 *)bodyPtr3);
-				bodyPtr3 += 2;
-				topRightZ = *((uint16 *)bodyPtr3);
-				bodyPtr3 += 2;
+				topRightX = stream.readUint16LE();
+				topRightY = stream.readUint16LE();
+				topRightZ = stream.readUint16LE();
 
 				return index;
 			}
 		}
-
-		bodyPtr = *bodyPtr2 + bodyPtr2;
+		stream.seek(pos + size);
 	} while (1);
 }
 
