@@ -935,7 +935,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	return Common::kNoError;
 }
 
-void AGDSEngine::reactivate(const Common::String &name) {
+void AGDSEngine::reactivate(const Common::String &name, bool runNow) {
 	if (name.empty())
 		return;
 
@@ -944,6 +944,8 @@ void AGDSEngine::reactivate(const Common::String &name) {
 		if (process && process->getName() == name) {
 			debug("reactivate %s", name.c_str());
 			process->activate();
+			if (runNow)
+				process->run();
 		}
 	}
 }

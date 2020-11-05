@@ -244,7 +244,7 @@ public:
 		return _mouse;
 	}
 
-	void reactivate(const Common::String &name);
+	void reactivate(const Common::String &name, bool runNow = false);
 
 private:
 	void loadPatches(Common::SeekableReadStream *file, Database & db);
