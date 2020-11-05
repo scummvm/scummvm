@@ -132,12 +132,16 @@ We have guides available to show you how to get ScummVM up and running:
       
       :doc:`other_platforms/nintendo_switch`
 
+      :doc:`other_platforms/nintendo_3ds`
+
       :doc:`other_platforms/dreamcast`
 
       ---
 
       Other systems
       ^^^^^^^^^^^^^^^
+      :doc:`other_platforms/amigaos4`
+
       
 
 
@@ -250,4 +254,6 @@ If you enjoy ScummVM, feel free to donate using the PayPal button on the `ScummV
 
 If you cannot donate but you have coding or writing skills, you can help us by contributing!
 
-For more information, see the `Contribution guide <#>`_ on our wiki.
+To help us with our documentation, see the :doc:`contribute/tech_writers`. 
+
+To help us with our code, check out `Developer Central <https://wiki.scummvm.org/index.php?title=Developer_Central>`_ on the ScummVM wiki.
