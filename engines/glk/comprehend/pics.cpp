@@ -76,7 +76,8 @@ Pics::ImageFile::ImageFile(const Common::String &filename) {
 	 * image offsets start at the beginning of the image file.
 	 */
 	version = f.readUint16LE();
-	if (version == 0x6300 /* Single image file */) {
+	if (version == 0x6300 /* Single image file */
+			|| version == 0x81f3 /* OO-Topos title - t0 */) {
 		_imageOffsets.resize(1);
 		_imageOffsets[0] = 4;
 		return;

@@ -23,6 +23,7 @@
 #include "glk/comprehend/game_oo.h"
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/draw_surface.h"
+#include "glk/comprehend/pics.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -59,6 +60,19 @@ OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE)
 
 	_colorTable = 1;
 	_gameStrings = &OO_STRINGS;
+	_titleGraphicFile = "t0";
+}
+
+void OOToposGame::beforeGame() {
+	// Draw the title
+	g_comprehend->drawPicture(TITLE_IMAGE);
+
+	// Print game information
+	console_println("Story by Michael and Muffy Berlyn, graphics by Raim und Redlich and Brian Poff");
+	console_println("IBM version by Jeffrey A. Jay. Copyright 1987  POLARWARE, Inc.");
+	g_comprehend->readChar();
+
+	g_comprehend->glk_window_clear(g_comprehend->_bottomWindow);
 }
 
 int OOToposGame::roomIsSpecial(unsigned room_index,

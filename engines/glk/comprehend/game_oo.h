@@ -40,6 +40,7 @@ public:
 	OOToposGame();
 	~OOToposGame() override {}
 
+	void beforeGame() override;
 	void beforeTurn() override;
 	int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) override;
 	void handleSpecialOpcode(uint8 operand) override;
