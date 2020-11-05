@@ -1378,9 +1378,10 @@ static int32 lANIM_SET(TwinEEngine *engine, LifeScriptContext &ctx) {
 	return 0;
 }
 
+/** Displays holomap travel animation */
 /*0x60*/
 static int32 lHOLOMAP_TRAJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ctx.stream.skip(1);
+	ctx.stream.skip(1); // index of the holomap trajectory
 	return -1;
 }
 
