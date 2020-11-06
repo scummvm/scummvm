@@ -116,6 +116,9 @@ void Character::moveTo(Common::Point dst, int frames) {
 }
 
 void Character::animate(Common::Point pos, int direction, int speed) {
+	debug("animate character: %d,%d %d %d", pos.x, pos.y, direction, speed);
+	if (direction == -1)
+		return;
 	auto jokes = _engine->jokes();
 	auto animationDescription = jokes->animationDescription(direction);
 	_animation = animationDescription? _engine->loadAnimation(animationDescription->filename): nullptr;
