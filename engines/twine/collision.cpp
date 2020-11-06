@@ -452,12 +452,7 @@ void Collision::stopFalling() { // ReceptionObj()
 	if (IS_HERO(_engine->_animations->currentlyProcessedActorIdx)) {
 		const int32 fall = _engine->_scene->heroYBeforeFall - _engine->_movements->processActorY;
 
-		if (fall >= 0x1000) {
-			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->x, _engine->_actor->processActorPtr->y + 1000, _engine->_actor->processActorPtr->z, kHitStars);
-			_engine->_actor->processActorPtr->life--;
-			_engine->_animations->initAnim(kLandingHit, 2, 0, _engine->_animations->currentlyProcessedActorIdx);
-		} else if (fall >= 0x800) {
-			// TODO: the same as the other branch?
+		if (fall >= 2048) {
 			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->x, _engine->_actor->processActorPtr->y + 1000, _engine->_actor->processActorPtr->z, kHitStars);
 			_engine->_actor->processActorPtr->life--;
 			_engine->_animations->initAnim(kLandingHit, 2, 0, _engine->_animations->currentlyProcessedActorIdx);
