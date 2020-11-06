@@ -147,7 +147,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-	// Castle of Dr. Brain - Korean DOS Floppy 1.1
+	// Castle of Dr. Brain - Korean fan translation, based on English DOS Floppy 1.1
 	{"castlebrain", "", {
 		{"resource.map", 0, "f77728304c70017c54793eb6ca648174", 2745},
 		{"resource.000", 0, "27ec5fa09cd12a7fd16e86d96a2ed245", 347071},
@@ -553,7 +553,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_STD16_SPEECH_GM	},
 
-	// Eco Quest - Korean DOS CD 1.1
+	// Eco Quest - Korean fan translation, based on English DOS CD 1.1
 	// SCI interpreter version 1.001.064
 	{"ecoquest", "CD", {
 		{"resource.aud", 0, "1971dcb007a0c064c152175400f4021b", 305187924},
@@ -853,7 +853,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_GK1_CD_WIN },
 
-	// Gabriel Knight - Korean Windows CD (from aquilegia)
+	// Gabriel Knight - Korean fan translation, based on English Windows CD
 	// Executable scanning reports "2.000.000", VERSION file reports "01.100.000"
 	{"gk1", "CD", {
 		{"resource.map", 0, "372d059f75856afa6d73dd84cbb8913d", 10996},
@@ -1709,7 +1709,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-	// King's Quest 5 - Korean DOS Floppy
+	// King's Quest 5 - Korean fan translation, based on English DOS Floppy
 	// SCI interpreter version 1.000.060
 	{"kq5", "", {
 		{"resource.map", 0, "d6172c27b453350e158815fbae23f41e", 8004},
@@ -2074,7 +2074,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO_KQ6_CD_WINDOWS	},
 
-	// King's Quest 6 - Korean DOS Floppy (supplied by aquilegia)
+	// King's Quest 6 - Korean fan translation, based on English DOS Floppy
 	{"kq6", "", {
 		{"resource.map", 0, "a362063318eebe7d6423b1d9dc6213e1", 8703},
 		{"resource.000", 0, "f2b7f753992c56a0c7a08d6a5077c895", 7863324},
@@ -2082,7 +2082,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::KO_KOR, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-	// King's Quest 6 - Korean DOS CD (from the King's Quest Collection)
+	// King's Quest 6 - Korean fan translation, based on English DOS CD (from the King's Quest Collection)
 	// Executable scanning reports "1.cfs.158", VERSION file reports "1.034 9/11/94 - KQ6 version 1.000.00G"
 	// SCI interpreter version 1.001.054
 	{"kq6", "CD", {
@@ -2092,7 +2092,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::KO_KOR, Common::kPlatformDOS, ADGF_CD, GUIO5(GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING)	},
 
-	// King's Quest 6 - Korean Windows CD (from the King's Quest Collection)
+	// King's Quest 6 - Korean fan translation, based on English Windows CD (from the King's Quest Collection)
 	// Executable scanning reports "1.cfs.158", VERSION file reports "1.034 9/11/94 - KQ6 version 1.000.00G"
 	// SCI interpreter version 1.001.054
 	{"kq6", "CD", {
@@ -2410,7 +2410,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
 
-	// Laura Bow 2 - Korean DOS CD (from "The Roberta Williams Antology"/1996)
+	// Laura Bow 2 - Korean fan translation, based on English DOS CD (from "The Roberta Williams Antology"/1996)
 	// Executable scanning reports "1.001.072", VERSION file reports "1.1" (from jvprat)
 	// SCI interpreter version 1.001.069 (just a guess)
 	{"laurabow2", "CD", {
@@ -5291,7 +5291,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_CD, GUIO6(GUIO_MIDIGM, GAMEOPTION_SQ4_SILVER_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING)	},
 
-	// Space Quest 4 - Korean DOS CD (from the Space Quest Collection)
+	// Space Quest 4 - Korean fan translation, based on English DOS CD (from the Space Quest Collection)
 	// Executable scanning reports "1.001.064", VERSION file reports "1.0"
 	{"sq4", "", {
 		{"resource.map", 0, "ed90a8e3ccc53af6633ff6ab58392bae", 7054},
