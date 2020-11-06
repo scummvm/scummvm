@@ -358,6 +358,7 @@ protected:
 
 	virtual void loadLanguageBundle() {}
 	void loadCJKFont();
+	void loadKorFont();
 	void setupMusic(int midi);
 	void setTalkSpeed(int talkspeed);
 	int getTalkSpeed();

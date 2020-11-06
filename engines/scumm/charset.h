@@ -144,6 +144,7 @@ class CharsetRendererPC : public CharsetRendererCommon {
 protected:
 	virtual void enableShadow(bool enable);
 	virtual void drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height);
+	void drawBits1Kor(Graphics::Surface &dest, int x1, int y1, const byte *src, int drawTop, int width, int height);
 
 public:
 	CharsetRendererPC(ScummEngine *vm) : CharsetRendererCommon(vm), _shadowType(kNoShadowType) { }

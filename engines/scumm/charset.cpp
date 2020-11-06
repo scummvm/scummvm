@@ -50,7 +50,6 @@ bool CharsetRenderer::isScummvmKorTarget() {
 }
 
 void ScummEngine::loadCJKFont() {
-	Common::File fp;
 	_useCJKMode = false;
 	_textSurfaceMultiplier = 1;
 	_newLineCharacter = 0;
@@ -59,65 +58,12 @@ void ScummEngine::loadCJKFont() {
 
 	// Special case for Korean
 	if (_language == Common::KO_KOR && (_game.version < 7 || _game.id == GID_FT)) {
-		int numChar = 2350;
-		_useCJKMode = true;
+		loadKorFont();
 
-		if (_game.version < 7 || _game.id == GID_FT)
-			_useMultiFont = 1;
-
-		if (_useMultiFont) {
-			debug("Loading Korean Multi Font System");
-			_numLoadedFont = 0;
-			_2byteFontPtr = NULL;
-			_2byteWidth = 0;
-			_2byteHeight = 0;
-			for (int i = 0; i < 20; i++) {
-				char fontFile[256];
-				snprintf(fontFile, sizeof(fontFile), "korean%02d.fnt", i);
-				_2byteMultiFontPtr[i] = NULL;
-				if (fp.open(fontFile)) {
-					_numLoadedFont++;
-					fp.readByte();
-					_2byteMultiShadow[i] = fp.readByte();
-					_2byteMultiWidth[i] = fp.readByte();
-					_2byteMultiHeight[i] = fp.readByte();
-
-					int fontSize = ((_2byteMultiWidth[i] + 7) / 8) * _2byteMultiHeight[i] * numChar;
-					_2byteMultiFontPtr[i] = new byte[fontSize];
-					warning("#%d, size %d, height =%d", i, fontSize, _2byteMultiHeight[i]);
-					fp.read(_2byteMultiFontPtr[i], fontSize);
-					fp.close();
-					if (_2byteFontPtr == NULL) {	// for non-initialized Smushplayer drawChar
-						_2byteFontPtr = _2byteMultiFontPtr[i];
-						_2byteWidth = _2byteMultiWidth[i];
-						_2byteHeight = _2byteMultiHeight[i];
-						_2byteShadow = _2byteMultiShadow[i];
-					}
-				}
-			}
-			if (_numLoadedFont == 0) {
-				warning("Cannot load any font for multi font");
-				_useMultiFont = 0;
-			} else {
-				debug("%d fonts are loaded", _numLoadedFont);
-			}
-		}
-
-		if (!_useMultiFont) {
-			debug("Loading Korean Single Font System");
-			if (fp.open("korean.fnt")) {
-				fp.seek(2, SEEK_CUR);
-				_2byteWidth = fp.readByte();
-				_2byteHeight = fp.readByte();
-				_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
-				fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
-				fp.close();
-			} else {
-				error("Couldn't load any font: %s", fp.getName());
-			}
-		}
 		return;
 	}
+
+	Common::File fp;
 
 	if (_game.version <= 5 && _game.platform == Common::kPlatformFMTowns && _language == Common::JA_JPN) { // FM-TOWNS v3 / v5 Kanji
 #if defined(DISABLE_TOWNS_DUAL_LAYER_MODE) || !defined(USE_RGB_COLOR)
@@ -224,6 +170,68 @@ void ScummEngine::loadCJKFont() {
 				error("SCUMM::Font: Could not load any font");
 		}
 	}
+}
+
+void ScummEngine::loadKorFont() {
+	Common::File fp;
+	int numChar = 2350;
+	_useCJKMode = true;
+
+	if (_game.version < 7 || _game.id == GID_FT)
+		_useMultiFont = 1;
+
+	if (_useMultiFont) {
+		debug("Loading Korean Multi Font System");
+		_numLoadedFont = 0;
+		_2byteFontPtr = NULL;
+		_2byteWidth = 0;
+		_2byteHeight = 0;
+		for (int i = 0; i < 20; i++) {
+			char fontFile[256];
+			snprintf(fontFile, sizeof(fontFile), "korean%02d.fnt", i);
+			_2byteMultiFontPtr[i] = NULL;
+			if (fp.open(fontFile)) {
+				_numLoadedFont++;
+				fp.readByte();
+				_2byteMultiShadow[i] = fp.readByte();
+				_2byteMultiWidth[i] = fp.readByte();
+				_2byteMultiHeight[i] = fp.readByte();
+
+				int fontSize = ((_2byteMultiWidth[i] + 7) / 8) * _2byteMultiHeight[i] * numChar;
+				_2byteMultiFontPtr[i] = new byte[fontSize];
+				warning("#%d, size %d, height =%d", i, fontSize, _2byteMultiHeight[i]);
+				fp.read(_2byteMultiFontPtr[i], fontSize);
+				fp.close();
+				if (_2byteFontPtr == NULL) {	// for non-initialized Smushplayer drawChar
+					_2byteFontPtr = _2byteMultiFontPtr[i];
+					_2byteWidth = _2byteMultiWidth[i];
+					_2byteHeight = _2byteMultiHeight[i];
+					_2byteShadow = _2byteMultiShadow[i];
+				}
+			}
+		}
+		if (_numLoadedFont == 0) {
+			warning("Cannot load any font for multi font");
+			_useMultiFont = 0;
+		} else {
+			debug("%d fonts are loaded", _numLoadedFont);
+		}
+	}
+
+	if (!_useMultiFont) {
+		debug("Loading Korean Single Font System");
+		if (fp.open("korean.fnt")) {
+			fp.seek(2, SEEK_CUR);
+			_2byteWidth = fp.readByte();
+			_2byteHeight = fp.readByte();
+			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
+			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
+			fp.close();
+		} else {
+			error("Couldn't load any font: %s", fp.getName());
+		}
+	}
+	return;
 }
 
 byte *ScummEngine::get2byteCharPtr(int idx) {
@@ -697,66 +705,12 @@ void CharsetRendererPC::enableShadow(bool enable) {
 }
 
 void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height) {
-	byte *dst = (byte *)dest.getBasePtr(x, y);
-
 	if (_vm->_useCJKMode && isScummvmKorTarget()) {
-		int y, x;
-		byte bits = 0;
-
-		// HACK: Since Korean fonts don't have shadow/stroke information,
-		//	   we use NUT-Renderer-like shadow drawing method.
-		bool useOldShadow = false;
-
-		int offsetX[14] = {-2, -2, -2, -1, 0, -1, 0, 1, -1, 1, -1, 0, 1, 0};
-		int offsetY[14] = {0, 1, 2, 2, 2, -1, -1, -1, 0, 0, 1, 1, 1, 0};
-		int cTable[14] = {_shadowColor, _shadowColor, _shadowColor,
-		                  _shadowColor, _shadowColor, _shadowColor, _shadowColor,
-		                  _shadowColor, _shadowColor, _shadowColor, _shadowColor,
-		                  _shadowColor, _shadowColor, _color};
-		int i = 0;
-
-		switch (_vm->_2byteShadow) {
-		case 1: // No shadow
-			i = 13;
-			break;
-		case 2: // SE direction shadow
-			i = 12;
-			break;
-		case 3: // Stroke & SW direction shadow ("Monkey2", "Indy4")
-			i = 0;
-			break;
-		default: // Stroke
-			i = 5;
-		}
-
-		const byte *origSrc = src;
-		byte *origDst = dst;
-
-		for (; i < 14; i++) {
-			src = origSrc;
-			dst = origDst;
-
-			for (y = 0; y < height && y + drawTop + offsetY[i] < dest.h; y++) {
-				for (x = 0; x < width && x + offsetY[i] < dest.w; x++) {
-					if ((x % 8) == 0)
-						bits = *src++;
-					if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
-						if (_enableShadow) {
-							*(dst + 1) = _shadowColor;
-							*(dst + dest.pitch) = _shadowColor;
-							*(dst + dest.pitch + 1) = _shadowColor;
-						}
-						*(dst + (dest.pitch * offsetY[i]) + offsetX[i]) = cTable[i];
-					}
-					dst++;
-				}
-
-				dst += dest.pitch - width;
-			}
-		}
+		drawBits1Kor(dest, x, y, src, drawTop, width, height);
 		return;
 	}
 
+	byte *dst = (byte *)dest.getBasePtr(x, y);
 	byte bits = 0;
 	uint8 col = _color;
 	int pitch = dest.pitch - width * dest.format.bytesPerPixel;
@@ -781,6 +735,65 @@ void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const b
 
 		dst += pitch;
 		dst2 += pitch;
+	}
+}
+
+void CharsetRendererPC::drawBits1Kor(Graphics::Surface &dest, int x1, int y1, const byte *src, int drawTop, int width, int height) {
+	byte *dst = (byte *)dest.getBasePtr(x1, y1);
+
+	int y, x;
+	byte bits = 0;
+
+	// HACK: Since Korean fonts don't have shadow/stroke information,
+	//	   we use NUT-Renderer-like shadow drawing method.
+	bool useOldShadow = false;
+
+	int offsetX[14] = {-2, -2, -2, -1, 0, -1, 0, 1, -1, 1, -1, 0, 1, 0};
+	int offsetY[14] = {0, 1, 2, 2, 2, -1, -1, -1, 0, 0, 1, 1, 1, 0};
+	int cTable[14] = {_shadowColor, _shadowColor, _shadowColor,
+						_shadowColor, _shadowColor, _shadowColor, _shadowColor,
+						_shadowColor, _shadowColor, _shadowColor, _shadowColor,
+						_shadowColor, _shadowColor, _color};
+	int i = 0;
+
+	switch (_vm->_2byteShadow) {
+	case 1: // No shadow
+		i = 13;
+		break;
+	case 2: // SE direction shadow
+		i = 12;
+		break;
+	case 3: // Stroke & SW direction shadow ("Monkey2", "Indy4")
+		i = 0;
+		break;
+	default: // Stroke
+		i = 5;
+	}
+
+	const byte *origSrc = src;
+	byte *origDst = dst;
+
+	for (; i < 14; i++) {
+		src = origSrc;
+		dst = origDst;
+
+		for (y = 0; y < height && y + drawTop + offsetY[i] < dest.h; y++) {
+			for (x = 0; x < width && x + offsetY[i] < dest.w; x++) {
+				if ((x % 8) == 0)
+					bits = *src++;
+				if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
+					if (_enableShadow) {
+						*(dst + 1) = _shadowColor;
+						*(dst + dest.pitch) = _shadowColor;
+						*(dst + dest.pitch + 1) = _shadowColor;
+					}
+					*(dst + (dest.pitch * offsetY[i]) + offsetX[i]) = cTable[i];
+				}
+				dst++;
+			}
+
+			dst += dest.pitch - width;
+		}
 	}
 }
 
