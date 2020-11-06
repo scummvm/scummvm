@@ -231,8 +231,7 @@ void Movements::update() {
 
 void Movements::processManualAction(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	// take this out when we want to give manual movements to other characters than Hero
-	if (actor == _engine->_scene->sceneHero) {
+	if (IS_HERO(actorIdx)) {
 		heroAction = false;
 
 		// If press W for action
@@ -254,7 +253,7 @@ void Movements::processManualAction(int actorIdx) {
 					heroMoved = true;
 					actor->angle = getRealAngle(&actor->move);
 					// TODO: previousLoopActionKey must be handled properly
-					if (!previousLoopActionKey || !actor->anim) {
+					if (!previousLoopActionKey || actor->anim == kAnimNone) {
 						const int32 aggresiveMode = _engine->getRandomNumber(3);
 
 						switch (aggresiveMode) {
@@ -291,7 +290,7 @@ void Movements::processManualAction(int actorIdx) {
 	}
 
 	if (_engine->_input->isActionActive(TwinEActionType::ThrowMagicBall) && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
-		if (_engine->_gameState->usingSabre == 0) { // Use Magic Ball
+		if (!_engine->_gameState->usingSabre) { // Use Magic Ball
 			if (_engine->_gameState->gameFlags[InventoryItems::kiMagicBall]) {
 				if (_engine->_gameState->magicBallIdx == -1) {
 					_engine->_animations->initAnim(kThrowBall, 1, 0, actorIdx);

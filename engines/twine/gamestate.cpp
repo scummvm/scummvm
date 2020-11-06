@@ -103,7 +103,7 @@ void GameState::initHeroVars() {
 	inventoryNumKeys = 0;
 	inventoryMagicPoints = 0;
 
-	usingSabre = 0;
+	usingSabre = false;
 
 	_engine->_scene->sceneHero->body = 0;
 	_engine->_scene->sceneHero->life = 50;
@@ -139,7 +139,7 @@ void GameState::initEngineVars() {
 	_engine->_actor->cropBottomScreen = 0;
 
 	magicLevelIdx = 0;
-	usingSabre = 0;
+	usingSabre = false;
 
 	gameChapter = 0;
 

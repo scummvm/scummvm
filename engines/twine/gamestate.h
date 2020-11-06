@@ -139,7 +139,7 @@ public:
 	int16 inventoryNumGas = 0;
 
 	/** Its using FunFrock Sabre */
-	int16 usingSabre = 0;
+	bool usingSabre = false;
 
 	/** Inventory used flags */
 	uint8 inventoryFlags[NUM_INVENTORY_ITEMS];

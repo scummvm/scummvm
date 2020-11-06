@@ -498,10 +498,10 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				warning("Use inventory [kiHolomap] not implemented!\n");
 				break;
 			case kiMagicBall:
-				if (_gameState->usingSabre == 1) {
+				if (_gameState->usingSabre) {
 					_actor->initModelActor(0, 0);
 				}
-				_gameState->usingSabre = 0;
+				_gameState->usingSabre = false;
 				break;
 			case kiUseSabre:
 				if (_scene->sceneHero->body != InventoryItems::kiUseSabre) {
@@ -511,7 +511,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					_actor->initModelActor(InventoryItems::kiUseSabre, 0);
 					_animations->initAnim(kSabreUnknown, 1, 0, 0);
 
-					_gameState->usingSabre = 1;
+					_gameState->usingSabre = true;
 				}
 				break;
 			case kiBookOfBu: {
