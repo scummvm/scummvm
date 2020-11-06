@@ -48,7 +48,7 @@ void TextLayout::layout(AGDSEngine &engine, const Common::String &process, const
 	Common::Point basePos;
 	size_t begin = 0;
 	while(begin < text.size()) {
-		while(begin < text.size() && text[begin]== '\r')
+		while(begin < text.size() && (text[begin]== '\r' || text[begin]== ' '))
 			++begin;
 		size_t end = text.find('\n', begin);
 		if (end == text.npos)
