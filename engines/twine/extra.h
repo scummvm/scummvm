@@ -76,10 +76,12 @@ public:
 
 	int32 addExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 info0, int32 targetActor, int32 maxSpeed, int32 strengthOfHit);
 
-	/** Add extra explosion
-	@param x Explostion X coordinate
-	@param y Explostion Y coordinate
-	@param z Explostion Z coordinate */
+	/**
+	 * Add extra explosion
+	 * @param x Explostion X coordinate
+	 * @param y Explostion Y coordinate
+	 * @param z Explostion Z coordinate
+	 */
 	int32 addExtraExplode(int32 x, int32 y, int32 z);
 
 	/** Reset all used extras */
