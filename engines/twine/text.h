@@ -217,7 +217,7 @@ public:
 	int32 nextDialTextEntry = 0; // ordered entry
 	Common::String currentVoxBankFile;
 
-	int32 showDialogueBubble = 1;
+	bool showDialogueBubble = true;
 
 	/**
 	 * Initialize dialogue

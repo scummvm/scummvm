@@ -1292,13 +1292,13 @@ static int32 lEXPLODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 /*0x59*/
 static int32 lBUBBLE_ON(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_text->showDialogueBubble = 1;
+	engine->_text->showDialogueBubble = true;
 	return 0;
 }
 
 /*0x5A*/
 static int32 lBUBBLE_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
-	engine->_text->showDialogueBubble = 1;
+	engine->_text->showDialogueBubble = true; // TODO: this looks wrong - why true and not false?
 	return 0;
 }
 
