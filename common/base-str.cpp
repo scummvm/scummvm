@@ -316,7 +316,7 @@ TEMPLATE bool BASESTRING::operator==(const BaseString &x) const {
 }
 
 TEMPLATE bool BASESTRING::operator==(const value_type *x) const {
-	return equals(BaseString(x));
+	return equals(x);
 }
 
 TEMPLATE bool BASESTRING::operator!=(const BaseString &x) const {
@@ -324,7 +324,7 @@ TEMPLATE bool BASESTRING::operator!=(const BaseString &x) const {
 }
 
 TEMPLATE bool BASESTRING::operator!=(const value_type *x) const {
-	return !equals(BaseString(x));
+	return !equals(x);
 }
 
 TEMPLATE int BASESTRING::compareTo(const BaseString &x) const {
