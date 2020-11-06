@@ -19,9 +19,9 @@ Use the keymaps tab to assign actions to keyboard keys or shortcuts, or mouse or
 
 ,,,,,,,,,,,,,,,,,
 
-Click on the red box next to the desired action to add an additional key or button. Click on the dropdown arrow for further options. 
+Click on the red box next to the desired action to add an additional key or button. Click on the dropdown expander for further options. 
 
-If all the mapped keys are not visible, hover over the red box to see all the mapped keys. 
+If all the mapped keys are not visible, hold the pointer over the red box to see all the mapped keys. 
 
 Reset
 	Resets all keymaps to default.

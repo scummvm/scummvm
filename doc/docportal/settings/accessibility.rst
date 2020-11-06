@@ -8,7 +8,7 @@ Overview
 The Accessibility tab
 ----------------------
 
-From the Launcher, go to **Options**, click the red **>** button until the Accessibility tab is visible, then go to **Accessibility**.
+From the Launcher, go to **Options**, click the red **>** until the Accessibility tab is visible, then go to **Accessibility**.
 
 Use this tab to change accessibility settings. 
 
@@ -22,7 +22,7 @@ Use this tab to change accessibility settings.
 .. _ttsenabled:
 
 Use Text to Speech
-	If ticked, enables text to speech. As the cursor hovers over any text field in the Launcher it is converted to speech. Use the dropdown menu to choose from a variety of voices. 
+	Enables text to speech. As the pointer is held over any text field in the Launcher it is converted to speech. Use the dropdown list to choose from a variety of voices. 
 
 	*tts_enabled* 
 
