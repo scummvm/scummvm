@@ -119,7 +119,8 @@ void Resources::initResources() {
 	// Menu and in-game palette
 	initPalettes();
 
-	if (HQR::getAllocEntry(&fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT) == 0) {
+	fontBufSize = HQR::getAllocEntry(&fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT);
+	if (fontBufSize == 0) {
 		error("Failed to load font");
 	}
 

@@ -146,6 +146,7 @@ private:
 	/** Dialogue text pointer */
 	char *dialTextPtr = nullptr; // bufText
 	/** Dialogue entry order pointer */
+	int32 dialOrderSize = 0;
 	char *dialOrderPtr = nullptr; // bufOrder
 	/** Number of dialogues text entries */
 	int16 numDialTextEntries = 0;

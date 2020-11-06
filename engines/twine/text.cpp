@@ -21,6 +21,7 @@
  */
 
 #include "twine/text.h"
+#include "common/memstream.h"
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/system.h"
@@ -72,23 +73,19 @@ void Text::initVoxBank(int32 bankIdx) {
 }
 
 bool Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
-	int32 currIdx = 0;
-
-	const int16 *localOrderBuf = (const int16 *)dialOrderPtr;
-
+	currDialTextEntry = 0;
 	voxHiddenIndex = 0;
 	hasHiddenVox = false;
 
+	Common::MemoryReadStream stream((const byte*)dialOrderPtr, dialOrderSize);
 	// choose right text from order index
 	for (int32 i = 0; i < numDialTextEntries; i++) {
-		int32 orderIdx = *(localOrderBuf++);
+		int32 orderIdx = stream.readSint16LE();
 		if (orderIdx == index) {
-			currIdx = i;
+			currDialTextEntry = i;
 			break;
 		}
 	}
-
-	currDialTextEntry = currIdx;
 
 	_engine->_sound->playVoxSample(currDialTextEntry);
 
@@ -137,13 +134,13 @@ void Text::initTextBank(int32 bankIdx) {
 	// the text banks indices are split into index and dialogs - each entry thus consists of two entries in the hqr
 	// every 28 entries starts a new language
 	const int32 languageIndex = _engine->cfgfile.LanguageId * size + (int)bankIdx * 2;
-	const int32 hqrSize = HQR::getAllocEntry((uint8 **)&dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex + INDEXOFFSET);
-	if (hqrSize == 0) {
+	dialOrderSize = HQR::getAllocEntry((uint8 **)&dialOrderPtr, Resources::HQR_TEXT_FILE, languageIndex + INDEXOFFSET);
+	if (dialOrderSize == 0) {
 		warning("Failed to initialize text bank %i from file %s", languageIndex, Resources::HQR_TEXT_FILE);
 		return;
 	}
 
-	numDialTextEntries = hqrSize / 2;
+	numDialTextEntries = dialOrderSize / 2;
 
 	if (HQR::getAllocEntry((uint8 **)&dialTextPtr, Resources::HQR_TEXT_FILE, languageIndex + DIALOGSOFFSET) == 0) {
 		warning("Failed to initialize additional text bank %i from file %s", languageIndex + 1, Resources::HQR_TEXT_FILE);
@@ -155,10 +152,12 @@ void Text::initTextBank(int32 bankIdx) {
 void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 	const uint8 sizeX = getCharWidth(character);
 	uint8 sizeY = getCharHeight(character);
-	uint8 *data = _engine->_resources->fontPtr + *((const int16 *)(_engine->_resources->fontPtr + character * 4));
-	data += 2;
-	x += *(data++);
-	y += *(data++);
+	Common::MemoryReadStream stream(_engine->_resources->fontPtr, _engine->_resources->fontBufSize);
+	stream.seek(character * 4);
+	stream.seek(stream.readSint16LE());
+	stream.skip(2);
+	x += stream.readByte();
+	y += stream.readByte();
 
 	const uint8 usedColor = dialTextColor;
 
@@ -170,9 +169,9 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 	const int32 toNextLine = SCREEN_WIDTH - sizeX;
 
 	do {
-		uint8 index = *(data++);
+		uint8 index = stream.readByte();
 		do {
-			const uint8 jump = *(data++);
+			const uint8 jump = stream.readByte();
 			screen2 += jump;
 			tempX += jump;
 			if (--index == 0) {
@@ -185,7 +184,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 				}
 				break;
 			}
-			uint8 number = *(data++);
+			uint8 number = stream.readByte();
 			for (uint8 i = 0; i < number; i++) {
 				if (tempX >= SCREEN_TEXTLIMIT_LEFT && tempX < SCREEN_TEXTLIMIT_RIGHT && tempY >= SCREEN_TEXTLIMIT_TOP && tempY < SCREEN_TEXTLIMIT_BOTTOM) {
 					*((uint8 *)_engine->frontVideoBuffer.getBasePtr(tempX, tempY)) = usedColor;
@@ -493,11 +492,17 @@ void Text::printText10Sub2() {
 }
 
 int32 Text::getCharWidth(uint8 chr) const {
-	return *(_engine->_resources->fontPtr + *((const int16 *)(_engine->_resources->fontPtr + chr * 4)));
+	Common::MemoryReadStream stream(_engine->_resources->fontPtr, _engine->_resources->fontBufSize);
+	stream.seek(chr * 4);
+	stream.seek(stream.readSint16LE());
+	return stream.readByte();
 }
 
 int32 Text::getCharHeight(uint8 chr) const {
-	return *(_engine->_resources->fontPtr + 1 + *((const int16 *)(_engine->_resources->fontPtr + chr * 4)));
+	Common::MemoryReadStream stream(_engine->_resources->fontPtr, _engine->_resources->fontBufSize);
+	stream.seek(chr * 4);
+	stream.seek(stream.readSint16LE() + 1);
+	return stream.readByte();
 }
 
 // TODO: refactor this code

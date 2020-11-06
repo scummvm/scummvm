@@ -140,6 +140,7 @@ public:
 	uint32 samplesSizeTable[NUM_SAMPLES]{0};
 
 	/** Font buffer pointer */
+	int32 fontBufSize = 0;
 	uint8 *fontPtr = nullptr;
 
 	uint32 spriteShadowSize = 0;
