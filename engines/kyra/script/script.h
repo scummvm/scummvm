@@ -38,8 +38,9 @@ struct EMCData {
 
 	byte *text;
 	uint16 *data;
+	uint32 ordrSize;
 	uint16 *ordr;
-	uint16 dataSize;
+	uint32 dataSize;
 
 	const Common::Array<const Opcode *> *sysFuncs;
 };
