@@ -1911,7 +1911,7 @@ void ScummEngine::loadLanguageBundle() {
 	}
 
 	ScummFile file;
-	openFile(file, "language.bnd");
+	openFile(file, "korean.trs");
 
 	if (!file.isOpen()) {
 		_existLanguageFile = false;
