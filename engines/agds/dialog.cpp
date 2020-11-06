@@ -94,10 +94,24 @@ bool Dialog::tick() {
 
 	Common::String &line = _dialogLine;
 	line.clear();
-	while (_dialogScriptPos < n && _dialogScript[_dialogScriptPos] != '\n' && _dialogScript[_dialogScriptPos] != '\r') {
-		line += _dialogScript[_dialogScriptPos++];
+
+	bool command = _dialogScript[_dialogScriptPos] == '@';
+	while(_dialogScriptPos < n) {
+		if (!command && _dialogScript[_dialogScriptPos] == '@')
+			break;
+
+		while (_dialogScriptPos < n && _dialogScript[_dialogScriptPos] != '\n' && _dialogScript[_dialogScriptPos] != '\r') {
+			line += _dialogScript[_dialogScriptPos++];
+		}
+		if (!command)
+			line += '\n';
+
+		while(_dialogScriptPos < n && (_dialogScript[_dialogScriptPos] == '\n' || _dialogScript[_dialogScriptPos] == '\r'))
+			++_dialogScriptPos;
+
+		if (command)
+			break;
 	}
-	++_dialogScriptPos;
 
 	if (line.empty())
 		return true;
