@@ -31,14 +31,14 @@ Use the audio tab to change the sound output for games.
 .. _device:
 
 **Preferred device (global settings)** or **Music device (game-specific settings)**
-	Specifies the device ScummVM uses to output audio. When set to <default>, ScummVM will automatically choose the most appropriate option for the played game. If set to an MT-32 or a MIDI device, or if ScummVM chooses one of these automatically, the settings on the MT-32 or MIDI tabs also apply.
+	Specifies the device ScummVM uses to output audio. When set to **<default>**, ScummVM automatically chooses the most appropriate option for the played game. If set to an MT-32 or a MIDI device, or if ScummVM chooses one of these automatically, the settings on the MT-32 or MIDI tabs also apply.
 
 	*music_driver* 
 
 .. _opl:
 
 AdLib Emulator 
-	Chooses which emulator is used by ScummVM when the AdLib emulator is chosen as the preferred device.
+	Chooses which emulator is used by ScummVM when the AdLib emulator is chosen as the **Preferred device**.
 
 	*opl_driver* 
 
@@ -78,14 +78,14 @@ Use the volume tab to set the relative volumes for various sounds.
 .. _music:
 
 **Music volume**
-	Adjusts the volume of the music played back in the game. 
+	Adjusts the volume of the music in the game. 
 
 	*music_volume* 
 
 .. _sfx:
 
 **SFX volume**
-	Adjusts the volume of the sound effects within the game.
+	Adjusts the volume of the sound effects in the game.
 
 	*sfx_volume* 
 
