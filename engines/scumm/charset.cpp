@@ -95,11 +95,12 @@ void ScummEngine::loadCJKFont() {
 					}
 				}
 			}
-			if(_numLoadedFont == 0) {
+			if (_numLoadedFont == 0) {
 				warning("Cannot load any font for multi font");
 				_useMultiFont = 0;
-			} else
+			} else {
 				debug("%d fonts are loaded", _numLoadedFont);
+			}
 		}
 
 		if (!_useMultiFont) {
@@ -350,7 +351,7 @@ void CharsetRendererCommon::setCurID(int32 id) {
 	_fontHeight = _fontPtr[1];
 	_numChars = READ_LE_UINT16(_fontPtr + 2);
 
-	if(_vm->_useMultiFont) {
+	if (_vm->_useMultiFont) {
 		if (id == 6) {	// HACK: Fix inventory font error
 			_vm->_2byteFontPtr = _vm->_2byteMultiFontPtr[0];
 			_vm->_2byteWidth = _vm->_2byteMultiWidth[0];
@@ -400,7 +401,7 @@ void CharsetRendererV3::setCurID(int32 id) {
 	_widthTable = _fontPtr;
 	_fontPtr += _numChars;
 
-	if(_vm->_useMultiFont) {
+	if (_vm->_useMultiFont) {
 		if (id == 6) {	// HACK: Fix inventory font error
 			_vm->_2byteFontPtr = _vm->_2byteMultiFontPtr[0];
 			_vm->_2byteWidth = _vm->_2byteMultiWidth[0];
