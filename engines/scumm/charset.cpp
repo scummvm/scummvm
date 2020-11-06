@@ -73,7 +73,7 @@ void ScummEngine::loadCJKFont() {
 			_2byteHeight = 0;
 			for (int i = 0; i < 20; i++) {
 				char fontFile[256];
-				sprintf(fontFile, "korean%02d.fnt", i);
+				snprintf(fontFile, sizeof(fontFile), "korean%02d.fnt", i);
 				_2byteMultiFontPtr[i] = NULL;
 				if (fp.open(fontFile)) {
 					_numLoadedFont++;
