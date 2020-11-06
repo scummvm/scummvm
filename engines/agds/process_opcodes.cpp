@@ -511,7 +511,7 @@ void Process::changeScreenPatch() {
 		return;
 	} else {
 		ObjectPtr object = screen->find(objectName);
-		int value = object && object->recovering();
+		int value = object && object->inScene();
 		debug("changeScreenPatch: current screen object recovering: %d", value);
 		push(value);
 	}
