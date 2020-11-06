@@ -144,7 +144,7 @@ void GameState::initEngineVars() {
 	gameChapter = 0;
 
 	_engine->_scene->sceneTextBank = TextBankId::Options_and_menus;
-	_engine->_scene->currentlyFollowedActor = 0;
+	_engine->_scene->currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
 	_engine->_actor->heroBehaviour = kNormal;
 	_engine->_actor->previousHeroAngle = 0;
 	_engine->_actor->previousHeroBehaviour = kNormal;

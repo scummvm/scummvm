@@ -316,9 +316,9 @@ public:
 	int16 mecaPinguinIdx = 0; // currentPingouin
 
 	/** Current followed actor in scene */
-	int16 currentlyFollowedActor = 0;
-	/** Current actor in zone */
-	int16 currentActorInZone = 0; // currentActorInZoneProcess
+	int16 currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
+	/** Current actor in zone - climbing a ladder */
+	bool currentActorInZone = false;
 	/** Current actor manipulated in scripts */
 	int16 currentScriptValue = 0; // manipActorResult
 

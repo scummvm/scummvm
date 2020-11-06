@@ -441,7 +441,7 @@ void Scene::processActorZones(int32 actorIdx) {
 	int32 tmpCellingGrid = 0;
 
 	if (IS_HERO(actorIdx)) {
-		currentActorInZone = actorIdx;
+		currentActorInZone = false;
 	}
 
 	for (int32 z = 0; z < sceneNumZones; z++) {
@@ -514,7 +514,7 @@ void Scene::processActorZones(int32 actorIdx) {
 
 					if (_engine->_renderer->destX >= 0 && _engine->_renderer->destZ >= 0 && _engine->_renderer->destX <= 0x7E00 && _engine->_renderer->destZ <= 0x7E00) {
 						if (_engine->_grid->getBrickShape(_engine->_renderer->destX, actor->y + 0x100, _engine->_renderer->destZ)) {
-							currentActorInZone = 1;
+							currentActorInZone = true;
 							if (actor->y >= ABS(zone->bottomLeft.y + zone->topRight.y) / 2) {
 								_engine->_animations->initAnim(kTopLadder, 2, 0, actorIdx); // reached end of ladder
 							} else {
