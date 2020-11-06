@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/memstream.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
 #include "twine/collision.h"
@@ -471,14 +472,16 @@ void Collision::stopFalling() { // ReceptionObj()
 }
 
 int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 actorIdx) {
-	const int16 *spriteBounding = (const int16 *)(_engine->_resources->spriteBoundingBoxPtr + extra->info0 * 16 + 4);
+	Common::MemoryReadStream stream(_engine->_resources->spriteBoundingBoxPtr, _engine->_resources->spriteBoundingBoxSize);
+	stream.seek(extra->info0 * 16);
+	stream.skip(4);
 
-	const int32 xLeft = *(spriteBounding++) + extra->x;
-	const int32 xRight = *(spriteBounding++) + extra->x;
-	const int32 yLeft = *(spriteBounding++) + extra->y;
-	const int32 yRight = *(spriteBounding++) + extra->y;
-	const int32 zLeft = *(spriteBounding++) + extra->z;
-	const int32 zRight = *(spriteBounding++) + extra->z;
+	const int32 xLeft = stream.readSint16LE() + extra->x;
+	const int32 xRight = stream.readSint16LE() + extra->x;
+	const int32 yLeft = stream.readSint16LE() + extra->y;
+	const int32 yRight = stream.readSint16LE() + extra->y;
+	const int32 zLeft = stream.readSint16LE() + extra->z;
+	const int32 zRight = stream.readSint16LE() + extra->z;
 
 	for (int32 a = 0; a < _engine->_scene->sceneNumActors; a++) {
 		const ActorStruct *actorTest = _engine->_scene->getActor(a);
@@ -529,27 +532,28 @@ int32 Collision::checkExtraCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 
 }
 
 int32 Collision::checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extraIdx) {
-	const int16 *spriteBounding = (const int16 *)(_engine->_resources->spriteBoundingBoxPtr + extra->info0 * 16 + 4);
+	Common::MemoryReadStream stream(_engine->_resources->spriteBoundingBoxPtr, _engine->_resources->spriteBoundingBoxSize);
+	stream.seek(extra->info0 * 16);
+	stream.skip(4);
 
-	const int32 xLeft = *(spriteBounding++) + extra->x;
-	const int32 xRight = *(spriteBounding++) + extra->x;
-	const int32 yLeft = *(spriteBounding++) + extra->y;
-	const int32 yRight = *(spriteBounding++) + extra->y;
-	const int32 zLeft = *(spriteBounding++) + extra->z;
-	const int32 zRight = *(spriteBounding++) + extra->z;
+	const int32 xLeft = stream.readSint16LE() + extra->x;
+	const int32 xRight = stream.readSint16LE() + extra->x;
+	const int32 yLeft = stream.readSint16LE() + extra->y;
+	const int32 yRight = stream.readSint16LE() + extra->y;
+	const int32 zLeft = stream.readSint16LE() + extra->z;
+	const int32 zRight = stream.readSint16LE() + extra->z;
 
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		const ExtraListStruct *extraTest = &_engine->_extra->extraList[i];
 		if (i != extraIdx && extraTest->info0 != -1) {
-			//          const int16 * spriteBoundingTest;
-			//	        spriteBoundingTest = (const int16*)(_engine->_resources->spriteBoundingBoxPtr + extraTest->info0 * 16 + 4);
-
-			const int32 xLeftTest = *(spriteBounding++) + extraTest->x;
-			const int32 xRightTest = *(spriteBounding++) + extraTest->x;
-			const int32 yLeftTest = *(spriteBounding++) + extraTest->y;
-			const int32 yRightTest = *(spriteBounding++) + extraTest->y;
-			const int32 zLeftTest = *(spriteBounding++) + extraTest->z;
-			const int32 zRightTest = *(spriteBounding++) + extraTest->z;
+			// const int16 * spriteBoundingTest;
+			// spriteBoundingTest = (const int16*)(_engine->_resources->spriteBoundingBoxPtr + extraTest->info0 * 16 + 4);
+			const int32 xLeftTest = stream.readSint16LE() + extraTest->x;
+			const int32 xRightTest = stream.readSint16LE() + extraTest->x;
+			const int32 yLeftTest = stream.readSint16LE() + extraTest->y;
+			const int32 yRightTest = stream.readSint16LE() + extraTest->y;
+			const int32 zLeftTest = stream.readSint16LE() + extraTest->z;
+			const int32 zRightTest = stream.readSint16LE() + extraTest->z;
 
 			if (xLeft < xLeftTest) {
 				if (xLeft < xRightTest && xRight > xLeftTest && yLeft < yRightTest && yRight > yLeftTest && zLeft < zRightTest && zRight > zLeftTest) {
