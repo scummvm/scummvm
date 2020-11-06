@@ -421,13 +421,14 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 
 void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 	int lastKoreanLineBreak = -1;
-	char tmpStrBuf[512];
 	int origPos = pos;
 	int lastspace = -1;
 	int curw = 1;
 	int chr;
 	int oldID = getCurID();
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
+
+	int strLength = _vm->resStrLen(str);
 
 	while ((chr = str[pos++]) != 0) {
 		if (_vm->_game.heversion >= 72) {
@@ -537,8 +538,8 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 				lastspace = -1;
 				lastKoreanLineBreak = -1;
 			} else {
-				strcpy(tmpStrBuf, (char*)(str + lastKoreanLineBreak));
-				strcpy((char*)(str + lastKoreanLineBreak + 1), tmpStrBuf);
+				byte* breakPtr = str + lastKoreanLineBreak;
+				memmove(breakPtr + 1, breakPtr, strLength - lastKoreanLineBreak + 1);
 				str[lastKoreanLineBreak] = 0xD;
 				curw = 1;
 				pos = lastKoreanLineBreak + 1;
