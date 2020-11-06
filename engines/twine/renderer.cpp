@@ -1664,13 +1664,13 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 	return 0;
 }
 
-void Renderer::copyActorInternAnim(uint8 *bodyPtrSrc, uint8 *bodyPtrDest) {
+void Renderer::copyActorInternAnim(const uint8 *bodyPtrSrc, uint8 *bodyPtrDest) {
 	// check if both characters allow animation
-	if (!(*((int16 *)bodyPtrSrc) & 2)) {
+	if (!(*((const int16 *)bodyPtrSrc) & 2)) {
 		return;
 	}
 
-	if (!(*((int16 *)bodyPtrDest) & 2)) {
+	if (!(*((const int16 *)bodyPtrDest) & 2)) {
 		return;
 	}
 
@@ -1678,16 +1678,16 @@ void Renderer::copyActorInternAnim(uint8 *bodyPtrSrc, uint8 *bodyPtrDest) {
 	bodyPtrSrc += 16;
 	bodyPtrDest += 16;
 
-	*((uint32 *)bodyPtrDest) = *((uint32 *)bodyPtrSrc);
-	*((uint32 *)(bodyPtrDest + 4)) = *((uint32 *)(bodyPtrSrc + 4));
+	*((uint32 *)bodyPtrDest) = *((const uint32 *)bodyPtrSrc);
+	*((uint32 *)(bodyPtrDest + 4)) = *((const uint32 *)(bodyPtrSrc + 4));
 
-	bodyPtrSrc = bodyPtrSrc + *((int16 *)(bodyPtrSrc - 2));
-	bodyPtrSrc = bodyPtrSrc + (*((int16 *)bodyPtrSrc)) * 6 + 2;
-	int16 cx = *((int16 *)bodyPtrSrc);
+	bodyPtrSrc = bodyPtrSrc + *((const int16 *)(bodyPtrSrc - 2));
+	bodyPtrSrc = bodyPtrSrc + (*((const int16 *)bodyPtrSrc)) * 6 + 2;
+	int16 cx = *((const int16 *)bodyPtrSrc);
 
-	bodyPtrDest = bodyPtrDest + *((int16 *)(bodyPtrDest - 2));
-	bodyPtrDest = bodyPtrDest + (*((int16 *)bodyPtrDest)) * 6 + 2;
-	int16 ax = *((int16 *)bodyPtrDest);
+	bodyPtrDest = bodyPtrDest + *((const int16 *)(bodyPtrDest - 2));
+	bodyPtrDest = bodyPtrDest + (*((const int16 *)bodyPtrDest)) * 6 + 2;
+	int16 ax = *((const int16 *)bodyPtrDest);
 
 	if (cx > ax) {
 		cx = ax;
@@ -1697,8 +1697,8 @@ void Renderer::copyActorInternAnim(uint8 *bodyPtrSrc, uint8 *bodyPtrDest) {
 	bodyPtrDest += 10;
 
 	for (int32 i = 0; i < cx; i++) {
-		*((uint32 *)bodyPtrDest) = *((uint32 *)bodyPtrSrc);
-		*((uint32 *)(bodyPtrDest + 4)) = *((uint32 *)(bodyPtrSrc + 4));
+		*((uint32 *)bodyPtrDest) = *((const uint32 *)bodyPtrSrc);
+		*((uint32 *)(bodyPtrDest + 4)) = *((const uint32 *)(bodyPtrSrc + 4));
 
 		bodyPtrDest += 30;
 		bodyPtrSrc += 30;
