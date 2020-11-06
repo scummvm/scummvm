@@ -1038,7 +1038,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 			polyHeader *currentPolyHeader = (polyHeader *)pointer;
 			//ecx = *((int32*) pointer);
 			pointer += 2;
-			polyRenderType = currentPolyHeader->renderType;
+			int16 polyRenderType = currentPolyHeader->renderType;
 
 			// TODO: RECHECK coordinates axis
 			if (polyRenderType >= 9) {
@@ -1317,7 +1317,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 			eax = *((const int *)pointer);
 			pointer += 4;
 
-			polyRenderType = eax & 0xFF;
+			int16 polyRenderType = eax & 0xFF;
 			numOfVertex = (eax & 0xFF00) >> 8;
 			int16 color = (eax & 0xFF0000) >> 16;
 

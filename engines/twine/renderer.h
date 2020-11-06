@@ -215,7 +215,6 @@ public:
 
 	const int16 *shadeAngleTab3 = nullptr; // tab3
 
-	int16 polyRenderType = 0; //FillVertic_AType;
 	int32 numOfVertex = 0;
 	int16 vertexCoordinates[193] {0};
 	int16 *pRenderV1 = nullptr;
