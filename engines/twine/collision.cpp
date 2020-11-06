@@ -449,7 +449,7 @@ void Collision::checkActorCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 d
 }
 
 void Collision::stopFalling() { // ReceptionObj()
-	if (_engine->_animations->currentlyProcessedActorIdx == 0) {
+	if (IS_HERO(_engine->_animations->currentlyProcessedActorIdx)) {
 		const int32 fall = _engine->_scene->heroYBeforeFall - _engine->_movements->processActorY;
 
 		if (fall >= 0x1000) {

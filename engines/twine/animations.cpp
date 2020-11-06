@@ -984,7 +984,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		_engine->_collision->processCollisionY = _engine->_movements->processActorY;
 		_engine->_collision->processCollisionZ = _engine->_movements->processActorZ;
 
-		if (!actorIdx && !actor->staticFlags.bComputeLowCollision) {
+		if (IS_HERO(actorIdx) && !actor->staticFlags.bComputeLowCollision) {
 			// check hero collisions with bricks
 			_engine->_collision->checkHeroCollisionWithBricks(actor->boudingBox.x.bottomLeft, actor->boudingBox.y.bottomLeft, actor->boudingBox.z.bottomLeft, 1);
 			_engine->_collision->checkHeroCollisionWithBricks(actor->boudingBox.x.topRight, actor->boudingBox.y.bottomLeft, actor->boudingBox.z.bottomLeft, 2);
@@ -1010,7 +1010,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 					_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, kHitStars);
 					initAnim(kBigHit, 2, 0, currentlyProcessedActorIdx);
 
-					if (currentlyProcessedActorIdx == 0) {
+					if (IS_HERO(currentlyProcessedActorIdx)) {
 						_engine->_movements->heroMoved = true;
 					}
 
@@ -1028,14 +1028,10 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 					_engine->_collision->stopFalling();
 					_engine->_movements->processActorY = (_engine->_collision->collisionY << 8) + 0x100;
 				} else {
-					if (!actorIdx && _engine->_actor->heroBehaviour == kAthletic && actor->anim == brickShape && _engine->cfgfile.WallCollision == 1) { // avoid wall hit damage
+					if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour == kAthletic && actor->anim == brickShape && _engine->cfgfile.WallCollision == 1) { // avoid wall hit damage
 						_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, kHitStars);
 						initAnim(kBigHit, 2, 0, currentlyProcessedActorIdx);
-
-						if (!actorIdx) {
-							_engine->_movements->heroMoved = true;
-						}
-
+						_engine->_movements->heroMoved = true;
 						actor->life--;
 					}
 
@@ -1077,7 +1073,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 					if (!actor->dynamicFlags.bIsRotationByAnim) {
 						actor->dynamicFlags.bIsFalling = 1;
 
-						if (!actorIdx && _engine->_scene->heroYBeforeFall == 0) {
+						if (IS_HERO(actorIdx) && _engine->_scene->heroYBeforeFall == 0) {
 							_engine->_scene->heroYBeforeFall = _engine->_movements->processActorY;
 						}
 
