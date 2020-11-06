@@ -1015,8 +1015,6 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
 int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 	int16 counter;
 	int16 type;
-	int16 color;
-	int16 bestZ;
 
 	int32 bestDepth;
 	int32 currentDepth;
@@ -1088,7 +1086,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 				destinationHeader->renderType = currentPolyHeader->renderType - 7;
 				destinationHeader->numOfVertex = currentPolyHeader->numOfVertex;
 
-				color = currentPolyHeader->colorIndex;
+				int16 color = currentPolyHeader->colorIndex;
 
 				int16 shadeEntry = *((int16 *)(pointer + 2));
 
@@ -1268,7 +1266,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 	renderTabSortedPtr = renderTabSorted;
 	for (int32 i = 0; i < numOfPrimitives; i++) { // then we sort the polygones | WARNING: very slow | TODO: improve this
 		renderTabEntryPtr2 = renderTab;
-		bestZ = -0x7FFF;
+		int16 bestZ = -0x7FFF;
 		for (int32 j = 0; j < numOfPrimitives; j++) {
 			if (renderTabEntryPtr2->depth > bestZ) {
 				bestZ = renderTabEntryPtr2->depth;
@@ -1305,7 +1303,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 		switch (type) {
 		case RENDERTYPE_DRAWLINE: { // draw a line
 			lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)pointer;
-			color = (*((int32 *)&lineCoordinatesPtr->data) & 0xFF00) >> 8;
+			int16 color = (*((int32 *)&lineCoordinatesPtr->data) & 0xFF00) >> 8;
 
 			const int32 x1 = *((const int16 *)&lineCoordinatesPtr->x1);
 			const int32 y1 = *((const int16 *)&lineCoordinatesPtr->y1);
@@ -1321,7 +1319,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 
 			polyRenderType = eax & 0xFF;
 			numOfVertex = (eax & 0xFF00) >> 8;
-			color = (eax & 0xFF0000) >> 16;
+			int16 color = (eax & 0xFF0000) >> 16;
 
 			uint8 *destPtr = (uint8 *)vertexCoordinates;
 
