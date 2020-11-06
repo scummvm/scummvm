@@ -171,17 +171,15 @@ ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::Strin
 }
 
 void AGDSEngine::runObject(const ObjectPtr &object) {
-	if (_currentScreen)
+	if (_currentScreen) {
 		if (_currentScreen->add(object)) {
 			runProcess(object);
-		} else {
+		} else if (!object->inScene()) {
 			debug("marking object %s as recovering...", object->getName().c_str());
-			object->recovering(true);
+			object->inScene(true);
 			runProcess(object);
-			object->recovering(false);
-			debug("unmarking object %s as recovering...", object->getName().c_str());
 		}
-	else
+	} else
 		warning("object %s has been loaded, but was not added to any screen", object->getName().c_str());
 }
 

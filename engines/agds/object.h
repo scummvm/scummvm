@@ -76,7 +76,6 @@ private:
 	uint							_userUseHandler;
 	int								_alpha;
 	bool							_inScene;
-	bool							_recovering;
 
 public:
 	Object(const Common::String &name, Common::SeekableReadStream * stream);
@@ -201,12 +200,6 @@ public:
 
 	void inScene(bool value)
 	{ _inScene = value; }
-
-	bool recovering() const
-	{ return _recovering; }
-
-	void recovering(bool value)
-	{ _recovering = value; }
 };
 typedef Common::SharedPtr<Object> ObjectPtr;
 
