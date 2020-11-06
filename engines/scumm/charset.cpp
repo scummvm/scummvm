@@ -746,7 +746,7 @@ void CharsetRendererPC::drawBits1Kor(Graphics::Surface &dest, int x1, int y1, co
 
 	// HACK: Since Korean fonts don't have shadow/stroke information,
 	//	   we use NUT-Renderer-like shadow drawing method.
-	bool useOldShadow = false;
+	//bool useOldShadow = false;
 
 	int offsetX[14] = {-2, -2, -2, -1, 0, -1, 0, 1, -1, 1, -1, 0, 1, 0};
 	int offsetY[14] = {0, 1, 2, 2, 2, -1, -1, -1, 0, 0, 1, 1, 1, 0};
