@@ -39,7 +39,8 @@ static const GameStrings OO_STRINGS = {
 	EXTRA_STRING_TABLE(154)
 };
 
-OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE) {
+OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE),
+		_wearingGoggles(false), _lightOn(false) {
 	_gameDataFile = "g0";
 
 	// Extra strings are (annoyingly) stored in the game binary
@@ -99,17 +100,15 @@ int OOToposGame::roomIsSpecial(unsigned room_index,
 }
 
 void OOToposGame::beforeTurn() {
-	// FIXME: Probably doesn't work correctly with restored games
-	static bool flashlight_was_on = false, googles_were_worn = false;
 	Room *room = &_rooms[_currentRoom];
 
 	/*
 	 * Check if the room needs to be redrawn because the flashlight
 	 * was switch off or on.
 	 */
-	if (_flags[OO_FLAG_FLASHLIGHT_ON] != flashlight_was_on &&
+	if (_flags[OO_FLAG_FLASHLIGHT_ON] != _lightOn &&
 	        (room->_flags & OO_ROOM_FLAG_DARK)) {
-		flashlight_was_on = _flags[OO_FLAG_FLASHLIGHT_ON];
+		_lightOn = _flags[OO_FLAG_FLASHLIGHT_ON];
 		_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 	}
 
@@ -117,11 +116,20 @@ void OOToposGame::beforeTurn() {
 	 * Check if the room needs to be redrawn because the goggles were
 	 * put on or removed.
 	 */
-	if (_flags[OO_FLAG_WEARING_GOGGLES] != googles_were_worn &&
+	if (_flags[OO_FLAG_WEARING_GOGGLES] != _wearingGoggles &&
 	        _currentRoom == OO_BRIGHT_ROOM) {
-		googles_were_worn = _flags[OO_FLAG_WEARING_GOGGLES];
+		_wearingGoggles = _flags[OO_FLAG_WEARING_GOGGLES];
 		_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 	}
+}
+
+bool OOToposGame::afterTurn() {
+	if (_flags[55])
+		_currentRoom = 55;
+	else if (_flags[56])
+		_currentRoom = 54;
+
+	return true;
 }
 
 void OOToposGame::handleSpecialOpcode(uint8 operand) {

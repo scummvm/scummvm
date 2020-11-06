@@ -33,6 +33,7 @@ enum RestartMode { RESTART_IMMEDIATE, RESTART_WITH_MSG, RESTART_WITHOUT_MSG };
 class OOToposGame : public ComprehendGameV2 {
 private:
 	RestartMode _restartMode;
+	bool _wearingGoggles, _lightOn;
 
 	void randomizeGuardLocation();
 	void computerResponse();
@@ -42,6 +43,7 @@ public:
 
 	void beforeGame() override;
 	void beforeTurn() override;
+	bool afterTurn() override;
 	int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) override;
 	void handleSpecialOpcode(uint8 operand) override;
 	bool handle_restart() override;
