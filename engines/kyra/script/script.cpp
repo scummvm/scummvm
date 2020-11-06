@@ -70,6 +70,7 @@ bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 
 	case MKTAG('O','R','D','R'):
 		_scriptData->ordr = new uint16[chunk._size >> 1];
+		_scriptData->ordrSize = chunk._size;
 		assert(_scriptData->ordr);
 		if (chunk._stream->read(_scriptData->ordr, chunk._size) != chunk._size)
 			error("Couldn't read ORDR chunk from file '%s'", _filename);
@@ -80,6 +81,7 @@ bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 
 	case MKTAG('D','A','T','A'):
 		_scriptData->data = new uint16[chunk._size >> 1];
+		_scriptData->dataSize = chunk._size;
 		assert(_scriptData->data);
 		if (chunk._stream->read(_scriptData->data, chunk._size) != chunk._size)
 			error("Couldn't read DATA chunk from file '%s'", _filename);
@@ -156,6 +158,9 @@ bool EMCInterpreter::start(EMCState *script, int function) {
 	if (!script->dataPtr)
 		return false;
 
+	if (function >= (int) script->dataPtr->ordrSize / 2 || function < 0)
+		return false;
+
 	uint16 functionOffset = script->dataPtr->ordr[function];
 	if (functionOffset == 0xFFFF)
 		return false;
@@ -166,6 +171,8 @@ bool EMCInterpreter::start(EMCState *script, int function) {
 		else
 			script->ip = &script->dataPtr->data[functionOffset];
 	} else {
+		if (functionOffset+1 >= (int) script->dataPtr->dataSize / 2)
+			return false;
 		script->ip = &script->dataPtr->data[functionOffset+1];
 	}
 
