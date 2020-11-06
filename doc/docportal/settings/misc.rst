@@ -8,7 +8,7 @@ Overview
 The Miscellaneous tab
 --------------------------
 
-From the Launcher, go to **Options**, click the red **>** button, and then go to **Misc**.
+From the Launcher, go to **Options**, click the red **>**, and then go to **Misc**.
 
 The Misc tab contains options that don’t belong on any of the other tabs.
 
@@ -34,17 +34,17 @@ GUI Renderer
 .. _autosave:
 
 Autosave
-	Adjusts the time period that ScummVM waits between autosaves. The default setting is 5 minutes. This is not available for all games. 
+	Adjusts the time period between autosaves. The default setting is 5 minutes. This is not available for all games. 
 
 	*autosave_period* 
 
 GUI Language
-	Choose the language of the ScummVM Launcher
+	Chooses the language of the ScummVM Launcher.
 
 	*gui_language* 
 
 Switch the ScummVM GUI language to the game language
-	If ticked, the Launcher language will be the same as the game language. 
+	If ticked, the Launcher language is the same as the game language. 
 
 	*gui_use_game_language* 
 

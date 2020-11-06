@@ -5,12 +5,12 @@ LAN
 Overview
 ============
 
-ScummVM can run local network web server which allows browser-based file management, including uploading and downloading game files. 
+ScummVM can run a local network web server which allows browser-based file management, including uploading and downloading game files. 
 
 The LAN tab
 ------------
 
-From the Launcher, go to **Options**, click the red **>** button until the LAN tab is visible, then go to **LAN**.
+From the Launcher, go to **Options**, click the red **>** until the LAN tab is visible, then go to **LAN**.
 
 Use the LAN tab to control the web server. 
 
@@ -38,7 +38,7 @@ Server's port
 .. _rootpath:
 
 /root/ Path	
-	Allows you to specify the root path. Any sub-directories will be accessible. 
+	Specifies the root path of the server. Any sub-directories will be accessible. 
 
 	*rootpath* 
 
