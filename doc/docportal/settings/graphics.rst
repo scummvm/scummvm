@@ -49,7 +49,7 @@ Aspect ratio correction
 .. _fullscreen:
 
 Fullscreen mode
-	Switches between playing games in a window, or playing them in fullscreen mode. Switch between the two by using :kbd:`Alt + F5` while in a game.
+	Switches between playing games in a window, or playing them in fullscreen mode. Switch between the two by using :kbd:`Alt+F5` while in a game.
 
 	*fullscreen* 
 

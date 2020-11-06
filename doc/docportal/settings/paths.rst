@@ -19,21 +19,21 @@ Use the paths tab to tell ScummVM where to look for files.
 .. _savepath:
 
 Save Path
-	The folder in which ScummVM will store saved games. If this is not set, saved games will generally be stored in the current directory, although there are exceptions to this. For more information, see the :doc:`../using_scummvm/save_load_games` page.
+	The path to the folder in which ScummVM stores saved games. If this is not set, saved games will generally be stored in the current directory, although there are exceptions to this. For more information, see the :doc:`../using_scummvm/save_load_games` page.
 	
 	*savepath* 
 
 .. _themepath:
 
 Theme Path
-	The folder that additional themes for the ScummVM Launcher are stored in.
+	The path to the folder in which ScummVM stores additional themes. 
 
 	*themepath* 
 
 .. _extra:
 
 Extra Path
-	This is the folder that ScummVM will look in for various extra files. These could include one or more of:
+	The path to the folder in which ScummVM will look for various extra files. These may include:
 
 	* Additional datafiles required for certain games
 	* Soundfonts 
