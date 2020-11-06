@@ -462,11 +462,11 @@ void Text::printText10Sub() {
 	_engine->_renderer->vertexCoordinates[7] = _engine->_renderer->vertexCoordinates[1];
 	_engine->_renderer->vertexCoordinates[8] = _engine->_renderer->vertexCoordinates[5];
 
-	_engine->_renderer->polyRenderType = 0; // POLYGONTYPE_FLAT
 	_engine->_renderer->numOfVertex = 3;
 
-	if (_engine->_renderer->computePolygons()) {
-		_engine->_renderer->renderPolygons(_engine->_renderer->polyRenderType, dialTextStopColor);
+	int32 polyRenderType = 0; // POLYGONTYPE_FLAT
+	if (_engine->_renderer->computePolygons(polyRenderType)) {
+		_engine->_renderer->renderPolygons(polyRenderType, dialTextStopColor);
 	}
 
 	_engine->copyBlockPhys(dialTextBoxRight - 24, dialTextBoxBottom - 24, dialTextBoxRight - 3, dialTextBoxBottom - 3);

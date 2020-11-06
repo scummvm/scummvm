@@ -217,11 +217,10 @@ public:
 
 	int32 numOfVertex = 0;
 	int16 vertexCoordinates[193] {0};
-	int16 *pRenderV1 = nullptr;
 
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 
-	int32 computePolygons();
+	int32 computePolygons(int16 polyRenderType);
 	void renderPolygons(int32 ecx, int32 edi);
 
 	void prepareIsoModel(uint8 *bodyPtr); // loadGfxSub

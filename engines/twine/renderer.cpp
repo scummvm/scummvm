@@ -406,9 +406,7 @@ FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
 }
 
-int32 Renderer::computePolygons() {
-	pRenderV1 = vertexCoordinates;
-
+int32 Renderer::computePolygons(int16 polyRenderType) {
 	vertexData *vertices = (vertexData *)vertexCoordinates;
 
 	vleft = vtop = 32767;
@@ -1019,7 +1017,6 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 	int32 bestDepth;
 	int32 currentDepth;
 	int32 bestPoly = 0;
-	int32 eax;
 	//	int32 ecx;
 
 	pointTab *currentVertex;
@@ -1100,7 +1097,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 				counter = destinationHeader->numOfVertex;
 
 				do {
-					eax = *((int16 *)pointer);
+					int32 eax = *((int16 *)pointer);
 					pointer += 2;
 
 					currentVertex = &flattenPoints[eax / 6];
@@ -1130,7 +1127,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 
 				bestDepth = -32000;
 				renderV19 = edi;
-				eax = 0;
+				int32 eax = 0;
 				counter = currentPolyHeader->numOfVertex;
 
 				do {
@@ -1314,7 +1311,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 			break;
 		}
 		case RENDERTYPE_DRAWPOLYGON: { // draw a polygon
-			eax = *((const int *)pointer);
+			int32 eax = *((const int *)pointer);
 			pointer += 4;
 
 			int16 polyRenderType = eax & 0xFF;
@@ -1329,15 +1326,13 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 				pointer += 2;
 			}
 
-			if (computePolygons() != ERROR_OUT_OF_SCREEN) {
+			if (computePolygons(polyRenderType) != ERROR_OUT_OF_SCREEN) {
 				renderPolygons(polyRenderType, color);
 			}
 
 			break;
 		}
 		case RENDERTYPE_DRAWSPHERE: { // draw a sphere
-			eax = *(const int *)pointer;
-
 			const int32 circleParam1 = *(const uint8 *)pointer;
 			const int32 circleParam4 = *((const int16 *)(pointer + 1));
 			const int32 circleParam5 = *((const int16 *)(pointer + 3));
