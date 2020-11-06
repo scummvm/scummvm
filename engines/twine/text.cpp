@@ -21,6 +21,7 @@
  */
 
 #include "twine/text.h"
+#include "common/endian.h"
 #include "common/memstream.h"
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -702,8 +703,8 @@ bool Text::getText(int32 index) {
 		return false;
 	}
 
-	int32 ptrCurrentEntry = localTextBuf[currIdx];
-	int32 ptrNextEntry = localTextBuf[currIdx + 1];
+	int32 ptrCurrentEntry = READ_LE_INT16(&localTextBuf[currIdx]);
+	int32 ptrNextEntry = READ_LE_INT16(&localTextBuf[currIdx + 1]);
 
 	currDialTextPtr = (dialTextPtr + ptrCurrentEntry);
 	currDialTextSize = ptrNextEntry - ptrCurrentEntry;
