@@ -48,7 +48,7 @@ private:
 	void computerConsole();
 
 	/**
-	 * Handles displaying a cmputer response
+	 * Handles displaying a computer response
 	 */
 	void computerResponse();
 

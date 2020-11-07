@@ -35,6 +35,7 @@ enum OOToposRoomFlag {
 
 enum OOToposFlag {
 	OO_FLAG_9 = 9,
+	OO_FLAG_13 = 13,
 	OO_FLAG_22 = 22,
 	OO_BRIGHT_ROOM = 25,
 	OO_FLAG_WEARING_GOGGLES = 27,
@@ -42,6 +43,8 @@ enum OOToposFlag {
 	OO_FLAG_43 = 43,
 	OO_FLAG_44 = 44,
 	OO_FLAG_SUFFICIENT_FUEL = 51,
+	OO_FLAG_55 = 55,
+	OO_FLAG_56 = 56,
 	OO_FLAG_58 = 58,
 	OO_FLAG_59 = 59,
 	OO_FLAG_READY_TO_DEPART = 60,
@@ -144,9 +147,9 @@ void OOToposGame::beforeTurn() {
 }
 
 bool OOToposGame::afterTurn() {
-	if (_flags[55])
+	if (_flags[OO_FLAG_55])
 		_currentRoom = 55;
-	else if (_flags[56])
+	else if (_flags[OO_FLAG_56])
 		_currentRoom = 54;
 
 	return true;
@@ -231,7 +234,7 @@ bool OOToposGame::handle_restart() {
 
 void OOToposGame::randomizeGuardLocation() {
 	Item *item = get_item(22);
-	if (_flags[13] && item->_room != _currentRoom) {
+	if (_flags[OO_FLAG_13] && item->_room != _currentRoom) {
 		if (getRandomNumber(255) > 128 && (_currentRoom == 3 || _currentRoom == 6))
 			item->_room = _currentRoom;
 	}
@@ -241,10 +244,10 @@ void OOToposGame::computerConsole() {
 	if (_currentRoom == 57) {
 		if (!_flags[OO_FLAG_9]) {
 			// Mission Code:
-			console_println("281");
+			console_println(_strings2[129].c_str());
 		} else if (!_flags[OO_FLAG_58]) {
 			// Welcome back! I was wondering if you would be returning
-			console_println("283");
+			console_println(_strings2[131].c_str());
 			_flags[OO_FLAG_58] = true;
 			_printComputerMsg = true;
 			checkShipWorking();
@@ -252,22 +255,22 @@ void OOToposGame::computerConsole() {
 			checkShipDepart();
 		} else if (_flags[OO_FLAG_43]) {
 			// We can reach Mealy Sukas with the fuel we have left
-			console_println("28E");
+			console_println(_strings2[142].c_str());
 			_flags[OO_FLAG_59] = true;
 
 			if (_flags[OO_FLAG_44])
 				// The currency on Mealy Sukas is the 'frod'
-				console_println("290");
+				console_println(_strings2[144].c_str());
 			else
 				// Without evaluation data as to the current fuel prices
-				console_println("28F");
+				console_println(_strings2[143].c_str());
 		}
 	}
 }
 
 void OOToposGame::computerResponse() {
 	console_println(_strings2[145].c_str());
-	if (_flags[43])
+	if (_flags[OO_FLAG_43])
 		console_println(_strings2[144].c_str());
 	else
 		console_println(_strings2[152].c_str());
