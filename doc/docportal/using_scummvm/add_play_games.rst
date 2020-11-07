@@ -50,7 +50,7 @@ ScummVM needs access to all the data files, so it will not be able to run direct
 - Where there are duplicate, identical files (same name, same file size) on more than one disc, only one copy of the file is required. 
 - Where there are files that have the same name but are different on each disc, rename them. For example, where there is a ``music.clu`` on two discs, rename the file on the first disc to ``music1.clu`` and the file on the second disc to ``music2.clu``. 
 
-.. _cd:
+.. _cdaudio:
 
 CD audio
 **********
