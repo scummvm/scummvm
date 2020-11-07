@@ -140,9 +140,12 @@ void Character::paint(Graphics::Surface &backbuffer) {
 		return;
 
 	Common::Point pos = _pos + _animationPos;
+
+	auto screen = _engine->getCurrentScreen();
+	auto scale = screen? screen->getZScale(_pos.y): 1;
+	_animation->scale(scale);
+
 	if (_phase >= 0 && _phase < _frames) {
-		auto screen = _engine->getCurrentScreen();
-		_animation->scale(screen? screen->getZScale(_pos.y): 1);
 		_animation->tick(*_engine);
 		if (_phase + 1 >= _frames) {
 			_phase = -1;
@@ -158,6 +161,8 @@ void Character::paint(Graphics::Surface &backbuffer) {
 		}
 	}
 
+	pos.y -= _animation->height();
+	pos.x -= _animation->width() / 2;
 	_animation->paint(*_engine, backbuffer, pos);
 }
 

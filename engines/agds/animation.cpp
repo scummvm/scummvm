@@ -163,10 +163,10 @@ void Animation::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common:
 }
 
 int Animation::width() const {
-	return _flic ? _flic->getWidth() : 0;
+	return _flic ? _flic->getWidth() * _scale: 0;
 }
 int Animation::height() const {
-	return _flic ? _flic->getHeight() : 0;
+	return _flic ? _flic->getHeight() * _scale: 0;
 }
 
 } // namespace AGDS
