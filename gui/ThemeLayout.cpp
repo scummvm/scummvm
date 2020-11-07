@@ -276,10 +276,10 @@ void ThemeLayoutMain::reflowLayout(Widget *widgetChain) {
 			_h = _children[0]->getHeight();
 
 		if (_y == -1)
-			_y = (g_gui.getBaseHeight() >> 1) - (_h >> 1);
+			_y = (g_system->getOverlayHeight() >> 1) - (_h >> 1);
 
 		if (_x == -1)
-			_x = (g_gui.getBaseWidth() >> 1) - (_w >> 1);
+			_x = (g_system->getOverlayWidth() >> 1) - (_w >> 1);
 	}
 }
 
