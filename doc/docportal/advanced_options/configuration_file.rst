@@ -418,7 +418,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`transparentdialogboxes <transparentdialog>`",boolean,false,
 		":ref:`tts_enabled <ttsenabled>`",boolean,false,
 		":ref:`tts_narrator <ttsnarrator>`",boolean,false,
-		":ref:`use_cdaudio <cd>`",boolean,true,
+		":ref:`use_cdaudio <cdaudio>`",boolean,true,
 		versioninfo,string,,
 		":ref:`window_style <style>`",boolean,true,
 		":ref:`windows_cursors <wincursors>`",boolean,false,
