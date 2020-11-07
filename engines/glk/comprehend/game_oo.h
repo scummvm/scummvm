@@ -35,7 +35,7 @@ private:
 	RestartMode _restartMode;
 	bool _wearingGoggles, _lightOn;
 	int _stringVal1, _stringVal2;
-	bool _addStringFlag, _shipNotWorking;
+	bool _printComputerMsg, _shipNotWorking;
 
 	void randomizeGuardLocation();
 	void computerResponse();
@@ -59,7 +59,7 @@ private:
 	 * A wrapped version of console_println that only prints the passed string
 	 * if the _addStringFlag is set
 	 */
-	void console_cond_println(const char *str);
+	void printComputerMsg(const char *str);
 public:
 	OOToposGame();
 	~OOToposGame() override {}

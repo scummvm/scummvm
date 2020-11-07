@@ -53,7 +53,7 @@ static const GameStrings OO_STRINGS = {
 
 OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE),
 		_wearingGoggles(false), _lightOn(false), _stringVal1(0), _stringVal2(0),
-		_addStringFlag(true), _shipNotWorking(false) {
+		_printComputerMsg(true), _shipNotWorking(false) {
 	_gameDataFile = "g0";
 
 	// Extra strings are (annoyingly) stored in the game binary
@@ -242,19 +242,19 @@ void OOToposGame::checkShipWorking() {
 		if (!_flags[idx]) {
 			if (!_stringVal2) {
 				// The following components are not installed
-				console_cond_println(_strings2[132].c_str());
+				printComputerMsg(_strings2[132].c_str());
 				_stringVal2 = 1;
 			}
 
 			// Power Cylinder
-			console_cond_println(_strings[_stringVal1].c_str());
+			printComputerMsg(_strings[_stringVal1].c_str());
 		}
 	}
 
 	_shipNotWorking = _stringVal2 != 0;
 	if (!_shipNotWorking)
 		// The ship is in working order
-		console_cond_println(_strings2[153].c_str());
+		printComputerMsg(_strings2[153].c_str());
 }
 
 void OOToposGame::checkShipFuel() {
@@ -276,7 +276,7 @@ void OOToposGame::checkShipFuel() {
 	// Computer: "Our current evaluation...
 	Instruction strReplace(0xC9, 0x4B);
 	execute_opcode(&strReplace, nullptr, nullptr);
-	console_cond_println(_strings2[146].c_str());
+	printComputerMsg(_strings2[146].c_str());
 
 	FunctionState funcState;
 	Instruction test(2, 75, 76);
@@ -285,17 +285,17 @@ void OOToposGame::checkShipFuel() {
 	if (funcState._testResult) {
 		// Computer: "We should now have enough
 		_flags[OO_FLAG_SUFFICIENT_FUEL] = true;
-		console_cond_println(_strings2[151].c_str());
+		printComputerMsg(_strings2[151].c_str());
 	} else {
 		_flags[OO_FLAG_SUFFICIENT_FUEL] = false;
 	}
 }
 
 void OOToposGame::shipDepartCheck() {
-	_addStringFlag = false;
+	_printComputerMsg = false;
 	checkShipWorking();
 	checkShipFuel();
-	_addStringFlag = true;
+	_printComputerMsg = true;
 
 	if (!_shipNotWorking && _flags[OO_FLAG_SUFFICIENT_FUEL]) {
 		Item *item = get_item(ITEM_SERUM_VIAL - 1);
@@ -318,11 +318,10 @@ void OOToposGame::shipDepartCheck() {
 	}
 }
 
-void OOToposGame::console_cond_println(const char *str) {
-	if (_addStringFlag)
+void OOToposGame::printComputerMsg(const char *str) {
+	if (_printComputerMsg)
 		console_println(str);
 }
-
 
 } // namespace Comprehend
 } // namespace Glk
