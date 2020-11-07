@@ -311,6 +311,8 @@ struct Instruction {
 		clear();
 	}
 
+	Instruction(byte opcode, byte op1 = 0, byte op2 = 0, byte op3 = 0);
+
 	void clear();
 };
 

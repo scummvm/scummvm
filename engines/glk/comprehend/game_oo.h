@@ -34,9 +34,19 @@ class OOToposGame : public ComprehendGameV2 {
 private:
 	RestartMode _restartMode;
 	bool _wearingGoggles, _lightOn;
+	int _stringVal1, _stringVal2;
+	bool _addStringFlag;
 
 	void randomizeGuardLocation();
 	void computerResponse();
+	void addBulkMessage();
+
+	/**
+	 * Tests if the player has enough to purchase needed ship fuel
+	 */
+	void fuelCheck();
+
+	void console_cond_println(const char *str);
 public:
 	OOToposGame();
 	~OOToposGame() override {}

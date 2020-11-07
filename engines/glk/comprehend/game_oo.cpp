@@ -28,19 +28,25 @@
 namespace Glk {
 namespace Comprehend {
 
-#define OO_ROOM_FLAG_DARK 0x02
+enum OOToposRoomFlag {
+	OO_ROOM_FLAG_FUEL = 1,
+	OO_ROOM_FLAG_DARK = 2
+};
 
-#define OO_BRIGHT_ROOM 0x19
-
-#define OO_FLAG_WEARING_GOGGLES 0x1b
-#define OO_FLAG_FLASHLIGHT_ON 0x27
+enum OOToposFlag {
+	OO_BRIGHT_ROOM = 25,
+	OO_FLAG_WEARING_GOGGLES = 27,
+	OO_FLAG_FLASHLIGHT_ON = 39,
+	OO_FLAG_SUFFICIENT_FUEL = 51
+};
 
 static const GameStrings OO_STRINGS = {
 	EXTRA_STRING_TABLE(154)
 };
 
 OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE),
-		_wearingGoggles(false), _lightOn(false) {
+		_wearingGoggles(false), _lightOn(false), _stringVal1(0), _stringVal2(0),
+		_addStringFlag(true) {
 	_gameDataFile = "g0";
 
 	// Extra strings are (annoyingly) stored in the game binary
@@ -219,6 +225,50 @@ void OOToposGame::computerResponse() {
 	else
 		console_println(_strings2[152].c_str());
 }
+
+void OOToposGame::addBulkMessage() {
+
+}
+
+void OOToposGame::fuelCheck() {
+	const byte ITEMS[7] = { 24, 27, 28, 29, 30, 31, 32 };
+	_variables[0x4b] = 0;
+	_stringVal1 = 68;
+	_stringVal2 = 0;
+
+	for (int idx = 168; idx < 175; ++idx, ++_stringVal1, ++_stringVal2) {
+		if (_flags[idx]) {
+			Item *item = get_item(ITEMS[_stringVal2]);
+			if (item->_room == ROOM_INVENTORY || (get_room(item->_room)->_flags & 1) == 1) {
+				Instruction varAdd(0x86, 0x4B, _stringVal1);
+				execute_opcode(&varAdd, nullptr, nullptr);
+			}
+		}
+	}
+
+	// Computer: "Our current evaluation...
+	Instruction strReplace(0xC9, 0x4B);
+	execute_opcode(&strReplace, nullptr, nullptr);
+	console_cond_println(_strings2[146].c_str());
+
+	FunctionState funcState;
+	Instruction test(2, 75, 76);
+	execute_opcode(&test, nullptr, nullptr);
+
+	if (funcState._testResult) {
+		// Computer: "We should now have enough
+		_flags[OO_FLAG_SUFFICIENT_FUEL] = true;
+		console_cond_println(_strings2[151].c_str());
+	} else {
+		_flags[OO_FLAG_SUFFICIENT_FUEL] = false;
+	}
+}
+
+void OOToposGame::console_cond_println(const char *str) {
+	if (_addStringFlag)
+		console_println(str);
+}
+
 
 } // namespace Comprehend
 } // namespace Glk

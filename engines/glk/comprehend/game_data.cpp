@@ -123,6 +123,12 @@ void Action::clear() {
 
 /*-------------------------------------------------------*/
 
+Instruction::Instruction(byte opcode, byte op1, byte op2, byte op3) : _opcode(opcode) {
+	_operand[0] = op1;
+	_operand[1] = op2;
+	_operand[2] = op3;
+}
+
 void Instruction::clear() {
 	_opcode = 0;
 	_nr_operands = 0;
