@@ -35,7 +35,7 @@ private:
 	RestartMode _restartMode;
 	bool _wearingGoggles, _lightOn;
 	int _stringVal1, _stringVal2;
-	bool _addStringFlag;
+	bool _addStringFlag, _bulkFlag;
 
 	void randomizeGuardLocation();
 	void computerResponse();
@@ -46,6 +46,15 @@ private:
 	 */
 	void fuelCheck();
 
+	/**
+	 * Checks whether the ship can depart, printing out the computer's response
+	 */
+	void shipDepartCheck();
+
+	/**
+	 * A wrapped version of console_println that only prints the passed string
+	 * if the _addStringFlag is set
+	 */
 	void console_cond_println(const char *str);
 public:
 	OOToposGame();

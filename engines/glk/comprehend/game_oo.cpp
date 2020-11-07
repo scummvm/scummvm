@@ -34,10 +34,17 @@ enum OOToposRoomFlag {
 };
 
 enum OOToposFlag {
+	OO_FLAG_22 = 22,
 	OO_BRIGHT_ROOM = 25,
 	OO_FLAG_WEARING_GOGGLES = 27,
 	OO_FLAG_FLASHLIGHT_ON = 39,
-	OO_FLAG_SUFFICIENT_FUEL = 51
+	OO_FLAG_SUFFICIENT_FUEL = 51,
+	OO_FLAG_READY_TO_DEPART = 60,
+	OO_TRACTOR_BEAM = 71
+};
+
+enum OOToposItem {
+	ITEM_SERUM_VIAL = 39
 };
 
 static const GameStrings OO_STRINGS = {
@@ -46,7 +53,7 @@ static const GameStrings OO_STRINGS = {
 
 OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE),
 		_wearingGoggles(false), _lightOn(false), _stringVal1(0), _stringVal2(0),
-		_addStringFlag(true) {
+		_addStringFlag(true), _bulkFlag(false) {
 	_gameDataFile = "g0";
 
 	// Extra strings are (annoyingly) stored in the game binary
@@ -238,8 +245,8 @@ void OOToposGame::fuelCheck() {
 
 	for (int idx = 168; idx < 175; ++idx, ++_stringVal1, ++_stringVal2) {
 		if (_flags[idx]) {
-			Item *item = get_item(ITEMS[_stringVal2]);
-			if (item->_room == ROOM_INVENTORY || (get_room(item->_room)->_flags & 1) == 1) {
+			Item *item = get_item(ITEMS[_stringVal2] - 1);
+			if (item->_room == ROOM_INVENTORY || (get_room(item->_room)->_flags & OO_ROOM_FLAG_FUEL) != 0) {
 				Instruction varAdd(0x86, 0x4B, _stringVal1);
 				execute_opcode(&varAdd, nullptr, nullptr);
 			}
@@ -261,6 +268,33 @@ void OOToposGame::fuelCheck() {
 		console_cond_println(_strings2[151].c_str());
 	} else {
 		_flags[OO_FLAG_SUFFICIENT_FUEL] = false;
+	}
+}
+
+void OOToposGame::shipDepartCheck() {
+	_addStringFlag = false;
+	addBulkMessage();
+	fuelCheck();
+	_addStringFlag = true;
+
+	if (!_bulkFlag && _flags[OO_FLAG_SUFFICIENT_FUEL]) {
+		Item *item = get_item(ITEM_SERUM_VIAL - 1);
+		if (item->_room == ROOM_INVENTORY || (get_room(item->_room)->_flags & OO_ROOM_FLAG_FUEL) != 0) {
+			if (!_flags[OO_TRACTOR_BEAM]) {
+				// I detect a tractor beam
+				console_println(_strings2[77].c_str());
+			} else if (!_flags[OO_FLAG_READY_TO_DEPART]) {
+				// All systems check. Ready to depart
+				_flags[OO_FLAG_22] = true;
+				console_println(_strings2[79].c_str());
+			} else {
+				// Please close the airlock
+				console_println(_strings2[76].c_str());
+			}
+		} else {
+			// The serum vial is not aboard the ship
+			console_println(_strings2[78].c_str());
+		}
 	}
 }
 
