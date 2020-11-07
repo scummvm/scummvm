@@ -37,7 +37,19 @@ private:
 	int _stringVal1, _stringVal2;
 	bool _printComputerMsg, _shipNotWorking;
 
+	/**
+	 * Randomizes a guard to different locations
+	 */
 	void randomizeGuardLocation();
+
+	/**
+	 * Handles the computer console
+	 */
+	void computerConsole();
+
+	/**
+	 * Handles displaying a cmputer response
+	 */
 	void computerResponse();
 
 	/**
@@ -53,7 +65,7 @@ private:
 	/**
 	 * Checks whether the ship can depart, printing out the computer's response
 	 */
-	void shipDepartCheck();
+	void checkShipDepart();
 
 	/**
 	 * A wrapped version of console_println that only prints the passed string

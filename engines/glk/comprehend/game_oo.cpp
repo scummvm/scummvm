@@ -34,11 +34,16 @@ enum OOToposRoomFlag {
 };
 
 enum OOToposFlag {
+	OO_FLAG_9 = 9,
 	OO_FLAG_22 = 22,
 	OO_BRIGHT_ROOM = 25,
 	OO_FLAG_WEARING_GOGGLES = 27,
 	OO_FLAG_FLASHLIGHT_ON = 39,
+	OO_FLAG_43 = 43,
+	OO_FLAG_44 = 44,
 	OO_FLAG_SUFFICIENT_FUEL = 51,
+	OO_FLAG_58 = 58,
+	OO_FLAG_59 = 59,
 	OO_FLAG_READY_TO_DEPART = 60,
 	OO_TRACTOR_BEAM = 71
 };
@@ -89,8 +94,7 @@ void OOToposGame::beforeGame() {
 	g_comprehend->glk_window_clear(g_comprehend->_bottomWindow);
 }
 
-int OOToposGame::roomIsSpecial(unsigned room_index,
-                               unsigned *roomDescString) {
+int OOToposGame::roomIsSpecial(unsigned room_index, unsigned *roomDescString) {
 	Room *room = &_rooms[room_index];
 
 	// Is the room dark
@@ -134,6 +138,9 @@ void OOToposGame::beforeTurn() {
 		_wearingGoggles = _flags[OO_FLAG_WEARING_GOGGLES];
 		_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 	}
+
+	// Handle the computer console if in front of it
+	computerConsole();
 }
 
 bool OOToposGame::afterTurn() {
@@ -230,6 +237,34 @@ void OOToposGame::randomizeGuardLocation() {
 	}
 }
 
+void OOToposGame::computerConsole() {
+	if (_currentRoom == 57) {
+		if (!_flags[OO_FLAG_9]) {
+			// Mission Code:
+			console_println("281");
+		} else if (!_flags[OO_FLAG_58]) {
+			// Welcome back! I was wondering if you would be returning
+			console_println("283");
+			_flags[OO_FLAG_58] = true;
+			_printComputerMsg = true;
+			checkShipWorking();
+		} else if (_flags[OO_FLAG_59]) {
+			checkShipDepart();
+		} else if (_flags[OO_FLAG_43]) {
+			// We can reach Mealy Sukas with the fuel we have left
+			console_println("28E");
+			_flags[OO_FLAG_59] = true;
+
+			if (_flags[OO_FLAG_44])
+				// The currency on Mealy Sukas is the 'frod'
+				console_println("290");
+			else
+				// Without evaluation data as to the current fuel prices
+				console_println("28F");
+		}
+	}
+}
+
 void OOToposGame::computerResponse() {
 	console_println(_strings2[145].c_str());
 	if (_flags[43])
@@ -296,7 +331,7 @@ void OOToposGame::checkShipFuel() {
 	}
 }
 
-void OOToposGame::shipDepartCheck() {
+void OOToposGame::checkShipDepart() {
 	_printComputerMsg = false;
 	checkShipWorking();
 	checkShipFuel();
