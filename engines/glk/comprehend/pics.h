@@ -59,7 +59,7 @@ class Pics : public Common::Archive {
 		uint16 _textY;
 
 		ImageContext(DrawSurface *drawSurface, Graphics::Font *font, uint flags) :
-			_drawSurface(drawSurface), _font(font), _drawFlags(0),
+			_drawSurface(drawSurface), _font(font), _drawFlags(flags),
 			_x(0), _y(0), _penColor(G_COLOR_BLACK), _fillColor(G_COLOR_BLACK),
 			_shape(SHAPE_CIRCLE_LARGE), _textX(0), _textY(0) {
 		}

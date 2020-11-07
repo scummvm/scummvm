@@ -30,10 +30,12 @@ namespace Comprehend {
 
 enum RestartMode { RESTART_IMMEDIATE, RESTART_WITH_MSG, RESTART_WITHOUT_MSG };
 
+enum YesNo { NO, YES, UNSET };
+
 class OOToposGame : public ComprehendGameV2 {
 private:
 	RestartMode _restartMode;
-	bool _wearingGoggles, _lightOn;
+	YesNo _noFloodfill, _lightOn;
 	int _stringVal1, _stringVal2;
 	bool _printComputerMsg, _shipNotWorking;
 
@@ -82,6 +84,7 @@ public:
 	int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) override;
 	void handleSpecialOpcode(uint8 operand) override;
 	bool handle_restart() override;
+	void synchronizeSave(Common::Serializer &s) override;
 };
 
 } // namespace Comprehend

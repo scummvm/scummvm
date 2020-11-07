@@ -136,7 +136,8 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 
 	case OPCODE_SET_PEN_COLOR:
 		debugC(kDebugGraphics, "set_pen_color(%.2x)", opcode);
-		ctx->_penColor = ctx->_drawSurface->getPenColor(param);
+		if (!(ctx->_drawFlags & IMAGEF_NO_FLOODFILL))
+			ctx->_penColor = ctx->_drawSurface->getPenColor(param);
 		break;
 
 	case OPCODE_TEXT_CHAR:
@@ -220,7 +221,8 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		debugC(kDebugGraphics, "draw_shape(%d, %d), style=%.2x, fill=%.2x",
 		       a, b, ctx->_shape, ctx->_fillColor);
 
-		ctx->_drawSurface->drawShape(a, b, ctx->_shape, ctx->_fillColor);
+		if (!(ctx->_drawFlags & IMAGEF_NO_FLOODFILL))
+			ctx->_drawSurface->drawShape(a, b, ctx->_shape, ctx->_fillColor);
 		break;
 
 	case OPCODE_DELAY:

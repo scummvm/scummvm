@@ -201,11 +201,16 @@ bool Comprehend::loadLauncherSavegameIfNeeded() {
 	return false;
 }
 
-
 void Comprehend::drawPicture(uint pictureNum) {
-	if (_topWindow)
+	if (_topWindow) {
+		// Clear the picture cache before each drawing in OO-Topos. Wearing the goggles
+		// can producing different versions of the same scene, so we can't cache it
+		if (_gameDescription._gameId == "ootopos")
+			_pictures->clear();
+
 		glk_image_draw_scaled(_topWindow, pictureNum,
 			20 * SCALE_FACTOR, 0, G_RENDER_WIDTH * SCALE_FACTOR, G_RENDER_HEIGHT * SCALE_FACTOR);
+	}
 }
 
 void Comprehend::drawLocationPicture(int pictureNum, bool clearBg) {

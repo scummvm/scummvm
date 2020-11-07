@@ -38,11 +38,12 @@ enum OOToposFlag {
 	OO_FLAG_13 = 13,
 	OO_FLAG_22 = 22,
 	OO_BRIGHT_ROOM = 25,
-	OO_FLAG_WEARING_GOGGLES = 27,
+	OO_FLAG_WEARING_GOGGLES = 27,	// ?
 	OO_FLAG_FLASHLIGHT_ON = 39,
 	OO_FLAG_43 = 43,
 	OO_FLAG_44 = 44,
 	OO_FLAG_SUFFICIENT_FUEL = 51,
+	OO_FLAG_53 = 53,
 	OO_FLAG_55 = 55,
 	OO_FLAG_56 = 56,
 	OO_FLAG_58 = 58,
@@ -60,7 +61,7 @@ static const GameStrings OO_STRINGS = {
 };
 
 OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE),
-		_wearingGoggles(false), _lightOn(false), _stringVal1(0), _stringVal2(0),
+		_noFloodfill(UNSET), _lightOn(UNSET), _stringVal1(0), _stringVal2(0),
 		_printComputerMsg(true), _shipNotWorking(false) {
 	_gameDataFile = "g0";
 
@@ -120,6 +121,7 @@ int OOToposGame::roomIsSpecial(unsigned room_index, unsigned *roomDescString) {
 }
 
 void OOToposGame::beforeTurn() {
+#if 0
 	Room *room = &_rooms[_currentRoom];
 
 	/*
@@ -141,16 +143,32 @@ void OOToposGame::beforeTurn() {
 		_wearingGoggles = _flags[OO_FLAG_WEARING_GOGGLES];
 		_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 	}
+#endif
+	if (!_flags[OO_FLAG_55] && !_flags[OO_FLAG_56]) {
+		YesNo nff = _flags[OO_FLAG_53] ? YES : NO;
+
+		if (_noFloodfill != nff) {
+			_noFloodfill = nff;
+			_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
+
+			if (_noFloodfill == YES)
+				g_comprehend->_drawFlags |= IMAGEF_NO_FLOODFILL;
+			else
+				g_comprehend->_drawFlags &= ~IMAGEF_NO_FLOODFILL;
+		}
+	}
+
 
 	// Handle the computer console if in front of it
 	computerConsole();
 }
 
 bool OOToposGame::afterTurn() {
-	if (_flags[OO_FLAG_55])
+	if (_flags[OO_FLAG_55]) {
 		_currentRoom = 55;
-	else if (_flags[OO_FLAG_56])
+	} else if (_flags[OO_FLAG_56]) {
 		_currentRoom = 54;
+	}
 
 	return true;
 }
@@ -230,6 +248,14 @@ bool OOToposGame::handle_restart() {
 	loadGame();
 	_updateFlags = UPDATE_ALL;
 	return true;
+}
+
+void OOToposGame::synchronizeSave(Common::Serializer &s) {
+	ComprehendGameV2::synchronizeSave(s);
+
+	if (s.isLoading()) {
+		_noFloodfill = UNSET;
+	}
 }
 
 void OOToposGame::randomizeGuardLocation() {
