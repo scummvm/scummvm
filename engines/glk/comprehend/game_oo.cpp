@@ -189,10 +189,15 @@ void OOToposGame::handleSpecialOpcode(uint8 operand) {
 		break;
 
 	case 9:
-		error("TODO: Special 9");
+		// Checks the ship fuel
+		checkShipFuel();
+		randomizeGuardLocation();
+		break;
 
 	case 10:
-		error("TODO: Special 10");
+		// Checks whether the ship is working
+		checkShipWorking();
+		break;
 
 	default:
 		break;
