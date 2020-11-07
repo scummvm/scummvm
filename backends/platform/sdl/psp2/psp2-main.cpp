@@ -22,6 +22,7 @@
 
 #include <psp2/kernel/processmgr.h>
 #include <psp2/power.h>
+#include <psp2/appmgr.h>
 
 #include "common/scummsys.h"
 #include "backends/platform/sdl/psp2/psp2.h"
@@ -29,6 +30,7 @@
 #include "base/main.h"
 
 int _newlib_heap_size_user = 192 * 1024 * 1024;
+char boot_params[1024];
 
 int main(int argc, char *argv[]) {
 
@@ -52,9 +54,35 @@ int main(int argc, char *argv[]) {
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
 #endif
 
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
+	sceAppMgrGetAppParam(boot_params);
+	int res;
+	if (strstr(boot_params,"psgm:play"))
+	{
+		char *param1 = strstr(boot_params, "&param=");
+		char *param2 = strstr(boot_params, "&param2=");
+		if (param1 != NULL && param2 != NULL)
+		{
+			char path[256];
+			char game_id[64];
+			param1 += 7;
+			memcpy(path, param1, param2 - param1);
+			path[param2-param1] = 0;
+			sprintf(game_id, param2 + 8);
+			const char* args[4];
+			args[0] = "ux0:app/VSCU00001/eboot.bin";
+			args[1] = "-p";
+			args[2] = path;
+			args[3] = game_id;
 
+			res = scummvm_main(4, args);
+			goto exit;
+		}
+	}
+
+	// Invoke the actual ScummVM main entry point:
+	res = scummvm_main(argc, argv);
+
+exit:
 	// Free OSystem
 	g_system->destroy();
 
