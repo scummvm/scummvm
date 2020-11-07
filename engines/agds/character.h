@@ -95,7 +95,7 @@ public:
 	void animate(Common::Point pos, int direction, int speed);
 
 	void stop() {
-		_phase = 0;
+		_phase = -1;
 		_frames = 0;
 	}
 
