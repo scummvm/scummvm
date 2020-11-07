@@ -1,5 +1,6 @@
 package org.scummvm.scummvm;
 
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.content.Context;
@@ -270,27 +271,38 @@ public class ScummVMEventsBase implements
 			}
 		}
 
-		// sequence of characters
-		if (action == KeyEvent.ACTION_MULTIPLE
-		    && keyCode == KeyEvent.KEYCODE_UNKNOWN) {
-			final KeyCharacterMap m = KeyCharacterMap.load(e.getDeviceId());
-			final KeyEvent[] es = m.getEvents(e.getCharacters().toCharArray());
+		// The KeyEvent.ACTION_MULTIPLE constant was deprecated in API level 29 (Q).
+		// No longer used by the input system.
+		// getAction() value: multiple duplicate key events have occurred in a row, or a complex string is being delivered.
+		//    If the key code is not KEYCODE_UNKNOWN then the getRepeatCount() method returns the number of times the given key code should be executed.
+		//    Otherwise, if the key code is KEYCODE_UNKNOWN, then this is a sequence of characters as returned by getCharacters().
+		//    sequence of characters
+		// getCharacters() is also deprecated in API level 29
+		//    For the special case of a ACTION_MULTIPLE event with key code of KEYCODE_UNKNOWN,
+		//    this is a raw string of characters associated with the event. In all other cases it is null.
+		// TODO What is the use case for this?
+		//  Does it make sense to keep it with a Build.VERSION.SDK_INT < Build.VERSION_CODES.Q check?
+		if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+			if (action == KeyEvent.ACTION_MULTIPLE
+				&& keyCode == KeyEvent.KEYCODE_UNKNOWN) {
+				final KeyCharacterMap m = KeyCharacterMap.load(e.getDeviceId());
+				final KeyEvent[] es = m.getEvents(e.getCharacters().toCharArray());
 
-			if (es == null) {
+				if (es == null) {
+					return true;
+				}
+
+				for (KeyEvent s : es) {
+					_scummvm.pushEvent(JE_KEY,
+						s.getAction(),
+						s.getKeyCode(),
+						eventUnicodeChar & KeyCharacterMap.COMBINING_ACCENT_MASK,
+						s.getMetaState(),
+						s.getRepeatCount(),
+						0);
+				}
 				return true;
 			}
-
-			for (KeyEvent s : es) {
-				_scummvm.pushEvent(JE_KEY,
-				                   s.getAction(),
-				                   s.getKeyCode(),
-				                   eventUnicodeChar & KeyCharacterMap.COMBINING_ACCENT_MASK,
-				                   s.getMetaState(),
-				                   s.getRepeatCount(),
-				                   0);
-			}
-
-			return true;
 		}
 
 		int type;

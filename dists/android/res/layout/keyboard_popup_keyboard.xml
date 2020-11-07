@@ -28,7 +28,7 @@
 	<!-- Excluded attribute due to error: (layout should not include itself) android:popupLayout="@layout/keyboard_popup_keyboard" -->
 	<!-- Removed attribute due to invalid for LinearLayout android:layout_alignParentBottom="true" -->
     <org.scummvm.scummvm.CustomKeyboardView
-            android:id="@android:id/keyboardView"
+            android:id="@id/ScummVMKeyboardView"
             android:background="@android:color/transparent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

@@ -15,10 +15,10 @@ dependencies {
     }
 }
 
-// Enable to see use of depracted API
-// tasks.withType(JavaCompile) {
-//     options.compilerArgs << "-Xlint:deprecation"
-// }
+// Enable to see use of deprecated API
+ tasks.withType(JavaCompile) {
+     options.compilerArgs << "-Xlint:deprecation"
+ }
 
 apply plugin: 'com.android.application'
 
@@ -33,7 +33,7 @@ android {
         setProperty("archivesBaseName", "ScummVM")
 
         minSdkVersion 16
-        targetSdkVersion 28
+        targetSdkVersion 29
 
         versionName "2.3.0git"
         versionCode 65
@@ -82,4 +82,5 @@ android {
 dependencies {
     implementation "androidx.annotation:annotation:1.1.0"
     implementation "androidx.documentfile:documentfile:1.0.1"
+    implementation "androidx.appcompat:appcompat:1.2.0"
 }
