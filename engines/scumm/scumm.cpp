@@ -325,9 +325,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_costumeRenderer = NULL;
 	_existLanguageFile = false;
 	_languageBuffer = 0;
-	_translationEntries = 0;
-	_numTranslationEntry = 0;
-	_lastUsedTranslationEntry = 0;
+	_translatedLines = 0;
+	_numTranslatedLines = 0;
+	_lastUsedTranslatedLine = 0;
 	_2byteFontPtr = 0;
 	_krStrPost = 0;
 	_V1TalkingActor = 0;
@@ -623,7 +623,7 @@ ScummEngine::~ScummEngine() {
 	delete[] _sortedActors;
 
 	delete[] _languageBuffer;
-	delete[] _translationEntries;
+	delete[] _translatedLines;
 
 	delete[] _2byteFontPtr;
 	if (_2byteFontPtr && !_useMultiFont)

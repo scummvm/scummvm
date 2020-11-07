@@ -1159,27 +1159,26 @@ public:
 	int _2byteMultiShadow[20];
 
 private:
-	bool _existLanguageFile;
-	byte *_languageBuffer;
-
-	struct TranslationEntry {
+	struct TranslatedLine {
 		uint16 key;
 		uint32 originalOffset;
 		uint32 translatedOffset;
 	};
 
-	struct Range {
+	struct TranslationRange {
 		uint32 left;
 		uint32 right;
 
-		Range(uint32 left_, uint32 right_) : left(left_), right(right_) {}
-		Range() : left(0), right(0) {}
+		TranslationRange(uint32 left_, uint32 right_) : left(left_), right(right_) {}
+		TranslationRange() : left(0), right(0) {}
 	};
 
-	TranslationEntry *_translationEntries;
-	Common::HashMap<uint16, Range> _languageIndex;
-	int _numTranslationEntry;
-	int _lastUsedTranslationEntry;
+	bool _existLanguageFile;
+	byte *_languageBuffer;
+	TranslatedLine *_translatedLines;
+	Common::HashMap<uint16, TranslationRange> _languageIndex;
+	int _numTranslatedLines;
+	int _lastUsedTranslatedLine;
 
 public:
 

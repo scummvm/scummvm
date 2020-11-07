@@ -1930,19 +1930,19 @@ void ScummEngine::loadLanguageBundle() {
 		return;
 	}
 
-	_numTranslationEntry = file.readUint32LE();
-	_translationEntries = new TranslationEntry[_numTranslationEntry];
+	_numTranslatedLines = file.readUint32LE();
+	_translatedLines = new TranslatedLine[_numTranslatedLines];
 	int key = 0;
 	int left = 0;
-	for (uint32 i = 0; i < _numTranslationEntry; i++) {
+	for (uint32 i = 0; i < _numTranslatedLines; i++) {
 		int curKey = file.readUint16LE();
-		_translationEntries[i].key = curKey;
-		_translationEntries[i].originalOffset = file.readUint32LE();
-		_translationEntries[i].translatedOffset = file.readUint32LE();
+		_translatedLines[i].key = curKey;
+		_translatedLines[i].originalOffset = file.readUint32LE();
+		_translatedLines[i].translatedOffset = file.readUint32LE();
 
 		if (curKey != key) {
 			if (key != 0) {
-				_languageIndex.setVal(key, Range(left, i - 1));
+				_languageIndex.setVal(key, TranslationRange(left, i - 1));
 			}
 
 			key = curKey;
@@ -1950,7 +1950,7 @@ void ScummEngine::loadLanguageBundle() {
 		}
 	}
 
-	_languageIndex.setVal(key, Range(left, _numTranslationEntry - 1));
+	_languageIndex.setVal(key, TranslationRange(left, _numTranslatedLines - 1));
 
 	int bodyPos = file.pos();
 
@@ -1958,49 +1958,51 @@ void ScummEngine::loadLanguageBundle() {
 	file.read(_languageBuffer, size - bodyPos);
 	file.close();
 
-	debugN("Loaded %d entries", _numTranslationEntry);
+	debugN("Loaded %d entries", _numTranslatedLines);
 }
 
 void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 	if (_existLanguageFile) {
-		Range range;
-
+		TranslationRange range;
+		uint16 key = vm.slot[_currentScript].number;
 		int textLen = resStrLen(text);
-		if (_languageIndex.tryGetVal(vm.slot[_currentScript].number, range)) {
+		if (_languageIndex.tryGetVal(key, range)) {
 			for (uint32 i = range.left; i <= range.right; i++) {
-				byte *originalText = &_languageBuffer[_translationEntries[i].originalOffset];
-				byte *translatedText = &_languageBuffer[_translationEntries[i].translatedOffset];
+				byte *originalText = &_languageBuffer[_translatedLines[i].originalOffset];
+				byte *translatedText = &_languageBuffer[_translatedLines[i].translatedOffset];
 				int originalLen = resStrLen(originalText);
 				if (textLen == originalLen && !memcmp(text, originalText, originalLen)) {
 					warning("Found in %d", i - range.left);
 					memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
-					_lastUsedTranslationEntry = i;
+					_lastUsedTranslatedLine = i;
 					return;
 				}
 			}
 		}
 
+		// Fast path is fail. try linear search
+		// Binary search is not used?
 		warning("Full search! %d", _currentRoom);
-		for (uint32 i = _lastUsedTranslationEntry; i < _numTranslationEntry; i++) {
-			byte *originalText = &_languageBuffer[_translationEntries[i].originalOffset];
-			byte *translatedText = &_languageBuffer[_translationEntries[i].translatedOffset];
+		for (uint32 i = _lastUsedTranslatedLine; i < _numTranslatedLines; i++) {
+			byte *originalText = &_languageBuffer[_translatedLines[i].originalOffset];
+			byte *translatedText = &_languageBuffer[_translatedLines[i].translatedOffset];
 			int originalLen = resStrLen(originalText);
 			if (textLen == originalLen && !memcmp(text, originalText, originalLen)) {
-				warning("Found in %d", i - _lastUsedTranslationEntry);
+				warning("Found in %d", i - _lastUsedTranslatedLine);
 				memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
-				_lastUsedTranslationEntry = i;
+				_lastUsedTranslatedLine = i;
 				return;
 			}
 		}
 
-		for (uint32 i = 0; i < _lastUsedTranslationEntry; i++) {
-			byte *originalText = &_languageBuffer[_translationEntries[i].originalOffset];
-			byte *translatedText = &_languageBuffer[_translationEntries[i].translatedOffset];
+		for (uint32 i = 0; i < _lastUsedTranslatedLine; i++) {
+			byte *originalText = &_languageBuffer[_translatedLines[i].originalOffset];
+			byte *translatedText = &_languageBuffer[_translatedLines[i].translatedOffset];
 			int originalLen = resStrLen(originalText);
 			if (textLen == originalLen && !memcmp(text, originalText, originalLen)) {
-				warning("Found in %d", (_numTranslationEntry - _lastUsedTranslationEntry) + i);
+				warning("Found in %d", (_numTranslatedLines - _lastUsedTranslatedLine) + i);
 				memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
-				_lastUsedTranslationEntry = i;
+				_lastUsedTranslatedLine = i;
 				return;
 			}
 		}
