@@ -166,8 +166,8 @@ void Character::paint(Graphics::Surface &backbuffer) {
 	_animation->paint(*_engine, backbuffer, pos);
 }
 
-int Character::getDirectionForMovement(int dx, int dy) {
-	auto angle = atan2(dy, dx);
+int Character::getDirectionForMovement(Common::Point delta) {
+	auto angle = atan2(delta.y, delta.x);
 	if (angle < 0)
 		angle += M_PI * 2;
 

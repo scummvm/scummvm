@@ -121,7 +121,7 @@ public:
 
 	void paint(Graphics::Surface & backbuffer);
 
-	int getDirectionForMovement(int dx, int dy);
+	int getDirectionForMovement(Common::Point delta);
 };
 
 
