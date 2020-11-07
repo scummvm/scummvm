@@ -1149,6 +1149,8 @@ public:
 	byte _newLineCharacter;
 	byte *get2byteCharPtr(int idx);
 
+	bool isScummvmKorTarget();
+
 //protected:
 	byte *_2byteFontPtr;
 	byte *_2byteMultiFontPtr[20];

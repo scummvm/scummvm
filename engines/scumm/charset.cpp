@@ -42,8 +42,8 @@ The advantage will be cleaner coder (easier to debug, in particular), and a
 better separation of the various modules.
 */
 
-bool CharsetRenderer::isScummvmKorTarget() {
-	if (_vm->_language == Common::KO_KOR && (_vm->_game.version < 7 || _vm->_game.id == GID_FT)) {
+bool ScummEngine::isScummvmKorTarget() {
+	if (_language == Common::KO_KOR && (_game.version < 7 || _game.id == GID_FT)) {
 		return true;
 	}
 	return false;
@@ -57,7 +57,7 @@ void ScummEngine::loadCJKFont() {
 	_useMultiFont = 0;	// Korean Multi-Font
 
 	// Special case for Korean
-	if (_language == Common::KO_KOR && (_game.version < 7 || _game.id == GID_FT)) {
+	if (isScummvmKorTarget()) {
 		loadKorFont();
 
 		return;
@@ -618,7 +618,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 		if (chr == _vm->_newLineCharacter)
 			lastspace = pos - 1;
 
-		if (_vm->_useCJKMode && isScummvmKorTarget()) {
+		if (_vm->_useCJKMode && _vm->isScummvmKorTarget()) {
 			if (_center == false && chr == '(' && pos - 3 >= origPos && checkKSCode(str[pos -3], str[pos -2]))
 				lastKoreanLineBreak = pos - 1;
 		}
@@ -633,7 +633,7 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 			} else if (chr & 0x80) {
 				pos++;
 				curw += _vm->_2byteWidth;
-				if (isScummvmKorTarget() && checkKSCode(chr, str[pos])) {
+				if (_vm->isScummvmKorTarget() && checkKSCode(chr, str[pos])) {
 					if (_center == false
 						&& !(pos - 4 >= origPos && str[pos - 3] == '`' && str[pos - 4] == ' ')	// prevents hanging quotation mark at the end of line
 						&& !(pos - 4 >= origPos && str[pos - 3] == '\'' && str[pos - 4] == ' ')	// prevents hanging single quotation mark at the end of line
@@ -651,12 +651,12 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 			curw += getCharWidth(chr);
 		}
 		if (lastspace == -1) {
-			if (!isScummvmKorTarget() || lastKoreanLineBreak == -1) {
+			if (!_vm->isScummvmKorTarget() || lastKoreanLineBreak == -1) {
 				continue;
 			}
 		}
 		if (curw > maxwidth) {
-			if (!isScummvmKorTarget()) {
+			if (!_vm->isScummvmKorTarget()) {
 				str[lastspace] = 0xD;
 				curw = 1;
 				pos = lastspace + 1;
@@ -705,7 +705,7 @@ void CharsetRendererPC::enableShadow(bool enable) {
 }
 
 void CharsetRendererPC::drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height) {
-	if (_vm->_useCJKMode && isScummvmKorTarget()) {
+	if (_vm->_useCJKMode && _vm->isScummvmKorTarget()) {
 		drawBits1Kor(dest, x, y, src, drawTop, width, height);
 		return;
 	}
@@ -862,7 +862,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	if (chr == '@')
 		return;
 
-	if (isScummvmKorTarget()) {
+	if (_vm->isScummvmKorTarget()) {
 		if (is2byte) {
 			charPtr = _vm->get2byteCharPtr(chr);
 			width = _vm->_2byteWidth;
@@ -943,7 +943,7 @@ void CharsetRendererV3::drawChar(int chr, Graphics::Surface &s, int x, int y) {
 	int height;
 	int is2byte = (chr > 0xff && _vm->_useCJKMode) ? 1 : 0;
 
-	if (isScummvmKorTarget()) {
+	if (_vm->isScummvmKorTarget()) {
 		if (is2byte) {
 			charPtr = _vm->get2byteCharPtr(chr);
 			width = _vm->_2byteWidth;
@@ -1003,7 +1003,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 	translateColor();
 
 	_vm->_charsetColorMap[1] = _color;
-	if (isScummvmKorTarget() && is2byte) {
+	if (_vm->isScummvmKorTarget() && is2byte) {
 		enableShadow(true);
 		_charPtr = _vm->get2byteCharPtr(chr);
 		_width = _vm->_2byteWidth;
@@ -1014,7 +1014,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 			return;
 	}
 
-	if (isScummvmKorTarget()) {
+	if (_vm->isScummvmKorTarget()) {
 		_origWidth = _width;
 		_origHeight = _height;
 	}
@@ -1289,7 +1289,7 @@ CharsetRendererTownsV3::CharsetRendererTownsV3(ScummEngine *vm) : CharsetRendere
 }
 
 int CharsetRendererTownsV3::getCharWidth(uint16 chr) {
-	if (isScummvmKorTarget()) {
+	if (_vm->isScummvmKorTarget()) {
 		return CharsetRendererV3::getCharWidth(chr);
 	}
 
@@ -1309,7 +1309,7 @@ int CharsetRendererTownsV3::getCharWidth(uint16 chr) {
 }
 
 int CharsetRendererTownsV3::getFontHeight() {
-	if (isScummvmKorTarget()) {
+	if (_vm->isScummvmKorTarget()) {
 		return CharsetRendererV3::getFontHeight();
 	}
 
@@ -1317,7 +1317,7 @@ int CharsetRendererTownsV3::getFontHeight() {
 }
 
 void CharsetRendererTownsV3::enableShadow(bool enable) {
-	if (isScummvmKorTarget()) {
+	if (_vm->isScummvmKorTarget()) {
 		CharsetRendererV3::enableShadow(enable);
 		return;
 	}
@@ -1335,7 +1335,7 @@ void CharsetRendererTownsV3::enableShadow(bool enable) {
 }
 
 void CharsetRendererTownsV3::drawBits1(Graphics::Surface &dest, int x, int y, const byte *src, int drawTop, int width, int height) {
-	if (isScummvmKorTarget()) {
+	if (_vm->isScummvmKorTarget()) {
 		CharsetRendererV3::drawBits1(dest, x, y, src, drawTop, width, height);
 		return;
 	}
@@ -1420,7 +1420,7 @@ void CharsetRendererTownsV3::drawBits1(Graphics::Surface &dest, int x, int y, co
 }
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 int CharsetRendererTownsV3::getDrawWidthIntern(uint16 chr) {
-	if (isScummvmKorTarget()) {
+	if (_vm->isScummvmKorTarget()) {
 		return CharsetRendererV3::getDrawWidthIntern(chr);
 	}
 
@@ -1434,7 +1434,7 @@ int CharsetRendererTownsV3::getDrawWidthIntern(uint16 chr) {
 }
 
 int CharsetRendererTownsV3::getDrawHeightIntern(uint16 chr) {
-	if (isScummvmKorTarget()) {
+	if (_vm->isScummvmKorTarget()) {
 		return CharsetRendererV3::getDrawHeightIntern(chr);
 	}
 
