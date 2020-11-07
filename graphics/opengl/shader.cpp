@@ -136,6 +136,14 @@ ShaderGL::ShaderGL(const Common::String &name, GLuint vertexShader, GLuint fragm
 	}
 	glLinkProgram(shaderProgram);
 
+	GLint status;
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
+	if (status != GL_TRUE) {
+		char buffer[512];
+		glGetProgramInfoLog(shaderProgram, 512, NULL, buffer);
+		error("Could not link shader %s: %s", name.c_str(), buffer);
+	}
+
 	glDetachShader(shaderProgram, vertexShader);
 	glDetachShader(shaderProgram, fragmentShader);
 
