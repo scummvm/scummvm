@@ -111,7 +111,7 @@ public:
 		return _pos;
 	}
 
-	void moveTo(Common::Point dst, int frames);
+	void moveTo(Common::Point dst, int direction);
 
 	void direction(int dir);
 
