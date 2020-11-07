@@ -1402,7 +1402,7 @@ int ScummEngine::convertVerbMessage(byte *dst, int dstSize, int var) {
 
 	bool isKorVerbGlue = false;
 
-	if (_language == Common::KO_KOR && _useCJKMode && var & (1 << 15)) {
+	if (isScummvmKorTarget() && _useCJKMode && var & (1 << 15)) {
 		isKorVerbGlue = true;
 		var &= ~(1 << 15);
 	}
@@ -1484,7 +1484,7 @@ int ScummEngine::convertNameMessage(byte *dst, int dstSize, int var) {
 		const byte *ptr = getObjOrActorName(num);
 		if (ptr) {
 			int increment = convertMessageToString(ptr, dst, dstSize);
-			if (_language == Common::KO_KOR && _useCJKMode) {
+			if (isScummvmKorTarget() && _useCJKMode) {
 				_krStrPost = 0;
 				int len = resStrLen(ptr);
 				if (len >= 2) {
@@ -1527,7 +1527,7 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 	if (_game.version == 3 || (_game.version >= 6 && _game.heversion < 72))
 		var = readVar(var);
 
-	if (_language == Common::KO_KOR && _useCJKMode && (var & (1 << 15))) {
+	if (isScummvmKorTarget() && _useCJKMode && (var & (1 << 15))) {
 		int idx;
 		static const byte codeIdx[] = {0x00, 0x00, 0xC0, 0xB8, 0x00, 0x00, 0xC0, 0xCC, 0xB0, 0xA1, 0xC0, 0xCC, 0xB8, 0xA6, 0xC0, 0xBB, 0xBF, 0xCD, 0xB0, 0xFA, 0xB4, 0xC2, 0xC0, 0xBA};
 
@@ -1547,7 +1547,7 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 		ptr = getStringAddress(var);
 		if (ptr) {
 			int increment = convertMessageToString(ptr, dst, dstSize);
-			if (_language == Common::KO_KOR && _useCJKMode) {
+			if (isScummvmKorTarget() && _useCJKMode) {
 				_krStrPost = 0;
 				for (int i = resStrLen(ptr); i > 1; i--) {
 					byte k1 = ptr[i - 2];
