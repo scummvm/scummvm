@@ -33,6 +33,7 @@ Console::Console(AGDSEngine *engine) : _engine(engine) {
 	registerCmd("activate",		WRAP_METHOD(Console, activate));
 	registerCmd("info",			WRAP_METHOD(Console, info));
 	registerCmd("run",			WRAP_METHOD(Console, run));
+	registerCmd("set",			WRAP_METHOD(Console, setGlobal));
 }
 
 bool Console::run(int argc, const char **argv) {
@@ -80,6 +81,20 @@ bool Console::info(int argc, const char **argv) {
 	for(auto & process : processes) {
 		debugPrintf("%s\n", process->getName().c_str());
 	}
+	return true;
+}
+
+bool Console::setGlobal(int argc, const char **argv) {
+	if (argc < 3) {
+		debugPrintf("usage: %s var value\n", argv[0]);
+		return true;
+	}
+	int value;
+	if (sscanf(argv[2], "%d", &value) != 1) {
+		debugPrintf("invalid value");
+		return true;
+	}
+	_engine->setGlobal(argv[1], value);
 	return true;
 }
 
