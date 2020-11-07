@@ -109,10 +109,12 @@ void Character::direction(int dir) {
 	}
 }
 
-void Character::moveTo(Common::Point dst, int frames) {
+void Character::moveTo(Common::Point dst, int dir) {
+	debug("character move %d,%d %d", dst.x, dst.y, dir);
 	_dst = dst;
 	_phase = 0;
-	_frames = frames;
+	_frames = 1 + sqrt(dst.sqrDist(_pos)) / 5;
+	direction(dir);
 }
 
 void Character::animate(Common::Point pos, int direction, int speed) {

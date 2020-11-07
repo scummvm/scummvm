@@ -1238,15 +1238,15 @@ void Process::enableCharacter() {
 }
 
 void Process::moveCharacter(bool usermove) {
-	int frames = pop();
+	int direction = pop();
 	Common::String regionName = popString();
 	Common::String id = popString();
-	debug("moveCharacter %s %s, frames: %d, usermove: %d", id.c_str(), regionName.c_str(), frames, usermove);
+	debug("moveCharacter %s %s, direction: %d, usermove: %d", id.c_str(), regionName.c_str(), direction, usermove);
 	Character *character = _engine->getCharacter(id);
 	if (character) {
 		auto region = _engine->loadRegion(regionName);
 		if (region) {
-			character->moveTo(region->center, frames);
+			character->moveTo(region->center, direction);
 		}
 	} else
 		warning("character %s could not be found", id.c_str());
