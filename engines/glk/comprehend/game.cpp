@@ -399,7 +399,7 @@ void ComprehendGame::update_graphics() {
 
 	case ROOM_IS_TOO_BRIGHT:
 		if (_updateFlags & UPDATE_GRAPHICS)
-			g_comprehend->clearScreen(false);
+			g_comprehend->clearScreen(true);
 		break;
 
 	default:
