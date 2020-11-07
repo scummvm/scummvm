@@ -190,7 +190,7 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 	_system(nullptr), _vectorRenderer(nullptr),
 	_layerToDraw(kDrawLayerBackground), _bytesPerPixel(0),  _graphicsMode(kGfxDisabled),
 	_font(nullptr), _initOk(false), _themeOk(false), _enabled(false), _themeFiles(),
-	_cursor(nullptr) {
+	_cursor(nullptr), _scaleFactor(1.0f) {
 
 	_system = g_system;
 	_parser = new ThemeParser(this);
@@ -310,8 +310,13 @@ const char *ThemeEngine::findModeConfigName(GraphicsMode mode) {
 }
 
 
+void ThemeEngine::setBaseResolution(int w, int h, float s) {
+	_baseWidth = w;
+	_baseHeight = h;
+	_scaleFactor = s;
 
-
+	_parser->setBaseResolution(w, h, s);
+}
 
 /**********************************************************
  * Theme setup/initialization
@@ -376,7 +381,7 @@ void ThemeEngine::clearAll() {
 	}
 }
 
-void ThemeEngine::refresh(int16 baseWidth, int16 baseHeight, float scaleFactor) {
+void ThemeEngine::refresh() {
 
 	// Flush all bitmaps if the overlay pixel format changed.
 	if (_overlayFormat != _system->getOverlayFormat()) {
@@ -398,8 +403,6 @@ void ThemeEngine::refresh(int16 baseWidth, int16 baseHeight, float scaleFactor) 
 		}
 		_abitmaps.clear();
 	}
-
-	_parser->setBaseResolution(baseWidth, baseHeight, scaleFactor);
 
 	init();
 
@@ -736,6 +739,14 @@ bool ThemeEngine::addBitmap(const Common::String &filename) {
 			surf = srcSurface->convertTo(_overlayFormat);
 	}
 
+	if (_scaleFactor != 1.0) {
+		Graphics::Surface *tmp2 = surf->scale(surf->w * _scaleFactor, surf->h * _scaleFactor, false);
+
+		surf->free();
+		delete surf;
+
+		surf = tmp2;
+	}
 	// Store the surface into our hashmap (attention, may store NULL entries!)
 	_bitmaps[filename] = surf;
 

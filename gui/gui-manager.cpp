@@ -129,6 +129,9 @@ void GuiManager::computeScaleFactor() {
 
 	_baseWidth = (int16)((float)w / _scaleFactor);
 
+	if (_theme)
+		_theme->setBaseResolution(_baseWidth, _baseHeight, _scaleFactor);
+
 	debug(3, "Setting %d x %d -> %d x %d -- %g", w, h, _baseWidth, _baseHeight, _scaleFactor);
 }
 
@@ -206,6 +209,7 @@ bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx, 
 	// Try to load the new theme
 	newTheme = new ThemeEngine(id, gfx);
 	assert(newTheme);
+	newTheme->setBaseResolution(_baseWidth, _baseHeight, _scaleFactor);
 
 	if (!newTheme->init()) {
 		delete newTheme;
@@ -584,7 +588,7 @@ void GuiManager::screenChange() {
 	computeScaleFactor();
 
 	// reinit the whole theme
-	_theme->refresh(_baseWidth, _baseHeight, _scaleFactor);
+	_theme->refresh();
 
 	// refresh all dialogs
 	for (DialogStack::size_type i = 0; i < _dialogStack.size(); ++i) {
