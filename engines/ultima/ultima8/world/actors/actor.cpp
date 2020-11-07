@@ -908,6 +908,59 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 	}
 }
 
+void Actor::tookHitCru() {
+	Animation::Sequence lastanim = getLastAnim();
+	if ((lastanim == Animation::unknownAnim30) || (lastanim == Animation::startRunWithLargeWeapon)) {
+		//uint16 controllednpc = World::get_instance()->getControlledNPCNum();
+		bool canseecontrolled = true; //this->canSee(controllednpc);
+		if (canseecontrolled) {
+			if (getRandom() % 4)
+				setActivity(5);
+			else
+				setActivity(10);
+		}
+	} else {
+		uint32 shape = getShape();
+		if (shape != 0x576) { // 0x576 = flaming guy
+			if (shape < 0x577) {
+				if (shape == 0x385 || shape == 0x4e6) {
+				   explode(2, 0);
+				   clearFlag(FLG_IN_NPC_LIST);
+				   clearFlag(FLG_GUMP_OPEN);
+			   }
+			   return;
+		   }
+		   if (shape != 0x596) {
+			   return;
+		   }
+		}
+
+		bool violence = true; // Game::I_isViolenceEnabled
+		if (!violence)
+			return;
+
+		static const uint16 FEMALE_SCREAMS[] = {0xb, 0xa};
+		static const uint16 MALE_SCREAMS[] = {0x65, 0x66, 0x67};
+		int nsounds;
+		const uint16 *sounds;
+		if (hasExtFlags(EXT_FEMALE)) {
+			nsounds = ARRAYSIZE(FEMALE_SCREAMS);
+			sounds = FEMALE_SCREAMS;
+		} else {
+			nsounds = ARRAYSIZE(MALE_SCREAMS);
+			sounds = MALE_SCREAMS;
+		}
+		AudioProcess *audio = AudioProcess::get_instance();
+		if (!audio)
+			return;
+		for (int i = 0; i < nsounds; i++) {
+			if (audio->isSFXPlayingForObject(sounds[i], _objId))
+				return;
+		}
+		audio->playSFX(sounds[getRandom() % nsounds], 0x80, _objId, 1);
+	}
+}
+
 void Actor::receiveHitU8(uint16 other, Direction dir, int damage, uint16 damage_type) {
 	if (isDead())
 		return; // already dead, so don't bother

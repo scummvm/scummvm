@@ -260,11 +260,15 @@ void ActorAnimProcess::run() {
 			if (audioproc) audioproc->playSFX(curframe->_sfx, 0x60, _itemNum, 0);
 		}
 
-		if (curframe && (curframe->_flags & AnimFrame::AFF_SPECIAL)) {
-			// Flag to trigger a special _action
-			// E.g.: play draw/sheathe SFX for avatar when weapon equipped,
-			// throw skull-fireball when ghost attacks, ...
-			doSpecial();
+		if (curframe) {
+			if (curframe->_flags & AnimFrame::AFF_SPECIAL) {
+				// Flag to trigger a special action
+				// E.g.: play draw/sheathe SFX for avatar when weapon equipped,
+				// throw skull-fireball when ghost attacks, ...
+				doSpecial();
+			} else if (curframe->_flags & AnimFrame::AFF_HURTY) {
+				a->tookHitCru();
+			}
 		}
 
 

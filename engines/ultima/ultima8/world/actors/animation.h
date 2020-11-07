@@ -102,6 +102,7 @@ enum Sequence {
 	kneelAndFire = 26,
 	slideLeft = 28,
 	slideRight = 29,
+	unknownAnim30 = 30,
 	startRunWithLargeWeapon = 31,
 	teleportIn = 32,
 	teleportOut = 33,
