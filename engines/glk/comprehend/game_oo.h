@@ -35,16 +35,20 @@ private:
 	RestartMode _restartMode;
 	bool _wearingGoggles, _lightOn;
 	int _stringVal1, _stringVal2;
-	bool _addStringFlag, _bulkFlag;
+	bool _addStringFlag, _shipNotWorking;
 
 	void randomizeGuardLocation();
 	void computerResponse();
-	void addBulkMessage();
+
+	/**
+	 * Checks whether the ship is in working order
+	 */
+	void checkShipWorking();
 
 	/**
 	 * Tests if the player has enough to purchase needed ship fuel
 	 */
-	void fuelCheck();
+	void checkShipFuel();
 
 	/**
 	 * Checks whether the ship can depart, printing out the computer's response

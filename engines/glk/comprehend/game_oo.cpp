@@ -53,7 +53,7 @@ static const GameStrings OO_STRINGS = {
 
 OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE),
 		_wearingGoggles(false), _lightOn(false), _stringVal1(0), _stringVal2(0),
-		_addStringFlag(true), _bulkFlag(false) {
+		_addStringFlag(true), _shipNotWorking(false) {
 	_gameDataFile = "g0";
 
 	// Extra strings are (annoyingly) stored in the game binary
@@ -233,11 +233,31 @@ void OOToposGame::computerResponse() {
 		console_println(_strings2[152].c_str());
 }
 
-void OOToposGame::addBulkMessage() {
+void OOToposGame::checkShipWorking() {
+	_stringVal1 = 164;
+	_stringVal2 = 0;
 
+	// Iterate through the ship's flags
+	for (int idx = 42; idx < 51; ++idx, ++_stringVal1) {
+		if (!_flags[idx]) {
+			if (!_stringVal2) {
+				// The following components are not installed
+				console_cond_println(_strings2[132].c_str());
+				_stringVal2 = 1;
+			}
+
+			// Power Cylinder
+			console_cond_println(_strings[_stringVal1].c_str());
+		}
+	}
+
+	_shipNotWorking = _stringVal2 != 0;
+	if (!_shipNotWorking)
+		// The ship is in working order
+		console_cond_println(_strings2[153].c_str());
 }
 
-void OOToposGame::fuelCheck() {
+void OOToposGame::checkShipFuel() {
 	const byte ITEMS[7] = { 24, 27, 28, 29, 30, 31, 32 };
 	_variables[0x4b] = 0;
 	_stringVal1 = 68;
@@ -273,11 +293,11 @@ void OOToposGame::fuelCheck() {
 
 void OOToposGame::shipDepartCheck() {
 	_addStringFlag = false;
-	addBulkMessage();
-	fuelCheck();
+	checkShipWorking();
+	checkShipFuel();
 	_addStringFlag = true;
 
-	if (!_bulkFlag && _flags[OO_FLAG_SUFFICIENT_FUEL]) {
+	if (!_shipNotWorking && _flags[OO_FLAG_SUFFICIENT_FUEL]) {
 		Item *item = get_item(ITEM_SERUM_VIAL - 1);
 		if (item->_room == ROOM_INVENTORY || (get_room(item->_room)->_flags & OO_ROOM_FLAG_FUEL) != 0) {
 			if (!_flags[OO_TRACTOR_BEAM]) {
