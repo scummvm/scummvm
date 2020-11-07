@@ -89,7 +89,7 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 
 	new GUI::ButtonWidget(this, "GlobalMenu.About", _("~A~bout"), Common::U32String(), kAboutCmd);
 
-	if (g_system->getOverlayWidth() > 320)
+	if (g_gui.getBaseWidth() > 320)
 		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", _("~R~eturn to Launcher"), Common::U32String(), kLauncherCmd);
 	else
 		_returnToLauncherButton = new GUI::ButtonWidget(this, "GlobalMenu.ReturnToLauncher", _c("~R~eturn to Launcher", "lowres"), Common::U32String(), kLauncherCmd);
@@ -165,7 +165,7 @@ void MainMenuDialog::reflowLayout() {
 	// Update labels when it might be needed
 	// FIXME: it might be better to declare GUI::StaticTextWidget::setLabel() virtual
 	// and to reimplement it in GUI::ButtonWidget to handle the hotkey.
-	if (g_system->getOverlayWidth() > 320)
+	if (g_gui.getBaseWidth() > 320)
 		_returnToLauncherButton->setLabel(_returnToLauncherButton->cleanupHotkey(_("~R~eturn to Launcher")));
 	else
 		_returnToLauncherButton->setLabel(_returnToLauncherButton->cleanupHotkey(_c("~R~eturn to Launcher", "lowres")));
