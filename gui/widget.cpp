@@ -594,16 +594,7 @@ void PicButtonWidget::setGfx(const Graphics::Surface *gfx, int statenum) {
 		return;
 	}
 
-	float scale = g_gui.getScaleFactor();
-
-	if (scale != 1.0f) {
-		Graphics::Surface *tmp = scaleGfx(gfx, gfx->w * scale, gfx->h * scale);
-		_gfx[statenum].copyFrom(*tmp);
-		tmp->free();
-		delete tmp;
-	} else {
-		_gfx[statenum].copyFrom(*gfx);
-	}
+	_gfx[statenum].copyFrom(*gfx);
 }
 
 void PicButtonWidget::setGfx(int w, int h, int r, int g, int b, int statenum) {
