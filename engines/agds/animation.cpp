@@ -141,7 +141,10 @@ bool Animation::tick(AGDSEngine &engine) {
 			engine.reactivate(_process, true);
 			return true;
 		}
-		return false;
+		if (_loop)
+			rewind();
+		else
+			return false;
 	}
 
 	decodeNextFrame(engine);
