@@ -82,6 +82,18 @@ bool Screen::add(ObjectPtr object) {
 	return true;
 }
 
+bool Screen::remove(Animation * animation) {
+	bool removed = false;
+	for(auto i = _animations.begin(); i != _animations.end(); ) {
+		if (*i == animation) {
+			_animations.erase(i++);
+			removed = true;
+		} else
+			++i;
+	}
+	return removed;
+}
+
 ObjectPtr Screen::find(const Common::String &name) {
 	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr &object = *i;
