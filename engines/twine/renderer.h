@@ -47,12 +47,16 @@ private:
 		uint8 *dataPtr = nullptr;
 	};
 
+	#include "common/pack-start.h"
 	struct pointTab {
 		int16 x = 0;
 		int16 y = 0;
 		int16 z = 0;
 	};
+	#include "common/pack-end.h"
+	static_assert(sizeof(pointTab) == 6, "Unexpected pointTab size");
 
+	#include "common/pack-start.h"
 	struct elementEntry {
 		int16 firstPoint = 0;  // data1
 		int16 numOfPoints = 0; // data2
@@ -69,6 +73,8 @@ private:
 		int32 field_20 = 0;
 		int16 field_24 = 0;
 	};
+	#include "common/pack-end.h"
+	static_assert(sizeof(elementEntry) == 38, "Unexpected elementEntry size");
 
 	struct lineCoordinates {
 		int32 data = 0;
@@ -134,9 +140,9 @@ private:
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
 	void applyRotation(int32 *targetMatrix, const int32 *currentMatrix);
-	void applyPointsRotation(const uint8 *firstPointsPtr, int32 numPoints, pointTab *destPoints, const int32 *rotationMatrix);
+	void applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const int32 *rotationMatrix);
 	void processRotatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr);
-	void applyPointsTranslation(const uint8 *firstPointsPtr, int32 numPoints, pointTab *destPoints, const int32 *translationMatrix);
+	void applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const int32 *translationMatrix);
 	void processTranslatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr);
 	void translateGroup(int16 ax, int16 bx, int16 cx);
 
