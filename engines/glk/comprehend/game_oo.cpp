@@ -158,9 +158,9 @@ void OOToposGame::beforeTurn() {
 			_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 
 			if (_noFloodfill == YES)
-				g_comprehend->_drawFlags |= IMAGEF_NO_FLOODFILL;
+				g_comprehend->_drawFlags |= IMAGEF_REVERSE;
 			else
-				g_comprehend->_drawFlags &= ~IMAGEF_NO_FLOODFILL;
+				g_comprehend->_drawFlags &= ~IMAGEF_REVERSE;
 		}
 	}
 

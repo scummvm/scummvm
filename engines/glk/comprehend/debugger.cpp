@@ -66,10 +66,10 @@ bool Debugger::cmdDump(int argc, const char **argv) {
 
 bool Debugger::cmdFloodfills(int argc, const char **argv) {
 	if (argc == 2 && !strcmp(argv[1], "off")) {
-		g_comprehend->_drawFlags |= IMAGEF_NO_FLOODFILL;
+		g_comprehend->_drawFlags |= IMAGEF_NO_PAINTING;
 		debugPrintf("Floodfills are off\n");
 	} else {
-		g_comprehend->_drawFlags &= ~IMAGEF_NO_FLOODFILL;
+		g_comprehend->_drawFlags &= ~IMAGEF_NO_PAINTING;
 		debugPrintf("Floodfills are on\n");
 	}
 

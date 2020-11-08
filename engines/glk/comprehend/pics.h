@@ -31,7 +31,11 @@
 namespace Glk {
 namespace Comprehend {
 
-#define IMAGEF_NO_FLOODFILL (1 << 1)
+enum ImageFlag {
+	IMAGEF_REVERSE = 1 << 0,
+	IMAGEF_NO_PAINTING = 1 << 1,
+	IMAGEF_NO_FILL = IMAGEF_REVERSE | IMAGEF_NO_PAINTING
+};
 
 enum {
 	LOCATIONS_OFFSET = 0,
