@@ -111,9 +111,9 @@ void Collision::reajustActorPosition(int32 brickShape) {
 		return;
 	}
 
-	int32 brkX = (collisionX << 9) - 0x100;
-	int32 brkY = collisionY << 8;
-	int32 brkZ = (collisionZ << 9) - 0x100;
+	const int32 brkX = (collisionX << 9) - 0x100;
+	const int32 brkY = collisionY << 8;
+	const int32 brkZ = (collisionZ << 9) - 0x100;
 
 	// double-side stairs
 	if (brickShape >= kDoubleSideStairsTop1 && brickShape <= kDoubleSideStairsRight2) {
@@ -381,14 +381,12 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 	return actor->collision;
 }
 
-void Collision::checkHeroCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 damageMask) {
-	int32 brickShape;
+void Collision::checkHeroCollisionWithBricks(int32 x, int32 y, int32 z, int32 damageMask) {
+	int32 brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ);
 
-	brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ);
-
-	_engine->_movements->processActorX += X;
-	_engine->_movements->processActorY += Y;
-	_engine->_movements->processActorZ += Z;
+	_engine->_movements->processActorX += x;
+	_engine->_movements->processActorY += y;
+	_engine->_movements->processActorZ += z;
 
 	if (_engine->_movements->processActorX >= 0 && _engine->_movements->processActorZ >= 0 && _engine->_movements->processActorX <= 0x7E00 && _engine->_movements->processActorZ <= 0x7E00) {
 		reajustActorPosition(brickShape);
@@ -396,10 +394,10 @@ void Collision::checkHeroCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 da
 
 		if (brickShape == kSolid) {
 			causeActorDamage |= damageMask;
-			brickShape = _engine->_grid->getBrickShapeFull(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->previousActorZ + Z, _engine->_actor->processActorPtr->boudingBox.y.topRight);
+			brickShape = _engine->_grid->getBrickShapeFull(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->previousActorZ + z, _engine->_actor->processActorPtr->boudingBox.y.topRight);
 
 			if (brickShape == kSolid) {
-				brickShape = _engine->_grid->getBrickShapeFull(X + _engine->_movements->previousActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ, _engine->_actor->processActorPtr->boudingBox.y.topRight);
+				brickShape = _engine->_grid->getBrickShapeFull(x + _engine->_movements->previousActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ, _engine->_actor->processActorPtr->boudingBox.y.topRight);
 
 				if (brickShape != kSolid) {
 					processCollisionX = _engine->_movements->previousActorX;
@@ -415,14 +413,12 @@ void Collision::checkHeroCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 da
 	_engine->_movements->processActorZ = processCollisionZ;
 }
 
-void Collision::checkActorCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 damageMask) {
-	int32 brickShape;
+void Collision::checkActorCollisionWithBricks(int32 x, int32 y, int32 z, int32 damageMask) {
+	int32 brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ);
 
-	brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ);
-
-	_engine->_movements->processActorX += X;
-	_engine->_movements->processActorY += Y;
-	_engine->_movements->processActorZ += Z;
+	_engine->_movements->processActorX += x;
+	_engine->_movements->processActorY += y;
+	_engine->_movements->processActorZ += z;
 
 	if (_engine->_movements->processActorX >= 0 && _engine->_movements->processActorZ >= 0 && _engine->_movements->processActorX <= 0x7E00 && _engine->_movements->processActorZ <= 0x7E00) {
 		reajustActorPosition(brickShape);
@@ -430,10 +426,10 @@ void Collision::checkActorCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 d
 
 		if (brickShape == kSolid) {
 			causeActorDamage |= damageMask;
-			brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->previousActorZ + Z);
+			brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->previousActorZ + z);
 
 			if (brickShape == kSolid) {
-				brickShape = _engine->_grid->getBrickShape(X + _engine->_movements->previousActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ);
+				brickShape = _engine->_grid->getBrickShape(x + _engine->_movements->previousActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ);
 
 				if (brickShape != kSolid) {
 					processCollisionX = _engine->_movements->previousActorX;
@@ -507,28 +503,28 @@ int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 act
 	return -1;
 }
 
-int32 Collision::checkExtraCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 oldX, int32 oldY, int32 oldZ) {
+bool Collision::checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, int32 oldX, int32 oldY, int32 oldZ) {
 	if (_engine->_grid->getBrickShape(oldX, oldY, oldZ)) {
-		return 1;
+		return true;
 	}
 
-	const int32 averageX = ABS(X + oldX) / 2;
-	const int32 averageY = ABS(Y + oldY) / 2;
-	const int32 averageZ = ABS(Z + oldZ) / 2;
+	const int32 averageX = ABS(x + oldX) / 2;
+	const int32 averageY = ABS(y + oldY) / 2;
+	const int32 averageZ = ABS(z + oldZ) / 2;
 
 	if (_engine->_grid->getBrickShape(averageX, averageY, averageZ)) {
-		return 1;
+		return true;
 	}
 
 	if (_engine->_grid->getBrickShape(ABS(oldX + averageX) / 2, ABS(oldY + averageY) / 2, ABS(oldZ + averageZ) / 2)) {
-		return 1;
+		return true;
 	}
 
-	if (_engine->_grid->getBrickShape(ABS(X + averageX) / 2, ABS(Y + averageY) / 2, ABS(Z + averageZ) / 2)) {
-		return 1;
+	if (_engine->_grid->getBrickShape(ABS(x + averageX) / 2, ABS(y + averageY) / 2, ABS(z + averageZ) / 2)) {
+		return true;
 	}
 
-	return 0;
+	return false;
 }
 
 int32 Collision::checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extraIdx) {

@@ -75,21 +75,21 @@ public:
 
 	/**
 	 * Check Hero collision with bricks
-	 * @param X Hero X coordinate
-	 * @param Y Hero Y coordinate
-	 * @param Z Hero Z coordinate
+	 * @param x Hero X coordinate
+	 * @param y Hero Y coordinate
+	 * @param z Hero Z coordinate
 	 * @param damageMask Cause damage mask
 	 */
-	void checkHeroCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 damageMask);
+	void checkHeroCollisionWithBricks(int32 x, int32 y, int32 z, int32 damageMask);
 
 	/**
 	 * Check other actor collision with bricks
-	 * @param X Actor X coordinate
-	 * @param Y Actor Y coordinate
-	 * @param Z Actor Z coordinate
+	 * @param x Actor X coordinate
+	 * @param y Actor Y coordinate
+	 * @param z Actor Z coordinate
 	 * @param damageMask Cause damage mask
 	 */
-	void checkActorCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 damageMask);
+	void checkActorCollisionWithBricks(int32 x, int32 y, int32 z, int32 damageMask);
 
 	/** Make actor to stop falling */
 	void stopFalling();
@@ -102,7 +102,7 @@ public:
 	int32 checkExtraCollisionWithActors(ExtraListStruct *extra, int32 actorIdx);
 
 	/** Check extra collision with bricks */
-	int32 checkExtraCollisionWithBricks(int32 X, int32 Y, int32 Z, int32 oldX, int32 oldY, int32 oldZ);
+	bool checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, int32 oldX, int32 oldY, int32 oldZ);
 
 	/**
 	 * Check extra collision with another extra
