@@ -860,7 +860,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "69b7516962510f780d38519cc15fcc7c", 12581736},
 		{"resource.msg", 0, "5a35e00e0b8d656ff423b76831a86ab8", 980765},
 		AD_LISTEND},
-		Common::KO_KOR, Common::kPlatformDOS, ADGF_CD, GUIO_GK1_CD_DOS },
+		Common::KO_KOR, Common::kPlatformDOS, ADGF_CD, GUIO3(GUIO_LINKSPEECHTOSFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_HQ_VIDEO) },
 
 	{"gk1", "CD", {
 		{"resource.map", 0, "372d059f75856afa6d73dd84cbb8913d", 10996},
@@ -2090,7 +2090,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
 		{"resource.msg", 0, "51ca9f8afc42ef442f6545b3c82a9165", 596121},
 		AD_LISTEND},
-		Common::KO_KOR, Common::kPlatformDOS, ADGF_CD, GUIO5(GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING)	},
+		Common::KO_KOR, Common::kPlatformDOS, ADGF_CD, GUIO4(GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING)	},
 
 	// King's Quest 6 - Korean fan translation, based on English Windows CD (from the King's Quest Collection)
 	// Executable scanning reports "1.cfs.158", VERSION file reports "1.034 9/11/94 - KQ6 version 1.000.00G"
@@ -2100,7 +2100,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
 		{"resource.msg", 0, "51ca9f8afc42ef442f6545b3c82a9165", 596121},
 		AD_LISTEND},
-		Common::KO_KOR, Common::kPlatformWindows, ADGF_CD, GUIO6(GUIO_NOASPECT, GAMEOPTION_HIGH_RESOLUTION_GRAPHICS, GAMEOPTION_KQ6_WINDOWS_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
+		Common::KO_KOR, Common::kPlatformWindows, ADGF_CD, GUIO5(GUIO_NOASPECT, GAMEOPTION_KQ6_WINDOWS_CURSORS, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
 
 	// King's Quest 6 - English Macintosh Floppy
 	// VERSION file reports "1.0"
