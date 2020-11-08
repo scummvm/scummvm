@@ -669,7 +669,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1NewGameString, kKyra1, kPlatformDOS, kTalkieVersion, ES_ESP, &k1NewGameStringDOSCDSpanishProvider },
 	{ k1ConfigStrings, kKyra1, kPlatformDOS, kTalkieVersion, ES_ESP, &k1ConfigStringsDOSCDSpanishProvider },
 
-	{ k1IntroStrings, kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS, &k1IntroStringsDOSCDRussianProvider },
+	/*{ k1IntroStrings, kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS, &k1IntroStringsDOSCDRussianProvider },
 	{ k1ItemNames, kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS, &k1ItemNamesDOSCDRussianProvider },
 	{ k1TakenStrings, kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS, &k1TakenStringsDOSCDRussianProvider },
 	{ k1PlacedStrings, kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS, &k1PlacedStringsDOSCDRussianProvider },
@@ -690,7 +690,7 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1VeryCleverString, kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS, &k1VeryCleverStringDOSCDRussianProvider },
 	{ k1GUIStrings, kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS, &k1GUIStringsDOSCDRussianProvider },
 	{ k1NewGameString, kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS, &k1NewGameStringDOSCDRussianProvider },
-	{ k1ConfigStrings, kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS, &k1ConfigStringsDOSCDRussianProvider },
+	{ k1ConfigStrings, kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS, &k1ConfigStringsDOSCDRussianProvider },*/
 
 	{ k1KallakWritingSeq, kKyra1, kPlatformFMTowns, kNoSpecial, UNK_LANG, &k1KallakWritingSeqFMTownsProvider },
 	{ k1MalcolmTreeSeq, kKyra1, kPlatformFMTowns, kNoSpecial, UNK_LANG, &k1MalcolmTreeSeqFMTownsProvider },
@@ -949,8 +949,8 @@ static const ResourceProvider resourceProviders[] = {
 	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, DE_DEU, &k2SeqplayTlkFilesDOSCDGermanProvider },
 	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kTalkieVersion, IT_ITA, &k2SeqplayStringsDOSCDItalianProvider },
 	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, IT_ITA, &k2SeqplayTlkFilesDOSCDItalianProvider },
-	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kTalkieVersion, RU_RUS, &k2SeqplayStringsDOSCDRussianProvider },
-	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, RU_RUS, &k2SeqplayTlkFilesDOSCDRussianProvider },
+	/*{ k2SeqplayStrings, kKyra2, kPlatformDOS, kTalkieVersion, RU_RUS, &k2SeqplayStringsDOSCDRussianProvider },
+	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, RU_RUS, &k2SeqplayTlkFilesDOSCDRussianProvider },*/
 
 	{ k2SeqplayStrings, kKyra2, kPlatformDOS, kTalkieVersion, ES_ESP, &k2SeqplayStringsDOSCDSpanishProvider },
 	{ k2SeqplayTlkFiles, kKyra2, kPlatformDOS, kTalkieVersion, ES_ESP, &k2SeqplayTlkFilesDOSCDSpanishProvider },

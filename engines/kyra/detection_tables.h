@@ -462,11 +462,11 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // Modern fan-made Russian translation by Siberian GRemlin
 		{
 			"kyra1",
-			"CD",
+			_s("The fan translator does not wish his translation to be incorporated into ScummVM."),
 			AD_ENTRY1("MAIN_ENG.CPS", "535765395e3594bfd9b727834028e288"),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
-			ADGF_CD,
+			ADGF_CD | ADGF_UNSUPPORTED,
 			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
 		KYRA1_CD_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
@@ -719,11 +719,11 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // CD version
 		{
 			"kyra2",
-			"CD",
+			_s("The fan translator does not wish his translation to be incorporated into ScummVM."),
 			AD_ENTRY1("FERRY.CPS", "763e2103858347d4ffffc329910d323f"),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
-			ADGF_DROPLANGUAGE | ADGF_CD,
+			ADGF_CD | ADGF_UNSUPPORTED,
 			GUIO5(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
 		KYRA2_CD_FAN_FLAGS(Common::RU_RUS, Common::EN_ANY)
