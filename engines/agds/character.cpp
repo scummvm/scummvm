@@ -168,6 +168,18 @@ void Character::paint(Graphics::Surface &backbuffer) {
 	_animation->paint(*_engine, backbuffer, pos);
 }
 
+int Character::z() const {
+	int y = _pos.y + _animationPos.y;
+	//fixme: add temp var : _movePos?
+	if (_phase >= 0 && _phase < _frames) {
+		float dy = _dst.y - _pos.y;
+		float t = 1.0f * _phase / _frames;
+		y += dy * t;
+	}
+	return y;
+}
+
+
 int Character::getDirectionForMovement(Common::Point delta) {
 	auto angle = atan2(delta.y, delta.x);
 	if (angle < 0)

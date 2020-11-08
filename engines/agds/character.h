@@ -122,6 +122,8 @@ public:
 	void paint(Graphics::Surface & backbuffer);
 
 	int getDirectionForMovement(Common::Point delta);
+
+	int z() const;
 };
 
 
