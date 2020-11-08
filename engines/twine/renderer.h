@@ -25,6 +25,16 @@
 
 #include "common/scummsys.h"
 
+#define POLYGONTYPE_FLAT 0
+#define POLYGONTYPE_COPPER 1
+#define POLYGONTYPE_BOPPER 2
+#define POLYGONTYPE_MARBLE 3
+#define POLYGONTYPE_TELE 4
+#define POLYGONTYPE_TRAS 5
+#define POLYGONTYPE_TRAME 6
+#define POLYGONTYPE_GOURAUD 7
+#define POLYGONTYPE_DITHER 8
+
 namespace TwinE {
 class TwinEEngine;
 class Renderer {
@@ -179,8 +189,8 @@ private:
 
 	bool isUsingOrhoProjection = false;
 
-	void computePolygons(int16 polyRenderType, int &vleft, int &vright, int &vtop, int &vbottom);
-	void renderPolygons(int32 renderType, int32 color, int vleft, int vright, int vtop, int vbottom);
+	void computePolygons(int16 polyRenderType, vertexData *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom);
+	void renderPolygons(int32 renderType, vertexData *vertices, int32 numVertices, int32 color, int vleft, int vright, int vtop, int vbottom);
 
 public:
 	Renderer(TwinEEngine *engine) : _engine(engine) {}

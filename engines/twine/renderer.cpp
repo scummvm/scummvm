@@ -36,16 +36,6 @@ namespace TwinE {
 #define RENDERTYPE_DRAWPOLYGON 1
 #define RENDERTYPE_DRAWSPHERE 2
 
-#define POLYGONTYPE_FLAT 0
-#define POLYGONTYPE_COPPER 1
-#define POLYGONTYPE_BOPPER 2
-#define POLYGONTYPE_MARBLE 3
-#define POLYGONTYPE_TELE 4
-#define POLYGONTYPE_TRAS 5
-#define POLYGONTYPE_TRAME 6
-#define POLYGONTYPE_GOURAUD 7
-#define POLYGONTYPE_DITHER 8
-
 int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 	if (!isUsingOrhoProjection) {
 		cX -= baseRotPosX;
@@ -404,13 +394,11 @@ FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
 }
 
-void Renderer::computePolygons(int16 polyRenderType, int &vleft, int &vright, int &vtop, int &vbottom) {
-	vertexData *vertices = (vertexData *)vertexCoordinates;
-
+void Renderer::computePolygons(int16 polyRenderType, vertexData *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) {
 	vleft = vtop = 32767;
 	vright = vbottom = -32768;
 
-	for (int32 i = 0; i < numOfVertex; i++) {
+	for (int32 i = 0; i < numVertices; i++) {
 		vertices[i].x = clamp(vertices[i].x, 0, SCREEN_WIDTH - 1);
 		int16 vertexX = vertices[i].x;
 
@@ -431,12 +419,12 @@ void Renderer::computePolygons(int16 polyRenderType, int &vleft, int &vright, in
 		}
 	}
 
-	uint8 vertexParam1 = vertices[numOfVertex - 1].param;
+	uint8 vertexParam1 = vertices[numVertices - 1].param;
 	uint8 vertexParam2 = vertexParam1;
-	int16 currentVertexX = vertices[numOfVertex - 1].x;
-	int16 currentVertexY = vertices[numOfVertex - 1].y;
+	int16 currentVertexX = vertices[numVertices - 1].x;
+	int16 currentVertexY = vertices[numVertices - 1].y;
 
-	for (int32 nVertex = 0; nVertex < numOfVertex; nVertex++) {
+	for (int32 nVertex = 0; nVertex < numVertices; nVertex++) {
 		int16 oldVertexY = currentVertexY;
 		int16 oldVertexX = currentVertexX;
 		uint8 oldVertexParam = vertexParam1;
@@ -479,7 +467,7 @@ void Renderer::computePolygons(int16 polyRenderType, int &vleft, int &vright, in
 		slope = up ? -slope : slope;
 
 		for (int32  i = 0; i < vsize + 2; i++) {
-			if (outPtr - polyTab < 960) {
+			if (outPtr - polyTab < ARRAYSIZE(polyTab)) {
 				if (outPtr - polyTab > 0) {
 					*outPtr = xpos;
 				}
@@ -488,11 +476,11 @@ void Renderer::computePolygons(int16 polyRenderType, int &vleft, int &vright, in
 			xpos += slope;
 		}
 
-		if (polyRenderType >= 7) { // we must compute the color progression
+		if (polyRenderType >= POLYGONTYPE_GOURAUD) { // we must compute the color progression
 			int16 *outPtr2 = &polyTab2[ypos + (up ? SCREEN_HEIGHT : 0)];
 
 			for (int32 i = 0; i < vsize + 2; i++) {
-				if (outPtr2 - polyTab2 < 960) {
+				if (outPtr2 - polyTab2 < ARRAYSIZE(polyTab2)) {
 					if (outPtr2 - polyTab2 > 0) {
 						*outPtr2 = cvalue;
 					}
@@ -504,11 +492,11 @@ void Renderer::computePolygons(int16 polyRenderType, int &vleft, int &vright, in
 	}
 }
 
-void Renderer::renderPolygons(int32 renderType, int32 color, int vleft, int vright, int vtop, int vbottom) {
+void Renderer::renderPolygons(int32 renderType, vertexData *vertices, int32 /*numVertices*/, int32 color, int vleft, int vright, int vtop, int vbottom) {
 	uint8 *out2;
 	int32 currentLine;
 
-	uint8 *out = (uint8*)_engine->frontVideoBuffer.getPixels() + SCREEN_WIDTH * vtop;
+	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, vtop);
 
 	int16 *ptr1 = &polyTab[vtop];
 	int16 *ptr2 = &polyTab2[vtop];
@@ -988,8 +976,9 @@ void Renderer::renderPolygons(int32 polyRenderType, int32 color) {
 	int vright = 0;
 	int vtop = 0;
 	int vbottom = 0;
-	computePolygons(polyRenderType, vleft, vright, vtop, vbottom);
-	renderPolygons(polyRenderType, color, vleft, vright, vtop, vbottom);
+	vertexData *vertices = (vertexData *)vertexCoordinates;
+	computePolygons(polyRenderType, vertices, numOfVertex, vleft, vright, vtop, vbottom);
+	renderPolygons(polyRenderType, vertices, numOfVertex, color, vleft, vright, vtop, vbottom);
 }
 
 void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {

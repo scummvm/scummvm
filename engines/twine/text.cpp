@@ -471,8 +471,7 @@ void Text::printText10Sub() {
 
 	_engine->_renderer->numOfVertex = 3;
 
-	int32 polyRenderType = 0; // POLYGONTYPE_FLAT
-	_engine->_renderer->renderPolygons(polyRenderType, dialTextStopColor);
+	_engine->_renderer->renderPolygons(POLYGONTYPE_FLAT, dialTextStopColor);
 
 	_engine->copyBlockPhys(left, top, right, bottom);
 }
