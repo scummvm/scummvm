@@ -176,16 +176,10 @@ private:
 	renderTabEntry renderTabSorted[1000];
 	uint8 renderTab7[10000] {0};
 
-	uint8 *renderV19 = nullptr; // RECHECK THIS
-
 	int16 vleft = 0;
 	int16 vtop = 0;
 	int16 vright = 0;
 	int16 vbottom = 0;
-
-	uint8 oldVertexParam = 0;
-	uint8 vertexParam1 = 0;
-	uint8 vertexParam2 = 0;
 
 	int16 polyTab[960] {0};
 	int16 polyTab2[960] {0};

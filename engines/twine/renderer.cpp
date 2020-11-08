@@ -433,14 +433,15 @@ int32 Renderer::computePolygons(int16 polyRenderType) {
 		}
 	}
 
-	vertexParam1 = vertexParam2 = vertices[numOfVertex - 1].param;
+	uint8 vertexParam1 = vertices[numOfVertex - 1].param;
+	uint8 vertexParam2 = vertexParam1;
 	int16 currentVertexX = vertices[numOfVertex - 1].x;
 	int16 currentVertexY = vertices[numOfVertex - 1].y;
 
 	for (int32 nVertex = 0; nVertex < numOfVertex; nVertex++) {
 		int16 oldVertexY = currentVertexY;
 		int16 oldVertexX = currentVertexX;
-		oldVertexParam = vertexParam1;
+		uint8 oldVertexParam = vertexParam1;
 
 		vertexParam1 = vertexParam2 = vertices[nVertex].param;
 		currentVertexX = vertices[nVertex].x;
@@ -1024,6 +1025,8 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 	uint8 *edi = renderTab7;           // renderTab7 coordinates buffer
 	int16 temp = *((const int16 *)pointer); // we read the number of polygons
 	pointer += 2;
+
+	uint8 *renderV19 = nullptr; // RECHECK THIS
 
 	if (temp) {
 		int16 primitiveCounter = temp; // the number of primitives = the number of polygons
