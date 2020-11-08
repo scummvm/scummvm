@@ -452,12 +452,19 @@ void Text::processTextLine() {
 }
 
 void Text::printText10Sub() {
+	const int32 right = dialTextBoxRight - 3;
+	const int32 left = dialTextBoxRight - 24;
+	const int32 top = dialTextBoxBottom - 24;
+	const int32 bottom = dialTextBoxBottom - 3;
+
 	_engine->_renderer->vertexCoordinates[0] = dialTextStopColor;
-	_engine->_renderer->vertexCoordinates[1] = dialTextBoxRight - 3;
-	_engine->_renderer->vertexCoordinates[2] = dialTextBoxBottom - 24;
+	_engine->_renderer->vertexCoordinates[1] = right;
+	_engine->_renderer->vertexCoordinates[2] = top;
+
 	_engine->_renderer->vertexCoordinates[3] = dialTextStopColor;
-	_engine->_renderer->vertexCoordinates[4] = dialTextBoxRight - 24;
-	_engine->_renderer->vertexCoordinates[5] = dialTextBoxBottom - 3;
+	_engine->_renderer->vertexCoordinates[4] = left;
+	_engine->_renderer->vertexCoordinates[5] = bottom;
+
 	_engine->_renderer->vertexCoordinates[6] = dialTextStartColor;
 	_engine->_renderer->vertexCoordinates[7] = _engine->_renderer->vertexCoordinates[1];
 	_engine->_renderer->vertexCoordinates[8] = _engine->_renderer->vertexCoordinates[5];
@@ -467,7 +474,7 @@ void Text::printText10Sub() {
 	int32 polyRenderType = 0; // POLYGONTYPE_FLAT
 	_engine->_renderer->renderPolygons(polyRenderType, dialTextStopColor);
 
-	_engine->copyBlockPhys(dialTextBoxRight - 24, dialTextBoxBottom - 24, dialTextBoxRight - 3, dialTextBoxBottom - 3);
+	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
 void Text::printText10Sub2() {
