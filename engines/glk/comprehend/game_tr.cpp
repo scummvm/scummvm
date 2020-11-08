@@ -145,26 +145,28 @@ int TransylvaniaGame::roomIsSpecial(unsigned room_index,
 }
 
 void TransylvaniaGame::beforeTurn() {
+	Room *room;
+
 	if (!isMonsterInRoom(&WEREWOLF) && !isMonsterInRoom(&VAMPIRE)) {
 		if (_currentRoom == ROOM_CLAY_HUT) {
 			Item *blackCat = get_item(ITEM_BLACK_CAT);
 			if (blackCat->_room == _currentRoom && getRandomNumber(255) >= 128)
 				console_println(_strings[109].c_str());
-			return;
+			goto done;
 
 		} else if (_currentRoom == ROOM_FIELD) {
 			Item *goblin = get_item(ITEM_GOBLIN);
 			if (goblin->_room == _currentRoom)
 				console_println(_strings[94 + getRandomNumber(3)].c_str());
-			return;
+			goto done;
 
 		}
 	}
 
 	if (updateMonster(&WEREWOLF) || updateMonster(&VAMPIRE))
-		return;
+		goto done;
 
-	Room *room = &_rooms[_currentRoom];
+	room = &_rooms[_currentRoom];
 	if ((room->_flags & ROOMFLAG_FOREST) && (_variables[VAR_TURN_COUNT] % 255) >= 4
 			&& getRandomNumber(255) < 40) {
 		int stringNum = _miceReleased ? 108 : 107;
@@ -184,6 +186,9 @@ void TransylvaniaGame::beforeTurn() {
 			get_item(ITEM_VAMPIRE)->_room = 0xff;
 		}
 	}
+
+done:
+	ComprehendGameV1::beforeTurn();
 }
 
 void TransylvaniaGame::synchronizeSave(Common::Serializer &s) {

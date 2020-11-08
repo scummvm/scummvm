@@ -165,6 +165,8 @@ void CrimsonCrownGame::beforeTurn() {
 		loadGame();
 		move_to(_currentRoom);
 	}
+
+	ComprehendGameV1::beforeTurn();
 }
 
 bool CrimsonCrownGame::handle_restart() {

@@ -144,7 +144,13 @@ void OOToposGame::beforeTurn() {
 		_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
 	}
 #endif
-	if (!_flags[OO_FLAG_55] && !_flags[OO_FLAG_56]) {
+	ComprehendGameV2::beforeTurn();
+
+	if (_flags[OO_FLAG_55]) {
+		_currentRoom = 55;
+	} else if (_flags[OO_FLAG_56]) {
+		_currentRoom = 54;
+	} else {
 		YesNo nff = _flags[OO_FLAG_53] ? YES : NO;
 
 		if (_noFloodfill != nff) {
@@ -158,19 +164,12 @@ void OOToposGame::beforeTurn() {
 		}
 	}
 
-
 	// Handle the computer console if in front of it
 	computerConsole();
 }
 
-bool OOToposGame::afterTurn() {
-	if (_flags[OO_FLAG_55]) {
-		_currentRoom = 55;
-	} else if (_flags[OO_FLAG_56]) {
-		_currentRoom = 54;
-	}
-
-	return true;
+void OOToposGame::afterTurn() {
+	ComprehendGameV2::afterTurn();
 }
 
 void OOToposGame::handleSpecialOpcode(uint8 operand) {

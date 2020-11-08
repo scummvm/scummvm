@@ -80,7 +80,7 @@ public:
 
 	void beforeGame() override;
 	void beforeTurn() override;
-	bool afterTurn() override;
+	void afterTurn() override;
 	int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) override;
 	void handleSpecialOpcode(uint8 operand) override;
 	bool handle_restart() override;

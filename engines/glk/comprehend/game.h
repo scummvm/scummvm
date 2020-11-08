@@ -93,9 +93,8 @@ private:
 	bool handle_sentence(uint tableNum, Sentence *sentence, Common::Array<byte> &words);
 	void read_sentence(Sentence *sentence);
 	void parse_sentence_word_pairs(Sentence *sentence);
-	void doBeforeTurn();
-	void doAfterTurn();
 	void read_input();
+	void doBeforeTurn();
 
 protected:
 	void game_save();
@@ -139,10 +138,8 @@ public:
 
 	virtual void beforeGame() {}
 	virtual void beforePrompt() {}
-	virtual void beforeTurn() {}
-	virtual bool afterTurn() {
-		return false;
-	}
+	virtual void beforeTurn();
+	virtual void afterTurn() {}
 	virtual int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) {
 		return ROOM_IS_NORMAL;
 	}

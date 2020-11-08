@@ -790,18 +790,15 @@ void ComprehendGame::parse_sentence_word_pairs(Sentence *sentence) {
 }
 
 void ComprehendGame::doBeforeTurn() {
-	// Run the game specific before turn bits
 	beforeTurn();
-
-	// Run the each turn functions
-	eval_function(0, nullptr);
 
 	if (!_ended)
 		update();
 }
 
-void ComprehendGame::doAfterTurn() {
-	afterTurn();
+void ComprehendGame::beforeTurn() {
+	// Run the each turn functions
+	eval_function(0, nullptr);
 }
 
 void ComprehendGame::read_input() {
@@ -846,7 +843,7 @@ void ComprehendGame::read_input() {
 
 		handled = handle_sentence(&_sentence);
 		if (handled)
-			doAfterTurn();
+			afterTurn();
 
 		/* FIXME - handle the 'before you can continue' case */
 		if (_inputLine[_inputLineIndex] == '\0')
