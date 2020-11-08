@@ -123,11 +123,11 @@ private:
 	int32 renderModelElements(int32 numOfPrimitives, uint8 *pointer);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
-	void applyRotation(int32 *tempMatrix, const int32 *currentMatrix);
+	void applyRotation(int32 *targetMatrix, const int32 *currentMatrix);
 	void applyPointsRotation(const uint8 *firstPointsPtr, int32 numPoints, pointTab *destPoints, const int32 *rotationMatrix);
-	void processRotatedElement(const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr);
+	void processRotatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr);
 	void applyPointsTranslation(const uint8 *firstPointsPtr, int32 numPoints, pointTab *destPoints, const int32 *translationMatrix);
-	void processTranslatedElement(const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr);
+	void processTranslatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr);
 	void translateGroup(int16 ax, int16 bx, int16 cx);
 
 	// ---- variables ----
@@ -158,10 +158,9 @@ private:
 
 	int32 baseMatrix[3 * 3] {0};
 
-	int32 matricesTable[271] {0};
-	uint8 *currentMatrixTableEntry = nullptr;
+	int32 matricesTable[30 * 3 * 3 + 1] {0};
 
-	int32 shadeMatrix[9] {0};
+	int32 shadeMatrix[3 * 3] {0};
 	int32 lightX = 0;
 	int32 lightY = 0;
 	int32 lightZ = 0;

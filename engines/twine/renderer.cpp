@@ -163,7 +163,7 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 	baseTransPosZ = destZ;
 }
 
-void Renderer::applyRotation(int32 *tempMatrix, const int32 *currentMatrix) {
+void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
 	int32 matrix1[9];
 	int32 matrix2[9];
 
@@ -217,20 +217,20 @@ void Renderer::applyRotation(int32 *tempMatrix, const int32 *currentMatrix) {
 		angle += 0x100;
 		int32 angleVar1 = shadeAngleTable[angle & 0x3FF]; // ecx
 
-		tempMatrix[1] = matrix2[1];
-		tempMatrix[4] = matrix2[4];
-		tempMatrix[7] = matrix2[7];
+		targetMatrix[1] = matrix2[1];
+		targetMatrix[4] = matrix2[4];
+		targetMatrix[7] = matrix2[7];
 
-		tempMatrix[0] = (matrix2[0] * angleVar1 - matrix2[2] * angleVar2) >> 14;
-		tempMatrix[2] = (matrix2[0] * angleVar2 + matrix2[2] * angleVar1) >> 14;
-		tempMatrix[3] = (matrix2[3] * angleVar1 - matrix2[5] * angleVar2) >> 14;
-		tempMatrix[5] = (matrix2[3] * angleVar2 + matrix2[5] * angleVar1) >> 14;
+		targetMatrix[0] = (matrix2[0] * angleVar1 - matrix2[2] * angleVar2) >> 14;
+		targetMatrix[2] = (matrix2[0] * angleVar2 + matrix2[2] * angleVar1) >> 14;
+		targetMatrix[3] = (matrix2[3] * angleVar1 - matrix2[5] * angleVar2) >> 14;
+		targetMatrix[5] = (matrix2[3] * angleVar2 + matrix2[5] * angleVar1) >> 14;
 
-		tempMatrix[6] = (matrix2[6] * angleVar1 - matrix2[8] * angleVar2) >> 14;
-		tempMatrix[8] = (matrix2[6] * angleVar2 + matrix2[8] * angleVar1) >> 14;
+		targetMatrix[6] = (matrix2[6] * angleVar1 - matrix2[8] * angleVar2) >> 14;
+		targetMatrix[8] = (matrix2[6] * angleVar2 + matrix2[8] * angleVar1) >> 14;
 	} else {
 		for (int32 i = 0; i < 9; i++) {
-			tempMatrix[i] = matrix2[i];
+			targetMatrix[i] = matrix2[i];
 		}
 	}
 }
@@ -255,7 +255,7 @@ void Renderer::applyPointsRotation(const uint8 *firstPointsPtr, int32 numPoints,
 	} while (--numOfPoints2);
 }
 
-void Renderer::processRotatedElement(const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr) { // unsigned char * elemPtr) // loadPart
+void Renderer::processRotatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr) { // unsigned char * elemPtr) // loadPart
 	int32 firstPoint = elemPtr->firstPoint;
 	int32 numOfPoints2 = elemPtr->numOfPoints;
 
@@ -287,13 +287,13 @@ void Renderer::processRotatedElement(const uint8 *pointsPtr, int32 rotZ, int32 r
 		destZ = computedPoints[pointIdx].z;
 	}
 
-	applyRotation((int32 *)currentMatrixTableEntry, currentMatrix);
+	applyRotation(targetMatrix, currentMatrix);
 
 	if (!numOfPoints2) {
 		warning("RENDER WARNING: No points in this model!");
 	}
 
-	applyPointsRotation(pointsPtr + firstPoint, numOfPoints2, &computedPoints[firstPoint / 6], (const int32 *)currentMatrixTableEntry);
+	applyPointsRotation(pointsPtr + firstPoint, numOfPoints2, &computedPoints[firstPoint / 6], targetMatrix);
 }
 
 void Renderer::applyPointsTranslation(const uint8 *firstPointsPtr, int32 numPoints, pointTab *destPoints, const int32 *translationMatrix) {
@@ -316,7 +316,7 @@ void Renderer::applyPointsTranslation(const uint8 *firstPointsPtr, int32 numPoin
 	} while (--numOfPoints2);
 }
 
-void Renderer::processTranslatedElement(const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr) {
+void Renderer::processTranslatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr) {
 	renderAngleX = rotX;
 	renderAngleY = rotY;
 	renderAngleZ = rotZ;
@@ -326,7 +326,7 @@ void Renderer::processTranslatedElement(const uint8 *pointsPtr, int32 rotX, int3
 		destY = 0;
 		destZ = 0;
 
-		int32 *dest = (int32 *)currentMatrixTableEntry;
+		int32 *dest = targetMatrix;
 
 		for (int32 i = 0; i < 9; i++) {
 			dest[i] = baseMatrix[i];
@@ -336,15 +336,15 @@ void Renderer::processTranslatedElement(const uint8 *pointsPtr, int32 rotX, int3
 		destY = computedPoints[(elemPtr->basePoint) / 6].y;
 		destZ = computedPoints[(elemPtr->basePoint) / 6].z;
 
-		const int32 *source = (const int32 *)((const uint8 *)matricesTable + elemPtr->baseElement);
-		int32 *dest = (int32 *)currentMatrixTableEntry;
+		const int32 *source = &matricesTable[elemPtr->baseElement / sizeof(int32)];
+		int32 *dest = targetMatrix;
 
 		for (int32 i = 0; i < 9; i++) {
 			dest[i] = source[i];
 		}
 	}
 
-	applyPointsTranslation(pointsPtr + elemPtr->firstPoint, elemPtr->numOfPoints, &computedPoints[elemPtr->firstPoint / 6], (int32 *)currentMatrixTableEntry);
+	applyPointsTranslation(pointsPtr + elemPtr->firstPoint, elemPtr->numOfPoints, &computedPoints[elemPtr->firstPoint / 6], targetMatrix);
 }
 
 void Renderer::translateGroup(int16 ax, int16 bx, int16 cx) {
@@ -1389,10 +1389,9 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 	uint8 *elementsPtr = bodyPtr;
 	const uint8 *elementsPtr2 = elementsPtr;
 
-	// TODO: un-memberify this
-	currentMatrixTableEntry = (uint8 *)matricesTable;
+	int32 *modelMatrix = matricesTable;
 
-	processRotatedElement(pointsPtr, renderAngleX, renderAngleY, renderAngleZ, (const elementEntry *)elementsPtr);
+	processRotatedElement(modelMatrix, pointsPtr, renderAngleX, renderAngleY, renderAngleZ, (const elementEntry *)elementsPtr);
 
 	elementsPtr += 38;
 
@@ -1402,18 +1401,18 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 
 	if (numOfElements - 1 != 0) {
 		numOfPrimitives = numOfElements - 1;
-		currentMatrixTableEntry = (uint8 *)&matricesTable[9];
+		modelMatrix = &matricesTable[9];
 
 		do {
 			int16 boneType = elemEntryPtr->flag;
 
 			if (boneType == 0) {
-				processRotatedElement(pointsPtr, elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr); // rotation
+				processRotatedElement(modelMatrix, pointsPtr, elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr); // rotation
 			} else if (boneType == 1) {
-				processTranslatedElement(pointsPtr, elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr); // translation
+				processTranslatedElement(modelMatrix, pointsPtr, elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr); // translation
 			}
 
-			currentMatrixTableEntry += 36;
+			modelMatrix += 9;
 			elementsPtr += 38;
 			elemEntryPtr = (elementEntry *)elementsPtr;
 		} while (--numOfPrimitives);
