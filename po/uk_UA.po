@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-08 21:02+0100\n"
+"POT-Creation-Date: 2020-11-08 21:15+0100\n"
 "PO-Revision-Date: 2020-11-03 18:43+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -4767,6 +4767,12 @@ msgstr "Кнопка боротьби L / R Swap"
 #: engines/kyra/detection.cpp:134
 msgid "Left button to attack, right button to pick up items"
 msgstr "Ліва кнопка для атаки, права кнопка для підбору предметів"
+
+#: engines/kyra/detection_tables.h:465 engines/kyra/detection_tables.h:722
+msgid ""
+"The fan translator does not wish his translation to be incorporated into "
+"ScummVM."
+msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233

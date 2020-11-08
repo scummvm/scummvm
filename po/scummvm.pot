@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-08 21:02+0100\n"
+"POT-Creation-Date: 2020-11-08 21:15+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4547,6 +4547,12 @@ msgstr ""
 
 #: engines/kyra/detection.cpp:134
 msgid "Left button to attack, right button to pick up items"
+msgstr ""
+
+#: engines/kyra/detection_tables.h:465 engines/kyra/detection_tables.h:722
+msgid ""
+"The fan translator does not wish his translation to be incorporated into "
+"ScummVM."
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
