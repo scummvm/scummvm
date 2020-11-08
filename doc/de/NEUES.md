@@ -30,7 +30,6 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die russische Version von Escape from Monkey Island hinzugefügt.
 
  Kyra:
-   - Unterstützung für die russische Version Version vom The Legend of Kyrandia (von Siberian GRemlin) hinzugefügt.
    - Russische Fan-Übersetzung von The Legend of Kyrandia 2 - Hand of Fate korrigiert (Untertitel im Into und in den Credits hinzugefügt).
 
  Lure:

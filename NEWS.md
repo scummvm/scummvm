@@ -29,7 +29,6 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Russian EMI.
 
  Kyra:
-   - Added support for Russian fan translation of The Legend of Kyrandia (translation by Siberian GRemlin).
    - Fixed Russian fan translation of The Legend of Kyrandia 2 - Hand of Fate (added Russian subtitles for intro and credits).
 
  Lure:
