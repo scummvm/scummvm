@@ -83,8 +83,9 @@ typedef Common::Array<QualifiedGameDescriptor> QualifiedGameList;
  */
 enum GameSupportLevel {
 	kStableGame = 0, // the game is fully supported
-	kTestingGame, // the game is not supposed to end up in releases yet but is ready for public testing
-	kUnstableGame // the game is not even ready for public testing yet
+	kTestingGame,    // the game is not supposed to end up in releases yet but is ready for public testing
+	kUnstableGame,   // the game is not even ready for public testing yet
+	kUnupportedGame  // we don't want to support the game
 };
 
 
@@ -118,7 +119,8 @@ struct DetectedGame {
 	               const Common::String &description,
 	               Common::Language language = Common::UNK_LANG,
 	               Common::Platform platform = Common::kPlatformUnknown,
-	               const Common::String &extra = Common::String());
+	               const Common::String &extra = Common::String(),
+	               bool unsupported = false);
 
 	void setGUIOptions(const Common::String &options);
 	void appendGUIOptions(const Common::String &str);
@@ -183,7 +185,7 @@ private:
 	 * Values that are missing are omitted, so e.g. (EXTRA/LANG) would be
 	 * added if no platform has been specified but a language and an extra string.
 	 */
-	Common::String updateDesc() const;
+	Common::String updateDesc(bool skipExtraField) const;
 
 	Common::String _guiOptions;
 };

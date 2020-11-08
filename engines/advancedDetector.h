@@ -67,11 +67,12 @@ struct ADGameFileDescription {
 
 enum ADGameFlags {
 	ADGF_NO_FLAGS        =  0,
-	ADGF_REMASTERED      = (1 << 19), ///< add "-remastered' to gameid
-	ADGF_AUTOGENTARGET   = (1 << 20), ///< automatically generate gameid from extra
-	ADGF_UNSTABLE        = (1 << 21), ///< flag to designate not yet officially-supported games that are not fit for public testing
-	ADGF_TESTING         = (1 << 22), ///< flag to designate not yet officially-supported games that are fit for public testing
-	ADGF_PIRATED         = (1 << 23), ///< flag to designate well known pirated versions with cracks
+	ADGF_REMASTERED      = (1 << 18), ///< add "-remastered' to gameid
+	ADGF_AUTOGENTARGET   = (1 << 19), ///< automatically generate gameid from extra
+	ADGF_UNSTABLE        = (1 << 20), ///< flag to designate not yet officially-supported games that are not fit for public testing
+	ADGF_TESTING         = (1 << 21), ///< flag to designate not yet officially-supported games that are fit for public testing
+	ADGF_PIRATED         = (1 << 22), ///< flag to designate well known pirated versions with cracks
+	ADGF_UNSUPPORTED     = (1 << 23), ///< flag to mark certain versions (like fan translations) not to be run for various reasons. A custom message can be provided in the ADGameDescription::extra field.
 	ADGF_ADDENGLISH      = (1 << 24), ///< always add English as language option
 	ADGF_MACRESFORK      = (1 << 25), ///< the md5 for this entry will be calculated from the resource fork
 	ADGF_USEEXTRAASTITLE = (1 << 26), ///< Extra field value will be used as main game title, not gameid

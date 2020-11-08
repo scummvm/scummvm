@@ -654,6 +654,13 @@ bool Engine::warnUserAboutUnsupportedGame() {
 	return true;
 }
 
+void Engine::errorUnsupportedGame(Common::String &extraMsg) {
+	Common::String message = extraMsg.empty() ? _("This game is not supported.") : _("This game is not supported for the following reason:\n\n");
+	message += _(extraMsg);
+	message += "\n\n";
+	GUI::MessageDialog(message).runModal();
+}
+
 uint32 Engine::getTotalPlayTime() const {
 	if (!_pauseLevel)
 		return _system->getMillis() - _engineStartTime;

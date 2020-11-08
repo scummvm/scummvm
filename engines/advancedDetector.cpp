@@ -171,7 +171,7 @@ DetectedGame AdvancedMetaEngineDetection::toDetectedGame(const ADDetectedGame &a
 		extra = desc->extra;
 	}
 
-	DetectedGame game(getEngineId(), desc->gameId, title, desc->language, desc->platform, extra);
+	DetectedGame game(getEngineId(), desc->gameId, title, desc->language, desc->platform, extra, desc->flags & ADGF_UNSUPPORTED);
 	game.hasUnknownFiles = adGame.hasUnknownFiles;
 	game.matchedFiles = adGame.matchedFiles;
 	game.preferredTarget = generatePreferredTarget(desc, _maxAutogenLength);
@@ -181,6 +181,8 @@ DetectedGame AdvancedMetaEngineDetection::toDetectedGame(const ADDetectedGame &a
 		game.gameSupportLevel = kUnstableGame;
 	else if (desc->flags & ADGF_TESTING)
 		game.gameSupportLevel = kTestingGame;
+	else if (desc->flags & ADGF_UNSUPPORTED)
+		game.gameSupportLevel = kUnupportedGame;
 
 	game.setGUIOptions(desc->guiOptions + _guiOptions);
 	game.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(desc->language));
@@ -378,6 +380,11 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 					&& showTestingWarning)))
 			&& !Engine::warnUserAboutUnsupportedGame())
 		return Common::kUserCanceled;
+
+	if (gameDescriptor.gameSupportLevel == kUnupportedGame) {
+		Engine::errorUnsupportedGame(gameDescriptor.extra);
+		return Common::kUserCanceled;
+	}
 
 	debug(2, "Running %s", gameDescriptor.description.c_str());
 	initSubSystems(agdDesc.desc);
