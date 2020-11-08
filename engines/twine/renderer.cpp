@@ -987,11 +987,9 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 }
 
 void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
-	int32 currentLine;
-
 	radius += 1;
 
-	for (currentLine = -radius; currentLine <= radius; currentLine++) {
+	for (int32 currentLine = -radius; currentLine <= radius; currentLine++) {
 		double width;
 
 		if (ABS(currentLine) != radius) {
@@ -1024,7 +1022,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 	// prepare polygons
 
 	uint8 *edi = renderTab7;           // renderTab7 coordinates buffer
-	int16 temp = *((int16 *)pointer); // we read the number of polygons
+	int16 temp = *((const int16 *)pointer); // we read the number of polygons
 	pointer += 2;
 
 	if (temp) {
@@ -1032,7 +1030,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 
 		do { // loop that load all the polygons
 			uint8 *render23 = edi;
-			polyHeader *currentPolyHeader = (polyHeader *)pointer;
+			const polyHeader *currentPolyHeader = (const polyHeader *)pointer;
 			//ecx = *((int32*) pointer);
 			pointer += 2;
 			int16 polyRenderType = currentPolyHeader->renderType;
@@ -1054,7 +1052,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 				renderV19 = edi;
 
 				do {
-					polyVertexHeader *currentPolyVertex = (polyVertexHeader *)pointer;
+					const polyVertexHeader *currentPolyVertex = (const polyVertexHeader *)pointer;
 
 					int16 shadeValue = currentPolyHeader->colorIndex + shadeTable[currentPolyVertex->shadeEntry];
 
@@ -1085,7 +1083,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 
 				int16 color = currentPolyHeader->colorIndex;
 
-				int16 shadeEntry = *((int16 *)(pointer + 2));
+				int16 shadeEntry = *((const int16 *)(pointer + 2));
 
 				pointer += 4;
 
@@ -1097,7 +1095,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 				counter = destinationHeader->numOfVertex;
 
 				do {
-					int32 eax = *((int16 *)pointer);
+					int32 eax = *((const int16 *)pointer);
 					pointer += 2;
 
 					currentVertex = &flattenPoints[eax / 6];
@@ -1131,7 +1129,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 				counter = currentPolyHeader->numOfVertex;
 
 				do {
-					eax = *((int16 *)pointer);
+					eax = *((const int16 *)pointer);
 					pointer += 2;
 
 					currentVertex = &flattenPoints[eax / 6];
@@ -1156,22 +1154,22 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 
 			int32 render25 = bestDepth;
 
-			int16 ax = *((int16 *)(edi + 4));
-			int16 bx = *((int16 *)(edi + 8));
+			int16 ax = *((const int16 *)(edi + 4));
+			int16 bx = *((const int16 *)(edi + 8));
 
-			ax -= *((int16 *)(edi + 16));
-			bx -= *((int16 *)(edi + 2));
+			ax -= *((const int16 *)(edi + 16));
+			bx -= *((const int16 *)(edi + 2));
 
 			ax *= bx;
 
 			bestDepth = ax;
 			bx = currentDepth;
 
-			ax = *((int16 *)(edi + 2));
-			int16 cx = *((int16 *)(edi + 10));
+			ax = *((const int16 *)(edi + 2));
+			int16 cx = *((const int16 *)(edi + 10));
 
-			ax -= *((int16 *)(edi + 14));
-			cx -= *((int16 *)(edi + 4));
+			ax -= *((const int16 *)(edi + 14));
+			cx -= *((const int16 *)(edi + 4));
 
 			ax *= cx;
 
@@ -1234,14 +1232,14 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 
 	// prepare spheres
 
-	temp = *((int16 *)pointer);
+	temp = *((const int16 *)pointer);
 	pointer += 2;
 	if (temp) {
 		numOfPrimitives += temp;
 		do {
 			uint8 color2 = *(pointer + 1);
-			int16 center = *((uint16 *)(pointer + 6));
-			int16 size = *((uint16 *)(pointer + 4));
+			int16 center = *((const uint16 *)(pointer + 6));
+			int16 size = *((const uint16 *)(pointer + 4));
 
 			*(uint8 *)edi = color2;
 			*((int16 *)(edi + 1)) = flattenPoints[center / 6].x;
@@ -1299,8 +1297,8 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 
 		switch (type) {
 		case RENDERTYPE_DRAWLINE: { // draw a line
-			lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)pointer;
-			int16 color = (*((int32 *)&lineCoordinatesPtr->data) & 0xFF00) >> 8;
+			const lineCoordinates *lineCoordinatesPtr = (const lineCoordinates *)pointer;
+			int16 color = (*((const int32 *)&lineCoordinatesPtr->data) & 0xFF00) >> 8;
 
 			const int32 x1 = *((const int16 *)&lineCoordinatesPtr->x1);
 			const int32 y1 = *((const int16 *)&lineCoordinatesPtr->y1);
@@ -1389,15 +1387,16 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 	bodyPtr += 2;
 
 	uint8 *elementsPtr = bodyPtr;
-	uint8 *elementsPtr2 = elementsPtr;
+	const uint8 *elementsPtr2 = elementsPtr;
 
+	// TODO: un-memberify this
 	currentMatrixTableEntry = (uint8 *)matricesTable;
 
 	processRotatedElement(pointsPtr, renderAngleX, renderAngleY, renderAngleZ, (const elementEntry *)elementsPtr);
 
 	elementsPtr += 38;
 
-	elementEntry *elemEntryPtr = (elementEntry *)elementsPtr;
+	const elementEntry *elemEntryPtr = (const elementEntry *)elementsPtr;
 
 	int32 numOfPrimitives = 0;
 
@@ -1460,8 +1459,9 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 
 			coZ += cameraPosX;
 
-			if (coZ <= 0)
+			if (coZ <= 0) {
 				coZ = 0x7FFFFFFF;
+			}
 
 			// X projection
 			{
@@ -1520,8 +1520,6 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 	shadePtr = (int32 *)(((uint8 *)shadePtr) + 2);
 
 	if (numOfShades) { // process normal data
-		int32 color;
-
 		uint8 *currentShadeDestination = (uint8 *)shadeTable;
 		int32 *lightMatrix = matricesTable;
 		const uint8 *pri2Ptr3;
@@ -1555,7 +1553,7 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 					int16 col2 = *((const int16 *)colPtr++);
 					int16 col3 = *((const int16 *)colPtr++);
 
-					color = shadeMatrix[0] * col1 + shadeMatrix[1] * col2 + shadeMatrix[2] * col3;
+					int32 color = shadeMatrix[0] * col1 + shadeMatrix[1] * col2 + shadeMatrix[2] * col3;
 					color += shadeMatrix[3] * col1 + shadeMatrix[4] * col2 + shadeMatrix[5] * col3;
 					color += shadeMatrix[6] * col1 + shadeMatrix[7] * col2 + shadeMatrix[8] * col3;
 
@@ -1585,15 +1583,8 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 
 void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
 	bodyHeaderStruct *bodyHeader;
-	int16 offsetToData;
-	uint8 *bodyDataPtr;
-	int16 numOfElement1;
-	int16 numOfPoint;
-	uint8 *ptrToKeyData;
-	int32 i;
 	int32 bp = 36;
 	int32 bx = 38;
-	uint8 *ptr2;
 
 	bodyHeader = (bodyHeaderStruct *)bodyPtr;
 
@@ -1608,20 +1599,20 @@ void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
 		return;
 	}
 
-	offsetToData = bodyHeader->offsetToData;
+	int16 offsetToData = bodyHeader->offsetToData;
 
-	bodyDataPtr = bodyPtr + offsetToData + 16;
+	uint8 *bodyDataPtr = bodyPtr + offsetToData + 16;
 
-	numOfElement1 = *((int16 *)bodyDataPtr);
-	ptr2 = bodyDataPtr + 2 + numOfElement1 * 6;
+	int16 numOfElement1 = *((const int16 *)bodyDataPtr);
+	uint8 *ptr2 = bodyDataPtr + 2 + numOfElement1 * 6;
 
-	numOfPoint = *((int16 *)ptr2);
+	int16 numOfPoint = *((const int16 *)ptr2);
 
-	ptrToKeyData = ptr2 + 2;
+	uint8 *ptrToKeyData = ptr2 + 2;
 
-	for (i = 0; i < numOfPoint; i++) {
+	for (int32 i = 0; i < numOfPoint; i++) {
 		ptrToKeyData += 38;
-		*((int16 *)(ptrToKeyData + 6)) = (*((int16 *)(ptrToKeyData + 6)) * bp) / bx;
+		*((int16 *)(ptrToKeyData + 6)) = (*((const int16 *)(ptrToKeyData + 6)) * bp) / bx;
 	}
 }
 
@@ -1651,10 +1642,10 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 	// restart at the beginning of the renderTable
 	renderTabEntryPtr = renderTab;
 
-	int16 bodyHeader = *((uint16 *)bodyPtr);
+	int16 bodyHeader = *((const uint16 *)bodyPtr);
 
 	// jump after the header
-	uint8 *ptr = bodyPtr + 16 + *((uint16 *)(bodyPtr + 14));
+	uint8 *ptr = bodyPtr + 16 + *((const uint16 *)(bodyPtr + 14));
 
 	if (bodyHeader & 2) { // if animated
 		// the mostly used renderer code
@@ -1706,24 +1697,19 @@ void Renderer::copyActorInternAnim(const uint8 *bodyPtrSrc, uint8 *bodyPtrDest) 
 }
 
 void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 Y, int32 angle, uint8 *entityPtr) {
-	int tmpBoxRight;
-	int x;
-	int y;
-	short int newAngle;
+	int32 tmpBoxRight = boxRight;
 
-	tmpBoxRight = boxRight;
-
-	y = boxBottom + boxTop;
+	int32 y = boxBottom + boxTop;
 	y >>= 1;
 
-	x = boxRight + boxLeft;
+	int32 x = boxRight + boxLeft;
 	x >>= 1;
 
 	setOrthoProjection(x, y, 0);
 	_engine->_interface->setClip(boxLeft, boxTop, tmpBoxRight, boxBottom);
 
 	if (angle == -1) {
-		newAngle = _engine->_movements->getRealAngle(&_engine->_menu->moveMenu);
+		const int16 newAngle = _engine->_movements->getRealAngle(&_engine->_menu->moveMenu);
 		if (_engine->_menu->moveMenu.numOfStep == 0) {
 			_engine->_movements->setActorAngleSafe(newAngle, newAngle - 256, 50, &_engine->_menu->moveMenu);
 		}
