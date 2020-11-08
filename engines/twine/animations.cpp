@@ -77,16 +77,16 @@ Animations::~Animations() {
 }
 
 int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	const int16 numOfKeyframeInAnim = *(int16 *)(animPtr);
+	const int16 numOfKeyframeInAnim = *(const int16 *)(animPtr);
 	if (keyframeIdx >= numOfKeyframeInAnim) {
 		return numOfKeyframeInAnim;
 	}
 
-	int16 numOfBonesInAnim = *(int16 *)(animPtr + 2);
+	int16 numOfBonesInAnim = *(const int16 *)(animPtr + 2);
 
 	uint8 *ptrToData = (uint8 *)((numOfBonesInAnim * 8 + 8) * keyframeIdx + animPtr + 8);
 
-	const int16 bodyHeader = *(int16 *)(bodyPtr);
+	const int16 bodyHeader = *(const int16 *)(bodyPtr);
 
 	if (!(bodyHeader & 2)) {
 		return 0;
@@ -97,13 +97,13 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bo
 	animTimerDataPtr->ptr = ptrToData;
 	animTimerDataPtr->time = _engine->lbaTime;
 
-	ptrToBodyData = ptrToBodyData + *(int16 *)(ptrToBodyData) + 2;
+	ptrToBodyData = ptrToBodyData + *(const int16 *)(ptrToBodyData) + 2;
 
-	const int16 numOfElementInBody = *(int16 *)(ptrToBodyData);
+	const int16 numOfElementInBody = *(const int16 *)(ptrToBodyData);
 
 	ptrToBodyData = ptrToBodyData + numOfElementInBody * 6 + 12;
 
-	const int16 numOfPointInBody = *(int16 *)(ptrToBodyData - 10); // num elements
+	const int16 numOfPointInBody = *(const int16 *)(ptrToBodyData - 10); // num elements
 
 	if (numOfBonesInAnim > numOfPointInBody) {
 		numOfBonesInAnim = numOfPointInBody;
@@ -124,12 +124,12 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bo
 
 	ptrToData = ptrToDataBackup + 2;
 
-	currentStepX = *(int16 *)(ptrToData);
-	currentStepY = *(int16 *)(ptrToData + 2);
-	currentStepZ = *(int16 *)(ptrToData + 4);
+	currentStepX = *(const int16 *)(ptrToData);
+	currentStepY = *(const int16 *)(ptrToData + 2);
+	currentStepZ = *(const int16 *)(ptrToData + 4);
 
-	processRotationByAnim = *(int16 *)(ptrToData + 6);
-	processLastRotationAngle = *(int16 *)(ptrToData + 10);
+	processRotationByAnim = *(const int16 *)(ptrToData + 6);
+	processLastRotationAngle = *(const int16 *)(ptrToData + 10);
 
 	return 1;
 }
@@ -142,12 +142,12 @@ int32 Animations::getStartKeyframe(const uint8 *animPtr) {
 	return READ_LE_INT16(animPtr + 4);
 }
 
-void Animations::applyAnimStepRotation(uint8 **ptr, int32 bp, int32 bx) {
-	int16 lastAngle = *(const int16 *)(lastKeyFramePtr);
-	lastKeyFramePtr += 2;
+void Animations::applyAnimStepRotation(uint8 **ptr, int32 bp, int32 bx, const uint8 **keyFramePtr, const uint8 **lastKeyFramePtr) {
+	int16 lastAngle = *(const int16 *)(*lastKeyFramePtr);
+	*lastKeyFramePtr += 2;
 
-	int16 newAngle = *(const int16 *)(keyFramePtr);
-	keyFramePtr += 2;
+	int16 newAngle = *(const int16 *)(*keyFramePtr);
+	*keyFramePtr += 2;
 
 	lastAngle &= 0x3FF;
 	newAngle &= 0x3FF;
@@ -172,12 +172,12 @@ void Animations::applyAnimStepRotation(uint8 **ptr, int32 bp, int32 bx) {
 	*(ptr) = *(ptr) + 2;
 }
 
-void Animations::applyAnimStep(uint8 **ptr, int32 bp, int32 bx) {
-	int16 lastAngle = *(const int16 *)lastKeyFramePtr;
-	lastKeyFramePtr += 2;
+void Animations::applyAnimStep(uint8 **ptr, int32 bp, int32 bx, const uint8 **keyFramePtr, const uint8 **lastKeyFramePtr) {
+	int16 lastAngle = *(const int16 *)*lastKeyFramePtr;
+	*lastKeyFramePtr += 2;
 
-	int16 newAngle = *(const int16 *)keyFramePtr;
-	keyFramePtr += 2;
+	int16 newAngle = *(const int16 *)*keyFramePtr;
+	*keyFramePtr += 2;
 
 	int16 angleDif = newAngle - lastAngle;
 
@@ -193,14 +193,14 @@ void Animations::applyAnimStep(uint8 **ptr, int32 bp, int32 bx) {
 	*(ptr) = *(ptr) + 2;
 }
 
-int32 Animations::getAnimMode(uint8 **ptr) {
+int32 Animations::getAnimMode(uint8 **ptr, const uint8 **keyFramePtr, const uint8 **lastKeyFramePtr) {
 	int16 *lptr = (int16 *)*ptr;
-	int16 opcode = *(const int16 *)(keyFramePtr);
+	int16 opcode = *(const int16 *)(*keyFramePtr);
 	*(int16 *)(lptr) = opcode;
 
-	keyFramePtr += 2;
+	*keyFramePtr += 2;
 	*(ptr) = *(ptr) + 2;
-	lastKeyFramePtr += 2;
+	*lastKeyFramePtr += 2;
 
 	return opcode;
 }
@@ -208,7 +208,7 @@ int32 Animations::getAnimMode(uint8 **ptr) {
 int32 Animations::setModelAnimation(int32 animState, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	int32 numOfPointInAnim = *(const int16 *)(animPtr + 2);
 
-	keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animPtr + 8;
+	const uint8* keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animPtr + 8;
 
 	int32 keyFrameLength = *(const int16 *)(keyFramePtr);
 
@@ -220,7 +220,7 @@ int32 Animations::setModelAnimation(int32 animState, uint8 *animPtr, uint8 *body
 
 	uint8 *edi = bodyPtr + 16;
 
-	uint8 *ebx = animTimerDataPtr->ptr;
+	const uint8 *ebx = animTimerDataPtr->ptr;
 	int32 ebp = animTimerDataPtr->time;
 
 	if (!ebx) {
@@ -228,7 +228,7 @@ int32 Animations::setModelAnimation(int32 animState, uint8 *animPtr, uint8 *body
 		ebp = keyFrameLength;
 	}
 
-	lastKeyFramePtr = ebx;
+	const uint8* lastKeyFramePtr = ebx;
 
 	int32 eax = *(const int16 *)(edi - 2);
 	edi += eax;
@@ -270,7 +270,7 @@ int32 Animations::setModelAnimation(int32 animState, uint8 *animPtr, uint8 *body
 
 		return 1;
 	}
-	uint8 *keyFramePtrOld = keyFramePtr;
+	const uint8 *keyFramePtrOld = keyFramePtr;
 
 	lastKeyFramePtr += 8;
 	keyFramePtr += 8;
@@ -287,19 +287,19 @@ int32 Animations::setModelAnimation(int32 animState, uint8 *animPtr, uint8 *body
 		int16 tmpNumOfPoints = numOfPointInAnim;
 
 		do {
-			int16 animOpcode = getAnimMode(&edi);
+			int16 animOpcode = getAnimMode(&edi, &keyFramePtr, &lastKeyFramePtr);
 
 			switch (animOpcode) {
 			case 0:  // allow global rotate
-				applyAnimStepRotation(&edi, eax, keyFrameLength);
-				applyAnimStepRotation(&edi, eax, keyFrameLength);
-				applyAnimStepRotation(&edi, eax, keyFrameLength);
+				applyAnimStepRotation(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStepRotation(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStepRotation(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				break;
 			case 1:  // dissallow global rotate
 			case 2:  // dissallow global rotate + hide
-				applyAnimStep(&edi, eax, keyFrameLength);
-				applyAnimStep(&edi, eax, keyFrameLength);
-				applyAnimStep(&edi, eax, keyFrameLength);
+				applyAnimStep(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStep(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStep(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				break;
 			default:
 				error("Unsupported animation rotation mode %d!\n", animOpcode);
@@ -356,7 +356,7 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 
 int32 Animations::stockAnimation(uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	uint8 *animPtr = animBuffer2;
-	int32 playAnim = *(int16 *)(bodyPtr);
+	int32 playAnim = *(const int16 *)(bodyPtr);
 
 	if (!(playAnim & 2)) {
 		return 0;
@@ -366,15 +366,15 @@ int32 Animations::stockAnimation(uint8 *bodyPtr, AnimTimerDataStruct *animTimerD
 	animTimerDataPtr->time = _engine->lbaTime;
 	animTimerDataPtr->ptr = animPtr;
 
-	int32 var0 = *(int16 *)(ptr - 2);
+	int32 var0 = *(const int16 *)(ptr - 2);
 	ptr = ptr + var0;
 
-	int32 var1 = *(int16 *)(ptr);
+	int32 var1 = *(const int16 *)(ptr);
 	var1 = var1 + var1 * 2;
 
 	ptr = ptr + var1 * 2 + 2;
 
-	int32 var2 = *(int16 *)(ptr);
+	int32 var2 = *(const int16 *)(ptr);
 	int32 counter = var2;
 	var2 = (var2 * 8) + 8;
 
@@ -399,7 +399,7 @@ int32 Animations::stockAnimation(uint8 *bodyPtr, AnimTimerDataStruct *animTimerD
 
 int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	const int32 numOfPointInAnim = *(const int16 *)(animPtr + 2);
-	keyFramePtr = ((numOfPointInAnim * 8 + 8) * animIdx) + animPtr + 8;
+	const uint8 *keyFramePtr = ((numOfPointInAnim * 8 + 8) * animIdx) + animPtr + 8;
 	const int32 keyFrameLength = *(const int16 *)(keyFramePtr);
 	const int16 bodyHeader = *(const int16 *)(bodyPtr);
 	if (!(bodyHeader & 2)) {
@@ -414,7 +414,7 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 		ebp = keyFrameLength;
 	}
 
-	lastKeyFramePtr = ebx;
+	const uint8* lastKeyFramePtr = ebx;
 
 	const int32 eax = _engine->lbaTime - ebp;
 

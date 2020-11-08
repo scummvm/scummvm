@@ -76,7 +76,7 @@ struct ZVBox {
 
 /** Actors animation timer structure */
 struct AnimTimerDataStruct {
-	uint8 *ptr = nullptr;
+	const uint8 *ptr = nullptr;
 	int32 time = 0;
 };
 
