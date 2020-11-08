@@ -540,8 +540,6 @@ void Extra::processExtras() {
 	int32 currentExtraX = 0;
 	int32 currentExtraY = 0;
 	int32 currentExtraZ = 0;
-	int32 currentExtraSpeedX = 0;
-	int32 currentExtraSpeedY = 0;
 
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &extraList[i];
@@ -571,10 +569,10 @@ void Extra::processExtras() {
 			currentExtraY = extra->y;
 			currentExtraZ = extra->z;
 
-			currentExtraSpeedX = extra->destX * (_engine->lbaTime - extra->lifeTime);
+			int32 currentExtraSpeedX = extra->destX * (_engine->lbaTime - extra->lifeTime);
 			extra->x = currentExtraSpeedX + extra->lastX;
 
-			currentExtraSpeedY = extra->destY * (_engine->lbaTime - extra->lifeTime);
+			int32 currentExtraSpeedY = extra->destY * (_engine->lbaTime - extra->lifeTime);
 			currentExtraSpeedY += extra->lastY;
 			extra->y = currentExtraSpeedY - ABS(((extra->angle * (_engine->lbaTime - extra->lifeTime)) * (_engine->lbaTime - extra->lifeTime)) >> 4);
 
