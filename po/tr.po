@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-10-31 19:57+0100\n"
-"PO-Revision-Date: 2020-11-05 00:43+0000\n"
+"PO-Revision-Date: 2020-11-08 12:43+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/tr/>\n"
@@ -1036,74 +1036,76 @@ msgstr "Oyunlar için görüntü oranını düzeltme"
 
 #: gui/options.cpp:1343
 msgid "Preferred device:"
-msgstr ""
+msgstr "Tercih edilen cihaz:"
 
 #: gui/options.cpp:1343
 msgid "Music device:"
-msgstr ""
+msgstr "Müzik cihazı:"
 
 #: gui/options.cpp:1343 gui/options.cpp:1345
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr ""
+msgstr "Tercih edilen ses cihazı veya ses kartı emülatörünü belirtir"
 
 #: gui/options.cpp:1343 gui/options.cpp:1345 gui/options.cpp:1346
 msgid "Specifies output sound device or sound card emulator"
-msgstr ""
+msgstr "Çıkış ses cihazı veya ses kartı emülatörünü belirtir"
 
 #: gui/options.cpp:1345
 msgctxt "lowres"
 msgid "Preferred dev.:"
-msgstr ""
+msgstr "Tercih edilen cih.:"
 
 #: gui/options.cpp:1345
 msgctxt "lowres"
 msgid "Music device:"
-msgstr ""
+msgstr "Müzik cihazı:"
 
 #: gui/options.cpp:1372
 msgid "AdLib emulator:"
-msgstr ""
+msgstr "AdLib emülatörü:"
 
 #: gui/options.cpp:1372 gui/options.cpp:1373
 msgid "AdLib is used for music in many games"
-msgstr ""
+msgstr "AdLib birçok oyunda müzik için kullanılır"
 
 #: gui/options.cpp:1386
 msgid "GM device:"
-msgstr ""
+msgstr "GM cihazı:"
 
 #: gui/options.cpp:1386
 msgid "Specifies default sound device for General MIDI output"
-msgstr ""
+msgstr "Genel MIDI çıkışı için varsayılan ses cihazını belirler"
 
 #: gui/options.cpp:1397
 msgid "Don't use General MIDI music"
-msgstr ""
+msgstr "Genel MIDI müzik kullanma"
 
 #: gui/options.cpp:1408 gui/options.cpp:1470
 msgid "Use first available device"
-msgstr ""
+msgstr "İlk müsait cihazı kullan"
 
 #: gui/options.cpp:1420
 msgid "SoundFont:"
-msgstr ""
+msgstr "Sesfontu:"
 
 #: gui/options.cpp:1420 gui/options.cpp:1422 gui/options.cpp:1423
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
+"Sesfontu FluidSynth ve Timidity gibi bazı ses kartları tarafından "
+"desteklenmektedir"
 
 #: gui/options.cpp:1422
 msgctxt "lowres"
 msgid "SoundFont:"
-msgstr ""
+msgstr "Sesfontu:"
 
 #: gui/options.cpp:1428
 msgid "Mixed AdLib/MIDI mode"
-msgstr ""
+msgstr "Karışık AdLib/MIDI modu"
 
 #: gui/options.cpp:1428
 msgid "Use both MIDI and AdLib sound generation"
-msgstr ""
+msgstr "MIDI ve AdLib ses üretimini beraber kullan"
 
 #: gui/options.cpp:1431
 msgid "MIDI gain:"
