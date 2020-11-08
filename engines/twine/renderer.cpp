@@ -1014,7 +1014,7 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
 	}
 }
 
-int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
+int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, renderTabEntry **renderTabEntryPtr) {
 	int16 counter;
 	int16 type;
 
@@ -1189,10 +1189,10 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 			} else {
 				numOfPrimitives++;
 
-				renderTabEntryPtr->depth = render25;
-				renderTabEntryPtr->renderType = 1;
-				renderTabEntryPtr->dataPtr = render23;
-				renderTabEntryPtr++;
+				(*renderTabEntryPtr)->depth = render25;
+				(*renderTabEntryPtr)->renderType = 1;
+				(*renderTabEntryPtr)->dataPtr = render23;
+				(*renderTabEntryPtr)++;
 
 				edi = render24;
 			}
@@ -1228,10 +1228,10 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 				bestDepth = depth;
 			}
 
-			renderTabEntryPtr->depth = bestDepth;
-			renderTabEntryPtr->renderType = 0;
-			renderTabEntryPtr->dataPtr = edi;
-			renderTabEntryPtr++;
+			(*renderTabEntryPtr)->depth = bestDepth;
+			(*renderTabEntryPtr)->renderType = 0;
+			(*renderTabEntryPtr)->dataPtr = edi;
+			(*renderTabEntryPtr)++;
 
 			pointer += 8;
 			edi += 12;
@@ -1254,10 +1254,10 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 			*((int16 *)(edi + 3)) = flattenPoints[center / 6].y;
 			*((int16 *)(edi + 5)) = size;
 
-			renderTabEntryPtr->depth = flattenPoints[center / 6].z;
-			renderTabEntryPtr->renderType = 2;
-			renderTabEntryPtr->dataPtr = edi;
-			renderTabEntryPtr++;
+			(*renderTabEntryPtr)->depth = flattenPoints[center / 6].z;
+			(*renderTabEntryPtr)->renderType = 2;
+			(*renderTabEntryPtr)->dataPtr = edi;
+			(*renderTabEntryPtr)++;
 
 			pointer += 8;
 			edi += 7;
@@ -1266,7 +1266,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 
 	const renderTabEntry *renderTabEntryPtr2 = renderTab;
 
-	renderTabSortedPtr = renderTabSorted;
+	renderTabEntry *renderTabSortedPtr = renderTabSorted;
 	for (int32 i = 0; i < numOfPrimitives; i++) { // then we sort the polygones | WARNING: very slow | TODO: improve this
 		renderTabEntryPtr2 = renderTab;
 		int16 bestZ = -0x7FFF;
@@ -1381,7 +1381,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 	return 0;
 }
 
-int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
+int32 Renderer::renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEntryPtr) {
 	//	int32 *tmpLightMatrix;
 	int32 numOfPoints = *((const uint16 *)bodyPtr);
 	bodyPtr += 2;
@@ -1583,7 +1583,7 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 		} while (--numOfPrimitives);
 	}
 
-	return renderModelElements(numOfPrimitives, (uint8 *)shadePtr);
+	return renderModelElements(numOfPrimitives, (uint8 *)shadePtr, &renderTabEntryPtr);
 }
 
 void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
@@ -1644,9 +1644,6 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 		renderZ = destZ - baseRotPosZ;
 	}
 
-	// restart at the beginning of the renderTable
-	renderTabEntryPtr = renderTab;
-
 	int16 bodyHeader = *((const uint16 *)bodyPtr);
 
 	// jump after the header
@@ -1654,7 +1651,8 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 
 	if (bodyHeader & 2) { // if animated
 		// the mostly used renderer code
-		return renderAnimatedModel(ptr);
+		// restart at the beginning of the renderTable
+		return renderAnimatedModel(ptr, renderTab);
 	}
 	error("Unsupported unanimated model render!");
 	return 0;

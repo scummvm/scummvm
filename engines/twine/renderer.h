@@ -118,9 +118,9 @@ private:
 		uint16 temp = 0;
 	};
 
-	int32 renderAnimatedModel(uint8 *bodyPtr);
+	int32 renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEntryPtr);
 	void circleFill(int32 x, int32 y, int32 radius, int8 color);
-	int32 renderModelElements(int32 numOfPrimitives, uint8 *pointer);
+	int32 renderModelElements(int32 numOfPrimitives, uint8 *pointer, renderTabEntry** renderTabEntryPtr);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
 	void applyRotation(int32 *targetMatrix, const int32 *currentMatrix);
@@ -168,9 +168,6 @@ private:
 	pointTab computedPoints[800]; // _projectedPointTable
 	pointTab flattenPoints[800];  // _flattenPointTable
 	int16 shadeTable[500] {0};
-
-	renderTabEntry *renderTabEntryPtr = nullptr;
-	renderTabEntry *renderTabSortedPtr = nullptr;
 
 	renderTabEntry renderTab[1000];
 	renderTabEntry renderTabSorted[1000];
