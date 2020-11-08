@@ -450,10 +450,12 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, uint16 languageSplit
 		rect.right = (maxWidth ? maxWidth : 192);
 		const char *curTextPos = text; // in work position for GetLongest()
 		const char *curTextLine = text; // starting point of current line
+
+		// Check for Korean text
+		if (g_sci->getLanguage() == Common::KO_KOR)
+			SwitchToFont1001OnKorean(curTextPos, languageSplitter);
+
 		while (*curTextPos) {
-			// We need to check for Korean-EUCKR every line
-			if (g_sci->getLanguage() == Common::KO_KOR)
-				SwitchToFont1001OnKorean(curTextPos, languageSplitter);
 			// We need to check for Shift-JIS every line
 			if (g_sci->getLanguage() == Common::JA_JPN)
 				SwitchToFont900OnSjis(curTextPos, languageSplitter);
@@ -548,17 +550,20 @@ void GfxText16::Box(const char *text, uint16 languageSplitter, bool show, const 
 	else
 		fontId = previousFontId;
 
+	// Check for Korean text
+	if (g_sci->getLanguage() == Common::KO_KOR) {
+		if (SwitchToFont1001OnKorean(curTextPos, languageSplitter)) {
+			doubleByteMode = true;
+			fontId = 1001;
+		}
+	}
+
 	// Reset reference code rects
 	_codeRefRects.clear();
 	_codeRefTempRect.left = _codeRefTempRect.top = -1;
 
 	maxTextWidth = 0;
 	while (*curTextPos) {
-		// We need to check for Korean-EUCKR every line
-		if (g_sci->getLanguage() == Common::KO_KOR) {
-			if (SwitchToFont1001OnKorean(curTextPos, languageSplitter))
-				doubleByteMode = true;
-		}
 		// We need to check for Shift-JIS every line
 		//  Police Quest 2 PC-9801 often draws English + Japanese text during the same call
 		if (g_sci->getLanguage() == Common::JA_JPN) {
@@ -695,11 +700,21 @@ void GfxText16::DrawStatus(const Common::String &strOrig) {
 
 // Check for Korean strings, and use font 1001 to render them
 bool GfxText16::SwitchToFont1001OnKorean(const char *text, uint16 languageSplitter) {
-	byte firstChar = (*(const byte *)text++);
+	const byte* ptr = (const byte *)text;
 	if (languageSplitter != 0x6b23) { // #k prefix as language splitter
-		if ((firstChar >= 0xA1) && (firstChar <= 0xFE)) {
-			SetFont(1001);
-			return true;
+		// Check if the text contains at least one Korean character
+		while (*ptr) {
+			byte ch = *ptr++;
+			if (ch >= 0xB0 && ch <= 0xC8) {
+				ch = *ptr++;
+				if (!ch)
+					return false;
+
+				if (ch >= 0xA1 && ch <= 0xFE) {
+					SetFont(1001);
+					return true;
+				}
+			}
 		}
 	}
 	return false;
