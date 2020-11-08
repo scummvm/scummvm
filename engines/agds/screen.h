@@ -110,6 +110,7 @@ public:
 	void add(Animation * animation) {
 		_animations.insert(animation);
 	}
+	bool remove(Animation * animation);
 
 	void update(const ObjectPtr &object) {
 		bool found = remove(object);
