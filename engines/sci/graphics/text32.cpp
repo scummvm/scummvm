@@ -338,12 +338,13 @@ void GfxText32::drawTextBox() {
 		}
 	}
 
+	// Check for Korean text
+	if (g_sci->getLanguage() == Common::KO_KOR)
+		SwitchToFont1001OnKorean(text);
+
 	charIndex = 0;
 	uint nextCharIndex = 0;
 	while (*text != '\0') {
-		// We need to check for Korean-EUCKR every line
-		if (g_sci->getLanguage() == Common::KO_KOR)
-			SwitchToFont1001OnKorean(text);
 		_drawPosition.x = _textRect.left;
 
 		uint length = getLongest(&nextCharIndex, textRectWidth);
@@ -719,12 +720,14 @@ Common::Rect GfxText32::getTextSize(const Common::String &text, int16 maxWidth, 
 		if (_text.size() > 0) {
 			const char *rawText = _text.c_str();
 			const char *sourceText = rawText;
+
+			// Check for Korean text
+			if (g_sci->getLanguage() == Common::KO_KOR)
+				SwitchToFont1001OnKorean(rawText);
+
 			uint charIndex = 0;
 			uint nextCharIndex = 0;
 			while (*rawText != '\0') {
-				// We need to check for Korean-EUCKR every line
-				if (g_sci->getLanguage() == Common::KO_KOR)
-					SwitchToFont1001OnKorean(rawText);
 				uint length = getLongest(&nextCharIndex, result.width());
 				textWidth = MAX(textWidth, getTextWidth(charIndex, length));
 				charIndex = nextCharIndex;
@@ -872,10 +875,20 @@ void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 c
 
 // Check for Korean strings, and use font 1001 to render them
 bool GfxText32::SwitchToFont1001OnKorean(const char *text) {
-	//byte firstChar = (*(const byte *)text++);
-	if (1/*(firstChar >= 0xA1) && (firstChar <= 0xFE)*/) {
-		setFont(1001);
-		return true;
+	const byte *ptr = (const byte *)text;
+	// Check if the text contains at least one Korean character
+	while (*ptr) {
+		byte ch = *ptr++;
+		if (ch >= 0xB0 && ch <= 0xC8) {
+			ch = *ptr++;
+			if (!ch)
+				return false;
+
+			if (ch >= 0xA1 && ch <= 0xFE) {
+				setFont(1001);
+				return true;
+			}
+		}
 	}
 	return false;
 }
