@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-10-31 19:57+0100\n"
+"POT-Creation-Date: 2020-11-08 21:02+0100\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -165,7 +165,7 @@ msgstr ""
 #: engines/drascula/saveload.cpp:49 engines/groovie/script.cpp:484
 #: engines/parallaction/saveload.cpp:271 engines/sci/engine/kgraphics.cpp:75
 #: engines/sci/graphics/controls32.cpp:925 engines/scumm/dialogs.cpp:187
-#: engines/scumm/scumm.cpp:1901 engines/scumm/players/player_v3m.cpp:130
+#: engines/scumm/scumm.cpp:1908 engines/scumm/players/player_v3m.cpp:130
 #: engines/scumm/players/player_v5m.cpp:108 engines/sky/compact.cpp:142
 #: engines/sword1/animation.cpp:532 engines/sword1/animation.cpp:553
 #: engines/sword1/animation.cpp:569 engines/sword1/animation.cpp:577
@@ -755,13 +755,13 @@ msgstr "Пошук у спісе гульняў"
 msgid "Search:"
 msgstr "Пошук:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:794
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:801
 #: engines/pegasus/pegasus.cpp:355 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
 msgid "Load game:"
 msgstr "Загрузіць гульню:"
 
-#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:794
+#: gui/launcher.cpp:210 engines/dialogs.cpp:102 engines/engine.cpp:801
 #: engines/parallaction/saveload.cpp:194 engines/pegasus/pegasus.cpp:355
 #: engines/scumm/dialogs.cpp:183 engines/tsage/scenes.cpp:601
 #: engines/wage/saveload.cpp:742 engines/xeen/saves.cpp:256
@@ -1840,28 +1840,28 @@ msgstr "Увядзіце апісанне слота %d:"
 msgid "Select a Theme"
 msgstr "Абярыце тэму"
 
-#: gui/ThemeEngine.cpp:276
+#: gui/ThemeEngine.cpp:278
 msgid "Disabled GFX"
 msgstr "Без графікі"
 
-#: gui/ThemeEngine.cpp:276
+#: gui/ThemeEngine.cpp:278
 msgctxt "lowres"
 msgid "Disabled GFX"
 msgstr "Без графікі"
 
-#: gui/ThemeEngine.cpp:277
+#: gui/ThemeEngine.cpp:279
 msgid "Standard renderer"
 msgstr "Стандартны растарызатар"
 
-#: gui/ThemeEngine.cpp:277 engines/scumm/dialogs.cpp:680
+#: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:680
 msgid "Standard"
 msgstr "Стандартны"
 
-#: gui/ThemeEngine.cpp:279
+#: gui/ThemeEngine.cpp:281
 msgid "Antialiased renderer"
 msgstr "Растарызатар са згладжваннем"
 
-#: gui/ThemeEngine.cpp:279
+#: gui/ThemeEngine.cpp:281
 msgid "Antialiased"
 msgstr "Са згладжваннем"
 
@@ -2048,7 +2048,7 @@ msgstr "Штомесяц"
 msgid "<Bad value>"
 msgstr "<Хібнае значэнне>"
 
-#: engines/advancedDetector.cpp:211
+#: engines/advancedDetector.cpp:213
 msgid "Illegitimate game copy detected. We provide no support in such cases"
 msgstr "Знойдзена нелегальная копія. Мы не даём падтрымкі ў такіх выпадках"
 
@@ -2085,7 +2085,7 @@ msgctxt "lowres"
 msgid "~R~eturn to Launcher"
 msgstr "Г~а~лоўнае меню"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:823 engines/agi/saveload.cpp:759
+#: engines/dialogs.cpp:103 engines/engine.cpp:830 engines/agi/saveload.cpp:759
 #: engines/avalanche/parser.cpp:1919 engines/cine/various.cpp:350
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:383
 #: engines/dreamweb/saveload.cpp:262 engines/glk/streams.cpp:1433
@@ -2102,7 +2102,7 @@ msgstr "Г~а~лоўнае меню"
 msgid "Save game:"
 msgstr "Захаваць гульню:"
 
-#: engines/dialogs.cpp:103 engines/engine.cpp:823
+#: engines/dialogs.cpp:103 engines/engine.cpp:830
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: engines/agi/saveload.cpp:759 engines/avalanche/parser.cpp:1919
 #: engines/cine/various.cpp:350 engines/dm/loadsave.cpp:199
@@ -2245,11 +2245,23 @@ msgstr ""
 msgid "Start anyway"
 msgstr "Усё адно запусціць"
 
-#: engines/engine.cpp:790
+#: engines/engine.cpp:658
+#, fuzzy
+msgid "This game is not supported."
+msgstr "Game id не падтрымваецца"
+
+#: engines/engine.cpp:658
+#, fuzzy
+msgid ""
+"This game is not supported for the following reason:\n"
+"\n"
+msgstr "Гэтая гульня не падтрымвае загрузку захаванняў праз галоўнае меню."
+
+#: engines/engine.cpp:797
 msgid "Loading game is currently unavailable"
 msgstr "Загрузка гульні цяпер недаступна"
 
-#: engines/engine.cpp:819
+#: engines/engine.cpp:826
 msgid "Saving game is currently unavailable"
 msgstr "Цяпер захаванне гульні недаступна"
 
@@ -2813,28 +2825,28 @@ msgstr "Правы курок"
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:53
-#: backends/platform/sdl/switch/switch.cpp:47
+#: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad Up"
 msgstr "Стрэлка ўгару"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:54
-#: backends/platform/sdl/switch/switch.cpp:48
+#: backends/platform/sdl/switch/switch.cpp:50
 msgid "D-pad Down"
 msgstr "Стрэлка ўніз"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
 #: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:55
-#: backends/platform/sdl/switch/switch.cpp:49
+#: backends/platform/sdl/switch/switch.cpp:51
 msgid "D-pad Left"
 msgstr "Стрэлка налева"
 
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
 #: backends/platform/sdl/ps3/ps3.cpp:55 backends/platform/sdl/psp2/psp2.cpp:56
-#: backends/platform/sdl/switch/switch.cpp:50
+#: backends/platform/sdl/switch/switch.cpp:52
 msgid "D-pad Right"
 msgstr "Стрэлка направа"
 
@@ -2848,25 +2860,25 @@ msgstr "Правы трыгер"
 
 #: backends/keymapper/hardware-input.cpp:277
 #: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:61
-#: backends/platform/sdl/switch/switch.cpp:57
+#: backends/platform/sdl/switch/switch.cpp:59
 msgid "Left Stick X"
 msgstr "Левы сцік вось X"
 
 #: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:62
-#: backends/platform/sdl/switch/switch.cpp:58
+#: backends/platform/sdl/switch/switch.cpp:60
 msgid "Left Stick Y"
 msgstr "Левы сцік вось Y"
 
 #: backends/keymapper/hardware-input.cpp:279
 #: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:63
-#: backends/platform/sdl/switch/switch.cpp:59
+#: backends/platform/sdl/switch/switch.cpp:61
 msgid "Right Stick X"
 msgstr "Правы сцік вось X"
 
 #: backends/keymapper/hardware-input.cpp:280
 #: backends/platform/sdl/ps3/ps3.cpp:65 backends/platform/sdl/psp2/psp2.cpp:64
-#: backends/platform/sdl/switch/switch.cpp:60
+#: backends/platform/sdl/switch/switch.cpp:62
 msgid "Right Stick Y"
 msgstr "Правы сцік вось Y"
 
@@ -3115,22 +3127,22 @@ msgid "Both"
 msgstr "Абодва"
 
 #: backends/platform/3ds/osystem-events.cpp:48
-#: backends/platform/sdl/switch/switch.cpp:37
+#: backends/platform/sdl/switch/switch.cpp:39
 msgid "A"
 msgstr "A"
 
 #: backends/platform/3ds/osystem-events.cpp:49
-#: backends/platform/sdl/switch/switch.cpp:36
+#: backends/platform/sdl/switch/switch.cpp:38
 msgid "B"
 msgstr "B"
 
 #: backends/platform/3ds/osystem-events.cpp:50
-#: backends/platform/sdl/switch/switch.cpp:39
+#: backends/platform/sdl/switch/switch.cpp:41
 msgid "X"
 msgstr "X"
 
 #: backends/platform/3ds/osystem-events.cpp:51
-#: backends/platform/sdl/switch/switch.cpp:38
+#: backends/platform/sdl/switch/switch.cpp:40
 msgid "Y"
 msgstr "Y"
 
@@ -3149,24 +3161,24 @@ msgid "Start"
 msgstr "Пуск"
 
 #: backends/platform/3ds/osystem-events.cpp:54
-#: backends/platform/sdl/switch/switch.cpp:55
+#: backends/platform/sdl/switch/switch.cpp:57
 msgid "ZL"
 msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:55
-#: backends/platform/sdl/switch/switch.cpp:56
+#: backends/platform/sdl/switch/switch.cpp:58
 msgid "ZR"
 msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 #: backends/platform/sdl/psp2/psp2.cpp:51
-#: backends/platform/sdl/switch/switch.cpp:45
+#: backends/platform/sdl/switch/switch.cpp:47
 msgid "L"
 msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
 #: backends/platform/sdl/psp2/psp2.cpp:52
-#: backends/platform/sdl/switch/switch.cpp:46
+#: backends/platform/sdl/switch/switch.cpp:48
 msgid "R"
 msgstr "R"
 
@@ -3574,12 +3586,12 @@ msgid "PS"
 msgstr "PS"
 
 #: backends/platform/sdl/ps3/ps3.cpp:48
-#: backends/platform/sdl/switch/switch.cpp:43
+#: backends/platform/sdl/switch/switch.cpp:45
 msgid "L3"
 msgstr "L3"
 
 #: backends/platform/sdl/ps3/ps3.cpp:49
-#: backends/platform/sdl/switch/switch.cpp:44
+#: backends/platform/sdl/switch/switch.cpp:46
 msgid "R3"
 msgstr "R3"
 
@@ -3599,12 +3611,12 @@ msgstr "L2"
 msgid "R2"
 msgstr "R2"
 
-#: backends/platform/sdl/switch/switch.cpp:40
+#: backends/platform/sdl/switch/switch.cpp:42
 msgid "Minus"
 msgstr "Мінус"
 
-#: backends/platform/sdl/switch/switch.cpp:41
-#: backends/platform/sdl/switch/switch.cpp:42
+#: backends/platform/sdl/switch/switch.cpp:43
+#: backends/platform/sdl/switch/switch.cpp:44
 msgid "Plus"
 msgstr "Плюс"
 
@@ -3950,7 +3962,7 @@ msgstr "Узнавіць"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2467
+#: engines/agos/saveload.cpp:159 engines/scumm/scumm.cpp:2474
 #, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -3961,7 +3973,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2457
+#: engines/agos/saveload.cpp:194 engines/scumm/scumm.cpp:2464
 #, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -3972,7 +3984,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2480
+#: engines/agos/saveload.cpp:202 engines/scumm/scumm.cpp:2487
 #, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -4222,11 +4234,11 @@ msgstr "Занадта каротка, каб быць сапраўдным фа
 msgid "This is not a valid Alan2 file."
 msgstr "Гэта несапраўдны файл Alan2."
 
-#: engines/glk/comprehend/game.cpp:318
+#: engines/glk/comprehend/game.cpp:319
 msgid "Savegame"
 msgstr "Захаваная гульня"
 
-#: engines/glk/comprehend/game.cpp:833
+#: engines/glk/comprehend/game.cpp:830
 msgid "Picture window toggled\n"
 msgstr ""
 
@@ -6370,7 +6382,7 @@ msgstr "Гучн. музыкі: "
 msgid "Subtitle speed: "
 msgstr "Хуткасць тытраў: "
 
-#: engines/scumm/scumm.cpp:1899
+#: engines/scumm/scumm.cpp:1906
 #, c-format
 msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
@@ -6379,7 +6391,7 @@ msgstr ""
 "Рэжым \"роднага\" MIDI патрабуе абнаўленне Roland Upgrade ад\n"
 "LucasArts, але бракуе %s. Пераключаюся на AdLib."
 
-#: engines/scumm/scumm.cpp:2765
+#: engines/scumm/scumm.cpp:2772
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
