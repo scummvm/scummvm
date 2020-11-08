@@ -182,7 +182,7 @@ private:
 
 	bool isUsingOrhoProjection = false;
 
-	int32 computePolygons(int16 polyRenderType, int &vleft, int &vright, int &vtop, int &vbottom);
+	void computePolygons(int16 polyRenderType, int &vleft, int &vright, int &vtop, int &vbottom);
 	void renderPolygons(int32 renderType, int32 color, int vleft, int vright, int vtop, int vbottom);
 
 public:

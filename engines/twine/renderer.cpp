@@ -46,8 +46,6 @@ namespace TwinE {
 #define POLYGONTYPE_GOURAUD 7
 #define POLYGONTYPE_DITHER 8
 
-#define ERROR_OUT_OF_SCREEN 2
-
 int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 	if (!isUsingOrhoProjection) {
 		cX -= baseRotPosX;
@@ -406,7 +404,7 @@ FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
 }
 
-int32 Renderer::computePolygons(int16 polyRenderType, int &vleft, int &vright, int &vtop, int &vbottom) {
+void Renderer::computePolygons(int16 polyRenderType, int &vleft, int &vright, int &vtop, int &vbottom) {
 	vertexData *vertices = (vertexData *)vertexCoordinates;
 
 	vleft = vtop = 32767;
@@ -504,8 +502,6 @@ int32 Renderer::computePolygons(int16 polyRenderType, int &vleft, int &vright, i
 			}
 		}
 	}
-
-	return 1;
 }
 
 void Renderer::renderPolygons(int32 renderType, int32 color, int vleft, int vright, int vtop, int vbottom) {
@@ -992,9 +988,8 @@ void Renderer::renderPolygons(int32 polyRenderType, int32 color) {
 	int vright = 0;
 	int vtop = 0;
 	int vbottom = 0;
-	if (computePolygons(polyRenderType, vleft, vright, vtop, vbottom) != ERROR_OUT_OF_SCREEN) {
-		renderPolygons(polyRenderType, color, vleft, vright, vtop, vbottom);
-	}
+	computePolygons(polyRenderType, vleft, vright, vtop, vbottom);
+	renderPolygons(polyRenderType, color, vleft, vright, vtop, vbottom);
 }
 
 void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
