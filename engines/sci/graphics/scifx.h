@@ -23,7 +23,7 @@
 namespace Sci {
 
 void setupCustomPaletteMods(GfxScreen *screen);
-void doCustomViewPalette(GfxScreen *screen, int x, int y, int z);
-void doCustomPicPalette(GfxScreen *screen, int x);
+void doCustomViewPalette(GfxScreen *screen, GuiResourceId view, int16 loop, int16 cel);
+void doCustomPicPalette(GfxScreen *screen, GuiResourceId pic);
 
 }
