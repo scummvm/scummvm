@@ -39,8 +39,10 @@ For a more comprehensive changelog of the latest experimental code, see:
      issues in screen transitions and avoids mode changes when playing Mac QuickTime videos.
    - Added custom palette mods for SQ3 and LSL2 from the FreeSCI project. When enabled, the mods improve the visuals
      in these two games.
+   - Added support for the Korean fan translations of Castle of Dr. Brain, Eco Quest, Gabriel Knight,
+     King's Quest 1, 5 and 6, Laura Bow 2: Dagger of Amon Ra and Space Quest 4
 
-SCUMM:
+ SCUMM:
    - Fixed Chinese, Japanese and Korean text display for The Dig and for The Curse of Monkey Island. These fixes
      also include some improvements to the common text display (mainly the formatting of wrapped texts).
    - Fixed display of Chinese, Japanese and Korean pause and restart dialogs.
