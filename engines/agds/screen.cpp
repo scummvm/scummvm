@@ -23,6 +23,7 @@
 #include "agds/screen.h"
 #include "agds/agds.h"
 #include "agds/animation.h"
+#include "agds/character.h"
 #include "agds/object.h"
 #include "agds/patch.h"
 #include "agds/region.h"
@@ -144,31 +145,57 @@ void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 		}
 	}
 
+	Character * character = engine.currentCharacter();
 	ChildrenType::iterator child = _children.begin();
 	AnimationsType::iterator animation = _animations.begin();
-	while(child != _children.end() || animation != _animations.end()) {
+	while(child != _children.end() || animation != _animations.end() || character) {
 		bool child_valid = child != _children.end();
 		bool animation_valid = animation != _animations.end();
-		if (child_valid && animation_valid) {
-			if ((*child)->z() > (*animation)->z()) {
-				//debug("object %d, z: %d", idx++, (*child)->z());
+
+		bool z_valid = false;
+		int z = 0;
+		int render_type = -1;
+		if (child_valid) {
+			if (!z_valid || (*child)->z() > z) {
+				z = (*child)->z();
+				z_valid = true;
+				render_type = 0;
+			}
+		}
+		if (animation_valid) {
+			if (!z_valid || (*animation)->z() > z) {
+				z = (*animation)->z();
+				z_valid = true;
+				render_type = 1;
+			}
+		}
+		if (character) {
+			if (!z_valid || character->z() > z) {
+				z = character->z();
+				z_valid = true;
+				render_type = 2;
+			}
+		}
+
+		switch (render_type) {
+			case 0:
+				//debug("object z: %d", (*child)->z());
 				if ((*child)->inScene())
 					(*child)->paint(engine, backbuffer);
 				++child;
-			} else {
-				//debug("animation %d, z: %d", idx++, (*animation)->z());
+				break;
+			case 1:
+				//debug("animation z: %d", (*animation)->z());
 				(*animation)->paint(engine, backbuffer, Common::Point());
 				++animation;
-			}
-		} else if (child_valid) {
-			//debug("object %d, z: %d", idx++, (*child)->z());
-			if ((*child)->inScene())
-				(*child)->paint(engine, backbuffer);
-			++child;
-		} else {
-			//debug("animation %d, z: %d", idx++, (*animation)->z());
-			(*animation)->paint(engine, backbuffer, Common::Point());
-			++animation;
+				break;
+			case 2:
+				//debug("character z: %d", character->z());
+				character->paint(backbuffer);
+				character = nullptr;
+				break;
+			default:
+				error("invalid logic in z-sort");
 		}
 	}
 }

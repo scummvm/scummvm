@@ -490,9 +490,6 @@ Common::Error AGDSEngine::run() {
 			mouseCursor->paint(*this, *backbuffer, _mouse);
 		}
 
-		if (_currentCharacter)
-			_currentCharacter->paint(*backbuffer);
-
 		if (_textLayout.valid()) {
 			if (_syncSoundId >= 0) {
 				if (!_soundManager.playing(_syncSoundId)) {
