@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-08 21:02+0100\n"
-"PO-Revision-Date: 2020-11-08 12:43+0000\n"
+"POT-Creation-Date: 2020-10-31 19:57+0100\n"
+"PO-Revision-Date: 2020-11-08 20:03+0000\n"
 "Last-Translator: mdenizdemirci <mdenizdemirci@gmail.com>\n"
 "Language-Team: Turkish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/tr/>\n"
@@ -1109,34 +1109,37 @@ msgstr "MIDI ve AdLib ses üretimini beraber kullan"
 
 #: gui/options.cpp:1431
 msgid "MIDI gain:"
-msgstr ""
+msgstr "MIDI kazancı:"
 
 #: gui/options.cpp:1441
 msgid "MT-32 Device:"
-msgstr ""
+msgstr "MT-32 Cihazı:"
 
 #: gui/options.cpp:1441
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
+"Roland MT-32/LAPC1/CM32l/CM64 çıkışı için varsayılan ses cihazını belirler"
 
 #: gui/options.cpp:1446
 msgid "True Roland MT-32 (disable GM emulation)"
-msgstr ""
+msgstr "Gerçek Roland MT-32 (GM emülatörünü iptal et)"
 
 #: gui/options.cpp:1446 gui/options.cpp:1448
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
+"Roland uyumlu gerçek cihazınızı bilgisayarınıza bağlayıp kullanmak "
+"istiyorsanız tik atın"
 
 #: gui/options.cpp:1448
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
-msgstr ""
+msgstr "Gerçek Roland MT-32 (GM emülatörü yok)"
 
 #: gui/options.cpp:1451
 msgid "Roland GS device (enable MT-32 mappings)"
-msgstr ""
+msgstr "Roland GS cihazı (MT-32 eşleşmelerini aktive et)"
 
 #: gui/options.cpp:1451
 msgid ""
