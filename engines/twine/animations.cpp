@@ -205,7 +205,7 @@ int32 Animations::getAnimMode(uint8 **ptr, const uint8 **keyFramePtr, const uint
 	return opcode;
 }
 
-int32 Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	int32 numOfPointInAnim = *(const int16 *)(animPtr + 2);
 
 	const uint8* keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animPtr + 8;
@@ -215,7 +215,7 @@ int32 Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8
 	int16 bodyHeader = *(const int16 *)(bodyPtr);
 
 	if (!(bodyHeader & 2)) {
-		return 0;
+		return false;
 	}
 
 	uint8 *edi = bodyPtr + 16;
@@ -268,7 +268,7 @@ int32 Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8
 		processRotationByAnim = *(const int16 *)(keyFramePtr + 8);
 		processLastRotationAngle = *(const int16 *)(keyFramePtr + 12);
 
-		return 1;
+		return true;
 	}
 	const uint8 *keyFramePtrOld = keyFramePtr;
 
@@ -313,7 +313,7 @@ int32 Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8
 	currentStepY = (*(const int16 *)(keyFramePtrOld + 4) * eax) / keyFrameLength;
 	currentStepZ = (*(const int16 *)(keyFramePtrOld + 6) * eax) / keyFrameLength;
 
-	return 0;
+	return false;
 }
 
 int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
