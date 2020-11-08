@@ -300,12 +300,7 @@ MODULE_OBJS += \
 	graphics/downscalesdl/downscalesdl-graphics.o
 endif
 
-ifeq ($(BACKEND),iphone)
-MODULE_OBJS += \
-	mutex/pthread/pthread-mutex.o
-endif
-
-ifeq ($(BACKEND),ios7)
+ifdef IPHONE
 MODULE_OBJS += \
 	mutex/pthread/pthread-mutex.o
 endif
