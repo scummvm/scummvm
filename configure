@@ -3473,6 +3473,7 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/gph/gp2xwiz-bundle.mk"
 			;;
 		iphone)
+			add_line_to_config_mk 'IPHONE = 1'
 			append_var DEFINES "-DIPHONE"
 			append_var ASFLAGS "-arch armv6"
 			_backend="iphone"
@@ -3482,6 +3483,7 @@ if test -n "$_host"; then
 			_timidity=no
 			;;
 		ios7)
+			add_line_to_config_mk 'IPHONE = 1'
 			append_var DEFINES "-DIPHONE -DIPHONE_IOS7 -DIPHONE_SANDBOXED"
 			_backend="ios7"
 			_seq_midi=no
