@@ -84,7 +84,7 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bo
 
 	int16 numOfBonesInAnim = *(const int16 *)(animPtr + 2);
 
-	uint8 *ptrToData = (uint8 *)((numOfBonesInAnim * 8 + 8) * keyframeIdx + animPtr + 8);
+	const uint8 *ptrToData = (const uint8 *)((numOfBonesInAnim * 8 + 8) * keyframeIdx + animPtr + 8);
 
 	const int16 bodyHeader = *(const int16 *)(bodyPtr);
 
@@ -109,7 +109,7 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bo
 		numOfBonesInAnim = numOfPointInBody;
 	}
 
-	uint8 *ptrToDataBackup = ptrToData;
+	const uint8 *ptrToDataBackup = ptrToData;
 
 	ptrToData += 8;
 
@@ -205,7 +205,7 @@ int32 Animations::getAnimMode(uint8 **ptr, const uint8 **keyFramePtr, const uint
 	return opcode;
 }
 
-int32 Animations::setModelAnimation(int32 animState, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+int32 Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	int32 numOfPointInAnim = *(const int16 *)(animPtr + 2);
 
 	const uint8* keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animPtr + 8;
