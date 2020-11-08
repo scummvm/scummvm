@@ -268,7 +268,6 @@ uint FontKoreanBase::getMaxFontWidth() const {
 
 uint FontKoreanBase::getCharWidth(uint16 ch) const {
 	if (isASCII(ch))
-		//return ((_drawMode == kOutlineMode) ? 10 : (_drawMode == kDefaultMode ? 8 : 9));
 		return ((_drawMode == kOutlineMode) ? _fontWidth / 2 + 2 : (_drawMode == kDefaultMode ? _fontWidth / 2 : _fontWidth / 2 + 1));
 	else
 		return getMaxFontWidth();

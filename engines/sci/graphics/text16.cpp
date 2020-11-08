@@ -693,7 +693,7 @@ void GfxText16::DrawStatus(const Common::String &strOrig) {
 	}
 }
 
-// korean and then switch to font 1001
+// Check for Korean strings, and use font 1001 to render them
 bool GfxText16::SwitchToFont1001OnKorean(const char *text, uint16 languageSplitter) {
 	byte firstChar = (*(const byte *)text++);
 	if (languageSplitter != 0x6b23) { // #k prefix as language splitter

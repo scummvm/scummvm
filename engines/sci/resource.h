@@ -644,6 +644,9 @@ protected:
 	bool checkResourceForSignatures(ResourceType resourceType, uint16 resourceNr, const byte *signature1, const byte *signature2);
 	void detectSciVersion();
 
+public:
+	bool isKoreanMessageMap(ResourceSource *source);
+
 private:
 	// For better or worse, because the patcher is added as a ResourceSource,
 	// its destruction is managed by freeResourceSources.

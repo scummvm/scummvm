@@ -143,11 +143,11 @@ protected:
 	virtual const uint8 *getCharData(uint16 c) const = 0;
 
 	enum DrawingFeature {
-		kFeatDefault		= 1 << 0,
-		kFeatOutline		= 1 << 1,
-		kFeatShadow			= 1 << 2,
-		kFeatFMTownsShadow	= 1 << 3,
-		kFeatFlipped		= 1 << 4
+		kFeatDefault        = 1 << 0,
+		kFeatOutline        = 1 << 1,
+		kFeatShadow         = 1 << 2,
+		kFeatFMTownsShadow  = 1 << 3,
+		kFeatFlipped        = 1 << 4
 	};
 
 	virtual bool hasFeature(int feat) const = 0;
