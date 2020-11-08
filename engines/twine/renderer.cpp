@@ -406,7 +406,7 @@ FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
 }
 
-int32 Renderer::computePolygons(int16 polyRenderType) {
+int32 Renderer::computePolygons(int16 polyRenderType, int &vleft, int &vright, int &vtop, int &vbottom) {
 	vertexData *vertices = (vertexData *)vertexCoordinates;
 
 	vleft = vtop = 32767;
@@ -508,7 +508,7 @@ int32 Renderer::computePolygons(int16 polyRenderType) {
 	return 1;
 }
 
-void Renderer::renderPolygons(int32 renderType, int32 color) {
+void Renderer::renderPolygons(int32 renderType, int32 color, int vleft, int vright, int vtop, int vbottom) {
 	uint8 *out2;
 	int32 currentLine;
 
@@ -987,6 +987,16 @@ void Renderer::renderPolygons(int32 renderType, int32 color) {
 	};
 }
 
+void Renderer::renderPolygons(int32 polyRenderType, int32 color) {
+	int vleft = 0;
+	int vright = 0;
+	int vtop = 0;
+	int vbottom = 0;
+	if (computePolygons(polyRenderType, vleft, vright, vtop, vbottom) != ERROR_OUT_OF_SCREEN) {
+		renderPolygons(polyRenderType, color, vleft, vright, vtop, vbottom);
+	}
+}
+
 void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
 	radius += 1;
 
@@ -1327,9 +1337,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer) {
 				pointer += 2;
 			}
 
-			if (computePolygons(polyRenderType) != ERROR_OUT_OF_SCREEN) {
-				renderPolygons(polyRenderType, color);
-			}
+			renderPolygons(polyRenderType, color);
 
 			break;
 		}

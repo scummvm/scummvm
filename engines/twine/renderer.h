@@ -176,16 +176,14 @@ private:
 	renderTabEntry renderTabSorted[1000];
 	uint8 renderTab7[10000] {0};
 
-	int16 vleft = 0;
-	int16 vtop = 0;
-	int16 vright = 0;
-	int16 vbottom = 0;
-
 	int16 polyTab[960] {0};
 	int16 polyTab2[960] {0};
 	// end render polygon vars
 
 	bool isUsingOrhoProjection = false;
+
+	int32 computePolygons(int16 polyRenderType, int &vleft, int &vright, int &vtop, int &vbottom);
+	void renderPolygons(int32 renderType, int32 color, int vleft, int vright, int vtop, int vbottom);
 
 public:
 	Renderer(TwinEEngine *engine) : _engine(engine) {}
@@ -212,10 +210,8 @@ public:
 
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 
-	int32 computePolygons(int16 polyRenderType);
-	void renderPolygons(int32 ecx, int32 edi);
-
 	void prepareIsoModel(uint8 *bodyPtr); // loadGfxSub
+	void renderPolygons(int32 polyRenderType, int32 color);
 
 	int32 projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
 	void setCameraPosition(int32 x, int32 y, int32 cX, int32 cY, int32 cZ);
