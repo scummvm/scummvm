@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-08 21:02+0100\n"
-"PO-Revision-Date: 2020-10-31 19:14+0000\n"
+"PO-Revision-Date: 2020-11-08 20:13+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -2257,17 +2257,16 @@ msgid "Start anyway"
 msgstr "Trotzdem starten"
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid "This game is not supported."
-msgstr "Spiel-ID nicht unterstützt"
+msgstr "Dieses Spiel wird nicht unterstützt."
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
 msgstr ""
-"Für dieses Spiel wird das Laden aus der Spieleliste heraus nicht unterstützt."
+"Dieses Spiel wird aus folgendem Grund nicht unterstützt:\n"
+"\n"
 
 #: engines/engine.cpp:797
 msgid "Loading game is currently unavailable"
