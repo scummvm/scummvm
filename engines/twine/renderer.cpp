@@ -1513,7 +1513,7 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr) {
 		} while (--numOfPrimitives);
 	}
 
-	shadePtr = (int32 *)elementsPtr;
+	int32 *shadePtr = (int32 *)elementsPtr;
 
 	int32 numOfShades = *((const uint16 *)shadePtr);
 

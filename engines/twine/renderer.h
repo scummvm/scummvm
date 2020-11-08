@@ -161,7 +161,6 @@ private:
 	int32 matricesTable[271] {0};
 	uint8 *currentMatrixTableEntry = nullptr;
 
-	int32 *shadePtr = nullptr;
 	int32 shadeMatrix[9] {0};
 	int32 lightX = 0;
 	int32 lightY = 0;
