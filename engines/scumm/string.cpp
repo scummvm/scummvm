@@ -1491,7 +1491,7 @@ int ScummEngine::convertNameMessage(byte *dst, int dstSize, int var) {
 					for (int i = len; i > 1; i--) {
 						byte k1 = ptr[i - 2];
 						byte k2 = ptr[i - 1];
-						if (checkHangul(k1, k2)) {
+						if (checkKSCode(k1, k2)) {
 							int jongsung = checkJongsung(k1, k2);
 							if (jongsung)
 								_krStrPost |= 1;
@@ -1552,7 +1552,7 @@ int ScummEngine::convertStringMessage(byte *dst, int dstSize, int var) {
 				for (int i = resStrLen(ptr); i > 1; i--) {
 					byte k1 = ptr[i - 2];
 					byte k2 = ptr[i - 1];
-					if (checkHangul(k1, k2)) {
+					if (checkKSCode(k1, k2)) {
 						int jongsung = checkJongsung(k1, k2);
 						if (jongsung)
 							_krStrPost |= 1;
