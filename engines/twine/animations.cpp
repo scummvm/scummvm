@@ -335,7 +335,7 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 		if (type == 3) {
 			if (animIdx == *bodyPtr) {
 				ptr++;
-				uint16 realAnimIdx = *(int16 *)(ptr);
+				uint16 realAnimIdx = *(const int16 *)(ptr);
 				ptr += 2;
 				uint8 *ptr2 = ptr;
 				ptr++;
@@ -361,7 +361,7 @@ int32 Animations::stockAnimation(uint8 *bodyPtr, AnimTimerDataStruct *animTimerD
 	if (!(playAnim & 2)) {
 		return 0;
 	}
-	uint8 *ptr = (bodyPtr + 0x10);
+	const uint8 *ptr = (bodyPtr + 0x10);
 
 	animTimerDataPtr->time = _engine->lbaTime;
 	animTimerDataPtr->ptr = animPtr;
@@ -379,13 +379,13 @@ int32 Animations::stockAnimation(uint8 *bodyPtr, AnimTimerDataStruct *animTimerD
 	var2 = (var2 * 8) + 8;
 
 	int32 *edi = (int32 *)(animPtr + 8);
-	int32 *esi = (int32 *)(ptr + 10);
+	const int32 *esi = (const int32 *)(ptr + 10);
 
 	do {
 		*(edi++) = *(esi++);
 		*(edi++) = *(esi++);
 
-		esi = (int32 *)(((int8 *)esi) + 30);
+		esi = (const int32 *)(((const int8 *)esi) + 30);
 	} while (counter--);
 
 	animBuffer2 += var2;
@@ -671,19 +671,18 @@ void Animations::processAnimActions(int32 actorIdx) {
 	}
 }
 
-// TODO: convert to boolean
-int32 Animations::initAnim(AnimationTypes newAnim, int16 animType, uint8 animExtra, int32 actorIdx) {
+bool Animations::initAnim(AnimationTypes newAnim, int16 animType, uint8 animExtra, int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->entity == -1) {
-		return 0;
+		return false;
 	}
 
 	if (actor->staticFlags.bIsSpriteActor) {
-		return 0;
+		return false;
 	}
 
 	if (newAnim == actor->anim && actor->previousAnimIdx != -1) {
-		return 1;
+		return true;
 	}
 
 	if (animExtra == 255 && actor->animType != 2) {
@@ -698,7 +697,7 @@ int32 Animations::initAnim(AnimationTypes newAnim, int16 animType, uint8 animExt
 
 	if (animType != 4 && actor->animType == 2) {
 		actor->animExtra = newAnim;
-		return 0;
+		return false;
 	}
 
 	if (animType == 3) {
@@ -743,7 +742,7 @@ int32 Animations::initAnim(AnimationTypes newAnim, int16 animType, uint8 animExt
 	actor->lastY = 0;
 	actor->lastZ = 0;
 
-	return 1;
+	return true;
 }
 
 void Animations::processActorAnimations(int32 actorIdx) { // DoAnim

@@ -122,7 +122,7 @@ public:
 	 * @param animExtra animation actions extra data
 	 * @param actorIdx actor index
 	 */
-	int32 initAnim(AnimationTypes newAnim, int16 animType, uint8 animExtra, int32 actorIdx);
+	bool initAnim(AnimationTypes newAnim, int16 animType, uint8 animExtra, int32 actorIdx);
 
 	/**
 	 * Process acotr animation actions
