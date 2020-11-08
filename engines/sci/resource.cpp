@@ -861,8 +861,7 @@ void DirectoryResourceSource::scanSource(ResourceManager *resMan) {
 }
 
 void ExtMapResourceSource::scanSource(ResourceManager *resMan) {
-	if (resMan->_mapVersion < kResVersionSci1Late &&
-	    !(getLocationName() == "message.map" && g_sci->getLanguage() == Common::KO_KOR)) {
+	if (resMan->_mapVersion < kResVersionSci1Late && !resMan->isKoreanMessageMap(this)) {
 		if (resMan->readResourceMapSCI0(this) != SCI_ERROR_NONE) {
 			resMan->_hasBadResources = true;
 		}
@@ -1934,7 +1933,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	memset(resMap, 0, sizeof(resource_index_t) * 32);
 	byte type = 0, prevtype = 0;
 	byte nEntrySize = _mapVersion == kResVersionSci11 ? SCI11_RESMAP_ENTRIES_SIZE : SCI1_RESMAP_ENTRIES_SIZE;
-	if (map->getLocationName() == "message.map" && g_sci->getLanguage() == Common::KO_KOR)
+	if (isKoreanMessageMap(map))
 		nEntrySize = SCI1_RESMAP_ENTRIES_SIZE;
 	ResourceId resId;
 
@@ -1963,7 +1962,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 		for (int i = 0; i < resMap[type].wSize; i++) {
 			uint16 number = fileStream->readUint16LE();
 			int volume_nr = 0;
-			if (_mapVersion == kResVersionSci11 && !(map->getLocationName() == "message.map" && g_sci->getLanguage() == Common::KO_KOR)) {
+			if (_mapVersion == kResVersionSci11 && !isKoreanMessageMap(map)) {
 				// offset stored in 3 bytes
 				fileOffset = fileStream->readUint16LE();
 				fileOffset |= fileStream->readByte() << 16;
@@ -1971,7 +1970,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			} else {
 				// offset/volume stored in 4 bytes
 				fileOffset = fileStream->readUint32LE();
-				if (_mapVersion < kResVersionSci11 && !(map->getLocationName() == "message.map" && g_sci->getLanguage() == Common::KO_KOR)) {
+				if (_mapVersion < kResVersionSci11 && !isKoreanMessageMap(map)) {
 					volume_nr = fileOffset >> 28; // most significant 4 bits
 					fileOffset &= 0x0FFFFFFF;     // least significant 28 bits
 				} else {
@@ -3087,6 +3086,10 @@ Common::String ResourceManager::findSierraGameId(const bool isBE) {
 	}
 
 	return heap->getStringAt(offset);
+}
+
+bool ResourceManager::isKoreanMessageMap(ResourceSource *source) {
+	return source->getLocationName() == "message.map" && g_sci->getLanguage() == Common::KO_KOR;
 }
 
 const Common::String &Resource::getResourceLocation() const {

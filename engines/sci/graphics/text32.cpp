@@ -56,7 +56,7 @@ GfxText32::GfxText32(SegManager *segMan, GfxCache *fonts) :
 void GfxText32::init() {
 	_xResolution = g_sci->_gfxFrameout->getScriptWidth();
 	_yResolution = g_sci->_gfxFrameout->getScriptHeight();
-    // GK1 Korean pathed version use doubled resolution for font
+    // GK1 Korean patched version uses doubled resolution for fonts
 	if (g_sci->getGameId() == GID_GK1 && g_sci->getLanguage() == Common::KO_KOR) {
 		_xResolution = _xResolution * 2;
 		_yResolution = _yResolution * 2;
@@ -870,7 +870,7 @@ void GfxText32::scrollLine(const Common::String &lineText, int numLines, uint8 c
 	drawText(0, lineText.size());
 }
 
-// korean and then switch to font 1001
+// Check for Korean strings, and use font 1001 to render them
 bool GfxText32::SwitchToFont1001OnKorean(const char *text) {
 	//byte firstChar = (*(const byte *)text++);
 	if (1/*(firstChar >= 0xA1) && (firstChar <= 0xFE)*/) {
