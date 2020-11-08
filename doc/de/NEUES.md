@@ -29,9 +29,6 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die Version in brasilianischem Portugiesisch von Grim Fandango hinzugefügt.
    - Unterstützung für die russische Version von Escape from Monkey Island hinzugefügt.
 
- Kyra:
-   - Russische Fan-Übersetzung von The Legend of Kyrandia 2 - Hand of Fate korrigiert (Untertitel im Into und in den Credits hinzugefügt).
-
  Lure:
    - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines Spielstands abgespielt.
 
