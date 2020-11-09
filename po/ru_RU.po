@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-08 21:15+0100\n"
-"PO-Revision-Date: 2020-11-03 12:12+0000\n"
+"PO-Revision-Date: 2020-11-10 01:53+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Русский\n"
 
@@ -2251,16 +2251,16 @@ msgid "Start anyway"
 msgstr "Всё равно запустить"
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid "This game is not supported."
-msgstr "Game id не поддерживается"
+msgstr "Эта игра не поддерживается."
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
-msgstr "Эта игра не поддерживает загрузку сохранённых игр через главное меню."
+msgstr ""
+"Эта игра не поддерживается по нижеследующим причинам:\n"
+"\n"
 
 #: engines/engine.cpp:797
 msgid "Loading game is currently unavailable"
@@ -4770,7 +4770,7 @@ msgstr "Левая кнопка для атаки, правая кнопка д�
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
-msgstr ""
+msgstr "Автор перевода не желает, чтобы его перевод был добавлен в ScummVM."
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
