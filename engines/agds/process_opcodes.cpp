@@ -491,11 +491,11 @@ void Process::userEnabled() {
 	push(enabled);
 }
 
-void Process::changeScreenPatch() {
+void Process::checkScreenPatch() {
 	Common::String objectName = popString();
 	Common::String screenName = popString();
 	Common::String inventoryScr = _engine->getSystemVariable("inventory_scr")->getString();
-	debug("changeScreenPatch: screen: %s, object: %s, inventory: %s",
+	debug("checkScreenPatch: screen: %s, object: %s, inventory: %s",
 	      screenName.empty() ? "none" : screenName.c_str(), objectName.c_str(), inventoryScr.empty() ? "none" : inventoryScr.c_str());
 
 	Screen *screen = _engine->getCurrentScreen();
@@ -505,14 +505,14 @@ void Process::changeScreenPatch() {
 	}
 
 	if (!screenName.empty()) {
-		debug("changeScreenPatch: stub, returning 0");
+		debug("checkScreenPatch: stub for screen != -1, returning 0");
 		//check that patch exist
 		push(0);
 		return;
 	} else {
 		ObjectPtr object = screen->find(objectName);
 		int value = object && object->inScene();
-		debug("changeScreenPatch: current screen object recovering: %d", value);
+		debug("checkScreenPatch: current screen object present: %d", value);
 		push(value);
 	}
 }
