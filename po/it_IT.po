@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-08 21:15+0100\n"
-"PO-Revision-Date: 2020-11-01 22:22+0000\n"
+"PO-Revision-Date: 2020-11-09 21:48+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -2259,18 +2259,16 @@ msgid "Start anyway"
 msgstr "Avvia comunque"
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid "This game is not supported."
-msgstr "ID di gioco non supportato"
+msgstr "Questo gioco non è supportato."
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
 msgstr ""
-"Questo gioco non supporta il caricamento di salvataggi dalla schermata di "
-"avvio."
+"Questo gioco non è supportato per le seguenti ragioni:\n"
+"\n"
 
 #: engines/engine.cpp:797
 msgid "Loading game is currently unavailable"
@@ -4796,6 +4794,8 @@ msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
 msgstr ""
+"Il fan che ha realizzato questa traduzione ha preferito che non venisse "
+"incorporata in ScummVM."
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
