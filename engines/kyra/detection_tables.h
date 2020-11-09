@@ -1097,6 +1097,22 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA3_CD_FAN_FLAGS(Common::IT_ITA, Common::FR_FRA)
 	},
+	{
+		{
+			"kyra3",
+			0,
+			{
+				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
+				{ "ALBUM.TRG", 0, "5e40de0c74cc2321928a15019252d468", -1 },
+				{ "AUD.PAK", 0, 0, -1 }
+			},
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_DROPLANGUAGE,
+			GUIO5(GUIO_NOMIDI, GUIO_RENDERVGA, GAMEOPTION_KYRA3_AUDIENCE, GAMEOPTION_KYRA3_SKIP, GAMEOPTION_KYRA3_HELIUM)
+		},
+		KYRA3_CD_FAN_FLAGS(Common::RU_RUS, Common::DE_DEU)
+	},
 
 #ifdef ENABLE_LOL
 	// Lands of Lore CD
