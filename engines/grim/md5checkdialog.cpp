@@ -38,7 +38,7 @@ MD5CheckDialog::MD5CheckDialog() :
 	const int screenW = g_system->getOverlayWidth();
 	const int screenH = g_system->getOverlayHeight();
 
-	Common::String message = _(
+	Common::U32String message = _(
 		"ScummVM will now verify the game data files, to make sure you have the best gaming experience.\n"
 		"This may take a while, please wait.\nSuccessive runs will not check them again.");
 
@@ -46,7 +46,7 @@ MD5CheckDialog::MD5CheckDialog() :
 	// down the string into lines, and taking the maximum of their widths.
 	// Using this, and accounting for the space the button(s) need, we can set
 	// the real size of the dialog
-	Common::Array<Common::String> lines;
+	Common::Array<Common::U32String> lines;
 	g_gui.getFont().wordWrapText(message, screenW - 2 * 20, lines);
 	_w = screenW - 20;
 	int maxlineWidth = _w - 20;
