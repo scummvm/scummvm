@@ -175,6 +175,7 @@ bool Dialog::tick() {
 		debug("end of dialog, running %s", process.c_str());
 		dialog_var->setInteger(-2);
 		_engine->reactivate(_dialogProcessName);
+		_dialogProcessName.clear();
 		return false;
 	}
 	return true;
