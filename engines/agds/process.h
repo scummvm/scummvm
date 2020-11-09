@@ -153,6 +153,7 @@ private:
 
 public:
 	Process(AGDSEngine *engine, ObjectPtr object, unsigned ip = 0);
+	static Common::String disassemble(ObjectPtr object);
 
 	ObjectPtr getObject() const {
 		return _object;
