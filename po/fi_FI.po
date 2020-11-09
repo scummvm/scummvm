@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-08 21:15+0100\n"
-"PO-Revision-Date: 2020-11-01 17:43+0000\n"
+"PO-Revision-Date: 2020-11-10 01:53+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -2240,16 +2240,16 @@ msgid "Start anyway"
 msgstr "Pelaa silti"
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid "This game is not supported."
-msgstr "Pelin tunniste ei ole tuettu"
+msgstr "Tämä peli ei ole tuettu."
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
-msgstr "Tämä peli ei tue pelitallennuksien lataamista pelin ulkopuolelta."
+msgstr ""
+"Tämä peli ei ole tuettu seuraavasta syystä:\n"
+"\n"
 
 #: engines/engine.cpp:797
 msgid "Loading game is currently unavailable"
@@ -4759,6 +4759,7 @@ msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
 msgstr ""
+"Fanikääntäjä ei halua että hänen käännöstyönsä lisätään osaksi ScummvM:ää."
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
