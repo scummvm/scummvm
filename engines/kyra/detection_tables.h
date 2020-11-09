@@ -77,6 +77,8 @@ namespace {
 #define GAMEOPTION_EOB_HPGRAPHS   GUIO_GAMEOPTIONS6
 #define GAMEOPTION_EOB_MOUSESWAP  GUIO_GAMEOPTIONS7
 
+static const char msgUnsupportedFanTranslation[] = _s("The fan translator does not wish his translation to be incorporated into ScummVM.");
+
 const KYRAGameDescription adGameDescs[] = {
 	/* disable these targets until they get supported
 	{
@@ -462,7 +464,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // Modern fan-made Russian translation by Siberian GRemlin
 		{
 			"kyra1",
-			_s("The fan translator does not wish his translation to be incorporated into ScummVM."),
+			msgUnsupportedFanTranslation,
 			AD_ENTRY1("MAIN_ENG.CPS", "535765395e3594bfd9b727834028e288"),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
@@ -719,7 +721,7 @@ const KYRAGameDescription adGameDescs[] = {
 	{ // CD version
 		{
 			"kyra2",
-			_s("The fan translator does not wish his translation to be incorporated into ScummVM."),
+			msgUnsupportedFanTranslation,
 			AD_ENTRY1("FERRY.CPS", "763e2103858347d4ffffc329910d323f"),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
