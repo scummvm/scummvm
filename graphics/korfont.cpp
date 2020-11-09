@@ -27,8 +27,7 @@
 
 namespace Graphics {
 
-bool checkKorCode(byte hi, byte lo)
-{
+bool checkKorCode(byte hi, byte lo) {
 	// hi: xx
 	// lo: yy
 	if ((0xA1 > lo) || (0xFE < lo)) {
@@ -200,7 +199,7 @@ uint16 ConvertKSToUCS2(uint16 code) {
 	return _ksToUcs2Table[index];
 }
 
-FontKorean *FontKorean::createFont(const char * fontFile) {
+FontKorean *FontKorean::createFont(const char *fontFile) {
 	FontKorean *ret = 0;
 
 	// Try ScummVM's font.
