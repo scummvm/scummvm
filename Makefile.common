@@ -135,7 +135,7 @@ clean:
 	$(RM_REC) $(DEPDIRS)
 	$(RM) $(OBJS) $(DETECT_OBJS) $(EXECUTABLE)
 ifdef SPLIT_DWARF
-	$(RM) $(OBJS:.o=.dwo)
+	$(RM) $(OBJS:.o=.dwo) $(DETECT_OBJS:.o=.dwo)
 	$(RM) $(EXECUTABLE).dwp
 endif
 
