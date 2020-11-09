@@ -945,6 +945,17 @@ void AGDSEngine::reactivate(const Common::String &name, bool runNow) {
 	}
 }
 
+void AGDSEngine::stopProcess(const Common::String & name) {
+	for(uint i = 0; i < _processes.size(); ++i) {
+		ProcessPtr &process = _processes[i];
+		if (process && process->getName() == name) {
+			debug("stopping %s...", name.c_str());
+			process->done();
+		}
+	}
+}
+
+
 Common::Error AGDSEngine::saveGameStream(Common::WriteStream *file, bool isAutosave) { return Common::Error(Common::kNoError); }
 
 } // End of namespace AGDS
