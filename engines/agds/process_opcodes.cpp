@@ -1558,4 +1558,71 @@ ProcessExitCode Process::resume() {
 	return _exitCode;
 }
 
+#define AGDS_DIS(NAME, METHOD) \
+	case NAME:           \
+		source += Common::String::format("%s\n", #NAME); \
+		break;
+
+#define AGDS_DIS_C(NAME, METHOD) \
+	case NAME: {           \
+		int8 arg = code[ip++]; \
+		source += Common::String::format("%s %d\n", #NAME, (int)arg); \
+	} break;
+
+#define AGDS_DIS_B(NAME, METHOD)  \
+	case NAME: {            \
+		uint8 arg = code[ip++]; \
+		source += Common::String::format("%s %u\n", #NAME, (uint)arg); \
+	} break;
+
+#define AGDS_DIS_W(NAME, METHOD)    \
+	case NAME: {              \
+		int16 arg = code[ip++]; arg |= ((int16)code[ip++]) << 8; \
+		source += Common::String::format("%s %d\n", #NAME, (int)arg); \
+	} break;
+
+#define AGDS_DIS_U(NAME, METHOD)     \
+	case NAME: {               \
+		uint16 arg = code[ip++]; arg |= ((uint16)code[ip++]) << 8; \
+		source += Common::String::format("%s %u\n", #NAME, (uint)arg); \
+	} break;
+
+#define AGDS_DIS_UU(NAME, METHOD)     \
+	case NAME: {                \
+		uint16 arg1 = code[ip++]; arg1 |= ((uint16)code[ip++]) << 8; \
+		uint16 arg2 = code[ip++]; arg2 |= ((uint16)code[ip++]) << 8; \
+		source += Common::String::format("%s %u %u\n", #NAME, (uint)arg1, (uint)arg2); \
+	} break;
+
+#define AGDS_DIS_UD(NAME, METHOD)           \
+	case NAME: {                     \
+		uint16 arg1 = code[ip++]; arg1 |= ((uint16)code[ip++]) << 8; \
+		uint16 arg2 = code[ip++]; arg2 |= ((uint16)code[ip++]) << 8; \
+		source += Common::String::format("%s %u\n", #NAME, (uint)(arg1 | (arg2 << 16))); \
+	} break;
+
+Common::String Process::disassemble(ObjectPtr object) {
+	Common::String source = Common::String::format("Object %s disassembly:\n", object->getName().c_str());
+
+	const auto &code = object->getCode();
+	uint ip = 0;
+	while (ip < code.size()) {
+		uint8 op = code[ip++];
+		source += Common::String::format("%04x: %02x: ", ip - 1, op);
+		switch (op) {
+			AGDS_OPCODE_LIST(
+				AGDS_DIS,
+				AGDS_DIS_C, AGDS_DIS_B,
+				AGDS_DIS_W, AGDS_DIS_U,
+				AGDS_DIS_UD, AGDS_DIS_UU
+			)
+		default:
+			source += Common::String::format("unknown opcode 0x%02x (%u)\n", (unsigned)op, (unsigned)op);
+			break;
+		}
+	}
+	source += Common::String::format("Object %s disassembly end\n", object->getName().c_str());
+	return source;
+}
+
 } // namespace AGDS
