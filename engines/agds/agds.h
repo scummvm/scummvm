@@ -108,6 +108,7 @@ public:
 	void runObject(const ObjectPtr &object);
 	void runObject(const Common::String & name, const Common::String &prototype = Common::String());
 	void runProcess(const ObjectPtr &object, uint ip = 0);
+	void stopProcess(const Common::String & name);
 
 	void resetCurrentScreen();
 	void loadScreen(const Common::String & name);
