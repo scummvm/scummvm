@@ -527,6 +527,17 @@ const uint8 *FontKoreanSVM::getCharDataDefault(uint16 c) const {
 
 // Korean Wansung font
 
+FontKoreanWansung::FontKoreanWansung()
+	: _fontShadow(0), _fontData(0), _fontDataSize(0),
+	  _englishFontWidth(0), _englishFontHeight(0), _englishFontData(0),
+	  _englishFontDataSize(0) {
+}
+
+FontKoreanWansung::~FontKoreanWansung() {
+	delete[] _fontData;
+	delete[] _englishFontData;
+}
+
 bool FontKoreanWansung::loadData(const char *fontFile) {
 	Common::SeekableReadStream *data = SearchMan.createReadStreamForMember(fontFile);
 	if (!data)

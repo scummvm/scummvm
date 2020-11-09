@@ -191,6 +191,8 @@ private:
  */
 class FontKoreanWansung : public FontKoreanBase {
 public:
+	FontKoreanWansung();
+	~FontKoreanWansung();
 	/**
 	 * Loads the ROM data from "KOREAN#.FNT".
 	 */
@@ -207,7 +209,7 @@ private:
 
 	int _englishFontWidth;
 	int _englishFontHeight;
-	uint8 *_englishFontData = NULL;
+	uint8 *_englishFontData;
 	uint _englishFontDataSize;
 
 
