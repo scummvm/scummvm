@@ -155,7 +155,7 @@ enum Opcode {
 	kSetPhaseVar					= 135,
 	kSetAnimationLoop				= 136,
 	kSetAnimationSpeed				= 137,
-	kStub138						= 138,
+	kScreenSaveScreenPatch			= 138,
 	kStub139						= 139,
 	kScreenChangeScreenPatch		= 140,
 	kGetFreeInventorySpace			= 141,
@@ -374,7 +374,7 @@ enum Opcode {
 	OP(kSetPhaseVar, setPhaseVar) \
 	OP(kSetAnimationLoop, setAnimationLoop) \
 	OP(kSetAnimationSpeed, setAnimationSpeed) \
-	OP(kStub138, stub138) \
+	OP(kScreenSaveScreenPatch, screenSaveScreenPatch) \
 	OP(kGetSavedMouseX, getSavedMouseX) \
 	OP(kGetSavedMouseY, getSavedMouseY) \
 	OP(kScreenChangeScreenPatch, changeScreenPatch) \

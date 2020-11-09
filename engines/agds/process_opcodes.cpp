@@ -644,11 +644,11 @@ void Process::setAnimationSpeed() {
 		_animationSpeed = value;
 }
 
-void Process::stub138() {
-	Common::String arg2 = popString();
-	Common::String arg1 = popString();
-	debug("stub138 %s %s", arg1.c_str(), arg2.c_str());
-	suspend(kExitCodeLoadScreenObject, arg2);
+void Process::screenSaveScreenPatch() {
+	Common::String objectName = popString();
+	Common::String screenName = popString();
+	debug("saveScreenPatch stub %s %s", screenName.c_str(), objectName.c_str());
+	suspend(kExitCodeLoadScreenObject, objectName);
 }
 
 void Process::getPictureBaseX() {
