@@ -618,11 +618,6 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 		if (chr == _vm->_newLineCharacter)
 			lastspace = pos - 1;
 
-		if (_vm->_useCJKMode && _vm->isScummvmKorTarget()) {
-			if (_center == false && chr == '(' && pos - 3 >= origPos && checkKSCode(str[pos -3], str[pos -2]))
-				lastKoreanLineBreak = pos - 1;
-		}
-
 		if (_vm->_useCJKMode) {
 			if (_vm->_game.platform == Common::kPlatformFMTowns) {
 				if (checkSJISCode(chr))
@@ -633,19 +628,27 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 			} else if (chr & 0x80) {
 				pos++;
 				curw += _vm->_2byteWidth;
-				if (_vm->isScummvmKorTarget() && checkKSCode(chr, str[pos])) {
-					if (_center == false
-						&& !(pos - 4 >= origPos && str[pos - 3] == '`' && str[pos - 4] == ' ')	// prevents hanging quotation mark at the end of line
-						&& !(pos - 4 >= origPos && str[pos - 3] == '\'' && str[pos - 4] == ' ')	// prevents hanging single quotation mark at the end of line
-						&& !(pos -3 >= origPos && str[pos -3] == '('))	// prevents hanging parenthesis at the end of line
-						lastKoreanLineBreak = pos - 2;
-				}
 				// Original keeps glyph width and character dimensions separately
 				if (_vm->_language == Common::KO_KOR || _vm->_language == Common::ZH_TWN) {
 					curw++;
 				}
 			} else if (chr != _vm->_newLineCharacter) {
 				curw += getCharWidth(chr);
+			}
+
+			if (_vm->isScummvmKorTarget() && !_center) {
+				// Break Korean words at any character
+				// Used in Korean fan translated games
+				if (chr & 0x80) {
+					if (checkKSCode(chr, str[pos - 1])
+					    && !(pos - 4 >= origPos && str[pos - 3] == '`' && str[pos - 4] == ' ')  // prevents hanging quotation mark at the end of line
+					    && !(pos - 4 >= origPos && str[pos - 3] == '\'' && str[pos - 4] == ' ') // prevents hanging single quotation mark at the end of line
+					    && !(pos - 3 >= origPos && str[pos - 3] == '('))  // prevents hanging parenthesis at the end of line
+						lastKoreanLineBreak = pos - 2;
+				} else {
+					if (chr == '(' && pos - 3 >= origPos && checkKSCode(str[pos - 3], str[pos - 2]))
+						lastKoreanLineBreak = pos - 1;
+				}
 			}
 		} else {
 			curw += getCharWidth(chr);
@@ -661,20 +664,24 @@ void CharsetRenderer::addLinebreaks(int a, byte *str, int pos, int maxwidth) {
 				curw = 1;
 				pos = lastspace + 1;
 				lastspace = -1;
-			} else if (lastspace >= lastKoreanLineBreak) {
-				str[lastspace] = 0xD;
-				curw = 1;
-				pos = lastspace + 1;
-				lastspace = -1;
-				lastKoreanLineBreak = -1;
 			} else {
-				byte* breakPtr = str + lastKoreanLineBreak;
-				memmove(breakPtr + 1, breakPtr, strLength - lastKoreanLineBreak + 1);
-				str[lastKoreanLineBreak] = 0xD;
-				curw = 1;
-				pos = lastKoreanLineBreak + 1;
-				lastspace = -1;
-				lastKoreanLineBreak = -1;
+				// Handle Korean line break mode (break Korean words at any character)
+				// Used in Korean fan translated games
+				if (lastspace >= lastKoreanLineBreak) {
+					str[lastspace] = 0xD;
+					curw = 1;
+					pos = lastspace + 1;
+					lastspace = -1;
+					lastKoreanLineBreak = -1;
+				} else {
+					byte *breakPtr = str + lastKoreanLineBreak;
+					memmove(breakPtr + 1, breakPtr, strLength - lastKoreanLineBreak + 1);
+					str[lastKoreanLineBreak] = 0xD;
+					curw = 1;
+					pos = lastKoreanLineBreak + 1;
+					lastspace = -1;
+					lastKoreanLineBreak = -1;
+				}
 			}
 		}
 	}
