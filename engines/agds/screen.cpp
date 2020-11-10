@@ -39,7 +39,7 @@ int Screen::AnimationZCompare(const Animation *a, const Animation *b) {
 	return b->z() - a->z();
 }
 
-Screen::Screen(ObjectPtr object) : _object(object), _name(object->getName()),
+Screen::Screen(AGDSEngine * engine, ObjectPtr object) : _engine(engine), _object(object), _name(object->getName()),
 	_children(&ObjectZCompare), _animations(&AnimationZCompare), _applyingPatch(false),
 	_characterNear(g_system->getHeight()), _characterFar(g_system->getHeight()) {
 	add(object);
@@ -134,10 +134,10 @@ Animation *Screen::findAnimationByPhaseVar(const Common::String &phaseVar) {
 	return NULL;
 }
 
-void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
+void Screen::paint(Graphics::Surface &backbuffer) {
 	for(uint i = 0; i < _animations.size(); ) {
 		Animation *animation = _animations.data()[i];
-		if (animation->tick(engine))
+		if (animation->tick(*_engine))
 			++i;
 		else {
 			debug("removing animation %s:%s", animation->process().c_str(), animation->phaseVar().c_str());
@@ -145,7 +145,7 @@ void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 		}
 	}
 
-	Character * character = engine.currentCharacter();
+	Character * character = _engine->currentCharacter();
 	ChildrenType::iterator child = _children.begin();
 	AnimationsType::iterator animation = _animations.begin();
 	while(child != _children.end() || animation != _animations.end() || character) {
@@ -181,12 +181,12 @@ void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 			case 0:
 				//debug("object z: %d", (*child)->z());
 				if ((*child)->inScene())
-					(*child)->paint(engine, backbuffer);
+					(*child)->paint(*_engine, backbuffer);
 				++child;
 				break;
 			case 1:
 				//debug("animation z: %d", (*animation)->z());
-				(*animation)->paint(engine, backbuffer, Common::Point());
+				(*animation)->paint(*_engine, backbuffer, Common::Point());
 				++animation;
 				break;
 			case 2:
@@ -226,7 +226,7 @@ Screen::KeyHandler Screen::findKeyHandler(const Common::String &keyName) {
 	return keyHandler;
 }
 
-void Screen::load(AGDSEngine & engine, const PatchPtr &patch) {
+void Screen::load(const PatchPtr &patch) {
 	debug("applying patch with %u objects", patch->objects.size());
 	_applyingPatch = true;
 	for(uint i = 0; i < patch->objects.size(); ++i) {
@@ -235,13 +235,13 @@ void Screen::load(AGDSEngine & engine, const PatchPtr &patch) {
 		if (object.flag <= 0)
 			remove(object.name);
 		else if (!find(object.name)) {
-			engine.runObject(object.name);
+			_engine->runObject(object.name);
 		}
 	}
 	_applyingPatch = false;
 }
 
-void Screen::save(AGDSEngine & engine, const PatchPtr &patch) {
+void Screen::save(const PatchPtr &patch) {
 	patch->objects.clear();
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;

@@ -51,6 +51,7 @@ class Screen {
 	typedef Common::SortedArray<Animation *, const Animation *> AnimationsType;
 	typedef Common::SortedArray<ObjectPtr, const ObjectPtr &> ChildrenType;
 
+	AGDSEngine *	_engine;
 	ObjectPtr		_object;
 	Common::String	_name;
 	ChildrenType	_children;
@@ -68,7 +69,7 @@ public:
 		KeyHandler(Object *o, uint i): object(o), ip(i) { }
 	};
 
-	Screen(ObjectPtr object);
+	Screen(AGDSEngine *engine, ObjectPtr object);
 	~Screen();
 
 	void setCharacterNearFar(int near, int far) {
@@ -120,14 +121,14 @@ public:
 
 	bool remove(const Common::String & name);
 	bool remove(const ObjectPtr & object);
-	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer);
+	void paint(Graphics::Surface & backbuffer);
 	ObjectPtr find(Common::Point pos) const;
 	ObjectPtr find(const Common::String &name);
 	KeyHandler findKeyHandler(const Common::String &keyName);
 	Animation * findAnimationByPhaseVar(const Common::String &phaseVar);
 
-	void load(AGDSEngine & engine, const PatchPtr &patch);
-	void save(AGDSEngine & engine, const PatchPtr &patch);
+	void load(const PatchPtr &patch);
+	void save(const PatchPtr &patch);
 };
 
 
