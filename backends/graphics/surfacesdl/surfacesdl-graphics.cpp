@@ -285,10 +285,6 @@ int SurfaceSdlGraphicsManager::getDefaultGraphicsMode() const {
 #endif
 }
 
-void SurfaceSdlGraphicsManager::resetGraphicsScale() {
-	setGraphicsMode(s_gfxModeSwitchTable[_scalerType][0]);
-}
-
 void SurfaceSdlGraphicsManager::beginGFXTransaction() {
 	assert(_transactionMode == kTransactionNone);
 
@@ -811,7 +807,7 @@ void SurfaceSdlGraphicsManager::initSize(uint w, uint h, const Graphics::PixelFo
 	if ((int)w != _videoMode.screenWidth || (int)h != _videoMode.screenHeight) {
 		const bool useDefault = defaultGraphicsModeConfig();
 		if (useDefault && w > 320) {
-			resetGraphicsScale();
+			setGraphicsMode(s_gfxModeSwitchTable[_scalerType][0]);
 		} else {
 			setGraphicsMode(getGraphicsModeIdByName(ConfMan.get("gfx_mode")));
 		}
