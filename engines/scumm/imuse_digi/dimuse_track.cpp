@@ -321,7 +321,6 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 			debug(5, "IMuseDigital::fadeOutMusic(fade:%d, sound:%d)", fadeDelay, track->soundId);
 			if (_vm->_game.id == GID_CMI) {
 				handleComiFadeOut(track, fadeDelay);
-				
 			}
 			else {
 				cloneToFadeOutTrack(track, fadeDelay);
@@ -419,7 +418,7 @@ int IMuseDigital::transformVolumeLinearToEqualPow(int volume, int mode) {
 	int result = volume;
 	if (!(volume < 0 || volume > 127000)) {
 		// Change range of values from 0-127*1000 to 0.0-1.0
-		double mappedValue = (((volume - 0)*(1.0 - 0.0)) / (127000 - 0)) + 0;
+		double mappedValue = (((volume - 0) * (1.0 - 0.0)) / (127000 - 0)) + 0;
 		double eqPowValue;
 
 		switch (mode)
@@ -431,16 +430,16 @@ int IMuseDigital::transformVolumeLinearToEqualPow(int volume, int mode) {
 			eqPowValue = sin(mappedValue * M_PI / 2.0);
 			break;
 		case 2:  // Parabola
-			eqPowValue = (1 - (1 - mappedValue)*(1 - mappedValue));
+			eqPowValue = (1 - (1 - mappedValue) * (1 - mappedValue));
 			break;
 		case 3:  // Logarithmic 1
-			eqPowValue = 1 + 0.2*log10(mappedValue);
+			eqPowValue = 1 + 0.2 * log10(mappedValue);
 			break;
 		case 4:  // Logarithmic 2
-			eqPowValue = 1 + 0.5*log10(mappedValue);
+			eqPowValue = 1 + 0.5 * log10(mappedValue);
 			break;
 		case 5:  // Logarithmic 3
-			eqPowValue = 1 + 0.7*log10(mappedValue);
+			eqPowValue = 1 + 0.7 * log10(mappedValue);
 			break;
 		case 6:  // Half sine curve
 			eqPowValue = (1.0 - cos(mappedValue * M_PI)) / 2.0;
@@ -450,7 +449,7 @@ int IMuseDigital::transformVolumeLinearToEqualPow(int volume, int mode) {
 		}
 
 		// Change range again, this time round the result
-		result = (((eqPowValue - 0.0)*(127000 - 0)) / (1.0 - 0.0)) + 0.0;
+		result = (((eqPowValue - 0.0) * (127000 - 0)) / (1.0 - 0.0)) + 0.0;
 		result = (int)round(result);
 	}
 
@@ -464,7 +463,7 @@ int IMuseDigital::transformVolumeEqualPowToLinear(int volume, int mode) {
 	int result = volume;
 	if (!(volume < 0 || volume > 127000)) {
 		// Change range of values from 0-127*1000 to 0.0-1.0
-		double mappedValue = (((volume - 0)*(1.0 - 0.0)) / (127000 - 0)) + 0;
+		double mappedValue = (((volume - 0) * (1.0 - 0.0)) / (127000 - 0)) + 0;
 		double linearValue;
 
 		switch (mode)
@@ -479,13 +478,13 @@ int IMuseDigital::transformVolumeEqualPowToLinear(int volume, int mode) {
 			linearValue = 1 - sqrt(1 - mappedValue);
 			break;
 		case 3:  // Logarithmic 1
-			linearValue = 0.00001*pow(M_E, 11.5129*mappedValue);
+			linearValue = 0.00001 * pow(M_E, 11.5129 * mappedValue);
 			break;
 		case 4:  // Logarithmic 2
-			linearValue = 0.01*pow(M_E, 4.60517*mappedValue);
+			linearValue = 0.01 * pow(M_E, 4.60517 * mappedValue);
 			break;
 		case 5:  // Logarithmic 3
-			linearValue = 0.0372759*pow(M_E, 3.28941*mappedValue);
+			linearValue = 0.0372759 * pow(M_E, 3.28941 * mappedValue);
 			break;
 		case 6:  // Half sine curve
 			linearValue = (2 * asin(sqrt(mappedValue))) / M_PI; // Ricontrolla
@@ -496,7 +495,7 @@ int IMuseDigital::transformVolumeEqualPowToLinear(int volume, int mode) {
 		}
 
 		// Change range again, this time round the result
-		result = (((linearValue - 0.0)*(127000 - 0)) / (1.0 - 0.0)) + 0.0;
+		result = (((linearValue - 0.0) * (127000 - 0)) / (1.0 - 0.0)) + 0.0;
 		result = (int)round(result);
 	}
 
