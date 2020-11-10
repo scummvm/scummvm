@@ -25,6 +25,7 @@
 #include "agds/animation.h"
 #include "agds/font.h"
 #include "agds/region.h"
+#include "agds/systemVariable.h"
 #include "common/debug.h"
 #include "common/memstream.h"
 #include "common/rect.h"
@@ -186,7 +187,7 @@ void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	if (!_text.empty()) {
 		Common::Point pos = _region ? _region->center : _pos;
 		int w = backbuffer.w - pos.x;
-		engine.getFont(1)->drawString(&backbuffer, _text, pos.x, pos.y, w, 0);
+		engine.getFont(engine.getSystemVariable("objtext_font")->getInteger())->drawString(&backbuffer, _text, pos.x, pos.y, w, 0);
 	}
 }
 
