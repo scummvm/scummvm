@@ -6,8 +6,9 @@
 
 namespace AGDS {
 
-void Dialog::run(const Common::String & dialogProcess) {
+void Dialog::run(const Common::String &dialogParentProcess, const Common::String & dialogProcess) {
 	debug("runDialog: %s", dialogProcess.c_str());
+	_dialogParentProcessName = dialogParentProcess;
 	_dialogProcessName = dialogProcess;
 	_engine->runObject(dialogProcess);
 }
@@ -169,13 +170,12 @@ bool Dialog::tick() {
 		dialog_var->setInteger(-3);
 	}
 	if (_dialogScriptPos >= n && !_dialogProcessName.empty()) {
-		Common::String process = _dialogProcessName;
 		_dialogProcessName.clear();
 
-		debug("end of dialog, running %s", process.c_str());
+		debug("end of dialog, running %s", _dialogParentProcessName.c_str());
 		dialog_var->setInteger(-2);
-		_engine->reactivate(_dialogProcessName);
-		_dialogProcessName.clear();
+		_engine->reactivate(_dialogParentProcessName);
+		_dialogParentProcessName.clear();
 		return false;
 	}
 	return true;

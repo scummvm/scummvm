@@ -174,7 +174,7 @@ void Process::run() {
 			activate();
 			continue;
 		case kExitCodeRunDialog:
-			_engine->runDialog(getExitArg1());
+			_engine->runDialog(getName(), getExitArg1());
 			break;
 		case kExitCodeSetNextScreen:
 			debug("process %s launches screen: %s", getName().c_str(), getExitArg1().c_str());

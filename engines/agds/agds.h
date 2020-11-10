@@ -221,8 +221,8 @@ public:
 		}
 	}
 
-	void runDialog(const Common::String &dialogProcess) {
-		_dialog.run(dialogProcess);
+	void runDialog(const Common::String &dialogParentProcess, const Common::String &dialogProcess) {
+		_dialog.run(dialogParentProcess, dialogProcess);
 	}
 
 	void tickInventory();
