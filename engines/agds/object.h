@@ -71,6 +71,7 @@ private:
 	Common::Point					_pos, _animationPos, _offset;
 	int								_z;
 	Common::String					_text;
+	Common::String					_title;
 	uint							_clickHandler;
 	uint							_examineHandler;
 	uint							_userUseHandler;
@@ -176,6 +177,14 @@ public:
 
 	void setText(const Common::String &text) {
 		_text = text;
+	}
+
+	void title(const Common::String &title) {
+		_title = title;
+	}
+
+	const Common::String& title() const {
+		return _title;
 	}
 
 	Common::Point getPosition() const {

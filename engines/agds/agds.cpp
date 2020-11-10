@@ -444,6 +444,13 @@ Common::Error AGDSEngine::run() {
 			}
 		}
 
+		_soundManager.tick();
+		if (active())
+			tick();
+
+		Graphics::Surface *backbuffer = _system->lockScreen();
+		backbuffer->fillRect(backbuffer->getRect(), 0);
+
 		Animation *mouseCursor = NULL;
 
 		if (userEnabled() && _currentScreen) {
@@ -451,14 +458,16 @@ Common::Error AGDSEngine::run() {
 			Animation *cursor = object ? object->getMouseCursor() : NULL;
 			if (cursor)
 				mouseCursor = cursor;
+
+			if (object && !object->title().empty()) {
+				auto & title = object->title();
+				auto font = getFont(getSystemVariable("objtext_font")->getInteger());
+				int w = font->getStringWidth(title);
+				int x = getSystemVariable("objtext_x")->getInteger() - w / 2;
+				int y = getSystemVariable("objtext_y")->getInteger();
+				font->drawString(backbuffer, title, x, y, backbuffer->w - x, 0);
+			}
 		}
-
-		_soundManager.tick();
-		if (active())
-			tick();
-
-		Graphics::Surface *backbuffer = _system->lockScreen();
-		backbuffer->fillRect(backbuffer->getRect(), 0);
 
 		if (_mjpgPlayer) {
 			const Graphics::Surface *surface = _mjpgPlayer->decodeFrame();
