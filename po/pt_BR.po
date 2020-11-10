@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-10 03:04+0100\n"
-"PO-Revision-Date: 2020-11-10 01:53+0000\n"
+"PO-Revision-Date: 2020-11-10 17:44+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -2368,7 +2368,7 @@ msgstr "OpenGL"
 
 #: graphics/renderer.cpp:34
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL com shaders"
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -6943,95 +6943,91 @@ msgstr "Não foi possível localizar o arquivo de dados '%s'."
 
 #: engines/twine/metaengine.cpp:78
 msgid "Debug Next Room"
-msgstr ""
+msgstr "Depurar Sala Seguinte"
 
 #: engines/twine/metaengine.cpp:83
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "Depurar Sala Anterior"
 
 #: engines/twine/metaengine.cpp:88
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "Aplicar Sobreposição de Grade para Depurar"
 
 #: engines/twine/metaengine.cpp:93
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "Aumentar Índice de Sobreposição de Grade para Depurar"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "Diminuir Índice de Sobreposição de Grade para Depurar"
 
 #: engines/twine/metaengine.cpp:103
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "Câmera da Grade de Depuração para Cima"
 
 #: engines/twine/metaengine.cpp:108
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "Câmera da Grade de Depuração para Baixo"
 
 #: engines/twine/metaengine.cpp:113
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "Câmera da Grade de Depuração para Esquerda"
 
 #: engines/twine/metaengine.cpp:119
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "Câmera da Grade de Depuração para Direita"
 
 #: engines/twine/metaengine.cpp:124
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "Comportamento Normal"
 
 #: engines/twine/metaengine.cpp:129
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "Comportamento Atlético"
 
 #: engines/twine/metaengine.cpp:134
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "Comportamento Agressivo"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "Comportamento Discreto"
 
 #: engines/twine/metaengine.cpp:144
-#, fuzzy
 msgid "Behaviour Action"
-msgstr "Ação anterior"
+msgstr "Ação de Comportamento"
 
 #: engines/twine/metaengine.cpp:150
 msgid "Change Behaviour"
-msgstr ""
+msgstr "Alterar Comportamento"
 
 #: engines/twine/metaengine.cpp:155
-#, fuzzy
 msgid "Options Menu"
-msgstr "Menu de Opções do DS"
+msgstr "Menu de Opções"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Use Selected Object"
-msgstr ""
+msgstr "Usar Objeto Selecionado"
 
 #: engines/twine/metaengine.cpp:172
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "Lançar Bola Mágica"
 
 #: engines/twine/metaengine.cpp:183
-#, fuzzy
 msgid "Move Backward"
-msgstr "Mover para trás"
+msgstr "Mover para Trás"
 
 #: engines/twine/metaengine.cpp:201
 msgid "Use Protopack"
-msgstr ""
+msgstr "Usar Protopack"
 
 #: engines/twine/metaengine.cpp:206
 msgid "Open Holomap"
-msgstr ""
+msgstr "Abrir Holomapa"
 
 #: engines/twine/metaengine.cpp:218
-#, fuzzy
 msgid "Special Action"
-msgstr "Ação"
+msgstr "Ação Especial"
 
 #: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
@@ -7039,16 +7035,15 @@ msgstr "Fugir"
 
 #: engines/twine/metaengine.cpp:234
 msgid "Accept"
-msgstr ""
+msgstr "Aceitar"
 
 #: engines/twine/metaengine.cpp:240 engines/twine/metaengine.cpp:281
 msgid "Abort"
-msgstr ""
+msgstr "Abortar"
 
 #: engines/twine/metaengine.cpp:269
-#, fuzzy
 msgid "Next Page"
-msgstr "Próxima página"
+msgstr "Próxima Página"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
