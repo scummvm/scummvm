@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-10 03:04+0100\n"
-"PO-Revision-Date: 2020-11-09 04:43+0000\n"
-"Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
+"PO-Revision-Date: 2020-11-10 10:50+0000\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -2380,7 +2380,7 @@ msgstr "OpenGL"
 
 #: graphics/renderer.cpp:34
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL con shaders"
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
