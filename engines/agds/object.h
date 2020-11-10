@@ -76,6 +76,7 @@ private:
 	uint							_examineHandler;
 	uint							_userUseHandler;
 	int								_alpha;
+	int								_scale;
 	bool							_inScene;
 
 public:
@@ -127,6 +128,14 @@ public:
 		if (alpha > 100)
 			alpha = 100;
 		_alpha = (100 - alpha) * 255 / 100;
+	}
+
+	void scale(int scale) {
+		_scale = scale;
+	}
+
+	int scale() const {
+		return _scale;
 	}
 
 	void region(RegionPtr region);
