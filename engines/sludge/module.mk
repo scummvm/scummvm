@@ -36,7 +36,6 @@ MODULE_OBJS := \
 	thumbnail.o \
 	timing.o \
 	transition.o \
-	utf8.o \
 	variable.o \
 	zbuffer.o \
  

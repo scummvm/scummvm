@@ -45,7 +45,6 @@
 #include "sludge/sprites.h"
 #include "sludge/statusba.h"
 #include "sludge/speech.h"
-#include "sludge/utf8.h"
 #include "sludge/variable.h"
 #include "sludge/version.h"
 #include "sludge/zbuffer.h"
