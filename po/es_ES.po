@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-10 03:04+0100\n"
-"PO-Revision-Date: 2020-11-10 10:50+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-11-10 17:43+0000\n"
+"Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -6956,110 +6956,105 @@ msgstr "No se puede localizar el archivo de datos «%s»."
 
 #: engines/twine/metaengine.cpp:78
 msgid "Debug Next Room"
-msgstr ""
+msgstr "Depuración: siguiente sala"
 
 #: engines/twine/metaengine.cpp:83
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "Depuración: sala anterior"
 
 #: engines/twine/metaengine.cpp:88
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "Depuración: aplicar cuadrícula de terrenos"
 
 #: engines/twine/metaengine.cpp:93
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "Depuración: aumentar índice de cuadrícula de terrenos"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "Depuración: disminuir índice de cuadrícula de terrenos"
 
 #: engines/twine/metaengine.cpp:103
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "Depuración: subir cámara de cuadrícula"
 
 #: engines/twine/metaengine.cpp:108
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "Depuración: bajar cámara de cuadrícula"
 
 #: engines/twine/metaengine.cpp:113
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "Depuración: mover cámara de cuadrícula a la izda."
 
 #: engines/twine/metaengine.cpp:119
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "Depuración: mover cámara de cuadrícula a la dcha."
 
 #: engines/twine/metaengine.cpp:124
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "Comportamiento normal"
 
 #: engines/twine/metaengine.cpp:129
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "Comportamiento deportivo"
 
 #: engines/twine/metaengine.cpp:134
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "Comportamiento agresivo"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "Comportamiento discreto"
 
 #: engines/twine/metaengine.cpp:144
-#, fuzzy
 msgid "Behaviour Action"
-msgstr "Acción anterior"
+msgstr "Acción de comportamiento"
 
 #: engines/twine/metaengine.cpp:150
 msgid "Change Behaviour"
-msgstr ""
+msgstr "Cambiar comportamiento"
 
 #: engines/twine/metaengine.cpp:155
-#, fuzzy
 msgid "Options Menu"
-msgstr "Menú de opciones de DS"
+msgstr "Menú de opciones"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Use Selected Object"
-msgstr ""
+msgstr "Usar objeto seleccionado"
 
 #: engines/twine/metaengine.cpp:172
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "Lanzar bola mágica"
 
 #: engines/twine/metaengine.cpp:183
-#, fuzzy
 msgid "Move Backward"
 msgstr "Retroceder"
 
 #: engines/twine/metaengine.cpp:201
 msgid "Use Protopack"
-msgstr ""
+msgstr "Usar proto-pack"
 
 #: engines/twine/metaengine.cpp:206
 msgid "Open Holomap"
-msgstr ""
+msgstr "Abrir holomapa"
 
 #: engines/twine/metaengine.cpp:218
-#, fuzzy
 msgid "Special Action"
-msgstr "Acción"
+msgstr "Acción especial"
 
 #: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
-msgstr "Escape"
+msgstr "Escapar"
 
 #: engines/twine/metaengine.cpp:234
 msgid "Accept"
-msgstr ""
+msgstr "Aceptar"
 
 #: engines/twine/metaengine.cpp:240 engines/twine/metaengine.cpp:281
 msgid "Abort"
-msgstr ""
+msgstr "Abortar"
 
 #: engines/twine/metaengine.cpp:269
-#, fuzzy
 msgid "Next Page"
 msgstr "Página siguiente"
 
