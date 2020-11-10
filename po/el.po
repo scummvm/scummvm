@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-10 03:04+0100\n"
-"PO-Revision-Date: 2020-10-14 17:43+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-11-11 06:44+0000\n"
+"Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
 "Language: el\n"
@@ -2302,16 +2302,16 @@ msgid "Start anyway"
 msgstr "Εκκίνηση παρά ταύτα"
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid "This game is not supported."
-msgstr "Το αναγνωριστικό παιχνιδιού δεν υποστηρίζεται"
+msgstr "Αυτό το παιχνίδι δεν υποστηρίζεται."
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
-msgstr "Αυτό το παιχνίδι δεν υποστηρίζει φόρτωση παιχνιδιών από τον launcher."
+msgstr ""
+"Αυτό το παιχνίδι δεν υποστηρίζεται για τον εξής λόγο:\n"
+"\n"
 
 #: engines/engine.cpp:797
 msgid "Loading game is currently unavailable"
@@ -2408,7 +2408,7 @@ msgstr "OpenGL"
 
 #: graphics/renderer.cpp:34
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL με σκιαστές"
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -4186,6 +4186,8 @@ msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
 msgstr ""
+"Ο ανεπίσημος μεταφραστής δεν επιθυμεί να ενσωματωθεί η μετάφρασή του στο "
+"ScummVM."
 
 #: engines/cge/detection.cpp:113 engines/cge2/detection.cpp:109
 msgid "Color Blind Mode"
@@ -5751,19 +5753,21 @@ msgstr "Αύξηση κλιμάκωσης εικόνας στα βίντεο σ�
 
 #: engines/sci/detection.cpp:270
 msgid "Use RGB rendering"
-msgstr ""
+msgstr "Χρήση απόδοσης RGB"
 
 #: engines/sci/detection.cpp:271
 msgid "Use RGB rendering to improve screen transitions"
-msgstr ""
+msgstr "Χρήση απόδοσης RGB για τη βελτίωση των μεταβάσεων μεταξύ οθονών"
 
 #: engines/sci/detection.cpp:281
 msgid "Use per-resource modified palettes"
-msgstr ""
+msgstr "Χρήση τροποποιημένης παλέτας ανά πόρο"
 
 #: engines/sci/detection.cpp:282
 msgid "Use custom per-resource palettes to improve visuals"
 msgstr ""
+"Χρήση ειδικής παλέτας για κάθε στοιχείο (resource) παιχνιδιού για βελτιωμένη "
+"απεικόνιση"
 
 #: engines/sci/detection.cpp:312
 msgid "MIDI mode:"
@@ -7035,95 +7039,91 @@ msgstr "Αδυναμία εντοπισμού του αρχείου παιχνι
 
 #: engines/twine/metaengine.cpp:78
 msgid "Debug Next Room"
-msgstr ""
+msgstr "Αποσφαλμάτωση: Επόμενο Δωμάτιο"
 
 #: engines/twine/metaengine.cpp:83
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "Αποσφαλμάτωση: Προηγούμενο Δωμάτιο"
 
 #: engines/twine/metaengine.cpp:88
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "Αποσφαλμάτωση: Εφαρμογή Πλέγματος στο Ταβάνι"
 
 #: engines/twine/metaengine.cpp:93
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "Αποσφαλμάτωση: Αύξηση του Δείκτη Πλέγματος στο Ταβάνι"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "Αποσφαλμάτωση: Μείωση του Δείκτη Πλέγματος στο Ταβάνι"
 
 #: engines/twine/metaengine.cpp:103
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "Αποσφαλμάτωση: Κάμερα Πλέγματος Πάνω"
 
 #: engines/twine/metaengine.cpp:108
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "Αποσφαλμάτωση: Κάμερα Πλέγματος Κάτω"
 
 #: engines/twine/metaengine.cpp:113
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "Αποσφαλμάτωση: Κάμερα Πλέγματος Αριστερά"
 
 #: engines/twine/metaengine.cpp:119
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "Αποσφαλμάτωση: Κάμερα Πλέγματος Δεξιά"
 
 #: engines/twine/metaengine.cpp:124
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "Κανονική Συμπεριφορά"
 
 #: engines/twine/metaengine.cpp:129
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "Αθλητική Συμπεριφορά"
 
 #: engines/twine/metaengine.cpp:134
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "Επιθετική Συμπεριφορά"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "Διακριτική Συμπεριφορά"
 
 #: engines/twine/metaengine.cpp:144
-#, fuzzy
 msgid "Behaviour Action"
-msgstr "Προηγούμενη ενέργεια"
+msgstr "Ενέργεια Συμπεριφοράς"
 
 #: engines/twine/metaengine.cpp:150
 msgid "Change Behaviour"
-msgstr ""
+msgstr "Αλλαγή Συμπεριφοράς"
 
 #: engines/twine/metaengine.cpp:155
-#, fuzzy
 msgid "Options Menu"
-msgstr "Μενού Επιλογών DS"
+msgstr "Μενού Επιλογών"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Use Selected Object"
-msgstr ""
+msgstr "Χρήση Επιλεγμένου Αντικειμένου"
 
 #: engines/twine/metaengine.cpp:172
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "Πέτα Μαγική Σφαίρα"
 
 #: engines/twine/metaengine.cpp:183
-#, fuzzy
 msgid "Move Backward"
-msgstr "Προχώρησε προς τα πίσω"
+msgstr "Κίνηση προς τα πίσω"
 
 #: engines/twine/metaengine.cpp:201
 msgid "Use Protopack"
-msgstr ""
+msgstr "Χρήση Πρότο-πακ"
 
 #: engines/twine/metaengine.cpp:206
 msgid "Open Holomap"
-msgstr ""
+msgstr "Άνοιγμα ολογραφικού χάρτη"
 
 #: engines/twine/metaengine.cpp:218
-#, fuzzy
 msgid "Special Action"
-msgstr "Πράξη"
+msgstr "Ειδική Ενέργεια"
 
 #: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
@@ -7131,16 +7131,15 @@ msgstr "Πλήκτρο Escape"
 
 #: engines/twine/metaengine.cpp:234
 msgid "Accept"
-msgstr ""
+msgstr "Αποδοχή"
 
 #: engines/twine/metaengine.cpp:240 engines/twine/metaengine.cpp:281
 msgid "Abort"
-msgstr ""
+msgstr "Ακύρωση"
 
 #: engines/twine/metaengine.cpp:269
-#, fuzzy
 msgid "Next Page"
-msgstr "Επόμενη σελίδα"
+msgstr "Επόμενη Σελίδα"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
