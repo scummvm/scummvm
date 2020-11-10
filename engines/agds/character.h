@@ -46,7 +46,6 @@ class Character {
 	Common::String 	_name;
 	Common::Point	_pos;
 	Common::Point	_animationPos;
-	Common::Point	_dst;
 	bool _enabled;
 	bool _visible;
 	int _phase;

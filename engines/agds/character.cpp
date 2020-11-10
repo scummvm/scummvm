@@ -116,9 +116,7 @@ void Character::direction(int dir) {
 
 void Character::moveTo(Common::Point dst, int dir) {
 	debug("character move %d,%d %d", dst.x, dst.y, dir);
-	_dst = dst;
-	_phase = 0;
-	_frames = 1 + sqrt(dst.sqrDist(_pos)) / 5;
+	_pos = dst;
 	direction(dir);
 }
 
@@ -157,13 +155,7 @@ void Character::paint(Graphics::Surface &backbuffer) {
 		if (_phase + 1 >= _frames) {
 			_phase = -1;
 			_frames = 0;
-			pos = _pos = _dst;
 		} else {
-			float dx = _dst.x - _pos.x;
-			float dy = _dst.y - _pos.y;
-			float t = 1.0f * _phase / _frames;
-			pos.x += dx * t;
-			pos.y += dy * t;
 			++_phase;
 		}
 	}
@@ -176,11 +168,6 @@ void Character::paint(Graphics::Surface &backbuffer) {
 int Character::z() const {
 	int y = _pos.y + _animationPos.y;
 	//fixme: add temp var : _movePos?
-	if (_phase >= 0 && _phase < _frames) {
-		float dy = _dst.y - _pos.y;
-		float t = 1.0f * _phase / _frames;
-		y += dy * t;
-	}
 	return y;
 }
 
