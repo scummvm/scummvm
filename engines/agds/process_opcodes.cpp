@@ -651,6 +651,20 @@ void Process::screenSaveScreenPatch() {
 	suspend(kExitCodeLoadScreenObject, objectName);
 }
 
+void Process::screenRemoveObjectSavePatch() {
+	Common::String objectName = popString();
+	Common::String screenName = popString();
+	if (screenName != _engine->getCurrentScreenName()) {
+		debug("screenRemoveObjectSavePatch semi-stub %s %s", screenName.c_str(), objectName.c_str());
+	} else {
+		Screen *screen = _engine->getCurrentScreen();
+		if (screen) {
+			if (!screen->remove(objectName))
+				warning("screenRemoveObjectSavePatch: object %s not found", objectName.c_str());
+		}
+	}
+}
+
 void Process::getPictureBaseX() {
 	Common::String name = popString();
 	debug("getPictureBaseX: %s", name.c_str());
