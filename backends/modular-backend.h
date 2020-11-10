@@ -76,7 +76,6 @@ public:
 	virtual int getDefaultStretchMode() const override final;
 	virtual bool setStretchMode(int mode) override final;
 	virtual int getStretchMode() const override final;
-	virtual void resetGraphicsScale() override final;
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const override final;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const override final;

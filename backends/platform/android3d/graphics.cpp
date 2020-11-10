@@ -252,9 +252,6 @@ bool AndroidGraphicsManager::setGraphicsMode(int mode, uint flags) {
 	return true;
 }
 
-void AndroidGraphicsManager::resetGraphicsScale() {
-}
-
 int AndroidGraphicsManager::getGraphicsMode() const {
 	return _graphicsMode;
 }
