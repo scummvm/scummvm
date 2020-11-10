@@ -7,6 +7,7 @@ engines/sci/engine/kmisc.cpp
 engines/sci/engine/savegame.cpp
 engines/sci/graphics/controls32.cpp
 engines/sci/graphics/video32.cpp
+engines/sci/metaengine.cpp
 engines/sci/resource.cpp
 engines/sci/sci.cpp
 engines/sci/sound/music.cpp

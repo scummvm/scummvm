@@ -32,7 +32,6 @@
 
 #include "common/config-manager.h"
 #include "common/encoding.h"
-#include "common/translation.h"
 
 #include <proto/exec.h>
 #include <proto/dos.h>
@@ -41,28 +40,28 @@
 #include <proto/charsets.h>
 
 char *MorphosDialogManager::utf8ToLocal(char *in) {
-	
+
 	if (!in) {
 		return strdup("");
 	}
-	
+
 	struct Library *CharsetsBase = OpenLibrary("charsets.library", 0);
 	if (CharsetsBase) {
-		
+
 		LONG dstmib = GetSystemCharset(NULL, 0);
 		if (dstmib != MIBENUM_INVALID) {
 			LONG dstlen = GetByteSize((APTR)in, -1, MIBENUM_UTF_8, dstmib);
 			char *out = (char *)malloc(dstlen + 1);
 			if (out) {
-				if (ConvertTagList((APTR)in, -1, (APTR)out, -1, MIBENUM_UTF_8, dstmib, NULL) != -1) {	
+				if (ConvertTagList((APTR)in, -1, (APTR)out, -1, MIBENUM_UTF_8, dstmib, NULL) != -1) {
 					return out;
 				}
 				free(out);
 			}
 		}
-		CloseLibrary(CharsetsBase);	
+		CloseLibrary(CharsetsBase);
 	}
-	
+
 	return strdup(in);
 }
 
@@ -74,22 +73,22 @@ Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const 
 	struct Library *AslBase = OpenLibrary(AslName, 39);
 
     if (AslBase) {
-		
+
 		struct FileRequester *fr = NULL;
-			
+
 		if (ConfMan.hasKey("browser_lastpath")) {
 			strncpy(pathBuffer, ConfMan.get("browser_lastpath").c_str(), sizeof(pathBuffer) - 1);
 		}
-	
+
 		fr = (struct FileRequester *)AllocAslRequestTags(ASL_FileRequest, TAG_DONE);
-		
-		if (!fr) 
+
+		if (!fr)
 			return result;
-		
+
 		char *newTitle = utf8ToLocal((char *)utf8Title.c_str());
-		
+
 		if (AslRequestTags(fr, ASLFR_TitleText, (IPTR)newTitle, ASLFR_RejectIcons, TRUE, ASLFR_InitialDrawer, (IPTR)pathBuffer, ASLFR_DrawersOnly, (isDirBrowser ? TRUE : FALSE), TAG_DONE)) {
-			
+
 			if (strlen(fr->fr_Drawer) < sizeof(pathBuffer)) {
 				strncpy(pathBuffer, fr->fr_Drawer, sizeof(pathBuffer));
 				if (!isDirBrowser) {
@@ -99,7 +98,7 @@ Common::DialogManager::DialogResult MorphosDialogManager::showFileBrowser(const 
 				ConfMan.set("browser_lastpath", pathBuffer);
 				result = kDialogOk;
 			}
-		}		
+		}
 
 		free(newTitle);
 		FreeAslRequest((APTR)fr);

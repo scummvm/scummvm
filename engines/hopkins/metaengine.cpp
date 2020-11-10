@@ -28,7 +28,6 @@
 #include "common/memstream.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
-#include "common/translation.h"
 #include "graphics/surface.h"
 
 #include "hopkins/detection.h"

@@ -24,7 +24,6 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/platform/sdl/macosx/macosx_wrapper.h"
-#include "common/translation.h"
 #include "backends/platform/sdl/macosx/macosx-compat.h"
 
 #include <AppKit/NSPasteboard.h>

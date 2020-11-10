@@ -26,7 +26,6 @@
 #include "sherlock/tattoo/tattoo.h"
 
 #include "common/system.h"
-#include "common/translation.h"
 #include "engines/advancedDetector.h"
 
 #include "sherlock/detection.h"

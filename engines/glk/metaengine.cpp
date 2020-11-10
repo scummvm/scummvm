@@ -69,7 +69,6 @@
 #include "graphics/surface.h"
 #include "common/config-manager.h"
 #include "common/file.h"
-#include "common/translation.h"
 
 #define MAX_SAVES 99
 

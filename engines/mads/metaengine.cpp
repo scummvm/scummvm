@@ -30,7 +30,6 @@
 #include "common/str-array.h"
 #include "common/memstream.h"
 #include "common/system.h"
-#include "common/translation.h"
 #include "graphics/surface.h"
 
 #include "mads/events.h"

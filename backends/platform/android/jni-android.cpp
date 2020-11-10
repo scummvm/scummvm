@@ -45,7 +45,6 @@
 #include "common/config-manager.h"
 #include "common/error.h"
 #include "common/textconsole.h"
-#include "common/translation.h"
 #include "common/encoding.h"
 #include "engines/engine.h"
 

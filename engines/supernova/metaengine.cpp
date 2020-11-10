@@ -24,7 +24,6 @@
 #include "common/file.h"
 #include "common/gui_options.h"
 #include "common/savefile.h"
-#include "common/translation.h"
 #include "common/system.h"
 #include "graphics/thumbnail.h"
 #include "engines/advancedDetector.h"

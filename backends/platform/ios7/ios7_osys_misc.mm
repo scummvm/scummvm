@@ -27,7 +27,6 @@
 
 #include <UIKit/UIKit.h>
 #include <SystemConfiguration/SCNetworkReachability.h>
-#include "common/translation.h"
 #include "backends/platform/ios7/ios7_app_delegate.h"
 #include "backends/platform/ios7/ios7_video.h"
 

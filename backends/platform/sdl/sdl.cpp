@@ -27,7 +27,6 @@
 #include "gui/EventRecorder.h"
 #include "common/taskbar.h"
 #include "common/textconsole.h"
-#include "common/translation.h"
 #include "common/encoding.h"
 
 #ifdef USE_DISCORD

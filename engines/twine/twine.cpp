@@ -32,7 +32,6 @@
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "common/translation.h"
 #include "engines/metaengine.h"
 #include "engines/util.h"
 #include "graphics/colormasks.h"

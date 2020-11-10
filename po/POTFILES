@@ -40,6 +40,8 @@ engines/game.cpp
 engines/metaengine.cpp
 engines/savestate.cpp
 
+graphics/renderer.cpp
+
 audio/adlib.cpp
 audio/fmopl.cpp
 audio/mididrv.cpp
@@ -68,6 +70,7 @@ backends/graphics/opengl/opengl-graphics.cpp
 backends/graphics/openglsdl/openglsdl-graphics.cpp
 backends/graphics/surfacesdl/surfacesdl-graphics.cpp
 backends/graphics/sdl/sdl-graphics.cpp
+backends/graphics3d/sdl/sdl-graphics3d.cpp
 backends/keymapper/hardware-input.cpp
 backends/keymapper/remap-widget.cpp
 backends/keymapper/virtual-mouse.cpp
@@ -87,6 +90,7 @@ backends/platform/3ds/osystem-events.cpp
 backends/platform/ds/arm9/source/dsoptions.cpp
 backends/platform/ds/arm9/source/scummhelp.cpp
 backends/platform/ios7/ios7_osys_events.cpp
+backends/platform/ios7/ios7_osys_main.cpp
 backends/platform/iphone/osys_events.cpp
 backends/platform/maemo/maemo.cpp
 backends/platform/sdl/macosx/appmenu_osx.mm

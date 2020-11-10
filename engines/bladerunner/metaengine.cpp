@@ -28,7 +28,6 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/serializer.h"
-#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 

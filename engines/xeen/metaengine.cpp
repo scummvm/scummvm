@@ -28,7 +28,6 @@
 #include "common/savefile.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
-#include "common/translation.h"
 #include "xeen/detection.h"
 
 #define MAX_SAVES 99

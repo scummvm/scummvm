@@ -31,7 +31,7 @@
 #include <eikenv.h> // for CEikonEnv::Static()
 
 #if (__GNUC__ && __cplusplus)
-//If a pop has no matching push, the command-line options are restored. 
+//If a pop has no matching push, the command-line options are restored.
 #pragma GCC diagnostic pop
 #endif
 
@@ -41,7 +41,6 @@
 #include "backends/platform/symbian/src/SymbianOS.h"
 #include "common/config-manager.h"
 #include "common/scummsys.h"
-#include "common/translation.h"
 
 #include "gui/message.h"
 

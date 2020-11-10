@@ -24,7 +24,6 @@
 #include "groovie/saveload.h"
 
 #include "common/system.h"
-#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 #include "groovie/detection.h"

@@ -32,7 +32,6 @@
 #include "glk/comprehend/pics.h"
 #include "glk/quetzal.h"
 #include "common/config-manager.h"
-#include "common/translation.h"
 #include "common/ustr.h"
 #include "engines/util.h"
 
