@@ -686,19 +686,19 @@ public:
 	uint16 readUint16() {
 		uint16 val;
 		read(&val, 2);
-		return (_bigEndian) ? TO_BE_16(val) : TO_LE_16(val);
+		return (_bigEndian) ? FROM_BE_16(val) : FROM_LE_16(val);
 	}
 
 	uint32 readUint32() {
 		uint32 val;
 		read(&val, 4);
-		return (_bigEndian) ? TO_BE_32(val) : TO_LE_32(val);
+		return (_bigEndian) ? FROM_BE_32(val) : FROM_LE_32(val);
 	}
 
 	uint64 readUint64() {
 		uint64 val;
 		read(&val, 8);
-		return (_bigEndian) ? TO_BE_64(val) : TO_LE_64(val);
+		return (_bigEndian) ? FROM_BE_64(val) : FROM_LE_64(val);
 	}
 
 	FORCEINLINE int16 readSint16() {
