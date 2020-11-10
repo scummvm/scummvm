@@ -780,6 +780,7 @@ void Process::stub193() {
 
 void Process::setObjectScale() {
 	int value = pop();
+	_object->scale(value);
 	debug("setObjectScale stub %d", value);
 }
 
