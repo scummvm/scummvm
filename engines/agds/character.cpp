@@ -100,6 +100,10 @@ void Character::load(Common::SeekableReadStream *stream) {
 void Character::direction(int dir) {
 	debug("setDirection %d", dir);
 	_direction = dir;
+
+	if (dir < 0)
+		return;
+
 	_animation = _engine->loadAnimation(_animations[dir].filename);
 	_animationPos = Common::Point();
 	if (!_animation) {
@@ -107,6 +111,7 @@ void Character::direction(int dir) {
 		_phase = -1;
 		_frames = 0;
 	}
+	_animation->rewind();
 }
 
 void Character::moveTo(Common::Point dst, int dir) {
