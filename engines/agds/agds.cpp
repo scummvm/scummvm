@@ -907,6 +907,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 	}
 
 	{
+		_soundManager.stopAll();
 		// Audio samples
 		Common::ScopedPtr<Common::SeekableReadStream> agds_a(db.getEntry(file, "__agds_a"));
 		Common::String sample = loadText(readString(agds_a.get()));
