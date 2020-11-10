@@ -217,7 +217,7 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 		PatchPtr &patch = _patches[_currentScreenName];
 		if (!patch)
 			patch = PatchPtr(new Patch());
-		_currentScreen->save(*this, patch);
+		_currentScreen->save(patch);
 		patch->defaultMouseCursor = _defaultMouseCursorName;
 	}
 	_mouseMap.hideAll(this);
@@ -230,13 +230,13 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	_soundManager.stopAll();
 	_currentScreenName = name;
 	//SAVE CURRENT OBJECTS IN PATCH see save_screen_patch
-	_currentScreen = new Screen(loadObject(name));
+	_currentScreen = new Screen(this, loadObject(name));
 	runProcess(_currentScreen->getObject());
 
 	PatchesType::const_iterator it = _patches.find(name);
 	if (it != _patches.end()) {
 		const PatchPtr &patch = it->_value;
-		_currentScreen->load(*this, patch);
+		_currentScreen->load(patch);
 		if (!patch->defaultMouseCursor.empty())
 			loadDefaultMouseCursor(patch->defaultMouseCursor);
 	}
@@ -503,7 +503,7 @@ Common::Error AGDSEngine::run() {
 				reactivate(_filmProcess);
 			}
 		} else if (_currentScreen) {
-			_currentScreen->paint(*this, *backbuffer);
+			_currentScreen->paint(*backbuffer);
 		}
 
 		if (!mouseCursor)
