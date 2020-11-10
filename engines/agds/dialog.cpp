@@ -119,7 +119,7 @@ bool Dialog::tick() {
 
 	debug("dialog line: %s", line.c_str());
 	if (line[0] == '@') {
-		if (line[1] == '@') //comment
+		if (line.size() < 2 || line[1] == '@') //comment
 			return true;
 
 		line.erase(0, 1);
