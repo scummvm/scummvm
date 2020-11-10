@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
 				path_param += 6;
 				memcpy(path, path_param, gameid_param - path_param);
 				path[gameid_param-path_param] = 0;
-				sprintf(game_id, gameid_param + 9);
+				snprintf(game_id, 64, gameid_param + 9);
 			}
 			else
 			{
@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 				gameid_param += 9;
 				memcpy(game_id, gameid_param, path_param - gameid_param);
 				game_id[path_param-gameid_param] = 0;
-				sprintf(path, path_param + 6);
+				snprintf(path, 256, path_param + 6);
 			}
 			
 			const char* args[4];
