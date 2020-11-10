@@ -218,32 +218,67 @@ void IMuseDigital::callback() {
 				return;
 
 			if (track->volFadeUsed) {
-				if (track->vol == track->volFadeDest) // Sanity check
-					track->volFadeUsed = false;
+				if (_vm->_game.id == GID_CMI) {
+					if (track->vol == track->volFadeDest) // Sanity check
+						track->volFadeUsed = false;
 
-				if (track->volFadeStep < 0) { // Fade out
-					if (track->vol > track->volFadeDest) {
-						track->vol += track->volFadeStep;
-						if (track->vol <= track->volFadeDest) {
-							track->vol = track->volFadeDest;
-							track->volFadeUsed = false;
-						}
-						if (track->vol == 0) {
-							// Fade out complete -> remove this track
-							flushTrack(track);
-							continue;
+					if (track->volFadeStep < 0) { // Fade out
+						if (track->vol > track->volFadeDest) {
+							int tempVolume = transformVolumeEqualPowToLinear(track->vol, 1); // Equal power to linear...
+							tempVolume += track->volFadeStep; // Remove step...
+							track->vol = transformVolumeLinearToEqualPow(tempVolume, 1); // Linear to equal power...
+
+							if (track->vol <= track->volFadeDest) {
+								track->vol = track->volFadeDest;
+								track->volFadeUsed = false;
+								flushTrack(track);
+								continue;
+							}
+							if (track->vol == 0) {
+								// Fade out complete -> remove this track
+								flushTrack(track);
+								continue;
+							}
 						}
 					}
-				} else if (track->volFadeStep > 0) { // Fade in
-					if (track->vol < track->volFadeDest) {
-						track->vol += track->volFadeStep;
-						if (track->vol >= track->volFadeDest) {
-							track->vol = track->volFadeDest;
-							track->volFadeUsed = false;
+					else if (track->volFadeStep > 0) { // Fade in
+						if (track->vol < track->volFadeDest) {
+							int tempVolume = transformVolumeEqualPowToLinear(track->vol, 1); // Equal power to linear...
+							tempVolume += track->volFadeStep; // Add step...
+							track->vol = transformVolumeLinearToEqualPow(tempVolume, 1); // Linear to equal power...
+							if (track->vol >= track->volFadeDest) {
+								track->vol = track->volFadeDest;
+								track->volFadeUsed = false;
+							}
 						}
 					}
 				}
- 				debug(5, "Fade: sound(%d), Vol(%d)", track->soundId, track->vol / 1000);
+				else {
+					if (track->volFadeStep < 0) {
+						if (track->vol > track->volFadeDest) {
+							track->vol += track->volFadeStep; 
+							if (track->vol < track->volFadeDest) {
+								track->vol = track->volFadeDest;
+								track->volFadeUsed = false;
+							}
+							if (track->vol == 0) {
+								// Fade out complete -> remove this track
+								flushTrack(track);
+								continue;
+							}
+						}
+					}
+					else if (track->volFadeStep > 0) {
+						if (track->vol < track->volFadeDest) {
+							track->vol += track->volFadeStep;
+							if (track->vol > track->volFadeDest) {
+								track->vol = track->volFadeDest;
+								track->volFadeUsed = false;
+							}
+						}
+					}
+				}
+ 				debug(5, "Fade: sound(%d), Vol(%d) in track(%d)", track->soundId, track->vol / 1000, track->trackId);
 			}
 
 			if (!track->souStreamUsed) {
@@ -410,35 +445,30 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 			int fadeDelay = (60 * _sound->getJumpFade(soundDesc, jumpId)) / 1000;
 			debug(5, "SwToNeReg(trackId:%d) - sound(%d) match hookId", track->trackId, track->soundId);
 			if (fadeDelay) {
-				debug(5, "SwToNeReg(trackId:%d) - call cloneToFadeOutTrack(delay:%d)", track->trackId, fadeDelay);
-				Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
-				if (fadeTrack) {
-					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
-					fadeTrack->regionOffset = 0;
-					debug(5, "SwToNeReg(trackId:%d) - sound(%d) faded track, select region %d, curHookId: %d", fadeTrack->trackId, fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
-					fadeTrack->curHookId = 0;
-
-					// Fade in the next region if the fade out track from
-					// the previous region has been allocated
-					track->volFadeDest = 127 * 1000;
-					track->vol = 25000; // Empirical value which works well for now, accounting for the fade track apparent desync
-					track->volFadeDelay = fadeDelay;
-					track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * fadeDelay);
-					track->volFadeUsed = true;
-				}
-
-				
+				// COMI specific: jump to new region without true crossfades; this is not true to the original interpreter,
+				// but crossfading between regions in the correct way requires an implementation which is more complex.
+				// Leaving as is, for now.
+				if (_vm->_game.id != GID_CMI) {
+					debug(5, "SwToNeReg(trackId:%d) - call cloneToFadeOutTrack(delay:%d)", track->trackId, fadeDelay);
+					Track *fadeTrack = cloneToFadeOutTrack(track, fadeDelay);
+					if (fadeTrack) {
+						fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
+						fadeTrack->regionOffset = 0;
+						debug(5, "SwToNeReg(trackId:%d) - sound(%d) faded track, select region %d, curHookId: %d", fadeTrack->trackId, fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+						fadeTrack->curHookId = 0;
+					}
+				}	
 			}
 			track->curRegion = region;
 			debug(5, "SwToNeReg(trackId:%d) - sound(%d) jump to region %d, curHookId: %d", track->trackId, track->soundId, track->curRegion, track->curHookId);
 			track->curHookId = 0;
+			
 		} else {
 			debug(5, "SwToNeReg(trackId:%d) - Normal switch region, sound(%d), hookId(%d)", track->trackId, track->soundId, track->curHookId);
 		}
 	} else {
 		debug(5, "SwToNeReg(trackId:%d) - Normal switch region, sound(%d), hookId(%d)", track->trackId, track->soundId, track->curHookId);
 	}
-
 	debug(5, "SwToNeReg(trackId:%d) - sound(%d), select region %d", track->trackId, track->soundId, track->curRegion);
 	track->dataOffset = _sound->getRegionOffset(soundDesc, track->curRegion);
 	track->regionOffset = 0;

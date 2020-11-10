@@ -166,7 +166,7 @@ void IMuseDigital::flushTrack(Track *track) {
 	if (track->souStreamUsed) {
 		_mixer->stopHandle(track->mixChanHandle);
 	} else if (track->stream) {
-		debug(5, "flushTrack() - soundId:%d", track->soundId);
+		debug(5, "flushTrack(trackId: %d) - soundId:%d", track->trackId, track->soundId);
 		// Finalize the appendable stream, then remove our reference to it.
 		// Note that there might still be some data left in the buffers of the
 		// appendable stream. We play it nice and wait till all of it
@@ -190,7 +190,7 @@ void IMuseDigital::flushTracks() {
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used && track->toBeRemoved && !_mixer->isSoundHandleActive(track->mixChanHandle)) {
-			debug(5, "flushTracks() - soundId:%d", track->soundId);
+			debug(5, "flushTracks() - trackId:%d, soundId:%d", track->trackId, track->soundId);
 			track->reset();
 		}
 	}
