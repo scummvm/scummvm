@@ -203,11 +203,7 @@ void Screen::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 ObjectPtr Screen::find(Common::Point pos) const {
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
-		if (!object->inScene())
-			continue;
-
-		RegionPtr region = object->region();
-		if (region && region->pointIn(pos))
+		if (object->pointIn(pos))
 			return object;
 	}
 	return ObjectPtr();

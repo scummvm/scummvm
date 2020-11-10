@@ -171,6 +171,16 @@ void Object::generateRegion() {
 	debug("%s: generated region: %s", _name.c_str(), _region->toString().c_str());
 }
 
+bool Object::pointIn(Common::Point pos) {
+	if (!_inScene)
+		return false;
+
+	if (_region && _region->pointIn(pos))
+		return true;
+
+	return false;
+}
+
 void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	if (_picture) {
 		Common::Point dst = _pos - _offset;

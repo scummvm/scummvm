@@ -218,6 +218,8 @@ public:
 
 	void inScene(bool value)
 	{ _inScene = value; }
+
+	bool pointIn(Common::Point pos);
 };
 typedef Common::SharedPtr<Object> ObjectPtr;
 
