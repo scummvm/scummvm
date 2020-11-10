@@ -247,6 +247,10 @@ public:
 
 	void reactivate(const Common::String &name, bool runNow = false);
 
+	bool showHints() const {
+		return _hintMode;
+	}
+
 private:
 	void loadPatches(Common::SeekableReadStream *file, Database & db);
 
@@ -305,6 +309,7 @@ private:
 	int							_syncSoundId;
 
 	bool						_fastMode;
+	bool						_hintMode;
 };
 
 

@@ -59,7 +59,8 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 																			 _dialog(this),
 																			 _tellTextTimer(0),
 																			 _syncSoundId(-1),
-                                                                             _fastMode(true) {
+                                                                             _fastMode(true),
+																			 _hintMode(false) {
 }
 
 AGDSEngine::~AGDSEngine() {
@@ -392,6 +393,9 @@ Common::Error AGDSEngine::run() {
 						_fastMode = !_fastMode;
 					}
 					break;
+				case Common::KEYCODE_LCTRL:
+					_hintMode = true;
+					break;
 				default:
 					if (event.kbd.ascii)
 						key = Common::String(static_cast<char>(event.kbd.ascii));
@@ -404,6 +408,17 @@ Common::Error AGDSEngine::run() {
 					}
 				}
 			} break;
+
+			case Common::EVENT_KEYUP: {
+				switch (event.kbd.keycode) {
+				case Common::KEYCODE_LCTRL:
+					_hintMode = false;
+					break;
+				default:
+					break;
+				}
+			} break;
+
 			case Common::EVENT_MOUSEMOVE:
 				_mouse = event.mouse;
 				if (userEnabled()) {

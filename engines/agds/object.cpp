@@ -180,14 +180,24 @@ void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 			_picture->blit(backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
 		}
 	}
+
 	if (_animation) {
 		_animation->tick(engine);
 		_animation->paint(engine, backbuffer, _pos + _animationPos);
 	}
+
 	if (!_text.empty()) {
 		Common::Point pos = _region ? _region->center : _pos;
 		int w = backbuffer.w - pos.x;
 		engine.getFont(engine.getSystemVariable("objtext_font")->getInteger())->drawString(&backbuffer, _text, pos.x, pos.y, w, 0);
+	}
+
+	if (engine.showHints() && !_title.empty()) {
+		Common::Point pos = _region ? _region->center : _pos;
+		int w = backbuffer.w - pos.x;
+		auto font = engine.getFont(engine.getSystemVariable("edit_font")->getInteger());
+		pos.x -= font->getStringWidth(_title) / 2;
+		font->drawString(&backbuffer, _title, pos.x, pos.y, w, 0);
 	}
 }
 
