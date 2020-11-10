@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-08 21:15+0100\n"
+"POT-Creation-Date: 2020-11-10 03:04+0100\n"
 "PO-Revision-Date: 2020-11-10 01:53+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
-"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Русский\n"
 
@@ -271,6 +271,7 @@ msgstr "Движок"
 
 #: gui/editgamedialog.cpp:202 gui/options.cpp:1638 gui/options.cpp:1769
 #: backends/graphics/sdl/sdl-graphics.cpp:374
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 #: backends/platform/ds/arm9/source/dsoptions.cpp:97
 msgid "Graphics"
 msgstr "Графика"
@@ -528,7 +529,7 @@ msgid "Sine"
 msgstr "Синусоида"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
-#: backends/platform/sdl/psp2/psp2.cpp:48
+#: backends/platform/sdl/psp2/psp2.cpp:48 engines/dragons/metaengine.cpp:195
 msgid "Triangle"
 msgstr "Треугольная"
 
@@ -590,8 +591,10 @@ msgstr "Закрыть"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:451
-#: engines/grim/grim.cpp:528 engines/wintermute/keymapper_tables.h:1011
+#: engines/dragons/metaengine.cpp:165 engines/glk/scott/scott.cpp:412
+#: engines/griffon/metaengine.cpp:98 engines/grim/grim.cpp:451
+#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:245
+#: engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1474
 #: engines/wintermute/keymapper_tables.h:1704
@@ -600,8 +603,10 @@ msgstr "Вверх"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:456
-#: engines/grim/grim.cpp:533 engines/wintermute/keymapper_tables.h:1017
+#: engines/dragons/metaengine.cpp:171 engines/glk/scott/scott.cpp:412
+#: engines/griffon/metaengine.cpp:104 engines/grim/grim.cpp:456
+#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:251
+#: engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1480
 #: engines/wintermute/keymapper_tables.h:1710
@@ -610,8 +615,9 @@ msgstr "Вниз"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
+#: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:110
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
-#: engines/wintermute/keymapper_tables.h:1023
+#: engines/twine/metaengine.cpp:263 engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1462
 #: engines/wintermute/keymapper_tables.h:1570
 #: engines/wintermute/keymapper_tables.h:1692
@@ -620,8 +626,9 @@ msgstr "Влево"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
+#: engines/dragons/metaengine.cpp:183 engines/griffon/metaengine.cpp:116
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
-#: engines/wintermute/keymapper_tables.h:1029
+#: engines/twine/metaengine.cpp:257 engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1468
 #: engines/wintermute/keymapper_tables.h:1578
 #: engines/wintermute/keymapper_tables.h:1698
@@ -2124,6 +2131,7 @@ msgstr "Сохранить игру:"
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
+#: engines/zvision/metaengine.cpp:194
 msgid "Save"
 msgstr "Сохранить"
 
@@ -2219,6 +2227,7 @@ msgstr ""
 "файле README."
 
 #: engines/engine.cpp:548 engines/metaengine.cpp:327 engines/savestate.cpp:81
+#: backends/platform/ios7/ios7_osys_main.cpp:277 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "Автосохранение"
@@ -2294,7 +2303,8 @@ msgstr "Назначение клавиш по умолчанию"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:175
 #: backends/platform/symbian/src/SymbianActions.cpp:44
-#: engines/wintermute/keymapper_tables.h:43
+#: engines/hdb/metaengine.cpp:187 engines/wintermute/keymapper_tables.h:43
+#: engines/zvision/metaengine.cpp:115
 msgid "Left Click"
 msgstr "Левый щелчок"
 
@@ -2307,14 +2317,15 @@ msgstr "Средний щелчок"
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:183
 #: backends/platform/symbian/src/SymbianActions.cpp:45
-#: engines/wintermute/keymapper_tables.h:49
+#: engines/wintermute/keymapper_tables.h:49 engines/zvision/metaengine.cpp:121
 msgid "Right Click"
 msgstr "Правый щелчок"
 
 #: engines/metaengine.cpp:76
 #: backends/platform/symbian/src/SymbianActions.cpp:52
-#: engines/mohawk/myst.cpp:593 engines/mohawk/riven.cpp:863
-#: engines/wintermute/keymapper_tables.h:1255
+#: engines/hdb/metaengine.cpp:238 engines/mohawk/myst.cpp:593
+#: engines/mohawk/riven.cpp:863 engines/sky/metaengine.cpp:113
+#: engines/twine/metaengine.cpp:73 engines/wintermute/keymapper_tables.h:1255
 msgid "Pause"
 msgstr "Пауза"
 
@@ -2334,7 +2345,7 @@ msgstr "Меню игры"
 msgid "Skip"
 msgstr "Пропустить"
 
-#: engines/metaengine.cpp:93
+#: engines/metaengine.cpp:93 engines/sky/metaengine.cpp:108
 msgid "Skip line"
 msgstr "Пропустить строку"
 
@@ -2342,10 +2353,19 @@ msgstr "Пропустить строку"
 msgid "Predictive input dialog"
 msgstr "Диалог предиктивного ввода"
 
-#: engines/metaengine.cpp:103 engines/grim/grim.cpp:508
-#: engines/grim/grim.cpp:600 engines/wintermute/keymapper_tables.h:55
+#: engines/metaengine.cpp:103 engines/griffon/metaengine.cpp:92
+#: engines/grim/grim.cpp:508 engines/grim/grim.cpp:600
+#: engines/sky/metaengine.cpp:88 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "Подтвердить"
+
+#: graphics/renderer.cpp:31 backends/graphics/opengl/opengl-graphics.cpp:165
+msgid "OpenGL"
+msgstr "OpenGL"
+
+#: graphics/renderer.cpp:34
+msgid "OpenGL with shaders"
+msgstr ""
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -2530,9 +2550,10 @@ msgstr "Вы действительно хотите выйти?"
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:316
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/mohawk/myst_stacks/menu.cpp:318
+#: engines/hdb/metaengine.cpp:255 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:186
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
+#: engines/zvision/metaengine.cpp:204 engines/zvision/metaengine.cpp:222
 msgid "Quit"
 msgstr "Выход"
 
@@ -2606,12 +2627,9 @@ msgstr "Режим 'касаний' тачскрина - Пролёт (клик�
 msgid "Do you want to quit ?"
 msgstr "Вы действительно хотите выйти?"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:165
-msgid "OpenGL"
-msgstr "OpenGL"
-
 #: backends/graphics/opengl/opengl-graphics.cpp:244
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
+#: engines/twine/metaengine.cpp:160
 msgid "Center"
 msgstr "По центру"
 
@@ -2682,16 +2700,19 @@ msgstr "Активный графический фильтр:"
 msgid "Windowed mode"
 msgstr "Оконный режим"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:378 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:378
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:136 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Переключение на весь экран"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:385 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:385
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:143 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr "Переключение перехвата мыши"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:390
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:148
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
 #: engines/wintermute/keymapper_tables.h:1061
@@ -2704,6 +2725,7 @@ msgid "Save screenshot"
 msgstr "Сохранить скриншот"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:396
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:154
 msgid "Toggle aspect ratio correction"
 msgstr "Переключение коррекции соотношения сторон"
 
@@ -2819,11 +2841,11 @@ msgstr "Левый стик"
 msgid "Right Stick"
 msgstr "Правый стик"
 
-#: backends/keymapper/hardware-input.cpp:265
+#: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:213
 msgid "Left Shoulder"
 msgstr "Левый курок"
 
-#: backends/keymapper/hardware-input.cpp:266
+#: backends/keymapper/hardware-input.cpp:266 engines/dragons/metaengine.cpp:219
 msgid "Right Shoulder"
 msgstr "Правый курок"
 
@@ -3441,10 +3463,12 @@ msgid "Indiana Jones Fight controls:"
 msgstr "Управление боями в Indiana Jones:"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
+#: engines/hdb/metaengine.cpp:205
 msgid "Move left"
 msgstr "Идти влево"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:77
+#: engines/hdb/metaengine.cpp:211
 msgid "Move right"
 msgstr "Идти вправо"
 
@@ -3521,6 +3545,7 @@ msgid "Minimize"
 msgstr "Свернуть"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:223
+#: engines/zvision/metaengine.cpp:158
 msgid "Help"
 msgstr "Помощь"
 
@@ -3561,14 +3586,17 @@ msgid "BSD License"
 msgstr "Лицензия BSD"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:45
+#: engines/dragons/metaengine.cpp:207
 msgid "Cross"
 msgstr "Крест"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:46
+#: engines/dragons/metaengine.cpp:201
 msgid "Circle"
 msgstr "Круг"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
+#: engines/dragons/metaengine.cpp:189
 msgid "Square"
 msgstr "Квадрат"
 
@@ -3943,7 +3971,7 @@ msgstr "Восстановить игру:"
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
 #: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
-#: engines/zvision/file/save_manager.cpp:62
+#: engines/zvision/file/save_manager.cpp:62 engines/zvision/metaengine.cpp:199
 msgid "Restore"
 msgstr "Восстановить"
 
@@ -4089,11 +4117,19 @@ msgstr ""
 "Во время бега МакКой не будет замедляться, когда игрок перестаёт щёлкать "
 "мышью"
 
-#: engines/cge/detection.cpp:113
+#: engines/bladerunner/detection_tables.h:96
+#: engines/bladerunner/detection_tables.h:107
+#: engines/kyra/detection_tables.h:80
+msgid ""
+"The fan translator does not wish his translation to be incorporated into "
+"ScummVM."
+msgstr "Автор перевода не желает, чтобы его перевод был добавлен в ScummVM."
+
+#: engines/cge/detection.cpp:113 engines/cge2/detection.cpp:109
 msgid "Color Blind Mode"
 msgstr "Режим без цвета"
 
-#: engines/cge/detection.cpp:114
+#: engines/cge/detection.cpp:114 engines/cge2/detection.cpp:110
 msgid "Enable Color Blind Mode by default"
 msgstr "Включить режим для людей со слабым восприятием цвета"
 
@@ -4108,6 +4144,18 @@ msgid ""
 msgstr ""
 "Использовать прозрачные диалоговые окна в 16-цветных сценах даже если "
 "оригинальная игра их не поддерживала"
+
+#: engines/cine/metaengine.cpp:142
+msgid "Unnamed autosave"
+msgstr "Автосохранение без имени"
+
+#: engines/cine/metaengine.cpp:144 engines/cine/metaengine.cpp:219
+msgid "Unnamed savegame"
+msgstr "Сохранённая игра без имени"
+
+#: engines/cine/metaengine.cpp:162 engines/cine/metaengine.cpp:232
+msgid "Empty autosave"
+msgstr "Пустое автосохранение"
 
 #: engines/cine/saveload.cpp:861
 msgid ""
@@ -4136,6 +4184,52 @@ msgstr ""
 "Пожалуйста, посмотрите на Вики\n"
 "https://wiki.scummvm.org/index.php?title=HOWTO-PlayStation_Videos как "
 "правильно переписать с вашего диска с игрой файлы DTSPEECH.XA и *.STR."
+
+#: engines/dragons/metaengine.cpp:124
+msgid ""
+"Error: It appears that the game data files were extracted incorrectly.\n"
+"\n"
+"You should only extract STR and XA files using the special method. The rest "
+"should be copied normally from your game CD.\n"
+"\n"
+" See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
+msgstr ""
+"Ошибка: Кажется, вы неверно переписали игру.\n"
+"\n"
+"Вам необходимо конвертировать особым образом только файлы STR и XA. "
+"Остальные файлы нужно было просто скопировать с вашего CD.\n"
+"\n"
+"Смотрите https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
+
+#: engines/dragons/metaengine.cpp:142
+msgid "Action"
+msgstr "Действие"
+
+#: engines/dragons/metaengine.cpp:148
+msgid "Change Command"
+msgstr "Изменить команду"
+
+#: engines/dragons/metaengine.cpp:154 engines/griffon/metaengine.cpp:129
+#: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
+#: engines/hdb/metaengine.cpp:231 engines/scumm/help.cpp:225
+#: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
+#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:211
+#: engines/zvision/metaengine.cpp:164
+msgid "Inventory"
+msgstr "Инвентарь"
+
+#: engines/dragons/metaengine.cpp:159 engines/scumm/help.cpp:86
+#: engines/scumm/help.cpp:89
+msgid "Enter"
+msgstr "Ввод"
+
+#: engines/dragons/metaengine.cpp:225
+msgid "Debug Graphics"
+msgstr "Отладка графики"
+
+#: engines/dragons/metaengine.cpp:230
+msgid "Quit Game"
+msgstr "Выйти из игры"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -4493,6 +4587,18 @@ msgstr "Не удалось сохранить игру в файл."
 msgid "Failed to delete file."
 msgstr "Не удалось удалить файл."
 
+#: engines/griffon/metaengine.cpp:86
+msgid "Menu / Skip"
+msgstr "Меню / Пропустить"
+
+#: engines/griffon/metaengine.cpp:122
+msgid "Attack"
+msgstr "Атака"
+
+#: engines/griffon/metaengine.cpp:136
+msgid "Speed Up Cutscene"
+msgstr "Ускорить заставку"
+
 #: engines/grim/detection.cpp:45
 msgid "Load user patch (unsupported)"
 msgstr "Загрузить пользовательский патч (без поддержки)"
@@ -4505,7 +4611,7 @@ msgstr ""
 "Загрузить пользовательский патч. Пожалуйста, заметьте, что команда ScummVM "
 "не оказывает поддержку при использовании таких патчей."
 
-#: engines/grim/detection.cpp:54
+#: engines/grim/detection.cpp:54 engines/zvision/metaengine.cpp:153
 msgid "Show FPS"
 msgstr "Показать счётчик кадров в секунду"
 
@@ -4541,17 +4647,12 @@ msgstr "Использовать/Говорить"
 msgid "Pick up/Put away"
 msgstr "Поднять/Отложить"
 
-#: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
-#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
-msgid "Inventory"
-msgstr "Инвентарь"
-
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:588
 msgid "Skip dialog lines"
 msgstr "Пропустить строчку диалога"
 
 #: engines/grim/grim.cpp:514 engines/grim/grim.cpp:606
+#: engines/hdb/metaengine.cpp:244
 msgid "Menu"
 msgstr "Меню"
 
@@ -4681,6 +4782,31 @@ msgstr "Включить чит-режим"
 msgid "Debug info and level selection becomes available"
 msgstr "Отладочная информация и выбор уровня становятся доступными"
 
+#: engines/hdb/metaengine.cpp:193
+msgid "Move up"
+msgstr "Идти вверх"
+
+#: engines/hdb/metaengine.cpp:199
+msgid "Move down"
+msgstr "Идти вниз"
+
+#: engines/hdb/metaengine.cpp:217 engines/scumm/help.cpp:128
+#: engines/scumm/help.cpp:152 engines/scumm/help.cpp:170
+#: engines/scumm/help.cpp:198 engines/scumm/help.cpp:213
+#: engines/scumm/help.cpp:224 engines/scumm/help.cpp:250
+#: engines/sky/metaengine.cpp:82 engines/wintermute/keymapper_tables.h:138
+#: engines/wintermute/keymapper_tables.h:1202
+msgid "Use"
+msgstr "Использовать"
+
+#: engines/hdb/metaengine.cpp:224
+msgid "Clear waypoints"
+msgstr "Стереть точки пути"
+
+#: engines/hdb/metaengine.cpp:250
+msgid "Debug"
+msgstr "Отладчик"
+
 #: engines/hopkins/detection.cpp:40 engines/hopkins/detection.cpp:50
 msgid "Gore Mode"
 msgstr "Режим с кровью"
@@ -4766,12 +4892,6 @@ msgstr "Fight Button L / R Swap"
 msgid "Left button to attack, right button to pick up items"
 msgstr "Левая кнопка для атаки, правая кнопка для выбора предметов"
 
-#: engines/kyra/detection_tables.h:465 engines/kyra/detection_tables.h:722
-msgid ""
-"The fan translator does not wish his translation to be incorporated into "
-"ScummVM."
-msgstr "Автор перевода не желает, чтобы его перевод был добавлен в ScummVM."
-
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
 #: engines/ultima/ultima8/meta_engine.cpp:130
@@ -4785,6 +4905,7 @@ msgid "Interact via Right Click"
 msgstr "Взаимодействовать через правый щелчок"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
+#: engines/twine/metaengine.cpp:177
 msgid "Move Forward"
 msgstr "Идти вперёд"
 
@@ -4801,12 +4922,14 @@ msgid "Move Right"
 msgstr "Идти вправо"
 
 #: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:479
-#: engines/pegasus/pegasus.cpp:2497
+#: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:195
+#: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Поворот налево"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2504
+#: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:189
+#: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "Поворот направо"
 
@@ -5580,7 +5703,7 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr "Yamaha FB-01"
 
-#: engines/sci/engine/kfile.cpp:485
+#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:396
 msgid "(Autosave)"
 msgstr "(Автосохранение)"
 
@@ -5623,7 +5746,7 @@ msgid ""
 msgstr ""
 "Не могу проигрывать %dbpp видео на системе с максимальной глубиной цвета 8bpp"
 
-#: engines/sci/resource.cpp:836
+#: engines/sci/resource.cpp:843
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
@@ -5907,7 +6030,7 @@ msgstr "Пропустить строку"
 msgid "Esc"
 msgstr "Esc"
 
-#: engines/scumm/help.cpp:77
+#: engines/scumm/help.cpp:77 engines/zvision/metaengine.cpp:216
 msgid "Skip cutscene"
 msgstr "Пропустить заставку"
 
@@ -5940,10 +6063,6 @@ msgstr "Alt"
 #: engines/scumm/help.cpp:80
 msgid "Save game 1-10"
 msgstr "Сохранить игру 1-10"
-
-#: engines/scumm/help.cpp:86 engines/scumm/help.cpp:89
-msgid "Enter"
-msgstr "Ввод"
 
 #: engines/scumm/help.cpp:87
 msgid "Music volume up / down"
@@ -6054,14 +6173,6 @@ msgstr "Идти"
 #: engines/scumm/help.cpp:127
 msgid "Get"
 msgstr "Взять"
-
-#: engines/scumm/help.cpp:128 engines/scumm/help.cpp:152
-#: engines/scumm/help.cpp:170 engines/scumm/help.cpp:198
-#: engines/scumm/help.cpp:213 engines/scumm/help.cpp:224
-#: engines/scumm/help.cpp:250 engines/wintermute/keymapper_tables.h:138
-#: engines/wintermute/keymapper_tables.h:1202
-msgid "Use"
-msgstr "Использовать"
 
 #: engines/scumm/help.cpp:129 engines/scumm/help.cpp:141
 msgid "Read"
@@ -6420,6 +6531,23 @@ msgstr "Громк. музыки: "
 msgid "Subtitle speed: "
 msgstr "Скорость титров: "
 
+#: engines/scumm/metaengine.cpp:331
+msgid ""
+"The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
+"piracy.\n"
+"The full version is available for purchase from the iTunes Store."
+msgstr ""
+"Во избежание пиратства Lite-версия игры Putt-Putt Saves the Zoo для iOS\n"
+"не поддерживается. Полную версию игры можно купить в iTunes Store."
+
+#: engines/scumm/metaengine.cpp:339
+msgid ""
+"The Russian version of Pajama Sam 2 is not supported yet due to incomplete "
+"code."
+msgstr ""
+"Русская версия \"Пижама Сэм 2\" не поддерживается ввиду отсутствия куска "
+"необходимого кода, который они использовали для локализации."
+
 #: engines/scumm/scumm.cpp:1906
 #, c-format
 msgid ""
@@ -6528,6 +6656,26 @@ msgstr "Вступление с дискет"
 #: engines/sky/detection.cpp:40
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Использовать вступление с гибких дисков (только для CD-версии игры)"
+
+#: engines/sky/metaengine.cpp:76
+msgid "Walk / Look / Talk"
+msgstr "Ходить / Смотреть / Говорить"
+
+#: engines/sky/metaengine.cpp:94
+msgid "Skip / Close"
+msgstr "Пропустить / Закрыть"
+
+#: engines/sky/metaengine.cpp:102
+msgid "Open control panel"
+msgstr "Открыть панель управления"
+
+#: engines/sky/metaengine.cpp:118
+msgid "Toggle fast mode"
+msgstr "Переключить быстрый режим"
+
+#: engines/sky/metaengine.cpp:123
+msgid "Toggle really fast mode"
+msgstr "Переключить очень быстрый режим"
 
 #: engines/stark/detection.cpp:368
 msgid "Load modded assets"
@@ -6700,6 +6848,14 @@ msgstr ""
 "Найдены заставки в формате PSX, но ScummVM был собран без поддержки RGB-"
 "цветов"
 
+#: engines/sword2/detection.cpp:33
+msgid "Show object labels"
+msgstr "Показывать названия объектов"
+
+#: engines/sword2/detection.cpp:34
+msgid "Show labels for objects on mouse hover"
+msgstr "Показывает названия объектов при наведении курсора мыши"
+
 #: engines/sword25/detection.cpp:41
 msgid "Use English speech"
 msgstr "Использовать английскую озвучку"
@@ -6748,6 +6904,115 @@ msgstr "Не удалось быстро загрузить сохранённу
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "Не удалось найти файл движка '%s'."
+
+#: engines/twine/metaengine.cpp:78
+msgid "Debug Next Room"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:83
+msgid "Debug Previous Room"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:88
+msgid "Debug Apply Celling Grid"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:93
+msgid "Debug Increase Celling Grid Index"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:98
+msgid "Debug Decrease Celling Grid Index"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:103
+msgid "Debug Grid Camera Up"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:108
+msgid "Debug Grid Camera Down"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:113
+msgid "Debug Grid Camera Left"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:119
+msgid "Debug Grid Camera Right"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:124
+msgid "Normal Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:129
+msgid "Athletic Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:134
+msgid "Aggressive Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:139
+msgid "Discreet Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:144
+#, fuzzy
+msgid "Behaviour Action"
+msgstr "Предыдущее действие"
+
+#: engines/twine/metaengine.cpp:150
+msgid "Change Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:155
+#, fuzzy
+msgid "Options Menu"
+msgstr "Меню опций DS"
+
+#: engines/twine/metaengine.cpp:166
+msgid "Use Selected Object"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:172
+msgid "Throw Magic Ball"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:183
+#, fuzzy
+msgid "Move Backward"
+msgstr "Идти назад"
+
+#: engines/twine/metaengine.cpp:201
+msgid "Use Protopack"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:206
+msgid "Open Holomap"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:218
+#, fuzzy
+msgid "Special Action"
+msgstr "Действие"
+
+#: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:61
+msgid "Escape"
+msgstr "Клавиша Esc"
+
+#: engines/twine/metaengine.cpp:234
+msgid "Accept"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:240 engines/twine/metaengine.cpp:281
+msgid "Abort"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:269
+#, fuzzy
+msgid "Next Page"
+msgstr "Следующая страница"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
@@ -6844,10 +7109,6 @@ msgid ""
 msgstr ""
 "Эта игра требует поддержки 3D персонажей, что выходит за рамки ScummVM. "
 "Ввиду этого, игра скорее всего не будет работать целиком или частично."
-
-#: engines/wintermute/keymapper_tables.h:61
-msgid "Escape"
-msgstr "Клавиша Esc"
 
 #: engines/wintermute/keymapper_tables.h:147
 #: engines/wintermute/keymapper_tables.h:510
@@ -7434,6 +7695,34 @@ msgstr ""
 "версии не выше %d. Для использования этого файла необходима свежая версия "
 "движка."
 
+#: engines/zvision/metaengine.cpp:129
+msgid "Look Up"
+msgstr "Смотреть вверх"
+
+#: engines/zvision/metaengine.cpp:135
+msgid "Look Down"
+msgstr "Смотреть вниз"
+
+#: engines/zvision/metaengine.cpp:170
+msgid "Spellbook"
+msgstr "Книга заклинаний"
+
+#: engines/zvision/metaengine.cpp:176
+msgid "Score"
+msgstr "Счёт"
+
+#: engines/zvision/metaengine.cpp:182
+msgid "Put away object"
+msgstr "Отложить обьект"
+
+#: engines/zvision/metaengine.cpp:188
+msgid "Extract coin"
+msgstr "Извлечь монету"
+
+#: engines/zvision/metaengine.cpp:209
+msgid "Preferences"
+msgstr "Предпочтения"
+
 #: engines/zvision/zvision.cpp:313
 msgid ""
 "Before playing this game, you'll need to copy the required fonts into "
@@ -7460,121 +7749,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Invetory"
 #~ msgstr "Инвентарь"
-
-#~ msgid "Unnamed autosave"
-#~ msgstr "Автосохранение без имени"
-
-#~ msgid "Unnamed savegame"
-#~ msgstr "Сохранённая игра без имени"
-
-#~ msgid "Empty autosave"
-#~ msgstr "Пустое автосохранение"
-
-#~ msgid ""
-#~ "Error: It appears that the game data files were extracted incorrectly.\n"
-#~ "\n"
-#~ "You should only extract STR and XA files using the special method. The "
-#~ "rest should be copied normally from your game CD.\n"
-#~ "\n"
-#~ " See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
-#~ msgstr ""
-#~ "Ошибка: Кажется, вы неверно переписали игру.\n"
-#~ "\n"
-#~ "Вам необходимо конвертировать особым образом только файлы STR и XA. "
-#~ "Остальные файлы нужно было просто скопировать с вашего CD.\n"
-#~ "\n"
-#~ "Смотрите https://wiki.scummvm.org/index.php?"
-#~ "title=Datafiles#Blazing_Dragons"
-
-#~ msgid "Action"
-#~ msgstr "Действие"
-
-#~ msgid "Change Command"
-#~ msgstr "Изменить команду"
-
-#~ msgid "Debug Graphics"
-#~ msgstr "Отладка графики"
-
-#~ msgid "Quit Game"
-#~ msgstr "Выйти из игры"
-
-#~ msgid "Menu / Skip"
-#~ msgstr "Меню / Пропустить"
-
-#~ msgid "Attack"
-#~ msgstr "Атака"
-
-#~ msgid "Speed Up Cutscene"
-#~ msgstr "Ускорить заставку"
-
-#~ msgid "Move up"
-#~ msgstr "Идти вверх"
-
-#~ msgid "Move down"
-#~ msgstr "Идти вниз"
-
-#~ msgid "Clear waypoints"
-#~ msgstr "Стереть точки пути"
-
-#~ msgid "Debug"
-#~ msgstr "Отладчик"
-
-#~ msgid ""
-#~ "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
-#~ "piracy.\n"
-#~ "The full version is available for purchase from the iTunes Store."
-#~ msgstr ""
-#~ "Во избежание пиратства Lite-версия игры Putt-Putt Saves the Zoo для iOS\n"
-#~ "не поддерживается. Полную версию игры можно купить в iTunes Store."
-
-#~ msgid ""
-#~ "The Russian version of Pajama Sam 2 is not supported yet due to "
-#~ "incomplete code."
-#~ msgstr ""
-#~ "Русская версия \"Пижама Сэм 2\" не поддерживается ввиду отсутствия куска "
-#~ "необходимого кода, который они использовали для локализации."
-
-#~ msgid "Walk / Look / Talk"
-#~ msgstr "Ходить / Смотреть / Говорить"
-
-#~ msgid "Skip / Close"
-#~ msgstr "Пропустить / Закрыть"
-
-#~ msgid "Open control panel"
-#~ msgstr "Открыть панель управления"
-
-#~ msgid "Toggle fast mode"
-#~ msgstr "Переключить быстрый режим"
-
-#~ msgid "Toggle really fast mode"
-#~ msgstr "Переключить очень быстрый режим"
-
-#~ msgid "Show object labels"
-#~ msgstr "Показывать названия объектов"
-
-#~ msgid "Show labels for objects on mouse hover"
-#~ msgstr "Показывает названия объектов при наведении курсора мыши"
-
-#~ msgid "Look Up"
-#~ msgstr "Смотреть вверх"
-
-#~ msgid "Look Down"
-#~ msgstr "Смотреть вниз"
-
-#~ msgid "Spellbook"
-#~ msgstr "Книга заклинаний"
-
-#~ msgid "Score"
-#~ msgstr "Счёт"
-
-#~ msgid "Put away object"
-#~ msgstr "Отложить обьект"
-
-#~ msgid "Extract coin"
-#~ msgstr "Извлечь монету"
-
-#~ msgid "Preferences"
-#~ msgstr "Предпочтения"
 
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "Движок не поддерживает уровень отладки '%s'"

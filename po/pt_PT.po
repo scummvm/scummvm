@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-08 21:15+0100\n"
+"POT-Creation-Date: 2020-11-10 03:04+0100\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -272,6 +272,7 @@ msgstr "Recursos"
 
 #: gui/editgamedialog.cpp:202 gui/options.cpp:1638 gui/options.cpp:1769
 #: backends/graphics/sdl/sdl-graphics.cpp:374
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 #: backends/platform/ds/arm9/source/dsoptions.cpp:97
 msgid "Graphics"
 msgstr "Gráficos"
@@ -526,7 +527,7 @@ msgid "Sine"
 msgstr "Seno"
 
 #: gui/fluidsynth-dialog.cpp:137 backends/platform/sdl/ps3/ps3.cpp:44
-#: backends/platform/sdl/psp2/psp2.cpp:48
+#: backends/platform/sdl/psp2/psp2.cpp:48 engines/dragons/metaengine.cpp:195
 msgid "Triangle"
 msgstr "Triângulo"
 
@@ -588,8 +589,10 @@ msgstr "Fechar"
 
 #: gui/gui-manager.cpp:137 engines/metaengine.cpp:108
 #: backends/platform/symbian/src/SymbianActions.cpp:40
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:451
-#: engines/grim/grim.cpp:528 engines/wintermute/keymapper_tables.h:1011
+#: engines/dragons/metaengine.cpp:165 engines/glk/scott/scott.cpp:412
+#: engines/griffon/metaengine.cpp:98 engines/grim/grim.cpp:451
+#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:245
+#: engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1474
 #: engines/wintermute/keymapper_tables.h:1704
@@ -598,8 +601,10 @@ msgstr "Cima"
 
 #: gui/gui-manager.cpp:142 engines/metaengine.cpp:113
 #: backends/platform/symbian/src/SymbianActions.cpp:41
-#: engines/glk/scott/scott.cpp:412 engines/grim/grim.cpp:456
-#: engines/grim/grim.cpp:533 engines/wintermute/keymapper_tables.h:1017
+#: engines/dragons/metaengine.cpp:171 engines/glk/scott/scott.cpp:412
+#: engines/griffon/metaengine.cpp:104 engines/grim/grim.cpp:456
+#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:251
+#: engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1480
 #: engines/wintermute/keymapper_tables.h:1710
@@ -608,8 +613,9 @@ msgstr "Baixo"
 
 #: gui/gui-manager.cpp:147 engines/metaengine.cpp:118
 #: backends/platform/symbian/src/SymbianActions.cpp:42
+#: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:110
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
-#: engines/wintermute/keymapper_tables.h:1023
+#: engines/twine/metaengine.cpp:263 engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1462
 #: engines/wintermute/keymapper_tables.h:1570
 #: engines/wintermute/keymapper_tables.h:1692
@@ -618,8 +624,9 @@ msgstr "Esquerda"
 
 #: gui/gui-manager.cpp:152 engines/metaengine.cpp:123
 #: backends/platform/symbian/src/SymbianActions.cpp:43
+#: engines/dragons/metaengine.cpp:183 engines/griffon/metaengine.cpp:116
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
-#: engines/wintermute/keymapper_tables.h:1029
+#: engines/twine/metaengine.cpp:257 engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1468
 #: engines/wintermute/keymapper_tables.h:1578
 #: engines/wintermute/keymapper_tables.h:1698
@@ -2123,6 +2130,7 @@ msgstr "Guardar jogo:"
 #: engines/toltecs/menu.cpp:292 engines/toon/toon.cpp:3362
 #: engines/tsage/scenes.cpp:599 engines/wage/saveload.cpp:752
 #: engines/xeen/saves.cpp:277 engines/zvision/file/save_manager.cpp:49
+#: engines/zvision/metaengine.cpp:194
 msgid "Save"
 msgstr "Guardar"
 
@@ -2215,6 +2223,7 @@ msgstr ""
 "Consulte o ficheiro README para mais detalhes."
 
 #: engines/engine.cpp:548 engines/metaengine.cpp:327 engines/savestate.cpp:81
+#: backends/platform/ios7/ios7_osys_main.cpp:277 engines/sky/metaengine.cpp:176
 #: engines/xeen/saves.cpp:290
 msgid "Autosave"
 msgstr "Auto-guardado"
@@ -2290,7 +2299,8 @@ msgstr "Mapeamento padrão"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:175
 #: backends/platform/symbian/src/SymbianActions.cpp:44
-#: engines/wintermute/keymapper_tables.h:43
+#: engines/hdb/metaengine.cpp:187 engines/wintermute/keymapper_tables.h:43
+#: engines/zvision/metaengine.cpp:115
 msgid "Left Click"
 msgstr "Clique esquerdo"
 
@@ -2303,14 +2313,15 @@ msgstr "Clique do meio"
 
 #: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:183
 #: backends/platform/symbian/src/SymbianActions.cpp:45
-#: engines/wintermute/keymapper_tables.h:49
+#: engines/wintermute/keymapper_tables.h:49 engines/zvision/metaengine.cpp:121
 msgid "Right Click"
 msgstr "Clique direito"
 
 #: engines/metaengine.cpp:76
 #: backends/platform/symbian/src/SymbianActions.cpp:52
-#: engines/mohawk/myst.cpp:593 engines/mohawk/riven.cpp:863
-#: engines/wintermute/keymapper_tables.h:1255
+#: engines/hdb/metaengine.cpp:238 engines/mohawk/myst.cpp:593
+#: engines/mohawk/riven.cpp:863 engines/sky/metaengine.cpp:113
+#: engines/twine/metaengine.cpp:73 engines/wintermute/keymapper_tables.h:1255
 msgid "Pause"
 msgstr "Pausa"
 
@@ -2330,7 +2341,7 @@ msgstr "Menu do jogo"
 msgid "Skip"
 msgstr "Ignorar"
 
-#: engines/metaengine.cpp:93
+#: engines/metaengine.cpp:93 engines/sky/metaengine.cpp:108
 msgid "Skip line"
 msgstr "Ignorar linha"
 
@@ -2338,10 +2349,19 @@ msgstr "Ignorar linha"
 msgid "Predictive input dialog"
 msgstr ""
 
-#: engines/metaengine.cpp:103 engines/grim/grim.cpp:508
-#: engines/grim/grim.cpp:600 engines/wintermute/keymapper_tables.h:55
+#: engines/metaengine.cpp:103 engines/griffon/metaengine.cpp:92
+#: engines/grim/grim.cpp:508 engines/grim/grim.cpp:600
+#: engines/sky/metaengine.cpp:88 engines/wintermute/keymapper_tables.h:55
 msgid "Confirm"
 msgstr "Confirmar"
+
+#: graphics/renderer.cpp:31 backends/graphics/opengl/opengl-graphics.cpp:165
+msgid "OpenGL"
+msgstr "OpenGL"
+
+#: graphics/renderer.cpp:34
+msgid "OpenGL with shaders"
+msgstr ""
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -2524,9 +2544,10 @@ msgstr "Deseja mesmo sair?"
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:316
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#: engines/mohawk/myst_stacks/menu.cpp:318
+#: engines/hdb/metaengine.cpp:255 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:186
 #: engines/scumm/help.cpp:82 engines/scumm/help.cpp:84
+#: engines/zvision/metaengine.cpp:204 engines/zvision/metaengine.cpp:222
 msgid "Quit"
 msgstr "Sair"
 
@@ -2600,12 +2621,9 @@ msgstr "'Modo Toque' do ecrã táctil - Sobre (Cliques DPad)"
 msgid "Do you want to quit ?"
 msgstr "Deseja sair?"
 
-#: backends/graphics/opengl/opengl-graphics.cpp:165
-msgid "OpenGL"
-msgstr "OpenGL"
-
 #: backends/graphics/opengl/opengl-graphics.cpp:244
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
+#: engines/twine/metaengine.cpp:160
 msgid "Center"
 msgstr "Centrado"
 
@@ -2676,16 +2694,19 @@ msgstr "Filtro gráfico ativo:"
 msgid "Windowed mode"
 msgstr "Modo janela"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:378 engines/scumm/help.cpp:86
+#: backends/graphics/sdl/sdl-graphics.cpp:378
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:136 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
 msgstr "Alternar entre janela / ecrã inteiro"
 
-#: backends/graphics/sdl/sdl-graphics.cpp:385 engines/scumm/help.cpp:99
+#: backends/graphics/sdl/sdl-graphics.cpp:385
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:143 engines/scumm/help.cpp:99
 #: engines/wintermute/keymapper_tables.h:710
 msgid "Toggle mouse capture"
 msgstr "Alternar captura do rato"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:390
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:148
 #: engines/wintermute/keymapper_tables.h:478
 #: engines/wintermute/keymapper_tables.h:847
 #: engines/wintermute/keymapper_tables.h:1061
@@ -2698,6 +2719,7 @@ msgid "Save screenshot"
 msgstr "Capturar ecrã"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:396
+#: backends/graphics3d/sdl/sdl-graphics3d.cpp:154
 msgid "Toggle aspect ratio correction"
 msgstr "Alternar correção da taxa de proporção"
 
@@ -2813,11 +2835,11 @@ msgstr "Analógico Esquerdo"
 msgid "Right Stick"
 msgstr "Analógico Direito"
 
-#: backends/keymapper/hardware-input.cpp:265
+#: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:213
 msgid "Left Shoulder"
 msgstr "Botão Superior Esquerdo"
 
-#: backends/keymapper/hardware-input.cpp:266
+#: backends/keymapper/hardware-input.cpp:266 engines/dragons/metaengine.cpp:219
 msgid "Right Shoulder"
 msgstr "Botão Superior Direito"
 
@@ -3428,10 +3450,12 @@ msgid "Indiana Jones Fight controls:"
 msgstr "Controlos de Combate do Indiana Jones:"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
+#: engines/hdb/metaengine.cpp:205
 msgid "Move left"
 msgstr "Mover para a esquerda"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:77
+#: engines/hdb/metaengine.cpp:211
 msgid "Move right"
 msgstr "Mover para a direita"
 
@@ -3508,6 +3532,7 @@ msgid "Minimize"
 msgstr "Minimizar"
 
 #: backends/platform/sdl/macosx/appmenu_osx.mm:223
+#: engines/zvision/metaengine.cpp:158
 msgid "Help"
 msgstr "Ajuda"
 
@@ -3548,14 +3573,17 @@ msgid "BSD License"
 msgstr "Licença BSD"
 
 #: backends/platform/sdl/ps3/ps3.cpp:41 backends/platform/sdl/psp2/psp2.cpp:45
+#: engines/dragons/metaengine.cpp:207
 msgid "Cross"
 msgstr "Cruz"
 
 #: backends/platform/sdl/ps3/ps3.cpp:42 backends/platform/sdl/psp2/psp2.cpp:46
+#: engines/dragons/metaengine.cpp:201
 msgid "Circle"
 msgstr "Círculo"
 
 #: backends/platform/sdl/ps3/ps3.cpp:43 backends/platform/sdl/psp2/psp2.cpp:47
+#: engines/dragons/metaengine.cpp:189
 msgid "Square"
 msgstr "Quadrado"
 
@@ -3925,7 +3953,7 @@ msgstr "Restaurar jogo:"
 #: engines/sherlock/scalpel/scalpel.cpp:1263
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
 #: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
-#: engines/zvision/file/save_manager.cpp:62
+#: engines/zvision/file/save_manager.cpp:62 engines/zvision/metaengine.cpp:199
 msgid "Restore"
 msgstr "Restaurar"
 
@@ -4058,11 +4086,19 @@ msgid ""
 "clicking the mouse"
 msgstr ""
 
-#: engines/cge/detection.cpp:113
+#: engines/bladerunner/detection_tables.h:96
+#: engines/bladerunner/detection_tables.h:107
+#: engines/kyra/detection_tables.h:80
+msgid ""
+"The fan translator does not wish his translation to be incorporated into "
+"ScummVM."
+msgstr ""
+
+#: engines/cge/detection.cpp:113 engines/cge2/detection.cpp:109
 msgid "Color Blind Mode"
 msgstr "Modo para daltónicos"
 
-#: engines/cge/detection.cpp:114
+#: engines/cge/detection.cpp:114 engines/cge2/detection.cpp:110
 msgid "Enable Color Blind Mode by default"
 msgstr "Ativar modo para daltónicos por defeito"
 
@@ -4075,6 +4111,18 @@ msgid ""
 "Use transparent dialog boxes in 16 color scenes even if the original game "
 "version did not support them"
 msgstr ""
+
+#: engines/cine/metaengine.cpp:142
+msgid "Unnamed autosave"
+msgstr "Auto-guardado sem nome"
+
+#: engines/cine/metaengine.cpp:144 engines/cine/metaengine.cpp:219
+msgid "Unnamed savegame"
+msgstr "Jogo guardado sem nome"
+
+#: engines/cine/metaengine.cpp:162 engines/cine/metaengine.cpp:232
+msgid "Empty autosave"
+msgstr "Auto-guardado vazio"
 
 #: engines/cine/saveload.cpp:861
 msgid ""
@@ -4096,6 +4144,46 @@ msgid ""
 "details on how to properly extract the DTSPEECH.XA and *.STR files from your "
 "game disc."
 msgstr ""
+
+#: engines/dragons/metaengine.cpp:124
+msgid ""
+"Error: It appears that the game data files were extracted incorrectly.\n"
+"\n"
+"You should only extract STR and XA files using the special method. The rest "
+"should be copied normally from your game CD.\n"
+"\n"
+" See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"
+msgstr ""
+
+#: engines/dragons/metaengine.cpp:142
+msgid "Action"
+msgstr "Ação"
+
+#: engines/dragons/metaengine.cpp:148
+msgid "Change Command"
+msgstr ""
+
+#: engines/dragons/metaengine.cpp:154 engines/griffon/metaengine.cpp:129
+#: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
+#: engines/hdb/metaengine.cpp:231 engines/scumm/help.cpp:225
+#: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
+#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:211
+#: engines/zvision/metaengine.cpp:164
+msgid "Inventory"
+msgstr ""
+
+#: engines/dragons/metaengine.cpp:159 engines/scumm/help.cpp:86
+#: engines/scumm/help.cpp:89
+msgid "Enter"
+msgstr ""
+
+#: engines/dragons/metaengine.cpp:225
+msgid "Debug Graphics"
+msgstr "Depurar Gráficos"
+
+#: engines/dragons/metaengine.cpp:230
+msgid "Quit Game"
+msgstr "Sair do Jogo"
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -4453,6 +4541,19 @@ msgstr "Não foi possível guardar o jogo."
 msgid "Failed to delete file."
 msgstr "Falha a eliminar o ficheiro."
 
+#: engines/griffon/metaengine.cpp:86
+msgid "Menu / Skip"
+msgstr ""
+
+#: engines/griffon/metaengine.cpp:122
+msgid "Attack"
+msgstr "Atacar"
+
+#: engines/griffon/metaengine.cpp:136
+#, fuzzy
+msgid "Speed Up Cutscene"
+msgstr "Ignorar cenas"
+
 #: engines/grim/detection.cpp:45
 msgid "Load user patch (unsupported)"
 msgstr ""
@@ -4463,7 +4564,7 @@ msgid ""
 "support for using such patches."
 msgstr ""
 
-#: engines/grim/detection.cpp:54
+#: engines/grim/detection.cpp:54 engines/zvision/metaengine.cpp:153
 msgid "Show FPS"
 msgstr "Mostrar FPS"
 
@@ -4496,18 +4597,13 @@ msgstr ""
 msgid "Pick up/Put away"
 msgstr ""
 
-#: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
-#: engines/scumm/help.cpp:225 engines/scumm/help.cpp:234
-#: engines/scumm/help.cpp:241 engines/scumm/help.cpp:249
-msgid "Inventory"
-msgstr ""
-
 #: engines/grim/grim.cpp:496 engines/grim/grim.cpp:588
 #, fuzzy
 msgid "Skip dialog lines"
 msgstr "Ignorar linha"
 
 #: engines/grim/grim.cpp:514 engines/grim/grim.cpp:606
+#: engines/hdb/metaengine.cpp:244
 msgid "Menu"
 msgstr "Menu"
 
@@ -4608,6 +4704,32 @@ msgstr "Ativa batotas"
 msgid "Debug info and level selection becomes available"
 msgstr ""
 
+#: engines/hdb/metaengine.cpp:193
+msgid "Move up"
+msgstr "Mover para cima"
+
+#: engines/hdb/metaengine.cpp:199
+msgid "Move down"
+msgstr "Mover para baixo"
+
+#: engines/hdb/metaengine.cpp:217 engines/scumm/help.cpp:128
+#: engines/scumm/help.cpp:152 engines/scumm/help.cpp:170
+#: engines/scumm/help.cpp:198 engines/scumm/help.cpp:213
+#: engines/scumm/help.cpp:224 engines/scumm/help.cpp:250
+#: engines/sky/metaengine.cpp:82 engines/wintermute/keymapper_tables.h:138
+#: engines/wintermute/keymapper_tables.h:1202
+msgid "Use"
+msgstr ""
+
+#: engines/hdb/metaengine.cpp:224
+#, fuzzy
+msgid "Clear waypoints"
+msgstr "Remover atalhos"
+
+#: engines/hdb/metaengine.cpp:250
+msgid "Debug"
+msgstr "Depurar"
+
 #: engines/hopkins/detection.cpp:40 engines/hopkins/detection.cpp:50
 msgid "Gore Mode"
 msgstr "Modo com sangue"
@@ -4693,12 +4815,6 @@ msgstr "Trocar botão de ataque esq/dir"
 msgid "Left button to attack, right button to pick up items"
 msgstr "Botão esquerdo para atacar, botão direito para apanhar itens"
 
-#: engines/kyra/detection_tables.h:465 engines/kyra/detection_tables.h:722
-msgid ""
-"The fan translator does not wish his translation to be incorporated into "
-"ScummVM."
-msgstr ""
-
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
 #: engines/ultima/ultima8/meta_engine.cpp:130
@@ -4712,6 +4828,7 @@ msgid "Interact via Right Click"
 msgstr "Interagir via Clique Direito"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
+#: engines/twine/metaengine.cpp:177
 msgid "Move Forward"
 msgstr "Avançar"
 
@@ -4728,12 +4845,14 @@ msgid "Move Right"
 msgstr "Mover à direita"
 
 #: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:479
-#: engines/pegasus/pegasus.cpp:2497
+#: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:195
+#: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Girar à esquerda"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2504
+#: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:189
+#: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "Girar à direita"
 
@@ -5446,7 +5565,7 @@ msgstr "Roland D-110 / D-10 / D-20"
 msgid "Yamaha FB-01"
 msgstr ""
 
-#: engines/sci/engine/kfile.cpp:485
+#: engines/sci/engine/kfile.cpp:485 engines/sci/metaengine.cpp:396
 msgid "(Autosave)"
 msgstr "(Auto-guardado)"
 
@@ -5483,7 +5602,7 @@ msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
 msgstr ""
 
-#: engines/sci/resource.cpp:836
+#: engines/sci/resource.cpp:843
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
@@ -5720,7 +5839,7 @@ msgstr ""
 msgid "Esc"
 msgstr ""
 
-#: engines/scumm/help.cpp:77
+#: engines/scumm/help.cpp:77 engines/zvision/metaengine.cpp:216
 msgid "Skip cutscene"
 msgstr ""
 
@@ -5752,10 +5871,6 @@ msgstr ""
 
 #: engines/scumm/help.cpp:80
 msgid "Save game 1-10"
-msgstr ""
-
-#: engines/scumm/help.cpp:86 engines/scumm/help.cpp:89
-msgid "Enter"
 msgstr ""
 
 #: engines/scumm/help.cpp:87
@@ -5866,14 +5981,6 @@ msgstr ""
 
 #: engines/scumm/help.cpp:127
 msgid "Get"
-msgstr ""
-
-#: engines/scumm/help.cpp:128 engines/scumm/help.cpp:152
-#: engines/scumm/help.cpp:170 engines/scumm/help.cpp:198
-#: engines/scumm/help.cpp:213 engines/scumm/help.cpp:224
-#: engines/scumm/help.cpp:250 engines/wintermute/keymapper_tables.h:138
-#: engines/wintermute/keymapper_tables.h:1202
-msgid "Use"
 msgstr ""
 
 #: engines/scumm/help.cpp:129 engines/scumm/help.cpp:141
@@ -6233,6 +6340,19 @@ msgstr ""
 msgid "Subtitle speed: "
 msgstr "Vel. das legendas: "
 
+#: engines/scumm/metaengine.cpp:331
+msgid ""
+"The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
+"piracy.\n"
+"The full version is available for purchase from the iTunes Store."
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:339
+msgid ""
+"The Russian version of Pajama Sam 2 is not supported yet due to incomplete "
+"code."
+msgstr ""
+
 #: engines/scumm/scumm.cpp:1906
 #, c-format
 msgid ""
@@ -6325,6 +6445,26 @@ msgstr ""
 #: engines/sky/detection.cpp:40
 msgid "Use the floppy version's intro (CD version only)"
 msgstr ""
+
+#: engines/sky/metaengine.cpp:76
+msgid "Walk / Look / Talk"
+msgstr ""
+
+#: engines/sky/metaengine.cpp:94
+msgid "Skip / Close"
+msgstr "Ignorar / Fechar"
+
+#: engines/sky/metaengine.cpp:102
+msgid "Open control panel"
+msgstr ""
+
+#: engines/sky/metaengine.cpp:118
+msgid "Toggle fast mode"
+msgstr "Alternar modo rápido"
+
+#: engines/sky/metaengine.cpp:123
+msgid "Toggle really fast mode"
+msgstr "Alternar modo muito rápido"
 
 #: engines/stark/detection.cpp:368
 #, fuzzy
@@ -6474,6 +6614,15 @@ msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr ""
 
+#: engines/sword2/detection.cpp:33
+msgid "Show object labels"
+msgstr ""
+
+#: engines/sword2/detection.cpp:34
+#, fuzzy
+msgid "Show labels for objects on mouse hover"
+msgstr "Mostra o nome dos objetos ao passar o rato por cima deles"
+
 #: engines/sword25/detection.cpp:41
 msgid "Use English speech"
 msgstr ""
@@ -6518,6 +6667,114 @@ msgstr "Não foi possível carregar rápido o jogo #%d"
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr ""
+
+#: engines/twine/metaengine.cpp:78
+msgid "Debug Next Room"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:83
+msgid "Debug Previous Room"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:88
+msgid "Debug Apply Celling Grid"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:93
+msgid "Debug Increase Celling Grid Index"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:98
+msgid "Debug Decrease Celling Grid Index"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:103
+msgid "Debug Grid Camera Up"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:108
+msgid "Debug Grid Camera Down"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:113
+msgid "Debug Grid Camera Left"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:119
+msgid "Debug Grid Camera Right"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:124
+msgid "Normal Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:129
+msgid "Athletic Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:134
+msgid "Aggressive Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:139
+msgid "Discreet Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:144
+msgid "Behaviour Action"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:150
+msgid "Change Behaviour"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:155
+#, fuzzy
+msgid "Options Menu"
+msgstr "Menu de Opções da DS"
+
+#: engines/twine/metaengine.cpp:166
+msgid "Use Selected Object"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:172
+msgid "Throw Magic Ball"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:183
+#, fuzzy
+msgid "Move Backward"
+msgstr "Retroceder"
+
+#: engines/twine/metaengine.cpp:201
+msgid "Use Protopack"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:206
+msgid "Open Holomap"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:218
+#, fuzzy
+msgid "Special Action"
+msgstr "Ação"
+
+#: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:61
+msgid "Escape"
+msgstr "Cancelar"
+
+#: engines/twine/metaengine.cpp:234
+msgid "Accept"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:240 engines/twine/metaengine.cpp:281
+msgid "Abort"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:269
+#, fuzzy
+msgid "Next Page"
+msgstr "Página seguinte"
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
@@ -6612,10 +6869,6 @@ msgid ""
 "This game requires 3D capabilities that are out ScummVM scope. As such, it "
 "is likely to be unplayable totally or partially."
 msgstr ""
-
-#: engines/wintermute/keymapper_tables.h:61
-msgid "Escape"
-msgstr "Cancelar"
 
 #: engines/wintermute/keymapper_tables.h:147
 #: engines/wintermute/keymapper_tables.h:510
@@ -7196,6 +7449,34 @@ msgstr ""
 "Este jogo guardado usa a versão %u, mas este motor só suporta versões até "
 "%d. Tem de atualizar o ScummVM para carregar este jogo guardado."
 
+#: engines/zvision/metaengine.cpp:129
+msgid "Look Up"
+msgstr "Olhar para Cima"
+
+#: engines/zvision/metaengine.cpp:135
+msgid "Look Down"
+msgstr "Olhar para Baixo"
+
+#: engines/zvision/metaengine.cpp:170
+msgid "Spellbook"
+msgstr "Livro de feitiços"
+
+#: engines/zvision/metaengine.cpp:176
+msgid "Score"
+msgstr "Pontuação"
+
+#: engines/zvision/metaengine.cpp:182
+msgid "Put away object"
+msgstr "Retirar objeto"
+
+#: engines/zvision/metaengine.cpp:188
+msgid "Extract coin"
+msgstr "Extrair moeda"
+
+#: engines/zvision/metaengine.cpp:209
+msgid "Preferences"
+msgstr "Preferências"
+
 #: engines/zvision/zvision.cpp:313
 msgid ""
 "Before playing this game, you'll need to copy the required fonts into "
@@ -7214,66 +7495,6 @@ msgstr ""
 #, fuzzy
 #~ msgid "Invetory"
 #~ msgstr "Mostrar inventário"
-
-#~ msgid "Unnamed autosave"
-#~ msgstr "Auto-guardado sem nome"
-
-#~ msgid "Unnamed savegame"
-#~ msgstr "Jogo guardado sem nome"
-
-#~ msgid "Empty autosave"
-#~ msgstr "Auto-guardado vazio"
-
-#~ msgid "Action"
-#~ msgstr "Ação"
-
-#~ msgid "Debug Graphics"
-#~ msgstr "Depurar Gráficos"
-
-#~ msgid "Quit Game"
-#~ msgstr "Sair do Jogo"
-
-#~ msgid "Attack"
-#~ msgstr "Atacar"
-
-#~ msgid "Move up"
-#~ msgstr "Mover para cima"
-
-#~ msgid "Move down"
-#~ msgstr "Mover para baixo"
-
-#~ msgid "Debug"
-#~ msgstr "Depurar"
-
-#~ msgid "Skip / Close"
-#~ msgstr "Ignorar / Fechar"
-
-#~ msgid "Toggle fast mode"
-#~ msgstr "Alternar modo rápido"
-
-#~ msgid "Toggle really fast mode"
-#~ msgstr "Alternar modo muito rápido"
-
-#~ msgid "Look Up"
-#~ msgstr "Olhar para Cima"
-
-#~ msgid "Look Down"
-#~ msgstr "Olhar para Baixo"
-
-#~ msgid "Spellbook"
-#~ msgstr "Livro de feitiços"
-
-#~ msgid "Score"
-#~ msgstr "Pontuação"
-
-#~ msgid "Put away object"
-#~ msgstr "Retirar objeto"
-
-#~ msgid "Extract coin"
-#~ msgstr "Extrair moeda"
-
-#~ msgid "Preferences"
-#~ msgstr "Preferências"
 
 #~ msgid "Engine does not support debug level '%s'"
 #~ msgstr "Este motor não suporta o nível de depuração '%s'"
