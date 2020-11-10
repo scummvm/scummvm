@@ -821,7 +821,9 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE
+			ADGF_UNSTABLE,
+			GUIO0()
+
 		},
 		GID_NOIR,
 		0,
@@ -840,7 +842,8 @@ static const TinselGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_UNSTABLE | ADGF_DEMO
+			ADGF_UNSTABLE | ADGF_DEMO,
+			GUIO0()
 		},
 		GID_NOIR,
 		0,
