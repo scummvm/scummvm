@@ -394,7 +394,7 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 		// so gave up
 		error("Game not supported while playing on 2 different CDs");
 	}
-	fadeTrack->soundDesc = soundDesc;
+	track->soundDesc = soundDesc;
 
 	// Set the volume fading parameters to indicate a fade out
 	fadeTrack->volFadeDelay = fadeDelay;

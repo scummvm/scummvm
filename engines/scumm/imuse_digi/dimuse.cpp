@@ -240,8 +240,7 @@ void IMuseDigital::callback() {
 								continue;
 							}
 						}
-					}
-					else if (track->volFadeStep > 0) { // Fade in
+					} else if (track->volFadeStep > 0) { // Fade in
 						if (track->vol < track->volFadeDest) {
 							int tempVolume = transformVolumeEqualPowToLinear(track->vol, 1); // Equal power to linear...
 							tempVolume += track->volFadeStep; // Add step...
@@ -252,8 +251,7 @@ void IMuseDigital::callback() {
 							}
 						}
 					}
-				}
-				else {
+				} else {
 					if (track->volFadeStep < 0) {
 						if (track->vol > track->volFadeDest) {
 							track->vol += track->volFadeStep; 
@@ -267,8 +265,7 @@ void IMuseDigital::callback() {
 								continue;
 							}
 						}
-					}
-					else if (track->volFadeStep > 0) {
+					} else if (track->volFadeStep > 0) {
 						if (track->vol < track->volFadeDest) {
 							track->vol += track->volFadeStep;
 							if (track->vol > track->volFadeDest) {
