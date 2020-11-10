@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-10 03:04+0100\n"
-"PO-Revision-Date: 2020-11-10 17:44+0000\n"
+"PO-Revision-Date: 2020-11-10 18:43+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -6963,11 +6963,11 @@ msgstr "File dati '%s' non trovato."
 
 #: engines/twine/metaengine.cpp:78
 msgid "Debug Next Room"
-msgstr ""
+msgstr "Debug: Stanza successiva"
 
 #: engines/twine/metaengine.cpp:83
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "Debug: Stanza precedente"
 
 #: engines/twine/metaengine.cpp:88
 msgid "Debug Apply Celling Grid"
@@ -6999,41 +6999,39 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:124
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "Comportamento Normale"
 
 #: engines/twine/metaengine.cpp:129
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "Comportamento Sportivo"
 
 #: engines/twine/metaengine.cpp:134
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "Comportamento Aggressivo"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "Comportamento Discreto"
 
 #: engines/twine/metaengine.cpp:144
-#, fuzzy
 msgid "Behaviour Action"
-msgstr "Azione precedente"
+msgstr "Azione del comportamento"
 
 #: engines/twine/metaengine.cpp:150
 msgid "Change Behaviour"
-msgstr ""
+msgstr "Cambia comportamento"
 
 #: engines/twine/metaengine.cpp:155
-#, fuzzy
 msgid "Options Menu"
-msgstr "Menu Opzioni DS"
+msgstr "Menù Opzioni"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Use Selected Object"
-msgstr ""
+msgstr "Usa oggetto selezionato"
 
 #: engines/twine/metaengine.cpp:172
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "Lancia Palla Magica"
 
 #: engines/twine/metaengine.cpp:183
 #, fuzzy
@@ -7042,7 +7040,7 @@ msgstr "Movimento indietro"
 
 #: engines/twine/metaengine.cpp:201
 msgid "Use Protopack"
-msgstr ""
+msgstr "Usa Protopack"
 
 #: engines/twine/metaengine.cpp:206
 msgid "Open Holomap"
