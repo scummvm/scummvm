@@ -58,16 +58,30 @@ int main(int argc, char *argv[]) {
 	int res;
 	if (strstr(boot_params,"psgm:play"))
 	{
-		char *param1 = strstr(boot_params, "&param=");
-		char *param2 = strstr(boot_params, "&param2=");
-		if (param1 != NULL && param2 != NULL)
+		char *path_param = strstr(boot_params, "&path=");
+		char *gameid_param = strstr(boot_params, "&game_id=");
+		if (path_param != NULL && gameid_param != NULL)
 		{
 			char path[256];
 			char game_id[64];
-			param1 += 7;
-			memcpy(path, param1, param2 - param1);
-			path[param2-param1] = 0;
-			sprintf(game_id, param2 + 8);
+
+			if (gameid_param > path_param)
+			{
+				// handle case where gameid param follows path param
+				path_param += 6;
+				memcpy(path, path_param, gameid_param - path_param);
+				path[gameid_param-path_param] = 0;
+				sprintf(game_id, gameid_param + 9);
+			}
+			else
+			{
+				// handle case where path param follows gameid param
+				gameid_param += 9;
+				memcpy(game_id, gameid_param, path_param - gameid_param);
+				game_id[path_param-gameid_param] = 0;
+				sprintf(path, path_param + 6);
+			}
+			
 			const char* args[4];
 			args[0] = "ux0:app/VSCU00001/eboot.bin";
 			args[1] = "-p";
