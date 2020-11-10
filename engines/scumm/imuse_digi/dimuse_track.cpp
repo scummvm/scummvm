@@ -321,8 +321,7 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 			debug(5, "IMuseDigital::fadeOutMusic(fade:%d, sound:%d)", fadeDelay, track->soundId);
 			if (_vm->_game.id == GID_CMI) {
 				handleComiFadeOut(track, fadeDelay);
-			}
-			else {
+			} else {
 				cloneToFadeOutTrack(track, fadeDelay);
 				flushTrack(track);
 			}
@@ -421,8 +420,7 @@ int IMuseDigital::transformVolumeLinearToEqualPow(int volume, int mode) {
 		double mappedValue = (((volume - 0) * (1.0 - 0.0)) / (127000 - 0)) + 0;
 		double eqPowValue;
 
-		switch (mode)
-		{
+		switch (mode) {
 		case 0:  // Sqrt curve
 			eqPowValue = sqrt(mappedValue);
 			break;
@@ -466,8 +464,7 @@ int IMuseDigital::transformVolumeEqualPowToLinear(int volume, int mode) {
 		double mappedValue = (((volume - 0) * (1.0 - 0.0)) / (127000 - 0)) + 0;
 		double linearValue;
 
-		switch (mode)
-		{
+		switch (mode) {
 		case 0:  // Sqrt curve
 			linearValue = mappedValue * mappedValue;
 			break;
