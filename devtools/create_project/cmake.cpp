@@ -53,10 +53,10 @@ const CMakeProvider::Library *CMakeProvider::getLibraryFromFeature(const char *f
 		{ "faad",       "faad2",             kSDLVersionAny, 0,              0,          0,                       0,                     "faad"       },
 		{ "fribidi",    "fribidi",           kSDLVersionAny, 0,              0,          0,                       0,                     "fribidi"    },
 		{ "discord",    "discord",           kSDLVersionAny, 0,              0,          0,                       0,                     "discord-rpc"},
-		{ "opengl",     nullptr,             kSDLVersionAny, "FindOpenGL",   "OpenGL",   "OPENGL_INCLUDE_DIR",    "OPENGL_gl_LIBRARY",   0            },
+		{ "opengl",     0,                   kSDLVersionAny, "FindOpenGL",   "OpenGL",   "OPENGL_INCLUDE_DIR",    "OPENGL_gl_LIBRARY",   0            },
 		{ "glew",       "glew",              kSDLVersionAny, "FindGLEW",     "GLEW",     "GLEW_INCLUDE_DIR",      "GLEW_LIBRARIES",      0            },
 		{ "libcurl",    "libcurl",           kSDLVersionAny, "FindCURL",     "CURL",     "CURL_INCLUDE_DIRS",     "CURL_LIBRARIES",      0            },
-		{ "sdlnet",     nullptr,             kSDLVersion1,   "FindSDL_net",  "SDL_net",  "SDL_NET_INCLUDE_DIRS",  "SDL_NET_LIBRARIES",   0            },
+		{ "sdlnet",     0,                   kSDLVersion1,   "FindSDL_net",  "SDL_net",  "SDL_NET_INCLUDE_DIRS",  "SDL_NET_LIBRARIES",   0            },
 		{ "sdlnet",     "SDL2_net",          kSDLVersion2,   0,              0,          0,                       0,                     "SDL2_net"   }
 	};
 

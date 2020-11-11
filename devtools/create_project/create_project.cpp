@@ -1551,8 +1551,8 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 			detectionModuleDirs.push_back(setup.srcDir + "/engines/" + i->name);
 		}
 
-		for (std::string &str : detectionModuleDirs) {
-			createModuleList(str, setup.defines, setup.testDirs, in, ex, true);
+        for (std::vector<std::string>::const_iterator i = detectionModuleDirs.begin(), end = detectionModuleDirs.end(); i != end; ++i) {
+			createModuleList(*i, setup.defines, setup.testDirs, in, ex, true);
 		}
 
 		createProjectFile(detProject, detUUID, setup, setup.srcDir, in, ex);
@@ -1992,8 +1992,8 @@ void ProjectProvider::createModuleList(const std::string &moduleDir, const Strin
 		std::string engineName = moduleRootDir.substr(p + 1);
 		std::string engineNameUpper;
 
-		for (char &c : engineName) {
-			engineNameUpper += toupper(c);
+        for (std::string::const_iterator i = engineName.begin(); i != engineName.end(); ++i) {
+			engineNameUpper += toupper(*i);
 		}
 		for (;;) {
 			std::getline(moduleMk, line);
