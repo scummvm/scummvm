@@ -329,7 +329,7 @@ void XcodeProvider::createProjectFile(const std::string &, const std::string &, 
 	}
 
 	std::ofstream project;
-	if (modulePath.size())
+	if (!modulePath.empty())
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix + '/' + modulePath);
 	else
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);

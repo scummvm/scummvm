@@ -385,6 +385,17 @@ std::string convertPathToWin(const std::string &path);
 void splitFilename(const std::string &fileName, std::string &name, std::string &ext);
 
 /**
+ * Splits a full path into directory and filename.
+ * This assumes the last part is the filename, even if it
+ * has no extension.
+ *
+ * @param path Path to split
+ * @param name Reference to a string, where to store the directory part.
+ * @param ext Reference to a string, where to store the filename part.
+ */
+void splitPath(const std::string &path, std::string &dir, std::string &file);
+
+/**
  * Returns the basename of a path.
  * examples:
  *   a/b/c/d.ext -> d.ext

@@ -118,7 +118,7 @@ void VisualStudioProvider::createProjectFile(const std::string &name, const std:
 			modulePath.erase(0, 1);
 	}
 
-	if (modulePath.size())
+	if (!modulePath.empty())
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix + '/' + modulePath);
 	else
 		addFilesToProject(moduleDir, project, includeList, excludeList, setup.filePrefix);

@@ -1266,6 +1266,12 @@ void splitFilename(const std::string &fileName, std::string &name, std::string &
 	ext = (dot == std::string::npos) ? std::string() : fileName.substr(dot + 1);
 }
 
+void splitPath(const std::string &path, std::string &dir, std::string &file) {
+	const std::string::size_type sep = path.find_last_of('/');
+	dir = (sep == std::string::npos) ? path : path.substr(0, sep);
+	file = (sep == std::string::npos) ? std::string() : path.substr(sep + 1);
+}
+
 std::string basename(const std::string &fileName) {
 	const std::string::size_type slash = fileName.find_last_of('/');
 	if (slash == std::string::npos)
@@ -1273,14 +1279,14 @@ std::string basename(const std::string &fileName) {
 	return fileName.substr(slash + 1);
 }
 
+bool producesObjectExtension(const std::string &ext) {
+	return (ext == "cpp" || ext == "c" || ext == "asm" || ext == "m" || ext == "mm");
+}
+
 bool producesObjectFile(const std::string &fileName) {
 	std::string n, ext;
 	splitFilename(fileName, n, ext);
-
-	if (ext == "cpp" || ext == "c" || ext == "asm" || ext == "m" || ext == "mm")
-		return true;
-	else
-		return false;
+	return producesObjectExtension(ext);
 }
 
 std::string toString(int num) {
@@ -1293,10 +1299,10 @@ std::string toString(int num) {
  * Checks whether the give file in the specified directory is present in the given
  * file list.
  *
- * This function does as special match against the file list. Object files (.o) are
- * excluded by default and it will not take file extensions into consideration,
- * when the extension of a file in the specified directory is one of "h", "cpp",
- * "c" or "asm".
+ * This function does as special match against the file list.
+ * By default object files (.o) are excluded, header files (.h) are included,
+ * and it will not take file extensions into consideration, when the extension
+ * of a file in the specified directory is one of "m", "cpp", "c" or "asm".
  *
  * @param dir Parent directory of the file.
  * @param fileName File name to match.
@@ -1304,6 +1310,9 @@ std::string toString(int num) {
  * @return "true" when the file is in the list, "false" otherwise.
  */
 bool isInList(const std::string &dir, const std::string &fileName, const StringList &fileList) {
+	if (fileList.empty())
+		return false;
+
 	std::string compareName, extensionName;
 	splitFilename(fileName, compareName, extensionName);
 
@@ -1311,28 +1320,34 @@ bool isInList(const std::string &dir, const std::string &fileName, const StringL
 		compareName += '.';
 
 	for (StringList::const_iterator i = fileList.begin(); i != fileList.end(); ++i) {
-		if (i->compare(0, dir.size(), dir))
-			continue;
 
 		// When no comparison name is given, we try to match whether a subset of
 		// the given directory should be included. To do that we must assure that
 		// the first character after the substring, having the same size as dir, must
 		// be a path delimiter.
 		if (compareName.empty()) {
+			if (i->compare(0, dir.size(), dir))
+				continue;
 			if (i->size() >= dir.size() + 1 && i->at(dir.size()) == '/')
 				return true;
 			else
 				continue;
 		}
 
-		const std::string lastPathComponent = ProjectProvider::getLastPathComponent(*i);
+		std::string listDir, listFile;
+		splitPath(*i, listDir, listFile);
+		if (dir.compare(0, listDir.size(), listDir))
+			continue;
+
 		if (extensionName == "o") {
 			return false;
-		} else if (!producesObjectFile(fileName) && extensionName != "h") {
-			if (fileName == lastPathComponent)
+		} else if (extensionName == "h") {
+			return true;
+		} else if (!producesObjectExtension(extensionName)) {
+			if (fileName == listFile)
 				return true;
 		} else {
-			if (!lastPathComponent.compare(0, compareName.size(), compareName))
+			if (!listFile.compare(0, compareName.size(), compareName))
 				return true;
 		}
 	}
@@ -1470,10 +1485,8 @@ FileNode *scanFiles(const std::string &dir, const StringList &includeList, const
 		std::string name, ext;
 		splitFilename(i->name, name, ext);
 
-		if (ext != "h") {
-			if (!isInList(dir, i->name, includeList))
-				continue;
-		}
+		if (!isInList(dir, i->name, includeList))
+			continue;
 
 		FileNode *child = new FileNode(i->name);
 		assert(child);
@@ -1555,7 +1568,7 @@ void ProjectProvider::createProject(BuildSetup &setup) {
 			createModuleList(*i, setup.defines, setup.testDirs, in, ex, true);
 		}
 
-		createProjectFile(detProject, detUUID, setup, setup.srcDir, in, ex);
+		createProjectFile(detProject, detUUID, setup, setup.srcDir + "/engines", in, ex);
 	}
 
 	if (setup.tests) {
