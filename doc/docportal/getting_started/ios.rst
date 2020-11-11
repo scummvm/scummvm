@@ -5,7 +5,7 @@ iOS
 
 Install ScummVM
 =====================
-There are two methods to install ScummVM onto your iOS device, and the method you use depends on whether or not your device is jailbroken. 
+There are two methods to install ScummVM onto your iOS device, and the method you use depends on whether or not the device is jailbroken. 
 
 No Jailbreak
 ^^^^^^^^^^^^^^^^
@@ -26,7 +26,7 @@ Prerequisites
 Create the Xcode project
 ***************************
 
-The first step is to download the repository containing the code we'll need to build the app with. The easiest way to do this is from the command line. Go to **Applications > Utilities > Terminal** and enter the following:
+The first step is to download the repository containing the code required to build the app. The next steps require use of the command line. Go to **Applications > Utilities > Terminal** and copy and paste the following, then press :kbd:`return` :
 
 .. code-block:: bash
 
@@ -39,16 +39,16 @@ The first step is to download the repository containing the code we'll need to b
 
         git checkout branch-2-2-0
 
-If you haven't done so before now, open Xcode from the Applications folder, and accept the End User License Agreement. Starting Xcode for the first time will also install the command line tools we require for the next steps.
+If you haven't done so before now, open Xcode from the Applications folder, and accept the End User License Agreement. Starting Xcode for the first time will also install the command line tools required for the next steps.
 
-The next step changes our present working directory and then generates the tools we need to create the Xcode project.
+The next step changes the present working directory and then generates the tools required to create the Xcode project.
 
 .. code-block:: bash
 
     cd scummvm/devtools/create_project/xcode
     xcodebuild
 
-Now we move back a few directories, to create a new build directory at the same level as the repository. 
+The next command creates a new directory called ``build`` at the same level as the repository:
 
 .. code-block:: bash
 
@@ -56,17 +56,21 @@ Now we move back a few directories, to create a new build directory at the same 
     mkdir build
     cd build
 
-Your present working directory will now be the new ``build`` directory. Unzip the downloaded iOS libraries package into the build folder by using the following command:
+The present working directory will now be the new ``build`` directory. Unzip the contents of the downloaded iOS libraries package into the build folder by using the following command:
 
 .. code-block:: bash
 
     unzip ~/Downloads/scummvm-ios7-libs-v2.zip
 
+.. note::
+
+    For newer versions of macOS, the unzip is done automatically. If this is the case, the unzip command will not work as expected. Instead, copy the contents of the ``scummvm-ios7-libs-v2`` folder into the ``build`` directory. It is simplest to do this in the Finder. 
+
 
 Generate the Xcode project
 *****************************
 
-It's time to generate the Xcode project. Ensure your present working directory is still the ``build`` directory, and then run the following on the command line:
+It's time to generate the Xcode project. Ensure the present working directory is still the ``build`` directory, and then run the following on the command line:
 
 .. code::
 
@@ -86,7 +90,7 @@ The resulting directory structure will look like this:
 
 .. tip::
 
-    To view the Home directory in the Finder, click on **Go** in the top menu bar, and then click **Home**, or alternatively use the keyboard shortcut :kbd:`shift` + :kbd:`command` + :kbd:`H`. 
+    To view the Home directory in the Finder, go to **Go > Home** in the top menu bar, or press :kbd:`command+shift+H`.
 
 Open the ``scummvm.xcodeproj`` file from the Finder, or via the command line:
 
@@ -97,12 +101,12 @@ Open the ``scummvm.xcodeproj`` file from the Finder, or via the command line:
 Build ScummVM
 *****************
 
-Once Xcode is open, connect the device you are installing ScummVM onto. At the top of the window, select **ScummVM-iOS** and then the device you connected. You will need to trust the device before it will show up on the list of connected devices. 
+Once Xcode is open, connect the device to install ScummVM onto. At the top of the window, select **ScummVM-iOS** and then the device you just connected. "Trust" the device for it to show up on the list of connected devices. 
 
 .. figure:: ../images/ios/choose_device.gif
 
    
-The last step before building the app is to change the bundle identifier and manage signing. Click on the **scummvm** project in the left pane, and then click on **ScummVM - iOS** under **TARGETS**. On the menu bar above, click on **General**. Under **Identity** you should see a field labeled **Bundle Identifier**. Here you will need to input a unique identifier in reverse-DNS format. This can be as simple as com.\ *yournamehere*. 
+The last step before building the app is to change the bundle identifier and manage signing. Click on the **scummvm** project in the left pane, and then click on **ScummVM - iOS** under **TARGETS**. On the menu bar above, click on **General**. Under **Identity** you should see a field labeled **Bundle Identifier**. Input a unique identifier in reverse-DNS format. This can be as simple as com.\ *yournamehere*. 
 
 .. figure:: ../images/ios/identifier.gif
 
@@ -113,52 +117,52 @@ Next to **General**, click on **Signing & Capabilities**. Under **Signing**, tic
 
    
 
-If you have not added your developer account to Xcode, do this now by clicking **Add an Account...** in the dropdown menu.
+If you have not added your developer account to Xcode, do this now. Click **Add an Account...** in the dropdown menu.
 
-In the upper left-hand corner, press the play button to start building ScummVM. When the build has finished, it will launch on your connected device. 
+In the upper left-hand corner, press the play button to build ScummVM. When the build has finished, it launches on your connected device. 
 
 
 Jailbreak
 ^^^^^^^^^^^^
 
-How to jailbreak an iOS device is outside the scope of this documentation. However, should you have a device that is jailbroken, iOS .deb and .ipa packages are available for install from the `ScummVM downloads page <https://www.scummvm.org/downloads>`_.
+How to jailbreak an iOS device is outside the scope of this documentation. However, should you have a device that is jailbroken, iOS ``.deb`` and ``.ipa`` packages are available for install from the `ScummVM downloads page <https://www.scummvm.org/downloads>`_.
 
 Prerequisites
 ***************
 
 - A jailbroken iOS device
-- A file manager app such as Filza on your iOS device
+- A file manager app such as Filza on the device
 
 
 Install ScummVM
 *******************
 
-Go to the `ScummVM downloads page <https://www.scummvm.org/downloads>`_ and download the recommended .deb package. Your device will ask how to open the file. Choose Filza.
+Go to the `ScummVM downloads page <https://www.scummvm.org/downloads>`_ and download the recommended ``.deb`` package. When the device asks how to open the file, choose Filza.
 
-Ensure the .deb package is saved somewhere in the ``/var/mobile`` directory. It should default to ``/var/mobile/Documents``, which is fine. Tap on the file and then tap **Install** in the upper right corner to install ScummVM.
+Ensure the ``.deb`` package is saved somewhere in the ``/var/mobile`` directory. It should default to ``/var/mobile/Documents``, which is fine. Tap on the file and then tap **Install** in the upper right corner to install ScummVM.
 
-The .ipa package can be installed in the same way.
+The ``.ipa`` package can be installed in the same way.
 
-You will need to restart your device for the install to complete. 
+Restart your device for the install to complete. 
 
 Transfer game files 
 =======================================
 
 There are multiple ways to transfer game files to your iOS device. 
 
-ScummVM has built-in Cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../settings/cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../settings/lan` page. 
+ScummVM has built-in Cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../using_scummvm/connect_cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../using_scummvm/local_webserver` page. 
 
 .. note::
 
  ScummVM's Cloud functionality does not currently support iCloud, however it is possible to upload game folders to your iCloud and then use the Files app on your iOS device to copy these folders into the local ScummVM folder.
 
-Another way to transfer files (for macOS Catalina and newer) to your device is by using the Finder while your device is connected to your Mac. In the Finder app on your Mac, navigate to **Locations** in the left pane, and click on the connected device. Click on **Files**, then drag and drop the folder containing the game files into the **ScummVM** folder. 
+Another way to transfer files (for macOS Catalina and newer) to your device is by using the Finder while your device is connected to your Mac. In the Finder app on your Mac, navigate to **Locations** in the left pane, and click on the connected device. Click on **Files**, then drag and drop the folder containing the game files into the **ScummVM** folder. For older versions of macOS, and for Windows users, file transfer can be done in iTunes. 
 
 .. image:: ../images/ios/ios_transfer_files.gif
    
-For older versions of macOS, and for Windows users, file transfer can be done in iTunes. 
 
-For more information on which files ScummVM requires, and how to add and play games, see `adding and playing games <adding_games>`_.
+
+For more information on which files ScummVM requires, and how to add and play games, see :doc:`../using_scummvm/add_play_games`. 
 
 Controls
 ============
@@ -185,18 +189,15 @@ Controls
 Click and drag mode
 ^^^^^^^^^^^^^^^^^^^^
 
-In this mode, a mouse click is sent immediately when you touch the screen, drags to wherever you slide your finger, and releases where you lift your finger. If you press down a second finger in this mode, you effectively release the left mouse button, and press down the right one, which is then released when you lift your finger again. 
+In this mode, a left mouse click is simulated when you touch the screen. The mouse pointer drags to wherever you slide your finger, and releases where you lift your finger.
 
-This is especially useful for Monkey Island 3: The Curse of Monkey Island and Full Throttle.
+If you press down a second finger in this mode, it releases the simulated left mouse button, and presses down the simulated right mouse button. The right mouse button is released when you lift your finger again. 
+
 
 Touchpad mode
 ^^^^^^^^^^^^^^^^
 
 In this mode, the cursor doesn't stay underneath your finger, but is rather moved around from its current position depending on the direction of your finger movement, just like a touchpad on a laptop.
-
-Settings
-============
-
 
 Paths
 =======
@@ -204,23 +205,9 @@ Paths
 Saved games
 ^^^^^^^^^^^^^^^^^
 
-``/var/mobile/Library/ScummVM/Savegames/`` or ``/ScummVM/Savegames/`` for a sandboxed version.
+``/var/mobile/Library/ScummVM/Savegames/`` if the device is jailbroken, or ``Savegames/`` in the ScummVM folder for a non-jailbroken device. Access this folder via the Finder or iTunes. 
 
 Configuration file
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-``/var/mobile/Library/ScummVM/Preferences`` or ``/Preferences`` for a sandboxed version.
-
-Known issues
-===============
-
-
-
-
-
-
-
-
-
-
-
+``/var/mobile/Library/ScummVM/Preferences`` if the device is jailbroken, or ``Preferences`` in the ScummVM folder for a non-jailbroken device. Access this folder via the Finder or iTunes. 
