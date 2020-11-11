@@ -54,16 +54,23 @@
 #undef MAX
 #endif
 
+/** Template method to return the absolute value of @p x. */
 template<typename T> inline T ABS(T x)		{ return (x >= 0) ? x : -x; }
+
+/** Template method to return the smallest of its parameters. */
 template<typename T> inline T MIN(T a, T b)	{ return (a < b) ? a : b; }
+
+/** Template method to return the largest of its parameters. */
 template<typename T> inline T MAX(T a, T b)	{ return (a > b) ? a : b; }
+
+/** Template method to clip the value @p v so that it remains between @p amin and @p amax. */
 template<typename T> inline T CLIP(T v, T amin, T amax)
 	{
 #if !defined(RELEASE_BUILD)
-		// debug builds use this assert to pinpoint
+		// Debug builds use this assert to pinpoint
 		// any problematic cases, where amin and amax
 		// are incorrectly ordered
-		// and thus CLIP() would return an invalid result
+		// and thus CLIP() would return an invalid result.
 		assert(amin <= amax);
 #endif
 		if (v < amin) return amin;
@@ -72,7 +79,7 @@ template<typename T> inline T CLIP(T v, T amin, T amax)
 	}
 
 /**
- * Template method which swaps the values of its two parameters.
+ * Template method to swap the values of its two parameters.
  */
 template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 
@@ -81,7 +88,7 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
 #endif
 
 /**
- * Macro which determines the number of entries in a fixed size array.
+ * Determine the number of entries in a fixed size array.
  */
 #define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
 
@@ -90,8 +97,8 @@ template<typename T> inline void SWAP(T &a, T &b) { T tmp = a; a = b; b = tmp; }
  */
 #define ARRAYEND(x) ((x) + ARRAYSIZE((x)))
 
-/*
- * Clear array using default or provided value
+/**
+ * Clear an array using the default or provided value.
  */
 template<typename T, size_t N> inline void ARRAYCLEAR(T (&array) [N], const T &value = T()) {
 	T * ptr = array;
@@ -101,8 +108,7 @@ template<typename T, size_t N> inline void ARRAYCLEAR(T (&array) [N], const T &v
 }
 
 /**
- * @def SCUMMVM_CURRENT_FUNCTION
- * This macro evaluates to the current function's name on compilers supporting this.
+ * Evaluate the name of the current function on compilers supporting this.
  */
 #if defined(__GNUC__)
 # define SCUMMVM_CURRENT_FUNCTION __PRETTY_FUNCTION__
@@ -126,96 +132,116 @@ namespace Common {
 /**
  * Print a hexdump of the data passed in. The number of bytes per line is
  * customizable.
- * @param data	the data to be dumped
- * @param len	the length of that data
- * @param bytesPerLine	number of bytes to print per line (default: 16)
- * @param startOffset	shift the shown offsets by the starting offset (default: 0)
+ *
+ * @param data          The data to be dumped.
+ * @param len           Length of that data.
+ * @param bytesPerLine  Number of bytes to print per line (default: 16).
+ * @param startOffset   Shift the shown offsets by the starting offset (default: 0).
  */
 extern void hexdump(const byte * data, int len, int bytesPerLine = 16, int startOffset = 0);
 
 
 /**
  * Parse a string for a boolean value.
+ *
  * The strings "true", "yes", and "1" are interpreted as true.
  * The strings "false", "no", and "0" are interpreted as false.
  * This function ignores case.
  *
- * @param[in] val			the string to parse
- * @param[out] valAsBool	the parsing result
- * @return 	true if the string parsed correctly, false if an error occurred.
+ * @param[in]  val        The string to parse.
+ * @param[out] valAsBool  Parsing result.
+ *
+ * @return True if the string has been parsed correctly, false if an error occurred.
  */
 bool parseBool(const String &val, bool &valAsBool);
 
 
 /**
  * Test whether the given character is alphanumeric (a-z, A-Z, 0-9).
+ *
  * If the parameter is outside the range of a signed or unsigned char, then
  * false is returned.
  *
- * @param c		the character to test
- * @return		true if the character is alphanumeric, false otherwise.
+ * @param c		The character to test.
+ *
+ * @return True if the character is alphanumeric, false otherwise.
  */
 bool isAlnum(int c);
 
 /**
  * Test whether the given character is an alphabetic letter (a-z, A-Z).
+ *
  * If the parameter is outside the range of a signed or unsigned char, then
  * false is returned.
  *
- * @param c		the character to test
- * @return		true if the character is alphabetic, false otherwise.
+ * @param c		The character to test.
+ *
+ * @return True if the character is alphabetic, false otherwise.
  */
 bool isAlpha(int c);
 
 /**
- * Test whether the given character is a decimal-digit (0-9).
+ * Test whether the given character is a decimal digit (0-9).
+ *
  * If the parameter is outside the range of a signed or unsigned char, then
  * false is returned.
  *
- * @param c		the character to test
- * @return		true if the character is a decimal-digit, false otherwise.
+ * @param c		The character to test.
+ *
+ * @return True if the character is a decimal digit, false otherwise.
  */
 bool isDigit(int c);
 
 /**
- * Test whether the given character is a hwzadecimal-digit (0-9 or A-F).
+ * Test whether the given character is a hexadecimal digit (0-9 or A-F).
+ *
  * If the parameter is outside the range of a signed or unsigned char, then
  * false is returned.
  *
- * @param c		the character to test
- * @return		true if the character is a hexadecimal-digit, false otherwise.
+ * @param c		The character to test.
+ *
+ * @return True if the character is a hexadecimal digit, false otherwise.
  */
 bool isXDigit(int c);
 
 /**
- * Test whether the given character is a lower-case letter (a-z).
+ * Test whether the given character is a lowercase letter (a-z).
+ *
  * If the parameter is outside the range of a signed or unsigned char, then
  * false is returned.
  *
- * @param c		the character to test
- * @return		true if the character is a lower-case letter, false otherwise.
+ * @param c		The character to test.
+ *
+ * @return True if the character is a lowercase letter, false otherwise.
  */
 bool isLower(int c);
 
 /**
- * Test whether the given character is a white-space.
- * White-space characters are ' ', '\t', '\r', '\n', '\v', '\f'.
+ * Test whether the given character is a whitespace.
+ *
+ * The following characters are considered a whitespace:
+ * @code
+ * ' ', '\t', '\r', '\n', '\v', '\f'
+ * @endcode
  *
  * If the parameter is outside the range of a signed or unsigned char, then
  * false is returned.
  *
- * @param c		the character to test
- * @return		true if the character is a white-space, false otherwise.
+ * @param c		The character to test.
+ *
+ * @return True if the character is a whitespace, false otherwise.
  */
 bool isSpace(int c);
 
 /**
- * Test whether the given character is an upper-case letter (A-Z).
+ * Test whether the given character is an uppercase letter (A-Z).
+ *
  * If the parameter is outside the range of a signed or unsigned char, then
  * false is returned.
  *
- * @param c		the character to test
- * @return		true if the character is an upper-case letter, false otherwise.
+ * @param c		The character to test.
+ *
+ * @return True if the character is an uppercase letter, false otherwise.
  */
 bool isUpper(int c);
 
@@ -226,8 +252,9 @@ bool isUpper(int c);
  * If the parameter is outside the range of a signed or unsigned char, then
  * false is returned.
  *
- * @param c		the character to test
- * @return		true if the character is printable, false otherwise.
+ * @param c		The character to test.
+ *
+ * @return True if the character is printable, false otherwise.
  */
 bool isPrint(int c);
 
@@ -235,36 +262,41 @@ bool isPrint(int c);
  * Test whether the given character is a punctuation character,
  * (i.e. not alphanumeric).
  *
- * @param c		the character to test
- * @return		true if the character is punctuation, false otherwise.
+ * @param c		The character to test.
+ *
+ * @return True if the character is punctuation, false otherwise.
  */
 bool isPunct(int c);
 
 /**
  * Test whether the given character is a control character.
  *
- * @param c		the character to test
- * @return		true if the character is a control character, false otherwise.
+ * @param c		The character to test.
+ *
+ * @return True if the character is a control character, false otherwise.
  */
 bool isCntrl(int c);
 
 /**
  * Test whether the given character has a graphical representation.
  *
- * @param c		the character to test
- * @return		true if the character is a graphic, false otherwise.
+ * @param c		The character to test.
+ *
+ * @return True if the character is a graphic, false otherwise.
  */
 bool isGraph(int c);
 
 
 /**
- * Represent bytes size of a file as a number with floating point and
+ * Represent the size of a file in bytes as a number with floating point and
  * largest suitable units. For example, 1474560 bytes as 1.4 MB.
  * 
- * @param bytes		size in bytes to be represented
- * @param unitsOut	(out-parameter) string with units
- * @note			use _() to translate units correctly
- * @return			string with a floating point number representing given size
+ * @param[in]  bytes     Size in bytes to be represented.
+ * @param[out] unitsOut  String with units.
+ *
+ * @note Use @c _() to translate units correctly.
+ *
+ * @return String with a floating point number representing the given size.
  */
 Common::String getHumanReadableBytes(uint64 bytes, Common::String &unitsOut);
 
