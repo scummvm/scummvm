@@ -105,8 +105,8 @@ public:
 	bool canSaveGameStateCurrently() { return _userEnabled; }
 
 	ObjectPtr loadObject(const Common::String & name, const Common::String & prototype = Common::String());
+	ObjectPtr runObject(const Common::String & name, const Common::String &prototype = Common::String());
 	void runObject(const ObjectPtr &object);
-	void runObject(const Common::String & name, const Common::String &prototype = Common::String());
 	void runProcess(const ObjectPtr &object, uint ip = 0);
 	void stopProcess(const Common::String & name);
 
