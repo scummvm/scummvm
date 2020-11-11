@@ -16,12 +16,11 @@ To run ScummVM, click on the icon in the Applications folder.
 
    macOS includes a technology called Gatekeeper, which checks to ensure only trusted software is run on your Mac. 
 
-   Since ScummVM is not available from the App Store, see this `Apple support page <https://support.apple.com/en-us/HT202491>`_ if you have any difficulty running ScummVM. 
+   Since ScummVM is not available from the App Store, see this `Apple support page <https://support.apple.com/en-us/HT202491>`_ . Follow the steps to allow ScummVM to run. 
 
 
 Linux
 --------
-
 
 There are multiple ways to install ScummVM onto a computer running Linux.
 
@@ -32,7 +31,7 @@ A Snap is an app that is bundled with its dependencies, which makes the install 
 
 The ScummVM Snap comes with a selection of freeware games and demos pre-loaded. 
 
-Enter the following on the command line (using your preferred Terminal application) to install the ScummVM Snap:
+Enter the following on the command line to install the ScummVM Snap:
 
 .. code:: bash
 
@@ -45,7 +44,7 @@ Flathub
 
 Flathub is another way to easily install apps for Linux by using Flatpak. Flatpak comes standard with Fedora-based distributions, but can be installed on any Linux operating system.  The `Flathub website <https://flatpak.org/setup/>`_ has excellent install instructions.
 
-Once Flatpak has been installed, enter the following on the command line to install ScummVM:
+Once Flatpak is installed, enter the following on the command line to install ScummVM:
 
 .. code:: bash
 
@@ -59,11 +58,11 @@ To run ScummVM, enter the following on the command line:
 
 .. note:: 
 
-   The Flatpak version of ScummVM is sandboxed, meaning that any games will need to be copied into the Documents folders to be accessible by ScummVM. 
+   The Flatpak version of ScummVM is sandboxed, meaning that any games need to be copied into the Documents folder to be accessible by ScummVM. 
 
    :doc:`Command line arguments <../advanced_topics/command_line>` can still be passed by adding them after the Flatpak run command.
 
-Some distributions have the option to install Flatpaks via the graphical desktop interface. To use this option, navigate to the `ScummVM Flatpak page <https://flathub.org/apps/details/org.scummvm.ScummVM>`_ and click the **INSTALL** button. A dialog will appear; choose the **Open with Software Install (default)** option, and click **OK**. You will then be guided through the install process. 
+Some distributions have the option to install Flatpaks via the graphical desktop interface. To use this option, navigate to the `ScummVM Flatpak page <https://flathub.org/apps/details/org.scummvm.ScummVM>`_ and click the **INSTALL** button. A dialog will appear; choose the **Open with Software Install (default)** option, and click **OK**. 
 
 Software Repository
 *********************************
@@ -75,8 +74,8 @@ If you are unsure how to install software packages from the software repository 
 To run ScummVM, enter ``scummvm`` on the command line, or launch ScummVM through the desktop interface by clicking **Menu > Games > ScummVM**
 
 
-Installing release binaries
-*********************************
+Release binaries
+*********************
 
 At this time, binary packages are only released for Debian and Ubuntu. Find and download the ScummVM version that corresponds to your operating system and architecture. To install a ``.deb`` package:
 
@@ -92,11 +91,11 @@ To run ScummVM, enter ``scummvm`` on the command line, or launch ScummVM through
 Windows
 ---------
 
-The easiest way to install ScummVM is to download the Windows installer. This installer will guide you through the install process, as well as adding a shortcut to the Start Menu. There is also an option to add a shortcut to the desktop. To run ScummVM, navigate to desktop and double click the ScummVM shortcut. To run ScummVM from the Start menu, go to **Start > All Apps > ScummVM**. For Windows XP, go to **Start > All Programs > Games > ScummVM**.
+The easiest way to install ScummVM is to download the Windows installer. This installer guides you through the install process, and adds a shortcut to the Start Menu. There is also an option to add a shortcut to the desktop. To run ScummVM, navigate to desktop and double click the ScummVM shortcut. To run ScummVM from the Start menu, go to **Start > All Apps > ScummVM**. For Windows XP, go to **Start > All Programs > Games > ScummVM**.
 
-Alternatively, you can download the Windows zipped file appropriate to your operating system (32bit or 64bit). To unzip the contents, right-click the folder, select Extract All, and then follow the instructions. To run ScummVM from this folder, find the ``scummvm.exe`` file and double click it. 
+Alternatively, download the Windows zipped file appropriate to your operating system (32bit or 64bit). To unzip the contents, right-click the folder, select Extract All, and then follow the instructions. To run ScummVM from this folder, find the ``scummvm.exe`` file and double click it. 
 
-Next steps...
------------------------
+Next steps
+-----------
 
-ScummVM is now installed and ready for you to :doc:`add your games <../using_scummvm/add_play_games>`!
+ScummVM is now installed and ready to :doc:`add and play games <../using_scummvm/add_play_games>`.
