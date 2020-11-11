@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-10 03:04+0100\n"
-"PO-Revision-Date: 2020-11-10 01:53+0000\n"
+"PO-Revision-Date: 2020-11-11 12:24+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -2385,7 +2385,7 @@ msgstr "OpenGL"
 
 #: graphics/renderer.cpp:34
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL avec shaders"
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -6985,11 +6985,11 @@ msgstr "Le fichier de données '%s' n'a pu être trouvé."
 
 #: engines/twine/metaengine.cpp:78
 msgid "Debug Next Room"
-msgstr ""
+msgstr "Debug Salle Suivante"
 
 #: engines/twine/metaengine.cpp:83
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "Debug Salle Précédente"
 
 #: engines/twine/metaengine.cpp:88
 msgid "Debug Apply Celling Grid"
@@ -7021,59 +7021,55 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:124
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "Comportement normal"
 
 #: engines/twine/metaengine.cpp:129
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "Comportement sportif"
 
 #: engines/twine/metaengine.cpp:134
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "Comportement agressif"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "Comportement discret"
 
 #: engines/twine/metaengine.cpp:144
-#, fuzzy
 msgid "Behaviour Action"
-msgstr "Action précédente"
+msgstr "Action de comportement"
 
 #: engines/twine/metaengine.cpp:150
 msgid "Change Behaviour"
-msgstr ""
+msgstr "Changer le comportement"
 
 #: engines/twine/metaengine.cpp:155
-#, fuzzy
 msgid "Options Menu"
-msgstr "Menu des options DS"
+msgstr "Menu Options"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Use Selected Object"
-msgstr ""
+msgstr "Utiliser l'objet sélectionné"
 
 #: engines/twine/metaengine.cpp:172
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "Lancer la balle magique"
 
 #: engines/twine/metaengine.cpp:183
-#, fuzzy
 msgid "Move Backward"
-msgstr "Bouger en arrière"
+msgstr "Reculer"
 
 #: engines/twine/metaengine.cpp:201
 msgid "Use Protopack"
-msgstr ""
+msgstr "Utiliser le Proto-Pack"
 
 #: engines/twine/metaengine.cpp:206
 msgid "Open Holomap"
-msgstr ""
+msgstr "Ouvrir l'Holomap"
 
 #: engines/twine/metaengine.cpp:218
-#, fuzzy
 msgid "Special Action"
-msgstr "Action"
+msgstr "Action spéciale"
 
 #: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
@@ -7081,14 +7077,13 @@ msgstr "S'échapper"
 
 #: engines/twine/metaengine.cpp:234
 msgid "Accept"
-msgstr ""
+msgstr "Accepter"
 
 #: engines/twine/metaengine.cpp:240 engines/twine/metaengine.cpp:281
 msgid "Abort"
-msgstr ""
+msgstr "Abandonner"
 
 #: engines/twine/metaengine.cpp:269
-#, fuzzy
 msgid "Next Page"
 msgstr "Page suivante"
 
