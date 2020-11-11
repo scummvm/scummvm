@@ -203,11 +203,12 @@ ObjectPtr AGDSEngine::getCurrentScreenObject(const Common::String &name) {
 }
 
 
-void AGDSEngine::runObject(const Common::String &name, const Common::String &prototype) {
+ObjectPtr AGDSEngine::runObject(const Common::String &name, const Common::String &prototype) {
 	ObjectPtr object = getCurrentScreenObject(name);
 	if (!object)
 		object = loadObject(name, prototype);
 	runObject(object);
+	return object;
 }
 
 void AGDSEngine::loadScreen(const Common::String &name) {
@@ -946,8 +947,7 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 			int present = agds_i->readUint32LE();
 			if (!name.empty() && present) {
 				debug("inventory: %s %d %d", name.c_str(), unk, present);
-				ObjectPtr object = loadObject(name);
-				runObject(name);
+				ObjectPtr object = runObject(name);
 				_inventory.add(object);
 			}
 		}
