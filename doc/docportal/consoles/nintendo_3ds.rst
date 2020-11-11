@@ -35,7 +35,7 @@ Transfer game files
 
 Transfer game folders onto the SD card. The exact location is not important. 
 
-ScummVM for the Nintendo 3DS also has Cloud functionality. See :doc:`../guides/connect_cloud`. 
+ScummVM for the Nintendo 3DS also has Cloud functionality. See :doc:`../using_scummvm/connect_cloud`. 
 
 See :doc:`../using_scummvm/add_play_games` for more information about how to add games to ScummVM. 
 
