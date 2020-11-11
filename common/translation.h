@@ -45,16 +45,26 @@ namespace Common {
 
 class File;
 
+/**
+ * Translation IDs.
+ */
 enum TranslationIDs {
-	kTranslationAutodetectId = 0,
-	kTranslationBuiltinId = 1000
+	kTranslationAutodetectId = 0, /*!< ID for the default language (the current system language). */
+	kTranslationBuiltinId = 1000  /*!< ID for the English language. */
 };
 
+/**
+ * Structure describing a translation language.
+ */
 struct TLanguage {
-	U32String name;
-	int id;
+	U32String name; /*!< Language name string. */
+	int id;         /*!< Language ID. */
 
 	TLanguage() : id(0) {}
+
+	/**
+	 * Construct a new language with name @p n and ID @p i.
+	 */
 	TLanguage(const U32String &n, int i) : name(n), id(i) {}
 };
 
@@ -62,10 +72,14 @@ bool operator<(const TLanguage &l, const TLanguage &r);
 
 typedef Array<TLanguage> TLangArray;
 
+/**
+ * Structure describing a translated message.
+ */
 struct PoMessageEntry {
-	int msgid;
-	String msgctxt;
-	U32String msgstr;
+	int msgid;         /*!< ID of the message. */
+	String msgctxt;    /*!< Context of the message. It can be empty.
+                            Can be used to solve ambiguities. */
+	U32String msgstr;  /*!< Message string. */
 };
 
 /**
@@ -74,133 +88,145 @@ struct PoMessageEntry {
 class TranslationManager : public Singleton<TranslationManager> {
 public:
 	/**
-	 * The constructor detects the system language and sets default
-	 * language to English.
+	 * Constructor that sets the current language to the default language.
+	 *
+	 * The default language is the detected system language.
 	 */
 	TranslationManager();
 	~TranslationManager();
 
 	/**
-	 * Retrieves the language string to the given id.
+	 * Retrieve the language string from the given ID.
 	 *
-	 * @param id Id of the language
-	 * @return the matching string description of the language
+	 * @param id ID of the language.
+	 *
+	 * @return Matching string description of the language.
 	 */
 	String getLangById(int id) const;
 
 	/**
-	 * Sets the current translation language to the one specified in the
-	 * parameter. If the parameter is an empty string, it sets the default
-	 * system language.
+	 * Set the current translation language to the one specified in the
+	 * parameter.
 	 *
-	 * @param lang Language to setup.
+	 * If the parameter is an empty string, it sets the translation language
+	 * to the default system language.
+	 *
+	 * @param lang Language to set up.
 	 */
 	void setLanguage(const String &lang);
 
 	/**
-	 * Sets the current translation language to the one specified by the
-	 * id parameter.
+	 * Set the current translation language to the one specified by the
+	 * @p id parameter.
 	 *
-	 * @param id The id of the language.
+	 * @param id ID of the language.
 	 */
 	void setLanguage(int id) {
 		setLanguage(getLangById(id));
 	}
 
 	/**
-	 * Parses a language string and returns an id instead.
+	 * Get the ID for the given language string.
 	 *
-	 * @param lang Language string
-	 * @return id of the language or kTranslationBuiltinId in case the
+	 * @param lang Language string.
+	 *
+	 * @return ID of the language or kTranslationBuiltinId in case the
 	 *         language could not be found.
 	 */
 	int parseLanguage(const String &lang) const;
 
 	/**
-	 * Returns the translation into the current language of the parameter
-	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message, as a U32String.
+	 * Return the translation of @p message into the current language.
+	 *
+	 * In case the message is not found in the translation catalog,
+	 * return the original untranslated message, as a U32String.
 	 */
 	U32String getTranslation(const char *message) const;
 
 	/**
-	 * Returns the translation into the current language of the parameter
-	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message, as a U32String.
+	 * Return the translation of @p message into the current language.
+	 *
+	 * In case the message is not found in the translation catalog,
+	 * return the original untranslated message, as a U32String.
 	 */
 	U32String getTranslation(const String &message) const;
 
 	/**
-	 * Returns the translation into the current language of the parameter
-	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message, as a U32String.
+	 * Return the translation of @p message into the current language.
 	 *
-	 * If a translation is found for the given context it will return that
-	 * translation, otherwise it will look for a translation for the same
-	 * massage without a context or with a different context.
+	 * In case the message is not found in the translation catalog,
+	 * return the original untranslated message, as a U32String.
+	 *
+	 * If a translation is found for the given context, return that
+	 * translation. Otherwise, look for a translation for the same
+	 * message without a context or with a different context.
 	 */
 	U32String getTranslation(const char *message, const char *context) const;
 
 	/**
-	 * Returns the translation into the current language of the parameter
-	 * message. In case the message isn't found in the translation catalog,
-	 * it returns the original untranslated message, as a U32String.
+	 * Return the translation of @p message into the current language.
 	 *
-	 * If a translation is found for the given context it will return that
-	 * translation, otherwise it will look for a translation for the same
-	 * massage without a context or with a different context.
+	 * In case the message is not found in the translation catalog,
+	 * return the original untranslated message, as a U32String.
+	 *
+	 * If a translation is found for the given context, return that
+	 * translation. Otherwise, look for a translation for the same
+	 * message without a context or with a different context.
 	 */
 	U32String getTranslation(const String &message, const String &context) const;
 
 	/**
-	 * Returns a list of supported languages.
+	 * Return a list of supported languages.
 	 *
-	 * @return The list of supported languages in a user readable form.
+	 * @return The list of supported languages in a user-readable format.
 	 */
 	const TLangArray getSupportedLanguageNames() const;
 
 	/**
-	 * Returns charset specified by selected translation language
+	 * Return the charset specified by the selected translation language.
 	 */
 	String getCurrentCharset() const;
 
 	/**
-	 * Returns currently selected translation language
+	 * Return the currently selected translation language.
 	 */
 	String getCurrentLanguage() const;
 
 private:
 	/**
-	 * Tries to find the given language or a derivate of it.
+	 * Attempt to find the given language or a derivate of it.
 	 *
-	 * @param lang Language string
-	 * @return id of the language or -1 in case no matching language could
+	 * @param lang Language string.
+	 *
+	 * @return ID of the language or -1 in case no matching language could
 	 *         be found.
 	 */
 	int32 findMatchingLanguage(const String &lang);
 
 	/**
-	 * Find the translations.dat file. It looks first using the SearchMan and
-	 * then if needed using the Themepath. If found it opens the given File
-	 * to read the translations.dat file.
+	 * Find the translations.dat file.
+	 *
+	 * First, search using the SearchMan and then, if needed, using the Themepath.
+	 * If found, open the given @p File to read the translations.dat file.
 	 */
 	bool openTranslationsFile(File &);
 
 	/**
 	 * Find the translations.dat file in the given directory node.
-	 * If found it opens the given File to read the translations.dat file.
+	 *
+	 * If found, open the given @p File to read the translations.dat file.
 	 */
 	bool openTranslationsFile(const FSNode &node, File &, int depth = -1);
 
 	/**
-	 * Load the list of languages from the translations.dat file
+	 * Load the list of languages from the translations.dat file.
 	 */
 	void loadTranslationsInfoDat();
 
 	/**
-	 * Load the translation for the given language from the translations.dat file
+	 * Load the translation for the given language from the translations.dat file.
 	 *
-	 * @param index of the language in the list of languages
+	 * @param index Index of the language in the list of languages.
 	 */
 	void loadLanguageDat(int index);
 

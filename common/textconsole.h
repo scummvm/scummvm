@@ -39,6 +39,7 @@ namespace Common {
 /**
  * An output formatter takes a source string and 'decorates' it with
  * extra information, storing the result in a destination buffer.
+ *
  * A typical use is to (optionally) enhance the output given by
  * the error() and debug() functions with extra information on
  * the state of the active engine.
@@ -52,8 +53,9 @@ void setErrorOutputFormatter(OutputFormatter f);
 
 
 /**
- * A callback which is invoked by error() just before aborting.
- * A typical example would be a function which shows a debug
+ * A callback that is invoked by error() just before aborting.
+ *
+ * A typical example would be a function that shows a debug
  * console and displays the given message in it.
  */
 typedef void (*ErrorHandler)(const char *msg);
@@ -62,6 +64,7 @@ typedef void (*ErrorHandler)(const char *msg);
  * Set a callback that is invoked by error() after the error
  * message has been printed, but before the application is
  * terminated.
+ *
  * This can be used to e.g. show a debugger console.
  */
 void setErrorHandler(ErrorHandler handler);
@@ -70,7 +73,14 @@ void setErrorHandler(ErrorHandler handler);
 
 } // End of namespace Common
 
+/**
+ * @addtogroup common_text_console
+ * @{
+ */
 
+/**
+ * Print an error message to the text console and then terminate the process.
+ */
 void NORETURN_PRE error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;
 
 #ifdef DISABLE_TEXT_CONSOLE
@@ -81,12 +91,13 @@ inline void warning(const char *s, ...) {}
 
 /**
  * Print a warning message to the text console (stderr).
+ *
  * Automatically prepends the text "WARNING: " and appends
  * an exclamation mark and a newline.
  */
 void warning(const char *s, ...) GCC_PRINTF(1, 2);
 
 #endif
-
+/** @} */
 
 #endif
