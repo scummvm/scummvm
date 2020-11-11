@@ -33,7 +33,7 @@ See :doc:`../using_scummvm/add_play_games` for more information.
 
 For games on PC or Mac formatted discs, use the native platform to access the data files, and then transfer these to Amiga. Alternatively, if you have external hardware such as a Catweazel floppy disc controller, you may be able to use this to access the files. 
 
-ScummVM for Amiga OS has Cloud and LAN functionality, to help manage the transfer of files. See :doc:`../guides/connect_cloud` and :doc:`../guides/local_webserver`. 
+ScummVM for Amiga OS has Cloud and LAN functionality, to help manage the transfer of files. See :doc:`../using_scummvm/connect_cloud` and :doc:`../using_scummvm/local_webserver`. 
 
 Controls
 =================

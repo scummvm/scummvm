@@ -7,7 +7,7 @@ Audio settings are found in four tabs:
 
 :ref:`Audio <audiotab>` | :ref:`Volume <volumetab>` | :ref:`MIDI <miditab>` | :ref:`MT-32 <mt32tab>` 
 
-For a comprehensive look at how to use ScummVM's extensive audio settings, check out our :doc:`../guides/understand_audio` guide. 
+For a comprehensive look at how to use ScummVM's extensive audio settings, check out our :doc:`../advanced_topics/understand_audio` guide. 
 
 .. _audiotab:
 

@@ -17,4 +17,4 @@ Not all settings are available for all games; for example, where there is no MID
 In the configuration file
 ==========================
 
-See the :doc:`configuration file <../advanced_options/configuration_file>` page for more information on how to do this. Configuration keywords are listed in the Settings pages below the description of each setting, in italics.
+See the :doc:`configuration file <../advanced_topics/configuration_file>` page for more information on how to do this. Configuration keywords are listed in the Settings pages below the description of each setting, in italics.
