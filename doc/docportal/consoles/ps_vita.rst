@@ -35,7 +35,7 @@ If you're using SD2Vita:
 
 Folders containing game files can be copied into any folder.
 
-ScummVM on the PS Vita supports :doc:`Cloud functionality <../guides/connect_cloud>`. 
+ScummVM on the PS Vita supports :doc:`Cloud functionality <../using_scummvm/connect_cloud>`. 
 
 For more information on how to add and play games, see the :doc:`../using_scummvm/add_play_games` page.
 
@@ -142,7 +142,7 @@ The touch control scheme can be switched in the global settings. Go to **Options
         - The rear touch pad is enabled. 
 
 
-The front touchscreen uses the direct mode by default, but this can be changed by editing the :doc:`configuration file <../advanced_options/configuration_file>` with the following keyword:
+The front touchscreen uses the direct mode by default, but this can be changed by editing the :doc:`configuration file <../advanced_topics/configuration_file>` with the following keyword:
 
 .. _frontpanel:
 

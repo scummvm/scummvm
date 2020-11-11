@@ -5,31 +5,8 @@
       :hidden:
 
       getting_started/mac_linux_windows
-
-
-.. toctree::
-      :glob:
-      :caption:  Phones and tablets
-      :maxdepth: 2
-      :hidden:
-
-      phones_tablets/*
-
-.. toctree::
-      :glob:
-      :caption:  Consoles
-      :maxdepth: 2
-      :hidden:
-
-      consoles/*
-
-.. toctree::
-      :glob:
-      :caption:  Other platforms
-      :maxdepth: 2
-      :hidden:
-
-      other_platforms/*
+      getting_started/android
+      getting_started/ios
 
 
 .. toctree::
@@ -40,8 +17,11 @@
       using_scummvm/the_launcher
       using_scummvm/add_play_games
       using_scummvm/save_load_games
+      using_scummvm/connect_cloud
+      using_scummvm/local_webserver
       using_scummvm/keyboard_shortcuts
       using_scummvm/how_to_settings
+
 
 .. toctree::
       :caption: Settings
@@ -60,29 +40,33 @@
       settings/lan
       settings/accessibility
 
+
 .. toctree::
-      :caption: Guides
+      :caption: Advanced topics
       :glob:
       :hidden:
 
-      guides/*
-
-.. toctree::
-      :caption: Games
-      :glob:
-      :hidden:
-
-      games/copy_protection
+      advanced_topics/command_line
+      advanced_topics/configuration_file
+      advanced_topics/understand_audio
+      advanced_topics/understand_graphics
 
 
 .. toctree::
-      :caption: Advanced options
       :glob:
+      :caption:  Consoles
+      :maxdepth: 2
       :hidden:
 
-      advanced_options/command_line
-      advanced_options/configuration_file
+      consoles/*
 
+.. toctree::
+      :glob:
+      :caption:  Other platforms
+      :maxdepth: 2
+      :hidden:
+
+      other_platforms/*
 
 .. toctree::
       :caption: Help
@@ -100,12 +84,6 @@
 
       release_notes/*  
 
-.. toctree::
-      :caption: Contribute to documentation
-      :glob:
-      :hidden:
-
-      contribute/*
 
 ====================
 Welcome to ScummVM!
@@ -122,25 +100,23 @@ While ScummVM was originally designed to run LucasArts' SCUMM games, over time s
 First steps
 ================
 
-We have guides available to show you how to get ScummVM up and running: 
+We have guides available to show you :column: mb-4 how to get ScummVM up and running: 
 
 .. panels::
       :container: container-fluid text-center mb-4
-      
+      :column: col-lg-12 mb-4
 
       Getting started
       ^^^^^^^^^^^^
 
       :doc:`getting_started/mac_linux_windows`
-      ---
 
-      Phones and Tablets
-      ^^^^^^^^^^^^^^^^^^^
-      :doc:`phones_tablets/ios` 
-      
-      :doc:`phones_tablets/android`
+      :doc:`getting_started/ios`
+
+      :doc:`getting_started/android`
 
       ---
+      :column: col-lg-6
 
       Consoles
       ^^^^^^^^^^^^^^^^^^^
@@ -155,10 +131,15 @@ We have guides available to show you how to get ScummVM up and running:
       :doc:`consoles/sega_dreamcast`
 
       ---
+      :column: col-lg-6
 
       Other platforms
       ^^^^^^^^^^^^^^^
       :doc:`other_platforms/amigaos_4`
+
+      :doc:`other_platforms/risc_os`
+
+      :doc:`other_platforms/atari`
 
       
 
@@ -186,59 +167,49 @@ So you have ScummVM installed, but now you need to know how to add and play some
       :doc:`using_scummvm/keyboard_shortcuts`
 
       ---
-      :column: col-lg-12
+
+      Use the features
+      ^^^^^^^^^^^^^^^^^^
+      :doc:`using_scummvm/connect_cloud`
+
+      :doc:`using_scummvm/local_webserver`
+
+      ---
 
       Change settings
       ^^^^^^^^^^^^^^^^^^^^^
       :doc:`using_scummvm/how_to_settings`
 
 
-The games!
-============
-
-One of the most commonly asked questions we get is, "Where do I get the games??". If you still have your old floppy discs and CDs lying around (and have a way to read them!), then you can use the game files from these original discs. For a list of which files you need for each game, check out the `Datafiles page <https://wiki.scummvm.org/index.php?title=Datafiles>`__ on our wiki. 
-
-If you haven't had a floppy disc or even a CD in your possession for a while, we have a `wiki page <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games>`_ dedicated to helping you find some games to play. As a quick summary, there are a few freeware games available for download on our website's `Downloads page <scummvm.org/downloads>`_, or there are digital distributors such as `GOG.com <gog.com>`_ and `Steam <https://store.steampowered.com/>`_. 
-
-Make sure you check out the `compatibility list <https://www.scummvm.org/compatibility/>`_ on our website and the `Supported Games page <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ on our wiki before you buy a game, to ensure it can run with ScummVM. 
 
 
-Definitive guides
-=====================
 
-In our Guides section, we do some deep dives into ScummVM features. 
-
-.. panels::
-      :container: text-center mb-4
-
-      Settings
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      :doc:`guides/understand_audio`
-
-      :doc:`guides/understand_graphics` 
-
-      ---
-
-      How to:
-      ^^^^^^^^^^^^^^
-      :doc:`guides/local_webserver`
-
-      :doc:`guides/connect_cloud`
-
-
-Advanced options
+Advanced topics
 ============================
 
-For our more experienced users, ScummVM has a command line interface, as well as the ability to edit settings directly in a configuration file. 
+For our more experienced users, ScummVM features a command line interface, as well as the ability to edit settings directly in a configuration file. 
+
+In this section, we also take a deep dive into understanding the graphics and audio settings. 
 
 
 .. panels::
       :container: text-center mb-4
-      :column: col-lg-12
 
-      :doc:`advanced_options/configuration_file` 
+      Advanced features
+      ^^^^^^^^^^^^^^^^^^^^
+      :doc:`advanced_topics/configuration_file` 
       
-      :doc:`advanced_options/command_line`
+      :doc:`advanced_topics/command_line`
+
+      ---
+      
+      Understand the settings
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+      :doc:`advanced_topics/understand_audio`
+
+      :doc:`advanced_topics/understand_graphics`
+
 
 
 Getting help

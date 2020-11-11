@@ -30,7 +30,7 @@ How do I get game files onto my device?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The **Other platforms** section provides information about installing ScummVM on various platforms, as well as how to transfer files to your chosen device. 
 
-ScummVM now has Cloud and LAN functionality to simplify the file transfer process. For more information, see :doc:`../guides/connect_cloud` and :doc:`../guides/local_webserver`.
+ScummVM now has Cloud and LAN functionality to simplify the file transfer process. For more information, see :doc:`../using_scummvm/connect_cloud` and :doc:`../using_scummvm/local_webserver`.
 
 On what platform(s) will ScummVM run?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -84,7 +84,7 @@ ScummVM
 ScummVM crashes, but the console window disappears too quickly to see the error message. 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-If you are using a computer, you can run ScummVM from the :doc:`command line <../advanced_options/command_line>`. By doing this, error messages remain visible even after ScummVM exits. 
+If you are using a computer, you can run ScummVM from the :doc:`command line <../advanced_topics/command_line>`. By doing this, error messages remain visible even after ScummVM exits. 
 
 You can also find error messages in the ScummVM log file. See :ref:`logfile`. 
 
@@ -139,21 +139,21 @@ The audio is really glitchy. What can I do?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 There may be a few things at play here. 
 
-- Try to increase the :ref:`audio buffer size <buffer>` in the :doc:`configuration file <../advanced_options/configuration_file>`. 
+- Try to increase the :ref:`audio buffer size <buffer>` in the :doc:`configuration file <../advanced_topics/configuration_file>`. 
 - If you are using the :ref:`MT-32 emulator <MT-32>`, your CPU may not have the processing power to keep up. In this case, you may have some success with running an external MT-32 emulator (Munt), as described in `this forum post <https://forums.scummvm.org/viewtopic.php?f=2&t=15251>`_, as long as your platform supports it. 
 - If you are using :ref:`FluidSynth <FS>`, in particular with a large Soundfont, your CPU may not have the processing power to keep up. Try selecting a different :ref:`Preferred device <device>`.
 - If you are using the :ref:`adlib` emulator, try selecting the least CPU-intensive option; MAME. 
 
 I have a CD version of a game, how do I get the sound to work without running the game from the CD?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-See using :ref:`cd`.
+See using :ref:`cdaudio`.
 
 Graphics
 ***********
 
 There are so many options... How do I know what to pick?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Start by checking out our :doc:`../guides/understand_graphics` page. It has comprehensive information on how it all works. 
+Start by checking out our :doc:`../advanced_topics/understand_graphics` page. It has comprehensive information on how it all works. 
 
 Can I just make the image larger (for example, 1 pixel becomes 4 pixels) without any smoothing or antialiasing?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
