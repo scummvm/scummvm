@@ -3,6 +3,24 @@
 Add and play games
 =================================
 
+The games
+----------------
+
+One of the most commonly asked questions we get is, "Where do I get the games??". If you still have your old floppy discs and CDs lying around, and have a way to read them, then you can use the game files from these original discs. 
+
+If you haven't had a floppy disc or even a CD in your possession for a while, there is a  ScummVM `wiki page <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games>`_ dedicated to helping you find some games to play. As a quick summary, there are a few freeware games available for download on the ScummVM website's `Downloads page <scummvm.org/downloads>`_, or there are digital distributors such as `GOG.com <gog.com>`_ and `Steam <https://store.steampowered.com/>`_. 
+
+Make sure to check out the `compatibility list <https://www.scummvm.org/compatibility/>`_ on our website, and the `Supported Games page <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ and `Platform Overview page <https://wiki.scummvm.org/index.php/Platforms/Overview>`_ on the wiki before you buy a game, to ensure it can run with ScummVM. 
+
+
+A note about copyright 
+------------------------
+
+The ScummVM team does not condone piracy. However, there are cases where the game companies themselves bundled 'cracked' executables with their games. In these cases the data files still contain the copy protection scripts, but the interpreter bypasses them - similar to what an illegally cracked version might do, only that here the producer of the game did it. There is no way for ScummVM to tell the difference between legitimate and pirated data files, so for the games where a cracked version of the original interpreter was sold at some point, ScummVM has to bypass the copy protection.
+
+In some cases ScummVM still shows the copy protection screen. Try entering any answer; chances are that it will work.
+
+
 The game files
 ------------------------
 
@@ -10,7 +28,7 @@ ScummVM needs access to the data files for each game. A comprehensive list of re
 
 .. note::
 
-    For ease of use, you can create a dedicated games directory into which subdirectories containing game files can be copied. The resulting directory structure will look somewhat like this::
+    For ease of use, you can create a dedicated games folder into which folder containing game files can be copied. The resulting directory structure will look somewhat like this::
 
         ScummVM Games
         |-- Day of the Tentacle
@@ -37,9 +55,9 @@ For games downloaded from digital distributors such as `GOG.com  <gog.com>`__, `
 
 .. tip::
 
-   A great way to share game files and automatically back up and sync your saved game states between devices is to connect a Cloud storage service to ScummVM. For detailed instructions see the :doc:`../guides/connect_cloud` guide.
+   A great way to share game files and automatically back up and sync your saved game states between devices is to connect a Cloud storage service to ScummVM. For detailed instructions see the :doc:`../using_scummvm/connect_cloud` guide.
 
-   For devices on the same local network, ScummVM can run a web server to allow hassle-free transfer of files. For detailed instructions, see the :doc:`../guides/local_webserver` guide. This is a good option if you do not wish to connect a Cloud service.
+   For devices on the same local network, ScummVM can run a web server to allow hassle-free transfer of files. For detailed instructions, see the :doc:`../using_scummvm/local_webserver` guide. This is a good option if you do not wish to connect a Cloud service.
 
 
 Multi-disc games
