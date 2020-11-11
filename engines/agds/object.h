@@ -197,7 +197,7 @@ public:
 	}
 
 	Common::Point getPosition() const {
-		return _pos;
+		return _pos - _offset;
 	}
 
 	Common::Point getOffset() const {
