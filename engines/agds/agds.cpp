@@ -176,10 +176,11 @@ void AGDSEngine::runObject(const ObjectPtr &object) {
 		if (_currentScreen->add(object)) {
 			runProcess(object);
 		} else if (!object->inScene()) {
-			debug("marking object %s as recovering...", object->getName().c_str());
+			debug("marking object %s as in-scene...", object->getName().c_str());
 			object->inScene(true);
 			runProcess(object);
-		}
+		} else
+			debug("object %s is in scene, skip run", object->getName().c_str());
 	} else
 		warning("object %s has been loaded, but was not added to any screen", object->getName().c_str());
 }
