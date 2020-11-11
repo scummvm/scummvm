@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-10 03:04+0100\n"
-"PO-Revision-Date: 2020-11-10 01:53+0000\n"
+"PO-Revision-Date: 2020-11-11 12:24+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Українська\n"
 
@@ -2366,7 +2366,7 @@ msgstr "OpenGL"
 
 #: graphics/renderer.cpp:34
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL з шейдерами"
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -6900,110 +6900,105 @@ msgstr "Не вдалося знайти файл даних '%s'."
 
 #: engines/twine/metaengine.cpp:78
 msgid "Debug Next Room"
-msgstr ""
+msgstr "Відладка: Наступна кімната"
 
 #: engines/twine/metaengine.cpp:83
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "Відладка: Попередня кімната"
 
 #: engines/twine/metaengine.cpp:88
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "Відладка: Накласти сітку стелі"
 
 #: engines/twine/metaengine.cpp:93
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "Відладка: Збільшити індекс сітки стелі"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "Відладка: Зменшити індекс сітки стелі"
 
 #: engines/twine/metaengine.cpp:103
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "Відладка: Камеру сітки вгору"
 
 #: engines/twine/metaengine.cpp:108
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "Відладка: Камеру сітки донизу"
 
 #: engines/twine/metaengine.cpp:113
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "Відладка: Камеру сітки вліво"
 
 #: engines/twine/metaengine.cpp:119
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "Відладка: Камеру сітки вправо"
 
 #: engines/twine/metaengine.cpp:124
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "Нормальна поведінка"
 
 #: engines/twine/metaengine.cpp:129
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "Атлетична поведінка"
 
 #: engines/twine/metaengine.cpp:134
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "Агресивна поведінка"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "Розсудлива поведінка"
 
 #: engines/twine/metaengine.cpp:144
-#, fuzzy
 msgid "Behaviour Action"
-msgstr "Попередня дія"
+msgstr "Дія поведінки"
 
 #: engines/twine/metaengine.cpp:150
 msgid "Change Behaviour"
-msgstr ""
+msgstr "Змінити поведінку"
 
 #: engines/twine/metaengine.cpp:155
-#, fuzzy
 msgid "Options Menu"
-msgstr "Меню налаштування DS"
+msgstr "Меню налаштування"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Use Selected Object"
-msgstr ""
+msgstr "Використати обраний об'єкт"
 
 #: engines/twine/metaengine.cpp:172
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "Кинути магічну кулю"
 
 #: engines/twine/metaengine.cpp:183
-#, fuzzy
 msgid "Move Backward"
 msgstr "Рухатись назад"
 
 #: engines/twine/metaengine.cpp:201
 msgid "Use Protopack"
-msgstr ""
+msgstr "Ужити протопак"
 
 #: engines/twine/metaengine.cpp:206
 msgid "Open Holomap"
-msgstr ""
+msgstr "Відкрити голомапу"
 
 #: engines/twine/metaengine.cpp:218
-#, fuzzy
 msgid "Special Action"
-msgstr "Дія"
+msgstr "Спеціальна дія"
 
 #: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
-msgstr "Клавіша ESC"
+msgstr "Втікти"
 
 #: engines/twine/metaengine.cpp:234
 msgid "Accept"
-msgstr ""
+msgstr "Прийняти"
 
 #: engines/twine/metaengine.cpp:240 engines/twine/metaengine.cpp:281
 msgid "Abort"
-msgstr ""
+msgstr "Перервати"
 
 #: engines/twine/metaengine.cpp:269
-#, fuzzy
 msgid "Next Page"
 msgstr "Наступна сторінка"
 
