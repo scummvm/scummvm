@@ -29,7 +29,7 @@ There are two views: list view and tile view. Click the list and tile icons at t
 Autosave
 ------------
 
-ScummVM automatically saves the game every 5 minutes. The :ref:`autosave period <autosave>` can be changed in the :doc:`Misc tab <../settings/misc>` or in the :doc:`configuration file <../advanced_options/configuration_file>`.
+ScummVM automatically saves the game every 5 minutes. The :ref:`autosave period <autosave>` can be changed in the :doc:`Misc tab <../settings/misc>` or in the :doc:`configuration file <../advanced_topics/configuration_file>`.
 
 
 Load a game
@@ -62,7 +62,7 @@ To load a saved state from within a game, press :kbd:`Ctrl+F5` (:kbd:`Ctrl+fn+F5
 Location of saved game files
 -------------------------------
 
-The save directory can be changed via the savepath setting in the :doc:`Paths tab <../settings/paths>`. It can also be changed in the :doc:`configuration file <../advanced_options/configuration_file>`.
+The save directory can be changed via the savepath setting in the :doc:`Paths tab <../settings/paths>`. It can also be changed in the :doc:`configuration file <../advanced_topics/configuration_file>`.
 
 Default saved game paths are shown below. 
 

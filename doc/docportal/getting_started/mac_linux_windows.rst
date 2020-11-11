@@ -61,7 +61,7 @@ To run ScummVM, enter the following on the command line:
 
    The Flatpak version of ScummVM is sandboxed, meaning that any games will need to be copied into the Documents folders to be accessible by ScummVM. 
 
-   :doc:`Command line arguments <../advanced_options/command_line>` can still be passed by adding them after the Flatpak run command.
+   :doc:`Command line arguments <../advanced_topics/command_line>` can still be passed by adding them after the Flatpak run command.
 
 Some distributions have the option to install Flatpaks via the graphical desktop interface. To use this option, navigate to the `ScummVM Flatpak page <https://flathub.org/apps/details/org.scummvm.ScummVM>`_ and click the **INSTALL** button. A dialog will appear; choose the **Open with Software Install (default)** option, and click **OK**. You will then be guided through the install process. 
 
