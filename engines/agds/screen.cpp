@@ -98,7 +98,7 @@ bool Screen::remove(Animation * animation) {
 ObjectPtr Screen::find(const Common::String &name) {
 	for (ChildrenType::iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr &object = *i;
-		if (object->getName() == name && object->inScene())
+		if (object->getName() == name)
 			return *i;
 	}
 	return ObjectPtr();
