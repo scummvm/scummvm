@@ -248,13 +248,13 @@ void CodeBlocksProvider::writeDefines(const StringList &defines, std::ofstream &
 }
 
 void CodeBlocksProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-                                                const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
+                                                const std::string &objPrefix, const std::string &filePrefix) {
 
 	for (FileNode::NodeList::const_iterator i = dir.children.begin(); i != dir.children.end(); ++i) {
 		const FileNode *node = *i;
 
 		if (!node->children.empty()) {
-			writeFileListToProject(*node, projectFile, indentation + 1, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '/');
+			writeFileListToProject(*node, projectFile, indentation + 1, objPrefix + node->name + '_', filePrefix + node->name + '/');
 		} else {
 			std::string name, ext;
 			splitFilename(node->name, name, ext);

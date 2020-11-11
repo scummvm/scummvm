@@ -1757,37 +1757,9 @@ std::string ProjectProvider::getLastPathComponent(const std::string &path) {
 void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &projectFile,
                                         const StringList &includeList, const StringList &excludeList,
                                         const std::string &filePrefix) {
-	// Check for duplicate object file names
-	StringList duplicate;
-
-	for (StringList::const_iterator i = includeList.begin(); i != includeList.end(); ++i) {
-		std::string fileName = getLastPathComponent(*i);
-		std::transform(fileName.begin(), fileName.end(), fileName.begin(), tolower);
-
-		// Leave out non object file names.
-		if (fileName.size() < 2 || fileName.compare(fileName.size() - 2, 2, ".o"))
-			continue;
-
-		// Check whether an duplicate has been found yet
-		if (std::find(duplicate.begin(), duplicate.end(), fileName) != duplicate.end())
-			continue;
-
-		// Search for duplicates
-		StringList::const_iterator j = i;
-		++j;
-		for (; j != includeList.end(); ++j) {
-			std::string candidateFileName = getLastPathComponent(*j);
-			std::transform(candidateFileName.begin(), candidateFileName.end(), candidateFileName.begin(), tolower);
-			if (fileName == candidateFileName) {
-				duplicate.push_back(fileName);
-				break;
-			}
-		}
-	}
-
 	FileNode *files = scanFiles(dir, includeList, excludeList);
 
-	writeFileListToProject(*files, projectFile, 0, duplicate, std::string(), filePrefix + '/');
+	writeFileListToProject(*files, projectFile, 0, std::string(), filePrefix + '/');
 
 	delete files;
 }

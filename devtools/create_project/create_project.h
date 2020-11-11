@@ -521,18 +521,16 @@ protected:
 
 	/**
 	 * Writes file entries for the specified directory node into
-	 * the given project file. It will also take care of duplicate
-	 * object files.
+	 * the given project file.
 	 *
 	 * @param dir Directory node.
 	 * @param projectFile File stream to write to.
 	 * @param indentation Indentation level to use.
-	 * @param duplicate List of duplicate object file names.
 	 * @param objPrefix Prefix to use for object files, which would name clash.
 	 * @param filePrefix Generic prefix to all files of the node.
 	 */
 	virtual void writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-	                                    const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) = 0;
+	                                    const std::string &objPrefix, const std::string &filePrefix) = 0;
 
 	/**
 	 * Output a list of project references to the file stream

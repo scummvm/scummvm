@@ -379,7 +379,7 @@ void XcodeProvider::outputMainProjectFile(const BuildSetup &setup) {
 // Files
 //////////////////////////////////////////////////////////////////////////
 void XcodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int indentation,
-                                           const StringList &duplicate, const std::string &objPrefix, const std::string &filePrefix) {
+                                           const std::string &objPrefix, const std::string &filePrefix) {
 
 	// Ensure that top-level groups are generated for i.e. engines/
 	Group *group = touchGroupsForPath(filePrefix);
@@ -393,7 +393,7 @@ void XcodeProvider::writeFileListToProject(const FileNode &dir, std::ofstream &p
 		}
 		// Process child nodes
 		if (!node->children.empty())
-			writeFileListToProject(*node, projectFile, indentation + 1, duplicate, objPrefix + node->name + '_', filePrefix + node->name + '/');
+			writeFileListToProject(*node, projectFile, indentation + 1, objPrefix + node->name + '_', filePrefix + node->name + '/');
 	}
 }
 
