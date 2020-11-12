@@ -2018,7 +2018,7 @@ const byte *ScummEngine::searchTranslatedLine(const byte *text, const Translatio
 		int originalLen = resStrLen(originalText);
 		int compare = compareResString(text, textLen + 1, originalText, originalLen + 1);
 		if (compare == 0) {
-			warning("Found in %d iteration", dbgIterationCount);
+			//warning("Found in %d iteration", dbgIterationCount);
 			const byte *translatedText = &_languageBuffer[_translatedLines[idx].translatedTextOffset];
 			return translatedText;
 		} else if (compare < 0) {
@@ -2028,7 +2028,7 @@ const byte *ScummEngine::searchTranslatedLine(const byte *text, const Translatio
 		}
 	}
 
-	warning("Not found in %d iteration", dbgIterationCount);
+	//warning("Not found in %d iteration", dbgIterationCount);
 
 	return nullptr;
 }
@@ -2065,7 +2065,7 @@ void dumpText(const byte* src, GameSettings _game) {
 			*ptr++ = chr;
 		}
 	}
-	warning("%s", buf);
+	warning("***\"%s\"", buf);
 }
 
 void ScummEngine::translateText(const byte *text, byte *trans_buff) {
@@ -2092,13 +2092,33 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 				scriptKey = (uint32)slot->where << 16;
 			}
 
-			// Fast & context aware path
+			// The purpose of the heuristics is to preserve context.
+			// The same English text can be translated differently depending on the context.
+
+			// First search by _currentRoom and _currentScript
 			const TranslationRoom &room = _roomIndex.getVal(roomKey, emptyRoom);
 			if (&room != &emptyRoom) { // FIXME?
 				TranslationRange scrpRange;
 				if (room.scriptRanges.tryGetVal(scriptKey, scrpRange)) {
 					const byte *translatedText = searchTranslatedLine(text, scrpRange);
 					if (translatedText) {
+						warning("Found by heuristic #1");
+						memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
+						return;
+					}
+				}
+			}
+
+			// If not found, search for current room
+			roomKey = _currentRoom;
+			scriptKey = WIO_ROOM << 16;
+			const TranslationRoom &room2 = _roomIndex.getVal(roomKey, emptyRoom);
+			if (&room2 != &emptyRoom) { // FIXME?
+				TranslationRange scrpRange;
+				if (room2.scriptRanges.tryGetVal(scriptKey, scrpRange)) {
+					const byte *translatedText = searchTranslatedLine(text, scrpRange);
+					if (translatedText) {
+						warning("Found by heuristic #2");
 						memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
 						return;
 					}
@@ -2107,10 +2127,9 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 		}
 
 		// Try full search
-		warning("Full search");
 
 		int left = 0;
-		int right = _numTranslatedLines;
+		int right = _numTranslatedLines - 1;
 
 		int dbgIterationCount = 0;
 
@@ -2122,7 +2141,8 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 			int originalLen = resStrLen(originalText);
 			int compare = compareResString(text, textLen + 1, originalText, originalLen + 1);
 			if (compare == 0) {
-				warning("Found in %d iteration", dbgIterationCount);
+				//warning("Found in %d iteration", dbgIterationCount);
+				warning("Found by full search");
 				const byte *translatedText = &_languageBuffer[_translatedLines[mid].translatedTextOffset];
 				memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
 				return;
@@ -2133,7 +2153,7 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 			}
 		}
 
-		warning("Not found in %d iteration", dbgIterationCount);
+		//warning("Not found in %d iteration", dbgIterationCount);
 	}
 
 	// Default: just copy the string
