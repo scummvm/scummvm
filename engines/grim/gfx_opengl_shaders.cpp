@@ -664,7 +664,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 	Math::Matrix4 viewMatrix = _viewMatrix;
 	viewMatrix.transpose();
 
-	OpenGL::ShaderGL *shaders[] = {_spriteProgram, _actorProgram, _actorLightsProgram};
+	OpenGL::ShaderGL *shaders[] = { _spriteProgram, _actorProgram, _actorLightsProgram };
 
 	if (g_grim->getGameType() == GType_MONKEY4) {
 		glEnable(GL_CULL_FACE);
@@ -682,7 +682,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		normalMatrix.invertAffineOrthonormal();
 		modelMatrix.transpose();
 
-		for (int i=0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			shaders[i]->use();
 			shaders[i]->setUniform("modelMatrix", modelMatrix);
 			if (actor->isInOverworld()) {
@@ -711,7 +711,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		modelMatrix.setPosition(pos);
 		modelMatrix.transpose();
 
-		for (int i=0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			shaders[i]->use();
 			shaders[i]->setUniform("modelMatrix", modelMatrix);
 			shaders[i]->setUniform("viewMatrix", _viewMatrix);
@@ -738,7 +738,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		if (!_currentShadowArray->dontNegate)
 			normal = -normal;
 
-		for (int i=0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			shaders[i]->use();
 			shaders[i]->setUniform("shadow._active", true);
 			shaders[i]->setUniform("shadow._color", color);
@@ -752,7 +752,7 @@ void GfxOpenGLS::startActorDraw(const Actor *actor) {
 		glEnable(GL_POLYGON_OFFSET_FILL);
 	}
 	else {
-		for (int i=0; i < 3; i++) {
+		for (int i = 0; i < 3; i++) {
 			shaders[i]->use();
 			shaders[i]->setUniform("shadow._active", false);
 		}
