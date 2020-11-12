@@ -851,14 +851,14 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	_redraw->redrawEngineActions(_redraw->reqBgRedraw);
 
 	// workaround to fix hero redraw after drowning
-	if (_actor->cropBottomScreen && _redraw->reqBgRedraw == 1) {
+	if (_actor->cropBottomScreen && _redraw->reqBgRedraw) {
 		_scene->sceneHero->staticFlags.bIsHidden = 1;
 		_redraw->redrawEngineActions(1);
 		_scene->sceneHero->staticFlags.bIsHidden = 0;
 	}
 
 	_scene->needChangeScene = -1;
-	_redraw->reqBgRedraw = 0;
+	_redraw->reqBgRedraw = false;
 
 	return 0;
 }
