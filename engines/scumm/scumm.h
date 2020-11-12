@@ -1160,9 +1160,8 @@ public:
 
 private:
 	struct TranslatedLine {
-		uint16 key;
-		uint32 originalOffset;
-		uint32 translatedOffset;
+		uint32 originalTextOffset;
+		uint32 translatedTextOffset;
 	};
 
 	struct TranslationRange {
@@ -1173,12 +1172,18 @@ private:
 		TranslationRange() : left(0), right(0) {}
 	};
 
+	struct TranslationRoom {
+		Common::HashMap<uint32, TranslationRange> scriptRanges;
+	};
+
 	bool _existLanguageFile;
 	byte *_languageBuffer;
-	TranslatedLine *_translatedLines;
-	Common::HashMap<uint16, TranslationRange> _languageIndex;
 	int _numTranslatedLines;
-	int _lastUsedTranslatedLine;
+	TranslatedLine *_translatedLines;
+	uint16 *_languageLineIndex;
+	Common::HashMap<byte, TranslationRoom> _roomIndex;
+
+	const byte *searchTranslatedLine(const byte *text, const TranslationRange &range);
 
 public:
 
