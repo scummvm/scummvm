@@ -1927,7 +1927,7 @@ void ScummEngine::loadLanguageBundle() {
 		return;
 	}
 
-	_numTranslatedLines = file.readUint32LE();
+	_numTranslatedLines = file.readUint16LE();
 	_translatedLines = new TranslatedLine[_numTranslatedLines];
 	_languageLineIndex = new uint16[_numTranslatedLines];
 
