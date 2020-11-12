@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-10 03:04+0100\n"
-"PO-Revision-Date: 2020-11-10 01:53+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2020-11-12 07:37+0000\n"
+"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -2354,7 +2354,7 @@ msgstr "OpenGL"
 
 #: graphics/renderer.cpp:34
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL sävyttimillä"
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -6926,44 +6926,41 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:124
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "Tavallinen käyttäytyminen"
 
 #: engines/twine/metaengine.cpp:129
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "Urheilullinen käyttäytyminen"
 
 #: engines/twine/metaengine.cpp:134
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "Hyökkäävä käyttäytyminen"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "Hienovarainen käyttäytyminen"
 
 #: engines/twine/metaengine.cpp:144
-#, fuzzy
 msgid "Behaviour Action"
-msgstr "Edellinen toiminto"
+msgstr "Käyttäytymistoiminta"
 
 #: engines/twine/metaengine.cpp:150
 msgid "Change Behaviour"
-msgstr ""
+msgstr "Vaihda käyttäytymistä"
 
 #: engines/twine/metaengine.cpp:155
-#, fuzzy
 msgid "Options Menu"
-msgstr "DS asetusvalikko"
+msgstr "Asetusvalikko"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Use Selected Object"
-msgstr ""
+msgstr "Käytä valittua esinettä"
 
 #: engines/twine/metaengine.cpp:172
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "Heitä taikapallo"
 
 #: engines/twine/metaengine.cpp:183
-#, fuzzy
 msgid "Move Backward"
 msgstr "Liiku taaksepäin"
 
@@ -6973,12 +6970,11 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:206
 msgid "Open Holomap"
-msgstr ""
+msgstr "Avaa holokartta"
 
 #: engines/twine/metaengine.cpp:218
-#, fuzzy
 msgid "Special Action"
-msgstr "Toiminta"
+msgstr "Erikoistoiminto"
 
 #: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
@@ -6986,14 +6982,13 @@ msgstr "Esc"
 
 #: engines/twine/metaengine.cpp:234
 msgid "Accept"
-msgstr ""
+msgstr "Hyväksy"
 
 #: engines/twine/metaengine.cpp:240 engines/twine/metaengine.cpp:281
 msgid "Abort"
-msgstr ""
+msgstr "Keskeytä"
 
 #: engines/twine/metaengine.cpp:269
-#, fuzzy
 msgid "Next Page"
 msgstr "Seuraava sivu"
 
