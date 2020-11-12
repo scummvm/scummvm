@@ -651,6 +651,7 @@ bool Menu::init() {
 	return HQR::getEntry(plasmaEffectPtr, Resources::HQR_RESS_FILE, RESSHQR_PLASMAEFFECT) > 0;
 }
 
+// TODO: if you stay long enough in the main menu without actions, the credits-scene is started
 EngineState Menu::run() {
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
