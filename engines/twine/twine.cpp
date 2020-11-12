@@ -305,9 +305,9 @@ void TwinEEngine::initConfigurations() {
 
 	const char *lng = Common::getLanguageDescription(_gameLang);
 	cfgfile.LanguageId = getLanguageTypeIndex(lng);
-	cfgfile.Voice = ConfGetOrDefault("Voice", "ON") == "ON";
-	cfgfile.FlagDisplayText = ConfGetOrDefault("FlagDisplayText", "ON") == "ON";
-	const Common::String midiType = ConfGetOrDefault("MidiType", "auto");
+	cfgfile.Voice = ConfGetIntOrDefault("voice", 1) == 1;
+	cfgfile.FlagDisplayText = ConfGetIntOrDefault("displaytext", 1) == 1;
+	const Common::String midiType = ConfGetOrDefault("miditype", "auto");
 	if (midiType == "None") {
 		cfgfile.MidiType = MIDIFILE_NONE;
 	} else {
@@ -323,21 +323,21 @@ void TwinEEngine::initConfigurations() {
 			debug("Could not find midi hqr file");
 		}
 	}
-	cfgfile.Version = ConfGetIntOrDefault("Version", EUROPE_VERSION);
-	cfgfile.UseCD = ConfGetIntOrDefault("UseCD", 0);
-	cfgfile.Sound = ConfGetIntOrDefault("Sound", 1);
-	cfgfile.Movie = ConfGetIntOrDefault("Movie", CONF_MOVIE_FLA);
-	cfgfile.Fps = ConfGetIntOrDefault("Fps", DEFAULT_FRAMES_PER_SECOND);
-	cfgfile.Debug = ConfGetIntOrDefault("Debug", 0) == 1;
+	cfgfile.Version = ConfGetIntOrDefault("version", EUROPE_VERSION);
+	cfgfile.UseCD = ConfGetIntOrDefault("usecd", 0) == 1;
+	cfgfile.Sound = ConfGetIntOrDefault("sound", 1) == 1;
+	cfgfile.Movie = ConfGetIntOrDefault("movie", CONF_MOVIE_FLA);
+	cfgfile.Fps = ConfGetIntOrDefault("fps", DEFAULT_FRAMES_PER_SECOND);
+	cfgfile.Debug = ConfGetIntOrDefault("debug", 0) == 1;
 
-	cfgfile.UseAutoSaving = ConfGetIntOrDefault("UseAutoSaving", 0);
-	cfgfile.CrossFade = ConfGetIntOrDefault("CrossFade", 0);
-	cfgfile.WallCollision = ConfGetIntOrDefault("WallCollision", 0);
+	cfgfile.UseAutoSaving = ConfGetIntOrDefault("useautosaving", 0);
+	cfgfile.CrossFade = ConfGetIntOrDefault("crossfade", 0);
+	cfgfile.WallCollision = ConfGetIntOrDefault("wallcollision", 0);
 
-	_actor->autoAgressive = ConfGetIntOrDefault("CombatAuto", 1) == 1;
-	cfgfile.ShadowMode = ConfGetIntOrDefault("Shadow", 2);
-	cfgfile.SceZoom = ConfGetIntOrDefault("SceZoom", 0) == 0;
-	cfgfile.PolygonDetails = ConfGetIntOrDefault("PolygonDetails", 2);
+	_actor->autoAgressive = ConfGetIntOrDefault("combatauto", 1) == 1;
+	cfgfile.ShadowMode = ConfGetIntOrDefault("shadow", 2);
+	cfgfile.SceZoom = ConfGetIntOrDefault("scezoom", 0) == 0;
+	cfgfile.PolygonDetails = ConfGetIntOrDefault("polygondetails", 2);
 }
 
 void TwinEEngine::initEngine() {

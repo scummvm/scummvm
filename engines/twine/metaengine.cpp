@@ -60,7 +60,95 @@ public:
 	}
 
 	Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;
+
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
+
+static const ExtraGuiOption OptWallCollision = {
+	_s("Enable wall collisions"),
+	_s("Enable the original wall collision damage"),
+	"wallcollision",
+	false
+};
+
+static const ExtraGuiOption OptCrossFade = {
+	_s("Enable cross fade"),
+	_s("Enable cross fading of images and scenes"),
+	"crossfade",
+	false
+};
+
+// this only changes the menu and doesn't change the autosave behaviour - as scummvm is handling this now
+static const ExtraGuiOption OptDisableSaveMenu = {
+	_s("Disable save menu"),
+	_s("The original only had autosaves. This allows you to save whenever you want."),
+	"useautosaving",
+	false
+};
+
+static const ExtraGuiOption OptDebug = {
+	_s("Enable debug mode"),
+	_s("Enable the debug mode"),
+	"debug",
+	false
+};
+
+static const ExtraGuiOption OptUseCD = {
+	_s("Enable audio CD"),
+	_s("Enable the original audio cd track"),
+	"usecd",
+	false
+};
+
+static const ExtraGuiOption OptSound = {
+	_s("Enable sound"),
+	_s("Enable the sound for the game"),
+	"sound",
+	true
+};
+
+static const ExtraGuiOption OptVoices = {
+	_s("Enable voices"),
+	_s("Enable the voices for the game"),
+	"voice",
+	true
+};
+
+static const ExtraGuiOption OptText = {
+	_s("Enable text"),
+	_s("Enable the text for the game"),
+	"displaytext",
+	true
+};
+
+static const ExtraGuiOption OptMovies = {
+	_s("Enable movies"),
+	_s("Enable the cutscenes for the game"),
+	"movie",
+	true
+};
+
+static const ExtraGuiOption OptUSAVersion = {
+	_s("Use the USA version"),
+	_s("Enable the USA specific version flags"),
+	"version",
+	false
+};
+
+const ExtraGuiOptions TwinEMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+	options.push_back(OptWallCollision);
+	options.push_back(OptCrossFade);
+	options.push_back(OptDisableSaveMenu);
+	options.push_back(OptDebug);
+	options.push_back(OptUseCD);
+	options.push_back(OptSound);
+	options.push_back(OptMovies);
+	options.push_back(OptUSAVersion);
+	options.push_back(OptVoices);
+	options.push_back(OptText);
+	return options;
+}
 
 Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
