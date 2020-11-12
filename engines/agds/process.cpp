@@ -193,7 +193,7 @@ void Process::run() {
 			activate();
 			continue;
 		case kExitCodeLoadInventoryObject:
-			_engine->inventory().add(_engine->loadObject(getExitArg1()));
+			_engine->inventory().add(_engine->runObject(getExitArg1()));
 			activate();
 			continue;
 		case kExitCodeCloseInventory:
