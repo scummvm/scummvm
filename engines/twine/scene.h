@@ -345,12 +345,18 @@ public:
 	void processEnvironmentSound();
 	void initSceneVars();
 
+	bool isGameRunning() const;
+
 	/**
 	 * Process actor zones
 	 * @param actorIdx Process actor index
 	 */
 	void processActorZones(int32 actorIdx);
 };
+
+inline bool Scene::isGameRunning() const {
+	return currentScene != nullptr;
+}
 
 } // namespace TwinE
 

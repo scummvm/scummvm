@@ -243,7 +243,7 @@ void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
 	_engine->_interface->drawLine(left + 1, bottom, right, bottom, 73); // bottom line
 }
 
-void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, const char *dialText, bool hover) {
+void Menu::drawButtonGfx(const MenuSettings *menuSettings, int32 width, int32 topheight, int32 buttonId, const char *dialText, bool hover) {
 	const int32 left = width - kMainMenuButtonSpan / 2;
 	const int32 right = width + kMainMenuButtonSpan / 2;
 
@@ -252,7 +252,7 @@ void Menu::drawButtonGfx(int32 width, int32 topheight, int32 buttonId, const cha
 	const int32 bottom = topheight + 25;
 
 	if (hover) {
-		if (buttonId <= MenuButtonTypes::kMasterVolume && buttonId >= MenuButtonTypes::kMusicVolume) {
+		if (menuSettings == &volumeMenuState && buttonId <= MenuButtonTypes::kMasterVolume && buttonId >= MenuButtonTypes::kMusicVolume) {
 			int32 newWidth = 0;
 			switch (buttonId) {
 			case MenuButtonTypes::kMusicVolume: {
@@ -328,13 +328,13 @@ void Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 		const char *text = menuSettings->getButtonText(_engine->_text, i);
 		if (hover) {
 			if (i == buttonNumber) {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, text, hover);
+				drawButtonGfx(menuSettings, kMainMenuButtonWidth, topHeight, menuItemId, text, hover);
 			}
 		} else {
 			if (i == buttonNumber) {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, text, true);
+				drawButtonGfx(menuSettings, kMainMenuButtonWidth, topHeight, menuItemId, text, true);
 			} else {
-				drawButtonGfx(kMainMenuButtonWidth, topHeight, menuItemId, text, false);
+				drawButtonGfx(menuSettings, kMainMenuButtonWidth, topHeight, menuItemId, text, false);
 			}
 		}
 
@@ -350,7 +350,13 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 
 	_engine->_input->enableKeyMap(uiKeyMapId);
 
-	_engine->_screens->loadMenuImage(false);
+	// if we are running the game already, the buttons are just rendered on top of the scene
+	if (!_engine->_scene->isGameRunning()) {
+		_engine->_screens->loadMenuImage(false);
+	} else {
+		_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+		_engine->flip();
+	}
 	do {
 		_engine->readKeys();
 
@@ -418,9 +424,9 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 					_engine->cfgfile.SceZoom = !_engine->cfgfile.SceZoom;
 				}
 				if (_engine->cfgfile.SceZoom) {
-					menuSettings->setActiveButtonTextId(TextId::kNoScenaryZoom);
-				} else {
 					menuSettings->setActiveButtonTextId(TextId::kScenaryZoomOn);
+				} else {
+					menuSettings->setActiveButtonTextId(TextId::kNoScenaryZoom);
 				}
 				break;
 			default:
@@ -582,6 +588,7 @@ int32 Menu::volumeMenu() {
 void Menu::inGameOptionsMenu() {
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 	_engine->_menu->optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
+	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 	_engine->_menu->optionsMenu();
 	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 	optionsMenuState.setButtonTextId(0, TextId::kReturnMenu);
