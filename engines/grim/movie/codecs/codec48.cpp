@@ -120,10 +120,10 @@ bool Codec48Decoder::decode(byte *dst, const byte *src) {
 		break;
 	case 5:
 		// Some other encoding, but it's unused. (Good)
-		warning("SmushDecoder::decode() codec 48 frame type 5 encountered! Please report!\n");
+		warning("SmushDecoder::decode() codec 48 frame type 5 encountered! Please report!");
 		break;
 	default:
-		warning("SmushDecoder::decode() Unknown codec 48 frame type %d\n", src[0]);
+		warning("SmushDecoder::decode() Unknown codec 48 frame type %d", src[0]);
 		break;
 	}
 

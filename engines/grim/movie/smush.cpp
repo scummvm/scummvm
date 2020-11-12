@@ -51,7 +51,7 @@ SmushPlayer::SmushPlayer(bool demo) : MoviePlayer(), _demo(demo) {
 }
 
 bool SmushPlayer::loadFile(const Common::String &filename) {
-	warning("Play video %s\n", filename.c_str());
+	warning("Play video %s", filename.c_str());
 	bool success = false;
 	_videoDecoder = _smushDecoder;
 	if (!_demo)
