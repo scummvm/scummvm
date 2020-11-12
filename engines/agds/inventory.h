@@ -26,6 +26,7 @@
 #include "common/scummsys.h"
 #include "common/array.h"
 #include "common/ptr.h"
+#include "common/rect.h"
 
 namespace AGDS {
 class Object;
@@ -62,6 +63,7 @@ public:
 
 	ObjectPtr get(int index) const;
 	int find(const Common::String &name) const;
+	ObjectPtr find(const Common::Point pos) const;
 
 	int free() const;
 	void clear();

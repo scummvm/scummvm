@@ -183,7 +183,7 @@ bool Object::pointIn(Common::Point pos) {
 
 void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	if (_picture) {
-		Common::Point dst = _pos - _offset;
+		Common::Point dst = getPosition();
 		Common::Rect srcRect = _picture->getRect();
 		uint32 color = (_alpha << 24) | 0xffffff; //fixme: _picture->format.ARGBToColor(_alpha, 255, 255, 255); is not working
 		if (Common::Rect::getBlitRect(dst, srcRect, backbuffer.getRect())) {

@@ -24,6 +24,7 @@
 #include "agds/object.h"
 #include "common/debug.h"
 #include "common/textconsole.h"
+#include "graphics/transparent_surface.h"
 
 namespace AGDS {
 
@@ -57,6 +58,23 @@ int Inventory::find(const Common::String &name) const {
 		if (_entries[i] && _entries[i]->getName() == name)
 			return i;
 	return -1;
+}
+
+ObjectPtr Inventory::find(const Common::Point pos) const {
+	for (uint i = 0; i < _entries.size(); ++i) {
+		auto & object = _entries[i];
+		if (!object)
+			continue;
+
+		auto picture = object->getPicture();
+		if (picture) {
+			auto rect = picture->getRect();
+			rect.moveTo(object->getPosition());
+			if (rect.contains(pos))
+				return object;
+		}
+	}
+	return ObjectPtr();
 }
 
 void Inventory::clear() {
