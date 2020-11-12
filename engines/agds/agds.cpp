@@ -473,6 +473,9 @@ Common::Error AGDSEngine::run() {
 
 		if (userEnabled() && _currentScreen) {
 			ObjectPtr object = _currentScreen->find(_mouse);
+			if (!object)
+				object = _inventory.find(_mouse);
+
 			Animation *cursor = object ? object->getMouseCursor() : NULL;
 			if (cursor)
 				mouseCursor = cursor;
