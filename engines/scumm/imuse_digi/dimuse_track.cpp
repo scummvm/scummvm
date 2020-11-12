@@ -158,11 +158,26 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		} else
 			error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
 
+		int fadeDelay = 30; // Default fade value if not found anywhere else
+
 		if (otherTrack && otherTrack->used && !otherTrack->toBeRemoved) {
 			track->curRegion = otherTrack->curRegion;
 			track->dataOffset = otherTrack->dataOffset;
 			track->regionOffset = otherTrack->regionOffset;
 			track->dataMod12Bit = otherTrack->dataMod12Bit;
+
+			if (_vm->_game.id == GID_CMI) {
+				fadeDelay = otherTrack->volFadeDelay != 0 ? otherTrack->volFadeDelay : fadeDelay;
+				track->regionOffset -= track->regionOffset >= (track->feedSize / _callbackFps) ? (track->feedSize / _callbackFps) : 0;
+			}
+		}
+		if (_vm->_game.id == GID_CMI) {
+			// Fade in the new track
+			track->vol = 0;
+			track->volFadeDelay = fadeDelay;
+			track->volFadeDest = volume * 1000;
+			track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * fadeDelay);
+			track->volFadeUsed = true;
 		}
 
 		track->stream = Audio::makeQueuingAudioStream(freq, track->mixerFlags & kFlagStereo);
@@ -279,9 +294,18 @@ void IMuseDigital::fadeOutMusicAndStartNew(int fadeDelay, const char *filename, 
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			debug(5, "IMuseDigital::fadeOutMusicAndStartNew(sound:%d) - starting", soundId);
-			startMusicWithOtherPos(filename, soundId, 0, 127, track);
-			cloneToFadeOutTrack(track, fadeDelay);
-			flushTrack(track);
+
+			// Store the fadeDelay in the track: startMusicWithOtherPos will use it to 
+			// fade in the new track; this will match fade in and fade out speeds.
+			if (_vm->_game.id == GID_CMI) {
+				track->volFadeDelay = fadeDelay;
+				startMusicWithOtherPos(filename, soundId, 0, 127, track);
+				handleComiFadeOut(track, fadeDelay);
+			} else {
+				startMusicWithOtherPos(filename, soundId, 0, 127, track);
+				cloneToFadeOutTrack(track, fadeDelay);
+				flushTrack(track);
+			}
 			break;
 		}
 	}
@@ -295,8 +319,12 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			debug(5, "IMuseDigital::fadeOutMusic(fade:%d, sound:%d)", fadeDelay, track->soundId);
-			cloneToFadeOutTrack(track, fadeDelay);
-			flushTrack(track);
+			if (_vm->_game.id == GID_CMI) {
+				handleComiFadeOut(track, fadeDelay);
+			} else {
+				cloneToFadeOutTrack(track, fadeDelay);
+				flushTrack(track);
+			}
 			break;
 		}
 	}
@@ -324,6 +352,16 @@ void IMuseDigital::setTrigger(TriggerParams *trigger) {
 	_triggerUsed = true;
 }
 
+Track *IMuseDigital::handleComiFadeOut(Track *track, int fadeDelay) {
+	track->volFadeDelay = fadeDelay;
+	track->volFadeDest = 0;
+	track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * fadeDelay);
+	track->volFadeUsed = true;
+	track->toBeRemoved = true;
+	return track;
+}
+
+
 Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	assert(track);
 	Track *fadeTrack;
@@ -337,7 +375,6 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 
 	assert(track->trackId < MAX_DIGITAL_TRACKS);
 	fadeTrack = _track[track->trackId + MAX_DIGITAL_TRACKS];
-
 	if (fadeTrack->used) {
 		debug(5, "cloneToFadeOutTrack: No free fade track, force flush fade soundId:%d", fadeTrack->soundId);
 		flushTrack(fadeTrack);
@@ -368,10 +405,98 @@ Track *IMuseDigital::cloneToFadeOutTrack(Track *track, int fadeDelay) {
 	fadeTrack->stream = Audio::makeQueuingAudioStream(_sound->getFreq(fadeTrack->soundDesc), track->mixerFlags & kFlagStereo);
 	_mixer->playStream(track->getType(), &fadeTrack->mixChanHandle, fadeTrack->stream, -1, fadeTrack->getVol(), fadeTrack->getPan());
 	fadeTrack->used = true;
-
 	debug(5, "cloneToFadeOutTrack() - end of func, soundId %d, fade soundId %d", track->soundId, fadeTrack->soundId);
 
 	return fadeTrack;
+}
+
+int IMuseDigital::transformVolumeLinearToEqualPow(int volume, int mode) {
+	if (volume == 0 || volume == 127000)
+		return volume;
+
+	int result = volume;
+	if (!(volume < 0 || volume > 127000)) {
+		// Change range of values from 0-127*1000 to 0.0-1.0
+		double mappedValue = (((volume - 0) * (1.0 - 0.0)) / (127000 - 0)) + 0;
+		double eqPowValue;
+
+		switch (mode) {
+		case 0:  // Sqrt curve
+			eqPowValue = sqrt(mappedValue);
+			break;
+		case 1:  // Quarter sine curve
+			eqPowValue = sin(mappedValue * M_PI / 2.0);
+			break;
+		case 2:  // Parabola
+			eqPowValue = (1 - (1 - mappedValue) * (1 - mappedValue));
+			break;
+		case 3:  // Logarithmic 1
+			eqPowValue = 1 + 0.2 * log10(mappedValue);
+			break;
+		case 4:  // Logarithmic 2
+			eqPowValue = 1 + 0.5 * log10(mappedValue);
+			break;
+		case 5:  // Logarithmic 3
+			eqPowValue = 1 + 0.7 * log10(mappedValue);
+			break;
+		case 6:  // Half sine curve
+			eqPowValue = (1.0 - cos(mappedValue * M_PI)) / 2.0;
+		default: // Fallback to linear
+			eqPowValue = mappedValue;
+			break;
+		}
+
+		// Change range again, this time round the result
+		result = (((eqPowValue - 0.0) * (127000 - 0)) / (1.0 - 0.0)) + 0.0;
+		result = (int)round(result);
+	}
+
+	return result;
+}
+
+int IMuseDigital::transformVolumeEqualPowToLinear(int volume, int mode) {
+	if (volume == 0 || volume == 127000)
+		return volume;
+
+	int result = volume;
+	if (!(volume < 0 || volume > 127000)) {
+		// Change range of values from 0-127*1000 to 0.0-1.0
+		double mappedValue = (((volume - 0) * (1.0 - 0.0)) / (127000 - 0)) + 0;
+		double linearValue;
+
+		switch (mode) {
+		case 0:  // Sqrt curve
+			linearValue = mappedValue * mappedValue;
+			break;
+		case 1:  // Quarter sine curve
+			linearValue = 0.63662 * asin(mappedValue);
+			break;
+		case 2:  // Parabola
+			linearValue = 1 - sqrt(1 - mappedValue);
+			break;
+		case 3:  // Logarithmic 1
+			linearValue = 0.00001 * pow(M_E, 11.5129 * mappedValue);
+			break;
+		case 4:  // Logarithmic 2
+			linearValue = 0.01 * pow(M_E, 4.60517 * mappedValue);
+			break;
+		case 5:  // Logarithmic 3
+			linearValue = 0.0372759 * pow(M_E, 3.28941 * mappedValue);
+			break;
+		case 6:  // Half sine curve
+			linearValue = (2 * asin(sqrt(mappedValue))) / M_PI; // Ricontrolla
+			break;
+		default: // Fallback to linear
+			linearValue = mappedValue;
+			break;
+		}
+
+		// Change range again, this time round the result
+		result = (((linearValue - 0.0) * (127000 - 0)) / (1.0 - 0.0)) + 0.0;
+		result = (int)round(result);
+	}
+
+	return result;
 }
 
 } // End of namespace Scumm

@@ -105,7 +105,10 @@ private:
 	void setTrigger(TriggerParams *trigger);
 	void setHookIdForMusic(int hookId);
 	Track *cloneToFadeOutTrack(Track *track, int fadeDelay);
-
+	Track *handleComiFadeOut(Track *track, int fadeDelay);
+	int transformVolumeLinearToEqualPow(int volume, int mode);
+	int transformVolumeEqualPowToLinear(int volume, int mode);
+	
 	void setFtMusicState(int stateId);
 	void setFtMusicSequence(int seqId);
 	void setFtMusicCuePoint(int cueId);
