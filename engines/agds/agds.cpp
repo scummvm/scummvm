@@ -607,6 +607,8 @@ void AGDSEngine::playFilm(Process &process, const Common::String &video, const C
 
 	_filmProcess = process.getName();
 	_mjpgPlayer = new MJPGPlayer(_resourceManager.getResource(video));
+	_soundManager.stopAll();
+	_syncSoundId = _soundManager.play(process.getName(), audio, Common::String());
 }
 
 void AGDSEngine::skipFilm() {
