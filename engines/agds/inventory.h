@@ -60,6 +60,7 @@ public:
 	}
 
 	int add(const ObjectPtr & object);
+	bool remove(const Common::String &name);
 
 	ObjectPtr get(int index) const;
 	int find(const Common::String &name) const;
