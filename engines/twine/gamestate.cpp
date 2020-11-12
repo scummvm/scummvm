@@ -64,7 +64,7 @@ void GameState::initEngineProjections() {
 	_engine->_renderer->setLightVector(_engine->_scene->alphaLight, _engine->_scene->betaLight, 0);
 }
 
-void GameState::initSceneVars() {
+void GameState::initGameStateVars() {
 	_engine->_extra->resetExtras();
 
 	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
@@ -116,7 +116,7 @@ void GameState::initEngineVars() {
 	_engine->_scene->alphaLight = 896;
 	_engine->_scene->betaLight = 950;
 	initEngineProjections();
-	initSceneVars();
+	initGameStateVars();
 	initHeroVars();
 
 	_engine->_scene->newHeroX = 0x2000;
@@ -483,6 +483,12 @@ void GameState::processGameoverAnimation() {
 	initEngineProjections();
 
 	_engine->lbaTime = tmpLbaTime;
+}
+
+void GameState::giveUp() {
+	_engine->_sound->stopSamples();
+	initGameStateVars();
+	_engine->_scene->stopRunningGame();
 }
 
 } // namespace TwinE

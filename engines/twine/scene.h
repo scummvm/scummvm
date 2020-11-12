@@ -346,6 +346,7 @@ public:
 	void initSceneVars();
 
 	bool isGameRunning() const;
+	void stopRunningGame();
 
 	/**
 	 * Process actor zones

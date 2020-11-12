@@ -86,7 +86,7 @@ class GameState {
 private:
 	TwinEEngine *_engine;
 
-	void initSceneVars();
+	void initGameStateVars();
 	void initHeroVars();
 
 public:
@@ -161,6 +161,7 @@ public:
 
 	void processFoundItem(int32 item);
 
+	void giveUp();
 	bool loadGame(Common::SeekableReadStream *file);
 	bool saveGame(Common::WriteStream *file);
 

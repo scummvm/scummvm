@@ -536,4 +536,8 @@ void Scene::processActorZones(int32 actorIdx) {
 	}
 }
 
+void Scene::stopRunningGame() {
+	currentScene = nullptr;
+}
+
 } // namespace TwinE

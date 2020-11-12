@@ -324,6 +324,45 @@ void Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 	}
 
 	for (int16 i = 0; i < maxButton; ++i) {
+		if (menuSettings == &advOptionsMenuState) {
+			int16 id = menuSettings->getButtonState(i);
+			switch (id) {
+			case MenuButtonTypes::kAgressiveMode:
+				if (_engine->_actor->autoAgressive) {
+					menuSettings->setButtonTextId(i, TextId::kBehaviourAgressiveAuto);
+				} else {
+					menuSettings->setButtonTextId(i, TextId::kBehaviourAgressiveManual);
+				}
+				break;
+			case MenuButtonTypes::kPolygonDetails:
+				if (_engine->cfgfile.PolygonDetails == 0) {
+					menuSettings->setButtonTextId(i, TextId::kDetailsPolygonsLow);
+				} else if (_engine->cfgfile.PolygonDetails == 1) {
+					menuSettings->setButtonTextId(i, TextId::kDetailsPolygonsMiddle);
+				} else {
+					menuSettings->setButtonTextId(i, TextId::kDetailsPolygonsHigh);
+				}
+				break;
+			case MenuButtonTypes::kShadowSettings:
+				if (_engine->cfgfile.ShadowMode == 0) {
+					menuSettings->setButtonTextId(i, TextId::kShadowsDisabled);
+				} else if (_engine->cfgfile.ShadowMode == 1) {
+					menuSettings->setButtonTextId(i, TextId::kShadowsFigures);
+				} else {
+					menuSettings->setButtonTextId(i, TextId::kDetailsShadowHigh);
+				}
+				break;
+			case MenuButtonTypes::kSceneryZoom:
+				if (_engine->cfgfile.SceZoom) {
+					menuSettings->setButtonTextId(i, TextId::kScenaryZoomOn);
+				} else {
+					menuSettings->setButtonTextId(i, TextId::kNoScenaryZoom);
+				}
+				break;
+			default:
+				break;
+			}
+		}
 		const int32 menuItemId = menuSettings->getButtonState(i);
 		const char *text = menuSettings->getButtonText(_engine->_text, i);
 		if (hover) {
@@ -381,11 +420,6 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
 					_engine->_actor->autoAgressive = !_engine->_actor->autoAgressive;
 				}
-				if (_engine->_actor->autoAgressive) {
-					menuSettings->setActiveButtonTextId(TextId::kBehaviourAgressiveAuto);
-				} else {
-					menuSettings->setActiveButtonTextId(TextId::kBehaviourAgressiveManual);
-				}
 				break;
 			case MenuButtonTypes::kPolygonDetails:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
@@ -394,13 +428,6 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
 					_engine->cfgfile.PolygonDetails++;
 					_engine->cfgfile.PolygonDetails %= 3;
-				}
-				if (_engine->cfgfile.PolygonDetails == 0) {
-					menuSettings->setActiveButtonTextId(TextId::kDetailsPolygonsLow);
-				} else if (_engine->cfgfile.PolygonDetails == 1) {
-					menuSettings->setActiveButtonTextId(TextId::kDetailsPolygonsMiddle);
-				} else {
-					menuSettings->setActiveButtonTextId(TextId::kDetailsPolygonsHigh);
 				}
 				break;
 			case MenuButtonTypes::kShadowSettings:
@@ -411,22 +438,10 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 					_engine->cfgfile.ShadowMode++;
 					_engine->cfgfile.ShadowMode %= 3;
 				}
-				if (_engine->cfgfile.ShadowMode == 0) {
-					menuSettings->setActiveButtonTextId(TextId::kShadowsDisabled);
-				} else if (_engine->cfgfile.ShadowMode == 1) {
-					menuSettings->setActiveButtonTextId(TextId::kShadowsFigures);
-				} else {
-					menuSettings->setActiveButtonTextId(TextId::kDetailsShadowHigh);
-				}
 				break;
 			case MenuButtonTypes::kSceneryZoom:
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft) || _engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
 					_engine->cfgfile.SceZoom = !_engine->cfgfile.SceZoom;
-				}
-				if (_engine->cfgfile.SceZoom) {
-					menuSettings->setActiveButtonTextId(TextId::kScenaryZoomOn);
-				} else {
-					menuSettings->setActiveButtonTextId(TextId::kNoScenaryZoom);
 				}
 				break;
 			default:
@@ -692,7 +707,7 @@ int32 Menu::giveupMenu() {
 			_engine->_sound->resumeSamples();
 			break;
 		case TextId::kGiveUp:
-			_engine->_sound->stopSamples();
+			_engine->_gameState->giveUp();
 			return 1;
 		case TextId::kCreateSaveGame:
 			_engine->_menuOptions->saveGameMenu();
