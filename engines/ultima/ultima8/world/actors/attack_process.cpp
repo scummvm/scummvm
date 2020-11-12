@@ -468,7 +468,7 @@ void AttackProcess::run() {
 			uint16 divisor = readNextWordWithData();
 			if (!divisor)
 				divisor = 1; // shouldn't happen in real data, but just to be sure..
-			setAttackData(opcode, val / divisor);
+			setAttackData(offset, val / divisor);
 			return;
 		}
 		case 0xb4:
