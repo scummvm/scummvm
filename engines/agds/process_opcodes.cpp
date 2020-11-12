@@ -288,6 +288,10 @@ void Process::loadMouse() {
 	_engine->loadDefaultMouseCursor(name);
 }
 
+void Process::resetMousePointer() {
+	_engine->currentInventoryObject(ObjectPtr());
+}
+
 void Process::getRandomNumber() {
 	int max = pop();
 	int value = max > 0 ? _engine->_random.getRandomNumber(max - 1) : 0;
@@ -522,6 +526,16 @@ void Process::loadMouseCursorFromObject() {
 	debug("loadMouseCursorFromObject %s", name.c_str());
 	Animation *cursor = _engine->loadMouseCursor(name);
 	_object->setMouseCursor(cursor); //overlay cursor
+}
+
+void Process::attachInventoryObjectToMouse() {
+	Common::String name = popString();
+	debug("attachInventoryObjectToMouse %s", name.c_str());
+	auto object = _engine->getCurrentScreenObject(name);
+	if (object)
+		_engine->currentInventoryObject(object);
+	else
+		warning("cannot find object %s", name.c_str());
 }
 
 void Process::fadeObject() {

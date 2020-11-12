@@ -246,6 +246,12 @@ public:
 		return _mouse;
 	}
 
+	void currentInventoryObject(const ObjectPtr & object);
+	void resetCurrentInventoryObject();
+
+	const ObjectPtr & currentInventoryObject() const {
+		return _currentInventoryObject;
+	}
 
 	bool showHints() const {
 		return _hintMode;
@@ -299,9 +305,12 @@ private:
 	bool						_systemUserEnabled;
 	MouseMap					_mouseMap;
 	Common::RandomSource		_random;
+
 	Inventory					_inventory;
 	Common::String				_inventoryRegionName;
 	RegionPtr					_inventoryRegion;
+	ObjectPtr					_currentInventoryObject;
+
 	Dialog						_dialog;
 
 	// Original engine use weird names for the vars, I keep them.

@@ -135,6 +135,7 @@ Animation *Screen::findAnimationByPhaseVar(const Common::String &phaseVar) {
 }
 
 void Screen::paint(Graphics::Surface &backbuffer) {
+	auto & currentInventoryObject = _engine->currentInventoryObject();
 	for(uint i = 0; i < _animations.size(); ) {
 		Animation *animation = _animations.data()[i];
 		if (animation->tick(*_engine))
@@ -180,7 +181,7 @@ void Screen::paint(Graphics::Surface &backbuffer) {
 		switch (render_type) {
 			case 0:
 				//debug("object z: %d", (*child)->z());
-				if ((*child)->inScene())
+				if ((*child) != currentInventoryObject && (*child)->inScene())
 					(*child)->paint(*_engine, backbuffer);
 				++child;
 				break;

@@ -130,6 +130,10 @@ public:
 		_alpha = (100 - alpha) * 255 / 100;
 	}
 
+	int alpha() const {
+		return _alpha;
+	}
+
 	void scale(int scale) {
 		_scale = scale;
 	}
@@ -164,8 +168,16 @@ public:
 		_useHandlers[name] = ip;
 	}
 
+	uint getUseHandler(const Common::String &name) const {
+		return _useHandlers.getVal(name, 0); //use handler can never be 0
+	}
+
 	void setUserUseHandler(uint ip) {
+		debug("OBJECT %s USER USE %04x", _name.c_str(), ip);
 		_userUseHandler = ip;
+	}
+	uint getUserUseHandler() const {
+		return _userUseHandler;
 	}
 
 	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);

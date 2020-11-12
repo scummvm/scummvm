@@ -127,7 +127,7 @@ enum Opcode {
 	kStub107						= 107,
 	kLoadMouse						= 108,
 	kStub109						= 109,
-	kStub110						= 110,
+	kResetMousePointer				= 110,
 	kInventoryAddObject				= 111,
 	kInventoryRemoveObject			= 112,
 	kStub113						= 113,
@@ -262,7 +262,7 @@ enum Opcode {
 	kHasGlobal						= 242,
 	kStub243						= 243,
 	kSetCharacterNotifyVars			= 244,
-	kStub245						= 245,
+	kAttachInventoryObjectToMouse	= 245,
 	kStub246						= 246,
 	kSetDialogForNextFilm			= 247
 };
@@ -339,6 +339,7 @@ enum Opcode {
 	OP(kClearScreen, clearScreen) \
 	OP(kInventoryClear, inventoryClear) \
 	OP(kLoadMouse, loadMouse) \
+	OP(kResetMousePointer, resetMousePointer) \
 	OP(kInventoryAddObject, inventoryAddObject) \
 	OP(kInventoryRemoveObject, inventoryRemoveObject) \
 	OP(kSetNextScreenSaveInHistory, setNextScreenSaveInHistory) \
@@ -463,6 +464,7 @@ enum Opcode {
 	OP(kInventoryFindObjectByName, inventoryFindObjectByName) \
 	OP(kLoadDialog, loadDialog) \
 	OP(kHasGlobal, hasGlobal) \
+	OP(kAttachInventoryObjectToMouse, attachInventoryObjectToMouse) \
 	OP(kSetDialogForNextFilm, setDialogForNextFilm)
 
 }
