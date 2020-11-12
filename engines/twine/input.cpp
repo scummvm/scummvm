@@ -55,7 +55,7 @@ static const struct KeyProperties {
 
 ScopedKeyMap::ScopedKeyMap(TwinEEngine* engine, const char *id) : _engine(engine) {
 	_prevKeyMap = _engine->_input->currentKeyMap();
-	_engine->_input->enableKeyMap(cutsceneKeyMapId);
+	_engine->_input->enableKeyMap(id);
 }
 
 ScopedKeyMap::~ScopedKeyMap() {
