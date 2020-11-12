@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-10 03:04+0100\n"
-"PO-Revision-Date: 2020-09-26 21:13+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-11-12 07:33+0000\n"
+"Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hi/>\n"
 "Language: hi\n"
@@ -31,7 +31,7 @@ msgstr "सुविधा बनाए गए:"
 
 #: gui/about.cpp:118
 msgid "Available engines:"
-msgstr ""
+msgstr "उपलब्ध इंजन :"
 
 #: gui/browser.cpp:75 backends/dialogs/macosx/macosx-dialogs.mm:78
 msgid "Show hidden files"
@@ -48,7 +48,7 @@ msgstr "ऊपर जाओ"
 #: gui/browser.cpp:79 gui/browser.cpp:81 gui/remotebrowser.cpp:57
 #: gui/remotebrowser.cpp:59
 msgid "Go to previous directory level"
-msgstr ""
+msgstr "पिछले फोल्डर स्तर पे जाएँ "
 
 #: gui/browser.cpp:81 gui/remotebrowser.cpp:59
 msgctxt "lowres"
@@ -89,19 +89,19 @@ msgstr "चुनें"
 
 #: gui/downloaddialog.cpp:49
 msgid "Select directory where to download game data"
-msgstr ""
+msgstr "उस फोल्डर को चुने जहाँ गेम डेटा डाउनलोड करना है "
 
 #: gui/downloaddialog.cpp:50 gui/editgamedialog.cpp:540 gui/launcher.cpp:207
 msgid "Select directory with game data"
-msgstr ""
+msgstr "उस फोल्डर को चुने जिसमे गेम डाटा है"
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "From: "
-msgstr ""
+msgstr "स्रोत: "
 
 #: gui/downloaddialog.cpp:53 gui/downloaddialog.cpp:228
 msgid "To: "
-msgstr ""
+msgstr "गंतव्य: "
 
 #: gui/downloaddialog.cpp:64
 msgid "Cancel download"
@@ -121,6 +121,8 @@ msgid ""
 "It looks like your connection is limited. Do you really want to download "
 "files with it?"
 msgstr ""
+"ऐसा लगता है की आपका कनेक्शन सीमित है। क्या आप इसके द्वारा ही डाउनलोड करना "
+"चाहते हैं?"
 
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
@@ -153,6 +155,8 @@ msgid ""
 "Cannot create a directory to download - the specified directory has a file "
 "with the same name."
 msgstr ""
+"डाउनलोड के लिए फोल्डर नहीं बना सकते - इस फोल्डर में पहले से ही इस नाम की एक "
+"फाइल है। "
 
 #: gui/downloaddialog.cpp:147 gui/editgamedialog.cpp:357
 #: gui/fluidsynth-dialog.cpp:154 gui/KeysDialog.cpp:43 gui/launcher.cpp:517
