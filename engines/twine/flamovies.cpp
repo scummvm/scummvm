@@ -132,18 +132,17 @@ void FlaMovies::drawDeltaFrame(Common::MemoryReadStream &stream, int32 width) {
 }
 
 void FlaMovies::scaleFla2x() {
-	int32 i, j;
 	uint8 *source = (uint8 *)flaBuffer;
 	uint8 *dest = (uint8 *)_engine->workVideoBuffer.getPixels();
 
 	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
-		for (i = 0; i < SCREEN_WIDTH * 40; i++) {
+		for (uint32 i = 0; i < SCREEN_WIDTH * 40; i++) {
 			*(dest++) = 0x00;
 		}
 	}
 
-	for (i = 0; i < FLASCREEN_HEIGHT; i++) {
-		for (j = 0; j < FLASCREEN_WIDTH; j++) {
+	for (int32 i = 0; i < FLASCREEN_HEIGHT; i++) {
+		for (int32 j = 0; j < FLASCREEN_WIDTH; j++) {
 			*(dest++) = *(source);
 			*(dest++) = *(source++);
 		}
@@ -151,7 +150,7 @@ void FlaMovies::scaleFla2x() {
 			memcpy(dest, dest - SCREEN_WIDTH, FLASCREEN_WIDTH * 2);
 			dest += FLASCREEN_WIDTH * 2;
 		} else { // stretch the movie like original game.
-			if (i % (2)) {
+			if (i % 2) {
 				memcpy(dest, dest - SCREEN_WIDTH, FLASCREEN_WIDTH * 2);
 				dest += FLASCREEN_WIDTH * 2;
 			}
@@ -163,7 +162,7 @@ void FlaMovies::scaleFla2x() {
 	}
 
 	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
-		for (i = 0; i < SCREEN_WIDTH * 40; i++) {
+		for (int32 i = 0; i < SCREEN_WIDTH * 40; i++) {
 			*(dest++) = 0x00;
 		}
 	}
@@ -172,7 +171,6 @@ void FlaMovies::scaleFla2x() {
 void FlaMovies::processFrame() {
 	FLASampleStruct sample;
 	uint32 opcodeBlockSize;
-	uint8 opcode;
 	int32 aux = 0;
 
 	file.read(&frameData.videoSize, 1);
@@ -192,7 +190,7 @@ void FlaMovies::processFrame() {
 
 	Common::MemoryReadStream stream(outBuf, frameData.frameVar0);
 	do {
-		opcode = stream.readByte();
+		uint8 opcode = stream.readByte();
 		stream.skip(1);
 		opcodeBlockSize = stream.readUint16LE();
 		const int32 pos = stream.pos();
