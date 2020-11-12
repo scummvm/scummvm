@@ -474,7 +474,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 		processRandomAction(actorIdx);
 		break;
 	default:
-		warning("Unknown Control mode %d\n", actor->controlMode);
+		warning("Unknown control mode %d", actor->controlMode);
 		break;
 	}
 }

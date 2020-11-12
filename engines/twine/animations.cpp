@@ -299,7 +299,7 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 				applyAnimStep(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				break;
 			default:
-				error("Unsupported animation rotation mode %d!\n", animOpcode);
+				error("Unsupported animation rotation mode %d", animOpcode);
 			}
 
 			edi += 30;
