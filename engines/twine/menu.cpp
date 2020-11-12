@@ -227,11 +227,11 @@ void Menu::processPlasmaEffect(int32 left, int32 top, int32 color) {
 		for (int32 x = 0; x < PLASMA_WIDTH; x++) {
 			const uint8 c = MIN(in[y * PLASMA_WIDTH + x] / 2 + color, max_value);
 			/* 2x2 squares sharing the same pixel color: */
-			const int32 target = 2 * (y * DEFAULT_SCREEN_WIDTH + x);
+			const int32 target = 2 * (y * SCREEN_WIDTH + x);
 			out[target + 0] = c;
 			out[target + 1] = c;
-			out[target + DEFAULT_SCREEN_WIDTH + 0] = c;
-			out[target + DEFAULT_SCREEN_WIDTH + 1] = c;
+			out[target + SCREEN_WIDTH + 0] = c;
+			out[target + SCREEN_WIDTH + 1] = c;
 		}
 	}
 }

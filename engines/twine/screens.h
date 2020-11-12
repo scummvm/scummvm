@@ -167,7 +167,6 @@ public:
 	 * @param source screen buffer
 	 * @param destination screen buffer
 	 */
-	void copyScreen(const uint8 *source, uint8 *destination);
 	void copyScreen(const Graphics::ManagedSurface &source, Graphics::ManagedSurface &destination);
 
 	/** Clear front buffer screen */

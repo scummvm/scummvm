@@ -104,7 +104,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		}
 	}
 
-	int32 flag2 = DEFAULT_SCREEN_WIDTH;
+	int32 flag2 = SCREEN_WIDTH;
 	endWidth -= startWidth;
 	endHeight -= startHeight;
 	if (endHeight < 0) {
@@ -206,7 +206,7 @@ void Interface::drawTransparentBox(int32 left, int32 top, int32 right, int32 bot
 	const int32 height = bottom - top;
 	int32 height2 = height + 1;
 	const int32 width = right - left + 1;
-	const int32 pitch = DEFAULT_SCREEN_WIDTH - width;
+	const int32 pitch = SCREEN_WIDTH - width;
 	const int32 localMode = colorAdj;
 
 	do {

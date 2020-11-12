@@ -1460,8 +1460,8 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 		int32 textBoxRight = textSize;
 		engine->_text->setFontColor(15);
 		engine->_text->drawText(0, drawVar1, textStr);
-		if (textSize > DEFAULT_SCREEN_WIDTH - 1) {
-			textBoxRight = DEFAULT_SCREEN_WIDTH - 1;
+		if (textSize > SCREEN_WIDTH - 1) {
+			textBoxRight = SCREEN_WIDTH - 1;
 		}
 
 		drawVar1 += 40;

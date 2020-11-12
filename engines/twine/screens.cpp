@@ -252,23 +252,8 @@ void Screens::fadeRedPal(const uint32 *pal) {
 	}
 }
 
-void Screens::copyScreen(const uint8 *source, uint8 *destination) {
-	if (SCALE == 1) {
-		memcpy(destination, source, SCREEN_WIDTH * SCREEN_HEIGHT);
-	} else if (SCALE == 2) {
-		for (int32 h = 0; h < SCREEN_HEIGHT / SCALE; h++) {
-			for (int32 w = 0; w < SCREEN_WIDTH / SCALE; w++) {
-				*destination++ = *source;
-				*destination++ = *source++;
-			}
-			memcpy(destination, destination - SCREEN_WIDTH, SCREEN_WIDTH);
-			destination += SCREEN_WIDTH;
-		}
-	}
-}
-
 void Screens::copyScreen(const Graphics::ManagedSurface& source, Graphics::ManagedSurface &destination) {
-	copyScreen((const uint8 *)source.getPixels(), (uint8 *)destination.getPixels());
+	destination.blitFrom(source);
 }
 
 void Screens::clearScreen() {

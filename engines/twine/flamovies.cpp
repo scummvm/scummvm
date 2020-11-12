@@ -137,7 +137,7 @@ void FlaMovies::scaleFla2x() {
 	uint8 *dest = (uint8 *)_engine->workVideoBuffer.getPixels();
 
 	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
-		for (i = 0; i < SCREEN_WIDTH / SCALE * 40; i++) {
+		for (i = 0; i < SCREEN_WIDTH * 40; i++) {
 			*(dest++) = 0x00;
 		}
 	}
@@ -148,22 +148,22 @@ void FlaMovies::scaleFla2x() {
 			*(dest++) = *(source++);
 		}
 		if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) { // include wide bars
-			memcpy(dest, dest - SCREEN_WIDTH / SCALE, FLASCREEN_WIDTH * 2);
+			memcpy(dest, dest - SCREEN_WIDTH, FLASCREEN_WIDTH * 2);
 			dest += FLASCREEN_WIDTH * 2;
 		} else { // stretch the movie like original game.
 			if (i % (2)) {
-				memcpy(dest, dest - SCREEN_WIDTH / SCALE, FLASCREEN_WIDTH * 2);
+				memcpy(dest, dest - SCREEN_WIDTH, FLASCREEN_WIDTH * 2);
 				dest += FLASCREEN_WIDTH * 2;
 			}
 			if (i % 10) {
-				memcpy(dest, dest - SCREEN_WIDTH / SCALE, FLASCREEN_WIDTH * 2);
+				memcpy(dest, dest - SCREEN_WIDTH, FLASCREEN_WIDTH * 2);
 				dest += FLASCREEN_WIDTH * 2;
 			}
 		}
 	}
 
 	if (_engine->cfgfile.Movie == CONF_MOVIE_FLAWIDE) {
-		for (i = 0; i < SCREEN_WIDTH / SCALE * 40; i++) {
+		for (i = 0; i < SCREEN_WIDTH * 40; i++) {
 			*(dest++) = 0x00;
 		}
 	}
