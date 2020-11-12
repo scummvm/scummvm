@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-10 03:04+0100\n"
-"PO-Revision-Date: 2020-10-12 19:56+0000\n"
+"PO-Revision-Date: 2020-11-12 19:44+0000\n"
 "Last-Translator: Matthew Duggan <mgithub@guarana.org>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1551,7 +1551,7 @@ msgstr ""
 #: gui/options.cpp:2227
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "設定ウインドーを閉じるとさばーが停止されます。"
 
 #: gui/options.cpp:2229
 msgid "Run server to manage files with browser (in the same network)."
@@ -1559,7 +1559,7 @@ msgstr ""
 
 #: gui/options.cpp:2230
 msgid "Closing options dialog will stop the server."
-msgstr ""
+msgstr "設定ウインドーを閉じるとさばーが停止されます。"
 
 #: gui/options.cpp:2242
 msgid "Use Text to speech"
@@ -1579,11 +1579,11 @@ msgstr "クラウドストーレジを変えることを失敗しました！"
 
 #: gui/options.cpp:2333
 msgid "Another cloud storage is already active."
-msgstr ""
+msgstr "他のクラウドストーレジは既に使用中です。"
 
 #: gui/options.cpp:2408
 msgid "Theme does not support selected language!"
-msgstr ""
+msgstr "テーマは選択された言語を対応できません！"
 
 #: gui/options.cpp:2411
 msgid "Theme cannot be loaded!"
@@ -1639,7 +1639,7 @@ msgstr "接続中..."
 
 #: gui/options.cpp:2697
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr ""
+msgstr "ストーレジは使用中。切断してもよろしいですか？"
 
 #: gui/options.cpp:2895 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
@@ -1655,15 +1655,15 @@ msgstr "ローカルサーバーを停止する"
 
 #: gui/options.cpp:3057
 msgid "Storage connected."
-msgstr ""
+msgstr "ストーレジ接続済み。"
 
 #: gui/options.cpp:3059
 msgid "Failed to connect storage."
-msgstr ""
+msgstr "ストーレジの接続を失敗しました。"
 
 #: gui/options.cpp:3061
 msgid "Failed to connect storage: "
-msgstr ""
+msgstr "ストーレジの接続を失敗しました： "
 
 #: gui/options.cpp:3081
 msgid ""
@@ -1678,7 +1678,7 @@ msgstr "#  次"
 
 #: gui/predictivedialog.cpp:107
 msgid "add"
-msgstr ""
+msgstr "追加"
 
 #: gui/predictivedialog.cpp:112 gui/predictivedialog.cpp:189
 msgid "Delete char"
@@ -2202,16 +2202,16 @@ msgid "Start anyway"
 msgstr "承知して開始"
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid "This game is not supported."
-msgstr "未対応のゲームID"
+msgstr "未対応のゲームID。"
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
-msgstr "このゲームはランチャーからロードができません。"
+msgstr ""
+"このゲームはランチャーからロードができません：\n"
+"\n"
 
 #: engines/engine.cpp:797
 msgid "Loading game is currently unavailable"
@@ -2491,7 +2491,7 @@ msgstr "全般"
 
 #: backends/events/default/default-events.cpp:296
 msgid "Global Main Menu"
-msgstr ""
+msgstr "メインメニュー"
 
 #: backends/events/default/default-events.cpp:303
 msgid "Display keyboard"
@@ -2503,7 +2503,7 @@ msgstr "消音の切替"
 
 #: backends/events/default/default-events.cpp:338
 msgid "Open Debugger"
-msgstr ""
+msgstr "デバッガーを開く"
 
 #: backends/events/gph/gph-events.cpp:417
 #: backends/events/gph/gph-events.cpp:460
@@ -2525,19 +2525,19 @@ msgstr ""
 
 #: backends/events/gph/gph-events.cpp:441
 msgid "Maximum Volume"
-msgstr ""
+msgstr "最大の音量"
 
 #: backends/events/gph/gph-events.cpp:443
 msgid "Increasing Volume"
-msgstr ""
+msgstr "音量を大く"
 
 #: backends/events/gph/gph-events.cpp:449
 msgid "Minimal Volume"
-msgstr ""
+msgstr "最小の音量"
 
 #: backends/events/gph/gph-events.cpp:451
 msgid "Decreasing Volume"
-msgstr ""
+msgstr "音量を小さく"
 
 #: backends/events/maemosdl/maemosdl-events.cpp:101
 msgid "Clicking Enabled"
@@ -2553,7 +2553,7 @@ msgstr ""
 
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 msgid "Do you want to quit ?"
-msgstr ""
+msgstr "終了してもよろしいですか？"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
@@ -2589,22 +2589,22 @@ msgstr "解像度: %dx%d"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:612
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
 msgid "Enabled aspect ratio correction"
-msgstr ""
+msgstr "縦横比修正適用"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:614
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2510
 msgid "Disabled aspect ratio correction"
-msgstr ""
+msgstr "縦横比修正無効"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:635
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
 msgid "Filtering enabled"
-msgstr ""
+msgstr "フィルター適用"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:637
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2529
 msgid "Filtering disabled"
-msgstr ""
+msgstr "フィルター無効"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:666
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2557
@@ -2626,12 +2626,12 @@ msgstr ""
 
 #: backends/graphics/sdl/sdl-graphics.cpp:367
 msgid "Windowed mode"
-msgstr ""
+msgstr "ウインドーモード"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:378
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:136 engines/scumm/help.cpp:86
 msgid "Toggle fullscreen"
-msgstr ""
+msgstr "全面モードの切替"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:385
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:143 engines/scumm/help.cpp:99
@@ -2650,12 +2650,12 @@ msgstr ""
 #: engines/wintermute/keymapper_tables.h:1419
 #: engines/wintermute/keymapper_tables.h:1450
 msgid "Save screenshot"
-msgstr ""
+msgstr "スクショを保存する"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:396
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:154
 msgid "Toggle aspect ratio correction"
-msgstr ""
+msgstr "縦横比修正の切替"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:403
 msgid "Toggle linear filtered scaling"
@@ -2667,11 +2667,11 @@ msgstr ""
 
 #: backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Increase the scale factor"
-msgstr ""
+msgstr "スケールを拡大する"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:422
 msgid "Decrease the scale factor"
-msgstr ""
+msgstr "スケールを縮小する"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:434
 msgid "Switch to nearest neighbour scaling"
@@ -2735,19 +2735,19 @@ msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
-msgstr ""
+msgstr "ジョイA"
 
 #: backends/keymapper/hardware-input.cpp:257
 msgid "Joy B"
-msgstr ""
+msgstr "ジョイB"
 
 #: backends/keymapper/hardware-input.cpp:258
 msgid "Joy X"
-msgstr ""
+msgstr "ジョイ横"
 
 #: backends/keymapper/hardware-input.cpp:259
 msgid "Joy Y"
-msgstr ""
+msgstr "ジョイ縦"
 
 #: backends/keymapper/hardware-input.cpp:260
 msgid "Joy Back"
@@ -2759,15 +2759,15 @@ msgstr ""
 
 #: backends/keymapper/hardware-input.cpp:262
 msgid "Joy Start"
-msgstr ""
+msgstr "ジョイスタート"
 
 #: backends/keymapper/hardware-input.cpp:263
 msgid "Left Stick"
-msgstr ""
+msgstr "左スティック"
 
 #: backends/keymapper/hardware-input.cpp:264
 msgid "Right Stick"
-msgstr ""
+msgstr "右スティック"
 
 #: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:213
 msgid "Left Shoulder"
@@ -2817,30 +2817,30 @@ msgstr ""
 #: backends/platform/sdl/ps3/ps3.cpp:62 backends/platform/sdl/psp2/psp2.cpp:61
 #: backends/platform/sdl/switch/switch.cpp:59
 msgid "Left Stick X"
-msgstr ""
+msgstr "左スティック横"
 
 #: backends/keymapper/hardware-input.cpp:278
 #: backends/platform/sdl/ps3/ps3.cpp:63 backends/platform/sdl/psp2/psp2.cpp:62
 #: backends/platform/sdl/switch/switch.cpp:60
 msgid "Left Stick Y"
-msgstr ""
+msgstr "左スティック縦"
 
 #: backends/keymapper/hardware-input.cpp:279
 #: backends/platform/sdl/ps3/ps3.cpp:64 backends/platform/sdl/psp2/psp2.cpp:63
 #: backends/platform/sdl/switch/switch.cpp:61
 msgid "Right Stick X"
-msgstr ""
+msgstr "右スティック横"
 
 #: backends/keymapper/hardware-input.cpp:280
 #: backends/platform/sdl/ps3/ps3.cpp:65 backends/platform/sdl/psp2/psp2.cpp:64
 #: backends/platform/sdl/switch/switch.cpp:62
 msgid "Right Stick Y"
-msgstr ""
+msgstr "右スティック縦"
 
 #: backends/keymapper/remap-widget.cpp:290
 #: backends/keymapper/remap-widget.cpp:320
 msgid "Reset to defaults"
-msgstr ""
+msgstr "初期化する"
 
 #: backends/keymapper/remap-widget.cpp:291
 msgid "Clear mapping"
@@ -2848,23 +2848,23 @@ msgstr ""
 
 #: backends/keymapper/virtual-mouse.cpp:157
 msgid "Virtual mouse up"
-msgstr ""
+msgstr "仮想マウスアップ"
 
 #: backends/keymapper/virtual-mouse.cpp:162
 msgid "Virtual mouse down"
-msgstr ""
+msgstr "仮想マウスダウン"
 
 #: backends/keymapper/virtual-mouse.cpp:167
 msgid "Virtual mouse left"
-msgstr ""
+msgstr "仮想マウス左"
 
 #: backends/keymapper/virtual-mouse.cpp:172
 msgid "Virtual mouse right"
-msgstr ""
+msgstr "仮想マウス右"
 
 #: backends/keymapper/virtual-mouse.cpp:177
 msgid "Slow down virtual mouse"
-msgstr ""
+msgstr "仮想マウスをゆっくりにする"
 
 #: backends/midi/windows.cpp:167
 msgid "Windows MIDI"
@@ -3293,7 +3293,7 @@ msgstr ""
 #: backends/platform/ds/arm9/source/scummhelp.cpp:42
 #: backends/platform/ds/arm9/source/scummhelp.cpp:59
 msgid "Left mouse button"
-msgstr ""
+msgstr "マウスの左ボタン"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:68
@@ -3304,7 +3304,7 @@ msgstr ""
 #: backends/platform/ds/arm9/source/scummhelp.cpp:43
 #: backends/platform/ds/arm9/source/scummhelp.cpp:60
 msgid "Right mouse button"
-msgstr ""
+msgstr "マウスの右ボタン"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:44
 #: backends/platform/ds/arm9/source/scummhelp.cpp:66
@@ -3382,12 +3382,12 @@ msgstr ""
 #: backends/platform/ds/arm9/source/scummhelp.cpp:76
 #: engines/hdb/metaengine.cpp:205
 msgid "Move left"
-msgstr ""
+msgstr "左に行く"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:77
 #: engines/hdb/metaengine.cpp:211
 msgid "Move right"
-msgstr ""
+msgstr "右に行く"
 
 #: backends/platform/ds/arm9/source/scummhelp.cpp:78
 msgid "High guard"
@@ -4728,31 +4728,31 @@ msgstr ""
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
 #: engines/twine/metaengine.cpp:177
 msgid "Move Forward"
-msgstr ""
+msgstr "前に進む"
 
 #: engines/kyra/engine/eobcommon.cpp:369 engines/kyra/engine/lol.cpp:476
 msgid "Move Back"
-msgstr ""
+msgstr "去る"
 
 #: engines/kyra/engine/eobcommon.cpp:370
 msgid "Move Left"
-msgstr ""
+msgstr "左に行く"
 
 #: engines/kyra/engine/eobcommon.cpp:371
 msgid "Move Right"
-msgstr ""
+msgstr "右に行く"
 
 #: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:479
 #: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:195
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
-msgstr ""
+msgstr "左に曲がる"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:480
 #: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:189
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
-msgstr ""
+msgstr "右に曲がる"
 
 #: engines/kyra/engine/eobcommon.cpp:374
 msgid "Open/Close Inventory"
@@ -4808,7 +4808,7 @@ msgstr "攻撃３"
 
 #: engines/kyra/engine/lol.cpp:474
 msgid "Show Map"
-msgstr ""
+msgstr "地図を表示"
 
 #: engines/kyra/engine/lol.cpp:477
 msgid "Slide Left"
@@ -4828,7 +4828,7 @@ msgstr "設定"
 
 #: engines/kyra/engine/lol.cpp:483
 msgid "Choose Spell"
-msgstr ""
+msgstr "魔法を選択"
 
 #: engines/kyra/gui/saveload_eob.cpp:596
 #, c-format
