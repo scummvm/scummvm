@@ -1095,6 +1095,12 @@ void Process::inventoryAddObject() {
 	suspend(kExitCodeLoadInventoryObject, name);
 }
 
+void Process::inventoryRemoveObject() {
+	Common::String name = popString();
+	debug("inventoryRemoveObject %s", name.c_str());
+	_engine->inventory().remove(name);
+}
+
 void Process::inventoryFindObjectByName() {
 	Common::String name = popString();
 	debug("inventoryFindObjectByName %s", name.c_str());

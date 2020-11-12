@@ -129,7 +129,7 @@ enum Opcode {
 	kStub109						= 109,
 	kStub110						= 110,
 	kInventoryAddObject				= 111,
-	kStub112						= 112,
+	kInventoryRemoveObject			= 112,
 	kStub113						= 113,
 	kStub114						= 114,
 	kStub115						= 115,
@@ -340,6 +340,7 @@ enum Opcode {
 	OP(kInventoryClear, inventoryClear) \
 	OP(kLoadMouse, loadMouse) \
 	OP(kInventoryAddObject, inventoryAddObject) \
+	OP(kInventoryRemoveObject, inventoryRemoveObject) \
 	OP(kSetNextScreenSaveInHistory, setNextScreenSaveInHistory) \
 	OP_U(kObjectRegisterUseObjectHandler, onObjectUse) \
 	OP(kStub82, stub82) \
