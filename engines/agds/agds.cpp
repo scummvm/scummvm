@@ -538,9 +538,7 @@ Common::Error AGDSEngine::run() {
 			}
 
 			if (_mjpgPlayer->eos()) {
-				delete _mjpgPlayer;
-				_mjpgPlayer = NULL;
-				reactivate(_filmProcess);
+				skipFilm();
 			}
 		} else if (_currentScreen) {
 			_currentScreen->paint(*backbuffer);
