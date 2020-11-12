@@ -290,7 +290,9 @@ void Registry::save() {
 	ConfMan.set("spew_on_error", _spewOnError.getString());
 	ConfMan.set("path", _dataPath.getString());
 	ConfMan.set("savepath", _savePath.getString());
-	ConfMan.set("last_set", _lastSet.getString());
+	if (ConfMan.hasKey("last_set")) {
+		ConfMan.set("last_set", _lastSet.getString());
+	}
 	ConfMan.setBool("game_devel_mode", _develMode.getBool());
 	ConfMan.setInt("music_volume", convertVolumeToMixer(_musicVolume.getInt()));
 	ConfMan.setInt("sfx_volume", convertVolumeToMixer(_sfxVolume.getInt()));
