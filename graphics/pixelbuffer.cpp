@@ -94,7 +94,7 @@ void PixelBuffer::copyBuffer(int thisFrom, int otherFrom, int length, const Pixe
 	    buf._format.rLoss == _format.rLoss &&
 	    buf._format.gLoss == _format.gLoss &&
 	    buf._format.bLoss == _format.bLoss && (
-		_format.aLoss = 8 ||
+		_format.aLoss == 8 ||
 		buf._format.aLoss == _format.aLoss
 	    )
 	) {
