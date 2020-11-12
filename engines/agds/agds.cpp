@@ -458,13 +458,36 @@ Common::Error AGDSEngine::run() {
 				if (userEnabled()) {
 					bool lclick = event.type == Common::EVENT_LBUTTONDOWN;
 					debug("%s %d, %d", lclick ? "lclick" : "rclick", _mouse.x, _mouse.y);
+					if (!lclick && _currentInventoryObject) {
+						auto object = _currentInventoryObject;
+						_currentInventoryObject.reset();
+
+						_inventory.add(object);
+						runObject(object);
+						break;
+					}
 					ObjectPtr object = _currentScreen->find(_mouse);
+
+					if (!object && !_currentInventoryObject) //allow inventory to be selected
+						object = _inventory.find(_mouse);
+
 					if (object) {
-						uint ip = lclick ? object->getClickHandler() : object->getExamineHandler();
+						debug("found object %s", object->title().c_str());
+						uint ip;
+						if (lclick) {
+							if (_currentInventoryObject) {
+								debug("trying use handler for object %s", _currentInventoryObject->getName().c_str());
+								ip = object->getUseHandler(_currentInventoryObject->getName());
+							} else
+								ip = object->getClickHandler();
+						 } else
+							ip = object->getExamineHandler();
+
 						if (ip) {
 							debug("found handler: %s %08x", object->getName().c_str(), ip + 7);
 							runProcess(object, ip);
-						}
+						} else
+							debug("no handler found");
 					}
 				}
 				break;
@@ -526,9 +549,19 @@ Common::Error AGDSEngine::run() {
 		if (!mouseCursor)
 			mouseCursor = _defaultMouseCursor;
 
-		if (userEnabled() && mouseCursor) {
-			mouseCursor->tick(*this);
-			mouseCursor->paint(*this, *backbuffer, _mouse);
+		if (userEnabled()) {
+			if (_currentInventoryObject) {
+				auto picture = _currentInventoryObject->getPicture();
+				Common::Point dst = _mouse;
+				Common::Rect srcRect = picture->getRect();
+				uint32 color = (_currentInventoryObject->alpha() << 24) | 0xffffff; //fixme: _picture->format.ARGBToColor(_alpha, 255, 255, 255); is not working
+				if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect())) {
+					picture->blit(*backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
+				}
+			} else {
+				mouseCursor->tick(*this);
+				mouseCursor->paint(*this, *backbuffer, _mouse);
+			}
 		}
 
 		if (_textLayout.valid()) {
@@ -998,5 +1031,13 @@ void AGDSEngine::stopProcess(const Common::String & name) {
 
 
 Common::Error AGDSEngine::saveGameStream(Common::WriteStream *file, bool isAutosave) { return Common::Error(Common::kNoError); }
+
+void AGDSEngine::currentInventoryObject(const ObjectPtr & object) {
+	_currentInventoryObject = object;
+}
+
+void AGDSEngine::resetCurrentInventoryObject() {
+	_currentInventoryObject.reset();
+}
 
 } // End of namespace AGDS
