@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-10 03:04+0100\n"
-"PO-Revision-Date: 2020-11-12 07:37+0000\n"
+"PO-Revision-Date: 2020-11-13 03:44+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6993,7 +6993,7 @@ msgstr "Debug Salle Précédente"
 
 #: engines/twine/metaengine.cpp:88
 msgid "Debug Apply Celling Grid"
-msgstr "Debug Appliquer la grille de cellules"
+msgstr "Debug Appliquer la grille de cases"
 
 #: engines/twine/metaengine.cpp:93
 msgid "Debug Increase Celling Grid Index"
