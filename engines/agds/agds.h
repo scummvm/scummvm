@@ -251,6 +251,8 @@ public:
 		return _hintMode;
 	}
 
+	void reAddInventory();
+
 private:
 	void loadPatches(Common::SeekableReadStream *file, Database & db);
 

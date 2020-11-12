@@ -68,6 +68,10 @@ public:
 	int free() const;
 	void clear();
 
+	const EntriesType & entries() const {
+		return _entries;
+	}
+
 	int maxSize() const {
 		return _entries.size();
 	}

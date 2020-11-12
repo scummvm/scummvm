@@ -212,6 +212,16 @@ ObjectPtr AGDSEngine::runObject(const Common::String &name, const Common::String
 	return object;
 }
 
+void AGDSEngine::reAddInventory() {
+	if (!_currentScreen)
+		return;
+
+	for(auto & object : _inventory.entries()) {
+		if (object)
+			runObject(object);
+	}
+}
+
 void AGDSEngine::loadScreen(const Common::String &name) {
 	_nextScreenName.clear();
 	debug("loadScreen %s", name.c_str());
@@ -243,6 +253,7 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 		if (!patch->defaultMouseCursor.empty())
 			loadDefaultMouseCursor(patch->defaultMouseCursor);
 	}
+	reAddInventory();
 }
 
 void AGDSEngine::resetCurrentScreen() {
