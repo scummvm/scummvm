@@ -44,18 +44,33 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 TwinEConsole::~TwinEConsole() {
 }
 
+#define TOGGLE_DEBUG(var, description) \
+	if ((var)) { \
+		debug("Disabling " description); \
+		(var) = false; \
+	} else { \
+		debug("Enabling " description); \
+		(var) = true; \
+	} \
+	if ((var) && !_engine->cfgfile.Debug) { \
+		doToggleDebug(0, nullptr); \
+	}
+
 bool TwinEConsole::doToggleZoneRendering(int argc, const char **argv) {
-	_engine->_debugScene->showingZones = !_engine->_debugScene->showingZones;
+	TOGGLE_DEBUG(_engine->_debugScene->showingZones, "zone rendering")
+	if (argc == 1) {
+		// TODO: support typeZones
+	}
 	return true;
 }
 
 bool TwinEConsole::doToggleFreeCamera(int argc, const char **argv) {
-	_engine->_debugGrid->useFreeCamera = !_engine->_debugGrid->useFreeCamera;
+	TOGGLE_DEBUG(_engine->_debugGrid->useFreeCamera, "free camera movement")
 	return true;
 }
 
 bool TwinEConsole::doToggleSceneChanges(int argc, const char **argv) {
-	_engine->_debugGrid->canChangeScenes = !_engine->_debugGrid->canChangeScenes;
+	TOGGLE_DEBUG(_engine->_debugGrid->canChangeScenes, "scene switching via keybinding")
 	return true;
 }
 

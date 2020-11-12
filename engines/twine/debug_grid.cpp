@@ -38,26 +38,20 @@ void DebugGrid::changeGridCamera() {
 	if (!useFreeCamera) {
 		return;
 	}
-	// Press up - more X positions
-	if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugGridCameraPressUp)) {
+
+	ScopedKeyMap scopedKeyMap(_engine, mainKeyMapId);
+
+	if (_engine->_input->isActionActive(TwinEActionType::DebugGridCameraPressUp)) {
 		_engine->_grid->newCameraZ--;
 		_engine->_redraw->reqBgRedraw = true;
-	}
-
-	// Press down - less X positions
-	else if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugGridCameraPressDown)) {
+	} else if (_engine->_input->isActionActive(TwinEActionType::DebugGridCameraPressDown)) {
 		_engine->_grid->newCameraZ++;
 		_engine->_redraw->reqBgRedraw = true;
 	}
-
-	// Press left - less Z positions
-	else if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugGridCameraPressLeft)) {
+	if (_engine->_input->isActionActive(TwinEActionType::DebugGridCameraPressLeft)) {
 		_engine->_grid->newCameraX--;
 		_engine->_redraw->reqBgRedraw = true;
-	}
-
-	// Press right - more Z positions
-	else if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugGridCameraPressRight)) {
+	} else if (_engine->_input->isActionActive(TwinEActionType::DebugGridCameraPressRight)) {
 		_engine->_grid->newCameraX++;
 		_engine->_redraw->reqBgRedraw = true;
 	}
@@ -67,7 +61,6 @@ void DebugGrid::changeGrid() {
 	if (!canChangeScenes) {
 		return;
 	}
-	// Press up - more X positions
 	if (_engine->_input->toggleActionIfActive(TwinEActionType::NextRoom)) {
 		_engine->_scene->currentSceneIdx++;
 		if (_engine->_scene->currentSceneIdx >= LBA1SceneId::SceneIdMax) {
@@ -77,7 +70,6 @@ void DebugGrid::changeGrid() {
 		_engine->_redraw->reqBgRedraw = true;
 	}
 
-	// Press down - less X positions
 	if (_engine->_input->toggleActionIfActive(TwinEActionType::PreviousRoom)) {
 		_engine->_scene->currentSceneIdx--;
 		if (_engine->_scene->currentSceneIdx < LBA1SceneId::Citadel_Island_Prison) {
