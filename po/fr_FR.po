@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-10 03:04+0100\n"
-"PO-Revision-Date: 2020-11-11 12:24+0000\n"
+"PO-Revision-Date: 2020-11-12 07:37+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6993,31 +6993,31 @@ msgstr "Debug Salle Précédente"
 
 #: engines/twine/metaengine.cpp:88
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "Debug Appliquer la grille de cellules"
 
 #: engines/twine/metaengine.cpp:93
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "Debug Augmenter l'index de la grille de cases"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "Debug Diminuer l'index de la grille de cases"
 
 #: engines/twine/metaengine.cpp:103
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "Debug Camera de grille Haut"
 
 #: engines/twine/metaengine.cpp:108
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "Debug Camera de grille Bas"
 
 #: engines/twine/metaengine.cpp:113
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "Debug Camera de grille Gauche"
 
 #: engines/twine/metaengine.cpp:119
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "Debug Camera de grille Droite"
 
 #: engines/twine/metaengine.cpp:124
 msgid "Normal Behaviour"
