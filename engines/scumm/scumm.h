@@ -1183,7 +1183,7 @@ private:
 	uint16 *_languageLineIndex;
 	Common::HashMap<byte, TranslationRoom> _roomIndex;
 
-	const byte *searchTranslatedLine(const byte *text, const TranslationRange &range);
+	const byte *searchTranslatedLine(const byte *text, const TranslationRange &range, bool useIndex);
 
 public:
 
