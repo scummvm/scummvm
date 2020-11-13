@@ -1,18 +1,16 @@
 
 =======================
-The configuration file
+Configuration file
 =======================
 
-The configuration file provides a way to edit both global and game-specific settings by using a text file containing configuration keywords and parameters. 
+The configuration file provides a way to edit both global and game-specific settings. It is a text file containing configuration keywords and parameters. 
 
-Settings are also accessible directly from :doc:`the Launcher <../using_scummvm/the_launcher>` . To edit global settings, click **Options**. To edit game-specific settings, highlight a game and then click **Edit Game**.
+Settings are also accessible directly from :doc:`the Launcher <../using_scummvm/the_launcher>`. See :doc:`../using_scummvm/how_to_settings`. 
 
 Location
 ==========
 
 The configuration file saves to different default locations, depending on the platform. 
-
-
 
 .. tabbed:: macOS
 
@@ -67,7 +65,7 @@ The configuration file saves to different default locations, depending on the pl
 
 			The AppData folder is hidden. The steps to view hidden files and folders depends on the Windows version. 
 
-			For more information, see the `Windows support page <https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files>`_.
+			For more information, see this `Windows support page <https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files>`_.
 
 
 	.. note::
@@ -79,15 +77,13 @@ The configuration file saves to different default locations, depending on the pl
 	.. panels::
 		:column: col-lg-12 mb-2
 
-		We follow the XDG Base Directory Specification. This means our configuration can be found in ``$XDG_CONFIG_HOME/scummvm/scummvm.ini``
-
-		If XDG_CONFIG_HOME is not defined or empty, ``~/.config`` is used, where ``~`` is your Home directory. 
+		We follow the XDG Base Directory Specification, so by default the configuration file can be found at ``/~.config/scummvm/scummvm.ini``, but its location may vary depending on the value of the ``XDG_CONFIG_HOME`` environment variable.
 		
 		If ScummVM was installed using Snap, the configuration file can be found at ``~/snap/scummvm/current/.config/scummvm/scummvm.ini``
 
 		.. note::
 			
-			``.config`` is a hidden directory. To view it use ``ls -a`` on the command line. If you are using a GUI file manager, go to **View > Show Hidden Files**, or use the keyboard shortcut :kbd:`Ctrl + H`.
+			``.config`` is a hidden directory. To view it use ``ls -a`` on the command line. Ff you are using a GUI file manager, use the keyboard shortcut :kbd:`Ctrl + H`.
 
 	
 
@@ -155,7 +151,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 	:widths: 35 15 25 25
   	:header-rows: 1 
 
-		Keyword,Type,Default,Options
+		Keyword,Type,Default,Description or Available options
 		alsa_port,number,,
 		":ref:`alt_intro <altintro>`",boolean,false,
 		":ref:`altamigapalette <altamiga>`",boolean,false,
@@ -260,50 +256,50 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`joystick_deadzone <deadzone>`",integer, 3
 		joystick_num,number,,
 		":ref:`kbdmouse_speed <mousespeed>`", integer, 10
-		":doc:`keymap_engine-default_DOWN <../settings/keymaps>`",string,JOY_DOWN
-		":doc:`keymap_engine-default_LCLK <../settings/keymaps>`",string,MOUSE_LEFT JOY_A
-		":doc:`keymap_engine-default_LEFT <../settings/keymaps>`",string,JOY_LEFT
-		":doc:`keymap_engine-default_MCLK <../settings/keymaps>`",string,MOUSE_MIDDLE
-		":doc:`keymap_engine-default_MENU <../settings/keymaps>`",string,F5 JOY_LEFT_SHOULDER
-		":doc:`keymap_engine-default_PAUSE <../settings/keymaps>`",string,SPACE
-		":doc:`keymap_engine-default_PIND <../settings/keymaps>`",string,
-		":doc:`keymap_engine-default_RCLK <../settings/keymaps>`",string,MOUSE_RIGHT JOY_B
-		":doc:`keymap_engine-default_RETURN <../settings/keymaps>`",string,RETURN
-		":doc:`keymap_engine-default_RIGHT <../settings/keymaps>`",string,JOY_RIGHT
-		":doc:`keymap_engine-default_SKIP <../settings/keymaps>`",string,ESCAPE JOY
-		":doc:`keymap_engine-default_SKLI <../settings/keymaps>`",string,PERIOD JOY_X
-		":doc:`keymap_engine-default_UP <../settings/keymaps>`",string,JOY_UP 
-		":doc:`keymap_global_DEBUGGER <../settings/keymaps>`",string,C+A+d 
-		":doc:`keymap_global_MENU <../settings/keymaps>`",string,C+F5 JOY_START
-		":doc:`keymap_global_MUTE <../settings/keymaps>`",string,C+u 
-		":doc:`keymap_global_QUIT <../settings/keymaps>`",string,C+q 
-		":doc:`keymap_global_VMOUSEDOWN <../settings/keymaps>`",string,JOY_LEFT_STICK_Y+
-		":doc:`keymap_global_VMOUSELEFT <../settings/keymaps>`",string,JOY_LEFT_STICK_X-
-		":doc:`keymap_global_VMOUSERIGHT <../settings/keymaps>`",string,JOY_LEFT_STICK_X+
-		":doc:`keymap_global_VMOUSESLOW <../settings/keymaps>`",string,JOY_RIGHT_SHOULDER
-		":doc:`keymap_global_VMOUSEUP <../settings/keymaps>`",string,JOY_LEFT_STICK_Y-
-		":doc:`keymap_gui_CLOS <../settings/keymaps>`",string,ESCAPE JOY_Y
-		":doc:`keymap_gui_DOWN <../settings/keymaps>`",string,JOY_DOWN
-		":doc:`keymap_gui_INTRCT <../settings/keymaps>`",string,JOY_A
-		":doc:`keymap_gui_LEFT <../settings/keymaps>`",string,
-		":doc:`keymap_gui_RIGHT <../settings/keymaps>`",string,JOY_RIGHT
-		":doc:`keymap_gui_UP <../settings/keymaps>`",string,JOY_UP
-		":doc:`keymap_sdl-graphics_ASPT <../settings/keymaps>`",string,C+A+a
-		":doc:`keymap_sdl-graphics_CAPT <../settings/keymaps>`",string,C+m
-		":doc:`keymap_sdl-graphics_FILT <../settings/keymaps>`",string,C+A+f
-		":doc:`keymap_sdl-graphics_FLT1 <../settings/keymaps>`",string,C+A+1 
-		":doc:`keymap_sdl-graphics_FLT2 <../settings/keymaps>`",string,C+A+2
-		":doc:`keymap_sdl-graphics_FLT3 <../settings/keymaps>`",string,C+A+3 
-		":doc:`keymap_sdl-graphics_FLT4 <../settings/keymaps>`",string,C+A+4 
-		":doc:`keymap_sdl-graphics_FLT5 <../settings/keymaps>`",string,C+A+5 
-		":doc:`keymap_sdl-graphics_FLT6 <../settings/keymaps>`",string, C+A+6
-		":doc:`keymap_sdl-graphics_FLT7 <../settings/keymaps>`",string,C+A+7
-		":doc:`keymap_sdl-graphics_FLT8 <../settings/keymaps>`",string,C+A+8
-		":doc:`keymap_sdl-graphics_FULS <../settings/keymaps>`",string,A+RETURN
-		":doc:`keymap_sdl-graphics_SCL- <../settings/keymaps>`",string,C+A+MINUS 
-		":doc:`keymap_sdl-graphics_SCL+ <../settings/keymaps>`",string,C+A+PLUS 
-		":doc:`keymap_sdl-graphics_SCRS <../settings/keymaps>`",string,A+s 
-		":doc:`keymap_sdl-graphics_STCH <../settings/keymaps>`",string,C+A+s 
+		":ref:`keymap_engine-default_DOWN <down>`",string,JOY_DOWN
+		":ref:`keymap_engine-default_LCLK <LCLK>`",string,MOUSE_LEFT JOY_A
+		":ref:`keymap_engine-default_LEFT <left>`",string,JOY_LEFT
+		":ref:`keymap_engine-default_MCLK <MCLK>`",string,MOUSE_MIDDLE
+		":ref:`keymap_engine-default_MENU <menu>`",string,F5 JOY_LEFT_SHOULDER
+		":ref:`keymap_engine-default_PAUSE <pause>`",string,SPACE
+		":ref:`keymap_engine-default_PIND <PIND>`",string,
+		":ref:`keymap_engine-default_RCLK <RCLK>`",string,MOUSE_RIGHT JOY_B
+		":ref:`keymap_engine-default_RETURN <RETURN>`",string,RETURN
+		":ref:`keymap_engine-default_RIGHT <right>`",string,JOY_RIGHT
+		":ref:`keymap_engine-default_SKIP <skip>`",string,ESCAPE JOY
+		":ref:`keymap_engine-default_SKLI <SKLI>`",string,PERIOD JOY_X
+		":ref:`keymap_engine-default_UP <up>`",string,JOY_UP 
+		":ref:`keymap_global_DEBUGGER <debug>`",string,C+A+d 
+		":ref:`keymap_global_MENU <gmm>`",string,C+F5 JOY_START,
+		":ref:`keymap_global_MUTE <mute>`",string,C+u, 
+		":ref:`keymap_global_QUIT <globalquit>`",string,C+q, 
+		":ref:`keymap_global_VMOUSEDOWN <vmousedown>`",string,JOY_LEFT_STICK_Y+, 
+		":ref:`keymap_global_VMOUSELEFT <vmouseleft>`",string,JOY_LEFT_STICK_X-, 
+		":ref:`keymap_global_VMOUSERIGHT <vmouseright>`",string,JOY_LEFT_STICK_X+, 
+		":ref:`keymap_global_VMOUSESLOW <vmouseslow>`",string,JOY_RIGHT_SHOULDER, 
+		":ref:`keymap_global_VMOUSEUP <vmouseup>`",string,JOY_LEFT_STICK_Y-, 
+		":ref:`keymap_gui_CLOS <close>`",string,ESCAPE JOY_Y, 
+		":ref:`keymap_gui_DOWN <guidown>`",string,JOY_DOWN, 
+		":ref:`keymap_gui_INTRCT <interact>`",string,JOY_A, 
+		":ref:`keymap_gui_LEFT <guileft>`",string, 
+		":ref:`keymap_gui_RIGHT <guiright>`",string,JOY_RIGHT, 
+		":ref:`keymap_gui_UP <guiup>`",string,JOY_UP, 
+		":ref:`keymap_sdl-graphics_ASPT <ASPT>`",string,C+A+a, 
+		":ref:`keymap_sdl-graphics_CAPT <CAPT>`",string,C+m,
+		":ref:`keymap_sdl-graphics_FILT <FILT>`",string,C+A+f
+		":ref:`keymap_sdl-graphics_FLT1 <FLT1>`",string,C+A+1 
+		":ref:`keymap_sdl-graphics_FLT2 <FLT2>`",string,C+A+2
+		":ref:`keymap_sdl-graphics_FLT3 <FLT3>`",string,C+A+3 
+		":ref:`keymap_sdl-graphics_FLT4 <FLT4>`",string,C+A+4 
+		":ref:`keymap_sdl-graphics_FLT5 <FLT5>`",string,C+A+5 
+		":ref:`keymap_sdl-graphics_FLT6 <FLT6>`",string, C+A+6
+		":ref:`keymap_sdl-graphics_FLT7 <FLT7>`",string,C+A+7
+		":ref:`keymap_sdl-graphics_FLT8 <FLT8>`",string,C+A+8
+		":ref:`keymap_sdl-graphics_FULS <FULS>`",string,A+RETURN
+		":ref:`keymap_sdl-graphics_SCL- <SCL>`",string,C+A+MINUS 
+		":ref:`keymap_sdl-graphics_SCL+ <SCL>`",string,C+A+PLUS 
+		":ref:`keymap_sdl-graphics_SCRS <SCRS>`",string,A+s 
+		":ref:`keymap_sdl-graphics_STCH <STCH>`",string,C+A+s 
 		":ref:`language <lang>`",string,,
 		":ref:`local_server_port <serverport>`",integer,12345,
 		":ref:`midi_gain <gain>`",number,,"- 0 - 1000"

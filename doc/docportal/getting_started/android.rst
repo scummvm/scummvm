@@ -3,22 +3,28 @@
 Android
 ===============
 
+Prerequisites
+================
+
+- An Android device running Android 4.1 (Jelly Bean) or newer.
+
+.. note::
+
+    ScummVM has been tested to work up to Android 10. Currently there are some file browsing limitations with Android 11. The ScummVM team are working to resolve these.  
+
 Install ScummVM
 ====================================
 
-There are multiple ways to install ScummVM on your Android device depending on what version of Android is installed on the device. 
-
+There are two ways to install ScummVM on an Android device; install it from the Google Play Store, or manually download and install the APK package from the ScummVM downloads page. 
 
 Google Play Store
 *********************
-For Android 7 (Nougat) or earlier, download ScummVM from the Google Play Store. It guides you through the installation. 
 
-.. caution:: 
+Go to the Google Play Store to download and install ScummVM. 
 
-    Currently the Google Play version of ScummVM does not work on Android versions 8.0 and later. If the version of Android on the device is not compatible with the app on the Google Play store, install ScummVM using the APK package. 
 
-APK package install
-**********************
+APK package 
+************
 
 On your device, use a web browser app to navigate to the `ScummVM downloads page <https://www.scummvm.org/downloads>`_. The recommended download section on the page should suggest the correct ``.apk`` package, however if it does not, scroll down to select the correct package. 
 
@@ -26,7 +32,7 @@ On your device, use a web browser app to navigate to the `ScummVM downloads page
 
     To find the correct package for your device, find out whether the device has a 32 or 64-bit operating system, and which chipset the device has. An internet search using the device model number should allow you to find these details.
 
-Click on the correct package to start the download. Once it has downloaded, go to the file and tap on it to start the install process. Use either a file manager app, or by select the file directly from the web browser downloads. The file manager or the web browser asks for permission to install the package, and once permission is granted, returns to the install. 
+Click on the correct package to start the download. Once it has downloaded, go to the file and tap on it to start the install process. Use either a file manager app, or select the file directly from the web browser downloads. The file manager or the web browser asks for permission to install the package, and once permission is granted, returns to the install. 
 
 .. note:: 
 
