@@ -4,9 +4,9 @@
       :maxdepth: 2
       :hidden:
 
-      getting_started/mac_linux_windows
-      getting_started/android
-      getting_started/ios
+      get_started/mac_linux_windows
+      get_started/android
+      get_started/ios
 
 
 .. toctree::
@@ -109,11 +109,11 @@ We have guides available to show you :column: mb-4 how to get ScummVM up and run
       Getting started
       ^^^^^^^^^^^^
 
-      :doc:`getting_started/mac_linux_windows`
+      :doc:`get_started/mac_linux_windows`
 
-      :doc:`getting_started/ios`
+      :doc:`get_started/ios`
 
-      :doc:`getting_started/android`
+      :doc:`get_started/android`
 
       ---
       :column: col-lg-6
