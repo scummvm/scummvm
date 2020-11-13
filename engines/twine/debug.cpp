@@ -417,15 +417,10 @@ void Debug::debugPlasmaWindow(const char *text, int32 color) {
 }
 
 void Debug::debugProcessWindow() {
-	if (_engine->_input->rightMouse) {
-		int32 quit = 0;
+	if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugMenu)) {
 		const char *text = "Game Debug Window";
-		int32 color = 64;
 		int32 colorIdx = 4;
 		int32 count = 0;
-		MouseStatusStruct mouseData;
-		_engine->_input->rightMouse = 0;
-		_engine->_input->leftMouse = 0;
 
 		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
@@ -435,14 +430,15 @@ void Debug::debugProcessWindow() {
 		}
 		debugDrawWindows();
 
-		do {
+		for (;;) {
 			_engine->readKeys();
 			if (_engine->shouldQuit()) {
-				quit = 1;
+				break;
 			}
+			MouseStatusStruct mouseData;
 			_engine->_input->getMousePositions(&mouseData);
 
-			if (mouseData.left) {
+			if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugMenuActivate)) {
 				int type = 0;
 				if ((type = debugProcessButton(mouseData.x, mouseData.y)) != NO_ACTION) { // process menu item
 					if (debugTypeUseMenu(type)) {
@@ -453,7 +449,6 @@ void Debug::debugProcessWindow() {
 					debugRefreshButtons(type);
 					debugSetActions(type);
 				}
-				mouseData.left = 0;
 			}
 
 			// draw window plasma effect
@@ -461,7 +456,7 @@ void Debug::debugProcessWindow() {
 				colorIdx++;
 				count = 0;
 			}
-			color = colorIdx * 16;
+			int32 color = colorIdx * 16;
 			if (color >= 240) {
 				color = 64;
 				colorIdx = 4;
@@ -469,14 +464,14 @@ void Debug::debugProcessWindow() {
 			debugPlasmaWindow(text, color);
 
 			// quit
-			if (mouseData.right) {
-				quit = 1;
+			if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugMenu)) {
+				break;
 			}
 
 			_engine->_system->delayMillis(1000 / 25); // rest
 
 			count++;
-		} while (!quit);
+		}
 		_engine->_redraw->reqBgRedraw = true;
 	}
 }

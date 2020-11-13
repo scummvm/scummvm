@@ -209,6 +209,16 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("c");
 		gameKeyMap->addAction(act);
 
+		act = new Action("DEBUGMENU", _("Debug Menu"));
+		act->setCustomEngineActionEvent(TwinEActionType::DebugMenu);
+		act->addDefaultInputMapping("MOUSE_RIGHT");
+		gameKeyMap->addAction(act);
+
+		act = new Action("DEBUGMENUEXEC", _("Debug Menu Execute"));
+		act->setCustomEngineActionEvent(TwinEActionType::DebugMenuActivate);
+		act->addDefaultInputMapping("MOUSE_LEFT");
+		gameKeyMap->addAction(act);
+
 		act = new Action("NORMALBEHAVIOUR", _("Normal Behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourNormal);
 		act->addDefaultInputMapping("F1");

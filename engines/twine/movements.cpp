@@ -275,13 +275,13 @@ void Movements::processManualAction(int actorIdx) {
 						_engine->_animations->initAnim(kRightPunch, 1, 0, actorIdx);
 					}
 
-					if (_engine->_input->toggleActionIfActive(TwinEActionType::MoveForward)) {
+					if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
 						_engine->_animations->initAnim(kKick, 1, 0, actorIdx);
 					}
 				}
 				break;
 			case kDiscrete:
-					_engine->_animations->initAnim(kHide, 0, 255, actorIdx);
+				_engine->_animations->initAnim(kHide, 0, 255, actorIdx);
 				break;
 			case kProtoPack:
 				break;

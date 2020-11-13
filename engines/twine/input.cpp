@@ -131,6 +131,8 @@ static constexpr const struct ActionMapping {
     {DebugGridCameraPressDown, 0x2C},
     {DebugGridCameraPressLeft, 0x1F},
     {DebugGridCameraPressRight, 0x2D},
+	{DebugMenu, 0x00},
+	{DebugMenuActivate, 0x00},
     {QuickBehaviourNormal, 0x3B},
     {QuickBehaviourAthletic, 0x3C},
     {QuickBehaviourAggressive, 0x3D},
@@ -164,6 +166,12 @@ static_assert(ARRAYSIZE(twineactions) == TwinEActionType::Max, "Unexpected actio
 uint8 Input::processCustomEngineEventStart(const Common::Event &event) {
 	if (!_engine->cfgfile.Debug) {
 		switch (event.customType) {
+		case TwinEActionType::DebugGridCameraPressUp:
+		case TwinEActionType::DebugGridCameraPressDown:
+		case TwinEActionType::DebugGridCameraPressLeft:
+		case TwinEActionType::DebugGridCameraPressRight:
+		case TwinEActionType::DebugMenu:
+		case TwinEActionType::DebugMenuActivate:
 		case TwinEActionType::NextRoom:
 		case TwinEActionType::PreviousRoom:
 		case TwinEActionType::ApplyCellingGrid:
@@ -199,12 +207,6 @@ void Input::readKeys() {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			localKey = processCustomEngineEventStart(event);
 			break;
-		case Common::EVENT_LBUTTONDOWN:
-			leftMouse = 1;
-			break;
-		case Common::EVENT_RBUTTONDOWN:
-			rightMouse = 1;
-			break;
 		default:
 			break;
 		}
@@ -234,10 +236,6 @@ void Input::getMousePositions(MouseStatusStruct *mouseData) {
 	Common::Point point = g_system->getEventManager()->getMousePos();
 	mouseData->x = point.x;
 	mouseData->y = point.y;
-	mouseData->left = leftMouse;
-	mouseData->right = rightMouse;
-	leftMouse = 0;
-	rightMouse = 0;
 }
 
 } // namespace TwinE
