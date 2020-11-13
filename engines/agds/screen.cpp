@@ -204,7 +204,7 @@ void Screen::paint(Graphics::Surface &backbuffer) {
 ObjectPtr Screen::find(Common::Point pos) const {
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
-		if (object->pointIn(pos))
+		if (object->pointIn(pos) && object->inScene())
 			return object;
 	}
 	return ObjectPtr();
