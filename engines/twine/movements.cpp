@@ -94,16 +94,16 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 	int32 difX = x2 - x1;
 	const int32 newX = difX * difX;
 
-	int32 flag;
+	bool flag;
 	// Exchange X and Z
 	if (newX < newZ) {
 		const int32 tmpEx = difX;
 		difX = difZ;
 		difZ = tmpEx;
 
-		flag = 1;
+		flag = true;
 	} else {
-		flag = 0;
+		flag = false;
 	}
 
 	targetActorDistance = (int32)sqrt((int64)newX + (int64)newZ);
@@ -133,7 +133,7 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 		finalAngle = -finalAngle;
 	}
 
-	if (flag == 1) {
+	if (flag) {
 		finalAngle = -finalAngle + 0x100;
 	}
 
