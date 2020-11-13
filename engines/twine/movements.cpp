@@ -172,7 +172,7 @@ int32 Movements::getRealValue(ActorMoveStruct *movePtr) {
 		return movePtr->to;
 	}
 
-	if (!(_engine->lbaTime - movePtr->timeOfChange < movePtr->numOfStep)) {
+	if (_engine->lbaTime - movePtr->timeOfChange >= movePtr->numOfStep) {
 		movePtr->numOfStep = 0;
 		return movePtr->to;
 	}
@@ -338,7 +338,7 @@ void Movements::processManualAction(int actorIdx) {
 
 		if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 			heroMoved = true;
-			if (actor->anim == 0) {
+			if (actor->anim == kStanding) {
 				_engine->_animations->initAnim(kTurnLeft, 0, 255, actorIdx);
 			} else {
 				if (!actor->dynamicFlags.bIsRotationByAnim) {
@@ -347,7 +347,7 @@ void Movements::processManualAction(int actorIdx) {
 			}
 		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 			heroMoved = true;
-			if (actor->anim == 0) {
+			if (actor->anim == kStanding) {
 				_engine->_animations->initAnim(kTurnRight, 0, 255, actorIdx);
 			} else {
 				if (!actor->dynamicFlags.bIsRotationByAnim) {
