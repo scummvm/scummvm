@@ -40,9 +40,11 @@ class MJPGPlayer {
 	uint							_framesPlayed;
 
 	struct Text {
+		using Lines = Common::Array<Common::String>;
+
 		uint			begin;
 		uint			end;
-		Common::String	line;
+		Lines 			lines;
 	};
 
 	Common::Array<Text> 			_subtitles;
