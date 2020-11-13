@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-10 03:04+0100\n"
+"POT-Creation-Date: 2020-11-13 20:49+0100\n"
 "PO-Revision-Date: 2020-11-10 17:44+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -595,7 +595,7 @@ msgstr "Fechar"
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/metaengine.cpp:165 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:98 engines/grim/grim.cpp:451
-#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:245
+#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:333
 #: engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1474
@@ -607,7 +607,7 @@ msgstr "Cima"
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/metaengine.cpp:171 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:104 engines/grim/grim.cpp:456
-#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:251
+#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:339
 #: engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1480
@@ -619,7 +619,7 @@ msgstr "Baixo"
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:110
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
-#: engines/twine/metaengine.cpp:263 engines/wintermute/keymapper_tables.h:1023
+#: engines/twine/metaengine.cpp:351 engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1462
 #: engines/wintermute/keymapper_tables.h:1570
 #: engines/wintermute/keymapper_tables.h:1692
@@ -630,7 +630,7 @@ msgstr "Esquerda"
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/metaengine.cpp:183 engines/griffon/metaengine.cpp:116
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
-#: engines/twine/metaengine.cpp:257 engines/wintermute/keymapper_tables.h:1029
+#: engines/twine/metaengine.cpp:345 engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1468
 #: engines/wintermute/keymapper_tables.h:1578
 #: engines/wintermute/keymapper_tables.h:1698
@@ -2328,7 +2328,7 @@ msgstr "Clique com Botão Direito"
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 #: engines/hdb/metaengine.cpp:238 engines/mohawk/myst.cpp:593
 #: engines/mohawk/riven.cpp:863 engines/sky/metaengine.cpp:113
-#: engines/twine/metaengine.cpp:73 engines/wintermute/keymapper_tables.h:1255
+#: engines/twine/metaengine.cpp:161 engines/wintermute/keymapper_tables.h:1255
 msgid "Pause"
 msgstr "Pausar"
 
@@ -2634,7 +2634,7 @@ msgstr "Você deseja sair?"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
-#: engines/twine/metaengine.cpp:160
+#: engines/twine/metaengine.cpp:248
 msgid "Center"
 msgstr "Centralizado"
 
@@ -2664,27 +2664,27 @@ msgid "Resolution: %dx%d"
 msgstr "Resolução: %dx%d"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:612
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2504
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2500
 msgid "Enabled aspect ratio correction"
 msgstr "Correção de proporção habilitada"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:614
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2510
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2506
 msgid "Disabled aspect ratio correction"
 msgstr "Correção de proporção desabilitada"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:635
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2527
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2523
 msgid "Filtering enabled"
 msgstr "Filtragem habilitada"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:637
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2529
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2525
 msgid "Filtering disabled"
 msgstr "Filtragem desabilitada"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:666
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2557
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2553
 msgid "Stretch mode"
 msgstr "Modo de preenchimento"
 
@@ -2697,7 +2697,7 @@ msgctxt "lowres"
 msgid "Normal (no scaling)"
 msgstr "Normal (sem escala)"
 
-#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2470
+#: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2466
 msgid "Active graphics filter:"
 msgstr "Filtros gráficos ativos:"
 
@@ -4134,11 +4134,11 @@ msgid ""
 "ScummVM."
 msgstr "O tradutor fã deseja que sua tradução não seja incorporada ao ScummVM."
 
-#: engines/cge/detection.cpp:113 engines/cge2/detection.cpp:109
+#: engines/cge/detection.cpp:113
 msgid "Color Blind Mode"
 msgstr "Modo Daltônico"
 
-#: engines/cge/detection.cpp:114 engines/cge2/detection.cpp:110
+#: engines/cge/detection.cpp:114
 msgid "Enable Color Blind Mode by default"
 msgstr "Habilita o Modo Daltônico por padrão"
 
@@ -4225,7 +4225,7 @@ msgstr "Alterar Comando"
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
 #: engines/hdb/metaengine.cpp:231 engines/scumm/help.cpp:225
 #: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
-#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:211
+#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:299
 #: engines/zvision/metaengine.cpp:164
 msgid "Inventory"
 msgstr "Inventário"
@@ -4916,7 +4916,7 @@ msgid "Interact via Right Click"
 msgstr "Interagir com Clique do Botão Direito"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
-#: engines/twine/metaengine.cpp:177
+#: engines/twine/metaengine.cpp:265
 msgid "Move Forward"
 msgstr "Mover para Frente"
 
@@ -4933,13 +4933,13 @@ msgid "Move Right"
 msgstr "Mover para Direita"
 
 #: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:479
-#: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:195
+#: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:283
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Virar à Esquerda"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:189
+#: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:277
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "Virar à Direita"
@@ -6941,107 +6941,201 @@ msgstr "Não foi possível carregar rapidamente o jogo salvo #%d"
 msgid "Unable to locate the '%s' data file."
 msgstr "Não foi possível localizar o arquivo de dados '%s'."
 
-#: engines/twine/metaengine.cpp:78
+#: engines/twine/metaengine.cpp:68
+msgid "Enable wall collisions"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:69
+msgid "Enable the original wall collision damage"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:75
+#, fuzzy
+msgid "Enable cross fade"
+msgstr "Habilitar modo de trapaça"
+
+#: engines/twine/metaengine.cpp:76
+msgid "Enable cross fading of images and scenes"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:83
+#, fuzzy
+msgid "Disable save menu"
+msgstr "Falha ao salvar o jogo"
+
+#: engines/twine/metaengine.cpp:84
+msgid ""
+"The original only had autosaves. This allows you to save whenever you want."
+msgstr ""
+
+#: engines/twine/metaengine.cpp:90
+#, fuzzy
+msgid "Enable debug mode"
+msgstr "Habilita modo de hélio"
+
+#: engines/twine/metaengine.cpp:91
+#, fuzzy
+msgid "Enable the debug mode"
+msgstr "Habilita modo de hélio"
+
+#: engines/twine/metaengine.cpp:97
+#, fuzzy
+msgid "Enable audio CD"
+msgstr "Habilita platéia de estúdio"
+
+#: engines/twine/metaengine.cpp:98
+msgid "Enable the original audio cd track"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:104
+#, fuzzy
+msgid "Enable sound"
+msgstr "Ativar armazenamento"
+
+#: engines/twine/metaengine.cpp:105
+#, fuzzy
+msgid "Enable the sound for the game"
+msgstr "Título completo do jogo"
+
+#: engines/twine/metaengine.cpp:111
+#, fuzzy
+msgid "Enable voices"
+msgstr "Habilitar Vênus"
+
+#: engines/twine/metaengine.cpp:112
+#, fuzzy
+msgid "Enable the voices for the game"
+msgstr "Habilita o sistema de ajuda Vênus"
+
+#: engines/twine/metaengine.cpp:118
+#, fuzzy
+msgid "Enable text"
+msgstr "Ativar armazenamento"
+
+#: engines/twine/metaengine.cpp:119
+#, fuzzy
+msgid "Enable the text for the game"
+msgstr "Título completo do jogo"
+
+#: engines/twine/metaengine.cpp:125
+#, fuzzy
+msgid "Enable movies"
+msgstr "Habilitar Vênus"
+
+#: engines/twine/metaengine.cpp:126
+#, fuzzy
+msgid "Enable the cutscenes for the game"
+msgstr "Habilita o sistema de ajuda Vênus"
+
+#: engines/twine/metaengine.cpp:132
+msgid "Use the USA version"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:133
+msgid "Enable the USA specific version flags"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:166
 msgid "Debug Next Room"
 msgstr "Depurar Sala Seguinte"
 
-#: engines/twine/metaengine.cpp:83
+#: engines/twine/metaengine.cpp:171
 msgid "Debug Previous Room"
 msgstr "Depurar Sala Anterior"
 
-#: engines/twine/metaengine.cpp:88
+#: engines/twine/metaengine.cpp:176
 msgid "Debug Apply Celling Grid"
 msgstr "Aplicar Sobreposição de Grade para Depurar"
 
-#: engines/twine/metaengine.cpp:93
+#: engines/twine/metaengine.cpp:181
 msgid "Debug Increase Celling Grid Index"
 msgstr "Aumentar Índice de Sobreposição de Grade para Depurar"
 
-#: engines/twine/metaengine.cpp:98
+#: engines/twine/metaengine.cpp:186
 msgid "Debug Decrease Celling Grid Index"
 msgstr "Diminuir Índice de Sobreposição de Grade para Depurar"
 
-#: engines/twine/metaengine.cpp:103
+#: engines/twine/metaengine.cpp:191
 msgid "Debug Grid Camera Up"
 msgstr "Câmera da Grade de Depuração para Cima"
 
-#: engines/twine/metaengine.cpp:108
+#: engines/twine/metaengine.cpp:196
 msgid "Debug Grid Camera Down"
 msgstr "Câmera da Grade de Depuração para Baixo"
 
-#: engines/twine/metaengine.cpp:113
+#: engines/twine/metaengine.cpp:201
 msgid "Debug Grid Camera Left"
 msgstr "Câmera da Grade de Depuração para Esquerda"
 
-#: engines/twine/metaengine.cpp:119
+#: engines/twine/metaengine.cpp:207
 msgid "Debug Grid Camera Right"
 msgstr "Câmera da Grade de Depuração para Direita"
 
-#: engines/twine/metaengine.cpp:124
+#: engines/twine/metaengine.cpp:212
 msgid "Normal Behaviour"
 msgstr "Comportamento Normal"
 
-#: engines/twine/metaengine.cpp:129
+#: engines/twine/metaengine.cpp:217
 msgid "Athletic Behaviour"
 msgstr "Comportamento Atlético"
 
-#: engines/twine/metaengine.cpp:134
+#: engines/twine/metaengine.cpp:222
 msgid "Aggressive Behaviour"
 msgstr "Comportamento Agressivo"
 
-#: engines/twine/metaengine.cpp:139
+#: engines/twine/metaengine.cpp:227
 msgid "Discreet Behaviour"
 msgstr "Comportamento Discreto"
 
-#: engines/twine/metaengine.cpp:144
+#: engines/twine/metaengine.cpp:232
 msgid "Behaviour Action"
 msgstr "Ação de Comportamento"
 
-#: engines/twine/metaengine.cpp:150
+#: engines/twine/metaengine.cpp:238
 msgid "Change Behaviour"
 msgstr "Alterar Comportamento"
 
-#: engines/twine/metaengine.cpp:155
+#: engines/twine/metaengine.cpp:243
 msgid "Options Menu"
 msgstr "Menu de Opções"
 
-#: engines/twine/metaengine.cpp:166
+#: engines/twine/metaengine.cpp:254
 msgid "Use Selected Object"
 msgstr "Usar Objeto Selecionado"
 
-#: engines/twine/metaengine.cpp:172
+#: engines/twine/metaengine.cpp:260
 msgid "Throw Magic Ball"
 msgstr "Lançar Bola Mágica"
 
-#: engines/twine/metaengine.cpp:183
+#: engines/twine/metaengine.cpp:271
 msgid "Move Backward"
 msgstr "Mover para Trás"
 
-#: engines/twine/metaengine.cpp:201
+#: engines/twine/metaengine.cpp:289
 msgid "Use Protopack"
 msgstr "Usar Protopack"
 
-#: engines/twine/metaengine.cpp:206
+#: engines/twine/metaengine.cpp:294
 msgid "Open Holomap"
 msgstr "Abrir Holomapa"
 
-#: engines/twine/metaengine.cpp:218
+#: engines/twine/metaengine.cpp:306
 msgid "Special Action"
 msgstr "Ação Especial"
 
-#: engines/twine/metaengine.cpp:223 engines/wintermute/keymapper_tables.h:61
+#: engines/twine/metaengine.cpp:311 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
 msgstr "Fugir"
 
-#: engines/twine/metaengine.cpp:234
+#: engines/twine/metaengine.cpp:322
 msgid "Accept"
 msgstr "Aceitar"
 
-#: engines/twine/metaengine.cpp:240 engines/twine/metaengine.cpp:281
+#: engines/twine/metaengine.cpp:328 engines/twine/metaengine.cpp:369
 msgid "Abort"
 msgstr "Abortar"
 
-#: engines/twine/metaengine.cpp:269
+#: engines/twine/metaengine.cpp:357
 msgid "Next Page"
 msgstr "Próxima Página"
 
