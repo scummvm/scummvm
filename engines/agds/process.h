@@ -66,6 +66,7 @@ private:
 	int				_animationSpeed;
 	bool			_samplePeriodic;
 	Common::Point	_mousePosition;
+	int				_filmSubtitlesResource;
 
 private:
 	void debug(const char *str, ...);

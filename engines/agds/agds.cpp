@@ -525,17 +525,7 @@ Common::Error AGDSEngine::run() {
 		}
 
 		if (_mjpgPlayer) {
-			const Graphics::Surface *surface = _mjpgPlayer->decodeFrame();
-
-			if (surface) {
-				Graphics::Surface *converted = surface->convertTo(_pixelFormat);
-				Common::Point dst((backbuffer->w - converted->w) / 2, (backbuffer->h - converted->h) / 2);
-				Common::Rect srcRect(converted->getRect());
-				if (Common::Rect::getBlitRect(dst, srcRect, backbuffer->getRect()))
-					backbuffer->copyRectToSurface(*converted, dst.x, dst.y, srcRect);
-				converted->free();
-				delete converted;
-			}
+			_mjpgPlayer->paint(*this, *backbuffer);
 
 			if (_mjpgPlayer->eos()) {
 				skipFilm();
@@ -597,8 +587,9 @@ Common::Error AGDSEngine::run() {
 	return Common::kNoError;
 }
 
-void AGDSEngine::playFilm(Process &process, const Common::String &video, const Common::String &audio) {
+void AGDSEngine::playFilm(Process &process, const Common::String &video, const Common::String &audio, const Common::String &subtitles) {
 	delete _mjpgPlayer;
+	_mjpgPlayer = nullptr;
 	if (_fastMode) {
 		debug("fast mode, skipping film");
 		process.activate();
@@ -606,7 +597,7 @@ void AGDSEngine::playFilm(Process &process, const Common::String &video, const C
 	}
 
 	_filmProcess = process.getName();
-	_mjpgPlayer = new MJPGPlayer(_resourceManager.getResource(video));
+	_mjpgPlayer = new MJPGPlayer(_resourceManager.getResource(video), subtitles);
 	_soundManager.stopAll();
 	_syncSoundId = _soundManager.play(process.getName(), audio, Common::String());
 }
@@ -691,7 +682,9 @@ void AGDSEngine::loadCharacter(const Common::String &id, const Common::String &f
 	_currentCharacter->load(_resourceManager.getResource(filename));
 }
 
-Graphics::TransparentSurface *AGDSEngine::loadPicture(const Common::String &name) { return convertToTransparent(_resourceManager.loadPicture(name, _pixelFormat)); }
+Graphics::TransparentSurface *AGDSEngine::loadPicture(const Common::String &name) {
+	return convertToTransparent(_resourceManager.loadPicture(name, _pixelFormat));
+}
 
 int AGDSEngine::loadFromCache(const Common::String &name) const {
 	PictureCacheLookup::const_iterator i = _pictureCacheLookup.find(name);

@@ -205,7 +205,7 @@ void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	if (engine.showHints() && !_title.empty()) {
 		Common::Point pos = _region ? _region->center : _pos;
 		int w = backbuffer.w - pos.x;
-		auto font = engine.getFont(engine.getSystemVariable("edit_font")->getInteger());
+		auto font = engine.getFont(engine.getSystemVariable("tell_font")->getInteger());
 		pos.x -= font->getStringWidth(_title) / 2;
 		font->drawString(&backbuffer, _title, pos.x, pos.y, w, 0);
 	}
