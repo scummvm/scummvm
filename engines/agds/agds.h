@@ -289,6 +289,7 @@ private:
 	SystemVariablesType			_systemVars;
 	Graphics::PixelFormat		_pixelFormat;
 	MJPGPlayer *				_mjpgPlayer;
+	uint32						_filmStarted;
 	Common::String				_filmProcess;
 	Screen *					_currentScreen;
 	Common::String				_currentScreenName;

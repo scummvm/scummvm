@@ -59,6 +59,10 @@ public:
 	void rewind();
 	const Graphics::Surface *decodeFrame();
 	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);
+
+	uint32 getNextFrameTimestamp() const {
+		return _framesPlayed * 1000 / 24;
+	}
 };
 
 
