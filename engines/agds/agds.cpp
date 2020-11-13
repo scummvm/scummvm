@@ -48,7 +48,8 @@ namespace AGDS {
 AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
                                                                              _gameDescription(gameDesc), _pictureCacheId(1), _sharedStorageIndex(-2),
 																			 _processes(MaxProcesses),
-                                                                             _mjpgPlayer(), _currentScreen(), _currentCharacter(),
+                                                                             _mjpgPlayer(), _filmStarted(0),
+																			 _currentScreen(), _currentCharacter(),
                                                                              _defaultMouseCursor(),
                                                                              _mouse(400, 300),
 																			 _userEnabled(true), _systemUserEnabled(true),
@@ -575,12 +576,19 @@ Common::Error AGDSEngine::run() {
 		_system->updateScreen();
 
 		if (!_fastMode) {
-			static const uint32 kFPS = 25;
-			static const uint32 kMaxTick = 1000 / kFPS;
+			if (_mjpgPlayer) {
+				uint32 elapsed = _system->getMillis() - _filmStarted;
+				uint32 expected = _mjpgPlayer->getNextFrameTimestamp();
+				if (expected > elapsed)
+					_system->delayMillis(expected - elapsed);
+			} else {
+				static const uint32 kFPS = 25;
+				static const uint32 kMaxTick = 1000 / kFPS;
 
-			uint32 dt = _system->getMillis() - frameStarted;
-			if (dt < kMaxTick)
-				_system->delayMillis(kMaxTick - dt);
+				uint32 dt = _system->getMillis() - frameStarted;
+				if (dt < kMaxTick)
+					_system->delayMillis(kMaxTick - dt);
+			}
 		}
 	}
 
@@ -599,6 +607,7 @@ void AGDSEngine::playFilm(Process &process, const Common::String &video, const C
 	_filmProcess = process.getName();
 	_mjpgPlayer = new MJPGPlayer(_resourceManager.getResource(video), subtitles);
 	_soundManager.stopAll();
+	_filmStarted = _system->getMillis();
 	_syncSoundId = _soundManager.play(process.getName(), audio, Common::String());
 }
 
