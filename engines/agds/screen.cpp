@@ -235,8 +235,11 @@ void Screen::load(const PatchPtr &patch) {
 		debug("patch object %s %d", object.name.c_str(), object.flag);
 		if (object.flag <= 0)
 			remove(object.name);
-		else if (!find(object.name)) {
-			_engine->runObject(object.name);
+		else {
+			auto instance = find(object.name); //find by name finds removed objects too
+			if (!instance || !instance->inScene()) {
+				_engine->runObject(object.name);
+			}
 		}
 	}
 	_applyingPatch = false;
