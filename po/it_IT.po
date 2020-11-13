@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-13 20:49+0100\n"
-"PO-Revision-Date: 2020-11-11 00:12+0000\n"
+"PO-Revision-Date: 2020-11-14 01:54+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -6963,93 +6963,83 @@ msgstr "File dati '%s' non trovato."
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "Abilita collisioni pareti"
 
 #: engines/twine/metaengine.cpp:69
 msgid "Enable the original wall collision damage"
 msgstr ""
+"Attiva i danni causati dalle collisioni con i muri, come nel gioco originale"
 
 #: engines/twine/metaengine.cpp:75
-#, fuzzy
 msgid "Enable cross fade"
-msgstr "Attiva modalità cheat"
+msgstr "Abilita dissolvenze"
 
 #: engines/twine/metaengine.cpp:76
 msgid "Enable cross fading of images and scenes"
-msgstr ""
+msgstr "Attiva effetti di dissolvenza per le immagini e gli scenari"
 
 #: engines/twine/metaengine.cpp:83
-#, fuzzy
 msgid "Disable save menu"
-msgstr "Impossibile salvare la partita"
+msgstr "Disabilita menù di salvataggio"
 
 #: engines/twine/metaengine.cpp:84
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
+"Il gioco originale salva automaticamente. Con questa opzione puoi salvare "
+"quando lo desideri."
 
 #: engines/twine/metaengine.cpp:90
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "Attiva la modalità elio"
+msgstr "Attiva modalità debug"
 
 #: engines/twine/metaengine.cpp:91
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "Attiva la modalità elio"
+msgstr "Attiva la modalità di debug"
 
 #: engines/twine/metaengine.cpp:97
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "Attiva le reazioni del pubblico"
+msgstr "Attiva audio CD"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "Abilita la traccia audio CD originale"
 
 #: engines/twine/metaengine.cpp:104
-#, fuzzy
 msgid "Enable sound"
-msgstr "Attiva servizio di archiviazione"
+msgstr "Attiva effetti sonori"
 
 #: engines/twine/metaengine.cpp:105
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "Titolo completo del gioco"
+msgstr "Abilita effetti sonori del gioco"
 
 #: engines/twine/metaengine.cpp:111
-#, fuzzy
 msgid "Enable voices"
-msgstr "Attiva Venus"
+msgstr "Attiva voci"
 
 #: engines/twine/metaengine.cpp:112
-#, fuzzy
 msgid "Enable the voices for the game"
-msgstr "Abilita il sistema di aiuto Venus"
+msgstr "Abilita le voci del gioco"
 
 #: engines/twine/metaengine.cpp:118
-#, fuzzy
 msgid "Enable text"
-msgstr "Attiva servizio di archiviazione"
+msgstr "Attiva testi"
 
 #: engines/twine/metaengine.cpp:119
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "Titolo completo del gioco"
+msgstr "Abilita i testi del gioco"
 
 #: engines/twine/metaengine.cpp:125
-#, fuzzy
 msgid "Enable movies"
-msgstr "Attiva Venus"
+msgstr "Attiva filmati"
 
 #: engines/twine/metaengine.cpp:126
-#, fuzzy
 msgid "Enable the cutscenes for the game"
-msgstr "Abilita il sistema di aiuto Venus"
+msgstr "Abilita le scene d'intermezzo del gioco"
 
 #: engines/twine/metaengine.cpp:132
 msgid "Use the USA version"
-msgstr ""
+msgstr "Usa la versione americana"
 
 #: engines/twine/metaengine.cpp:133
 msgid "Enable the USA specific version flags"
