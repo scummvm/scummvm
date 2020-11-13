@@ -1,0 +1,116 @@
+in vec3 position;
+in vec2 texcoord;
+in vec4 color;
+in vec3 normal;
+
+uniform highp mat4 modelMatrix;
+uniform highp mat4 viewMatrix;
+uniform highp mat4 projMatrix;
+uniform highp mat4 extraMatrix;
+uniform highp mat4 normalMatrix;
+uniform highp vec3 cameraPos;
+uniform bool textured;
+uniform bool useVertexAlpha;
+uniform vec4 uniformColor;
+uniform bool hasAmbient;
+
+const int maxLights = 8;
+uniform vec4 lightsPosition[maxLights];
+uniform vec4 lightsDirection[maxLights];
+uniform vec4 lightsColor[maxLights];
+uniform vec4 lightsParams[maxLights];
+
+struct shadow_info {
+	bool _active;
+	vec3 _color;
+	vec3 _light;
+	vec3 _point;
+	vec3 _normal;
+};
+
+uniform shadow_info shadow;
+
+out vec2 Texcoord;
+out vec4 Color;
+
+void main()
+{
+	vec4 pos = vec4(position, 1.0);
+	pos = modelMatrix * pos;
+
+	// See http://en.wikipedia.org/wiki/Line-plane_intersection
+	if (shadow._active) {
+		pos /= pos.w;
+		vec3 l = pos.xyz - shadow._light;
+		float d = dot(shadow._point - shadow._light, shadow._normal) / dot(l, shadow._normal);
+		vec3 p = shadow._light + d * l;
+		pos = vec4(p, 1.0);
+	}
+
+	pos -= vec4(cameraPos * pos.w, 0.0);
+	pos = viewMatrix * pos;
+	pos /= pos.w;
+	pos.z *= -1.0;
+
+	vec4 projectedPos = projMatrix * pos;
+
+	gl_Position = projectedPos;
+
+	if (shadow._active) {
+		Color = vec4(shadow._color, 1.0);
+	} else {
+		Color = color;
+	}
+	if (!useVertexAlpha)
+		Color.a = 1.0;
+	Color *= uniformColor;
+	if (textured) {
+		Texcoord = texcoord;
+	} else {
+		Texcoord = vec2(0.0, 0.0);
+	}
+
+	vec3 light = vec3(0.0, 0.0, 0.0);
+	vec3 normalEye = normalize((normalMatrix * vec4(normal, 1.0)).xyz);
+
+	for (int i = 0; i < maxLights; ++i) {
+		float intensity = lightsColor[i].w;
+		float light_type = lightsPosition[i].w;
+		if (light_type >= 0.0) { // Not ambient
+			vec3 vertexToLight;
+			if (light_type > 0.0) { // positional light
+				float falloffNear = lightsParams[i].x;
+				float falloffFar = max(falloffNear, lightsParams[i].y);
+				vertexToLight = lightsPosition[i].xyz - pos.xyz;
+				float dist = length(vertexToLight);
+				if (falloffFar == falloffNear) {
+					intensity = 0.0;
+				} else {
+					intensity *= clamp(1.0 - (dist - falloffNear) / (falloffFar - falloffNear), 0.0, 1.0);
+				}
+				if (lightsDirection[i].w > -1.0) { // Spotlight
+					// See DirectX spotlight documentation
+					float cosAngle = -dot(normalize(vertexToLight), normalize(lightsDirection[i].xyz)); // rho
+					float cosPenumbra = clamp(lightsParams[i].w, 0.0, 1.0); // cos(theta / 2)
+					float cosUmbra = clamp(lightsParams[i].z, 0.0, cosPenumbra); // cos(phi / 2)
+					if (cosAngle <= cosPenumbra) {
+						if (cosAngle < cosUmbra || cosPenumbra == cosUmbra) {
+							intensity = 0.0;
+						} else {
+							intensity *= (cosAngle - cosUmbra) / (cosPenumbra - cosUmbra);
+						}
+					}
+				}
+			} else { // directional light
+				vertexToLight = -lightsPosition[i].xyz;
+			}
+			intensity *= max(0.0, dot(normalEye, normalize(vertexToLight)));
+		}
+		light += lightsColor[i].xyz * intensity;
+	}
+
+	if (!hasAmbient)
+		light += vec3(0.5, 0.5, 0.5);
+	light /= max(1.0, max(max(light.x, light.y), light.z));
+	Color *= vec4(light, 1.0);
+}

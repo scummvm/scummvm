@@ -29,23 +29,17 @@ out vec4 Color;
 void main()
 {
 	vec4 pos = vec4(position, 1.0);
-	pos = modelMatrix * pos;
+	vec4 offset = modelMatrix * vec4(0.0, 0.0, 0.0, 1.0);
+	offset -= vec4(cameraPos * offset.w, 0.0);
+	offset = viewMatrix * offset;
 
-	// See http://en.wikipedia.org/wiki/Line-plane_intersection
-	if (shadow._active) {
-		pos /= pos.w;
-		vec3 l = pos.xyz - shadow._light;
-		float d = dot(shadow._point - shadow._light, shadow._normal) / dot(l, shadow._normal);
-		vec3 p = shadow._light + d * l;
-		pos = vec4(p, 1.0);
-        }
-
-	pos -= vec4(cameraPos * pos.w, 0.0);
-	pos = viewMatrix * pos;
+	pos = extraMatrix * pos;
+	pos += vec4(offset.xyz * pos.w, 0.0);
 	pos /= pos.w;
 	pos.z *= -1.0;
 
 	vec4 projectedPos = projMatrix * pos;
+	projectedPos.z = ROUND(projectedPos.z);
 
 	gl_Position = projectedPos;
 
