@@ -1946,7 +1946,9 @@ void ScummEngine::loadLanguageBundle() {
 
 	// sanity check
 	for (int i = 0; i < _numTranslatedLines; i++) {
-		assert(_languageLineIndex[i] != 0xffff);
+		if (_languageLineIndex[i] == 0xffff) {
+			error("Invalid language bundle file");
+		}
 	}
 
 	// Room
@@ -2038,6 +2040,8 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 			// used in drawVerb(), etc
 			debug(7, "translateText: Room=%d, CurrentScript == 0xff", _currentRoom);
 		} else {
+			// Use series of heuristics to preserve "the context of the conversation",
+			// since one English text can be translated differently depending on the context.
 			ScriptSlot *slot = &vm.slot[_currentScript];
 			debug(7, "translateText: Room=%d, Script=%d, WIO=%d", _currentRoom, slot->number, slot->where);
 
@@ -2046,13 +2050,10 @@ void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 				roomKey = _currentRoom;
 			}
 
-			uint32 scriptKey = (uint32)slot->where << 16 | slot->number;
+			uint32 scriptKey = slot->where << 16 | slot->number;
 			if (slot->where == WIO_ROOM) {
-				scriptKey = (uint32)slot->where << 16;
+				scriptKey = slot->where << 16;
 			}
-
-			// The purpose of the heuristics is to preserve context.
-			// The same English text can be translated differently depending on the context.
 
 			// First search by _currentRoom and _currentScript
 			Common::HashMap<byte, TranslationRoom>::const_iterator iterator = _roomIndex.find(roomKey);
