@@ -2,15 +2,11 @@
 Cloud
 ================
 
+Use the Cloud tab to manage connected cloud storage services.
+
 ScummVM currently supports Dropbox, OneDrive, Google Drive and Box. Connecting ScummVM to a cloud storage service provides an easy way of sharing game files and saved games between multiple devices. 
 
-
-The Cloud tab
-----------------
-
-From the Launcher, go to **Options**, click the red **>** until the Cloud tab is visible, then go to **Cloud**.
-
-Use the cloud tab to manage connected cloud storage services.
+From the Launcher, select :guilabel:`Options`, click the red :guilabel:`>` until the Cloud tab is visible, and then select the :guilabel:`Cloud` tab.
 
 .. figure:: ../images/settings/cloud.png
 

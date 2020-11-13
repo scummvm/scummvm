@@ -2,15 +2,9 @@
 Miscellaneous
 ======================
 
-Overview
-==========
+Use the Misc tab to change miscellaneous settings that don’t belong on any of the other tabs.
 
-The Miscellaneous tab
---------------------------
-
-From the Launcher, go to **Options**, click the red **>**, and then go to **Misc**.
-
-The Misc tab contains options that don’t belong on any of the other tabs.
+From the Launcher, select :guilabel:`Options`, click the red :guilabel:`>` until the Misc tab is visible, and then select the :guilabel:`Misc` tab.
 
 .. figure:: ../images/settings/misc.png
 

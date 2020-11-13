@@ -54,16 +54,16 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
         Button,Action
         Left stick,Mouse
         Left stick + R button,Slow Mouse
-        :kbd:`B`,Left mouse button
-        :kbd:`A`,Right mouse button
+        Ⓑ,Left mouse button
+        Ⓐ,Right mouse button
         Directional buttons,"Keypad 'Cursor' Keys"
         Directional buttons + R button ,"Diagonal Keypad 'Cursor' Keys"
         L button,Game menu (F5)
         R button,Shift 
-        :kbd:`Y`,Period
-        :kbd:`Y` + R button,Space 
-        :kbd:`X`,Escape 
-        :kbd:`X` + R button,Return
+        Ⓨ,Period
+        Ⓨ + R button,Space 
+        Ⓧ,Escape 
+        Ⓧ + R button,Return
         |plus|,Global main menu (GMM)
         |minus|,Toggle virtual keyboard
         |minus| + R button,AGI predictive input dialog

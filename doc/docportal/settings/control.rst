@@ -2,10 +2,9 @@
 Control
 =================
 
-The Control tab
-----------------
+Use the Control tab to change aspects of joystick controls. This tab is only available when a joystick or game controller is connected, or for certain touch screen enabled platforms. 
 
-Use the control tab to change aspects of joystick controls. This tab is only available when a joystick or game controller is connected, or for certain touch screen enabled platforms. 
+From the Launcher, select :guilabel:`Options`, and then select the :guilabel:`Control` tab.
 
 .. figure:: ../images/settings/control.png
 

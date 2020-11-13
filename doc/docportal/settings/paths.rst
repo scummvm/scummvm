@@ -2,13 +2,15 @@
 Paths
 ==============
 
-Overview
-============
+Use the Paths tab to tell ScummVM where to look for files.
 
-The Paths tab
----------------
+**To change settings globally:** 
 
-Use the paths tab to tell ScummVM where to look for files.
+	From the Launcher, select :guilabel:`Options`, then select the :guilabel:`Paths` tab.  
+
+**To change settings for a specific game:** 
+
+	Highlight the game in the games list, select :guilabel:`Edit Game` then select the :guilabel:`Paths` tab. 
 
 .. figure:: ../images/settings/paths.png
 

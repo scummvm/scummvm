@@ -2,13 +2,11 @@
 Game
 =============
 
-The Game tab
----------------
-
-Choose a game, then go to **Edit Game**.
-
-Use the game tab to display and change information about how the game is
+Use the Game tab to display and change information about how the game is
 identified by ScummVM.
+
+From the Launcher, highlight a game on the games list, then select :guilabel:`Edit Game`. The :guilabel:`Game` tab is the first tab shown.  
+
 
 .. figure:: ../images/settings/game.png
 
