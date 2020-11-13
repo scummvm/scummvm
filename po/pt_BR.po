@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-13 20:49+0100\n"
-"PO-Revision-Date: 2020-11-10 17:44+0000\n"
+"PO-Revision-Date: 2020-11-14 01:54+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -6943,97 +6943,86 @@ msgstr "Não foi possível localizar o arquivo de dados '%s'."
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "Habilitar colisões de parede"
 
 #: engines/twine/metaengine.cpp:69
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "Habilita dano por colisão em parede como no jogo original"
 
 #: engines/twine/metaengine.cpp:75
-#, fuzzy
 msgid "Enable cross fade"
-msgstr "Habilitar modo de trapaça"
+msgstr "Habilitar transição suave"
 
 #: engines/twine/metaengine.cpp:76
 msgid "Enable cross fading of images and scenes"
-msgstr ""
+msgstr "Habilita transição suave de imagens e cenas"
 
 #: engines/twine/metaengine.cpp:83
-#, fuzzy
 msgid "Disable save menu"
-msgstr "Falha ao salvar o jogo"
+msgstr "Desabilitar menu de salvar"
 
 #: engines/twine/metaengine.cpp:84
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
+"O jogo original possuía apenas salvamento automático. Isso permite que você "
+"salve sempre que quiser."
 
 #: engines/twine/metaengine.cpp:90
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "Habilita modo de hélio"
+msgstr "Habilitar modo de depuração"
 
 #: engines/twine/metaengine.cpp:91
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "Habilita modo de hélio"
+msgstr "Habilita modo de depuração"
 
 #: engines/twine/metaengine.cpp:97
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "Habilita platéia de estúdio"
+msgstr "Habilitar áudio do CD"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "Habilita a faixa de áudio original do CD"
 
 #: engines/twine/metaengine.cpp:104
-#, fuzzy
 msgid "Enable sound"
-msgstr "Ativar armazenamento"
+msgstr "Ativar som"
 
 #: engines/twine/metaengine.cpp:105
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "Título completo do jogo"
+msgstr "Habilita o som do jogo"
 
 #: engines/twine/metaengine.cpp:111
-#, fuzzy
 msgid "Enable voices"
-msgstr "Habilitar Vênus"
+msgstr "Habilitar vozes"
 
 #: engines/twine/metaengine.cpp:112
-#, fuzzy
 msgid "Enable the voices for the game"
-msgstr "Habilita o sistema de ajuda Vênus"
+msgstr "Habilita vozes do jogo"
 
 #: engines/twine/metaengine.cpp:118
-#, fuzzy
 msgid "Enable text"
-msgstr "Ativar armazenamento"
+msgstr "Habilitar texto"
 
 #: engines/twine/metaengine.cpp:119
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "Título completo do jogo"
+msgstr "Habilita o texto da fala no jogo"
 
 #: engines/twine/metaengine.cpp:125
-#, fuzzy
 msgid "Enable movies"
-msgstr "Habilitar Vênus"
+msgstr "Habilitar filmes"
 
 #: engines/twine/metaengine.cpp:126
-#, fuzzy
 msgid "Enable the cutscenes for the game"
-msgstr "Habilita o sistema de ajuda Vênus"
+msgstr "Habilita as cenas do jogo"
 
 #: engines/twine/metaengine.cpp:132
 msgid "Use the USA version"
-msgstr ""
+msgstr "Usar versão americana"
 
 #: engines/twine/metaengine.cpp:133
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "Habilita parâmetros específicos da versão americana"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Debug Next Room"
