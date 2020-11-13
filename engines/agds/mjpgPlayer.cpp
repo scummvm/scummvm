@@ -117,13 +117,18 @@ void MJPGPlayer::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	auto font = engine.getFont(engine.getSystemVariable("tell_font")->getInteger());
 	int baseX = engine.getSystemVariable("subtitle_x")->getInteger();
 	int baseY = engine.getSystemVariable("subtitle_y")->getInteger();
+	int maxWidth = engine.getSystemVariable("subtitle_width")->getInteger();
 
 	auto & lines = _subtitles[_nextSubtitleIndex].lines;
 	for(auto & line : lines) {
-		int w = font->getStringWidth(line);
-		int x = baseX - w / 2;
-		font->drawString(&backbuffer, line, x, baseY, backbuffer.w - x, 0);
-		baseY += font->getFontHeight();
+		Text::Lines sublines;
+		font->wordWrapText(line, maxWidth, sublines);
+		for(auto & subline : sublines) {
+			int w = font->getStringWidth(subline);
+			int x = baseX - w / 2;
+			font->drawString(&backbuffer, subline, x, baseY, backbuffer.w - x, 0);
+			baseY += font->getFontHeight();
+		}
 	}
 }
 
