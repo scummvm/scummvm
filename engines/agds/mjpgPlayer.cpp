@@ -50,7 +50,18 @@ MJPGPlayer::MJPGPlayer(Common::SeekableReadStream *stream, const Common::String 
 
 		line = line.substr(offset);
 		debug("subtitle line: %d-%d: %s", begin, end, line.c_str());
-		_subtitles.push_back({begin, end, line});
+		Text::Lines lines;
+		{
+			uint lineBegin = 0;
+			while(lineBegin < line.size()) {
+				uint lineEnd = line.find('|', lineBegin);
+				if (lineEnd == line.npos)
+					lineEnd = line.size();
+				lines.push_back(line.substr(lineBegin, lineEnd - lineBegin));
+				lineBegin = lineEnd + 1;
+			}
+		}
+		_subtitles.push_back({begin, end, lines});
 		pos = next + 1;
 	}
 }
@@ -104,12 +115,16 @@ void MJPGPlayer::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 		return;
 
 	auto font = engine.getFont(engine.getSystemVariable("tell_font")->getInteger());
-	int x = engine.getSystemVariable("subtitle_x")->getInteger();
-	int y = engine.getSystemVariable("subtitle_y")->getInteger();
+	int baseX = engine.getSystemVariable("subtitle_x")->getInteger();
+	int baseY = engine.getSystemVariable("subtitle_y")->getInteger();
 
-	auto & text = _subtitles[_nextSubtitleIndex].line;
-	x -= font->getStringWidth(text) / 2;
-	font->drawString(&backbuffer, text, x, y, backbuffer.w, 0);
+	auto & lines = _subtitles[_nextSubtitleIndex].lines;
+	for(auto & line : lines) {
+		int w = font->getStringWidth(line);
+		int x = baseX - w / 2;
+		font->drawString(&backbuffer, line, x, baseY, backbuffer.w - x, 0);
+		baseY += font->getFontHeight();
+	}
 }
 
 
