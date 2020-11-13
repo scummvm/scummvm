@@ -1564,6 +1564,14 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		final Version version2_2_1_forPatch = new Version("2.2.1"); // patch for 2.2.1 Beta1 purposes
 		boolean existingConfigInScummVMDataDirReplacedOnce = false; // patch for 2.2.1 Beta1 purposes
 
+		// NOTE: our config file scummvm.ini is created directly inside the ScummVM internal app path
+		//       this is probably due to a mistake (?), since we do create a config path for it above
+		//       ( in File internalScummVMConfigDir , the sub-path ".config/scummvm")
+		//       However, this is harmless, so we can keep it this way.
+		//       Or we could change it in a future version.
+		//       Keep in mind that changing the scummvm.ini config file location would require at the very least:
+		//       - Moving the old scummvm.ini (if upgrading) to the new location and deleting it from the old one
+		//       - Updating the ScummVM documentation about the new location
 		_configScummvmFile = new File(_actualScummVMDataDir, "scummvm.ini");
 
 		try {
