@@ -2,18 +2,11 @@
 LAN
 ==============
 
-Overview
-============
+Use the LAN tab to control the web server. 
 
 ScummVM can run a local network web server which allows browser-based file management, including uploading and downloading game files. 
 
-The LAN tab
-------------
-
-From the Launcher, go to **Options**, click the red **>** until the LAN tab is visible, then go to **LAN**.
-
-Use the LAN tab to control the web server. 
-
+From the Launcher, select :guilabel:`Options`, click the red :guilabel:`>` until the LAN tab is visible, and then select the :guilabel:`LAN` tab.
 
 .. figure:: ../images/settings/LAN.png
 

@@ -2,18 +2,14 @@
 Engine
 =====================
 
-Engine settings are those settings that are unique to a particular game or game engine. To find out which engine powers your game, have a look at the Supported Games `Wiki page
+Use the Engine tab to change settings that are unique to the game being played. 
+
+From the Launcher, highlight a game on the games list, select :guilabel:`Edit Game`, and then select the :guilabel:`Engine` tab. This tab may not be available for all games. 
+
+To find out which engine powers your game, have a look at the ScummVM Supported Games `wiki page
 <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_. 
 
 Engines: ADL_ | AGI_ | BLADERUNNER_ | CGE_ | CINE_ | DRASCULA_ | DREAMWEB_ | HDB_ | HOPKINS_ | KYRA_ | LURE_ | MADS_ | NEVERHOOD_ | SCI_ | SCUMM_ | SHERLOCK_ | SKY_ | SUPERNOVA_ | TOLTECS_ | WINTERMUTE_ | XEEN_ |
-
-
-The Engine tab
---------------
-
-Choose a game, then go to **Edit Game > Engine**. Note that this tab may not be available for all games. 
-
-Use the engine tab to change settings that are unique to the game being played. Only available settings are shown. 
 
 .. figure:: ../images/settings/engine.png
 
@@ -26,6 +22,7 @@ Use the engine tab to change settings that are unique to the game being played. 
 
 ADL
 *****
+
 .. _ntsc:
 
 TV emulation
@@ -36,7 +33,7 @@ TV emulation
 .. _color:
 
 Color Graphics
-	Uses color graphics instead of monochrome.
+	Uses color graphics instead of monochrome graphics.
 
 	*color* 
 
@@ -50,7 +47,7 @@ Show scanlines
 .. _mono:
 
 Always use sharp monochrome text
-	Does not emulate NTSC artifacts for text
+	Does not emulate NTSC artifacts for text.
 
 	*monotext* 
 
@@ -64,7 +61,7 @@ AGI
 .. _osl:
 
 Use original save/load screens
-	Uses the original save and load dialogs instead of the ScummVM ones
+	Uses the original save/load screens instead of the ScummVM screens. 
 
 	*originalsaveload* 
 
@@ -113,28 +110,28 @@ BLADERUNNER
 .. _sitcom:
 
 Sitcom mode
-	Adds laughter after actor's line or narration
+	Adds laughter after the actor's line or narration.
 
 	*sitcom* 
 
 .. _shorty:
 
 Shorty mode
-	Shrinks the actors and makes their voices high pitched
+	Shrinks the actors and makes their voices high pitched.
 
 	*shorty* 
 
 .. _nodelay:
 
 Frame limiter high performance mode
-	Avoids use of delayMillis() function. This mode may result in high CPU usage.
+	Avoids use of ``delayMillis()`` function. This mode may result in high CPU usage.
 
 	*nodelaymillisfl* 
 
 .. _fpsfl:
 
 Max frames per second limit
-	Targets a maximum of 120 fps. When disabled, the game targets 60 fps.
+	Targets a maximum of 120 frames per second (fps). When disabled, the game targets 60 fps.
 
 	*frames_per_secondfl* 
 
@@ -155,7 +152,7 @@ CGE
 .. _blind:
 
 Color Blind Mode
-	Enables Color Blind Mode by default
+	Enables Color Blind Mode by default.
 
 	*enable_color_blind* 
 
@@ -167,7 +164,7 @@ CINE
 *********
 
 Use original save/load screen
-	Uses the original save/load screens instead of the ScummVM one
+	Uses the original save/load screens instead of the ScummVM screens. 
 
 	*originalsaveload* 
 
@@ -186,7 +183,7 @@ DRASCULA
 *************
 
 Use original save/load screens
-	Uses the original save and load screens instead of the ScummVM ones
+	Uses the original save/load screens instead of the ScummVM screens. 
 
 	*originalsaveload* 
 
@@ -198,7 +195,7 @@ DREAMWEB
 **********
 
 Use original save/load screens
-	Uses the original save and load screens instead of the ScummVM ones.
+	Uses the original save/load screens instead of the ScummVM screens. 
 
 	*originalsaveload* 
 
@@ -261,7 +258,7 @@ Skip support
 .. _helium:
 
 Enable helium mode
-	Makes people sound like they've inhaled Helium.
+	Makes characters sound like they inhaled Helium.
 
 	*helium_mode* 
 
@@ -275,7 +272,7 @@ Enable smooth scrolling when walking
 .. _floating:
 
 Enable floating cursors
-	Changes the cursor when it floats to the edge of the screen to a directional arrow. The player can then click to walk towards that direction.
+	Changes the cursor when it floats to the edge of the screen to a directional arrow. Click to walk in that direction.
 
 	*floating_cursors* 
 
@@ -363,7 +360,7 @@ NEVERHOOD
 ************
 
 Use original save/load screens
-	Uses the original save and load screens instead of the ScummVM ones
+	Uses the original save/load screens instead of the ScummVM screens. 
 
 	*originalsaveload* 
 
@@ -403,7 +400,7 @@ SCI
 .. _dither:
 
 Skip EGA dithering pass (full color backgrounds)
-	Skips dithering pass in EGA games, graphics are shown with full colors
+	Skips dithering pass in EGA games. Graphics are shown with full colors.
 
 	*disable_dithering* 
 
@@ -443,7 +440,7 @@ Prefer digital sound effects
 	*prefer_digitalsfx*
 
 Use original save/load screens
-	Uses the original save/load screens instead of the ScummVM ones.
+	Uses the original save/load screens instead of the ScummVM screens. 
 
 	*originalsaveload* 
 
@@ -464,7 +461,7 @@ Use CD audio
 .. _wincursors:
 
 Use Windows cursors
-	Uses the Windows cursors (smaller and monochrome) instead of the DOS cursors. 
+	Uses the Windows cursor (smaller and monochrome) instead of the DOS cursor. 
 
 	*windows_cursors* 
 
@@ -506,7 +503,7 @@ Show Object Line
 .. _classic:
 
 Use NES Classic Palette
-	Uses a more neutral color palette that closely emulates the NES Classic
+	Uses a more neutral color palette that closely emulates the NES Classic.
 
 	*mm_nes_classic_palette* 
 
@@ -518,7 +515,7 @@ SHERLOCK
 *********
 
 Use original load/save screens
-	Uses the original save and load screens instead of the ScummVM ones"),
+	Uses the original save/load screens instead of the ScummVM screens.
 	
 	*originalsaveload* 
 
@@ -598,7 +595,7 @@ TOLTECS
 **************
 
 Use original save/load screens
-	Uses the original save and load screens instead of the ScummVM ones
+	Uses the original save/load screens instead of the ScummVM screens. 
 
 	*originalsaveload* 
 	
@@ -640,7 +637,7 @@ Show item costs in standard inventory mode
 .. _durable:
 
 More durable armor
-	Armor won't break until character is at -80HP, rather than -10HP.
+	Armor won't break until character is at -80HP, instead of the default -10HP.
 
 	*DurableArmor* 
 
