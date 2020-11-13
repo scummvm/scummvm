@@ -1,36 +1,41 @@
 ==============================
-Set up a local webserver
+Set up a local web server
 ==============================
 
-ScummVM has the ability to run a local webserver, to make the transfer of game files easier. 
+ScummVM can run a local web server, to allow the transfer of files between devices on the same network. 
 
 How to use the web server
 ----------------------------
 
-Go to **Options > LAN**. You may need to use the red **>** button to bring the LAN tab into view. 
+From the Launcher, select :guilabel:`Options`, click the red :guilabel:`>` until the LAN tab is visible, and then select the :guilabel:`LAN` tab.
 
-Click **Run server**. 
 
-.. figure:: ../images/settings/LAN.png
+Click :guilabel:`Run server` to start the server. 
 
-    The LAN tab. 
+.. figure:: ../images/cloud_and_lan/lan_server_running.png
+
+    The LAN tab, with the server running. 
     
 To access the server, type the URL shown into the address bar of any web browser:
 
 .. figure:: ../images/settings/LAN_server.png
 
-    The server running in the browser. 
+    The server's browser interface. 
 
-To download a file, click on the file you wish to download. A system download dialog box opens.
+To download a file, click on the file. A system download dialog box opens.
 
 To create a new directory, click **Create Directory**. 
 
 .. figure:: ../images/settings/LAN_server_new.png
 
-    Creating a new directory.
+    Create a new directory.
 
-To upload files, click **Upload Files** and select files from the system file explorer. 
+To upload files, click **Upload Files** and select files from the system file browser. 
 
 .. figure:: ../images/settings/LAN_server_upload.png
 
-    Uploading files. 
+    Upload files. 
+
+To change which files are accessible on the web server, set the :guilabel:`/root/ Path` to the directory containing the files you wish to access. You will be able to access anything inside that directory, but you will not able to access the parent directory.  
+
+To stop the web server, either click :guilabel:`Stop server` or click :guilabel:`Ok` to close the settings dialog.  

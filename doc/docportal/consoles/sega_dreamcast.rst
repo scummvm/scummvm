@@ -104,13 +104,13 @@ The Dreamcast mouse and keyboard peripherals are also supported.
     Button,Action,Notes
     Joystick,Moves pointer,
     Directional pad,Moves pointer slowly,Also controls the on-screen keyboard
-    A,Left Click,
-    B,Right Click,
-    Y,Spacebar,Pause
+    Ⓐ,Left Click,
+    Ⓑ,Right Click,
+    Ⓨ,Spacebar,Pause
     Start,F5,Load and save
     Trigger L,Toggles the on-screen keyboard on/off,
-    X,5,For boxing in Indiana Jones and the Last Crusade
-    Directional pad + X,"1, 2, 3, 4, 6, 7, 8, 9",For boxing in Indiana Jones and the Last Crusade
+    Ⓧ,5,For boxing in Indiana Jones and the Last Crusade
+    Ⓧ + Directional pad,"1, 2, 3, 4, 6, 7, 8, 9",For boxing in Indiana Jones and the Last Crusade
 
 Paths 
 =======

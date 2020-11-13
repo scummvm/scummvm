@@ -5,7 +5,7 @@ Command line interface
 
 Launching ScummVM from the command line allows you to pass a number of options, some of which override the applicable global or game-specific settings. It also allows you to launch straight into a game without going to the Launcher first. 
 
-Some options, such as ``--help`` or ``--list-audio-devices``, allow you to view information about ScummVM directly on the command line without launching ScummVM or starting a game. 
+Some options, such as ``--help`` or ``--list-audio-devices``, allow you to view information about ScummVM directly on the command line without starting the Launcher or starting a game. 
 
 Usage
 =========
@@ -14,7 +14,7 @@ Usage
 
     scummvm [option] [game]
 
-To launch ScummVM, enter the path to ScummVM. Optionally, follow this by any of the options documented below, and/or the path to the game you wish to start. If a game has already been added to the games list in the Launcher, you can pass the game id instead of the path to the game. 
+To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any of the options documented below, and/or the path to the game you wish to start. If a game has already been added to the games list in the Launcher, you can pass the game id instead of the path to the game. 
 
 
 .. tabbed:: macOS
@@ -24,7 +24,7 @@ To launch ScummVM, enter the path to ScummVM. Optionally, follow this by any of 
 
         The following examples assume the path to the ScummVM app is ``Applications/ScummVM.app``. 
         
-        If you are unsure of the path to the app, drag and drop the ScummVM app icon into the Terminal window, which prints the path to the ScummVM app. 
+        If you are unsure of the path to the app, drag the ScummVM app icon into the Terminal window. This prints the path to the ScummVM app. 
         
         To run ScummVM from the command line, add ``/Contents/MacOS/scummvm`` to that path. 
 
@@ -98,7 +98,7 @@ Options
 
 The meaning of most options can be inverted by prefixing them with ``no-``. For example, ``--no-aspect-ratio`` will turn aspect ratio correction off. This does not apply to short options. 
 
-Option parameters are shown in capitals, and need to be replaced with real values.
+Option parameters are shown below in capitals, and need to be replaced with real values.
 
 Short options are listed where they are available. 
 

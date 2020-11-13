@@ -2,15 +2,10 @@
 Accessibility
 =================
 
-Overview
-===========
+Use the Accessibility tab to change accessibility settings. 
 
-The Accessibility tab
-----------------------
+From the Launcher, select :guilabel:`Options`, click the red right arrow :guilabel:`>`  until the Accessibility tab is visible, and then select the :guilabel:`Accessibility` tab.
 
-From the Launcher, go to **Options**, click the red **>** until the Accessibility tab is visible, then go to **Accessibility**.
-
-Use this tab to change accessibility settings. 
 
 .. figure:: ../images/settings/accessibility.png
 

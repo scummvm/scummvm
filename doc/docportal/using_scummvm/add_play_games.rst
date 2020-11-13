@@ -8,7 +8,7 @@ The games
 
 One of the most commonly asked questions we get is, "Where do I get the games??". If you still have your old floppy discs and CDs lying around, and have a way to read them, then you can use the game files from these original discs. 
 
-If you haven't had a floppy disc or even a CD in your possession for a while, there is a  ScummVM `wiki page <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games>`_ dedicated to helping you find some games to play. As a quick summary, there are a few freeware games available for download on the ScummVM website's `Downloads page <scummvm.org/downloads>`_, or there are digital distributors such as `GOG.com <gog.com>`_ and `Steam <https://store.steampowered.com/>`_. 
+If you haven't had a floppy disc or even a CD in your possession for a while, there is a  ScummVM `wiki page <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games>`_ dedicated to helping you find some games to play. As a quick summary, there are a few freeware games available for download on the ScummVM website's `Downloads page <scummvm.org/downloads>`_, or there are digital distributors such as `GOG.com <https://www.gog.com/>`__ and `Steam <https://store.steampowered.com/>`_. ScummVM has an affiliate referrer programme with GOG.com, so if you are going to buy a game, please use the links on the `wiki page <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games>`_ to help the ScummVM project! 
 
 Make sure to check out the `compatibility list <https://www.scummvm.org/compatibility/>`_ on our website, and the `Supported Games page <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ and `Platform Overview page <https://wiki.scummvm.org/index.php/Platforms/Overview>`_ on the wiki before you buy a game, to ensure it can run with ScummVM. 
 
@@ -45,17 +45,20 @@ ScummVM needs access to the data files for each game. A comprehensive list of re
 For games on floppies or CDs:
 
 - If the data files are accessible, the external media can be accessed directly by ScummVM. Alternatively, copy the game files to a folder as described above. 
-- If the data files are not accessible, run the installer on the platform the game was designed for, to extract the individual files. 
+- If the data files are not accessible, run the installer on the platform the game was designed for, to extract the game files. 
 
-For games downloaded from digital distributors such as `GOG.com  <gog.com>`__, `Steam <https://store.steampowered.com>`__, or from various `freeware sources <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games#Freeware_Games>`__ sources:
+For games downloaded from digital distributors or from various `freeware sources <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games#Freeware_Games>`__ sources:
 
-- Run the installer, or
-- If the data files are supplied as a .zip file, extract the archive.
+- Run the installer to extract the game files, or
+- If the data files are supplied as a ``.zip`` archive, extract the archive.
+
+For macOS or Linux users without access to a Windows machine, it is possible to get the game files from games that only have Windows installers. Use `Wine <https://www.winehq.org/>`_ to run the Windows installer on macOS or Linux. Alternatively, for GOG.com games, use `innoextract <https://constexpr.org/innoextract/>`_ to unpack game files from the installer without actually running it.
+
 
 
 .. tip::
 
-   A great way to share game files and automatically back up and sync your saved game states between devices is to connect a Cloud storage service to ScummVM. For detailed instructions see the :doc:`../using_scummvm/connect_cloud` guide.
+   Use ScummVM's Cloud functionality to share game files and automatically back up and sync your saved game states. For detailed instructions see the :doc:`../using_scummvm/connect_cloud` guide.
 
    For devices on the same local network, ScummVM can run a web server to allow hassle-free transfer of files. For detailed instructions, see the :doc:`../using_scummvm/local_webserver` guide. This is a good option if you do not wish to connect a Cloud service.
 
@@ -73,7 +76,7 @@ ScummVM needs access to all the data files, so it will not be able to run direct
 CD audio
 **********
 
-Some games contain one or more separate audio tracks on CD. To use these with ScummVM, they need to be extracted from the CD in ``.wav`` or ``.aiff`` format, and then converted to either ``.mp3``, ``.flac`` or ``.ogg`` file formats. 
+Some games contain one or more separate audio tracks on CD. To use these with ScummVM, extract the audio tracks from the CD in ``.wav`` or ``.aiff`` format, and then convert them to either ``.mp3``, ``.flac`` or ``.ogg`` file formats. 
 
 .. tip::
 
