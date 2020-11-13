@@ -253,7 +253,7 @@ void Movements::processManualAction(int actorIdx) {
 					heroMoved = true;
 					actor->angle = getRealAngle(&actor->move);
 					// TODO: previousLoopActionKey must be handled properly
-					if (!previousLoopActionKey || actor->anim == kAnimNone) {
+					if (!previousLoopActionKey || actor->anim == kStanding) {
 						const int32 aggresiveMode = _engine->getRandomNumber(3);
 
 						switch (aggresiveMode) {
