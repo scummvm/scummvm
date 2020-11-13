@@ -242,7 +242,6 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	_animations.clear();
 
 	_currentScreenName = name;
-	//SAVE CURRENT OBJECTS IN PATCH see save_screen_patch
 	_currentScreen = new Screen(this, loadObject(name));
 	runProcess(_currentScreen->getObject());
 
