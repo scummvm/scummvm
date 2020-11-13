@@ -24,19 +24,32 @@
 #define AGDS_MJPG_PLAYER_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/stream.h"
+#include "common/str.h"
 #include "graphics/surface.h"
 #include "image/jpeg.h"
 
 namespace AGDS {
 
+class AGDSEngine;
 class MJPGPlayer {
-	Common::SeekableReadStream * _stream;
-	int32				_firstFramePos;
-	Image::JPEGDecoder	_decoder;
+	Common::SeekableReadStream * 	_stream;
+	int32							_firstFramePos;
+	Image::JPEGDecoder				_decoder;
+	uint							_framesPlayed;
+
+	struct Text {
+		uint			begin;
+		uint			end;
+		Common::String	line;
+	};
+
+	Common::Array<Text> 			_subtitles;
+	uint							_nextSubtitleIndex;
 
 public:
-	MJPGPlayer(Common::SeekableReadStream * stream);
+	MJPGPlayer(Common::SeekableReadStream * stream, const Common::String &subtitles);
 	~MJPGPlayer();
 
 	bool eos() {
@@ -45,6 +58,7 @@ public:
 
 	void rewind();
 	const Graphics::Surface *decodeFrame();
+	void paint(AGDSEngine &engine, Graphics::Surface &backbuffer);
 };
 
 

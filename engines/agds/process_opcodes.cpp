@@ -632,6 +632,8 @@ void Process::resetState() {
 	_tileHeight = 16;
 	_tileIndex = 0;
 	_tileResource = 0;
+
+	_filmSubtitlesResource = -1;
 }
 
 void Process::setAnimationZ() {
@@ -1004,8 +1006,8 @@ void Process::quit() {
 }
 
 void Process::setDialogForNextFilm() {
-	int value = pop();
-	debug("setDialogForNextFilm %d", value);
+	_filmSubtitlesResource = pop();
+	debug("setDialogForNextFilm %d", _filmSubtitlesResource);
 }
 
 void Process::tell(bool npc, const Common::String &sound) {
@@ -1092,10 +1094,11 @@ void Process::getObjectPictureHeight() {
 void Process::playFilm() {
 	Common::String audio = popText();
 	Common::String video = popText();
+	Common::String subtitles = _engine->loadText(getString(_filmSubtitlesResource));
 
-	debug("playFilm %s %s", video.c_str(), audio.c_str());
+	debug("playFilm %s %s %s", video.c_str(), audio.c_str(), subtitles.c_str());
 	suspend();
-	_engine->playFilm(*this, video, audio);
+	_engine->playFilm(*this, video, audio, subtitles);
 }
 
 void Process::inventoryClear() {

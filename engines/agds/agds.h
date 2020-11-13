@@ -121,7 +121,7 @@ public:
 	const Common::String & getSharedStorage(int id) const;
 
 	bool active() const { return !_mjpgPlayer && !(_soundManager.playing(_syncSoundId) || _tellTextTimer > 0); }
-	void playFilm(Process &process, const Common::String &video, const Common::String &audio);
+	void playFilm(Process &process, const Common::String &video, const Common::String &audio, const Common::String &subtitles);
 	void skipFilm();
 
 	ResourceManager & resourceManager() {
