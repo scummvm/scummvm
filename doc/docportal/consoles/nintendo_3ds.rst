@@ -58,10 +58,10 @@ See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shor
     Button,Action
     Circle Pad,Moves the cursor
     R + Circle Pad,Slow Mouse
-    A,Left mouse button
-    B,Right mouse button
-    X,Opens the virtual keyboard
-    Y,ESC 
+    Ⓐ,Left mouse button
+    Ⓑ,Right mouse button
+    Ⓧ,Opens the virtual keyboard
+    Ⓨ,ESC 
     Control Pad,Keypad cursor keys
     L Button,Toggles magnify mode on/off
     R Button,Toggles between hover/drag modes

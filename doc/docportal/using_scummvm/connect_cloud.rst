@@ -1,9 +1,9 @@
 ===============================
-Connect a Cloud service
+Connect a cloud service
 ===============================
 
-From the Launcher, go to **Options > Cloud**.
-
+From the Launcher, select :guilabel:`Options`, click the red :guilabel:`>` until the Cloud tab is visible, and then select the :guilabel:`Cloud` tab.
+ 
 To connect your chosen cloud storage service to ScummVM, select it from the **Active storage** dropdown. 
 
 .. figure:: ../images/cloud_and_lan/cloud_storage.png
@@ -12,16 +12,16 @@ Click on the link shown at **1.**, and log in to your cloud storage account. Onc
 
 .. figure:: ../images/cloud_and_lan/cloud_code.png
 
-Copy the 6-digit code, click into the empty box next to the **Paste** button, and then click the **Paste** button. 
+Copy the 6-digit code, click into the empty field next to :guilabel:`Paste`, and then click :guilabel:`Paste`. 
 
 .. figure:: ../images/cloud_and_lan/cloud_connect.png
 
-Click **3. Connect**, then, once the next information loads, click on **Enable storage**.
+Click :guilabel:`3. Connect`. Once the next page loads, click :guilabel:`Enable storage`.
 
 .. figure:: ../images/cloud_and_lan/cloud_enable.png
 
-Saved games automatically sync on launch, after saving, and on loading a saved game. You can also manually sync by using the **Sync now** button. 
+Saved games sync automatically on launch, when a game is saved, and when a saved game is loaded. Select :guilabel:`Sync now` to manually sync. 
 
-To download the game files from your cloud ScummVM folder, click **Download game files**.
+To download the game files from your cloud ScummVM folder, click :guilabel:`Download game files`. 
 
-To change to a different cloud account, or to disconnect your cloud account from ScummVM, click **Disconnect**.
+To change to a different cloud account, or to disconnect your cloud account from ScummVM, click :guilabel:`Disconnect`. 
