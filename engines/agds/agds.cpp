@@ -379,9 +379,8 @@ Common::Error AGDSEngine::run() {
 
 	Common::EventManager *eventManager = _system->getEventManager();
 
+	uint32 frameStarted = _system->getMillis();
 	while (!shouldQuit()) {
-		uint32 frameStarted = _system->getMillis();
-
 		Common::Event event;
 		while (eventManager->pollEvent(event)) {
 			if (!_currentScreen)
@@ -576,8 +575,9 @@ Common::Error AGDSEngine::run() {
 		_system->updateScreen();
 
 		if (!_fastMode) {
+			uint32 ts = _system->getMillis();
 			if (_mjpgPlayer) {
-				uint32 elapsed = _system->getMillis() - _filmStarted;
+				uint32 elapsed = ts - _filmStarted;
 				uint32 expected = _mjpgPlayer->getNextFrameTimestamp();
 				if (expected > elapsed)
 					_system->delayMillis(expected - elapsed);
@@ -585,10 +585,11 @@ Common::Error AGDSEngine::run() {
 				static const uint32 kFPS = 25;
 				static const uint32 kMaxTick = 1000 / kFPS;
 
-				uint32 dt = _system->getMillis() - frameStarted;
+				uint32 dt = ts - frameStarted;
 				if (dt < kMaxTick)
 					_system->delayMillis(kMaxTick - dt);
 			}
+			frameStarted = ts;
 		}
 	}
 
