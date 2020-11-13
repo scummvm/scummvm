@@ -56,7 +56,7 @@ For more information about settings, see the Settings section of the documentati
 
 .. _reporter:
 
-There is one additional configuration option, *enable_reporter*. When set to true in :doc:`../advanced_options/configuration_file`, log messages are sent to the `!Reporter <http://www.avisoft.force9.co.uk/Reporter.html>`_ application, which can be useful to developers. 
+There is one additional configuration option, *enable_reporter*. When set to true in :doc:`../advanced_topics/configuration_file`, log messages are sent to the `!Reporter <http://www.avisoft.force9.co.uk/Reporter.html>`_ application, which can be useful to developers. 
 
 
 Known issues
