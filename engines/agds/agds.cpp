@@ -241,7 +241,6 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	}
 	_animations.clear();
 
-	_soundManager.stopAll();
 	_currentScreenName = name;
 	//SAVE CURRENT OBJECTS IN PATCH see save_screen_patch
 	_currentScreen = new Screen(this, loadObject(name));
@@ -967,7 +966,8 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		Common::String phaseVar = readString(agds_a.get());
 		uint unk0 = agds_a->readUint32LE();
 		uint unk1 = agds_a->readUint32LE();
-		debug("saved audio state: sample: %s, var: %s %u %u", sample.c_str(), phaseVar.c_str(), unk0, unk1);
+		debug("saved audio state: sample: '%s', var: '%s' %u %u", sample.c_str(), phaseVar.c_str(), unk0, unk1);
+		debug("phase var for sample -> %d", getGlobal(phaseVar));
 		playSound(Common::String(), sample, phaseVar); //fixme: double check
 	}
 
