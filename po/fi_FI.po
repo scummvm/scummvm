@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-13 20:49+0100\n"
-"PO-Revision-Date: 2020-11-12 07:37+0000\n"
-"Last-Translator: jepael <kermespersialainen@gmail.com>\n"
+"PO-Revision-Date: 2020-11-13 20:58+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -6984,39 +6984,39 @@ msgstr ""
 
 #: engines/twine/metaengine.cpp:166
 msgid "Debug Next Room"
-msgstr ""
+msgstr "Debug seuraava huone"
 
 #: engines/twine/metaengine.cpp:171
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "Debug edellinen huone"
 
 #: engines/twine/metaengine.cpp:176
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "Debug celling grid päälle/pois"
 
 #: engines/twine/metaengine.cpp:181
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "Debug kasvata celling grid indeksiä"
 
 #: engines/twine/metaengine.cpp:186
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "Debug pienennä celling grid indeksiä"
 
 #: engines/twine/metaengine.cpp:191
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "Debug grid kamera ylös"
 
 #: engines/twine/metaengine.cpp:196
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "Debug grid kamera alas"
 
 #: engines/twine/metaengine.cpp:201
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "Debug grid kamera vasemmalle"
 
 #: engines/twine/metaengine.cpp:207
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "Debug grid kamera oikealle"
 
 #: engines/twine/metaengine.cpp:212
 msgid "Normal Behaviour"
@@ -7060,7 +7060,7 @@ msgstr "Liiku taaksepäin"
 
 #: engines/twine/metaengine.cpp:289
 msgid "Use Protopack"
-msgstr ""
+msgstr "Käytä protopack:ia"
 
 #: engines/twine/metaengine.cpp:294
 msgid "Open Holomap"
