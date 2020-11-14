@@ -106,8 +106,8 @@ int32 Collision::getAverageValue(int32 var0, int32 var1, int32 var2, int32 var3)
 	return (((var1 - var0) * var3) / var2) + var0;
 }
 
-void Collision::reajustActorPosition(int32 brickShape) {
-	if (brickShape == kNone) {
+void Collision::reajustActorPosition(ShapeType brickShape) {
+	if (brickShape == ShapeType::kNone) {
 		return;
 	}
 
@@ -116,84 +116,84 @@ void Collision::reajustActorPosition(int32 brickShape) {
 	const int32 brkZ = (collisionZ << 9) - 0x100;
 
 	// double-side stairs
-	if (brickShape >= kDoubleSideStairsTop1 && brickShape <= kDoubleSideStairsRight2) {
+	if (brickShape >= ShapeType::kDoubleSideStairsTop1 && brickShape <= ShapeType::kDoubleSideStairsRight2) {
 		switch (brickShape) {
-		case kDoubleSideStairsTop1:
+		case ShapeType::kDoubleSideStairsTop1:
 			if (_engine->_movements->processActorZ - collisionZ <= _engine->_movements->processActorX - collisionX) {
-				brickShape = kStairsTopLeft;
+				brickShape = ShapeType::kStairsTopLeft;
 			} else {
-				brickShape = kStairsTopRight;
+				brickShape = ShapeType::kStairsTopRight;
 			}
 			break;
-		case kDoubleSideStairsBottom1:
+		case ShapeType::kDoubleSideStairsBottom1:
 			if (_engine->_movements->processActorZ - collisionZ <= _engine->_movements->processActorX - collisionX) {
-				brickShape = kStairsBottomLeft;
+				brickShape = ShapeType::kStairsBottomLeft;
 			} else {
-				brickShape = kStairsBottomRight;
+				brickShape = ShapeType::kStairsBottomRight;
 			}
 			break;
-		case kDoubleSideStairsLeft1:
+		case ShapeType::kDoubleSideStairsLeft1:
 			if (512 - _engine->_movements->processActorX - collisionX <= _engine->_movements->processActorZ - collisionZ) {
-				brickShape = kStairsTopLeft;
+				brickShape = ShapeType::kStairsTopLeft;
 			} else {
-				brickShape = kStairsBottomLeft;
+				brickShape = ShapeType::kStairsBottomLeft;
 			}
 			break;
-		case kDoubleSideStairsRight1:
+		case ShapeType::kDoubleSideStairsRight1:
 			if (512 - _engine->_movements->processActorX - collisionX <= _engine->_movements->processActorZ - collisionZ) {
-				brickShape = kStairsTopRight;
+				brickShape = ShapeType::kStairsTopRight;
 			} else {
-				brickShape = kStairsBottomRight;
+				brickShape = ShapeType::kStairsBottomRight;
 			}
 			break;
-		case kDoubleSideStairsTop2:
+		case ShapeType::kDoubleSideStairsTop2:
 			if (_engine->_movements->processActorX - collisionX >= _engine->_movements->processActorZ - collisionZ) {
-				brickShape = kStairsTopRight;
+				brickShape = ShapeType::kStairsTopRight;
 			} else {
-				brickShape = kStairsTopLeft;
+				brickShape = ShapeType::kStairsTopLeft;
 			}
 			break;
-		case kDoubleSideStairsBottom2:
+		case ShapeType::kDoubleSideStairsBottom2:
 			if (_engine->_movements->processActorZ - collisionZ <= _engine->_movements->processActorX - collisionX) {
-				brickShape = kStairsBottomRight;
+				brickShape = ShapeType::kStairsBottomRight;
 			} else {
-				brickShape = kStairsBottomLeft;
+				brickShape = ShapeType::kStairsBottomLeft;
 			}
 			break;
-		case kDoubleSideStairsLeft2:
+		case ShapeType::kDoubleSideStairsLeft2:
 			if (512 - _engine->_movements->processActorX - collisionX <= _engine->_movements->processActorZ - collisionZ) {
-				brickShape = kStairsBottomLeft;
+				brickShape = ShapeType::kStairsBottomLeft;
 			} else {
-				brickShape = kStairsTopLeft;
+				brickShape = ShapeType::kStairsTopLeft;
 			}
 			break;
-		case kDoubleSideStairsRight2:
+		case ShapeType::kDoubleSideStairsRight2:
 			if (512 - _engine->_movements->processActorX - collisionX <= _engine->_movements->processActorZ - collisionZ) {
-				brickShape = kStairsBottomRight;
+				brickShape = ShapeType::kStairsBottomRight;
 			} else {
-				brickShape = kStairsTopRight;
+				brickShape = ShapeType::kStairsTopRight;
 			}
 			break;
 		default:
 			if (_engine->cfgfile.Debug) {
-				debug("Brick Shape %d unsupported", brickShape);
+				debug("Brick Shape %d unsupported", (int)brickShape);
 			}
 			break;
 		}
 	}
 
-	if (brickShape >= kStairsTopLeft && brickShape <= kStairsBottomRight) {
+	if (brickShape >= ShapeType::kStairsTopLeft && brickShape <= ShapeType::kStairsBottomRight) {
 		switch (brickShape) {
-		case kStairsTopLeft:
+		case ShapeType::kStairsTopLeft:
 			_engine->_movements->processActorY = brkY + getAverageValue(0, 256, 512, _engine->_movements->processActorX - brkX);
 			break;
-		case kStairsTopRight:
+		case ShapeType::kStairsTopRight:
 			_engine->_movements->processActorY = brkY + getAverageValue(0, 256, 512, _engine->_movements->processActorZ - brkZ);
 			break;
-		case kStairsBottomLeft:
+		case ShapeType::kStairsBottomLeft:
 			_engine->_movements->processActorY = brkY + getAverageValue(256, 0, 512, _engine->_movements->processActorZ - brkZ);
 			break;
-		case kStairsBottomRight:
+		case ShapeType::kStairsBottomRight:
 			_engine->_movements->processActorY = brkY + getAverageValue(256, 0, 512, _engine->_movements->processActorX - brkX);
 			break;
 		default:
@@ -382,7 +382,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 }
 
 void Collision::checkHeroCollisionWithBricks(int32 x, int32 y, int32 z, int32 damageMask) {
-	int32 brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ);
+	ShapeType brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ);
 
 	_engine->_movements->processActorX += x;
 	_engine->_movements->processActorY += y;
@@ -392,14 +392,14 @@ void Collision::checkHeroCollisionWithBricks(int32 x, int32 y, int32 z, int32 da
 		reajustActorPosition(brickShape);
 		brickShape = _engine->_grid->getBrickShapeFull(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ, _engine->_actor->processActorPtr->boudingBox.y.topRight);
 
-		if (brickShape == kSolid) {
+		if (brickShape == ShapeType::kSolid) {
 			causeActorDamage |= damageMask;
 			brickShape = _engine->_grid->getBrickShapeFull(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->previousActorZ + z, _engine->_actor->processActorPtr->boudingBox.y.topRight);
 
-			if (brickShape == kSolid) {
+			if (brickShape == ShapeType::kSolid) {
 				brickShape = _engine->_grid->getBrickShapeFull(x + _engine->_movements->previousActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ, _engine->_actor->processActorPtr->boudingBox.y.topRight);
 
-				if (brickShape != kSolid) {
+				if (brickShape != ShapeType::kSolid) {
 					processCollisionX = _engine->_movements->previousActorX;
 				}
 			} else {
@@ -414,7 +414,7 @@ void Collision::checkHeroCollisionWithBricks(int32 x, int32 y, int32 z, int32 da
 }
 
 void Collision::checkActorCollisionWithBricks(int32 x, int32 y, int32 z, int32 damageMask) {
-	int32 brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ);
+	ShapeType brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ);
 
 	_engine->_movements->processActorX += x;
 	_engine->_movements->processActorY += y;
@@ -424,14 +424,14 @@ void Collision::checkActorCollisionWithBricks(int32 x, int32 y, int32 z, int32 d
 		reajustActorPosition(brickShape);
 		brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ);
 
-		if (brickShape == kSolid) {
+		if (brickShape == ShapeType::kSolid) {
 			causeActorDamage |= damageMask;
 			brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->previousActorZ + z);
 
-			if (brickShape == kSolid) {
+			if (brickShape == ShapeType::kSolid) {
 				brickShape = _engine->_grid->getBrickShape(x + _engine->_movements->previousActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ);
 
-				if (brickShape != kSolid) {
+				if (brickShape != ShapeType::kSolid) {
 					processCollisionX = _engine->_movements->previousActorX;
 				}
 			} else {
@@ -504,7 +504,7 @@ int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 act
 }
 
 bool Collision::checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, int32 oldX, int32 oldY, int32 oldZ) {
-	if (_engine->_grid->getBrickShape(oldX, oldY, oldZ)) {
+	if (_engine->_grid->getBrickShape(oldX, oldY, oldZ) != ShapeType::kNone) {
 		return true;
 	}
 
@@ -512,15 +512,15 @@ bool Collision::checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, int32 o
 	const int32 averageY = ABS(y + oldY) / 2;
 	const int32 averageZ = ABS(z + oldZ) / 2;
 
-	if (_engine->_grid->getBrickShape(averageX, averageY, averageZ)) {
+	if (_engine->_grid->getBrickShape(averageX, averageY, averageZ) != ShapeType::kNone) {
 		return true;
 	}
 
-	if (_engine->_grid->getBrickShape(ABS(oldX + averageX) / 2, ABS(oldY + averageY) / 2, ABS(oldZ + averageZ) / 2)) {
+	if (_engine->_grid->getBrickShape(ABS(oldX + averageX) / 2, ABS(oldY + averageY) / 2, ABS(oldZ + averageZ) / 2) != ShapeType::kNone) {
 		return true;
 	}
 
-	if (_engine->_grid->getBrickShape(ABS(x + averageX) / 2, ABS(y + averageY) / 2, ABS(z + averageZ) / 2)) {
+	if (_engine->_grid->getBrickShape(ABS(x + averageX) / 2, ABS(y + averageY) / 2, ABS(z + averageZ) / 2) != ShapeType::kNone) {
 		return true;
 	}
 

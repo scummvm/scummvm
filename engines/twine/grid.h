@@ -24,28 +24,9 @@
 #define TWINE_GRID_H
 
 #include "common/scummsys.h"
-#include "twine/actor.h"
+#include "twine/shared.h"
 
 namespace TwinE {
-
-enum ShapeType {
-	kNone = 0,
-	kSolid = 1,
-	kStairsTopLeft = 2,
-	kStairsTopRight = 3,
-	kStairsBottomLeft = 4,
-	kStairsBottomRight = 5,
-	kDoubleSideStairsTop1 = 6,
-	kDoubleSideStairsBottom1 = 7,
-	kDoubleSideStairsLeft1 = 8,
-	kDoubleSideStairsRight1 = 9,
-	kDoubleSideStairsTop2 = 10,
-	kDoubleSideStairsBottom2 = 11,
-	kDoubleSideStairsLeft2 = 12,
-	kDoubleSideStairsRight2 = 13,
-	kFlatBottom1 = 14,
-	kFlatBottom2 = 15
-};
 
 /** Block fragment entry */
 struct BlockEntry {
@@ -291,9 +272,9 @@ public:
 	/** Redraw grid background */
 	void redrawGrid();
 
-	int32 getBrickShape(int32 x, int32 y, int32 z);
+	ShapeType getBrickShape(int32 x, int32 y, int32 z);
 
-	int32 getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2);
+	ShapeType getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2);
 
 	int32 getBrickSoundType(int32 x, int32 y, int32 z);
 };

@@ -24,6 +24,7 @@
 #define TWINE_ACTOR_H
 
 #include "common/scummsys.h"
+#include "twine/shared.h"
 
 namespace TwinE {
 
@@ -163,15 +164,23 @@ enum ControlMode {
 };
 
 /** Actors structure */
-struct ActorStruct {
+class ActorStruct {
+private:
+	ShapeType _brickShape = ShapeType::kNone; // field_3
+	bool _brickCausesDamage = false;
+public:
 	StaticFlagsStruct staticFlags;
 	DynamicFlagsStruct dynamicFlags;
+
+	inline ShapeType brickShape() const { return _brickShape; }
+	inline void setBrickShape(ShapeType shapeType) { _brickShape = shapeType; _brickCausesDamage = false; }
+	inline void setBrickCausesDamage() { _brickCausesDamage = true; }
+	inline bool brickCausesDamage() { return _brickCausesDamage; }
 
 	int32 entity = 0; // costumeIndex
 	int32 body = 0;
 	AnimationTypes anim = kAnimNone;
 	int32 animExtra = 0;  //field_2
-	int32 brickShape = 0; // field_3
 	const uint8 *animExtraPtr = nullptr;
 	int32 sprite = 0; // field_8
 	uint8 *entityDataPtr = nullptr;
@@ -293,7 +302,7 @@ public:
 	/** Actor shadow Z coordinate */
 	int32 shadowZ = 0;
 	/** Actor shadow collition type - brick shape */
-	int8 shadowCollisionType = 0; // shadowVar
+	ShapeType shadowCollisionType = ShapeType::kNone; // shadowVar
 
 	HeroBehaviourType heroBehaviour = kNormal;
 	/** Hero auto agressive mode */

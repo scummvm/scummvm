@@ -953,13 +953,12 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 	// actor collisions with bricks
 	if (actor->staticFlags.bComputeCollisionWithBricks) {
-		int32 brickShape;
 		_engine->_collision->collisionY = 0;
 
-		brickShape = _engine->_grid->getBrickShape(_engine->_movements->previousActorX, _engine->_movements->previousActorY, _engine->_movements->previousActorZ);
+		ShapeType brickShape = _engine->_grid->getBrickShape(_engine->_movements->previousActorX, _engine->_movements->previousActorY, _engine->_movements->previousActorZ);
 
-		if (brickShape) {
-			if (brickShape != kSolid) {
+		if (brickShape != ShapeType::kNone) {
+			if (brickShape != ShapeType::kSolid) {
 				_engine->_collision->reajustActorPosition(brickShape);
 			} /*else { // this shouldn't happen (collision should avoid it)
 				actor->y = processActorY = (processActorY / 256) * 256 + 256; // go upper
@@ -1002,7 +1001,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			_engine->_renderer->destZ += _engine->_movements->processActorZ;
 
 			if (_engine->_renderer->destX >= 0 && _engine->_renderer->destZ >= 0 && _engine->_renderer->destX <= 0x7E00 && _engine->_renderer->destZ <= 0x7E00) {
-				if (_engine->_grid->getBrickShape(_engine->_renderer->destX, _engine->_movements->processActorY + 256, _engine->_renderer->destZ) && _engine->cfgfile.WallCollision == 1) { // avoid wall hit damage
+				if (_engine->_grid->getBrickShape(_engine->_renderer->destX, _engine->_movements->processActorY + 256, _engine->_renderer->destZ) != ShapeType::kNone && _engine->cfgfile.WallCollision) { // avoid wall hit damage
 					_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, kHitStars);
 					initAnim(kBigHit, 2, 0, currentlyProcessedActorIdx);
 
@@ -1016,15 +1015,15 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		}
 
 		brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ);
-		actor->brickShape = brickShape;
+		actor->setBrickShape(brickShape);
 
-		if (brickShape) {
-			if (brickShape == kSolid) {
+		if (brickShape != ShapeType::kNone) {
+			if (brickShape == ShapeType::kSolid) {
 				if (actor->dynamicFlags.bIsFalling) {
 					_engine->_collision->stopFalling();
 					_engine->_movements->processActorY = (_engine->_collision->collisionY << 8) + 0x100;
 				} else {
-					if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour == kAthletic && actor->anim == brickShape && _engine->cfgfile.WallCollision == 1) { // avoid wall hit damage
+					if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour == kAthletic && actor->anim == AnimationTypes::kForward && _engine->cfgfile.WallCollision) { // avoid wall hit damage
 						_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, kHitStars);
 						initAnim(kBigHit, 2, 0, currentlyProcessedActorIdx);
 						_engine->_movements->heroMoved = true;
@@ -1032,17 +1031,18 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 					}
 
 					// no Z coordinate issue
-					if (!_engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->previousActorZ)) {
+					if (_engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->previousActorZ) == ShapeType::kNone) {
 						_engine->_movements->processActorZ = _engine->_movements->previousActorZ;
 					}
 
 					// no X coordinate issue
-					if (!_engine->_grid->getBrickShape(_engine->_movements->previousActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ)) {
+					if (_engine->_grid->getBrickShape(_engine->_movements->previousActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ) == ShapeType::kNone) {
 						_engine->_movements->processActorX = _engine->_movements->previousActorX;
 					}
 
 					// X and Z with issue, no move
-					if (_engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->previousActorZ) && _engine->_grid->getBrickShape(_engine->_movements->previousActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ)) {
+					if (_engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY, _engine->_movements->previousActorZ) != ShapeType::kNone &&
+					    _engine->_grid->getBrickShape(_engine->_movements->previousActorX, _engine->_movements->processActorY, _engine->_movements->processActorZ) != ShapeType::kNone) {
 						return;
 					}
 				}
@@ -1059,7 +1059,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			if (actor->staticFlags.bCanFall && actor->standOn == -1) {
 				brickShape = _engine->_grid->getBrickShape(_engine->_movements->processActorX, _engine->_movements->processActorY - 1, _engine->_movements->processActorZ);
 
-				if (brickShape) {
+				if (brickShape != ShapeType::kNone) {
 					if (actor->dynamicFlags.bIsFalling) {
 						_engine->_collision->stopFalling();
 					}
@@ -1090,7 +1090,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 	}
 
 	if (_engine->_collision->causeActorDamage) {
-		actor->brickShape |= 0x80;
+		actor->setBrickCausesDamage();
 	}
 
 	// check and fix actor bounding position

@@ -280,7 +280,7 @@ void GameState::processFoundItem(int32 item) {
 
 	const int32 itemX = (_engine->_scene->sceneHero->x + 0x100) >> 9;
 	int32 itemY = _engine->_scene->sceneHero->y >> 8;
-	if (_engine->_scene->sceneHero->brickShape & 0x7F) {
+	if (_engine->_scene->sceneHero->brickShape() != ShapeType::kNone) {
 		itemY++;
 	}
 	const int32 itemZ = (_engine->_scene->sceneHero->z + 0x100) >> 9;

@@ -561,7 +561,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					pinguin->body = -1;
 					_actor->initModelActor(0, _scene->mecaPinguinIdx);
 					pinguin->dynamicFlags.bIsDead = 0; // &= 0xDF
-					pinguin->brickShape = 0;
+					pinguin->setBrickShape(ShapeType::kNone);
 					_movements->moveActor(pinguin->angle, pinguin->angle, pinguin->speed, &pinguin->move);
 					_gameState->gameFlags[InventoryItems::kiPinguin] = 0; // byte_50D89 = 0;
 					pinguin->info0 = lbaTime + 1500;

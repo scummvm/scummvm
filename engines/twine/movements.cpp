@@ -44,10 +44,10 @@ void Movements::getShadowPosition(int32 x, int32 y, int32 z) {
 
 	if (*ptr) {
 		const uint8 *blockPtr = _engine->_grid->getBlockLibrary(*ptr - 1) + 3 + *(ptr + 1) * 4;
-		const uint8 brickShape = *((const uint8 *)(blockPtr));
+		const ShapeType brickShape = (ShapeType)*((const uint8 *)(blockPtr));
 		_engine->_actor->shadowCollisionType = brickShape;
 	} else {
-		_engine->_actor->shadowCollisionType = 0;
+		_engine->_actor->shadowCollisionType = ShapeType::kNone;
 	}
 	_engine->_collision->reajustActorPosition(_engine->_actor->shadowCollisionType);
 
@@ -389,7 +389,7 @@ void Movements::processRandomAction(int actorIdx) {
 		return;
 	}
 
-	if (actor->brickShape & 0x80) {
+	if (actor->brickCausesDamage()) {
 		moveActor(actor->angle, (((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
 		actor->info0 = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
 		_engine->_animations->initAnim(kStanding, 0, 255, actorIdx);

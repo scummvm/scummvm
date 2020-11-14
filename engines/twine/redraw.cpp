@@ -380,7 +380,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 
 							const int32 tempX = (actor2->x + 0x100) >> 9;
 							int32 tempY = actor2->y >> 8;
-							if (actor2->brickShape & 0x7F) {
+							if (actor2->brickShape() != ShapeType::kNone) {
 								tempY++;
 							}
 
@@ -472,7 +472,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 					} else {
 						const int32 tmpX = (actor2->x + actor2->boudingBox.x.topRight + 0x100) >> 9;
 						int32 tmpY = actor2->y >> 8;
-						if (actor2->brickShape & 0x7F) {
+						if (actor2->brickShape() != ShapeType::kNone) {
 							tmpY++;
 						}
 						const int32 tmpZ = (actor2->z + actor2->boudingBox.z.topRight + 0x100) >> 9;

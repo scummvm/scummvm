@@ -693,7 +693,7 @@ int32 Menu::giveupMenu() {
 	_engine->_sound->pauseSamples();
 
 	MenuSettings *localMenu;
-	if (_engine->cfgfile.UseAutoSaving == 1) {
+	if (_engine->cfgfile.UseAutoSaving) {
 		localMenu = &giveUpMenuState;
 	} else {
 		localMenu = &giveUpMenuWithSaveState;

@@ -106,11 +106,11 @@ struct ConfigFile {
 
 	// these settings are not available in the original version
 	/** Use cross fade effect while changing images, or be as the original */
-	int32 CrossFade = 0;
+	bool CrossFade = false;
 	/** Flag to toggle Wall Collision */
-	int32 WallCollision = 0;
+	bool WallCollision = false;
 	/** Use original autosaving system or save when you want */
-	int32 UseAutoSaving = 0;
+	bool UseAutoSaving = false;
 
 	// these settings can be changed in-game - and must be persisted
 	/** Shadow mode type, value: all, character only, none */

@@ -395,7 +395,7 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->info2 = 0;
 	actor->info3 = 0;
 
-	actor->brickShape = 0;
+	actor->setBrickShape(ShapeType::kNone);
 	actor->collision = -1;
 	actor->standOn = -1;
 	actor->zone = -1;

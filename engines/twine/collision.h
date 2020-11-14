@@ -65,7 +65,7 @@ public:
 	 * Reajust actor position in scene according with brick shape bellow actor
 	 * @param brickShape Shape of brick bellow the actor
 	 */
-	void reajustActorPosition(int32 brickShape);
+	void reajustActorPosition(ShapeType brickShape);
 
 	/**
 	 * Check collision with actors

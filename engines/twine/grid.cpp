@@ -651,19 +651,19 @@ void Grid::redrawGrid() {
 	}
 }
 
-int32 Grid::getBrickShape(int32 x, int32 y, int32 z) {
+ShapeType Grid::getBrickShape(int32 x, int32 y, int32 z) {
 	updateCollisionCoordinates(x, y, z);
 
 	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= GRID_SIZE_X) {
-		return 0;
+		return ShapeType::kNone;
 	}
 
 	if (_engine->_collision->collisionY <= -1) {
-		return 1;
+		return ShapeType::kSolid;
 	}
 
 	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY >= GRID_SIZE_Y || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= GRID_SIZE_Z) {
-		return 0;
+		return ShapeType::kNone;
 	}
 
 	uint8 *blockBufferPtr = blockBuffer;
@@ -682,9 +682,9 @@ int32 Grid::getBrickShape(int32 x, int32 y, int32 z) {
 		const uint8 tmpBrickIdx = *(blockBufferPtr + 1);
 		blockPtr = blockPtr + tmpBrickIdx * 4;
 
-		return *blockPtr;
+		return (ShapeType)*blockPtr;
 	}
-	return *(blockBufferPtr + 1);
+	return (ShapeType)*(blockBufferPtr + 1);
 }
 
 void Grid::updateCollisionCoordinates(int32 x, int32 y, int32 z) {
@@ -693,19 +693,19 @@ void Grid::updateCollisionCoordinates(int32 x, int32 y, int32 z) {
 	_engine->_collision->collisionZ = (z + 0x100) >> 9;
 }
 
-int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
+ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 	updateCollisionCoordinates(x, y, z);
 
 	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= GRID_SIZE_X) {
-		return 0;
+		return ShapeType::kNone;
 	}
 
 	if (_engine->_collision->collisionY <= -1) {
-		return 1;
+		return ShapeType::kSolid;
 	}
 
 	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY >= GRID_SIZE_Y || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= GRID_SIZE_Z) {
-		return 0;
+		return ShapeType::kNone;
 	}
 
 	uint8 *blockBufferPtr = blockBuffer;
@@ -724,7 +724,7 @@ int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 		uint8 tmpBrickIdx = *(blockBufferPtr + 1);
 		blockPtr = blockPtr + tmpBrickIdx * 4;
 
-		uint8 brickShape = *blockPtr;
+		ShapeType brickShape = (ShapeType)*blockPtr;
 
 		int32 newY = (y2 + 255) >> 8;
 		int32 currY = _engine->_collision->collisionY;
@@ -738,13 +738,13 @@ int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 			currY++;
 
 			if (READ_LE_INT16(blockBufferPtr) != 0) {
-				return 1;
+				return ShapeType::kSolid;
 			}
 		}
 
 		return brickShape;
 	}
-	uint8 brickShape = *(blockBufferPtr + 1);
+	ShapeType brickShape = (ShapeType)*(blockBufferPtr + 1);
 
 	int32 newY = (y2 + 255) >> 8;
 	int32 currY = _engine->_collision->collisionY;
@@ -758,26 +758,26 @@ int32 Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 		currY++;
 
 		if (READ_LE_INT16(blockBufferPtr) != 0) {
-			return 1;
+			return ShapeType::kSolid;
 		}
 	}
 
-	return 0;
+	return ShapeType::kNone;
 }
 
 int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) { // getPos2
 	updateCollisionCoordinates(x, y, z);
 
 	if (_engine->_collision->collisionX < 0 || _engine->_collision->collisionX >= GRID_SIZE_X) {
-		return 0;
+		return 0; // none
 	}
 
 	if (_engine->_collision->collisionY <= -1) {
-		return 1;
+		return 1; // solid
 	}
 
 	if (_engine->_collision->collisionY < 0 || _engine->_collision->collisionY >= GRID_SIZE_Y || _engine->_collision->collisionZ < 0 || _engine->_collision->collisionZ >= GRID_SIZE_Z) {
-		return 0;
+		return 0; // none
 	}
 
 	const uint8 *blockBufferPtr = blockBuffer;
@@ -800,7 +800,7 @@ int32 Grid::getBrickSoundType(int32 x, int32 y, int32 z) { // getPos2
 		return READ_LE_INT16(blockPtr);
 	}
 
-	return 0xF0;
+	return 240;
 }
 
 } // namespace TwinE
