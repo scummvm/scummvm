@@ -145,9 +145,9 @@ void GameState::initEngineVars() {
 
 	_engine->_scene->sceneTextBank = TextBankId::Options_and_menus;
 	_engine->_scene->currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
-	_engine->_actor->heroBehaviour = kNormal;
+	_engine->_actor->heroBehaviour = HeroBehaviourType::kNormal;
 	_engine->_actor->previousHeroAngle = 0;
-	_engine->_actor->previousHeroBehaviour = kNormal;
+	_engine->_actor->previousHeroBehaviour = HeroBehaviourType::kNormal;
 }
 
 bool GameState::loadGame(Common::SeekableReadStream *file) {
@@ -231,7 +231,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->write(gameFlags, NUM_GAME_FLAGS);
 	file->writeByte(_engine->_scene->currentSceneIdx);
 	file->writeByte(gameChapter);
-	file->writeByte(_engine->_actor->heroBehaviour);
+	file->writeByte((byte)_engine->_actor->heroBehaviour);
 	file->writeByte(_engine->_scene->sceneHero->life);
 	file->writeSint16LE(inventoryNumKashes);
 	file->writeByte(magicLevelIdx);

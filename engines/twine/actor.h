@@ -34,26 +34,6 @@ namespace TwinE {
 /** Total number of bodies allowed in the game */
 #define NUM_BODIES 200
 
-/** Hero behaviour
- * <li> NORMAL: Talk / Read / Search / Use
- * <li> ATHLETIC: Jump
- * <li> AGGRESSIVE:
- * Auto mode   : Fight
- * Manual mode : While holding the spacebar down
- * 			UP / RIGHT / LEFT will manually select
- * 			different punch/kick options
- * <li> DISCREET: Kneel down to hide
- *
- * @note The values must match the @c TextId indices
- */
-enum HeroBehaviourType {
-	kNormal = 0,
-	kAthletic = 1,
-	kAggressive = 2,
-	kDiscrete = 3,
-	kProtoPack = 4
-};
-
 /** Actors move structure */
 struct ActorMoveStruct {
 	int16 from = 0;
@@ -263,11 +243,11 @@ public:
 	/** Actor shadow collition type - brick shape */
 	ShapeType shadowCollisionType = ShapeType::kNone; // shadowVar
 
-	HeroBehaviourType heroBehaviour = kNormal;
+	HeroBehaviourType heroBehaviour = HeroBehaviourType::kNormal;
 	/** Hero auto agressive mode */
 	bool autoAgressive = true;
 	/** Previous Hero behaviour */
-	HeroBehaviourType previousHeroBehaviour = kNormal;
+	HeroBehaviourType previousHeroBehaviour = HeroBehaviourType::kNormal;
 	/** Previous Hero angle */
 	int16 previousHeroAngle = 0;
 
@@ -306,7 +286,7 @@ public:
 	 * Set hero behaviour
 	 * @param behaviour behaviour value to set
 	 */
-	void setBehaviour(int32 behaviour);
+	void setBehaviour(HeroBehaviourType behaviour);
 
 	/** Preload all sprites */
 	void preloadSprites();

@@ -240,7 +240,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 					engine->_scene->currentScriptValue = engine->_movements->targetActorDistance;
 				}
 			} else {
-				if (engine->_actor->heroBehaviour == kDiscrete) {
+				if (engine->_actor->heroBehaviour == HeroBehaviourType::kDiscrete) {
 					int32 heroAngle;
 
 					heroAngle = ctx.actor->angle + 0x480 - newAngle + 0x400;
@@ -296,7 +296,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		engine->_scene->currentScriptValue = engine->_gameState->inventoryNumKashes;
 		break;
 	case kcBEHAVIOUR:
-		engine->_scene->currentScriptValue = engine->_actor->heroBehaviour;
+		engine->_scene->currentScriptValue = (int16)engine->_actor->heroBehaviour;
 		break;
 	case kcCHAPTER:
 		engine->_scene->currentScriptValue = engine->_gameState->gameChapter;
@@ -652,7 +652,7 @@ static int32 lCAM_FOLLOW(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 /*0x1E*/
 static int32 lSET_BEHAVIOUR(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int32 behavior = ctx.stream.readByte();
+	const HeroBehaviourType behavior = (HeroBehaviourType)ctx.stream.readByte();
 
 	engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, 0);
 	engine->_actor->setBehaviour(behavior);

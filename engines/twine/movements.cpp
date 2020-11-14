@@ -242,13 +242,13 @@ void Movements::processManualAction(int actorIdx) {
 		// Process hero actions
 		if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
 			switch (_engine->_actor->heroBehaviour) {
-			case kNormal:
+			case HeroBehaviourType::kNormal:
 				heroAction = true;
 				break;
-			case kAthletic:
+			case HeroBehaviourType::kAthletic:
 				_engine->_animations->initAnim(AnimationTypes::kJump, 1, AnimationTypes::kStanding, actorIdx);
 				break;
-			case kAggressive:
+			case HeroBehaviourType::kAggressive:
 				if (_engine->_actor->autoAgressive) {
 					heroMoved = true;
 					actor->angle = getRealAngle(&actor->move);
@@ -280,10 +280,10 @@ void Movements::processManualAction(int actorIdx) {
 					}
 				}
 				break;
-			case kDiscrete:
+			case HeroBehaviourType::kDiscrete:
 				_engine->_animations->initAnim(AnimationTypes::kHide, 0, AnimationTypes::kAnimInvalid, actorIdx);
 				break;
-			case kProtoPack:
+			case HeroBehaviourType::kProtoPack:
 				break;
 			}
 		}

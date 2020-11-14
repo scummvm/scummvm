@@ -89,6 +89,26 @@ enum class AnimationTypes {
 	kAnimInvalid = 255
 };
 
+/** Hero behaviour
+ * <li> NORMAL: Talk / Read / Search / Use
+ * <li> ATHLETIC: Jump
+ * <li> AGGRESSIVE:
+ * Auto mode   : Fight
+ * Manual mode : While holding the spacebar down
+ * 			UP / RIGHT / LEFT will manually select
+ * 			different punch/kick options
+ * <li> DISCREET: Kneel down to hide
+ *
+ * @note The values must match the @c TextId indices
+ */
+enum class HeroBehaviourType {
+	kNormal = 0,
+	kAthletic = 1,
+	kAggressive = 2,
+	kDiscrete = 3,
+	kProtoPack = 4
+};
+
 }
 
 #endif

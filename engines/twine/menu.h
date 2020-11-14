@@ -169,6 +169,7 @@ private:
 	void drawInfoMenu(int16 left, int16 top);
 	void drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDrawBox);
 	void drawInventoryItems();
+	void prepareAndDrawBehaviour(int32 angle, HeroBehaviourType behaviour);
 	void drawBehaviourMenu(int32 angle);
 	void drawItem(int32 item);
 	/**

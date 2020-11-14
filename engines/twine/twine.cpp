@@ -504,8 +504,8 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				break;
 			case kiUseSabre:
 				if (_scene->sceneHero->body != InventoryItems::kiUseSabre) {
-					if (_actor->heroBehaviour == kProtoPack) {
-						_actor->setBehaviour(kNormal);
+					if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
+						_actor->setBehaviour(HeroBehaviourType::kNormal);
 					}
 					_actor->initModelActor(InventoryItems::kiUseSabre, 0);
 					_animations->initAnim(AnimationTypes::kSabreUnknown, 1, AnimationTypes::kStanding, 0);
@@ -540,10 +540,10 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					_scene->sceneHero->body = 1;
 				}
 
-				if (_actor->heroBehaviour == kProtoPack) {
-					_actor->setBehaviour(kNormal);
+				if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
+					_actor->setBehaviour(HeroBehaviourType::kNormal);
 				} else {
-					_actor->setBehaviour(kProtoPack);
+					_actor->setBehaviour(HeroBehaviourType::kProtoPack);
 				}
 				break;
 			case kiPinguin: {
@@ -626,10 +626,10 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				_scene->sceneHero->body = 1;
 			}
 
-			if (_actor->heroBehaviour == kProtoPack) {
-				_actor->setBehaviour(kNormal);
+			if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
+				_actor->setBehaviour(HeroBehaviourType::kNormal);
 			} else {
-				_actor->setBehaviour(kProtoPack);
+				_actor->setBehaviour(HeroBehaviourType::kProtoPack);
 			}
 		}
 

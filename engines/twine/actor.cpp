@@ -118,30 +118,30 @@ void Actor::loadHeroEntities() {
 	_engine->_scene->sceneHero->animExtraPtr = _engine->_animations->currentActorAnimExtraPtr;
 }
 
-void Actor::setBehaviour(int32 behaviour) {
+void Actor::setBehaviour(HeroBehaviourType behaviour) {
 	switch (behaviour) {
-	case kNormal:
-		heroBehaviour = kNormal;
+	case HeroBehaviourType::kNormal:
+		heroBehaviour = behaviour;
 		_engine->_scene->sceneHero->entityDataPtr = heroEntityNORMAL;
 		_engine->_scene->sceneHero->entityDataSize = heroEntityNORMALSize;
 		break;
-	case kAthletic:
-		heroBehaviour = kAthletic;
+	case HeroBehaviourType::kAthletic:
+		heroBehaviour = behaviour;
 		_engine->_scene->sceneHero->entityDataPtr = heroEntityATHLETIC;
 		_engine->_scene->sceneHero->entityDataSize = heroEntityATHLETICSize;
 		break;
-	case kAggressive:
-		heroBehaviour = kAggressive;
+	case HeroBehaviourType::kAggressive:
+		heroBehaviour = behaviour;
 		_engine->_scene->sceneHero->entityDataPtr = heroEntityAGGRESSIVE;
 		_engine->_scene->sceneHero->entityDataSize = heroEntityAGGRESSIVESize;
 		break;
-	case kDiscrete:
-		heroBehaviour = kDiscrete;
+	case HeroBehaviourType::kDiscrete:
+		heroBehaviour = behaviour;
 		_engine->_scene->sceneHero->entityDataPtr = heroEntityDISCRETE;
 		_engine->_scene->sceneHero->entityDataSize = heroEntityDISCRETESize;
 		break;
-	case kProtoPack:
-		heroBehaviour = kProtoPack;
+	case HeroBehaviourType::kProtoPack:
+		heroBehaviour = behaviour;
 		_engine->_scene->sceneHero->entityDataPtr = heroEntityPROTOPACK;
 		_engine->_scene->sceneHero->entityDataSize = heroEntityPROTOPACKSize;
 		break;
@@ -179,11 +179,11 @@ void Actor::initSpriteActor(int32 actorIdx) {
 }
 
 int32 Actor::getTextIdForBehaviour() const {
-	if (_engine->_actor->heroBehaviour == kAggressive && _engine->_actor->autoAgressive) {
+	if (_engine->_actor->heroBehaviour == HeroBehaviourType::kAggressive && _engine->_actor->autoAgressive) {
 		return TextId::kBehaviourAgressiveAuto;
 	}
 	// the other values are matching the text ids
-	return _engine->_actor->heroBehaviour;
+	return (int32)_engine->_actor->heroBehaviour;
 }
 
 int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox) {
@@ -254,8 +254,8 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		return;
 	}
 
-	if (IS_HERO(actorIdx) && heroBehaviour == kProtoPack && localActor->armor != 0 && localActor->armor != 1) {
-		setBehaviour(kNormal);
+	if (IS_HERO(actorIdx) && heroBehaviour == HeroBehaviourType::kProtoPack && localActor->armor != 0 && localActor->armor != 1) {
+		setBehaviour(HeroBehaviourType::kNormal);
 	}
 
 	ActorBoundingBox actorBoundingBox;
