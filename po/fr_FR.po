@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-13 20:49+0100\n"
-"PO-Revision-Date: 2020-11-13 03:44+0000\n"
+"PO-Revision-Date: 2020-11-14 13:49+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -6985,97 +6985,86 @@ msgstr "Le fichier de données '%s' n'a pu être trouvé."
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "Activer les collisions contre les murs"
 
 #: engines/twine/metaengine.cpp:69
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "Active les dommages de collisions contre les murs d'origine"
 
 #: engines/twine/metaengine.cpp:75
-#, fuzzy
 msgid "Enable cross fade"
-msgstr "Activer le mode Triche"
+msgstr "Activer le fondu enchaîné"
 
 #: engines/twine/metaengine.cpp:76
 msgid "Enable cross fading of images and scenes"
-msgstr ""
+msgstr "Active le fondu enchaîné des images et des scènes"
 
 #: engines/twine/metaengine.cpp:83
-#, fuzzy
 msgid "Disable save menu"
-msgstr "Échec de la sauvegarde"
+msgstr "Désactiver le menu sauvegarde"
 
 #: engines/twine/metaengine.cpp:84
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
+"Le jeu d'origine n'utilisait que des sauvegardes automatiques. Ceci vous "
+"permet de sauvegarder quand vous voulez."
 
 #: engines/twine/metaengine.cpp:90
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "Activer le mode hélium"
+msgstr "Activer le debug mode"
 
 #: engines/twine/metaengine.cpp:91
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "Activer le mode hélium"
+msgstr "Active le mode de débogage"
 
 #: engines/twine/metaengine.cpp:97
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "Activer le public en studio"
+msgstr "Activer le CD audio"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "Active la lecture des pistes audio CD d'origine"
 
 #: engines/twine/metaengine.cpp:104
-#, fuzzy
 msgid "Enable sound"
-msgstr "Activer le service de stockage"
+msgstr "Activer les sons"
 
 #: engines/twine/metaengine.cpp:105
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "Nom complet du jeu"
+msgstr "Active les sons du jeu"
 
 #: engines/twine/metaengine.cpp:111
-#, fuzzy
 msgid "Enable voices"
-msgstr "Activer Venus"
+msgstr "Activer les voix"
 
 #: engines/twine/metaengine.cpp:112
-#, fuzzy
 msgid "Enable the voices for the game"
-msgstr "Active le système d'aide Venus"
+msgstr "Active les voix du jeu"
 
 #: engines/twine/metaengine.cpp:118
-#, fuzzy
 msgid "Enable text"
-msgstr "Activer le service de stockage"
+msgstr "Activer les textes"
 
 #: engines/twine/metaengine.cpp:119
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "Nom complet du jeu"
+msgstr "Active les textes du jeu"
 
 #: engines/twine/metaengine.cpp:125
-#, fuzzy
 msgid "Enable movies"
-msgstr "Activer Venus"
+msgstr "Activer les films"
 
 #: engines/twine/metaengine.cpp:126
-#, fuzzy
 msgid "Enable the cutscenes for the game"
-msgstr "Active le système d'aide Venus"
+msgstr "Active les scènes cinématiques du jeu"
 
 #: engines/twine/metaengine.cpp:132
 msgid "Use the USA version"
-msgstr ""
+msgstr "Jeu en version américaine"
 
 #: engines/twine/metaengine.cpp:133
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "Active les indicateurs spécifiques de la version américaine"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Debug Next Room"
