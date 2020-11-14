@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-14 14:01+0000\n"
-"PO-Revision-Date: 2020-11-14 14:22+0000\n"
+"PO-Revision-Date: 2020-11-14 14:30+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1014,7 +1014,7 @@ msgstr ""
 
 #: gui/options.cpp:1307
 msgid "Game 3D Renderer:"
-msgstr "Moteur de rendu 3D du jeu :"
+msgstr "Rendu 3D des jeux :"
 
 #: gui/options.cpp:1316
 msgid "3D Anti-aliasing:"
