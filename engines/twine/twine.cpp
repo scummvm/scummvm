@@ -692,7 +692,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 
 		if (!actor->dynamicFlags.bIsDead) {
 			if (actor->life == 0) {
-				if (a == 0) { // if its hero who died
+				if (IS_HERO(a)) {
 					_animations->initAnim(AnimationTypes::kLandDeath, 4, AnimationTypes::kStanding, 0);
 					actor->controlMode = ControlMode::kNoMove;
 				} else {
@@ -768,7 +768,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			}
 
 			if (actor->life <= 0) {
-				if (!a) { // if its Hero
+				if (IS_HERO(a)) {
 					if (actor->dynamicFlags.bAnimEnded) {
 						if (_gameState->inventoryNumLeafs > 0) { // use clover leaf automaticaly
 							_scene->sceneHero->x = _scene->newHeroX;
