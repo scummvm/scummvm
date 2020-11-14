@@ -232,6 +232,11 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 		if (!patch)
 			patch = PatchPtr(new Patch());
 		_currentScreen->save(patch);
+		patch->characterPresent = _currentCharacter != nullptr;
+		if (_currentCharacter) {
+			patch->characterPosition = _currentCharacter->position();
+			patch->characterDirection = _currentCharacter->direction();
+		}
 		patch->defaultMouseCursor = _defaultMouseCursorName;
 	}
 	_mouseMap.hideAll(this);
@@ -249,6 +254,10 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	if (it != _patches.end()) {
 		const PatchPtr &patch = it->_value;
 		_currentScreen->load(patch);
+		if (_currentCharacter && patch->characterPresent) {
+			_currentCharacter->position(patch->characterPosition);
+			_currentCharacter->direction(patch->characterDirection);
+		}
 		if (!patch->defaultMouseCursor.empty())
 			loadDefaultMouseCursor(patch->defaultMouseCursor);
 	}

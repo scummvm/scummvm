@@ -21,12 +21,12 @@ void Patch::load(Common::SeekableReadStream *stream) {
 		return;
 
 	unk41 = stream->readUint32LE();
-	characterX = stream->readUint32LE();
-	characterY = stream->readUint32LE();
+	characterPosition.x = stream->readUint32LE();
+	characterPosition.y = stream->readUint32LE();
 	characterDirection = stream->readUint32LE();
-	unk51 = stream->readUint32LE();
-	debug("character at %u,%u with dir: %u", characterX, characterY, characterDirection);
-	debug("unknown entries: %u %u", unk41, unk51);
+	characterPresent = stream->readUint32LE();
+	debug("character %s at %u,%u with dir: %u", characterPresent? "[present]": "[absent]", characterPosition.x, characterPosition.y, characterDirection);
+	debug("some screen loading flag: %u", unk41);
 	uint object_count = stream->readUint32LE();
 	debug("objects in this patch: %u", object_count);
 	if (stream->read(palette, sizeof(palette)) != sizeof(palette)) {
