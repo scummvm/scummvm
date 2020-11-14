@@ -60,7 +60,7 @@ public:
 	}
 
 private:
-	IWFile *_iwFile;
+	//IWFile *_iwFile;
 	Common::MacResManager *_macResFork;
 	Common::Platform _platform;
 	bool _isDemo;
