@@ -111,12 +111,12 @@ private:
 
 	struct bodyHeaderStruct {
 		int16 bodyFlag = 0;
-		int16 unk0 = 0;
-		int16 unk1 = 0;
-		int16 bottomleft = 0;
-		int16 topright = 0;
-		int16 unk4 = 0;
-		int16 unk5 = 0;
+		int16 minsx = 0;
+		int16 maxsx = 0;
+		int16 minsy = 0;
+		int16 maxsy = 0;
+		int16 minsz = 0;
+		int16 maxsz = 0;
 		int16 offsetToData = 0;
 		int8 *ptrToKeyFrame = nullptr;
 		int32 keyFrameTime = 0;

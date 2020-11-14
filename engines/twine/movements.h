@@ -165,11 +165,11 @@ public:
 
 	/**
 	 * Rotate actor with a given angle
-	 * @param X Actor current X coordinate
-	 * @param Z Actor current Z coordinate
+	 * @param x Actor current X coordinate
+	 * @param z Actor current Z coordinate
 	 * @param angle Actor angle to rotate
 	 */
-	void rotateActor(int32 X, int32 Z, int32 angle);
+	void rotateActor(int32 x, int32 z, int32 angle);
 
 	/**
 	 * Get distance value in 2D
