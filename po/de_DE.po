@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-14 14:01+0000\n"
-"PO-Revision-Date: 2020-11-10 18:43+0000\n"
+"PO-Revision-Date: 2020-11-14 14:30+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6976,20 +6976,19 @@ msgstr "Datendatei '%s' kann nicht gefunden werden."
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "Wand-Kollisionen aktivieren"
 
 #: engines/twine/metaengine.cpp:69
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "Aktiviere den Schaden bei Wand-Kollisionen, der im Original auftritt"
 
 #: engines/twine/metaengine.cpp:75
-#, fuzzy
 msgid "Enable cross fade"
-msgstr "Cheat-Modus aktivieren"
+msgstr "Übergänge aktivieren"
 
 #: engines/twine/metaengine.cpp:76
 msgid "Enable cross fading of images and scenes"
-msgstr ""
+msgstr "Aktiviere Übergänge von Bildern und Szenen"
 
 #: engines/twine/metaengine.cpp:83
 #, fuzzy
