@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-14 14:42+0000\n"
-"PO-Revision-Date: 2020-11-14 14:42+0000\n"
+"PO-Revision-Date: 2020-11-14 15:41+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1485,15 +1485,11 @@ msgstr "Ouvrir le gestionnaire de téléchargement"
 #: gui/options.cpp:2180
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
-"Pour modifier le compte de ce stockage, déconnectez-vous et reconnectez-"
-"vous :"
+msgstr "Déconnectez et reconnectez-vous pour choisir un autre compte :"
 
 #: gui/options.cpp:2182
 msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
-"Pour modifier le compte de ce stockage, déconnectez-vous et reconnectez-"
-"vous :"
+msgstr "Déconnectez et reconnectez-vous pour choisir un autre compte :"
 
 #: gui/options.cpp:2183
 msgid "Disconnect"
