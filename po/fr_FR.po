@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-14 14:01+0000\n"
-"PO-Revision-Date: 2020-11-14 13:49+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2020-11-14 14:22+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -1382,7 +1382,7 @@ msgstr "Maintenant"
 
 #: gui/options.cpp:2146
 msgid "Active storage:"
-msgstr "Service de stockage actif :"
+msgstr "Service actif :"
 
 #: gui/options.cpp:2146
 msgid "Active cloud storage"
