@@ -44,6 +44,7 @@ ObjectPtr Inventory::get(int index) const {
 }
 
 int Inventory::add(const ObjectPtr & object) {
+	object->persistent(false);
 	for (uint i = 0; i < _entries.size(); ++i) {
 		if (!_entries[i]) {
 			_entries[i] = object;

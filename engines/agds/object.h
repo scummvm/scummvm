@@ -78,10 +78,19 @@ private:
 	int								_alpha;
 	int								_scale;
 	bool							_inScene;
+	bool							_persistent;
 
 public:
 	Object(const Common::String &name, Common::SeekableReadStream * stream);
 	~Object();
+
+	void persistent(bool persistent) {
+		_persistent = persistent;
+	}
+
+	bool persistent() const {
+		return _persistent;
+	}
 
 	void readStringTable(unsigned resOffset, uint16 resCount);
 	const StringEntry & getString(uint16 index) const;
