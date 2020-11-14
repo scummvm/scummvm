@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-13 20:49+0100\n"
-"PO-Revision-Date: 2020-11-10 17:44+0000\n"
+"PO-Revision-Date: 2020-11-14 10:56+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -6877,133 +6877,122 @@ msgstr "Nem található a '%s' adatfájl."
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "Fali ütközések engedélyezése"
 
 #: engines/twine/metaengine.cpp:69
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "Engedélyezi az eredeti falütközési sérülést"
 
 #: engines/twine/metaengine.cpp:75
-#, fuzzy
 msgid "Enable cross fade"
-msgstr "Csaló mód engedélyezés"
+msgstr "Keresztfakulás engedélyezése"
 
 #: engines/twine/metaengine.cpp:76
 msgid "Enable cross fading of images and scenes"
-msgstr ""
+msgstr "Engedélyezi a képek és jelenetek kereszt halványítását"
 
 #: engines/twine/metaengine.cpp:83
-#, fuzzy
 msgid "Disable save menu"
-msgstr "Játék mentés nem sikerült"
+msgstr "Mentés menü letiltás"
 
 #: engines/twine/metaengine.cpp:84
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
+"Az eredetiben csak automatikus mentés van. Ez lehetővé teszi, hogy mentsen "
+"amikor akar."
 
 #: engines/twine/metaengine.cpp:90
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "Helium mód engedélyezve"
+msgstr "Debug mód engedélyezve"
 
 #: engines/twine/metaengine.cpp:91
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "Helium mód engedélyezve"
+msgstr "Debug mód engedélyezve"
 
 #: engines/twine/metaengine.cpp:97
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "Stúdió közönség engedélyezése"
+msgstr "Audio CD engedélyezve"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "Engedélyezi az eredeti audio CD-sávot"
 
 #: engines/twine/metaengine.cpp:104
-#, fuzzy
 msgid "Enable sound"
-msgstr "Tároló engedélyezése"
+msgstr "Hang engedélyezve"
 
 #: engines/twine/metaengine.cpp:105
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "A játék teljes neve"
+msgstr "Engedélyezi a játék hangját"
 
 #: engines/twine/metaengine.cpp:111
-#, fuzzy
 msgid "Enable voices"
-msgstr "Venus engedélyezve"
+msgstr "Hangok engedélyezése"
 
 #: engines/twine/metaengine.cpp:112
-#, fuzzy
 msgid "Enable the voices for the game"
-msgstr "Venus súgórendszer engedélyezve"
+msgstr "Engedélyezi a játék hangjait"
 
 #: engines/twine/metaengine.cpp:118
-#, fuzzy
 msgid "Enable text"
-msgstr "Tároló engedélyezése"
+msgstr "Szöveg engedélyezése"
 
 #: engines/twine/metaengine.cpp:119
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "A játék teljes neve"
+msgstr "Engedélyezi a játék feliratait"
 
 #: engines/twine/metaengine.cpp:125
-#, fuzzy
 msgid "Enable movies"
-msgstr "Venus engedélyezve"
+msgstr "Filmek engedélyezve"
 
 #: engines/twine/metaengine.cpp:126
-#, fuzzy
 msgid "Enable the cutscenes for the game"
-msgstr "Venus súgórendszer engedélyezve"
+msgstr "Engedélyezi a játék átvezető jeleneteit"
 
 #: engines/twine/metaengine.cpp:132
 msgid "Use the USA version"
-msgstr ""
+msgstr "USA verzió használata"
 
 #: engines/twine/metaengine.cpp:133
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "Engedélyezi az USA-specifikus verziójelzőket"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Debug Next Room"
-msgstr ""
+msgstr "Következő szoba Debug"
 
 #: engines/twine/metaengine.cpp:171
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "Előző szoba Debug"
 
 #: engines/twine/metaengine.cpp:176
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "Debug Cella rács alkalmazása"
 
 #: engines/twine/metaengine.cpp:181
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "Debug Cella rács Index növelése"
 
 #: engines/twine/metaengine.cpp:186
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "Debug Cella rács Index csökkentése"
 
 #: engines/twine/metaengine.cpp:191
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "Debug rács Kamera Fel"
 
 #: engines/twine/metaengine.cpp:196
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "Debug rács Kamera Le"
 
 #: engines/twine/metaengine.cpp:201
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "Debug rács Kamera Bal"
 
 #: engines/twine/metaengine.cpp:207
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "Debug rács Kamera Jobb"
 
 #: engines/twine/metaengine.cpp:212
 msgid "Normal Behaviour"
