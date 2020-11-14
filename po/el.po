@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-13 20:49+0100\n"
-"PO-Revision-Date: 2020-11-11 06:44+0000\n"
+"PO-Revision-Date: 2020-11-14 13:49+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -7039,97 +7039,87 @@ msgstr "Αδυναμία εντοπισμού του αρχείου παιχνι
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "Σύγκρουση με τοίχους"
 
 #: engines/twine/metaengine.cpp:69
 msgid "Enable the original wall collision damage"
 msgstr ""
+"Ενεργοποίηση επίπτωσης από σύγκρουση με τοίχο όπως ήταν στο αρχικό παιχνίδι"
 
 #: engines/twine/metaengine.cpp:75
-#, fuzzy
 msgid "Enable cross fade"
-msgstr "Ενεργοποίηση cheat"
+msgstr "Χρήση ομαλών μεταβάσεων"
 
 #: engines/twine/metaengine.cpp:76
 msgid "Enable cross fading of images and scenes"
-msgstr ""
+msgstr "Ενεργοποίηση ομαλής μετάβασης (cross fade) μεταξύ εικόνων και σκηνών"
 
 #: engines/twine/metaengine.cpp:83
-#, fuzzy
 msgid "Disable save menu"
-msgstr "Αδυναμία αποθήκευσης παιχνιδιού"
+msgstr "Απενεργοποίηση μενού αποθήκευσης"
 
 #: engines/twine/metaengine.cpp:84
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
+"Το αρχικό παιχνίδι έκανε μόνο αυτόματη αποθήκευση. Αυτή η νέα δυνατότητα σας "
+"επιτρέπει να αποθηκεύσετε όποτε θέλετε."
 
 #: engines/twine/metaengine.cpp:90
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "Ενεργοποίηση λειτουργίας ηλίου"
+msgstr "Χρήση λειτουργίας αποσφαλμάτωσης"
 
 #: engines/twine/metaengine.cpp:91
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "Ενεργοποίηση λειτουργίας ηλίου"
+msgstr "Ενεργοποίηση της λειτουργίας αποσφαλμάτωσης (debug)"
 
 #: engines/twine/metaengine.cpp:97
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "Ενεργοποίηση κοινού στούντιο"
+msgstr "Ενεργοποίηση ήχου από CD"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "Ενεργοποίηση χρήσης ήχου από CD που είχε το αρχικό παιχνίδι"
 
 #: engines/twine/metaengine.cpp:104
-#, fuzzy
 msgid "Enable sound"
-msgstr "Ενεργοποίηση αποθήκευσης"
+msgstr "Ενεργοποίηση ήχου"
 
 #: engines/twine/metaengine.cpp:105
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "Πλήρης τίτλος του παιχνιδιού"
+msgstr "Ενεργοποίηση του ήχου για το παιχνίδι"
 
 #: engines/twine/metaengine.cpp:111
-#, fuzzy
 msgid "Enable voices"
-msgstr "Ενεργοποίηση Αφροδίτης"
+msgstr "Ενεργοποίηση φωνής"
 
 #: engines/twine/metaengine.cpp:112
-#, fuzzy
 msgid "Enable the voices for the game"
-msgstr "Ενεργοποίηση του συστήματος βοήθειας της Αφροδίτης"
+msgstr "Ενεργοποίηση των φωνών στο παιχνίδι"
 
 #: engines/twine/metaengine.cpp:118
-#, fuzzy
 msgid "Enable text"
-msgstr "Ενεργοποίηση αποθήκευσης"
+msgstr "Ενεργοποίηση κειμένου"
 
 #: engines/twine/metaengine.cpp:119
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "Πλήρης τίτλος του παιχνιδιού"
+msgstr "Ενεργοποίηση του κειμένου για το παιχνίδι"
 
 #: engines/twine/metaengine.cpp:125
-#, fuzzy
 msgid "Enable movies"
-msgstr "Ενεργοποίηση Αφροδίτης"
+msgstr "Ενεργοποίηση ταινιών"
 
 #: engines/twine/metaengine.cpp:126
-#, fuzzy
 msgid "Enable the cutscenes for the game"
-msgstr "Ενεργοποίηση του συστήματος βοήθειας της Αφροδίτης"
+msgstr "Ενεργοποίηση των ταινιών (cutscenes) για το παιχνίδι"
 
 #: engines/twine/metaengine.cpp:132
 msgid "Use the USA version"
-msgstr ""
+msgstr "Χρήση της έκδοσης από ΗΠΑ"
 
 #: engines/twine/metaengine.cpp:133
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "Ενεργοποίηση ειδικών ρυθμίσεων που είχε η έκδοση από ΗΠΑ"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Debug Next Room"
