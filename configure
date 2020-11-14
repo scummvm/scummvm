@@ -4259,7 +4259,7 @@ if test "$_tts" = auto ; then
 		mingw*)
 			cat > $TMPC << EOF
 #include <windows.h>
-#include <Servprov.h>
+#include <servprov.h>
 #include <sapi.h>
 int main(void) { return 0; }
 EOF
