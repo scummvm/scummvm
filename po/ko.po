@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-13 20:49+0100\n"
-"PO-Revision-Date: 2020-10-26 00:43+0000\n"
+"PO-Revision-Date: 2020-11-14 10:56+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ko/>\n"
@@ -1328,8 +1328,8 @@ msgid ""
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
-"게임을 시작할 때 ScummVM GUI 언어를 게임 언어로 전환합니다. 이렇게 하면 게임"
-"이 ScummVM 저장/불러오기 창이 게임과 동일한 언어로 표시됩니다."
+"게임을 시작할 때 ScummVM GUI 언어를 게임 언어로 전환합니다. 이렇게 하면 ScummVM 저장/불러오기 창이 게임과 동일한 "
+"언어로 표시됩니다."
 
 #: gui/options.cpp:2120
 msgid "Use native system file browser"
@@ -2225,16 +2225,16 @@ msgid "Start anyway"
 msgstr "확인"
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid "This game is not supported."
-msgstr "게임 ID가 지원되지 않습니다."
+msgstr "이 게임은 지원되지 않습니다."
 
 #: engines/engine.cpp:658
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
-msgstr "이 게임은 런처에서 불러오기를 지원하지 않습니다."
+msgstr ""
+"이 게임은 다음 이유로 지원되지 않습니다:\n"
+"\n"
 
 #: engines/engine.cpp:797
 msgid "Loading game is currently unavailable"
@@ -3071,9 +3071,8 @@ msgid "Failed to upload the file!"
 msgstr "파일 업로드에 실패했습니다!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:184
-#, fuzzy
 msgid "No file was passed!"
-msgstr "No file was passed!"
+msgstr ""
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
 msgid "Uploaded successfully!"
@@ -4106,17 +4105,15 @@ msgstr ""
 
 #: engines/cine/metaengine.cpp:142
 msgid "Unnamed autosave"
-msgstr ""
+msgstr "제목 없는 저장"
 
 #: engines/cine/metaengine.cpp:144 engines/cine/metaengine.cpp:219
-#, fuzzy
 msgid "Unnamed savegame"
 msgstr "제목 없음"
 
 #: engines/cine/metaengine.cpp:162 engines/cine/metaengine.cpp:232
-#, fuzzy
 msgid "Empty autosave"
-msgstr "자동 저장"
+msgstr "비어있는 자동 저장"
 
 #: engines/cine/saveload.cpp:861
 msgid ""
@@ -4159,9 +4156,8 @@ msgid ""
 msgstr ""
 
 #: engines/dragons/metaengine.cpp:142
-#, fuzzy
 msgid "Action"
-msgstr "활성화"
+msgstr ""
 
 #: engines/dragons/metaengine.cpp:148
 msgid "Change Command"
@@ -4182,14 +4178,12 @@ msgid "Enter"
 msgstr "Enter"
 
 #: engines/dragons/metaengine.cpp:225
-#, fuzzy
 msgid "Debug Graphics"
-msgstr "그래픽"
+msgstr ""
 
 #: engines/dragons/metaengine.cpp:230
-#, fuzzy
 msgid "Quit Game"
-msgstr "게임"
+msgstr ""
 
 #: engines/drascula/saveload.cpp:47
 msgid ""
@@ -4548,9 +4542,8 @@ msgid "Attack"
 msgstr ""
 
 #: engines/griffon/metaengine.cpp:136
-#, fuzzy
 msgid "Speed Up Cutscene"
-msgstr "컷씬을 건너뜀"
+msgstr "컷씬을 빠르게 재생"
 
 #: engines/grim/detection.cpp:45
 msgid "Load user patch (unsupported)"
@@ -4733,14 +4726,12 @@ msgid "Debug info and level selection becomes available"
 msgstr "디버그 정보와 레벨 선택이 가능해집니다."
 
 #: engines/hdb/metaengine.cpp:193
-#, fuzzy
 msgid "Move up"
-msgstr "뒤로 이동"
+msgstr "위로 이동"
 
 #: engines/hdb/metaengine.cpp:199
-#, fuzzy
 msgid "Move down"
-msgstr "앞으로 이동"
+msgstr "아래로 이동"
 
 #: engines/hdb/metaengine.cpp:217 engines/scumm/help.cpp:128
 #: engines/scumm/help.cpp:152 engines/scumm/help.cpp:170
@@ -4752,9 +4743,8 @@ msgid "Use"
 msgstr "사용하기"
 
 #: engines/hdb/metaengine.cpp:224
-#, fuzzy
 msgid "Clear waypoints"
-msgstr "맵핑 지우기"
+msgstr ""
 
 #: engines/hdb/metaengine.cpp:250
 msgid "Debug"
@@ -5803,19 +5793,19 @@ msgstr "음성과 자막"
 
 #: engines/scumm/dialogs.cpp:675
 msgid "Select a Proficiency Level."
-msgstr ""
+msgstr "숙련도 레벨을 고르세요."
 
 #: engines/scumm/dialogs.cpp:677
 msgid "Refer to your Loom(TM) manual for help."
-msgstr ""
+msgstr "도움이 필요하시면 Loom(TM) 매뉴얼을 참조해 주세요."
 
 #: engines/scumm/dialogs.cpp:681
 msgid "Practice"
-msgstr ""
+msgstr "연습"
 
 #: engines/scumm/dialogs.cpp:682
 msgid "Expert"
-msgstr ""
+msgstr "전문가"
 
 #: engines/scumm/help.cpp:73
 msgid "Common keyboard commands:"
@@ -5929,15 +5919,15 @@ msgstr "* Ctrl+F와 Ctrl+G를 사용하는"
 
 #: engines/scumm/help.cpp:108
 msgid "  ctrl-g are not recommended"
-msgstr "것은 잘못된 게임 동작이나"
+msgstr "  것은 잘못된 게임 동작이나"
 
 #: engines/scumm/help.cpp:109
 msgid "  since they may cause crashes"
-msgstr "충돌을 발생시킬 수 있으므로"
+msgstr "  충돌을 발생시킬 수 있으므로"
 
 #: engines/scumm/help.cpp:110
 msgid "  or incorrect game behavior."
-msgstr "권장하지 않습니다."
+msgstr "  권장하지 않습니다."
 
 #: engines/scumm/help.cpp:114
 msgid "Spinning drafts on the keyboard:"
@@ -6118,7 +6108,7 @@ msgstr "이전 대사를 강조"
 
 #: engines/scumm/help.cpp:218
 msgid "KeyDown"
-msgstr "KeyDown "
+msgstr "KeyDown"
 
 #: engines/scumm/help.cpp:218
 msgid "Highlight next dialogue"
@@ -6460,23 +6450,20 @@ msgid "Walk / Look / Talk"
 msgstr ""
 
 #: engines/sky/metaengine.cpp:94
-#, fuzzy
 msgid "Skip / Close"
-msgstr "대사 건너뛰기"
+msgstr ""
 
 #: engines/sky/metaengine.cpp:102
 msgid "Open control panel"
 msgstr ""
 
 #: engines/sky/metaengine.cpp:118
-#, fuzzy
 msgid "Toggle fast mode"
-msgstr "드래그 모드 전환"
+msgstr ""
 
 #: engines/sky/metaengine.cpp:123
-#, fuzzy
 msgid "Toggle really fast mode"
-msgstr "매우 빠른 모드 (*)로 실행"
+msgstr ""
 
 #: engines/stark/detection.cpp:368
 msgid "Load modded assets"
@@ -6626,9 +6613,8 @@ msgid ""
 msgstr ""
 
 #: engines/sword2/detection.cpp:33
-#, fuzzy
 msgid "Show object labels"
-msgstr "오브젝트 이름 표시"
+msgstr ""
 
 #: engines/sword2/detection.cpp:34
 msgid "Show labels for objects on mouse hover"
@@ -6688,18 +6674,16 @@ msgid "Enable the original wall collision damage"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:75
-#, fuzzy
 msgid "Enable cross fade"
-msgstr "치트 모드 활성화"
+msgstr ""
 
 #: engines/twine/metaengine.cpp:76
 msgid "Enable cross fading of images and scenes"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:83
-#, fuzzy
 msgid "Disable save menu"
-msgstr "게임 저장 실패"
+msgstr ""
 
 #: engines/twine/metaengine.cpp:84
 msgid ""
@@ -6707,58 +6691,48 @@ msgid ""
 msgstr ""
 
 #: engines/twine/metaengine.cpp:90
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "헬륨 모드를 활성화합니다."
+msgstr ""
 
 #: engines/twine/metaengine.cpp:91
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "헬륨 모드를 활성화합니다."
+msgstr ""
 
 #: engines/twine/metaengine.cpp:97
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "스튜디오 관객을 활성화합니다."
+msgstr ""
 
 #: engines/twine/metaengine.cpp:98
 msgid "Enable the original audio cd track"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:104
-#, fuzzy
 msgid "Enable sound"
-msgstr "스토리지 활성화"
+msgstr ""
 
 #: engines/twine/metaengine.cpp:105
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "게임의 전체 이름"
+msgstr ""
 
 #: engines/twine/metaengine.cpp:111
-#, fuzzy
 msgid "Enable voices"
-msgstr "스토리지 활성화"
+msgstr ""
 
 #: engines/twine/metaengine.cpp:112
-#, fuzzy
 msgid "Enable the voices for the game"
-msgstr "게임의 전체 이름"
+msgstr ""
 
 #: engines/twine/metaengine.cpp:118
-#, fuzzy
 msgid "Enable text"
-msgstr "스토리지 활성화"
+msgstr ""
 
 #: engines/twine/metaengine.cpp:119
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "게임의 전체 이름"
+msgstr ""
 
 #: engines/twine/metaengine.cpp:125
-#, fuzzy
 msgid "Enable movies"
-msgstr "스토리지 활성화"
+msgstr ""
 
 #: engines/twine/metaengine.cpp:126
 msgid "Enable the cutscenes for the game"
@@ -6833,9 +6807,8 @@ msgid "Change Behaviour"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:243
-#, fuzzy
 msgid "Options Menu"
-msgstr "옵션(~O~)"
+msgstr ""
 
 #: engines/twine/metaengine.cpp:254
 msgid "Use Selected Object"
@@ -6846,9 +6819,8 @@ msgid "Throw Magic Ball"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:271
-#, fuzzy
 msgid "Move Backward"
-msgstr "뒤로 이동"
+msgstr ""
 
 #: engines/twine/metaengine.cpp:289
 msgid "Use Protopack"
@@ -6875,9 +6847,8 @@ msgid "Abort"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:357
-#, fuzzy
 msgid "Next Page"
-msgstr "다음"
+msgstr ""
 
 #: engines/ultima/shared/early/ultima_early.cpp:71
 msgid "Could not find correct ultima.dat datafile"
@@ -7551,14 +7522,12 @@ msgid ""
 msgstr ""
 
 #: engines/zvision/metaengine.cpp:129
-#, fuzzy
 msgid "Look Up"
-msgstr "보기"
+msgstr ""
 
 #: engines/zvision/metaengine.cpp:135
-#, fuzzy
 msgid "Look Down"
-msgstr "보기 (L)"
+msgstr ""
 
 #: engines/zvision/metaengine.cpp:170
 msgid "Spellbook"
@@ -7577,9 +7546,8 @@ msgid "Extract coin"
 msgstr ""
 
 #: engines/zvision/metaengine.cpp:209
-#, fuzzy
 msgid "Preferences"
-msgstr "선호하는 장치:"
+msgstr ""
 
 #: engines/zvision/zvision.cpp:313
 msgid ""
