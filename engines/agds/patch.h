@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/rect.h"
 #include "common/str.h"
 
 namespace Common	{ class SeekableReadStream; }
@@ -46,10 +47,9 @@ struct Patch {
 	Common::String prevScreenName;
 
 	uint unk41;
-	uint characterX;
-	uint characterY;
+	Common::Point characterPosition;
 	uint characterDirection;
-	uint unk51;
+	bool characterPresent;
 
 	byte palette[0x300];
 	Common::String defaultMouseCursor;
