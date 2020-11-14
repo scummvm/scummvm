@@ -118,7 +118,7 @@ private:
 	int _cursorStatus;
 	int _cursorEnabled;
 	int _los[VIEWPORT_W][VIEWPORT_H];
-	bool _continueScreenRefresh;
+	//bool _continueScreenRefresh;
 	uint32 _priorFrameTime;
 
 public:
