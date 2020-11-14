@@ -168,6 +168,9 @@ ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::Strin
 		error("no database entry for %s\n", clone.c_str());
 
 	ObjectPtr object(new Object(name, stream));
+	if (!prototype.empty()) {
+		object->persistent(false);
+	}
 	delete stream;
 	return object;
 }
