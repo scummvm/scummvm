@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-14 14:55+0000\n"
-"PO-Revision-Date: 2020-11-14 10:55+0000\n"
+"PO-Revision-Date: 2020-11-15 00:39+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -7074,14 +7074,12 @@ msgid "Debug Grid Camera Right"
 msgstr "Depuración: mover cámara de cuadrícula a la dcha."
 
 #: engines/twine/metaengine.cpp:212
-#, fuzzy
-#| msgid "Debug print"
 msgid "Debug Menu"
-msgstr "Imprimir salida del depurador"
+msgstr "Menú de depuración"
 
 #: engines/twine/metaengine.cpp:217
 msgid "Debug Menu Execute"
-msgstr ""
+msgstr "Ejecutar menú de depuración"
 
 #: engines/twine/metaengine.cpp:222
 msgid "Normal Behaviour"
