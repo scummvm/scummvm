@@ -33,7 +33,7 @@
 
 namespace Petka {
 
-const uint kFirstCursorId = 5001;
+//const uint kFirstCursorId = 5001;
 const uint kCaseButtonIndex = 0;
 
 QObjectStar::QObjectStar() {
