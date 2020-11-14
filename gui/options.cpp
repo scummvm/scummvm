@@ -2112,7 +2112,6 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	if (ConfMan.hasKey("gui_use_game_language")) {
 		_guiLanguageUseGameLanguageCheckbox->setState(ConfMan.getBool("gui_use_game_language", _domain));
 	}
-
 #endif // USE_TRANSLATION
 
 	if (g_system->hasFeature(OSystem::kFeatureSystemBrowserDialog)) {
