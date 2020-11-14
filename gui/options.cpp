@@ -107,7 +107,7 @@ enum {
 
 #ifdef USE_FLUIDSYNTH
 enum {
-	kFluidSynthSettingsCmd		= 'flst'
+	kFluidSynthSettingsCmd  = 'flst'
 };
 #endif
 
