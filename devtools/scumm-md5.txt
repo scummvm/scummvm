@@ -113,6 +113,7 @@ zak	Zak McKracken and the Alien Mindbenders
 
 	2d4536a56e01da4b02eb021e7770afa2	7520	en	FM-TOWNS	FM-TOWNS	-	-
 	1ca86e2cf9aaa2068738a1e5ba477e60	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Andrea Petrucci
+	ce3edc99cd4f478c5b37104d70c68ca5	-1	jp	FM-TOWNS	FM-TOWNS	-	-	raziel-
 
 	8299d9b8a1b0e7b881bae7a9971dc5e2	1916	en	Atari	V2	Demo	non-interactive	Fingolfin
 
