@@ -703,7 +703,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					}
 				}
 
-				if (actor->bonusParameter & 0x1F0 && !(actor->bonusParameter & 1)) {
+				if (!actor->bonusParameter.unk1 && (actor->bonusParameter.cloverleaf || actor->bonusParameter.kashes || actor->bonusParameter.key || actor->bonusParameter.lifepoints || actor->bonusParameter.magicpoints)) {
 					_actor->processActorExtraBonus(a);
 				}
 			}
@@ -756,8 +756,8 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 						} else {
 							const int32 rnd = getRandomNumber(2000) + 3096;
 							_sound->playSample(Samples::Explode, rnd, 1, actor->x, actor->y, actor->z, a);
-							if (actor->bonusParameter & 0x1F0) {
-								if (!(actor->bonusParameter & 1)) {
+							if (actor->bonusParameter.cloverleaf || actor->bonusParameter.kashes || actor->bonusParameter.key || actor->bonusParameter.lifepoints || actor->bonusParameter.magicpoints) {
+								if (!actor->bonusParameter.unk1) {
 									_actor->processActorExtraBonus(a);
 								}
 								actor->life = 0;

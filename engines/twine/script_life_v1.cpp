@@ -21,6 +21,7 @@
  */
 
 #include "twine/script_life_v1.h"
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
@@ -39,7 +40,6 @@
 #include "twine/resources.h"
 #include "twine/scene.h"
 #include "twine/screens.h"
-#include "common/memstream.h"
 #include "twine/sound.h"
 #include "twine/text.h"
 #include "twine/twine.h"
@@ -880,12 +880,12 @@ static int32 lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lGIVE_BONUS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 flag = ctx.stream.readByte();
 
-	if (ctx.actor->bonusParameter & 0x1F0) {
+	if (ctx.actor->bonusParameter.cloverleaf || ctx.actor->bonusParameter.kashes || ctx.actor->bonusParameter.key || ctx.actor->bonusParameter.lifepoints || ctx.actor->bonusParameter.magicpoints) {
 		engine->_actor->processActorExtraBonus(ctx.actorIdx);
 	}
 
 	if (flag != 0) {
-		ctx.actor->bonusParameter |= 1;
+		ctx.actor->bonusParameter.unk1 = 1;
 	}
 
 	return 0;

@@ -166,8 +166,7 @@ bool Scene::loadSceneLBA1() {
 		act->z = stream.readUint16LE();
 		act->collisionZ = act->z;
 		act->strengthOfHit = stream.readByte();
-		act->bonusParameter = stream.readUint16LE();
-		act->bonusParameter &= 0xFE;
+		*(uint16*)&act->bonusParameter = stream.readUint16LE() & 0xFE;
 		act->angle = stream.readUint16LE();
 		act->speed = stream.readUint16LE();
 		act->controlMode = (ControlMode)stream.readUint16LE();

@@ -402,6 +402,7 @@ void Actor::resetActor(int16 actorIdx) {
 
 	memset(&actor->staticFlags, 0, sizeof(StaticFlagsStruct));
 	memset(&actor->dynamicFlags, 0, sizeof(DynamicFlagsStruct));
+	memset(&actor->bonusParameter, 0, sizeof(BonusParameter));
 
 	actor->life = 50;
 	actor->armor = 1;
@@ -481,12 +482,21 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	int32 numBonus = 0;
-
-	int8 bonusTable[8];
-	for (int32 a = 0; a < 5; a++) {
-		if (actor->bonusParameter & (1 << (a + 4))) {
-			bonusTable[numBonus++] = a;
-		}
+	int8 bonusTable[5];
+	if (actor->bonusParameter.kashes) {
+		bonusTable[numBonus++] = 0; // kashes
+	}
+	if (actor->bonusParameter.lifepoints) {
+		bonusTable[numBonus++] = 1; // lifepoints
+	}
+	if (actor->bonusParameter.magicpoints) {
+		bonusTable[numBonus++] = 2; // magicpoints
+	}
+	if (actor->bonusParameter.key) {
+		bonusTable[numBonus++] = 3; // key
+	}
+	if (actor->bonusParameter.cloverleaf) {
+		bonusTable[numBonus++] = 4; // cloverleaf
 	}
 
 	if (numBonus == 0) {
@@ -501,15 +511,14 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 	if (!_engine->_gameState->magicLevelIdx && currentBonus == 2) {
 		currentBonus = 1;
 	}
-	currentBonus += 3;
-
+	int8 bonusSprite = currentBonus + 3;
 	if (actor->dynamicFlags.bIsDead) {
-		_engine->_extra->addExtraBonus(actor->x, actor->y, actor->z, 0x100, 0, currentBonus, actor->bonusAmount);
+		_engine->_extra->addExtraBonus(actor->x, actor->y, actor->z, 0x100, 0, bonusSprite, actor->bonusAmount);
 		// FIXME add constant for sample index
 		_engine->_sound->playSample(Samples::ItemPopup, 0x1000, 1, actor->x, actor->y, actor->z, actorIdx);
 	} else {
 		int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->z);
-		_engine->_extra->addExtraBonus(actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, 200, angle, currentBonus, actor->bonusAmount);
+		_engine->_extra->addExtraBonus(actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, 200, angle, bonusSprite, actor->bonusAmount);
 		// FIXME add constant for sample index
 		_engine->_sound->playSample(Samples::ItemPopup, 0x1000, 1, actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, actorIdx);
 	}

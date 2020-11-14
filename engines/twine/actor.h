@@ -102,6 +102,19 @@ struct DynamicFlagsStruct {
 	uint16 bUnk8000 : 1;          // 0x8000 unused
 };
 
+struct BonusParameter {
+	uint16 unk1 : 1;
+	uint16 unk2 : 1;
+	uint16 unk3 : 1;
+	uint16 unk4 : 1;
+	uint16 kashes : 1;
+	uint16 lifepoints : 1;
+	uint16 magicpoints : 1;
+	uint16 key : 1;
+	uint16 cloverleaf : 1;
+	uint16 unused : 7;
+};
+
 /** Actors structure */
 class ActorStruct {
 private:
@@ -130,7 +143,7 @@ public:
 	int32 z = 0;
 	int32 strengthOfHit = 0; // field_66
 	int32 hitBy = 0;
-	int32 bonusParameter = 0; // field_10
+	BonusParameter bonusParameter; // field_10
 	int32 angle = 0;
 	int32 speed = 0;
 	ControlMode controlMode = ControlMode::kNoMove;
