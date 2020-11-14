@@ -2129,7 +2129,6 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	_updatesPopUp = new PopUpWidget(boss, prefix + "UpdatesPopup");
 
 	const int *vals = Common::UpdateManager::getUpdateIntervals();
-
 	while (*vals != -1) {
 		_updatesPopUp->appendEntry(Common::UpdateManager::updateIntervalToString(*vals), *vals);
 		vals++;
