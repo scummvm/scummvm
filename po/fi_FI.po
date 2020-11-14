@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-14 14:55+0000\n"
-"PO-Revision-Date: 2020-11-14 10:55+0000\n"
+"PO-Revision-Date: 2020-11-15 00:39+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -7008,14 +7008,12 @@ msgid "Debug Grid Camera Right"
 msgstr "Debug grid kamera oikealle"
 
 #: engines/twine/metaengine.cpp:212
-#, fuzzy
-#| msgid "Debug print"
 msgid "Debug Menu"
-msgstr "Debug-tulostus"
+msgstr "Debug-valikko"
 
 #: engines/twine/metaengine.cpp:217
 msgid "Debug Menu Execute"
-msgstr ""
+msgstr "Näytä debug-menu"
 
 #: engines/twine/metaengine.cpp:222
 msgid "Normal Behaviour"
