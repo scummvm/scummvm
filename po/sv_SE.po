@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-14 14:01+0000\n"
+"POT-Creation-Date: 2020-11-14 14:42+0000\n"
 "PO-Revision-Date: 2020-10-26 22:27+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -128,7 +128,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:398 gui/launcher.cpp:419 gui/launcher.cpp:462
-#: gui/options.cpp:2658 gui/options.cpp:2696
+#: gui/options.cpp:2657 gui/options.cpp:2695
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -139,7 +139,7 @@ msgstr "Ja"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:398 gui/launcher.cpp:419 gui/launcher.cpp:462
-#: gui/options.cpp:2658 gui/options.cpp:2696
+#: gui/options.cpp:2657 gui/options.cpp:2695
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -249,7 +249,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:174 gui/options.cpp:1248
 #: gui/options.cpp:1268 gui/options.cpp:1281 gui/options.cpp:1295
 #: gui/options.cpp:1309 gui/options.cpp:1318 gui/options.cpp:2083
-#: gui/options.cpp:2256 audio/null.cpp:41
+#: gui/options.cpp:2255 audio/null.cpp:41
 msgid "<default>"
 msgstr "<standard>"
 
@@ -420,20 +420,20 @@ msgstr "Achievements"
 #: gui/editgamedialog.cpp:527 gui/editgamedialog.cpp:588 gui/options.cpp:1936
 #: gui/options.cpp:1942 gui/options.cpp:1950 gui/options.cpp:1974
 #: gui/options.cpp:2022 gui/options.cpp:2030 gui/options.cpp:2039
-#: gui/options.cpp:2280 gui/options.cpp:2286 gui/options.cpp:2293
-#: gui/options.cpp:2302 gui/options.cpp:2536 gui/options.cpp:2539
-#: gui/options.cpp:2546 gui/options.cpp:2552 gui/options.cpp:2563
+#: gui/options.cpp:2279 gui/options.cpp:2285 gui/options.cpp:2292
+#: gui/options.cpp:2301 gui/options.cpp:2535 gui/options.cpp:2538
+#: gui/options.cpp:2545 gui/options.cpp:2551 gui/options.cpp:2562
 msgctxt "path"
 msgid "None"
 msgstr "Ingen"
 
 #: gui/editgamedialog.cpp:375 gui/editgamedialog.cpp:471
-#: gui/editgamedialog.cpp:592 gui/options.cpp:1930 gui/options.cpp:2274
-#: gui/options.cpp:2542 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:592 gui/options.cpp:1930 gui/options.cpp:2273
+#: gui/options.cpp:2541 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Standard"
 
-#: gui/editgamedialog.cpp:520 gui/options.cpp:2557
+#: gui/editgamedialog.cpp:520 gui/options.cpp:2556
 msgid "Select SoundFont"
 msgstr "Välj SoundFont"
 
@@ -441,7 +441,7 @@ msgstr "Välj SoundFont"
 msgid "Select additional game directory"
 msgstr "Välj en ytterligare spelkatalog"
 
-#: gui/editgamedialog.cpp:572 gui/options.cpp:2471
+#: gui/editgamedialog.cpp:572 gui/options.cpp:2470
 msgid "Select directory for saved games"
 msgstr "Välj katalog för spardata"
 
@@ -844,7 +844,7 @@ msgstr "Kataloger scannade: %d ..."
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "Upptäckte %d nya spel, ignorerade %d tidigare tillagda spel ..."
 
-#: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2191
+#: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2190
 msgid "Open URL"
 msgstr "Öppna adress"
 
@@ -1345,11 +1345,11 @@ msgstr ""
 "spara- och ladda-dialogrutor (i de spel som använder ScummVMs egna) får "
 "samma språk som resten av spelet."
 
-#: gui/options.cpp:2120
+#: gui/options.cpp:2119
 msgid "Use native system file browser"
 msgstr "Använd systemets egen filhanterare"
 
-#: gui/options.cpp:2121
+#: gui/options.cpp:2120
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
@@ -1357,29 +1357,36 @@ msgstr ""
 "Använd systemets eget filgränssnitt i stället för ScummVMs för att välja "
 "filer och kataloger."
 
-#: gui/options.cpp:2128 gui/updates-dialog.cpp:86
+#: gui/options.cpp:2127 gui/updates-dialog.cpp:86
 msgid "Update check:"
 msgstr "Uppdateringskoll:"
 
-#: gui/options.cpp:2128
+#: gui/options.cpp:2127
 msgid "How often to check ScummVM updates"
 msgstr "Hur ofta ScummVM kollar efter uppdateringar"
 
-#: gui/options.cpp:2139
+#: gui/options.cpp:2138
 msgid "Check now"
 msgstr "Kolla nu"
 
-#: gui/options.cpp:2146
+#: gui/options.cpp:2145
 #, fuzzy
 msgid "Active storage:"
 msgstr "Aktivera molnlagring"
 
-#: gui/options.cpp:2146
+#: gui/options.cpp:2145
 msgid "Active cloud storage"
 msgstr "Aktivera molnlagring"
 
-#: gui/options.cpp:2155
+#: gui/options.cpp:2154
 msgctxt "lowres"
+msgid ""
+"4. Storage is not yet enabled. Verify that username is correct and enable it:"
+msgstr ""
+"4. Lagring är inte på. Kontrollera att användarnamnet är korrekt och "
+"aktivera det:"
+
+#: gui/options.cpp:2156
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
@@ -1387,230 +1394,223 @@ msgstr ""
 "aktivera det:"
 
 #: gui/options.cpp:2157
-msgid ""
-"4. Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr ""
-"4. Lagring är inte på. Kontrollera att användarnamnet är korrekt och "
-"aktivera det:"
-
-#: gui/options.cpp:2158
 msgid "Enable storage"
 msgstr "Aktivera lagring"
 
-#: gui/options.cpp:2158
+#: gui/options.cpp:2157
 msgid "Confirm you want to use this account for this storage"
 msgstr "Bekräfta att du vill använda det här kontot för den här lagringen"
 
-#: gui/options.cpp:2160 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:2159 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "Anv. namn:"
 
-#: gui/options.cpp:2160
+#: gui/options.cpp:2159
 msgid "Username used by this storage"
 msgstr "Användarnamn som används av detta lager"
 
-#: gui/options.cpp:2161
+#: gui/options.cpp:2160
 msgid "<none>"
 msgstr "<ingen>"
 
-#: gui/options.cpp:2163
+#: gui/options.cpp:2162
 msgid "Used space:"
 msgstr "Utnyttjat utrymme:"
 
-#: gui/options.cpp:2163
+#: gui/options.cpp:2162
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "Utrymme som används av ScummVM:s sparade data på det här lagret"
 
-#: gui/options.cpp:2166
+#: gui/options.cpp:2165
 #, fuzzy
 msgid "Last sync:"
 msgstr "Senast synkad:"
 
-#: gui/options.cpp:2166
+#: gui/options.cpp:2165
 #, fuzzy
 msgid "When was the last time saved games were synced with this storage"
 msgstr "När sparade data synkades senast för det här lagret"
 
-#: gui/options.cpp:2167 gui/options.cpp:2896
+#: gui/options.cpp:2166 gui/options.cpp:2895
 msgid "<never>"
 msgstr "<aldrig>"
 
-#: gui/options.cpp:2169
+#: gui/options.cpp:2168
 msgctxt "lowres"
+msgid "Saved games sync automatically on launch, after saving and on loading."
+msgstr ""
+"Sparade spel synkroniseras automatiskt vid start, efter sparning och vid "
+"laddning."
+
+#: gui/options.cpp:2170
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Sparade spel synkroniseras automatiskt vid start, efter sparning och vid "
 "laddning."
 
 #: gui/options.cpp:2171
-msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr ""
-"Sparade spel synkroniseras automatiskt vid start, efter sparning och vid "
-"laddning."
-
-#: gui/options.cpp:2172
 msgid "Sync now"
 msgstr "Synkronisera nu"
 
-#: gui/options.cpp:2172
+#: gui/options.cpp:2171
 msgid "Start saved games sync"
 msgstr "Starta synkroniseringen av sparade spel"
 
-#: gui/options.cpp:2175
+#: gui/options.cpp:2174
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "Du kan ladda ner spelfiler från din ScummVM-katalog i molnet:"
 
-#: gui/options.cpp:2177
+#: gui/options.cpp:2176
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "Du kan ladda ner spelfiler från din ScummVM-katalog i molnet:"
 
-#: gui/options.cpp:2178
+#: gui/options.cpp:2177
 msgid "Download game files"
 msgstr "Ladda ner spelfiler"
 
-#: gui/options.cpp:2178
+#: gui/options.cpp:2177
 msgid "Open downloads manager dialog"
 msgstr "Öppna fönstret för nedladdningshantering"
 
-#: gui/options.cpp:2181
+#: gui/options.cpp:2180
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 "För att byta konto för den här lagringen kopplar du ned och kopplar sedan "
 "upp igen:"
 
-#: gui/options.cpp:2183
+#: gui/options.cpp:2182
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 
-#: gui/options.cpp:2184
+#: gui/options.cpp:2183
 msgid "Disconnect"
 msgstr "Koppla ned"
 
-#: gui/options.cpp:2184
+#: gui/options.cpp:2183
 msgid "Stop using this storage on this device"
 msgstr "Sluta använda den här lagringen på den här enheten"
 
-#: gui/options.cpp:2187
+#: gui/options.cpp:2186
 msgctxt "lowres"
+msgid "This storage is not connected yet! To connect,"
+msgstr "Den här lagringen är inte ansluten än! För att ansluta,"
+
+#: gui/options.cpp:2188
 msgid "This storage is not connected yet! To connect,"
 msgstr "Den här lagringen är inte ansluten än! För att ansluta,"
 
 #: gui/options.cpp:2189
-msgid "This storage is not connected yet! To connect,"
-msgstr "Den här lagringen är inte ansluten än! För att ansluta,"
-
-#: gui/options.cpp:2190
 msgid "1. Open this link:"
 msgstr "1. Öppna den här länken:"
 
-#: gui/options.cpp:2193
+#: gui/options.cpp:2192
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
 msgstr "2. Skriv in koden du fått:"
 
-#: gui/options.cpp:2195
+#: gui/options.cpp:2194
 msgid "2. Get the code and enter it here:"
 msgstr "2. Skriv in koden du fått:"
 
-#: gui/options.cpp:2197
+#: gui/options.cpp:2196
 msgid "Paste"
 msgstr "Klistra in"
 
-#: gui/options.cpp:2197
+#: gui/options.cpp:2196
 msgid "Paste code from clipboard"
 msgstr "Klistra in kod från urklipp"
 
-#: gui/options.cpp:2198
+#: gui/options.cpp:2197
 msgid "3. Connect"
 msgstr "Anslut"
 
-#: gui/options.cpp:2198
+#: gui/options.cpp:2197
 msgid "Connect your cloud storage account"
 msgstr "Anslut ditt molnlagerkonto"
 
-#: gui/options.cpp:2207
+#: gui/options.cpp:2206
 msgid "Run server"
 msgstr "Starta server"
 
-#: gui/options.cpp:2207
+#: gui/options.cpp:2206
 msgid "Run local webserver"
 msgstr "Starta lokal webbserver"
 
-#: gui/options.cpp:2208 gui/options.cpp:3011
+#: gui/options.cpp:2207 gui/options.cpp:3010
 msgid "Not running"
 msgstr "Ej aktiv"
 
-#: gui/options.cpp:2212
+#: gui/options.cpp:2211
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/root/-sökväg:"
 
-#: gui/options.cpp:2212 gui/options.cpp:2214 gui/options.cpp:2215
+#: gui/options.cpp:2211 gui/options.cpp:2213 gui/options.cpp:2214
 #, fuzzy
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "Bestämmer vilken katalog filhanteraren har åtkomst till"
 
-#: gui/options.cpp:2214
+#: gui/options.cpp:2213
 msgid "/root/ Path:"
 msgstr "/root/-sökväg:"
 
-#: gui/options.cpp:2220
+#: gui/options.cpp:2219
 msgid "Server's port:"
 msgstr "Serverport:"
 
-#: gui/options.cpp:2220
+#: gui/options.cpp:2219
 msgid "Port for server to use"
 msgstr "Serverport"
 
-#: gui/options.cpp:2225
+#: gui/options.cpp:2224
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 
-#: gui/options.cpp:2226
+#: gui/options.cpp:2225
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
 msgstr "Om du stänger dialogrutan avslutas servern."
 
-#: gui/options.cpp:2228
+#: gui/options.cpp:2227
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 
-#: gui/options.cpp:2229
+#: gui/options.cpp:2228
 msgid "Closing options dialog will stop the server."
 msgstr ""
 
-#: gui/options.cpp:2241
+#: gui/options.cpp:2240
 msgid "Use Text to speech"
 msgstr "Använd automatisk uppläsning"
 
-#: gui/options.cpp:2241
+#: gui/options.cpp:2240
 msgid "Will read text in gui on mouse over."
 msgstr "Läser gränssnittets text under muspekaren"
 
-#: gui/options.cpp:2254
+#: gui/options.cpp:2253
 msgid "None"
 msgstr "Ingen"
 
-#: gui/options.cpp:2329
+#: gui/options.cpp:2328
 msgid "Failed to change cloud storage!"
 msgstr "Kunde inte ändra molnlager!"
 
-#: gui/options.cpp:2332
+#: gui/options.cpp:2331
 msgid "Another cloud storage is already active."
 msgstr "Ett annat molnlager är redan aktivt."
 
-#: gui/options.cpp:2407
+#: gui/options.cpp:2406
 msgid "Theme does not support selected language!"
 msgstr "Temat stöder inte det valda språket!"
 
-#: gui/options.cpp:2410
+#: gui/options.cpp:2409
 msgid "Theme cannot be loaded!"
 msgstr "Temat kunde inte laddas!"
 
-#: gui/options.cpp:2413
+#: gui/options.cpp:2412
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1618,28 +1618,28 @@ msgstr ""
 "\n"
 "Diverse inställningar kommer att återställas."
 
-#: gui/options.cpp:2478
+#: gui/options.cpp:2477
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "Det går inte att skriva till den valda katalogen. Var god välj en annan."
 
-#: gui/options.cpp:2487
+#: gui/options.cpp:2486
 msgid "Select directory for GUI themes"
 msgstr "Välj katalog för GUI-teman"
 
-#: gui/options.cpp:2497
+#: gui/options.cpp:2496
 msgid "Select directory for extra files"
 msgstr "Välj katalog för extra filer"
 
-#: gui/options.cpp:2508
+#: gui/options.cpp:2507
 msgid "Select directory for plugins"
 msgstr "Välj katalog för tillägg"
 
-#: gui/options.cpp:2521
+#: gui/options.cpp:2520
 msgid "Select directory for Files Manager /root/"
 msgstr "Välj katalog för filhanterarens /root/"
 
-#: gui/options.cpp:2633
+#: gui/options.cpp:2632
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1647,51 +1647,51 @@ msgstr ""
 "Kunde inte öppna adressen!\n"
 "Var god navigera till sidan manuellt."
 
-#: gui/options.cpp:2658
+#: gui/options.cpp:2657
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "En annan lagring är aktiv. Vill du avbryta den?"
 
-#: gui/options.cpp:2667 gui/options.cpp:2705
+#: gui/options.cpp:2666 gui/options.cpp:2704
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Vänta tills det nuvarande lagret är färdigt och försök igen."
 
-#: gui/options.cpp:2680
+#: gui/options.cpp:2679
 msgid "Connecting..."
 msgstr "Ansluter ..."
 
-#: gui/options.cpp:2696
+#: gui/options.cpp:2695
 #, fuzzy
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Ett annat lager är aktivt. Vill du avbryta det?"
 
-#: gui/options.cpp:2894 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:2893 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<nu direkt>"
 
-#: gui/options.cpp:3003
+#: gui/options.cpp:3002
 msgid "Stop server"
 msgstr "Stoppa server"
 
-#: gui/options.cpp:3004
+#: gui/options.cpp:3003
 msgid "Stop local webserver"
 msgstr "Stoppa lokal webbserver"
 
-#: gui/options.cpp:3056
+#: gui/options.cpp:3055
 #, fuzzy
 msgid "Storage connected."
 msgstr "%s lageranslutningsguide"
 
-#: gui/options.cpp:3058
+#: gui/options.cpp:3057
 #, fuzzy
 msgid "Failed to connect storage."
 msgstr "Kunde inte ändra molnlager!"
 
-#: gui/options.cpp:3060
+#: gui/options.cpp:3059
 #, fuzzy
 msgid "Failed to connect storage: "
 msgstr "Kunde inte ändra molnlager!"
 
-#: gui/options.cpp:3080
+#: gui/options.cpp:3079
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."

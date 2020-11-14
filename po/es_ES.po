@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-14 14:01+0000\n"
+"POT-Creation-Date: 2020-11-14 14:42+0000\n"
 "PO-Revision-Date: 2020-11-14 10:55+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -127,7 +127,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:398 gui/launcher.cpp:419 gui/launcher.cpp:462
-#: gui/options.cpp:2658 gui/options.cpp:2696
+#: gui/options.cpp:2657 gui/options.cpp:2695
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -138,7 +138,7 @@ msgstr "Sí"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:398 gui/launcher.cpp:419 gui/launcher.cpp:462
-#: gui/options.cpp:2658 gui/options.cpp:2696
+#: gui/options.cpp:2657 gui/options.cpp:2695
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -248,7 +248,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:174 gui/options.cpp:1248
 #: gui/options.cpp:1268 gui/options.cpp:1281 gui/options.cpp:1295
 #: gui/options.cpp:1309 gui/options.cpp:1318 gui/options.cpp:2083
-#: gui/options.cpp:2256 audio/null.cpp:41
+#: gui/options.cpp:2255 audio/null.cpp:41
 msgid "<default>"
 msgstr "<por defecto>"
 
@@ -419,20 +419,20 @@ msgstr "Logros"
 #: gui/editgamedialog.cpp:527 gui/editgamedialog.cpp:588 gui/options.cpp:1936
 #: gui/options.cpp:1942 gui/options.cpp:1950 gui/options.cpp:1974
 #: gui/options.cpp:2022 gui/options.cpp:2030 gui/options.cpp:2039
-#: gui/options.cpp:2280 gui/options.cpp:2286 gui/options.cpp:2293
-#: gui/options.cpp:2302 gui/options.cpp:2536 gui/options.cpp:2539
-#: gui/options.cpp:2546 gui/options.cpp:2552 gui/options.cpp:2563
+#: gui/options.cpp:2279 gui/options.cpp:2285 gui/options.cpp:2292
+#: gui/options.cpp:2301 gui/options.cpp:2535 gui/options.cpp:2538
+#: gui/options.cpp:2545 gui/options.cpp:2551 gui/options.cpp:2562
 msgctxt "path"
 msgid "None"
 msgstr "Ninguna"
 
 #: gui/editgamedialog.cpp:375 gui/editgamedialog.cpp:471
-#: gui/editgamedialog.cpp:592 gui/options.cpp:1930 gui/options.cpp:2274
-#: gui/options.cpp:2542 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:592 gui/options.cpp:1930 gui/options.cpp:2273
+#: gui/options.cpp:2541 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "Por defecto"
 
-#: gui/editgamedialog.cpp:520 gui/options.cpp:2557
+#: gui/editgamedialog.cpp:520 gui/options.cpp:2556
 msgid "Select SoundFont"
 msgstr "Selecciona un SoundFont"
 
@@ -440,7 +440,7 @@ msgstr "Selecciona un SoundFont"
 msgid "Select additional game directory"
 msgstr "Selecciona el directorio adicional"
 
-#: gui/editgamedialog.cpp:572 gui/options.cpp:2471
+#: gui/editgamedialog.cpp:572 gui/options.cpp:2470
 msgid "Select directory for saved games"
 msgstr "Selecciona el directorio para partidas guardadas"
 
@@ -845,7 +845,7 @@ msgstr ""
 "Se han encontrado %d juegos nuevos y se han ignorado %d juegos (ya "
 "añadidos)..."
 
-#: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2191
+#: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2190
 msgid "Open URL"
 msgstr "Abre la dirección URL"
 
@@ -1353,11 +1353,11 @@ msgstr ""
 "del juego. De esa manera, si un juego utiliza las ventanas de guardado y "
 "carga de ScummVM, estarán en el mismo idioma que el juego."
 
-#: gui/options.cpp:2120
+#: gui/options.cpp:2119
 msgid "Use native system file browser"
 msgstr "Usar el explorador de archivos nativo"
 
-#: gui/options.cpp:2121
+#: gui/options.cpp:2120
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
@@ -1365,28 +1365,35 @@ msgstr ""
 "Utiliza el explorador de archivos del sistema nativo en lugar del de ScummVM "
 "para seleccionar un archivo o directorio."
 
-#: gui/options.cpp:2128 gui/updates-dialog.cpp:86
+#: gui/options.cpp:2127 gui/updates-dialog.cpp:86
 msgid "Update check:"
 msgstr "Actualizar:"
 
-#: gui/options.cpp:2128
+#: gui/options.cpp:2127
 msgid "How often to check ScummVM updates"
 msgstr "Frecuencia con la que se buscan actualizaciones"
 
-#: gui/options.cpp:2139
+#: gui/options.cpp:2138
 msgid "Check now"
 msgstr "Buscar ahora"
 
-#: gui/options.cpp:2146
+#: gui/options.cpp:2145
 msgid "Active storage:"
 msgstr "Alm. activo:"
 
-#: gui/options.cpp:2146
+#: gui/options.cpp:2145
 msgid "Active cloud storage"
 msgstr "Almacenamiento en la nube activo"
 
-#: gui/options.cpp:2155
+#: gui/options.cpp:2154
 msgctxt "lowres"
+msgid ""
+"4. Storage is not yet enabled. Verify that username is correct and enable it:"
+msgstr ""
+"4. El almacenamiento no está activado todavía. Verifica que el nombre de "
+"usuario es correcto y actívalo:"
+
+#: gui/options.cpp:2156
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
@@ -1394,242 +1401,235 @@ msgstr ""
 "usuario es correcto y actívalo:"
 
 #: gui/options.cpp:2157
-msgid ""
-"4. Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr ""
-"4. El almacenamiento no está activado todavía. Verifica que el nombre de "
-"usuario es correcto y actívalo:"
-
-#: gui/options.cpp:2158
 msgid "Enable storage"
 msgstr "Activar almacenamiento"
 
-#: gui/options.cpp:2158
+#: gui/options.cpp:2157
 msgid "Confirm you want to use this account for this storage"
 msgstr "Confirma que quieres usar esta cuenta como almacenamiento"
 
-#: gui/options.cpp:2160 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:2159 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "Usuario:"
 
-#: gui/options.cpp:2160
+#: gui/options.cpp:2159
 msgid "Username used by this storage"
 msgstr "Nombre de usuario utilizado para este almacenamiento"
 
-#: gui/options.cpp:2161
+#: gui/options.cpp:2160
 msgid "<none>"
 msgstr "<ninguno>"
 
-#: gui/options.cpp:2163
+#: gui/options.cpp:2162
 msgid "Used space:"
 msgstr "Espacio utilizado:"
 
-#: gui/options.cpp:2163
+#: gui/options.cpp:2162
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
 "Espacio utilizado por las partidas guardadas de ScummVM en este "
 "almacenamiento"
 
-#: gui/options.cpp:2166
+#: gui/options.cpp:2165
 msgid "Last sync:"
 msgstr "Última sincronización:"
 
-#: gui/options.cpp:2166
+#: gui/options.cpp:2165
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 "Fecha en la que se ha producido la última sincronización de partidas "
 "guardadas con este almacenamiento"
 
-#: gui/options.cpp:2167 gui/options.cpp:2896
+#: gui/options.cpp:2166 gui/options.cpp:2895
 msgid "<never>"
 msgstr "<nunca>"
 
-#: gui/options.cpp:2169
+#: gui/options.cpp:2168
 msgctxt "lowres"
+msgid "Saved games sync automatically on launch, after saving and on loading."
+msgstr ""
+"Las partidas guardadas se sincronizan automáticamente al iniciar el juego, "
+"al guardar y al cargar."
+
+#: gui/options.cpp:2170
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Las partidas guardadas se sincronizan automáticamente al iniciar el juego, "
 "al guardar y al cargar."
 
 #: gui/options.cpp:2171
-msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr ""
-"Las partidas guardadas se sincronizan automáticamente al iniciar el juego, "
-"al guardar y al cargar."
-
-#: gui/options.cpp:2172
 msgid "Sync now"
 msgstr "Sincronizar ahora"
 
-#: gui/options.cpp:2172
+#: gui/options.cpp:2171
 msgid "Start saved games sync"
 msgstr "Inicia la sincronización de las partidas guardadas"
 
-#: gui/options.cpp:2175
+#: gui/options.cpp:2174
 msgctxt "lowres"
+msgid "You can download game files from your cloud ScummVM folder:"
+msgstr ""
+"Puedes descargar archivos de juego desde tu carpeta en la nube de ScummVM:"
+
+#: gui/options.cpp:2176
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr ""
 "Puedes descargar archivos de juego desde tu carpeta en la nube de ScummVM:"
 
 #: gui/options.cpp:2177
-msgid "You can download game files from your cloud ScummVM folder:"
-msgstr ""
-"Puedes descargar archivos de juego desde tu carpeta en la nube de ScummVM:"
-
-#: gui/options.cpp:2178
 msgid "Download game files"
 msgstr "Descargar archivos de juego"
 
-#: gui/options.cpp:2178
+#: gui/options.cpp:2177
 msgid "Open downloads manager dialog"
 msgstr "Abre el gestor de descargas"
 
-#: gui/options.cpp:2181
+#: gui/options.cpp:2180
 msgctxt "lowres"
+msgid "To change account for this storage, disconnect and connect again:"
+msgstr ""
+"Para cambiar la cuenta para este almacenamiento, desconecta y conecta de "
+"nuevo:"
+
+#: gui/options.cpp:2182
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 "Para cambiar la cuenta para este almacenamiento, desconecta y conecta de "
 "nuevo:"
 
 #: gui/options.cpp:2183
-msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
-"Para cambiar la cuenta para este almacenamiento, desconecta y conecta de "
-"nuevo:"
-
-#: gui/options.cpp:2184
 msgid "Disconnect"
 msgstr "Desconectar"
 
-#: gui/options.cpp:2184
+#: gui/options.cpp:2183
 msgid "Stop using this storage on this device"
 msgstr "Deja de utilizar este almacenamiento en este dispositivo"
 
-#: gui/options.cpp:2187
+#: gui/options.cpp:2186
 msgctxt "lowres"
+msgid "This storage is not connected yet! To connect,"
+msgstr "¡Este almacenamiento no está conectado todavía! Para conectar,"
+
+#: gui/options.cpp:2188
 msgid "This storage is not connected yet! To connect,"
 msgstr "¡Este almacenamiento no está conectado todavía! Para conectar,"
 
 #: gui/options.cpp:2189
-msgid "This storage is not connected yet! To connect,"
-msgstr "¡Este almacenamiento no está conectado todavía! Para conectar,"
-
-#: gui/options.cpp:2190
 msgid "1. Open this link:"
 msgstr "1. Abre este enlace:"
 
-#: gui/options.cpp:2193
+#: gui/options.cpp:2192
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
 msgstr "2.- Obtén el código e introdúcelo aquí:"
 
-#: gui/options.cpp:2195
+#: gui/options.cpp:2194
 msgid "2. Get the code and enter it here:"
 msgstr "2.- Obtén el código e introdúcelo aquí:"
 
-#: gui/options.cpp:2197
+#: gui/options.cpp:2196
 msgid "Paste"
 msgstr "Pegar"
 
-#: gui/options.cpp:2197
+#: gui/options.cpp:2196
 msgid "Paste code from clipboard"
 msgstr "Pega el código desde el portapapeles"
 
-#: gui/options.cpp:2198
+#: gui/options.cpp:2197
 msgid "3. Connect"
 msgstr "3. Conectar"
 
-#: gui/options.cpp:2198
+#: gui/options.cpp:2197
 msgid "Connect your cloud storage account"
 msgstr "Conecta con tu cuenta de almacenamiento en la nube"
 
-#: gui/options.cpp:2207
+#: gui/options.cpp:2206
 msgid "Run server"
 msgstr "Habilitar servidor"
 
-#: gui/options.cpp:2207
+#: gui/options.cpp:2206
 msgid "Run local webserver"
 msgstr "Arranca el servidor local"
 
-#: gui/options.cpp:2208 gui/options.cpp:3011
+#: gui/options.cpp:2207 gui/options.cpp:3010
 msgid "Not running"
 msgstr "Detenido"
 
-#: gui/options.cpp:2212
+#: gui/options.cpp:2211
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "/raíz/:"
 
-#: gui/options.cpp:2212 gui/options.cpp:2214 gui/options.cpp:2215
+#: gui/options.cpp:2211 gui/options.cpp:2213 gui/options.cpp:2214
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr ""
 "Selecciona el directorio que se mostrará como /raíz/ en el administrador de "
 "archivos"
 
-#: gui/options.cpp:2214
+#: gui/options.cpp:2213
 msgid "/root/ Path:"
 msgstr "Directorio /raíz/:"
 
-#: gui/options.cpp:2220
+#: gui/options.cpp:2219
 msgid "Server's port:"
 msgstr "Puerto del servidor:"
 
-#: gui/options.cpp:2220
+#: gui/options.cpp:2219
 msgid "Port for server to use"
 msgstr "Puerto que usará el servidor"
 
-#: gui/options.cpp:2225
+#: gui/options.cpp:2224
 msgctxt "lowres"
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "Arrancar el servidor para gestionar ficheros con un navegador (en la misma "
 "red)."
 
-#: gui/options.cpp:2226
+#: gui/options.cpp:2225
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
 msgstr "Cerrar el panel de opciones detendrá el servidor."
 
-#: gui/options.cpp:2228
+#: gui/options.cpp:2227
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "Arrancar el servidor para gestionar ficheros con un navegador (en la misma "
 "red)."
 
-#: gui/options.cpp:2229
+#: gui/options.cpp:2228
 msgid "Closing options dialog will stop the server."
 msgstr "Cerrar el panel de opciones parará el servidor."
 
-#: gui/options.cpp:2241
+#: gui/options.cpp:2240
 msgid "Use Text to speech"
 msgstr "Convertir de texto a voz"
 
-#: gui/options.cpp:2241
+#: gui/options.cpp:2240
 msgid "Will read text in gui on mouse over."
 msgstr ""
 "Leerá el texto de la interfaz allá por donde pase el puntero del ratón."
 
-#: gui/options.cpp:2254
+#: gui/options.cpp:2253
 msgid "None"
 msgstr "Ninguno"
 
-#: gui/options.cpp:2329
+#: gui/options.cpp:2328
 msgid "Failed to change cloud storage!"
 msgstr "¡Fallo al cambiar el almacenamiento en la nube!"
 
-#: gui/options.cpp:2332
+#: gui/options.cpp:2331
 msgid "Another cloud storage is already active."
 msgstr "Ya se ha habilitado otro almacenamiento en la nube."
 
-#: gui/options.cpp:2407
+#: gui/options.cpp:2406
 msgid "Theme does not support selected language!"
 msgstr "¡El tema no es compatible con el idioma seleccionado!"
 
-#: gui/options.cpp:2410
+#: gui/options.cpp:2409
 msgid "Theme cannot be loaded!"
 msgstr "¡No se ha podido cargar el tema!"
 
-#: gui/options.cpp:2413
+#: gui/options.cpp:2412
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1637,27 +1637,27 @@ msgstr ""
 "\n"
 "Se restaurará la configuración por defecto."
 
-#: gui/options.cpp:2478
+#: gui/options.cpp:2477
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "No se puede escribir en el directorio elegido. Selecciona otro."
 
-#: gui/options.cpp:2487
+#: gui/options.cpp:2486
 msgid "Select directory for GUI themes"
 msgstr "Selecciona el directorio de temas"
 
-#: gui/options.cpp:2497
+#: gui/options.cpp:2496
 msgid "Select directory for extra files"
 msgstr "Selecciona el directorio adicional"
 
-#: gui/options.cpp:2508
+#: gui/options.cpp:2507
 msgid "Select directory for plugins"
 msgstr "Selecciona el directorio de plugins"
 
-#: gui/options.cpp:2521
+#: gui/options.cpp:2520
 msgid "Select directory for Files Manager /root/"
 msgstr "Selecciona el directorio /raíz/ para el administrador de archivos"
 
-#: gui/options.cpp:2633
+#: gui/options.cpp:2632
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1665,47 +1665,47 @@ msgstr ""
 "No se ha podido abrir la URL.\n"
 "Accede a la página manualmente."
 
-#: gui/options.cpp:2658
+#: gui/options.cpp:2657
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Ya hay otro almacenamiento activo. ¿Quieres interrumpirlo?"
 
-#: gui/options.cpp:2667 gui/options.cpp:2705
+#: gui/options.cpp:2666 gui/options.cpp:2704
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Espera a que el almacenamiento actual finalice y prueba otra vez."
 
-#: gui/options.cpp:2680
+#: gui/options.cpp:2679
 msgid "Connecting..."
 msgstr "Conectando..."
 
-#: gui/options.cpp:2696
+#: gui/options.cpp:2695
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Este almacenamiento está en uso. ¿Quieres interrumpirlo?"
 
-#: gui/options.cpp:2894 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:2893 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<ahora>"
 
-#: gui/options.cpp:3003
+#: gui/options.cpp:3002
 msgid "Stop server"
 msgstr "Detener servidor"
 
-#: gui/options.cpp:3004
+#: gui/options.cpp:3003
 msgid "Stop local webserver"
 msgstr "Detiene el servidor local"
 
-#: gui/options.cpp:3056
+#: gui/options.cpp:3055
 msgid "Storage connected."
 msgstr "Almacenamiento conectado."
 
-#: gui/options.cpp:3058
+#: gui/options.cpp:3057
 msgid "Failed to connect storage."
 msgstr "Fallo al conectar con el almacenamiento."
 
-#: gui/options.cpp:3060
+#: gui/options.cpp:3059
 msgid "Failed to connect storage: "
 msgstr "Fallo al conectar con el almacenamiento: "
 
-#: gui/options.cpp:3080
+#: gui/options.cpp:3079
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
