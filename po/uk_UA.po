@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-13 20:49+0100\n"
-"PO-Revision-Date: 2020-11-11 12:24+0000\n"
+"PO-Revision-Date: 2020-11-14 10:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Українська\n"
 
@@ -6900,97 +6900,86 @@ msgstr "Не вдалося знайти файл даних '%s'."
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "Ввімкнути зіткнення зі стінами"
 
 #: engines/twine/metaengine.cpp:69
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "Ввімкнути пошкодження від зіткнення зі стінами як в оригіналі"
 
 #: engines/twine/metaengine.cpp:75
-#, fuzzy
 msgid "Enable cross fade"
-msgstr "Ввімкнути режим чітера"
+msgstr "Ввімкнути плавне вицвітання"
 
 #: engines/twine/metaengine.cpp:76
 msgid "Enable cross fading of images and scenes"
-msgstr ""
+msgstr "Ввімкнути плавний перехід між зображеннями та сценами"
 
 #: engines/twine/metaengine.cpp:83
-#, fuzzy
 msgid "Disable save menu"
-msgstr "Не вдалося записати гру"
+msgstr "Заборонити меню збереження"
 
 #: engines/twine/metaengine.cpp:84
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
+"Оригінал мав тільки автоматичне збереження гри. Ця опція дозволить вам "
+"записатися у довільний момент."
 
 #: engines/twine/metaengine.cpp:90
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "Ввімкнути режим гелієвих голосів"
+msgstr "Ввімкнути режим відладки"
 
 #: engines/twine/metaengine.cpp:91
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "Ввімкнути режим гелієвих голосів"
+msgstr "Ввімкнути режим відладки"
 
 #: engines/twine/metaengine.cpp:97
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "Додати аудіторію у студію"
+msgstr "Ввімкнути аудіо CD"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "Ввімкнути оригінальний трек з CD"
 
 #: engines/twine/metaengine.cpp:104
-#, fuzzy
 msgid "Enable sound"
-msgstr "Ввімкнути середовище"
+msgstr "Ввімкнути звук"
 
 #: engines/twine/metaengine.cpp:105
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "Повна назва гри"
+msgstr "Ввімкнути звук у грі"
 
 #: engines/twine/metaengine.cpp:111
-#, fuzzy
 msgid "Enable voices"
-msgstr "Ввімкнути Venus"
+msgstr "Ввімкнути озвучку"
 
 #: engines/twine/metaengine.cpp:112
-#, fuzzy
 msgid "Enable the voices for the game"
-msgstr "Ввімкнути допоміжну систему Venus"
+msgstr "Ввімкнути озвучку голосів у грі"
 
 #: engines/twine/metaengine.cpp:118
-#, fuzzy
 msgid "Enable text"
-msgstr "Ввімкнути середовище"
+msgstr "Ввімкнути текст"
 
 #: engines/twine/metaengine.cpp:119
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "Повна назва гри"
+msgstr "Ввімкнути тексти у грі"
 
 #: engines/twine/metaengine.cpp:125
-#, fuzzy
 msgid "Enable movies"
-msgstr "Ввімкнути Venus"
+msgstr "Ввімкнути роліки"
 
 #: engines/twine/metaengine.cpp:126
-#, fuzzy
 msgid "Enable the cutscenes for the game"
-msgstr "Ввімкнути допоміжну систему Venus"
+msgstr "Ввімкнути відеороліки у грі"
 
 #: engines/twine/metaengine.cpp:132
 msgid "Use the USA version"
-msgstr ""
+msgstr "Використовувати версію USA"
 
 #: engines/twine/metaengine.cpp:133
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "Ввімкнути опції гри, специфічні для USA версії"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Debug Next Room"
