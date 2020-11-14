@@ -43,4 +43,13 @@ void Patch::load(Common::SeekableReadStream *stream) {
 	}
 }
 
+int Patch::getFlag(const Common::String & name) const {
+	for(auto & object : objects) {
+		if (object.name == name)
+			return object.flag;
+	}
+	return 0;
+}
+
+
 }

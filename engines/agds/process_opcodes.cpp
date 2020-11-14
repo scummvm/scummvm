@@ -25,6 +25,7 @@
 #include "agds/character.h"
 #include "agds/font.h"
 #include "agds/opcode.h"
+#include "agds/patch.h"
 #include "agds/process.h"
 #include "agds/region.h"
 #include "agds/screen.h"
@@ -508,11 +509,17 @@ void Process::checkScreenPatch() {
 		return;
 	}
 
-	if (!screenName.empty()) {
-		debug("checkScreenPatch: stub for screen != -1, returning 0");
-		//check that patch exist
-		push(0);
-		return;
+	if (!screenName.empty() && screenName != screen->getName()) {
+		if (objectName != _engine->getSystemVariable("inventory_scr")->getString()) {
+			debug("checkScreenPatch for object %s %s");
+			auto patch = _engine->getPatch(screenName);
+			push(patch? patch->getFlag(objectName): 0);
+		} else {
+			push(_engine->inventory().find(objectName) >= 0);
+		}
+	} if (screen && screen->applyingPatch()) {
+		debug("checkScreenPatch: attempt to change screen patch (%s) in patching process %s", screen->getName().c_str(), getName().c_str());
+		push(-1);
 	} else {
 		ObjectPtr object = screen->find(objectName);
 		int value = object && object->inScene();
