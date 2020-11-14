@@ -330,7 +330,7 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 		uint8 *ptr = (bodyPtr + 1);
 
 		if (type == 3) {
-			if (animIdx == *bodyPtr) {
+			if (animIdx == (AnimationTypes)*bodyPtr) {
 				ptr++;
 				uint16 realAnimIdx = READ_LE_INT16(ptr);
 				ptr += 2;
@@ -668,7 +668,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 	}
 }
 
-bool Animations::initAnim(AnimationTypes newAnim, int16 animType, uint8 animExtra, int32 actorIdx) {
+bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes animExtra, int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->entity == -1) {
 		return false;
@@ -682,8 +682,8 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, uint8 animExtr
 		return true;
 	}
 
-	if (animExtra == 255 && actor->animType != 2) {
-		animExtra = (uint8)actor->anim;
+	if (animExtra == AnimationTypes::kAnimInvalid && actor->animType != 2) {
+		animExtra = actor->anim;
 	}
 
 	int32 animIndex = getBodyAnimIndex(newAnim, actorIdx);
@@ -702,8 +702,8 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, uint8 animExtr
 
 		animExtra = actor->anim;
 
-		if (animExtra == 15 || animExtra == 7 || animExtra == 8 || animExtra == 9) {
-			animExtra = 0;
+		if (animExtra == AnimationTypes::kThrowBall || animExtra == AnimationTypes::kFall || animExtra == AnimationTypes::kLanding || animExtra == AnimationTypes::kLandingHit) {
+			animExtra = AnimationTypes::kStanding;
 		}
 	}
 
@@ -994,7 +994,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		}
 
 		// process wall hit while running
-		if (_engine->_collision->causeActorDamage && !actor->dynamicFlags.bIsFalling && !currentlyProcessedActorIdx && _engine->_actor->heroBehaviour == kAthletic && actor->anim == kForward) {
+		if (_engine->_collision->causeActorDamage && !actor->dynamicFlags.bIsFalling && !currentlyProcessedActorIdx && _engine->_actor->heroBehaviour == HeroBehaviourType::kAthletic && actor->anim == AnimationTypes::kForward) {
 			_engine->_movements->rotateActor(actor->boudingBox.x.bottomLeft, actor->boudingBox.z.bottomLeft, actor->angle + 0x580);
 
 			_engine->_renderer->destX += _engine->_movements->processActorX;
@@ -1003,7 +1003,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			if (_engine->_renderer->destX >= 0 && _engine->_renderer->destZ >= 0 && _engine->_renderer->destX <= 0x7E00 && _engine->_renderer->destZ <= 0x7E00) {
 				if (_engine->_grid->getBrickShape(_engine->_renderer->destX, _engine->_movements->processActorY + 256, _engine->_renderer->destZ) != ShapeType::kNone && _engine->cfgfile.WallCollision) { // avoid wall hit damage
 					_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, kHitStars);
-					initAnim(kBigHit, 2, 0, currentlyProcessedActorIdx);
+					initAnim(AnimationTypes::kBigHit, 2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
 
 					if (IS_HERO(currentlyProcessedActorIdx)) {
 						_engine->_movements->heroMoved = true;
@@ -1025,7 +1025,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 				} else {
 					if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour == kAthletic && actor->anim == AnimationTypes::kForward && _engine->cfgfile.WallCollision) { // avoid wall hit damage
 						_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, kHitStars);
-						initAnim(kBigHit, 2, 0, currentlyProcessedActorIdx);
+						initAnim(AnimationTypes::kBigHit, 2, AnimationTypes::kStanding, currentlyProcessedActorIdx);
 						_engine->_movements->heroMoved = true;
 						actor->life--;
 					}
@@ -1073,7 +1073,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 							_engine->_scene->heroYBeforeFall = _engine->_movements->processActorY;
 						}
 
-						initAnim(kFall, 0, 255, actorIdx);
+						initAnim(AnimationTypes::kFall, 0, AnimationTypes::kAnimInvalid, actorIdx);
 					}
 				}
 			}

@@ -246,42 +246,42 @@ void Movements::processManualAction(int actorIdx) {
 				heroAction = true;
 				break;
 			case kAthletic:
-				_engine->_animations->initAnim(kJump, 1, 0, actorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kJump, 1, AnimationTypes::kStanding, actorIdx);
 				break;
 			case kAggressive:
 				if (_engine->_actor->autoAgressive) {
 					heroMoved = true;
 					actor->angle = getRealAngle(&actor->move);
 					// TODO: previousLoopActionKey must be handled properly
-					if (!previousLoopActionKey || actor->anim == kStanding) {
+					if (!previousLoopActionKey || actor->anim == AnimationTypes::kStanding) {
 						const int32 aggresiveMode = _engine->getRandomNumber(3);
 
 						switch (aggresiveMode) {
 						case 0:
-							_engine->_animations->initAnim(kKick, 1, 0, actorIdx);
+							_engine->_animations->initAnim(AnimationTypes::kKick, 1, AnimationTypes::kStanding, actorIdx);
 							break;
 						case 1:
-							_engine->_animations->initAnim(kRightPunch, 1, 0, actorIdx);
+							_engine->_animations->initAnim(AnimationTypes::kRightPunch, 1, AnimationTypes::kStanding, actorIdx);
 							break;
 						case 2:
-							_engine->_animations->initAnim(kLeftPunch, 1, 0, actorIdx);
+							_engine->_animations->initAnim(AnimationTypes::kLeftPunch, 1, AnimationTypes::kStanding, actorIdx);
 							break;
 						}
 					}
 				} else {
 					if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-						_engine->_animations->initAnim(kLeftPunch, 1, 0, actorIdx);
+						_engine->_animations->initAnim(AnimationTypes::kLeftPunch, 1, AnimationTypes::kStanding, actorIdx);
 					} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-						_engine->_animations->initAnim(kRightPunch, 1, 0, actorIdx);
+						_engine->_animations->initAnim(AnimationTypes::kRightPunch, 1, AnimationTypes::kStanding, actorIdx);
 					}
 
 					if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
-						_engine->_animations->initAnim(kKick, 1, 0, actorIdx);
+						_engine->_animations->initAnim(AnimationTypes::kKick, 1, AnimationTypes::kStanding, actorIdx);
 					}
 				}
 				break;
 			case kDiscrete:
-				_engine->_animations->initAnim(kHide, 0, 255, actorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kHide, 0, AnimationTypes::kAnimInvalid, actorIdx);
 				break;
 			case kProtoPack:
 				break;
@@ -293,7 +293,7 @@ void Movements::processManualAction(int actorIdx) {
 		if (!_engine->_gameState->usingSabre) { // Use Magic Ball
 			if (_engine->_gameState->gameFlags[InventoryItems::kiMagicBall]) {
 				if (_engine->_gameState->magicBallIdx == -1) {
-					_engine->_animations->initAnim(kThrowBall, 1, 0, actorIdx);
+					_engine->_animations->initAnim(AnimationTypes::kThrowBall, 1, AnimationTypes::kStanding, actorIdx);
 				}
 
 				heroMoved = true;
@@ -304,7 +304,7 @@ void Movements::processManualAction(int actorIdx) {
 				_engine->_actor->initModelActor(InventoryItems::kiUseSabre, actorIdx);
 			}
 
-			_engine->_animations->initAnim(kSabreAttack, 1, 0, actorIdx);
+			_engine->_animations->initAnim(AnimationTypes::kSabreAttack, 1, AnimationTypes::kStanding, actorIdx);
 
 			heroMoved = true;
 			actor->angle = getRealAngle(&actor->move);
@@ -320,7 +320,7 @@ void Movements::processManualAction(int actorIdx) {
 
 		if (heroActionKey != heroPressedKey || loopCursorKeys != heroPressedKey2) {
 			if (heroMoved) {
-				_engine->_animations->initAnim(kStanding, 0, 255, actorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, actorIdx);
 			}
 		}
 
@@ -328,18 +328,18 @@ void Movements::processManualAction(int actorIdx) {
 
 		if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
 			if (!_engine->_scene->currentActorInZone) {
-				_engine->_animations->initAnim(kForward, 0, 255, actorIdx);
+				_engine->_animations->initAnim(AnimationTypes::kForward, 0, AnimationTypes::kAnimInvalid, actorIdx);
 			}
 			heroMoved = true;
 		} else if (_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
-			_engine->_animations->initAnim(kBackward, 0, 255, actorIdx);
+			_engine->_animations->initAnim(AnimationTypes::kBackward, 0, AnimationTypes::kAnimInvalid, actorIdx);
 			heroMoved = true;
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 			heroMoved = true;
-			if (actor->anim == kStanding) {
-				_engine->_animations->initAnim(kTurnLeft, 0, 255, actorIdx);
+			if (actor->anim == AnimationTypes::kStanding) {
+				_engine->_animations->initAnim(AnimationTypes::kTurnLeft, 0, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
 				if (!actor->dynamicFlags.bIsRotationByAnim) {
 					actor->angle = getRealAngle(&actor->move);
@@ -347,8 +347,8 @@ void Movements::processManualAction(int actorIdx) {
 			}
 		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 			heroMoved = true;
-			if (actor->anim == kStanding) {
-				_engine->_animations->initAnim(kTurnRight, 0, 255, actorIdx);
+			if (actor->anim == AnimationTypes::kStanding) {
+				_engine->_animations->initAnim(AnimationTypes::kTurnRight, 0, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
 				if (!actor->dynamicFlags.bIsRotationByAnim) {
 					actor->angle = getRealAngle(&actor->move);
@@ -392,11 +392,11 @@ void Movements::processRandomAction(int actorIdx) {
 	if (actor->brickCausesDamage()) {
 		moveActor(actor->angle, (((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
 		actor->info0 = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
-		_engine->_animations->initAnim(kStanding, 0, 255, actorIdx);
+		_engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, actorIdx);
 	}
 
 	if (!actor->move.numOfStep) {
-		_engine->_animations->initAnim(kForward, 0, 255, actorIdx);
+		_engine->_animations->initAnim(AnimationTypes::kForward, 0, AnimationTypes::kAnimInvalid, actorIdx);
 		if (_engine->lbaTime > actor->info0) {
 			moveActor(actor->angle, (((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
 			actor->info0 = _engine->getRandomNumber(300) + _engine->lbaTime + 300;

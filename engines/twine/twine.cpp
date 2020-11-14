@@ -508,7 +508,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 						_actor->setBehaviour(kNormal);
 					}
 					_actor->initModelActor(InventoryItems::kiUseSabre, 0);
-					_animations->initAnim(kSabreUnknown, 1, 0, 0);
+					_animations->initAnim(AnimationTypes::kSabreUnknown, 1, AnimationTypes::kStanding, 0);
 
 					_gameState->usingSabre = true;
 				}
@@ -693,7 +693,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		if (!actor->dynamicFlags.bIsDead) {
 			if (actor->life == 0) {
 				if (a == 0) { // if its hero who died
-					_animations->initAnim(kLandDeath, 4, 0, 0);
+					_animations->initAnim(AnimationTypes::kLandDeath, 4, AnimationTypes::kStanding, 0);
 					actor->controlMode = ControlMode::kNoMove;
 				} else {
 					_sound->playSample(Samples::Explode, getRandomNumber(2000) + 3096, 1, actor->x, actor->y, actor->z, a);
@@ -735,25 +735,15 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			}
 
 			if (actor->staticFlags.bCanDrown) {
-				int32 brickSound;
-				brickSound = _grid->getBrickSoundType(actor->x, actor->y - 1, actor->z);
+				int32 brickSound = _grid->getBrickSoundType(actor->x, actor->y - 1, actor->z);
 				actor->brickSound = brickSound;
 
 				if ((brickSound & 0xF0) == 0xF0) {
-					if ((brickSound & 0xF) == 1) {
-						if (a) { // all other actors
-							int32 rnd = getRandomNumber(2000) + 3096;
-							_sound->playSample(Samples::Explode, rnd, 1, actor->x, actor->y, actor->z, a);
-							if (actor->bonusParameter & 0x1F0) {
-								if (!(actor->bonusParameter & 1)) {
-									_actor->processActorExtraBonus(a);
-								}
-								actor->life = 0;
-							}
-						} else { // if Hero
-							if (_actor->heroBehaviour != 4 || (brickSound & 0x0F) != actor->anim) {
+					if ((brickSound & 0x0F) == 1) {
+						if (IS_HERO(a)) {
+							if (_actor->heroBehaviour != HeroBehaviourType::kProtoPack || actor->anim != AnimationTypes::kForward) {
 								if (!_actor->cropBottomScreen) {
-									_animations->initAnim(kDrawn, 4, 0, 0);
+									_animations->initAnim(AnimationTypes::kDrawn, 4, AnimationTypes::kStanding, 0);
 									_renderer->projectPositionOnScreen(actor->x - _grid->cameraX, actor->y - _grid->cameraY, actor->z - _grid->cameraZ);
 									_actor->cropBottomScreen = _renderer->projPosY;
 								}
@@ -762,6 +752,15 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 								actor->life = -1;
 								_actor->cropBottomScreen = _renderer->projPosY;
 								actor->staticFlags.bCanDrown |= 0x10;
+							}
+						} else {
+							const int32 rnd = getRandomNumber(2000) + 3096;
+							_sound->playSample(Samples::Explode, rnd, 1, actor->x, actor->y, actor->z, a);
+							if (actor->bonusParameter & 0x1F0) {
+								if (!(actor->bonusParameter & 1)) {
+									_actor->processActorExtraBonus(a);
+								}
+								actor->life = 0;
 							}
 						}
 					}

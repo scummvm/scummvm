@@ -154,10 +154,10 @@ void Actor::setBehaviour(int32 behaviour) {
 
 	initModelActor(bodyIdx, 0);
 
-	_engine->_scene->sceneHero->anim = kAnimNone;
+	_engine->_scene->sceneHero->anim = AnimationTypes::kAnimNone;
 	_engine->_scene->sceneHero->animType = 0;
 
-	_engine->_animations->initAnim(kStanding, 0, 255, 0);
+	_engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, 0);
 }
 
 void Actor::initSpriteActor(int32 actorIdx) {
@@ -359,7 +359,7 @@ void Actor::initActor(int16 actorIdx) {
 		actor->animType = 0;
 
 		if (actor->entity != -1) {
-			_engine->_animations->initAnim(actor->anim, 0, 255, actorIdx);
+			_engine->_animations->initAnim(actor->anim, 0, AnimationTypes::kAnimInvalid, actorIdx);
 		}
 
 		_engine->_movements->setActorAngleSafe(actor->angle, actor->angle, 0, &actor->move);
@@ -374,7 +374,7 @@ void Actor::resetActor(int16 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
 	actor->body = 0;
-	actor->anim = kStanding;
+	actor->anim = AnimationTypes::kStanding;
 	actor->x = 0;
 	actor->y = -1;
 	actor->z = 0;
@@ -430,9 +430,9 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 	actor->hitBy = actorIdx;
 
 	if (actor->armor <= strengthOfHit) {
-		if (actor->anim == kBigHit || actor->anim == kHit2) {
+		if (actor->anim == AnimationTypes::kBigHit || actor->anim == AnimationTypes::kHit2) {
 			const int32 tmpAnimPos = actor->animPosition;
-			if (actor->animExtra) {
+			if (actor->animExtra != AnimationTypes::kStanding) {
 				_engine->_animations->processAnimActions(actorIdxAttacked);
 			}
 
@@ -443,9 +443,9 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 			}
 
 			if (_engine->getRandomNumber() & 1) {
-				_engine->_animations->initAnim(kHit2, 3, 255, actorIdxAttacked);
+				_engine->_animations->initAnim(AnimationTypes::kHit2, 3, AnimationTypes::kAnimInvalid, actorIdxAttacked);
 			} else {
-				_engine->_animations->initAnim(kBigHit, 3, 255, actorIdxAttacked);
+				_engine->_animations->initAnim(AnimationTypes::kBigHit, 3, AnimationTypes::kAnimInvalid, actorIdxAttacked);
 			}
 		}
 
@@ -461,7 +461,7 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 			actor->life = 0;
 		}
 	} else {
-		_engine->_animations->initAnim(kHit, 3, 255, actorIdxAttacked);
+		_engine->_animations->initAnim(AnimationTypes::kHit, 3, AnimationTypes::kAnimInvalid, actorIdxAttacked);
 	}
 }
 

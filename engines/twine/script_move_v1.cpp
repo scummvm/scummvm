@@ -89,7 +89,7 @@ static int32 mBODY(TwinEEngine *engine, MoveScriptContext &ctx) {
 /*0x03*/
 static int32 mANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 	AnimationTypes animIdx = (AnimationTypes)ctx.stream.readByte();
-	if (engine->_animations->initAnim(animIdx, 0, 0, ctx.actorIdx)) {
+	if (engine->_animations->initAnim(animIdx, 0, AnimationTypes::kStanding, ctx.actorIdx)) {
 		return 0;
 	}
 	ctx.undo(1);

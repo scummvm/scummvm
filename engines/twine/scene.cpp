@@ -492,7 +492,7 @@ void Scene::processActorZones(int32 actorIdx) {
 				break;
 			case kObject:
 				if (IS_HERO(actorIdx) && _engine->_movements->heroAction) {
-					_engine->_animations->initAnim(kAction, 1, 0, 0);
+					_engine->_animations->initAnim(AnimationTypes::kAction, 1, AnimationTypes::kStanding, 0);
 					processZoneExtraBonus(zone);
 				}
 				break;
@@ -507,7 +507,7 @@ void Scene::processActorZones(int32 actorIdx) {
 				}
 				break;
 			case kLadder:
-				if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour != kProtoPack && (actor->anim == kForward || actor->anim == kTopLadder || actor->anim == kClimbLadder)) {
+				if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour != kProtoPack && (actor->anim == AnimationTypes::kForward || actor->anim == AnimationTypes::kTopLadder || actor->anim == AnimationTypes::kClimbLadder)) {
 					_engine->_movements->rotateActor(actor->boudingBox.x.bottomLeft, actor->boudingBox.z.bottomLeft, actor->angle + 0x580);
 					_engine->_renderer->destX += _engine->_movements->processActorX;
 					_engine->_renderer->destZ += _engine->_movements->processActorZ;
@@ -516,9 +516,9 @@ void Scene::processActorZones(int32 actorIdx) {
 						if (_engine->_grid->getBrickShape(_engine->_renderer->destX, actor->y + 0x100, _engine->_renderer->destZ) != ShapeType::kNone) {
 							currentActorInZone = true;
 							if (actor->y >= ABS(zone->bottomLeft.y + zone->topRight.y) / 2) {
-								_engine->_animations->initAnim(kTopLadder, 2, 0, actorIdx); // reached end of ladder
+								_engine->_animations->initAnim(AnimationTypes::kTopLadder, 2, AnimationTypes::kStanding, actorIdx); // reached end of ladder
 							} else {
-								_engine->_animations->initAnim(kClimbLadder, 0, 255, actorIdx); // go up in ladder
+								_engine->_animations->initAnim(AnimationTypes::kClimbLadder, 0, AnimationTypes::kAnimInvalid, actorIdx); // go up in ladder
 							}
 						}
 					}
