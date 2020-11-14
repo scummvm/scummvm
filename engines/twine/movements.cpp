@@ -454,27 +454,27 @@ void Movements::processActorMovements(int32 actorIdx) {
 	 * will literally not move, but rather that it's Track Script (also called Move Script) is
 	 * initially stopped. The Actor may move if it is assigned a moving animation.
 	 */
-	case kNoMove:
-	case kFollow2:     // unused
-	case kTrackAttack: // unused
+	case ControlMode::kNoMove:
+	case ControlMode::kFollow2:     // unused
+	case ControlMode::kTrackAttack: // unused
 		break;
-	case kManual:
+	case ControlMode::kManual:
 		processManualAction(actorIdx);
 		break;
-	case kFollow:
+	case ControlMode::kFollow:
 		processFollowAction(actorIdx);
 		break;
-	case kTrack:
+	case ControlMode::kTrack:
 		processTrackAction(actorIdx);
 		break;
-	case kSameXZ:
+	case ControlMode::kSameXZ:
 		processSameXZAction(actorIdx);
 		break;
-	case kRandom:
+	case ControlMode::kRandom:
 		processRandomAction(actorIdx);
 		break;
 	default:
-		warning("Unknown control mode %d", actor->controlMode);
+		warning("Unknown control mode %d", (int)actor->controlMode);
 		break;
 	}
 }

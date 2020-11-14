@@ -152,7 +152,7 @@ struct DynamicFlagsStruct {
 };
 
 /** Control mode types */
-enum ControlMode {
+enum class ControlMode {
 	kNoMove = 0,
 	kManual = 1,
 	kFollow = 2,
