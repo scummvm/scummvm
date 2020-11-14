@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-13 20:49+0100\n"
-"PO-Revision-Date: 2020-11-13 20:58+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2020-11-14 10:55+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -6890,97 +6890,86 @@ msgstr "Datatiedostoa \"%s\" ei löydetty."
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "Seinien törmäystarkistus päälle"
 
 #: engines/twine/metaengine.cpp:69
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "Pelin alkuperäinen seiniintörmäyksen vahinkomalli päälle"
 
 #: engines/twine/metaengine.cpp:75
-#, fuzzy
 msgid "Enable cross fade"
-msgstr "Salli huijaustila"
+msgstr "Ristiinhäivytys päälle"
 
 #: engines/twine/metaengine.cpp:76
 msgid "Enable cross fading of images and scenes"
-msgstr ""
+msgstr "Kuvien ja kohtausten ristiihäivytys päälle"
 
 #: engines/twine/metaengine.cpp:83
-#, fuzzy
 msgid "Disable save menu"
-msgstr "Pelitilan tallentaminen epäonnistui"
+msgstr "Tallennusvalikko pois päältä"
 
 #: engines/twine/metaengine.cpp:84
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
+"Alkuperäisessä pelissä oli vain automaattitallennus. Tämä mahdollistaa pelin "
+"tallentamisen milloin tahansa."
 
 #: engines/twine/metaengine.cpp:90
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "Käytä heliumtilaa"
+msgstr "Käytä debugtilaa"
 
 #: engines/twine/metaengine.cpp:91
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "Käytä heliumtilaa"
+msgstr "Debug-tila päälle"
 
 #: engines/twine/metaengine.cpp:97
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "Studioyleisö päälle"
+msgstr "Käytä Audio CD:tä"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "Käytä alkuperäistä audio CD-raitaa"
 
 #: engines/twine/metaengine.cpp:104
-#, fuzzy
 msgid "Enable sound"
-msgstr "Aktivoi tallennustila"
+msgstr "Äänet päälle"
 
 #: engines/twine/metaengine.cpp:105
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "Pelin koko nimi"
+msgstr "Laita pelin äänet päälle"
 
 #: engines/twine/metaengine.cpp:111
-#, fuzzy
 msgid "Enable voices"
-msgstr "Käytä Venusta"
+msgstr "Puhe päälle"
 
 #: engines/twine/metaengine.cpp:112
-#, fuzzy
 msgid "Enable the voices for the game"
-msgstr "Käytä Venus-avustusjärjestelmää"
+msgstr "Laita puhe päälle pelissä"
 
 #: engines/twine/metaengine.cpp:118
-#, fuzzy
 msgid "Enable text"
-msgstr "Aktivoi tallennustila"
+msgstr "Tekstit päälle"
 
 #: engines/twine/metaengine.cpp:119
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "Pelin koko nimi"
+msgstr "Laita tekstit päälle pelissä"
 
 #: engines/twine/metaengine.cpp:125
-#, fuzzy
 msgid "Enable movies"
-msgstr "Käytä Venusta"
+msgstr "Videot päälle"
 
 #: engines/twine/metaengine.cpp:126
-#, fuzzy
 msgid "Enable the cutscenes for the game"
-msgstr "Käytä Venus-avustusjärjestelmää"
+msgstr "Laita videot päälle pelissä"
 
 #: engines/twine/metaengine.cpp:132
 msgid "Use the USA version"
-msgstr ""
+msgstr "Käytä USA-versiota"
 
 #: engines/twine/metaengine.cpp:133
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "Käytä USA-versiota pelistä"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Debug Next Room"
