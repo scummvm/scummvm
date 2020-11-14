@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-14 14:01+0000\n"
-"PO-Revision-Date: 2020-11-14 14:30+0000\n"
+"PO-Revision-Date: 2020-11-14 14:34+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -6991,81 +6991,73 @@ msgid "Enable cross fading of images and scenes"
 msgstr "Aktiviere Übergänge von Bildern und Szenen"
 
 #: engines/twine/metaengine.cpp:83
-#, fuzzy
 msgid "Disable save menu"
-msgstr "Konnte Spielstand nicht speichern"
+msgstr "Speichermenü deaktivieren"
 
 #: engines/twine/metaengine.cpp:84
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
+"Im Original-Spiel sind nur automatisch erzeugte Spielstände möglich. Diese "
+"Option ermöglicht dir, das Spiel zu jedem beliebigen Zeitpunkt zu speichern."
 
 #: engines/twine/metaengine.cpp:90
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "Aktiviert Helium-Modus"
+msgstr "Debug-Modus aktivieren"
 
 #: engines/twine/metaengine.cpp:91
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "Aktiviert Helium-Modus"
+msgstr "Aktiviere den Debug-Modus"
 
 #: engines/twine/metaengine.cpp:97
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "Aktiviert Studio-Publikum"
+msgstr "CD-Audio aktivieren"
 
 #: engines/twine/metaengine.cpp:98
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "Aktiviert den originalen CD-Audio-Track"
 
 #: engines/twine/metaengine.cpp:104
-#, fuzzy
 msgid "Enable sound"
-msgstr "Cloud aktivieren"
+msgstr "Sounds aktivieren"
 
 #: engines/twine/metaengine.cpp:105
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "Vollständiger Name des Spiels"
+msgstr "Aktiviere Sound in dem Spiel"
 
 #: engines/twine/metaengine.cpp:111
-#, fuzzy
 msgid "Enable voices"
-msgstr "Venus aktivieren"
+msgstr "Sprachausgabe aktivieren"
 
 #: engines/twine/metaengine.cpp:112
-#, fuzzy
 msgid "Enable the voices for the game"
-msgstr "Aktiviere das Venus-Hilfesystem"
+msgstr "Aktiviere Sprachausgabe in dem Spiel"
 
 #: engines/twine/metaengine.cpp:118
-#, fuzzy
 msgid "Enable text"
-msgstr "Cloud aktivieren"
+msgstr "Text aktivieren"
 
 #: engines/twine/metaengine.cpp:119
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "Vollständiger Name des Spiels"
+msgstr "Aktiviere Textausgabe in dem Spiel"
 
 #: engines/twine/metaengine.cpp:125
-#, fuzzy
 msgid "Enable movies"
-msgstr "Venus aktivieren"
+msgstr "Filme aktivieren"
 
 #: engines/twine/metaengine.cpp:126
-#, fuzzy
 msgid "Enable the cutscenes for the game"
-msgstr "Aktiviere das Venus-Hilfesystem"
+msgstr "Aktiviere Zwischensequenzen in dem Spiel"
 
 #: engines/twine/metaengine.cpp:132
 msgid "Use the USA version"
-msgstr ""
+msgstr "USA-Version verwenden"
 
 #: engines/twine/metaengine.cpp:133
 msgid "Enable the USA specific version flags"
 msgstr ""
+"Aktiviere einige Optionen, die ausschließlich für die USA-Version gedacht "
+"sind"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Debug Next Room"
