@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-14 14:01+0000\n"
-"PO-Revision-Date: 2020-11-14 14:30+0000\n"
+"PO-Revision-Date: 2020-11-14 14:42+0000\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1447,15 +1447,11 @@ msgstr "<jamais>"
 #: gui/options.cpp:2169
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr ""
-"Les sauvegardes sont synchronisées automatiquement au lancement, après "
-"sauvegarde et au chargement."
+msgstr "Les sauvegardes sont synchronisées automatiquement."
 
 #: gui/options.cpp:2171
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr ""
-"Les sauvegardes sont synchronisées automatiquement au lancement, après "
-"sauvegarde et au chargement."
+msgstr "Les sauvegardes sont synchronisées automatiquement."
 
 #: gui/options.cpp:2172
 msgid "Sync now"
