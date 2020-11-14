@@ -1620,6 +1620,11 @@ static int indexCompare(const void *p1, const void *p2) {
 
 // Create an index of the language file.
 void ScummEngine_v7::loadLanguageBundle() {
+	if (isScummvmKorTarget()) {
+		// HACK to support language bundle for FT
+		ScummEngine::loadLanguageBundle();
+		return;
+	}
 	ScummFile file;
 	int32 size;
 
@@ -1796,6 +1801,11 @@ void ScummEngine_v7::playSpeech(const byte *ptr) {
 }
 
 void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
+	if (isScummvmKorTarget()) {
+		// HACK to support language bundle for FT
+		ScummEngine::translateText(text, trans_buff);
+		return;
+	}
 	LangIndexNode target;
 	LangIndexNode *found = NULL;
 	int i;
