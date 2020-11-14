@@ -109,6 +109,11 @@ enum class HeroBehaviourType {
 	kProtoPack = 4
 };
 
+enum class ExtraSpecialType {
+	kHitStars = 0,
+	kExplodeCloud = 1
+};
+
 }
 
 #endif

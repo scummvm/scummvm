@@ -450,7 +450,7 @@ void Collision::stopFalling() { // ReceptionObj()
 		const int32 fall = _engine->_scene->heroYBeforeFall - _engine->_movements->processActorY;
 
 		if (fall >= 2048) {
-			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->x, _engine->_actor->processActorPtr->y + 1000, _engine->_actor->processActorPtr->z, kHitStars);
+			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->x, _engine->_actor->processActorPtr->y + 1000, _engine->_actor->processActorPtr->z, ExtraSpecialType::kHitStars);
 			_engine->_actor->processActorPtr->life--;
 			_engine->_animations->initAnim(AnimationTypes::kLandingHit, 2, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);
 		} else if (fall > 10) {

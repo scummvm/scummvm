@@ -179,7 +179,7 @@ void Extra::throwExtra(ExtraListStruct *extra, int32 var1, int32 var2, int32 var
 }
 
 void Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) { // InitSpecial
-	const int16 flag = 0x8000 + type;
+	const int16 flag = 0x8000 + (int16)type;
 
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &extraList[i];
@@ -189,7 +189,7 @@ void Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) { 
 		extra->info0 = flag;
 		extra->info1 = 0;
 
-		if (type == kHitStars) {
+		if (type == ExtraSpecialType::kHitStars) {
 			extra->type = 9;
 
 			extra->x = x;
@@ -203,7 +203,7 @@ void Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) { 
 			extra->lifeTime = _engine->lbaTime;
 			extra->actorIdx = 100;
 		}
-		if (type == kExplodeCloud) {
+		if (type == ExtraSpecialType::kExplodeCloud) {
 			extra->type = 1;
 
 			extra->x = x;
@@ -493,16 +493,14 @@ void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 co
 }
 
 void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y) {
-	int32 specialType;
 	ExtraListStruct *extra = &extraList[extraIdx];
-
-	specialType = extra->info0 & 0x7FFF;
+	ExtraSpecialType specialType = (ExtraSpecialType)(extra->info0 & 0x7FFF);
 
 	switch (specialType) {
-	case kHitStars:
+	case ExtraSpecialType::kHitStars:
 		drawSpecialShape(hitStarsShapeTable, x, y, 15, (_engine->lbaTime << 5) & 0x300, 4);
 		break;
-	case kExplodeCloud: {
+	case ExtraSpecialType::kExplodeCloud: {
 		int32 cloudTime = 1 + _engine->lbaTime - extra->lifeTime;
 
 		if (cloudTime > 32) {
@@ -775,7 +773,7 @@ void Extra::processExtras() {
 			if (process) {
 				// show explode cloud
 				if (extra->type & 0x100) {
-					addExtraSpecial(currentExtraX, currentExtraY, currentExtraZ, kExplodeCloud);
+					addExtraSpecial(currentExtraX, currentExtraY, currentExtraZ, ExtraSpecialType::kExplodeCloud);
 				}
 				// if extra is magic ball
 				if (i == _engine->_gameState->magicBallIdx) {

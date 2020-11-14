@@ -53,11 +53,6 @@ struct ExtraListStruct {
 	int16 info1 = 0;         // field_20
 };
 
-enum ExtraSpecialType {
-	kHitStars = 0,
-	kExplodeCloud = 1
-};
-
 class TwinEEngine;
 
 class Extra {

@@ -449,7 +449,7 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 			}
 		}
 
-		_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, kHitStars);
+		_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, ExtraSpecialType::kHitStars);
 
 		if (!actorIdxAttacked) {
 			_engine->_movements->heroMoved = true;
