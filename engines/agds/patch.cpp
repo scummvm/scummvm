@@ -25,7 +25,8 @@ void Patch::load(Common::SeekableReadStream *stream) {
 	characterY = stream->readUint32LE();
 	characterDirection = stream->readUint32LE();
 	unk51 = stream->readUint32LE();
-	debug("unknown entries: %u (character at %u,%u with dir: %u) %u", unk41, characterX, characterY, characterDirection, unk51);
+	debug("character at %u,%u with dir: %u", characterX, characterY, characterDirection);
+	debug("unknown entries: %u %u", unk41, unk51);
 	uint object_count = stream->readUint32LE();
 	debug("objects in this patch: %u", object_count);
 	if (stream->read(palette, sizeof(palette)) != sizeof(palette)) {
