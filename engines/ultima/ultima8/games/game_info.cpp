@@ -185,7 +185,7 @@ void GameInfo::save(Common::WriteStream *ws) {
 	ws->write(d.c_str(), d.size());
 }
 
-bool GameInfo::load(IDataSource *ids, uint32 version) {
+bool GameInfo::load(IDataSource *ids, uint32 ver) {
 	Std::string s;
 	Std::vector<Std::string> parts;
 

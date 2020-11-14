@@ -32,16 +32,16 @@ CycleProcess *CycleProcess::_instance = nullptr;
 
 // Which color to cycle in each of the palette colors 8~14
 static const bool CYCLE_COL_FLAGS[7][3] = {
-	1, 0, 0,
-	0, 0, 1,
-	1, 0, 0,
-	0, 0, 1,
-	1, 1, 0,
-	1, 1, 1,
-	0, 1, 0
+	{ 1, 0, 0 },
+	{ 0, 0, 1 },
+	{ 1, 0, 0 },
+	{ 0, 0, 1 },
+	{ 1, 1, 0 },
+	{ 1, 1, 1 },
+	{ 0, 1, 0 }
 };
 
-static const uint8 CYCLE_INIT_COLS[7][3] = {0, 0, 0, 0, 0, 0, 124, 0, 0, 0, 0, 124, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+static const uint8 CYCLE_INIT_COLS[7][3] = {{ 0, 0, 0 }, { 0, 0, 0 }, { 124, 0, 0 }, { 0, 0, 124 }, { 0, 0, 0 }, { 0, 0, 0 }, { 0, 0, 0 }};
 
 static const bool CYCLE_RANDOMIZE[7] = {
 	false, false, false, false, false, false, true
