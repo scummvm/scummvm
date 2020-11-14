@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-13 20:49+0100\n"
+"POT-Creation-Date: 2020-11-14 14:01+0000\n"
 "PO-Revision-Date: 2020-11-14 10:56+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -129,7 +129,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:398 gui/launcher.cpp:419 gui/launcher.cpp:462
-#: gui/options.cpp:2659 gui/options.cpp:2697
+#: gui/options.cpp:2658 gui/options.cpp:2696
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -140,7 +140,7 @@ msgstr "Так"
 #: gui/downloaddialog.cpp:119 gui/downloaddialog.cpp:154
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:398 gui/launcher.cpp:419 gui/launcher.cpp:462
-#: gui/options.cpp:2659 gui/options.cpp:2697
+#: gui/options.cpp:2658 gui/options.cpp:2696
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -250,7 +250,7 @@ msgstr ""
 #: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:174 gui/options.cpp:1248
 #: gui/options.cpp:1268 gui/options.cpp:1281 gui/options.cpp:1295
 #: gui/options.cpp:1309 gui/options.cpp:1318 gui/options.cpp:2083
-#: gui/options.cpp:2257 audio/null.cpp:41
+#: gui/options.cpp:2256 audio/null.cpp:41
 msgid "<default>"
 msgstr "<за умовчанням>"
 
@@ -421,20 +421,20 @@ msgstr "Досягнення"
 #: gui/editgamedialog.cpp:527 gui/editgamedialog.cpp:588 gui/options.cpp:1936
 #: gui/options.cpp:1942 gui/options.cpp:1950 gui/options.cpp:1974
 #: gui/options.cpp:2022 gui/options.cpp:2030 gui/options.cpp:2039
-#: gui/options.cpp:2281 gui/options.cpp:2287 gui/options.cpp:2294
-#: gui/options.cpp:2303 gui/options.cpp:2537 gui/options.cpp:2540
-#: gui/options.cpp:2547 gui/options.cpp:2553 gui/options.cpp:2564
+#: gui/options.cpp:2280 gui/options.cpp:2286 gui/options.cpp:2293
+#: gui/options.cpp:2302 gui/options.cpp:2536 gui/options.cpp:2539
+#: gui/options.cpp:2546 gui/options.cpp:2552 gui/options.cpp:2563
 msgctxt "path"
 msgid "None"
 msgstr "Не завдано"
 
 #: gui/editgamedialog.cpp:375 gui/editgamedialog.cpp:471
-#: gui/editgamedialog.cpp:592 gui/options.cpp:1930 gui/options.cpp:2275
-#: gui/options.cpp:2543 backends/platform/wii/options.cpp:56
+#: gui/editgamedialog.cpp:592 gui/options.cpp:1930 gui/options.cpp:2274
+#: gui/options.cpp:2542 backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr "За умовчанням"
 
-#: gui/editgamedialog.cpp:520 gui/options.cpp:2558
+#: gui/editgamedialog.cpp:520 gui/options.cpp:2557
 msgid "Select SoundFont"
 msgstr "Виберіть SoundFont"
 
@@ -442,7 +442,7 @@ msgstr "Виберіть SoundFont"
 msgid "Select additional game directory"
 msgstr "Виберіть додаткову папку гри"
 
-#: gui/editgamedialog.cpp:572 gui/options.cpp:2472
+#: gui/editgamedialog.cpp:572 gui/options.cpp:2471
 msgid "Select directory for saved games"
 msgstr "Виберіть папку для збережених ігор"
 
@@ -843,7 +843,7 @@ msgstr "Проглянуто %d папок ..."
 msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr "Знайдено %d нових ігор, пропущено %d попередньо доданих ігор ..."
 
-#: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2192
+#: gui/message.cpp:148 gui/message.cpp:152 gui/options.cpp:2191
 msgid "Open URL"
 msgstr "Відкрити URL"
 
@@ -1367,20 +1367,27 @@ msgstr "Перевіряти оновлення:"
 msgid "How often to check ScummVM updates"
 msgstr "Як часто перевіряти оновлення ScummVM"
 
-#: gui/options.cpp:2140
+#: gui/options.cpp:2139
 msgid "Check now"
 msgstr "Перевірити зараз"
 
-#: gui/options.cpp:2147
+#: gui/options.cpp:2146
 msgid "Active storage:"
 msgstr "Активне хмарне середовище:"
 
-#: gui/options.cpp:2147
+#: gui/options.cpp:2146
 msgid "Active cloud storage"
 msgstr "Активне хмарне середовище"
 
-#: gui/options.cpp:2156
+#: gui/options.cpp:2155
 msgctxt "lowres"
+msgid ""
+"4. Storage is not yet enabled. Verify that username is correct and enable it:"
+msgstr ""
+"4. Середовище ще не увімкнено. Перевірте, що ім'я користувача правильне, та "
+"ввімкніть його:"
+
+#: gui/options.cpp:2157
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
@@ -1388,237 +1395,230 @@ msgstr ""
 "ввімкніть його:"
 
 #: gui/options.cpp:2158
-msgid ""
-"4. Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr ""
-"4. Середовище ще не увімкнено. Перевірте, що ім'я користувача правильне, та "
-"ввімкніть його:"
-
-#: gui/options.cpp:2159
 msgid "Enable storage"
 msgstr "Ввімкнути середовище"
 
-#: gui/options.cpp:2159
+#: gui/options.cpp:2158
 msgid "Confirm you want to use this account for this storage"
 msgstr ""
 "Підтвердіть, що хочете використовувати цей обліковий запис для цього схову"
 
-#: gui/options.cpp:2161 backends/platform/wii/options.cpp:114
+#: gui/options.cpp:2160 backends/platform/wii/options.cpp:114
 msgid "Username:"
 msgstr "Користувач:"
 
-#: gui/options.cpp:2161
+#: gui/options.cpp:2160
 msgid "Username used by this storage"
 msgstr "Обліковий запис для цього середовища"
 
-#: gui/options.cpp:2162
+#: gui/options.cpp:2161
 msgid "<none>"
 msgstr "<немає>"
 
-#: gui/options.cpp:2164
+#: gui/options.cpp:2163
 msgid "Used space:"
 msgstr "Використаний об'єм:"
 
-#: gui/options.cpp:2164
+#: gui/options.cpp:2163
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr ""
 "Об'єм, використаний для збережених станів ігор ScummVM на цьому хмарному "
 "середовищі"
 
-#: gui/options.cpp:2167
+#: gui/options.cpp:2166
 msgid "Last sync:"
 msgstr "Остання синхронизація:"
 
-#: gui/options.cpp:2167
+#: gui/options.cpp:2166
 msgid "When was the last time saved games were synced with this storage"
 msgstr ""
 "Час, коли було зроблено останню синхронизацію збережених ігор з цим сховом"
 
-#: gui/options.cpp:2168 gui/options.cpp:2897
+#: gui/options.cpp:2167 gui/options.cpp:2896
 msgid "<never>"
 msgstr "<ніколи>"
 
-#: gui/options.cpp:2170
+#: gui/options.cpp:2169
 msgctxt "lowres"
+msgid "Saved games sync automatically on launch, after saving and on loading."
+msgstr ""
+"Збережені ігри автоматично синхронізуються при запуску, після збереження та "
+"завантаження."
+
+#: gui/options.cpp:2171
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Збережені ігри автоматично синхронізуються при запуску, після збереження та "
 "завантаження."
 
 #: gui/options.cpp:2172
-msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr ""
-"Збережені ігри автоматично синхронізуються при запуску, після збереження та "
-"завантаження."
-
-#: gui/options.cpp:2173
 msgid "Sync now"
 msgstr "Синхронізуйте зараз"
 
-#: gui/options.cpp:2173
+#: gui/options.cpp:2172
 msgid "Start saved games sync"
 msgstr "Розпочати синхронізацію"
 
-#: gui/options.cpp:2176
+#: gui/options.cpp:2175
 msgctxt "lowres"
+msgid "You can download game files from your cloud ScummVM folder:"
+msgstr "Ви можете завантажити ігрові файли зі своєї хмарної папки ScummVM:"
+
+#: gui/options.cpp:2177
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "Ви можете завантажити ігрові файли зі своєї хмарної папки ScummVM:"
 
 #: gui/options.cpp:2178
-msgid "You can download game files from your cloud ScummVM folder:"
-msgstr "Ви можете завантажити ігрові файли зі своєї хмарної папки ScummVM:"
-
-#: gui/options.cpp:2179
 msgid "Download game files"
 msgstr "Завантажити файли гри"
 
-#: gui/options.cpp:2179
+#: gui/options.cpp:2178
 msgid "Open downloads manager dialog"
 msgstr "Відкрити керування завантаженнями"
 
-#: gui/options.cpp:2182
+#: gui/options.cpp:2181
 msgctxt "lowres"
+msgid "To change account for this storage, disconnect and connect again:"
+msgstr ""
+"Щоб змінити обліковий запис цього сховища, відключіться та підключіться ще "
+"раз:"
+
+#: gui/options.cpp:2183
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr ""
 "Щоб змінити обліковий запис цього сховища, відключіться та підключіться ще "
 "раз:"
 
 #: gui/options.cpp:2184
-msgid "To change account for this storage, disconnect and connect again:"
-msgstr ""
-"Щоб змінити обліковий запис цього сховища, відключіться та підключіться ще "
-"раз:"
-
-#: gui/options.cpp:2185
 msgid "Disconnect"
 msgstr "Від'єднатись"
 
-#: gui/options.cpp:2185
+#: gui/options.cpp:2184
 msgid "Stop using this storage on this device"
 msgstr "Перестаньте використовувати цей накопичувач на цьому пристрої"
 
-#: gui/options.cpp:2188
+#: gui/options.cpp:2187
 msgctxt "lowres"
+msgid "This storage is not connected yet! To connect,"
+msgstr "Цей сховище ще не підключено! З'єднати,"
+
+#: gui/options.cpp:2189
 msgid "This storage is not connected yet! To connect,"
 msgstr "Цей сховище ще не підключено! З'єднати,"
 
 #: gui/options.cpp:2190
-msgid "This storage is not connected yet! To connect,"
-msgstr "Цей сховище ще не підключено! З'єднати,"
-
-#: gui/options.cpp:2191
 msgid "1. Open this link:"
 msgstr "1. Відкрийте це посилання:"
 
-#: gui/options.cpp:2194
+#: gui/options.cpp:2193
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
 msgstr "2. Отримайте код і введіть його тут:"
 
-#: gui/options.cpp:2196
+#: gui/options.cpp:2195
 msgid "2. Get the code and enter it here:"
 msgstr "2. Отримайте код і введіть його тут:"
 
-#: gui/options.cpp:2198
+#: gui/options.cpp:2197
 msgid "Paste"
 msgstr "Вставити"
 
-#: gui/options.cpp:2198
+#: gui/options.cpp:2197
 msgid "Paste code from clipboard"
 msgstr "Вставити код з буфера обміну"
 
-#: gui/options.cpp:2199
+#: gui/options.cpp:2198
 msgid "3. Connect"
 msgstr "3. Залучитись"
 
-#: gui/options.cpp:2199
+#: gui/options.cpp:2198
 msgid "Connect your cloud storage account"
 msgstr "Залучитись до вашого облікового запису на хмарному середовищі"
 
-#: gui/options.cpp:2208
+#: gui/options.cpp:2207
 msgid "Run server"
 msgstr "Запустити сервер"
 
-#: gui/options.cpp:2208
+#: gui/options.cpp:2207
 msgid "Run local webserver"
 msgstr "Запускає локальний веб-сервер"
 
-#: gui/options.cpp:2209 gui/options.cpp:3012
+#: gui/options.cpp:2208 gui/options.cpp:3011
 msgid "Not running"
 msgstr "Вимкнено"
 
-#: gui/options.cpp:2213
+#: gui/options.cpp:2212
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "Корінний шлях:"
 
-#: gui/options.cpp:2213 gui/options.cpp:2215 gui/options.cpp:2216
+#: gui/options.cpp:2212 gui/options.cpp:2214 gui/options.cpp:2215
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "Вкажіть шлях, який буде показано як /root/ у Керуванні файлами"
 
-#: gui/options.cpp:2215
+#: gui/options.cpp:2214
 msgid "/root/ Path:"
 msgstr "Шлях /root/:"
 
-#: gui/options.cpp:2221
+#: gui/options.cpp:2220
 msgid "Server's port:"
 msgstr "Порт сервера:"
 
-#: gui/options.cpp:2221
+#: gui/options.cpp:2220
 msgid "Port for server to use"
 msgstr "Порт для використання сервера"
 
+#: gui/options.cpp:2225
+msgctxt "lowres"
+msgid "Run server to manage files with browser (in the same network)."
+msgstr ""
+"Запустіть сервер для управління файлами за допомогою браузера (в одній "
+"мережі)."
+
 #: gui/options.cpp:2226
 msgctxt "lowres"
+msgid "Closing options dialog will stop the server."
+msgstr "Діалогове вікно параметрів закриття зупинить сервер."
+
+#: gui/options.cpp:2228
 msgid "Run server to manage files with browser (in the same network)."
 msgstr ""
 "Запустіть сервер для управління файлами за допомогою браузера (в одній "
 "мережі)."
-
-#: gui/options.cpp:2227
-msgctxt "lowres"
-msgid "Closing options dialog will stop the server."
-msgstr "Діалогове вікно параметрів закриття зупинить сервер."
 
 #: gui/options.cpp:2229
-msgid "Run server to manage files with browser (in the same network)."
-msgstr ""
-"Запустіть сервер для управління файлами за допомогою браузера (в одній "
-"мережі)."
-
-#: gui/options.cpp:2230
 msgid "Closing options dialog will stop the server."
 msgstr "Діалогове вікно параметрів закриття зупинить сервер."
 
-#: gui/options.cpp:2242
+#: gui/options.cpp:2241
 msgid "Use Text to speech"
 msgstr "Використовувати генератор мови"
 
-#: gui/options.cpp:2242
+#: gui/options.cpp:2241
 msgid "Will read text in gui on mouse over."
 msgstr "Буде читати текст вголос при наведенні миші."
 
-#: gui/options.cpp:2255
+#: gui/options.cpp:2254
 msgid "None"
 msgstr "Не завдано"
 
-#: gui/options.cpp:2330
+#: gui/options.cpp:2329
 msgid "Failed to change cloud storage!"
 msgstr "Не вдалося змінити хмарне середовище!"
 
-#: gui/options.cpp:2333
+#: gui/options.cpp:2332
 msgid "Another cloud storage is already active."
 msgstr "Інше хмарне середовище вже активне."
 
-#: gui/options.cpp:2408
+#: gui/options.cpp:2407
 msgid "Theme does not support selected language!"
 msgstr "Тема не підтримує обраної мови!"
 
-#: gui/options.cpp:2411
+#: gui/options.cpp:2410
 msgid "Theme cannot be loaded!"
 msgstr "Тему не було завантажено!"
 
-#: gui/options.cpp:2414
+#: gui/options.cpp:2413
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1626,27 +1626,27 @@ msgstr ""
 "\n"
 "Різні налаштування буде поновлено."
 
-#: gui/options.cpp:2479
+#: gui/options.cpp:2478
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Не можу писати у вибрану папку. Будь ласка, вкажіть іншу."
 
-#: gui/options.cpp:2488
+#: gui/options.cpp:2487
 msgid "Select directory for GUI themes"
 msgstr "Виберіть папку для тем GUI"
 
-#: gui/options.cpp:2498
+#: gui/options.cpp:2497
 msgid "Select directory for extra files"
 msgstr "Виберіть папку з додатковими файлами"
 
-#: gui/options.cpp:2509
+#: gui/options.cpp:2508
 msgid "Select directory for plugins"
 msgstr "Виберіть папку зі втулками"
 
-#: gui/options.cpp:2522
+#: gui/options.cpp:2521
 msgid "Select directory for Files Manager /root/"
 msgstr "Виберіть папку /root/ для Керування файлами"
 
-#: gui/options.cpp:2634
+#: gui/options.cpp:2633
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1654,47 +1654,47 @@ msgstr ""
 "Не вдалося відкрити URL!\n"
 "Будь-ласка, перейдіть вручну на вказану сторінку."
 
-#: gui/options.cpp:2659
+#: gui/options.cpp:2658
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Інше хмарне середовище вже є активним. Чи ви хочете припинити процес?"
 
-#: gui/options.cpp:2668 gui/options.cpp:2706
+#: gui/options.cpp:2667 gui/options.cpp:2705
 msgid "Wait until current Storage finishes up and try again."
 msgstr "Заждіть, поки поточне середовище закінчить роботу, і спробуйте знов."
 
-#: gui/options.cpp:2681
+#: gui/options.cpp:2680
 msgid "Connecting..."
 msgstr "Залучитись..."
 
-#: gui/options.cpp:2697
+#: gui/options.cpp:2696
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Це хмарне середовище вже є активним. Чи ви хочете припинити процес?"
 
-#: gui/options.cpp:2895 backends/cloud/cloudmanager.cpp:157
+#: gui/options.cpp:2894 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
 msgstr "<зараз>"
 
-#: gui/options.cpp:3004
+#: gui/options.cpp:3003
 msgid "Stop server"
 msgstr "Вимкнути сервер"
 
-#: gui/options.cpp:3005
+#: gui/options.cpp:3004
 msgid "Stop local webserver"
 msgstr "Вимкнути локальний веб-сервер"
 
-#: gui/options.cpp:3057
+#: gui/options.cpp:3056
 msgid "Storage connected."
 msgstr "Хмарне середовище підключено."
 
-#: gui/options.cpp:3059
+#: gui/options.cpp:3058
 msgid "Failed to connect storage."
 msgstr "Не вдалося залучитися до хмарного середовища."
 
-#: gui/options.cpp:3061
+#: gui/options.cpp:3060
 msgid "Failed to connect storage: "
 msgstr "Не вдалося залучитися до хмарного середовища: "
 
-#: gui/options.cpp:3081
+#: gui/options.cpp:3080
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
