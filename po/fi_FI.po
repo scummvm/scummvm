@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-14 14:42+0000\n"
+"POT-Creation-Date: 2020-11-14 14:55+0000\n"
 "PO-Revision-Date: 2020-11-14 10:55+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -590,7 +590,7 @@ msgstr "Sulje"
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/metaengine.cpp:165 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:98 engines/grim/grim.cpp:451
-#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:333
+#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:343
 #: engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1474
@@ -602,7 +602,7 @@ msgstr "Ylös"
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/metaengine.cpp:171 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:104 engines/grim/grim.cpp:456
-#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:339
+#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:349
 #: engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1480
@@ -614,7 +614,7 @@ msgstr "Alas"
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:110
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
-#: engines/twine/metaengine.cpp:351 engines/wintermute/keymapper_tables.h:1023
+#: engines/twine/metaengine.cpp:361 engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1462
 #: engines/wintermute/keymapper_tables.h:1570
 #: engines/wintermute/keymapper_tables.h:1692
@@ -625,7 +625,7 @@ msgstr "Vasen"
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/metaengine.cpp:183 engines/griffon/metaengine.cpp:116
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
-#: engines/twine/metaengine.cpp:345 engines/wintermute/keymapper_tables.h:1029
+#: engines/twine/metaengine.cpp:355 engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1468
 #: engines/wintermute/keymapper_tables.h:1578
 #: engines/wintermute/keymapper_tables.h:1698
@@ -2618,7 +2618,7 @@ msgstr "Haluatko lopettaa?"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
-#: engines/twine/metaengine.cpp:248
+#: engines/twine/metaengine.cpp:258
 msgid "Center"
 msgstr "Keskitetty"
 
@@ -4201,7 +4201,7 @@ msgstr "Vaihda komento"
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
 #: engines/hdb/metaengine.cpp:231 engines/scumm/help.cpp:225
 #: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
-#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:299
+#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:309
 #: engines/zvision/metaengine.cpp:164
 msgid "Inventory"
 msgstr "Tavarat"
@@ -4895,7 +4895,7 @@ msgid "Interact via Right Click"
 msgstr "Interaktio oikealla hiirennapilla"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
-#: engines/twine/metaengine.cpp:265
+#: engines/twine/metaengine.cpp:275
 msgid "Move Forward"
 msgstr "Liiku eteenpäin"
 
@@ -4912,13 +4912,13 @@ msgid "Move Right"
 msgstr "Liiku oikealle"
 
 #: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:479
-#: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:283
+#: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:293
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Käänny vasemmalle"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:277
+#: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:287
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "Käänny oikealle"
@@ -7008,70 +7008,80 @@ msgid "Debug Grid Camera Right"
 msgstr "Debug grid kamera oikealle"
 
 #: engines/twine/metaengine.cpp:212
+#, fuzzy
+#| msgid "Debug print"
+msgid "Debug Menu"
+msgstr "Debug-tulostus"
+
+#: engines/twine/metaengine.cpp:217
+msgid "Debug Menu Execute"
+msgstr ""
+
+#: engines/twine/metaengine.cpp:222
 msgid "Normal Behaviour"
 msgstr "Tavallinen käyttäytyminen"
 
-#: engines/twine/metaengine.cpp:217
+#: engines/twine/metaengine.cpp:227
 msgid "Athletic Behaviour"
 msgstr "Urheilullinen käyttäytyminen"
 
-#: engines/twine/metaengine.cpp:222
+#: engines/twine/metaengine.cpp:232
 msgid "Aggressive Behaviour"
 msgstr "Hyökkäävä käyttäytyminen"
 
-#: engines/twine/metaengine.cpp:227
+#: engines/twine/metaengine.cpp:237
 msgid "Discreet Behaviour"
 msgstr "Hienovarainen käyttäytyminen"
 
-#: engines/twine/metaengine.cpp:232
+#: engines/twine/metaengine.cpp:242
 msgid "Behaviour Action"
 msgstr "Käyttäytymistoiminta"
 
-#: engines/twine/metaengine.cpp:238
+#: engines/twine/metaengine.cpp:248
 msgid "Change Behaviour"
 msgstr "Vaihda käyttäytymistä"
 
-#: engines/twine/metaengine.cpp:243
+#: engines/twine/metaengine.cpp:253
 msgid "Options Menu"
 msgstr "Asetusvalikko"
 
-#: engines/twine/metaengine.cpp:254
+#: engines/twine/metaengine.cpp:264
 msgid "Use Selected Object"
 msgstr "Käytä valittua esinettä"
 
-#: engines/twine/metaengine.cpp:260
+#: engines/twine/metaengine.cpp:270
 msgid "Throw Magic Ball"
 msgstr "Heitä taikapallo"
 
-#: engines/twine/metaengine.cpp:271
+#: engines/twine/metaengine.cpp:281
 msgid "Move Backward"
 msgstr "Liiku taaksepäin"
 
-#: engines/twine/metaengine.cpp:289
+#: engines/twine/metaengine.cpp:299
 msgid "Use Protopack"
 msgstr "Käytä protopack:ia"
 
-#: engines/twine/metaengine.cpp:294
+#: engines/twine/metaengine.cpp:304
 msgid "Open Holomap"
 msgstr "Avaa holokartta"
 
-#: engines/twine/metaengine.cpp:306
+#: engines/twine/metaengine.cpp:316
 msgid "Special Action"
 msgstr "Erikoistoiminto"
 
-#: engines/twine/metaengine.cpp:311 engines/wintermute/keymapper_tables.h:61
+#: engines/twine/metaengine.cpp:321 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
 msgstr "Esc"
 
-#: engines/twine/metaengine.cpp:322
+#: engines/twine/metaengine.cpp:332
 msgid "Accept"
 msgstr "Hyväksy"
 
-#: engines/twine/metaengine.cpp:328 engines/twine/metaengine.cpp:369
+#: engines/twine/metaengine.cpp:338 engines/twine/metaengine.cpp:379
 msgid "Abort"
 msgstr "Keskeytä"
 
-#: engines/twine/metaengine.cpp:357
+#: engines/twine/metaengine.cpp:367
 msgid "Next Page"
 msgstr "Seuraava sivu"
 
