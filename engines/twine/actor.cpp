@@ -291,26 +291,24 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 	} else {
 		Common::MemoryReadStream stream(bodyTable[localActor->entity], bodyTableSize[localActor->entity]);
 		stream.skip(2);
-		int16 var1 = stream.readSint16LE();
-		int16 var2 = stream.readSint16LE();
+		const int16 var1 = stream.readSint16LE();
+		const int16 var2 = stream.readSint16LE();
 		localActor->boudingBox.y.bottomLeft = stream.readSint16LE();
 		localActor->boudingBox.y.topRight = stream.readSint16LE();
-		int16 var3 = stream.readSint16LE();
-		int16 var4 = stream.readSint16LE();
+		const int16 var3 = stream.readSint16LE();
+		const int16 var4 = stream.readSint16LE();
 
 		int32 result = 0;
+		const int32 result1 = var2 - var1;
+		const int32 result2 = var4 - var3;
 		if (localActor->staticFlags.bUseMiniZv) {
-			int32 result1 = var2 - var1; // take smaller for bound
-			int32 result2 = var4 - var3;
-
+			// take smaller for bound
 			result = MIN(result1, result2);
 
 			result = ABS(result);
 			result >>= 1;
 		} else {
-			int32 result1 = var2 - var1; // take average for bound
-			int32 result2 = var4 - var3;
-
+			// take average for bound
 			result = result2 + result1;
 			result = ABS(result);
 			result >>= 2;
@@ -322,11 +320,13 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		localActor->boudingBox.z.topRight = result;
 	}
 
-	if (currentIndex == -1)
+	if (currentIndex == -1) {
 		return;
+	}
 
-	if (localActor->previousAnimIdx == -1)
+	if (localActor->previousAnimIdx == -1) {
 		return;
+	}
 
 	_engine->_renderer->copyActorInternAnim(bodyTable[currentIndex], bodyTable[localActor->entity]);
 }
@@ -334,7 +334,7 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 void Actor::initActor(int16 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
-	if (actor->staticFlags.bIsSpriteActor) { // if sprite actor
+	if (actor->staticFlags.bIsSpriteActor) {
 		if (actor->strengthOfHit != 0) {
 			actor->dynamicFlags.bIsHitting = 1;
 		}

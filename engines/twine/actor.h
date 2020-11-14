@@ -126,6 +126,7 @@ struct StaticFlagsStruct {
 	uint16 bDoesntCastShadow : 1;           // 0x1000
 	uint16 bIsBackgrounded : 1;             // 0x2000
 	uint16 bIsCarrierActor : 1;             // 0x4000
+	// take smaller value for bound, or if not set take average for bound
 	uint16 bUseMiniZv : 1;                  // 0x8000
 };
 
