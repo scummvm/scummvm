@@ -619,7 +619,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// use Proto-Pack
-		if (_input->isActionActive(TwinEActionType::UseProtoPack, false) && _gameState->gameFlags[InventoryItems::kiProtoPack] == 1) {
+		if (_input->toggleActionIfActive(TwinEActionType::UseProtoPack) && _gameState->gameFlags[InventoryItems::kiProtoPack] == 1) {
 			if (_gameState->gameFlags[InventoryItems::kiBookOfBu]) {
 				_scene->sceneHero->body = 0;
 			} else {
