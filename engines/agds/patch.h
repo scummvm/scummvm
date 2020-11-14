@@ -56,6 +56,7 @@ struct Patch {
 	Common::Array<Object> objects;
 
 	void load(Common::SeekableReadStream *stream);
+	int getFlag(const Common::String & name) const;
 };
 
 

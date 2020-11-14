@@ -223,6 +223,11 @@ void AGDSEngine::reAddInventory() {
 	}
 }
 
+PatchPtr AGDSEngine::getPatch(const Common::String &screenName) const {
+	auto it = _patches.find(screenName);
+	return it != _patches.end()? it->_value: PatchPtr();
+}
+
 void AGDSEngine::loadScreen(const Common::String &name) {
 	_nextScreenName.clear();
 	debug("loadScreen %s", name.c_str());
@@ -250,9 +255,8 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	_currentScreen = new Screen(this, loadObject(name));
 	runProcess(_currentScreen->getObject());
 
-	PatchesType::const_iterator it = _patches.find(name);
-	if (it != _patches.end()) {
-		const PatchPtr &patch = it->_value;
+	auto patch = getPatch(name);
+	if (patch) {
 		_currentScreen->load(patch);
 		if (_currentCharacter && patch->characterPresent) {
 			_currentCharacter->position(patch->characterPosition);
