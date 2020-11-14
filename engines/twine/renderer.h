@@ -36,7 +36,9 @@
 #define POLYGONTYPE_DITHER 8
 
 namespace TwinE {
+
 class TwinEEngine;
+
 class Renderer {
 private:
 	TwinEEngine *_engine;

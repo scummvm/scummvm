@@ -104,6 +104,7 @@ namespace TwinE {
 #define NUM_SAMPLES 243
 
 class TwinEEngine;
+
 class Resources {
 private:
 	TwinEEngine *_engine;

@@ -205,6 +205,7 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoun
 			if (idx == bodyIdx) {
 				const int16 bodyIndex = stream.readUint16LE();
 
+				// TODO: move into resources class
 				int32 index;
 				if (!(bodyIndex & 0x8000)) {
 					index = currentPositionInBodyPtrTab;

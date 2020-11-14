@@ -103,11 +103,11 @@ int32 Collision::getAverageValue(int32 var0, int32 var1, int32 var2, int32 var3)
 		return var1;
 	}
 
-	return ((((var1 - var0) * var3) / var2) + var0);
+	return (((var1 - var0) * var3) / var2) + var0;
 }
 
 void Collision::reajustActorPosition(int32 brickShape) {
-	if (!brickShape) {
+	if (brickShape == kNone) {
 		return;
 	}
 
