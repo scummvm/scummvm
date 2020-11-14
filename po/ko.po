@@ -1328,8 +1328,8 @@ msgid ""
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
 msgstr ""
-"게임을 시작할 때 ScummVM GUI 언어를 게임 언어로 전환합니다. 이렇게 하면 ScummVM 저장/불러오기 창이 게임과 동일한 "
-"언어로 표시됩니다."
+"게임을 시작할 때 ScummVM GUI 언어를 게임 언어로 전환합니다. 이렇게 하면 "
+"ScummVM 저장/불러오기 창이 게임과 동일한 언어로 표시됩니다."
 
 #: gui/options.cpp:2120
 msgid "Use native system file browser"
