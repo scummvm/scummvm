@@ -182,6 +182,7 @@ void AGDSEngine::runObject(const ObjectPtr &object) {
 		} else if (!object->inScene()) {
 			debug("marking object %s as in-scene...", object->getName().c_str());
 			object->inScene(true);
+			object->allowCalls(false);
 			runProcess(object);
 		} else
 			debug("object %s is in scene, skip run", object->getName().c_str());

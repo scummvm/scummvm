@@ -1208,7 +1208,10 @@ void Process::loadTextFromObject() {
 
 void Process::call(uint16 addr) {
 	debug("call %04x", addr);
-	_engine->runProcess(_object, _ip + addr);
+	if (_object->allowCalls()) {
+		_engine->runProcess(_object, _ip + addr);
+	} else
+		debug("call skipped (recovered object)");
 }
 
 void Process::onKey(uint16 size) {
