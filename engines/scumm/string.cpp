@@ -1212,7 +1212,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 	byte lastChr = 0;
 	const byte *src;
 	byte *end;
-	byte transBuf[384];
+	byte transBuf[2048];
 
 	assert(dst);
 	end = dst + dstSize;
@@ -1222,7 +1222,7 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 		return 0;
 	}
 
-	if (_game.version >= 7) {
+	if (_game.version >= 7 || isScummvmKorTarget()) {
 		translateText(msg, transBuf);
 		src = transBuf;
 	} else {
@@ -1620,6 +1620,11 @@ static int indexCompare(const void *p1, const void *p2) {
 
 // Create an index of the language file.
 void ScummEngine_v7::loadLanguageBundle() {
+	if (isScummvmKorTarget()) {
+		// Support language bundle for FT
+		ScummEngine::loadLanguageBundle();
+		return;
+	}
 	ScummFile file;
 	int32 size;
 
@@ -1796,6 +1801,11 @@ void ScummEngine_v7::playSpeech(const byte *ptr) {
 }
 
 void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
+	if (isScummvmKorTarget()) {
+		// Support language bundle for FT
+		ScummEngine::translateText(text, trans_buff);
+		return;
+	}
 	LangIndexNode target;
 	LangIndexNode *found = NULL;
 	int i;
@@ -1901,7 +1911,185 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff) {
 
 #endif
 
+void ScummEngine::loadLanguageBundle() {
+	if (!isScummvmKorTarget()) {
+		_existLanguageFile = false;
+		return;
+	}
+
+	ScummFile file;
+	openFile(file, "korean.trs");
+
+	if (!file.isOpen()) {
+		_existLanguageFile = false;
+		return;
+	}
+
+	_existLanguageFile = true;
+
+	int size = file.size();
+
+	uint32 magic1 = file.readUint32BE();
+	uint32 magic2 = file.readUint32BE();
+
+	if (magic1 != MKTAG('S', 'C', 'V', 'M') || magic2 != MKTAG('T', 'R', 'S', ' ')) {
+		_existLanguageFile = false;
+		return;
+	}
+
+	_numTranslatedLines = file.readUint16LE();
+	_translatedLines = new TranslatedLine[_numTranslatedLines];
+	_languageLineIndex = new uint16[_numTranslatedLines];
+
+	// sanity check
+	for (int i = 0; i < _numTranslatedLines; i++) {
+		_languageLineIndex[i] = 0xffff;
+	}
+
+	for (int i = 0; i < _numTranslatedLines; i++) {
+		int idx = file.readUint16LE();
+		assert(idx < _numTranslatedLines);
+		_languageLineIndex[idx] = i;
+		_translatedLines[i].originalTextOffset = file.readUint32LE();
+		_translatedLines[i].translatedTextOffset = file.readUint32LE();
+	}
+
+	// sanity check
+	for (int i = 0; i < _numTranslatedLines; i++) {
+		if (_languageLineIndex[i] == 0xffff) {
+			error("Invalid language bundle file");
+		}
+	}
+
+	// Room
+	byte numTranslatedRoom = file.readByte();
+	for (uint32 i = 0; i < numTranslatedRoom; i++) {
+		byte roomId = file.readByte();
+
+		TranslationRoom &room = _roomIndex.getVal(roomId);
+
+		uint16 numScript = file.readUint16LE();
+		for (int sc = 0; sc < numScript; sc++) {
+			uint32 scrpKey = file.readUint32LE();
+			uint16 scrpLeft = file.readUint16LE();
+			uint16 scrpRight = file.readUint16LE();
+
+			room.scriptRanges.setVal(scrpKey, TranslationRange(scrpLeft, scrpRight));
+		}
+	}
+
+	int bodyPos = file.pos();
+
+	for (int i = 0; i < _numTranslatedLines; i++) {
+		_translatedLines[i].originalTextOffset -= bodyPos;
+		_translatedLines[i].translatedTextOffset -= bodyPos;
+	}
+	_languageBuffer = new byte[size - bodyPos];
+	file.read(_languageBuffer, size - bodyPos);
+	file.close();
+
+	debug(2, "loadLanguageBundle: Loaded %d entries", _numTranslatedLines);
+}
+
+const byte *ScummEngine::searchTranslatedLine(const byte *text, const TranslationRange &range, bool useIndex) {
+	int textLen = resStrLen(text);
+
+	int left = range.left;
+	int right = range.right;
+
+	int dbgIterationCount = 0;
+
+	while (left <= right) {
+		dbgIterationCount++;
+		debug(8, "searchTranslatedLine: Range: %d - %d", left, right);
+		int mid = (left + right) / 2;
+		int idx = useIndex ? _languageLineIndex[mid] : mid;
+		const byte *originalText = &_languageBuffer[_translatedLines[idx].originalTextOffset];
+		int originalLen = resStrLen(originalText);
+		int compare = memcmp(text, originalText, MIN(textLen + 1, originalLen + 1));
+		if (compare == 0) {
+			debug(8, "searchTranslatedLine: Found in %d iteration", dbgIterationCount);
+			const byte *translatedText = &_languageBuffer[_translatedLines[idx].translatedTextOffset];
+			return translatedText;
+		} else if (compare < 0) {
+			right = mid - 1;
+		} else if (compare > 0) {
+			left = mid + 1;
+		}
+	}
+
+	debug(8, "searchTranslatedLine: Not found in %d iteration", dbgIterationCount);
+
+	return nullptr;
+}
+
 void ScummEngine::translateText(const byte *text, byte *trans_buff) {
+	if (_existLanguageFile) {
+		int textLen = resStrLen(text);
+
+		if (_currentScript == 0xff) {
+			// used in drawVerb(), etc
+			debug(7, "translateText: Room=%d, CurrentScript == 0xff", _currentRoom);
+		} else {
+			// Use series of heuristics to preserve "the context of the conversation",
+			// since one English text can be translated differently depending on the context.
+			ScriptSlot *slot = &vm.slot[_currentScript];
+			debug(7, "translateText: Room=%d, Script=%d, WIO=%d", _currentRoom, slot->number, slot->where);
+
+			byte roomKey = 0;
+			if (slot->where != WIO_GLOBAL) {
+				roomKey = _currentRoom;
+			}
+
+			uint32 scriptKey = slot->where << 16 | slot->number;
+			if (slot->where == WIO_ROOM) {
+				scriptKey = slot->where << 16;
+			}
+
+			// First search by _currentRoom and _currentScript
+			Common::HashMap<byte, TranslationRoom>::const_iterator iterator = _roomIndex.find(roomKey);
+			if (iterator != _roomIndex.end()) {
+				const TranslationRoom &room = iterator->_value;
+				TranslationRange scrpRange;
+				if (room.scriptRanges.tryGetVal(scriptKey, scrpRange)) {
+					const byte *translatedText = searchTranslatedLine(text, scrpRange, true);
+					if (translatedText) {
+						debug(7, "translateText: Found by heuristic #1");
+						memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
+						return;
+					}
+				}
+			}
+
+			// If not found, search for current room
+			roomKey = _currentRoom;
+			scriptKey = WIO_ROOM << 16;
+			iterator = _roomIndex.find(roomKey);
+			if (iterator != _roomIndex.end()) {
+				const TranslationRoom &room = iterator->_value;
+				TranslationRange scrpRange;
+				if (room.scriptRanges.tryGetVal(scriptKey, scrpRange)) {
+					const byte *translatedText = searchTranslatedLine(text, scrpRange, true);
+					if (translatedText) {
+						debug(7, "translateText: Found by heuristic #2");
+						memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
+						return;
+					}
+				}
+			}
+		}
+
+		// Try full search
+		const byte *translatedText = searchTranslatedLine(text, TranslationRange(0, _numTranslatedLines - 1), false);
+		if (translatedText) {
+			debug(7, "translateText: Found by full search");
+			memcpy(trans_buff, translatedText, resStrLen(translatedText) + 1);
+			return;
+		}
+
+		debug(7, "translateText: Not found");
+	}
+
 	// Default: just copy the string
 	memcpy(trans_buff, text, resStrLen(text) + 1);
 }
