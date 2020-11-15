@@ -609,7 +609,7 @@ bool OSystem_SDL::hasTextInClipboard() {
 }
 
 Common::U32String OSystem_SDL::getTextFromClipboard() {
-	if (!hasTextInClipboard()) return Common::U32String("");
+	if (!hasTextInClipboard()) return Common::U32String();
 
 	char *text = SDL_GetClipboardText();
 

@@ -184,11 +184,11 @@ void LauncherDialog::build() {
 #endif
 		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
 
-	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, Common::U32String(""), kSearchCmd);
+	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, Common::U32String(), kSearchCmd);
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 
 	// Add list with game titles
-	_list = new ListWidget(this, "Launcher.GameList", Common::U32String(""), kListSearchCmd);
+	_list = new ListWidget(this, "Launcher.GameList", Common::U32String(), kListSearchCmd);
 	_list->setEditable(false);
 	_list->enableDictionarySelect(true);
 	_list->setNumberingMode(kListNumberingOff);
@@ -707,8 +707,8 @@ void LauncherDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kSearchClearCmd:
 		// Reset the active search filter, thus showing all games again
-		_searchWidget->setEditString(Common::U32String(""));
-		_list->setFilter(Common::U32String(""));
+		_searchWidget->setEditString(Common::U32String());
+		_list->setFilter(Common::U32String());
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);

@@ -92,8 +92,8 @@ protected:
 	int				_lastRead;
 
 public:
-	ListWidget(Dialog *boss, const String &name, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0);
-	ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(""), uint32 cmd = 0);
+	ListWidget(Dialog *boss, const String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
+	ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 
 	bool containsWidget(Widget *) const override;
 	Widget *findWidget(int x, int y) override;

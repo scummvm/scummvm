@@ -1007,7 +1007,7 @@ void MacText::drawSelection() {
 
 Common::U32String MacText::getSelection(bool formatted, bool newlines) {
 	if (_selectedText.endY == -1)
-		return Common::U32String("");
+		return Common::U32String();
 
 	SelectedText s = _selectedText;
 
@@ -1113,7 +1113,7 @@ Common::U32String MacText::getEditedString() {
 
 Common::U32String MacText::cutSelection() {
 	if (!isCutAllowed())
-		return Common::U32String("");
+		return Common::U32String();
 
 	SelectedText s = _selectedText;
 

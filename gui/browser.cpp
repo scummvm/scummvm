@@ -62,7 +62,7 @@ BrowserDialog::BrowserDialog(const Common::U32String &title, bool dirBrowser)
 	new StaticTextWidget(this, "Browser.Headline", title);
 
 	// Current path - TODO: handle long paths ?
-	_currentPath = new EditTextWidget(this, "Browser.Path", Common::U32String(""), Common::U32String(""), 0, kPathEditedCmd);
+	_currentPath = new EditTextWidget(this, "Browser.Path", Common::U32String(), Common::U32String(), 0, kPathEditedCmd);
 
 	// Add file list
 	_fileList = new ListWidget(this, "Browser.List");
@@ -79,8 +79,8 @@ BrowserDialog::BrowserDialog(const Common::U32String &title, bool dirBrowser)
 		new ButtonWidget(this, "Browser.Up", _("Go up"), _("Go to previous directory level"), kGoUpCmd);
 	else
 		new ButtonWidget(this, "Browser.Up", _c("Go up", "lowres"), _("Go to previous directory level"), kGoUpCmd);
-	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), Common::U32String(""), kCloseCmd);
-	new ButtonWidget(this, "Browser.Choose", _("Choose"), Common::U32String(""), kChooseCmd);
+	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), Common::U32String(), kCloseCmd);
+	new ButtonWidget(this, "Browser.Choose", _("Choose"), Common::U32String(), kChooseCmd);
 }
 
 int BrowserDialog::runModal() {

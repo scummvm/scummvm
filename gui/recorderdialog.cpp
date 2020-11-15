@@ -64,12 +64,12 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(nullptr), _cu
 	_list = new GUI::ListWidget(this, "RecorderDialog.List");
 	_list->setNumberingMode(GUI::kListNumberingOff);
 
-	_deleteButton = new GUI::ButtonWidget(this, "RecorderDialog.Delete", _("Delete"), Common::U32String(""), kDeleteCmd);
-	new GUI::ButtonWidget(this, "RecorderDialog.Cancel", _("Cancel"), Common::U32String(""), kCloseCmd);
-	new GUI::ButtonWidget(this, "RecorderDialog.Record", _("Record"), Common::U32String(""), kRecordCmd);
-	_playbackButton = new GUI::ButtonWidget(this, "RecorderDialog.Playback", _("Playback"), Common::U32String(""), kPlaybackCmd);
+	_deleteButton = new GUI::ButtonWidget(this, "RecorderDialog.Delete", _("Delete"), Common::U32String(), kDeleteCmd);
+	new GUI::ButtonWidget(this, "RecorderDialog.Cancel", _("Cancel"), Common::U32String(), kCloseCmd);
+	new GUI::ButtonWidget(this, "RecorderDialog.Record", _("Record"), Common::U32String(), kRecordCmd);
+	_playbackButton = new GUI::ButtonWidget(this, "RecorderDialog.Playback", _("Playback"), Common::U32String(), kPlaybackCmd);
 
-	_editButton = new GUI::ButtonWidget(this, "RecorderDialog.Edit", _("Edit"), Common::U32String(""), kEditRecordCmd);
+	_editButton = new GUI::ButtonWidget(this, "RecorderDialog.Edit", _("Edit"), Common::U32String(), kEditRecordCmd);
 
 	_editButton->setEnabled(false);
 	_deleteButton->setEnabled(false);
@@ -78,8 +78,8 @@ RecorderDialog::RecorderDialog() : Dialog("RecorderDialog"), _list(nullptr), _cu
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 	_container = new GUI::ContainerWidget(this, "RecorderDialog.Thumbnail");
 	if (g_gui.xmlEval()->getVar("Globals.RecorderDialog.ExtInfo.Visible") == 1) {
-		new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", Common::U32String("<"), Common::U32String(""), kPrevScreenshotCmd);
-		new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", Common::U32String(">"), Common::U32String(""), kNextScreenshotCmd);
+		new GUI::ButtonWidget(this,"RecorderDialog.NextScreenShotButton", Common::U32String("<"), Common::U32String(), kPrevScreenshotCmd);
+		new GUI::ButtonWidget(this, "RecorderDialog.PreviousScreenShotButton", Common::U32String(">"), Common::U32String(), kNextScreenshotCmd);
 		_currentScreenshotText = new StaticTextWidget(this, "RecorderDialog.currentScreenshot", Common::U32String("0/0"));
 		_authorText = new StaticTextWidget(this, "RecorderDialog.Author", _("Author: "));
 		_notesText = new StaticTextWidget(this, "RecorderDialog.Notes", _("Notes: "));

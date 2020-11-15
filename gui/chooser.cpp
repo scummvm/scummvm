@@ -43,8 +43,8 @@ ChooserDialog::ChooserDialog(const U32String &title, String dialogId)
 	_list->setEditable(false);
 
 	// Buttons
-	new ButtonWidget(this, dialogId + ".Cancel", _("Cancel"), Common::U32String(""), kCloseCmd);
-	_chooseButton = new ButtonWidget(this, dialogId + ".Choose", _("Choose"), Common::U32String(""), kChooseCmd);
+	new ButtonWidget(this, dialogId + ".Cancel", _("Cancel"), Common::U32String(), kCloseCmd);
+	_chooseButton = new ButtonWidget(this, dialogId + ".Choose", _("Choose"), Common::U32String(), kChooseCmd);
 	_chooseButton->setEnabled(false);
 }
 

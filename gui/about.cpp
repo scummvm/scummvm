@@ -93,7 +93,7 @@ AboutDialog::AboutDialog()
 	int i;
 
 	for (i = 0; i < 1; i++)
-		_lines.push_back(U32String(""));
+		_lines.push_back(U32String());
 
 	Common::String version("C0""ScummVM ");
 	version += gScummVMVersion;
@@ -112,7 +112,7 @@ AboutDialog::AboutDialog()
 	featureList += gScummVMFeatures;
 	addLine(featureList);
 
-	_lines.push_back(U32String(""));
+	_lines.push_back(U32String());
 
 	Common::U32String engines("C1");
 	engines += _("Available engines:");
@@ -136,7 +136,7 @@ AboutDialog::AboutDialog()
 	for (i = 0; i < ARRAYSIZE(gpl_text); i++)
 		addLine(U32String(gpl_text[i]));
 
-	_lines.push_back(U32String(""));
+	_lines.push_back(U32String());
 
 	for (i = 0; i < ARRAYSIZE(credits); i++)
 		addLine(U32String(credits[i]));
@@ -145,7 +145,7 @@ AboutDialog::AboutDialog()
 void AboutDialog::addLine(const U32String &str) {
 	U32String::const_iterator strBeginItr = str.begin();
 	if (*strBeginItr == 0) {
-		_lines.push_back(U32String(""));
+		_lines.push_back(U32String());
 	} else {
 		Common::U32String format(str.begin(), str.begin() + 2);
 		strBeginItr += 2;
