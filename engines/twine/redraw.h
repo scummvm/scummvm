@@ -63,7 +63,7 @@ private:
 		uint16 x = 0;
 		uint16 y = 0;
 		uint16 z = 0;
-		uint16 field_A = 0;
+		uint16 offset = 0;
 		uint16 field_C = 0;
 		uint16 field_E = 0;
 		uint16 field_10 = 0;

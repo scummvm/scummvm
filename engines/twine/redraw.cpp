@@ -294,7 +294,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 							drawList[drawListPos].x = _engine->_actor->shadowX;
 							drawList[drawListPos].y = _engine->_actor->shadowY;
 							drawList[drawListPos].z = _engine->_actor->shadowZ;
-							drawList[drawListPos].field_A = 2;
+							drawList[drawListPos].offset = 2;
 							drawListPos++;
 						}
 					}
@@ -330,7 +330,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 							drawList[drawListPos].x = _engine->_actor->shadowX;
 							drawList[drawListPos].y = _engine->_actor->shadowY;
 							drawList[drawListPos].z = _engine->_actor->shadowZ;
-							drawList[drawListPos].field_A = 0;
+							drawList[drawListPos].offset = 0;
 							drawListPos++;
 						}
 					}
@@ -409,7 +409,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				_engine->_renderer->projectPositionOnScreen(shadow.x - _engine->_grid->cameraX, shadow.y - _engine->_grid->cameraY, shadow.z - _engine->_grid->cameraZ);
 
 				int32 spriteWidth, spriteHeight;
-				_engine->_grid->getSpriteSize(shadow.field_A, &spriteWidth, &spriteHeight, _engine->_resources->spriteShadowPtr);
+				_engine->_grid->getSpriteSize(shadow.offset, &spriteWidth, &spriteHeight, _engine->_resources->spriteShadowPtr);
 
 				// calculate sprite size and position on screen
 				renderLeft = _engine->_renderer->projPosX - (spriteWidth / 2);
@@ -420,7 +420,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
 
 				if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
-					_engine->_grid->drawSprite(shadow.field_A, renderLeft, renderTop, _engine->_resources->spriteShadowPtr);
+					_engine->_grid->drawSprite(shadow.offset, renderLeft, renderTop, _engine->_resources->spriteShadowPtr);
 				}
 
 				const int32 tmpX = (shadow.x + 0x100) >> 9;
