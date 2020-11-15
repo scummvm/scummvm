@@ -378,7 +378,7 @@ void Scene::processEnvironmentSound() {
 					samplePlayed = 0;
 				}
 
-				int16 sampleIdx = sampleAmbiance[currentAmb];
+				const int16 sampleIdx = sampleAmbiance[currentAmb];
 				if (sampleIdx != -1) {
 					int16 decal = sampleRound[currentAmb];
 					int16 repeat = sampleRepeat[currentAmb];

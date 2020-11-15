@@ -254,9 +254,7 @@ int Extra::getBonusSprite(BonusParameter bonusParameter) const {
 }
 
 int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 param, int32 angle, int32 type, int32 bonusAmount) { // ExtraBonus
-	int32 i;
-
-	for (i = 0; i < EXTRA_MAX_ENTRIES; i++) {
+	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &extraList[i];
 		if (extra->info0 != -1) {
 			continue;
@@ -286,9 +284,7 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 param, int32 angle, 
 }
 
 int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 sprite, int32 var2, int32 var3, int32 var4, int32 var5, int32 strengthOfHit) { // ThrowExtra
-	int32 i;
-
-	for (i = 0; i < EXTRA_MAX_ENTRIES; i++) {
+	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &extraList[i];
 		if (extra->info0 != -1) {
 			continue;
@@ -314,9 +310,7 @@ int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spri
 }
 
 int32 Extra::addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActorIdx, int32 maxSpeed, int32 strengthOfHit) { // ExtraSearch
-	int32 i;
-
-	for (i = 0; i < EXTRA_MAX_ENTRIES; i++) {
+	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &extraList[i];
 		if (extra->info0 != -1) {
 			continue;
@@ -343,9 +337,7 @@ int32 Extra::addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spr
 
 // cseg01:00018168
 int32 Extra::findExtraKey() {
-	int32 i;
-
-	for (i = 0; i < EXTRA_MAX_ENTRIES; i++) {
+	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &extraList[i];
 		if (extra->info0 == SPRITEHQR_KEY) {
 			return i;
@@ -357,9 +349,7 @@ int32 Extra::findExtraKey() {
 
 // cseg01:00018250
 int32 Extra::addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx) { // addMagicBallAimingAtKey
-	int32 i;
-
-	for (i = 0; i < EXTRA_MAX_ENTRIES; i++) {
+	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &extraList[i];
 		if (extra->info0 != -1) {
 			continue;
