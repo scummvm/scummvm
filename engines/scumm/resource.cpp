@@ -1116,8 +1116,7 @@ void ScummEngine::loadPtrToResource(ResType type, ResId idx, const byte *source)
 
 	// Translate resource text
 	byte translateBuffer[512];
-	if (isScummvmKorTarget())
-	{
+	if (isScummvmKorTarget()) {
 		if (!source) {
 			refreshScriptPointer();
 			source = _scriptPointer;
