@@ -1991,25 +1991,6 @@ void ScummEngine::loadLanguageBundle() {
 	debug(2, "loadLanguageBundle: Loaded %d entries", _numTranslatedLines);
 }
 
-// strcmp equivalent for Scumm string
-static int compareResString(const byte* a, int aLen, const byte* b, int bLen) {
-	byte c1;
-	byte c2;
-
-	int i = 0;
-	do {
-		c1 = a[i];
-		c2 = b[i];
-
-		if (i >= aLen - 1 || i >= bLen - 1)
-			return c1 - c2;
-
-		i++;
-	} while (c1 == c2);
-
-	return c1 - c2;
-}
-
 const byte *ScummEngine::searchTranslatedLine(const byte *text, const TranslationRange &range, bool useIndex) {
 	int textLen = resStrLen(text);
 
@@ -2025,7 +2006,7 @@ const byte *ScummEngine::searchTranslatedLine(const byte *text, const Translatio
 		int idx = useIndex ? _languageLineIndex[mid] : mid;
 		const byte *originalText = &_languageBuffer[_translatedLines[idx].originalTextOffset];
 		int originalLen = resStrLen(originalText);
-		int compare = compareResString(text, textLen + 1, originalText, originalLen + 1);
+		int compare = memcmp(text, originalText, MIN(textLen + 1, originalLen + 1));
 		if (compare == 0) {
 			debug(8, "searchTranslatedLine: Found in %d iteration", dbgIterationCount);
 			const byte *translatedText = &_languageBuffer[_translatedLines[idx].translatedTextOffset];
