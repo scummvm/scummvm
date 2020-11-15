@@ -2908,11 +2908,20 @@ case $_host_os in
 		echocheck "macOS deployement target"
 		cat > $TMPC << EOF
 #include "AvailabilityMacros.h"
-#include <stdio.h>
-int main(int argc, char *argv[]) { printf("%d\n", MAC_OS_X_VERSION_MIN_REQUIRED); return 0; }
+
+#define _DIGIT(x) #x
+#define DIGIT(x) _DIGIT(x)
+
+const char version[] = "Version:" DIGIT(MAC_OS_X_VERSION_MIN_REQUIRED);
+const char *_version() { char *s = (char *)version; return s; }
+
+int main(int argc, char *argv[]) { _version(); return 0; }
 EOF
 		cc_check_no_clean
-		_macos_min_version=`$TMPO$HOSTEXEEXT 2>/dev/null`
+		if $_strings $TMPO$HOSTEXEEXT | grep Version: >/dev/null; then
+			_macos_min_version=`$_strings $TMPO$HOSTEXEEXT | grep Version:`
+			_macos_min_version="${_macos_min_version/Version:/}"
+		fi
 		cc_check_clean
 
 		# Also get a dot version of the min version
