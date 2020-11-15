@@ -25,6 +25,10 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <signal.h>
+// sighandler_t is a GNU extension exposed when _GNU_SOURCE is defined
+#ifndef _GNU_SOURCE
+typedef void (*sighandler_t)(int);
+#endif
 #elif defined(WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
