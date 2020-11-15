@@ -105,13 +105,13 @@ static const int16 explodeCloudShapeTable[] = {
 
 Extra::Extra(TwinEEngine *engine) : _engine(engine) {}
 
-int32 Extra::addExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 info0, int32 targetActor, int32 maxSpeed, int32 strengthOfHit) {
+int32 Extra::addExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActor, int32 maxSpeed, int32 strengthOfHit) {
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &extraList[i];
 		if (extra->info0 != -1) {
 			continue;
 		}
-		extra->info0 = info0;
+		extra->info0 = spriteIdx;
 		extra->type = 0x80;
 		extra->info1 = 0;
 		extra->x = x;
@@ -136,7 +136,7 @@ int32 Extra::addExtraExplode(int32 x, int32 y, int32 z) {
 		if (extra->info0 != -1) {
 			continue;
 		}
-		extra->info0 = 0x61;
+		extra->info0 = SPRITEHQR_EXPLOSION_FIRST_FRAME;
 		extra->type = 0x1001;
 		extra->info1 = 0;
 		extra->x = x;
@@ -283,13 +283,13 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 param, int32 angle, 
 	return -1;
 }
 
-int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 sprite, int32 var2, int32 var3, int32 var4, int32 var5, int32 strengthOfHit) { // ThrowExtra
+int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 var2, int32 var3, int32 var4, int32 var5, int32 strengthOfHit) { // ThrowExtra
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &extraList[i];
 		if (extra->info0 != -1) {
 			continue;
 		}
-		extra->info0 = sprite;
+		extra->info0 = spriteIdx;
 		extra->type = 0x210C;
 		extra->x = x;
 		extra->y = y;
