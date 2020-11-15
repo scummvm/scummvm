@@ -19,6 +19,17 @@ TEST_LIBS += test/null_osystem.o \
 	test/stubs.o
 endif
 
+ifdef WIN32
+TEST_LIBS += test/null_osystem.o \
+	backends/fs/posix/posix-fs-factory.o \
+	backends/fs/posix/posix-fs.o \
+	backends/fs/posix/posix-iostream.o \
+	backends/fs/abstract-fs.o \
+	backends/fs/stdiostream.o \
+	backends/modular-backend.o \
+	test/stubs.o
+endif
+
 TEST_LIBS +=	audio/libaudio.a math/libmath.a common/libcommon.a
 
 ifeq ($(ENABLE_WINTERMUTE), STATIC_PLUGIN)

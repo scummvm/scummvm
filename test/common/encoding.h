@@ -6,7 +6,7 @@
 
 // We support CJK on all the platforms but it relies on OSystem to read
 // file which *in test environments* is available only on some platforms
-#if defined(POSIX)
+#if defined(POSIX) || defined(WIN32)
 #define TEST_CJK 1
 #else
 #define TEST_CJK 0
@@ -15,8 +15,8 @@
 class EncodingTestSuite : public CxxTest::TestSuite
 {
 public:
-#if TEST_CJK
 	void test_korean() {
+#if TEST_CJK
 		Common::install_null_g_system();
 		const byte utf8[] = {
 			0xea, 0xb2, 0x8c, 0xec, 0x9e, 0x84, 0xec, 0xa4,
@@ -53,9 +53,11 @@ public:
 		TS_ASSERT_EQUALS(ustr_from_uhc, ustr);
 		TS_ASSERT(strcmp((const char *) utf8, uhc_to_utf8.c_str()) == 0);
 		TS_ASSERT(strcmp((const char *) uhc, utf8_to_uhc.c_str()) == 0);
+#endif
 	}
 
 	void test_chinese() {
+#if TEST_CJK
 		Common::install_null_g_system();
 		const byte utf8[] = {
 			0xe9, 0x81, 0x8a, 0xe6, 0x88, 0xb2, 0xe6, 0x9a,
@@ -87,9 +89,11 @@ public:
 		TS_ASSERT_EQUALS(ustr_from_big5, ustr);
 		TS_ASSERT(strcmp((const char *) utf8, big5_to_utf8.c_str()) == 0);
 		TS_ASSERT(strcmp((const char *) big5, utf8_to_big5.c_str()) == 0);
+#endif
 	}
 
 	void test_japanese() {
+#if TEST_CJK
 		Common::install_null_g_system();
 		const byte utf8[] = {
 			0xe4, 0xb8, 0x80, 0xe6, 0x99, 0x82, 0xe5, 0x81,
@@ -130,8 +134,8 @@ public:
 		TS_ASSERT_EQUALS(ustr_from_cp932, ustr);
 		TS_ASSERT(strcmp((const char *) utf8, cp932_to_utf8.c_str()) == 0);
 		TS_ASSERT(strcmp((const char *) cp932, utf8_to_cp932.c_str()) == 0);
-	}
 #endif
+	}
 
 	void test_conversion_unicode_machine_endian() {
 		Common::install_null_g_system();
