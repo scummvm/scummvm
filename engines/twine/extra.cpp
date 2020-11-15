@@ -218,6 +218,41 @@ void Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) { 
 	}
 }
 
+int Extra::getBonusSprite(BonusParameter bonusParameter) const {
+	int numBonus = 0;
+	int8 bonusSprites[5];
+	if (bonusParameter.kashes) {
+		bonusSprites[numBonus++] = SPRITEHQR_KASHES;
+	}
+	if (bonusParameter.lifepoints) {
+		bonusSprites[numBonus++] = SPRITEHQR_LIFEPOINTS;
+	}
+	if (bonusParameter.magicpoints) {
+		bonusSprites[numBonus++] = SPRITEHQR_MAGICPOINTS;
+	}
+	if (bonusParameter.key) {
+		bonusSprites[numBonus++] = SPRITEHQR_KEY;
+	}
+	if (bonusParameter.cloverleaf) {
+		bonusSprites[numBonus++] = SPRITEHQR_CLOVERLEAF;
+	}
+
+	if (numBonus == 0) {
+		return -1;
+	}
+
+	const int bonusIndex = _engine->getRandomNumber(numBonus);
+	assert(bonusIndex >= 0);
+	assert(bonusIndex < numBonus);
+	int8 bonusSprite = bonusSprites[bonusIndex];
+	// if bonus is magic an no magic level yet, then give life points
+	if (!_engine->_gameState->magicLevelIdx && bonusSprite == SPRITEHQR_MAGICPOINTS) {
+		bonusSprite = SPRITEHQR_KASHES;
+	}
+
+	return bonusSprite;
+}
+
 int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 param, int32 angle, int32 type, int32 bonusAmount) { // ExtraBonus
 	int32 i;
 

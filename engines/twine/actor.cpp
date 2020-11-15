@@ -481,35 +481,9 @@ void Actor::processActorCarrier(int32 actorIdx) { // CheckCarrier
 void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
-	int32 numBonus = 0;
-	int8 bonusSprites[5];
-	if (actor->bonusParameter.kashes) {
-		bonusSprites[numBonus++] = SPRITEHQR_KASHES;
-	}
-	if (actor->bonusParameter.lifepoints) {
-		bonusSprites[numBonus++] = SPRITEHQR_LIFEPOINTS;
-	}
-	if (actor->bonusParameter.magicpoints) {
-		bonusSprites[numBonus++] = SPRITEHQR_MAGICPOINTS;
-	}
-	if (actor->bonusParameter.key) {
-		bonusSprites[numBonus++] = SPRITEHQR_KEY;
-	}
-	if (actor->bonusParameter.cloverleaf) {
-		bonusSprites[numBonus++] = SPRITEHQR_CLOVERLEAF;
-	}
-
-	if (numBonus == 0) {
+	const int bonusSprite = _engine->_extra->getBonusSprite(actor->bonusParameter);
+	if (bonusSprite == -1) {
 		return;
-	}
-
-	const int bonusIndex = _engine->getRandomNumber(numBonus);
-	assert(bonusIndex >= 0);
-	assert(bonusIndex < numBonus);
-	int8 bonusSprite = bonusSprites[bonusIndex];
-	// if bonus is magic an no magic level yet, then give life points
-	if (!_engine->_gameState->magicLevelIdx && bonusSprite == SPRITEHQR_MAGICPOINTS) {
-		bonusSprite = SPRITEHQR_KASHES;
 	}
 	if (actor->dynamicFlags.bIsDead) {
 		_engine->_extra->addExtraBonus(actor->x, actor->y, actor->z, 0x100, 0, bonusSprite, actor->bonusAmount);

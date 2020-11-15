@@ -90,6 +90,8 @@ public:
 
 	void drawExtraSpecial(int32 extraIdx, int32 x, int32 y);
 
+	int getBonusSprite(BonusParameter bonusParameter) const;
+
 	/** Process extras */
 	void processExtras();
 };

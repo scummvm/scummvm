@@ -102,6 +102,16 @@ struct DynamicFlagsStruct {
 	uint16 bUnk8000 : 1;          // 0x8000 unused
 };
 
+/**
+ * Bonus type flags - a bitfield value, of which the bits mean:
+ * bit 8: clover leaf,
+ * bit 7: small key,
+ * bit 6: magic,
+ * bit 5: life,
+ * bit 4: money,
+ * If more than one type of bonus is selected, the actual type of bonus
+ * will be chosen randomly each time player uses Action.
+ */
 struct BonusParameter {
 	uint16 unk1 : 1;
 	uint16 unk2 : 1;
