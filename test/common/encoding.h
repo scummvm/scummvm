@@ -4,9 +4,18 @@
 #include "common/ustr.h"
 #include "../null_osystem.h"
 
+// We support CJK on all the platforms but it relies on OSystem to read
+// file which *in test environments* is available only on some platforms
+#if defined(POSIX)
+#define TEST_CJK 1
+#else
+#define TEST_CJK 0
+#endif
+
 class EncodingTestSuite : public CxxTest::TestSuite
 {
 public:
+#if TEST_CJK
 	void test_korean() {
 		Common::install_null_g_system();
 		const byte utf8[] = {
@@ -122,6 +131,7 @@ public:
 		TS_ASSERT(strcmp((const char *) utf8, cp932_to_utf8.c_str()) == 0);
 		TS_ASSERT(strcmp((const char *) cp932, utf8_to_cp932.c_str()) == 0);
 	}
+#endif
 
 	void test_conversion_unicode_machine_endian() {
 		Common::install_null_g_system();
