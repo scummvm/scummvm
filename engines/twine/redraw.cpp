@@ -439,7 +439,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				// TODO reverse this part of the code
 				warning("Not yet reversed part of the rendering code");
 			}
-			// Drawing sprite actors
+			// Drawing sprite actors, doors and entities
 			else if (flags == 0x1000) {
 				const uint8 *spritePtr = _engine->_resources->spriteTable[actor2->entity];
 
