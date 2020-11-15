@@ -2909,7 +2909,7 @@ EOF
 		cc_check_no_clean
 		if $_strings $TMPO$HOSTEXEEXT | grep Version: >/dev/null; then
 			_macos_min_version=`$_strings $TMPO$HOSTEXEEXT | grep Version:`
-			_macos_min_version="${_macos_min_version/Version:/}"
+			_macos_min_version="${_macos_min_version#Version:}"
 		fi
 		cc_check_clean
 
