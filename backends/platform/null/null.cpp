@@ -25,6 +25,10 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <signal.h>
+#elif defined(WIN32)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef main
 #endif
 
 // We use some stdio.h functionality here thus we need to allow some
@@ -88,6 +92,8 @@ public:
 private:
 #ifdef POSIX
 	timeval _startTime;
+#elif defined(WIN32)
+	DWORD _startTime;
 #endif
 };
 
@@ -124,6 +130,8 @@ void intHandler(int dummy) {
 void OSystem_NULL::initBackend() {
 #ifdef POSIX
 	gettimeofday(&_startTime, 0);
+#elif defined(WIN32)
+	_startTime = GetTickCount();
 #endif
 #if defined(POSIX) && !defined(NULL_DRIVER_USE_FOR_TEST)
 	last_handler = signal(SIGINT, intHandler);
@@ -174,6 +182,8 @@ uint32 OSystem_NULL::getMillis(bool skipRecord) {
 
 	return (uint32)(((curTime.tv_sec - _startTime.tv_sec) * 1000) +
 			((curTime.tv_usec - _startTime.tv_usec) / 1000));
+#elif defined(WIN32)
+	return GetTickCount() - _startTime;
 #else
 	return 0;
 #endif
@@ -182,6 +192,8 @@ uint32 OSystem_NULL::getMillis(bool skipRecord) {
 void OSystem_NULL::delayMillis(uint msecs) {
 #ifdef POSIX
 	usleep(msecs * 1000);
+#elif defined(WIN32)
+	Sleep(msecs);
 #endif
 }
 
