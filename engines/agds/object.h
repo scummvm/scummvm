@@ -79,15 +79,22 @@ private:
 	int								_scale;
 	bool							_inScene;
 	bool							_persistent;
+	bool							_allowCalls;
 
 public:
 	Object(const Common::String &name, Common::SeekableReadStream * stream);
 	~Object();
 
+	bool allowCalls() const {
+		return _allowCalls;
+	}
+	void allowCalls(bool allow) {
+		_allowCalls = allow;
+	}
+
 	void persistent(bool persistent) {
 		_persistent = persistent;
 	}
-
 	bool persistent() const {
 		return _persistent;
 	}
