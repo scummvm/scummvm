@@ -437,6 +437,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 			// Drawing unknown
 			else if (flags < 0x1000) {
 				// TODO reverse this part of the code
+				warning("Not yet reversed part of the rendering code");
 			}
 			// Drawing sprite actors
 			else if (flags == 0x1000) {

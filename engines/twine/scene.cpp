@@ -26,6 +26,7 @@
 #include "common/util.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
+#include "twine/debug_grid.h"
 #include "twine/extra.h"
 #include "twine/gamestate.h"
 #include "twine/grid.h"
@@ -449,7 +450,7 @@ void Scene::processActorZones(int32 actorIdx) {
 				}
 				break;
 			case kCamera:
-				if (currentlyFollowedActor == actorIdx) {
+				if (currentlyFollowedActor == actorIdx && !_engine->_debugGrid->useFreeCamera) {
 					_engine->disableScreenRecenter = true;
 					if (_engine->_grid->newCameraX != zone->infoData.CameraView.x || _engine->_grid->newCameraY != zone->infoData.CameraView.y || _engine->_grid->newCameraZ != zone->infoData.CameraView.z) {
 						_engine->_grid->newCameraX = zone->infoData.CameraView.x;
