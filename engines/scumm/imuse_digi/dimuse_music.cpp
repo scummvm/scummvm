@@ -401,7 +401,7 @@ void IMuseDigital::playComiDemoMusic(const char *songName, const imuseComiTable 
 		if (getCurMusicSoundId() == table->soundId)
 			return;
 		if ((table->attribPos != 0) &&
-			(table->attribPos == _comiDemoStateMusicTable[_curMusicState].attribPos)) {
+				(table->attribPos == _comiDemoStateMusicTable[_curMusicState].attribPos)) {
 			fadeOutMusicAndStartNew(table->fadeOutDelay, table->filename, table->soundId);
 		}
 		else {
