@@ -83,9 +83,7 @@ public:
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
-#ifdef NULL_DRIVER_USE_FOR_TEST
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
-#endif
 
 private:
 #ifdef POSIX
@@ -215,6 +213,11 @@ void OSystem_NULL::logMessage(LogMessageType::Type type, const char *message) {
 	fflush(output);
 }
 
+void OSystem_NULL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	s.add("dists/engine-data", new Common::FSDirectory("dists/engine-data", 4), priority);
+	s.add("gui/themes", new Common::FSDirectory("gui/themes", 4), priority);
+}
+
 OSystem *OSystem_NULL_create() {
 	return new OSystem_NULL();
 }
@@ -230,11 +233,6 @@ int main(int argc, char *argv[]) {
 	return res;
 }
 #else
-void OSystem_NULL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
-	Common::String dataPath = "dists/engine-data";
-	Common::FSNode dataNode(dataPath);
-	s.add(dataPath, new Common::FSDirectory(dataNode, 4), priority);
-}
 void Common::install_null_g_system() {
 	g_system = OSystem_NULL_create();
 }
