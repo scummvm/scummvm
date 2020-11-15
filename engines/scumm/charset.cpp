@@ -785,10 +785,10 @@ void CharsetRendererPC::drawBits1Kor(Graphics::Surface &dest, int x1, int y1, co
 		dst = origDst;
 
 		for (y = 0; y < height && y + drawTop + offsetY[i] < dest.h; y++) {
-			for (x = 0; x < width && x + offsetY[i] < dest.w; x++) {
+			for (x = 0; x < width && x + x1 + offsetX[i] < dest.w; x++) {
 				if ((x % 8) == 0)
 					bits = *src++;
-				if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
+				if ((bits & revBitMask(x % 8)) && y + drawTop + offsetY[i] >= 0 && x + x1 + offsetX[i] >= 0) {
 					if (_enableShadow) {
 						*(dst + 1) = _shadowColor;
 						*(dst + dest.pitch) = _shadowColor;
