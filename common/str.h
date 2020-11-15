@@ -85,7 +85,7 @@ public:
 	explicit String(char c);
 
 	/** Construct a new string from the given u32 string. */
-	String(const U32String &str);
+	String(const U32String &str, CodePage page = kUtf8);
 
 	String &operator=(const char *str);
 	String &operator=(const String &str);
@@ -246,8 +246,15 @@ public:
 	U32String decode(CodePage page = kUtf8) const;
 
 protected:
-	void decodeUTF8(U32String &dst) const;
-	void decodeOneByte(U32String &dst, CodePage page) const;
+	void encodeUTF8(const U32String &src);
+	void encodeWindows932(const U32String &src);
+    	void encodeWindows949(const U32String &src);
+	void encodeWindows950(const U32String &src, bool translit = true);
+	void encodeOneByte(const U32String &src, CodePage page, bool translit = true);
+	void encodeInternal(const U32String &src, CodePage page);
+	void translitChar(U32String::value_type point);
+
+	friend class U32String;
 };
 
 // Append two strings to form a new (temp) string

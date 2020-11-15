@@ -50,6 +50,7 @@
 "..\..\..\..\NEWS"-"!:\system\apps\scummvm\NEWS"
 
 ; Common datafiles needed for some games
+"..\encoding.dat"-"!:\system\apps\scummvm\encoding.dat"
 "..\kyra.dat"-"!:\system\apps\scummvm\kyra.dat"
 "..\sky.cpt"-"!:\system\apps\scummvm\sky.cpt"
 

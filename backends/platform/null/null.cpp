@@ -83,6 +83,10 @@ public:
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
 
+#ifdef NULL_DRIVER_USE_FOR_TEST
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
+#endif
+
 private:
 #ifdef POSIX
 	timeval _startTime;
@@ -108,7 +112,7 @@ OSystem_NULL::OSystem_NULL() {
 OSystem_NULL::~OSystem_NULL() {
 }
 
-#ifdef POSIX
+#if defined(POSIX) && !defined(NULL_DRIVER_USE_FOR_TEST)
 static volatile bool intReceived = false;
 
 static sighandler_t last_handler;
@@ -122,7 +126,8 @@ void intHandler(int dummy) {
 void OSystem_NULL::initBackend() {
 #ifdef POSIX
 	gettimeofday(&_startTime, 0);
-
+#endif
+#if defined(POSIX) && !defined(NULL_DRIVER_USE_FOR_TEST)
 	last_handler = signal(SIGINT, intHandler);
 #endif
 
@@ -142,7 +147,7 @@ bool OSystem_NULL::pollEvent(Common::Event &event) {
 	((DefaultTimerManager *)getTimerManager())->checkTimers();
 	((NullMixerManager *)_mixerManager)->update(1);
 
-#ifdef POSIX
+#if defined(POSIX) && !defined(NULL_DRIVER_USE_FOR_TEST)
 	if (intReceived) {
 		intReceived = false;
 
@@ -214,6 +219,7 @@ OSystem *OSystem_NULL_create() {
 	return new OSystem_NULL();
 }
 
+#ifndef NULL_DRIVER_USE_FOR_TEST
 int main(int argc, char *argv[]) {
 	g_system = OSystem_NULL_create();
 	assert(g_system);
@@ -223,6 +229,16 @@ int main(int argc, char *argv[]) {
 	g_system->destroy();
 	return res;
 }
+#else
+void OSystem_NULL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
+	Common::String dataPath = "dists/engine-data";
+	Common::FSNode dataNode(dataPath);
+	s.add(dataPath, new Common::FSDirectory(dataNode, 4), priority);
+}
+void Common::install_null_g_system() {
+	g_system = OSystem_NULL_create();
+}
+#endif
 
 #else /* USE_NULL_DRIVER */
 

@@ -54,6 +54,7 @@ cryomni3d.dat          FILE    "dists/engine-data/cryomni3d.dat"
 #if PLUGIN_ENABLED_STATIC(DRASCULA)
 drascula.dat           FILE    "dists/engine-data/drascula.dat"
 #endif
+encoding.dat          FILE    "dists/engine-data/encoding.dat"
 #if PLUGIN_ENABLED_STATIC(HUGO)
 hugo.dat               FILE    "dists/engine-data/hugo.dat"
 #endif

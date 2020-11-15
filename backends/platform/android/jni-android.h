@@ -69,7 +69,6 @@ public:
 	static void showVirtualKeyboard(bool enable);
 	static void showKeyboardControl(bool enable);
 	static void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
-	static char *convertEncoding(const char *to, const char *from, const char *string, size_t length);
 
 	static inline bool haveSurface();
 	static inline bool swapBuffers();
@@ -86,7 +85,7 @@ public:
 	static Common::Array<Common::String> getAllStorageLocations();
 
 	static bool createDirectoryWithSAF(const Common::String &dirPath);
-	static Common::String createFileWithSAF(const Common::String &filePath);
+	static Common::U32String createFileWithSAF(const Common::String &filePath);
 	static void closeFileWithSAF(const Common::String &hackyFilename);
 
 private:
@@ -114,7 +113,6 @@ private:
 	static jmethodID _MID_showVirtualKeyboard;
 	static jmethodID _MID_showKeyboardControl;
 	static jmethodID _MID_getSysArchives;
-	static jmethodID _MID_convertEncoding;
 	static jmethodID _MID_getAllStorageLocations;
 	static jmethodID _MID_initSurface;
 	static jmethodID _MID_deinitSurface;
@@ -149,8 +147,8 @@ private:
 							int arg2, int arg3, int arg4, int arg5, int arg6);
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
 
-	static jstring convertToJString(JNIEnv *env, const Common::String &str, const Common::String &from);
-	static Common::String convertFromJString(JNIEnv *env, const jstring &jstr, const Common::String &to);
+	static jstring convertToJString(JNIEnv *env, const Common::U32String &str);
+	static Common::U32String convertFromJString(JNIEnv *env, const jstring &jstr);
 
 	static PauseToken _pauseToken;
 };

@@ -39,10 +39,10 @@ String::String(char c)
 }
 
 #ifndef SCUMMVM_UTIL
-String::String(const U32String &str)
+String::String(const U32String &str, Common::CodePage page)
 	: BaseString<char>() {
 	_storage[0] = 0;
-	*this = String(str.encode());
+	*this = String(str.encode(page));
 }
 #endif
 

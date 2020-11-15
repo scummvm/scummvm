@@ -40,7 +40,6 @@
 #include "common/system.h"
 #include "common/ustr.h"
 #include "common/config-manager.h"
-#include "common/encoding.h"
 
 ISpVoice *_voice;
 
@@ -184,8 +183,8 @@ bool WindowsTextToSpeechManager::say(const Common::U32String &str, Action action
 		return true;
 
 	// We have to set the pitch by prepending xml code at the start of the said string;
-	Common::U32String pitch = Common::U32String::format(Common::U32String("<pitch absmiddle=\"%d\">%S"), _ttsState->_pitch / 10, str.c_str());
-	WCHAR *strW = (WCHAR *) Common::Encoding::convert("UTF-16", pitch);
+	Common::U32String pitch = Common::U32String::format("<pitch absmiddle=\"%d\">%S", _ttsState->_pitch / 10, str.c_str());
+	WCHAR *strW = (WCHAR *) pitch.encodeUTF16Native();
 	if (strW == nullptr) {
 		warning("Cannot convert from UTF-32 encoding for text to speech");
 		return true;

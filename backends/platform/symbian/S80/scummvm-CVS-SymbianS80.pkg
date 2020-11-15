@@ -49,6 +49,7 @@
 "..\..\..\..\NEWS"-"!:\system\apps\scummvm\NEWS"
 
 ; Common datafiles needed for some games
+"..\..\..\..\dists\engine-data\encoding.dat"-"!:\system\apps\scummvm\encoding.dat"
 "..\..\..\..\dists\engine-data\kyra.dat"-"!:\system\apps\scummvm\kyra.dat"
 "..\..\..\..\dists\engine-data\sky.cpt"-"!:\system\apps\scummvm\sky.cpt"
 "..\..\..\..\dists\engine-data\lure.dat"-"!:\system\apps\scummvm\lure.dat"

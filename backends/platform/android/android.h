@@ -136,7 +136,6 @@ public:
 	virtual bool setTextInClipboard(const Common::U32String &text) override;
 	virtual bool isConnectionLimited() override;
 	virtual Common::String getSystemLanguage() const override;
-	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length) override;
 };
 
 #endif

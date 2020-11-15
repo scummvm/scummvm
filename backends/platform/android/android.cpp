@@ -666,8 +666,4 @@ Common::String OSystem_Android::getSystemProperty(const char *name) const {
 	return Common::String(value, len);
 }
 
-char *OSystem_Android::convertEncoding(const char *to, const char *from, const char *string, size_t length) {
-	return JNI::convertEncoding(to, from, string, length);
-}
-
 #endif

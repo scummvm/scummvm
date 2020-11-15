@@ -674,12 +674,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
-		protected byte[] convertEncoding(String to, String from, byte[] string) throws UnsupportedEncodingException {
-			String str = new String(string, from);
-			return str.getBytes(to);
-		}
-
-		@Override
 		protected String[] getAllStorageLocations() {
 			if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 			    && (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED

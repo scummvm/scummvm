@@ -12,7 +12,6 @@ MODULE_OBJS := \
 	networking.o \
 	savegame.o \
 	sound.o \
-	encoding.o \
 	testbed.o \
 	testsuite.o \
 	video.o

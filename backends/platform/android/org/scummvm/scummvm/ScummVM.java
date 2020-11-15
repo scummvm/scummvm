@@ -10,7 +10,6 @@ import android.os.Build;
 import android.util.Log;
 import android.view.SurfaceHolder;
 
-import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 
@@ -68,7 +67,6 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	abstract protected void showVirtualKeyboard(boolean enable);
 	abstract protected void showKeyboardControl(boolean enable);
 	abstract protected String[] getSysArchives();
-	abstract protected byte[] convertEncoding(String to, String from, byte[] string) throws UnsupportedEncodingException;
 	abstract protected String[] getAllStorageLocations();
 	abstract protected String[] getAllStorageLocationsNoPermissionRequest();
 	abstract protected boolean createDirectoryWithSAF(String dirPath);
