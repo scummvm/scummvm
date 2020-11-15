@@ -62,7 +62,7 @@
 namespace Sci {
 #ifdef ENABLE_SCI32
 
-extern int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(""), bool alignCenter = true);
+extern int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(), bool alignCenter = true);
 
 reg_t kBaseSetter32(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];

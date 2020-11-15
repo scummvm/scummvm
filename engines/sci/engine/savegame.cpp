@@ -1239,7 +1239,7 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 	return true;
 }
 
-extern int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(""), bool alignCenter = true);
+extern int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(), bool alignCenter = true);
 
 void gamestate_afterRestoreFixUp(EngineState *s, int savegameId) {
 	switch (g_sci->getGameId()) {

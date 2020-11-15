@@ -70,7 +70,7 @@ static int16 adjustGraphColor(int16 color) {
 		return color;
 }
 
-int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(""), bool alignCenter = true) {
+int showScummVMDialog(const Common::U32String &message, const Common::U32String &altButton = Common::U32String(), bool alignCenter = true) {
 	Graphics::TextAlign alignment = alignCenter ? Graphics::kTextAlignCenter : Graphics::kTextAlignLeft;
 	GUI::MessageDialog dialog(message, _("OK"), altButton, alignment);
 	return dialog.runModal();

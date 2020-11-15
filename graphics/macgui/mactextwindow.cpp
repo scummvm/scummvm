@@ -241,7 +241,7 @@ void MacTextWindow::drawSelection() {
 
 Common::U32String MacTextWindow::getSelection(bool formatted, bool newlines) {
 	if (_selectedText.endY == -1)
-		return Common::U32String("");
+		return Common::U32String();
 
 	SelectedText s = _selectedText;
 
@@ -267,7 +267,7 @@ bool MacTextWindow::isCutAllowed() {
 
 Common::U32String MacTextWindow::cutSelection() {
 	if (!isCutAllowed())
-		return Common::U32String("");
+		return Common::U32String();
 
 	SelectedText s = _selectedText;
 
@@ -283,7 +283,7 @@ Common::U32String MacTextWindow::cutSelection() {
 	if (selPos == Common::U32String::npos) {
 		//warning("Cannot find substring '%s' in '%s'", selection.c_str(), _inputText.c_str()); // Needed encode method
 
-		return Common::U32String("");
+		return Common::U32String();
 	}
 
 	Common::U32String newInput = _inputText.substr(0, selPos) + _inputText.substr(selPos + selection.size());

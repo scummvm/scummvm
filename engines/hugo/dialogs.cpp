@@ -276,14 +276,14 @@ EntryDialog::EntryDialog(const Common::String &title, const Common::String &butt
 								lines[i], Graphics::kTextAlignCenter);
 	}
 
-	_text = new GUI::EditTextWidget(this, 10, 10 + lineCount * (kLineHeight + 1), _w - 20, kLineHeight, Common::U32String(""), Common::U32String(""), 0, kCmdFinishEdit);
+	_text = new GUI::EditTextWidget(this, 10, 10 + lineCount * (kLineHeight + 1), _w - 20, kLineHeight, Common::U32String(), Common::U32String(), 0, kCmdFinishEdit);
 	_text->setEditString(defaultValue);
 
 	_h += kLineHeight + 5;
 
 	buttonPos = (_w - buttonWidth) / 2;
 
-	new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, buttonLabel, Common::U32String(""), kCmdButton, Common::ASCII_RETURN);	// Confirm dialog
+	new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, buttonLabel, Common::U32String(), kCmdButton, Common::ASCII_RETURN);	// Confirm dialog
 
 }
 

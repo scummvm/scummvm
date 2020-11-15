@@ -73,8 +73,8 @@ void TabWidget::init() {
 	String leftArrow = g_gui.useRTL() ? ">" : "<";
 	String rightArrow = g_gui.useRTL() ? "<" : ">";
 
-	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, Common::U32String(leftArrow), Common::U32String(""), kCmdLeft);
-	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, Common::U32String(rightArrow), Common::U32String(""), kCmdRight);
+	_navLeft = new ButtonWidget(this, x, y, _butW, _butH, Common::U32String(leftArrow), Common::U32String(), kCmdLeft);
+	_navRight = new ButtonWidget(this, x + _butW + 2, y, _butW, _butH, Common::U32String(rightArrow), Common::U32String(), kCmdRight);
 
 	_navLeft->setEnabled(false);
 	_navRight->setEnabled(true);
