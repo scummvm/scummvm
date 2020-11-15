@@ -473,6 +473,8 @@ const Common::U32String InfoDialog::queryResString(int stringno) {
 		convertFromCodePage = Common::kWindows932;
 	else if (_vm->_language == Common::ZH_TWN || _vm->_language == Common::ZH_CNA)
 		convertFromCodePage = Common::kWindows950;
+	else if (_vm->_language == Common::RU_RUS)
+		convertFromCodePage = Common::kDos866;
 
 	return convertFromCodePage == Common::kCodePageInvalid ? _(tmp) : U32String(tmp, convertFromCodePage);
 }
