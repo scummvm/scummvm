@@ -42,55 +42,85 @@
 
 namespace TwinE {
 
-void Scene::setActorStaticFlags(int32 actorIdx, uint16 staticFlags) {
+void Scene::setActorStaticFlags(ActorStruct* act, uint16 staticFlags) {
 	if (staticFlags & 0x1) {
-		_sceneActors[actorIdx].staticFlags.bComputeCollisionWithObj = 1;
+		act->staticFlags.bComputeCollisionWithObj = 1;
 	}
 	if (staticFlags & 0x2) {
-		_sceneActors[actorIdx].staticFlags.bComputeCollisionWithBricks = 1;
+		act->staticFlags.bComputeCollisionWithBricks = 1;
 	}
 	if (staticFlags & 0x4) {
-		_sceneActors[actorIdx].staticFlags.bIsZonable = 1;
+		act->staticFlags.bIsZonable = 1;
 	}
 	if (staticFlags & 0x8) {
-		_sceneActors[actorIdx].staticFlags.bUsesClipping = 1;
+		act->staticFlags.bUsesClipping = 1;
 	}
 	if (staticFlags & 0x10) {
-		_sceneActors[actorIdx].staticFlags.bCanBePushed = 1;
+		act->staticFlags.bCanBePushed = 1;
 	}
 	if (staticFlags & 0x20) {
-		_sceneActors[actorIdx].staticFlags.bComputeLowCollision = 1;
+		act->staticFlags.bComputeLowCollision = 1;
 	}
 	if (staticFlags & 0x40) {
-		_sceneActors[actorIdx].staticFlags.bCanDrown = 1;
+		act->staticFlags.bCanDrown = 1;
 	}
 	if (staticFlags & 0x80) {
-		_sceneActors[actorIdx].staticFlags.bComputeCollisionWithFloor = 1;
+		act->staticFlags.bComputeCollisionWithFloor = 1;
 	}
 
 	if (staticFlags & 0x100) {
-		_sceneActors[actorIdx].staticFlags.bUnk0100 = 1;
+		act->staticFlags.bUnk0100 = 1;
 	}
 	if (staticFlags & 0x200) {
-		_sceneActors[actorIdx].staticFlags.bIsHidden = 1;
+		act->staticFlags.bIsHidden = 1;
 	}
 	if (staticFlags & 0x400) {
-		_sceneActors[actorIdx].staticFlags.bIsSpriteActor = 1;
+		act->staticFlags.bIsSpriteActor = 1;
 	}
 	if (staticFlags & 0x800) {
-		_sceneActors[actorIdx].staticFlags.bCanFall = 1;
+		act->staticFlags.bCanFall = 1;
 	}
 	if (staticFlags & 0x1000) {
-		_sceneActors[actorIdx].staticFlags.bDoesntCastShadow = 1;
+		act->staticFlags.bDoesntCastShadow = 1;
 	}
 	if (staticFlags & 0x2000) {
 		//sceneActors[actorIdx].staticFlags.bIsBackgrounded = 1;
 	}
 	if (staticFlags & 0x4000) {
-		_sceneActors[actorIdx].staticFlags.bIsCarrierActor = 1;
+		act->staticFlags.bIsCarrierActor = 1;
 	}
 	if (staticFlags & 0x8000) {
-		_sceneActors[actorIdx].staticFlags.bUseMiniZv = 1;
+		act->staticFlags.bUseMiniZv = 1;
+	}
+}
+
+void Scene::setBonusParameterFlags(ActorStruct* act, uint16 bonusFlags) {
+	if (bonusFlags & 0x1) {
+		act->bonusParameter.unk1 = 1;
+	}
+	if (bonusFlags & 0x2) {
+		act->bonusParameter.unk2 = 1;
+	}
+	if (bonusFlags & 0x4) {
+		act->bonusParameter.unk3 = 1;
+	}
+	if (bonusFlags & 0x8) {
+		act->bonusParameter.unk4 = 1;
+	}
+	if (bonusFlags & 0x10) {
+		act->bonusParameter.kashes = 1;
+	}
+	if (bonusFlags & 0x20) {
+		act->bonusParameter.lifepoints = 1;
+	}
+	if (bonusFlags & 0x40) {
+		act->bonusParameter.magicpoints = 1;
+	}
+	if (bonusFlags & 0x80) {
+		act->bonusParameter.key = 1;
+	}
+	if (bonusFlags & 0x100) {
+		act->bonusParameter.cloverleaf = 1;
 	}
 }
 
@@ -147,10 +177,9 @@ bool Scene::loadSceneLBA1() {
 	for (int32 i = 1; i < sceneNumActors; i++) {
 		_engine->_actor->resetActor(i);
 
-		const uint16 staticFlags = stream.readUint16LE();
-		setActorStaticFlags(i, staticFlags);
-
 		ActorStruct* act = &_sceneActors[i];
+		setActorStaticFlags(act, stream.readUint16LE());
+
 		act->entity = stream.readUint16LE();
 
 		if (!act->staticFlags.bIsSpriteActor) {
@@ -167,7 +196,7 @@ bool Scene::loadSceneLBA1() {
 		act->z = stream.readUint16LE();
 		act->collisionZ = act->z;
 		act->strengthOfHit = stream.readByte();
-		*(uint16*)&act->bonusParameter = stream.readUint16LE() & 0xFE;
+		setBonusParameterFlags(act, stream.readUint16LE());
 		act->angle = stream.readUint16LE();
 		act->speed = stream.readUint16LE();
 		act->controlMode = (ControlMode)stream.readUint16LE();

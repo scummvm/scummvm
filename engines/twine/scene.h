@@ -242,7 +242,8 @@ private:
 
 	/** Process zone extra bonus */
 	void processZoneExtraBonus(ZoneStruct *zone);
-	void setActorStaticFlags(int32 actorIdx, uint16 staticFlags);
+	void setActorStaticFlags(ActorStruct* act, uint16 staticFlags);
+	void setBonusParameterFlags(ActorStruct* act, uint16 bonusFlags);
 	bool loadSceneLBA1();
 	/** Initialize new scene */
 	bool initScene(int32 index);
