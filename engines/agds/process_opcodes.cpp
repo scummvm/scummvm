@@ -771,11 +771,16 @@ void Process::loadSaveSlotNamePicture() {
 	delete save;
 }
 
-void Process::stub166() {
-	int arg3 = pop();
-	int arg2 = pop();
-	Common::String arg1 = popString();
-	debug("stub166 %s %d %d", arg1.c_str(), arg2, arg3);
+void Process::setObjectRegionOffset() {
+	int dy = pop();
+	int dx = pop();
+	Common::String objectName = popString();
+	debug("setObjectRegionOffset %s %d %d", objectName.c_str(), dx, dy);
+	auto object = _engine->getCurrentScreenObject(objectName);
+	if (object)
+		object->regionOffset(Common::Point(dx, dy));
+	else
+		warning("setObjectRegionOffset: object %s not found", objectName.c_str());
 }
 
 void Process::stub172() {
@@ -998,12 +1003,9 @@ void Process::moveScreenObject() {
 	Common::String name = popString();
 	debug("moveScreenObject %s %d %d", name.c_str(), x, y);
 	ObjectPtr object = _engine->getCurrentScreenObject(name);
-	if (object) {
-		RegionPtr region = object->region();
-		if (region)
-			debug("object region %s", region->toString().c_str());
+	if (object)
 		object->moveTo(Common::Point(x, y));
-	} else
+	else
 		warning("moveScreenObject: object %s not found", name.c_str());
 }
 

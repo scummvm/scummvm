@@ -148,15 +148,9 @@ void Object::setPicture(Graphics::TransparentSurface *picture) {
 
 void Object::region(RegionPtr region) {
 	_region = region;
-	_pos = region->topLeft();
 }
 
-void Object::moveTo(Common::Point pos)
-{
-	Common::Point delta = pos - _pos;
-	debug("moving object %+d,%+d", delta.x, delta.y);
-	if (_region)
-		_region->move(delta);
+void Object::moveTo(Common::Point pos) {
 	_pos = pos;
 }
 
@@ -175,6 +169,9 @@ void Object::generateRegion() {
 bool Object::pointIn(Common::Point pos) {
 	if (!_inScene)
 		return false;
+
+	pos -= _pos;
+	pos -= _regionOffset;
 
 	if (_region && _region->pointIn(pos))
 		return true;

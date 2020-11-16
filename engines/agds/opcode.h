@@ -183,7 +183,7 @@ enum Opcode {
 	kEnableInventory				= 163,
 	kLoadPreviousScreen				= 164,
 	kMoveScreenObject				= 165,
-	kStub166						= 166,
+	kSetObjectRegionOffset			= 166,
 	kStub167						= 167,
 	kStub168						= 168,
 	kGetIntegerSystemVariable		= 169,
@@ -402,7 +402,7 @@ enum Opcode {
 	OP(kGetObjectSurfaceY, getObjectSurfaceY) \
 	OP(kLoadGame, loadGame) \
 	OP(kLoadSaveSlotNamePicture, loadSaveSlotNamePicture) \
-	OP(kStub166, stub166) \
+	OP(kSetObjectRegionOffset, setObjectRegionOffset) \
 	OP(kSetDelay, setDelay) \
 	OP(kStub172, stub172) \
 	OP(kStub173, stub173) \

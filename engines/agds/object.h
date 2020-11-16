@@ -69,6 +69,7 @@ private:
 	Animation *						_animation;
 	Animation *						_mouseCursor;
 	Common::Point					_pos, _animationPos, _offset;
+	Common::Point					_regionOffset;
 	int								_z;
 	Common::String					_text;
 	Common::String					_title;
@@ -137,6 +138,10 @@ public:
 	}
 
 	void generateRegion();
+
+	void regionOffset(Common::Point offset) {
+		_regionOffset = offset;
+	}
 
 	void setAlpha(int alpha) {
 		if (alpha < 0)
