@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-15 15:20+0000\n"
-"PO-Revision-Date: 2020-11-14 15:41+0000\n"
-"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
+"PO-Revision-Date: 2020-11-16 09:07+0000\n"
+"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -275,7 +275,7 @@ msgstr "Moteur"
 #: backends/graphics3d/sdl/sdl-graphics3d.cpp:132
 #: backends/platform/ds/arm9/source/dsoptions.cpp:97
 msgid "Graphics"
-msgstr "Graphique"
+msgstr "Graphismes"
 
 #: gui/editgamedialog.cpp:202 gui/options.cpp:1638 gui/options.cpp:1769
 msgid "GFX"
@@ -1026,13 +1026,13 @@ msgstr "Désactivé"
 
 #: gui/options.cpp:1332
 msgid "Filter graphics"
-msgstr "Filtrer les graphiques"
+msgstr "Filtrer les graphismes"
 
 #: gui/options.cpp:1332
 msgid "Use linear filtering when scaling graphics"
 msgstr ""
 "Utiliser une interpolation bi-linéaire lors du changement d'échelle des "
-"graphiques"
+"graphismes"
 
 #: gui/options.cpp:1335
 msgid "Aspect ratio correction"
@@ -3858,11 +3858,11 @@ msgstr "Émule la sortie composite vers un téléviseur NTSC"
 
 #: engines/adl/detection.cpp:58 engines/adl/detection.cpp:68
 msgid "Color graphics"
-msgstr "Utiliser les graphiques en couleurs"
+msgstr "Graphismes en couleurs"
 
 #: engines/adl/detection.cpp:59 engines/adl/detection.cpp:69
 msgid "Use color graphics instead of monochrome"
-msgstr "Utiliser les graphiques en couleurs au lieu du noir et blanc"
+msgstr "Utilise les graphismes en couleurs au lieu du noir et blanc"
 
 #: engines/adl/detection.cpp:78
 msgid "Show scanlines"
@@ -4247,7 +4247,7 @@ msgstr "Entrer"
 
 #: engines/dragons/metaengine.cpp:225
 msgid "Debug Graphics"
-msgstr "Deboguer les Graphiques"
+msgstr "Deboguer les Graphismes"
 
 #: engines/dragons/metaengine.cpp:230
 msgid "Quit Game"
@@ -4277,7 +4277,7 @@ msgstr "Utiliser le mode palette lumineuse"
 
 #: engines/dreamweb/detection.cpp:55
 msgid "Display graphics using the game's bright palette"
-msgstr "Utiliser la palette lumineuse du jeu pour l'affichage"
+msgstr "Utilise la palette lumineuse du jeu pour les graphismes"
 
 #: engines/glk/detection.cpp:225
 msgid "Enable Text to Speech"
@@ -5600,16 +5600,16 @@ msgstr "Passer l'étape de tramage EGA (fonds de couleurs pleines)"
 #: engines/sci/detection.cpp:144
 msgid "Skip dithering pass in EGA games, graphics are shown with full colors"
 msgstr ""
-"Passer l'étape de tramage dans les jeux EGA ; les images utilisent des "
+"Passe l'étape de tramage dans les jeux EGA ; les graphismes utilisent des "
 "couleurs pleines"
 
 #: engines/sci/detection.cpp:153
 msgid "Enable high resolution graphics"
-msgstr "Utiliser les graphiques haute résolution"
+msgstr "Activer les graphismes haute résolution"
 
 #: engines/sci/detection.cpp:154
 msgid "Enable high resolution graphics/content"
-msgstr "Utiliser les graphiques haute résolution"
+msgstr "Active les graphismes et le contenu haute résolution"
 
 #: engines/sci/detection.cpp:163
 msgid "Enable black-lined video"
@@ -7095,14 +7095,12 @@ msgid "Debug Grid Camera Right"
 msgstr "Debug Camera de grille Droite"
 
 #: engines/twine/metaengine.cpp:212
-#, fuzzy
-#| msgid "Debug print"
 msgid "Debug Menu"
-msgstr "Imprimer le débogage"
+msgstr "Debug Menu"
 
 #: engines/twine/metaengine.cpp:217
 msgid "Debug Menu Execute"
-msgstr ""
+msgstr "Debug Menu Exécuter"
 
 #: engines/twine/metaengine.cpp:222
 msgid "Normal Behaviour"
