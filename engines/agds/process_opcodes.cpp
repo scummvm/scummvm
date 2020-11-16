@@ -749,6 +749,7 @@ void Process::loadSaveSlotNamePicture() {
 	Common::InSaveFile * save = saveMan->openForLoading(saveSlotName);
 	if (!save) {
 		debug("no save in slot %d", saveSlot);
+		_object->setPicture(nullptr);
 		return;
 	}
 
