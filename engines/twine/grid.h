@@ -26,6 +26,10 @@
 #include "common/scummsys.h"
 #include "twine/shared.h"
 
+namespace Graphics {
+class ManagedSurface;
+}
+
 namespace TwinE {
 
 /** Block fragment entry */
@@ -128,7 +132,7 @@ private:
 	 * @param y grid Y coordinate
 	 * @param buffer work video buffer
 	 */
-	void copyGridMask(int32 index, int32 x, int32 y, const uint8 *buffer);
+	void copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurface& buffer);
 
 	/** Table with all loaded bricks */
 	uint8 *brickTable[NUM_BRICKS]{nullptr};

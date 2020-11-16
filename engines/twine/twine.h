@@ -249,9 +249,6 @@ public:
 	/** Main game video buffer */
 	Graphics::ManagedSurface frontVideoBuffer;
 
-	/** temporary screen table */
-	int32 screenLookupTable[2000]{0};
-
 	int32 loopInventoryItem = 0;
 	int32 loopActorStep = 0;
 

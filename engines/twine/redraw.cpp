@@ -154,7 +154,7 @@ void Redraw::blitBackgroundAreas() {
 	const RedrawStruct *currentArea = currentRedrawList;
 
 	for (int32 i = 0; i < numOfRedrawBox; i++) {
-		_engine->_interface->blitBox(currentArea->left, currentArea->top, currentArea->right, currentArea->bottom, (const int8 *)_engine->workVideoBuffer.getPixels(), currentArea->left, currentArea->top, (int8 *)_engine->frontVideoBuffer.getPixels());
+		_engine->_interface->blitBox(currentArea->left, currentArea->top, currentArea->right, currentArea->bottom, _engine->workVideoBuffer, currentArea->left, currentArea->top, _engine->frontVideoBuffer);
 		currentArea++;
 	}
 }
@@ -395,7 +395,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 							addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 
 							if (actor2->staticFlags.bIsBackgrounded && bgRedraw == 1) {
-								_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom, (const int8 *)_engine->frontVideoBuffer.getPixels(), _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8 *)_engine->workVideoBuffer.getPixels());
+								_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom, _engine->frontVideoBuffer, _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->workVideoBuffer);
 							}
 						}
 					}
@@ -484,7 +484,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom);
 
 					if (actor2->staticFlags.bIsBackgrounded && bgRedraw == 1) {
-						_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom, (const int8 *)_engine->frontVideoBuffer.getPixels(), _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8 *)_engine->workVideoBuffer.getPixels());
+						_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom, _engine->frontVideoBuffer, _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->workVideoBuffer);
 					}
 
 					// show clipping area

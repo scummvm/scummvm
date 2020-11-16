@@ -459,7 +459,7 @@ void GameState::processGameoverAnimation() {
 		const int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);
 		const int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 100);
 
-		_engine->_interface->blitBox(left, top, right, bottom, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
+		_engine->_interface->blitBox(left, top, right, bottom, _engine->workVideoBuffer, 120, 120, _engine->frontVideoBuffer);
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);
 		_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
 		_engine->copyBlockPhys(left, top, right, bottom);
@@ -469,7 +469,7 @@ void GameState::processGameoverAnimation() {
 	}
 
 	_engine->_sound->playSample(Samples::Explode, _engine->getRandomNumber(2000) + 3096);
-	_engine->_interface->blitBox(left, top, right, bottom, (int8 *)_engine->workVideoBuffer.getPixels(), 120, 120, (int8 *)_engine->frontVideoBuffer.getPixels());
+	_engine->_interface->blitBox(left, top, right, bottom, _engine->workVideoBuffer, 120, 120, _engine->frontVideoBuffer);
 	_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
 	_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
 	_engine->copyBlockPhys(left, top, right, bottom);

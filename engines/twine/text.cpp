@@ -162,7 +162,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 
 	const uint8 usedColor = dialTextColor;
 
-	uint8 *screen2 = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[y] + x;
+	uint8 *screen2 = (uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y);
 
 	int32 tempX = x;
 	int32 tempY = y;
@@ -278,7 +278,7 @@ int32 Text::getTextSize(const char *dialogue) { // SizeFont
 }
 
 void Text::initDialogueBox() { // InitDialWindow
-	_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, (const int8 *)_engine->workVideoBuffer.getPixels(), dialTextBoxLeft, dialTextBoxTop, (int8 *)_engine->frontVideoBuffer.getPixels());
+	_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, _engine->workVideoBuffer, dialTextBoxLeft, dialTextBoxTop, _engine->frontVideoBuffer);
 
 	if (newGameVar4 != 0) {
 		_engine->_menu->drawBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom);
@@ -287,11 +287,11 @@ void Text::initDialogueBox() { // InitDialWindow
 
 	_engine->copyBlockPhys(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom);
 	printText8Var3 = 0;
-	_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, (const int8 *)_engine->frontVideoBuffer.getPixels(), dialTextBoxLeft, dialTextBoxTop, (int8 *)_engine->workVideoBuffer.getPixels());
+	_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, _engine->frontVideoBuffer, dialTextBoxLeft, dialTextBoxTop, _engine->workVideoBuffer);
 }
 
 void Text::initInventoryDialogueBox() { // SecondInitDialWindow
-	_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, (const int8 *)_engine->workVideoBuffer.getPixels(), dialTextBoxLeft, dialTextBoxTop, (int8 *)_engine->frontVideoBuffer.getPixels());
+	_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, _engine->workVideoBuffer, dialTextBoxLeft, dialTextBoxTop, _engine->frontVideoBuffer);
 	_engine->copyBlockPhys(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom);
 	printText8Var3 = 0;
 }
@@ -525,7 +525,7 @@ int Text::printText10() {
 			return 0;
 		}
 		if (printText8Var6 != 0) {
-			_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, (const int8 *)_engine->workVideoBuffer.getPixels(), dialTextBoxLeft, dialTextBoxTop, (int8 *)_engine->frontVideoBuffer.getPixels());
+			_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, _engine->workVideoBuffer, dialTextBoxLeft, dialTextBoxTop, _engine->frontVideoBuffer);
 			_engine->copyBlockPhys(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom);
 			printText8Var3 = 0;
 			printText8Var6 = 0;

@@ -265,14 +265,6 @@ void TwinEEngine::allocVideoMemory() {
 	workVideoBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, format);
 	frontVideoBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, format);
 
-	int32 j = 0;
-	int32 k = 0;
-	for (int32 i = SCREEN_HEIGHT; i > 0; i--) {
-		screenLookupTable[j] = k;
-		j++;
-		k += SCREEN_WIDTH;
-	}
-
 	// initVideoVar1 = -1;
 }
 

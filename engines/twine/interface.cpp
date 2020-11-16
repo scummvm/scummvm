@@ -21,6 +21,7 @@
  */
 
 #include "twine/interface.h"
+#include "graphics/managed_surface.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -112,7 +113,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		endHeight = -endHeight;
 	}
 
-	out = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[startHeight] + startWidth;
+	out = (uint8*)_engine->frontVideoBuffer.getBasePtr(startWidth, startHeight);
 
 	int16 color = currentLineColor;
 	if (endWidth < endHeight) { // significant slope
@@ -152,9 +153,9 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 	}
 }
 
-void Interface::blitBox(int32 left, int32 top, int32 right, int32 bottom, const int8 *source, int32 leftDest, int32 topDest, int8 *dest) {
-	const int8 *s = _engine->screenLookupTable[top] + source + left;
-	int8 *d = _engine->screenLookupTable[topDest] + dest + leftDest;
+void Interface::blitBox(int32 left, int32 top, int32 right, int32 bottom, const Graphics::ManagedSurface &source, int32 leftDest, int32 topDest, Graphics::ManagedSurface &dest) {
+	const int8 *s = (const int8 *)source.getBasePtr(left, top);
+	int8 *d = (int8 *)dest.getBasePtr(left, top);
 
 	int32 width = right - left + 1;
 	int32 height = bottom - top + 1;
@@ -202,7 +203,7 @@ void Interface::drawTransparentBox(int32 left, int32 top, int32 right, int32 bot
 		bottom = SCREEN_TEXTLIMIT_BOTTOM;
 	}
 
-	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
+	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getBasePtr(left, top);
 	const int32 height = bottom - top;
 	int32 height2 = height + 1;
 	const int32 width = right - left + 1;
@@ -245,7 +246,7 @@ void Interface::drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom
 	// cropping
 	int32 offset = -((right - left) - SCREEN_WIDTH);
 
-	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
+	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getBasePtr(left, top);
 
 	for (int32 x = top; x < bottom; x++) {
 		for (int32 y = left; y < right; y++) {

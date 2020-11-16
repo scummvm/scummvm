@@ -51,7 +51,7 @@ Grid::~Grid() {
 	}
 }
 
-void Grid::copyGridMask(int32 index, int32 x, int32 y, const uint8 *buffer) {
+void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurface& buffer) {
 	uint8 *ptr = brickMaskTable[index];
 
 	int32 left = x + *(ptr + 2);
@@ -106,8 +106,8 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const uint8 *buffer) {
 		}
 	}
 
-	uint8 *outPtr = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[absY] + left;
-	const uint8 *inPtr = buffer + _engine->screenLookupTable[absY] + left;
+	uint8 *outPtr = (uint8 *)_engine->frontVideoBuffer.getBasePtr(left, absY);
+	const uint8 *inPtr = (const uint8*)buffer.getBasePtr(left, absY);
 
 	do {
 		int32 vc3 = *(ptr++);
@@ -154,7 +154,7 @@ void Grid::drawOverModelActor(int32 x, int32 y, int32 z) {
 
 			if (currBrickEntry->posY + 38 > _engine->_interface->textWindowTop && currBrickEntry->posY <= _engine->_interface->textWindowBottom && currBrickEntry->y >= y) {
 				if (currBrickEntry->x + currBrickEntry->z > z + x) {
-					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, (uint8 *)_engine->workVideoBuffer.getPixels());
+					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, _engine->workVideoBuffer);
 				}
 			}
 		}
@@ -171,11 +171,11 @@ void Grid::drawOverSpriteActor(int32 x, int32 y, int32 z) {
 
 			if (currBrickEntry->posY + 38 > _engine->_interface->textWindowTop && currBrickEntry->posY <= _engine->_interface->textWindowBottom && currBrickEntry->y >= y) {
 				if ((currBrickEntry->x == x) && (currBrickEntry->z == z)) {
-					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, (uint8 *)_engine->workVideoBuffer.getPixels());
+					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, _engine->workVideoBuffer);
 				}
 
 				if ((currBrickEntry->x > x) || (currBrickEntry->z > z)) {
-					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, (uint8 *)_engine->workVideoBuffer.getPixels());
+					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, _engine->workVideoBuffer);
 				}
 			}
 		}
@@ -490,7 +490,7 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 		right++;
 		bottom++;
 
-		uint8 *outPtr = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
+		uint8 *outPtr = (uint8 *)_engine->frontVideoBuffer.getBasePtr(left, top);
 
 		int32 offset = -((right - left) - SCREEN_WIDTH);
 

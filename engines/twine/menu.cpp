@@ -221,7 +221,7 @@ void Menu::processPlasmaEffect(int32 left, int32 top, int32 color) {
 	plasmaEffectRenderFrame();
 
 	const uint8 *in = plasmaEffectPtr + 5 * PLASMA_WIDTH;
-	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
+	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(left, top);
 
 	for (int32 y = 0; y < PLASMA_HEIGHT / 2; y++) {
 		for (int32 x = 0; x < PLASMA_WIDTH; x++) {
@@ -294,7 +294,7 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, int32 width, int32 to
 			}
 		}
 	} else {
-		_engine->_interface->blitBox(left, top, right, bottom, (const int8 *)_engine->workVideoBuffer.getPixels(), left, top, (int8 *)_engine->frontVideoBuffer.getPixels());
+		_engine->_interface->blitBox(left, top, right, bottom, _engine->workVideoBuffer, left, top, _engine->frontVideoBuffer);
 		_engine->_interface->drawTransparentBox(left, top, right, bottom, 4);
 	}
 

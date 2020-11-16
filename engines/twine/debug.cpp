@@ -35,9 +35,9 @@
 
 namespace TwinE {
 
-void Debug::debugFillButton(int32 X, int32 Y, int32 width, int32 height, int8 color) {
-	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[Y] + X;
-	int32 offset = 640 - width;
+void Debug::debugFillButton(int32 x, int32 y, int32 width, int32 height, int8 color) {
+	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getBasePtr(x, y);
+	int32 offset = SCREEN_WIDTH - width;
 
 	for (int32 i = 0; i < height; i++) {
 		for (int32 j = 0; j < width; j++) {
