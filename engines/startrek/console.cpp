@@ -20,8 +20,9 @@
  *
  */
 
-#include "startrek/console.h"
+#include "common/file.h"
 #include "gui/debugger.h"
+#include "startrek/console.h"
 #include "startrek/resource.h"
 #include "startrek/room.h"
 #include "startrek/startrek.h"
@@ -32,6 +33,8 @@ Console::Console(StarTrekEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("room",			WRAP_METHOD(Console, Cmd_Room));
 	registerCmd("actions",		WRAP_METHOD(Console, Cmd_Actions));
 	registerCmd("text",			WRAP_METHOD(Console, Cmd_Text));
+	registerCmd("bg",			WRAP_METHOD(Console, Cmd_Bg));
+	registerCmd("dumpfile",		WRAP_METHOD(Console, Cmd_DumpFile));
 }
 
 Console::~Console() {
@@ -109,6 +112,44 @@ bool Console::Cmd_Text(int argc, const char **argv) {
 
 	return true;
 }
+
+bool Console::Cmd_Bg(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <background image name>\n", argv[0]);
+		return true;
+	}
+
+	_vm->_gfx->setBackgroundImage(argv[1]);
+	_vm->_gfx->copyBackgroundScreen();
+	_vm->_system->updateScreen();
+
+	return false;
+}
+
+bool Console::Cmd_DumpFile(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <file name>\n", argv[0]);
+		return true;
+	}
+
+	debugPrintf("Dumping %s...\n", argv[1]);
+
+	Common::MemoryReadStreamEndian *stream = _vm->_resource->loadFile(argv[1]);
+	uint32 size = stream->size();
+	byte *data = new byte[size];
+	stream->read(data, size);
+	delete stream;
+
+	Common::DumpFile out;
+	out.open(argv[1]);
+	out.write(data, size);
+	out.flush();
+	out.close();
+	delete[] data;
+
+	return true;
+}
+
 
 Common::String Console::EventToString(uint32 action) {
 	const char *actions[] = {
