@@ -57,6 +57,8 @@ struct Patch {
 
 	void load(Common::SeekableReadStream *stream);
 	int getFlag(const Common::String & name) const;
+	int incRef(const Common::String & name);
+	int decRef(const Common::String & name);
 };
 
 

@@ -51,5 +51,26 @@ int Patch::getFlag(const Common::String & name) const {
 	return 0;
 }
 
+int Patch::incRef(const Common::String & name) {
+	for(auto & object : objects) {
+		if (object.name == name) {
+			return ++object.flag;
+		}
+	}
+	objects.push_back({name, 1});
+	return 1;
+}
+
+int Patch::decRef(const Common::String & name) {
+	for(auto & object : objects) {
+		if (object.name == name) {
+			//this is original code lol
+			object.flag = 0;
+			return 0;
+		}
+	}
+	objects.push_back({name, 0});
+	return 0;
+}
 
 }
