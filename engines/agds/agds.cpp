@@ -879,8 +879,6 @@ bool AGDSEngine::hasFeature(EngineFeature f) const {
 	switch (f) {
 	case kSupportsSubtitleOptions:
 	case kSupportsReturnToLauncher:
-	case kSupportsLoadingDuringRuntime:
-	case kSupportsSavingDuringRuntime:
 	case kSupportsChangingOptionsDuringRuntime:
 		return true;
 	default:
