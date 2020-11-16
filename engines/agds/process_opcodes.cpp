@@ -667,6 +667,13 @@ void Process::setAnimationSpeed() {
 		_animationSpeed = value;
 }
 
+void Process::compareScreenName() {
+	auto name = popString();
+	auto currentScreenName = _engine->getCurrentScreenName();
+	debug("compareScreenName %s (currentScreen: %s)", name.c_str(), currentScreenName.c_str());
+	push(name == currentScreenName? 1: 0);
+}
+
 void Process::screenObjectPatchIncRef() {
 	Common::String objectName = popString();
 	Common::String screenName = popString();

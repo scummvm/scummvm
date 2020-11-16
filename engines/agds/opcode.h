@@ -168,7 +168,7 @@ enum Opcode {
 	kGetCharacterAnimationPhase		= 148,
 	kGetCharacterX					= 149,
 	kGetCharacterY					= 150,
-	kStub151						= 151,
+	kCompareScreenName				= 151,
 	kGetPictureBaseX				= 152,
 	kGetPictureBaseY				= 153,
 	kGetObjectSurfaceX				= 154,
@@ -351,6 +351,7 @@ enum Opcode {
 	OP(kSetObjectZ, setObjectZ) \
 	OP(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay) \
 	OP(kLoadTextFromObject, loadTextFromObject) \
+	OP(kCompareScreenName, compareScreenName) \
 	OP(kScreenSetZNearFar, screenSetZNearFar) \
 	OP(kScreenLoadObject, loadScreenObject) \
 	OP(kScreenLoadRegion, loadScreenRegion) \
