@@ -329,6 +329,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_translatedLines = 0;
 	_languageLineIndex = 0;
 	_2byteFontPtr = 0;
+	_2byteWidth = 0;
+	_2byteHeight = 0;
+	_2byteShadow = 0;
 	_krStrPost = 0;
 	_V1TalkingActor = 0;
 	for (int i = 0; i < 20; i++)
