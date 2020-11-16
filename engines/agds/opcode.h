@@ -429,6 +429,7 @@ enum Opcode {
 	OP(kGetObjectPictureWidth, getObjectPictureWidth) \
 	OP(kGetObjectPictureHeight, getObjectPictureHeight) \
 	OP(kLoadPicture, loadPicture) \
+	OP(kStub197, stub197) \
 	OP(kStub199, stub199) \
 	OP(kSetSampleVolumeAndPan, setSampleVolumeAndPan) \
 	OP(kAddSampleToSoundGroup, addSampleToSoundGroup) \

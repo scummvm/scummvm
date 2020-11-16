@@ -846,6 +846,12 @@ void Process::stub194() {
 	debug("stub194: mute");
 }
 
+void Process::stub197() {
+	int flag = pop();
+	auto objectName = popString();
+	debug("stub197: %s %d", objectName.c_str(), flag);
+}
+
 void Process::stub199() {
 	int value = pop();
 	debug("stub199: (free cached surface?) %d", value);
