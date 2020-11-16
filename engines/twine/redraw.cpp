@@ -458,7 +458,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				renderBottom = renderTop + spriteHeight;
 
 				if (actor2->staticFlags.bUsesClipping) {
-					_engine->_interface->setClip(_engine->_renderer->projPosXScreen + actor2->info0, _engine->_renderer->projPosYScreen + actor2->info1, _engine->_renderer->projPosXScreen + actor2->info2, _engine->_renderer->projPosYScreen + actor2->info3);
+					_engine->_interface->setClip(_engine->_renderer->projPosXScreen + actor2->cropLeft, _engine->_renderer->projPosYScreen + actor2->cropTop, _engine->_renderer->projPosXScreen + actor2->cropRight, _engine->_renderer->projPosYScreen + actor2->cropBottom);
 				} else {
 					_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
 				}

@@ -391,15 +391,15 @@ void Movements::processRandomAction(int actorIdx) {
 
 	if (actor->brickCausesDamage()) {
 		moveActor(actor->angle, (((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
-		actor->info0 = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
+		actor->delayInMillis = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
 		_engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, actorIdx);
 	}
 
 	if (!actor->move.numOfStep) {
 		_engine->_animations->initAnim(AnimationTypes::kForward, 0, AnimationTypes::kAnimInvalid, actorIdx);
-		if (_engine->lbaTime > actor->info0) {
+		if (_engine->lbaTime > actor->delayInMillis) {
 			moveActor(actor->angle, (((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
-			actor->info0 = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
+			actor->delayInMillis = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
 		}
 	}
 }

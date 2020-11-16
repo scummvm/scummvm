@@ -556,7 +556,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					pinguin->setBrickShape(ShapeType::kNone);
 					_movements->moveActor(pinguin->angle, pinguin->angle, pinguin->speed, &pinguin->move);
 					_gameState->gameFlags[InventoryItems::kiPinguin] = 0; // byte_50D89 = 0;
-					pinguin->info0 = lbaTime + 1500;
+					pinguin->delayInMillis = lbaTime + 1500;
 				}
 				break;
 			}

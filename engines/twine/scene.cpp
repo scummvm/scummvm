@@ -171,11 +171,12 @@ bool Scene::loadSceneLBA1() {
 		act->angle = stream.readUint16LE();
 		act->speed = stream.readUint16LE();
 		act->controlMode = (ControlMode)stream.readUint16LE();
-		act->info0 = stream.readSint16LE();
-		act->info1 = stream.readSint16LE();
-		act->info2 = stream.readSint16LE();
-		act->info3 = stream.readSint16LE();
-		act->followedActor = act->info3;
+		act->cropLeft = stream.readSint16LE();
+		act->delayInMillis = act->cropLeft; // TODO: this might not be needed
+		act->cropTop = stream.readSint16LE();
+		act->cropRight = stream.readSint16LE();
+		act->cropBottom = stream.readSint16LE();
+		act->followedActor = act->cropBottom; // TODO: is this needed? and valid?
 		act->bonusAmount = stream.readByte();
 		act->talkColor = stream.readByte();
 		act->armor = stream.readByte();

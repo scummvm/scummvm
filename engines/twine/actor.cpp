@@ -390,10 +390,10 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->speed = 40;
 	actor->controlMode = ControlMode::kNoMove;
 
-	actor->info0 = 0;
-	actor->info1 = 0;
-	actor->info2 = 0;
-	actor->info3 = 0;
+	actor->cropLeft = 0;
+	actor->cropTop = 0;
+	actor->cropRight = 0;
+	actor->cropBottom = 0;
 
 	actor->setBrickShape(ShapeType::kNone);
 	actor->collision = -1;

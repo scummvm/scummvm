@@ -157,10 +157,11 @@ public:
 	int32 angle = 0;
 	int32 speed = 0;
 	ControlMode controlMode = ControlMode::kNoMove;
-	int32 info0 = 0;         // cropLeft
-	int32 info1 = 0;         // cropTop
-	int32 info2 = 0;         // cropRight
-	int32 info3 = 0;         // cropBottom
+	int32 delayInMillis = 0;
+	int32 cropLeft = 0;
+	int32 cropTop = 0;
+	int32 cropRight = 0;
+	int32 cropBottom = 0;
 	int32 followedActor = 0; // same as info3
 	int32 bonusAmount = 0;   // field_12
 	int32 talkColor = 0;
