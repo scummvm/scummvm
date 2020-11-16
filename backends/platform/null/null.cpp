@@ -226,7 +226,7 @@ void OSystem_NULL::logMessage(LogMessageType::Type type, const char *message) {
 }
 
 void OSystem_NULL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
-	s.add("dists/engine-data", new Common::FSDirectory("dists/engine-data", 4), priority);
+	s.add("test/engine-data", new Common::FSDirectory("test/engine-data", 4), priority);
 	s.add("gui/themes", new Common::FSDirectory("gui/themes", 4), priority);
 }
 
