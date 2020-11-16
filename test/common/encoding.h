@@ -6,7 +6,7 @@
 
 // We support CJK on all the platforms but it relies on OSystem to read
 // file which *in test environments* is available only on some platforms
-#if defined(POSIX) || defined(WIN32)
+#if NULL_OSYSTEM_IS_AVAILABLE
 #define TEST_CJK 1
 #else
 #define TEST_CJK 0
@@ -138,7 +138,6 @@ public:
 	}
 
 	void test_conversion_unicode_machine_endian() {
-		Common::install_null_g_system();
 		//  |dolar|   cent    |     euro       |
 		unsigned char utf8[] = {0x24, 0xC2, 0xA2, 0xE2, 0x82, 0xAC, 0};
 #ifdef SCUMM_BIG_ENDIAN
@@ -193,7 +192,6 @@ public:
 	}
 
 	void test_conversion_unicode_big_endian() {
-		Common::install_null_g_system();
 		//  |dolar|   cent    |     euro       |
 		unsigned char utf8[] = {0x24, 0xC2, 0xA2, 0xE2, 0x82, 0xAC, 0};
 		//| dolar |  cent  |    euro   |
@@ -214,7 +212,6 @@ public:
 	}
 
 	void test_conversion_unicode_little_endian() {
-		Common::install_null_g_system();
 		//  |dolar|   cent    |     euro       |
 		unsigned char utf8[] = {0x24, 0xC2, 0xA2, 0xE2, 0x82, 0xAC, 0};
 		//| dolar |  cent  |    euro   |
@@ -234,8 +231,6 @@ public:
 	}
 
 	void test_cyrillic_transliteration() {
-		Common::install_null_g_system();
-
 		unsigned char utf8[] = {/* Z */0xD0, 0x97, /* d */ 0xD0, 0xB4, /* r */ 0xD1, 0x80, /* a */ 0xD0, 0xB0, /* v */ 0xD0, 0xB2, /* s */ 0xD1, 0x81, /* t */ 0xD1, 0x82, /* v */ 0xD0, 0xB2, /* u */ 0xD1, 0x83, /* j */ 0xD0, 0xB9, /* t */ 0xD1, 0x82, /* e */ 0xD0, 0xB5, 0};
 		unsigned char iso_8859_5[] = {0xB7, 0xD4, 0xE0, 0xD0, 0xD2, 0xE1, 0xE2, 0xD2, 0xE3, 0xD9, 0xE2, 0xD5, 0};
 		unsigned char ascii[] = "Zdravstvujte";
@@ -258,8 +253,6 @@ public:
 	}
 
 	void test_other_conversions() {
-		Common::install_null_g_system();
-
 		unsigned char cp850[] = {0x99, 0xE0, 0xEA, 0x41, 0x64, 0};
 		unsigned char utf8_1[] = {0xC3, 0x96, 0xC3, 0x93, 0xC3, 0x9B, 0x41, 0x64, 0};
 
