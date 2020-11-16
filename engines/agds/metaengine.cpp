@@ -21,6 +21,8 @@
  */
 #include "agds/agds.h"
 #include "agds/object.h"
+#include "common/savefile.h"
+#include "common/system.h"
 
 namespace AGDS {
 
@@ -29,13 +31,10 @@ public:
 	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
-		case kSupportsListSaves:
-		case kSupportsLoadingDuringStartup:
-		case kSupportsDeleteSave:
-		case kSavesSupportMetaInfo:
-		case kSavesSupportThumbnail:
 		case kSimpleSavesNames:
 			return true;
+		case kSupportsLoadingDuringStartup:
+			return false;
 		default:
 			return AdvancedMetaEngine::hasFeature(f);
 		}
@@ -46,7 +45,36 @@ public:
 	}
 
 	int getMaximumSaveSlot() const override {
-		return 99;
+		return 24;
+	}
+
+	SaveStateList listSaves(const char *target) const {
+		Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+		Common::StringArray filenames;
+		Common::String pattern(getSavegameFilePattern(target));
+
+		filenames = saveFileMan->listSavefiles(pattern);
+
+		SaveStateList saveList;
+		for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+			// Obtain the last 2 digits of the filename, since they correspond to the save slot
+			int slotNum = atoi(file->c_str() + file->size() - 2);
+
+			if (slotNum >= 0 && slotNum <= getMaximumSaveSlot()) {
+				SaveStateDescriptor desc;
+
+				desc.setSaveSlot(slotNum);
+				desc.setDescription(*file);
+				if (slotNum == getAutosaveSlot())
+					desc.setWriteProtectedFlag(true);
+
+				saveList.push_back(desc);
+			}
+		}
+
+		// Sort saves based on slot number.
+		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
+		return saveList;
 	}
 };
 
