@@ -65,7 +65,7 @@ void Scene::setActorStaticFlags(int32 actorIdx, uint16 staticFlags) {
 		_sceneActors[actorIdx].staticFlags.bCanDrown = 1;
 	}
 	if (staticFlags & 0x80) {
-		_sceneActors[actorIdx].staticFlags.bUnk80 = 1;
+		_sceneActors[actorIdx].staticFlags.bComputeCollisionWithFloor = 1;
 	}
 
 	if (staticFlags & 0x100) {

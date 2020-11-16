@@ -70,7 +70,7 @@ struct StaticFlagsStruct {
 	uint16 bCanBePushed : 1;                // 0x0010
 	uint16 bComputeLowCollision : 1;        // 0x0020
 	uint16 bCanDrown : 1;                   // 0x0040
-	uint16 bUnk80 : 1;                      // 0x0080
+	uint16 bComputeCollisionWithFloor : 1;  // 0x0080
 	uint16 bUnk0100 : 1;                    // 0x0100
 	uint16 bIsHidden : 1;                   // 0x0200
 	uint16 bIsSpriteActor : 1;              // 0x0400
