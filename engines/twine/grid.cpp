@@ -431,7 +431,10 @@ bool Grid::initGrid(int32 index) {
 	}
 
 	// load layouts from file
-	HQR::getAllocEntry(&currentBll, Resources::HQR_LBA_BLL_FILE, index);
+	if (HQR::getAllocEntry(&currentBll, Resources::HQR_LBA_BLL_FILE, index) == 0) {
+		warning("Failed to load block library index: %i", index);
+		return false;
+	}
 
 	loadGridBricks(currentGridSize);
 
