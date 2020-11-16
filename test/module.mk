@@ -70,18 +70,19 @@ endif
 
 test: test/runner
 	./test/runner
-test/runner: test/runner.cpp $(TEST_LIBS)
-	$(QUIET_CXX)$(CXX) $(TEST_CXXFLAGS) $(CPPFLAGS) $(TEST_CFLAGS) -o $@ $+ $(TEST_LDFLAGS)
-test/runner.cpp: $(TESTS) copy-dat
+test/runner: test/runner.cpp $(TEST_LIBS) copy-dat
+	$(QUIET_CXX)$(CXX) $(TEST_CXXFLAGS) $(CPPFLAGS) $(TEST_CFLAGS) -o $@ $(srcdir)/test/runner.cpp $(TEST_LIBS) $(TEST_LDFLAGS)
+test/runner.cpp: $(TESTS)
 	@mkdir -p test
 	$(srcdir)/test/cxxtest/cxxtestgen.py $(TEST_FLAGS) -o $@ $+
 
 clean: clean-test
 clean-test:
-	-$(RM) test/runner.cpp test/runner
+	-$(RM) test/runner.cpp test/runner test/engine-data/encoding.dat
+	rmdir test/engine-data
 
 copy-dat:
 	-$(MKDIR) test/engine-data
-	-$(CP) $(srcdir)/dists/engine-data/encoding.dat test/engine-data
+	-$(CP) $(srcdir)/dists/engine-data/encoding.dat test/engine-data/encoding.dat
 
 .PHONY: test clean-test copy-dat
