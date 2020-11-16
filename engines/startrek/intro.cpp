@@ -28,6 +28,8 @@ namespace StarTrek {
 void StarTrekEngine::playIntro() {
 	// TODO: .MT audio file
 
+	_frameIndex = 0;
+
 	initStarfieldPosition();
 	initStarfield(10, 20, 309, 169, 128);
 

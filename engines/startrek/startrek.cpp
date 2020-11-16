@@ -133,38 +133,29 @@ Common::Error StarTrekEngine::run() {
 	_gfx->setMouseBitmap("pushbtn");
 	_gfx->toggleMouse(true);
 
-	bool shouldPlayIntro = true;
 	bool loadedSave = false;
 
 	if (ConfMan.hasKey("save_slot")) {
 		if (!loadGame(ConfMan.getInt("save_slot")))
 			error("Failed to load savegame %d", ConfMan.getInt("save_slot"));
-		shouldPlayIntro = false;
 		loadedSave = true;
-		_roomIndexToLoad = -1;
 	}
 
 	if (!loadedSave) {
-		if (shouldPlayIntro) {
-			_frameIndex = 0;
-			playIntro();
-		}
-
-		_frameIndex = 0;
-
-		_gameMode = -1;
-		_lastGameMode = -1;
-	}
-
-	if (loadedSave)
+		playIntro();
+		runGameMode(GAMEMODE_BEAMDOWN, false);
+	} else {
+		_roomIndexToLoad = -1;
 		runGameMode(_gameMode, true);
-	else
-		runGameMode(GAMEMODE_AWAYMISSION, false);
+	}
+	
 	return Common::kNoError;
 }
 
 Common::Error StarTrekEngine::runGameMode(int mode, bool resume) {
 	if (!resume) { // Only run this if not just resuming from a savefile
+		_frameIndex = 0;
+		_lastGameMode = -1;
 		_gameMode = mode;
 
 		_sound->stopAllVocSounds();
@@ -236,7 +227,7 @@ Common::Error StarTrekEngine::runGameMode(int mode, bool resume) {
 		switch (_gameMode) {
 		case GAMEMODE_BRIDGE:
 			popNextEvent(&event);
-			//runBridge();
+			runBridge();
 			break;
 
 		case GAMEMODE_AWAYMISSION:

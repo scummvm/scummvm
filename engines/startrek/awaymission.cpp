@@ -165,7 +165,7 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 		_warpHotspotsActive = true;
 		break;
 	case 6:
-		error("initAwayCrewPositions(6) unimplemented");
+		loadBridgeActors();
 		break;
 	default:
 		warning("Invalid parameter (%d) to initAwayCrewPositions", warpEntryIndex);

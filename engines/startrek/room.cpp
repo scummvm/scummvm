@@ -691,8 +691,6 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 			break;
 		}
 	}
-
-	_vm->_roomIndexToLoad = 0;
 }
 
 void Room::showGameOverMenu() { // TODO: takes an optional parameter?

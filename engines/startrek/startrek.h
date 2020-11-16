@@ -232,8 +232,11 @@ public:
 	void runTransportSequence(const Common::String &name);
 
 	// Bridge
-	void initBridge(bool b) {}; // TODO
-	void cleanupBridge() {}; // TODO
+	void initBridge(bool b);
+	void loadBridge();
+	void loadBridgeActors();
+	void cleanupBridge();
+	void runBridge();
 
 	void playMovie(Common::String filename);
 	void playMovieMac(Common::String filename);
