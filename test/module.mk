@@ -69,8 +69,6 @@ endif
 
 
 test: test/runner
-	-md5sum test/engine-data/encoding.dat
-	-md5sum $(srcdir)/dists/engine-data/encoding.dat
 	./test/runner
 test/runner: test/runner.cpp $(TEST_LIBS) copy-dat
 	$(QUIET_CXX)$(CXX) $(TEST_CXXFLAGS) $(CPPFLAGS) $(TEST_CFLAGS) -o $@ test/runner.cpp $(TEST_LIBS) $(TEST_LDFLAGS)
