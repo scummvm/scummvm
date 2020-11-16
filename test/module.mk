@@ -69,6 +69,8 @@ endif
 
 
 test: test/runner
+	-md5sum test/engine-data/encoding.dat
+	-md5sum $(srcdir)/dists/engine-data/encoding.dat
 	./test/runner
 test/runner: test/runner.cpp $(TEST_LIBS) copy-dat
 	$(QUIET_CXX)$(CXX) $(TEST_CXXFLAGS) $(CPPFLAGS) $(TEST_CFLAGS) -o $@ test/runner.cpp $(TEST_LIBS) $(TEST_LDFLAGS)
@@ -79,10 +81,10 @@ test/runner.cpp: $(TESTS)
 clean: clean-test
 clean-test:
 	-$(RM) test/runner.cpp test/runner test/engine-data/encoding.dat
-	rmdir test/engine-data
+	-rmdir test/engine-data
 
 copy-dat:
-	-$(MKDIR) test/engine-data
-	-$(CP) $(srcdir)/dists/engine-data/encoding.dat test/engine-data/encoding.dat
+	$(MKDIR) test/engine-data
+	$(CP) $(srcdir)/dists/engine-data/encoding.dat test/engine-data/encoding.dat
 
 .PHONY: test clean-test copy-dat
