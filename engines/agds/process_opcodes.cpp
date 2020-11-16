@@ -517,7 +517,7 @@ void Process::checkScreenPatch() {
 		} else {
 			push(_engine->inventory().find(objectName) >= 0);
 		}
-	} if (screen && screen->applyingPatch()) {
+	} else if (screen && screen->applyingPatch()) {
 		debug("checkScreenPatch: attempt to change screen patch (%s) in patching process %s", screen->getName().c_str(), getName().c_str());
 		push(-1);
 	} else {
