@@ -229,9 +229,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 			}
 
 			if (!targetActorIdx) {
-				int32 heroAngle;
-
-				heroAngle = ctx.actor->angle + 0x480 - newAngle + 0x400;
+				int32 heroAngle = ctx.actor->angle + 0x480 - newAngle + 0x400;
 				heroAngle &= 0x3FF;
 
 				if (ABS(heroAngle) > 0x100) {
@@ -241,9 +239,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 				}
 			} else {
 				if (engine->_actor->heroBehaviour == HeroBehaviourType::kDiscrete) {
-					int32 heroAngle;
-
-					heroAngle = ctx.actor->angle + 0x480 - newAngle + 0x400;
+					int32 heroAngle = ctx.actor->angle + 0x480 - newAngle + 0x400;
 					heroAngle &= 0x3FF;
 
 					if (ABS(heroAngle) > 0x100) {

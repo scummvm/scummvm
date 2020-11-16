@@ -52,7 +52,6 @@ int32 Interface::checkClipping(int32 x, int32 y) {
 // TODO: check if Graphics::drawLine() works here
 void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, int32 lineColor) {
 	int32 currentLineColor = lineColor;
-	uint8 *out;
 
 	// draw line from left to right
 	if (startWidth > endWidth) {
@@ -69,8 +68,8 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 	int32 outcode0 = checkClipping(startWidth, startHeight);
 	int32 outcode1 = checkClipping(endWidth, endHeight);
 
-	while ((outcode0 | outcode1) != 0) {
-		if ((outcode0 & outcode1) != 0 && outcode0 != INSIDE) {
+	while ((outcode0 | outcode1) != INSIDE) {
+		if ((outcode0 & outcode1) != INSIDE && outcode0 != INSIDE) {
 			return; // Reject lines which are behind one clipping plane
 		}
 
@@ -113,7 +112,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		endHeight = -endHeight;
 	}
 
-	out = (uint8*)_engine->frontVideoBuffer.getBasePtr(startWidth, startHeight);
+	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(startWidth, startHeight);
 
 	int16 color = currentLineColor;
 	if (endWidth < endHeight) { // significant slope

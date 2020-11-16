@@ -1043,7 +1043,7 @@ void Menu::processInventoryMenu() {
 		if (bx == 3) {
 			_engine->_text->initInventoryDialogueBox();
 
-			if (_engine->_gameState->gameFlags[inventorySelectedItem] == 1 && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && inventorySelectedItem < NUM_INVENTORY_ITEMS) {
+			if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->gameFlags[inventorySelectedItem] == 1 && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
 				_engine->_text->initText(inventorySelectedItem + 100);
 			} else {
 				_engine->_text->initText(128);
@@ -1065,7 +1065,7 @@ void Menu::processInventoryMenu() {
 				_engine->_text->initInventoryDialogueBox();
 				bx = 0;
 			} else {
-				if (_engine->_gameState->gameFlags[inventorySelectedItem] == 1 && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && inventorySelectedItem < NUM_INVENTORY_ITEMS) {
+				if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->gameFlags[inventorySelectedItem] == 1 && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
 					_engine->_text->initInventoryDialogueBox();
 					_engine->_text->initText(inventorySelectedItem + 100);
 				}
@@ -1074,7 +1074,7 @@ void Menu::processInventoryMenu() {
 
 		drawItem(inventorySelectedItem);
 
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter) && _engine->_gameState->gameFlags[inventorySelectedItem] == 1 && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && inventorySelectedItem < NUM_INVENTORY_ITEMS) {
+		if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter) && _engine->_gameState->gameFlags[inventorySelectedItem] == 1 && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
 			_engine->loopInventoryItem = inventorySelectedItem;
 			inventorySelectedColor = 91;
 			drawItem(inventorySelectedItem);
