@@ -232,6 +232,13 @@ PatchPtr AGDSEngine::getPatch(const Common::String &screenName) const {
 	return it != _patches.end()? it->_value: PatchPtr();
 }
 
+PatchPtr AGDSEngine::createPatch(const Common::String &screenName) {
+	auto & patch = _patches[screenName];
+	if (!patch)
+		patch = PatchPtr(new Patch());
+	return patch;
+}
+
 void AGDSEngine::loadScreen(const Common::String &name) {
 	_nextScreenName.clear();
 	debug("loadScreen %s", name.c_str());
