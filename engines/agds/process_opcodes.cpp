@@ -667,18 +667,41 @@ void Process::setAnimationSpeed() {
 		_animationSpeed = value;
 }
 
-void Process::screenSaveScreenPatch() {
+void Process::screenObjectPatchIncRef() {
 	Common::String objectName = popString();
 	Common::String screenName = popString();
-	debug("saveScreenPatch stub %s %s", screenName.c_str(), objectName.c_str());
-	suspend(kExitCodeLoadScreenObject, objectName);
+	debug("screenObjectPatchIncRef: %s %s", screenName.c_str(), objectName.c_str());
+	if (!screenName.empty() && screenName != _engine->getCurrentScreenName()) {
+		if (_engine->getCurrentScreen()->applyingPatch()) {
+			debug("attempt to change screen patch (%s) in patching process (%s)", objectName.c_str(), screenName.c_str());
+		} else {
+			//fixme: add non-existent screen check?
+			auto patch = _engine->createPatch(screenName);
+			int refs = patch->incRef(objectName);
+			debug("increment refcount for object %s, result: %d", objectName.c_str(), refs);
+		}
+	} else {
+		debug("screenObjectPatchIncRef: current screen, loading object");
+		suspend(kExitCodeLoadScreenObject, objectName);
+	}
 }
 
-void Process::screenRemoveObjectSavePatch() {
+void Process::screenObjectPatchDecRef() {
 	Common::String objectName = popString();
 	Common::String screenName = popString();
-	if (screenName != _engine->getCurrentScreenName()) {
-		debug("screenRemoveObjectSavePatch semi-stub %s %s", screenName.c_str(), objectName.c_str());
+	if (!screenName.empty() && screenName != _engine->getCurrentScreenName()) {
+		debug("screenObjectPatchDecRef %s %s", screenName.c_str(), objectName.c_str());
+		if (_engine->getCurrentScreen()->applyingPatch()) {
+			debug("attempt to change screen patch (%s) in patching process (%s)", objectName.c_str(), screenName.c_str());
+		} else {
+			//fixme: add non-existent screen check?
+			auto patch = _engine->getPatch(screenName);
+			if (patch) {
+				int refs = patch->decRef(objectName);
+				debug("decrement refcount for object %s, result: %d", objectName.c_str(), refs);
+			} else
+				debug("decrement refcount for object %s, no patch for screen %s", objectName.c_str(), screenName.c_str());
+		}
 	} else {
 		Screen *screen = _engine->getCurrentScreen();
 		if (screen) {
