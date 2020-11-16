@@ -403,8 +403,7 @@ void IMuseDigital::playComiDemoMusic(const char *songName, const imuseComiTable 
 		if ((table->attribPos != 0) &&
 				(table->attribPos == _comiDemoStateMusicTable[_curMusicState].attribPos)) {
 			fadeOutMusicAndStartNew(table->fadeOutDelay, table->filename, table->soundId);
-		}
-		else {
+		} else {
 			fadeOutMusic(table->fadeOutDelay);
 			startMusic(table->filename, table->soundId, hookId, 127);
 		}
