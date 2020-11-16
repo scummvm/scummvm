@@ -83,10 +83,10 @@ void Renderer::setBaseTranslation(int32 x, int32 y, int32 z) {
 	baseTransPosZ = z;
 }
 
-void Renderer::setOrthoProjection(int32 X, int32 Y, int32 Z) {
-	orthoProjX = X;
-	orthoProjY = Y;
-	orthoProjZ = Z;
+void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
+	orthoProjX = x;
+	orthoProjY = y;
+	orthoProjZ = z;
 
 	isUsingOrhoProjection = true;
 }
