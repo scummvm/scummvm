@@ -171,10 +171,10 @@ bool Scene::loadSceneLBA1() {
 		act->angle = stream.readUint16LE();
 		act->speed = stream.readUint16LE();
 		act->controlMode = (ControlMode)stream.readUint16LE();
-		act->info0 = stream.readUint16LE();
-		act->info1 = stream.readUint16LE();
-		act->info2 = stream.readUint16LE();
-		act->info3 = stream.readUint16LE();
+		act->info0 = stream.readSint16LE();
+		act->info1 = stream.readSint16LE();
+		act->info2 = stream.readSint16LE();
+		act->info3 = stream.readSint16LE();
 		act->followedActor = act->info3;
 		act->bonusAmount = stream.readByte();
 		act->talkColor = stream.readByte();
