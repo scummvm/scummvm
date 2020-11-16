@@ -46,12 +46,12 @@ struct Patch {
 	Common::String screenRegionName;
 	Common::String prevScreenName;
 
-	uint unk41;
+	uint unk41 = 0;
 	Common::Point characterPosition;
-	uint characterDirection;
-	bool characterPresent;
+	uint characterDirection = 0;
+	bool characterPresent = false;
 
-	byte palette[0x300];
+	byte palette[0x300] = {};
 	Common::String defaultMouseCursor;
 	Common::Array<Object> objects;
 

@@ -259,6 +259,7 @@ public:
 
 	void reAddInventory();
 	PatchPtr getPatch(const Common::String &screenName) const;
+	PatchPtr createPatch(const Common::String &screenName);
 
 private:
 	void loadPatches(Common::SeekableReadStream *file, Database & db);
