@@ -321,7 +321,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		fadeOutMusic(120);
 		return;
 	}
-	
+
 	switch (table->transitionType) {
 	case 0:
 	default:
