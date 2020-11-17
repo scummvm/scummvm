@@ -60,7 +60,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	if (getPlatform() != Common::kPlatformDOS)
 		error("Only DOS versions of Star Trek: 25th Anniversary are currently supported");
 	else if (getGameType() == GType_STJR)
-		error("Star Trek: Judgment Rites not yet supported");
+		error("Star Trek: Judgment Rites is not yet supported");
 
 	DebugMan.addDebugChannel(kDebugSound, "sound", "Sound");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics");
@@ -110,6 +110,9 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 
 	for (int i = 0; i < MAX_BAN_FILES; i++)
 		_banFiles[i] = nullptr;
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "patches");
 }
 
 StarTrekEngine::~StarTrekEngine() {

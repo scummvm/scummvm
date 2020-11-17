@@ -34,7 +34,8 @@ Console::Console(StarTrekEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("actions",		WRAP_METHOD(Console, Cmd_Actions));
 	registerCmd("text",			WRAP_METHOD(Console, Cmd_Text));
 	registerCmd("bg",			WRAP_METHOD(Console, Cmd_Bg));
-	registerCmd("dumpfile",		WRAP_METHOD(Console, Cmd_DumpFile));
+	registerCmd("filedump",		WRAP_METHOD(Console, Cmd_DumpFile));
+	registerCmd("filesearch",	WRAP_METHOD(Console, Cmd_SearchFile));
 }
 
 Console::~Console() {
@@ -134,7 +135,12 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 
 	debugPrintf("Dumping %s...\n", argv[1]);
 
-	Common::MemoryReadStreamEndian *stream = _vm->_resource->loadFile(argv[1]);
+	Common::MemoryReadStreamEndian *stream = _vm->_resource->loadFile(argv[1], 0, false);
+	if (!stream) {
+		debugPrintf("File not found\n");
+		return true;
+	}
+
 	uint32 size = stream->size();
 	byte *data = new byte[size];
 	stream->read(data, size);
@@ -150,6 +156,23 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::Cmd_SearchFile(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <file name>\n", argv[0]);
+		return true;
+	}
+
+	Common::String filename = argv[1];
+	filename.toUppercase();
+
+	Common::List<ResourceIndex> records = _vm->_resource->searchIndex(filename);
+	debugPrintf("Found:\n");
+	for (Common::List<ResourceIndex>::const_iterator i = records.begin(), end = records.end(); i != end; ++i) {
+		debugPrintf("%s, offset: %d\n", i->fileName.c_str(), i->indexOffset);
+	}
+
+	return true;
+}
 
 Common::String Console::EventToString(uint32 action) {
 	const char *actions[] = {

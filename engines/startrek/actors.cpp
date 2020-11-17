@@ -169,9 +169,10 @@ void StarTrekEngine::updateActorAnimations() {
 					actor->animFile->seek(actor->animFrame * 22, SEEK_SET);
 					char animFrameFilename[16];
 					actor->animFile->read(animFrameFilename, 16);
-					sprite->setBitmap(loadAnimationFrame(animFrameFilename, actor->scale));
-
 					actor->bitmapFilename = animFrameFilename;
+					actor->bitmapFilename.trim();
+
+					sprite->setBitmap(loadAnimationFrame(actor->bitmapFilename, actor->scale));
 
 					actor->animFile->seek(10 + actor->animFrame * 22, SEEK_SET);
 					uint16 xOffset = actor->animFile->readUint16();
@@ -469,8 +470,9 @@ void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_anim
 	if (addSprite)
 		_gfx->addSprite(sprite);
 
-	sprite->setBitmap(loadAnimationFrame(firstFrameFilename, scale));
 	actor->bitmapFilename = firstFrameFilename;
+	actor->bitmapFilename.trim();
+	sprite->setBitmap(loadAnimationFrame(actor->bitmapFilename, scale));
 	actor->scale = scale;
 	actor->animFile->seek(10, SEEK_SET);
 

@@ -42,6 +42,7 @@ private:
 	bool Cmd_Text(int argc, const char **argv);
 	bool Cmd_Bg(int argc, const char **argv);
 	bool Cmd_DumpFile(int argc, const char **argv);
+	bool Cmd_SearchFile(int argc, const char **argv);
 
 	Common::String EventToString(uint32 action);
 	Common::String ItemToString(byte index);

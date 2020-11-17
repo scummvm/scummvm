@@ -518,13 +518,11 @@ void StarTrekEngine::loadMenuButtons(String mnuFilename, int xpos, int ypos) {
 		char bitmapBasename[11];
 		stream->seek(i * 16, SEEK_SET);
 		stream->read(bitmapBasename, 10);
-		for (int j = 0; j < 10; j++) {
-			if (bitmapBasename[j] == ' ')
-				bitmapBasename[j] = '\0';
-		}
 		bitmapBasename[10] = '\0';
+		Common::String bitmapName = bitmapBasename;
+		bitmapName.trim();
 
-		_activeMenu->sprites[i].setBitmap(_resource->loadBitmapFile(bitmapBasename));
+		_activeMenu->sprites[i].setBitmap(_resource->loadBitmapFile(bitmapName));
 		_activeMenu->sprites[i].pos.x = stream->readUint16() + xpos;
 		_activeMenu->sprites[i].pos.y = stream->readUint16() + ypos;
 		_activeMenu->retvals[i] = stream->readUint16();
