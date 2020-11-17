@@ -774,6 +774,9 @@ void AGDSEngine::addSystemVar(const Common::String &name, SystemVariable *var) {
 }
 
 void AGDSEngine::tell(Process &process, const Common::String &regionName, Common::String text, Common::String sound, bool npc) {
+	if (getSystemVariable("tell_close_inv")->getInteger())
+		_inventory.enable(false);
+
 	int font_id = getSystemVariable(npc? "npc_tell_font": "tell_font")->getInteger();
 	Common::Point pos;
 
