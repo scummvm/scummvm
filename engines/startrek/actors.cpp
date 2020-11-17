@@ -1215,12 +1215,10 @@ int StarTrekEngine::showInventoryMenu(int x, int y, bool restoreMouse) {
 		}
 
 		case TREKEVENT_LBUTTONDOWN:
-exitWithSelection:
 			displayMenu = false;
 			break;
 
 		case TREKEVENT_RBUTTONDOWN:
-exitWithoutSelection:
 			displayMenu = false;
 			lastItemIndex = -1;
 			break;
@@ -1229,12 +1227,15 @@ exitWithoutSelection:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_F2:
-				goto exitWithoutSelection;
+				displayMenu = false;
+				lastItemIndex = -1;
+				break;
 
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
 			case Common::KEYCODE_F1:
-				goto exitWithSelection;
+				displayMenu = false;
+				break;
 
 			case Common::KEYCODE_HOME:
 			case Common::KEYCODE_KP7:

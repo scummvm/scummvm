@@ -363,13 +363,27 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 				if (scrollOffset == 0)
 					disableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
-				goto readjustScroll;
+				textboxSprite.bitmapChanged = true;
+				drawMainText(
+				    textBitmap,
+				    numTextLines - scrollOffset,
+				    numTextboxLines,
+				    lineFormattedText.c_str() + scrollOffset * (TEXTBOX_WIDTH - 2),
+				    numChoicesWithNames != 0);
+				break;
 
 			case TEXTBUTTON_GOTO_TOP:
 				scrollOffset = 0;
 				disableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
-				goto readjustScroll;
+				textboxSprite.bitmapChanged = true;
+				drawMainText(
+				    textBitmap,
+				    numTextLines - scrollOffset,
+				    numTextboxLines,
+				    lineFormattedText.c_str() + scrollOffset * (TEXTBOX_WIDTH - 2),
+				    numChoicesWithNames != 0);
+				break;
 
 			case TEXTBUTTON_SCROLLDOWN:
 			case TEXTBUTTON_SCROLLDOWN_ONELINE:
@@ -381,15 +395,19 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 					scrollOffset = numTextLines - 1;
 				if (scrollOffset + numTextboxLines >= numTextLines)
 					disableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
-				goto readjustScroll;
+				textboxSprite.bitmapChanged = true;
+				drawMainText(
+				    textBitmap,
+				    numTextLines - scrollOffset,
+				    numTextboxLines,
+				    lineFormattedText.c_str() + scrollOffset * (TEXTBOX_WIDTH - 2),
+				    numChoicesWithNames != 0);
+				break;
 
 			case TEXTBUTTON_GOTO_BOTTOM:
 				scrollOffset = numTextLines - numTextboxLines;
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				disableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
-				goto readjustScroll;
-
-readjustScroll:
 				textboxSprite.bitmapChanged = true;
 				drawMainText(
 				    textBitmap,

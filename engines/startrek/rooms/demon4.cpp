@@ -475,11 +475,11 @@ bool Room::demon4ShowSunPuzzle() {
 
 		switch (event.type) {
 		case TREKEVENT_LBUTTONDOWN: {
-		lclick:
 			Common::Point mousePos = _vm->_gfx->getMousePos();
-			if (_vm->_gfx->getSpriteAt(mousePos) == &doneButtonSprite)
-				goto done;
-			else {
+			if (_vm->_gfx->getSpriteAt(mousePos) == &doneButtonSprite) {
+				solved = (abs(sliderY) <= 2 && abs(sliderR) <= 2 && abs(sliderB) <= 2);
+				continueLoop = false;
+			} else {
 				if (mousePos.y >= 0x64 && mousePos.y <= 0x86) {
 					if (mousePos.x >= 0xa0 && mousePos.x <= 0xa6)
 						sliderY = mousePos.y - 0x75;
@@ -494,11 +494,7 @@ bool Room::demon4ShowSunPuzzle() {
 		}
 
 		case TREKEVENT_RBUTTONDOWN:
-		done:
-			if (abs(sliderY) <= 2 && abs(sliderR) <= 2 && abs(sliderB) <= 2)
-				solved = true;
-			else
-				solved = false;
+			solved = (abs(sliderY) <= 2 && abs(sliderR) <= 2 && abs(sliderB) <= 2);
 			continueLoop = false;
 			break;
 
@@ -506,12 +502,30 @@ bool Room::demon4ShowSunPuzzle() {
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_F2:
-				goto done;
+				solved = (abs(sliderY) <= 2 && abs(sliderR) <= 2 && abs(sliderB) <= 2);
+				continueLoop = false;
+				break;
 
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
-			case Common::KEYCODE_F1:
-				goto lclick;
+			case Common::KEYCODE_F1: {
+				// Same as TREKEVENT_LBUTTONDOWN
+				Common::Point mousePos = _vm->_gfx->getMousePos();
+				if (_vm->_gfx->getSpriteAt(mousePos) == &doneButtonSprite) {
+					solved = (abs(sliderY) <= 2 && abs(sliderR) <= 2 && abs(sliderB) <= 2);
+					continueLoop = false;
+				} else {
+					if (mousePos.y >= 0x64 && mousePos.y <= 0x86) {
+						if (mousePos.x >= 0xa0 && mousePos.x <= 0xa6)
+							sliderY = mousePos.y - 0x75;
+						else if (mousePos.x >= 0xa8 && mousePos.x <= 0xae)
+							sliderR = mousePos.y - 0x75;
+						else if (mousePos.x >= 0xb0 && mousePos.x <= 0xb6)
+							sliderB = mousePos.y - 0x75;
+						sliderChanged = true;
+					}
+				}
+			}
 
 			default:
 				break;

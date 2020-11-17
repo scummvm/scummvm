@@ -2608,6 +2608,7 @@ public:
 	void veng2UseImpulseConsole();
 	void veng2SpockReachedImpulseConsole();
 	void veng2SpockUsedImpulseConsole();
+	void veng2PowerWeapons();
 	void veng2UseMainComputer();
 	void veng2UseSTricorderOnMainComputer();
 	void veng2SpockReachedMainComputerToPutTricorder();
