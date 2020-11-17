@@ -237,9 +237,9 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeByte(magicLevelIdx);
 	file->writeByte(inventoryMagicPoints);
 	file->writeByte(inventoryNumLeafsBox);
-	file->writeSint16LE(_engine->_scene->newHeroX);
-	file->writeSint16LE(_engine->_scene->newHeroY);
-	file->writeSint16LE(_engine->_scene->newHeroZ);
+	file->writeSint16LE(_engine->_scene->sceneHero->x);
+	file->writeSint16LE(_engine->_scene->sceneHero->y);
+	file->writeSint16LE(_engine->_scene->sceneHero->z);
 	file->writeSint16LE(_engine->_scene->sceneHero->angle);
 	file->writeByte(_engine->_scene->sceneHero->body);
 
