@@ -38,12 +38,12 @@ enum OOToposFlag {
 	OO_FLAG_13 = 13,
 	OO_FLAG_22 = 22,
 	OO_BRIGHT_ROOM = 25,
-	OO_FLAG_WEARING_GOGGLES = 27,	// ?
+	OO_FLAG_WEARING_GOGGLES = 27,
 	OO_FLAG_FLASHLIGHT_ON = 39,
 	OO_FLAG_43 = 43,
 	OO_FLAG_44 = 44,
 	OO_FLAG_SUFFICIENT_FUEL = 51,
-	OO_FLAG_53 = 53,
+	OO_FLAG_REVERSE_VIDEO = 53,	// Effect of wearing goggles
 	OO_FLAG_55 = 55,
 	OO_FLAG_56 = 56,
 	OO_FLAG_58 = 58,
@@ -151,7 +151,7 @@ void OOToposGame::beforeTurn() {
 	} else if (_flags[OO_FLAG_56]) {
 		_currentRoom = 54;
 	} else {
-		YesNo nff = _flags[OO_FLAG_53] ? YES : NO;
+		YesNo nff = _flags[OO_FLAG_REVERSE_VIDEO] ? YES : NO;
 
 		if (_noFloodfill != nff) {
 			_noFloodfill = nff;
