@@ -901,6 +901,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("The New Adventure of Roger Wilco (v1.00)", "e5f0a7cb8d49f66b89114951888ca688"),
 	FANMADE("The Ruby Cast (v0.02)", "ed138e461bb1516e097007e017ab62df"),
 	FANMADE("The Shadow Plan", "c02cd10267e721f4e836b1431f504a0a"),
+	FANMADE("The Sorceror's Appraisal", "b121ba95d2beb6c16e2f762a13b8baa2"),
 	FANMADE("Time Quest (Demo v0.1)", "12e1a6f03ea4b8c5531acd0400b4ed8d"),
 	FANMADE("Time Quest (Demo v0.2)", "7b710608abc99e0861ac59b967bf3f6d"),
 	FANMADE_SVP("Time Quest", "90314f473d8317be5cd1f0306f139aea", 300, 0x2440, Common::kPlatformCoCo3),
