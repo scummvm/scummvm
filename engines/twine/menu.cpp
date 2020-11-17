@@ -55,9 +55,6 @@ namespace TwinE {
 	Used when returning from credit sequence to redraw the main menu background image */
 static const uint32 kPlasmaEffectFilesize = 262176;
 
-/** Used to calculate the spanning between button and screen */
-static const uint16 kMainMenuButtonSpan = 550;
-
 namespace MenuButtonTypes {
 enum _MenuButtonTypes {
 	kMusicVolume = 1,
@@ -358,10 +355,12 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 		}
 		const int32 menuItemId = menuSettings->getButtonState(i);
 		const char *text = menuSettings->getButtonText(_engine->_text, i);
-		const int32 left = (SCREEN_WIDTH / 2) - kMainMenuButtonSpan / 2;
-		const int32 right = (SCREEN_WIDTH / 2) + kMainMenuButtonSpan / 2;
-		const int32 top = topHeight - 25;
-		const int32 bottom = topHeight + 25;
+		const uint16 mainMenuButtonWidthHalf = 550 / 2;
+		const uint16 mainMenuButtonHeightHalf = 50 / 2;
+		const int32 left = (SCREEN_WIDTH / 2) - mainMenuButtonWidthHalf;
+		const int32 right = (SCREEN_WIDTH / 2) + mainMenuButtonWidthHalf;
+		const int32 top = topHeight - mainMenuButtonHeightHalf;
+		const int32 bottom = topHeight + mainMenuButtonHeightHalf;
 		if (hover) {
 			if (i == buttonNumber) {
 				drawButtonGfx(menuSettings, left, top, right, bottom, menuItemId, text, hover);
