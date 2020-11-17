@@ -767,7 +767,20 @@ void Process::getSavedMouseY() {
 void Process::loadGame() {
 	int saveSlot = pop();
 	debug("loadGame %d", saveSlot);
-	suspend(kExitCodeLoadSaveGame, saveSlot);
+	suspend(kExitCodeLoadGame, saveSlot);
+}
+
+void Process::saveGame() {
+	int saveSlot = pop();
+	debug("saveGame stub %d", saveSlot);
+	suspend(kExitCodeSaveGame, saveSlot);
+}
+
+void Process::getSaveGameName() {
+	int flag = pop();
+	int saveSlot = pop();
+	debug("getSaveGameName stub %d %d", saveSlot, flag);
+	push(1);
 }
 
 void Process::loadSaveSlotNamePicture() {
