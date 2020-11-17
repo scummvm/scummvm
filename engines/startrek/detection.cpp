@@ -123,6 +123,20 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{ // ST25 DOS floppy edition (EN) #3 (Interplay's 10 Year Anthology: Classic Collection)
+		{
+			"st25",
+			"Floppy",
+			AD_ENTRY1s("data.001", "57040928a0f374281aa86ba4e7db8444", 7222652),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GType_ST25,
+		0,
+	},
+
 	{ // ST25 DOS floppy edition (GER)
 		{
 			"st25",
