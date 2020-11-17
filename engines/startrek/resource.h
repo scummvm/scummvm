@@ -57,12 +57,9 @@ public:
 	Resource(Common::Platform platform, bool isDemo);
 	virtual ~Resource();
 
-	ResourceIndex getIndex(Common::String filename);
 	Common::List<ResourceIndex> searchIndex(Common::String filename);
 	Common::MemoryReadStreamEndian *loadFile(Common::String filename, int fileIndex = 0, bool errorOnNotFound = true);
-	Common::MemoryReadStreamEndian *loadSequentialFile(Common::String filename, int fileIndex = 0);
 	Common::MemoryReadStreamEndian *loadBitmapFile(Common::String baseName);
-	uint32 getSequentialFileOffset(uint32 offset, int fileIndex);
 
 	/**
 	 * TODO: Figure out what the extra parameters are, and if they're important.
@@ -81,7 +78,10 @@ public:
 
 private:
 	void readIndexFile();
+	ResourceIndex getIndex(Common::String filename);
 	ResourceIndex getIndexEntry(Common::SeekableReadStream *indexFile);
+	Common::MemoryReadStreamEndian *loadSequentialFile(Common::String filename, int fileIndex = 0);
+	uint32 getSequentialFileOffset(uint32 offset, int fileIndex);
 
 	//IWFile *_iwFile;
 	Common::MacResManager *_macResFork;
