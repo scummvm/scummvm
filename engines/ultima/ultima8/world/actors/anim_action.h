@@ -46,7 +46,7 @@ struct AnimFrame {
 		AFF_SPECIAL  = 0x00000800, // U8 only
 		AFF_HURTY    = 0x00001000, // Crusader only - TODO: find a better name for this.
 		AFF_USECODE  = 0x00004000,
-		AFF_NOSTOP   = 0x00008000, // Crusader only - Probably - applied to most death animations
+		AFF_NOSTOP   = 0x00008000  // Crusader only - Probably - applied to most death animations
 		//AFF_UNKNOWN  = 0xF0E0B01C,
 		//AFF_FIRE     = 0x0F1F00C0
 	};
