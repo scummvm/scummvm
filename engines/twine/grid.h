@@ -116,7 +116,7 @@ private:
 	 * @param gridSize size of the current grid
 	 * @return true if everything went ok
 	 */
-	int32 loadGridBricks(int32 gridSize);
+	void loadGridBricks(int32 gridSize);
 	/** Create grid masks to allow display actors over the bricks */
 	void createGridMask();
 	/**
