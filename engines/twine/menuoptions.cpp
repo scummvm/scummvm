@@ -341,7 +341,8 @@ int MenuOptions::chooseSave(int textIdx, bool showEmptySlots) {
 
 	if (showEmptySlots) {
 		while (saveFiles.getButtonCount() < maxButtons) {
-			saveFiles.addButton("EMPTY");
+			// the first button is the back button - to subtract that one again to get the real slot index
+			saveFiles.addButton("EMPTY", saveFiles.getButtonCount() - 1);
 		}
 	}
 
@@ -352,8 +353,9 @@ int MenuOptions::chooseSave(int textIdx, bool showEmptySlots) {
 		case TextId::kReturnMenu:
 			return -1;
 		default:
-			// the first button is the back button - to subtract that one again to get the real slot index
-			return saveFiles.getButtonState(id);
+			const int16 slot = saveFiles.getButtonState(id);
+			debug("Selected slot %d for saving", slot);
+			return slot;
 		}
 	}
 
