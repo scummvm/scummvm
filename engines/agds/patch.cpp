@@ -43,6 +43,33 @@ void Patch::load(Common::SeekableReadStream *stream) {
 	}
 }
 
+void Patch::save(Common::SeekableWriteStream *stream) {
+	int extended = 1;
+	stream->writeByte(extended);
+	writeString(stream, screenRegionName);
+	writeString(stream, prevScreenName);
+
+	if (extended == 0)
+		return;
+
+	stream->writeUint32LE(unk41);
+	stream->writeUint32LE(characterPosition.x);
+	stream->writeUint32LE(characterPosition.y);
+	stream->writeUint32LE(characterDirection);
+	stream->writeUint32LE(characterPresent);
+
+	stream->writeUint32LE(objects.size());
+	if (stream->write(palette, sizeof(palette)) != sizeof(palette)) {
+		error("short write, can't write palette");
+	}
+
+	writeString(stream, defaultMouseCursor);
+	for(auto &object: objects) {
+		stream->writeSint16LE(object.flag);
+		writeString(stream, object.name);
+	}
+}
+
 int Patch::getFlag(const Common::String & name) const {
 	for(auto & object : objects) {
 		if (object.name == name)
