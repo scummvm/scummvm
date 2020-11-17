@@ -795,6 +795,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 								_scene->newHeroY = -1;
 								_scene->newHeroZ = -1;
 								_scene->currentSceneIdx = _scene->previousSceneIdx;
+								_scene->stopRunningGame();
 							}
 
 							autoSave();

@@ -555,6 +555,7 @@ void Scene::processActorZones(int32 actorIdx) {
 }
 
 void Scene::stopRunningGame() {
+	free(currentScene);
 	currentScene = nullptr;
 }
 

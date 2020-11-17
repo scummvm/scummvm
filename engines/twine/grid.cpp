@@ -273,7 +273,6 @@ void Grid::loadGridBricks(int32 gridSize) {
 	uint32 lastBrick = 0;
 	uint32 currentBllEntryIdx = 0;
 
-	memset(brickTable, 0, sizeof(brickTable));
 	memset(brickSizeTable, 0, sizeof(brickSizeTable));
 	memset(brickUsageTable, 0, sizeof(brickUsageTable));
 
@@ -321,6 +320,8 @@ void Grid::loadGridBricks(int32 gridSize) {
 
 	for (uint32 i = firstBrick; i <= lastBrick; i++) {
 		if (!brickUsageTable[i]) {
+			free(brickTable[i]);
+			brickTable[i] = nullptr;
 			continue;
 		}
 		brickSizeTable[i] = HQR::getAllocEntry(&brickTable[i], Resources::HQR_LBA_BRK_FILE, i);

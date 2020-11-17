@@ -453,6 +453,7 @@ void GameState::processGameoverAnimation() {
 	while (!_engine->_input->toggleAbortAction() && (_engine->lbaTime - startLbaTime) <= 500) {
 		_engine->readKeys();
 		if (_engine->shouldQuit()) {
+			free(gameOverPtr);
 			return;
 		}
 
