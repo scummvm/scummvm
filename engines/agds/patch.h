@@ -28,7 +28,7 @@
 #include "common/rect.h"
 #include "common/str.h"
 
-namespace Common	{ class SeekableReadStream; }
+namespace Common	{ class SeekableReadStream; class SeekableWriteStream; }
 
 namespace AGDS {
 
@@ -56,6 +56,7 @@ struct Patch {
 	Common::Array<Object> objects;
 
 	void load(Common::SeekableReadStream *stream);
+	void save(Common::SeekableWriteStream *stream);
 	int getFlag(const Common::String & name) const;
 	int incRef(const Common::String & name);
 	int decRef(const Common::String & name);
