@@ -41,6 +41,10 @@ namespace TwinE {
 Sound::Sound(TwinEEngine *engine) : _engine(engine) {
 }
 
+Sound::~Sound() {
+	_engine->_system->getMixer()->stopAll();
+}
+
 void Sound::setSamplePosition(int32 chan, int32 x, int32 y, int32 z) {
 	int32 distance;
 	distance = ABS(_engine->_movements->getDistance3D(_engine->_grid->newCameraX << 9, _engine->_grid->newCameraY << 8, _engine->_grid->newCameraZ << 9, x, y, z));
@@ -130,6 +134,7 @@ bool Sound::playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize
 	Audio::SeekableAudioStream *audioStream = Audio::makeVOCStream(stream, DisposeAfterUse::YES);
 	if (audioStream == nullptr) {
 		warning("Failed to create audio stream for %s", name);
+		delete stream;
 		return false;
 	}
 	_engine->_system->getMixer()->playStream(soundType, &samplesPlaying[channelIdx], audioStream, index);

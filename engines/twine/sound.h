@@ -71,6 +71,7 @@ private:
 
 public:
 	Sound(TwinEEngine *engine);
+	~Sound();
 
 	/**
 	 * Play FLA movie samples
