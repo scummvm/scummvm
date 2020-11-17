@@ -269,10 +269,14 @@ int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenInd
 
 int32 getAllocVoxEntry(uint8 **ptr, const char *filename, int32 index, int32 hiddenIndex) {
 	const int32 size = voxEntrySize(filename, index, hiddenIndex);
+	if (size == 0) {
+		warning("HQR: vox entry with 0 size found for index: %d", index);
+		return 0;
+	}
 
 	*ptr = (uint8 *)malloc(size * sizeof(uint8));
 	if (!*ptr) {
-		warning("HQR: unable to allocate entry memory");
+		warning("HQR: unable to allocate entry memory of size %d for index: %d", size, index);
 		return 0;
 	}
 	const int32 entrySize = getVoxEntry(*ptr, filename, index, hiddenIndex);
