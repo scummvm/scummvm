@@ -138,6 +138,7 @@ public:
 	inline void setBrickShape(ShapeType shapeType) { _brickShape = shapeType; _brickCausesDamage = false; }
 	inline void setBrickCausesDamage() { _brickCausesDamage = true; }
 	inline bool brickCausesDamage() { return _brickCausesDamage; }
+	void loadModel(int32 modelIndex);
 
 	int32 entity = 0; // costumeIndex
 	int32 body = 0;

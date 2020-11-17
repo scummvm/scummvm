@@ -129,7 +129,7 @@ bool Scene::loadSceneLBA1() {
 
 	// load scene ambience properties
 	sceneTextBank = stream.readByte();
-	currentGameOverScene = stream.readByte();
+	_currentGameOverScene = stream.readByte();
 	stream.skip(4);
 
 	alphaLight = stream.readUint16LE();
@@ -139,31 +139,31 @@ bool Scene::loadSceneLBA1() {
 	alphaLight = 896;
 	betaLight = 950;
 
-	sampleAmbiance[0] = stream.readUint16LE();
-	sampleRepeat[0] = stream.readUint16LE();
-	sampleRound[0] = stream.readUint16LE();
+	_sampleAmbiance[0] = stream.readUint16LE();
+	_sampleRepeat[0] = stream.readUint16LE();
+	_sampleRound[0] = stream.readUint16LE();
 
-	sampleAmbiance[1] = stream.readUint16LE();
-	sampleRepeat[1] = stream.readUint16LE();
-	sampleRound[1] = stream.readUint16LE();
+	_sampleAmbiance[1] = stream.readUint16LE();
+	_sampleRepeat[1] = stream.readUint16LE();
+	_sampleRound[1] = stream.readUint16LE();
 
-	sampleAmbiance[2] = stream.readUint16LE();
-	sampleRepeat[2] = stream.readUint16LE();
-	sampleRound[2] = stream.readUint16LE();
+	_sampleAmbiance[2] = stream.readUint16LE();
+	_sampleRepeat[2] = stream.readUint16LE();
+	_sampleRound[2] = stream.readUint16LE();
 
-	sampleAmbiance[3] = stream.readUint16LE();
-	sampleRepeat[3] = stream.readUint16LE();
-	sampleRound[3] = stream.readUint16LE();
+	_sampleAmbiance[3] = stream.readUint16LE();
+	_sampleRepeat[3] = stream.readUint16LE();
+	_sampleRound[3] = stream.readUint16LE();
 
-	sampleMinDelay = stream.readUint16LE();
-	sampleMinDelayRnd = stream.readUint16LE();
+	_sampleMinDelay = stream.readUint16LE();
+	_sampleMinDelayRnd = stream.readUint16LE();
 
-	sceneMusic = stream.readByte();
+	_sceneMusic = stream.readByte();
 
 	// load hero properties
-	sceneHeroX = stream.readUint16LE();
-	sceneHeroY = stream.readUint16LE();
-	sceneHeroZ = stream.readUint16LE();
+	_sceneHeroX = stream.readUint16LE();
+	_sceneHeroY = stream.readUint16LE();
+	_sceneHeroZ = stream.readUint16LE();
 
 	sceneHero->moveScriptSize = stream.readUint16LE();
 	sceneHero->moveScript = currentScene + stream.pos();
@@ -180,11 +180,7 @@ bool Scene::loadSceneLBA1() {
 		ActorStruct* act = &_sceneActors[i];
 		setActorStaticFlags(act, stream.readUint16LE());
 
-		act->entity = stream.readUint16LE();
-
-		if (!act->staticFlags.bIsSpriteActor) {
-			act->entityDataSize = HQR::getAllocEntry(&act->entityDataPtr, Resources::HQR_FILE3D_FILE, act->entity);
-		}
+		act->loadModel(stream.readUint16LE());
 
 		act->body = stream.readByte();
 		act->anim = (AnimationTypes) stream.readByte();
@@ -314,15 +310,15 @@ void Scene::changeScene() {
 	_engine->_grid->initGrid(needChangeScene);
 
 	if (heroPositionType == ScenePositionType::kZone) {
-		newHeroX = zoneHeroX;
-		newHeroY = zoneHeroY;
-		newHeroZ = zoneHeroZ;
+		newHeroX = _zoneHeroX;
+		newHeroY = _zoneHeroY;
+		newHeroZ = _zoneHeroZ;
 	}
 
 	if (heroPositionType == ScenePositionType::kScene || heroPositionType == ScenePositionType::kNoPosition) {
-		newHeroX = sceneHeroX;
-		newHeroY = sceneHeroY;
-		newHeroZ = sceneHeroZ;
+		newHeroX = _sceneHeroX;
+		newHeroY = _sceneHeroY;
+		newHeroZ = _sceneHeroZ;
 	}
 
 	sceneHero->x = newHeroX;
@@ -346,7 +342,7 @@ void Scene::changeScene() {
 	_engine->_gameState->inventoryNumKeys = 0;
 	_engine->disableScreenRecenter = false;
 	heroPositionType = ScenePositionType::kNoPosition;
-	sampleAmbienceTime = 0;
+	_sampleAmbienceTime = 0;
 
 	_engine->_grid->newCameraX = _sceneActors[currentlyFollowedActor].x >> 9;
 	_engine->_grid->newCameraY = _sceneActors[currentlyFollowedActor].y >> 8;
@@ -365,8 +361,8 @@ void Scene::changeScene() {
 
 	_engine->_renderer->setLightVector(alphaLight, betaLight, 0);
 
-	if (sceneMusic != -1) {
-		_engine->_music->playTrackMusic(sceneMusic);
+	if (_sceneMusic != -1) {
+		_engine->_music->playTrackMusic(_sceneMusic);
 	}
 }
 
@@ -377,20 +373,20 @@ ActorStruct *Scene::getActor(int32 actorIdx) {
 }
 
 void Scene::initSceneVars() {
-	sampleAmbiance[0] = -1;
-	sampleAmbiance[1] = -1;
-	sampleAmbiance[2] = -1;
-	sampleAmbiance[3] = -1;
+	_sampleAmbiance[0] = -1;
+	_sampleAmbiance[1] = -1;
+	_sampleAmbiance[2] = -1;
+	_sampleAmbiance[3] = -1;
 
-	sampleRepeat[0] = 0;
-	sampleRepeat[1] = 0;
-	sampleRepeat[2] = 0;
-	sampleRepeat[3] = 0;
+	_sampleRepeat[0] = 0;
+	_sampleRepeat[1] = 0;
+	_sampleRepeat[2] = 0;
+	_sampleRepeat[3] = 0;
 
-	sampleRound[0] = 0;
-	sampleRound[1] = 0;
-	sampleRound[2] = 0;
-	sampleRound[3] = 0;
+	_sampleRound[0] = 0;
+	_sampleRound[1] = 0;
+	_sampleRound[2] = 0;
+	_sampleRound[3] = 0;
 
 	sceneNumActors = 0;
 	sceneNumZones = 0;
@@ -398,21 +394,21 @@ void Scene::initSceneVars() {
 }
 
 void Scene::processEnvironmentSound() {
-	if (_engine->lbaTime >= sampleAmbienceTime) {
+	if (_engine->lbaTime >= _sampleAmbienceTime) {
 		int16 currentAmb = _engine->getRandomNumber(4); // random ambiance
 
 		for (int32 s = 0; s < 4; s++) {
-			if (!(samplePlayed & (1 << currentAmb))) { // if not already played
-				samplePlayed |= (1 << currentAmb);     // make sample played
+			if (!(_samplePlayed & (1 << currentAmb))) { // if not already played
+				_samplePlayed |= (1 << currentAmb);     // make sample played
 
-				if (samplePlayed == 15) { // reset if all samples played
-					samplePlayed = 0;
+				if (_samplePlayed == 15) { // reset if all samples played
+					_samplePlayed = 0;
 				}
 
-				const int16 sampleIdx = sampleAmbiance[currentAmb];
+				const int16 sampleIdx = _sampleAmbiance[currentAmb];
 				if (sampleIdx != -1) {
-					int16 decal = sampleRound[currentAmb];
-					int16 repeat = sampleRepeat[currentAmb];
+					int16 decal = _sampleRound[currentAmb];
+					int16 repeat = _sampleRepeat[currentAmb];
 
 					_engine->_sound->playSample(sampleIdx, (4096 + _engine->getRandomNumber(decal) - (decal / 2)), repeat, 110, -1, 110);
 					break;
@@ -424,7 +420,7 @@ void Scene::processEnvironmentSound() {
 		}
 
 		// compute next ambiance timer
-		sampleAmbienceTime = _engine->lbaTime + (_engine->getRandomNumber(sampleMinDelayRnd) + sampleMinDelay) * 50;
+		_sampleAmbienceTime = _engine->lbaTime + (_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay) * 50;
 	}
 }
 
@@ -473,9 +469,9 @@ void Scene::processActorZones(int32 actorIdx) {
 			case kCube:
 				if (IS_HERO(actorIdx) && actor->life > 0) {
 					needChangeScene = zone->infoData.ChangeScene.newSceneIdx;
-					zoneHeroX = actor->x - zone->bottomLeft.x + zone->infoData.ChangeScene.x;
-					zoneHeroY = actor->y - zone->bottomLeft.y + zone->infoData.ChangeScene.y;
-					zoneHeroZ = actor->z - zone->bottomLeft.z + zone->infoData.ChangeScene.z;
+					_zoneHeroX = actor->x - zone->bottomLeft.x + zone->infoData.ChangeScene.x;
+					_zoneHeroY = actor->y - zone->bottomLeft.y + zone->infoData.ChangeScene.y;
+					_zoneHeroZ = actor->z - zone->bottomLeft.z + zone->infoData.ChangeScene.z;
 					heroPositionType = ScenePositionType::kZone;
 				}
 				break;

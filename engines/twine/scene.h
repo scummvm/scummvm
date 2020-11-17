@@ -255,25 +255,25 @@ private:
 	int32 _currentSceneSize = 0;
 
 	/** Timer for the next sample ambience in scene */
-	int32 sampleAmbienceTime = 0;
-	int16 sampleAmbiance[4] {0};
-	int16 sampleRepeat[4] {0};
-	int16 sampleRound[4] {0};
-	int16 sampleMinDelay = 0;
-	int16 sampleMinDelayRnd = 0;
+	int32 _sampleAmbienceTime = 0;
+	int16 _sampleAmbiance[4] {0};
+	int16 _sampleRepeat[4] {0};
+	int16 _sampleRound[4] {0};
+	int16 _sampleMinDelay = 0;
+	int16 _sampleMinDelayRnd = 0;
 
-	int16 samplePlayed = 0;
+	int16 _samplePlayed = 0;
 
-	int16 sceneMusic = 0;
+	int16 _sceneMusic = 0;
 
-	int16 sceneHeroX = 0; // newTwinsenXByScene
-	int16 sceneHeroY = 0; // newTwinsenYByScene
-	int16 sceneHeroZ = 0; // newTwinsenZByScene
+	int16 _sceneHeroX = 0; // newTwinsenXByScene
+	int16 _sceneHeroY = 0; // newTwinsenYByScene
+	int16 _sceneHeroZ = 0; // newTwinsenZByScene
 
-	int16 zoneHeroX = 0; // newTwinsenXByZone
-	int16 zoneHeroY = 0; // newTwinsenYByZone
-	int16 zoneHeroZ = 0; // newTwinsenZByZone
-	int32 currentGameOverScene = 0;
+	int16 _zoneHeroX = 0; // newTwinsenXByZone
+	int16 _zoneHeroY = 0; // newTwinsenYByZone
+	int16 _zoneHeroZ = 0; // newTwinsenZByZone
+	int32 _currentGameOverScene = 0;
 
 public:
 	Scene(TwinEEngine *engine) : _engine(engine) {}

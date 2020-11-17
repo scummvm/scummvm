@@ -490,10 +490,21 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 		// FIXME add constant for sample index
 		_engine->_sound->playSample(Samples::ItemPopup, 0x1000, 1, actor->x, actor->y, actor->z, actorIdx);
 	} else {
-		int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->z);
+		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->z);
 		_engine->_extra->addExtraBonus(actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, 200, angle, bonusSprite, actor->bonusAmount);
 		// FIXME add constant for sample index
 		_engine->_sound->playSample(Samples::ItemPopup, 0x1000, 1, actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, actorIdx);
+	}
+}
+
+void ActorStruct::loadModel(int32 modelIndex) {
+	entity = modelIndex;
+	if (!staticFlags.bIsSpriteActor) {
+		entityDataSize = HQR::getAllocEntry(&entityDataPtr, Resources::HQR_FILE3D_FILE, modelIndex);
+	} else {
+		entityDataSize = 0;
+		free(entityDataPtr);
+		entityDataPtr = nullptr;
 	}
 }
 
