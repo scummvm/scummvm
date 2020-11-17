@@ -146,20 +146,18 @@ private:
 
 	/**
 	 * Draws main menu button
-	 * @param width menu button width
-	 * @param topheight is the height between the top of the screen and the first button
 	 * @param buttonId current button identification from menu settings
 	 * @param dialText
 	 * @param hover flag to know if should draw as a hover button or not
 	 */
-	void drawButtonGfx(const MenuSettings *menuSettings, int32 width, int32 topheight, int32 buttonId, const char *dialText, bool hover);
+	void drawButtonGfx(const MenuSettings *menuSettings, int32 left, int32 top, int32 right, int32 bottom, int32 buttonId, const char *dialText, bool hover);
 	void plasmaEffectRenderFrame();
 	/**
 	 * Process the menu button draw
 	 * @param data menu settings array
 	 * @param mode flag to know if should draw as a hover button or not
 	 */
-	void drawButtons(MenuSettings *menuSettings, bool hover);
+	int16 drawButtons(MenuSettings *menuSettings, bool hover);
 	/** Used to run the advanced options menu */
 	int32 advoptionsMenu();
 	/** Used to run the volume menu */

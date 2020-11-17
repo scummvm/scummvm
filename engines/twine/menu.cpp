@@ -55,8 +55,6 @@ namespace TwinE {
 	Used when returning from credit sequence to redraw the main menu background image */
 static const uint32 kPlasmaEffectFilesize = 262176;
 
-/** Menu buttons width */
-static const uint16 kMainMenuButtonWidth = 320;
 /** Used to calculate the spanning between button and screen */
 static const uint16 kMainMenuButtonSpan = 550;
 
@@ -243,14 +241,7 @@ void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
 	_engine->_interface->drawLine(left + 1, bottom, right, bottom, 73); // bottom line
 }
 
-void Menu::drawButtonGfx(const MenuSettings *menuSettings, int32 width, int32 topheight, int32 buttonId, const char *dialText, bool hover) {
-	const int32 left = width - kMainMenuButtonSpan / 2;
-	const int32 right = width + kMainMenuButtonSpan / 2;
-
-	// topheight is the center Y pos of the button
-	const int32 top = topheight - 25; // this makes the button be 50 height
-	const int32 bottom = topheight + 25;
-
+void Menu::drawButtonGfx(const MenuSettings *menuSettings, int32 left, int32 top, int32 right, int32 bottom, int32 buttonId, const char *dialText, bool hover) {
 	if (hover) {
 		if (menuSettings == &volumeMenuState && buttonId <= MenuButtonTypes::kMasterVolume && buttonId >= MenuButtonTypes::kMusicVolume) {
 			int32 newWidth = 0;
@@ -303,12 +294,12 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, int32 width, int32 to
 	_engine->_text->setFontColor(15);
 	_engine->_text->setFontParameters(2, 8);
 	const int32 textSize = _engine->_text->getTextSize(dialText);
-	_engine->_text->drawText(width - (textSize / 2), topheight - 18, dialText);
+	_engine->_text->drawText((SCREEN_WIDTH / 2) - (textSize / 2), top + 7, dialText);
 
 	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
-void Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
+int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 	int16 buttonNumber = menuSettings->getActiveButton();
 	const int32 maxButton = menuSettings->getButtonCount();
 	int32 topHeight = menuSettings->getButtonBoxHeight();
@@ -320,8 +311,10 @@ void Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 	}
 
 	if (maxButton <= 0) {
-		return;
+		return -1;
 	}
+
+	int16 mouseActiveButton = -1;
 
 	for (int16 i = 0; i < maxButton; ++i) {
 		if (menuSettings == &advOptionsMenuState) {
@@ -365,20 +358,28 @@ void Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 		}
 		const int32 menuItemId = menuSettings->getButtonState(i);
 		const char *text = menuSettings->getButtonText(_engine->_text, i);
+		const int32 left = (SCREEN_WIDTH / 2) - kMainMenuButtonSpan / 2;
+		const int32 right = (SCREEN_WIDTH / 2) + kMainMenuButtonSpan / 2;
+		const int32 top = topHeight - 25;
+		const int32 bottom = topHeight + 25;
 		if (hover) {
 			if (i == buttonNumber) {
-				drawButtonGfx(menuSettings, kMainMenuButtonWidth, topHeight, menuItemId, text, hover);
+				drawButtonGfx(menuSettings, left, top, right, bottom, menuItemId, text, hover);
 			}
 		} else {
 			if (i == buttonNumber) {
-				drawButtonGfx(menuSettings, kMainMenuButtonWidth, topHeight, menuItemId, text, true);
+				drawButtonGfx(menuSettings, left, top, right, bottom, menuItemId, text, true);
 			} else {
-				drawButtonGfx(menuSettings, kMainMenuButtonWidth, topHeight, menuItemId, text, false);
+				drawButtonGfx(menuSettings, left, top, right, bottom, menuItemId, text, false);
 			}
+		}
+		if (_engine->_input->isMouseHovering(left, top, right, bottom)) {
+			mouseActiveButton = i;
 		}
 
 		topHeight += 56; // increase button top height
 	}
+	return mouseActiveButton;
 }
 
 int32 Menu::processMenu(MenuSettings *menuSettings) {
@@ -509,12 +510,19 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 			menuSettings->setActiveButton(currentButton);
 
 			// draw all buttons
-			drawButtons(menuSettings, false);
+			const int16 mouseButtonHovered = drawButtons(menuSettings, false);
+			if (mouseButtonHovered != -1) {
+				currentButton = mouseButtonHovered;
+			}
 			buttonsNeedRedraw = false;
 		}
 
 		// draw plasma effect for the current selected button
-		drawButtons(menuSettings, true);
+		const int16 mouseButtonHovered = drawButtons(menuSettings, true);
+		if (mouseButtonHovered != -1) {
+			currentButton = mouseButtonHovered;
+		}
+
 		if (_engine->shouldQuit()) {
 			return kQuitEngine;
 		}
