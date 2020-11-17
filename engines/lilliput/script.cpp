@@ -3045,7 +3045,7 @@ void LilliputScript::OC_waitForEvent() {
 	while (true) {
 		if (_vm->_keyboard_checkKeyboard()) {
 			_vm->_keyboard_getch();
-			break;;
+			break;
 		}
 		if (_vm->_mouseButton == 1)
 			break;

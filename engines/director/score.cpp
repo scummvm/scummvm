@@ -471,7 +471,7 @@ bool Score::renderTransition(uint16 frameId) {
 	if (tp) {
 		_window->playTransition(tp->duration, tp->area, tp->chunkSize, tp->type, frameId);
 
-		delete _window->_puppetTransition;;
+		delete _window->_puppetTransition;
 		_window->_puppetTransition = nullptr;
 		return true;
 	} else if (currentFrame->_transType) {

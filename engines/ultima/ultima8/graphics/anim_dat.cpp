@@ -135,7 +135,7 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 		case Animation::teleportOutReplacement:
 			return Animation::teleportOut;
 		default:
-			return static_cast<uint32>(action);;
+			return static_cast<uint32>(action);
 		}
 	}
 }

@@ -169,7 +169,7 @@ void GUI_Button:: Display(bool full_redraw) {
 	}
 	if (!enabled) {
 		uint8 *pointer;
-		int pixel = SDL_MapRGB(surface->format, 0, 0, 0);;
+		int pixel = SDL_MapRGB(surface->format, 0, 0, 0);
 		uint8 bytepp = surface->format.bytesPerPixel;
 
 		if (!SDL_LockSurface(surface)) {

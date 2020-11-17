@@ -2439,7 +2439,7 @@ void geas_implementation::run_script(String s, String &rv) {
 	else if (tok == "pause") {
 		tok = next_token(s, c1, c2);
 		if (!is_param(tok)) {
-			gi->debug_print("Expected parameter after pause in " + s);;
+			gi->debug_print("Expected parameter after pause in " + s);
 			return;
 		}
 		int i = eval_int(param_contents(tok));

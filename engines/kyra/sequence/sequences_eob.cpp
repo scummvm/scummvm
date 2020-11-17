@@ -1765,7 +1765,7 @@ EoBAmigaFinalePlayer::EoBAmigaFinalePlayer(EoBEngine *vm, Screen_EoB *screen) : 
 	_councilAnimData4 = _vm->staticres()->loadRawData(kEoB1FinaleCouncilAnim4, size);
 	_eyesAnimData = _vm->staticres()->loadRawData(kEoB1FinaleEyesAnim, size);
 	_handsAnimData = (const int16*)_vm->staticres()->loadRawDataBe16(kEoB1FinaleHandsAnim, size);
-	_textFrameDuration = _vm->staticres()->loadRawData(kEoB1FinaleTextDuration, size);;
+	_textFrameDuration = _vm->staticres()->loadRawData(kEoB1FinaleTextDuration, size);
 }
 
 EoBAmigaFinalePlayer::~EoBAmigaFinalePlayer() {

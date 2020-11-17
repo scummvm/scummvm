@@ -1740,7 +1740,7 @@ void Window::drawTryAgain() {
 
 		_tryAgainInfo.y1 = _tryY1;
 		_tryAgainInfo.y2 = _tryY2;
-		_tryAgainInfo.x1 = g_hdb->_screenDrawWidth / 2 - _gfxTry->_width / 2;;
+		_tryAgainInfo.x1 = g_hdb->_screenDrawWidth / 2 - _gfxTry->_width / 2;
 		_tryAgainInfo.x2 = g_hdb->_screenDrawWidth / 2 - _gfxAgain->_width / 2;
 	}
 

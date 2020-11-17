@@ -948,7 +948,7 @@ Common::Error Ultima8Engine::loadGameState(int slot) {
 }
 
 Common::Error Ultima8Engine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
-	Common::Error result = Shared::UltimaEngine::saveGameState(slot, desc, isAutosave);;
+	Common::Error result = Shared::UltimaEngine::saveGameState(slot, desc, isAutosave);
 
 	if (!isAutosave) {
 		if (result.getCode() == Common::kNoError)

@@ -236,13 +236,13 @@ void GameData::loadU8Data() {
 
 	Common::SeekableReadStream *fd = filesystem->ReadFile("@game/static/fixed.dat");
 	if (!fd)
-		error("Unable to load static/fixed.dat");;
+		error("Unable to load static/fixed.dat");
 
 	_fixed = new RawArchive(fd);
 
 	char langletter = _gameInfo->getLanguageUsecodeLetter();
 	if (!langletter)
-		error("Unknown language. Unable to open usecode");;
+		error("Unknown language. Unable to open usecode");
 
 	Std::string filename = "@game/usecode/";
 	filename += langletter;
@@ -261,7 +261,7 @@ void GameData::loadU8Data() {
 	if (!sf) sf = filesystem->ReadFile("@game/static/u8shapes.cmp");
 
 	if (!sf)
-		error("Unable to load static/u8shapes.flx or static/u8shapes.cmp");;
+		error("Unable to load static/u8shapes.flx or static/u8shapes.cmp");
 
 	_mainShapes = new MainShapeArchive(sf, MAINSHAPES,
 	                                  PaletteManager::get_instance()->getPalette(PaletteManager::Pal_Game));

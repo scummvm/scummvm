@@ -181,7 +181,7 @@ bool AmigaDOSFont::load(Common::SeekableReadStream &file) {
 
 	for (int i = 0; i < _numElements; ++i) {
 		file.read(cfile, _maxPathLen);
-		_content[i].height = file.readUint16BE();;
+		_content[i].height = file.readUint16BE();
 		_content[i].style = file.readByte();
 		_content[i].flags = file.readByte();
 		_content[i].contentFile = cfile;

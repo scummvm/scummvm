@@ -48,7 +48,7 @@ Vector2d::Matrix(const float *data) :
 void Vector2d::rotateAround(const Vector2d &point, const Angle &angle) {
 	*this -= point;
 	float cosa = angle.getCosine();
-	float sina = angle.getSine();;
+	float sina = angle.getSine();
 
 	float x  = value(0) * cosa - value(1) * sina;
 	value(1) = value(0) * sina + value(1) * cosa;

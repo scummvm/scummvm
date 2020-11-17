@@ -169,7 +169,7 @@ bool Magic::cast() {
 	if (cast_buffer_len != 0) {
 		event->scroll->display_string("\n(");
 		event->scroll->display_string(spell[index]->name);
-		event->scroll->display_string(")\n");;
+		event->scroll->display_string(")\n");
 	} else {
 		event->scroll->display_string(spell[index]->name);
 		event->scroll->display_string("\n\"");
