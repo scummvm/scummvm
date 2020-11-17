@@ -154,16 +154,15 @@ void Sound::loadMusicFile(const Common::String &baseSoundName) {
 
 	_loadedMidiFilename = baseSoundName;
 
-	/*
-	if (_vm->getPlatform() == Common::kPlatformAmiga)
-		playAmigaSound(baseSoundName);
-	else if (_vm->getPlatform() == Common::kPlatformMacintosh)
-		playMacSMFSound(baseSoundName);
-	else if (_vm->getFeatures() & GF_DEMO)
-		playSMFSound(baseSoundName);
-	else
-	*/
-	loadPCMusicFile(baseSoundName);
+	if (_vm->getPlatform() == Common::kPlatformDOS) {
+		loadPCMusicFile(baseSoundName);
+	} else if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		//playAmigaSound(baseSoundName);
+	} else if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+		//playMacSMFSound(baseSoundName);
+	} else if (_vm->getFeatures() & GF_DEMO) {
+		//playSMFSound(baseSoundName);
+	}
 }
 
 void Sound::playMidiMusicTracks(int startTrack, int loopTrack) {
