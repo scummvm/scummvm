@@ -296,6 +296,34 @@ static const StarTrekGameDescription gameDescriptions[] = {
 		GF_CDROM,
 	},
 
+	{ // STJR DOS Floppy edition (ENG) (The White Label - Doubles)
+		{
+			"stjr",
+			"Floppy",
+			AD_ENTRY1s("data.001", "1c8de3c02f69c07c582d59d3c29e4dd9", 2955146),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GType_STJR,
+		0
+	},
+
+	{ // STJR DOS Floppy edition (FRA) (The White Label - Doubles)
+		{
+			"stjr",
+			"Floppy",
+			AD_ENTRY1s("data.001", "1c8de3c02f69c07c582d59d3c29e4dd9", 2966180),
+			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GType_STJR,
+		0
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
 
