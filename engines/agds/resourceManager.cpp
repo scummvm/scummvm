@@ -230,9 +230,15 @@ Common::String readString(Common::SeekableReadStream * stream, uint size) {
 	if (stream->read(text.data(), text.size()) != text.size())
 		error("readString: short read");
 
-	uint len;
-	for(len = 0; len < text.size() && text[len]; ++len);
-	return Common::String(text.data(), len);
+	return Common::String(text.data(), strlen(text.data()));
+}
+
+void writeString(Common::SeekableWriteStream * stream, const Common::String &string, uint size) {
+	Common::Array<char> text(size);
+	memcpy(text.data(), string.c_str(), MIN(string.size(), size));
+
+	if (stream->write(text.data(), text.size()) != text.size())
+		error("writeString: short write");
 }
 
 } // End of namespace AGDS

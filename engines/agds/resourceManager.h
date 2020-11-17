@@ -95,6 +95,7 @@ public:
 };
 
 Common::String readString(Common::SeekableReadStream * stream, uint size = 32);
+void writeString(Common::SeekableWriteStream * stream, const Common::String &string, uint size = 32);
 
 } // End of namespace AGDS
 
