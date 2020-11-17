@@ -446,7 +446,7 @@ void GameState::processGameoverAnimation() {
 	_engine->_renderer->prepareIsoModel(gameOverPtr);
 	_engine->_sound->stopSamples();
 	_engine->_music->stopMidiMusic(); // stop fade music
-	_engine->_renderer->setCameraPosition(320, 240, 128, 200, 200);
+	_engine->_renderer->setCameraPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 128, 200, 200);
 	int32 startLbaTime = _engine->lbaTime;
 	_engine->_interface->setClip(left, top, right, bottom);
 

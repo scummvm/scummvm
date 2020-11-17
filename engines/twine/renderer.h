@@ -241,7 +241,7 @@ public:
 
 	void renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 Y, int32 angle, uint8 *entityPtr);
 
-	void renderInventoryItem(int32 X, int32 Y, uint8 *itemBodyPtr, int32 angle, int32 param);
+	void renderInventoryItem(int32 x, int32 y, uint8 *itemBodyPtr, int32 angle, int32 param);
 };
 
 } // namespace TwinE

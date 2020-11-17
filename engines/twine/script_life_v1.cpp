@@ -1431,7 +1431,7 @@ static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->flip();
 	engine->_scene->changeRoomVar10 = 0;
 
-	engine->_renderer->setCameraPosition(320, 240, 128, 1024, 1024);
+	engine->_renderer->setCameraPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 128, 1024, 1024);
 	engine->_renderer->setCameraAngle(0, 1500, 0, 25, -128, 0, 13000);
 	engine->_renderer->setLightVector(896, 950, 0);
 

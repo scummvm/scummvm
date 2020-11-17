@@ -157,8 +157,8 @@ void Holomap::processHolomap() {
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
 	loadHolomapGFX();
-	drawHolomapTitle(320, 25);
-	_engine->_renderer->setCameraPosition(320, 190, 128, 1024, 1024);
+	drawHolomapTitle(SCREEN_WIDTH / 2, 25);
+	_engine->_renderer->setCameraPosition(SCREEN_WIDTH / 2, 190, 128, 1024, 1024);
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->setFontCrossColor(9);
