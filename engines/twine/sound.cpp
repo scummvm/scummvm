@@ -137,7 +137,7 @@ bool Sound::playSample(int channelIdx, int index, uint8 *sampPtr, int32 sampSize
 		delete stream;
 		return false;
 	}
-	_engine->_system->getMixer()->playStream(soundType, &samplesPlaying[channelIdx], audioStream, index);
+	_engine->_system->getMixer()->playStream(soundType, &samplesPlaying[channelIdx], Audio::makeLoopingAudioStream(audioStream, loop), index);
 	return true;
 }
 
