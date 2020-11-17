@@ -58,7 +58,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -82,12 +82,9 @@ bool Tony::TonyEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool TonyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Tony::TonyGameDescription *gd = (const Tony::TonyGameDescription *)desc;
-	if (gd) {
-		*engine = new Tony::TonyEngine(syst, gd);
-	}
-	return gd != 0;
+Common::Error TonyMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Tony::TonyEngine(syst, (const Tony::TonyGameDescription *)desc);
+	return Common::kNoError;
 }
 
 SaveStateList TonyMetaEngine::listSaves(const char *target) const {

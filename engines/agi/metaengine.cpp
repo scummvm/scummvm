@@ -112,7 +112,7 @@ public:
 		return "agi";
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -134,9 +134,8 @@ bool AgiMetaEngine::hasFeature(MetaEngineFeature f) const {
 		(f == kSimpleSavesNames);
 }
 
-bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Agi::AGIGameDescription *gd = (const Agi::AGIGameDescription *)desc;
-	bool res = true;
 
 	switch (gd->gameType) {
 	case Agi::GType_PreAGI:
@@ -151,9 +150,7 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 			*engine = new Agi::WinnieEngine(syst, gd);
 			break;
 		default:
-			res = false;
-			error("PreAGI engine: unknown gameID");
-			break;
+			return Common::kUnsupportedGameidError;
 		}
 		break;
 	case Agi::GType_V1:
@@ -162,11 +159,10 @@ bool AgiMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 		*engine = new Agi::AgiEngine(syst, gd);
 		break;
 	default:
-		res = false;
-		error("AGI engine: unknown gameType");
+		return Common::kUnsupportedGameidError;
 	}
 
-	return res;
+	return Common::kNoError;
 }
 
 SaveStateList AgiMetaEngine::listSaves(const char *target) const {

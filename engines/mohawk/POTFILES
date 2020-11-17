@@ -1,5 +1,6 @@
 engines/mohawk/detection.cpp
 engines/mohawk/dialogs.cpp
+engines/mohawk/metaengine.cpp
 engines/mohawk/mohawk.cpp
 engines/mohawk/metaengine.cpp
 engines/mohawk/myst.cpp

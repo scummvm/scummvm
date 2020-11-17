@@ -399,12 +399,10 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 
 	if (plugin) {
 		// Call child class's createInstanceMethod.
-		if (plugin->get<AdvancedMetaEngine>().createInstance(syst, engine, agdDesc.desc)) {
-			return Common::Error(Common::kNoError);
-		}
+		return plugin->get<AdvancedMetaEngine>().createInstance(syst, engine, agdDesc.desc);
 	}
 
-	return Common::Error(Common::kNoGameDataFoundError);
+	return Common::Error(Common::kEnginePluginNotFound);
 }
 
 void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName) const {

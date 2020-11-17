@@ -57,7 +57,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -78,12 +78,9 @@ bool Lure::LureEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Lure::LureGameDescription *gd = (const Lure::LureGameDescription *)desc;
-	if (gd) {
-		*engine = new Lure::LureEngine(syst, gd);
-	}
-	return gd != 0;
+Common::Error LureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Lure::LureEngine(syst, (const Lure::LureGameDescription *)desc);
+	return Common::kNoError;
 }
 
 SaveStateList LureMetaEngine::listSaves(const char *target) const {

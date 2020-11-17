@@ -50,7 +50,7 @@ public:
 		return "lilliput";
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override;
@@ -59,12 +59,10 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool LilliputMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	if (gd) {
-		*engine = new LilliputEngine(syst, (const LilliputGameDescription *)gd);
-		((LilliputEngine *)*engine)->initGame((const LilliputGameDescription *)gd);
-	}
-	return gd != 0;
+Common::Error LilliputMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+	*engine = new LilliputEngine(syst, (const LilliputGameDescription *)gd);
+	((LilliputEngine *)*engine)->initGame((const LilliputGameDescription *)gd);
+	return Common::kNoError;
 }
 
 bool LilliputMetaEngine::hasFeature(MetaEngineFeature f) const {

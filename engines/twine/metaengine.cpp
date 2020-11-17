@@ -45,18 +45,16 @@ public:
 		return 6;
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		if (desc) {
-			TwineGameType gameType = TwineGameType::GType_LBA;
-			const Common::String gameId = desc->gameId;
-			if (gameId == "lba") {
-				gameType = TwineGameType::GType_LBA;
-			} else if (gameId == "lba2") {
-				gameType = TwineGameType::GType_LBA2;
-			}
-			*engine = new TwinE::TwinEEngine(syst, desc->language, desc->flags, gameType);
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+		TwineGameType gameType = TwineGameType::GType_LBA;
+		const Common::String gameId = desc->gameId;
+		if (gameId == "lba") {
+			gameType = TwineGameType::GType_LBA;
+		} else if (gameId == "lba2") {
+			gameType = TwineGameType::GType_LBA2;
 		}
-		return desc != nullptr;
+		*engine = new TwinE::TwinEEngine(syst, desc->language, desc->flags, gameType);
+		return Common::kNoError;
 	}
 
 	Common::Array<Common::Keymap *> initKeymaps(const char *target) const override;

@@ -37,7 +37,7 @@ public:
 		return "groovie";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	SaveStateList listSaves(const char *target) const override;
@@ -46,18 +46,14 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	if (gd) {
+Common::Error GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 #ifndef ENABLE_GROOVIE2
-		if (((const GroovieGameDescription *)gd)->version == kGroovieV2) {
-			Engine::errorUnsupportedGame(_("GroovieV2 support is not compiled in"));
-			return false;
-		}
+	if (((const GroovieGameDescription *)gd)->version == kGroovieV2)
+		return Common::Error(Common::kUnsupportedGameidError, _s("GroovieV2 support is not compiled in"));
 #endif
 
-		*engine = new GroovieEngine(syst, (const GroovieGameDescription *)gd);
-	}
-	return gd != 0;
+	*engine = new GroovieEngine(syst, (const GroovieGameDescription *)gd);
+	return Common::kNoError;
 }
 
 bool GroovieMetaEngine::hasFeature(MetaEngineFeature f) const {

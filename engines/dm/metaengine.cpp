@@ -42,10 +42,9 @@ public:
 		return "dm";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		if (desc)
-			*engine = new DM::DMEngine(syst, (const DMADGameDescription*)desc);
-		return desc != nullptr;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+		*engine = new DM::DMEngine(syst, (const DMADGameDescription*)desc);
+		return Common::kNoError;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override {
