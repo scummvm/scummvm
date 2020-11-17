@@ -238,4 +238,9 @@ void Input::getMousePositions(MouseStatusStruct *mouseData) {
 	mouseData->y = point.y;
 }
 
+bool Input::isMouseHovering(int32 left, int32 top, int32 right, int32 bottom) const {
+	Common::Point point = g_system->getEventManager()->getMousePos();
+	return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom;
+}
+
 } // namespace TwinE

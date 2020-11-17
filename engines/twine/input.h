@@ -129,6 +129,8 @@ public:
 	 */
 	bool isActionActive(TwinEActionType actionType, bool onlyFirstTime = true) const;
 
+	bool isMouseHovering(int32 left, int32 top, int32 right, int32 bottom) const;
+
 	/**
 	 * @brief If the action is active, the internal state is reset and a following call of this method won't return
 	 * @c true anymore
