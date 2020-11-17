@@ -78,6 +78,7 @@ extern const imuseDigTable _digStateMusicTable[];
 extern const imuseDigTable _digSeqMusicTable[];
 extern const imuseComiTable _comiStateMusicTable[];
 extern const imuseComiTable _comiSeqMusicTable[];
+extern const imuseComiTable _comiDemoStateMusicTable[];
 extern const imuseFtStateTable _ftStateMusicTable[];
 extern const imuseFtSeqTable _ftSeqMusicTable[];
 extern const imuseFtNames _ftSeqNames[];
