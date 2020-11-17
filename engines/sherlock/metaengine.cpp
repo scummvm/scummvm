@@ -56,7 +56,7 @@ public:
     /**
 	 * Creates an instance of the game engine
 	 */
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	/**
 	 * Returns a list of features the game's MetaEngine support
@@ -84,22 +84,19 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error SherlockMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Sherlock::SherlockGameDescription *gd = (const Sherlock::SherlockGameDescription *)desc;
-	if (gd) {
-		switch (gd->gameID) {
-		case Sherlock::GType_SerratedScalpel:
-			*engine = new Sherlock::Scalpel::ScalpelEngine(syst, gd);
-			break;
-		case Sherlock::GType_RoseTattoo:
-			*engine = new Sherlock::Tattoo::TattooEngine(syst, gd);
-			break;
-		default:
-			error("Unknown game");
-			break;
-		}
+	switch (gd->gameID) {
+	case Sherlock::GType_SerratedScalpel:
+		*engine = new Sherlock::Scalpel::ScalpelEngine(syst, gd);
+		break;
+	case Sherlock::GType_RoseTattoo:
+		*engine = new Sherlock::Tattoo::TattooEngine(syst, gd);
+		break;
+	default:
+		return Common::kUnsupportedGameidError;
 	}
-	return gd != 0;
+	return Common::kNoError;
 }
 
 bool SherlockMetaEngine::hasFeature(MetaEngineFeature f) const {

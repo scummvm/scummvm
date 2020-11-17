@@ -448,7 +448,7 @@ public:
 	 * A createInstance implementation for subclasses. To be called after the base
 	 * createInstance function above is called.
 	 */
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
 
 	/**
 	 * Return the name of the engine plugin based on the engineID.

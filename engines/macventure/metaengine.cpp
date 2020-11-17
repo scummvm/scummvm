@@ -47,7 +47,7 @@ public:
 	}
 
 protected:
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -113,11 +113,9 @@ SaveStateList MacVentureMetaEngine::listSaves(const char *target) const {
 
 int MacVentureMetaEngine::getMaximumSaveSlot() const { return 999; }
 
-bool MacVentureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *game) const {
-	if (game) {
-		*engine = new MacVenture::MacVentureEngine(syst, game);
-	}
-	return game != 0;
+Common::Error MacVentureMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *game) const {
+	*engine = new MacVenture::MacVentureEngine(syst, game);
+	return Common::kNoError;
 }
 
 void MacVentureMetaEngine::removeSaveState(const char *target, int slot) const {

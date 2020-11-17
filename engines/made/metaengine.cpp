@@ -52,7 +52,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool MadeMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -65,12 +65,9 @@ bool Made::MadeEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-bool MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Made::MadeGameDescription *gd = (const Made::MadeGameDescription *)desc;
-	if (gd) {
-		*engine = new Made::MadeEngine(syst, gd);
-	}
-	return gd != 0;
+Common::Error MadeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Made::MadeEngine(syst, (const Made::MadeGameDescription *)desc);
+	return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MADE)

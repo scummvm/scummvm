@@ -50,7 +50,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
     SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -77,12 +77,9 @@ bool Toltecs::ToltecsEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool ToltecsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Toltecs::ToltecsGameDescription *gd = (const Toltecs::ToltecsGameDescription *)desc;
-	if (gd) {
-		*engine = new Toltecs::ToltecsEngine(syst, gd);
-	}
-	return gd != 0;
+Common::Error ToltecsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Toltecs::ToltecsEngine(syst, (const Toltecs::ToltecsGameDescription *)desc);
+	return Common::kNoError;
 }
 
 SaveStateList ToltecsMetaEngine::listSaves(const char *target) const {

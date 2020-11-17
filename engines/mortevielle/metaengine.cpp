@@ -45,7 +45,7 @@ public:
 		return "mortevielle";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override;
@@ -53,11 +53,9 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool MortevielleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new Mortevielle::MortevielleEngine(syst, (const Mortevielle::MortevielleGameDescription *)desc);
-	}
-	return desc != 0;
+Common::Error MortevielleMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Mortevielle::MortevielleEngine(syst, (const Mortevielle::MortevielleGameDescription *)desc);
+	return Common::kNoError;
 }
 
 bool MortevielleMetaEngine::hasFeature(MetaEngineFeature f) const {

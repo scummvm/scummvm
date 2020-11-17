@@ -127,7 +127,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateList listSavesForPrefix(const char *prefix, const char *extension) const;
@@ -259,55 +259,48 @@ Common::KeymapArray MohawkMetaEngine::initKeymaps(const char *target) const {
 	return AdvancedMetaEngine::initKeymaps(target);
 }
 
-bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Mohawk::MohawkGameDescription *gd = (const Mohawk::MohawkGameDescription *)desc;
 
-	if (gd) {
-		switch (gd->gameType) {
-		case Mohawk::GType_MYST:
-		case Mohawk::GType_MAKINGOF:
+	switch (gd->gameType) {
+	case Mohawk::GType_MYST:
+	case Mohawk::GType_MAKINGOF:
 #ifdef ENABLE_MYST
 #ifndef ENABLE_MYSTME
-			if (gd->features & Mohawk::GF_ME) {
-				Engine::errorUnsupportedGame(_("Myst ME support not compiled in"));
-				return false;
-			}
+		if (gd->features & Mohawk::GF_ME)
+			return Common::Error(Common::kUnsupportedGameidError, _s("Myst ME support not compiled in"));
 #endif
-			*engine = new Mohawk::MohawkEngine_Myst(syst, gd);
-			break;
+		*engine = new Mohawk::MohawkEngine_Myst(syst, gd);
+		break;
 #else
-			Engine::errorUnsupportedGame(_("Myst support not compiled in"));
-			return false;
+		return Common::Error(Common::kUnsupportedGameidError, _s("Myst support not compiled in"));
 #endif
-		case Mohawk::GType_RIVEN:
+	case Mohawk::GType_RIVEN:
 #ifdef ENABLE_RIVEN
-			*engine = new Mohawk::MohawkEngine_Riven(syst, gd);
-			break;
+		*engine = new Mohawk::MohawkEngine_Riven(syst, gd);
+		break;
 #else
-			Engine::errorUnsupportedGame(_("Riven support not compiled in"));
-			return false;
+		return Common::Error(Common::kUnsupportedGameidError, _s("Riven support not compiled in"));
 #endif
-		case Mohawk::GType_LIVINGBOOKSV1:
-		case Mohawk::GType_LIVINGBOOKSV2:
-		case Mohawk::GType_LIVINGBOOKSV3:
-		case Mohawk::GType_LIVINGBOOKSV4:
-		case Mohawk::GType_LIVINGBOOKSV5:
-			*engine = new Mohawk::MohawkEngine_LivingBooks(syst, gd);
-			break;
-		case Mohawk::GType_CSTIME:
+	case Mohawk::GType_LIVINGBOOKSV1:
+	case Mohawk::GType_LIVINGBOOKSV2:
+	case Mohawk::GType_LIVINGBOOKSV3:
+	case Mohawk::GType_LIVINGBOOKSV4:
+	case Mohawk::GType_LIVINGBOOKSV5:
+		*engine = new Mohawk::MohawkEngine_LivingBooks(syst, gd);
+		break;
+	case Mohawk::GType_CSTIME:
 #ifdef ENABLE_CSTIME
-			*engine = new Mohawk::MohawkEngine_CSTime(syst, gd);
-			break;
+		*engine = new Mohawk::MohawkEngine_CSTime(syst, gd);
+		break;
 #else
-			Engine::errorUnsupportedGame(_("CSTime support not compiled in"));
-			return false;
+		return Common::Error(Common::kUnsupportedGameidError, _s("CSTime support not compiled in"));
 #endif
-		default:
-			error("Unknown Mohawk Engine");
-		}
+	default:
+		return Common::kUnsupportedGameidError;
 	}
 
-	return (gd != nullptr);
+	return Common::kNoError;
 }
 
 GUI::OptionsContainerWidget *MohawkMetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {

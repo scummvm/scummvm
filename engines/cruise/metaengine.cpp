@@ -56,7 +56,7 @@ public:
 	SaveStateList listSaves(const char *target) const override;
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool CruiseMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -123,12 +123,9 @@ SaveStateDescriptor CruiseMetaEngine::querySaveMetaInfos(const char *target, int
 	return SaveStateDescriptor();
 }
 
-bool CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Cruise::CRUISEGameDescription *gd = (const Cruise::CRUISEGameDescription *)desc;
-	if (gd) {
-		*engine = new Cruise::CruiseEngine(syst, gd);
-	}
-	return gd != 0;
+Common::Error CruiseMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Cruise::CruiseEngine(syst, (const Cruise::CRUISEGameDescription *)desc);
+	return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(CRUISE)

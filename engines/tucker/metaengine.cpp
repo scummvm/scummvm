@@ -50,11 +50,9 @@ public:
 		}
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		if (desc) {
-			*engine = new Tucker::TuckerEngine(syst, desc->language, desc->flags);
-		}
-		return desc != nullptr;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+		*engine = new Tucker::TuckerEngine(syst, desc->language, desc->flags);
+		return Common::kNoError;
 	}
 
     SaveStateList listSaves(const char *target) const override {

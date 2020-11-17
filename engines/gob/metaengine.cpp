@@ -35,8 +35,7 @@ public:
 
     bool hasFeature(MetaEngineFeature f) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool GobMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -48,17 +47,11 @@ bool Gob::GobEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine) const {
-	return AdvancedMetaEngine::createInstance(syst, engine);
-}
-
-bool GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error GobMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Gob::GOBGameDescription *gd = (const Gob::GOBGameDescription *)desc;
-	if (gd) {
-		*engine = new Gob::GobEngine(syst);
-		((Gob::GobEngine *)*engine)->initGame(gd);
-	}
-	return gd != 0;
+	*engine = new Gob::GobEngine(syst);
+	((Gob::GobEngine *)*engine)->initGame(gd);
+	return Common::kNoError;
 }
 
 
