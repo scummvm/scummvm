@@ -277,6 +277,7 @@ private:
 
 public:
 	Scene(TwinEEngine *engine) : _engine(engine) {}
+	~Scene();
 
 	uint8 *currentScene = nullptr;
 

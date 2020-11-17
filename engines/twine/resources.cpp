@@ -46,11 +46,14 @@ Resources::~Resources() {
 	free(fontPtr);
 	free(spriteShadowPtr);
 	free(spriteBoundingBoxPtr);
+	free(_engine->_screens->mainPalette);
 }
 
 void Resources::initPalettes() {
 	// Init standard palette
-	HQR::getAllocEntry(&_engine->_screens->mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL);
+	if (HQR::getAllocEntry(&_engine->_screens->mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL) == 0) {
+		error("Failed to load main palette");
+	}
 	_engine->_screens->convertPalToRGBA(_engine->_screens->mainPalette, _engine->_screens->mainPaletteRGBA);
 
 	memcpy(_engine->_screens->palette, _engine->_screens->mainPalette, NUMOFCOLORS * 3);

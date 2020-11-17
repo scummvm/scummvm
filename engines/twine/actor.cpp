@@ -43,6 +43,7 @@ Actor::Actor(TwinEEngine *engine) : _engine(engine) {
 }
 
 Actor::~Actor() {
+	_engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->entityDataPtr = nullptr;
 	free(heroEntityNORMAL);
 	free(heroEntityATHLETIC);
 	free(heroEntityAGGRESSIVE);
@@ -495,6 +496,10 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 		// FIXME add constant for sample index
 		_engine->_sound->playSample(Samples::ItemPopup, 0x1000, 1, actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, actorIdx);
 	}
+}
+
+ActorStruct::~ActorStruct() {
+	free(entityDataPtr);
 }
 
 void ActorStruct::loadModel(int32 modelIndex) {

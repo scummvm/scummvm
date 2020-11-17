@@ -131,6 +131,8 @@ private:
 	ShapeType _brickShape = ShapeType::kNone; // field_3
 	bool _brickCausesDamage = false;
 public:
+	~ActorStruct();
+
 	StaticFlagsStruct staticFlags;
 	DynamicFlagsStruct dynamicFlags;
 

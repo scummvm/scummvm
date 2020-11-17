@@ -49,6 +49,8 @@ Grid::~Grid() {
 	for (int32 i = 0; i < ARRAYSIZE(brickTable); i++) {
 		free(brickTable[i]);
 	}
+	free(currentGrid);
+	free(currentBll);
 }
 
 void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurface& buffer) {
@@ -318,9 +320,6 @@ int32 Grid::loadGridBricks(int32 gridSize) {
 	for (uint32 i = firstBrick; i <= lastBrick; i++) {
 		if (!brickUsageTable[i]) {
 			continue;
-		}
-		if (brickTable[i]) {
-			free(brickTable[i]);
 		}
 		brickSizeTable[i] = HQR::getAllocEntry(&brickTable[i], Resources::HQR_LBA_BRK_FILE, i);
 		if (brickSizeTable[i] == 0) {

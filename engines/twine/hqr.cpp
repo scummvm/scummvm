@@ -198,8 +198,12 @@ int32 numEntries(const char *filename) {
 }
 
 int32 getAllocEntry(uint8 **ptr, const char *filename, int32 index) {
+	if (*ptr) {
+		free(*ptr);
+	}
 	const int32 size = entrySize(filename, index);
 	if (size <= 0) {
+		*ptr = nullptr;
 		warning("HQR: failed to get entry for index %i from file: %s", index, filename);
 		return 0;
 	}

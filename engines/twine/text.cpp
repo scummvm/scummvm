@@ -45,6 +45,11 @@ namespace TwinE {
 #define INDEXOFFSET 0
 #define DIALOGSOFFSET 1
 
+Text::~Text() {
+	free(dialTextPtr);
+	free(dialOrderPtr);
+}
+
 void Text::initVoxBank(int32 bankIdx) {
 	static const char *LanguageSufixTypes[] = {
 	    "sys",

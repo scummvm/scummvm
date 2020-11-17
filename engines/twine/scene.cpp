@@ -42,6 +42,10 @@
 
 namespace TwinE {
 
+Scene::~Scene() {
+	free(currentScene);
+}
+
 void Scene::setActorStaticFlags(ActorStruct* act, uint16 staticFlags) {
 	if (staticFlags & 0x1) {
 		act->staticFlags.bComputeCollisionWithObj = 1;
