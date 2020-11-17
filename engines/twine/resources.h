@@ -173,6 +173,17 @@ public:
 	uint32 spriteBoundingBoxSize = 0;
 	uint8 *spriteBoundingBoxPtr = nullptr;
 
+	uint32 holomapSurfaceSize = 0;
+	uint8 *holomapSurfacePtr = nullptr;
+	uint32 holomapImageSize = 0;
+	uint8 *holomapImagePtr = nullptr;
+	uint32 holomapTwinsenModelSize = 0;
+	uint8 *holomapTwinsenModelPtr = nullptr;
+	uint32 holomapTwinsenArrowSize = 0;
+	uint8 *holomapTwinsenArrowPtr = nullptr;
+	uint32 holomapArrowSize = 0;
+	uint8 *holomapArrowPtr = nullptr;
+
 	/** Initialize resource pointers */
 	void initResources();
 

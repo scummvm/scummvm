@@ -46,6 +46,11 @@ Resources::~Resources() {
 	free(fontPtr);
 	free(spriteShadowPtr);
 	free(spriteBoundingBoxPtr);
+	free(holomapSurfacePtr);
+	free(holomapImagePtr);
+	free(holomapTwinsenModelPtr);
+	free(holomapTwinsenArrowPtr);
+	free(holomapArrowPtr);
 	free(_engine->_screens->mainPalette);
 }
 
@@ -139,6 +144,31 @@ void Resources::initResources() {
 	spriteBoundingBoxSize = HQR::getAllocEntry(&spriteBoundingBoxPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA);
 	if (spriteBoundingBoxSize == 0) {
 		error("Failed to load actors bounding box data");
+	}
+
+	holomapSurfaceSize = HQR::getAllocEntry(&holomapSurfacePtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOSURFACE);
+	if (holomapSurfaceSize == 0) {
+		error("Failed to load holomap surface");
+	}
+
+	holomapImageSize = HQR::getAllocEntry(&holomapImagePtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOIMG);
+	if (holomapImageSize == 0) {
+		error("Failed to load holomap image");
+	}
+
+	holomapTwinsenModelSize = HQR::getAllocEntry(&holomapTwinsenModelPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINMDL);
+	if (holomapTwinsenModelSize == 0) {
+		error("Failed to load holomap twinsen model");
+	}
+
+	holomapArrowSize = HQR::getAllocEntry(&holomapArrowPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL);
+	if (holomapArrowSize == 0) {
+		error("Failed to load holomap arrow model");
+	}
+
+	holomapTwinsenArrowSize = HQR::getAllocEntry(&holomapTwinsenArrowPtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL);
+	if (holomapTwinsenArrowSize == 0) {
+		error("Failed to load holomap twinsen arrow model");
 	}
 
 	preloadSprites();
