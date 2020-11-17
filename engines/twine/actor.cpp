@@ -211,9 +211,6 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoun
 				if (!(bodyIndex & 0x8000)) {
 					index = currentPositionInBodyPtrTab;
 					currentPositionInBodyPtrTab++;
-					if (bodyTable[index]) {
-						free(bodyTable[index]);
-					}
 					bodyTableSize[index] = HQR::getAllocEntry(&bodyTable[index], Resources::HQR_BODY_FILE, bodyIndex & 0xFFFF);
 					if (bodyTableSize[index] == 0) {
 						error("HQR ERROR: Loading body entities");
