@@ -731,6 +731,11 @@ public:
 	Resource *_resource;
 
 private:
+	int leftClickEvent();
+	int rightClickEvent();
+	int mouseMoveEvent();
+	int lookupNextAction(const int *lookupArray, int action);
+
 	Common::RandomSource _randomSource;
 	Common::SineTable _sineTable;
 	Common::CosineTable _cosineTable;

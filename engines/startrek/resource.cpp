@@ -242,8 +242,8 @@ Common::MemoryReadStreamEndian *Resource::loadFile(Common::String filename, int 
 	if (_isDemo && _platform == Common::kPlatformDOS) {
 		stream = dataFile->readStream(index.uncompressedSize);
 	} else {
-		uint16 uncompressedSize = (_platform == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
-		uint16   compressedSize = (_platform == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
+		uint16 uncompressedSize = bigEndian ? dataFile->readUint16BE() : dataFile->readUint16LE();
+		uint16   compressedSize = bigEndian ? dataFile->readUint16BE() : dataFile->readUint16LE();
 		stream = decodeLZSS(dataFile->readStream(compressedSize), uncompressedSize);
 	}
 
