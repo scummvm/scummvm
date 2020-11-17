@@ -35,7 +35,7 @@ void StarTrekEngine::initBridge(bool b) {
 	// TODO: starfield
 
 	loadBridge();
-};
+}
 
 void StarTrekEngine::loadBridge() {
 	initStarfield(72, 30, 247, 102, 0);
