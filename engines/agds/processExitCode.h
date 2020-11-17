@@ -36,9 +36,10 @@ namespace AGDS {
 		kExitCodeMouseAreaChange				= 11,
 		kExitCodeRunDialog						= 12,
 		kExitCodeCreatePatchLoadResources		= 13,
-		kExitCodeLoadSaveGame					= 14,
+		kExitCodeLoadGame						= 14,
 		kExitCodeExitScreen						= 15,
 		kExitCodeCloseInventory					= 16,
+		kExitCodeSaveGame						= 17,
 
 		kExitCodeLoadPreviousScreenObject		= 99
 	};

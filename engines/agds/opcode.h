@@ -174,11 +174,11 @@ enum Opcode {
 	kGetObjectSurfaceX				= 154,
 	kGetObjectSurfaceY				= 155,
 	kLoadGame						= 156,
-	kStub157						= 157,
+	kSaveGame						= 157,
 	kQuit							= 158,
 	kExitProcessCreatePatch			= 159,
 	kLoadSaveSlotNamePicture		= 160,
-	kStub161						= 161,
+	kGetSaveGameName				= 161,
 	kDisableInventory				= 162,
 	kEnableInventory				= 163,
 	kLoadPreviousScreen				= 164,
@@ -402,7 +402,9 @@ enum Opcode {
 	OP(kGetObjectSurfaceX, getObjectSurfaceX) \
 	OP(kGetObjectSurfaceY, getObjectSurfaceY) \
 	OP(kLoadGame, loadGame) \
+	OP(kSaveGame, saveGame) \
 	OP(kLoadSaveSlotNamePicture, loadSaveSlotNamePicture) \
+	OP(kGetSaveGameName, getSaveGameName) \
 	OP(kSetObjectRegionOffset, setObjectRegionOffset) \
 	OP(kSetDelay, setDelay) \
 	OP(kStub172, stub172) \

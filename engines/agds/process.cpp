@@ -213,13 +213,17 @@ void Process::run() {
 				activate();
 			}
 			break;
-		case kExitCodeLoadSaveGame:
+		case kExitCodeLoadGame:
 			if (_engine->loadGameState(getExitIntArg1()).getCode() == Common::kNoError) {
 				done();
 			} else {
 				debug("save loading failed, resuming execution...");
 				activate(); //continue
 			}
+			break;
+		case kExitCodeSaveGame:
+			_engine->returnToPreviousScreen();
+			activate();
 			break;
 		default:
 			error("unknown process exit code %d", code);
