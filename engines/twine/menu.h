@@ -51,11 +51,11 @@ private:
 	Common::String _buttonTexts[MAX_BUTTONS];
 	int8 _activeButtonIdx = 0;
 
+public:
 	int16 getButtonTextId(int buttonIndex) const {
 		return _settings[MenuSettings_FirstButton + buttonIndex * 2];
 	}
 
-public:
 	void reset() {
 		for (int32 i = 0; i < MAX_BUTTONS; ++i) {
 			_buttonTexts[i] = "";

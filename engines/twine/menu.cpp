@@ -518,6 +518,14 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 		if (_engine->shouldQuit()) {
 			return kQuitEngine;
 		}
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIAbort)) {
+			for (int i = 0; i < menuSettings->getButtonCount(); ++i) {
+				const int16 textId = menuSettings->getButtonTextId(i);
+				if (textId == TextId::kReturnMenu || textId == TextId::kReturnGame || textId == TextId::kContinue) {
+					return textId;
+				}
+			}
+		}
 		_engine->_system->delayMillis(10);
 	} while (!_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter));
 
