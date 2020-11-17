@@ -131,15 +131,12 @@ public:
 		return 999;
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool Myst3MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Myst3GameDescription *gd = (const Myst3GameDescription *)desc;
-	if (gd) {
-		*engine = new Myst3Engine(syst, gd);
-	}
-	return gd != 0;
+Common::Error Myst3MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Myst3Engine(syst, (const Myst3GameDescription *)desc);
+	return Common::kNoError;
 }
 
 Common::Platform Myst3Engine::getPlatform() const {

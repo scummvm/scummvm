@@ -45,7 +45,7 @@ public:
 		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
 		return AdvancedMetaEngine::createInstance(syst, engine);
 	}
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -62,9 +62,8 @@ bool AGOS::AGOSEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const AGOS::AGOSGameDescription *gd = (const AGOS::AGOSGameDescription *)desc;
-	bool res = true;
 
 	switch (gd->gameType) {
 	case AGOS::GType_PN:
@@ -100,11 +99,10 @@ bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 		break;
 #endif
 	default:
-		res = false;
-		error("AGOS engine: unknown gameType");
+		return Common::kUnsupportedGameidError;
 	}
 
-	return res;
+	return Common::kNoError;
 }
 
 SaveStateList AgosMetaEngine::listSaves(const char *target) const {

@@ -50,7 +50,7 @@ public:
 		return "prince";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override { return 99; }
@@ -159,13 +159,9 @@ void PrinceMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(fileName);
 }
 
-bool PrinceMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	using namespace Prince;
-	const PrinceGameDescription *gd = (const PrinceGameDescription *)desc;
-	if (gd) {
-		*engine = new PrinceEngine(syst, gd);
-	}
-	return gd != 0;
+Common::Error PrinceMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Prince::PrinceEngine(syst, (const Prince::PrinceGameDescription *)desc);
+	return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PRINCE)

@@ -38,7 +38,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const override;
 	virtual void removeSaveState(const char *target, int slot) const override;
 	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool PetkaMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -96,11 +96,9 @@ SaveStateDescriptor PetkaMetaEngine::querySaveMetaInfos(const char *target, int 
 	return SaveStateDescriptor();
 }
 
-bool PetkaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc)
-		*engine = new Petka::PetkaEngine(syst, desc);
-
-	return desc != 0;
+Common::Error PetkaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Petka::PetkaEngine(syst, desc);
+	return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PETKA)

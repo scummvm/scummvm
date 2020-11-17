@@ -34,14 +34,12 @@ public:
 	}
 	virtual bool hasFeature(MetaEngineFeature f) const override { return false; }
 
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
-bool IcbMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc)
-		*engine = new IcbEngine(syst, desc);
-
-	return desc != nullptr;
+Common::Error IcbMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new IcbEngine(syst, desc);
+	return Common::kNoError;
 }
 
 } // End of namespace ICB

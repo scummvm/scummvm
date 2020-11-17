@@ -35,7 +35,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
@@ -157,11 +157,9 @@ SaveStateDescriptor ToonMetaEngine::querySaveMetaInfos(const char *target, int s
 	return SaveStateDescriptor();
 }
 
-bool ToonMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new Toon::ToonEngine(syst, desc);
-	}
-	return desc != 0;
+Common::Error ToonMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Toon::ToonEngine(syst, desc);
+	return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(TOON)

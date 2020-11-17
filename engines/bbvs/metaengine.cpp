@@ -44,7 +44,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
@@ -121,11 +121,9 @@ SaveStateDescriptor BbvsMetaEngine::querySaveMetaInfos(const char *target, int s
 	return SaveStateDescriptor();
 }
 
-bool BbvsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new Bbvs::BbvsEngine(syst, desc);
-	}
-	return desc != 0;
+Common::Error BbvsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Bbvs::BbvsEngine(syst, desc);
+	return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(BBVS)

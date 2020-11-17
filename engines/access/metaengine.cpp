@@ -76,7 +76,7 @@ public:
 
     bool hasFeature(MetaEngineFeature f) const override;
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -101,21 +101,19 @@ bool Access::AccessEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error AccessMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Access::AccessGameDescription *gd = (const Access::AccessGameDescription *)desc;
-	if (gd) {
-		switch (gd->gameID) {
-		case Access::GType_Amazon:
-			*engine = new Access::Amazon::AmazonEngine(syst, gd);
-			break;
-		case Access::GType_MartianMemorandum:
-			*engine = new Access::Martian::MartianEngine(syst, gd);
-			break;
-		default:
-			error("Unknown game");
-		}
+	switch (gd->gameID) {
+	case Access::GType_Amazon:
+		*engine = new Access::Amazon::AmazonEngine(syst, gd);
+		break;
+	case Access::GType_MartianMemorandum:
+		*engine = new Access::Martian::MartianEngine(syst, gd);
+		break;
+	default:
+		return Common::kUnsupportedGameidError;
 	}
-	return gd != 0;
+	return Common::kNoError;
 }
 
 SaveStateList AccessMetaEngine::listSaves(const char *target) const {

@@ -69,7 +69,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -94,12 +94,9 @@ bool MADS::MADSEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const MADS::MADSGameDescription *gd = (const MADS::MADSGameDescription *)desc;
-	if (gd) {
-		*engine = new MADS::MADSEngine(syst, gd);
-	}
-	return gd != 0;
+Common::Error MADSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new MADS::MADSEngine(syst, (const MADS::MADSGameDescription *)desc);
+	return Common::kNoError;
 }
 
 SaveStateList MADSMetaEngine::listSaves(const char *target) const {

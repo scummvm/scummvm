@@ -74,7 +74,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override { return 999; }
@@ -129,26 +129,21 @@ void CryOmni3DMetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-bool CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine,
+Common::Error CryOmni3DMetaEngine::createInstance(OSystem *syst, Engine **engine,
 		const ADGameDescription *desc) const {
 	const CryOmni3DGameDescription *gd = (const CryOmni3DGameDescription *)desc;
 
-	if (gd) {
-		switch (gd->gameType) {
-		case GType_VERSAILLES:
+	switch (gd->gameType) {
+	case GType_VERSAILLES:
 #ifdef ENABLE_VERSAILLES
-			*engine = new Versailles::CryOmni3DEngine_Versailles(syst, gd);
-			break;
+		*engine = new Versailles::CryOmni3DEngine_Versailles(syst, gd);
+		return Common::kNoError;
 #else
-			warning("Versailles support not compiled in");
-			return false;
+		return Common::Error(Common::kUnsupportedGameidError, _s("Versailles 1685 support is not compiled in"));
 #endif
-		default:
-			error("Unknown Cryo Omni3D Engine");
-		}
+	default:
+		return Common::kUnsupportedGameidError;
 	}
-
-	return (gd != 0);
 }
 
 } // End of namespace CryOmni3D

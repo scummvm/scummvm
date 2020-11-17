@@ -41,11 +41,9 @@ public:
 			(f == kSavesUseExtendedFormat);
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		if (desc)
-			*engine = new Hadesch::HadeschEngine(syst, desc);
-		
-		return desc != 0;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+		*engine = new Hadesch::HadeschEngine(syst, desc);
+		return Common::kNoError;
 	}
 
 	const char *getName() const override {

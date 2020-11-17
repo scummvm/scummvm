@@ -52,7 +52,7 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -79,11 +79,9 @@ bool Titanic::TitanicEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool TitanicMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Titanic::TitanicGameDescription *gd = (const Titanic::TitanicGameDescription *)desc;
-	*engine = new Titanic::TitanicEngine(syst, gd);
-
-	return gd != 0;
+Common::Error TitanicMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Titanic::TitanicEngine(syst, (const Titanic::TitanicGameDescription *)desc);
+	return Common::kNoError;
 }
 
 SaveStateList TitanicMetaEngine::listSaves(const char *target) const {

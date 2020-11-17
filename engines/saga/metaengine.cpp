@@ -78,10 +78,7 @@ public:
 
     bool hasFeature(MetaEngineFeature f) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine) const override {
-		return AdvancedMetaEngine::createInstance(syst, engine);
-	}
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -108,31 +105,27 @@ bool Saga::SagaEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Saga::SAGAGameDescription *gd = (const Saga::SAGAGameDescription *)desc;
 
 	switch (gd->gameId) {
 	case Saga::GID_IHNM:
 #ifndef ENABLE_IHNM
-		Engine::errorUnsupportedGame(_("I Have No Mouth support not compiled in"));
-		return false;
+		return Common::Error(Common::kUnsupportedGameidError, _s("I Have No Mouth support not compiled in"));
 #endif
 		break;
 	case Saga::GID_DINO:
 	case Saga::GID_FTA2:
 #ifndef ENABLE_SAGA2
-		Engine::errorUnsupportedGame(_("SAGA2 support not compiled in"));
-		return false;
+		return Common::Error(Common::kUnsupportedGameidError, _s("SAGA2 support not compiled in"));
 #endif
 		break;
 	default:
 		break;
 	}
 
-	if (gd) {
-		*engine = new Saga::SagaEngine(syst, gd);
-	}
-	return gd != 0;
+	*engine = new Saga::SagaEngine(syst, gd);
+	return Common::kNoError;
 }
 
 SaveStateList SagaMetaEngine::listSaves(const char *target) const {

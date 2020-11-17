@@ -46,7 +46,7 @@ public:
 		return "hugo";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override;
@@ -56,12 +56,10 @@ public:
 
 };
 
-bool HugoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	if (gd) {
-		*engine = new HugoEngine(syst, (const HugoGameDescription *)gd);
-		((HugoEngine *)*engine)->initGame((const HugoGameDescription *)gd);
-	}
-	return gd != 0;
+Common::Error HugoMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+	*engine = new HugoEngine(syst, (const HugoGameDescription *)gd);
+	((HugoEngine *)*engine)->initGame((const HugoGameDescription *)gd);
+	return Common::kNoError;
 }
 
 bool HugoMetaEngine::hasFeature(MetaEngineFeature f) const {

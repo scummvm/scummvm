@@ -37,7 +37,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	void removeSaveState(const char *target, int slot) const override;
@@ -62,12 +62,9 @@ bool SupernovaMetaEngine::hasFeature(MetaEngineFeature f) const {
 	}
 }
 
-bool SupernovaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new Supernova::SupernovaEngine(syst);
-	}
-
-	return desc != nullptr;
+Common::Error SupernovaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Supernova::SupernovaEngine(syst);
+	return Common::kNoError;
 }
 
 SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {

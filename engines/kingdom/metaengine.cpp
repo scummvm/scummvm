@@ -45,7 +45,7 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	virtual int getMaximumSaveSlot() const override;
 	virtual SaveStateList listSaves(const char *target) const override;
@@ -63,11 +63,9 @@ bool KingdomMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSavesSupportCreationDate);
 }
 
-bool KingdomMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc)
-		*engine = new Kingdom::KingdomGame(syst, desc);
-
-	return desc != nullptr;
+Common::Error KingdomMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Kingdom::KingdomGame(syst, desc);
+	return Common::kNoError;
 }
 
 int KingdomMetaEngine::getMaximumSaveSlot() const {
