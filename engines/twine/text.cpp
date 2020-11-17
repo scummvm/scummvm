@@ -303,9 +303,8 @@ void Text::initInventoryDialogueBox() { // SecondInitDialWindow
 
 // TODO: refactor this code
 void Text::initText(int32 index) {
-	printTextVar13 = 0;
-
 	if (!getText(index)) {
+		printTextVar13 = 0;
 		return;
 	}
 
@@ -777,14 +776,13 @@ void Text::textClipSmall() { // newGame4
 }
 
 void Text::drawAskQuestion(int32 index) {
-	int32 textStatus = 1;
-
 	// get right VOX entry index
 	initVoxToPlay(index);
 
 	initText(index);
 	initDialogueBox();
 
+	int32 textStatus = 1;
 	do {
 		_engine->readKeys();
 		textStatus = printText10();
