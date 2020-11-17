@@ -94,7 +94,9 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 
 	// Original sets up bytes 0-3 of rdf file as "remote function caller"
 
-	_room->loadMapFile(getScreenName());
+	bool isDemo = getFeatures() & GF_DEMO;
+	if (!isDemo)
+		_room->loadMapFile(getScreenName());
 
 	_awayMission.activeAction = ACTION_WALK;
 
@@ -105,14 +107,16 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 	int16 den = _room->getMaxY() - _room->getMinY() + 1;
 	_playerActorScale = Fixed16(num) / den;
 
-	int16 addr = _room->getBanDataStart();
-	while (addr != _room->getBanDataEnd()) {
-		Common::String name((char *)&_room->_rdfData[addr]);
-		loadBanFile(name);
-		addr += strlen((char *)&_room->_rdfData[addr]) + 1;
-	}
-
 	_actionQueue.clear();
+
+	if (!isDemo) {
+		int16 addr = _room->getBanDataStart();
+		while (addr != _room->getBanDataEnd()) {
+			Common::String name((char *)&_room->_rdfData[addr]);
+			loadBanFile(name);
+			addr += strlen((char *)&_room->_rdfData[addr]) + 1;
+		}
+	}
 }
 
 void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {

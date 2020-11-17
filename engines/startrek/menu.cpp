@@ -874,6 +874,9 @@ void StarTrekEngine::chooseMouseBitmapForAction(int action, bool withRedOutline)
 		"lookh3"
 	};
 
+	if (getFeatures() & GF_DEMO)
+		return;
+
 	Common::String bitmapName;
 
 	switch (action) {

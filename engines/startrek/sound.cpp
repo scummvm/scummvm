@@ -98,6 +98,10 @@ void Sound::playMidiTrack(int track) {
 	if (!_vm->_musicEnabled || !_vm->_musicWorking)
 		return;
 
+	// TODO: Demo music
+	if (_vm->getFeatures() & GF_DEMO)
+		return;
+
 	assert(loadedSoundData != nullptr);
 
 	// Check if a midi slot for this track exists already
@@ -147,6 +151,8 @@ bool Sound::isMidiPlaying() {
 }
 
 void Sound::loadMusicFile(const Common::String &baseSoundName) {
+	bool isDemo = _vm->getFeatures() & GF_DEMO;
+
 	clearAllMidiSlots();
 
 	if (baseSoundName == _loadedMidiFilename)
@@ -154,14 +160,14 @@ void Sound::loadMusicFile(const Common::String &baseSoundName) {
 
 	_loadedMidiFilename = baseSoundName;
 
-	if (_vm->getPlatform() == Common::kPlatformDOS) {
+	if (_vm->getPlatform() == Common::kPlatformDOS && !isDemo) {
 		loadPCMusicFile(baseSoundName);
+	} else if (_vm->getPlatform() == Common::kPlatformDOS && isDemo) {
+		//playSMFSound(baseSoundName);
 	} else if (_vm->getPlatform() == Common::kPlatformAmiga) {
 		//playAmigaSound(baseSoundName);
 	} else if (_vm->getPlatform() == Common::kPlatformMacintosh) {
 		//playMacSMFSound(baseSoundName);
-	} else if (_vm->getFeatures() & GF_DEMO) {
-		//playSMFSound(baseSoundName);
 	}
 }
 

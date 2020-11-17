@@ -96,7 +96,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_textboxVar6 = 0;
 	_textboxHasMultipleChoices = false;
 
-	_missionToLoad = "DEMON";
+	_missionToLoad = "";
 	_roomIndexToLoad = 0;
 	_mapFile = nullptr;
 	_iwFile = nullptr;
@@ -125,7 +125,8 @@ StarTrekEngine::~StarTrekEngine() {
 }
 
 Common::Error StarTrekEngine::run() {
-	_resource = new Resource(getPlatform(), getFeatures() & GF_DEMO);
+	bool isDemo = getFeatures() & GF_DEMO;
+	_resource = new Resource(getPlatform(), isDemo);
 	_gfx = new Graphics(this);
 	_sound = new Sound(this);
 	setDebugger(new Console(this));
@@ -133,7 +134,7 @@ Common::Error StarTrekEngine::run() {
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	initializeEventsAndMouse();
 
-	_gfx->setMouseBitmap("pushbtn");
+	_gfx->setMouseBitmap(!isDemo ? "pushbtn" : "cursor");
 	_gfx->toggleMouse(true);
 
 	bool loadedSave = false;
@@ -145,8 +146,14 @@ Common::Error StarTrekEngine::run() {
 	}
 
 	if (!loadedSave) {
-		playIntro();
-		runGameMode(GAMEMODE_BEAMDOWN, false);
+		if (!isDemo) {
+			playIntro();
+			_missionToLoad = "DEMON";
+			runGameMode(GAMEMODE_BEAMDOWN, false);
+		} else {
+			_missionToLoad = "DEMO";
+			runGameMode(GAMEMODE_AWAYMISSION, false);
+		}
 	} else {
 		_roomIndexToLoad = -1;
 		runGameMode(_gameMode, true);

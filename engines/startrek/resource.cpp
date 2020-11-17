@@ -98,17 +98,17 @@ ResourceIndex Resource::getIndex(Common::String filename) {
 ResourceIndex Resource::getIndexEntry(Common::SeekableReadStream *indexFile) {
 	ResourceIndex index;
 
-	index.indexOffset = 0;
-	index.foundData = false;
-	index.fileCount = 1;
-	index.uncompressedSize = 0;
-
 	Common::String currentFile;
 	for (byte i = 0; i < 8; i++) {
 		char c = indexFile->readByte();
 		if (c)
 			currentFile += c;
 	}
+
+	// The demo version has an empty entry in the end
+	if (currentFile.size() == 0)
+		return index;
+
 	currentFile += '.';
 
 	// Read extension
@@ -234,18 +234,16 @@ Common::MemoryReadStreamEndian *Resource::loadFile(Common::String filename, int 
 	if (!dataFile)
 		error("Could not open data file");
 
+	if (index.fileCount != 1)
+		index.indexOffset = getSequentialFileOffset(index.indexOffset, fileIndex);
+	dataFile->seek(index.indexOffset);
+
 	Common::SeekableReadStream *stream;
 	if (_isDemo && _platform == Common::kPlatformDOS) {
 		stream = dataFile->readStream(index.uncompressedSize);
 	} else {
-		if (index.fileCount != 1) {
-			index.indexOffset = getSequentialFileOffset(index.indexOffset, fileIndex);
-		}
-		dataFile->seek(index.indexOffset);
-
 		uint16 uncompressedSize = (_platform == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
 		uint16   compressedSize = (_platform == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
-
 		stream = decodeLZSS(dataFile->readStream(compressedSize), uncompressedSize);
 	}
 
