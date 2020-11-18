@@ -4,7 +4,7 @@ Engine
 
 Use the Engine tab to change settings that are unique to the game being played. 
 
-From the Launcher, highlight a game on the games list, select :guilabel:`Edit Game`, and then select the :guilabel:`Engine` tab. This tab may not be available for all games. 
+From the Launcher, highlight a game on the games list, select **Edit Game**, and then select the **Engine** tab. This tab may not be available for all games. 
 
 To find out which engine powers your game, have a look at the ScummVM Supported Games `wiki page
 <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_. 
@@ -248,7 +248,7 @@ Enable studio audience
 
 	*studio_audience* 
 
-.. _skip:
+.. _skipsupport:
 
 Skip support
 	Allows the user to skip text and cutscenes.

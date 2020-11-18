@@ -29,7 +29,7 @@ There are two views: list view and tile view. Click the list and tile icons at t
 Autosave
 ------------
 
-ScummVM automatically saves the game every 5 minutes. The :ref:`autosave period <autosave>` can be changed in the :doc:`Misc tab <../settings/misc>` or in the :doc:`configuration file <../advanced_topics/configuration_file>`.
+ScummVM automatically saves the game every 5 minutes. The :ref:`autosave period <autosave>` can be changed in the Misc settings tab, or in the :doc:`configuration file <../advanced_topics/configuration_file>`.
 
 
 Load a game
@@ -37,7 +37,7 @@ Load a game
 
 Saved games can be loaded directly from the Launcher without starting the game first, by selecting the **Load** button.
 
-There are two views: list view and tile view. Click the list and tile icons at the bottom left of the window to toggle between the two.  . 
+There are two views: list view and tile view. Click the list and tile icons at the bottom left of the window to toggle between the two.  
 
 In list view, the pane on the left shows a list of your saved states. Click on a saved state to highlight it. The pane on the right shows information about the highlighted state such as timestamps, screenshots and playtime.
 
@@ -58,6 +58,7 @@ In tile view, each tile shows a screenshot of the saved state, as well as the de
 
 To load a saved state from within a game, press :kbd:`Ctrl+F5` (:kbd:`Ctrl+fn+F5` on a Mac) to access the Global Main Menu. Select **Load**.
 
+.. _savelocation:
 
 Location of saved game files
 -------------------------------
@@ -112,11 +113,10 @@ Default saved game paths are shown below.
 	.. panels::
 		:column: col-lg-12 mb-2
 
-		We follow the XDG Base Directory Specification. This means our configuration can be found in ``$XDG_DATA_HOME/scummvm/saves/``
-
-		If XDG_DATA_HOME is not defined or empty, ``~/.local/share/`` will be used, where ``~`` is your Home directory. 
 		
-		Note that ``.local`` is a hidden directory; to view it use ``ls -a`` on the command line. If you are using a GUI file manager, go to **View > Show Hidden Files**, or use the keyboard shortcut :kbd:`Ctrl + H`.
+		We follow the XDG Base Directory Specification, so by default the saved games can be found at ``~/.local/share/scummvm/saves/``, but this location may vary depending on the value of the ``XDG_DATA_HOME`` environment variable.
+		
+		``.local`` is a hidden directory. To view it use ``ls -a`` on the command line, or, if you are using a GUI file manager, press :kbd:`Ctrl + H`.
 
 		If ScummVM was installed using Snap, the saves can be found at ``~/snap/scummvm/current/.local/share/scummvm/saves/``
 

@@ -14,13 +14,13 @@
       :glob:
       :hidden:
 
-      using_scummvm/the_launcher
-      using_scummvm/add_play_games
-      using_scummvm/save_load_games
-      using_scummvm/connect_cloud
-      using_scummvm/local_webserver
-      using_scummvm/keyboard_shortcuts
-      using_scummvm/how_to_settings
+      use_scummvm/the_launcher
+      use_scummvm/add_play_games
+      use_scummvm/save_load_games
+      use_scummvm/connect_cloud
+      use_scummvm/LAN
+      use_scummvm/keyboard_shortcuts
+      use_scummvm/how_to_settings
 
 
 .. toctree::
@@ -100,7 +100,7 @@ While ScummVM was originally designed to run LucasArts' SCUMM games, over time s
 First steps
 ================
 
-We have guides available to show you :column: mb-4 how to get ScummVM up and running: 
+We have guides available to show you how to get ScummVM up and running: 
 
 .. panels::
       :container: container-fluid text-center mb-4
@@ -147,38 +147,38 @@ We have guides available to show you :column: mb-4 how to get ScummVM up and run
 How do I use ScummVM?
 =========================
 
-So you have ScummVM installed, but now you need to know how to add and play some games! We have lots of useful information to help you out:
+So you have ScummVM installed, but now you need to know how to play some games! We have lots of useful information to help you out:
 
 .. panels::
       :container: text-center mb-4
 
       Understand the interface
       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      :doc:`using_scummvm/the_launcher` 
+      :doc:`use_scummvm/the_launcher` 
 
       ---
 
       Play games
       ^^^^^^^^^^^^^^
-      :doc:`using_scummvm/add_play_games`
+      :doc:`use_scummvm/add_play_games`
 
-      :doc:`using_scummvm/save_load_games`
+      :doc:`use_scummvm/save_load_games`
 
-      :doc:`using_scummvm/keyboard_shortcuts`
+      :doc:`use_scummvm/keyboard_shortcuts`
 
       ---
 
       Use the features
       ^^^^^^^^^^^^^^^^^^
-      :doc:`using_scummvm/connect_cloud`
+      :doc:`use_scummvm/connect_cloud`
 
-      :doc:`using_scummvm/local_webserver`
+      :doc:`use_scummvm/LAN`
 
       ---
 
       Change settings
       ^^^^^^^^^^^^^^^^^^^^^
-      :doc:`using_scummvm/how_to_settings`
+      :doc:`use_scummvm/how_to_settings`
 
 
 
@@ -232,7 +232,7 @@ If you are having problems with any aspect of ScummVM, take a look at our help s
 What's changed since I was last here?
 ======================================
 
-For a quick recap on what's been happening with the latest release, check out our Release Notes section. 
+For a quick recap on what's happening with the latest release, check out our Release Notes section. 
 
 
 The ScummVM Project
@@ -241,8 +241,4 @@ ScummVM is an open-source project.
 
 If you enjoy ScummVM, feel free to donate using the PayPal button on the `ScummVM homepage <https://www.scummvm.org>`__. This will help us buy the utilities to develop ScummVM faster and more efficiently.
 
-If you cannot donate but you have coding or writing skills, you can help us by contributing!
-
-To help us with our documentation, see the :doc:`contribute/tech_writers`. 
-
-To help us with our code, check out `Developer Central <https://wiki.scummvm.org/index.php?title=Developer_Central>`_ on the ScummVM wiki.
+If you cannot donate but you have coding or writing skills, you can help us by contributing! Check out `Developer Central <https://wiki.scummvm.org/index.php?title=Developer_Central>`_ on the ScummVM wiki.

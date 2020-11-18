@@ -25,7 +25,7 @@ This may include documenting a new feature, documenting a new or existing port, 
 	* Linux: Use `sudo apt install python3-pip`. 
 	* Windows: Pip3 is installed when you install Python3. 
 	* macOS: Pip3 is installed if you install Python3 with Homebrew. 
-* Use pip3 to install [sphinx](https://www.sphinx-doc.org/en/master/usage/installation.html), [sphinx-panels](https://sphinx-panels.readthedocs.io/en/latest/#installation) and [recommonmark](https://www.sphinx-doc.org/en/master/usage/markdown.html).   
+* Use pip3 to install [sphinx](https://www.sphinx-doc.org/en/master/usage/installation.html), the [Read the Docs theme](https://sphinx-rtd-theme.readthedocs.io/en/stable/installing.html) [sphinx-panels](https://sphinx-panels.readthedocs.io/en/latest/#installation) and [recommonmark](https://www.sphinx-doc.org/en/master/usage/markdown.html).   
 * [Install Git](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/set-up-git), if you don’t have it already. 
 * [Fork and clone](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo) the [scummvm repository](https://github.com/scummvm/scummvm). 
 * [Create and checkout](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/creating-and-deleting-branches-within-your-repository) a new branch.
