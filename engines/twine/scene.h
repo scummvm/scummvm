@@ -236,6 +236,25 @@ enum LBA1SceneId {
 #define IS_HERO(x) (x) == OWN_ACTOR_SCENE_INDEX
 
 class TwinEEngine;
+
+/**
+ * scene 0: 23 actors
+ *
+ * scene 1: 14 actors
+ * actor 1 - car
+ * actor 2 - elephant
+ * actor 3 - soldier at the house
+ * actor 4 - patrolling soldier before gate
+ * actor 5 - soldier after gate
+ * actor 6 - ??
+ * actor 7 - ??
+ * actor 8 - left gate
+ * actor 9 - ??
+ * actor 10 - door after leaving truck
+ * actor 11 - door subway
+ * actor 12 - guy at rubbish
+ * actor 13 - ??
+ */
 class Scene {
 private:
 	TwinEEngine *_engine;

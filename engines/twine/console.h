@@ -42,6 +42,7 @@ private:
 	bool doToggleZoneRendering(int argc, const char **argv);
 	bool doToggleFreeCamera(int argc, const char **argv);
 	bool doToggleSceneChanges(int argc, const char **argv);
+	bool doSkipSceneActorsBut(int argc, const char **argv);
 public:
 	TwinEConsole(TwinEEngine *engine);
 	~TwinEConsole() override;

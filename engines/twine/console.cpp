@@ -39,6 +39,7 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("toggle_zones", WRAP_METHOD(TwinEConsole, doToggleZoneRendering));
 	registerCmd("toggle_freecamera", WRAP_METHOD(TwinEConsole, doToggleFreeCamera));
 	registerCmd("toggle_scenechanges", WRAP_METHOD(TwinEConsole, doToggleSceneChanges));
+	registerCmd("scene_actor", WRAP_METHOD(TwinEConsole, doSkipSceneActorsBut));
 }
 
 TwinEConsole::~TwinEConsole() {
@@ -61,6 +62,17 @@ bool TwinEConsole::doToggleZoneRendering(int argc, const char **argv) {
 	if (argc == 1) {
 		// TODO: support typeZones
 	}
+	return true;
+}
+
+bool TwinEConsole::doSkipSceneActorsBut(int argc, const char **argv) {
+	if (argc < 2) {
+		debug("Usage: give actor id of scene or -1 to disable");
+		return false;
+	}
+	const int16 actorIdx = atoi(argv[1]);
+	debug("Only load actor %d in the next scene", actorIdx);
+	_engine->_debugScene->onlyLoadActor = actorIdx;
 	return true;
 }
 

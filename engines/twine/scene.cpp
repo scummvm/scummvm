@@ -27,6 +27,7 @@
 #include "twine/actor.h"
 #include "twine/animations.h"
 #include "twine/debug_grid.h"
+#include "twine/debug_scene.h"
 #include "twine/extra.h"
 #include "twine/gamestate.h"
 #include "twine/grid.h"
@@ -178,7 +179,8 @@ bool Scene::loadSceneLBA1() {
 	stream.skip(sceneHero->lifeScriptSize);
 
 	sceneNumActors = stream.readUint16LE();
-	for (int32 i = 1; i < sceneNumActors; i++) {
+	int cnt = 1;
+	for (int32 i = 1; i < sceneNumActors; i++, cnt++) {
 		_engine->_actor->resetActor(i);
 
 		ActorStruct* act = &_sceneActors[i];
@@ -218,6 +220,11 @@ bool Scene::loadSceneLBA1() {
 		act->lifeScriptSize = stream.readUint16LE();
 		act->lifeScript = currentScene + stream.pos();
 		stream.skip(act->lifeScriptSize);
+
+		if (_engine->_debugScene->onlyLoadActor != -1 && _engine->_debugScene->onlyLoadActor != cnt) {
+			sceneNumActors--;
+			i--;
+		}
 	}
 
 	sceneNumZones = stream.readUint16LE();

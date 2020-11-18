@@ -40,6 +40,7 @@ public:
 	DebugScene(TwinEEngine *engine);
 	bool showingZones = false;
 	int32 typeZones = 127; // all zones on as default
+	int16 onlyLoadActor = -1;
 
 	void displayZones();
 };
