@@ -575,13 +575,22 @@ int ResourceManager::readAudioMapSCI11(IntMapResourceSource *map) {
 			}
 
 			// GK2 has invalid audio36 map entries on CD 1 of the German 
-			//  version and CD 6 of all versions. All are safe to ignore
+			//  version and CDs 5-6 of all versions. All are safe to ignore
 			//  because their content doesn't apply to the disc's chapter.
 			if (g_sci->getGameId() == GID_GK2) {
 				// Map 2020 on CD 1 only exists in localized versions and
 				//  contains inventory messages from later chapters.
 				if (map->_volumeNumber == 1 &&
 					map->_mapNumber == 2020) {
+					continue;
+				}
+
+				// Maps 210 and 220 on CD 5 point to garbage data.
+				//  These maps are for Huber Farm messages but this area
+				//  was removed from chapter 5. If these map entries are
+				//  used then it breaks the audio during other chapters.
+				if (map->_volumeNumber == 5 &&
+					(map->_mapNumber == 210 || map->_mapNumber == 220)) {
 					continue;
 				}
 
