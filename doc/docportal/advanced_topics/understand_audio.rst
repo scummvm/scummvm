@@ -61,16 +61,16 @@ What is MIDI?
 
 MIDI is a communications protocol for musical information; it can be likened to digital sheet music. By itself, MIDI is not sound. Hardware or software synthesizers create (synthesize) audio by interpreting the information given to them via the MIDI protocol. 
 
-Some games only contain MIDI audio data. In the past this prevented audio for these games from working on platforms that did not support MIDI, or with soundcards that did not provide MIDI drivers. 
+While some older soundcards (and a few modern ones) have their own hardware-based synthesizers, this is relatively rare. Generally, soundcard drivers work with software synthesizers to interpret MIDI and output audio. 
 
-ScummVM can now convert MIDI data to sampled audio using MIDI device emulators. 
-
+Some games only contain MIDI audio data. In the past this prevented audio for these games from working on platforms that did not support MIDI, or with soundcards that did not provide MIDI drivers. ScummVM can now convert MIDI data to sampled audio using MIDI device emulators. 
 
 
 What is General MIDI?
 ------------------------------
 
 General MIDI is a MIDI standard which is implemented by a large number of devices. While using MIDI as its protocol, it also specifies an instrument map and some other information that devices must implement.
+
 
 .. _FS:
 
@@ -101,9 +101,9 @@ Some games which contain MIDI music data have tracks designed specifically for t
 - MT32_PCM.ROM - IC21 (512KB)
 - MT32_CONTROL.ROM - IC26 (32KB) and IC27 (32KB)
 
-Place these ROMs in the game directory, in your extrapath, or in the directory where your ScummVM executable resides. ScummVM will also look for ``CM32L_PCM.ROM`` and ``CM32L_CONTROL.ROM`` - the ROMs from the CM-32L device - and will use these instead of the MT32 ROMs if they are available. 
+Place these ROMs in the game directory, in your extrapath, or in the directory where your ScummVM executable resides. ScummVM also looks for ``CM32L_PCM.ROM`` and ``CM32L_CONTROL.ROM``—the ROMs from the CM-32L device—and uses these instead of the MT32 ROMs if they are available. 
 
-ScummVM will use the MT-32 emulator if it is set as the **Preferred device** or **Music device**, or if it is specified in the MT-32 tab when **Preferred device** or **Music device** is set to **<default>** and ScummVM chooses MT-32 output automatically. 
+ScummVM uses the MT-32 emulator if it is set as the **Preferred device** or **Music device**, or if it is specified in the MT-32 tab when **Preferred device** or **Music device** is set to **<default>** and ScummVM chooses MT-32 output automatically. 
 
 You don't need to enable **True Roland MT-32** in the MT-32 tab, ScummVM does this automatically. 
 
@@ -119,17 +119,14 @@ The processor requirements for the MT-32 emulator are quite high; a fast CPU is 
 Native MIDI support
 --------------------------
 
-All MIDI ports will show up in the **Preferred device** or **Music device** dropdown selector. If you have selected a MIDI port, you will also need to specify what type of MIDI device this is with the options in the :ref:`MT-32 <mt32>` tab. 
+All MIDI ports show up in the **Preferred device** or **Music device** dropdown selector. If you have selected a MIDI port, you need to specify what type of MIDI device this is with the options in the :ref:`MT-32 <mt32>` tab. 
 
-- Enabling the **True Roland MT-32** option tells ScummVM that the MIDI device is an MT-32 (or fully compatible) device. 
-- Enabling **Roland GS device** tells ScummVM to use an MT-32 soundtrack on a GS device. This is not supported by all games.
-- If no options are selected, this tells ScummVM that the device is General MIDI.  
+- Enable **True Roland MT-32** to tell ScummVM that the MIDI device is an MT-32 (or fully compatible) device. 
+- Enable **Roland GS device** to tell ScummVM to use an MT-32 soundtrack on a GS device. This is not supported by all games.
+- If no options are selected, ScummVM treats the device on the port as a General MIDI device.  
 
-Selecting an option that does not match the MIDI port selected may have unintended consequences; for example, if a game only has support for MT-32 and you have a General MIDI device selected as the **Preferred device** or **Music device**, ScummVM will convert the MT-32 MIDI data to GM-compatible MIDI data. While this may work fine for some games, it really depends on how the game has made use of the MT-32. 
+If you select an option that does not match the actual device, this may have unintended consequences. For example, if a game only has support for MT-32 and you have a General MIDI device selected as the **Preferred device** or **Music device**, ScummVM will convert the MT-32 MIDI data to GM-compatible MIDI data. While this may work fine for some games, it really depends on how the game has made use of the MT-32. 
 
-.. note::
-
-    Soundcards or audio interfaces do not necessarily have anything to do with MIDI; while some older soundcards (and a few modern ones) have their own hardware-based synthesizers, it is relatively rare. Generally, soundcard drivers work with software synthesizers to interpret MIDI and output audio. 
 
 
 macOS/Mac OSX 
@@ -142,7 +139,7 @@ The `Apple Support page <https://support.apple.com/en-nz/guide/audio-midi-setup/
 Windows
 **********
 
-Windows has a generic built-in MIDI synthesizer - GS WaveTable Synth - also based on Roland's GS sounds. 
+Windows has a generic built-in MIDI synthesizer—GS WaveTable Synth—also based on Roland's GS sounds. 
 
 For an in-depth look at audio and MIDI device setup on a Windows computer, see this `very helpful article <http://donyaquick.com/midi-on-windows/>`_.
 
@@ -211,7 +208,7 @@ ScummVM has to resample all sounds to the selected output frequency. It is recom
 Audio buffer size
 ==========================
 
-There is no option to control audio buffer size through the GUI, but the default value can be overridden in the the :doc:`configuration file <../advanced_topics/configuration_file>`. The default value is calculated based on output sampling frequency to keep audio latency below 45ms. 
+There is no option to control audio buffer size through the GUI, but the default value can be overridden in the the :doc:`configuration file <../advanced_topics/configuration_file>` with the *audio_buffer_size* configuration keyword. The default value is calculated based on output sampling frequency to keep audio latency below 45ms. 
 
 Appropriate values are normally between 512 and 8192, but the value must be one of: 256, 512, 1024, 2048, 4096, 8192, 16384, or 32768. 
 

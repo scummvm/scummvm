@@ -34,7 +34,7 @@ Controls
 
 Controls can be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`.
 
-See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
+See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
 
 
 Paths 

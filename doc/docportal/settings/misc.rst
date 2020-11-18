@@ -4,7 +4,7 @@ Miscellaneous
 
 Use the Misc tab to change miscellaneous settings that don’t belong on any of the other tabs.
 
-From the Launcher, select :guilabel:`Options`, click the red :guilabel:`>` until the Misc tab is visible, and then select the :guilabel:`Misc` tab.
+From the Launcher, select **Options**, click the **>** scroll arrow until the Misc tab is visible, and then select the **Misc** tab.
 
 .. figure:: ../images/settings/misc.png
 
@@ -28,7 +28,7 @@ GUI Renderer
 .. _autosave:
 
 Autosave
-	Adjusts the time period between autosaves. The default setting is 5 minutes. This is not available for all games. 
+	Adjusts the time period between autosaves. The default setting is 5 minutes. 
 
 	*autosave_period* 
 

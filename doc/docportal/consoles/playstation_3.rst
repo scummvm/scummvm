@@ -27,16 +27,16 @@ Transfer game files
 
 Games can be launched from either a USB drive, or from the internal hard drive. The hard drive has better performance.  
 
-To copy game files to the hard drive, use the USB drive, or use ScummVM's :doc:`Cloud functionality <../using_scummvm/connect_cloud>`. 
+To copy game files to the hard drive, use the USB drive, or use ScummVM's :doc:`Cloud functionality <../use_scummvm/connect_cloud>`. 
 
-See :doc:`../using_scummvm/add_play_games` for more information. 
+See :doc:`../use_scummvm/add_play_games` for more information. 
 
 Controls
 =================
 
 Controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`.
 
-See the :doc:`../using_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
+See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
 
 
 Default control mapping
