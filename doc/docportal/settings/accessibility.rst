@@ -4,7 +4,8 @@ Accessibility
 
 Use the Accessibility tab to change accessibility settings. 
 
-From the Launcher, select :guilabel:`Options`, click the red right arrow :guilabel:`>`  until the Accessibility tab is visible, and then select the :guilabel:`Accessibility` tab.
+From the Launcher, select **Options**, click the **>** scroll arrow until the LAN tab is visible, and then select the **LAN** tab.
+
 
 
 .. figure:: ../images/settings/accessibility.png

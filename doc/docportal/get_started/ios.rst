@@ -147,7 +147,7 @@ Transfer game files
 
 There are multiple ways to transfer game files to your iOS device. 
 
-ScummVM has built-in cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../using_scummvm/connect_cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../using_scummvm/local_webserver` page. 
+ScummVM has built-in cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../use_scummvm/connect_cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../use_scummvm/LAN` page. 
 
 .. note::
 
@@ -158,7 +158,7 @@ Another way to transfer files (for macOS Catalina and newer) to your device is b
 .. image:: ../images/ios/ios_transfer_files.gif
    
 
-For more information on which files ScummVM requires, and how to add and play games, see :doc:`../using_scummvm/add_play_games`. 
+For more information on which files ScummVM requires, and how to add and play games, see :doc:`../use_scummvm/add_play_games`. 
 
 Controls
 ============
@@ -180,20 +180,28 @@ Controls
         F 0-9 keys,The F-bar above the keyboard.
         Pause,Keyboard spacebar
         Toggle `Click and drag mode`_,Swipe two fingers up from bottom to top. 
-        Toggle `Touchpad mode`_,Swipe two fingers from left to right.  
+        Toggles between :ref:`direct` and :ref:`touchpad` ,Swipe two fingers from left to right.  
 
 Click and drag mode
 ^^^^^^^^^^^^^^^^^^^^
 
-In this mode, a left mouse click is simulated when you touch the screen. The mouse pointer drags to wherever you slide your finger, and releases where you lift your finger.
+ Simulates a left mouse click when you touch the screen. The mouse pointer drags to wherever you slide your finger, and releases where you lift your finger.
 
 If you press down a second finger in this mode, it releases the simulated left mouse button, and presses down the simulated right mouse button. The right mouse button is released when you lift your finger again. 
 
+.. _direct:
+
+Direct mode
+^^^^^^^^^^^^^
+
+The mouse cursor is placed directly under where your finger touches the screen. 
+
+.. _touchpad:
 
 Touchpad mode
 ^^^^^^^^^^^^^^^^
 
-In this mode, the cursor doesn't stay underneath your finger, but is rather moved around from its current position depending on the direction of your finger movement, just like a touchpad on a laptop.
+The mouse cursor doesn't stay underneath your finger. The cursor is moved around from its current position by the direction of your finger movement, just like a touchpad on a laptop.
 
 Paths
 =======

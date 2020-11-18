@@ -6,11 +6,11 @@ Use the Paths tab to tell ScummVM where to look for files.
 
 **To change settings globally:** 
 
-	From the Launcher, select :guilabel:`Options`, then select the :guilabel:`Paths` tab.  
+	From the Launcher, select **Options**, then select the **Paths** tab.  
 
 **To change settings for a specific game:** 
 
-	Highlight the game in the games list, select :guilabel:`Edit Game` then select the :guilabel:`Paths` tab. 
+	Highlight the game in the games list, select **Edit Game** then select the **Paths** tab. 
 
 .. figure:: ../images/settings/paths.png
 
@@ -21,25 +21,21 @@ Use the Paths tab to tell ScummVM where to look for files.
 .. _savepath:
 
 Save Path
-	The path to the folder in which ScummVM stores saved games. If this is not set, saved games will generally be stored in the current directory, although there are exceptions to this. For more information, see the :doc:`../using_scummvm/save_load_games` page.
+	Sets the path to the folder in which ScummVM stores saved games. If this is not set, saved games will generally be stored in the current directory, although there are exceptions to this. For more information, see the :ref:`Save and Load games <savelocation>` page.
 	
 	*savepath* 
 
 .. _themepath:
 
 Theme Path
-	The path to the folder in which ScummVM stores additional themes. 
+	Sets the path to the folder in which ScummVM stores additional themes. 
 
 	*themepath* 
 
 .. _extra:
 
 Extra Path
-	The path to the folder in which ScummVM will look for various extra files. These may include:
-
-	* Additional datafiles required for certain games
-	* Soundfonts 
-	* MT-32 ROMs 
+	Sets the path to the folder in which ScummVM will look for various extra files. These could include additional datafiles required for certain games, Soundfonts or MT-32 ROMs. 
 
 	*extrapath* 
 

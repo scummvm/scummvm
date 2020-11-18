@@ -46,19 +46,107 @@ Transfer game files
 
 Transfer all the required game data files to your device, into a folder accessible by the ScummVM app. 
 
-ScummVM has built-in Cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../using_scummvm/connect_cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../using_scummvm/local_webserver` page. 
+ScummVM has built-in Cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../use_scummvm/connect_cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../use_scummvm/LAN` page. 
 
 There are a few other options to transfer the game files:
 
  - Copy the files directly onto the microSD card, if the device has one.
  - USB transfer from a computer. To complete file transfer via USB cable, tap the **Charging this device via USB notification** when the device is connected. Select **Use USB for** and then **File Transfer**. An Android File Transfer window opens.   
- - Download games such as freeware games or those from digital distributors such `GOG.com <gog.com>`_  or `Steam <steam.steampowered.com>`_ directly to your device.
+ - Download games such as freeware games or those from digital distributors directly to your device.
 
-For more information on which files ScummVM requires, and how to add and play games, see :doc:`../using_scummvm/add_play_games`.
-
-
+For more information on which files ScummVM requires, and how to add and play games, see :doc:`../use_scummvm/add_play_games`.
 
 
+
+Controls
+=============
+
+Default control mapping
+****************************
+
+Controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
+
+.. csv-table:: 
+    :header-rows: 1
+
+        Touch screen control, Action
+        One finger tap, Left mouse click
+        Two finger tap, Right mouse click
+        Long hold one finger tap, Middle mouse click 
+        Long press system Back button, Opens Global Main Menu
+        Short press system Back button, "Skip, or Cancel/Quit in the Launcher"
+        Small keyboard icon (top right), Opens/closes Virtual keyboard
+
+
+Two finger tap
+****************
+
+To do a two finger tap, hold one finger down and then tap with a second finger. 
+
+
+Immersive Sticky fullscreen mode
+**********************************
+
+ScummVM for Android uses the Immersive Sticky fullscreen mode, which means that the Android system bar is hidden until the user swipes from an edge with a system bar. Swipe from the edge to reveal the system bars.  They remain semi-transparent and disappear after a few seconds unless you interact with them. Your swipe also registers in the game, so if you need to swipe from an edge with system bars, your game play is not interrupted. 
+
+Virtual keyboard
+*******************
+
+To open the virtual keyboard, tap on the small keyboard icon at the top right of the screen, or tap on any editable text field. To hide the virtual keyboard, tap the small keyboard icon again, or tap outside the text field. 
+
+To display or hide the small keyboard icon, from the Launcher select **Options** and then the **Control** tab. Tick the **Show on-screen control** box to enable the keyboard icon. 
+
+Touchscreen modes
+*******************
+
+The touchscreen operates in two modes: Direct mode or Touchpad mode. To toggle between the two, from the Launcher select **Options** and then the **Control** tab. Tick **Touchpad mouse mode** to enable Touchpad mode. 
+
+Direct mode
+^^^^^^^^^^^^^
+
+The mouse cursor is placed directly under where your finger touches the screen. 
+
+
+Touchpad mode
+^^^^^^^^^^^^^^^^
+
+The mouse cursor doesn't stay underneath your finger. The cursor is moved around from its current position by the direction of your finger movement, just like a touchpad on a laptop.
+
+
+Paths
+=======
+
+Saved games
+**************
+
+By default, the saved games are saved in the internal app folder. To change the path, go to the :doc:`../settings/paths` tab in either the global or game-specific settings. 
+
+
+Configuration file
+************************
+
+The configuration file is in the internal app folder, and this path cannot be changed. 
+
+Access the internal app folder
+********************************
+
+To access the internal app folder, use ScummVM's built-in LAN functionality:
+
+1. From the Launcher, select **Options** and then the **LAN** tab. 
+2. Select **/root/Path**.
+3. Use the file browser to **Go up** to the root of the ScummVM internal app folder. 
+4. Select the **ScummVM data (int)** shortcut, and tap **Choose**. 
+5. Run the server to access the ``scummvm.ini``` configuration file. 
+
+For more information, see the :doc:`../use_scummvm/LAN` page. 
+
+
+Known issues
+===============
+
+- On some newer devices, there is an issue if the saved path is outside the app's internal (or external) storage. The ScummVM team is currently working on a fix.
+
+- If ScummVM is uninstalled or downgraded, its internal and external app spaces are fully deleted. If you want to keep saved games use ScummVM's :doc:`cloud <../use_scummvm/connect_cloud>` or LAN functionality to keep those files. Alternatively, change the saved game path to a shared location such as an SD card. 
 
 
 

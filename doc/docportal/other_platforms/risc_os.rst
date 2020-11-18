@@ -25,12 +25,12 @@ Transfer game files
 
 Copy data files directly from the original discs on machines that have CD and/or floppy drives, or transfer the files from another system by using a USB stick. 
 
-See :doc:`../using_scummvm/add_play_games` for more information. 
+See :doc:`../use_scummvm/add_play_games` for more information. 
 
 Controls
 =================
 
-Controls can be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../using_scummvm/keyboard_shortcuts` page for common default keyboard shortcuts. 
+Controls can be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common default keyboard shortcuts. 
 
 
 Paths 
