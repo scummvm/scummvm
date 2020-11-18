@@ -578,6 +578,24 @@ bool Debugger::cmdPosition(int argc, const char **argv) {
 	return true;
 }
 
+/**
+ * @brief Auxiliary function to determine if a String is comprised exclusively of "0"
+ *
+ * This is basically a very simplified (and smaller scope) version of
+ * checking the String with isdigit() (which is banned).
+ *
+ * @param valStr The String to examine
+ * @return true if String is all zeroes, false otherwise
+*/
+bool isAllZeroes(Common::String valStr) {
+	for (uint i = 0; i < valStr.size();  ++i) {
+		if (valStr.c_str()[i] != '0') {
+			return false;
+		}
+	}
+	return true;
+}
+
 // Tracks marked as (G) are only available in-game ie. not in the official OST by Frank Klepacki on his site.
 //
 // Note that there are a few tracks that are not proper music tracks but rather SFX tracks.
@@ -601,7 +619,7 @@ const char* kMusicTracksArr[] = {"Animoid Row (G)",                 // kMusicAra
                                  "Gothic Club",                     // kMusicGothic1
                                  "Transition",                      // kMusicGothic2
                                  "The Eyes Follow",                 // kMusicStrip1
-                                 "Dektora Dance (G)",               // kMusicDkoDnce1
+                                 "Dektora's Dance (G)",             // kMusicDkoDnce1
                                  "End Credits",                     // kMusicCredits
                                  "Ending (aka Moraji)",             // kMusicMoraji
                                  "Remorse (aka Clovis Dies 1)",     // kMusicClovDie1
@@ -610,7 +628,7 @@ const char* kMusicTracksArr[] = {"Animoid Row (G)",                 // kMusicAra
 
 bool Debugger::cmdMusic(int argc, const char** argv) {
 	if (argc != 2) {
-		debugPrintf("Play the specified music track, list the available tracks or stop the current playing track.\n");
+		debugPrintf("Play the specified music track, list the available tracks\nor stop the current playing track.\n");
 		debugPrintf("Usage: %s (list|stop|<musicId>)\n", argv[0]);
 		debugPrintf("Usage: %s <musicId>\nmusicId can be in [0, %d]\n", argv[0], (int)_vm->_gameInfo->getMusicTrackCount() - 1);
 		return true;
@@ -627,11 +645,17 @@ bool Debugger::cmdMusic(int argc, const char** argv) {
 		//_vm->_ambientSounds->removeLoopingSound(kSfxMUSBLEED, 0);
 	} else {
 		int musicId = atoi(argv[1]);
-		if (musicId >= 0 && musicId < (int)_vm->_gameInfo->getMusicTrackCount()) {
+
+		if ((musicId == 0 && !isAllZeroes(trackArgStr))
+		    || musicId < 0
+		    || musicId >= (int)_vm->_gameInfo->getMusicTrackCount()) {
+			debugPrintf("Invalid music track id specified.\nPlease choose an integer between 0 and %d.\n", (int)_vm->_gameInfo->getMusicTrackCount() - 1);
+			return true;
+		} else {
 			_vm->_music->stop(0);
 			_vm->_music->play(_vm->_gameInfo->getMusicTrack(musicId), 100, 0, 0, -1, 0, 0);
-		} else {
-			debugPrintf("Invalid music track id specified. Please choose an integer between 0 and %d.\n", (int)_vm->_gameInfo->getMusicTrackCount()-1);
+			//debugPrintf("Now playing track %2d - \"%s\" (%s)\n", musicId, kMusicTracksArr[musicId], _vm->_gameInfo->getMusicTrack(musicId).c_str());
+			debugPrintf("Now playing track %2d - \"%s\"\n", musicId, kMusicTracksArr[musicId]);
 		}
 		//_vm->_ambientSounds->removeLoopingSound(kSfxMUSBLEED, 0);
 		//_vm->_ambientSounds->addLoopingSound(kSfxMUSBLEED, 100, 0, 0);
