@@ -591,8 +591,8 @@ const char* kMusicTracksArr[] = {"Animoid Row (G)",                 // kMusicAra
                                  "Etsuko Theme",                    // kMusicKyoto
                                  "One More Time, Love (G)",         // kMusicOneTime
                                  "Gothic Club 2",                   // kMusicGothic3
-                                 "Ark Dragon Fly (G)",              // kMusicArkdFly1
-                                 "Ark Dance (G)",                   // kMusicArkDnce1
+                                 "Arcane Dragon Fly (G)",           // kMusicArkdFly1
+                                 "Arcane Dance (G)",                // kMusicArkDnce1
                                  "Taffy's Club 2",                  // kMusicTaffy2
                                  "Enigma Drift",                    // kMusicTaffy3
                                  "Late Call",                       // kMusicTaffy4
