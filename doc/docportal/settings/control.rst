@@ -4,7 +4,7 @@ Control
 
 Use the Control tab to change aspects of joystick controls. This tab is only available when a joystick or game controller is connected, or for certain touch screen enabled platforms. 
 
-From the Launcher, select :guilabel:`Options`, and then select the :guilabel:`Control` tab.
+From the Launcher, select **Options**, and then select the **Control** tab.
 
 .. figure:: ../images/settings/control.png
 
@@ -26,3 +26,9 @@ Joy deadzone
 	Sets the deadzone for an analog joystick. A lower value will reduce the size of the deadzone.
 
 	*joystick_deadzone*
+
+Show on-screen control
+	Toggles the small on-screen keyboard icon on and off.
+
+Touchpad mouse mode
+	Toggles between :ref:`direct` and :ref:`touchpad`. 

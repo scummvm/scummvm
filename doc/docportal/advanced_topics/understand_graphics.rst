@@ -17,7 +17,7 @@ Graphics modes
 
 The original game graphics are upscaled using different graphical filters, which are specialized algorithms used to ensure that low resolution pixel-art still looks good when it is displayed at a higher resolution.
 
-If the game originally ran at a resolution of 320x200 - which is typical for most SCUMM games - then using a graphics mode with a scale factor of 2x will yield 640x400 graphics. A 3x scale factor will yield 960x600.
+If the game originally ran at a resolution of 320x200—which is typical for most SCUMM games—then using a graphics mode with a scale factor of 2x yields 640x400 graphics. A 3x scale factor yields 960x600.
 
 A comparison of graphics modes
 *************************************
@@ -75,14 +75,14 @@ Not all engines support all, or even any, of the graphics modes.
 
 There is always a speed penalty when using any form of anti-aliasing/linear filtering.
 
-To switch between graphics modes on the go, use :kbd:`Ctrl` + :kbd:`Alt` + :kbd:`1` to :kbd:`8`. 
+To switch between graphics modes, press :kbd:`Ctrl + Alt` and :kbd:`1` to :kbd:`8`. 
 
 OpenGL mode
 **************
 
 OpenGL graphics mode works a little differently to the other graphics modes. Instead of applying the aspect ratio and stretch mode settings one after the other (and after the graphics mode scaling has been applied), it does all the scaling and stretching in one step, going directly from the original game resolution to the final display resolution. 
 
-Output is controlled by your window size (or screen resolution if in full screen) and the stretch mode selected, as well as the Filter graphics option. 
+Output is controlled by your window size (or screen resolution if in full screen) and the stretch mode selected, as well as the **Filter graphics** option. 
 
 .. _aspect:
 
@@ -97,9 +97,9 @@ Older games were designed to be run at 320x200 pixels, but on systems where each
 
 .. figure:: ../images/graphics/aspect_ratio/aspect_ratio.png
 
-    Aspect ratio correction applied - notice the moon is actually round now.  
+    Aspect ratio correction applied. Notice the moon is actually round now.  
 
-To toggle aspect ratio on and off, use :kbd:`Ctrl` + :kbd:`Alt` + :kbd:`a`.
+To toggle aspect ratio on and off, press :kbd:`Ctrl+Alt+a`.
 
 .. _stretch:
 
@@ -109,13 +109,13 @@ Stretch modes
 
 There are five stretch modes:
 
-- Center - centers the image in the window. 
-- Pixel-perfect scaling - scales the image to a multiple of the original game resolution as much as possible (for example, 2x, 3x, 4x and so on), and fills the remaining empty space with black borders. 
-- Fit to window - fits the image to the window, but maintains the aspect ratio and does not stretch it to fill the window.
-- Stretch - stretches the image to fill the window
--  Fit to window (4:3) - fits the image to the window, at a forced 4:3 aspect ratio.
+- Center: centers the image in the window. 
+- Pixel-perfect scaling: scales the image to a multiple of the original game resolution as much as possible (for example, 2x, 3x, 4x and so on), and fills the remaining empty space with black borders. 
+- Fit to window: fits the image to the window, but maintains the aspect ratio and does not stretch it to fill the window.
+- Stretch: stretches the image to fill the window
+- Fit to window (4:3): fits the image to the window, at a forced 4:3 aspect ratio.
 
-To switch between stretch modes on the go, use :kbd:`Ctrl` + :kbd:`Alt` + :kbd:`s`.
+To switch between stretch modes, press :kbd:`Ctrl+Alt+s`.
 
 Render mode
 -------------
@@ -153,4 +153,4 @@ Filter graphics
 
 When enabled, ScummVM uses bilinear interpolation instead of nearest neighbor for the :ref:`aspect ratio <aspect>` and :ref:`stretch mode <stretch>`. It does not affect the graphics mode scaling unless OpenGL is selected, in which case it determines how the OpenGL scaling is done. 
 
-To toggle between bilinear interpolation and nearest neighbor, use :kbd:`Ctrl` + :kbd:`Alt` + :kbd:`f`.
+To toggle between bilinear interpolation and nearest neighbor, press :kbd:`Ctrl+Alt+f`.

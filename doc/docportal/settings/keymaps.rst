@@ -6,11 +6,11 @@ Use the Keymaps tab to assign actions to keyboard keys or shortcuts, or mouse or
 
 **To change settings globally:** 
 
-	From the Launcher, select :guilabel:`Options`, then select the :guilabel:`Keymaps` tab. 
+	From the Launcher, select **Options**, then select the **Keymaps** tab. 
 
 **To change settings for a specific game:** 
 
-	Highlight the game in the games list, select :guilabel:`Edit Game` then select the :guilabel:`Keymaps` tab. 
+	Highlight the game in the games list, select **Edit Game** then select the **Keymaps** tab. 
 
 .. figure:: ../images/settings/keymaps.png
 
@@ -22,9 +22,9 @@ Use the Keymaps tab to assign actions to keyboard keys or shortcuts, or mouse or
 
 ,,,,,,,,,,,,,,,,,
 
-Click on the red box next to the desired action to add an additional key or button. Click on the :guilabel:`▼`  dropdown expander for further options. 
+Click on the button next to the desired action to add an additional key or button. Click on the **▼**  dropdown expander for more options. 
 
-If all the mapped keys are not visible, hold the pointer over the red box to see all the mapped keys. 
+If all the mapped keys are not visible, hold the pointer over the button to see all the mapped keys. 
 
 Reset
 	Resets all keymaps to default.

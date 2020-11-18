@@ -5,7 +5,7 @@ Configuration file
 
 The configuration file provides a way to edit both global and game-specific settings. It is a text file containing configuration keywords and parameters. 
 
-Settings are also accessible directly from :doc:`the Launcher <../using_scummvm/the_launcher>`. See :doc:`../using_scummvm/how_to_settings`. 
+Settings are also accessible directly from the Launcher. See :doc:`../use_scummvm/how_to_settings`. 
 
 Location
 ==========
@@ -77,13 +77,13 @@ The configuration file saves to different default locations, depending on the pl
 	.. panels::
 		:column: col-lg-12 mb-2
 
-		We follow the XDG Base Directory Specification, so by default the configuration file can be found at ``/~.config/scummvm/scummvm.ini``, but its location may vary depending on the value of the ``XDG_CONFIG_HOME`` environment variable.
+		We follow the XDG Base Directory Specification, so by default the configuration file is found at ``/~.config/scummvm/scummvm.ini``, but its location may vary depending on the value of the ``XDG_CONFIG_HOME`` environment variable.
 		
 		If ScummVM was installed using Snap, the configuration file can be found at ``~/snap/scummvm/current/.config/scummvm/scummvm.ini``
 
 		.. note::
 			
-			``.config`` is a hidden directory. To view it use ``ls -a`` on the command line. Ff you are using a GUI file manager, use the keyboard shortcut :kbd:`Ctrl + H`.
+			``.config`` is a hidden directory. To view it use ``ls -a`` on the command line, or, if you are using a GUI file manager, press :kbd:`Ctrl + H`.
 
 	
 
@@ -151,7 +151,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 	:widths: 35 15 25 25
   	:header-rows: 1 
 
-		Keyword,Type,Default,Description or Available options
+		Keyword,Type,Default,Description/Options
 		alsa_port,number,,
 		":ref:`alt_intro <altintro>`",boolean,false,
 		":ref:`altamigapalette <altamiga>`",boolean,false,
@@ -169,7 +169,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`autosave_period <autosave>`", integer, 300s 
 		auto_savenames,boolean,false
 		":ref:`bilinear_filtering <bilinear>`",boolean,false,
-		boot_param,number,none,
+		`boot_param <https://wiki.scummvm.org/index.php/Boot_Params>`_,number,none,
 		":ref:`bright_palette <bright>`",boolean,true,
 		cdrom,number,,
 		":ref:`color <color>`",boolean,,
@@ -192,8 +192,8 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`enable_high_resolution_graphics <hires>`",boolean,true,
 		":ref:`enable_hq_video <hq>`",boolean,true,
 		":ref:`enable_larryscale <larry>`",boolean,true,
-		":ref:`enable_video_upscale <upscale>`",boolean,true,
 		":ref:`enable_reporter <reporter>`",boolean,false,RISC OS only. 
+		":ref:`enable_video_upscale <upscale>`",boolean,true,
 		":ref:`enable_tts <ttsenabled>`",boolean,false,
 		":ref:`extrapath <extra>`",string,None,"		path"
 		":ref:`fade_style <fade>`",boolean,true,
@@ -368,7 +368,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 	- 22050
 	- 44100"
 		":ref:`platform <platform>`",string,,
-		":ref:`portaits_on, <portraits>`",boolean,true,
+		":ref:`portaits_on <portraits>`",boolean,true,
 		":ref:`prefer_digitalsfx <dsfx>`",boolean,true,
 		":ref:`render_mode <render>`",string,,"	
 	- hercGreen 
@@ -394,7 +394,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`ShowItemCosts <cost>`",boolean,false,
 		":ref:`silver_cursors <silver>`",boolean,false,
 		":ref:`sitcom <sitcom>`",boolean,false,
-		":ref:`skip_support <skip>`",boolean,true,
+		":ref:`skip_support <skipsupport>`",boolean,true,
 		":ref:`skiphallofrecordsscenes <skiphall>`",boolean,false,
 		":ref:`smooth_scrolling <smooth>`",boolean,true,
 		":ref:`speech_mute <speechmute>`",boolean,false,
@@ -414,7 +414,7 @@ There are many recognized configuration keywords. In the table below, each keywo
 		":ref:`transparentdialogboxes <transparentdialog>`",boolean,false,
 		":ref:`tts_enabled <ttsenabled>`",boolean,false,
 		":ref:`tts_narrator <ttsnarrator>`",boolean,false,
-		":ref:`use_cdaudio <cdaudio>`",boolean,true,
+		use_cdaudio,boolean,true, 
 		versioninfo,string,,
 		":ref:`window_style <style>`",boolean,true,
 		":ref:`windows_cursors <wincursors>`",boolean,false,

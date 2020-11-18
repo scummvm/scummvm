@@ -7,10 +7,10 @@ ScummVM can run a local web server, to allow the transfer of files between devic
 How to use the web server
 ----------------------------
 
-From the Launcher, select :guilabel:`Options`, click the red :guilabel:`>` until the LAN tab is visible, and then select the :guilabel:`LAN` tab.
+From the Launcher, select **Options**, click the **>** scroll arrow until the LAN tab is visible, and then select the **LAN** tab.
 
 
-Click :guilabel:`Run server` to start the server. 
+Click **Run server** to start the server. 
 
 .. figure:: ../images/cloud_and_lan/lan_server_running.png
 
@@ -36,6 +36,6 @@ To upload files, click **Upload Files** and select files from the system file br
 
     Upload files. 
 
-To change which files are accessible on the web server, set the :guilabel:`/root/ Path` to the directory containing the files you wish to access. You will be able to access anything inside that directory, but you will not able to access the parent directory.  
+To change which files are accessible on the web server, set the **/root/ Path** to the directory containing the files you wish to access. You can access anything inside that directory, but you cannot access its parent directory.  
 
-To stop the web server, either click :guilabel:`Stop server` or click :guilabel:`Ok` to close the settings dialog.  
+To stop the web server, click **Stop server** to stop the server, or **Ok** to close the settings dialog.  
