@@ -185,6 +185,7 @@ bool AIScriptRachael::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		// added goal for restored content
 		// fall through
 	case kGoalRachaelAtEndOfAct3IfMetWithMcCoy:
+		AI_Movement_Track_Pause(kActorRachael);
 		Actor_Put_In_Set(kActorRachael, kSetFreeSlotG);
 		Actor_Set_At_Waypoint(kActorRachael, 39, 0);
 		break;
