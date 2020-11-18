@@ -6,19 +6,19 @@ Add and play games
 The games
 ----------------
 
-One of the most commonly asked questions we get is, "Where do I get the games??". If you still have your old floppy discs and CDs lying around, and have a way to read them, then you can use the game files from these original discs. 
+One of the most frequently asked questions is, "Where do I get the games?!?". If you still have your old floppy discs or CDs lying around, and have a way to read them, then you can use the game files from those original discs. 
 
-If you haven't had a floppy disc or even a CD in your possession for a while, there is a  ScummVM `wiki page <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games>`_ dedicated to helping you find some games to play. As a quick summary, there are a few freeware games available for download on the ScummVM website's `Downloads page <scummvm.org/downloads>`_, or there are digital distributors such as `GOG.com <https://www.gog.com/>`__ and `Steam <https://store.steampowered.com/>`_. ScummVM has an affiliate referrer programme with GOG.com, so if you are going to buy a game, please use the links on the `wiki page <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games>`_ to help the ScummVM project! 
+If you haven't had a floppy disc or even a CD in your possession for a while, there is a ScummVM `wiki page <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games>`_ dedicated to helping you find some games to play. As a quick summary, there are a few freeware games available for download on the ScummVM website's `Downloads page <https://www.scummvm.org/downloads/>`_, or there are digital distributors such as `GOG.com <https://www.gog.com/>`__ and `Steam <https://store.steampowered.com/>`_. ScummVM has an affiliate referrer programme with GOG.com, so if you are going to buy a game, please use the links on the `wiki page <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games>`_ to help the ScummVM project! 
 
-Make sure to check out the `compatibility list <https://www.scummvm.org/compatibility/>`_ on our website, and the `Supported Games page <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ and `Platform Overview page <https://wiki.scummvm.org/index.php/Platforms/Overview>`_ on the wiki before you buy a game, to ensure it can run with ScummVM. 
+Make sure to check out the `compatibility list <https://www.scummvm.org/compatibility/>`_ on our website, and the `Supported Games page <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ and `Platform Overview page <https://wiki.scummvm.org/index.php/Platforms/Overview>`_ on the ScummVM wiki before you buy a game, to ensure it can run with ScummVM. 
 
 
 A note about copyright 
 ------------------------
 
-The ScummVM team does not condone piracy. However, there are cases where the game companies themselves bundled 'cracked' executables with their games. In these cases the data files still contain the copy protection scripts, but the interpreter bypasses them - similar to what an illegally cracked version might do, only that here the producer of the game did it. There is no way for ScummVM to tell the difference between legitimate and pirated data files, so for the games where a cracked version of the original interpreter was sold at some point, ScummVM has to bypass the copy protection.
+The ScummVM team does not condone piracy, however there are cases where the game companies themselves bundled 'cracked' executables with their games. In these cases the data files still contain the copy protection scripts, but the interpreter bypasses them; similar to what an illegally cracked version might do, only that here the producer of the game did it. There is no way for ScummVM to tell the difference between legitimate and pirated data files, so for the games where a cracked version of the original interpreter was sold at some point, ScummVM has to bypass the copy protection.
 
-In some cases ScummVM still shows the copy protection screen. Try entering any answer; chances are that it will work.
+In some cases ScummVM still shows the copy protection screen. Enter any answer; chances are that it will work.
 
 
 The game files
@@ -47,7 +47,7 @@ For games on floppies or CDs:
 - If the data files are accessible, the external media can be accessed directly by ScummVM. Alternatively, copy the game files to a folder as described above. 
 - If the data files are not accessible, run the installer on the platform the game was designed for, to extract the game files. 
 
-For games downloaded from digital distributors or from various `freeware sources <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games#Freeware_Games>`__ sources:
+For games downloaded from digital distributors or from various `freeware sources <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games#Freeware_Games>`__:
 
 - Run the installer to extract the game files, or
 - If the data files are supplied as a ``.zip`` archive, extract the archive.
@@ -58,9 +58,7 @@ For macOS or Linux users without access to a Windows machine, it is possible to 
 
 .. tip::
 
-   Use ScummVM's Cloud functionality to share game files and automatically back up and sync your saved game states. For detailed instructions see the :doc:`../using_scummvm/connect_cloud` guide.
-
-   For devices on the same local network, ScummVM can run a web server to allow hassle-free transfer of files. For detailed instructions, see the :doc:`../using_scummvm/local_webserver` guide. This is a good option if you do not wish to connect a Cloud service.
+   Use ScummVM's Cloud functionality to share game files and automatically back up and sync your saved game states. For detailed instructions see the :doc:`../use_scummvm/connect_cloud` guide. For devices on the same local network, ScummVM can run a web server to allow hassle-free transfer of files. For detailed instructions, see the :doc:`../use_scummvm/LAN` guide. This is a good option if you do not wish to connect a Cloud service.
 
 
 Multi-disc games
@@ -82,7 +80,7 @@ Some games contain one or more separate audio tracks on CD. To use these with Sc
 
     Software suggestion:
 
-    `fre:ac <https://www.freac.org/>`_ is a multi-platform, open-source software, with the ability to both rip CDs and convert audio between .mp3, .ogg, .flac and .wav formats. 
+    `fre:ac <https://www.freac.org/>`_ is a multi-platform, open-source software, with the ability to both rip CDs and convert audio between ``.mp3``, ``.ogg``, ``.flac`` and ``.wav`` formats. 
 
 Place the converted audio files in the same folder that contains the other game datafiles. 
 
@@ -96,7 +94,7 @@ All LucasArts SCUMM games also exist in versions for the Macintosh. Most of the 
 
 Mac uses a different file system to other systems (HFS+), so to access the CD or floppy disc on a Windows or Linux system you will need additional software to view and copy the files. 
 
-For Windows, HFSExplorer is a basic and free option, which allows read-only access to HFS drives. `Download the installer <http://www.catacombae.org/hfsexplorer/>`_ rather than the ZIP file, to ensure it is installed correctly. 
+For Windows, `HFS Explorer <http://www.catacombae.org/hfsexplorer/>`_  is a basic and free option, which allows read-only access to HFS drives. Use the installer rather than the ZIP file, to ensure it is installed correctly. 
 
 For Linux, hfsplus allows read-only access to HFS drives. To use hfsplus, use the command line: 
 
@@ -111,7 +109,7 @@ For Linux, hfsplus allows read-only access to HFS drives. To use hfsplus, use th
 Add games to the Launcher
 ---------------------------------
 
-1. Run ScummVM to open :doc:`../using_scummvm/the_launcher`.
+1. Run ScummVM to open :doc:`the Launcher <../use_scummvm/the_launcher>`.
 
 2. In the Launcher window, click **Add Game**. This opens a file browser; either the system file browser or the ScummVM file browser. To add multiple games at once, click the expander arrow next to **Add Game**, and select **Mass Add**.
 
@@ -133,11 +131,11 @@ Add games to the Launcher
 .. image:: ../images/Launcher/game_settings.png
    :class: with-shadow
 
-6. Games are now ready to play! To play, select a game and click **Start**.
+6. Games are now ready to play! To play, highlight a game in the games list and click **Start**.
 
 .. image:: ../images/Launcher/start_game.png
    :class: with-shadow
 
-Games can also be launched directly from the command line. For more information, see the `Command line options <../advanced_options/command_line>`_ page.
+Games can also be launched directly from the command line. For more information, see the `Command line options <../advanced_topics/command_line>`_ page.
 
 

@@ -13,6 +13,7 @@ Default keyboard shortcuts
 
 .. csv-table:: 
       :widths: 30 70
+      :header-rows: 1
   
         Shortcut, Description
         :kbd:`Ctrl+F5` ,Displays the Global Main Menu

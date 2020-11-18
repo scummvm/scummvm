@@ -6,11 +6,11 @@ Use the Graphics tab to change how games look when they are played.
 
 **To change settings globally:** 
 
-	From the Launcher, select :guilabel:`Options`. The :guilabel:`Graphics` tab is the first tab shown. 
+	From the Launcher, select **Options**. The **Graphics** tab is the first tab shown. 
 
 **To change settings for a specific game:** 
 
-	Highlight the game in the games list, select :guilabel:`Edit Game` then select the :guilabel:`Graphics` tab. 
+	Highlight the game in the games list, select **Edit Game** then select the **Graphics** tab. 
 
 For a comprehensive look at how to use these settings, check out our :doc:`../advanced_topics/understand_graphics` guide. 
 
@@ -38,7 +38,7 @@ Render mode
 .. _stretchmode:
 
 Stretch mode
-	Changes the way the game is displayed in relation to the window size.
+	Changes the way the game is displayed in relation to the window or screen size.
 
 	*stretch_mode* 
 

@@ -30,7 +30,7 @@ How do I get game files onto my device?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The **Other platforms** section provides information about installing ScummVM on various platforms, as well as how to transfer files to your chosen device. 
 
-ScummVM now has Cloud and LAN functionality to simplify the file transfer process. For more information, see :doc:`../using_scummvm/connect_cloud` and :doc:`../using_scummvm/local_webserver`.
+ScummVM now has Cloud and LAN functionality to simplify the file transfer process. For more information, see :doc:`../use_scummvm/connect_cloud` and :doc:`../use_scummvm/LAN`.
 
 On what platform(s) will ScummVM run?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -53,7 +53,7 @@ See `Where to get the games <https://wiki.scummvm.org/index.php?title=Where_to_g
 
 How do I install games from my floppy discs/CDs?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Generally speaking, you do not need to install the games. You only need to point ScummVM to the game files contained on these discs. See :doc:`../using_scummvm/add_play_games`. 
+Generally speaking, you do not need to install the games. You only need to point ScummVM to the game files contained on these discs. See :doc:`../use_scummvm/add_play_games`. 
 
 Do I need the original game discs?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -69,11 +69,11 @@ This is only supported for a select number of games. See the `wiki <https://wiki
 
 How do I launch a game straight from the game folder?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Games must be added to and started from :doc:`../using_scummvm/the_launcher`, they cannot be started directly from the game files. See :doc:`../using_scummvm/add_play_games`. It is only necessary to add each game once; ScummVM will remember the game and it will be available to start from the Launcher. 
+Games must be added to and started from :doc:`../use_scummvm/the_launcher`, they cannot be started directly from the game files. See :doc:`../use_scummvm/add_play_games`. It is only necessary to add each game once; ScummVM will remember the game and it will be available to start from the Launcher. 
 
 What are the in-game keyboard shortcuts?
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-A list of default shortcuts can be found on the :doc:`../using_scummvm/keyboard_shortcuts` page. Since version 2.2.0 it is also possible to create custom shortcuts on the :doc:`../settings/keymaps` tab. 
+A list of default shortcuts can be found on the :doc:`../use_scummvm/keyboard_shortcuts` page. Since version 2.2.0 it is also possible to create custom shortcuts on the :doc:`../settings/keymaps` tab. 
 
 Troubleshooting
 ===================
@@ -100,7 +100,7 @@ Help! My game won't run!
 
 1. Make sure your game is supported. Check the `Compatibility page <https://www.scummvm.org/compatibility/>`_ on our website. 
 
-2. Check that you have all the required datafiles. See the :doc:`../using_scummvm/add_play_games` page for more information.
+2. Check that you have all the required datafiles. See the :doc:`../use_scummvm/add_play_games` page for more information.
 
 3. Ask on the forums or on Discord whether your game is supported on the platform you're trying to play it on. :doc:`contact`
 

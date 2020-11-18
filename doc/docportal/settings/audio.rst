@@ -2,17 +2,17 @@
 Audio
 ===============
 
-Audio settings are found in four tabs:
+Audio settings are found on four tabs:
 
 :ref:`Audio <audiotab>` | :ref:`Volume <volumetab>` | :ref:`MIDI <miditab>` | :ref:`MT-32 <mt32tab>` 
 
 **To change settings globally:**
  
- 	From the Launcher, select :guilabel:`Options`, then select the applicable tab. 
+ 	From the Launcher, select **Options**, then select the applicable tab. 
 	 
 **To change settings for a specific game:**
 	
-	From the Launcher, highlight the game in the games list, select :guilabel:`Edit Game`, and then select the applicable tab. 
+	From the Launcher, highlight the game in the games list, select **Edit Game**, and then select the applicable tab. 
 
 For a comprehensive look at how to use ScummVM's extensive audio settings, check out our :doc:`../advanced_topics/understand_audio` guide. 
 
@@ -159,18 +159,19 @@ MIDI gain
 
 
 FluidSynth 
-****************\
+****************
 
 Opens a new dialog, with three further tabs:
-`Reverb`_ | `Chorus`_ | `Misc`_
+:ref:`fsreverb` | `Chorus`_ | `Misc`_
 
 
 .. figure:: ../images/settings/fluidsynth.png
 
     The FluidSynth dialog, reached from the MIDI tab.
 
+.. _fsreverb:
 
-_`Reverb`
+Reverb
 ^^^^^^^^^^^^^^^^^
 
 Reverberation, or reverb, describes the pattern of echoes and reflections that occur when a sound is heard in an enclosed closed space, such as a room or a concert hall. 
@@ -306,5 +307,7 @@ MT-32 Device
 **Roland GS device (enable MT-32 mappings)**
 	Tells ScummVM that the MIDI device is a GS device that has an MT-32 map, such as an SC-55, SC-88 or SC-8820. Note that this cannot be used in conjunction with the True Roland MT-32 option. 
 
+	*enable_gs*
 
+	
 
