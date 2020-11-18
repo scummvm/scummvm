@@ -640,6 +640,7 @@ int ResourceManager::addAppropriateSources() {
 		Common::ArchiveMemberList files;
 		SearchMan.listMatchingMembers(files, "resource.0##");
 
+		Common::sort(files.begin(), files.end(), Common::ArchiveMemberListComparator());
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			const Common::String name = (*x)->getName();
 			const char *dot = strrchr(name.c_str(), '.');
@@ -679,6 +680,7 @@ int ResourceManager::addAppropriateSources() {
 			_multiDiscAudio = true;
 		}
 
+		Common::sort(mapFiles.begin(), mapFiles.end(), Common::ArchiveMemberListComparator());
 		for (Common::ArchiveMemberList::const_iterator mapIterator = mapFiles.begin(); mapIterator != mapFiles.end(); ++mapIterator) {
 			Common::String mapName = (*mapIterator)->getName();
 			int mapNumber = atoi(strrchr(mapName.c_str(), '.') + 1);
