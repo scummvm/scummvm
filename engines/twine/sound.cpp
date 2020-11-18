@@ -69,7 +69,7 @@ void Sound::playFlaSample(int32 index, int32 frequency, int32 repeat, int32 x, i
 		return;
 	}
 
-	uint8 *sampPtr;
+	uint8 *sampPtr = nullptr;
 	const int32 sampSize = HQR::getAllocEntry(&sampPtr, Resources::HQR_FLASAMP_FILE, index);
 	if (sampSize == 0) {
 		warning("Failed to load %s", Resources::HQR_FLASAMP_FILE);
