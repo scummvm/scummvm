@@ -157,9 +157,9 @@ void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
 
 	if (renderAngleX) {
 		int32 angle = renderAngleX;
-		int32 angleVar2 = shadeAngleTable[angle & 0x3FF];
-		angle += 0x100;
-		int32 angleVar1 = shadeAngleTable[angle & 0x3FF];
+		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
+		angle += 256;
+		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
 		matrix1[0] = currentMatrix[0];
 		matrix1[3] = currentMatrix[3];
@@ -179,9 +179,9 @@ void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
 
 	if (renderAngleZ) {
 		int32 angle = renderAngleZ;
-		int32 angleVar2 = shadeAngleTable[angle & 0x3FF];
-		angle += 0x100;
-		int32 angleVar1 = shadeAngleTable[angle & 0x3FF];
+		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
+		angle += 256;
+		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
 		matrix2[2] = matrix1[2];
 		matrix2[5] = matrix1[5];
@@ -201,9 +201,9 @@ void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
 
 	if (renderAngleY) {
 		int32 angle = renderAngleY;
-		int32 angleVar2 = shadeAngleTable[angle & 0x3FF]; // esi
-		angle += 0x100;
-		int32 angleVar1 = shadeAngleTable[angle & 0x3FF]; // ecx
+		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
+		angle += 256;
+		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
 		targetMatrix[1] = matrix2[1];
 		targetMatrix[4] = matrix2[4];

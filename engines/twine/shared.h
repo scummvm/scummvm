@@ -118,6 +118,10 @@ enum class ExtraSpecialType {
 	kExplodeCloud = 1
 };
 
+inline int32 ClampAngle(int32 angle) {
+	return angle & 0x3FF;
+}
+
 }
 
 #endif

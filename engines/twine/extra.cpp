@@ -645,7 +645,7 @@ void Extra::processExtras() {
 			currentExtraZ = actor->z;
 
 			int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->x, extra->z, currentExtraX, currentExtraZ);
-			int32 angle = (tmpAngle - extra->angle) & 0x3FF;
+			int32 angle = ClampAngle(tmpAngle - extra->angle);
 
 			if (angle > 400 && angle < 600) {
 				if (extra->strengthOfHit) {
@@ -691,7 +691,7 @@ void Extra::processExtras() {
 			int32 actorIdx = extra->actorIdx;
 
 			int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->x, extra->z, extraKey->x, extraKey->z);
-			int32 angle = (tmpAngle - extra->angle) & 0x3FF;
+			int32 angle = ClampAngle(tmpAngle - extra->angle);
 
 			if (angle > 400 && angle < 600) {
 				_engine->_sound->playSample(Samples::ItemFound, 4096, 1, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->y, _engine->_scene->sceneHero->z, 0);

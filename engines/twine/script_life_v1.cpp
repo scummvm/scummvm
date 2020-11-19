@@ -228,8 +228,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 			}
 
 			if (IS_HERO(targetActorIdx)) {
-				int32 heroAngle = ctx.actor->angle + 0x480 - newAngle + 0x400;
-				heroAngle &= 0x3FF;
+				int32 heroAngle = ClampAngle(ctx.actor->angle + 0x480 - newAngle + 0x400);
 
 				if (ABS(heroAngle) > 0x100) {
 					engine->_scene->currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
@@ -238,8 +237,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 				}
 			} else {
 				if (engine->_actor->heroBehaviour == HeroBehaviourType::kDiscrete) {
-					int32 heroAngle = ctx.actor->angle + 0x480 - newAngle + 0x400;
-					heroAngle &= 0x3FF;
+					int32 heroAngle = ClampAngle(ctx.actor->angle + 0x480 - newAngle + 0x400);
 
 					if (ABS(heroAngle) > 0x100) {
 						engine->_scene->currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
