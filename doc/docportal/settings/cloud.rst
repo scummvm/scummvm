@@ -18,7 +18,7 @@ From the Launcher, select **Options**, click the **>** scroll arrow until the Cl
 Active storage
 	Choose from Dropbox, OneDrive, Google Drive, or Box. 
 
-Once a Cloud service has been selected, further options are available:
+After a Cloud service has been selected, further options are available:
 
 Sync Now
 	Manually syncs saved games with the cloud service. Saved games automatically sync on launch, after saving, and on game load. 

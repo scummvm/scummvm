@@ -63,7 +63,7 @@ To load a saved state from within a game, press :kbd:`Ctrl+F5` (:kbd:`Ctrl+fn+F5
 Location of saved game files
 -------------------------------
 
-The save directory can be changed via the savepath setting in the :doc:`Paths tab <../settings/paths>`. It can also be changed in the :doc:`configuration file <../advanced_topics/configuration_file>`.
+The save directory can be changed with the savepath setting in the :doc:`Paths tab <../settings/paths>`. It can also be changed in the :doc:`configuration file <../advanced_topics/configuration_file>`.
 
 Default saved game paths are shown below. 
 
@@ -114,7 +114,7 @@ Default saved game paths are shown below.
 		:column: col-lg-12 mb-2
 
 		
-		We follow the XDG Base Directory Specification, so by default the saved games can be found at ``~/.local/share/scummvm/saves/``, but this location may vary depending on the value of the ``XDG_DATA_HOME`` environment variable.
+		We follow the XDG Base Directory Specification, so by default the saved games can be found at ``~/.local/share/scummvm/saves/``, but this location might vary depending on the value of the ``XDG_DATA_HOME`` environment variable.
 		
 		``.local`` is a hidden directory. To view it use ``ls -a`` on the command line, or, if you are using a GUI file manager, press :kbd:`Ctrl + H`.
 
