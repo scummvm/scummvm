@@ -250,7 +250,7 @@ static int32 mWAIT_NUM_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.undo(2);
 	}
 
-	return abortMove;
+	return abortMove ? 1 : 0;
 }
 
 /*0x0E*/
@@ -546,7 +546,7 @@ static int32 mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	}
 
 	if (ctx.actor->angle != engine->_scene->currentScriptValue) {
-		ctx.stream.rewind(4);
+		ctx.undo(4);
 		return 1;
 	}
 	engine->_movements->clearRealAngle(ctx.actor);
@@ -614,10 +614,10 @@ void ScriptMove::processMoveScript(int32 actorIdx) {
 		if (end < 0) {
 			warning("Actor %d Life script [%s] not implemented", actorIdx, function_map[scriptOpcode].name);
 		}
+		if (ctx.actor->positionInMoveScript != -1) {
+			actor->positionInMoveScript = ctx.stream.pos();
+		}
 	} while (end != 1);
-	if (ctx.actor->positionInMoveScript != -1) {
-		actor->positionInMoveScript = ctx.stream.pos();
-	}
 }
 
 } // namespace TwinE
