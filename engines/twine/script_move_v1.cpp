@@ -25,10 +25,12 @@
 #include "common/util.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
+#include "twine/flamovies.h"
 #include "twine/movements.h"
 #include "twine/redraw.h"
 #include "twine/renderer.h"
 #include "twine/scene.h"
+#include "twine/screens.h"
 #include "common/memstream.h"
 #include "twine/sound.h"
 #include "twine/twine.h"
@@ -459,8 +461,24 @@ static int32 mSAMPLE_STOP(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 /*0x1E*/
 static int32 mPLAY_FLA(TwinEEngine *engine, MoveScriptContext &ctx) {
-	// TODO param1: null-terminated string - name of the fla file to play (extension may be included, but it's not required)
-	return -1;
+	int strIdx = 0;
+	char movie[64];
+	do {
+		const byte c = ctx.stream.readByte();
+		movie[strIdx++] = c;
+		if (c == '\0') {
+			break;
+		}
+		if (strIdx >= ARRAYSIZE(movie)) {
+			error("Max string size exceeded for fla name");
+		}
+	} while (true);
+
+	engine->_flaMovies->playFlaMovie(movie);
+	engine->setPalette(engine->_screens->paletteRGBA);
+	engine->_screens->clearScreen();
+	engine->flip();
+	return 0;
 }
 
 /*0x1F*/
