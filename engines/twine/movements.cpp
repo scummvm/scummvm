@@ -64,7 +64,7 @@ void Movements::setActorAngleSafe(int16 startAngle, int16 endAngle, int16 stepAn
 }
 
 void Movements::clearRealAngle(ActorStruct *actorPtr) {
-	setActorAngleSafe(actorPtr->angle, actorPtr->angle, 0, &actorPtr->move);
+	setActorAngleSafe(actorPtr->angle, actorPtr->angle, ANGLE_0, &actorPtr->move);
 }
 
 void Movements::setActorAngle(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {
@@ -114,7 +114,7 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 
 	const int32 destAngle = (difZ << 14) / targetActorDistance;
 
-	int32 startAngle = 0;
+	int32 startAngle = ANGLE_0;
 	//	stopAngle  = 0x100;
 
 	while (_engine->_renderer->shadeAngleTab3[startAngle] > destAngle) {
@@ -127,14 +127,14 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 		}
 	}
 
-	int32 finalAngle = 128 + startAngle;
+	int32 finalAngle = ANGLE_45 + startAngle;
 
 	if (difX <= 0) {
 		finalAngle = -finalAngle;
 	}
 
 	if (flag) {
-		finalAngle = -finalAngle + 0x100;
+		finalAngle = -finalAngle + ANGLE_90;
 	}
 
 	return ClampAngle(finalAngle);
@@ -149,14 +149,7 @@ int32 Movements::getRealAngle(ActorMoveStruct *movePtr) {
 			return movePtr->to;
 		}
 
-		int32 remainingAngle = movePtr->to - movePtr->from;
-
-		if (remainingAngle < -0x200) {
-			remainingAngle += 0x400;
-		} else if (remainingAngle > 0x200) {
-			remainingAngle -= 0x400;
-		}
-
+		int32 remainingAngle = NormalizeAngle(movePtr->to - movePtr->from);
 		remainingAngle *= timePassed;
 		remainingAngle /= movePtr->numOfStep;
 		remainingAngle += movePtr->from;
@@ -185,7 +178,7 @@ int32 Movements::getRealValue(ActorMoveStruct *movePtr) {
 }
 
 void Movements::rotateActor(int32 x, int32 z, int32 angle) {
-	const double radians = 2 * M_PI * angle / 0x400;
+	const double radians = AngleToRadians(angle);
 	_engine->_renderer->destX = (int32)(x * cos(radians) + z * sin(radians));
 	_engine->_renderer->destZ = (int32)(-x * sin(radians) + z * cos(radians));
 }
@@ -206,14 +199,7 @@ void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMove
 	movePtr->to = to;
 
 	const int16 numOfStep = (from - to) << 6;
-
-	int32 numOfStepInt;
-	if (numOfStep < 0) {
-		numOfStepInt = -numOfStep;
-	} else {
-		numOfStepInt = numOfStep;
-	}
-
+	int32 numOfStepInt = ABS(numOfStep);
 	numOfStepInt >>= 6;
 
 	numOfStepInt *= speed;
@@ -359,11 +345,11 @@ void Movements::processManualAction(int actorIdx) {
 
 	int16 tempAngle;
 	if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-		tempAngle = 0x100;
+		tempAngle = ANGLE_90;
 	} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-		tempAngle = -0x100;
+		tempAngle = -ANGLE_90;
 	} else {
-		tempAngle = 0;
+		tempAngle = ANGLE_0;
 	}
 
 	moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
@@ -390,7 +376,7 @@ void Movements::processRandomAction(int actorIdx) {
 	}
 
 	if (actor->brickCausesDamage()) {
-		moveActor(actor->angle, ClampAngle((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)), actor->speed, &actor->move);
+		moveActor(actor->angle, ClampAngle((_engine->getRandomNumber() & ANGLE_90) + (actor->angle - ANGLE_90)), actor->speed, &actor->move);
 		actor->delayInMillis = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
 		_engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, actorIdx);
 	}
@@ -398,7 +384,7 @@ void Movements::processRandomAction(int actorIdx) {
 	if (!actor->move.numOfStep) {
 		_engine->_animations->initAnim(AnimationTypes::kForward, 0, AnimationTypes::kAnimInvalid, actorIdx);
 		if (_engine->lbaTime > actor->delayInMillis) {
-			moveActor(actor->angle, ClampAngle((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)), actor->speed, &actor->move);
+			moveActor(actor->angle, ClampAngle((_engine->getRandomNumber() & ANGLE_90) + (actor->angle - ANGLE_90)), actor->speed, &actor->move);
 			actor->delayInMillis = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
 		}
 	}
@@ -429,11 +415,11 @@ void Movements::processActorMovements(int32 actorIdx) {
 			return;
 		}
 
-		int16 tempAngle = 0;
+		int16 tempAngle = ANGLE_0;
 		if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-			tempAngle = 0x100;
+			tempAngle = ANGLE_90;
 		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-			tempAngle = -0x100;
+			tempAngle = -ANGLE_90;
 		}
 
 		moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);

@@ -118,8 +118,45 @@ enum class ExtraSpecialType {
 	kExplodeCloud = 1
 };
 
-inline int32 ClampAngle(int32 angle) {
-	return angle & 0x3FF;
+#define ANGLE_360 1024
+#define ANGLE_270 768
+#define ANGLE_180 512
+#define ANGLE_135 384
+#define ANGLE_90 256
+#define ANGLE_45 128
+#define ANGLE_0 0
+
+inline int32 NormalizeAngle(int32 angle) {
+	if (angle < -ANGLE_180) {
+		angle += ANGLE_360;
+	} else if (angle > ANGLE_180) {
+		angle -= ANGLE_360;
+	}
+	return angle;
+}
+
+/**
+ * @param[in] angle The angle as input from game data
+ * @return The value as it is used at runtime
+ */
+inline constexpr int32 ToAngle(int32 angle) {
+	return angle;
+}
+
+/**
+ * @param[in] angle The angle as used at runtime
+ * @return The value as it should be used for storing in game data
+ */
+inline constexpr int32 FromAngle(int32 angle) {
+	return angle;
+}
+
+inline constexpr double AngleToRadians(int32 angle) {
+	return 2.0 * M_PI * angle / (double)ANGLE_360;
+}
+
+inline constexpr int32 ClampAngle(int32 angle) {
+	return angle & (ANGLE_360 - 1);
 }
 
 }

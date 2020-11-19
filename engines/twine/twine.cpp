@@ -491,7 +491,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				break;
 			case kiMagicBall:
 				if (_gameState->usingSabre) {
-					_actor->initModelActor(0, 0);
+					_actor->initModelActor(0, OWN_ACTOR_SCENE_INDEX);
 				}
 				_gameState->usingSabre = false;
 				break;
@@ -500,8 +500,8 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 					if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
 						_actor->setBehaviour(HeroBehaviourType::kNormal);
 					}
-					_actor->initModelActor(InventoryItems::kiUseSabre, 0);
-					_animations->initAnim(AnimationTypes::kSabreUnknown, 1, AnimationTypes::kStanding, 0);
+					_actor->initModelActor(InventoryItems::kiUseSabre, OWN_ACTOR_SCENE_INDEX);
+					_animations->initAnim(AnimationTypes::kSabreUnknown, 1, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 
 					_gameState->usingSabre = true;
 				}
@@ -668,7 +668,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		loopActorStep = 1;
 	}
 
-	_movements->setActorAngle(0, -256, 5, &loopMovePtr);
+	_movements->setActorAngle(ANGLE_0, -ANGLE_90, 5, &loopMovePtr);
 	disableScreenRecenter = false;
 
 	_scene->processEnvironmentSound();
@@ -744,7 +744,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 								actor->controlMode = ControlMode::kNoMove;
 								actor->life = -1;
 								_actor->cropBottomScreen = _renderer->projPosY;
-								actor->staticFlags.bCanDrown |= 0x10;
+								actor->staticFlags.bCanDrown |= 0x10; // TODO: doesn't make sense
 							}
 						} else {
 							const int32 rnd = getRandomNumber(2000) + 3096;
@@ -824,7 +824,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		_renderer->projectPositionOnScreen(actor->x - (_grid->newCameraX << 9),
 		                                   actor->y - (_grid->newCameraY << 8),
 		                                   actor->z - (_grid->newCameraZ << 9));
-		if (_renderer->projPosX < 80 || _renderer->projPosX > 539 || _renderer->projPosY < 80 || _renderer->projPosY > 429) {
+		if (_renderer->projPosX < 80 || _renderer->projPosX >= SCREEN_WIDTH - 60 || _renderer->projPosY < 80 || _renderer->projPosY >= SCREEN_HEIGHT - 50) {
 			_grid->newCameraX = ((actor->x + 0x100) >> 9) + (((actor->x + 0x100) >> 9) - _grid->newCameraX) / 2;
 			_grid->newCameraY = actor->y >> 8;
 			_grid->newCameraZ = ((actor->z + 0x100) >> 9) + (((actor->z + 0x100) >> 9) - _grid->newCameraZ) / 2;
@@ -859,7 +859,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 bool TwinEEngine::gameEngineLoop() {
 	_redraw->reqBgRedraw = true;
 	_screens->lockPalette = true;
-	_movements->setActorAngle(0, -256, 5, &loopMovePtr);
+	_movements->setActorAngle(ANGLE_0, -ANGLE_90, 5, &loopMovePtr);
 
 	while (quitGame == -1) {
 		uint32 start = g_system->getMillis();
@@ -944,7 +944,7 @@ void TwinEEngine::crossFade(const Graphics::ManagedSurface &buffer, const uint32
 	backupSurface.create(frontVideoBuffer.w, frontVideoBuffer.h, fmt);
 	newSurface.create(frontVideoBuffer.w, frontVideoBuffer.h, fmt);
 	tempSurface.create(frontVideoBuffer.w, frontVideoBuffer.h, Graphics::PixelFormat::createFormatCLUT8());
-	tempSurface.setPalette(palette, 0, 256);
+	tempSurface.setPalette(palette, 0, NUMOFCOLORS);
 
 	surfaceTable.create(frontVideoBuffer.w, frontVideoBuffer.h, fmt);
 
@@ -953,7 +953,7 @@ void TwinEEngine::crossFade(const Graphics::ManagedSurface &buffer, const uint32
 
 	for (int32 i = 0; i < 8; i++) {
 		surfaceTable.blitFrom(backupSurface);
-		surfaceTable.transBlitFrom(newSurface, 0, false, 0, i * 32);
+		surfaceTable.transBlitFrom(newSurface, 0, false, 0, i * NUMOFCOLORS / 8);
 		frontVideoBuffer.blitFrom(surfaceTable);
 		flip();
 		delaySkip(50);

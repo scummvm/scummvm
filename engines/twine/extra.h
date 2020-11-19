@@ -59,7 +59,7 @@ class Extra {
 private:
 	TwinEEngine *_engine;
 
-	void throwExtra(ExtraListStruct *extra, int32 var1, int32 angle, int32 var3, int32 var4);
+	void throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x, int32 extraAngle);
 	void processMagicballBounce(ExtraListStruct *extra, int32 x, int32 y, int32 z);
 	int32 findExtraKey();
 	int32 addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx);
@@ -73,9 +73,9 @@ public:
 
 	/**
 	 * Add extra explosion
-	 * @param x Explostion X coordinate
-	 * @param y Explostion Y coordinate
-	 * @param z Explostion Z coordinate
+	 * @param x Explosion X coordinate
+	 * @param y Explosion Y coordinate
+	 * @param z Explosion Z coordinate
 	 */
 	int32 addExtraExplode(int32 x, int32 y, int32 z);
 
@@ -83,10 +83,10 @@ public:
 	void resetExtras();
 
 	void addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type);
-	int32 addExtraBonus(int32 x, int32 y, int32 z, int32 param, int32 angle, int32 type, int32 bonusAmount);
-	int32 addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 var2, int32 angle, int32 var4, int32 var5, int32 strengthOfHit);
-	int32 addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActorIdx, int32 maxSpeed, int32 strengthOfHit);
-	void addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 param1, int32 angle, int32 param2, int32 param3);
+	int32 addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 type, int32 bonusAmount);
+	int32 addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle, int32 strengthOfHit);
+	int32 addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActorIdx, int32 finalAngle, int32 strengthOfHit);
+	void addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle);
 
 	void drawExtraSpecial(int32 extraIdx, int32 x, int32 y);
 

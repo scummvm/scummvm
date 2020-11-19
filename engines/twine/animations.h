@@ -53,7 +53,7 @@ private:
 	/** Rotation by anim and not by engine */
 	int16 processRotationByAnim = 0; // processActorVar5
 	/** Last rotation angle */
-	int16 processLastRotationAngle = 0; // processActorVar6
+	int16 processLastRotationAngle = ANGLE_0; // processActorVar6
 
 	/** Current step X coornidate */
 	int16 currentStepX = 0;

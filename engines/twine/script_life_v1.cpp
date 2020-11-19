@@ -228,18 +228,18 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 			}
 
 			if (IS_HERO(targetActorIdx)) {
-				int32 heroAngle = ClampAngle(ctx.actor->angle + 0x480 - newAngle + 0x400);
+				int32 heroAngle = ClampAngle(ctx.actor->angle + ANGLE_360 + ANGLE_45 - newAngle + ANGLE_360);
 
-				if (ABS(heroAngle) > 0x100) {
+				if (ABS(heroAngle) > ANGLE_90) {
 					engine->_scene->currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 				} else {
 					engine->_scene->currentScriptValue = engine->_movements->targetActorDistance;
 				}
 			} else {
 				if (engine->_actor->heroBehaviour == HeroBehaviourType::kDiscrete) {
-					int32 heroAngle = ClampAngle(ctx.actor->angle + 0x480 - newAngle + 0x400);
+					int32 heroAngle = ClampAngle(ctx.actor->angle + ANGLE_360 + ANGLE_45 - newAngle + ANGLE_360);
 
-					if (ABS(heroAngle) > 0x100) {
+					if (ABS(heroAngle) > ANGLE_90) {
 						engine->_scene->currentScriptValue = MAX_TARGET_ACTOR_DISTANCE;
 					} else {
 						engine->_scene->currentScriptValue = engine->_movements->targetActorDistance;
@@ -955,7 +955,7 @@ static int32 lFOUND_OBJECT(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 distance = ctx.stream.readSint16LE();
 
-	ctx.actor->angle = 0x300;
+	ctx.actor->angle = ANGLE_270;
 	ctx.actor->x = ctx.actor->lastX - distance;
 	ctx.actor->dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->speed = 0;
@@ -970,7 +970,7 @@ static int32 lSET_DOOR_LEFT(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 distance = ctx.stream.readSint16LE();
 
-	ctx.actor->angle = 0x100;
+	ctx.actor->angle = ANGLE_90;
 	ctx.actor->x = ctx.actor->lastX + distance;
 	ctx.actor->dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->speed = 0;
@@ -985,7 +985,7 @@ static int32 lSET_DOOR_RIGHT(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 distance = ctx.stream.readSint16LE();
 
-	ctx.actor->angle = 0x200;
+	ctx.actor->angle = ANGLE_180;
 	ctx.actor->z = ctx.actor->lastZ - distance;
 	ctx.actor->dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->speed = 0;
@@ -1000,7 +1000,7 @@ static int32 lSET_DOOR_UP(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_DOOR_DOWN(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 distance = ctx.stream.readSint16LE();
 
-	ctx.actor->angle = 0;
+	ctx.actor->angle = ANGLE_0;
 	ctx.actor->z = ctx.actor->lastZ + distance;
 	ctx.actor->dynamicFlags.bIsSpriteMoving = 0;
 	ctx.actor->speed = 0;
@@ -1430,7 +1430,7 @@ static int32 lFULL_POINT(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lBETA(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 newAngle = ctx.stream.readSint16LE();
-	ctx.actor->angle = newAngle;
+	ctx.actor->angle = ToAngle(newAngle);
 	engine->_movements->clearRealAngle(ctx.actor);
 	return 0;
 }

@@ -726,7 +726,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 	}
 
 	if (_engine->zoomScreen) {
-		//zoomScreenScale();
+		zoomScreenScale();
 	}
 }
 
@@ -766,10 +766,11 @@ void Redraw::drawBubble(int32 actorIdx) {
 }
 
 void Redraw::zoomScreenScale() {
+#if 0
+	// TODO: this is broken
 	Graphics::ManagedSurface zoomWorkVideoBuffer;
 	zoomWorkVideoBuffer.copyFrom(_engine->workVideoBuffer);
 
-	// TODO: this is broken
 	const uint8 *src = (const uint8 *)zoomWorkVideoBuffer.getPixels();
 	uint8 *dest = (uint8 *)_engine->workVideoBuffer.getPixels();
 	for (int h = 0; h < zoomWorkVideoBuffer.h; h++) {
@@ -782,6 +783,7 @@ void Redraw::zoomScreenScale() {
 	}
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	zoomWorkVideoBuffer.free();
+#endif
 }
 
 } // namespace TwinE
