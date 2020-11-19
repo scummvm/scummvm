@@ -85,7 +85,11 @@ enum class AnimationTypes {
 	kHit2 = 22,
 	kSabreAttack = 23,
 	kSabreUnknown = 24,
-
+	kCarStarting = 303,
+	kCarDriving = 304,
+	kCarDrivingBackwards = 305,
+	kCarStopping = 306,
+	kCarFrozen = 307,
 	kAnimInvalid = 255
 };
 
