@@ -12,7 +12,7 @@ The **Preferred device** in the global settings Audio tab, or the **Music device
 
 If **Preferred device** or **Music device** is set to **<default>** and ScummVM chooses either an MT-32 or General MIDI device automatically, the settings on the MT-32 or MIDI tabs also apply, and the devices selected on these tabs are the ones that will be used. If **Preferred device** or **Music device** is set to either an MT-32 device or a GM device, ScummVM will use that device and ignore the devices chosen on the MT-32 and MIDI tabs. 
 
-Many of the settings are highly dependent on the soundtrack(s) of the game you are playing; some offer only MIDI, while others have MP3 soundtracks, and so on. 
+Not all settings are applicable to all games. For example, changing the General MIDI settings will not have any effect on a game that only has CD audio. 
 
 
 The evolution of PC audio
@@ -59,7 +59,7 @@ To find out which emulation is compatible with the game you're playing, have a l
 What is MIDI? 
 ======================
 
-MIDI is a communications protocol for musical information; it can be likened to digital sheet music. By itself, MIDI is not sound. Hardware or software synthesizers create (synthesize) audio by interpreting the information given to them via the MIDI protocol. 
+MIDI is a communications protocol for musical information; it can be likened to digital sheet music. By itself, MIDI is not sound. Hardware or software synthesizers create (synthesize) audio by interpreting the information given to them by the MIDI protocol. 
 
 While some older soundcards (and a few modern ones) have their own hardware-based synthesizers, this is relatively rare. Generally, soundcard drivers work with software synthesizers to interpret MIDI and output audio. 
 
@@ -79,9 +79,9 @@ General MIDI device emulation (FluidSynth)
 
 If the ScummVM you're using has libfluidsynth support it will be able to play MIDI music by using the FluidSynth emulator if set as the **Preferred device** or **Music device**, or if specified in the MIDI tab when **Preferred device** or **Music device** is set to **<default>** and ScummVM chooses General MIDI output automatically. 
 
-You will have to specify a SoundFont in the MIDI tab for ScummVM to use FluidSynth. MIDI is like digital sheet music; it needs a library of sound samples known as a SoundFont to draw from in order to synthesize music. See the `ScummVM forum <https://forums.scummvm.org/viewtopic.php?t=14541>`_ for an example of a great SoundFont.  
+You will have to specify a SoundFont in the MIDI tab for ScummVM to use FluidSynth. MIDI is like digital sheet music; it needs a library of sound samples known as a SoundFont to draw from to synthesize music. See the `ScummVM forum <https://forums.scummvm.org/viewtopic.php?t=14541>`_ for an example of a great SoundFont.  
 
-Since the default output volume from FluidSynth can be fairly low, ScummVM will automatically set the gain to get a stronger signal. This can be further adjusted using the :ref:`MIDI gain <gain>` setting. 
+The default output volume from FluidSynth can be fairly low, so ScummVM automatically sets the gain to get a stronger signal. Use the :ref:`MIDI gain <gain>` setting to further adjust this. 
 
 The processor requirements for FluidSynth are quite high; a fast CPU is recommended.
 
@@ -109,14 +109,14 @@ You don't need to enable **True Roland MT-32** in the MT-32 tab, ScummVM does th
 
 .. tip::
 
-    Some games work better with some MT-32 devices than others. As an example, Lure of the Temptress makes use of extra sound effects included with the CM-32L and won't sound right with an MT-32. Likewise, The Colonel's Bequest exploits some bugs in the early MT-32 modules, which means that later devices will play incorrect sound effects! 
+    Some games work better with some MT-32 devices than others. As an example, Lure of the Temptress makes use of extra sound effects included with the CM-32L and won't sound right with an MT-32. Likewise, The Colonel's Bequest uses some bugs in the early MT-32 modules, which means that later devices will play incorrect sound effects! 
     
     `This Wikipedia article <https://en.wikipedia.org/wiki/List_of_MT-32-compatible_computer_games>`_ provides a comprehensive list of MT-32 compatible games, including which games work best with which device.  
 
 The processor requirements for the MT-32 emulator are quite high; a fast CPU is strongly recommended.
 
 
-Native MIDI support
+Built-in MIDI support
 --------------------------
 
 All MIDI ports show up in the **Preferred device** or **Music device** dropdown selector. If you have selected a MIDI port, you need to specify what type of MIDI device this is with the options in the :ref:`MT-32 <mt32>` tab. 
@@ -125,7 +125,7 @@ All MIDI ports show up in the **Preferred device** or **Music device** dropdown 
 - Enable **Roland GS device** to tell ScummVM to use an MT-32 soundtrack on a GS device. This is not supported by all games.
 - If no options are selected, ScummVM treats the device on the port as a General MIDI device.  
 
-If you select an option that does not match the actual device, this may have unintended consequences. For example, if a game only has support for MT-32 and you have a General MIDI device selected as the **Preferred device** or **Music device**, ScummVM will convert the MT-32 MIDI data to GM-compatible MIDI data. While this may work fine for some games, it really depends on how the game has made use of the MT-32. 
+If you select an option that does not match the actual device, this might have unintended consequences. For example, if a game only has support for MT-32 and you have a General MIDI device selected as the **Preferred device** or **Music device**, ScummVM will convert the MT-32 MIDI data to GM-compatible MIDI data. While this might work fine for some games, it really depends on how the game has made use of the MT-32. 
 
 
 
@@ -146,11 +146,11 @@ For an in-depth look at audio and MIDI device setup on a Windows computer, see t
 Linux
 ******
 
-MIDI device setup may vary depending on your Linux distro. 
+MIDI device setup might vary depending on your Linux distro. 
 
-If you do not have a hardware MIDI device, there are two options: FluidSynth and TiMidity. FluidSynth is recommended as TiMidity may have some lag, depending on the system. 
+If you do not have a hardware MIDI device, there are two options: FluidSynth and TiMidity. FluidSynth is recommended as TiMidity might have some lag, depending on the system. 
 
-Here are a couple of helpful articles from the Ubuntu community documentation to get you started. These instructions should work for any Debian-based distro. 
+Here are a couple of helpful articles from the Ubuntu community documentation to get you started. 
 
 `How to: Software Synthesizers <https://help.ubuntu.com/community/Midi/SoftwareSynthesisHowTo>`_
 
@@ -163,7 +163,7 @@ Here are a couple of helpful articles from the Ubuntu community documentation to
 What is AdLib? 
 ================
 
-AdLib devices do not use MIDI. They instead have a chip that produces sound via FM synthesis. While some games do store their audio data using a MIDI-derived format, this is converted by the game to work with the AdLib chip. ScummVM emulates a few different AdLib configurations, and selects the most appropriate for the game:
+AdLib devices do not use MIDI. They instead have a chip that produces sound through FM synthesis. While some games do store their audio data using a MIDI-derived format, this is converted by the game to work with the AdLib chip. ScummVM emulates a few different AdLib configurations, and selects the most appropriate for the game:
 
 - The original AdLib and SoundBlaster card had one OPL2 chip. 
 - The SoundBlaster Pro 1 had two OPL2 chips
@@ -171,13 +171,13 @@ AdLib devices do not use MIDI. They instead have a chip that produces sound via 
 
 The AdLib emulator setting offers MAME, DOSBox and Nuked emulation, with MAME being the least accurate and using the least CPU power, and Nuked being the most accurate and also using the most CPU power - DOSBox is somewhere in between. 
 
-There is also the option to select the OPL2LPT and OPL3LPT devices, which are external hardware devices with a real OPL chip, connected via the parallel port of a computer. 
+There is also the option to select the OPL2LPT and OPL3LPT devices, which are external hardware devices with a real OPL chip, connected through the parallel port of a computer. 
 
-AdLib does not require a SoundFont or ROMs, so for many games it may be the easiest to configure. However, if an MT-32 or GS emulator or device is available, ScummVM will prioritize this over AdLib. 
+AdLib does not require a SoundFont or ROMs, so for many games it might be the easiest to configure. However, if an MT-32 or GS emulator or device is available, ScummVM will prioritize this over AdLib. 
 
 Mixed AdLib/MIDI mode
 ------------------------
-Some games contain sound effects that are exclusive to the AdLib soundtrack, or the AdLib soundtrack may provide better sound effects. For these games, you can combine MIDI music with AdLib sound effects by using the :ref:`mixed AdLib/MIDI mode <multi>`.
+Some games contain sound effects that are exclusive to the AdLib soundtrack, or the AdLib soundtrack might provide better sound effects. For these games, you can combine MIDI music with AdLib sound effects by using the :ref:`mixed AdLib/MIDI mode <multi>`.
 
 .. note::
 
@@ -201,7 +201,7 @@ For games that use CD audio, the sounds were probably sampled at 44100Hz, so tha
 
 ScummVM generates the samples when using AdLib, FM-Towns, PC Speaker or IBM PCjr emulated sound. 22050Hz will usually be fine for these options, although for Beneath a Steel Sky 44100Hz is recommended.
 
-ScummVM has to resample all sounds to the selected output frequency. It is recommended to choose an output frequency that is a multiple of the original frequency. Choosing an in-between number may not be supported by your sound card.
+ScummVM has to resample all sounds to the selected output frequency. It is recommended to choose an output frequency that is a multiple of the original frequency. Choosing an in-between number might not be supported by your sound card.
 
 .. _buffer:
 
@@ -212,6 +212,6 @@ There is no option to control audio buffer size through the GUI, but the default
 
 Appropriate values are normally between 512 and 8192, but the value must be one of: 256, 512, 1024, 2048, 4096, 8192, 16384, or 32768. 
 
-Smaller values yield faster response time, but can lead to stuttering if your CPU isn't able to catch up with audio sampling when using the sound emulators. Large buffer sizes may lead to minor audio delays (high latency).
+Smaller values yield faster response time, but can lead to stuttering if your CPU isn't able to catch up with audio sampling when using the sound emulators. Large buffer sizes might lead to minor audio delays (high latency).
 
 

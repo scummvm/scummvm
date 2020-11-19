@@ -5,7 +5,9 @@ Version 2.2.0 - "Interactive Fantasy"
  
 New games
 =============
-    - Currently, more than 1600 games are detected and supported.
+
+Currently, more than 1600 games are detected and supported.
+
     - Added support for Blazing Dragons.
     - Added support for Griffon Legend.
     - Added support for Interactive Fiction games based on the following engines:
@@ -123,8 +125,8 @@ SCUMM
     - Fixed the rendering of the flashlight in MM NES to match the original version.
     - Replaced the existing NES palette to a more accurate NTSC palette based on Mesen.
     - Added a new GUI option to switch to an alternative NES palette based on the NES Classic.
-    - Improved colors in Apple //gs Maniac Mansion.
-    - Fixed crash when entering garage in Apple //gs Maniac Mansion.
+    - Improved colors in Apple IIGS Maniac Mansion.
+    - Fixed crash when entering garage in Apple IIGS Maniac Mansion.
     - Added support from Classic Full Throttle from Remastered release. 
 
 Supernova
@@ -135,7 +137,7 @@ Supernova
 Sky
 ********
 
-    - Fixed syncing of music volume between native settings panel and ScummVM configuration. 
+    - Fixed syncing of music volume between built-in settings panel and ScummVM configuration. 
 
 Sword1
 ********

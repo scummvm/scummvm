@@ -50,9 +50,9 @@ For games on floppies or CDs:
 For games downloaded from digital distributors or from various `freeware sources <https://wiki.scummvm.org/index.php?title=Where_to_get_the_games#Freeware_Games>`__:
 
 - Run the installer to extract the game files, or
-- If the data files are supplied as a ``.zip`` archive, extract the archive.
+- If the data files are supplied as a zip file, extract the files.
 
-For macOS or Linux users without access to a Windows machine, it is possible to get the game files from games that only have Windows installers. Use `Wine <https://www.winehq.org/>`_ to run the Windows installer on macOS or Linux. Alternatively, for GOG.com games, use `innoextract <https://constexpr.org/innoextract/>`_ to unpack game files from the installer without actually running it.
+For macOS or Linux users without access to a Windows machine, you can get the game files from games that only have Windows installers. Use `Wine <https://www.winehq.org/>`_ to run the Windows installer on macOS or Linux. Alternatively, for GOG.com games, use `innoextract <https://constexpr.org/innoextract/>`_ to unpack game files from the installer without actually running it.
 
 
 
@@ -74,13 +74,13 @@ ScummVM needs access to all the data files, so it will not be able to run direct
 CD audio
 **********
 
-Some games contain one or more separate audio tracks on CD. To use these with ScummVM, extract the audio tracks from the CD in ``.wav`` or ``.aiff`` format, and then convert them to either ``.mp3``, ``.flac`` or ``.ogg`` file formats. 
+Some games contain one or more separate audio tracks on CD. To use these with ScummVM, extract the audio tracks from the CD in WAV or AIFF format, and then convert them to either MP3, FLAC or OGG file formats. 
 
 .. tip::
 
     Software suggestion:
 
-    `fre:ac <https://www.freac.org/>`_ is a multi-platform, open-source software, with the ability to both rip CDs and convert audio between ``.mp3``, ``.ogg``, ``.flac`` and ``.wav`` formats. 
+    `fre:ac <https://www.freac.org/>`_ is a multi-platform, open-source software, with the ability to both rip CDs and convert audio between MP3, OGG, FLAC and WAV  file formats. 
 
 Place the converted audio files in the same folder that contains the other game datafiles. 
 
@@ -94,9 +94,9 @@ All LucasArts SCUMM games also exist in versions for the Macintosh. Most of the 
 
 Mac uses a different file system to other systems (HFS+), so to access the CD or floppy disc on a Windows or Linux system you will need additional software to view and copy the files. 
 
-For Windows, `HFS Explorer <http://www.catacombae.org/hfsexplorer/>`_  is a basic and free option, which allows read-only access to HFS drives. Use the installer rather than the ZIP file, to ensure it is installed correctly. 
+For Windows, `HFS Explorer <http://www.catacombae.org/hfsexplorer/>`_  is a basic and free option, which gives you read-only access to HFS drives. Use the installer rather than the zip file, to ensure it is installed correctly. 
 
-For Linux, hfsplus allows read-only access to HFS drives. To use hfsplus, use the command line: 
+For Linux, hfsplus gives you read-only access to HFS drives. To use hfsplus, use the command line: 
 
    1. Install hfsplus using the software manager. On Debian-based distributions, use ``sudo apt install hfsplus``.
    2. Find the game disc by running ``sudo fdisk -l`` and finding the one with type ``Apple HFS/HFS+``. In this example, this is ``/dev/fd0``.
@@ -124,9 +124,9 @@ Add games to the Launcher
 
 .. note::
 
-   The **Use Native file browser**  option in the :doc:`Misc <../settings/misc>` tab of the global settings controls whether ScummVM uses the native system file browser, or its own file browser. 
+   The **Use Native file browser**  option in the :doc:`Misc <../settings/misc>` tab of the global settings controls whether ScummVM uses the system file browser, or its own file browser. 
 
-5.  The **Edit Game** dialog opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should work at the default settings. Click **Ok**. 
+5.  The **Edit Game** dialog opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything is OK at the default settings. Click **Ok**. 
 
 .. image:: ../images/Launcher/game_settings.png
    :class: with-shadow

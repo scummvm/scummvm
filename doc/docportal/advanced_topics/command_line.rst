@@ -3,7 +3,7 @@
 Command line interface
 =======================
 
-Launching ScummVM from the command line allows you to pass a number of options, some of which override the applicable global or game-specific settings. It also allows you to launch straight into a game without going to the Launcher first. 
+Launching ScummVM from the command line lets you pass a number of options, some of which override the applicable global or game-specific settings. It also lets you launch straight into a game without going to the Launcher first. 
 
 Some options, such as ``--help`` or ``--list-audio-devices``, allow you to view information about ScummVM directly on the command line without starting the Launcher or starting a game. 
 

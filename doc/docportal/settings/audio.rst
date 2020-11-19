@@ -52,7 +52,7 @@ AdLib Emulator
 .. _speechmute:
 
 Text and Speech
-	For games with digitized speech, this setting allows the user to decide whether to play the game with speech only, subtitles only, or both. 
+	For games with digitized speech, this setting lets the user decide whether to play the game with speech only, subtitles only, or both. 
 
 	*speech_mute* 
 

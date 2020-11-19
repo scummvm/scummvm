@@ -101,12 +101,12 @@ Open the ``scummvm.xcodeproj`` file from the Finder, or from the command line:
 Build ScummVM
 *****************
 
-Once Xcode is open, connect a device to install ScummVM onto. At the top of the window, select **ScummVM-iOS** and then select the device you just connected. You will need to "Trust" the device for it to show up on the list of connected devices. 
+When Xcode is open, connect a device to install ScummVM onto. At the top of the window, select **ScummVM-iOS** and then select the device you just connected. You will need to "Trust" the device for it to show up on the list of connected devices. 
 
 .. figure:: ../images/ios/choose_device.gif
 
    
-The last step before building ScummVM is to change the bundle identifier and manage signing. Click on the **scummvm** project in the left pane, and then click on **ScummVM - iOS** under **TARGETS**. On the menu bar above, click on **General**. Under **Identity** you should see a field labeled **Bundle Identifier**. Input a unique identifier in reverse-DNS format. This can be as simple as com.\ *yournamehere*. 
+The last step before building ScummVM is to change the bundle identifier and manage signing. Click on the **scummvm** project in the left pane, and then click on **ScummVM - iOS** under **TARGETS**. On the menu bar above, click on **General**. Under **Identity** there is a field labeled **Bundle Identifier**. Enter a unique identifier in reverse-DNS format. This can be as simple as com.\ *yournamehere*. 
 
 .. figure:: ../images/ios/identifier.gif
 
@@ -138,7 +138,7 @@ Install ScummVM
 
 Go to the `ScummVM downloads page <https://www.scummvm.org/downloads>`_ and download the recommended ``.deb`` or ``.ipa`` package. When the device asks how to open the file, choose Filza.
 
-Ensure the package is saved somewhere in the ``/var/mobile/`` directory. It should default to ``/var/mobile/Documents/``, which is fine. Tap on the file and then tap **Install** in the upper right corner to install ScummVM.
+Ensure the package is saved somewhere in the ``/var/mobile/`` directory. It defaults to ``/var/mobile/Documents/``, which is fine. Tap on the file and then tap **Install** in the upper right corner to install ScummVM.
 
 Restart your device for the install to complete. 
 
@@ -147,11 +147,11 @@ Transfer game files
 
 There are multiple ways to transfer game files to your iOS device. 
 
-ScummVM has built-in cloud functionality, which allows you to connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../use_scummvm/connect_cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../use_scummvm/LAN` page. 
+ScummVM has built-in cloud functionality, which lets you connect your Google Drive, OneDrive, Box or Dropbox account. For more information, see the :doc:`../use_scummvm/connect_cloud` page. ScummVM also has the ability to run a local web server. For more information, see the :doc:`../use_scummvm/LAN` page. 
 
 .. note::
 
- ScummVM's cloud functionality does not currently support iCloud, however it is possible to upload game folders to your iCloud and then use the Files app on your iOS device to copy these folders into the local ScummVM folder.
+ ScummVM's cloud functionality does not currently support iCloud, however you can upload game folders to your iCloud and then use the Files app on your iOS device to copy these folders into the local ScummVM folder.
 
 Another way to transfer files (for macOS Catalina and newer) to your device is by using the Finder while your device is connected to your Mac. In the Finder app on your Mac, navigate to **Locations** in the left pane, and click on the connected device. Click on **Files**, then drag the folder containing the game files into the **ScummVM** folder. For older versions of macOS, and for Windows users, file transfer can be done in iTunes. 
 
@@ -168,40 +168,52 @@ Controls
   	:header-rows: 2
 
         Game Controller Mapping,
-        Action,Touch screen control
-        Left click,Single tap
-        Right click,"Hold one finger on screen where you want to click, single tap another"
-        Arrow keys,Use a three finger swipe in the direction of the arrow key you want. You can also use the arrow buttons in the bar above the keyboard. You may need to scroll across on smaller screens to see these.  
-        ESC,"Hold one finger on screen, double tap another, or use the Esc key in the bar above the keyboard."
-        Tab,The Tab button in the bar above the keyboard.
-        Return,The Return button in the bar above the keyboard.
-        Global Main Menu,"Swipe two fingers down from top to bottom, or the tap the left-most button in the bar above the keyboard."
-        Enable/disable keyboard,"The pinch gesture enables or disables the keyboard. If no external keyboard is connected, this shows and hides the onscreen keyboard. When an external keyboard is connected, the pinch gesture enables/disables inputs from the external keyboard."
-        F 0-9 keys,The F-bar above the keyboard.
-        Pause,Keyboard spacebar
-        Toggle `Click and drag mode`_,Swipe two fingers up from bottom to top. 
-        Toggles between :ref:`direct` and :ref:`touchpad` ,Swipe two fingers from left to right.  
+        Touch screen control, Action
+        One finger tap, Left mouse click
+        :ref:`twofinger`, Right mouse click
+        :ref:`twofingerdouble`,ESC
+        Two finger swipe (bottom to top), Toggles `Click and drag mode`_
+        Two finger swipe (left to right),Toggles between touch direct mode and touchpad mode. 
+        Two finger swipe (top to bottom),Global Main Menu  
+        Three finger swipe, Arrow keys  
+       
+        Pinch gesture, Enables/disables keyboard
+        Keyboard spacebar, Pause
+       
+
+Touch controls
+^^^^^^^^^^^^^^^^^
+The touch control scheme can be switched in the global settings. From the Launcher, go to **Options > Control > Touchpad mouse mode**.
+
+    - When touchpad mouse mode is off, the touch controls are direct. The pointer jumps to where the finger touches the screen.
+    - When touchpad mouse mode is on, the touch controls are indirect. The finger can be far away from the pointer and still move it, like on a laptop touchpad. 
+    - The pointer speed setting in the :doc:`Controls tab <../settings/control>` affects how far the pointer moves in response to a finger movement.
+
+.. _twofinger:
+
+Two finger tap
+******************
+
+For a two finger tap, hold one finger down and then tap with a second finger. 
+
+.. _twofingerdouble:
+
+Two finger double tap
+************************
+
+For a two finger double tap, hold one finger down and then double tap with a second finger.
+
 
 Click and drag mode
-^^^^^^^^^^^^^^^^^^^^
+*********************
 
- Simulates a left mouse click when you touch the screen. The mouse pointer drags to wherever you slide your finger, and releases where you lift your finger.
+Simulates a left mouse click when you touch the screen. The mouse pointer drags to wherever you slide your finger, and releases where you lift your finger.
 
 If you press down a second finger in this mode, it releases the simulated left mouse button, and presses down the simulated right mouse button. The right mouse button is released when you lift your finger again. 
 
-.. _direct:
-
-Direct mode
-^^^^^^^^^^^^^
-
-The mouse cursor is placed directly under where your finger touches the screen. 
-
-.. _touchpad:
-
-Touchpad mode
-^^^^^^^^^^^^^^^^
-
-The mouse cursor doesn't stay underneath your finger. The cursor is moved around from its current position by the direction of your finger movement, just like a touchpad on a laptop.
+Keyboard
+**********
+If no external keyboard is connected, the pinch gesture shows and hides the onscreen keyboard. When an external keyboard is connected, the pinch gesture enables/disables inputs from the external keyboard.
 
 Paths
 =======
@@ -209,9 +221,9 @@ Paths
 Saved games
 ^^^^^^^^^^^^^^^^^
 
-``/var/mobile/Library/ScummVM/Savegames/`` if the device is jailbroken, or ``Savegames/`` in the ScummVM folder for a non-jailbroken device. Access this folder via the Finder or iTunes. 
+``/var/mobile/Library/ScummVM/Savegames/`` if the device is jailbroken, or ``Savegames/`` in the ScummVM folder for a non-jailbroken device. Access this folder through the Finder or iTunes. 
 
 Configuration file
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-``/var/mobile/Library/ScummVM/Preferences`` if the device is jailbroken, or ``Preferences`` in the ScummVM folder for a non-jailbroken device. Access this folder via the Finder or iTunes. 
+``/var/mobile/Library/ScummVM/Preferences`` if the device is jailbroken, or ``Preferences`` in the ScummVM folder for a non-jailbroken device. Access this folder through the Finder or iTunes. 
