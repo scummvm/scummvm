@@ -228,7 +228,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 				engine->_movements->targetActorDistance = MAX_TARGET_ACTOR_DISTANCE;
 			}
 
-			if (!targetActorIdx) {
+			if (IS_HERO(targetActorIdx)) {
 				int32 heroAngle = ctx.actor->angle + 0x480 - newAngle + 0x400;
 				heroAngle &= 0x3FF;
 
