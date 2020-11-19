@@ -164,15 +164,15 @@ static int32 mLOOP(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x07
  */
 static int32 mANGLE(TwinEEngine *engine, MoveScriptContext &ctx) {
-	const int16 angle = ctx.stream.readSint16LE();
+	const int16 angle = ToAngle(ctx.stream.readSint16LE());
 	if (ctx.actor->staticFlags.bIsSpriteActor) {
 		return 0;
 	}
 	engine->_scene->currentScriptValue = angle;
 	if (ctx.actor->move.numOfStep == 0) {
-		engine->_movements->moveActor(ctx.actor->angle, engine->_scene->currentScriptValue, ctx.actor->speed, &ctx.actor->move);
+		engine->_movements->moveActor(ctx.actor->angle, angle, ctx.actor->speed, &ctx.actor->move);
 	}
-	if (ctx.actor->angle == engine->_scene->currentScriptValue) {
+	if (ctx.actor->angle == angle) {
 		engine->_movements->clearRealAngle(ctx.actor);
 		return 0;
 	}
@@ -248,7 +248,7 @@ static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_renderer->destY = sp.y;
 	engine->_renderer->destZ = sp.z;
 
-	const int32 newAngle = 0x200 + engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->x, ctx.actor->z, sp.x, sp.z);
+	const int32 newAngle = ANGLE_180 + engine->_movements->getAngleAndSetTargetActorDistance(ctx.actor->x, ctx.actor->z, sp.x, sp.z);
 
 	if (ctx.actor->staticFlags.bIsSpriteActor) {
 		ctx.actor->angle = newAngle;
@@ -430,11 +430,11 @@ static int32 mBETA(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mOPEN_LEFT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 doorStatus = ctx.stream.readSint16LE();
 	if (ctx.actor->staticFlags.bIsSpriteActor && ctx.actor->staticFlags.bUsesClipping) {
-		ctx.actor->angle = 0x300;
+		ctx.actor->angle = ANGLE_270;
 		ctx.actor->doorStatus = doorStatus;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
-		engine->_movements->setActorAngle(0, 1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, 1000, 50, &ctx.actor->move);
 	}
 	return 0;
 }
@@ -446,11 +446,11 @@ static int32 mOPEN_LEFT(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mOPEN_RIGHT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 doorStatus = ctx.stream.readSint16LE();
 	if (ctx.actor->staticFlags.bIsSpriteActor && ctx.actor->staticFlags.bUsesClipping) {
-		ctx.actor->angle = 0x100;
+		ctx.actor->angle = ANGLE_90;
 		ctx.actor->doorStatus = doorStatus;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
-		engine->_movements->setActorAngle(0, 1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, 1000, 50, &ctx.actor->move);
 	}
 	return 0;
 }
@@ -462,11 +462,11 @@ static int32 mOPEN_RIGHT(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mOPEN_UP(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 doorStatus = ctx.stream.readSint16LE();
 	if (ctx.actor->staticFlags.bIsSpriteActor && ctx.actor->staticFlags.bUsesClipping) {
-		ctx.actor->angle = 0x200;
+		ctx.actor->angle = ANGLE_180;
 		ctx.actor->doorStatus = doorStatus;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
-		engine->_movements->setActorAngle(0, 1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, 1000, 50, &ctx.actor->move);
 	}
 	return 0;
 }
@@ -478,11 +478,11 @@ static int32 mOPEN_UP(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mOPEN_DOWN(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 doorStatus = ctx.stream.readSint16LE();
 	if (ctx.actor->staticFlags.bIsSpriteActor && ctx.actor->staticFlags.bUsesClipping) {
-		ctx.actor->angle = 0;
+		ctx.actor->angle = ANGLE_0;
 		ctx.actor->doorStatus = doorStatus;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
-		engine->_movements->setActorAngle(0, 1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, 1000, 50, &ctx.actor->move);
 	}
 	return 0;
 }
@@ -496,7 +496,7 @@ static int32 mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->doorStatus = 0;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = -1000;
-		engine->_movements->setActorAngle(0, -1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, -1000, 50, &ctx.actor->move);
 	}
 	return 0;
 }
@@ -598,7 +598,7 @@ static int32 mSIMPLE_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x21
  */
 static int32 mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
-	const int16 angle = ctx.stream.readSint16LE();
+	const int16 angle = ToAngle(ctx.stream.readSint16LE());
 	if (ctx.actor->staticFlags.bIsSpriteActor) {
 		return 0;
 	}
@@ -635,10 +635,10 @@ static int32 mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 	if (engine->_scene->currentScriptValue == -1 && ctx.actor->move.numOfStep == 0) {
 		if (engine->getRandomNumber() & 1) {
-			const int32 newAngle = ctx.actor->angle + 256 + (ABS(val1) >> 1);
+			const int32 newAngle = ctx.actor->angle + ANGLE_90 + (ABS(val1) >> 1);
 			engine->_scene->currentScriptValue = ClampAngle(newAngle - engine->getRandomNumber(val1));
 		} else {
-			const int32 newAngle = ctx.actor->angle - 256 + (ABS(val1) >> 1);
+			const int32 newAngle = ctx.actor->angle - ANGLE_90 + (ABS(val1) >> 1);
 			engine->_scene->currentScriptValue = ClampAngle(newAngle - engine->getRandomNumber(val1));
 		}
 

@@ -1702,7 +1702,7 @@ void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight,
 	if (angle == -1) {
 		const int16 newAngle = _engine->_movements->getRealAngle(&_engine->_menu->moveMenu);
 		if (_engine->_menu->moveMenu.numOfStep == 0) {
-			_engine->_movements->setActorAngleSafe(newAngle, newAngle - 256, 50, &_engine->_menu->moveMenu);
+			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, 50, &_engine->_menu->moveMenu);
 		}
 		renderIsoModel(0, y, 0, 0, newAngle, 0, entityPtr);
 	} else {

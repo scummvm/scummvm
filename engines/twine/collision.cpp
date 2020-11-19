@@ -371,7 +371,7 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 				const int32 zRightTest = actorTest->z + actorTest->boudingBox.z.topRight;
 
 				if (xLeft < xRightTest && xRight > xLeftTest && yLeft < yRightTest && yRight > yLeftTest && zLeft < zRightTest && zRight > zLeftTest) {
-					_engine->_actor->hitActor(actorIdx, a, actor->strengthOfHit, actor->angle + 0x200);
+					_engine->_actor->hitActor(actorIdx, a, actor->strengthOfHit, actor->angle + ANGLE_90);
 					actor->dynamicFlags.bIsHitting = 0;
 				}
 			}

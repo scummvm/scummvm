@@ -99,7 +99,7 @@ private:
 	 * @param listSize number of drawing objects in the list
 	 */
 	void sortDrawingList(DrawListStruct *list, int32 listSize);
-	void updateOverlayTypePosition(int16 X1, int16 Y1, int16 X2, int16 Y2);
+	void updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2);
 
 public:
 	Redraw(TwinEEngine *engine) : _engine(engine) {}
@@ -129,7 +129,7 @@ public:
 
 	OverlayListStruct overlayList[OVERLAY_MAX_ENTRIES];
 
-	void addOverlay(int16 type, int16 info0, int16 X, int16 Y, int16 info1, int16 posType, int16 lifeTime);
+	void addOverlay(int16 type, int16 info0, int16 x, int16 y, int16 info1, int16 posType, int16 lifeTime);
 
 	/**
 	 * Add a certain region to redraw list array

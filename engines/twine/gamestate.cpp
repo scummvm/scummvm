@@ -41,6 +41,7 @@
 #include "twine/resources.h"
 #include "twine/scene.h"
 #include "twine/screens.h"
+#include "twine/shared.h"
 #include "twine/sound.h"
 #include "twine/text.h"
 #include "twine/twine.h"
@@ -191,7 +192,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	_engine->_scene->newHeroX = file->readSint16LE();
 	_engine->_scene->newHeroY = file->readSint16LE();
 	_engine->_scene->newHeroZ = file->readSint16LE();
-	_engine->_scene->sceneHero->angle = file->readSint16LE();
+	_engine->_scene->sceneHero->angle = ToAngle(file->readSint16LE());
 	_engine->_actor->previousHeroAngle = _engine->_scene->sceneHero->angle;
 	_engine->_scene->sceneHero->body = file->readByte();
 
@@ -240,7 +241,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeSint16LE(_engine->_scene->sceneHero->x);
 	file->writeSint16LE(_engine->_scene->sceneHero->y);
 	file->writeSint16LE(_engine->_scene->sceneHero->z);
-	file->writeSint16LE(_engine->_scene->sceneHero->angle);
+	file->writeSint16LE(FromAngle(_engine->_scene->sceneHero->angle));
 	file->writeByte(_engine->_scene->sceneHero->body);
 
 	// number of holomap locations
