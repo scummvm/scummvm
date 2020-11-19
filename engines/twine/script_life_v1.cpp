@@ -470,7 +470,7 @@ static int32 lNO_IF(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 /*0x0A*/
 static int32 lLABEL(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ctx.stream.skip(1);
+	ctx.stream.skip(1); // label id
 	return 0;
 }
 
@@ -608,7 +608,7 @@ static int32 lSET_DIRMODE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	const int32 controlMode = ctx.stream.readByte();
 
 	ctx.actor->controlMode = (ControlMode)controlMode;
-	if (ctx.actor->controlMode == ControlMode::kFollow) {
+	if (ctx.actor->controlMode == ControlMode::kFollow || ctx.actor->controlMode == ControlMode::kFollow2) {
 		ctx.actor->followedActor = ctx.stream.readByte();
 	}
 
@@ -622,7 +622,7 @@ static int32 lSET_DIRMODE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 
 	ActorStruct *otherActor = engine->_scene->getActor(otherActorIdx);
 	otherActor->controlMode = (ControlMode)controlMode;
-	if (otherActor->controlMode == ControlMode::kFollow) {
+	if (otherActor->controlMode == ControlMode::kFollow || ctx.actor->controlMode == ControlMode::kFollow2) {
 		otherActor->followedActor = ctx.stream.readByte();
 	}
 
