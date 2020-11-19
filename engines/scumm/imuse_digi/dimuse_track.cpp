@@ -441,6 +441,7 @@ int IMuseDigital::transformVolumeLinearToEqualPow(int volume, int mode) {
 			break;
 		case 6:  // Half sine curve
 			eqPowValue = (1.0 - cos(mappedValue * M_PI)) / 2.0;
+			break;
 		default: // Fallback to linear
 			eqPowValue = mappedValue;
 			break;
