@@ -133,7 +133,7 @@ static int32 mWAIT_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 /*0x06*/
 static int32 mLOOP(TwinEEngine *engine, MoveScriptContext &ctx) {
-	// TODO
+	// TODO no params
 	return -1;
 }
 
@@ -454,7 +454,7 @@ static int32 mSAMPLE_STOP(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 /*0x1E*/
 static int32 mPLAY_FLA(TwinEEngine *engine, MoveScriptContext &ctx) {
-	// TODO
+	// TODO param1: null-terminated string - name of the fla file to play (extension may be included, but it's not required)
 	return -1;
 }
 
