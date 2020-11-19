@@ -184,7 +184,12 @@ static int32 mLABEL(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 /*0x0A*/
 static int32 mGOTO(TwinEEngine *engine, MoveScriptContext &ctx) {
-	ctx.stream.seek(ctx.stream.readSint16LE());
+	const int16 pos = ctx.stream.readSint16LE();
+	if (pos == -1) {
+		ctx.actor->positionInMoveScript = -1;
+		return 1;
+	}
+	ctx.stream.seek(pos);
 	return 0;
 }
 
