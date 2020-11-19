@@ -4,7 +4,7 @@ LAN
 
 Use the LAN tab to control the web server. 
 
-ScummVM can run a local network web server which allows browser-based file management, including uploading and downloading game files. 
+ScummVM can run a local network web server for browser-based file management, including uploading and downloading game files. 
 
 From the Launcher, select **Options**, click the **>** scroll arrow until the LAN tab is visible, and then select the **LAN** tab.
 
@@ -17,7 +17,7 @@ From the Launcher, select **Options**, click the **>** scroll arrow until the LA
 ,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
 
 Run server
-	Starts the web server. Once running, this displays the URL at which the web server can be accessed. 
+	Starts the web server. When running, this displays the URL at which the web server can be accessed. 
 
 Stop server
     Stops the web server. 

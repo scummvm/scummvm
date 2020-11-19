@@ -18,10 +18,10 @@ The pane on the left is the games list, which lists all the games that have been
 Quick search
 =============
 
-Quick search allows you to filter the games list.  
+Quick search lets you filter the games list.  
 The quick search input is located at the top of the page next to the magnifying glass icon. The filter is applied as you type, and is not case sensitive. To clear the filter, click **X** next to the input field. 
 
-There are many ways to filter games. For instance, you can type "Monkey Island" to quickly locate all "Monkey Island" games on the list, or you can type "German" to find German games. 
+There are many ways to filter games. For example, you can type "Monkey Island" to locate all "Monkey Island" games on the list, or you can type "German" to find German games. 
 
 .. figure:: ../images/Launcher/quicksearch.png
    

@@ -110,7 +110,7 @@ Stretch modes
 There are five stretch modes:
 
 - Center: centers the image in the window. 
-- Pixel-perfect scaling: scales the image to a multiple of the original game resolution as much as possible (for example, 2x, 3x, 4x and so on), and fills the remaining empty space with black borders. 
+- Pixel-perfect scaling: scales the image to a multiple of the original game resolution as much as possible (for example, 2x, 3x, 4x), and fills the remaining empty space with black borders. 
 - Fit to window: fits the image to the window, but maintains the aspect ratio and does not stretch it to fill the window.
 - Stretch: stretches the image to fill the window
 - Fit to window (4:3): fits the image to the window, at a forced 4:3 aspect ratio.
@@ -120,7 +120,7 @@ To switch between stretch modes, press :kbd:`Ctrl+Alt+s`.
 Render mode
 -------------
 
-For most games this setting will have no effect. For some of the older games that could be played on different systems and graphics cards, this control allows us to decide which system we want ScummVM to reproduce. 
+For most games this setting will have no effect. For some of the older games that could be played on different systems and graphics cards, this control lets you decide which system you want ScummVM to reproduce. 
 
 Below are some of the common render modes, to illustrate how the render mode setting works. 
 
