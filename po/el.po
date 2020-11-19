@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-18 22:07+0000\n"
-"PO-Revision-Date: 2020-11-14 13:49+0000\n"
+"PO-Revision-Date: 2020-11-19 12:34+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -7158,14 +7158,12 @@ msgid "Debug Grid Camera Right"
 msgstr "Αποσφαλμάτωση: Κάμερα Πλέγματος Δεξιά"
 
 #: engines/twine/metaengine.cpp:212
-#, fuzzy
-#| msgid "Debug print"
 msgid "Debug Menu"
-msgstr "Εκτύπωση πληροφορίας αποσφαλμάτωσης"
+msgstr "Μενού Αποσφαλμάτωσης"
 
 #: engines/twine/metaengine.cpp:217
 msgid "Debug Menu Execute"
-msgstr ""
+msgstr "Εκτέλεση Μενού Αποσφαλμάτωσης (Debug)"
 
 #: engines/twine/metaengine.cpp:222
 msgid "Normal Behaviour"
