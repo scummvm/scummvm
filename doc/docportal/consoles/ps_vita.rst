@@ -9,12 +9,11 @@ Prerequisites
 *******************
 
 - A homebrew-enabled PS Vita console with `Vitashell <https://github.com/TheOfficialFloW/VitaShell/releases/tag/v2.02>`_ installed. How to enable homebrew is outside the scope of this documentation.
-- At least one ScummVM supported game. See the `compatibility page <https://www.scummvm.org/compatibility/>`_ on our website for a list of compatible games. 
 
 Download and install ScummVM
 ******************************
 
-The PS Vita package is available for download on our website's `Downloads page <https://www.scummvm.org/downloads>`_.
+The PS Vita package is available for download on the ScummVM `Downloads page <https://www.scummvm.org/downloads>`_.
 
 Copy the ``.vpk`` to the PS Vita and install it using VitaShell. 
 
@@ -24,18 +23,11 @@ Transfer game files
 
 There are a few ways to transfer game files to the PS Vita. 
 
-Using VitaShell:
-    
-    -  Transfer over FTP
-    -  Transfer via USB
+Use VitaShell to transfer the files by USB or FTP, or use SD2Vita to transfer the files directly to the microSD card. 
 
-If you're using SD2Vita:
-    
-    - Transfer the files directly to the microSD card. 
+Folders containing game files can be copied anywhere on the SD card. 
 
-Folders containing game files can be copied into any folder.
-
-ScummVM on the PS Vita supports :doc:`Cloud functionality <../use_scummvm/connect_cloud>`. 
+ScummVM on the PS Vita supports :doc:`cloud functionality <../use_scummvm/connect_cloud>`. 
 
 For more information on how to add and play games, see the :doc:`../use_scummvm/add_play_games` page.
 
@@ -43,12 +35,10 @@ For more information on how to add and play games, see the :doc:`../use_scummvm/
 Controls
 =================
 
-Default control mapping
+Default control map
 *********************************
 
-These controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`.
-
-See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
+These controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
 
 
 .. |square| raw:: html
@@ -75,8 +65,8 @@ See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortc
         Button,Action
         Left stick,Mouse
         Left stick + R button,Slow Mouse
-        |x|,Left mouse button
-        |circle|,Right mouse button
+        |x|,Left mouse click
+        |circle|,Right mouse click
         Directional buttons,Keypad 'Cursor' Keys 
         Directional buttons + R button,Diagonal Keypad 'Cursor' Keys
         L button,Game menu (F5)
@@ -94,23 +84,23 @@ See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortc
 
         "Front Touchscreen Controls, always enabled",
         Touch,Action
-        Short single finger tap,Move pointer to finger position and left mouse button click
-        Short second finger tap while holding one finger,Move pointer to first finger position and right mouse button click
-        Single finger drag,Move pointer directly with finger
-        `Two finger drag`_ ,Move pointer while left mouse button is held down (drag and drop). The pointer directly follows the first finger. The drag is ended when the last finger is removed.
-        `Three finger drag`_ ,Move pointer while right mouse button is held down (drag and drop). The pointer directly follows the first finger. The drag is ended when the last finger is removed.
+        One finger tap,Moves pointer to finger position and left mouse click
+        Two finger tap,Moves pointer to first finger position and right mouse click
+        Single finger drag,Moves pointer directly with finger
+        `Two finger drag`_ ,Moves pointer while left mouse button is held down (drag-and-drop). 
+        `Three finger drag`_ ,Moves pointer while right mouse button is held down (drag-and-drop). 
 
 .. csv-table::  
     :widths: 50 50
     :header-rows: 2
 
-        "Back Touchpad Controls, enabled via settings",
+        "Back Touchpad Controls, enabled through settings",
         Touch,Action
-        Short single finger tap,Left mouse button click
-        Short second finger tap while holding one finger,Right mouse button click
-        Single finger drag,"Move pointer indirectly with finger, pointer speed can be adjusted in control settings"
-        `Two finger drag`_,Move pointer while left mouse button is held down (drag and drop). The pointer motion is affected by the first finger. The drag is ended when the last finger is removed.
-        `Three finger drag`_ ,Move pointer while right mouse button is held down (drag and drop). The pointer motion is affected by the first finger. The drag is ended when the last finger is removed.
+        One finger tap,Left mouse button click
+        Two finger tap,Right mouse button click
+        Single finger drag,"Moves pointer indirectly with finger, pointer speed can be adjusted in control settings"
+        `Two finger drag`_,Moves pointer while left mouse button is held down (drag-and-drop). 
+        `Three finger drag`_ ,Moves pointer while right mouse button is held down (drag-and-drop). 
 
 Keyboard and mouse support
 ****************************
@@ -119,9 +109,7 @@ Real bluetooth mice and keyboards work on the Vita and are supported by ScummVM.
 
 .. note::
 
-    Not all bluetooth keyboards or mice pair successfully with the Vita. 
-
-    We tested the Jelly Bean BT keyboard and mouse combo (ASIN:B06Y56BBYP) and with the standalone Jelly Comb Bluetooth Wireless Mouse (ASIN:B075HBDWCF).
+    Not all bluetooth keyboards or mice pair successfully with the Vita. The ScummVM team tested the Jelly Bean BT keyboard and mouse combo (ASIN:B06Y56BBYP) and with the standalone Jelly Comb Bluetooth Wireless Mouse (ASIN:B075HBDWCF).
 
 Touch support
 ****************
@@ -150,25 +138,26 @@ The front touchscreen uses the direct mode by default, but this can be changed b
 
 When set to true, the touch controls on the front touchscreen are indirect. 
 
+Two finger tap
+^^^^^^^^^^^^^^^^^^^^
+
+For a two finger tap, hold one finger down and then tap with a second finger. 
+
+
 Two finger drag
 ^^^^^^^^^^^^^^^^^^^
 
-The two finger drag works in the following way: holding down two fingers for a while initiates a drag and drop feature, where the left mouse button is being held down. 
+Hold down two fingers to initiate a drag-and-drop feature. The two finger drag simulates the left mouse button being held down. 
 
 - The first finger affects mouse motion during the drag, the second finger can be removed without affecting the drag. 
 - When the last finger is removed, the left mouse button is released and the drag is over. 
 - The second finger can be anywhere, it doesn't have to be close to the first finger, and it doesn't have to be put down simultaneously with the first finger.
 
-Typical usage of the two finger drag and drop in Full Throttle: 
-    - Hold down one finger over an object. 
-    - Hold down a second finger somewhere on the screen for a little bit to initiate a two finger drag. This brings up the action menu. 
-    - Let go of the second finger. The two finger drag continues since one finger is still down. 
-    - Select an action with the first finger, and let go of the first finger to end the drag.
-
 Three finger drag
 ^^^^^^^^^^^^^^^^^^^^
-The three finger drag works in a similar way to the `Two finger drag`_, except that instead of holding down a single second finger, you hold down two extra fingers. Holding down the three fingers for a while initiates a drag and drop feature, where the right mouse button is being held down.
- 
+
+Hold down the three fingers to initiate a drag-and-drop feature. The three finger drag simulates the right mouse button being held down. 
+
 Paths 
 ============================
 
@@ -191,9 +180,9 @@ Audio
 
 Supported audio file formats:
 
-- ``.mp3``
-- ``.ogg`` 
-- ``.flac``
+- MP3
+- OGG 
+- FLAC
 - Uncompressed audio
 
 Controls
@@ -204,4 +193,4 @@ See the `Touch support`_ section.
 Known Issues
 ===============
 
-MT-32 emulation is not available on the PS Vita.
+- MT-32 emulation is not available on the PS Vita.

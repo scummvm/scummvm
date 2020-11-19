@@ -26,7 +26,7 @@ To help you report a bug, you can find error messages in the ScummVM log file. T
 	.. panels::
 		:column: col-lg-12 mb-2
 
-		We use the XDG Base Directory Specification, so by default the file will be ``~/.cache/scummvm/logs/scummvm.log`` but its location may vary depending on the value of the ``XDG_CACHE_HOME`` environment variable. 
+		We use the XDG Base Directory Specification, so by default the file will be ``~/.cache/scummvm/logs/scummvm.log`` but its location might vary depending on the value of the ``XDG_CACHE_HOME`` environment variable. 
 
 .. tabbed:: Windows
 

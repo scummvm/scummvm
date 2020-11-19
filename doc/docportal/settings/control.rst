@@ -31,4 +31,4 @@ Show on-screen control
 	Toggles the small on-screen keyboard icon on and off.
 
 Touchpad mouse mode
-	Toggles between :ref:`direct` and :ref:`touchpad`. 
+	Toggles between direct mode and touchpad mode. 
