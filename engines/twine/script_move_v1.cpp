@@ -37,11 +37,11 @@
 
 namespace TwinE {
 
-static int32 numRepeatSample = 1;
-
 struct MoveScriptContext {
 	int32 actorIdx;
 	ActorStruct *actor;
+	int32 numRepeatSample = 1;
+
 	Common::MemorySeekableReadWriteStream stream;
 
 	MoveScriptContext(int32 _actorIdx, ActorStruct *_actor) : actorIdx(_actorIdx), actor(_actor), stream(actor->moveScript, actor->moveScriptSize) {
@@ -56,10 +56,9 @@ struct MoveScriptContext {
 	}
 };
 
-/** Returns:
-	   -1 - Need implementation
-		0 - Completed
-		1 - Break script */
+/**
+ * Returns @c -1 Need implementation, @c 0 Condition false, @c 1 - Condition true
+ */
 typedef int32 ScriptMoveFunc(TwinEEngine *engine, MoveScriptContext &ctx);
 
 struct ScriptMoveFunction {
@@ -70,25 +69,37 @@ struct ScriptMoveFunction {
 #define MAPFUNC(name, func) \
 	{ name, func }
 
-/*0x00*/
+/**
+ * End of Actor Move Script
+ * @note Opcode @c 0x00
+ */
 static int32 mEND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	ctx.actor->positionInMoveScript = -1;
 	return 1;
 }
 
-/*0x01*/
+/**
+ * No Operation
+ * @note Opcode @c 0x01
+ */
 static int32 mNOP(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x02*/
+/**
+ * Choose new body for the current actor (Parameter = File3D Body Instance)
+ * @note Opcode @c 0x02
+ */
 static int32 mBODY(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 bodyIdx = ctx.stream.readByte();
 	engine->_actor->initModelActor(bodyIdx, ctx.actorIdx);
 	return 0;
 }
 
-/*0x03*/
+/**
+ * Choose new animation for the current actor (Parameter = File3D Animation Instance)
+ * @note Opcode @c 0x03
+ */
 static int32 mANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 	AnimationTypes animIdx = (AnimationTypes)ctx.stream.readByte();
 	if (engine->_animations->initAnim(animIdx, 0, AnimationTypes::kStanding, ctx.actorIdx)) {
@@ -98,7 +109,10 @@ static int32 mANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 1;
 }
 
-/*0x04*/
+/**
+ * Tell the actor to go to a new position (Parameter = Track Index)
+ * @note Opcode @c 0x04
+ */
 static int32 mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = ctx.stream.readByte();
 
@@ -123,7 +137,10 @@ static int32 mGOTO_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x05*/
+/**
+ * Wait the end of the current animation
+ * @note Opcode @c 0x05
+ */
 static int32 mWAIT_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (!ctx.actor->dynamicFlags.bAnimEnded) {
 		ctx.undo(0);
@@ -133,13 +150,19 @@ static int32 mWAIT_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 1;
 }
 
-/*0x06*/
+/**
+ * Loop a certain label (Parameter = Label Number)
+ * @note Opcode @c 0x06
+ */
 static int32 mLOOP(TwinEEngine *engine, MoveScriptContext &ctx) {
 	// TODO no params
 	return -1;
 }
 
-/*0x07*/
+/**
+ * Make the actor turn around
+ * @note Opcode @c 0x07
+ */
 static int32 mANGLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 angle = ctx.stream.readSint16LE();
 	if (ctx.actor->staticFlags.bIsSpriteActor) {
@@ -157,7 +180,10 @@ static int32 mANGLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 1;
 }
 
-/*0x08*/
+/**
+ * Set new postion for the current actor (Parameter = Track Index)
+ * @note Opcode @c 0x08
+ */
 static int32 mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = ctx.stream.readByte();
 
@@ -177,14 +203,20 @@ static int32 mPOS_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x09*/
+/**
+ * Specify a new label (Parameter = Label Number)
+ * @note Opcode @c 0x09
+ */
 static int32 mLABEL(TwinEEngine *engine, MoveScriptContext &ctx) {
 	ctx.actor->labelIdx = ctx.stream.readByte();
 	ctx.actor->currentLabelPtr = ctx.stream.pos() - 2;
 	return 0;
 }
 
-/*0x0A*/
+/**
+ * Go to a certain label (Parameter = Label Number)
+ * @note Opcode @c 0x0A
+ */
 static int32 mGOTO(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 pos = ctx.stream.readSint16LE();
 	if (pos == -1) {
@@ -195,13 +227,19 @@ static int32 mGOTO(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x0B*/
+/**
+ * Tell the actor to stop the current animation
+ * @note Opcode @c 0x0B
+ */
 static int32 mSTOP(TwinEEngine *engine, MoveScriptContext &ctx) {
 	ctx.actor->positionInMoveScript = -1;
 	return 1;
 }
 
-/*0x0C*/
+/**
+ * Tell the actor to go to a symbolic point
+ * @note Opcode @c 0x0C
+ */
 static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_scene->currentScriptValue = ctx.stream.readByte();
 
@@ -226,7 +264,10 @@ static int32 mGOTO_SYM_POINT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x0D*/
+/**
+ * Wait a certain number of frame update in the current animation
+ * @note Opcode @c 0x0D
+ */
 static int32 mWAIT_NUM_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 	bool abortMove = false;
 	const int32 animRepeats = ctx.stream.readByte();
@@ -253,14 +294,20 @@ static int32 mWAIT_NUM_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return abortMove ? 1 : 0;
 }
 
-/*0x0E*/
+/**
+ * Play a sample (Parameter = Sample index)
+ * @note Opcode @c 0x0E
+ */
 static int32 mSAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	engine->_sound->playSample(sampleIdx, 0x1000, 1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
 	return 0;
 }
 
-/*0x0F*/
+/**
+ * Tell the actor to go to a new position (Parameter = Track Index)
+ * @note Opcode @c 0x0F
+ */
 static int32 mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int32 trackId = ctx.stream.readByte();
 	if (!ctx.actor->staticFlags.bIsSpriteActor) {
@@ -288,7 +335,10 @@ static int32 mGOTO_POINT_3D(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x10*/
+/**
+ * Specify a new rotation speed for the current actor (Parameter = Rotation speed) [ 0 means fast, 32767 means slow ]
+ * @note Opcode @c 0x10
+ */
 static int32 mSPEED(TwinEEngine *engine, MoveScriptContext &ctx) {
 	ctx.actor->speed = ctx.stream.readSint16LE();
 
@@ -299,7 +349,10 @@ static int32 mSPEED(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x11*/
+/**
+ * Set actor as background (Parameter = 1 (true); = 0 (false))
+ * @note Opcode @c 0x11
+ */
 static int32 mBACKGROUND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (ctx.stream.readByte() != 0) {
 		if (!ctx.actor->staticFlags.bIsBackgrounded) {
@@ -320,7 +373,10 @@ static int32 mBACKGROUND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x12*/
+/**
+ * Number os seconds to wait.
+ * @note Opcode @c 0x12
+ */
 static int32 mWAIT_NUM_SECOND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int32 numSeconds = ctx.stream.readByte();
 	int32 currentTime = ctx.stream.readSint32LE();
@@ -342,13 +398,19 @@ static int32 mWAIT_NUM_SECOND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x13*/
+/**
+ * To not use Bodies.
+ * @note Opcode @c 0x13
+ */
 static int32 mNO_BODY(TwinEEngine *engine, MoveScriptContext &ctx) {
 	engine->_actor->initModelActor(-1, ctx.actorIdx);
 	return 0;
 }
 
-/*0x14*/
+/**
+ * Change actor orientation. (Parameter = New Angle)
+ * @note Opcode @c 0x14
+ */
 static int32 mBETA(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 beta = ctx.stream.readSint16LE();
 
@@ -361,7 +423,10 @@ static int32 mBETA(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x15*/
+/**
+ * Open the door (left way) (Parameter = distance to open).
+ * @note Opcode @c 0x15
+ */
 static int32 mOPEN_LEFT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 doorStatus = ctx.stream.readSint16LE();
 	if (ctx.actor->staticFlags.bIsSpriteActor && ctx.actor->staticFlags.bUsesClipping) {
@@ -374,7 +439,10 @@ static int32 mOPEN_LEFT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x16*/
+/**
+ * Open the door (right way) (Parameter = distance to open).
+ * @note Opcode @c 0x16
+ */
 static int32 mOPEN_RIGHT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 doorStatus = ctx.stream.readSint16LE();
 	if (ctx.actor->staticFlags.bIsSpriteActor && ctx.actor->staticFlags.bUsesClipping) {
@@ -387,7 +455,10 @@ static int32 mOPEN_RIGHT(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x17*/
+/**
+ * Open the door (up way) (Parameter = distance to open).
+ * @note Opcode @c 0x17
+ */
 static int32 mOPEN_UP(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 doorStatus = ctx.stream.readSint16LE();
 	if (ctx.actor->staticFlags.bIsSpriteActor && ctx.actor->staticFlags.bUsesClipping) {
@@ -400,7 +471,10 @@ static int32 mOPEN_UP(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x18*/
+/**
+ * Open the door (down way) (Parameter = distance to open).
+ * @note Opcode @c 0x18
+ */
 static int32 mOPEN_DOWN(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 doorStatus = ctx.stream.readSint16LE();
 	if (ctx.actor->staticFlags.bIsSpriteActor && ctx.actor->staticFlags.bUsesClipping) {
@@ -413,7 +487,10 @@ static int32 mOPEN_DOWN(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x19*/
+/**
+ * Close the door.
+ * @note Opcode @c 0x19
+ */
 static int32 mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (ctx.actor->staticFlags.bIsSpriteActor && ctx.actor->staticFlags.bUsesClipping) {
 		ctx.actor->doorStatus = 0;
@@ -424,7 +501,10 @@ static int32 mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x1A*/
+/**
+ * Wait till door close.
+ * @note Opcode @c 0x1A
+ */
 static int32 mWAIT_DOOR(TwinEEngine *engine, MoveScriptContext &ctx) {
 	if (ctx.actor->staticFlags.bIsSpriteActor && ctx.actor->staticFlags.bUsesClipping) {
 		if (ctx.actor->speed) {
@@ -435,7 +515,10 @@ static int32 mWAIT_DOOR(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x1B*/
+/**
+ * Generate a random sample.
+ * @note Opcode @c 0x1B
+ */
 static int32 mSAMPLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 freq = engine->getRandomNumber(2048) + 2048;
 	int32 sampleIdx = ctx.stream.readSint16LE();
@@ -443,7 +526,10 @@ static int32 mSAMPLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x1C*/
+/**
+ * Play always the sample (Parameter = Sample index)
+ * @note Opcode @c 0x1C
+ */
 static int32 mSAMPLE_ALWAYS(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	if (!engine->_sound->isSamplePlaying(sampleIdx)) { // if its not playing
@@ -452,14 +538,20 @@ static int32 mSAMPLE_ALWAYS(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x1D*/
+/**
+ * Stop playing the sample
+ * @note Opcode @c 0x1D
+ */
 static int32 mSAMPLE_STOP(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	engine->_sound->stopSample(sampleIdx);
 	return 0;
 }
 
-/*0x1E*/
+/**
+ * Play FLA cutscenes (Parameter = Cutscene Name)
+ * @note Opcode @c 0x1E
+ */
 static int32 mPLAY_FLA(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int strIdx = 0;
 	char movie[64];
@@ -481,21 +573,30 @@ static int32 mPLAY_FLA(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x1F*/
+/**
+ * Repeat sample (Parameter = Sample index).
+ * @note Opcode @c 0x1F
+ */
 static int32 mREPEAT_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
-	numRepeatSample = ctx.stream.readSint16LE();
+	ctx.numRepeatSample = ctx.stream.readSint16LE();
 	return 0;
 }
 
-/*0x20*/
+/**
+ * Play a sample (Parameter = Sample index)
+ * @note Opcode @c 0x20
+ */
 static int32 mSIMPLE_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
-	engine->_sound->playSample(sampleIdx, 0x1000, numRepeatSample, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
-	numRepeatSample = 1;
+	engine->_sound->playSample(sampleIdx, 0x1000, ctx.numRepeatSample, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
+	ctx.numRepeatSample = 1;
 	return 0;
 }
 
-/*0x21*/
+/**
+ * The actor rotate to Twinsen direction (Parameter = -1 (near); = 0 (far))
+ * @note Opcode @c 0x21
+ */
 static int32 mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 angle = ctx.stream.readSint16LE();
 	if (ctx.actor->staticFlags.bIsSpriteActor) {
@@ -519,7 +620,10 @@ static int32 mFACE_HERO(TwinEEngine *engine, MoveScriptContext &ctx) {
 	return 0;
 }
 
-/*0x22*/
+/**
+ * Generate an random angle for the current actor
+ * @note Opcode @c 0x22
+ */
 static int32 mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 	const int16 val1 = ctx.stream.readSint16LE();
 	const int16 val2 = ctx.stream.readSint16LE();
@@ -593,12 +697,10 @@ static const ScriptMoveFunction function_map[] = {
     /*0x22*/ MAPFUNC("ANGLE_RND", mANGLE_RND)};
 
 ScriptMove::ScriptMove(TwinEEngine *engine) : _engine(engine) {
-	numRepeatSample = 1;
 }
 
 void ScriptMove::processMoveScript(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	numRepeatSample = 1;
 
 	int32 end = -2;
 
