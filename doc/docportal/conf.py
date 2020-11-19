@@ -85,9 +85,10 @@ panels_add_fontawesome_latex = True
 latex_elements = {
     'extraclassoptions': 'openany,oneside',
     'fncychap': ' ',
+    'pointsize': '11pt',
     'preamble': r'''
-        \usepackage{lato}
-        \usepackage{lato}
+        \usepackage{charter}
+        \usepackage[defaultsans]{lato}
         \usepackage{inconsolata}
     ''',
 
