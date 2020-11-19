@@ -88,7 +88,7 @@ latex_elements = {
     'preamble': r'''
         \usepackage{lato}
         \usepackage{lato}
-        \usepackage{Inconsolata}
+        \usepackage{inconsolata}
     ''',
 
 }
