@@ -87,12 +87,9 @@ latex_elements = {
     'fncychap': ' ',
     'preamble': r'''
         \usepackage{lato}
+        \usepackage{lato}
         \usepackage{Inconsolata}
     ''',
-    'fontpkg': r'''
-        \setmainfont{Lato}
-        \setsansfont{Lato}
-        \setmonofont{Inconsolata}
-        ''',
+
 }
 
