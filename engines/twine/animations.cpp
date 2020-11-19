@@ -465,7 +465,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 		switch (actionType) {
 		case ACTION_HITTING: {
 			const int32 animPos = stream.readByte() - 1;
-			const int8 strength = stream.readByte();
+			const int32 strength = stream.readByte();
 
 			if (animPos == actor->animPosition) {
 				actor->strengthOfHit = strength;
