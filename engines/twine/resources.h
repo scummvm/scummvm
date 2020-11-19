@@ -205,6 +205,7 @@ public:
 	 * isometric bricks, which are some kind of tiles, that are used for building the terrains in LBA 1 isometric scenes.
 	 * One brick is the tiniest piece of a grid, which has 64 x 64 x 25 cells. Bricks cannot be used directly on a grid,
 	 * but instead they are grouped into blocks by block libraries, which are then referenced by grids
+	 * Bricks are images or sprites in a special format.
 	 */
 	static constexpr const char *HQR_LBA_BRK_FILE = "lba_brk.hqr";
 	// scenes (active area content (actors, scripts, etc.))
