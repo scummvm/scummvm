@@ -20,3 +20,11 @@
     }
    }
 
+.wy-side-nav-search, .wy-nav-top  {
+      background-color: #cc6600 !important;
+   }
+
+.caption-text, .icon-home {
+   color: #cc6600;
+}
+
