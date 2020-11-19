@@ -84,10 +84,10 @@ panels_add_fontawesome_latex = True
 
 latex_elements = {
     'extraclassoptions': 'openany,oneside',
-    'preamble':r'''
-        \usepackage{kpfonts}
-        \usepackage[defaultsans]{lato}
-        \usepackage{kpfonts}
+    'fontpkg': r'''
+    \setmainfont{DejaVu Sans}
+    \setsansfont{DejaVu Sans}
+    \setmonofont{Dejavu Sans Mono}
     ''',
 }
 
