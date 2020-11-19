@@ -158,7 +158,7 @@ void Extra::resetExtras() {
 	}
 }
 
-void Extra::throwExtra(ExtraListStruct *extra, int32 var1, int32 var2, int32 var3, int32 var4) { // InitFly
+void Extra::throwExtra(ExtraListStruct *extra, int32 var1, int32 angle, int32 var3, int32 var4) { // InitFly
 	extra->type |= 2;
 
 	extra->lastX = extra->x;
@@ -169,7 +169,7 @@ void Extra::throwExtra(ExtraListStruct *extra, int32 var1, int32 var2, int32 var
 
 	extra->destY = -_engine->_renderer->destZ;
 
-	_engine->_movements->rotateActor(0, _engine->_renderer->destX, var2);
+	_engine->_movements->rotateActor(0, _engine->_renderer->destX, angle);
 
 	extra->destX = _engine->_renderer->destX;
 	extra->destZ = _engine->_renderer->destZ;
@@ -283,7 +283,7 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 param, int32 angle, 
 	return -1;
 }
 
-int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 var2, int32 var3, int32 var4, int32 var5, int32 strengthOfHit) { // ThrowExtra
+int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 var2, int32 angle, int32 var4, int32 var5, int32 strengthOfHit) { // ThrowExtra
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &extraList[i];
 		if (extra->info0 != -1) {
@@ -296,7 +296,7 @@ int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spri
 		extra->z = z;
 
 		// same as InitFly
-		throwExtra(extra, var2, var3, var4, var5);
+		throwExtra(extra, var2, angle, var4, var5);
 
 		extra->strengthOfHit = strengthOfHit;
 		extra->lifeTime = _engine->lbaTime;
