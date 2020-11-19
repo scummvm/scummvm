@@ -16,14 +16,14 @@ Download and install ScummVM
 
 Download the RISC OS package from the `ScummVM Downloads page <https://www.scummvm.org/downloads/>`_. 
 
-Use a tool such as SparkFS to extract the archive. It is important that the archive is not extracted on any other system, since this results in a loss of file type information. ScummVM requires this file type information to run properly. 
+Use a tool such as SparkFS to extract the archive. It is important that the archive is not extracted on any other system, because this results in a loss of file type information. ScummVM requires the file type information to run properly. 
 
 
 
 Transfer game files
 =======================
 
-Copy data files directly from the original discs on machines that have CD and/or floppy drives, or transfer the files from another system by using a USB stick. 
+Copy data files directly from the original discs on machines that have CD and/or floppy drives, or use a USB drive to transfer the files from another system. 
 
 See :doc:`../use_scummvm/add_play_games` for more information. 
 
@@ -56,14 +56,14 @@ For more information about settings, see the Settings section of the documentati
 
 .. _reporter:
 
-There is one additional configuration option, *enable_reporter*. When set to true in :doc:`../advanced_topics/configuration_file`, log messages are sent to the `!Reporter <http://www.avisoft.force9.co.uk/Reporter.html>`_ application, which can be useful to developers. 
+There is one additional configuration option, *enable_reporter*. When set to true in :doc:`../advanced_topics/configuration_file`, log messages are sent to the `!Reporter <http://www.avisoft.force9.co.uk/Reporter.html>`_ application. This is useful mostly for developers. 
 
 
 Known issues
 ==============
 
-- Due to ongoing issues with executable size, releases are built without Cloud or LAN functionality. 
+- ScummVM for RISC OS does not have cloud or LAN functionality. 
 - FluidSynth is not supported. 
-- The releases are only compatible with RISC OS 5, and not RISC OS 3, 4, or 6. 
+- ScummVM is not compatible with RISC OS 3, 4 or 6. 
 
  

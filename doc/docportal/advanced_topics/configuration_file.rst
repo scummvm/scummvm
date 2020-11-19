@@ -77,7 +77,7 @@ The configuration file saves to different default locations, depending on the pl
 	.. panels::
 		:column: col-lg-12 mb-2
 
-		We follow the XDG Base Directory Specification, so by default the configuration file is found at ``/~.config/scummvm/scummvm.ini``, but its location may vary depending on the value of the ``XDG_CONFIG_HOME`` environment variable.
+		We follow the XDG Base Directory Specification, so by default the configuration file is found at ``/~.config/scummvm/scummvm.ini``, but its location might vary depending on the value of the ``XDG_CONFIG_HOME`` environment variable.
 		
 		If ScummVM was installed using Snap, the configuration file can be found at ``~/snap/scummvm/current/.config/scummvm/scummvm.ini``
 

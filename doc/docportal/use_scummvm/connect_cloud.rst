@@ -8,7 +8,7 @@ To connect your chosen cloud storage service to ScummVM, select it from the **Ac
 
 .. figure:: ../images/cloud_and_lan/cloud_storage.png
 
-Click on the link shown at **1.**, and log in to your cloud storage account. Once you have logged in, a 6-digit code will be displayed.
+Click on the link shown at **1.**, and sign in to your cloud storage account. After you sign in, a 6-digit code will be displayed.
 
 .. figure:: ../images/cloud_and_lan/cloud_code.png
 
@@ -16,7 +16,7 @@ Copy the 6-digit code, click into the empty field next to **Paste**, and then cl
 
 .. figure:: ../images/cloud_and_lan/cloud_connect.png
 
-Click **3. Connect**. Once the next page loads, click **Enable storage**.
+Click **3. Connect**. After the next page loads, click **Enable storage**.
 
 .. figure:: ../images/cloud_and_lan/cloud_enable.png
 

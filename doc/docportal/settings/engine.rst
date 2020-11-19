@@ -4,7 +4,7 @@ Engine
 
 Use the Engine tab to change settings that are unique to the game being played. 
 
-From the Launcher, highlight a game on the games list, select **Edit Game**, and then select the **Engine** tab. This tab may not be available for all games. 
+From the Launcher, highlight a game on the games list, select **Edit Game**, and then select the **Engine** tab. This tab might not be available for all games. 
 
 To find out which engine powers your game, have a look at the ScummVM Supported Games `wiki page
 <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_. 
@@ -75,7 +75,7 @@ Use an alternative palette
 .. _support:
 
 Mouse support
-	Enables mouse support. Allows use of the mouse for movement and in game menus.
+	Enables mouse support for movement and in game menus.
 
 	*mousesupport* 
 
@@ -124,7 +124,7 @@ Shorty mode
 .. _nodelay:
 
 Frame limiter high performance mode
-	Avoids use of ``delayMillis()`` function. This mode may result in high CPU usage.
+	Avoids use of ``delayMillis()`` function. This mode might result in high CPU usage.
 
 	*nodelaymillisfl* 
 
@@ -251,7 +251,7 @@ Enable studio audience
 .. _skipsupport:
 
 Skip support
-	Allows the user to skip text and cutscenes.
+	Lets the user skip text and cutscenes.
 
 	*skip_support* 
 
@@ -367,7 +367,7 @@ Use original save/load screens
 .. _skiphall:
 
 Skip the Hall of Records storyboard scenes
-	Allows the player to skip past the Hall of Records storyboard scenes.
+	Lets the player skip past the Hall of Records storyboard scenes.
 
 	*skiphallofrecordsscenes* 
 
@@ -630,7 +630,7 @@ XEEN
 .. _cost:
 
 Show item costs in standard inventory mode
-	Shows item costs in standard inventory mode, which allows the value of items to be compared.
+	Shows item costs in standard inventory mode, which lets the value of items be compared.
 
 	*ShowItemCosts* 
 

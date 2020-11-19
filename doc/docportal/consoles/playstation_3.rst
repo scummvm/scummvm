@@ -27,19 +27,17 @@ Transfer game files
 
 Games can be launched from either a USB drive, or from the internal hard drive. The hard drive has better performance.  
 
-To copy game files to the hard drive, use the USB drive, or use ScummVM's :doc:`Cloud functionality <../use_scummvm/connect_cloud>`. 
+To copy game files to the hard drive, use the USB drive, or use ScummVM's :doc:`cloud functionality <../use_scummvm/connect_cloud>`. 
 
 See :doc:`../use_scummvm/add_play_games` for more information. 
 
 Controls
 =================
 
-Controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`.
-
-See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
+Controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
 
 
-Default control mapping
+Default control map
 *************************
 
 .. |square| raw:: html
@@ -81,18 +79,23 @@ Paths
 Saved games 
 *******************
 
-``/hdd0/game/SCUM12000/saves``
+```/hdd0/game/SCUM12000/USRDIR/saves/``
 
 Configuration file 
 **************************
 
-
+``/hdd0/game/SCUM12000/USRDIR/scummvm.ini``
 
 Settings
 ==========
 
 For more information, see the Settings section of the documentation. Only platform-specific differences are listed here. 
 
+Audio
+*********
+Supported audio file formats:
 
-Known issues
-==============
+- MP3
+- OGG
+- FLAC
+- Uncompressed audio

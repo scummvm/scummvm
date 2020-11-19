@@ -31,7 +31,7 @@ From the Launcher, highlight a game on the games list, then select **Edit Game**
 .. _lang:
 
 **Language**
-	For multi-language games, this changes the language of the game. For games that have a single language hardcoded, this changes the font of the subtitles. For instance, selecting German will add an umlaut to German subtitles, and selecting Spanish will add the tilde to Spanish subtitles. 
+	For multi-language games, this changes the language of the game. For games that have a single language hardcoded, this changes the font of the subtitles. For example, selecting German will add an umlaut to German subtitles, and selecting Spanish will add the tilde to Spanish subtitles. 
 
 	*language* 
 

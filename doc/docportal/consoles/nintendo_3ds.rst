@@ -8,7 +8,7 @@ Install ScummVM
 Prerequisites
 ****************
 
-- A Nintendo 3DS with a Homebrew Launcher or custom firmware. Enabling homebrew is outside the scope of this documentation. 
+- A Nintendo 3DS with a Homebrew Launcher or custom firmware. How to enable homebrew is outside the scope of this documentation. 
 
 Download and install ScummVM
 *********************************
@@ -28,14 +28,14 @@ CIA
 
 Use any CIA installation software to install the ``scummvm.cia`` file.
 
-The CIA format requires a DSP binary dump saved on your SD card as ``/3ds/dspfirm.cdc``. This is not an optional step, since without this you will not have proper audio support. Documenting this process is outside the scope of this documentation.  
+The CIA format requires a DSP binary dump saved on your SD card as ``/3ds/dspfirm.cdc``. This is not an optional step, because without this you will not have proper audio support. Documenting this process is outside the scope of this documentation.  
 
 Transfer game files
 =======================
 
 Transfer game folders onto the SD card. The exact location is not important. 
 
-ScummVM for the Nintendo 3DS also has Cloud functionality. See :doc:`../use_scummvm/connect_cloud`. 
+ScummVM for the Nintendo 3DS also has cloud functionality. See :doc:`../use_scummvm/connect_cloud`. 
 
 See :doc:`../use_scummvm/add_play_games` for more information about how to add games to ScummVM. 
 
@@ -46,9 +46,7 @@ Controls
 Default control mapping
 ****************************
 
-Controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`.
-
-See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
+Controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
 
 .. csv-table::
     :widths: 50 50
@@ -73,11 +71,12 @@ See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortc
 Hover mode
 ************
 
-When using the touchscreen, you are simulating the movement of the mouse. You can click with taps, however you can't drag or hold down a mouse button unless you use the buttons mapped to the right/left mouse buttons. 
+When using the touchscreen, hover mode simulates the movement of the mouse. You can click with taps, however you can't drag or hold down a mouse button unless you use the buttons mapped to the right/left mouse buttons. 
 
 Drag mode
 **************
-Every time you touch and release the touchscreen, you are simulating the click and release of the mouse buttons. At the moment, this is only a left mouse button click.
+
+Simulates the click and release of the mouse buttons every time you touch and release the touchscreen. At the moment, this is only a left mouse button click.
 
 Magnify mode
 ****************
@@ -114,6 +113,9 @@ Settings
 
 For more information about Settings, see the Settings section of the documentation. Only platform-specific differences are listed here. 
 
+3DS config menu
+****************
+
 .. figure:: ../images/3ds/config.png
 
     The 3DS config menu. 
@@ -125,13 +127,23 @@ Stretch to fit
     Stretches the image to fit the screen
 
 Snap to edges
-    The 3DS touch screen has difficulty reaching the very end of the screen. Enabling this options means that if you're within a few pixels of the edge, the cursor will snap to the edge. 
+    The 3DS touch screen has difficulty reaching the very end of the screen. With this option enabled, if you're within a few pixels of the edge the cursor snaps to the edge. 
     
 Use Screen:
     Sets whether ScummVM uses the **Top**, **Bottom** or **Both** screens.
     
 C-Pad Sensitivity
     Sets the sensitivity of the Circle Pad. 
+
+Audio
+******
+
+Supported audio file formats:
+
+- MP3 
+- OGG 
+- OGG
+- Uncompressed audio
 
 Known issues
 ==============
