@@ -84,10 +84,15 @@ panels_add_fontawesome_latex = True
 
 latex_elements = {
     'extraclassoptions': 'openany,oneside',
-    'fontpkg': r'''
-    \setmainfont{DejaVu Sans}
-    \setsansfont{DejaVu Sans}
-    \setmonofont{Dejavu Sans Mono}
+    'fncychap': ' ',
+    'preamble': r'''
+        \usepackage{lato}
+        \usepackage{Inconsolata}
     ''',
+    'fontpkg': r'''
+        \setmainfont{Lato}
+        \setsansfont{Lato}
+        \setmonofont{Inconsolata}
+        ''',
 }
 
