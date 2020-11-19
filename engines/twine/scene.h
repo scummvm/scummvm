@@ -51,6 +51,9 @@ struct ScenePoint {
 	int16 z = 0;
 };
 
+/**
+ * Special actions, like change scene, climbing a ladder, ...
+ */
 struct ZoneStruct {
 	ScenePoint bottomLeft;
 	ScenePoint topRight;
@@ -74,9 +77,11 @@ struct ZoneStruct {
 		struct {
 			int16 newGrid;
 		} CeillingGrid;
+
+		/** show a text (e.g. when reading a sign) */
 		struct {
-			int16 textIdx;
-			int16 textColor;
+			int16 textIdx;		/*!< text index in the current active text bank */
+			int16 textColor;	/*!< text color (see @c ActorStruct::talkColor) */
 		} DisplayText;
 		struct {
 			int16 info0;
@@ -335,7 +340,7 @@ public:
 
 	int16 talkingActor = 0;
 
-	// TRACKS
+	// TRACKS Tell the actor where to go
 
 	int32 sceneNumTracks = 0;
 	ScenePoint sceneTracks[NUM_MAX_TRACKS];

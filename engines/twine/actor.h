@@ -125,7 +125,11 @@ struct BonusParameter {
 	uint16 unused : 7;
 };
 
-/** Actors structure */
+/**
+ * Actors structure
+ *
+ * Such as characters, doors, moving plataforms, invisible actors, ...
+ */
 class ActorStruct {
 private:
 	ShapeType _brickShape = ShapeType::kNone; // field_3
