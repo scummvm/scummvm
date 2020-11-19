@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-18 22:07+0000\n"
+"POT-Creation-Date: 2020-11-19 06:03+0000\n"
 "PO-Revision-Date: 2020-11-15 00:39+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -75,7 +75,7 @@ msgstr "Arriba"
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:184
-#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:214
+#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -2270,7 +2270,7 @@ msgstr ""
 "ScummVM. Por lo tanto, puede que sea inestable y que las partidas que "
 "guardes no funcionen en versiones futuras de ScummVM."
 
-#: engines/engine.cpp:651 engines/wintermute/wintermute.cpp:214
+#: engines/engine.cpp:651 engines/wintermute/wintermute.cpp:210
 msgid "Start anyway"
 msgstr "Jugar aun así"
 
@@ -7226,23 +7226,23 @@ msgstr "Filtrado bilineal de sprites (LENTO)"
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "Aplica un filtrado bilineal a cada sprite individual"
 
-#: engines/wintermute/wintermute.cpp:180
+#: engines/wintermute/wintermute.cpp:176
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr "Este juego requiere el soporte para PNG, JPEG y Vorbis."
 
-#: engines/wintermute/wintermute.cpp:191
+#: engines/wintermute/wintermute.cpp:187
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr ""
 "Este juego requiere el submotor FoxTail, el cual no está presente en la "
 "compilación."
 
-#: engines/wintermute/wintermute.cpp:202
+#: engines/wintermute/wintermute.cpp:198
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr ""
 "Este juego requiere el submotor HeroCraft, el cual no está presente en la "
 "compilación."
 
-#: engines/wintermute/wintermute.cpp:213
+#: engines/wintermute/wintermute.cpp:209
 msgid ""
 "This game requires 3D capabilities that are out ScummVM scope. As such, it "
 "is likely to be unplayable totally or partially."

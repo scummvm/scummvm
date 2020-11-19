@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-18 22:07+0000\n"
+"POT-Creation-Date: 2020-11-19 06:03+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -75,7 +75,7 @@ msgstr "Subir"
 #: engines/mohawk/riven_stacks/aspit.cpp:372
 #: engines/mohawk/riven_stacks/aspit.cpp:456
 #: engines/parallaction/saveload.cpp:271 engines/scumm/dialogs.cpp:184
-#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:214
+#: engines/sword1/control.cpp:889 engines/wintermute/wintermute.cpp:210
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -2251,7 +2251,7 @@ msgstr ""
 "é possível que seja instável, e qualquer jogo guardado pode não funcionar em "
 "futuras versões do ScummVM."
 
-#: engines/engine.cpp:651 engines/wintermute/wintermute.cpp:214
+#: engines/engine.cpp:651 engines/wintermute/wintermute.cpp:210
 msgid "Start anyway"
 msgstr "Iniciar na mesma"
 
@@ -6956,19 +6956,19 @@ msgstr "Filtragem bilinear gráfica (LENTA)"
 msgid "Apply bilinear filtering to individual sprites"
 msgstr "Aplica uma filtragem bilinear aos sprites individuais"
 
-#: engines/wintermute/wintermute.cpp:180
+#: engines/wintermute/wintermute.cpp:176
 msgid "This game requires PNG, JPEG and Vorbis support."
 msgstr ""
 
-#: engines/wintermute/wintermute.cpp:191
+#: engines/wintermute/wintermute.cpp:187
 msgid "This game requires the FoxTail subengine, which is not compiled in."
 msgstr ""
 
-#: engines/wintermute/wintermute.cpp:202
+#: engines/wintermute/wintermute.cpp:198
 msgid "This game requires the HeroCraft subengine, which is not compiled in."
 msgstr ""
 
-#: engines/wintermute/wintermute.cpp:213
+#: engines/wintermute/wintermute.cpp:209
 msgid ""
 "This game requires 3D capabilities that are out ScummVM scope. As such, it "
 "is likely to be unplayable totally or partially."
