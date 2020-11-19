@@ -300,7 +300,7 @@ static int32 mWAIT_NUM_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 static int32 mSAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
-	engine->_sound->playSample(sampleIdx, 0x1000, 1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
+	engine->_sound->playSample(sampleIdx, 4096, 1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
 	return 0;
 }
 
@@ -533,7 +533,7 @@ static int32 mSAMPLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mSAMPLE_ALWAYS(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	if (!engine->_sound->isSamplePlaying(sampleIdx)) { // if its not playing
-		engine->_sound->playSample(sampleIdx, 0x1000, -1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
+		engine->_sound->playSample(sampleIdx, 4096, -1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
 	}
 	return 0;
 }
@@ -588,7 +588,7 @@ static int32 mREPEAT_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 static int32 mSIMPLE_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
-	engine->_sound->playSample(sampleIdx, 0x1000, ctx.numRepeatSample, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
+	engine->_sound->playSample(sampleIdx, 4096, ctx.numRepeatSample, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
 	ctx.numRepeatSample = 1;
 	return 0;
 }
@@ -635,13 +635,11 @@ static int32 mANGLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 
 	if (engine->_scene->currentScriptValue == -1 && ctx.actor->move.numOfStep == 0) {
 		if (engine->getRandomNumber() & 1) {
-			engine->_scene->currentScriptValue = val1;
-			const int32 newAngle = ctx.actor->angle + 0x100 + (ABS(engine->_scene->currentScriptValue) >> 1);
-			engine->_scene->currentScriptValue = (newAngle - engine->getRandomNumber(engine->_scene->currentScriptValue)) & 0x3FF;
+			const int32 newAngle = ctx.actor->angle + 256 + (ABS(val1) >> 1);
+			engine->_scene->currentScriptValue = ClampAngle(newAngle - engine->getRandomNumber(val1));
 		} else {
-			engine->_scene->currentScriptValue = val1;
-			const int32 newAngle = ctx.actor->angle - 0x100 + (ABS(engine->_scene->currentScriptValue) >> 1);
-			engine->_scene->currentScriptValue = (newAngle - engine->getRandomNumber(engine->_scene->currentScriptValue)) & 0x3FF;
+			const int32 newAngle = ctx.actor->angle - 256 + (ABS(val1) >> 1);
+			engine->_scene->currentScriptValue = ClampAngle(newAngle - engine->getRandomNumber(val1));
 		}
 
 		engine->_movements->moveActor(ctx.actor->angle, engine->_scene->currentScriptValue, ctx.actor->speed, &ctx.actor->move);

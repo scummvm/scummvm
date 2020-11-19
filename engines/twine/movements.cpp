@@ -57,9 +57,9 @@ void Movements::getShadowPosition(int32 x, int32 y, int32 z) {
 }
 
 void Movements::setActorAngleSafe(int16 startAngle, int16 endAngle, int16 stepAngle, ActorMoveStruct *movePtr) {
-	movePtr->from = startAngle & 0x3FF;
-	movePtr->to = endAngle & 0x3FF;
-	movePtr->numOfStep = stepAngle & 0x3FF;
+	movePtr->from = ClampAngle(startAngle);
+	movePtr->to = ClampAngle(endAngle);
+	movePtr->numOfStep = ClampAngle(stepAngle);
 	movePtr->timeOfChange = _engine->lbaTime;
 }
 
@@ -137,7 +137,7 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 		finalAngle = -finalAngle + 0x100;
 	}
 
-	return finalAngle & 0x3FF;
+	return ClampAngle(finalAngle);
 }
 
 int32 Movements::getRealAngle(ActorMoveStruct *movePtr) {
@@ -199,8 +199,8 @@ int32 Movements::getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2,
 }
 
 void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) { // ManualRealAngle
-	const int16 from = angleFrom & 0x3FF;
-	const int16 to = angleTo & 0x3FF;
+	const int16 from = ClampAngle(angleFrom);
+	const int16 to = ClampAngle(angleTo);
 
 	movePtr->from = from;
 	movePtr->to = to;
@@ -390,7 +390,7 @@ void Movements::processRandomAction(int actorIdx) {
 	}
 
 	if (actor->brickCausesDamage()) {
-		moveActor(actor->angle, (((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
+		moveActor(actor->angle, ClampAngle((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)), actor->speed, &actor->move);
 		actor->delayInMillis = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
 		_engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, actorIdx);
 	}
@@ -398,7 +398,7 @@ void Movements::processRandomAction(int actorIdx) {
 	if (!actor->move.numOfStep) {
 		_engine->_animations->initAnim(AnimationTypes::kForward, 0, AnimationTypes::kAnimInvalid, actorIdx);
 		if (_engine->lbaTime > actor->delayInMillis) {
-			moveActor(actor->angle, (((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)) & 0x3FF), actor->speed, &actor->move);
+			moveActor(actor->angle, ClampAngle((_engine->getRandomNumber() & 0x100) + (actor->angle - 0x100)), actor->speed, &actor->move);
 			actor->delayInMillis = _engine->getRandomNumber(300) + _engine->lbaTime + 300;
 		}
 	}

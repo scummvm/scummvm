@@ -143,14 +143,11 @@ int32 Animations::getStartKeyframe(const uint8 *animPtr) {
 }
 
 void Animations::applyAnimStepRotation(uint8 **ptr, int32 bp, int32 bx, const uint8 **keyFramePtr, const uint8 **lastKeyFramePtr) {
-	int16 lastAngle = READ_LE_INT16(*lastKeyFramePtr);
+	const int16 lastAngle = ClampAngle(READ_LE_INT16(*lastKeyFramePtr));
 	*lastKeyFramePtr += 2;
 
-	int16 newAngle = READ_LE_INT16(*keyFramePtr);
+	const int16 newAngle = ClampAngle(READ_LE_INT16(*keyFramePtr));
 	*keyFramePtr += 2;
-
-	lastAngle &= 0x3FF;
-	newAngle &= 0x3FF;
 
 	int16 angleDiff = newAngle - lastAngle;
 
@@ -168,7 +165,7 @@ void Animations::applyAnimStepRotation(uint8 **ptr, int32 bp, int32 bx, const ui
 	}
 
 	int16 *dest = (int16 *)*(ptr);
-	*dest = computedAngle & 0x3FF;
+	*dest = ClampAngle(computedAngle);
 	*(ptr) = *(ptr) + 2;
 }
 
@@ -867,7 +864,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 				actor->dynamicFlags.bIsRotationByAnim = 0;
 			}
 
-			actor->angle = (actor->angle + processLastRotationAngle - actor->lastRotationAngle) & 0x3FF;
+			actor->angle = ClampAngle(actor->angle + processLastRotationAngle - actor->lastRotationAngle);
 			actor->lastRotationAngle = processLastRotationAngle;
 
 			_engine->_movements->rotateActor(currentStepX, currentStepZ, actor->angle);
