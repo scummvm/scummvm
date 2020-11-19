@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-16 18:07+0000\n"
+"POT-Creation-Date: 2020-11-18 22:07+0000\n"
 "PO-Revision-Date: 2020-11-15 10:30+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -5789,7 +5789,7 @@ msgstr ""
 "Das %d bpp-Video kann nicht auf einem System mit einer maximalen Farbtiefe "
 "von 8bpp abgespielt werden"
 
-#: engines/sci/resource.cpp:843
+#: engines/sci/resource.cpp:845
 msgid ""
 "Missing or corrupt game resources have been detected. Some game features may "
 "not work properly. Please check the console for more information, and verify "
