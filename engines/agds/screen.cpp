@@ -138,7 +138,7 @@ void Screen::paint(Graphics::Surface &backbuffer) {
 	auto & currentInventoryObject = _engine->currentInventoryObject();
 	for(uint i = 0; i < _animations.size(); ) {
 		Animation *animation = _animations.data()[i];
-		if (animation->tick(*_engine))
+		if (animation->tick())
 			++i;
 		else {
 			debug("removing animation %s:%s", animation->process().c_str(), animation->phaseVar().c_str());
@@ -187,7 +187,7 @@ void Screen::paint(Graphics::Surface &backbuffer) {
 				break;
 			case 1:
 				//debug("animation z: %d", (*animation)->z());
-				(*animation)->paint(*_engine, backbuffer, Common::Point());
+				(*animation)->paint(backbuffer, Common::Point());
 				++animation;
 				break;
 			case 2:

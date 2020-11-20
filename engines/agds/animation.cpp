@@ -30,8 +30,9 @@
 
 namespace AGDS {
 
-Animation::Animation() :
-	_flic(), _frame(), _frames(0), _loop(false), _cycles(1), _phaseVarControlled(false),
+Animation::Animation(AGDSEngine *engine) :
+	_engine(engine), _flic(), _frame(),
+	_frames(0), _loop(false), _cycles(1), _phaseVarControlled(false),
 	_phase(0), _paused(false), _speed(100), _z(0),
 	_delay(0), _random(0), _scale(1) {
 }
@@ -50,7 +51,7 @@ void Animation::freeFrame() {
 }
 
 
-bool Animation::load(Common::SeekableReadStream *stream) {
+bool Animation::load(Common::SeekableReadStream *stream, const Common::String &fname) {
 	if (_phaseVarControlled) {
 		if (_phaseVar.empty()) {
 			warning("phase var controlled animation with no phase var");
@@ -75,20 +76,26 @@ bool Animation::load(Common::SeekableReadStream *stream) {
 		}
 	}
 	delete _flic;
+	_flic = nullptr;
+
+	if (fname.hasSuffixIgnoreCase(".bmp")) {
+		_frame = _engine->loadPicture(fname);
+		_frames = 1;
+		return true;
+	}
+
 	Video::FlicDecoder *flic = new Video::FlicDecoder;
 	if (flic->loadStream(stream)) {
 		_frames = flic->getFrameCount();
-		delete _flic;
 		_flic = flic;
 		return true;
 	} else {
 		_frames = 0;
-		delete flic;
 		return false;
 	}
 }
 
-void Animation::decodeNextFrame(AGDSEngine &engine) {
+void Animation::decodeNextFrame() {
 	auto frame = _flic->decodeNextFrame();
 	if (!frame) {
 		warning("frame couldn't be decoded");
@@ -97,7 +104,7 @@ void Animation::decodeNextFrame(AGDSEngine &engine) {
 
 	freeFrame();
 	_delay = _flic->getCurFrameDelay() * _speed / 4000; //40 == 1000 / 25, 25 fps
-	_frame = engine.convertToTransparent(frame->convertTo(engine.pixelFormat(), _flic->getPalette()));
+	_frame = _engine->convertToTransparent(frame->convertTo(_engine->pixelFormat(), _flic->getPalette()));
 	if (_scale != 1) {
 		auto f = _frame->scale(_frame->w * _scale, _frame->h * _scale, true);
 		if (f) {
@@ -114,12 +121,16 @@ void Animation::rewind() {
 	_flic->rewind();
 }
 
-bool Animation::tick(AGDSEngine &engine) {
+bool Animation::tick() {
+	if (!_flic && _frame) { //static frame
+		return true;
+	}
+
 	if (_paused || (_phaseVarControlled && !_frame)) {
 		return true;
 	}
 
-	if (_phaseVarControlled && engine.getGlobal(_phaseVar) == -2) {
+	if (_phaseVarControlled && _engine->getGlobal(_phaseVar) == -2) {
 		debug("phase var %s signalled deleting of animation", _phaseVar.c_str());
 		return false;
 	}
@@ -133,12 +144,12 @@ bool Animation::tick(AGDSEngine &engine) {
 	if (eov) {
 		if (!_loop) {
 			if (!_phaseVar.empty())
-				engine.setGlobal(_phaseVar, -1);
+				_engine->setGlobal(_phaseVar, -1);
 		}
 
 		if (_phaseVarControlled) {
 			freeFrame();
-			engine.reactivate(_process, true);
+			_engine->reactivate(_process, true);
 			return true;
 		}
 		if (_loop)
@@ -147,16 +158,16 @@ bool Animation::tick(AGDSEngine &engine) {
 			return false;
 	}
 
-	decodeNextFrame(engine);
+	decodeNextFrame();
 	if (!_process.empty()) {
 		if (!_phaseVar.empty()) {
-			engine.setGlobal(_phaseVar, _phase - 1);
+			_engine->setGlobal(_phaseVar, _phase - 1);
 		}
 	}
 	return true;
 }
 
-void Animation::paint(AGDSEngine &engine, Graphics::Surface &backbuffer, Common::Point dst) {
+void Animation::paint(Graphics::Surface &backbuffer, Common::Point dst) {
 	dst += _position;
 	if (_frame) {
 		Common::Rect srcRect = _frame->getRect();
