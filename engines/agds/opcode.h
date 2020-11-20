@@ -240,7 +240,7 @@ enum Opcode {
 	kStopCharacter					= 220,
 	kRestartAnimation				= 221,
 	kStub222						= 222,
-	kStub223						= 223,
+	kSetShadowIntensity				= 223,
 	kSetNPCTellNotifyVar			= 224,
 	kPauseAnimation					= 225,
 	kFadeObject						= 226,
@@ -442,7 +442,7 @@ enum Opcode {
 	OP(kStopCharacter, stopCharacter) \
 	OP(kLeaveCharacterEx, leaveCharacterEx) \
 	OP(kRestartAnimation, restartAnimation) \
-	OP(kStub223, stub223) \
+	OP(kSetShadowIntensity, setShadowIntensity) \
 	OP(kSetNPCTellNotifyVar, setNPCTellNotifyVar) \
 	OP(kPauseAnimation, pauseAnimation) \
 	OP(kFadeObject, fadeObject) \

@@ -78,6 +78,17 @@ class AGDSEngine : public Engine {
 	static constexpr uint MaxProcesses = 100;
 
 public:
+
+	struct Color {
+		uint8 r = 0;
+		uint8 g = 0;
+		uint8 b = 0;
+
+		void FromString(const Common::String &rgb);
+		Common::String ToString() const;
+
+		uint32 map(const Graphics::PixelFormat &format) const;
+	};
 	AGDSEngine(OSystem *syst, const ADGameDescription *gameDesc);
 	~AGDSEngine();
 
@@ -290,6 +301,9 @@ private:
 	SystemVariablesListType		_systemVarList;
 	SystemVariablesType			_systemVars;
 	Graphics::PixelFormat		_pixelFormat;
+	Color						_colorKey;
+	Color						_minShadowColor;
+	Color						_maxShadowColor;
 	MJPGPlayer *				_mjpgPlayer;
 	uint32						_filmStarted;
 	Common::String				_filmProcess;

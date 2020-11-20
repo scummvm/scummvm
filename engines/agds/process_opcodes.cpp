@@ -948,9 +948,9 @@ void Process::restartAnimation() {
 	}
 }
 
-void Process::stub223() {
+void Process::setShadowIntensity() {
 	int value = pop();
-	debug("stub223: %d", value);
+	debug("setShadowIntensity: %d", value);
 }
 
 void Process::pauseAnimation() {
