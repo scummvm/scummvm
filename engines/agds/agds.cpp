@@ -1090,12 +1090,11 @@ Common::Error AGDSEngine::loadGameStream(Common::SeekableReadStream *file) {
 		int n = 34;
 		while(n--) {
 			Common::String name = readString(agds_i.get());
-			int unk = agds_i->readUint32LE();
-			int present = agds_i->readUint32LE();
-			if (!name.empty() && present) {
-				debug("inventory: %s %d %d", name.c_str(), unk, present);
-				ObjectPtr object = runObject(name);
-				_inventory.add(object);
+			int refcount = agds_i->readUint32LE();
+			int objectPtr = agds_i->readUint32LE();
+			if (!name.empty() && refcount) {
+				debug("inventory: %s %d %d", name.c_str(), refcount, objectPtr);
+				_inventory.add(runObject(name));
 			}
 		}
 	}
