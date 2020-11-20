@@ -201,13 +201,15 @@ void Screen::paint(Graphics::Surface &backbuffer) {
 	}
 }
 
-ObjectPtr Screen::find(Common::Point pos) const {
+Common::Array<ObjectPtr> Screen::find(Common::Point pos) const {
+	Common::Array<ObjectPtr> objects;
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
-		if (object->pointIn(pos) && object->inScene())
-			return object;
+		if (object->pointIn(pos) && object->inScene()) {
+			objects.push_back(object);
+		}
 	}
-	return ObjectPtr();
+	return objects;
 }
 
 Screen::KeyHandler Screen::findKeyHandler(const Common::String &keyName) {

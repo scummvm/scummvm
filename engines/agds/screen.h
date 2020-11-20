@@ -122,7 +122,7 @@ public:
 	bool remove(const Common::String & name);
 	bool remove(const ObjectPtr & object);
 	void paint(Graphics::Surface & backbuffer);
-	ObjectPtr find(Common::Point pos) const;
+	Common::Array<ObjectPtr> find(Common::Point pos) const;
 	ObjectPtr find(const Common::String &name);
 	KeyHandler findKeyHandler(const Common::String &keyName);
 	Animation * findAnimationByPhaseVar(const Common::String &phaseVar);
