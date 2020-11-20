@@ -91,7 +91,7 @@ void Character::load(Common::SeekableReadStream *stream) {
 			      unk5, unk6, unk7, unk8,
 			      unk9, unk10, unk11);
 		}
-		_animations.push_back(animation);
+		_animations[index] = animation;
 	}
 
 	delete stream;
@@ -104,7 +104,8 @@ void Character::direction(int dir) {
 	if (dir < 0)
 		return;
 
-	_animation = _engine->loadAnimation(_animations[dir].filename);
+	auto desc = animationDescription(dir);
+	_animation = desc? _engine->loadAnimation(desc->filename): nullptr;
 	_animationPos = Common::Point();
 	if (!_animation) {
 		debug("no animation?");
