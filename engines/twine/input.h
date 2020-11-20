@@ -117,6 +117,7 @@ public:
 	 * Like disabling ui keymaps when we are in-game - or vice versa.
 	 */
 	void enableKeyMap(const char *id);
+	void enableAdditionalKeyMap(const char *id, bool enable);
 
 	const Common::String currentKeyMap() const;
 
