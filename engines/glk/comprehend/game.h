@@ -138,6 +138,7 @@ public:
 
 	virtual void beforeGame() {}
 	virtual void beforePrompt() {}
+	virtual void afterPrompt() {}
 	virtual void beforeTurn();
 	virtual void afterTurn() {}
 	virtual int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) {
