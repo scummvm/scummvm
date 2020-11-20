@@ -585,8 +585,8 @@ Common::Error AGDSEngine::run() {
 					picture->blit(*backbuffer, dst.x, dst.y, Graphics::FLIP_NONE, &srcRect, color);
 				}
 			} else {
-				mouseCursor->tick(*this);
-				mouseCursor->paint(*this, *backbuffer, _mouse);
+				mouseCursor->tick();
+				mouseCursor->paint(*backbuffer, _mouse);
 			}
 		}
 
@@ -709,8 +709,8 @@ Animation *AGDSEngine::loadAnimation(const Common::String &name) {
 	Common::SeekableReadStream *stream = _resourceManager.getResource(name);
 	if (!stream)
 		error("could not load animation from %s", name.c_str());
-	Animation *animation = new Animation();
-	if (!animation->load(stream))
+	Animation *animation = new Animation(this);
+	if (!animation->load(stream, name))
 		error("could not load animation from %s", name.c_str());
 
 	_animations[name] = animation;

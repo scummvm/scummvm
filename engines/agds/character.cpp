@@ -151,7 +151,7 @@ void Character::paint(Graphics::Surface &backbuffer) {
 	_animation->scale(scale);
 
 	if (_phase >= 0 && _phase < _frames) {
-		_animation->tick(*_engine);
+		_animation->tick();
 		if (_phase + 1 >= _frames) {
 			_phase = -1;
 			_frames = 0;
@@ -162,7 +162,7 @@ void Character::paint(Graphics::Surface &backbuffer) {
 
 	pos.y -= _animation->height();
 	pos.x -= _animation->width() / 2;
-	_animation->paint(*_engine, backbuffer, pos);
+	_animation->paint(backbuffer, pos);
 }
 
 int Character::z() const {

@@ -191,8 +191,8 @@ void Object::paint(AGDSEngine &engine, Graphics::Surface &backbuffer) {
 	}
 
 	if (_animation) {
-		_animation->tick(engine);
-		_animation->paint(engine, backbuffer, _pos + _animationPos);
+		_animation->tick();
+		_animation->paint(backbuffer, _pos + _animationPos);
 	}
 
 	if (!_text.empty()) {

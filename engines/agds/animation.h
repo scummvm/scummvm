@@ -36,6 +36,7 @@ class AGDSEngine;
 class Object;
 
 class Animation {
+	AGDSEngine *		_engine;
 	Video::FlicDecoder *_flic;
 	Graphics::TransparentSurface *_frame;
 	int					_frames;
@@ -54,7 +55,7 @@ class Animation {
 	float				_scale;
 
 public:
-	Animation();
+	Animation(AGDSEngine *engine);
 	~Animation();
 
 	void freeFrame();
@@ -145,18 +146,19 @@ public:
 		return _phase;
 	}
 
-	bool load(Common::SeekableReadStream *stream);
-	void paint(AGDSEngine & engine, Graphics::Surface & backbuffer, Common::Point dst);
+	bool load(Common::SeekableReadStream *stream, const Common::String &fname);
+	void paint(Graphics::Surface & backbuffer, Common::Point dst);
 	int width() const;
 	int height() const;
-	bool tick(AGDSEngine &engine);
-	void decodeNextFrameIfNoFrame(AGDSEngine &engine) {
+	bool tick();
+
+	void decodeNextFrameIfNoFrame() {
 		if (!_frame)
-			decodeNextFrame(engine);
+			decodeNextFrame();
 	}
 
 private:
-	void decodeNextFrame(AGDSEngine &engine);
+	void decodeNextFrame();
 };
 
 
