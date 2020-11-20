@@ -111,6 +111,7 @@ const Object::StringEntry &Object::getString(uint16 index) const {
 }
 
 void Object::setPicture(Graphics::TransparentSurface *picture) {
+	_pos = Common::Point();
 	if (_picture) {
 		_picture->free();
 		delete _picture;
