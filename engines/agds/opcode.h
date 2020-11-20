@@ -90,7 +90,7 @@ enum Opcode {
 	kLoadPictureFromObject			= 69,
 	kLoadAnimationFromObject		= 70,
 	kSetObjectZ						= 71,
-	kUpdateScreenHeightToDisplay	= 72,
+	kUpdateObjectZToDisplay			= 72,
 	kLoadTextFromObject				= 73,
 	kScreenSetZNearFar				= 74,
 	kScreenLoadRegion				= 75,
@@ -349,7 +349,7 @@ enum Opcode {
 	OP(kAnimateCharacter, animateCharacter) \
 	OP(kLoadCharacter, loadCharacter) \
 	OP(kSetObjectZ, setObjectZ) \
-	OP(kUpdateScreenHeightToDisplay, updateScreenHeightToDisplay) \
+	OP(kUpdateObjectZToDisplay, updateObjectZToDisplay) \
 	OP(kLoadTextFromObject, loadTextFromObject) \
 	OP(kCompareScreenName, compareScreenName) \
 	OP(kScreenSetZNearFar, screenSetZNearFar) \

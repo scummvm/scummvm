@@ -1255,7 +1255,7 @@ void Process::setObjectZ() {
 	_engine->getCurrentScreen()->update(_object);
 }
 
-void Process::updateScreenHeightToDisplay() {
+void Process::updateObjectZToDisplay() {
 	debug("updateObjectZtoDisplayHeight");
 	_object->z(g_system->getHeight());
 	_engine->getCurrentScreen()->update(_object);
