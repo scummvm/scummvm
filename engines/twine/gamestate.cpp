@@ -151,14 +151,17 @@ void GameState::initEngineVars() {
 	_engine->_actor->previousHeroBehaviour = HeroBehaviourType::kNormal;
 }
 
+// http://lbafileinfo.kazekr.net/index.php?title=LBA1:Savegame
 bool GameState::loadGame(Common::SeekableReadStream *file) {
 	if (file == nullptr) {
 		return false;
 	}
 
-	initEngineVars();
+	if (file->readByte() != 0x03) {
+		return false;
+	}
 
-	file->skip(1); // skip save game id
+	initEngineVars();
 
 	int playerNameIdx = 0;
 	do {
@@ -255,7 +258,8 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->write(inventoryFlags, NUM_INVENTORY_ITEMS);
 
 	file->writeByte(inventoryNumLeafs);
-	file->writeByte(usingSabre);
+	file->writeByte(usingSabre ? 1 : 0);
+	file->writeByte(0);
 
 	return true;
 }

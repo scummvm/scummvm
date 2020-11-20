@@ -147,6 +147,15 @@ public:
 	void loadModel(int32 modelIndex);
 
 	int32 entity = 0; // costumeIndex
+	/**
+	 * 0: tunic + medallion
+	 * 1: tunic
+	 * 2: tunic + medallion + sword
+	 * 3: prison suit
+	 * 4: nurse outfit
+	 * 5: tunic + medallion + horn
+	 * 6: snowboard (WARNING, this can crash the game when you change behavior)
+	 */
 	int32 body = 0;
 	AnimationTypes anim = AnimationTypes::kAnimNone;
 	AnimationTypes animExtra = AnimationTypes::kStanding;  //field_2
