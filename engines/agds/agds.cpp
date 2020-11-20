@@ -47,6 +47,7 @@ namespace AGDS {
 
 AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Engine(system),
                                                                              _gameDescription(gameDesc), _pictureCacheId(1), _sharedStorageIndex(-2),
+																			 _shadowIntensity(0),
 																			 _processes(MaxProcesses),
                                                                              _mjpgPlayer(), _filmStarted(0),
 																			 _currentScreen(), _currentCharacter(),
@@ -814,7 +815,26 @@ Graphics::TransparentSurface *AGDSEngine::convertToTransparent(Graphics::Surface
 	if (!surface)
 		return NULL;
 	Graphics::TransparentSurface *t = new Graphics::TransparentSurface(*surface, true);
-	t->applyColorKey(_colorKey.r, _colorKey.g, _colorKey.b);
+	assert(t->format.bytesPerPixel == 4);
+	uint32* pixels = static_cast<uint32 *>(t->getPixels());
+	for (int i = 0; i < t->h; i++) {
+		for (int j = 0; j < t->w; j++) {
+			uint32 pix = pixels[i * t->w + j];
+			uint8 r, g, b, a;
+			t->format.colorToARGB(pix, a, r, g, b);
+			if (r == _colorKey.r && g == _colorKey.g && b == _colorKey.b) {
+				r = g = b = a = 0;
+			} else if (
+				r >= _minShadowColor.r && r <= _maxShadowColor.r &&
+				g >= _minShadowColor.g && g <= _maxShadowColor.g &&
+				b >= _minShadowColor.b && b <= _maxShadowColor.b
+			) {
+				r = g = b = 0;
+				a = (255 * _shadowIntensity / 100);
+			}
+			pixels[i * t->w + j] = t->format.ARGBToColor(a, r, g, b);
+		}
+	}
 	surface->free();
 	delete surface;
 	return t;
