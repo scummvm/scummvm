@@ -535,14 +535,22 @@ void Process::loadMouseCursorFromObject() {
 	_object->setMouseCursor(cursor); //overlay cursor
 }
 
-void Process::attachInventoryObjectToMouse() {
+void Process::attachInventoryObjectToMouse(bool flag) {
 	Common::String name = popString();
-	debug("attachInventoryObjectToMouse %s", name.c_str());
+	debug("attachInventoryObjectToMouse %s %d", name.c_str(), flag);
 	auto object = _engine->getCurrentScreenObject(name);
 	if (object)
 		_engine->currentInventoryObject(object);
 	else
 		warning("cannot find object %s", name.c_str());
+}
+
+void Process::attachInventoryObjectToMouse0() {
+	attachInventoryObjectToMouse(false);
+}
+
+void Process::attachInventoryObjectToMouse1() {
+	attachInventoryObjectToMouse(true);
 }
 
 void Process::fadeObject() {

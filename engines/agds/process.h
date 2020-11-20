@@ -151,6 +151,7 @@ private:
 
 	ProcessExitCode resume();
 	void setupAnimation(Animation *animation);
+	void attachInventoryObjectToMouse(bool flag);
 
 public:
 	Process(AGDSEngine *engine, ObjectPtr object, unsigned ip = 0);
