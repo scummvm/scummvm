@@ -897,13 +897,14 @@ void Menu::processBehaviourMenu() {
 
 	int32 tmpTime = _engine->lbaTime;
 
+	_engine->_input->enableAdditionalKeyMap(uiKeyMapId, true);
 	while (_engine->_input->isActionActive(TwinEActionType::BehaviourMenu) || _engine->_input->isQuickBehaviourActionActive()) {
 		_engine->readKeys();
 
 		int heroBehaviour = (int)_engine->_actor->heroBehaviour;
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::TurnLeft)) {
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
 			heroBehaviour--;
-		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::TurnRight)) {
+		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
 			heroBehaviour++;
 		}
 
@@ -927,6 +928,7 @@ void Menu::processBehaviourMenu() {
 		_engine->_system->delayMillis(1000 / 50);
 		_engine->lbaTime++;
 	}
+	_engine->_input->enableAdditionalKeyMap(uiKeyMapId, false);
 
 	_engine->lbaTime = tmpTime;
 
