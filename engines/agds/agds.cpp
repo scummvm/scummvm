@@ -488,13 +488,16 @@ Common::Error AGDSEngine::run() {
 						runObject(object);
 						break;
 					}
-					ObjectPtr object = _currentScreen->find(_mouse);
 
-					if (!object && !_currentInventoryObject) //allow inventory to be selected
-						object = _inventory.find(_mouse);
+					auto objects = _currentScreen->find(_mouse);
+					if (objects.empty() && !_currentInventoryObject) { //allow inventory to be selected
+						auto object = _inventory.find(_mouse);
+						if (object)
+							objects.push_back(object);
+					}
 
-					if (object) {
-						debug("found object %s", object->title().c_str());
+					for(auto & object : objects) {
+						debug("found object %s", object->getName().c_str());
 						uint ip;
 						if (lclick) {
 							if (_currentInventoryObject) {
@@ -502,12 +505,13 @@ Common::Error AGDSEngine::run() {
 								ip = object->getUseHandler(_currentInventoryObject->getName());
 							} else
 								ip = object->getClickHandler();
-						 } else
+						} else
 							ip = object->getExamineHandler();
 
 						if (ip) {
 							debug("found handler: %s %08x", object->getName().c_str(), ip + 7);
 							runProcess(object, ip);
+							break;
 						} else
 							debug("no handler found");
 					}
@@ -528,21 +532,33 @@ Common::Error AGDSEngine::run() {
 		Animation *mouseCursor = NULL;
 
 		if (userEnabled() && _currentScreen) {
-			ObjectPtr object = _currentScreen->find(_mouse);
-			if (!object)
-				object = _inventory.find(_mouse);
+			auto objects = _currentScreen->find(_mouse);
+			if (objects.empty()) {
+				auto object = _inventory.find(_mouse);
+				if (object)
+					objects.push_back(object);
+			}
 
-			Animation *cursor = object ? object->getMouseCursor() : NULL;
+
+			Animation *cursor = nullptr;
+			for(auto & object : objects) {
+				cursor = object->getMouseCursor();
+				if (cursor)
+					break;
+			}
+
 			if (cursor)
 				mouseCursor = cursor;
 
-			if (object && !object->title().empty()) {
-				auto & title = object->title();
-				auto font = getFont(getSystemVariable("objtext_font")->getInteger());
-				int w = font->getStringWidth(title);
-				int x = getSystemVariable("objtext_x")->getInteger() - w / 2;
-				int y = getSystemVariable("objtext_y")->getInteger();
-				font->drawString(backbuffer, title, x, y, backbuffer->w - x, 0);
+			for(auto & object : objects) {
+				if (!object->title().empty()) {
+					auto & title = object->title();
+					auto font = getFont(getSystemVariable("objtext_font")->getInteger());
+					int w = font->getStringWidth(title);
+					int x = getSystemVariable("objtext_x")->getInteger() - w / 2;
+					int y = getSystemVariable("objtext_y")->getInteger();
+					font->drawString(backbuffer, title, x, y, backbuffer->w - x, 0);
+				}
 			}
 		}
 
