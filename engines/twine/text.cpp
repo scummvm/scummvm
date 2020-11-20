@@ -398,39 +398,40 @@ void Text::processTextLine() {
 			buffer++;
 			continue;
 		}
+		if (*buffer == '\0') {
+			break;
+		}
 
-		if (*buffer != 0) {
-			printText8Var8 = buffer;
-			WordSize wordSize = getWordSize(buffer, buf1);
-			if (addLineBreakX + dialCharSpace + wordSize.inPixel < dialTextBoxParam2) {
-				char *temp = buffer + 1;
-				if (*buffer == 1) {
+		printText8Var8 = buffer;
+		WordSize wordSize = getWordSize(buffer, buf1);
+		if (addLineBreakX + dialCharSpace + wordSize.inPixel < dialTextBoxParam2) {
+			char *temp = buffer + 1;
+			if (*buffer == 1) {
+				var4 = 0;
+				buffer = temp;
+			} else {
+				if (*buf1 == '@') {
 					var4 = 0;
 					buffer = temp;
+					if (addLineBreakX == 0) {
+						addLineBreakX = 7;
+						*((int16 *)buf2) = spaceChar;
+					}
+					if (buf1[1] == 'P') {
+						printText8Var1 = dialTextBoxParam1;
+						buffer++;
+					}
 				} else {
-					if (*buf1 == '@') {
-						var4 = 0;
-						buffer = temp;
-						if (addLineBreakX == 0) {
-							addLineBreakX = 7;
-							*((int16 *)buf2) = spaceChar;
-						}
-						if (buf1[1] == 'P') {
-							printText8Var1 = dialTextBoxParam1;
-							buffer++;
-						}
-					} else {
-						buffer += wordSize.inChar;
-						printText8Var8 = buffer;
-						strncat(buf2, buf1, sizeof(buf2));
-						strncat(buf2, " ", sizeof(buf2)); // not 100% accurate
-						printText8PrepareBufferVar2++;
+					buffer += wordSize.inChar;
+					printText8Var8 = buffer;
+					strncat(buf2, buf1, sizeof(buf2));
+					strncat(buf2, " ", sizeof(buf2)); // not 100% accurate
+					printText8PrepareBufferVar2++;
 
-						addLineBreakX += wordSize.inPixel + dialCharSpace;
-						if (*printText8Var8 != 0) {
-							printText8Var8++;
-							continue;
-						}
+					addLineBreakX += wordSize.inPixel + dialCharSpace;
+					if (*printText8Var8 != '\0') {
+						printText8Var8++;
+						continue;
 					}
 				}
 			}
@@ -497,7 +498,7 @@ void Text::printText10Sub2() {
 			fontColor = dialTextStopColor;
 		}
 		ptr -= 3;
-	};
+	}
 }
 
 int32 Text::getCharWidth(uint8 chr) const {
