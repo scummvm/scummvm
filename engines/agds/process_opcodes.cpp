@@ -951,6 +951,7 @@ void Process::restartAnimation() {
 void Process::setShadowIntensity() {
 	int value = pop();
 	debug("setShadowIntensity: %d", value);
+	_engine->shadowIntensity(value);
 }
 
 void Process::pauseAnimation() {

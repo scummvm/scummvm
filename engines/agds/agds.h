@@ -272,6 +272,10 @@ public:
 	PatchPtr getPatch(const Common::String &screenName) const;
 	PatchPtr createPatch(const Common::String &screenName);
 
+	void shadowIntensity(int intensity) {
+		_shadowIntensity = intensity;
+	}
+
 private:
 	void loadPatches(Common::SeekableReadStream *file, Database & db);
 
@@ -304,6 +308,7 @@ private:
 	Color						_colorKey;
 	Color						_minShadowColor;
 	Color						_maxShadowColor;
+	int							_shadowIntensity;
 	MJPGPlayer *				_mjpgPlayer;
 	uint32						_filmStarted;
 	Common::String				_filmProcess;
