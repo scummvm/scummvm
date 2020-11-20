@@ -136,6 +136,7 @@ bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
 		_engine->_gameState->gameFlags[i] = 1;
 		_engine->_gameState->inventoryFlags[i] = 1;
 	}
+	_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] = 0;
 	int amount = 10;
 	if (argc > 1) {
 		amount = atoi(argv[1]);
