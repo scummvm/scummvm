@@ -24,7 +24,7 @@
 #define AGDS_CHARACTER_H
 
 #include "common/scummsys.h"
-#include "common/array.h"
+#include "common/hashmap.h"
 #include "common/ptr.h"
 #include "common/rect.h"
 
@@ -62,7 +62,7 @@ class Character {
 		Common::String 			filename;
 		Common::Array<Frame> 	frames;
 	};
-	Common::Array<AnimationDescription> _animations;
+	Common::HashMap<int, AnimationDescription> _animations;
 
 public:
 	Character(AGDSEngine * engine, const Common::String & name, const ObjectPtr & object):
@@ -70,7 +70,8 @@ public:
 	}
 
 	const AnimationDescription * animationDescription(uint index) const {
-		return index < _animations.size()? &_animations[index]: nullptr;
+		auto it = _animations.find(index);
+		return it != _animations.end()? &it->_value: nullptr;
 	}
 
 	const Common::String & name() const {
