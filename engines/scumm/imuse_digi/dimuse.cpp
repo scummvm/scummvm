@@ -459,9 +459,16 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 			track->curRegion = region;
 			debug(5, "SwToNeReg(trackId:%d) - sound(%d) jump to region %d, curHookId: %d", track->trackId, track->soundId, track->curRegion, track->curHookId);
 			track->curHookId = 0;
-			
 		} else {
-			debug(5, "SwToNeReg(trackId:%d) - Normal switch region, sound(%d), hookId(%d)", track->trackId, track->soundId, track->curHookId);
+			// Check if the jump led to a  "start" marker; if so, we have to enforce it anyway.
+			// Fixes bug/edge-case #11956;
+			// Go see ImuseDigiSndMgr::getJumpIdByRegionAndHookId(...) for further information.
+			if (_vm->_game.id == GID_CMI && soundDesc->jump[jumpId].dest == soundDesc->marker[2].pos && !scumm_stricmp(soundDesc->marker[2].ptr, "start")) {
+				track->curRegion = region;
+				debug(5, "SwToNeReg(trackId:%d) - Enforced sound(%d) jump to region %d marked with a \"start\" marker, hookId(%d)", track->trackId, track->soundId, track->curRegion, track->curHookId);
+			} else {
+				debug(5, "SwToNeReg(trackId:%d) - Normal switch region, sound(%d), hookId(%d)", track->trackId, track->soundId, track->curHookId);
+			}
 		}
 	} else {
 		debug(5, "SwToNeReg(trackId:%d) - Normal switch region, sound(%d), hookId(%d)", track->trackId, track->soundId, track->curHookId);
