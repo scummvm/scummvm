@@ -75,7 +75,6 @@ AGDSEngine::~AGDSEngine() {
 }
 
 bool AGDSEngine::initGraphics(int w, int h) {
-	//fixme: get mode from config?
 	typedef Common::List<Graphics::PixelFormat> FormatsType;
 	FormatsType formats = _system->getSupportedFormats();
 
@@ -90,6 +89,22 @@ bool AGDSEngine::initGraphics(int w, int h) {
 	}
 	error("no supported video format found");
 	return false;
+}
+
+void AGDSEngine::Color::FromString(const Common::String &rgb) {
+	uint cr, cg, cb;
+	if (sscanf(rgb.c_str(), "%u,%u,%u", &cr, &cg, &cb) == 3) {
+		r = cr;
+		g = cg;
+		b = cb;
+	}
+}
+
+uint32 AGDSEngine::Color::map(const Graphics::PixelFormat &format) const {
+	return format.RGBToColor(r, g, b);
+}
+Common::String AGDSEngine::Color::ToString() const {
+	return Common::String::format("#%02x%02x%02x", r, g, b);
 }
 
 bool AGDSEngine::load() {
@@ -109,8 +124,28 @@ bool AGDSEngine::load() {
 		debug("config videomode = %dx%d", w, h);
 	}
 
-	if (!initGraphics(w, h))
-		error("no video mode found");
+	{
+		Common::String transparency, shadowMin, shadowMax;
+		if (config.getKey("transparency", "core", transparency)) {
+			_colorKey.FromString(transparency);
+		}
+		debug("transparent color: %s", _colorKey.ToString().c_str());
+
+		if (config.getKey("shadow_min", "core", shadowMin)) {
+			_minShadowColor.FromString(shadowMin);
+		}
+		debug("shadow color min: %s", _minShadowColor.ToString().c_str());
+
+		if (config.getKey("shadow_max", "core", shadowMax)) {
+			_maxShadowColor.FromString(shadowMax);
+		}
+		debug("shadow color max: %s", _maxShadowColor.ToString().c_str());
+	}
+
+	if (!initGraphics(w, h)) {
+		warning("no video mode found");
+		return false;
+	}
 
 	Common::INIFile::SectionKeyList values = config.getKeys("core");
 	for (Common::INIFile::SectionKeyList::iterator i = values.begin(); i != values.end(); ++i) {
@@ -118,6 +153,7 @@ bool AGDSEngine::load() {
 			if (!_resourceManager.addPath(i->value))
 				return false;
 	}
+
 	if (!_data.open("data.adb"))
 		return false;
 
@@ -778,7 +814,7 @@ Graphics::TransparentSurface *AGDSEngine::convertToTransparent(Graphics::Surface
 	if (!surface)
 		return NULL;
 	Graphics::TransparentSurface *t = new Graphics::TransparentSurface(*surface, true);
-	t->applyColorKey(0xff, 0, 0xff);
+	t->applyColorKey(_colorKey.r, _colorKey.g, _colorKey.b);
 	surface->free();
 	delete surface;
 	return t;
