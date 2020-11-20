@@ -239,10 +239,16 @@ bool OOToposGame::handle_restart() {
 }
 
 void OOToposGame::synchronizeSave(Common::Serializer &s) {
+	if (s.isSaving())
+		_currentRoom = _currentRoomCopy;
+
 	ComprehendGameV2::synchronizeSave(s);
 
 	if (s.isLoading()) {
 		_noFloodfill = UNSET;
+		_currentRoomCopy = _currentRoom;
+
+		beforeTurn();
 	}
 }
 
