@@ -59,6 +59,9 @@ void SoundManager::tick() {
 }
 
 Sound *SoundManager::findSampleByPhaseVar(const Common::String &phaseVar) {
+	if (phaseVar.empty())
+		return nullptr;
+
 	for (auto i = _sounds.begin(); i != _sounds.end(); ++i) {
 		auto &sound = *i;
 		if (sound.phaseVar == phaseVar) {
@@ -81,6 +84,13 @@ void SoundManager::stopAll() {
 
 int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &phaseVar, int id) {
 	debug("SoundMan::play %s %s %s", process.c_str(), resource.c_str(), phaseVar.c_str());
+	{
+		auto sample = findSampleByPhaseVar(phaseVar);
+		if (sample && playing(sample->id)) {
+			debug("already playing");
+			return sample->id;
+		}
+	}
 	Common::File *file = new Common::File();
 	if (!file->open(resource)) {
 		if (!phaseVar.empty())
