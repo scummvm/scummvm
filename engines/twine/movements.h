@@ -87,17 +87,20 @@ private:
 	void processMovementExecution(int actorIdx);
 	void processRotationExecution(int actorIdx);
 
+	bool heroAction = false;
+
 public:
 	Movements(TwinEEngine *engine);
 
 	void update();
 
-	/** Hero moved */
-	bool heroMoved = false; // twinsenMove
 	/**
 	 * Hero executes the current action of the trigger zone
 	 */
-	bool heroAction = false;
+	bool shouldTriggerZoneAction() const;
+
+	/** Hero moved */
+	bool heroMoved = false; // twinsenMove
 
 	/** Process actor.x coordinate */
 	int16 processActorX = 0;
@@ -207,6 +210,10 @@ public:
 
 	void processActorMovements(int32 actorIdx);
 };
+
+inline bool Movements::shouldTriggerZoneAction() const {
+	return heroAction;
+}
 
 } // namespace TwinE
 

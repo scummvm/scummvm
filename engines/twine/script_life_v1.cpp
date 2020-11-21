@@ -257,7 +257,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		engine->_scene->currentScriptValue = ctx.actor->hitBy;
 		break;
 	case kcACTION:
-		engine->_scene->currentScriptValue = engine->_movements->heroAction ? 1 : 0;
+		engine->_scene->currentScriptValue = engine->_movements->shouldTriggerZoneAction() ? 1 : 0;
 		break;
 	case kcFLAG_GAME: {
 		int32 flagIdx = ctx.stream.readByte();

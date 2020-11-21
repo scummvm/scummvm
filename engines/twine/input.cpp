@@ -108,52 +108,15 @@ void Input::enableKeyMap(const char *id) {
 	debug("enable keymap %s", id);
 }
 
-// TODO: get rid of this table
 static constexpr const struct ActionMapping {
 	TwinEActionType action;
-	uint8 localKey;
-} twineactions[] = {
-    {Pause, 0x00},
-    {NextRoom, 0x00},
-    {PreviousRoom, 0x00},
-    {ApplyCellingGrid, 0x00},
-    {IncreaseCellingGridIndex, 0x00},
-    {DecreaseCellingGridIndex, 0x00},
-    {DebugGridCameraPressUp, 0x00},
-    {DebugGridCameraPressDown, 0x00},
-    {DebugGridCameraPressLeft, 0x00},
-    {DebugGridCameraPressRight, 0x00},
-    {DebugMenu, 0x00},
-    {DebugMenuActivate, 0x00},
-    {QuickBehaviourNormal, 0x00},
-    {QuickBehaviourAthletic, 0x00},
-    {QuickBehaviourAggressive, 0x00},
-    {QuickBehaviourDiscreet, 0x00},
-    {ExecuteBehaviourAction, 0x00},
-    {BehaviourMenu, 0x00},
-    {OptionsMenu, 0x00},
-    {RecenterScreenOnTwinsen, 0x00},
-    {UseSelectedObject, 0x00},
-    {ThrowMagicBall, 0x00},
+	uint8 mask;
+} cursorChangeMask[] = {
     {MoveForward, 0x01},
     {MoveBackward, 0x02},
     {TurnLeft, 0x04},
-    {TurnRight, 0x08},
-    {UseProtoPack, 0x00},
-    {OpenHolomap, 0x00},
-    {InventoryMenu, 0x00},
-    {SpecialAction, 0x00},
-    {Escape, 0x00},
-    {UIEnter, 0x00},
-    {UIAbort, 0x00},
-    {UILeft, 0x00},
-    {UIRight, 0x00},
-    {UIUp, 0x00},
-    {UIDown, 0x00},
-    {UINextPage, 0x00},
-    {CutsceneAbort, 0x00}};
-
-static_assert(ARRAYSIZE(twineactions) == TwinEActionType::Max, "Unexpected action mapping array size");
+    {TurnRight, 0x08}
+};
 
 uint8 Input::processCustomEngineEventStart(const Common::Event &event) {
 	if (!_engine->cfgfile.Debug) {
@@ -172,18 +135,27 @@ uint8 Input::processCustomEngineEventStart(const Common::Event &event) {
 			break;
 		default:
 			actionStates[event.customType] = 1 + event.kbdRepeat;
-			return twineactions[event.customType].localKey;
+			break;
 		}
 	} else {
 		actionStates[event.customType] = 1 + event.kbdRepeat;
-		return twineactions[event.customType].localKey;
+	}
+	for (int i = 0; i < ARRAYSIZE(cursorChangeMask); ++i) {
+		if (event.customType == cursorChangeMask[i].action) {
+			return cursorChangeMask[i].mask;
+		}
 	}
 	return 0;
 }
 
 uint8 Input::processCustomEngineEventEnd(const Common::Event &event) {
 	actionStates[event.customType] = 0;
-	return twineactions[event.customType].localKey;
+	for (int i = 0; i < ARRAYSIZE(cursorChangeMask); ++i) {
+		if (event.customType == cursorChangeMask[i].action) {
+			return cursorChangeMask[i].mask;
+		}
+	}
+	return 0;
 }
 
 void Input::readKeys() {
