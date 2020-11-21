@@ -93,7 +93,8 @@ struct MouseStatusStruct {
 class ScopedKeyMap {
 private:
 	TwinEEngine* _engine;
-	Common::String _prevKeyMap;
+	bool _changed;
+	Common::String _keymap;
 public:
 	ScopedKeyMap(TwinEEngine* engine, const char *id);
 	~ScopedKeyMap();
