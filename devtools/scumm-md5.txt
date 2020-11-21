@@ -304,6 +304,7 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	12cdc256eae5a461bcc9a49975999841	-1	en	DOS	Floppy	Demo	-	Paulo Vicente
 	99b6f822b0b2612415407865438697d6	-1	en	DOS	-	Demo	non-interactive
 	28d24a33448fab6795850bc9f159a4a2	11170	jp	FM-TOWNS	FM-TOWNS	Demo	non-interactive	khalek, Fingolfin
+	add05fa3f50d9264f47638516c9496dd	12035	ru	DOS	-	CD	-	RUSCUMM
 
 tentacle	Day of the Tentacle
 	acad97ab1c6fc2a5b2d98abf6db4a190	-1	en	All?	Floppy	Floppy	Version A ?
