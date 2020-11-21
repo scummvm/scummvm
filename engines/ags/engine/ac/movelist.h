@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MOVE_H
-#define __AC_MOVE_H
+#ifndef AGS_ENGINE_AC_MOVE_H
+#define AGS_ENGINE_AC_MOVE_H
 
 #include "util/wgt2allg.h" // fixed type
 #include "game/savegame.h"
@@ -48,4 +48,4 @@ struct MoveList {
     void WriteToFile(Common::Stream *out);
 };
 
-#endif // __AC_MOVE_H
+#endif

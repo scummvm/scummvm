@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_DYNOBJ__SCRIPTOBJECT_H
-#define __AGS_EE_DYNOBJ__SCRIPTOBJECT_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTOBJECT_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTOBJECT_H
 
 #include "ac/roomobject.h"
 
@@ -32,4 +32,4 @@ struct ScriptObject {
   int __padding;
 };
 
-#endif // __AGS_EE_DYNOBJ__SCRIPTOBJECT_H
+#endif

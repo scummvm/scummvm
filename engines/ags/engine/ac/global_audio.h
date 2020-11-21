@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALAUDIO_H
-#define __AGS_EE_AC__GLOBALAUDIO_H
+#ifndef AGS_ENGINE_AC_GLOBALAUDIO_H
+#define AGS_ENGINE_AC_GLOBALAUDIO_H
 
 void    StopAmbientSound (int channel);
 void    PlayAmbientSound (int channel, int sndnum, int vol, int x, int y);
@@ -73,4 +73,4 @@ void    stop_voice_speech();
 // Stop non-blocking voice-over and revert audio volumes if necessary
 void    stop_voice_nonblocking();
 
-#endif // __AGS_EE_AC__GLOBALAUDIO_H
+#endif

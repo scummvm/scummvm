@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALOBJECT_H
-#define __AGS_EE_AC__GLOBALOBJECT_H
+#ifndef AGS_ENGINE_AC_GLOBAL_OBJECT_H
+#define AGS_ENGINE_AC_GLOBAL_OBJECT_H
 
 namespace AGS { namespace Common { class Bitmap; } }
 using namespace AGS; // FIXME later
@@ -73,4 +73,4 @@ void GetObjectPropertyText (int item, const char *property, char *bufer);
 
 Common::Bitmap *GetObjectImage(int obj, int *isFlipped);
 
-#endif // __AGS_EE_AC__GLOBALOBJECT_H
+#endif

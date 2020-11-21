@@ -26,9 +26,9 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_DEBUG__ASSERT_H
-#define __AGS_CN_DEBUG__ASSERT_H
+#ifndef AGS_SHARED_DEBUGGING_ASSERT_H
+#define AGS_SHARED_DEBUGGING_ASSERT_H
 
 #include <assert.h>
 
-#endif // __AGS_CN_DEBUG__ASSERT_H
+#endif

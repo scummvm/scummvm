@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_SCRIPTDRAWINGSURFACE_H
-#define __AC_SCRIPTDRAWINGSURFACE_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTDRAWINGSURFACE_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTDRAWINGSURFACE_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 #include "game/roomstruct.h"
@@ -60,4 +60,4 @@ struct ScriptDrawingSurface final : AGSCCDynamicObject {
     ScriptDrawingSurface();
 };
 
-#endif // __AC_SCRIPTDRAWINGSURFACE_H
+#endif

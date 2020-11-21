@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__STRING_H
-#define __AGS_EE_AC__STRING_H
+#ifndef AGS_ENGINE_AC_STRING_H
+#define AGS_ENGINE_AC_STRING_H
 
 #include <stdarg.h>
 #include "ac/dynobj/cc_dynamicobject.h"
@@ -58,4 +58,4 @@ size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, i
 void check_strlen(char*ptt);
 void my_strncpy(char *dest, const char *src, int len);
 
-#endif // __AGS_EE_AC__STRING_H
+#endif

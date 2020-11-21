@@ -20,9 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_PLATFORM__MUTEX_BASE_H
-#define __AGS_EE_PLATFORM__MUTEX_BASE_H
-
+#ifndef AGS_ENGINE_UTIL_MUTEX_BASE_H
+#define AGS_ENGINE_UTIL_MUTEX_BASE_H
 
 namespace AGS
 {
@@ -43,4 +42,4 @@ public:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_EE_PLATFORM__MUTEX_BASE_H
+#endif

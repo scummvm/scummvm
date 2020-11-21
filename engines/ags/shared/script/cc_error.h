@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __CC_ERROR_H
-#define __CC_ERROR_H
+#ifndef AGS_SHARED_SCRIPT_ERROR_H
+#define AGS_SHARED_SCRIPT_ERROR_H
 
 #include "util/string.h"
 
@@ -41,4 +41,4 @@ extern AGS::Common::String ccErrorCallStack; // callstack where error happened
 extern bool ccErrorIsUserError;
 extern const char *ccCurScriptName; // name of currently compiling script
 
-#endif // __CC_ERROR_H
+#endif

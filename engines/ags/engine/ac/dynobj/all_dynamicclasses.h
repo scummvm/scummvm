@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_DYNOBJ__ALLDYNAMICCLASSES_H
-#define __AGS_EE_DYNOBJ__ALLDYNAMICCLASSES_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_ALLDYNAMICCLASSES_H
+#define AGS_ENGINE_AC_DYNOBJ_ALLDYNAMICCLASSES_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 #include "ac/dynobj/cc_audiochannel.h"
@@ -37,4 +37,4 @@
 
 #include "ac/dynobj/cc_serializer.h"
 
-#endif // __AGS_EE_DYNOBJ__ALLDYNAMICCLASSES_H
+#endif

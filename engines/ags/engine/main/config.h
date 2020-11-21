@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_MAIN__CONFIG_H
-#define __AGS_EE_MAIN__CONFIG_H
+#ifndef AGS_ENGINE_MAIN_CONFIG_H
+#define AGS_ENGINE_MAIN_CONFIG_H
 
 #include "main/graphics_mode.h"
 #include "util/ini_util.h"
@@ -78,4 +78,4 @@ void INIwritestring(ConfigTree &cfg, const String &sectn, const String &item, co
 void INIwriteint(ConfigTree &cfg, const String &sectn, const String &item, int value);
 
 
-#endif // __AGS_EE_MAIN__CONFIG_H
+#endif

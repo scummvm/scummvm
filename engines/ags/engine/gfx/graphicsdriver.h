@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GFX__GRAPHICSDRIVER_H
-#define __AGS_EE_GFX__GRAPHICSDRIVER_H
+#ifndef AGS_ENGINE_GFX_GRAPHICSDRIVER_H
+#define AGS_ENGINE_GFX_GRAPHICSDRIVER_H
 
 #include <memory>
 #include "gfx/gfxdefines.h"
@@ -197,4 +197,4 @@ public:
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__GRAPHICSDRIVER_H
+#endif

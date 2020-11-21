@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_SERIALIZER_H
-#define __AC_SERIALIZER_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CCSERIALIZER_H
+#define AGS_ENGINE_AC_DYNOBJ_CCSERIALIZER_H
 
 #include "ac/dynobj/cc_dynamicobject.h"
 
@@ -32,4 +32,4 @@ struct AGSDeSerializer : ICCObjectReader {
 
 extern AGSDeSerializer ccUnserializer;
 
-#endif // __AC_SERIALIZER_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_PLATFORM_UTIL_PE_H
-#define __AGS_EE_PLATFORM_UTIL_PE_H
+#ifndef AGS_ENGINE_PLATFORM_UTIL_PE_H
+#define AGS_ENGINE_PLATFORM_UTIL_PE_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -39,4 +39,4 @@ int getVersionInformation(char* filename, version_info_t* version_info);
 }
 #endif
 
-#endif // __AGS_EE_PLATFORM_UTIL_PE_H
+#endif

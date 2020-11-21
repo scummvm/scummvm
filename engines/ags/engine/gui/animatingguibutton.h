@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_GUI__ANIMATINGGUIBUTTON_H
-#define __AGS_EE_GUI__ANIMATINGGUIBUTTON_H
+#ifndef AGS_ENGINE_GUI_ANIMATINGGUIBUTTON_H
+#define AGS_ENGINE_GUI_ANIMATINGGUIBUTTON_H
 
 #include "ac/runtime_defines.h"
 
@@ -40,4 +40,4 @@ struct AnimatingGUIButton {
     void WriteToFile(Common::Stream *out);
 };
 
-#endif // __AGS_EE_GUI__ANIMATINGGUIBUTTON_H
+#endif

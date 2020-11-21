@@ -20,9 +20,9 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALDYNAMICSPRITE_H
-#define __AGS_EE_AC__GLOBALDYNAMICSPRITE_H
+#ifndef AGS_ENGINE_AC_GLOBAL_DYNAMICSPRITE_H
+#define AGS_ENGINE_AC_GLOBAL_DYNAMICSPRITE_H
 
 int LoadImageFile(const char *filename);
 
-#endif // __AGS_EE_AC__GLOBALDYNAMICSPRITE_H
+#endif

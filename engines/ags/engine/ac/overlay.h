@@ -20,8 +20,9 @@
  *
  */
 
-#ifndef __AGS_EE_AC__OVERLAY_H
-#define __AGS_EE_AC__OVERLAY_H
+#ifndef AGS_ENGINE_AC_OVERLAY_H
+#define AGS_ENGINE_AC_OVERLAY_H
+
 #include <vector>
 #include "ac/screenoverlay.h"
 #include "ac/dynobj/scriptoverlay.h"
@@ -53,4 +54,4 @@ extern int is_text_overlay; // blocking text overlay on screen
 
 extern std::vector<ScreenOverlay> screenover;
 
-#endif // __AGS_EE_AC__OVERLAY_H
+#endif

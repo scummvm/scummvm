@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__MATH_H
-#define __AGS_CN_UTIL__MATH_H
+#ifndef AGS_SHARED_UTIL_MATH_H
+#define AGS_SHARED_UTIL_MATH_H
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -98,4 +98,4 @@ namespace Math
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__MATH_H
+#endif

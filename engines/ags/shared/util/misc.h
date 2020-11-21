@@ -49,8 +49,8 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef __MISC_H
-#define __MISC_H
+#ifndef AGS_SHARED_UTIL_MISC_H
+#define AGS_SHARED_UTIL_MISC_H
 
 #include "util/file.h" // TODO: extract filestream mode constants
 

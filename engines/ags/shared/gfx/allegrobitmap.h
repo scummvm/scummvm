@@ -29,8 +29,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_GFX__ALLEGROBITMAP_H
-#define __AGS_CN_GFX__ALLEGROBITMAP_H
+#ifndef AGS_SHARED_GFX_ALLEGROBITMAP_H
+#define AGS_SHARED_GFX_ALLEGROBITMAP_H
 
 #include <allegro.h>
 #include "core/types.h"
@@ -257,4 +257,4 @@ namespace BitmapHelper
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_GFX__ALLEGROBITMAP_H
+#endif

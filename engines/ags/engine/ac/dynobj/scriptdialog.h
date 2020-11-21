@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef __AGS_EE_DYNOBJ__SCRIPTDIALOG_H
-#define __AGS_EE_DYNOBJ__SCRIPTDIALOG_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTDIALOG_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTDIALOG_H
 
 struct ScriptDialog {
     int id;
     int reserved;
 };
 
-#endif // __AGS_EE_DYNOBJ__SCRIPTDIALOG_H
+#endif

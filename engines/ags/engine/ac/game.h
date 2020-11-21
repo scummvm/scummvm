@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_AC__GAME_H
-#define __AGS_EE_AC__GAME_H
+#ifndef AGS_ENGINE_AC_GAME_H
+#define AGS_ENGINE_AC_GAME_H
 
 #include "ac/dynobj/scriptviewframe.h"
 #include "main/game_file.h"
@@ -199,4 +199,4 @@ extern unsigned int loopcounter;
 extern void set_loop_counter(unsigned int new_counter);
 extern int game_paused;
 
-#endif // __AGS_EE_AC__GAME_H
+#endif

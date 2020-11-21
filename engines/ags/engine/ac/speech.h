@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__SPEECH_H
-#define __AGS_EE_AC__SPEECH_H
+#ifndef AGS_ENGINE_AC_SPEECH_H
+#define AGS_ENGINE_AC_SPEECH_H
 
 enum SkipSpeechStyle
 {
@@ -41,4 +41,4 @@ enum SkipSpeechStyle
 int user_to_internal_skip_speech(SkipSpeechStyle userval);
 SkipSpeechStyle internal_skip_speech_to_user(int internal_val);
 
-#endif // __AGS_EE_AC__SPEECH_H
+#endif

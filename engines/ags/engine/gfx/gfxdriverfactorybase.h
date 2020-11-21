@@ -30,8 +30,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GFX__GFXDRIVERFACTORYBASE_H
-#define __AGS_EE_GFX__GFXDRIVERFACTORYBASE_H
+#ifndef AGS_ENGINE_GFX_GFXDRIVERFACTORYBASE_H
+#define AGS_ENGINE_GFX_GFXDRIVERFACTORYBASE_H
 
 #include <vector>
 #include "gfx/gfxdriverfactory.h"
@@ -117,4 +117,4 @@ protected:
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__GFXDRIVERFACTORYBASE_H
+#endif

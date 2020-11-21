@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GFX__GFXDRIVERBASE_H
-#define __AGS_EE_GFX__GFXDRIVERBASE_H
+#ifndef AGS_ENGINE_GFX_GFXDRIVERBASE_H
+#define AGS_ENGINE_GFX_GFXDRIVERBASE_H
 
 #include <vector>
 #include "gfx/ddb.h"
@@ -259,4 +259,4 @@ private:
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__GFXDRIVERBASE_H
+#endif

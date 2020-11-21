@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__RICHGAMEMEDIA_H
-#define __AGS_EE_AC__RICHGAMEMEDIA_H
+#ifndef AGS_ENGINE_AC_RICHGAMEMEDIA_H
+#define AGS_ENGINE_AC_RICHGAMEMEDIA_H
 
 // Windows Vista Rich Save Games, modified to be platform-agnostic
 
@@ -53,4 +53,4 @@ typedef struct _RICH_GAME_MEDIA_HEADER
 } RICH_GAME_MEDIA_HEADER;
 #pragma pack(pop)
 
-#endif // __AGS_EE_AC__RICHGAMEMEDIA_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_FONT_H
-#define __AC_FONT_H
+#ifndef AGS_SHARED_FONT_FONTS_H
+#define AGS_SHARED_FONT_FONTS_H
 
 #include <vector>
 #include "core/types.h"
@@ -117,4 +117,4 @@ size_t split_lines(const char *texx, SplitLines &lines, int width, int fontNumbe
 
 namespace AGS { namespace Common { extern SplitLines Lines; } }
 
-#endif // __AC_FONT_H
+#endif

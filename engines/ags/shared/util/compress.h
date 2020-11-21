@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_COMPRESS_H
-#define __AC_COMPRESS_H
+#ifndef AGS_SHARED_UTIL_COMPRESS_H
+#define AGS_SHARED_UTIL_COMPRESS_H
 
 #include "util/wgt2allg.h" // color (allegro RGB)
 
@@ -45,4 +45,4 @@ void load_lzw(Common::Stream *in, Common::Bitmap **bmm, int dst_bpp, color *pall
 void savecompressed_allegro(Common::Stream *out, const Common::Bitmap *bmpp, const color *pall);
 void loadcompressed_allegro(Common::Stream *in, Common::Bitmap **bimpp, color *pall);
 
-#endif // __AC_COMPRESS_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __CC_MANAGEDOBJECTPOOL_H
-#define __CC_MANAGEDOBJECTPOOL_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_MANAGEDOBJECTPOOL_H
+#define AGS_ENGINE_AC_DYNOBJ_MANAGEDOBJECTPOOL_H
 
 #include <vector>
 #include <queue>
@@ -93,4 +93,4 @@ extern ManagedObjectPool pool;
 #define ManagedObjectLog(...)
 #endif
 
-#endif // __CC_MANAGEDOBJECTPOOL_H
+#endif

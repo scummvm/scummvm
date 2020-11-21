@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_SCRIPTCONTAINERS_H
-#define __AC_SCRIPTCONTAINERS_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTCONTAINERS_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTCONTAINERS_H
 
 class ScriptDictBase;
 class ScriptSetBase;
@@ -35,4 +35,4 @@ ScriptSetBase *Set_Create(bool sorted, bool case_sensitive);
 // Unserialize set from the memory stream
 ScriptSetBase *Set_Unserialize(int index, const char *serializedData, int dataSize);
 
-#endif // __AC_SCRIPTCONTAINERS_H
+#endif

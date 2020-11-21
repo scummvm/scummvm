@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AC_BLENDER_H
-#define __AC_BLENDER_H
+#ifndef AGS_ENGINE_GFX_BLENDER_H
+#define AGS_ENGINE_GFX_BLENDER_H
 
 //
 // Allegro's standard alpha blenders result in:
@@ -72,4 +72,4 @@ void set_opaque_alpha_blender();
 // Sets argb2argb for 32-bit mode, and provides appropriate funcs for blending 32-bit onto 15/16/24-bit destination
 void set_argb2any_blender();
 
-#endif // __AC_BLENDER_H
+#endif

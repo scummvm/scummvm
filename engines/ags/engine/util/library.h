@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_UTIL__LIBRARY_H
-#define __AGS_EE_UTIL__LIBRARY_H
+#ifndef AGS_ENGINE_UTIL_LIBRARY_H
+#define AGS_ENGINE_UTIL_LIBRARY_H
 
 #include "core/platform.h"
 #include "util/string.h"
@@ -30,7 +30,6 @@ namespace AGS
 {
 namespace Engine
 {
-
 
 class BaseLibrary
 {
@@ -66,5 +65,4 @@ public:
 
 #endif
 
-
-#endif // __AGS_EE_UTIL__MUTEX_H
+#endif

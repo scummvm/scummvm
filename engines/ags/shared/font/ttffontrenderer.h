@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_TTFFONTRENDERER_H
-#define __AC_TTFFONTRENDERER_H
+#ifndef AGS_SHARED_FONT_TTFFONTRENDERER_H
+#define AGS_SHARED_FONT_TTFFONTRENDERER_H
 
 #include <map>
 #include "font/agsfontrenderer.h"
@@ -53,4 +53,4 @@ private:
     std::map<int, FontData> _fontData;
 };
 
-#endif // __AC_TTFFONTRENDERER_H
+#endif

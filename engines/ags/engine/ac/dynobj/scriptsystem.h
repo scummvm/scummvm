@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_DYNOBJ__SCRIPTSYSTEM_H
-#define __AGS_EE_DYNOBJ__SCRIPTSYSTEM_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTSYSTEM_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTSYSTEM_H
 
 // The text script's "system" struct
 struct ScriptSystem {
@@ -35,4 +35,4 @@ struct ScriptSystem {
     int reserved[5];  // so that future scripts don't overwrite data
 };
 
-#endif // __AGS_EE_DYNOBJ__SCRIPTSYSTEM_H
+#endif

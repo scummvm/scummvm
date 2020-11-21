@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MYLABEL_H
-#define __AC_MYLABEL_H
+#ifndef AGS_ENGINE_GUI_MYLABEL_H
+#define AGS_ENGINE_GUI_MYLABEL_H
 
 #include "gui/newcontrol.h"
 
@@ -37,4 +37,4 @@ struct MyLabel:public NewControl
   int processmessage(int mcode, int wParam, long lParam) override;
 };
 
-#endif // __AC_MYLABEL_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__SCREENOVERLAY_H
-#define __AGS_EE_AC__SCREENOVERLAY_H
+#ifndef AGS_ENGINE_AC_SCREENOVERLAY_H
+#define AGS_ENGINE_AC_SCREENOVERLAY_H
 
 #include <stdint.h>
 
@@ -46,4 +46,4 @@ struct ScreenOverlay {
     void WriteToFile(Common::Stream *out) const;
 };
 
-#endif // __AGS_EE_AC__SCREENOVERLAY_H
+#endif

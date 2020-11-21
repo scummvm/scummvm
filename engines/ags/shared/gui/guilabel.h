@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_GUILABEL_H
-#define __AC_GUILABEL_H
+#ifndef AGS_SHARED_GUI_GUILABEL_H
+#define AGS_SHARED_GUI_GUILABEL_H
 
 #include <vector>
 #include "gui/guiobject.h"
@@ -72,4 +72,4 @@ private:
 extern std::vector<AGS::Common::GUILabel> guilabels;
 extern int numguilabels;
 
-#endif // __AC_GUILABEL_H
+#endif

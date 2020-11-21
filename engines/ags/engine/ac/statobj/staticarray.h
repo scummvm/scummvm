@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_STATOBJ__STATICARRAY_H
-#define __AGS_EE_STATOBJ__STATICARRAY_H
+#ifndef _AGS_ENGINE_AC_STATICOBJ_STATICARRAY_H
+#define _AGS_ENGINE_AC_STATICOBJ_STATICARRAY_H
 
 #include "ac/statobj/staticobject.h"
 
@@ -66,4 +66,4 @@ private:
     int                 _elemCount;
 };
 
-#endif // __AGS_EE_STATOBJ__STATICOBJECT_H
+#endif

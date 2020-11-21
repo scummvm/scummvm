@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_GFX__GFXDEFINES_H
-#define __AGS_EE_GFX__GFXDEFINES_H
+#ifndef AGS_ENGINE_GFX_GFXDEFINES_H
+#define AGS_ENGINE_GFX_GFXDEFINES_H
 
 #include "core/types.h"
 
@@ -87,4 +87,4 @@ struct DisplayMode : public GraphicResolution
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__GFXDEFINES_H
+#endif

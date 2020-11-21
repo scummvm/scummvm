@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_PLATFORM__THREAD_WINDOWS_H
-#define __AGS_EE_PLATFORM__THREAD_WINDOWS_H
+#ifndef AGS_ENGINE_UTIL_THREAD_WINDOWS_H
+#define AGS_ENGINE_UTIL_THREAD_WINDOWS_H
 
 namespace AGS
 {
@@ -120,4 +120,4 @@ typedef WindowsThread Thread;
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_PLATFORM__THREAD_WINDOWS_H
+#endif

@@ -30,8 +30,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_API__IAGSSTREAM_H
-#define __AGS_CN_API__IAGSSTREAM_H
+#ifndef AGS_SHARED_API_IAGSSTREAM_H
+#define AGS_SHARED_API_IAGSSTREAM_H
 
 // TODO: it would probably be better to not include core definition headers
 // in API class headers, but make separate core headers specifically for
@@ -98,4 +98,4 @@ public:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_API__IAGSSTREAM_H
+#endif

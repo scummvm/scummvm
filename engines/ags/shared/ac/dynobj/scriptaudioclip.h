@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_DYNOBJ__SCRIPTAUDIOCLIP_H
-#define __AGS_CN_DYNOBJ__SCRIPTAUDIOCLIP_H
+#ifndef AGS_SHARED_AC_DYNOBJ_SCRIPTAUDIOCLIP_H
+#define AGS_SHARED_AC_DYNOBJ_SCRIPTAUDIOCLIP_H
 
 #include "util/string.h"
 
@@ -56,4 +56,4 @@ struct ScriptAudioClip {
     void ReadFromFile(Common::Stream *in);
 };
 
-#endif // __AGS_CN_DYNOBJ__SCRIPTAUDIOCLIP_H
+#endif

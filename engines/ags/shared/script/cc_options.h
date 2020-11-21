@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __CC_OPTIONS_H
-#define __CC_OPTIONS_H
+#ifndef AGS_SHARED_SCRIPT_CC_OPTIONS_H
+#define AGS_SHARED_SCRIPT_CC_OPTIONS_H
 
 #define SCOPT_EXPORTALL      1   // export all functions automatically
 #define SCOPT_SHOWWARNINGS   2   // printf warnings to console

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MEDIA_AUDIO_SYSTEM_H
-#define __AC_MEDIA_AUDIO_SYSTEM_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_AUDIO_SYSTEM_H
+#define AGS_ENGINE_MEDIA_AUDIO_AUDIO_SYSTEM_H
 
 #include "media/audio/audiodefines.h"
 #include "media/audio/ambientsound.h"

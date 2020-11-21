@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef __AGS_EE_DYNOBJ__SCRIPTHOTSPOT_H
-#define __AGS_EE_DYNOBJ__SCRIPTHOTSPOT_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTHOTSPOT_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTHOTSPOT_H
 
 struct ScriptHotspot {
     int id;
     int reserved;
 };
 
-#endif // __AGS_EE_DYNOBJ__SCRIPTHOTSPOT_H
+#endif

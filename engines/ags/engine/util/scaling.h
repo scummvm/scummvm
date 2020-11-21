@@ -29,8 +29,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_UTIL__SCALING_H
-#define __AGS_EE_UTIL__SCALING_H
+#ifndef AGS_ENGINE_UTIL_SCALING_H
+#define AGS_ENGINE_UTIL_SCALING_H
 
 #include "core/types.h"
 #include "util/geometry.h"
@@ -181,4 +181,4 @@ struct PlaneScaling
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_UTIL__SCALING_H
+#endif

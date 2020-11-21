@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALDIALOG_H
-#define __AGS_EE_AC__GLOBALDIALOG_H
+#ifndef AGS_ENGINE_AC_GLOBALDIALOG_H
+#define AGS_ENGINE_AC_GLOBALDIALOG_H
 
 void RunDialog(int tum);
 int GetDialogOption (int dlg, int opt);
 void SetDialogOption(int dlg, int opt, int onoroff, bool dlg_script = false);
 void StopDialog();
 
-#endif // __AGS_EE_AC__GLOBALDIALOG_H
+#endif

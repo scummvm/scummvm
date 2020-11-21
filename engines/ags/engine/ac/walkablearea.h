@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__WALKABLEAREA_H
-#define __AGS_EE_AC__WALKABLEAREA_H
+#ifndef AGS_ENGINE_AC_WALKABLEAREA_H
+#define AGS_ENGINE_AC_WALKABLEAREA_H
 
 void  redo_walkable_areas();
 int   get_walkable_area_pixel(int x, int y);
@@ -33,4 +33,4 @@ Common::Bitmap *prepare_walkable_areas (int sourceChar);
 int   get_walkable_area_at_location(int xx, int yy);
 int   get_walkable_area_at_character (int charnum);
 
-#endif // __AGS_EE_AC__WALKABLEAREA_H
+#endif

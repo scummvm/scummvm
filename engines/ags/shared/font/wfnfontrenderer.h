@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_WFNFONTRENDERER_H
-#define __AC_WFNFONTRENDERER_H
+#ifndef AGS_SHARED_FONT_WFNFONTRENDERER_H
+#define AGS_SHARED_FONT_WFNFONTRENDERER_H
 
 #include <map>
 #include "font/agsfontrenderer.h"
@@ -51,4 +51,4 @@ private:
   std::map<int, FontData> _fontData;
 };
 
-#endif // __AC_WFNFONTRENDERER_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__ROOMSTATUS_H
-#define __AGS_EE_AC__ROOMSTATUS_H
+#ifndef AGS_ENGINE_AC_ROOMSTATUS_H
+#define AGS_ENGINE_AC_ROOMSTATUS_H
 
 #include "ac/roomobject.h"
 #include "game/roomstruct.h"
@@ -82,4 +82,4 @@ RoomStatus* getRoomStatus(int room);
 bool isRoomStatusValid(int room);
 void resetRoomStatuses();
 
-#endif // __AGS_EE_AC__ROOMSTATUS_H
+#endif

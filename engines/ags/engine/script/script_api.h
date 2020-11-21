@@ -27,8 +27,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_SCRIPT__SCRIPTAPI_H
-#define __AGS_EE_SCRIPT__SCRIPTAPI_H
+#ifndef AGS_ENGINE_SCRIPT_SCRIPTAPI_H
+#define AGS_ENGINE_SCRIPT_SCRIPTAPI_H
 
 #include <stdarg.h>
 #include "core/types.h"
@@ -558,4 +558,4 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
     RET_CLASS* ret_obj = METHOD((CLASS*)self, (P1CLASS*)params[0].Ptr); \
     return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
 
-#endif // __AGS_EE_SCRIPT__SCRIPTAPI_H
+#endif

@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__MEMORY_H
-#define __AGS_CN_UTIL__MEMORY_H
+#ifndef AGS_SHARED_UTIL_MEMORY_H
+#define AGS_SHARED_UTIL_MEMORY_H
 
 #include <string.h>
 #include "util/bbop.h"
@@ -253,4 +253,4 @@ namespace Memory
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__MEMORY_H
+#endif

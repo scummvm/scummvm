@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__MATH_H
-#define __AGS_EE_AC__MATH_H
+#ifndef AGS_ENGINE_AC_MATH_H
+#define AGS_ENGINE_AC_MATH_H
 
 #include "core/types.h"
 
@@ -57,4 +57,4 @@ float Math_Sqrt(float value);
 int __Rand(int upto);
 #define Random __Rand
 
-#endif // __AGS_EE_AC__MATH_H
+#endif

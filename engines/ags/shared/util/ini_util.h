@@ -27,8 +27,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__INIUTIL_H
-#define __AGS_CN_UTIL__INIUTIL_H
+#ifndef AGS_SHARED_UTIL_INIUTIL_H
+#define AGS_SHARED_UTIL_INIUTIL_H
 
 #include <map>
 #include "util/string.h"
@@ -74,4 +74,4 @@ namespace IniUtil
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__INIUTIL_H
+#endif

@@ -20,13 +20,8 @@
  *
  */
 
-//=============================================================================
-//
-//
-//
-//=============================================================================
-#ifndef __AGS_CN_UTIL__BUFFEREDSTREAM_H
-#define __AGS_CN_UTIL__BUFFEREDSTREAM_H
+#ifndef AGS_SHARED_UTIL_BUFFEREDSTREAM_H
+#define AGS_SHARED_UTIL_BUFFEREDSTREAM_H
 
 #include <vector>
 #include "util/filestream.h"
@@ -76,4 +71,4 @@ private:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__BUFFEREDSTREAM_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_DYNOBJ__SCRIPTDATETIME_H
-#define __AGS_EE_DYNOBJ__SCRIPTDATETIME_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTDATETIME_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTDATETIME_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -38,4 +38,4 @@ struct ScriptDateTime final : AGSCCDynamicObject {
     ScriptDateTime();
 };
 
-#endif // __AGS_EE_DYNOBJ__SCRIPTDATETIME_H
+#endif

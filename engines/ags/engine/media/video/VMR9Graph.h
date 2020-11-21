@@ -31,7 +31,7 @@
 
 #if _MSC_VER > 1000
 #pragma once
-#endif // _MSC_VER > 1000
+#endif
 
 #include <dshow.h>
 #include <Vmr9.h>
@@ -157,4 +157,4 @@ protected:
 	IDirect3DSurface9*			m_pD3DSurface;
 };
 
-#endif // !defined(AFX_VMR9GRAPH_H__449FDB5B_6719_4134_B5A7_B651C08D109E__INCLUDED_)
+#endif

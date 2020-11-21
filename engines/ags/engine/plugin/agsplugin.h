@@ -28,8 +28,8 @@
 //
 //=============================================================================
 
-#ifndef _AGS_PLUGIN_H
-#define _AGS_PLUGIN_H
+#ifndef AGS_ENGINE_PLUGIN_AGSPLUGIN_H
+#define AGS_ENGINE_PLUGIN_AGSPLUGIN_H
 
 // If the plugin isn't using DDraw, don't require the headers
 #ifndef DIRECTDRAW_VERSION

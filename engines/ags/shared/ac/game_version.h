@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_AC__GAMEVERSION_H
-#define __AGS_CN_AC__GAMEVERSION_H
+#ifndef AGS_SHARED_AC_GAMEVERSION_H
+#define AGS_SHARED_AC_GAMEVERSION_H
 
 /*
 
@@ -153,4 +153,4 @@ enum GameDataVersion
 
 extern GameDataVersion loaded_game_file_version;
 
-#endif // __AGS_CN_AC__GAMEVERSION_H
+#endif

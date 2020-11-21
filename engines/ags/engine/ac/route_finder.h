@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_ROUTEFND_H
-#define __AC_ROUTEFND_H
+#ifndef AGS_ENGINE_AC_ROUTEFND_H
+#define AGS_ENGINE_AC_ROUTEFND_H
 
 #include "ac/game_version.h"
 
@@ -42,4 +42,4 @@ void set_route_move_speed(int speed_x, int speed_y);
 int find_route(short srcx, short srcy, short xx, short yy, AGS::Common::Bitmap *onscreen, int movlst, int nocross = 0, int ignore_walls = 0);
 void calculate_move_stage(MoveList * mlsp, int aaa);
 
-#endif // __AC_ROUTEFND_H
+#endif

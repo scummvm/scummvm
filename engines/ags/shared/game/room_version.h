@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_AC__ROOMVERSION_H
-#define __AGS_CN_AC__ROOMVERSION_H
+#ifndef AGS_SHARED_GAME_ROOMVERSION_H
+#define AGS_SHARED_GAME_ROOMVERSION_H
 
 /* room file versions history
 8:  final v1.14 release
@@ -93,4 +93,4 @@ enum RoomFileVersion
     kRoomVersion_Current = kRoomVersion_3508
 };
 
-#endif // __AGS_CN_AC__ROOMVERSION_H
+#endif

@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_PLUGIN__PLUGINENGINE_H
-#define __AGS_EE_PLUGIN__PLUGINENGINE_H
+#ifndef AGS_ENGINE_PLUGIN_PLUGIN_ENGINE_H
+#define AGS_ENGINE_PLUGIN_PLUGIN_ENGINE_H
 
 #include <vector>
 #include "game/game_init.h"
@@ -54,4 +54,4 @@ bool pl_any_want_hook(int event);
 void pl_set_file_handle(long data, AGS::Common::Stream *stream);
 void pl_clear_file_handle();
 
-#endif // __AGS_EE_PLUGIN__PLUGINENGINE_H
+#endif

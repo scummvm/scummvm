@@ -20,11 +20,11 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALLABEL_H
-#define __AGS_EE_AC__GLOBALLABEL_H
+#ifndef AGS_ENGINE_AC_GLOBAL_LABEL_H
+#define AGS_ENGINE_AC_GLOBAL_LABEL_H
 
 void		SetLabelColor(int guin,int objn, int colr);
 void		SetLabelText(int guin,int objn, const char*newtx);
 void		SetLabelFont(int guin,int objn, int fontnum);
 
-#endif // __AGS_EE_AC__GLOBALLABEL_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_PLUGIN__PLUGINOBJECTREADER_H
-#define __AGS_EE_PLUGIN__PLUGINOBJECTREADER_H
+#ifndef AGS_ENGINE_PLUGIN_PLUGINOBJECTREADER_H
+#define AGS_ENGINE_PLUGIN_PLUGINOBJECTREADER_H
 
 class IAGSManagedObjectReader;
 
@@ -30,4 +30,4 @@ struct PluginObjectReader {
     const char *type;
 };
 
-#endif // __AGS_EE_PLUGIN__PLUGINOBJECTREADER_H
+#endif

@@ -25,8 +25,9 @@
 // Various utility bit and byte operations
 //
 //=============================================================================
-#ifndef __AGS_CN_UTIL__BBOP_H
-#define __AGS_CN_UTIL__BBOP_H
+
+#ifndef AGS_SHARED_UTIL_BBOP_H
+#define AGS_SHARED_UTIL_BBOP_H
 
 #include "core/platform.h"
 #include "core/types.h"
@@ -165,4 +166,4 @@ namespace BBOp  = BitByteOperations;
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__BBOP_H
+#endif

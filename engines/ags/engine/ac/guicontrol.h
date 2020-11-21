@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GUICONTROL_H
-#define __AGS_EE_AC__GUICONTROL_H
+#ifndef AGS_ENGINE_AC_GUICONTROL_H
+#define AGS_ENGINE_AC_GUICONTROL_H
 
 #include "gui/guiobject.h"
 #include "gui/guibutton.h"
@@ -70,4 +70,4 @@ void		GUIControl_SetSize(GUIObject *guio, int newwid, int newhit);
 void		GUIControl_SendToBack(GUIObject *guio);
 void		GUIControl_BringToFront(GUIObject *guio);
 
-#endif // __AGS_EE_AC__GUICONTROL_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_UTIL__MUTEX_PTHREAD_H
-#define __AGS_EE_UTIL__MUTEX_PTHREAD_H
+#ifndef AGS_ENGINE_UTIL_MUTEX_PTHREAD_H
+#define AGS_ENGINE_UTIL_MUTEX_PTHREAD_H
 
 #include <pthread.h>
 
@@ -64,4 +64,4 @@ typedef PThreadMutex Mutex;
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_UTIL__MUTEX_PTHREAD_H
+#endif

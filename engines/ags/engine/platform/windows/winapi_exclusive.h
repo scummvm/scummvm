@@ -28,8 +28,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_PLATFORM__WINAPI_EXCLUSIVE_H
-#define __AGS_EE_PLATFORM__WINAPI_EXCLUSIVE_H
+#ifndef AGS_ENGINE_PLATFORM_WINDOWS_WINAPI_EXCLUSIVE_H
+#define AGS_ENGINE_PLATFORM_WINDOWS_WINAPI_EXCLUSIVE_H
 
 #ifndef _WINDOWS_ // do not include if windows.h was included first
 #define _WINDOWS_ // there can be only one
@@ -57,6 +57,6 @@ typedef HANDLE HWND;
 
 typedef int (FAR WINAPI *FARPROC)();
 
-#endif // _WINDOWS_
+#endif
 
-#endif // __AGS_EE_PLATFORM__WINAPI_EXCLUSIVE_H
+#endif

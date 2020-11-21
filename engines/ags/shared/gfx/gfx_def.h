@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_GFX__GFXDEF_H
-#define __AGS_CN_GFX__GFXDEF_H
+#ifndef AGS_SHARED_GFX_GFXDEF_H
+#define AGS_SHARED_GFX_GFXDEF_H
 
 namespace AGS
 {
@@ -125,4 +125,4 @@ namespace GfxDef
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_GFX__GFXDEF_H
+#endif

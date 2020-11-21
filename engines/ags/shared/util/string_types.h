@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_UTIL__STRINGTYPES_H
-#define __AGS_CN_UTIL__STRINGTYPES_H
+#ifndef AGS_SHARED_UTIL_STRINGTYPES_H
+#define AGS_SHARED_UTIL_STRINGTYPES_H
 
 #include <cctype>
 #include <functional>
@@ -120,4 +120,4 @@ typedef std::unordered_map<String, String, HashStrNoCase, StrEqNoCase> StringIMa
 } // namespace Common
 } // namespace AGS
 
-#endif //__AGS_CN_UTIL__STRINGTYPES_H
+#endif

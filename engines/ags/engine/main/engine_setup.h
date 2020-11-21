@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_MAIN__ENGINESETUP_H
-#define __AGS_EE_MAIN__ENGINESETUP_H
+#ifndef AGS_ENGINE_MAIN_ENGINESETUP_H
+#define AGS_ENGINE_MAIN_ENGINESETUP_H
 
 #include "util/geometry.h"
 #include "gfx/gfxdefines.h"
@@ -38,4 +38,4 @@ void engine_pre_gfxsystem_shutdown();
 // Applies necessary changes after screen<->virtual coordinate transformation has changed
 void on_coordinates_scaling_changed();
 
-#endif // __AGS_EE_MAIN__ENGINESETUP_H
+#endif

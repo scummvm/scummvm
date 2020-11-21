@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALSCREEN_H
-#define __AGS_EE_AC__GLOBALSCREEN_H
+#ifndef AGS_ENGINE_AC_GLOBAL_SCREEN_H
+#define AGS_ENGINE_AC_GLOBAL_SCREEN_H
 
 void FlipScreen(int amount);
 void ShakeScreen(int severe);
@@ -33,4 +33,4 @@ void SetNextScreenTransition(int newtrans);
 void SetFadeColor(int red, int green, int blue);
 void FadeIn(int sppd);
 
-#endif // __AGS_EE_AC__GLOBALSCREEN_H
+#endif

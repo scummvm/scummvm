@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_GUILISTBOX_H
-#define __AC_GUILISTBOX_H
+#ifndef AGS_SHARED_GUI_GUILISTBOX_H
+#define AGS_SHARED_GUI_GUILISTBOX_H
 
 #include <vector>
 #include "gui/guiobject.h"
@@ -103,4 +103,4 @@ private:
 extern std::vector<AGS::Common::GUIListBox> guilist;
 extern int numguilist;
 
-#endif // __AC_GUILISTBOX_H
+#endif

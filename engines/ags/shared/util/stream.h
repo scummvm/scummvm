@@ -32,8 +32,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__STREAM_H
-#define __AGS_CN_UTIL__STREAM_H
+#ifndef AGS_SHARED_UTIL_STREAM_H
+#define AGS_SHARED_UTIL_STREAM_H
 
 #include "api/stream_api.h"
 
@@ -92,4 +92,4 @@ public:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__STREAM_H
+#endif

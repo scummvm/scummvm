@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GFX__ALI3DD3D_H
-#define __AGS_EE_GFX__ALI3DD3D_H
+#ifndef AGS_ENGINE_PLATFORM_WINDOWS_ALI3DD3D_H
+#define AGS_ENGINE_PLATFORM_WINDOWS_ALI3DD3D_H
 
 #include "core/platform.h"
 
@@ -343,4 +343,4 @@ private:
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__ALI3DD3D_H
+#endif

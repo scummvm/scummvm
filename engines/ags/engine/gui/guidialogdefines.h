@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_GUI__GUIDIALOGDEFINES_H
-#define __AGS_EE_GUI__GUIDIALOGDEFINES_H
+#ifndef AGS_ENGINE_GUI_GUIDIALOGDEFINES_H
+#define AGS_ENGINE_GUI_GUIDIALOGDEFINES_H
 
 #define MSG_RESTORE      984
 #define MSG_CANCEL       985    // "Cancel"
@@ -113,4 +113,4 @@ struct OnScreenWindow
     OnScreenWindow();
 };
 
-#endif // __AGS_EE_GUI__GUIDIALOGDEFINES_H
+#endif

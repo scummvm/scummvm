@@ -28,8 +28,8 @@
 // rename this to RoomObject one day?
 //=============================================================================
 
-#ifndef __AGS_EE_AC__OBJECT_H
-#define __AGS_EE_AC__OBJECT_H
+#ifndef AGS_ENGINE_AC_OBJECT_H
+#define AGS_ENGINE_AC_OBJECT_H
 
 #include "ac/common_defines.h"
 #include "ac/dynobj/scriptobject.h"
@@ -96,5 +96,4 @@ int     is_pos_in_sprite(int xx,int yy,int arx,int ary, Common::Bitmap *sprit, i
 // X and Y are ROOM coordinates
 int     check_click_on_object(int roomx, int roomy, int mood);
 
-#endif // __AGS_EE_AC__OBJECT_H
-
+#endif

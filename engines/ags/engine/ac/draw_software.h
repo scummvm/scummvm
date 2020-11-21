@@ -27,8 +27,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_AC__DRAWSOFTWARE_H
-#define __AGS_EE_AC__DRAWSOFTWARE_H
+#ifndef AGS_ENGINE_AC_DRAWSOFTWARE_H
+#define AGS_ENGINE_AC_DRAWSOFTWARE_H
 
 #include "gfx/bitmap.h"
 #include "gfx/ddb.h"
@@ -54,4 +54,4 @@ void update_black_invreg_and_reset(AGS::Common::Bitmap *ds);
 // no_transform flag tells the system that the regions should be plain copied to the ds.
 void update_room_invreg_and_reset(int view_index, AGS::Common::Bitmap *ds, AGS::Common::Bitmap *src, bool no_transform);
 
-#endif // __AGS_EE_AC__DRAWSOFTWARE_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALDISPLAY_H
-#define __AGS_EE_AC__GLOBALDISPLAY_H
+#ifndef AGS_ENGINE_AC_GLOBALDISPLAY_H
+#define AGS_ENGINE_AC_GLOBALDISPLAY_H
 
 #include "ac/speech.h"
 
@@ -39,4 +39,4 @@ void SetSpeechStyle (int newstyle);
 void SetSkipSpeech (SkipSpeechStyle newval);
 SkipSpeechStyle GetSkipSpeech();
 
-#endif // __AGS_EE_AC__GLOBALDISPLAY_H
+#endif

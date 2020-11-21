@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_CCGUI_H
-#define __AC_CCGUI_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CCGUI_H
+#define AGS_ENGINE_AC_DYNOBJ_CCGUI_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -37,4 +37,4 @@ struct CCGUI final : AGSCCDynamicObject {
     void Unserialize(int index, const char *serializedData, int dataSize) override;
 };
 
-#endif // __AC_CCGUI_H
+#endif

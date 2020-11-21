@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALROOM_H
-#define __AGS_EE_AC__GLOBALROOM_H
+#ifndef AGS_ENGINE_AC_GLOBAL_ROOM_H
+#define AGS_ENGINE_AC_GLOBAL_ROOM_H
 
 void SetAmbientTint (int red, int green, int blue, int opacity, int luminance);
 void SetAmbientLightLevel(int light_level);
@@ -37,4 +37,4 @@ void GetRoomPropertyText (const char *property, char *bufer);
 void SetBackgroundFrame(int frnum);
 int GetBackgroundFrame() ;
 
-#endif // __AGS_EE_AC__GLOBALROOM_H
+#endif

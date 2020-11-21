@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__SPRITELISTENTRY_H
-#define __AGS_EE_AC__SPRITELISTENTRY_H
+#ifndef AGS_ENGINE_AC_SPRITELISTENTRY_H
+#define AGS_ENGINE_AC_SPRITELISTENTRY_H
 
 #include "gfx/ddb.h"
 
@@ -38,4 +38,4 @@ struct SpriteListEntry
     SpriteListEntry();
 };
 
-#endif // __AGS_EE_AC__SPRITELISTENTRY_H
+#endif

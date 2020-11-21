@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_AC__PATHHELPER_H
-#define __AGS_EE_AC__PATHHELPER_H
+#ifndef AGS_ENGINE_AC_PATHHELPER_H
+#define AGS_ENGINE_AC_PATHHELPER_H
 
 #include "util/string.h"
 
@@ -83,4 +83,4 @@ String  get_audio_install_dir();
 String  get_voice_install_dir();
 void    get_install_dir_path(char* buffer, const char *fileName);
 
-#endif // __AGS_EE_AC__PATHHELPER_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_SCRIPT__NONBLOCKINGSCRIPTFUNCTION_H
-#define __AGS_EE_SCRIPT__NONBLOCKINGSCRIPTFUNCTION_H
+#ifndef AGS_ENGINE_SCRIPT_NONBLOCKINGSCRIPTFUNCTION_H
+#define AGS_ENGINE_SCRIPT_NONBLOCKINGSCRIPTFUNCTION_H
 
 #include "ac/runtime_defines.h"
 #include "script/runtimescriptvalue.h"
@@ -50,4 +50,4 @@ struct NonBlockingScriptFunction
     }
 };
 
-#endif // __AGS_EE_SCRIPT__NONBLOCKINGSCRIPTFUNCTION_H
+#endif

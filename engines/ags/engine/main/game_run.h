@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_MAIN__GAMERUN_H
-#define __AGS_EE_MAIN__GAMERUN_H
+#ifndef AGS_ENGINE_MAIN_GAME_RUN_H
+#define AGS_ENGINE_MAIN_GAME_RUN_H
 
 namespace AGS { namespace Engine { class IDriverDependantBitmap; }}
 using namespace AGS::Engine; // FIXME later
@@ -50,4 +50,4 @@ bool run_service_key_controls(int &kgn);
 // otherwise returns true and provides mouse button code.
 bool run_service_mb_controls(int &mbut, int &mwheelz);
 
-#endif // __AGS_EE_MAIN__GAMERUN_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_SCRIPT__EXECUTINGSCRIPT_H
-#define __AGS_EE_SCRIPT__EXECUTINGSCRIPT_H
+#ifndef AGS_ENGINE_SCRIPT_EXECUTINGSCRIPT_H
+#define AGS_ENGINE_SCRIPT_EXECUTINGSCRIPT_H
 
 #include "script/cc_instance.h"
 
@@ -76,4 +76,4 @@ struct ExecutingScript {
     ExecutingScript();
 };
 
-#endif // __AGS_EE_SCRIPT__EXECUTINGSCRIPT_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__TREEMAP_H
-#define __AGS_EE_AC__TREEMAP_H
+#ifndef AGS_ENGINE_AC_TREEMAP_H
+#define AGS_ENGINE_AC_TREEMAP_H
 
 // Binary tree structure for holding translations, allows fast
 // access
@@ -37,4 +37,4 @@ struct TreeMap {
     ~TreeMap();
 };
 
-#endif // __AGS_EE_AC__TREEMAP_H
+#endif

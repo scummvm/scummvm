@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_UTIL__MUTEX_H
-#define __AGS_EE_UTIL__MUTEX_H
+#ifndef AGS_ENGINE_UTIL_MUTEX_H
+#define AGS_ENGINE_UTIL_MUTEX_H
 
 namespace AGS
 {
@@ -55,4 +55,4 @@ public:
 #include "mutex_std.h"
 #endif
 
-#endif // __AGS_EE_UTIL__MUTEX_H
+#endif

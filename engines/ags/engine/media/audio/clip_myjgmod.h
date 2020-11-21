@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MYJGMOD_H
-#define __AC_MYJGMOD_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_CLIP_MYJGMOD_H
+#define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYJGMOD_H
 
 #include "jgmod.h"
 #include "media/audio/soundclip.h"
@@ -54,4 +54,4 @@ struct MYMOD:public SOUNDCLIP
     MYMOD();
 };
 
-#endif // __AC_MYJGMOD_H
+#endif

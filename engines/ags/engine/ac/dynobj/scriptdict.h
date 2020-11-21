@@ -33,8 +33,8 @@
 //
 //=============================================================================
 
-#ifndef __AC_SCRIPTDICT_H
-#define __AC_SCRIPTDICT_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTDICT_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTDICT_H
 
 #include <map>
 #include <unordered_map>
@@ -194,4 +194,4 @@ typedef ScriptDictImpl< std::map<String, String, StrLessNoCase>, true, false > S
 typedef ScriptDictImpl< std::unordered_map<String, String>, false, true > ScriptHashDict;
 typedef ScriptDictImpl< std::unordered_map<String, String, HashStrNoCase, StrEqNoCase>, false, false > ScriptHashDictCI;
 
-#endif // __AC_SCRIPTDICT_H
+#endif

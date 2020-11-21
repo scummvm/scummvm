@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_SCRIPTCAMERA_H
-#define __AC_SCRIPTCAMERA_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTCAMERA_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTCAMERA_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -49,4 +49,4 @@ private:
 // Unserialize camera from the memory stream
 ScriptCamera *Camera_Unserialize(int handle, const char *serializedData, int dataSize);
 
-#endif // __AC_SCRIPTCAMERA_H
+#endif

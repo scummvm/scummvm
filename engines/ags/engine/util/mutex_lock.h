@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_UTIL__MUTEX_LOCK_H
-#define __AGS_EE_UTIL__MUTEX_LOCK_H
+#ifndef AGS_ENGINE_UTIL_MUTEX_LOCK_H
+#define AGS_ENGINE_UTIL_MUTEX_LOCK_H
 
 #include "util/mutex.h"
 
@@ -71,4 +71,4 @@ public:
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_UTIL__MUTEX_LOCK_H
+#endif

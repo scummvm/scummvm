@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__TEXTSTREAMWRITER_H
-#define __AGS_CN_UTIL__TEXTSTREAMWRITER_H
+#ifndef AGS_SHARED_UTIL_TEXTSTREAMWRITER_H
+#define AGS_SHARED_UTIL_TEXTSTREAMWRITER_H
 
 #include "util/textwriter.h"
 
@@ -69,4 +69,4 @@ private:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__TEXTSTREAMWRITER_H
+#endif

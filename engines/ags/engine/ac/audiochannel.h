@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__AUDIOCHANNEL_H
-#define __AGS_EE_AC__AUDIOCHANNEL_H
+#ifndef AGS_ENGINE_AC_AUDIOCHANNEL_H
+#define AGS_ENGINE_AC_AUDIOCHANNEL_H
 
 #include "ac/dynobj/scriptaudioclip.h"
 #include "ac/dynobj/scriptaudiochannel.h"
@@ -40,4 +40,4 @@ void    AudioChannel_Stop(ScriptAudioChannel *channel);
 void    AudioChannel_Seek(ScriptAudioChannel *channel, int newPosition);
 void    AudioChannel_SetRoomLocation(ScriptAudioChannel *channel, int xPos, int yPos);
 
-#endif // __AGS_EE_AC__AUDIOCHANNEL_H
+#endif

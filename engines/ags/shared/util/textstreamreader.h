@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__TEXTSTREAMREADER_H
-#define __AGS_CN_UTIL__TEXTSTREAMREADER_H
+#ifndef AGS_SHARED_UTIL_TEXTSTREAMREADER_H
+#define AGS_SHARED_UTIL_TEXTSTREAMREADER_H
 
 #include "util/textreader.h"
 
@@ -68,4 +68,4 @@ private:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__TEXTSTREAM_H
+#endif

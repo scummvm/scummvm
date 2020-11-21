@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GFX__ALLEGROGFXFILTER_H
-#define __AGS_EE_GFX__ALLEGROGFXFILTER_H
+#ifndef AGS_ENGINE_GFX_ALLEGROGFXFILTER_H
+#define AGS_ENGINE_GFX_ALLEGROGFXFILTER_H
 
 #include "gfx/bitmap.h"
 #include "gfx/gfxfilter_scaling.h"
@@ -78,4 +78,4 @@ protected:
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__ALLEGROGFXFILTER_H
+#endif

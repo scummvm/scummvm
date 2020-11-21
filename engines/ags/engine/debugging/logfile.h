@@ -32,8 +32,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_DEBUG__LOGFILE_H
-#define __AGS_EE_DEBUG__LOGFILE_H
+#ifndef AGS_ENGINE_DEBUGGING_LOGFILE_H
+#define AGS_ENGINE_DEBUGGING_LOGFILE_H
 
 #include <memory>
 #include "debug/outputhandler.h"
@@ -86,4 +86,4 @@ private:
 }   // namespace Engine
 }   // namespace AGS
 
-#endif // __AGS_EE_DEBUG__LOGFILE_H
+#endif

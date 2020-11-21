@@ -45,8 +45,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_GAME__ROOMINFO_H
-#define __AGS_CN_GAME__ROOMINFO_H
+#ifndef AGS_SHARED_GAME_ROOMINFO_H
+#define AGS_SHARED_GAME_ROOMINFO_H
 
 #include <memory>
 #include "ac/common_defines.h"
@@ -394,4 +394,4 @@ PBitmap FixBitmap(PBitmap bmp, int dst_width, int dst_height);
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_GAME__ROOMINFO_H
+#endif

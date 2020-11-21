@@ -20,9 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_UTIL__LIBRARY_DUMMY_H
-#define __AGS_EE_UTIL__LIBRARY_DUMMY_H
-
+#ifndef AGS_ENGINE_UTIL_LIBRARY_DUMMY_H
+#define AGS_ENGINE_UTIL_LIBRARY_DUMMY_H
 
 namespace AGS
 {
@@ -70,6 +69,4 @@ typedef DummyLibrary Library;
 } // namespace Engine
 } // namespace AGS
 
-
-
-#endif // __AGS_EE_UTIL__LIBRARY_DUMMY_H
+#endif

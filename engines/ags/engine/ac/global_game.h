@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALGAME_H
-#define __AGS_EE_AC__GLOBALGAME_H
+#ifndef AGS_ENGINE_AC_GLOBAL_GAME_H
+#define AGS_ENGINE_AC_GLOBAL_GAME_H
 
 #include "util/string.h"
 using namespace AGS; // FIXME later
@@ -90,4 +90,4 @@ int WaitMouse(int nloops);
 int WaitMouseKey(int nloops);
 void SkipWait();
 
-#endif // __AGS_EE_AC__GLOBALGAME_H
+#endif

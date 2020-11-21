@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALINVWINDOW_H
-#define __AGS_EE_AC__GLOBALINVWINDOW_H
+#ifndef AGS_ENGINE_AC_GLOBAL_INVWINDOW_H
+#define AGS_ENGINE_AC_GLOBAL_INVWINDOW_H
 
 void sc_invscreen();
 void SetInvDimensions(int ww,int hh);
 
-#endif // __AGS_EE_AC__GLOBALINVWINDOW_H
+#endif

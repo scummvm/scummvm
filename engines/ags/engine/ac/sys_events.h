@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__SYS_EVENTS_H
-#define __AGS_EE_AC__SYS_EVENTS_H
+#ifndef AGS_ENGINE_AC_SYS_EVENTS_H
+#define AGS_ENGINE_AC_SYS_EVENTS_H
 
 int  ags_getch ();
 int  ags_kbhit ();
@@ -38,4 +38,4 @@ void ags_clear_input_buffer();
 // TODO: seriously not a good design, replace with event listening
 void ags_wait_until_keypress();
 
-#endif // __AGS_EE_AC__SYS_EVENTS_H
+#endif

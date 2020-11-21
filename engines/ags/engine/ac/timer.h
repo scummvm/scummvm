@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__TIMER_H
-#define __AGS_EE_AC__TIMER_H
+#ifndef AGS_ENGINE_AC_TIMER_H
+#define AGS_ENGINE_AC_TIMER_H
 
 #include <type_traits>
 #include <chrono>
@@ -42,4 +42,4 @@ extern bool isTimerFpsMaxed();
 extern bool waitingForNextTick();  // store last tick time.
 extern void skipMissedTicks();  // if more than N frames, just skip all, start a fresh.
 
-#endif // __AGS_EE_AC__TIMER_H
+#endif

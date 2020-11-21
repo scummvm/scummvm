@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_SOUNDCACHE_H
-#define __AC_SOUNDCACHE_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_SOUNDCACHE_H
+#define AGS_ENGINE_MEDIA_AUDIO_SOUNDCACHE_H
 
 #include "ac/asset_helper.h"
 
@@ -53,4 +53,4 @@ void sound_cache_free(char* buffer, bool is_wave);
 char* get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size);
 
 
-#endif // __AC_SOUNDCACHE_H
+#endif

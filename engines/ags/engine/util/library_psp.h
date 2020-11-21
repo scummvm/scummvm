@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_UTIL__LIBRARY_PSP_H
-#define __AGS_EE_UTIL__LIBRARY_PSP_H
+#ifndef AGS_ENGINE_UTIL_LIBRARY_PSP_H
+#define AGS_ENGINE_UTIL_LIBRARY_PSP_H
 
 #include <pspsdk.h>
 #include "util/string.h"
@@ -155,11 +155,7 @@ private:
 
 typedef PSPLibrary Library;
 
-
-
 } // namespace Engine
 } // namespace AGS
 
-
-
-#endif // __AGS_EE_UTIL__LIBRARY_PSP_H
+#endif

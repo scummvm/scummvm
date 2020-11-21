@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AC_SOUND_H
-#define __AC_SOUND_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_SOUND_H
+#define AGS_ENGINE_MEDIA_AUDIO_SOUND_H
 
 #include "ac/asset_helper.h"
 #include "media/audio/soundclip.h"
@@ -42,4 +42,4 @@ SOUNDCLIP *my_load_mod(const AssetPath &asset_name, int repet);
 
 extern int use_extra_sound_offset;
 
-#endif // __AC_SOUND_H
+#endif

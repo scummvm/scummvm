@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__INVWINDOW_H
-#define __AGS_EE_AC__INVWINDOW_H
+#ifndef AGS_ENGINE_AC_INVWINDOW_H
+#define AGS_ENGINE_AC_INVWINDOW_H
 
 #include "ac/characterinfo.h"
 #include "ac/dynobj/scriptinvitem.h"
@@ -50,4 +50,4 @@ int				offset_over_inv(GUIInvWindow *inv);
 // NOTE: This function is valid for AGS 2.72 and lower
 int             invscreen();
 
-#endif // __AGS_EE_AC__INVWINDOW_H
+#endif

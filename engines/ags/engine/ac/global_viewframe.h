@@ -20,9 +20,9 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALVIEWFRAME_H
-#define __AGS_EE_AC__GLOBALVIEWFRAME_H
+#ifndef AGS_ENGINE_AC_GLOBAL_VIEWFRAME_H
+#define AGS_ENGINE_AC_GLOBAL_VIEWFRAME_H
 
 void SetFrameSound (int vii, int loop, int frame, int sound);
 
-#endif // __AGS_EE_AC__GLOBALVIEWFRAME_H
+#endif

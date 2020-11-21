@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_GAME__SAVEGAME_H
-#define __AGS_EE_GAME__SAVEGAME_H
+#ifndef AGS_ENGINE_GAME_SAVEGAME_H
+#define AGS_ENGINE_GAME_SAVEGAME_H
 
 #include <memory>
 #include "ac/game_version.h"
@@ -174,4 +174,4 @@ void           SaveGameState(PStream out);
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GAME__SAVEGAME_H
+#endif

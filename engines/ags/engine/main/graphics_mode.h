@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_MAIN__GRAPHICSMODE_H
-#define __AGS_EE_MAIN__GRAPHICSMODE_H
+#ifndef AGS_ENGINE_MAIN_GRAPHICSMODE_H
+#define AGS_ENGINE_MAIN_GRAPHICSMODE_H
 
 #include "gfx/gfxdefines.h"
 #include "util/scaling.h"
@@ -160,4 +160,4 @@ bool graphics_mode_set_filter(const String &filter_id);
 // Releases current graphic mode and shuts down renderer
 void graphics_mode_shutdown();
 
-#endif // __AGS_EE_MAIN__GRAPHICSMODE_H
+#endif

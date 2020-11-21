@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_UTIL__FILESTREAM_H
-#define __AGS_CN_UTIL__FILESTREAM_H
+#ifndef AGS_SHARED_UTIL_FILESTREAM_H
+#define AGS_SHARED_UTIL_FILESTREAM_H
 
 #include <stdio.h>
 
@@ -79,4 +79,4 @@ private:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__FILESTREAM_H
+#endif

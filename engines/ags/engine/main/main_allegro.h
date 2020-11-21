@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_MAIN__MAINALLEGRO_H
-#define __AGS_EE_MAIN__MAINALLEGRO_H
+#ifndef AGS_ENGINE_MAIN_MAINALLEGRO_H
+#define AGS_ENGINE_MAIN_MAINALLEGRO_H
 
 // Gets allegro_error as a const string.
 // Please, use this getter to acquire error text, do not use allegro_error
@@ -33,4 +33,4 @@ const char *get_allegro_error();
 // truncated. Null terminator is always guaranteed.
 const char *set_allegro_error(const char *format, ...);
 
-#endif // __AGS_EE_MAIN__MAINALLEGRO_H
+#endif

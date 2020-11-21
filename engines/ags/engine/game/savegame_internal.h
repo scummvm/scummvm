@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_GAME__SAVEGAMEINTERNAL_H
-#define __AGS_EE_GAME__SAVEGAMEINTERNAL_H
+#ifndef AGS_ENGINE_GAME_SAVEGAMEINTERNAL_H
+#define AGS_ENGINE_GAME_SAVEGAMEINTERNAL_H
 
 #include <memory>
 #include <vector>
@@ -149,4 +149,4 @@ struct RestoredData
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GAME__SAVEGAMEINTERNAL_H
+#endif

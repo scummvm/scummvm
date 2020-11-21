@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_PLATFORM__WIN_EXCEPTION_HANDLING_H
-#define __AGS_EE_PLATFORM__WIN_EXCEPTION_HANDLING_H
+#ifndef AGS_ENGINE_PLATFORM_WINDOWS_WIN_EX_HANDLING_H
+#define AGS_ENGINE_PLATFORM_WINDOWS_WIN_EX_HANDLING_H
 
 #include "util/ini_util.h"
 
@@ -30,4 +30,4 @@ int  initialize_engine_with_exception_handling(
     int (initialize_engine)(const AGS::Common::ConfigTree &startup_opts),
     const AGS::Common::ConfigTree &startup_opts);
 
-#endif // __AGS_EE_PLATFORM__WIN_EXCEPTION_HANDLING_H
+#endif

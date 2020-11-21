@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __CC_SCRIPT_H
-#define __CC_SCRIPT_H
+#ifndef AGS_SHARED_SCRIPT_CC_SCRIPT_H
+#define AGS_SHARED_SCRIPT_CC_SCRIPT_H
 
 #include <memory>
 #include "core/types.h"
@@ -82,4 +82,4 @@ protected:
 
 typedef std::shared_ptr<ccScript> PScript;
 
-#endif // __CC_SCRIPT_H
+#endif

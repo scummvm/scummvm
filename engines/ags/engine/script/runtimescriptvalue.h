@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_SCRIPT__RUNTIMESCRIPTVALUE_H
-#define __AGS_EE_SCRIPT__RUNTIMESCRIPTVALUE_H
+#ifndef AGS_ENGINE_SCRIPT_RUNTIMESCRIPTVALUE_H
+#define AGS_ENGINE_SCRIPT_RUNTIMESCRIPTVALUE_H
 
 #include "script/script_api.h"
 #include "util/memory.h"
@@ -393,4 +393,4 @@ public:
     intptr_t           GetDirectPtr() const;
 };
 
-#endif // __AGS_EE_SCRIPT__RUNTIMESCRIPTVALUE_H
+#endif

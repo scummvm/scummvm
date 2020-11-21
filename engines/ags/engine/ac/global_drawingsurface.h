@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALDRAWINGSURFACE_H
-#define __AGS_EE_AC__GLOBALDRAWINGSURFACE_H
+#ifndef AGS_ENGINE_AC_GLOBALDRAWINGSURFACE_H
+#define AGS_ENGINE_AC_GLOBALDRAWINGSURFACE_H
 
 void RawSaveScreen ();
 // RawRestoreScreen: copy backup bitmap back to screen; we
@@ -46,4 +46,4 @@ void RawDrawCircle (int xx, int yy, int rad);
 void RawDrawRectangle(int x1, int y1, int x2, int y2);
 void RawDrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
 
-#endif // __AGS_EE_AC__GLOBALDRAWINGSURFACE_H
+#endif

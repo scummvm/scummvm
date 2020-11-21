@@ -33,8 +33,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_GAME__CUSTOMPROPERTIES_H
-#define __AGS_CN_GAME__CUSTOMPROPERTIES_H
+#ifndef AGS_SHARED_GAME_CUSTOMPROPERTIES_H
+#define AGS_SHARED_GAME_CUSTOMPROPERTIES_H
 
 #include <unordered_map>
 #include "util/string.h"
@@ -110,4 +110,4 @@ namespace Properties
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_GAME__CUSTOMPROPERTIES_H
+#endif

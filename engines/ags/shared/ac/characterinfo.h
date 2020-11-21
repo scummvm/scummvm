@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_CHARACTERINFO_H
-#define __AC_CHARACTERINFO_H
+#ifndef AGS_SHARED_AC_CHARACTERINFO_H
+#define AGS_SHARED_AC_CHARACTERINFO_H
 
 #include "ac/common_defines.h" // constants
 
@@ -149,4 +149,4 @@ struct OldCharacterInfo {
 #define COPY_CHAR_VAR(name) ci->name = oci->name
 void ConvertOldCharacterToNew (OldCharacterInfo *oci, CharacterInfo *ci);
 
-#endif // __AC_CHARACTERINFO_H
+#endif

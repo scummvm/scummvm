@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_CCDIALOG_H
-#define __AC_CCDIALOG_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CCDIALOG_H
+#define AGS_ENGINE_AC_DYNOBJ_CCDIALOG_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -38,4 +38,4 @@ struct CCDialog final : AGSCCDynamicObject {
 
 };
 
-#endif // __AC_CCDIALOG_H
+#endif

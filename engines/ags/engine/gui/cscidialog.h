@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GUI__CSCIDIALOG_H
-#define __AGS_EE_GUI__CSCIDIALOG_H
+#ifndef AGS_ENGINE_GUI_CSCIDIALOG_H
+#define AGS_ENGINE_GUI_CSCIDIALOG_H
 
 #include "gui/guidialoginternaldefs.h"
 
@@ -44,4 +44,4 @@ int  checkcontrols();
 int  finddefaultcontrol(int flagmask);
 int  GetBaseWidth ();
 
-#endif // __AGS_EE_GUI__CSCIDIALOG_H
+#endif

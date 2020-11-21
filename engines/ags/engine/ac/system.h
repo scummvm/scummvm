@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__SYSTEMAUDIO_H
-#define __AGS_EE_AC__SYSTEMAUDIO_H
+#ifndef AGS_ENGINE_AC_SYSTEMAUDIO_H
+#define AGS_ENGINE_AC_SYSTEMAUDIO_H
 
 #include "ac/dynobj/scriptaudiochannel.h"
 
@@ -50,4 +50,4 @@ void    System_SetVolume(int newvol);
 const char *System_GetRuntimeInfo();
 
 
-#endif // __AGS_EE_AC_SYSTEMAUDIO_H
+#endif

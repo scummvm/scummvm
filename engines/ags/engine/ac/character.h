@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__CHARACTER_H
-#define __AGS_EE_AC__CHARACTER_H
+#ifndef AGS_ENGINE_AC_CHARACTER_H
+#define AGS_ENGINE_AC_CHARACTER_H
 
 #include "ac/characterinfo.h"
 #include "ac/characterextras.h"
@@ -221,4 +221,4 @@ extern int32_t _sc_PlayerCharPtr;
 // order of loops to turn character in circle from down to down
 extern int turnlooporder[8];
 
-#endif // __AGS_EE_AC__CHARACTER_H
+#endif

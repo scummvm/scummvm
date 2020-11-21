@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__REGION_H
-#define __AGS_EE_AC__REGION_H
+#ifndef AGS_ENGINE_AC_REGION_H
+#define AGS_ENGINE_AC_REGION_H
 
 #include "ac/dynobj/scriptregion.h"
 
@@ -42,4 +42,4 @@ void	Region_RunInteraction(ScriptRegion *ssr, int mood);
 
 void    generate_light_table();
 
-#endif // __AGS_EE_AC__REGION_H
+#endif

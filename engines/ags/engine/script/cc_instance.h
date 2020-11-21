@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __CC_INSTANCE_H
-#define __CC_INSTANCE_H
+#ifndef AGS_ENGINE_SCRIPT_CCINSTANCE_H
+#define AGS_ENGINE_SCRIPT_CCINSTANCE_H
 
 #include <memory>
 #include <unordered_map>
@@ -228,4 +228,4 @@ protected:
     void    PopFromFuncCallStack(FunctionCallStack &func_callstack, int32_t num_entries);
 };
 
-#endif // __CC_INSTANCE_H
+#endif

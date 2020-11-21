@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GFX__HQ2XGFXFILTER_H
-#define __AGS_EE_GFX__HQ2XGFXFILTER_H
+#ifndef AGS_ENGINE_GFX_HQ2XGFXFILTER_H
+#define AGS_ENGINE_GFX_HQ2XGFXFILTER_H
 
 #include "gfx/gfxfilter_allegro.h"
 
@@ -65,4 +65,4 @@ protected:
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__HQ2XGFXFILTER_H
+#endif

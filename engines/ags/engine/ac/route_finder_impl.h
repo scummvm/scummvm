@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_ROUTE_FINDER_IMPL
-#define __AC_ROUTE_FINDER_IMPL
+#ifndef AGS_ENGINE_AC_ROUTE_FINDER_IMPL
+#define AGS_ENGINE_AC_ROUTE_FINDER_IMPL
 
 #include "ac/game_version.h"
 
@@ -50,4 +50,4 @@ void calculate_move_stage(MoveList * mlsp, int aaa);
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AC_ROUTE_FINDER_IMPL
+#endif

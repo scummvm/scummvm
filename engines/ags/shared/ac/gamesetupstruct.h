@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_AC__GAMESETUPSTRUCT_H
-#define __AGS_CN_AC__GAMESETUPSTRUCT_H
+#ifndef AGS_SHARED_AC_GAMESETUPSTRUCT_H
+#define AGS_SHARED_AC_GAMESETUPSTRUCT_H
 
 #include <vector>
 #include "ac/audiocliptype.h"
@@ -167,4 +167,4 @@ void ConvertOldGameStruct (OldGameSetupStruct *ogss, GameSetupStruct *gss);
 // Finds an audio clip using legacy convention index
 ScriptAudioClip* GetAudioClipForOldStyleNumber(GameSetupStruct &game, bool is_music, int num);
 
-#endif // __AGS_CN_AC__GAMESETUPSTRUCT_H
+#endif

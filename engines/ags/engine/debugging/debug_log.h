@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_DEBUG_LOG_H
-#define __AC_DEBUG_LOG_H
+#ifndef AGS_ENGINE_DEBUGGING_LOG_H
+#define AGS_ENGINE_DEBUGGING_LOG_H
 
 #include "script/cc_instance.h"
 #include "ac/runtime_defines.h"
@@ -53,4 +53,4 @@ extern int first_debug_line, last_debug_line, display_console;
 
 extern AGSPlatformDriver *platform;
 
-#endif // __AC_DEBUG_LOG_H
+#endif

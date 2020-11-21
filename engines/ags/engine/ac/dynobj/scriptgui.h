@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_DYNOBJ__SCRIPTGUI_H
-#define __AGS_EE_DYNOBJ__SCRIPTGUI_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTGUI_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTGUI_H
 
 // 64 bit: This struct must be 8 byte long
 struct ScriptGUI {
@@ -29,4 +29,4 @@ struct ScriptGUI {
   int __padding;
 };
 
-#endif // __AGS_EE_DYNOBJ__SCRIPTGUI_H
+#endif

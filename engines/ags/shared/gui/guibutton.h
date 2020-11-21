@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_GUIBUTTON_H
-#define __AC_GUIBUTTON_H
+#ifndef AGS_SHARED_GUI_GUIBUTTON_H
+#define AGS_SHARED_GUI_GUIBUTTON_H
 
 #include <vector>
 #include "gui/guiobject.h"
@@ -141,4 +141,4 @@ extern int numguibuts;
 int UpdateAnimatingButton(int bu);
 void StopButtonAnimation(int idxn);
 
-#endif // __AC_GUIBUTTON_H
+#endif

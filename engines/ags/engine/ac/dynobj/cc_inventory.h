@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_CCINVENTORY_H
-#define __AC_CCINVENTORY_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CCINVENTORY_H
+#define AGS_ENGINE_AC_DYNOBJ_CCINVENTORY_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -38,4 +38,4 @@ struct CCInventory final : AGSCCDynamicObject {
 
 };
 
-#endif // __AC_CCINVENTORY_H
+#endif

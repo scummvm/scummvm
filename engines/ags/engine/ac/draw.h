@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__DRAW_H
-#define __AGS_EE_AC__DRAW_H
+#ifndef AGS_ENGINE_AC_DRAW_H
+#define AGS_ENGINE_AC_DRAW_H
 
 #include <memory>
 #include "core/types.h"
@@ -177,4 +177,4 @@ Common::PBitmap PrepareSpriteForUse(Common::PBitmap bitmap, bool has_alpha);
 // of the requested width and height and game's native color depth.
 Common::Bitmap *CopyScreenIntoBitmap(int width, int height, bool at_native_res = false);
 
-#endif // __AGS_EE_AC__DRAW_H
+#endif

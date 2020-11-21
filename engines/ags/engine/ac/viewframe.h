@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__VIEWFRAME_H
-#define __AGS_EE_AC__VIEWFRAME_H
+#ifndef AGS_ENGINE_AC_VIEWFRAME_H
+#define AGS_ENGINE_AC_VIEWFRAME_H
 
 #include "ac/runtime_defines.h"
 #include "ac/view.h"
@@ -49,4 +49,4 @@ void CheckViewFrame (int view, int loop, int frame, int sound_volume=SCR_NO_VALU
 // draws a view frame, flipped if appropriate
 void DrawViewFrame(Common::Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha_blend = false);
 
-#endif // __AGS_EE_AC__VIEWFRAME_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_CCGUIOBJECT_H
-#define __AC_CCGUIOBJECT_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CCGUI_H
+#define AGS_ENGINE_AC_DYNOBJ_CCGUI_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -38,4 +38,4 @@ struct CCGUIObject final : AGSCCDynamicObject {
 
 };
 
-#endif // __AC_CCGUIOBJECT_H
+#endif

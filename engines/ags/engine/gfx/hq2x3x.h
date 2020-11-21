@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_HQ2X3X_H
-#define __AC_HQ2X3X_H
+#ifndef AGS_ENGINE_GFX_HQ2X3X_H
+#define AGS_ENGINE_GFX_HQ2X3X_H
 
 #include "core/platform.h"
 
@@ -35,4 +35,4 @@ void hq2x_32( unsigned char * pIn, unsigned char * pOut, int Xres, int Yres, int
 void hq3x_32( unsigned char * pIn, unsigned char * pOut, int Xres, int Yres, int BpL );
 #endif
 
-#endif // __AC_HQ2X3X_H
+#endif

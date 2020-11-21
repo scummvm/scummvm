@@ -28,8 +28,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_GAME__MAINGAMEFILE_H
-#define __AGS_CN_GAME__MAINGAMEFILE_H
+#ifndef AGS_SHARED_GAME_MAINGAMEFILE_H
+#define AGS_SHARED_GAME_MAINGAMEFILE_H
 
 #include <memory>
 #include <set>
@@ -154,4 +154,4 @@ void               FixupSaveDirectory(GameSetupStruct &game);
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_GAME__MAINGAMEFILE_H
+#endif

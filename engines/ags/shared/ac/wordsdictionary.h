@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_WORDSDICTIONARY_H
-#define __AC_WORDSDICTIONARY_H
+#ifndef AGS_SHARED_AC_WORDSDICTIONARY_H
+#define AGS_SHARED_AC_WORDSDICTIONARY_H
 
 #include "core/types.h"
 
@@ -60,4 +60,4 @@ extern void encrypt_text(char *toenc);
 extern void write_string_encrypt(Common::Stream *out, const char *s);
 extern void write_dictionary (WordsDictionary *dict, Common::Stream *out);
 
-#endif // __AC_WORDSDICTIONARY_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_UTIL__LIBRARY_POSIX_H
-#define __AGS_EE_UTIL__LIBRARY_POSIX_H
+#ifndef AGS_ENGINE_UTIL_LIBRARY_POSIX_H
+#define AGS_ENGINE_UTIL_LIBRARY_POSIX_H
 
 #include <dlfcn.h>
 #include "core/platform.h"
@@ -156,6 +156,4 @@ typedef PosixLibrary Library;
 } // namespace Engine
 } // namespace AGS
 
-
-
-#endif // __AGS_EE_UTIL__LIBRARY_POSIX_H
+#endif

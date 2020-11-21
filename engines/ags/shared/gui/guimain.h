@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_GUIMAIN_H
-#define __AC_GUIMAIN_H
+#ifndef AGS_SHARED_GUI_GUIMAIN_H
+#define AGS_SHARED_GUI_GUIMAIN_H
 
 #include <vector>
 #include "ac/common_defines.h" // TODO: split out gui drawing helpers
@@ -246,4 +246,4 @@ extern int get_eip_guiobj();
 
 extern bool outlineGuiObjects;
 
-#endif // __AC_GUIMAIN_H
+#endif

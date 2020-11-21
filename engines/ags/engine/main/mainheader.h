@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_MAIN__MAINHEADER_H
-#define __AGS_EE_MAIN__MAINHEADER_H
+#ifndef AGS_ENGINE_MAIN_MAINHEADER_H
+#define AGS_ENGINE_MAIN_MAINHEADER_H
 
 #include "core/platform.h"
 
@@ -49,4 +49,4 @@ extern "C" void selectLatestSavegame();
 extern bool psp_load_latest_savegame;
 #endif
 
-#endif // __AGS_EE_MAIN__MAINHEADER_H
+#endif

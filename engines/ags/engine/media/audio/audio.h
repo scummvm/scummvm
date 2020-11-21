@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_AUDIO_H
-#define __AC_AUDIO_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_AUDIO_H
+#define AGS_ENGINE_MEDIA_AUDIO_AUDIO_H
 
 #include <array>
 #include "media/audio/audiodefines.h"
@@ -158,4 +158,4 @@ extern SOUNDCLIP *cachedQueuedMusic;
 // TODO: double check that ambient sounds array actually needs +1
 extern std::array<AmbientSound,MAX_SOUND_CHANNELS+1> ambient;
 
-#endif // __AC_AUDIO_H
+#endif

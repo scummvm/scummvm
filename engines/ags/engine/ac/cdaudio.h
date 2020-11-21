@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__CDAUDIO_H
-#define __AGS_EE_AC__CDAUDIO_H
+#ifndef AGS_ENGINE_AC_CDAUDIO_H
+#define AGS_ENGINE_AC_CDAUDIO_H
 
 // CD Player functions
 // flags returned with cd_getstatus
@@ -33,4 +33,4 @@
 int     init_cd_player() ;
 int     cd_manager(int cmdd,int datt) ;
 
-#endif // __AGS_EE_AC__CDAUDIO_H
+#endif

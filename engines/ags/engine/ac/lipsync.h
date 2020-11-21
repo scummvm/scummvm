@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_LIPSYNC_H
-#define __AC_LIPSYNC_H
+#ifndef AGS_ENGINE_AC_LIPSYNC_H
+#define AGS_ENGINE_AC_LIPSYNC_H
 
 struct SpeechLipSyncLine {
     char  filename[14];
@@ -30,4 +30,4 @@ struct SpeechLipSyncLine {
     short numPhonemes;
 };
 
-#endif // __AC_LIPSYNC_H
+#endif

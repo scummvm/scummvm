@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_UTIL__STDIOCOMPAT_H
-#define __AGS_CN_UTIL__STDIOCOMPAT_H
+#ifndef AGS_SHARED_UTIL_STDIOCOMPAT_H
+#define AGS_SHARED_UTIL_STDIOCOMPAT_H
 
 #include <stdio.h>
 #include <stdint.h>
@@ -44,4 +44,4 @@ file_off_t ags_file_size(const char *path);
 }
 #endif
 
-#endif // __AGS_CN_UTIL__STDIOCOMPAT_H
+#endif

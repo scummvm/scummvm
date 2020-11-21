@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__PATH_H
-#define __AGS_CN_UTIL__PATH_H
+#ifndef AGS_SHARED_UTIL_PATH_H
+#define AGS_SHARED_UTIL_PATH_H
 
 #include "util/string.h"
 
@@ -90,4 +90,4 @@ namespace Path
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__PATH_H
+#endif

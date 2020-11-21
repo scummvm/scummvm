@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_SCRIPTOVERLAY_H
-#define __AC_SCRIPTOVERLAY_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTOVERLAY_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTOVERLAY_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -39,4 +39,4 @@ struct ScriptOverlay final : AGSCCDynamicObject {
     ScriptOverlay();
 };
 
-#endif // __AC_SCRIPTOVERLAY_H
+#endif

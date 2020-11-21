@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_QUEUEDAUDIOITEM_H
-#define __AC_QUEUEDAUDIOITEM_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_QUEUEDAUDIOITEM_H
+#define AGS_ENGINE_MEDIA_AUDIO_QUEUEDAUDIOITEM_H
 
 struct SOUNDCLIP;
 
@@ -38,4 +38,4 @@ struct QueuedAudioItem {
     void WriteToFile(Common::Stream *out) const;
 };
 
-#endif // __AC_QUEUEDAUDIOITEM_H
+#endif

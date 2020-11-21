@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALWALKABLEAREA_H
-#define __AGS_EE_AC__GLOBALWALKABLEAREA_H
+#ifndef AGS_ENGINE_AC_GLOBAL_WALKABLEAREA_H
+#define AGS_ENGINE_AC_GLOBAL_WALKABLEAREA_H
 
 int   GetScalingAt (int x, int y);
 void  SetAreaScaling(int area, int min, int max);
@@ -34,4 +34,4 @@ int   GetWalkableAreaAtRoom(int x, int y);
 // if area is disabled or non-existing, returns 0 (no area)
 int   GetWalkableAreaAtScreen(int x, int y);
 
-#endif // __AGS_EE_AC__GLOBALWALKABLEAREA_H
+#endif

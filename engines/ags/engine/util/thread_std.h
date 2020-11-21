@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_PLATFORM__THREAD_STD_H
-#define __AGS_EE_PLATFORM__THREAD_STD_H
+#ifndef AGS_ENGINE_UTIL_THREAD_STD_H
+#define AGS_ENGINE_UTIL_THREAD_STD_H
 
 #include <system_error>
 #include <thread>
@@ -102,4 +102,4 @@ typedef StdThread Thread;
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_PLATFORM__THREAD_STD_H
+#endif

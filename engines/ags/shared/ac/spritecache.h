@@ -42,8 +42,8 @@
 //
 //=============================================================================
 
-#ifndef __SPRCACHE_H
-#define __SPRCACHE_H
+#ifndef AGS_SHARED_AC_SPRITECACHE_H
+#define AGS_SHARED_AC_SPRITECACHE_H
 
 #include <memory>
 #include <vector>
@@ -247,4 +247,4 @@ private:
 
 extern SpriteCache spriteset;
 
-#endif // __SPRCACHE_H
+#endif

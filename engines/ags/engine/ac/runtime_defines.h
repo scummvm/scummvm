@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_RUNTIMEDEFINES_H
-#define __AC_RUNTIMEDEFINES_H
+#ifndef AGS_ENGINE_AC_RUNTIMEDEFINES_H
+#define AGS_ENGINE_AC_RUNTIMEDEFINES_H
 
 // xalleg.h pulls in an Allegro-internal definition of MAX_TIMERS which
 // conflicts with the definition in runtime_defines.h. Forget it.
@@ -158,4 +158,4 @@ const int LegacyRoomVolumeFactor            = 30;
 
 #include "ac/common_defines.h"
 
-#endif // __AC_RUNTIMEDEFINES_H
+#endif
