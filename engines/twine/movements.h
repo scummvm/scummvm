@@ -35,15 +35,11 @@ private:
 	TwinEEngine *_engine;
 
 	// enter, space, ...
-	int32 heroPressedKey = 0;
-	// cursor buttons
-	int32 heroPressedKey2 = 0;
-	// enter, space, ...
 	int16 heroActionKey = 0;
-	// enter, space, ...
-	int32 loopCursorKeys = 0;
-	// cursor keys
 	int32 previousLoopActionKey = 0;
+	// cursor keys
+	int32 loopCursorKeys = 0;
+	int32 previousLoopCursorKeys = 0;
 
 	/**
 	 * The Actor is controlled by the player. This works well only for the Hero Actor in general.
