@@ -108,17 +108,7 @@ void Input::enableKeyMap(const char *id) {
 	debug("enable keymap %s", id);
 }
 
-static constexpr const struct ActionMapping {
-	TwinEActionType action;
-	uint8 mask;
-} cursorChangeMask[] = {
-    {MoveForward, 0x01},
-    {MoveBackward, 0x02},
-    {TurnLeft, 0x04},
-    {TurnRight, 0x08}
-};
-
-uint8 Input::processCustomEngineEventStart(const Common::Event &event) {
+void Input::processCustomEngineEventStart(const Common::Event &event) {
 	if (!_engine->cfgfile.Debug) {
 		switch (event.customType) {
 		case TwinEActionType::DebugGridCameraPressUp:
@@ -140,34 +130,21 @@ uint8 Input::processCustomEngineEventStart(const Common::Event &event) {
 	} else {
 		actionStates[event.customType] = 1 + event.kbdRepeat;
 	}
-	for (int i = 0; i < ARRAYSIZE(cursorChangeMask); ++i) {
-		if (event.customType == cursorChangeMask[i].action) {
-			return cursorChangeMask[i].mask;
-		}
-	}
-	return 0;
 }
 
-uint8 Input::processCustomEngineEventEnd(const Common::Event &event) {
+void Input::processCustomEngineEventEnd(const Common::Event &event) {
 	actionStates[event.customType] = 0;
-	for (int i = 0; i < ARRAYSIZE(cursorChangeMask); ++i) {
-		if (event.customType == cursorChangeMask[i].action) {
-			return cursorChangeMask[i].mask;
-		}
-	}
-	return 0;
 }
 
 void Input::readKeys() {
-	cursorKeyMask = 0;
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-			cursorKeyMask |= processCustomEngineEventEnd(event);
+			processCustomEngineEventEnd(event);
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-			cursorKeyMask |= processCustomEngineEventStart(event);
+			processCustomEngineEventStart(event);
 			break;
 		default:
 			break;

@@ -209,11 +209,46 @@ void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMove
 	movePtr->timeOfChange = _engine->lbaTime;
 }
 
+void Movements::ChangedCursorKeys::update(TwinEEngine* engine) {
+	if (engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
+		leftChange = leftDown == 0;
+		leftDown = 1;
+	} else {
+		leftChange = leftDown;
+		leftDown = 0;
+	}
+
+	if (engine->_input->isActionActive(TwinEActionType::TurnRight)) {
+		rightChange = rightDown == 0;
+		rightDown = 1;
+	} else {
+		rightChange = rightDown;
+		rightDown = 0;
+	}
+
+	if (engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
+		backwardChange = backwardDown == 0;
+		backwardDown = 1;
+	} else {
+		backwardChange = backwardDown;
+		backwardDown = 0;
+	}
+
+	if (engine->_input->isActionActive(TwinEActionType::MoveForward)) {
+		forwardChange = forwardDown == 0;
+		forwardDown = 1;
+	} else {
+		forwardChange = forwardDown;
+		forwardDown = 0;
+	}
+}
+
 void Movements::update() {
 	previousChangedCursorKeys = changedCursorKeys;
 	previousLoopActionKey = heroActionKey;
+
 	heroActionKey = _engine->_input->isHeroActionActive();
-	changedCursorKeys = _engine->_input->cursorKeyMask;
+	changedCursorKeys.update(_engine);
 }
 
 bool Movements::processBehaviourExecution(int actorIdx) {
