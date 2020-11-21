@@ -1651,8 +1651,8 @@ static int32 lANIM_SET(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x60
  */
 static int32 lHOLOMAP_TRAJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ctx.stream.skip(1); // index of the holomap trajectory
-	return -1;
+	engine->_holomap->drawHolomapTrajectory(ctx.stream.readByte());
+	return 0;
 }
 
 /**
