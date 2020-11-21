@@ -316,6 +316,23 @@ static const CryOmni3DGameDescription gameDescriptions[] = {
 
 	// Versailles 1685
 	// German Windows compressed from DVD
+	// From laenion, ticket #11963
+	{
+		{
+			"versailles",
+			"",
+			VERSAILLES_ENTRY("PROGRAM.Z", "cdd35a623d1ed05d1dc3248735cea868", 236363, "ALM"),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUI_OPTIONS_VERSAILLES
+		},
+		GType_VERSAILLES,
+		GF_VERSAILLES_FONTS_NUMERIC | GF_VERSAILLES_AUDIOPADDING_YES | GF_VERSAILLES_LINK_LOCALIZED,
+	},
+
+	// Versailles 1685
+	// German Windows compressed from DVD
 	// From Uka in forum
 	{
 		{
