@@ -37,20 +37,12 @@ const char *cutsceneKeyMapId = "cutsceneKeyMap";
 /** Pressed key char map - scanCodeTab2 */
 static const struct KeyProperties {
 	uint8 high;
-	bool cursor;
 	uint8 key;
 } pressedKeyCharMap[] = {
-    {0x01, true, 0x48}, // up
-    {0x02, true, 0x50}, // down
-    {0x04, true, 0x4B}, // left
-    {0x08, true, 0x4D}, // right
-    {0x01, false, 0x39},  // space bar
-    {0x02, false, 0x1C},  // enter
-    {0x04, false, 0x1D},  // ctrl
-    {0x08, false, 0x38},  // alt
-    {0x10, false, 0x53},  // del
-    {0x20, false, 0x2A},  // left shift
-    {0x20, false, 0x36}  // right shift
+    {0x01, 0x48}, // up
+    {0x02, 0x50}, // down
+    {0x04, 0x4B}, // left
+    {0x08, 0x4D} // right
 };
 
 ScopedKeyMap::ScopedKeyMap(TwinEEngine* engine, const char *id) : _engine(engine) {
@@ -228,9 +220,7 @@ void Input::readKeys() {
 
 		for (int i = 0; i < ARRAYSIZE(pressedKeyCharMap); i++) {
 			if (pressedKeyCharMap[i].key == localKey) {
-				if (pressedKeyCharMap[i].cursor) {
-					cursorKeys |= pressedKeyCharMap[i].high;
-				}
+				cursorKeys |= pressedKeyCharMap[i].high;
 				break;
 			}
 		}
