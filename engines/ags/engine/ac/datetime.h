@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/scriptdatetime.h"
 
+namespace AGS3 {
+
 ScriptDateTime *DateTime_Now_Core();
 ScriptDateTime *DateTime_Now();
 int             DateTime_GetYear(ScriptDateTime *sdt);
@@ -34,5 +36,7 @@ int             DateTime_GetHour(ScriptDateTime *sdt);
 int             DateTime_GetMinute(ScriptDateTime *sdt);
 int             DateTime_GetSecond(ScriptDateTime *sdt);
 int             DateTime_GetRawTime(ScriptDateTime *sdt);
+
+} // namespace AGS3
 
 #endif

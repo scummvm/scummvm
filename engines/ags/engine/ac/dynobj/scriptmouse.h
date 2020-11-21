@@ -23,9 +23,13 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTMOUSE_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTMOUSE_H
 
+namespace AGS3 {
+
 // The text script's "mouse" struct
 struct ScriptMouse {
 	int x, y;
 };
+
+} // namespace AGS3
 
 #endif

@@ -25,6 +25,8 @@
 
 #include "gfx/bitmap.h"
 
+namespace AGS3 {
+
 using namespace AGS; // FIXME later
 
 struct NewControl {
@@ -42,5 +44,7 @@ struct NewControl {
 	void drawifneeded();
 	void drawandmouse();
 };
+
+} // namespace AGS3
 
 #endif

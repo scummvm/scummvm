@@ -52,6 +52,7 @@
 #include "core/types.h"
 #include "debug/assert.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -158,7 +159,7 @@ public:
 	// This also means that there's always at least one section in any string,
 	// even if there are no separating chars.
 	bool    FindSection(char separator, size_t first, size_t last, bool exclude_first_sep, bool exclude_last_sep,
-	                    size_t &from, size_t &to) const;
+		size_t &from, size_t &to) const;
 
 	// Get Nth character with bounds check (as opposed to subscript operator)
 	inline char GetAt(size_t index) const {
@@ -209,7 +210,7 @@ public:
 	String  RightSection(char separator, bool exclude_separator = true) const;
 	// Extract the range of Xth to Yth fields, separated by the given character
 	String  Section(char separator, size_t first, size_t last,
-	                bool exclude_first_sep = true, bool exclude_last_sep = true) const;
+		bool exclude_first_sep = true, bool exclude_last_sep = true) const;
 	// Splits the string into segments divided by the instances of a given character,
 	// including empty segments e.g. if separators follow each other;
 	// returns at least one segment (equal to full string if no separator was found)
@@ -247,7 +248,7 @@ public:
 	void    ClipRightSection(char separator, bool include_separator = true);
 	// Cuts out the range of Xth to Yth fields separated by the given character
 	void    ClipSection(char separator, size_t first, size_t last,
-	                    bool include_first_sep = true, bool include_last_sep = true);
+		bool include_first_sep = true, bool include_last_sep = true);
 	// Sets string length to zero
 	void    Empty();
 	// Makes a new string by filling N chars with certain value
@@ -304,7 +305,7 @@ public:
 	// Truncate the string to range of Xth to Yth fields separated by the
 	// given character
 	void    TruncateToSection(char separator, size_t first, size_t last,
-	                          bool exclude_first_sep = true, bool exclude_last_sep = true);
+		bool exclude_first_sep = true, bool exclude_last_sep = true);
 	// Wraps the given string buffer without owning it, won't count references,
 	// won't delete it at destruction. Can be used with string literals.
 	void    Wrap(const char *cstr);
@@ -348,7 +349,7 @@ private:
 	// or after the current string data
 	void    ReserveAndShift(bool left, size_t more_length);
 
-	char    *_cstr;  // pointer to actual string data
+	char *_cstr;  // pointer to actual string data
 	size_t  _len;    // valid string length, in characters, excluding null-term
 
 	// Header of a reference-counted buffer
@@ -359,12 +360,13 @@ private:
 
 	// Union that groups mutually exclusive data (currently only ref counted buffer)
 	union {
-		char      *_buf;     // reference-counted data (raw ptr)
+		char *_buf;     // reference-counted data (raw ptr)
 		BufHeader *_bufHead; // the header of a reference-counted data
 	};
 };
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -27,21 +27,23 @@
 #include "gui/guiobject.h"
 #include "util/string.h"
 
+namespace AGS3 {
+
 #define GUIBUTTON_LEGACY_TEXTLENGTH 50
 
 namespace AGS {
 namespace Common {
 
 enum MouseButton {
-	kMouseNone  = -1,
-	kMouseLeft  =  0,
-	kMouseRight =  1,
+	kMouseNone = -1,
+	kMouseLeft = 0,
+	kMouseRight = 1,
 };
 
 enum GUIClickAction {
-	kGUIAction_None       = 0,
-	kGUIAction_SetMode    = 1,
-	kGUIAction_RunScript  = 2,
+	kGUIAction_None = 0,
+	kGUIAction_SetMode = 1,
+	kGUIAction_RunScript = 2,
 };
 
 enum LegacyButtonAlignment {
@@ -80,7 +82,7 @@ public:
 	void ReadFromSavegame(Common::Stream *in, GuiSvgVersion svg_ver) override;
 	void WriteToSavegame(Common::Stream *out) const override;
 
-// TODO: these members are currently public; hide them later
+	// TODO: these members are currently public; hide them later
 public:
 	int32_t     Image;
 	int32_t     MouseOverImage;
@@ -133,5 +135,7 @@ extern int numguibuts;
 
 int UpdateAnimatingButton(int bu);
 void StopButtonAnimation(int idxn);
+
+} // namespace AGS3
 
 #endif

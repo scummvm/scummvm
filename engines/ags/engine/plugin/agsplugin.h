@@ -31,6 +31,8 @@
 #ifndef AGS_ENGINE_PLUGIN_AGSPLUGIN_H
 #define AGS_ENGINE_PLUGIN_AGSPLUGIN_H
 
+namespace AGS3 {
+
 // If the plugin isn't using DDraw, don't require the headers
 #ifndef DIRECTDRAW_VERSION
 typedef void *LPDIRECTDRAW2;
@@ -284,16 +286,20 @@ public:
 	// return number of bytes used
 	virtual int Serialize(const char *address, char *buffer, int bufsize) = 0;
 protected:
-	IAGSScriptManagedObject() {};
-	~IAGSScriptManagedObject() {};
+	IAGSScriptManagedObject() {
+	};
+	~IAGSScriptManagedObject() {
+	};
 };
 
 class IAGSManagedObjectReader {
 public:
 	virtual void Unserialize(int key, const char *serializedData, int dataSize) = 0;
 protected:
-	IAGSManagedObjectReader() {};
-	~IAGSManagedObjectReader() {};
+	IAGSManagedObjectReader() {
+	};
+	~IAGSManagedObjectReader() {
+	};
 };
 
 class IAGSFontRenderer {
@@ -307,8 +313,10 @@ public:
 	virtual void AdjustYCoordinateForFont(int *ycoord, int fontNumber) = 0;
 	virtual void EnsureTextValidForFont(char *text, int fontNumber) = 0;
 protected:
-	IAGSFontRenderer() {};
-	~IAGSFontRenderer() {};
+	IAGSFontRenderer() {
+	};
+	~IAGSFontRenderer() {
+	};
 };
 
 // The plugin-to-engine interface
@@ -578,5 +586,7 @@ DLLEXPORT int    AGS_PluginV2() {
 }
 
 #endif // THIS_IS_THE_PLUGIN
+
+} // namespace AGS3
 
 #endif

@@ -23,7 +23,11 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_TIMER_H
 #define AGS_ENGINE_AC_GLOBAL_TIMER_H
 
+namespace AGS3 {
+
 void script_SetTimer(int tnum, int timeout);
 int  IsTimerExpired(int tnum);
+
+} // namespace AGS3
 
 #endif

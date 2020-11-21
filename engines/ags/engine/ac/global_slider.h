@@ -23,7 +23,11 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_SLIDER_H
 #define AGS_ENGINE_AC_GLOBAL_SLIDER_H
 
+namespace AGS3 {
+
 void    SetSliderValue(int guin, int objn, int valn);
 int     GetSliderValue(int guin, int objn);
+
+} // namespace AGS3
 
 #endif

@@ -33,6 +33,8 @@
 #include "util/thread.h"
 #include "ac/timer.h"
 
+namespace AGS3 {
+
 struct SOUNDCLIP;
 
 //controls access to the channels, since that's the main point of synchronization between the streaming thread and the user code
@@ -76,7 +78,7 @@ void        calculate_reserved_channel_count();
 void        update_clip_default_volume(ScriptAudioClip *audioClip);
 void        start_fading_in_new_track_if_applicable(int fadeInChannel, ScriptAudioClip *newSound);
 void        stop_or_fade_out_channel(int fadeOutChannel, int fadeInChannel = -1, ScriptAudioClip *newSound = nullptr);
-SOUNDCLIP  *load_sound_clip(ScriptAudioClip *audioClip, bool repeat);
+SOUNDCLIP *load_sound_clip(ScriptAudioClip *audioClip, bool repeat);
 ScriptAudioChannel *play_audio_clip_on_channel(int channel, ScriptAudioClip *clip, int priority, int repeat, int fromOffset, SOUNDCLIP *cachedClip = nullptr);
 void        remove_clips_of_type_from_queue(int audioType);
 void        update_queued_clips_volume(int audioType, int new_vol);
@@ -155,5 +157,7 @@ extern SOUNDCLIP *cachedQueuedMusic;
 
 // TODO: double check that ambient sounds array actually needs +1
 extern std::array < AmbientSound, MAX_SOUND_CHANNELS + 1 > ambient;
+
+} // namespace AGS3
 
 #endif

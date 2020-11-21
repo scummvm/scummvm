@@ -23,8 +23,12 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_TEXTBOX_H
 #define AGS_ENGINE_AC_GLOBAL_TEXTBOX_H
 
+namespace AGS3 {
+
 void SetTextBoxFont(int guin, int objn, int fontnum);
 void GetTextBoxText(int guin, int objn, char *txbuf);
 void SetTextBoxText(int guin, int objn, const char *txbuf);
+
+} // namespace AGS3
 
 #endif

@@ -39,6 +39,7 @@
 
 #include "ogl_headers.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -79,7 +80,7 @@ public:
 		_stretchToHeight = height;
 		_useResampler = useResampler;
 	}
-	void SetLightLevel(int lightLevel) override  {
+	void SetLightLevel(int lightLevel) override {
 		_lightLevel = lightLevel;
 	}
 	void SetTint(int red, int green, int blue, int tintSaturation) override {
@@ -202,7 +203,8 @@ public:
 	void Render() override;
 	void Render(int xoff, int yoff, GlobalFlipType flip) override;
 	bool GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt) override;
-	void EnableVsyncBeforeRender(bool enabled) override { }
+	void EnableVsyncBeforeRender(bool enabled) override {
+	}
 	void Vsync() override;
 	void RenderSpritesAtScreenResolution(bool enabled, int supersampling) override;
 	void FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) override;
@@ -316,7 +318,7 @@ private:
 	void CreateTintShader();
 	void CreateLightShader();
 	void CreateShaderProgram(ShaderProgram &prg, const char *name, const char *fragment_shader_src,
-	                         const char *sampler_var, const char *color_var, const char *aux_var);
+		const char *sampler_var, const char *color_var, const char *aux_var);
 	void DeleteShaderProgram(ShaderProgram &prg);
 	void OutputShaderError(GLuint obj_id, const String &obj_name, bool is_shader);
 	// Configure backbuffer texture, that is used in render-to-texture mode
@@ -359,11 +361,11 @@ public:
 	const GfxFilterInfo *GetFilterInfo(size_t index) const override;
 	String               GetDefaultFilterID() const override;
 
-	static OGLGraphicsFactory   *GetFactory();
+	static OGLGraphicsFactory *GetFactory();
 
 private:
-	OGLGraphicsDriver   *EnsureDriverCreated() override;
-	OGLGfxFilter        *CreateFilter(const String &id) override;
+	OGLGraphicsDriver *EnsureDriverCreated() override;
+	OGLGfxFilter *CreateFilter(const String &id) override;
 
 	static OGLGraphicsFactory *_factory;
 };
@@ -371,5 +373,6 @@ private:
 } // namespace OGL
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

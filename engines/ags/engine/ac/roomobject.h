@@ -25,11 +25,14 @@
 
 #include "ac/common_defines.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 // IMPORTANT: this struct is restricted by plugin API!
@@ -71,5 +74,7 @@ struct RoomObject {
 	void ReadFromFile(Common::Stream *in);
 	void WriteToFile(Common::Stream *out) const;
 };
+
+} // namespace AGS3
 
 #endif

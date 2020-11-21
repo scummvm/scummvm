@@ -50,12 +50,15 @@
 #include "core/platform.h"
 #include "util/error.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
 class Bitmap;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 typedef AGS::Common::HError HAGSError;
 
@@ -246,5 +249,7 @@ private:
 };
 
 extern SpriteCache spriteset;
+
+} // namespace AGS3
 
 #endif

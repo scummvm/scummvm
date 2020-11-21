@@ -25,12 +25,15 @@
 
 #include "util/wgt2allg.h" // color (allegro RGB)
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
 class Bitmap;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 void csavecompressed(Common::Stream *out, const unsigned char *tobesaved, const color pala[256]);
@@ -49,5 +52,7 @@ void save_lzw(Common::Stream *out, const Common::Bitmap *bmpp, const color *pall
 void load_lzw(Common::Stream *in, Common::Bitmap **bmm, int dst_bpp, color *pall);
 void savecompressed_allegro(Common::Stream *out, const Common::Bitmap *bmpp, const color *pall);
 void loadcompressed_allegro(Common::Stream *in, Common::Bitmap **bimpp, color *pall);
+
+} // namespace AGS3
 
 #endif

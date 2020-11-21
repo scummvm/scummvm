@@ -32,6 +32,7 @@
 #include "core/types.h"
 #include "gfx/gfxdefines.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -44,5 +45,6 @@ public:
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

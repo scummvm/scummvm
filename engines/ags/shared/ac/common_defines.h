@@ -25,6 +25,8 @@
 
 #include "core/platform.h"
 
+namespace AGS3 {
+
 #define EXIT_NORMAL 0
 #define EXIT_CRASH  92
 #define EXIT_ERROR  93
@@ -127,5 +129,7 @@
 #define OBJF_SOLID          0x20  // blocks characters from moving
 #define OBJF_LEGACY_LOCKED  0x40  // object position is locked in the editor (OBSOLETE since 3.5.0)
 #define OBJF_HASLIGHT       0x80  // the tint_light is valid and treated as brightness
+
+} // namespace AGS3
 
 #endif

@@ -23,6 +23,10 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_DYNAMICSPRITE_H
 #define AGS_ENGINE_AC_GLOBAL_DYNAMICSPRITE_H
 
+namespace AGS3 {
+
 int LoadImageFile(const char *filename);
+
+} // namespace AGS3
 
 #endif

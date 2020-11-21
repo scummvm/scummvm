@@ -26,6 +26,8 @@
 #include "util/geometry.h"
 #include "core/types.h"
 
+namespace AGS3 {
+
 #define PAL_GAMEWIDE        0
 #define PAL_LOCKED          1
 #define PAL_BACKGROUND      2
@@ -117,21 +119,21 @@
 #define MAX_SG_FOLDER_LEN 50
 
 enum GameResolutionType {
-	kGameResolution_Undefined   = -1,
+	kGameResolution_Undefined = -1,
 	// definition of 320x200 in very old versions of the engine (somewhere pre-2.56)
-	kGameResolution_Default     = 0,
-	kGameResolution_320x200     = 1,
-	kGameResolution_320x240     = 2,
-	kGameResolution_640x400     = 3,
-	kGameResolution_640x480     = 4,
-	kGameResolution_800x600     = 5,
-	kGameResolution_1024x768    = 6,
-	kGameResolution_1280x720    = 7,
-	kGameResolution_Custom      = 8,
+	kGameResolution_Default = 0,
+	kGameResolution_320x200 = 1,
+	kGameResolution_320x240 = 2,
+	kGameResolution_640x400 = 3,
+	kGameResolution_640x480 = 4,
+	kGameResolution_800x600 = 5,
+	kGameResolution_1024x768 = 6,
+	kGameResolution_1280x720 = 7,
+	kGameResolution_Custom = 8,
 	kNumGameResolutions,
 
-	kGameResolution_LastLoRes   = kGameResolution_320x240,
-	kGameResolution_FirstHiRes  = kGameResolution_640x400
+	kGameResolution_LastLoRes = kGameResolution_320x240,
+	kGameResolution_FirstHiRes = kGameResolution_640x400
 };
 
 inline bool IsLegacyHiRes(GameResolutionType resolution) {
@@ -143,8 +145,8 @@ Size ResolutionTypeToSize(GameResolutionType resolution, bool letterbox = false)
 // Automatic numbering of dialog options (OPT_DIALOGNUMBERED)
 enum DialogOptionNumbering {
 	kDlgOptNoNumbering = -1,
-	kDlgOptKeysOnly    =  0, // implicit key shortcuts
-	kDlgOptNumbering   =  1  // draw option indices and use key shortcuts
+	kDlgOptKeysOnly = 0, // implicit key shortcuts
+	kDlgOptNumbering = 1  // draw option indices and use key shortcuts
 };
 
 // Version of the script api (OPT_BASESCRIPTAPI and OPT_SCRIPTCOMPATLEV).
@@ -170,9 +172,9 @@ enum ScriptAPIVersion {
 // Determines whether the graphics renderer should scale sprites at the final
 // screen resolution, as opposed to native resolution
 enum RenderAtScreenRes {
-	kRenderAtScreenRes_UserDefined  = 0,
-	kRenderAtScreenRes_Enabled      = 1,
-	kRenderAtScreenRes_Disabled     = 2,
+	kRenderAtScreenRes_UserDefined = 0,
+	kRenderAtScreenRes_Enabled = 1,
+	kRenderAtScreenRes_Disabled = 2,
 };
 
 // Method to use when blending two sprites with alpha channel
@@ -251,5 +253,7 @@ struct FontInfo {
 
 	FontInfo();
 };
+
+} // namespace AGS3
 
 #endif

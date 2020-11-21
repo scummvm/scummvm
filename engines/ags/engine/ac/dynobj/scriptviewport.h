@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
+namespace AGS3 {
+
 // ScriptViewport keeps a reference to actual room Viewport in script.
 struct ScriptViewport final : AGSCCDynamicObject {
 public:
@@ -52,5 +54,7 @@ private:
 
 // Unserialize viewport from the memory stream
 ScriptViewport *Viewport_Unserialize(int handle, const char *serializedData, int dataSize);
+
+} // namespace AGS3
 
 #endif

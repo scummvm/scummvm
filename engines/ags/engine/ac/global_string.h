@@ -23,11 +23,15 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_STRING_H
 #define AGS_ENGINE_AC_GLOBAL_STRING_H
 
+namespace AGS3 {
+
 int StrGetCharAt(const char *strin, int posn);
 void StrSetCharAt(char *strin, int posn, int nchar);
 void _sc_strcat(char *s1, const char *s2);
 void _sc_strlower(char *desbuf);
 void _sc_strupper(char *desbuf);
 void _sc_strcpy(char *destt, const char *text);
+
+} // namespace AGS3
 
 #endif

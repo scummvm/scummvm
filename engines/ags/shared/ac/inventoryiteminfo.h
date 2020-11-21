@@ -23,11 +23,14 @@
 #ifndef AGS_SHARED_AC_INVENTORYITEMINFO_H
 #define AGS_SHARED_AC_INVENTORYITEMINFO_H
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 #define IFLG_STARTWITH 1
@@ -43,5 +46,7 @@ struct InventoryItemInfo {
 	void ReadFromSavegame(Common::Stream *in);
 	void WriteToSavegame(Common::Stream *out) const;
 };
+
+} // namespace AGS3
 
 #endif

@@ -26,6 +26,8 @@
 #include <map>
 #include "script/cc_instance.h"    // ccInstance
 
+namespace AGS3 {
+
 struct ICCDynamicObject;
 struct ICCStaticObject;
 
@@ -38,7 +40,7 @@ struct ScriptImport {
 
 	String              Name;           // import's uid
 	RuntimeScriptValue  Value;
-	ccInstance          *InstancePtr;   // script instance
+	ccInstance *InstancePtr;   // script instance
 };
 
 struct SystemImports {
@@ -64,5 +66,7 @@ extern SystemImports simp;
 // This is to register symbols exclusively for plugins, to allow them
 // perform old style unsafe function calls
 extern SystemImports simp_for_plugin;
+
+} // namespace AGS3
 
 #endif

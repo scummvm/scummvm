@@ -25,6 +25,8 @@
 
 #include "util/ini_util.h"
 
+namespace AGS3 {
+
 const char *get_engine_name();
 const char *get_engine_version();
 void        show_preload();
@@ -61,5 +63,7 @@ extern ResourcePaths ResPaths;
 // Used for apps to register their own plugins and other configuration
 typedef void (*t_engine_pre_init_callback)(void);
 extern void engine_set_pre_init_callback(t_engine_pre_init_callback callback);
+
+} // namespace AGS3
 
 #endif

@@ -32,6 +32,7 @@
 #include "gfx/gfxfilter.h"
 #include "util/scaling.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -49,5 +50,6 @@ protected:
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -26,6 +26,8 @@
 #include "ac/dynobj/cc_dynamicobject.h"
 #include "util/file.h"
 
+namespace AGS3 {
+
 using namespace AGS; // FIXME later
 
 #define scFileRead   1
@@ -62,5 +64,7 @@ struct sc_File final : ICCDynamicObject {
 	void    WriteInt32(const char *address, intptr_t offset, int32_t val) override;
 	void    WriteFloat(const char *address, intptr_t offset, float val) override;
 };
+
+} // namespace AGS3
 
 #endif

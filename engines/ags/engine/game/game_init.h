@@ -33,6 +33,7 @@
 #include "game/main_game_file.h"
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -60,5 +61,6 @@ HGameInitError  InitGameState(const LoadedGameEntities &ents, GameDataVersion da
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

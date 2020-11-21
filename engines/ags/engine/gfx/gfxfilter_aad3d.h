@@ -31,6 +31,7 @@
 
 #include "gfx/gfxfilter_d3d.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 namespace D3D {
@@ -48,5 +49,6 @@ public:
 } // namespace D3D
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

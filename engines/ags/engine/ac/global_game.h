@@ -24,6 +24,9 @@
 #define AGS_ENGINE_AC_GLOBAL_GAME_H
 
 #include "util/string.h"
+
+namespace AGS3 {
+
 using namespace AGS; // FIXME later
 
 void GiveScore(int amnt);
@@ -89,5 +92,7 @@ int WaitKey(int nloops);
 int WaitMouse(int nloops);
 int WaitMouseKey(int nloops);
 void SkipWait();
+
+} // namespace AGS3
 
 #endif

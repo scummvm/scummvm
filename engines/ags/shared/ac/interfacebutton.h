@@ -23,6 +23,8 @@
 #ifndef AGS_SHARED_AC_INTERFACEBUTTON_H
 #define AGS_SHARED_AC_INTERFACEBUTTON_H
 
+namespace AGS3 {
+
 #define MAXBUTTON       20
 #define IBFLG_ENABLED   1
 #define IBFLG_INVBOX    2
@@ -33,5 +35,7 @@ struct InterfaceButton {
 	char flags;
 	void set(int xx, int yy, int picc, int overpicc, int actionn);
 };
+
+} // namespace AGS3
 
 #endif

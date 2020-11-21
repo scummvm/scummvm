@@ -31,6 +31,7 @@
 
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -38,19 +39,20 @@ class TextReader {
 public:
 	virtual ~TextReader() = default;
 
-	virtual bool IsValid() const            = 0;
+	virtual bool IsValid() const = 0;
 
 	// Read single character
-	virtual char    ReadChar()              = 0;
+	virtual char    ReadChar() = 0;
 	// Read defined number of characters
 	virtual String  ReadString(size_t length) = 0;
 	// Read till line break
-	virtual String  ReadLine()              = 0;
+	virtual String  ReadLine() = 0;
 	// Read till end of available data
-	virtual String  ReadAll()               = 0;
+	virtual String  ReadAll() = 0;
 };
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

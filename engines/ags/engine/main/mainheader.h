@@ -45,8 +45,13 @@
 #include <sys/stat.h>
 #include <android/log.h>
 
+namespace AGS3 {
+
 extern "C" void selectLatestSavegame();
 extern bool psp_load_latest_savegame;
+
+} // namespace AGS3
+
 #endif
 
 #endif

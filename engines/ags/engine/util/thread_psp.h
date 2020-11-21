@@ -27,9 +27,9 @@
 #include <pspkernel.h>
 #include <pspthreadman.h>
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
-
 
 class PSPThread : public BaseThread {
 public:
@@ -98,8 +98,8 @@ private:
 
 typedef PSPThread Thread;
 
-
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

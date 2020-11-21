@@ -25,6 +25,8 @@
 
 #include "ac/runtime_defines.h"
 
+namespace AGS3 {
+
 // Forward declaration
 namespace AGS {
 namespace Common {
@@ -57,5 +59,7 @@ struct CharacterExtras {
 	void ReadFromFile(Common::Stream *in);
 	void WriteToFile(Common::Stream *out);
 };
+
+} // namespace AGS3
 
 #endif

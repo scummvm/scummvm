@@ -31,12 +31,15 @@
 #include "util/geometry.h"
 #include "util/string.h"
 
+namespace AGS3 {
+
 // Forward declaration
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 // There were issues when including header caused conflicts
@@ -55,8 +58,8 @@ namespace Common {
 // Legacy GUIMain visibility state, which combined Visible property and override factor
 enum LegacyGUIVisState {
 	kGUIVisibility_Concealed = -1, // gui is hidden by command
-	kGUIVisibility_Off       =  0, // gui is disabled (won't show up by command)
-	kGUIVisibility_On        =  1  // gui is shown by command
+	kGUIVisibility_Off = 0, // gui is disabled (won't show up by command)
+	kGUIVisibility_On = 1  // gui is shown by command
 };
 
 class Bitmap;
@@ -226,7 +229,7 @@ extern bool is_sprite_alpha(int spr);
 
 // This function has distinct implementations in Engine and Editor
 extern void draw_gui_sprite(Common::Bitmap *ds, int spr, int x, int y, bool use_alpha = true,
-                            Common::BlendMode blend_mode = Common::kBlendMode_Alpha);
+	Common::BlendMode blend_mode = Common::kBlendMode_Alpha);
 
 extern AGS_INLINE int game_to_data_coord(int coord);
 extern AGS_INLINE int data_to_game_coord(int coord);
@@ -235,7 +238,7 @@ extern AGS_INLINE int get_fixed_pixel_size(int pixels);
 
 // Those function have distinct implementations in Engine and Editor
 extern void wouttext_outline(Common::Bitmap *ds, int xxp, int yyp, int usingfont, color_t text_color, const char *texx);
-extern int wgettextwidth_compensate(Common::Bitmap *ds, const char *tex, int font) ;
+extern int wgettextwidth_compensate(Common::Bitmap *ds, const char *tex, int font);
 extern void check_font(int *fontnum);
 
 extern void set_our_eip(int eip);
@@ -244,5 +247,7 @@ extern void set_eip_guiobj(int eip);
 extern int get_eip_guiobj();
 
 extern bool outlineGuiObjects;
+
+} // namespace AGS3
 
 #endif

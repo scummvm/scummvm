@@ -26,11 +26,12 @@
 #include "game/savegame.h"
 #include "util/stream.h"
 
+namespace AGS3 {
 namespace AGS {
 
 namespace Common {
 struct Interaction;
-}
+} // namespace Shared
 
 namespace Engine {
 

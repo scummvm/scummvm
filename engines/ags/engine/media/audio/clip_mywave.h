@@ -25,8 +25,10 @@
 
 #include "media/audio/soundclip.h"
 
+namespace AGS3 {
+
 // My new MP3STREAM wrapper
-struct MYWAVE: public SOUNDCLIP {
+struct MYWAVE : public SOUNDCLIP {
 	SAMPLE *wave;
 	int voice;
 
@@ -53,5 +55,7 @@ protected:
 	int get_voice() override;
 	void adjust_volume() override;
 };
+
+} // namespace AGS3
 
 #endif

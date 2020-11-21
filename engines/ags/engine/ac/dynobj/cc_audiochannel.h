@@ -25,10 +25,14 @@
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
+namespace AGS3 {
+
 struct CCAudioChannel final : AGSCCDynamicObject {
 	const char *GetType() override;
 	int Serialize(const char *address, char *buffer, int bufsize) override;
 	void Unserialize(int index, const char *serializedData, int dataSize) override;
 };
+
+} // namespace AGS3
 
 #endif

@@ -26,9 +26,11 @@
 #include "almp3.h"
 #include "media/audio/soundclip.h"
 
+namespace AGS3 {
+
 extern AGS::Engine::Mutex _mp3_mutex;
 
-struct MYMP3: public SOUNDCLIP {
+struct MYMP3 : public SOUNDCLIP {
 	ALMP3_MP3STREAM *stream;
 	PACKFILE *in;
 	size_t filesize;
@@ -53,5 +55,7 @@ protected:
 private:
 	void adjust_stream();
 };
+
+} // namespace AGS3
 
 #endif

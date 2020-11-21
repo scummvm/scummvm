@@ -26,6 +26,7 @@
 #include <vector>
 #include "gui/guiobject.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -52,7 +53,7 @@ public:
 	void ReadFromSavegame(Common::Stream *in, GuiSvgVersion svg_ver) override;
 	void WriteToSavegame(Common::Stream *out) const override;
 
-// TODO: these members are currently public; hide them later
+	// TODO: these members are currently public; hide them later
 public:
 	bool    IsMouseOver;
 	int32_t CharId; // whose inventory (-1 = current player)
@@ -71,5 +72,7 @@ private:
 
 extern std::vector<AGS::Common::GUIInvWindow> guiinv;
 extern int numguiinv;
+
+} // namespace AGS3
 
 #endif

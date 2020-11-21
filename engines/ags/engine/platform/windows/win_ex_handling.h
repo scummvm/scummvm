@@ -25,9 +25,13 @@
 
 #include "util/ini_util.h"
 
+namespace AGS3 {
+
 void setup_malloc_handling();
 int  initialize_engine_with_exception_handling(
-    int (initialize_engine)(const AGS::Common::ConfigTree &startup_opts),
-    const AGS::Common::ConfigTree &startup_opts);
+	int (initialize_engine)(const AGS::Common::ConfigTree &startup_opts),
+	const AGS::Common::ConfigTree &startup_opts);
+
+} // namespace AGS3
 
 #endif

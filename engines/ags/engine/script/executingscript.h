@@ -25,6 +25,8 @@
 
 #include "script/cc_instance.h"
 
+namespace AGS3 {
+
 enum PostScriptAction {
 	ePSANewRoom,
 	ePSAInvScreen,
@@ -73,5 +75,7 @@ struct ExecutingScript {
 	void init();
 	ExecutingScript();
 };
+
+} // namespace AGS3
 
 #endif

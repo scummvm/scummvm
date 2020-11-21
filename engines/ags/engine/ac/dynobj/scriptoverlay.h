@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
+namespace AGS3 {
+
 struct ScriptOverlay final : AGSCCDynamicObject {
 	int overlayId;
 	int borderWidth;
@@ -38,5 +40,7 @@ struct ScriptOverlay final : AGSCCDynamicObject {
 	void Remove();
 	ScriptOverlay();
 };
+
+} // namespace AGS3
 
 #endif

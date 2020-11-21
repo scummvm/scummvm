@@ -35,6 +35,8 @@
 #include "debug/outputhandler.h"
 #include "util/ini_util.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
@@ -62,7 +64,7 @@ enum SetupReturnValue {
 };
 
 struct AGSPlatformDriver
-// be used as a output target for logging system
+	// be used as a output target for logging system
 	: public AGS::Common::IOutputHandler {
 	virtual void AboutToQuitGame();
 	virtual void Delay(int millis);
@@ -84,7 +86,7 @@ struct AGSPlatformDriver
 		return ".";
 	}
 	// Get directory for storing all-games user configuration files
-	virtual const char *GetUserGlobalConfigDirectory()  {
+	virtual const char *GetUserGlobalConfigDirectory() {
 		return ".";
 	}
 	// Get default directory for program output (logs)
@@ -150,7 +152,8 @@ struct AGSPlatformDriver
 	virtual void UnRegisterGameWithGameExplorer();
 	virtual int  ConvertKeycodeToScanCode(int keyCode);
 	// Adjust window size to ensure it is in the supported limits
-	virtual void ValidateWindowSize(int &x, int &y, bool borderless) const {}
+	virtual void ValidateWindowSize(int &x, int &y, bool borderless) const {
+	}
 
 	virtual int  InitializeCDPlayer() = 0;  // return 0 on success
 	virtual int  CDPlayerCommand(int cmdd, int datt) = 0;
@@ -200,5 +203,7 @@ int cd_player_control(int cmdd, int datt);
 // [IKM] What is a need to have this global var if you can get AGSPlatformDriver
 // instance by calling AGSPlatformDriver::GetDriver()?
 extern AGSPlatformDriver *platform;
+
+} // namespace AGS3
 
 #endif

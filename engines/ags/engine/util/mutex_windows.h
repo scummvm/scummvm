@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_UTIL_MUTEXT_WINDOWS_H
 #define AGS_ENGINE_UTIL_MUTEXT_WINDOWS_H
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
-
 
 class WindowsMutex : public BaseMutex {
 public:
@@ -57,11 +57,10 @@ private:
 	HANDLE _mutex;
 };
 
-
 typedef WindowsMutex Mutex;
-
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

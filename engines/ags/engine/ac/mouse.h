@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/scriptmouse.h"
 
+namespace AGS3 {
+
 #define DOMOUSE_UPDATE 0
 #define DOMOUSE_ENABLE 1
 #define DOMOUSE_DISABLE 2
@@ -77,5 +79,7 @@ extern ScriptMouse scmouse;
 
 extern int cur_mode;
 extern int cur_cursor;
+
+} // namespace AGS3
 
 #endif

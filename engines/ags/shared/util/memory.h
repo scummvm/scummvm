@@ -33,6 +33,8 @@
 #include "util/bbop.h"
 #include "util/math.h"
 
+namespace AGS3 {
+
 #if defined (AGS_STRICT_ALIGNMENT) || defined (TEST_STRICT_ALIGNMENT)
 #define MEMORY_STRICT_ALIGNMENT
 #endif
@@ -91,10 +93,10 @@ inline int64_t ReadInt64(const void *ptr) {
 	const uint8_t *b = (const uint8_t *)ptr;
 #if defined (BITBYTE_BIG_ENDIAN)
 	return ((uint64_t)b[0] << 56) | ((uint64_t)b[1] << 48) | ((uint64_t)b[2] << 40) | ((uint64_t)b[3] << 32) |
-	       (b[4] << 24) | (b[5] << 16) | (b[6] << 8) | b[7];
+		(b[4] << 24) | (b[5] << 16) | (b[6] << 8) | b[7];
 #else
 	return ((uint64_t)b[7] << 56) | ((uint64_t)b[6] << 48) | ((uint64_t)b[5] << 40) | ((uint64_t)b[4] << 32) |
-	       (b[3] << 24) | (b[2] << 16) | (b[1] << 8) | b[0];
+		(b[3] << 24) | (b[2] << 16) | (b[1] << 8) | b[0];
 #endif
 #else
 	return *(int64_t *)ptr;
@@ -218,8 +220,8 @@ inline void WriteInt64BE(void *ptr, int64_t value) {
 //-------------------------------------------------------------------------
 // Copies block of 2d data from source into destination.
 inline void BlockCopy(uint8_t *dst, const size_t dst_pitch, const size_t dst_offset,
-                      const uint8_t *src, const size_t src_pitch, const size_t src_offset,
-                      const size_t height) {
+	const uint8_t *src, const size_t src_pitch, const size_t src_offset,
+	const size_t height) {
 	for (size_t y = 0; y < height; ++y, src += src_pitch, dst += dst_pitch)
 		memcpy(dst + dst_offset, src + src_offset, Math::Min(dst_pitch - dst_offset, src_pitch - src_offset));
 }
@@ -228,5 +230,6 @@ inline void BlockCopy(uint8_t *dst, const size_t dst_pitch, const size_t dst_off
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

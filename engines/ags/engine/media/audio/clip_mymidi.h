@@ -25,8 +25,10 @@
 
 #include "media/audio/soundclip.h"
 
+namespace AGS3 {
+
 // MIDI
-struct MYMIDI: public SOUNDCLIP {
+struct MYMIDI : public SOUNDCLIP {
 	MIDI *tune;
 	int lengthInSeconds;
 
@@ -58,5 +60,7 @@ protected:
 	int get_voice() override;
 	void adjust_volume() override;
 };
+
+} // namespace AGS3
 
 #endif

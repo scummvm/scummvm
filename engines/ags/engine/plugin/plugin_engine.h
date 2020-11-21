@@ -33,14 +33,17 @@
 #include "game/game_init.h"
 #include "game/plugininfo.h"
 
+namespace AGS3 {
+
 #define PLUGIN_FILENAME_MAX (49)
 
 class IAGSEngine;
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 void pl_stop_plugins();
@@ -57,5 +60,7 @@ bool pl_any_want_hook(int event);
 
 void pl_set_file_handle(long data, AGS::Common::Stream *stream);
 void pl_clear_file_handle();
+
+} // namespace AGS3
 
 #endif

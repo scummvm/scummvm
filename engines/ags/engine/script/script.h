@@ -33,6 +33,8 @@
 #include "game/interactions.h"
 #include "util/string.h"
 
+namespace AGS3 {
+
 using AGS::Common::Interaction;
 using AGS::Common::InteractionCommandList;
 using AGS::Common::InteractionScripts;
@@ -52,10 +54,10 @@ void    cancel_all_scripts();
 ccInstance *GetScriptInstanceByType(ScriptInstType sc_inst);
 // Queues a script function to be run either called by the engine or from another script
 void    QueueScriptFunction(ScriptInstType sc_inst, const char *fn_name, size_t param_count = 0,
-                            const RuntimeScriptValue &p1 = RuntimeScriptValue(), const RuntimeScriptValue &p2 = RuntimeScriptValue());
+	const RuntimeScriptValue &p1 = RuntimeScriptValue(), const RuntimeScriptValue &p2 = RuntimeScriptValue());
 // Try to run a script function right away
 void    RunScriptFunction(ScriptInstType sc_inst, const char *fn_name, size_t param_count = 0,
-                          const RuntimeScriptValue &p1 = RuntimeScriptValue(), const RuntimeScriptValue &p2 = RuntimeScriptValue());
+	const RuntimeScriptValue &p1 = RuntimeScriptValue(), const RuntimeScriptValue &p2 = RuntimeScriptValue());
 
 int     RunScriptFunctionIfExists(ccInstance *sci, const char *tsname, int numParam, const RuntimeScriptValue *params);
 int     RunTextScript(ccInstance *sci, const char *tsname);
@@ -69,7 +71,7 @@ AGS::Common::String GetScriptName(ccInstance *sci);
 
 //=============================================================================
 
-char   *make_ts_func_name(const char *base, int iii, int subd);
+char *make_ts_func_name(const char *base, int iii, int subd);
 // Performs various updates to the game after script interpreter returns control to the engine.
 // Executes actions and does changes that are not executed immediately at script command, for
 // optimisation and other reasons.
@@ -120,5 +122,7 @@ extern int numScriptModules;
 extern std::vector<AGS::Common::String> characterScriptObjNames;
 extern AGS::Common::String objectScriptObjNames[MAX_ROOM_OBJECTS];
 extern std::vector<AGS::Common::String> guiScriptObjNames;
+
+} // namespace AGS3
 
 #endif

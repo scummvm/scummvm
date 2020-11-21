@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_GLOBALDRAWINGSURFACE_H
 #define AGS_ENGINE_AC_GLOBALDRAWINGSURFACE_H
 
+namespace AGS3 {
+
 void RawSaveScreen();
 // RawRestoreScreen: copy backup bitmap back to screen; we
 // deliberately don't free the Common::Bitmap *cos they can multiple restore
@@ -45,5 +47,7 @@ void RawDrawLine(int fromx, int fromy, int tox, int toy);
 void RawDrawCircle(int xx, int yy, int rad);
 void RawDrawRectangle(int x1, int y1, int x2, int y2);
 void RawDrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3);
+
+} // namespace AGS3
 
 #endif

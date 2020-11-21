@@ -29,6 +29,8 @@
 #ifndef AGS_SHARED_GAME_ROOMVERSION_H
 #define AGS_SHARED_GAME_ROOMVERSION_H
 
+namespace AGS3 {
+
 /* room file versions history
 8:  final v1.14 release
 9:  intermediate v2 alpha releases
@@ -91,5 +93,7 @@ enum RoomFileVersion {
 	kRoomVersion_3508 = 33,
 	kRoomVersion_Current = kRoomVersion_3508
 };
+
+} // namespace AGS3
 
 #endif

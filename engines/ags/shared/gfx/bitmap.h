@@ -31,6 +31,7 @@
 
 #include "util/geometry.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -87,5 +88,6 @@ void    ReadPixelsFromMemory(Bitmap *dst, const uint8_t *src_buffer, const size_
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

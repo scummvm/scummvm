@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_ROOM_H
 #define AGS_ENGINE_AC_GLOBAL_ROOM_H
 
+namespace AGS3 {
+
 void SetAmbientTint(int red, int green, int blue, int opacity, int luminance);
 void SetAmbientLightLevel(int light_level);
 void NewRoom(int nrnum);
@@ -35,6 +37,8 @@ int  HasBeenToRoom(int roomnum);
 void GetRoomPropertyText(const char *property, char *bufer);
 
 void SetBackgroundFrame(int frnum);
-int GetBackgroundFrame() ;
+int GetBackgroundFrame();
+
+} // namespace AGS3
 
 #endif

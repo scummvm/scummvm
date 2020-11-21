@@ -26,6 +26,7 @@
 #include "core/platform.h"
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -47,7 +48,7 @@ public:
 
 } // namespace Engine
 } // namespace AGS
-
+} // namespace AGS3
 
 #if AGS_PLATFORM_OS_WINDOWS
 #include "library_windows.h"

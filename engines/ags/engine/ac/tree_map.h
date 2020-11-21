@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_TREEMAP_H
 #define AGS_ENGINE_AC_TREEMAP_H
 
+namespace AGS3 {
+
 // Binary tree structure for holding translations, allows fast
 // access
 struct TreeMap {
@@ -36,5 +38,7 @@ struct TreeMap {
 	void clear();
 	~TreeMap();
 };
+
+} // namespace AGS3
 
 #endif

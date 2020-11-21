@@ -37,11 +37,13 @@
 
 #include "util/geometry.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 class Bitmap;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 void msetgraphpos(int, int);
@@ -100,3 +102,5 @@ extern int disable_mgetgraphpos;
 extern char currentcursor;
 
 extern Common::Bitmap *mousecurs[MAXCURSORS];
+
+} // namespace AGS3

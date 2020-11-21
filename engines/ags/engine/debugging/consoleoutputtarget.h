@@ -32,6 +32,7 @@
 
 #include "debug/outputhandler.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -46,7 +47,8 @@ public:
 	void PrintMessage(const DebugMessage &msg) override;
 };
 
-}   // namespace Engine
-}   // namespace AGS
+} // namespace Engine
+} // namespace AGS
+} // namespace AGS3
 
 #endif

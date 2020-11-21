@@ -23,6 +23,7 @@
 #ifndef AGS_ENGINE_GUI_GUIDIALOG_H
 #define AGS_ENGINE_GUI_GUIDIALOG_H
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 class Bitmap;
@@ -49,5 +50,7 @@ int  quitdialog();
 
 // last string value in gui dialog.
 char *get_gui_dialog_buffer();
+
+} // namespace AGS3
 
 #endif

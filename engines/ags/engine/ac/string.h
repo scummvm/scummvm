@@ -26,6 +26,8 @@
 #include <stdarg.h>
 #include "ac/dynobj/cc_dynamicobject.h"
 
+namespace AGS3 {
+
 // Check that a supplied buffer from a text script function was not null
 #define VALIDATE_STRING(strin) if ((unsigned long)strin <= 4096) quit("!String argument was null: make sure you pass a string, not an int, as a buffer")
 
@@ -57,5 +59,7 @@ class SplitLines;
 size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, int fonnt, size_t max_lines = -1);
 void check_strlen(char *ptt);
 void my_strncpy(char *dest, const char *src, int len);
+
+} // namespace AGS3
 
 #endif

@@ -32,6 +32,8 @@
 #include "gui/guitextbox.h"
 #include "ac/dynobj/scriptgui.h"
 
+namespace AGS3 {
+
 using AGS::Common::GUIObject;
 using AGS::Common::GUIButton;
 using AGS::Common::GUIInvWindow;
@@ -40,7 +42,7 @@ using AGS::Common::GUIListBox;
 using AGS::Common::GUISlider;
 using AGS::Common::GUITextBox;
 
-GUIObject   *GetGUIControlAtLocation(int xx, int yy);
+GUIObject *GetGUIControlAtLocation(int xx, int yy);
 int         GUIControl_GetVisible(GUIObject *guio);
 void        GUIControl_SetVisible(GUIObject *guio, int visible);
 int         GUIControl_GetClickable(GUIObject *guio);
@@ -48,12 +50,12 @@ void        GUIControl_SetClickable(GUIObject *guio, int enabled);
 int         GUIControl_GetEnabled(GUIObject *guio);
 void        GUIControl_SetEnabled(GUIObject *guio, int enabled);
 int         GUIControl_GetID(GUIObject *guio);
-ScriptGUI  *GUIControl_GetOwningGUI(GUIObject *guio);
-GUIButton  *GUIControl_GetAsButton(GUIObject *guio);
+ScriptGUI *GUIControl_GetOwningGUI(GUIObject *guio);
+GUIButton *GUIControl_GetAsButton(GUIObject *guio);
 GUIInvWindow *GUIControl_GetAsInvWindow(GUIObject *guio);
-GUILabel   *GUIControl_GetAsLabel(GUIObject *guio);
+GUILabel *GUIControl_GetAsLabel(GUIObject *guio);
 GUIListBox *GUIControl_GetAsListBox(GUIObject *guio);
-GUISlider  *GUIControl_GetAsSlider(GUIObject *guio);
+GUISlider *GUIControl_GetAsSlider(GUIObject *guio);
 GUITextBox *GUIControl_GetAsTextBox(GUIObject *guio);
 int         GUIControl_GetX(GUIObject *guio);
 void        GUIControl_SetX(GUIObject *guio, int xx);
@@ -69,5 +71,7 @@ void        GUIControl_SetHeight(GUIObject *guio, int newhit);
 void        GUIControl_SetSize(GUIObject *guio, int newwid, int newhit);
 void        GUIControl_SendToBack(GUIObject *guio);
 void        GUIControl_BringToFront(GUIObject *guio);
+
+} // namespace AGS3
 
 #endif

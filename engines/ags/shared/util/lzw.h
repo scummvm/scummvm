@@ -23,16 +23,21 @@
 #ifndef AGS_SHARED_UTIL_LZW_H
 #define AGS_SHARED_UTIL_LZW_H
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 void lzwcompress(Common::Stream *lzw_in, Common::Stream *out);
 unsigned char *lzwexpand_to_mem(Common::Stream *in);
 
 extern long outbytes, maxsize, putbytes;
+
+} // namespace AGS3
 
 #endif

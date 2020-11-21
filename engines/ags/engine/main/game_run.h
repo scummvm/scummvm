@@ -23,11 +23,14 @@
 #ifndef AGS_ENGINE_MAIN_GAME_RUN_H
 #define AGS_ENGINE_MAIN_GAME_RUN_H
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Engine {
 class IDriverDependantBitmap;
-}
-}
+} // namespace Engine
+} // namespace AGS
+
 using namespace AGS::Engine; // FIXME later
 
 // Loops game frames until certain event takes place (for blocking actions)
@@ -53,5 +56,7 @@ bool run_service_key_controls(int &kgn);
 // Runs service mouse controls, returns false if mouse input was claimed by the engine,
 // otherwise returns true and provides mouse button code.
 bool run_service_mb_controls(int &mbut, int &mwheelz);
+
+} // namespace AGS3
 
 #endif

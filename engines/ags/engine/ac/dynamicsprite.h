@@ -26,6 +26,8 @@
 #include "ac/dynobj/scriptdynamicsprite.h"
 #include "ac/dynobj/scriptdrawingsurface.h"
 
+namespace AGS3 {
+
 void    DynamicSprite_Delete(ScriptDynamicSprite *sds);
 ScriptDrawingSurface *DynamicSprite_GetDrawingSurface(ScriptDynamicSprite *dss);
 int     DynamicSprite_GetGraphic(ScriptDynamicSprite *sds);
@@ -52,5 +54,7 @@ ScriptDynamicSprite *DynamicSprite_CreateFromBackground(int frame, int x1, int y
 
 void    add_dynamic_sprite(int gotSlot, Common::Bitmap *redin, bool hasAlpha = false);
 void    free_dynamic_sprite(int gotSlot);
+
+} // namespace AGS3
 
 #endif

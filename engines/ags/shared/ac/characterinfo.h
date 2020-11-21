@@ -25,11 +25,14 @@
 
 #include "ac/common_defines.h" // constants
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 #define MAX_INV             301
@@ -156,5 +159,7 @@ struct OldCharacterInfo {
 
 #define COPY_CHAR_VAR(name) ci->name = oci->name
 void ConvertOldCharacterToNew(OldCharacterInfo *oci, CharacterInfo *ci);
+
+} // namespace AGS3
 
 #endif

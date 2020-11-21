@@ -31,6 +31,8 @@
 
 #include "util/string.h"
 
+namespace AGS3 {
+
 extern void cc_error(const char *, ...);
 
 // error reporting
@@ -40,5 +42,7 @@ extern AGS::Common::String ccErrorString; // description of the error
 extern AGS::Common::String ccErrorCallStack; // callstack where error happened
 extern bool ccErrorIsUserError;
 extern const char *ccCurScriptName; // name of currently compiling script
+
+} // namespace AGS3
 
 #endif

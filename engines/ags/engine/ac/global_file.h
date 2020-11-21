@@ -25,11 +25,13 @@
 
 #include "util/file.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 int32_t FileOpen(const char *fnmm, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
@@ -46,5 +48,7 @@ int   FileReadInt(int32_t handle);
 char  FileReadRawChar(int32_t handle);
 int   FileReadRawInt(int32_t handle);
 void  FileWriteRawChar(int32_t handle, int chartoWrite);
+
+} // namespace AGS3
 
 #endif

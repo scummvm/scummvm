@@ -23,11 +23,13 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_OBJECT_H
 #define AGS_ENGINE_AC_GLOBAL_OBJECT_H
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 class Bitmap;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 // TODO: merge with other Rect declared in bitmap unit
@@ -76,5 +78,7 @@ int  GetObjectProperty(int hss, const char *property);
 void GetObjectPropertyText(int item, const char *property, char *bufer);
 
 Common::Bitmap *GetObjectImage(int obj, int *isFlipped);
+
+} // namespace AGS3
 
 #endif

@@ -23,9 +23,13 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTINVITEM_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTINVITEM_H
 
+namespace AGS3 {
+
 struct ScriptInvItem {
 	int id;
 	int reserved;
 };
+
+} // namespace AGS3
 
 #endif

@@ -29,6 +29,7 @@
 #ifndef AGS_ENGINE_GFX_ALI3DEXCEPTION_H
 #define AGS_ENGINE_GFX_ALI3DEXCEPTION_H
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -49,5 +50,6 @@ public:
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

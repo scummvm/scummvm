@@ -46,6 +46,7 @@
 #include "gfx/gfxdriverfactorybase.h"
 #include "gfx/gfxdriverbase.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 namespace ALSW {
@@ -77,8 +78,10 @@ public:
 	int GetColorDepth() override {
 		return _colDepth;
 	}
-	void SetLightLevel(int lightLevel) override  { }
-	void SetTint(int red, int green, int blue, int tintSaturation) override { }
+	void SetLightLevel(int lightLevel) override {
+	}
+	void SetTint(int red, int green, int blue, int tintSaturation) override {
+	}
 
 	Bitmap *_bmp;
 	int _width, _height;
@@ -191,14 +194,16 @@ public:
 #ifndef AGS_NO_VIDEO_PLAYER
 	bool PlayVideo(const char *filename, bool useAVISound, VideoSkipType skipType, bool stretchToFullScreen) override;
 #endif
-	bool SupportsGammaControl() override ;
+	bool SupportsGammaControl() override;
 	void SetGamma(int newGamma) override;
-	void UseSmoothScaling(bool enabled) override { }
+	void UseSmoothScaling(bool enabled) override {
+	}
 	void EnableVsyncBeforeRender(bool enabled) override {
 		_autoVsync = enabled;
 	}
 	void Vsync() override;
-	void RenderSpritesAtScreenResolution(bool enabled, int supersampling) override { }
+	void RenderSpritesAtScreenResolution(bool enabled, int supersampling) override {
+	}
 	bool RequiresFullRedrawEachFrame() override {
 		return false;
 	}
@@ -262,8 +267,8 @@ private:
 
 	void highcolor_fade_in(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue);
 	void highcolor_fade_out(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue);
-	void __fade_from_range(PALETTE source, PALETTE dest, int speed, int from, int to) ;
-	void __fade_out_range(int speed, int from, int to, int targetColourRed, int targetColourGreen, int targetColourBlue) ;
+	void __fade_from_range(PALETTE source, PALETTE dest, int speed, int from, int to);
+	void __fade_out_range(int speed, int from, int to, int targetColourRed, int targetColourGreen, int targetColourBlue);
 	int  GetAllegroGfxDriverID(bool windowed);
 };
 
@@ -280,7 +285,7 @@ public:
 
 private:
 	ALSoftwareGraphicsDriver *EnsureDriverCreated() override;
-	AllegroGfxFilter         *CreateFilter(const String &id) override;
+	AllegroGfxFilter *CreateFilter(const String &id) override;
 
 	static ALSWGraphicsFactory *_factory;
 };
@@ -288,5 +293,6 @@ private:
 } // namespace ALSW
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

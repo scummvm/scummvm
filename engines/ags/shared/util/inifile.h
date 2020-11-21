@@ -36,6 +36,7 @@
 #include <list>
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -101,7 +102,7 @@ public:
 		ItemIterator Begin() {
 			return Items.begin();
 		}
-		ItemIterator End()   {
+		ItemIterator End() {
 			return Items.end();
 		}
 		ConstItemIterator CBegin() const {
@@ -136,7 +137,7 @@ public:
 	SectionIterator Begin() {
 		return _sections.begin();
 	}
-	SectionIterator End()   {
+	SectionIterator End() {
 		return _sections.end();
 	}
 	ConstSectionIterator CBegin() const {
@@ -169,5 +170,6 @@ private:
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -31,6 +31,8 @@
 
 #include "util/mutex.h"
 
+namespace AGS3 {
+
 // JJS: This is needed for the derieved classes
 extern volatile int psp_audio_multithreaded;
 
@@ -40,7 +42,9 @@ extern volatile int psp_audio_multithreaded;
 // Improving this situation is only possible with massive refactory of
 // sound clip use, taking backwards-compatible audio system in account.
 
-enum SoundClipState { SoundClipInitial, SoundClipPlaying, SoundClipPaused, SoundClipStopped };
+enum SoundClipState {
+	SoundClipInitial, SoundClipPlaying, SoundClipPaused, SoundClipStopped
+};
 
 struct SOUNDCLIP {
 	int priority;
@@ -170,5 +174,7 @@ protected:
 		return final_vol >= 0 ? final_vol : 0;
 	}
 };
+
+} // namespace AGS3
 
 #endif

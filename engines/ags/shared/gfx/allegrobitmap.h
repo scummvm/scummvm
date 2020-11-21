@@ -36,6 +36,7 @@
 #include "core/types.h"
 #include "gfx/bitmap.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -218,10 +219,9 @@ public:
 	void    SetScanLine(int index, unsigned char *data, int data_size = -1);
 
 private:
-	BITMAP          *_alBitmap;
-	bool            _isDataOwner;
+	BITMAP *_alBitmap;
+	bool _isDataOwner;
 };
-
 
 
 namespace BitmapHelper {
@@ -234,5 +234,6 @@ Bitmap *CreateRawBitmapWrapper(BITMAP *al_bmp);
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

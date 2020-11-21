@@ -25,6 +25,8 @@
 
 #include "gui/guilabel.h"
 
+namespace AGS3 {
+
 using AGS::Common::GUILabel;
 
 const char *Label_GetText_New(GUILabel *labl);
@@ -34,5 +36,7 @@ int         Label_GetColor(GUILabel *labl);
 void        Label_SetColor(GUILabel *labl, int colr);
 int         Label_GetFont(GUILabel *labl);
 void        Label_SetFont(GUILabel *guil, int fontnum);
+
+} // namespace AGS3
 
 #endif

@@ -28,20 +28,19 @@
 #include "gui/guidefines.h"
 #include "util/string.h"
 
+namespace AGS3 {
+
 #define GUIDIS_GREYOUT   1
 #define GUIDIS_BLACKOUT  2
 #define GUIDIS_UNCHANGED 4
 #define GUIDIS_GUIOFF  0x80
 
-
-
-
 namespace AGS {
 namespace Common {
 
 enum LegacyGUIAlignment {
-	kLegacyGUIAlign_Left   = 0,
-	kLegacyGUIAlign_Right  = 1,
+	kLegacyGUIAlign_Left = 0,
+	kLegacyGUIAlign_Right = 1,
 	kLegacyGUIAlign_Center = 2
 };
 
@@ -64,7 +63,8 @@ public:
 	bool            IsClickable() const;
 
 	// Operations
-	virtual void    Draw(Bitmap *ds) { }
+	virtual void    Draw(Bitmap *ds) {
+	}
 	void            SetClickable(bool on);
 	void            SetEnabled(bool on);
 	void            SetTranslated(bool on);
@@ -72,21 +72,27 @@ public:
 
 	// Events
 	// Key pressed for control
-	virtual void    OnKeyPress(int keycode) { }
+	virtual void    OnKeyPress(int keycode) {
+	}
 	// Mouse button down - return 'True' to lock focus
 	virtual bool    OnMouseDown() {
 		return false;
 	}
 	// Mouse moves onto control
-	virtual void    OnMouseEnter() { }
+	virtual void    OnMouseEnter() {
+	}
 	// Mouse moves off control
-	virtual void    OnMouseLeave() { }
+	virtual void    OnMouseLeave() {
+	}
 	// Mouse moves over control - x,y relative to gui
-	virtual void    OnMouseMove(int x, int y) { }
+	virtual void    OnMouseMove(int x, int y) {
+	}
 	// Mouse button up
-	virtual void    OnMouseUp() { }
+	virtual void    OnMouseUp() {
+	}
 	// Control was resized
-	virtual void    OnResized() { }
+	virtual void    OnResized() {
+	}
 
 	// Serialization
 	virtual void    ReadFromFile(Common::Stream *in, GuiVersion gui_version);
@@ -94,7 +100,7 @@ public:
 	virtual void    ReadFromSavegame(Common::Stream *in, GuiSvgVersion svg_ver);
 	virtual void    WriteToSavegame(Common::Stream *out) const;
 
-// TODO: these members are currently public; hide them later
+	// TODO: these members are currently public; hide them later
 public:
 	int32_t  Id;         // GUI object's identifier
 	int32_t  ParentId;   // id of parent GUI
@@ -130,5 +136,7 @@ extern int all_buttons_disabled;
 inline bool IsGUIEnabled(AGS::Common::GUIObject *g) {
 	return !all_buttons_disabled && g->IsEnabled();
 }
+
+} // namespace AGS3
 
 #endif

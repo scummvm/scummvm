@@ -33,6 +33,8 @@
 #include "util/memory.h"
 #include "ac/dynobj/cc_dynamicobject.h"
 
+namespace AGS3 {
+
 struct ICCStaticObject;
 struct StaticArray;
 
@@ -63,19 +65,19 @@ enum ScriptValueType {
 struct RuntimeScriptValue {
 public:
 	RuntimeScriptValue() {
-		Type        = kScValUndefined;
-		IValue      = 0;
-		Ptr         = nullptr;
-		MgrPtr      = nullptr;
-		Size        = 0;
+		Type = kScValUndefined;
+		IValue = 0;
+		Ptr = nullptr;
+		MgrPtr = nullptr;
+		Size = 0;
 	}
 
 	RuntimeScriptValue(int32_t val) {
-		Type        = kScValInteger;
-		IValue      = val;
-		Ptr         = nullptr;
-		MgrPtr      = nullptr;
-		Size        = 4;
+		Type = kScValInteger;
+		IValue = val;
+		Ptr = nullptr;
+		MgrPtr = nullptr;
+		Size = 4;
 	}
 
 	ScriptValueType Type;
@@ -88,19 +90,19 @@ public:
 	// Pointer is used for storing... pointers - to objects, arrays,
 	// functions and stack entries (other RSV)
 	union {
-		char                *Ptr;   // generic data pointer
-		RuntimeScriptValue  *RValue;// access ptr as a pointer to Runtime Value
-		ScriptAPIFunction   *SPfn;  // access ptr as a pointer to Script API Static Function
+		char *Ptr;   // generic data pointer
+		RuntimeScriptValue *RValue;// access ptr as a pointer to Runtime Value
+		ScriptAPIFunction *SPfn;  // access ptr as a pointer to Script API Static Function
 		ScriptAPIObjectFunction *ObjPfn; // access ptr as a pointer to Script API Object Function
 	};
 	// TODO: separation to Ptr and MgrPtr is only needed so far as there's
 	// a separation between Script*, Dynamic* and game entity classes.
 	// Once those classes are merged, it will no longer be needed.
 	union {
-		void                *MgrPtr;// generic object manager pointer
-		ICCStaticObject     *StcMgr;// static object manager
-		StaticArray         *StcArr;// static array manager
-		ICCDynamicObject    *DynMgr;// dynamic object manager
+		void *MgrPtr;// generic object manager pointer
+		ICCStaticObject *StcMgr;// static object manager
+		StaticArray *StcArr;// static array manager
+		ICCDynamicObject *DynMgr;// dynamic object manager
 	};
 	// The "real" size of data, either one stored in I/FValue,
 	// or the one referenced by Ptr. Used for calculating stack
@@ -125,43 +127,43 @@ public:
 	}
 
 	inline RuntimeScriptValue &Invalidate() {
-		Type    = kScValUndefined;
-		IValue   = 0;
-		Ptr     = nullptr;
-		MgrPtr  = nullptr;
-		Size    = 0;
+		Type = kScValUndefined;
+		IValue = 0;
+		Ptr = nullptr;
+		MgrPtr = nullptr;
+		Size = 0;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetUInt8(uint8_t val) {
-		Type    = kScValInteger;
-		IValue  = val;
-		Ptr     = nullptr;
-		MgrPtr  = nullptr;
-		Size    = 1;
+		Type = kScValInteger;
+		IValue = val;
+		Ptr = nullptr;
+		MgrPtr = nullptr;
+		Size = 1;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetInt16(int16_t val) {
-		Type    = kScValInteger;
-		IValue  = val;
-		Ptr     = nullptr;
-		MgrPtr  = nullptr;
-		Size    = 2;
+		Type = kScValInteger;
+		IValue = val;
+		Ptr = nullptr;
+		MgrPtr = nullptr;
+		Size = 2;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetInt32(int32_t val) {
-		Type    = kScValInteger;
-		IValue  = val;
-		Ptr     = nullptr;
-		MgrPtr  = nullptr;
-		Size    = 4;
+		Type = kScValInteger;
+		IValue = val;
+		Ptr = nullptr;
+		MgrPtr = nullptr;
+		Size = 4;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetFloat(float val) {
-		Type    = kScValFloat;
-		FValue  = val;
-		Ptr     = nullptr;
-		MgrPtr  = nullptr;
-		Size    = 4;
+		Type = kScValFloat;
+		FValue = val;
+		Ptr = nullptr;
+		MgrPtr = nullptr;
+		Size = 4;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetInt32AsBool(bool val) {
@@ -171,108 +173,108 @@ public:
 		return SetFloat(val ? 1.0F : 0.0F);
 	}
 	inline RuntimeScriptValue &SetPluginArgument(int32_t val) {
-		Type    = kScValPluginArg;
-		IValue  = val;
-		Ptr     = nullptr;
-		MgrPtr  = nullptr;
-		Size    = 4;
+		Type = kScValPluginArg;
+		IValue = val;
+		Ptr = nullptr;
+		MgrPtr = nullptr;
+		Size = 4;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetStackPtr(RuntimeScriptValue *stack_entry) {
-		Type    = kScValStackPtr;
-		IValue  = 0;
-		RValue  = stack_entry;
-		MgrPtr  = nullptr;
-		Size    = 4;
+		Type = kScValStackPtr;
+		IValue = 0;
+		RValue = stack_entry;
+		MgrPtr = nullptr;
+		Size = 4;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetData(char *data, int size) {
-		Type    = kScValData;
-		IValue  = 0;
-		Ptr     = data;
-		MgrPtr  = nullptr;
-		Size    = size;
+		Type = kScValData;
+		IValue = 0;
+		Ptr = data;
+		MgrPtr = nullptr;
+		Size = size;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetGlobalVar(RuntimeScriptValue *glvar_value) {
-		Type    = kScValGlobalVar;
-		IValue  = 0;
-		RValue  = glvar_value;
-		MgrPtr  = nullptr;
-		Size    = 4;
+		Type = kScValGlobalVar;
+		IValue = 0;
+		RValue = glvar_value;
+		MgrPtr = nullptr;
+		Size = 4;
 		return *this;
 	}
 	// TODO: size?
 	inline RuntimeScriptValue &SetStringLiteral(const char *str) {
-		Type    = kScValStringLiteral;
-		IValue  = 0;
-		Ptr     = const_cast<char *>(str);
-		MgrPtr  = nullptr;
-		Size    = 4;
+		Type = kScValStringLiteral;
+		IValue = 0;
+		Ptr = const_cast<char *>(str);
+		MgrPtr = nullptr;
+		Size = 4;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetStaticObject(void *object, ICCStaticObject *manager) {
-		Type    = kScValStaticObject;
-		IValue  = 0;
-		Ptr     = (char *)object;
-		StcMgr  = manager;
-		Size    = 4;
+		Type = kScValStaticObject;
+		IValue = 0;
+		Ptr = (char *)object;
+		StcMgr = manager;
+		Size = 4;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetStaticArray(void *object, StaticArray *manager) {
-		Type    = kScValStaticArray;
-		IValue  = 0;
-		Ptr     = (char *)object;
-		StcArr  = manager;
-		Size    = 4;
+		Type = kScValStaticArray;
+		IValue = 0;
+		Ptr = (char *)object;
+		StcArr = manager;
+		Size = 4;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetDynamicObject(void *object, ICCDynamicObject *manager) {
-		Type    = kScValDynamicObject;
-		IValue  = 0;
-		Ptr     = (char *)object;
-		DynMgr  = manager;
-		Size    = 4;
+		Type = kScValDynamicObject;
+		IValue = 0;
+		Ptr = (char *)object;
+		DynMgr = manager;
+		Size = 4;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetPluginObject(void *object, ICCDynamicObject *manager) {
-		Type    = kScValPluginObject;
-		IValue  = 0;
-		Ptr     = (char *)object;
-		DynMgr  = manager;
-		Size    = 4;
+		Type = kScValPluginObject;
+		IValue = 0;
+		Ptr = (char *)object;
+		DynMgr = manager;
+		Size = 4;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetStaticFunction(ScriptAPIFunction *pfn) {
-		Type    = kScValStaticFunction;
-		IValue  = 0;
-		SPfn    = pfn;
-		MgrPtr  = nullptr;
-		Size    = 4;
+		Type = kScValStaticFunction;
+		IValue = 0;
+		SPfn = pfn;
+		MgrPtr = nullptr;
+		Size = 4;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetPluginFunction(void *pfn) {
-		Type    = kScValPluginFunction;
-		IValue  = 0;
-		Ptr     = (char *)pfn;
-		MgrPtr  = nullptr;
-		Size    = 4;
+		Type = kScValPluginFunction;
+		IValue = 0;
+		Ptr = (char *)pfn;
+		MgrPtr = nullptr;
+		Size = 4;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetObjectFunction(ScriptAPIObjectFunction *pfn) {
-		Type    = kScValObjectFunction;
-		IValue  = 0;
-		ObjPfn  = pfn;
-		MgrPtr  = nullptr;
-		Size    = 4;
+		Type = kScValObjectFunction;
+		IValue = 0;
+		ObjPfn = pfn;
+		MgrPtr = nullptr;
+		Size = 4;
 		return *this;
 	}
 	inline RuntimeScriptValue &SetCodePtr(char *ptr) {
-		Type    = kScValCodePtr;
-		IValue  = 0;
-		Ptr     = ptr;
-		MgrPtr  = nullptr;
-		Size    = 4;
+		Type = kScValCodePtr;
+		IValue = 0;
+		Ptr = ptr;
+		MgrPtr = nullptr;
+		Size = 4;
 		return *this;
 	}
 
@@ -293,7 +295,8 @@ public:
 	inline RuntimeScriptValue ReadValue() {
 		RuntimeScriptValue rval;
 		switch (this->Type) {
-		case kScValStackPtr: {
+		case kScValStackPtr:
+		{
 			if (RValue->Type == kScValData) {
 				rval.SetInt32(*(int32_t *)(RValue->GetPtrWithOffset() + this->IValue));
 			} else {
@@ -301,7 +304,8 @@ public:
 			}
 		}
 		break;
-		case kScValGlobalVar: {
+		case kScValGlobalVar:
+		{
 			if (RValue->Type == kScValData) {
 				rval.SetInt32(AGS::Common::Memory::ReadInt32LE(RValue->GetPtrWithOffset() + this->IValue));
 			} else {
@@ -310,15 +314,18 @@ public:
 		}
 		break;
 		case kScValStaticObject:
-		case kScValStaticArray: {
+		case kScValStaticArray:
+		{
 			rval.SetInt32(this->StcMgr->ReadInt32(this->Ptr, this->IValue));
 		}
 		break;
-		case kScValDynamicObject: {
+		case kScValDynamicObject:
+		{
 			rval.SetInt32(this->DynMgr->ReadInt32(this->Ptr, this->IValue));
 		}
 		break;
-		default: {
+		default:
+		{
 			// 64 bit: Memory reads are still 32 bit
 			rval.SetInt32(*(int32_t *)this->GetPtrWithOffset());
 		}
@@ -347,5 +354,7 @@ public:
 	// Resolve and return direct pointer to the referenced data; non pointer types return IValue
 	intptr_t           GetDirectPtr() const;
 };
+
+} // namespace AGS3
 
 #endif

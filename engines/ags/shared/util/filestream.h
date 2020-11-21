@@ -28,6 +28,7 @@
 #include "util/datastream.h"
 #include "util/file.h" // TODO: extract filestream mode constants
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -39,7 +40,7 @@ public:
 	// - there is an issue opening the file (does not exist, locked, permissions, etc)
 	// - the open mode could not be determined
 	FileStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode,
-	           DataEndianess stream_endianess = kLittleEndian);
+		DataEndianess stream_endianess = kLittleEndian);
 	~FileStream() override;
 
 	bool    HasErrors() const override;
@@ -68,12 +69,13 @@ public:
 private:
 	void            Open(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode);
 
-	FILE                *_file;
+	FILE *_file;
 	const FileOpenMode  _openMode;
 	const FileWorkMode  _workMode;
 };
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -26,6 +26,8 @@
 #include <map>
 #include "font/agsfontrenderer.h"
 
+namespace AGS3 {
+
 struct ALFONT_FONT;
 
 class TTFFontRenderer : public IAGSFontRenderer, public IAGSFontRenderer2 {
@@ -38,7 +40,7 @@ public:
 	}
 	int GetTextWidth(const char *text, int fontNumber) override;
 	int GetTextHeight(const char *text, int fontNumber) override;
-	void RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) override ;
+	void RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) override;
 	void AdjustYCoordinateForFont(int *ycoord, int fontNumber) override;
 	void EnsureTextValidForFont(char *text, int fontNumber) override;
 
@@ -48,10 +50,12 @@ public:
 
 private:
 	struct FontData {
-		ALFONT_FONT     *AlFont;
+		ALFONT_FONT *AlFont;
 		FontRenderParams Params;
 	};
 	std::map<int, FontData> _fontData;
 };
+
+} // namespace AGS3
 
 #endif

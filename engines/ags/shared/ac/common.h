@@ -23,6 +23,8 @@
 #ifndef AGS_SHARED_AC_COMMON_H
 #define AGS_SHARED_AC_COMMON_H
 
+namespace AGS3 {
+
 // These are the project-dependent functions, they are defined both in Engine.App and AGS.Native.
 void quit(const char *);
 void quitprintf(const char *fmt, ...);
@@ -31,5 +33,7 @@ void set_our_eip(int eip);
 int  get_our_eip();
 
 extern const char *game_file_sig;
+
+} // namespace AGS3
 
 #endif

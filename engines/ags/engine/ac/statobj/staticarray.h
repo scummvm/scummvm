@@ -25,6 +25,8 @@
 
 #include "ac/statobj/staticobject.h"
 
+namespace AGS3 {
+
 struct ICCDynamicObject;
 
 struct StaticArray : public ICCStaticObject {
@@ -57,11 +59,13 @@ public:
 	void    WriteFloat(const char *address, intptr_t offset, float val) override;
 
 private:
-	ICCStaticObject     *_staticMgr;
-	ICCDynamicObject    *_dynamicMgr;
+	ICCStaticObject *_staticMgr;
+	ICCDynamicObject *_dynamicMgr;
 	int                 _elemLegacySize;
 	int                 _elemRealSize;
 	int                 _elemCount;
 };
+
+} // namespace AGS3
 
 #endif

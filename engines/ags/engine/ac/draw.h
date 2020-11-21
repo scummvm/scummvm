@@ -29,6 +29,8 @@
 #include "gfx/gfx_def.h"
 #include "util/wgt2allg.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Bitmap;
@@ -115,9 +117,9 @@ void construct_engine_overlay();
 void add_to_sprite_list(Engine::IDriverDependantBitmap *spp, int xx, int yy, int baseline, int trans, int sprNum, bool isWalkBehind = false);
 void tint_image(Common::Bitmap *g, Common::Bitmap *source, int red, int grn, int blu, int light_level, int luminance = 255);
 void draw_sprite_support_alpha(Common::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, Common::Bitmap *image, bool src_has_alpha,
-                               Common::BlendMode blend_mode = Common::kBlendMode_Alpha, int alpha = 0xFF);
+	Common::BlendMode blend_mode = Common::kBlendMode_Alpha, int alpha = 0xFF);
 void draw_sprite_slot_support_alpha(Common::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, int src_slot,
-                                    Common::BlendMode blend_mode = Common::kBlendMode_Alpha, int alpha = 0xFF);
+	Common::BlendMode blend_mode = Common::kBlendMode_Alpha, int alpha = 0xFF);
 void draw_gui_sprite(Common::Bitmap *ds, int pic, int x, int y, bool use_alpha, Common::BlendMode blend_mode);
 void draw_gui_sprite_v330(Common::Bitmap *ds, int pic, int x, int y, bool use_alpha = true, Common::BlendMode blend_mode = Common::kBlendMode_Alpha);
 // Render game on screen
@@ -176,5 +178,7 @@ Common::PBitmap PrepareSpriteForUse(Common::PBitmap bitmap, bool has_alpha);
 // Makes a screenshot corresponding to the last screen render and returns it as a bitmap
 // of the requested width and height and game's native color depth.
 Common::Bitmap *CopyScreenIntoBitmap(int width, int height, bool at_native_res = false);
+
+} // namespace AGS3
 
 #endif

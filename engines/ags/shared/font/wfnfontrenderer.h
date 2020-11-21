@@ -26,6 +26,8 @@
 #include <map>
 #include "font/agsfontrenderer.h"
 
+namespace AGS3 {
+
 class WFNFont;
 
 class WFNFontRenderer : public IAGSFontRenderer, public IAGSFontRenderer2 {
@@ -44,10 +46,12 @@ public:
 
 private:
 	struct FontData {
-		WFNFont         *Font;
+		WFNFont *Font;
 		FontRenderParams Params;
 	};
 	std::map<int, FontData> _fontData;
 };
+
+} // namespace AGS3
 
 #endif

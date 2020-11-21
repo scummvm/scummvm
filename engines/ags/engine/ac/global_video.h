@@ -23,7 +23,11 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_VIDEO_H
 #define AGS_ENGINE_AC_GLOBAL_VIDEO_H
 
+namespace AGS3 {
+
 void scrPlayVideo(const char *name, int skip, int flags);
 void pause_sound_if_necessary_and_play_video(const char *name, int skip, int flags);
+
+} // namespace AGS3
 
 #endif

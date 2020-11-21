@@ -25,6 +25,8 @@
 
 #include "ac/statobj/staticobject.h"
 
+namespace AGS3 {
+
 struct AGSStaticObject : public ICCStaticObject {
 	~AGSStaticObject() override = default;
 
@@ -49,5 +51,7 @@ struct StaticGame : public AGSStaticObject {
 
 extern AGSStaticObject GlobalStaticManager;
 extern StaticGame      GameStaticManager;
+
+} // namespace AGS3
 
 #endif

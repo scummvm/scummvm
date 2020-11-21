@@ -23,6 +23,10 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_RECORD_H
 #define AGS_ENGINE_AC_GLOBAL_RECORD_H
 
+namespace AGS3 {
+
 void scStartRecording(int keyToStop);
+
+} // namespace AGS3
 
 #endif

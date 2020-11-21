@@ -29,6 +29,8 @@
 #ifndef AGS_ENGINE_PLUGIN_PLUGIN_BUILTIN_H
 #define AGS_ENGINE_PLUGIN_PLUGIN_BUILTIN_H
 
+namespace AGS3 {
+
 #define PLUGIN_FILENAME_MAX (49)
 
 class IAGSEngine;
@@ -48,5 +50,7 @@ struct InbuiltPluginDetails {
 
 // Register a builtin plugin.
 int pl_register_builtin_plugin(InbuiltPluginDetails const &details);
+
+} // namespace AGS3
 
 #endif

@@ -79,35 +79,36 @@
 
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
 // Message types provide distinction for debug messages by their intent.
 enum MessageType {
-	kDbgMsg_None                = 0,
+	kDbgMsg_None = 0,
 	// Alerts may be informative messages with topmost level of importance,
 	// such as reporting engine startup and shutdown.
-	kDbgMsg_Alert               ,
+	kDbgMsg_Alert,
 	// Fatal errors are ones that make program abort immediately.
-	kDbgMsg_Fatal               ,
+	kDbgMsg_Fatal,
 	// Error messages are about engine not being able to perform requested
 	// operation in a situation when that will affect game playability and
 	// further execution.
-	kDbgMsg_Error               ,
+	kDbgMsg_Error,
 	// Warnings are made when unexpected or non-standart behavior
 	// is detected in program, which is not immediately critical,
 	// but may be a symptom of a bigger problem.
-	kDbgMsg_Warn                ,
+	kDbgMsg_Warn,
 	// General information messages.
-	kDbgMsg_Info                ,
+	kDbgMsg_Info,
 	// Debug reason is for arbitrary information about events and current
 	// game state.
-	kDbgMsg_Debug               ,
+	kDbgMsg_Debug,
 
 
 	// Convenient aliases
-	kDbgMsg_Default             = kDbgMsg_Debug,
-	kDbgMsg_All                 = kDbgMsg_Debug
+	kDbgMsg_Default = kDbgMsg_Debug,
+	kDbgMsg_All = kDbgMsg_Debug
 };
 
 // This enumeration is a list of common hard-coded groups, but more could
@@ -131,9 +132,12 @@ struct DebugGroupID {
 	uint32_t    ID;
 	String      SID;
 
-	DebugGroupID() : ID(kDbgGroup_None) {}
-	DebugGroupID(uint32_t id, const String &sid = "") : ID(id), SID(sid) {}
-	DebugGroupID(const String &sid) : ID(kDbgGroup_None), SID(sid) {}
+	DebugGroupID() : ID(kDbgGroup_None) {
+	}
+	DebugGroupID(uint32_t id, const String &sid = "") : ID(id), SID(sid) {
+	}
+	DebugGroupID(const String &sid) : ID(kDbgGroup_None), SID(sid) {
+	}
 	// Tells if any of the id components is valid
 	bool IsValid() const {
 		return ID != kDbgGroup_None || !SID.IsEmpty();
@@ -155,9 +159,10 @@ void Printf(MessageType mt, const char *fmt, ...);
 // Output formatted message of given group and type
 void Printf(DebugGroupID group_id, MessageType mt, const char *fmt, ...);
 
-}   // namespace Debug
+} // namespace Debug
 
-}   // namespace Common
-}   // namespace AGS
+} // namespace Common
+} // namespace AGS
+} // namespace AGS3
 
 #endif

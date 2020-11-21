@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_WALKBEHIND_H
 #define AGS_ENGINE_AC_WALKBEHIND_H
 
+namespace AGS3 {
+
 enum WalkBehindMethodEnum {
 	DrawOverCharSprite,
 	DrawAsSeparateSprite,
@@ -31,5 +33,7 @@ enum WalkBehindMethodEnum {
 
 void update_walk_behind_images();
 void recache_walk_behinds();
+
+} // namespace AGS3
 
 #endif

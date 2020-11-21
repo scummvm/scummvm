@@ -33,6 +33,7 @@
 #include <memory>
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -45,10 +46,14 @@ typedef std::shared_ptr<Error> PError;
 //
 class Error {
 public:
-	Error(int code, String general, PError inner_error = PError()) : _code(code), _general(general), _innerError(inner_error) {}
-	Error(int code, String general, String comment, PError inner_error = PError()) : _code(code), _general(general), _comment(comment), _innerError(inner_error) {}
-	Error(String general, PError inner_error = PError()) : _code(0), _general(general), _innerError(inner_error) {}
-	Error(String general, String comment, PError inner_error = PError()) : _code(0), _general(general), _comment(comment), _innerError(inner_error) {}
+	Error(int code, String general, PError inner_error = PError()) : _code(code), _general(general), _innerError(inner_error) {
+	}
+	Error(int code, String general, String comment, PError inner_error = PError()) : _code(code), _general(general), _comment(comment), _innerError(inner_error) {
+	}
+	Error(String general, PError inner_error = PError()) : _code(0), _general(general), _innerError(inner_error) {
+	}
+	Error(String general, String comment, PError inner_error = PError()) : _code(0), _general(general), _comment(comment), _innerError(inner_error) {
+	}
 
 
 	// Error code is a number, defining error subtype. It is not much use to the end-user,
@@ -110,8 +115,10 @@ public:
 	}
 
 	ErrorHandle() = default;
-	ErrorHandle(T *err) : _error(err) {}
-	ErrorHandle(std::shared_ptr<T> err) : _error(err) {}
+	ErrorHandle(T *err) : _error(err) {
+	}
+	ErrorHandle(std::shared_ptr<T> err) : _error(err) {
+	}
 
 	bool HasError() const {
 		return _error.get() != NULL;
@@ -144,9 +151,11 @@ typedef ErrorHandle<Error> HError;
 template <typename CodeType, String(*GetErrorText)(CodeType)>
 class TypedCodeError : public Error {
 public:
-	TypedCodeError(CodeType code, PError inner_error = PError()) : Error(code, GetErrorText(code), inner_error) {}
+	TypedCodeError(CodeType code, PError inner_error = PError()) : Error(code, GetErrorText(code), inner_error) {
+	}
 	TypedCodeError(CodeType code, String comment, PError inner_error = PError()) :
-		Error(code, GetErrorText(code), comment, inner_error) {}
+		Error(code, GetErrorText(code), comment, inner_error) {
+	}
 
 	CodeType Code() const {
 		return (CodeType)Error::Code();
@@ -155,5 +164,6 @@ public:
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

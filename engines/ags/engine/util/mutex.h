@@ -26,6 +26,7 @@
 namespace AGS {
 namespace Engine {
 
+namespace AGS3 {
 
 class BaseMutex {
 public:
@@ -44,7 +45,7 @@ public:
 
 } // namespace Engine
 } // namespace AGS
-
+} // namespace AGS3
 
 #if 0
 // insert platforms here

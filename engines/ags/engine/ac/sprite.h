@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_SPRITE_H
 #define AGS_ENGINE_AC_SPRITE_H
 
+namespace AGS3 {
+
 void get_new_size_for_sprite(int ee, int ww, int hh, int &newwid, int &newhit);
 // set any alpha-transparent pixels in the image to the appropriate
 // RGB mask value so that the ->Blit calls work correctly
@@ -31,5 +33,7 @@ void set_rgb_mask_using_alpha_channel(Common::Bitmap *image);
 Common::Bitmap *remove_alpha_channel(Common::Bitmap *from);
 void pre_save_sprite(int ee);
 void initialize_sprite(int ee);
+
+} // namespace AGS3
 
 #endif

@@ -27,6 +27,8 @@
 #include <io.h>
 #include "debug/agseditordebugger.h"
 
+namespace AGS3 {
+
 struct NamedPipesAGSDebugger : IAGSEditorDebugger {
 private:
 	HANDLE _hPipeSending;
@@ -43,5 +45,7 @@ public:
 	virtual bool IsMessageAvailable() override;
 	virtual char *GetNextMessage() override;
 };
+
+} // namespace AGS3
 
 #endif

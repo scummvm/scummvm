@@ -23,13 +23,13 @@
 #ifndef AGS_ENGINE_UTIL_THREAD_H
 #define AGS_ENGINE_UTIL_THREAD_H
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
-
 class BaseThread {
 public:
-	typedef void(* AGSThreadEntry)();
+	typedef void(*AGSThreadEntry)();
 
 	BaseThread() = default;
 	virtual ~BaseThread() = default;
@@ -51,6 +51,7 @@ public:
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #if 0
 // insert platforms here

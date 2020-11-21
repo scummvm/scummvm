@@ -46,6 +46,7 @@
 
 #include "util/file.h" // TODO: extract filestream mode constants or introduce generic ones
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -62,10 +63,10 @@ enum AssetSearchPriority {
 };
 
 enum AssetError {
-	kAssetNoError           =  0,
-	kAssetErrNoLibFile      = -1, // library file not found or can't be read
-	kAssetErrLibParse       = -2, // bad library file format or read error
-	kAssetErrNoManager      = -6, // asset manager not initialized
+	kAssetNoError = 0,
+	kAssetErrNoLibFile = -1, // library file not found or can't be read
+	kAssetErrLibParse = -2, // bad library file format or read error
+	kAssetErrNoManager = -6, // asset manager not initialized
 };
 
 // Explicit location of asset data
@@ -111,9 +112,9 @@ public:
 	static bool         GetAssetLocation(const String &asset_name, AssetLocation &loc);
 
 	static bool         DoesAssetExist(const String &asset_name);
-	static Stream       *OpenAsset(const String &asset_name,
-	                               FileOpenMode open_mode = kFile_Open,
-	                               FileWorkMode work_mode = kFile_Read);
+	static Stream *OpenAsset(const String &asset_name,
+		FileOpenMode open_mode = kFile_Open,
+		FileWorkMode work_mode = kFile_Read);
 
 private:
 	AssetManager();
@@ -134,18 +135,18 @@ private:
 
 	bool        _DoesAssetExist(const String &asset_name);
 
-	AssetInfo   *FindAssetByFileName(const String &asset_name);
+	AssetInfo *FindAssetByFileName(const String &asset_name);
 	String      MakeLibraryFileNameForAsset(const AssetInfo *asset);
 
 	bool        GetAssetFromLib(const String &asset_name, AssetLocation &loc, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
 	bool        GetAssetFromDir(const String &asset_name, AssetLocation &loc, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
 	bool        GetAssetByPriority(const String &asset_name, AssetLocation &loc, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
-	Stream      *OpenAssetAsStream(const String &asset_name, FileOpenMode open_mode, FileWorkMode work_mode);
+	Stream *OpenAssetAsStream(const String &asset_name, FileOpenMode open_mode, FileWorkMode work_mode);
 
-	static AssetManager     *_theAssetManager;
+	static AssetManager *_theAssetManager;
 	AssetSearchPriority     _searchPriority;
 
-	AssetLibInfo            &_assetLib;
+	AssetLibInfo &_assetLib;
 	String                  _basePath;          // library's parent path (directory)
 	soff_t                  _lastAssetSize;     // size of asset that was opened last time
 };
@@ -155,5 +156,6 @@ String GetAssetErrorText(AssetError err);
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

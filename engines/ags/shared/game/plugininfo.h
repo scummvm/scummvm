@@ -32,6 +32,8 @@
 #include <memory>
 #include "util/string.h"
 
+namespace AGS3 {
+
 // TODO: why 10 MB limit?
 #define PLUGIN_SAVEBUFFERSIZE 10247680
 
@@ -45,10 +47,12 @@ struct PluginInfo {
 	std::shared_ptr<char> Data;
 	size_t      DataLen;
 
-	PluginInfo() : DataLen(0) {}
+	PluginInfo() : DataLen(0) {
+	}
 };
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -32,6 +32,7 @@
 #include <vector>
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -62,5 +63,6 @@ struct AssetLibInfo {
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

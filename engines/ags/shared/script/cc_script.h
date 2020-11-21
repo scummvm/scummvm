@@ -32,11 +32,14 @@
 #include <memory>
 #include "core/types.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 struct ccScript {
@@ -84,5 +87,7 @@ protected:
 };
 
 typedef std::shared_ptr<ccScript> PScript;
+
+} // namespace AGS3
 
 #endif

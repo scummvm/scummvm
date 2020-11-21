@@ -23,7 +23,11 @@
 #ifndef AGS_ENGINE_AC_GLOBALDATETIME_H
 #define AGS_ENGINE_AC_GLOBALDATETIME_H
 
-int sc_GetTime(int whatti) ;
+namespace AGS3 {
+
+int sc_GetTime(int whatti);
 int GetRawTime();
+
+} // namespace AGS3
 
 #endif

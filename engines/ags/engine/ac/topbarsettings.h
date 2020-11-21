@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_TOPBARSETTINGS_H
 #define AGS_ENGINE_AC_TOPBARSETTINGS_H
 
+namespace AGS3 {
+
 struct TopBarSettings {
 	int wantIt;
 	int height;
@@ -36,5 +38,7 @@ struct TopBarSettings {
 		text[0] = 0;
 	}
 };
+
+} // namespace AGS3
 
 #endif

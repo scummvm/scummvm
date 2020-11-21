@@ -25,6 +25,7 @@
 
 #include "core/types.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -81,5 +82,6 @@ struct DisplayMode : public GraphicResolution {
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

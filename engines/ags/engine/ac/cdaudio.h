@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_CDAUDIO_H
 #define AGS_ENGINE_AC_CDAUDIO_H
 
+namespace AGS3 {
+
 // CD Player functions
 // flags returned with cd_getstatus
 #define CDS_DRIVEOPEN    0x0001  // tray is open
@@ -30,7 +32,9 @@
 #define CDS_AUDIOSUPPORT 0x0010  // supports audio CDs
 #define CDS_DRIVEEMPTY   0x0800  // no CD in drive
 
-int     init_cd_player() ;
-int     cd_manager(int cmdd, int datt) ;
+int     init_cd_player();
+int     cd_manager(int cmdd, int datt);
+
+} // namespace AGS3
 
 #endif

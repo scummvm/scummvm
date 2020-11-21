@@ -35,6 +35,7 @@
 #include "core/types.h"
 #include "util/geometry.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -156,5 +157,6 @@ struct PlaneScaling {
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

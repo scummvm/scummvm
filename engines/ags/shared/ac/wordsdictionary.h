@@ -25,11 +25,14 @@
 
 #include "core/types.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 #define MAX_PARSER_WORD_LENGTH 30
@@ -63,5 +66,7 @@ extern void freadmissout(short *pptr, Common::Stream *in);
 extern void encrypt_text(char *toenc);
 extern void write_string_encrypt(Common::Stream *out, const char *s);
 extern void write_dictionary(WordsDictionary *dict, Common::Stream *out);
+
+} // namespace AGS3
 
 #endif

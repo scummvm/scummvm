@@ -25,6 +25,8 @@
 
 #include "core/types.h"
 
+namespace AGS3 {
+
 enum RoundDirections {
 	eRoundDown = 0,
 	eRoundNearest = 1,
@@ -56,5 +58,7 @@ float Math_Sqrt(float value);
 
 int __Rand(int upto);
 #define Random __Rand
+
+} // namespace AGS3
 
 #endif

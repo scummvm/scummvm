@@ -27,6 +27,8 @@
 #include "util/scaling.h"
 #include "util/string.h"
 
+namespace AGS3 {
+
 using AGS::Common::String;
 using AGS::Engine::DisplayMode;
 
@@ -39,8 +41,8 @@ class IGfxModeList;
 }
 }
 bool find_nearest_supported_mode(const AGS::Engine::IGfxModeList &modes, const Size &wanted_size,
-                                 const int color_depth, const Size *ratio_reference, const Size *upper_bound,
-                                 AGS::Engine::DisplayMode &dm, int *mode_index = nullptr);
+	const int color_depth, const Size *ratio_reference, const Size *upper_bound,
+	AGS::Engine::DisplayMode &dm, int *mode_index = nullptr);
 
 
 // The game-to-screen transformation
@@ -119,8 +121,10 @@ struct ColorDepthOption {
 	int     Bits;   // color depth value in bits
 	bool    Forced; // whether the depth should be forced, or driver's recommendation used
 
-	ColorDepthOption() : Bits(0), Forced(false) {}
-	ColorDepthOption(int bits, bool forced = false) : Bits(bits), Forced(forced) {}
+	ColorDepthOption() : Bits(0), Forced(false) {
+	}
+	ColorDepthOption(int bits, bool forced = false) : Bits(bits), Forced(forced) {
+	}
 };
 
 // ActiveDisplaySetting struct merges DisplayMode and GameFrameSetup,
@@ -139,7 +143,7 @@ ActiveDisplaySetting graphics_mode_get_last_setting(bool windowed);
 bool graphics_mode_create_renderer(const String &driver_id);
 // Try to find and initialize compatible display mode as close to given setup as possible
 bool graphics_mode_set_dm_any(const Size &game_size, const DisplayModeSetup &dm_setup,
-                              const ColorDepthOption &color_depth, const GameFrameSetup &frame_setup);
+	const ColorDepthOption &color_depth, const GameFrameSetup &frame_setup);
 // Set the display mode with given parameters
 bool graphics_mode_set_dm(const AGS::Engine::DisplayMode &dm);
 // Set the native image size
@@ -154,5 +158,7 @@ bool graphics_mode_set_filter_any(const GfxFilterSetup &setup);
 bool graphics_mode_set_filter(const String &filter_id);
 // Releases current graphic mode and shuts down renderer
 void graphics_mode_shutdown();
+
+} // namespace AGS3
 
 #endif

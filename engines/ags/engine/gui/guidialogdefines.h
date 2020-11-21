@@ -23,6 +23,10 @@
 #ifndef AGS_ENGINE_GUI_GUIDIALOGDEFINES_H
 #define AGS_ENGINE_GUI_GUIDIALOGDEFINES_H
 
+#include "ac/gamesetup.h"
+
+namespace AGS3 {
+
 #define MSG_RESTORE      984
 #define MSG_CANCEL       985    // "Cancel"
 #define MSG_SELECTLOAD   986    // "Select game to restore"
@@ -35,8 +39,6 @@
 #define MSG_QUITBUTTON   993    // "Quit"
 #define MSG_PLAYBUTTON   994    // "Play"
 #define MSG_QUITDIALOG   995    // "Do you want to quit?"
-
-#include "ac/gamesetup.h"
 
 /*#define COL251 26
 #define COL252 28
@@ -113,5 +115,7 @@ struct OnScreenWindow {
 
 	OnScreenWindow();
 };
+
+} // namespace AGS3
 
 #endif

@@ -29,11 +29,13 @@
 
 // TODO: we need to make some kind of TextManager class of this module
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 class Bitmap;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS;
 
 class IAGSFontRenderer;
@@ -131,7 +133,8 @@ size_t split_lines(const char *texx, SplitLines &lines, int width, int fontNumbe
 namespace AGS {
 namespace Common {
 extern SplitLines Lines;
-}
-}
+} // namespace Shared
+} // namespace AGS
+} // namespace AGS3
 
 #endif

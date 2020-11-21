@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTSYSTEM_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTSYSTEM_H
 
+namespace AGS3 {
+
 // The text script's "system" struct
 struct ScriptSystem {
 	int width, height;
@@ -34,5 +36,7 @@ struct ScriptSystem {
 	char aci_version[10]; // FIXME this when possible, version format is different now
 	int reserved[5];  // so that future scripts don't overwrite data
 };
+
+} // namespace AGS3
 
 #endif

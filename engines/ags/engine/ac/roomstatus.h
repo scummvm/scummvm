@@ -28,12 +28,15 @@
 #include "game/interactions.h"
 #include "util/string_types.h"
 
+namespace AGS3 {
+
 // Forward declaration
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using AGS::Common::Stream;
 using AGS::Common::Interaction;
 
@@ -47,8 +50,8 @@ struct RoomStatus {
 	int   tsdatasize;
 	char *tsdata;
 	Interaction intrHotspot[MAX_ROOM_HOTSPOTS];
-	Interaction intrObject [MAX_ROOM_OBJECTS];
-	Interaction intrRegion [MAX_ROOM_REGIONS];
+	Interaction intrObject[MAX_ROOM_OBJECTS];
+	Interaction intrRegion[MAX_ROOM_REGIONS];
 	Interaction intrRoom;
 
 	Common::StringIMap roomProps;
@@ -85,5 +88,7 @@ RoomStatus *getRoomStatus(int room);
 // a room if the status is already initialised.
 bool isRoomStatusValid(int room);
 void resetRoomStatuses();
+
+} // namespace AGS3
 
 #endif

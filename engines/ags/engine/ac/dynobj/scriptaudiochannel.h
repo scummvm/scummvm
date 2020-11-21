@@ -23,9 +23,13 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTAUDIOCHANNEL_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTAUDIOCHANNEL_H
 
+namespace AGS3 {
+
 struct ScriptAudioChannel {
 	int id;
 	int reserved;
 };
+
+} // namespace AGS3
 
 #endif

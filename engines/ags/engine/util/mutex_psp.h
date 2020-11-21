@@ -27,9 +27,9 @@
 #include <pspkernel.h>
 #include <pspthreadman.h>
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
-
 
 class PSPMutex : public BaseMutex {
 public:
@@ -53,11 +53,10 @@ private:
 	SceUID _mutex;
 };
 
-
 typedef PSPMutex Mutex;
-
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

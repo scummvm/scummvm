@@ -33,6 +33,7 @@
 #include "util/geometry.h"
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -73,5 +74,6 @@ typedef std::shared_ptr<IGfxFilter> PGfxFilter;
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

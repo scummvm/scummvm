@@ -28,6 +28,8 @@
 #include "util/string.h"
 #include "debug/out.h"
 
+namespace AGS3 {
+
 // FIXME: Replace with a unified way to get the directory which contains the engine binary
 #if AGS_PLATFORM_OS_ANDROID
 extern char android_app_directory[256];
@@ -53,11 +55,11 @@ public:
 	AGS::Common::String BuildFilename(AGS::Common::String libraryName) {
 		return String::FromFormat(
 #if AGS_PLATFORM_OS_MACOS
-		           "lib%s.dylib"
+			"lib%s.dylib"
 #else
-		           "lib%s.so"
+			"lib%s.so"
 #endif
-		           , libraryName.GetCStr());
+			, libraryName.GetCStr());
 	}
 
 	AGS::Common::String BuildPath(const char *path, AGS::Common::String libraryName) {
@@ -131,9 +133,8 @@ private:
 
 typedef PosixLibrary Library;
 
-
-
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

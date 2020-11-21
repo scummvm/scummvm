@@ -25,6 +25,8 @@
 
 #include "core/platform.h"
 
+namespace AGS3 {
+
 #define EXTENDED_KEY_CODE ('\0')
 #define EXTENDED_KEY_CODE_MACOS ('?')
 
@@ -175,5 +177,7 @@ int GetKeyForKeyPressCb(int keycode);
 // Allegro4 "platform" keycode from an AGS keycode.
 // Returns -1 if not found.
 int PlatformKeyFromAgsKey(int key);
+
+} // namespace AGS3
 
 #endif

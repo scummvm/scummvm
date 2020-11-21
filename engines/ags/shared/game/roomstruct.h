@@ -54,6 +54,8 @@
 #include "util/geometry.h"
 #include "util/wgt2allg.h" // color (allegro RGB)
 
+namespace AGS3 {
+
 struct ccScript;
 struct SpriteInfo;
 typedef std::shared_ptr<ccScript> PScript;
@@ -74,18 +76,18 @@ enum RoomAreaMask {
 // Room's audio volume modifier
 enum RoomVolumeMod {
 	kRoomVolumeQuietest = -3,
-	kRoomVolumeQuieter  = -2,
-	kRoomVolumeQuiet    = -1,
-	kRoomVolumeNormal   =  0,
-	kRoomVolumeLoud     =  1,
-	kRoomVolumeLouder   =  2,
-	kRoomVolumeLoudest  =  3,
+	kRoomVolumeQuieter = -2,
+	kRoomVolumeQuiet = -1,
+	kRoomVolumeNormal = 0,
+	kRoomVolumeLoud = 1,
+	kRoomVolumeLouder = 2,
+	kRoomVolumeLoudest = 3,
 	// These two options are only settable at runtime by SetMusicVolume()
-	kRoomVolumeExtra1   =  4,
-	kRoomVolumeExtra2   =  5,
+	kRoomVolumeExtra1 = 4,
+	kRoomVolumeExtra2 = 5,
 
-	kRoomVolumeMin      = kRoomVolumeQuietest,
-	kRoomVolumeMax      = kRoomVolumeExtra2,
+	kRoomVolumeMin = kRoomVolumeQuietest,
+	kRoomVolumeMax = kRoomVolumeExtra2,
 };
 
 // Flag tells that walkable area does not have continious zoom
@@ -302,7 +304,7 @@ public:
 	// Gets region's tint luminance in 0 to 100 range value; returns 0 if region's light level is set
 	int  GetRegionTintLuminance(int id) const;
 
-// TODO: all members are currently public because they are used everywhere; hide them later
+	// TODO: all members are currently public because they are used everywhere; hide them later
 public:
 	// Game's unique ID, corresponds to GameSetupStructBase::uniqueid.
 	// If this field has a valid value and does not match actual game's id,
@@ -384,5 +386,6 @@ PBitmap FixBitmap(PBitmap bmp, int dst_width, int dst_height);
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -33,6 +33,8 @@
 #include <utility>
 #include "util/string.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
@@ -78,5 +80,7 @@ PACKFILE *PackfileFromAsset(const AssetPath &path, size_t &asset_size);
 // Creates DUMBFILE stream from AGS asset. Used for creating DUMB objects
 DUMBFILE *DUMBfileFromAsset(const AssetPath &path, size_t &asset_size);
 bool DoesAssetExistInLib(const AssetPath &assetname);
+
+} // namespace AGS3
 
 #endif

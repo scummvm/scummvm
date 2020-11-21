@@ -26,12 +26,14 @@
 #include "util/wgt2allg.h" // fixed type
 #include "game/savegame.h"
 
+namespace AGS3 {
+
 // Forward declaration
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
 using namespace AGS; // FIXME later
 
 #define MAXNEEDSTAGES 256
@@ -51,5 +53,7 @@ struct MoveList {
 	AGS::Engine::HSaveError ReadFromFile(Common::Stream *in, int32_t cmp_ver);
 	void WriteToFile(Common::Stream *out);
 };
+
+} // namespace AGS3
 
 #endif

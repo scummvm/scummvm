@@ -31,6 +31,8 @@
 #ifndef AGS_ENGINE_PLATFORM_WINDOWS_WINAPI_EXCLUSIVE_H
 #define AGS_ENGINE_PLATFORM_WINDOWS_WINAPI_EXCLUSIVE_H
 
+namespace AGS3 {
+
 #ifndef _WINDOWS_ // do not include if windows.h was included first
 #define _WINDOWS_ // there can be only one
 
@@ -58,5 +60,7 @@ typedef HANDLE HWND;
 typedef int (FAR WINAPI *FARPROC)();
 
 #endif
+
+} // namespace AGS3
 
 #endif

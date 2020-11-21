@@ -25,9 +25,9 @@
 
 #include <gccore.h>
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
-
 
 class WiiMutex : public BaseMutex {
 public:
@@ -51,11 +51,10 @@ private:
 	mutex_t _mutex;
 };
 
-
 typedef WiiMutex Mutex;
-
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

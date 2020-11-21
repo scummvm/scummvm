@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
+namespace AGS3 {
+
 struct ScriptViewFrame final : AGSCCDynamicObject {
 	int view, loop, frame;
 
@@ -36,5 +38,7 @@ struct ScriptViewFrame final : AGSCCDynamicObject {
 	ScriptViewFrame(int p_view, int p_loop, int p_frame);
 	ScriptViewFrame();
 };
+
+} // namespace AGS3
 
 #endif

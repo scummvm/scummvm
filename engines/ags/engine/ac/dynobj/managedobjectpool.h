@@ -30,11 +30,13 @@
 #include "script/runtimescriptvalue.h"
 #include "ac/dynobj/cc_dynamicobject.h"   // ICCDynamicObject
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 struct ManagedObjectPool final {
@@ -54,14 +56,16 @@ private:
 		}
 
 		ManagedObject()
-			: obj_type(kScValUndefined), handle(0), addr(nullptr), callback(nullptr), refCount(0) {}
+			: obj_type(kScValUndefined), handle(0), addr(nullptr), callback(nullptr), refCount(0) {
+		}
 		ManagedObject(ScriptValueType obj_type, int32_t handle, const char *addr, ICCDynamicObject *callback)
-			: obj_type(obj_type), handle(handle), addr(addr), callback(callback), refCount(0) {}
+			: obj_type(obj_type), handle(handle), addr(addr), callback(callback), refCount(0) {
+		}
 	};
 
 	int objectCreationCounter;  // used to do garbage collection every so often
 
-	int32_t nextHandle {}; // TODO: manage nextHandle's going over INT32_MAX !
+	int32_t nextHandle{}; // TODO: manage nextHandle's going over INT32_MAX !
 	std::queue<int32_t> available_ids;
 	std::vector<ManagedObject> objects;
 	std::unordered_map<const char *, int32_t> handleByAddress;
@@ -88,7 +92,7 @@ public:
 	void reset();
 	ManagedObjectPool();
 
-	const char *disableDisposeForObject {nullptr};
+	const char *disableDisposeForObject{ nullptr };
 };
 
 extern ManagedObjectPool pool;
@@ -98,5 +102,7 @@ extern ManagedObjectPool pool;
 #else
 #define ManagedObjectLog(...)
 #endif
+
+} // namespace AGS3
 
 #endif

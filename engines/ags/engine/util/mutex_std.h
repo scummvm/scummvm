@@ -25,12 +25,14 @@
 
 #include <mutex>
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
 class StdMutex : public BaseMutex {
 public:
-	inline StdMutex() : mutex_() {}
+	inline StdMutex() : mutex_() {
+	}
 	inline ~StdMutex() override = default;
 
 	StdMutex &operator=(const StdMutex &) = delete;
@@ -51,5 +53,6 @@ typedef StdMutex Mutex;
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

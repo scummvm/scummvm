@@ -42,6 +42,8 @@
 #include "util/string.h"
 #include "util/string_types.h"
 
+namespace AGS3 {
+
 using namespace AGS::Common;
 
 class ScriptSetBase : public AGSCCDynamicObject {
@@ -149,5 +151,7 @@ typedef ScriptSetImpl< std::set<String>, true, true > ScriptSet;
 typedef ScriptSetImpl< std::set<String, StrLessNoCase>, true, false > ScriptSetCI;
 typedef ScriptSetImpl< std::unordered_set<String>, false, true > ScriptHashSet;
 typedef ScriptSetImpl< std::unordered_set<String, HashStrNoCase, StrEqNoCase>, false, false > ScriptHashSetCI;
+
+} // namespace AGS3
 
 #endif

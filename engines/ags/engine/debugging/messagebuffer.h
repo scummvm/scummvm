@@ -34,6 +34,7 @@
 #include <vector>
 #include "debug/outputhandler.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -59,7 +60,8 @@ private:
 	size_t          _msgLost;
 };
 
-}   // namespace Engine
-}   // namespace AGS
+} // namespace Engine
+} // namespace AGS
+} // namespace AGS3
 
 #endif

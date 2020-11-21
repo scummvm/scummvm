@@ -54,6 +54,7 @@
 #include "util/string.h"
 #include "util/string_types.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -64,8 +65,10 @@ struct DebugGroup {
 	DebugGroupID    UID;
 	String          OutputName;
 
-	DebugGroup() {}
-	DebugGroup(DebugGroupID id, String out_name) : UID(id), OutputName(out_name) {}
+	DebugGroup() {
+	}
+	DebugGroup(DebugGroupID id, String out_name) : UID(id), OutputName(out_name) {
+	}
 };
 
 // DebugOutput is a slot for IOutputHandler with its own group filter
@@ -141,7 +144,8 @@ private:
 		PDebugOutput Target;
 		bool          Suppressed;
 
-		OutputSlot() : Suppressed(false) {}
+		OutputSlot() : Suppressed(false) {
+		}
 	};
 
 	typedef std::vector<DebugGroup> GroupVector;
@@ -161,7 +165,8 @@ private:
 // TODO: move this to the dynamically allocated engine object whenever it is implemented
 extern DebugManager DbgMgr;
 
-}   // namespace Common
-}   // namespace AGS
+} // namespace Common
+} // namespace AGS
+} // namespace AGS3
 
 #endif

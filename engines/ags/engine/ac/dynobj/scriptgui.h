@@ -23,10 +23,14 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTGUI_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTGUI_H
 
+namespace AGS3 {
+
 // 64 bit: This struct must be 8 byte long
 struct ScriptGUI {
 	int id;
 	int __padding;
 };
+
+} // namespace AGS3
 
 #endif

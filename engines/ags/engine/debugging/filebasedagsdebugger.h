@@ -25,6 +25,8 @@
 
 #include "debug/agseditordebugger.h"
 
+namespace AGS3 {
+
 struct FileBasedAGSDebugger : IAGSEditorDebugger {
 public:
 
@@ -37,5 +39,7 @@ public:
 };
 
 extern const char *SENT_MESSAGE_FILE_NAME;
+
+} // namespace AGS3
 
 #endif

@@ -25,9 +25,9 @@
 
 #include <pthread.h>
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
-
 
 class PThreadMutex : public BaseMutex {
 public:
@@ -53,8 +53,8 @@ private:
 
 typedef PThreadMutex Mutex;
 
-
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

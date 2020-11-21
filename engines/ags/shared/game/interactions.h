@@ -52,6 +52,8 @@
 #include <memory>
 #include "util/string_types.h"
 
+namespace AGS3 {
+
 #define LOCAL_VARIABLE_OFFSET       10000
 #define MAX_GLOBAL_VARIABLES        100
 #define MAX_ACTION_ARGS             5
@@ -63,9 +65,9 @@ namespace Common {
 
 enum InterValType {
 	kInterValLiteralInt = 1,
-	kInterValVariable   = 2,
-	kInterValBoolean    = 3,
-	kInterValCharnum    = 4
+	kInterValVariable = 2,
+	kInterValBoolean = 3,
+	kInterValCharnum = 4
 };
 
 enum InteractionVersion {
@@ -179,9 +181,9 @@ typedef std::shared_ptr<Interaction> PInteraction;
 
 // Legacy pre-3.0 kind of global and local room variables
 struct InteractionVariable {
-	String Name {};
-	char   Type {'\0'};
-	int    Value {0};
+	String Name{};
+	char   Type{ '\0' };
+	int    Value{ 0 };
 
 	InteractionVariable();
 	InteractionVariable(const String &name, char type, int val);
@@ -208,5 +210,7 @@ typedef std::shared_ptr<InteractionScripts> PInteractionScripts;
 // Legacy global variables
 extern AGS::Common::InteractionVariable globalvars[MAX_GLOBAL_VARIABLES];
 extern int numGlobalVars;
+
+} // namespace AGS3
 
 #endif

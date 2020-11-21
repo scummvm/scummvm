@@ -23,9 +23,13 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTDIALOG_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTDIALOG_H
 
+namespace AGS3 {
+
 struct ScriptDialog {
 	int id;
 	int reserved;
 };
+
+} // namespace AGS3
 
 #endif

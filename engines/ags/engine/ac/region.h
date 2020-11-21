@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/scriptregion.h"
 
+namespace AGS3 {
+
 ScriptRegion *GetRegionAtRoom(int xx, int yy);
 void    Region_SetLightLevel(ScriptRegion *ssr, int brightness);
 int     Region_GetLightLevel(ScriptRegion *ssr);
@@ -41,5 +43,7 @@ int     Region_GetID(ScriptRegion *ssr);
 void    Region_RunInteraction(ScriptRegion *ssr, int mood);
 
 void    generate_light_table();
+
+} // namespace AGS3
 
 #endif

@@ -54,11 +54,14 @@
 
 #include "util/file.h" // TODO: extract filestream mode constants
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 // Case-insensitive file lookup functions. On case-insensitive systems
@@ -68,10 +71,11 @@ using namespace AGS; // FIXME later
 // They are used as a system-independent way to open a file when its name
 // case can be ignored.
 Common::Stream *ci_fopen(const char *file_name,
-                         Common::FileOpenMode open_mode = Common::kFile_Open,
-                         Common::FileWorkMode work_mode = Common::kFile_Read);
+	Common::FileOpenMode open_mode = Common::kFile_Open,
+	Common::FileWorkMode work_mode = Common::kFile_Read);
 // TODO: return String object
 char *ci_find_file(const char *dir_name, const char *file_name);
 
+} // namespace AGS3
 
-#endif  // __MISC_H
+#endif

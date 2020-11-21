@@ -26,6 +26,8 @@
 #include "ac/dynobj/scriptgui.h"
 #include "gui/guimain.h"
 
+namespace AGS3 {
+
 using AGS::Common::GUIMain;
 using AGS::Common::GUIObject;
 
@@ -89,5 +91,7 @@ extern int ifacepopped;
 
 extern int ifacepopped;
 extern int mouse_on_iface;
+
+} // namespace AGS3
 
 #endif

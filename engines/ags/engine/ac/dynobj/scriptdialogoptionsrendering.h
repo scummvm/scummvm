@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/scriptdrawingsurface.h"
 
+namespace AGS3 {
+
 struct ScriptDialogOptionsRendering final : AGSCCDynamicObject {
 	int x, y, width, height;
 	bool hasAlphaChannel;
@@ -51,5 +53,6 @@ struct ScriptDialogOptionsRendering final : AGSCCDynamicObject {
 	ScriptDialogOptionsRendering();
 };
 
+} // namespace AGS3
 
 #endif

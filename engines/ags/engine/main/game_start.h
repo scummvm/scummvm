@@ -23,7 +23,11 @@
 #ifndef AGS_ENGINE_MAIN_GAME_START_H
 #define AGS_ENGINE_MAIN_GAME_START_H
 
+namespace AGS3 {
+
 void start_game();
 void initialize_start_and_play_game(int override_start_room, const char *loadSaveGameOnStartup);
+
+} // namespace AGS3
 
 #endif

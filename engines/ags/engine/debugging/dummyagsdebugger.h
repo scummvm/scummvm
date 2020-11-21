@@ -25,13 +25,16 @@
 
 #include "debug/debugger.h"
 
+namespace AGS3 {
+
 struct DummyAGSDebugger : IAGSEditorDebugger {
 public:
 
 	virtual bool Initialize() override {
 		return false;
 	}
-	virtual void Shutdown() override { }
+	virtual void Shutdown() override {
+	}
 	virtual bool SendMessageToEditor(const char *message) override {
 		return false;
 	}
@@ -42,5 +45,7 @@ public:
 		return NULL;
 	}
 };
+
+} // namespace AGS3
 
 #endif

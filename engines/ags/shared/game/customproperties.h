@@ -40,6 +40,8 @@
 #include "util/string.h"
 #include "util/string_types.h"
 
+namespace AGS3 {
+
 #define LEGACY_MAX_CUSTOM_PROPERTIES                30
 // NOTE: for some reason the property name stored in schema object was limited
 // to only 20 characters, while the custom properties map could hold up to 200.
@@ -102,5 +104,6 @@ void          WriteValues(const StringIMap &map, Stream *out);
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -29,6 +29,8 @@
 #ifndef AGS_SHARED_AC_GAMEVERSION_H
 #define AGS_SHARED_AC_GAMEVERSION_H
 
+namespace AGS3 {
+
 /*
 
 Game data versions and changes:
@@ -151,5 +153,7 @@ enum GameDataVersion {
 };
 
 extern GameDataVersion loaded_game_file_version;
+
+} // namespace AGS3
 
 #endif

@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/scriptinvitem.h"
 
+namespace AGS3 {
+
 void InventoryItem_SetCursorGraphic(ScriptInvItem *iitem, int newSprite);
 int  InventoryItem_GetCursorGraphic(ScriptInvItem *iitem);
 void InventoryItem_SetGraphic(ScriptInvItem *iitem, int piccy);
@@ -41,5 +43,7 @@ void InventoryItem_GetPropertyText(ScriptInvItem *scii, const char *property, ch
 const char *InventoryItem_GetTextProperty(ScriptInvItem *scii, const char *property);
 
 void set_inv_item_cursorpic(int invItemId, int piccy);
+
+} // namespace AGS3
 
 #endif

@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_GUI_H
 #define AGS_ENGINE_AC_GLOBAL_GUI_H
 
+namespace AGS3 {
+
 // IsGUIOn tells whether GUI is actually displayed on screen right now
 int  IsGUIOn(int guinum);
 // This is an internal script function, and is undocumented.
@@ -55,5 +57,7 @@ void SetGUIObjectPosition(int guin, int objn, int xx, int yy);
 int GetGUIObjectAt(int xx, int yy);
 int GetGUIAt(int xx, int yy);
 void SetTextWindowGUI(int guinum);
+
+} // namespace AGS3
 
 #endif

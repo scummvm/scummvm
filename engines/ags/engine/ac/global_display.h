@@ -25,6 +25,8 @@
 
 #include "ac/speech.h"
 
+namespace AGS3 {
+
 void Display(const char *texx, ...); // applies translation
 void DisplaySimple(const char *text); // does not apply translation
 void DisplayAt(int xxp, int yyp, int widd, const char *text);
@@ -38,5 +40,7 @@ void DisplayMessageBar(int ypos, int ttexcol, int backcol, const char *title, in
 void SetSpeechStyle(int newstyle);
 void SetSkipSpeech(SkipSpeechStyle newval);
 SkipSpeechStyle GetSkipSpeech();
+
+} // namespace AGS3
 
 #endif

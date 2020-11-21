@@ -31,6 +31,7 @@
 
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -102,5 +103,6 @@ private:
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

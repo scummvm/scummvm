@@ -23,20 +23,24 @@
 #ifndef AGS_ENGINE_PLATFORM_UTIL_PE_H
 #define AGS_ENGINE_PLATFORM_UTIL_PE_H
 
+namespace AGS3 {
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct {
-	char version[15];
-	char description[100];
-	char internal_name[100];
-} version_info_t;
+	typedef struct {
+		char version[15];
+		char description[100];
+		char internal_name[100];
+	} version_info_t;
 
-int getVersionInformation(char *filename, version_info_t *version_info);
+	int getVersionInformation(char *filename, version_info_t *version_info);
 
 #ifdef __cplusplus
 }
 #endif
+
+} // namespace AGS3
 
 #endif

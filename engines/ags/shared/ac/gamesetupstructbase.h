@@ -28,12 +28,15 @@
 #include "util/string.h"
 #include "util/wgt2allg.h" // color (allegro RGB)
 
+namespace AGS3 {
+
 // Forward declaration
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 struct WordsDictionary;
@@ -243,5 +246,7 @@ private:
 	// Game default resolution to actual game resolution factor
 	int _screenUpscaleMult;
 };
+
+// namespace AGS3
 
 #endif

@@ -23,9 +23,13 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTHOTSPOT_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTHOTSPOT_H
 
+namespace AGS3 {
+
 struct ScriptHotspot {
 	int id;
 	int reserved;
 };
+
+} // namespace AGS3
 
 #endif

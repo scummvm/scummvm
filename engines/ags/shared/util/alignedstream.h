@@ -47,6 +47,7 @@
 
 #include "util/proxystream.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -58,8 +59,8 @@ enum AlignedStreamMode {
 class AlignedStream : public ProxyStream {
 public:
 	AlignedStream(Stream *stream, AlignedStreamMode mode,
-	              ObjectOwnershipPolicy stream_ownership_policy = kReleaseAfterUse,
-	              size_t base_alignment = sizeof(int16_t));
+		ObjectOwnershipPolicy stream_ownership_policy = kReleaseAfterUse,
+		size_t base_alignment = sizeof(int16_t));
 	~AlignedStream() override;
 
 	// Read/Write cumulated padding and reset block counter
@@ -109,5 +110,6 @@ private:
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

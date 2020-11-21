@@ -26,6 +26,8 @@
 #include <vector>
 #include "ac/dynobj/scriptdialog.h"
 
+namespace AGS3 {
+
 int  Dialog_GetID(ScriptDialog *sd);
 int  Dialog_GetOptionCount(ScriptDialog *sd);
 int  Dialog_GetShowTextParser(ScriptDialog *sd);
@@ -37,8 +39,10 @@ void Dialog_SetOptionState(ScriptDialog *sd, int option, int newState);
 void Dialog_Start(ScriptDialog *sd);
 
 void do_conversation(int dlgnum);
-int  show_dialog_options(int dlgnum, int sayChosenOption, bool runGameLoopsInBackground) ;
+int  show_dialog_options(int dlgnum, int sayChosenOption, bool runGameLoopsInBackground);
 
 extern ScriptDialog *scrDialog;
+
+} // namespace AGS3
 
 #endif
