@@ -628,23 +628,19 @@ bool Text::drawTextFullscreen(int32 index) {
 		}
 		hasHiddenVox = false;
 
-		stopVox(currDialTextEntry);
-
 		printTextVar13 = 0;
 
-		if (printedText != 0) {
-			_engine->_interface->loadClip();
-			return aborted;
-		}
-
-		// wait displaying text
-		for (;;) {
-			_engine->readKeys();
-			if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
-				aborted = true;
-				break;
+		if (printedText == 0) {
+			stopVox(currDialTextEntry);
+			// wait displaying text
+			for (;;) {
+				_engine->readKeys();
+				if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
+					aborted = true;
+					break;
+				}
+				_engine->_system->delayMillis(1);
 			}
-			_engine->_system->delayMillis(1);
 		}
 	} else { // RECHECK THIS
 		while (playVox(currDialTextEntry)) {
