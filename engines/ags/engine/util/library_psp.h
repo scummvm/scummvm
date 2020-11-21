@@ -27,6 +27,7 @@
 #include "util/string.h"
 #include "debug/out.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -128,5 +129,6 @@ typedef PSPLibrary Library;
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

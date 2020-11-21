@@ -25,6 +25,8 @@
 
 #include "game/customproperties.h"
 
+namespace AGS3 {
+
 using AGS::Common::StringIMap;
 
 // Getting a property value requires static and runtime property maps.
@@ -38,5 +40,7 @@ const char *get_text_property_dynamic_string(const StringIMap &st_prop, const St
 
 bool set_int_property(StringIMap &rt_prop, const char *property, int value);
 bool set_text_property(StringIMap &rt_prop, const char *property, const char *value);
+
+} // namespace AGS3
 
 #endif

@@ -32,6 +32,8 @@
 #include <utility>
 #include "core/types.h"
 
+namespace AGS3 {
+
 // Forward declaration
 namespace AGS {
 namespace Common {
@@ -75,17 +77,17 @@ struct ICCDynamicObject {
 	// necessary, because byte-code does not contain any distinct operation for this case.
 	// The worst thing here is that with the current byte-code structure we can never tell whether
 	// offset 0 means getting pointer to whole object or a pointer to its first field.
-	virtual const char *GetFieldPtr(const char *address, intptr_t offset)           = 0;
+	virtual const char *GetFieldPtr(const char *address, intptr_t offset) = 0;
 	virtual void    Read(const char *address, intptr_t offset, void *dest, int size) = 0;
-	virtual uint8_t ReadInt8(const char *address, intptr_t offset)                  = 0;
-	virtual int16_t ReadInt16(const char *address, intptr_t offset)                 = 0;
-	virtual int32_t ReadInt32(const char *address, intptr_t offset)                 = 0;
-	virtual float   ReadFloat(const char *address, intptr_t offset)                 = 0;
+	virtual uint8_t ReadInt8(const char *address, intptr_t offset) = 0;
+	virtual int16_t ReadInt16(const char *address, intptr_t offset) = 0;
+	virtual int32_t ReadInt32(const char *address, intptr_t offset) = 0;
+	virtual float   ReadFloat(const char *address, intptr_t offset) = 0;
 	virtual void    Write(const char *address, intptr_t offset, void *src, int size) = 0;
-	virtual void    WriteInt8(const char *address, intptr_t offset, uint8_t val)    = 0;
-	virtual void    WriteInt16(const char *address, intptr_t offset, int16_t val)   = 0;
-	virtual void    WriteInt32(const char *address, intptr_t offset, int32_t val)   = 0;
-	virtual void    WriteFloat(const char *address, intptr_t offset, float val)     = 0;
+	virtual void    WriteInt8(const char *address, intptr_t offset, uint8_t val) = 0;
+	virtual void    WriteInt16(const char *address, intptr_t offset, int16_t val) = 0;
+	virtual void    WriteInt32(const char *address, intptr_t offset, int32_t val) = 0;
+	virtual void    WriteFloat(const char *address, intptr_t offset, float val) = 0;
 
 protected:
 	ICCDynamicObject() = default;
@@ -127,5 +129,7 @@ extern int ccAddObjectReference(int32_t handle);
 extern int ccReleaseObjectReference(int32_t handle);
 
 extern ICCStringClass *stringClassImpl;
+
+} // namespace AGS3
 
 #endif

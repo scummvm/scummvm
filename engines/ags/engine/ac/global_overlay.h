@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_GLOBALOVERLAY_H
 #define AGS_ENGINE_AC_GLOBALOVERLAY_H
 
+namespace AGS3 {
+
 void RemoveOverlay(int ovrid);
 int  CreateGraphicOverlay(int xx, int yy, int slott, int trans);
 int  CreateTextOverlayCore(int xx, int yy, int wii, int fontid, int text_color, const char *text, int disp_type, int allowShrink);
@@ -30,5 +32,7 @@ int  CreateTextOverlay(int xx, int yy, int wii, int fontid, int clr, const char 
 void SetTextOverlay(int ovrid, int xx, int yy, int wii, int fontid, int text_color, const char *text);
 void MoveOverlay(int ovrid, int newx, int newy);
 int  IsOverlayValid(int ovrid);
+
+} // namespace AGS3
 
 #endif

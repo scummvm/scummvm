@@ -26,6 +26,8 @@
 #include <vector>
 #include "ac/dynobj/cc_dynamicobject.h"   // ICCDynamicObject
 
+namespace AGS3 {
+
 #define CC_DYNAMIC_ARRAY_TYPE_NAME "CCDynamicArray"
 #define ARRAY_MANAGED_TYPE_FLAG    0x80000000
 
@@ -61,5 +63,7 @@ namespace DynamicArrayHelpers {
 // Create array of managed strings
 DynObjectRef CreateStringArray(const std::vector<const char *>);
 };
+
+} // namespace AGS3
 
 #endif

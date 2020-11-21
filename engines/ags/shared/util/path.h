@@ -31,6 +31,7 @@
 
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -86,5 +87,6 @@ String  GetCmdLinePathInASCII(const char *arg, int arg_index);
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

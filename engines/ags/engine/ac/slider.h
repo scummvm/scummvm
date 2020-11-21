@@ -25,6 +25,8 @@
 
 #include "gui/guislider.h"
 
+namespace AGS3 {
+
 using AGS::Common::GUISlider;
 
 void    Slider_SetMax(GUISlider *guisl, int valn);
@@ -39,5 +41,7 @@ int     Slider_GetHandleGraphic(GUISlider *guisl);
 void    Slider_SetHandleGraphic(GUISlider *guisl, int newImage);
 int     Slider_GetHandleOffset(GUISlider *guisl);
 void    Slider_SetHandleOffset(GUISlider *guisl, int newOffset);
+
+} // namespace AGS3
 
 #endif

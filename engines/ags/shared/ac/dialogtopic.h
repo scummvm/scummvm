@@ -23,11 +23,14 @@
 #ifndef AGS_SHARED_AC_DIALOGTOPIC_H
 #define AGS_SHARED_AC_DIALOGTOPIC_H
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 // [IKM] This is *conversation* dialog, not *gui* dialog, mind you!
@@ -73,5 +76,6 @@ struct DialogTopic {
 	void WriteToSavegame(Common::Stream *out) const;
 };
 
+} // namespace AGS3
 
 #endif

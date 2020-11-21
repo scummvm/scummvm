@@ -23,12 +23,15 @@
 #ifndef AGS_ENGINE_AC_ROUTE_FINDER_IMPL_LEGACY
 #define AGS_ENGINE_AC_ROUTE_FINDER_IMPL_LEGACY
 
+namespace AGS3 {
+
 // Forward declaration
 namespace AGS {
 namespace Common {
 class Bitmap;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 struct MoveList;
 
 namespace AGS {
@@ -51,5 +54,6 @@ void calculate_move_stage(MoveList *mlsp, int aaa);
 } // namespace RouteFinderLegacy
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

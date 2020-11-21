@@ -25,6 +25,8 @@
 
 #include "util/string.h"
 
+namespace AGS3 {
+
 struct IAGSEditorDebugger;
 struct ScriptPosition;
 
@@ -63,5 +65,7 @@ enum FPSDisplayMode {
 extern float fps;
 extern FPSDisplayMode display_fps;
 extern int debug_flags;
+
+} // namespace AGS3
 
 #endif

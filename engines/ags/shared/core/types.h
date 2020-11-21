@@ -34,6 +34,8 @@
 #include <stdlib.h> // for size_t
 #include <limits.h> // for _WORDSIZE
 
+namespace AGS3 {
+
 #ifndef NULL
 #define NULL nullptr
 #endif
@@ -64,8 +66,10 @@ typedef int64_t soff_t;
 
 // TODO: use distinct fixed point class
 enum {
-	kShift    = 16,
-	kUnit     = 1 << kShift
+	kShift = 16,
+	kUnit = 1 << kShift
 };
+
+} // namespace AGS3
 
 #endif

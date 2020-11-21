@@ -27,11 +27,14 @@
 #include "ac/screenoverlay.h"
 #include "ac/dynobj/scriptoverlay.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Bitmap;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 void Overlay_Remove(ScriptOverlay *sco);
@@ -57,5 +60,7 @@ extern int is_complete_overlay;
 extern int is_text_overlay; // blocking text overlay on screen
 
 extern std::vector<ScreenOverlay> screenover;
+
+} // namespace AGS3
 
 #endif

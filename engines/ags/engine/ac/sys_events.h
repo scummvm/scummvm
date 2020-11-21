@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_SYS_EVENTS_H
 #define AGS_ENGINE_AC_SYS_EVENTS_H
 
+namespace AGS3 {
+
 int  ags_getch();
 int  ags_kbhit();
 int  ags_iskeypressed(int keycode);
@@ -37,5 +39,7 @@ void ags_clear_input_buffer();
 // Halts execution until any user input
 // TODO: seriously not a good design, replace with event listening
 void ags_wait_until_keypress();
+
+} // namespace AGS3
 
 #endif

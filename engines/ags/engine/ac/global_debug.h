@@ -26,7 +26,11 @@
 #include <cstdio>
 #include "util/string.h"
 
+namespace AGS3 {
+
 AGS::Common::String GetRuntimeInfo();
 void script_debug(int cmdd, int dataa);
+
+} // namespace AGS3
 
 #endif

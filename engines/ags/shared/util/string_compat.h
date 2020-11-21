@@ -25,18 +25,22 @@
 
 #include "core/types.h"
 
+namespace AGS3 {
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-char *ags_strlwr(char *s);
-char *ags_strupr(char *s);
-int ags_stricmp(const char *, const char *);
-int ags_strnicmp(const char *, const char *, size_t);
-char *ags_strdup(const char *s);
+	char *ags_strlwr(char *s);
+	char *ags_strupr(char *s);
+	int ags_stricmp(const char *, const char *);
+	int ags_strnicmp(const char *, const char *, size_t);
+	char *ags_strdup(const char *s);
 
 #ifdef __cplusplus
 }
 #endif
+
+} // namespace AGS3
 
 #endif

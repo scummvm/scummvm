@@ -46,6 +46,8 @@
 #include "util/library.h"
 #include "util/string.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Engine {
 namespace D3D {
@@ -201,7 +203,8 @@ public:
 	void Render() override;
 	void Render(int xoff, int yoff, GlobalFlipType flip) override;
 	bool GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt) override;
-	void EnableVsyncBeforeRender(bool enabled) override { }
+	void EnableVsyncBeforeRender(bool enabled) override {
+	}
 	void Vsync() override;
 	void RenderSpritesAtScreenResolution(bool enabled, int supersampling) override {
 		_renderSprAtScreenRes = enabled;
@@ -311,14 +314,14 @@ public:
 	const GfxFilterInfo *GetFilterInfo(size_t index) const override;
 	String               GetDefaultFilterID() const override;
 
-	static D3DGraphicsFactory   *GetFactory();
-	static D3DGraphicsDriver    *GetD3DDriver();
+	static D3DGraphicsFactory *GetFactory();
+	static D3DGraphicsDriver *GetD3DDriver();
 
 private:
 	D3DGraphicsFactory();
 
-	D3DGraphicsDriver   *EnsureDriverCreated() override;
-	D3DGfxFilter        *CreateFilter(const String &id) override;
+	D3DGraphicsDriver *EnsureDriverCreated() override;
+	D3DGfxFilter *CreateFilter(const String &id) override;
 
 	bool Init();
 
@@ -341,11 +344,12 @@ private:
 	// TODO: find out if there is better solution.
 	//
 	static Library      _library;
-	IDirect3D9         *_direct3d;
+	IDirect3D9 *_direct3d;
 };
 
 } // namespace D3D
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

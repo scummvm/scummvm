@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_DEBUGGING_AGSEDITORDEBUGGER_H
 #define AGS_ENGINE_DEBUGGING_AGSEDITORDEBUGGER_H
 
+namespace AGS3 {
+
 struct IAGSEditorDebugger {
 public:
 	virtual ~IAGSEditorDebugger() = default;
@@ -34,5 +36,7 @@ public:
 	// Message will be allocated on heap with malloc
 	virtual char *GetNextMessage() = 0;
 };
+
+} // namespace AGS3
 
 #endif

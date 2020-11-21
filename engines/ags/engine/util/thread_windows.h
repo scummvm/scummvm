@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_UTIL_THREAD_WINDOWS_H
 #define AGS_ENGINE_UTIL_THREAD_WINDOWS_H
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
-
 
 class WindowsThread : public BaseThread {
 public:
@@ -52,7 +52,7 @@ public:
 		if ((_thread != NULL) && (!_running)) {
 			DWORD result = ResumeThread(_thread);
 
-			_running = (result != (DWORD) - 1);
+			_running = (result != (DWORD)-1);
 			return _running;
 		} else {
 			return false;
@@ -95,11 +95,10 @@ private:
 	}
 };
 
-
 typedef WindowsThread Thread;
-
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

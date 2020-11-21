@@ -23,6 +23,10 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_PARSER_H
 #define AGS_ENGINE_AC_GLOBAL_PARSER_H
 
+namespace AGS3 {
+
 int SaidUnknownWord(char *buffer);
+
+} // namespace AGS3
 
 #endif

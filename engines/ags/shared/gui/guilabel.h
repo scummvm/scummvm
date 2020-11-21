@@ -27,12 +27,14 @@
 #include "gui/guiobject.h"
 #include "util/string.h"
 
+namespace AGS3 {
+
 class SplitLines;
 
 namespace AGS {
 namespace Common {
 
-class GUILabel: public GUIObject {
+class GUILabel : public GUIObject {
 public:
 	GUILabel();
 
@@ -48,7 +50,7 @@ public:
 	void ReadFromSavegame(Common::Stream *in, GuiSvgVersion svg_ver) override;
 	void WriteToSavegame(Common::Stream *out) const override;
 
-// TODO: these members are currently public; hide them later
+	// TODO: these members are currently public; hide them later
 public:
 	String  Text;
 	int32_t Font;
@@ -68,5 +70,7 @@ private:
 
 extern std::vector<AGS::Common::GUILabel> guilabels;
 extern int numguilabels;
+
+} // namespace AGS3
 
 #endif

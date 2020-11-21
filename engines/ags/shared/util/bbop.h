@@ -36,6 +36,7 @@
 #define BITBYTE_BIG_ENDIAN
 #endif
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -60,8 +61,8 @@ inline int32_t SwapBytesInt32(const int32_t val) {
 
 inline int64_t SwapBytesInt64(const int64_t val) {
 	return ((val >> 56) & 0xFF) | ((val >> 40) & 0xFF00) | ((val >> 24) & 0xFF0000) |
-	       ((val >> 8) & 0xFF000000) | ((val << 8) & 0xFF00000000LL) |
-	       ((val << 24) & 0xFF0000000000LL) | ((val << 40) & 0xFF000000000000LL) | ((val << 56) & 0xFF00000000000000LL);
+		((val >> 8) & 0xFF000000) | ((val << 8) & 0xFF00000000LL) |
+		((val << 24) & 0xFF0000000000LL) | ((val << 40) & 0xFF000000000000LL) | ((val << 56) & 0xFF00000000000000LL);
 }
 
 inline float SwapBytesFloat(const float val) {
@@ -143,10 +144,10 @@ inline float FloatFromBE(const float val) {
 
 
 // Aliases for easier calling
-namespace BBOp  = BitByteOperations;
-
+namespace BBOp = BitByteOperations;
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

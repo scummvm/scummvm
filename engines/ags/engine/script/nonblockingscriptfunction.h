@@ -28,6 +28,8 @@
 
 #include <vector>
 
+namespace AGS3 {
+
 struct NonBlockingScriptFunction {
 	const char *functionName;
 	int numParameters;
@@ -47,5 +49,7 @@ struct NonBlockingScriptFunction {
 		globalScriptHasFunction = true;
 	}
 };
+
+} // namespace AGS3
 
 #endif

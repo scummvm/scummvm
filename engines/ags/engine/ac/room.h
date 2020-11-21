@@ -28,6 +28,8 @@
 #include "script/runtimescriptvalue.h"
 #include "game/roomstruct.h"
 
+namespace AGS3 {
+
 ScriptDrawingSurface *Room_GetDrawingSurfaceForBackground(int backgroundNumber);
 ScriptDrawingSurface *Room_GetDrawingSurfaceForMask(RoomAreaMask mask);
 int Room_GetObjectCount();
@@ -75,5 +77,7 @@ struct MoveList;
 void convert_move_path_to_room_resolution(MoveList *ml);
 
 extern AGS::Common::RoomStruct thisroom;
+
+} // namespace AGS3
 
 #endif

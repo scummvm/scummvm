@@ -25,9 +25,13 @@
 
 #include "util/string.h"
 
+namespace AGS3 {
+
 using AGS::Common::String;
 
 void close_translation();
 bool init_translation(const String &lang, const String &fallback_lang, bool quit_on_error);
+
+} // namespace AGS3
 
 #endif

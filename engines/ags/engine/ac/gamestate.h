@@ -36,18 +36,22 @@
 #include "util/string.h"
 #include "ac/timer.h"
 
+namespace AGS3 {
+
 // Forward declaration
 namespace AGS {
 namespace Common {
 class Bitmap;
 class Stream;
 typedef std::shared_ptr<Bitmap> PBitmap;
-}
+} // namespace Shared
+
 namespace Engine {
 struct RestoredData;
-}
-}
+} // namespace Engine
+} // namespace AGS
 using namespace AGS; // FIXME later
+
 struct ScriptViewport;
 struct ScriptCamera;
 
@@ -56,12 +60,11 @@ struct ScriptCamera;
 // Savegame data format
 enum GameStateSvgVersion {
 	kGSSvgVersion_OldFormat = -1, // TODO: remove after old save support is dropped
-	kGSSvgVersion_Initial   = 0,
-	kGSSvgVersion_350       = 1,
-	kGSSvgVersion_3509      = 2,
-	kGSSvgVersion_3510      = 3,
+	kGSSvgVersion_Initial = 0,
+	kGSSvgVersion_350 = 1,
+	kGSSvgVersion_3509 = 2,
+	kGSSvgVersion_3510 = 3,
 };
-
 
 
 // Adding to this might need to modify AGSDEFNS.SH and AGSPLUGIN.H
@@ -220,7 +223,7 @@ struct GameState {
 	int   gamma_adjustment;
 	short temporarily_turned_off_character;  // Hide Player Charactr ticked
 	short inv_backwards_compatibility;
-	int  *gui_draw_order;
+	int *gui_draw_order;
 	std::vector<AGS::Common::String> do_once_tokens;
 	int   text_min_display_time_ms;
 	int   ignore_user_input_after_text_timeout_ms;
@@ -354,7 +357,7 @@ struct GameState {
 	void ReadQueuedAudioItems_Aligned(Common::Stream *in);
 	void ReadCustomProperties_v340(Common::Stream *in);
 	void WriteCustomProperties_v340(Common::Stream *out) const;
-	void ReadFromSavegame(Common::Stream *in,  GameStateSvgVersion svg_ver, AGS::Engine::RestoredData &r_data);
+	void ReadFromSavegame(Common::Stream *in, GameStateSvgVersion svg_ver, AGS::Engine::RestoredData &r_data);
 	void WriteForSavegame(Common::Stream *out) const;
 	void FreeProperties();
 	void FreeViewportsAndCameras();
@@ -399,5 +402,7 @@ HorAlignment ConvertLegacyScriptAlignment(LegacyScriptAlignment align);
 HorAlignment ReadScriptAlignment(int32_t align);
 
 extern GameState play;
+
+} // namespace AGS3
 
 #endif

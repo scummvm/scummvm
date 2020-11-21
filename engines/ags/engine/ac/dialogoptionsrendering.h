@@ -26,6 +26,8 @@
 #include "ac/dynobj/scriptdialog.h"
 #include "ac/dynobj/scriptdialogoptionsrendering.h"
 
+namespace AGS3 {
+
 int  DialogOptionsRendering_GetX(ScriptDialogOptionsRendering *dlgOptRender);
 void DialogOptionsRendering_SetX(ScriptDialogOptionsRendering *dlgOptRender, int newX);
 int  DialogOptionsRendering_GetY(ScriptDialogOptionsRendering *dlgOptRender);
@@ -46,5 +48,7 @@ ScriptDialog *DialogOptionsRendering_GetDialogToRender(ScriptDialogOptionsRender
 ScriptDrawingSurface *DialogOptionsRendering_GetSurface(ScriptDialogOptionsRendering *dlgOptRender);
 int  DialogOptionsRendering_GetActiveOptionID(ScriptDialogOptionsRendering *dlgOptRender);
 void DialogOptionsRendering_SetActiveOptionID(ScriptDialogOptionsRendering *dlgOptRender, int activeOptionID);
+
+} // namespace AGS3
 
 #endif

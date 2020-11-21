@@ -31,6 +31,8 @@
 
 #include "util/string.h"
 
+namespace AGS3 {
+
 using AGS::Common::String;
 
 // Filepath tokens, which are replaced by platform-specific directory names
@@ -80,5 +82,7 @@ String  get_install_dir();
 String  get_audio_install_dir();
 String  get_voice_install_dir();
 void    get_install_dir_path(char *buffer, const char *fileName);
+
+} // namespace AGS3
 
 #endif

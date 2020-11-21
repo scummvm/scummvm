@@ -32,6 +32,7 @@
 #include "core/platform.h"
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -67,7 +68,7 @@ bool        GetFileModesFromCMode(const String &cmode, FileOpenMode &open_mode, 
 // Gets C-style file mode from FileOpenMode and FileWorkMode
 String      GetCMode(FileOpenMode open_mode, FileWorkMode work_mode);
 
-Stream      *OpenFile(const String &filename, FileOpenMode open_mode, FileWorkMode work_mode);
+Stream *OpenFile(const String &filename, FileOpenMode open_mode, FileWorkMode work_mode);
 // Convenience helpers
 // Create a totally new file, overwrite existing one
 inline Stream *CreateFile(const String &filename) {
@@ -85,5 +86,6 @@ inline Stream *OpenFileWrite(const String &filename) {
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

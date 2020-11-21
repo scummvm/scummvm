@@ -34,6 +34,7 @@
 #include "util/bbop.h"
 #include "util/stream.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -59,17 +60,17 @@ public:
 
 	inline size_t ReadArrayOfInt16(int16_t *buffer, size_t count) override {
 		return MustSwapBytes() ?
-		       ReadAndConvertArrayOfInt16(buffer, count) : ReadArray(buffer, sizeof(int16_t), count);
+			ReadAndConvertArrayOfInt16(buffer, count) : ReadArray(buffer, sizeof(int16_t), count);
 	}
 
 	inline size_t ReadArrayOfInt32(int32_t *buffer, size_t count) override {
 		return MustSwapBytes() ?
-		       ReadAndConvertArrayOfInt32(buffer, count) : ReadArray(buffer, sizeof(int32_t), count);
+			ReadAndConvertArrayOfInt32(buffer, count) : ReadArray(buffer, sizeof(int32_t), count);
 	}
 
 	inline size_t ReadArrayOfInt64(int64_t *buffer, size_t count) override {
 		return MustSwapBytes() ?
-		       ReadAndConvertArrayOfInt64(buffer, count) : ReadArray(buffer, sizeof(int64_t), count);
+			ReadAndConvertArrayOfInt64(buffer, count) : ReadArray(buffer, sizeof(int64_t), count);
 	}
 
 	size_t  WriteInt16(int16_t val) override;
@@ -82,17 +83,17 @@ public:
 
 	inline size_t WriteArrayOfInt16(const int16_t *buffer, size_t count) override {
 		return MustSwapBytes() ?
-		       WriteAndConvertArrayOfInt16(buffer, count) : WriteArray(buffer, sizeof(int16_t), count);
+			WriteAndConvertArrayOfInt16(buffer, count) : WriteArray(buffer, sizeof(int16_t), count);
 	}
 
 	inline size_t WriteArrayOfInt32(const int32_t *buffer, size_t count) override {
 		return MustSwapBytes() ?
-		       WriteAndConvertArrayOfInt32(buffer, count) : WriteArray(buffer, sizeof(int32_t), count);
+			WriteAndConvertArrayOfInt32(buffer, count) : WriteArray(buffer, sizeof(int32_t), count);
 	}
 
 	inline size_t WriteArrayOfInt64(const int64_t *buffer, size_t count) override {
 		return MustSwapBytes() ?
-		       WriteAndConvertArrayOfInt64(buffer, count) : WriteArray(buffer, sizeof(int64_t), count);
+			WriteAndConvertArrayOfInt64(buffer, count) : WriteArray(buffer, sizeof(int64_t), count);
 	}
 
 protected:
@@ -124,5 +125,6 @@ protected:
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

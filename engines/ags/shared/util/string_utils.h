@@ -25,11 +25,14 @@
 
 #include "util/string.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 //=============================================================================
@@ -76,6 +79,6 @@ void            WriteCStr(const String &s, Stream *out);
 }
 } // namespace Common
 } // namespace AGS
-
+} // namespace AGS3
 
 #endif

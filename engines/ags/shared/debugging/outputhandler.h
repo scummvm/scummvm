@@ -33,6 +33,7 @@
 #include "debug/out.h"
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -42,7 +43,8 @@ struct DebugMessage {
 	String       GroupName;
 	MessageType  MT;
 
-	DebugMessage() : GroupID(kDbgGroup_None), MT(kDbgMsg_None) {}
+	DebugMessage() : GroupID(kDbgGroup_None), MT(kDbgMsg_None) {
+	}
 	DebugMessage(const String &text, uint32_t group_id, const String &group_name, MessageType mt)
 		: Text(text)
 		, GroupID(group_id)
@@ -60,7 +62,8 @@ public:
 	virtual void PrintMessage(const DebugMessage &msg) = 0;
 };
 
-}   // namespace Common
-}   // namespace AGS
+} // namespace Common
+} // namespace AGS
+} // namespace AGS3
 
 #endif

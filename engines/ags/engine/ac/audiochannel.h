@@ -26,6 +26,8 @@
 #include "ac/dynobj/scriptaudioclip.h"
 #include "ac/dynobj/scriptaudiochannel.h"
 
+namespace AGS3 {
+
 int     AudioChannel_GetID(ScriptAudioChannel *channel);
 int     AudioChannel_GetIsPlaying(ScriptAudioChannel *channel);
 int     AudioChannel_GetPanning(ScriptAudioChannel *channel);
@@ -39,5 +41,7 @@ int     AudioChannel_SetVolume(ScriptAudioChannel *channel, int newVolume);
 void    AudioChannel_Stop(ScriptAudioChannel *channel);
 void    AudioChannel_Seek(ScriptAudioChannel *channel, int newPosition);
 void    AudioChannel_SetRoomLocation(ScriptAudioChannel *channel, int xPos, int yPos);
+
+} // namespace AGS3
 
 #endif

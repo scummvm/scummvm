@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_UTIL_LIBRARY_DUMMY_H
 #define AGS_ENGINE_UTIL_LIBRARY_DUMMY_H
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
-
 
 class DummyLibrary : BaseLibrary {
 public:
@@ -52,12 +52,10 @@ public:
 	}
 };
 
-
 typedef DummyLibrary Library;
-
-
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

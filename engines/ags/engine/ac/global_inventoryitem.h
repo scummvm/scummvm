@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_INVENTORYITEM_H
 #define AGS_ENGINE_AC_GLOBAL_INVENTORYITEM_H
 
+namespace AGS3 {
+
 void set_inv_item_pic(int invi, int piccy);
 void SetInvItemName(int invi, const char *newName);
 int  GetInvAt(int xxx, int yyy);
@@ -32,5 +34,7 @@ void RunInventoryInteraction(int iit, int modd);
 int  IsInventoryInteractionAvailable(int item, int mood);
 int  GetInvProperty(int item, const char *property);
 void GetInvPropertyText(int item, const char *property, char *bufer);
+
+} // namespace AGS3
 
 #endif

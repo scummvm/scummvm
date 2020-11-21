@@ -23,7 +23,11 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_INVWINDOW_H
 #define AGS_ENGINE_AC_GLOBAL_INVWINDOW_H
 
+namespace AGS3 {
+
 void sc_invscreen();
 void SetInvDimensions(int ww, int hh);
+
+} // namespace AGS3
 
 #endif

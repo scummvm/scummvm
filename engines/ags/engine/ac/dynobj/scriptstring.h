@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
+namespace AGS3 {
+
 struct ScriptString final : AGSCCDynamicObject, ICCStringClass {
 	char *text;
 
@@ -38,5 +40,7 @@ struct ScriptString final : AGSCCDynamicObject, ICCStringClass {
 	ScriptString();
 	ScriptString(const char *fromText);
 };
+
+} // namespace AGS3
 
 #endif

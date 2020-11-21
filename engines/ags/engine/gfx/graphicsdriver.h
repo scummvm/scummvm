@@ -34,12 +34,13 @@
 #include "gfx/gfxmodelist.h"
 #include "util/geometry.h"
 
+namespace AGS3 {
 namespace AGS {
 
 namespace Common {
 class Bitmap;
 typedef std::shared_ptr<Common::Bitmap> PBitmap;
-}
+} // namespace Common
 
 namespace Engine {
 
@@ -70,10 +71,12 @@ struct SpriteTransform {
 	float Rotate; // angle, in radians
 
 	SpriteTransform()
-		: X(0), Y(0), ScaleX(1.f), ScaleY(1.f), Rotate(0.f) {}
+		: X(0), Y(0), ScaleX(1.f), ScaleY(1.f), Rotate(0.f) {
+	}
 
 	SpriteTransform(int x, int y, float scalex = 1.0f, float scaley = 1.0f, float rotate = 0.0f)
-		: X(x), Y(y), ScaleX(scalex), ScaleY(scaley), Rotate(rotate) {}
+		: X(x), Y(y), ScaleX(scalex), ScaleY(scaley), Rotate(rotate) {
+	}
 };
 
 typedef void (*GFXDRV_CLIENTCALLBACK)();
@@ -129,7 +132,7 @@ public:
 	// global model transformation; all subsequent calls to DrawSprite will be adding
 	// sprites to this batch's list.
 	virtual void BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-	                              const Point offset = Point(), GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr) = 0;
+		const Point offset = Point(), GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr) = 0;
 	// Adds sprite to the active batch
 	virtual void DrawSprite(int x, int y, IDriverDependantBitmap *bitmap) = 0;
 	// Adds fade overlay fx to the active batch
@@ -191,5 +194,6 @@ public:
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

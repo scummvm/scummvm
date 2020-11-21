@@ -23,8 +23,12 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_TRANSLATION_H
 #define AGS_ENGINE_AC_GLOBAL_TRANSLATION_H
 
+namespace AGS3 {
+
 const char *get_translation(const char *text);
 int IsTranslationAvailable();
 int GetTranslationName(char *buffer);
+
+} // namespace AGS3
 
 #endif

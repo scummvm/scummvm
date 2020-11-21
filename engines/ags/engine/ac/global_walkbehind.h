@@ -23,6 +23,10 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_WALKBEHIND_H
 #define AGS_ENGINE_AC_GLOBAL_WALKBEHIND_H
 
+namespace AGS3 {
+
 void SetWalkBehindBase(int wa, int bl);
+
+} // namespace AGS3
 
 #endif

@@ -23,10 +23,14 @@
 #ifndef AGS_ENGINE_MEDIA_VIDEO_VIDEO_H
 #define AGS_ENGINE_MEDIA_VIDEO_VIDEO_H
 
+namespace AGS3 {
+
 void play_theora_video(const char *name, int skip, int flags);
 void play_flc_file(int numb, int playflags);
 
 // Update video playback if the display mode has changed
 void video_on_gfxmode_changed();
+
+} // namespace AGS3
 
 #endif

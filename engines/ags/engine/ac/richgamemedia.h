@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_RICHGAMEMEDIA_H
 #define AGS_ENGINE_AC_RICHGAMEMEDIA_H
 
+namespace AGS3 {
+
 // Windows Vista Rich Save Games, modified to be platform-agnostic
 
 #define RM_MAXLENGTH    1024
@@ -32,8 +34,9 @@
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 #pragma pack(push)
@@ -55,5 +58,7 @@ typedef struct _RICH_GAME_MEDIA_HEADER {
 	void WriteToFile(Common::Stream *out);
 } RICH_GAME_MEDIA_HEADER;
 #pragma pack(pop)
+
+} // namespace AGS3
 
 #endif

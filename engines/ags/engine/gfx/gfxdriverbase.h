@@ -34,6 +34,7 @@
 #include "gfx/graphicsdriver.h"
 #include "util/scaling.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -53,9 +54,10 @@ struct SpriteBatchDesc {
 	// Optional bitmap to draw sprites upon. Used exclusively by the software rendering mode.
 	PBitmap                  Surface;
 
-	SpriteBatchDesc() : Flip(kFlip_None) {}
+	SpriteBatchDesc() : Flip(kFlip_None) {
+	}
 	SpriteBatchDesc(const Rect viewport, const SpriteTransform &transform, const Point offset = Point(),
-	                GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr)
+		GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr)
 		: Viewport(viewport)
 		, Transform(transform)
 		, Offset(offset)
@@ -103,7 +105,7 @@ public:
 	Rect        GetRenderDestination() const override;
 
 	void        BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-	                             const Point offset = Point(), GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr) override;
+		const Point offset = Point(), GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr) override;
 	void        ClearDrawLists() override;
 
 	void        SetCallbackForPolling(GFXDRV_CLIENTCALLBACK callback) override {
@@ -225,10 +227,10 @@ protected:
 
 	// Prepares bitmap to be applied to the texture, copies pixels to the provided buffer
 	void BitmapToVideoMem(const Bitmap *bitmap, const bool has_alpha, const TextureTile *tile, const VideoMemDDB *target,
-	                      char *dst_ptr, const int dst_pitch, const bool usingLinearFiltering);
+		char *dst_ptr, const int dst_pitch, const bool usingLinearFiltering);
 	// Same but optimized for opaque source bitmaps which ignore transparent "mask color"
 	void BitmapToVideoMemOpaque(const Bitmap *bitmap, const bool has_alpha, const TextureTile *tile, const VideoMemDDB *target,
-	                            char *dst_ptr, const int dst_pitch);
+		char *dst_ptr, const int dst_pitch);
 
 	// Stage virtual screen is used to let plugins draw custom graphics
 	// in between render stages (between room and GUI, after GUI, and so on)
@@ -262,5 +264,6 @@ private:
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

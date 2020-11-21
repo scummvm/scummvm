@@ -26,10 +26,12 @@
 #include "almp3.h"
 #include "media/audio/soundclip.h"
 
+namespace AGS3 {
+
 extern AGS::Engine::Mutex _mp3_mutex;
 
 // pre-loaded (non-streaming) MP3 file
-struct MYSTATICMP3: public SOUNDCLIP {
+struct MYSTATICMP3 : public SOUNDCLIP {
 	ALMP3_MP3 *tune;
 	char *mp3buffer;
 
@@ -60,5 +62,7 @@ protected:
 private:
 	void adjust_stream();
 };
+
+} // namespace AGS3
 
 #endif

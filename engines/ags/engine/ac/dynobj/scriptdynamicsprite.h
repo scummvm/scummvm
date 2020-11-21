@@ -25,7 +25,9 @@
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
-struct ScriptDynamicSprite final  : AGSCCDynamicObject {
+namespace AGS3 {
+
+struct ScriptDynamicSprite final : AGSCCDynamicObject {
 	int slot;
 
 	int Dispose(const char *address, bool force) override;
@@ -36,5 +38,7 @@ struct ScriptDynamicSprite final  : AGSCCDynamicObject {
 	ScriptDynamicSprite(int slot);
 	ScriptDynamicSprite();
 };
+
+} // namespace AGS3
 
 #endif

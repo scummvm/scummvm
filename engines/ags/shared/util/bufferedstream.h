@@ -27,6 +27,7 @@
 #include "util/filestream.h"
 #include "util/file.h" // TODO: extract filestream mode constants
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -67,5 +68,6 @@ private:
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -25,9 +25,9 @@
 
 #include "util/mutex.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
-
 
 class MutexLock {
 private:
@@ -59,8 +59,8 @@ public:
 	}
 }; // class MutexLock
 
-
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

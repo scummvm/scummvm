@@ -23,11 +23,14 @@
 #ifndef AGS_SHARED_AC_MOUSECURSOR_H
 #define AGS_SHARED_AC_MOUSECURSOR_H
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 #define MCF_ANIMMOVE 1
@@ -48,5 +51,7 @@ struct MouseCursor {
 	void ReadFromSavegame(Common::Stream *in);
 	void WriteToSavegame(Common::Stream *out) const;
 };
+
+} // namespace AGS3
 
 #endif

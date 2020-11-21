@@ -25,18 +25,22 @@
 
 #include <stdint.h>
 
+namespace AGS3 {
+
 // Forward declaration
 namespace AGS {
 namespace Common {
 class Bitmap;
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 namespace AGS {
 namespace Engine {
 class IDriverDependantBitmap;
-}
-}
+} // namespace Engine
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 
@@ -54,5 +58,7 @@ struct ScreenOverlay {
 	void ReadFromFile(Common::Stream *in, int32_t cmp_ver);
 	void WriteToFile(Common::Stream *out) const;
 };
+
+} // namespace AGS3
 
 #endif

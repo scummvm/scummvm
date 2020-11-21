@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/scripthotspot.h"
 
+namespace AGS3 {
+
 void    Hotspot_SetEnabled(ScriptHotspot *hss, int newval);
 int     Hotspot_GetEnabled(ScriptHotspot *hss);
 int     Hotspot_GetID(ScriptHotspot *hss);
@@ -43,5 +45,7 @@ const char *Hotspot_GetTextProperty(ScriptHotspot *hss, const char *property);
 // Gets hotspot ID at the given room coordinates;
 // if hotspot is disabled or non-existing, returns 0 (no area)
 int     get_hotspot_at(int xpp, int ypp);
+
+} // namespace AGS3
 
 #endif

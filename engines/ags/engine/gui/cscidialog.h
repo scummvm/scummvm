@@ -31,6 +31,8 @@
 
 #include "gui/guidialoginternaldefs.h"
 
+namespace AGS3 {
+
 int  CSCIGetVersion();
 int  CSCIDrawWindow(int xx, int yy, int wid, int hit);
 void CSCIEraseWindow(int handl);
@@ -43,5 +45,7 @@ void multiply_up(int *x1, int *y1, int *x2, int *y2);
 int  checkcontrols();
 int  finddefaultcontrol(int flagmask);
 int  GetBaseWidth();
+
+} // namespace AGS3
 
 #endif

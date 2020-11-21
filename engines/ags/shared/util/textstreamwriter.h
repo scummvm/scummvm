@@ -31,6 +31,7 @@
 
 #include "util/textwriter.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -43,7 +44,7 @@ public:
 	~TextStreamWriter() override;
 
 	bool    IsValid() const override;
-	const Stream   *GetStream() const;
+	const Stream *GetStream() const;
 	// TODO: use shared ptr instead
 	void            ReleaseStream();
 
@@ -65,5 +66,6 @@ private:
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

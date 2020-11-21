@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_GLOBALAUDIO_H
 #define AGS_ENGINE_AC_GLOBALAUDIO_H
 
+namespace AGS3 {
+
 void    StopAmbientSound(int channel);
 void    PlayAmbientSound(int channel, int sndnum, int vol, int x, int y);
 int     IsChannelPlaying(int chan);
@@ -72,5 +74,7 @@ bool    play_voice_nonblocking(int charid, int sndid, bool as_speech);
 void    stop_voice_speech();
 // Stop non-blocking voice-over and revert audio volumes if necessary
 void    stop_voice_nonblocking();
+
+} // namespace AGS3
 
 #endif

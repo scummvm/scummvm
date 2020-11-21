@@ -23,6 +23,10 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_VIEWFRAME_H
 #define AGS_ENGINE_AC_GLOBAL_VIEWFRAME_H
 
+namespace AGS3 {
+
 void SetFrameSound(int vii, int loop, int frame, int sound);
+
+} // namespace AGS3
 
 #endif

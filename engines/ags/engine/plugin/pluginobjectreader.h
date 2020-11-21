@@ -23,11 +23,15 @@
 #ifndef AGS_ENGINE_PLUGIN_PLUGINOBJECTREADER_H
 #define AGS_ENGINE_PLUGIN_PLUGINOBJECTREADER_H
 
+namespace AGS3 {
+
 class IAGSManagedObjectReader;
 
 struct PluginObjectReader {
 	IAGSManagedObjectReader *reader;
 	const char *type;
 };
+
+} // namespace AGS3
 
 #endif

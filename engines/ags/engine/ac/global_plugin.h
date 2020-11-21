@@ -23,7 +23,11 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_PLUGIN_H
 #define AGS_ENGINE_AC_GLOBAL_PLUGIN_H
 
+namespace AGS3 {
+
 void PluginSimulateMouseClick(int pluginButtonID);
 bool RegisterPluginStubs(const char *name);
+
+} // namespace AGS3
 
 #endif

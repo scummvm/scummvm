@@ -29,6 +29,10 @@
 #ifndef AGS_ENGINE_SCRIPT_EXPORTS_H
 #define AGS_ENGINE_SCRIPT_EXPORTS_H
 
+namespace AGS3 {
+
 void setup_script_exports(ScriptAPIVersion base_api, ScriptAPIVersion compat_api);
+
+} // namespace AGS3
 
 #endif

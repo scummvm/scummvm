@@ -25,6 +25,8 @@
 
 #include "gui/guimain.h"
 
+namespace AGS3 {
+
 using AGS::Common::GUIMain;
 
 // options for 'disp_type' parameter
@@ -76,10 +78,12 @@ int get_textwindow_top_border_height(int twgui);
 // Warning!: draw_text_window() and draw_text_window_and_bar() can create new text_window_ds
 void draw_text_window(Common::Bitmap **text_window_ds, bool should_free_ds, int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight, int ifnum);
 void draw_text_window_and_bar(Common::Bitmap **text_window_ds, bool should_free_ds,
-                              int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight = 0, int ifnum = -1);
+	int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight = 0, int ifnum = -1);
 int get_textwindow_padding(int ifnum);
 
 // The efficient length of the last source text prepared for display
 extern int source_text_length;
+
+} // namespace AGS3
 
 #endif

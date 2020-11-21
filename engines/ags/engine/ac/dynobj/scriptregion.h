@@ -23,9 +23,13 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTREGION_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTREGION_H
 
+namespace AGS3 {
+
 struct ScriptRegion {
 	int id;
 	int reserved;
 };
+
+} // namespace AGS3
 
 #endif

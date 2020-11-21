@@ -25,11 +25,14 @@
 
 #include <vector>
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 #define VFLG_FLIPSPRITE 1
@@ -86,5 +89,7 @@ struct ViewStruct272 {
 };
 
 void Convert272ViewsToNew(const std::vector<ViewStruct272> &oldv, ViewStruct *newv);
+
+} // namespace AGS3
 
 #endif

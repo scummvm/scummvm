@@ -42,6 +42,8 @@
 #include "util/string.h"
 #include "util/version.h"
 
+namespace AGS3 {
+
 struct GameSetupStruct;
 struct DialogTopic;
 struct ViewStruct;
@@ -107,9 +109,9 @@ struct MainGameSource {
 // directly. This is temporary solution that has to be resolved by the future
 // code refactoring.
 struct LoadedGameEntities {
-	GameSetupStruct        &Game;
-	DialogTopic           *&Dialogs;
-	ViewStruct            *&Views;
+	GameSetupStruct &Game;
+	DialogTopic *&Dialogs;
+	ViewStruct *&Views;
 	PScript                 GlobalScript;
 	PScript                 DialogScript;
 	std::vector<PScript>    ScriptModules;
@@ -148,5 +150,6 @@ void               FixupSaveDirectory(GameSetupStruct &game);
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

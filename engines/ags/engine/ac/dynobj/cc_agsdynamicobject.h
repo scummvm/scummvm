@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/cc_dynamicobject.h"
 
+namespace AGS3 {
+
 struct AGSCCDynamicObject : ICCDynamicObject {
 protected:
 	virtual ~AGSCCDynamicObject() = default;
@@ -64,5 +66,7 @@ protected:
 	float UnserializeFloat();
 
 };
+
+} // namespace AGS3
 
 #endif

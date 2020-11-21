@@ -25,6 +25,8 @@
 
 #include "ac/characterinfo.h"
 
+namespace AGS3 {
+
 void StopMoving(int chaa);
 void ReleaseCharacterView(int chat);
 void MoveToWalkableArea(int charid);
@@ -88,5 +90,7 @@ void DisplayThought(int chid, const char *text);
 void __sc_displayspeech(int chid, const char *text);
 void DisplaySpeechAt(int xx, int yy, int wii, int aschar, const char *spch);
 int DisplaySpeechBackground(int charid, const char *speel);
+
+} // nemspace AGS3
 
 #endif

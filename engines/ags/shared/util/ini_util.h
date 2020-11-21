@@ -33,6 +33,7 @@
 #include <map>
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -70,5 +71,6 @@ bool Merge(const String &file, const ConfigTree &tree);
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -26,6 +26,8 @@
 #include "core/platform.h"
 #include "util/version.h"
 
+namespace AGS3 {
+
 // Current engine version
 extern AGS::Common::Version EngineVersion;
 // Lowest savedgame version, accepted by this engine
@@ -66,5 +68,7 @@ extern char psp_translation[];
 void main_print_help();
 
 int ags_entry_point(int argc, char *argv[]);
+
+} // namespace AGS3
 
 #endif

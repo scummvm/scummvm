@@ -25,6 +25,8 @@
 
 #include "gui/guilistbox.h"
 
+namespace AGS3 {
+
 using AGS::Common::GUIListBox;
 
 int         ListBox_AddItem(GUIListBox *lbb, const char *text);
@@ -34,7 +36,7 @@ void        ListBox_FillDirList(GUIListBox *listbox, const char *filemask);
 int         ListBox_GetSaveGameSlots(GUIListBox *listbox, int index);
 int         ListBox_FillSaveGameList(GUIListBox *listbox);
 int         ListBox_GetItemAtLocation(GUIListBox *listbox, int x, int y);
-char        *ListBox_GetItemText(GUIListBox *listbox, int index, char *buffer);
+char *ListBox_GetItemText(GUIListBox *listbox, int index, char *buffer);
 const char *ListBox_GetItems(GUIListBox *listbox, int index);
 void        ListBox_SetItemText(GUIListBox *listbox, int index, const char *newtext);
 void        ListBox_RemoveItem(GUIListBox *listbox, int itemIndex);
@@ -54,5 +56,7 @@ void        ListBox_ScrollDown(GUIListBox *listbox);
 void        ListBox_ScrollUp(GUIListBox *listbox);
 
 GUIListBox *is_valid_listbox(int guin, int objn);
+
+} // namespace AGS3
 
 #endif

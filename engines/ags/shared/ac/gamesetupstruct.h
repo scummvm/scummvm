@@ -33,6 +33,8 @@
 #include "game/customproperties.h"
 #include "game/main_game_file.h" // TODO: constants to separate header or split out reading functions
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 struct AssetLibInfo;
@@ -40,8 +42,8 @@ struct Interaction;
 struct InteractionScripts;
 typedef std::shared_ptr<Interaction> PInteraction;
 typedef std::shared_ptr<InteractionScripts> PInteractionScripts;
-}
-}
+} // namespace Shared
+} // namespace AGS
 
 using AGS::Common::PInteraction;
 using AGS::Common::PInteractionScripts;
@@ -50,7 +52,7 @@ struct OldGameSetupStruct;
 
 
 // TODO: split GameSetupStruct into struct used to hold loaded game data, and actual runtime object
-struct GameSetupStruct: public GameSetupStructBase {
+struct GameSetupStruct : public GameSetupStructBase {
 	// This array is used only to read data into;
 	// font parameters are then put and queried in the fonts module
 	// TODO: split into installation params (used only when reading) and runtime params
@@ -79,8 +81,8 @@ struct GameSetupStruct: public GameSetupStructBase {
 	char              saveGameFileExtension[MAX_SG_EXT_LENGTH];
 	char              saveGameFolderName[MAX_SG_FOLDER_LEN];
 	int               roomCount;
-	int              *roomNumbers;
-	char            **roomNames;
+	int *roomNumbers;
+	char **roomNames;
 	std::vector<ScriptAudioClip> audioClips;
 	std::vector<AudioClipType> audioClipTypes;
 	// A clip to play when player gains score in game
@@ -155,7 +157,7 @@ struct GameSetupStruct: public GameSetupStructBase {
 
 	// Functions for reading and writing appropriate data from/to save game
 	void ReadFromSaveGame_v321(Common::Stream *in, char *gswas, ccScript *compsc, CharacterInfo *chwas,
-	                           WordsDictionary *olddict, char **mesbk);
+		WordsDictionary *olddict, char **mesbk);
 
 	void ReadFromSavegame(Common::PStream in);
 	void WriteForSavegame(Common::PStream out);
@@ -166,5 +168,7 @@ struct GameSetupStruct: public GameSetupStructBase {
 void ConvertOldGameStruct(OldGameSetupStruct *ogss, GameSetupStruct *gss);
 // Finds an audio clip using legacy convention index
 ScriptAudioClip *GetAudioClipForOldStyleNumber(GameSetupStruct &game, bool is_music, int num);
+
+} // namespace AGS3
 
 #endif

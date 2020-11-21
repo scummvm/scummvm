@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_SCREEN_H
 #define AGS_ENGINE_AC_GLOBAL_SCREEN_H
 
+namespace AGS3 {
+
 void FlipScreen(int amount);
 void ShakeScreen(int severe);
 void ShakeScreenBackground(int delay, int amount, int length);
@@ -32,5 +34,7 @@ void SetScreenTransition(int newtrans);
 void SetNextScreenTransition(int newtrans);
 void SetFadeColor(int red, int green, int blue);
 void FadeIn(int sppd);
+
+} // namespace AGS3
 
 #endif

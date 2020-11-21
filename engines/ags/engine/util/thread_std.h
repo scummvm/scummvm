@@ -26,6 +26,7 @@
 #include <system_error>
 #include <thread>
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -98,5 +99,6 @@ typedef StdThread Thread;
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

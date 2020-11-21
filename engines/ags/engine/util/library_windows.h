@@ -27,15 +27,17 @@
 #include "platform/windows/winapi_exclusive.h"
 #include "util/string.h"
 
+namespace AGS3 {
+
 // Because this class may be exposed to generic code in sake of inlining,
 // we should avoid including <windows.h> full of macros with common names.
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-WINBASEAPI BOOL WINAPI FreeLibrary(HMODULE hLibModule);
-WINBASEAPI FARPROC WINAPI GetProcAddress(HMODULE hModule, LPCSTR lpProcName);
-WINBASEAPI HMODULE WINAPI LoadLibraryA(LPCSTR lpLibFileName);
+	WINBASEAPI BOOL WINAPI FreeLibrary(HMODULE hLibModule);
+	WINBASEAPI FARPROC WINAPI GetProcAddress(HMODULE hModule, LPCSTR lpProcName);
+	WINBASEAPI HMODULE WINAPI LoadLibraryA(LPCSTR lpLibFileName);
 
 #ifdef __cplusplus
 } // extern "C"
@@ -99,9 +101,8 @@ private:
 
 typedef WindowsLibrary Library;
 
-
-
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_UTIL_MUTEX_BASE_H
 #define AGS_ENGINE_UTIL_MUTEX_BASE_H
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
-
 
 class BaseMutex {
 public:
@@ -35,8 +35,8 @@ public:
 	virtual void Unlock() = 0;
 };
 
-
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

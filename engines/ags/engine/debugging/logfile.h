@@ -38,11 +38,12 @@
 #include <memory>
 #include "debug/outputhandler.h"
 
+namespace AGS3 {
 namespace AGS {
 
 namespace Common {
 class Stream;
-}
+} // namespace Shared
 
 namespace Engine {
 
@@ -81,7 +82,8 @@ private:
 	OpenMode              _openMode;
 };
 
-}   // namespace Engine
-}   // namespace AGS
+} // namespace Engine
+} // namespace AGS
+} // namespace AGS3
 
 #endif

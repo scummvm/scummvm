@@ -23,6 +23,8 @@
 #ifndef AGS_SHARED_FONT_AGSFONTRENDERER_H
 #define AGS_SHARED_FONT_AGSFONTRENDERER_H
 
+namespace AGS3 {
+
 struct BITMAP;
 
 // WARNING: this interface is exposed for plugins and declared for the second time in agsplugin.h
@@ -60,5 +62,7 @@ protected:
 	IAGSFontRenderer2() = default;
 	~IAGSFontRenderer2() = default;
 };
+
+} // namespace AGS3
 
 #endif

@@ -26,6 +26,8 @@
 #include "main/graphics_mode.h"
 #include "util/ini_util.h"
 
+namespace AGS3 {
+
 using AGS::Common::String;
 using AGS::Common::ConfigTree;
 
@@ -79,5 +81,6 @@ void INIwriteint(ConfigTree &cfg, const String &sectn, const String &item, int v
 void INIwritestring(ConfigTree &cfg, const String &sectn, const String &item, const String &value);
 void INIwriteint(ConfigTree &cfg, const String &sectn, const String &item, int value);
 
+} // namespace AGS3
 
 #endif

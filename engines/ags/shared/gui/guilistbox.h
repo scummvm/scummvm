@@ -27,6 +27,7 @@
 #include "gui/guiobject.h"
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -63,7 +64,7 @@ public:
 	void ReadFromSavegame(Common::Stream *in, GuiSvgVersion svg_ver) override;
 	void WriteToSavegame(Common::Stream *out) const override;
 
-// TODO: these members are currently public; hide them later
+	// TODO: these members are currently public; hide them later
 public:
 	int32_t               Font;
 	color_t               TextColor;
@@ -99,5 +100,7 @@ private:
 
 extern std::vector<AGS::Common::GUIListBox> guilist;
 extern int numguilist;
+
+} // namespace AGS3
 
 #endif

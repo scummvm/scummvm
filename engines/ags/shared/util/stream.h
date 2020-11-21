@@ -37,6 +37,7 @@
 
 #include "api/stream_api.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -84,5 +85,6 @@ public:
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

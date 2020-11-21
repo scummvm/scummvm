@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
+namespace AGS3 {
+
 struct ScriptDateTime final : AGSCCDynamicObject {
 	int year, month, day;
 	int hour, minute, second;
@@ -37,5 +39,7 @@ struct ScriptDateTime final : AGSCCDynamicObject {
 
 	ScriptDateTime();
 };
+
+} // namespace AGS3
 
 #endif

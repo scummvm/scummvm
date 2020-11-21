@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_OBJECTCACHE_H
 #define AGS_ENGINE_AC_OBJECTCACHE_H
 
+namespace AGS3 {
+
 // stores cached object info
 struct ObjectCache {
 	Common::Bitmap *image;
@@ -32,5 +34,7 @@ struct ObjectCache {
 	// The following are used to determine if the character has moved
 	int   xwas, ywas;
 };
+
+} // namespace AGS3
 
 #endif

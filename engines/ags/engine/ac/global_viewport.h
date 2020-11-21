@@ -23,9 +23,13 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_VIEWPORT_H
 #define AGS_ENGINE_AC_GLOBAL_VIEWPORT_H
 
+namespace AGS3 {
+
 void SetViewport(int offsx, int offsy);
 void ReleaseViewport();
 int  GetViewportX();
 int  GetViewportY();
+
+} // namespace AGS3
 
 #endif

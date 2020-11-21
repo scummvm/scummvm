@@ -26,11 +26,13 @@
 #include "ac/dynobj/cc_agsdynamicobject.h"
 #include "game/roomstruct.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Bitmap;
-}
-}
+} // namespace Shared
+} // namespace AGS
 
 struct ScriptDrawingSurface final : AGSCCDynamicObject {
 	// These numbers and types are used to determine the source of this drawing surface;
@@ -63,5 +65,7 @@ struct ScriptDrawingSurface final : AGSCCDynamicObject {
 
 	ScriptDrawingSurface();
 };
+
+} // namespace AGS3
 
 #endif

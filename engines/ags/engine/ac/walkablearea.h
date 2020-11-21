@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_WALKABLEAREA_H
 #define AGS_ENGINE_AC_WALKABLEAREA_H
 
+namespace AGS3 {
+
 void  redo_walkable_areas();
 int   get_walkable_area_pixel(int x, int y);
 int   get_area_scaling(int onarea, int xx, int yy);
@@ -32,5 +34,7 @@ int   is_point_in_rect(int x, int y, int left, int top, int right, int bottom);
 Common::Bitmap *prepare_walkable_areas(int sourceChar);
 int   get_walkable_area_at_location(int xx, int yy);
 int   get_walkable_area_at_character(int charnum);
+
+} // namespace AGS3
 
 #endif

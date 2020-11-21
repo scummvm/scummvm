@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
+namespace AGS3 {
+
 struct CCGUIObject final : AGSCCDynamicObject {
 
 	// return the type name of the object
@@ -37,5 +39,7 @@ struct CCGUIObject final : AGSCCDynamicObject {
 	void Unserialize(int index, const char *serializedData, int dataSize) override;
 
 };
+
+} // namespace AGS3
 
 #endif

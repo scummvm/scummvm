@@ -31,6 +31,7 @@
 
 #include "gfx/gfxfilter_ogl.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 namespace OGL {
@@ -48,5 +49,6 @@ public:
 } // namespace OGL
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

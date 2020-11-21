@@ -38,6 +38,8 @@
 #include "util/stream.h"
 #include "util/string.h"
 
+namespace AGS3 {
+
 struct SpriteInfo;
 namespace AGS {
 namespace Common {
@@ -94,5 +96,6 @@ HRoomFileError WriteRoomData(const RoomStruct *room, Stream *out, RoomFileVersio
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

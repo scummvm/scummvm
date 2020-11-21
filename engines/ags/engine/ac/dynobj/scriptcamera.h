@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
+namespace AGS3 {
+
 // ScriptCamera keeps a reference to actual room Camera in script.
 struct ScriptCamera final : AGSCCDynamicObject {
 public:
@@ -53,5 +55,7 @@ private:
 
 // Unserialize camera from the memory stream
 ScriptCamera *Camera_Unserialize(int handle, const char *serializedData, int dataSize);
+
+} // namespace AGS3
 
 #endif

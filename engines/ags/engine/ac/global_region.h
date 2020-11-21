@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_REGION_H
 #define AGS_ENGINE_AC_GLOBAL_REGION_H
 
+namespace AGS3 {
+
 // Gets region ID at the given room coordinates;
 // if region is disabled or non-existing, returns 0 (no area)
 int  GetRegionIDAtRoom(int xxx, int yyy);
@@ -33,5 +35,7 @@ void EnableRegion(int hsnum);
 void DisableGroundLevelAreas(int alsoEffects);
 void EnableGroundLevelAreas();
 void RunRegionInteraction(int regnum, int mood);
+
+} // namespace AGS3
 
 #endif

@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_MAIN_MAINALLEGRO_H
 #define AGS_ENGINE_MAIN_MAINALLEGRO_H
 
+namespace AGS3 {
+
 // Gets allegro_error as a const string.
 // Please, use this getter to acquire error text, do not use allegro_error
 // global variable directly.
@@ -32,5 +34,7 @@ const char *get_allegro_error();
 // (usually 256). If the formatted message is larger than that it will be
 // truncated. Null terminator is always guaranteed.
 const char *set_allegro_error(const char *format, ...);
+
+} // namespace AGS3
 
 #endif

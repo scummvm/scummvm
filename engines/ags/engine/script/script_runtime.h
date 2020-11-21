@@ -40,6 +40,8 @@
 #include "script/cc_script.h"      // ccScript
 #include "script/cc_instance.h"    // ccInstance
 
+namespace AGS3 {
+
 struct ICCStaticObject;
 struct ICCDynamicObject;
 struct StaticArray;
@@ -82,5 +84,7 @@ extern void ccNotifyScriptStillAlive();
 // for calling exported plugin functions old-style
 extern int call_function(intptr_t addr, const RuntimeScriptValue *object, int numparm, const RuntimeScriptValue *parms);
 extern void nullfree(void *data); // in script/script_runtime
+
+} // namespace AGS3
 
 #endif

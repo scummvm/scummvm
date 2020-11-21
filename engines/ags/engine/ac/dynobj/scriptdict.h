@@ -43,6 +43,8 @@
 #include "util/string.h"
 #include "util/string_types.h"
 
+namespace AGS3 {
+
 using namespace AGS::Common;
 
 class ScriptDictBase : public AGSCCDynamicObject {
@@ -167,7 +169,7 @@ private:
 			int key_pos = bytesSoFar;
 			bytesSoFar += key_len;
 			size_t value_len = UnserializeInt();
-			if (value_len == (size_t) - 1) {
+			if (value_len == (size_t)-1) {
 				TryAddItem(&serializedData[key_pos], key_len, nullptr, 0);
 			} else {
 				int value_pos = bytesSoFar;
@@ -184,5 +186,7 @@ typedef ScriptDictImpl< std::map<String, String>, true, true > ScriptDict;
 typedef ScriptDictImpl< std::map<String, String, StrLessNoCase>, true, false > ScriptDictCI;
 typedef ScriptDictImpl< std::unordered_map<String, String>, false, true > ScriptHashDict;
 typedef ScriptDictImpl< std::unordered_map<String, String, HashStrNoCase, StrEqNoCase>, false, false > ScriptHashDictCI;
+
+} // namespace AGS3
 
 #endif

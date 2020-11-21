@@ -25,11 +25,14 @@
 
 #include "util/string.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 enum AudioFileType {
@@ -59,5 +62,7 @@ struct ScriptAudioClip {
 
 	void ReadFromFile(Common::Stream *in);
 };
+
+} // namespace AGS3
 
 #endif

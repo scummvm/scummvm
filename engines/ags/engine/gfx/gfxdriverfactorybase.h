@@ -37,6 +37,7 @@
 #include "gfx/gfxdriverfactory.h"
 #include "gfx/gfxfilter.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -98,10 +99,11 @@ protected:
 	virtual TGfxDriverClass *EnsureDriverCreated() = 0;
 	virtual TGfxFilterClass *CreateFilter(const String &id) = 0;
 
-	TGfxDriverClass         *_driver;
+	TGfxDriverClass *_driver;
 };
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

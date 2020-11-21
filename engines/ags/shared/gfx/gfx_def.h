@@ -29,12 +29,13 @@
 #ifndef AGS_SHARED_GFX_GFXDEF_H
 #define AGS_SHARED_GFX_GFXDEF_H
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
 enum BlendMode {
 	// free blending (ARGB -> ARGB) modes
-	kBlendMode_NoAlpha        = 0, // ignore alpha channel
+	kBlendMode_NoAlpha = 0, // ignore alpha channel
 	kBlendMode_Alpha,              // alpha-blend src to dest, combining src & dest alphas
 	// NOTE: add new modes here
 
@@ -104,5 +105,6 @@ inline int LegacyTrans100ToAlpha255(int legacy_transparency) {
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

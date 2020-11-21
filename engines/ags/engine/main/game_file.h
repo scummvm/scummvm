@@ -26,6 +26,8 @@
 #include "util/error.h"
 #include "util/string.h"
 
+namespace AGS3 {
+
 using AGS::Common::HError;
 
 // Preload particular game-describing parameters from the game data header (title, save game dir name, etc)
@@ -33,5 +35,7 @@ HError preload_game_data();
 // Loads game data and reinitializes the game state; assigns error message in case of failure
 HError load_game_file();
 void display_game_file_error(HError err);
+
+} // namespace AGS3
 
 #endif

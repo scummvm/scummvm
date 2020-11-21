@@ -23,7 +23,11 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_MOUSE_H
 #define AGS_ENGINE_AC_GLOBAL_MOUSE_H
 
+namespace AGS3 {
+
 void HideMouseCursor();
 void ShowMouseCursor();
+
+} // namespace AGS3
 
 #endif

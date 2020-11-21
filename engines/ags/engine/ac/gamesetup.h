@@ -26,6 +26,7 @@
 #include "main/graphics_mode.h"
 #include "util/string.h"
 
+namespace AGS3 {
 
 // Mouse control activation type
 enum MouseControlWhen {
@@ -88,5 +89,7 @@ struct GameSetup {
 // options before engine is initialized, and storing certain runtime variables.
 // Perhaps it makes sense to separate those two group of vars at some point.
 extern GameSetup usetup;
+
+} // namespace AGS3
 
 #endif

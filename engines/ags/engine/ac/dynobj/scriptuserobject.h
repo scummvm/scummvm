@@ -31,6 +31,8 @@
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
+namespace AGS3 {
+
 struct ScriptUserObject final : ICCDynamicObject {
 public:
 	ScriptUserObject();
@@ -71,7 +73,7 @@ private:
 	// need more significant change to program before we could use different
 	// approach.
 	int32_t  _size;
-	char    *_data;
+	char *_data;
 };
 
 
@@ -80,5 +82,7 @@ namespace ScriptStructHelpers {
 // Creates a managed Point object, represented as a pair of X and Y coordinates.
 ScriptUserObject *CreatePoint(int x, int y);
 };
+
+} // namespace AGS3
 
 #endif

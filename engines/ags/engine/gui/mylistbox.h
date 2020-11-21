@@ -25,10 +25,12 @@
 
 #include "gui/newcontrol.h"
 
+namespace AGS3 {
+
 #define MAXLISTITEM 300
 #define ARROWWIDTH 8
 
-struct MyListBox: public NewControl {
+struct MyListBox : public NewControl {
 	int items, topitem, numonscreen, selected;
 	char *itemnames[MAXLISTITEM];
 	MyListBox(int xx, int yy, int wii, int hii);
@@ -40,5 +42,7 @@ struct MyListBox: public NewControl {
 	void additem(char *texx);
 	int processmessage(int mcode, int wParam, long lParam) override;
 };
+
+} // namespace AGS3
 
 #endif

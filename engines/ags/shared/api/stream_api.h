@@ -38,6 +38,7 @@
 // plugins, and let plugin developers include them manually in plugin sources.
 #include "core/types.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -93,5 +94,6 @@ public:
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

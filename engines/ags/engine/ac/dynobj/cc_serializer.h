@@ -25,11 +25,15 @@
 
 #include "ac/dynobj/cc_dynamicobject.h"
 
+namespace AGS3 {
+
 struct AGSDeSerializer : ICCObjectReader {
 
 	void Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) override;
 };
 
 extern AGSDeSerializer ccUnserializer;
+
+} // namespace AGS3
 
 #endif

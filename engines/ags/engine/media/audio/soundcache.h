@@ -25,6 +25,8 @@
 
 #include "ac/asset_helper.h"
 
+namespace AGS3 {
+
 // PSP: A simple sound cache. The size can be configured in the config file.
 // The data rate while reading from disk on the PSP is usually between 500 to 900 kiB/s,
 // caching the last used sound files therefore improves game performance.
@@ -51,5 +53,6 @@ void clear_sound_cache();
 void sound_cache_free(char *buffer, bool is_wave);
 char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size);
 
+} // namespace AGS3
 
 #endif

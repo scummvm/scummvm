@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTCONTAINERS_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTCONTAINERS_H
 
+namespace AGS3 {
+
 class ScriptDictBase;
 class ScriptSetBase;
 
@@ -34,5 +36,7 @@ ScriptDictBase *Dict_Unserialize(int index, const char *serializedData, int data
 ScriptSetBase *Set_Create(bool sorted, bool case_sensitive);
 // Unserialize set from the memory stream
 ScriptSetBase *Set_Unserialize(int index, const char *serializedData, int dataSize);
+
+} // namespace AGS3
 
 #endif

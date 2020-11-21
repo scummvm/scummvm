@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_RUNTIMEDEFINES_H
 #define AGS_ENGINE_AC_RUNTIMEDEFINES_H
 
+namespace AGS3 {
+
 // xalleg.h pulls in an Allegro-internal definition of MAX_TIMERS which
 // conflicts with the definition in runtime_defines.h. Forget it.
 #ifdef MAX_TIMERS
@@ -54,13 +56,13 @@
 
 // Legacy (pre 3.5.0) alignment types used in the script API
 enum LegacyScriptAlignment {
-	kLegacyScAlignLeft      = 1,
-	kLegacyScAlignCentre    = 2,
-	kLegacyScAlignRight     = 3
+	kLegacyScAlignLeft = 1,
+	kLegacyScAlignCentre = 2,
+	kLegacyScAlignRight = 3
 };
 
 const int LegacyMusicMasterVolumeAdjustment = 60;
-const int LegacyRoomVolumeFactor            = 30;
+const int LegacyRoomVolumeFactor = 30;
 
 // These numbers were chosen arbitrarily -- the idea is
 // to make sure that the user gets the parameters the right way round
@@ -154,6 +156,8 @@ const int LegacyRoomVolumeFactor            = 30;
 #define RESTART_POINT_SAVE_GAME_NUMBER 999
 
 #define MAX_OPEN_SCRIPT_FILES 10
+
+} // namespace AGS3
 
 #include "ac/common_defines.h"
 

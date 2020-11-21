@@ -25,6 +25,8 @@
 
 #include "gui/guibutton.h"
 
+namespace AGS3 {
+
 using AGS::Common::GUIButton;
 
 void        Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat);
@@ -48,5 +50,7 @@ void        Button_SetTextColor(GUIButton *butt, int newcol);
 int         UpdateAnimatingButton(int bu);
 void        StopButtonAnimation(int idxn);
 void        FindAndRemoveButtonAnimation(int guin, int objn);
+
+} // namespace AGS3
 
 #endif

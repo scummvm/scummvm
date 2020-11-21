@@ -25,6 +25,7 @@
 
 #include "util/stream.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -78,11 +79,12 @@ public:
 	bool    Seek(soff_t offset, StreamSeek origin) override;
 
 protected:
-	Stream                  *_stream;
+	Stream *_stream;
 	ObjectOwnershipPolicy   _streamOwnershipPolicy;
 };
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

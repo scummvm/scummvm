@@ -26,7 +26,9 @@
 #include "alogg.h"
 #include "media/audio/soundclip.h"
 
-struct MYOGG: public SOUNDCLIP {
+namespace AGS3 {
+
+struct MYOGG : public SOUNDCLIP {
 	ALOGG_OGGSTREAM *stream;
 	PACKFILE *in;
 	char *buffer;
@@ -63,5 +65,7 @@ protected:
 private:
 	void adjust_stream();
 };
+
+} // namespace AGS3
 
 #endif

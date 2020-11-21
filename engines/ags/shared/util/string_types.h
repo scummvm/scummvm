@@ -30,6 +30,7 @@
 #include <vector>
 #include "util/string.h"
 
+namespace AGS3 {
 namespace FNV {
 
 const uint32_t PRIME_NUMBER = 2166136261U;
@@ -104,5 +105,6 @@ typedef std::unordered_map<String, String, HashStrNoCase, StrEqNoCase> StringIMa
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

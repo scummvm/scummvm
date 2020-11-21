@@ -34,11 +34,14 @@
 #include "ac/common_defines.h"
 #include "ac/dynobj/scriptobject.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Bitmap;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 extern AGS_INLINE int is_valid_object(int obtest);
@@ -99,5 +102,7 @@ int     is_pos_in_sprite(int xx, int yy, int arx, int ary, Common::Bitmap *sprit
 // X and Y co-ordinates must be in native format
 // X and Y are ROOM coordinates
 int     check_click_on_object(int roomx, int roomy, int mood);
+
+} // namespace AGS3
 
 #endif

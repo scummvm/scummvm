@@ -25,6 +25,8 @@
 
 #include "ac/interfacebutton.h" // InterfaceButton
 
+namespace AGS3 {
+
 // this struct should go in a Game struct, not the room structure.
 struct InterfaceElement {
 	int             x, y, x2, y2;
@@ -55,5 +57,7 @@ invx1=-1; numbuttons=2; popupbuttons=1;
 button[0].set(0,13,3,-1,0);
 }
 };*/
+
+} // namespace AGS3
 
 #endif

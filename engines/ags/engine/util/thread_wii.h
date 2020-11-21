@@ -25,9 +25,9 @@
 
 #include <gccore.h>
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
-
 
 class WiiThread : public BaseThread {
 public:
@@ -100,5 +100,6 @@ typedef WiiThread Thread;
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

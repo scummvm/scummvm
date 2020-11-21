@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_CHARACTERCACHE_H
 #define AGS_ENGINE_AC_CHARACTERCACHE_H
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Bitmap;
@@ -40,5 +42,7 @@ struct CharacterCache {
 	short lightlevwas, tintlightwas;
 	// no mirroredWas is required, since the code inverts the sprite number
 };
+
+} // namespace AGS3
 
 #endif

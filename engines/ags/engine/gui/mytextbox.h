@@ -25,13 +25,17 @@
 
 #include "gui/newcontrol.h"
 
+namespace AGS3 {
+
 #define TEXTBOX_MAXLEN 49
-struct MyTextBox: public NewControl {
+struct MyTextBox : public NewControl {
 	char text[TEXTBOX_MAXLEN + 1];
 	MyTextBox(int xx, int yy, int wii, const char *tee);
 	void draw(Common::Bitmap *ds) override;
 	int pressedon(int mousex, int mousey) override;
 	int processmessage(int mcode, int wParam, long lParam) override;
 };
+
+} // namespace AGS3
 
 #endif

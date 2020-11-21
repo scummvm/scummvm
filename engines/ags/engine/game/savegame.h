@@ -28,13 +28,13 @@
 #include "util/error.h"
 #include "util/version.h"
 
+namespace AGS3 {
 
 namespace AGS {
-
 namespace Common {
 class Bitmap;
 class Stream;
-}
+} // namespace Shared
 
 namespace Engine {
 
@@ -55,12 +55,12 @@ typedef std::shared_ptr<Stream> PStream;
 //-----------------------------------------------------------------------------
 enum SavegameVersion {
 	kSvgVersion_Undefined = 0,
-	kSvgVersion_321       = 8,
+	kSvgVersion_321 = 8,
 	kSvgVersion_Components = 9,
 	kSvgVersion_Cmp_64bit = 10,
 	kSvgVersion_350_final = 11,
 	kSvgVersion_350_final2 = 12,
-	kSvgVersion_Current   = kSvgVersion_350_final2,
+	kSvgVersion_Current = kSvgVersion_350_final2,
 	kSvgVersion_LowestSupported = kSvgVersion_321 // change if support dropped
 };
 
@@ -117,11 +117,11 @@ struct SavegameSource {
 // Supported elements of savegame description;
 // these may be used as flags to define valid fields
 enum SavegameDescElem {
-	kSvgDesc_None       = 0,
-	kSvgDesc_EnvInfo    = 0x0001,
-	kSvgDesc_UserText   = 0x0002,
-	kSvgDesc_UserImage  = 0x0004,
-	kSvgDesc_All        = kSvgDesc_EnvInfo | kSvgDesc_UserText | kSvgDesc_UserImage
+	kSvgDesc_None = 0,
+	kSvgDesc_EnvInfo = 0x0001,
+	kSvgDesc_UserText = 0x0002,
+	kSvgDesc_UserImage = 0x0004,
+	kSvgDesc_All = kSvgDesc_EnvInfo | kSvgDesc_UserText | kSvgDesc_UserImage
 };
 
 // SavegameDescription describes savegame with information about the enviroment
@@ -154,7 +154,7 @@ struct SavegameDescription {
 
 // Opens savegame for reading; optionally reads description, if any is provided
 HSaveError     OpenSavegame(const String &filename, SavegameSource &src,
-                            SavegameDescription &desc, SavegameDescElem elems = kSvgDesc_All);
+	SavegameDescription &desc, SavegameDescElem elems = kSvgDesc_All);
 // Opens savegame and reads the savegame description
 HSaveError     OpenSavegame(const String &filename, SavegameDescription &desc, SavegameDescElem elems = kSvgDesc_All);
 
@@ -169,5 +169,6 @@ void           SaveGameState(PStream out);
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

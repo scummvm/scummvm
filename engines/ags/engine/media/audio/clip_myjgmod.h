@@ -26,8 +26,10 @@
 #include "jgmod.h"
 #include "media/audio/soundclip.h"
 
+namespace AGS3 {
+
 // MOD/XM (JGMOD)
-struct MYMOD: public SOUNDCLIP {
+struct MYMOD : public SOUNDCLIP {
 	JGMOD *tune;
 
 	int poll();
@@ -52,5 +54,7 @@ struct MYMOD: public SOUNDCLIP {
 
 	MYMOD();
 };
+
+} // namespace AGS3
 
 #endif

@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_HOTSPOT_H
 #define AGS_ENGINE_AC_GLOBAL_HOTSPOT_H
 
+namespace AGS3 {
+
 void DisableHotspot(int hsnum);
 void EnableHotspot(int hsnum);
 int  GetHotspotPointX(int hotspot);
@@ -36,5 +38,6 @@ void RunHotspotInteraction(int hotspothere, int mood);
 int  GetHotspotProperty(int hss, const char *property);
 void GetHotspotPropertyText(int item, const char *property, char *bufer);
 
+} // namespace AGS3
 
 #endif

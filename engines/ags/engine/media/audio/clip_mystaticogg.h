@@ -26,8 +26,10 @@
 #include "alogg.h"
 #include "media/audio/soundclip.h"
 
+namespace AGS3 {
+
 // pre-loaded (non-streaming) OGG file
-struct MYSTATICOGG: public SOUNDCLIP {
+struct MYSTATICOGG : public SOUNDCLIP {
 	ALOGG_OGG *tune;
 	char *mp3buffer;
 	int mp3buffersize;
@@ -66,5 +68,7 @@ protected:
 private:
 	void adjust_stream();
 };
+
+} // namespace AGS3
 
 #endif

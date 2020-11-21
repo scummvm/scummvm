@@ -26,6 +26,8 @@
 //
 //=============================================================================
 
+namespace AGS3 {
+
 #ifndef AGS_SHARED_SCRIPT_CC_OPTIONS_H
 #define AGS_SHARED_SCRIPT_CC_OPTIONS_H
 
@@ -40,5 +42,7 @@
 
 extern void ccSetOption(int, int);
 extern int ccGetOption(int);
+
+} // namespace AGS3
 
 #endif

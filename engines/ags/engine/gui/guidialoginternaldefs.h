@@ -25,6 +25,8 @@
 
 #include "gui/guidialogdefines.h"
 
+namespace AGS3 {
+
 #define _export
 #ifdef WINAPI
 #undef WINAPI
@@ -33,5 +35,7 @@
 extern int ags_misbuttondown(int but);
 #define mbutrelease(X) (!ags_misbuttondown(X))
 #define TEXT_HT usetup.textheight
+
+} // namespace AGS3
 
 #endif

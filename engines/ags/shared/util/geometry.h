@@ -31,6 +31,8 @@
 
 #include "util/math.h"
 
+namespace AGS3 {
+
 namespace AGSMath = AGS::Common::Math;
 //namespace AGS
 //{
@@ -44,35 +46,35 @@ enum FrameAlignment {
 	// Alignment options are representing 8 sides of a frame (rectangle);
 	// they are implemented as flags that may be combined together if it
 	// is wanted to define alignment to multiple sides at once.
-	kAlignTopLeft       = 0x0001,
-	kAlignTopCenter     = 0x0002,
-	kAlignTopRight      = 0x0004,
-	kAlignMiddleLeft    = 0x0008,
-	kAlignMiddleCenter  = 0x0010,
-	kAlignMiddleRight   = 0x0020,
-	kAlignBottomLeft    = 0x0040,
-	kAlignBottomCenter  = 0x0080,
-	kAlignBottomRight   = 0x0100,
+	kAlignTopLeft = 0x0001,
+	kAlignTopCenter = 0x0002,
+	kAlignTopRight = 0x0004,
+	kAlignMiddleLeft = 0x0008,
+	kAlignMiddleCenter = 0x0010,
+	kAlignMiddleRight = 0x0020,
+	kAlignBottomLeft = 0x0040,
+	kAlignBottomCenter = 0x0080,
+	kAlignBottomRight = 0x0100,
 
 	// Masks are helping to determine whether alignment parameter contains
 	// particular horizontal or vertical component (for example: left side
 	// or bottom side)
-	kMAlignLeft         = kAlignTopLeft | kAlignMiddleLeft | kAlignBottomLeft,
-	kMAlignRight        = kAlignTopRight | kAlignMiddleRight | kAlignBottomRight,
-	kMAlignTop          = kAlignTopLeft | kAlignTopCenter | kAlignTopRight,
-	kMAlignBottom       = kAlignBottomLeft | kAlignBottomCenter | kAlignBottomRight,
-	kMAlignHCenter      = kAlignTopCenter | kAlignMiddleCenter | kAlignBottomCenter,
-	kMAlignVCenter      = kAlignMiddleLeft | kAlignMiddleCenter | kAlignMiddleRight
+	kMAlignLeft = kAlignTopLeft | kAlignMiddleLeft | kAlignBottomLeft,
+	kMAlignRight = kAlignTopRight | kAlignMiddleRight | kAlignBottomRight,
+	kMAlignTop = kAlignTopLeft | kAlignTopCenter | kAlignTopRight,
+	kMAlignBottom = kAlignBottomLeft | kAlignBottomCenter | kAlignBottomRight,
+	kMAlignHCenter = kAlignTopCenter | kAlignMiddleCenter | kAlignBottomCenter,
+	kMAlignVCenter = kAlignMiddleLeft | kAlignMiddleCenter | kAlignMiddleRight
 };
 
 // Horizontal alignment; based on FrameAlignment, used to restrict alignment
 // setting to left/right/center option, while keeping compatibility with any
 // alignment in case it will be supported in the future.
 enum HorAlignment {
-	kHAlignNone     = kAlignNone,
-	kHAlignLeft     = kAlignTopLeft,
-	kHAlignRight    = kAlignTopRight,
-	kHAlignCenter   = kAlignTopCenter
+	kHAlignNone = kAlignNone,
+	kHAlignLeft = kAlignTopLeft,
+	kHAlignRight = kAlignTopRight,
+	kHAlignCenter = kAlignTopCenter
 };
 
 enum RectPlacement {
@@ -160,7 +162,7 @@ struct Size {
 
 	inline static Size Clamp(const Size &sz, const Size &floor, const Size &ceil) {
 		return Size(AGSMath::Clamp(sz.Width, floor.Width, ceil.Width),
-		            AGSMath::Clamp(sz.Height, floor.Height, ceil.Height));
+			AGSMath::Clamp(sz.Height, floor.Height, ceil.Height));
 	}
 
 	// Indicates if current size exceeds other size by any metric
@@ -211,17 +213,17 @@ struct Rect {
 	int Bottom;
 
 	Rect() {
-		Left    = 0;
-		Top     = 0;
-		Right   = -1;
-		Bottom  = -1;
+		Left = 0;
+		Top = 0;
+		Right = -1;
+		Bottom = -1;
 	}
 
 	Rect(int l, int t, int r, int b) {
-		Left    = l;
-		Top     = t;
-		Right   = r;
-		Bottom  = b;
+		Left = l;
+		Top = t;
+		Right = r;
+		Bottom = b;
 	}
 
 	inline Point GetLT() const {
@@ -361,5 +363,6 @@ Rect ClampToRect(const Rect &place, const Rect &item);
 Rect PlaceInRect(const Rect &place, const Rect &item, const RectPlacement &placement);
 //} // namespace Common
 //} // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -23,9 +23,13 @@
 #ifndef AGS_ENGINE_AC_GLOBALDIALOG_H
 #define AGS_ENGINE_AC_GLOBALDIALOG_H
 
+namespace AGS3 {
+
 void RunDialog(int tum);
 int GetDialogOption(int dlg, int opt);
 void SetDialogOption(int dlg, int opt, int onoroff, bool dlg_script = false);
 void StopDialog();
+
+} // namespace AGS3
 
 #endif

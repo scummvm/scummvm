@@ -49,11 +49,13 @@
 #include <vector>
 #include "core/types.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
 
 enum WFNError {
 	kWFNErr_NoError,
@@ -105,5 +107,7 @@ protected:
 
 	static const WFNChar        _emptyChar; // a dummy character to substitute bad symbols
 };
+
+} // namespace AGS3
 
 #endif

@@ -23,6 +23,8 @@
 #ifndef AGS_ENGINE_MEDIA_AUDIO_AMBIENTSOUND_H
 #define AGS_ENGINE_MEDIA_AUDIO_AMBIENTSOUND_H
 
+namespace AGS3 {
+
 // Forward declaration
 namespace AGS {
 namespace Common {
@@ -45,5 +47,7 @@ struct AmbientSound {
 	void ReadFromFile(Common::Stream *in);
 	void WriteToFile(Common::Stream *out);
 };
+
+} // namespace AGS3
 
 #endif

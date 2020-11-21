@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/scriptaudiochannel.h"
 
+namespace AGS3 {
+
 int     System_GetColorDepth();
 int     System_GetOS();
 int     System_GetScreenWidth();
@@ -49,5 +51,6 @@ int     System_GetVolume();
 void    System_SetVolume(int newvol);
 const char *System_GetRuntimeInfo();
 
+} // namespace AGS3
 
 #endif

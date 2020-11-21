@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
+namespace AGS3 {
+
 struct CCRegion final : AGSCCDynamicObject {
 
 	// return the type name of the object
@@ -35,7 +37,8 @@ struct CCRegion final : AGSCCDynamicObject {
 	int Serialize(const char *address, char *buffer, int bufsize) override;
 
 	void Unserialize(int index, const char *serializedData, int dataSize) override;
-
 };
+
+} // namespace AGS3
 
 #endif

@@ -33,13 +33,16 @@
 #include "main/game_file.h"
 #include "util/string.h"
 
+namespace AGS3 {
+
 // Forward declaration
 namespace AGS {
 namespace Common {
 class Bitmap;
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 #define RAGMODE_PRESERVEGLOBALINT 1
@@ -202,5 +205,7 @@ extern int frames_per_second; // fixed game fps, set by script
 extern unsigned int loopcounter;
 extern void set_loop_counter(unsigned int new_counter);
 extern int game_paused;
+
+} // namespace AGS3
 
 #endif

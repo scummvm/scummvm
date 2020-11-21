@@ -29,6 +29,8 @@
 #ifndef AGS_SHARED_UTIL_MATH_H
 #define AGS_SHARED_UTIL_MATH_H
 
+namespace AGS3 {
+
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
 #endif
@@ -84,5 +86,6 @@ inline float DegreesToRadians(float deg) {
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

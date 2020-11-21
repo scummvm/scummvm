@@ -36,6 +36,8 @@
 #include <dshow.h>
 #include <Vmr9.h>
 
+namespace AGS3 {
+
 //#pragma comment( lib, "strmiids.lib" )
 //#pragma comment( lib, "Quartz.lib" )
 //#pragma comment( lib, "d3d9.lib" )
@@ -127,33 +129,35 @@ protected:
 	DWORD                       m_dwRotId;
 	char                        m_pszErrorDescription[1024 + MAX_ERROR_TEXT_LEN];
 	int                         m_nNumberOfStream;
-	const char    *m_pszFileName;
+	const char *m_pszFileName;
 	long m_oldWndProc;
 	// MEDIA WINDOW
 	HWND                        m_hMediaWindow;
 	// SRC interfaces array
-	IBaseFilter                *m_srcFilterArray[10];
+	IBaseFilter *m_srcFilterArray[10];
 	// SOUND interfaces
-	IBaseFilter                *m_pDirectSoundFilter;
+	IBaseFilter *m_pDirectSoundFilter;
 	// GRAPH interfaces
-	IUnknown                   *m_pGraphUnknown;
-	IGraphBuilder              *m_pGraphBuilder;
-	IFilterGraph               *m_pFilterGraph;
-	IFilterGraph2              *m_pFilterGraph2;
-	IMediaControl              *m_pMediaControl;
-	IMediaSeeking                *m_pMediaSeeking;
+	IUnknown *m_pGraphUnknown;
+	IGraphBuilder *m_pGraphBuilder;
+	IFilterGraph *m_pFilterGraph;
+	IFilterGraph2 *m_pFilterGraph2;
+	IMediaControl *m_pMediaControl;
+	IMediaSeeking *m_pMediaSeeking;
 	//IMediaEvent*              m_pMediaEvent;
-	IMediaEventEx              *m_pMediaEventEx;
+	IMediaEventEx *m_pMediaEventEx;
 	// VMR9 interfaces
-	IBaseFilter                *m_pVMRBaseFilter;
-	IVMRFilterConfig9          *m_pVMRFilterConfig;
-	IVMRMixerBitmap9           *m_pVMRMixerBitmap;
-	IVMRMixerControl9          *m_pVMRMixerControl;
-	IVMRMonitorConfig9         *m_pVMRMonitorConfig;
-	IVMRWindowlessControl9     *m_pVMRWindowlessControl;
+	IBaseFilter *m_pVMRBaseFilter;
+	IVMRFilterConfig9 *m_pVMRFilterConfig;
+	IVMRMixerBitmap9 *m_pVMRMixerBitmap;
+	IVMRMixerControl9 *m_pVMRMixerControl;
+	IVMRMonitorConfig9 *m_pVMRMonitorConfig;
+	IVMRWindowlessControl9 *m_pVMRWindowlessControl;
 	// DIRECT3D interfaces
 	//IDirect3DDevice9*         m_pD3DDevice;
-	IDirect3DSurface9          *m_pD3DSurface;
+	IDirect3DSurface9 *m_pD3DSurface;
 };
+
+} // namespace AGS3
 
 #endif

@@ -29,7 +29,7 @@
 #include "gfx/bitmap.h"
 #include "media/audio/audiodefines.h"
 
-
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -137,5 +137,6 @@ struct RestoredData {
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

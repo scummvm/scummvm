@@ -23,13 +23,16 @@
 #ifndef AGS_ENGINE_MEDIA_AUDIO_QUEUEDAUDIOITEM_H
 #define AGS_ENGINE_MEDIA_AUDIO_QUEUEDAUDIOITEM_H
 
+namespace AGS3 {
+
 struct SOUNDCLIP;
 
 namespace AGS {
 namespace Common {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 struct QueuedAudioItem {
@@ -41,5 +44,7 @@ struct QueuedAudioItem {
 	void ReadFromFile(Common::Stream *in);
 	void WriteToFile(Common::Stream *out) const;
 };
+
+} // namespace AGS3
 
 #endif

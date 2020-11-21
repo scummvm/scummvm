@@ -37,6 +37,8 @@
 #include "script/nonblockingscriptfunction.h"
 #include "util/string.h"
 
+namespace AGS3 {
+
 using namespace AGS;
 
 #define INSTF_SHAREDATA     1
@@ -59,8 +61,8 @@ struct ScriptImport;
 
 struct ScriptInstruction {
 	ScriptInstruction() {
-		Code        = 0;
-		InstanceId  = 0;
+		Code = 0;
+		InstanceId = 0;
 	}
 
 	int32_t Code;
@@ -79,7 +81,7 @@ struct ScriptOperation {
 
 struct ScriptVariable {
 	ScriptVariable() {
-		ScAddress   = -1; // address = 0 is valid one, -1 means undefined
+		ScAddress = -1; // address = 0 is valid one, -1 means undefined
 	}
 
 	int32_t             ScAddress;  // original 32-bit relative data address, written in compiled script;
@@ -144,7 +146,7 @@ public:
 	ccInstance *callStackCodeInst[MAX_CALL_STACK];
 
 	// array of real import indexes used in script
-	int  *resolved_imports;
+	int *resolved_imports;
 	int  numimports;
 
 	char *code_fixups;
@@ -217,5 +219,7 @@ protected:
 	void    PushToFuncCallStack(FunctionCallStack &func_callstack, const RuntimeScriptValue &rval);
 	void    PopFromFuncCallStack(FunctionCallStack &func_callstack, int32_t num_entries);
 };
+
+} // namespace AGS3
 
 #endif

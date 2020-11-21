@@ -26,6 +26,7 @@
 #include <vector>
 #include "gui/guiobject.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -51,7 +52,7 @@ public:
 	void ReadFromSavegame(Stream *in, GuiSvgVersion svg_ver) override;
 	void WriteToSavegame(Stream *out) const override;
 
-// TODO: these members are currently public; hide them later
+	// TODO: these members are currently public; hide them later
 public:
 	int32_t MinValue;
 	int32_t MaxValue;
@@ -72,5 +73,7 @@ private:
 
 extern std::vector<AGS::Common::GUISlider> guislider;
 extern int numguislider;
+
+} // namespace AGS3
 
 #endif

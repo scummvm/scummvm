@@ -25,9 +25,9 @@
 
 #include <pthread.h>
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
-
 
 class PThreadThread : public BaseThread {
 public:
@@ -97,8 +97,8 @@ private:
 
 typedef PThreadThread Thread;
 
-
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

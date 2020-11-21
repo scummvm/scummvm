@@ -38,6 +38,7 @@
 #include "gfx/bitmap.h"
 #include "gfx/gfx_def.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -52,7 +53,7 @@ Bitmap *ConvertBitmap(Bitmap *src, int dst_color_depth);
 // or fallbacks to common "magic pink" transparency mode;
 // optionally uses blending alpha (overall image transparency).
 void DrawSpriteBlend(Bitmap *ds, const Point &ds_at, Bitmap *sprite,
-                     Common::BlendMode blend_mode, bool dst_has_alpha = true, bool src_has_alpha = true, int blend_alpha = 0xFF);
+	Common::BlendMode blend_mode, bool dst_has_alpha = true, bool src_has_alpha = true, int blend_alpha = 0xFF);
 
 // Draws a bitmap over another one with given alpha level (0 - 255),
 // takes account of the bitmap's mask color,
@@ -63,5 +64,6 @@ void DrawSpriteWithTransparency(Bitmap *ds, Bitmap *sprite, int x, int y, int al
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

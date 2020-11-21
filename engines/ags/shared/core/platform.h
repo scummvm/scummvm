@@ -23,6 +23,8 @@
 #ifndef AGS_SHARED_CORE_PLATFORM_H
 #define AGS_SHARED_CORE_PLATFORM_H
 
+namespace AGS3 {
+
 // platform definitions. Not intended for replacing types or checking for libraries.
 
 // check Android first because sometimes it can get confused with host OS
@@ -123,5 +125,7 @@
 #else
 #define AGS_PLATFORM_DEBUG  (0)
 #endif
+
+} // namespace AGS3
 
 #endif

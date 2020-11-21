@@ -26,8 +26,12 @@
 #include "script/runtimescriptvalue.h"
 #include "ac/dynobj/cc_dynamicobject.h"
 
+namespace AGS3 {
+
 extern ScriptValueType ccGetObjectAddressAndManagerFromHandle(
-    int32_t handle, void *&object, ICCDynamicObject *&manager);
+	int32_t handle, void *&object, ICCDynamicObject *&manager);
+
+} // namespace AGS3
 
 #endif
 

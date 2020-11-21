@@ -34,6 +34,8 @@
 #include "util/geometry.h"
 #include "util/scaling.h"
 
+namespace AGS3 {
+
 class Camera;
 class Viewport;
 
@@ -48,7 +50,7 @@ typedef std::weak_ptr<Viewport> ViewportRef;
 template <typename T>
 bool is_uninitialized(std::weak_ptr<T> const &weak) {
 	using wt = std::weak_ptr<T>;
-	return !weak.owner_before(wt{}) &&!wt{} .owner_before(weak);
+	return !weak.owner_before(wt{}) && !wt{}.owner_before(weak);
 }
 
 
@@ -219,5 +221,7 @@ private:
 	bool _hasChangedSize = false;
 	bool _hasChangedVisible = false;
 };
+
+} // namespace AGS3
 
 #endif

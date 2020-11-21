@@ -33,6 +33,8 @@
 #include "ac/wordsdictionary.h"  // WordsDictionary
 #include "script/cc_script.h"           // ccScript
 
+namespace AGS3 {
+
 struct OriGameSetupStruct {
 	char              gamename[30];
 	char              options[20];
@@ -42,14 +44,14 @@ struct OriGameSetupStruct {
 	int               numiface;
 	int               numviews;
 	MouseCursor       mcurs[10];
-	char              *globalscript;
+	char *globalscript;
 	int               numcharacters;
-	OldCharacterInfo     *chars;
+	OldCharacterInfo *chars;
 #ifdef UNUSED_CODE
 	EventBlock        __charcond[50];   // [IKM] 2012-06-22: does not seem to be used anywhere
 	EventBlock        __invcond[100];   // same
 #endif
-	ccScript          *compiled_script;
+	ccScript *compiled_script;
 	int               playercharacter;
 	unsigned char     __old_spriteflags[2100];
 	int               totalscore;
@@ -65,7 +67,7 @@ struct OriGameSetupStruct {
 	int               reserved[2];
 	short             numlang;
 	char              langcodes[MAXLANGUAGE][3];
-	char              *messages[MAXGLOBALMES];
+	char *messages[MAXGLOBALMES];
 };
 
 struct OriGameSetupStruct2 : public OriGameSetupStruct {
@@ -79,5 +81,7 @@ struct OriGameSetupStruct2 : public OriGameSetupStruct {
 struct OldGameSetupStruct : public OriGameSetupStruct2 {
 	unsigned char spriteflags[LEGACY_MAX_SPRITES_V25];
 };
+
+} // namespace AGS3
 
 #endif

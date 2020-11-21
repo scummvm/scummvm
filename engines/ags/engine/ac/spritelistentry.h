@@ -25,6 +25,8 @@
 
 #include "gfx/ddb.h"
 
+namespace AGS3 {
+
 struct SpriteListEntry {
 	AGS::Engine::IDriverDependantBitmap *bmp;
 	AGS::Common::Bitmap *pic;
@@ -36,5 +38,7 @@ struct SpriteListEntry {
 
 	SpriteListEntry();
 };
+
+} // namespace AGS3
 
 #endif

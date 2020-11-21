@@ -34,6 +34,8 @@
 #include "gfx/ddb.h"
 #include "util/geometry.h"
 
+namespace AGS3 {
+
 // Inits dirty rects array for the given room camera/viewport pair
 // View_index indicates the room viewport (>= 0) or the main viewport (-1)
 void init_invalid_regions(int view_index, const Size &surf_size, const Rect &viewport);
@@ -53,5 +55,7 @@ void update_black_invreg_and_reset(AGS::Common::Bitmap *ds);
 // Copies the room regions marked as dirty from source (src) to destination (ds) with the given offset (x, y)
 // no_transform flag tells the system that the regions should be plain copied to the ds.
 void update_room_invreg_and_reset(int view_index, AGS::Common::Bitmap *ds, AGS::Common::Bitmap *src, bool no_transform);
+
+} // namespace AGS3
 
 #endif

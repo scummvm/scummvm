@@ -23,8 +23,12 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_PALETTE_H
 #define AGS_ENGINE_AC_GLOBAL_PALETTE_H
 
+namespace AGS3 {
+
 void CyclePalette(int strt, int eend);
 void SetPalRGB(int inndx, int rr, int gg, int bb);
 void UpdatePalette();
+
+} // namespace AGS3
 
 #endif

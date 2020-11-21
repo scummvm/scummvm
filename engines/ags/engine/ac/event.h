@@ -26,6 +26,8 @@
 #include "ac/runtime_defines.h"
 #include "script/runtimescriptvalue.h"
 
+namespace AGS3 {
+
 // parameters to run_on_event
 #define GE_LEAVE_ROOM 1
 #define GE_ENTER_ROOM 2
@@ -83,5 +85,7 @@ extern int evblocknum;
 extern int eventClaimed;
 
 extern const char *tsnames[4];
+
+} // namespace AGS3
 
 #endif

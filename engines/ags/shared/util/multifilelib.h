@@ -37,6 +37,7 @@
 #include "core/asset.h"
 #include "util/stream.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -45,21 +46,21 @@ namespace Common {
 //
 namespace MFLUtil {
 enum MFLError {
-	kMFLNoError           =  0,
-	kMFLErrNoLibSig       = -1, // library signature does not match
-	kMFLErrLibVersion     = -2, // library version unsupported
-	kMFLErrNoLibBase      = -3, // file is not library base (head)
-	kMFLErrLibAssetCount  = -4, // too many assets in library
+	kMFLNoError = 0,
+	kMFLErrNoLibSig = -1, // library signature does not match
+	kMFLErrLibVersion = -2, // library version unsupported
+	kMFLErrNoLibBase = -3, // file is not library base (head)
+	kMFLErrLibAssetCount = -4, // too many assets in library
 };
 
 enum MFLVersion {
-	kMFLVersion_SingleLib   = 6,
-	kMFLVersion_MultiV10    = 10,
-	kMFLVersion_MultiV11    = 11,
-	kMFLVersion_MultiV15    = 15, // unknown differences
-	kMFLVersion_MultiV20    = 20,
-	kMFLVersion_MultiV21    = 21,
-	kMFLVersion_MultiV30    = 30  // 64-bit file support, loose limits
+	kMFLVersion_SingleLib = 6,
+	kMFLVersion_MultiV10 = 10,
+	kMFLVersion_MultiV11 = 11,
+	kMFLVersion_MultiV15 = 15, // unknown differences
+	kMFLVersion_MultiV20 = 20,
+	kMFLVersion_MultiV21 = 21,
+	kMFLVersion_MultiV30 = 30  // 64-bit file support, loose limits
 };
 
 // Maximal number of the data files in one library chain (1-byte index)
@@ -74,5 +75,6 @@ void     WriteEnder(soff_t lib_offset, MFLVersion lib_index, Stream *out);
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -25,12 +25,15 @@
 
 #include "ac/game_version.h"
 
+namespace AGS3 {
+
 // Forward declaration
 namespace AGS {
 namespace Common {
 class Bitmap;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 struct MoveList;
 
 void init_pathfinder(GameDataVersion game_file_version);
@@ -45,5 +48,7 @@ void set_route_move_speed(int speed_x, int speed_y);
 
 int find_route(short srcx, short srcy, short xx, short yy, AGS::Common::Bitmap *onscreen, int movlst, int nocross = 0, int ignore_walls = 0);
 void calculate_move_stage(MoveList *mlsp, int aaa);
+
+} // namespace AGS3
 
 #endif

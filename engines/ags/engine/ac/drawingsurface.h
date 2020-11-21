@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/scriptdrawingsurface.h"
 
+namespace AGS3 {
+
 void    DrawingSurface_Release(ScriptDrawingSurface *sds);
 // convert actual co-ordinate back to what the script is expecting
 ScriptDrawingSurface *DrawingSurface_CreateCopy(ScriptDrawingSurface *sds);
@@ -46,5 +48,7 @@ void    DrawingSurface_DrawMessageWrapped(ScriptDrawingSurface *sds, int xx, int
 void    DrawingSurface_DrawLine(ScriptDrawingSurface *sds, int fromx, int fromy, int tox, int toy, int thickness);
 void    DrawingSurface_DrawPixel(ScriptDrawingSurface *sds, int x, int y);
 int     DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y);
+
+} // namespace AGS3
 
 #endif

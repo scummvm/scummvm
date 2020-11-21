@@ -26,6 +26,8 @@
 #include "util/geometry.h"
 #include "gfx/gfxdefines.h"
 
+namespace AGS3 {
+
 // Sets up game viewport and object scaling parameters depending on game.
 // TODO: this is part of the game init, not engine init, move it later
 void engine_init_resolution_settings(const Size game_size);
@@ -37,5 +39,7 @@ void engine_pre_gfxmode_release();
 void engine_pre_gfxsystem_shutdown();
 // Applies necessary changes after screen<->virtual coordinate transformation has changed
 void on_coordinates_scaling_changed();
+
+} // namespace AGS3
 
 #endif

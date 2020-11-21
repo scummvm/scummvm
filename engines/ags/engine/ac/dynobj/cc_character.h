@@ -25,6 +25,8 @@
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
+namespace AGS3 {
+
 struct CCCharacter final : AGSCCDynamicObject {
 
 	// return the type name of the object
@@ -38,5 +40,7 @@ struct CCCharacter final : AGSCCDynamicObject {
 
 	void WriteInt16(const char *address, intptr_t offset, int16_t val) override;
 };
+
+} // namespace AGS3
 
 #endif

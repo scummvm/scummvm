@@ -29,6 +29,8 @@
 #ifndef AGS_ENGINE_GFX_BLENDER_H
 #define AGS_ENGINE_GFX_BLENDER_H
 
+namespace AGS3 {
+
 //
 // Allegro's standard alpha blenders result in:
 // - src and dst RGB are combined proportionally to src alpha
@@ -71,5 +73,7 @@ void set_additive_alpha_blender();
 void set_opaque_alpha_blender();
 // Sets argb2argb for 32-bit mode, and provides appropriate funcs for blending 32-bit onto 15/16/24-bit destination
 void set_argb2any_blender();
+
+} // namespace AGS3
 
 #endif

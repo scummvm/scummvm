@@ -36,6 +36,8 @@
 #include "ac/statobj/agsstaticobject.h"
 #include "debug/out.h"
 
+namespace AGS3 {
+
 struct RuntimeScriptValue;
 
 // TODO: replace void* with base object class when possible; also put array class for parameters
@@ -46,7 +48,7 @@ typedef RuntimeScriptValue ScriptAPIObjectFunction(void *self, const RuntimeScri
 // Uses EITHER sc_args/sc_argc or varg_ptr as parameter list, whichever is not
 // NULL, with varg_ptr having HIGHER priority.
 const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
-                          const RuntimeScriptValue *sc_args, int32_t sc_argc, va_list *varg_ptr);
+	const RuntimeScriptValue *sc_args, int32_t sc_argc, va_list *varg_ptr);
 // Sprintf that takes script values as arguments
 inline const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format, const RuntimeScriptValue *args, int32_t argc) {
 	return ScriptSprintf(buffer, buf_length, format, args, argc, nullptr);
@@ -555,5 +557,7 @@ inline const char *ScriptVSprintf(char *buffer, size_t buf_length, const char *f
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 1); \
 	RET_CLASS* ret_obj = METHOD((CLASS*)self, (P1CLASS*)params[0].Ptr); \
 	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj)
+
+} // namespace AGS3
 
 #endif

@@ -32,6 +32,7 @@
 #include "core/platform.h"
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Common {
 
@@ -49,5 +50,6 @@ String GetCurrentDirectory();
 
 } // namespace Common
 } // namespace AGS
+} // namespace AGS3
 
 #endif

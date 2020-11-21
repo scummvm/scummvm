@@ -32,6 +32,8 @@
 #include "ac/asset_helper.h"
 #include "media/audio/soundclip.h"
 
+namespace AGS3 {
+
 SOUNDCLIP *my_load_wave(const AssetPath &asset_name, int voll, int loop);
 SOUNDCLIP *my_load_mp3(const AssetPath &asset_name, int voll);
 SOUNDCLIP *my_load_static_mp3(const AssetPath &asset_name, int voll, bool loop);
@@ -41,5 +43,7 @@ SOUNDCLIP *my_load_midi(const AssetPath &asset_name, int repet);
 SOUNDCLIP *my_load_mod(const AssetPath &asset_name, int repet);
 
 extern int use_extra_sound_offset;
+
+} // namespace AGS3
 
 #endif

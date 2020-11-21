@@ -37,6 +37,7 @@
 #include "util/string.h"
 #include "util/string_types.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -57,7 +58,7 @@ public:
 	virtual void                 Shutdown() = 0;
 	// Get graphics driver associated with this factory; creates one if
 	// it does not exist.
-	virtual IGraphicsDriver     *GetDriver() = 0;
+	virtual IGraphicsDriver *GetDriver() = 0;
 	// Destroy graphics driver associated with this factory; does nothing
 	// if one was not created yet,
 	virtual void                 DestroyDriver() = 0;
@@ -80,5 +81,6 @@ IGfxDriverFactory *GetGfxDriverFactory(const String id);
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

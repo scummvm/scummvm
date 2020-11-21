@@ -25,6 +25,8 @@
 
 #include "gui/guitextbox.h"
 
+namespace AGS3 {
+
 using AGS::Common::GUITextBox;
 
 const char *TextBox_GetText_New(GUITextBox *texbox);
@@ -34,5 +36,7 @@ int         TextBox_GetTextColor(GUITextBox *guit);
 void        TextBox_SetTextColor(GUITextBox *guit, int colr);
 int         TextBox_GetFont(GUITextBox *guit);
 void        TextBox_SetFont(GUITextBox *guit, int fontnum);
+
+} // namespace AGS3
 
 #endif
