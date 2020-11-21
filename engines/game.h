@@ -32,6 +32,15 @@
 #include "common/platform.h"
 
 /**
+ * @defgroup engines_game Games
+ * @ingroup engines
+ *
+ * @brief API for managing games by engines.
+ *
+ * @{
+ */
+
+/**
  * A simple structure used to map gameids (like "monkey", "sword1", ...) to
  * nice human readable and descriptive game titles (like "The Secret of Monkey Island").
  * This is a plain struct to make it possible to declare NULL-terminated C arrays
@@ -253,5 +262,5 @@ private:
  */
 Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, bool translate, bool fullPath, uint32 wordwrapAt = 0);
 Common::U32String generateUnknownGameReport(const DetectedGame &detectedGame, bool translate, bool fullPath, uint32 wordwrapAt = 0);
-
+/** @} */
 #endif
