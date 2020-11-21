@@ -854,8 +854,8 @@ void Process::stub192() {
 	debug("stub192: %s: set some object flag to %d", name.c_str(), value);
 }
 
-void Process::stub193() {
-	debug("stub193: removing inventory object 0?");
+void Process::removeGapsFromInventory() {
+	debug("removeGapsFromInventory: stub");
 }
 
 void Process::setObjectScale() {
