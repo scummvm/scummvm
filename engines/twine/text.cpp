@@ -596,8 +596,6 @@ int Text::printText10() {
 
 // TODO: refactor this code
 bool Text::drawTextFullscreen(int32 index) {
-	ScopedKeyMap scopedKeyMap(_engine, cutsceneKeyMapId);
-
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
