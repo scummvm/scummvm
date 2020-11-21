@@ -223,14 +223,21 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				awayMissionSelectAction(true);
 				break;
 
-			case Common::KEYCODE_w:
-				hideInventoryIcons();
-				_awayMission.activeAction = ACTION_WALK;
-				break;
-
 			case Common::KEYCODE_t:
 				hideInventoryIcons();
 				_awayMission.activeAction = ACTION_TALK;
+				awayMissionSelectAction(false);
+				break;
+
+			case Common::KEYCODE_l:
+				hideInventoryIcons();
+				_awayMission.activeAction = ACTION_LOOK;
+				awayMissionSelectAction(false);
+				break;
+
+			case Common::KEYCODE_g:
+				hideInventoryIcons();
+				_awayMission.activeAction = ACTION_GET;
 				awayMissionSelectAction(false);
 				break;
 
@@ -238,6 +245,11 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				hideInventoryIcons();
 				_awayMission.activeAction = ACTION_USE;
 				awayMissionSelectAction(false);
+				break;
+
+			case Common::KEYCODE_w:
+				hideInventoryIcons();
+				_awayMission.activeAction = ACTION_WALK;
 				break;
 
 			case Common::KEYCODE_i:
@@ -262,16 +274,34 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				awayMissionLeftClick();
 				break;
 
-			case Common::KEYCODE_g:
-				hideInventoryIcons();
-				_awayMission.activeAction = ACTION_GET;
-				awayMissionSelectAction(false);
+			case Common::KEYCODE_c:
+				// Bridge computer, where the player can ask about various topics.
+				// ENHANCEMENT: Normally, this is only available when in the bridge.
+				// We also show it in missions.
+				handleBridgeComputer();
 				break;
 
-			case Common::KEYCODE_l:
-				hideInventoryIcons();
-				_awayMission.activeAction = ACTION_LOOK;
-				awayMissionSelectAction(false);
+			case Common::KEYCODE_p:
+				// Pause game
+				// TODO
+				break;
+
+			case Common::KEYCODE_e:
+				if (event.kbd.flags && Common::KBD_CTRL) {
+					_sound->toggleSfx();
+				}
+				break;
+
+			case Common::KEYCODE_m:
+				if (event.kbd.flags && Common::KBD_CTRL) {
+					_sound->toggleMusic();
+				}
+				break;
+
+			case Common::KEYCODE_q:
+				if (event.kbd.flags && Common::KBD_CTRL) {
+					showQuitGamePrompt(20, 20);
+				}
 				break;
 
 			default:
