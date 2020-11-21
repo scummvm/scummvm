@@ -1008,7 +1008,6 @@ Character *TempleLocation::doOptions(Character *c) {
 
 TrainingLocation::TrainingLocation() : BaseLocation(TRAINING) {
 	Common::fill(&_charsTrained[0], &_charsTrained[6], 0);
-	_maxLevel = 0;
 	_experienceToNextLevel = 0;
 	_charIndex = 0;
 
@@ -1019,53 +1018,50 @@ TrainingLocation::TrainingLocation() : BaseLocation(TRAINING) {
 	_vocName = _ccNum ? "youtrn1.voc" : "training.voc";
 }
 
-Common::String TrainingLocation::createLocationText(Character &ch) {
+int TrainingLocation::maxLevel() const {
 	Party &party = *g_vm->_party;
 	if (_ccNum) {
 		switch (party._mazeId) {
 		case 29:
 			// Castleview
-			_maxLevel = 30;
-			break;
+			return 30;
 		case 31:
 			// Sandcaster
-			_maxLevel = 50;
-			break;
+			return 50;
 		case 37:
 			// Olympus
-			_maxLevel = 200;
-			break;
+			return 200;
 		default:
 			// Kalindra's Castle
-			_maxLevel = 100;
-			break;
+			return 100;
 		}
 	} else {
 		switch (party._mazeId) {
 		case 28:
 			// Vertigo
-			_maxLevel = 10;
-			break;
+			return 10;
 		case 30:
 			// Rivercity
-			_maxLevel = 15;
-			break;
+			return 15;
 		default:
 			// Newcastle
-			_maxLevel = 20;
-			break;
+			return 20;
 		}
 	}
+}
 
+Common::String TrainingLocation::createLocationText(Character &ch) {
+	Party &party = *g_vm->_party;
+	int maxLevelAtLocation = maxLevel();
 	_experienceToNextLevel = ch.experienceToNextLevel();
 
 	Common::String msg;
-	if (_experienceToNextLevel && ch._level._permanent < _maxLevel) {
+	if (_experienceToNextLevel && ch._level._permanent < maxLevelAtLocation) {
 		// Need more experience
 		int nextLevel = ch._level._permanent + 1;
 		msg = Common::String::format(Res.EXPERIENCE_FOR_LEVEL,
 			ch._name.c_str(), _experienceToNextLevel, nextLevel);
-	} else if (ch._level._permanent >= _maxLevel) {
+	} else if (ch._level._permanent >= maxLevelAtLocation) {
 		// At maximum level
 		_experienceToNextLevel = 1;
 		msg = Common::String::format(Res.TRAINING_LEARNED_ALL, ch._name.c_str());
@@ -1107,7 +1103,7 @@ Character *TrainingLocation::doOptions(Character *c) {
 			_drawFrameIndex = 0;
 
 			Common::String name;
-			if (c->_level._permanent >= _maxLevel) {
+			if (c->_level._permanent >= maxLevel()) {
 				name = _ccNum ? "gtlost.voc" : "trainin1.voc";
 			} else {
 				name = _ccNum ? "gtlost.voc" : "trainin0.voc";
