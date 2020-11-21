@@ -33,6 +33,15 @@ struct Surface;
 }
 
 /**
+ * @defgroup engines_savestate Save states
+ * @ingroup engines
+ *
+ * @brief API for managing save states.
+ *
+ * @{
+ */
+
+/**
  * Object describing a save state.
  *
  * This at least includes the save slot number and a human readable
@@ -273,5 +282,5 @@ struct SaveStateDescriptorSlotComparator {
 		return x.getSaveSlot() < y.getSaveSlot();
 	}
 };
-
+/** @} */
 #endif
