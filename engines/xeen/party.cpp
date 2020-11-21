@@ -95,10 +95,10 @@ void Treasure::reset() {
 
 /*------------------------------------------------------------------------*/
 
-const int BLACKSMITH_DATA1[4][4] = {
+static const int BLACKSMITH_DATA1[4][4] = {
 	{ 15, 5, 5, 5 },{ 5, 10, 5, 5 },{ 0, 5, 10, 5 },{ 0, 0, 0, 5 }
 };
-const int BLACKSMITH_DATA2[4][4] = {
+static const int BLACKSMITH_DATA2[4][4] = {
 	{ 10, 5, 0, 5 },{ 10, 5, 5, 5 },{ 0, 5, 5, 10 },{ 0, 5, 10, 0 }
 };
 
