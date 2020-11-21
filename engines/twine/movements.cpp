@@ -355,7 +355,7 @@ void Movements::processRotationExecution(int actorIdx) {
 void Movements::processManualAction(int actorIdx) {
 	if (IS_HERO(actorIdx)) {
 		heroAction = false;
-		if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
+		if (_engine->_input->isHeroActionActive()) {
 			heroAction = processBehaviourExecution(actorIdx);
 		}
 	}

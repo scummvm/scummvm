@@ -516,13 +516,13 @@ void Scene::processActorZones(int32 actorIdx) {
 				}
 				break;
 			case kObject:
-				if (IS_HERO(actorIdx) && _engine->_movements->heroAction) {
+				if (IS_HERO(actorIdx) && _engine->_movements->shouldTriggerZoneAction()) {
 					_engine->_animations->initAnim(AnimationTypes::kAction, 1, AnimationTypes::kStanding, 0);
 					processZoneExtraBonus(zone);
 				}
 				break;
 			case kText:
-				if (IS_HERO(actorIdx) && _engine->_movements->heroAction) {
+				if (IS_HERO(actorIdx) && _engine->_movements->shouldTriggerZoneAction()) {
 					_engine->freezeTime();
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);
 					talkingActor = actorIdx;
