@@ -897,7 +897,7 @@ void Menu::processBehaviourMenu() {
 
 	int32 tmpTime = _engine->lbaTime;
 
-	_engine->_input->enableAdditionalKeyMap(uiKeyMapId, true);
+	const bool changedUiKeyMapState = _engine->_input->enableAdditionalKeyMap(uiKeyMapId, true);
 	while (_engine->_input->isActionActive(TwinEActionType::BehaviourMenu) || _engine->_input->isQuickBehaviourActionActive()) {
 		_engine->readKeys();
 
@@ -928,7 +928,9 @@ void Menu::processBehaviourMenu() {
 		_engine->_system->delayMillis(1000 / 50);
 		_engine->lbaTime++;
 	}
-	_engine->_input->enableAdditionalKeyMap(uiKeyMapId, false);
+	if (changedUiKeyMapState) {
+		_engine->_input->enableAdditionalKeyMap(uiKeyMapId, false);
+	}
 
 	_engine->lbaTime = tmpTime;
 
