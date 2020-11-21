@@ -596,6 +596,7 @@ int Text::printText10() {
 
 // TODO: refactor this code
 bool Text::drawTextFullscreen(int32 index) {
+	const bool changedKeyMapState = _engine->_input->enableAdditionalKeyMap(cutsceneKeyMapId, true);
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
@@ -653,6 +654,10 @@ bool Text::drawTextFullscreen(int32 index) {
 		}
 		hasHiddenVox = false;
 		voxHiddenIndex = 0;
+	}
+
+	if (changedKeyMapState) {
+		_engine->_input->enableAdditionalKeyMap(cutsceneKeyMapId, false);
 	}
 
 	stopVox(currDialTextEntry);
