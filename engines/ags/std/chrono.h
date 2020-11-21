@@ -1,0 +1,85 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ */
+
+#ifndef AGS_STD_CHRONO_H
+#define AGS_STD_CHRONO_H
+
+#include "common/system.h"
+
+namespace AGS3 {
+namespace std {
+
+namespace chrono {
+
+typedef uint32 milliseconds;
+
+struct system_clock {
+};
+
+
+struct steady_clock { // wraps QueryPerformanceCounter
+	using rep = uint32;
+	using period = milliseconds;
+	using duration = milliseconds;
+	using time_point = uint32;
+	static constexpr bool is_steady = true;
+
+	static time_point now() { // get current time
+		return g_system->getMillis();
+	}
+};
+
+using high_resolution_clock = steady_clock;
+
+class duration {
+private:
+	uint32 _value;
+public:
+	duration() : _value(0) {
+	}
+	duration(uint32 value) : _value(value) {
+	}
+
+	size_t count() const {
+		// durations for ScummVM are hardcoded to be in milliseconds
+		return 1000;
+	}
+
+	operator milliseconds() const {
+		return _value;
+	}
+};
+
+template<class T>
+duration duration_cast(T param);
+
+template<milliseconds>
+duration duration_cast(milliseconds param) {
+	return duration(param);
+}
+
+} // namespace chrono
+
+} // namespace std
+} // namespace AGS3
+
+#endif
