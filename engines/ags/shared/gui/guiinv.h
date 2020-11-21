@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_GUIINV_H
-#define __AC_GUIINV_H
+#ifndef AGS_SHARED_GUI_GUIINV_H
+#define AGS_SHARED_GUI_GUIINV_H
 
 #include <vector>
 #include "gui/guiobject.h"
@@ -75,4 +75,4 @@ private:
 extern std::vector<AGS::Common::GUIInvWindow> guiinv;
 extern int numguiinv;
 
-#endif // __AC_GUIINV_H
+#endif

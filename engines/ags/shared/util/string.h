@@ -43,8 +43,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__STRING_H
-#define __AGS_CN_UTIL__STRING_H
+#ifndef AGS_SHARED_UTIL_STRING_H
+#define AGS_SHARED_UTIL_STRING_H
 
 #include <stdarg.h>
 #include <vector>
@@ -386,4 +386,4 @@ private:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__STRING_H
+#endif

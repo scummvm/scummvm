@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_UTIL__LZW_H
-#define __AGS_CN_UTIL__LZW_H
+#ifndef AGS_SHARED_UTIL_LZW_H
+#define AGS_SHARED_UTIL_LZW_H
 
 namespace AGS { namespace Common { class Stream; } }
 using namespace AGS; // FIXME later
@@ -31,4 +31,4 @@ unsigned char *lzwexpand_to_mem(Common::Stream *in);
 
 extern long outbytes, maxsize, putbytes;
 
-#endif // __AGS_CN_UTIL__LZW_H
+#endif

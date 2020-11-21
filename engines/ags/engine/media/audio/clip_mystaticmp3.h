@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MYSTATICMP3_H
-#define __AC_MYSTATICMP3_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_CLIP_MYSTATICMP3_H
+#define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYSTATICMP3_H
 
 #include "almp3.h"
 #include "media/audio/soundclip.h"
@@ -62,4 +62,4 @@ private:
     void adjust_stream();
 };
 
-#endif // __AC_MYSTATICMP3_H
+#endif

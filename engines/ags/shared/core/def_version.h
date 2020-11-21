@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_CORE__DEFVERSION_H
-#define __AGS_CN_CORE__DEFVERSION_H
+#ifndef AGS_SHARED_CORE_DEFVERSION_H
+#define AGS_SHARED_CORE_DEFVERSION_H
 
 #define ACI_VERSION_STR      "3.5.1.0"
 #if defined (RC_INVOKED) // for MSVC resource compiler
@@ -36,4 +36,4 @@
 
 #define ACI_COPYRIGHT_YEARS "2011-2020"
 
-#endif // __AGS_CN_CORE__DEFVERSION_H
+#endif

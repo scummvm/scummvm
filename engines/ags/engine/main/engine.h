@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_MAIN__ENGINE_H
-#define __AGS_EE_MAIN__ENGINE_H
+#ifndef AGS_ENGINE_MAIN_ENGINE_H
+#define AGS_ENGINE_MAIN_ENGINE_H
 
 #include "util/ini_util.h"
 
@@ -64,4 +64,4 @@ extern ResourcePaths ResPaths;
 typedef void (*t_engine_pre_init_callback)(void);
 extern void engine_set_pre_init_callback(t_engine_pre_init_callback callback);
 
-#endif // __AGS_EE_MAIN__ENGINE_H
+#endif

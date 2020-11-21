@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALTIMER_H
-#define __AGS_EE_AC__GLOBALTIMER_H
+#ifndef AGS_ENGINE_AC_GLOBAL_TIMER_H
+#define AGS_ENGINE_AC_GLOBAL_TIMER_H
 
 void script_SetTimer(int tnum,int timeout);
 int  IsTimerExpired(int tnum);
 
-#endif // __AGS_EE_AC__GLOBALTIMER_H
+#endif

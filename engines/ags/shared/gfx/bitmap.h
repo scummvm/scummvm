@@ -25,8 +25,9 @@
 // Base bitmap header
 //
 //=============================================================================
-#ifndef __AGS_CN_GFX__BITMAP_H
-#define __AGS_CN_GFX__BITMAP_H
+
+#ifndef AGS_SHARED_GFX_BITMAP_H
+#define AGS_SHARED_GFX_BITMAP_H
 
 #include "util/geometry.h"
 
@@ -94,4 +95,4 @@ namespace BitmapHelper
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_GFX__BITMAP_H
+#endif

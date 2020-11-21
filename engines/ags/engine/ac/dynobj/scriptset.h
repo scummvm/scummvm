@@ -32,8 +32,8 @@
 //
 //=============================================================================
 
-#ifndef __AC_SCRIPTSET_H
-#define __AC_SCRIPTSET_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTSET_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTSET_H
 
 #include <set>
 #include <unordered_set>
@@ -152,4 +152,4 @@ typedef ScriptSetImpl< std::set<String, StrLessNoCase>, true, false > ScriptSetC
 typedef ScriptSetImpl< std::unordered_set<String>, false, true > ScriptHashSet;
 typedef ScriptSetImpl< std::unordered_set<String, HashStrNoCase, StrEqNoCase>, false, false > ScriptHashSetCI;
 
-#endif // __AC_SCRIPTSET_H
+#endif

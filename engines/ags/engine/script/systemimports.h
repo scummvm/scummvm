@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __CC_SYSTEMIMPORTS_H
-#define __CC_SYSTEMIMPORTS_H
+#ifndef AGS_ENGINE_SCRIPT_SYSTEMIMPORTS_H
+#define AGS_ENGINE_SCRIPT_SYSTEMIMPORTS_H
 
 #include <map>
 #include "script/cc_instance.h"    // ccInstance
@@ -68,4 +68,4 @@ extern SystemImports simp;
 // perform old style unsafe function calls
 extern SystemImports simp_for_plugin;
 
-#endif  // __CC_SYSTEMIMPORTS_H
+#endif

@@ -20,9 +20,9 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALRECORD_H
-#define __AGS_EE_AC__GLOBALRECORD_H
+#ifndef AGS_ENGINE_AC_GLOBAL_RECORD_H
+#define AGS_ENGINE_AC_GLOBAL_RECORD_H
 
 void scStartRecording (int keyToStop);
 
-#endif // __AGS_EE_AC__GLOBALRECORD_H
+#endif

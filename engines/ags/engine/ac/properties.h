@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__PROPERTIES_H
-#define __AGS_EE_AC__PROPERTIES_H
+#ifndef AGS_ENGINE_AC_PROPERTIES_H
+#define AGS_ENGINE_AC_PROPERTIES_H
 
 #include "game/customproperties.h"
 
@@ -39,4 +39,4 @@ const char* get_text_property_dynamic_string(const StringIMap &st_prop, const St
 bool set_int_property(StringIMap &rt_prop, const char *property, int value);
 bool set_text_property(StringIMap &rt_prop, const char *property, const char* value);
 
-#endif // __AGS_EE_AC__PROPERTIES_H
+#endif

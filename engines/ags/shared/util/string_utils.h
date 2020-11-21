@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_UTIL__STRINGUTILS_H
-#define __AGS_CN_UTIL__STRINGUTILS_H
+#ifndef AGS_SHARED_UTIL_STRING_UTILS_H
+#define AGS_SHARED_UTIL_STRING_UTILS_H
 
 #include "util/string.h"
 
@@ -78,4 +78,4 @@ namespace StrUtil
 } // namespace AGS
 
 
-#endif // __AGS_CN_UTIL__STRINGUTILS_H
+#endif

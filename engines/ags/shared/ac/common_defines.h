@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_DEFINES_H
-#define __AC_DEFINES_H
+#ifndef AGS_SHARED_AC_DEFINES_H
+#define AGS_SHARED_AC_DEFINES_H
 
 #include "core/platform.h"
 
@@ -128,4 +128,4 @@
 #define OBJF_LEGACY_LOCKED  0x40  // object position is locked in the editor (OBSOLETE since 3.5.0)
 #define OBJF_HASLIGHT       0x80  // the tint_light is valid and treated as brightness
 
-#endif // __AC_DEFINES_H
+#endif

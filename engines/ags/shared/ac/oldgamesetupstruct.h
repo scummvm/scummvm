@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_AC__OLDGAMESETUPSTRUCT_H
-#define __AGS_CN_AC__OLDGAMESETUPSTRUCT_H
+#ifndef AGS_SHARED_AC_OLDGAMESETUPSTRUCT_H
+#define AGS_SHARED_AC_OLDGAMESETUPSTRUCT_H
 
 #include "ac/characterinfo.h"       // OldCharacterInfo, CharacterInfo
 #ifdef UNUSED_CODE
@@ -80,4 +80,4 @@ struct OldGameSetupStruct : public OriGameSetupStruct2 {
     unsigned char spriteflags[LEGACY_MAX_SPRITES_V25];
 };
 
-#endif // __AGS_CN_AC__OLDGAMESETUPSTRUCT_H
+#endif

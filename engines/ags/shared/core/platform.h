@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_PLATFORM_H
-#define __AC_PLATFORM_H
+#ifndef AGS_SHARED_CORE_PLATFORM_H
+#define AGS_SHARED_CORE_PLATFORM_H
 
 // platform definitions. Not intended for replacing types or checking for libraries.
 
@@ -124,4 +124,4 @@
     #define AGS_PLATFORM_DEBUG  (0)
 #endif
 
-#endif // __AC_PLATFORM_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_AC__GAMESETUPSTRUCTBASE_H
-#define __AGS_CN_AC__GAMESETUPSTRUCTBASE_H
+#ifndef AGS_SHARED_AC_GAMESETUPSTRUCTBASE_H
+#define AGS_SHARED_AC_GAMESETUPSTRUCTBASE_H
 
 #include "ac/game_version.h"
 #include "ac/gamestructdefines.h"
@@ -224,4 +224,4 @@ private:
     int _screenUpscaleMult;
 };
 
-#endif // __AGS_CN_AC__GAMESETUPSTRUCTBASE_H
+#endif

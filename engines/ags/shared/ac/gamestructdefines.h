@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_AC__GAMESTRUCTDEFINES_H
-#define __AGS_CN_AC__GAMESTRUCTDEFINES_H
+#ifndef AGS_SHARED_AC_GAMESTRUCTDEFINES_H
+#define AGS_SHARED_AC_GAMESTRUCTDEFINES_H
 
 #include "util/geometry.h"
 #include "core/types.h"
@@ -258,4 +258,4 @@ struct FontInfo
     FontInfo();
 };
 
-#endif // __AGS_CN_AC__GAMESTRUCTDEFINES_H
+#endif

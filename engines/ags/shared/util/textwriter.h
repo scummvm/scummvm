@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__TEXTWRITER_H
-#define __AGS_CN_UTIL__TEXTWRITER_H
+#ifndef AGS_SHARED_UTIL_TEXTWRITER_H
+#define AGS_SHARED_UTIL_TEXTWRITER_H
 
 #include "util/string.h"
 
@@ -57,4 +57,4 @@ public:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__TEXTWRITER_H
+#endif

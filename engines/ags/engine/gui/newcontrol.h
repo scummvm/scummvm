@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_GUI__NEWCONTROL_H
-#define __AGS_EE_GUI__NEWCONTROL_H
+#ifndef AGS_ENGINE_GUI_NEWCONTROL_H
+#define AGS_ENGINE_GUI_NEWCONTROL_H
 
 #include "gfx/bitmap.h"
 
@@ -44,4 +44,4 @@ struct NewControl
   void drawandmouse();
 };
 
-#endif // __AGS_EE_GUI__NEWCONTROL_H
+#endif

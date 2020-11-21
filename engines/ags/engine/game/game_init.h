@@ -27,8 +27,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GAME__GAMEINIT_H
-#define __AGS_EE_GAME__GAMEINIT_H
+#ifndef AGS_ENGINE_GAME_GAMEINIT_H
+#define AGS_ENGINE_GAME_GAMEINIT_H
 
 #include "game/main_game_file.h"
 #include "util/string.h"
@@ -64,4 +64,4 @@ HGameInitError  InitGameState(const LoadedGameEntities &ents, GameDataVersion da
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GAME__GAMEINIT_H
+#endif

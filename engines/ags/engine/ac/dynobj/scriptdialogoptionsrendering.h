@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_SCRIPTDIALOGOPTIONSRENDERING_H
-#define __AC_SCRIPTDIALOGOPTIONSRENDERING_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTDIALOGOPTIONSRENDERING_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTDIALOGOPTIONSRENDERING_H
 
 #include "ac/dynobj/scriptdrawingsurface.h"
 
@@ -52,4 +52,4 @@ struct ScriptDialogOptionsRendering final : AGSCCDynamicObject {
 };
 
 
-#endif // __AC_SCRIPTDIALOGOPTIONSRENDERING_H
+#endif

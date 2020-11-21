@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__SPRITE_H
-#define __AGS_EE_AC__SPRITE_H
+#ifndef AGS_ENGINE_AC_SPRITE_H
+#define AGS_ENGINE_AC_SPRITE_H
 
 void get_new_size_for_sprite (int ee, int ww, int hh, int &newwid, int &newhit);
 // set any alpha-transparent pixels in the image to the appropriate
@@ -32,4 +32,4 @@ Common::Bitmap *remove_alpha_channel(Common::Bitmap *from);
 void pre_save_sprite(int ee);
 void initialize_sprite (int ee);
 
-#endif // __AGS_EE_AC__SPRITE_H
+#endif

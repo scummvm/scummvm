@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_UTIL__PSP_MUTEX_H
-#define __AGS_EE_UTIL__PSP_MUTEX_H
+#ifndef AGS_ENGINE_UTIL_PSP_MUTEX_H
+#define AGS_ENGINE_UTIL_PSP_MUTEX_H
 
 #include <pspsdk.h>
 #include <pspkernel.h>
@@ -67,4 +67,4 @@ typedef PSPMutex Mutex;
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_UTIL__PSP_MUTEX_H
+#endif

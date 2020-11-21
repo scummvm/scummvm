@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_UTIL__STRINGCOMPAT_H
-#define __AGS_CN_UTIL__STRINGCOMPAT_H
+#ifndef AGS_SHARED_UTIL_STRINGCOMPAT_H
+#define AGS_SHARED_UTIL_STRINGCOMPAT_H
 
 #include "core/types.h"
 
@@ -39,4 +39,4 @@ char *ags_strdup(const char *s);
 }
 #endif
 
-#endif // __AGS_CN_UTIL__STRINGCOMPAT_H
+#endif

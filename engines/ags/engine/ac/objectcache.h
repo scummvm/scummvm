@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__OBJECTCACHE_H
-#define __AGS_EE_AC__OBJECTCACHE_H
+#ifndef AGS_ENGINE_AC_OBJECTCACHE_H
+#define AGS_ENGINE_AC_OBJECTCACHE_H
 
 // stores cached object info
 struct ObjectCache {
@@ -33,4 +33,4 @@ struct ObjectCache {
     int   xwas, ywas;
 };
 
-#endif // __AGS_EE_AC__OBJECTCACHE_H
+#endif

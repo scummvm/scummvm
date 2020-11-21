@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_UTIL__WINDOWS_MUTEX_H
-#define __AGS_EE_UTIL__WINDOWS_MUTEX_H
+#ifndef AGS_ENGINE_UTIL_MUTEXT_WINDOWS_H
+#define AGS_ENGINE_UTIL_MUTEXT_WINDOWS_H
 
 namespace AGS
 {
@@ -71,4 +71,4 @@ typedef WindowsMutex Mutex;
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_UTIL__WINDOWS_MUTEX_H
+#endif

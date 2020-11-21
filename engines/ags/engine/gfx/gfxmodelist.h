@@ -25,8 +25,9 @@
 // Supported graphics mode interface
 //
 //=============================================================================
-#ifndef __AGS_EE_GFX__GFXMODELIST_H
-#define __AGS_EE_GFX__GFXMODELIST_H
+
+#ifndef AGS_ENGINE_GFX_GFXMODELIST_H
+#define AGS_ENGINE_GFX_GFXMODELIST_H
 
 #include "core/types.h"
 #include "gfx/gfxdefines.h"
@@ -47,4 +48,4 @@ public:
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__GFXMODELIST_H
+#endif

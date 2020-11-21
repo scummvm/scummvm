@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_CORE__ASSET_H
-#define __AGS_CN_CORE__ASSET_H
+#ifndef AGS_SHARED_CORE_ASSET_H
+#define AGS_SHARED_CORE_ASSET_H
 
 #include <vector>
 #include "util/string.h"
@@ -67,4 +67,4 @@ struct AssetLibInfo
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_CORE__ASSET_H
+#endif

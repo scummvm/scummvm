@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_UTIL__MUTEX_STD_H
-#define __AGS_EE_UTIL__MUTEX_STD_H
+#ifndef AGS_ENGINE_UTIL_MUTEX_STD_H
+#define AGS_ENGINE_UTIL_MUTEX_STD_H
 
 #include <mutex>
 
@@ -51,4 +51,4 @@ typedef StdMutex Mutex;
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_UTIL__MUTEX_STD_H
+#endif

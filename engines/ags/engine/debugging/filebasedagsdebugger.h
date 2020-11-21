@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_FILEBASEDAGSDEBUGGER_H
-#define __AC_FILEBASEDAGSDEBUGGER_H
+#ifndef AGS_ENGINE_DEBUGGING_FILEBASEDAGSDEBUGGER_H
+#define AGS_ENGINE_DEBUGGING_FILEBASEDAGSDEBUGGER_H
 
 #include "debug/agseditordebugger.h"
 
@@ -39,4 +39,4 @@ public:
 
 extern const char* SENT_MESSAGE_FILE_NAME;
 
-#endif // __AC_FILEBASEDAGSDEBUGGER_H
+#endif

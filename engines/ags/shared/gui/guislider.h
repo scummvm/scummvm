@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_GUISLIDER_H
-#define __AC_GUISLIDER_H
+#ifndef AGS_SHARED_GUI_GUISLIDER_H
+#define AGS_SHARED_GUI_GUISLIDER_H
 
 #include <vector>
 #include "gui/guiobject.h"
@@ -76,4 +76,4 @@ private:
 extern std::vector<AGS::Common::GUISlider> guislider;
 extern int numguislider;
 
-#endif // __AC_GUISLIDER_H
+#endif

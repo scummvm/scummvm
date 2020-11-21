@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_UTIL__THREAD_H
-#define __AGS_EE_UTIL__THREAD_H
+#ifndef AGS_ENGINE_UTIL_THREAD_H
+#define AGS_ENGINE_UTIL_THREAD_H
 
 namespace AGS
 {
@@ -61,4 +61,4 @@ public:
 #endif
 
 
-#endif // __AGS_EE_UTIL__THREAD_H
+#endif

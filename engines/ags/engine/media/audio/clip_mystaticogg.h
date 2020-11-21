@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MYSTATICOGG_H
-#define __AC_MYSTATICOGG_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_CLIP_MYSTATICOGG_H
+#define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYSTATICOGG_H
 
 #include "alogg.h"
 #include "media/audio/soundclip.h"
@@ -68,4 +68,4 @@ private:
     void adjust_stream();
 };
 
-#endif // __AC_MYSTATICOGG_H
+#endif

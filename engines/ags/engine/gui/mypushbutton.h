@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_PUSHBUTTON_H
-#define __AC_PUSHBUTTON_H
+#ifndef AGS_ENGINE_GUI_PUSHBUTTON_H
+#define AGS_ENGINE_GUI_PUSHBUTTON_H
 
 #include "gui/newcontrol.h"
 
@@ -34,4 +34,4 @@ struct MyPushButton:public NewControl
   int processmessage(int mcode, int wParam, long lParam) override;
 };
 
-#endif // __AC_PUSHBUTTON_H
+#endif

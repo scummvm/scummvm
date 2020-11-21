@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_AUDIOCLIPTYPE_H
-#define __AC_AUDIOCLIPTYPE_H
+#ifndef AGS_SHARED_AC_AUDIOCLIPTYPE_H
+#define AGS_SHARED_AC_AUDIOCLIPTYPE_H
 
 // Forward declaration
 namespace AGS { namespace Common { class Stream; } }
@@ -41,4 +41,4 @@ struct AudioClipType {
     void WriteToSavegame(Common::Stream *out) const;
 };
 
-#endif // __AC_AUDIOCLIPTYPE_H
+#endif

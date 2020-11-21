@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_GUI__GUIDIALOGINTERNALDEFS_H
-#define __AGS_EE_GUI__GUIDIALOGINTERNALDEFS_H
+#ifndef AGS_ENGINE_GUI_GUIDIALOGINTERNALDEFS_H
+#define AGS_ENGINE_GUI_GUIDIALOGINTERNALDEFS_H
 
 #include "gui/guidialogdefines.h"
 
@@ -34,4 +34,4 @@ extern int ags_misbuttondown (int but);
 #define mbutrelease(X) (!ags_misbuttondown(X))
 #define TEXT_HT usetup.textheight
 
-#endif // __AGS_EE_GUI__GUIDIALOGINTERNALDEFS_H
+#endif

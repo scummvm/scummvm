@@ -28,8 +28,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__DATASTREAM_H
-#define __AGS_CN_UTIL__DATASTREAM_H
+#ifndef AGS_SHARED_UTIL_DATASTREAM_H
+#define AGS_SHARED_UTIL_DATASTREAM_H
 
 #include "util/bbop.h"
 #include "util/stream.h"
@@ -140,4 +140,4 @@ protected:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__DATASTREAM_H
+#endif

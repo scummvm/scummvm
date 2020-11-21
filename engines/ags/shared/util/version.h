@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_MAIN__VERSION_H
-#define __AGS_CN_MAIN__VERSION_H
+#ifndef AGS_SHARED_UTIL_VERSION_H
+#define AGS_SHARED_UTIL_VERSION_H
 
 #include "util/string.h"
 
@@ -115,4 +115,4 @@ private:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_MAIN__VERSION_H
+#endif

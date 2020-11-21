@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_DYNOBJ__SCRIPTFILE_H
-#define __AGS_EE_DYNOBJ__SCRIPTFILE_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTFILE_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTFILE_H
 
 #include "ac/dynobj/cc_dynamicobject.h"
 #include "util/file.h"
@@ -63,4 +63,4 @@ struct sc_File final : ICCDynamicObject {
     void    WriteFloat(const char *address, intptr_t offset, float val) override;
 };
 
-#endif // __AGS_EE_DYNOBJ__SCRIPTFILE_H
+#endif

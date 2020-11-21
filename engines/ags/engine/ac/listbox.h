@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__LISTBOX_H
-#define __AGS_EE_AC__LISTBOX_H
+#ifndef AGS_ENGINE_AC_LISTBOX_H
+#define AGS_ENGINE_AC_LISTBOX_H
 
 #include "gui/guilistbox.h"
 
@@ -55,4 +55,4 @@ void		ListBox_ScrollUp(GUIListBox *listbox);
 
 GUIListBox* is_valid_listbox (int guin, int objn);
 
-#endif // __AGS_EE_AC__LISTBOX_H
+#endif

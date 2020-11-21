@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__DISPLAY_H
-#define __AGS_EE_AC__DISPLAY_H
+#ifndef AGS_ENGINE_AC_DISPLAY_H
+#define AGS_ENGINE_AC_DISPLAY_H
 
 #include "gui/guimain.h"
 
@@ -82,4 +82,4 @@ int get_textwindow_padding(int ifnum);
 // The efficient length of the last source text prepared for display
 extern int source_text_length;
 
-#endif // __AGS_EE_AC__DISPLAY_H
+#endif

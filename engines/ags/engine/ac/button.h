@@ -20,13 +20,8 @@
  *
  */
 
-//=============================================================================
-//
-//
-//
-//=============================================================================
-#ifndef __AGS_EE_AC__BUTTON_H
-#define __AGS_EE_AC__BUTTON_H
+#ifndef AGS_ENGINE_AC_BUTTON_H
+#define AGS_ENGINE_AC_BUTTON_H
 
 #include "gui/guibutton.h"
 
@@ -54,4 +49,4 @@ int			UpdateAnimatingButton(int bu);
 void		StopButtonAnimation(int idxn);
 void		FindAndRemoveButtonAnimation(int guin, int objn);
 
-#endif // __AGS_EE_AC__BUTTON_H
+#endif

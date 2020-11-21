@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALGUI_H
-#define __AGS_EE_AC__GLOBALGUI_H
+#ifndef AGS_ENGINE_AC_GLOBAL_GUI_H
+#define AGS_ENGINE_AC_GLOBAL_GUI_H
 
 // IsGUIOn tells whether GUI is actually displayed on screen right now
 int  IsGUIOn (int guinum);
@@ -56,4 +56,4 @@ int GetGUIObjectAt (int xx, int yy);
 int GetGUIAt (int xx,int yy);
 void SetTextWindowGUI (int guinum);
 
-#endif // __AGS_EE_AC__GLOBALGUI_H
+#endif

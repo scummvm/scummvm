@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__FILE_H
-#define __AGS_CN_UTIL__FILE_H
+#ifndef AGS_SHARED_UTIL_FILE_H
+#define AGS_SHARED_UTIL_FILE_H
 
 #include "core/platform.h"
 #include "util/string.h"
@@ -94,4 +94,4 @@ namespace File
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__FILE_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_MAIN__QUIT_H
-#define __AGS_EE_MAIN__QUIT_H
+#ifndef AGS_ENGINE_MAIN_QUIT_H
+#define AGS_ENGINE_MAIN_QUIT_H
 
 enum QuitReason
 {
@@ -47,4 +47,4 @@ enum QuitReason
     kQuit_FatalError    = kQuitKind_EngineException
 };
 
-#endif // __AGS_EE_MAIN__QUIT_H
+#endif

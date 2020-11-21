@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MYMIDI_H
-#define __AC_MYMIDI_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_CLIP_MYMIDI_H
+#define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYMIDI_H
 
 #include "media/audio/soundclip.h"
 
@@ -60,4 +60,4 @@ protected:
     void adjust_volume() override;
 };
 
-#endif // __AC_MYMIDI_H
+#endif

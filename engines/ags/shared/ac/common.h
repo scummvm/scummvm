@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_COMMON_H
-#define __AC_COMMON_H
+#ifndef AGS_SHARED_AC_COMMON_H
+#define AGS_SHARED_AC_COMMON_H
 
 // These are the project-dependent functions, they are defined both in Engine.App and AGS.Native.
 void quit(const char *);
@@ -32,4 +32,4 @@ int  get_our_eip();
 
 extern const char *game_file_sig;
 
-#endif // __AC_COMMON_H
+#endif

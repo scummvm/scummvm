@@ -20,12 +20,12 @@
  *
  */
 
-#ifndef __AGS_EE_DYNOBJ__SCRIPTINVITEM_H
-#define __AGS_EE_DYNOBJ__SCRIPTINVITEM_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTINVITEM_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTINVITEM_H
 
 struct ScriptInvItem {
     int id;
     int reserved;
 };
 
-#endif // __AGS_EE_DYNOBJ__SCRIPTINVITEM_H
+#endif

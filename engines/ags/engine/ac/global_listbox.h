@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALLISTBOX_H
-#define __AGS_EE_AC__GLOBALLISTBOX_H
+#ifndef AGS_ENGINE_AC_GLOBAL_LISTBOX_H
+#define AGS_ENGINE_AC_GLOBAL_LISTBOX_H
 
 void		ListBoxClear(int guin, int objn);
 void		ListBoxAdd(int guin, int objn, const char*newitem);
@@ -34,4 +34,4 @@ void		ListBoxSetTopItem (int guin, int objn, int item);
 int			ListBoxSaveGameList (int guin, int objn);
 void		ListBoxDirList (int guin, int objn, const char*filemask);
 
-#endif // __AGS_EE_AC__GLOBALLISTBOX_H
+#endif

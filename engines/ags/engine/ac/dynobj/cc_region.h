@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_CCREGION_H
-#define __AC_CCREGION_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CCREGION_H
+#define AGS_ENGINE_AC_DYNOBJ_CCREGION_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -38,4 +38,4 @@ struct CCRegion final : AGSCCDynamicObject {
 
 };
 
-#endif // __AC_CCREGION_H
+#endif

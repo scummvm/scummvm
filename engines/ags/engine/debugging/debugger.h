@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_DEBUGGER_H
-#define __AC_DEBUGGER_H
+#ifndef AGS_ENGINE_DEBUGGING_DEBUGGER_H
+#define AGS_ENGINE_DEBUGGING_DEBUGGER_H
 
 #include "util/string.h"
 
@@ -65,4 +65,4 @@ extern float fps;
 extern FPSDisplayMode display_fps;
 extern int debug_flags;
 
-#endif // __AC_DEBUGGER_H
+#endif

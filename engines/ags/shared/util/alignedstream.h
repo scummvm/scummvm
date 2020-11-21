@@ -42,8 +42,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__ALIGNEDSTREAM_H
-#define __AGS_CN_UTIL__ALIGNEDSTREAM_H
+#ifndef AGS_SHARED_UTIL_ALIGNEDSTREAM_H
+#define AGS_SHARED_UTIL_ALIGNEDSTREAM_H
 
 #include "util/proxystream.h"
 
@@ -114,4 +114,4 @@ private:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__ALIGNEDSTREAM_H
+#endif

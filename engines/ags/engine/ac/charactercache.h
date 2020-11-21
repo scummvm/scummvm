@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__CHARACTERCACHE_H
-#define __AGS_EE_AC__CHARACTERCACHE_H
+#ifndef AGS_ENGINE_AC_CHARACTERCACHE_H
+#define AGS_ENGINE_AC_CHARACTERCACHE_H
 
 namespace AGS { namespace Common { class Bitmap; } }
 using namespace AGS; // FIXME later
@@ -37,4 +37,4 @@ struct CharacterCache {
     // no mirroredWas is required, since the code inverts the sprite number
 };
 
-#endif // __AGS_EE_AC__CHARACTERCACHE_H
+#endif

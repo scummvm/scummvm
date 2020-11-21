@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_SCRIPT__SCRIPT_H
-#define __AGS_EE_SCRIPT__SCRIPT_H
+#ifndef AGS_ENGINE_SCRIPT_SCRIPT_H
+#define AGS_ENGINE_SCRIPT_SCRIPT_H
 
 #include <vector>
 
@@ -121,4 +121,4 @@ extern std::vector<AGS::Common::String> characterScriptObjNames;
 extern AGS::Common::String objectScriptObjNames[MAX_ROOM_OBJECTS];
 extern std::vector<AGS::Common::String> guiScriptObjNames;
 
-#endif // __AGS_EE_SCRIPT__SCRIPT_H
+#endif

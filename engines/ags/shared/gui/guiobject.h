@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_GUIOBJECT_H
-#define __AC_GUIOBJECT_H
+#ifndef AGS_SHARED_GUI_GUIOBJECT_H
+#define AGS_SHARED_GUI_GUIOBJECT_H
 
 #include "core/types.h"
 #include "gfx/bitmap.h"
@@ -131,4 +131,4 @@ extern int all_buttons_disabled;
 // Tells if the given control is considered enabled, taking global flag into account
 inline bool IsGUIEnabled(AGS::Common::GUIObject *g) { return !all_buttons_disabled && g->IsEnabled(); }
 
-#endif // __AC_GUIOBJECT_H
+#endif

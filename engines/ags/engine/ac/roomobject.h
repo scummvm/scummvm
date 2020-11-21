@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__ROOMOBJECT_H
-#define __AGS_EE_AC__ROOMOBJECT_H
+#ifndef AGS_ENGINE_AC_ROOMOBJECT_H
+#define AGS_ENGINE_AC_ROOMOBJECT_H
 
 #include "ac/common_defines.h"
 
@@ -64,4 +64,4 @@ struct RoomObject {
     void WriteToFile(Common::Stream *out) const;
 };
 
-#endif // __AGS_EE_AC__ROOMOBJECT_H
+#endif

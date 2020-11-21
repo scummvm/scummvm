@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_GAME__SAVEGAMECOMPONENTS_H
-#define __AGS_EE_GAME__SAVEGAMECOMPONENTS_H
+#ifndef AGS_ENGINE_GAME_SAVEGAMECOMPONENTS_H
+#define AGS_ENGINE_GAME_SAVEGAMECOMPONENTS_H
 
 #include "game/savegame.h"
 #include "util/stream.h"
@@ -61,4 +61,4 @@ namespace SavegameComponents
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GAME__SAVEGAMECOMPONENTS_H
+#endif

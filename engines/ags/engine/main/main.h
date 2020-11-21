@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_MAIN__MAIN_H
-#define __AGS_EE_MAIN__MAIN_H
+#ifndef AGS_ENGINE_MAIN_MAIN_H
+#define AGS_ENGINE_MAIN_MAIN_H
 
 #include "core/platform.h"
 #include "util/version.h"
@@ -67,4 +67,4 @@ void main_print_help();
 
 int ags_entry_point(int argc, char *argv[]);
 
-#endif // __AGS_EE_MAIN__MAIN_H
+#endif

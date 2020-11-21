@@ -46,8 +46,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_GAME__INTEREACTIONS_H
-#define __AGS_CN_GAME__INTEREACTIONS_H
+#ifndef AGS_SHARED_GAME_INTEREACTIONS_H
+#define AGS_SHARED_GAME_INTEREACTIONS_H
 
 #include <memory>
 #include "util/string_types.h"
@@ -220,4 +220,4 @@ typedef std::shared_ptr<InteractionScripts> PInteractionScripts;
 extern AGS::Common::InteractionVariable globalvars[MAX_GLOBAL_VARIABLES];
 extern int numGlobalVars;
 
-#endif // __AGS_CN_GAME__INTEREACTIONS_H
+#endif

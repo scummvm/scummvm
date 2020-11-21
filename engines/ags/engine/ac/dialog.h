@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__DIALOG_H
-#define __AGS_EE_AC__DIALOG_H
+#ifndef AGS_ENGINE_AC_DIALOG_H
+#define AGS_ENGINE_AC_DIALOG_H
 
 #include <vector>
 #include "ac/dynobj/scriptdialog.h"
@@ -41,4 +41,4 @@ int  show_dialog_options(int dlgnum, int sayChosenOption, bool runGameLoopsInBac
 
 extern ScriptDialog *scrDialog;
 
-#endif // __AGS_EE_AC__DIALOG_H
+#endif

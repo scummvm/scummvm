@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_CCOBJECT_H
-#define __AC_CCOBJECT_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CCOBJECT_H
+#define AGS_ENGINE_AC_DYNOBJ_CCOBJECT_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -38,4 +38,4 @@ struct CCObject final : AGSCCDynamicObject {
 
 };
 
-#endif // __AC_CCOBJECT_H
+#endif

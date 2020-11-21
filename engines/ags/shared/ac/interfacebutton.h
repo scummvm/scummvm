@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_INTERFACEBUTTON_H
-#define __AC_INTERFACEBUTTON_H
+#ifndef AGS_SHARED_AC_INTERFACEBUTTON_H
+#define AGS_SHARED_AC_INTERFACEBUTTON_H
 
 #define MAXBUTTON       20
 #define IBFLG_ENABLED   1
@@ -34,4 +34,4 @@ struct InterfaceButton {
     void set(int xx, int yy, int picc, int overpicc, int actionn);
 };
 
-#endif // __AC_INTERFACEBUTTON_H
+#endif

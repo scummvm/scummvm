@@ -44,8 +44,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_DEBUG__DEBUGMANAGER_H
-#define __AGS_CN_DEBUG__DEBUGMANAGER_H
+#ifndef AGS_SHARED_DEBUGGING_DEBUGMANAGER_H
+#define AGS_SHARED_DEBUGGING_DEBUGMANAGER_H
 
 #include <memory>
 #include <unordered_map>
@@ -170,4 +170,4 @@ extern DebugManager DbgMgr;
 }   // namespace Common
 }   // namespace AGS
 
-#endif // __AGS_CN_DEBUG__DEBUGMANAGER_H
+#endif

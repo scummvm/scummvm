@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_DYNOBJ__CCAUDIOCLIP_H
-#define __AGS_EE_DYNOBJ__CCAUDIOCLIP_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CCAUDIOCLIP_H
+#define AGS_ENGINE_AC_DYNOBJ_CCAUDIOCLIP_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -31,4 +31,4 @@ struct CCAudioClip final : AGSCCDynamicObject {
     void Unserialize(int index, const char *serializedData, int dataSize) override;
 };
 
-#endif // __AGS_EE_DYNOBJ__CCAUDIOCLIP_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_SCRIPTVIEWFRAME_H
-#define __AC_SCRIPTVIEWFRAME_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTVIEWFRAME_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTVIEWFRAME_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -37,4 +37,4 @@ struct ScriptViewFrame final : AGSCCDynamicObject {
     ScriptViewFrame();
 };
 
-#endif // __AC_SCRIPTVIEWFRAME_H
+#endif

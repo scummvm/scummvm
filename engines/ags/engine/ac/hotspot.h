@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__HOTSPOT_H
-#define __AGS_EE_AC__HOTSPOT_H
+#ifndef AGS_ENGINE_AC_HOTSPOT_H
+#define AGS_ENGINE_AC_HOTSPOT_H
 
 #include "ac/dynobj/scripthotspot.h"
 
@@ -44,4 +44,4 @@ const char* Hotspot_GetTextProperty(ScriptHotspot *hss, const char *property);
 // if hotspot is disabled or non-existing, returns 0 (no area)
 int     get_hotspot_at(int xpp,int ypp);
 
-#endif // __AGS_EE_AC__HOTSPOT_H
+#endif

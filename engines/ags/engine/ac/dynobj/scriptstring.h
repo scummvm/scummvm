@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_SCRIPTSTRING_H
-#define __AC_SCRIPTSTRING_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTSTRING_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTSTRING_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -39,4 +39,4 @@ struct ScriptString final : AGSCCDynamicObject, ICCStringClass {
     ScriptString(const char *fromText);
 };
 
-#endif // __AC_SCRIPTSTRING_H
+#endif

@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALSLIDER_H
-#define __AGS_EE_AC__GLOBALSLIDER_H
+#ifndef AGS_ENGINE_AC_GLOBAL_SLIDER_H
+#define AGS_ENGINE_AC_GLOBAL_SLIDER_H
 
 void	SetSliderValue(int guin,int objn, int valn);
 int		GetSliderValue(int guin,int objn);
 
-#endif // __AGS_EE_AC__GLOBALSLIDER_H
+#endif

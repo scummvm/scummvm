@@ -27,8 +27,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_DEBUG__OUTPUTHANDLER_H
-#define __AGS_CN_DEBUG__OUTPUTHANDLER_H
+#ifndef AGS_SHARED_DEBUGGING_OUTPUTHANDLER_H
+#define AGS_SHARED_DEBUGGING_OUTPUTHANDLER_H
 
 #include "debug/out.h"
 #include "util/string.h"
@@ -67,4 +67,4 @@ public:
 }   // namespace Common
 }   // namespace AGS
 
-#endif // __AGS_CN_DEBUG__OUTPUTHANDLER_H
+#endif

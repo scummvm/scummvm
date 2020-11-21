@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_CCCHARACTER_H
-#define __AC_CCCHARACTER_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CCCHARACTER_H
+#define AGS_ENGINE_AC_DYNOBJ_CCCHARACTER_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -39,4 +39,4 @@ struct CCCharacter final : AGSCCDynamicObject {
     void WriteInt16(const char *address, intptr_t offset, int16_t val) override;
 };
 
-#endif // __AC_CCCHARACTER_H
+#endif

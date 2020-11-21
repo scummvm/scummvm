@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_CORE__TYPES_H
-#define __AGS_CN_CORE__TYPES_H
+#ifndef AGS_SHARED_CORE_TYPES_H
+#define AGS_SHARED_CORE_TYPES_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -69,4 +69,4 @@ enum
     kUnit     = 1 << kShift
 };
 
-#endif // __AGS_CN_CORE__TYPES_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_AGSFONTRENDERER_H
-#define __AC_AGSFONTRENDERER_H
+#ifndef AGS_SHARED_FONT_AGSFONTRENDERER_H
+#define AGS_SHARED_FONT_AGSFONTRENDERER_H
 
 struct BITMAP;
 
@@ -64,4 +64,4 @@ protected:
   ~IAGSFontRenderer2() = default;
 };
 
-#endif // __AC_AGSFONTRENDERER_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_INTERFACEELEMENT_H
-#define __AC_INTERFACEELEMENT_H
+#ifndef AGS_SHARED_AC_INTERFACEELEMENT_H
+#define AGS_SHARED_AC_INTERFACEELEMENT_H
 
 #include "ac/interfacebutton.h" // InterfaceButton
 
@@ -56,4 +56,4 @@ button[0].set(0,13,3,-1,0);
 }
 };*/
 
-#endif // __AC_INTERFACEELEMENT_H
+#endif

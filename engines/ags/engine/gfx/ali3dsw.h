@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GFX__ALI3DSW_H
-#define __AGS_EE_GFX__ALI3DSW_H
+#ifndef AGS_ENGINE_GFX_ALI3DSW_H
+#define AGS_ENGINE_GFX_ALI3DSW_H
 
 #include <memory>
 
@@ -277,4 +277,4 @@ private:
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__ALI3DSW_H
+#endif

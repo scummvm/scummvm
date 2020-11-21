@@ -28,8 +28,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_GAME_ROOMFILE_H
-#define __AGS_CN_GAME_ROOMFILE_H
+#ifndef AGS_SHARED_GAME_ROOMFILE_H
+#define AGS_SHARED_GAME_ROOMFILE_H
 
 #include <memory>
 #include <vector>
@@ -99,4 +99,4 @@ HRoomFileError WriteRoomData(const RoomStruct *room, Stream *out, RoomFileVersio
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_GAME_ROOMFILE_H
+#endif

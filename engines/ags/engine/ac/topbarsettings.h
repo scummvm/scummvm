@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__TOPBARSETTINGS_H
-#define __AGS_EE_AC__TOPBARSETTINGS_H
+#ifndef AGS_ENGINE_AC_TOPBARSETTINGS_H
+#define AGS_ENGINE_AC_TOPBARSETTINGS_H
 
 struct TopBarSettings {
     int wantIt;
@@ -37,4 +37,4 @@ struct TopBarSettings {
     }
 };
 
-#endif // __AGS_EE_AC__TOPBARSETTINGS_H
+#endif

@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __CS_COMMON_H
-#define __CS_COMMON_H
+#ifndef AGS_SHARED_SCRIPT_SCRIPT_COMMON_H
+#define AGS_SHARED_SCRIPT_SCRIPT_COMMON_H
 
 #define SCOM_VERSION 90
 #define SCOM_VERSIONSTR "0.90"
@@ -138,4 +138,4 @@ extern int currentline;
 extern const char scfilesig[5];
 #define ENDFILESIG 0xbeefcafe
 
-#endif // __CS_COMMON_H
+#endif

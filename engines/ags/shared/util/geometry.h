@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__GEOMETRY_H
-#define __AGS_CN_UTIL__GEOMETRY_H
+#ifndef AGS_SHARED_UTIL_GEOMETRY_H
+#define AGS_SHARED_UTIL_GEOMETRY_H
 
 #include "util/math.h"
 
@@ -413,4 +413,4 @@ Rect PlaceInRect(const Rect &place, const Rect &item, const RectPlacement &place
 //} // namespace Common
 //} // namespace AGS
 
-#endif // __AGS_CN_UTIL__GEOMETRY_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__KEYCODE_H
-#define __AGS_EE_AC__KEYCODE_H
+#ifndef AGS_ENGINE_AC_KEYCODE_H
+#define AGS_ENGINE_AC_KEYCODE_H
 
 #include "core/platform.h"
 
@@ -177,4 +177,4 @@ int GetKeyForKeyPressCb(int keycode);
 // Returns -1 if not found.
 int PlatformKeyFromAgsKey(int key);
 
-#endif // __AGS_EE_AC__KEYCODE_H
+#endif

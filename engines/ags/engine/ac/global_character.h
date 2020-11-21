@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALCHARACTER_H
-#define __AGS_EE_AC__GLOBALCHARACTER_H
+#ifndef AGS_ENGINE_AC_GLOBALCHARACTER_H
+#define AGS_ENGINE_AC_GLOBALCHARACTER_H
 
 #include "ac/characterinfo.h"
 
@@ -89,4 +89,4 @@ void __sc_displayspeech(int chid, const char *text);
 void DisplaySpeechAt (int xx, int yy, int wii, int aschar, const char*spch);
 int DisplaySpeechBackground(int charid, const char*speel);
 
-#endif // __AGS_EE_AC__CHARACTEREXTRAS_H
+#endif

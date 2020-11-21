@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MYOGG_H
-#define __AC_MYOGG_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_CLIP_MYOGG_H
+#define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYOGG_H
 
 #include "alogg.h"
 #include "media/audio/soundclip.h"
@@ -65,4 +65,4 @@ private:
     void adjust_stream();
 };
 
-#endif // __AC_MYOGG_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_CCHOTSPOT_H
-#define __AC_CCHOTSPOT_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CCHOTSPOT_H
+#define AGS_ENGINE_AC_DYNOBJ_CCHOTSPOT_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -38,4 +38,4 @@ struct CCHotspot final : AGSCCDynamicObject {
 
 };
 
-#endif // __AC_CCHOTSPOT_H
+#endif

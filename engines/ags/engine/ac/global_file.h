@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALFILE_H
-#define __AGS_EE_AC__GLOBALFILE_H
+#ifndef AGS_ENGINE_AC_GLOBAL_FILE_H
+#define AGS_ENGINE_AC_GLOBAL_FILE_H
 
 #include "util/file.h"
 
@@ -43,4 +43,4 @@ char  FileReadRawChar(int32_t handle);
 int   FileReadRawInt(int32_t handle);
 void  FileWriteRawChar(int32_t handle, int chartoWrite);
 
-#endif // __AGS_EE_AC__GLOBALFILE_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MYDUMBMOD_H
-#define __AC_MYDUMBMOD_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_CLIP_MYDUMBMOD_H
+#define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYDUMBMOD_H
 
 #include "aldumb.h"
 #include "media/audio/soundclip.h"
@@ -74,4 +74,4 @@ protected:
     int get_real_mod_pos();
 };
 
-#endif // __AC_MYDUMBMOD_H
+#endif

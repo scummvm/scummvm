@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_PLATFORM__AGSPLATFORMDRIVER_H
-#define __AGS_EE_PLATFORM__AGSPLATFORMDRIVER_H
+#ifndef AGS_ENGINE_PLATFORM_BASE_AGSPLATFORMDRIVER_H
+#define AGS_ENGINE_PLATFORM_BASE_AGSPLATFORMDRIVER_H
 
 #include <errno.h>
 #include <vector>
@@ -177,4 +177,4 @@ int cd_player_control(int cmdd, int datt);
 // instance by calling AGSPlatformDriver::GetDriver()?
 extern AGSPlatformDriver *platform;
 
-#endif // __AGS_EE_PLATFORM__AGSPLATFORMDRIVER_H
+#endif

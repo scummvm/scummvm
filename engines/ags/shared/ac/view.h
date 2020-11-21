@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_VIEW_H
-#define __AC_VIEW_H
+#ifndef AGS_SHARED_AC_VIEW_H
+#define AGS_SHARED_AC_VIEW_H
 
 #include <vector>
 
@@ -85,4 +85,4 @@ struct ViewStruct272 {
 
 void Convert272ViewsToNew(const std::vector<ViewStruct272> &oldv, ViewStruct *newv);
 
-#endif // __AC_VIEW_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GUI_H
-#define __AGS_EE_AC__GUI_H
+#ifndef AGS_ENGINE_AC_GUI_H
+#define AGS_ENGINE_AC_GUI_H
 
 #include "ac/dynobj/scriptgui.h"
 #include "gui/guimain.h"
@@ -90,4 +90,4 @@ extern int ifacepopped;
 extern int ifacepopped;
 extern int mouse_on_iface;
 
-#endif // __AGS_EE_AC__GUI_H
+#endif

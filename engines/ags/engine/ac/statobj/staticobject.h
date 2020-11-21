@@ -28,8 +28,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_STATOBJ__STATICOBJECT_H
-#define __AGS_EE_STATOBJ__STATICOBJECT_H
+#ifndef AGS_ENGINE_AC_STATICOBJ_STATICOBJECT_H
+#define AGS_ENGINE_AC_STATICOBJ_STATICOBJECT_H
 
 #include "core/types.h"
 
@@ -50,4 +50,4 @@ struct ICCStaticObject {
     virtual void    WriteFloat(const char *address, intptr_t offset, float val)     = 0;
 };
 
-#endif // __AGS_EE_STATOBJ__STATICOBJECT_H
+#endif

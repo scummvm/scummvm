@@ -30,8 +30,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__INIFILE_H
-#define __AGS_CN_UTIL__INIFILE_H
+#ifndef AGS_SHARED_UTIL_INIFILE_H
+#define AGS_SHARED_UTIL_INIFILE_H
 
 #include <list>
 #include "util/string.h"
@@ -142,4 +142,4 @@ private:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__INIFILE_H
+#endif

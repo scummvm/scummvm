@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_AC__VIEWPORT_H
-#define __AGS_EE_AC__VIEWPORT_H
+#ifndef AGS_ENGINE_GAME_VIEWPORT_H
+#define AGS_ENGINE_GAME_VIEWPORT_H
 
 #include <memory>
 #include <vector>
@@ -200,4 +200,4 @@ private:
     bool _hasChangedVisible = false;
 };
 
-#endif // __AGS_EE_AC__VIEWPORT_H
+#endif

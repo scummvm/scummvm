@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALINVENTORYITEM_H
-#define __AGS_EE_AC__GLOBALINVENTORYITEM_H
+#ifndef AGS_ENGINE_AC_GLOBAL_INVENTORYITEM_H
+#define AGS_ENGINE_AC_GLOBAL_INVENTORYITEM_H
 
 void set_inv_item_pic(int invi, int piccy);
 void SetInvItemName(int invi, const char *newName);
@@ -33,4 +33,4 @@ int  IsInventoryInteractionAvailable (int item, int mood);
 int  GetInvProperty (int item, const char *property);
 void GetInvPropertyText (int item, const char *property, char *bufer);
 
-#endif // __AGS_EE_AC__GLOBALINVENTORYITEM_H
+#endif

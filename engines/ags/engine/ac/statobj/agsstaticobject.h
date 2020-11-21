@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_STATOBJ__AGSSTATICOBJECT_H
-#define __AGS_EE_STATOBJ__AGSSTATICOBJECT_H
+#ifndef _AGS_ENGINE_AC_STATICOBJ_AGSSTATICOBJECT_H
+#define _AGS_ENGINE_AC_STATICOBJ_AGSSTATICOBJECT_H
 
 #include "ac/statobj/staticobject.h"
 
@@ -50,4 +50,4 @@ struct StaticGame : public AGSStaticObject {
 extern AGSStaticObject GlobalStaticManager;
 extern StaticGame      GameStaticManager;
 
-#endif // __AGS_EE_STATOBJ__AGSSTATICOBJECT_H
+#endif

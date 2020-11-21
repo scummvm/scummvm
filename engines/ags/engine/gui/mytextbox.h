@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MYTEXTBOX_H
-#define __AC_MYTEXTBOX_H
+#ifndef AGS_ENGINE_GUI_MYTEXTBOX_H
+#define AGS_ENGINE_GUI_MYTEXTBOX_H
 
 #include "gui/newcontrol.h"
 
@@ -35,4 +35,4 @@ struct MyTextBox:public NewControl
   int processmessage(int mcode, int wParam, long lParam) override;
 };
 
-#endif // __AC_MYTEXTBOX_H
+#endif

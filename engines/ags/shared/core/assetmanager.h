@@ -41,8 +41,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_CORE__ASSETMANAGER_H
-#define __AGS_CN_CORE__ASSETMANAGER_H
+#ifndef AGS_SHARED_CORE_ASSETMANAGER_H
+#define AGS_SHARED_CORE_ASSETMANAGER_H
 
 #include "util/file.h" // TODO: extract filestream mode constants or introduce generic ones
 
@@ -162,4 +162,4 @@ String GetAssetErrorText(AssetError err);
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_CORE__ASSETMANAGER_H
+#endif

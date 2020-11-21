@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MYWAVE_H
-#define __AC_MYWAVE_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_CLIP_MYWAVE_H
+#define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYWAVE_H
 
 #include "media/audio/soundclip.h"
 
@@ -55,4 +55,4 @@ protected:
     void adjust_volume() override;
 };
 
-#endif // __AC_MYWAVE_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_GUITEXTBOX_H
-#define __AC_GUITEXTBOX_H
+#ifndef AGS_SHARED_GUI_GUITEXTBOX_H
+#define AGS_SHARED_GUI_GUITEXTBOX_H
 
 #include <vector>
 #include "gui/guiobject.h"
@@ -70,4 +70,4 @@ private:
 extern std::vector<AGS::Common::GUITextBox> guitext;
 extern int numguitext;
 
-#endif // __AC_GUITEXTBOX_H
+#endif

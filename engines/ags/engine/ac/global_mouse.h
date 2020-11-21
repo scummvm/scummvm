@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALMOUSE_H
-#define __AGS_EE_AC__GLOBALMOUSE_H
+#ifndef AGS_ENGINE_AC_GLOBAL_MOUSE_H
+#define AGS_ENGINE_AC_GLOBAL_MOUSE_H
 
 void HideMouseCursor ();
 void ShowMouseCursor ();
 
-#endif // __AGS_EE_AC__GLOBALMOUSE_H
+#endif

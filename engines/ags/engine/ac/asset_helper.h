@@ -26,8 +26,9 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_AC__ASSETHELPER_H
-#define __AGS_EE_AC__ASSETHELPER_H
+#ifndef AGS_ENGINE_AC_ASSETHELPER_H
+#define AGS_ENGINE_AC_ASSETHELPER_H
+
 #include <memory>
 #include <utility>
 #include "util/string.h"
@@ -75,4 +76,4 @@ PACKFILE *PackfileFromAsset(const AssetPath &path, size_t &asset_size);
 DUMBFILE *DUMBfileFromAsset(const AssetPath &path, size_t &asset_size);
 bool DoesAssetExistInLib(const AssetPath &assetname);
 
-#endif // __AGS_EE_AC__ASSETHELPER_H
+#endif

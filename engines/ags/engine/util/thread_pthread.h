@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_PLATFORM__THREAD_PTHREAD_H
-#define __AGS_EE_PLATFORM__THREAD_PTHREAD_H
+#ifndef AGS_ENGINE_UTIL_THREAD_PTHREAD_H
+#define AGS_ENGINE_UTIL_THREAD_PTHREAD_H
 
 #include <pthread.h>
 
@@ -119,4 +119,4 @@ typedef PThreadThread Thread;
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_PLATFORM__THREAD_PTHREAD_H
+#endif

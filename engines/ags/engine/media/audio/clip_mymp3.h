@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MYMP3_H
-#define __AC_MYMP3_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_CLIP_MYMP3_H
+#define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYMP3_H
 
 #include "almp3.h"
 #include "media/audio/soundclip.h"
@@ -55,4 +55,4 @@ private:
     void adjust_stream();
 };
 
-#endif // __AC_MYMP3_H
+#endif

@@ -32,8 +32,8 @@
 
 #define _WGT45_
 
-#ifndef __WGT4_H
-#define __WGT4_H
+#ifndef AGS_SHARED_UTIL_WGT4_H
+#define AGS_SHARED_UTIL_WGT4_H
 
 #include "allegro.h"
 
@@ -85,5 +85,4 @@ extern "C"
 // archive attributes to search for - al_findfirst breaks with 0
 #define FA_SEARCH -1
 
-
-#endif // __WGT4_H
+#endif

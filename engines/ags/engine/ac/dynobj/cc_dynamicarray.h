@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __CC_DYNAMICARRAY_H
-#define __CC_DYNAMICARRAY_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CCDYNAMICARRAY_H
+#define AGS_ENGINE_AC_DYNOBJ_CCDYNAMICARRAY_H
 
 #include <vector>
 #include "ac/dynobj/cc_dynamicobject.h"   // ICCDynamicObject

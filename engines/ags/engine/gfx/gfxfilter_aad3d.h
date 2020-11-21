@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GFX__AAD3DGFXFILTER_H
-#define __AGS_EE_GFX__AAD3DGFXFILTER_H
+#ifndef AGS_ENGINE_GFX_AAD3DGFXFILTER_H
+#define AGS_ENGINE_GFX_AAD3DGFXFILTER_H
 
 #include "gfx/gfxfilter_d3d.h"
 
@@ -53,4 +53,4 @@ public:
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__AAD3DGFXFILTER_H
+#endif

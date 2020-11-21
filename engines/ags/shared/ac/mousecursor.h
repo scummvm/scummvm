@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MOUSECURSOR_H
-#define __AC_MOUSECURSOR_H
+#ifndef AGS_SHARED_AC_MOUSECURSOR_H
+#define AGS_SHARED_AC_MOUSECURSOR_H
 
 namespace AGS { namespace Common { class Stream; } }
 using namespace AGS; // FIXME later
@@ -45,4 +45,4 @@ struct MouseCursor {
     void WriteToSavegame(Common::Stream *out) const;
 };
 
-#endif // __AC_MOUSECURSOR_H
+#endif

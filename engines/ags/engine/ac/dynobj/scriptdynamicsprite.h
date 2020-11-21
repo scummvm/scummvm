@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_SCRIPTDYNAMICSPRITE_H
-#define __AC_SCRIPTDYNAMICSPRITE_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTDYNAMICSPRITE_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTDYNAMICSPRITE_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -37,4 +37,4 @@ struct ScriptDynamicSprite final  : AGSCCDynamicObject {
     ScriptDynamicSprite();
 };
 
-#endif // __AC_SCRIPTDYNAMICSPRITE_H
+#endif

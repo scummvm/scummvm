@@ -28,8 +28,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_DEBUG__MESSAGEBUFFER_H
-#define __AGS_EE_DEBUG__MESSAGEBUFFER_H
+#ifndef AGS_ENGINE_DEBUGGING_MESSAGEBUFFER_H
+#define AGS_ENGINE_DEBUGGING_MESSAGEBUFFER_H
 
 #include <vector>
 #include "debug/outputhandler.h"
@@ -65,4 +65,4 @@ private:
 }   // namespace Engine
 }   // namespace AGS
 
-#endif // __AGS_EE_DEBUG__MESSAGEBUFFER_H
+#endif

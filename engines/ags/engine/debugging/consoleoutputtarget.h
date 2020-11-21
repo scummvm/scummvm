@@ -27,8 +27,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_DEBUG__CONSOLEOUTPUTTARGET_H
-#define __AGS_EE_DEBUG__CONSOLEOUTPUTTARGET_H
+#ifndef AGS_ENGINE_DEBUGGING_CONSOLEOUTPUTTARGET_H
+#define AGS_ENGINE_DEBUGGING_CONSOLEOUTPUTTARGET_H
 
 #include "debug/outputhandler.h"
 
@@ -52,4 +52,4 @@ public:
 }   // namespace Engine
 }   // namespace AGS
 
-#endif // __AGS_EE_DEBUG__CONSOLEOUTPUTTARGET_H
+#endif

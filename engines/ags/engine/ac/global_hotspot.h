@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__GLOBALHOTSPOT_H
-#define __AGS_EE_AC__GLOBALHOTSPOT_H
+#ifndef AGS_ENGINE_AC_GLOBAL_HOTSPOT_H
+#define AGS_ENGINE_AC_GLOBAL_HOTSPOT_H
 
 void DisableHotspot(int hsnum);
 void EnableHotspot(int hsnum);
@@ -37,4 +37,4 @@ int  GetHotspotProperty (int hss, const char *property);
 void GetHotspotPropertyText (int item, const char *property, char *bufer);
 
 
-#endif // __AGS_EE_AC__GLOBALHOTSPOT_H
+#endif

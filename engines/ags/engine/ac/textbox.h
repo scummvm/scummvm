@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__TEXTBOX_H
-#define __AGS_EE_AC__TEXTBOX_H
+#ifndef AGS_ENGINE_AC_TEXTBOX_H
+#define AGS_ENGINE_AC_TEXTBOX_H
 
 #include "gui/guitextbox.h"
 
@@ -35,4 +35,4 @@ void		TextBox_SetTextColor(GUITextBox *guit, int colr);
 int			TextBox_GetFont(GUITextBox *guit);
 void		TextBox_SetFont(GUITextBox *guit, int fontnum);
 
-#endif // __AGS_EE_AC__TEXTBOX_H
+#endif

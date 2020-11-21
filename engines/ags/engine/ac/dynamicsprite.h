@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__DYNAMICSPRITE_H
-#define __AGS_EE_AC__DYNAMICSPRITE_H
+#ifndef AGS_ENGINE_AC_DYNAMICSPRITE_H
+#define AGS_ENGINE_AC_DYNAMICSPRITE_H
 
 #include "ac/dynobj/scriptdynamicsprite.h"
 #include "ac/dynobj/scriptdrawingsurface.h"
@@ -53,4 +53,4 @@ ScriptDynamicSprite* DynamicSprite_CreateFromBackground(int frame, int x1, int y
 void	add_dynamic_sprite(int gotSlot, Common::Bitmap *redin, bool hasAlpha = false);
 void	free_dynamic_sprite (int gotSlot);
 
-#endif // __AGS_EE_AC__DYNAMICSPRITE_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__MOUSE_H
-#define __AGS_EE_AC__MOUSE_H
+#ifndef AGS_ENGINE_AC_MOUSE_H
+#define AGS_ENGINE_AC_MOUSE_H
 
 #include "ac/dynobj/scriptmouse.h"
 
@@ -78,4 +78,4 @@ extern ScriptMouse scmouse;
 extern int cur_mode;
 extern int cur_cursor;
 
-#endif // __AGS_EE_AC__MOUSE_H
+#endif

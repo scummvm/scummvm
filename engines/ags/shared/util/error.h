@@ -27,8 +27,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__ERROR_H
-#define __AGS_CN_UTIL__ERROR_H
+#ifndef AGS_SHARED_UTIL_ERROR_H
+#define AGS_SHARED_UTIL_ERROR_H
 
 #include <memory>
 #include "util/string.h"
@@ -142,4 +142,4 @@ public:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__ERROR_H
+#endif

@@ -25,8 +25,9 @@
 // Managed script object interface.
 //
 //=============================================================================
-#ifndef __CC_DYNAMICOBJECT_H
-#define __CC_DYNAMICOBJECT_H
+
+#ifndef AGS_ENGINE_AC_DYNOBJ_CCDYNAMICOBJECT_H
+#define AGS_ENGINE_AC_DYNOBJ_CCDYNAMICOBJECT_H
 
 #include <utility>
 #include "core/types.h"
@@ -123,4 +124,4 @@ extern int ccReleaseObjectReference(int32_t handle);
 
 extern ICCStringClass *stringClassImpl;
 
-#endif // __CC_DYNAMICOBJECT_H
+#endif

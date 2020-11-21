@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GFX__ALI3DOGL_H
-#define __AGS_EE_GFX__ALI3DOGL_H
+#ifndef AGS_ENGINE_GFX_ALI3DOGL_H
+#define AGS_ENGINE_GFX_ALI3DOGL_H
 
 #include <memory>
 #include "gfx/bitmap.h"
@@ -369,4 +369,4 @@ private:
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__ALI3DOGL_H
+#endif

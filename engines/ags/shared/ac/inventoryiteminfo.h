@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_INVENTORYITEMINFO_H
-#define __AC_INVENTORYITEMINFO_H
+#ifndef AGS_SHARED_AC_INVENTORYITEMINFO_H
+#define AGS_SHARED_AC_INVENTORYITEMINFO_H
 
 namespace AGS { namespace Common { class Stream; } }
 using namespace AGS; // FIXME later
@@ -40,4 +40,4 @@ struct InventoryItemInfo {
     void WriteToSavegame(Common::Stream *out) const;
 };
 
-#endif // __AC_INVENTORYITEMINFO_H
+#endif

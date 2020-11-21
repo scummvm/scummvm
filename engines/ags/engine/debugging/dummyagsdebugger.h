@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_DUMMYAGSDEBUGGER_H
-#define __AC_DUMMYAGSDEBUGGER_H
+#ifndef AGS_ENGINE_DEBUGGING_DUMMYAGSDEBUGGER_H
+#define AGS_ENGINE_DEBUGGING_DUMMYAGSDEBUGGER_H
 
 #include "debug/debugger.h"
 
@@ -36,4 +36,4 @@ public:
     virtual char* GetNextMessage() override { return NULL; }
 };
 
-#endif // __AC_DUMMYAGSDEBUGGER_H
+#endif

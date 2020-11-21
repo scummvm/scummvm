@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_DYNOBJ__SCRIPTUSERSTRUCT_H
-#define __AGS_EE_DYNOBJ__SCRIPTUSERSTRUCT_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTUSERSTRUCT_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTUSERSTRUCT_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -83,4 +83,4 @@ namespace ScriptStructHelpers
     ScriptUserObject *CreatePoint(int x, int y);
 };
 
-#endif // __AGS_EE_DYNOBJ__SCRIPTUSERSTRUCT_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_CCDYNAMICOBJECT_H
-#define __AC_CCDYNAMICOBJECT_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CC_AGSDYNAMICOBJECT_H
+#define AGS_ENGINE_AC_DYNOBJ_CC_AGSDYNAMICOBJECT_H
 
 #include "ac/dynobj/cc_dynamicobject.h"
 
@@ -65,4 +65,4 @@ protected:
 
 };
 
-#endif // __AC_CCDYNAMICOBJECT_H
+#endif

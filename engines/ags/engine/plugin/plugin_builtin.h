@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_PLUGIN__PLUGINBUILTIN_H
-#define __AGS_EE_PLUGIN__PLUGINBUILTIN_H
+#ifndef AGS_ENGINE_PLUGIN_PLUGIN_BUILTIN_H
+#define AGS_ENGINE_PLUGIN_PLUGIN_BUILTIN_H
 
 #define PLUGIN_FILENAME_MAX (49)
 
@@ -49,4 +49,4 @@ struct InbuiltPluginDetails {
 // Register a builtin plugin.
 int pl_register_builtin_plugin(InbuiltPluginDetails const &details);
 
-#endif // __AGS_EE_PLUGIN__PLUGINBUILTIN_H
+#endif

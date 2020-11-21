@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_MAIN__GAMEFILE_H
-#define __AGS_EE_MAIN__GAMEFILE_H
+#ifndef AGS_ENGINE_MAIN_GAMEFILE_H
+#define AGS_ENGINE_MAIN_GAMEFILE_H
 
 #include "util/error.h"
 #include "util/string.h"
@@ -34,4 +34,4 @@ HError preload_game_data();
 HError load_game_file();
 void display_game_file_error(HError err);
 
-#endif // __AGS_EE_MAIN__GAMEFILE_H
+#endif

@@ -74,8 +74,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_DEBUG__OUT_H
-#define __AGS_CN_DEBUG__OUT_H
+#ifndef AGS_SHARED_DEBUGGING_OUT_H
+#define AGS_SHARED_DEBUGGING_OUT_H
 
 #include "util/string.h"
 
@@ -162,4 +162,4 @@ namespace Debug
 }   // namespace Common
 }   // namespace AGS
 
-#endif // __AGS_CN_DEBUG__OUT_H
+#endif

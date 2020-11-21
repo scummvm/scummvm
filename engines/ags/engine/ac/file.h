@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_AC__FILE_H
-#define __AGS_EE_AC__FILE_H
+#ifndef AGS_ENGINE_AC_FILE_H
+#define AGS_ENGINE_AC_FILE_H
 
 #include "ac/dynobj/scriptfile.h"
 #include "ac/runtime_defines.h"
@@ -65,4 +65,4 @@ ScriptFileHandle *check_valid_file_handle_ptr(Stream *stream_ptr, const char *op
 ScriptFileHandle *check_valid_file_handle_int32(int32_t handle, const char *operation_name);
 Stream *get_valid_file_stream_from_handle(int32_t handle, const char *operation_name);
 
-#endif // __AGS_EE_AC__FILE_H
+#endif

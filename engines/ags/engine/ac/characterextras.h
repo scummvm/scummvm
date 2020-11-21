@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__CHARACTEREXTRAS_H
-#define __AGS_EE_AC__CHARACTEREXTRAS_H
+#ifndef AGS_ENGINE_AC_CHARACTEREXTRAS_H
+#define AGS_ENGINE_AC_CHARACTEREXTRAS_H
 
 #include "ac/runtime_defines.h"
 
@@ -54,4 +54,4 @@ struct CharacterExtras {
     void WriteToFile(Common::Stream *out);
 };
 
-#endif // __AGS_EE_AC__CHARACTEREXTRAS_H
+#endif

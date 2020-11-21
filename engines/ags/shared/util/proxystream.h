@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_UTIL__PROXYSTREAM_H
-#define __AGS_CN_UTIL__PROXYSTREAM_H
+#ifndef AGS_SHARED_UTIL_PROXYSTREAM_H
+#define AGS_SHARED_UTIL_PROXYSTREAM_H
 
 #include "util/stream.h"
 
@@ -89,4 +89,4 @@ protected:
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__PROXYSTREAM_H
+#endif

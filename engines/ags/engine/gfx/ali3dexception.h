@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GFX__ALI3DEXCEPTION_H
-#define __AGS_EE_GFX__ALI3DEXCEPTION_H
+#ifndef AGS_ENGINE_GFX_ALI3DEXCEPTION_H
+#define AGS_ENGINE_GFX_ALI3DEXCEPTION_H
 
 namespace AGS
 {
@@ -56,4 +56,4 @@ public:
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__ALI3DEXCEPTION_H
+#endif

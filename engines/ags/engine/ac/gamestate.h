@@ -20,9 +20,8 @@
  *
  */
 
-#ifndef __AC_GAMESTATE_H
-#define __AC_GAMESTATE_H
-
+#ifndef AGS_ENGINE_AC_GAMESTATE_H
+#define AGS_ENGINE_AC_GAMESTATE_H
 
 #include <memory>
 #include <vector>
@@ -401,4 +400,4 @@ HorAlignment ReadScriptAlignment(int32_t align);
 
 extern GameState play;
 
-#endif // __AC_GAMESTATE_H
+#endif

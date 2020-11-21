@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__ROOM_H
-#define __AGS_EE_AC__ROOM_H
+#ifndef AGS_ENGINE_AC_ROOM_H
+#define AGS_ENGINE_AC_ROOM_H
 
 #include "ac/dynobj/scriptdrawingsurface.h"
 #include "ac/characterinfo.h"
@@ -76,4 +76,4 @@ void convert_move_path_to_room_resolution(MoveList *ml);
 
 extern AGS::Common::RoomStruct thisroom;
 
-#endif // __AGS_EE_AC__ROOM_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_GUIDEFINES_H
-#define __AC_GUIDEFINES_H
+#ifndef AGS_SHARED_GUI_GUIDEFINES_H
+#define AGS_SHARED_GUI_GUIDEFINES_H
 
 #define GUIMAGIC          0xcafebeef
 #define MAX_GUIOBJ_EVENTS 10
@@ -190,4 +190,4 @@ enum GuiSvgVersion
 
 extern int guis_need_update;
 
-#endif // __AC_GUIDEFINES_H
+#endif

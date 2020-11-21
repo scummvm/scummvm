@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_DEBUG__AGSEDITORDEBUGGER_H
-#define __AGS_EE_DEBUG__AGSEDITORDEBUGGER_H
+#ifndef AGS_ENGINE_DEBUGGING_AGSEDITORDEBUGGER_H
+#define AGS_ENGINE_DEBUGGING_AGSEDITORDEBUGGER_H
 
 struct IAGSEditorDebugger
 {
@@ -36,4 +36,4 @@ public:
     virtual char* GetNextMessage() = 0;
 };
 
-#endif // __AGS_EE_DEBUG__AGSEDITORDEBUGGER_H
+#endif

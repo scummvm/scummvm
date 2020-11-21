@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__EVENT_H
-#define __AGS_EE_AC__EVENT_H
+#ifndef AGS_ENGINE_AC_EVENT_H
+#define AGS_ENGINE_AC_EVENT_H
 
 #include "ac/runtime_defines.h"
 #include "script/runtimescriptvalue.h"
@@ -84,5 +84,4 @@ extern int eventClaimed;
 
 extern const char*tsnames[4];
 
-#endif // __AGS_EE_AC__EVENT_H
-
+#endif

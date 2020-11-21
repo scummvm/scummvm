@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_SCRIPTVIEWPORT_H
-#define __AC_SCRIPTVIEWPORT_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTVIEWPORT_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPTVIEWPORT_H
 
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
@@ -48,4 +48,4 @@ private:
 // Unserialize viewport from the memory stream
 ScriptViewport *Viewport_Unserialize(int handle, const char *serializedData, int dataSize);
 
-#endif // __AC_SCRIPTVIEWPORT_H
+#endif

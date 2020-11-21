@@ -32,8 +32,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GFX__GFXUTIL_H
-#define __AGS_EE_GFX__GFXUTIL_H
+#ifndef AGS_ENGINE_GFX_GFXUTIL_H
+#define AGS_ENGINE_GFX_GFXUTIL_H
 
 #include "gfx/bitmap.h"
 #include "gfx/gfx_def.h"
@@ -67,4 +67,4 @@ namespace GfxUtil
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__GFXUTIL_H
+#endif

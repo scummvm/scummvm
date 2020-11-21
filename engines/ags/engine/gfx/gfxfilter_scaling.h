@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_EE_GFX__SCALINGGFXFILTER_H
-#define __AGS_EE_GFX__SCALINGGFXFILTER_H
+#ifndef AGS_ENGINE_GFX_SCALINGGFXFILTER_H
+#define AGS_ENGINE_GFX_SCALINGGFXFILTER_H
 
 #include "gfx/gfxfilter.h"
 #include "util/scaling.h"
@@ -53,4 +53,4 @@ protected:
 } // namespace Engine
 } // namespace AGS
 
-#endif // __AGS_EE_GFX__SCALINGGFXFILTER_H
+#endif

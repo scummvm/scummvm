@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_CN_AC__DIALOGTOPIC_H
-#define __AGS_CN_AC__DIALOGTOPIC_H
+#ifndef AGS_SHARED_AC_DIALOGTOPIC_H
+#define AGS_SHARED_AC_DIALOGTOPIC_H
 
 namespace AGS { namespace Common { class Stream; } }
 using namespace AGS; // FIXME later
@@ -70,4 +70,4 @@ struct DialogTopic {
 };
 
 
-#endif // __AGS_CN_AC__DIALOGTOPIC_H
+#endif

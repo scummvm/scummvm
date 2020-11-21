@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__DRAWINGSURFACE_H
-#define __AGS_EE_AC__DRAWINGSURFACE_H
+#ifndef AGS_ENGINE_AC_DRAWINGSURFACE_H
+#define AGS_ENGINE_AC_DRAWINGSURFACE_H
 
 #include "ac/dynobj/scriptdrawingsurface.h"
 
@@ -47,4 +47,4 @@ void	DrawingSurface_DrawLine(ScriptDrawingSurface *sds, int fromx, int fromy, in
 void	DrawingSurface_DrawPixel(ScriptDrawingSurface *sds, int x, int y);
 int		DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y);
 
-#endif // __AGS_EE_AC__DRAWINGSURFACE_H
+#endif

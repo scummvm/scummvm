@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_MYLISTBOX_H
-#define __AC_MYLISTBOX_H
+#ifndef AGS_ENGINE_GUI_MYLISTBOX_H
+#define AGS_ENGINE_GUI_MYLISTBOX_H
 
 #include "gui/newcontrol.h"
 
@@ -42,4 +42,4 @@ struct MyListBox:public NewControl
   int processmessage(int mcode, int wParam, long lParam) override;
 };
 
-#endif // __AC_MYLISTBOX_H
+#endif

@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef __AGS_EE_PLUGIN__PLUGINFUNC_H
-#define __AGS_EE_PLUGIN__PLUGINFUNC_H
+#ifndef AGS_ENGINE_AC_GLOBAL_PLUGIN_H
+#define AGS_ENGINE_AC_GLOBAL_PLUGIN_H
 
 void PluginSimulateMouseClick(int pluginButtonID);
 bool RegisterPluginStubs(const char* name);
 
-#endif // __AGS_EE_PLUGIN__PLUGINFUNC_H
+#endif

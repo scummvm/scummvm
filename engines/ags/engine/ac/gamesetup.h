@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AC_GAMESETUP_H
-#define __AC_GAMESETUP_H
+#ifndef AGS_ENGINE_AC_GAMESETUP_H
+#define AGS_ENGINE_AC_GAMESETUP_H
 
 #include "main/graphics_mode.h"
 #include "util/string.h"
@@ -91,4 +91,4 @@ struct GameSetup {
 // Perhaps it makes sense to separate those two group of vars at some point.
 extern GameSetup usetup;
 
-#endif // __AC_GAMESETUP_H
+#endif

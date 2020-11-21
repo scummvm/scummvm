@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AGS_CN_UTIL__DIRECTORY_H
-#define __AGS_CN_UTIL__DIRECTORY_H
+#ifndef AGS_SHARED_UTIL_DIRECTORY_H
+#define AGS_SHARED_UTIL_DIRECTORY_H
 
 #include "core/platform.h"
 #include "util/string.h"
@@ -53,4 +53,4 @@ namespace Directory
 } // namespace Common
 } // namespace AGS
 
-#endif // __AGS_CN_UTIL__DIRECTORY_H
+#endif

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef __AGS_EE_AC__PARSER_H
-#define __AGS_EE_AC__PARSER_H
+#ifndef AGS_ENGINE_AC_PARSER_H
+#define AGS_ENGINE_AC_PARSER_H
 
 int Parser_FindWordID(const char *wordToFind);
 const char* Parser_SaidUnknownWord();
@@ -35,4 +35,4 @@ int is_valid_word_char(char theChar);
 int FindMatchingMultiWordWord(char *thisword, const char **text);
 int parse_sentence (const char *src_text, int *numwords, short*wordarray, short*compareto, int comparetonum);
 
-#endif // __AGS_EE_AC__PARSER_H
+#endif

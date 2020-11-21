@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef __AC_SOUNDCLIP_H
-#define __AC_SOUNDCLIP_H
+#ifndef AGS_ENGINE_MEDIA_AUDIO_SOUNDCLIP_H
+#define AGS_ENGINE_MEDIA_AUDIO_SOUNDCLIP_H
 
 #include "util/mutex.h"
 
@@ -177,4 +177,4 @@ protected:
     }
 };
 
-#endif // __AC_SOUNDCLIP_H
+#endif
