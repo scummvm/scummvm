@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GameDefinitionFile xmlns:baseTypes="urn:schemas-microsoft-com:GamesExplorerBaseTypes.v1" xmlns="urn:schemas-microsoft-com:GameDescription.v1">
+  <GameDefinition gameID="{8236D2E9-2528-4C5C-ABA3-E0B8B657A297}">
+    <Name>Gfx Driver 4</Name>
+    <Description>This is an example GDF for the DirectX SDK.</Description>
+    <ReleaseDate>2006-03-03</ReleaseDate>
+    <Genres>
+      <Genre>Action/Adventure</Genre>
+    </Genres>
+    <Version>
+      <VersionNumber versionNumber="1.0.2.1" />
+    </Version>
+    <WindowsExperienceIndex minimum="1" recommended="1" />
+    <Developers>
+      <Developer URI="http://msdn.microsoft.com/directx/">Microsoft DirectX SDK</Developer>
+    </Developers>
+  </GameDefinition>
+</GameDefinitionFile>
