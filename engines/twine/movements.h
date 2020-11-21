@@ -34,12 +34,37 @@ class Movements {
 private:
 	TwinEEngine *_engine;
 
+	struct ChangedCursorKeys {
+		uint8 forwardChange = 0;
+		uint8 backwardChange = 0;
+		uint8 leftChange = 0;
+		uint8 rightChange = 0;
+		uint8 forwardDown = 0;
+		uint8 backwardDown = 0;
+		uint8 leftDown = 0;
+		uint8 rightDown = 0;
+
+		void update(TwinEEngine* engine);
+
+		inline bool operator==(const ChangedCursorKeys& rhs) const {
+			return forwardChange == rhs.forwardChange && backwardChange == rhs.backwardChange && leftChange == rhs.leftChange && rightChange == rhs.rightChange;
+		}
+
+		inline operator bool () const {
+			return forwardChange && backwardChange && leftChange && rightChange;
+		}
+
+		inline bool operator!=(const ChangedCursorKeys& rhs) const {
+			return forwardChange != rhs.forwardChange || backwardChange != rhs.backwardChange || leftChange != rhs.leftChange || rightChange != rhs.rightChange;
+		}
+	};
+
 	// enter, space, ...
 	int16 heroActionKey = 0;
 	int32 previousLoopActionKey = 0;
 	// cursor keys
-	int32 changedCursorKeys = 0;
-	int32 previousChangedCursorKeys = 0;
+	ChangedCursorKeys changedCursorKeys;
+	ChangedCursorKeys previousChangedCursorKeys;
 
 	/**
 	 * The Actor is controlled by the player. This works well only for the Hero Actor in general.
@@ -88,6 +113,14 @@ private:
 	void processRotationExecution(int actorIdx);
 
 	bool heroAction = false;
+
+	/**
+	 * @brief This is a bitmask of 4 bits that is changed whenever a cursor key has changed. A set bit
+	 * does not mean that the cursor is pressed - but that a change has happened in this particular frame
+	 *
+	 * @note This value is reset with every single call to @c readKeys()
+	 */
+	uint8 cursorKeyMask = 0;
 
 public:
 	Movements(TwinEEngine *engine);
