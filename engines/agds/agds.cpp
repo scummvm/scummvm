@@ -299,11 +299,16 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	}
 	_animations.clear();
 
-	_currentScreenName = name;
-	_currentScreen = new Screen(this, loadObject(name));
-	runProcess(_currentScreen->getObject());
-
 	auto patch = getPatch(name);
+
+	_currentScreenName = name;
+	auto screenObject = loadObject(name);
+	_currentScreen = new Screen(this, screenObject);
+	if (patch)
+		screenObject->allowCalls(false);
+
+	runProcess(screenObject);
+
 	if (patch) {
 		_currentScreen->load(patch);
 		if (_currentCharacter && patch->characterPresent) {
