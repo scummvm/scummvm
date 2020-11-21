@@ -2025,8 +2025,6 @@ const byte *ScummEngine::searchTranslatedLine(const byte *text, const Translatio
 
 void ScummEngine::translateText(const byte *text, byte *trans_buff) {
 	if (_existLanguageFile) {
-		int textLen = resStrLen(text);
-
 		if (_currentScript == 0xff) {
 			// used in drawVerb(), etc
 			debug(7, "translateText: Room=%d, CurrentScript == 0xff", _currentRoom);
