@@ -1,0 +1,219 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include <WinResrc.h>
+#define IDC_STATIC -1
+#include "../../Common/core/def_version.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (United Kingdom) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENG)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_UK
+#pragma code_page(1252)
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DATA
+//
+
+__GDF_XML               DATA                    "DefaultGDF.gdf.xml"
+
+PIXEL_SHADER            DATA                    "tintshader.fxo"
+
+PIXEL_SHADER_LEGACY     DATA                    "tintshaderLegacy.fxo"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION ACI_VERSION_MSRC_DEF
+ PRODUCTVERSION ACI_VERSION_MSRC_DEF
+ FILEFLAGSMASK 0x3fL
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "080904b0"
+        BEGIN
+            VALUE "Comments", "This game was created using AGS - http://www.adventuregamestudio.co.uk/"
+            VALUE "CompanyName", "AGS Engine by Chris Jones et al.        "
+            VALUE "FileDescription", "Adventure Game Studio run-time engine   "
+            VALUE "FileVersion", ACI_VERSION_STR
+            VALUE "InternalName", "acwin"
+            VALUE "LegalCopyright", "AGS Copyright (c) 1999-2010 Chris Jones and " ACI_COPYRIGHT_YEARS " others."
+            VALUE "OriginalFilename", "acwin.exe"
+            VALUE "ProductName", "Made with Adventure Game Studio"
+            VALUE "ProductVersion", ACI_VERSION_STR
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x809, 1200
+    END
+END
+
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include <WinResrc.h>\r\n"
+    "#define IDC_STATIC -1\r\n"
+    "#include ""../../Common/core/def_version.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_ICON                ICON                    "game-1.ico"
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Dialog
+//
+
+IDD_SETUP DIALOGEX 0, 0, 518, 295
+STYLE DS_SETFONT | DS_MODALFRAME | DS_CENTER | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "AGS Game Settings"
+FONT 8, "Tahoma", 400, 0, 0x0
+BEGIN
+    GROUPBOX        "Graphics settings",IDC_GFXOPTIONS,7,7,247,131
+    CONTROL         "Game resolution: XXXX x XXXX",IDC_RESOLUTION,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,15,19,161,10
+    CONTROL         "Driver:",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,14,34,35,10
+    COMBOBOX        IDC_GFXDRIVER,50,32,136,100,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "&Start in a windowed mode",IDC_WINDOWED,"Button",BS_AUTOCHECKBOX | BS_LEFT | BS_VCENTER | WS_TABSTOP,14,49,172,9
+    CONTROL         "Mode:",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,14,66,21,8
+    LTEXT           "",IDC_GFXMODETEXT,50,66,135,8
+    CONTROL         "Fullscreen scale:",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,14,84,56,10
+    COMBOBOX        IDC_FSSCALING,75,82,166,100,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Windowed scale:",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,14,101,54,10
+    COMBOBOX        IDC_WINDOWSCALING,75,99,166,100,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "Scaling method:",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,14,118,56,10
+    COMBOBOX        IDC_GFXFILTER,75,116,166,100,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Gameplay settings",IDC_STATIC,7,141,247,33
+    CONTROL         "Game language:",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,15,155,56,10
+    COMBOBOX        IDC_LANGUAGE,71,153,170,100,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CTEXT           "Static",IDC_VERSION,7,190,247,9
+    DEFPUSHBUTTON   "S&ave",IDOK,7,207,56,14
+    PUSHBUTTON      "&Save and Run",IDOKRUN,67,207,56,14
+    PUSHBUTTON      "Cancel",IDCANCEL,127,207,56,14
+    PUSHBUTTON      "Ad&vanced  >>>",IDC_ADVANCED,188,207,67,14
+    GROUPBOX        "Graphics options",IDC_STATIC,264,7,247,69
+    CONTROL         "Vertical sync",IDC_VSYNC,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,271,20,135,9
+    CONTROL         "Use 85 Hz display (CRT monitors only)",IDC_REFRESH_85HZ,
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,271,33,138,9
+    CONTROL         "Smooth scaled sprites",IDC_ANTIALIAS,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,271,46,138,9
+    CONTROL         "Render sprites at screen resolution",IDC_RENDERATSCREENRES,
+                    "Button",BS_AUTOCHECKBOX | BS_LEFT | BS_VCENTER | WS_TABSTOP,271,59,172,9
+    GROUPBOX        "Sound options",IDC_STATIC,264,79,247,76
+    LTEXT           "Digital Sound:",IDC_STATIC,271,94,46,9
+    COMBOBOX        IDC_DIGISOUND,320,92,176,70,CBS_DROPDOWNLIST | WS_GROUP | WS_TABSTOP
+    LTEXT           "MIDI music:",IDC_STATIC,271,110,47,10
+    COMBOBOX        IDC_MIDIMUSIC,320,108,176,70,CBS_DROPDOWNLIST | WS_TABSTOP
+    CONTROL         "Enable threaded audio",IDC_THREADEDAUDIO,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,271,126,160,9
+    CONTROL         "Use voice pack if available",IDC_VOICEPACK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,271,140,160,9
+    GROUPBOX        "Mouse options",IDC_STATIC,264,158,247,58
+    CONTROL         "Auto lock to window",IDC_MOUSE_AUTOLOCK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,271,173,80,10
+    LTEXT           "Cursor speed: Default",IDC_MOUSESPEED_TEXT,271,187,176,8
+    CONTROL         "",IDC_MOUSESPEED,"msctls_trackbar32",WS_TABSTOP,271,198,226,14
+    GROUPBOX        "Sprite cache",IDC_STATIC,264,219,247,33
+    CONTROL         "Maximum size:",IDC_STATIC,"Static",SS_LEFTNOWORDWRAP | WS_GROUP,271,233,50,10
+    COMBOBOX        IDC_SPRITECACHE,325,231,118,100,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "",IDC_STATIC,264,250,247,36
+    CONTROL         "Custom game saves path",IDC_CUSTOMSAVEDIRCHECK,"Button",BS_AUTOCHECKBOX | WS_TABSTOP,271,256,165,10,WS_EX_TRANSPARENT
+    EDITTEXT        IDC_CUSTOMSAVEDIR,271,269,202,14,ES_AUTOHSCROLL | ES_READONLY
+    PUSHBUTTON      "...",IDC_CUSTOMSAVEDIRBTN,477,269,20,14
+    COMBOBOX        IDC_GFXMODE,50,64,191,100,CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// DESIGNINFO
+//
+
+#ifdef APSTUDIO_INVOKED
+GUIDELINES DESIGNINFO
+BEGIN
+    IDD_SETUP, DIALOG
+    BEGIN
+        LEFTMARGIN, 7
+        RIGHTMARGIN, 511
+        VERTGUIDE, 254
+        VERTGUIDE, 264
+        TOPMARGIN, 7
+        BOTTOMMARGIN, 288
+    END
+END
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_SETUP AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
+#endif    // English (United Kingdom) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
