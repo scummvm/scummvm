@@ -35,12 +35,13 @@ const char *uiKeyMapId = "uiKeyMap";
 const char *cutsceneKeyMapId = "cutsceneKeyMap";
 
 ScopedKeyMap::ScopedKeyMap(TwinEEngine* engine, const char *id) : _engine(engine) {
-	_prevKeyMap = _engine->_input->currentKeyMap();
-	_engine->_input->enableKeyMap(id);
+	_changed = _engine->_input->enableAdditionalKeyMap(id, true);
 }
 
 ScopedKeyMap::~ScopedKeyMap() {
-	_engine->_input->enableKeyMap(_prevKeyMap.c_str());
+	if (_changed) {
+		_engine->_input->enableAdditionalKeyMap(_keymap.c_str(), false);
+	}
 }
 
 Input::Input(TwinEEngine *engine) : _engine(engine) {}
