@@ -26,32 +26,36 @@
 #include "ac/runtime_defines.h"
 
 // Forward declaration
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 struct CharacterExtras {
-    // UGLY UGLY UGLY!! The CharacterInfo struct size is fixed because it's
-    // used in the scripts, therefore overflowing stuff has to go here
-    short invorder[MAX_INVORDER];
-    short invorder_count;
-    // TODO: implement full AABB and keep updated, so that engine could rely on these cached values all time;
-    // TODO: consider having both fixed AABB and volatile one that changes with animation frame (unless you change how anims work)
-    short width;
-    short height;
-    short zoom;
-    short xwas;
-    short ywas;
-    short tint_r;
-    short tint_g;
-    short tint_b;
-    short tint_level;
-    short tint_light;
-    char  process_idle_this_time;
-    char  slow_move_counter;
-    short animwait;
+	// UGLY UGLY UGLY!! The CharacterInfo struct size is fixed because it's
+	// used in the scripts, therefore overflowing stuff has to go here
+	short invorder[MAX_INVORDER];
+	short invorder_count;
+	// TODO: implement full AABB and keep updated, so that engine could rely on these cached values all time;
+	// TODO: consider having both fixed AABB and volatile one that changes with animation frame (unless you change how anims work)
+	short width;
+	short height;
+	short zoom;
+	short xwas;
+	short ywas;
+	short tint_r;
+	short tint_g;
+	short tint_b;
+	short tint_level;
+	short tint_light;
+	char  process_idle_this_time;
+	char  slow_move_counter;
+	short animwait;
 
-    void ReadFromFile(Common::Stream *in);
-    void WriteToFile(Common::Stream *out);
+	void ReadFromFile(Common::Stream *in);
+	void WriteToFile(Common::Stream *out);
 };
 
 #endif

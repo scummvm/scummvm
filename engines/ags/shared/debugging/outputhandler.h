@@ -33,35 +33,31 @@
 #include "debug/out.h"
 #include "util/string.h"
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
-struct DebugMessage
-{
-    String       Text;
-    uint32_t     GroupID;
-    String       GroupName;
-    MessageType  MT;
+struct DebugMessage {
+	String       Text;
+	uint32_t     GroupID;
+	String       GroupName;
+	MessageType  MT;
 
-    DebugMessage() : GroupID(kDbgGroup_None), MT(kDbgMsg_None) {}
-    DebugMessage(const String &text, uint32_t group_id, const String &group_name, MessageType mt)
-        : Text(text)
-        , GroupID(group_id)
-        , GroupName(group_name)
-        , MT(mt)
-    {}
+	DebugMessage() : GroupID(kDbgGroup_None), MT(kDbgMsg_None) {}
+	DebugMessage(const String &text, uint32_t group_id, const String &group_name, MessageType mt)
+		: Text(text)
+		, GroupID(group_id)
+		, GroupName(group_name)
+		, MT(mt) {
+	}
 };
 
-class IOutputHandler
-{
+class IOutputHandler {
 public:
-    virtual ~IOutputHandler() = default;
-    
-    // Print the given text sent from the debug group.
-    // Implementations are free to decide which message components are to be printed, and how.
-    virtual void PrintMessage(const DebugMessage &msg) = 0;
+	virtual ~IOutputHandler() = default;
+
+	// Print the given text sent from the debug group.
+	// Implementations are free to decide which message components are to be printed, and how.
+	virtual void PrintMessage(const DebugMessage &msg) = 0;
 };
 
 }   // namespace Common

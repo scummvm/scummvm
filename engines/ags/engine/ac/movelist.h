@@ -27,25 +27,29 @@
 #include "game/savegame.h"
 
 // Forward declaration
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 #define MAXNEEDSTAGES 256
 #define MAXNEEDSTAGES_LEGACY 40
 
 struct MoveList {
-    int   pos[MAXNEEDSTAGES];
-    int   numstage;
-    fixed xpermove[MAXNEEDSTAGES], ypermove[MAXNEEDSTAGES];
-    int   fromx, fromy;
-    int   onstage, onpart;
-    int   lastx, lasty;
-    char  doneflag;
-    char  direct;  // MoveCharDirect was used or not
+	int   pos[MAXNEEDSTAGES];
+	int   numstage;
+	fixed xpermove[MAXNEEDSTAGES], ypermove[MAXNEEDSTAGES];
+	int   fromx, fromy;
+	int   onstage, onpart;
+	int   lastx, lasty;
+	char  doneflag;
+	char  direct;  // MoveCharDirect was used or not
 
-    void ReadFromFile_Legacy(Common::Stream *in);
-    AGS::Engine::HSaveError ReadFromFile(Common::Stream *in, int32_t cmp_ver);
-    void WriteToFile(Common::Stream *out);
+	void ReadFromFile_Legacy(Common::Stream *in);
+	AGS::Engine::HSaveError ReadFromFile(Common::Stream *in, int32_t cmp_ver);
+	void WriteToFile(Common::Stream *out);
 };
 
 #endif

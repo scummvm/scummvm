@@ -32,17 +32,14 @@
 #include "core/types.h"
 #include "gfx/gfxdefines.h"
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
-class IGfxModeList
-{
+class IGfxModeList {
 public:
-    virtual ~IGfxModeList() = default;
-    virtual int  GetModeCount() const = 0;
-    virtual bool GetMode(int index, DisplayMode &mode) const = 0;
+	virtual ~IGfxModeList() = default;
+	virtual int  GetModeCount() const = 0;
+	virtual bool GetMode(int index, DisplayMode &mode) const = 0;
 };
 
 } // namespace Engine

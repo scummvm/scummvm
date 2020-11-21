@@ -29,41 +29,38 @@
 
 class SplitLines;
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
-class GUILabel:public GUIObject
-{
+class GUILabel: public GUIObject {
 public:
-    GUILabel();
-    
-    String       GetText() const;
+	GUILabel();
 
-    // Operations
-    void Draw(Bitmap *ds) override;
-    void SetText(const String &text);
+	String       GetText() const;
 
-    // Serialization
-    void ReadFromFile(Stream *in, GuiVersion gui_version) override;
-    void WriteToFile(Stream *out) const override;
-    void ReadFromSavegame(Common::Stream *in, GuiSvgVersion svg_ver) override;
-    void WriteToSavegame(Common::Stream *out) const override;
+	// Operations
+	void Draw(Bitmap *ds) override;
+	void SetText(const String &text);
+
+	// Serialization
+	void ReadFromFile(Stream *in, GuiVersion gui_version) override;
+	void WriteToFile(Stream *out) const override;
+	void ReadFromSavegame(Common::Stream *in, GuiSvgVersion svg_ver) override;
+	void WriteToSavegame(Common::Stream *out) const override;
 
 // TODO: these members are currently public; hide them later
 public:
-    String  Text;
-    int32_t Font;
-    color_t TextColor;
-    HorAlignment TextAlignment;
+	String  Text;
+	int32_t Font;
+	color_t TextColor;
+	HorAlignment TextAlignment;
 
 private:
-    void PrepareTextToDraw();
-    size_t SplitLinesForDrawing(SplitLines &lines);
+	void PrepareTextToDraw();
+	size_t SplitLinesForDrawing(SplitLines &lines);
 
-    // prepared text buffer/cache
-    String _textToDraw;
+	// prepared text buffer/cache
+	String _textToDraw;
 };
 
 } // namespace Common

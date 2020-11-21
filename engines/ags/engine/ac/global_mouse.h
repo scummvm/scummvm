@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_MOUSE_H
 #define AGS_ENGINE_AC_GLOBAL_MOUSE_H
 
-void HideMouseCursor ();
-void ShowMouseCursor ();
+void HideMouseCursor();
+void ShowMouseCursor();
 
 #endif

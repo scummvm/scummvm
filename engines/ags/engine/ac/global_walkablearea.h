@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_WALKABLEAREA_H
 #define AGS_ENGINE_AC_GLOBAL_WALKABLEAREA_H
 
-int   GetScalingAt (int x, int y);
+int   GetScalingAt(int x, int y);
 void  SetAreaScaling(int area, int min, int max);
 void  RemoveWalkableArea(int areanum);
 void  RestoreWalkableArea(int areanum);

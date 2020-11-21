@@ -27,41 +27,38 @@
 #include "gui/guiobject.h"
 #include "util/string.h"
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
-class GUITextBox : public GUIObject
-{
+class GUITextBox : public GUIObject {
 public:
-    GUITextBox();
+	GUITextBox();
 
-    bool IsBorderShown() const;
+	bool IsBorderShown() const;
 
-    // Operations
-    void Draw(Bitmap *ds) override;
-    void SetShowBorder(bool on);
- 
-    // Events
-    void OnKeyPress(int keycode) override;
- 
-    // Serialization
-    void ReadFromFile(Stream *in, GuiVersion gui_version) override;
-    void WriteToFile(Stream *out) const override;
-    void ReadFromSavegame(Stream *in, GuiSvgVersion svg_ver) override;
-    void WriteToSavegame(Stream *out) const override;
- 
+	// Operations
+	void Draw(Bitmap *ds) override;
+	void SetShowBorder(bool on);
+
+	// Events
+	void OnKeyPress(int keycode) override;
+
+	// Serialization
+	void ReadFromFile(Stream *in, GuiVersion gui_version) override;
+	void WriteToFile(Stream *out) const override;
+	void ReadFromSavegame(Stream *in, GuiSvgVersion svg_ver) override;
+	void WriteToSavegame(Stream *out) const override;
+
 // TODO: these members are currently public; hide them later
 public:
-    int32_t Font;
-    String  Text;
-    color_t TextColor;
+	int32_t Font;
+	String  Text;
+	color_t TextColor;
 
 private:
-    int32_t TextBoxFlags;
+	int32_t TextBoxFlags;
 
-    void DrawTextBoxContents(Bitmap *ds, color_t text_color);
+	void DrawTextBoxContents(Bitmap *ds, color_t text_color);
 };
 
 } // namespace Common

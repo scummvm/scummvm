@@ -25,15 +25,22 @@
 
 #include "debug/debugger.h"
 
-struct DummyAGSDebugger : IAGSEditorDebugger
-{
+struct DummyAGSDebugger : IAGSEditorDebugger {
 public:
 
-    virtual bool Initialize() override { return false; }
-    virtual void Shutdown() override { }
-    virtual bool SendMessageToEditor(const char *message) override { return false; }
-    virtual bool IsMessageAvailable() override { return false; }
-    virtual char* GetNextMessage() override { return NULL; }
+	virtual bool Initialize() override {
+		return false;
+	}
+	virtual void Shutdown() override { }
+	virtual bool SendMessageToEditor(const char *message) override {
+		return false;
+	}
+	virtual bool IsMessageAvailable() override {
+		return false;
+	}
+	virtual char *GetNextMessage() override {
+		return NULL;
+	}
 };
 
 #endif

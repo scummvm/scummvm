@@ -25,7 +25,7 @@
 
 void FlipScreen(int amount);
 void ShakeScreen(int severe);
-void ShakeScreenBackground (int delay, int amount, int length);
+void ShakeScreenBackground(int delay, int amount, int length);
 void TintScreen(int red, int grn, int blu);
 void my_fade_out(int spdd);
 void SetScreenTransition(int newtrans);

@@ -33,44 +33,40 @@
 #include "util/geometry.h"
 #include "util/string.h"
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 using Common::String;
 
-struct GfxFilterInfo
-{
-    String   Id;
-    String   Name;
-    int      MinScale;
-    int      MaxScale;
+struct GfxFilterInfo {
+	String   Id;
+	String   Name;
+	int      MinScale;
+	int      MaxScale;
 
-    GfxFilterInfo()
-    {}
-    GfxFilterInfo(String id, String name, int min_scale = 0, int max_scale = 0)
-        : Id(id)
-        , Name(name)
-        , MinScale(min_scale)
-        , MaxScale(max_scale)
-    {}
+	GfxFilterInfo() {
+	}
+	GfxFilterInfo(String id, String name, int min_scale = 0, int max_scale = 0)
+		: Id(id)
+		, Name(name)
+		, MinScale(min_scale)
+		, MaxScale(max_scale) {
+	}
 };
 
-class IGfxFilter
-{
+class IGfxFilter {
 public:
-    virtual ~IGfxFilter() = default;
+	virtual ~IGfxFilter() = default;
 
-    virtual const GfxFilterInfo &GetInfo() const = 0;
+	virtual const GfxFilterInfo &GetInfo() const = 0;
 
-    // Init filter for the specified color depth
-    virtual bool Initialize(const int color_depth, String &err_str) = 0;
-    virtual void UnInitialize() = 0;
-    // Try to set rendering translation; returns actual supported destination rect
-    virtual Rect SetTranslation(const Size src_size, const Rect dst_rect) = 0;
-    // Get defined destination rect for this filter
-    virtual Rect GetDestination() const = 0;
+	// Init filter for the specified color depth
+	virtual bool Initialize(const int color_depth, String &err_str) = 0;
+	virtual void UnInitialize() = 0;
+	// Try to set rendering translation; returns actual supported destination rect
+	virtual Rect SetTranslation(const Size src_size, const Rect dst_rect) = 0;
+	// Get defined destination rect for this filter
+	virtual Rect GetDestination() const = 0;
 };
 
 typedef std::shared_ptr<IGfxFilter> PGfxFilter;

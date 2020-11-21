@@ -23,6 +23,6 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_PARSER_H
 #define AGS_ENGINE_AC_GLOBAL_PARSER_H
 
-int SaidUnknownWord (char*buffer);
+int SaidUnknownWord(char *buffer);
 
 #endif

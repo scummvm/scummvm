@@ -23,6 +23,6 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_VIEWFRAME_H
 #define AGS_ENGINE_AC_GLOBAL_VIEWFRAME_H
 
-void SetFrameSound (int vii, int loop, int frame, int sound);
+void SetFrameSound(int vii, int loop, int frame, int sound);
 
 #endif

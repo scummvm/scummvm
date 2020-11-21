@@ -23,10 +23,9 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTAUDIOCHANNEL_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTAUDIOCHANNEL_H
 
-struct ScriptAudioChannel
-{
-    int id;
-    int reserved;
+struct ScriptAudioChannel {
+	int id;
+	int reserved;
 };
 
 #endif

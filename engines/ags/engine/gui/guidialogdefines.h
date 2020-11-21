@@ -85,32 +85,33 @@
 
 #define CTB_KEYPRESS 91
 
-namespace AGS { namespace Common { class Bitmap; } }
+namespace AGS {
+namespace Common {
+class Bitmap;
+}
+}
 using namespace AGS; // FIXME later
 
 //  =========  STRUCTS  ========
-struct DisplayProperties
-{
-    int width;
-    int height;
-    int colors;
-    int textheight;
+struct DisplayProperties {
+	int width;
+	int height;
+	int colors;
+	int textheight;
 };
 
-struct CSCIMessage
-{
-    int code;
-    int id;
-    int wParam;
+struct CSCIMessage {
+	int code;
+	int id;
+	int wParam;
 };
 
-struct OnScreenWindow
-{
-    int x, y;
-    int handle;
-    int oldtop;
+struct OnScreenWindow {
+	int x, y;
+	int handle;
+	int oldtop;
 
-    OnScreenWindow();
+	OnScreenWindow();
 };
 
 #endif

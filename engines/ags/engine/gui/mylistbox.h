@@ -28,18 +28,17 @@
 #define MAXLISTITEM 300
 #define ARROWWIDTH 8
 
-struct MyListBox:public NewControl
-{
-  int items, topitem, numonscreen, selected;
-  char *itemnames[MAXLISTITEM];
-  MyListBox(int xx, int yy, int wii, int hii);
-  void clearlist();
-  ~MyListBox() override;
+struct MyListBox: public NewControl {
+	int items, topitem, numonscreen, selected;
+	char *itemnames[MAXLISTITEM];
+	MyListBox(int xx, int yy, int wii, int hii);
+	void clearlist();
+	~MyListBox() override;
 
-  void draw(Common::Bitmap *ds) override;
-  int pressedon(int mousex, int mousey) override;
-  void additem(char *texx);
-  int processmessage(int mcode, int wParam, long lParam) override;
+	void draw(Common::Bitmap *ds) override;
+	int pressedon(int mousex, int mousey) override;
+	void additem(char *texx);
+	int processmessage(int mcode, int wParam, long lParam) override;
 };
 
 #endif

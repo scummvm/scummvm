@@ -49,44 +49,38 @@
 #define LEGACY_MAX_CUSTOM_PROP_DESC_LENGTH          100
 #define LEGACY_MAX_CUSTOM_PROP_VALUE_LENGTH         500
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
-enum PropertyVersion
-{
-    kPropertyVersion_Initial = 1,
-    kPropertyVersion_340,
-    kPropertyVersion_Current = kPropertyVersion_340
+enum PropertyVersion {
+	kPropertyVersion_Initial = 1,
+	kPropertyVersion_340,
+	kPropertyVersion_Current = kPropertyVersion_340
 };
 
-enum PropertyType
-{
-    kPropertyUndefined = 0,
-    kPropertyBoolean,
-    kPropertyInteger,
-    kPropertyString
+enum PropertyType {
+	kPropertyUndefined = 0,
+	kPropertyBoolean,
+	kPropertyInteger,
+	kPropertyString
 };
 
-enum PropertyError
-{
-    kPropertyErr_NoError,
-    kPropertyErr_UnsupportedFormat
+enum PropertyError {
+	kPropertyErr_NoError,
+	kPropertyErr_UnsupportedFormat
 };
 
 //
 // PropertyDesc - a description of a single custom property
 //
-struct PropertyDesc
-{
-    String       Name;
-    PropertyType Type;
-    String       Description;
-    String       DefaultValue;
+struct PropertyDesc {
+	String       Name;
+	PropertyType Type;
+	String       Description;
+	String       DefaultValue;
 
-    PropertyDesc();
-    PropertyDesc(const String &name, PropertyType type, const String &desc, const String &def_value);
+	PropertyDesc();
+	PropertyDesc(const String &name, PropertyType type, const String &desc, const String &def_value);
 };
 
 // NOTE: AGS has case-insensitive property IDs
@@ -94,16 +88,15 @@ struct PropertyDesc
 typedef std::unordered_map<String, PropertyDesc, HashStrNoCase, StrEqNoCase> PropertySchema;
 
 
-namespace Properties
-{
-    PropertyError ReadSchema(PropertySchema &schema, Stream *in);
-    void          WriteSchema(const PropertySchema &schema, Stream *out);
+namespace Properties {
+PropertyError ReadSchema(PropertySchema &schema, Stream *in);
+void          WriteSchema(const PropertySchema &schema, Stream *out);
 
-    // Reads property values from the stream and assign them to map.
-    // The non-matching existing map items, if any, are NOT erased.
-    PropertyError ReadValues(StringIMap &map, Stream *in);
-    // Writes property values chunk to the stream
-    void          WriteValues(const StringIMap &map, Stream *out);
+// Reads property values from the stream and assign them to map.
+// The non-matching existing map items, if any, are NOT erased.
+PropertyError ReadValues(StringIMap &map, Stream *in);
+// Writes property values chunk to the stream
+void          WriteValues(const StringIMap &map, Stream *out);
 
 } // namespace Properties
 

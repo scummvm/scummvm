@@ -25,19 +25,23 @@
 
 #include "util/file.h"
 
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
-int32_t FileOpen(const char*fnmm, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
+int32_t FileOpen(const char *fnmm, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
 // NOTE: FileOpenCMode is a backwards-compatible replacement for old-style global script function FileOpen
-int32_t FileOpenCMode(const char*fnmm, const char* cmode);
+int32_t FileOpenCMode(const char *fnmm, const char *cmode);
 void  FileClose(int32_t handle);
 void  FileWrite(int32_t handle, const char *towrite);
-void  FileWriteRawLine(int32_t handle, const char*towrite);
-void  FileRead(int32_t handle,char*toread);
-int   FileIsEOF (int32_t handle);
+void  FileWriteRawLine(int32_t handle, const char *towrite);
+void  FileRead(int32_t handle, char *toread);
+int   FileIsEOF(int32_t handle);
 int   FileIsError(int32_t handle);
-void  FileWriteInt(int32_t handle,int into);
+void  FileWriteInt(int32_t handle, int into);
 int   FileReadInt(int32_t handle);
 char  FileReadRawChar(int32_t handle);
 int   FileReadRawInt(int32_t handle);

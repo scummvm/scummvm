@@ -26,49 +26,49 @@
 #include <string.h>
 
 DynObjectRef ScriptString::CreateString(const char *fromText) {
-    return CreateNewScriptStringObj(fromText);
+	return CreateNewScriptStringObj(fromText);
 }
 
 int ScriptString::Dispose(const char *address, bool force) {
-    // always dispose
-    if (text) {
-        free(text);
-        text = nullptr;
-    }
-    delete this;
-    return 1;
+	// always dispose
+	if (text) {
+		free(text);
+		text = nullptr;
+	}
+	delete this;
+	return 1;
 }
 
 const char *ScriptString::GetType() {
-    return "String";
+	return "String";
 }
 
 int ScriptString::Serialize(const char *address, char *buffer, int bufsize) {
-    StartSerialize(buffer);
-    
-    auto toSerialize = text ? text : "";
-    
-    auto len = strlen(toSerialize);
-    SerializeInt(len);
-    strcpy(&serbuffer[bytesSoFar], toSerialize);
-    bytesSoFar += len + 1;
-    
-    return EndSerialize();
+	StartSerialize(buffer);
+
+	auto toSerialize = text ? text : "";
+
+	auto len = strlen(toSerialize);
+	SerializeInt(len);
+	strcpy(&serbuffer[bytesSoFar], toSerialize);
+	bytesSoFar += len + 1;
+
+	return EndSerialize();
 }
 
 void ScriptString::Unserialize(int index, const char *serializedData, int dataSize) {
-    StartUnserialize(serializedData, dataSize);
-    int textsize = UnserializeInt();
-    text = (char*)malloc(textsize + 1);
-    strcpy(text, &serializedData[bytesSoFar]);
-    ccRegisterUnserializedObject(index, text, this);
+	StartUnserialize(serializedData, dataSize);
+	int textsize = UnserializeInt();
+	text = (char *)malloc(textsize + 1);
+	strcpy(text, &serializedData[bytesSoFar]);
+	ccRegisterUnserializedObject(index, text, this);
 }
 
 ScriptString::ScriptString() {
-    text = nullptr;
+	text = nullptr;
 }
 
 ScriptString::ScriptString(const char *fromText) {
-    text = (char*)malloc(strlen(fromText) + 1);
-    strcpy(text, fromText);
+	text = (char *)malloc(strlen(fromText) + 1);
+	strcpy(text, fromText);
 }

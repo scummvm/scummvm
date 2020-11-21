@@ -29,37 +29,36 @@
 extern AGS::Engine::Mutex _mp3_mutex;
 
 // pre-loaded (non-streaming) MP3 file
-struct MYSTATICMP3:public SOUNDCLIP
-{
-    ALMP3_MP3 *tune;
-    char *mp3buffer;
+struct MYSTATICMP3: public SOUNDCLIP {
+	ALMP3_MP3 *tune;
+	char *mp3buffer;
 
-    void poll() override;
+	void poll() override;
 
-    void set_volume(int newvol) override;
-    void set_speed(int new_speed) override;
+	void set_volume(int newvol) override;
+	void set_speed(int new_speed) override;
 
-    void destroy() override;
+	void destroy() override;
 
-    void seek(int pos) override;
+	void seek(int pos) override;
 
-    int get_pos() override;
+	int get_pos() override;
 
-    int get_pos_ms() override;
+	int get_pos_ms() override;
 
-    int get_length_ms() override;
+	int get_length_ms() override;
 
-    int get_sound_type() override;
+	int get_sound_type() override;
 
-    int play() override;
+	int play() override;
 
-    MYSTATICMP3();
+	MYSTATICMP3();
 
 protected:
-    int get_voice() override;
-    void adjust_volume() override;
+	int get_voice() override;
+	void adjust_volume() override;
 private:
-    void adjust_stream();
+	void adjust_stream();
 };
 
 #endif

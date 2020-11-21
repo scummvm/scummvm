@@ -31,34 +31,30 @@
 
 #include "gfx/gfxfilter_allegro.h"
 
-namespace AGS
-{
-namespace Engine
-{
-namespace ALSW
-{
+namespace AGS {
+namespace Engine {
+namespace ALSW {
 
-class HqxGfxFilter : public AllegroGfxFilter
-{
+class HqxGfxFilter : public AllegroGfxFilter {
 public:
-    HqxGfxFilter();
-    ~HqxGfxFilter() override;
+	HqxGfxFilter();
+	~HqxGfxFilter() override;
 
-    const GfxFilterInfo &GetInfo() const override;
+	const GfxFilterInfo &GetInfo() const override;
 
-    bool Initialize(const int color_depth, String &err_str) override;
-    Bitmap *InitVirtualScreen(Bitmap *screen, const Size src_size, const Rect dst_rect) override;
-    Bitmap *ShutdownAndReturnRealScreen() override;
+	bool Initialize(const int color_depth, String &err_str) override;
+	Bitmap *InitVirtualScreen(Bitmap *screen, const Size src_size, const Rect dst_rect) override;
+	Bitmap *ShutdownAndReturnRealScreen() override;
 
-    static const GfxFilterInfo FilterInfo;
+	static const GfxFilterInfo FilterInfo;
 
 protected:
-    Bitmap *PreRenderPass(Bitmap *toRender) override;
+	Bitmap *PreRenderPass(Bitmap *toRender) override;
 
-    typedef void (*PfnHqx)(unsigned char *in, unsigned char *out, int src_w, int src_h, int bpl);
+	typedef void (*PfnHqx)(unsigned char *in, unsigned char *out, int src_w, int src_h, int bpl);
 
-    PfnHqx  _pfnHqx;
-    Bitmap *_hqxScalingBuffer;
+	PfnHqx  _pfnHqx;
+	Bitmap *_hqxScalingBuffer;
 };
 
 } // namespace ALSW

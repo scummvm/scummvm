@@ -25,8 +25,8 @@
 
 // 64 bit: This struct must be 8 byte long
 struct ScriptGUI {
-  int id;
-  int __padding;
+	int id;
+	int __padding;
 };
 
 #endif

@@ -23,16 +23,16 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_ROOM_H
 #define AGS_ENGINE_AC_GLOBAL_ROOM_H
 
-void SetAmbientTint (int red, int green, int blue, int opacity, int luminance);
+void SetAmbientTint(int red, int green, int blue, int opacity, int luminance);
 void SetAmbientLightLevel(int light_level);
 void NewRoom(int nrnum);
-void NewRoomEx(int nrnum,int newx,int newy);
+void NewRoomEx(int nrnum, int newx, int newy);
 void NewRoomNPC(int charid, int nrnum, int newx, int newy);
 void ResetRoom(int nrnum);
 int  HasPlayerBeenInRoom(int roomnum);
-void CallRoomScript (int value);
-int  HasBeenToRoom (int roomnum);
-void GetRoomPropertyText (const char *property, char *bufer);
+void CallRoomScript(int value);
+int  HasBeenToRoom(int roomnum);
+void GetRoomPropertyText(const char *property, char *bufer);
 
 void SetBackgroundFrame(int frnum);
 int GetBackgroundFrame() ;

@@ -25,63 +25,58 @@
 
 #include "core/types.h"
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 // TODO: find the way to merge this with sprite batch transform
-enum GlobalFlipType
-{
-    kFlip_None,
-    kFlip_Horizontal, // this means - mirror over horizontal middle line
-    kFlip_Vertical,   // this means - mirror over vertical middle line
-    kFlip_Both
+enum GlobalFlipType {
+	kFlip_None,
+	kFlip_Horizontal, // this means - mirror over horizontal middle line
+	kFlip_Vertical,   // this means - mirror over vertical middle line
+	kFlip_Both
 };
 
 // GraphicResolution struct determines image size and color depth
-struct GraphicResolution
-{
-    int32_t Width;
-    int32_t Height;
-    int32_t ColorDepth;
+struct GraphicResolution {
+	int32_t Width;
+	int32_t Height;
+	int32_t ColorDepth;
 
-    GraphicResolution()
-        : Width(0)
-        , Height(0)
-        , ColorDepth(0)
-    {
-    }
+	GraphicResolution()
+		: Width(0)
+		, Height(0)
+		, ColorDepth(0) {
+	}
 
-    GraphicResolution(int32_t width, int32_t height, int32_t color_depth)
-    {
-        Width = width;
-        Height = height;
-        ColorDepth = color_depth;
-    }
+	GraphicResolution(int32_t width, int32_t height, int32_t color_depth) {
+		Width = width;
+		Height = height;
+		ColorDepth = color_depth;
+	}
 
-    inline bool IsValid() const { return Width > 0 && Height > 0 && ColorDepth > 0; }
+	inline bool IsValid() const {
+		return Width > 0 && Height > 0 && ColorDepth > 0;
+	}
 };
 
 // DisplayMode struct provides extended description of display mode
-struct DisplayMode : public GraphicResolution
-{
-    int32_t RefreshRate;
-    bool    Vsync;
-    bool    Windowed;
+struct DisplayMode : public GraphicResolution {
+	int32_t RefreshRate;
+	bool    Vsync;
+	bool    Windowed;
 
-    DisplayMode()
-        : RefreshRate(0)
-        , Vsync(false)
-        , Windowed(false)
-    {}
+	DisplayMode()
+		: RefreshRate(0)
+		, Vsync(false)
+		, Windowed(false) {
+	}
 
-    DisplayMode(const GraphicResolution &res, bool windowed = false, int32_t refresh = 0, bool vsync = false)
-        : GraphicResolution(res)
-        , RefreshRate(refresh)
-        , Vsync(vsync)
-        , Windowed(windowed)
-    {}
+	DisplayMode(const GraphicResolution &res, bool windowed = false, int32_t refresh = 0, bool vsync = false)
+		: GraphicResolution(res)
+		, RefreshRate(refresh)
+		, Vsync(vsync)
+		, Windowed(windowed) {
+	}
 };
 
 } // namespace Engine

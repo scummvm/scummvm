@@ -34,7 +34,11 @@
 #include "ac/common_defines.h"
 #include "ac/dynobj/scriptobject.h"
 
-namespace AGS { namespace Common { class Bitmap; } }
+namespace AGS {
+namespace Common {
+class Bitmap;
+}
+}
 using namespace AGS; // FIXME later
 
 extern AGS_INLINE int is_valid_object(int obtest);
@@ -66,7 +70,7 @@ void    Object_SetPosition(ScriptObject *objj, int xx, int yy);
 void    Object_SetX(ScriptObject *objj, int xx);
 void    Object_SetY(ScriptObject *objj, int yy);
 void    Object_GetName(ScriptObject *objj, char *buffer);
-const char* Object_GetName_New(ScriptObject *objj);
+const char *Object_GetName_New(ScriptObject *objj);
 bool    Object_IsInteractionAvailable(ScriptObject *oobj, int mood);
 void    Object_Move(ScriptObject *objj, int x, int y, int speed, int blocking, int direct);
 void    Object_SetClickable(ScriptObject *objj, int clik);
@@ -84,14 +88,14 @@ void    Object_SetIgnoreWalkbehinds(ScriptObject *chaa, int clik);
 int     Object_GetIgnoreWalkbehinds(ScriptObject *chaa);
 void    Object_RunInteraction(ScriptObject *objj, int mode);
 
-int     Object_GetProperty (ScriptObject *objj, const char *property);
+int     Object_GetProperty(ScriptObject *objj, const char *property);
 void    Object_GetPropertyText(ScriptObject *objj, const char *property, char *bufer);
-const char* Object_GetTextProperty(ScriptObject *objj, const char *property);
+const char *Object_GetTextProperty(ScriptObject *objj, const char *property);
 
-void    move_object(int objj,int tox,int toy,int spee,int ignwal);
+void    move_object(int objj, int tox, int toy, int spee, int ignwal);
 void    get_object_blocking_rect(int objid, int *x1, int *y1, int *width, int *y2);
-int     isposinbox(int mmx,int mmy,int lf,int tp,int rt,int bt);
-int     is_pos_in_sprite(int xx,int yy,int arx,int ary, Common::Bitmap *sprit, int spww,int sphh, int flipped = 0);
+int     isposinbox(int mmx, int mmy, int lf, int tp, int rt, int bt);
+int     is_pos_in_sprite(int xx, int yy, int arx, int ary, Common::Bitmap *sprit, int spww, int sphh, int flipped = 0);
 // X and Y co-ordinates must be in native format
 // X and Y are ROOM coordinates
 int     check_click_on_object(int roomx, int roomy, int mood);

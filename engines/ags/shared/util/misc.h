@@ -23,11 +23,11 @@
 /*
   Copyright (c) 2003, Shawn R. Walker
   All rights reserved.
-  
+
   Redistribution and use in source and binary forms, with or without
   modification, are permitted provided that the following conditions
   are met:
-  
+
       * Redistributions of source code must retain the above copyright notice,
         this list of conditions and the following disclaimer.
       * Redistributions in binary form must reproduce the above copyright
@@ -36,7 +36,7 @@
       * Neither the name of Shawn R. Walker nor names of contributors
         may be used to endorse or promote products derived from this software
         without specific prior written permission.
-  
+
   THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
   AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
   IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -54,7 +54,11 @@
 
 #include "util/file.h" // TODO: extract filestream mode constants
 
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 // Case-insensitive file lookup functions. On case-insensitive systems
@@ -64,8 +68,8 @@ using namespace AGS; // FIXME later
 // They are used as a system-independent way to open a file when its name
 // case can be ignored.
 Common::Stream *ci_fopen(const char *file_name,
-                             Common::FileOpenMode open_mode = Common::kFile_Open,
-                             Common::FileWorkMode work_mode = Common::kFile_Read);
+                         Common::FileOpenMode open_mode = Common::kFile_Open,
+                         Common::FileWorkMode work_mode = Common::kFile_Read);
 // TODO: return String object
 char *ci_find_file(const char *dir_name, const char *file_name);
 

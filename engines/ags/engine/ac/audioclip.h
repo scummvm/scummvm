@@ -30,8 +30,8 @@ int     AudioClip_GetFileType(ScriptAudioClip *clip);
 int     AudioClip_GetType(ScriptAudioClip *clip);
 int     AudioClip_GetIsAvailable(ScriptAudioClip *clip);
 void    AudioClip_Stop(ScriptAudioClip *clip);
-ScriptAudioChannel* AudioClip_Play(ScriptAudioClip *clip, int priority, int repeat);
-ScriptAudioChannel* AudioClip_PlayFrom(ScriptAudioClip *clip, int position, int priority, int repeat);
-ScriptAudioChannel* AudioClip_PlayQueued(ScriptAudioClip *clip, int priority, int repeat);
+ScriptAudioChannel *AudioClip_Play(ScriptAudioClip *clip, int priority, int repeat);
+ScriptAudioChannel *AudioClip_PlayFrom(ScriptAudioClip *clip, int position, int priority, int repeat);
+ScriptAudioChannel *AudioClip_PlayQueued(ScriptAudioClip *clip, int priority, int repeat);
 
 #endif

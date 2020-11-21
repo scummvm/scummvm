@@ -31,22 +31,18 @@
 
 #include "gfx/gfxfilter_scaling.h"
 
-namespace AGS
-{
-namespace Engine
-{
-namespace OGL
-{
+namespace AGS {
+namespace Engine {
+namespace OGL {
 
-class OGLGfxFilter : public ScalingGfxFilter
-{
+class OGLGfxFilter : public ScalingGfxFilter {
 public:
-    const GfxFilterInfo &GetInfo() const override;
+	const GfxFilterInfo &GetInfo() const override;
 
-    virtual bool UseLinearFiltering() const;
-    virtual void SetFilteringForStandardSprite();
+	virtual bool UseLinearFiltering() const;
+	virtual void SetFilteringForStandardSprite();
 
-    static const GfxFilterInfo FilterInfo;
+	static const GfxFilterInfo FilterInfo;
 };
 
 } // namespace D3D

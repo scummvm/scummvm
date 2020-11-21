@@ -116,38 +116,35 @@
 #define MAX_SG_EXT_LENGTH 20
 #define MAX_SG_FOLDER_LEN 50
 
-enum GameResolutionType
-{
-    kGameResolution_Undefined   = -1,
-    // definition of 320x200 in very old versions of the engine (somewhere pre-2.56)
-    kGameResolution_Default     = 0,
-    kGameResolution_320x200     = 1,
-    kGameResolution_320x240     = 2,
-    kGameResolution_640x400     = 3,
-    kGameResolution_640x480     = 4,
-    kGameResolution_800x600     = 5,
-    kGameResolution_1024x768    = 6,
-    kGameResolution_1280x720    = 7,
-    kGameResolution_Custom      = 8,
-    kNumGameResolutions,
+enum GameResolutionType {
+	kGameResolution_Undefined   = -1,
+	// definition of 320x200 in very old versions of the engine (somewhere pre-2.56)
+	kGameResolution_Default     = 0,
+	kGameResolution_320x200     = 1,
+	kGameResolution_320x240     = 2,
+	kGameResolution_640x400     = 3,
+	kGameResolution_640x480     = 4,
+	kGameResolution_800x600     = 5,
+	kGameResolution_1024x768    = 6,
+	kGameResolution_1280x720    = 7,
+	kGameResolution_Custom      = 8,
+	kNumGameResolutions,
 
-    kGameResolution_LastLoRes   = kGameResolution_320x240,
-    kGameResolution_FirstHiRes  = kGameResolution_640x400
+	kGameResolution_LastLoRes   = kGameResolution_320x240,
+	kGameResolution_FirstHiRes  = kGameResolution_640x400
 };
 
-inline bool IsLegacyHiRes(GameResolutionType resolution)
-{
-    return resolution > kGameResolution_LastLoRes;
+inline bool IsLegacyHiRes(GameResolutionType resolution) {
+	return resolution > kGameResolution_LastLoRes;
 }
 
 Size ResolutionTypeToSize(GameResolutionType resolution, bool letterbox = false);
 
 // Automatic numbering of dialog options (OPT_DIALOGNUMBERED)
-enum DialogOptionNumbering
-{
-    kDlgOptNoNumbering = -1,
-    kDlgOptKeysOnly    =  0, // implicit key shortcuts
-    kDlgOptNumbering   =  1  // draw option indices and use key shortcuts
+enum DialogOptionNumbering {
+	kDlgOptNoNumbering = -1,
+	kDlgOptKeysOnly    =  0, // implicit key shortcuts
+	kDlgOptNumbering   =  1  // draw option indices and use key shortcuts
 };
 
 // Version of the script api (OPT_BASESCRIPTAPI and OPT_SCRIPTCOMPATLEV).
@@ -156,43 +153,39 @@ enum DialogOptionNumbering
 // two options.
 // NOTE: please remember that those values are valid only for games made with
 // 3.4.0 final and above.
-enum ScriptAPIVersion
-{
-    kScriptAPI_Undefined = INT32_MIN,
-    kScriptAPI_v321 = 0,
-    kScriptAPI_v330 = 1,
-    kScriptAPI_v334 = 2,
-    kScriptAPI_v335 = 3,
-    kScriptAPI_v340 = 4,
-    kScriptAPI_v341 = 5,
-    kScriptAPI_v350 = 6,
-    kScriptAPI_v3507= 7,
-    kScriptAPI_v351 = 8,
-    kScriptAPI_Current = kScriptAPI_v351
+enum ScriptAPIVersion {
+	kScriptAPI_Undefined = INT32_MIN,
+	kScriptAPI_v321 = 0,
+	kScriptAPI_v330 = 1,
+	kScriptAPI_v334 = 2,
+	kScriptAPI_v335 = 3,
+	kScriptAPI_v340 = 4,
+	kScriptAPI_v341 = 5,
+	kScriptAPI_v350 = 6,
+	kScriptAPI_v3507 = 7,
+	kScriptAPI_v351 = 8,
+	kScriptAPI_Current = kScriptAPI_v351
 };
 
 // Determines whether the graphics renderer should scale sprites at the final
 // screen resolution, as opposed to native resolution
-enum RenderAtScreenRes
-{
-    kRenderAtScreenRes_UserDefined  = 0,
-    kRenderAtScreenRes_Enabled      = 1,
-    kRenderAtScreenRes_Disabled     = 2,
+enum RenderAtScreenRes {
+	kRenderAtScreenRes_UserDefined  = 0,
+	kRenderAtScreenRes_Enabled      = 1,
+	kRenderAtScreenRes_Disabled     = 2,
 };
 
 // Method to use when blending two sprites with alpha channel
-enum GameSpriteAlphaRenderingStyle
-{
-    kSpriteAlphaRender_Legacy = 0,
-    kSpriteAlphaRender_Proper
+enum GameSpriteAlphaRenderingStyle {
+	kSpriteAlphaRender_Legacy = 0,
+	kSpriteAlphaRender_Proper
 };
 
 // Method to use when blending two GUI elements with alpha channel
-enum GameGuiAlphaRenderingStyle
-{
-    kGuiAlphaRender_Legacy = 0,
-    kGuiAlphaRender_AdditiveAlpha,
-    kGuiAlphaRender_Proper
+enum GameGuiAlphaRenderingStyle {
+	kGuiAlphaRender_Legacy = 0,
+	kGuiAlphaRender_AdditiveAlpha,
+	kGuiAlphaRender_Proper
 };
 
 
@@ -206,23 +199,26 @@ enum GameGuiAlphaRenderingStyle
 #define SPF_HADALPHACHANNEL 0x80  // the saved sprite on disk has one
 
 // General information about sprite (properties, size)
-struct SpriteInfo
-{
-    uint32_t Flags;
-    int      Width;
-    int      Height;
+struct SpriteInfo {
+	uint32_t Flags;
+	int      Width;
+	int      Height;
 
-    SpriteInfo();
+	SpriteInfo();
 
-    //
-    // Legacy game support
-    //
-    // Gets if sprite should adjust its base size depending on game's resolution
-    inline bool IsRelativeRes() const { return (Flags & SPF_VAR_RESOLUTION) != 0; }
-    // Gets if sprite belongs to high resolution; hi-res sprites should be
-    // downscaled in low-res games, and low-res sprites should be upscaled
-    // in hi-res games
-    inline bool IsLegacyHiRes() const { return (Flags & SPF_HIRES) != 0; }
+	//
+	// Legacy game support
+	//
+	// Gets if sprite should adjust its base size depending on game's resolution
+	inline bool IsRelativeRes() const {
+		return (Flags & SPF_VAR_RESOLUTION) != 0;
+	}
+	// Gets if sprite belongs to high resolution; hi-res sprites should be
+	// downscaled in low-res games, and low-res sprites should be upscaled
+	// in hi-res games
+	inline bool IsLegacyHiRes() const {
+		return (Flags & SPF_HIRES) != 0;
+	}
 };
 
 // Various font parameters, defining and extending font rendering behavior.
@@ -230,32 +226,30 @@ struct SpriteInfo
 // the strictly determined position on canvas, FontInfo may additionally
 // provide instructions on adjusting drawing position, as well as arranging
 // multiple lines, and similar cases.
-struct FontInfo
-{
-    enum AutoOutlineStyle : int
-    {
-        kRounded = 0,
-        kSquared = 1,
-    };
+struct FontInfo {
+	enum AutoOutlineStyle : int {
+		kRounded = 0,
+		kSquared = 1,
+	};
 
-    // General font's loading and rendering flags
-    uint32_t      Flags;
-    // Font size, in points (basically means pixels in AGS)
-    int           SizePt;
-    // Factor to multiply base font size by
-    int           SizeMultiplier;
-    // Outlining font index, or auto-outline flag
-    char          Outline;
-    // Custom vertical render offset, used mainly for fixing broken fonts
-    int           YOffset;
-    // custom line spacing between two lines of text (0 = use font height)
-    int           LineSpacing;
-    // When automatic outlining, thickness of the outline (0 = use legacy thickness)
-    int           AutoOutlineThickness;
-    // When automatic outlining, style of the outline
-    AutoOutlineStyle AutoOutlineStyle;
+	// General font's loading and rendering flags
+	uint32_t      Flags;
+	// Font size, in points (basically means pixels in AGS)
+	int           SizePt;
+	// Factor to multiply base font size by
+	int           SizeMultiplier;
+	// Outlining font index, or auto-outline flag
+	char          Outline;
+	// Custom vertical render offset, used mainly for fixing broken fonts
+	int           YOffset;
+	// custom line spacing between two lines of text (0 = use font height)
+	int           LineSpacing;
+	// When automatic outlining, thickness of the outline (0 = use legacy thickness)
+	int           AutoOutlineThickness;
+	// When automatic outlining, style of the outline
+	AutoOutlineStyle AutoOutlineStyle;
 
-    FontInfo();
+	FontInfo();
 };
 
 #endif

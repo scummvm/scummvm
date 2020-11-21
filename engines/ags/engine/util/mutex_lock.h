@@ -25,44 +25,36 @@
 
 #include "util/mutex.h"
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 
-class MutexLock
-{
+class MutexLock {
 private:
 	BaseMutex *_m;
 	MutexLock(MutexLock const &); // non-copyable
-	MutexLock& operator=(MutexLock const &); // not copy-assignable
+	MutexLock &operator=(MutexLock const &); // not copy-assignable
 
 public:
-	void Release()
-	{
+	void Release() {
 		if (_m != nullptr) _m->Unlock();
 		_m = nullptr;
 	}
 
-	void Acquire(BaseMutex &mutex)
-	{
+	void Acquire(BaseMutex &mutex) {
 		Release();
 		_m = &mutex;
 		_m->Lock();
 	}
 
-	MutexLock() : _m(nullptr)
-	{
+	MutexLock() : _m(nullptr) {
 	}
 
-	explicit MutexLock(BaseMutex &mutex) : _m(nullptr)
-	{
+	explicit MutexLock(BaseMutex &mutex) : _m(nullptr) {
 		Acquire(mutex);
 	}
 
-	~MutexLock()
-	{
+	~MutexLock() {
 		Release();
 	}
 }; // class MutexLock

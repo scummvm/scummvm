@@ -23,45 +23,38 @@
 #ifndef AGS_ENGINE_UTIL_MUTEXT_WINDOWS_H
 #define AGS_ENGINE_UTIL_MUTEXT_WINDOWS_H
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 
-class WindowsMutex : public BaseMutex
-{
+class WindowsMutex : public BaseMutex {
 public:
-  WindowsMutex()
-  {
-    _mutex = CreateMutex(NULL, FALSE, NULL);
+	WindowsMutex() {
+		_mutex = CreateMutex(NULL, FALSE, NULL);
 
-    _ASSERT(_mutex != NULL);
-  }
+		_ASSERT(_mutex != NULL);
+	}
 
-  ~WindowsMutex()
-  {
-    _ASSERT(_mutex != NULL);
+	~WindowsMutex() {
+		_ASSERT(_mutex != NULL);
 
-    CloseHandle(_mutex);
-  }
+		CloseHandle(_mutex);
+	}
 
-  inline void Lock()
-  {
-    _ASSERT(_mutex != NULL);
+	inline void Lock() {
+		_ASSERT(_mutex != NULL);
 
-    WaitForSingleObject(_mutex, INFINITE);
-  }
+		WaitForSingleObject(_mutex, INFINITE);
+	}
 
-  inline void Unlock()
-  {
-    _ASSERT(_mutex != NULL);
+	inline void Unlock() {
+		_ASSERT(_mutex != NULL);
 
-    ReleaseMutex(_mutex);
-  }
+		ReleaseMutex(_mutex);
+	}
 
 private:
-  HANDLE _mutex;
+	HANDLE _mutex;
 };
 
 

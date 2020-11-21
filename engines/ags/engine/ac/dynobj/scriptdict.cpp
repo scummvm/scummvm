@@ -22,38 +22,33 @@
 
 #include "ac/dynobj/scriptdict.h"
 
-int ScriptDictBase::Dispose(const char *address, bool force)
-{
-    Clear();
-    delete this;
-    return 1;
+int ScriptDictBase::Dispose(const char *address, bool force) {
+	Clear();
+	delete this;
+	return 1;
 }
 
-const char *ScriptDictBase::GetType()
-{
-    return "StringDictionary";
+const char *ScriptDictBase::GetType() {
+	return "StringDictionary";
 }
 
-int ScriptDictBase::Serialize(const char *address, char *buffer, int bufsize)
-{
-    size_t total_sz = CalcSerializeSize() + sizeof(int32_t) * 2;
-    if (bufsize < 0 || total_sz >(size_t)bufsize)
-    {
-        // buffer not big enough, ask for a bigger one
-        return -((int)total_sz);
-    }
-    StartSerialize(buffer);
-    SerializeInt(IsSorted());
-    SerializeInt(IsCaseSensitive());
-    SerializeContainer();
-    return EndSerialize();
+int ScriptDictBase::Serialize(const char *address, char *buffer, int bufsize) {
+	size_t total_sz = CalcSerializeSize() + sizeof(int32_t) * 2;
+	if (bufsize < 0 || total_sz > (size_t)bufsize) {
+		// buffer not big enough, ask for a bigger one
+		return -((int)total_sz);
+	}
+	StartSerialize(buffer);
+	SerializeInt(IsSorted());
+	SerializeInt(IsCaseSensitive());
+	SerializeContainer();
+	return EndSerialize();
 }
 
-void ScriptDictBase::Unserialize(int index, const char *serializedData, int dataSize)
-{
-    // NOTE: we expect sorted/case flags are read by external reader;
-    // this is awkward, but I did not find better design solution atm
-    StartUnserialize(serializedData, dataSize);
-    UnserializeContainer(serializedData);
-    ccRegisterUnserializedObject(index, this, this);
+void ScriptDictBase::Unserialize(int index, const char *serializedData, int dataSize) {
+	// NOTE: we expect sorted/case flags are read by external reader;
+	// this is awkward, but I did not find better design solution atm
+	StartUnserialize(serializedData, dataSize);
+	UnserializeContainer(serializedData);
+	ccRegisterUnserializedObject(index, this, this);
 }

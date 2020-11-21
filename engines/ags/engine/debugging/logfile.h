@@ -38,49 +38,47 @@
 #include <memory>
 #include "debug/outputhandler.h"
 
-namespace AGS
-{
+namespace AGS {
 
-namespace Common { class Stream; }
+namespace Common {
+class Stream;
+}
 
-namespace Engine
-{
+namespace Engine {
 
 using Common::DebugMessage;
 using Common::Stream;
 using Common::String;
 
-class LogFile : public AGS::Common::IOutputHandler
-{
+class LogFile : public AGS::Common::IOutputHandler {
 public:
-    enum OpenMode
-    {
-        kLogFile_Overwrite,
-        kLogFile_OverwriteAtFirstMessage,
-        kLogFile_Append
-    };
+	enum OpenMode {
+		kLogFile_Overwrite,
+		kLogFile_OverwriteAtFirstMessage,
+		kLogFile_Append
+	};
 
 public:
-        LogFile();
+	LogFile();
 
-    void PrintMessage(const Common::DebugMessage &msg) override;
+	void PrintMessage(const Common::DebugMessage &msg) override;
 
-    // Open file using given file path, optionally appending if one exists
-    //
-    // TODO: filepath parameter here may be actually used as a pattern
-    // or prefix, while the actual filename could be made by combining
-    // this prefix with current date, game name, and similar additional
-    // useful information. Whether this is to be determined here or on
-    // high-level side remains a question.
-    //
-    bool         OpenFile(const String &file_path, OpenMode open_mode = kLogFile_Overwrite);
-        // Close file
-    void         CloseFile();
+	// Open file using given file path, optionally appending if one exists
+	//
+	// TODO: filepath parameter here may be actually used as a pattern
+	// or prefix, while the actual filename could be made by combining
+	// this prefix with current date, game name, and similar additional
+	// useful information. Whether this is to be determined here or on
+	// high-level side remains a question.
+	//
+	bool         OpenFile(const String &file_path, OpenMode open_mode = kLogFile_Overwrite);
+	// Close file
+	void         CloseFile();
 
 private:
-        std::unique_ptr<Stream> _file;
-        String                _filePath;
-        OpenMode              _openMode;
+	std::unique_ptr<Stream> _file;
+	String                _filePath;
+	OpenMode              _openMode;
 };
 
 }   // namespace Engine

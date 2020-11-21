@@ -25,62 +25,64 @@
 
 #include <vector>
 
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 #define VFLG_FLIPSPRITE 1
 
 struct ViewFrame {
-    int   pic;
-    short xoffs, yoffs;
-    short speed;
-    int   flags;
-    int   sound;  // play sound when this frame comes round
-    int   reserved_for_future[2];
-    ViewFrame();
+	int   pic;
+	short xoffs, yoffs;
+	short speed;
+	int   flags;
+	int   sound;  // play sound when this frame comes round
+	int   reserved_for_future[2];
+	ViewFrame();
 
-    void ReadFromFile(Common::Stream *in);
-    void WriteToFile(Common::Stream *out);
+	void ReadFromFile(Common::Stream *in);
+	void WriteToFile(Common::Stream *out);
 };
 
 #define LOOPFLAG_RUNNEXTLOOP 1
 
-struct ViewLoopNew
-{
-    short numFrames;
-    int   flags;
-    ViewFrame *frames;
+struct ViewLoopNew {
+	short numFrames;
+	int   flags;
+	ViewFrame *frames;
 
-    ViewLoopNew();
-    void Initialize(int frameCount);
-    void Dispose();
-    bool RunNextLoop();
-    void WriteToFile_v321(Common::Stream *out);
-    void ReadFromFile_v321(Common::Stream *in);
-    void WriteFrames_Aligned(Common::Stream *out);
-    void ReadFrames_Aligned(Common::Stream *in);
+	ViewLoopNew();
+	void Initialize(int frameCount);
+	void Dispose();
+	bool RunNextLoop();
+	void WriteToFile_v321(Common::Stream *out);
+	void ReadFromFile_v321(Common::Stream *in);
+	void WriteFrames_Aligned(Common::Stream *out);
+	void ReadFrames_Aligned(Common::Stream *in);
 };
 
-struct ViewStruct
-{
-    short numLoops;
-    ViewLoopNew *loops;
+struct ViewStruct {
+	short numLoops;
+	ViewLoopNew *loops;
 
-    ViewStruct();
-    void Initialize(int loopCount);
-    void Dispose();
-    void WriteToFile(Common::Stream *out);
-    void ReadFromFile(Common::Stream *in);
+	ViewStruct();
+	void Initialize(int loopCount);
+	void Dispose();
+	void WriteToFile(Common::Stream *out);
+	void ReadFromFile(Common::Stream *in);
 };
 
 struct ViewStruct272 {
-    short     numloops;
-    short     numframes[16];
-    int       loopflags[16];
-    ViewFrame frames[16][20];
+	short     numloops;
+	short     numframes[16];
+	int       loopflags[16];
+	ViewFrame frames[16][20];
 
-    ViewStruct272();
-    void ReadFromFile(Common::Stream *in);
+	ViewStruct272();
+	void ReadFromFile(Common::Stream *in);
 };
 
 void Convert272ViewsToNew(const std::vector<ViewStruct272> &oldv, ViewStruct *newv);

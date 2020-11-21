@@ -33,7 +33,11 @@
 #include <utility>
 #include "util/string.h"
 
-namespace AGS { namespace Common {class Stream;}}
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using AGS::Common::Stream;
 using AGS::Common::String;
 
@@ -45,8 +49,8 @@ String  get_known_assetlib(const String &filename);
 Stream *find_open_asset(const String &filename);
 
 extern "C" {
-    struct PACKFILE; // Allegro 4's own stream type
-    struct DUMBFILE; // DUMB stream type
+	struct PACKFILE; // Allegro 4's own stream type
+	struct DUMBFILE; // DUMB stream type
 }
 
 // AssetPath combines asset library and item names
@@ -62,11 +66,10 @@ AssetPath get_voice_over_assetpath(const String &filename);
 // Custom AGS PACKFILE user object
 // TODO: it is preferrable to let our Stream define custom readable window instead,
 // keeping this as simple as possible for now (we may require a stream classes overhaul).
-struct AGS_PACKFILE_OBJ
-{
-    std::unique_ptr<Stream> stream;
-    size_t asset_size = 0u;
-    size_t remains = 0u;
+struct AGS_PACKFILE_OBJ {
+	std::unique_ptr<Stream> stream;
+	size_t asset_size = 0u;
+	size_t remains = 0u;
 };
 // Creates PACKFILE stream from AGS asset.
 // This function is supposed to be used only when you have to create Allegro

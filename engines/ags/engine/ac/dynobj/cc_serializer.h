@@ -27,7 +27,7 @@
 
 struct AGSDeSerializer : ICCObjectReader {
 
-    void Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) override;
+	void Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) override;
 };
 
 extern AGSDeSerializer ccUnserializer;

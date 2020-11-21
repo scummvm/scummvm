@@ -24,21 +24,25 @@
 #define AGS_SHARED_AC_AUDIOCLIPTYPE_H
 
 // Forward declaration
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 #define AUDIO_CLIP_TYPE_SOUND 1
 struct AudioClipType {
-    int id;
-    int reservedChannels;
-    int volume_reduction_while_speech_playing;
-    int crossfadeSpeed;
-    int reservedForFuture;
+	int id;
+	int reservedChannels;
+	int volume_reduction_while_speech_playing;
+	int crossfadeSpeed;
+	int reservedForFuture;
 
-    void ReadFromFile(Common::Stream *in);
-    void WriteToFile(Common::Stream *out);
-    void ReadFromSavegame(Common::Stream *in);
-    void WriteToSavegame(Common::Stream *out) const;
+	void ReadFromFile(Common::Stream *in);
+	void WriteToFile(Common::Stream *out);
+	void ReadFromSavegame(Common::Stream *in);
+	void WriteToSavegame(Common::Stream *out) const;
 };
 
 #endif

@@ -26,25 +26,22 @@
 #include "core/platform.h"
 #include "util/string.h"
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
-class BaseLibrary
-{
+class BaseLibrary {
 public:
-  BaseLibrary() = default;
+	BaseLibrary() = default;
 
-  virtual ~BaseLibrary() = default;
+	virtual ~BaseLibrary() = default;
 
-  virtual AGS::Common::String GetFilenameForLib(AGS::Common::String libraryName) = 0;
+	virtual AGS::Common::String GetFilenameForLib(AGS::Common::String libraryName) = 0;
 
-  virtual bool Load(AGS::Common::String libraryName) = 0;
+	virtual bool Load(AGS::Common::String libraryName) = 0;
 
-  virtual bool Unload() = 0;
+	virtual bool Unload() = 0;
 
-  virtual void *GetFunctionAddress(AGS::Common::String functionName) = 0;
+	virtual void *GetFunctionAddress(AGS::Common::String functionName) = 0;
 };
 
 

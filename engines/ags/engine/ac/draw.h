@@ -29,14 +29,14 @@
 #include "gfx/gfx_def.h"
 #include "util/wgt2allg.h"
 
-namespace AGS
-{
-    namespace Common
-    {
-        class Bitmap;
-        typedef std::shared_ptr<Common::Bitmap> PBitmap;
-    }
-    namespace Engine { class IDriverDependantBitmap; }
+namespace AGS {
+namespace Common {
+class Bitmap;
+typedef std::shared_ptr<Common::Bitmap> PBitmap;
+}
+namespace Engine {
+class IDriverDependantBitmap;
+}
 }
 using namespace AGS; // FIXME later
 
@@ -54,10 +54,10 @@ using namespace AGS; // FIXME later
 
 
 struct CachedActSpsData {
-    int xWas, yWas;
-    int baselineWas;
-    int isWalkBehindHere;
-    int valid;
+	int xWas, yWas;
+	int baselineWas;
+	int isWalkBehindHere;
+	int valid;
 };
 
 // Converts AGS color index to the actual bitmap color using game's color depth
@@ -103,8 +103,8 @@ void mark_current_background_dirty();
 void invalidate_cached_walkbehinds();
 // Avoid freeing and reallocating the memory if possible
 Common::Bitmap *recycle_bitmap(Common::Bitmap *bimp, int coldep, int wid, int hit, bool make_transparent = false);
-Engine::IDriverDependantBitmap* recycle_ddb_bitmap(Engine::IDriverDependantBitmap *bimp, Common::Bitmap *source, bool hasAlpha = false, bool opaque = false);
-// Draw everything 
+Engine::IDriverDependantBitmap *recycle_ddb_bitmap(Engine::IDriverDependantBitmap *bimp, Common::Bitmap *source, bool hasAlpha = false, bool opaque = false);
+// Draw everything
 void render_graphics(Engine::IDriverDependantBitmap *extraBitmap = nullptr, int extraX = 0, int extraY = 0);
 // Construct game scene, scheduling drawing list for the renderer
 void construct_game_scene(bool full_redraw = false);
@@ -112,8 +112,8 @@ void construct_game_scene(bool full_redraw = false);
 void construct_game_screen_overlay(bool draw_mouse = true);
 // Construct engine overlay with debugging tools (fps, console)
 void construct_engine_overlay();
-void add_to_sprite_list(Engine::IDriverDependantBitmap* spp, int xx, int yy, int baseline, int trans, int sprNum, bool isWalkBehind = false);
-void tint_image (Common::Bitmap *g, Common::Bitmap *source, int red, int grn, int blu, int light_level, int luminance=255);
+void add_to_sprite_list(Engine::IDriverDependantBitmap *spp, int xx, int yy, int baseline, int trans, int sprNum, bool isWalkBehind = false);
+void tint_image(Common::Bitmap *g, Common::Bitmap *source, int red, int grn, int blu, int light_level, int luminance = 255);
 void draw_sprite_support_alpha(Common::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, Common::Bitmap *image, bool src_has_alpha,
                                Common::BlendMode blend_mode = Common::kBlendMode_Alpha, int alpha = 0xFF);
 void draw_sprite_slot_support_alpha(Common::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, int src_slot,
@@ -126,7 +126,7 @@ void render_to_screen();
 void draw_game_screen_callback();
 void GfxDriverOnInitCallback(void *data);
 bool GfxDriverNullSpriteCallback(int x, int y);
-void putpixel_compensate (Common::Bitmap *g, int xx,int yy, int col);
+void putpixel_compensate(Common::Bitmap *g, int xx, int yy, int col);
 // create the actsps[aa] image with the object drawn correctly
 // returns 1 if nothing at all has changed and actsps is still
 // intact from last time; 0 otherwise

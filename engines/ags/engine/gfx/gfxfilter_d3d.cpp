@@ -26,32 +26,26 @@
 #include <d3d9.h>
 #endif
 
-namespace AGS
-{
-namespace Engine
-{
-namespace D3D
-{
+namespace AGS {
+namespace Engine {
+namespace D3D {
 
 const GfxFilterInfo D3DGfxFilter::FilterInfo = GfxFilterInfo("StdScale", "Nearest-neighbour");
 
-const GfxFilterInfo &D3DGfxFilter::GetInfo() const
-{
-    return FilterInfo;
+const GfxFilterInfo &D3DGfxFilter::GetInfo() const {
+	return FilterInfo;
 }
 
-void D3DGfxFilter::SetSamplerStateForStandardSprite(void *direct3ddevice9)
-{
+void D3DGfxFilter::SetSamplerStateForStandardSprite(void *direct3ddevice9) {
 #if AGS_PLATFORM_OS_WINDOWS
-    IDirect3DDevice9* d3d9 = ((IDirect3DDevice9*)direct3ddevice9);
-    d3d9->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
-    d3d9->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
+	IDirect3DDevice9 *d3d9 = ((IDirect3DDevice9 *)direct3ddevice9);
+	d3d9->SetSamplerState(0, D3DSAMP_MINFILTER, D3DTEXF_POINT);
+	d3d9->SetSamplerState(0, D3DSAMP_MAGFILTER, D3DTEXF_POINT);
 #endif
 }
 
-bool D3DGfxFilter::NeedToColourEdgeLines()
-{
-    return false;
+bool D3DGfxFilter::NeedToColourEdgeLines() {
+	return false;
 }
 
 } // namespace D3D

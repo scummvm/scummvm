@@ -26,29 +26,29 @@
 #include "ac/dynobj/scriptdrawingsurface.h"
 
 struct ScriptDialogOptionsRendering final : AGSCCDynamicObject {
-    int x, y, width, height;
-    bool hasAlphaChannel;
-    int parserTextboxX, parserTextboxY;
-    int parserTextboxWidth;
-    int dialogID;
-    int activeOptionID;
-    int chosenOptionID;
-    ScriptDrawingSurface *surfaceToRenderTo;
-    bool surfaceAccessed;
-    bool needRepaint;
+	int x, y, width, height;
+	bool hasAlphaChannel;
+	int parserTextboxX, parserTextboxY;
+	int parserTextboxWidth;
+	int dialogID;
+	int activeOptionID;
+	int chosenOptionID;
+	ScriptDrawingSurface *surfaceToRenderTo;
+	bool surfaceAccessed;
+	bool needRepaint;
 
-    // return the type name of the object
-    const char *GetType() override;
+	// return the type name of the object
+	const char *GetType() override;
 
-    // serialize the object into BUFFER (which is BUFSIZE bytes)
-    // return number of bytes used
-    int Serialize(const char *address, char *buffer, int bufsize) override;
+	// serialize the object into BUFFER (which is BUFSIZE bytes)
+	// return number of bytes used
+	int Serialize(const char *address, char *buffer, int bufsize) override;
 
-    void Unserialize(int index, const char *serializedData, int dataSize) override;
+	void Unserialize(int index, const char *serializedData, int dataSize) override;
 
-    void Reset();
+	void Reset();
 
-    ScriptDialogOptionsRendering();
+	ScriptDialogOptionsRendering();
 };
 
 

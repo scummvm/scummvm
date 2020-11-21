@@ -22,33 +22,27 @@
 
 #include "gfx/gfxfilter_scaling.h"
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
-bool ScalingGfxFilter::Initialize(const int color_depth, String &err_str)
-{
-    // succeed by default
-    return true;
+bool ScalingGfxFilter::Initialize(const int color_depth, String &err_str) {
+	// succeed by default
+	return true;
 }
 
-void ScalingGfxFilter::UnInitialize()
-{
-    // do nothing by default
+void ScalingGfxFilter::UnInitialize() {
+	// do nothing by default
 }
 
-Rect ScalingGfxFilter::SetTranslation(const Size src_size, const Rect dst_rect)
-{
-    // do not restrict scaling by default
-    _dstRect = dst_rect;
-    _scaling.Init(src_size, dst_rect);
-    return _dstRect;
+Rect ScalingGfxFilter::SetTranslation(const Size src_size, const Rect dst_rect) {
+	// do not restrict scaling by default
+	_dstRect = dst_rect;
+	_scaling.Init(src_size, dst_rect);
+	return _dstRect;
 }
 
-Rect ScalingGfxFilter::GetDestination() const
-{
-    return _dstRect;
+Rect ScalingGfxFilter::GetDestination() const {
+	return _dstRect;
 }
 
 } // namespace Engine

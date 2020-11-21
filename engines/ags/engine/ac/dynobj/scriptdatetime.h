@@ -26,16 +26,16 @@
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
 struct ScriptDateTime final : AGSCCDynamicObject {
-    int year, month, day;
-    int hour, minute, second;
-    int rawUnixTime;
+	int year, month, day;
+	int hour, minute, second;
+	int rawUnixTime;
 
-    int Dispose(const char *address, bool force) override;
-    const char *GetType() override;
-    int Serialize(const char *address, char *buffer, int bufsize) override;
-    void Unserialize(int index, const char *serializedData, int dataSize) override;
+	int Dispose(const char *address, bool force) override;
+	const char *GetType() override;
+	int Serialize(const char *address, char *buffer, int bufsize) override;
+	void Unserialize(int index, const char *serializedData, int dataSize) override;
 
-    ScriptDateTime();
+	ScriptDateTime();
 };
 
 #endif

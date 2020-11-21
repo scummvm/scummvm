@@ -23,7 +23,11 @@
 #ifndef AGS_ENGINE_MAIN_GAME_RUN_H
 #define AGS_ENGINE_MAIN_GAME_RUN_H
 
-namespace AGS { namespace Engine { class IDriverDependantBitmap; }}
+namespace AGS {
+namespace Engine {
+class IDriverDependantBitmap;
+}
+}
 using namespace AGS::Engine; // FIXME later
 
 // Loops game frames until certain event takes place (for blocking actions)

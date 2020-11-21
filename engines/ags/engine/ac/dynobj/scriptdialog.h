@@ -24,8 +24,8 @@
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTDIALOG_H
 
 struct ScriptDialog {
-    int id;
-    int reserved;
+	int id;
+	int reserved;
 };
 
 #endif

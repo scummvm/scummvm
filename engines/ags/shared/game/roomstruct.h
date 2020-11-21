@@ -25,12 +25,12 @@
 // RoomStruct, a class describing initial room data.
 //
 // Because of the imperfect implementation there is inconsistency in how
-// this data is interpreted at the runtime. 
+// this data is interpreted at the runtime.
 // Some of that data is never supposed to be changed at runtime. Another
 // may be changed, but these changes are lost as soon as room is unloaded.
 // The changes that must remain in memory are kept as separate classes:
 // see RoomStatus, RoomObject etc.
-// 
+//
 // Partially this is because same class was used for both engine and editor,
 // while runtime code was not available for the editor.
 //
@@ -63,31 +63,29 @@ typedef std::shared_ptr<ccScript> PScript;
 // refactored.
 
 // Room's area mask type
-enum RoomAreaMask
-{
-    kRoomAreaNone = 0,
-    kRoomAreaHotspot,
-    kRoomAreaWalkBehind,
-    kRoomAreaWalkable,
-    kRoomAreaRegion
+enum RoomAreaMask {
+	kRoomAreaNone = 0,
+	kRoomAreaHotspot,
+	kRoomAreaWalkBehind,
+	kRoomAreaWalkable,
+	kRoomAreaRegion
 };
 
 // Room's audio volume modifier
-enum RoomVolumeMod
-{
-    kRoomVolumeQuietest = -3,
-    kRoomVolumeQuieter  = -2,
-    kRoomVolumeQuiet    = -1,
-    kRoomVolumeNormal   =  0,
-    kRoomVolumeLoud     =  1,
-    kRoomVolumeLouder   =  2,
-    kRoomVolumeLoudest  =  3,
-    // These two options are only settable at runtime by SetMusicVolume()
-    kRoomVolumeExtra1   =  4,
-    kRoomVolumeExtra2   =  5,
+enum RoomVolumeMod {
+	kRoomVolumeQuietest = -3,
+	kRoomVolumeQuieter  = -2,
+	kRoomVolumeQuiet    = -1,
+	kRoomVolumeNormal   =  0,
+	kRoomVolumeLoud     =  1,
+	kRoomVolumeLouder   =  2,
+	kRoomVolumeLoudest  =  3,
+	// These two options are only settable at runtime by SetMusicVolume()
+	kRoomVolumeExtra1   =  4,
+	kRoomVolumeExtra2   =  5,
 
-    kRoomVolumeMin      = kRoomVolumeQuietest,
-    kRoomVolumeMax      = kRoomVolumeExtra2,
+	kRoomVolumeMin      = kRoomVolumeQuietest,
+	kRoomVolumeMax      = kRoomVolumeExtra2,
 };
 
 // Flag tells that walkable area does not have continious zoom
@@ -109,10 +107,8 @@ enum RoomVolumeMod
 #define MAX_MESSAGES       100
 
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
 class Bitmap;
 class Stream;
@@ -120,128 +116,120 @@ class Stream;
 typedef std::shared_ptr<Bitmap> PBitmap;
 
 // Various room options
-struct RoomOptions
-{
-    // Index of the startup music in the room
-    int  StartupMusic;
-    // If saving and loading game is disabled in the room
-    bool SaveLoadDisabled;
-    // If player character is turned off in the room
-    bool PlayerCharOff;
-    // Apply player character's normal view when entering this room
-    int  PlayerView;
-    // Room's music volume modifier
-    RoomVolumeMod MusicVolume;
+struct RoomOptions {
+	// Index of the startup music in the room
+	int  StartupMusic;
+	// If saving and loading game is disabled in the room
+	bool SaveLoadDisabled;
+	// If player character is turned off in the room
+	bool PlayerCharOff;
+	// Apply player character's normal view when entering this room
+	int  PlayerView;
+	// Room's music volume modifier
+	RoomVolumeMod MusicVolume;
 
-    RoomOptions();
+	RoomOptions();
 };
 
 // Single room background frame
-struct RoomBgFrame
-{
-    PBitmap     Graphic;
-    // Palette is only valid in 8-bit games
-    color       Palette[256];
-    // Tells if this frame should keep previous frame palette instead of using its own
-    bool        IsPaletteShared;
+struct RoomBgFrame {
+	PBitmap     Graphic;
+	// Palette is only valid in 8-bit games
+	color       Palette[256];
+	// Tells if this frame should keep previous frame palette instead of using its own
+	bool        IsPaletteShared;
 
-    RoomBgFrame();
+	RoomBgFrame();
 };
 
 // Describes room edges (coordinates of four edges)
-struct RoomEdges
-{
-    int32_t Left;
-    int32_t Right;
-    int32_t Top;
-    int32_t Bottom;
+struct RoomEdges {
+	int32_t Left;
+	int32_t Right;
+	int32_t Top;
+	int32_t Bottom;
 
-    RoomEdges();
-    RoomEdges(int l, int r, int t, int b);
+	RoomEdges();
+	RoomEdges(int l, int r, int t, int b);
 };
 
 // Room hotspot description
-struct RoomHotspot
-{
-    String      Name;
-    String      ScriptName;
-    // Custom properties
-    StringIMap  Properties;
-    // Old-style interactions
-    PInteraction Interaction;
-    // Event script links
-    PInteractionScripts EventHandlers;
+struct RoomHotspot {
+	String      Name;
+	String      ScriptName;
+	// Custom properties
+	StringIMap  Properties;
+	// Old-style interactions
+	PInteraction Interaction;
+	// Event script links
+	PInteractionScripts EventHandlers;
 
-    // Player will automatically walk here when interacting with hotspot
-    Point       WalkTo;
+	// Player will automatically walk here when interacting with hotspot
+	Point       WalkTo;
 };
 
 // Room object description
-struct RoomObjectInfo
-{
-    int32_t         Room;
-    int32_t         X;
-    int32_t         Y;
-    int32_t         Sprite;
-    bool            IsOn;
-    // Object's z-order in the room, or -1 (use Y)
-    int32_t         Baseline;
-    int32_t         Flags;
-    String          Name;
-    String          ScriptName;
-    // Custom properties
-    StringIMap      Properties;
-    // Old-style interactions
-    PInteraction    Interaction;
-    // Event script links
-    PInteractionScripts EventHandlers;
+struct RoomObjectInfo {
+	int32_t         Room;
+	int32_t         X;
+	int32_t         Y;
+	int32_t         Sprite;
+	bool            IsOn;
+	// Object's z-order in the room, or -1 (use Y)
+	int32_t         Baseline;
+	int32_t         Flags;
+	String          Name;
+	String          ScriptName;
+	// Custom properties
+	StringIMap      Properties;
+	// Old-style interactions
+	PInteraction    Interaction;
+	// Event script links
+	PInteractionScripts EventHandlers;
 
-    RoomObjectInfo();
+	RoomObjectInfo();
 };
 
 // Room region description
-struct RoomRegion
-{
-    // Light level (-100 -> +100) or Tint luminance (0 - 255)
-    int32_t         Light;
-    // Tint setting (R-B-G-S)
-    int32_t         Tint;
-    // Custom properties
-    StringIMap      Properties;
-    // Old-style interactions
-    PInteraction    Interaction;
-    // Event script links
-    PInteractionScripts EventHandlers;
+struct RoomRegion {
+	// Light level (-100 -> +100) or Tint luminance (0 - 255)
+	int32_t         Light;
+	// Tint setting (R-B-G-S)
+	int32_t         Tint;
+	// Custom properties
+	StringIMap      Properties;
+	// Old-style interactions
+	PInteraction    Interaction;
+	// Event script links
+	PInteractionScripts EventHandlers;
 
-    RoomRegion();
+	RoomRegion();
 };
 
 // Walkable area description
-struct WalkArea
-{
-    // Apply player character's normal view on this area
-    int32_t     CharacterView;
-    // Character's scaling (-100 -> +100 %)
-    // General scaling, or scaling at the farthest point
-    int32_t     ScalingFar;
-    // Scaling at the nearest point, or NOT_VECTOR_SCALED for uniform scaling
-    int32_t     ScalingNear;
-    // Light level (-100 -> +100)
-    int32_t     Light;
-    // Top and bottom Y of the area
-    int32_t     Top;
-    int32_t     Bottom;
+struct WalkArea {
+	// Apply player character's normal view on this area
+	int32_t     CharacterView;
+	// Character's scaling (-100 -> +100 %)
+	// General scaling, or scaling at the farthest point
+	int32_t     ScalingFar;
+	// Scaling at the nearest point, or NOT_VECTOR_SCALED for uniform scaling
+	int32_t     ScalingNear;
+	// Light level (-100 -> +100)
+	int32_t     Light;
+	// Top and bottom Y of the area
+	int32_t     Top;
+	int32_t     Bottom;
 
-    WalkArea();
+	WalkArea();
 };
 
 // Walk-behind description
-struct WalkBehind
-{
-    // Object's z-order in the room
-    int32_t Baseline;
+struct WalkBehind {
+	// Object's z-order in the room
+	int32_t Baseline;
 
-    WalkBehind();
+	WalkBehind();
 };
 
 // Room messages
@@ -249,21 +237,19 @@ struct WalkBehind
 #define MSG_DISPLAYNEXT 0x01 // supercedes using alt-200 at end of message
 #define MSG_TIMELIMIT   0x02
 
-struct MessageInfo
-{
-    char    DisplayAs; // 0 - std display window, >=1 - as character's speech
-    char    Flags; // combination of MSG_xxx flags
+struct MessageInfo {
+	char    DisplayAs; // 0 - std display window, >=1 - as character's speech
+	char    Flags; // combination of MSG_xxx flags
 
-    MessageInfo();
+	MessageInfo();
 };
 
 
 // Room's legacy resolution type
-enum RoomResolutionType
-{
-    kRoomRealRes = 0, // room should always be treated as-is
-    kRoomLoRes = 1, // created for low-resolution game
-    kRoomHiRes = 2 // created for high-resolution game
+enum RoomResolutionType {
+	kRoomRealRes = 0, // room should always be treated as-is
+	kRoomLoRes = 1, // created for low-resolution game
+	kRoomHiRes = 2 // created for high-resolution game
 };
 
 
@@ -272,111 +258,116 @@ enum RoomResolutionType
 // This class contains initial room data. Some of it may still be modified
 // at the runtime, but then these changes get lost as soon as room is unloaded.
 //
-class RoomStruct
-{
+class RoomStruct {
 public:
-    RoomStruct();
-    ~RoomStruct();
+	RoomStruct();
+	~RoomStruct();
 
-    // Gets if room should adjust its base size depending on game's resolution
-    inline bool IsRelativeRes() const { return _resolution != kRoomRealRes; }
-    // Gets if room belongs to high resolution
-    inline bool IsLegacyHiRes() const { return _resolution == kRoomHiRes; }
-    // Gets legacy resolution type
-    inline RoomResolutionType GetResolutionType() const { return _resolution; }
+	// Gets if room should adjust its base size depending on game's resolution
+	inline bool IsRelativeRes() const {
+		return _resolution != kRoomRealRes;
+	}
+	// Gets if room belongs to high resolution
+	inline bool IsLegacyHiRes() const {
+		return _resolution == kRoomHiRes;
+	}
+	// Gets legacy resolution type
+	inline RoomResolutionType GetResolutionType() const {
+		return _resolution;
+	}
 
-    // Releases room resources
-    void            Free();
-    // Release room messages and scripts correspondingly. These two functions are needed
-    // at very specific occasion when only part of the room resources has to be freed.
-    void            FreeMessages();
-    void            FreeScripts();
-    // Init default room state
-    void            InitDefaults();
-    // Set legacy resolution type
-    void            SetResolution(RoomResolutionType type);
+	// Releases room resources
+	void            Free();
+	// Release room messages and scripts correspondingly. These two functions are needed
+	// at very specific occasion when only part of the room resources has to be freed.
+	void            FreeMessages();
+	void            FreeScripts();
+	// Init default room state
+	void            InitDefaults();
+	// Set legacy resolution type
+	void            SetResolution(RoomResolutionType type);
 
-    // Gets bitmap of particular mask layer
-    Bitmap *GetMask(RoomAreaMask mask) const;
-    // Gets mask's scale relative to the room's background size
-    float   GetMaskScale(RoomAreaMask mask) const;
+	// Gets bitmap of particular mask layer
+	Bitmap *GetMask(RoomAreaMask mask) const;
+	// Gets mask's scale relative to the room's background size
+	float   GetMaskScale(RoomAreaMask mask) const;
 
-    // TODO: see later whether it may be more convenient to move these to the Region class instead.
-    // Gets if the given region has light level set
-    bool HasRegionLightLevel(int id) const;
-    // Gets if the given region has a tint set
-    bool HasRegionTint(int id) const;
-    // Gets region's light level in -100 to 100 range value; returns 0 (default level) if region's tint is set
-    int  GetRegionLightLevel(int id) const;
-    // Gets region's tint luminance in 0 to 100 range value; returns 0 if region's light level is set
-    int  GetRegionTintLuminance(int id) const;
+	// TODO: see later whether it may be more convenient to move these to the Region class instead.
+	// Gets if the given region has light level set
+	bool HasRegionLightLevel(int id) const;
+	// Gets if the given region has a tint set
+	bool HasRegionTint(int id) const;
+	// Gets region's light level in -100 to 100 range value; returns 0 (default level) if region's tint is set
+	int  GetRegionLightLevel(int id) const;
+	// Gets region's tint luminance in 0 to 100 range value; returns 0 if region's light level is set
+	int  GetRegionTintLuminance(int id) const;
 
 // TODO: all members are currently public because they are used everywhere; hide them later
 public:
-    // Game's unique ID, corresponds to GameSetupStructBase::uniqueid.
-    // If this field has a valid value and does not match actual game's id,
-    // then engine will refuse to start this room.
-    // May be set to NO_GAME_ID_IN_ROOM_FILE to let it run within any game.
-    int32_t                 GameID;
-    // Loaded room file's data version. This value may be used to know when
-    // the room must have behavior specific to certain version of AGS.
-    int32_t                 DataVersion;
+	// Game's unique ID, corresponds to GameSetupStructBase::uniqueid.
+	// If this field has a valid value and does not match actual game's id,
+	// then engine will refuse to start this room.
+	// May be set to NO_GAME_ID_IN_ROOM_FILE to let it run within any game.
+	int32_t                 GameID;
+	// Loaded room file's data version. This value may be used to know when
+	// the room must have behavior specific to certain version of AGS.
+	int32_t                 DataVersion;
 
-    // Room region masks resolution. Defines the relation between room and mask units.
-    // Mask point is calculated as roompt / MaskResolution. Must be >= 1.
-    int32_t                 MaskResolution;
-    // Size of the room, in logical coordinates (= pixels)
-    int32_t                 Width;
-    int32_t                 Height;
-    // Primary room palette (8-bit games)
-    color                   Palette[256];
+	// Room region masks resolution. Defines the relation between room and mask units.
+	// Mask point is calculated as roompt / MaskResolution. Must be >= 1.
+	int32_t                 MaskResolution;
+	// Size of the room, in logical coordinates (= pixels)
+	int32_t                 Width;
+	int32_t                 Height;
+	// Primary room palette (8-bit games)
+	color                   Palette[256];
 
-    // Basic room options
-    RoomOptions             Options;
+	// Basic room options
+	RoomOptions             Options;
 
-    // Background frames
-    int32_t                 BackgroundBPP; // bytes per pixel
-    size_t                  BgFrameCount;
-    RoomBgFrame             BgFrames[MAX_ROOM_BGFRAMES];
-    // Speed at which background frames are changing, 0 - no auto animation
-    int32_t                 BgAnimSpeed;
-    // Edges
-    RoomEdges               Edges;
-    // Region masks
-    PBitmap                 HotspotMask;
-    PBitmap                 RegionMask;
-    PBitmap                 WalkAreaMask;
-    PBitmap                 WalkBehindMask;
-    // Room entities
-    size_t                  HotspotCount;
-    RoomHotspot             Hotspots[MAX_ROOM_HOTSPOTS];
-    size_t                  ObjectCount;
-    RoomObjectInfo          Objects[MAX_ROOM_OBJECTS];
-    size_t                  RegionCount;
-    RoomRegion              Regions[MAX_ROOM_REGIONS];
-    size_t                  WalkAreaCount;
-    WalkArea                WalkAreas[MAX_WALK_AREAS + 1];
-    size_t                  WalkBehindCount;
-    WalkBehind              WalkBehinds[MAX_WALK_BEHINDS];
+	// Background frames
+	int32_t                 BackgroundBPP; // bytes per pixel
+	size_t                  BgFrameCount;
+	RoomBgFrame             BgFrames[MAX_ROOM_BGFRAMES];
+	// Speed at which background frames are changing, 0 - no auto animation
+	int32_t                 BgAnimSpeed;
+	// Edges
+	RoomEdges               Edges;
+	// Region masks
+	PBitmap                 HotspotMask;
+	PBitmap                 RegionMask;
+	PBitmap                 WalkAreaMask;
+	PBitmap                 WalkBehindMask;
+	// Room entities
+	size_t                  HotspotCount;
+	RoomHotspot             Hotspots[MAX_ROOM_HOTSPOTS];
+	size_t                  ObjectCount;
+	RoomObjectInfo          Objects[MAX_ROOM_OBJECTS];
+	size_t                  RegionCount;
+	RoomRegion              Regions[MAX_ROOM_REGIONS];
+	size_t                  WalkAreaCount;
+	WalkArea                WalkAreas[MAX_WALK_AREAS + 1];
+	size_t                  WalkBehindCount;
+	WalkBehind              WalkBehinds[MAX_WALK_BEHINDS];
 
-    // Old numbered room messages (used with DisplayMessage, etc)
-    size_t                  MessageCount;
-    String                  Messages[MAX_MESSAGES];
-    MessageInfo             MessageInfos[MAX_MESSAGES];
+	// Old numbered room messages (used with DisplayMessage, etc)
+	size_t                  MessageCount;
+	String                  Messages[MAX_MESSAGES];
+	MessageInfo             MessageInfos[MAX_MESSAGES];
 
-    // Custom properties
-    StringIMap              Properties;
-    // Old-style interactions
-    InterVarVector          LocalVariables;
-    PInteraction            Interaction;
-    // Event script links
-    PInteractionScripts     EventHandlers;
-    // Compiled room script
-    PScript                 CompiledScript;
+	// Custom properties
+	StringIMap              Properties;
+	// Old-style interactions
+	InterVarVector          LocalVariables;
+	PInteraction            Interaction;
+	// Event script links
+	PInteractionScripts     EventHandlers;
+	// Compiled room script
+	PScript                 CompiledScript;
 
 private:
-    // Room's legacy resolution type, defines relation room and game's resolution
-    RoomResolutionType      _resolution;
+	// Room's legacy resolution type, defines relation room and game's resolution
+	RoomResolutionType      _resolution;
 };
 
 

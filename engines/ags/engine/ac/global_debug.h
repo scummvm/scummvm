@@ -27,6 +27,6 @@
 #include "util/string.h"
 
 AGS::Common::String GetRuntimeInfo();
-void script_debug(int cmdd,int dataa);
+void script_debug(int cmdd, int dataa);
 
 #endif

@@ -23,7 +23,11 @@
 #ifndef AGS_SHARED_AC_MOUSECURSOR_H
 #define AGS_SHARED_AC_MOUSECURSOR_H
 
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 #define MCF_ANIMMOVE 1
@@ -32,17 +36,17 @@ using namespace AGS; // FIXME later
 #define MCF_HOTSPOT  8  // only animate when over hotspot
 // this struct is also in the plugin header file
 struct MouseCursor {
-    int   pic;
-    short hotx, hoty;
-    short view;
-    char  name[10];
-    char  flags;
-    MouseCursor();
+	int   pic;
+	short hotx, hoty;
+	short view;
+	char  name[10];
+	char  flags;
+	MouseCursor();
 
-    void ReadFromFile(Common::Stream *in);
-    void WriteToFile(Common::Stream *out);
-    void ReadFromSavegame(Common::Stream *in);
-    void WriteToSavegame(Common::Stream *out) const;
+	void ReadFromFile(Common::Stream *in);
+	void WriteToFile(Common::Stream *out);
+	void ReadFromSavegame(Common::Stream *in);
+	void WriteToSavegame(Common::Stream *out) const;
 };
 
 #endif

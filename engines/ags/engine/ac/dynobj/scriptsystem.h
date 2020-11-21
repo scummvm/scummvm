@@ -25,14 +25,14 @@
 
 // The text script's "system" struct
 struct ScriptSystem {
-    int width,height;
-    int coldepth;
-    int os;
-    int windowed;
-    int vsync;
-    int viewport_width, viewport_height;
-    char aci_version[10]; // FIXME this when possible, version format is different now
-    int reserved[5];  // so that future scripts don't overwrite data
+	int width, height;
+	int coldepth;
+	int os;
+	int windowed;
+	int vsync;
+	int viewport_width, viewport_height;
+	char aci_version[10]; // FIXME this when possible, version format is different now
+	int reserved[5];  // so that future scripts don't overwrite data
 };
 
 #endif

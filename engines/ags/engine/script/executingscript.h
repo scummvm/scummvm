@@ -26,54 +26,52 @@
 #include "script/cc_instance.h"
 
 enum PostScriptAction {
-    ePSANewRoom,
-    ePSAInvScreen,
-    ePSARestoreGame,
-    ePSARestoreGameDialog,
-    ePSARunAGSGame,
-    ePSARunDialog,
-    ePSARestartGame,
-    ePSASaveGame,
-    ePSASaveGameDialog
+	ePSANewRoom,
+	ePSAInvScreen,
+	ePSARestoreGame,
+	ePSARestoreGameDialog,
+	ePSARunAGSGame,
+	ePSARunDialog,
+	ePSARestartGame,
+	ePSASaveGame,
+	ePSASaveGameDialog
 };
 
 #define MAX_QUEUED_SCRIPTS 4
 #define MAX_QUEUED_ACTIONS 5
 #define MAX_FUNCTION_NAME_LEN 60
 
-enum ScriptInstType
-{
-    kScInstGame,
-    kScInstRoom
+enum ScriptInstType {
+	kScInstGame,
+	kScInstRoom
 };
 
-struct QueuedScript
-{
-    Common::String     FnName;
-    ScriptInstType     Instance;
-    size_t             ParamCount;
-    RuntimeScriptValue Param1;
-    RuntimeScriptValue Param2;
+struct QueuedScript {
+	Common::String     FnName;
+	ScriptInstType     Instance;
+	size_t             ParamCount;
+	RuntimeScriptValue Param1;
+	RuntimeScriptValue Param2;
 
-    QueuedScript();
+	QueuedScript();
 };
 
 struct ExecutingScript {
-    ccInstance *inst;
-    PostScriptAction postScriptActions[MAX_QUEUED_ACTIONS];
-    const char *postScriptActionNames[MAX_QUEUED_ACTIONS];
-    ScriptPosition  postScriptActionPositions[MAX_QUEUED_ACTIONS];
-    char postScriptSaveSlotDescription[MAX_QUEUED_ACTIONS][100];
-    int  postScriptActionData[MAX_QUEUED_ACTIONS];
-    int  numPostScriptActions;
-    QueuedScript ScFnQueue[MAX_QUEUED_SCRIPTS];
-    int  numanother;
-    char forked;
+	ccInstance *inst;
+	PostScriptAction postScriptActions[MAX_QUEUED_ACTIONS];
+	const char *postScriptActionNames[MAX_QUEUED_ACTIONS];
+	ScriptPosition  postScriptActionPositions[MAX_QUEUED_ACTIONS];
+	char postScriptSaveSlotDescription[MAX_QUEUED_ACTIONS][100];
+	int  postScriptActionData[MAX_QUEUED_ACTIONS];
+	int  numPostScriptActions;
+	QueuedScript ScFnQueue[MAX_QUEUED_SCRIPTS];
+	int  numanother;
+	char forked;
 
-    int queue_action(PostScriptAction act, int data, const char *aname);
-    void run_another(const char *namm, ScriptInstType scinst, size_t param_count, const RuntimeScriptValue &p1, const RuntimeScriptValue &p2);
-    void init();
-    ExecutingScript();
+	int queue_action(PostScriptAction act, int data, const char *aname);
+	void run_another(const char *namm, ScriptInstType scinst, size_t param_count, const RuntimeScriptValue &p1, const RuntimeScriptValue &p2);
+	void init();
+	ExecutingScript();
 };
 
 #endif

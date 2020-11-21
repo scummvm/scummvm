@@ -27,37 +27,30 @@
 #include <pspkernel.h>
 #include <pspthreadman.h>
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 
-class PSPMutex : public BaseMutex
-{
+class PSPMutex : public BaseMutex {
 public:
-  PSPMutex()
-  {
-    _mutex = sceKernelCreateSema("", 0, 1, 1, 0);
-  }
+	PSPMutex() {
+		_mutex = sceKernelCreateSema("", 0, 1, 1, 0);
+	}
 
-  ~PSPMutex()
-  {
-    sceKernelDeleteSema(_mutex);
-  }
+	~PSPMutex() {
+		sceKernelDeleteSema(_mutex);
+	}
 
-  inline void Lock()
-  {
-    sceKernelWaitSema(_mutex, 1, 0);
-  }
+	inline void Lock() {
+		sceKernelWaitSema(_mutex, 1, 0);
+	}
 
-  inline void Unlock()
-  {
-    sceKernelSignalSema(_mutex, 1);
-  }
+	inline void Unlock() {
+		sceKernelSignalSema(_mutex, 1);
+	}
 
 private:
-  SceUID _mutex;
+	SceUID _mutex;
 };
 
 

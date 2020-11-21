@@ -35,7 +35,7 @@ AGSEngine *g_vm;
 /*------------------------------------------------------------------*/
 
 AGSEngine::AGSEngine(OSystem *syst, const AGSGameDescription *gameDesc) : Engine(syst),
-		_gameDescription(gameDesc), _randomSource("AGS") {
+	_gameDescription(gameDesc), _randomSource("AGS") {
 	g_vm = this;
 	DebugMan.addDebugChannel(kDebugPath, "Path", "Pathfinding debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");

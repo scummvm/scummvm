@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_TIMER_H
 #define AGS_ENGINE_AC_GLOBAL_TIMER_H
 
-void script_SetTimer(int tnum,int timeout);
+void script_SetTimer(int tnum, int timeout);
 int  IsTimerExpired(int tnum);
 
 #endif

@@ -25,16 +25,15 @@
 
 using namespace AGS::Common;
 
-void ScriptAudioClip::ReadFromFile(Stream *in)
-{
-    id = in->ReadInt32();
-    scriptName.ReadCount(in, SCRIPTAUDIOCLIP_SCRIPTNAMELENGTH);
-    fileName.ReadCount(in, SCRIPTAUDIOCLIP_FILENAMELENGTH);
-    bundlingType = in->ReadInt8();
-    type = in->ReadInt8();
-    fileType = in->ReadInt8();
-    defaultRepeat = in->ReadInt8();
-    defaultPriority = in->ReadInt16();
-    defaultVolume = in->ReadInt16();
-    in->ReadInt32(); // reserved
+void ScriptAudioClip::ReadFromFile(Stream *in) {
+	id = in->ReadInt32();
+	scriptName.ReadCount(in, SCRIPTAUDIOCLIP_SCRIPTNAMELENGTH);
+	fileName.ReadCount(in, SCRIPTAUDIOCLIP_FILENAMELENGTH);
+	bundlingType = in->ReadInt8();
+	type = in->ReadInt8();
+	fileType = in->ReadInt8();
+	defaultRepeat = in->ReadInt8();
+	defaultPriority = in->ReadInt16();
+	defaultVolume = in->ReadInt16();
+	in->ReadInt32(); // reserved
 }

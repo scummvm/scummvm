@@ -31,22 +31,18 @@
 
 #include "gfx/gfxfilter_ogl.h"
 
-namespace AGS
-{
-namespace Engine
-{
-namespace OGL
-{
+namespace AGS {
+namespace Engine {
+namespace OGL {
 
-class AAOGLGfxFilter : public OGLGfxFilter
-{
+class AAOGLGfxFilter : public OGLGfxFilter {
 public:
-    const GfxFilterInfo &GetInfo() const override;
+	const GfxFilterInfo &GetInfo() const override;
 
-    bool UseLinearFiltering() const override;
-    void SetFilteringForStandardSprite() override;
+	bool UseLinearFiltering() const override;
+	void SetFilteringForStandardSprite() override;
 
-    static const GfxFilterInfo FilterInfo;
+	static const GfxFilterInfo FilterInfo;
 };
 
 } // namespace OGL

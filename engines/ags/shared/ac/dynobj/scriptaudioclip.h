@@ -25,16 +25,20 @@
 
 #include "util/string.h"
 
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 enum AudioFileType {
-    eAudioFileOGG = 1,
-    eAudioFileMP3 = 2,
-    eAudioFileWAV = 3,
-    eAudioFileVOC = 4,
-    eAudioFileMIDI = 5,
-    eAudioFileMOD = 6
+	eAudioFileOGG = 1,
+	eAudioFileMP3 = 2,
+	eAudioFileWAV = 3,
+	eAudioFileVOC = 4,
+	eAudioFileMIDI = 5,
+	eAudioFileMOD = 6
 };
 
 #define AUCL_BUNDLE_EXE 1
@@ -43,17 +47,17 @@ enum AudioFileType {
 #define SCRIPTAUDIOCLIP_SCRIPTNAMELENGTH    30
 #define SCRIPTAUDIOCLIP_FILENAMELENGTH      15
 struct ScriptAudioClip {
-    int id = 0;
-    Common::String scriptName;
-    Common::String fileName;
-    char bundlingType = AUCL_BUNDLE_EXE;
-    char type = 0;
-    char fileType = eAudioFileOGG;
-    char defaultRepeat = 0;
-    short defaultPriority = 50;
-    short defaultVolume = 100;
+	int id = 0;
+	Common::String scriptName;
+	Common::String fileName;
+	char bundlingType = AUCL_BUNDLE_EXE;
+	char type = 0;
+	char fileType = eAudioFileOGG;
+	char defaultRepeat = 0;
+	short defaultPriority = 50;
+	short defaultVolume = 100;
 
-    void ReadFromFile(Common::Stream *in);
+	void ReadFromFile(Common::Stream *in);
 };
 
 #endif

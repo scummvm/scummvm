@@ -26,23 +26,28 @@
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
 // ScriptViewport keeps a reference to actual room Viewport in script.
-struct ScriptViewport final : AGSCCDynamicObject
-{
+struct ScriptViewport final : AGSCCDynamicObject {
 public:
-    ScriptViewport(int id);
-    // Get viewport index; negative means the viewport was deleted
-    int GetID() const { return _id; }
-    void SetID(int id) { _id = id; }
-    // Reset viewport index to indicate that this reference is no longer valid
-    void Invalidate() { _id = -1; }
+	ScriptViewport(int id);
+	// Get viewport index; negative means the viewport was deleted
+	int GetID() const {
+		return _id;
+	}
+	void SetID(int id) {
+		_id = id;
+	}
+	// Reset viewport index to indicate that this reference is no longer valid
+	void Invalidate() {
+		_id = -1;
+	}
 
-    const char *GetType() override;
-    int Dispose(const char *address, bool force) override;
-    int Serialize(const char *address, char *buffer, int bufsize) override;
-    void Unserialize(int index, const char *serializedData, int dataSize) override;
+	const char *GetType() override;
+	int Dispose(const char *address, bool force) override;
+	int Serialize(const char *address, char *buffer, int bufsize) override;
+	void Unserialize(int index, const char *serializedData, int dataSize) override;
 
 private:
-    int _id = -1; // index of viewport in the game state array
+	int _id = -1; // index of viewport in the game state array
 };
 
 // Unserialize viewport from the memory stream

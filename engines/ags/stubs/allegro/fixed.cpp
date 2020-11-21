@@ -29,63 +29,57 @@ fixed fixtorad_r;
 fixed radtofix_r;
 
 fixed ftofix(double x) {
-   if (x > 32767.0) {
-      *allegro_errno = ERANGE;
-      return 0x7FFFFFFF;
-   }
+	if (x > 32767.0) {
+		*allegro_errno = ERANGE;
+		return 0x7FFFFFFF;
+	}
 
-   if (x < -32767.0) {
-      *allegro_errno = ERANGE;
-      return (fixed)-0x7FFFFFFF;
-   }
+	if (x < -32767.0) {
+		*allegro_errno = ERANGE;
+		return (fixed) - 0x7FFFFFFF;
+	}
 
-   return (fixed)(x * 65536.0 + (x < 0 ? -0.5 : 0.5));
+	return (fixed)(x * 65536.0 + (x < 0 ? -0.5 : 0.5));
 }
 
 double fixtof(fixed x) {
-   return (double)x / 65536.0;
+	return (double)x / 65536.0;
 }
 
 fixed fixadd(fixed x, fixed y) {
-   fixed result = x + y;
+	fixed result = x + y;
 
-   if (result >= 0) {
-      if ((x < 0) && (y < 0)) {
-         *allegro_errno = ERANGE;
-         return (fixed)-0x7FFFFFFF;
-      }
-      else
-         return result;
-   }
-   else {
-      if ((x > 0) && (y > 0)) {
-         *allegro_errno = ERANGE;
-         return 0x7FFFFFFF;
-      }
-      else
-         return result;
-   }
+	if (result >= 0) {
+		if ((x < 0) && (y < 0)) {
+			*allegro_errno = ERANGE;
+			return (fixed) - 0x7FFFFFFF;
+		} else
+			return result;
+	} else {
+		if ((x > 0) && (y > 0)) {
+			*allegro_errno = ERANGE;
+			return 0x7FFFFFFF;
+		} else
+			return result;
+	}
 }
 
 fixed fixsub(fixed x, fixed y) {
-   fixed result = x - y;
+	fixed result = x - y;
 
-   if (result >= 0) {
-      if ((x < 0) && (y > 0)) {
-         *allegro_errno = ERANGE;
-         return (fixed)-0x7FFFFFFF;
-      }
-      else
-         return result;
-   }
-   else {
-      if ((x > 0) && (y < 0)) {
-         *allegro_errno = ERANGE;
-         return 0x7FFFFFFF;
-      }
-      else
-         return result;
-   }
+	if (result >= 0) {
+		if ((x < 0) && (y > 0)) {
+			*allegro_errno = ERANGE;
+			return (fixed) - 0x7FFFFFFF;
+		} else
+			return result;
+	} else {
+		if ((x > 0) && (y < 0)) {
+			*allegro_errno = ERANGE;
+			return 0x7FFFFFFF;
+		} else
+			return result;
+	}
 }
 
 fixed fixmul(fixed x, fixed y) {

@@ -23,6 +23,6 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_RECORD_H
 #define AGS_ENGINE_AC_GLOBAL_RECORD_H
 
-void scStartRecording (int keyToStop);
+void scStartRecording(int keyToStop);
 
 #endif

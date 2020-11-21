@@ -28,7 +28,7 @@
 
 namespace AGS3 {
 
-#include "common/pack-start.h"	// START STRUCT PACKING
+#include "common/pack-start.h"  // START STRUCT PACKING
 
 struct color {
 	byte r, g, b;
@@ -37,7 +37,7 @@ struct color {
 typedef color RGB;
 typedef color PALETTE[256];
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+#include "common/pack-end.h"    // END STRUCT PACKING
 
 //define RGB(r,g,b)          ((COLORREF)(((BYTE)(r)|((WORD)((BYTE)(g))<<8))|(((DWORD)(BYTE)(b))<<16)))
 

@@ -24,22 +24,26 @@
 #define AGS_ENGINE_MEDIA_AUDIO_AMBIENTSOUND_H
 
 // Forward declaration
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 #define AMBIENCE_FULL_DIST 25
 
 struct AmbientSound {
-    int  channel;  // channel number, 1 upwards
-    int  x,y;
-    int  vol;
-    int  num;  // sound number, eg. 3 = sound3.wav
-    int  maxdist;
+	int  channel;  // channel number, 1 upwards
+	int  x, y;
+	int  vol;
+	int  num;  // sound number, eg. 3 = sound3.wav
+	int  maxdist;
 
-    bool IsPlaying();
+	bool IsPlaying();
 
-    void ReadFromFile(Common::Stream *in);
-    void WriteToFile(Common::Stream *out);
+	void ReadFromFile(Common::Stream *in);
+	void WriteToFile(Common::Stream *out);
 };
 
 #endif

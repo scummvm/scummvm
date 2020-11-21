@@ -26,13 +26,13 @@
 #include "core/platform.h"
 
 #if AGS_PLATFORM_OS_ANDROID
-void InitLUTs(){}
-void hq2x_32( unsigned char * pIn, unsigned char * pOut, int Xres, int Yres, int BpL ){}
-void hq3x_32( unsigned char * pIn, unsigned char * pOut, int Xres, int Yres, int BpL ){}
+void InitLUTs() {}
+void hq2x_32(unsigned char *pIn, unsigned char *pOut, int Xres, int Yres, int BpL) {}
+void hq3x_32(unsigned char *pIn, unsigned char *pOut, int Xres, int Yres, int BpL) {}
 #else
 void InitLUTs();
-void hq2x_32( unsigned char * pIn, unsigned char * pOut, int Xres, int Yres, int BpL );
-void hq3x_32( unsigned char * pIn, unsigned char * pOut, int Xres, int Yres, int BpL );
+void hq2x_32(unsigned char *pIn, unsigned char *pOut, int Xres, int Yres, int BpL);
+void hq3x_32(unsigned char *pIn, unsigned char *pOut, int Xres, int Yres, int BpL);
 #endif
 
 #endif

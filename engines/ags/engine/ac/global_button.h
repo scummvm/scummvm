@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_AC_GLOBALBUTTON_H
 #define AGS_ENGINE_AC_GLOBALBUTTON_H
 
-void SetButtonText(int guin,int objn, const char*newtx);
+void SetButtonText(int guin, int objn, const char *newtx);
 void AnimateButton(int guin, int objn, int view, int loop, int speed, int repeat);
 int  GetButtonPic(int guin, int objn, int ptype);
-void SetButtonPic(int guin,int objn,int ptype,int slotn);
+void SetButtonPic(int guin, int objn, int ptype, int slotn);
 
 #endif

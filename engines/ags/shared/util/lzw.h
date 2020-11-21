@@ -23,7 +23,11 @@
 #ifndef AGS_SHARED_UTIL_LZW_H
 #define AGS_SHARED_UTIL_LZW_H
 
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 void lzwcompress(Common::Stream *lzw_in, Common::Stream *out);

@@ -30,37 +30,34 @@ extern GameSetupStruct game;
 
 // return the type name of the object
 const char *CCCharacter::GetType() {
-    return "Character";
+	return "Character";
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int CCCharacter::Serialize(const char *address, char *buffer, int bufsize) {
-    CharacterInfo *chaa = (CharacterInfo*)address;
-    StartSerialize(buffer);
-    SerializeInt(chaa->index_id);
-    return EndSerialize();
+	CharacterInfo *chaa = (CharacterInfo *)address;
+	StartSerialize(buffer);
+	SerializeInt(chaa->index_id);
+	return EndSerialize();
 }
 
 void CCCharacter::Unserialize(int index, const char *serializedData, int dataSize) {
-    StartUnserialize(serializedData, dataSize);
-    int num = UnserializeInt();
-    ccRegisterUnserializedObject(index, &game.chars[num], this);
+	StartUnserialize(serializedData, dataSize);
+	int num = UnserializeInt();
+	ccRegisterUnserializedObject(index, &game.chars[num], this);
 }
 
-void CCCharacter::WriteInt16(const char *address, intptr_t offset, int16_t val)
-{
-    *(int16_t*)(address + offset) = val;
+void CCCharacter::WriteInt16(const char *address, intptr_t offset, int16_t val) {
+	*(int16_t *)(address + offset) = val;
 
-    // Detect when a game directly modifies the inventory, which causes the displayed
-    // and actual inventory to diverge since 2.70. Force an update of the displayed
-    // inventory for older games that reply on the previous behaviour.
-    if (loaded_game_file_version < kGameVersion_270)
-    {
-        const int invoffset = 112;
-        if (offset >= invoffset && offset < (invoffset + MAX_INV * sizeof(short)))
-        {
-            update_invorder();
-        }
-    }
+	// Detect when a game directly modifies the inventory, which causes the displayed
+	// and actual inventory to diverge since 2.70. Force an update of the displayed
+	// inventory for older games that reply on the previous behaviour.
+	if (loaded_game_file_version < kGameVersion_270) {
+		const int invoffset = 112;
+		if (offset >= invoffset && offset < (invoffset + MAX_INV * sizeof(short))) {
+			update_invorder();
+		}
+	}
 }

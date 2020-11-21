@@ -26,38 +26,42 @@
 #include "ac/dynobj/cc_agsdynamicobject.h"
 #include "game/roomstruct.h"
 
-namespace AGS { namespace Common { class Bitmap; }}
+namespace AGS {
+namespace Common {
+class Bitmap;
+}
+}
 
 struct ScriptDrawingSurface final : AGSCCDynamicObject {
-    // These numbers and types are used to determine the source of this drawing surface;
-    // only one of them can be valid for this surface.
-    int roomBackgroundNumber;
-    RoomAreaMask roomMaskType;
-    int dynamicSpriteNumber;
-    int dynamicSurfaceNumber;
-    bool isLinkedBitmapOnly;
-    Common::Bitmap *linkedBitmapOnly;
-    int currentColour;
-    int currentColourScript;
-    int highResCoordinates;
-    int modified;
-    int hasAlphaChannel;
-    //Common::Bitmap* abufBackup;
+	// These numbers and types are used to determine the source of this drawing surface;
+	// only one of them can be valid for this surface.
+	int roomBackgroundNumber;
+	RoomAreaMask roomMaskType;
+	int dynamicSpriteNumber;
+	int dynamicSurfaceNumber;
+	bool isLinkedBitmapOnly;
+	Common::Bitmap *linkedBitmapOnly;
+	int currentColour;
+	int currentColourScript;
+	int highResCoordinates;
+	int modified;
+	int hasAlphaChannel;
+	//Common::Bitmap* abufBackup;
 
-    int Dispose(const char *address, bool force) override;
-    const char *GetType() override;
-    int Serialize(const char *address, char *buffer, int bufsize) override;
-    void Unserialize(int index, const char *serializedData, int dataSize) override;
-    Common::Bitmap* GetBitmapSurface();
-    Common::Bitmap *StartDrawing();
-    void PointToGameResolution(int *xcoord, int *ycoord);
-    void SizeToGameResolution(int *width, int *height);
-    void SizeToGameResolution(int *adjustValue);
-    void SizeToDataResolution(int *adjustValue);
-    void FinishedDrawing();
-    void FinishedDrawingReadOnly();
+	int Dispose(const char *address, bool force) override;
+	const char *GetType() override;
+	int Serialize(const char *address, char *buffer, int bufsize) override;
+	void Unserialize(int index, const char *serializedData, int dataSize) override;
+	Common::Bitmap *GetBitmapSurface();
+	Common::Bitmap *StartDrawing();
+	void PointToGameResolution(int *xcoord, int *ycoord);
+	void SizeToGameResolution(int *width, int *height);
+	void SizeToGameResolution(int *adjustValue);
+	void SizeToDataResolution(int *adjustValue);
+	void FinishedDrawing();
+	void FinishedDrawingReadOnly();
 
-    ScriptDrawingSurface();
+	ScriptDrawingSurface();
 };
 
 #endif

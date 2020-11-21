@@ -29,20 +29,20 @@ extern ScriptRegion scrRegion[MAX_ROOM_REGIONS];
 
 // return the type name of the object
 const char *CCRegion::GetType() {
-    return "Region";
+	return "Region";
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int CCRegion::Serialize(const char *address, char *buffer, int bufsize) {
-    ScriptRegion *shh = (ScriptRegion*)address;
-    StartSerialize(buffer);
-    SerializeInt(shh->id);
-    return EndSerialize();
+	ScriptRegion *shh = (ScriptRegion *)address;
+	StartSerialize(buffer);
+	SerializeInt(shh->id);
+	return EndSerialize();
 }
 
 void CCRegion::Unserialize(int index, const char *serializedData, int dataSize) {
-    StartUnserialize(serializedData, dataSize);
-    int num = UnserializeInt();
-    ccRegisterUnserializedObject(index, &scrRegion[num], this);
+	StartUnserialize(serializedData, dataSize);
+	int num = UnserializeInt();
+	ccRegisterUnserializedObject(index, &scrRegion[num], this);
 }

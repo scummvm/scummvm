@@ -27,18 +27,18 @@
 
 // this struct should go in a Game struct, not the room structure.
 struct InterfaceElement {
-    int             x, y, x2, y2;
-    int             bgcol, fgcol, bordercol;
-    int             vtextxp, vtextyp, vtextalign;  // X & Y relative to topleft of interface
-    char            vtext[40];
-    int             numbuttons;
-    InterfaceButton button[MAXBUTTON];
-    int             flags;
-    int             reserved_for_future;
-    int             popupyp;   // pops up when mousey < this
-    char            popup;     // does it pop up? (like sierra icon bar)
-    char            on;
-    InterfaceElement();
+	int             x, y, x2, y2;
+	int             bgcol, fgcol, bordercol;
+	int             vtextxp, vtextyp, vtextalign;  // X & Y relative to topleft of interface
+	char            vtext[40];
+	int             numbuttons;
+	InterfaceButton button[MAXBUTTON];
+	int             flags;
+	int             reserved_for_future;
+	int             popupyp;   // pops up when mousey < this
+	char            popup;     // does it pop up? (like sierra icon bar)
+	char            on;
+	InterfaceElement();
 };
 
 /*struct InterfaceStyle {

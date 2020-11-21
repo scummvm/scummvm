@@ -25,7 +25,7 @@
 
 // The text script's "mouse" struct
 struct ScriptMouse {
-    int x,y;
+	int x, y;
 };
 
 #endif

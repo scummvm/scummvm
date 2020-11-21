@@ -39,33 +39,28 @@ String ccErrorCallStack;
 bool ccErrorIsUserError = false;
 const char *ccCurScriptName = "";
 
-void cc_error(const char *descr, ...)
-{
-    ccErrorIsUserError = false;
-    if (descr[0] == '!')
-    {
-        ccErrorIsUserError = true;
-        descr++;
-    }
+void cc_error(const char *descr, ...) {
+	ccErrorIsUserError = false;
+	if (descr[0] == '!') {
+		ccErrorIsUserError = true;
+		descr++;
+	}
 
-    va_list ap;
-    va_start(ap, descr);
-    String displbuf = String::FromFormatV(descr, ap);
-    va_end(ap);
+	va_list ap;
+	va_start(ap, descr);
+	String displbuf = String::FromFormatV(descr, ap);
+	va_end(ap);
 
-    if (currentline > 0)
-    {
-        // [IKM] Implementation is project-specific
-        std::pair<String, String> errinfo = cc_error_at_line(displbuf);
-        ccErrorString = errinfo.first;
-        ccErrorCallStack = errinfo.second;
-    }
-    else
-    {
-        ccErrorString = cc_error_without_line(displbuf);
-        ccErrorCallStack = "";
-    }
+	if (currentline > 0) {
+		// [IKM] Implementation is project-specific
+		std::pair<String, String> errinfo = cc_error_at_line(displbuf);
+		ccErrorString = errinfo.first;
+		ccErrorCallStack = errinfo.second;
+	} else {
+		ccErrorString = cc_error_without_line(displbuf);
+		ccErrorCallStack = "";
+	}
 
-    ccError = 1;
-    ccErrorLine = currentline;
+	ccError = 1;
+	ccErrorLine = currentline;
 }

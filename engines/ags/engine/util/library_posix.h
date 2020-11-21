@@ -36,116 +36,96 @@ extern AGS::Common::String appDirectory;
 #endif
 
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 
-class PosixLibrary : BaseLibrary
-{
+class PosixLibrary : BaseLibrary {
 public:
-  PosixLibrary()
-    : _library(nullptr)
-  {
-  };
+	PosixLibrary()
+		: _library(nullptr) {
+	};
 
-  ~PosixLibrary() override
-  {
-    Unload();
-  };
+	~PosixLibrary() override {
+		Unload();
+	};
 
-  AGS::Common::String BuildFilename(AGS::Common::String libraryName)
-  {
-    return String::FromFormat(
+	AGS::Common::String BuildFilename(AGS::Common::String libraryName) {
+		return String::FromFormat(
 #if AGS_PLATFORM_OS_MACOS
-        "lib%s.dylib"
+		           "lib%s.dylib"
 #else
-        "lib%s.so"
+		           "lib%s.so"
 #endif
-        , libraryName.GetCStr());
-  }
+		           , libraryName.GetCStr());
+	}
 
-  AGS::Common::String BuildPath(const char *path, AGS::Common::String libraryName)
-  {
-    AGS::Common::String platformLibraryName = "";
-    if (path)
-    {
-      platformLibraryName = path;
-      platformLibraryName.Append("/");
-    }
-    platformLibraryName.Append(BuildFilename(libraryName));
+	AGS::Common::String BuildPath(const char *path, AGS::Common::String libraryName) {
+		AGS::Common::String platformLibraryName = "";
+		if (path) {
+			platformLibraryName = path;
+			platformLibraryName.Append("/");
+		}
+		platformLibraryName.Append(BuildFilename(libraryName));
 
-    AGS::Common::Debug::Printf("Built library path: %s", platformLibraryName.GetCStr());
-    return platformLibraryName;
-  }
+		AGS::Common::Debug::Printf("Built library path: %s", platformLibraryName.GetCStr());
+		return platformLibraryName;
+	}
 
-  AGS::Common::String GetFilenameForLib(AGS::Common::String libraryName) override
-  {
-    return BuildFilename(libraryName);
-  }
+	AGS::Common::String GetFilenameForLib(AGS::Common::String libraryName) override {
+		return BuildFilename(libraryName);
+	}
 
-  bool Load(AGS::Common::String libraryName) override
-  {
-    Unload();
+	bool Load(AGS::Common::String libraryName) override {
+		Unload();
 
-    // Try rpath first
-    _library = dlopen(BuildPath(nullptr, libraryName).GetCStr(), RTLD_LAZY);
-    AGS::Common::Debug::Printf("dlopen returned: %s", dlerror());
-    if (_library != nullptr)
-    {
-      return true;
-    }
+		// Try rpath first
+		_library = dlopen(BuildPath(nullptr, libraryName).GetCStr(), RTLD_LAZY);
+		AGS::Common::Debug::Printf("dlopen returned: %s", dlerror());
+		if (_library != nullptr) {
+			return true;
+		}
 
-    // Try current path
-    _library = dlopen(BuildPath(".", libraryName).GetCStr(), RTLD_LAZY);
+		// Try current path
+		_library = dlopen(BuildPath(".", libraryName).GetCStr(), RTLD_LAZY);
 
-    AGS::Common::Debug::Printf("dlopen returned: %s", dlerror());
+		AGS::Common::Debug::Printf("dlopen returned: %s", dlerror());
 
-    if (_library == nullptr)
-    {
-      // Try the engine directory
+		if (_library == nullptr) {
+			// Try the engine directory
 
 #if AGS_PLATFORM_OS_ANDROID
-      char buffer[200];
-      sprintf(buffer, "%s%s", android_app_directory, "/lib");
-      _library = dlopen(BuildPath(buffer, libraryName).GetCStr(), RTLD_LAZY);
+			char buffer[200];
+			sprintf(buffer, "%s%s", android_app_directory, "/lib");
+			_library = dlopen(BuildPath(buffer, libraryName).GetCStr(), RTLD_LAZY);
 #else
-      _library = dlopen(BuildPath(appDirectory, libraryName).GetCStr(), RTLD_LAZY);
+			_library = dlopen(BuildPath(appDirectory, libraryName).GetCStr(), RTLD_LAZY);
 #endif
 
-      AGS::Common::Debug::Printf("dlopen returned: %s", dlerror());
-    }
+			AGS::Common::Debug::Printf("dlopen returned: %s", dlerror());
+		}
 
-    return (_library != nullptr);
-  }
+		return (_library != nullptr);
+	}
 
-  bool Unload() override
-  {
-    if (_library)
-    {
-      return (dlclose(_library) == 0);
-    }
-    else
-    {
-      return true;
-    }
-  }
+	bool Unload() override {
+		if (_library) {
+			return (dlclose(_library) == 0);
+		} else {
+			return true;
+		}
+	}
 
-  void *GetFunctionAddress(AGS::Common::String functionName) override
-  {
-    if (_library)
-    {
-      return dlsym(_library, functionName.GetCStr());
-    }
-    else
-    {
-      return nullptr;
-    }
-  }
+	void *GetFunctionAddress(AGS::Common::String functionName) override {
+		if (_library) {
+			return dlsym(_library, functionName.GetCStr());
+		} else {
+			return nullptr;
+		}
+	}
 
 private:
-  void *_library;
+	void *_library;
 };
 
 

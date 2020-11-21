@@ -31,6 +31,6 @@
 #define CDS_DRIVEEMPTY   0x0800  // no CD in drive
 
 int     init_cd_player() ;
-int     cd_manager(int cmdd,int datt) ;
+int     cd_manager(int cmdd, int datt) ;
 
 #endif

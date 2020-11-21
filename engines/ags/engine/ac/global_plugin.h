@@ -24,6 +24,6 @@
 #define AGS_ENGINE_AC_GLOBAL_PLUGIN_H
 
 void PluginSimulateMouseClick(int pluginButtonID);
-bool RegisterPluginStubs(const char* name);
+bool RegisterPluginStubs(const char *name);
 
 #endif

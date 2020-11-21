@@ -26,48 +26,45 @@
 #include <vector>
 #include "gui/guiobject.h"
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
-class GUISlider : public GUIObject
-{
+class GUISlider : public GUIObject {
 public:
-    GUISlider();
+	GUISlider();
 
-    // Tells if the slider is horizontal (otherwise - vertical)
-    bool IsHorizontal() const;
-    bool IsOverControl(int x, int y, int leeway) const override;
+	// Tells if the slider is horizontal (otherwise - vertical)
+	bool IsHorizontal() const;
+	bool IsOverControl(int x, int y, int leeway) const override;
 
-    // Operations
-    void Draw(Bitmap *ds) override;
+	// Operations
+	void Draw(Bitmap *ds) override;
 
-    // Events
-    bool OnMouseDown() override;
-    void OnMouseMove(int xp, int yp) override;
-    void OnMouseUp() override;
+	// Events
+	bool OnMouseDown() override;
+	void OnMouseMove(int xp, int yp) override;
+	void OnMouseUp() override;
 
-    // Serialization
-    void ReadFromFile(Stream *in, GuiVersion gui_version) override;
-    void WriteToFile(Stream *out) const override;
-    void ReadFromSavegame(Stream *in, GuiSvgVersion svg_ver) override;
-    void WriteToSavegame(Stream *out) const override;
+	// Serialization
+	void ReadFromFile(Stream *in, GuiVersion gui_version) override;
+	void WriteToFile(Stream *out) const override;
+	void ReadFromSavegame(Stream *in, GuiSvgVersion svg_ver) override;
+	void WriteToSavegame(Stream *out) const override;
 
 // TODO: these members are currently public; hide them later
 public:
-    int32_t MinValue;
-    int32_t MaxValue;
-    int32_t Value;
-    int32_t BgImage;
-    int32_t HandleImage;
-    int32_t HandleOffset;
-    bool    IsMousePressed;
+	int32_t MinValue;
+	int32_t MaxValue;
+	int32_t Value;
+	int32_t BgImage;
+	int32_t HandleImage;
+	int32_t HandleOffset;
+	bool    IsMousePressed;
 
 private:
-    // The following variables are not persisted on disk
-    // Cached coordinates of slider handle
-    Rect    _cachedHandle;
+	// The following variables are not persisted on disk
+	// Cached coordinates of slider handle
+	Rect    _cachedHandle;
 };
 
 } // namespace Common

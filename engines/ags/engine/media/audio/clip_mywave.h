@@ -26,33 +26,32 @@
 #include "media/audio/soundclip.h"
 
 // My new MP3STREAM wrapper
-struct MYWAVE:public SOUNDCLIP
-{
-    SAMPLE *wave;
-    int voice;
+struct MYWAVE: public SOUNDCLIP {
+	SAMPLE *wave;
+	int voice;
 
-    void poll() override;
+	void poll() override;
 
-    void set_volume(int new_speed) override;
+	void set_volume(int new_speed) override;
 
-    void destroy() override;
+	void destroy() override;
 
-    void seek(int pos) override;
+	void seek(int pos) override;
 
-    int get_pos() override;
-    int get_pos_ms() override;
+	int get_pos() override;
+	int get_pos_ms() override;
 
-    int get_length_ms() override;
+	int get_length_ms() override;
 
-    int get_sound_type() override;
+	int get_sound_type() override;
 
-    int play() override;
+	int play() override;
 
-    MYWAVE();
+	MYWAVE();
 
 protected:
-    int get_voice() override;
-    void adjust_volume() override;
+	int get_voice() override;
+	void adjust_volume() override;
 };
 
 #endif

@@ -38,104 +38,92 @@ namespace AGSMath = AGS::Common::Math;
 //{
 
 // Type of alignment of a geometric item of rectangular boundaries.
-enum FrameAlignment
-{
-    kAlignNone = 0,
+enum FrameAlignment {
+	kAlignNone = 0,
 
-    // Alignment options are representing 8 sides of a frame (rectangle);
-    // they are implemented as flags that may be combined together if it
-    // is wanted to define alignment to multiple sides at once.
-    kAlignTopLeft       = 0x0001,
-    kAlignTopCenter     = 0x0002,
-    kAlignTopRight      = 0x0004,
-    kAlignMiddleLeft    = 0x0008,
-    kAlignMiddleCenter  = 0x0010,
-    kAlignMiddleRight   = 0x0020,
-    kAlignBottomLeft    = 0x0040,
-    kAlignBottomCenter  = 0x0080,
-    kAlignBottomRight   = 0x0100,
+	// Alignment options are representing 8 sides of a frame (rectangle);
+	// they are implemented as flags that may be combined together if it
+	// is wanted to define alignment to multiple sides at once.
+	kAlignTopLeft       = 0x0001,
+	kAlignTopCenter     = 0x0002,
+	kAlignTopRight      = 0x0004,
+	kAlignMiddleLeft    = 0x0008,
+	kAlignMiddleCenter  = 0x0010,
+	kAlignMiddleRight   = 0x0020,
+	kAlignBottomLeft    = 0x0040,
+	kAlignBottomCenter  = 0x0080,
+	kAlignBottomRight   = 0x0100,
 
-    // Masks are helping to determine whether alignment parameter contains
-    // particular horizontal or vertical component (for example: left side
-    // or bottom side)
-    kMAlignLeft         = kAlignTopLeft | kAlignMiddleLeft | kAlignBottomLeft,
-    kMAlignRight        = kAlignTopRight | kAlignMiddleRight | kAlignBottomRight,
-    kMAlignTop          = kAlignTopLeft | kAlignTopCenter | kAlignTopRight,
-    kMAlignBottom       = kAlignBottomLeft | kAlignBottomCenter | kAlignBottomRight,
-    kMAlignHCenter      = kAlignTopCenter | kAlignMiddleCenter | kAlignBottomCenter,
-    kMAlignVCenter      = kAlignMiddleLeft | kAlignMiddleCenter | kAlignMiddleRight
+	// Masks are helping to determine whether alignment parameter contains
+	// particular horizontal or vertical component (for example: left side
+	// or bottom side)
+	kMAlignLeft         = kAlignTopLeft | kAlignMiddleLeft | kAlignBottomLeft,
+	kMAlignRight        = kAlignTopRight | kAlignMiddleRight | kAlignBottomRight,
+	kMAlignTop          = kAlignTopLeft | kAlignTopCenter | kAlignTopRight,
+	kMAlignBottom       = kAlignBottomLeft | kAlignBottomCenter | kAlignBottomRight,
+	kMAlignHCenter      = kAlignTopCenter | kAlignMiddleCenter | kAlignBottomCenter,
+	kMAlignVCenter      = kAlignMiddleLeft | kAlignMiddleCenter | kAlignMiddleRight
 };
 
 // Horizontal alignment; based on FrameAlignment, used to restrict alignment
 // setting to left/right/center option, while keeping compatibility with any
 // alignment in case it will be supported in the future.
-enum HorAlignment
-{
-    kHAlignNone     = kAlignNone,
-    kHAlignLeft     = kAlignTopLeft,
-    kHAlignRight    = kAlignTopRight,
-    kHAlignCenter   = kAlignTopCenter
+enum HorAlignment {
+	kHAlignNone     = kAlignNone,
+	kHAlignLeft     = kAlignTopLeft,
+	kHAlignRight    = kAlignTopRight,
+	kHAlignCenter   = kAlignTopCenter
 };
 
-enum RectPlacement
-{
-    kPlaceOffset,
-    kPlaceCenter,
-    kPlaceStretch,
-    kPlaceStretchProportional,
-    kNumRectPlacement
+enum RectPlacement {
+	kPlaceOffset,
+	kPlaceCenter,
+	kPlaceStretch,
+	kPlaceStretchProportional,
+	kNumRectPlacement
 };
 
-struct Point
-{
-    int X;
-    int Y;
+struct Point {
+	int X;
+	int Y;
 
-    Point()
-    {
-        X = 0;
-        Y = 0;
-    }
+	Point() {
+		X = 0;
+		Y = 0;
+	}
 
-    Point(int x, int y)
-    {
-        X = x;
-        Y = y;
-    }
+	Point(int x, int y) {
+		X = x;
+		Y = y;
+	}
 
-    inline bool operator ==(const Point &p) const
-    {
-        return X == p.X && Y == p.Y;
-    }
+	inline bool operator ==(const Point &p) const {
+		return X == p.X && Y == p.Y;
+	}
 
-    inline bool operator !=(const Point &p) const
-    {
-        return X != p.X || Y != p.Y;
-    }
+	inline bool operator !=(const Point &p) const {
+		return X != p.X || Y != p.Y;
+	}
 
-    inline Point operator +(const Point &p) const
-    {
-        return Point(X + p.X, Y + p.Y);
-    }
+	inline Point operator +(const Point &p) const {
+		return Point(X + p.X, Y + p.Y);
+	}
 };
 
-struct Line
-{
+struct Line {
 	int X1;
 	int Y1;
 	int X2;
 	int Y2;
 
-	Line()
-	{
+	Line() {
 		X1 = 0;
 		Y1 = 0;
 		X2 = 0;
 		Y2 = 0;
 	}
 
-	Line(int x1, int y1, int x2, int y2)
-	{
+	Line(int x1, int y1, int x2, int y2) {
 		X1 = x1;
 		Y1 = y1;
 		X2 = x2;
@@ -144,203 +132,169 @@ struct Line
 };
 
 // Helper factory functions
-inline Line HLine(int x1, int x2, int y)
-{
+inline Line HLine(int x1, int x2, int y) {
 	return Line(x1, y, x2, y);
 }
 
-inline Line VLine(int x, int y1, int y2)
-{
+inline Line VLine(int x, int y1, int y2) {
 	return Line(x, y1, x, y2);
 }
 
-struct Size
-{
-    int Width;
-    int Height;
+struct Size {
+	int Width;
+	int Height;
 
-    Size()
-    {
-        Width = 0;
-        Height = 0;
-    }
+	Size() {
+		Width = 0;
+		Height = 0;
+	}
 
-    Size(int width, int height)
-    {
-        Width = width;
-        Height = height;
-    }
+	Size(int width, int height) {
+		Width = width;
+		Height = height;
+	}
 
-    inline bool IsNull() const
-    {
-        return Width <= 0 || Height <= 0;
-    }
+	inline bool IsNull() const {
+		return Width <= 0 || Height <= 0;
+	}
 
-    inline static Size Clamp(const Size &sz, const Size &floor, const Size &ceil)
-    {
-        return Size(AGSMath::Clamp(sz.Width, floor.Width, ceil.Width),
-                    AGSMath::Clamp(sz.Height, floor.Height, ceil.Height));
-    }
+	inline static Size Clamp(const Size &sz, const Size &floor, const Size &ceil) {
+		return Size(AGSMath::Clamp(sz.Width, floor.Width, ceil.Width),
+		            AGSMath::Clamp(sz.Height, floor.Height, ceil.Height));
+	}
 
-    // Indicates if current size exceeds other size by any metric
-    inline bool ExceedsByAny(const Size size) const
-    {
-        return Width > size.Width || Height > size.Height;
-    }
+	// Indicates if current size exceeds other size by any metric
+	inline bool ExceedsByAny(const Size size) const {
+		return Width > size.Width || Height > size.Height;
+	}
 
-    inline bool operator==(const Size size) const
-    {
-        return Width == size.Width && Height == size.Height;
-    }
+	inline bool operator==(const Size size) const {
+		return Width == size.Width && Height == size.Height;
+	}
 
-    inline bool operator!=(const Size size) const
-    {
-        return Width != size.Width || Height != size.Height;
-    }
+	inline bool operator!=(const Size size) const {
+		return Width != size.Width || Height != size.Height;
+	}
 
-    inline bool operator<(const Size &other) const
-    { // TODO: this implementation is silly and not universally useful; make a realistic one and replace with another function where necessary
-        return Width < other.Width || (Width == other.Width && Height < other.Height);
-    }
+	inline bool operator<(const Size &other) const {
+		// TODO: this implementation is silly and not universally useful; make a realistic one and replace with another function where necessary
+		return Width < other.Width || (Width == other.Width && Height < other.Height);
+	}
 
-    inline Size operator *(int x) const
-    {
-        return Size(Width * x, Height * x);
-    }
+	inline Size operator *(int x) const {
+		return Size(Width * x, Height * x);
+	}
 
-    inline Size operator /(int x) const
-    {
-        return Size(Width / x, Height / x);
-    }
+	inline Size operator /(int x) const {
+		return Size(Width / x, Height / x);
+	}
 
-    inline Size &operator *=(int x)
-    {
-        Width *= x;
-        Height *= x;
-        return *this;
-    }
+	inline Size &operator *=(int x) {
+		Width *= x;
+		Height *= x;
+		return *this;
+	}
 
-    inline Size &operator /=(int x)
-    {
-        Width /= x;
-        Height /= x;
-        return *this;
-    }
+	inline Size &operator /=(int x) {
+		Width /= x;
+		Height /= x;
+		return *this;
+	}
 };
 
 // TODO: consider making Rect have right-bottom coordinate with +1 offset
 // to comply with many other libraries (i.e. Right - Left == Width)
-struct Rect
-{
+struct Rect {
 	int Left;
 	int Top;
 	int Right;
 	int Bottom;
 
-	Rect()
-	{
-		Left	= 0;
-		Top		= 0;
-		Right	= -1;
-		Bottom	= -1;
+	Rect() {
+		Left    = 0;
+		Top     = 0;
+		Right   = -1;
+		Bottom  = -1;
 	}
 
-	Rect(int l, int t, int r, int b)
-	{
-		Left	= l;
-		Top		= t;
-		Right	= r;
-		Bottom	= b;
+	Rect(int l, int t, int r, int b) {
+		Left    = l;
+		Top     = t;
+		Right   = r;
+		Bottom  = b;
 	}
 
-    inline Point GetLT() const
-    {
-        return Point(Left, Top);
-    }
+	inline Point GetLT() const {
+		return Point(Left, Top);
+	}
 
-    inline Point GetCenter() const
-    {
-        return Point(Left + GetWidth() / 2, Top + GetHeight() / 2);
-    }
+	inline Point GetCenter() const {
+		return Point(Left + GetWidth() / 2, Top + GetHeight() / 2);
+	}
 
-	inline int GetWidth() const
-	{
+	inline int GetWidth() const {
 		return Right - Left + 1;
 	}
 
-	inline int GetHeight() const
-	{
+	inline int GetHeight() const {
 		return Bottom - Top + 1;
 	}
 
-    inline Size GetSize() const
-    {
-        return Size(GetWidth(), GetHeight());
-    }
-    
-    inline bool IsEmpty() const
-    {
-        return Right < Left || Bottom < Top;
-    }
+	inline Size GetSize() const {
+		return Size(GetWidth(), GetHeight());
+	}
 
-    inline bool IsInside(int x, int y) const
-    {
-        return x >= Left && y >= Top && (x <= Right) && (y <= Bottom);
-    }
+	inline bool IsEmpty() const {
+		return Right < Left || Bottom < Top;
+	}
 
-    inline bool IsInside(const Point &pt) const
-    {
-        return IsInside(pt.X, pt.Y);
-    }
+	inline bool IsInside(int x, int y) const {
+		return x >= Left && y >= Top && (x <= Right) && (y <= Bottom);
+	}
 
-    inline void MoveToX(int x)
-    {
-        Right += x - Left;
-        Left = x;
-    }
+	inline bool IsInside(const Point &pt) const {
+		return IsInside(pt.X, pt.Y);
+	}
 
-    inline void MoveToY(int y)
-    {
-        Bottom += y - Top;
-        Top = y;
-    }
+	inline void MoveToX(int x) {
+		Right += x - Left;
+		Left = x;
+	}
 
-    inline void MoveTo(const Point &pt)
-    {
-        MoveToX(pt.X);
-        MoveToY(pt.Y);
-    }
+	inline void MoveToY(int y) {
+		Bottom += y - Top;
+		Top = y;
+	}
 
-    inline void SetWidth(int width)
-    {
-        Right = Left + width - 1;
-    }
+	inline void MoveTo(const Point &pt) {
+		MoveToX(pt.X);
+		MoveToY(pt.Y);
+	}
 
-    inline void SetHeight(int height)
-    {
-        Bottom = Top + height - 1;
-    }
+	inline void SetWidth(int width) {
+		Right = Left + width - 1;
+	}
 
-    inline static Rect MoveBy(const Rect &r, int x, int y)
-    {
-        return Rect(r.Left + x, r.Top + y, r.Right + x, r.Bottom + y);
-    }
+	inline void SetHeight(int height) {
+		Bottom = Top + height - 1;
+	}
+
+	inline static Rect MoveBy(const Rect &r, int x, int y) {
+		return Rect(r.Left + x, r.Top + y, r.Right + x, r.Bottom + y);
+	}
 };
 
 // Helper factory function
-inline Rect RectWH(int x, int y, int width, int height)
-{
+inline Rect RectWH(int x, int y, int width, int height) {
 	return Rect(x, y, x + width - 1, y + height - 1);
 }
 
-inline Rect RectWH(const Size &sz)
-{
-    return Rect(0, 0, sz.Width - 1, sz.Height - 1);
+inline Rect RectWH(const Size &sz) {
+	return Rect(0, 0, sz.Width - 1, sz.Height - 1);
 }
 
 
-struct Triangle
-{
+struct Triangle {
 	int X1;
 	int Y1;
 	int X2;
@@ -348,8 +302,7 @@ struct Triangle
 	int X3;
 	int Y3;
 
-	Triangle()
-	{
+	Triangle() {
 		X1 = 0;
 		Y1 = 0;
 		X2 = 0;
@@ -358,8 +311,7 @@ struct Triangle
 		Y3 = 0;
 	}
 
-	Triangle(int x1, int y1, int x2, int y2, int x3, int y3)
-	{
+	Triangle(int x1, int y1, int x2, int y2, int x3, int y3) {
 		X1 = x1;
 		Y1 = y1;
 		X2 = x2;
@@ -369,21 +321,18 @@ struct Triangle
 	}
 };
 
-struct Circle
-{
+struct Circle {
 	int X;
 	int Y;
 	int Radius;
 
-	Circle()
-	{
+	Circle() {
 		X = 0;
 		Y = 0;
 		Radius = 0;
 	}
 
-	Circle(int x, int y, int radius)
-	{
+	Circle(int x, int y, int radius) {
 		X = x;
 		Y = y;
 		Radius = radius;

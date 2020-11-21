@@ -23,42 +23,33 @@
 #ifndef AGS_ENGINE_UTIL_LIBRARY_DUMMY_H
 #define AGS_ENGINE_UTIL_LIBRARY_DUMMY_H
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 
-class DummyLibrary : BaseLibrary
-{
+class DummyLibrary : BaseLibrary {
 public:
-  DummyLibrary()
-  {
-  };
+	DummyLibrary() {
+	};
 
-  ~DummyLibrary() override
-  {
-  };
+	~DummyLibrary() override {
+	};
 
-  AGS::Common::String GetFilenameForLib(AGS::Common::String libraryName) override
-  {
-      return libraryName;
-  }
+	AGS::Common::String GetFilenameForLib(AGS::Common::String libraryName) override {
+		return libraryName;
+	}
 
-  bool Load(AGS::Common::String libraryName) override
-  {
-    return false;
-  }
+	bool Load(AGS::Common::String libraryName) override {
+		return false;
+	}
 
-  bool Unload() override
-  {
-    return true;
-  }
+	bool Unload() override {
+		return true;
+	}
 
-  void *GetFunctionAddress(AGS::Common::String functionName) override
-  {
-    return NULL;
-  }
+	void *GetFunctionAddress(AGS::Common::String functionName) override {
+		return NULL;
+	}
 };
 
 

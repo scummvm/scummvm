@@ -37,7 +37,11 @@
 
 #include "allegro.h"
 
-namespace AGS { namespace Common { class Bitmap; }}
+namespace AGS {
+namespace Common {
+class Bitmap;
+}
+}
 using namespace AGS; // FIXME later
 
 
@@ -56,24 +60,24 @@ extern void __my_setcolor(int *ctset, int newcol, int wantColDep);
 extern "C"
 {
 #endif
-    
-    extern void wsetrgb(int coll, int r, int g, int b, color * pall);
-    extern void wcolrotate(unsigned char start, unsigned char finish, int dir, color * pall);
 
-    extern Common::Bitmap *wnewblock(Common::Bitmap *src, int x1, int y1, int x2, int y2);
+extern void wsetrgb(int coll, int r, int g, int b, color *pall);
+extern void wcolrotate(unsigned char start, unsigned char finish, int dir, color *pall);
 
-    extern int wloadsprites(color * pall, char *filnam, Common::Bitmap ** sarray, int strt, int eend);
+extern Common::Bitmap *wnewblock(Common::Bitmap *src, int x1, int y1, int x2, int y2);
 
-    extern void wputblock(Common::Bitmap *ds, int xx, int yy, Common::Bitmap *bll, int xray);
-	// CHECKME: temporary solution for plugin system
-	extern void wputblock_raw(Common::Bitmap *ds, int xx, int yy, BITMAP *bll, int xray);
-    extern const int col_lookups[32];
+extern int wloadsprites(color *pall, char *filnam, Common::Bitmap **sarray, int strt, int eend);
 
-    //extern void wsetcolor(int nval);
+extern void wputblock(Common::Bitmap *ds, int xx, int yy, Common::Bitmap *bll, int xray);
+// CHECKME: temporary solution for plugin system
+extern void wputblock_raw(Common::Bitmap *ds, int xx, int yy, BITMAP *bll, int xray);
+extern const int col_lookups[32];
 
-    extern int __wremap_keep_transparent;
-    extern void wremap(color * pal1, Common::Bitmap *picc, color * pal2);
-    extern void wremapall(color * pal1, Common::Bitmap *picc, color * pal2);
+//extern void wsetcolor(int nval);
+
+extern int __wremap_keep_transparent;
+extern void wremap(color *pal1, Common::Bitmap *picc, color *pal2);
+extern void wremapall(color *pal1, Common::Bitmap *picc, color *pal2);
 
 #ifdef __cplusplus
 }

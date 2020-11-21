@@ -24,8 +24,8 @@
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTREGION_H
 
 struct ScriptRegion {
-    int id;
-    int reserved;
+	int id;
+	int reserved;
 };
 
 #endif

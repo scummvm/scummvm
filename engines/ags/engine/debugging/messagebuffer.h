@@ -34,32 +34,29 @@
 #include <vector>
 #include "debug/outputhandler.h"
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 using Common::String;
 using Common::DebugMessage;
 
-class MessageBuffer : public AGS::Common::IOutputHandler
-{
+class MessageBuffer : public AGS::Common::IOutputHandler {
 public:
-    MessageBuffer(size_t buffer_limit = 1024);
+	MessageBuffer(size_t buffer_limit = 1024);
 
-    void PrintMessage(const DebugMessage &msg) override;
+	void PrintMessage(const DebugMessage &msg) override;
 
-    // Clears buffer
-    void         Clear();
-    // Sends buffered messages into given output target
-    void         Send(const String &out_id);
-    // Sends buffered messages into given output target and clears buffer
-    void         Flush(const String &out_id);
+	// Clears buffer
+	void         Clear();
+	// Sends buffered messages into given output target
+	void         Send(const String &out_id);
+	// Sends buffered messages into given output target and clears buffer
+	void         Flush(const String &out_id);
 
 private:
-    const size_t    _bufferLimit;
-    std::vector<DebugMessage> _buffer;
-    size_t          _msgLost;
+	const size_t    _bufferLimit;
+	std::vector<DebugMessage> _buffer;
+	size_t          _msgLost;
 };
 
 }   // namespace Engine

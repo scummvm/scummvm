@@ -24,8 +24,8 @@
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTHOTSPOT_H
 
 struct ScriptHotspot {
-    int id;
-    int reserved;
+	int id;
+	int reserved;
 };
 
 #endif

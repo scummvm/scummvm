@@ -24,6 +24,6 @@
 #define AGS_ENGINE_AC_GLOBALDATETIME_H
 
 int sc_GetTime(int whatti) ;
-int GetRawTime ();
+int GetRawTime();
 
 #endif

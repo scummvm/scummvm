@@ -33,45 +33,41 @@
 #include "gfx/gfxfilter_scaling.h"
 #include "gfx/gfxdefines.h"
 
-namespace AGS
-{
-namespace Engine
-{
-namespace ALSW
-{
+namespace AGS {
+namespace Engine {
+namespace ALSW {
 
 using Common::Bitmap;
 
-class AllegroGfxFilter : public ScalingGfxFilter
-{
+class AllegroGfxFilter : public ScalingGfxFilter {
 public:
-    AllegroGfxFilter();
+	AllegroGfxFilter();
 
-    const GfxFilterInfo &GetInfo() const override;
-    
-    virtual Bitmap *InitVirtualScreen(Bitmap *screen, const Size src_size, const Rect dst_rect);
-    virtual Bitmap *ShutdownAndReturnRealScreen();
-    virtual void RenderScreen(Bitmap *toRender, int x, int y);
-    virtual void RenderScreenFlipped(Bitmap *toRender, int x, int y, GlobalFlipType flipType);
-    virtual void ClearRect(int x1, int y1, int x2, int y2, int color);
-    virtual void GetCopyOfScreenIntoBitmap(Bitmap *copyBitmap);
-    virtual void GetCopyOfScreenIntoBitmap(Bitmap *copyBitmap, bool copy_with_yoffset);
+	const GfxFilterInfo &GetInfo() const override;
 
-    static const GfxFilterInfo FilterInfo;
+	virtual Bitmap *InitVirtualScreen(Bitmap *screen, const Size src_size, const Rect dst_rect);
+	virtual Bitmap *ShutdownAndReturnRealScreen();
+	virtual void RenderScreen(Bitmap *toRender, int x, int y);
+	virtual void RenderScreenFlipped(Bitmap *toRender, int x, int y, GlobalFlipType flipType);
+	virtual void ClearRect(int x1, int y1, int x2, int y2, int color);
+	virtual void GetCopyOfScreenIntoBitmap(Bitmap *copyBitmap);
+	virtual void GetCopyOfScreenIntoBitmap(Bitmap *copyBitmap, bool copy_with_yoffset);
+
+	static const GfxFilterInfo FilterInfo;
 
 protected:
-    virtual Bitmap *PreRenderPass(Bitmap *toRender);
+	virtual Bitmap *PreRenderPass(Bitmap *toRender);
 
-    // pointer to real screen bitmap
-    Bitmap *realScreen;
-    // bitmap the size of game resolution
-    Bitmap *virtualScreen;
-    // buffer for making a copy of video memory before stretching
-    // for screen capture
-    Bitmap *realScreenSizedBuffer;
-    Bitmap *lastBlitFrom;
-    int     lastBlitX;
-    int     lastBlitY;
+	// pointer to real screen bitmap
+	Bitmap *realScreen;
+	// bitmap the size of game resolution
+	Bitmap *virtualScreen;
+	// buffer for making a copy of video memory before stretching
+	// for screen capture
+	Bitmap *realScreenSizedBuffer;
+	Bitmap *lastBlitFrom;
+	int     lastBlitX;
+	int     lastBlitY;
 };
 
 } // namespace ALSW

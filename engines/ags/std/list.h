@@ -58,7 +58,7 @@ public:
 	};
 public:
 	typename Common::List<T>::iterator insert(typename Common::List<T>::iterator pos,
-		const T &element) {
+	        const T &element) {
 		Common::List<T>::insert(pos, element);
 		return pos;
 	}

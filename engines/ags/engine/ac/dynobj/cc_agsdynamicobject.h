@@ -27,41 +27,41 @@
 
 struct AGSCCDynamicObject : ICCDynamicObject {
 protected:
-    virtual ~AGSCCDynamicObject() = default;
+	virtual ~AGSCCDynamicObject() = default;
 public:
-    // default implementation
-    int Dispose(const char *address, bool force) override;
+	// default implementation
+	int Dispose(const char *address, bool force) override;
 
-    // TODO: pass savegame format version
-    virtual void Unserialize(int index, const char *serializedData, int dataSize) = 0;
+	// TODO: pass savegame format version
+	virtual void Unserialize(int index, const char *serializedData, int dataSize) = 0;
 
-    // Legacy support for reading and writing object values by their relative offset
-    const char* GetFieldPtr(const char *address, intptr_t offset) override;
-    void    Read(const char *address, intptr_t offset, void *dest, int size) override;
-    uint8_t ReadInt8(const char *address, intptr_t offset) override;
-    int16_t ReadInt16(const char *address, intptr_t offset) override;
-    int32_t ReadInt32(const char *address, intptr_t offset) override;
-    float   ReadFloat(const char *address, intptr_t offset) override;
-    void    Write(const char *address, intptr_t offset, void *src, int size) override;
-    void    WriteInt8(const char *address, intptr_t offset, uint8_t val) override;
-    void    WriteInt16(const char *address, intptr_t offset, int16_t val) override;
-    void    WriteInt32(const char *address, intptr_t offset, int32_t val) override;
-    void    WriteFloat(const char *address, intptr_t offset, float val) override;
+	// Legacy support for reading and writing object values by their relative offset
+	const char *GetFieldPtr(const char *address, intptr_t offset) override;
+	void    Read(const char *address, intptr_t offset, void *dest, int size) override;
+	uint8_t ReadInt8(const char *address, intptr_t offset) override;
+	int16_t ReadInt16(const char *address, intptr_t offset) override;
+	int32_t ReadInt32(const char *address, intptr_t offset) override;
+	float   ReadFloat(const char *address, intptr_t offset) override;
+	void    Write(const char *address, intptr_t offset, void *src, int size) override;
+	void    WriteInt8(const char *address, intptr_t offset, uint8_t val) override;
+	void    WriteInt16(const char *address, intptr_t offset, int16_t val) override;
+	void    WriteInt32(const char *address, intptr_t offset, int32_t val) override;
+	void    WriteFloat(const char *address, intptr_t offset, float val) override;
 
 protected:
-    // Savegame serialization
-    // TODO: reimplement with the proper memory stream?!
-    int bytesSoFar;
-    int totalBytes;
-    char *serbuffer;
+	// Savegame serialization
+	// TODO: reimplement with the proper memory stream?!
+	int bytesSoFar;
+	int totalBytes;
+	char *serbuffer;
 
-    void StartSerialize(char *sbuffer);
-    void SerializeInt(int val);
-    void SerializeFloat(float val);
-    int  EndSerialize();
-    void StartUnserialize(const char *sbuffer, int pTotalBytes);
-    int  UnserializeInt();
-    float UnserializeFloat();
+	void StartSerialize(char *sbuffer);
+	void SerializeInt(int val);
+	void SerializeFloat(float val);
+	int  EndSerialize();
+	void StartUnserialize(const char *sbuffer, int pTotalBytes);
+	int  UnserializeInt();
+	float UnserializeFloat();
 
 };
 

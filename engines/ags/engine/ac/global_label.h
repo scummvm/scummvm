@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_LABEL_H
 #define AGS_ENGINE_AC_GLOBAL_LABEL_H
 
-void		SetLabelColor(int guin,int objn, int colr);
-void		SetLabelText(int guin,int objn, const char*newtx);
-void		SetLabelFont(int guin,int objn, int fontnum);
+void        SetLabelColor(int guin, int objn, int colr);
+void        SetLabelText(int guin, int objn, const char *newtx);
+void        SetLabelFont(int guin, int objn, int fontnum);
 
 #endif

@@ -38,12 +38,12 @@ using namespace AGS; // FIXME later
 //  Initial implementation for apps to register their own inbuilt plugins
 
 struct InbuiltPluginDetails {
-    char      filename[PLUGIN_FILENAME_MAX+1];
-    void      (*engineStartup) (IAGSEngine *);
-    void      (*engineShutdown) ();
-    int       (*onEvent) (int, int);
-    void      (*initGfxHook) (const char *driverName, void *data);
-    int       (*debugHook) (const char * whichscript, int lineNumber, int reserved);
+	char      filename[PLUGIN_FILENAME_MAX + 1];
+	void (*engineStartup)(IAGSEngine *);
+	void (*engineShutdown)();
+	int (*onEvent)(int, int);
+	void (*initGfxHook)(const char *driverName, void *data);
+	int (*debugHook)(const char *whichscript, int lineNumber, int reserved);
 };
 
 // Register a builtin plugin.

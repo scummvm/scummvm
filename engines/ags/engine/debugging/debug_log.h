@@ -45,7 +45,7 @@ void quitprintf(const char *texx, ...);
 bool init_editor_debugging();
 
 // allow LShift to single-step,  RShift to pause flow
-void scriptDebugHook (ccInstance *ccinst, int linenum) ;
+void scriptDebugHook(ccInstance *ccinst, int linenum) ;
 
 extern AGS::Common::String debug_line[DEBUG_CONSOLE_NUMLINES];
 extern int first_debug_line, last_debug_line, display_console;

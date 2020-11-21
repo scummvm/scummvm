@@ -24,7 +24,7 @@
 #define AGS_ENGINE_MEDIA_VIDEO_VIDEO_H
 
 void play_theora_video(const char *name, int skip, int flags);
-void play_flc_file(int numb,int playflags);
+void play_flc_file(int numb, int playflags);
 
 // Update video playback if the display mode has changed
 void video_on_gfxmode_changed();

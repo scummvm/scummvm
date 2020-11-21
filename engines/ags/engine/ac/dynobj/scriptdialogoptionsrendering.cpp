@@ -24,38 +24,36 @@
 
 // return the type name of the object
 const char *ScriptDialogOptionsRendering::GetType() {
-    return "DialogOptionsRendering";
+	return "DialogOptionsRendering";
 }
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int ScriptDialogOptionsRendering::Serialize(const char *address, char *buffer, int bufsize) {
-    return 0;
+	return 0;
 }
 
 void ScriptDialogOptionsRendering::Unserialize(int index, const char *serializedData, int dataSize) {
-    ccRegisterUnserializedObject(index, this, this);
+	ccRegisterUnserializedObject(index, this, this);
 }
 
-void ScriptDialogOptionsRendering::Reset()
-{
-    x = 0;
-    y = 0;
-    width = 0;
-    height = 0;
-    hasAlphaChannel = false;
-    parserTextboxX = 0;
-    parserTextboxY = 0;
-    parserTextboxWidth = 0;
-    dialogID = 0;
-    surfaceToRenderTo = nullptr;
-    surfaceAccessed = false;
-    activeOptionID = -1;
-    chosenOptionID = -1;
-    needRepaint = false;
+void ScriptDialogOptionsRendering::Reset() {
+	x = 0;
+	y = 0;
+	width = 0;
+	height = 0;
+	hasAlphaChannel = false;
+	parserTextboxX = 0;
+	parserTextboxY = 0;
+	parserTextboxWidth = 0;
+	dialogID = 0;
+	surfaceToRenderTo = nullptr;
+	surfaceAccessed = false;
+	activeOptionID = -1;
+	chosenOptionID = -1;
+	needRepaint = false;
 }
 
-ScriptDialogOptionsRendering::ScriptDialogOptionsRendering()
-{
-    Reset();
+ScriptDialogOptionsRendering::ScriptDialogOptionsRendering() {
+	Reset();
 }

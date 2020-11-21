@@ -23,25 +23,22 @@
 #ifndef AGS_ENGINE_UTIL_MUTEX_H
 #define AGS_ENGINE_UTIL_MUTEX_H
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 
-class BaseMutex
-{
+class BaseMutex {
 public:
-  BaseMutex() = default;
+	BaseMutex() = default;
 
-  virtual ~BaseMutex() = default;
+	virtual ~BaseMutex() = default;
 
-  BaseMutex &operator=(const BaseMutex &) = delete;
-  BaseMutex(const BaseMutex &) = delete;
+	BaseMutex &operator=(const BaseMutex &) = delete;
+	BaseMutex(const BaseMutex &) = delete;
 
-  virtual void Lock() = 0;
+	virtual void Lock() = 0;
 
-  virtual void Unlock() = 0;
+	virtual void Unlock() = 0;
 };
 
 
@@ -50,7 +47,7 @@ public:
 
 
 #if 0
-  // insert platforms here
+// insert platforms here
 #else
 #include "mutex_std.h"
 #endif

@@ -23,14 +23,13 @@
 #ifndef AGS_ENGINE_AC_WALKBEHIND_H
 #define AGS_ENGINE_AC_WALKBEHIND_H
 
-enum WalkBehindMethodEnum
-{
-    DrawOverCharSprite,
-    DrawAsSeparateSprite,
-    DrawAsSeparateCharSprite
+enum WalkBehindMethodEnum {
+	DrawOverCharSprite,
+	DrawAsSeparateSprite,
+	DrawAsSeparateCharSprite
 };
 
 void update_walk_behind_images();
-void recache_walk_behinds ();
+void recache_walk_behinds();
 
 #endif

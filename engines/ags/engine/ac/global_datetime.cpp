@@ -26,23 +26,23 @@
 #include "ac/common.h"
 
 int sc_GetTime(int whatti) {
-    ScriptDateTime *sdt = DateTime_Now_Core();
-    int returnVal = 0;
+	ScriptDateTime *sdt = DateTime_Now_Core();
+	int returnVal = 0;
 
-    if (whatti == 1) returnVal = sdt->hour;
-    else if (whatti == 2) returnVal = sdt->minute;
-    else if (whatti == 3) returnVal = sdt->second;
-    else if (whatti == 4) returnVal = sdt->day;
-    else if (whatti == 5) returnVal = sdt->month;
-    else if (whatti == 6) returnVal = sdt->year;
-    else quit("!GetTime: invalid parameter passed");
+	if (whatti == 1) returnVal = sdt->hour;
+	else if (whatti == 2) returnVal = sdt->minute;
+	else if (whatti == 3) returnVal = sdt->second;
+	else if (whatti == 4) returnVal = sdt->day;
+	else if (whatti == 5) returnVal = sdt->month;
+	else if (whatti == 6) returnVal = sdt->year;
+	else quit("!GetTime: invalid parameter passed");
 
-    delete sdt;
+	delete sdt;
 
-    return returnVal;
+	return returnVal;
 }
 
-int GetRawTime () {
-    // TODO: we might need to modify script API to support larger time type
-    return static_cast<int>(time(nullptr));
+int GetRawTime() {
+	// TODO: we might need to modify script API to support larger time type
+	return static_cast<int>(time(nullptr));
 }

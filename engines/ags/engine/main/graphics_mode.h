@@ -33,7 +33,11 @@ using AGS::Engine::DisplayMode;
 Size get_desktop_size();
 String make_scaling_factor_string(uint32_t scaling);
 
-namespace AGS { namespace Engine { class IGfxModeList; }}
+namespace AGS {
+namespace Engine {
+class IGfxModeList;
+}
+}
 bool find_nearest_supported_mode(const AGS::Engine::IGfxModeList &modes, const Size &wanted_size,
                                  const int color_depth, const Size *ratio_reference, const Size *upper_bound,
                                  AGS::Engine::DisplayMode &dm, int *mode_index = nullptr);
@@ -46,93 +50,84 @@ extern AGS::Engine::PlaneScaling GameScaling;
 
 
 // Filter configuration
-struct GfxFilterSetup
-{
-    String ID;          // internal filter ID
-    String UserRequest; // filter name, requested by user
+struct GfxFilterSetup {
+	String ID;          // internal filter ID
+	String UserRequest; // filter name, requested by user
 };
 
-enum FrameScaleDefinition
-{
-    kFrame_IntScale,        // explicit integer scaling x/y factors
-    kFrame_MaxRound,        // calculate max round uniform scaling factor
-    kFrame_MaxStretch,      // resize to maximal possible inside the display box
-    kFrame_MaxProportional, // same as stretch, but keep game's aspect ratio
-    kNumFrameScaleDef
+enum FrameScaleDefinition {
+	kFrame_IntScale,        // explicit integer scaling x/y factors
+	kFrame_MaxRound,        // calculate max round uniform scaling factor
+	kFrame_MaxStretch,      // resize to maximal possible inside the display box
+	kFrame_MaxProportional, // same as stretch, but keep game's aspect ratio
+	kNumFrameScaleDef
 };
 
 // Game frame configuration
-struct GameFrameSetup
-{
-    FrameScaleDefinition ScaleDef;    // a method used to determine game frame scaling
-    int                  ScaleFactor; // explicit scale factor
+struct GameFrameSetup {
+	FrameScaleDefinition ScaleDef;    // a method used to determine game frame scaling
+	int                  ScaleFactor; // explicit scale factor
 
-    GameFrameSetup();
-    GameFrameSetup(FrameScaleDefinition def, int factor = 0);
-    bool IsValid() const;
+	GameFrameSetup();
+	GameFrameSetup(FrameScaleDefinition def, int factor = 0);
+	bool IsValid() const;
 };
 
-enum ScreenSizeDefinition
-{
-    kScreenDef_Explicit,        // define by width & height
-    kScreenDef_ByGameScaling,   // define by game scale factor
-    kScreenDef_MaxDisplay,      // set to maximal supported (desktop/device screen size)
-    kNumScreenDef
+enum ScreenSizeDefinition {
+	kScreenDef_Explicit,        // define by width & height
+	kScreenDef_ByGameScaling,   // define by game scale factor
+	kScreenDef_MaxDisplay,      // set to maximal supported (desktop/device screen size)
+	kNumScreenDef
 };
 
 // Configuration that is used to determine the size of the screen
-struct ScreenSizeSetup
-{
-    ScreenSizeDefinition SizeDef;       // a method used to determine screen size
-    ::Size               Size;          // explicitly defined screen metrics
-    bool                 MatchDeviceRatio; // whether to choose resolution matching device aspect ratio
+struct ScreenSizeSetup {
+	ScreenSizeDefinition SizeDef;       // a method used to determine screen size
+	::Size               Size;          // explicitly defined screen metrics
+	bool                 MatchDeviceRatio; // whether to choose resolution matching device aspect ratio
 
-    ScreenSizeSetup();
+	ScreenSizeSetup();
 };
 
 // Display mode configuration
-struct DisplayModeSetup
-{
-    ScreenSizeSetup      ScreenSize;
+struct DisplayModeSetup {
+	ScreenSizeSetup      ScreenSize;
 
-    int                  RefreshRate;   // gfx mode refresh rate
-    bool                 VSync;         // vertical sync
-    bool                 Windowed;      // is mode windowed
+	int                  RefreshRate;   // gfx mode refresh rate
+	bool                 VSync;         // vertical sync
+	bool                 Windowed;      // is mode windowed
 
-    DisplayModeSetup();
+	DisplayModeSetup();
 };
 
 // Full graphics configuration
-struct ScreenSetup
-{
-    String               DriverID;      // graphics driver ID
-    DisplayModeSetup     DisplayMode;   // definition of the initial display mode
+struct ScreenSetup {
+	String               DriverID;      // graphics driver ID
+	DisplayModeSetup     DisplayMode;   // definition of the initial display mode
 
-    // Definitions for the fullscreen and windowed scaling methods.
-    // When the initial display mode is set, corresponding scaling method from this pair is used.
-    // The second method is meant to be saved and used if display mode is switched at runtime.
-    GameFrameSetup       FsGameFrame;   // how the game frame should be scaled/positioned in fullscreen mode
-    GameFrameSetup       WinGameFrame;  // how the game frame should be scaled/positioned in windowed mode
+	// Definitions for the fullscreen and windowed scaling methods.
+	// When the initial display mode is set, corresponding scaling method from this pair is used.
+	// The second method is meant to be saved and used if display mode is switched at runtime.
+	GameFrameSetup       FsGameFrame;   // how the game frame should be scaled/positioned in fullscreen mode
+	GameFrameSetup       WinGameFrame;  // how the game frame should be scaled/positioned in windowed mode
 
-    GfxFilterSetup       Filter;        // graphics filter definition
+	GfxFilterSetup       Filter;        // graphics filter definition
 };
 
 // Display mode color depth variants suggested for the use
-struct ColorDepthOption
-{
-    int     Bits;   // color depth value in bits
-    bool    Forced; // whether the depth should be forced, or driver's recommendation used
+struct ColorDepthOption {
+	int     Bits;   // color depth value in bits
+	bool    Forced; // whether the depth should be forced, or driver's recommendation used
 
-    ColorDepthOption() : Bits(0), Forced(false) {}
-    ColorDepthOption(int bits, bool forced = false) : Bits(bits), Forced(forced) {}
+	ColorDepthOption() : Bits(0), Forced(false) {}
+	ColorDepthOption(int bits, bool forced = false) : Bits(bits), Forced(forced) {}
 };
 
 // ActiveDisplaySetting struct merges DisplayMode and GameFrameSetup,
 // which is useful if you need to save active settings and reapply them later.
-struct ActiveDisplaySetting
-{
-    DisplayMode     Dm;
-    GameFrameSetup  FrameSetup;
+struct ActiveDisplaySetting {
+	DisplayMode     Dm;
+	GameFrameSetup  FrameSetup;
 };
 
 // Initializes any possible gfx mode, using user config as a recommendation;

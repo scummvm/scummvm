@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_VIDEO_H
 #define AGS_ENGINE_AC_GLOBAL_VIDEO_H
 
-void scrPlayVideo(const char* name, int skip, int flags);
+void scrPlayVideo(const char *name, int skip, int flags);
 void pause_sound_if_necessary_and_play_video(const char *name, int skip, int flags);
 
 #endif

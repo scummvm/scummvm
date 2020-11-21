@@ -40,20 +40,20 @@
 
 // Not all compilers have this. Added in clang and gcc followed
 #ifndef __has_attribute
-    #define __has_attribute(x) 0
+#define __has_attribute(x) 0
 #endif
 
 #ifndef FORCEINLINE
-    #ifdef _MSC_VER
-        #define FORCEINLINE __forceinline
+#ifdef _MSC_VER
+#define FORCEINLINE __forceinline
 
-    #elif defined (__GNUC__) || __has_attribute(__always_inline__)
-        #define FORCEINLINE inline __attribute__((__always_inline__))
+#elif defined (__GNUC__) || __has_attribute(__always_inline__)
+#define FORCEINLINE inline __attribute__((__always_inline__))
 
-    #else
-        #define FORCEINLINE inline
+#else
+#define FORCEINLINE inline
 
-    #endif
+#endif
 #endif
 
 // Stream offset type
@@ -63,10 +63,9 @@ typedef int64_t soff_t;
 #define color_t int32_t
 
 // TODO: use distinct fixed point class
-enum
-{
-    kShift    = 16,
-    kUnit     = 1 << kShift
+enum {
+	kShift    = 16,
+	kUnit     = 1 << kShift
 };
 
 #endif

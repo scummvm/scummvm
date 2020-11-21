@@ -31,22 +31,18 @@
 
 #include "gfx/gfxfilter_d3d.h"
 
-namespace AGS
-{
-namespace Engine
-{
-namespace D3D
-{
+namespace AGS {
+namespace Engine {
+namespace D3D {
 
-class AAD3DGfxFilter : public D3DGfxFilter
-{
+class AAD3DGfxFilter : public D3DGfxFilter {
 public:
-    const GfxFilterInfo &GetInfo() const override;
+	const GfxFilterInfo &GetInfo() const override;
 
-    void SetSamplerStateForStandardSprite(void *direct3ddevice9) override;
-    bool NeedToColourEdgeLines() override;
+	void SetSamplerStateForStandardSprite(void *direct3ddevice9) override;
+	bool NeedToColourEdgeLines() override;
 
-    static const GfxFilterInfo FilterInfo;
+	static const GfxFilterInfo FilterInfo;
 };
 
 } // namespace D3D

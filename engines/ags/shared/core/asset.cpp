@@ -22,23 +22,19 @@
 
 #include "core/asset.h"
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
 AssetInfo::AssetInfo()
-    : LibUid(0)
-    , Offset(0)
-    , Size(0)
-{
+	: LibUid(0)
+	, Offset(0)
+	, Size(0) {
 }
-void AssetLibInfo::Unload()
-{
-    BaseFileName = "";
-    BaseFilePath = "";
-    LibFileNames.clear();
-    AssetInfos.clear();
+void AssetLibInfo::Unload() {
+	BaseFileName = "";
+	BaseFilePath = "";
+	LibFileNames.clear();
+	AssetInfos.clear();
 }
 
 } // namespace Common

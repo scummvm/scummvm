@@ -25,17 +25,21 @@
 
 struct SOUNDCLIP;
 
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 struct QueuedAudioItem {
-    short audioClipIndex;
-    short priority;
-    bool  repeat;
-    SOUNDCLIP *cachedClip;
+	short audioClipIndex;
+	short priority;
+	bool  repeat;
+	SOUNDCLIP *cachedClip;
 
-    void ReadFromFile(Common::Stream *in);
-    void WriteToFile(Common::Stream *out) const;
+	void ReadFromFile(Common::Stream *in);
+	void WriteToFile(Common::Stream *out) const;
 };
 
 #endif

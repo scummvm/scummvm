@@ -46,33 +46,30 @@ struct GameSetupStruct;
 struct DialogTopic;
 struct ViewStruct;
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
 // Error codes for main game file reading
-enum MainGameFileErrorType
-{
-    kMGFErr_NoError,
-    kMGFErr_FileOpenFailed,
-    kMGFErr_SignatureFailed,
-    // separate error given for "too old" format to provide clarifying message
-    kMGFErr_FormatVersionTooOld,
-    kMGFErr_FormatVersionNotSupported,
-    kMGFErr_CapsNotSupported,
-    kMGFErr_InvalidNativeResolution,
-    kMGFErr_TooManySprites,
-    kMGFErr_TooManyCursors,
-    kMGFErr_InvalidPropertySchema,
-    kMGFErr_InvalidPropertyValues,
-    kMGFErr_NoGlobalScript,
-    kMGFErr_CreateGlobalScriptFailed,
-    kMGFErr_CreateDialogScriptFailed,
-    kMGFErr_CreateScriptModuleFailed,
-    kMGFErr_GameEntityFailed,
-    kMGFErr_PluginDataFmtNotSupported,
-    kMGFErr_PluginDataSizeTooLarge
+enum MainGameFileErrorType {
+	kMGFErr_NoError,
+	kMGFErr_FileOpenFailed,
+	kMGFErr_SignatureFailed,
+	// separate error given for "too old" format to provide clarifying message
+	kMGFErr_FormatVersionTooOld,
+	kMGFErr_FormatVersionNotSupported,
+	kMGFErr_CapsNotSupported,
+	kMGFErr_InvalidNativeResolution,
+	kMGFErr_TooManySprites,
+	kMGFErr_TooManyCursors,
+	kMGFErr_InvalidPropertySchema,
+	kMGFErr_InvalidPropertyValues,
+	kMGFErr_NoGlobalScript,
+	kMGFErr_CreateGlobalScriptFailed,
+	kMGFErr_CreateDialogScriptFailed,
+	kMGFErr_CreateScriptModuleFailed,
+	kMGFErr_GameEntityFailed,
+	kMGFErr_PluginDataFmtNotSupported,
+	kMGFErr_PluginDataSizeTooLarge
 };
 
 String GetMainGameFileErrorText(MainGameFileErrorType err);
@@ -82,27 +79,26 @@ typedef ErrorHandle<MainGameFileError> HGameFileError;
 typedef std::shared_ptr<Stream> PStream;
 
 // MainGameSource defines a successfully opened main game file
-struct MainGameSource
-{
-    // Standart main game file names for 3.* and 2.* games respectively
-    static const String DefaultFilename_v3;
-    static const String DefaultFilename_v2;
-    // Signature of the current game format
-    static const String Signature;
+struct MainGameSource {
+	// Standart main game file names for 3.* and 2.* games respectively
+	static const String DefaultFilename_v3;
+	static const String DefaultFilename_v2;
+	// Signature of the current game format
+	static const String Signature;
 
-    // Name of the asset file
-    String              Filename;
-    // Game file format version
-    GameDataVersion     DataVersion;
-    // Tool identifier (like version) this game was compiled with
-    String              CompiledWith;
-    // Extended engine capabilities required by the game; their primary use
-    // currently is to let "alternate" game formats indicate themselves
-    std::set<String>    Caps;
-    // A ponter to the opened stream
-    PStream             InputStream;
+	// Name of the asset file
+	String              Filename;
+	// Game file format version
+	GameDataVersion     DataVersion;
+	// Tool identifier (like version) this game was compiled with
+	String              CompiledWith;
+	// Extended engine capabilities required by the game; their primary use
+	// currently is to let "alternate" game formats indicate themselves
+	std::set<String>    Caps;
+	// A ponter to the opened stream
+	PStream             InputStream;
 
-    MainGameSource();
+	MainGameSource();
 };
 
 // LoadedGameEntities is meant for keeping objects loaded from the game file.
@@ -110,31 +106,30 @@ struct MainGameSource
 // of these objects yet, they have to be attached using references to be read
 // directly. This is temporary solution that has to be resolved by the future
 // code refactoring.
-struct LoadedGameEntities
-{
-    GameSetupStruct        &Game;
-    DialogTopic           *&Dialogs;
-    ViewStruct            *&Views;
-    PScript                 GlobalScript;
-    PScript                 DialogScript;
-    std::vector<PScript>    ScriptModules;
-    std::vector<PluginInfo> PluginInfos;
+struct LoadedGameEntities {
+	GameSetupStruct        &Game;
+	DialogTopic           *&Dialogs;
+	ViewStruct            *&Views;
+	PScript                 GlobalScript;
+	PScript                 DialogScript;
+	std::vector<PScript>    ScriptModules;
+	std::vector<PluginInfo> PluginInfos;
 
-    // Original sprite data (when it was read into const-sized arrays)
-    size_t                  SpriteCount;
-    std::unique_ptr<char[]> SpriteFlags;
+	// Original sprite data (when it was read into const-sized arrays)
+	size_t                  SpriteCount;
+	std::unique_ptr<char[]> SpriteFlags;
 
-    // Old dialog support
-    // legacy compiled dialog script of its own format,
-    // requires separate interpreting
-    std::vector< std::shared_ptr<unsigned char> > OldDialogScripts;
-    // probably, actual dialog script sources kept within some older games
-    std::vector<String>     OldDialogSources;
-    // speech texts displayed during dialog
-    std::vector<String>     OldSpeechLines;
+	// Old dialog support
+	// legacy compiled dialog script of its own format,
+	// requires separate interpreting
+	std::vector< std::shared_ptr<unsigned char> > OldDialogScripts;
+	// probably, actual dialog script sources kept within some older games
+	std::vector<String>     OldDialogSources;
+	// speech texts displayed during dialog
+	std::vector<String>     OldSpeechLines;
 
-    LoadedGameEntities(GameSetupStruct &game, DialogTopic *&dialogs, ViewStruct *&views);
-    ~LoadedGameEntities();
+	LoadedGameEntities(GameSetupStruct &game, DialogTopic *&dialogs, ViewStruct *&views);
+	~LoadedGameEntities();
 };
 
 // Tells if the given path (library filename) contains main game file

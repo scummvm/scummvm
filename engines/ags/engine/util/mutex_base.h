@@ -23,19 +23,16 @@
 #ifndef AGS_ENGINE_UTIL_MUTEX_BASE_H
 #define AGS_ENGINE_UTIL_MUTEX_BASE_H
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
 
-class BaseMutex
-{
+class BaseMutex {
 public:
-  BaseMutex() = 0;
-  virtual ~BaseMutex() = 0;
-  virtual void Lock() = 0;
-  virtual void Unlock() = 0;
+	BaseMutex() = 0;
+	virtual ~BaseMutex() = 0;
+	virtual void Lock() = 0;
+	virtual void Unlock() = 0;
 };
 
 

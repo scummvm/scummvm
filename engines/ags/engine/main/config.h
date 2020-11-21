@@ -57,7 +57,9 @@ int convert_fp_to_scaling(uint32_t scaling);
 // Fill in setup structs with default settings for the given mode (windowed or fullscreen)
 void graphics_mode_get_defaults(bool windowed, ScreenSizeSetup &scsz_setup, GameFrameSetup &frame_setup);
 
-typedef struct { char s[5]; } AlIDStr;
+typedef struct {
+	char s[5];
+} AlIDStr;
 // Converts Allegro driver ID type to 4-char string
 AlIDStr AlIDToChars(int al_id);
 AlIDStr AlIDToChars(const String &s);

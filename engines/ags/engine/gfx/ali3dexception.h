@@ -29,28 +29,22 @@
 #ifndef AGS_ENGINE_GFX_ALI3DEXCEPTION_H
 #define AGS_ENGINE_GFX_ALI3DEXCEPTION_H
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
-class Ali3DException
-{
+class Ali3DException {
 public:
-    Ali3DException(const char *message)
-    {
-        _message = message;
-    }
+	Ali3DException(const char *message) {
+		_message = message;
+	}
 
-    const char *_message;
+	const char *_message;
 };
 
-class Ali3DFullscreenLostException : public Ali3DException
-{
+class Ali3DFullscreenLostException : public Ali3DException {
 public:
-    Ali3DFullscreenLostException() : Ali3DException("User has switched away from application")
-    {
-    }
+	Ali3DFullscreenLostException() : Ali3DException("User has switched away from application") {
+	}
 };
 
 } // namespace Engine

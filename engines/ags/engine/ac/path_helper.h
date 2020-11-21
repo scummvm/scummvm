@@ -38,9 +38,8 @@ extern const String UserSavedgamesRootToken;
 extern const String GameSavedgamesDirToken;
 extern const String GameDataDirToken;
 
-inline const char *PathOrCurDir(const char *path)
-{
-    return path ? path : ".";
+inline const char *PathOrCurDir(const char *path) {
+	return path ? path : ".";
 }
 
 // Subsitutes illegal characters with '_'. This function uses illegal chars array
@@ -56,11 +55,10 @@ String FixSlashAfterToken(const String &path);
 String MakeSpecialSubDir(const String &sp_dir);
 
 // ResolvedPath describes an actual location pointed by a user path (e.g. from script)
-struct ResolvedPath
-{
-    String BaseDir; // base directory, one of the special path roots
-    String FullPath;// full path
-    String AltPath; // alternative full path, for backwards compatibility
+struct ResolvedPath {
+	String BaseDir; // base directory, one of the special path roots
+	String FullPath;// full path
+	String AltPath; // alternative full path, for backwards compatibility
 };
 // Resolves a file path provided by user (e.g. script) into actual file path,
 // by substituting special keywords with actual platform-specific directory names.
@@ -81,6 +79,6 @@ void    set_install_dir(const String &path, const String &audio_path, const Stri
 String  get_install_dir();
 String  get_audio_install_dir();
 String  get_voice_install_dir();
-void    get_install_dir_path(char* buffer, const char *fileName);
+void    get_install_dir_path(char *buffer, const char *fileName);
 
 #endif

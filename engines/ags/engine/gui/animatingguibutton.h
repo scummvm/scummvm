@@ -26,18 +26,22 @@
 #include "ac/runtime_defines.h"
 
 // Forward declaration
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 struct AnimatingGUIButton {
-    // index into guibuts array, GUI, button
-    short buttonid, ongui, onguibut;
-    // current animation status
-    short view, loop, frame;
-    short speed, repeat, wait;
+	// index into guibuts array, GUI, button
+	short buttonid, ongui, onguibut;
+	// current animation status
+	short view, loop, frame;
+	short speed, repeat, wait;
 
-    void ReadFromFile(Common::Stream *in);
-    void WriteToFile(Common::Stream *out);
+	void ReadFromFile(Common::Stream *in);
+	void WriteToFile(Common::Stream *out);
 };
 
 #endif

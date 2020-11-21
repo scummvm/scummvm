@@ -23,18 +23,22 @@
 #ifndef AGS_ENGINE_AC_CHARACTERCACHE_H
 #define AGS_ENGINE_AC_CHARACTERCACHE_H
 
-namespace AGS { namespace Common { class Bitmap; } }
+namespace AGS {
+namespace Common {
+class Bitmap;
+}
+}
 using namespace AGS; // FIXME later
 
 // stores cached info about the character
 struct CharacterCache {
-    Common::Bitmap *image;
-    int sppic;
-    int scaling;
-    int inUse;
-    short tintredwas, tintgrnwas, tintbluwas, tintamntwas;
-    short lightlevwas, tintlightwas;
-    // no mirroredWas is required, since the code inverts the sprite number
+	Common::Bitmap *image;
+	int sppic;
+	int scaling;
+	int inUse;
+	short tintredwas, tintgrnwas, tintbluwas, tintamntwas;
+	short lightlevwas, tintlightwas;
+	// no mirroredWas is required, since the code inverts the sprite number
 };
 
 #endif

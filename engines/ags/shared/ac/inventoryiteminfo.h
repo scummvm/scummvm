@@ -23,21 +23,25 @@
 #ifndef AGS_SHARED_AC_INVENTORYITEMINFO_H
 #define AGS_SHARED_AC_INVENTORYITEMINFO_H
 
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 #define IFLG_STARTWITH 1
 struct InventoryItemInfo {
-    char name[25];
-    int  pic;
-    int  cursorPic, hotx, hoty;
-    int  reserved[5];
-    char flags;
+	char name[25];
+	int  pic;
+	int  cursorPic, hotx, hoty;
+	int  reserved[5];
+	char flags;
 
-    void ReadFromFile(Common::Stream *in);
-    void WriteToFile(Common::Stream *out);
-    void ReadFromSavegame(Common::Stream *in);
-    void WriteToSavegame(Common::Stream *out) const;
+	void ReadFromFile(Common::Stream *in);
+	void WriteToFile(Common::Stream *out);
+	void ReadFromSavegame(Common::Stream *in);
+	void WriteToSavegame(Common::Stream *out) const;
 };
 
 #endif

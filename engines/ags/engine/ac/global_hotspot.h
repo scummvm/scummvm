@@ -25,16 +25,16 @@
 
 void DisableHotspot(int hsnum);
 void EnableHotspot(int hsnum);
-int  GetHotspotPointX (int hotspot);
-int  GetHotspotPointY (int hotspot);
+int  GetHotspotPointX(int hotspot);
+int  GetHotspotPointY(int hotspot);
 // Gets hotspot ID at the given screen coordinates;
 // if hotspot is disabled or non-existing, returns 0 (no area)
-int  GetHotspotIDAtScreen(int xxx,int yyy);
+int  GetHotspotIDAtScreen(int xxx, int yyy);
 void GetHotspotName(int hotspot, char *buffer);
-void RunHotspotInteraction (int hotspothere, int mood);
+void RunHotspotInteraction(int hotspothere, int mood);
 
-int  GetHotspotProperty (int hss, const char *property);
-void GetHotspotPropertyText (int item, const char *property, char *bufer);
+int  GetHotspotProperty(int hss, const char *property);
+void GetHotspotPropertyText(int item, const char *property, char *bufer);
 
 
 #endif

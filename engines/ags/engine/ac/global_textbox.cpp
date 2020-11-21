@@ -32,34 +32,34 @@ using namespace AGS::Common;
 
 extern GameSetupStruct game;
 
-void SetTextBoxFont(int guin,int objn, int fontnum) {
+void SetTextBoxFont(int guin, int objn, int fontnum) {
 
-    if ((guin<0) | (guin>=game.numgui)) quit("!SetTextBoxFont: invalid GUI number");
-    if ((objn<0) | (objn>=guis[guin].GetControlCount())) quit("!SetTextBoxFont: invalid object number");
-    if (guis[guin].GetControlType(objn) != kGUITextBox)
-        quit("!SetTextBoxFont: specified control is not a text box");
+	if ((guin < 0) | (guin >= game.numgui)) quit("!SetTextBoxFont: invalid GUI number");
+	if ((objn < 0) | (objn >= guis[guin].GetControlCount())) quit("!SetTextBoxFont: invalid object number");
+	if (guis[guin].GetControlType(objn) != kGUITextBox)
+		quit("!SetTextBoxFont: specified control is not a text box");
 
-    GUITextBox *guit = (GUITextBox*)guis[guin].GetControl(objn);
-    TextBox_SetFont(guit, fontnum);
+	GUITextBox *guit = (GUITextBox *)guis[guin].GetControl(objn);
+	TextBox_SetFont(guit, fontnum);
 }
 
-void GetTextBoxText(int guin, int objn, char*txbuf) {
-    VALIDATE_STRING(txbuf);
-    if ((guin<0) | (guin>=game.numgui)) quit("!GetTextBoxText: invalid GUI number");
-    if ((objn<0) | (objn>=guis[guin].GetControlCount())) quit("!GetTextBoxText: invalid object number");
-    if (guis[guin].GetControlType(objn)!=kGUITextBox)
-        quit("!GetTextBoxText: specified control is not a text box");
+void GetTextBoxText(int guin, int objn, char *txbuf) {
+	VALIDATE_STRING(txbuf);
+	if ((guin < 0) | (guin >= game.numgui)) quit("!GetTextBoxText: invalid GUI number");
+	if ((objn < 0) | (objn >= guis[guin].GetControlCount())) quit("!GetTextBoxText: invalid object number");
+	if (guis[guin].GetControlType(objn) != kGUITextBox)
+		quit("!GetTextBoxText: specified control is not a text box");
 
-    GUITextBox*guisl=(GUITextBox*)guis[guin].GetControl(objn);
-    TextBox_GetText(guisl, txbuf);
+	GUITextBox *guisl = (GUITextBox *)guis[guin].GetControl(objn);
+	TextBox_GetText(guisl, txbuf);
 }
 
-void SetTextBoxText(int guin, int objn, const char* txbuf) {
-    if ((guin<0) | (guin>=game.numgui)) quit("!SetTextBoxText: invalid GUI number");
-    if ((objn<0) | (objn>=guis[guin].GetControlCount())) quit("!SetTextBoxText: invalid object number");
-    if (guis[guin].GetControlType(objn)!=kGUITextBox)
-        quit("!SetTextBoxText: specified control is not a text box");
+void SetTextBoxText(int guin, int objn, const char *txbuf) {
+	if ((guin < 0) | (guin >= game.numgui)) quit("!SetTextBoxText: invalid GUI number");
+	if ((objn < 0) | (objn >= guis[guin].GetControlCount())) quit("!SetTextBoxText: invalid object number");
+	if (guis[guin].GetControlType(objn) != kGUITextBox)
+		quit("!SetTextBoxText: specified control is not a text box");
 
-    GUITextBox*guisl=(GUITextBox*)guis[guin].GetControl(objn);
-    TextBox_SetText(guisl, txbuf);
+	GUITextBox *guisl = (GUITextBox *)guis[guin].GetControl(objn);
+	TextBox_SetText(guisl, txbuf);
 }

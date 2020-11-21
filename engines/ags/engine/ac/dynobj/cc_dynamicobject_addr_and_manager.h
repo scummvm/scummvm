@@ -27,7 +27,7 @@
 #include "ac/dynobj/cc_dynamicobject.h"
 
 extern ScriptValueType ccGetObjectAddressAndManagerFromHandle(
-   int32_t handle, void *&object, ICCDynamicObject *&manager);
+    int32_t handle, void *&object, ICCDynamicObject *&manager);
 
 #endif
 

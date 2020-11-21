@@ -57,40 +57,39 @@
 32:  v3.5.0 - 64-bit file offsets
 33:  v3.5.0.8 - deprecated room resolution, added mask resolution
 */
-enum RoomFileVersion
-{
-    kRoomVersion_Undefined = 0,
-    kRoomVersion_pre114_3 = 3,  // exact version unknown
-    kRoomVersion_pre114_4 = 4,  // exact version unknown
-    kRoomVersion_pre114_5 = 5,  // exact version unknown
-    kRoomVersion_pre114_6 = 6,  // exact version unknown
-    kRoomVersion_114 = 8,
-    kRoomVersion_200_alpha = 9,
-    kRoomVersion_200_alpha7 = 10,
-    kRoomVersion_200_final = 11,
-    kRoomVersion_208 = 12,
-    kRoomVersion_214 = 13,
-    kRoomVersion_240 = 14,
-    kRoomVersion_241 = 15,
-    kRoomVersion_250a = 16,
-    kRoomVersion_250b = 17,
-    kRoomVersion_251 = 18,
-    kRoomVersion_253 = 19,
-    kRoomVersion_255a = 20,
-    kRoomVersion_255b = 21,
-    kRoomVersion_261 = 22,
-    kRoomVersion_262 = 23,
-    kRoomVersion_270 = 24,
-    kRoomVersion_272 = 25,
-    kRoomVersion_300a = 26,
-    kRoomVersion_300b = 27,
-    kRoomVersion_303a = 28,
-    kRoomVersion_303b = 29,
-    kRoomVersion_3404 = 30,
-    kRoomVersion_3415 = 31,
-    kRoomVersion_350 = 32,
-    kRoomVersion_3508 = 33,
-    kRoomVersion_Current = kRoomVersion_3508
+enum RoomFileVersion {
+	kRoomVersion_Undefined = 0,
+	kRoomVersion_pre114_3 = 3,  // exact version unknown
+	kRoomVersion_pre114_4 = 4,  // exact version unknown
+	kRoomVersion_pre114_5 = 5,  // exact version unknown
+	kRoomVersion_pre114_6 = 6,  // exact version unknown
+	kRoomVersion_114 = 8,
+	kRoomVersion_200_alpha = 9,
+	kRoomVersion_200_alpha7 = 10,
+	kRoomVersion_200_final = 11,
+	kRoomVersion_208 = 12,
+	kRoomVersion_214 = 13,
+	kRoomVersion_240 = 14,
+	kRoomVersion_241 = 15,
+	kRoomVersion_250a = 16,
+	kRoomVersion_250b = 17,
+	kRoomVersion_251 = 18,
+	kRoomVersion_253 = 19,
+	kRoomVersion_255a = 20,
+	kRoomVersion_255b = 21,
+	kRoomVersion_261 = 22,
+	kRoomVersion_262 = 23,
+	kRoomVersion_270 = 24,
+	kRoomVersion_272 = 25,
+	kRoomVersion_300a = 26,
+	kRoomVersion_300b = 27,
+	kRoomVersion_303a = 28,
+	kRoomVersion_303b = 29,
+	kRoomVersion_3404 = 30,
+	kRoomVersion_3415 = 31,
+	kRoomVersion_350 = 32,
+	kRoomVersion_3508 = 33,
+	kRoomVersion_Current = kRoomVersion_3508
 };
 
 #endif

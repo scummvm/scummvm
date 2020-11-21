@@ -51,111 +51,110 @@ ICCStringClass *stringClassImpl = nullptr;
 
 // set the class that will be used for dynamic strings
 void ccSetStringClassImpl(ICCStringClass *theClass) {
-    stringClassImpl = theClass;
+	stringClassImpl = theClass;
 }
 
 // register a memory handle for the object and allow script
 // pointers to point to it
 int32_t ccRegisterManagedObject(const void *object, ICCDynamicObject *callback, bool plugin_object) {
-    int32_t handl = pool.AddObject((const char*)object, callback, plugin_object);
+	int32_t handl = pool.AddObject((const char *)object, callback, plugin_object);
 
-    ManagedObjectLog("Register managed object type '%s' handle=%d addr=%08X",
-        ((callback == NULL) ? "(unknown)" : callback->GetType()), handl, object);
+	ManagedObjectLog("Register managed object type '%s' handle=%d addr=%08X",
+	                 ((callback == NULL) ? "(unknown)" : callback->GetType()), handl, object);
 
-    return handl;
+	return handl;
 }
 
 // register a de-serialized object
 int32_t ccRegisterUnserializedObject(int index, const void *object, ICCDynamicObject *callback, bool plugin_object) {
-    return pool.AddUnserializedObject((const char*)object, callback, plugin_object, index);
+	return pool.AddUnserializedObject((const char *)object, callback, plugin_object, index);
 }
 
 // unregister a particular object
 int ccUnRegisterManagedObject(const void *object) {
-    return pool.RemoveObject((const char*)object);
+	return pool.RemoveObject((const char *)object);
 }
 
 // remove all registered objects
 void ccUnregisterAllObjects() {
-    pool.reset();
+	pool.reset();
 }
 
 // serialize all objects to disk
 void ccSerializeAllObjects(Stream *out) {
-    pool.WriteToDisk(out);
+	pool.WriteToDisk(out);
 }
 
 // un-serialise all objects (will remove all currently registered ones)
 int ccUnserializeAllObjects(Stream *in, ICCObjectReader *callback) {
-    return pool.ReadFromDisk(in, callback);
+	return pool.ReadFromDisk(in, callback);
 }
 
 // dispose the object if RefCount==0
 void ccAttemptDisposeObject(int32_t handle) {
-    pool.CheckDispose(handle);
+	pool.CheckDispose(handle);
 }
 
 // translate between object handles and memory addresses
 int32_t ccGetObjectHandleFromAddress(const char *address) {
-    // set to null
-    if (address == nullptr)
-        return 0;
+	// set to null
+	if (address == nullptr)
+		return 0;
 
-    int32_t handl = pool.AddressToHandle(address);
+	int32_t handl = pool.AddressToHandle(address);
 
-    ManagedObjectLog("Line %d WritePtr: %08X to %d", currentline, address, handl);
+	ManagedObjectLog("Line %d WritePtr: %08X to %d", currentline, address, handl);
 
-    if (handl == 0) {
-        cc_error("Pointer cast failure: the object being pointed to is not in the managed object pool");
-        return -1;
-    }
-    return handl;
+	if (handl == 0) {
+		cc_error("Pointer cast failure: the object being pointed to is not in the managed object pool");
+		return -1;
+	}
+	return handl;
 }
 
 const char *ccGetObjectAddressFromHandle(int32_t handle) {
-    if (handle == 0) {
-        return nullptr;
-    }
-    const char *addr = pool.HandleToAddress(handle);
+	if (handle == 0) {
+		return nullptr;
+	}
+	const char *addr = pool.HandleToAddress(handle);
 
-    ManagedObjectLog("Line %d ReadPtr: %d to %08X", currentline, handle, addr);
+	ManagedObjectLog("Line %d ReadPtr: %d to %08X", currentline, handle, addr);
 
-    if (addr == nullptr) {
-        cc_error("Error retrieving pointer: invalid handle %d", handle);
-        return nullptr;
-    }
-    return addr;
+	if (addr == nullptr) {
+		cc_error("Error retrieving pointer: invalid handle %d", handle);
+		return nullptr;
+	}
+	return addr;
 }
 
-ScriptValueType ccGetObjectAddressAndManagerFromHandle(int32_t handle, void *&object, ICCDynamicObject *&manager)
-{
-    if (handle == 0) {
-        object = nullptr;
-        manager = nullptr;
-        return kScValUndefined;
-    }
-    ScriptValueType obj_type = pool.HandleToAddressAndManager(handle, object, manager);
-    if (obj_type == kScValUndefined) {
-        cc_error("Error retrieving pointer: invalid handle %d", handle);
-    }
-    return obj_type;
+ScriptValueType ccGetObjectAddressAndManagerFromHandle(int32_t handle, void *&object, ICCDynamicObject *&manager) {
+	if (handle == 0) {
+		object = nullptr;
+		manager = nullptr;
+		return kScValUndefined;
+	}
+	ScriptValueType obj_type = pool.HandleToAddressAndManager(handle, object, manager);
+	if (obj_type == kScValUndefined) {
+		cc_error("Error retrieving pointer: invalid handle %d", handle);
+	}
+	return obj_type;
 }
 
 int ccAddObjectReference(int32_t handle) {
-    if (handle == 0)
-        return 0;
+	if (handle == 0)
+		return 0;
 
-    return pool.AddRef(handle);
+	return pool.AddRef(handle);
 }
 
 int ccReleaseObjectReference(int32_t handle) {
-    if (handle == 0)
-        return 0;
+	if (handle == 0)
+		return 0;
 
-    if (pool.HandleToAddress(handle) == nullptr) {
-        cc_error("Error releasing pointer: invalid handle %d", handle);
-        return -1;
-    }
+	if (pool.HandleToAddress(handle) == nullptr) {
+		cc_error("Error releasing pointer: invalid handle %d", handle);
+		return -1;
+	}
 
-    return pool.SubRef(handle);
+	return pool.SubRef(handle);
 }

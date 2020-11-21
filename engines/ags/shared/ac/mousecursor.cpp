@@ -25,42 +25,45 @@
 
 using AGS::Common::Stream;
 
-MouseCursor::MouseCursor() { pic = 2054; hotx = 0; hoty = 0; name[0] = 0; flags = 0; view = -1; }
-
-void MouseCursor::ReadFromFile(Stream *in)
-{
-    pic = in->ReadInt32();
-    hotx = in->ReadInt16();
-    hoty = in->ReadInt16();
-    view = in->ReadInt16();
-    in->Read(name, 10);
-    flags = in->ReadInt8();
+MouseCursor::MouseCursor() {
+	pic = 2054;
+	hotx = 0;
+	hoty = 0;
+	name[0] = 0;
+	flags = 0;
+	view = -1;
 }
 
-void MouseCursor::WriteToFile(Stream *out)
-{
-    out->WriteInt32(pic);
-    out->WriteInt16(hotx);
-    out->WriteInt16(hoty);
-    out->WriteInt16(view);
-    out->Write(name, 10);
-    out->WriteInt8(flags);
+void MouseCursor::ReadFromFile(Stream *in) {
+	pic = in->ReadInt32();
+	hotx = in->ReadInt16();
+	hoty = in->ReadInt16();
+	view = in->ReadInt16();
+	in->Read(name, 10);
+	flags = in->ReadInt8();
 }
 
-void MouseCursor::ReadFromSavegame(Stream *in)
-{
-    pic = in->ReadInt32();
-    hotx = in->ReadInt32();
-    hoty = in->ReadInt32();
-    view = in->ReadInt32();
-    flags = in->ReadInt32();
+void MouseCursor::WriteToFile(Stream *out) {
+	out->WriteInt32(pic);
+	out->WriteInt16(hotx);
+	out->WriteInt16(hoty);
+	out->WriteInt16(view);
+	out->Write(name, 10);
+	out->WriteInt8(flags);
 }
 
-void MouseCursor::WriteToSavegame(Stream *out) const
-{
-    out->WriteInt32(pic);
-    out->WriteInt32(hotx);
-    out->WriteInt32(hoty);
-    out->WriteInt32(view);
-    out->WriteInt32(flags);
+void MouseCursor::ReadFromSavegame(Stream *in) {
+	pic = in->ReadInt32();
+	hotx = in->ReadInt32();
+	hoty = in->ReadInt32();
+	view = in->ReadInt32();
+	flags = in->ReadInt32();
+}
+
+void MouseCursor::WriteToSavegame(Stream *out) const {
+	out->WriteInt32(pic);
+	out->WriteInt32(hotx);
+	out->WriteInt32(hoty);
+	out->WriteInt32(view);
+	out->WriteInt32(flags);
 }
