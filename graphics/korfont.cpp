@@ -296,6 +296,10 @@ bool FontKoreanSVM::loadData(const char *fontFile) {
 	uint numChars16x16 = data->readUint16BE();
 	uint numChars8x16 = data->readUint16BE();
 	uint numChars8x8 = data->readUint16BE();
+	if (data->err()) {
+		delete data;
+		return false;
+	}
 
 	if (_fontWidth == 16) {
 		_fontData16x16Size = numChars16x16 * 32;
@@ -304,10 +308,12 @@ bool FontKoreanSVM::loadData(const char *fontFile) {
 		data->read(_fontData16x16, _fontData16x16Size);
 
 		_fontData8x16Size = numChars8x16 * 16;
-		_fontData8x16 = new uint8[numChars8x16 * 16];
+		_fontData8x16 = new uint8[_fontData8x16Size];
 		assert(_fontData8x16);
-		for (uint i=0; i < _fontData8x16Size; i++)
-			data->read(&_fontData8x16[i], 2);
+		for (uint i = 0; i < _fontData8x16Size; ++i) {
+			_fontData8x16[i] = data->readByte();
+			data->skip(1);
+		}
 	} else {
 		data->skip(numChars16x16 * 32);
 		data->skip(numChars8x16 * 32);
