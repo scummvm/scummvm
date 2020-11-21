@@ -40,29 +40,27 @@ int SpriteResource::_clippedBottom;
 SpriteResource::SpriteResource() {
 	_filesize = 0;
 	_data = nullptr;
-	_scaledWidth = _scaledHeight = 0;
 }
 
 SpriteResource::SpriteResource(const Common::String &filename) {
 	_data = nullptr;
-	_scaledWidth = _scaledHeight = 0;
 	load(filename);
 }
 
 SpriteResource::SpriteResource(const Common::String &filename, int ccMode) {
 	_data = nullptr;
-	_scaledWidth = _scaledHeight = 0;
 	load(filename, ccMode);
+}
+
+SpriteResource::SpriteResource(const SpriteResource &src) {
+	copy(src);
 }
 
 SpriteResource::~SpriteResource() {
 	clear();
 }
 
-SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
-	delete[] _data;
-	_index.clear();
-
+void SpriteResource::copy(const SpriteResource &src) {
 	_filesize = src._filesize;
 	_data = new byte[_filesize];
 	Common::copy(src._data, src._data + _filesize, _data);
@@ -70,6 +68,13 @@ SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
 	_index.resize(src._index.size());
 	for (uint i = 0; i < src._index.size(); ++i)
 		_index[i] = src._index[i];
+}
+
+SpriteResource &SpriteResource::operator=(const SpriteResource &src) {
+	delete[] _data;
+	_index.clear();
+
+	copy(src);
 
 	return *this;
 }
