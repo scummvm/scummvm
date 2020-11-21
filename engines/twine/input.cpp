@@ -34,17 +34,6 @@ const char *mainKeyMapId = "mainKeyMap";
 const char *uiKeyMapId = "uiKeyMap";
 const char *cutsceneKeyMapId = "cutsceneKeyMap";
 
-/** Pressed key char map - scanCodeTab2 */
-static const struct KeyProperties {
-	uint8 high;
-	uint8 key;
-} pressedKeyCharMap[] = {
-    {0x01, 0x48}, // up
-    {0x02, 0x50}, // down
-    {0x04, 0x4B}, // left
-    {0x08, 0x4D} // right
-};
-
 ScopedKeyMap::ScopedKeyMap(TwinEEngine* engine, const char *id) : _engine(engine) {
 	_prevKeyMap = _engine->_input->currentKeyMap();
 	_engine->_input->enableKeyMap(id);
@@ -124,37 +113,37 @@ static constexpr const struct ActionMapping {
 	TwinEActionType action;
 	uint8 localKey;
 } twineactions[] = {
-    {Pause, 0x19},
-    {NextRoom, 0x13},
-    {PreviousRoom, 0x21},
-    {ApplyCellingGrid, 0x14},
-    {IncreaseCellingGridIndex, 0x22},
-    {DecreaseCellingGridIndex, 0x30},
-    {DebugGridCameraPressUp, 0x2E},
-    {DebugGridCameraPressDown, 0x2C},
-    {DebugGridCameraPressLeft, 0x1F},
-    {DebugGridCameraPressRight, 0x2D},
-	{DebugMenu, 0x00},
-	{DebugMenuActivate, 0x00},
-    {QuickBehaviourNormal, 0x3B},
-    {QuickBehaviourAthletic, 0x3C},
-    {QuickBehaviourAggressive, 0x3D},
-    {QuickBehaviourDiscreet, 0x3E},
-    {ExecuteBehaviourAction, 0x39},
-    {BehaviourMenu, 0x1D},
-    {OptionsMenu, 0x40},
-    {RecenterScreenOnTwinsen, 0x1C},
-    {UseSelectedObject, 0x1C},
-    {ThrowMagicBall, 0x38},
-    {MoveForward, 0x48},
-    {MoveBackward, 0x50},
-    {TurnRight, 0x4D},
-    {TurnLeft, 0x4B},
-    {UseProtoPack, 0x24},
-    {OpenHolomap, 0x23},
-    {InventoryMenu, 0x36},
-    {SpecialAction, 0x11},
-    {Escape, 0x01},
+    {Pause, 0x00},
+    {NextRoom, 0x00},
+    {PreviousRoom, 0x00},
+    {ApplyCellingGrid, 0x00},
+    {IncreaseCellingGridIndex, 0x00},
+    {DecreaseCellingGridIndex, 0x00},
+    {DebugGridCameraPressUp, 0x00},
+    {DebugGridCameraPressDown, 0x00},
+    {DebugGridCameraPressLeft, 0x00},
+    {DebugGridCameraPressRight, 0x00},
+    {DebugMenu, 0x00},
+    {DebugMenuActivate, 0x00},
+    {QuickBehaviourNormal, 0x00},
+    {QuickBehaviourAthletic, 0x00},
+    {QuickBehaviourAggressive, 0x00},
+    {QuickBehaviourDiscreet, 0x00},
+    {ExecuteBehaviourAction, 0x00},
+    {BehaviourMenu, 0x00},
+    {OptionsMenu, 0x00},
+    {RecenterScreenOnTwinsen, 0x00},
+    {UseSelectedObject, 0x00},
+    {ThrowMagicBall, 0x00},
+    {MoveForward, 0x01},
+    {MoveBackward, 0x02},
+    {TurnLeft, 0x04},
+    {TurnRight, 0x08},
+    {UseProtoPack, 0x00},
+    {OpenHolomap, 0x00},
+    {InventoryMenu, 0x00},
+    {SpecialAction, 0x00},
+    {Escape, 0x00},
     {UIEnter, 0x00},
     {UIAbort, 0x00},
     {UILeft, 0x00},
@@ -198,31 +187,18 @@ uint8 Input::processCustomEngineEventEnd(const Common::Event &event) {
 }
 
 void Input::readKeys() {
-	cursorKeys = 0;
-
+	cursorKeyMask = 0;
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event)) {
-		uint8 localKey = 0;
 		switch (event.type) {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-			localKey = processCustomEngineEventEnd(event);
+			processCustomEngineEventEnd(event);
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
-			localKey = processCustomEngineEventStart(event);
+			cursorKeyMask |= processCustomEngineEventStart(event);
 			break;
 		default:
 			break;
-		}
-
-		if (localKey == 0) {
-			continue;
-		}
-
-		for (int i = 0; i < ARRAYSIZE(pressedKeyCharMap); i++) {
-			if (pressedKeyCharMap[i].key == localKey) {
-				cursorKeys |= pressedKeyCharMap[i].high;
-				break;
-			}
 		}
 	}
 }
