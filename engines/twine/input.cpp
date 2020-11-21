@@ -192,7 +192,7 @@ void Input::readKeys() {
 	while (g_system->getEventManager()->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_END:
-			processCustomEngineEventEnd(event);
+			cursorKeyMask |= processCustomEngineEventEnd(event);
 			break;
 		case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 			cursorKeyMask |= processCustomEngineEventStart(event);

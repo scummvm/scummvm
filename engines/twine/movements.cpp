@@ -210,103 +210,96 @@ void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMove
 }
 
 void Movements::update() {
-	previousLoopCursorKeys = loopCursorKeys;
+	previousChangedCursorKeys = changedCursorKeys;
 	previousLoopActionKey = heroActionKey;
 	heroActionKey = _engine->_input->isHeroActionActive();
-	loopCursorKeys = _engine->_input->cursorKeys;
+	changedCursorKeys = _engine->_input->cursorKeyMask;
 }
 
-void Movements::processManualAction(int actorIdx) {
-	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (IS_HERO(actorIdx)) {
-		heroAction = false;
-
-		// If press W for action
-		if (_engine->_input->toggleActionIfActive(TwinEActionType::SpecialAction)) {
-			heroAction = true;
-		}
-
-		// Process hero actions
-		if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
-			switch (_engine->_actor->heroBehaviour) {
-			case HeroBehaviourType::kNormal:
-				heroAction = true;
-				break;
-			case HeroBehaviourType::kAthletic:
-				_engine->_animations->initAnim(AnimationTypes::kJump, 1, AnimationTypes::kStanding, actorIdx);
-				break;
-			case HeroBehaviourType::kAggressive:
-				if (_engine->_actor->autoAgressive) {
-					heroMoved = true;
-					actor->angle = getRealAngle(&actor->move);
-					// TODO: previousLoopActionKey must be handled properly
-					if (!previousLoopActionKey || actor->anim == AnimationTypes::kStanding) {
-						const int32 aggresiveMode = _engine->getRandomNumber(3);
-
-						switch (aggresiveMode) {
-						case 0:
-							_engine->_animations->initAnim(AnimationTypes::kKick, 1, AnimationTypes::kStanding, actorIdx);
-							break;
-						case 1:
-							_engine->_animations->initAnim(AnimationTypes::kRightPunch, 1, AnimationTypes::kStanding, actorIdx);
-							break;
-						case 2:
-							_engine->_animations->initAnim(AnimationTypes::kLeftPunch, 1, AnimationTypes::kStanding, actorIdx);
-							break;
-						}
-					}
-				} else {
-					if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-						_engine->_animations->initAnim(AnimationTypes::kLeftPunch, 1, AnimationTypes::kStanding, actorIdx);
-					} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
-						_engine->_animations->initAnim(AnimationTypes::kRightPunch, 1, AnimationTypes::kStanding, actorIdx);
-					}
-
-					if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
-						_engine->_animations->initAnim(AnimationTypes::kKick, 1, AnimationTypes::kStanding, actorIdx);
-					}
-				}
-				break;
-			case HeroBehaviourType::kDiscrete:
-				_engine->_animations->initAnim(AnimationTypes::kHide, 0, AnimationTypes::kAnimInvalid, actorIdx);
-				break;
-			case HeroBehaviourType::kProtoPack:
-				break;
-			}
-		}
+bool Movements::processBehaviourExecution(int actorIdx) {
+	bool executeAction = false;
+	if (_engine->_input->toggleActionIfActive(TwinEActionType::SpecialAction)) {
+		executeAction = true;
 	}
-
-	if (_engine->_input->isActionActive(TwinEActionType::ThrowMagicBall) && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
-		if (!_engine->_gameState->usingSabre) { // Use Magic Ball
-			if (_engine->_gameState->gameFlags[InventoryItems::kiMagicBall]) {
-				if (_engine->_gameState->magicBallIdx == -1) {
-					_engine->_animations->initAnim(AnimationTypes::kThrowBall, 1, AnimationTypes::kStanding, actorIdx);
-				}
-
-				heroMoved = true;
-				actor->angle = getRealAngle(&actor->move);
-			}
-		} else if (_engine->_gameState->gameFlags[InventoryItems::kiUseSabre]) {
-			if (actor->body != InventoryItems::kiUseSabre) {
-				_engine->_actor->initModelActor(InventoryItems::kiUseSabre, actorIdx);
-			}
-
-			_engine->_animations->initAnim(AnimationTypes::kSabreAttack, 1, AnimationTypes::kStanding, actorIdx);
-
+	switch (_engine->_actor->heroBehaviour) {
+	case HeroBehaviourType::kNormal:
+		executeAction = true;
+		break;
+	case HeroBehaviourType::kAthletic:
+		_engine->_animations->initAnim(AnimationTypes::kJump, 1, AnimationTypes::kStanding, actorIdx);
+		break;
+	case HeroBehaviourType::kAggressive:
+		if (_engine->_actor->autoAgressive) {
+			ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 			heroMoved = true;
 			actor->angle = getRealAngle(&actor->move);
+			// TODO: previousLoopActionKey must be handled properly
+			if (!previousLoopActionKey || actor->anim == AnimationTypes::kStanding) {
+				const int32 aggresiveMode = _engine->getRandomNumber(3);
+
+				switch (aggresiveMode) {
+				case 0:
+					_engine->_animations->initAnim(AnimationTypes::kKick, 1, AnimationTypes::kStanding, actorIdx);
+					break;
+				case 1:
+					_engine->_animations->initAnim(AnimationTypes::kRightPunch, 1, AnimationTypes::kStanding, actorIdx);
+					break;
+				case 2:
+					_engine->_animations->initAnim(AnimationTypes::kLeftPunch, 1, AnimationTypes::kStanding, actorIdx);
+					break;
+				}
+			}
+		} else {
+			if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
+				_engine->_animations->initAnim(AnimationTypes::kLeftPunch, 1, AnimationTypes::kStanding, actorIdx);
+			} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
+				_engine->_animations->initAnim(AnimationTypes::kRightPunch, 1, AnimationTypes::kStanding, actorIdx);
+			}
+
+			if (_engine->_input->isActionActive(TwinEActionType::MoveForward)) {
+				_engine->_animations->initAnim(AnimationTypes::kKick, 1, AnimationTypes::kStanding, actorIdx);
+			}
 		}
+		break;
+	case HeroBehaviourType::kDiscrete:
+		_engine->_animations->initAnim(AnimationTypes::kHide, 0, AnimationTypes::kAnimInvalid, actorIdx);
+		break;
+	case HeroBehaviourType::kProtoPack:
+		break;
 	}
+	return executeAction;
+}
 
-	// TODO: remove loopCursorKeys here
-	if (!loopCursorKeys || heroAction) {
-		// if continue walking
-		if (_engine->_input->isActionActive(TwinEActionType::MoveForward) || _engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
-			heroMoved = false; // don't break animation
+bool Movements::processAttackExecution(int actorIdx) {
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	if (!_engine->_gameState->usingSabre) { // Use Magic Ball
+		if (_engine->_gameState->gameFlags[InventoryItems::kiMagicBall]) {
+			if (_engine->_gameState->magicBallIdx == -1) {
+				_engine->_animations->initAnim(AnimationTypes::kThrowBall, 1, AnimationTypes::kStanding, actorIdx);
+			}
+
+			actor->angle = getRealAngle(&actor->move);
+			return true;
+		}
+	} else if (_engine->_gameState->gameFlags[InventoryItems::kiUseSabre]) {
+		if (actor->body != InventoryItems::kiUseSabre) {
+			_engine->_actor->initModelActor(InventoryItems::kiUseSabre, actorIdx);
 		}
 
-		if (heroActionKey != previousLoopActionKey || loopCursorKeys != previousLoopCursorKeys) {
-			if (heroMoved) {
+		_engine->_animations->initAnim(AnimationTypes::kSabreAttack, 1, AnimationTypes::kStanding, actorIdx);
+
+		actor->angle = getRealAngle(&actor->move);
+		return true;
+	}
+	return false;
+}
+
+void Movements::processMovementExecution(int actorIdx) {
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	if (!changedCursorKeys || heroAction) {
+		// if walking should get stopped
+		if (!_engine->_input->isActionActive(TwinEActionType::MoveForward) && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
+			if (heroMoved && (heroActionKey != previousLoopActionKey || changedCursorKeys != previousChangedCursorKeys)) {
 				_engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, actorIdx);
 			}
 		}
@@ -324,7 +317,6 @@ void Movements::processManualAction(int actorIdx) {
 		}
 
 		if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
-			heroMoved = true;
 			if (actor->anim == AnimationTypes::kStanding) {
 				_engine->_animations->initAnim(AnimationTypes::kTurnLeft, 0, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
@@ -332,8 +324,8 @@ void Movements::processManualAction(int actorIdx) {
 					actor->angle = getRealAngle(&actor->move);
 				}
 			}
-		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 			heroMoved = true;
+		} else if (_engine->_input->isActionActive(TwinEActionType::TurnRight)) {
 			if (actor->anim == AnimationTypes::kStanding) {
 				_engine->_animations->initAnim(AnimationTypes::kTurnRight, 0, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
@@ -341,9 +333,13 @@ void Movements::processManualAction(int actorIdx) {
 					actor->angle = getRealAngle(&actor->move);
 				}
 			}
+			heroMoved = true;
 		}
 	}
+}
 
+void Movements::processRotationExecution(int actorIdx) {
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	int16 tempAngle;
 	if (_engine->_input->isActionActive(TwinEActionType::TurnLeft)) {
 		tempAngle = ANGLE_90;
@@ -354,6 +350,24 @@ void Movements::processManualAction(int actorIdx) {
 	}
 
 	moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
+}
+
+void Movements::processManualAction(int actorIdx) {
+	if (IS_HERO(actorIdx)) {
+		heroAction = false;
+		if (_engine->_input->isActionActive(TwinEActionType::ExecuteBehaviourAction)) {
+			heroAction = processBehaviourExecution(actorIdx);
+		}
+	}
+
+	if (_engine->_input->isActionActive(TwinEActionType::ThrowMagicBall) && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
+		if (processAttackExecution(actorIdx)) {
+			heroMoved = true;
+		}
+	}
+
+	processMovementExecution(actorIdx);
+	processRotationExecution(actorIdx);
 }
 
 void Movements::processFollowAction(int actorIdx) {

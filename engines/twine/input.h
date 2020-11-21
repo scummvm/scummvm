@@ -109,6 +109,12 @@ private:
 public:
 	Input(TwinEEngine *engine);
 
+	/**
+	 * @brief This is a bitmask of 4 bits that is changed whenever a cursor key has changed. A set bit
+	 * does not mean that the cursor is pressed - but that a change has happened in this particular frame
+	 *
+	 * @note This value is reset with every single call to @c readKeys()
+	 */
 	uint8 cursorKeyMask = 0;
 
 	/**
@@ -149,6 +155,9 @@ public:
 	 */
 	void getMousePositions(MouseStatusStruct *mouseData);
 
+	/**
+	 * @brief Updates the internal action states
+	 */
 	void readKeys();
 	uint8 processCustomEngineEventStart(const Common::Event& event);
 	uint8 processCustomEngineEventEnd(const Common::Event& event);

@@ -38,8 +38,8 @@ private:
 	int16 heroActionKey = 0;
 	int32 previousLoopActionKey = 0;
 	// cursor keys
-	int32 loopCursorKeys = 0;
-	int32 previousLoopCursorKeys = 0;
+	int32 changedCursorKeys = 0;
+	int32 previousChangedCursorKeys = 0;
 
 	/**
 	 * The Actor is controlled by the player. This works well only for the Hero Actor in general.
@@ -77,6 +77,15 @@ private:
 	 * its speed is not taken into consideration in this mode.
 	 */
 	void processSameXZAction(int actorIdx);
+
+	/**
+	 * @return A value of @c true means that the actor should e.g. start reading a sign or checking
+	 * a locker for loot or secrets
+	 */
+	bool processBehaviourExecution(int actorIdx);
+	bool processAttackExecution(int actorIdx);
+	void processMovementExecution(int actorIdx);
+	void processRotationExecution(int actorIdx);
 
 public:
 	Movements(TwinEEngine *engine);
