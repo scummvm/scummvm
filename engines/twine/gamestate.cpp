@@ -241,9 +241,11 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeByte(magicLevelIdx);
 	file->writeByte(inventoryMagicPoints);
 	file->writeByte(inventoryNumLeafsBox);
-	file->writeSint16LE(_engine->_scene->sceneHero->x);
-	file->writeSint16LE(_engine->_scene->sceneHero->y);
-	file->writeSint16LE(_engine->_scene->sceneHero->z);
+	// we don't save the whole scene state - so we have to make sure that the hero is
+	// respawned at the start of the scene - and not at its current position
+	file->writeSint16LE(_engine->_scene->newHeroX);
+	file->writeSint16LE(_engine->_scene->newHeroY);
+	file->writeSint16LE(_engine->_scene->newHeroZ);
 	file->writeSint16LE(FromAngle(_engine->_scene->sceneHero->angle));
 	file->writeByte(_engine->_scene->sceneHero->body);
 
