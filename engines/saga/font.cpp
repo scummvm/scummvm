@@ -711,10 +711,11 @@ void SJISFont::textDrawRect(FontId fontId, const char *text, const Common::Rect 
 	int numChar = 0;
 	const char *pos = text;
 	const char *last = 0;
+	int checkWidth = (rect.width() - 16) & ~7;
 
 	for (uint16 c = fetchChar(pos); c; c = fetchChar(pos)) {
 		curW += (_font->getCharWidth(c) >> 1);
-		if (curW > rect.width() || c == (uint16)'\r' || c == (uint16)'\n') {
+		if ((curW > checkWidth && !preventLineBreakForCharacter(c)) || c == (uint16)'\r' || c == (uint16)'\n') {
 			draw(fontId, text, numChar, textPoint, color, effectColor, flags);
 			numChar = 0;
 			textPoint.x = rect.left;
@@ -736,9 +737,9 @@ void SJISFont::textDrawRect(FontId fontId, const char *text, const Common::Rect 
 
 	// If the whole string fits into one line it gets aligned to the center
 	if (textPoint.y == rect.top)
-		textPoint.x = textPoint.x + rect.width() / 2 - (getStringWidth(fontId, text, 0, flags) / 2);
+		textPoint.x = textPoint.x + (rect.width() - getStringWidth(fontId, text, 0, flags)) / 2;
 
-	draw(fontId, text, numChar, textPoint, color, effectColor, flags);	
+	draw(fontId, text, numChar, textPoint, color, effectColor, flags);
 }
 
 int SJISFont::getStringLength(const char *text) {
@@ -758,12 +759,8 @@ int SJISFont::getStringWidth(FontId fontId, const char *text, size_t count, Font
 	for (uint16 c = fetchChar(text); c; c = fetchChar(text)) {
 		if (c == (uint16)'\r' || c == (uint16)'\n') {
 			maxW = MAX<int>(curW, maxW);
-#if 1
 			curW = 0;
 			continue;
-#else
-			break;
-#endif
 		}
 		curW += _font->getCharWidth(c);
 		if (!--count)
@@ -782,16 +779,18 @@ int SJISFont::getHeight(FontId fontId, const char *text, int width, FontEffectFl
 
 	_font->setDrawingMode(mode);
 	int res = _font->getFontHeight();
+	int checkWidth = (width - 16) & ~7;
 	int tmpWidth = 0;
+
 	for (uint16 c = fetchChar(text); c; c = fetchChar(text)) {
 		// The spacing is always the same (regardless of the fontId and font style) for the char spacing, but not for the line spacing.
 		_font->setDrawingMode(Graphics::FontSJIS::kDefaultMode);
 		tmpWidth += (_font->getCharWidth(c) >> 1);
-		if (tmpWidth > width || c == (uint16)'\r' || c == (uint16)'\n') {
+		if ((tmpWidth > checkWidth && !preventLineBreakForCharacter(c)) || c == (uint16)'\r' || c == (uint16)'\n') {
 			tmpWidth = tmpWidth > width ? _font->getCharWidth(c) >> 1 : 0;
 			_font->setDrawingMode(mode);
 			res += _font->getFontHeight();
-		}		
+		}
 	}
 
 	return (res + 1) >> 1;
@@ -852,6 +851,11 @@ uint16 SJISFont::fetchChar(const char *&s) const {
 
 	ch |= (uint8)(*s++) << 8;
 	return ch;
+}
+
+bool SJISFont::preventLineBreakForCharacter(uint16 ch) const {
+	uint8 c = (ch >> 8) & 0xFF;
+	return c && ((c >= 0x81 && c <= 0x9F) || c >= 0xE0);
 }
 
 } // End of namespace Saga

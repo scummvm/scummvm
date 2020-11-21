@@ -237,7 +237,7 @@ class DefaultFont : public Font {
 	 void outFont(const FontStyle &drawFont, const char *text, size_t count, const Common::Point &point, int color, FontEffectFlags flags);
 	 void loadFont(FontData *font, uint32 fontResourceId);
 	 void createOutline(FontData *font);
- 
+
 	 int getByteLen(int numBits) const {
 		 int byteLength = numBits / 8;
 
@@ -271,6 +271,7 @@ private:
 	void draw(FontId fontId, const char *text, size_t count, const Common::Point &point, int color, int effectColor, FontEffectFlags flags) override;
 
 	uint16 fetchChar(const char *&s) const;
+	bool preventLineBreakForCharacter(uint16 ch) const;
 
 	Graphics::FontSJIS *_font;
 };
