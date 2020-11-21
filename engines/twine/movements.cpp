@@ -210,6 +210,7 @@ void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMove
 }
 
 void Movements::update() {
+	previousLoopCursorKeys = loopCursorKeys;
 	previousLoopActionKey = heroActionKey;
 	heroActionKey = _engine->_input->isHeroActionActive();
 	loopCursorKeys = _engine->_input->cursorKeys;
@@ -304,7 +305,7 @@ void Movements::processManualAction(int actorIdx) {
 			heroMoved = false; // don't break animation
 		}
 
-		if (heroActionKey != heroPressedKey || loopCursorKeys != heroPressedKey2) {
+		if (heroActionKey != previousLoopActionKey || loopCursorKeys != previousLoopCursorKeys) {
 			if (heroMoved) {
 				_engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, actorIdx);
 			}
@@ -353,9 +354,6 @@ void Movements::processManualAction(int actorIdx) {
 	}
 
 	moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
-
-	heroPressedKey = heroActionKey;
-	heroPressedKey2 = loopCursorKeys;
 }
 
 void Movements::processFollowAction(int actorIdx) {
@@ -423,8 +421,6 @@ void Movements::processActorMovements(int32 actorIdx) {
 		}
 
 		moveActor(actor->angle, actor->angle + tempAngle, actor->speed, &actor->move);
-
-		heroPressedKey = heroActionKey;
 		return;
 	}
 	if (!actor->staticFlags.bIsSpriteActor) {
