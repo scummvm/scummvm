@@ -26,43 +26,42 @@
 #include "alogg.h"
 #include "media/audio/soundclip.h"
 
-struct MYOGG:public SOUNDCLIP
-{
-    ALOGG_OGGSTREAM *stream;
-    PACKFILE *in;
-    char *buffer;
-    int chunksize;
+struct MYOGG: public SOUNDCLIP {
+	ALOGG_OGGSTREAM *stream;
+	PACKFILE *in;
+	char *buffer;
+	int chunksize;
 
-    int last_but_one_but_one;
-    int last_but_one;
-    int last_ms_offs;
+	int last_but_one_but_one;
+	int last_but_one;
+	int last_ms_offs;
 
-    void poll() override;
+	void poll() override;
 
-    void set_volume(int newvol) override;
-    void set_speed(int new_speed) override;
+	void set_volume(int newvol) override;
+	void set_speed(int new_speed) override;
 
-    void destroy() override;
+	void destroy() override;
 
-    void seek(int pos) override;
+	void seek(int pos) override;
 
-    int get_pos() override;    
+	int get_pos() override;
 
-    int get_pos_ms() override;
+	int get_pos_ms() override;
 
-    int get_length_ms() override;
+	int get_length_ms() override;
 
-    int get_sound_type() override;
+	int get_sound_type() override;
 
-    int play() override;
+	int play() override;
 
-    MYOGG();
+	MYOGG();
 
 protected:
-    int get_voice() override;
-    void adjust_volume() override;
+	int get_voice() override;
+	void adjust_volume() override;
 private:
-    void adjust_stream();
+	void adjust_stream();
 };
 
 #endif

@@ -25,37 +25,30 @@
 
 #include <pthread.h>
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 
-class PThreadMutex : public BaseMutex
-{
+class PThreadMutex : public BaseMutex {
 public:
-  inline PThreadMutex()
-  {
-    pthread_mutex_init(&_mutex, NULL);
-  }
+	inline PThreadMutex() {
+		pthread_mutex_init(&_mutex, NULL);
+	}
 
-  inline ~PThreadMutex()
-  {
-    pthread_mutex_destroy(&_mutex);
-  }
+	inline ~PThreadMutex() {
+		pthread_mutex_destroy(&_mutex);
+	}
 
-  inline void Lock()
-  {
-    pthread_mutex_lock(&_mutex);
-  }
+	inline void Lock() {
+		pthread_mutex_lock(&_mutex);
+	}
 
-  inline void Unlock()
-  {
-    pthread_mutex_unlock(&_mutex);
-  }
+	inline void Unlock() {
+		pthread_mutex_unlock(&_mutex);
+	}
 
 private:
-  pthread_mutex_t _mutex;
+	pthread_mutex_t _mutex;
 };
 
 typedef PThreadMutex Mutex;

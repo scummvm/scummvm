@@ -44,59 +44,58 @@ extern GameSetupStruct game;
 
 
 void RemoveOverlay(int ovrid) {
-    if (find_overlay_of_type(ovrid) < 0) quit("!RemoveOverlay: invalid overlay id passed");
-    remove_screen_overlay(ovrid);
+	if (find_overlay_of_type(ovrid) < 0) quit("!RemoveOverlay: invalid overlay id passed");
+	remove_screen_overlay(ovrid);
 }
 
-int CreateGraphicOverlay(int xx,int yy,int slott,int trans) {
-    data_to_game_coords(&xx, &yy);
+int CreateGraphicOverlay(int xx, int yy, int slott, int trans) {
+	data_to_game_coords(&xx, &yy);
 
-    Bitmap *screeno=BitmapHelper::CreateTransparentBitmap(game.SpriteInfos[slott].Width, game.SpriteInfos[slott].Height, game.GetColorDepth());
-    wputblock(screeno, 0,0,spriteset[slott],trans);
-    bool hasAlpha = (game.SpriteInfos[slott].Flags & SPF_ALPHACHANNEL) != 0;
-    int nse = add_screen_overlay(xx, yy, OVER_CUSTOM, screeno, hasAlpha);
-    return screenover[nse].type;
+	Bitmap *screeno = BitmapHelper::CreateTransparentBitmap(game.SpriteInfos[slott].Width, game.SpriteInfos[slott].Height, game.GetColorDepth());
+	wputblock(screeno, 0, 0, spriteset[slott], trans);
+	bool hasAlpha = (game.SpriteInfos[slott].Flags & SPF_ALPHACHANNEL) != 0;
+	int nse = add_screen_overlay(xx, yy, OVER_CUSTOM, screeno, hasAlpha);
+	return screenover[nse].type;
 }
 
 int CreateTextOverlayCore(int xx, int yy, int wii, int fontid, int text_color, const char *text, int disp_type, int allowShrink) {
-    if (wii<8) wii=play.GetUIViewport().GetWidth()/2;
-    if (xx<0) xx=play.GetUIViewport().GetWidth()/2-wii/2;
-    if (text_color ==0) text_color =16;
-    return _display_main(xx,yy,wii, text, disp_type, fontid, -text_color, 0, allowShrink, false);
+	if (wii < 8) wii = play.GetUIViewport().GetWidth() / 2;
+	if (xx < 0) xx = play.GetUIViewport().GetWidth() / 2 - wii / 2;
+	if (text_color == 0) text_color = 16;
+	return _display_main(xx, yy, wii, text, disp_type, fontid, -text_color, 0, allowShrink, false);
 }
 
-int CreateTextOverlay(int xx, int yy, int wii, int fontid, int text_color, const char* text, int disp_type) {
-    int allowShrink = 0;
+int CreateTextOverlay(int xx, int yy, int wii, int fontid, int text_color, const char *text, int disp_type) {
+	int allowShrink = 0;
 
-    if (xx != OVR_AUTOPLACE) {
-        data_to_game_coords(&xx,&yy);
-        wii = data_to_game_coord(wii);
-    }
-    else  // allow DisplaySpeechBackground to be shrunk
-        allowShrink = 1;
+	if (xx != OVR_AUTOPLACE) {
+		data_to_game_coords(&xx, &yy);
+		wii = data_to_game_coord(wii);
+	} else // allow DisplaySpeechBackground to be shrunk
+		allowShrink = 1;
 
-    return CreateTextOverlayCore(xx, yy, wii, fontid, text_color, text, disp_type, allowShrink);
+	return CreateTextOverlayCore(xx, yy, wii, fontid, text_color, text, disp_type, allowShrink);
 }
 
 void SetTextOverlay(int ovrid, int xx, int yy, int wii, int fontid, int text_color, const char *text) {
-    RemoveOverlay(ovrid);
-    const int disp_type = ovrid;
-    if (CreateTextOverlay(xx, yy, wii, fontid, text_color, text, disp_type) !=ovrid)
-        quit("SetTextOverlay internal error: inconsistent type ids");
+	RemoveOverlay(ovrid);
+	const int disp_type = ovrid;
+	if (CreateTextOverlay(xx, yy, wii, fontid, text_color, text, disp_type) != ovrid)
+		quit("SetTextOverlay internal error: inconsistent type ids");
 }
 
-void MoveOverlay(int ovrid, int newx,int newy) {
-    data_to_game_coords(&newx, &newy);
+void MoveOverlay(int ovrid, int newx, int newy) {
+	data_to_game_coords(&newx, &newy);
 
-    int ovri=find_overlay_of_type(ovrid);
-    if (ovri<0) quit("!MoveOverlay: invalid overlay ID specified");
-    screenover[ovri].x=newx;
-    screenover[ovri].y=newy;
+	int ovri = find_overlay_of_type(ovrid);
+	if (ovri < 0) quit("!MoveOverlay: invalid overlay ID specified");
+	screenover[ovri].x = newx;
+	screenover[ovri].y = newy;
 }
 
 int IsOverlayValid(int ovrid) {
-    if (find_overlay_of_type(ovrid) < 0)
-        return 0;
+	if (find_overlay_of_type(ovrid) < 0)
+		return 0;
 
-    return 1;
+	return 1;
 }

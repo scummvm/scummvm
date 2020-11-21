@@ -27,9 +27,9 @@
 
 // 64 bit: Struct size must be 8 byte for scripts to work
 struct ScriptObject {
-  int id;
-  //RoomObject *obj;
-  int __padding;
+	int id;
+	//RoomObject *obj;
+	int __padding;
 };
 
 #endif

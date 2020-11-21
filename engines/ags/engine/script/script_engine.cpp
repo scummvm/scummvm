@@ -37,26 +37,25 @@
 #include "util/file.h"
 #include "util/stream.h"
 
-namespace AGS { namespace Common { class RoomStruct; } }
+namespace AGS {
+namespace Common {
+class RoomStruct;
+}
+}
 using namespace AGS::Common;
 
 extern void quit(const char *);
 extern int currentline; // in script/script_common
 
-std::pair<String, String> cc_error_at_line(const char *error_msg)
-{
-    ccInstance *sci = ccInstance::GetCurrentInstance();
-    if (!sci)
-    {
-        return std::make_pair(String::FromFormat("Error (line %d): %s", currentline, error_msg), String());
-    }
-    else
-    {
-        return std::make_pair(String::FromFormat("Error: %s\n", error_msg), ccInstance::GetCurrentInstance()->GetCallStack(5));
-    }
+std::pair<String, String> cc_error_at_line(const char *error_msg) {
+	ccInstance *sci = ccInstance::GetCurrentInstance();
+	if (!sci) {
+		return std::make_pair(String::FromFormat("Error (line %d): %s", currentline, error_msg), String());
+	} else {
+		return std::make_pair(String::FromFormat("Error: %s\n", error_msg), ccInstance::GetCurrentInstance()->GetCallStack(5));
+	}
 }
 
-String cc_error_without_line(const char *error_msg)
-{
-    return String::FromFormat("Runtime error: %s", error_msg);
+String cc_error_without_line(const char *error_msg) {
+	return String::FromFormat("Runtime error: %s", error_msg);
 }

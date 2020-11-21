@@ -23,39 +23,37 @@
 #ifndef AGS_ENGINE_UTIL_THREAD_H
 #define AGS_ENGINE_UTIL_THREAD_H
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 
-class BaseThread
-{
+class BaseThread {
 public:
-  typedef void(* AGSThreadEntry)();
+	typedef void(* AGSThreadEntry)();
 
-  BaseThread() = default;
-  virtual ~BaseThread() = default;
+	BaseThread() = default;
+	virtual ~BaseThread() = default;
 
-  BaseThread &operator=(const BaseThread &) = delete;
-  BaseThread(const BaseThread &) = delete;
+	BaseThread &operator=(const BaseThread &) = delete;
+	BaseThread(const BaseThread &) = delete;
 
-  virtual bool Create(AGSThreadEntry entryPoint, bool looping) = 0;
-  virtual bool Start() = 0;
-  virtual bool Stop() = 0;
+	virtual bool Create(AGSThreadEntry entryPoint, bool looping) = 0;
+	virtual bool Start() = 0;
+	virtual bool Stop() = 0;
 
-  inline bool CreateAndStart(AGSThreadEntry entryPoint, bool looping)
-  {
-    if (!Create(entryPoint, looping)) { return false; }
-    return Start();
-  }
+	inline bool CreateAndStart(AGSThreadEntry entryPoint, bool looping) {
+		if (!Create(entryPoint, looping)) {
+			return false;
+		}
+		return Start();
+	}
 };
 
 } // namespace Engine
 } // namespace AGS
 
 #if 0
-  // insert platforms here
+// insert platforms here
 #else
 #include "thread_std.h"
 #endif

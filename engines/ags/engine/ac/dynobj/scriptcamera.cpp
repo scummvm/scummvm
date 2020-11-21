@@ -28,45 +28,39 @@ using namespace AGS::Common;
 
 ScriptCamera::ScriptCamera(int id) : _id(id) {}
 
-const char *ScriptCamera::GetType()
-{
-    return "Camera2";
+const char *ScriptCamera::GetType() {
+	return "Camera2";
 }
 
-int ScriptCamera::Dispose(const char *address, bool force)
-{
-    // Note that ScriptCamera is a reference to actual Camera object,
-    // and this deletes the reference, while camera may remain in GameState.
-    delete this;
-    return 1;
+int ScriptCamera::Dispose(const char *address, bool force) {
+	// Note that ScriptCamera is a reference to actual Camera object,
+	// and this deletes the reference, while camera may remain in GameState.
+	delete this;
+	return 1;
 }
 
-int ScriptCamera::Serialize(const char *address, char *buffer, int bufsize)
-{
-    StartSerialize(buffer);
-    SerializeInt(_id);
-    return EndSerialize();
+int ScriptCamera::Serialize(const char *address, char *buffer, int bufsize) {
+	StartSerialize(buffer);
+	SerializeInt(_id);
+	return EndSerialize();
 }
 
-void ScriptCamera::Unserialize(int index, const char *serializedData, int dataSize)
-{
-    StartUnserialize(serializedData, dataSize);
-    _id = UnserializeInt();
-    ccRegisterUnserializedObject(index, this, this);
+void ScriptCamera::Unserialize(int index, const char *serializedData, int dataSize) {
+	StartUnserialize(serializedData, dataSize);
+	_id = UnserializeInt();
+	ccRegisterUnserializedObject(index, this, this);
 }
 
-ScriptCamera *Camera_Unserialize(int handle, const char *serializedData, int dataSize)
-{
-    // The way it works now, we must not create a new script object,
-    // but acquire one from the GameState, which keeps the first reference.
-    // This is essential because GameState should be able to invalidate any
-    // script references when Camera gets removed.
-    const int id = BBOp::Int32FromLE(*((int*)serializedData));
-    if (id >= 0)
-    {
-        auto scam = play.RegisterRoomCamera(id, handle);
-        if (scam)
-            return scam;
-    }
-    return new ScriptCamera(-1); // make invalid reference
+ScriptCamera *Camera_Unserialize(int handle, const char *serializedData, int dataSize) {
+	// The way it works now, we must not create a new script object,
+	// but acquire one from the GameState, which keeps the first reference.
+	// This is essential because GameState should be able to invalidate any
+	// script references when Camera gets removed.
+	const int id = BBOp::Int32FromLE(*((int *)serializedData));
+	if (id >= 0) {
+		auto scam = play.RegisterRoomCamera(id, handle);
+		if (scam)
+			return scam;
+	}
+	return new ScriptCamera(-1); // make invalid reference
 }

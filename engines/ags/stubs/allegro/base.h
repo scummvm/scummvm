@@ -37,8 +37,8 @@ namespace AGS3 {
 
 /* Returns the median of x, y, z */
 #define MID(x,y,z)   ((x) > (y) ? ((y) > (z) ? (y) : ((x) > (z) ?    \
-                       (z) : (x))) : ((y) > (z) ? ((z) > (x) ? (z) : \
-                       (x)): (y)))
+                                   (z) : (x))) : ((y) > (z) ? ((z) > (x) ? (z) : \
+                                           (x)): (y)))
 
 #define AL_ID MKTAG
 

@@ -24,15 +24,15 @@
 #define AGS_ENGINE_AC_PARSER_H
 
 int Parser_FindWordID(const char *wordToFind);
-const char* Parser_SaidUnknownWord();
-void ParseText (const char*text);
-int Said (const char*checkwords);
+const char *Parser_SaidUnknownWord();
+void ParseText(const char *text);
+int Said(const char *checkwords);
 
 //=============================================================================
 
-int find_word_in_dictionary (const char *lookfor);
+int find_word_in_dictionary(const char *lookfor);
 int is_valid_word_char(char theChar);
 int FindMatchingMultiWordWord(char *thisword, const char **text);
-int parse_sentence (const char *src_text, int *numwords, short*wordarray, short*compareto, int comparetonum);
+int parse_sentence(const char *src_text, int *numwords, short *wordarray, short *compareto, int comparetonum);
 
 #endif

@@ -23,19 +23,18 @@
 #ifndef AGS_ENGINE_AC_SPEECH_H
 #define AGS_ENGINE_AC_SPEECH_H
 
-enum SkipSpeechStyle
-{
-    kSkipSpeechUndefined    = -1,
-    kSkipSpeechKeyMouseTime =  0,
-    kSkipSpeechKeyTime      =  1,
-    kSkipSpeechTime         =  2,
-    kSkipSpeechKeyMouse     =  3,
-    kSkipSpeechMouseTime    =  4,
-    kSkipSpeechKey          =  5,
-    kSkipSpeechMouse        =  6,
+enum SkipSpeechStyle {
+	kSkipSpeechUndefined    = -1,
+	kSkipSpeechKeyMouseTime =  0,
+	kSkipSpeechKeyTime      =  1,
+	kSkipSpeechTime         =  2,
+	kSkipSpeechKeyMouse     =  3,
+	kSkipSpeechMouseTime    =  4,
+	kSkipSpeechKey          =  5,
+	kSkipSpeechMouse        =  6,
 
-    kSkipSpeechFirst        = kSkipSpeechKeyMouseTime,
-    kSkipSpeechLast         = kSkipSpeechMouse
+	kSkipSpeechFirst        = kSkipSpeechKeyMouseTime,
+	kSkipSpeechLast         = kSkipSpeechMouse
 };
 
 int user_to_internal_skip_speech(SkipSpeechStyle userval);

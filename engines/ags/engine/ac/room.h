@@ -28,8 +28,8 @@
 #include "script/runtimescriptvalue.h"
 #include "game/roomstruct.h"
 
-ScriptDrawingSurface* Room_GetDrawingSurfaceForBackground(int backgroundNumber);
-ScriptDrawingSurface* Room_GetDrawingSurfaceForMask(RoomAreaMask mask);
+ScriptDrawingSurface *Room_GetDrawingSurfaceForBackground(int backgroundNumber);
+ScriptDrawingSurface *Room_GetDrawingSurfaceForMask(RoomAreaMask mask);
 int Room_GetObjectCount();
 int Room_GetWidth();
 int Room_GetHeight();
@@ -39,22 +39,22 @@ int Room_GetRightEdge();
 int Room_GetTopEdge();
 int Room_GetBottomEdge();
 int Room_GetMusicOnLoad();
-const char* Room_GetTextProperty(const char *property);
+const char *Room_GetTextProperty(const char *property);
 int Room_GetProperty(const char *property);
-const char* Room_GetMessages(int index);
+const char *Room_GetMessages(int index);
 RuntimeScriptValue Sc_Room_GetProperty(const RuntimeScriptValue *params, int32_t param_count);
 
 //=============================================================================
 
-void  save_room_data_segment ();
+void  save_room_data_segment();
 void  unload_old_room();
-void  load_new_room(int newnum,CharacterInfo*forchar);
-void  new_room(int newnum,CharacterInfo*forchar);
+void  load_new_room(int newnum, CharacterInfo *forchar);
+void  new_room(int newnum, CharacterInfo *forchar);
 int   find_highest_room_entered();
 void  first_room_initialization();
 void  check_new_room();
 void  compile_room_script();
-void  on_background_frame_change ();
+void  on_background_frame_change();
 // Clear the current room pointer if room status is no longer valid
 void  croom_ptr_clear();
 

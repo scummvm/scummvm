@@ -31,10 +31,8 @@
 
 #include "util/ini_util.h"
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 using namespace Common;
 

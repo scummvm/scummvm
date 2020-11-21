@@ -26,7 +26,7 @@
 void RemoveOverlay(int ovrid);
 int  CreateGraphicOverlay(int xx, int yy, int slott, int trans);
 int  CreateTextOverlayCore(int xx, int yy, int wii, int fontid, int text_color, const char *text, int disp_type, int allowShrink);
-int  CreateTextOverlay(int xx, int yy, int wii, int fontid, int clr, const char* text, int disp_type);
+int  CreateTextOverlay(int xx, int yy, int wii, int fontid, int clr, const char *text, int disp_type);
 void SetTextOverlay(int ovrid, int xx, int yy, int wii, int fontid, int text_color, const char *text);
 void MoveOverlay(int ovrid, int newx, int newy);
 int  IsOverlayValid(int ovrid);

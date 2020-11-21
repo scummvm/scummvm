@@ -26,15 +26,15 @@
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
 struct ScriptViewFrame final : AGSCCDynamicObject {
-    int view, loop, frame;
+	int view, loop, frame;
 
-    int Dispose(const char *address, bool force) override;
-    const char *GetType() override;
-    int Serialize(const char *address, char *buffer, int bufsize) override;
-    void Unserialize(int index, const char *serializedData, int dataSize) override;
+	int Dispose(const char *address, bool force) override;
+	const char *GetType() override;
+	int Serialize(const char *address, char *buffer, int bufsize) override;
+	void Unserialize(int index, const char *serializedData, int dataSize) override;
 
-    ScriptViewFrame(int p_view, int p_loop, int p_frame);
-    ScriptViewFrame();
+	ScriptViewFrame(int p_view, int p_loop, int p_frame);
+	ScriptViewFrame();
 };
 
 #endif

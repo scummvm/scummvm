@@ -39,28 +39,25 @@
 #include "util/string.h"
 
 struct SpriteInfo;
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
 class RoomStruct;
 
-enum RoomFileErrorType
-{
-    kRoomFileErr_NoError,
-    kRoomFileErr_FileOpenFailed,
-    kRoomFileErr_FormatNotSupported,
-    kRoomFileErr_UnexpectedEOF,
-    kRoomFileErr_UnknownBlockType,
-    kRoomFileErr_OldBlockNotSupported,
-    kRoomFileErr_BlockDataOverlapping,
-    kRoomFileErr_IncompatibleEngine,
-    kRoomFileErr_ScriptLoadFailed,
-    kRoomFileErr_InconsistentData,
-    kRoomFileErr_PropertiesBlockFormat,
-    kRoomFileErr_InvalidPropertyValues,
-    kRoomFileErr_BlockNotFound
+enum RoomFileErrorType {
+	kRoomFileErr_NoError,
+	kRoomFileErr_FileOpenFailed,
+	kRoomFileErr_FormatNotSupported,
+	kRoomFileErr_UnexpectedEOF,
+	kRoomFileErr_UnknownBlockType,
+	kRoomFileErr_OldBlockNotSupported,
+	kRoomFileErr_BlockDataOverlapping,
+	kRoomFileErr_IncompatibleEngine,
+	kRoomFileErr_ScriptLoadFailed,
+	kRoomFileErr_InconsistentData,
+	kRoomFileErr_PropertiesBlockFormat,
+	kRoomFileErr_InvalidPropertyValues,
+	kRoomFileErr_BlockNotFound
 };
 
 String GetRoomFileErrorText(RoomFileErrorType err);
@@ -71,16 +68,15 @@ typedef std::shared_ptr<Stream> PStream;
 
 
 // RoomDataSource defines a successfully opened room file
-struct RoomDataSource
-{
-    // Name of the asset file
-    String              Filename;
-    // Room file format version
-    RoomFileVersion     DataVersion;
-    // A ponter to the opened stream
-    PStream             InputStream;
+struct RoomDataSource {
+	// Name of the asset file
+	String              Filename;
+	// Room file format version
+	RoomFileVersion     DataVersion;
+	// A ponter to the opened stream
+	PStream             InputStream;
 
-    RoomDataSource();
+	RoomDataSource();
 };
 
 // Opens room file for reading from an arbitrary file

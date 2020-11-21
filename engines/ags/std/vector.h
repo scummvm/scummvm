@@ -102,7 +102,7 @@ public:
 	}
 
 	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator first,
-		typename Common::Array<T>::iterator last) {
+	        typename Common::Array<T>::iterator last) {
 		Common::copy(last, this->_storage + this->_size, first);
 
 		int count = (last - first);

@@ -31,36 +31,36 @@ using namespace AGS::Common;
 
 extern GameSetupStruct game;
 
-void SetLabelColor(int guin,int objn, int colr) {
-    if ((guin<0) | (guin>=game.numgui))
-        quit("!SetLabelColor: invalid GUI number");
-    if ((objn<0) | (objn>=guis[guin].GetControlCount()))
-        quit("!SetLabelColor: invalid object number");
-    if (guis[guin].GetControlType(objn)!=kGUILabel)
-        quit("!SetLabelColor: specified control is not a label");
+void SetLabelColor(int guin, int objn, int colr) {
+	if ((guin < 0) | (guin >= game.numgui))
+		quit("!SetLabelColor: invalid GUI number");
+	if ((objn < 0) | (objn >= guis[guin].GetControlCount()))
+		quit("!SetLabelColor: invalid object number");
+	if (guis[guin].GetControlType(objn) != kGUILabel)
+		quit("!SetLabelColor: specified control is not a label");
 
-    GUILabel*guil=(GUILabel*)guis[guin].GetControl(objn);
-    Label_SetColor(guil, colr);
+	GUILabel *guil = (GUILabel *)guis[guin].GetControl(objn);
+	Label_SetColor(guil, colr);
 }
 
-void SetLabelText(int guin,int objn, const char*newtx) {
-    VALIDATE_STRING(newtx);
-    if ((guin<0) | (guin>=game.numgui)) quit("!SetLabelText: invalid GUI number");
-    if ((objn<0) | (objn>=guis[guin].GetControlCount())) quit("!SetLabelTexT: invalid object number");
-    if (guis[guin].GetControlType(objn)!=kGUILabel)
-        quit("!SetLabelText: specified control is not a label");
+void SetLabelText(int guin, int objn, const char *newtx) {
+	VALIDATE_STRING(newtx);
+	if ((guin < 0) | (guin >= game.numgui)) quit("!SetLabelText: invalid GUI number");
+	if ((objn < 0) | (objn >= guis[guin].GetControlCount())) quit("!SetLabelTexT: invalid object number");
+	if (guis[guin].GetControlType(objn) != kGUILabel)
+		quit("!SetLabelText: specified control is not a label");
 
-    GUILabel*guil=(GUILabel*)guis[guin].GetControl(objn);
-    Label_SetText(guil, newtx);
+	GUILabel *guil = (GUILabel *)guis[guin].GetControl(objn);
+	Label_SetText(guil, newtx);
 }
 
-void SetLabelFont(int guin,int objn, int fontnum) {
+void SetLabelFont(int guin, int objn, int fontnum) {
 
-    if ((guin<0) | (guin>=game.numgui)) quit("!SetLabelFont: invalid GUI number");
-    if ((objn<0) | (objn>=guis[guin].GetControlCount())) quit("!SetLabelFont: invalid object number");
-    if (guis[guin].GetControlType(objn)!=kGUILabel)
-        quit("!SetLabelFont: specified control is not a label");
+	if ((guin < 0) | (guin >= game.numgui)) quit("!SetLabelFont: invalid GUI number");
+	if ((objn < 0) | (objn >= guis[guin].GetControlCount())) quit("!SetLabelFont: invalid object number");
+	if (guis[guin].GetControlType(objn) != kGUILabel)
+		quit("!SetLabelFont: specified control is not a label");
 
-    GUILabel*guil=(GUILabel*)guis[guin].GetControl(objn);
-    Label_SetFont(guil, fontnum);
+	GUILabel *guil = (GUILabel *)guis[guin].GetControl(objn);
+	Label_SetFont(guil, fontnum);
 }

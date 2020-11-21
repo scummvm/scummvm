@@ -26,38 +26,37 @@
 #include "media/audio/soundclip.h"
 
 // MIDI
-struct MYMIDI:public SOUNDCLIP
-{
-    MIDI *tune;
-    int lengthInSeconds;
+struct MYMIDI: public SOUNDCLIP {
+	MIDI *tune;
+	int lengthInSeconds;
 
-    void poll() override;
+	void poll() override;
 
-    void set_volume(int newvol) override;
+	void set_volume(int newvol) override;
 
-    void destroy() override;
+	void destroy() override;
 
-    void seek(int pos) override;
+	void seek(int pos) override;
 
-    int get_pos() override;
+	int get_pos() override;
 
-    int get_pos_ms() override;
+	int get_pos_ms() override;
 
-    int get_length_ms() override;
+	int get_length_ms() override;
 
-    void pause() override;
+	void pause() override;
 
-    void resume() override;
+	void resume() override;
 
-    int get_sound_type() override;
+	int get_sound_type() override;
 
-    int play() override;
+	int play() override;
 
-    MYMIDI();
+	MYMIDI();
 
 protected:
-    int get_voice() override;
-    void adjust_volume() override;
+	int get_voice() override;
+	void adjust_volume() override;
 };
 
 #endif

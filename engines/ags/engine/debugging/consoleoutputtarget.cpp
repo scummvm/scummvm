@@ -24,26 +24,22 @@
 #include "consoleoutputtarget.h"
 #include "debug/debug_log.h"
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
-ConsoleOutputTarget::ConsoleOutputTarget()
-{
+ConsoleOutputTarget::ConsoleOutputTarget() {
 }
 
 ConsoleOutputTarget::~ConsoleOutputTarget() = default;
 
-void ConsoleOutputTarget::PrintMessage(const DebugMessage &msg)
-{
-    // limit number of characters for console
-    // TODO: is there a way to find out how many characters can fit in?
-    debug_line[last_debug_line] = msg.Text.Left(99);
+void ConsoleOutputTarget::PrintMessage(const DebugMessage &msg) {
+	// limit number of characters for console
+	// TODO: is there a way to find out how many characters can fit in?
+	debug_line[last_debug_line] = msg.Text.Left(99);
 
-    last_debug_line = (last_debug_line + 1) % DEBUG_CONSOLE_NUMLINES;
-    if (last_debug_line == first_debug_line)
-        first_debug_line = (first_debug_line + 1) % DEBUG_CONSOLE_NUMLINES;
+	last_debug_line = (last_debug_line + 1) % DEBUG_CONSOLE_NUMLINES;
+	if (last_debug_line == first_debug_line)
+		first_debug_line = (first_debug_line + 1) % DEBUG_CONSOLE_NUMLINES;
 }
 
 } // namespace Engine

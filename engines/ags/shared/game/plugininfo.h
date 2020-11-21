@@ -35,20 +35,17 @@
 // TODO: why 10 MB limit?
 #define PLUGIN_SAVEBUFFERSIZE 10247680
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
-struct PluginInfo
-{
-    // (File)name of plugin
-    String      Name;
-    // Custom data for plugin
-    std::shared_ptr<char> Data;
-    size_t      DataLen;
+struct PluginInfo {
+	// (File)name of plugin
+	String      Name;
+	// Custom data for plugin
+	std::shared_ptr<char> Data;
+	size_t      DataLen;
 
-    PluginInfo() : DataLen(0) {}
+	PluginInfo() : DataLen(0) {}
 };
 
 } // namespace Common

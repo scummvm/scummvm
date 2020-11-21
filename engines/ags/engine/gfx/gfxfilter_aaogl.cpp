@@ -27,29 +27,23 @@
 #include "gfx/gfxfilter_aaogl.h"
 #include "ogl_headers.h"
 
-namespace AGS
-{
-namespace Engine
-{
-namespace OGL
-{
+namespace AGS {
+namespace Engine {
+namespace OGL {
 
 const GfxFilterInfo AAOGLGfxFilter::FilterInfo = GfxFilterInfo("Linear", "Linear interpolation");
 
-bool AAOGLGfxFilter::UseLinearFiltering() const
-{
-    return true;
+bool AAOGLGfxFilter::UseLinearFiltering() const {
+	return true;
 }
 
-void AAOGLGfxFilter::SetFilteringForStandardSprite()
-{
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+void AAOGLGfxFilter::SetFilteringForStandardSprite() {
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 }
 
-const GfxFilterInfo &AAOGLGfxFilter::GetInfo() const
-{
-    return FilterInfo;
+const GfxFilterInfo &AAOGLGfxFilter::GetInfo() const {
+	return FilterInfo;
 }
 
 } // namespace OGL

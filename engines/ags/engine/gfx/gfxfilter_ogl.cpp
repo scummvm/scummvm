@@ -27,29 +27,23 @@
 #include "gfx/gfxfilter_ogl.h"
 #include "ogl_headers.h"
 
-namespace AGS
-{
-namespace Engine
-{
-namespace OGL
-{
+namespace AGS {
+namespace Engine {
+namespace OGL {
 
 const GfxFilterInfo OGLGfxFilter::FilterInfo = GfxFilterInfo("StdScale", "Nearest-neighbour");
 
-bool OGLGfxFilter::UseLinearFiltering() const
-{
-    return false;
+bool OGLGfxFilter::UseLinearFiltering() const {
+	return false;
 }
 
-void OGLGfxFilter::SetFilteringForStandardSprite()
-{
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+void OGLGfxFilter::SetFilteringForStandardSprite() {
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 }
 
-const GfxFilterInfo &OGLGfxFilter::GetInfo() const
-{
-    return FilterInfo;
+const GfxFilterInfo &OGLGfxFilter::GetInfo() const {
+	return FilterInfo;
 }
 
 } // namespace OGL

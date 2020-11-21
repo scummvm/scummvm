@@ -32,22 +32,19 @@
 #include "gfx/gfxfilter.h"
 #include "util/scaling.h"
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
-class ScalingGfxFilter : public IGfxFilter
-{
+class ScalingGfxFilter : public IGfxFilter {
 public:
-    bool Initialize(const int color_depth, String &err_str) override;
-    void UnInitialize() override;
-    Rect SetTranslation(const Size src_size, const Rect dst_rect) override;
-    Rect GetDestination() const override;
+	bool Initialize(const int color_depth, String &err_str) override;
+	void UnInitialize() override;
+	Rect SetTranslation(const Size src_size, const Rect dst_rect) override;
+	Rect GetDestination() const override;
 
 protected:
-    Rect            _dstRect;
-    PlaneScaling    _scaling;
+	Rect            _dstRect;
+	PlaneScaling    _scaling;
 };
 
 } // namespace Engine

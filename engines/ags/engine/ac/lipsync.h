@@ -24,10 +24,10 @@
 #define AGS_ENGINE_AC_LIPSYNC_H
 
 struct SpeechLipSyncLine {
-    char  filename[14];
-    int  *endtimeoffs;
-    short*frame;
-    short numPhonemes;
+	char  filename[14];
+	int  *endtimeoffs;
+	short *frame;
+	short numPhonemes;
 };
 
 #endif

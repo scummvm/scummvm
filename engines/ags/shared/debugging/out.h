@@ -79,83 +79,81 @@
 
 #include "util/string.h"
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
 // Message types provide distinction for debug messages by their intent.
-enum MessageType
-{
-    kDbgMsg_None                = 0,
-    // Alerts may be informative messages with topmost level of importance,
-    // such as reporting engine startup and shutdown.
-    kDbgMsg_Alert               ,
-    // Fatal errors are ones that make program abort immediately.
-    kDbgMsg_Fatal               ,
-    // Error messages are about engine not being able to perform requested
-    // operation in a situation when that will affect game playability and
-    // further execution.
-    kDbgMsg_Error               ,
-    // Warnings are made when unexpected or non-standart behavior
-    // is detected in program, which is not immediately critical,
-    // but may be a symptom of a bigger problem.
-    kDbgMsg_Warn                ,
-    // General information messages.
-    kDbgMsg_Info                ,
-    // Debug reason is for arbitrary information about events and current
-    // game state.
-    kDbgMsg_Debug               ,
+enum MessageType {
+	kDbgMsg_None                = 0,
+	// Alerts may be informative messages with topmost level of importance,
+	// such as reporting engine startup and shutdown.
+	kDbgMsg_Alert               ,
+	// Fatal errors are ones that make program abort immediately.
+	kDbgMsg_Fatal               ,
+	// Error messages are about engine not being able to perform requested
+	// operation in a situation when that will affect game playability and
+	// further execution.
+	kDbgMsg_Error               ,
+	// Warnings are made when unexpected or non-standart behavior
+	// is detected in program, which is not immediately critical,
+	// but may be a symptom of a bigger problem.
+	kDbgMsg_Warn                ,
+	// General information messages.
+	kDbgMsg_Info                ,
+	// Debug reason is for arbitrary information about events and current
+	// game state.
+	kDbgMsg_Debug               ,
 
 
-    // Convenient aliases
-    kDbgMsg_Default             = kDbgMsg_Debug,
-    kDbgMsg_All                 = kDbgMsg_Debug
+	// Convenient aliases
+	kDbgMsg_Default             = kDbgMsg_Debug,
+	kDbgMsg_All                 = kDbgMsg_Debug
 };
 
 // This enumeration is a list of common hard-coded groups, but more could
 // be added via debugging configuration interface (see 'debug/debug.h').
-enum CommonDebugGroup
-{
-    kDbgGroup_None = -1,
-    // Main debug group is for reporting general engine status and issues
-    kDbgGroup_Main = 0,
-    // Game group is for logging game logic state and issues
-    kDbgGroup_Game,
-    // Log from the game script
-    kDbgGroup_Script,
-    // Sprite cache logging
-    kDbgGroup_SprCache,
-    // Group for debugging managed object state (can slow engine down!)
-    kDbgGroup_ManObj
+enum CommonDebugGroup {
+	kDbgGroup_None = -1,
+	// Main debug group is for reporting general engine status and issues
+	kDbgGroup_Main = 0,
+	// Game group is for logging game logic state and issues
+	kDbgGroup_Game,
+	// Log from the game script
+	kDbgGroup_Script,
+	// Sprite cache logging
+	kDbgGroup_SprCache,
+	// Group for debugging managed object state (can slow engine down!)
+	kDbgGroup_ManObj
 };
 
 // Debug group identifier defining either numeric or string id, or both
-struct DebugGroupID
-{
-    uint32_t    ID;
-    String      SID;
+struct DebugGroupID {
+	uint32_t    ID;
+	String      SID;
 
-    DebugGroupID() : ID(kDbgGroup_None) {}
-    DebugGroupID(uint32_t id, const String &sid = "") : ID(id), SID(sid) {}
-    DebugGroupID(const String &sid) : ID(kDbgGroup_None), SID(sid) {}
-    // Tells if any of the id components is valid
-    bool IsValid() const { return ID != kDbgGroup_None || !SID.IsEmpty(); }
-    // Tells if both id components are properly set
-    bool IsComplete() const { return ID != kDbgGroup_None && !SID.IsEmpty(); }
+	DebugGroupID() : ID(kDbgGroup_None) {}
+	DebugGroupID(uint32_t id, const String &sid = "") : ID(id), SID(sid) {}
+	DebugGroupID(const String &sid) : ID(kDbgGroup_None), SID(sid) {}
+	// Tells if any of the id components is valid
+	bool IsValid() const {
+		return ID != kDbgGroup_None || !SID.IsEmpty();
+	}
+	// Tells if both id components are properly set
+	bool IsComplete() const {
+		return ID != kDbgGroup_None && !SID.IsEmpty();
+	}
 };
 
-namespace Debug
-{
-    //
-    // Debug output
-    //
-    // Output formatted message of default group and default type
-    void Printf(const char *fmt, ...);
-    // Output formatted message of default group and given type
-    void Printf(MessageType mt, const char *fmt, ...);
-    // Output formatted message of given group and type
-    void Printf(DebugGroupID group_id, MessageType mt, const char *fmt, ...);
+namespace Debug {
+//
+// Debug output
+//
+// Output formatted message of default group and default type
+void Printf(const char *fmt, ...);
+// Output formatted message of default group and given type
+void Printf(MessageType mt, const char *fmt, ...);
+// Output formatted message of given group and type
+void Printf(DebugGroupID group_id, MessageType mt, const char *fmt, ...);
 
 }   // namespace Debug
 

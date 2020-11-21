@@ -31,20 +31,20 @@ using namespace AGS::Common;
 
 extern GameSetupStruct game;
 
-void SetSliderValue(int guin,int objn, int valn) {
-    if ((guin<0) | (guin>=game.numgui)) quit("!SetSliderValue: invalid GUI number");
-    if (guis[guin].GetControlType(objn)!=kGUISlider)
-        quit("!SetSliderValue: specified control is not a slider");
+void SetSliderValue(int guin, int objn, int valn) {
+	if ((guin < 0) | (guin >= game.numgui)) quit("!SetSliderValue: invalid GUI number");
+	if (guis[guin].GetControlType(objn) != kGUISlider)
+		quit("!SetSliderValue: specified control is not a slider");
 
-    GUISlider*guisl=(GUISlider*)guis[guin].GetControl(objn);
-    Slider_SetValue(guisl, valn);
+	GUISlider *guisl = (GUISlider *)guis[guin].GetControl(objn);
+	Slider_SetValue(guisl, valn);
 }
 
-int GetSliderValue(int guin,int objn) {
-    if ((guin<0) | (guin>=game.numgui)) quit("!GetSliderValue: invalid GUI number");
-    if (guis[guin].GetControlType(objn)!=kGUISlider)
-        quit("!GetSliderValue: specified control is not a slider");
+int GetSliderValue(int guin, int objn) {
+	if ((guin < 0) | (guin >= game.numgui)) quit("!GetSliderValue: invalid GUI number");
+	if (guis[guin].GetControlType(objn) != kGUISlider)
+		quit("!GetSliderValue: specified control is not a slider");
 
-    GUISlider*guisl=(GUISlider*)guis[guin].GetControl(objn);
-    return Slider_GetValue(guisl);
+	GUISlider *guisl = (GUISlider *)guis[guin].GetControl(objn);
+	return Slider_GetValue(guisl);
 }

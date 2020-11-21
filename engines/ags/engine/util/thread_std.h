@@ -26,75 +26,72 @@
 #include <system_error>
 #include <thread>
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
-class StdThread : public BaseThread
-{
+class StdThread : public BaseThread {
 public:
-  StdThread() : thread_(), entry_(nullptr), looping_(false)
-  {
-  }
+	StdThread() : thread_(), entry_(nullptr), looping_(false) {
+	}
 
-  ~StdThread() override
-  {
-    Stop();
-  }
+	~StdThread() override {
+		Stop();
+	}
 
-  StdThread &operator=(const StdThread &) = delete;
-  StdThread(const StdThread &) = delete;
+	StdThread &operator=(const StdThread &) = delete;
+	StdThread(const StdThread &) = delete;
 
-  bool Create(AGSThreadEntry entryPoint, bool looping) override
-  {
-    if (!entryPoint) { return false; }
+	bool Create(AGSThreadEntry entryPoint, bool looping) override {
+		if (!entryPoint) {
+			return false;
+		}
 
-    entry_ = entryPoint;
-    looping_ = looping;
-    return true;
-  }
+		entry_ = entryPoint;
+		looping_ = looping;
+		return true;
+	}
 
-  bool Start() override
-  {
-    if (thread_.joinable()) { return true; }
-    if (!entry_) { return false; }
+	bool Start() override {
+		if (thread_.joinable()) {
+			return true;
+		}
+		if (!entry_) {
+			return false;
+		}
 
-    try {
-      thread_ = std::thread(thread_start_, this);
-    } catch (std::system_error) {
-      return false;
-    }
-    return thread_.joinable();
-  }
+		try {
+			thread_ = std::thread(thread_start_, this);
+		} catch (std::system_error) {
+			return false;
+		}
+		return thread_.joinable();
+	}
 
-  bool Stop() override
-  {
-    if (!thread_.joinable()) { return true; }
+	bool Stop() override {
+		if (!thread_.joinable()) {
+			return true;
+		}
 
-    looping_ = false; // signal thread to stop
-    thread_.join();
-    return true;
-  }
+		looping_ = false; // signal thread to stop
+		thread_.join();
+		return true;
+	}
 
 private:
-  std::thread thread_;
-  AGSThreadEntry entry_;
-  bool looping_;
+	std::thread thread_;
+	AGSThreadEntry entry_;
+	bool looping_;
 
-  static void thread_start_(StdThread *self)
-  {
-    auto entry = self->entry_;
-    for (;;)
-    {
-      entry();
-      if (!self->looping_)
-      {
-        break;
-      }
-      std::this_thread::yield();
-    }
-  }
+	static void thread_start_(StdThread *self) {
+		auto entry = self->entry_;
+		for (;;) {
+			entry();
+			if (!self->looping_) {
+				break;
+			}
+			std::this_thread::yield();
+		}
+	}
 };
 
 typedef StdThread Thread;

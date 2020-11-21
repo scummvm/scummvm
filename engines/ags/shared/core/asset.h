@@ -32,36 +32,32 @@
 #include <vector>
 #include "util/string.h"
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
 // Information on single asset
-struct AssetInfo
-{
-    // A pair of filename and libuid is assumed to be unique in game scope
-    String      FileName;   // filename associated with asset
-    int32_t     LibUid;     // uid of library, containing this asset
-    soff_t      Offset;     // asset's position in library file (in bytes)
-    soff_t      Size;       // asset's size (in bytes)
+struct AssetInfo {
+	// A pair of filename and libuid is assumed to be unique in game scope
+	String      FileName;   // filename associated with asset
+	int32_t     LibUid;     // uid of library, containing this asset
+	soff_t      Offset;     // asset's position in library file (in bytes)
+	soff_t      Size;       // asset's size (in bytes)
 
-    AssetInfo();
+	AssetInfo();
 };
 
 typedef std::vector<AssetInfo> AssetVec;
 
 // Information on multifile asset library
-struct AssetLibInfo
-{
-    String BaseFileName;               // library's base (head) filename
-    String BaseFilePath;               // full path to the base filename
-    std::vector<String> LibFileNames;  // filename for each library part
+struct AssetLibInfo {
+	String BaseFileName;               // library's base (head) filename
+	String BaseFilePath;               // full path to the base filename
+	std::vector<String> LibFileNames;  // filename for each library part
 
-    // Library contents
-    AssetVec AssetInfos; // information on contained assets
+	// Library contents
+	AssetVec AssetInfos; // information on contained assets
 
-    void Unload();
+	void Unload();
 };
 
 } // namespace Common

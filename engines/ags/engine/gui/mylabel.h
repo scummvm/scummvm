@@ -25,16 +25,15 @@
 
 #include "gui/newcontrol.h"
 
-struct MyLabel:public NewControl
-{
-  char text[150];
-  MyLabel(int xx, int yy, int wii, const char *tee);
+struct MyLabel: public NewControl {
+	char text[150];
+	MyLabel(int xx, int yy, int wii, const char *tee);
 
-  void draw(Common::Bitmap *ds) override;
+	void draw(Common::Bitmap *ds) override;
 
-  int pressedon(int mousex, int mousey) override;
+	int pressedon(int mousex, int mousey) override;
 
-  int processmessage(int mcode, int wParam, long lParam) override;
+	int processmessage(int mcode, int wParam, long lParam) override;
 };
 
 #endif

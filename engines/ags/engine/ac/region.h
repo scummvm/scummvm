@@ -38,7 +38,7 @@ void    Region_Tint(ScriptRegion *srr, int red, int green, int blue, int amount,
 void    Region_SetEnabled(ScriptRegion *ssr, int enable);
 int     Region_GetEnabled(ScriptRegion *ssr);
 int     Region_GetID(ScriptRegion *ssr);
-void	Region_RunInteraction(ScriptRegion *ssr, int mood);
+void    Region_RunInteraction(ScriptRegion *ssr, int mood);
 
 void    generate_light_table();
 

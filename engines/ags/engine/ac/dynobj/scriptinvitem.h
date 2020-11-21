@@ -24,8 +24,8 @@
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTINVITEM_H
 
 struct ScriptInvItem {
-    int id;
-    int reserved;
+	int id;
+	int reserved;
 };
 
 #endif

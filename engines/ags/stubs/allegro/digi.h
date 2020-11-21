@@ -123,12 +123,12 @@ AL_ARRAY(_DRIVER_INFO, _digi_driver_list);
 
 /* macros for constructing the driver lists */
 #define BEGIN_DIGI_DRIVER_LIST                                 \
-   _DRIVER_INFO _digi_driver_list[] =                          \
-   {
+	_DRIVER_INFO _digi_driver_list[] =                          \
+	        {
 
 #define END_DIGI_DRIVER_LIST                                   \
-      {  0,                nullptr,             0     }        \
-   };
+	{  0,                nullptr,             0     }        \
+	};
 
 AL_VAR(DIGI_DRIVER *, digi_driver);
 

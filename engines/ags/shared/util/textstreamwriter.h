@@ -31,39 +31,36 @@
 
 #include "util/textwriter.h"
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
 class Stream;
 
-class TextStreamWriter : public TextWriter
-{
+class TextStreamWriter : public TextWriter {
 public:
-    // TODO: use shared ptr
-    TextStreamWriter(Stream *stream);
-    ~TextStreamWriter() override;
+	// TODO: use shared ptr
+	TextStreamWriter(Stream *stream);
+	~TextStreamWriter() override;
 
-    bool    IsValid() const override;
-    const Stream   *GetStream() const;
-    // TODO: use shared ptr instead
-    void            ReleaseStream();
+	bool    IsValid() const override;
+	const Stream   *GetStream() const;
+	// TODO: use shared ptr instead
+	void            ReleaseStream();
 
-    bool            EOS() const;
+	bool            EOS() const;
 
-    // Write single character
-    void    WriteChar(char c) override;
-    // Write string as a plain text (without null-terminator)
-    void    WriteString(const String &str) override;
-    // Write string and add line break at the end
-    void    WriteLine(const String &str) override;
-    // Write formatted string (see *printf)
-    void    WriteFormat(const char *fmt, ...) override;
-    void    WriteLineBreak() override;
+	// Write single character
+	void    WriteChar(char c) override;
+	// Write string as a plain text (without null-terminator)
+	void    WriteString(const String &str) override;
+	// Write string and add line break at the end
+	void    WriteLine(const String &str) override;
+	// Write formatted string (see *printf)
+	void    WriteFormat(const char *fmt, ...) override;
+	void    WriteLineBreak() override;
 
 private:
-    Stream *_stream;
+	Stream *_stream;
 };
 
 } // namespace Common

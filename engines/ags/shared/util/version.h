@@ -31,85 +31,73 @@
 
 #include "util/string.h"
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
 using Common::String;
 
-struct Version
-{
-    int32_t Major;
-    int32_t Minor;
-    int32_t Release;
-    int32_t Revision;
-    String  Special;
-    String  BuildInfo;
+struct Version {
+	int32_t Major;
+	int32_t Minor;
+	int32_t Release;
+	int32_t Revision;
+	String  Special;
+	String  BuildInfo;
 
-    String  LongString;
-    String  ShortString;
-    String  BackwardCompatibleString;
+	String  LongString;
+	String  ShortString;
+	String  BackwardCompatibleString;
 
-    // Last engine version, using different version format than AGS Editor (3.22.1120 / 3.2.2.1120)
-    static const Version LastOldFormatVersion;
+	// Last engine version, using different version format than AGS Editor (3.22.1120 / 3.2.2.1120)
+	static const Version LastOldFormatVersion;
 
-    Version();
-    Version(int32_t major, int32_t minor, int32_t release);
-    Version(int32_t major, int32_t minor, int32_t release, int32_t revision);
-    Version(int32_t major, int32_t minor, int32_t release, int32_t revision, const String &special);
-    Version(int32_t major, int32_t minor, int32_t release, int32_t revision, const String &special, const String &build_info);
-    Version(const String &version_string);
+	Version();
+	Version(int32_t major, int32_t minor, int32_t release);
+	Version(int32_t major, int32_t minor, int32_t release, int32_t revision);
+	Version(int32_t major, int32_t minor, int32_t release, int32_t revision, const String &special);
+	Version(int32_t major, int32_t minor, int32_t release, int32_t revision, const String &special, const String &build_info);
+	Version(const String &version_string);
 
-    inline int32_t AsNumber() const
-    {
-        return Major * 10000 + Minor * 100 + Release;
-    }
+	inline int32_t AsNumber() const {
+		return Major * 10000 + Minor * 100 + Release;
+	}
 
-    inline int64_t AsLongNumber() const
-    {
-        return (int64_t)Major * 100000000L + (int64_t)Minor * 1000000L + (int64_t)Release * 10000L + Revision;
-    }
+	inline int64_t AsLongNumber() const {
+		return (int64_t)Major * 100000000L + (int64_t)Minor * 1000000L + (int64_t)Release * 10000L + Revision;
+	}
 
-    inline int32_t AsSmallNumber() const
-    {
-        return Major * 100 + Minor;
-    }
+	inline int32_t AsSmallNumber() const {
+		return Major * 100 + Minor;
+	}
 
-    void SetFromString(const String &version_string);
+	void SetFromString(const String &version_string);
 
-    inline bool operator < (const Version &other) const
-    {
-        return AsLongNumber() < other.AsLongNumber();
-    }
+	inline bool operator < (const Version &other) const {
+		return AsLongNumber() < other.AsLongNumber();
+	}
 
-    inline bool operator <= (const Version &other) const
-    {
-        return AsLongNumber() <= other.AsLongNumber();
-    }
+	inline bool operator <= (const Version &other) const {
+		return AsLongNumber() <= other.AsLongNumber();
+	}
 
-    inline bool operator > (const Version &other) const
-    {
-        return AsLongNumber() > other.AsLongNumber();
-    }
+	inline bool operator > (const Version &other) const {
+		return AsLongNumber() > other.AsLongNumber();
+	}
 
-    inline bool operator >= (const Version &other) const
-    {
-        return AsLongNumber() >= other.AsLongNumber();
-    }
+	inline bool operator >= (const Version &other) const {
+		return AsLongNumber() >= other.AsLongNumber();
+	}
 
-    inline bool operator == (const Version &other) const
-    {
-        return AsLongNumber() == other.AsLongNumber();
-    }
+	inline bool operator == (const Version &other) const {
+		return AsLongNumber() == other.AsLongNumber();
+	}
 
-    inline bool operator != (const Version &other) const
-    {
-        return AsLongNumber() != other.AsLongNumber();
-    }
+	inline bool operator != (const Version &other) const {
+		return AsLongNumber() != other.AsLongNumber();
+	}
 
 private:
-    void MakeString();
+	void MakeString();
 };
 
 } // namespace Common

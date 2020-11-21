@@ -25,13 +25,12 @@
 
 #include "gui/newcontrol.h"
 
-struct MyPushButton:public NewControl
-{
-  char text[50];
-  MyPushButton(int xx, int yy, int wi, int hi, const char *tex);
-  void draw(Common::Bitmap *ds) override;
-  int pressedon(int mousex, int mousey) override;
-  int processmessage(int mcode, int wParam, long lParam) override;
+struct MyPushButton: public NewControl {
+	char text[50];
+	MyPushButton(int xx, int yy, int wi, int hi, const char *tex);
+	void draw(Common::Bitmap *ds) override;
+	int pressedon(int mousex, int mousey) override;
+	int processmessage(int mcode, int wParam, long lParam) override;
 };
 
 #endif

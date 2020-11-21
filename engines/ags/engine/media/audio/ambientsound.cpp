@@ -27,28 +27,26 @@
 
 using AGS::Common::Stream;
 
-bool AmbientSound::IsPlaying () {
-    if (channel <= 0)
-        return false;
-    return channel_is_playing(channel);
+bool AmbientSound::IsPlaying() {
+	if (channel <= 0)
+		return false;
+	return channel_is_playing(channel);
 }
 
-void AmbientSound::ReadFromFile(Stream *in)
-{
-    channel = in->ReadInt32();
-    x = in->ReadInt32();
-    y = in->ReadInt32();
-    vol = in->ReadInt32();
-    num = in->ReadInt32();
-    maxdist = in->ReadInt32();
+void AmbientSound::ReadFromFile(Stream *in) {
+	channel = in->ReadInt32();
+	x = in->ReadInt32();
+	y = in->ReadInt32();
+	vol = in->ReadInt32();
+	num = in->ReadInt32();
+	maxdist = in->ReadInt32();
 }
 
-void AmbientSound::WriteToFile(Stream *out)
-{
-    out->WriteInt32(channel);
-    out->WriteInt32(x);
-    out->WriteInt32(y);
-    out->WriteInt32(vol);
-    out->WriteInt32(num);
-    out->WriteInt32(maxdist);
+void AmbientSound::WriteToFile(Stream *out) {
+	out->WriteInt32(channel);
+	out->WriteInt32(x);
+	out->WriteInt32(y);
+	out->WriteInt32(vol);
+	out->WriteInt32(num);
+	out->WriteInt32(maxdist);
 }

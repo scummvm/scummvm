@@ -35,147 +35,123 @@
 #include "core/types.h"
 #include "util/geometry.h"
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
-class AxisScaling
-{
+class AxisScaling {
 public:
-    AxisScaling()
-        : _scale(kUnit)
-        , _unscale(kUnit)
-        , _srcOffset(0)
-        , _dstOffset(0)
-    {
-    }
+	AxisScaling()
+		: _scale(kUnit)
+		, _unscale(kUnit)
+		, _srcOffset(0)
+		, _dstOffset(0) {
+	}
 
-    bool IsIdentity() const
-    {
-        return _scale == kUnit && _srcOffset == 0 && _dstOffset == 0;
-    }
+	bool IsIdentity() const {
+		return _scale == kUnit && _srcOffset == 0 && _dstOffset == 0;
+	}
 
-    bool IsTranslateOnly() const
-    {
-        return _scale == kUnit;
-    }
+	bool IsTranslateOnly() const {
+		return _scale == kUnit;
+	}
 
-    void Init(const int32_t src_length, const int32_t dst_length, const int32_t src_offset = 0, const int32_t dst_offset = 0)
-    {
-        _scale = kUnit;
-        _unscale = kUnit;
-        _srcOffset = src_offset;
-        _dstOffset = dst_offset;
+	void Init(const int32_t src_length, const int32_t dst_length, const int32_t src_offset = 0, const int32_t dst_offset = 0) {
+		_scale = kUnit;
+		_unscale = kUnit;
+		_srcOffset = src_offset;
+		_dstOffset = dst_offset;
 
-        if (src_length != 0)
-        {
-            int32_t scale = (dst_length << kShift) / src_length;
-            if (scale != 0)
-            {
-                _scale = scale;
-                _unscale = scale;
-                int32_t scaled_val = ScaleDistance(src_length);
-                if (scaled_val < dst_length)
-                    _scale++;
-            }
-        }
-    }
+		if (src_length != 0) {
+			int32_t scale = (dst_length << kShift) / src_length;
+			if (scale != 0) {
+				_scale = scale;
+				_unscale = scale;
+				int32_t scaled_val = ScaleDistance(src_length);
+				if (scaled_val < dst_length)
+					_scale++;
+			}
+		}
+	}
 
-    void SetSrcOffset(int32_t x)
-    {
-        _srcOffset = x;
-    }
+	void SetSrcOffset(int32_t x) {
+		_srcOffset = x;
+	}
 
-    void SetDstOffset(int32_t x)
-    {
-        _dstOffset = x;
-    }
+	void SetDstOffset(int32_t x) {
+		_dstOffset = x;
+	}
 
-    inline int32_t GetSrcOffset() const { return _srcOffset; }
+	inline int32_t GetSrcOffset() const {
+		return _srcOffset;
+	}
 
-    inline int32_t ScalePt(int32_t x) const
-    {
-        return (((x - _srcOffset) * _scale) >> kShift) + _dstOffset;
-    }
-    inline int32_t ScaleDistance(int32_t x) const
-    {
-        return ((x * _scale) >> kShift);
-    }
-    inline int32_t UnScalePt(int32_t x) const
-    {
-        return ((x - _dstOffset) << kShift) / _unscale + _srcOffset;
-    }
-    inline int32_t UnScaleDistance(int32_t x) const
-    {
-        return (x << kShift) / _unscale;
-    }
+	inline int32_t ScalePt(int32_t x) const {
+		return (((x - _srcOffset) * _scale) >> kShift) + _dstOffset;
+	}
+	inline int32_t ScaleDistance(int32_t x) const {
+		return ((x * _scale) >> kShift);
+	}
+	inline int32_t UnScalePt(int32_t x) const {
+		return ((x - _dstOffset) << kShift) / _unscale + _srcOffset;
+	}
+	inline int32_t UnScaleDistance(int32_t x) const {
+		return (x << kShift) / _unscale;
+	}
 
 private:
-    int32_t _scale;
-    int32_t _unscale;
-    int32_t _srcOffset;
-    int32_t _dstOffset;
+	int32_t _scale;
+	int32_t _unscale;
+	int32_t _srcOffset;
+	int32_t _dstOffset;
 };
 
-struct PlaneScaling
-{
-    AxisScaling X;
-    AxisScaling Y;
+struct PlaneScaling {
+	AxisScaling X;
+	AxisScaling Y;
 
-    bool IsIdentity() const
-    {
-        return X.IsIdentity() && Y.IsIdentity();
-    }
+	bool IsIdentity() const {
+		return X.IsIdentity() && Y.IsIdentity();
+	}
 
-    bool IsTranslateOnly() const
-    {
-        return X.IsTranslateOnly() && Y.IsTranslateOnly();
-    }
+	bool IsTranslateOnly() const {
+		return X.IsTranslateOnly() && Y.IsTranslateOnly();
+	}
 
-    void Init(const Size &src_size, const Rect &dst_rect)
-    {
-        X.Init(src_size.Width, dst_rect.GetWidth(), 0, dst_rect.Left);
-        Y.Init(src_size.Height, dst_rect.GetHeight(), 0, dst_rect.Top);
-    }
+	void Init(const Size &src_size, const Rect &dst_rect) {
+		X.Init(src_size.Width, dst_rect.GetWidth(), 0, dst_rect.Left);
+		Y.Init(src_size.Height, dst_rect.GetHeight(), 0, dst_rect.Top);
+	}
 
-    void Init(const Rect &src_rect, const Rect &dst_rect)
-    {
-        X.Init(src_rect.GetWidth(), dst_rect.GetWidth(), src_rect.Left, dst_rect.Left);
-        Y.Init(src_rect.GetHeight(), dst_rect.GetHeight(), src_rect.Top, dst_rect.Top);
-    }
+	void Init(const Rect &src_rect, const Rect &dst_rect) {
+		X.Init(src_rect.GetWidth(), dst_rect.GetWidth(), src_rect.Left, dst_rect.Left);
+		Y.Init(src_rect.GetHeight(), dst_rect.GetHeight(), src_rect.Top, dst_rect.Top);
+	}
 
-    void SetSrcOffsets(int x, int y)
-    {
-        X.SetSrcOffset(x);
-        Y.SetSrcOffset(y);
-    }
+	void SetSrcOffsets(int x, int y) {
+		X.SetSrcOffset(x);
+		Y.SetSrcOffset(y);
+	}
 
-    void SetDestOffsets(int x, int y)
-    {
-        X.SetDstOffset(x);
-        Y.SetDstOffset(y);
-    }
+	void SetDestOffsets(int x, int y) {
+		X.SetDstOffset(x);
+		Y.SetDstOffset(y);
+	}
 
-    inline Point Scale(const Point p) const
-    {
-        return Point(X.ScalePt(p.X), Y.ScalePt(p.Y));
-    }
+	inline Point Scale(const Point p) const {
+		return Point(X.ScalePt(p.X), Y.ScalePt(p.Y));
+	}
 
-    inline Rect ScaleRange(const Rect r) const
-    {
-        return RectWH(X.ScalePt(r.Left), Y.ScalePt(r.Top), X.ScaleDistance(r.GetWidth()), Y.ScaleDistance(r.GetHeight()));
-    }
+	inline Rect ScaleRange(const Rect r) const {
+		return RectWH(X.ScalePt(r.Left), Y.ScalePt(r.Top), X.ScaleDistance(r.GetWidth()), Y.ScaleDistance(r.GetHeight()));
+	}
 
-    inline Point UnScale(const Point p) const
-    {
-        return Point(X.UnScalePt(p.X), Y.UnScalePt(p.Y));
-    }
+	inline Point UnScale(const Point p) const {
+		return Point(X.UnScalePt(p.X), Y.UnScalePt(p.Y));
+	}
 
-    inline Rect UnScaleRange(const Rect r) const
-    {
-        return RectWH(X.UnScalePt(r.Left), Y.UnScalePt(r.Top), X.UnScaleDistance(r.GetWidth()), Y.UnScaleDistance(r.GetHeight()));
-    }
+	inline Rect UnScaleRange(const Rect r) const {
+		return RectWH(X.UnScalePt(r.Left), Y.UnScalePt(r.Top), X.UnScaleDistance(r.GetWidth()), Y.UnScaleDistance(r.GetHeight()));
+	}
 };
 
 } // namespace Engine

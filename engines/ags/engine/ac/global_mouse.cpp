@@ -25,10 +25,10 @@
 
 extern GameState play;
 
-void HideMouseCursor () {
-    play.mouse_cursor_hidden = 1;
+void HideMouseCursor() {
+	play.mouse_cursor_hidden = 1;
 }
 
-void ShowMouseCursor () {
-    play.mouse_cursor_hidden = 0;
+void ShowMouseCursor() {
+	play.mouse_cursor_hidden = 0;
 }

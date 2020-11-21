@@ -32,13 +32,13 @@ void InventoryItem_SetName(ScriptInvItem *scii, const char *newname);
 int  InventoryItem_GetID(ScriptInvItem *scii);
 ScriptInvItem *GetInvAtLocation(int xx, int yy);
 void InventoryItem_GetName(ScriptInvItem *iitem, char *buff);
-const char* InventoryItem_GetName_New(ScriptInvItem *invitem);
+const char *InventoryItem_GetName_New(ScriptInvItem *invitem);
 int  InventoryItem_GetGraphic(ScriptInvItem *iitem);
 void InventoryItem_RunInteraction(ScriptInvItem *iitem, int mood);
 int  InventoryItem_CheckInteractionAvailable(ScriptInvItem *iitem, int mood);
 int  InventoryItem_GetProperty(ScriptInvItem *scii, const char *property);
 void InventoryItem_GetPropertyText(ScriptInvItem *scii, const char *property, char *bufer);
-const char* InventoryItem_GetTextProperty(ScriptInvItem *scii, const char *property);
+const char *InventoryItem_GetTextProperty(ScriptInvItem *scii, const char *property);
 
 void set_inv_item_cursorpic(int invItemId, int piccy);
 

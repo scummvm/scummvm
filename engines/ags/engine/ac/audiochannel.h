@@ -30,7 +30,7 @@ int     AudioChannel_GetID(ScriptAudioChannel *channel);
 int     AudioChannel_GetIsPlaying(ScriptAudioChannel *channel);
 int     AudioChannel_GetPanning(ScriptAudioChannel *channel);
 void    AudioChannel_SetPanning(ScriptAudioChannel *channel, int newPanning);
-ScriptAudioClip* AudioChannel_GetPlayingClip(ScriptAudioChannel *channel);
+ScriptAudioClip *AudioChannel_GetPlayingClip(ScriptAudioChannel *channel);
 int     AudioChannel_GetPosition(ScriptAudioChannel *channel);
 int     AudioChannel_GetPositionMs(ScriptAudioChannel *channel);
 int     AudioChannel_GetLengthMs(ScriptAudioChannel *channel);

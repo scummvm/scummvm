@@ -27,22 +27,21 @@
 #include <io.h>
 #include "debug/agseditordebugger.h"
 
-struct NamedPipesAGSDebugger : IAGSEditorDebugger
-{
+struct NamedPipesAGSDebugger : IAGSEditorDebugger {
 private:
-    HANDLE _hPipeSending;
-    HANDLE _hPipeReading;
-    const char *_instanceToken;
+	HANDLE _hPipeSending;
+	HANDLE _hPipeReading;
+	const char *_instanceToken;
 
-    void SendAcknowledgement();
+	void SendAcknowledgement();
 public:
 
-    NamedPipesAGSDebugger(const char *instanceToken);
-    virtual bool Initialize() override;
-    virtual void Shutdown() override;
-    virtual bool SendMessageToEditor(const char *message) override;
-    virtual bool IsMessageAvailable() override;
-    virtual char* GetNextMessage() override;
+	NamedPipesAGSDebugger(const char *instanceToken);
+	virtual bool Initialize() override;
+	virtual void Shutdown() override;
+	virtual bool SendMessageToEditor(const char *message) override;
+	virtual bool IsMessageAvailable() override;
+	virtual char *GetNextMessage() override;
 };
 
 #endif

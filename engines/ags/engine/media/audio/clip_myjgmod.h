@@ -27,31 +27,30 @@
 #include "media/audio/soundclip.h"
 
 // MOD/XM (JGMOD)
-struct MYMOD:public SOUNDCLIP
-{
-    JGMOD *tune;
+struct MYMOD: public SOUNDCLIP {
+	JGMOD *tune;
 
-    int poll();
+	int poll();
 
-    void set_volume(int newvol);
+	void set_volume(int newvol);
 
-    void destroy();
+	void destroy();
 
-    void seek(int patnum);
+	void seek(int patnum);
 
-    int get_pos();
+	int get_pos();
 
-    int get_pos_ms();
+	int get_pos_ms();
 
-    int get_length_ms();
+	int get_length_ms();
 
-    int get_voice();
+	int get_voice();
 
-    int get_sound_type();
+	int get_sound_type();
 
-    int play();
+	int play();
 
-    MYMOD();
+	MYMOD();
 };
 
 #endif

@@ -44,7 +44,7 @@ int     System_GetSupportsGammaControl();
 int     System_GetGamma();
 void    System_SetGamma(int newValue);
 int     System_GetAudioChannelCount();
-ScriptAudioChannel* System_GetAudioChannels(int index);
+ScriptAudioChannel *System_GetAudioChannels(int index);
 int     System_GetVolume();
 void    System_SetVolume(int newvol);
 const char *System_GetRuntimeInfo();

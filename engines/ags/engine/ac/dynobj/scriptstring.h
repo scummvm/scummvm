@@ -26,17 +26,17 @@
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
 struct ScriptString final : AGSCCDynamicObject, ICCStringClass {
-    char *text;
+	char *text;
 
-    int Dispose(const char *address, bool force) override;
-    const char *GetType() override;
-    int Serialize(const char *address, char *buffer, int bufsize) override;
-    void Unserialize(int index, const char *serializedData, int dataSize) override;
+	int Dispose(const char *address, bool force) override;
+	const char *GetType() override;
+	int Serialize(const char *address, char *buffer, int bufsize) override;
+	void Unserialize(int index, const char *serializedData, int dataSize) override;
 
-    DynObjectRef CreateString(const char *fromText) override;
+	DynObjectRef CreateString(const char *fromText) override;
 
-    ScriptString();
-    ScriptString(const char *fromText);
+	ScriptString();
+	ScriptString(const char *fromText);
 };
 
 #endif

@@ -160,9 +160,9 @@ namespace AGS3 {
 
 #define COLORCONV_KEEP_ALPHA        (COLORCONV_TOTAL                 \
                                      & ~(COLORCONV_32A_TO_8 |        \
-                                         COLORCONV_32A_TO_15 |       \
-                                         COLORCONV_32A_TO_16 |       \
-                                         COLORCONV_32A_TO_24))
+                                             COLORCONV_32A_TO_15 |       \
+                                             COLORCONV_32A_TO_16 |       \
+                                             COLORCONV_32A_TO_24))
 
 class BITMAP : public Graphics::ManagedSurface {
 };

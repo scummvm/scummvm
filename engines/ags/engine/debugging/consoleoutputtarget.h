@@ -32,21 +32,18 @@
 
 #include "debug/outputhandler.h"
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 using Common::String;
 using Common::DebugMessage;
 
-class ConsoleOutputTarget : public AGS::Common::IOutputHandler
-{
+class ConsoleOutputTarget : public AGS::Common::IOutputHandler {
 public:
-    ConsoleOutputTarget();
-    virtual ~ConsoleOutputTarget();
+	ConsoleOutputTarget();
+	virtual ~ConsoleOutputTarget();
 
-    void PrintMessage(const DebugMessage &msg) override;
+	void PrintMessage(const DebugMessage &msg) override;
 };
 
 }   // namespace Engine

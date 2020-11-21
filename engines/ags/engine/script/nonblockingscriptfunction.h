@@ -28,26 +28,24 @@
 
 #include <vector>
 
-struct NonBlockingScriptFunction
-{
-    const char* functionName;
-    int numParameters;
-    //void* param1;
-    //void* param2;
-    RuntimeScriptValue params[2];
-    bool roomHasFunction;
-    bool globalScriptHasFunction;
-    std::vector<bool> moduleHasFunction;
-    bool atLeastOneImplementationExists;
+struct NonBlockingScriptFunction {
+	const char *functionName;
+	int numParameters;
+	//void* param1;
+	//void* param2;
+	RuntimeScriptValue params[2];
+	bool roomHasFunction;
+	bool globalScriptHasFunction;
+	std::vector<bool> moduleHasFunction;
+	bool atLeastOneImplementationExists;
 
-    NonBlockingScriptFunction(const char*funcName, int numParams)
-    {
-        this->functionName = funcName;
-        this->numParameters = numParams;
-        atLeastOneImplementationExists = false;
-        roomHasFunction = true;
-        globalScriptHasFunction = true;
-    }
+	NonBlockingScriptFunction(const char *funcName, int numParams) {
+		this->functionName = funcName;
+		this->numParameters = numParams;
+		atLeastOneImplementationExists = false;
+		roomHasFunction = true;
+		globalScriptHasFunction = true;
+	}
 };
 
 #endif

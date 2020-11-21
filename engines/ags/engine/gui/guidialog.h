@@ -23,7 +23,11 @@
 #ifndef AGS_ENGINE_GUI_GUIDIALOG_H
 #define AGS_ENGINE_GUI_GUIDIALOG_H
 
-namespace AGS { namespace Common { class Bitmap; } }
+namespace AGS {
+namespace Common {
+class Bitmap;
+}
+}
 
 // Functions for handling hard-coded GUIs
 // Prepares GUI bitmaps which will be passed to the renderer's draw chain
@@ -39,7 +43,7 @@ int  savegamedialog();
 void preparesavegamelist(int ctrllist);
 void enterstringwindow(const char *prompttext, char *stouse);
 int  enternumberwindow(char *prompttext);
-int  roomSelectorWindow(int currentRoom, int numRooms, int*roomNumbers, char**roomNames);
+int  roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **roomNames);
 int  myscimessagebox(const char *lpprompt, char *btn1, char *btn2);
 int  quitdialog();
 

@@ -24,6 +24,6 @@
 #define AGS_ENGINE_AC_GLOBAL_INVWINDOW_H
 
 void sc_invscreen();
-void SetInvDimensions(int ww,int hh);
+void SetInvDimensions(int ww, int hh);
 
 #endif

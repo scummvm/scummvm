@@ -25,91 +25,73 @@
 
 #include <pthread.h>
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 
-class PThreadThread : public BaseThread
-{
+class PThreadThread : public BaseThread {
 public:
-  PThreadThread()
-  {
-    _thread = 0;
-    _entry = NULL;
-    _running = false;
-    _looping = false;
-  }
+	PThreadThread() {
+		_thread = 0;
+		_entry = NULL;
+		_running = false;
+		_looping = false;
+	}
 
-  ~PThreadThread()
-  {
-    Stop();
-  }
+	~PThreadThread() {
+		Stop();
+	}
 
-  inline bool Create(AGSThreadEntry entryPoint, bool looping)
-  {
-    _looping = looping;
-    _entry = entryPoint;
+	inline bool Create(AGSThreadEntry entryPoint, bool looping) {
+		_looping = looping;
+		_entry = entryPoint;
 
-    // Thread creation is delayed till the thread is started
-    return true;
-  }
+		// Thread creation is delayed till the thread is started
+		return true;
+	}
 
-  inline bool Start()
-  {
-    if (!_running)
-    {
-      _running = (pthread_create(&_thread, NULL, _thread_start, this) == 0);
+	inline bool Start() {
+		if (!_running) {
+			_running = (pthread_create(&_thread, NULL, _thread_start, this) == 0);
 
-      return _running;
-    }
-    else
-    {
-      return false;
-    }
-  }
+			return _running;
+		} else {
+			return false;
+		}
+	}
 
-  bool Stop()
-  {
-    if (_running)
-    {
-      if (_looping)
-      {
-        _looping = false;
-      }
+	bool Stop() {
+		if (_running) {
+			if (_looping) {
+				_looping = false;
+			}
 
-      pthread_join(_thread, NULL);
+			pthread_join(_thread, NULL);
 
-      _running = false;
-      return true;
-    }
-    else
-    {
-      return false;
-    }
-  }
+			_running = false;
+			return true;
+		} else {
+			return false;
+		}
+	}
 
 private:
-  pthread_t _thread;
-  bool      _running;
-  bool      _looping;
+	pthread_t _thread;
+	bool      _running;
+	bool      _looping;
 
-  AGSThreadEntry _entry;
+	AGSThreadEntry _entry;
 
-  static void *_thread_start(void *arg)
-  {
-    AGSThreadEntry entry = ((PThreadThread *)arg)->_entry;
-    bool *looping = &((PThreadThread *)arg)->_looping;
+	static void *_thread_start(void *arg) {
+		AGSThreadEntry entry = ((PThreadThread *)arg)->_entry;
+		bool *looping = &((PThreadThread *)arg)->_looping;
 
-    do
-    {
-      entry();
-    }
-    while (*looping);
+		do {
+			entry();
+		} while (*looping);
 
-    return NULL;
-  }
+		return NULL;
+	}
 };
 
 

@@ -26,13 +26,13 @@
 #include "game/savegame.h"
 #include "util/stream.h"
 
-namespace AGS
-{
+namespace AGS {
 
-namespace Common { struct Interaction; }
+namespace Common {
+struct Interaction;
+}
 
-namespace Engine
-{
+namespace Engine {
 
 using Common::Stream;
 typedef std::shared_ptr<Stream> PStream;
@@ -40,22 +40,21 @@ typedef std::shared_ptr<Stream> PStream;
 struct PreservedParams;
 struct RestoredData;
 
-namespace SavegameComponents
-{
-    // Reads all available components from the stream
-    HSaveError    ReadAll(PStream in, SavegameVersion svg_version, const PreservedParams &pp, RestoredData &r_data);
-    // Writes a full list of common components to the stream
-    HSaveError    WriteAllCommon(PStream out);
+namespace SavegameComponents {
+// Reads all available components from the stream
+HSaveError    ReadAll(PStream in, SavegameVersion svg_version, const PreservedParams &pp, RestoredData &r_data);
+// Writes a full list of common components to the stream
+HSaveError    WriteAllCommon(PStream out);
 
-    // Utility functions for reading and writing legacy interactions,
-    // or their "times run" counters separately.
-    void ReadTimesRun272(Interaction &intr, Stream *in);
-    HSaveError ReadInteraction272(Interaction &intr, Stream *in);
-    void WriteTimesRun272(const Interaction &intr, Stream *out);
-    void WriteInteraction272(const Interaction &intr, Stream *out);
+// Utility functions for reading and writing legacy interactions,
+// or their "times run" counters separately.
+void ReadTimesRun272(Interaction &intr, Stream *in);
+HSaveError ReadInteraction272(Interaction &intr, Stream *in);
+void WriteTimesRun272(const Interaction &intr, Stream *out);
+void WriteInteraction272(const Interaction &intr, Stream *out);
 
-    // Precreates primary camera and viewport and reads legacy camera data
-    void ReadLegacyCameraState(Stream *in, RestoredData &r_data);
+// Precreates primary camera and viewport and reads legacy camera data
+void ReadLegacyCameraState(Stream *in, RestoredData &r_data);
 }
 
 } // namespace Engine

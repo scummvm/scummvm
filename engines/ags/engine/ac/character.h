@@ -62,7 +62,7 @@ void    Character_RemoveTint(CharacterInfo *chaa);
 int     Character_GetHasExplicitTint(CharacterInfo *chaa);
 void    Character_Say(CharacterInfo *chaa, const char *text);
 void    Character_SayAt(CharacterInfo *chaa, int x, int y, int width, const char *texx);
-ScriptOverlay* Character_SayBackground(CharacterInfo *chaa, const char *texx);
+ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx);
 void    Character_SetAsPlayer(CharacterInfo *chaa);
 void    Character_SetIdleView(CharacterInfo *chaa, int iview, int itime);
 void    Character_SetOption(CharacterInfo *chaa, int flag, int yesorno);
@@ -82,10 +82,10 @@ void    Character_RunInteraction(CharacterInfo *chaa, int mood);
 
 int Character_GetProperty(CharacterInfo *chaa, const char *property);
 void Character_GetPropertyText(CharacterInfo *chaa, const char *property, char *bufer);
-const char* Character_GetTextProperty(CharacterInfo *chaa, const char *property);
+const char *Character_GetTextProperty(CharacterInfo *chaa, const char *property);
 
-ScriptInvItem* Character_GetActiveInventory(CharacterInfo *chaa);
-void    Character_SetActiveInventory(CharacterInfo *chaa, ScriptInvItem* iit);
+ScriptInvItem *Character_GetActiveInventory(CharacterInfo *chaa);
+void    Character_SetActiveInventory(CharacterInfo *chaa, ScriptInvItem *iit);
 int     Character_GetAnimating(CharacterInfo *chaa);
 int     Character_GetAnimationSpeed(CharacterInfo *chaa);
 void    Character_SetAnimationSpeed(CharacterInfo *chaa, int newval);
@@ -124,7 +124,7 @@ void    Character_SetMovementLinkedToAnimation(CharacterInfo *chaa, int yesorno)
 int     Character_GetLoop(CharacterInfo *chaa);
 void    Character_SetLoop(CharacterInfo *chaa, int newval);
 int     Character_GetMoving(CharacterInfo *chaa);
-const char* Character_GetName(CharacterInfo *chaa);
+const char *Character_GetName(CharacterInfo *chaa);
 void    Character_SetName(CharacterInfo *chaa, const char *newName);
 int     Character_GetNormalView(CharacterInfo *chaa);
 int     Character_GetPreviousRoom(CharacterInfo *chaa);
@@ -163,46 +163,50 @@ int     Character_GetSpeakingFrame(CharacterInfo *chaa);
 //=============================================================================
 
 struct MoveList;
-namespace AGS { namespace Common { class Bitmap; } }
+namespace AGS {
+namespace Common {
+class Bitmap;
+}
+}
 using namespace AGS; // FIXME later
 
-void animate_character(CharacterInfo *chap, int loopn,int sppd,int rept, int noidleoverride = 0, int direction = 0, int sframe = 0);
-void walk_character(int chac,int tox,int toy,int ignwal, bool autoWalkAnims);
-int  find_looporder_index (int curloop);
+void animate_character(CharacterInfo *chap, int loopn, int sppd, int rept, int noidleoverride = 0, int direction = 0, int sframe = 0);
+void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims);
+int  find_looporder_index(int curloop);
 // returns 0 to use diagonal, 1 to not
-int  useDiagonal (CharacterInfo *char1);
+int  useDiagonal(CharacterInfo *char1);
 // returns 1 normally, or 0 if they only have horizontal animations
 int  hasUpDownLoops(CharacterInfo *char1);
-void start_character_turning (CharacterInfo *chinf, int useloop, int no_diagonal);
-void fix_player_sprite(MoveList*cmls,CharacterInfo*chinf);
+void start_character_turning(CharacterInfo *chinf, int useloop, int no_diagonal);
+void fix_player_sprite(MoveList *cmls, CharacterInfo *chinf);
 // Check whether two characters have walked into each other
 int  has_hit_another_character(int sourceChar);
-int  doNextCharMoveStep (CharacterInfo *chi, int &char_index, CharacterExtras *chex);
+int  doNextCharMoveStep(CharacterInfo *chi, int &char_index, CharacterExtras *chex);
 int  find_nearest_walkable_area_within(int *xx, int *yy, int range, int step);
-void find_nearest_walkable_area (int *xx, int *yy);
-void walk_character(int chac,int tox,int toy,int ignwal, bool autoWalkAnims);
+void find_nearest_walkable_area(int *xx, int *yy);
+void walk_character(int chac, int tox, int toy, int ignwal, bool autoWalkAnims);
 void FindReasonableLoopForCharacter(CharacterInfo *chap);
 void walk_or_move_character(CharacterInfo *chaa, int x, int y, int blocking, int direct, bool isWalk);
 int  is_valid_character(int newchar);
-int  wantMoveNow (CharacterInfo *chi, CharacterExtras *chex);
+int  wantMoveNow(CharacterInfo *chi, CharacterExtras *chex);
 void setup_player_character(int charid);
 void CheckViewFrameForCharacter(CharacterInfo *chi);
 Common::Bitmap *GetCharacterImage(int charid, int *isFlipped);
 CharacterInfo *GetCharacterAtScreen(int xx, int yy);
 // Get character ID at the given room coordinates
-int is_pos_on_character(int xx,int yy);
+int is_pos_on_character(int xx, int yy);
 void get_char_blocking_rect(int charid, int *x1, int *y1, int *width, int *y2);
 // Check whether the source char has walked onto character ww
-int is_char_on_another (int sourceChar, int ww, int*fromxptr, int*cwidptr);
+int is_char_on_another(int sourceChar, int ww, int *fromxptr, int *cwidptr);
 int my_getpixel(Common::Bitmap *blk, int x, int y);
 // X and Y co-ordinates must be in 320x200 format
-int check_click_on_character(int xx,int yy,int mood);
-int is_pos_on_character(int xx,int yy);
+int check_click_on_character(int xx, int yy, int mood);
+int is_pos_on_character(int xx, int yy);
 void _DisplaySpeechCore(int chid, const char *displbuf);
 void _DisplayThoughtCore(int chid, const char *displbuf);
-void _displayspeech(const char*texx, int aschar, int xx, int yy, int widd, int isThought);
+void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int isThought);
 int get_character_currently_talking();
-void DisplaySpeech(const char*texx, int aschar);
+void DisplaySpeech(const char *texx, int aschar);
 int update_lip_sync(int talkview, int talkloop, int *talkframeptr);
 
 // Calculates character's bounding box in room coordinates (takes only in-room transform into account)
@@ -213,7 +217,7 @@ Rect GetCharacterRoomBBox(int charid, bool use_frame_0 = false);
 // or the one that is least far away from its camera; calculated as a perpendicular distance between two AABBs.
 PViewport FindNearestViewport(int charid);
 
-extern CharacterInfo*playerchar;
+extern CharacterInfo *playerchar;
 extern CharacterExtras *charextra;
 extern MoveList *mls;
 extern int32_t _sc_PlayerCharPtr;

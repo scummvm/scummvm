@@ -25,12 +25,12 @@
 
 void set_inv_item_pic(int invi, int piccy);
 void SetInvItemName(int invi, const char *newName);
-int  GetInvAt (int xxx, int yyy);
-void GetInvName(int indx,char*buff);
+int  GetInvAt(int xxx, int yyy);
+void GetInvName(int indx, char *buff);
 int  GetInvGraphic(int indx);
-void RunInventoryInteraction (int iit, int modd);
-int  IsInventoryInteractionAvailable (int item, int mood);
-int  GetInvProperty (int item, const char *property);
-void GetInvPropertyText (int item, const char *property, char *bufer);
+void RunInventoryInteraction(int iit, int modd);
+int  IsInventoryInteractionAvailable(int item, int mood);
+int  GetInvProperty(int item, const char *property);
+void GetInvPropertyText(int item, const char *property, char *bufer);
 
 #endif

@@ -23,6 +23,6 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_WALKBEHIND_H
 #define AGS_ENGINE_AC_GLOBAL_WALKBEHIND_H
 
-void SetWalkBehindBase(int wa,int bl);
+void SetWalkBehindBase(int wa, int bl);
 
 #endif

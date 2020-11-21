@@ -26,17 +26,17 @@
 #include "ac/dynobj/cc_agsdynamicobject.h"
 
 struct ScriptOverlay final : AGSCCDynamicObject {
-    int overlayId;
-    int borderWidth;
-    int borderHeight;
-    int isBackgroundSpeech;
+	int overlayId;
+	int borderWidth;
+	int borderHeight;
+	int isBackgroundSpeech;
 
-    int Dispose(const char *address, bool force) override;
-    const char *GetType() override;
-    int Serialize(const char *address, char *buffer, int bufsize) override;
-    void Unserialize(int index, const char *serializedData, int dataSize) override;
-    void Remove();
-    ScriptOverlay();
+	int Dispose(const char *address, bool force) override;
+	const char *GetType() override;
+	int Serialize(const char *address, char *buffer, int bufsize) override;
+	void Unserialize(int index, const char *serializedData, int dataSize) override;
+	void Remove();
+	ScriptOverlay();
 };
 
 #endif

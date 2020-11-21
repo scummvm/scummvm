@@ -27,45 +27,44 @@
 #include "media/audio/soundclip.h"
 
 // pre-loaded (non-streaming) OGG file
-struct MYSTATICOGG:public SOUNDCLIP
-{
-    ALOGG_OGG *tune;
-    char *mp3buffer;
-    int mp3buffersize;
-    int extraOffset;
+struct MYSTATICOGG: public SOUNDCLIP {
+	ALOGG_OGG *tune;
+	char *mp3buffer;
+	int mp3buffersize;
+	int extraOffset;
 
-    int last_but_one_but_one;
-    int last_but_one;
-    int last_ms_offs;
+	int last_but_one_but_one;
+	int last_but_one;
+	int last_ms_offs;
 
-    void poll() override;
+	void poll() override;
 
-    void set_volume(int newvol) override;
-    void set_speed(int new_speed) override;
+	void set_volume(int newvol) override;
+	void set_speed(int new_speed) override;
 
-    void destroy() override;
+	void destroy() override;
 
-    void seek(int pos) override;
+	void seek(int pos) override;
 
-    int get_pos() override;    
+	int get_pos() override;
 
-    int get_pos_ms() override;
+	int get_pos_ms() override;
 
-    int get_length_ms() override;
+	int get_length_ms() override;
 
-    int get_sound_type() override;
+	int get_sound_type() override;
 
-    int play_from(int position) override;
+	int play_from(int position) override;
 
-    int play() override;
+	int play() override;
 
-    MYSTATICOGG();
+	MYSTATICOGG();
 
 protected:
-    int get_voice() override;
-    void adjust_volume() override;
+	int get_voice() override;
+	void adjust_volume() override;
 private:
-    void adjust_stream();
+	void adjust_stream();
 };
 
 #endif

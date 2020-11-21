@@ -116,39 +116,38 @@ Fonts have adjustable outline
 
 */
 
-enum GameDataVersion
-{
-    kGameVersion_Undefined      = 0,
-    kGameVersion_230            = 12,
-    kGameVersion_240            = 12,
-    kGameVersion_250            = 18,
-    kGameVersion_251            = 19, // same as 2.52
-    kGameVersion_253            = 20,
-    kGameVersion_254            = 21,
-    kGameVersion_255            = 22,
-    kGameVersion_256            = 24,
-    kGameVersion_260            = 25,
-    kGameVersion_261            = 26,
-    kGameVersion_262            = 27,
-    kGameVersion_270            = 31,
-    kGameVersion_272            = 32,
-    kGameVersion_300            = 35,
-    kGameVersion_301            = 36,
-    kGameVersion_310            = 37,
-    kGameVersion_311            = 39,
-    kGameVersion_312            = 40,
-    kGameVersion_320            = 41,
-    kGameVersion_321            = 42,
-    kGameVersion_330            = 43,
-    kGameVersion_331            = 44,
-    kGameVersion_340_1          = 45,
-    kGameVersion_340_2          = 46,
-    kGameVersion_340_4          = 47,
-    kGameVersion_341            = 48,
-    kGameVersion_341_2          = 49,
-    kGameVersion_350            = 50,
-    kGameVersion_351            = 51,
-    kGameVersion_Current        = kGameVersion_351
+enum GameDataVersion {
+	kGameVersion_Undefined      = 0,
+	kGameVersion_230            = 12,
+	kGameVersion_240            = 12,
+	kGameVersion_250            = 18,
+	kGameVersion_251            = 19, // same as 2.52
+	kGameVersion_253            = 20,
+	kGameVersion_254            = 21,
+	kGameVersion_255            = 22,
+	kGameVersion_256            = 24,
+	kGameVersion_260            = 25,
+	kGameVersion_261            = 26,
+	kGameVersion_262            = 27,
+	kGameVersion_270            = 31,
+	kGameVersion_272            = 32,
+	kGameVersion_300            = 35,
+	kGameVersion_301            = 36,
+	kGameVersion_310            = 37,
+	kGameVersion_311            = 39,
+	kGameVersion_312            = 40,
+	kGameVersion_320            = 41,
+	kGameVersion_321            = 42,
+	kGameVersion_330            = 43,
+	kGameVersion_331            = 44,
+	kGameVersion_340_1          = 45,
+	kGameVersion_340_2          = 46,
+	kGameVersion_340_4          = 47,
+	kGameVersion_341            = 48,
+	kGameVersion_341_2          = 49,
+	kGameVersion_350            = 50,
+	kGameVersion_351            = 51,
+	kGameVersion_Current        = kGameVersion_351
 };
 
 extern GameDataVersion loaded_game_file_version;

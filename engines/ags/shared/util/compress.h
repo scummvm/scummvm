@@ -25,10 +25,15 @@
 
 #include "util/wgt2allg.h" // color (allegro RGB)
 
-namespace AGS { namespace Common { class Stream; class Bitmap; } }
+namespace AGS {
+namespace Common {
+class Stream;
+class Bitmap;
+}
+}
 using namespace AGS; // FIXME later
 
-void csavecompressed(Common::Stream *out, const unsigned char * tobesaved, const color pala[256]);
+void csavecompressed(Common::Stream *out, const unsigned char *tobesaved, const color pala[256]);
 // RLE compression
 void cpackbitl(const uint8_t *line, int size, Common::Stream *out);
 void cpackbitl16(const uint16_t *line, int size, Common::Stream *out);

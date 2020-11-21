@@ -41,14 +41,14 @@ int Mouse_GetModeGraphic(int curs);
 void Mouse_ChangeModeView(int curs, int newview);
 // The Mouse:: functions are static so the script doesn't pass
 // in an object parameter
-void SetMousePosition (int newx, int newy);
+void SetMousePosition(int newx, int newy);
 int GetCursorMode();
-void SetNextCursor ();
+void SetNextCursor();
 // permanently change cursor graphic
-void ChangeCursorGraphic (int curs, int newslot);
-void ChangeCursorHotspot (int curs, int x, int y);
+void ChangeCursorGraphic(int curs, int newslot);
+void ChangeCursorHotspot(int curs, int x, int y);
 int IsButtonDown(int which);
-void SetMouseBounds (int x1, int y1, int x2, int y2);
+void SetMouseBounds(int x1, int y1, int x2, int y2);
 void RefreshMouse();
 // mouse cursor functions:
 // set_mouse_cursor: changes visual appearance to specified cursor
@@ -69,7 +69,7 @@ int GetMouseCursor();
 void update_script_mouse_coords();
 void update_inv_cursor(int invnum);
 void update_cached_mouse_cursor();
-void set_new_cursor_graphic (int spriteslot);
+void set_new_cursor_graphic(int spriteslot);
 int find_next_enabled_cursor(int startwith);
 int find_previous_enabled_cursor(int startwith);
 

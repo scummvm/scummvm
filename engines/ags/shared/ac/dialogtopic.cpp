@@ -25,26 +25,23 @@
 
 using AGS::Common::Stream;
 
-void DialogTopic::ReadFromFile(Stream *in)
-{
-    in->ReadArray(optionnames, 150*sizeof(char), MAXTOPICOPTIONS);
-    in->ReadArrayOfInt32(optionflags, MAXTOPICOPTIONS);
-    // optionscripts pointer is not used anywhere in the engine
-    optionscripts = nullptr;
-    in->ReadInt32(); // optionscripts 32-bit pointer
-    in->ReadArrayOfInt16(entrypoints, MAXTOPICOPTIONS);
-    startupentrypoint = in->ReadInt16();
-    codesize = in->ReadInt16();
-    numoptions = in->ReadInt32();
-    topicFlags = in->ReadInt32();
+void DialogTopic::ReadFromFile(Stream *in) {
+	in->ReadArray(optionnames, 150 * sizeof(char), MAXTOPICOPTIONS);
+	in->ReadArrayOfInt32(optionflags, MAXTOPICOPTIONS);
+	// optionscripts pointer is not used anywhere in the engine
+	optionscripts = nullptr;
+	in->ReadInt32(); // optionscripts 32-bit pointer
+	in->ReadArrayOfInt16(entrypoints, MAXTOPICOPTIONS);
+	startupentrypoint = in->ReadInt16();
+	codesize = in->ReadInt16();
+	numoptions = in->ReadInt32();
+	topicFlags = in->ReadInt32();
 }
 
-void DialogTopic::ReadFromSavegame(Common::Stream *in)
-{
-    in->ReadArrayOfInt32(optionflags, MAXTOPICOPTIONS);
+void DialogTopic::ReadFromSavegame(Common::Stream *in) {
+	in->ReadArrayOfInt32(optionflags, MAXTOPICOPTIONS);
 }
 
-void DialogTopic::WriteToSavegame(Common::Stream *out) const
-{
-    out->WriteArrayOfInt32(optionflags, MAXTOPICOPTIONS);
+void DialogTopic::WriteToSavegame(Common::Stream *out) const {
+	out->WriteArrayOfInt32(optionflags, MAXTOPICOPTIONS);
 }

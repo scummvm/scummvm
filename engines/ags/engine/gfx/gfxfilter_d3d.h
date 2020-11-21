@@ -31,22 +31,18 @@
 
 #include "gfx/gfxfilter_scaling.h"
 
-namespace AGS
-{
-namespace Engine
-{
-namespace D3D
-{
+namespace AGS {
+namespace Engine {
+namespace D3D {
 
-class D3DGfxFilter : public ScalingGfxFilter
-{
+class D3DGfxFilter : public ScalingGfxFilter {
 public:
-    const GfxFilterInfo &GetInfo() const override;
+	const GfxFilterInfo &GetInfo() const override;
 
-    virtual void SetSamplerStateForStandardSprite(void *direct3ddevice9);
-    virtual bool NeedToColourEdgeLines();
+	virtual void SetSamplerStateForStandardSprite(void *direct3ddevice9);
+	virtual bool NeedToColourEdgeLines();
 
-    static const GfxFilterInfo FilterInfo;
+	static const GfxFilterInfo FilterInfo;
 };
 
 } // namespace D3D

@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_MAIN_UPDATE_H
 #define AGS_ENGINE_MAIN_UPDATE_H
 
-#define MAX_SHEEP 30	// sheep == follower
+#define MAX_SHEEP 30    // sheep == follower
 
-int do_movelist_move(short*mlnum,int*xx,int*yy);
+int do_movelist_move(short *mlnum, int *xx, int *yy);
 void update_stuff();
 
 #endif

@@ -25,25 +25,26 @@
 
 #include <mutex>
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
-class StdMutex : public BaseMutex
-{
-  public:
-    inline StdMutex() : mutex_() {}
-    inline ~StdMutex() override = default;
+class StdMutex : public BaseMutex {
+public:
+	inline StdMutex() : mutex_() {}
+	inline ~StdMutex() override = default;
 
-    StdMutex &operator=(const StdMutex &) = delete;
-    StdMutex(const StdMutex &) = delete;
+	StdMutex &operator=(const StdMutex &) = delete;
+	StdMutex(const StdMutex &) = delete;
 
-    inline void Lock() override { mutex_.lock(); }
-    inline void Unlock() override { mutex_.unlock(); }
+	inline void Lock() override {
+		mutex_.lock();
+	}
+	inline void Unlock() override {
+		mutex_.unlock();
+	}
 
-  private:
-    std::recursive_mutex mutex_;
+private:
+	std::recursive_mutex mutex_;
 };
 
 typedef StdMutex Mutex;

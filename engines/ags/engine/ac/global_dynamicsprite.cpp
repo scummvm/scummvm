@@ -36,23 +36,22 @@ using namespace AGS::Engine;
 extern SpriteCache spriteset;
 extern IGraphicsDriver *gfxDriver;
 
-int LoadImageFile(const char *filename)
-{
-    ResolvedPath rp;
-    if (!ResolveScriptPath(filename, true, rp))
-        return 0;
+int LoadImageFile(const char *filename) {
+	ResolvedPath rp;
+	if (!ResolveScriptPath(filename, true, rp))
+		return 0;
 
-    Bitmap *loadedFile = BitmapHelper::LoadFromFile(rp.FullPath);
-    if (!loadedFile && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
-        loadedFile = BitmapHelper::LoadFromFile(rp.AltPath);
-    if (!loadedFile)
-        return 0;
+	Bitmap *loadedFile = BitmapHelper::LoadFromFile(rp.FullPath);
+	if (!loadedFile && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
+		loadedFile = BitmapHelper::LoadFromFile(rp.AltPath);
+	if (!loadedFile)
+		return 0;
 
-    int gotSlot = spriteset.GetFreeIndex();
-    if (gotSlot <= 0)
-        return 0;
+	int gotSlot = spriteset.GetFreeIndex();
+	if (gotSlot <= 0)
+		return 0;
 
-    add_dynamic_sprite(gotSlot, ReplaceBitmapWithSupportedFormat(loadedFile));
+	add_dynamic_sprite(gotSlot, ReplaceBitmapWithSupportedFormat(loadedFile));
 
-    return gotSlot;
+	return gotSlot;
 }

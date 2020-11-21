@@ -33,24 +33,21 @@
 #include "game/main_game_file.h"
 #include "util/string.h"
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 using namespace Common;
 
 // Error codes for initializing the game
-enum GameInitErrorType
-{
-    kGameInitErr_NoError,
-    // currently AGS requires at least one font to be present in game
-    kGameInitErr_NoFonts,
-    kGameInitErr_TooManyAudioTypes,
-    kGameInitErr_EntityInitFail,
-    kGameInitErr_TooManyPlugins,
-    kGameInitErr_PluginNameInvalid,
-    kGameInitErr_ScriptLinkFailed
+enum GameInitErrorType {
+	kGameInitErr_NoError,
+	// currently AGS requires at least one font to be present in game
+	kGameInitErr_NoFonts,
+	kGameInitErr_TooManyAudioTypes,
+	kGameInitErr_EntityInitFail,
+	kGameInitErr_TooManyPlugins,
+	kGameInitErr_PluginNameInvalid,
+	kGameInitErr_ScriptLinkFailed
 };
 
 String GetGameInitErrorText(GameInitErrorType err);

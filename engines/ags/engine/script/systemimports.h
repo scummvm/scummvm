@@ -31,36 +31,33 @@ struct ICCStaticObject;
 
 using AGS::Common::String;
 
-struct ScriptImport
-{
-    ScriptImport()
-    {
-        InstancePtr = nullptr;
-    }
+struct ScriptImport {
+	ScriptImport() {
+		InstancePtr = nullptr;
+	}
 
-    String              Name;           // import's uid
-    RuntimeScriptValue  Value;
-    ccInstance          *InstancePtr;   // script instance
+	String              Name;           // import's uid
+	RuntimeScriptValue  Value;
+	ccInstance          *InstancePtr;   // script instance
 };
 
-struct SystemImports
-{
+struct SystemImports {
 private:
-    // Note we can't use a hash-map here, because we sometimes need to search
-    // by partial keys.
-    typedef std::map<String, int> IndexMap;
+	// Note we can't use a hash-map here, because we sometimes need to search
+	// by partial keys.
+	typedef std::map<String, int> IndexMap;
 
-    std::vector<ScriptImport> imports;
-    IndexMap btree;
+	std::vector<ScriptImport> imports;
+	IndexMap btree;
 
 public:
-    int  add(const String &name, const RuntimeScriptValue &value, ccInstance *inst);
-    void remove(const String &name);
-    const ScriptImport *getByName(const String &name);
-    int  get_index_of(const String &name);
-    const ScriptImport *getByIndex(int index);
-    void RemoveScriptExports(ccInstance *inst);
-    void clear();
+	int  add(const String &name, const RuntimeScriptValue &value, ccInstance *inst);
+	void remove(const String &name);
+	const ScriptImport *getByName(const String &name);
+	int  get_index_of(const String &name);
+	const ScriptImport *getByIndex(int index);
+	void RemoveScriptExports(ccInstance *inst);
+	void clear();
 };
 
 extern SystemImports simp;

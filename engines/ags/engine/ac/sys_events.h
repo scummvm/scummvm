@@ -23,14 +23,14 @@
 #ifndef AGS_ENGINE_AC_SYS_EVENTS_H
 #define AGS_ENGINE_AC_SYS_EVENTS_H
 
-int  ags_getch ();
-int  ags_kbhit ();
-int  ags_iskeypressed (int keycode);
+int  ags_getch();
+int  ags_kbhit();
+int  ags_iskeypressed(int keycode);
 
-int  ags_misbuttondown (int but);
+int  ags_misbuttondown(int but);
 int  ags_mgetbutton();
-void ags_domouse (int what);
-int  ags_check_mouse_wheel ();
+void ags_domouse(int what);
+int  ags_check_mouse_wheel();
 
 // Clears buffered keypresses and mouse clicks, if any
 void ags_clear_input_buffer();

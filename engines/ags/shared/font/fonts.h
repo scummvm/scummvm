@@ -29,7 +29,11 @@
 
 // TODO: we need to make some kind of TextManager class of this module
 
-namespace AGS { namespace Common { class Bitmap; } }
+namespace AGS {
+namespace Common {
+class Bitmap;
+}
+}
 using namespace AGS;
 
 class IAGSFontRenderer;
@@ -39,8 +43,8 @@ struct FontRenderParams;
 
 void init_font_renderer();
 void shutdown_font_renderer();
-void adjust_y_coordinate_for_text(int* ypos, size_t fontnum);
-IAGSFontRenderer* font_replace_renderer(size_t fontNumber, IAGSFontRenderer* renderer);
+void adjust_y_coordinate_for_text(int *ypos, size_t fontnum);
+IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer);
 bool font_first_renderer_loaded();
 bool is_font_loaded(size_t fontNumber);
 bool is_bitmap_font(size_t fontNumber);
@@ -89,32 +93,45 @@ void free_all_fonts();
 // and drawing. For that reason it is not equivalent to std::vector,
 // but keeps constructed String buffers intact for most time.
 // TODO: implement proper strings pool.
-class SplitLines
-{
+class SplitLines {
 public:
-    inline size_t Count() const { return _count; }
-    inline const Common::String &operator[](size_t i) const { return _pool[i]; }
-    inline Common::String &operator[](size_t i) { return _pool[i]; }
-    inline void Clear() { _pool.clear(); _count = 0; }
-    inline void Reset() { _count = 0; }
-    inline void Add(const char *cstr)
-    {
-        if (_pool.size() == _count) _pool.resize(_count + 1);
-        _pool[_count++].SetString(cstr);
-    }
+	inline size_t Count() const {
+		return _count;
+	}
+	inline const Common::String &operator[](size_t i) const {
+		return _pool[i];
+	}
+	inline Common::String &operator[](size_t i) {
+		return _pool[i];
+	}
+	inline void Clear() {
+		_pool.clear();
+		_count = 0;
+	}
+	inline void Reset() {
+		_count = 0;
+	}
+	inline void Add(const char *cstr) {
+		if (_pool.size() == _count) _pool.resize(_count + 1);
+		_pool[_count++].SetString(cstr);
+	}
 
-    // An auxiliary line processing buffer
-    std::vector<char> LineBuf;
+	// An auxiliary line processing buffer
+	std::vector<char> LineBuf;
 
 private:
-    std::vector<Common::String> _pool;
-    size_t _count; // actual number of lines in use
+	std::vector<Common::String> _pool;
+	size_t _count; // actual number of lines in use
 };
 
 // Break up the text into lines restricted by the given width;
 // returns number of lines, or 0 if text cannot be split well to fit in this width
 size_t split_lines(const char *texx, SplitLines &lines, int width, int fontNumber, size_t max_lines = -1);
 
-namespace AGS { namespace Common { extern SplitLines Lines; } }
+namespace AGS {
+namespace Common {
+extern SplitLines Lines;
+}
+}
 
 #endif

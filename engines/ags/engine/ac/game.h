@@ -34,7 +34,12 @@
 #include "util/string.h"
 
 // Forward declaration
-namespace AGS { namespace Common { class Bitmap; class Stream; } }
+namespace AGS {
+namespace Common {
+class Bitmap;
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 #define RAGMODE_PRESERVEGLOBALINT 1
@@ -55,15 +60,14 @@ using namespace AGS; // FIXME later
 #define GP_NUMINVITEMS   12
 #define GP_ISFRAMEFLIPPED 13
 
-enum CutsceneSkipStyle
-{
-    kSkipSceneUndefined = 0,
-    eSkipSceneEscOnly = 1,
-    eSkipSceneAnyKey = 2,
-    eSkipSceneMouse = 3,
-    eSkipSceneKeyMouse = 4,
-    eSkipSceneEscOrRMB = 5,
-    eSkipSceneScriptOnly = 6
+enum CutsceneSkipStyle {
+	kSkipSceneUndefined = 0,
+	eSkipSceneEscOnly = 1,
+	eSkipSceneAnyKey = 2,
+	eSkipSceneMouse = 3,
+	eSkipSceneKeyMouse = 4,
+	eSkipSceneEscOrRMB = 5,
+	eSkipSceneScriptOnly = 6
 };
 
 //=============================================================================
@@ -92,9 +96,9 @@ bool SetCustomSaveParent(const Common::String &path);
 // as a relative to system's user saves directory
 bool SetSaveGameDirectoryPath(const char *newFolder, bool explicit_path = false);
 int Game_SetSaveGameDirectory(const char *newFolder);
-const char* Game_GetSaveSlotDescription(int slnum);
+const char *Game_GetSaveSlotDescription(int slnum);
 
-const char* Game_GetGlobalStrings(int index);
+const char *Game_GetGlobalStrings(int index);
 
 int Game_GetInventoryItemCount();
 int Game_GetFontCount();
@@ -108,7 +112,7 @@ int Game_GetSpriteHeight(int spriteNum);
 int Game_GetLoopCountForView(int viewNumber);
 int Game_GetRunNextSettingForLoop(int viewNumber, int loopNumber);
 int Game_GetFrameCountForLoop(int viewNumber, int loopNumber);
-ScriptViewFrame* Game_GetViewFrame(int viewNumber, int loopNumber, int frame);
+ScriptViewFrame *Game_GetViewFrame(int viewNumber, int loopNumber, int frame);
 int Game_DoOnceOnly(const char *token);
 
 int  Game_GetTextReadingSpeed();
@@ -125,15 +129,15 @@ int Game_GetSkippingCutscene();
 int Game_GetInSkippableCutscene();
 
 int Game_GetColorFromRGB(int red, int grn, int blu);
-const char* Game_InputBox(const char *msg);
-const char* Game_GetLocationName(int x, int y);
+const char *Game_InputBox(const char *msg);
+const char *Game_GetLocationName(int x, int y);
 
-const char* Game_GetGlobalMessages(int index);
+const char *Game_GetGlobalMessages(int index);
 
 int Game_GetSpeechFont();
 int Game_GetNormalFont();
 
-const char* Game_GetTranslationFilename();
+const char *Game_GetTranslationFilename();
 int Game_ChangeTranslation(const char *newFilename);
 
 //=============================================================================
@@ -151,7 +155,7 @@ void save_game_dialog();
 void free_do_once_tokens();
 // Free all the memory associated with the game
 void unload_game_file();
-void save_game(int slotn, const char*descript);
+void save_game(int slotn, const char *descript);
 bool read_savedgame_description(const Common::String &savedgame, Common::String &description);
 bool read_savedgame_screenshot(const Common::String &savedgame, int &want_shot);
 // Tries to restore saved game and displays an error on failure; if the error occured
@@ -167,13 +171,13 @@ long write_screen_shot_for_vista(Common::Stream *out, Common::Bitmap *screenshot
 
 bool is_in_cutscene();
 CutsceneSkipStyle get_cutscene_skipstyle();
-void start_skipping_cutscene ();
+void start_skipping_cutscene();
 bool check_skip_cutscene_keypress(int kgn);
 bool check_skip_cutscene_mclick(int mbut);
 void initialize_skippable_cutscene();
 void stop_fast_forwarding();
 
-int __GetLocationType(int xxx,int yyy, int allowHotspot0);
+int __GetLocationType(int xxx, int yyy, int allowHotspot0);
 
 // Called whenever game looses input focus
 void display_switch_out();
@@ -184,9 +188,9 @@ void display_switch_out_suspend();
 // Called when the game gets input focus and should resume
 void display_switch_in_resume();
 
-void replace_tokens(const char*srcmes,char*destm, int maxlen = 99999);
-const char *get_global_message (int msnum);
-void get_message_text (int msnum, char *buffer, char giveErr = 1);
+void replace_tokens(const char *srcmes, char *destm, int maxlen = 99999);
+const char *get_global_message(int msnum);
+void get_message_text(int msnum, char *buffer, char giveErr = 1);
 
 bool unserialize_audio_script_object(int index, const char *objectType, const char *serializedData, int dataSize);
 

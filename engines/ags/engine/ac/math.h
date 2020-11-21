@@ -26,9 +26,9 @@
 #include "core/types.h"
 
 enum RoundDirections {
-    eRoundDown = 0,
-    eRoundNearest = 1,
-    eRoundUp = 2
+	eRoundDown = 0,
+	eRoundNearest = 1,
+	eRoundUp = 2
 };
 
 

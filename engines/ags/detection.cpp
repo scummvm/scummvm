@@ -25,7 +25,7 @@
 #include "ags/detection_tables.h"
 
 AGSMetaEngineDetection::AGSMetaEngineDetection() : AdvancedMetaEngineDetection(AGS::GAME_DESCRIPTIONS,
-	sizeof(AGS::AGSGameDescription), AGS::AGS_GAMES) {
+	        sizeof(AGS::AGSGameDescription), AGS::AGS_GAMES) {
 	static const char *const DIRECTORY_GLOBS[2] = { "usecode", 0 };
 	_maxScanDepth = 2;
 	_directoryGlobs = DIRECTORY_GLOBS;

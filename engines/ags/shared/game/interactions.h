@@ -58,35 +58,30 @@
 #define MAX_NEWINTERACTION_EVENTS   30
 #define MAX_COMMANDS_PER_LIST       40
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
-enum InterValType
-{
-    kInterValLiteralInt = 1,
-    kInterValVariable   = 2,
-    kInterValBoolean    = 3,
-    kInterValCharnum    = 4
+enum InterValType {
+	kInterValLiteralInt = 1,
+	kInterValVariable   = 2,
+	kInterValBoolean    = 3,
+	kInterValCharnum    = 4
 };
 
-enum InteractionVersion
-{
-    kInteractionVersion_Initial = 1
+enum InteractionVersion {
+	kInteractionVersion_Initial = 1
 };
 
 // InteractionValue represents an argument of interaction command
-struct InteractionValue
-{
-    InterValType Type;  // value type
-    int          Value; // value definition
-    int          Extra;
+struct InteractionValue {
+	InterValType Type;  // value type
+	int          Value; // value definition
+	int          Extra;
 
-    InteractionValue();
+	InteractionValue();
 
-    void Read(Stream *in);
-    void Write(Stream *out) const;
+	void Read(Stream *in);
+	void Write(Stream *out) const;
 };
 
 
@@ -94,121 +89,115 @@ struct InteractionCommandList;
 typedef std::unique_ptr<InteractionCommandList> UInterCmdList;
 
 // InteractionCommand represents a single command (action), an item of Command List
-struct InteractionCommand
-{
-    int                     Type;       // type of action
-    InteractionValue        Data[MAX_ACTION_ARGS]; // action arguments
-    UInterCmdList           Children;   // list of sub-actions
-    InteractionCommandList *Parent;     // action parent (optional)
+struct InteractionCommand {
+	int                     Type;       // type of action
+	InteractionValue        Data[MAX_ACTION_ARGS]; // action arguments
+	UInterCmdList           Children;   // list of sub-actions
+	InteractionCommandList *Parent;     // action parent (optional)
 
-    InteractionCommand();
-    InteractionCommand(const InteractionCommand &ic);
+	InteractionCommand();
+	InteractionCommand(const InteractionCommand &ic);
 
-    void Assign(const InteractionCommand &ic, InteractionCommandList *parent);
-    void Reset();
+	void Assign(const InteractionCommand &ic, InteractionCommandList *parent);
+	void Reset();
 
-    void Read_v321(Stream *in, bool &has_children);
-    void Write_v321(Stream *out) const;
+	void Read_v321(Stream *in, bool &has_children);
+	void Write_v321(Stream *out) const;
 
-    InteractionCommand &operator = (const InteractionCommand &ic);
+	InteractionCommand &operator = (const InteractionCommand &ic);
 
 private:
-    void ReadValues_Aligned(Stream *in);
-    void WriteValues_Aligned(Stream *out) const;
+	void ReadValues_Aligned(Stream *in);
+	void WriteValues_Aligned(Stream *out) const;
 };
 
 
 typedef std::vector<InteractionCommand> InterCmdVector;
 // InteractionCommandList represents a list of commands (actions) that need to be
 // performed on particular game event
-struct InteractionCommandList
-{
-    InterCmdVector  Cmds;     // actions to run
-    int             TimesRun; // used by engine to track score changes
+struct InteractionCommandList {
+	InterCmdVector  Cmds;     // actions to run
+	int             TimesRun; // used by engine to track score changes
 
-    InteractionCommandList();
-    InteractionCommandList(const InteractionCommandList &icmd_list);
+	InteractionCommandList();
+	InteractionCommandList(const InteractionCommandList &icmd_list);
 
-    void Reset();
+	void Reset();
 
-    void Read_v321(Stream *in);
-    void Write_v321(Stream *out) const;
+	void Read_v321(Stream *in);
+	void Write_v321(Stream *out) const;
 
 protected:
-    void Read_Aligned(Common::Stream *in, std::vector<bool> &cmd_children);
-    void Write_Aligned(Common::Stream *out) const;
+	void Read_Aligned(Common::Stream *in, std::vector<bool> &cmd_children);
+	void Write_Aligned(Common::Stream *out) const;
 };
 
 
 // InteractionEvent is a single event with a list of commands to performed
-struct InteractionEvent
-{
-    int           Type;     // type of event
-    int           TimesRun; // used by engine to track score changes
-    UInterCmdList Response; // list of commands to run
+struct InteractionEvent {
+	int           Type;     // type of event
+	int           TimesRun; // used by engine to track score changes
+	UInterCmdList Response; // list of commands to run
 
-    InteractionEvent();
-    InteractionEvent(const InteractionEvent &ie);
+	InteractionEvent();
+	InteractionEvent(const InteractionEvent &ie);
 
-    InteractionEvent &operator = (const InteractionEvent &ic);
+	InteractionEvent &operator = (const InteractionEvent &ic);
 };
 
 typedef std::vector<InteractionEvent> InterEvtVector;
 // Interaction is the list of events and responses for a game or game object
-struct Interaction
-{
-    // The first few event types depend on the item - ID's of 100+ are
-    // custom events (used for subroutines)
-    InterEvtVector Events;
+struct Interaction {
+	// The first few event types depend on the item - ID's of 100+ are
+	// custom events (used for subroutines)
+	InterEvtVector Events;
 
-    Interaction();
-    Interaction(const Interaction &inter);
+	Interaction();
+	Interaction(const Interaction &inter);
 
-    // Copy information on number of times events of this interaction were fired
-    void CopyTimesRun(const Interaction &inter);
-    void Reset();
+	// Copy information on number of times events of this interaction were fired
+	void CopyTimesRun(const Interaction &inter);
+	void Reset();
 
-    // Game static data (de)serialization
-    static Interaction *CreateFromStream(Stream *in);
-    void                Write(Stream *out) const;
+	// Game static data (de)serialization
+	static Interaction *CreateFromStream(Stream *in);
+	void                Write(Stream *out) const;
 
-    // Reading and writing runtime data from/to savedgame;
-    // NOTE: these are backwards-compatible methods, that do not always
-    // have practical sense
-    void ReadFromSavedgame_v321(Stream *in);
-    void WriteToSavedgame_v321(Stream *out) const;
-    void ReadTimesRunFromSave_v321(Stream *in);
-    void WriteTimesRunToSave_v321(Stream *out) const;
+	// Reading and writing runtime data from/to savedgame;
+	// NOTE: these are backwards-compatible methods, that do not always
+	// have practical sense
+	void ReadFromSavedgame_v321(Stream *in);
+	void WriteToSavedgame_v321(Stream *out) const;
+	void ReadTimesRunFromSave_v321(Stream *in);
+	void WriteTimesRunToSave_v321(Stream *out) const;
 
-    Interaction &operator =(const Interaction &inter);
+	Interaction &operator =(const Interaction &inter);
 };
 
 typedef std::shared_ptr<Interaction> PInteraction;
 
 
 // Legacy pre-3.0 kind of global and local room variables
-struct InteractionVariable
-{
-    String Name {};
-    char   Type {'\0'};
-    int    Value {0};
+struct InteractionVariable {
+	String Name {};
+	char   Type {'\0'};
+	int    Value {0};
 
-    InteractionVariable();
-    InteractionVariable(const String &name, char type, int val);
+	InteractionVariable();
+	InteractionVariable(const String &name, char type, int val);
 
-    void Read(Stream *in);
-    void Write(Stream *out) const;
+	void Read(Stream *in);
+	void Write(Stream *out) const;
 };
 
 typedef std::vector<InteractionVariable> InterVarVector;
 
 
 // A list of script function names for all supported events
-struct InteractionScripts
-{
-    StringV ScriptFuncNames;
+struct InteractionScripts {
+	StringV ScriptFuncNames;
 
-    static InteractionScripts *CreateFromStream(Stream *in);
+	static InteractionScripts *CreateFromStream(Stream *in);
 };
 
 typedef std::shared_ptr<InteractionScripts> PInteractionScripts;

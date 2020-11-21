@@ -49,64 +49,61 @@
 #include <vector>
 #include "core/types.h"
 
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 
-enum WFNError
-{
-    kWFNErr_NoError,
-    kWFNErr_BadSignature,
-    kWFNErr_BadTableAddress,
-    kWFNErr_HasBadCharacters
+enum WFNError {
+	kWFNErr_NoError,
+	kWFNErr_BadSignature,
+	kWFNErr_BadTableAddress,
+	kWFNErr_HasBadCharacters
 };
 
-struct WFNChar
-{
-    uint16_t       Width;
-    uint16_t       Height;
-    const uint8_t *Data;
+struct WFNChar {
+	uint16_t       Width;
+	uint16_t       Height;
+	const uint8_t *Data;
 
-    WFNChar();
+	WFNChar();
 
-    inline size_t GetRowByteCount() const
-    {
-        return (Width + 7) / 8;
-    }
+	inline size_t GetRowByteCount() const {
+		return (Width + 7) / 8;
+	}
 
-    inline size_t GetRequiredPixelSize() const
-    {
-        return GetRowByteCount() * Height;
-    }
+	inline size_t GetRequiredPixelSize() const {
+		return GetRowByteCount() * Height;
+	}
 
-    // Ensure character's width & height fit in given number of pixel bytes
-    void RestrictToBytes(size_t bytes);
+	// Ensure character's width & height fit in given number of pixel bytes
+	void RestrictToBytes(size_t bytes);
 };
 
 
-class WFNFont
-{
+class WFNFont {
 public:
-    inline uint16_t GetCharCount() const
-    {
-        return static_cast<uint16_t>(_refs.size());
-    }
+	inline uint16_t GetCharCount() const {
+		return static_cast<uint16_t>(_refs.size());
+	}
 
-    // Get WFN character for the given code; if the character is missing, returns empty character
-    inline const WFNChar &GetChar(uint8_t code) const
-    {
-        return code < _refs.size() ? *_refs[code] : _emptyChar;
-    }
+	// Get WFN character for the given code; if the character is missing, returns empty character
+	inline const WFNChar &GetChar(uint8_t code) const {
+		return code < _refs.size() ? *_refs[code] : _emptyChar;
+	}
 
-    void Clear();
-    // Reads WFNFont object, using data_size bytes from stream; if data_size = 0,
-    // the available stream's length is used instead. Returns error code.
-    WFNError ReadFromFile(AGS::Common::Stream *in, const soff_t data_size = 0);
+	void Clear();
+	// Reads WFNFont object, using data_size bytes from stream; if data_size = 0,
+	// the available stream's length is used instead. Returns error code.
+	WFNError ReadFromFile(AGS::Common::Stream *in, const soff_t data_size = 0);
 
 protected:
-    std::vector<const WFNChar*> _refs;      // reference array, contains pointers to elements of _items
-    std::vector<WFNChar>        _items;     // actual character items
-    std::vector<uint8_t>        _pixelData; // pixel data array
+	std::vector<const WFNChar *> _refs;     // reference array, contains pointers to elements of _items
+	std::vector<WFNChar>        _items;     // actual character items
+	std::vector<uint8_t>        _pixelData; // pixel data array
 
-    static const WFNChar        _emptyChar; // a dummy character to substitute bad symbols
+	static const WFNChar        _emptyChar; // a dummy character to substitute bad symbols
 };
 
 #endif

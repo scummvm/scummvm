@@ -24,7 +24,7 @@
 #define AGS_ENGINE_AC_GLOBALDIALOG_H
 
 void RunDialog(int tum);
-int GetDialogOption (int dlg, int opt);
+int GetDialogOption(int dlg, int opt);
 void SetDialogOption(int dlg, int opt, int onoroff, bool dlg_script = false);
 void StopDialog();
 

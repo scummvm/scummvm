@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_SLIDER_H
 #define AGS_ENGINE_AC_GLOBAL_SLIDER_H
 
-void	SetSliderValue(int guin,int objn, int valn);
-int		GetSliderValue(int guin,int objn);
+void    SetSliderValue(int guin, int objn, int valn);
+int     GetSliderValue(int guin, int objn);
 
 #endif

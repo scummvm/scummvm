@@ -26,8 +26,8 @@
 class IAGSManagedObjectReader;
 
 struct PluginObjectReader {
-    IAGSManagedObjectReader *reader;
-    const char *type;
+	IAGSManagedObjectReader *reader;
+	const char *type;
 };
 
 #endif

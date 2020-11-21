@@ -23,7 +23,11 @@
 #ifndef AGS_SHARED_AC_DIALOGTOPIC_H
 #define AGS_SHARED_AC_DIALOGTOPIC_H
 
-namespace AGS { namespace Common { class Stream; } }
+namespace AGS {
+namespace Common {
+class Stream;
+}
+}
 using namespace AGS; // FIXME later
 
 // [IKM] This is *conversation* dialog, not *gui* dialog, mind you!
@@ -54,19 +58,19 @@ using namespace AGS; // FIXME later
 #define DCHAR_NARRATOR  999
 #define DCHAR_PLAYER    998
 struct DialogTopic {
-    char          optionnames[MAXTOPICOPTIONS][150];
-    int           optionflags[MAXTOPICOPTIONS];
-    unsigned char *optionscripts;
-    short         entrypoints[MAXTOPICOPTIONS];
-    short         startupentrypoint;
-    short         codesize;
-    int           numoptions;
-    int           topicFlags;
+	char          optionnames[MAXTOPICOPTIONS][150];
+	int           optionflags[MAXTOPICOPTIONS];
+	unsigned char *optionscripts;
+	short         entrypoints[MAXTOPICOPTIONS];
+	short         startupentrypoint;
+	short         codesize;
+	int           numoptions;
+	int           topicFlags;
 
-    void ReadFromFile(Common::Stream *in);
+	void ReadFromFile(Common::Stream *in);
 
-    void ReadFromSavegame(Common::Stream *in);
-    void WriteToSavegame(Common::Stream *out) const;
+	void ReadFromSavegame(Common::Stream *in);
+	void WriteToSavegame(Common::Stream *out) const;
 };
 
 

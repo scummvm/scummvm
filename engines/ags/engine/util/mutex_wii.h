@@ -25,37 +25,30 @@
 
 #include <gccore.h>
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 
-class WiiMutex : public BaseMutex
-{
+class WiiMutex : public BaseMutex {
 public:
-  inline WiiMutex()
-  {
-    LWP_MutexInit(&_mutex, 0);
-  }
+	inline WiiMutex() {
+		LWP_MutexInit(&_mutex, 0);
+	}
 
-  inline ~WiiMutex()
-  {
-    LWP_MutexDestroy(_mutex);
-  }
+	inline ~WiiMutex() {
+		LWP_MutexDestroy(_mutex);
+	}
 
-  inline void Lock()
-  {
-    LWP_MutexLock(_mutex);
-  }
+	inline void Lock() {
+		LWP_MutexLock(_mutex);
+	}
 
-  inline void Unlock()
-  {
-    LWP_MutexUnlock(_mutex);
-  }
+	inline void Unlock() {
+		LWP_MutexUnlock(_mutex);
+	}
 
 private:
-  mutex_t _mutex;
+	mutex_t _mutex;
 };
 
 

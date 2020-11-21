@@ -41,10 +41,9 @@
 //#pragma comment( lib, "d3d9.lib" )
 //#pragma comment( lib, "d3dx9.lib" )
 
-#define WM_MEDIA_NOTIF		(WM_APP + 777)
+#define WM_MEDIA_NOTIF      (WM_APP + 777)
 
-class CVMR9Graph  
-{
+class CVMR9Graph {
 	// Constructor / destructor
 public:
 	CVMR9Graph();
@@ -56,19 +55,19 @@ public:
 	// Graph configuration
 	void SetNumberOfLayer(int nNumberOfLayer);
 	BOOL SetMediaWindow(HWND MediaWindow);
-	BOOL SetMediaFile(const char* pszFileName, bool withSound, int nLayer = 0);
+	BOOL SetMediaFile(const char *pszFileName, bool withSound, int nLayer = 0);
 	BOOL PreserveAspectRatio(BOOL bPreserve = TRUE);
-	IBaseFilter* AddFilter(const char* pszName, const GUID& clsid);
+	IBaseFilter *AddFilter(const char *pszName, const GUID &clsid);
 
 	// Graph control
 	BOOL PlayGraph();
 	BOOL StopGraph();
 	BOOL ResetGraph();
-  OAFilterState GetState();
-	IMediaEvent* GetPtrMediaEvent();
-	IMediaControl* GetPtrMediaControl();
-	IMediaSeeking* GetPtrMediaSeeking();
-	IBasicAudio* GetPtrBasicAudio();
+	OAFilterState GetState();
+	IMediaEvent *GetPtrMediaEvent();
+	IMediaControl *GetPtrMediaControl();
+	IMediaSeeking *GetPtrMediaSeeking();
+	IBasicAudio *GetPtrBasicAudio();
 
 
 	// Layer control
@@ -89,7 +88,7 @@ public:
 	// helper
 	LPCTSTR GetLastError();
 
-  // Internal
+	// Internal
 	BOOL BuildAndRenderGraph(bool withSound);
 
 protected:
@@ -114,47 +113,47 @@ protected:
 	// DSOW helper methods
 	HRESULT AddToRot(IUnknown *pUnkGraph);
 	void RemoveFromRot();
-	IPin* GetPin(IBaseFilter *pFilter, PIN_DIRECTION PinDir);
-	void ReportError(const char* pszError, HRESULT hrCode);
+	IPin *GetPin(IBaseFilter *pFilter, PIN_DIRECTION PinDir);
+	void ReportError(const char *pszError, HRESULT hrCode);
 	HRESULT GetNextFilter(IBaseFilter *pFilter, PIN_DIRECTION Dir, IBaseFilter **ppNext);
-	BOOL RemoveFilterChain(IBaseFilter* pFilter, IBaseFilter* pStopFilter);
-	HRESULT AddFilterByClsid(IGraphBuilder *pGraph, LPCWSTR wszName, const GUID& clsid, IBaseFilter **ppF);
+	BOOL RemoveFilterChain(IBaseFilter *pFilter, IBaseFilter *pStopFilter);
+	HRESULT AddFilterByClsid(IGraphBuilder *pGraph, LPCWSTR wszName, const GUID &clsid, IBaseFilter **ppF);
 
 	// Attributes
 public:
-  bool UseAVISound;
+	bool UseAVISound;
 
 protected:
-	DWORD						m_dwRotId;
-	char						m_pszErrorDescription[1024+MAX_ERROR_TEXT_LEN];
-	int							m_nNumberOfStream;
-  const char*    m_pszFileName;
-  long m_oldWndProc;
+	DWORD                       m_dwRotId;
+	char                        m_pszErrorDescription[1024 + MAX_ERROR_TEXT_LEN];
+	int                         m_nNumberOfStream;
+	const char    *m_pszFileName;
+	long m_oldWndProc;
 	// MEDIA WINDOW
-	HWND						m_hMediaWindow;
+	HWND                        m_hMediaWindow;
 	// SRC interfaces array
-	IBaseFilter*				m_srcFilterArray[10];
+	IBaseFilter                *m_srcFilterArray[10];
 	// SOUND interfaces
-	IBaseFilter*				m_pDirectSoundFilter;
+	IBaseFilter                *m_pDirectSoundFilter;
 	// GRAPH interfaces
-	IUnknown*					m_pGraphUnknown;
-	IGraphBuilder*				m_pGraphBuilder;
-	IFilterGraph*				m_pFilterGraph;
-	IFilterGraph2*				m_pFilterGraph2;
-	IMediaControl*				m_pMediaControl;
-  IMediaSeeking*				m_pMediaSeeking;
-	//IMediaEvent*				m_pMediaEvent;
-	IMediaEventEx*				m_pMediaEventEx;
+	IUnknown                   *m_pGraphUnknown;
+	IGraphBuilder              *m_pGraphBuilder;
+	IFilterGraph               *m_pFilterGraph;
+	IFilterGraph2              *m_pFilterGraph2;
+	IMediaControl              *m_pMediaControl;
+	IMediaSeeking                *m_pMediaSeeking;
+	//IMediaEvent*              m_pMediaEvent;
+	IMediaEventEx              *m_pMediaEventEx;
 	// VMR9 interfaces
-	IBaseFilter*				m_pVMRBaseFilter;
-	IVMRFilterConfig9*			m_pVMRFilterConfig;
-	IVMRMixerBitmap9*			m_pVMRMixerBitmap;
-	IVMRMixerControl9*			m_pVMRMixerControl;
-	IVMRMonitorConfig9*			m_pVMRMonitorConfig;
-	IVMRWindowlessControl9*		m_pVMRWindowlessControl;
+	IBaseFilter                *m_pVMRBaseFilter;
+	IVMRFilterConfig9          *m_pVMRFilterConfig;
+	IVMRMixerBitmap9           *m_pVMRMixerBitmap;
+	IVMRMixerControl9          *m_pVMRMixerControl;
+	IVMRMonitorConfig9         *m_pVMRMonitorConfig;
+	IVMRWindowlessControl9     *m_pVMRWindowlessControl;
 	// DIRECT3D interfaces
-	//IDirect3DDevice9*			m_pD3DDevice;
-	IDirect3DSurface9*			m_pD3DSurface;
+	//IDirect3DDevice9*         m_pD3DDevice;
+	IDirect3DSurface9          *m_pD3DSurface;
 };
 
 #endif

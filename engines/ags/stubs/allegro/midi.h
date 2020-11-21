@@ -90,15 +90,15 @@ AL_ARRAY(_DRIVER_INFO, _midi_driver_list);
 
 /* macros for constructing the driver lists */
 #define BEGIN_MIDI_DRIVER_LIST                                 \
-   _DRIVER_INFO _midi_driver_list[] =                          \
-   {
+	_DRIVER_INFO _midi_driver_list[] =                          \
+	        {
 
 #define END_MIDI_DRIVER_LIST                                   \
-      {  0,                NULL,                0     }        \
-   };
+	{  0,                NULL,                0     }        \
+	};
 
 #define MIDI_DRIVER_DIGMID                                     \
-      {  MIDI_DIGMID,      &midi_digmid,        TRUE  },
+	{  MIDI_DIGMID,      &midi_digmid,        TRUE  },
 
 
 AL_VAR(MIDI_DRIVER *, midi_driver);

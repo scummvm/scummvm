@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_VIEWPORT_H
 #define AGS_ENGINE_AC_GLOBAL_VIEWPORT_H
 
-void SetViewport(int offsx,int offsy);
+void SetViewport(int offsx, int offsy);
 void ReleaseViewport();
-int  GetViewportX ();
-int  GetViewportY ();
+int  GetViewportX();
+int  GetViewportY();
 
 #endif

@@ -27,22 +27,22 @@
 #include "gui/guiinv.h"
 #include "script/executingscript.h"
 
-extern ExecutingScript*curscript;
+extern ExecutingScript *curscript;
 extern GameState play;
 
 void sc_invscreen() {
-    curscript->queue_action(ePSAInvScreen, 0, "InventoryScreen");
+	curscript->queue_action(ePSAInvScreen, 0, "InventoryScreen");
 }
 
-void SetInvDimensions(int ww,int hh) {
-    play.inv_item_wid = ww;
-    play.inv_item_hit = hh;
-    play.inv_numdisp = 0;
-    // backwards compatibility
-    for (int i = 0; i < numguiinv; i++) {
-        guiinv[i].ItemWidth = ww;
-        guiinv[i].ItemHeight = hh;
-        guiinv[i].OnResized();
-    }
-    guis_need_update = 1;
+void SetInvDimensions(int ww, int hh) {
+	play.inv_item_wid = ww;
+	play.inv_item_hit = hh;
+	play.inv_numdisp = 0;
+	// backwards compatibility
+	for (int i = 0; i < numguiinv; i++) {
+		guiinv[i].ItemWidth = ww;
+		guiinv[i].ItemHeight = hh;
+		guiinv[i].OnResized();
+	}
+	guis_need_update = 1;
 }

@@ -46,114 +46,108 @@
 
 #include "util/file.h" // TODO: extract filestream mode constants or introduce generic ones
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
 class Stream;
 struct MultiFileLib;
 struct AssetLibInfo;
 struct AssetInfo;
 
-enum AssetSearchPriority
-{
-    // TODO: rename this to something more obvious
-    kAssetPriorityUndefined,
-    kAssetPriorityLib,
-    kAssetPriorityDir
+enum AssetSearchPriority {
+	// TODO: rename this to something more obvious
+	kAssetPriorityUndefined,
+	kAssetPriorityLib,
+	kAssetPriorityDir
 };
 
-enum AssetError
-{
-    kAssetNoError           =  0,
-    kAssetErrNoLibFile      = -1, // library file not found or can't be read
-    kAssetErrLibParse       = -2, // bad library file format or read error
-    kAssetErrNoManager      = -6, // asset manager not initialized
+enum AssetError {
+	kAssetNoError           =  0,
+	kAssetErrNoLibFile      = -1, // library file not found or can't be read
+	kAssetErrLibParse       = -2, // bad library file format or read error
+	kAssetErrNoManager      = -6, // asset manager not initialized
 };
 
 // Explicit location of asset data
-struct AssetLocation
-{
-    String      FileName;   // file where asset is located
-    soff_t      Offset;     // asset's position in file (in bytes)
-    soff_t      Size;       // asset's size (in bytes)
+struct AssetLocation {
+	String      FileName;   // file where asset is located
+	soff_t      Offset;     // asset's position in file (in bytes)
+	soff_t      Size;       // asset's size (in bytes)
 
-    AssetLocation();
+	AssetLocation();
 };
 
 
-class AssetManager
-{
+class AssetManager {
 public:
-    static bool     CreateInstance();
-    static void     DestroyInstance();
-    ~AssetManager();
+	static bool     CreateInstance();
+	static void     DestroyInstance();
+	~AssetManager();
 
-    static bool     SetSearchPriority(AssetSearchPriority priority);
-    static AssetSearchPriority GetSearchPriority();
+	static bool     SetSearchPriority(AssetSearchPriority priority);
+	static AssetSearchPriority GetSearchPriority();
 
-    // Test if given file is main data file
-    static bool         IsDataFile(const String &data_file);
-    // Read data file table of contents into provided struct
-    static AssetError   ReadDataFileTOC(const String &data_file, AssetLibInfo &lib);
+	// Test if given file is main data file
+	static bool         IsDataFile(const String &data_file);
+	// Read data file table of contents into provided struct
+	static AssetError   ReadDataFileTOC(const String &data_file, AssetLibInfo &lib);
 
-    // NOTE: this group of methods are only temporarily public
-    static AssetError   SetDataFile(const String &data_file);
-    static String       GetLibraryBaseFile();
-    static const AssetLibInfo *GetLibraryTOC();
-    static int          GetAssetCount();
-    static String       GetLibraryForAsset(const String &asset_name);
-    static String       GetAssetFileByIndex(int index);
-    static soff_t       GetAssetOffset(const String &asset_name);
-    static soff_t       GetAssetSize(const String &asset_name);
-    // TODO: instead of this support streams that work in a file subsection, limited by size
-    static soff_t       GetLastAssetSize();
-    // TODO: this is a workaround that lets us use back-end specific kind of streams
-    // to read the asset data. This is not ideal, because it limits us to reading from file.
-    // The better solution could be returning a standart stream object (like std::stream,
-    // or even std::streambuf), which is used to initialize both AGS and back-end compatible
-    // stream wrappers.
-    static bool         GetAssetLocation(const String &asset_name, AssetLocation &loc);
+	// NOTE: this group of methods are only temporarily public
+	static AssetError   SetDataFile(const String &data_file);
+	static String       GetLibraryBaseFile();
+	static const AssetLibInfo *GetLibraryTOC();
+	static int          GetAssetCount();
+	static String       GetLibraryForAsset(const String &asset_name);
+	static String       GetAssetFileByIndex(int index);
+	static soff_t       GetAssetOffset(const String &asset_name);
+	static soff_t       GetAssetSize(const String &asset_name);
+	// TODO: instead of this support streams that work in a file subsection, limited by size
+	static soff_t       GetLastAssetSize();
+	// TODO: this is a workaround that lets us use back-end specific kind of streams
+	// to read the asset data. This is not ideal, because it limits us to reading from file.
+	// The better solution could be returning a standart stream object (like std::stream,
+	// or even std::streambuf), which is used to initialize both AGS and back-end compatible
+	// stream wrappers.
+	static bool         GetAssetLocation(const String &asset_name, AssetLocation &loc);
 
-    static bool         DoesAssetExist(const String &asset_name);
-    static Stream       *OpenAsset(const String &asset_name,
-                                   FileOpenMode open_mode = kFile_Open,
-                                   FileWorkMode work_mode = kFile_Read);
+	static bool         DoesAssetExist(const String &asset_name);
+	static Stream       *OpenAsset(const String &asset_name,
+	                               FileOpenMode open_mode = kFile_Open,
+	                               FileWorkMode work_mode = kFile_Read);
 
 private:
-    AssetManager();
+	AssetManager();
 
-    bool        _SetSearchPriority(AssetSearchPriority priority);
-    AssetSearchPriority _GetSearchPriority();
-    AssetError  _SetDataFile(const String &data_file);
-    String      _GetLibraryBaseFile();
-    const AssetLibInfo &_GetLibraryTOC() const;
-    int         _GetAssetCount();    
-    String      _GetLibraryForAsset(const String &asset_name);
-    String      _GetAssetFileByIndex(int index);
-    soff_t      _GetAssetOffset(const String &asset_name);
-    soff_t      _GetAssetSize(const String &asset_name);
-    soff_t      _GetLastAssetSize();
+	bool        _SetSearchPriority(AssetSearchPriority priority);
+	AssetSearchPriority _GetSearchPriority();
+	AssetError  _SetDataFile(const String &data_file);
+	String      _GetLibraryBaseFile();
+	const AssetLibInfo &_GetLibraryTOC() const;
+	int         _GetAssetCount();
+	String      _GetLibraryForAsset(const String &asset_name);
+	String      _GetAssetFileByIndex(int index);
+	soff_t      _GetAssetOffset(const String &asset_name);
+	soff_t      _GetAssetSize(const String &asset_name);
+	soff_t      _GetLastAssetSize();
 
-    AssetError  RegisterAssetLib(const String &data_file, const String &password);
+	AssetError  RegisterAssetLib(const String &data_file, const String &password);
 
-    bool        _DoesAssetExist(const String &asset_name);
+	bool        _DoesAssetExist(const String &asset_name);
 
-    AssetInfo   *FindAssetByFileName(const String &asset_name);
-    String      MakeLibraryFileNameForAsset(const AssetInfo *asset);
+	AssetInfo   *FindAssetByFileName(const String &asset_name);
+	String      MakeLibraryFileNameForAsset(const AssetInfo *asset);
 
-    bool        GetAssetFromLib(const String &asset_name, AssetLocation &loc, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
-    bool        GetAssetFromDir(const String &asset_name, AssetLocation &loc, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
-    bool        GetAssetByPriority(const String &asset_name, AssetLocation &loc, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
-    Stream      *OpenAssetAsStream(const String &asset_name, FileOpenMode open_mode, FileWorkMode work_mode);
+	bool        GetAssetFromLib(const String &asset_name, AssetLocation &loc, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
+	bool        GetAssetFromDir(const String &asset_name, AssetLocation &loc, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
+	bool        GetAssetByPriority(const String &asset_name, AssetLocation &loc, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
+	Stream      *OpenAssetAsStream(const String &asset_name, FileOpenMode open_mode, FileWorkMode work_mode);
 
-    static AssetManager     *_theAssetManager;
-    AssetSearchPriority     _searchPriority;
+	static AssetManager     *_theAssetManager;
+	AssetSearchPriority     _searchPriority;
 
-    AssetLibInfo            &_assetLib;
-    String                  _basePath;          // library's parent path (directory)
-    soff_t                  _lastAssetSize;     // size of asset that was opened last time
+	AssetLibInfo            &_assetLib;
+	String                  _basePath;          // library's parent path (directory)
+	soff_t                  _lastAssetSize;     // size of asset that was opened last time
 };
 
 

@@ -27,11 +27,10 @@ using namespace AGS::Common;
 
 const char *game_file_sig = "Adventure Creator Game File v2";
 
-void quitprintf(const char *fmt, ...)
-{
-    va_list ap;
-    va_start(ap, fmt);
-    String text = String::FromFormatV(fmt, ap);
-    va_end(ap);
-    quit(text);
+void quitprintf(const char *fmt, ...) {
+	va_list ap;
+	va_start(ap, fmt);
+	String text = String::FromFormatV(fmt, ap);
+	va_end(ap);
+	quit(text);
 }

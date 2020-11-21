@@ -23,17 +23,16 @@
 #ifndef AGS_ENGINE_DEBUGGING_AGSEDITORDEBUGGER_H
 #define AGS_ENGINE_DEBUGGING_AGSEDITORDEBUGGER_H
 
-struct IAGSEditorDebugger
-{
+struct IAGSEditorDebugger {
 public:
-    virtual ~IAGSEditorDebugger() = default;
+	virtual ~IAGSEditorDebugger() = default;
 
-    virtual bool Initialize() = 0;
-    virtual void Shutdown() = 0;
-    virtual bool SendMessageToEditor(const char *message) = 0;
-    virtual bool IsMessageAvailable() = 0;
-    // Message will be allocated on heap with malloc
-    virtual char* GetNextMessage() = 0;
+	virtual bool Initialize() = 0;
+	virtual void Shutdown() = 0;
+	virtual bool SendMessageToEditor(const char *message) = 0;
+	virtual bool IsMessageAvailable() = 0;
+	// Message will be allocated on heap with malloc
+	virtual char *GetNextMessage() = 0;
 };
 
 #endif

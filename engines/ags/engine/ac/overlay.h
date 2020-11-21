@@ -27,24 +27,28 @@
 #include "ac/screenoverlay.h"
 #include "ac/dynobj/scriptoverlay.h"
 
-namespace AGS { namespace Common { class Bitmap; } }
+namespace AGS {
+namespace Common {
+class Bitmap;
+}
+}
 using namespace AGS; // FIXME later
 
 void Overlay_Remove(ScriptOverlay *sco);
-void Overlay_SetText(ScriptOverlay *scover, int wii, int fontid, int clr, const char*text);
+void Overlay_SetText(ScriptOverlay *scover, int wii, int fontid, int clr, const char *text);
 int  Overlay_GetX(ScriptOverlay *scover);
 void Overlay_SetX(ScriptOverlay *scover, int newx);
 int  Overlay_GetY(ScriptOverlay *scover);
 void Overlay_SetY(ScriptOverlay *scover, int newy);
 int  Overlay_GetValid(ScriptOverlay *scover);
-ScriptOverlay* Overlay_CreateGraphical(int x, int y, int slot, int transparent);
-ScriptOverlay* Overlay_CreateTextual(int x, int y, int width, int font, int colour, const char* text);
+ScriptOverlay *Overlay_CreateGraphical(int x, int y, int slot, int transparent);
+ScriptOverlay *Overlay_CreateTextual(int x, int y, int width, int font, int colour, const char *text);
 
 int  find_overlay_of_type(int type);
 void remove_screen_overlay(int type);
 // Calculates overlay position in screen coordinates
 void get_overlay_position(const ScreenOverlay &over, int *x, int *y);
-size_t add_screen_overlay(int x,int y,int type,Common::Bitmap *piccy, bool alphaChannel = false);
+size_t add_screen_overlay(int x, int y, int type, Common::Bitmap *piccy, bool alphaChannel = false);
 size_t add_screen_overlay(int x, int y, int type, Common::Bitmap *piccy, int pic_offx, int pic_offy, bool alphaChannel = false);
 void remove_screen_overlay_index(size_t over_idx);
 void recreate_overlay_ddbs();

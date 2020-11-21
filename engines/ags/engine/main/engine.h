@@ -44,18 +44,16 @@ void        engine_shutdown_gfxmode();
 
 using AGS::Common::String;
 // Defines a package file location
-struct PackLocation
-{
-    String Name; // filename, for the reference or to use as an ID
-    String Path; // full path
+struct PackLocation {
+	String Name; // filename, for the reference or to use as an ID
+	String Path; // full path
 };
 // Game resource paths
-struct ResourcePaths
-{
-    String       DataDir;    // path to the data directory
-    PackLocation GamePak;    // main game package
-    PackLocation AudioPak;   // audio package
-    PackLocation SpeechPak;  // voice-over package
+struct ResourcePaths {
+	String       DataDir;    // path to the data directory
+	PackLocation GamePak;    // main game package
+	PackLocation AudioPak;   // audio package
+	PackLocation SpeechPak;  // voice-over package
 };
 extern ResourcePaths ResPaths;
 

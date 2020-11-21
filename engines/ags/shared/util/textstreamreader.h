@@ -31,38 +31,35 @@
 
 #include "util/textreader.h"
 
-namespace AGS
-{
-namespace Common
-{
+namespace AGS {
+namespace Common {
 
 class Stream;
 
-class TextStreamReader : public TextReader
-{
+class TextStreamReader : public TextReader {
 public:
-    // TODO: use shared ptr
-    TextStreamReader(Stream *stream);
-    ~TextStreamReader() override;
+	// TODO: use shared ptr
+	TextStreamReader(Stream *stream);
+	~TextStreamReader() override;
 
-    bool    IsValid() const override;
-    const Stream   *GetStream() const;
-    // TODO: use shared ptr instead
-    void            ReleaseStream();
+	bool    IsValid() const override;
+	const Stream   *GetStream() const;
+	// TODO: use shared ptr instead
+	void            ReleaseStream();
 
-    bool            EOS() const;
+	bool            EOS() const;
 
-    // Read single character
-    char    ReadChar() override;
-    // Read defined number of characters
-    String  ReadString(size_t length) override;
-    // Read till line break
-    String  ReadLine() override;
-    // Read till end of available data
-    String  ReadAll() override;
+	// Read single character
+	char    ReadChar() override;
+	// Read defined number of characters
+	String  ReadString(size_t length) override;
+	// Read till line break
+	String  ReadLine() override;
+	// Read till end of available data
+	String  ReadAll() override;
 
 private:
-    Stream *_stream;
+	Stream *_stream;
 };
 
 } // namespace Common

@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_TRANSLATION_H
 #define AGS_ENGINE_AC_GLOBAL_TRANSLATION_H
 
-const char *get_translation (const char *text);
-int IsTranslationAvailable ();
-int GetTranslationName (char* buffer);
+const char *get_translation(const char *text);
+int IsTranslationAvailable();
+int GetTranslationName(char *buffer);
 
 #endif

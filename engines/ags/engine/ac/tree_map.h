@@ -26,15 +26,15 @@
 // Binary tree structure for holding translations, allows fast
 // access
 struct TreeMap {
-    TreeMap *left, *right;
-    char *text;
-    char *translation;
+	TreeMap *left, *right;
+	char *text;
+	char *translation;
 
-    TreeMap();
-    char* findValue (const char* key);
-    void addText (const char* ntx, char *trans);
-    void clear();
-    ~TreeMap();
+	TreeMap();
+	char *findValue(const char *key);
+	void addText(const char *ntx, char *trans);
+	void clear();
+	~TreeMap();
 };
 
 #endif

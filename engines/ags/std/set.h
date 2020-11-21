@@ -49,10 +49,18 @@ public:
 	typedef T *iterator;
 	typedef const T *const_iterator;
 
-	iterator begin() { return _items.begin(); }
-	iterator end() { return _items.end(); }
-	const_iterator begin() const { return _items.begin(); }
-	const_iterator end() const { return _items.end(); }
+	iterator begin() {
+		return _items.begin();
+	}
+	iterator end() {
+		return _items.end();
+	}
+	const_iterator begin() const {
+		return _items.begin();
+	}
+	const_iterator end() const {
+		return _items.end();
+	}
 
 	/**
 	 * Clear the set

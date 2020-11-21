@@ -34,56 +34,51 @@
 #include "util/string_compat.h"
 
 
-void scrPlayVideo(const char* name, int skip, int flags) {
-    EndSkippingUntilCharStops();
+void scrPlayVideo(const char *name, int skip, int flags) {
+	EndSkippingUntilCharStops();
 
-    if (play.fast_forward)
-        return;
-    if (debug_flags & DBG_NOVIDEO)
-        return;
+	if (play.fast_forward)
+		return;
+	if (debug_flags & DBG_NOVIDEO)
+		return;
 
-    if ((flags < 10) && (usetup.digicard == DIGI_NONE)) {
-        // if game audio is disabled in Setup, then don't
-        // play any sound on the video either
-        flags += 10;
-    }
+	if ((flags < 10) && (usetup.digicard == DIGI_NONE)) {
+		// if game audio is disabled in Setup, then don't
+		// play any sound on the video either
+		flags += 10;
+	}
 
-    pause_sound_if_necessary_and_play_video(name, skip, flags);
+	pause_sound_if_necessary_and_play_video(name, skip, flags);
 }
 
 
 #ifndef AGS_NO_VIDEO_PLAYER
 
-void pause_sound_if_necessary_and_play_video(const char *name, int skip, int flags)
-{
-    int musplaying = play.cur_music_number, i;
-    int ambientWas[MAX_SOUND_CHANNELS];
-    for (i = 1; i < MAX_SOUND_CHANNELS; i++)
-        ambientWas[i] = ambient[i].channel;
+void pause_sound_if_necessary_and_play_video(const char *name, int skip, int flags) {
+	int musplaying = play.cur_music_number, i;
+	int ambientWas[MAX_SOUND_CHANNELS];
+	for (i = 1; i < MAX_SOUND_CHANNELS; i++)
+		ambientWas[i] = ambient[i].channel;
 
-    if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "ogv") == 0))
-    {
-        play_theora_video(name, skip, flags);
-    }
-    else
-    {
-        char videoFilePath[MAX_PATH];
-        get_install_dir_path(videoFilePath, name);
+	if ((strlen(name) > 3) && (ags_stricmp(&name[strlen(name) - 3], "ogv") == 0)) {
+		play_theora_video(name, skip, flags);
+	} else {
+		char videoFilePath[MAX_PATH];
+		get_install_dir_path(videoFilePath, name);
 
-        platform->PlayVideo(videoFilePath, skip, flags);
-    }
+		platform->PlayVideo(videoFilePath, skip, flags);
+	}
 
-    if (flags < 10) 
-    {
-        update_music_volume();
-        // restart the music
-        if (musplaying >= 0)
-            newmusic (musplaying);
-        for (i = 1; i < MAX_SOUND_CHANNELS; i++) {
-            if (ambientWas[i] > 0)
-                PlayAmbientSound(ambientWas[i], ambient[i].num, ambient[i].vol, ambient[i].x, ambient[i].y);
-        }
-    }
+	if (flags < 10) {
+		update_music_volume();
+		// restart the music
+		if (musplaying >= 0)
+			newmusic(musplaying);
+		for (i = 1; i < MAX_SOUND_CHANNELS; i++) {
+			if (ambientWas[i] > 0)
+				PlayAmbientSound(ambientWas[i], ambient[i].num, ambient[i].vol, ambient[i].x, ambient[i].y);
+		}
+	}
 }
 
 #else

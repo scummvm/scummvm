@@ -28,31 +28,30 @@
 
 extern AGS::Engine::Mutex _mp3_mutex;
 
-struct MYMP3:public SOUNDCLIP
-{
-    ALMP3_MP3STREAM *stream;
-    PACKFILE *in;
-    size_t filesize;
-    char *buffer;
-    int chunksize;
+struct MYMP3: public SOUNDCLIP {
+	ALMP3_MP3STREAM *stream;
+	PACKFILE *in;
+	size_t filesize;
+	char *buffer;
+	int chunksize;
 
-    void poll() override;
-    void set_volume(int newvol) override;
-    void set_speed(int new_speed) override;
-    void destroy() override;
-    void seek(int pos) override;
-    int get_pos() override;
-    int get_pos_ms() override;
-    int get_length_ms() override;
-    int get_sound_type() override;
-    int play() override;
-    MYMP3();
+	void poll() override;
+	void set_volume(int newvol) override;
+	void set_speed(int new_speed) override;
+	void destroy() override;
+	void seek(int pos) override;
+	int get_pos() override;
+	int get_pos_ms() override;
+	int get_length_ms() override;
+	int get_sound_type() override;
+	int play() override;
+	MYMP3();
 
 protected:
-    int get_voice() override;
-    void adjust_volume() override;
+	int get_voice() override;
+	void adjust_volume() override;
 private:
-    void adjust_stream();
+	void adjust_stream();
 };
 
 #endif

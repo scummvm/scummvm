@@ -33,81 +33,67 @@
 extern "C" {
 #endif
 
-    WINBASEAPI BOOL WINAPI FreeLibrary(HMODULE hLibModule);
-    WINBASEAPI FARPROC WINAPI GetProcAddress(HMODULE hModule, LPCSTR lpProcName);
-    WINBASEAPI HMODULE WINAPI LoadLibraryA(LPCSTR lpLibFileName);
+WINBASEAPI BOOL WINAPI FreeLibrary(HMODULE hLibModule);
+WINBASEAPI FARPROC WINAPI GetProcAddress(HMODULE hModule, LPCSTR lpProcName);
+WINBASEAPI HMODULE WINAPI LoadLibraryA(LPCSTR lpLibFileName);
 
 #ifdef __cplusplus
 } // extern "C"
 #endif
 
 
-namespace AGS
-{
-namespace Engine
-{
+namespace AGS {
+namespace Engine {
 
 
-class WindowsLibrary : BaseLibrary
-{
+class WindowsLibrary : BaseLibrary {
 public:
-  WindowsLibrary()
-    : _library(NULL)
-  {
-  };
+	WindowsLibrary()
+		: _library(NULL) {
+	};
 
-  virtual ~WindowsLibrary()
-  {
-    Unload();
-  };
+	virtual ~WindowsLibrary() {
+		Unload();
+	};
 
-  AGS::Common::String BuildFilename(AGS::Common::String libraryName)
-  {
-    return String::FromFormat("%s.dll", libraryName.GetCStr());
-  }
+	AGS::Common::String BuildFilename(AGS::Common::String libraryName) {
+		return String::FromFormat("%s.dll", libraryName.GetCStr());
+	}
 
-  AGS::Common::String BuildPath(AGS::Common::String libraryName)
-  {
-    AGS::Common::String platformLibraryName = BuildFilename(libraryName);
+	AGS::Common::String BuildPath(AGS::Common::String libraryName) {
+		AGS::Common::String platformLibraryName = BuildFilename(libraryName);
 
-    AGS::Common::Debug::Printf("Built library path: %s", platformLibraryName.GetCStr());
+		AGS::Common::Debug::Printf("Built library path: %s", platformLibraryName.GetCStr());
 
-    return platformLibraryName;
-  }
+		return platformLibraryName;
+	}
 
-  AGS::Common::String GetFilenameForLib(AGS::Common::String libraryName) override
-  {
-    return BuildFilename(libraryName);
-  }
+	AGS::Common::String GetFilenameForLib(AGS::Common::String libraryName) override {
+		return BuildFilename(libraryName);
+	}
 
-  bool Load(AGS::Common::String libraryName)
-  {
-    Unload();
+	bool Load(AGS::Common::String libraryName) {
+		Unload();
 
-    _library = LoadLibraryA(BuildPath(libraryName).GetCStr());
+		_library = LoadLibraryA(BuildPath(libraryName).GetCStr());
 
-    return (_library != NULL);
-  }
+		return (_library != NULL);
+	}
 
-  bool Unload()
-  {
-    if (_library)
-    {
-      return (FreeLibrary(_library) != 0);
-    }
-    else
-    {
-      return true;
-    }
-  }
+	bool Unload() {
+		if (_library) {
+			return (FreeLibrary(_library) != 0);
+		} else {
+			return true;
+		}
+	}
 
-  void *GetFunctionAddress(AGS::Common::String functionName)
-  {
-    return GetProcAddress(_library, functionName.GetCStr());
-  }
+	void *GetFunctionAddress(AGS::Common::String functionName) {
+		return GetProcAddress(_library, functionName.GetCStr());
+	}
 
 private:
-  HANDLE _library;
+	HANDLE _library;
 };
 
 
