@@ -345,6 +345,10 @@ void Sound::playSoundEffectIndex(int index) {
 	}
 }
 
+void Sound::toggleMusic() {
+	setMusicEnabled(!_vm->_musicEnabled);
+}
+
 void Sound::setMusicEnabled(bool enable) {
 	if (!_vm->_musicWorking || _vm->_musicEnabled == enable)
 		return;
@@ -355,6 +359,10 @@ void Sound::setMusicEnabled(bool enable) {
 		playMidiMusicTracks(_loopingMidiTrack, _loopingMidiTrack);
 	else
 		clearMidiSlot(0);
+}
+
+void Sound::toggleSfx() {
+	setSfxEnabled(!_vm->_sfxEnabled);
 }
 
 void Sound::setSfxEnabled(bool enable) {

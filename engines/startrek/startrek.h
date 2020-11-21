@@ -211,6 +211,10 @@ struct TrekEvent {
 	uint32 tick;
 };
 
+struct ComputerTopic {
+	Common::String fileName;
+	Common::String topic;
+};
 
 class Graphics;
 class IWFile;
@@ -237,6 +241,8 @@ public:
 	void loadBridgeActors();
 	void cleanupBridge();
 	void runBridge();
+	void handleBridgeEvents();
+	void handleBridgeComputer();
 
 	void playMovie(Common::String filename);
 	void playMovieMac(Common::String filename);
@@ -501,8 +507,10 @@ public:
 	 * Effectively replaces the "readTextFromRdf" function.
 	 */
 	String readTextFromArrayWithChoices(int choiceIndex, uintptr data, String *headerTextOutput);
+	Common::String readTextFromFoundComputerTopics(int choiceIndex, uintptr data, String *headerTextOutput);
 
 	Common::String showCodeInputBox();
+	Common::String showComputerInputBox();
 	void redrawTextInput();
 	void addCharToTextInputBuffer(char c);
 	/**
@@ -735,11 +743,13 @@ private:
 	int rightClickEvent();
 	int mouseMoveEvent();
 	int lookupNextAction(const int *lookupArray, int action);
+	void loadBridgeComputerTopics();
 
 	Common::RandomSource _randomSource;
 	Common::SineTable _sineTable;
 	Common::CosineTable _cosineTable;
 	Room *_room;
+	Common::List<ComputerTopic> _computerTopics;
 };
 
 // Static function
