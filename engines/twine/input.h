@@ -110,7 +110,6 @@ public:
 	Input(TwinEEngine *engine);
 
 	int16 cursorKeys = 0;
-	int16 pressedKey = 0;
 
 	/**
 	 * @brief Dependent on the context we are currently in the game, we might want to disable certain keymaps.

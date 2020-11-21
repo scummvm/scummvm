@@ -230,12 +230,6 @@ void Input::readKeys() {
 			if (pressedKeyCharMap[i].key == localKey) {
 				if (pressedKeyCharMap[i].cursor) {
 					cursorKeys |= pressedKeyCharMap[i].high;
-				} else {
-					if (event.type == Common::EVENT_CUSTOM_ENGINE_ACTION_END) {
-						pressedKey &= ~pressedKeyCharMap[i].high;
-					} else {
-						pressedKey |= pressedKeyCharMap[i].high;
-					}
 				}
 				break;
 			}
