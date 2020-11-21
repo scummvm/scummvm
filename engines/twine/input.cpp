@@ -99,13 +99,15 @@ bool Input::isHeroActionActive() const {
 	return isActionActive(TwinEActionType::ExecuteBehaviourAction) || isActionActive(TwinEActionType::SpecialAction);
 }
 
-void Input::enableAdditionalKeyMap(const char *id, bool enable) {
+bool Input::enableAdditionalKeyMap(const char *id, bool enable) {
 	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
 	Common::Keymap *keymap = keymapper->getKeymap(id);
 	if (keymap == nullptr) {
-		return;
+		return false;
 	}
+	const bool changed = keymap->isEnabled() != enable;
 	keymap->setEnabled(enable);
+	return changed;
 }
 
 void Input::enableKeyMap(const char *id) {
