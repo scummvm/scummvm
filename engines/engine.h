@@ -52,42 +52,74 @@ class Dialog;
 }
 
 /**
- * Initializes graphics and shows error message.
+ * @defgroup engines_engine Engine
+ * @ingroup engines
+ *
+ * @brief API for managing various functions of the engine.
+ *
+ * @{
+ */
+
+/**
+ * Initialize graphics and show an error message.
  */
 void GUIErrorMessage(const Common::U32String &msg, const char *url = nullptr);
-void GUIErrorMessage(const Common::String &msg, const char *url = nullptr); // Redirect to GUIErrorMessage with U32Strings
+/**
+ * Initialize graphics and show an error message.
+ */
+void GUIErrorMessage(const Common::String &msg, const char *url = nullptr);
+/**
+ * Initialize graphics and show an error message.
+ */
 void GUIErrorMessageWithURL(const Common::U32String &msg, const char *url);
-void GUIErrorMessageWithURL(const Common::String &msg, const char *url); // Redirect to GUIErrorMessageWithURL with U32Strings
+/**
+ * Initialize graphics and show an error message.
+ */
+void GUIErrorMessageWithURL(const Common::String &msg, const char *url);
+/**
+ * Initialize graphics and show an error message.
+ */
 void GUIErrorMessageFormat(Common::U32String fmt, ...);
+/**
+ * Initialize graphics and show an error message.
+ */
 void GUIErrorMessageFormat(const char *fmt, ...) GCC_PRINTF(1, 2);
+
 
 class Engine;
 
-
 /**
-* Manages pausing by Engine::pauseEngine handing out tokens that
-* each represent one requested level of pause.
+* Class for managing pausing by Engine::pauseEngine that hands out pause tokens.
+*
+* Each token represents one requested level of pause.
 */
 class PauseToken {
 public:
 	PauseToken();
+	/**
+     * Construct a pause token.
+     */
 	PauseToken(const PauseToken &);
 #if __cplusplus >= 201103L
 	PauseToken(PauseToken &&);
 #endif
 	~PauseToken();
-
+	/**
+     * Assign the pause token.
+     */
 	void operator=(const PauseToken &);
 #if __cplusplus >= 201103L
 	void operator=(PauseToken &&);
 #endif
-	/** Manually releases the PauseToken. Only allowed if the token
-	* currently represents a pause request.
+	/**
+	* Manually release the PauseToken.
+	*
+	* Only allowed if the token currently represents a pause request.
 	*/
 	void clear();
 
 	/**
-	 * Returns true if the PauseToken represents a pause level,
+	 * Return true if the PauseToken represents a pause level,
 	 * false if it is empty.
 	 */
 	bool isActive() const { return _engine != nullptr; }
@@ -96,31 +128,58 @@ private:
 	PauseToken(Engine *);
 
 	Engine *_engine;
-
+	/**
+	 * @see Engine
+	 */
 	friend class Engine;
 };
 
 class Engine {
 public:
+	/**
+	 * The OSystem instance used by the engine.
+	 */
 	OSystem *_system;
+	/**
+	 * The Mixer instance used by the engine.
+	 */
 	Audio::Mixer *_mixer;
 
 protected:
+	/**
+	 * The TimerManager instance used by the engine.
+	 */
 	Common::TimerManager *_timer;
+	/**
+	 * The EventManager instance used by the engine.
+	 */
 	Common::EventManager *_eventMan;
+	/**
+	 * The SaveFileMAnager used by the engine.
+	 */
 	Common::SaveFileManager *_saveFileMan;
 
+	/**
+	 * The Dialog instance used by the engine.
+	 */
 	GUI::Dialog *_mainMenuDialog;
+	/**
+	 * Run a GUI dialog.
+	 */
 	virtual int runDialog(GUI::Dialog &dialog);
 
-	const Common::String _targetName; // target name for saves
+	/**
+	 * Target name for saves.
+	 */
+	const Common::String _targetName;
 
 private:
 	/**
-	 * The pause level, 0 means 'running', a positive value indicates
-	 * how often the engine has been paused (and hence how often it has
-	 * to be un-paused before it resumes running). This makes it possible
-	 * to nest code which pauses the engine.
+	 * The pause level.
+	 *
+	 * 0 means 'running'. A positive value indicates how often the engine
+	 * has been paused and thus how many times it must be unpaused before
+	 * it resumes running. This makes it possible to nest the code that pauses the engine.
 	 */
 	int _pauseLevel;
 
@@ -130,80 +189,91 @@ private:
 	uint32 _pauseStartTime;
 
 	/**
-	 * The time when the engine was started. This value is used to calculate
-	 * the current play time of the game running.
+	 * The time when the engine was started.
+	 *
+	 * This value is used to calculate the current play time of the game running.
 	 */
 	int32 _engineStartTime;
 
 	/**
-	 * Autosave interval
+	 * Autosave interval.
 	 */
 	const int _autosaveInterval;
 
 	/**
-	 * The last time an autosave was done
+	 * The last time an autosave was done.
 	 */
 	int _lastAutosaveTime;
 
 	/**
-	 * Save slot selected via global main menu.
-	 * This slot will be loaded after main menu execution (not from inside
+	 * Save slot selected via the global main menu.
+	 *
+	 * This slot will be loaded after the main menu execution (not from inside
 	 * the menu loop, to avoid bugs like #2822778).
 	 */
 	int _saveSlotToLoad;
 
 	/**
-	 * Optional debugger for the engine
+	 * Optional debugger for the engine.
 	 */
 	GUI::Debugger *_debugger;
 public:
 
 
 	/**
-	 * A feature in this context means an ability of the engine which can be
-	 * either available or not.
+	 * Engine features.
+	 *
+	 * A feature in this context means an ability of the engine
+	 * that can be either available or not.
 	 * @see Engine::hasFeature()
 	 */
 	enum EngineFeature {
 		/**
-		 * Enables the subtitle speed and toggle items in the Options section
+		 * Enable the subtitle speed and toggle items in the Options section
 		 * of the global main menu.
 		 */
 		kSupportsSubtitleOptions,
 
 		/**
-		 * 'Return to launcher' feature is supported, i.e., EVENT_RETURN_TO_LAUNCHER is handled
-		 * either directly, or indirectly (that is, the engine calls and honors
+		 * The 'Return to launcher' feature is supported.
+		 *
+		 * This means that EVENT_RETURN_TO_LAUNCHER is handled
+		 * either directly, or indirectly (the engine calls and honors
 		 * the result of the Engine::shouldQuit() method appropriately).
 		 */
 		kSupportsReturnToLauncher,
 
 		/**
-		 * Loading savestates during runtime is supported, that is, this engine
-		 * implements loadGameState() and canLoadGameStateCurrently().
+		 * Loading save states during runtime is supported.
+		 *
+		 * This means that the engine implements loadGameState() and canLoadGameStateCurrently().
 		 * If this feature is supported, then the corresponding MetaEngine *must*
 		 * support the kSupportsListSaves feature.
 		 */
 		kSupportsLoadingDuringRuntime,
 
 		/**
-		 * Loading savestates during runtime is supported, that is, this engine
-		 * implements saveGameState() and canSaveGameStateCurrently().
+		 * Loading save states during runtime is supported.
+		 *
+		 * This means that the engine implements saveGameState() and canSaveGameStateCurrently().
 		 * If this feature is supported, then the corresponding MetaEngine *must*
 		 * support the kSupportsListSaves feature.
 		 */
 		kSupportsSavingDuringRuntime,
 
 		/**
-		 * Changing the game settings during runtime is supported. This enables
-		 * showing the engine options tab in the config dialog accessed through
-		 * the Global Main Menu.
+		 * Changing the game settings during runtime is supported.
+		 *
+		 * This enables showing the Engine Options tab in the config dialog
+		 * accessed through the global main menu.
 		 */
 		kSupportsChangingOptionsDuringRuntime,
 
 		/**
-		 * Arbitrary resolutions are supported, that is, this engine allows
-		 * the backend to override the resolution passed to OSystem::setupScreen.
+		 * Arbitrary resolutions are supported.
+		 *
+		 * This means that the engine allows the backend to override the resolution
+		 * passed to OSystem::setupScreen.
 		 * The engine will need to read the actual resolution used by the
 		 * backend using OSystem::getWidth and OSystem::getHeight.
 		 */
@@ -215,16 +285,22 @@ public:
 	/** @name Overloadable methods
 	 *
 	 *  All Engine subclasses should consider overloading some or all of the following methods.
+	 *  @{
 	 */
-	//@{
 
+	/**
+	 * Create an instance of the engine.
+	 */
 	Engine(OSystem *syst);
+	/**
+	 * Destroy the engine instance.
+	 */
 	virtual ~Engine();
 
 	/**
-	 * Init SearchMan according to the game path.
+	 * Initialize SearchMan according to the game path.
 	 *
-	 * By default it adds the directory in non-flat mode with a depth of 4 as
+	 * By default, this adds the directory in non-flat mode with a depth of 4 as
 	 * priority 0 to SearchMan.
 	 *
 	 * @param gamePath The base directory of the game data.
@@ -232,13 +308,14 @@ public:
 	virtual void initializePath(const Common::FSNode &gamePath);
 
 	/**
-	 * Init the engine and start its main loop.
-	 * @return returns kNoError on success, else an error code.
+	 * Initialize the engine and start its main loop.
+	 *
+	 * @return kNoError on success, otherwise an error code.
 	 */
 	virtual Common::Error run() = 0;
 
 	/**
-	 * Prepare an error string, which is printed by the error() function.
+	 * Prepare an error string that is printed by the error() function.
 	 */
 	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);
 
@@ -248,8 +325,10 @@ public:
 	virtual GUI::Debugger *getDebugger() { return _debugger; }
 
 	/**
-	 * Sets the engine's debugger. Once set, the Engine class is responsible for managing
-	 * the debugger, and freeing it on exit
+	 * Set the engine's debugger.
+	 *
+	 * Once set, the Engine class is responsible for managing 
+	 * the debugger, and freeing it on exit.
 	 */
 	void setDebugger(GUI::Debugger *debugger) {
 		assert(!_debugger);
@@ -258,6 +337,7 @@ public:
 
 	/**
 	 * Return the engine's debugger instance, or create one if none is present.
+	 *
 	 * Used by error() to invoke the debugger when a severe error is reported.
 	 */
 	GUI::Debugger *getOrCreateDebugger();
@@ -268,15 +348,17 @@ public:
 	virtual bool hasFeature(EngineFeature f) const { return false; }
 
 	/**
-	 * Notify the engine that the sound settings in the config manager may have
-	 * changed and that it hence should adjust any internal volume etc. values
+	 * Notify the engine that the sound settings in the config manager might have
+	 * changed and that it should adjust any internal volume (and other) values
 	 * accordingly.
+	 *
 	 * The default implementation sets the volume levels of all mixer sound
 	 * types according to the config entries of the active domain.
 	 * When overwriting, call the default implementation first, then adjust the
 	 * volumes further (if required).
 	 *
 	 * @note When setting volume levels, respect the "mute" config entry.
+	 *
 	 * @note The volume for the plain sound type is reset to the maximum
 	 *       volume. If the engine can associate its own value for this
 	 *       type, it needs to overwrite this member and set it accordingly.
@@ -285,19 +367,19 @@ public:
 	virtual void syncSoundSettings();
 
 	/**
-	 * Notify the engine that the settings editable from the game tab in the
-	 * in-game options dialog may have changed and that they need to be applied
+	 * Notify the engine that the settings editable from the Game tab in the
+	 * in-game options dialog might have changed and that they need to be applied
 	 * if necessary.
 	 */
 	virtual void applyGameSettings() {}
 
 	/**
-	 * Flip mute all sound option.
+	 * Flip mute all sound options.
 	 */
 	virtual void flipMute();
 
 	/**
-	 * Generates the savegame filename
+	 * Generate the savegame filename.
 	 */
 	virtual Common::String getSaveStateName(int slot) const {
 		return Common::String::format("%s.%03d", _targetName.c_str(), slot);
@@ -305,108 +387,133 @@ public:
 
 	/**
 	 * Load a game state.
-	 * @param slot	the slot from which a savestate should be loaded
-	 * @return returns kNoError on success, else an error code.
+	 *
+	 * @param slot	The slot from which a save state should be loaded.
+	 *
+	 * @return kNoError on success, otherwise an error code.
 	 */
 	virtual Common::Error loadGameState(int slot);
 
 	/**
 	 * Load a game state.
-	 * @param stream	the stream to load the savestate from
-	 * @return returns kNoError on success, else an error code.
+	 *
+	 * @param stream	The stream to load the save state from.
+	 *
+	 * @return kNoError on success, otherwise an error code.
 	 */
 	virtual Common::Error loadGameStream(Common::SeekableReadStream *stream);
 
 	/**
-	 * Sets the game slot for a savegame to be loaded after global
-	 * main menu execution. This is to avoid loading a savegame from
+	 * Set the game slot for a savegame to be loaded after the global
+	 * main menu execution.
+	 *
+	 * This is to avoid loading a savegame from
 	 * inside the menu loop which causes bugs like #2822778.
 	 *
-	 * @param slot	the slot from which a savestate should be loaded.
+	 * @param slot	The slot from which a save state should be loaded.
 	 */
 	void setGameToLoadSlot(int slot);
 
 	/**
-	 * Indicates whether a game state can be loaded.
+	 * Indicate whether a game state can be loaded.
 	 */
 	virtual bool canLoadGameStateCurrently();
 
 	/**
 	 * Save a game state.
-	 * @param slot	the slot into which the savestate should be stored
-	 * @param desc	a description for the savestate, entered by the user
-	 * @param isAutosave	Expected to be true if an autosave is being created
-	 * @return returns kNoError on success, else an error code.
+	 *
+	 * @param slot        The slot into which the save state should be stored.
+	 * @param desc        Description for the save state, entered by the user.
+	 * @param isAutosave  Expected to be true if an autosave is being created.
+	 *
+	 * @return kNoError on success, otherwise an error code.
 	 */
 	virtual Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false);
 
 	/**
 	 * Save a game state.
-	 * @param stream	The write stream to save the savegame data to
-	 * @param isAutosave	Expected to be true if an autosave is being created
-	 * @return returns kNoError on success, else an error code.
+	 *
+	 * @param stream      The write stream to save the savegame data to.
+	 * @param isAutosave  Expected to be true if an autosave is being created.
+	 *
+	 * @return kNoError on success, otherwise an error code.
 	 */
 	virtual Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false);
 
 	/**
-	 * Indicates whether a game state can be saved.
+	 * Indicate whether a game state can be saved.
 	 */
 	virtual bool canSaveGameStateCurrently();
 
 	/**
-	 * Shows the ScummVM save dialog, allowing users to save their game
+	 * Show the ScummVM save dialog, allowing users to save their game.
 	 */
 	bool saveGameDialog();
 
 	/**
-	 * Shows the ScummVM Restore dialog, allowing users to load a game
+	 * Show the ScummVM Restore dialog, allowing users to load a game.
 	 */
 	bool loadGameDialog();
 
 protected:
 	/**
-	 * Actual implementation of pauseEngine by subclasses. See there
-	 * for details.
+	 * Actual implementation of pauseEngine by subclasses.
+	 *
+	 * @see Engine::pauseEngine
 	 */
 	virtual void pauseEngineIntern(bool pause);
 
-	//@}
+	 /** @} */
 
 
 public:
 
 	/**
-	 * Request the engine to quit. Sends a EVENT_QUIT event to the Event
-	 * Manager.
+	 * Request the engine to quit.
+	 *
+	 * Sends an EVENT_QUIT event to the Event Manager.
 	 */
 	static void quitGame();
 
 	/**
-	 * Return whether the ENGINE should quit respectively should return to the
-	 * launcher.
+	 * Return whether the engine should quit.
+	 *
+	 * This can mean either quitting ScummVM altogether, or returning to the launcher.
 	 */
 	static bool shouldQuit();
 
+	/**
+	 * Return the MetaEngineDetection instance used by this engine.
+	 */
 	static MetaEngineDetection &getMetaEngineDetection();
+
+	/**
+	 * Return the MetaEngine instance used by this engine.
+	 */
 	static MetaEngine &getMetaEngine();
 
 	/**
-	 * Pause the engine. This should stop any audio playback
-	 * and other stuff. Called right before the system runs a global dialog
-	 * (like a global pause, main menu, options or 'confirm exit' dialog).
+	 * Pause the engine.
 	 *
-	 * Returns a PauseToken. Multiple pause tokens may exist. The engine will
+	 * This should stop any audio playback and other operations.
+	 * Called right before the system runs a global dialog
+	 * (like a global pause, main menu, options, or 'confirm exit' dialog).
+	 *
+	 * Returns a PauseToken. Multiple pause tokens can exist. The engine will
 	 * be resumed when all associated pause tokens reach the end of their lives.
 	 */
 	PauseToken pauseEngine();
 private:
-	/** Resume the engine. This should resume any audio playback and other stuff.
-	*
-	* Only PauseToken is allowed to call this member function. Use the PauseToken
-	* that you got from pauseEngine to resume the engine.
-	*/
+	/** Resume the engine.
+	 *
+	 * This should resume any audio playback and other operations.
+	 * Only PauseToken is allowed to call this member function. Use the PauseToken
+	 * that you got from pauseEngine to resume the engine.
+	 */
 	void resumeEngine();
-
+	/**
+	 * @see Engine::PauseToken
+	 */
 	friend class PauseToken;
 
 public:
@@ -417,22 +524,21 @@ public:
 	bool isPaused() const { return _pauseLevel != 0; }
 
 	/**
-	 * Run the Global Main Menu Dialog
+	 * Run the global main menu dialog.
 	 */
 	void openMainMenuDialog();
 
 	/**
 	 * Display a warning to the user that the game is not fully supported.
 	 *
-	 * @return true if the user chose to start anyway, false otherwise
+	 * @return True if the user chooses to start anyway, false otherwise.
 	 */
 	static bool warnUserAboutUnsupportedGame();
 
 	/**
 	 * Display an error message to the user that the game is not supported.
 	 *
-	 * @param extraMsg    This will be appended to the default message.
-	 *
+	 * @param extraMsg  An extra message that will be appended to the default message.				
 	 */
 	static void errorUnsupportedGame(Common::String extraMsg);
 
@@ -446,48 +552,67 @@ public:
 	/**
 	 * Set the game time counter to the specified time.
 	 *
-	 * This can be used to set the play time counter after loading a savegame
-	 * for example. Another use case is in case the engine wants to exclude
-	 * time from the counter the user spent in original engine dialogs.
+	 * This can be used to set the play time counter after loading a savegame,
+	 * for example. Another use case is when the engine wants to exclude from
+	 * the counter the time that the user spent in original engine dialogs.
 	 *
 	 * @param time Play time to set up in ms.
 	 */
 	void setTotalPlayTime(uint32 time = 0);
 
+	/**
+	 * Return the TimerManager instance used by this engine.
+	 */
 	inline Common::TimerManager *getTimerManager() { return _timer; }
+	/**
+	 * Return the EventManager instance used by this engine.
+	 */
 	inline Common::EventManager *getEventManager() { return _eventMan; }
+	/**
+	 * Return the SaveFileManager instance used by this engine.
+	 */
 	inline Common::SaveFileManager *getSaveFileManager() { return _saveFileMan; }
 
 public:
-	/** On some systems, check if the game appears to be run from CD. */
+	/** On some systems, check whether the game appears to be run from CD. */
 	void checkCD();
 
 
 	/**
-	 * Checks for whether it's time to do an autosave, and if so, does it.
+	 * Check whether it is time to autosave, and if so, do it.
 	 */
 	void handleAutoSave();
 
 	/**
-	 * Does an autosave immediately if autosaves are turned on
+	 * Autosave immediately if autosaves are enabled.
 	 */
 	void saveAutosaveIfEnabled();
 
 	/**
-	 * Indicates whether an autosave can currently be saved.
+	 * Indicate whether an autosave can currently be done.
 	 */
 	virtual bool canSaveAutosaveCurrently() {
 		return canSaveGameStateCurrently();
 	}
 
 	/**
-	 * Returns the slot that should be used for autosaves
-	 * @note	This should match the meta engine getAutosaveSlot() method
+	 * Return the slot that should be used for autosaves.
+	 *
+	 * @note	This should match the meta engine getAutosaveSlot() method.
 	 */
 	virtual int getAutosaveSlot() const {
 		return 0;
 	}
-
+	
+	/**
+	 * Check whether it is time to autosave based on the
+	 * provided @p lastSaveTime.
+	 *
+	 * This function is now deprecated as autosaves are handled directly by
+	 * the Engine class and derived classes do not need to worry about it other than
+	 * to implement canSaveAutosaveCurrently() and getAutosaveSlot() 
+	 * if the default implementations are not sufficient.
+	 */
 	bool shouldPerformAutoSave(int lastSaveTime) {
 		// TODO: Remove deprecated method once all engines are refactored
 		// to no longer do autosaves directly themselves
@@ -495,12 +620,17 @@ public:
 	}
 };
 
-// Chained games
+
+/** @name Chained games
+*
+*  @{
+*/
 
 /**
- * Singleton class which manages chained games. A chained game is one that
- * starts automatically, optionally loading a saved game, instead of returning
- * to the launcher.
+ * Singleton class which manages chained games.
+ *
+ * A chained game is one that starts automatically, optionally loading
+ * a saved game, instead of returning to the launcher.
  */
 class ChainedGamesManager : public Common::Singleton<ChainedGamesManager> {
 private:
@@ -513,15 +643,18 @@ private:
 
 public:
 	ChainedGamesManager();
+	/** Clear the chained games manager of any games. */
 	void clear();
+	/** Load a game into a slot in the chained games manager. */
 	void push(const Common::String target, const int slot = -1);
+	/** Pop the last game loaded into the chained games manager. */
 	bool pop(Common::String &target, int &slot);
 };
 
 /** Convenience shortcut for accessing the chained games manager. */
 #define ChainedGamesMan ChainedGamesManager::instance()
-
-// FIXME: HACK for MidiEmu & error()
+/** @} */
+/** Current workaround for MidiEmu & error(). */ //FIXME
 extern Engine *g_engine;
-
+/** @} */
 #endif
