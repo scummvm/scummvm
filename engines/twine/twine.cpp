@@ -437,7 +437,6 @@ void TwinEEngine::processInventoryAction() {
 	case kiHolomap:
 		_holomap->processHolomap();
 		_screens->lockPalette = true;
-		warning("Use inventory [kiHolomap] not implemented!");
 		break;
 	case kiMagicBall:
 		if (_gameState->usingSabre) {
