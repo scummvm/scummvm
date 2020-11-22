@@ -21,6 +21,7 @@
  */
 
 #include "twine/text.h"
+#include "common/algorithm.h"
 #include "common/endian.h"
 #include "common/memstream.h"
 #include "common/scummsys.h"
@@ -290,14 +291,14 @@ void Text::initDialogueBox() { // InitDialWindow
 	}
 
 	_engine->copyBlockPhys(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom);
-	_blendInCharactersPos = 0;
+	_fadeInCharactersPos = 0;
 	_engine->_interface->blitBox(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom, _engine->frontVideoBuffer, _dialTextBoxLeft, _dialTextBoxTop, _engine->workVideoBuffer);
 }
 
 void Text::initInventoryDialogueBox() { // SecondInitDialWindow
 	_engine->_interface->blitBox(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom, _engine->workVideoBuffer, _dialTextBoxLeft, _dialTextBoxTop, _engine->frontVideoBuffer);
 	_engine->copyBlockPhys(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom);
-	_blendInCharactersPos = 0;
+	_fadeInCharactersPos = 0;
 }
 
 // TODO: refactor this code
@@ -307,14 +308,13 @@ void Text::initText(int32 index) {
 		return;
 	}
 
-	_progressiveTextBuffer = buf2;
+	_progressiveTextBufferPtr = _progressiveTextBuffer;
 
 	_hasValidTextHandle = true;
 
 	_dialTextBoxCurrentLine = 0;
-	buf1[0] = '\0';
-	buf2[0] = '\0';
-	_blendInCharactersPos = 0;
+	_progressiveTextBuffer[0] = '\0';
+	_fadeInCharactersPos = 0;
 	_dialTextYPos = _dialTextBoxLeft + 8;
 	_progressiveTextEnd = false;
 	_progressiveTextNextPage = false;
@@ -326,51 +326,48 @@ void Text::initText(int32 index) {
 }
 
 void Text::initProgressiveTextBuffer() {
-	buf2[0] = '\0';
-
-	int32 i = 0;
-	while (i < _dialTextBufferSize) {
-		strncat(buf2, " ", sizeof(buf2));
-		i++;
-	}
-
-	_progressiveTextBuffer = buf2;
+	Common::fill(&_progressiveTextBuffer[0], &_progressiveTextBuffer[256], ' ');
+	_progressiveTextBuffer[255] = '\0';
+	_progressiveTextBufferPtr = _progressiveTextBuffer;
 	_addLineBreakX = 16;
 	_dialTextBoxCurrentLine = 0;
 }
 
 void Text::fillFadeInBuffer(int16 x, int16 y, int16 chr) {
-	if (_blendInCharactersPos < 32) {
-		_blendInCharacters[_blendInCharactersPos].chr = chr;
-		_blendInCharacters[_blendInCharactersPos].x = x;
-		_blendInCharacters[_blendInCharactersPos].y = y;
-		_blendInCharactersPos++;
+	if (_fadeInCharactersPos < TEXT_MAX_FADE_IN_CHR) {
+		_fadeInCharacters[_fadeInCharactersPos].chr = chr;
+		_fadeInCharacters[_fadeInCharactersPos].x = x;
+		_fadeInCharacters[_fadeInCharactersPos].y = y;
+		_fadeInCharactersPos++;
 		return;
 	}
 	int32 counter2 = 0;
-	while (counter2 < 31) {
+	while (counter2 < TEXT_MAX_FADE_IN_CHR - 1) {
 		const int32 var1 = (counter2 + 1);
 		const int32 var2 = counter2;
-		_blendInCharacters[var2] = _blendInCharacters[var1];
+		_fadeInCharacters[var2] = _fadeInCharacters[var1];
 		counter2++;
 	}
-	_blendInCharacters[31].chr = chr;
-	_blendInCharacters[31].x = x;
-	_blendInCharacters[31].y = y;
+	_fadeInCharacters[TEXT_MAX_FADE_IN_CHR - 1].chr = chr;
+	_fadeInCharacters[TEXT_MAX_FADE_IN_CHR - 1].x = x;
+	_fadeInCharacters[TEXT_MAX_FADE_IN_CHR - 1].y = y;
 }
 
-Text::WordSize Text::getWordSize(const char *arg1, char *arg2) {
+Text::WordSize Text::getWordSize(const char *completeText, char *wordBuf, int32 wordBufSize) {
 	int32 temp = 0;
-	const char *arg2Save = arg2;
+	const char *arg2Save = wordBuf;
 
-	while (*arg1 != '\0' && *arg1 != '\1' && *arg1 != ' ') {
+	while (*completeText != '\0' && *completeText != '\1' && *completeText != ' ') {
 		temp++;
-		*arg2++ = *arg1++;
+		*wordBuf++ = *completeText++;
+		if (temp >= wordBufSize - 1) {
+			break;
+		}
 	}
 
 	WordSize size;
 	size.inChar = temp;
-	*arg2 = '\0';
+	*wordBuf = '\0';
 	size.inPixel = getTextSize(arg2Save);
 	return size;
 }
@@ -382,7 +379,7 @@ void Text::processTextLine() {
 
 	_addLineBreakX = 0;
 	printText8PrepareBufferVar2 = 0;
-	buf2[0] = 0;
+	_progressiveTextBuffer[0] = 0;
 
 	for (;;) {
 		if (*buffer == ' ') {
@@ -394,29 +391,30 @@ void Text::processTextLine() {
 		}
 
 		printText8Var8 = buffer;
-		WordSize wordSize = getWordSize(buffer, buf1);
+		char wordBuf[256] = "";
+		WordSize wordSize = getWordSize(buffer, wordBuf, sizeof(wordBuf));
 		if (_addLineBreakX + _dialCharSpace + wordSize.inPixel < _dialTextBoxParam2) {
 			char *temp = buffer + 1;
 			if (*buffer == 1) {
 				var4 = false;
 				buffer = temp;
 			} else {
-				if (*buf1 == '@') {
+				if (*wordBuf == '@') {
 					var4 = false;
 					buffer = temp;
 					if (_addLineBreakX == 0) {
 						_addLineBreakX = 7;
-						*((int16 *)buf2) = spaceChar;
+						*((int16 *)_progressiveTextBuffer) = ' ';
 					}
-					if (buf1[1] == 'P') {
+					if (wordBuf[1] == 'P') {
 						_dialTextBoxCurrentLine = _dialTextBoxLines;
 						buffer++;
 					}
 				} else {
 					buffer += wordSize.inChar;
 					printText8Var8 = buffer;
-					strncat(buf2, buf1, sizeof(buf2));
-					strncat(buf2, " ", sizeof(buf2)); // not 100% accurate
+					strncat(_progressiveTextBuffer, wordBuf, sizeof(_progressiveTextBuffer));
+					strncat(_progressiveTextBuffer, " ", sizeof(_progressiveTextBuffer)); // not 100% accurate
 					printText8PrepareBufferVar2++;
 
 					_addLineBreakX += wordSize.inPixel + _dialCharSpace;
@@ -444,7 +442,7 @@ void Text::processTextLine() {
 
 	printText8Var8 = buffer;
 
-	_progressiveTextBuffer = buf2;
+	_progressiveTextBufferPtr = _progressiveTextBuffer;
 }
 
 void Text::renderContinueReadingTriangle() {
@@ -475,7 +473,7 @@ void Text::renderContinueReadingTriangle() {
 void Text::fadeInCharacters(int32 counter, int32 fontColor) {
 	_engine->_system->delayMillis(15);
 	while (--counter >= 0) {
-		const BlendInCharacter *ptr = &_blendInCharacters[counter];
+		const BlendInCharacter *ptr = &_fadeInCharacters[counter];
 		setFontColor(fontColor);
 		drawCharacterShadow(ptr->x, ptr->y, ptr->chr, fontColor);
 		fontColor -= _dialTextStepSize;
@@ -505,7 +503,7 @@ int Text::updateProgressiveText() {
 		return 0;
 	}
 
-	if (*_progressiveTextBuffer == '\0') {
+	if (*_progressiveTextBufferPtr == '\0') {
 		if (_progressiveTextEnd) {
 			if (renderTextTriangle) {
 				renderContinueReadingTriangle();
@@ -516,7 +514,7 @@ int Text::updateProgressiveText() {
 		if (_progressiveTextNextPage) {
 			_engine->_interface->blitBox(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom, _engine->workVideoBuffer, _dialTextBoxLeft, _dialTextBoxTop, _engine->frontVideoBuffer);
 			_engine->copyBlockPhys(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom);
-			_blendInCharactersPos = 0;
+			_fadeInCharactersPos = 0;
 			_progressiveTextNextPage = false;
 			_dialTextYPos = _dialTextBoxLeft + 8;
 			_dialTextXPos = _dialTextBoxTop + 8;
@@ -530,15 +528,15 @@ int Text::updateProgressiveText() {
 	}
 
 	// RECHECK this later
-	if (*_progressiveTextBuffer == '\0') {
+	if (*_progressiveTextBufferPtr == '\0') {
 		return 1;
 	}
 
-	fillFadeInBuffer(_dialTextYPos, _dialTextXPos, *_progressiveTextBuffer);
-	fadeInCharacters(_blendInCharactersPos, _dialTextStartColor);
-	int8 charWidth = getCharWidth(*_progressiveTextBuffer);
+	fillFadeInBuffer(_dialTextYPos, _dialTextXPos, *_progressiveTextBufferPtr);
+	fadeInCharacters(_fadeInCharactersPos, _dialTextStartColor);
+	int8 charWidth = getCharWidth(*_progressiveTextBufferPtr);
 
-	if (*_progressiveTextBuffer != ' ') {
+	if (*_progressiveTextBufferPtr != ' ') {
 		_dialTextYPos += charWidth + 2;
 	} else {
 		if (printText10Var1 != 0) {
@@ -549,9 +547,9 @@ int Text::updateProgressiveText() {
 	}
 
 	// next character
-	_progressiveTextBuffer++;
+	_progressiveTextBufferPtr++;
 
-	if (*_progressiveTextBuffer != '\0') {
+	if (*_progressiveTextBufferPtr != '\0') {
 		return 1;
 	}
 

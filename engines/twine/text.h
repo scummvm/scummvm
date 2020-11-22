@@ -98,6 +98,8 @@ enum _TextId {
 };
 }
 
+#define TEXT_MAX_FADE_IN_CHR 32
+
 class TwinEEngine;
 class Text {
 private:
@@ -123,7 +125,7 @@ private:
 		int32 inChar = 0;
 		int32 inPixel = 0;
 	};
-	WordSize getWordSize(const char *arg1, char *arg2);
+	WordSize getWordSize(const char *completeText, char *wordBuf, int32 wordBufSize);
 	void processTextLine();
 	// draw next page arrow polygon
 	void renderContinueReadingTriangle();
@@ -159,16 +161,13 @@ private:
 	/** Number of dialogues text entries */
 	int16 numDialTextEntries = 0;
 
-	const int16 spaceChar = 0x20;
-
 	// TODO: refactor all this variables and related functions
-	char buf1[256] {'\0'};
-	char buf2[256] {'\0'};
+	char _progressiveTextBuffer[256] {'\0'};
 	char *printText8Var8 = nullptr;
 	int32 printText10Var1 = 0;
 
 	int32 _dialTextXPos = 0;
-	char *_progressiveTextBuffer = nullptr;
+	char *_progressiveTextBufferPtr = nullptr;
 	int32 _dialTextBoxCurrentLine = 0;
 	int32 _dialTextYPos = 0;
 	bool _progressiveTextEnd = false;
@@ -179,8 +178,8 @@ private:
 		int16 x = 0;
 		int16 y = 0;
 	};
-	BlendInCharacter _blendInCharacters[32];
-	int32 _blendInCharactersPos = 0;
+	BlendInCharacter _fadeInCharacters[TEXT_MAX_FADE_IN_CHR];
+	int32 _fadeInCharactersPos = 0;
 	int32 printText8PrepareBufferVar2 = 0;
 	// ---
 
