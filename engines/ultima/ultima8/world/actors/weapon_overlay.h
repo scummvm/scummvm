@@ -57,6 +57,8 @@ struct AnimWeaponOverlay {
 		if (type >= _overlay.size())
 			return nullptr;
 
+		assert(direction != dir_invalid);
+
 		uint32 diroff;
 		if (_overlay[type]._dirCount == 8)
 			diroff = static_cast<uint32>(direction) / 2;
