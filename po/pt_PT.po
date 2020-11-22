@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-22 16:45+0000\n"
+"POT-Creation-Date: 2020-11-22 17:20+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -2199,6 +2199,12 @@ msgstr "Não foi possível mudar para ecrã inteiro."
 msgid "Could not apply filtering setting."
 msgstr "Não foi possível aplicar o filtro."
 
+#: engines/engine.cpp:420
+#, fuzzy
+#| msgid "No error"
+msgid "Error"
+msgstr "Sem erro"
+
 #: engines/engine.cpp:507
 msgid ""
 "You appear to be playing this game directly\n"
@@ -2301,21 +2307,21 @@ msgstr "IDs de jogos correspondidos para o motor %s:"
 msgid "Default game keymap"
 msgstr "Mapeamento padrão"
 
-#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:175
+#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:162
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: engines/hdb/metaengine.cpp:187 engines/wintermute/keymapper_tables.h:43
 #: engines/zvision/metaengine.cpp:115
 msgid "Left Click"
 msgstr "Clique esquerdo"
 
-#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:179
+#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:166
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:1716
 msgid "Middle Click"
 msgstr "Clique do meio"
 
-#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:183
+#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:170
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/wintermute/keymapper_tables.h:49 engines/zvision/metaengine.cpp:121
 msgid "Right Click"
@@ -3511,7 +3517,7 @@ msgstr "Modo ecrã táctil ativado."
 msgid "Touchpad mode disabled."
 msgstr "Modo ecrã táctil desativado."
 
-#: backends/platform/maemo/maemo.cpp:171
+#: backends/platform/maemo/maemo.cpp:158
 msgid "Click Mode"
 msgstr "Modo clique"
 

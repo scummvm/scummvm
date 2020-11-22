@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-22 16:45+0000\n"
+"POT-Creation-Date: 2020-11-22 17:20+0000\n"
 "PO-Revision-Date: 2020-11-14 10:56+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -2168,6 +2168,12 @@ msgstr "전체 화면 설정을 적용할 수 없습니다."
 msgid "Could not apply filtering setting."
 msgstr "필터링 설정을 적용할 수 없습니다."
 
+#: engines/engine.cpp:420
+#, fuzzy
+#| msgid "No error"
+msgid "Error"
+msgstr "에러 없음"
+
 #: engines/engine.cpp:507
 msgid ""
 "You appear to be playing this game directly\n"
@@ -2270,21 +2276,21 @@ msgstr "%s 엔진에서 매칭된 게임 ID:"
 msgid "Default game keymap"
 msgstr "기본 게임 키맵"
 
-#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:175
+#: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:162
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: engines/hdb/metaengine.cpp:187 engines/wintermute/keymapper_tables.h:43
 #: engines/zvision/metaengine.cpp:115
 msgid "Left Click"
 msgstr "왼쪽 클릭"
 
-#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:179
+#: engines/metaengine.cpp:65 backends/platform/maemo/maemo.cpp:166
 #: engines/wintermute/keymapper_tables.h:249
 #: engines/wintermute/keymapper_tables.h:293
 #: engines/wintermute/keymapper_tables.h:1716
 msgid "Middle Click"
 msgstr "중간 클릭"
 
-#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:183
+#: engines/metaengine.cpp:70 backends/platform/maemo/maemo.cpp:170
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: engines/wintermute/keymapper_tables.h:49 engines/zvision/metaengine.cpp:121
 msgid "Right Click"
@@ -3486,7 +3492,7 @@ msgstr "터치패드 모드가 활성화되었습니다."
 msgid "Touchpad mode disabled."
 msgstr "터치패드 모드가 비활성화되었습니다."
 
-#: backends/platform/maemo/maemo.cpp:171
+#: backends/platform/maemo/maemo.cpp:158
 msgid "Click Mode"
 msgstr "클릭 모드"
 
