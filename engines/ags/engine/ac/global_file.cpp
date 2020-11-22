@@ -32,7 +32,7 @@
 #include "util/path.h"
 #include "util/stream.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 int32_t FileOpenCMode(const char *fnmm, const char *cmode) {
 	Common::FileOpenMode open_mode;

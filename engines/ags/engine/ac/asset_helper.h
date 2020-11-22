@@ -36,12 +36,12 @@
 namespace AGS3 {
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Stream;
 }
 }
-using AGS::Common::Stream;
-using AGS::Common::String;
+using AGS::Shared::Stream;
+using AGS::Shared::String;
 
 // Looks for valid asset library everywhere and returns path, or empty string if failed
 String  find_assetlib(const String &filename);

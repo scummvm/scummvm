@@ -52,7 +52,7 @@ namespace Engine {
 namespace ALSW {
 
 class AllegroGfxFilter;
-using AGS::Common::Bitmap;
+using AGS::Shared::Bitmap;
 
 class ALSoftwareBitmap : public IDriverDependantBitmap {
 public:

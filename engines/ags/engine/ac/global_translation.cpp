@@ -33,7 +33,7 @@
 #include "util/memory.h"
 #include "core/types.h"
 
-using namespace AGS::Common::Memory;
+using namespace AGS::Shared::Memory;
 
 extern GameState play;
 extern AGSPlatformDriver *platform;

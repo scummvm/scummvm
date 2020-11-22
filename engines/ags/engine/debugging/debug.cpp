@@ -48,7 +48,7 @@
 #include <winalleg.h>
 #endif
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern char check_dynamic_sprites_at_exit;

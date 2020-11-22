@@ -36,7 +36,7 @@
 #include "util/stream.h"
 #include "core/assetmanager.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameSetup usetup;
 extern GameSetupStruct game;

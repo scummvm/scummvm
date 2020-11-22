@@ -33,7 +33,7 @@
 #include "ac/common.h"
 #include "util/stream.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 #define AE_WAITFLAG   0x80000000
 #define MAXANIMSTAGES 10
@@ -70,7 +70,7 @@ struct PolyPoints {
 		numpoints = 0;
 	}
 
-	void Read(AGS::Common::Stream *in);
+	void Read(AGS::Shared::Stream *in);
 };
 
 

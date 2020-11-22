@@ -33,7 +33,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class TextWriter {
 public:
@@ -52,7 +52,7 @@ public:
 	virtual void    WriteLineBreak() = 0;
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

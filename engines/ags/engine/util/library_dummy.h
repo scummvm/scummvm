@@ -35,11 +35,11 @@ public:
 	~DummyLibrary() override {
 	};
 
-	AGS::Common::String GetFilenameForLib(AGS::Common::String libraryName) override {
+	AGS::Shared::String GetFilenameForLib(AGS::Shared::String libraryName) override {
 		return libraryName;
 	}
 
-	bool Load(AGS::Common::String libraryName) override {
+	bool Load(AGS::Shared::String libraryName) override {
 		return false;
 	}
 
@@ -47,7 +47,7 @@ public:
 		return true;
 	}
 
-	void *GetFunctionAddress(AGS::Common::String functionName) override {
+	void *GetFunctionAddress(AGS::Shared::String functionName) override {
 		return NULL;
 	}
 };

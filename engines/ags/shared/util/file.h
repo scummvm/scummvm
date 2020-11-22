@@ -34,7 +34,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 // Forward declarations
 class Stream;
@@ -84,7 +84,7 @@ inline Stream *OpenFileWrite(const String &filename) {
 }
 } // namespace File
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

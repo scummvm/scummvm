@@ -53,14 +53,14 @@
 namespace AGS3 {
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Stream;
 class Bitmap;
 } // namespace Shared
 } // namespace AGS
 
 using namespace AGS; // FIXME later
-typedef AGS::Common::HError HAGSError;
+typedef AGS::Shared::HError HAGSError;
 
 struct SpriteInfo;
 
@@ -238,7 +238,7 @@ private:
 	// Loads sprite index file
 	bool        LoadSpriteIndexFile(const char *filename, int expectedFileID, soff_t spr_initial_offs, sprkey_t topmost);
 	// Rebuilds sprite index from the main sprite file
-	HAGSError   RebuildSpriteIndex(AGS::Common::Stream *in, sprkey_t topmost, SpriteFileVersion vers);
+	HAGSError   RebuildSpriteIndex(AGS::Shared::Stream *in, sprkey_t topmost, SpriteFileVersion vers);
 	// Writes compressed sprite to the stream
 	void        CompressSprite(Common::Bitmap *sprite, Common::Stream *out);
 	// Uncompresses sprite from stream into the given bitmap

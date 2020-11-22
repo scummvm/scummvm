@@ -24,7 +24,7 @@
 #include "ac/characterinfo.h"
 #include "util/stream.h"
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 
 void CharacterInfo::ReadFromFile(Stream *in) {

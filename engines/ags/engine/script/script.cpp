@@ -608,7 +608,7 @@ void quit_with_script_error(const char *functionName) {
 }
 
 int get_nivalue(InteractionCommandList *nic, int idx, int parm) {
-	if (nic->Cmds[idx].Data[parm].Type == AGS::Common::kInterValVariable) {
+	if (nic->Cmds[idx].Data[parm].Type == AGS::Shared::kInterValVariable) {
 		// return the value of the variable
 		return get_interaction_variable(nic->Cmds[idx].Data[parm].Value)->Value;
 	}

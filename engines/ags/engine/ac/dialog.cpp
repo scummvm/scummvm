@@ -60,7 +60,7 @@
 #include "ac/mouse.h"
 #include "media/audio/audio_system.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameSetupStruct game;
 extern GameState play;

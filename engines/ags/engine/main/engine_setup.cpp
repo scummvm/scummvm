@@ -44,7 +44,7 @@
 #include "media/video/video.h"
 #include "platform/base/agsplatformdriver.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern GameSetupStruct game;

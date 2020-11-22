@@ -36,7 +36,7 @@
 #include "plugin/agsplugin.h"
 #include "util/string_utils.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 #define IOS_CONFIG_FILENAME "ios.cfg"
 

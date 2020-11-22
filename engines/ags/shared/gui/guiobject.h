@@ -36,7 +36,7 @@ namespace AGS3 {
 #define GUIDIS_GUIOFF  0x80
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 enum LegacyGUIAlignment {
 	kLegacyGUIAlign_Left = 0,
@@ -127,13 +127,13 @@ protected:
 // Converts legacy alignment type used in GUI Label/ListBox data (only left/right/center)
 HorAlignment ConvertLegacyGUIAlignment(LegacyGUIAlignment align);
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 
 // Tells if all controls are disabled
 extern int all_buttons_disabled;
 // Tells if the given control is considered enabled, taking global flag into account
-inline bool IsGUIEnabled(AGS::Common::GUIObject *g) {
+inline bool IsGUIEnabled(AGS::Shared::GUIObject *g) {
 	return !all_buttons_disabled && g->IsEnabled();
 }
 

@@ -61,7 +61,7 @@ namespace AGS3 {
 #define MAX_COMMANDS_PER_LIST       40
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 enum InterValType {
 	kInterValLiteralInt = 1,
@@ -204,11 +204,11 @@ struct InteractionScripts {
 
 typedef std::shared_ptr<InteractionScripts> PInteractionScripts;
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 
 // Legacy global variables
-extern AGS::Common::InteractionVariable globalvars[MAX_GLOBAL_VARIABLES];
+extern AGS::Shared::InteractionVariable globalvars[MAX_GLOBAL_VARIABLES];
 extern int numGlobalVars;
 
 } // namespace AGS3

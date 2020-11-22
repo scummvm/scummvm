@@ -29,7 +29,7 @@ namespace AGS3 {
 
 struct SpriteListEntry {
 	AGS::Engine::IDriverDependantBitmap *bmp;
-	AGS::Common::Bitmap *pic;
+	AGS::Shared::Bitmap *pic;
 	int baseline;
 	int x, y;
 	int transparent;

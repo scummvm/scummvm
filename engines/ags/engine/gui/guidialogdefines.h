@@ -88,7 +88,7 @@ namespace AGS3 {
 #define CTB_KEYPRESS 91
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Bitmap;
 }
 }

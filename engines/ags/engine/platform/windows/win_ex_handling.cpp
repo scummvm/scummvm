@@ -37,7 +37,7 @@
 #define USE_CUSTOM_EXCEPTION_HANDLER
 #endif
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern int our_eip;
 extern int eip_guinum;
@@ -66,7 +66,7 @@ static void DisplayException() {
 }
 
 int initialize_engine_with_exception_handling(
-    int (initialize_engine)(const AGS::Common::ConfigTree &startup_opts),
+    int (initialize_engine)(const AGS::Shared::ConfigTree &startup_opts),
     const ConfigTree &startup_opts) {
 	__try {
 		Debug::Printf(kDbgMsg_Info, "Installing exception handler");

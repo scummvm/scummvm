@@ -44,7 +44,7 @@
 
 namespace AGS3 {
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 class ScriptSetBase : public AGSCCDynamicObject {
 public:

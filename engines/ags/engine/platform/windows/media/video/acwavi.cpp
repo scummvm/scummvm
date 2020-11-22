@@ -47,7 +47,7 @@
 #include "main/game_run.h"
 #include "platform/base/agsplatformdriver.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 //link with the following libraries under project/settings/link...

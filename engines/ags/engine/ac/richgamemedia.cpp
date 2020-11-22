@@ -23,7 +23,7 @@
 #include "ac/richgamemedia.h"
 #include "util/stream.h"
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 void RICH_GAME_MEDIA_HEADER::ReadFromFile(Stream *in) {
 	dwMagicNumber = in->ReadInt32();

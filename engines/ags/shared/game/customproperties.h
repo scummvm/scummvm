@@ -52,7 +52,7 @@ namespace AGS3 {
 #define LEGACY_MAX_CUSTOM_PROP_VALUE_LENGTH         500
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 enum PropertyVersion {
 	kPropertyVersion_Initial = 1,
@@ -102,7 +102,7 @@ void          WriteValues(const StringIMap &map, Stream *out);
 
 } // namespace Properties
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

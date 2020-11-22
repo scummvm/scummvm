@@ -26,13 +26,13 @@
 #include "util/alignedstream.h"
 #include "util/math.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 InteractionVariable globalvars[MAX_GLOBAL_VARIABLES] = {InteractionVariable("Global 1", 0, 0)};
 int numGlobalVars = 1;
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 InteractionValue::InteractionValue() {
 	Type = kInterValLiteralInt;
@@ -372,5 +372,5 @@ InteractionScripts *InteractionScripts::CreateFromStream(Stream *in) {
 	return scripts;
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

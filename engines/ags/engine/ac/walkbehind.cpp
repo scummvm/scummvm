@@ -27,7 +27,7 @@
 #include "gfx/graphicsdriver.h"
 #include "gfx/bitmap.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern RoomStruct thisroom;

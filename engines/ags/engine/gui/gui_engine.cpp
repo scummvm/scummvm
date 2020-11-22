@@ -44,7 +44,7 @@
 #include "gfx/bitmap.h"
 #include "gfx/blender.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 // For engine these are defined in ac.cpp
 extern int eip_guiobj;
@@ -109,7 +109,7 @@ int get_eip_guiobj() {
 bool outlineGuiObjects = false;
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 bool GUIObject::IsClickable() const {
 	return (Flags & kGUICtrl_Clickable) != 0;
@@ -156,5 +156,5 @@ void GUIButton::PrepareTextToDraw() {
 		_textToDraw = _text;
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

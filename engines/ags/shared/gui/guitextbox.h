@@ -29,7 +29,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class GUITextBox : public GUIObject {
 public:
@@ -62,10 +62,10 @@ private:
 	void DrawTextBoxContents(Bitmap *ds, color_t text_color);
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 
-extern std::vector<AGS::Common::GUITextBox> guitext;
+extern std::vector<AGS::Shared::GUITextBox> guitext;
 extern int numguitext;
 
 } // namespace AGS3

@@ -45,7 +45,7 @@
 #define USE_SIMPLE_GFX_INIT
 #endif
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern int proper_exit;

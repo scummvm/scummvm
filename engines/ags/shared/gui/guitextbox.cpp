@@ -28,11 +28,11 @@
 
 #define GUITEXTBOX_LEGACY_TEXTLEN 200
 
-std::vector<AGS::Common::GUITextBox> guitext;
+std::vector<AGS::Shared::GUITextBox> guitext;
 int numguitext = 0;
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 GUITextBox::GUITextBox() {
 	Font = 0;
@@ -135,5 +135,5 @@ void GUITextBox::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(TextBoxFlags);
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

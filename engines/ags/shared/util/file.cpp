@@ -30,7 +30,7 @@
 #include "util/bufferedstream.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 soff_t File::GetFileSize(const String &filename) {
 	return ags_file_size(filename.GetCStr());
@@ -151,5 +151,5 @@ Stream *File::OpenFile(const String &filename, FileOpenMode open_mode, FileWorkM
 	return fs;
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

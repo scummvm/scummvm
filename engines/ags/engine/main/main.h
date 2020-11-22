@@ -29,22 +29,22 @@
 namespace AGS3 {
 
 // Current engine version
-extern AGS::Common::Version EngineVersion;
+extern AGS::Shared::Version EngineVersion;
 // Lowest savedgame version, accepted by this engine
-extern AGS::Common::Version SavedgameLowestBackwardCompatVersion;
+extern AGS::Shared::Version SavedgameLowestBackwardCompatVersion;
 // Lowest engine version, which would accept current savedgames
-extern AGS::Common::Version SavedgameLowestForwardCompatVersion;
+extern AGS::Shared::Version SavedgameLowestForwardCompatVersion;
 
 //=============================================================================
 
 extern char **global_argv;
 
 // Location of the engine executable
-extern AGS::Common::String appDirectory;
+extern AGS::Shared::String appDirectory;
 // Game path from the startup options (before reading config)
-extern AGS::Common::String cmdGameDataPath;
+extern AGS::Shared::String cmdGameDataPath;
 
-AGS::Common::String GetPathFromCmdArg(int arg_index);
+AGS::Shared::String GetPathFromCmdArg(int arg_index);
 
 // Startup flags, set from parameters to engine
 extern int force_window;

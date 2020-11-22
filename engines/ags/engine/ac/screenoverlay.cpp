@@ -23,7 +23,7 @@
 #include "screenoverlay.h"
 #include "util/stream.h"
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 void ScreenOverlay::ReadFromFile(Stream *in, int32_t cmp_ver) {
 	// Skipping bmp and pic pointer values

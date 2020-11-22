@@ -45,7 +45,7 @@
 #define LEGACY_TINT_IS_ENABLED 0x80000000
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 RoomDataSource::RoomDataSource()
 	: DataVersion(kRoomVersion_Undefined) {
@@ -881,5 +881,5 @@ HRoomFileError WriteRoomData(const RoomStruct *room, Stream *out, RoomFileVersio
 	return HRoomFileError::None();
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

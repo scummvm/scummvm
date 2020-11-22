@@ -42,7 +42,7 @@
 #include "util/file.h"
 #include "util/stream.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 // [IKM] We have to forward-declare these because their implementations are in the Engine
 extern void initialize_sprite(int);
@@ -732,7 +732,7 @@ HError SpriteCache::InitFile(const char *filename, const char *sprindex_filename
 	return RebuildSpriteIndex(_stream.get(), topmost, vers);
 }
 
-HError SpriteCache::RebuildSpriteIndex(AGS::Common::Stream *in, sprkey_t topmost, SpriteFileVersion vers) {
+HError SpriteCache::RebuildSpriteIndex(AGS::Shared::Stream *in, sprkey_t topmost, SpriteFileVersion vers) {
 	for (sprkey_t i = 0; i <= topmost; ++i) {
 		_spriteData[i].Offset = in->GetPosition();
 		_spriteData[i].Flags = 0;

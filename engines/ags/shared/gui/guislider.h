@@ -28,7 +28,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class GUISlider : public GUIObject {
 public:
@@ -68,10 +68,10 @@ private:
 	Rect    _cachedHandle;
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 
-extern std::vector<AGS::Common::GUISlider> guislider;
+extern std::vector<AGS::Shared::GUISlider> guislider;
 extern int numguislider;
 
 } // namespace AGS3

@@ -29,7 +29,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 // Needs tuning depending on the platform.
 const auto BufferStreamSize = 8 * 1024;
@@ -66,7 +66,7 @@ private:
 	void FillBufferFromPosition(soff_t position);
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

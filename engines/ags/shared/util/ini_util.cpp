@@ -28,7 +28,7 @@
 #include "util/textstreamwriter.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 typedef std::unique_ptr<Stream>       UStream;
 typedef IniFile::SectionIterator      SectionIterator;
@@ -179,5 +179,5 @@ bool IniUtil::Merge(const String &file, const ConfigTree &tree) {
 	return true;
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

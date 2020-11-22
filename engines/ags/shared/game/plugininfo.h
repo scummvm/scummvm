@@ -38,7 +38,7 @@ namespace AGS3 {
 #define PLUGIN_SAVEBUFFERSIZE 10247680
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 struct PluginInfo {
 	// (File)name of plugin
@@ -51,7 +51,7 @@ struct PluginInfo {
 	}
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

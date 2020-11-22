@@ -39,7 +39,7 @@ namespace AGS3 {
 
 class IAGSEngine;
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Stream;
 } // namespace Shared
 } // namespace AGS
@@ -58,7 +58,7 @@ bool pl_is_plugin_loaded(const char *pl_name);
 //returns whether _any_ plugins want a particular event
 bool pl_any_want_hook(int event);
 
-void pl_set_file_handle(long data, AGS::Common::Stream *stream);
+void pl_set_file_handle(long data, AGS::Shared::Stream *stream);
 void pl_clear_file_handle();
 
 } // namespace AGS3

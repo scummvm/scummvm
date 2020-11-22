@@ -33,7 +33,7 @@ namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
-using AGS::Common::Bitmap;
+using AGS::Shared::Bitmap;
 
 typedef std::shared_ptr<Bitmap> PBitmap;
 

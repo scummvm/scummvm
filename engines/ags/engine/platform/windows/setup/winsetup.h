@@ -36,7 +36,7 @@ namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
-using namespace Common;
+using namespace Shared;
 
 void SetWinIcon();
 SetupReturnValue WinSetup(const ConfigTree &cfg_in, ConfigTree &cfg_out,

@@ -42,7 +42,7 @@
 #include "gfx/graphicsdriver.h"
 #include "gfx/gfxfilter.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern GameSetupStruct game;

@@ -69,7 +69,7 @@
 #include "util/string_utils.h"
 #include "media/audio/audio_system.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 #define ALLEGRO_KEYBOARD_HANDLER
 

@@ -45,7 +45,7 @@
 #include "script/script_common.h"
 #include "util/stream.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 ICCStringClass *stringClassImpl = nullptr;
 

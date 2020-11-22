@@ -26,7 +26,7 @@
 namespace AGS3 {
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Bitmap;
 } // namespace Shared
 } // namespace AGS
@@ -42,7 +42,7 @@ void current_fade_out_effect();
 AGS::Engine::IDriverDependantBitmap *prepare_screen_for_transition_in();
 
 // Screenshot made in the last room, used during some of the transition effects
-extern AGS::Common::Bitmap *saved_viewport_bitmap;
+extern AGS::Shared::Bitmap *saved_viewport_bitmap;
 
 } // namespace AGS3
 

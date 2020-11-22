@@ -38,7 +38,7 @@
 #include "ac/timer.h"
 #include "media/audio/audio_system.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 #if defined (AGS_HAS_CD_AUDIO)

@@ -27,7 +27,7 @@
 #include "gui/guimain.h"
 #include "gui/guislider.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameSetupStruct game;
 

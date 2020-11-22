@@ -41,7 +41,7 @@
 #include "game/roomstruct.h"
 #include "main/game_run.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern TopBarSettings topBar;
 extern GameState play;

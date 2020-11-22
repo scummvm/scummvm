@@ -36,7 +36,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class DataStream : public Stream {
 public:
@@ -123,7 +123,7 @@ protected:
 	}
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

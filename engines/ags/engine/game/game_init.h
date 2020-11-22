@@ -37,7 +37,7 @@ namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
-using namespace Common;
+using namespace Shared;
 
 // Error codes for initializing the game
 enum GameInitErrorType {

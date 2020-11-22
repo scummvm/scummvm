@@ -46,8 +46,8 @@
 #include "util/memory.h"
 #include "util/string_utils.h" // linux strnicmp definition
 
-using namespace AGS::Common;
-using namespace AGS::Common::Memory;
+using namespace AGS::Shared;
+using namespace AGS::Shared::Memory;
 
 extern ccInstance *loadedInstances[MAX_LOADED_INSTANCES]; // in script/script_runtime
 extern int gameHasBeenRestored; // in ac/game

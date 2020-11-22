@@ -27,7 +27,7 @@
 
 namespace AGS3 {
 
-using AGS::Common::GUITextBox;
+using AGS::Shared::GUITextBox;
 
 const char *TextBox_GetText_New(GUITextBox *texbox);
 void        TextBox_GetText(GUITextBox *texbox, char *buffer);

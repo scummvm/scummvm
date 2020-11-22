@@ -36,7 +36,7 @@ namespace AGS3 {
 #endif
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 namespace Math {
 template <class T>
@@ -84,7 +84,7 @@ inline float DegreesToRadians(float deg) {
 }
 } // namespace Math
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

@@ -43,8 +43,8 @@ extern void update_polled_stuff_if_runtime();
 
 extern MoveList *mls;
 
-using AGS::Common::Bitmap;
-namespace BitmapHelper = AGS::Common::BitmapHelper;
+using AGS::Shared::Bitmap;
+namespace BitmapHelper = AGS::Shared::BitmapHelper;
 
 // #define DEBUG_PATHFINDER
 
@@ -231,7 +231,7 @@ static int is_route_possible(int fromx, int fromy, int tox, int toy, Bitmap *wss
 			walk_area_granularity[dd] = MAX_GRANULARITY;
 
 #ifdef DEBUG_PATHFINDER
-		AGS::Common::Debug::Printf("area %d: Gran %d", dd, walk_area_granularity[dd]);
+		AGS::Shared::Debug::Printf("area %d: Gran %d", dd, walk_area_granularity[dd]);
 #endif
 	}
 	walk_area_granularity[0] = MAX_GRANULARITY;
@@ -323,7 +323,7 @@ try_again:
 	iterations++;
 	if (iterations > 5) {
 #ifdef DEBUG_PATHFINDER
-		AGS::Common::Debug::Printf("not found: %d,%d  beenhere 0x%X\n", srcx, srcy, beenhere[srcy][srcx]);
+		AGS::Shared::Debug::Printf("not found: %d,%d  beenhere 0x%X\n", srcx, srcy, beenhere[srcy][srcx]);
 #endif
 		nesting--;
 		return 0;
@@ -733,7 +733,7 @@ void calculate_move_stage(MoveList *mlsp, int aaa) {
 	mlsp->ypermove[aaa] = newymove;
 
 #ifdef DEBUG_PATHFINDER
-	AGS::Common::Debug::Printf("stage %d from %d,%d to %d,%d Xpermove:%X Ypm:%X", aaa, ourx, oury, destx, desty, newxmove, newymove);
+	AGS::Shared::Debug::Printf("stage %d from %d,%d to %d,%d Xpermove:%X Ypm:%X", aaa, ourx, oury, destx, desty, newxmove, newymove);
 	// wtextcolor(14);
 	// wgtprintf((reallyneed[aaa] >> 16) & 0x000ffff, reallyneed[aaa] & 0x000ffff, cbuttfont, "%d", aaa);
 #endif
@@ -807,7 +807,7 @@ stage_again:
 		// find the furthest point that can be seen from this stage
 		for (aaa = pathbackstage - 1; aaa >= 0; aaa--) {
 #ifdef DEBUG_PATHFINDER
-			AGS::Common::Debug::Printf("stage %2d: %2d,%2d\n", aaa, pathbackx[aaa], pathbacky[aaa]);
+			AGS::Shared::Debug::Printf("stage %2d: %2d,%2d\n", aaa, pathbackx[aaa], pathbacky[aaa]);
 #endif
 			if (can_see_from(srcx, srcy, pathbackx[aaa], pathbacky[aaa])) {
 				nearestpos = MAKE_INTCOORD(pathbackx[aaa], pathbacky[aaa]);
@@ -831,7 +831,7 @@ stage_again:
 			srcx = (nearestpos >> 16) & 0x000ffff;
 			srcy = nearestpos & 0x000ffff;
 #ifdef DEBUG_PATHFINDER
-			AGS::Common::Debug::Printf("Added: %d, %d pbs:%d", srcx, srcy, pathbackstage);
+			AGS::Shared::Debug::Printf("Added: %d, %d pbs:%d", srcx, srcy, pathbackstage);
 #endif
 			lastpbs = pathbackstage;
 			pathbackstage = nearestindx;
@@ -853,13 +853,13 @@ stage_again:
 			return 0;
 		}
 #ifdef DEBUG_PATHFINDER
-		AGS::Common::Debug::Printf("Route from %d,%d to %d,%d - %d stage, %d stages", orisrcx, orisrcy, xx, yy, pathbackstage, numstages);
+		AGS::Shared::Debug::Printf("Route from %d,%d to %d,%d - %d stage, %d stages", orisrcx, orisrcy, xx, yy, pathbackstage, numstages);
 #endif
 		int mlist = movlst;
 		mls[mlist].numstage = numstages;
 		memcpy(&mls[mlist].pos[0], &reallyneed[0], sizeof(int) * numstages);
 #ifdef DEBUG_PATHFINDER
-		AGS::Common::Debug::Printf("stages: %d\n", numstages);
+		AGS::Shared::Debug::Printf("stages: %d\n", numstages);
 #endif
 
 		for (aaa = 0; aaa < numstages - 1; aaa++) {

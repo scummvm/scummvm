@@ -34,7 +34,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 // Information on single asset
 struct AssetInfo {
@@ -61,7 +61,7 @@ struct AssetLibInfo {
 	void Unload();
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

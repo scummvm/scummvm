@@ -31,8 +31,8 @@
 #include "ac/game_version.h"
 #include "media/audio/audio_system.h"
 
-using AGS::Common::Bitmap;
-using AGS::Common::Graphics;
+using AGS::Shared::Bitmap;
+using AGS::Shared::Graphics;
 
 extern GameSetupStruct game;
 extern ViewStruct *views;

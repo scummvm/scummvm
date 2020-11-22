@@ -28,7 +28,7 @@
 #include "debug/debug_log.h"
 #include "game/roomstruct.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern RoomStruct thisroom;
 

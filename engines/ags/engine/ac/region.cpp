@@ -32,7 +32,7 @@
 #include "game/roomstruct.h"
 #include "script/runtimescriptvalue.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern ScriptRegion scrRegion[MAX_ROOM_REGIONS];
 extern RoomStruct thisroom;

@@ -28,7 +28,7 @@ namespace AGS3 {
 struct SOUNDCLIP;
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Stream;
 } // namespace Shared
 } // namespace AGS

@@ -55,7 +55,7 @@ extern void dxmedia_resume_video();
 extern char lastError[200];
 #endif
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern GameSetupStruct game;

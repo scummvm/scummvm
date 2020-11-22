@@ -29,7 +29,7 @@ namespace AGS {
 namespace Common {
 class Stream;
 } // namespace Shared
-} // namespace AGS
+namespace SharedGS
 
 using namespace AGS; // FIXME later
 

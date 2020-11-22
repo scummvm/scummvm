@@ -33,7 +33,7 @@
 #include "platform/base/agsplatformdriver.h"
 #include "ac/timer.h"
 
-using AGS::Common::Bitmap;
+using AGS::Shared::Bitmap;
 
 extern int windowbackgroundcolor, pushbuttondarkcolor;
 extern int pushbuttonlightcolor;

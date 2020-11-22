@@ -39,7 +39,7 @@ namespace Common {
 
 struct DebugMessage {
 	String       Text;
-	uint32_t     GroupID;
+namespace SharedoupID;
 	String       GroupName;
 	MessageType  MT;
 

@@ -31,7 +31,7 @@
 namespace AGS3 {
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Bitmap;
 class Stream;
 } // namespace Shared

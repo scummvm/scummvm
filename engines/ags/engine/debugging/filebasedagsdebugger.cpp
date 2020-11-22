@@ -28,8 +28,8 @@
 #include "util/wgt2allg.h"              // exists()
 #include "platform/base/agsplatformdriver.h"
 
-using AGS::Common::Stream;
-using AGS::Common::TextStreamWriter;
+using AGS::Shared::Stream;
+using AGS::Shared::TextStreamWriter;
 
 const char *SENT_MESSAGE_FILE_NAME = "dbgrecv.tmp";
 

@@ -39,7 +39,7 @@ namespace Engine {
 using Common::String;
 using Common::DebugMessage;
 
-class ConsoleOutputTarget : public AGS::Common::IOutputHandler {
+class ConsoleOutputTarget : public AGS::Shared::IOutputHandler {
 public:
 	ConsoleOutputTarget();
 	virtual ~ConsoleOutputTarget();

@@ -46,7 +46,7 @@
 #include "ac/dynobj/cc_object.h"
 #include "ac/movelist.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 
 extern ScriptObject scrObj[MAX_ROOM_OBJECTS];

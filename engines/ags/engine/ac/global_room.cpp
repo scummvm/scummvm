@@ -39,7 +39,7 @@
 #include "script/script.h"
 #include "util/math.h"
 
-using namespace Common;
+using namespace Shared;
 
 extern GameState play;
 extern GameSetupStruct game;

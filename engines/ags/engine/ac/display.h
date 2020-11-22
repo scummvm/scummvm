@@ -27,7 +27,7 @@
 
 namespace AGS3 {
 
-using AGS::Common::GUIMain;
+using AGS::Shared::GUIMain;
 
 // options for 'disp_type' parameter
 #define DISPLAYTEXT_SPEECH        0

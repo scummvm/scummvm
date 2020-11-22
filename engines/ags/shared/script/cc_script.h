@@ -35,7 +35,7 @@
 namespace AGS3 {
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Stream;
 } // namespace Shared
 } // namespace AGS

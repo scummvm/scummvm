@@ -24,8 +24,8 @@
 #include "ac/view.h"
 #include "util/alignedstream.h"
 
-using AGS::Common::AlignedStream;
-using AGS::Common::Stream;
+using AGS::Shared::AlignedStream;
+using AGS::Shared::Stream;
 
 ViewFrame::ViewFrame()
 	: pic(0)

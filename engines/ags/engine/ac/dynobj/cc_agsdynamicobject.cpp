@@ -26,7 +26,7 @@
 #include "ac/common.h"               // quit()
 #include "util/bbop.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 // *** The script serialization routines for built-in types
 

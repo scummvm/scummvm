@@ -43,8 +43,8 @@
 #include "platform/base/agsplatformdriver.h"
 #include "ac/timer.h"
 
-using AGS::Common::Bitmap;
-namespace BitmapHelper = AGS::Common::BitmapHelper;
+using AGS::Shared::Bitmap;
+namespace BitmapHelper = AGS::Shared::BitmapHelper;
 
 extern char ignore_bounds; // from mousew32
 extern IGraphicsDriver *gfxDriver;

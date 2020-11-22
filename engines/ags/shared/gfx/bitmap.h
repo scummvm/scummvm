@@ -33,7 +33,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 // Mask option for blitting one bitmap on another
 enum BitmapMaskOption {
@@ -49,7 +49,7 @@ enum BitmapFlip {
 	kBitmap_HVFlip
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 
 
@@ -57,7 +57,7 @@ enum BitmapFlip {
 #include "gfx/allegrobitmap.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class Bitmap;
 
@@ -86,7 +86,7 @@ void    CopyTransparency(Bitmap *dst, const Bitmap *mask, bool dst_has_alpha, bo
 void    ReadPixelsFromMemory(Bitmap *dst, const uint8_t *src_buffer, const size_t src_pitch, const size_t src_px_offset = 0);
 } // namespace BitmapHelper
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

@@ -24,7 +24,7 @@
 #include "ac/gamestate.h"
 #include "util/bbop.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 ScriptCamera::ScriptCamera(int id) : _id(id) {}
 

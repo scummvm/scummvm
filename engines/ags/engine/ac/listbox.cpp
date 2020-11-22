@@ -32,7 +32,7 @@
 #include "gui/guimain.h"
 #include "debug/debug_log.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameState play;
 extern GameSetupStruct game;

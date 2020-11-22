@@ -25,7 +25,7 @@
 #include "script/script_common.h"  // current_line
 #include "util/string.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 // Returns full script error message and callstack (if possible)
 extern std::pair<String, String> cc_error_at_line(const char *error_msg);

@@ -39,7 +39,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class Stream : public IAGSStream {
 public:
@@ -83,7 +83,7 @@ public:
 	size_t WriteByteCount(uint8_t b, size_t count);
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

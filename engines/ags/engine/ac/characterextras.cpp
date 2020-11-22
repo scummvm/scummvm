@@ -23,7 +23,7 @@
 #include "ac/characterextras.h"
 #include "util/stream.h"
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 void CharacterExtras::ReadFromFile(Stream *in) {
 	in->ReadArrayOfInt16(invorder, MAX_INVORDER);

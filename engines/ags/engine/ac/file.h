@@ -34,7 +34,7 @@
 
 namespace AGS3 {
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 int     File_Exists(const char *fnmm);
 int     File_Delete(const char *fnmm);

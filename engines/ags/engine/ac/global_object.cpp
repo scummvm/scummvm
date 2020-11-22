@@ -45,7 +45,7 @@
 #include "gfx/bitmap.h"
 #include "gfx/gfx_def.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 #define OVERLAPPING_OBJECT 1000
 

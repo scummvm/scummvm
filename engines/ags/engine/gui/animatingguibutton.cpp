@@ -23,7 +23,7 @@
 #include "gui/animatingguibutton.h"
 #include "util/stream.h"
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 void AnimatingGUIButton::ReadFromFile(Stream *in) {
 	buttonid = in->ReadInt16();

@@ -124,7 +124,7 @@ namespace AGS {
 namespace Engine {
 namespace OGL {
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 void ogl_dummy_vsync() { }
 

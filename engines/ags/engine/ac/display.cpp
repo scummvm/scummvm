@@ -55,8 +55,8 @@
 #include "media/audio/audio_system.h"
 #include "ac/timer.h"
 
-using namespace AGS::Common;
-using namespace AGS::Common::BitmapHelper;
+using namespace AGS::Shared;
+using namespace AGS::Shared::BitmapHelper;
 
 extern GameState play;
 extern GameSetupStruct game;

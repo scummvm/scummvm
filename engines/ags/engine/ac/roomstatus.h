@@ -32,13 +32,13 @@ namespace AGS3 {
 
 // Forward declaration
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Stream;
 } // namespace Shared
 } // namespace AGS
 
-using AGS::Common::Stream;
-using AGS::Common::Interaction;
+using AGS::Shared::Stream;
+using AGS::Shared::Interaction;
 
 // This struct is saved in the save games - it contains everything about
 // a room that could change

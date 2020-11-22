@@ -40,7 +40,7 @@ namespace AGS3 {
 
 // Forward declaration
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Bitmap;
 class Stream;
 typedef std::shared_ptr<Bitmap> PBitmap;
@@ -224,14 +224,14 @@ struct GameState {
 	short temporarily_turned_off_character;  // Hide Player Charactr ticked
 	short inv_backwards_compatibility;
 	int *gui_draw_order;
-	std::vector<AGS::Common::String> do_once_tokens;
+	std::vector<AGS::Shared::String> do_once_tokens;
 	int   text_min_display_time_ms;
 	int   ignore_user_input_after_text_timeout_ms;
 	int   default_audio_type_volumes[MAX_AUDIO_TYPES];
 
 	// Dynamic custom property values for characters and items
-	std::vector<AGS::Common::StringIMap> charProps;
-	AGS::Common::StringIMap invProps[MAX_INV];
+	std::vector<AGS::Shared::StringIMap> charProps;
+	AGS::Shared::StringIMap invProps[MAX_INV];
 
 	// Dynamic speech state
 	//

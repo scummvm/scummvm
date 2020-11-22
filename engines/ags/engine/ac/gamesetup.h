@@ -43,7 +43,7 @@ enum MouseSpeedDef {
 	kNumMouseSpeedDefs
 };
 
-using AGS::Common::String;
+using AGS::Shared::String;
 
 // TODO: reconsider the purpose of this struct.
 // Earlier I was trying to remove the uses of this struct from the engine

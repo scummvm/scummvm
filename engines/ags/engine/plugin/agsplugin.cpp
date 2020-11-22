@@ -74,8 +74,8 @@
 #include "util/filestream.h"
 #include "media/audio/audio_system.h"
 
-using namespace AGS::Common;
-using namespace AGS::Common::Memory;
+using namespace AGS::Shared;
+using namespace AGS::Shared::Memory;
 using namespace AGS::Engine;
 
 
@@ -1010,7 +1010,7 @@ Engine::GameInitError pl_register_plugins(const std::vector<Common::PluginInfo> 
 
 		String expect_filename = apl->library.GetFilenameForLib(apl->filename);
 		if (apl->library.Load(apl->filename)) {
-			AGS::Common::Debug::Printf(kDbgMsg_Info, "Plugin '%s' loaded as '%s', resolving imports...", apl->filename, expect_filename.GetCStr());
+			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' loaded as '%s', resolving imports...", apl->filename, expect_filename.GetCStr());
 
 			if (apl->library.GetFunctionAddress("AGS_PluginV2") == nullptr) {
 				quitprintf("Plugin '%s' is an old incompatible version.", apl->filename);
@@ -1025,16 +1025,16 @@ Engine::GameInitError pl_register_plugins(const std::vector<Common::PluginInfo> 
 			apl->debugHook = (int(*)(const char *, int, int))apl->library.GetFunctionAddress("AGS_EngineDebugHook");
 			apl->initGfxHook = (void(*)(const char *, void *))apl->library.GetFunctionAddress("AGS_EngineInitGfx");
 		} else {
-			AGS::Common::Debug::Printf(kDbgMsg_Info, "Plugin '%s' could not be loaded (expected '%s'), trying built-in plugins...",
+			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' could not be loaded (expected '%s'), trying built-in plugins...",
 			                           apl->filename, expect_filename.GetCStr());
 			if (pl_use_builtin_plugin(apl)) {
-				AGS::Common::Debug::Printf(kDbgMsg_Info, "Build-in plugin '%s' found and being used.", apl->filename);
+				AGS::Shared::Debug::Printf(kDbgMsg_Info, "Build-in plugin '%s' found and being used.", apl->filename);
 			} else {
 				// Plugin loading has failed at this point, try using built-in plugin function stubs
 				if (RegisterPluginStubs((const char *)apl->filename))
-					AGS::Common::Debug::Printf(kDbgMsg_Info, "Placeholder functions for the plugin '%s' found.", apl->filename);
+					AGS::Shared::Debug::Printf(kDbgMsg_Info, "Placeholder functions for the plugin '%s' found.", apl->filename);
 				else
-					AGS::Common::Debug::Printf(kDbgMsg_Info, "No placeholder functions for the plugin '%s' found. The game might fail to load!", apl->filename);
+					AGS::Shared::Debug::Printf(kDbgMsg_Info, "No placeholder functions for the plugin '%s' found. The game might fail to load!", apl->filename);
 				continue;
 			}
 		}

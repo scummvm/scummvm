@@ -33,7 +33,7 @@ namespace AGS3 {
 namespace AGS {
 namespace Common {
 class Bitmap;
-} // namespace Shared
+namespace Sharedhared
 } // namespace AGS
 
 using namespace AGS;
@@ -133,7 +133,7 @@ size_t split_lines(const char *texx, SplitLines &lines, int width, int fontNumbe
 namespace AGS {
 namespace Common {
 extern SplitLines Lines;
-} // namespace Shared
+namespace Sharedhared
 } // namespace AGS
 } // namespace AGS3
 

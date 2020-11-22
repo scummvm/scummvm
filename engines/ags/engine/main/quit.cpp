@@ -47,7 +47,7 @@
 #include "plugin/plugin_engine.h"
 #include "media/audio/audio_system.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern GameSetupStruct game;

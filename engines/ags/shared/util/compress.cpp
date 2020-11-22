@@ -37,7 +37,7 @@
 #include "util/bbop.h"
 #endif
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 void cpackbitl(const uint8_t *line, int size, Stream *out) {
 	int cnt = 0;                  // bytes encoded

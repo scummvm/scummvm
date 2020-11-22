@@ -32,7 +32,7 @@
 #include "script/script.h"
 
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern RoomStruct thisroom;
 extern RoomStatus *croom;

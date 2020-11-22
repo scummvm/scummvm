@@ -47,7 +47,7 @@
 #include "ac/timer.h"
 #include "main/game_run.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 //-----------------------

@@ -53,7 +53,7 @@
 #include "plugin/agsplugin.h"
 #include "script/script.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern int ifacepopped;

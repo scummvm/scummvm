@@ -25,15 +25,15 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Bitmap;
 }
 }
 
 // Functions for handling hard-coded GUIs
 // Prepares GUI bitmaps which will be passed to the renderer's draw chain
-AGS::Common::Bitmap *prepare_gui_screen(int x, int y, int width, int height, bool opaque);
-AGS::Common::Bitmap *get_gui_screen();
+AGS::Shared::Bitmap *prepare_gui_screen(int x, int y, int width, int height, bool opaque);
+AGS::Shared::Bitmap *get_gui_screen();
 // Deletes GUI bitmaps
 void clear_gui_screen();
 // Draws virtual screen contents on the GUI bitmaps and assignes them to

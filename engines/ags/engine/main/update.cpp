@@ -49,7 +49,7 @@
 #include "main/game_run.h"
 #include "ac/movelist.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern MoveList *mls;

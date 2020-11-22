@@ -27,7 +27,7 @@
 #include "script/cc_script.h"
 #include "util/stream.h"
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 GameSetupStructBase::GameSetupStructBase()
 	: numviews(0)

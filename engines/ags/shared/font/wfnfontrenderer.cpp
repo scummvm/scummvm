@@ -28,7 +28,7 @@
 #include "gfx/bitmap.h"
 #include "util/stream.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 static unsigned char GetCharCode(unsigned char wanted_code, const WFNFont *font) {
 	return wanted_code < font->GetCharCount() ? wanted_code : '?';

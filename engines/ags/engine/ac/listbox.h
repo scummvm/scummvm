@@ -27,7 +27,7 @@
 
 namespace AGS3 {
 
-using AGS::Common::GUIListBox;
+using AGS::Shared::GUIListBox;
 
 int         ListBox_AddItem(GUIListBox *lbb, const char *text);
 int         ListBox_InsertItemAt(GUIListBox *lbb, int index, const char *text);

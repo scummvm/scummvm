@@ -34,7 +34,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 namespace Directory {
 // Creates new directory (if it does not exist)
@@ -48,7 +48,7 @@ String SetCurrentDirectory(const String &path);
 String GetCurrentDirectory();
 } // namespace Directory
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

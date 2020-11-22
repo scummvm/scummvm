@@ -41,17 +41,17 @@ public:
 		Unload();
 	};
 
-	AGS::Common::String BuildPath(char *path, AGS::Common::String libraryName) {
-		AGS::Common::String platformLibraryName = path;
+	AGS::Shared::String BuildPath(char *path, AGS::Shared::String libraryName) {
+		AGS::Shared::String platformLibraryName = path;
 		platformLibraryName.Append(libraryName);
 		platformLibraryName.Append(".prx");
 
-		AGS::Common::Debug::Printf("Built library path: %s", platformLibraryName.GetCStr());
+		AGS::Shared::Debug::Printf("Built library path: %s", platformLibraryName.GetCStr());
 
 		return platformLibraryName;
 	}
 
-	bool Load(AGS::Common::String libraryName) {
+	bool Load(AGS::Shared::String libraryName) {
 		Unload();
 
 		// Try current path
@@ -66,7 +66,7 @@ public:
 		_moduleName = libraryName;
 		_moduleName.MakeLower();
 
-		AGS::Common::Debug::Printf("Result is %s %d", _moduleName.GetCStr(), _library);
+		AGS::Shared::Debug::Printf("Result is %s %d", _moduleName.GetCStr(), _library);
 
 		return (_library > -1);
 	}
@@ -79,7 +79,7 @@ public:
 		}
 	}
 
-	void *GetFunctionAddress(AGS::Common::String functionName) {
+	void *GetFunctionAddress(AGS::Shared::String functionName) {
 		if (_library > -1) {
 			// On the PSP functions are identified by an ID that is the first 4 byte of the SHA1 of the name.
 			int functionId;
@@ -99,7 +99,7 @@ public:
 			} else if (functionName == "AGS_EngineInitGfx") {
 				functionId = 0xA428D254;
 			} else {
-				AGS::Common::Debug::Printf("Function ID not found: %s", functionName.GetCStr());
+				AGS::Shared::Debug::Printf("Function ID not found: %s", functionName.GetCStr());
 				functionId = -1;
 			}
 #else
@@ -121,7 +121,7 @@ public:
 
 private:
 	SceUID _library;
-	AGS::Common::String _moduleName;
+	AGS::Shared::String _moduleName;
 };
 
 

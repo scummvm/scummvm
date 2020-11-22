@@ -34,7 +34,7 @@
 #include "font/fonts.h"
 #endif
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 // project-specific implementation
 extern bool ShouldAntiAliasText();

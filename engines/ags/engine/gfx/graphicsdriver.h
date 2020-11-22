@@ -37,10 +37,10 @@
 namespace AGS3 {
 namespace AGS {
 
-namespace Common {
+namespace Shared {
 class Bitmap;
 typedef std::shared_ptr<Common::Bitmap> PBitmap;
-} // namespace Common
+} // namespace Shared
 
 namespace Engine {
 

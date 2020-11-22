@@ -35,7 +35,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class Error;
 typedef std::shared_ptr<Error> PError;
@@ -162,7 +162,7 @@ public:
 	}
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

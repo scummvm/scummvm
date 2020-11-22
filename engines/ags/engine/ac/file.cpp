@@ -46,7 +46,7 @@
 #include "util/string.h"
 #include "util/string_utils.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameSetup usetup;
 extern GameSetupStruct game;

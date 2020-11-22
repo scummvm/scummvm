@@ -23,7 +23,7 @@
 #include "ac/common.h"
 #include "util/string.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 const char *game_file_sig = "Adventure Creator Game File v2";
 

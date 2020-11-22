@@ -29,7 +29,7 @@
 #include "game/savegame_components.h"
 #include "util/alignedstream.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 RoomStatus::RoomStatus() {

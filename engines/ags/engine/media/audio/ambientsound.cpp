@@ -25,7 +25,7 @@
 #include "media/audio/soundclip.h"
 #include "util/stream.h"
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 bool AmbientSound::IsPlaying() {
 	if (channel <= 0)

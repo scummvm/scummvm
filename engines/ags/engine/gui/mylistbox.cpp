@@ -30,7 +30,7 @@
 #include "gui/guidialoginternaldefs.h"
 #include "gui/mylistbox.h"
 
-using AGS::Common::Bitmap;
+using AGS::Shared::Bitmap;
 
 extern GameSetup usetup;
 extern int numcurso, hotx, hoty;

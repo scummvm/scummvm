@@ -70,7 +70,7 @@ AGSMac::AGSMac() {
 	AGSMacInitPaths(psp_game_file_name, libraryApplicationSupport);
 
 	snprintf(commonDataPath, PATH_MAX, "%s/uk.co.adventuregamestudio", libraryApplicationSupport);
-	AGS::Common::Directory::CreateDirectory(commonDataPath);
+	AGS::Shared::Directory::CreateDirectory(commonDataPath);
 
 	strcpy(psp_translation, "default");
 }

@@ -29,7 +29,7 @@
 
 namespace AGS3 {
 
-using AGS::Common::GUIInvWindow;
+using AGS::Shared::GUIInvWindow;
 
 void            InvWindow_SetCharacterToUse(GUIInvWindow *guii, CharacterInfo *chaa);
 CharacterInfo *InvWindow_GetCharacterToUse(GUIInvWindow *guii);

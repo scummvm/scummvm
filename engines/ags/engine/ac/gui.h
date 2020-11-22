@@ -28,8 +28,8 @@
 
 namespace AGS3 {
 
-using AGS::Common::GUIMain;
-using AGS::Common::GUIObject;
+using AGS::Shared::GUIMain;
+using AGS::Shared::GUIObject;
 
 ScriptGUI *GUI_AsTextWindow(ScriptGUI *tehgui);
 int     GUI_GetPopupStyle(ScriptGUI *tehgui);
@@ -71,7 +71,7 @@ ScriptGUI *GetGUIAtLocation(int xx, int yy);
 
 void    remove_popup_interface(int ifacenum);
 void    process_interface_click(int ifce, int btn, int mbut);
-void    replace_macro_tokens(const char *text, AGS::Common::String &fixed_text);
+void    replace_macro_tokens(const char *text, AGS::Shared::String &fixed_text);
 void    update_gui_zorder();
 void    export_gui_controls(int ee);
 void    unexport_gui_controls(int ee);

@@ -27,7 +27,7 @@
 #include "gfx/gfxdriverbase.h"
 #include "gfx/gfx_util.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 namespace AGS {
 namespace Engine {

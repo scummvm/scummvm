@@ -27,7 +27,7 @@
 
 namespace AGS3 {
 
-using AGS::Common::GUISlider;
+using AGS::Shared::GUISlider;
 
 void    Slider_SetMax(GUISlider *guisl, int valn);
 int     Slider_GetMax(GUISlider *guisl);

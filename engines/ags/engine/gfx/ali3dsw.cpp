@@ -60,7 +60,7 @@ namespace AGS {
 namespace Engine {
 namespace ALSW {
 
-using namespace Common;
+using namespace Shared;
 
 bool ALSoftwareGfxModeList::GetMode(int index, DisplayMode &mode) const {
 	if (_gfxModeList && index >= 0 && index < _gfxModeList->num_modes) {

@@ -31,7 +31,7 @@ const char *get_engine_name();
 const char *get_engine_version();
 void        show_preload();
 void        engine_init_game_settings();
-int         initialize_engine(const AGS::Common::ConfigTree &startup_opts);
+int         initialize_engine(const AGS::Shared::ConfigTree &startup_opts);
 
 struct ScreenSetup;
 // Try to set new graphics mode deduced from given configuration;
@@ -44,7 +44,7 @@ bool        engine_try_switch_windowed_gfxmode();
 // Shutdown graphics mode (used before shutting down tha application)
 void        engine_shutdown_gfxmode();
 
-using AGS::Common::String;
+using AGS::Shared::String;
 // Defines a package file location
 struct PackLocation {
 	String Name; // filename, for the reference or to use as an ID

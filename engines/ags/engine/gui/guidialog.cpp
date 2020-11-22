@@ -34,7 +34,7 @@
 #include "gfx/graphicsdriver.h"
 #include "debug/debug_log.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern IGraphicsDriver *gfxDriver;

@@ -31,7 +31,7 @@ namespace AGS3 {
 struct ICCDynamicObject;
 struct ICCStaticObject;
 
-using AGS::Common::String;
+using AGS::Shared::String;
 
 struct ScriptImport {
 	ScriptImport() {

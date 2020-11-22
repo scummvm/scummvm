@@ -47,7 +47,7 @@
 #include "gfx/graphicsdriver.h"
 #include "main/graphics_mode.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern GameSetupStruct game;

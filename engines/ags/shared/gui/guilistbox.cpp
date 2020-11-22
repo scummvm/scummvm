@@ -26,11 +26,11 @@
 #include "util/stream.h"
 #include "util/string_utils.h"
 
-std::vector<AGS::Common::GUIListBox> guilist;
+std::vector<AGS::Shared::GUIListBox> guilist;
 int numguilist = 0;
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 GUIListBox::GUIListBox() {
 	ItemCount = 0;
@@ -390,5 +390,5 @@ void GUIListBox::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(SelectedItem);
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

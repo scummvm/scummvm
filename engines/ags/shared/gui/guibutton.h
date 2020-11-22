@@ -32,7 +32,7 @@ namespace AGS3 {
 #define GUIBUTTON_LEGACY_TEXTLENGTH 50
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 enum MouseButton {
 	kMouseNone = -1,
@@ -127,10 +127,10 @@ private:
 	String _textToDraw;
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 
-extern std::vector<AGS::Common::GUIButton> guibuts;
+extern std::vector<AGS::Shared::GUIButton> guibuts;
 extern int numguibuts;
 
 int UpdateAnimatingButton(int bu);

@@ -27,7 +27,7 @@
 extern void __my_setcolor(int *ctset, int newcol, int wantColDep);
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 Bitmap::Bitmap()
 	: _alBitmap(nullptr)
@@ -411,5 +411,5 @@ Bitmap *CreateRawBitmapWrapper(BITMAP *al_bmp) {
 } // namespace BitmapHelper
 
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

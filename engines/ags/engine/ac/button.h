@@ -27,7 +27,7 @@
 
 namespace AGS3 {
 
-using AGS::Common::GUIButton;
+using AGS::Shared::GUIButton;
 
 void        Button_Animate(GUIButton *butt, int view, int loop, int speed, int repeat);
 const char *Button_GetText_New(GUIButton *butt);

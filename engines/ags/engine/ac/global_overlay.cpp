@@ -35,7 +35,7 @@
 #include "ac/system.h"
 #include "gfx/bitmap.h"
 
-using namespace Common;
+using namespace Shared;
 using namespace Engine;
 
 extern SpriteCache spriteset;

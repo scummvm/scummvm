@@ -28,7 +28,7 @@
 
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 AssetLocation::AssetLocation()
 	: Offset(0)
@@ -367,5 +367,5 @@ String GetAssetErrorText(AssetError err) {
 	return "Unknown error.";
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

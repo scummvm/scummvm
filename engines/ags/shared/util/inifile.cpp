@@ -34,7 +34,7 @@ inline int isblank(int ch) {
 } // std
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 inline static void ReplaceSubString(String &line, IniFile::StrPos &sub_pos, const String &new_sub) {
 	line.ReplaceMid(sub_pos.first, sub_pos.second - sub_pos.first, new_sub);
@@ -266,5 +266,5 @@ void IniFile::Write(Stream *out) const {
 	writer.ReleaseStream();
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

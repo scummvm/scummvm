@@ -60,7 +60,7 @@ struct ccScript;
 struct SpriteInfo;
 typedef std::shared_ptr<ccScript> PScript;
 
-// TODO: move the following enums under AGS::Common namespace
+// TODO: move the following enums under AGS::Shared namespace
 // later, when more engine source is put in AGS namespace and
 // refactored.
 
@@ -110,7 +110,7 @@ enum RoomVolumeMod {
 
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class Bitmap;
 class Stream;
@@ -384,7 +384,7 @@ void FixRoomMasks(RoomStruct *room);
 // Adjusts bitmap size if necessary and returns either new or old bitmap.
 PBitmap FixBitmap(PBitmap bmp, int dst_width, int dst_height);
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

@@ -29,7 +29,7 @@
 #include "script/runtimescriptvalue.h"
 #include "media/audio/audio_system.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameState play;
 extern RoomStruct thisroom;

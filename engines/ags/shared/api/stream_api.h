@@ -40,7 +40,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 enum StreamSeek {
 	kSeekBegin,
@@ -92,7 +92,7 @@ public:
 	virtual bool        Seek(soff_t offset, StreamSeek origin = kSeekCurrent) = 0;
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

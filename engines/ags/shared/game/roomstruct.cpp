@@ -26,7 +26,7 @@
 #include "gfx/bitmap.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 RoomOptions::RoomOptions()
 	: StartupMusic(0)
@@ -298,5 +298,5 @@ void FixRoomMasks(RoomStruct *room) {
 	room->WalkAreaMask = FixBitmap(room->WalkAreaMask, low_width, low_height);
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

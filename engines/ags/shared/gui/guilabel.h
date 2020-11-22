@@ -32,7 +32,7 @@ namespace AGS3 {
 class SplitLines;
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class GUILabel : public GUIObject {
 public:
@@ -65,10 +65,10 @@ private:
 	String _textToDraw;
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 
-extern std::vector<AGS::Common::GUILabel> guilabels;
+extern std::vector<AGS::Shared::GUILabel> guilabels;
 extern int numguilabels;
 
 } // namespace AGS3

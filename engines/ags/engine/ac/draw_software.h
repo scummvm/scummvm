@@ -51,10 +51,10 @@ void invalidate_all_rects();
 void invalidate_all_camera_rects(int view_index);
 void invalidate_rect_ds(int x1, int y1, int x2, int y2, bool in_room);
 // Paints the black screen background in the regions marked as dirty
-void update_black_invreg_and_reset(AGS::Common::Bitmap *ds);
+void update_black_invreg_and_reset(AGS::Shared::Bitmap *ds);
 // Copies the room regions marked as dirty from source (src) to destination (ds) with the given offset (x, y)
 // no_transform flag tells the system that the regions should be plain copied to the ds.
-void update_room_invreg_and_reset(int view_index, AGS::Common::Bitmap *ds, AGS::Common::Bitmap *src, bool no_transform);
+void update_room_invreg_and_reset(int view_index, AGS::Shared::Bitmap *ds, AGS::Shared::Bitmap *src, bool no_transform);
 
 } // namespace AGS3
 

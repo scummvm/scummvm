@@ -48,7 +48,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class Stream;
 struct MultiFileLib;
@@ -154,7 +154,7 @@ private:
 
 String GetAssetErrorText(AssetError err);
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

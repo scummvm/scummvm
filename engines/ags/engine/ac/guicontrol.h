@@ -34,13 +34,13 @@
 
 namespace AGS3 {
 
-using AGS::Common::GUIObject;
-using AGS::Common::GUIButton;
-using AGS::Common::GUIInvWindow;
-using AGS::Common::GUILabel;
-using AGS::Common::GUIListBox;
-using AGS::Common::GUISlider;
-using AGS::Common::GUITextBox;
+using AGS::Shared::GUIObject;
+using AGS::Shared::GUIButton;
+using AGS::Shared::GUIInvWindow;
+using AGS::Shared::GUILabel;
+using AGS::Shared::GUIListBox;
+using AGS::Shared::GUISlider;
+using AGS::Shared::GUITextBox;
 
 GUIObject *GetGUIControlAtLocation(int xx, int yy);
 int         GUIControl_GetVisible(GUIObject *guio);

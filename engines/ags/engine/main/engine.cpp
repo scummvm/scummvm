@@ -79,7 +79,7 @@
 #include "util/misc.h"
 #include "util/path.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern char check_dynamic_sprites_at_exit;

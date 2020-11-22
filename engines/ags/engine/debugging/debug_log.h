@@ -31,8 +31,8 @@
 
 namespace AGS3 {
 
-void init_debug(const AGS::Common::ConfigTree &cfg, bool stderr_only);
-void apply_debug_config(const AGS::Common::ConfigTree &cfg);
+void init_debug(const AGS::Shared::ConfigTree &cfg, bool stderr_only);
+void apply_debug_config(const AGS::Shared::ConfigTree &cfg);
 void shutdown_debug();
 
 void debug_set_console(bool enable);
@@ -49,7 +49,7 @@ bool init_editor_debugging();
 // allow LShift to single-step,  RShift to pause flow
 void scriptDebugHook(ccInstance *ccinst, int linenum);
 
-extern AGS::Common::String debug_line[DEBUG_CONSOLE_NUMLINES];
+extern AGS::Shared::String debug_line[DEBUG_CONSOLE_NUMLINES];
 extern int first_debug_line, last_debug_line, display_console;
 
 
