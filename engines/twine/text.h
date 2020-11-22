@@ -165,10 +165,8 @@ private:
 	// TODO: refactor all this variables and related functions
 	char buf1[256] {'\0'};
 	char buf2[256] {'\0'};
-	char *printText8Ptr1 = nullptr;
 	char *progressiveTextBuffer = nullptr;
 	int32 printText8Var1 = 0;
-	int32 _blendInCharactersPos = 0;
 	int32 TEXT_CurrentLetterX = 0;
 	bool printText8Var5 = false;
 	bool printText8Var6 = false;
@@ -182,6 +180,7 @@ private:
 		int16 y = 0;
 	};
 	BlendInCharacter _blendInCharacters[32];
+	int32 _blendInCharactersPos = 0;
 	int32 printText8PrepareBufferVar2 = 0;
 	// ---
 
@@ -224,7 +223,7 @@ public:
 	~Text();
 
 	// TODO: refactor all this variables and related functions
-	bool printTextVar13 = false;
+	bool _hasValidTextHandle = false;
 	// renders a triangle if the next side of the text can get activated
 	bool renderTextTriangle = false;
 	bool drawTextBoxBackground = false;
