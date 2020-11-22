@@ -735,7 +735,7 @@ int32 Menu::giveupMenu() {
 		}
 		_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 		_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
-	} while (menuId != TextId::kGiveUp && menuId != TextId::kContinue);
+	} while (menuId != TextId::kGiveUp && menuId != TextId::kContinue && menuId != TextId::kCreateSaveGame);
 
 	return 0;
 }
