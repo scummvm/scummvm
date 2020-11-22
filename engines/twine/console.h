@@ -43,6 +43,8 @@ private:
 	bool doToggleFreeCamera(int argc, const char **argv);
 	bool doToggleSceneChanges(int argc, const char **argv);
 	bool doSkipSceneActorsBut(int argc, const char **argv);
+	bool doSetGameFlag(int argc, const char **argv);
+	bool doSetInventoryFlag(int argc, const char **argv);
 public:
 	TwinEConsole(TwinEEngine *engine);
 	~TwinEConsole() override;
