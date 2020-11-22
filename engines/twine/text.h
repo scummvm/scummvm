@@ -150,7 +150,6 @@ private:
 
 	// RECHECK THIS LATER
 	int32 currentBankIdx = TextBankId::None; // textVar1
-	char textVar2[256] {'\0'};
 
 	/** Dialogue text pointer */
 	char *dialTextPtr = nullptr; // bufText

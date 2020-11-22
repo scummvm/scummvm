@@ -133,7 +133,6 @@ void Text::initTextBank(int32 bankIdx) {
 	}
 
 	currentBankIdx = bankIdx;
-	textVar2[0] = '\0';
 
 	// get index according with language
 	const int32 size = _engine->isLBA1() ? 28 : 30;
@@ -441,7 +440,7 @@ void Text::processTextLine() {
 			printText8PrepareBufferVar2 = 1;
 		}
 		dialCharSpace += (dialTextBoxParam2 - addLineBreakX) / printText8PrepareBufferVar2;
-		printText10Var1 = dialTextBoxParam2 - addLineBreakX - dialTextBoxParam2 - addLineBreakX; // stupid... recheck
+		printText10Var1 = -2 * addLineBreakX;
 	}
 
 	printText8Var8 = buffer;
