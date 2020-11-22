@@ -179,8 +179,6 @@ private:
 	};
 	BlendInCharacter _fadeInCharacters[TEXT_MAX_FADE_IN_CHR];
 	int32 _fadeInCharactersPos = 0;
-	int32 printText8PrepareBufferVar2 = 0;
-	// ---
 
 	/** Current dialogue text pointer */
 	char *_currDialTextPtr = nullptr;

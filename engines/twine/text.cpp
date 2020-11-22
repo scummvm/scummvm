@@ -377,8 +377,8 @@ void Text::processTextLine() {
 	bool var4 = true;
 
 	int32 lineBreakX = 0;
-	printText8PrepareBufferVar2 = 0;
-	_progressiveTextBuffer[0] = 0;
+	int32 printText8PrepareBufferVar2 = 0;
+	_progressiveTextBuffer[0] = '\0';
 
 	for (;;) {
 		if (*buffer == ' ') {
@@ -407,7 +407,8 @@ void Text::processTextLine() {
 			buffer++;
 			if (lineBreakX == 0) {
 				lineBreakX = 7;
-				*((int16 *)_progressiveTextBuffer) = ' ';
+				*(_progressiveTextBuffer + 0) = ' ';
+				*(_progressiveTextBuffer + 1) = ' ';
 			}
 			if (wordBuf[1] == 'P') {
 				_dialTextBoxCurrentLine = _dialTextBoxLines;
