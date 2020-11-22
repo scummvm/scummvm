@@ -73,6 +73,10 @@ Programmcodes finden Sie auf Englisch unter:
    - Gelegentliche Grafikfehler in Kampf-Szenen korrigiert.
    - Verbesserte Unterstützung für Zwischensequenzen, die nun dem Original genauer entsprechen.
 
+ MorphOS-Portierung:
+   - Unterstützung für native Dateisystem-Dialoge hinzugefügt.
+   - Unterstützung für die Cloud-Anbindung hinzugefügt.
+
 #### 2.2.0 "Interactive Fantasy" (27.09.2020)
 
  Neue Spiele:
