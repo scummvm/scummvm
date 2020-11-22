@@ -1611,11 +1611,11 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_screens->loadImage(25);
 	engine->_text->textClipFull();
 	engine->_text->setFontCrossColor(15);
-	engine->_text->newGameVar4 = 0;
+	engine->_text->drawTextBoxBackground = false;
 	const bool tmpFlagDisplayText = engine->cfgfile.FlagDisplayText;
 	engine->cfgfile.FlagDisplayText = true;
 	engine->_text->drawTextFullscreen(6);
-	engine->_text->newGameVar4 = 1;
+	engine->_text->drawTextBoxBackground = true;
 	engine->_text->textClipSmall();
 	engine->_screens->fadeToBlack(engine->_screens->paletteRGBACustom);
 	engine->_screens->clearScreen();

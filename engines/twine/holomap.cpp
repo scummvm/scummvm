@@ -166,7 +166,7 @@ void Holomap::processHolomap() {
 
 	// TODO
 
-	_engine->_text->newGameVar4 = 1;
+	_engine->_text->drawTextBoxBackground = true;
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
 	_engine->_scene->alphaLight = alphaLightTmp;
 	_engine->_scene->betaLight = betaLightTmp;
