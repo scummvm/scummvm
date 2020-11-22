@@ -31,6 +31,7 @@
 #include "kyra/sound/sound.h"
 
 #include "common/system.h"
+#include "common/substream.h"
 
 #include "base/version.h"
 
@@ -2454,9 +2455,9 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	updateScrollState(scrollTable, 320);
 	r->loadToVRAM(scrollTable, 0x400, 0xD800);
 
-	_sres->loadContainer("CREDIT");
-	Common::SeekableReadStreamEndian *in = _sres->resStreamEndian(1);
-	r->loadStreamToVRAM(in, 32, true);
+	Common::SeekableReadStreamEndian *containerAlt = _sres->loadContainer("CREDIT") ? 0 : _res->createEndianAwareReadStream("CREDIT");
+	Common::SeekableReadStreamEndian *in = containerAlt ? new Common::SeekableSubReadStreamEndian(containerAlt, 0, 35840, true) : _sres->resStreamEndian(1);
+	r->loadStreamToVRAM(in, 32, !containerAlt);
 	delete in;
 
 	_screen->sega_selectPalette(50, 0, 0);
@@ -2468,13 +2469,14 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	if (!jumpToTitle)
 		_screen->sega_fadeToNeutral(3);
 
-	for (int i = jumpToTitle ? 8 : 0; i < 8 && !(shouldQuit() || skipFlag()); ++i) {
+	int last = (_flags.lang == Common::JA_JPN ? 6 : 8);
+	for (int i = jumpToTitle ? last : 0; i < last && !(shouldQuit() || skipFlag()); ++i) {
 		updateScrollState(scrollTable, 320);
 		r->loadToVRAM(scrollTable, 0x400, 0xD800);
-		_screen->sega_selectPalette(i == 3 ? 59 : 50, 0, true);
+		_screen->sega_selectPalette(i == 3 && _flags.lang == Common::EN_ANY ? 59 : 50, 0, true);
 
-		in = _sres->resStreamEndian(i);
-		r->loadStreamToVRAM(in, 32, true);
+		in = containerAlt ? new Common::SeekableSubReadStreamEndian(containerAlt, i * 35840, (i + 1) * 35840, true) : _sres->resStreamEndian(i);
+		r->loadStreamToVRAM(in, 32, !containerAlt);
 		delete in;
 
 		r->render(0);
@@ -2495,7 +2497,7 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 
 		delay(3000);
 
-		if (i == 7)
+		if (i == last - 1)
 			r->fillRectWithTiles(1, 40, 0, 88, 28, 0, false);
 
 		mod = -1;
@@ -2521,9 +2523,10 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	r->setPitch(64);
 	_screen->sega_selectPalette(0, 0);
 
-	in = _sres->resStreamEndian(8);
-	r->loadStreamToVRAM(in, 32, true);
+	in = containerAlt ? new Common::SeekableSubReadStreamEndian(containerAlt, last * 35840, (last + 1) * 35840, true) : _sres->resStreamEndian(last);
+	r->loadStreamToVRAM(in, 32, !containerAlt);
 	delete in;
+	delete containerAlt;
 
 	r->memsetVRAM(0x8C20, 0xCC, 0x700);
 
@@ -2793,15 +2796,17 @@ bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool setupScreen) {
 	_allowSkip = false;
 	resetSkipFlag();
 
-	if (!_seqPlayer->play(sequenceId))
-		return false;
+	bool res = _seqPlayer->play(sequenceId);
 
 	if (setupScreen)
 		seq_segaRestoreAfterSequence();
 
 	_totalPlaySecs += ((_system->getMillis() - startTime) / 1000);
 
-	return true;
+	if (!res)
+		error("EoBEngine::seq_segaPlaySequence(): Failed to play cutscene no. %d", sequenceId);
+
+	return res;
 }
 
 void EoBEngine::seq_segaPausePlayer(bool pause) {
