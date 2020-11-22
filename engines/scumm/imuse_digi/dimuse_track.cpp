@@ -353,9 +353,9 @@ void IMuseDigital::setTrigger(TriggerParams *trigger) {
 }
 
 Track *IMuseDigital::handleComiFadeOut(Track *track, int fadeDelay) {
-	track->volFadeDelay = fadeDelay;
+	track->volFadeDelay = fadeDelay != 0 ? fadeDelay : 60;
 	track->volFadeDest = 0;
-	track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * fadeDelay);
+	track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * track->volFadeDelay);
 	track->volFadeUsed = true;
 	track->toBeRemoved = true;
 	return track;
