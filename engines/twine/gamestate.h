@@ -92,6 +92,30 @@ private:
 public:
 	GameState(TwinEEngine *engine);
 
+	inline bool inventoryDisabled() const {
+		return gameFlags[GAMEFLAG_INVENTORY_DISABLED] != 0;
+	}
+
+	inline bool hasOpenedFunfrocksSafe() const {
+		return gameFlags[30] != 0;
+	}
+
+	inline bool hasItem(InventoryItems item) const {
+		return gameFlags[item] != 0;
+	}
+
+	inline void giveItem(InventoryItems item) {
+		gameFlags[item] = 1;
+	}
+
+	inline void removeItem(InventoryItems item) {
+		gameFlags[item] = 0;
+	}
+
+	inline void setFlag(uint8 index, uint8 value) {
+		gameFlags[index] = value;
+	}
+
 	/**
 	 * LBA engine game flags to save quest states
 	 *
