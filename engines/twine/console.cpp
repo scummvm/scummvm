@@ -136,6 +136,7 @@ bool TwinEConsole::doToggleDebug(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doListMenuText(int argc, const char **argv) {
+	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	for (int32 i = 0; i < 1000; ++i) {
 		char buf[256];
 		if (_engine->_text->getMenuText(i, buf, sizeof(buf))) {

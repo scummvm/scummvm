@@ -32,8 +32,8 @@
 #include "twine/menu.h"
 #include "twine/renderer.h"
 #include "twine/resources.h"
-#include "twine/screens.h"
 #include "twine/scene.h"
+#include "twine/screens.h"
 #include "twine/sound.h"
 #include "twine/twine.h"
 
@@ -83,7 +83,7 @@ bool Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
 	voxHiddenIndex = 0;
 	hasHiddenVox = false;
 
-	Common::MemoryReadStream stream((const byte*)dialOrderPtr, dialOrderSize);
+	Common::MemoryReadStream stream((const byte *)dialOrderPtr, dialOrderSize);
 	// choose right text from order index
 	for (int32 i = 0; i < numDialTextEntries; i++) {
 		int32 orderIdx = stream.readSint16LE();
@@ -291,14 +291,14 @@ void Text::initDialogueBox() { // InitDialWindow
 	}
 
 	_engine->copyBlockPhys(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom);
-	printText8Var3 = 0;
+	_blendInCharactersPos = 0;
 	_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, _engine->frontVideoBuffer, dialTextBoxLeft, dialTextBoxTop, _engine->workVideoBuffer);
 }
 
 void Text::initInventoryDialogueBox() { // SecondInitDialWindow
 	_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, _engine->workVideoBuffer, dialTextBoxLeft, dialTextBoxTop, _engine->frontVideoBuffer);
 	_engine->copyBlockPhys(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom);
-	printText8Var3 = 0;
+	_blendInCharactersPos = 0;
 }
 
 // TODO: refactor this code
@@ -309,18 +309,17 @@ void Text::initText(int32 index) {
 	}
 
 	printText8Ptr1 = buf1;
-	printText8Ptr2 = buf2;
+	progressiveTextBuffer = buf2;
 
 	printTextVar13 = true;
 
 	printText8Var1 = 0;
-	buf1[0] = 0;
-	buf2[0] = 0;
-	printText8Var2 = index;
-	printText8Var3 = 0;
+	buf1[0] = '\0';
+	buf2[0] = '\0';
+	_blendInCharactersPos = 0;
 	TEXT_CurrentLetterX = dialTextBoxLeft + 8;
-	printText8Var5 = 0;
-	printText8Var6 = 0;
+	printText8Var5 = false;
+	printText8Var6 = false;
 	TEXT_CurrentLetterY = dialTextBoxTop + 8;
 	printText8Var8 = currDialTextPtr;
 
@@ -338,34 +337,29 @@ void Text::initProgressiveTextBuffer() {
 		i++;
 	};
 
-	printText8Ptr2 = buf2;
+	progressiveTextBuffer = buf2;
 	addLineBreakX = 16;
 	printText8Var1 = 0;
 }
 
-void Text::printText8Sub4(int16 a, int16 b, int16 c) {
-	int32 counter2 = 0;
-
-	if (printText8Var3 < 32) {
-		const int32 temp = printText8Var3 * 3;
-		pt8s4[temp] = c;
-		pt8s4[temp + 1] = a;
-		pt8s4[temp + 2] = b;
-
-		printText8Var3++;
-	} else {
-		while (counter2 < 31) {
-			const int32 var1 = (counter2 + 1) * 3;
-			const int32 var2 = counter2 * 3;
-			pt8s4[var2] = pt8s4[var1];
-			pt8s4[var2 + 1] = pt8s4[var1 + 1];
-			pt8s4[var2 + 2] = pt8s4[var1 + 2];
-			counter2++;
-		}
-		pt8s4[93] = c;
-		pt8s4[94] = a;
-		pt8s4[95] = b;
+void Text::fillFadeInBuffer(int16 x, int16 y, int16 chr) {
+	if (_blendInCharactersPos < 32) {
+		_blendInCharacters[_blendInCharactersPos].chr = chr;
+		_blendInCharacters[_blendInCharactersPos].x = x;
+		_blendInCharacters[_blendInCharactersPos].y = y;
+		_blendInCharactersPos++;
+		return;
 	}
+	int32 counter2 = 0;
+	while (counter2 < 31) {
+		const int32 var1 = (counter2 + 1);
+		const int32 var2 = counter2;
+		_blendInCharacters[var2] = _blendInCharacters[var1];
+		counter2++;
+	}
+	_blendInCharacters[31].chr = chr;
+	_blendInCharacters[31].x = x;
+	_blendInCharacters[31].y = y;
 }
 
 Text::WordSize Text::getWordSize(const char *arg1, char *arg2) {
@@ -453,7 +447,7 @@ void Text::processTextLine() {
 
 	printText8Var8 = buffer;
 
-	printText8Ptr2 = buf2;
+	progressiveTextBuffer = buf2;
 }
 
 void Text::renderContinueReadingTriangle() {
@@ -481,23 +475,16 @@ void Text::renderContinueReadingTriangle() {
 	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
-void Text::printText10Sub2() {
-	const int32 currentLetter = printText8Var3 - 1;
-	const int32 currentIndex = currentLetter * 3;
-	int16 *ptr = pt8s4 + currentIndex;
-	int32 counter = printText8Var3;
-	int32 fontColor = dialTextStartColor;
-
-	_engine->_system->delayMillis(15);
-
+void Text::fadeInCharacters(int32 counter, int32 fontColor) {
+	_engine->_system->delayMillis(1);
 	while (--counter >= 0) {
+		const BlendInCharacter *ptr = &_blendInCharacters[counter];
 		setFontColor(fontColor);
-		drawCharacterShadow(*(ptr + 1), *(ptr + 2), (uint8)*ptr, fontColor);
+		drawCharacterShadow(ptr->x, ptr->y, ptr->chr, fontColor);
 		fontColor -= dialTextStepSize;
 		if (fontColor > dialTextStopColor) {
 			fontColor = dialTextStopColor;
 		}
-		ptr -= 3;
 	}
 }
 
@@ -521,40 +508,40 @@ int Text::printText10() {
 		return 0;
 	}
 
-	if (*printText8Ptr2 == '\0') {
-		if (printText8Var5 != 0) {
+	if (*progressiveTextBuffer == '\0') {
+		if (printText8Var5) {
 			if (renderTextTriangle) {
 				renderContinueReadingTriangle();
 			}
 			printTextVar13 = false;
 			return 0;
 		}
-		if (printText8Var6 != 0) {
+		if (printText8Var6) {
 			_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, _engine->workVideoBuffer, dialTextBoxLeft, dialTextBoxTop, _engine->frontVideoBuffer);
 			_engine->copyBlockPhys(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom);
-			printText8Var3 = 0;
-			printText8Var6 = 0;
+			_blendInCharactersPos = 0;
+			printText8Var6 = false;
 			TEXT_CurrentLetterX = dialTextBoxLeft + 8;
 			TEXT_CurrentLetterY = dialTextBoxTop + 8;
 		}
 		if (*printText8Var8 == '\0') {
 			initProgressiveTextBuffer();
-			printText8Var5 = 1;
+			printText8Var5 = true;
 			return 1;
 		}
 		processTextLine();
 	}
 
 	// RECHECK this later
-	if (*printText8Ptr2 == '\0') {
+	if (*progressiveTextBuffer == '\0') {
 		return 1;
 	}
 
-	printText8Sub4(TEXT_CurrentLetterX, TEXT_CurrentLetterY, *printText8Ptr2);
-	printText10Sub2();
-	int8 charWidth = getCharWidth(*printText8Ptr2);
+	fillFadeInBuffer(TEXT_CurrentLetterX, TEXT_CurrentLetterY, *progressiveTextBuffer);
+	fadeInCharacters(_blendInCharactersPos, dialTextStartColor);
+	int8 charWidth = getCharWidth(*progressiveTextBuffer);
 
-	if (*printText8Ptr2 != ' ') {
+	if (*progressiveTextBuffer != ' ') {
 		TEXT_CurrentLetterX += charWidth + 2;
 	} else {
 		if (printText10Var1 != 0) {
@@ -565,16 +552,16 @@ int Text::printText10() {
 	}
 
 	// next character
-	printText8Ptr2++;
+	progressiveTextBuffer++;
 
-	if (*printText8Ptr2 != '\0') {
+	if (*progressiveTextBuffer != '\0') {
 		return 1;
 	}
 
 	TEXT_CurrentLetterY += 38;
 	TEXT_CurrentLetterX = dialTextBoxLeft + 8;
 
-	if (printText8Var6 == 1 && printText8Var5 == 0) {
+	if (printText8Var6 && !printText8Var5) {
 		renderContinueReadingTriangle();
 		return 2;
 	}
@@ -585,10 +572,10 @@ int Text::printText10() {
 	}
 
 	initProgressiveTextBuffer();
-	printText8Var6 = 1;
+	printText8Var6 = true;
 
 	if (*printText8Var8 == '\0') {
-		printText8Var5 = 1;
+		printText8Var5 = true;
 	}
 
 	return 1;

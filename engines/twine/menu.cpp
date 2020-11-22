@@ -742,8 +742,10 @@ int32 Menu::giveupMenu() {
 
 void Menu::drawInfoMenu(int16 left, int16 top) {
 	_engine->_interface->resetClip();
-	drawBox(left, top, left + 450, top + 80);
-	_engine->_interface->drawSplittedBox(left + 1, top + 1, left + 449, top + 79, 0);
+	const int32 width = 450;
+	const int32 height = 80;
+	drawBox(left, top, left + width, top + height);
+	_engine->_interface->drawSplittedBox(left + 1, top + 1, left + width - 1, top + height - 1, 0);
 
 	int32 newBoxLeft2 = left + 9;
 

@@ -119,7 +119,6 @@ private:
 	 */
 	void drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color);
 	void initProgressiveTextBuffer();
-	void printText8Sub4(int16 a, int16 b, int16 c);
 	struct WordSize {
 		int32 inChar = 0;
 		int32 inPixel = 0;
@@ -128,7 +127,17 @@ private:
 	void processTextLine();
 	// draw next page arrow polygon
 	void renderContinueReadingTriangle();
-	void printText10Sub2();
+	/**
+	 * @see fadeInCharacters
+	 */
+	void fillFadeInBuffer(int16 x, int16 y, int16 chr);
+	/**
+	 * Blend in characters for a text scrolling in
+	 *
+	 * @see fillFadeInBuffer
+	 * @param counter The amount of characters to handle - max 32
+	 */
+	void fadeInCharacters(int32 counter, int32 fontColor);
 	int32 getCharWidth(uint8 chr) const;
 	int32 getCharHeight(uint8 chr) const;
 	/**
@@ -157,18 +166,22 @@ private:
 	char buf1[256] {'\0'};
 	char buf2[256] {'\0'};
 	char *printText8Ptr1 = nullptr;
-	char *printText8Ptr2 = nullptr;
+	char *progressiveTextBuffer = nullptr;
 	int32 printText8Var1 = 0;
-	int32 printText8Var2 = 0;
-	int32 printText8Var3 = 0;
+	int32 _blendInCharactersPos = 0;
 	int32 TEXT_CurrentLetterX = 0;
-	int32 printText8Var5 = 0;
-	int32 printText8Var6 = 0;
+	bool printText8Var5 = false;
+	bool printText8Var6 = false;
 	int32 TEXT_CurrentLetterY = 0;
 	char *printText8Var8 = nullptr;
 	int32 printText10Var1 = 0;
 	int32 addLineBreakX = 0;
-	int16 pt8s4[96] {0};
+	struct BlendInCharacter {
+		int16 chr = 0;
+		int16 x = 0;
+		int16 y = 0;
+	};
+	BlendInCharacter _blendInCharacters[32];
 	int32 printText8PrepareBufferVar2 = 0;
 	// ---
 
@@ -190,7 +203,11 @@ private:
 	int32 dialTextStartColor = 0;
 	/** Dialogue text stop color for cross coloring dialogues */
 	int32 dialTextStopColor = 0;
-	/** Dialogue text step size for cross coloring dialogues */
+	/**
+	 * Dialogue text step size for cross coloring dialogues
+	 *
+	 * The speed in which the color reaches it's destination color while fading in.
+	 */
 	int32 dialTextStepSize = 0;
 	/** Dialogue text buffer size for cross coloring dialogues */
 	int32 dialTextBufferSize = 0;
