@@ -1658,6 +1658,7 @@ const char *const HIT_SPELL_POINTS_RESTORED = "Hit Pts and Spell Pts restored.";
 const char *const TOO_DANGEROUS_TO_REST = "Too dangerous to rest here!";
 const char *const SOME_CHARS_MAY_DIE = "Some Chars may die. Rest anyway?";
 
+const char *const DISMISS_WHOM = "\t010\v005Dismiss whom?";
 const char *const CANT_DISMISS_LAST_CHAR = "You cannot dismiss your last character!";
 
 const char *const DELETE_CHAR_WITH_ELDER_WEAPON = "\v000\t000This character has an Elder Weapon and cannot be deleted!";
@@ -2246,6 +2247,7 @@ void writeConstants(CCArchive &cc) {
 	file.syncString(HIT_SPELL_POINTS_RESTORED);
 	file.syncString(TOO_DANGEROUS_TO_REST);
 	file.syncString(SOME_CHARS_MAY_DIE);
+	file.syncString(DISMISS_WHOM);
 	file.syncString(CANT_DISMISS_LAST_CHAR);
 	file.syncString(DELETE_CHAR_WITH_ELDER_WEAPON);
 	file.syncStrings(REMOVE_DELETE, 2);

@@ -42,24 +42,23 @@ void Dismiss::execute() {
 
 	Window &w = windows[31];
 	w.open();
-	_iconSprites.draw(w, 0, Common::Point(225, 120));
-	w.update();
 
 	bool breakFlag = false;
 	while (!_vm->shouldExit() && !breakFlag) {
 		do {
 			events.updateGameCounter();
-			intf.draw3d(false);
+			intf.draw3d(false, false);
+
 			w.frame();
-			w.writeString("\r");
+			w.fill();
+			w.writeString(Res.DISMISS_WHOM);
 			_iconSprites.draw(w, 0, Common::Point(225, 120));
-			windows[3].update();
 			w.update();
 
 			do {
 				events.pollEventsAndWait();
 				checkEvents(_vm);
-			} while (!_vm->shouldExit() && !_buttonValue && events.timeElapsed() == 0);
+			} while (!_vm->shouldExit() && !_buttonValue && events.timeElapsed() < 2);
 		} while (!_vm->shouldExit() && !_buttonValue);
 
 		if (_buttonValue >= Common::KEYCODE_F1 && _buttonValue <= Common::KEYCODE_F6) {
@@ -85,6 +84,9 @@ void Dismiss::execute() {
 			breakFlag = true;
 		}
 	}
+
+	w.close();
+	intf.drawParty(true);
 }
 
 void Dismiss::loadButtons() {
