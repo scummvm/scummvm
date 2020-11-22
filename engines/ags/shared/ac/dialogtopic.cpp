@@ -23,7 +23,7 @@
 #include "ac/dialogtopic.h"
 #include "util/stream.h"
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 void DialogTopic::ReadFromFile(Stream *in) {
 	in->ReadArray(optionnames, 150 * sizeof(char), MAXTOPICOPTIONS);

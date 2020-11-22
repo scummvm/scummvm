@@ -25,7 +25,7 @@
 #include "util/string_types.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 DebugOutput::DebugOutput(const String &id, IOutputHandler *handler, MessageType def_verbosity, bool enabled)
 	: _id(id)
@@ -224,5 +224,5 @@ void Printf(DebugGroupID group, MessageType mt, const char *fmt, ...) {
 
 } // namespace Debug
 
-}   // namespace Common
+}   // namespace Shared
 }   // namespace AGS

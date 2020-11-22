@@ -27,13 +27,13 @@
 #include "util/stream.h"
 #include "util/string_utils.h"
 
-std::vector<AGS::Common::GUILabel> guilabels;
+std::vector<AGS::Shared::GUILabel> guilabels;
 int numguilabels = 0;
 
 #define GUILABEL_TEXTLENGTH_PRE272 200
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 GUILabel::GUILabel() {
 	Font = 0;
@@ -121,5 +121,5 @@ void GUILabel::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(TextAlignment);
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

@@ -46,8 +46,8 @@ struct ICCStaticObject;
 struct ICCDynamicObject;
 struct StaticArray;
 
-using AGS::Common::String;
-using AGS::Common::String;
+using AGS::Shared::String;
+using AGS::Shared::String;
 
 // ************ SCRIPT LOADING AND RUNNING FUNCTIONS ************
 

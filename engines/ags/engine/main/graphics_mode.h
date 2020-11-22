@@ -29,7 +29,7 @@
 
 namespace AGS3 {
 
-using AGS::Common::String;
+using AGS::Shared::String;
 using AGS::Engine::DisplayMode;
 
 Size get_desktop_size();

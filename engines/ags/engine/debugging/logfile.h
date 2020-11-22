@@ -41,7 +41,7 @@
 namespace AGS3 {
 namespace AGS {
 
-namespace Common {
+namespace Shared {
 class Stream;
 } // namespace Shared
 
@@ -51,7 +51,7 @@ using Common::DebugMessage;
 using Common::Stream;
 using Common::String;
 
-class LogFile : public AGS::Common::IOutputHandler {
+class LogFile : public AGS::Shared::IOutputHandler {
 public:
 	enum OpenMode {
 		kLogFile_Overwrite,

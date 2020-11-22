@@ -58,23 +58,23 @@ public:
 		Unload();
 	};
 
-	AGS::Common::String BuildFilename(AGS::Common::String libraryName) {
+	AGS::Shared::String BuildFilename(AGS::Shared::String libraryName) {
 		return String::FromFormat("%s.dll", libraryName.GetCStr());
 	}
 
-	AGS::Common::String BuildPath(AGS::Common::String libraryName) {
-		AGS::Common::String platformLibraryName = BuildFilename(libraryName);
+	AGS::Shared::String BuildPath(AGS::Shared::String libraryName) {
+		AGS::Shared::String platformLibraryName = BuildFilename(libraryName);
 
-		AGS::Common::Debug::Printf("Built library path: %s", platformLibraryName.GetCStr());
+		AGS::Shared::Debug::Printf("Built library path: %s", platformLibraryName.GetCStr());
 
 		return platformLibraryName;
 	}
 
-	AGS::Common::String GetFilenameForLib(AGS::Common::String libraryName) override {
+	AGS::Shared::String GetFilenameForLib(AGS::Shared::String libraryName) override {
 		return BuildFilename(libraryName);
 	}
 
-	bool Load(AGS::Common::String libraryName) {
+	bool Load(AGS::Shared::String libraryName) {
 		Unload();
 
 		_library = LoadLibraryA(BuildPath(libraryName).GetCStr());
@@ -90,7 +90,7 @@ public:
 		}
 	}
 
-	void *GetFunctionAddress(AGS::Common::String functionName) {
+	void *GetFunctionAddress(AGS::Shared::String functionName) {
 		return GetProcAddress(_library, functionName.GetCStr());
 	}
 

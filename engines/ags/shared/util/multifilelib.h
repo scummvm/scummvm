@@ -39,7 +39,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 //
 // MultiFileLib utilities: (de)serialization of asset library in MFL format
@@ -73,7 +73,7 @@ void     WriteHeader(const AssetLibInfo &lib, MFLVersion lib_version, int lib_in
 void     WriteEnder(soff_t lib_offset, MFLVersion lib_index, Stream *out);
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

@@ -38,11 +38,11 @@
 #include "util/stream.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 class RoomStruct;
 }
 }
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern void quit(const char *);
 extern int currentline; // in script/script_common

@@ -41,7 +41,7 @@
 #include <jni.h>
 #include <android/log.h>
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 #define ANDROID_CONFIG_FILENAME "android.cfg"
 

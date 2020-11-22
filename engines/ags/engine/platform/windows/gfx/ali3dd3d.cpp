@@ -50,7 +50,7 @@ extern int dxmedia_play_video_3d(const char *filename, IDirect3DDevice9 *device,
 extern void dxmedia_shutdown_3d();
 #endif
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 // Necessary to update textures from 8-bit bitmaps
 extern RGB palette[256];
@@ -128,7 +128,7 @@ namespace AGS {
 namespace Engine {
 namespace D3D {
 
-using namespace Common;
+using namespace Shared;
 
 void D3DBitmap::Dispose() {
 	if (_tiles != NULL) {

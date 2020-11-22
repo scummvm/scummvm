@@ -35,7 +35,7 @@ namespace AGS3 {
 
 // Forward declaration
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Stream;
 } // namespace Shared
 } // namespace AGS
@@ -53,7 +53,7 @@ struct GameSetupStruct;
 #define GUIMAIN_LEGACY_TW_FLAGS_SIZE       4
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 // Legacy GUIMain visibility state, which combined Visible property and override factor
 enum LegacyGUIVisState {
@@ -214,7 +214,7 @@ void WriteGUI(const std::vector<GUIMain> &guis, Stream *out);
 void ApplyLegacyVisibility(GUIMain &gui, LegacyGUIVisState vis);
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 
 extern std::vector<Common::GUIMain> guis;

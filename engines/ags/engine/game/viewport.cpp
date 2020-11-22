@@ -26,7 +26,7 @@
 #include "game/roomstruct.h"
 #include "game/viewport.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern RoomStruct thisroom;
 

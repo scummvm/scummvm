@@ -26,11 +26,11 @@
 #include "util/stream.h"
 #include "util/string_utils.h"
 
-std::vector<AGS::Common::GUIButton> guibuts;
+std::vector<AGS::Shared::GUIButton> guibuts;
 int numguibuts = 0;
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 FrameAlignment ConvertLegacyButtonAlignment(LegacyButtonAlignment align) {
 	switch (align) {
@@ -346,5 +346,5 @@ void GUIButton::DrawTextButton(Bitmap *ds, bool draw_disabled) {
 	DrawText(ds, draw_disabled);
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

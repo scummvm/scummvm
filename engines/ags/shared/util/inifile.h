@@ -38,7 +38,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class IniFile {
 public:
@@ -168,7 +168,7 @@ private:
 	LSections _sections;
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

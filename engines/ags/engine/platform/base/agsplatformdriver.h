@@ -38,7 +38,7 @@
 namespace AGS3 {
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Stream;
 }
 namespace Engine {
@@ -65,7 +65,7 @@ enum SetupReturnValue {
 
 struct AGSPlatformDriver
 	// be used as a output target for logging system
-	: public AGS::Common::IOutputHandler {
+	: public AGS::Shared::IOutputHandler {
 	virtual void AboutToQuitGame();
 	virtual void Delay(int millis);
 	virtual void DisplayAlert(const char *, ...) = 0;
@@ -178,7 +178,7 @@ struct AGSPlatformDriver
 	// IOutputHandler implementation
 	//-----------------------------------------------
 	// Writes to the standard platform's output, prepending "AGS: " prefix to the message
-	void PrintMessage(const AGS::Common::DebugMessage &msg) override;
+	void PrintMessage(const AGS::Shared::DebugMessage &msg) override;
 
 protected:
 	// TODO: this is a quick solution for IOutputHandler implementation

@@ -27,7 +27,7 @@
 
 namespace AGS3 {
 
-using AGS::Common::GUILabel;
+using AGS::Shared::GUILabel;
 
 const char *Label_GetText_New(GUILabel *labl);
 void        Label_GetText(GUILabel *labl, char *buffer);

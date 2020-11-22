@@ -33,7 +33,7 @@
 #include "stdio_compat.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 namespace Directory {
 
@@ -81,5 +81,5 @@ String GetCurrentDirectory() {
 
 } // namespace Directory
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

@@ -24,7 +24,7 @@
 #include "ac/common_defines.h"
 #include "util/stream.h"
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 // [IKM] 2012-07-02: these functions are used during load/save game,
 // and read/written as-is, hence cachedClip pointer should be serialized

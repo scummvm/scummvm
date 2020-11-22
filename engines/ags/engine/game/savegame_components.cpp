@@ -60,7 +60,7 @@
 #include "util/filestream.h" // TODO: needed only because plugins expect file handle
 #include "media/audio/audio_system.h"
 
-using namespace Common;
+using namespace Shared;
 
 extern GameSetupStruct game;
 extern color palette[256];

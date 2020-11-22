@@ -25,7 +25,7 @@
 #include "util/stream.h"
 #include "util/wgt2allg.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 #ifdef __cplusplus
 extern "C"

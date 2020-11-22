@@ -28,7 +28,7 @@
 #include "util/stream.h"
 #include "util/string_compat.h"
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 // currently executed line
 int currentline;

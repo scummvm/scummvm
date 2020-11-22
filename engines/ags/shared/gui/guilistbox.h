@@ -29,7 +29,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class GUIListBox : public GUIObject {
 public:
@@ -95,10 +95,10 @@ private:
 	String _textToDraw;
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 
-extern std::vector<AGS::Common::GUIListBox> guilist;
+extern std::vector<AGS::Shared::GUIListBox> guilist;
 extern int numguilist;
 
 } // namespace AGS3

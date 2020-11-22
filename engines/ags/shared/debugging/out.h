@@ -81,7 +81,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 // Message types provide distinction for debug messages by their intent.
 enum MessageType {
@@ -161,7 +161,7 @@ void Printf(DebugGroupID group_id, MessageType mt, const char *fmt, ...);
 
 } // namespace Debug
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

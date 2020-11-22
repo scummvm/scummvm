@@ -27,7 +27,7 @@
 #include "util/string_utils.h"
 #include "util/stream.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 String cbuf_to_string_and_free(char *char_buf) {
 	String s = char_buf;
@@ -37,7 +37,7 @@ String cbuf_to_string_and_free(char *char_buf) {
 
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 String StrUtil::IntToString(int d) {
 	return String::FromFormat("%d", d);
@@ -156,5 +156,5 @@ void StrUtil::WriteCStr(const String &s, Stream *out) {
 	out->Write(s.GetCStr(), s.GetLength() + 1);
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

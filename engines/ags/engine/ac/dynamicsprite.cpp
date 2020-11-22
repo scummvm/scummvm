@@ -41,7 +41,7 @@
 #include "gfx/graphicsdriver.h"
 #include "script/runtimescriptvalue.h"
 
-using namespace Common;
+using namespace Shared;
 using namespace Engine;
 
 extern GameSetupStruct game;

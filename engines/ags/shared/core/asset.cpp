@@ -23,7 +23,7 @@
 #include "core/asset.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 AssetInfo::AssetInfo()
 	: LibUid(0)
@@ -37,5 +37,5 @@ void AssetLibInfo::Unload() {
 	AssetInfos.clear();
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

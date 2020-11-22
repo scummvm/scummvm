@@ -68,7 +68,7 @@ extern "C"
 namespace AGS {
 namespace Engine {
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 //=============================================================================
 //

@@ -30,7 +30,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class FileStream : public DataStream {
 public:
@@ -74,7 +74,7 @@ private:
 	const FileWorkMode  _workMode;
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

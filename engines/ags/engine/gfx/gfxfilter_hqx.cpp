@@ -28,7 +28,7 @@ namespace AGS {
 namespace Engine {
 namespace ALSW {
 
-using namespace Common;
+using namespace Shared;
 
 const GfxFilterInfo HqxGfxFilter::FilterInfo = GfxFilterInfo("Hqx", "Hqx (High Quality)", 2, 3);
 

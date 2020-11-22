@@ -38,7 +38,7 @@ extern SpriteCache spriteset;
 
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 int GUIInvWindow::GetCharacterId() const {
 	if (CharId < 0)
@@ -91,5 +91,5 @@ void GUIInvWindow::Draw(Bitmap *ds) {
 	}
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

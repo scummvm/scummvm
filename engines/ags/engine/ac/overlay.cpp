@@ -38,7 +38,7 @@
 #include "gfx/bitmap.h"
 #include "script/runtimescriptvalue.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern GameSetupStruct game;

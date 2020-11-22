@@ -307,7 +307,7 @@ public:
 		case kScValGlobalVar:
 		{
 			if (RValue->Type == kScValData) {
-				rval.SetInt32(AGS::Common::Memory::ReadInt32LE(RValue->GetPtrWithOffset() + this->IValue));
+				rval.SetInt32(AGS::Shared::Memory::ReadInt32LE(RValue->GetPtrWithOffset() + this->IValue));
 			} else {
 				rval = *RValue;
 			}

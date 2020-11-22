@@ -63,7 +63,7 @@
 #define USE_CUSTOM_EXCEPTION_HANDLER
 #endif
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 String appDirectory; // Needed for library loading
@@ -140,11 +140,11 @@ void main_create_platform_driver() {
 #define SVG_VERSION_FWCOMPAT_REVISION   1111
 
 // Current engine version
-AGS::Common::Version EngineVersion;
+AGS::Shared::Version EngineVersion;
 // Lowest savedgame version, accepted by this engine
-AGS::Common::Version SavedgameLowestBackwardCompatVersion;
+AGS::Shared::Version SavedgameLowestBackwardCompatVersion;
 // Lowest engine version, which would accept current savedgames
-AGS::Common::Version SavedgameLowestForwardCompatVersion;
+AGS::Shared::Version SavedgameLowestForwardCompatVersion;
 
 void main_init(int argc, char *argv[]) {
 	EngineVersion = Version(ACI_VERSION_STR " " SPECIAL_VERSION);

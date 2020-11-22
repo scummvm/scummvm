@@ -29,7 +29,7 @@
 namespace AGS {
 namespace Engine {
 
-using namespace Common;
+using namespace Shared;
 
 LogFile::LogFile()
 	: _openMode(kLogFile_Overwrite) {

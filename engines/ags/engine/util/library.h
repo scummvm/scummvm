@@ -36,13 +36,13 @@ public:
 
 	virtual ~BaseLibrary() = default;
 
-	virtual AGS::Common::String GetFilenameForLib(AGS::Common::String libraryName) = 0;
+	virtual AGS::Shared::String GetFilenameForLib(AGS::Shared::String libraryName) = 0;
 
-	virtual bool Load(AGS::Common::String libraryName) = 0;
+	virtual bool Load(AGS::Shared::String libraryName) = 0;
 
 	virtual bool Unload() = 0;
 
-	virtual void *GetFunctionAddress(AGS::Common::String functionName) = 0;
+	virtual void *GetFunctionAddress(AGS::Shared::String functionName) = 0;
 };
 
 

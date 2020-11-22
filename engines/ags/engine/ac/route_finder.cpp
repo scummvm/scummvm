@@ -27,7 +27,7 @@
 
 #include "debug/out.h"
 
-using AGS::Common::Bitmap;
+using AGS::Shared::Bitmap;
 
 class IRouteFinder {
 public:
@@ -101,10 +101,10 @@ static IRouteFinder *route_finder_impl = nullptr;
 
 void init_pathfinder(GameDataVersion game_file_version) {
 	if (game_file_version >= kGameVersion_350) {
-		AGS::Common::Debug::Printf(AGS::Common::MessageType::kDbgMsg_Info, "Initialize path finder library");
+		AGS::Shared::Debug::Printf(AGS::Shared::MessageType::kDbgMsg_Info, "Initialize path finder library");
 		route_finder_impl = new AGSRouteFinder();
 	} else {
-		AGS::Common::Debug::Printf(AGS::Common::MessageType::kDbgMsg_Info, "Initialize legacy path finder library");
+		AGS::Shared::Debug::Printf(AGS::Shared::MessageType::kDbgMsg_Info, "Initialize legacy path finder library");
 		route_finder_impl = new AGSLegacyRouteFinder();
 	}
 

@@ -32,7 +32,7 @@
 #include "util/string.h"
 #include "util/string_compat.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameSetupStruct game;
 extern GameState play;

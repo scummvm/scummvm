@@ -25,7 +25,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class BaseMutex {
 public:
@@ -35,7 +35,7 @@ public:
 	virtual void Unlock() = 0;
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

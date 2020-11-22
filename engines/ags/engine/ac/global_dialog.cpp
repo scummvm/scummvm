@@ -31,7 +31,7 @@
 #include "debug/out.h"
 #include "script/script.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameSetupStruct game;
 extern GameState play;

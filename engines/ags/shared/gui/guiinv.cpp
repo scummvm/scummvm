@@ -26,11 +26,11 @@
 #include "gui/guimain.h"
 #include "util/stream.h"
 
-std::vector<AGS::Common::GUIInvWindow> guiinv;
+std::vector<AGS::Shared::GUIInvWindow> guiinv;
 int numguiinv = 0;
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 GUIInvWindow::GUIInvWindow() {
 	IsMouseOver = false;
@@ -127,5 +127,5 @@ void GUIInvWindow::CalculateNumCells() {
 	}
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

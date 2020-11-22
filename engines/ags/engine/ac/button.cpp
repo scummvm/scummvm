@@ -32,7 +32,7 @@
 #include "gui/animatingguibutton.h"
 #include "gui/guimain.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameSetupStruct game;
 extern ViewStruct *views;

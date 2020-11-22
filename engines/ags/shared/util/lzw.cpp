@@ -30,7 +30,7 @@
 #include "ac/common.h" // quit
 #include "util/stream.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 #ifdef _MANAGED
 // ensure this doesn't get compiled to .NET IL

@@ -26,7 +26,7 @@
 #include "util/stream.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 GUIObject::GUIObject() {
 	Id          = 0;
@@ -194,5 +194,5 @@ HorAlignment ConvertLegacyGUIAlignment(LegacyGUIAlignment align) {
 	return kHAlignNone;
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

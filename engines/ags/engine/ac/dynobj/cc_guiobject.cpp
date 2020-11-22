@@ -25,7 +25,7 @@
 #include "gui/guimain.h"
 #include "gui/guiobject.h"
 
-using AGS::Common::GUIObject;
+using AGS::Shared::GUIObject;
 
 // return the type name of the object
 const char *CCGUIObject::GetType() {

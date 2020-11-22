@@ -28,7 +28,7 @@
 #include "gui/guimain.h"
 #include "gui/guibutton.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameSetupStruct game;
 

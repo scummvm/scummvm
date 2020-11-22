@@ -24,7 +24,7 @@
 #include "ac/common.h"
 #include "util/stream.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 void MoveList::ReadFromFile_Legacy(Stream *in) {

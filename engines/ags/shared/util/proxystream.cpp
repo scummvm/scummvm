@@ -23,7 +23,7 @@
 #include "util/proxystream.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 ProxyStream::ProxyStream(Stream *stream, ObjectOwnershipPolicy stream_ownership_policy)
 	: _stream(stream)
@@ -152,5 +152,5 @@ bool ProxyStream::Seek(soff_t offset, StreamSeek origin) {
 	return _stream ? _stream->Seek(offset, origin) : false;
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

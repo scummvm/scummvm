@@ -28,7 +28,7 @@
 namespace AGS3 {
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Stream;
 } // namespace Shared
 } // namespace AGS
@@ -42,7 +42,7 @@ using namespace AGS; // FIXME later
 Common::String cbuf_to_string_and_free(char *char_buf);
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 namespace StrUtil {
 enum ConversionError {
 	kNoError,   // conversion successful
@@ -77,7 +77,7 @@ void            SkipCStr(Stream *in);
 void            WriteCStr(const char *cstr, Stream *out);
 void            WriteCStr(const String &s, Stream *out);
 }
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

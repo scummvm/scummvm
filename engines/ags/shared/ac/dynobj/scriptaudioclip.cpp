@@ -23,7 +23,7 @@
 #include "ac/dynobj/scriptaudioclip.h"
 #include "util/stream.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 void ScriptAudioClip::ReadFromFile(Stream *in) {
 	id = in->ReadInt32();

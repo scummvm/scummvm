@@ -62,7 +62,7 @@
 #include "util/string_utils.h"
 #include "media/audio/audio_system.h"
 
-using namespace Common;
+using namespace Shared;
 using namespace Engine;
 
 // function is currently implemented in game.cpp

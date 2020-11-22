@@ -24,7 +24,7 @@
 #include "util/memory.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 // TODO: revise this construction later
 namespace BitmapHelper {
@@ -169,5 +169,5 @@ void ReadPixelsFromMemory(Bitmap *dst, const uint8_t *src_buffer, const size_t s
 
 } // namespace BitmapHelper
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

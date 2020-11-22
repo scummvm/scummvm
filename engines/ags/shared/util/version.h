@@ -33,7 +33,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 using Common::String;
 
@@ -101,7 +101,7 @@ private:
 	void MakeString();
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

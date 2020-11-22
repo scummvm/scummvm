@@ -29,7 +29,7 @@
 #include "util/string_compat.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 String::String()
 	: _cstr(nullptr)
@@ -846,5 +846,5 @@ void String::ReserveAndShift(bool left, size_t more_length) {
 	}
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

@@ -40,7 +40,7 @@ namespace AGS3 {
 #endif
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 namespace Memory {
 //-------------------------------------------------------------------------
@@ -228,7 +228,7 @@ inline void BlockCopy(uint8_t *dst, const size_t dst_pitch, const size_t dst_off
 
 } // namespace Memory
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

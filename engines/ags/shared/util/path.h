@@ -33,7 +33,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 namespace Path {
 // Tells if the given path is a directory
@@ -85,7 +85,7 @@ String  GetPathInASCII(const String &path);
 String  GetCmdLinePathInASCII(const char *arg, int arg_index);
 } // namespace Path
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

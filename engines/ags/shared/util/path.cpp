@@ -34,7 +34,7 @@
 #endif
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 namespace Path {
 
@@ -241,5 +241,5 @@ String GetCmdLinePathInASCII(const char *arg, int arg_index) {
 
 } // namespace Path
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

@@ -26,7 +26,7 @@
 #include "util/memory.h"
 #include "util/stream.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 static const char   *WFN_FILE_SIGNATURE  = "WGT Font File  ";
 static const size_t  WFN_FILE_SIG_LENGTH = 15;

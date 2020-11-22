@@ -39,7 +39,7 @@
 #include <pwd.h>
 #include <sys/stat.h>
 
-using AGS::Common::String;
+using AGS::Shared::String;
 
 
 // Replace the default Allegro icon. The original defintion is in the

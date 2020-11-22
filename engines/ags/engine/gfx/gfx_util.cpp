@@ -32,7 +32,7 @@ extern int psp_gfx_renderer;
 namespace AGS {
 namespace Engine {
 
-using namespace Common;
+using namespace Shared;
 
 namespace GfxUtil {
 

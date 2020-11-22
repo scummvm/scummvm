@@ -46,7 +46,7 @@
 #include "media/audio/audio_system.h"
 
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern GameSetupStruct game;
@@ -310,7 +310,7 @@ void read_game_data_location(const ConfigTree &cfg) {
 	if (!usetup.data_files_dir.IsEmpty()) {
 		// strip any trailing slash
 		// TODO: move this to Path namespace later
-		AGS::Common::Path::FixupPath(usetup.data_files_dir);
+		AGS::Shared::Path::FixupPath(usetup.data_files_dir);
 #if AGS_PLATFORM_OS_WINDOWS
 		// if the path is just x:\ don't strip the slash
 		if (!(usetup.data_files_dir.GetLength() == 3 && usetup.data_files_dir[1u] == ':')) {

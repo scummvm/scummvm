@@ -39,15 +39,15 @@ namespace AGS {
 namespace Common {
 struct AssetLibInfo;
 struct Interaction;
-struct InteractionScripts;
+namespace SharedonScripts;
 typedef std::shared_ptr<Interaction> PInteraction;
 typedef std::shared_ptr<InteractionScripts> PInteractionScripts;
 } // namespace Shared
 } // namespace AGS
 
-using AGS::Common::PInteraction;
-using AGS::Common::PInteractionScripts;
-using AGS::Common::HGameFileError;
+using AGS::Shared::PInteraction;
+using AGS::Shared::PInteractionScripts;
+using AGS::Shared::HGameFileError;
 struct OldGameSetupStruct;
 
 
@@ -68,9 +68,9 @@ struct GameSetupStruct : public GameSetupStructBase {
 	int               filever;  // just used by editor
 	Common::String    compiled_with; // version of AGS this data was created by
 	char              lipSyncFrameLetters[MAXLIPSYNCFRAMES][50];
-	AGS::Common::PropertySchema propSchema;
-	std::vector<AGS::Common::StringIMap> charProps;
-	AGS::Common::StringIMap invProps[MAX_INV];
+	AGS::Shared::PropertySchema propSchema;
+	std::vector<AGS::Shared::StringIMap> charProps;
+	AGS::Shared::StringIMap invProps[MAX_INV];
 	// NOTE: although the view names are stored in game data, they are never
 	// used, nor registered as script exports; numeric IDs are used to
 	// reference views instead.

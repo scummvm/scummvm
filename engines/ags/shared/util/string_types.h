@@ -60,8 +60,8 @@ namespace tr1 {
 #endif
 // std::hash for String object
 template<>
-struct hash<AGS::Common::String> : public unary_function<AGS::Common::String, size_t> {
-	size_t operator()(const AGS::Common::String &key) const {
+struct hash<AGS::Shared::String> : public unary_function<AGS::Shared::String, size_t> {
+	size_t operator()(const AGS::Shared::String &key) const {
 		return FNV::Hash(key.GetCStr(), key.GetLength());
 	}
 };
@@ -72,7 +72,7 @@ struct hash<AGS::Common::String> : public unary_function<AGS::Common::String, si
 
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 //
 // Various comparison functors
@@ -103,7 +103,7 @@ typedef std::vector<String> StringV;
 typedef std::unordered_map<String, String> StringMap;
 typedef std::unordered_map<String, String, HashStrNoCase, StrEqNoCase> StringIMap;
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

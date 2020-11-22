@@ -41,7 +41,7 @@ namespace Engine {
 using Common::String;
 using Common::DebugMessage;
 
-class MessageBuffer : public AGS::Common::IOutputHandler {
+class MessageBuffer : public AGS::Shared::IOutputHandler {
 public:
 	MessageBuffer(size_t buffer_limit = 1024);
 

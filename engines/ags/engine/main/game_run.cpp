@@ -66,7 +66,7 @@
 #include "ac/timer.h"
 #include "ac/keycode.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern AnimatingGUIButton animbuts[MAX_ANIMATING_BUTTONS];
 extern int numAnimButs;

@@ -42,7 +42,7 @@ namespace AGS3 {
 
 struct SpriteInfo;
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class RoomStruct;
 
@@ -94,7 +94,7 @@ HRoomFileError ExtractScriptText(String &script, Stream *in, RoomFileVersion dat
 
 HRoomFileError WriteRoomData(const RoomStruct *room, Stream *out, RoomFileVersion data_ver);
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

@@ -23,7 +23,7 @@
 #include "ac/audiocliptype.h"
 #include "util/stream.h"
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 void AudioClipType::ReadFromFile(Stream *in) {
 	id = in->ReadInt32();

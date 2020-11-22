@@ -40,7 +40,7 @@
 namespace AGS3 {
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Bitmap;
 } // namespace Shared
 } // namespace AGS

@@ -27,7 +27,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 // TODO: replace with std::shared_ptr!!!
 enum ObjectOwnershipPolicy {
@@ -83,7 +83,7 @@ protected:
 	ObjectOwnershipPolicy   _streamOwnershipPolicy;
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

@@ -28,7 +28,7 @@
 #include "script/script_api.h"
 #include "util/math.h"
 
-namespace Math = AGS::Common::Math;
+namespace Math = AGS::Shared::Math;
 
 enum FormatParseResult {
 	kFormatParseNone,

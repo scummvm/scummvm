@@ -33,7 +33,7 @@
 #include "gfx/bitmap.h"
 #include "script/runtimescriptvalue.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern RoomStruct thisroom;
 extern RoomStatus *croom;

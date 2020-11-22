@@ -25,7 +25,7 @@
 #include "util/math.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 AlignedStream::AlignedStream(Stream *stream, AlignedStreamMode mode, ObjectOwnershipPolicy stream_ownership_policy,
                              size_t base_alignment)
@@ -328,5 +328,5 @@ void AlignedStream::FinalizeBlock() {
 	_block = 0;
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

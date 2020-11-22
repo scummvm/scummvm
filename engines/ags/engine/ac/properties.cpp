@@ -28,7 +28,7 @@
 #include "script/runtimescriptvalue.h"
 #include "util/string_utils.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameSetupStruct game;
 extern ScriptString myScriptStringImpl;

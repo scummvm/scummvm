@@ -71,7 +71,7 @@
 #include "media/audio/audio_system.h"
 #include "ac/movelist.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameSetupStruct game;
 extern int displayed_room, starting_room;

@@ -38,7 +38,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class Bitmap {
 public:
@@ -232,7 +232,7 @@ Bitmap *CreateRawBitmapOwner(BITMAP *al_bmp);
 Bitmap *CreateRawBitmapWrapper(BITMAP *al_bmp);
 } // namespace BitmapHelper
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

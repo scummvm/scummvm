@@ -49,7 +49,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 enum AlignedStreamMode {
 	kAligned_Read,
@@ -108,7 +108,7 @@ private:
 	int64_t             _block;
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

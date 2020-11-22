@@ -30,7 +30,7 @@
 #include "script/script_common.h"
 #include "util/stream.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 const auto OBJECT_CACHE_MAGIC_NUMBER = 0xa30b;
 const auto SERIALIZE_BUFFER_SIZE = 10240;

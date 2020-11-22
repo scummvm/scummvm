@@ -25,11 +25,11 @@
 #include "gui/guislider.h"
 #include "util/stream.h"
 
-std::vector<AGS::Common::GUISlider> guislider;
+std::vector<AGS::Shared::GUISlider> guislider;
 int numguislider = 0;
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 GUISlider::GUISlider() {
 	MinValue = 0;
@@ -240,5 +240,5 @@ void GUISlider::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(Value);
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

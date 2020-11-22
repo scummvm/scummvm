@@ -26,7 +26,7 @@
 #include "util/string_utils.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 namespace MFLUtil {
 const String HeadSig = "CLIB\x1a";
@@ -401,7 +401,7 @@ int32_t MFLUtil::ReadEncInt32(Stream *in, int &rand_val) {
 	int val;
 	ReadEncArray(&val, sizeof(int32_t), 1, in, rand_val);
 #if AGS_PLATFORM_ENDIAN_BIG
-	AGS::Common::BitByteOperations::SwapBytesInt32(val);
+	AGS::Shared::BitByteOperations::SwapBytesInt32(val);
 #endif
 	return val;
 }
@@ -418,4 +418,4 @@ void MFLUtil::ReadEncString(char *buffer, size_t max_len, Stream *in, int &rand_
 }
 
 } // namespace AGS
-} // namespace Common
+} // namespace Shared

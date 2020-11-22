@@ -32,7 +32,7 @@ namespace AGS3 {
 
 // Forward declaration
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Stream;
 } // namespace Shared
 } // namespace AGS

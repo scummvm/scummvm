@@ -38,7 +38,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 enum DataEndianess {
 	kBigEndian,
@@ -146,7 +146,7 @@ inline float FloatFromBE(const float val) {
 // Aliases for easier calling
 namespace BBOp = BitByteOperations;
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

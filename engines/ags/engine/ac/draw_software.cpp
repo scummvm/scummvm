@@ -52,7 +52,7 @@
 #include "gfx/bitmap.h"
 #include "util/scaling.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 // TODO: choose these values depending on game resolution?

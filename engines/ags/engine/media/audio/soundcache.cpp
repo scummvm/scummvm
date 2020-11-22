@@ -31,7 +31,7 @@
 #include "util/string.h"
 #include "debug/out.h"
 
-using namespace Common;
+using namespace Shared;
 
 sound_cache_entry_t *sound_cache_entries = nullptr;
 unsigned int sound_cache_counter = 0;

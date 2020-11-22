@@ -42,7 +42,7 @@
 #include "gfx/gfx_def.h"
 #include "gfx/gfx_util.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern GameSetupStruct game;

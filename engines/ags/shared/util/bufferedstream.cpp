@@ -28,7 +28,7 @@
 #include "util/string.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess)
 	: FileStream(file_name, open_mode, work_mode, stream_endianess), _buffer(BufferStreamSize), _bufferPosition(0), _position(0) {
@@ -137,5 +137,5 @@ bool BufferedStream::Seek(soff_t offset, StreamSeek origin) {
 	return _position == want_pos;
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

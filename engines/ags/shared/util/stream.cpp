@@ -23,7 +23,7 @@
 #include "util/stream.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 size_t Stream::WriteByteCount(uint8_t b, size_t count) {
 	if (!CanWrite())
@@ -36,5 +36,5 @@ size_t Stream::WriteByteCount(uint8_t b, size_t count) {
 	return size;
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

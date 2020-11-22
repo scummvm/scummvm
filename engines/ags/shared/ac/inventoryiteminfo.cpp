@@ -24,7 +24,7 @@
 #include "util/stream.h"
 #include "util/string_utils.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 void InventoryItemInfo::ReadFromFile(Stream *in) {
 	in->Read(name, 25);

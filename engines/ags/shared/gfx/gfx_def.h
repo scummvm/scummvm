@@ -31,7 +31,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 enum BlendMode {
 	// free blending (ARGB -> ARGB) modes
@@ -103,7 +103,7 @@ inline int LegacyTrans100ToAlpha255(int legacy_transparency) {
 }
 } // namespace GfxDef
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

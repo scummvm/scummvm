@@ -33,7 +33,7 @@
 
 namespace AGS3 {
 
-using AGS::Common::String;
+using AGS::Shared::String;
 
 // Filepath tokens, which are replaced by platform-specific directory names
 extern const String UserSavedgamesRootToken;

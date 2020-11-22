@@ -42,7 +42,7 @@
 #include "media/audio/audio_system.h"
 #include "ac/timer.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern GameSetupStruct game;

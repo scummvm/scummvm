@@ -27,7 +27,7 @@
 #include "gui/guidialoginternaldefs.h"
 #include "gfx/bitmap.h"
 
-using AGS::Common::Bitmap;
+using AGS::Shared::Bitmap;
 
 extern GameSetup usetup;
 

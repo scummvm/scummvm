@@ -35,10 +35,10 @@
 
 namespace AGS3 {
 
-using AGS::Common::Interaction;
-using AGS::Common::InteractionCommandList;
-using AGS::Common::InteractionScripts;
-using AGS::Common::InteractionVariable;
+using AGS::Shared::Interaction;
+using AGS::Shared::InteractionCommandList;
+using AGS::Shared::InteractionScripts;
+using AGS::Shared::InteractionVariable;
 
 #define LATE_REP_EXEC_ALWAYS_NAME "late_repeatedly_execute_always"
 #define REP_EXEC_ALWAYS_NAME "repeatedly_execute_always"
@@ -67,7 +67,7 @@ int     RunTextScript2IParam(ccInstance *sci, const char *tsname, const RuntimeS
 int     PrepareTextScript(ccInstance *sci, const char **tsname);
 bool    DoRunScriptFuncCantBlock(ccInstance *sci, NonBlockingScriptFunction *funcToRun, bool hasTheFunc);
 
-AGS::Common::String GetScriptName(ccInstance *sci);
+AGS::Shared::String GetScriptName(ccInstance *sci);
 
 //=============================================================================
 
@@ -119,9 +119,9 @@ extern int numScriptModules;
 
 // TODO: find out if these extra arrays are really necessary. This may be remains from the
 // time when the symbol import table was holding raw pointers to char array.
-extern std::vector<AGS::Common::String> characterScriptObjNames;
-extern AGS::Common::String objectScriptObjNames[MAX_ROOM_OBJECTS];
-extern std::vector<AGS::Common::String> guiScriptObjNames;
+extern std::vector<AGS::Shared::String> characterScriptObjNames;
+extern AGS::Shared::String objectScriptObjNames[MAX_ROOM_OBJECTS];
+extern std::vector<AGS::Shared::String> guiScriptObjNames;
 
 } // namespace AGS3
 

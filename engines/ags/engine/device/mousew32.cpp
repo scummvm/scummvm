@@ -60,7 +60,7 @@
 #include "ac/sys_events.h" // j for ags_iskeypressed
 #endif
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 

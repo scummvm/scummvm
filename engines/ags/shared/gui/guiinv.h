@@ -28,7 +28,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class GUIInvWindow : public GUIObject {
 public:
@@ -67,10 +67,10 @@ private:
 	void CalculateNumCells();
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 
-extern std::vector<AGS::Common::GUIInvWindow> guiinv;
+extern std::vector<AGS::Shared::GUIInvWindow> guiinv;
 extern int numguiinv;
 
 } // namespace AGS3

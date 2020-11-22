@@ -27,7 +27,7 @@
 #include "util/string.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 FileStream::FileStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode,
                        DataEndianess stream_endianess)
@@ -160,5 +160,5 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 		throw std::runtime_error("Error opening file.");
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

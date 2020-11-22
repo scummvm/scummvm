@@ -35,7 +35,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 typedef std::map<String, String>         StringOrderMap;
 typedef StringOrderMap::const_iterator   StrStrOIter;
@@ -69,7 +69,7 @@ void WriteToString(String &s, const ConfigTree &tree);
 bool Merge(const String &file, const ConfigTree &tree);
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

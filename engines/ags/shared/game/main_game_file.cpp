@@ -40,7 +40,7 @@
 #include "font/fonts.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 const String MainGameSource::DefaultFilename_v3 = "game28.dta";
 const String MainGameSource::DefaultFilename_v2 = "ac2game.dta";
@@ -733,5 +733,5 @@ HGameFileError UpdateGameData(LoadedGameEntities &ents, GameDataVersion data_ver
 	return HGameFileError::None();
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

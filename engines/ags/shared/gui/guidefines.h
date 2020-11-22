@@ -85,7 +85,7 @@ enum GuiVersion {
 };
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 // GUIMain's style and behavior flags
 enum GUIMainFlags {
@@ -176,7 +176,7 @@ enum GuiSvgVersion {
 	kGuiSvgVersion_350 = 1
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 
 extern int guis_need_update;

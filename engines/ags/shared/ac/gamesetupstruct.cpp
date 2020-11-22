@@ -28,7 +28,7 @@
 #include "game/interactions.h"
 #include "util/alignedstream.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 GameSetupStruct::GameSetupStruct()
 	: filever(0)

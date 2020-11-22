@@ -26,7 +26,7 @@
 #include "util/stream.h"
 #include "util/string_compat.h"
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 WordsDictionary::WordsDictionary()
 	: num_words(0)

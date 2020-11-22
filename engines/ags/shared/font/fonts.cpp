@@ -34,10 +34,10 @@
 
 #define STD_BUFFER_SIZE 3000
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 struct Font {
 	IAGSFontRenderer   *Renderer;
@@ -189,7 +189,7 @@ bool use_default_linespacing(size_t fontNumber) {
 extern int wgettextwidth_compensate(const char *tex, int font);
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 SplitLines Lines;
 }
 }

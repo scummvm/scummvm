@@ -26,7 +26,7 @@ namespace AGS {
 namespace Engine {
 namespace ALSW {
 
-using namespace Common;
+using namespace Shared;
 
 const GfxFilterInfo AllegroGfxFilter::FilterInfo = GfxFilterInfo("StdScale", "Nearest-neighbour");
 

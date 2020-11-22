@@ -52,8 +52,8 @@ namespace AGS {
 namespace Engine {
 namespace D3D {
 
-using AGS::Common::Bitmap;
-using AGS::Common::String;
+using AGS::Shared::Bitmap;
+using AGS::Shared::String;
 class D3DGfxFilter;
 
 struct D3DTextureTile : public TextureTile {

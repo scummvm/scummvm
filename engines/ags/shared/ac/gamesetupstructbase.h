@@ -32,7 +32,7 @@ namespace AGS3 {
 
 // Forward declaration
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Stream;
 } // namespace Shared
 } // namespace AGS
@@ -214,7 +214,7 @@ struct GameSetupStructBase {
 	}
 
 	// Returns the expected filename of a digital audio package
-	inline AGS::Common::String GetAudioVOXName() const {
+	inline AGS::Shared::String GetAudioVOXName() const {
 		return IsLegacyAudioSystem() ? "music.vox" : "audio.vox";
 	}
 

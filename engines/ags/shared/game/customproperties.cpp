@@ -25,7 +25,7 @@
 #include "util/string_utils.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 PropertyDesc::PropertyDesc() {
 	Type = kPropertyBoolean;
@@ -117,5 +117,5 @@ void WriteValues(const StringIMap &map, Stream *out) {
 
 } // namespace Properties
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

@@ -41,7 +41,7 @@
 
 extern MoveList *mls;
 
-using AGS::Common::Bitmap;
+using AGS::Shared::Bitmap;
 
 // #define DEBUG_PATHFINDER
 
@@ -238,14 +238,14 @@ int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int
 	assert(num_navpoints <= MAXNAVPOINTS);
 
 #ifdef DEBUG_PATHFINDER
-	AGS::Common::Debug::Printf("Route from %d,%d to %d,%d - %d stages", srcx, srcy, xx, yy, num_navpoints);
+	AGS::Shared::Debug::Printf("Route from %d,%d to %d,%d - %d stages", srcx, srcy, xx, yy, num_navpoints);
 #endif
 
 	int mlist = movlst;
 	mls[mlist].numstage = num_navpoints;
 	memcpy(&mls[mlist].pos[0], &navpoints[0], sizeof(int) * num_navpoints);
 #ifdef DEBUG_PATHFINDER
-	AGS::Common::Debug::Printf("stages: %d\n", num_navpoints);
+	AGS::Shared::Debug::Printf("stages: %d\n", num_navpoints);
 #endif
 
 	for (i = 0; i < num_navpoints - 1; i++)

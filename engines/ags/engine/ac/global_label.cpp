@@ -27,7 +27,7 @@
 #include "ac/string.h"
 #include "gui/guimain.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameSetupStruct game;
 

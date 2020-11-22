@@ -98,7 +98,7 @@
 #include "util/string_utils.h"
 #include "ac/keycode.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];

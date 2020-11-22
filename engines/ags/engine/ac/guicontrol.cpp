@@ -35,7 +35,7 @@
 #include "ac/dynobj/cc_gui.h"
 #include "ac/dynobj/cc_guiobject.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern ScriptGUI *scrGui;
 extern CCGUI ccDynamicGUI;

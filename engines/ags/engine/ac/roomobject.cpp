@@ -30,7 +30,7 @@
 #include "main/update.h"
 #include "util/stream.h"
 
-using AGS::Common::Stream;
+using AGS::Shared::Stream;
 
 extern ViewStruct *views;
 extern GameState play;

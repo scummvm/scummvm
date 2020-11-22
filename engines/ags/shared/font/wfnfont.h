@@ -52,7 +52,7 @@
 namespace AGS3 {
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Stream;
 } // namespace Shared
 } // namespace AGS
@@ -98,7 +98,7 @@ public:
 	void Clear();
 	// Reads WFNFont object, using data_size bytes from stream; if data_size = 0,
 	// the available stream's length is used instead. Returns error code.
-	WFNError ReadFromFile(AGS::Common::Stream *in, const soff_t data_size = 0);
+	WFNError ReadFromFile(AGS::Shared::Stream *in, const soff_t data_size = 0);
 
 protected:
 	std::vector<const WFNChar *> _refs;     // reference array, contains pointers to elements of _items

@@ -63,7 +63,7 @@
 #include "util/stream.h"
 
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 #if !defined (AGS_CASE_SENSITIVE_FILESYSTEM)
 #include <string.h>

@@ -56,7 +56,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 // DebugGroup is a message sender definition, identified by DebugGroupID
 // and providing OutputName that could be used when printing its messages.
@@ -165,7 +165,7 @@ private:
 // TODO: move this to the dynamically allocated engine object whenever it is implemented
 extern DebugManager DbgMgr;
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

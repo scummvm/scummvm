@@ -28,7 +28,7 @@
 
 #include <string.h> // for memcpy()
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 //
 // NOTE to future optimizers: I am using 'this' ptr here to better

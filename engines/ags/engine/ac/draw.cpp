@@ -71,7 +71,7 @@
 #include "media/audio/audio_system.h"
 #include "ac/game.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 #if AGS_PLATFORM_OS_ANDROID

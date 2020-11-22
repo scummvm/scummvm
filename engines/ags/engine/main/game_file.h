@@ -28,7 +28,7 @@
 
 namespace AGS3 {
 
-using AGS::Common::HError;
+using AGS::Shared::HError;
 
 // Preload particular game-describing parameters from the game data header (title, save game dir name, etc)
 HError preload_game_data();

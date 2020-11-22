@@ -35,7 +35,7 @@
 #include "util/stream.h"
 #include "util/string_utils.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 #define MOVER_MOUSEDOWNLOCKED -4000
 
@@ -44,7 +44,7 @@ int all_buttons_disabled = 0, gui_inv_pic = -1;
 int gui_disabled_style = 0;
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 /* static */ String GUIMain::FixupGUIName(const String &name) {
 	if (name.GetLength() > 0 && name[0u] != 'g')
@@ -816,5 +816,5 @@ void ApplyLegacyVisibility(GUIMain &gui, LegacyGUIVisState vis) {
 
 } // namespace GUI
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS

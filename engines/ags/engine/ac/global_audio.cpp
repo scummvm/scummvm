@@ -36,7 +36,7 @@
 #include "ac/timer.h"
 #include "util/string_compat.h"
 
-using namespace AGS::Common;
+using namespace AGS::Shared;
 
 extern GameSetup usetup;
 extern GameState play;

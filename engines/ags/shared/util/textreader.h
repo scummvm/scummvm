@@ -33,7 +33,7 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 class TextReader {
 public:
@@ -51,7 +51,7 @@ public:
 	virtual String  ReadAll() = 0;
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

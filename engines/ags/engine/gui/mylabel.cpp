@@ -29,7 +29,7 @@
 #include "gui/mylabel.h"
 #include "gui/guidialoginternaldefs.h"
 
-using namespace Common;
+using namespace Shared;
 
 extern GameSetup usetup;
 

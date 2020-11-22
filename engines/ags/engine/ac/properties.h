@@ -27,7 +27,7 @@
 
 namespace AGS3 {
 
-using AGS::Common::StringIMap;
+using AGS::Shared::StringIMap;
 
 // Getting a property value requires static and runtime property maps.
 // Key is first searched in runtime map, if not found - static map is taken,

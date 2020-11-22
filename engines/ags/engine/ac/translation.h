@@ -27,7 +27,7 @@
 
 namespace AGS3 {
 
-using AGS::Common::String;
+using AGS::Shared::String;
 
 void close_translation();
 bool init_translation(const String &lang, const String &fallback_lang, bool quit_on_error);

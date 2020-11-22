@@ -27,7 +27,7 @@
 #include "util/stream.h"
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 #if AGS_PLATFORM_OS_WINDOWS
 static const char Endl[2] = {'\r', '\n'};
@@ -108,5 +108,5 @@ void TextStreamWriter::WriteLineBreak() {
 		_stream->Write(Endl, sizeof(Endl));
 }
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
