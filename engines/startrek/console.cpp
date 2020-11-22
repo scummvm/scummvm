@@ -127,18 +127,13 @@ bool Console::Cmd_Bg(int argc, const char **argv) {
 	return false;
 }
 
-bool Console::Cmd_DumpFile(int argc, const char **argv) {
-	if (argc < 2) {
-		debugPrintf("Usage: %s <file name>\n", argv[0]);
-		return true;
-	}
+void Console::dumpFile(Common::String fileName) {
+	debugPrintf("Dumping %s...\n", fileName.c_str());
 
-	debugPrintf("Dumping %s...\n", argv[1]);
-
-	Common::MemoryReadStreamEndian *stream = _vm->_resource->loadFile(argv[1], 0, false);
+	Common::MemoryReadStreamEndian *stream = _vm->_resource->loadFile(fileName, 0, false);
 	if (!stream) {
 		debugPrintf("File not found\n");
-		return true;
+		return;
 	}
 
 	uint32 size = stream->size();
@@ -147,11 +142,30 @@ bool Console::Cmd_DumpFile(int argc, const char **argv) {
 	delete stream;
 
 	Common::DumpFile out;
-	out.open(argv[1]);
+	out.open(fileName);
 	out.write(data, size);
 	out.flush();
 	out.close();
 	delete[] data;
+}
+
+bool Console::Cmd_DumpFile(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <file name>\n", argv[0]);
+		return true;
+	}
+
+	Common::String fileName = argv[1];
+
+	if (fileName != "*") {
+		dumpFile(fileName);
+	} else {
+		for (Common::List<ResourceIndex>::const_iterator i = _vm->_resource->_resources.begin(), end = _vm->_resource->_resources.end(); i != end; ++i) {
+			if (i->fileName == "S5ROOM3.BMP" || i->fileName == "Z_LIST.TXT")
+				continue;
+			dumpFile(i->fileName);
+		}
+	}
 
 	return true;
 }
