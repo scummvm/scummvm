@@ -429,6 +429,149 @@ void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
 	_sound->setSamplePosition(channelIdx, actor->x, actor->y, actor->z);
 }
 
+void TwinEEngine::processInventoryAction() {
+	ScopedEngineFreeze scoped(this);
+	_menu->processInventoryMenu();
+
+	switch (loopInventoryItem) {
+	case kiHolomap:
+		_holomap->processHolomap();
+		_screens->lockPalette = true;
+		warning("Use inventory [kiHolomap] not implemented!");
+		break;
+	case kiMagicBall:
+		if (_gameState->usingSabre) {
+			_actor->initModelActor(0, OWN_ACTOR_SCENE_INDEX);
+		}
+		_gameState->usingSabre = false;
+		break;
+	case kiUseSabre:
+		if (_scene->sceneHero->body != InventoryItems::kiUseSabre) {
+			if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
+				_actor->setBehaviour(HeroBehaviourType::kNormal);
+			}
+			_actor->initModelActor(InventoryItems::kiUseSabre, OWN_ACTOR_SCENE_INDEX);
+			_animations->initAnim(AnimationTypes::kSabreUnknown, 1, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
+
+			_gameState->usingSabre = true;
+		}
+		break;
+	case kiBookOfBu: {
+		_screens->fadeToBlack(_screens->paletteRGBA);
+		_screens->loadImage(RESSHQR_INTROSCREEN1IMG);
+		_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
+		_text->newGameVar4 = 0;
+		_text->textClipFull();
+		_text->setFontCrossColor(15);
+		const bool tmpFlagDisplayText = cfgfile.FlagDisplayText;
+		cfgfile.FlagDisplayText = true;
+		_text->drawTextFullscreen(161);
+		cfgfile.FlagDisplayText = tmpFlagDisplayText;
+		_text->textClipSmall();
+		_text->newGameVar4 = 1;
+		_text->initTextBank(_scene->sceneTextBank + 3);
+		_screens->fadeToBlack(_screens->paletteRGBACustom);
+		_screens->clearScreen();
+		flip();
+		setPalette(_screens->paletteRGBA);
+		_screens->lockPalette = true;
+		break;
+	}
+	case kiProtoPack:
+		if (_gameState->gameFlags[InventoryItems::kiBookOfBu]) {
+			_scene->sceneHero->body = 0;
+		} else {
+			_scene->sceneHero->body = 1;
+		}
+
+		if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
+			_actor->setBehaviour(HeroBehaviourType::kNormal);
+		} else {
+			_actor->setBehaviour(HeroBehaviourType::kProtoPack);
+		}
+		break;
+	case kiPinguin: {
+		ActorStruct *pinguin = _scene->getActor(_scene->mecaPinguinIdx);
+
+		pinguin->x = _renderer->destX + _scene->sceneHero->x;
+		pinguin->y = _scene->sceneHero->y;
+		pinguin->z = _renderer->destZ + _scene->sceneHero->z;
+		pinguin->angle = _scene->sceneHero->angle;
+
+		_movements->rotateActor(0, 800, pinguin->angle);
+
+		if (!_collision->checkCollisionWithActors(_scene->mecaPinguinIdx)) {
+			pinguin->life = 50;
+			pinguin->body = -1;
+			_actor->initModelActor(0, _scene->mecaPinguinIdx);
+			pinguin->dynamicFlags.bIsDead = 0; // &= 0xDF
+			pinguin->setBrickShape(ShapeType::kNone);
+			_movements->moveActor(pinguin->angle, pinguin->angle, pinguin->speed, &pinguin->move);
+			_gameState->gameFlags[InventoryItems::kiPinguin] = 0; // byte_50D89 = 0;
+			pinguin->delayInMillis = lbaTime + 1500;
+		}
+		break;
+	}
+	case kiBonusList: {
+		unfreezeTime();
+		_redraw->redrawEngineActions(1);
+		freezeTime();
+		_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
+		_text->textClipFull();
+		_text->setFontCrossColor(15);
+		_text->drawTextFullscreen(162);
+		_text->textClipSmall();
+		_text->initTextBank(_scene->sceneTextBank + 3);
+		break;
+	}
+	case kiCloverLeaf:
+		if (_scene->sceneHero->life < 50) {
+			if (_gameState->inventoryNumLeafs > 0) {
+				_scene->sceneHero->life = 50;
+				_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;
+				_gameState->inventoryNumLeafs--;
+				_redraw->addOverlay(koInventoryItem, 27, 0, 0, 0, koNormal, 3);
+			}
+		}
+		break;
+	}
+
+	_redraw->redrawEngineActions(1);
+}
+
+void TwinEEngine::processOptionsMenu() {
+	ScopedEngineFreeze scoped(this);
+	_sound->pauseSamples();
+	_menu->inGameOptionsMenu();
+	// TODO: play music
+	_sound->resumeSamples();
+	_redraw->redrawEngineActions(1);
+}
+
+void TwinEEngine::centerScreenOnActor() {
+	if (!disableScreenRecenter && !_debugGrid->useFreeCamera) {
+		ActorStruct *actor = _scene->getActor(_scene->currentlyFollowedActor);
+		_renderer->projectPositionOnScreen(actor->x - (_grid->newCameraX << 9),
+		                                   actor->y - (_grid->newCameraY << 8),
+		                                   actor->z - (_grid->newCameraZ << 9));
+		if (_renderer->projPosX < 80 || _renderer->projPosX >= SCREEN_WIDTH - 60 || _renderer->projPosY < 80 || _renderer->projPosY >= SCREEN_HEIGHT - 50) {
+			_grid->newCameraX = ((actor->x + 0x100) >> 9) + (((actor->x + 0x100) >> 9) - _grid->newCameraX) / 2;
+			_grid->newCameraY = actor->y >> 8;
+			_grid->newCameraZ = ((actor->z + 0x100) >> 9) + (((actor->z + 0x100) >> 9) - _grid->newCameraZ) / 2;
+
+			if (_grid->newCameraX >= 64) {
+				_grid->newCameraX = 63;
+			}
+
+			if (_grid->newCameraZ >= 64) {
+				_grid->newCameraZ = 63;
+			}
+
+			_redraw->reqBgRedraw = true;
+		}
+	}
+}
+
 int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	_input->enableKeyMap(mainKeyMapId);
 
@@ -468,125 +611,13 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		if (_input->toggleActionIfActive(TwinEActionType::OptionsMenu)) {
-			freezeTime();
-			_sound->pauseSamples();
-			_menu->inGameOptionsMenu();
-			// TODO: play music
-			_sound->resumeSamples();
-			unfreezeTime();
-			_redraw->redrawEngineActions(1);
+			processOptionsMenu();
 		}
 
 		// inventory menu
 		loopInventoryItem = -1;
 		if (_input->isActionActive(TwinEActionType::InventoryMenu) && _scene->sceneHero->entity != -1 && _scene->sceneHero->controlMode == ControlMode::kManual) {
-			freezeTime();
-			_menu->processInventoryMenu();
-
-			switch (loopInventoryItem) {
-			case kiHolomap:
-				_holomap->processHolomap();
-				_screens->lockPalette = true;
-				warning("Use inventory [kiHolomap] not implemented!");
-				break;
-			case kiMagicBall:
-				if (_gameState->usingSabre) {
-					_actor->initModelActor(0, OWN_ACTOR_SCENE_INDEX);
-				}
-				_gameState->usingSabre = false;
-				break;
-			case kiUseSabre:
-				if (_scene->sceneHero->body != InventoryItems::kiUseSabre) {
-					if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
-						_actor->setBehaviour(HeroBehaviourType::kNormal);
-					}
-					_actor->initModelActor(InventoryItems::kiUseSabre, OWN_ACTOR_SCENE_INDEX);
-					_animations->initAnim(AnimationTypes::kSabreUnknown, 1, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
-
-					_gameState->usingSabre = true;
-				}
-				break;
-			case kiBookOfBu: {
-				_screens->fadeToBlack(_screens->paletteRGBA);
-				_screens->loadImage(RESSHQR_INTROSCREEN1IMG);
-				_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
-				_text->newGameVar4 = 0;
-				_text->textClipFull();
-				_text->setFontCrossColor(15);
-				const bool tmpFlagDisplayText = cfgfile.FlagDisplayText;
-				cfgfile.FlagDisplayText = true;
-				_text->drawTextFullscreen(161);
-				cfgfile.FlagDisplayText = tmpFlagDisplayText;
-				_text->textClipSmall();
-				_text->newGameVar4 = 1;
-				_text->initTextBank(_scene->sceneTextBank + 3);
-				_screens->fadeToBlack(_screens->paletteRGBACustom);
-				_screens->clearScreen();
-				flip();
-				setPalette(_screens->paletteRGBA);
-				_screens->lockPalette = true;
-			} break;
-			case kiProtoPack:
-				if (_gameState->gameFlags[InventoryItems::kiBookOfBu]) {
-					_scene->sceneHero->body = 0;
-				} else {
-					_scene->sceneHero->body = 1;
-				}
-
-				if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
-					_actor->setBehaviour(HeroBehaviourType::kNormal);
-				} else {
-					_actor->setBehaviour(HeroBehaviourType::kProtoPack);
-				}
-				break;
-			case kiPinguin: {
-				ActorStruct *pinguin = _scene->getActor(_scene->mecaPinguinIdx);
-
-				pinguin->x = _renderer->destX + _scene->sceneHero->x;
-				pinguin->y = _scene->sceneHero->y;
-				pinguin->z = _renderer->destZ + _scene->sceneHero->z;
-				pinguin->angle = _scene->sceneHero->angle;
-
-				_movements->rotateActor(0, 800, pinguin->angle);
-
-				if (!_collision->checkCollisionWithActors(_scene->mecaPinguinIdx)) {
-					pinguin->life = 50;
-					pinguin->body = -1;
-					_actor->initModelActor(0, _scene->mecaPinguinIdx);
-					pinguin->dynamicFlags.bIsDead = 0; // &= 0xDF
-					pinguin->setBrickShape(ShapeType::kNone);
-					_movements->moveActor(pinguin->angle, pinguin->angle, pinguin->speed, &pinguin->move);
-					_gameState->gameFlags[InventoryItems::kiPinguin] = 0; // byte_50D89 = 0;
-					pinguin->delayInMillis = lbaTime + 1500;
-				}
-				break;
-			}
-			case kiBonusList: {
-				unfreezeTime();
-				_redraw->redrawEngineActions(1);
-				freezeTime();
-				_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
-				_text->textClipFull();
-				_text->setFontCrossColor(15);
-				_text->drawTextFullscreen(162);
-				_text->textClipSmall();
-				_text->initTextBank(_scene->sceneTextBank + 3);
-				break;
-			}
-			case kiCloverLeaf:
-				if (_scene->sceneHero->life < 50) {
-					if (_gameState->inventoryNumLeafs > 0) {
-						_scene->sceneHero->life = 50;
-						_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;
-						_gameState->inventoryNumLeafs--;
-						_redraw->addOverlay(koInventoryItem, 27, 0, 0, 0, koNormal, 3);
-					}
-				}
-				break;
-			}
-
-			unfreezeTime();
-			_redraw->redrawEngineActions(1);
+			processInventoryAction();
 		}
 
 		// Process behaviour menu
@@ -683,163 +714,144 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	for (int32 a = 0; a < _scene->sceneNumActors; a++) {
 		ActorStruct *actor = _scene->getActor(a);
 
-		if (!actor->dynamicFlags.bIsDead) {
-			if (actor->life == 0) {
-				if (IS_HERO(a)) {
-					_animations->initAnim(AnimationTypes::kLandDeath, 4, AnimationTypes::kStanding, 0);
-					actor->controlMode = ControlMode::kNoMove;
-				} else {
-					_sound->playSample(Samples::Explode, getRandomNumber(2000) + 3096, 1, actor->x, actor->y, actor->z, a);
+		if (actor->dynamicFlags.bIsDead) {
+			continue;
+		}
 
-					if (a == _scene->mecaPinguinIdx) {
-						_extra->addExtraExplode(actor->x, actor->y, actor->z);
-					}
-				}
+		if (actor->life == 0) {
+			if (IS_HERO(a)) {
+				_animations->initAnim(AnimationTypes::kLandDeath, 4, AnimationTypes::kStanding, 0);
+				actor->controlMode = ControlMode::kNoMove;
+			} else {
+				_sound->playSample(Samples::Explode, getRandomNumber(2000) + 3096, 1, actor->x, actor->y, actor->z, a);
 
-				if (!actor->bonusParameter.unk1 && (actor->bonusParameter.cloverleaf || actor->bonusParameter.kashes || actor->bonusParameter.key || actor->bonusParameter.lifepoints || actor->bonusParameter.magicpoints)) {
-					_actor->processActorExtraBonus(a);
+				if (a == _scene->mecaPinguinIdx) {
+					_extra->addExtraExplode(actor->x, actor->y, actor->z);
 				}
 			}
 
-			_movements->processActorMovements(a);
-
-			actor->collisionX = actor->x;
-			actor->collisionY = actor->y;
-			actor->collisionZ = actor->z;
-
-			if (actor->positionInMoveScript != -1) {
-				_scriptMove->processMoveScript(a);
+			if (!actor->bonusParameter.unk1 && (actor->bonusParameter.cloverleaf || actor->bonusParameter.kashes || actor->bonusParameter.key || actor->bonusParameter.lifepoints || actor->bonusParameter.magicpoints)) {
+				_actor->processActorExtraBonus(a);
 			}
+		}
 
-			_animations->processActorAnimations(a);
+		_movements->processActorMovements(a);
 
-			if (actor->staticFlags.bIsZonable) {
-				_scene->processActorZones(a);
-			}
+		actor->collisionX = actor->x;
+		actor->collisionY = actor->y;
+		actor->collisionZ = actor->z;
 
-			if (actor->positionInLifeScript != -1) {
-				_scriptLife->processLifeScript(a);
-			}
+		if (actor->positionInMoveScript != -1) {
+			_scriptMove->processMoveScript(a);
+		}
 
-			processActorSamplePosition(a);
+		_animations->processActorAnimations(a);
 
-			if (quitGame != -1) {
-				return quitGame;
-			}
+		if (actor->staticFlags.bIsZonable) {
+			_scene->processActorZones(a);
+		}
 
-			if (actor->staticFlags.bCanDrown) {
-				int32 brickSound = _grid->getBrickSoundType(actor->x, actor->y - 1, actor->z);
-				actor->brickSound = brickSound;
+		if (actor->positionInLifeScript != -1) {
+			_scriptLife->processLifeScript(a);
+		}
 
-				if ((brickSound & 0xF0) == 0xF0) {
-					if ((brickSound & 0x0F) == 1) {
-						if (IS_HERO(a)) {
-							if (_actor->heroBehaviour != HeroBehaviourType::kProtoPack || actor->anim != AnimationTypes::kForward) {
-								if (!_actor->cropBottomScreen) {
-									_animations->initAnim(AnimationTypes::kDrawn, 4, AnimationTypes::kStanding, 0);
-									_renderer->projectPositionOnScreen(actor->x - _grid->cameraX, actor->y - _grid->cameraY, actor->z - _grid->cameraZ);
-									_actor->cropBottomScreen = _renderer->projPosY;
-								}
+		processActorSamplePosition(a);
+
+		if (quitGame != -1) {
+			return quitGame;
+		}
+
+		if (actor->staticFlags.bCanDrown) {
+			int32 brickSound = _grid->getBrickSoundType(actor->x, actor->y - 1, actor->z);
+			actor->brickSound = brickSound;
+
+			if ((brickSound & 0xF0) == 0xF0) {
+				if ((brickSound & 0x0F) == 1) {
+					if (IS_HERO(a)) {
+						if (_actor->heroBehaviour != HeroBehaviourType::kProtoPack || actor->anim != AnimationTypes::kForward) {
+							if (!_actor->cropBottomScreen) {
+								_animations->initAnim(AnimationTypes::kDrawn, 4, AnimationTypes::kStanding, 0);
 								_renderer->projectPositionOnScreen(actor->x - _grid->cameraX, actor->y - _grid->cameraY, actor->z - _grid->cameraZ);
-								actor->controlMode = ControlMode::kNoMove;
-								actor->life = -1;
 								_actor->cropBottomScreen = _renderer->projPosY;
-								actor->staticFlags.bCanDrown |= 0x10; // TODO: doesn't make sense
 							}
-						} else {
-							const int32 rnd = getRandomNumber(2000) + 3096;
-							_sound->playSample(Samples::Explode, rnd, 1, actor->x, actor->y, actor->z, a);
-							if (actor->bonusParameter.cloverleaf || actor->bonusParameter.kashes || actor->bonusParameter.key || actor->bonusParameter.lifepoints || actor->bonusParameter.magicpoints) {
-								if (!actor->bonusParameter.unk1) {
-									_actor->processActorExtraBonus(a);
-								}
-								actor->life = 0;
+							_renderer->projectPositionOnScreen(actor->x - _grid->cameraX, actor->y - _grid->cameraY, actor->z - _grid->cameraZ);
+							actor->controlMode = ControlMode::kNoMove;
+							actor->life = -1;
+							_actor->cropBottomScreen = _renderer->projPosY;
+							actor->staticFlags.bCanDrown |= 0x10; // TODO: doesn't make sense
+						}
+					} else {
+						const int32 rnd = getRandomNumber(2000) + 3096;
+						_sound->playSample(Samples::Explode, rnd, 1, actor->x, actor->y, actor->z, a);
+						if (actor->bonusParameter.cloverleaf || actor->bonusParameter.kashes || actor->bonusParameter.key || actor->bonusParameter.lifepoints || actor->bonusParameter.magicpoints) {
+							if (!actor->bonusParameter.unk1) {
+								_actor->processActorExtraBonus(a);
 							}
+							actor->life = 0;
 						}
 					}
 				}
 			}
+		}
 
-			if (actor->life <= 0) {
-				if (IS_HERO(a)) {
-					if (actor->dynamicFlags.bAnimEnded) {
-						if (_gameState->inventoryNumLeafs > 0) { // use clover leaf automaticaly
-							_scene->sceneHero->x = _scene->newHeroX;
-							_scene->sceneHero->y = _scene->newHeroY;
-							_scene->sceneHero->z = _scene->newHeroZ;
+		if (actor->life <= 0) {
+			if (IS_HERO(a)) {
+				if (actor->dynamicFlags.bAnimEnded) {
+					if (_gameState->inventoryNumLeafs > 0) { // use clover leaf automaticaly
+						_scene->sceneHero->x = _scene->newHeroX;
+						_scene->sceneHero->y = _scene->newHeroY;
+						_scene->sceneHero->z = _scene->newHeroZ;
 
-							_scene->needChangeScene = _scene->currentSceneIdx;
-							_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;
+						_scene->needChangeScene = _scene->currentSceneIdx;
+						_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;
 
-							_grid->newCameraX = (_scene->sceneHero->x >> 9);
-							_grid->newCameraY = (_scene->sceneHero->y >> 8);
-							_grid->newCameraZ = (_scene->sceneHero->z >> 9);
+						_grid->newCameraX = (_scene->sceneHero->x >> 9);
+						_grid->newCameraY = (_scene->sceneHero->y >> 8);
+						_grid->newCameraZ = (_scene->sceneHero->z >> 9);
 
-							_scene->heroPositionType = ScenePositionType::kReborn;
+						_scene->heroPositionType = ScenePositionType::kReborn;
 
-							_scene->sceneHero->life = 50;
-							_redraw->reqBgRedraw = true;
-							_screens->lockPalette = true;
-							_gameState->inventoryNumLeafs--;
-							_actor->cropBottomScreen = 0;
-						} else { // game over
-							_gameState->inventoryNumLeafsBox = 2;
-							_gameState->inventoryNumLeafs = 1;
-							_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;
-							_actor->heroBehaviour = _actor->previousHeroBehaviour;
-							actor->angle = _actor->previousHeroAngle;
-							actor->life = 50;
+						_scene->sceneHero->life = 50;
+						_redraw->reqBgRedraw = true;
+						_screens->lockPalette = true;
+						_gameState->inventoryNumLeafs--;
+						_actor->cropBottomScreen = 0;
+					} else { // game over
+						_gameState->inventoryNumLeafsBox = 2;
+						_gameState->inventoryNumLeafs = 1;
+						_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;
+						_actor->heroBehaviour = _actor->previousHeroBehaviour;
+						actor->angle = _actor->previousHeroAngle;
+						actor->life = 50;
 
-							if (_scene->previousSceneIdx != _scene->currentSceneIdx) {
-								_scene->newHeroX = -1;
-								_scene->newHeroY = -1;
-								_scene->newHeroZ = -1;
-								_scene->currentSceneIdx = _scene->previousSceneIdx;
-								_scene->stopRunningGame();
-							}
-
-							autoSave();
-							_gameState->processGameoverAnimation();
-							quitGame = 0;
-							return 0;
+						if (_scene->previousSceneIdx != _scene->currentSceneIdx) {
+							_scene->newHeroX = -1;
+							_scene->newHeroY = -1;
+							_scene->newHeroZ = -1;
+							_scene->currentSceneIdx = _scene->previousSceneIdx;
+							_scene->stopRunningGame();
 						}
+
+						autoSave();
+						_gameState->processGameoverAnimation();
+						quitGame = 0;
+						return 0;
 					}
-				} else {
-					_actor->processActorCarrier(a);
-					actor->dynamicFlags.bIsDead = 1;
-					actor->entity = -1;
-					actor->zone = -1;
 				}
+			} else {
+				_actor->processActorCarrier(a);
+				actor->dynamicFlags.bIsDead = 1;
+				actor->entity = -1;
+				actor->zone = -1;
 			}
+		}
 
-			if (_scene->needChangeScene != -1) {
-				return 0;
-			}
+		if (_scene->needChangeScene != -1) {
+			return 0;
 		}
 	}
 
-	// recenter screen automatically
-	if (!disableScreenRecenter && !_debugGrid->useFreeCamera) {
-		ActorStruct *actor = _scene->getActor(_scene->currentlyFollowedActor);
-		_renderer->projectPositionOnScreen(actor->x - (_grid->newCameraX << 9),
-		                                   actor->y - (_grid->newCameraY << 8),
-		                                   actor->z - (_grid->newCameraZ << 9));
-		if (_renderer->projPosX < 80 || _renderer->projPosX >= SCREEN_WIDTH - 60 || _renderer->projPosY < 80 || _renderer->projPosY >= SCREEN_HEIGHT - 50) {
-			_grid->newCameraX = ((actor->x + 0x100) >> 9) + (((actor->x + 0x100) >> 9) - _grid->newCameraX) / 2;
-			_grid->newCameraY = actor->y >> 8;
-			_grid->newCameraZ = ((actor->z + 0x100) >> 9) + (((actor->z + 0x100) >> 9) - _grid->newCameraZ) / 2;
-
-			if (_grid->newCameraX >= 64) {
-				_grid->newCameraX = 63;
-			}
-
-			if (_grid->newCameraZ >= 64) {
-				_grid->newCameraZ = 63;
-			}
-
-			_redraw->reqBgRedraw = true;
-		}
-	}
+	centerScreenOnActor();
 
 	_redraw->redrawEngineActions(_redraw->reqBgRedraw);
 

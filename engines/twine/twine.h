@@ -170,6 +170,11 @@ private:
 	TwineGameType _gameType;
 	EngineState _state = EngineState::Menu;
 
+	void processInventoryAction();
+	void processOptionsMenu();
+	/** recenter screen on followed actor automatically */
+	void centerScreenOnActor();
+
 public:
 	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, TwineGameType gameType);
 	~TwinEEngine() override;
