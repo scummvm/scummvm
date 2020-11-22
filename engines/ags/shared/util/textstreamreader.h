@@ -29,7 +29,7 @@
 #ifndef AGS_SHARED_UTIL_TEXTSTREAMREADER_H
 #define AGS_SHARED_UTIL_TEXTSTREAMREADER_H
 
-#include "util/textreader.h"
+#include "ags/shared/util/textreader.h"
 
 namespace AGS3 {
 namespace AGS {

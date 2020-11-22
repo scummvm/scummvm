@@ -20,7 +20,7 @@
  *
  */
 
-#include "cc_options.h"
+#include "ags/shared/cc_options.h"
 
 namespace AGS3 {
 

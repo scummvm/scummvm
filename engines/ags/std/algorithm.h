@@ -20,21 +20,23 @@
  *
  */
 
-#include "ags/shared/ac/common.h"
-#include "ags/shared/util/string.h"
+#ifndef AGS_STD_ALGORITHM_H
+#define AGS_STD_ALGORITHM_H
+
+#include "common/algorithm.h"
+#include "common/util.h"
 
 namespace AGS3 {
+namespace std {
 
-using namespace AGS::Shared;
+template<typename T> inline T abs(T x) { return ABS(x); }
+template<typename T> inline T min(T a, T b) { return MIN(a, b); }
+template<typename T> inline T max(T a, T b) { return MAX(a, b); }
+template<typename T> inline T clip(T v, T amin, T amax) { return CLIP(v, amin, amax); }
+template<typename T> inline T sqrt(T x) { return ::sqrt(x); }
+template<typename T> inline void swap(T a, T b) { SWAP(a, b); }
 
-const char *game_file_sig = "Adventure Creator Game File v2";
-
-void quitprintf(const char *fmt, ...) {
-	va_list ap;
-	va_start(ap, fmt);
-	String text = String::FromFormatV(fmt, ap);
-	va_end(ap);
-	quit(text);
-}
-
+} // namespace std
 } // namespace AGS3
+
+#endif

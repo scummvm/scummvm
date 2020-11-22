@@ -23,9 +23,9 @@
 #ifndef AGS_SHARED_FONT_FONTS_H
 #define AGS_SHARED_FONT_FONTS_H
 
-#include <vector>
-#include "core/types.h"
-#include "util/string.h"
+//include <vector>
+#include "ags/shared/core/types.h"
+#include "ags/shared/util/string.h"
 
 // TODO: we need to make some kind of TextManager class of this module
 

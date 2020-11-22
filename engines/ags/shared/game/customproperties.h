@@ -36,9 +36,9 @@
 #ifndef AGS_SHARED_GAME_CUSTOMPROPERTIES_H
 #define AGS_SHARED_GAME_CUSTOMPROPERTIES_H
 
-#include <unordered_map>
-#include "util/string.h"
-#include "util/string_types.h"
+//include <unordered_map>
+#include "ags/shared/util/string.h"
+#include "ags/shared/util/string_types.h"
 
 namespace AGS3 {
 

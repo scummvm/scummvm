@@ -23,15 +23,15 @@
 #ifndef AGS_SHARED_AC_GAMESETUPSTRUCT_H
 #define AGS_SHARED_AC_GAMESETUPSTRUCT_H
 
-#include <vector>
-#include "ac/audiocliptype.h"
-#include "ac/characterinfo.h" // TODO: constants to separate header
-#include "ac/gamesetupstructbase.h"
-#include "ac/inventoryiteminfo.h"
-#include "ac/mousecursor.h"
-#include "ac/dynobj/scriptaudioclip.h"
-#include "game/customproperties.h"
-#include "game/main_game_file.h" // TODO: constants to separate header or split out reading functions
+//include <vector>
+#include "ags/shared/ac/audiocliptype.h"
+#include "ags/shared/ac/characterinfo.h" // TODO: constants to separate header
+#include "ags/shared/ac/gamesetupstructbase.h"
+#include "ags/shared/ac/inventoryiteminfo.h"
+#include "ags/shared/ac/mousecursor.h"
+#include "ags/shared/ac/dynobj/scriptaudioclip.h"
+#include "ags/shared/game/customproperties.h"
+#include "ags/shared/game/main_game_file.h" // TODO: constants to separate header or split out reading functions
 
 namespace AGS3 {
 

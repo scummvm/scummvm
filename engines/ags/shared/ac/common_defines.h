@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_AC_DEFINES_H
 #define AGS_SHARED_AC_DEFINES_H
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 namespace AGS3 {
 

@@ -29,8 +29,8 @@
 #ifndef AGS_SHARED_SCRIPT_CC_SCRIPT_H
 #define AGS_SHARED_SCRIPT_CC_SCRIPT_H
 
-#include <memory>
-#include "core/types.h"
+//include <memory>
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 

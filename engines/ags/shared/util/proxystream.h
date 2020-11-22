@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_UTIL_PROXYSTREAM_H
 #define AGS_SHARED_UTIL_PROXYSTREAM_H
 
-#include "util/stream.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 namespace AGS {

@@ -29,8 +29,8 @@
 #ifndef AGS_SHARED_UTIL_DIRECTORY_H
 #define AGS_SHARED_UTIL_DIRECTORY_H
 
-#include "core/platform.h"
-#include "util/string.h"
+#include "ags/shared/core/platform.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 namespace AGS {

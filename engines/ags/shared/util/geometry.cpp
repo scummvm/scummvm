@@ -20,9 +20,10 @@
  *
  */
 
-#include "util/geometry.h"
-#include <algorithm>
-#include <cmath>
+#include "ags/shared/util/geometry.h"
+#include "ags/std/algorithm.h"
+#include "ags/std/algorithm.h"
+//include <cmath>
 
 namespace AGS3 {
 
@@ -52,7 +53,7 @@ float DistanceBetween(const Rect &r1, const Rect &r2) {
 	);
 	int inner_width = std::max(0, rect_outer.GetWidth() - r1.GetWidth() - r2.GetWidth());
 	int inner_height = std::max(0, rect_outer.GetHeight() - r1.GetHeight() - r2.GetHeight());
-	return std::sqrt(inner_width ^ 2 + inner_height ^ 2);
+	return std::sqrt((inner_width ^ 2) + (inner_height ^ 2));
 }
 
 Size ProportionalStretch(int dest_w, int dest_h, int item_w, int item_h) {

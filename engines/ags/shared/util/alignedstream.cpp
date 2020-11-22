@@ -20,9 +20,9 @@
  *
  */
 
-#include "debug/assert.h"
-#include "util/alignedstream.h"
-#include "util/math.h"
+#include "ags/shared/debugging/assert.h"
+#include "ags/shared/util/alignedstream.h"
+#include "ags/shared/util/math.h"
 
 namespace AGS3 {
 namespace AGS {

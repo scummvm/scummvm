@@ -38,6 +38,11 @@ using weak_ptr = Common::WeakPtr<T>;
 template<typename T, class DL = Common::DefaultDeleter<T> >
 using unique_ptr = Common::ScopedPtr<T, DL>;
 
+template<class T>
+T *memcpy(T *dest, const T *src, size_t n) {
+	return (T *)::memcpy(dest, src, n);
+}
+
 } // namespace std
 } // namespace AGS3
 

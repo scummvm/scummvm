@@ -30,20 +30,22 @@
 #ifndef AGS_SHARED_UTIL_INIUTIL_H
 #define AGS_SHARED_UTIL_INIUTIL_H
 
-#include <map>
-#include "util/string.h"
+#include "ags/std/map.h"
+#include "ags/shared/util/string.h"
+#include "ags/shared/util/string_types.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-typedef std::map<String, String>         StringOrderMap;
+typedef std::map<String, String> StringOrderMap;
 typedef StringOrderMap::const_iterator   StrStrOIter;
 
 typedef std::map<String, StringOrderMap> ConfigTree;
 typedef ConfigTree::const_iterator       ConfigNode;
 
 namespace IniUtil {
+
 // Parse the contents of given file as INI format and insert values
 // into the tree. The pre-existing tree items, if any, are NOT erased.
 // Returns FALSE if the file could not be opened.
@@ -67,7 +69,8 @@ void WriteToString(String &s, const ConfigTree &tree);
 // or same stream opened for both reading and writing.
 // Returns FALSE if the file could not be opened for writing.
 bool Merge(const String &file, const ConfigTree &tree);
-};
+
+} // namespace IniUtil
 
 } // namespace Shared
 } // namespace AGS

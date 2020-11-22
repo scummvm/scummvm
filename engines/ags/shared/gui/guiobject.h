@@ -23,10 +23,10 @@
 #ifndef AGS_SHARED_GUI_GUIOBJECT_H
 #define AGS_SHARED_GUI_GUIOBJECT_H
 
-#include "core/types.h"
-#include "gfx/bitmap.h"
-#include "gui/guidefines.h"
-#include "util/string.h"
+#include "ags/shared/core/types.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gui/guidefines.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 

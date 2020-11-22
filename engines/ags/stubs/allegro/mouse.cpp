@@ -27,7 +27,9 @@ namespace AGS3 {
 
 MOUSE_DRIVER mousedrv_none;
 MOUSE_DRIVER *mouse_driver;
-_DRIVER_INFO _mouse_driver_list[];
+_DRIVER_INFO _mouse_driver_list[] = {
+	{ 0, nullptr, 0 }
+};
 
 BITMAP *mouse_sprite;
 int mouse_x_focus;

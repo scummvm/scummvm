@@ -35,7 +35,7 @@
 #ifndef AGS_SHARED_UTIL_STREAM_H
 #define AGS_SHARED_UTIL_STREAM_H
 
-#include "api/stream_api.h"
+#include "ags/shared/api/stream_api.h"
 
 namespace AGS3 {
 namespace AGS {

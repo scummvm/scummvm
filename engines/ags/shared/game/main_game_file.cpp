@@ -20,24 +20,24 @@
  *
  */
 
-#include <cstdio>
-#include "ac/audiocliptype.h"
-#include "ac/dialogtopic.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/spritecache.h"
-#include "ac/view.h"
-#include "ac/wordsdictionary.h"
-#include "ac/dynobj/scriptaudioclip.h"
-#include "core/asset.h"
-#include "core/assetmanager.h"
-#include "game/main_game_file.h"
-#include "gui/guimain.h"
-#include "script/cc_error.h"
-#include "util/alignedstream.h"
-#include "util/path.h"
-#include "util/string_compat.h"
-#include "util/string_utils.h"
-#include "font/fonts.h"
+//include <cstdio>
+#include "ags/shared/ac/audiocliptype.h"
+#include "ags/shared/ac/dialogtopic.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/ac/view.h"
+#include "ags/shared/ac/wordsdictionary.h"
+#include "ags/shared/ac/dynobj/scriptaudioclip.h"
+#include "ags/shared/core/asset.h"
+#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/game/main_game_file.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/script/cc_error.h"
+#include "ags/shared/util/alignedstream.h"
+#include "ags/shared/util/path.h"
+#include "ags/shared/util/string_compat.h"
+#include "ags/shared/util/string_utils.h"
+#include "ags/shared/font/fonts.h"
 
 namespace AGS3 {
 namespace AGS {

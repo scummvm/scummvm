@@ -20,20 +20,20 @@
  *
  */
 
-#include "ac/common.h" // update_polled_stuff
-#include "ac/common_defines.h"
-#include "ac/gamestructdefines.h"
-#include "ac/wordsdictionary.h" // TODO: extract string decryption
-#include "core/assetmanager.h"
-#include "debug/out.h"
-#include "game/customproperties.h"
-#include "game/room_file.h"
-#include "game/roomstruct.h"
-#include "gfx/bitmap.h"
-#include "script/cc_error.h"
-#include "script/cc_script.h"
-#include "util/compress.h"
-#include "util/string_utils.h"
+#include "ags/shared/ac/common.h" // update_polled_stuff
+#include "ags/shared/ac/common_defines.h"
+#include "ags/shared/ac/gamestructdefines.h"
+#include "ags/shared/ac/wordsdictionary.h" // TODO: extract string decryption
+#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/shared/game/customproperties.h"
+#include "ags/shared/game/room_file.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_script.h"
+#include "ags/shared/util/compress.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 

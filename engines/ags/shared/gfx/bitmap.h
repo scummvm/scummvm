@@ -29,7 +29,7 @@
 #ifndef AGS_SHARED_GFX_BITMAP_H
 #define AGS_SHARED_GFX_BITMAP_H
 
-#include "util/geometry.h"
+#include "ags/shared/util/geometry.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -51,11 +51,12 @@ enum BitmapFlip {
 
 } // namespace Shared
 } // namespace AGS
-
+} // namespace AGS3
 
 // Declare the actual bitmap class
-#include "gfx/allegrobitmap.h"
+#include "ags/shared/gfx/allegrobitmap.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 

@@ -29,9 +29,9 @@
 #ifndef AGS_SHARED_UTIL_MEMORY_H
 #define AGS_SHARED_UTIL_MEMORY_H
 
-#include <string.h>
-#include "util/bbop.h"
-#include "util/math.h"
+//include <string.h>
+#include "ags/shared/util/bbop.h"
+#include "ags/shared/util/math.h"
 
 namespace AGS3 {
 

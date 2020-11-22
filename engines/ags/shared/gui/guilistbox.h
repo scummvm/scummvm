@@ -23,9 +23,9 @@
 #ifndef AGS_SHARED_GUI_GUILISTBOX_H
 #define AGS_SHARED_GUI_GUILISTBOX_H
 
-#include <vector>
-#include "gui/guiobject.h"
-#include "util/string.h"
+//include <vector>
+#include "ags/shared/gui/guiobject.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 namespace AGS {

@@ -23,13 +23,13 @@
 #ifndef AGS_SHARED_GUI_GUIMAIN_H
 #define AGS_SHARED_GUI_GUIMAIN_H
 
-#include <vector>
-#include "ac/common_defines.h" // TODO: split out gui drawing helpers
-#include "gfx/gfx_def.h" // TODO: split out gui drawing helpers
-#include "gui/guidefines.h"
-#include "util/error.h"
-#include "util/geometry.h"
-#include "util/string.h"
+//include <vector>
+#include "ags/shared/ac/common_defines.h" // TODO: split out gui drawing helpers
+#include "ags/shared/gfx/gfx_def.h" // TODO: split out gui drawing helpers
+#include "ags/shared/gui/guidefines.h"
+#include "ags/shared/util/error.h"
+#include "ags/shared/util/geometry.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 

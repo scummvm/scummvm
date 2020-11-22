@@ -20,13 +20,14 @@
  *
  */
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 #if AGS_PLATFORM_OS_WINDOWS
-#include <windows.h>
+//include <windows.h>
 #endif
-#include "allegro/file.h"
-#include "util/path.h"
-#include "util/stdio_compat.h"
+
+#include "ags/stubs/allegro/file.h"
+#include "ags/shared/util/path.h"
+#include "ags/shared/util/stdio_compat.h"
 
 namespace AGS3 {
 
@@ -80,7 +81,7 @@ String GetDirectoryPath(const String &path) {
 	String dir = path;
 	FixupPath(dir);
 	size_t slash_at = dir.FindCharReverse('/');
-	if (slash_at != -1) {
+	if (slash_at != String::npos) {
 		dir.ClipMid(slash_at + 1);
 		return dir;
 	}

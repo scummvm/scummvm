@@ -20,8 +20,8 @@
  *
  */
 
-#include "ac/audiocliptype.h"
-#include "util/stream.h"
+#include "ags/shared/ac/audiocliptype.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

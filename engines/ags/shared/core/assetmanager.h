@@ -44,7 +44,7 @@
 #ifndef AGS_SHARED_CORE_ASSETMANAGER_H
 #define AGS_SHARED_CORE_ASSETMANAGER_H
 
-#include "util/file.h" // TODO: extract filestream mode constants or introduce generic ones
+#include "ags/shared/util/file.h" // TODO: extract filestream mode constants or introduce generic ones
 
 namespace AGS3 {
 namespace AGS {
@@ -138,10 +138,10 @@ private:
 	AssetInfo *FindAssetByFileName(const String &asset_name);
 	String      MakeLibraryFileNameForAsset(const AssetInfo *asset);
 
-	bool        GetAssetFromLib(const String &asset_name, AssetLocation &loc, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
-	bool        GetAssetFromDir(const String &asset_name, AssetLocation &loc, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
-	bool        GetAssetByPriority(const String &asset_name, AssetLocation &loc, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
-	Stream *OpenAssetAsStream(const String &asset_name, FileOpenMode open_mode, FileWorkMode work_mode);
+	bool        GetAssetFromLib(const String &asset_name, AssetLocation &loc, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode);
+	bool        GetAssetFromDir(const String &asset_name, AssetLocation &loc, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode);
+	bool        GetAssetByPriority(const String &asset_name, AssetLocation &loc, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode);
+	Stream *OpenAssetAsStream(const String &asset_name, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode);
 
 	static AssetManager *_theAssetManager;
 	AssetSearchPriority     _searchPriority;

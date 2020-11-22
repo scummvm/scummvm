@@ -20,9 +20,9 @@
  *
  */
 
-#include <stdarg.h>
-#include "debug/debugmanager.h"
-#include "util/string_types.h"
+//include <stdarg.h>
+#include "ags/shared/debugging/debugmanager.h"
+#include "ags/shared/util/string_types.h"
 
 namespace AGS3 {
 namespace AGS {

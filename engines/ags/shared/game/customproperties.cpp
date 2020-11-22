@@ -20,9 +20,9 @@
  *
  */
 
-#include "game/customproperties.h"
-#include "util/stream.h"
-#include "util/string_utils.h"
+#include "ags/shared/game/customproperties.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 namespace AGS {

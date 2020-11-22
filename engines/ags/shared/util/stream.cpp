@@ -20,7 +20,7 @@
  *
  */
 
-#include "util/stream.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 namespace AGS {

@@ -20,10 +20,10 @@
  *
  */
 
-#include "ac/spritecache.h"
-#include "gui/guimain.h"
-#include "gui/guislider.h"
-#include "util/stream.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/gui/guislider.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

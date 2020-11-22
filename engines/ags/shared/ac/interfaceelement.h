@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_AC_INTERFACEELEMENT_H
 #define AGS_SHARED_AC_INTERFACEELEMENT_H
 
-#include "ac/interfacebutton.h" // InterfaceButton
+#include "ags/shared/ac/interfacebutton.h" // InterfaceButton
 
 namespace AGS3 {
 

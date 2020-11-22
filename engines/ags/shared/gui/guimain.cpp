@@ -20,20 +20,20 @@
  *
  */
 
-#include <algorithm>
-#include "ac/game_version.h"
-#include "ac/spritecache.h"
-#include "debug/out.h"
-#include "font/fonts.h"
-#include "gui/guibutton.h"
-#include "gui/guiinv.h"
-#include "gui/guilabel.h"
-#include "gui/guilistbox.h"
-#include "gui/guimain.h"
-#include "gui/guislider.h"
-#include "gui/guitextbox.h"
-#include "util/stream.h"
-#include "util/string_utils.h"
+//include <algorithm>
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/gui/guibutton.h"
+#include "ags/shared/gui/guiinv.h"
+#include "ags/shared/gui/guilabel.h"
+#include "ags/shared/gui/guilistbox.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/gui/guislider.h"
+#include "ags/shared/gui/guitextbox.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 

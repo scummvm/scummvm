@@ -29,10 +29,11 @@
 #ifndef AGS_SHARED_CORE_TYPES_H
 #define AGS_SHARED_CORE_TYPES_H
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdlib.h> // for size_t
-#include <limits.h> // for _WORDSIZE
+#include "common/scummsys.h"
+//include <stddef.h>
+//include <stdint.h>
+//include <stdlib.h> // for size_t
+//include <limits.h> // for _WORDSIZE
 
 namespace AGS3 {
 
@@ -58,11 +59,32 @@ namespace AGS3 {
 #endif
 #endif
 
+typedef uint8 uint8_t;
+typedef uint16 uint16_t;
+typedef uint32 uint32_t;
+typedef int8 int8_t;
+typedef int16 int16_t;
+typedef int32 int32_t;
+typedef int64 int64_t;
+
 // Stream offset type
-typedef int64_t soff_t;
+typedef int64 soff_t;
 
 #define fixed_t int32_t // fixed point type
 #define color_t int32_t
+
+#undef INT32_MIN
+#undef INT32_MAX
+#undef INT_MIN
+#undef INT_MAX
+#undef UINT_MAX
+#undef SIZE_MAX
+#define INT32_MIN     (-2147483647 - 1)
+#define INT32_MAX       2147483647
+#define INT_MIN     (-2147483647 - 1)
+#define INT_MAX       2147483647
+#define UINT_MAX      0xffffffff
+#define SIZE_MAX      0xffffffff
 
 // TODO: use distinct fixed point class
 enum {

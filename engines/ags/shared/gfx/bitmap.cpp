@@ -20,8 +20,8 @@
  *
  */
 
-#include "gfx/bitmap.h"
-#include "util/memory.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/util/memory.h"
 
 namespace AGS3 {
 namespace AGS {

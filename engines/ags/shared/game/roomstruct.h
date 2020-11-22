@@ -48,11 +48,11 @@
 #ifndef AGS_SHARED_GAME_ROOMINFO_H
 #define AGS_SHARED_GAME_ROOMINFO_H
 
-#include <memory>
-#include "ac/common_defines.h"
-#include "game/interactions.h"
-#include "util/geometry.h"
-#include "util/wgt2allg.h" // color (allegro RGB)
+//include <memory>
+#include "ags/shared/ac/common_defines.h"
+#include "ags/shared/game/interactions.h"
+#include "ags/shared/util/geometry.h"
+#include "ags/shared/util/wgt2allg.h" // color (allegro RGB)
 
 namespace AGS3 {
 

@@ -20,18 +20,18 @@
  *
  */
 
-#include <alfont.h>
-#include "core/platform.h"
+//include <alfont.h>
+#include "ags/shared/core/platform.h"
 
 #define AGS_OUTLINE_FONT_FIX (!AGS_PLATFORM_OS_WINDOWS)
 
-#include "core/assetmanager.h"
-#include "font/ttffontrenderer.h"
-#include "util/stream.h"
+#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/font/ttffontrenderer.h"
+#include "ags/shared/util/stream.h"
 
 #if AGS_OUTLINE_FONT_FIX // TODO: factor out the hack in LoadFromDiskEx
-#include "ac/gamestructdefines.h"
-#include "font/fonts.h"
+#include "ags/shared/ac/gamestructdefines.h"
+#include "ags/shared/font/fonts.h"
 #endif
 
 namespace AGS3 {

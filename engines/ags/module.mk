@@ -16,7 +16,30 @@ MODULE_OBJS = \
 	stubs/allegro/mouse.o \
 	stubs/allegro/sound.o \
 	stubs/allegro/system.o \
-	stubs/allegro/unicode.o
+	stubs/allegro/unicode.o \
+	shared/util/alignedstream.o \
+	shared/util/bufferedstream.o \
+	shared/util/compress.o \
+	shared/util/datastream.o \
+	shared/util/directory.o \
+	shared/util/file.o \
+	shared/util/filestream.o \
+	shared/util/geometry.o \
+	shared/util/inifile.o \
+	shared/util/ini_util.o \
+	shared/util/lzw.o \
+	shared/util/misc.o \
+	shared/util/mutifilelib.o \
+	shared/util/path.o \
+	shared/util/proxystream.o \
+	shared/util/stream.o \
+	shared/util/string.o \
+	shared/util/string_compat.o \
+	shared/util/string_utils.o \
+	shared/util/textstreamreader.o \
+	shared/util/textstreamwriter.o \
+	shared/util/version.o \
+	shared/util/wgt2allg.o
 
 
 # This module can be built as a plugin

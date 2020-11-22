@@ -20,11 +20,11 @@
  *
  */
 
-#include <algorithm>
-#include "font/wfnfont.h"
-#include "debug/out.h"
-#include "util/memory.h"
-#include "util/stream.h"
+//include <algorithm>
+#include "ags/shared/font/wfnfont.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/shared/util/memory.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

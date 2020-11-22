@@ -20,7 +20,7 @@
  *
  */
 
-#include "core/asset.h"
+#include "ags/shared/core/asset.h"
 
 namespace AGS3 {
 namespace AGS {

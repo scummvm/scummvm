@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_AC_VIEW_H
 #define AGS_SHARED_AC_VIEW_H
 
-#include <vector>
+//include <vector>
 
 namespace AGS3 {
 

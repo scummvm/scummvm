@@ -29,13 +29,13 @@
 #ifndef AGS_SHARED_UTIL_VERSION_H
 #define AGS_SHARED_UTIL_VERSION_H
 
-#include "util/string.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-using Common::String;
+using Shared::String;
 
 struct Version {
 	int32_t Major;

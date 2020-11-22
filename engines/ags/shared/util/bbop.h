@@ -29,8 +29,8 @@
 #ifndef AGS_SHARED_UTIL_BBOP_H
 #define AGS_SHARED_UTIL_BBOP_H
 
-#include "core/platform.h"
-#include "core/types.h"
+#include "ags/shared/core/platform.h"
+#include "ags/shared/core/types.h"
 
 #if AGS_PLATFORM_ENDIAN_BIG || defined (TEST_BIGENDIAN)
 #define BITBYTE_BIG_ENDIAN

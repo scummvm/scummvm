@@ -30,8 +30,8 @@
 #ifndef AGS_SHARED_DEBUGGING_OUTPUTHANDLER_H
 #define AGS_SHARED_DEBUGGING_OUTPUTHANDLER_H
 
-#include "debug/out.h"
-#include "util/string.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 namespace AGS {

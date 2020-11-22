@@ -20,10 +20,10 @@
  *
  */
 
-#include <stdio.h>
-#include <utility>
-#include "script/script_common.h"  // current_line
-#include "util/string.h"
+//include <stdio.h>
+//include <utility>
+#include "ags/shared/script/script_common.h"  // current_line
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 

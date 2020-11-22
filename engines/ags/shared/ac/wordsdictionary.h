@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_AC_WORDSDICTIONARY_H
 #define AGS_SHARED_AC_WORDSDICTIONARY_H
 
-#include "core/types.h"
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 

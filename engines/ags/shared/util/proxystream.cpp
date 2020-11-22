@@ -20,7 +20,7 @@
  *
  */
 
-#include "util/proxystream.h"
+#include "ags/shared/util/proxystream.h"
 
 namespace AGS3 {
 namespace AGS {

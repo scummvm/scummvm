@@ -47,12 +47,12 @@
 #ifndef AGS_SHARED_DEBUGGING_DEBUGMANAGER_H
 #define AGS_SHARED_DEBUGGING_DEBUGMANAGER_H
 
-#include <memory>
-#include <unordered_map>
-#include "debug/out.h"
-#include "debug/outputhandler.h"
-#include "util/string.h"
-#include "util/string_types.h"
+//include <memory>
+//include <unordered_map>
+#include "ags/shared/debugging/out.h"
+#include "ags/shared/debugging/outputhandler.h"
+#include "ags/shared/util/string.h"
+#include "ags/shared/util/string_types.h"
 
 namespace AGS3 {
 namespace AGS {

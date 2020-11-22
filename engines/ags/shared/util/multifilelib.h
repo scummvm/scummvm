@@ -34,8 +34,8 @@
 #ifndef AGS_SHARED_UTIL_MULTIFILELIB_H
 #define AGS_SHARED_UTIL_MULTIFILELIB_H
 
-#include "core/asset.h"
-#include "util/stream.h"
+#include "ags/shared/core/asset.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -45,6 +45,7 @@ namespace Shared {
 // MultiFileLib utilities: (de)serialization of asset library in MFL format
 //
 namespace MFLUtil {
+
 enum MFLError {
 	kMFLNoError = 0,
 	kMFLErrNoLibSig = -1, // library signature does not match
@@ -71,7 +72,8 @@ MFLError ReadHeader(AssetLibInfo &lib, Stream *in);
 
 void     WriteHeader(const AssetLibInfo &lib, MFLVersion lib_version, int lib_index, Stream *out);
 void     WriteEnder(soff_t lib_offset, MFLVersion lib_index, Stream *out);
-};
+
+} // namespace MFLUtil
 
 } // namespace Shared
 } // namespace AGS

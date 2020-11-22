@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_AC_DYNOBJ_SCRIPTAUDIOCLIP_H
 #define AGS_SHARED_AC_DYNOBJ_SCRIPTAUDIOCLIP_H
 
-#include "util/string.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 

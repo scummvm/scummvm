@@ -20,7 +20,7 @@
  *
  */
 
-#include "util/datastream.h"
+#include "ags/shared/util/datastream.h"
 
 namespace AGS3 {
 namespace AGS {

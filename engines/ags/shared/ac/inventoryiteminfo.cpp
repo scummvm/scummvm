@@ -20,9 +20,9 @@
  *
  */
 
-#include "ac/inventoryiteminfo.h"
-#include "util/stream.h"
-#include "util/string_utils.h"
+#include "ags/shared/ac/inventoryiteminfo.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 

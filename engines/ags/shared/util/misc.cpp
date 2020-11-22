@@ -49,19 +49,19 @@
   OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <string.h>
+//include <stdio.h>
+//include <sys/types.h>
+//include <sys/stat.h>
+//include <string.h>
 #if !AGS_PLATFORM_OS_WINDOWS
-#include <dirent.h>
+//include <dirent.h>
 #endif
 
-#include "allegro.h"
-#include "util/file.h"
-#include "util/stream.h"
+#include "ags/stubs/allegro.h"
+#include "ags/shared/util/file.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

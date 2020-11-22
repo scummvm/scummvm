@@ -34,7 +34,7 @@
 #include "core/platform.h"
 #define AGS_DDRAW_GAMMA_CONTROL (AGS_PLATFORM_OS_WINDOWS)
 
-#include <allegro.h>
+#include "ags/stubs/allegro.h"
 
 #if AGS_DDRAW_GAMMA_CONTROL
 #include <winalleg.h>

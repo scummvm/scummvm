@@ -32,15 +32,15 @@
 #pragma warning (disable: 4996 4312)  // disable deprecation warnings
 #endif
 
-#include "ac/common.h" // quit
-#include "ac/gamestructdefines.h"
-#include "ac/spritecache.h"
-#include "core/assetmanager.h"
-#include "debug/out.h"
-#include "gfx/bitmap.h"
-#include "util/compress.h"
-#include "util/file.h"
-#include "util/stream.h"
+#include "ags/shared/ac/common.h" // quit
+#include "ags/shared/ac/gamestructdefines.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/util/compress.h"
+#include "ags/shared/util/file.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 
