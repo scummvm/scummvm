@@ -42,7 +42,7 @@ void Process::debug(const char *str, ...) {
 	va_list va;
 	va_start(va, str);
 
-	Common::String format = Common::String::format("%s %04x[%u]: %s", _object->getName().c_str(), _lastIp + 7, _stack.size(), str);
+	Common::String format = Common::String::format("%s %04x[%u]: %s", _object->getName().c_str(), _lastIp, _stack.size(), str);
 	Common::String buf = Common::String::vformat(format.c_str(), va);
 
 	buf += '\n';
