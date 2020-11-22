@@ -547,6 +547,7 @@ public:
 	 */
 	void drawMenuButtonOutline(Bitmap *bitmap, byte color);
 	void showOptionsMenu(int x, int y);
+	void showBridgeMenu(Common::String menu, int x, int y);
 	/**
 	 * Show the "action selection" menu, ie. look, talk, etc.
 	 */
@@ -744,6 +745,7 @@ private:
 	int mouseMoveEvent();
 	int lookupNextAction(const int *lookupArray, int action);
 	void loadBridgeComputerTopics();
+	void bridgeLeftClick();
 
 	Common::RandomSource _randomSource;
 	Common::SineTable _sineTable;

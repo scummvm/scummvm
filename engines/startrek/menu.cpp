@@ -254,6 +254,105 @@ void StarTrekEngine::showOptionsMenu(int x, int y) {
 	}
 }
 
+void StarTrekEngine::showBridgeMenu(Common::String menu, int x, int y) {
+	bool tmpMouseControllingShip = _mouseControllingShip;
+	_mouseControllingShip = false;
+
+	Common::Point oldMousePos = _gfx->getMousePos();
+	loadMenuButtons(menu, x, y);
+
+	chooseMousePositionFromSprites(_activeMenu->sprites, _activeMenu->numButtons, -1, 4);
+	int event = handleMenuEvents(0, false);
+
+	unloadMenuButtons();
+	_mouseControllingShip = tmpMouseControllingShip;
+
+	if (event != MENUEVENT_LCLICK_OFFBUTTON && event != MENUEVENT_RCLICK_OFFBUTTON)
+		_gfx->warpMouse(oldMousePos.x, oldMousePos.y);
+
+	switch (event) {
+	case 0:	// Spock, talk
+		// TODO
+		break;
+	case 1:
+		// TODO
+		break;
+	case 2:
+		// TODO
+		break;
+	case 3:
+		// TODO
+		break;
+	case 16:	// Kirk, captain's log
+		// TODO
+		break;
+	case 17:	// Kirk, transporter
+		// TODO: Check if Enterprise is in orbit
+		// TODO: header and text
+		showTextbox("KIRK", "#BRID\\C_060#Spock, come with me. Mr Scott, you have the conn.", 160, 130, 176, 0);
+		runGameMode(GAMEMODE_BEAMDOWN, false);
+		// TODO
+		break;
+	case 18:	// Kirk, options
+		showOptionsMenu(65, 60);
+		break;
+	case 32:
+		// TODO
+		break;
+	case 33: // Spock, consult computer
+		handleBridgeComputer();
+		break;
+	case 48:	// Scotty, damage control
+		// TODO
+		break;
+	case 49:	// Scotty, emergency power
+		// TODO
+		break;
+	case 64:	// Uhura, communications
+		// TODO: header and text
+		showTextbox("LIEUTENANT UHURA", _resource->getLoadedText(16), 298, 150, 161, 0);
+		break;
+	case 80:	// Sulu, orbit
+		// TODO
+		break;
+	case 81:	// Sulu, shields
+		// TODO
+		break;
+	case 96:	// Chekov, navigation
+		// TODO
+		break;
+	case 97:	// Chekov, weapons
+		// TODO
+		break;
+	case 112:
+		// TODO
+		break;
+	case 113:
+		// TODO
+		break;
+	case 114:
+		// TODO
+		break;
+	case 115:
+		// TODO
+		break;
+	case 116:
+		// TODO
+		break;
+	case 117:
+		// TODO
+		break;
+	case 118:
+		// TODO
+		break;
+	case 119:
+		// TODO
+		break;
+	default:
+		break;
+	}
+}
+
 int StarTrekEngine::showActionMenu() {
 	const int actionMappingUp[] = { // Actions to jump to when up is pressed
 		ACTION_TALK,    // <- ACTION_WALK

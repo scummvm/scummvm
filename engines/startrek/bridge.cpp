@@ -27,6 +27,23 @@
 
 namespace StarTrek {
 
+struct BridgeActorAndMenu {
+	int id;
+	const char *anim;
+	const char *menu;
+	int16 x;
+	int16 y;
+};
+
+BridgeActorAndMenu bridgeActorsAndMenus[] = {
+	{ 0, "bstndki", "command",  60,  100 },	// Kirk
+	{ 1, "bstndsp", "comp",    200,   30 },	// Spock
+	{ 4, "bstndsu", "helm",     60,   70 },	// Sulu
+	{ 5, "bstndch", "nav",      60,   70 },	// Chekov
+	{ 6, "bstnduh", "comm",     30,   30 },	// Uhura
+	{ 7, "bstndsc", "eng",      30,   30 },	// Scotty
+};
+
 void StarTrekEngine::initBridge(bool b) {
 	_gfx->loadPalette("bridge");
 	_sound->loadMusicFile("bridge");
@@ -48,6 +65,11 @@ void StarTrekEngine::loadBridge() {
 	_system->updateScreen();
 
 	loadBridgeActors();
+	_missionName = _missionToLoad;
+	_resource->setTxtFileName(_missionName);
+	_sound->loadMusicFile("bridge");
+	_sound->playMidiMusicTracks(0, -1);
+	//loadBanFile("T0BAN");
 	//sub_1312C();	// TODO
 
 	// TODO
@@ -59,13 +81,37 @@ void StarTrekEngine::loadBridge() {
 }
 
 void StarTrekEngine::loadBridgeActors() {
-	loadActorAnim(0, "bstndki", 0, 0, 4);	// Kirk
-	loadActorAnim(1, "bstndsp", 0, 0, 0);	// Spock
-	loadActorAnim(6, "bstnduh", 0, 0, 0);	// Uhura
-	loadActorAnim(5, "bstndch", 0, 0, 0);	// Chekov
-	loadActorAnim(4, "bstndsu", 0, 0, 0);	// Sulu
-	loadActorAnim(7, "bstndsc", 0, 0, 0);	// Scotty
-	loadActorAnim(2, "xstndmc", 0, 0, 0);	// McCoy
+	for (int i = 0; i < ARRAYSIZE(bridgeActorsAndMenus); ++i) {
+		BridgeActorAndMenu a = bridgeActorsAndMenus[i];
+		loadActorAnim(a.id, a.anim, 0, 0, 1.0);
+	}
+}
+
+void StarTrekEngine::bridgeLeftClick() {
+	Sprite *sprite = _gfx->getSpriteAt(_gfx->getMousePos());
+	int clickedActor = -1;
+
+	if (sprite == nullptr)
+		return;
+
+	for (int i = 0; i < NUM_ACTORS; i++) {
+		Actor *actor = &_actorList[i];
+		if (sprite == &actor->sprite) {
+			clickedActor = i;
+			break;
+		}
+	}
+
+	if (clickedActor == -1)
+		return;
+
+	for (int i = 0; i < ARRAYSIZE(bridgeActorsAndMenus); ++i) {
+		BridgeActorAndMenu a = bridgeActorsAndMenus[i];
+		if (a.id == clickedActor) {
+			showBridgeMenu(a.menu, a.x, a.y);
+			break;
+		}
+	}
 }
 
 void StarTrekEngine::cleanupBridge() {
@@ -109,7 +155,7 @@ void StarTrekEngine::handleBridgeEvents() {
 			break;
 
 		case TREKEVENT_LBUTTONDOWN:
-			// TODO
+			bridgeLeftClick();
 			break;
 
 		case TREKEVENT_MOUSEMOVE:
