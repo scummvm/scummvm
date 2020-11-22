@@ -278,7 +278,7 @@ int32 Text::getTextSize(const char *dialogue) { // SizeFont
 		}
 	} while (1);
 
-	return (_dialTextSize);
+	return _dialTextSize;
 }
 
 void Text::initDialogueBox() { // InitDialWindow
@@ -672,22 +672,19 @@ void Text::setTextCrossColor(int32 stopColor, int32 startColor, int32 stepSize) 
 }
 
 bool Text::getText(int32 index) {
-	int32 currIdx = 0;
-	int32 orderIdx = 0;
-
 	const int16 *localTextBuf = (const int16 *)dialTextPtr;
 	const int16 *localOrderBuf = (const int16 *)dialOrderPtr;
 
-	int32 numEntries = numDialTextEntries;
-
+	const int32 numEntries = numDialTextEntries;
+	int32 currIdx = 0;
 	// choose right text from order index
 	do {
-		orderIdx = *(localOrderBuf++);
+		int32 orderIdx = *(localOrderBuf++);
 		if (orderIdx == index) {
 			break;
 		}
 		currIdx++;
-	} while (currIdx < numDialTextEntries);
+	} while (currIdx < numEntries);
 
 	if (currIdx >= numEntries) {
 		return false;
@@ -696,9 +693,8 @@ bool Text::getText(int32 index) {
 	int32 ptrCurrentEntry = READ_LE_INT16(&localTextBuf[currIdx]);
 	int32 ptrNextEntry = READ_LE_INT16(&localTextBuf[currIdx + 1]);
 
-	_currDialTextPtr = (dialTextPtr + ptrCurrentEntry);
+	_currDialTextPtr = dialTextPtr + ptrCurrentEntry;
 	_currDialTextSize = ptrNextEntry - ptrCurrentEntry;
-	numDialTextEntries = numEntries;
 
 	// RECHECK: this was added for vox playback
 	currDialTextEntry = currIdx;
@@ -725,7 +721,7 @@ bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 		return false;
 	}
 
-	if ((_currDialTextSize - 1) > 0xFF) {
+	if (_currDialTextSize - 1 > 0xFF) {
 		_currDialTextSize = 0xFF;
 	}
 
