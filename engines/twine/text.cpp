@@ -501,7 +501,7 @@ int32 Text::getCharHeight(uint8 chr) const {
 }
 
 // TODO: refactor this code
-int Text::printText10() {
+int Text::updateProgressiveText() {
 	if (!_hasValidTextHandle) {
 		return 0;
 	}
@@ -599,7 +599,7 @@ bool Text::drawTextFullscreen(int32 index) {
 		int32 printedText;
 		for (;;) {
 			_engine->readKeys();
-			printedText = printText10();
+			printedText = updateProgressiveText();
 			playVox(currDialTextEntry);
 
 			if (!printedText && !_engine->_sound->isSamplePlaying(currDialTextEntry)) {
@@ -766,7 +766,7 @@ void Text::drawAskQuestion(int32 index) {
 	int32 textStatus = 1;
 	do {
 		_engine->readKeys();
-		textStatus = printText10();
+		textStatus = updateProgressiveText();
 
 		if (textStatus == 2) {
 			do {

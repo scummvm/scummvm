@@ -361,7 +361,7 @@ void GameState::processFoundItem(int32 item) {
 
 		if (textState) {
 			_engine->_interface->resetClip();
-			textState = _engine->_text->printText10();
+			textState = _engine->_text->updateProgressiveText();
 		}
 
 		if (textState == 0 || textState == 2) {
