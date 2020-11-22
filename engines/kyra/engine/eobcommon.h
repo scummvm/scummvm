@@ -451,6 +451,7 @@ protected:
 	const uint8 *_saveThrowModExt;
 
 	const EoBCharacter *_npcPreset;
+	const char *const *_npcPresetNames;
 	int _npcSequenceSub;
 	bool _partyResting;
 	bool _loading;
@@ -1244,6 +1245,7 @@ protected:
 	const char *_menuOkString;
 	const char *const *_2431Strings;
 	const char *const *_textInputCharacterLines;
+	int _textInputCharacterLinesSize;
 	const char *const *_textInputSelectStrings;
 	const char *const *_menuStringsTransfer;
 	const char *const *_transferStringsScummVM;

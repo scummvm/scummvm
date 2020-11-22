@@ -635,7 +635,7 @@ void EoBEngine::drawDialogueButtons() {
 	_screen->sega_getRenderer()->render(0);
 }
 
-GUI_EoB_SegaCD::GUI_EoB_SegaCD(EoBEngine *vm) : GUI_EoB(vm), _vm(vm) {
+GUI_EoB_SegaCD::GUI_EoB_SegaCD(EoBEngine *vm) : GUI_EoB(vm), _vm(vm), _clickableCharactersNumPages(vm->_textInputCharacterLinesSize) {
 	_vm->_sres->loadContainer("ITEM");
 	uint8 *cm = _vm->_sres->resData(8, 0);
 	uint8 *cmdec = new uint8[47925];
@@ -665,7 +665,7 @@ void GUI_EoB_SegaCD::drawCampMenu() {
 	_screen->sega_selectPalette(40, 2, true);
 }
 
-void GUI_EoB_SegaCD::initMemorizePrayMenu() {
+void GUI_EoB_SegaCD::initMemorizePrayMenu(int spellType) {
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 0, 0, 22, 21, 0);
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 8, 20, 2, 0x62AB, true);
 	_screen->sega_getRenderer()->fillRectWithTiles(0, 1, 4, 20, 4, 0x6283, true);
@@ -673,7 +673,7 @@ void GUI_EoB_SegaCD::initMemorizePrayMenu() {
 	_screen->sega_getRenderer()->memsetVRAM(0x5560, 0, 1280);
 	_screen->sega_getRenderer()->loadToVRAM(&_campMenu[0x87C0], 4992, 0x3CE0);
 	_screen->sega_clearTextBuffer(0);
-	_vm->_txt->printShadedText(getMenuString(37), 0, 2, 0xFF, 0xCC, 160, 16, 0, false);
+	_vm->_txt->printShadedText(_vm->_menuStringsSpells[spellType ? 17 : 14], 0, 2, 0xFF, 0xCC, 160, 16, 0, false);
 	_screen->sega_loadTextBufferToVRAM(0, 0x5060, 2560);
 	_screen->sega_getRenderer()->render(0, 1, 4, 20, 2);
 }
@@ -924,7 +924,7 @@ int GUI_EoB_SegaCD::checkClickableCharactersSelection() {
 	if (highlight == -1) {
 		for (int i = 0; i < 3; ++i) {
 			int x = 200 + i * 36;
-			if (!_vm->posWithinRect(mousePos.x, mousePos.y, x, 164, x + _screen->getTextWidth(_vm->_textInputSelectStrings[i]) - 1, 171))
+			if (!_vm->posWithinRect(mousePos.x, mousePos.y, x, 164, x + _screen->getTextWidth(_vm->_textInputSelectStrings[i ? i + 2 : _clickableCharactersPage]) - 1, 171))
 				continue;
 			highlight = 200 + i;
 			break;
@@ -950,7 +950,7 @@ int GUI_EoB_SegaCD::checkClickableCharactersSelection() {
 		_menuCur = -1;
 		switch (highlight) {
 		case 200:
-			printClickableCharacters(_clickableCharactersPage ^ 1);
+			printClickableCharacters((_clickableCharactersPage + 1) % _clickableCharactersNumPages);
 			break;
 		case 201:
 			_keyPressed.keycode = Common::KEYCODE_BACKSPACE;
@@ -988,7 +988,7 @@ void GUI_EoB_SegaCD::printClickableCharacter(int id, int col) {
 		_vm->_txt->printShadedText(ch, (id % 12) * 12 + 12, (id / 12) * 12 + 32, col);
 	} else if (id >= 200) {
 		id -= 200;
-		_vm->_txt->printShadedText(_vm->_textInputSelectStrings[id], 60 + id * 36, 100, col);
+		_vm->_txt->printShadedText(_vm->_textInputSelectStrings[id ? id + 2 : _clickableCharactersPage], 60 + id * 36, 100, col);
 	}
 }
 
@@ -999,7 +999,7 @@ char GUI_EoB_SegaCD::fetchClickableCharacter(int id) const {
 		return 0;
 
 	uint8 c = (uint8)_vm->_textInputCharacterLines[_clickableCharactersPage][id];
-	if (_clickableCharactersPage) {
+	if (_clickableCharactersPage == 1) {
 		if (c > 159 && c < 192)
 			c -= 32;
 		else if (c > 191 && c < 224)

@@ -79,12 +79,14 @@ static const char *const kEoB1ChargenClassStringsSegaCDEnglish[29] = {
 	"FIGHTER/CLERIC/MAGE",
 	"RANGER/CLERIC",
 	"CLERIC/MAGE",
+
 	"FIGHTER",
 	"MAGE",
 	"CLERIC",
 	"THIEF",
 	"PALADIN",
 	"RANGER",
+
 	"FTR.",
 	"MAGE",
 	"CLERIC",
@@ -119,7 +121,7 @@ static const char *const kEoB1MainMenuStringsSegaCDEnglish[3] = {
 
 static const StringListProvider kEoB1MainMenuStringsSegaCDEnglishProvider = { ARRAYSIZE(kEoB1MainMenuStringsSegaCDEnglish), kEoB1MainMenuStringsSegaCDEnglish };
 
-static const char *const kEoB1BonusStringsSegaCDEnglish[9] = {
+static const char *const kEoB1BonusStringsSegaCDEnglish[13] = {
 	"Congratulations on completing all 12 Beholder Bonuses.",
 	"The names of the character in your winning Beholder Bonus party are:",
 	"Search results",
@@ -128,7 +130,11 @@ static const char *const kEoB1BonusStringsSegaCDEnglish[9] = {
 	"Steps",
 	"Arrows",
 	"Maps",
-	"Special searches"
+	"Special searches",
+	":",
+	":",
+	"",
+	""
 };
 
 static const StringListProvider kEoB1BonusStringsSegaCDEnglishProvider = { ARRAYSIZE(kEoB1BonusStringsSegaCDEnglish), kEoB1BonusStringsSegaCDEnglish };
@@ -584,14 +590,14 @@ static const char *const kEoB1MenuStringsSaveLoadSegaCDEnglish[8] = {
 
 static const StringListProvider kEoB1MenuStringsSaveLoadSegaCDEnglishProvider = { ARRAYSIZE(kEoB1MenuStringsSaveLoadSegaCDEnglish), kEoB1MenuStringsSaveLoadSegaCDEnglish };
 
-static const char *const kEoB1MenuStringsOnOffSegaCDEnglish[2] = {
+/*static const char *const kEoB1MenuStringsOnOffSegaCDEnglish[2] = {
 	"ON",
 	"OFF"
 };
 
 static const StringListProvider kEoB1MenuStringsOnOffSegaCDEnglishProvider = { ARRAYSIZE(kEoB1MenuStringsOnOffSegaCDEnglish), kEoB1MenuStringsOnOffSegaCDEnglish };
-
-static const char *const kEoB1MenuStringsSpellsSegaCDEnglish[17] = {
+*/
+static const char *const kEoB1MenuStringsSpellsSegaCDEnglish[18] = {
 	"Select a character from your party who would like to learn spells.",
 	"Your Paladin is too low a level for spells.\r",
 	"The Mage has no Spell Book!\r",
@@ -608,7 +614,8 @@ static const char *const kEoB1MenuStringsSpellsSegaCDEnglish[17] = {
 	"Clear",
 	"\x82""r""\x82\x90\x82\x85\x82\x8c\x82\x8c\x82\x93\x81""@""\x82""`""\x82\x96\x82\x81\x82\x89\x82\x8c\x82\x81\x82\x82\x82\x8c\x82\x85\x81""F",
 	"Yes",
-	"No"
+	"No",
+	"\x82""r""\x82\x90\x82\x85\x82\x8c\x82\x8c\x82\x93\x81""@""\x82""`""\x82\x96\x82\x81\x82\x89\x82\x8c\x82\x81\x82\x82\x82\x8c\x82\x85\x81""F"
 };
 
 static const StringListProvider kEoB1MenuStringsSpellsSegaCDEnglishProvider = { ARRAYSIZE(kEoB1MenuStringsSpellsSegaCDEnglish), kEoB1MenuStringsSpellsSegaCDEnglish };
@@ -629,12 +636,12 @@ static const char *const kEoB1MenuStringsDropSegaCDEnglish[1] = {
 
 static const StringListProvider kEoB1MenuStringsDropSegaCDEnglishProvider = { ARRAYSIZE(kEoB1MenuStringsDropSegaCDEnglish), kEoB1MenuStringsDropSegaCDEnglish };
 
-static const char *const kEoB1MenuStringsExitSegaCDEnglish[1] = {
+/*static const char *const kEoB1MenuStringsExitSegaCDEnglish[1] = {
 	" Are you sure you\r wish to exit the\r game?"
 };
 
 static const StringListProvider kEoB1MenuStringsExitSegaCDEnglishProvider = { ARRAYSIZE(kEoB1MenuStringsExitSegaCDEnglish), kEoB1MenuStringsExitSegaCDEnglish };
-
+*/
 static const char *const kEoB1MenuStringsStarveSegaCDEnglish[1] = {
 	"Your party is starving. Do you wish to continue resting?"
 };
@@ -702,6 +709,7 @@ static const char *const kEoB1MenuYesNoStringsSegaCDEnglish[2] = {
 
 static const StringListProvider kEoB1MenuYesNoStringsSegaCDEnglishProvider = { ARRAYSIZE(kEoB1MenuYesNoStringsSegaCDEnglish), kEoB1MenuYesNoStringsSegaCDEnglish };
 
+/*
 static const char *const kEoB1CharGuiStringsInSegaCDEnglish[4] = {
 	"CHARACTER INFO",
 	"AC",
@@ -710,7 +718,7 @@ static const char *const kEoB1CharGuiStringsInSegaCDEnglish[4] = {
 };
 
 static const StringListProvider kEoB1CharGuiStringsInSegaCDEnglishProvider = { ARRAYSIZE(kEoB1CharGuiStringsInSegaCDEnglish), kEoB1CharGuiStringsInSegaCDEnglish };
-
+*/
 static const char *const kEoB1CharStatusStrings7SegaCDEnglish[1] = {
 	"%s no longer has giant strength.\r"
 };
@@ -984,7 +992,7 @@ static const StringListProvider kEoB1MagicStrings7SegaCDEnglishProvider = { ARRA
 static const char *const kEoB1MagicStrings8SegaCDEnglish[3] = {
 	"All spells on %s are dispelled.\r",
 	"The party is already blessed!\r",
-	"The aid spell fails!\r",
+	"The aid spell fails!\r"
 };
 
 static const StringListProvider kEoB1MagicStrings8SegaCDEnglishProvider = { ARRAYSIZE(kEoB1MagicStrings8SegaCDEnglish), kEoB1MagicStrings8SegaCDEnglish };
@@ -1133,17 +1141,60 @@ static const char *const kEoB1DefaultPartyNamesSegaCDEnglish[4] = {
 
 static const StringListProvider kEoB1DefaultPartyNamesSegaCDEnglishProvider = { ARRAYSIZE(kEoB1DefaultPartyNamesSegaCDEnglish), kEoB1DefaultPartyNamesSegaCDEnglish };
 
-static const char *const kEoB1TextInputCharacterLinesSegaCD[2] = {
+static const char *const kEoB1NpcPresetsNamesSegaCDEnglish[9] = {
+	"Anya",
+	"Beohram",
+	"Kirath",
+	"Ileria",
+	"Tyrra",
+	"Tod Uphill",
+	"Taghor",
+	"Dohrum",
+	"Keirgar"
+};
+
+static const StringListProvider kEoB1NpcPresetsNamesSegaCDEnglishProvider = { ARRAYSIZE(kEoB1NpcPresetsNamesSegaCDEnglish), kEoB1NpcPresetsNamesSegaCDEnglish };
+
+static const char *const kEoB1TextInputCharacterLinesSegaCDEnglish[2] = {
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZ          0123456789  ,./'&-_()   ",
 	"abcdefghijklmnopqrstuvwxyz          0123456789  ,./'&-_()   "
 };
 
-static const StringListProvider kEoB1TextInputCharacterLinesSegaCDProvider = { ARRAYSIZE(kEoB1TextInputCharacterLinesSegaCD), kEoB1TextInputCharacterLinesSegaCD };
+static const StringListProvider kEoB1TextInputCharacterLinesSegaCDEnglishProvider = { ARRAYSIZE(kEoB1TextInputCharacterLinesSegaCDEnglish), kEoB1TextInputCharacterLinesSegaCDEnglish };
 
-static const char *const kEoB1TextInputSelectStringsSegaCD[3] = {
+static const char *const kEoB1TextInputSelectStringsSegaCDEnglish[5] = {
 	"NEXT",
+	"NEXT",
+	"",
 	"BS",
 	"END"
 };
 
-static const StringListProvider kEoB1TextInputSelectStringsSegaCDProvider = { ARRAYSIZE(kEoB1TextInputSelectStringsSegaCD), kEoB1TextInputSelectStringsSegaCD };
+static const StringListProvider kEoB1TextInputSelectStringsSegaCDEnglishProvider = { ARRAYSIZE(kEoB1TextInputSelectStringsSegaCDEnglish), kEoB1TextInputSelectStringsSegaCDEnglish };
+
+static const char *const kEoB1SaveNamePatternsSegaCDEnglish[1] = {
+	"%s\r FLOOR % -2u % u: % 02u"
+};
+
+static const StringListProvider kEoB1SaveNamePatternsSegaCDEnglishProvider = { ARRAYSIZE(kEoB1SaveNamePatternsSegaCDEnglish), kEoB1SaveNamePatternsSegaCDEnglish };
+
+static const byte kEoB1CharTilesTableSegaCDEnglish[256] = {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x2d,	0x00, 0x00, 0x00, 0x21, 0x00, 0x20, 0x1f, 0x22,
+	0x23, 0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a,	0x2b, 0x2c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,	0x18, 0x19, 0x1a, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x11,	0x19, 0x00, 0x00, 0x00, 0x16, 0x02, 0x00, 0x37,
+	0x03, 0x55, 0x12, 0x00, 0x06, 0x1f, 0x00, 0x00,	0x10, 0x1e, 0x00, 0x00, 0x15, 0x56, 0x00, 0x00,
+	0x13, 0x21, 0x00, 0x18, 0x0a, 0x00, 0x1c, 0x00,	0x00, 0x0d, 0x09, 0x01, 0x08, 0x20, 0x00, 0x04,
+	0x00, 0x0e, 0x1a, 0x00, 0x00, 0x00, 0x00, 0x17,	0x0f, 0x07, 0x14, 0x1b, 0x0c, 0x05, 0x0b, 0x31,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+static const ByteProvider kEoB1CharTilesTableSegaCDEnglishProvider = { ARRAYSIZE(kEoB1CharTilesTableSegaCDEnglish), kEoB1CharTilesTableSegaCDEnglish };

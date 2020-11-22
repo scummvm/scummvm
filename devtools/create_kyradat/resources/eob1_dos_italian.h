@@ -895,3 +895,16 @@ static const char *const kEoB1MonsterDistAttStringsDOSItalian[5] = {
 
 static const StringListProvider kEoB1MonsterDistAttStringsDOSItalianProvider = { ARRAYSIZE(kEoB1MonsterDistAttStringsDOSItalian), kEoB1MonsterDistAttStringsDOSItalian };
 
+static const char *const kEoB1NpcPresetsNamesDOSItalian[9] = {
+	"Anya",
+	"Beohram",
+	"Kirath",
+	"Ileria",
+	"Tyrra",
+	"Tod Uphill",
+	"Taghor",
+	"Dohrum",
+	"Keirgar"
+};
+
+static const StringListProvider kEoB1NpcPresetsNamesDOSItalianProvider = { ARRAYSIZE(kEoB1NpcPresetsNamesDOSItalian), kEoB1NpcPresetsNamesDOSItalian };

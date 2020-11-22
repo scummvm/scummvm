@@ -107,7 +107,7 @@ private:
 	bool restParty();
 
 	virtual void drawCampMenu() {}
-	virtual void initMemorizePrayMenu() {}
+	virtual void initMemorizePrayMenu(int) {}
 	virtual void initScribeScrollMenu() {}
 	virtual void printScribeScrollSpellString(const int16 *menuItems, int id, bool highlight);
 	virtual bool confirmDialogue(int id);
