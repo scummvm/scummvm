@@ -187,9 +187,9 @@ Common::Error TwinEEngine::run() {
 			if (_scene->newHeroX == -1) {
 				_scene->heroPositionType = ScenePositionType::kNoPosition;
 			}
-			_text->newGameVar5 = 0;
+			_text->renderTextTriangle = false;
 			_text->textClipSmall();
-			_text->newGameVar4 = 1;
+			_text->drawTextBoxBackground = true;
 			_state = EngineState::GameLoop;
 			break;
 		case EngineState::GameLoop:
@@ -460,7 +460,7 @@ void TwinEEngine::processInventoryAction() {
 		_screens->fadeToBlack(_screens->paletteRGBA);
 		_screens->loadImage(RESSHQR_INTROSCREEN1IMG);
 		_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
-		_text->newGameVar4 = 0;
+		_text->drawTextBoxBackground = false;
 		_text->textClipFull();
 		_text->setFontCrossColor(15);
 		const bool tmpFlagDisplayText = cfgfile.FlagDisplayText;
@@ -468,7 +468,7 @@ void TwinEEngine::processInventoryAction() {
 		_text->drawTextFullscreen(161);
 		cfgfile.FlagDisplayText = tmpFlagDisplayText;
 		_text->textClipSmall();
-		_text->newGameVar4 = 1;
+		_text->drawTextBoxBackground = true;
 		_text->initTextBank(_scene->sceneTextBank + 3);
 		_screens->fadeToBlack(_screens->paletteRGBACustom);
 		_screens->clearScreen();

@@ -57,8 +57,8 @@ void MenuOptions::newGame() {
 	// intro screen 1 - twinsun
 	_engine->_screens->loadImage(RESSHQR_INTROSCREEN1IMG);
 
-	_engine->_text->newGameVar4 = 0;
-	_engine->_text->newGameVar5 = 1;
+	_engine->_text->drawTextBoxBackground = false;
+	_engine->_text->renderTextTriangle = true;
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->textClipFull();
@@ -91,8 +91,8 @@ void MenuOptions::newGame() {
 	_engine->_screens->clearScreen();
 	_engine->flip();
 
-	_engine->_text->newGameVar4 = 1;
-	_engine->_text->newGameVar5 = 0;
+	_engine->_text->drawTextBoxBackground = true;
+	_engine->_text->renderTextTriangle = false;
 
 	// set main palette back
 	_engine->setPalette(_engine->_screens->paletteRGBA);

@@ -127,7 +127,7 @@ private:
 	WordSize getWordSize(const char *arg1, char *arg2);
 	void processTextLine();
 	// draw next page arrow polygon
-	void printText10Sub();
+	void renderContinueReadingTriangle();
 	void printText10Sub2();
 	int32 getCharWidth(uint8 chr) const;
 	int32 getCharHeight(uint8 chr) const;
@@ -207,9 +207,10 @@ public:
 	~Text();
 
 	// TODO: refactor all this variables and related functions
-	int32 printTextVar13 = 0;
-	int32 newGameVar4 = 0;
-	int32 newGameVar5 = 0;
+	bool printTextVar13 = false;
+	// renders a triangle if the next side of the text can get activated
+	bool renderTextTriangle = false;
+	bool drawTextBoxBackground = false;
 	bool hasHiddenVox = false; // printTextVar5
 	int32 voxHiddenIndex = 0;
 	// ---
