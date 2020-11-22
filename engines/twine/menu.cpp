@@ -758,7 +758,7 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 	_engine->_interface->drawSplittedBox(newBoxLeft, boxTop, boxLeft, boxBottom, 91);
 	drawBox(left + 25, top + 10, left + 324, top + 10 + 14);
 
-	if (!_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && _engine->_gameState->gameFlags[InventoryItems::kiTunic]) {
+	if (!_engine->_gameState->inventoryDisabled() && _engine->_gameState->hasItem(InventoryItems::kiTunic)) {
 		_engine->_grid->drawSprite(0, newBoxLeft2, top + 36, _engine->_resources->spriteTable[SPRITEHQR_MAGICPOINTS]);
 		if (_engine->_gameState->magicLevelIdx > 0) {
 			_engine->_interface->drawSplittedBox(newBoxLeft, top + 35, _engine->_screens->crossDot(newBoxLeft, boxRight, 80, _engine->_gameState->inventoryMagicPoints), top + 50, 75);
@@ -957,7 +957,7 @@ void Menu::drawItem(int32 item) {
 	_engine->_interface->drawSplittedBox(left, top, right, bottom,
 	                                     inventorySelectedItem == item ? inventorySelectedColor : 0);
 
-	if (_engine->_gameState->gameFlags[item] && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && item < NUM_INVENTORY_ITEMS) {
+	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && !_engine->_gameState->inventoryDisabled()) {
 		_engine->_renderer->prepareIsoModel(_engine->_resources->inventoryTable[item]);
 		itemAngle[item] += 8;
 		_engine->_renderer->renderInventoryItem(itemX, itemY, _engine->_resources->inventoryTable[item], itemAngle[item], 15000);
@@ -995,9 +995,9 @@ void Menu::processInventoryMenu() {
 	inventorySelectedColor = 68;
 
 	if (_engine->_gameState->inventoryNumLeafs > 0) {
-		_engine->_gameState->gameFlags[InventoryItems::kiCloverLeaf] = 1;
+		_engine->_gameState->giveItem(InventoryItems::kiCloverLeaf);
 	// TODO: shouldn't this get reset? } else {
-	//	_engine->_gameState->gameFlags[InventoryItems::kiCloverLeaf] = 0;
+	//	_engine->_gameState->removeItem(InventoryItems::kiCloverLeaf);
 	}
 
 	drawInventoryItems();
@@ -1059,7 +1059,7 @@ void Menu::processInventoryMenu() {
 		if (bx == 3) {
 			_engine->_text->initInventoryDialogueBox();
 
-			if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->gameFlags[inventorySelectedItem] == 1 && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
+			if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
 				_engine->_text->initText(inventorySelectedItem + 100);
 			} else {
 				_engine->_text->initText(128);
@@ -1081,7 +1081,7 @@ void Menu::processInventoryMenu() {
 				_engine->_text->initInventoryDialogueBox();
 				bx = 0;
 			} else {
-				if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->gameFlags[inventorySelectedItem] == 1 && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
+				if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
 					_engine->_text->initInventoryDialogueBox();
 					_engine->_text->initText(inventorySelectedItem + 100);
 				}
@@ -1090,7 +1090,7 @@ void Menu::processInventoryMenu() {
 
 		drawItem(inventorySelectedItem);
 
-		if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter) && _engine->_gameState->gameFlags[inventorySelectedItem] == 1 && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
+		if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter) && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
 			_engine->loopInventoryItem = inventorySelectedItem;
 			inventorySelectedColor = 91;
 			drawItem(inventorySelectedItem);

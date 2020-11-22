@@ -478,7 +478,7 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	}
 	case kiProtoPack:
-		if (_gameState->gameFlags[InventoryItems::kiBookOfBu]) {
+		if (_gameState->hasItem(InventoryItems::kiBookOfBu)) {
 			_scene->sceneHero->body = 0;
 		} else {
 			_scene->sceneHero->body = 1;
@@ -507,7 +507,7 @@ void TwinEEngine::processInventoryAction() {
 			pinguin->dynamicFlags.bIsDead = 0; // &= 0xDF
 			pinguin->setBrickShape(ShapeType::kNone);
 			_movements->moveActor(pinguin->angle, pinguin->angle, pinguin->speed, &pinguin->move);
-			_gameState->gameFlags[InventoryItems::kiPinguin] = 0; // byte_50D89 = 0;
+			_gameState->removeItem(InventoryItems::kiPinguin); // byte_50D89 = 0;
 			pinguin->delayInMillis = lbaTime + 1500;
 		}
 		break;
@@ -643,8 +643,8 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// use Proto-Pack
-		if (_input->toggleActionIfActive(TwinEActionType::UseProtoPack) && _gameState->gameFlags[InventoryItems::kiProtoPack] == 1) {
-			if (_gameState->gameFlags[InventoryItems::kiBookOfBu]) {
+		if (_input->toggleActionIfActive(TwinEActionType::UseProtoPack) && _gameState->hasItem(InventoryItems::kiProtoPack)) {
+			if (_gameState->hasItem(InventoryItems::kiBookOfBu)) {
 				_scene->sceneHero->body = 0;
 			} else {
 				_scene->sceneHero->body = 1;
@@ -667,7 +667,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 
 		// Draw holomap
-		if (_input->isActionActive(TwinEActionType::OpenHolomap) && _gameState->gameFlags[InventoryItems::kiHolomap] == 1 && !_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
+		if (_input->isActionActive(TwinEActionType::OpenHolomap) && _gameState->hasItem(InventoryItems::kiHolomap) && !_gameState->inventoryDisabled()) {
 			freezeTime();
 			//TestRestoreModeSVGA(1);
 			_holomap->processHolomap();

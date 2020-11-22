@@ -308,7 +308,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 bool Movements::processAttackExecution(int actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (!_engine->_gameState->usingSabre) { // Use Magic Ball
-		if (_engine->_gameState->gameFlags[InventoryItems::kiMagicBall]) {
+		if (_engine->_gameState->hasItem(InventoryItems::kiMagicBall)) {
 			if (_engine->_gameState->magicBallIdx == -1) {
 				_engine->_animations->initAnim(AnimationTypes::kThrowBall, 1, AnimationTypes::kStanding, actorIdx);
 			}
@@ -316,7 +316,7 @@ bool Movements::processAttackExecution(int actorIdx) {
 			actor->angle = getRealAngle(&actor->move);
 			return true;
 		}
-	} else if (_engine->_gameState->gameFlags[InventoryItems::kiUseSabre]) {
+	} else if (_engine->_gameState->hasItem(InventoryItems::kiUseSabre)) {
 		if (actor->body != InventoryItems::kiUseSabre) {
 			_engine->_actor->initModelActor(InventoryItems::kiUseSabre, actorIdx);
 		}
@@ -395,7 +395,7 @@ void Movements::processManualAction(int actorIdx) {
 		}
 	}
 
-	if (_engine->_input->isActionActive(TwinEActionType::ThrowMagicBall) && !_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
+	if (_engine->_input->isActionActive(TwinEActionType::ThrowMagicBall) && !_engine->_gameState->inventoryDisabled()) {
 		if (processAttackExecution(actorIdx)) {
 			heroMoved = true;
 		}

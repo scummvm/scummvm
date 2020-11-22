@@ -261,12 +261,12 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		break;
 	case kcFLAG_GAME: {
 		int32 flagIdx = ctx.stream.readByte();
-		if (!engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] ||
-		    (engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && flagIdx >= MaxInventoryItems)) {
+		if (!engine->_gameState->inventoryDisabled() ||
+		    (engine->_gameState->inventoryDisabled() && flagIdx >= MaxInventoryItems)) {
 			engine->_scene->currentScriptValue = engine->_gameState->gameFlags[flagIdx];
 		} else {
 			if (flagIdx == GAMEFLAG_INVENTORY_DISABLED) {
-				engine->_scene->currentScriptValue = engine->_gameState->gameFlags[flagIdx];
+				engine->_scene->currentScriptValue = engine->_gameState->inventoryDisabled();
 			} else {
 				engine->_scene->currentScriptValue = 0;
 			}
@@ -322,11 +322,11 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 	case kcUSE_INVENTORY: {
 		int32 item = ctx.stream.readByte();
 
-		if (!engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
+		if (!engine->_gameState->inventoryDisabled()) {
 			if (item == engine->loopInventoryItem) {
 				engine->_scene->currentScriptValue = 1;
 			} else {
-				if (engine->_gameState->inventoryFlags[item] == 1 && engine->_gameState->gameFlags[item] == 1) {
+				if (engine->_gameState->inventoryFlags[item] == 1 && engine->_gameState->hasItem((InventoryItems)item)) {
 					engine->_scene->currentScriptValue = 1;
 				} else {
 					engine->_scene->currentScriptValue = 0;
@@ -786,11 +786,9 @@ static int32 lEND_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x24
  */
 static int32 lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int32 flagIdx = ctx.stream.readByte();
-	const int32 flagValue = ctx.stream.readByte();
-
-	engine->_gameState->gameFlags[flagIdx] = flagValue;
-
+	const uint8 flagIdx = ctx.stream.readByte();
+	const uint8 flagValue = ctx.stream.readByte();
+	engine->_gameState->setFlag(flagIdx, flagValue);
 	return 0;
 }
 
@@ -1332,7 +1330,7 @@ static int32 lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	static int32 location = ctx.stream.readByte();
 	engine->_holomap->setHolomapPosition(location);
-	if (engine->_gameState->gameFlags[InventoryItems::kiHolomap]) {
+	if (engine->_gameState->hasItem(InventoryItems::kiHolomap)) {
 		engine->_redraw->addOverlay(koInventoryItem, 0, 0, 0, 0, koNormal, 3);
 	}
 
