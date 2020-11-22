@@ -1116,7 +1116,7 @@ void Menu::processInventoryMenu() {
 
 	keymapper->getKeymap(uiKeyMapId)->setEnabled(false);
 
-	_engine->_text->printTextVar13 = false;
+	_engine->_text->_hasValidTextHandle = false;
 
 	_engine->_scene->alphaLight = tmpAlphaLight;
 	_engine->_scene->betaLight = tmpBetaLight;

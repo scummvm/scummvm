@@ -304,14 +304,13 @@ void Text::initInventoryDialogueBox() { // SecondInitDialWindow
 // TODO: refactor this code
 void Text::initText(int32 index) {
 	if (!getText(index)) {
-		printTextVar13 = false;
+		_hasValidTextHandle = false;
 		return;
 	}
 
-	printText8Ptr1 = buf1;
 	progressiveTextBuffer = buf2;
 
-	printTextVar13 = true;
+	_hasValidTextHandle = true;
 
 	printText8Var1 = 0;
 	buf1[0] = '\0';
@@ -381,7 +380,7 @@ Text::WordSize Text::getWordSize(const char *arg1, char *arg2) {
 void Text::processTextLine() {
 	char *buffer = printText8Var8;
 	dialCharSpace = 7;
-	int16 var4 = 1;
+	bool var4 = true;
 
 	addLineBreakX = 0;
 	printText8PrepareBufferVar2 = 0;
@@ -401,11 +400,11 @@ void Text::processTextLine() {
 		if (addLineBreakX + dialCharSpace + wordSize.inPixel < dialTextBoxParam2) {
 			char *temp = buffer + 1;
 			if (*buffer == 1) {
-				var4 = 0;
+				var4 = false;
 				buffer = temp;
 			} else {
 				if (*buf1 == '@') {
-					var4 = 0;
+					var4 = false;
 					buffer = temp;
 					if (addLineBreakX == 0) {
 						addLineBreakX = 7;
@@ -437,7 +436,7 @@ void Text::processTextLine() {
 		printText8PrepareBufferVar2--;
 	}
 
-	if (*printText8Var8 != '\0' && var4 == 1) {
+	if (*printText8Var8 != '\0' && var4) {
 		if (printText8PrepareBufferVar2 == 0) {
 			printText8PrepareBufferVar2 = 1;
 		}
@@ -476,7 +475,7 @@ void Text::renderContinueReadingTriangle() {
 }
 
 void Text::fadeInCharacters(int32 counter, int32 fontColor) {
-	_engine->_system->delayMillis(1);
+	_engine->_system->delayMillis(15);
 	while (--counter >= 0) {
 		const BlendInCharacter *ptr = &_blendInCharacters[counter];
 		setFontColor(fontColor);
@@ -504,7 +503,7 @@ int32 Text::getCharHeight(uint8 chr) const {
 
 // TODO: refactor this code
 int Text::printText10() {
-	if (!printTextVar13) {
+	if (!_hasValidTextHandle) {
 		return 0;
 	}
 
@@ -513,7 +512,7 @@ int Text::printText10() {
 			if (renderTextTriangle) {
 				renderContinueReadingTriangle();
 			}
-			printTextVar13 = false;
+			_hasValidTextHandle = false;
 			return 0;
 		}
 		if (printText8Var6) {
@@ -616,7 +615,7 @@ bool Text::drawTextFullscreen(int32 index) {
 		}
 		hasHiddenVox = false;
 
-		printTextVar13 = false;
+		_hasValidTextHandle = false;
 
 		if (printedText == 0) {
 			stopVox(currDialTextEntry);
@@ -796,7 +795,7 @@ void Text::drawAskQuestion(int32 index) {
 
 	hasHiddenVox = false;
 	voxHiddenIndex = 0;
-	printTextVar13 = false;
+	_hasValidTextHandle = false;
 }
 
 } // namespace TwinE
