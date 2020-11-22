@@ -767,7 +767,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 		if (!actor->dynamicFlags.bIsFalling) {
 			if (actor->speed) {
-				int32 xAxisRotation = _engine->_movements->getRealValue(&actor->move);
+				int32 xAxisRotation = actor->move.getRealValue(_engine->lbaTime);
 				if (!xAxisRotation) {
 					if (actor->move.to > 0) {
 						xAxisRotation = 1;
