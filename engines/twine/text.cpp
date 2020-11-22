@@ -679,7 +679,7 @@ bool Text::getText(int32 index) {
 	int32 currIdx = 0;
 	// choose right text from order index
 	do {
-		int32 orderIdx = *(localOrderBuf++);
+		const int32 orderIdx = *(localOrderBuf++);
 		if (orderIdx == index) {
 			break;
 		}
@@ -690,8 +690,8 @@ bool Text::getText(int32 index) {
 		return false;
 	}
 
-	int32 ptrCurrentEntry = READ_LE_INT16(&localTextBuf[currIdx]);
-	int32 ptrNextEntry = READ_LE_INT16(&localTextBuf[currIdx + 1]);
+	const int32 ptrCurrentEntry = READ_LE_INT16(&localTextBuf[currIdx]);
+	const int32 ptrNextEntry = READ_LE_INT16(&localTextBuf[currIdx + 1]);
 
 	_currDialTextPtr = dialTextPtr + ptrCurrentEntry;
 	_currDialTextSize = ptrNextEntry - ptrCurrentEntry;
