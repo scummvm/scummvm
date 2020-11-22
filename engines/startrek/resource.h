@@ -76,6 +76,8 @@ public:
 		_txtFilename = txtFileName;
 	}
 
+	Common::List<ResourceIndex> _resources;
+
 private:
 	void readIndexFile();
 	ResourceIndex getIndex(Common::String filename);
@@ -88,7 +90,7 @@ private:
 	Common::Platform _platform;
 	bool _isDemo;
 	Common::String _txtFilename;
-	Common::List<ResourceIndex> _resources;
+	//Common::List<ResourceIndex> _resources;
 };
 
 } // End of namespace StarTrek

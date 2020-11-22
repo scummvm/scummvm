@@ -46,6 +46,7 @@ private:
 
 	Common::String EventToString(uint32 action);
 	Common::String ItemToString(byte index);
+	void dumpFile(Common::String fileName);
 };
 
 } // End of namespace StarTrek
