@@ -327,6 +327,7 @@ void Resources::loadData() {
 	file.syncString(HIT_SPELL_POINTS_RESTORED);
 	file.syncString(TOO_DANGEROUS_TO_REST);
 	file.syncString(SOME_CHARS_MAY_DIE);
+	file.syncString(DISMISS_WHOM);
 	file.syncString(CANT_DISMISS_LAST_CHAR);
 	file.syncString(DELETE_CHAR_WITH_ELDER_WEAPON);
 	file.syncStrings(REMOVE_DELETE, 2);
