@@ -23,6 +23,7 @@
 #include "twine/renderer.h"
 #include "common/textconsole.h"
 #include "common/util.h"
+#include "twine/actor.h"
 #include "twine/interface.h"
 #include "twine/menu.h"
 #include "twine/movements.h"
@@ -1700,9 +1701,10 @@ void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight,
 	_engine->_interface->setClip(boxLeft, boxTop, tmpBoxRight, boxBottom);
 
 	if (angle == -1) {
-		const int16 newAngle = _engine->_movements->getRealAngle(&_engine->_menu->moveMenu);
-		if (_engine->_menu->moveMenu.numOfStep == 0) {
-			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, 50, &_engine->_menu->moveMenu);
+		ActorMoveStruct &move = _engine->_menu->moveMenu;
+		const int16 newAngle = move.getRealAngle(_engine->lbaTime);
+		if (move.numOfStep == 0) {
+			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, 50, &move);
 		}
 		renderIsoModel(0, y, 0, 0, newAngle, 0, entityPtr);
 	} else {

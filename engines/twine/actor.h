@@ -40,6 +40,18 @@ struct ActorMoveStruct {
 	int16 to = 0;
 	int16 numOfStep = 0;
 	int32 timeOfChange = 0;
+
+	/**
+	 * Get actor real angle
+	 * @param time engine time used for interpolation
+	 */
+	int32 getRealAngle(int32 time);
+
+	/**
+	 * Get actor step
+	 * @param time engine time used for interpolation
+	 */
+	int32 getRealValue(int32 time);
 };
 
 /** Actors zone volumique points structure */

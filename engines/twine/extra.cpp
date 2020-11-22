@@ -661,7 +661,7 @@ void Extra::processExtras() {
 			}
 
 			const int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->y, 0, currentExtraY, _engine->_movements->targetActorDistance);
-			int32 pos = _engine->_movements->getRealAngle(&extra->trackActorMove);
+			int32 pos = extra->trackActorMove.getRealAngle(_engine->lbaTime);
 			if (!pos) {
 				pos = 1;
 			}
@@ -711,7 +711,7 @@ void Extra::processExtras() {
 				continue;
 			}
 			int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->y, 0, extraKey->y, _engine->_movements->targetActorDistance);
-			int32 pos = _engine->_movements->getRealAngle(&extra->trackActorMove);
+			int32 pos = extra->trackActorMove.getRealAngle(_engine->lbaTime);
 
 			if (!pos) {
 				pos = 1;

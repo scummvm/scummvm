@@ -693,7 +693,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		}
 	}
 
-	loopActorStep = _movements->getRealValue(&loopMovePtr);
+	loopActorStep = loopMovePtr.getRealValue(lbaTime);
 	if (!loopActorStep) {
 		loopActorStep = 1;
 	}

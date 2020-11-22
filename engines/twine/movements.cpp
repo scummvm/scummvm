@@ -140,43 +140,6 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 	return ClampAngle(finalAngle);
 }
 
-int32 Movements::getRealAngle(ActorMoveStruct *movePtr) {
-	if (movePtr->numOfStep) {
-		const int32 timePassed = _engine->lbaTime - movePtr->timeOfChange;
-
-		if (timePassed >= movePtr->numOfStep) { // rotation is finished
-			movePtr->numOfStep = 0;
-			return movePtr->to;
-		}
-
-		int32 remainingAngle = NormalizeAngle(movePtr->to - movePtr->from);
-		remainingAngle *= timePassed;
-		remainingAngle /= movePtr->numOfStep;
-		remainingAngle += movePtr->from;
-
-		return remainingAngle;
-	}
-
-	return movePtr->to;
-}
-
-int32 Movements::getRealValue(ActorMoveStruct *movePtr) {
-	if (!movePtr->numOfStep) {
-		return movePtr->to;
-	}
-
-	if (_engine->lbaTime - movePtr->timeOfChange >= movePtr->numOfStep) {
-		movePtr->numOfStep = 0;
-		return movePtr->to;
-	}
-
-	int32 tempStep = movePtr->to - movePtr->from;
-	tempStep *= _engine->lbaTime - movePtr->timeOfChange;
-	tempStep /= movePtr->numOfStep;
-
-	return tempStep + movePtr->from;
-}
-
 void Movements::rotateActor(int32 x, int32 z, int32 angle) {
 	const double radians = AngleToRadians(angle);
 	_engine->_renderer->destX = (int32)(x * cos(radians) + z * sin(radians));
@@ -267,7 +230,7 @@ bool Movements::processBehaviourExecution(int actorIdx) {
 		if (_engine->_actor->autoAgressive) {
 			ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 			heroMoved = true;
-			actor->angle = getRealAngle(&actor->move);
+			actor->angle = actor->move.getRealAngle(_engine->lbaTime);
 			// TODO: previousLoopActionKey must be handled properly
 			if (!previousLoopActionKey || actor->anim == AnimationTypes::kStanding) {
 				const int32 aggresiveMode = _engine->getRandomNumber(3);
@@ -313,7 +276,7 @@ bool Movements::processAttackExecution(int actorIdx) {
 				_engine->_animations->initAnim(AnimationTypes::kThrowBall, 1, AnimationTypes::kStanding, actorIdx);
 			}
 
-			actor->angle = getRealAngle(&actor->move);
+			actor->angle = actor->move.getRealAngle(_engine->lbaTime);
 			return true;
 		}
 	} else if (_engine->_gameState->hasItem(InventoryItems::kiUseSabre)) {
@@ -323,7 +286,7 @@ bool Movements::processAttackExecution(int actorIdx) {
 
 		_engine->_animations->initAnim(AnimationTypes::kSabreAttack, 1, AnimationTypes::kStanding, actorIdx);
 
-		actor->angle = getRealAngle(&actor->move);
+		actor->angle = actor->move.getRealAngle(_engine->lbaTime);
 		return true;
 	}
 	return false;
@@ -356,7 +319,7 @@ void Movements::processMovementExecution(int actorIdx) {
 				_engine->_animations->initAnim(AnimationTypes::kTurnLeft, 0, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
 				if (!actor->dynamicFlags.bIsRotationByAnim) {
-					actor->angle = getRealAngle(&actor->move);
+					actor->angle = actor->move.getRealAngle(_engine->lbaTime);
 				}
 			}
 			heroMoved = true;
@@ -365,7 +328,7 @@ void Movements::processMovementExecution(int actorIdx) {
 				_engine->_animations->initAnim(AnimationTypes::kTurnRight, 0, AnimationTypes::kAnimInvalid, actorIdx);
 			} else {
 				if (!actor->dynamicFlags.bIsRotationByAnim) {
-					actor->angle = getRealAngle(&actor->move);
+					actor->angle = actor->move.getRealAngle(_engine->lbaTime);
 				}
 			}
 			heroMoved = true;
@@ -474,7 +437,7 @@ void Movements::processActorMovements(int32 actorIdx) {
 	}
 	if (!actor->staticFlags.bIsSpriteActor) {
 		if (actor->controlMode != ControlMode::kManual) {
-			actor->angle = getRealAngle(&actor->move);
+			actor->angle = actor->move.getRealAngle(_engine->lbaTime);
 		}
 	}
 

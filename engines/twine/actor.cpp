@@ -510,4 +510,42 @@ void ActorStruct::loadModel(int32 modelIndex) {
 	}
 }
 
+int32 ActorMoveStruct::getRealAngle(int32 time) {
+	if (numOfStep) {
+		const int32 timePassed = time - timeOfChange;
+
+		if (timePassed >= numOfStep) { // rotation is finished
+			numOfStep = 0;
+			return to;
+		}
+
+		int32 remainingAngle = NormalizeAngle(to - from);
+		remainingAngle *= timePassed;
+		remainingAngle /= numOfStep;
+		remainingAngle += from;
+
+		return remainingAngle;
+	}
+
+	return to;
+}
+
+int32 ActorMoveStruct::getRealValue(int32 time) {
+	if (!numOfStep) {
+		return to;
+	}
+
+	if (time - timeOfChange >= numOfStep) {
+		numOfStep = 0;
+		return to;
+	}
+
+	int32 tempStep = to - from;
+	tempStep *= time - timeOfChange;
+	tempStep /= numOfStep;
+
+	return tempStep + from;
+}
+
+
 } // namespace TwinE
