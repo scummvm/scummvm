@@ -1082,7 +1082,7 @@ void Menu::processInventoryMenu() {
 		}
 
 		if (bx != 2) {
-			bx = _engine->_text->printText10();
+			bx = _engine->_text->updateProgressiveText();
 		}
 
 		// TRICKY: 3D model rotation delay - only apply when no text is drawing

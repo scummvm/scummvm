@@ -262,7 +262,7 @@ public:
 	void initInventoryDialogueBox();
 
 	void initText(int32 index);
-	int printText10();
+	int updateProgressiveText();
 
 	/**
 	 * Set font type parameters
