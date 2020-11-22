@@ -90,7 +90,8 @@ void Process::jumpz(int16 delta) {
 	if (value == 0) {
 		debug("jumpz %d %+d", value, delta);
 		_ip += delta;
-	}
+	} else
+		debug("jumpz ignored %d %+d", value, delta);
 }
 
 void Process::incrementGlobalByTop() {
