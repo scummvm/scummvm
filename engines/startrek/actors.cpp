@@ -445,7 +445,7 @@ void StarTrekEngine::actorFunc1() {
 
 void StarTrekEngine::drawActorToScreen(Actor *actor, const Common::String &_animName, int16 x, int16 y, Fixed8 scale, bool addSprite) {
 	Common::String animFilename = _animName;
-	if (_animName.contains("stnd") /* && word_45d20 == -1 */) // TODO
+	if (_animName.hasPrefixIgnoreCase("stnd") /* && word_45d20 == -1 */) // TODO
 		animFilename += 'j';
 
 	actor->animFilename = _animName;
