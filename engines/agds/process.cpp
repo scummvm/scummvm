@@ -33,7 +33,8 @@ Process::Process(AGDSEngine *engine, ObjectPtr object, unsigned ip) : _engine(en
                                                                                        _tileWidth(16), _tileHeight(16), _tileResource(0), _tileIndex(0),
                                                                                        _timer(0),
                                                                                        _animationCycles(1), _animationLoop(false), _animationZ(0), _animationDelay(-1), _animationRandom(0),
-																					   _phaseVarControlled(false), _animationSpeed(100), _samplePeriodic(false),
+																					   _phaseVarControlled(false), _animationSpeed(100),
+																					   _samplePeriodic(false), _samplePaused(false),
 																					   _filmSubtitlesResource(-1)
                                                                                        {
 }
