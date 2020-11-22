@@ -174,7 +174,7 @@ void OpenGLSdlGraphics3dManager::setupScreen() {
 
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	bool needsWindowReset = false;
-	if (_window->getSDLWindow()) {
+	if (_window->getSDLWindow() && _glContext) {
 		// The anti-aliasing setting cannot be changed without recreating the window.
 		// So check if the window needs to be recreated.
 
