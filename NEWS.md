@@ -70,6 +70,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed occasional border corruption during fights.
    - Improvements to cutscenes to better match the original games.
 
+ MorphOS port :
+   - Add native system file browser feature
+   - Add Cloud feature
+
 #### 2.2.0 "Interactive Fantasy" (2020-09-27)
 
  New games:

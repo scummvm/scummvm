@@ -31,7 +31,6 @@
 #include "backends/dialogs/morphos/morphos-dialogs.h"
 
 #include "common/config-manager.h"
-#include "common/encoding.h"
 
 #include <proto/exec.h>
 #include <proto/dos.h>
