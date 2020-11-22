@@ -171,7 +171,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				track->regionOffset -= track->regionOffset >= (track->feedSize / _callbackFps) ? (track->feedSize / _callbackFps) : 0;
 			}
 		}
-		if (_vm->_game.id == GID_CMI) {
+		if (_vm->_game.id == GID_CMI && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			// Fade in the new track
 			track->vol = 0;
 			track->volFadeDelay = fadeDelay;
@@ -441,6 +441,7 @@ int IMuseDigital::transformVolumeLinearToEqualPow(int volume, int mode) {
 			break;
 		case 6:  // Half sine curve
 			eqPowValue = (1.0 - cos(mappedValue * M_PI)) / 2.0;
+			break;
 		default: // Fallback to linear
 			eqPowValue = mappedValue;
 			break;
