@@ -17,6 +17,14 @@ MODULE_OBJS = \
 	stubs/allegro/sound.o \
 	stubs/allegro/system.o \
 	stubs/allegro/unicode.o \
+	shared/gui/guibutton.o \
+	shared/gui/guiinv.o \
+	shared/gui/guilabel.o \
+	shared/gui/guilistbox.o \
+	shared/gui/guimain.o \
+	shared/gui/guiobject.o \
+	shared/gui/guislider.o \
+	shared/gui/guitextbox.o \
 	shared/script/cc_error.o \
 	shared/script/cc_options.o \
 	shared/script/cc_script.o \

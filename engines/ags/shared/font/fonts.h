@@ -31,9 +31,9 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Bitmap;
-namespace Sharedhared
+} // namespace Shared
 } // namespace AGS
 
 using namespace AGS;
@@ -79,12 +79,12 @@ void set_font_outline(size_t font_number, int outline_type);
 // Outputs a single line of text on the defined position on bitmap, using defined font, color and parameters
 int getfontlinespacing(size_t fontNumber);
 // Print text on a surface using a given font
-void wouttextxy(Common::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, const char *texx);
+void wouttextxy(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, const char *texx);
 // Assigns FontInfo to the font
 void set_fontinfo(size_t fontNumber, const FontInfo &finfo);
 // Loads a font from disk
 bool wloadfont_size(size_t fontNumber, const FontInfo &font_info);
-void wgtprintf(Common::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, char *fmt, ...);
+void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, char *fmt, ...);
 // Free particular font's data
 void wfreefont(size_t fontNumber);
 // Free all fonts data
@@ -100,10 +100,10 @@ public:
 	inline size_t Count() const {
 		return _count;
 	}
-	inline const Common::String &operator[](size_t i) const {
+	inline const Shared::String &operator[](size_t i) const {
 		return _pool[i];
 	}
-	inline Common::String &operator[](size_t i) {
+	inline Shared::String &operator[](size_t i) {
 		return _pool[i];
 	}
 	inline void Clear() {
@@ -122,7 +122,7 @@ public:
 	std::vector<char> LineBuf;
 
 private:
-	std::vector<Common::String> _pool;
+	std::vector<Shared::String> _pool;
 	size_t _count; // actual number of lines in use
 };
 
@@ -131,9 +131,9 @@ private:
 size_t split_lines(const char *texx, SplitLines &lines, int width, int fontNumber, size_t max_lines = -1);
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 extern SplitLines Lines;
-namespace Sharedhared
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 

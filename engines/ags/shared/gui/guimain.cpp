@@ -20,7 +20,6 @@
  *
  */
 
-//include <algorithm>
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/debugging/out.h"
@@ -34,6 +33,7 @@
 #include "ags/shared/gui/guitextbox.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_utils.h"
+#include "ags/std/algorithm.h"
 
 namespace AGS3 {
 
@@ -561,7 +561,7 @@ void GUIMain::WriteToFile(Stream *out) const {
 	}
 }
 
-void GUIMain::ReadFromSavegame(Common::Stream *in, GuiSvgVersion svg_version) {
+void GUIMain::ReadFromSavegame(Stream *in, GuiSvgVersion svg_version) {
 	// Properties
 	_flags = in->ReadInt32();
 	X = in->ReadInt32();
@@ -593,7 +593,7 @@ void GUIMain::ReadFromSavegame(Common::Stream *in, GuiSvgVersion svg_version) {
 	MouseWasAt.Y = in->ReadInt32();
 }
 
-void GUIMain::WriteToSavegame(Common::Stream *out) const {
+void GUIMain::WriteToSavegame(Stream *out) const {
 	// Properties
 	out->WriteInt32(_flags);
 	out->WriteInt32(X);
@@ -643,10 +643,10 @@ void DrawTextAlignedHor(Bitmap *ds, const char *text, int font, color_t text_col
 	wouttext_outline(ds, x, y, font, text_color, text);
 }
 
-HError ResortGUI(std::vector<GUIMain> &guis, bool bwcompat_ctrl_zorder = false) {
+HError ResortGUI(std::vector<GUIMain> &theGuis, bool bwcompat_ctrl_zorder = false) {
 	// set up the reverse-lookup array
-	for (size_t gui_index = 0; gui_index < guis.size(); ++gui_index) {
-		GUIMain &gui = guis[gui_index];
+	for (size_t gui_index = 0; gui_index < theGuis.size(); ++gui_index) {
+		GUIMain &gui = theGuis[gui_index];
 		HError err = gui.RebuildArray();
 		if (!err)
 			return err;
@@ -663,7 +663,7 @@ HError ResortGUI(std::vector<GUIMain> &guis, bool bwcompat_ctrl_zorder = false) 
 	return HError::None();
 }
 
-HError ReadGUI(std::vector<GUIMain> &guis, Stream *in, bool is_savegame) {
+HError ReadGUI(std::vector<GUIMain> &theGuis, Stream *in, bool is_savegame) {
 	if (in->ReadInt32() != (int)GUIMAGIC)
 		return new Error("ReadGUI: unknown format or file is corrupt");
 
@@ -678,11 +678,11 @@ HError ReadGUI(std::vector<GUIMain> &guis, Stream *in, bool is_savegame) {
 			GameGuiVersion, kGuiVersion_Initial, kGuiVersion_Current));
 	else
 		gui_count = in->ReadInt32();
-	guis.resize(gui_count);
+	theGuis.resize(gui_count);
 
 	// import the main GUI elements
 	for (size_t i = 0; i < gui_count; ++i) {
-		GUIMain &gui = guis[i];
+		GUIMain &gui = theGuis[i];
 		gui.InitDefaults();
 		gui.ReadFromFile(in, GameGuiVersion);
 
@@ -764,16 +764,16 @@ HError ReadGUI(std::vector<GUIMain> &guis, Stream *in, bool is_savegame) {
 			guilist[i].ReadFromFile(in, GameGuiVersion);
 		}
 	}
-	return ResortGUI(guis, GameGuiVersion < kGuiVersion_272e);
+	return ResortGUI(theGuis, GameGuiVersion < kGuiVersion_272e);
 }
 
-void WriteGUI(const std::vector<GUIMain> &guis, Stream *out) {
+void WriteGUI(const std::vector<GUIMain> &theGuis, Stream *out) {
 	out->WriteInt32(GUIMAGIC);
 	out->WriteInt32(kGuiVersion_Current);
-	out->WriteInt32(guis.size());
+	out->WriteInt32(theGuis.size());
 
-	for (size_t i = 0; i < guis.size(); ++i) {
-		guis[i].WriteToFile(out);
+	for (size_t i = 0; i < theGuis.size(); ++i) {
+		theGuis[i].WriteToFile(out);
 	}
 	out->WriteInt32(numguibuts);
 	for (int i = 0; i < numguibuts; ++i) {

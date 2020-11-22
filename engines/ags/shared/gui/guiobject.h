@@ -95,10 +95,10 @@ public:
 	}
 
 	// Serialization
-	virtual void    ReadFromFile(Common::Stream *in, GuiVersion gui_version);
-	virtual void    WriteToFile(Common::Stream *out) const;
-	virtual void    ReadFromSavegame(Common::Stream *in, GuiSvgVersion svg_ver);
-	virtual void    WriteToSavegame(Common::Stream *out) const;
+	virtual void    ReadFromFile(Stream *in, GuiVersion gui_version);
+	virtual void    WriteToFile(Stream *out) const;
+	virtual void    ReadFromSavegame(Stream *in, GuiSvgVersion svg_ver);
+	virtual void    WriteToSavegame(Stream *out) const;
 
 	// TODO: these members are currently public; hide them later
 public:

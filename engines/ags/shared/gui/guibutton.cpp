@@ -279,7 +279,7 @@ void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
 		}
 
 		if (place == kButtonPlace_InvItemStretch) {
-			ds->StretchBlt(spriteset[gui_inv_pic], RectWH(X + 3, Y + 3, Width - 6, Height - 6), Common::kBitmap_Transparency);
+			ds->StretchBlt(spriteset[gui_inv_pic], RectWH(X + 3, Y + 3, Width - 6, Height - 6), Shared::kBitmap_Transparency);
 		} else if (place == kButtonPlace_InvItemCenter) {
 			draw_gui_sprite(ds, gui_inv_pic,
 				X + Width / 2 - get_adjusted_spritewidth(gui_inv_pic) / 2,

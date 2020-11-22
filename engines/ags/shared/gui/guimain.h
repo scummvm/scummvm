@@ -23,13 +23,14 @@
 #ifndef AGS_SHARED_GUI_GUIMAIN_H
 #define AGS_SHARED_GUI_GUIMAIN_H
 
-//include <vector>
 #include "ags/shared/ac/common_defines.h" // TODO: split out gui drawing helpers
 #include "ags/shared/gfx/gfx_def.h" // TODO: split out gui drawing helpers
 #include "ags/shared/gui/guidefines.h"
 #include "ags/shared/util/error.h"
 #include "ags/shared/util/geometry.h"
 #include "ags/shared/util/string.h"
+#include "ags/std/utility.h"
+#include "ags/std/vector.h"
 
 namespace AGS3 {
 
@@ -217,7 +218,7 @@ void ApplyLegacyVisibility(GUIMain &gui, LegacyGUIVisState vis);
 } // namespace Shared
 } // namespace AGS
 
-extern std::vector<Common::GUIMain> guis;
+extern std::vector<Shared::GUIMain> guis;
 extern int all_buttons_disabled, gui_inv_pic;
 extern int gui_disabled_style;
 
@@ -228,8 +229,8 @@ extern int get_adjusted_spriteheight(int spr);
 extern bool is_sprite_alpha(int spr);
 
 // This function has distinct implementations in Engine and Editor
-extern void draw_gui_sprite(Common::Bitmap *ds, int spr, int x, int y, bool use_alpha = true,
-	Common::BlendMode blend_mode = Common::kBlendMode_Alpha);
+extern void draw_gui_sprite(Shared::Bitmap *ds, int spr, int x, int y, bool use_alpha = true,
+	Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha);
 
 extern AGS_INLINE int game_to_data_coord(int coord);
 extern AGS_INLINE int data_to_game_coord(int coord);
@@ -237,8 +238,8 @@ extern AGS_INLINE void data_to_game_coords(int *x, int *y);
 extern AGS_INLINE int get_fixed_pixel_size(int pixels);
 
 // Those function have distinct implementations in Engine and Editor
-extern void wouttext_outline(Common::Bitmap *ds, int xxp, int yyp, int usingfont, color_t text_color, const char *texx);
-extern int wgettextwidth_compensate(Common::Bitmap *ds, const char *tex, int font);
+extern void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int usingfont, color_t text_color, const char *texx);
+extern int wgettextwidth_compensate(Shared::Bitmap *ds, const char *tex, int font);
 extern void check_font(int *fontnum);
 
 extern void set_our_eip(int eip);

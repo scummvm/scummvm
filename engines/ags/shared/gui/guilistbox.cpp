@@ -97,7 +97,7 @@ void GUIListBox::Clear() {
 	guis_need_update = 1;
 }
 
-void GUIListBox::Draw(Common::Bitmap *ds) {
+void GUIListBox::Draw(Shared::Bitmap *ds) {
 	const int width = Width - 1;
 	const int height = Height - 1;
 	const int pixel_size = get_fixed_pixel_size(1);

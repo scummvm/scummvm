@@ -49,7 +49,7 @@ String GUILabel::GetText() const {
 	return Text;
 }
 
-void GUILabel::Draw(Common::Bitmap *ds) {
+void GUILabel::Draw(Shared::Bitmap *ds) {
 	check_font(&Font);
 
 	// TODO: need to find a way to cache text prior to drawing;
