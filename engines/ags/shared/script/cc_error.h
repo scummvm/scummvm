@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#ifndef AGS_SHARED_SCRIPT_ERROR_H
-#define AGS_SHARED_SCRIPT_ERROR_H
+#ifndef AGS_SHARED_SCRIPT_CC_ERROR_H
+#define AGS_SHARED_SCRIPT_CC_ERROR_H
 
 #include "ags/shared/util/string.h"
 

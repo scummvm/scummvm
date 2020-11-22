@@ -29,8 +29,8 @@
 #ifndef AGS_SHARED_SCRIPT_CC_SCRIPT_H
 #define AGS_SHARED_SCRIPT_CC_SCRIPT_H
 
-//include <memory>
 #include "ags/shared/core/types.h"
+#include "ags/std/memory.h"
 
 namespace AGS3 {
 
@@ -68,16 +68,16 @@ public:
 	int numSections;
 	int capacitySections;
 
-	static ccScript *CreateFromStream(Common::Stream *in);
+	static ccScript *CreateFromStream(Shared::Stream *in);
 
 	ccScript();
 	ccScript(const ccScript &src);
 	virtual ~ccScript(); // there are few derived classes, so dtor should be virtual
 
 	// write the script to disk (after compiling)
-	void        Write(Common::Stream *out);
+	void        Write(Shared::Stream *out);
 	// read back a script written with Write
-	bool        Read(Common::Stream *in);
+	bool        Read(Shared::Stream *in);
 	const char *GetSectionName(int32_t offset);
 
 protected:

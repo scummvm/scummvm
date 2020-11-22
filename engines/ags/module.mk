@@ -17,6 +17,9 @@ MODULE_OBJS = \
 	stubs/allegro/sound.o \
 	stubs/allegro/system.o \
 	stubs/allegro/unicode.o \
+	shared/script/cc_error.o \
+	shared/script/cc_options.o \
+	shared/script/cc_script.o \
 	shared/util/alignedstream.o \
 	shared/util/bufferedstream.o \
 	shared/util/compress.o \
