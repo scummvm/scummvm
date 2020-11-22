@@ -74,16 +74,7 @@ private:
 
 	void push(bool);
 
-	uint8 next() {
-		const Object::CodeType & code = _object->getCode();
-		if (_ip < code.size()) {
-			return code[_ip++];
-		} else {
-			_status = kStatusError;
-			return 0;
-		}
-	}
-
+	uint8 next();
 	uint16 next16() {
 		uint8 l = next();
 		uint16 h = next();
