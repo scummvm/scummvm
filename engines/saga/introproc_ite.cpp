@@ -124,7 +124,7 @@ EventColumns *Scene::queueIntroDialogue(EventColumns *eventColumns, int n_dialog
 	textEntry.effectKnownColor = (_vm->getPlatform() == Common::kPlatformPC98) ? kKnownColorSubtitleEffectColorPC98 : kKnownColorTransparent;
 	textEntry.useRect = true;
 	textEntry.rect.left = (_vm->getPlatform() == Common::kPlatformPC98) ? 10 : 0;
-	textEntry.rect.right = _vm->getDisplayInfo().width - (_vm->getPlatform() == Common::kPlatformPC98 ? 20 : 0);
+	textEntry.rect.right = _vm->getDisplayInfo().width - (_vm->getPlatform() == Common::kPlatformPC98 ? 10 : 0);
 	if (_vm->getLanguage() == Common::DE_DEU) {
 		textEntry.rect.top = INTRO_DE_CAPTION_Y;
 	} else if (_vm->getLanguage() == Common::IT_ITA) {
