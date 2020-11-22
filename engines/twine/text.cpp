@@ -329,7 +329,6 @@ void Text::initProgressiveTextBuffer() {
 	Common::fill(&_progressiveTextBuffer[0], &_progressiveTextBuffer[256], ' ');
 	_progressiveTextBuffer[255] = '\0';
 	_progressiveTextBufferPtr = _progressiveTextBuffer;
-	_addLineBreakX = 16;
 	_dialTextBoxCurrentLine = 0;
 }
 
@@ -377,7 +376,7 @@ void Text::processTextLine() {
 	_dialCharSpace = 7;
 	bool var4 = true;
 
-	_addLineBreakX = 0;
+	int32 lineBreakX = 0;
 	printText8PrepareBufferVar2 = 0;
 	_progressiveTextBuffer[0] = 0;
 
@@ -393,37 +392,40 @@ void Text::processTextLine() {
 		printText8Var8 = buffer;
 		char wordBuf[256] = "";
 		WordSize wordSize = getWordSize(buffer, wordBuf, sizeof(wordBuf));
-		if (_addLineBreakX + _dialCharSpace + wordSize.inPixel < _dialTextBoxParam2) {
-			char *temp = buffer + 1;
-			if (*buffer == 1) {
-				var4 = false;
-				buffer = temp;
-			} else {
-				if (*wordBuf == '@') {
-					var4 = false;
-					buffer = temp;
-					if (_addLineBreakX == 0) {
-						_addLineBreakX = 7;
-						*((int16 *)_progressiveTextBuffer) = ' ';
-					}
-					if (wordBuf[1] == 'P') {
-						_dialTextBoxCurrentLine = _dialTextBoxLines;
-						buffer++;
-					}
-				} else {
-					buffer += wordSize.inChar;
-					printText8Var8 = buffer;
-					strncat(_progressiveTextBuffer, wordBuf, sizeof(_progressiveTextBuffer));
-					strncat(_progressiveTextBuffer, " ", sizeof(_progressiveTextBuffer)); // not 100% accurate
-					printText8PrepareBufferVar2++;
+		if (lineBreakX + _dialCharSpace + wordSize.inPixel >= _dialTextBoxParam2) {
+			break;
+		}
 
-					_addLineBreakX += wordSize.inPixel + _dialCharSpace;
-					if (*printText8Var8 != '\0') {
-						printText8Var8++;
-						continue;
-					}
-				}
+		if (*buffer == '\1') {
+			var4 = false;
+			buffer++;
+			break;
+		}
+
+		if (*wordBuf == '@') {
+			var4 = false;
+			buffer++;
+			if (lineBreakX == 0) {
+				lineBreakX = 7;
+				*((int16 *)_progressiveTextBuffer) = ' ';
 			}
+			if (wordBuf[1] == 'P') {
+				_dialTextBoxCurrentLine = _dialTextBoxLines;
+				buffer++;
+			}
+			break;
+		}
+
+		buffer += wordSize.inChar;
+		printText8Var8 = buffer;
+		strncat(_progressiveTextBuffer, wordBuf, sizeof(_progressiveTextBuffer));
+		strncat(_progressiveTextBuffer, " ", sizeof(_progressiveTextBuffer)); // not 100% accurate
+		printText8PrepareBufferVar2++;
+
+		lineBreakX += wordSize.inPixel + _dialCharSpace;
+		if (*printText8Var8 != '\0') {
+			printText8Var8++;
+			continue;
 		}
 		break;
 	}
@@ -436,8 +438,8 @@ void Text::processTextLine() {
 		if (printText8PrepareBufferVar2 == 0) {
 			printText8PrepareBufferVar2 = 1;
 		}
-		_dialCharSpace += (_dialTextBoxParam2 - _addLineBreakX) / printText8PrepareBufferVar2;
-		printText10Var1 = -2 * _addLineBreakX;
+		_dialCharSpace += (_dialTextBoxParam2 - lineBreakX) / printText8PrepareBufferVar2;
+		printText10Var1 = -2 * lineBreakX;
 	}
 
 	printText8Var8 = buffer;

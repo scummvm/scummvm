@@ -172,7 +172,6 @@ private:
 	int32 _dialTextYPos = 0;
 	bool _progressiveTextEnd = false;
 	bool _progressiveTextNextPage = false;
-	int32 _addLineBreakX = 0;
 	struct BlendInCharacter {
 		int16 chr = 0;
 		int16 x = 0;
