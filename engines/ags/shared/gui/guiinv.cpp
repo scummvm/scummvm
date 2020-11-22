@@ -20,11 +20,11 @@
  *
  */
 
-#include <math.h>
-#include "ac/game_version.h"
-#include "gui/guiinv.h"
-#include "gui/guimain.h"
-#include "util/stream.h"
+//include <math.h>
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/gui/guiinv.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

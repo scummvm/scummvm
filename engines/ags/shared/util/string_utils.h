@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_UTIL_STRING_UTILS_H
 #define AGS_SHARED_UTIL_STRING_UTILS_H
 
-#include "util/string.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
@@ -39,7 +39,7 @@ using namespace AGS; // FIXME later
 
 // Converts char* to string and frees original malloc-ed array;
 // This is used when we get a malloc'd char array from some utility function.
-Common::String cbuf_to_string_and_free(char *char_buf);
+Shared::String cbuf_to_string_and_free(char *char_buf);
 
 namespace AGS {
 namespace Shared {

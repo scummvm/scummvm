@@ -28,14 +28,13 @@
 //
 //=============================================================================
 
-#include "core/platform.h"
+#ifndef AGS_SHARED_UTIL_WGT2ALLG_H
+#define AGS_SHARED_UTIL_WGT2ALLG_H
 
 #define _WGT45_
 
-#ifndef AGS_SHARED_UTIL_WGT4_H
-#define AGS_SHARED_UTIL_WGT4_H
-
-#include "allegro.h"
+#include "ags/shared/core/platform.h"
+#include "ags/stubs/allegro.h"
 
 namespace AGS3 {
 
@@ -47,12 +46,11 @@ class Bitmap;
 
 using namespace AGS; // FIXME later
 
-
 #if defined WGT2ALLEGRO_NOFUNCTIONS
 #error WGT2ALLEGRO_NOFUNCTIONS macro is obsolete and should not be defined anymore.
 #endif
 
-#define color RGB
+//define color RGB
 
 //=============================================================================
 
@@ -67,20 +65,20 @@ extern "C"
 	extern void wsetrgb(int coll, int r, int g, int b, color *pall);
 	extern void wcolrotate(unsigned char start, unsigned char finish, int dir, color *pall);
 
-	extern Common::Bitmap *wnewblock(Common::Bitmap *src, int x1, int y1, int x2, int y2);
+	extern Shared::Bitmap *wnewblock(Shared::Bitmap *src, int x1, int y1, int x2, int y2);
 
-	extern int wloadsprites(color *pall, char *filnam, Common::Bitmap **sarray, int strt, int eend);
+	extern int wloadsprites(color *pall, char *filnam, Shared::Bitmap **sarray, int strt, int eend);
 
-	extern void wputblock(Common::Bitmap *ds, int xx, int yy, Common::Bitmap *bll, int xray);
+	extern void wputblock(Shared::Bitmap *ds, int xx, int yy, Shared::Bitmap *bll, int xray);
 	// CHECKME: temporary solution for plugin system
-	extern void wputblock_raw(Common::Bitmap *ds, int xx, int yy, BITMAP *bll, int xray);
+	extern void wputblock_raw(Shared::Bitmap *ds, int xx, int yy, BITMAP *bll, int xray);
 	extern const int col_lookups[32];
 
 	//extern void wsetcolor(int nval);
 
 	extern int __wremap_keep_transparent;
-	extern void wremap(color *pal1, Common::Bitmap *picc, color *pal2);
-	extern void wremapall(color *pal1, Common::Bitmap *picc, color *pal2);
+	extern void wremap(color *pal1, Shared::Bitmap *picc, color *pal2);
+	extern void wremapall(color *pal1, Shared::Bitmap *picc, color *pal2);
 
 #ifdef __cplusplus
 }

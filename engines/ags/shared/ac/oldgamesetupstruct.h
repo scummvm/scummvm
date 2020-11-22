@@ -23,15 +23,15 @@
 #ifndef AGS_SHARED_AC_OLDGAMESETUPSTRUCT_H
 #define AGS_SHARED_AC_OLDGAMESETUPSTRUCT_H
 
-#include "ac/characterinfo.h"       // OldCharacterInfo, CharacterInfo
+#include "ags/shared/ac/characterinfo.h"       // OldCharacterInfo, CharacterInfo
 #ifdef UNUSED_CODE
-#include "ac/eventblock.h"       // EventBlock
+#include "ags/shared/ac/eventblock.h"       // EventBlock
 #endif
-#include "ac/interfaceelement.h"    // InterfaceElement
-#include "ac/inventoryiteminfo.h"   // InventoryItemInfo
-#include "ac/mousecursor.h"      // MouseCursor
-#include "ac/wordsdictionary.h"  // WordsDictionary
-#include "script/cc_script.h"           // ccScript
+#include "ags/shared/ac/interfaceelement.h"    // InterfaceElement
+#include "ags/shared/ac/inventoryiteminfo.h"   // InventoryItemInfo
+#include "ags/shared/ac/mousecursor.h"      // MouseCursor
+#include "ags/shared/ac/wordsdictionary.h"  // WordsDictionary
+#include "ags/shared/script/cc_script.h"           // ccScript
 
 namespace AGS3 {
 

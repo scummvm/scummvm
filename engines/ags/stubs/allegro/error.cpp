@@ -20,9 +20,11 @@
  *
  */
 
+#include "ags/stubs/allegro/error.h"
+
 namespace AGS3 {
 
-static int allegro_error;
-extern int *allegro_errno = &allegro_error;
+int errnum;
+int *allegro_errno = &errnum;
 
 } // namespace AGS3

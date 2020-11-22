@@ -20,13 +20,13 @@
  *
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include "script/cc_error.h"
-#include "script/cc_script.h"
-#include "script/script_common.h"
-#include "util/stream.h"
-#include "util/string_compat.h"
+//include <stdlib.h>
+//include <string.h>
+#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_script.h"
+#include "ags/shared/script/script_common.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_compat.h"
 
 namespace AGS3 {
 

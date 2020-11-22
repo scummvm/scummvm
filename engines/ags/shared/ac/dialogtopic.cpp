@@ -20,8 +20,8 @@
  *
  */
 
-#include "ac/dialogtopic.h"
-#include "util/stream.h"
+#include "ags/shared/ac/dialogtopic.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

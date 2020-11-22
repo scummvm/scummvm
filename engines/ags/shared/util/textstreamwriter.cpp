@@ -20,11 +20,11 @@
  *
  */
 
-#include <stdarg.h>
-#include <stdio.h> // sprintf
-#include "core/platform.h"
-#include "util/textstreamwriter.h"
-#include "util/stream.h"
+//include <stdarg.h>
+//include <stdio.h> // sprintf
+#include "ags/shared/core/platform.h"
+#include "ags/shared/util/textstreamwriter.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 namespace AGS {

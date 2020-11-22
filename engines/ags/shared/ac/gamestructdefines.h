@@ -23,8 +23,8 @@
 #ifndef AGS_SHARED_AC_GAMESTRUCTDEFINES_H
 #define AGS_SHARED_AC_GAMESTRUCTDEFINES_H
 
-#include "util/geometry.h"
-#include "core/types.h"
+#include "ags/shared/util/geometry.h"
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 

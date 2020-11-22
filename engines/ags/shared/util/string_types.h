@@ -23,12 +23,10 @@
 #ifndef AGS_SHARED_UTIL_STRINGTYPES_H
 #define AGS_SHARED_UTIL_STRINGTYPES_H
 
-#include <cctype>
-#include <functional>
-#include <unordered_map>
-
-#include <vector>
-#include "util/string.h"
+#include "ags/std/map.h"
+#include "ags/std/vector.h"
+#include "ags/shared/util/string.h"
+#include "common/hash-str.h"
 
 namespace AGS3 {
 namespace FNV {
@@ -51,29 +49,59 @@ inline size_t Hash_LowerCase(const char *data, const size_t len) {
 }
 
 } // namespace FNV
-
+} // namespace AGS3
 
 // A std::hash specialization for AGS String
-namespace std {
-#ifdef AGS_NEEDS_TR1
-namespace tr1 {
-#endif
-// std::hash for String object
-template<>
-struct hash<AGS::Shared::String> : public unary_function<AGS::Shared::String, size_t> {
-	size_t operator()(const AGS::Shared::String &key) const {
-		return FNV::Hash(key.GetCStr(), key.GetLength());
+namespace AGS3 {
+
+struct CaseSensitiveString_EqualTo {
+	bool operator()(const AGS3::AGS::Shared::String &x, const AGS3::AGS::Shared::String &y) const {
+		return x.Compare(y) == 0;
 	}
 };
-#ifdef AGS_NEEDS_TR1
-}
-#endif
-}
 
+struct CaseSensitiveString_Hash {
+	uint operator()(const AGS3::AGS::Shared::String &x) const {
+		return Common::hashit(x.GetNullableCStr());
+	}
+};
 
+struct IgnoreCase_EqualTo {
+	bool operator()(const AGS3::AGS::Shared::String &x, const AGS3::AGS::Shared::String &y) const {
+		return x.CompareNoCase(y) == 0;
+	}
+};
+
+struct IgnoreCase_Hash {
+	uint operator()(const AGS3::AGS::Shared::String &x) const {
+		return Common::hashit_lower(x.GetNullableCStr());
+	}
+};
+
+} // namespace AGS3
+
+namespace Common {
+
+// Specalization of the Hash functor for String objects.
+// We do case sensitve hashing here, because that is what
+// the default EqualTo is compatible with. If one wants to use
+// case insensitve hashing, then only because one wants to use
+// IgnoreCase_EqualTo, and then one has to specify a custom
+// hash anyway.
+template<>
+struct Hash<AGS3::AGS::Shared::String> {
+	uint operator()(const AGS3::AGS::Shared::String &s) const {
+		return Common::hashit(s.GetNullableCStr());
+	}
+};
+
+} // namespace Common
+
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
+#if 0
 //
 // Various comparison functors
 //
@@ -98,10 +126,11 @@ struct HashStrNoCase : public std::unary_function<String, size_t> {
 		return FNV::Hash_LowerCase(key.GetCStr(), key.GetLength());
 	}
 };
+#endif
 
 typedef std::vector<String> StringV;
 typedef std::unordered_map<String, String> StringMap;
-typedef std::unordered_map<String, String, HashStrNoCase, StrEqNoCase> StringIMap;
+typedef std::unordered_map<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo> StringIMap;
 
 } // namespace Shared
 } // namespace AGS

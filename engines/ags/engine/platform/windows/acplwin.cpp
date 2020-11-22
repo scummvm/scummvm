@@ -27,7 +27,7 @@
 // ********* WINDOWS *********
 
 #include <string.h>
-#include <allegro.h>
+#include "ags/stubs/allegro.h"
 #include <allegro/platform/aintwin.h>
 #include "ac/common.h"
 #include "ac/draw.h"

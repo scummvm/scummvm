@@ -20,14 +20,14 @@
  *
  */
 
-#include "util/file.h"
-
-#include <stdexcept>
-#include "core/platform.h"
-#include "util/stdio_compat.h"
-#include <errno.h>
-#include "util/filestream.h"
-#include "util/bufferedstream.h"
+#include "ags/shared/core/platform.h"
+#include "ags/shared/util/stdio_compat.h"
+#include "ags/shared/util/filestream.h"
+#include "ags/shared/util/bufferedstream.h"
+#include "ags/shared/util/file.h"
+#include "common/file.h"
+#include "common/savefile.h"
+#include "common/system.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -38,46 +38,24 @@ soff_t File::GetFileSize(const String &filename) {
 }
 
 bool File::TestReadFile(const String &filename) {
-	FILE *test_file = fopen(filename, "rb");
-	if (test_file) {
-		fclose(test_file);
-		return true;
-	}
-	return false;
+	return Common::File::exists(filename.GetNullableCStr());
 }
 
 bool File::TestWriteFile(const String &filename) {
-	FILE *test_file = fopen(filename, "r+");
-	if (test_file) {
-		fclose(test_file);
-		return true;
-	}
 	return TestCreateFile(filename);
 }
 
 bool File::TestCreateFile(const String &filename) {
-	FILE *test_file = fopen(filename, "wb");
-	if (test_file) {
-		fclose(test_file);
-		::remove(filename);
-		return true;
-	}
-	return false;
+	Common::DumpFile df;
+
+	bool result = df.open(filename.GetNullableCStr());
+	df.close();
+
+	return result;
 }
 
 bool File::DeleteFile(const String &filename) {
-	if (::remove(filename) != 0) {
-		int err;
-#if AGS_PLATFORM_OS_WINDOWS
-		_get_errno(&err);
-#else
-		err = errno;
-#endif
-		if (err == EACCES) {
-			return false;
-		}
-	}
-	return true;
+	return g_system->getSavefileManager()->removeSavefile(filename.GetNullableCStr());
 }
 
 bool File::GetFileModesFromCMode(const String &cmode, FileOpenMode &open_mode, FileWorkMode &work_mode) {
@@ -137,7 +115,7 @@ String File::GetCMode(FileOpenMode open_mode, FileWorkMode work_mode) {
 
 Stream *File::OpenFile(const String &filename, FileOpenMode open_mode, FileWorkMode work_mode) {
 	FileStream *fs = nullptr;
-	try {
+//	try {
 		if (work_mode == kFile_Read) // NOTE: BufferedStream does not work correctly in the write mode
 			fs = new BufferedStream(filename, open_mode, work_mode);
 		else
@@ -146,9 +124,10 @@ Stream *File::OpenFile(const String &filename, FileOpenMode open_mode, FileWorkM
 			delete fs;
 			fs = nullptr;
 		}
-	} catch (std::runtime_error) {
-		fs = nullptr;
-	}
+//	} catch (std::runtime_error) {
+//		fs = nullptr;
+//	}
+
 	return fs;
 }
 

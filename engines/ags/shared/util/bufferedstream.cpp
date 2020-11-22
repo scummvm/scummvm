@@ -20,12 +20,12 @@
  *
  */
 
-#include <algorithm>
-#include <cstring>
-#include <stdexcept>
-#include "util/bufferedstream.h"
-#include "util/stdio_compat.h"
-#include "util/string.h"
+#include "ags/std/algorithm.h"
+#include "ags/std/memory.h"
+#include "ags/shared/util/bufferedstream.h"
+#include "ags/shared/util/stdio_compat.h"
+#include "ags/shared/util/string.h"
+#include "common/textconsole.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -34,14 +34,14 @@ namespace Shared {
 BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess)
 	: FileStream(file_name, open_mode, work_mode, stream_endianess), _buffer(BufferStreamSize), _bufferPosition(0), _position(0) {
 	if (FileStream::Seek(0, kSeekEnd) == false)
-		throw std::runtime_error("Error determining stream end.");
+		error("Error determining stream end.");
 
 	_end = FileStream::GetPosition();
 	if (_end == -1)
-		throw std::runtime_error("Error determining stream end.");
+		error("Error determining stream end.");
 
 	if (FileStream::Seek(0, kSeekBegin) == false)
-		throw std::runtime_error("Error determining stream end.");
+		error("Error determining stream end.");
 
 	_buffer.resize(0);
 

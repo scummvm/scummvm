@@ -23,10 +23,10 @@
 #ifndef AGS_SHARED_AC_GAMESETUPSTRUCTBASE_H
 #define AGS_SHARED_AC_GAMESETUPSTRUCTBASE_H
 
-#include "ac/game_version.h"
-#include "ac/gamestructdefines.h"
-#include "util/string.h"
-#include "util/wgt2allg.h" // color (allegro RGB)
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/ac/gamestructdefines.h"
+#include "ags/shared/util/string.h"
+#include "ags/shared/util/wgt2allg.h" // color (allegro RGB)
 
 namespace AGS3 {
 

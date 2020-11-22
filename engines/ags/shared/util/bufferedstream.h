@@ -23,9 +23,9 @@
 #ifndef AGS_SHARED_UTIL_BUFFEREDSTREAM_H
 #define AGS_SHARED_UTIL_BUFFEREDSTREAM_H
 
-#include <vector>
-#include "util/filestream.h"
-#include "util/file.h" // TODO: extract filestream mode constants
+#include "ags/std/vector.h"
+#include "ags/shared/util/filestream.h"
+#include "ags/shared/util/file.h" // TODO: extract filestream mode constants
 
 namespace AGS3 {
 namespace AGS {

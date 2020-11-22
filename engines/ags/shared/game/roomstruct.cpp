@@ -20,10 +20,10 @@
  *
  */
 
-#include "ac/common.h" // update_polled_stuff_if_runtime
-#include "game/room_file.h"
-#include "game/roomstruct.h"
-#include "gfx/bitmap.h"
+#include "ags/shared/ac/common.h" // update_polled_stuff_if_runtime
+#include "ags/shared/game/room_file.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/gfx/bitmap.h"
 
 namespace AGS3 {
 namespace AGS {

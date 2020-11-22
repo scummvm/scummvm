@@ -29,7 +29,7 @@
 #ifndef AGS_SHARED_UTIL_GEOMETRY_H
 #define AGS_SHARED_UTIL_GEOMETRY_H
 
-#include "util/math.h"
+#include "ags/shared/util/math.h"
 
 namespace AGS3 {
 

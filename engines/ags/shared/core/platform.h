@@ -27,8 +27,16 @@ namespace AGS3 {
 
 // platform definitions. Not intended for replacing types or checking for libraries.
 
+// ScummVM implementation is identifying as Linux for now
+#if 1
+#define AGS_PLATFORM_OS_WINDOWS (0)
+#define AGS_PLATFORM_OS_LINUX   (1)
+#define AGS_PLATFORM_OS_MACOS   (0)
+#define AGS_PLATFORM_OS_ANDROID (1)
+#define AGS_PLATFORM_OS_IOS     (0)
+#define AGS_PLATFORM_OS_PSP     (0)
 // check Android first because sometimes it can get confused with host OS
-#if defined(__ANDROID__) || defined(ANDROID)
+#elif defined(__ANDROID__) || defined(ANDROID)
 #define AGS_PLATFORM_OS_WINDOWS (0)
 #define AGS_PLATFORM_OS_LINUX   (0)
 #define AGS_PLATFORM_OS_MACOS   (0)
@@ -44,7 +52,7 @@ namespace AGS3 {
 #define AGS_PLATFORM_OS_IOS     (0)
 #define AGS_PLATFORM_OS_PSP     (0)
 #elif defined(__APPLE__)
-#include "TargetConditionals.h"
+#include "ags/shared/TargetConditionals.h"
 #ifndef TARGET_OS_SIMULATOR
 #define TARGET_OS_SIMULATOR (0)
 #endif

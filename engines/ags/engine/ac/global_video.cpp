@@ -20,7 +20,7 @@
  *
  */
 
-#include <allegro.h>
+#include "ags/stubs/allegro.h"
 #include "ac/gamesetup.h"
 #include "ac/gamestate.h"
 #include "ac/global_audio.h"

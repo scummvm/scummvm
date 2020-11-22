@@ -36,7 +36,7 @@
 // TODO: it would probably be better to not include core definition headers
 // in API class headers, but make separate core headers specifically for
 // plugins, and let plugin developers include them manually in plugin sources.
-#include "core/types.h"
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -78,7 +78,7 @@ public:
 	virtual size_t      ReadArrayOfInt32(int32_t *buffer, size_t count) = 0;
 	virtual size_t      ReadArrayOfInt64(int64_t *buffer, size_t count) = 0;
 
-	virtual size_t      WriteInt8(int8_t val) = 0;;
+	virtual size_t      WriteInt8(int8_t val) = 0;
 	virtual size_t      WriteInt16(int16_t val) = 0;
 	virtual size_t      WriteInt32(int32_t val) = 0;
 	virtual size_t      WriteInt64(int64_t val) = 0;

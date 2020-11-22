@@ -20,11 +20,11 @@
  *
  */
 
-#include "core/assetmanager.h"
-#include "util/misc.h" // ci_fopen
-#include "util/multifilelib.h"
-#include "util/path.h"
-#include "util/string_utils.h"
+#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/util/misc.h" // ci_fopen
+#include "ags/shared/util/multifilelib.h"
+#include "ags/shared/util/path.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 namespace AGS {

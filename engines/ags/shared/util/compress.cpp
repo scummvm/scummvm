@@ -20,21 +20,14 @@
  *
  */
 
-#ifdef _MANAGED
-// ensure this doesn't get compiled to .NET IL
-#pragma unmanaged
-#endif
-
-#include <stdlib.h>
-#include <stdio.h>
-#include "ac/common.h"  // quit, update_polled_stuff
-#include "gfx/bitmap.h"
-#include "util/compress.h"
-#include "util/lzw.h"
-#include "util/misc.h"
-#include "util/stream.h"
+#include "ags/shared/ac/common.h"  // quit, update_polled_stuff
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/util/compress.h"
+#include "ags/shared/util/lzw.h"
+#include "ags/shared/util/misc.h"
+#include "ags/shared/util/stream.h"
 #if AGS_PLATFORM_ENDIAN_BIG
-#include "util/bbop.h"
+#include "ags/shared/util/bbop.h"
 #endif
 
 namespace AGS3 {

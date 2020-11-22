@@ -20,9 +20,9 @@
  *
  */
 
-#include <aastr.h>
-#include "gfx/allegrobitmap.h"
-#include "debug/assert.h"
+//include <aastr.h>
+#include "ags/shared/gfx/allegrobitmap.h"
+#include "ags/shared/debugging/assert.h"
 
 namespace AGS3 {
 

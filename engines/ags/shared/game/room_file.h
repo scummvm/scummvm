@@ -31,12 +31,12 @@
 #ifndef AGS_SHARED_GAME_ROOMFILE_H
 #define AGS_SHARED_GAME_ROOMFILE_H
 
-#include <memory>
-#include <vector>
-#include "game/room_version.h"
-#include "util/error.h"
-#include "util/stream.h"
-#include "util/string.h"
+//include <memory>
+//include <vector>
+#include "ags/shared/game/room_version.h"
+#include "ags/shared/util/error.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 

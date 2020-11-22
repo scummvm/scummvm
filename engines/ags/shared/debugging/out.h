@@ -77,7 +77,7 @@
 #ifndef AGS_SHARED_DEBUGGING_OUT_H
 #define AGS_SHARED_DEBUGGING_OUT_H
 
-#include "util/string.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 namespace AGS {

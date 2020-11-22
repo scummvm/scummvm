@@ -20,16 +20,17 @@
  *
  */
 
-#include "util/bbop.h"
-#include "util/multifilelib.h"
-#include "util/stream.h"
-#include "util/string_utils.h"
+#include "ags/shared/util/bbop.h"
+#include "ags/shared/util/multifilelib.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
 namespace MFLUtil {
+
 const String HeadSig = "CLIB\x1a";
 const String TailSig = "CLIB\x1\x2\x3\x4SIGE";
 
@@ -60,7 +61,8 @@ void     ReadEncArray(void *data, size_t size, size_t count, Stream *in, int &ra
 int8_t   ReadEncInt8(Stream *in, int &rand_val);
 int32_t  ReadEncInt32(Stream *in, int &rand_val);
 void     ReadEncString(char *buffer, size_t max_len, Stream *in, int &rand_val);
-};
+
+} // namespace  MFLUtil
 
 
 MFLUtil::MFLError MFLUtil::TestIsMFL(Stream *in, bool test_is_main) {
@@ -127,7 +129,7 @@ MFLUtil::MFLError MFLUtil::ReadSigsAndVersion(Stream *in, MFLVersion *p_lib_vers
 		soff_t abs_offset_32 = in->ReadInt32();
 
 		// test for header signature again, with 64-bit and 32-bit offsets if necessary
-		if (abs_offset > 0 && abs_offset < (tail_abs_offset - HeadSig.GetLength())) {
+		if (abs_offset > 0 && abs_offset < (soff_t)(tail_abs_offset - HeadSig.GetLength())) {
 			in->Seek(abs_offset, kSeekBegin);
 			sig.ReadCount(in, HeadSig.GetLength());
 		}
@@ -135,7 +137,7 @@ MFLUtil::MFLError MFLUtil::ReadSigsAndVersion(Stream *in, MFLVersion *p_lib_vers
 		// try again with 32-bit offset
 		if (HeadSig.Compare(sig) != 0) {
 			abs_offset = abs_offset_32;
-			if (abs_offset > 0 && abs_offset < (tail_abs_offset - HeadSig.GetLength())) {
+			if (abs_offset > 0 && abs_offset < (soff_t)(tail_abs_offset - HeadSig.GetLength())) {
 				in->Seek(abs_offset, kSeekBegin);
 				sig.ReadCount(in, HeadSig.GetLength());
 			}

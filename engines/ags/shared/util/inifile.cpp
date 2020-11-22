@@ -20,11 +20,11 @@
  *
  */
 
-#include <cctype>
-#include <string.h>
-#include "util/inifile.h"
-#include "util/textstreamreader.h"
-#include "util/textstreamwriter.h"
+//include <cctype>
+//include <string.h>
+#include "ags/shared/util/inifile.h"
+#include "ags/shared/util/textstreamreader.h"
+#include "ags/shared/util/textstreamwriter.h"
 
 namespace AGS3 {
 
@@ -155,7 +155,7 @@ void IniFile::RemoveSection(SectionIterator sec) {
 
 // Moves string pointer forward to the first non-space character
 const char *SkipSpace(const char *line, const char *endl) {
-	for (; line != endl && isspace(*line); ++line);
+	for (; line != endl && Common::isSpace(*line); ++line);
 	return line;
 }
 

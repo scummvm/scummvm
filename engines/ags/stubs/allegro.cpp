@@ -25,6 +25,7 @@
 namespace AGS3 {
 
 int install_allegro() {
+	errnum = 0;
 	return 0;
 }
 

@@ -52,7 +52,7 @@
 #ifndef AGS_SHARED_UTIL_MISC_H
 #define AGS_SHARED_UTIL_MISC_H
 
-#include "util/file.h" // TODO: extract filestream mode constants
+#include "ags/shared/util/file.h" // TODO: extract filestream mode constants
 
 namespace AGS3 {
 
@@ -70,9 +70,9 @@ using namespace AGS; // FIXME later
 // names in different character case.
 // They are used as a system-independent way to open a file when its name
 // case can be ignored.
-Common::Stream *ci_fopen(const char *file_name,
-	Common::FileOpenMode open_mode = Common::kFile_Open,
-	Common::FileWorkMode work_mode = Common::kFile_Read);
+Shared::Stream *ci_fopen(const char *file_name,
+	Shared::FileOpenMode open_mode = Shared::kFile_Open,
+	Shared::FileWorkMode work_mode = Shared::kFile_Read);
 // TODO: return String object
 char *ci_find_file(const char *dir_name, const char *file_name);
 

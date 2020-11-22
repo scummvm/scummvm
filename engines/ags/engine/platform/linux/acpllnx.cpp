@@ -27,7 +27,7 @@
 // ********* LINUX PLACEHOLDER DRIVER *********
 
 #include <stdio.h>
-#include <allegro.h>
+#include "ags/stubs/allegro.h"
 #include <xalleg.h>
 #include "ac/runtime_defines.h"
 #include "gfx/gfxdefines.h"

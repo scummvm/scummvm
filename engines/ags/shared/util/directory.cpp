@@ -20,17 +20,12 @@
  *
  */
 
-#include "core/platform.h"
-#include <errno.h>
-#if AGS_PLATFORM_OS_WINDOWS
-#include <direct.h>
-#else
-#include <sys/stat.h>
-#include <unistd.h>
-#endif
-#include "util/directory.h"
-#include "util/path.h"
-#include "stdio_compat.h"
+#include "ags/shared/core/platform.h"
+#include "ags/shared/util/directory.h"
+#include "ags/shared/util/path.h"
+#include "ags/shared/util/stdio_compat.h"
+#include "common/config-manager.h"
+#include "common/fs.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -39,11 +34,7 @@ namespace Shared {
 namespace Directory {
 
 bool CreateDirectory(const String &path) {
-	return mkdir(path
-#if ! AGS_PLATFORM_OS_WINDOWS
-		, 0755
-#endif
-	) == 0 || errno == EEXIST;
+	return Common::FSNode(path.GetNullableCStr()).createDirectory();
 }
 
 bool CreateAllDirectories(const String &parent, const String &path) {
@@ -68,16 +59,22 @@ bool CreateAllDirectories(const String &parent, const String &path) {
 }
 
 String SetCurrentDirectory(const String &path) {
-	chdir(path);
-	return GetCurrentDirectory();
+	warning("TODO: SetCurrentDirectory: %s", path.GetNullableCStr());
+//	chdir(path);
+//	return GetCurrentDirectory();
+	return path;
 }
 
 String GetCurrentDirectory() {
+#ifdef TODO
 	char buf[512];
 	getcwd(buf, 512);
 	String str(buf);
 	Path::FixupPath(str);
 	return str;
+#else
+	return ConfMan.get("path");
+#endif
 }
 
 } // namespace Directory

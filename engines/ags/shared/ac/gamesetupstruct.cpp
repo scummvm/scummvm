@@ -20,13 +20,13 @@
  *
  */
 
-#include "ac/audiocliptype.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/oldgamesetupstruct.h"
-#include "ac/wordsdictionary.h"
-#include "ac/dynobj/scriptaudioclip.h"
-#include "game/interactions.h"
-#include "util/alignedstream.h"
+#include "ags/shared/ac/audiocliptype.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/oldgamesetupstruct.h"
+#include "ags/shared/ac/wordsdictionary.h"
+#include "ags/shared/ac/dynobj/scriptaudioclip.h"
+#include "ags/shared/game/interactions.h"
+#include "ags/shared/util/alignedstream.h"
 
 namespace AGS3 {
 

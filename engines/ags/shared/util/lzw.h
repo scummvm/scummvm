@@ -33,8 +33,8 @@ class Stream;
 
 using namespace AGS; // FIXME later
 
-void lzwcompress(Common::Stream *lzw_in, Common::Stream *out);
-unsigned char *lzwexpand_to_mem(Common::Stream *in);
+void lzwcompress(Shared::Stream *lzw_in, Shared::Stream *out);
+unsigned char *lzwexpand_to_mem(Shared::Stream *in);
 
 extern long outbytes, maxsize, putbytes;
 

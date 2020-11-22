@@ -20,12 +20,12 @@
  *
  */
 
-#include "ac/characterinfo.h"
-#include "ac/gamesetupstructbase.h"
-#include "ac/game_version.h"
-#include "ac/wordsdictionary.h"
-#include "script/cc_script.h"
-#include "util/stream.h"
+#include "ags/shared/ac/characterinfo.h"
+#include "ags/shared/ac/gamesetupstructbase.h"
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/ac/wordsdictionary.h"
+#include "ags/shared/script/cc_script.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

@@ -20,9 +20,9 @@
  *
  */
 
-#include "util/math.h"
-#include "util/stream.h"
-#include "util/textstreamreader.h"
+#include "ags/shared/util/math.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/textstreamreader.h"
 
 namespace AGS3 {
 namespace AGS {

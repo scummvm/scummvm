@@ -20,11 +20,11 @@
  *
  */
 
-#include "ac/spritecache.h"
-#include "gui/guibutton.h"
-#include "gui/guimain.h" // TODO: extract helper functions
-#include "util/stream.h"
-#include "util/string_utils.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/gui/guibutton.h"
+#include "ags/shared/gui/guimain.h" // TODO: extract helper functions
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 

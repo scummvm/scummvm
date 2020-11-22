@@ -20,21 +20,38 @@
  *
  */
 
-#include "ags/shared/ac/common.h"
-#include "ags/shared/util/string.h"
+#include "ags/shared/util/string_compat.h"
+#include "ags/shared/core/platform.h"
+#include "common/str.h"
 
 namespace AGS3 {
 
-using namespace AGS::Shared;
+char *ags_strlwr(char *s) {
+	char *p = s;
+	for (; *p; p++)
+		*p = tolower(*p);
+	return s;
+}
 
-const char *game_file_sig = "Adventure Creator Game File v2";
+char *ags_strupr(char *s) {
+	char *p = s;
+	for (; *p; p++)
+		*p = toupper(*p);
+	return s;
+}
 
-void quitprintf(const char *fmt, ...) {
-	va_list ap;
-	va_start(ap, fmt);
-	String text = String::FromFormatV(fmt, ap);
-	va_end(ap);
-	quit(text);
+int ags_stricmp(const char *s1, const char *s2) {
+	return scumm_stricmp(s1, s2);
+}
+
+int ags_strnicmp(const char *s1, const char *s2, size_t n) {
+	return scumm_strnicmp(s1, s2, n);
+}
+
+char *ags_strdup(const char *s) {
+	char *result = (char *)malloc(strlen(s) + 1);
+	strcpy(result, s);
+	return result;
 }
 
 } // namespace AGS3

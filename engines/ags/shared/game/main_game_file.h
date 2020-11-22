@@ -31,16 +31,16 @@
 #ifndef AGS_SHARED_GAME_MAINGAMEFILE_H
 #define AGS_SHARED_GAME_MAINGAMEFILE_H
 
-#include <memory>
-#include <set>
-#include <vector>
-#include "ac/game_version.h"
-#include "game/plugininfo.h"
-#include "script/cc_script.h"
-#include "util/error.h"
-#include "util/stream.h"
-#include "util/string.h"
-#include "util/version.h"
+//include <memory>
+//include <set>
+//include <vector>
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/game/plugininfo.h"
+#include "ags/shared/script/cc_script.h"
+#include "ags/shared/util/error.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/string.h"
+#include "ags/shared/util/version.h"
 
 namespace AGS3 {
 

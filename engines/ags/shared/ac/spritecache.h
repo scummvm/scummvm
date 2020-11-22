@@ -45,10 +45,10 @@
 #ifndef AGS_SHARED_AC_SPRITECACHE_H
 #define AGS_SHARED_AC_SPRITECACHE_H
 
-#include <memory>
-#include <vector>
-#include "core/platform.h"
-#include "util/error.h"
+//include <memory>
+//include <vector>
+#include "ags/shared/core/platform.h"
+#include "ags/shared/util/error.h"
 
 namespace AGS3 {
 

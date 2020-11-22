@@ -29,6 +29,6 @@
 #ifndef AGS_SHARED_DEBUGGING_ASSERT_H
 #define AGS_SHARED_DEBUGGING_ASSERT_H
 
-#include <assert.h>
+//include <assert.h>
 
 #endif

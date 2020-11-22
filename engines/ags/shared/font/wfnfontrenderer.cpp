@@ -20,13 +20,13 @@
  *
  */
 
-#include "ac/common.h" // our_eip
-#include "core/assetmanager.h"
-#include "debug/out.h"
-#include "font/wfnfont.h"
-#include "font/wfnfontrenderer.h"
-#include "gfx/bitmap.h"
-#include "util/stream.h"
+#include "ags/shared/ac/common.h" // our_eip
+#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/shared/font/wfnfont.h"
+#include "ags/shared/font/wfnfontrenderer.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

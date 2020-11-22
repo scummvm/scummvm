@@ -125,7 +125,7 @@ public:
 	 * Rotates the array so that the item pointed to by the iterator becomes
 	 * the first item, and the predeceding item becomes the last one
 	 */
-	void rotate(Common::Array<T>::iterator &it) {
+	void rotate(typename Common::Array<T>::iterator it) {
 		if (it != Common::Array<T>::end()) {
 			size_t count = it - Common::Array<T>::begin();
 			for (size_t ctr = 0; ctr < count; ++ctr) {

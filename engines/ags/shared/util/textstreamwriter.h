@@ -29,7 +29,7 @@
 #ifndef AGS_SHARED_UTIL_TEXTSTREAMWRITER_H
 #define AGS_SHARED_UTIL_TEXTSTREAMWRITER_H
 
-#include "util/textwriter.h"
+#include "ags/shared/util/textwriter.h"
 
 namespace AGS3 {
 namespace AGS {

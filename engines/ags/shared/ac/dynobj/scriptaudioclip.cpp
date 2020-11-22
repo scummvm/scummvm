@@ -20,8 +20,8 @@
  *
  */
 
-#include "ac/dynobj/scriptaudioclip.h"
-#include "util/stream.h"
+#include "ags/shared/ac/dynobj/scriptaudioclip.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

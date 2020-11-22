@@ -36,7 +36,7 @@
 #endif
 
 #include <memory>
-#include <allegro.h>
+#include "ags/stubs/allegro.h"
 #include <winalleg.h>
 #include <d3d9.h>
 #include "gfx/bitmap.h"

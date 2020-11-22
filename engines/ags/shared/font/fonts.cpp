@@ -20,17 +20,17 @@
  *
  */
 
-#include <cstdio>
-#include <vector>
-#include <alfont.h>
-#include "ac/common.h" // set_our_eip
-#include "ac/gamestructdefines.h"
-#include "font/fonts.h"
-#include "font/ttffontrenderer.h"
-#include "font/wfnfontrenderer.h"
-#include "gfx/bitmap.h"
-#include "gui/guidefines.h" // MAXLINE
-#include "util/string_utils.h"
+//include <cstdio>
+//include <vector>
+//include <alfont.h>
+#include "ags/shared/ac/common.h" // set_our_eip
+#include "ags/shared/ac/gamestructdefines.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/font/ttffontrenderer.h"
+#include "ags/shared/font/wfnfontrenderer.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gui/guidefines.h" // MAXLINE
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 

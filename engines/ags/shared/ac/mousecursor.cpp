@@ -20,8 +20,8 @@
  *
  */
 
-#include "ac/mousecursor.h"
-#include "util/stream.h"
+#include "ags/shared/ac/mousecursor.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

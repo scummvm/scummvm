@@ -33,8 +33,9 @@
 #ifndef AGS_SHARED_UTIL_INIFILE_H
 #define AGS_SHARED_UTIL_INIFILE_H
 
-#include <list>
-#include "util/string.h"
+#include "ags/shared/util/string.h"
+#include "ags/std/utility.h"
+#include "ags/std/list.h"
 
 namespace AGS3 {
 namespace AGS {

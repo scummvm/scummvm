@@ -27,8 +27,6 @@
 
 namespace AGS3 {
 
-
-
 // Error codes
 #define EPERM           1
 #define ENOENT          2
@@ -75,6 +73,7 @@ namespace AGS3 {
 #define STRUNCATE       80
 #endif
 
+extern int errnum;
 extern int *allegro_errno;
 
 } // namespace AGS3

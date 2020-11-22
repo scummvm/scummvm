@@ -20,10 +20,10 @@
  *
  */
 
-#include "ac/common.h" // quit
-#include "gui/guimain.h"
-#include "gui/guiobject.h"
-#include "util/stream.h"
+#include "ags/shared/ac/common.h" // quit
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/gui/guiobject.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 namespace AGS {

@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_AC_CHARACTERINFO_H
 #define AGS_SHARED_AC_CHARACTERINFO_H
 
-#include "ac/common_defines.h" // constants
+#include "ags/shared/ac/common_defines.h" // constants
 
 namespace AGS3 {
 

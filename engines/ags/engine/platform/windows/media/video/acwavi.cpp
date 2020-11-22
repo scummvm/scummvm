@@ -33,7 +33,7 @@
 #if AGS_PLATFORM_OS_WINDOWS && ! defined (AGS_NO_VIDEO_PLAYER)
 
 //#define ALLEGRO_STATICLINK  // already defined in project settings
-#include <allegro.h>
+#include "ags/stubs/allegro.h"
 #include <winalleg.h>
 #include <windows.h>
 #include <stdlib.h>

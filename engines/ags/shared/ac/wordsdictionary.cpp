@@ -20,11 +20,11 @@
  *
  */
 
-#include <algorithm>
-#include <string.h>
-#include "ac/wordsdictionary.h"
-#include "util/stream.h"
-#include "util/string_compat.h"
+//include <algorithm>
+//include <string.h>
+#include "ags/shared/ac/wordsdictionary.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_compat.h"
 
 namespace AGS3 {
 

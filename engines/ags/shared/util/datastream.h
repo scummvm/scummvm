@@ -31,8 +31,8 @@
 #ifndef AGS_SHARED_UTIL_DATASTREAM_H
 #define AGS_SHARED_UTIL_DATASTREAM_H
 
-#include "util/bbop.h"
-#include "util/stream.h"
+#include "ags/shared/util/bbop.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 namespace AGS {

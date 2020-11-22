@@ -20,12 +20,12 @@
  *
  */
 
-#include "ac/game_version.h"
-#include "font/fonts.h"
-#include "gui/guilabel.h"
-#include "gui/guimain.h"
-#include "util/stream.h"
-#include "util/string_utils.h"
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/gui/guilabel.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 

@@ -20,11 +20,11 @@
  *
  */
 
-#include "font/fonts.h"
-#include "gui/guilistbox.h"
-#include "gui/guimain.h"
-#include "util/stream.h"
-#include "util/string_utils.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/gui/guilistbox.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 

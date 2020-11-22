@@ -32,9 +32,11 @@
 #ifndef AGS_SHARED_GFX_ALLEGROBITMAP_H
 #define AGS_SHARED_GFX_ALLEGROBITMAP_H
 
-#include <allegro.h>
-#include "core/types.h"
-#include "gfx/bitmap.h"
+#include "ags/stubs/allegro.h"
+#include "ags/shared/core/types.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/util/geometry.h"
+#include "graphics/screen.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -74,15 +76,15 @@ public:
 
 	// Is this a "normal" bitmap created by application which data can be directly accessed for reading and writing
 	inline bool IsMemoryBitmap() const {
-		return is_memory_bitmap(_alBitmap) != 0;
+		return true;
 	}
 	// Is this a video bitmap
 	inline bool IsVideoBitmap() const {
-		return is_video_bitmap(_alBitmap) != 0;
+		return dynamic_cast<Graphics::Screen *>(_alBitmap) != nullptr;
 	}
 	// Is this a linear bitmap, the one that can be accessed linearly within each scanline
 	inline bool IsLinearBitmap() const {
-		return is_linear_bitmap(_alBitmap) != 0;
+		return true;
 	}
 
 	// Checks if bitmap cannot be used
@@ -103,7 +105,7 @@ public:
 		return Size(_alBitmap->w, _alBitmap->h);
 	}
 	inline int  GetColorDepth() const {
-		return bitmap_color_depth(_alBitmap);
+		return _alBitmap->format.bpp();
 	}
 	// BPP: bytes per pixel
 	inline int  GetBPP() const {
@@ -123,17 +125,17 @@ public:
 	// Gets a pointer to underlying graphic data
 	// FIXME: actually not a very good idea, since there's no 100% guarantee the scanline positions in memory are sequential
 	inline const unsigned char *GetData() const {
-		return _alBitmap->line[0];
+		return (unsigned char *)_alBitmap->getPixels();
 	}
 
 	// Get scanline for direct reading
 	inline const unsigned char *GetScanLine(int index) const {
-		return (index >= 0 && index < GetHeight()) ? _alBitmap->line[index] : nullptr;
+		return (index >= 0 && index < GetHeight()) ? (unsigned char *)_alBitmap->getBasePtr(0, index) : nullptr;
 	}
 
 	void    SetMaskColor(color_t color);
 	inline color_t GetMaskColor() const {
-		return bitmap_mask_color(_alBitmap);
+		return _alBitmap->getTransparentColor();
 	}
 
 	// FIXME: allegro manual states these should not be used externally;
@@ -210,10 +212,10 @@ public:
 	// TODO: think how to increase safety over this (some fixed memory buffer class with iterator?)
 	// Gets scanline for directly writing into it
 	inline unsigned char *GetScanLineForWriting(int index) {
-		return (index >= 0 && index < GetHeight()) ? _alBitmap->line[index] : nullptr;
+		return (index >= 0 && index < GetHeight()) ? (unsigned char *)_alBitmap->getBasePtr(0, index) : nullptr;
 	}
 	inline unsigned char *GetDataForWriting() {
-		return _alBitmap->line[0];
+		return (unsigned char *)_alBitmap->getPixels();
 	}
 	// Copies buffer contents into scanline
 	void    SetScanLine(int index, unsigned char *data, int data_size = -1);
