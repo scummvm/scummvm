@@ -34,6 +34,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  SAGA:
    - Unterstützung für ITE GOG Mac CD v1.1 hinzugefügt.
+   - Unterstützung für die japanische Version von ITE PC-98 hinzugefügt.
 
  SCI:
    - Unterstützung für RGB-Rendering (16/32bpp) für SCI0 - SCI1.1-Spiele hinzugefügt. Dadurch werden Probleme
