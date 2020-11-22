@@ -800,10 +800,22 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 
 // TODO: convert cantDrawBox to bool
 void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDrawBox) {
-	int32 boxLeft = (int32)behaviour * 110 + 110;
-	int32 boxRight = boxLeft + 99;
-	int32 boxTop = 110;
-	int32 boxBottom = 229;
+	const int border = 110;
+	const int32 padding = 11;
+	const int32 width = 99;
+	const int height = 119;
+
+	const int32 boxLeft = (int32)behaviour * (width + padding) + border;
+	const int32 boxRight = boxLeft + width;
+	const int32 boxTop = border;
+	const int32 boxBottom = boxTop + height;
+
+	const int titleOffset = 10;
+	const int titleHeight = 40;
+	const int32 titleBoxLeft = border;
+	const int32 titleBoxRight = 540;
+	const int32 titleBoxTop = boxBottom + titleOffset;
+	const int32 titleBoxBottom = titleBoxTop + titleHeight;
 
 	uint8 *currentAnim = _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)behaviour]];
 	int16 currentAnimState = behaviourAnimState[(byte)behaviour];
@@ -829,21 +841,21 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDra
 		_engine->_interface->drawSplittedBox(boxLeft, boxTop, boxRight, boxBottom, 69);
 
 		// behaviour menu title
-		_engine->_interface->drawSplittedBox(110, 239, 540, 279, 0);
-		drawBox(110, 239, 540, 279);
+		_engine->_interface->drawSplittedBox(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom, 0);
+		drawBox(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom);
 
 		_engine->_text->setFontColor(15);
 
 		char dialText[256];
 		_engine->_text->getMenuText(_engine->_actor->getTextIdForBehaviour(), dialText, sizeof(dialText));
 
-		_engine->_text->drawText((650 - _engine->_text->getTextSize(dialText)) / 2, 240, dialText);
+		_engine->_text->drawText((650 - _engine->_text->getTextSize(dialText)) / 2, titleBoxTop + 1, dialText);
 	}
 
 	_engine->_renderer->renderBehaviourModel(boxLeft, boxTop, boxRight, boxBottom, -600, angle, behaviourEntity);
 
 	_engine->copyBlockPhys(boxLeft, boxTop, boxRight, boxBottom);
-	_engine->copyBlockPhys(110, 239, 540, 279);
+	_engine->copyBlockPhys(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom);
 
 	_engine->_interface->loadClip();
 }
