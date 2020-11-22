@@ -3148,7 +3148,7 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 					of = _vm->screen()->setFont(Screen::FID_6_FNT);
 					y++;
 				} else if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-					Common::strlcpy(_saveSlotStringsTemp[slot], Common::String::format("%s\r FLOOR %-2u %u:%02u", _vm->_characters[0].name, _vm->_currentLevel, _vm->_totalPlaySecs / 3600, (_vm->_totalPlaySecs % 3600) / 60).c_str(), 25);
+					Common::strlcpy(_saveSlotStringsTemp[slot], Common::String::format(_vm->_saveNamePatterns[0], _vm->_characters[0].name, _vm->_currentLevel, _vm->_totalPlaySecs / 3600, (_vm->_totalPlaySecs % 3600) / 60).c_str(), 25);
 					in = strlen(_saveSlotStringsTemp[slot]);
 				} else {
 					in = getTextInput(_saveSlotStringsTemp[slot], x + 1, fy, 19, _vm->guiSettings()->colors.guiColorBlue, 0, _vm->guiSettings()->colors.guiColorDarkRed);
@@ -3424,7 +3424,7 @@ void GUI_EoB::runMemorizePrayMenu(int charIndex, int spellType) {
 		}
 	}
 
-	initMemorizePrayMenu();
+	initMemorizePrayMenu(spellType);
 	Button *buttonList = initMenu(4);
 
 	int lastHighLightText = -1;

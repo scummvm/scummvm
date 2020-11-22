@@ -1654,8 +1654,23 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob",
 			0,
-			AD_ENTRY1s("PLAYFLD", "e9dbc6944e6c00801f3932808f98e443", -1),
+			AD_ENTRY2s("L12",		"190804270d12e806b5c7264fd9690200", -1,
+					   "PLAYFLD",	"e9dbc6944e6c00801f3932808f98e443", -1),
 			Common::EN_ANY,
+			Common::kPlatformSegaCD,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDISEGACD, GAMEOPTION_EOB_MOUSESWAP)
+		},
+		EOB_FLAGS
+	},
+
+	{
+		{
+			"eob",
+			0,
+			AD_ENTRY2s("L12",		"2095d1612a37264281e37996bd8c3bc2", -1,
+					   "PLAYFLD",	"e9dbc6944e6c00801f3932808f98e443", -1),
+			Common::JA_JPN,
 			Common::kPlatformSegaCD,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSPEECH, GUIO_MIDISEGACD, GAMEOPTION_EOB_MOUSESWAP)

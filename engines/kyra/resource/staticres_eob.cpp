@@ -91,7 +91,7 @@ bool StaticResource::loadEoBNpcData(Common::SeekableReadStream &stream, void *&p
 	for (int i = 0; i < size; i++, s++) {
 		s->id = stream.readByte();
 		s->flags = stream.readByte();
-		stream.read(s->name, 11);
+		s->name[0] = 0;
 		s->strengthCur = stream.readSByte();
 		s->strengthMax = stream.readSByte();
 		s->strengthExtCur = stream.readSByte();
@@ -351,7 +351,7 @@ void EoBCoreEngine::initStaticResource() {
 	_characterStatusStrings12 = _staticres->loadStrings(kEoBBaseCharStatusStrings12, temp);
 	_characterStatusStrings13 = _staticres->loadStrings(_flags.gameID == GI_EOB2 ? kEoBBaseCharStatusStrings132 : kEoBBaseCharStatusStrings131, temp);
 
-	_textInputCharacterLines = _staticres->loadStrings(kEoBBaseTextInputCharacterLines, temp);
+	_textInputCharacterLines = _staticres->loadStrings(kEoBBaseTextInputCharacterLines, _textInputCharacterLinesSize);
 	_textInputSelectStrings = _staticres->loadStrings(kEoBBaseTextInputSelectStrings, temp);
 
 	_levelGainStrings = _staticres->loadStrings(kEoBBaseLevelGainStrings, temp);
@@ -371,6 +371,7 @@ void EoBCoreEngine::initStaticResource() {
 
 	_encodeMonsterShpTable = _staticres->loadRawDataBe16(kEoBBaseEncodeMonsterDefs, temp);
 	_npcPreset = _staticres->loadEoBNpcData(kEoBBaseNpcPresets, temp);
+	_npcPresetNames = _staticres->loadStrings(kEoBBaseNpcPresetsNames, temp);
 
 	_teleporterShapeCoords = _staticres->loadRawData(kEoBBaseDscTelptrShpCoords, temp);
 	_portalSeq = (const int8 *)_staticres->loadRawData(kEoBBasePortalSeqData, temp);
@@ -468,6 +469,8 @@ void EoBCoreEngine::initStaticResource() {
 	_coneOfColdDest4 = (const int8 *)_staticres->loadRawData(kEoBBaseConeOfColdDest4, temp);
 	_coneOfColdGfxTbl = _staticres->loadRawData(kEoBBaseConeOfColdGfxTbl, _coneOfColdGfxTblSize);
 
+	_saveNamePatterns = _staticres->loadStrings(kEoBBaseSaveNamePatterns, temp);
+
 	if (_flags.platform == Common::kPlatformAmiga) {
 		const char *const *map = _staticres->loadStrings(kEoBBaseSoundMap, temp2);
 		_amigaSoundMap = new const char*[temp2];
@@ -524,22 +527,24 @@ void EoBCoreEngine::initStaticResource() {
 	// EOB I SegaCD actually has save/load menus with more than 1 slot if there is
 	// a RAM cart present). I supply the strings here, too...
 
-	static const char *const saveLoadStrings[7][4] = {
+	static const char *const saveLoadStrings[8][4] = {
 		{   "Cancel",   "Empty Slot",		"Save Game",    "Load Game"     },
 		{   "Abbr.",    "Leerer Slot",		"Speichern",    "  Laden"       },
 		{	" < < ",	"Posizione Vuota",	"Salva",		"Carica"	    },
 		{	"Anular",	"Sin Uso",			"Grabar",		"Cargar"	    },
 		{   0,          0,					0,					0			},
 		{	0,          0,					0,					0			},
-		{   "Cancel",   "\x82""d""\x82\x8d\x82\x90\x82\x94\x82\x99\x81""@""\x82\x92\x82\x85\x82\x87\x82\x89\x82\x8f\x82\x8e",		"Select save area",    "Select load data"     }
+		{   "Cancel",   "\x82""d""\x82\x8d\x82\x90\x82\x94\x82\x99\x81""@""\x82\x92\x82\x85\x82\x87\x82\x89\x82\x8f\x82\x8e",		"Select save area",    "Select load data"     },
+		{   "\x82\xe2\x82\xdf\x82\xe9",   "\x8b\xf3\x82\xab\x97\xcc\x88\xe6",	"\x82\xc7\x82\xb1\x82\xc9\x83""Z""\x81""|""\x83""u""\x82\xb5\x82\xdc\x82\xb7\x82\xa9\x81""H",	"\x82\xc7\x82\xea\x82\xf0\x83\x8d\x81""|""\x83""h""\x82\xb5\x82\xdc\x82\xb7\x82\xa9\x81""H"    }
 	};
 
-	static const char *const errorSlotEmptyString[6] = {
+	static const char *const errorSlotEmptyString[8] = {
 		"There is no game\rsaved in that slot!",
 		"Hier ist noch kein\rSpiel gespeichert!",
 		"Non c'\x0E alcun gioco\rsalvato in quella\rposizione!",
 		"No hay partidas\rgrabadas!",
 		"\r ""\x82\xBB\x82\xCC\x83""X""\x83\x8D\x83""b""\x83""g""\x82\xC9\x82\xCD\x83""Q""\x81""[""\x83\x80\x82\xAA\x83""Z""\x81""[""\x83""u\r ""\x82\xB3\x82\xEA\x82\xC4\x82\xA2\x82\xDC\x82\xB9\x82\xF1\x81""B",
+		"\x8b\xf3\x82\xab\x97\xcc\x88\xe6",
 		0
 	};
 
@@ -567,14 +572,19 @@ void EoBCoreEngine::initStaticResource() {
 		_errorSlotEmptyString = errorSlotEmptyString[3];
 		break;
 	case Common::JA_JPN:
-		// EOB II FM-Towns uses English here.
-		// Only the empty slot warning is in Japanese.
-		_saveLoadStrings = saveLoadStrings[0];
-		_errorSlotEmptyString = errorSlotEmptyString[4];
+		if (_flags.platform == Common::kPlatformSegaCD) {
+			_saveLoadStrings = saveLoadStrings[7];
+			_errorSlotEmptyString = errorSlotEmptyString[6];
+		} else {
+			// EOB II FM-Towns uses English here.
+			// Only the empty slot warning is in Japanese.
+			_saveLoadStrings = saveLoadStrings[0];
+			_errorSlotEmptyString = errorSlotEmptyString[4];
+		}
 		break;
 	default:
 		_saveLoadStrings = saveLoadStrings[5];
-		_errorSlotEmptyString = errorSlotEmptyString[5];
+		_errorSlotEmptyString = errorSlotEmptyString[7];
 		break;
 	}
 
@@ -1720,7 +1730,6 @@ void DarkMoonEngine::initStaticResource() {
 
 	_ascii2SjisTables = _staticres->loadStrings(kEoB2Ascii2SjisTables, temp);
 	_ascii2SjisTables2 = _staticres->loadStrings(kEoB2Ascii2SjisTables2, temp);
-	_saveNamePatterns = _staticres->loadStrings(kEoB2SaveNamePatterns, temp);
 
 	_monsterAcHitChanceTable1 = _monsterAcHitChanceTbl1;
 	_monsterAcHitChanceTable2 = _monsterAcHitChanceTbl2;
