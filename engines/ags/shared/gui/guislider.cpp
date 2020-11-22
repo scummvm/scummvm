@@ -51,15 +51,15 @@ bool GUISlider::IsHorizontal() const {
 	return Width > Height;
 }
 
-bool GUISlider::IsOverControl(int X, int Y, int leeway) const {
+bool GUISlider::IsOverControl(int x, int y, int leeway) const {
 	// check the overall boundary
-	if (GUIObject::IsOverControl(X, Y, leeway))
+	if (GUIObject::IsOverControl(x, y, leeway))
 		return true;
 	// now check the handle too
-	return _cachedHandle.IsInside(Point(X, Y));
+	return _cachedHandle.IsInside(Point(x, y));
 }
 
-void GUISlider::Draw(Common::Bitmap *ds) {
+void GUISlider::Draw(Bitmap *ds) {
 	Rect bar;
 	Rect handle;
 	int  thickness;

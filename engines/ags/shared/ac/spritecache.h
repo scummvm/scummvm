@@ -117,8 +117,8 @@ public:
 	static const size_t   MAX_SPRITE_SLOTS = INT32_MAX;
 
 	// Standart sprite file and sprite index names
-	static const Common::String DefaultSpriteFileName;
-	static const Common::String DefaultSpriteIndexName;
+	static const Shared::String DefaultSpriteFileName;
+	static const Shared::String DefaultSpriteIndexName;
 
 	SpriteCache(std::vector<SpriteInfo> &sprInfos);
 	~SpriteCache();
@@ -153,12 +153,12 @@ public:
 	// Deletes all data and resets cache to the clear state
 	void        Reset();
 	// Assigns new sprite for the given index; this sprite won't be auto disposed
-	void        SetSprite(sprkey_t index, Common::Bitmap *);
+	void        SetSprite(sprkey_t index, Shared::Bitmap *);
 	// Assigns new sprite for the given index, remapping it to sprite 0;
 	// optionally marks it as an asset placeholder
 	void        SetEmptySprite(sprkey_t index, bool as_asset);
 	// Assigns new bitmap for the *registered* sprite without changing its properties
-	void        SubstituteBitmap(sprkey_t index, Common::Bitmap *);
+	void        SubstituteBitmap(sprkey_t index, Shared::Bitmap *);
 	// Sets max cache size in bytes
 	void        SetMaxCacheSize(size_t size);
 
@@ -177,7 +177,7 @@ public:
 	int         SaveSpriteIndex(const char *filename, const SpriteFileIndex &index);
 
 	// Loads (if it's not in cache yet) and returns bitmap by the sprite index
-	Common::Bitmap *operator[](sprkey_t index);
+	Shared::Bitmap *operator[](sprkey_t index);
 
 private:
 	void        Init();
@@ -199,7 +199,7 @@ private:
 		uint32_t        Flags;
 		// TODO: investigate if we may safely use unique_ptr here
 		// (some of these bitmaps may be assigned from outside of the cache)
-		Common::Bitmap *Image; // actual bitmap
+		Shared::Bitmap *Image; // actual bitmap
 
 		// Tells if there actually is a registered sprite in this slot
 		bool DoesSpriteExist() const;
@@ -220,7 +220,7 @@ private:
 	std::vector<SpriteData> _spriteData;
 	bool _compressed;        // are sprites compressed
 
-	std::unique_ptr<Common::Stream> _stream; // the sprite stream
+	std::unique_ptr<Shared::Stream> _stream; // the sprite stream
 	sprkey_t _lastLoad; // last loaded sprite index
 
 	size_t _maxCacheSize;  // cache size limit
@@ -240,9 +240,9 @@ private:
 	// Rebuilds sprite index from the main sprite file
 	HAGSError   RebuildSpriteIndex(AGS::Shared::Stream *in, sprkey_t topmost, SpriteFileVersion vers);
 	// Writes compressed sprite to the stream
-	void        CompressSprite(Common::Bitmap *sprite, Common::Stream *out);
+	void        CompressSprite(Shared::Bitmap *sprite, Shared::Stream *out);
 	// Uncompresses sprite from stream into the given bitmap
-	void        UnCompressSprite(Common::Bitmap *sprite, Common::Stream *in);
+	void        UnCompressSprite(Shared::Bitmap *sprite, Shared::Stream *in);
 
 	// Initialize the empty sprite slot
 	void        InitNullSpriteParams(sprkey_t index);
