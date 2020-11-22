@@ -164,7 +164,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 	x += stream.readByte();
 	y += stream.readByte();
 
-	const uint8 usedColor = dialTextColor;
+	const uint8 usedColor = _dialTextColor;
 
 	uint8 *screen2 = (uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y);
 
@@ -250,20 +250,20 @@ void Text::drawText(int32 x, int32 y, const char *dialogue) { // Font
 		}
 
 		if (currChar == ' ') {
-			x += dialCharSpace;
+			x += _dialCharSpace;
 		} else {
-			dialTextSize = getCharWidth(currChar);
+			_dialTextSize = getCharWidth(currChar);
 			drawCharacter(x, y, currChar); // draw the character on screen
 			// add the length of the space between 2 characters
-			x += dialSpaceBetween;
+			x += _dialSpaceBetween;
 			// add the length of the current character
-			x += dialTextSize;
+			x += _dialTextSize;
 		}
 	} while (1);
 }
 
 int32 Text::getTextSize(const char *dialogue) { // SizeFont
-	dialTextSize = 0;
+	_dialTextSize = 0;
 
 	do {
 		uint8 currChar = (uint8) * (dialogue++);
@@ -271,32 +271,32 @@ int32 Text::getTextSize(const char *dialogue) { // SizeFont
 			break;
 
 		if (currChar == ' ') {
-			dialTextSize += dialCharSpace;
+			_dialTextSize += _dialCharSpace;
 		} else {
-			dialTextSize += dialSpaceBetween;
-			dialTextSize += getCharWidth(currChar);
+			_dialTextSize += _dialSpaceBetween;
+			_dialTextSize += getCharWidth(currChar);
 		}
 	} while (1);
 
-	return (dialTextSize);
+	return (_dialTextSize);
 }
 
 void Text::initDialogueBox() { // InitDialWindow
-	_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, _engine->workVideoBuffer, dialTextBoxLeft, dialTextBoxTop, _engine->frontVideoBuffer);
+	_engine->_interface->blitBox(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom, _engine->workVideoBuffer, _dialTextBoxLeft, _dialTextBoxTop, _engine->frontVideoBuffer);
 
 	if (drawTextBoxBackground) {
-		_engine->_menu->drawBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom);
-		_engine->_interface->drawTransparentBox(dialTextBoxLeft + 1, dialTextBoxTop + 1, dialTextBoxRight - 1, dialTextBoxBottom - 1, 3);
+		_engine->_menu->drawBox(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom);
+		_engine->_interface->drawTransparentBox(_dialTextBoxLeft + 1, _dialTextBoxTop + 1, _dialTextBoxRight - 1, _dialTextBoxBottom - 1, 3);
 	}
 
-	_engine->copyBlockPhys(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom);
+	_engine->copyBlockPhys(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom);
 	_blendInCharactersPos = 0;
-	_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, _engine->frontVideoBuffer, dialTextBoxLeft, dialTextBoxTop, _engine->workVideoBuffer);
+	_engine->_interface->blitBox(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom, _engine->frontVideoBuffer, _dialTextBoxLeft, _dialTextBoxTop, _engine->workVideoBuffer);
 }
 
 void Text::initInventoryDialogueBox() { // SecondInitDialWindow
-	_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, _engine->workVideoBuffer, dialTextBoxLeft, dialTextBoxTop, _engine->frontVideoBuffer);
-	_engine->copyBlockPhys(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom);
+	_engine->_interface->blitBox(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom, _engine->workVideoBuffer, _dialTextBoxLeft, _dialTextBoxTop, _engine->frontVideoBuffer);
+	_engine->copyBlockPhys(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom);
 	_blendInCharactersPos = 0;
 }
 
@@ -307,19 +307,19 @@ void Text::initText(int32 index) {
 		return;
 	}
 
-	progressiveTextBuffer = buf2;
+	_progressiveTextBuffer = buf2;
 
 	_hasValidTextHandle = true;
 
-	printText8Var1 = 0;
+	_dialTextBoxCurrentLine = 0;
 	buf1[0] = '\0';
 	buf2[0] = '\0';
 	_blendInCharactersPos = 0;
-	TEXT_CurrentLetterX = dialTextBoxLeft + 8;
-	printText8Var5 = false;
-	printText8Var6 = false;
-	TEXT_CurrentLetterY = dialTextBoxTop + 8;
-	printText8Var8 = currDialTextPtr;
+	_dialTextYPos = _dialTextBoxLeft + 8;
+	_progressiveTextEnd = false;
+	_progressiveTextNextPage = false;
+	_dialTextXPos = _dialTextBoxTop + 8;
+	printText8Var8 = _currDialTextPtr;
 
 	// lba font is get while engine start
 	setFontParameters(2, 7);
@@ -330,14 +330,14 @@ void Text::initProgressiveTextBuffer() {
 
 	buf2[0] = '\0';
 
-	while (i < dialTextBufferSize) {
+	while (i < _dialTextBufferSize) {
 		strncat(buf2, " ", sizeof(buf2));
 		i++;
 	};
 
-	progressiveTextBuffer = buf2;
-	addLineBreakX = 16;
-	printText8Var1 = 0;
+	_progressiveTextBuffer = buf2;
+	_addLineBreakX = 16;
+	_dialTextBoxCurrentLine = 0;
 }
 
 void Text::fillFadeInBuffer(int16 x, int16 y, int16 chr) {
@@ -378,10 +378,10 @@ Text::WordSize Text::getWordSize(const char *arg1, char *arg2) {
 
 void Text::processTextLine() {
 	char *buffer = printText8Var8;
-	dialCharSpace = 7;
+	_dialCharSpace = 7;
 	bool var4 = true;
 
-	addLineBreakX = 0;
+	_addLineBreakX = 0;
 	printText8PrepareBufferVar2 = 0;
 	buf2[0] = 0;
 
@@ -396,7 +396,7 @@ void Text::processTextLine() {
 
 		printText8Var8 = buffer;
 		WordSize wordSize = getWordSize(buffer, buf1);
-		if (addLineBreakX + dialCharSpace + wordSize.inPixel < dialTextBoxParam2) {
+		if (_addLineBreakX + _dialCharSpace + wordSize.inPixel < _dialTextBoxParam2) {
 			char *temp = buffer + 1;
 			if (*buffer == 1) {
 				var4 = false;
@@ -405,12 +405,12 @@ void Text::processTextLine() {
 				if (*buf1 == '@') {
 					var4 = false;
 					buffer = temp;
-					if (addLineBreakX == 0) {
-						addLineBreakX = 7;
+					if (_addLineBreakX == 0) {
+						_addLineBreakX = 7;
 						*((int16 *)buf2) = spaceChar;
 					}
 					if (buf1[1] == 'P') {
-						printText8Var1 = dialTextBoxParam1;
+						_dialTextBoxCurrentLine = _dialTextBoxLines;
 						buffer++;
 					}
 				} else {
@@ -420,7 +420,7 @@ void Text::processTextLine() {
 					strncat(buf2, " ", sizeof(buf2)); // not 100% accurate
 					printText8PrepareBufferVar2++;
 
-					addLineBreakX += wordSize.inPixel + dialCharSpace;
+					_addLineBreakX += wordSize.inPixel + _dialCharSpace;
 					if (*printText8Var8 != '\0') {
 						printText8Var8++;
 						continue;
@@ -439,36 +439,36 @@ void Text::processTextLine() {
 		if (printText8PrepareBufferVar2 == 0) {
 			printText8PrepareBufferVar2 = 1;
 		}
-		dialCharSpace += (dialTextBoxParam2 - addLineBreakX) / printText8PrepareBufferVar2;
-		printText10Var1 = -2 * addLineBreakX;
+		_dialCharSpace += (_dialTextBoxParam2 - _addLineBreakX) / printText8PrepareBufferVar2;
+		printText10Var1 = -2 * _addLineBreakX;
 	}
 
 	printText8Var8 = buffer;
 
-	progressiveTextBuffer = buf2;
+	_progressiveTextBuffer = buf2;
 }
 
 void Text::renderContinueReadingTriangle() {
-	const int32 right = dialTextBoxRight - 3;
-	const int32 left = dialTextBoxRight - 24;
-	const int32 top = dialTextBoxBottom - 24;
-	const int32 bottom = dialTextBoxBottom - 3;
+	const int32 right = _dialTextBoxRight - 3;
+	const int32 left = _dialTextBoxRight - 24;
+	const int32 top = _dialTextBoxBottom - 24;
+	const int32 bottom = _dialTextBoxBottom - 3;
 
-	_engine->_renderer->vertexCoordinates[0] = dialTextStopColor;
+	_engine->_renderer->vertexCoordinates[0] = _dialTextStopColor;
 	_engine->_renderer->vertexCoordinates[1] = right;
 	_engine->_renderer->vertexCoordinates[2] = top;
 
-	_engine->_renderer->vertexCoordinates[3] = dialTextStopColor;
+	_engine->_renderer->vertexCoordinates[3] = _dialTextStopColor;
 	_engine->_renderer->vertexCoordinates[4] = left;
 	_engine->_renderer->vertexCoordinates[5] = bottom;
 
-	_engine->_renderer->vertexCoordinates[6] = dialTextStartColor;
+	_engine->_renderer->vertexCoordinates[6] = _dialTextStartColor;
 	_engine->_renderer->vertexCoordinates[7] = _engine->_renderer->vertexCoordinates[1];
 	_engine->_renderer->vertexCoordinates[8] = _engine->_renderer->vertexCoordinates[5];
 
 	_engine->_renderer->numOfVertex = 3;
 
-	_engine->_renderer->renderPolygons(POLYGONTYPE_FLAT, dialTextStopColor);
+	_engine->_renderer->renderPolygons(POLYGONTYPE_FLAT, _dialTextStopColor);
 
 	_engine->copyBlockPhys(left, top, right, bottom);
 }
@@ -479,9 +479,9 @@ void Text::fadeInCharacters(int32 counter, int32 fontColor) {
 		const BlendInCharacter *ptr = &_blendInCharacters[counter];
 		setFontColor(fontColor);
 		drawCharacterShadow(ptr->x, ptr->y, ptr->chr, fontColor);
-		fontColor -= dialTextStepSize;
-		if (fontColor > dialTextStopColor) {
-			fontColor = dialTextStopColor;
+		fontColor -= _dialTextStepSize;
+		if (fontColor > _dialTextStopColor) {
+			fontColor = _dialTextStopColor;
 		}
 	}
 }
@@ -506,74 +506,75 @@ int Text::updateProgressiveText() {
 		return 0;
 	}
 
-	if (*progressiveTextBuffer == '\0') {
-		if (printText8Var5) {
+	if (*_progressiveTextBuffer == '\0') {
+		if (_progressiveTextEnd) {
 			if (renderTextTriangle) {
 				renderContinueReadingTriangle();
 			}
 			_hasValidTextHandle = false;
 			return 0;
 		}
-		if (printText8Var6) {
-			_engine->_interface->blitBox(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom, _engine->workVideoBuffer, dialTextBoxLeft, dialTextBoxTop, _engine->frontVideoBuffer);
-			_engine->copyBlockPhys(dialTextBoxLeft, dialTextBoxTop, dialTextBoxRight, dialTextBoxBottom);
+		if (_progressiveTextNextPage) {
+			_engine->_interface->blitBox(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom, _engine->workVideoBuffer, _dialTextBoxLeft, _dialTextBoxTop, _engine->frontVideoBuffer);
+			_engine->copyBlockPhys(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom);
 			_blendInCharactersPos = 0;
-			printText8Var6 = false;
-			TEXT_CurrentLetterX = dialTextBoxLeft + 8;
-			TEXT_CurrentLetterY = dialTextBoxTop + 8;
+			_progressiveTextNextPage = false;
+			_dialTextYPos = _dialTextBoxLeft + 8;
+			_dialTextXPos = _dialTextBoxTop + 8;
 		}
 		if (*printText8Var8 == '\0') {
 			initProgressiveTextBuffer();
-			printText8Var5 = true;
+			_progressiveTextEnd = true;
 			return 1;
 		}
 		processTextLine();
 	}
 
 	// RECHECK this later
-	if (*progressiveTextBuffer == '\0') {
+	if (*_progressiveTextBuffer == '\0') {
 		return 1;
 	}
 
-	fillFadeInBuffer(TEXT_CurrentLetterX, TEXT_CurrentLetterY, *progressiveTextBuffer);
-	fadeInCharacters(_blendInCharactersPos, dialTextStartColor);
-	int8 charWidth = getCharWidth(*progressiveTextBuffer);
+	fillFadeInBuffer(_dialTextYPos, _dialTextXPos, *_progressiveTextBuffer);
+	fadeInCharacters(_blendInCharactersPos, _dialTextStartColor);
+	int8 charWidth = getCharWidth(*_progressiveTextBuffer);
 
-	if (*progressiveTextBuffer != ' ') {
-		TEXT_CurrentLetterX += charWidth + 2;
+	if (*_progressiveTextBuffer != ' ') {
+		_dialTextYPos += charWidth + 2;
 	} else {
 		if (printText10Var1 != 0) {
-			TEXT_CurrentLetterX++;
+			_dialTextYPos++;
 			printText10Var1--;
 		}
-		TEXT_CurrentLetterX += dialCharSpace;
+		_dialTextYPos += _dialCharSpace;
 	}
 
 	// next character
-	progressiveTextBuffer++;
+	_progressiveTextBuffer++;
 
-	if (*progressiveTextBuffer != '\0') {
+	if (*_progressiveTextBuffer != '\0') {
 		return 1;
 	}
 
-	TEXT_CurrentLetterY += 38;
-	TEXT_CurrentLetterX = dialTextBoxLeft + 8;
+	const int32 lineHeight = 38;
+	_dialTextXPos += lineHeight;
+	_dialTextYPos = _dialTextBoxLeft + 8;
 
-	if (printText8Var6 && !printText8Var5) {
+	if (_progressiveTextNextPage && !_progressiveTextEnd) {
 		renderContinueReadingTriangle();
 		return 2;
 	}
 
-	printText8Var1++;
-	if (printText8Var1 < dialTextBoxParam1) {
+	_dialTextBoxCurrentLine++;
+	if (_dialTextBoxCurrentLine < _dialTextBoxLines) {
 		return 1;
 	}
 
 	initProgressiveTextBuffer();
-	printText8Var6 = true;
+	_progressiveTextNextPage = true;
 
 	if (*printText8Var8 == '\0') {
-		printText8Var5 = true;
+		_progressiveTextEnd = true;
 	}
 
 	return 1;
@@ -648,26 +649,26 @@ bool Text::drawTextFullscreen(int32 index) {
 }
 
 void Text::setFontParameters(int32 spaceBetween, int32 charSpace) {
-	dialSpaceBetween = spaceBetween;
-	dialCharSpace = charSpace;
+	_dialSpaceBetween = spaceBetween;
+	_dialCharSpace = charSpace;
 }
 
 void Text::setFontCrossColor(int32 color) {
-	dialTextStepSize = -1;
-	dialTextBufferSize = 14;
-	dialTextStartColor = color << 4;
-	dialTextStopColor = (color << 4) + 12;
+	_dialTextStepSize = -1;
+	_dialTextBufferSize = 14;
+	_dialTextStartColor = color << 4;
+	_dialTextStopColor = (color << 4) + 12;
 }
 
 void Text::setFontColor(int32 color) {
-	dialTextColor = color;
+	_dialTextColor = color;
 }
 
 void Text::setTextCrossColor(int32 stopColor, int32 startColor, int32 stepSize) {
-	dialTextStartColor = startColor;
-	dialTextStopColor = stopColor;
-	dialTextStepSize = stepSize;
-	dialTextBufferSize = ((startColor - stopColor) + 1) / stepSize;
+	_dialTextStartColor = startColor;
+	_dialTextStopColor = stopColor;
+	_dialTextStepSize = stepSize;
+	_dialTextBufferSize = ((startColor - stopColor) + 1) / stepSize;
 }
 
 bool Text::getText(int32 index) {
@@ -695,8 +696,8 @@ bool Text::getText(int32 index) {
 	int32 ptrCurrentEntry = READ_LE_INT16(&localTextBuf[currIdx]);
 	int32 ptrNextEntry = READ_LE_INT16(&localTextBuf[currIdx + 1]);
 
-	currDialTextPtr = (dialTextPtr + ptrCurrentEntry);
-	currDialTextSize = ptrNextEntry - ptrCurrentEntry;
+	_currDialTextPtr = (dialTextPtr + ptrCurrentEntry);
+	_currDialTextSize = ptrNextEntry - ptrCurrentEntry;
 	numDialTextEntries = numEntries;
 
 	// RECHECK: this was added for vox playback
@@ -724,13 +725,13 @@ bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 		return false;
 	}
 
-	if ((currDialTextSize - 1) > 0xFF) {
-		currDialTextSize = 0xFF;
+	if ((_currDialTextSize - 1) > 0xFF) {
+		_currDialTextSize = 0xFF;
 	}
 
-	copyText(currDialTextPtr, text, currDialTextSize);
-	currDialTextSize++;
-	copyText(text, _engine->_menu->currMenuTextBuffer, currDialTextSize);
+	copyText(_currDialTextPtr, text, _currDialTextSize);
+	_currDialTextSize++;
+	copyText(text, _engine->_menu->currMenuTextBuffer, _currDialTextSize);
 
 	_engine->_menu->currMenuTextIndex = index;
 	_engine->_menu->currMenuTextBank = _engine->_scene->sceneTextBank;
@@ -738,22 +739,22 @@ bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 }
 
 void Text::textClipFull() { // newGame2
-	dialTextBoxLeft = 8;
-	dialTextBoxTop = 8;
-	dialTextBoxRight = 631;
+	_dialTextBoxLeft = 8;
+	_dialTextBoxTop = 8;
+	_dialTextBoxRight = 631;
 
-	dialTextBoxBottom = 471;
-	dialTextBoxParam1 = 11;
-	dialTextBoxParam2 = 607;
+	_dialTextBoxBottom = 471;
+	_dialTextBoxLines = 11;
+	_dialTextBoxParam2 = 607;
 }
 
 void Text::textClipSmall() { // newGame4
-	dialTextBoxLeft = 16;
-	dialTextBoxTop = 334;
-	dialTextBoxRight = 623;
-	dialTextBoxBottom = 463;
-	dialTextBoxParam1 = 3;
-	dialTextBoxParam2 = 591;
+	_dialTextBoxLeft = 16;
+	_dialTextBoxTop = 334;
+	_dialTextBoxRight = 623;
+	_dialTextBoxBottom = 463;
+	_dialTextBoxLines = 3;
+	_dialTextBoxParam2 = 591;
 }
 
 void Text::drawAskQuestion(int32 index) {
