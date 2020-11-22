@@ -28,6 +28,8 @@
 #include "script/runtimescriptvalue.h"
 #include "ac/dynobj/cc_dialog.h"
 
+namespace AGS3 {
+
 extern DialogTopic *dialog;
 extern CCDialog ccDynamicDialog;
 
@@ -248,28 +250,28 @@ RuntimeScriptValue Sc_DialogOptionsRendering_SetHasAlphaChannel(void *self, cons
 
 
 void RegisterDialogOptionsRenderingAPI() {
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::Update^0",             Sc_DialogOptionsRendering_Update);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::RunActiveOption^0",    Sc_DialogOptionsRendering_RunActiveOption);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_ActiveOptionID",   Sc_DialogOptionsRendering_GetActiveOptionID);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_ActiveOptionID",   Sc_DialogOptionsRendering_SetActiveOptionID);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_DialogToRender",   Sc_DialogOptionsRendering_GetDialogToRender);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_Height",           Sc_DialogOptionsRendering_GetHeight);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_Height",           Sc_DialogOptionsRendering_SetHeight);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_ParserTextBoxX",   Sc_DialogOptionsRendering_GetParserTextboxX);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_ParserTextBoxX",   Sc_DialogOptionsRendering_SetParserTextboxX);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_ParserTextBoxY",   Sc_DialogOptionsRendering_GetParserTextboxY);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_ParserTextBoxY",   Sc_DialogOptionsRendering_SetParserTextboxY);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::Update^0", Sc_DialogOptionsRendering_Update);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::RunActiveOption^0", Sc_DialogOptionsRendering_RunActiveOption);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_ActiveOptionID", Sc_DialogOptionsRendering_GetActiveOptionID);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_ActiveOptionID", Sc_DialogOptionsRendering_SetActiveOptionID);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_DialogToRender", Sc_DialogOptionsRendering_GetDialogToRender);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_Height", Sc_DialogOptionsRendering_GetHeight);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_Height", Sc_DialogOptionsRendering_SetHeight);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_ParserTextBoxX", Sc_DialogOptionsRendering_GetParserTextboxX);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_ParserTextBoxX", Sc_DialogOptionsRendering_SetParserTextboxX);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_ParserTextBoxY", Sc_DialogOptionsRendering_GetParserTextboxY);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_ParserTextBoxY", Sc_DialogOptionsRendering_SetParserTextboxY);
 	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_ParserTextBoxWidth", Sc_DialogOptionsRendering_GetParserTextboxWidth);
 	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_ParserTextBoxWidth", Sc_DialogOptionsRendering_SetParserTextboxWidth);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_Surface",          Sc_DialogOptionsRendering_GetSurface);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_Width",            Sc_DialogOptionsRendering_GetWidth);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_Width",            Sc_DialogOptionsRendering_SetWidth);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_X",                Sc_DialogOptionsRendering_GetX);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_X",                Sc_DialogOptionsRendering_SetX);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_Y",                Sc_DialogOptionsRendering_GetY);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_Y",                Sc_DialogOptionsRendering_SetY);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_HasAlphaChannel",  Sc_DialogOptionsRendering_GetHasAlphaChannel);
-	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_HasAlphaChannel",  Sc_DialogOptionsRendering_SetHasAlphaChannel);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_Surface", Sc_DialogOptionsRendering_GetSurface);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_Width", Sc_DialogOptionsRendering_GetWidth);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_Width", Sc_DialogOptionsRendering_SetWidth);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_X", Sc_DialogOptionsRendering_GetX);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_X", Sc_DialogOptionsRendering_SetX);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_Y", Sc_DialogOptionsRendering_GetY);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_Y", Sc_DialogOptionsRendering_SetY);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::get_HasAlphaChannel", Sc_DialogOptionsRendering_GetHasAlphaChannel);
+	ccAddExternalObjectFunction("DialogOptionsRenderingInfo::set_HasAlphaChannel", Sc_DialogOptionsRendering_SetHasAlphaChannel);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -292,3 +294,5 @@ void RegisterDialogOptionsRenderingAPI() {
 	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::get_Y", (void *)DialogOptionsRendering_GetY);
 	ccAddExternalFunctionForPlugin("DialogOptionsRenderingInfo::set_Y", (void *)DialogOptionsRendering_SetY);
 }
+
+} // namespace AGS3

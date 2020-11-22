@@ -22,6 +22,7 @@
 
 #include "util/stream.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -38,3 +39,4 @@ size_t Stream::WriteByteCount(uint8_t b, size_t count) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

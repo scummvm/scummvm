@@ -25,19 +25,20 @@
 #include "gui/guiobject.h"
 #include "util/stream.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
 GUIObject::GUIObject() {
-	Id          = 0;
-	ParentId    = 0;
-	Flags       = kGUICtrl_DefFlags;
-	X           = 0;
-	Y           = 0;
-	Width       = 0;
-	Height      = 0;
-	ZOrder      = -1;
-	IsActivated    = false;
+	Id = 0;
+	ParentId = 0;
+	Flags = kGUICtrl_DefFlags;
+	X = 0;
+	Y = 0;
+	Width = 0;
+	Height = 0;
+	ZOrder = -1;
+	IsActivated = false;
 	_scEventCount = 0;
 }
 
@@ -121,15 +122,15 @@ void GUIObject::WriteToFile(Stream *out) const {
 }
 
 void GUIObject::ReadFromFile(Stream *in, GuiVersion gui_version) {
-	Flags    = in->ReadInt32();
+	Flags = in->ReadInt32();
 	// reverse particular flags from older format
 	if (gui_version < kGuiVersion_350)
 		Flags ^= kGUICtrl_OldFmtXorMask;
-	X        = in->ReadInt32();
-	Y        = in->ReadInt32();
-	Width    = in->ReadInt32();
-	Height   = in->ReadInt32();
-	ZOrder   = in->ReadInt32();
+	X = in->ReadInt32();
+	Y = in->ReadInt32();
+	Width = in->ReadInt32();
+	Height = in->ReadInt32();
+	ZOrder = in->ReadInt32();
 	if (gui_version < kGuiVersion_350) {
 		// NOTE: reading into actual variables only for old savegame support
 		IsActivated = in->ReadInt32() != 0;
@@ -196,3 +197,4 @@ HorAlignment ConvertLegacyGUIAlignment(LegacyGUIAlignment align) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

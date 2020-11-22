@@ -27,6 +27,8 @@
 #include "script/cc_script.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 GameSetupStructBase::GameSetupStructBase()
@@ -251,3 +253,5 @@ Size ResolutionTypeToSize(GameResolutionType resolution, bool letterbox) {
 	}
 	return Size();
 }
+
+} // namespace AGS3

@@ -27,6 +27,8 @@
 
 #include "debug/out.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Bitmap;
 
 class IRouteFinder {
@@ -138,3 +140,5 @@ int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int
 void calculate_move_stage(MoveList *mlsp, int aaa) {
 	route_finder_impl->calculate_move_stage(mlsp, aaa);
 }
+
+} // namespace AGS3

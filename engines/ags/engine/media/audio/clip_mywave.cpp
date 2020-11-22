@@ -29,6 +29,8 @@
 
 #include "platform/base/agsplatformdriver.h"
 
+namespace AGS3 {
+
 void MYWAVE::poll() {
 	if (state_ != SoundClipPlaying) {
 		return;
@@ -128,3 +130,5 @@ MYWAVE::MYWAVE() : SOUNDCLIP() {
 	wave = nullptr;
 	voice = -1;
 }
+
+} // namespace AGS3

@@ -79,6 +79,8 @@
 #include "util/misc.h"
 #include "util/path.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -1541,3 +1543,5 @@ const char *get_engine_version() {
 void engine_set_pre_init_callback(t_engine_pre_init_callback callback) {
 	engine_pre_init_callback = callback;
 }
+
+} // namespace AGS3

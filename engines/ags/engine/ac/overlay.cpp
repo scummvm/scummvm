@@ -38,6 +38,8 @@
 #include "gfx/bitmap.h"
 #include "script/runtimescriptvalue.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -238,8 +240,8 @@ void get_overlay_position(const ScreenOverlay &over, int *x, int *y) {
 		const int charpic = views[game.chars[charid].view].loops[game.chars[charid].loop].frames[0].pic;
 		const int height = (charextra[charid].height < 1) ? game.SpriteInfos[charpic].Height : charextra[charid].height;
 		Point screenpt = view->RoomToScreen(
-		                     data_to_game_coord(game.chars[charid].x),
-		                     data_to_game_coord(game.chars[charid].get_effective_y()) - height).first;
+			data_to_game_coord(game.chars[charid].x),
+			data_to_game_coord(game.chars[charid].get_effective_y()) - height).first;
 		tdxp = screenpt.X - over.pic->GetWidth() / 2;
 		if (tdxp < 0) tdxp = 0;
 		tdyp = screenpt.Y - get_fixed_pixel_size(5);
@@ -298,7 +300,7 @@ RuntimeScriptValue Sc_Overlay_CreateGraphical(const RuntimeScriptValue *params, 
 RuntimeScriptValue Sc_Overlay_CreateTextual(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_SCRIPT_SPRINTF(Overlay_CreateTextual, 6);
 	ScriptOverlay *overlay = Overlay_CreateTextual(params[0].IValue, params[1].IValue, params[2].IValue,
-	                         params[3].IValue, params[4].IValue, scsf_buffer);
+		params[3].IValue, params[4].IValue, scsf_buffer);
 	return RuntimeScriptValue().SetDynamicObject(overlay, overlay);
 }
 
@@ -359,15 +361,15 @@ void ScPl_Overlay_SetText(ScriptOverlay *scover, int wii, int fontid, int clr, c
 
 
 void RegisterOverlayAPI() {
-	ccAddExternalStaticFunction("Overlay::CreateGraphical^4",   Sc_Overlay_CreateGraphical);
-	ccAddExternalStaticFunction("Overlay::CreateTextual^106",   Sc_Overlay_CreateTextual);
-	ccAddExternalObjectFunction("Overlay::SetText^104",         Sc_Overlay_SetText);
-	ccAddExternalObjectFunction("Overlay::Remove^0",            Sc_Overlay_Remove);
-	ccAddExternalObjectFunction("Overlay::get_Valid",           Sc_Overlay_GetValid);
-	ccAddExternalObjectFunction("Overlay::get_X",               Sc_Overlay_GetX);
-	ccAddExternalObjectFunction("Overlay::set_X",               Sc_Overlay_SetX);
-	ccAddExternalObjectFunction("Overlay::get_Y",               Sc_Overlay_GetY);
-	ccAddExternalObjectFunction("Overlay::set_Y",               Sc_Overlay_SetY);
+	ccAddExternalStaticFunction("Overlay::CreateGraphical^4", Sc_Overlay_CreateGraphical);
+	ccAddExternalStaticFunction("Overlay::CreateTextual^106", Sc_Overlay_CreateTextual);
+	ccAddExternalObjectFunction("Overlay::SetText^104", Sc_Overlay_SetText);
+	ccAddExternalObjectFunction("Overlay::Remove^0", Sc_Overlay_Remove);
+	ccAddExternalObjectFunction("Overlay::get_Valid", Sc_Overlay_GetValid);
+	ccAddExternalObjectFunction("Overlay::get_X", Sc_Overlay_GetX);
+	ccAddExternalObjectFunction("Overlay::set_X", Sc_Overlay_SetX);
+	ccAddExternalObjectFunction("Overlay::get_Y", Sc_Overlay_GetY);
+	ccAddExternalObjectFunction("Overlay::set_Y", Sc_Overlay_SetY);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -381,3 +383,5 @@ void RegisterOverlayAPI() {
 	ccAddExternalFunctionForPlugin("Overlay::get_Y", (void *)Overlay_GetY);
 	ccAddExternalFunctionForPlugin("Overlay::set_Y", (void *)Overlay_SetY);
 }
+
+} // namespace AGS3

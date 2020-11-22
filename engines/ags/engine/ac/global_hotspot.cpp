@@ -37,6 +37,8 @@
 #include "game/roomstruct.h"
 #include "script/script.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern RoomStruct thisroom;
@@ -109,8 +111,8 @@ void RunHotspotInteraction(int hotspothere, int mood) {
 		play.usedinv = cdata;
 	}
 
-	if ((game.options[OPT_WALKONLOOK] == 0) & (mood == MODE_LOOK)) ;
-	else if (play.auto_use_walkto_points == 0) ;
+	if ((game.options[OPT_WALKONLOOK] == 0) & (mood == MODE_LOOK));
+	else if (play.auto_use_walkto_points == 0);
 	else if ((mood != MODE_WALK) && (play.check_interaction_only == 0))
 		MoveCharacterToHotspot(game.playercharacter, hotspothere);
 
@@ -149,3 +151,5 @@ int GetHotspotProperty(int hss, const char *property) {
 void GetHotspotPropertyText(int item, const char *property, char *bufer) {
 	get_text_property(thisroom.Hotspots[item].Properties, croom->hsProps[item], property, bufer);
 }
+
+} // namespace AGS3

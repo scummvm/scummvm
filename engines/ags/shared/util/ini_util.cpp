@@ -27,6 +27,7 @@
 #include "util/stream.h"
 #include "util/textstreamwriter.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -70,7 +71,7 @@ void IniUtil::Write(const String &file, const ConfigTree &tree) {
 	TextStreamWriter writer(fs.get());
 
 	for (ConfigNode it_sec = tree.begin(); it_sec != tree.end(); ++it_sec) {
-		const String &sec_key     = it_sec->first;
+		const String &sec_key = it_sec->first;
 		const StringOrderMap &sec_tree = it_sec->second;
 
 		if (!sec_tree.size())
@@ -82,7 +83,7 @@ void IniUtil::Write(const String &file, const ConfigTree &tree) {
 		}
 		// write all items
 		for (StrStrOIter keyval = sec_tree.begin(); keyval != sec_tree.end(); ++keyval) {
-			const String &item_key   = keyval->first;
+			const String &item_key = keyval->first;
 			const String &item_value = keyval->second;
 
 			writer.WriteFormat("%s = %s", item_key.GetCStr(), item_value.GetCStr());
@@ -137,7 +138,7 @@ bool IniUtil::Merge(const String &file, const ConfigTree &tree) {
 
 		// Replace matching items
 		for (ItemIterator item = sec->Begin(); item != sec->End(); ++item) {
-			String key        = item->GetKey();
+			String key = item->GetKey();
 			StrStrOIter keyval = subtree.find(key);
 			if (keyval == subtree.end())
 				continue; // this item is not interesting for us
@@ -181,3 +182,4 @@ bool IniUtil::Merge(const String &file, const ConfigTree &tree) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

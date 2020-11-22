@@ -27,6 +27,8 @@
 #include "gfx/graphicsdriver.h"
 #include "gfx/bitmap.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -54,9 +56,9 @@ void update_walk_behind_images() {
 
 		if (walkBehindRight[ee] > 0) {
 			wbbmp = BitmapHelper::CreateTransparentBitmap(
-			            (walkBehindRight[ee] - walkBehindLeft[ee]) + 1,
-			            (walkBehindBottom[ee] - walkBehindTop[ee]) + 1,
-			            thisroom.BgFrames[play.bg_frame].Graphic->GetColorDepth());
+				(walkBehindRight[ee] - walkBehindLeft[ee]) + 1,
+				(walkBehindBottom[ee] - walkBehindTop[ee]) + 1,
+				thisroom.BgFrames[play.bg_frame].Graphic->GetColorDepth());
 			int yy, startX = walkBehindLeft[ee], startY = walkBehindTop[ee];
 			for (rr = startX; rr <= walkBehindRight[ee]; rr++) {
 				for (yy = startY; yy <= walkBehindBottom[ee]; yy++) {
@@ -139,3 +141,5 @@ void recache_walk_behinds() {
 		update_walk_behind_images();
 	}
 }
+
+} // namespace AGS3

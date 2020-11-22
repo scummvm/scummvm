@@ -69,6 +69,8 @@
 #include "util/string_utils.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 #define ALLEGRO_KEYBOARD_HANDLER
@@ -187,8 +189,8 @@ int LoadSaveSlotScreenshot(int slnum, int width, int height) {
 	// resize the sprite to the requested size
 	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, spriteset[gotSlot]->GetColorDepth());
 	newPic->StretchBlt(spriteset[gotSlot],
-	                   RectWH(0, 0, game.SpriteInfos[gotSlot].Width, game.SpriteInfos[gotSlot].Height),
-	                   RectWH(0, 0, width, height));
+		RectWH(0, 0, game.SpriteInfos[gotSlot].Width, game.SpriteInfos[gotSlot].Height),
+		RectWH(0, 0, width, height));
 
 	update_polled_stuff_if_runtime();
 
@@ -319,7 +321,8 @@ int GetGameParameter(int parm, int data1, int data2, int data3) {
 	case GP_FRAMESPEED:
 	case GP_FRAMEIMAGE:
 	case GP_FRAMESOUND:
-	case GP_ISFRAMEFLIPPED: {
+	case GP_ISFRAMEFLIPPED:
+	{
 		if ((data1 < 1) || (data1 > game.numviews)) {
 			quitprintf("!GetGameParameter: invalid view specified (v: %d, l: %d, f: %d)", data1, data2, data3);
 		}
@@ -464,7 +467,7 @@ void StartCutscene(int skipwith) {
 
 	if (is_in_cutscene()) {
 		quitprintf("!StartCutscene: already in a cutscene; previous started in \"%s\", line %d",
-		           last_cutscene_script_pos.Section.GetCStr(), last_cutscene_script_pos.Line);
+			last_cutscene_script_pos.Section.GetCStr(), last_cutscene_script_pos.Line);
 	}
 
 	if ((skipwith < 1) || (skipwith > 6))
@@ -646,7 +649,7 @@ int IsKeyPressed(int keycode) {
 	case eAGSKeyCodeCloseBracket:
 		return ags_iskeypressed(__allegro_KEY_CLOSEBRACE);
 		break;
-	// NOTE: we're treating EQUALS like PLUS, even though it is only available shifted.
+		// NOTE: we're treating EQUALS like PLUS, even though it is only available shifted.
 	case eAGSKeyCodePlus:
 		return ags_iskeypressed(__allegro_KEY_EQUALS) || ags_iskeypressed(__allegro_KEY_PLUS_PAD);
 		break;
@@ -654,7 +657,7 @@ int IsKeyPressed(int keycode) {
 		return ags_iskeypressed(__allegro_KEY_MINUS) || ags_iskeypressed(__allegro_KEY_MINUS_PAD);
 		break;
 
-	// non-shifted versions of keys
+		// non-shifted versions of keys
 	case eAGSKeyCodeColon:
 		return ags_iskeypressed(__allegro_KEY_COLON) || ags_iskeypressed(__allegro_KEY_COLON2);
 		break;
@@ -846,8 +849,8 @@ int IsKeyPressed(int keycode) {
 		return ags_iskeypressed(__allegro_KEY_DEL) || ags_iskeypressed(__allegro_KEY_DEL_PAD);
 		break;
 
-	// These keys are not defined in the eAGSKey enum but are in the manual
-	// https://adventuregamestudio.github.io/ags-manual/ASCIIcodes.html
+		// These keys are not defined in the eAGSKey enum but are in the manual
+		// https://adventuregamestudio.github.io/ags-manual/ASCIIcodes.html
 
 	case 403:
 		return ags_iskeypressed(__allegro_KEY_LSHIFT);
@@ -865,9 +868,9 @@ int IsKeyPressed(int keycode) {
 		return ags_iskeypressed(__allegro_KEY_ALT);
 		break;
 
-	// (noted here for interest)
-	// The following are the AGS_EXT_KEY_SHIFT, derived from applying arithmetic to the original keycodes.
-	// These do not have a corresponding ags key enum, do not appear in the manual and may not be accessible because of OS contraints.
+		// (noted here for interest)
+		// The following are the AGS_EXT_KEY_SHIFT, derived from applying arithmetic to the original keycodes.
+		// These do not have a corresponding ags key enum, do not appear in the manual and may not be accessible because of OS contraints.
 
 	case 392:
 		return ags_iskeypressed(__allegro_KEY_PRTSCR);
@@ -918,10 +921,10 @@ int IsKeyPressed(int keycode) {
 		return ags_iskeypressed(__allegro_KEY_CAPSLOCK);
 		break;
 
-	// Allegro4 keys that were never supported:
-	// __allegro_KEY_COMMAND
-	// __allegro_KEY_TILDE
-	// __allegro_KEY_BACKQUOTE
+		// Allegro4 keys that were never supported:
+		// __allegro_KEY_COMMAND
+		// __allegro_KEY_TILDE
+		// __allegro_KEY_BACKQUOTE
 
 	default:
 		// Remaining Allegro4 keycodes are offset by AGS_EXT_KEY_SHIFT
@@ -996,9 +999,9 @@ void RoomProcessClick(int xx, int yy, int mood) {
 
 	if ((mood == MODE_WALK) && (game.options[OPT_NOWALKMODE] == 0)) {
 		int hsnum = get_hotspot_at(xx, yy);
-		if (hsnum < 1) ;
-		else if (thisroom.Hotspots[hsnum].WalkTo.X < 1) ;
-		else if (play.auto_use_walkto_points == 0) ;
+		if (hsnum < 1);
+		else if (thisroom.Hotspots[hsnum].WalkTo.X < 1);
+		else if (play.auto_use_walkto_points == 0);
 		else {
 			xx = thisroom.Hotspots[hsnum].WalkTo.X;
 			yy = thisroom.Hotspots[hsnum].WalkTo.Y;
@@ -1142,3 +1145,5 @@ int WaitMouseKey(int nloops) {
 void SkipWait() {
 	play.wait_counter = 0;
 }
+
+} // namespace AGS3

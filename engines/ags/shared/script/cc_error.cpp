@@ -25,6 +25,8 @@
 #include "script/script_common.h"  // current_line
 #include "util/string.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 // Returns full script error message and callstack (if possible)
@@ -64,3 +66,5 @@ void cc_error(const char *descr, ...) {
 	ccError = 1;
 	ccErrorLine = currentline;
 }
+
+} // namespace AGS3

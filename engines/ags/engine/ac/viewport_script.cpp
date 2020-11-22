@@ -35,6 +35,8 @@
 #include "script/script_api.h"
 #include "script/script_runtime.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 //=============================================================================
@@ -553,3 +555,5 @@ void RegisterViewportAPI() {
 	ccAddExternalObjectFunction("Viewport::ScreenToRoomPoint", Sc_Viewport_ScreenToRoomPoint);
 	ccAddExternalObjectFunction("Viewport::RoomToScreenPoint", Sc_Viewport_RoomToScreenPoint);
 }
+
+} // namespace AGS3

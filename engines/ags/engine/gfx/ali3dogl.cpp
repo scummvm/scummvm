@@ -35,6 +35,8 @@
 #include "util/math.h"
 #include "ac/timer.h"
 
+namespace AGS3 {
+
 #if AGS_PLATFORM_OS_ANDROID
 
 #define glOrtho glOrthof
@@ -1871,5 +1873,6 @@ OGLGfxFilter *OGLGraphicsFactory::CreateFilter(const String &id) {
 } // namespace OGL
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif // only on Windows, Android and iOS

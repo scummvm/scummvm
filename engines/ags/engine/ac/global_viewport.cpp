@@ -24,6 +24,8 @@
 #include "ac/draw.h"
 #include "debug/debug_log.h"
 
+namespace AGS3 {
+
 void SetViewport(int offsx, int offsy) {
 	offsx = data_to_game_coord(offsx);
 	offsy = data_to_game_coord(offsy);
@@ -38,3 +40,5 @@ int GetViewportX() {
 int GetViewportY() {
 	return game_to_data_coord(play.GetRoomCamera(0)->GetRect().Top);
 }
+
+} // namespace AGS3

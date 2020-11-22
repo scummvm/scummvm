@@ -28,6 +28,8 @@
 #include "script/runtimescriptvalue.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetupStruct game;
@@ -104,3 +106,5 @@ bool set_text_property(StringIMap &rt_prop, const char *property, const char *va
 	}
 	return false;
 }
+
+} // namespace AGS3

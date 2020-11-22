@@ -47,6 +47,8 @@
 #include "ac/timer.h"
 #include "main/game_run.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -200,14 +202,14 @@ static int find_free_audio_channel(ScriptAudioClip *clip, int priority, bool int
 			break;
 		}
 		if ((ch->priority < lowestPrioritySoFar) &&
-		        (ch->sourceClipType == clip->type)) {
+			(ch->sourceClipType == clip->type)) {
 			lowestPrioritySoFar = ch->priority;
 			lowestPriorityID = i;
 		}
 	}
 
 	if ((channelToUse < 0) && (lowestPriorityID >= 0) &&
-	        (lowestPrioritySoFar <= priority)) {
+		(lowestPrioritySoFar <= priority)) {
 		stop_or_fade_out_channel(lowestPriorityID, lowestPriorityID, clip);
 		channelToUse = lowestPriorityID;
 	} else if ((channelToUse >= 0) && (play.crossfading_in_channel < 1)) {
@@ -218,7 +220,7 @@ static int find_free_audio_channel(ScriptAudioClip *clip, int priority, bool int
 
 bool is_audiotype_allowed_to_play(AudioFileType type) {
 	return (type == eAudioFileMIDI && usetup.midicard != MIDI_NONE) ||
-	       (type != eAudioFileMIDI && usetup.digicard != DIGI_NONE);
+		(type != eAudioFileMIDI && usetup.digicard != DIGI_NONE);
 }
 
 SOUNDCLIP *load_sound_clip(ScriptAudioClip *audioClip, bool repeat) {
@@ -572,11 +574,11 @@ void update_directional_sound_vol() {
 		auto *ch = lock.GetChannelIfPlaying(chnum);
 		if ((ch != nullptr) && (ch->xSource >= 0)) {
 			ch->apply_directional_modifier(
-			    get_volume_adjusted_for_distance(ch->vol,
-			                                     ch->xSource,
-			                                     ch->ySource,
-			                                     ch->maximumPossibleDistanceAway) -
-			    ch->vol);
+				get_volume_adjusted_for_distance(ch->vol,
+					ch->xSource,
+					ch->ySource,
+					ch->maximumPossibleDistanceAway) -
+				ch->vol);
 		}
 	}
 }
@@ -892,7 +894,7 @@ void update_audio_system_on_game_loop() {
 			play.cur_music_number = -1;
 			play_next_queued();
 		} else if ((game.options[OPT_CROSSFADEMUSIC] > 0) &&
-		           (play.music_queue_size > 0) && (!crossFading)) {
+			(play.music_queue_size > 0) && (!crossFading)) {
 			// want to crossfade, and new tune in the queue
 			auto *ch = lock.GetChannel(SCHAN_MUSIC);
 			if (ch) {
@@ -932,10 +934,10 @@ void stopmusic() {
 			update_music_volume();
 		}
 	} else if ((game.options[OPT_CROSSFADEMUSIC] > 0)
-	           && (lock.GetChannelIfPlaying(SCHAN_MUSIC) != nullptr)
-	           && (current_music_type != 0)
-	           && (current_music_type != MUS_MIDI)
-	           && (current_music_type != MUS_MOD)) {
+		&& (lock.GetChannelIfPlaying(SCHAN_MUSIC) != nullptr)
+		&& (current_music_type != 0)
+		&& (current_music_type != MUS_MIDI)
+		&& (current_music_type != MUS_MOD)) {
 
 		crossFading = -1;
 		crossFadeStep = 0;
@@ -1013,9 +1015,9 @@ int prepare_for_new_music() {
 	int useChannel = SCHAN_MUSIC;
 
 	if ((game.options[OPT_CROSSFADEMUSIC] > 0)
-	        && (lock.GetChannelIfPlaying(SCHAN_MUSIC) != nullptr)
-	        && (current_music_type != MUS_MIDI)
-	        && (current_music_type != MUS_MOD)) {
+		&& (lock.GetChannelIfPlaying(SCHAN_MUSIC) != nullptr)
+		&& (current_music_type != MUS_MIDI)
+		&& (current_music_type != MUS_MOD)) {
 
 		if (crossFading > 0) {
 			// It's still crossfading to the previous track
@@ -1132,3 +1134,5 @@ static void play_new_music(int mnum, SOUNDCLIP *music) {
 void newmusic(int mnum) {
 	play_new_music(mnum, nullptr);
 }
+
+} // namespace AGS3

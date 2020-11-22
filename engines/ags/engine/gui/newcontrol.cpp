@@ -24,6 +24,8 @@
 #include "gui/guidialog.h"
 #include "gui/guidialoginternaldefs.h"
 
+namespace AGS3 {
+
 extern int topwindowhandle;
 
 NewControl::NewControl(int xx, int yy, int wi, int hi) {
@@ -51,7 +53,7 @@ int NewControl::mouseisinarea(int mousex, int mousey) {
 	if (topwindowhandle != wlevel)
 		return 0;
 
-	if ((mousex > x) & (mousex < x + wid) & (mousey > y) & (mousey < y + hit))
+	if ((mousex > x) &(mousex < x + wid) &(mousey > y) &(mousey < y + hit))
 		return 1;
 
 	return 0;
@@ -69,3 +71,5 @@ void NewControl::drawandmouse() {
 	draw(get_gui_screen());
 	//  ags_domouse(DOMOUSE_ENABLE);
 }
+
+} // namespace AGS3

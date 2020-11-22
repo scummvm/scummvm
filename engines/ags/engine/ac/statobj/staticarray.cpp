@@ -24,28 +24,30 @@
 #include "ac/statobj/staticarray.h"
 #include "ac/dynobj/cc_dynamicobject.h"
 
+namespace AGS3 {
+
 void StaticArray::Create(int elem_legacy_size, int elem_real_size, int elem_count) {
-	_staticMgr      = nullptr;
-	_dynamicMgr     = nullptr;
+	_staticMgr = nullptr;
+	_dynamicMgr = nullptr;
 	_elemLegacySize = elem_legacy_size;
-	_elemRealSize   = elem_real_size;
-	_elemCount      = elem_count;
+	_elemRealSize = elem_real_size;
+	_elemCount = elem_count;
 }
 
 void StaticArray::Create(ICCStaticObject *stcmgr, int elem_legacy_size, int elem_real_size, int elem_count) {
-	_staticMgr      = stcmgr;
-	_dynamicMgr     = nullptr;
+	_staticMgr = stcmgr;
+	_dynamicMgr = nullptr;
 	_elemLegacySize = elem_legacy_size;
-	_elemRealSize   = elem_real_size;
-	_elemCount      = elem_count;
+	_elemRealSize = elem_real_size;
+	_elemCount = elem_count;
 }
 
 void StaticArray::Create(ICCDynamicObject *dynmgr, int elem_legacy_size, int elem_real_size, int elem_count) {
-	_staticMgr      = nullptr;
-	_dynamicMgr     = dynmgr;
+	_staticMgr = nullptr;
+	_dynamicMgr = dynmgr;
 	_elemLegacySize = elem_legacy_size;
-	_elemRealSize   = elem_real_size;
-	_elemCount      = elem_count;
+	_elemRealSize = elem_real_size;
+	_elemCount = elem_count;
 }
 
 const char *StaticArray::GetElementPtr(const char *address, intptr_t legacy_offset) {
@@ -160,3 +162,5 @@ void StaticArray::WriteFloat(const char *address, intptr_t offset, float val) {
 		*(float *)(el_ptr + offset % _elemLegacySize) = val;
 	}
 }
+
+} // namespace AGS3

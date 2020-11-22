@@ -25,6 +25,8 @@
 #include "ac/speech.h"
 #include "debug/debug_log.h"
 
+namespace AGS3 {
+
 int user_to_internal_skip_speech(SkipSpeechStyle userval) {
 	switch (userval) {
 	case kSkipSpeechKeyMouseTime:
@@ -194,29 +196,31 @@ void RegisterSpeechAPI(ScriptAPIVersion base_api, ScriptAPIVersion compat_api) {
 	ccAddExternalStaticFunction("Speech::set_AnimationStopTimeMargin", Sc_Speech_SetAnimationStopTimeMargin);
 	ccAddExternalStaticFunction("Speech::get_CustomPortraitPlacement", Sc_Speech_GetCustomPortraitPlacement);
 	ccAddExternalStaticFunction("Speech::set_CustomPortraitPlacement", Sc_Speech_SetCustomPortraitPlacement);
-	ccAddExternalStaticFunction("Speech::get_DisplayPostTimeMs",      Sc_Speech_GetDisplayPostTimeMs);
-	ccAddExternalStaticFunction("Speech::set_DisplayPostTimeMs",      Sc_Speech_SetDisplayPostTimeMs);
+	ccAddExternalStaticFunction("Speech::get_DisplayPostTimeMs", Sc_Speech_GetDisplayPostTimeMs);
+	ccAddExternalStaticFunction("Speech::set_DisplayPostTimeMs", Sc_Speech_SetDisplayPostTimeMs);
 	ccAddExternalStaticFunction("Speech::get_GlobalSpeechAnimationDelay", Sc_Speech_GetGlobalSpeechAnimationDelay);
 	ccAddExternalStaticFunction("Speech::set_GlobalSpeechAnimationDelay", Sc_Speech_SetGlobalSpeechAnimationDelay);
-	ccAddExternalStaticFunction("Speech::get_PortraitXOffset",        Sc_Speech_GetPortraitXOffset);
-	ccAddExternalStaticFunction("Speech::set_PortraitXOffset",        Sc_Speech_SetPortraitXOffset);
-	ccAddExternalStaticFunction("Speech::get_PortraitY",              Sc_Speech_GetPortraitY);
-	ccAddExternalStaticFunction("Speech::set_PortraitY",              Sc_Speech_SetPortraitY);
-	ccAddExternalStaticFunction("Speech::get_SkipKey",                Sc_Speech_GetSkipKey);
-	ccAddExternalStaticFunction("Speech::set_SkipKey",                Sc_Speech_SetSkipKey);
-	ccAddExternalStaticFunction("Speech::get_SkipStyle",              Sc_Speech_GetSkipStyle);
-	ccAddExternalStaticFunction("Speech::set_SkipStyle",              Sc_SetSkipSpeech);
-	ccAddExternalStaticFunction("Speech::get_Style",                  Sc_Speech_GetStyle);
-	ccAddExternalStaticFunction("Speech::set_Style",                  Sc_SetSpeechStyle);
-	ccAddExternalStaticFunction("Speech::get_TextAlignment",          Sc_Speech_GetTextAlignment);
+	ccAddExternalStaticFunction("Speech::get_PortraitXOffset", Sc_Speech_GetPortraitXOffset);
+	ccAddExternalStaticFunction("Speech::set_PortraitXOffset", Sc_Speech_SetPortraitXOffset);
+	ccAddExternalStaticFunction("Speech::get_PortraitY", Sc_Speech_GetPortraitY);
+	ccAddExternalStaticFunction("Speech::set_PortraitY", Sc_Speech_SetPortraitY);
+	ccAddExternalStaticFunction("Speech::get_SkipKey", Sc_Speech_GetSkipKey);
+	ccAddExternalStaticFunction("Speech::set_SkipKey", Sc_Speech_SetSkipKey);
+	ccAddExternalStaticFunction("Speech::get_SkipStyle", Sc_Speech_GetSkipStyle);
+	ccAddExternalStaticFunction("Speech::set_SkipStyle", Sc_SetSkipSpeech);
+	ccAddExternalStaticFunction("Speech::get_Style", Sc_Speech_GetStyle);
+	ccAddExternalStaticFunction("Speech::set_Style", Sc_SetSpeechStyle);
+	ccAddExternalStaticFunction("Speech::get_TextAlignment", Sc_Speech_GetTextAlignment);
 	if (base_api < kScriptAPI_v350)
-		ccAddExternalStaticFunction("Speech::set_TextAlignment",      Sc_Speech_SetTextAlignment_Old);
+		ccAddExternalStaticFunction("Speech::set_TextAlignment", Sc_Speech_SetTextAlignment_Old);
 	else
-		ccAddExternalStaticFunction("Speech::set_TextAlignment",      Sc_Speech_SetTextAlignment);
+		ccAddExternalStaticFunction("Speech::set_TextAlignment", Sc_Speech_SetTextAlignment);
 	ccAddExternalStaticFunction("Speech::get_UseGlobalSpeechAnimationDelay", Sc_Speech_GetUseGlobalSpeechAnimationDelay);
 	ccAddExternalStaticFunction("Speech::set_UseGlobalSpeechAnimationDelay", Sc_Speech_SetUseGlobalSpeechAnimationDelay);
-	ccAddExternalStaticFunction("Speech::get_VoiceMode",              Sc_Speech_GetVoiceMode);
-	ccAddExternalStaticFunction("Speech::set_VoiceMode",              Sc_SetVoiceMode);
+	ccAddExternalStaticFunction("Speech::get_VoiceMode", Sc_Speech_GetVoiceMode);
+	ccAddExternalStaticFunction("Speech::set_VoiceMode", Sc_SetVoiceMode);
 
 	/* -- Don't register more unsafe plugin symbols until new plugin interface is designed --*/
 }
+
+} // namespace AGS3

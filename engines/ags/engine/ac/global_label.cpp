@@ -27,6 +27,8 @@
 #include "ac/string.h"
 #include "gui/guimain.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetupStruct game;
@@ -64,3 +66,5 @@ void SetLabelFont(int guin, int objn, int fontnum) {
 	GUILabel *guil = (GUILabel *)guis[guin].GetControl(objn);
 	Label_SetFont(guil, fontnum);
 }
+
+} // namespace AGS3

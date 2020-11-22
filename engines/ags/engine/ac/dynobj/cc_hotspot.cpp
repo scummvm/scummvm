@@ -25,6 +25,8 @@
 #include "ac/common_defines.h"
 #include "game/roomstruct.h"
 
+namespace AGS3 {
+
 extern ScriptHotspot scrHotspot[MAX_ROOM_HOTSPOTS];
 
 // return the type name of the object
@@ -46,3 +48,5 @@ void CCHotspot::Unserialize(int index, const char *serializedData, int dataSize)
 	int num = UnserializeInt();
 	ccRegisterUnserializedObject(index, &scrHotspot[num], this);
 }
+
+} // namespace AGS3

@@ -28,6 +28,8 @@
 #include "ac/walkbehind.h"
 #include "debug/debug_log.h"
 
+namespace AGS3 {
+
 extern RoomStatus *croom;
 extern int walk_behind_baselines_changed;
 
@@ -42,3 +44,5 @@ void SetWalkBehindBase(int wa, int bl) {
 		debug_script_log("Walk-behind %d baseline changed to %d", wa, bl);
 	}
 }
+
+} // namespace AGS3

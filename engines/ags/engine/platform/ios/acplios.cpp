@@ -36,6 +36,8 @@
 #include "plugin/agsplugin.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 #define IOS_CONFIG_FILENAME "ios.cfg"
@@ -623,5 +625,7 @@ AGSPlatformDriver *AGSPlatformDriver::GetDriver() {
 		instance = new AGSIOS();
 	return instance;
 }
+
+} // namespace AGS3
 
 #endif

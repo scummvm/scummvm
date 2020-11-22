@@ -36,6 +36,8 @@
 #include "script/runtimescriptvalue.h"
 #include "util/string_compat.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetupStruct game;
@@ -252,7 +254,7 @@ void SetTextWindowGUI(int guinum) {
 	if ((guinum < -1) | (guinum >= game.numgui))
 		quit("!SetTextWindowGUI: invalid GUI number");
 
-	if (guinum < 0) ;  // disable it
+	if (guinum < 0);  // disable it
 	else if (!guis[guinum].IsTextWindow())
 		quit("!SetTextWindowGUI: specified GUI is not a text window");
 
@@ -260,3 +262,5 @@ void SetTextWindowGUI(int guinum) {
 		play.speech_textwindow_gui = guinum;
 	game.options[OPT_TWCUSTOM] = guinum;
 }
+
+} // namespace AGS3

@@ -46,6 +46,8 @@
 #include "util/string.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetup usetup;
@@ -210,10 +212,10 @@ int File_GetPosition(sc_File *fil) {
 //=============================================================================
 
 
-const String GameInstallRootToken    = "$INSTALLDIR$";
+const String GameInstallRootToken = "$INSTALLDIR$";
 const String UserSavedgamesRootToken = "$MYDOCS$";
-const String GameSavedgamesDirToken  = "$SAVEGAMEDIR$";
-const String GameDataDirToken        = "$APPDATADIR$";
+const String GameSavedgamesDirToken = "$SAVEGAMEDIR$";
+const String GameDataDirToken = "$APPDATADIR$";
 
 void FixupFilename(char *filename) {
 	const char *illegal = platform->GetIllegalFileChars();
@@ -234,7 +236,7 @@ void FixupFilename(char *filename) {
 // Returns TRUE if the new string was created, and FALSE if the path was good.
 bool FixSlashAfterToken(const String &path, const String &token, String &new_path) {
 	if (path.CompareLeft(token) == 0 && path.GetLength() > token.GetLength() &&
-	        path[token.GetLength()] != '/') {
+		path[token.GetLength()] != '/') {
 		new_path = String::FromFormat("%s/%s", token.GetCStr(), path.Mid(token.GetLength()).GetCStr());
 		return true;
 	}
@@ -244,10 +246,10 @@ bool FixSlashAfterToken(const String &path, const String &token, String &new_pat
 String FixSlashAfterToken(const String &path) {
 	String fixed_path = path;
 	Path::FixupPath(fixed_path);
-	if (FixSlashAfterToken(fixed_path, GameInstallRootToken,    fixed_path) ||
-	        FixSlashAfterToken(fixed_path, UserSavedgamesRootToken, fixed_path) ||
-	        FixSlashAfterToken(fixed_path, GameSavedgamesDirToken,  fixed_path) ||
-	        FixSlashAfterToken(fixed_path, GameDataDirToken,        fixed_path))
+	if (FixSlashAfterToken(fixed_path, GameInstallRootToken, fixed_path) ||
+		FixSlashAfterToken(fixed_path, UserSavedgamesRootToken, fixed_path) ||
+		FixSlashAfterToken(fixed_path, GameSavedgamesDirToken, fixed_path) ||
+		FixSlashAfterToken(fixed_path, GameDataDirToken, fixed_path))
 		return fixed_path;
 	return path;
 }
@@ -293,7 +295,7 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 	if (sc_path.CompareLeft(GameInstallRootToken, GameInstallRootToken.GetLength()) == 0) {
 		if (!read_only) {
 			debug_script_warn("Attempt to access file '%s' denied (cannot write to game installation directory)",
-			                  sc_path.GetCStr());
+				sc_path.GetCStr());
 			return false;
 		}
 		parent_dir = get_install_dir();
@@ -327,7 +329,7 @@ bool ResolveScriptPath(const String &orig_sc_path, bool read_only, ResolvedPath 
 		// if the unsafe path is used for write operation
 		if (!read_only && game.options[OPT_SAFEFILEPATHS]) {
 			debug_script_warn("Attempt to access file '%s' denied (cannot write to game installation directory);\nPath will be remapped to the app data directory: '%s'",
-			                  sc_path.GetCStr(), parent_dir.GetCStr());
+				sc_path.GetCStr(), parent_dir.GetCStr());
 		}
 	}
 
@@ -713,25 +715,25 @@ RuntimeScriptValue Sc_File_GetPosition(void *self, const RuntimeScriptValue *par
 
 
 void RegisterFileAPI() {
-	ccAddExternalStaticFunction("File::Delete^1",           Sc_File_Delete);
-	ccAddExternalStaticFunction("File::Exists^1",           Sc_File_Exists);
-	ccAddExternalStaticFunction("File::Open^2",             Sc_sc_OpenFile);
-	ccAddExternalObjectFunction("File::Close^0",            Sc_File_Close);
-	ccAddExternalObjectFunction("File::ReadInt^0",          Sc_File_ReadInt);
-	ccAddExternalObjectFunction("File::ReadRawChar^0",      Sc_File_ReadRawChar);
-	ccAddExternalObjectFunction("File::ReadRawInt^0",       Sc_File_ReadRawInt);
-	ccAddExternalObjectFunction("File::ReadRawLine^1",      Sc_File_ReadRawLine);
-	ccAddExternalObjectFunction("File::ReadRawLineBack^0",  Sc_File_ReadRawLineBack);
-	ccAddExternalObjectFunction("File::ReadString^1",       Sc_File_ReadString);
-	ccAddExternalObjectFunction("File::ReadStringBack^0",   Sc_File_ReadStringBack);
-	ccAddExternalObjectFunction("File::WriteInt^1",         Sc_File_WriteInt);
-	ccAddExternalObjectFunction("File::WriteRawChar^1",     Sc_File_WriteRawChar);
-	ccAddExternalObjectFunction("File::WriteRawLine^1",     Sc_File_WriteRawLine);
-	ccAddExternalObjectFunction("File::WriteString^1",      Sc_File_WriteString);
-	ccAddExternalObjectFunction("File::Seek^2",             Sc_File_Seek);
-	ccAddExternalObjectFunction("File::get_EOF",            Sc_File_GetEOF);
-	ccAddExternalObjectFunction("File::get_Error",          Sc_File_GetError);
-	ccAddExternalObjectFunction("File::get_Position",       Sc_File_GetPosition);
+	ccAddExternalStaticFunction("File::Delete^1", Sc_File_Delete);
+	ccAddExternalStaticFunction("File::Exists^1", Sc_File_Exists);
+	ccAddExternalStaticFunction("File::Open^2", Sc_sc_OpenFile);
+	ccAddExternalObjectFunction("File::Close^0", Sc_File_Close);
+	ccAddExternalObjectFunction("File::ReadInt^0", Sc_File_ReadInt);
+	ccAddExternalObjectFunction("File::ReadRawChar^0", Sc_File_ReadRawChar);
+	ccAddExternalObjectFunction("File::ReadRawInt^0", Sc_File_ReadRawInt);
+	ccAddExternalObjectFunction("File::ReadRawLine^1", Sc_File_ReadRawLine);
+	ccAddExternalObjectFunction("File::ReadRawLineBack^0", Sc_File_ReadRawLineBack);
+	ccAddExternalObjectFunction("File::ReadString^1", Sc_File_ReadString);
+	ccAddExternalObjectFunction("File::ReadStringBack^0", Sc_File_ReadStringBack);
+	ccAddExternalObjectFunction("File::WriteInt^1", Sc_File_WriteInt);
+	ccAddExternalObjectFunction("File::WriteRawChar^1", Sc_File_WriteRawChar);
+	ccAddExternalObjectFunction("File::WriteRawLine^1", Sc_File_WriteRawLine);
+	ccAddExternalObjectFunction("File::WriteString^1", Sc_File_WriteString);
+	ccAddExternalObjectFunction("File::Seek^2", Sc_File_Seek);
+	ccAddExternalObjectFunction("File::get_EOF", Sc_File_GetEOF);
+	ccAddExternalObjectFunction("File::get_Error", Sc_File_GetError);
+	ccAddExternalObjectFunction("File::get_Position", Sc_File_GetPosition);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -753,3 +755,5 @@ void RegisterFileAPI() {
 	ccAddExternalFunctionForPlugin("File::get_EOF", (void *)File_GetEOF);
 	ccAddExternalFunctionForPlugin("File::get_Error", (void *)File_GetError);
 }
+
+} // namespace AGS3

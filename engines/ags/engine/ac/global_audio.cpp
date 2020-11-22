@@ -36,6 +36,8 @@
 #include "ac/timer.h"
 #include "util/string_compat.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetup usetup;
@@ -69,7 +71,7 @@ void PlayAmbientSound(int channel, int sndnum, int vol, int x, int y) {
 
 	// only play the sound if it's not already playing
 	if ((ambient[channel].channel < 1) || (!channel_is_playing(ambient[channel].channel)) ||
-	        (ambient[channel].num != sndnum)) {
+		(ambient[channel].num != sndnum)) {
 
 		StopAmbientSound(channel);
 		// in case a normal non-ambient sound was playing, stop it too
@@ -241,7 +243,7 @@ int PlayMusicQueued(int musnum) {
 	}
 
 	if ((play.music_queue_size > 0) &&
-	        (play.music_queue[play.music_queue_size - 1] >= QUEUED_MUSIC_REPEAT)) {
+		(play.music_queue[play.music_queue_size - 1] >= QUEUED_MUSIC_REPEAT)) {
 		debug_script_warn("PlayMusicQueued: cannot queue music after a repeating tune has been queued");
 		return 0;
 	}
@@ -325,7 +327,7 @@ void SetMusicVolume(int newvol) {
 
 void SetMusicMasterVolume(int newvol) {
 	const int min_volume = loaded_game_file_version < kGameVersion_330 ? 0 :
-	                       -LegacyMusicMasterVolumeAdjustment - (kRoomVolumeMax * LegacyRoomVolumeFactor);
+		-LegacyMusicMasterVolumeAdjustment - (kRoomVolumeMax * LegacyRoomVolumeFactor);
 	if ((newvol < min_volume) | (newvol > 100))
 		quitprintf("!SetMusicMasterVolume: invalid volume - must be from %d to %d", min_volume, 100);
 	play.music_master_volume = newvol + LegacyMusicMasterVolumeAdjustment;
@@ -667,3 +669,5 @@ void stop_voice_nonblocking() {
 		play.speech_voice_blocking = false;
 	}
 }
+
+} // namespace AGS3

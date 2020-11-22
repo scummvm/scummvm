@@ -34,6 +34,8 @@
 #include "font/fonts.h"
 #endif
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 // project-specific implementation
@@ -119,7 +121,7 @@ bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize, const FontRen
 	// A simple workaround is to disable outline fonts for it and use
 	// automatic outline drawing.
 	if (get_font_outline(fontNumber) >= 0 &&
-	        strcmp(alfont_get_name(alfptr), "LucasFan-Font") == 0)
+		strcmp(alfont_get_name(alfptr), "LucasFan-Font") == 0)
 		set_font_outline(fontNumber, FONT_OUTLINE_AUTO);
 #endif
 	if (fontSize == 0)
@@ -138,3 +140,5 @@ void TTFFontRenderer::FreeMemory(int fontNumber) {
 	alfont_destroy_font(_fontData[fontNumber].AlFont);
 	_fontData.erase(fontNumber);
 }
+
+} // namespace AGS3

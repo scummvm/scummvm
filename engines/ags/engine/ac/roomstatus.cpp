@@ -29,6 +29,8 @@
 #include "game/savegame_components.h"
 #include "util/alignedstream.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -47,12 +49,12 @@ RoomStatus::RoomStatus() {
 
 RoomStatus::~RoomStatus() {
 	if (tsdata)
-		delete [] tsdata;
+		delete[] tsdata;
 }
 
 void RoomStatus::FreeScriptData() {
 	if (tsdata)
-		delete [] tsdata;
+		delete[] tsdata;
 	tsdata = nullptr;
 	tsdatasize = 0;
 }
@@ -212,3 +214,5 @@ void resetRoomStatuses() {
 		}
 	}
 }
+
+} // namespace AGS3

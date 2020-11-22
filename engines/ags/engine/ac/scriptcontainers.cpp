@@ -37,6 +37,8 @@
 #include "script/script_runtime.h"
 #include "util/bbop.h"
 
+namespace AGS3 {
+
 extern ScriptString myScriptStringImpl;
 
 //=============================================================================
@@ -316,3 +318,5 @@ void RegisterContainerAPI() {
 	ccAddExternalObjectFunction("Set::get_ItemCount", Sc_Set_GetItemCount);
 	ccAddExternalObjectFunction("Set::GetItemsAsArray", Sc_Set_GetItemAsArray);
 }
+
+} // namespace AGS3

@@ -27,6 +27,8 @@
 #include "media/audio/clip_myjgmod.h"
 #include "media/audio/audiointernaldefs.h"
 
+namespace AGS3 {
+
 int MYMOD::poll() {
 	if (done)
 		return done;
@@ -87,4 +89,6 @@ int MYMOD::play() {
 MYMOD::MYMOD() : SOUNDCLIP() {
 }
 
-#endif // #ifdef JGMOD_MOD_PLAYER
+} // namespace AGS3
+
+#endif

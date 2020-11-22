@@ -34,6 +34,8 @@
 #include "ac/event.h"
 #include "ac/gamestate.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetupStruct game;
@@ -148,3 +150,5 @@ int GetInvProperty(int item, const char *property) {
 void GetInvPropertyText(int item, const char *property, char *bufer) {
 	get_text_property(game.invProps[item], play.invProps[item], property, bufer);
 }
+
+} // namespace AGS3

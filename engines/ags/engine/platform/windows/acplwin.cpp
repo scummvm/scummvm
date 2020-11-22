@@ -48,6 +48,8 @@
 #include "util/string_compat.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 #ifndef AGS_NO_VIDEO_PLAYER
 extern void dxmedia_abort_video();
 extern void dxmedia_pause_video();
@@ -1044,5 +1046,7 @@ LPDIRECTINPUTDEVICE IAGSEngine::GetDirectInputKeyboard() {
 LPDIRECTINPUTDEVICE IAGSEngine::GetDirectInputMouse() {
 	return mouse_dinput_device;
 }
+
+} // namespace AGS3
 
 #endif

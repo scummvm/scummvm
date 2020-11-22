@@ -45,6 +45,8 @@
 #include "media/audio/audio_system.h"
 #include "ac/timer.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetupStruct game;
@@ -125,7 +127,7 @@ int InvWindow_GetRowCount(GUIInvWindow *guii) {
 
 void InvWindow_ScrollDown(GUIInvWindow *guii) {
 	if ((charextra[guii->GetCharacterId()].invorder_count) >
-	        (guii->TopItem + (guii->ColCount * guii->RowCount))) {
+		(guii->TopItem + (guii->ColCount * guii->RowCount))) {
 		guii->TopItem += guii->ColCount;
 		guis_need_update = 1;
 	}
@@ -308,8 +310,8 @@ void InventoryScreen::Draw(Bitmap *ds) {
 		if (i >= top_item + num_visible_items)
 			break;
 		Bitmap *spof = spriteset[dii[i].sprnum];
-		wputblock(ds, barxp + 1 + ((i - top_item) % 4)*widest + widest / 2 - spof->GetWidth() / 2,
-		          bartop + 1 + ((i - top_item) / 4)*highest + highest / 2 - spof->GetHeight() / 2, spof, 1);
+		wputblock(ds, barxp + 1 + ((i - top_item) % 4) * widest + widest / 2 - spof->GetWidth() / 2,
+			bartop + 1 + ((i - top_item) / 4) * highest + highest / 2 - spof->GetHeight() / 2, spof, 1);
 	}
 #define BUTTONWID Math::Max(1, game.SpriteInfos[btn_select_sprite].Width)
 	// Draw select, look and OK buttons
@@ -601,20 +603,20 @@ RuntimeScriptValue Sc_InvWindow_SetTopItem(void *self, const RuntimeScriptValue 
 
 
 void RegisterInventoryWindowAPI() {
-	ccAddExternalObjectFunction("InvWindow::ScrollDown^0",          Sc_InvWindow_ScrollDown);
-	ccAddExternalObjectFunction("InvWindow::ScrollUp^0",            Sc_InvWindow_ScrollUp);
-	ccAddExternalObjectFunction("InvWindow::get_CharacterToUse",    Sc_InvWindow_GetCharacterToUse);
-	ccAddExternalObjectFunction("InvWindow::set_CharacterToUse",    Sc_InvWindow_SetCharacterToUse);
-	ccAddExternalObjectFunction("InvWindow::geti_ItemAtIndex",      Sc_InvWindow_GetItemAtIndex);
-	ccAddExternalObjectFunction("InvWindow::get_ItemCount",         Sc_InvWindow_GetItemCount);
-	ccAddExternalObjectFunction("InvWindow::get_ItemHeight",        Sc_InvWindow_GetItemHeight);
-	ccAddExternalObjectFunction("InvWindow::set_ItemHeight",        Sc_InvWindow_SetItemHeight);
-	ccAddExternalObjectFunction("InvWindow::get_ItemWidth",         Sc_InvWindow_GetItemWidth);
-	ccAddExternalObjectFunction("InvWindow::set_ItemWidth",         Sc_InvWindow_SetItemWidth);
-	ccAddExternalObjectFunction("InvWindow::get_ItemsPerRow",       Sc_InvWindow_GetItemsPerRow);
-	ccAddExternalObjectFunction("InvWindow::get_RowCount",          Sc_InvWindow_GetRowCount);
-	ccAddExternalObjectFunction("InvWindow::get_TopItem",           Sc_InvWindow_GetTopItem);
-	ccAddExternalObjectFunction("InvWindow::set_TopItem",           Sc_InvWindow_SetTopItem);
+	ccAddExternalObjectFunction("InvWindow::ScrollDown^0", Sc_InvWindow_ScrollDown);
+	ccAddExternalObjectFunction("InvWindow::ScrollUp^0", Sc_InvWindow_ScrollUp);
+	ccAddExternalObjectFunction("InvWindow::get_CharacterToUse", Sc_InvWindow_GetCharacterToUse);
+	ccAddExternalObjectFunction("InvWindow::set_CharacterToUse", Sc_InvWindow_SetCharacterToUse);
+	ccAddExternalObjectFunction("InvWindow::geti_ItemAtIndex", Sc_InvWindow_GetItemAtIndex);
+	ccAddExternalObjectFunction("InvWindow::get_ItemCount", Sc_InvWindow_GetItemCount);
+	ccAddExternalObjectFunction("InvWindow::get_ItemHeight", Sc_InvWindow_GetItemHeight);
+	ccAddExternalObjectFunction("InvWindow::set_ItemHeight", Sc_InvWindow_SetItemHeight);
+	ccAddExternalObjectFunction("InvWindow::get_ItemWidth", Sc_InvWindow_GetItemWidth);
+	ccAddExternalObjectFunction("InvWindow::set_ItemWidth", Sc_InvWindow_SetItemWidth);
+	ccAddExternalObjectFunction("InvWindow::get_ItemsPerRow", Sc_InvWindow_GetItemsPerRow);
+	ccAddExternalObjectFunction("InvWindow::get_RowCount", Sc_InvWindow_GetRowCount);
+	ccAddExternalObjectFunction("InvWindow::get_TopItem", Sc_InvWindow_GetTopItem);
+	ccAddExternalObjectFunction("InvWindow::set_TopItem", Sc_InvWindow_SetTopItem);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -633,3 +635,5 @@ void RegisterInventoryWindowAPI() {
 	ccAddExternalFunctionForPlugin("InvWindow::get_TopItem", (void *)InvWindow_GetTopItem);
 	ccAddExternalFunctionForPlugin("InvWindow::set_TopItem", (void *)InvWindow_SetTopItem);
 }
+
+} // namespace AGS3

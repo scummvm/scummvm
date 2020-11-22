@@ -27,6 +27,8 @@
 #include "util/stream.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
+
 std::vector<AGS::Shared::GUILabel> guilabels;
 int numguilabels = 0;
 
@@ -62,10 +64,10 @@ void GUILabel::Draw(Common::Bitmap *ds) {
 	const bool limit_by_label_frame = loaded_game_file_version >= kGameVersion_272;
 	int at_y = Y;
 	for (size_t i = 0;
-	        i < Lines.Count() && (!limit_by_label_frame || at_y <= Y + Height);
-	        ++i, at_y += linespacing) {
+		i < Lines.Count() && (!limit_by_label_frame || at_y <= Y + Height);
+		++i, at_y += linespacing) {
 		GUI::DrawTextAlignedHor(ds, Lines[i], Font, text_color, X, X + Width - 1, at_y,
-		                        (FrameAlignment)TextAlignment);
+			(FrameAlignment)TextAlignment);
 	}
 }
 
@@ -123,3 +125,4 @@ void GUILabel::WriteToSavegame(Stream *out) const {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

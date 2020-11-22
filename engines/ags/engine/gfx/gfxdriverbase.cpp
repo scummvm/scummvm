@@ -27,6 +27,8 @@
 #include "gfx/gfxdriverbase.h"
 #include "gfx/gfx_util.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 namespace AGS {
@@ -68,7 +70,7 @@ Rect GraphicsDriverBase::GetRenderDestination() const {
 }
 
 void GraphicsDriverBase::BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-        const Point offset, GlobalFlipType flip, PBitmap surface) {
+	const Point offset, GlobalFlipType flip, PBitmap surface) {
 	_actSpriteBatch++;
 	_spriteBatchDesc.push_back(SpriteBatchDesc(viewport, transform, offset, flip, surface));
 	InitSpriteBatch(_actSpriteBatch, _spriteBatchDesc[_actSpriteBatch]);
@@ -283,14 +285,14 @@ __inline void get_pixel_if_not_transparent32(unsigned int *pixel, unsigned int *
 
 
 void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const bool has_alpha, const TextureTile *tile, const VideoMemDDB *target,
-        char *dst_ptr, const int dst_pitch, const bool usingLinearFiltering) {
+	char *dst_ptr, const int dst_pitch, const bool usingLinearFiltering) {
 	const int src_depth = bitmap->GetColorDepth();
 	bool lastPixelWasTransparent = false;
 	for (int y = 0; y < tile->height; y++) {
 		lastPixelWasTransparent = false;
 		const uint8_t *scanline_before = bitmap->GetScanLine(y + tile->y - 1);
-		const uint8_t *scanline_at     = bitmap->GetScanLine(y + tile->y);
-		const uint8_t *scanline_after  = bitmap->GetScanLine(y + tile->y + 1);
+		const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
+		const uint8_t *scanline_after = bitmap->GetScanLine(y + tile->y + 1);
 		unsigned int *memPtrLong = (unsigned int *)dst_ptr;
 
 		for (int x = 0; x < tile->width; x++) {
@@ -401,7 +403,7 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMem(const Bitmap *bitmap, const boo
 }
 
 void VideoMemoryGraphicsDriver::BitmapToVideoMemOpaque(const Bitmap *bitmap, const bool has_alpha, const TextureTile *tile, const VideoMemDDB *target,
-        char *dst_ptr, const int dst_pitch) {
+	char *dst_ptr, const int dst_pitch) {
 	const int src_depth = bitmap->GetColorDepth();
 	for (int y = 0; y < tile->height; y++) {
 		const uint8_t *scanline_at = bitmap->GetScanLine(y + tile->y);
@@ -430,3 +432,4 @@ void VideoMemoryGraphicsDriver::BitmapToVideoMemOpaque(const Bitmap *bitmap, con
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3

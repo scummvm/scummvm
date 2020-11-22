@@ -25,6 +25,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+namespace AGS3 {
+
 DynObjectRef ScriptString::CreateString(const char *fromText) {
 	return CreateNewScriptStringObj(fromText);
 }
@@ -72,3 +74,5 @@ ScriptString::ScriptString(const char *fromText) {
 	text = (char *)malloc(strlen(fromText) + 1);
 	strcpy(text, fromText);
 }
+
+} // namespace AGS3

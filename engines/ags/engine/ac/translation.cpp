@@ -36,6 +36,8 @@
 #include "util/stream.h"
 #include "core/assetmanager.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetup usetup;
@@ -71,7 +73,7 @@ bool init_translation(const String &lang, const String &fallback_lang, bool quit
 	// in case it's inside a library file, record the offset
 	lang_offs_start = language_file->GetPosition();
 
-	char transsig[16] = {0};
+	char transsig[16] = { 0 };
 	language_file->Read(transsig, 15);
 	if (strcmp(transsig, "AGSTranslation") != 0) {
 		Debug::Printf(kDbgMsg_Error, "Translation signature mismatch: %s", transFileName);
@@ -136,7 +138,7 @@ bool parse_translation(Stream *language_file, String &parse_error) {
 			read_string_decrypt(language_file, wasgamename, sizeof(wasgamename));
 			if ((uidfrom != game.uniqueid) || (strcmp(wasgamename, game.gamename) != 0)) {
 				parse_error.Format("The translation file is not compatible with this game. The translation is designed for '%s'.",
-				                   wasgamename);
+					wasgamename);
 				return false;
 			}
 		} else if (blockType == 3) {
@@ -171,3 +173,5 @@ bool parse_translation(Stream *language_file, String &parse_error) {
 
 	return true;
 }
+
+} // namespace AGS3

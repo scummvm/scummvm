@@ -28,6 +28,8 @@
 
 #include "ac/gamestructdefines.h"
 
+namespace AGS3 {
+
 extern void RegisterAudioChannelAPI();
 extern void RegisterAudioClipAPI();
 extern void RegisterButtonAPI();
@@ -105,3 +107,5 @@ void setup_script_exports(ScriptAPIVersion base_api, ScriptAPIVersion compat_api
 
 	RegisterStaticObjects();
 }
+
+} // namespace AGS3

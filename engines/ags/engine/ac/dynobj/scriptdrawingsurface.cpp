@@ -30,6 +30,8 @@
 #include "game/roomstruct.h"
 #include "gfx/bitmap.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern RoomStruct thisroom;
@@ -129,3 +131,5 @@ ScriptDrawingSurface::ScriptDrawingSurface() {
 		highResCoordinates = 1;
 	}
 }
+
+} // namespace AGS3

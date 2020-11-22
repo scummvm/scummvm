@@ -26,6 +26,8 @@
 #include "util/stream.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
+
 std::vector<AGS::Shared::GUIListBox> guilist;
 int numguilist = 0;
 
@@ -96,7 +98,7 @@ void GUIListBox::Clear() {
 }
 
 void GUIListBox::Draw(Common::Bitmap *ds) {
-	const int width  = Width - 1;
+	const int width = Width - 1;
 	const int height = Height - 1;
 	const int pixel_size = get_fixed_pixel_size(1);
 
@@ -115,7 +117,7 @@ void GUIListBox::Draw(Common::Bitmap *ds) {
 	SetFont(Font);
 
 	// draw the scroll bar in if necessary
-	if (ItemCount > VisibleItemCount && IsBorderShown() && AreArrowsShown()) {
+	if (ItemCount > VisibleItemCount &&IsBorderShown() && AreArrowsShown()) {
 		int xstrt, ystrt;
 		ds->DrawRect(Rect(X + width - get_fixed_pixel_size(7), Y, (X + (pixel_size - 1) + width) - get_fixed_pixel_size(7), Y + height), draw_color);
 		ds->DrawRect(Rect(X + width - get_fixed_pixel_size(7), Y + height / 2, X + width, Y + height / 2 + (pixel_size - 1)), draw_color);
@@ -125,14 +127,14 @@ void GUIListBox::Draw(Common::Bitmap *ds) {
 
 		draw_color = ds->GetCompatibleColor(TextColor);
 		ds->DrawTriangle(Triangle(xstrt, ystrt, xstrt + get_fixed_pixel_size(4), ystrt,
-		                          xstrt + get_fixed_pixel_size(2),
-		                          ystrt + get_fixed_pixel_size(5)), draw_color);
+			xstrt + get_fixed_pixel_size(2),
+			ystrt + get_fixed_pixel_size(5)), draw_color);
 
 		ystrt = Y + 3;
 		ds->DrawTriangle(Triangle(xstrt, ystrt + get_fixed_pixel_size(5),
-		                          xstrt + get_fixed_pixel_size(4),
-		                          ystrt + get_fixed_pixel_size(5),
-		                          xstrt + get_fixed_pixel_size(2), ystrt), draw_color);
+			xstrt + get_fixed_pixel_size(4),
+			ystrt + get_fixed_pixel_size(5),
+			xstrt + get_fixed_pixel_size(2), ystrt), draw_color);
 
 		right_hand_edge -= get_fixed_pixel_size(7);
 	}
@@ -162,7 +164,7 @@ void GUIListBox::Draw(Common::Bitmap *ds) {
 		PrepareTextToDraw(Items[item_index]);
 
 		GUI::DrawTextAlignedHor(ds, _textToDraw, Font, text_color, X + 1 + pixel_size, right_hand_edge, at_y + 1,
-		                        (FrameAlignment)TextAlignment);
+			(FrameAlignment)TextAlignment);
 	}
 
 	DrawItemsUnfix();
@@ -327,7 +329,7 @@ void GUIListBox::ReadFromFile(Stream *in, GuiVersion gui_version) {
 	}
 
 	if (gui_version >= kGuiVersion_272d && gui_version < kGuiVersion_350 &&
-	        (ListBoxFlags & kListBox_SvgIndex)) {
+		(ListBoxFlags & kListBox_SvgIndex)) {
 		// NOTE: reading into actual variables only for old savegame support
 		for (int i = 0; i < ItemCount; ++i)
 			SavedGameIndex[i] = in->ReadInt16();
@@ -392,3 +394,4 @@ void GUIListBox::WriteToSavegame(Stream *out) const {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

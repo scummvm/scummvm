@@ -39,6 +39,8 @@
 #include "script/script.h"
 #include "util/math.h"
 
+namespace AGS3 {
+
 using namespace Shared;
 
 extern GameState play;
@@ -55,9 +57,9 @@ extern RoomStruct thisroom;
 
 void SetAmbientTint(int red, int green, int blue, int opacity, int luminance) {
 	if ((red < 0) || (green < 0) || (blue < 0) ||
-	        (red > 255) || (green > 255) || (blue > 255) ||
-	        (opacity < 0) || (opacity > 100) ||
-	        (luminance < 0) || (luminance > 100))
+		(red > 255) || (green > 255) || (blue > 255) ||
+		(opacity < 0) || (opacity > 100) ||
+		(luminance < 0) || (luminance > 100))
 		quit("!SetTint: invalid parameter. R,G,B must be 0-255, opacity & luminance 0-100");
 
 	debug_script_log("Set ambient tint RGB(%d,%d,%d) %d%%", red, green, blue, opacity);
@@ -100,7 +102,7 @@ void NewRoom(int nrnum) {
 			play.stop_dialog_at_end = DIALOG_NEWROOM + nrnum;
 		else {
 			quitprintf("!NewRoom: two NewRoom/RunDialog/StopDialog requests within dialog; last was called in \"%s\", line %d",
-			           last_in_dialog_request_script_pos.Section.GetCStr(), last_in_dialog_request_script_pos.Line);
+				last_in_dialog_request_script_pos.Section.GetCStr(), last_in_dialog_request_script_pos.Line);
 		}
 		return;
 	}
@@ -220,3 +222,5 @@ void SetBackgroundFrame(int frnum) {
 int GetBackgroundFrame() {
 	return play.bg_frame;
 }
+
+} // namespace AGS3

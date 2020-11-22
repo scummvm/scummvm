@@ -81,6 +81,9 @@
 #include "media/audio/audio_system.h"
 
 #include "ac/dynobj/scriptstring.h"
+
+namespace AGS3 {
+
 extern ScriptString myScriptStringImpl;
 
 // void (char*texx, ...)
@@ -2691,3 +2694,5 @@ void RegisterGlobalAPI() {
 	ccAddExternalFunctionForPlugin("WaitKey", (void *)WaitKey);
 	ccAddExternalFunctionForPlugin("WaitMouseKey", (void *)WaitMouseKey);
 }
+
+} // namespace AGS3

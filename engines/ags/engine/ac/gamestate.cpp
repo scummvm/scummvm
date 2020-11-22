@@ -39,6 +39,8 @@
 #include "util/alignedstream.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -367,7 +369,7 @@ bool GameState::IsNonBlockingVoiceSpeech() const {
 
 bool GameState::ShouldPlayVoiceSpeech() const {
 	return !play.fast_forward &&
-	       (play.want_speech >= 1) && (!ResPaths.SpeechPak.Name.IsEmpty());
+		(play.want_speech >= 1) && (!ResPaths.SpeechPak.Name.IsEmpty());
 }
 
 void GameState::ReadFromSavegame(Common::Stream *in, GameStateSvgVersion svg_ver, RestoredData &r_data) {
@@ -848,6 +850,8 @@ HorAlignment ConvertLegacyScriptAlignment(LegacyScriptAlignment align) {
 // Alignment constants in the Script API and still support old version.
 HorAlignment ReadScriptAlignment(int32_t align) {
 	return game.options[OPT_BASESCRIPTAPI] < kScriptAPI_v350 ?
-	       ConvertLegacyScriptAlignment((LegacyScriptAlignment)align) :
-	       (HorAlignment)align;
+		ConvertLegacyScriptAlignment((LegacyScriptAlignment)align) :
+		(HorAlignment)align;
 }
+
+} // namespace AGS3

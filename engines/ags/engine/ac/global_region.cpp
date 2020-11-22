@@ -31,6 +31,7 @@
 #include "gfx/bitmap.h"
 #include "script/script.h"
 
+namespace AGS3 {
 
 using namespace AGS::Shared;
 
@@ -70,7 +71,7 @@ void SetAreaLightLevel(int area, int brightness) {
 	if (brightness > 100) brightness = 100;
 	thisroom.Regions[area].Light = brightness;
 	// disable RGB tint for this area
-	thisroom.Regions[area].Tint  = 0;
+	thisroom.Regions[area].Tint = 0;
 	debug_script_log("Region %d light level set to %d", area, brightness);
 }
 
@@ -79,7 +80,7 @@ void SetRegionTint(int area, int red, int green, int blue, int amount, int lumin
 		quit("!SetRegionTint: invalid region");
 
 	if ((red < 0) || (red > 255) || (green < 0) || (green > 255) ||
-	        (blue < 0) || (blue > 255)) {
+		(blue < 0) || (blue > 255)) {
 		quit("!SetRegionTint: RGB values must be 0-255");
 	}
 
@@ -100,9 +101,9 @@ void SetRegionTint(int area, int red, int green, int blue, int amount, int lumin
 	blue -= 100;*/
 
 	thisroom.Regions[area].Tint = (red & 0xFF) |
-	                              ((green & 0xFF) << 8) |
-	                              ((blue & 0XFF) << 16) |
-	                              ((amount & 0xFF) << 24);
+		((green & 0xFF) << 8) |
+		((blue & 0XFF) << 16) |
+		((amount & 0xFF) << 24);
 	thisroom.Regions[area].Light = (luminance * 25) / 10;
 }
 
@@ -165,3 +166,5 @@ void RunRegionInteraction(int regnum, int mood) {
 	evblockbasename = oldbasename;
 	evblocknum = oldblocknum;
 }
+
+} // namespace AGS3

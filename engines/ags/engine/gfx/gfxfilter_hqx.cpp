@@ -24,6 +24,7 @@
 #include "gfx/gfxfilter_hqx.h"
 #include "gfx/hq2x3x.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 namespace ALSW {
@@ -79,7 +80,7 @@ Bitmap *HqxGfxFilter::ShutdownAndReturnRealScreen() {
 Bitmap *HqxGfxFilter::PreRenderPass(Bitmap *toRender) {
 	_hqxScalingBuffer->Acquire();
 	_pfnHqx(toRender->GetDataForWriting(), _hqxScalingBuffer->GetDataForWriting(),
-	        toRender->GetWidth(), toRender->GetHeight(), _hqxScalingBuffer->GetLineLength());
+		toRender->GetWidth(), toRender->GetHeight(), _hqxScalingBuffer->GetLineLength());
 	_hqxScalingBuffer->Release();
 	return _hqxScalingBuffer;
 }
@@ -87,3 +88,4 @@ Bitmap *HqxGfxFilter::PreRenderPass(Bitmap *toRender) {
 } // namespace ALSW
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3

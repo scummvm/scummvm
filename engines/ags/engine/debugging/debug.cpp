@@ -48,6 +48,8 @@
 #include <winalleg.h>
 #endif
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -165,8 +167,8 @@ MessageType get_messagetype_from_string(const String &mt) {
 typedef std::pair<CommonDebugGroup, MessageType> DbgGroupOption;
 
 void apply_log_config(const ConfigTree &cfg, const String &log_id,
-                      bool def_enabled,
-                      std::initializer_list<DbgGroupOption> def_opts) {
+	bool def_enabled,
+	std::initializer_list<DbgGroupOption> def_opts) {
 	String value = INIreadstring(cfg, "log", log_id);
 	if (value.IsEmpty() && !def_enabled)
 		return;
@@ -231,32 +233,32 @@ void apply_debug_config(const ConfigTree &cfg) {
 	apply_log_config(cfg, OutputSystemID, /* defaults */ true, { DbgGroupOption(kDbgGroup_Main, kDbgMsg_Info) });
 	bool legacy_log_enabled = INIreadint(cfg, "misc", "log", 0) != 0;
 	apply_log_config(cfg, OutputFileID,
-	                 /* defaults */
-	legacy_log_enabled, {
-		DbgGroupOption(kDbgGroup_Main, kDbgMsg_All),
-		DbgGroupOption(kDbgGroup_Game, kDbgMsg_Info),
-		DbgGroupOption(kDbgGroup_Script, kDbgMsg_All),
-#ifdef DEBUG_SPRITECACHE
-		DbgGroupOption(kDbgGroup_SprCache, kDbgMsg_All),
-#else
-		DbgGroupOption(kDbgGroup_SprCache, kDbgMsg_Info),
-#endif
-#ifdef DEBUG_MANAGED_OBJECTS
-		DbgGroupOption(kDbgGroup_ManObj, kDbgMsg_All),
-#else
-		DbgGroupOption(kDbgGroup_ManObj, kDbgMsg_Info),
-#endif
-	});
+		/* defaults */
+		legacy_log_enabled, {
+			DbgGroupOption(kDbgGroup_Main, kDbgMsg_All),
+			DbgGroupOption(kDbgGroup_Game, kDbgMsg_Info),
+			DbgGroupOption(kDbgGroup_Script, kDbgMsg_All),
+	#ifdef DEBUG_SPRITECACHE
+			DbgGroupOption(kDbgGroup_SprCache, kDbgMsg_All),
+	#else
+			DbgGroupOption(kDbgGroup_SprCache, kDbgMsg_Info),
+	#endif
+	#ifdef DEBUG_MANAGED_OBJECTS
+			DbgGroupOption(kDbgGroup_ManObj, kDbgMsg_All),
+	#else
+			DbgGroupOption(kDbgGroup_ManObj, kDbgMsg_Info),
+	#endif
+		});
 
 	// Init game console if the game was compiled in Debug mode
 	if (game.options[OPT_DEBUGMODE] != 0) {
 		apply_log_config(cfg, OutputGameConsoleID,
-		                 /* defaults */
-		true, {
-			DbgGroupOption(kDbgGroup_Main, kDbgMsg_All),
-			DbgGroupOption(kDbgGroup_Game, kDbgMsg_All),
-			DbgGroupOption(kDbgGroup_Script, kDbgMsg_All)
-		});
+			/* defaults */
+			true, {
+				DbgGroupOption(kDbgGroup_Main, kDbgMsg_All),
+				DbgGroupOption(kDbgGroup_Game, kDbgMsg_All),
+				DbgGroupOption(kDbgGroup_Script, kDbgMsg_All)
+			});
 		debug_set_console(true);
 	}
 
@@ -430,7 +432,7 @@ int check_for_messages_from_editor() {
 			free(msg);
 			return 2;
 		} else if ((strncmp(msgPtr, "SETBREAK", 8) == 0) ||
-		           (strncmp(msgPtr, "DELBREAK", 8) == 0)) {
+			(strncmp(msgPtr, "DELBREAK", 8) == 0)) {
 			bool isDelete = (msgPtr[0] == 'D');
 			// Format:  SETBREAK $scriptname$lineNumber$
 			msgPtr += 10;
@@ -449,7 +451,7 @@ int check_for_messages_from_editor() {
 			if (isDelete) {
 				for (i = 0; i < numBreakpoints; i++) {
 					if ((breakpoints[i].lineNumber == lineNumber) &&
-					        (strcmp(breakpoints[i].scriptName, scriptNameBuf) == 0)) {
+						(strcmp(breakpoints[i].scriptName, scriptNameBuf) == 0)) {
 						numBreakpoints--;
 						breakpoints.erase(breakpoints.begin() + i);
 						break;
@@ -548,7 +550,7 @@ void scriptDebugHook(ccInstance *ccinst, int linenum) {
 
 	for (int i = 0; i < numBreakpoints; i++) {
 		if ((breakpoints[i].lineNumber == linenum) &&
-		        (strcmp(breakpoints[i].scriptName, scriptName) == 0)) {
+			(strcmp(breakpoints[i].scriptName, scriptName) == 0)) {
 			break_into_debugger();
 			break;
 		}
@@ -570,5 +572,6 @@ void check_debug_keys() {
 		}
 
 	}
-
 }
+
+} // namespace AGS3

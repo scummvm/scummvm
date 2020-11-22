@@ -34,6 +34,8 @@
 #include "gfx/graphicsdriver.h"
 #include "debug/debug_log.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -113,10 +115,10 @@ int loadgamedialog() {
 
 	int handl = CSCIDrawWindow(boxleft, boxtop, wnd_width, wnd_height);
 	int ctrlok =
-	    CSCICreateControl(CNT_PUSHBUTTON | CNF_DEFAULT, 135, 5, 60, 10, get_global_message(MSG_RESTORE));
+		CSCICreateControl(CNT_PUSHBUTTON | CNF_DEFAULT, 135, 5, 60, 10, get_global_message(MSG_RESTORE));
 	int ctrlcancel =
-	    CSCICreateControl(CNT_PUSHBUTTON | CNF_CANCEL, 135, 5 + buttonhit, 60, 10,
-	                      get_global_message(MSG_CANCEL));
+		CSCICreateControl(CNT_PUSHBUTTON | CNF_CANCEL, 135, 5 + buttonhit, 60, 10,
+			get_global_message(MSG_CANCEL));
 	int ctrllist = CSCICreateControl(CNT_LISTBOX, 10, 30, 120, 80, nullptr);
 	int ctrltex1 = CSCICreateControl(CNT_LABEL, 10, 5, 120, 0, get_global_message(MSG_SELECTLOAD));
 	CSCISendControlMessage(ctrllist, CLB_CLEAR, 0, 0);
@@ -168,8 +170,8 @@ int savegamedialog() {
 
 	int handl = CSCIDrawWindow(boxleft, boxtop, wnd_width, wnd_height);
 	int ctrlcancel =
-	    CSCICreateControl(CNT_PUSHBUTTON | CNF_CANCEL, 135, 5 + buttonhit, 60, 10,
-	                      get_global_message(MSG_CANCEL));
+		CSCICreateControl(CNT_PUSHBUTTON | CNF_CANCEL, 135, 5 + buttonhit, 60, 10,
+			get_global_message(MSG_CANCEL));
 	int ctrllist = CSCICreateControl(CNT_LISTBOX, 10, 40, 120, 80, nullptr);
 	int ctrltbox = 0;
 
@@ -210,17 +212,17 @@ int savegamedialog() {
 				if (toomanygames) {
 					int nwhand = CSCIDrawWindow(boxleft + 5, boxtop + 20, 190, 65);
 					int lbl1 =
-					    CSCICreateControl(CNT_LABEL, 15, 5, 160, 0, get_global_message(MSG_REPLACEWITH1));
+						CSCICreateControl(CNT_LABEL, 15, 5, 160, 0, get_global_message(MSG_REPLACEWITH1));
 					int lbl2 = CSCICreateControl(CNT_LABEL, 25, 14, 160, 0, bufTemp);
 					int lbl3 =
-					    CSCICreateControl(CNT_LABEL, 15, 25, 160, 0, get_global_message(MSG_REPLACEWITH2));
+						CSCICreateControl(CNT_LABEL, 15, 25, 160, 0, get_global_message(MSG_REPLACEWITH2));
 					int txt1 = CSCICreateControl(CNT_TEXTBOX, 15, 35, 160, 0, bufTemp);
 					int btnOk =
-					    CSCICreateControl(CNT_PUSHBUTTON | CNF_DEFAULT, 25, 50, 60, 10,
-					                      get_global_message(MSG_REPLACE));
+						CSCICreateControl(CNT_PUSHBUTTON | CNF_DEFAULT, 25, 50, 60, 10,
+							get_global_message(MSG_REPLACE));
 					int btnCancel =
-					    CSCICreateControl(CNT_PUSHBUTTON | CNF_CANCEL, 95, 50, 60, 10,
-					                      get_global_message(MSG_CANCEL));
+						CSCICreateControl(CNT_PUSHBUTTON | CNF_CANCEL, 95, 50, 60, 10,
+							get_global_message(MSG_CANCEL));
 
 					CSCIMessage cmes;
 					do {
@@ -413,7 +415,7 @@ int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **r
 	int handl = CSCIDrawWindow(boxleft, boxtop, wnd_width, wnd_height);
 	int ctrllist = CSCICreateControl(CNT_LISTBOX, 10, 40, 220, 100, nullptr);
 	int ctrlcancel =
-	    CSCICreateControl(CNT_PUSHBUTTON | CNF_CANCEL, 80, 145, 60, 10, "Cancel");
+		CSCICreateControl(CNT_PUSHBUTTON | CNF_CANCEL, 80, 145, 60, 10, "Cancel");
 
 	CSCISendControlMessage(ctrllist, CLB_CLEAR, 0, 0);    // clear the list box
 	for (int aa = 0; aa < numRooms; aa++) {
@@ -510,3 +512,5 @@ int quitdialog() {
 	strcpy(playbut, get_global_message(MSG_PLAYBUTTON));
 	return myscimessagebox(get_global_message(MSG_QUITDIALOG), quitbut, playbut);
 }
+
+} // namespace AGS3

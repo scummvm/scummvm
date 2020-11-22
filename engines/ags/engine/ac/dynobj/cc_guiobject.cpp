@@ -25,6 +25,8 @@
 #include "gui/guimain.h"
 #include "gui/guiobject.h"
 
+namespace AGS3 {
+
 using AGS::Shared::GUIObject;
 
 // return the type name of the object
@@ -48,3 +50,5 @@ void CCGUIObject::Unserialize(int index, const char *serializedData, int dataSiz
 	int objnum = UnserializeInt();
 	ccRegisterUnserializedObject(index, guis[guinum].GetControl(objnum), this);
 }
+
+} // namespace AGS3

@@ -32,6 +32,7 @@
 #include "util/path.h"
 #include "stdio_compat.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -40,9 +41,9 @@ namespace Directory {
 bool CreateDirectory(const String &path) {
 	return mkdir(path
 #if ! AGS_PLATFORM_OS_WINDOWS
-	             , 0755
+		, 0755
 #endif
-	            ) == 0 || errno == EEXIST;
+	) == 0 || errno == EEXIST;
 }
 
 bool CreateAllDirectories(const String &parent, const String &path) {
@@ -83,3 +84,4 @@ String GetCurrentDirectory() {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

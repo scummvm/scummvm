@@ -37,6 +37,8 @@
 #include "ac/spritecache.h"
 #include "util/compress.h"
 
+namespace AGS3 {
+
 //=============================================================================
 // Engine-specific implementation split out of sprcache.cpp
 //=============================================================================
@@ -50,3 +52,5 @@ void SpriteCache::InitNullSpriteParams(sprkey_t index) {
 	_spriteData[index].Size = _spriteData[0].Size;
 	_spriteData[index].Flags = SPRCACHEFLAG_REMAPPED;
 }
+
+} // namespace AGS3

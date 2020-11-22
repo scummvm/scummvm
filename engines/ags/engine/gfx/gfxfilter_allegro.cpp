@@ -22,6 +22,7 @@
 
 #include "gfx/gfxfilter_allegro.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 namespace ALSW {
@@ -135,8 +136,8 @@ void AllegroGfxFilter::GetCopyOfScreenIntoBitmap(Bitmap *copyBitmap, bool copy_w
 			// so copy the screen to a buffer first.
 			realScreenSizedBuffer->Blit(realScreen, 0, 0);
 			copyBitmap->StretchBlt(realScreenSizedBuffer,
-			                       _dstRect,
-			                       RectWH(0, 0, copyBitmap->GetWidth(), copyBitmap->GetHeight()));
+				_dstRect,
+				RectWH(0, 0, copyBitmap->GetWidth(), copyBitmap->GetHeight()));
 		}
 	} else if (!lastBlitFrom)
 		copyBitmap->Fill(0);
@@ -144,8 +145,8 @@ void AllegroGfxFilter::GetCopyOfScreenIntoBitmap(Bitmap *copyBitmap, bool copy_w
 		copyBitmap->Blit(realScreen, lastBlitX, lastBlitY, 0, 0, copyBitmap->GetWidth(), copyBitmap->GetHeight());
 	else {
 		copyBitmap->StretchBlt(lastBlitFrom,
-		                       RectWH(0, 0, lastBlitFrom->GetWidth(), lastBlitFrom->GetHeight()),
-		                       RectWH(0, 0, copyBitmap->GetWidth(), copyBitmap->GetHeight()));
+			RectWH(0, 0, lastBlitFrom->GetWidth(), lastBlitFrom->GetHeight()),
+			RectWH(0, 0, copyBitmap->GetWidth(), copyBitmap->GetHeight()));
 	}
 }
 
@@ -157,3 +158,4 @@ Bitmap *AllegroGfxFilter::PreRenderPass(Bitmap *toRender) {
 } // namespace ALSW
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3

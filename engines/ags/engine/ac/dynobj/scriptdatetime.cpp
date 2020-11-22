@@ -22,6 +22,8 @@
 
 #include "ac/dynobj/scriptdatetime.h"
 
+namespace AGS3 {
+
 int ScriptDateTime::Dispose(const char *address, bool force) {
 	// always dispose a DateTime
 	delete this;
@@ -61,3 +63,5 @@ ScriptDateTime::ScriptDateTime() {
 	hour = minute = second = 0;
 	rawUnixTime = 0;
 }
+
+} // namespace AGS3

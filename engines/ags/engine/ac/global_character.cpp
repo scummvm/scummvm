@@ -47,6 +47,8 @@
 #include "main/game_run.h"
 #include "script/script.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 
@@ -115,8 +117,8 @@ int GetCharacterWidth(int ww) {
 
 	if (charextra[ww].width < 1) {
 		if ((char1->view < 0) ||
-		        (char1->loop >= views[char1->view].numLoops) ||
-		        (char1->frame >= views[char1->view].loops[char1->loop].numFrames)) {
+			(char1->loop >= views[char1->view].numLoops) ||
+			(char1->frame >= views[char1->view].loops[char1->loop].numFrames)) {
 			debug_script_warn("GetCharacterWidth: Character %s has invalid frame: view %d, loop %d, frame %d", char1->scrname, char1->view + 1, char1->loop, char1->frame);
 			return data_to_game_coord(4);
 		}
@@ -131,8 +133,8 @@ int GetCharacterHeight(int charid) {
 
 	if (charextra[charid].height < 1) {
 		if ((char1->view < 0) ||
-		        (char1->loop >= views[char1->view].numLoops) ||
-		        (char1->frame >= views[char1->view].loops[char1->loop].numFrames)) {
+			(char1->loop >= views[char1->view].numLoops) ||
+			(char1->frame >= views[char1->view].loops[char1->loop].numFrames)) {
 			debug_script_warn("GetCharacterHeight: Character %s has invalid frame: view %d, loop %d, frame %d", char1->scrname, char1->view + 1, char1->loop, char1->frame);
 			return data_to_game_coord(2);
 		}
@@ -555,10 +557,12 @@ int DisplaySpeechBackground(int charid, const char *speel) {
 	}
 
 	int ovrl = CreateTextOverlay(OVR_AUTOPLACE, charid, play.GetUIViewport().GetWidth() / 2, FONT_SPEECH,
-	                             -game.chars[charid].talkcolor, get_translation(speel), DISPLAYTEXT_NORMALOVERLAY);
+		-game.chars[charid].talkcolor, get_translation(speel), DISPLAYTEXT_NORMALOVERLAY);
 
 	int scid = find_overlay_of_type(ovrl);
 	screenover[scid].bgSpeechForChar = charid;
 	screenover[scid].timeout = GetTextDisplayTime(speel, 1);
 	return ovrl;
 }
+
+} // namespace AGS3

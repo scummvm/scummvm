@@ -31,6 +31,8 @@
 #include "platform/base/agsplatformdriver.h"
 #include "ac/timer.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -133,106 +135,106 @@ int ags_getch() {
 		// the complete scan code list is not here.
 
 		switch (scancode) {
-		case __allegro_KEY_F1 :
-			gott = eAGSKeyCodeF1 ;
+		case __allegro_KEY_F1:
+			gott = eAGSKeyCodeF1;
 			break;
-		case __allegro_KEY_F2 :
-			gott = eAGSKeyCodeF2 ;
+		case __allegro_KEY_F2:
+			gott = eAGSKeyCodeF2;
 			break;
-		case __allegro_KEY_F3 :
-			gott = eAGSKeyCodeF3 ;
+		case __allegro_KEY_F3:
+			gott = eAGSKeyCodeF3;
 			break;
-		case __allegro_KEY_F4 :
-			gott = eAGSKeyCodeF4 ;
+		case __allegro_KEY_F4:
+			gott = eAGSKeyCodeF4;
 			break;
-		case __allegro_KEY_F5 :
-			gott = eAGSKeyCodeF5 ;
+		case __allegro_KEY_F5:
+			gott = eAGSKeyCodeF5;
 			break;
-		case __allegro_KEY_F6 :
-			gott = eAGSKeyCodeF6 ;
+		case __allegro_KEY_F6:
+			gott = eAGSKeyCodeF6;
 			break;
-		case __allegro_KEY_F7 :
-			gott = eAGSKeyCodeF7 ;
+		case __allegro_KEY_F7:
+			gott = eAGSKeyCodeF7;
 			break;
-		case __allegro_KEY_F8 :
-			gott = eAGSKeyCodeF8 ;
+		case __allegro_KEY_F8:
+			gott = eAGSKeyCodeF8;
 			break;
-		case __allegro_KEY_F9 :
-			gott = eAGSKeyCodeF9 ;
+		case __allegro_KEY_F9:
+			gott = eAGSKeyCodeF9;
 			break;
-		case __allegro_KEY_F10 :
-			gott = eAGSKeyCodeF10 ;
+		case __allegro_KEY_F10:
+			gott = eAGSKeyCodeF10;
 			break;
-		case __allegro_KEY_F11 :
-			gott = eAGSKeyCodeF11 ;
+		case __allegro_KEY_F11:
+			gott = eAGSKeyCodeF11;
 			break;
-		case __allegro_KEY_F12 :
-			gott = eAGSKeyCodeF12 ;
-			break;
-
-		case __allegro_KEY_INSERT :
-			gott = eAGSKeyCodeInsert ;
-			break;
-		case __allegro_KEY_DEL :
-			gott = eAGSKeyCodeDelete ;
-			break;
-		case __allegro_KEY_HOME :
-			gott = eAGSKeyCodeHome ;
-			break;
-		case __allegro_KEY_END :
-			gott = eAGSKeyCodeEnd ;
-			break;
-		case __allegro_KEY_PGUP :
-			gott = eAGSKeyCodePageUp ;
-			break;
-		case __allegro_KEY_PGDN :
-			gott = eAGSKeyCodePageDown ;
-			break;
-		case __allegro_KEY_LEFT :
-			gott = eAGSKeyCodeLeftArrow ;
-			break;
-		case __allegro_KEY_RIGHT :
-			gott = eAGSKeyCodeRightArrow ;
-			break;
-		case __allegro_KEY_UP :
-			gott = eAGSKeyCodeUpArrow ;
-			break;
-		case __allegro_KEY_DOWN :
-			gott = eAGSKeyCodeDownArrow ;
+		case __allegro_KEY_F12:
+			gott = eAGSKeyCodeF12;
 			break;
 
-		case __allegro_KEY_0_PAD :
-			gott = eAGSKeyCodeInsert ;
+		case __allegro_KEY_INSERT:
+			gott = eAGSKeyCodeInsert;
 			break;
-		case __allegro_KEY_1_PAD :
-			gott = eAGSKeyCodeEnd ;
+		case __allegro_KEY_DEL:
+			gott = eAGSKeyCodeDelete;
 			break;
-		case __allegro_KEY_2_PAD :
-			gott = eAGSKeyCodeDownArrow ;
+		case __allegro_KEY_HOME:
+			gott = eAGSKeyCodeHome;
 			break;
-		case __allegro_KEY_3_PAD :
-			gott = eAGSKeyCodePageDown ;
+		case __allegro_KEY_END:
+			gott = eAGSKeyCodeEnd;
 			break;
-		case __allegro_KEY_4_PAD :
-			gott = eAGSKeyCodeLeftArrow ;
+		case __allegro_KEY_PGUP:
+			gott = eAGSKeyCodePageUp;
 			break;
-		case __allegro_KEY_5_PAD :
-			gott = eAGSKeyCodeNumPad5 ;
+		case __allegro_KEY_PGDN:
+			gott = eAGSKeyCodePageDown;
 			break;
-		case __allegro_KEY_6_PAD :
-			gott = eAGSKeyCodeRightArrow ;
+		case __allegro_KEY_LEFT:
+			gott = eAGSKeyCodeLeftArrow;
 			break;
-		case __allegro_KEY_7_PAD :
-			gott = eAGSKeyCodeHome ;
+		case __allegro_KEY_RIGHT:
+			gott = eAGSKeyCodeRightArrow;
 			break;
-		case __allegro_KEY_8_PAD :
-			gott = eAGSKeyCodeUpArrow ;
+		case __allegro_KEY_UP:
+			gott = eAGSKeyCodeUpArrow;
 			break;
-		case __allegro_KEY_9_PAD :
-			gott = eAGSKeyCodePageUp ;
+		case __allegro_KEY_DOWN:
+			gott = eAGSKeyCodeDownArrow;
 			break;
-		case __allegro_KEY_DEL_PAD :
-			gott = eAGSKeyCodeDelete ;
+
+		case __allegro_KEY_0_PAD:
+			gott = eAGSKeyCodeInsert;
+			break;
+		case __allegro_KEY_1_PAD:
+			gott = eAGSKeyCodeEnd;
+			break;
+		case __allegro_KEY_2_PAD:
+			gott = eAGSKeyCodeDownArrow;
+			break;
+		case __allegro_KEY_3_PAD:
+			gott = eAGSKeyCodePageDown;
+			break;
+		case __allegro_KEY_4_PAD:
+			gott = eAGSKeyCodeLeftArrow;
+			break;
+		case __allegro_KEY_5_PAD:
+			gott = eAGSKeyCodeNumPad5;
+			break;
+		case __allegro_KEY_6_PAD:
+			gott = eAGSKeyCodeRightArrow;
+			break;
+		case __allegro_KEY_7_PAD:
+			gott = eAGSKeyCodeHome;
+			break;
+		case __allegro_KEY_8_PAD:
+			gott = eAGSKeyCodeUpArrow;
+			break;
+		case __allegro_KEY_9_PAD:
+			gott = eAGSKeyCodePageUp;
+			break;
+		case __allegro_KEY_DEL_PAD:
+			gott = eAGSKeyCodeDelete;
 			break;
 
 		default:
@@ -268,3 +270,5 @@ void ags_wait_until_keypress() {
 	}
 	ags_getch();
 }
+
+} // namespace AGS3

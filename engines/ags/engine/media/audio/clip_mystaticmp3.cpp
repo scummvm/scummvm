@@ -31,6 +31,8 @@
 
 #include "platform/base/agsplatformdriver.h"
 
+namespace AGS3 {
+
 extern int our_eip;
 
 // ALMP3 functions are not reentrant! This mutex should be locked before calling any
@@ -162,4 +164,6 @@ MYSTATICMP3::MYSTATICMP3() : SOUNDCLIP() {
 	mp3buffer = nullptr;
 }
 
-#endif // !NO_MP3_PLAYER
+} // namespace AGS3
+
+#endif

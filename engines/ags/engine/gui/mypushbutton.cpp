@@ -33,6 +33,8 @@
 #include "platform/base/agsplatformdriver.h"
 #include "ac/timer.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Bitmap;
 
 extern int windowbackgroundcolor, pushbuttondarkcolor;
@@ -109,3 +111,5 @@ int MyPushButton::pressedon(int mousex, int mousey) {
 int MyPushButton::processmessage(int mcode, int wParam, long lParam) {
 	return -1;                  // doesn't support messages
 }
+
+} // namespace AGS3

@@ -38,6 +38,8 @@
 #include "ac/timer.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -55,25 +57,38 @@ AGSPlatformDriver *platform = nullptr;
 
 // ******** DEFAULT IMPLEMENTATIONS *******
 
-void AGSPlatformDriver::AboutToQuitGame() { }
-void AGSPlatformDriver::PostAllegroInit(bool windowed) { }
-void AGSPlatformDriver::AttachToParentConsole() { }
-void AGSPlatformDriver::DisplaySwitchOut() { }
-void AGSPlatformDriver::DisplaySwitchIn() { }
-void AGSPlatformDriver::PauseApplication() { }
-void AGSPlatformDriver::ResumeApplication() { }
-void AGSPlatformDriver::GetSystemDisplayModes(std::vector<DisplayMode> &dms) { }
+void AGSPlatformDriver::AboutToQuitGame() {
+}
+void AGSPlatformDriver::PostAllegroInit(bool windowed) {
+}
+void AGSPlatformDriver::AttachToParentConsole() {
+}
+void AGSPlatformDriver::DisplaySwitchOut() {
+}
+void AGSPlatformDriver::DisplaySwitchIn() {
+}
+void AGSPlatformDriver::PauseApplication() {
+}
+void AGSPlatformDriver::ResumeApplication() {
+}
+void AGSPlatformDriver::GetSystemDisplayModes(std::vector<DisplayMode> &dms) {
+}
 bool AGSPlatformDriver::EnterFullscreenMode(const DisplayMode &dm) {
 	return true;
 }
 bool AGSPlatformDriver::ExitFullscreenMode() {
 	return true;
 }
-void AGSPlatformDriver::AdjustWindowStyleForFullscreen() { }
-void AGSPlatformDriver::AdjustWindowStyleForWindowed() { }
-void AGSPlatformDriver::RegisterGameWithGameExplorer() { }
-void AGSPlatformDriver::UnRegisterGameWithGameExplorer() { }
-void AGSPlatformDriver::PlayVideo(const char *name, int skip, int flags) {}
+void AGSPlatformDriver::AdjustWindowStyleForFullscreen() {
+}
+void AGSPlatformDriver::AdjustWindowStyleForWindowed() {
+}
+void AGSPlatformDriver::RegisterGameWithGameExplorer() {
+}
+void AGSPlatformDriver::UnRegisterGameWithGameExplorer() {
+}
+void AGSPlatformDriver::PlayVideo(const char *name, int skip, int flags) {
+}
 
 const char *AGSPlatformDriver::GetAllegroFailUserHint() {
 	return "Make sure you have latest version of Allegro 4 libraries installed, and your system is running in graphical mode.";
@@ -149,7 +164,8 @@ int AGSPlatformDriver::ConvertKeycodeToScanCode(int keycode) {
 bool AGSPlatformDriver::LockMouseToWindow() {
 	return false;
 }
-void AGSPlatformDriver::UnlockMouse() { }
+void AGSPlatformDriver::UnlockMouse() {
+}
 
 //-----------------------------------------------
 // IOutputHandler implementation
@@ -209,7 +225,7 @@ int cd_player_control(int cmdd, int datt) {
 		cd_close();
 	else if (cmdd == 8)
 		return numcddrives;
-	else if (cmdd == 9) ;
+	else if (cmdd == 9);
 	else quit("!CDAudio: Unknown command code");
 
 	return 0;
@@ -240,3 +256,5 @@ void AGSPlatformDriver::Delay(int millis) {
 		now = AGS_Clock::now(); // update now
 	}
 }
+
+} // namespace AGS3

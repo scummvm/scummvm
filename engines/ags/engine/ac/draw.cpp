@@ -71,6 +71,8 @@
 #include "media/audio/audio_system.h"
 #include "ac/game.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -2333,3 +2335,5 @@ void render_graphics(IDriverDependantBitmap *extraBitmap, int extraX, int extraY
 
 	screen_is_dirty = false;
 }
+
+} // namespace AGS3

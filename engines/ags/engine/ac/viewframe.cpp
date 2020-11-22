@@ -31,6 +31,8 @@
 #include "ac/game_version.h"
 #include "media/audio/audio_system.h"
 
+} // namespace AGS3
+
 using AGS::Shared::Bitmap;
 using AGS::Shared::Graphics;
 
@@ -262,3 +264,5 @@ void RegisterViewFrameAPI() {
 	ccAddExternalFunctionForPlugin("ViewFrame::get_Speed", (void *)ViewFrame_GetSpeed);
 	ccAddExternalFunctionForPlugin("ViewFrame::get_View", (void *)ViewFrame_GetView);
 }
+
+} // namespace AGS3

@@ -39,6 +39,7 @@
 #include "util/string_utils.h"
 #include "font/fonts.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -111,7 +112,7 @@ bool IsMainGameLibrary(const String &filename) {
 		return false;
 	for (size_t i = 0; i < lib.AssetInfos.size(); ++i) {
 		if (lib.AssetInfos[i].FileName.CompareNoCase(MainGameSource::DefaultFilename_v3) == 0 ||
-		        lib.AssetInfos[i].FileName.CompareNoCase(MainGameSource::DefaultFilename_v2) == 0) {
+			lib.AssetInfos[i].FileName.CompareNoCase(MainGameSource::DefaultFilename_v2) == 0) {
 			return true;
 		}
 	}
@@ -132,7 +133,7 @@ HGameFileError OpenMainGameFileBase(PStream &in, MainGameSource &src) {
 		return new MainGameFileError(kMGFErr_FormatVersionTooOld, String::FromFormat("Required format version: %d, supported %d - %d", src.DataVersion, kGameVersion_250, kGameVersion_Current));
 	if (src.DataVersion > kGameVersion_Current)
 		return new MainGameFileError(kMGFErr_FormatVersionNotSupported,
-		                             String::FromFormat("Game was compiled with %s. Required format version: %d, supported %d - %d", src.CompiledWith.GetCStr(), src.DataVersion, kGameVersion_250, kGameVersion_Current));
+			String::FromFormat("Game was compiled with %s. Required format version: %d, supported %d - %d", src.CompiledWith.GetCStr(), src.DataVersion, kGameVersion_250, kGameVersion_Current));
 	// Read required capabilities
 	if (src.DataVersion >= kGameVersion_341) {
 		size_t count = in->ReadInt32();
@@ -226,10 +227,10 @@ void ReadViews(GameSetupStruct &game, ViewStruct *&views, Stream *in, GameDataVe
 }
 
 void ReadDialogs(DialogTopic *&dialog,
-                 std::vector< std::shared_ptr<unsigned char> > &old_dialog_scripts,
-                 std::vector<String> &old_dialog_src,
-                 std::vector<String> &old_speech_lines,
-                 Stream *in, GameDataVersion data_ver, int dlg_count) {
+	std::vector< std::shared_ptr<unsigned char> > &old_dialog_scripts,
+	std::vector<String> &old_dialog_src,
+	std::vector<String> &old_speech_lines,
+	Stream *in, GameDataVersion data_ver, int dlg_count) {
 	// TODO: I suspect +5 was a hacky way to "supress" memory access mistakes;
 	// double check and remove if proved unnecessary
 	dialog = (DialogTopic *)malloc(sizeof(DialogTopic) * dlg_count + 5);
@@ -258,7 +259,7 @@ void ReadDialogs(DialogTopic *&dialog,
 			if (data_ver > kGameVersion_260)
 				decrypt_text(buffer);
 			old_dialog_src[i] = buffer;
-			delete [] buffer;
+			delete[] buffer;
 		} else {
 			in->Seek(script_text_len);
 		}
@@ -268,13 +269,13 @@ void ReadDialogs(DialogTopic *&dialog,
 	//
 	// TODO: investigate this: these strings were read much simplier in the editor, see code:
 	/*
-	    char stringbuffer[1000];
-	    for (bb=0;bb<thisgame.numdlgmessage;bb++) {
-	        if ((filever >= 26) && (encrypted))
-	            read_string_decrypt(iii, stringbuffer);
-	        else
-	            fgetstring(stringbuffer, iii);
-	    }
+		char stringbuffer[1000];
+		for (bb=0;bb<thisgame.numdlgmessage;bb++) {
+			if ((filever >= 26) && (encrypted))
+				read_string_decrypt(iii, stringbuffer);
+			else
+				fgetstring(stringbuffer, iii);
+		}
 	*/
 	int i = 0;
 	char buffer[1000];
@@ -371,7 +372,7 @@ void BuildAudioClipArray(const std::vector<String> &assets, std::vector<ScriptAu
 		else if (ags_stricmp(temp_extension, "mid") == 0)
 			clip.fileType = eAudioFileMIDI;
 		else if ((ags_stricmp(temp_extension, "mod") == 0) || (ags_stricmp(temp_extension, "xm") == 0)
-		         || (ags_stricmp(temp_extension, "s3m") == 0) || (ags_stricmp(temp_extension, "it") == 0))
+			|| (ags_stricmp(temp_extension, "s3m") == 0) || (ags_stricmp(temp_extension, "it") == 0))
 			clip.fileType = eAudioFileMOD;
 		else if (ags_stricmp(temp_extension, "ogg") == 0)
 			clip.fileType = eAudioFileOGG;
@@ -437,9 +438,9 @@ void UpgradeFonts(GameSetupStruct &game, GameDataVersion data_ver) {
 			FontInfo &finfo = game.fonts[font];
 			// Thickness that corresponds to 1 game pixel
 			finfo.AutoOutlineThickness =
-			    // if it's a scaled up bitmap font, move the outline out more
-			    (is_bitmap_font(font) && get_font_scaling_mul(font) > 1) ?
-			    get_fixed_pixel_size(1) : 1;
+				// if it's a scaled up bitmap font, move the outline out more
+				(is_bitmap_font(font) && get_font_scaling_mul(font) > 1) ?
+				get_fixed_pixel_size(1) : 1;
 			finfo.AutoOutlineStyle = FontInfo::kSquared;
 		}
 	}
@@ -682,7 +683,7 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 	game.read_messages(in, data_ver);
 
 	ReadDialogs(ents.Dialogs, ents.OldDialogScripts, ents.OldDialogSources, ents.OldSpeechLines,
-	            in, data_ver, game.numdialog);
+		in, data_ver, game.numdialog);
 	HError err2 = GUI::ReadGUI(guis, in);
 	if (!err2)
 		return new MainGameFileError(kMGFErr_GameEntityFailed, err2);
@@ -735,3 +736,4 @@ HGameFileError UpdateGameData(LoadedGameEntities &ents, GameDataVersion data_ver
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

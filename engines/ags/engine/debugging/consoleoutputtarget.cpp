@@ -24,6 +24,7 @@
 #include "consoleoutputtarget.h"
 #include "debug/debug_log.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -44,3 +45,4 @@ void ConsoleOutputTarget::PrintMessage(const DebugMessage &msg) {
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3

@@ -33,6 +33,8 @@
 #include "game/roomstruct.h"
 #include "gfx/bitmap.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern RoomStruct thisroom;
@@ -76,7 +78,7 @@ int get_area_scaling(int onarea, int xx, int yy) {
 	yy = room_to_mask_coord(yy);
 
 	if ((onarea >= 0) && (onarea <= MAX_WALK_AREAS) &&
-	        (thisroom.WalkAreas[onarea].ScalingNear != NOT_VECTOR_SCALED)) {
+		(thisroom.WalkAreas[onarea].ScalingNear != NOT_VECTOR_SCALED)) {
 		// We have vector scaling!
 		// In case the character is off the screen, limit the Y co-ordinate
 		// to within the area range (otherwise we get silly zoom levels
@@ -90,7 +92,7 @@ int get_area_scaling(int onarea, int xx, int yy) {
 		// Zoom level = ((max - min) * Percent) / 100
 		if (thisroom.WalkAreas[onarea].Bottom != thisroom.WalkAreas[onarea].Top) {
 			int percent = ((yy - thisroom.WalkAreas[onarea].Top) * 100)
-			              / (thisroom.WalkAreas[onarea].Bottom - thisroom.WalkAreas[onarea].Top);
+				/ (thisroom.WalkAreas[onarea].Bottom - thisroom.WalkAreas[onarea].Top);
 			zoom_level = ((thisroom.WalkAreas[onarea].ScalingNear - thisroom.WalkAreas[onarea].ScalingFar) * (percent)) / 100 + thisroom.WalkAreas[onarea].ScalingFar;
 		} else {
 			// Special case for 1px tall walkable area: take bottom line scaling
@@ -128,10 +130,10 @@ void remove_walkable_areas_from_temp(int fromx, int cwidth, int starty, int endy
 	if (starty < 0)
 		starty = 0;
 
-	for (; cwidth > 0; cwidth --) {
+	for (; cwidth > 0; cwidth--) {
 		for (yyy = starty; yyy <= endy; yyy++)
 			walkable_areas_temp->PutPixel(fromx, yyy, 0);
-		fromx ++;
+		fromx++;
 	}
 
 }
@@ -146,7 +148,7 @@ Bitmap *prepare_walkable_areas(int sourceChar) {
 	// copy the walkable areas to the temp bitmap
 	walkable_areas_temp->Blit(thisroom.WalkAreaMask.get(), 0, 0, 0, 0, thisroom.WalkAreaMask->GetWidth(), thisroom.WalkAreaMask->GetHeight());
 	// if the character who's moving doesn't Bitmap *, don't bother checking
-	if (sourceChar < 0) ;
+	if (sourceChar < 0);
 	else if (game.chars[sourceChar].flags & CHF_NOBLOCKING)
 		return walkable_areas_temp;
 
@@ -189,8 +191,8 @@ Bitmap *prepare_walkable_areas(int sourceChar) {
 		// if the character is currently standing on the object, ignore
 		// it so as to allow him to escape
 		if ((sourceChar >= 0) &&
-		        (is_point_in_rect(game.chars[sourceChar].x, game.chars[sourceChar].y,
-		                          x1, y1, x1 + width, y2)))
+			(is_point_in_rect(game.chars[sourceChar].x, game.chars[sourceChar].y,
+				x1, y1, x1 + width, y2)))
 			continue;
 
 		remove_walkable_areas_from_temp(x1, width, y1, y2);
@@ -239,3 +241,5 @@ int get_walkable_area_at_character(int charnum) {
 	CharacterInfo *chin = &game.chars[charnum];
 	return get_walkable_area_at_location(chin->x, chin->y);
 }
+
+} // namespace AGS3

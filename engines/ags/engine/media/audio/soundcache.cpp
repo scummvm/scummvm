@@ -31,6 +31,8 @@
 #include "util/string.h"
 #include "debug/out.h"
 
+namespace AGS3 {
+
 using namespace Shared;
 
 sound_cache_entry_t *sound_cache_entries = nullptr;
@@ -210,3 +212,5 @@ char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size) 
 	}
 
 }
+
+} // namespace AGS3

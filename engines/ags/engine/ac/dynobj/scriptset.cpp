@@ -22,6 +22,8 @@
 
 #include "ac/dynobj/scriptset.h"
 
+namespace AGS3 {
+
 int ScriptSetBase::Dispose(const char *address, bool force) {
 	Clear();
 	delete this;
@@ -34,7 +36,7 @@ const char *ScriptSetBase::GetType() {
 
 int ScriptSetBase::Serialize(const char *address, char *buffer, int bufsize) {
 	size_t total_sz = CalcSerializeSize() + sizeof(int32_t) * 2;
-	if (bufsize < 0 || total_sz > (size_t)bufsize) {
+	if (bufsize < 0 || total_sz >(size_t)bufsize) {
 		// buffer not big enough, ask for a bigger one
 		return -((int)total_sz);
 	}
@@ -52,3 +54,5 @@ void ScriptSetBase::Unserialize(int index, const char *serializedData, int dataS
 	UnserializeContainer(serializedData);
 	ccRegisterUnserializedObject(index, this, this);
 }
+
+} // namespace AGS3

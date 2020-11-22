@@ -29,6 +29,8 @@
 
 #include "platform/base/agsplatformdriver.h"
 
+namespace AGS3 {
+
 extern "C" {
 	extern int alogg_is_end_of_oggstream(ALOGG_OGGSTREAM *ogg);
 	extern int alogg_is_end_of_ogg(ALOGG_OGG *ogg);
@@ -206,3 +208,5 @@ MYOGG::MYOGG() : SOUNDCLIP() {
 	last_but_one = 0;
 	last_ms_offs = 0;
 }
+
+} // namespace AGS3

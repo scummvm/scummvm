@@ -42,6 +42,8 @@
 #include "gfx/gfx_def.h"
 #include "gfx/gfx_util.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -90,7 +92,7 @@ void DrawingSurface_Release(ScriptDrawingSurface *sds) {
 			}
 			for (tt = 0; tt < game.numgui; tt++) {
 				if ((guis[tt].BgImage == sds->dynamicSpriteNumber) &&
-				        (guis[tt].IsDisplayed())) {
+					(guis[tt].IsDisplayed())) {
 					guis_need_update = 1;
 					break;
 				}
@@ -143,7 +145,7 @@ ScriptDrawingSurface *DrawingSurface_CreateCopy(ScriptDrawingSurface *sds) {
 }
 
 void DrawingSurface_DrawImageImpl(ScriptDrawingSurface *sds, Bitmap *src, int dst_x, int dst_y, int trans, int dst_width, int dst_height,
-                                  int src_x, int src_y, int src_width, int src_height, int sprite_id, bool src_has_alpha) {
+	int src_x, int src_y, int src_width, int src_height, int sprite_id, bool src_has_alpha) {
 	Bitmap *ds = sds->GetBitmapSurface();
 	if (src == ds)
 		quit("!DrawingSurface.DrawImage: cannot draw onto itself");
@@ -186,7 +188,7 @@ void DrawingSurface_DrawImageImpl(ScriptDrawingSurface *sds, Bitmap *src, int ds
 	}
 
 	if (dst_x >= ds->GetWidth() || dst_x + dst_width <= 0 || dst_y >= ds->GetHeight() || dst_y + dst_height <= 0 ||
-	        src_x >= src->GetWidth() || src_x + src_width <= 0 || src_y >= src->GetHeight() || src_y + src_height <= 0)
+		src_x >= src->GetWidth() || src_x + src_width <= 0 || src_y >= src->GetHeight() || src_y + src_height <= 0)
 		return; // source or destination rects lie completely off surface
 	// Clamp the source rect to the valid limits to prevent exceptions (ignore dest, bitmap drawing deals with that)
 	Math::ClampLength(src_x, src_width, 0, src->GetWidth());
@@ -196,12 +198,12 @@ void DrawingSurface_DrawImageImpl(ScriptDrawingSurface *sds, Bitmap *src, int ds
 	// if simplier blit/draw_sprite could be called (no translucency with alpha channel).
 	bool needToFreeBitmap = false;
 	if (dst_width != src->GetWidth() || dst_height != src->GetHeight() ||
-	        src_width != src->GetWidth() || src_height != src->GetHeight()) {
+		src_width != src->GetWidth() || src_height != src->GetHeight()) {
 		// Resize and/or partial copy specified
 		Bitmap *newPic = BitmapHelper::CreateBitmap(dst_width, dst_height, src->GetColorDepth());
 		newPic->StretchBlt(src,
-		                   RectWH(src_x, src_y, src_width, src_height),
-		                   RectWH(0, 0, dst_width, dst_height));
+			RectWH(src_x, src_y, src_width, src_height),
+			RectWH(0, 0, dst_width, dst_height));
 
 		src = newPic;
 		needToFreeBitmap = true;
@@ -219,7 +221,7 @@ void DrawingSurface_DrawImageImpl(ScriptDrawingSurface *sds, Bitmap *src, int ds
 	}
 
 	draw_sprite_support_alpha(ds, sds->hasAlphaChannel != 0, dst_x, dst_y, src, src_has_alpha,
-	                          kBlendMode_Alpha, GfxDef::Trans100ToAlpha255(trans));
+		kBlendMode_Alpha, GfxDef::Trans100ToAlpha255(trans));
 
 	sds->FinishedDrawing();
 
@@ -228,11 +230,11 @@ void DrawingSurface_DrawImageImpl(ScriptDrawingSurface *sds, Bitmap *src, int ds
 }
 
 void DrawingSurface_DrawImageEx(ScriptDrawingSurface *sds, int dst_x, int dst_y, int slot, int trans, int dst_width, int dst_height,
-                                int src_x, int src_y, int src_width, int src_height) {
+	int src_x, int src_y, int src_width, int src_height) {
 	if ((slot < 0) || (spriteset[slot] == nullptr))
 		quit("!DrawingSurface.DrawImage: invalid sprite slot number specified");
 	DrawingSurface_DrawImageImpl(sds, spriteset[slot], dst_x, dst_y, trans, dst_width, dst_height,
-	                             src_x, src_y, src_width, src_height, slot, (game.SpriteInfos[slot].Flags & SPF_ALPHACHANNEL) != 0);
+		src_x, src_y, src_width, src_height, slot, (game.SpriteInfos[slot].Flags & SPF_ALPHACHANNEL) != 0);
 }
 
 void DrawingSurface_DrawImage(ScriptDrawingSurface *sds, int xx, int yy, int slot, int trans, int width, int height) {
@@ -240,10 +242,10 @@ void DrawingSurface_DrawImage(ScriptDrawingSurface *sds, int xx, int yy, int slo
 }
 
 void DrawingSurface_DrawSurfaceEx(ScriptDrawingSurface *target, ScriptDrawingSurface *source, int trans,
-                                  int dst_x, int dst_y, int dst_width, int dst_height,
-                                  int src_x, int src_y, int src_width, int src_height) {
+	int dst_x, int dst_y, int dst_width, int dst_height,
+	int src_x, int src_y, int src_width, int src_height) {
 	DrawingSurface_DrawImageImpl(target, source->GetBitmapSurface(), dst_x, dst_y, trans, dst_width, dst_height,
-	                             src_x, src_y, src_width, src_height, -1, source->hasAlphaChannel);
+		src_x, src_y, src_width, src_height, -1, source->hasAlphaChannel);
 }
 
 void DrawingSurface_DrawSurface(ScriptDrawingSurface *target, ScriptDrawingSurface *source, int trans) {
@@ -472,7 +474,7 @@ RuntimeScriptValue Sc_DrawingSurface_DrawImage_6(void *self, const RuntimeScript
 RuntimeScriptValue Sc_DrawingSurface_DrawImage(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 10);
 	DrawingSurface_DrawImageEx((ScriptDrawingSurface *)self, params[0].IValue, params[1].IValue, params[2].IValue, params[3].IValue, params[4].IValue, params[5].IValue,
-	                           params[6].IValue, params[7].IValue, params[8].IValue, params[9].IValue);
+		params[6].IValue, params[7].IValue, params[8].IValue, params[9].IValue);
 	return RuntimeScriptValue((int32_t)0);
 }
 
@@ -520,8 +522,8 @@ RuntimeScriptValue Sc_DrawingSurface_DrawSurface_2(void *self, const RuntimeScri
 RuntimeScriptValue Sc_DrawingSurface_DrawSurface(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	ASSERT_OBJ_PARAM_COUNT(METHOD, 10);
 	DrawingSurface_DrawSurfaceEx((ScriptDrawingSurface *)self, (ScriptDrawingSurface *)params[0].Ptr,
-	                             params[1].IValue, params[2].IValue, params[3].IValue, params[4].IValue, params[5].IValue,
-	                             params[6].IValue, params[7].IValue, params[8].IValue, params[9].IValue);
+		params[1].IValue, params[2].IValue, params[3].IValue, params[4].IValue, params[5].IValue,
+		params[6].IValue, params[7].IValue, params[8].IValue, params[9].IValue);
 	return RuntimeScriptValue((int32_t)0);
 }
 
@@ -583,31 +585,31 @@ void ScPl_DrawingSurface_DrawString(ScriptDrawingSurface *sds, int xx, int yy, i
 }
 
 void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion compat_api) {
-	ccAddExternalObjectFunction("DrawingSurface::Clear^1",              Sc_DrawingSurface_Clear);
-	ccAddExternalObjectFunction("DrawingSurface::CreateCopy^0",         Sc_DrawingSurface_CreateCopy);
-	ccAddExternalObjectFunction("DrawingSurface::DrawCircle^3",         Sc_DrawingSurface_DrawCircle);
-	ccAddExternalObjectFunction("DrawingSurface::DrawImage^6",          Sc_DrawingSurface_DrawImage_6);
-	ccAddExternalObjectFunction("DrawingSurface::DrawImage^10",         Sc_DrawingSurface_DrawImage);
-	ccAddExternalObjectFunction("DrawingSurface::DrawLine^5",           Sc_DrawingSurface_DrawLine);
+	ccAddExternalObjectFunction("DrawingSurface::Clear^1", Sc_DrawingSurface_Clear);
+	ccAddExternalObjectFunction("DrawingSurface::CreateCopy^0", Sc_DrawingSurface_CreateCopy);
+	ccAddExternalObjectFunction("DrawingSurface::DrawCircle^3", Sc_DrawingSurface_DrawCircle);
+	ccAddExternalObjectFunction("DrawingSurface::DrawImage^6", Sc_DrawingSurface_DrawImage_6);
+	ccAddExternalObjectFunction("DrawingSurface::DrawImage^10", Sc_DrawingSurface_DrawImage);
+	ccAddExternalObjectFunction("DrawingSurface::DrawLine^5", Sc_DrawingSurface_DrawLine);
 	ccAddExternalObjectFunction("DrawingSurface::DrawMessageWrapped^5", Sc_DrawingSurface_DrawMessageWrapped);
-	ccAddExternalObjectFunction("DrawingSurface::DrawPixel^2",          Sc_DrawingSurface_DrawPixel);
-	ccAddExternalObjectFunction("DrawingSurface::DrawRectangle^4",      Sc_DrawingSurface_DrawRectangle);
-	ccAddExternalObjectFunction("DrawingSurface::DrawString^104",       Sc_DrawingSurface_DrawString);
+	ccAddExternalObjectFunction("DrawingSurface::DrawPixel^2", Sc_DrawingSurface_DrawPixel);
+	ccAddExternalObjectFunction("DrawingSurface::DrawRectangle^4", Sc_DrawingSurface_DrawRectangle);
+	ccAddExternalObjectFunction("DrawingSurface::DrawString^104", Sc_DrawingSurface_DrawString);
 	if (base_api < kScriptAPI_v350)
 		ccAddExternalObjectFunction("DrawingSurface::DrawStringWrapped^6", Sc_DrawingSurface_DrawStringWrapped_Old);
 	else
 		ccAddExternalObjectFunction("DrawingSurface::DrawStringWrapped^6", Sc_DrawingSurface_DrawStringWrapped);
-	ccAddExternalObjectFunction("DrawingSurface::DrawSurface^2",        Sc_DrawingSurface_DrawSurface_2);
-	ccAddExternalObjectFunction("DrawingSurface::DrawSurface^10",       Sc_DrawingSurface_DrawSurface);
-	ccAddExternalObjectFunction("DrawingSurface::DrawTriangle^6",       Sc_DrawingSurface_DrawTriangle);
-	ccAddExternalObjectFunction("DrawingSurface::GetPixel^2",           Sc_DrawingSurface_GetPixel);
-	ccAddExternalObjectFunction("DrawingSurface::Release^0",            Sc_DrawingSurface_Release);
-	ccAddExternalObjectFunction("DrawingSurface::get_DrawingColor",     Sc_DrawingSurface_GetDrawingColor);
-	ccAddExternalObjectFunction("DrawingSurface::set_DrawingColor",     Sc_DrawingSurface_SetDrawingColor);
-	ccAddExternalObjectFunction("DrawingSurface::get_Height",           Sc_DrawingSurface_GetHeight);
+	ccAddExternalObjectFunction("DrawingSurface::DrawSurface^2", Sc_DrawingSurface_DrawSurface_2);
+	ccAddExternalObjectFunction("DrawingSurface::DrawSurface^10", Sc_DrawingSurface_DrawSurface);
+	ccAddExternalObjectFunction("DrawingSurface::DrawTriangle^6", Sc_DrawingSurface_DrawTriangle);
+	ccAddExternalObjectFunction("DrawingSurface::GetPixel^2", Sc_DrawingSurface_GetPixel);
+	ccAddExternalObjectFunction("DrawingSurface::Release^0", Sc_DrawingSurface_Release);
+	ccAddExternalObjectFunction("DrawingSurface::get_DrawingColor", Sc_DrawingSurface_GetDrawingColor);
+	ccAddExternalObjectFunction("DrawingSurface::set_DrawingColor", Sc_DrawingSurface_SetDrawingColor);
+	ccAddExternalObjectFunction("DrawingSurface::get_Height", Sc_DrawingSurface_GetHeight);
 	ccAddExternalObjectFunction("DrawingSurface::get_UseHighResCoordinates", Sc_DrawingSurface_GetUseHighResCoordinates);
 	ccAddExternalObjectFunction("DrawingSurface::set_UseHighResCoordinates", Sc_DrawingSurface_SetUseHighResCoordinates);
-	ccAddExternalObjectFunction("DrawingSurface::get_Width",            Sc_DrawingSurface_GetWidth);
+	ccAddExternalObjectFunction("DrawingSurface::get_Width", Sc_DrawingSurface_GetWidth);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -635,3 +637,5 @@ void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion compa
 	ccAddExternalFunctionForPlugin("DrawingSurface::set_UseHighResCoordinates", (void *)DrawingSurface_SetUseHighResCoordinates);
 	ccAddExternalFunctionForPlugin("DrawingSurface::get_Width", (void *)DrawingSurface_GetWidth);
 }
+
+} // namespace AGS3

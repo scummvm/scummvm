@@ -27,6 +27,8 @@
 #include "gui/guidialoginternaldefs.h"
 #include "gfx/bitmap.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Bitmap;
 
 extern GameSetup usetup;
@@ -90,3 +92,5 @@ int MyTextBox::processmessage(int mcode, int wParam, long lParam) {
 
 	return 0;
 }
+
+} // namespace AGS3

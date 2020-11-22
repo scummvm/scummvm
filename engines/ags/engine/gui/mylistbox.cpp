@@ -30,6 +30,8 @@
 #include "gui/guidialoginternaldefs.h"
 #include "gui/mylistbox.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Bitmap;
 
 extern GameSetup usetup;
@@ -112,7 +114,7 @@ int MyListBox::pressedon(int mousex, int mousey) {
 	if (mousex > x + wid - ARROWWIDTH) {
 		if ((mousey - y < hit / 2) & (topitem > 0))
 			topitem--;
-		else if ((mousey - y > hit / 2) & (topitem + numonscreen < items))
+		else if ((mousey - y > hit / 2) &(topitem + numonscreen < items))
 			topitem++;
 
 	} else {
@@ -122,7 +124,7 @@ int MyListBox::pressedon(int mousex, int mousey) {
 
 	}
 
-//    ags_domouse(DOMOUSE_DISABLE);
+	//    ags_domouse(DOMOUSE_DISABLE);
 	draw(get_gui_screen());
 	//  ags_domouse(DOMOUSE_ENABLE);
 	smcode = CM_SELCHANGE;
@@ -195,3 +197,5 @@ int MyListBox::processmessage(int mcode, int wParam, long lParam) {
 
 	return 0;
 }
+
+} // namespace AGS3

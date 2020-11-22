@@ -22,6 +22,7 @@
 
 #include "core/asset.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -39,3 +40,4 @@ void AssetLibInfo::Unload() {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

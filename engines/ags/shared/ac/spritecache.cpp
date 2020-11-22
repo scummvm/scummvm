@@ -42,6 +42,8 @@
 #include "util/file.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 // [IKM] We have to forward-declare these because their implementations are in the Engine
@@ -219,7 +221,7 @@ sprkey_t SpriteCache::GetFreeIndex() {
 
 bool SpriteCache::SpriteData::DoesSpriteExist() const {
 	return (Image != nullptr) || // HAS loaded bitmap
-	       ((Flags & SPRCACHEFLAG_ISASSET) != 0); // OR found in the game resources
+		((Flags & SPRCACHEFLAG_ISASSET) != 0); // OR found in the game resources
 }
 
 bool SpriteCache::SpriteData::IsAssetSprite() const {
@@ -228,8 +230,8 @@ bool SpriteCache::SpriteData::IsAssetSprite() const {
 
 bool SpriteCache::SpriteData::IsExternalSprite() const {
 	return (Image != nullptr) &&  // HAS loaded bitmap
-	       ((Flags & SPRCACHEFLAG_ISASSET) == 0) && // AND NOT found in game resources
-	       ((Flags & SPRCACHEFLAG_REMAPPED) == 0); // AND was NOT remapped to another sprite
+		((Flags & SPRCACHEFLAG_ISASSET) == 0) && // AND NOT found in game resources
+		((Flags & SPRCACHEFLAG_REMAPPED) == 0); // AND was NOT remapped to another sprite
 }
 
 bool SpriteCache::SpriteData::IsLocked() const {
@@ -323,7 +325,7 @@ void SpriteCache::DisposeOldest() {
 			// There must be a bug somewhere causing this, but for now
 			// let's just reset the cache
 			Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "RUNTIME CACHE ERROR: CACHE INCONSISTENT: RESETTING\n\tAt size %d (of %d), start %d end %d  fwdlink=%d",
-			              _cacheSize, _maxCacheSize, oldstart, _listend, _liststart);
+				_cacheSize, _maxCacheSize, oldstart, _listend, _liststart);
 			DisposeAll();
 		}
 	}
@@ -338,7 +340,7 @@ void SpriteCache::DisposeAll() {
 	_listend = -1;
 	for (size_t i = 0; i < _spriteData.size(); ++i) {
 		if (!_spriteData[i].IsLocked() && // not locked
-		        _spriteData[i].IsAssetSprite()) { // sprite from game resource
+			_spriteData[i].IsAssetSprite()) { // sprite from game resource
 			delete _spriteData[i].Image;
 			_spriteData[i].Image = nullptr;
 		}
@@ -602,7 +604,7 @@ int SpriteCache::SaveToFile(const char *filename, bool compressOutput, SpriteFil
 
 		if (this->_compressed != compressOutput) {
 			// shouldn't be able to get here
-			delete [] memBuffer;
+			delete[] memBuffer;
 			delete output;
 			return -2;
 		}
@@ -635,7 +637,7 @@ int SpriteCache::SaveToFile(const char *filename, bool compressOutput, SpriteFil
 		output->WriteArray(memBuffer, sizeToCopy, 1);
 	}
 
-	delete [] memBuffer;
+	delete[] memBuffer;
 	delete output;
 
 	index.SpriteFileIDCheck = spriteFileIDCheck;
@@ -840,9 +842,9 @@ bool SpriteCache::LoadSpriteIndexFile(const char *filename, int expectedFileID, 
 		}
 	}
 
-	delete [] rspritewidths;
-	delete [] rspriteheights;
-	delete [] spriteoffs;
+	delete[] rspritewidths;
+	delete[] rspriteheights;
+	delete[] spriteoffs;
 	delete fidx;
 	return true;
 }
@@ -862,3 +864,5 @@ int SpriteCache::AttachFile(const char *filename) {
 bool SpriteCache::IsFileCompressed() const {
 	return _compressed;
 }
+
+} // namespace AGS3

@@ -25,6 +25,8 @@
 #include "ac/listbox.h"
 #include "ac/string.h"
 
+namespace AGS3 {
+
 void ListBoxClear(int guin, int objn) {
 	GUIListBox *guisl = is_valid_listbox(guin, objn);
 	ListBox_Clear(guisl);
@@ -68,3 +70,5 @@ void ListBoxDirList(int guin, int objn, const char *filemask) {
 	GUIListBox *guisl = is_valid_listbox(guin, objn);
 	ListBox_FillDirList(guisl, filemask);
 }
+
+} // namespace AGS3

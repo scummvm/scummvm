@@ -25,6 +25,7 @@
 #include "game/roomstruct.h"
 #include "gfx/bitmap.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -145,24 +146,24 @@ void RoomStruct::FreeScripts() {
 }
 
 void RoomStruct::InitDefaults() {
-	DataVersion     = kRoomVersion_Current;
-	GameID          = NO_GAME_ID_IN_ROOM_FILE;
+	DataVersion = kRoomVersion_Current;
+	GameID = NO_GAME_ID_IN_ROOM_FILE;
 
-	_resolution     = kRoomRealRes;
-	MaskResolution  = 1;
-	Width           = 320;
-	Height          = 200;
+	_resolution = kRoomRealRes;
+	MaskResolution = 1;
+	Width = 320;
+	Height = 200;
 
-	Options         = RoomOptions();
-	Edges           = RoomEdges(0, 317, 40, 199);
+	Options = RoomOptions();
+	Edges = RoomEdges(0, 317, 40, 199);
 
-	BgFrameCount    = 1;
-	HotspotCount    = 0;
-	ObjectCount     = 0;
-	RegionCount     = 0;
-	WalkAreaCount   = 0;
+	BgFrameCount = 1;
+	HotspotCount = 0;
+	ObjectCount = 0;
+	RegionCount = 0;
+	WalkAreaCount = 0;
 	WalkBehindCount = 0;
-	MessageCount    = 0;
+	MessageCount = 0;
 
 	for (size_t i = 0; i < (size_t)MAX_ROOM_HOTSPOTS; ++i) {
 		Hotspots[i] = RoomHotspot();
@@ -300,3 +301,4 @@ void FixRoomMasks(RoomStruct *room) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

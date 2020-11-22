@@ -25,6 +25,8 @@
 #include "ac/dialogtopic.h"
 #include "ac/gamestructdefines.h"
 
+namespace AGS3 {
+
 // return the type name of the object
 const char *CCDialog::GetType() {
 	return "Dialog";
@@ -44,3 +46,5 @@ void CCDialog::Unserialize(int index, const char *serializedData, int dataSize) 
 	int num = UnserializeInt();
 	ccRegisterUnserializedObject(index, &scrDialog[num], this);
 }
+
+} // namespace AGS3

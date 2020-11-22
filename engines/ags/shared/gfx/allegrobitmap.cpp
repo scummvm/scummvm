@@ -24,6 +24,8 @@
 #include "gfx/allegrobitmap.h"
 #include "debug/assert.h"
 
+namespace AGS3 {
+
 extern void __my_setcolor(int *ctset, int newcol, int wantColDep);
 
 namespace AGS {
@@ -188,11 +190,11 @@ void Bitmap::StretchBlt(Bitmap *src, const Rect &dst_rc, BitmapMaskOption mask) 
 	// WARNING: For some evil reason Allegro expects dest and src bitmaps in different order for blit and draw_sprite
 	if (mask == kBitmap_Transparency) {
 		stretch_sprite(_alBitmap, al_src_bmp,
-		               dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
+			dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
 	} else {
 		stretch_blit(al_src_bmp, _alBitmap,
-		             0, 0, al_src_bmp->w, al_src_bmp->h,
-		             dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
+			0, 0, al_src_bmp->w, al_src_bmp->h,
+			dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
 	}
 }
 
@@ -200,12 +202,12 @@ void Bitmap::StretchBlt(Bitmap *src, const Rect &src_rc, const Rect &dst_rc, Bit
 	BITMAP *al_src_bmp = src->_alBitmap;
 	if (mask == kBitmap_Transparency) {
 		masked_stretch_blit(al_src_bmp, _alBitmap,
-		                    src_rc.Left, src_rc.Top, src_rc.GetWidth(), src_rc.GetHeight(),
-		                    dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
+			src_rc.Left, src_rc.Top, src_rc.GetWidth(), src_rc.GetHeight(),
+			dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
 	} else {
 		stretch_blit(al_src_bmp, _alBitmap,
-		             src_rc.Left, src_rc.Top, src_rc.GetWidth(), src_rc.GetHeight(),
-		             dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
+			src_rc.Left, src_rc.Top, src_rc.GetWidth(), src_rc.GetHeight(),
+			dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
 	}
 }
 
@@ -214,11 +216,11 @@ void Bitmap::AAStretchBlt(Bitmap *src, const Rect &dst_rc, BitmapMaskOption mask
 	// WARNING: For some evil reason Allegro expects dest and src bitmaps in different order for blit and draw_sprite
 	if (mask == kBitmap_Transparency) {
 		aa_stretch_sprite(_alBitmap, al_src_bmp,
-		                  dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
+			dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
 	} else {
 		aa_stretch_blit(al_src_bmp, _alBitmap,
-		                0, 0, al_src_bmp->w, al_src_bmp->h,
-		                dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
+			0, 0, al_src_bmp->w, al_src_bmp->h,
+			dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
 	}
 }
 
@@ -231,8 +233,8 @@ void Bitmap::AAStretchBlt(Bitmap *src, const Rect &src_rc, const Rect &dst_rc, B
 		throw "aa_masked_blit is not yet supported!";
 	} else {
 		aa_stretch_blit(al_src_bmp, _alBitmap,
-		                src_rc.Left, src_rc.Top, src_rc.GetWidth(), src_rc.GetHeight(),
-		                dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
+			src_rc.Left, src_rc.Top, src_rc.GetWidth(), src_rc.GetHeight(),
+			dst_rc.Left, dst_rc.Top, dst_rc.GetWidth(), dst_rc.GetHeight());
 	}
 }
 
@@ -335,7 +337,7 @@ void Bitmap::DrawLine(const Line &ln, color_t color) {
 
 void Bitmap::DrawTriangle(const Triangle &tr, color_t color) {
 	triangle(_alBitmap,
-	         tr.X1, tr.Y1, tr.X2, tr.Y2, tr.X3, tr.Y3, color);
+		tr.X1, tr.Y1, tr.X2, tr.Y2, tr.X3, tr.Y3, color);
 }
 
 void Bitmap::DrawRect(const Rect &rc, color_t color) {
@@ -410,6 +412,6 @@ Bitmap *CreateRawBitmapWrapper(BITMAP *al_bmp) {
 
 } // namespace BitmapHelper
 
-
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

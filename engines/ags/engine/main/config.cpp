@@ -45,6 +45,7 @@
 #include "util/string_utils.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
@@ -159,7 +160,7 @@ bool parse_legacy_frame_config(const String &scaling_option, String &filter_id, 
 			filter_id = legacy_filters[i].CurrentName;
 			frame.ScaleDef = legacy_filters[i].Scaling == 0 ? kFrame_MaxRound : kFrame_IntScale;
 			frame.ScaleFactor = legacy_filters[i].Scaling >= 0 ? legacy_filters[i].Scaling :
-			                    scaling_option.Mid(legacy_filters[i].LegacyName.GetLength()).ToInt();
+				scaling_option.Mid(legacy_filters[i].LegacyName.GetLength()).ToInt();
 			return true;
 		}
 	}
@@ -197,17 +198,17 @@ int convert_fp_to_scaling(uint32_t scaling) {
 
 AlIDStr AlIDToChars(int al_id) {
 	if (al_id == 0)
-		return AlIDStr {{ 'N', 'O', 'N', 'E', '\0' }};
+		return AlIDStr{ { 'N', 'O', 'N', 'E', '\0' } };
 	else if (al_id == -1)
-		return AlIDStr {{ 'A', 'U', 'T', 'O', '\0' }};
+		return AlIDStr{ { 'A', 'U', 'T', 'O', '\0' } };
 	else
-		return AlIDStr {{
+		return AlIDStr{ {
 			static_cast<char>((al_id >> 24) & 0xFF),
 			static_cast<char>((al_id >> 16) & 0xFF),
 			static_cast<char>((al_id >> 8) & 0xFF),
 			static_cast<char>((al_id) & 0xFF),
 			'\0'
-		}};
+		} };
 }
 
 AlIDStr AlIDToChars(const String &s) {
@@ -364,8 +365,8 @@ void read_legacy_graphics_config(const ConfigTree &cfg) {
 			// AGS 3.2.1 and 3.3.0 aspect ratio preferences
 			if (!usetup.Screen.DisplayMode.Windowed) {
 				usetup.Screen.DisplayMode.ScreenSize.MatchDeviceRatio =
-				    (INIreadint(cfg, "misc", "sideborders") > 0 || INIreadint(cfg, "misc", "forceletterbox") > 0 ||
-				     INIreadint(cfg, "misc", "prefer_sideborders") > 0 || INIreadint(cfg, "misc", "prefer_letterbox") > 0);
+					(INIreadint(cfg, "misc", "sideborders") > 0 || INIreadint(cfg, "misc", "forceletterbox") > 0 ||
+						INIreadint(cfg, "misc", "prefer_sideborders") > 0 || INIreadint(cfg, "misc", "prefer_letterbox") > 0);
 			}
 		}
 
@@ -478,7 +479,7 @@ void apply_config(const ConfigTree &cfg) {
 		}
 
 		usetup.Screen.DisplayMode.ScreenSize.Size = Size(INIreadint(cfg, "graphics", "screen_width"),
-		        INIreadint(cfg, "graphics", "screen_height"));
+			INIreadint(cfg, "graphics", "screen_height"));
 		usetup.Screen.DisplayMode.ScreenSize.MatchDeviceRatio = INIreadint(cfg, "graphics", "match_device_ratio", 1) != 0;
 		// TODO: move to config overrides (replace values during config load)
 #if AGS_PLATFORM_OS_MACOS
@@ -609,3 +610,5 @@ void save_config_file() {
 	if (!cfg_file.IsEmpty())
 		IniUtil::Merge(cfg_file, cfg);
 }
+
+} // namespace AGS3

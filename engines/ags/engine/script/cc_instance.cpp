@@ -46,6 +46,8 @@
 #include "util/memory.h"
 #include "util/string_utils.h" // linux strnicmp definition
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Shared::Memory;
 
@@ -1819,3 +1821,5 @@ void ccInstance::PopFromFuncCallStack(FunctionCallStack &func_callstack, int32_t
 	func_callstack.Head += num_entries;
 	func_callstack.Count -= num_entries;
 }
+
+} // namespace AGS3

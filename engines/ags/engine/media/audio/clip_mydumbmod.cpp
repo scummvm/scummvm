@@ -27,6 +27,8 @@
 #include "media/audio/clip_mydumbmod.h"
 #include "media/audio/audiointernaldefs.h"
 
+namespace AGS3 {
+
 void al_duh_set_loop(AL_DUH_PLAYER *dp, int loop) {
 	DUH_SIGRENDERER *sr = al_duh_get_sigrenderer(dp);
 	DUMB_IT_SIGRENDERER *itsr = duh_get_it_sigrenderer(sr);
@@ -175,5 +177,7 @@ MYMOD::MYMOD() : SOUNDCLIP() {
 	tune = nullptr;
 	duhPlayer = nullptr;
 }
+
+} // namespace AGS3
 
 #endif // DUMB_MOD_PLAYER

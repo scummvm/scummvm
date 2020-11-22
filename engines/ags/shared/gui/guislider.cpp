@@ -25,6 +25,8 @@
 #include "gui/guislider.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 std::vector<AGS::Shared::GUISlider> guislider;
 int numguislider = 0;
 
@@ -242,3 +244,4 @@ void GUISlider::WriteToSavegame(Stream *out) const {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

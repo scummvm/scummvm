@@ -23,6 +23,8 @@
 #include "ac/dynobj/scriptdynamicsprite.h"
 #include "ac/dynamicsprite.h"
 
+namespace AGS3 {
+
 int ScriptDynamicSprite::Dispose(const char *address, bool force) {
 	// always dispose
 	if ((slot) && (!force))
@@ -56,3 +58,5 @@ ScriptDynamicSprite::ScriptDynamicSprite(int theSlot) {
 ScriptDynamicSprite::ScriptDynamicSprite() {
 	slot = 0;
 }
+
+} // namespace AGS3

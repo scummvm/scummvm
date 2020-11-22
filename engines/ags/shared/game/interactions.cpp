@@ -26,9 +26,11 @@
 #include "util/alignedstream.h"
 #include "util/math.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
-InteractionVariable globalvars[MAX_GLOBAL_VARIABLES] = {InteractionVariable("Global 1", 0, 0)};
+InteractionVariable globalvars[MAX_GLOBAL_VARIABLES] = { InteractionVariable("Global 1", 0, 0) };
 int numGlobalVars = 1;
 
 namespace AGS {
@@ -41,7 +43,7 @@ InteractionValue::InteractionValue() {
 }
 
 void InteractionValue::Read(Stream *in) {
-	Type  = (InterValType)in->ReadInt8();
+	Type = (InterValType)in->ReadInt8();
 	Value = in->ReadInt32();
 	Extra = in->ReadInt32();
 }
@@ -345,7 +347,7 @@ InteractionVariable::InteractionVariable(const String &name, char type, int val)
 
 void InteractionVariable::Read(Stream *in) {
 	Name.ReadCount(in, INTER_VAR_NAME_LENGTH);
-	Type  = in->ReadInt8();
+	Type = in->ReadInt8();
 	Value = in->ReadInt32();
 }
 
@@ -374,3 +376,4 @@ InteractionScripts *InteractionScripts::CreateFromStream(Stream *in) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

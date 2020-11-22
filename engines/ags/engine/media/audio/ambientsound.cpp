@@ -25,6 +25,8 @@
 #include "media/audio/soundclip.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 bool AmbientSound::IsPlaying() {
@@ -50,3 +52,5 @@ void AmbientSound::WriteToFile(Stream *out) {
 	out->WriteInt32(num);
 	out->WriteInt32(maxdist);
 }
+
+} // namespace AGS3

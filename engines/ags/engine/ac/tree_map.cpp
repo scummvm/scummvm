@@ -25,6 +25,8 @@
 #include "ac/common.h"
 #include "ac/tree_map.h"
 
+namespace AGS3 {
+
 TreeMap::TreeMap() {
 	left = nullptr;
 	right = nullptr;
@@ -53,7 +55,7 @@ char *TreeMap::findValue(const char *key) {
 
 void TreeMap::addText(const char *ntx, char *trans) {
 	if ((ntx == nullptr) || (ntx[0] == 0) ||
-	        ((text != nullptr) && (strcmp(ntx, text) == 0)))
+		((text != nullptr) && (strcmp(ntx, text) == 0)))
 		// don't add if it's an empty string or if it's already here
 		return;
 
@@ -101,3 +103,5 @@ void TreeMap::clear() {
 TreeMap::~TreeMap() {
 	clear();
 }
+
+} // namespace AGS3

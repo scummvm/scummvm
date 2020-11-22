@@ -24,6 +24,8 @@
 #include "ac/dynobj/scriptaudioclip.h"
 #include "ac/gamesetupstruct.h"
 
+namespace AGS3 {
+
 extern GameSetupStruct game;
 
 const char *CCAudioClip::GetType() {
@@ -42,3 +44,5 @@ void CCAudioClip::Unserialize(int index, const char *serializedData, int dataSiz
 	int id = UnserializeInt();
 	ccRegisterUnserializedObject(index, &game.audioClips[id], this);
 }
+
+} // namespace AGS3

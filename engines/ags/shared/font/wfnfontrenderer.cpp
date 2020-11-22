@@ -28,6 +28,8 @@
 #include "gfx/bitmap.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 static unsigned char GetCharCode(unsigned char wanted_code, const WFNFont *font) {
@@ -104,7 +106,7 @@ int RenderChar(Bitmap *ds, const int at_x, const int at_y, const WFNChar &wfn_ch
 			if (((actdata[h * bytewid + (w / 8)] & (0x80 >> (w % 8))) != 0)) {
 				if (scale > 1) {
 					ds->FillRect(Rect(x + w, y + h, x + w + (scale - 1),
-					                  y + h + (scale - 1)), text_color);
+						y + h + (scale - 1)), text_color);
 				} else {
 					ds->PutPixel(x + w, y + h, text_color);
 				}
@@ -162,3 +164,5 @@ void WFNFontRenderer::FreeMemory(int fontNumber) {
 bool WFNFontRenderer::SupportsExtendedCharacters(int fontNumber) {
 	return _fontData[fontNumber].Font->GetCharCount() > 128;
 }
+
+} // namespace AGS3

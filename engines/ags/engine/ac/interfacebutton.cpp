@@ -22,6 +22,8 @@
 
 #include "ac/interfacebutton.h"
 
+namespace AGS3 {
+
 void InterfaceButton::set(int xx, int yy, int picc, int overpicc, int actionn) {
 	x = xx;
 	y = yy;
@@ -33,3 +35,5 @@ void InterfaceButton::set(int xx, int yy, int picc, int overpicc, int actionn) {
 	flags = IBFLG_ENABLED;
 	reserved_for_future = 0;
 }
+
+} // namespace AGS3

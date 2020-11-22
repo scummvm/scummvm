@@ -23,6 +23,8 @@
 #include "screenoverlay.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 void ScreenOverlay::ReadFromFile(Stream *in, int32_t cmp_ver) {
@@ -62,3 +64,5 @@ void ScreenOverlay::WriteToFile(Stream *out) const {
 	out->WriteInt32(_offsetX);
 	out->WriteInt32(_offsetY);
 }
+
+} // namespace AGS3

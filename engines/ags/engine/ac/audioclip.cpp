@@ -28,6 +28,8 @@
 #include "ac/dynobj/cc_audiochannel.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 extern GameSetupStruct game;
 extern ScriptAudioChannel scrAudioChannel[MAX_SOUND_CHANNELS + 1];
 extern CCAudioChannel ccDynamicAudio;
@@ -122,14 +124,14 @@ RuntimeScriptValue Sc_AudioClip_PlayQueued(void *self, const RuntimeScriptValue 
 }
 
 void RegisterAudioClipAPI() {
-	ccAddExternalObjectFunction("AudioClip::Play^2",            Sc_AudioClip_Play);
-	ccAddExternalObjectFunction("AudioClip::PlayFrom^3",        Sc_AudioClip_PlayFrom);
-	ccAddExternalObjectFunction("AudioClip::PlayQueued^2",      Sc_AudioClip_PlayQueued);
-	ccAddExternalObjectFunction("AudioClip::Stop^0",            Sc_AudioClip_Stop);
-	ccAddExternalObjectFunction("AudioClip::get_ID",            Sc_AudioClip_GetID);
-	ccAddExternalObjectFunction("AudioClip::get_FileType",      Sc_AudioClip_GetFileType);
-	ccAddExternalObjectFunction("AudioClip::get_IsAvailable",   Sc_AudioClip_GetIsAvailable);
-	ccAddExternalObjectFunction("AudioClip::get_Type",          Sc_AudioClip_GetType);
+	ccAddExternalObjectFunction("AudioClip::Play^2", Sc_AudioClip_Play);
+	ccAddExternalObjectFunction("AudioClip::PlayFrom^3", Sc_AudioClip_PlayFrom);
+	ccAddExternalObjectFunction("AudioClip::PlayQueued^2", Sc_AudioClip_PlayQueued);
+	ccAddExternalObjectFunction("AudioClip::Stop^0", Sc_AudioClip_Stop);
+	ccAddExternalObjectFunction("AudioClip::get_ID", Sc_AudioClip_GetID);
+	ccAddExternalObjectFunction("AudioClip::get_FileType", Sc_AudioClip_GetFileType);
+	ccAddExternalObjectFunction("AudioClip::get_IsAvailable", Sc_AudioClip_GetIsAvailable);
+	ccAddExternalObjectFunction("AudioClip::get_Type", Sc_AudioClip_GetType);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -141,3 +143,5 @@ void RegisterAudioClipAPI() {
 	ccAddExternalFunctionForPlugin("AudioClip::get_IsAvailable", (void *)AudioClip_GetIsAvailable);
 	ccAddExternalFunctionForPlugin("AudioClip::get_Type", (void *)AudioClip_GetType);
 }
+
+} // namespace AGS3

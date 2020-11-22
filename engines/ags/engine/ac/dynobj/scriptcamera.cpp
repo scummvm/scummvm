@@ -24,9 +24,12 @@
 #include "ac/gamestate.h"
 #include "util/bbop.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
-ScriptCamera::ScriptCamera(int id) : _id(id) {}
+ScriptCamera::ScriptCamera(int id) : _id(id) {
+}
 
 const char *ScriptCamera::GetType() {
 	return "Camera2";
@@ -64,3 +67,5 @@ ScriptCamera *Camera_Unserialize(int handle, const char *serializedData, int dat
 	}
 	return new ScriptCamera(-1); // make invalid reference
 }
+
+} // namespace AGS3

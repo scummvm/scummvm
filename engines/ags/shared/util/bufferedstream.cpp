@@ -27,6 +27,7 @@
 #include "util/stdio_compat.h"
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -121,13 +122,13 @@ bool BufferedStream::Seek(soff_t offset, StreamSeek origin) {
 	soff_t want_pos = -1;
 	switch (origin) {
 	case StreamSeek::kSeekCurrent:
-		want_pos = _position   + offset;
+		want_pos = _position + offset;
 		break;
 	case StreamSeek::kSeekBegin:
-		want_pos = 0           + offset;
+		want_pos = 0 + offset;
 		break;
 	case StreamSeek::kSeekEnd:
-		want_pos = _end        + offset;
+		want_pos = _end + offset;
 		break;
 		break;
 	}
@@ -139,3 +140,4 @@ bool BufferedStream::Seek(soff_t offset, StreamSeek origin) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

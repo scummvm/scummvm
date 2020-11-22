@@ -23,6 +23,7 @@
 #include <ctype.h>
 #include "util/version.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -134,3 +135,4 @@ void Version::MakeString() {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

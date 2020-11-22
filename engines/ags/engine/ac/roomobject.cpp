@@ -30,6 +30,8 @@
 #include "main/update.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 extern ViewStruct *views;
@@ -121,8 +123,8 @@ void RoomObject::update_cycle_view_forwards() {
 			if (play.no_multiloop_repeat == 0) {
 				// multi-loop anims, go back to start of it
 				while ((loop > 0) &&
-				        (views[view].loops[loop - 1].RunNextLoop()))
-					loop --;
+					(views[view].loops[loop - 1].RunNextLoop()))
+					loop--;
 			}
 			if (cycling % ANIM_BACKWARDS == ANIM_ONCERESET)
 				cycling = 0;
@@ -136,9 +138,9 @@ void RoomObject::update_cycle_view_backwards() {
 	frame--;
 	if (frame < 0) {
 		if ((loop > 0) &&
-		        (views[view].loops[loop - 1].RunNextLoop())) {
+			(views[view].loops[loop - 1].RunNextLoop())) {
 			// If it's a Go-to-next-loop on the previous one, then go back
-			loop --;
+			loop--;
 			frame = views[view].loops[loop].numFrames - 1;
 		} else if (cycling % ANIM_BACKWARDS == ANIM_ONCE) {
 			// leave it on the first frame
@@ -163,3 +165,5 @@ void RoomObject::WriteToFile(Stream *out) const {
 	out->WriteArrayOfInt8((int8_t *)&cycling, 4);
 	out->WriteArrayOfInt16(&blocking_width, 2);
 }
+
+} // namespace AGS3

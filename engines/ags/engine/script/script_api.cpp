@@ -28,6 +28,8 @@
 #include "script/script_api.h"
 #include "util/math.h"
 
+namespace AGS3 {
+
 namespace Math = AGS::Shared::Math;
 
 enum FormatParseResult {
@@ -71,7 +73,7 @@ inline const char *GetArgPtr(const RuntimeScriptValue *sc_args, va_list *varg_pt
 // snprintf but formatting values ourselves, or by using some library method
 // that supports customizing, such as getting arguments in a custom way.
 const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
-                          const RuntimeScriptValue *sc_args, int32_t sc_argc, va_list *varg_ptr) {
+	const RuntimeScriptValue *sc_args, int32_t sc_argc, va_list *varg_ptr) {
 	if (!buffer || buf_length == 0) {
 		cc_error("Internal error in ScriptSprintf: buffer is null");
 		return "";
@@ -99,14 +101,14 @@ const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
 	// number, such case is theoretically valid.
 	const size_t fmtbuf_size = 27;
 	char       fmtbuf[fmtbuf_size];
-	char       *fmt_bufptr;
-	char       *fmt_bufendptr = &fmtbuf[fmtbuf_size - 1];
+	char *fmt_bufptr;
+	char *fmt_bufendptr = &fmtbuf[fmtbuf_size - 1];
 
-	char       *out_ptr    = buffer;
+	char *out_ptr = buffer;
 	// save 1 character for null terminator
 	const char *out_endptr = buffer + buf_length - 1;
-	const char *fmt_ptr    = format;
-	int32_t    arg_idx     = 0;
+	const char *fmt_ptr = format;
+	int32_t    arg_idx = 0;
 
 	ptrdiff_t  avail_outbuf;
 	int        snprintf_res;
@@ -172,7 +174,7 @@ const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
 				*(out_ptr++) = '%';
 				continue;
 			} else if (fmt_done >= kFormatParseArgFirst && fmt_done <= kFormatParseArgLast &&
-			           (varg_ptr || arg_idx < sc_argc)) {
+				(varg_ptr || arg_idx < sc_argc)) {
 				// Print the actual value
 				// NOTE: snprintf is called with avail_outbuf + 1 here, because we let it use our reserved
 				// character for null-terminator, in case we are at the end of the buffer
@@ -224,3 +226,5 @@ const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
 	*out_ptr = 0;
 	return buffer;
 }
+
+} // namespace AGS3

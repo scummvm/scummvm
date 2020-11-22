@@ -27,6 +27,8 @@
 #include "debug/debug_log.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 extern GameSetupStruct game;
 extern ViewStruct *views;
 
@@ -52,3 +54,5 @@ void SetFrameSound(int vii, int loop, int frame, int sound) {
 		views[vii].loops[loop].frames[frame].sound = clip->id + (game.IsLegacyAudioSystem() ? 0x10000000 : 0);
 	}
 }
+
+} // namespace AGS3

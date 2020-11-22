@@ -27,6 +27,7 @@
 #include "gfx/gfxfilter_ogl.h"
 #include "ogl_headers.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 namespace OGL {
@@ -49,5 +50,6 @@ const GfxFilterInfo &OGLGfxFilter::GetInfo() const {
 } // namespace OGL
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif // only on Windows, Android and iOS

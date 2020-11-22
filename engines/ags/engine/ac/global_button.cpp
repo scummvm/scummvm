@@ -28,6 +28,8 @@
 #include "gui/guimain.h"
 #include "gui/guibutton.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetupStruct game;
@@ -100,3 +102,5 @@ void SetButtonPic(int guin, int objn, int ptype, int slotn) {
 		Button_SetPushedGraphic(guil, slotn);
 	}
 }
+
+} // namespace AGS3

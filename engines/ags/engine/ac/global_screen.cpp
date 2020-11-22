@@ -35,6 +35,8 @@
 #include "gfx/graphicsdriver.h"
 #include "gfx/bitmap.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -164,7 +166,7 @@ void SetNextScreenTransition(int newtrans) {
 
 void SetFadeColor(int red, int green, int blue) {
 	if ((red < 0) || (red > 255) || (green < 0) || (green > 255) ||
-	        (blue < 0) || (blue > 255))
+		(blue < 0) || (blue > 255))
 		quit("!SetFadeColor: Red, Green and Blue must be 0-255");
 
 	play.fade_to_red = red;
@@ -180,3 +182,5 @@ void FadeIn(int sppd) {
 
 	my_fade_in(palette, sppd);
 }
+
+} // namespace AGS3

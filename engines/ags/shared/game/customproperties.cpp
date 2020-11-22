@@ -24,6 +24,7 @@
 #include "util/stream.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -44,7 +45,7 @@ namespace Properties {
 PropertyError ReadSchema(PropertySchema &schema, Stream *in) {
 	PropertyVersion version = (PropertyVersion)in->ReadInt32();
 	if (version < kPropertyVersion_Initial ||
-	        version > kPropertyVersion_Current) {
+		version > kPropertyVersion_Current) {
 		return kPropertyErr_UnsupportedFormat;
 	}
 
@@ -74,7 +75,7 @@ void WriteSchema(const PropertySchema &schema, Stream *out) {
 	out->WriteInt32(kPropertyVersion_Current);
 	out->WriteInt32(schema.size());
 	for (PropertySchema::const_iterator it = schema.begin();
-	        it != schema.end(); ++it) {
+		it != schema.end(); ++it) {
 		const PropertyDesc &prop = it->second;
 		StrUtil::WriteString(prop.Name, out);
 		out->WriteInt32(prop.Type);
@@ -86,19 +87,19 @@ void WriteSchema(const PropertySchema &schema, Stream *out) {
 PropertyError ReadValues(StringIMap &map, Stream *in) {
 	PropertyVersion version = (PropertyVersion)in->ReadInt32();
 	if (version < kPropertyVersion_Initial ||
-	        version > kPropertyVersion_Current) {
+		version > kPropertyVersion_Current) {
 		return kPropertyErr_UnsupportedFormat;
 	}
 
 	int count = in->ReadInt32();
 	if (version == kPropertyVersion_Initial) {
 		for (int i = 0; i < count; ++i) {
-			String name  = String::FromStream(in, LEGACY_MAX_CUSTOM_PROP_NAME_LENGTH);
+			String name = String::FromStream(in, LEGACY_MAX_CUSTOM_PROP_NAME_LENGTH);
 			map[name] = String::FromStream(in, LEGACY_MAX_CUSTOM_PROP_VALUE_LENGTH);
 		}
 	} else {
 		for (int i = 0; i < count; ++i) {
-			String name  = StrUtil::ReadString(in);
+			String name = StrUtil::ReadString(in);
 			map[name] = StrUtil::ReadString(in);
 		}
 	}
@@ -109,7 +110,7 @@ void WriteValues(const StringIMap &map, Stream *out) {
 	out->WriteInt32(kPropertyVersion_Current);
 	out->WriteInt32(map.size());
 	for (StringIMap::const_iterator it = map.begin();
-	        it != map.end(); ++it) {
+		it != map.end(); ++it) {
 		StrUtil::WriteString(it->first, out);
 		StrUtil::WriteString(it->second, out);
 	}
@@ -119,3 +120,4 @@ void WriteValues(const StringIMap &map, Stream *out) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

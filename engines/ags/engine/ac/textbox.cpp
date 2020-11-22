@@ -26,6 +26,8 @@
 #include "ac/gamesetupstruct.h"
 #include "ac/string.h"
 
+namespace AGS3 {
+
 extern GameSetupStruct game;
 
 
@@ -141,16 +143,16 @@ RuntimeScriptValue Sc_TextBox_SetTextColor(void *self, const RuntimeScriptValue 
 
 
 void RegisterTextBoxAPI() {
-	ccAddExternalObjectFunction("TextBox::GetText^1",       Sc_TextBox_GetText);
-	ccAddExternalObjectFunction("TextBox::SetText^1",       Sc_TextBox_SetText);
-	ccAddExternalObjectFunction("TextBox::get_Font",        Sc_TextBox_GetFont);
-	ccAddExternalObjectFunction("TextBox::set_Font",        Sc_TextBox_SetFont);
-	ccAddExternalObjectFunction("TextBox::get_ShowBorder",  Sc_TextBox_GetShowBorder);
-	ccAddExternalObjectFunction("TextBox::set_ShowBorder",  Sc_TextBox_SetShowBorder);
-	ccAddExternalObjectFunction("TextBox::get_Text",        Sc_TextBox_GetText_New);
-	ccAddExternalObjectFunction("TextBox::set_Text",        Sc_TextBox_SetText);
-	ccAddExternalObjectFunction("TextBox::get_TextColor",   Sc_TextBox_GetTextColor);
-	ccAddExternalObjectFunction("TextBox::set_TextColor",   Sc_TextBox_SetTextColor);
+	ccAddExternalObjectFunction("TextBox::GetText^1", Sc_TextBox_GetText);
+	ccAddExternalObjectFunction("TextBox::SetText^1", Sc_TextBox_SetText);
+	ccAddExternalObjectFunction("TextBox::get_Font", Sc_TextBox_GetFont);
+	ccAddExternalObjectFunction("TextBox::set_Font", Sc_TextBox_SetFont);
+	ccAddExternalObjectFunction("TextBox::get_ShowBorder", Sc_TextBox_GetShowBorder);
+	ccAddExternalObjectFunction("TextBox::set_ShowBorder", Sc_TextBox_SetShowBorder);
+	ccAddExternalObjectFunction("TextBox::get_Text", Sc_TextBox_GetText_New);
+	ccAddExternalObjectFunction("TextBox::set_Text", Sc_TextBox_SetText);
+	ccAddExternalObjectFunction("TextBox::get_TextColor", Sc_TextBox_GetTextColor);
+	ccAddExternalObjectFunction("TextBox::set_TextColor", Sc_TextBox_SetTextColor);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -163,3 +165,5 @@ void RegisterTextBoxAPI() {
 	ccAddExternalFunctionForPlugin("TextBox::get_TextColor", (void *)TextBox_GetTextColor);
 	ccAddExternalFunctionForPlugin("TextBox::set_TextColor", (void *)TextBox_SetTextColor);
 }
+
+} // namespace AGS3

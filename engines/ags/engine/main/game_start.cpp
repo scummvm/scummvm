@@ -44,6 +44,8 @@
 #include "media/audio/audio_system.h"
 #include "ac/timer.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -155,3 +157,5 @@ void initialize_start_and_play_game(int override_start_room, const char *loadSav
 		quit((char *)gfxException._message);
 	}
 }
+
+} // namespace AGS3

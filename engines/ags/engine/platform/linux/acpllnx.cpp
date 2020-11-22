@@ -39,6 +39,8 @@
 #include <pwd.h>
 #include <sys/stat.h>
 
+namespace AGS3 {
+
 using AGS::Shared::String;
 
 
@@ -200,5 +202,7 @@ void AGSLinux::GetSystemDisplayModes(std::vector<Engine::DisplayMode> &dms) {
 	}
 	destroy_gfx_mode_list(gmlist);
 }
+
+} // namespace AGS3
 
 #endif

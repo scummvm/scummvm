@@ -26,6 +26,8 @@
 #include "util/stream.h"
 #include "util/string_compat.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 WordsDictionary::WordsDictionary()
@@ -52,9 +54,9 @@ void WordsDictionary::allocate_memory(int wordCount) {
 
 void WordsDictionary::free_memory() {
 	if (num_words > 0) {
-		delete [] word[0];
-		delete [] word;
-		delete [] wordnum;
+		delete[] word[0];
+		delete[] word;
+		delete[] wordnum;
 		word = nullptr;
 		wordnum = nullptr;
 		num_words = 0;
@@ -66,7 +68,7 @@ void WordsDictionary::sort() {
 	for (aa = 0; aa < num_words; aa++) {
 		for (bb = aa + 1; bb < num_words; bb++) {
 			if (((wordnum[aa] == wordnum[bb]) && (ags_stricmp(word[aa], word[bb]) > 0))
-			        || (wordnum[aa] > wordnum[bb])) {
+				|| (wordnum[aa] > wordnum[bb])) {
 				short temp = wordnum[aa];
 				char tempst[30];
 
@@ -172,3 +174,5 @@ void write_dictionary(WordsDictionary *dict, Stream *out) {
 		out->WriteInt16(dict->wordnum[ii]);//__putshort__lilendian(dict->wordnum[ii], writeto);
 	}
 }
+
+} // namespace AGS3

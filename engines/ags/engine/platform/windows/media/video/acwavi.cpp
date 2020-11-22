@@ -47,6 +47,8 @@
 #include "main/game_run.h"
 #include "platform/base/agsplatformdriver.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -435,4 +437,6 @@ int WINAPI WinMain(
 }
 #endif
 
-#endif // AGS_PLATFORM_OS_WINDOWS
+} // namespace AGS3
+
+#endif

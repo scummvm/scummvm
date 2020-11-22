@@ -32,6 +32,8 @@
 #include "gui/animatingguibutton.h"
 #include "gui/guimain.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetupStruct game;
@@ -213,7 +215,7 @@ int UpdateAnimatingButton(int bu) {
 			animbuts[bu].frame = 0;
 			// multi-loop anim, go back
 			while ((animbuts[bu].loop > 0) &&
-			        (tview->loops[animbuts[bu].loop - 1].RunNextLoop()))
+				(tview->loops[animbuts[bu].loop - 1].RunNextLoop()))
 				animbuts[bu].loop--;
 		} else
 			return 1;
@@ -420,31 +422,31 @@ RuntimeScriptValue Sc_Button_GetView(void *self, const RuntimeScriptValue *param
 }
 
 void RegisterButtonAPI() {
-	ccAddExternalObjectFunction("Button::Animate^4",            Sc_Button_Animate);
-	ccAddExternalObjectFunction("Button::Click^1",              Sc_Button_Click);
-	ccAddExternalObjectFunction("Button::GetText^1",            Sc_Button_GetText);
-	ccAddExternalObjectFunction("Button::SetText^1",            Sc_Button_SetText);
-	ccAddExternalObjectFunction("Button::get_TextAlignment",    Sc_Button_GetTextAlignment);
-	ccAddExternalObjectFunction("Button::set_TextAlignment",    Sc_Button_SetTextAlignment);
-	ccAddExternalObjectFunction("Button::get_Animating",        Sc_Button_GetAnimating);
-	ccAddExternalObjectFunction("Button::get_ClipImage",        Sc_Button_GetClipImage);
-	ccAddExternalObjectFunction("Button::set_ClipImage",        Sc_Button_SetClipImage);
-	ccAddExternalObjectFunction("Button::get_Font",             Sc_Button_GetFont);
-	ccAddExternalObjectFunction("Button::set_Font",             Sc_Button_SetFont);
-	ccAddExternalObjectFunction("Button::get_Frame",            Sc_Button_GetFrame);
-	ccAddExternalObjectFunction("Button::get_Graphic",          Sc_Button_GetGraphic);
-	ccAddExternalObjectFunction("Button::get_Loop",             Sc_Button_GetLoop);
+	ccAddExternalObjectFunction("Button::Animate^4", Sc_Button_Animate);
+	ccAddExternalObjectFunction("Button::Click^1", Sc_Button_Click);
+	ccAddExternalObjectFunction("Button::GetText^1", Sc_Button_GetText);
+	ccAddExternalObjectFunction("Button::SetText^1", Sc_Button_SetText);
+	ccAddExternalObjectFunction("Button::get_TextAlignment", Sc_Button_GetTextAlignment);
+	ccAddExternalObjectFunction("Button::set_TextAlignment", Sc_Button_SetTextAlignment);
+	ccAddExternalObjectFunction("Button::get_Animating", Sc_Button_GetAnimating);
+	ccAddExternalObjectFunction("Button::get_ClipImage", Sc_Button_GetClipImage);
+	ccAddExternalObjectFunction("Button::set_ClipImage", Sc_Button_SetClipImage);
+	ccAddExternalObjectFunction("Button::get_Font", Sc_Button_GetFont);
+	ccAddExternalObjectFunction("Button::set_Font", Sc_Button_SetFont);
+	ccAddExternalObjectFunction("Button::get_Frame", Sc_Button_GetFrame);
+	ccAddExternalObjectFunction("Button::get_Graphic", Sc_Button_GetGraphic);
+	ccAddExternalObjectFunction("Button::get_Loop", Sc_Button_GetLoop);
 	ccAddExternalObjectFunction("Button::get_MouseOverGraphic", Sc_Button_GetMouseOverGraphic);
 	ccAddExternalObjectFunction("Button::set_MouseOverGraphic", Sc_Button_SetMouseOverGraphic);
-	ccAddExternalObjectFunction("Button::get_NormalGraphic",    Sc_Button_GetNormalGraphic);
-	ccAddExternalObjectFunction("Button::set_NormalGraphic",    Sc_Button_SetNormalGraphic);
-	ccAddExternalObjectFunction("Button::get_PushedGraphic",    Sc_Button_GetPushedGraphic);
-	ccAddExternalObjectFunction("Button::set_PushedGraphic",    Sc_Button_SetPushedGraphic);
-	ccAddExternalObjectFunction("Button::get_Text",             Sc_Button_GetText_New);
-	ccAddExternalObjectFunction("Button::set_Text",             Sc_Button_SetText);
-	ccAddExternalObjectFunction("Button::get_TextColor",        Sc_Button_GetTextColor);
-	ccAddExternalObjectFunction("Button::set_TextColor",        Sc_Button_SetTextColor);
-	ccAddExternalObjectFunction("Button::get_View",             Sc_Button_GetView);
+	ccAddExternalObjectFunction("Button::get_NormalGraphic", Sc_Button_GetNormalGraphic);
+	ccAddExternalObjectFunction("Button::set_NormalGraphic", Sc_Button_SetNormalGraphic);
+	ccAddExternalObjectFunction("Button::get_PushedGraphic", Sc_Button_GetPushedGraphic);
+	ccAddExternalObjectFunction("Button::set_PushedGraphic", Sc_Button_SetPushedGraphic);
+	ccAddExternalObjectFunction("Button::get_Text", Sc_Button_GetText_New);
+	ccAddExternalObjectFunction("Button::set_Text", Sc_Button_SetText);
+	ccAddExternalObjectFunction("Button::get_TextColor", Sc_Button_GetTextColor);
+	ccAddExternalObjectFunction("Button::set_TextColor", Sc_Button_SetTextColor);
+	ccAddExternalObjectFunction("Button::get_View", Sc_Button_GetView);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -467,3 +469,5 @@ void RegisterButtonAPI() {
 	ccAddExternalFunctionForPlugin("Button::get_TextColor", (void *)Button_GetTextColor);
 	ccAddExternalFunctionForPlugin("Button::set_TextColor", (void *)Button_SetTextColor);
 }
+
+} // namespace AGS3

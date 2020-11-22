@@ -31,6 +31,8 @@
 #include <thread>
 #include "platform/base/agsplatformdriver.h"
 
+namespace AGS3 {
+
 namespace {
 
 const auto MAXIMUM_FALL_BEHIND = 3;
@@ -120,3 +122,5 @@ void skipMissedTicks() {
 	last_tick_time = AGS_Clock::now();
 	next_frame_timestamp = AGS_Clock::now();
 }
+
+} // namespace AGS3

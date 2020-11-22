@@ -47,6 +47,8 @@
 #include "plugin/plugin_engine.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -87,7 +89,7 @@ void quit_shutdown_scripts() {
 
 void quit_check_dynamic_sprites(QuitReason qreason) {
 	if ((qreason & kQuitKind_NormalExit) && (check_dynamic_sprites_at_exit) &&
-	        (game.options[OPT_DEBUGMODE] != 0)) {
+		(game.options[OPT_DEBUGMODE] != 0)) {
 		// game exiting normally -- make sure the dynamic sprites
 		// have been deleted
 		for (int i = 1; i < spriteset.GetSpriteSlotCount(); i++) {
@@ -146,8 +148,8 @@ QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
 		} else {
 			qreason = kQuit_GameError;
 			alertis.Format("An error has occurred. Please contact the game author for support, as this "
-			               "is likely to be a scripting error and not a bug in AGS.\n"
-			               "(ACI version %s)\n\n", EngineVersion.LongString.GetCStr());
+				"is likely to be a scripting error and not a bug in AGS.\n"
+				"(ACI version %s)\n\n", EngineVersion.LongString.GetCStr());
 		}
 
 		alertis.Append(get_cur_script(5));
@@ -160,14 +162,14 @@ QuitReason quit_check_for_error_state(const char *&qmsg, String &alertis) {
 	} else if (qmsg[0] == '%') {
 		qmsg++;
 		alertis.Format("A warning has been generated. This is not normally fatal, but you have selected "
-		               "to treat warnings as errors.\n"
-		               "(ACI version %s)\n\n%s\n", EngineVersion.LongString.GetCStr(), get_cur_script(5).GetCStr());
+			"to treat warnings as errors.\n"
+			"(ACI version %s)\n\n%s\n", EngineVersion.LongString.GetCStr(), get_cur_script(5).GetCStr());
 		return kQuit_GameWarning;
 	} else {
 		alertis.Format("An internal error has occurred. Please note down the following information.\n"
-		               "If the problem persists, post the details on the AGS Technical Forum.\n"
-		               "(ACI version %s)\n"
-		               "\nError: ", EngineVersion.LongString.GetCStr());
+			"If the problem persists, post the details on the AGS Technical Forum.\n"
+			"(ACI version %s)\n"
+			"\nError: ", EngineVersion.LongString.GetCStr());
 		return kQuit_FatalError;
 	}
 }
@@ -300,3 +302,5 @@ extern "C" {
 		quit(msg);
 	}
 }
+
+} // namespace AGS3

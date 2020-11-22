@@ -34,6 +34,8 @@
 #include "script/runtimescriptvalue.h"
 #include "util/string_compat.h"
 
+namespace AGS3 {
+
 extern GameSetupStruct game;
 extern GameState play;
 extern int longestline;
@@ -254,14 +256,13 @@ size_t break_up_text_into_lines(const char *todis, SplitLines &lines, int wii, i
 			line_length = wgettextwidth_compensate(lines[rr], fonnt);
 			if (line_length > longestline)
 				longestline = line_length;
-		}
-	else
-		for (size_t rr = 0; rr < lines.Count(); rr++) {
-			line_length = wgettextwidth_compensate(lines[rr], fonnt);
-			if (line_length > longestline)
-				longestline = line_length;
-		}
-	return lines.Count();
+		} else
+			for (size_t rr = 0; rr < lines.Count(); rr++) {
+				line_length = wgettextwidth_compensate(lines[rr], fonnt);
+				if (line_length > longestline)
+					longestline = line_length;
+			}
+		return lines.Count();
 }
 
 int MAXSTRLEN = MAX_MAXSTRLEN;
@@ -412,26 +413,26 @@ const char *ScPl_String_Format(const char *texx, ...) {
 
 
 void RegisterStringAPI() {
-	ccAddExternalStaticFunction("String::IsNullOrEmpty^1",  Sc_String_IsNullOrEmpty);
-	ccAddExternalObjectFunction("String::Append^1",         Sc_String_Append);
-	ccAddExternalObjectFunction("String::AppendChar^1",     Sc_String_AppendChar);
-	ccAddExternalObjectFunction("String::CompareTo^2",      Sc_String_CompareTo);
-	ccAddExternalObjectFunction("String::Contains^1",       Sc_StrContains);
-	ccAddExternalObjectFunction("String::Copy^0",           Sc_String_Copy);
-	ccAddExternalObjectFunction("String::EndsWith^2",       Sc_String_EndsWith);
-	ccAddExternalStaticFunction("String::Format^101",       Sc_String_Format);
-	ccAddExternalObjectFunction("String::IndexOf^1",        Sc_StrContains);
-	ccAddExternalObjectFunction("String::LowerCase^0",      Sc_String_LowerCase);
-	ccAddExternalObjectFunction("String::Replace^3",        Sc_String_Replace);
-	ccAddExternalObjectFunction("String::ReplaceCharAt^2",  Sc_String_ReplaceCharAt);
-	ccAddExternalObjectFunction("String::StartsWith^2",     Sc_String_StartsWith);
-	ccAddExternalObjectFunction("String::Substring^2",      Sc_String_Substring);
-	ccAddExternalObjectFunction("String::Truncate^1",       Sc_String_Truncate);
-	ccAddExternalObjectFunction("String::UpperCase^0",      Sc_String_UpperCase);
-	ccAddExternalObjectFunction("String::get_AsFloat",      Sc_StringToFloat);
-	ccAddExternalObjectFunction("String::get_AsInt",        Sc_StringToInt);
-	ccAddExternalObjectFunction("String::geti_Chars",       Sc_String_GetChars);
-	ccAddExternalObjectFunction("String::get_Length",       Sc_strlen);
+	ccAddExternalStaticFunction("String::IsNullOrEmpty^1", Sc_String_IsNullOrEmpty);
+	ccAddExternalObjectFunction("String::Append^1", Sc_String_Append);
+	ccAddExternalObjectFunction("String::AppendChar^1", Sc_String_AppendChar);
+	ccAddExternalObjectFunction("String::CompareTo^2", Sc_String_CompareTo);
+	ccAddExternalObjectFunction("String::Contains^1", Sc_StrContains);
+	ccAddExternalObjectFunction("String::Copy^0", Sc_String_Copy);
+	ccAddExternalObjectFunction("String::EndsWith^2", Sc_String_EndsWith);
+	ccAddExternalStaticFunction("String::Format^101", Sc_String_Format);
+	ccAddExternalObjectFunction("String::IndexOf^1", Sc_StrContains);
+	ccAddExternalObjectFunction("String::LowerCase^0", Sc_String_LowerCase);
+	ccAddExternalObjectFunction("String::Replace^3", Sc_String_Replace);
+	ccAddExternalObjectFunction("String::ReplaceCharAt^2", Sc_String_ReplaceCharAt);
+	ccAddExternalObjectFunction("String::StartsWith^2", Sc_String_StartsWith);
+	ccAddExternalObjectFunction("String::Substring^2", Sc_String_Substring);
+	ccAddExternalObjectFunction("String::Truncate^1", Sc_String_Truncate);
+	ccAddExternalObjectFunction("String::UpperCase^0", Sc_String_UpperCase);
+	ccAddExternalObjectFunction("String::get_AsFloat", Sc_StringToFloat);
+	ccAddExternalObjectFunction("String::get_AsInt", Sc_StringToInt);
+	ccAddExternalObjectFunction("String::geti_Chars", Sc_String_GetChars);
+	ccAddExternalObjectFunction("String::get_Length", Sc_strlen);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -456,3 +457,5 @@ void RegisterStringAPI() {
 	ccAddExternalFunctionForPlugin("String::geti_Chars", (void *)String_GetChars);
 	ccAddExternalFunctionForPlugin("String::get_Length", (void *)strlen);
 }
+
+} // namespace AGS3

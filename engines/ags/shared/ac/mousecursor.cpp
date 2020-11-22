@@ -23,6 +23,8 @@
 #include "ac/mousecursor.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 MouseCursor::MouseCursor() {
@@ -67,3 +69,5 @@ void MouseCursor::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(view);
 	out->WriteInt32(flags);
 }
+
+} // namespace AGS3

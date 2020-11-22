@@ -23,6 +23,8 @@
 #include "gui/animatingguibutton.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 void AnimatingGUIButton::ReadFromFile(Stream *in) {
@@ -48,3 +50,5 @@ void AnimatingGUIButton::WriteToFile(Stream *out) {
 	out->WriteInt16(repeat);
 	out->WriteInt16(wait);
 }
+
+} // namespace AGS3

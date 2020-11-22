@@ -28,6 +28,7 @@
 #include "util/string.h"
 #include "util/string_compat.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -210,7 +211,7 @@ size_t String::FindString(const char *cstr, size_t from) const {
 }
 
 bool String::FindSection(char separator, size_t first, size_t last, bool exclude_first_sep, bool exclude_last_sep,
-                         size_t &from, size_t &to) const {
+	size_t &from, size_t &to) const {
 	if (!_cstr || !separator) {
 		return false;
 	}
@@ -247,7 +248,7 @@ bool String::FindSection(char separator, size_t first, size_t last, bool exclude
 		// correct the indices to stay in the [0; length] range
 		assert(slice_from <= slice_to);
 		from = Math::Clamp(slice_from, (size_t)0, _len);
-		to   = Math::Clamp(slice_to, (size_t)0, _len);
+		to = Math::Clamp(slice_to, (size_t)0, _len);
 		return true;
 	}
 	return false;
@@ -341,7 +342,7 @@ String String::RightSection(char separator, bool exclude_separator) const {
 }
 
 String String::Section(char separator, size_t first, size_t last,
-                       bool exclude_first_sep, bool exclude_last_sep) const {
+	bool exclude_first_sep, bool exclude_last_sep) const {
 	if (!_cstr || !separator) {
 		return String();
 	}
@@ -349,7 +350,7 @@ String String::Section(char separator, size_t first, size_t last,
 	size_t slice_from;
 	size_t slice_to;
 	if (FindSection(separator, first, last, exclude_first_sep, exclude_last_sep,
-	                slice_from, slice_to)) {
+		slice_from, slice_to)) {
 		return Mid(slice_from, slice_to - slice_from);
 	}
 	return String();
@@ -471,7 +472,7 @@ void String::ClipRightSection(char separator, bool include_separator) {
 }
 
 void String::ClipSection(char separator, size_t first, size_t last,
-                         bool include_first_sep, bool include_last_sep) {
+	bool include_first_sep, bool include_last_sep) {
 	if (!_cstr || !separator) {
 		return;
 	}
@@ -479,7 +480,7 @@ void String::ClipSection(char separator, size_t first, size_t last,
 	size_t slice_from;
 	size_t slice_to;
 	if (FindSection(separator, first, last, !include_first_sep, !include_last_sep,
-	                slice_from, slice_to)) {
+		slice_from, slice_to)) {
 		ClipMid(slice_from, slice_to - slice_from);
 	}
 }
@@ -526,7 +527,7 @@ void String::Free() {
 		assert(_bufHead->RefCount > 0);
 		_bufHead->RefCount--;
 		if (!_bufHead->RefCount) {
-			delete [] _buf;
+			delete[] _buf;
 		}
 	}
 	_buf = nullptr;
@@ -597,7 +598,7 @@ void String::Reverse() {
 	if (!_cstr || GetLength() <= 1)
 		return;
 	for (char *fw = _cstr, *bw = _cstr + _len - 1;
-	        *fw; ++fw, --bw) {
+		*fw; ++fw, --bw) {
 		std::swap(*fw, *bw);
 	}
 }
@@ -737,7 +738,7 @@ void String::TruncateToRightSection(char separator, bool exclude_separator) {
 }
 
 void String::TruncateToSection(char separator, size_t first, size_t last,
-                               bool exclude_first_sep, bool exclude_last_sep) {
+	bool exclude_first_sep, bool exclude_last_sep) {
 	if (!_cstr || !separator) {
 		return;
 	}
@@ -745,7 +746,7 @@ void String::TruncateToSection(char separator, size_t first, size_t last,
 	size_t slice_from;
 	size_t slice_to;
 	if (FindSection(separator, first, last, exclude_first_sep, exclude_last_sep,
-	                slice_from, slice_to)) {
+		slice_from, slice_to)) {
 		TruncateToMid(slice_from, slice_to - slice_from);
 	} else {
 		Empty();
@@ -833,12 +834,12 @@ void String::ReserveAndShift(bool left, size_t more_length) {
 			// make sure we make use of all of our space
 			const char *cstr_head = _buf + sizeof(String::BufHeader);
 			size_t free_space = left ?
-			                    _cstr - cstr_head :
-			                    (cstr_head + _bufHead->Capacity) - (_cstr + _len);
+				_cstr - cstr_head :
+				(cstr_head + _bufHead->Capacity) - (_cstr + _len);
 			if (free_space < more_length) {
 				Align((left ?
-				       _cstr + (more_length - free_space) :
-				       _cstr - (more_length - free_space)) - cstr_head);
+					_cstr + (more_length - free_space) :
+					_cstr - (more_length - free_space)) - cstr_head);
 			}
 		}
 	} else {
@@ -848,3 +849,4 @@ void String::ReserveAndShift(bool left, size_t more_length) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

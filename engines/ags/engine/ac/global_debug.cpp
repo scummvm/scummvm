@@ -47,6 +47,8 @@
 #include "gfx/graphicsdriver.h"
 #include "main/graphics_mode.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -69,16 +71,16 @@ String GetRuntimeInfo() {
 	Rect render_frame = gfxDriver->GetRenderDestination();
 	PGfxFilter filter = gfxDriver->GetGraphicsFilter();
 	String runtimeInfo = String::FromFormat(
-	                         "Adventure Game Studio run-time engine[ACI version %s"
-	                         "[Game resolution %d x %d (%d-bit)"
-	                         "[Running %d x %d at %d-bit%s%s[GFX: %s; %s[Draw frame %d x %d["
-	                         "Sprite cache size: %d KB (limit %d KB; %d locked)",
-	                         EngineVersion.LongString.GetCStr(), game.GetGameRes().Width, game.GetGameRes().Height, game.GetColorDepth(),
-	                         mode.Width, mode.Height, mode.ColorDepth, (convert_16bit_bgr) ? " BGR" : "",
-	                         mode.Windowed ? " W" : "",
-	                         gfxDriver->GetDriverName(), filter->GetInfo().Name.GetCStr(),
-	                         render_frame.GetWidth(), render_frame.GetHeight(),
-	                         spriteset.GetCacheSize() / 1024, spriteset.GetMaxCacheSize() / 1024, spriteset.GetLockedSize() / 1024);
+		"Adventure Game Studio run-time engine[ACI version %s"
+		"[Game resolution %d x %d (%d-bit)"
+		"[Running %d x %d at %d-bit%s%s[GFX: %s; %s[Draw frame %d x %d["
+		"Sprite cache size: %d KB (limit %d KB; %d locked)",
+		EngineVersion.LongString.GetCStr(), game.GetGameRes().Width, game.GetGameRes().Height, game.GetColorDepth(),
+		mode.Width, mode.Height, mode.ColorDepth, (convert_16bit_bgr) ? " BGR" : "",
+		mode.Windowed ? " W" : "",
+		gfxDriver->GetDriverName(), filter->GetInfo().Name.GetCStr(),
+		render_frame.GetWidth(), render_frame.GetHeight(),
+		spriteset.GetCacheSize() / 1024, spriteset.GetMaxCacheSize() / 1024, spriteset.GetLockedSize() / 1024);
 	if (play.separate_music_lib)
 		runtimeInfo.Append("[AUDIO.VOX enabled");
 	if (play.want_speech >= 1)
@@ -185,3 +187,5 @@ void script_debug(int cmdd, int dataa) {
 		ccSetOption(SCOPT_DEBUGRUN, dataa);
 	else quit("!Debug: unknown command code");
 }
+
+} // namespace AGS3

@@ -60,6 +60,8 @@
 #include "ac/mouse.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetupStruct game;
@@ -1226,3 +1228,5 @@ void RegisterDialogAPI() {
 	ccAddExternalFunctionForPlugin("Dialog::SetOptionState^2", (void *)Dialog_SetOptionState);
 	ccAddExternalFunctionForPlugin("Dialog::Start^0", (void *)Dialog_Start);
 }
+
+} // namespace AGS3

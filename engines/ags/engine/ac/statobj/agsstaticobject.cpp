@@ -25,6 +25,8 @@
 #include "ac/game.h"
 #include "ac/gamestate.h"
 
+namespace AGS3 {
+
 AGSStaticObject GlobalStaticManager;
 StaticGame      GameStaticManager;
 
@@ -84,3 +86,5 @@ void StaticGame::WriteInt32(const char *address, intptr_t offset, int32_t val) {
 		*(int32_t *)(address + offset) = val;
 	}
 }
+
+} // namespace AGS3

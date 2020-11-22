@@ -23,6 +23,8 @@
 #include "ac/dynobj/cc_gui.h"
 #include "ac/dynobj/scriptgui.h"
 
+namespace AGS3 {
+
 extern ScriptGUI *scrGui;
 
 // return the type name of the object
@@ -44,3 +46,5 @@ void CCGUI::Unserialize(int index, const char *serializedData, int dataSize) {
 	int num = UnserializeInt();
 	ccRegisterUnserializedObject(index, &scrGui[num], this);
 }
+
+} // namespace AGS3

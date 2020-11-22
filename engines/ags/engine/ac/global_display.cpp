@@ -41,6 +41,8 @@
 #include "game/roomstruct.h"
 #include "main/game_run.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern TopBarSettings topBar;
@@ -113,8 +115,8 @@ void DisplayMessageAtY(int msnum, int ypos) {
 	if (display_message_aschar > 0) {
 		display_message_aschar = 0;
 		quit("!DisplayMessage: data column specified a character for local\n"
-		     "message; use the message editor to select the character for room\n"
-		     "messages.\n");
+			"message; use the message editor to select the character for room\n"
+			"messages.\n");
 	}
 
 	int repeatloop = 1;
@@ -174,13 +176,13 @@ void DisplayAtY(int ypos, const char *texx) {
 
 		if (is_screen_dirty()) {
 			// erase any previous DisplaySpeech
-			play.disabled_user_interface ++;
+			play.disabled_user_interface++;
 			UpdateGameOnce();
-			play.disabled_user_interface --;
+			play.disabled_user_interface--;
 		}
 
 		_display_at(-1, ypos, ui_view.GetWidth() / 2 + ui_view.GetWidth() / 4,
-		            get_translation(texx), DISPLAYTEXT_MESSAGEBOX, 0, 0, 0, false);
+			get_translation(texx), DISPLAYTEXT_MESSAGEBOX, 0, 0, 0, false);
 	}
 }
 
@@ -201,3 +203,5 @@ void SetSkipSpeech(SkipSpeechStyle newval) {
 SkipSpeechStyle GetSkipSpeech() {
 	return internal_skip_speech_to_user(play.cant_skip_speech);
 }
+
+} // namespace AGS3

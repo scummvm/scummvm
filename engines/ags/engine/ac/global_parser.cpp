@@ -26,6 +26,8 @@
 #include "ac/gamestate.h"
 #include "ac/string.h"
 
+namespace AGS3 {
+
 extern GameState play;
 
 int SaidUnknownWord(char *buffer) {
@@ -35,3 +37,5 @@ int SaidUnknownWord(char *buffer) {
 		return 0;
 	return 1;
 }
+
+} // namespace AGS3

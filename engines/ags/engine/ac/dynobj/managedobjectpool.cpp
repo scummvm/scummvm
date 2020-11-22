@@ -30,6 +30,8 @@
 #include "script/script_common.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 const auto OBJECT_CACHE_MAGIC_NUMBER = 0xa30b;
@@ -199,7 +201,7 @@ int ManagedObjectPool::AddObject(const char *address, ICCDynamicObject *callback
 
 	o = ManagedObject(plugin_object ? kScValPluginObject : kScValDynamicObject, handle, address, callback);
 
-	handleByAddress.insert({address, o.handle});
+	handleByAddress.insert({ address, o.handle });
 	objectCreationCounter++;
 	ManagedObjectLog("Allocated managed object handle=%d, type=%s", handle, callback->GetType());
 	return o.handle;
@@ -223,7 +225,7 @@ int ManagedObjectPool::AddUnserializedObject(const char *address, ICCDynamicObje
 
 	o = ManagedObject(plugin_object ? kScValPluginObject : kScValDynamicObject, handle, address, callback);
 
-	handleByAddress.insert({address, o.handle});
+	handleByAddress.insert({ address, o.handle });
 	ManagedObjectLog("Allocated unserialized managed object handle=%d, type=%s", o.handle, callback->GetType());
 	return o.handle;
 }
@@ -287,7 +289,8 @@ int ManagedObjectPool::ReadFromDisk(Stream *in, ICCObjectReader *reader) {
 	auto version = in->ReadInt32();
 
 	switch (version) {
-	case 1: {
+	case 1:
+	{
 		// IMPORTANT: numObjs is "nextHandleId", which is why we iterate from 1 to numObjs-1
 		int numObjs = in->ReadInt32();
 		for (int i = 1; i < numObjs; i++) {
@@ -309,7 +312,8 @@ int ManagedObjectPool::ReadFromDisk(Stream *in, ICCObjectReader *reader) {
 		}
 	}
 	break;
-	case 2: {
+	case 2:
+	{
 		// This is actually number of objects written.
 		int objectsSize = in->ReadInt32();
 		for (int i = 0; i < objectsSize; i++) {
@@ -377,3 +381,5 @@ ManagedObjectPool::ManagedObjectPool() : objectCreationCounter(0), nextHandle(1)
 }
 
 ManagedObjectPool pool;
+
+} // namespace AGS3

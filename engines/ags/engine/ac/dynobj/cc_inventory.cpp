@@ -24,6 +24,8 @@
 #include "ac/dynobj/scriptinvitem.h"
 #include "ac/characterinfo.h"
 
+namespace AGS3 {
+
 extern ScriptInvItem scrInv[MAX_INV];
 
 // return the type name of the object
@@ -45,3 +47,5 @@ void CCInventory::Unserialize(int index, const char *serializedData, int dataSiz
 	int num = UnserializeInt();
 	ccRegisterUnserializedObject(index, &scrInv[num], this);
 }
+
+} // namespace AGS3
