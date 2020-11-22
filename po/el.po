@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-22 16:45+0000\n"
-"PO-Revision-Date: 2020-11-19 12:34+0000\n"
+"PO-Revision-Date: 2020-11-22 17:19+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -309,7 +309,7 @@ msgstr "Αντιστοιχίσεις πλήκτρων"
 
 #: gui/editgamedialog.cpp:246 gui/options.cpp:1833 engines/dialogs.cpp:333
 msgid "Backend"
-msgstr ""
+msgstr "Πλατφόρμα"
 
 #: gui/editgamedialog.cpp:260 gui/options.cpp:1847 engines/dialogs.cpp:301
 msgid "Audio"
