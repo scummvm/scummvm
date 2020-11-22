@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-20 04:23+0000\n"
+"POT-Creation-Date: 2020-11-21 14:56+0000\n"
 "PO-Revision-Date: 2020-11-15 10:30+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -597,7 +597,7 @@ msgstr "Schließen"
 #: backends/platform/symbian/src/SymbianActions.cpp:40
 #: engines/dragons/metaengine.cpp:165 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:98 engines/grim/grim.cpp:451
-#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:343
+#: engines/grim/grim.cpp:528 engines/twine/metaengine.cpp:345
 #: engines/wintermute/keymapper_tables.h:1011
 #: engines/wintermute/keymapper_tables.h:1100
 #: engines/wintermute/keymapper_tables.h:1474
@@ -609,7 +609,7 @@ msgstr "Hoch"
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: engines/dragons/metaengine.cpp:171 engines/glk/scott/scott.cpp:412
 #: engines/griffon/metaengine.cpp:104 engines/grim/grim.cpp:456
-#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:349
+#: engines/grim/grim.cpp:533 engines/twine/metaengine.cpp:351
 #: engines/wintermute/keymapper_tables.h:1017
 #: engines/wintermute/keymapper_tables.h:1107
 #: engines/wintermute/keymapper_tables.h:1480
@@ -621,7 +621,7 @@ msgstr "Runter"
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: engines/dragons/metaengine.cpp:177 engines/griffon/metaengine.cpp:110
 #: engines/grim/grim.cpp:461 engines/grim/grim.cpp:538
-#: engines/twine/metaengine.cpp:361 engines/wintermute/keymapper_tables.h:1023
+#: engines/twine/metaengine.cpp:363 engines/wintermute/keymapper_tables.h:1023
 #: engines/wintermute/keymapper_tables.h:1462
 #: engines/wintermute/keymapper_tables.h:1570
 #: engines/wintermute/keymapper_tables.h:1692
@@ -632,7 +632,7 @@ msgstr "Links"
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: engines/dragons/metaengine.cpp:183 engines/griffon/metaengine.cpp:116
 #: engines/grim/grim.cpp:466 engines/grim/grim.cpp:543
-#: engines/twine/metaengine.cpp:355 engines/wintermute/keymapper_tables.h:1029
+#: engines/twine/metaengine.cpp:357 engines/wintermute/keymapper_tables.h:1029
 #: engines/wintermute/keymapper_tables.h:1468
 #: engines/wintermute/keymapper_tables.h:1578
 #: engines/wintermute/keymapper_tables.h:1698
@@ -2637,7 +2637,7 @@ msgstr "Möchten Sie beenden?"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:244
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:83
-#: engines/twine/metaengine.cpp:258
+#: engines/twine/metaengine.cpp:259
 msgid "Center"
 msgstr "Zentriert"
 
@@ -4233,7 +4233,7 @@ msgstr "Befehl anpassen"
 #: engines/grim/grim.cpp:491 engines/grim/grim.cpp:583
 #: engines/hdb/metaengine.cpp:231 engines/scumm/help.cpp:225
 #: engines/scumm/help.cpp:234 engines/scumm/help.cpp:241
-#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:309
+#: engines/scumm/help.cpp:249 engines/twine/metaengine.cpp:311
 #: engines/zvision/metaengine.cpp:164
 msgid "Inventory"
 msgstr "Inventar"
@@ -4932,7 +4932,7 @@ msgid "Interact via Right Click"
 msgstr "Interaktion via Rechtsklick"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:475
-#: engines/twine/metaengine.cpp:275
+#: engines/twine/metaengine.cpp:277
 msgid "Move Forward"
 msgstr "Nach vorn bewegen"
 
@@ -4949,13 +4949,13 @@ msgid "Move Right"
 msgstr "Nach rechts gehen"
 
 #: engines/kyra/engine/eobcommon.cpp:372 engines/kyra/engine/lol.cpp:479
-#: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:293
+#: engines/pegasus/pegasus.cpp:2497 engines/twine/metaengine.cpp:295
 #: engines/zvision/metaengine.cpp:141
 msgid "Turn Left"
 msgstr "Nach links drehen"
 
 #: engines/kyra/engine/eobcommon.cpp:373 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:287
+#: engines/pegasus/pegasus.cpp:2504 engines/twine/metaengine.cpp:289
 #: engines/zvision/metaengine.cpp:147
 msgid "Turn Right"
 msgstr "Nach rechts drehen"
@@ -7127,47 +7127,47 @@ msgstr "Verhalten"
 msgid "Change Behaviour"
 msgstr "Verhalten ändern"
 
-#: engines/twine/metaengine.cpp:253
+#: engines/twine/metaengine.cpp:254
 msgid "Options Menu"
 msgstr "Optionsmenü"
 
-#: engines/twine/metaengine.cpp:264
+#: engines/twine/metaengine.cpp:265
 msgid "Use Selected Object"
 msgstr "Ausgewähltes Objekt verwenden"
 
-#: engines/twine/metaengine.cpp:270
+#: engines/twine/metaengine.cpp:271
 msgid "Throw Magic Ball"
 msgstr "Magischen Ball werfen"
 
-#: engines/twine/metaengine.cpp:281
+#: engines/twine/metaengine.cpp:283
 msgid "Move Backward"
 msgstr "Rückwärts bewegen"
 
-#: engines/twine/metaengine.cpp:299
+#: engines/twine/metaengine.cpp:301
 msgid "Use Protopack"
 msgstr "Protopack verwenden"
 
-#: engines/twine/metaengine.cpp:304
+#: engines/twine/metaengine.cpp:306
 msgid "Open Holomap"
 msgstr "Holomap öffnen"
 
-#: engines/twine/metaengine.cpp:316
+#: engines/twine/metaengine.cpp:318
 msgid "Special Action"
 msgstr "Aktion"
 
-#: engines/twine/metaengine.cpp:321 engines/wintermute/keymapper_tables.h:61
+#: engines/twine/metaengine.cpp:323 engines/wintermute/keymapper_tables.h:61
 msgid "Escape"
 msgstr "Escape-Taste"
 
-#: engines/twine/metaengine.cpp:332
+#: engines/twine/metaengine.cpp:334
 msgid "Accept"
 msgstr "Annehmen"
 
-#: engines/twine/metaengine.cpp:338 engines/twine/metaengine.cpp:379
+#: engines/twine/metaengine.cpp:340 engines/twine/metaengine.cpp:381
 msgid "Abort"
 msgstr "Abbrechen"
 
-#: engines/twine/metaengine.cpp:367
+#: engines/twine/metaengine.cpp:369
 msgid "Next Page"
 msgstr "Nächste Seite"
 
