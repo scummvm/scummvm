@@ -44,8 +44,9 @@ namespace AGDS {
 		int					group;
 		int					leftVolume;
 		int					rightVolume;
+		bool				paused;
 		Sound(int id_, const Common::String &p, const Common::String & res, const Common::String & var, Audio::SoundHandle h, int g = 0):
-			id(id_), process(p), name(res), phaseVar(var), handle(h), group(g), leftVolume(100), rightVolume(100) {
+			id(id_), process(p), name(res), phaseVar(var), handle(h), group(g), leftVolume(100), rightVolume(100), paused(false) {
 		}
 	};
 
@@ -59,7 +60,7 @@ namespace AGDS {
 	public:
 		SoundManager(AGDSEngine *engine, Audio::Mixer *mixer): _nextId(1), _engine(engine), _mixer(mixer) { }
 		void tick();
-		int play(const Common::String &process, const Common::String &file, const Common::String &phaseVar, int id = -1);
+		int play(const Common::String &process, const Common::String &file, const Common::String &phaseVar, bool startPlaying = true, int id = -1);
 		bool playing(int id) const;
 		void stopAll();
 		Sound *findSampleByPhaseVar(const Common::String &phaseVar);

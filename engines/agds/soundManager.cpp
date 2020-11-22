@@ -47,7 +47,7 @@ void SoundManager::tick() {
 				debug("sample %s restarts (via phase var)", sound.name.c_str());
 				_engine->setGlobal(phaseVar, 1);
 				_mixer->stopID(sound.id);
-				play(sound.process, sound.name, sound.phaseVar, sound.id);
+				play(sound.process, sound.name, sound.phaseVar, true, sound.id);
 			} else if (value & 4) {
 				debug("sample %s stops (via phase var)", sound.name.c_str());
 				_mixer->stopID(sound.id);
@@ -82,8 +82,8 @@ void SoundManager::stopAll() {
 	_sounds.clear();
 }
 
-int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &phaseVar, int id) {
-	debug("SoundMan::play %s %s %s", process.c_str(), resource.c_str(), phaseVar.c_str());
+int SoundManager::play(const Common::String &process, const Common::String &resource, const Common::String &phaseVar, bool startPlaying, int id) {
+	debug("SoundMan::play %s %s %s %d %d", process.c_str(), resource.c_str(), phaseVar.c_str(), startPlaying, id);
 	{
 		auto sample = findSampleByPhaseVar(phaseVar);
 		if (sample && playing(sample->id)) {
@@ -120,9 +120,9 @@ int SoundManager::play(const Common::String &process, const Common::String &reso
 	Audio::SoundHandle handle;
 	if (id == -1)
 		id = _nextId++;
-	_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, id);
 
 	_sounds.push_back(Sound(id, process, resource, phaseVar, handle));
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, stream, id);
 	//if (sound_off)
 	//	setPhaseVar(_sounds.back(), 1);
 	return id;

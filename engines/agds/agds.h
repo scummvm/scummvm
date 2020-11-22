@@ -239,8 +239,8 @@ public:
 
 	void tickInventory();
 
-	int playSound(const Common::String &process, const Common::String &resource, const Common::String &phaseVar) {
-		return _soundManager.play(process, resource, phaseVar);
+	int playSound(const Common::String &process, const Common::String &resource, const Common::String &phaseVar, bool playing = true) {
+		return _soundManager.play(process, resource, phaseVar, playing);
 	}
 
 	void playSoundSync(const Common::String &resource, const Common::String &phaseVar) {

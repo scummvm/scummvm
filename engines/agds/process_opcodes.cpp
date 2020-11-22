@@ -642,6 +642,7 @@ void Process::resetState() {
 	_animationDelay = -1;
 	_animationSpeed = 100;
 	_samplePeriodic = false;
+	_samplePaused = false;
 
 	_tileWidth = 16;
 	_tileHeight = 16;
@@ -870,8 +871,9 @@ void Process::disableMouseAreas() {
 	_engine->_mouseMap.disable(_engine, value > 0);
 }
 
-void Process::stub194() {
-	debug("stub194: mute");
+void Process::samplePaused() {
+	debug("samplePaused: stub");
+	_samplePaused = true;
 }
 
 void Process::stub197() {
