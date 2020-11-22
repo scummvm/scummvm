@@ -35,6 +35,8 @@
 #include "ac/dynobj/cc_gui.h"
 #include "ac/dynobj/cc_guiobject.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern ScriptGUI *scrGui;
@@ -385,35 +387,35 @@ RuntimeScriptValue Sc_GUIControl_SetZOrder(void *self, const RuntimeScriptValue 
 
 
 void RegisterGUIControlAPI() {
-	ccAddExternalObjectFunction("GUIControl::BringToFront^0",   Sc_GUIControl_BringToFront);
-	ccAddExternalStaticFunction("GUIControl::GetAtScreenXY^2",  Sc_GetGUIControlAtLocation);
-	ccAddExternalObjectFunction("GUIControl::SendToBack^0",     Sc_GUIControl_SendToBack);
-	ccAddExternalObjectFunction("GUIControl::SetPosition^2",    Sc_GUIControl_SetPosition);
-	ccAddExternalObjectFunction("GUIControl::SetSize^2",        Sc_GUIControl_SetSize);
-	ccAddExternalObjectFunction("GUIControl::get_AsButton",     Sc_GUIControl_GetAsButton);
-	ccAddExternalObjectFunction("GUIControl::get_AsInvWindow",  Sc_GUIControl_GetAsInvWindow);
-	ccAddExternalObjectFunction("GUIControl::get_AsLabel",      Sc_GUIControl_GetAsLabel);
-	ccAddExternalObjectFunction("GUIControl::get_AsListBox",    Sc_GUIControl_GetAsListBox);
-	ccAddExternalObjectFunction("GUIControl::get_AsSlider",     Sc_GUIControl_GetAsSlider);
-	ccAddExternalObjectFunction("GUIControl::get_AsTextBox",    Sc_GUIControl_GetAsTextBox);
-	ccAddExternalObjectFunction("GUIControl::get_Clickable",    Sc_GUIControl_GetClickable);
-	ccAddExternalObjectFunction("GUIControl::set_Clickable",    Sc_GUIControl_SetClickable);
-	ccAddExternalObjectFunction("GUIControl::get_Enabled",      Sc_GUIControl_GetEnabled);
-	ccAddExternalObjectFunction("GUIControl::set_Enabled",      Sc_GUIControl_SetEnabled);
-	ccAddExternalObjectFunction("GUIControl::get_Height",       Sc_GUIControl_GetHeight);
-	ccAddExternalObjectFunction("GUIControl::set_Height",       Sc_GUIControl_SetHeight);
-	ccAddExternalObjectFunction("GUIControl::get_ID",           Sc_GUIControl_GetID);
-	ccAddExternalObjectFunction("GUIControl::get_OwningGUI",    Sc_GUIControl_GetOwningGUI);
-	ccAddExternalObjectFunction("GUIControl::get_Visible",      Sc_GUIControl_GetVisible);
-	ccAddExternalObjectFunction("GUIControl::set_Visible",      Sc_GUIControl_SetVisible);
-	ccAddExternalObjectFunction("GUIControl::get_Width",        Sc_GUIControl_GetWidth);
-	ccAddExternalObjectFunction("GUIControl::set_Width",        Sc_GUIControl_SetWidth);
-	ccAddExternalObjectFunction("GUIControl::get_X",            Sc_GUIControl_GetX);
-	ccAddExternalObjectFunction("GUIControl::set_X",            Sc_GUIControl_SetX);
-	ccAddExternalObjectFunction("GUIControl::get_Y",            Sc_GUIControl_GetY);
-	ccAddExternalObjectFunction("GUIControl::set_Y",            Sc_GUIControl_SetY);
-	ccAddExternalObjectFunction("GUIControl::get_ZOrder",       Sc_GUIControl_GetZOrder);
-	ccAddExternalObjectFunction("GUIControl::set_ZOrder",       Sc_GUIControl_SetZOrder);
+	ccAddExternalObjectFunction("GUIControl::BringToFront^0", Sc_GUIControl_BringToFront);
+	ccAddExternalStaticFunction("GUIControl::GetAtScreenXY^2", Sc_GetGUIControlAtLocation);
+	ccAddExternalObjectFunction("GUIControl::SendToBack^0", Sc_GUIControl_SendToBack);
+	ccAddExternalObjectFunction("GUIControl::SetPosition^2", Sc_GUIControl_SetPosition);
+	ccAddExternalObjectFunction("GUIControl::SetSize^2", Sc_GUIControl_SetSize);
+	ccAddExternalObjectFunction("GUIControl::get_AsButton", Sc_GUIControl_GetAsButton);
+	ccAddExternalObjectFunction("GUIControl::get_AsInvWindow", Sc_GUIControl_GetAsInvWindow);
+	ccAddExternalObjectFunction("GUIControl::get_AsLabel", Sc_GUIControl_GetAsLabel);
+	ccAddExternalObjectFunction("GUIControl::get_AsListBox", Sc_GUIControl_GetAsListBox);
+	ccAddExternalObjectFunction("GUIControl::get_AsSlider", Sc_GUIControl_GetAsSlider);
+	ccAddExternalObjectFunction("GUIControl::get_AsTextBox", Sc_GUIControl_GetAsTextBox);
+	ccAddExternalObjectFunction("GUIControl::get_Clickable", Sc_GUIControl_GetClickable);
+	ccAddExternalObjectFunction("GUIControl::set_Clickable", Sc_GUIControl_SetClickable);
+	ccAddExternalObjectFunction("GUIControl::get_Enabled", Sc_GUIControl_GetEnabled);
+	ccAddExternalObjectFunction("GUIControl::set_Enabled", Sc_GUIControl_SetEnabled);
+	ccAddExternalObjectFunction("GUIControl::get_Height", Sc_GUIControl_GetHeight);
+	ccAddExternalObjectFunction("GUIControl::set_Height", Sc_GUIControl_SetHeight);
+	ccAddExternalObjectFunction("GUIControl::get_ID", Sc_GUIControl_GetID);
+	ccAddExternalObjectFunction("GUIControl::get_OwningGUI", Sc_GUIControl_GetOwningGUI);
+	ccAddExternalObjectFunction("GUIControl::get_Visible", Sc_GUIControl_GetVisible);
+	ccAddExternalObjectFunction("GUIControl::set_Visible", Sc_GUIControl_SetVisible);
+	ccAddExternalObjectFunction("GUIControl::get_Width", Sc_GUIControl_GetWidth);
+	ccAddExternalObjectFunction("GUIControl::set_Width", Sc_GUIControl_SetWidth);
+	ccAddExternalObjectFunction("GUIControl::get_X", Sc_GUIControl_GetX);
+	ccAddExternalObjectFunction("GUIControl::set_X", Sc_GUIControl_SetX);
+	ccAddExternalObjectFunction("GUIControl::get_Y", Sc_GUIControl_GetY);
+	ccAddExternalObjectFunction("GUIControl::set_Y", Sc_GUIControl_SetY);
+	ccAddExternalObjectFunction("GUIControl::get_ZOrder", Sc_GUIControl_GetZOrder);
+	ccAddExternalObjectFunction("GUIControl::set_ZOrder", Sc_GUIControl_SetZOrder);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -445,3 +447,5 @@ void RegisterGUIControlAPI() {
 	ccAddExternalFunctionForPlugin("GUIControl::get_Y", (void *)GUIControl_GetY);
 	ccAddExternalFunctionForPlugin("GUIControl::set_Y", (void *)GUIControl_SetY);
 }
+
+} // namespace AGS3

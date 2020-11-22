@@ -35,6 +35,8 @@
 #include "util/stream.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 #define MOVER_MOUSEDOWNLOCKED -4000
@@ -57,29 +59,29 @@ GUIMain::GUIMain() {
 }
 
 void GUIMain::InitDefaults() {
-	ID            = 0;
+	ID = 0;
 	Name.Empty();
-	_flags        = kGUIMain_DefFlags;
+	_flags = kGUIMain_DefFlags;
 
-	X             = 0;
-	Y             = 0;
-	Width         = 0;
-	Height        = 0;
-	BgColor       = 8;
-	BgImage       = 0;
-	FgColor       = 1;
-	Padding       = TEXTWINDOW_PADDING_DEFAULT;
-	PopupStyle    = kGUIPopupNormal;
+	X = 0;
+	Y = 0;
+	Width = 0;
+	Height = 0;
+	BgColor = 8;
+	BgImage = 0;
+	FgColor = 1;
+	Padding = TEXTWINDOW_PADDING_DEFAULT;
+	PopupStyle = kGUIPopupNormal;
 	PopupAtMouseY = -1;
-	Transparency  = 0;
-	ZOrder        = -1;
+	Transparency = 0;
+	ZOrder = -1;
 
-	FocusCtrl     = 0;
+	FocusCtrl = 0;
 	HighlightCtrl = -1;
 	MouseOverCtrl = -1;
 	MouseDownCtrl = -1;
-	MouseWasAt.X  = -1;
-	MouseWasAt.Y  = -1;
+	MouseWasAt.X = -1;
+	MouseWasAt.Y = -1;
 
 	OnClickHandler.Empty();
 
@@ -197,23 +199,23 @@ void GUIMain::Draw(Bitmap *ds) {
 void GUIMain::DrawAt(Bitmap *ds, int x, int y) {
 	SET_EIP(375)
 
-	if ((Width < 1) || (Height < 1))
-		return;
+		if ((Width < 1) || (Height < 1))
+			return;
 
 	Bitmap subbmp;
 	subbmp.CreateSubBitmap(ds, RectWH(x, y, Width, Height));
 
 	SET_EIP(376)
-	// stop border being transparent, if the whole GUI isn't
-	if ((FgColor == 0) && (BgColor != 0))
-		FgColor = 16;
+		// stop border being transparent, if the whole GUI isn't
+		if ((FgColor == 0) && (BgColor != 0))
+			FgColor = 16;
 
 	if (BgColor != 0)
 		subbmp.Fill(subbmp.GetCompatibleColor(BgColor));
 
 	SET_EIP(377)
 
-	color_t draw_color;
+		color_t draw_color;
 	if (FgColor != BgColor) {
 		draw_color = subbmp.GetCompatibleColor(FgColor);
 		subbmp.DrawRect(Rect(0, 0, subbmp.GetWidth() - 1, subbmp.GetHeight() - 1), draw_color);
@@ -223,13 +225,13 @@ void GUIMain::DrawAt(Bitmap *ds, int x, int y) {
 
 	SET_EIP(378)
 
-	if (BgImage > 0 && spriteset[BgImage] != nullptr)
-		draw_gui_sprite(&subbmp, BgImage, 0, 0, false);
+		if (BgImage > 0 && spriteset[BgImage] != nullptr)
+			draw_gui_sprite(&subbmp, BgImage, 0, 0, false);
 
 	SET_EIP(379)
 
-	if (all_buttons_disabled && gui_disabled_style == GUIDIS_BLACKOUT)
-		return; // don't draw GUI controls
+		if (all_buttons_disabled && gui_disabled_style == GUIDIS_BLACKOUT)
+			return; // don't draw GUI controls
 
 	for (size_t ctrl_index = 0; ctrl_index < _controls.size(); ++ctrl_index) {
 		set_eip_guiobj(_ctrlDrawOrder[ctrl_index]);
@@ -253,7 +255,7 @@ void GUIMain::DrawAt(Bitmap *ds, int x, int y) {
 			DrawBlob(&subbmp, objToDraw->X, objToDraw->Y + objToDraw->Height - get_fixed_pixel_size(1) - 1, draw_color);
 			DrawBlob(&subbmp, objToDraw->X, objToDraw->Y, draw_color);
 			DrawBlob(&subbmp, objToDraw->X + objToDraw->Width - get_fixed_pixel_size(1) - 1,
-			         objToDraw->Y + objToDraw->Height - get_fixed_pixel_size(1) - 1, draw_color);
+				objToDraw->Y + objToDraw->Height - get_fixed_pixel_size(1) - 1, draw_color);
 		}
 		if (outlineGuiObjects) {
 			// draw a dotted outline round all objects
@@ -391,8 +393,8 @@ bool GUIMain::SetControlZOrder(int index, int zorder) {
 		return false; // no change
 
 	const bool move_back = zorder < old_zorder; // back is at zero index
-	const int  left      = move_back ? zorder : old_zorder;
-	const int  right     = move_back ? old_zorder : zorder;
+	const int  left = move_back ? zorder : old_zorder;
+	const int  right = move_back ? old_zorder : zorder;
 	for (size_t i = 0; i < _controls.size(); ++i) {
 		const int i_zorder = _controls[i]->ZOrder;
 		if (i_zorder == old_zorder)
@@ -441,7 +443,7 @@ void GUIMain::OnMouseButtonDown() {
 
 	// don't activate disabled buttons
 	if (!IsGUIEnabled(_controls[MouseOverCtrl]) || !_controls[MouseOverCtrl]->IsVisible() ||
-	        !_controls[MouseOverCtrl]->IsClickable())
+		!_controls[MouseOverCtrl]->IsClickable())
 		return;
 
 	MouseDownCtrl = MouseOverCtrl;
@@ -469,7 +471,7 @@ void GUIMain::OnMouseButtonUp() {
 
 void GUIMain::ReadFromFile(Stream *in, GuiVersion gui_version) {
 	// Legacy text window tag
-	char tw_flags[GUIMAIN_LEGACY_TW_FLAGS_SIZE] = {0};
+	char tw_flags[GUIMAIN_LEGACY_TW_FLAGS_SIZE] = { 0 };
 	if (gui_version < kGuiVersion_350)
 		in->Read(tw_flags, sizeof(tw_flags));
 
@@ -480,33 +482,33 @@ void GUIMain::ReadFromFile(Stream *in, GuiVersion gui_version) {
 		Name = StrUtil::ReadString(in);
 		OnClickHandler = StrUtil::ReadString(in);
 	}
-	X             = in->ReadInt32();
-	Y             = in->ReadInt32();
-	Width         = in->ReadInt32();
-	Height        = in->ReadInt32();
+	X = in->ReadInt32();
+	Y = in->ReadInt32();
+	Width = in->ReadInt32();
+	Height = in->ReadInt32();
 	if (gui_version < kGuiVersion_350) {
 		// NOTE: reading into actual variables only for old savegame support
 		FocusCtrl = in->ReadInt32();
 	}
 	const size_t ctrl_count = in->ReadInt32();
-	PopupStyle    = (GUIPopupStyle)in->ReadInt32();
+	PopupStyle = (GUIPopupStyle)in->ReadInt32();
 	PopupAtMouseY = in->ReadInt32();
-	BgColor       = in->ReadInt32();
-	BgImage       = in->ReadInt32();
-	FgColor       = in->ReadInt32();
+	BgColor = in->ReadInt32();
+	BgImage = in->ReadInt32();
+	FgColor = in->ReadInt32();
 	if (gui_version < kGuiVersion_350) {
 		// NOTE: reading into actual variables only for old savegame support
 		MouseOverCtrl = in->ReadInt32();
-		MouseWasAt.X  = in->ReadInt32();
-		MouseWasAt.Y  = in->ReadInt32();
+		MouseWasAt.X = in->ReadInt32();
+		MouseWasAt.Y = in->ReadInt32();
 		MouseDownCtrl = in->ReadInt32();
 		HighlightCtrl = in->ReadInt32();
 	}
-	_flags         = in->ReadInt32();
-	Transparency  = in->ReadInt32();
-	ZOrder        = in->ReadInt32();
-	ID            = in->ReadInt32();
-	Padding       = in->ReadInt32();
+	_flags = in->ReadInt32();
+	Transparency = in->ReadInt32();
+	ZOrder = in->ReadInt32();
+	ID = in->ReadInt32();
+	Padding = in->ReadInt32();
 	if (gui_version < kGuiVersion_350)
 		in->Seek(sizeof(int32_t) * GUIMAIN_LEGACY_RESERVED_INTS);
 
@@ -673,7 +675,7 @@ HError ReadGUI(std::vector<GUIMain> &guis, Stream *in, bool is_savegame) {
 		GameGuiVersion = kGuiVersion_Initial;
 	} else if (GameGuiVersion > kGuiVersion_Current)
 		return new Error(String::FromFormat("ReadGUI: format version not supported (required %d, supported %d - %d)",
-		                                    GameGuiVersion, kGuiVersion_Initial, kGuiVersion_Current));
+			GameGuiVersion, kGuiVersion_Initial, kGuiVersion_Current));
 	else
 		gui_count = in->ReadInt32();
 	guis.resize(gui_count);
@@ -818,3 +820,4 @@ void ApplyLegacyVisibility(GUIMain &gui, LegacyGUIVisState vis) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

@@ -23,6 +23,8 @@
 #include "ac/richgamemedia.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 void RICH_GAME_MEDIA_HEADER::ReadFromFile(Stream *in) {
@@ -52,3 +54,5 @@ void RICH_GAME_MEDIA_HEADER::WriteToFile(Stream *out) {
 	out->WriteArrayOfInt16((int16_t *)szLevelName, RM_MAXLENGTH);
 	out->WriteArrayOfInt16((int16_t *)szComments, RM_MAXLENGTH);
 }
+
+} // namespace AGS3

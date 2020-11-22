@@ -74,6 +74,8 @@
 #include "util/filestream.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Shared::Memory;
 using namespace AGS::Engine;
@@ -124,7 +126,7 @@ struct EnginePlugin {
 	char        filename[PLUGIN_FILENAME_MAX + 1];
 	AGS::Engine::Library   library;
 	bool       available;
-	char       *savedata;
+	char *savedata;
 	int         savedatasize;
 	int         wantHook;
 	int         invalidatedRegion;
@@ -193,7 +195,7 @@ void IAGSEngine::RequestEventHook(int32 event) {
 		quit("!IAGSEngine::RequestEventHook: no callback AGS_EngineOnEvent function exported from plugin");
 
 	if ((event & AGSE_SCRIPTDEBUG) &&
-	        ((plugins[this->pluginId].wantHook & AGSE_SCRIPTDEBUG) == 0)) {
+		((plugins[this->pluginId].wantHook & AGSE_SCRIPTDEBUG) == 0)) {
 		pluginsWantingDebugHooks++;
 		ccSetDebugHook(scriptDebugHook);
 	}
@@ -211,7 +213,7 @@ void IAGSEngine::UnrequestEventHook(int32 event) {
 		quit("!IAGSEngine::UnrequestEventHook: invalid event requested");
 
 	if ((event & AGSE_SCRIPTDEBUG) &&
-	        (plugins[this->pluginId].wantHook & AGSE_SCRIPTDEBUG)) {
+		(plugins[this->pluginId].wantHook & AGSE_SCRIPTDEBUG)) {
 		pluginsWantingDebugHooks--;
 		if (pluginsWantingDebugHooks < 1)
 			ccSetDebugHook(nullptr);
@@ -564,7 +566,7 @@ void IAGSEngine::PlaySoundChannel(int32 channel, int32 soundType, int32 volume, 
 	SOUNDCLIP *newcha = nullptr;
 
 	if (((soundType == PSND_MP3STREAM) || (soundType == PSND_OGGSTREAM))
-	        && (loop != 0))
+		&& (loop != 0))
 		quit("IAGSEngine::PlaySoundChannel: streamed samples cannot loop");
 
 	// TODO: find out how engine was supposed to decide on where to load the sound from
@@ -725,7 +727,7 @@ void IAGSEngine::QueueGameScriptFunction(const char *name, int32 globalScript, i
 		quit("IAGSEngine::QueueGameScriptFunction: invalid number of arguments");
 
 	curscript->run_another(name, globalScript ? kScInstGame : kScInstRoom, numArgs,
-	                       RuntimeScriptValue().SetPluginArgument(arg1), RuntimeScriptValue().SetPluginArgument(arg2));
+		RuntimeScriptValue().SetPluginArgument(arg1), RuntimeScriptValue().SetPluginArgument(arg2));
 }
 
 int IAGSEngine::RegisterManagedObject(const void *object, IAGSScriptManagedObject *callback) {
@@ -988,7 +990,7 @@ Engine::GameInitError pl_register_plugins(const std::vector<Common::PluginInfo> 
 		// ".dll" extension appended; we need to take care of that
 		const String name_ext = ".dll";
 		if (name.GetLength() <= name_ext.GetLength() || name.GetLength() > PLUGIN_FILENAME_MAX + name_ext.GetLength() ||
-		        name.CompareRightNoCase(name_ext, name_ext.GetLength())) {
+			name.CompareRightNoCase(name_ext, name_ext.GetLength())) {
 			return kGameInitErr_PluginNameInvalid;
 		}
 		// remove ".dll" from plugin's name
@@ -1026,7 +1028,7 @@ Engine::GameInitError pl_register_plugins(const std::vector<Common::PluginInfo> 
 			apl->initGfxHook = (void(*)(const char *, void *))apl->library.GetFunctionAddress("AGS_EngineInitGfx");
 		} else {
 			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' could not be loaded (expected '%s'), trying built-in plugins...",
-			                           apl->filename, expect_filename.GetCStr());
+				apl->filename, expect_filename.GetCStr());
 			if (pl_use_builtin_plugin(apl)) {
 				AGS::Shared::Debug::Printf(kDbgMsg_Info, "Build-in plugin '%s' found and being used.", apl->filename);
 			} else {
@@ -1065,3 +1067,5 @@ bool pl_any_want_hook(int event) {
 	}
 	return false;
 }
+
+} // namespace AGS3

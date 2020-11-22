@@ -24,6 +24,8 @@
 #include "gfx/blender.h"
 #include "util/wgt2allg.h"
 
+namespace AGS3 {
+
 extern "C" {
 	// Fallback routine for when we don't have anything better to do.
 	unsigned long _blender_black(unsigned long x, unsigned long y, unsigned long n);
@@ -186,25 +188,25 @@ FORCEINLINE unsigned long argb2argb_blend_core(unsigned long src_col, unsigned l
 		dst_alpha++;
 
 	// dst_g now contains the green hue from destination color
-	dst_g   = (dst_col & 0x00FF00) * dst_alpha / 256;
+	dst_g = (dst_col & 0x00FF00) * dst_alpha / 256;
 	// dst_col now contains the red & blue hues from destination color
 	dst_col = (dst_col & 0xFF00FF) * dst_alpha / 256;
 
 	// res_g now contains the green hue of the pre-final color
-	dst_g   = (((src_col & 0x00FF00) - (dst_g   & 0x00FF00)) * src_alpha / 256 + dst_g)   & 0x00FF00;
+	dst_g = (((src_col & 0x00FF00) - (dst_g & 0x00FF00)) * src_alpha / 256 + dst_g) & 0x00FF00;
 	// res_rb now contains the red & blue hues of the pre-final color
 	dst_col = (((src_col & 0xFF00FF) - (dst_col & 0xFF00FF)) * src_alpha / 256 + dst_col) & 0xFF00FF;
 
 	// dst_alpha now contains the final alpha
 	// we assume that final alpha will never be zero
-	dst_alpha  = 256 - (256 - src_alpha) * (256 - dst_alpha) / 256;
+	dst_alpha = 256 - (256 - src_alpha) * (256 - dst_alpha) / 256;
 	// src_alpha is now the final alpha factor made for being multiplied by,
 	// instead of divided by: this makes it possible to use it in faster
 	// calculation below
-	src_alpha  = /* 256 * 256 == */ 0x10000 / dst_alpha;
+	src_alpha = /* 256 * 256 == */ 0x10000 / dst_alpha;
 
 	// setting up final color hues
-	dst_g   = (dst_g   * src_alpha / 256) & 0x00FF00;
+	dst_g = (dst_g * src_alpha / 256) & 0x00FF00;
 	dst_col = (dst_col * src_alpha / 256) & 0xFF00FF;
 	return dst_col | dst_g | (--dst_alpha << 24);
 }
@@ -284,6 +286,8 @@ void set_opaque_alpha_blender() {
 
 void set_argb2any_blender() {
 	set_blender_mode_ex(_blender_black, _blender_black, _blender_black, _argb2argb_blender,
-	                    _blender_alpha15, skiptranspixels_blender_alpha16, _blender_alpha24,
-	                    0, 0, 0, 0xff); // TODO: do we need to support proper 15- and 24-bit here?
+		_blender_alpha15, skiptranspixels_blender_alpha16, _blender_alpha24,
+		0, 0, 0, 0xff); // TODO: do we need to support proper 15- and 24-bit here?
 }
+
+} // namespace AGS3

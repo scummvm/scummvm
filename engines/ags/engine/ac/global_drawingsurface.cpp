@@ -37,6 +37,8 @@
 #include "gfx/gfx_def.h"
 #include "gfx/gfx_util.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -78,8 +80,8 @@ void RawRestoreScreenTinted(int red, int green, int blue, int opacity) {
 		return;
 	}
 	if ((red < 0) || (green < 0) || (blue < 0) ||
-	        (red > 255) || (green > 255) || (blue > 255) ||
-	        (opacity < 1) || (opacity > 100))
+		(red > 255) || (green > 255) || (blue > 255) ||
+		(opacity < 1) || (opacity > 100))
 		quit("!RawRestoreScreenTinted: invalid parameter. R,G,B must be 0-255, opacity 1-100");
 
 	debug_script_log("RawRestoreTinted RGB(%d,%d,%d) %d%%", red, green, blue, opacity);
@@ -92,7 +94,7 @@ void RawRestoreScreenTinted(int red, int green, int blue, int opacity) {
 
 void RawDrawFrameTransparent(int frame, int translev) {
 	if ((frame < 0) || ((size_t)frame >= thisroom.BgFrameCount) ||
-	        (translev < 0) || (translev > 99))
+		(translev < 0) || (translev > 99))
 		quit("!RawDrawFrameTransparent: invalid parameter (transparency must be 0-99, frame a valid BG frame)");
 
 	PBitmap bg = thisroom.BgFrames[frame].Graphic;
@@ -109,7 +111,7 @@ void RawDrawFrameTransparent(int frame, int translev) {
 	} else {
 		// Draw it transparently
 		GfxUtil::DrawSpriteWithTransparency(RAW_SURFACE(), bg.get(), 0, 0,
-		                                    GfxDef::Trans100ToAlpha255(translev));
+			GfxDef::Trans100ToAlpha255(translev));
 	}
 	invalidate_screen();
 	mark_current_background_dirty();
@@ -129,7 +131,7 @@ void RawSetColor(int clr) {
 }
 void RawSetColorRGB(int red, int grn, int blu) {
 	if ((red < 0) || (red > 255) || (grn < 0) || (grn > 255) ||
-	        (blu < 0) || (blu > 255))
+		(blu < 0) || (blu > 255))
 		quit("!RawSetColorRGB: colour values must be 0-255");
 
 	play.raw_color = makecol_depth(thisroom.BgFrames[play.bg_frame].Graphic->GetColorDepth(), red, grn, blu);
@@ -243,8 +245,8 @@ void RawDrawImageResized(int xx, int yy, int gotSlot, int width, int height) {
 	// resize the sprite to the requested size
 	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, spriteset[gotSlot]->GetColorDepth());
 	newPic->StretchBlt(spriteset[gotSlot],
-	                   RectWH(0, 0, game.SpriteInfos[gotSlot].Width, game.SpriteInfos[gotSlot].Height),
-	                   RectWH(0, 0, width, height));
+		RectWH(0, 0, game.SpriteInfos[gotSlot].Width, game.SpriteInfos[gotSlot].Height),
+		RectWH(0, 0, width, height));
 
 	RAW_START();
 	if (newPic->GetColorDepth() != RAW_SURFACE()->GetColorDepth())
@@ -304,3 +306,5 @@ void RawDrawTriangle(int x1, int y1, int x2, int y2, int x3, int y3) {
 	invalidate_screen();
 	mark_current_background_dirty();
 }
+
+} // namespace AGS3

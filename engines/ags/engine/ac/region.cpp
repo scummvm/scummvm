@@ -32,6 +32,8 @@
 #include "game/roomstruct.h"
 #include "script/runtimescriptvalue.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern ScriptRegion scrRegion[MAX_ROOM_REGIONS];
@@ -223,23 +225,23 @@ RuntimeScriptValue Sc_Region_GetTintLuminance(void *self, const RuntimeScriptVal
 
 
 void RegisterRegionAPI() {
-	ccAddExternalStaticFunction("Region::GetAtRoomXY^2",        Sc_GetRegionAtRoom);
-	ccAddExternalStaticFunction("Region::GetAtScreenXY^2",      Sc_GetRegionAtScreen);
-	ccAddExternalStaticFunction("Region::GetDrawingSurface",    Sc_Region_GetDrawingSurface);
-	ccAddExternalObjectFunction("Region::Tint^4",               Sc_Region_TintNoLum);
-	ccAddExternalObjectFunction("Region::Tint^5",               Sc_Region_Tint);
-	ccAddExternalObjectFunction("Region::RunInteraction^1",     Sc_Region_RunInteraction);
-	ccAddExternalObjectFunction("Region::get_Enabled",          Sc_Region_GetEnabled);
-	ccAddExternalObjectFunction("Region::set_Enabled",          Sc_Region_SetEnabled);
-	ccAddExternalObjectFunction("Region::get_ID",               Sc_Region_GetID);
-	ccAddExternalObjectFunction("Region::get_LightLevel",       Sc_Region_GetLightLevel);
-	ccAddExternalObjectFunction("Region::set_LightLevel",       Sc_Region_SetLightLevel);
-	ccAddExternalObjectFunction("Region::get_TintEnabled",      Sc_Region_GetTintEnabled);
-	ccAddExternalObjectFunction("Region::get_TintBlue",         Sc_Region_GetTintBlue);
-	ccAddExternalObjectFunction("Region::get_TintGreen",        Sc_Region_GetTintGreen);
-	ccAddExternalObjectFunction("Region::get_TintRed",          Sc_Region_GetTintRed);
-	ccAddExternalObjectFunction("Region::get_TintSaturation",   Sc_Region_GetTintSaturation);
-	ccAddExternalObjectFunction("Region::get_TintLuminance",    Sc_Region_GetTintLuminance);
+	ccAddExternalStaticFunction("Region::GetAtRoomXY^2", Sc_GetRegionAtRoom);
+	ccAddExternalStaticFunction("Region::GetAtScreenXY^2", Sc_GetRegionAtScreen);
+	ccAddExternalStaticFunction("Region::GetDrawingSurface", Sc_Region_GetDrawingSurface);
+	ccAddExternalObjectFunction("Region::Tint^4", Sc_Region_TintNoLum);
+	ccAddExternalObjectFunction("Region::Tint^5", Sc_Region_Tint);
+	ccAddExternalObjectFunction("Region::RunInteraction^1", Sc_Region_RunInteraction);
+	ccAddExternalObjectFunction("Region::get_Enabled", Sc_Region_GetEnabled);
+	ccAddExternalObjectFunction("Region::set_Enabled", Sc_Region_SetEnabled);
+	ccAddExternalObjectFunction("Region::get_ID", Sc_Region_GetID);
+	ccAddExternalObjectFunction("Region::get_LightLevel", Sc_Region_GetLightLevel);
+	ccAddExternalObjectFunction("Region::set_LightLevel", Sc_Region_SetLightLevel);
+	ccAddExternalObjectFunction("Region::get_TintEnabled", Sc_Region_GetTintEnabled);
+	ccAddExternalObjectFunction("Region::get_TintBlue", Sc_Region_GetTintBlue);
+	ccAddExternalObjectFunction("Region::get_TintGreen", Sc_Region_GetTintGreen);
+	ccAddExternalObjectFunction("Region::get_TintRed", Sc_Region_GetTintRed);
+	ccAddExternalObjectFunction("Region::get_TintSaturation", Sc_Region_GetTintSaturation);
+	ccAddExternalObjectFunction("Region::get_TintLuminance", Sc_Region_GetTintLuminance);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -258,3 +260,5 @@ void RegisterRegionAPI() {
 	ccAddExternalFunctionForPlugin("Region::get_TintRed", (void *)Region_GetTintRed);
 	ccAddExternalFunctionForPlugin("Region::get_TintSaturation", (void *)Region_GetTintSaturation);
 }
+
+} // namespace AGS3

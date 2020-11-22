@@ -28,6 +28,8 @@
 #include "gui/guimain.h"
 #include "gui/guitextbox.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetupStruct game;
@@ -63,3 +65,5 @@ void SetTextBoxText(int guin, int objn, const char *txbuf) {
 	GUITextBox *guisl = (GUITextBox *)guis[guin].GetControl(objn);
 	TextBox_SetText(guisl, txbuf);
 }
+
+} // namespace AGS3

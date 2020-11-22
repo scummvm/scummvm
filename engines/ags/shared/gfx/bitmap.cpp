@@ -23,6 +23,7 @@
 #include "gfx/bitmap.h"
 #include "util/memory.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -98,7 +99,7 @@ struct PixelNoSkip {
 	}
 };
 
-typedef PixelTransCpy<uint8_t,  1> PixelTransCpy8;
+typedef PixelTransCpy<uint8_t, 1> PixelTransCpy8;
 typedef PixelTransCpy<uint16_t, 2> PixelTransCpy16;
 
 struct PixelTransCpy24 {
@@ -119,7 +120,7 @@ struct PixelTransCpy32 {
 		if (*(const uint32_t *)src == mask_color)
 			*(uint32_t *)dst = mask_color;
 		else if (use_alpha)
-			dst[3] =  src[3]; // copy alpha channel
+			dst[3] = src[3]; // copy alpha channel
 		else
 			dst[3] = 0xFF; // set the alpha channel byte to opaque
 	}
@@ -142,15 +143,15 @@ void ApplyMask(uint8_t *dst, const uint8_t *src, size_t pitch, size_t height, Fn
 }
 
 void CopyTransparency(Bitmap *dst, const Bitmap *mask, bool dst_has_alpha, bool mask_has_alpha) {
-	color_t mask_color     = mask->GetMaskColor();
-	uint8_t *dst_ptr       = dst->GetDataForWriting();
+	color_t mask_color = mask->GetMaskColor();
+	uint8_t *dst_ptr = dst->GetDataForWriting();
 	const uint8_t *src_ptr = mask->GetData();
-	const size_t bpp       = mask->GetBPP();
-	const size_t pitch     = mask->GetLineLength();
-	const size_t height    = mask->GetHeight();
+	const size_t bpp = mask->GetBPP();
+	const size_t pitch = mask->GetLineLength();
+	const size_t height = mask->GetHeight();
 
 	if (bpp == 1)
-		ApplyMask(dst_ptr, src_ptr, pitch, height, PixelTransCpy8(),  PixelNoSkip(), mask_color, dst_has_alpha, mask_has_alpha);
+		ApplyMask(dst_ptr, src_ptr, pitch, height, PixelTransCpy8(), PixelNoSkip(), mask_color, dst_has_alpha, mask_has_alpha);
 	else if (bpp == 2)
 		ApplyMask(dst_ptr, src_ptr, pitch, height, PixelTransCpy16(), PixelNoSkip(), mask_color, dst_has_alpha, mask_has_alpha);
 	else if (bpp == 3)
@@ -171,3 +172,4 @@ void ReadPixelsFromMemory(Bitmap *dst, const uint8_t *src_buffer, const size_t s
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

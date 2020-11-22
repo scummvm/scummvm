@@ -23,6 +23,8 @@
 #include <memory.h>
 #include "scriptuserobject.h"
 
+namespace AGS3 {
+
 // return the type name of the object
 const char *ScriptUserObject::GetType() {
 	return "UserObject";
@@ -34,7 +36,7 @@ ScriptUserObject::ScriptUserObject()
 }
 
 ScriptUserObject::~ScriptUserObject() {
-	delete [] _data;
+	delete[] _data;
 }
 
 /* static */ ScriptUserObject *ScriptUserObject::CreateManaged(size_t size) {
@@ -45,7 +47,7 @@ ScriptUserObject::~ScriptUserObject() {
 }
 
 void ScriptUserObject::Create(const char *data, size_t size) {
-	delete [] _data;
+	delete[] _data;
 	_data = nullptr;
 
 	_size = size;
@@ -129,3 +131,5 @@ ScriptUserObject *ScriptStructHelpers::CreatePoint(int x, int y) {
 	suo->WriteInt32((const char *)suo, sizeof(int32_t), y);
 	return suo;
 }
+
+} // namespace AGS3

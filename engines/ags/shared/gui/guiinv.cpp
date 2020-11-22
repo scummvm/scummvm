@@ -26,6 +26,8 @@
 #include "gui/guimain.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 std::vector<AGS::Shared::GUIInvWindow> guiinv;
 int numguiinv = 0;
 
@@ -129,3 +131,4 @@ void GUIInvWindow::CalculateNumCells() {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

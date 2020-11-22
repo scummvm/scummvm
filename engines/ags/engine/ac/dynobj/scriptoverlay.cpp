@@ -26,6 +26,8 @@
 #include "ac/runtime_defines.h"
 #include "ac/screenoverlay.h"
 
+namespace AGS3 {
+
 int ScriptOverlay::Dispose(const char *address, bool force) {
 	// since the managed object is being deleted, remove the
 	// reference so it doesn't try and dispose something else
@@ -84,3 +86,5 @@ ScriptOverlay::ScriptOverlay() {
 	borderHeight = 0;
 	isBackgroundSpeech = 0;
 }
+
+} // namespace AGS3

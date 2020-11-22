@@ -26,6 +26,7 @@
 #include <d3d9.h>
 #endif
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 namespace D3D {
@@ -51,3 +52,4 @@ bool D3DGfxFilter::NeedToColourEdgeLines() {
 } // namespace D3D
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3

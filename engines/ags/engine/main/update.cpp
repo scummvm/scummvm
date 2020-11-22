@@ -49,6 +49,8 @@
 #include "main/game_run.h"
 #include "ac/movelist.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -95,16 +97,18 @@ int do_movelist_move(short *mlnum, int *xx, int *yy) {
 		int adjAmnt = 3;
 		// 2.70: if the X permove is also <=1, don't do the skipping
 		if (((xpermove & 0xffff0000) == 0xffff0000) ||
-		        ((xpermove & 0xffff0000) == 0x00000000))
+			((xpermove & 0xffff0000) == 0x00000000))
 			adjAmnt = 2;
 
 		// 2.61 RC1: correct this to work with > -1 as well as < 1
-		if (ypermove == 0) { }
+		if (ypermove == 0) {
+		}
 		// Y per move is < 1, so finish the move
 		else if ((ypermove & 0xffff0000) == 0)
 			targety -= adjAmnt;
 		// Y per move is -1 exactly, don't snap to finish
-		else if (ypermove == 0xffff0000) { }
+		else if (ypermove == 0xffff0000) {
+		}
 		// Y per move is > -1, so finish the move
 		else if ((ypermove & 0xffff0000) == 0xffff0000)
 			targety += adjAmnt;
@@ -117,26 +121,28 @@ int do_movelist_move(short *mlnum, int *xx, int *yy) {
 
 		// if the Y permove is also <=1, don't skip as far
 		if (((ypermove & 0xffff0000) == 0xffff0000) ||
-		        ((ypermove & 0xffff0000) == 0x00000000))
+			((ypermove & 0xffff0000) == 0x00000000))
 			adjAmnt = 2;
 
-		if (xpermove == 0) { }
+		if (xpermove == 0) {
+		}
 		// Y per move is < 1, so finish the move
 		else if ((xpermove & 0xffff0000) == 0)
 			targetx -= adjAmnt;
 		// X per move is -1 exactly, don't snap to finish
-		else if (xpermove == 0xffff0000) { }
+		else if (xpermove == 0xffff0000) {
+		}
 		// X per move is > -1, so finish the move
 		else if ((xpermove & 0xffff0000) == 0xffff0000)
 			targetx += adjAmnt;
 
 		/*    int xpmm=(xpermove >> 16) & 0x0000ffff;
 		//    if ((xpmm==0) | (xpmm==0xffff)) cmls->doneflag|=1;
-		    if (xpmm==0) cmls->doneflag|=1;*/
+			if (xpmm==0) cmls->doneflag|=1;*/
 	} else yps = cmls->fromy + (int)(fixtof(ypermove) * (float)cmls->onpart);
 	// check if finished horizontal movement
 	if (((xpermove > 0) && (xps >= targetx)) ||
-	        ((xpermove < 0) && (xps <= targetx))) {
+		((xpermove < 0) && (xps <= targetx))) {
 		cmls->doneflag |= 1;
 		xps = targetx;
 		// if the Y is almost there too, finish it
@@ -147,7 +153,7 @@ int do_movelist_move(short *mlnum, int *xx, int *yy) {
 	} else if (xpermove == 0)
 		cmls->doneflag |= 1;
 	// check if finished vertical movement
-	if ((ypermove > 0) & (yps >= targety)) {
+	if ((ypermove > 0) &(yps >= targety)) {
 		cmls->doneflag |= 2;
 		yps = targety;
 	} else if ((ypermove < 0) & (yps <= targety)) {
@@ -205,8 +211,8 @@ void update_cycling_views() {
 void update_shadow_areas() {
 	// shadow areas
 	int onwalkarea = get_walkable_area_at_character(game.playercharacter);
-	if (onwalkarea < 0) ;
-	else if (playerchar->flags & CHF_FIXVIEW) ;
+	if (onwalkarea < 0);
+	else if (playerchar->flags & CHF_FIXVIEW);
 	else {
 		onwalkarea = thisroom.WalkAreas[onwalkarea].Light;
 		if (onwalkarea > 0) playerchar->view = onwalkarea - 1;
@@ -220,7 +226,7 @@ void update_character_move_and_anim(int &numSheep, int *followingAsSheep) {
 	for (int aa = 0; aa < game.numcharacters; aa++) {
 		if (game.chars[aa].on != 1) continue;
 
-		CharacterInfo *chi    = &game.chars[aa];
+		CharacterInfo *chi = &game.chars[aa];
 		CharacterExtras *chex = &charextra[aa];
 
 		chi->UpdateMoveAndAnim(aa, chex, numSheep, followingAsSheep);
@@ -270,7 +276,7 @@ void update_speech_and_messages() {
 		}
 
 		if (play.messagetime < 1 && play.speech_display_post_time_ms > 0 &&
-		        play.fast_forward == 0) {
+			play.fast_forward == 0) {
 			if (!play.speech_in_post_state) {
 				play.messagetime = ::lround(play.speech_display_post_time_ms * get_current_fps() / 1000.0f);
 			}
@@ -331,8 +337,8 @@ void update_sierra_speech() {
 				// the lip-sync has finished, so just stay idle
 			} else {
 				while ((curLipLinePhoneme < splipsync[curLipLine].numPhonemes) &&
-				        ((curLipLinePhoneme < 0) || (voice_pos_ms >= splipsync[curLipLine].endtimeoffs[curLipLinePhoneme]))) {
-					curLipLinePhoneme ++;
+					((curLipLinePhoneme < 0) || (voice_pos_ms >= splipsync[curLipLine].endtimeoffs[curLipLinePhoneme]))) {
+					curLipLinePhoneme++;
 					if (curLipLinePhoneme >= splipsync[curLipLine].numPhonemes)
 						facetalkframe = game.default_lipsync_frame;
 					else
@@ -347,18 +353,18 @@ void update_sierra_speech() {
 		} else if (facetalkwait > 0) facetalkwait--;
 		// don't animate if the speech has finished
 		else if ((play.messagetime < 1) && (facetalkframe == 0) &&
-		         // if play.close_mouth_speech_time = 0, this means animation should play till
-		         // the speech ends; but this should not work in voice mode, and also if the
-		         // speech is in the "post" state
-		         (play.speech_has_voice || play.speech_in_post_state || play.close_mouth_speech_time > 0))
+			// if play.close_mouth_speech_time = 0, this means animation should play till
+			// the speech ends; but this should not work in voice mode, and also if the
+			// speech is in the "post" state
+			(play.speech_has_voice || play.speech_in_post_state || play.close_mouth_speech_time > 0))
 			;
 		else {
 			// Close mouth at end of sentence: if speech has entered the "post" state,
 			// or if this is a text only mode and close_mouth_speech_time is set
 			if (play.speech_in_post_state ||
-			        (!play.speech_has_voice &&
-			         (play.messagetime < play.close_mouth_speech_time) &&
-			         (play.close_mouth_speech_time > 0))) {
+				(!play.speech_has_voice &&
+				(play.messagetime < play.close_mouth_speech_time) &&
+					(play.close_mouth_speech_time > 0))) {
 				facetalkframe = 0;
 				facetalkwait = play.messagetime;
 			} else if ((game.options[OPT_LIPSYNCTEXT]) && (facetalkrepeat > 0)) {
@@ -366,15 +372,15 @@ void update_sierra_speech() {
 				facetalkwait = update_lip_sync(facetalkview, facetalkloop, &facetalkframe);
 				// It is actually displayed for facetalkwait+1 loops
 				// (because when it's 1, it gets --'d then wait for next time)
-				facetalkwait --;
+				facetalkwait--;
 			} else {
 				// normal non-lip-sync
 				facetalkframe++;
 				if ((facetalkframe >= views[facetalkview].loops[facetalkloop].numFrames) ||
-				        (!play.speech_has_voice && (play.messagetime < 1) && (play.close_mouth_speech_time > 0))) {
+					(!play.speech_has_voice && (play.messagetime < 1) && (play.close_mouth_speech_time > 0))) {
 
 					if ((facetalkframe >= views[facetalkview].loops[facetalkloop].numFrames) &&
-					        (views[facetalkview].loops[facetalkloop].RunNextLoop())) {
+						(views[facetalkview].loops[facetalkloop].RunNextLoop())) {
 						facetalkloop++;
 					} else {
 						facetalkloop = 0;
@@ -468,3 +474,5 @@ void update_stuff() {
 
 	our_eip = 25;
 }
+
+} // namespace AGS3

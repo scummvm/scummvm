@@ -71,6 +71,8 @@
 #include "media/audio/audio_system.h"
 #include "ac/movelist.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetupStruct game;
@@ -3867,3 +3869,5 @@ void RegisterCharacterAPI(ScriptAPIVersion base_api, ScriptAPIVersion compat_api
 	ccAddExternalFunctionForPlugin("Character::get_z", (void *)Character_GetZ);
 	ccAddExternalFunctionForPlugin("Character::set_z", (void *)Character_SetZ);
 }
+
+} // namespace AGS3

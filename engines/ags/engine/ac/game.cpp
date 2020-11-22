@@ -98,6 +98,8 @@
 #include "util/string_utils.h"
 #include "ac/keycode.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -2317,3 +2319,5 @@ void RegisterStaticObjects() {
 	ccAddExternalStaticObject("system", &scsystem, &GlobalStaticManager);
 	ccAddExternalStaticObject("savegameindex", &play.filenumbers[0], &GlobalStaticManager);
 }
+
+} // namespace AGS3

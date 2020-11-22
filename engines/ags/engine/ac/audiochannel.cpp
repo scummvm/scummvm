@@ -29,6 +29,8 @@
 #include "script/runtimescriptvalue.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameState play;
@@ -278,23 +280,23 @@ RuntimeScriptValue Sc_AudioChannel_SetSpeed(void *self, const RuntimeScriptValue
 }
 
 void RegisterAudioChannelAPI() {
-	ccAddExternalObjectFunction("AudioChannel::Seek^1",             Sc_AudioChannel_Seek);
-	ccAddExternalObjectFunction("AudioChannel::SetRoomLocation^2",  Sc_AudioChannel_SetRoomLocation);
-	ccAddExternalObjectFunction("AudioChannel::Stop^0",             Sc_AudioChannel_Stop);
-	ccAddExternalObjectFunction("AudioChannel::get_ID",             Sc_AudioChannel_GetID);
-	ccAddExternalObjectFunction("AudioChannel::get_IsPlaying",      Sc_AudioChannel_GetIsPlaying);
-	ccAddExternalObjectFunction("AudioChannel::get_LengthMs",       Sc_AudioChannel_GetLengthMs);
-	ccAddExternalObjectFunction("AudioChannel::get_Panning",        Sc_AudioChannel_GetPanning);
-	ccAddExternalObjectFunction("AudioChannel::set_Panning",        Sc_AudioChannel_SetPanning);
-	ccAddExternalObjectFunction("AudioChannel::get_PlayingClip",    Sc_AudioChannel_GetPlayingClip);
-	ccAddExternalObjectFunction("AudioChannel::get_Position",       Sc_AudioChannel_GetPosition);
-	ccAddExternalObjectFunction("AudioChannel::get_PositionMs",     Sc_AudioChannel_GetPositionMs);
-	ccAddExternalObjectFunction("AudioChannel::get_Volume",         Sc_AudioChannel_GetVolume);
-	ccAddExternalObjectFunction("AudioChannel::set_Volume",         Sc_AudioChannel_SetVolume);
-	ccAddExternalObjectFunction("AudioChannel::get_Speed",          Sc_AudioChannel_GetSpeed);
-	ccAddExternalObjectFunction("AudioChannel::set_Speed",          Sc_AudioChannel_SetSpeed);
+	ccAddExternalObjectFunction("AudioChannel::Seek^1", Sc_AudioChannel_Seek);
+	ccAddExternalObjectFunction("AudioChannel::SetRoomLocation^2", Sc_AudioChannel_SetRoomLocation);
+	ccAddExternalObjectFunction("AudioChannel::Stop^0", Sc_AudioChannel_Stop);
+	ccAddExternalObjectFunction("AudioChannel::get_ID", Sc_AudioChannel_GetID);
+	ccAddExternalObjectFunction("AudioChannel::get_IsPlaying", Sc_AudioChannel_GetIsPlaying);
+	ccAddExternalObjectFunction("AudioChannel::get_LengthMs", Sc_AudioChannel_GetLengthMs);
+	ccAddExternalObjectFunction("AudioChannel::get_Panning", Sc_AudioChannel_GetPanning);
+	ccAddExternalObjectFunction("AudioChannel::set_Panning", Sc_AudioChannel_SetPanning);
+	ccAddExternalObjectFunction("AudioChannel::get_PlayingClip", Sc_AudioChannel_GetPlayingClip);
+	ccAddExternalObjectFunction("AudioChannel::get_Position", Sc_AudioChannel_GetPosition);
+	ccAddExternalObjectFunction("AudioChannel::get_PositionMs", Sc_AudioChannel_GetPositionMs);
+	ccAddExternalObjectFunction("AudioChannel::get_Volume", Sc_AudioChannel_GetVolume);
+	ccAddExternalObjectFunction("AudioChannel::set_Volume", Sc_AudioChannel_SetVolume);
+	ccAddExternalObjectFunction("AudioChannel::get_Speed", Sc_AudioChannel_GetSpeed);
+	ccAddExternalObjectFunction("AudioChannel::set_Speed", Sc_AudioChannel_SetSpeed);
 	// For compatibility with  Ahmet Kamil's (aka Gord10) custom engine
-	ccAddExternalObjectFunction("AudioChannel::SetSpeed^1",         Sc_AudioChannel_SetSpeed);
+	ccAddExternalObjectFunction("AudioChannel::SetSpeed^1", Sc_AudioChannel_SetSpeed);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -312,3 +314,5 @@ void RegisterAudioChannelAPI() {
 	ccAddExternalFunctionForPlugin("AudioChannel::get_Volume", (void *)AudioChannel_GetVolume);
 	ccAddExternalFunctionForPlugin("AudioChannel::set_Volume", (void *)AudioChannel_SetVolume);
 }
+
+} // namespace AGS3

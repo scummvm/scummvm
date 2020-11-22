@@ -23,6 +23,8 @@
 #include "ac/characterextras.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 void CharacterExtras::ReadFromFile(Stream *in) {
@@ -60,3 +62,5 @@ void CharacterExtras::WriteToFile(Stream *out) {
 	out->WriteInt8(slow_move_counter);
 	out->WriteInt16(animwait);
 }
+
+} // namespace AGS3

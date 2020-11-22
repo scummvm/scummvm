@@ -24,9 +24,12 @@
 #include "ac/gamestate.h"
 #include "util/bbop.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
-ScriptViewport::ScriptViewport(int id) : _id(id) {}
+ScriptViewport::ScriptViewport(int id) : _id(id) {
+}
 
 const char *ScriptViewport::GetType() {
 	return "Viewport2";
@@ -64,3 +67,5 @@ ScriptViewport *Viewport_Unserialize(int handle, const char *serializedData, int
 	}
 	return new ScriptViewport(-1); // make invalid reference
 }
+
+} // namespace AGS3

@@ -35,6 +35,8 @@
 #include "main/update.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern ViewStruct *views;
@@ -81,7 +83,7 @@ void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, in
 	}
 
 	// Make sure it doesn't flash up a blue cup
-	if (view < 0) ;
+	if (view < 0);
 	else if (loop >= views[view].numLoops)
 		loop = 0;
 
@@ -135,8 +137,8 @@ int CharacterInfo::update_character_walking(CharacterExtras *chex) {
 				if (wantloop < 0)
 					wantloop = 7;
 				if ((turnlooporder[wantloop] >= views[view].numLoops) ||
-				        (views[view].loops[turnlooporder[wantloop]].numFrames < 1) ||
-				        ((turnlooporder[wantloop] >= 4) && ((flags & CHF_NODIAGONAL) != 0))) {
+					(views[view].loops[turnlooporder[wantloop]].numFrames < 1) ||
+					((turnlooporder[wantloop] >= 4) && ((flags & CHF_NODIAGONAL) != 0))) {
 					if (walking >= TURNING_BACKWARDS)
 						wantloop--;
 					else
@@ -190,8 +192,8 @@ void CharacterInfo::update_character_moving(int &char_index, CharacterExtras *ch
 				// to stop it being jumpy
 				chex->xwas = x;
 				chex->ywas = y;
-				x = ((x) - oldxp) / 2 + oldxp;
-				y = ((y) - oldyp) / 2 + oldyp;
+				x = ((x)-oldxp) / 2 + oldxp;
+				y = ((y)-oldyp) / 2 + oldyp;
 			} else if (numSteps > 0)
 				chex->xwas = INVALID_X;
 
@@ -256,8 +258,8 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 	// not moving, but animating
 	// idleleft is <0 while idle view is playing (.animating is 0)
 	if (((animating != 0) || (idleleft < 0)) &&
-	        ((walking == 0) || ((flags & CHF_MOVENOTWALK) != 0)) &&
-	        (room == displayed_room)) {
+		((walking == 0) || ((flags & CHF_MOVENOTWALK) != 0)) &&
+		(room == displayed_room)) {
 		doing_nothing = 0;
 		// idle anim doesn't count as doing something
 		if (idleleft < 0)
@@ -271,7 +273,7 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 			// closed mouth at end of sentence
 			// NOTE: standard lip-sync is synchronized with text timer, not voice file
 			if (play.speech_in_post_state ||
-			        ((play.messagetime >= 0) && (play.messagetime < play.close_mouth_speech_time)))
+				((play.messagetime >= 0) && (play.messagetime < play.close_mouth_speech_time)))
 				frame = 0;
 
 			if (frame != fraa) {
@@ -288,9 +290,9 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 				if (frame < 0) {
 					// if the previous loop is a Run Next Loop one, go back to it
 					if ((loop > 0) &&
-					        (views[view].loops[loop - 1].RunNextLoop())) {
+						(views[view].loops[loop - 1].RunNextLoop())) {
 
-						loop --;
+						loop--;
 						frame = views[view].loops[loop].numFrames - 1;
 					} else if (animating & CHANIM_REPEAT) {
 
@@ -309,10 +311,10 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 				frame++;
 
 			if ((aa == char_speaking) &&
-			        (play.speech_in_post_state ||
-			         ((!play.speech_has_voice) &&
-			          (play.close_mouth_speech_time > 0) &&
-			          (play.messagetime < play.close_mouth_speech_time)))) {
+				(play.speech_in_post_state ||
+				((!play.speech_has_voice) &&
+					(play.close_mouth_speech_time > 0) &&
+					(play.messagetime < play.close_mouth_speech_time)))) {
 				// finished talking - stop animation
 				animating = 0;
 				frame = 0;
@@ -344,7 +346,7 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 					// if it's a multi-loop animation, go back to start
 					if (play.no_multiloop_repeat == 0) {
 						while ((loop > 0) &&
-						        (views[view].loops[loop - 1].RunNextLoop()))
+							(views[view].loops[loop - 1].RunNextLoop()))
 							loop--;
 					}
 				}
@@ -376,9 +378,9 @@ void CharacterInfo::update_character_follower(int &aa, int &numSheep, int *follo
 	else if ((following >= 0) && (doing_nothing == 1)) {
 		short distaway = (followinfo >> 8) & 0x00ff;
 		// no character in this room
-		if ((game.chars[following].on == 0) || (on == 0)) ;
+		if ((game.chars[following].on == 0) || (on == 0));
 		else if (room < 0) {
-			room ++;
+			room++;
 			if (room == 0) {
 				// appear in the new room
 				room = game.chars[following].room;
@@ -387,10 +389,10 @@ void CharacterInfo::update_character_follower(int &aa, int &numSheep, int *follo
 			}
 		}
 		// wait a bit, so we're not constantly walking
-		else if (Random(100) < (followinfo & 0x00ff)) ;
+		else if (Random(100) < (followinfo & 0x00ff));
 		// the followed character has changed room
 		else if ((room != game.chars[following].room)
-		         && (game.chars[following].on == 0))
+			&& (game.chars[following].on == 0))
 			;  // do nothing if the player isn't visible
 		else if (room != game.chars[following].room) {
 			prevroom = room;
@@ -425,15 +427,15 @@ void CharacterInfo::update_character_follower(int &aa, int &numSheep, int *follo
 			// if the characetr is following another character and
 			// neither is in the current room, don't try to move
 		} else if ((abs(game.chars[following].x - x) > distaway + 30) |
-		           (abs(game.chars[following].y - y) > distaway + 30) |
-		           ((followinfo & 0x00ff) == 0)) {
+			(abs(game.chars[following].y - y) > distaway + 30) |
+			((followinfo & 0x00ff) == 0)) {
 			// in same room
 			int goxoffs = (Random(50) - 25);
 			// make sure he's not standing on top of the other man
 			if (goxoffs < 0) goxoffs -= distaway;
 			else goxoffs += distaway;
 			walk_character(aa, game.chars[following].x + goxoffs,
-			               game.chars[following].y + (Random(50) - 25), 0, true);
+				game.chars[following].y + (Random(50) - 25), 0, true);
 			doing_nothing = 0;
 		}
 	}
@@ -441,11 +443,11 @@ void CharacterInfo::update_character_follower(int &aa, int &numSheep, int *follo
 
 void CharacterInfo::update_character_idle(CharacterExtras *chex, int &doing_nothing) {
 	// no idle animation, so skip this bit
-	if (idleview < 1) ;
+	if (idleview < 1);
 	// currently playing idle anim
-	else if (idleleft < 0) ;
+	else if (idleleft < 0);
 	// not in the current room
-	else if (room != displayed_room) ;
+	else if (room != displayed_room);
 	// they are moving or animating (or the view is locked), so
 	// reset idle timeout
 	else if ((doing_nothing == 0) || ((flags & CHF_FIXVIEW) != 0))
@@ -478,10 +480,12 @@ void CharacterInfo::update_character_idle(CharacterExtras *chex, int &doing_noth
 				useloop = 0;
 
 			animate_character(this, useloop,
-			                  animspeed + 5, (idletime == 0) ? 1 : 0, 1);
+				animspeed + 5, (idletime == 0) ? 1 : 0, 1);
 
 			// don't set Animating while the idle anim plays
 			animating = 0;
 		}
 	}  // end do idle animation
 }
+
+} // namespace AGS3

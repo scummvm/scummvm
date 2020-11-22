@@ -63,6 +63,8 @@
 #define USE_CUSTOM_EXCEPTION_HANDLER
 #endif
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -164,12 +166,12 @@ void main_init(int argc, char *argv[]) {
 
 String get_engine_string() {
 	return String::FromFormat("Adventure Game Studio v%s Interpreter\n"
-	                          "Copyright (c) 1999-2011 Chris Jones and " ACI_COPYRIGHT_YEARS " others\n"
+		"Copyright (c) 1999-2011 Chris Jones and " ACI_COPYRIGHT_YEARS " others\n"
 #ifdef BUILD_STR
-	                          "ACI version %s (Build: %s)\n",
-	                          EngineVersion.ShortString.GetCStr(), EngineVersion.LongString.GetCStr(), EngineVersion.BuildInfo.GetCStr());
+		"ACI version %s (Build: %s)\n",
+		EngineVersion.ShortString.GetCStr(), EngineVersion.LongString.GetCStr(), EngineVersion.BuildInfo.GetCStr());
 #else
-	                          "ACI version %s\n", EngineVersion.ShortString.GetCStr(), EngineVersion.LongString.GetCStr());
+		"ACI version %s\n", EngineVersion.ShortString.GetCStr(), EngineVersion.LongString.GetCStr());
 #endif
 }
 
@@ -178,67 +180,67 @@ extern char return_to_room[150];
 
 void main_print_help() {
 	platform->WriteStdOut(
-	    "Usage: ags [OPTIONS] [GAMEFILE or DIRECTORY]\n\n"
-	    //--------------------------------------------------------------------------------|
-	    "Options:\n"
+		"Usage: ags [OPTIONS] [GAMEFILE or DIRECTORY]\n\n"
+		//--------------------------------------------------------------------------------|
+		"Options:\n"
 #if AGS_PLATFORM_OS_WINDOWS
-	    "  --console-attach             Write output to the parent process's console\n"
+		"  --console-attach             Write output to the parent process's console\n"
 #endif
-	    "  --fps                        Display fps counter\n"
-	    "  --fullscreen                 Force display mode to fullscreen\n"
-	    "  --gfxdriver <id>             Request graphics driver. Available options:\n"
+		"  --fps                        Display fps counter\n"
+		"  --fullscreen                 Force display mode to fullscreen\n"
+		"  --gfxdriver <id>             Request graphics driver. Available options:\n"
 #if AGS_PLATFORM_OS_WINDOWS
-	    "                                 d3d9, ogl, software\n"
+		"                                 d3d9, ogl, software\n"
 #else
-	    "                                 ogl, software\n"
+		"                                 ogl, software\n"
 #endif
-	    "  --gfxfilter FILTER [SCALING]\n"
-	    "                               Request graphics filter. Available options:\n"
-	    "                                 hqx, linear, none, stdscale\n"
-	    "                                 (support differs between graphic drivers);\n"
-	    "                                 scaling is specified by integer number\n"
-	    "  --help                       Print this help message and stop\n"
-	    "  --log-OUTPUT=GROUP[:LEVEL][,GROUP[:LEVEL]][,...]\n"
-	    "  --log-OUTPUT=+GROUPLIST[:LEVEL]\n"
-	    "                               Setup logging to the chosen OUTPUT with given\n"
-	    "                               log groups and verbosity levels. Groups may\n"
-	    "                               be also defined by a LIST of one-letter IDs,\n"
-	    "                               preceded by '+', e.g. +ABCD:LEVEL. Verbosity may\n"
-	    "                               be also defined by a numberic ID.\n"
-	    "                               OUTPUTs are\n"
-	    "                                 stdout, file, console\n"
-	    "                               (where \"console\" is internal engine's console)\n"
-	    "                               GROUPs are:\n"
-	    "                                 all, main (m), game (g), manobj (o),\n"
-	    "                                 script (s), sprcache (c)\n"
-	    "                               LEVELs are:\n"
-	    "                                 all, alert (1), fatal (2), error (3), warn (4),\n"
-	    "                                 info (5), debug (6)\n"
-	    "                               Examples:\n"
-	    "                                 --log-stdout=+mgs:debug\n"
-	    "                                 --log-file=all:warn\n"
-	    "  --log-file-path=PATH         Define custom path for the log file\n"
-	    //--------------------------------------------------------------------------------|
+		"  --gfxfilter FILTER [SCALING]\n"
+		"                               Request graphics filter. Available options:\n"
+		"                                 hqx, linear, none, stdscale\n"
+		"                                 (support differs between graphic drivers);\n"
+		"                                 scaling is specified by integer number\n"
+		"  --help                       Print this help message and stop\n"
+		"  --log-OUTPUT=GROUP[:LEVEL][,GROUP[:LEVEL]][,...]\n"
+		"  --log-OUTPUT=+GROUPLIST[:LEVEL]\n"
+		"                               Setup logging to the chosen OUTPUT with given\n"
+		"                               log groups and verbosity levels. Groups may\n"
+		"                               be also defined by a LIST of one-letter IDs,\n"
+		"                               preceded by '+', e.g. +ABCD:LEVEL. Verbosity may\n"
+		"                               be also defined by a numberic ID.\n"
+		"                               OUTPUTs are\n"
+		"                                 stdout, file, console\n"
+		"                               (where \"console\" is internal engine's console)\n"
+		"                               GROUPs are:\n"
+		"                                 all, main (m), game (g), manobj (o),\n"
+		"                                 script (s), sprcache (c)\n"
+		"                               LEVELs are:\n"
+		"                                 all, alert (1), fatal (2), error (3), warn (4),\n"
+		"                                 info (5), debug (6)\n"
+		"                               Examples:\n"
+		"                                 --log-stdout=+mgs:debug\n"
+		"                                 --log-file=all:warn\n"
+		"  --log-file-path=PATH         Define custom path for the log file\n"
+		//--------------------------------------------------------------------------------|
 #if AGS_PLATFORM_OS_WINDOWS
-	    "  --no-message-box             Disable reporting of alerts to message boxes\n"
-	    "  --setup                      Run setup application\n"
+		"  --no-message-box             Disable reporting of alerts to message boxes\n"
+		"  --setup                      Run setup application\n"
 #endif
-	    "  --tell                       Print various information concerning engine\n"
-	    "                                 and the game; for selected output use:\n"
-	    "  --tell-config                Print contents of merged game config\n"
-	    "  --tell-configpath            Print paths to available config files\n"
-	    "  --tell-data                  Print information on game data and its location\n"
-	    "  --tell-engine                Print engine name and version\n"
-	    "  --tell-graphicdriver         Print list of supported graphic drivers\n"
-	    "\n"
-	    "  --version                    Print engine's version and stop\n"
-	    "  --windowed                   Force display mode to windowed\n"
-	    "\n"
-	    "Gamefile options:\n"
-	    "  /dir/path/game/              Launch the game in specified directory\n"
-	    "  /dir/path/game/penguin.exe   Launch penguin.exe\n"
-	    "  [nothing]                    Launch the game in the current directory\n"
-	    //--------------------------------------------------------------------------------|
+		"  --tell                       Print various information concerning engine\n"
+		"                                 and the game; for selected output use:\n"
+		"  --tell-config                Print contents of merged game config\n"
+		"  --tell-configpath            Print paths to available config files\n"
+		"  --tell-data                  Print information on game data and its location\n"
+		"  --tell-engine                Print engine name and version\n"
+		"  --tell-graphicdriver         Print list of supported graphic drivers\n"
+		"\n"
+		"  --version                    Print engine's version and stop\n"
+		"  --windowed                   Force display mode to windowed\n"
+		"\n"
+		"Gamefile options:\n"
+		"  /dir/path/game/              Launch the game in specified directory\n"
+		"  /dir/path/game/penguin.exe   Launch penguin.exe\n"
+		"  [nothing]                    Launch the game in the current directory\n"
+		//--------------------------------------------------------------------------------|
 	);
 }
 
@@ -459,3 +461,5 @@ int ags_entry_point(int argc, char *argv[]) {
 	}
 #endif
 }
+
+} // namespace AGS3

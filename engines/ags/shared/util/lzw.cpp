@@ -30,6 +30,8 @@
 #include "ac/common.h" // quit
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 #ifdef _MANAGED
@@ -67,7 +69,7 @@ int insert(int i, int run) {
 	p = &root[(unsigned char)lzbuffer[i]];
 	lson[i] = rson[i] = NIL;
 	while ((j = *p) != NIL) {
-		for (n = min(k, l); n < run && (c = (lzbuffer[j + n] - lzbuffer[i + n])) == 0; n++) ;
+		for (n = min(k, l); n < run && (c = (lzbuffer[j + n] - lzbuffer[i + n])) == 0; n++);
 
 		if (n > match) {
 			match = n;
@@ -219,7 +221,7 @@ void myputc(int ccc, Stream *out) {
 void lzwexpand(Stream *lzw_in, Stream *out) {
 	int bits, ch, i, j, len, mask;
 	char *lzbuffer;
-//  printf(" UnShrinking: %s ",filena);
+	//  printf(" UnShrinking: %s ",filena);
 	putbytes = 0;
 
 	lzbuffer = (char *)malloc(N);
@@ -273,3 +275,5 @@ unsigned char *lzwexpand_to_mem(Stream *in) {
 	lzwexpand(in, nullptr);
 	return membuff;
 }
+
+} // namespace AGS3

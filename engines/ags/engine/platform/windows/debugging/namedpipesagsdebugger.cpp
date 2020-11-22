@@ -28,6 +28,8 @@
 
 #include <stdio.h> // sprintf
 
+namespace AGS3 {
+
 void NamedPipesAGSDebugger::SendAcknowledgement() {
 	DWORD bytesWritten;
 	WriteFile(_hPipeSending, "MSGACK", 6, &bytesWritten, NULL);
@@ -50,7 +52,7 @@ bool NamedPipesAGSDebugger::Initialize() {
 	_hPipeReading = CreateFile(pipeNameBuffer, GENERIC_READ, 0, NULL, OPEN_EXISTING, 0, NULL);
 
 	if ((_hPipeReading == INVALID_HANDLE_VALUE) ||
-	        (_hPipeSending == INVALID_HANDLE_VALUE))
+		(_hPipeSending == INVALID_HANDLE_VALUE))
 		return false;
 
 	return true;
@@ -91,7 +93,8 @@ char *NamedPipesAGSDebugger::GetNextMessage() {
 	} else {
 		return NULL;
 	}
-
 }
 
-#endif // AGS_PLATFORM_OS_WINDOWS
+} // namespace AGS3
+
+#endif

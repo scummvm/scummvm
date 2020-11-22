@@ -32,6 +32,8 @@
 #include "gfx/bitmap.h"
 #include "gfx/graphicsdriver.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -181,3 +183,5 @@ void initialize_sprite(int ee) {
 		our_eip = oldeip;
 	}
 }
+
+} // namespace AGS3

@@ -50,6 +50,8 @@ typedef float D3DVALUE, *LPD3DVALUE;
 //#include <atlbase.h>
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 #define USES_CONVERSION int _convert = 0; _convert; UINT _acp = CP_ACP; _acp; LPCWSTR _lpw = NULL; _lpw; LPCSTR _lpa = NULL; _lpa
 
 inline LPWSTR WINAPI AtlA2WHelper(LPWSTR lpw, LPCSTR lpa, int nChars, UINT acp) {
@@ -920,4 +922,6 @@ BOOL CVMR9Graph::SetLayerZOrder(int nLayer, DWORD dwZOrder) {
 	return TRUE;
 }
 
-#endif // AGS_PLATFORM_OS_WINDOWS
+} // namespace AGS3
+
+#endif

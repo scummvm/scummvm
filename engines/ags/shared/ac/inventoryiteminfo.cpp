@@ -24,6 +24,8 @@
 #include "util/stream.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 void InventoryItemInfo::ReadFromFile(Stream *in) {
@@ -57,3 +59,5 @@ void InventoryItemInfo::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(pic);
 	out->WriteInt32(cursorPic);
 }
+
+} // namespace AGS3

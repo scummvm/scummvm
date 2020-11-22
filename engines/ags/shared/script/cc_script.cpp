@@ -28,6 +28,8 @@
 #include "util/stream.h"
 #include "util/string_compat.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 // currently executed line
@@ -70,27 +72,27 @@ ccScript *ccScript::CreateFromStream(Stream *in) {
 }
 
 ccScript::ccScript() {
-	globaldata          = nullptr;
-	globaldatasize      = 0;
-	code                = nullptr;
-	codesize            = 0;
-	strings             = nullptr;
-	stringssize         = 0;
-	fixuptypes          = nullptr;
-	fixups              = nullptr;
-	numfixups           = 0;
-	importsCapacity     = 0;
-	imports             = nullptr;
-	numimports          = 0;
-	exportsCapacity     = 0;
-	exports             = nullptr;
-	export_addr         = nullptr;
-	numexports          = 0;
-	instances           = 0;
-	sectionNames        = nullptr;
-	sectionOffsets      = nullptr;
-	numSections         = 0;
-	capacitySections    = 0;
+	globaldata = nullptr;
+	globaldatasize = 0;
+	code = nullptr;
+	codesize = 0;
+	strings = nullptr;
+	stringssize = 0;
+	fixuptypes = nullptr;
+	fixups = nullptr;
+	numfixups = 0;
+	importsCapacity = 0;
+	imports = nullptr;
+	numimports = 0;
+	exportsCapacity = 0;
+	exports = nullptr;
+	export_addr = nullptr;
+	numexports = 0;
+	instances = 0;
+	sectionNames = nullptr;
+	sectionOffsets = nullptr;
+	numSections = 0;
+	capacitySections = 0;
 }
 
 ccScript::ccScript(const ccScript &src) {
@@ -370,3 +372,5 @@ const char *ccScript::GetSectionName(int32_t offs) {
 
 	return sectionNames[i - 1];
 }
+
+} // namespace AGS3

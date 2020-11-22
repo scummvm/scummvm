@@ -28,6 +28,8 @@
 #include "game/interactions.h"
 #include "util/alignedstream.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 GameSetupStruct::GameSetupStruct()
@@ -138,7 +140,7 @@ void GameSetupStruct::read_font_infos(Common::Stream *in, GameDataVersion data_v
 			if (data_ver >= kGameVersion_351) {
 				fonts[i].AutoOutlineThickness = in->ReadInt32();
 				fonts[i].AutoOutlineStyle =
-				    static_cast<enum FontInfo::AutoOutlineStyle>(in->ReadInt32());
+					static_cast<enum FontInfo::AutoOutlineStyle>(in->ReadInt32());
 			}
 		}
 	}
@@ -247,7 +249,7 @@ void GameSetupStruct::read_messages(Common::Stream *in, GameDataVersion data_ver
 		} else
 			read_string_decrypt(in, messages[ee], GLOBALMESLENGTH);
 	}
-	delete [] load_messages;
+	delete[] load_messages;
 	load_messages = nullptr;
 }
 
@@ -349,7 +351,7 @@ void GameSetupStruct::ReadAudioClips_Aligned(Common::Stream *in, size_t count) {
 }
 
 void GameSetupStruct::ReadFromSaveGame_v321(Stream *in, char *gswas, ccScript *compsc, CharacterInfo *chwas,
-        WordsDictionary *olddict, char **mesbk) {
+	WordsDictionary *olddict, char **mesbk) {
 	int bb;
 
 	ReadInvInfo_Aligned(in);
@@ -382,7 +384,7 @@ void ConvertOldGameStruct(OldGameSetupStruct *ogss, GameSetupStruct *gss) {
 	for (int i = 0; i < 20; i++)
 		gss->options[i] = ogss->options[i];
 	memcpy(&gss->paluses[0], &ogss->paluses[0], 256);
-	memcpy(&gss->defpal[0],  &ogss->defpal[0],  256 * sizeof(color));
+	memcpy(&gss->defpal[0], &ogss->defpal[0], 256 * sizeof(color));
 	gss->numviews = ogss->numviews;
 	gss->numcharacters = ogss->numcharacters;
 	gss->playercharacter = ogss->playercharacter;
@@ -443,3 +445,5 @@ void GameSetupStruct::WriteForSavegame(PStream out) {
 	out->WriteInt32(invhotdotsprite);
 	out->WriteInt32(default_lipsync_frame);
 }
+
+} // namespace AGS3

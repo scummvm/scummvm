@@ -24,11 +24,12 @@
 #include "util/alignedstream.h"
 #include "util/math.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
 AlignedStream::AlignedStream(Stream *stream, AlignedStreamMode mode, ObjectOwnershipPolicy stream_ownership_policy,
-                             size_t base_alignment)
+	size_t base_alignment)
 	: ProxyStream(stream, stream_ownership_policy)
 	, _mode(mode)
 	, _baseAlignment(base_alignment)
@@ -330,3 +331,4 @@ void AlignedStream::FinalizeBlock() {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

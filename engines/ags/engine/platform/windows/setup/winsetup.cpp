@@ -48,6 +48,8 @@
 #include "util/file.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
+
 #define AL_ID(a,b,c,d)     (((a)<<24) | ((b)<<16) | ((c)<<8) | (d))
 
 #define DIGI_DIRECTAMX(n)        AL_ID('A','X','A'+(n),' ')
@@ -1156,5 +1158,6 @@ SetupReturnValue WinSetup(const ConfigTree &cfg_in, ConfigTree &cfg_out,
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
-#endif // AGS_PLATFORM_OS_WINDOWS
+#endif

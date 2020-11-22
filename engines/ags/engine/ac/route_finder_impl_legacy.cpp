@@ -39,6 +39,8 @@
 #include "gfx/bitmap.h"
 #include "debug/out.h"
 
+namespace AGS3 {
+
 extern void update_polled_stuff_if_runtime();
 
 extern MoveList *mls;
@@ -85,11 +87,11 @@ static int lastcx, lastcy;
 static void line_callback(BITMAP *bmpp, int x, int y, int d) {
 	/*  if ((x>=320) | (y>=200) | (x<0) | (y<0)) line_failed=1;
 	  else */ if (getpixel(bmpp, x, y) < 1)
-		line_failed = 1;
-	else if (line_failed == 0) {
-		lastcx = x;
-		lastcy = y;
-	}
+		  line_failed = 1;
+	  else if (line_failed == 0) {
+		  lastcx = x;
+		  lastcy = y;
+	  }
 }
 
 
@@ -330,7 +332,7 @@ try_again:
 	}
 
 	if (((nextx < 0) | (nextx >= wallscreen->GetWidth()) | (nexty < 0) | (nexty >= wallscreen->GetHeight())) ||
-	        (wallscreen->GetPixel(nextx, nexty) == 0) || ((beenhere[srcy][srcx] & (1 << trydir)) != 0)) {
+		(wallscreen->GetPixel(nextx, nexty) == 0) || ((beenhere[srcy][srcx] & (1 << trydir)) != 0)) {
 
 		if (leftorright == 0) {
 			trydir++;
@@ -344,7 +346,7 @@ try_again:
 		goto try_again;
 	}
 	beenhere[srcy][srcx] |= (1 << trydir);
-//  srcx=nextx; srcy=nexty;
+	//  srcx=nextx; srcy=nexty;
 	beenhere[srcy][srcx] |= 0x80; // being processed
 
 	int retcod = try_this_square(nextx, nexty, tox, toy);
@@ -435,7 +437,7 @@ static int find_route_dijkstra(int fromx, int fromy, int destx, int desty) {
 		return 1;
 	}
 
-	int allocsize = int (wallscreen->GetWidth()) * int (wallscreen->GetHeight()) * sizeof(int);
+	int allocsize = int(wallscreen->GetWidth()) * int(wallscreen->GetHeight()) * sizeof(int);
 	int *parent = (int *)malloc(allocsize);
 	int min = 999999, cheapest[40], newcell[40], replace[40];
 	int *visited = (int *)malloc(MAX_TRAIL_LENGTH * sizeof(int));
@@ -511,8 +513,8 @@ static int find_route_dijkstra(int fromx, int fromy, int destx, int desty) {
 			newx = newcell[p] % wallscreen->GetWidth();
 			newy = newcell[p] / wallscreen->GetWidth();
 			beenhere[newy][newx] = beenhere[cheapest[p] / wallscreen->GetWidth()][cheapest[p] % wallscreen->GetWidth()] + 1;
-//      int wal = walk_area_granularity[->GetPixel(wallscreen, newx, newy)];
-//      beenhere[newy - newy%wal][newx - newx%wal] = beenhere[newy][newx];
+			//      int wal = walk_area_granularity[->GetPixel(wallscreen, newx, newy)];
+			//      beenhere[newy - newy%wal][newx - newx%wal] = beenhere[newy][newx];
 			parent[newcell[p]] = cheapest[p];
 
 			// edges of screen pose a problem, so if current and dest are within
@@ -525,7 +527,7 @@ static int find_route_dijkstra(int fromx, int fromy, int destx, int desty) {
 
 			// Found the desination, abort loop
 			if ((newx >= destxlow) && (newx <= destxhi) && (newy >= destylow)
-			        && (newy <= destyhi)) {
+				&& (newy <= destyhi)) {
 				foundAnswer = newcell[p];
 				break;
 			}
@@ -578,7 +580,7 @@ static int find_route_dijkstra(int fromx, int fromy, int destx, int desty) {
 		newx = on % wallscreen->GetWidth();
 		newy = on / wallscreen->GetWidth();
 		if ((newx >= destxlow) && (newx <= destxhi) && (newy >= destylow)
-		        && (newy <= destyhi))
+			&& (newy <= destyhi))
 			break;
 
 		pathbackx[pathbackstage] = on % wallscreen->GetWidth();
@@ -816,7 +818,7 @@ stage_again:
 		}
 
 		if ((nearestpos == 0) && (can_see_from(srcx, srcy, xx, yy) == 0) &&
-		        (srcx >= 0) && (srcy >= 0) && (srcx < wallscreen->GetWidth()) && (srcy < wallscreen->GetHeight()) && (pathbackstage > 0)) {
+			(srcx >= 0) && (srcy >= 0) && (srcx < wallscreen->GetWidth()) && (srcy < wallscreen->GetHeight()) && (pathbackstage > 0)) {
 			// If we couldn't see anything, we're stuck in a corner so advance
 			// to the next square anyway (but only if they're on the screen)
 			nearestindx = pathbackstage - 1;
@@ -906,8 +908,7 @@ void shutdown_pathfinder() {
 	beenhere_array_size = 0;
 }
 
-
-
 } // namespace RouteFinderLegacy
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3

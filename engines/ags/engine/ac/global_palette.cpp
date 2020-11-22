@@ -26,6 +26,8 @@
 #include "ac/gamestate.h"
 #include "ac/global_palette.h"
 
+namespace AGS3 {
+
 extern GameSetupStruct game;
 extern GameState play;
 extern color palette[256];
@@ -72,3 +74,5 @@ void UpdatePalette() {
 	if (!play.fast_forward)
 		setpal();
 }
+
+} // namespace AGS3

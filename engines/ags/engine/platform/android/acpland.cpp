@@ -41,6 +41,8 @@
 #include <jni.h>
 #include <android/log.h>
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 #define ANDROID_CONFIG_FILENAME "android.cfg"
@@ -724,5 +726,7 @@ AGSPlatformDriver *AGSPlatformDriver::GetDriver() {
 
 	return instance;
 }
+
+} // namespace AGS3
 
 #endif

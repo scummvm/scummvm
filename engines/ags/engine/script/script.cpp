@@ -52,6 +52,8 @@
 #include "util/string_compat.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 extern GameSetupStruct game;
 extern GameState play;
 extern int gameHasBeenRestored, displayed_room;
@@ -160,13 +162,13 @@ void run_function_on_non_blocking_thread(NonBlockingScriptFunction *funcToRun) {
 int run_interaction_event(Interaction *nint, int evnt, int chkAny, int isInv) {
 
 	if (evnt < 0 || (size_t)evnt >= nint->Events.size() ||
-	        (nint->Events[evnt].Response.get() == nullptr) || (nint->Events[evnt].Response->Cmds.size() == 0)) {
+		(nint->Events[evnt].Response.get() == nullptr) || (nint->Events[evnt].Response->Cmds.size() == 0)) {
 		// no response defined for this event
 		// If there is a response for "Any Click", then abort now so as to
 		// run that instead
-		if (chkAny < 0) ;
+		if (chkAny < 0);
 		else if ((size_t)chkAny < nint->Events.size() &&
-		         (nint->Events[chkAny].Response.get() != nullptr) && (nint->Events[chkAny].Response->Cmds.size() > 0))
+			(nint->Events[chkAny].Response.get() != nullptr) && (nint->Events[chkAny].Response->Cmds.size() > 0))
 			return 0;
 
 		// Otherwise, run unhandled_event
@@ -200,7 +202,7 @@ int run_interaction_script(InteractionScripts *nint, int evnt, int chkAny, int i
 		// no response defined for this event
 		// If there is a response for "Any Click", then abort now so as to
 		// run that instead
-		if (chkAny < 0) ;
+		if (chkAny < 0);
 		else if ((nint->ScriptFuncNames[chkAny] != nullptr) && (nint->ScriptFuncNames[chkAny][0u] != 0))
 			return 0;
 
@@ -438,7 +440,7 @@ int RunTextScript(ccInstance *sci, const char *tsname) {
 				RunScriptFunctionIfExists(moduleInst[kk], tsname, 0, nullptr);
 
 			if ((room_changes_was != play.room_changes) ||
-			        (restore_game_count_was != gameHasBeenRestored))
+				(restore_game_count_was != gameHasBeenRestored))
 				return 0;
 		}
 	}
@@ -672,7 +674,8 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 		switch (nicl->Cmds[i].Type) {
 		case 0:  // Do nothing
 			break;
-		case 1: { // Run script
+		case 1:
+		{ // Run script
 			TempEip tempip(4001);
 			RuntimeScriptValue rval_null;
 			update_polled_mp3();
@@ -713,7 +716,8 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 		case 8:  // Play Flic
 			play_flc_file(IPARAM1, IPARAM2);
 			break;
-		case 9: { // Run Dialog
+		case 9:
+		{ // Run Dialog
 			int room_was = play.room_changes;
 			RunDialog(IPARAM1);
 			// if they changed room within the dialog script,
@@ -903,11 +907,13 @@ void run_unhandled_event(int evnt) {
 		evtype = 4;
 	if ((evtype == 1) & ((evnt == 0) | (evnt == 5) | (evnt == 6)))
 		;  // character stands on hotspot, mouse moves over hotspot, any click
-	else if ((evtype == 2) & (evnt == 4)) ; // any click on object
-	else if ((evtype == 3) & (evnt == 4)) ; // any click on character
+	else if ((evtype == 2) & (evnt == 4)); // any click on object
+	else if ((evtype == 3) & (evnt == 4)); // any click on character
 	else if (evtype > 0) {
 		can_run_delayed_command();
 
 		QueueScriptFunction(kScInstGame, "unhandled_event", 2, RuntimeScriptValue().SetInt32(evtype), RuntimeScriptValue().SetInt32(evnt));
 	}
 }
+
+} // namespace AGS3

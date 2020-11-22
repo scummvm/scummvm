@@ -23,6 +23,8 @@
 #include "ac/dialogtopic.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 void DialogTopic::ReadFromFile(Stream *in) {
@@ -45,3 +47,5 @@ void DialogTopic::ReadFromSavegame(Common::Stream *in) {
 void DialogTopic::WriteToSavegame(Common::Stream *out) const {
 	out->WriteArrayOfInt32(optionflags, MAXTOPICOPTIONS);
 }
+
+} // namespace AGS3

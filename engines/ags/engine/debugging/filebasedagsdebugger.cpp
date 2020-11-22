@@ -28,6 +28,8 @@
 #include "util/wgt2allg.h"              // exists()
 #include "platform/base/agsplatformdriver.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 using AGS::Shared::TextStreamWriter;
 
@@ -75,3 +77,5 @@ char *FileBasedAGSDebugger::GetNextMessage() {
 	msg[fileSize] = 0;
 	return msg;
 }
+
+} // namespace AGS3

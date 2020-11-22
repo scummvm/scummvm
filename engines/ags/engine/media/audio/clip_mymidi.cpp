@@ -25,6 +25,8 @@
 #include "media/audio/clip_mymidi.h"
 #include "media/audio/audiointernaldefs.h"
 
+namespace AGS3 {
+
 void MYMIDI::poll() {
 	if (state_ != SoundClipPlaying) {
 		return;
@@ -122,3 +124,5 @@ MYMIDI::MYMIDI() : SOUNDCLIP() {
 	tune = nullptr;
 	lengthInSeconds = 0;
 }
+
+} // namespace AGS3

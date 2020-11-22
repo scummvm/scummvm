@@ -37,6 +37,8 @@
 #define USE_CUSTOM_EXCEPTION_HANDLER
 #endif
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern int our_eip;
@@ -95,5 +97,7 @@ void setup_malloc_handling() {
 	_set_new_mode(1);
 	printfworkingspace = (char *)malloc(7000);
 }
+
+} // namespace AGS3
 
 #endif // AGS_PLATFORM_OS_WINDOWS

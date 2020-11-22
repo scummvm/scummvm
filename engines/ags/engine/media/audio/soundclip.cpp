@@ -26,6 +26,8 @@
 #include "media/audio/soundclip.h"
 #include "media/audio/audiointernaldefs.h"
 
+namespace AGS3 {
+
 int SOUNDCLIP::play_from(int position) {
 	int retVal = play();
 	if ((retVal != 0) && (position > 0)) {
@@ -90,3 +92,5 @@ SOUNDCLIP::SOUNDCLIP() {
 }
 
 SOUNDCLIP::~SOUNDCLIP() = default;
+
+} // namespace AGS3

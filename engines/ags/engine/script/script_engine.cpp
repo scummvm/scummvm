@@ -37,11 +37,14 @@
 #include "util/file.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 namespace AGS {
 namespace Shared {
 class RoomStruct;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS::Shared;
 
 extern void quit(const char *);
@@ -59,3 +62,5 @@ std::pair<String, String> cc_error_at_line(const char *error_msg) {
 String cc_error_without_line(const char *error_msg) {
 	return String::FromFormat("Runtime error: %s", error_msg);
 }
+
+} // namespace AGS3

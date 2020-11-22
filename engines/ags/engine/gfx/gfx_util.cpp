@@ -24,6 +24,8 @@
 #include "gfx/gfx_util.h"
 #include "gfx/blender.h"
 
+namespace AGS3 {
+
 // CHECKME: is this hack still relevant?
 #if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
 extern int psp_gfx_renderer;
@@ -77,7 +79,7 @@ bool SetBlender(BlendMode blend_mode, bool dst_has_alpha, bool src_has_alpha, in
 	PfnBlenderCb blender;
 	if (dst_has_alpha)
 		blender = src_has_alpha ? set.AllAlpha :
-		          (blend_alpha == 0xFF ? set.OpaqueToAlphaNoTrans : set.OpaqueToAlpha);
+		(blend_alpha == 0xFF ? set.OpaqueToAlphaNoTrans : set.OpaqueToAlpha);
 	else
 		blender = src_has_alpha ? set.AlphaToOpaque : set.AllOpaque;
 
@@ -89,14 +91,14 @@ bool SetBlender(BlendMode blend_mode, bool dst_has_alpha, bool src_has_alpha, in
 }
 
 void DrawSpriteBlend(Bitmap *ds, const Point &ds_at, Bitmap *sprite,
-                     BlendMode blend_mode,  bool dst_has_alpha, bool src_has_alpha, int blend_alpha) {
+	BlendMode blend_mode, bool dst_has_alpha, bool src_has_alpha, int blend_alpha) {
 	if (blend_alpha <= 0)
 		return; // do not draw 100% transparent image
 
 	if (// support only 32-bit blending at the moment
-	    ds->GetColorDepth() == 32 && sprite->GetColorDepth() == 32 &&
-	    // set blenders if applicable and tell if succeeded
-	    SetBlender(blend_mode, dst_has_alpha, src_has_alpha, blend_alpha)) {
+		ds->GetColorDepth() == 32 && sprite->GetColorDepth() == 32 &&
+		// set blenders if applicable and tell if succeeded
+		SetBlender(blend_mode, dst_has_alpha, src_has_alpha, blend_alpha)) {
 		ds->TransBlendBlt(sprite, ds_at.X, ds_at.Y);
 	} else {
 		GfxUtil::DrawSpriteWithTransparency(ds, sprite, ds_at.X, ds_at.Y, blend_alpha);
@@ -110,14 +112,14 @@ void DrawSpriteWithTransparency(Bitmap *ds, Bitmap *sprite, int x, int y, int al
 	}
 
 	int surface_depth = ds->GetColorDepth();
-	int sprite_depth  = sprite->GetColorDepth();
+	int sprite_depth = sprite->GetColorDepth();
 
 	if (sprite_depth < surface_depth
-	        // CHECKME: what is the purpose of this hack and is this still relevant?
+		// CHECKME: what is the purpose of this hack and is this still relevant?
 #if AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID
-	        || (ds->GetBPP() < surface_depth && psp_gfx_renderer > 0) // Fix for corrupted speechbox outlines with the OGL driver
+		|| (ds->GetBPP() < surface_depth && psp_gfx_renderer > 0) // Fix for corrupted speechbox outlines with the OGL driver
 #endif
-	   ) {
+		) {
 		// If sprite is lower color depth than destination surface, e.g.
 		// 8-bit sprites drawn on 16/32-bit surfaces.
 		if (sprite_depth == 8 && surface_depth >= 24) {
@@ -138,7 +140,7 @@ void DrawSpriteWithTransparency(Bitmap *ds, Bitmap *sprite, int x, int y, int al
 			for (int scan_y = 0; scan_y < hctemp.GetHeight(); ++scan_y) {
 				// we know this must be 1 bpp source and 2 bpp pixel destination
 				const uint8_t *src_scanline = sprite->GetScanLine(scan_y);
-				uint16_t      *dst_scanline = (uint16_t *)hctemp.GetScanLineForWriting(scan_y);
+				uint16_t *dst_scanline = (uint16_t *)hctemp.GetScanLineForWriting(scan_y);
 				for (int scan_x = 0; scan_x < hctemp.GetWidth(); ++scan_x) {
 					if (src_scanline[scan_x] == 0) {
 						dst_scanline[scan_x] = mask_color;
@@ -167,3 +169,4 @@ void DrawSpriteWithTransparency(Bitmap *ds, Bitmap *sprite, int x, int y, int al
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3

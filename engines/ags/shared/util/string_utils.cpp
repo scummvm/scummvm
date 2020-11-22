@@ -27,6 +27,8 @@
 #include "util/string_utils.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 String cbuf_to_string_and_free(char *char_buf) {
@@ -158,3 +160,4 @@ void StrUtil::WriteCStr(const String &s, Stream *out) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

@@ -26,6 +26,8 @@
 #include "ac/common.h"               // quit()
 #include "util/bbop.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 // *** The script serialization routines for built-in types
@@ -125,3 +127,5 @@ void AGSCCDynamicObject::WriteInt32(const char *address, intptr_t offset, int32_
 void AGSCCDynamicObject::WriteFloat(const char *address, intptr_t offset, float val) {
 	*(float *)(address + offset) = val;
 }
+
+} // namespace AGS3

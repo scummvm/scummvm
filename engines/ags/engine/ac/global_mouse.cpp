@@ -23,6 +23,8 @@
 #include "ac/global_mouse.h"
 #include "ac/gamestate.h"
 
+namespace AGS3 {
+
 extern GameState play;
 
 void HideMouseCursor() {
@@ -32,3 +34,5 @@ void HideMouseCursor() {
 void ShowMouseCursor() {
 	play.mouse_cursor_hidden = 0;
 }
+
+} // namespace AGS3

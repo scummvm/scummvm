@@ -30,6 +30,8 @@
 #include "gfx/graphicsdriver.h"
 #include "gfx/bitmap.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -55,3 +57,5 @@ int LoadImageFile(const char *filename) {
 
 	return gotSlot;
 }
+
+} // namespace AGS3

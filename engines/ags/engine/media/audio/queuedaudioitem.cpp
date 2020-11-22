@@ -24,6 +24,8 @@
 #include "ac/common_defines.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 // [IKM] 2012-07-02: these functions are used during load/save game,
@@ -42,3 +44,5 @@ void QueuedAudioItem::WriteToFile(Stream *out) const {
 	out->WriteBool(repeat);
 	out->WriteInt32(0); // cachedClip
 }
+
+} // namespace AGS3

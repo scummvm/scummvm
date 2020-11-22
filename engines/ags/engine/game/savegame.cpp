@@ -62,6 +62,8 @@
 #include "util/string_utils.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 using namespace Shared;
 using namespace Engine;
 
@@ -82,7 +84,7 @@ namespace AGS {
 namespace Engine {
 
 const String SavegameSource::LegacySignature = "Adventure Game Studio saved game";
-const String SavegameSource::Signature       = "Adventure Game Studio saved game v2";
+const String SavegameSource::Signature = "Adventure Game Studio saved game v2";
 
 SavegameSource::SavegameSource()
 	: Version(kSvgVersion_Undefined) {
@@ -178,7 +180,7 @@ HSaveError ReadDescription(Stream *in, SavegameVersion &svg_ver, SavegameDescrip
 	svg_ver = (SavegameVersion)in->ReadInt32();
 	if (svg_ver < kSvgVersion_LowestSupported || svg_ver > kSvgVersion_Current)
 		return new SavegameError(kSvgErr_FormatVersionNotSupported,
-		                         String::FromFormat("Required: %d, supported: %d - %d.", svg_ver, kSvgVersion_LowestSupported, kSvgVersion_Current));
+			String::FromFormat("Required: %d, supported: %d - %d.", svg_ver, kSvgVersion_LowestSupported, kSvgVersion_Current));
 
 	// Enviroment information
 	if (elems & kSvgDesc_EnvInfo) {
@@ -223,9 +225,9 @@ HSaveError ReadDescription_v321(Stream *in, SavegameVersion &svg_ver, SavegameDe
 
 	// Check saved game format version
 	if (svg_ver < kSvgVersion_LowestSupported ||
-	        svg_ver > kSvgVersion_Current) {
+		svg_ver > kSvgVersion_Current) {
 		return new SavegameError(kSvgErr_FormatVersionNotSupported,
-		                         String::FromFormat("Required: %d, supported: %d - %d.", svg_ver, kSvgVersion_LowestSupported, kSvgVersion_Current));
+			String::FromFormat("Required: %d, supported: %d - %d.", svg_ver, kSvgVersion_LowestSupported, kSvgVersion_Current));
 	}
 
 	if (elems & kSvgDesc_UserImage)
@@ -236,10 +238,10 @@ HSaveError ReadDescription_v321(Stream *in, SavegameVersion &svg_ver, SavegameDe
 	String version_str = String::FromStream(in);
 	Version eng_version(version_str);
 	if (eng_version > EngineVersion ||
-	        eng_version < SavedgameLowestBackwardCompatVersion) {
+		eng_version < SavedgameLowestBackwardCompatVersion) {
 		// Engine version is either non-forward or non-backward compatible
 		return new SavegameError(kSvgErr_IncompatibleEngine,
-		                         String::FromFormat("Required: %s, supported: %s - %s.", eng_version.LongString.GetCStr(), SavedgameLowestBackwardCompatVersion.LongString.GetCStr(), EngineVersion.LongString.GetCStr()));
+			String::FromFormat("Required: %s, supported: %s - %s.", eng_version.LongString.GetCStr(), SavedgameLowestBackwardCompatVersion.LongString.GetCStr(), EngineVersion.LongString.GetCStr()));
 	}
 	if (elems & kSvgDesc_EnvInfo) {
 		desc.MainDataFilename.Read(in);
@@ -457,19 +459,19 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 
 	if (create_global_script()) {
 		return new SavegameError(kSvgErr_GameObjectInitFailed,
-		                         String::FromFormat("Unable to recreate global script: %s", ccErrorString.GetCStr()));
+			String::FromFormat("Unable to recreate global script: %s", ccErrorString.GetCStr()));
 	}
 
 	// read the global data into the newly created script
 	if (r_data.GlobalScript.Data.get())
 		memcpy(gameinst->globaldata, r_data.GlobalScript.Data.get(),
-		       Math::Min((size_t)gameinst->globaldatasize, r_data.GlobalScript.Len));
+			Math::Min((size_t)gameinst->globaldatasize, r_data.GlobalScript.Len));
 
 	// restore the script module data
 	for (int i = 0; i < numScriptModules; ++i) {
 		if (r_data.ScriptModules[i].Data.get())
 			memcpy(moduleInst[i]->globaldata, r_data.ScriptModules[i].Data.get(),
-			       Math::Min((size_t)moduleInst[i]->globaldatasize, r_data.ScriptModules[i].Len));
+				Math::Min((size_t)moduleInst[i]->globaldatasize, r_data.ScriptModules[i].Len));
 	}
 
 	setup_player_character(game.playercharacter);
@@ -556,10 +558,10 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 				continue;
 			if ((size_t)chan_info.ClipID >= game.audioClips.size()) {
 				return new SavegameError(kSvgErr_GameObjectInitFailed,
-				                         String::FromFormat("Invalid audio clip index: %d (clip count: %u).", chan_info.ClipID, game.audioClips.size()));
+					String::FromFormat("Invalid audio clip index: %d (clip count: %u).", chan_info.ClipID, game.audioClips.size()));
 			}
 			play_audio_clip_on_channel(i, &game.audioClips[chan_info.ClipID],
-			                           chan_info.Priority, chan_info.Repeat, chan_info.Pos);
+				chan_info.Priority, chan_info.Repeat, chan_info.Pos);
 
 			auto *ch = lock.GetChannel(i);
 			if (ch != nullptr) {
@@ -629,7 +631,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 		AudioChannelsLock lock;
 
 		if ((crossFading > 0 && !lock.GetChannelIfPlaying(crossFading)) ||
-		        (crossFading <= 0 && !lock.GetChannelIfPlaying(SCHAN_MUSIC))) {
+			(crossFading <= 0 && !lock.GetChannelIfPlaying(SCHAN_MUSIC))) {
 			current_music_type = 0; // playback failed, reset flag
 		}
 	}
@@ -735,3 +737,4 @@ void SaveGameState(PStream out) {
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3

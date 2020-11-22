@@ -77,6 +77,8 @@
 #include "util/math.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -1222,3 +1224,5 @@ void RegisterRoomAPI() {
 	ccAddExternalFunctionForPlugin("Room::get_TopEdge", (void *)Room_GetTopEdge);
 	ccAddExternalFunctionForPlugin("Room::get_Width", (void *)Room_GetWidth);
 }
+
+} // namespace AGS3

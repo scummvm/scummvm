@@ -25,6 +25,8 @@
 #include "ac/datetime.h"
 #include "ac/common.h"
 
+namespace AGS3 {
+
 int sc_GetTime(int whatti) {
 	ScriptDateTime *sdt = DateTime_Now_Core();
 	int returnVal = 0;
@@ -46,3 +48,5 @@ int GetRawTime() {
 	// TODO: we might need to modify script API to support larger time type
 	return static_cast<int>(time(nullptr));
 }
+
+} // namespace AGS3

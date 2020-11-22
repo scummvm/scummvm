@@ -26,6 +26,8 @@
 #include "ac/gamesetupstruct.h"
 #include "ac/game_version.h"
 
+namespace AGS3 {
+
 extern GameSetupStruct game;
 
 // return the type name of the object
@@ -61,3 +63,5 @@ void CCCharacter::WriteInt16(const char *address, intptr_t offset, int16_t val) 
 		}
 	}
 }
+
+} // namespace AGS3

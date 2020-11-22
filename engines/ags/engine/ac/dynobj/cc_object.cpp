@@ -25,6 +25,8 @@
 #include "ac/common_defines.h"
 #include "game/roomstruct.h"
 
+namespace AGS3 {
+
 extern ScriptObject scrObj[MAX_ROOM_OBJECTS];
 
 // return the type name of the object
@@ -46,3 +48,5 @@ void CCObject::Unserialize(int index, const char *serializedData, int dataSize) 
 	int num = UnserializeInt();
 	ccRegisterUnserializedObject(index, &scrObj[num], this);
 }
+
+} // namespace AGS3

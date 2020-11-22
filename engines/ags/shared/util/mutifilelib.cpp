@@ -25,6 +25,7 @@
 #include "util/stream.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -34,12 +35,12 @@ const String TailSig = "CLIB\x1\x2\x3\x4SIGE";
 
 static const size_t SingleFilePswLen = 13;
 
-static const size_t MaxAssetFileLen  = 100;
-static const size_t MaxDataFileLen   = 50;
-static const size_t V10LibFileLen    = 20;
-static const size_t V10AssetFileLen  = 25;
+static const size_t MaxAssetFileLen = 100;
+static const size_t MaxDataFileLen = 50;
+static const size_t V10LibFileLen = 20;
+static const size_t V10AssetFileLen = 25;
 
-static const int EncryptionRandSeed  = 9338638;
+static const int EncryptionRandSeed = 9338638;
 static const String EncryptionString = "My\x1\xde\x4Jibzle";
 
 MFLError ReadSigsAndVersion(Stream *in, MFLVersion *p_lib_version, soff_t *p_abs_offset);
@@ -94,7 +95,7 @@ MFLUtil::MFLError MFLUtil::ReadHeader(AssetLibInfo &lib, Stream *in) {
 	// (since only base data file may be EXE file, other clib parts are always on their own)
 	if (abs_offset > 0) {
 		for (AssetVec::iterator it = lib.AssetInfos.begin();
-		        it != lib.AssetInfos.end(); ++it) {
+			it != lib.AssetInfos.end(); ++it) {
 			if (it->LibUid == 0)
 				it->Offset += abs_offset;
 		}
@@ -149,9 +150,9 @@ MFLUtil::MFLError MFLUtil::ReadSigsAndVersion(Stream *in, MFLVersion *p_lib_vers
 	// read library header
 	MFLVersion lib_version = (MFLVersion)in->ReadByte();
 	if ((lib_version != kMFLVersion_SingleLib) && (lib_version != kMFLVersion_MultiV10) &&
-	        (lib_version != kMFLVersion_MultiV11) && (lib_version != kMFLVersion_MultiV15) &&
-	        (lib_version != kMFLVersion_MultiV20) && (lib_version != kMFLVersion_MultiV21) &&
-	        lib_version != kMFLVersion_MultiV30)
+		(lib_version != kMFLVersion_MultiV11) && (lib_version != kMFLVersion_MultiV15) &&
+		(lib_version != kMFLVersion_MultiV20) && (lib_version != kMFLVersion_MultiV21) &&
+		lib_version != kMFLVersion_MultiV30)
 		return kMFLErrLibVersion; // unsupported version
 
 	if (p_lib_version)
@@ -381,7 +382,7 @@ void MFLUtil::DecryptText(char *text) {
 
 int MFLUtil::GetNextPseudoRand(int &rand_val) {
 	return (((rand_val = rand_val * 214013L
-	                     + 2531011L) >> 16) & 0x7fff);
+		+ 2531011L) >> 16) & 0x7fff);
 }
 
 void MFLUtil::ReadEncArray(void *data, size_t size, size_t count, Stream *in, int &rand_val) {
@@ -417,5 +418,6 @@ void MFLUtil::ReadEncString(char *buffer, size_t max_len, Stream *in, int &rand_
 	}
 }
 
-} // namespace AGS
 } // namespace Shared
+} // namespace AGS
+} // namespace AGS3

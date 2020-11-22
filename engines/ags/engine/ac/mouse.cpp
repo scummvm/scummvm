@@ -42,6 +42,8 @@
 #include "gfx/graphicsdriver.h"
 #include "gfx/gfxfilter.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -89,7 +91,7 @@ void SetMouseBounds(int x1, int y1, int x2, int y2) {
 	} else {
 		if (x1 < 0 || x1 > xmax || x2 < 0 || x2 > xmax || x1 > x2 || y1 < 0 || y1 > ymax || y2 < 0 || y2 > ymax || y1 > y2)
 			debug_script_warn("SetMouseBounds: arguments are out of range and will be corrected: (%d,%d)-(%d,%d), range is (%d,%d)-(%d,%d)",
-			                  x1, y1, x2, y2, 0, 0, xmax, ymax);
+				x1, y1, x2, y2, 0, 0, xmax, ymax);
 		x1 = Math::Clamp(x1, 0, xmax);
 		x2 = Math::Clamp(x2, x1, xmax);
 		y1 = Math::Clamp(y1, 0, ymax);
@@ -115,7 +117,7 @@ void set_mouse_cursor(int newcurs) {
 
 	// if it's same cursor and there's animation in progress, then don't assign a new pic just yet
 	if (newcurs == cur_cursor && game.mcurs[newcurs].view >= 0 &&
-	        (mouse_frame > 0 || mouse_delay > 0)) {
+		(mouse_frame > 0 || mouse_delay > 0)) {
 		return;
 	}
 
@@ -133,17 +135,17 @@ void set_mouse_cursor(int newcurs) {
 
 	// If it's inventory cursor, draw hotspot crosshair sprite upon it
 	if ((newcurs == MODE_USE) && (game.mcurs[newcurs].pic > 0) &&
-	        ((game.hotdot > 0) || (game.invhotdotsprite > 0))) {
+		((game.hotdot > 0) || (game.invhotdotsprite > 0))) {
 		// If necessary, create a copy of the cursor and put the hotspot
 		// dot onto it
 		dotted_mouse_cursor = BitmapHelper::CreateBitmapCopy(mousecurs[0]);
 
 		if (game.invhotdotsprite > 0) {
 			draw_sprite_slot_support_alpha(dotted_mouse_cursor,
-			                               (game.SpriteInfos[game.mcurs[newcurs].pic].Flags & SPF_ALPHACHANNEL) != 0,
-			                               hotspotx - game.SpriteInfos[game.invhotdotsprite].Width / 2,
-			                               hotspoty - game.SpriteInfos[game.invhotdotsprite].Height / 2,
-			                               game.invhotdotsprite);
+				(game.SpriteInfos[game.mcurs[newcurs].pic].Flags & SPF_ALPHACHANNEL) != 0,
+				hotspotx - game.SpriteInfos[game.invhotdotsprite].Width / 2,
+				hotspoty - game.SpriteInfos[game.invhotdotsprite].Height / 2,
+				game.invhotdotsprite);
 		} else {
 			putpixel_compensate(dotted_mouse_cursor, hotspotx, hotspoty, MakeColor(game.hotdot));
 
@@ -315,8 +317,8 @@ int IsButtonDown(int which) {
 
 int IsModeEnabled(int which) {
 	return (which < 0) || (which >= game.numcursors) ? 0 :
-	       which == MODE_USE ? playerchar->activeinv > 0 :
-	       (game.mcurs[which].flags & MCF_DISABLED) == 0;
+		which == MODE_USE ? playerchar->activeinv > 0 :
+	(game.mcurs[which].flags & MCF_DISABLED) == 0;
 }
 
 void Mouse_EnableControl(bool on) {
@@ -326,7 +328,7 @@ void Mouse_EnableControl(bool on) {
 	// Whether mouse movement should be controlled by the engine - this is
 	// determined based on related config option.
 	bool should_control_mouse = usetup.mouse_ctrl_when == kMouseCtrl_Always ||
-	                            (usetup.mouse_ctrl_when == kMouseCtrl_Fullscreen && !is_windowed);
+		(usetup.mouse_ctrl_when == kMouseCtrl_Fullscreen && !is_windowed);
 	// Whether mouse movement control is supported by the engine - this is
 	// determined on per platform basis. Some builds may not have such
 	// capability, e.g. because of how backend library implements mouse utils.
@@ -582,31 +584,31 @@ RuntimeScriptValue Sc_Mouse_SetSpeed(const RuntimeScriptValue *params, int32_t p
 }
 
 void RegisterMouseAPI() {
-	ccAddExternalStaticFunction("Mouse::ChangeModeGraphic^2",       Sc_ChangeCursorGraphic);
-	ccAddExternalStaticFunction("Mouse::ChangeModeHotspot^3",       Sc_ChangeCursorHotspot);
-	ccAddExternalStaticFunction("Mouse::ChangeModeView^2",          Sc_Mouse_ChangeModeView);
-	ccAddExternalStaticFunction("Mouse::Click^1",                   Sc_Mouse_Click);
-	ccAddExternalStaticFunction("Mouse::DisableMode^1",             Sc_disable_cursor_mode);
-	ccAddExternalStaticFunction("Mouse::EnableMode^1",              Sc_enable_cursor_mode);
-	ccAddExternalStaticFunction("Mouse::GetModeGraphic^1",          Sc_Mouse_GetModeGraphic);
-	ccAddExternalStaticFunction("Mouse::IsButtonDown^1",            Sc_IsButtonDown);
-	ccAddExternalStaticFunction("Mouse::IsModeEnabled^1",           Sc_IsModeEnabled);
+	ccAddExternalStaticFunction("Mouse::ChangeModeGraphic^2", Sc_ChangeCursorGraphic);
+	ccAddExternalStaticFunction("Mouse::ChangeModeHotspot^3", Sc_ChangeCursorHotspot);
+	ccAddExternalStaticFunction("Mouse::ChangeModeView^2", Sc_Mouse_ChangeModeView);
+	ccAddExternalStaticFunction("Mouse::Click^1", Sc_Mouse_Click);
+	ccAddExternalStaticFunction("Mouse::DisableMode^1", Sc_disable_cursor_mode);
+	ccAddExternalStaticFunction("Mouse::EnableMode^1", Sc_enable_cursor_mode);
+	ccAddExternalStaticFunction("Mouse::GetModeGraphic^1", Sc_Mouse_GetModeGraphic);
+	ccAddExternalStaticFunction("Mouse::IsButtonDown^1", Sc_IsButtonDown);
+	ccAddExternalStaticFunction("Mouse::IsModeEnabled^1", Sc_IsModeEnabled);
 	ccAddExternalStaticFunction("Mouse::SaveCursorUntilItLeaves^0", Sc_SaveCursorForLocationChange);
-	ccAddExternalStaticFunction("Mouse::SelectNextMode^0",          Sc_SetNextCursor);
-	ccAddExternalStaticFunction("Mouse::SelectPreviousMode^0",      Sc_SetPreviousCursor);
-	ccAddExternalStaticFunction("Mouse::SetBounds^4",               Sc_SetMouseBounds);
-	ccAddExternalStaticFunction("Mouse::SetPosition^2",             Sc_SetMousePosition);
-	ccAddExternalStaticFunction("Mouse::Update^0",                  Sc_RefreshMouse);
-	ccAddExternalStaticFunction("Mouse::UseDefaultGraphic^0",       Sc_set_default_cursor);
-	ccAddExternalStaticFunction("Mouse::UseModeGraphic^1",          Sc_set_mouse_cursor);
-	ccAddExternalStaticFunction("Mouse::get_ControlEnabled",        Sc_Mouse_GetControlEnabled);
-	ccAddExternalStaticFunction("Mouse::set_ControlEnabled",        Sc_Mouse_SetControlEnabled);
-	ccAddExternalStaticFunction("Mouse::get_Mode",                  Sc_GetCursorMode);
-	ccAddExternalStaticFunction("Mouse::set_Mode",                  Sc_set_cursor_mode);
-	ccAddExternalStaticFunction("Mouse::get_Speed",                 Sc_Mouse_GetSpeed);
-	ccAddExternalStaticFunction("Mouse::set_Speed",                 Sc_Mouse_SetSpeed);
-	ccAddExternalStaticFunction("Mouse::get_Visible",               Sc_Mouse_GetVisible);
-	ccAddExternalStaticFunction("Mouse::set_Visible",               Sc_Mouse_SetVisible);
+	ccAddExternalStaticFunction("Mouse::SelectNextMode^0", Sc_SetNextCursor);
+	ccAddExternalStaticFunction("Mouse::SelectPreviousMode^0", Sc_SetPreviousCursor);
+	ccAddExternalStaticFunction("Mouse::SetBounds^4", Sc_SetMouseBounds);
+	ccAddExternalStaticFunction("Mouse::SetPosition^2", Sc_SetMousePosition);
+	ccAddExternalStaticFunction("Mouse::Update^0", Sc_RefreshMouse);
+	ccAddExternalStaticFunction("Mouse::UseDefaultGraphic^0", Sc_set_default_cursor);
+	ccAddExternalStaticFunction("Mouse::UseModeGraphic^1", Sc_set_mouse_cursor);
+	ccAddExternalStaticFunction("Mouse::get_ControlEnabled", Sc_Mouse_GetControlEnabled);
+	ccAddExternalStaticFunction("Mouse::set_ControlEnabled", Sc_Mouse_SetControlEnabled);
+	ccAddExternalStaticFunction("Mouse::get_Mode", Sc_GetCursorMode);
+	ccAddExternalStaticFunction("Mouse::set_Mode", Sc_set_cursor_mode);
+	ccAddExternalStaticFunction("Mouse::get_Speed", Sc_Mouse_GetSpeed);
+	ccAddExternalStaticFunction("Mouse::set_Speed", Sc_Mouse_SetSpeed);
+	ccAddExternalStaticFunction("Mouse::get_Visible", Sc_Mouse_GetVisible);
+	ccAddExternalStaticFunction("Mouse::set_Visible", Sc_Mouse_SetVisible);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -631,3 +633,5 @@ void RegisterMouseAPI() {
 	ccAddExternalFunctionForPlugin("Mouse::get_Visible", (void *)Mouse_GetVisible);
 	ccAddExternalFunctionForPlugin("Mouse::set_Visible", (void *)Mouse_SetVisible);
 }
+
+} // namespace AGS3

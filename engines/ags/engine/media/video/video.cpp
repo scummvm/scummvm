@@ -50,6 +50,8 @@
 #include "util/stream.h"
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -223,7 +225,8 @@ void play_flc_file(int numb, int playflags) {
 	delete hicol_buf;
 	hicol_buf = nullptr;
 	//  SetVirtualScreen(screen); wputblock(0,0,backbuffer,0);
-	while (ags_mgetbutton() != NONE) { } // clear any queued mouse events.
+	while (ags_mgetbutton() != NONE) {
+	} // clear any queued mouse events.
 	invalidate_screen();
 }
 
@@ -232,7 +235,7 @@ void play_flc_file(int numb, int playflags) {
 // Theora player begin
 // TODO: find a way to take Bitmap here?
 Bitmap gl_TheoraBuffer;
-int theora_playing_callback(BITMAP *theoraBuffer) {
+int theora_playing_callback(BITMAP * theoraBuffer) {
 	if (theoraBuffer == nullptr) {
 		// No video, only sound
 		return check_if_user_input_should_cancel_video();
@@ -250,7 +253,7 @@ int theora_playing_callback(BITMAP *theoraBuffer) {
 		drawAtY = viewport.GetHeight() / 2 - fliTargetHeight / 2;
 		if (!gfxDriver->HasAcceleratedTransform()) {
 			fli_target->StretchBlt(&gl_TheoraBuffer, RectWH(0, 0, gl_TheoraBuffer.GetWidth(), gl_TheoraBuffer.GetHeight()),
-			                       RectWH(drawAtX, drawAtY, fliTargetWidth, fliTargetHeight));
+				RectWH(drawAtX, drawAtY, fliTargetWidth, fliTargetHeight));
 			gfxDriver->UpdateDDBFromBitmap(fli_ddb, fli_target, false);
 			drawAtX = 0;
 			drawAtY = 0;
@@ -290,7 +293,7 @@ void apeg_stream_skip(int bytes, void *ptr) {
 }
 //
 
-APEG_STREAM *get_theora_size(Stream *video_stream, int *width, int *height) {
+APEG_STREAM *get_theora_size(Stream * video_stream, int *width, int *height) {
 	APEG_STREAM *oggVid = apeg_open_stream_ex(video_stream);
 	if (oggVid != nullptr) {
 		apeg_get_video_size(oggVid, width, height);
@@ -393,8 +396,13 @@ void video_on_gfxmode_changed() {
 
 #else
 
-void play_theora_video(const char *name, int skip, int flags) {}
-void play_flc_file(int numb, int playflags) {}
-void video_on_gfxmode_changed() {}
+void play_theora_video(const char *name, int skip, int flags) {
+}
+void play_flc_file(int numb, int playflags) {
+}
+void video_on_gfxmode_changed() {
+}
 
 #endif
+
+} // namespace AGS3

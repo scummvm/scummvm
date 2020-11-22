@@ -22,6 +22,7 @@
 
 #include "gfx/gfxfilter_scaling.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -47,3 +48,4 @@ Rect ScalingGfxFilter::GetDestination() const {
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3

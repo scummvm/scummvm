@@ -23,6 +23,8 @@
 #include "ac/common.h"
 #include "util/string.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 const char *game_file_sig = "Adventure Creator Game File v2";
@@ -34,3 +36,5 @@ void quitprintf(const char *fmt, ...) {
 	va_end(ap);
 	quit(text);
 }
+
+} // namespace AGS3

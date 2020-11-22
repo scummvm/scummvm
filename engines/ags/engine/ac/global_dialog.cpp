@@ -31,6 +31,8 @@
 #include "debug/out.h"
 #include "script/script.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetupStruct game;
@@ -49,7 +51,7 @@ void RunDialog(int tum) {
 			play.stop_dialog_at_end = DIALOG_NEWTOPIC + tum;
 		else
 			quitprintf("!RunDialog: two NewRoom/RunDialog/StopDialog requests within dialog; last was called in \"%s\", line %d",
-			           last_in_dialog_request_script_pos.Section.GetCStr(), last_in_dialog_request_script_pos.Line);
+				last_in_dialog_request_script_pos.Section.GetCStr(), last_in_dialog_request_script_pos.Line);
 		return;
 	}
 
@@ -106,3 +108,5 @@ int GetDialogOption(int dlg, int opt) {
 		return 1;
 	return 0;
 }
+
+} // namespace AGS3

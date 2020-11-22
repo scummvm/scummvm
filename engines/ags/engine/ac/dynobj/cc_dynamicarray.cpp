@@ -23,6 +23,8 @@
 #include <string.h>
 #include "cc_dynamicarray.h"
 
+namespace AGS3 {
+
 // return the type name of the object
 const char *CCDynamicArray::GetType() {
 	return CC_DYNAMIC_ARRAY_TYPE_NAME;
@@ -147,3 +149,5 @@ DynObjectRef DynamicArrayHelpers::CreateStringArray(const std::vector<const char
 	}
 	return arr;
 }
+
+} // namespace AGS3

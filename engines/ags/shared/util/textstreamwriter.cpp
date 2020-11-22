@@ -26,13 +26,14 @@
 #include "util/textstreamwriter.h"
 #include "util/stream.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
 #if AGS_PLATFORM_OS_WINDOWS
-static const char Endl[2] = {'\r', '\n'};
+static const char Endl[2] = { '\r', '\n' };
 #else
-static const char Endl[1] = {'\n'};
+static const char Endl[1] = { '\n' };
 #endif
 
 
@@ -95,12 +96,12 @@ void TextStreamWriter::WriteFormat(const char *fmt, ...) {
 	va_start(argptr, fmt);
 	int need_length = vsnprintf(nullptr, 0, fmt, argptr);
 	va_start(argptr, fmt); // Reset argptr
-	char *buffer    = new char[need_length + 1];
+	char *buffer = new char[need_length + 1];
 	vsprintf(buffer, fmt, argptr);
 	va_end(argptr);
 
 	_stream->Write(buffer, need_length);
-	delete [] buffer;
+	delete[] buffer;
 }
 
 void TextStreamWriter::WriteLineBreak() {
@@ -110,3 +111,4 @@ void TextStreamWriter::WriteLineBreak() {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

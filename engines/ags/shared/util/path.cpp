@@ -28,6 +28,8 @@
 #include "util/path.h"
 #include "util/stdio_compat.h"
 
+namespace AGS3 {
+
 // TODO: implement proper portable path length
 #ifndef MAX_PATH
 #define MAX_PATH 512
@@ -64,9 +66,9 @@ int ComparePaths(const String &path1, const String &path2) {
 
 	int cmp_result =
 #if defined AGS_CASE_SENSITIVE_FILESYSTEM
-	    fixed_path1.Compare(fixed_path2);
+		fixed_path1.Compare(fixed_path2);
 #else
-	    fixed_path1.CompareNoCase(fixed_path2);
+		fixed_path1.CompareNoCase(fixed_path2);
 #endif // AGS_CASE_SENSITIVE_FILESYSTEM
 	return cmp_result;
 }
@@ -91,7 +93,7 @@ bool IsSameOrSubDir(const String &parent, const String &path) {
 	char relative[MAX_PATH];
 	// canonicalize_filename treats "." as "./." (file in working dir)
 	const char *use_parent = parent == "." ? "./" : parent;
-	const char *use_path   = path   == "." ? "./" : path;
+	const char *use_path = path == "." ? "./" : path;
 	canonicalize_filename(can_parent, use_parent, MAX_PATH);
 	canonicalize_filename(can_path, use_path, MAX_PATH);
 	const char *pstr = make_relative_filename(relative, can_parent, can_path, MAX_PATH);
@@ -243,3 +245,4 @@ String GetCmdLinePathInASCII(const char *arg, int arg_index) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

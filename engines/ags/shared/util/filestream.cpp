@@ -26,11 +26,12 @@
 #include "util/stdio_compat.h"
 #include "util/string.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
 FileStream::FileStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode,
-                       DataEndianess stream_endianess)
+	DataEndianess stream_endianess)
 	: DataStream(stream_endianess)
 	, _file(nullptr)
 	, _openMode(open_mode)
@@ -82,7 +83,7 @@ soff_t FileStream::GetLength() const {
 
 soff_t FileStream::GetPosition() const {
 	if (IsValid()) {
-		return (soff_t) ags_ftell(_file);
+		return (soff_t)ags_ftell(_file);
 	}
 	return -1;
 }
@@ -162,3 +163,4 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

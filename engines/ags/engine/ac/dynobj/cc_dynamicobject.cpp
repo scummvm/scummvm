@@ -45,6 +45,8 @@
 #include "script/script_common.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 ICCStringClass *stringClassImpl = nullptr;
@@ -60,7 +62,7 @@ int32_t ccRegisterManagedObject(const void *object, ICCDynamicObject *callback, 
 	int32_t handl = pool.AddObject((const char *)object, callback, plugin_object);
 
 	ManagedObjectLog("Register managed object type '%s' handle=%d addr=%08X",
-	                 ((callback == NULL) ? "(unknown)" : callback->GetType()), handl, object);
+		((callback == NULL) ? "(unknown)" : callback->GetType()), handl, object);
 
 	return handl;
 }
@@ -158,3 +160,5 @@ int ccReleaseObjectReference(int32_t handle) {
 
 	return pool.SubRef(handle);
 }
+
+} // namespace AGS3

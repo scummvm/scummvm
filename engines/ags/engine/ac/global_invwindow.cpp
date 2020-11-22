@@ -27,6 +27,8 @@
 #include "gui/guiinv.h"
 #include "script/executingscript.h"
 
+namespace AGS3 {
+
 extern ExecutingScript *curscript;
 extern GameState play;
 
@@ -46,3 +48,5 @@ void SetInvDimensions(int ww, int hh) {
 	}
 	guis_need_update = 1;
 }
+
+} // namespace AGS3

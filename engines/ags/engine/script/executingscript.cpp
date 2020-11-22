@@ -25,6 +25,8 @@
 #include "debug/debug_log.h"
 #include "debug/debugger.h"
 
+namespace AGS3 {
+
 QueuedScript::QueuedScript()
 	: Instance(kScInstGame)
 	, ParamCount(0) {
@@ -44,10 +46,10 @@ int ExecutingScript::queue_action(PostScriptAction act, int data, const char *an
 		case ePSARunAGSGame:
 		case ePSARestartGame:
 			quitprintf("!%s: Cannot run this command, since there was a %s command already queued to run in \"%s\", line %d",
-			           aname, postScriptActionNames[numPostScriptActions - 1],
-			           postScriptActionPositions[numPostScriptActions - 1].Section.GetCStr(), postScriptActionPositions[numPostScriptActions - 1].Line);
+				aname, postScriptActionNames[numPostScriptActions - 1],
+				postScriptActionPositions[numPostScriptActions - 1].Section.GetCStr(), postScriptActionPositions[numPostScriptActions - 1].Line);
 			break;
-		// MACPORT FIX 9/6/5: added default clause to remove warning
+			// MACPORT FIX 9/6/5: added default clause to remove warning
 		default:
 			break;
 		}
@@ -93,3 +95,5 @@ void ExecutingScript::init() {
 ExecutingScript::ExecutingScript() {
 	init();
 }
+
+} // namespace AGS3

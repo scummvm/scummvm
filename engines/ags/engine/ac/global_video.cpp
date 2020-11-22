@@ -33,6 +33,7 @@
 #include "platform/base/agsplatformdriver.h"
 #include "util/string_compat.h"
 
+namespace AGS3 {
 
 void scrPlayVideo(const char *name, int skip, int flags) {
 	EndSkippingUntilCharStops();
@@ -83,6 +84,9 @@ void pause_sound_if_necessary_and_play_video(const char *name, int skip, int fla
 
 #else
 
-void pause_sound_if_necessary_and_play_video(const char *name, int skip, int flags) {}
+void pause_sound_if_necessary_and_play_video(const char *name, int skip, int flags) {
+}
 
 #endif
+
+} // namespace AGS3

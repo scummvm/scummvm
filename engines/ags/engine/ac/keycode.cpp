@@ -24,6 +24,8 @@
 
 #include <allegro.h>
 
+namespace AGS3 {
+
 int GetKeyForKeyPressCb(int keycode) {
 	// lower case 'a'..'z' do not exist as keycodes, only ascii. 'A'..'Z' do though!
 	return (keycode >= 'a' && keycode <= 'z') ? keycode - 32 : keycode;
@@ -33,7 +35,7 @@ int PlatformKeyFromAgsKey(int key) {
 	int platformKey = -1;
 
 	switch (key) {
-	// ctrl-[A-Z] keys are numbered 1-26 for A-Z
+		// ctrl-[A-Z] keys are numbered 1-26 for A-Z
 	case eAGSKeyCodeCtrlA:
 		platformKey = 1;
 		break;
@@ -55,8 +57,8 @@ int PlatformKeyFromAgsKey(int key) {
 	case eAGSKeyCodeCtrlG:
 		platformKey = 7;
 		break;
-	// case eAGSKeyCodeCtrlH: // overlap with backspace
-	// case eAGSKeyCodeCtrlI: // overlap with tab
+		// case eAGSKeyCodeCtrlH: // overlap with backspace
+		// case eAGSKeyCodeCtrlI: // overlap with tab
 	case eAGSKeyCodeCtrlJ:
 		platformKey = 10;
 		break;
@@ -66,7 +68,7 @@ int PlatformKeyFromAgsKey(int key) {
 	case eAGSKeyCodeCtrlL:
 		platformKey = 12;
 		break;
-	// case eAGSKeyCodeCtrlM: // overlap with return
+		// case eAGSKeyCodeCtrlM: // overlap with return
 	case eAGSKeyCodeCtrlN:
 		platformKey = 14;
 		break;
@@ -385,3 +387,5 @@ int PlatformKeyFromAgsKey(int key) {
 
 	return platformKey;
 }
+
+} // namespace AGS3

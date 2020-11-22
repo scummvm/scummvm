@@ -29,6 +29,8 @@
 #include <alfont.h>
 #include "ac/gamesetupstruct.h"
 
+namespace AGS3 {
+
 extern int our_eip;
 extern GameSetupStruct game;
 
@@ -43,3 +45,5 @@ void set_our_eip(int eip) {
 int get_our_eip() {
 	return our_eip;
 }
+
+} // namespace AGS3

@@ -23,6 +23,8 @@
 #include <string.h>
 #include "ac/interfaceelement.h"
 
+namespace AGS3 {
+
 InterfaceElement::InterfaceElement() {
 	vtextxp = 0;
 	vtextyp = 1;
@@ -34,3 +36,5 @@ InterfaceElement::InterfaceElement() {
 	on = 1;
 	flags = 0;
 }
+
+} // namespace AGS3

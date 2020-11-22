@@ -25,6 +25,8 @@
 #include "ac/common.h" // quit
 #include "util/math.h"
 
+namespace AGS3 {
+
 int FloatToInt(float value, int roundDirection) {
 	if (value >= 0.0) {
 		if (roundDirection == eRoundDown)
@@ -242,24 +244,24 @@ RuntimeScriptValue Sc_Math_GetPi(const RuntimeScriptValue *params, int32_t param
 
 
 void RegisterMathAPI() {
-	ccAddExternalStaticFunction("Maths::ArcCos^1",              Sc_Math_ArcCos);
-	ccAddExternalStaticFunction("Maths::ArcSin^1",              Sc_Math_ArcSin);
-	ccAddExternalStaticFunction("Maths::ArcTan^1",              Sc_Math_ArcTan);
-	ccAddExternalStaticFunction("Maths::ArcTan2^2",             Sc_Math_ArcTan2);
-	ccAddExternalStaticFunction("Maths::Cos^1",                 Sc_Math_Cos);
-	ccAddExternalStaticFunction("Maths::Cosh^1",                Sc_Math_Cosh);
-	ccAddExternalStaticFunction("Maths::DegreesToRadians^1",    Sc_Math_DegreesToRadians);
-	ccAddExternalStaticFunction("Maths::Exp^1",                 Sc_Math_Exp);
-	ccAddExternalStaticFunction("Maths::Log^1",                 Sc_Math_Log);
-	ccAddExternalStaticFunction("Maths::Log10^1",               Sc_Math_Log10);
-	ccAddExternalStaticFunction("Maths::RadiansToDegrees^1",    Sc_Math_RadiansToDegrees);
-	ccAddExternalStaticFunction("Maths::RaiseToPower^2",        Sc_Math_RaiseToPower);
-	ccAddExternalStaticFunction("Maths::Sin^1",                 Sc_Math_Sin);
-	ccAddExternalStaticFunction("Maths::Sinh^1",                Sc_Math_Sinh);
-	ccAddExternalStaticFunction("Maths::Sqrt^1",                Sc_Math_Sqrt);
-	ccAddExternalStaticFunction("Maths::Tan^1",                 Sc_Math_Tan);
-	ccAddExternalStaticFunction("Maths::Tanh^1",                Sc_Math_Tanh);
-	ccAddExternalStaticFunction("Maths::get_Pi",                Sc_Math_GetPi);
+	ccAddExternalStaticFunction("Maths::ArcCos^1", Sc_Math_ArcCos);
+	ccAddExternalStaticFunction("Maths::ArcSin^1", Sc_Math_ArcSin);
+	ccAddExternalStaticFunction("Maths::ArcTan^1", Sc_Math_ArcTan);
+	ccAddExternalStaticFunction("Maths::ArcTan2^2", Sc_Math_ArcTan2);
+	ccAddExternalStaticFunction("Maths::Cos^1", Sc_Math_Cos);
+	ccAddExternalStaticFunction("Maths::Cosh^1", Sc_Math_Cosh);
+	ccAddExternalStaticFunction("Maths::DegreesToRadians^1", Sc_Math_DegreesToRadians);
+	ccAddExternalStaticFunction("Maths::Exp^1", Sc_Math_Exp);
+	ccAddExternalStaticFunction("Maths::Log^1", Sc_Math_Log);
+	ccAddExternalStaticFunction("Maths::Log10^1", Sc_Math_Log10);
+	ccAddExternalStaticFunction("Maths::RadiansToDegrees^1", Sc_Math_RadiansToDegrees);
+	ccAddExternalStaticFunction("Maths::RaiseToPower^2", Sc_Math_RaiseToPower);
+	ccAddExternalStaticFunction("Maths::Sin^1", Sc_Math_Sin);
+	ccAddExternalStaticFunction("Maths::Sinh^1", Sc_Math_Sinh);
+	ccAddExternalStaticFunction("Maths::Sqrt^1", Sc_Math_Sqrt);
+	ccAddExternalStaticFunction("Maths::Tan^1", Sc_Math_Tan);
+	ccAddExternalStaticFunction("Maths::Tanh^1", Sc_Math_Tanh);
+	ccAddExternalStaticFunction("Maths::get_Pi", Sc_Math_GetPi);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -282,3 +284,5 @@ void RegisterMathAPI() {
 	ccAddExternalFunctionForPlugin("Maths::Tanh^1", (void *)Math_Tanh);
 	ccAddExternalFunctionForPlugin("Maths::get_Pi", (void *)Math_GetPi);
 }
+
+} // namespace AGS3

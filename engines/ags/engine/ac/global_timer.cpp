@@ -25,6 +25,8 @@
 #include "ac/common.h"
 #include "ac/gamestate.h"
 
+namespace AGS3 {
+
 extern GameState play;
 
 
@@ -43,3 +45,5 @@ int IsTimerExpired(int tnum) {
 	}
 	return 0;
 }
+
+} // namespace AGS3

@@ -22,6 +22,8 @@
 
 #include "ac/dynobj/scriptdialogoptionsrendering.h"
 
+namespace AGS3 {
+
 // return the type name of the object
 const char *ScriptDialogOptionsRendering::GetType() {
 	return "DialogOptionsRendering";
@@ -57,3 +59,5 @@ void ScriptDialogOptionsRendering::Reset() {
 ScriptDialogOptionsRendering::ScriptDialogOptionsRendering() {
 	Reset();
 }
+
+} // namespace AGS3

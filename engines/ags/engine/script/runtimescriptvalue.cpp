@@ -28,6 +28,8 @@
 
 #include <string.h> // for memcpy()
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 //
@@ -225,8 +227,8 @@ intptr_t RuntimeScriptValue::GetDirectPtr() const {
 	const RuntimeScriptValue *temp_val = this;
 	int ival = temp_val->IValue;
 	if (temp_val->Type == kScValGlobalVar || temp_val->Type == kScValStackPtr) {
-		temp_val  = temp_val->RValue;
-		ival     += temp_val->IValue;
+		temp_val = temp_val->RValue;
+		ival += temp_val->IValue;
 	}
 	if (temp_val->Type == kScValDynamicObject)
 		return (intptr_t)temp_val->DynMgr->GetFieldPtr(temp_val->Ptr, ival);
@@ -235,3 +237,5 @@ intptr_t RuntimeScriptValue::GetDirectPtr() const {
 	else
 		return (intptr_t)(temp_val->Ptr + ival);
 }
+
+} // namespace AGS3

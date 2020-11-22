@@ -27,6 +27,8 @@
 #include "ac/global_translation.h"
 #include "ac/string.h"
 
+namespace AGS3 {
+
 extern GameSetupStruct game;
 
 // ** LABEL FUNCTIONS
@@ -144,14 +146,14 @@ RuntimeScriptValue Sc_Label_SetColor(void *self, const RuntimeScriptValue *param
 
 
 void RegisterLabelAPI() {
-	ccAddExternalObjectFunction("Label::GetText^1",     Sc_Label_GetText);
-	ccAddExternalObjectFunction("Label::SetText^1",     Sc_Label_SetText);
+	ccAddExternalObjectFunction("Label::GetText^1", Sc_Label_GetText);
+	ccAddExternalObjectFunction("Label::SetText^1", Sc_Label_SetText);
 	ccAddExternalObjectFunction("Label::get_TextAlignment", Sc_Label_GetTextAlignment);
 	ccAddExternalObjectFunction("Label::set_TextAlignment", Sc_Label_SetTextAlignment);
-	ccAddExternalObjectFunction("Label::get_Font",      Sc_Label_GetFont);
-	ccAddExternalObjectFunction("Label::set_Font",      Sc_Label_SetFont);
-	ccAddExternalObjectFunction("Label::get_Text",      Sc_Label_GetText_New);
-	ccAddExternalObjectFunction("Label::set_Text",      Sc_Label_SetText);
+	ccAddExternalObjectFunction("Label::get_Font", Sc_Label_GetFont);
+	ccAddExternalObjectFunction("Label::set_Font", Sc_Label_SetFont);
+	ccAddExternalObjectFunction("Label::get_Text", Sc_Label_GetText_New);
+	ccAddExternalObjectFunction("Label::set_Text", Sc_Label_SetText);
 	ccAddExternalObjectFunction("Label::get_TextColor", Sc_Label_GetColor);
 	ccAddExternalObjectFunction("Label::set_TextColor", Sc_Label_SetColor);
 
@@ -166,3 +168,5 @@ void RegisterLabelAPI() {
 	ccAddExternalFunctionForPlugin("Label::get_TextColor", (void *)Label_GetColor);
 	ccAddExternalFunctionForPlugin("Label::set_TextColor", (void *)Label_SetColor);
 }
+
+} // namespace AGS3

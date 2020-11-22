@@ -28,6 +28,8 @@
 #include "ac/string.h"
 #include "util/string_compat.h"
 
+namespace AGS3 {
+
 extern int MAXSTRLEN;
 
 int StrGetCharAt(const char *strin, int posn) {
@@ -79,3 +81,5 @@ void _sc_strcpy(char *destt, const char *text) {
 	check_strlen(destt);
 	my_strncpy(destt, text, MAXSTRLEN - 1);
 }
+
+} // namespace AGS3

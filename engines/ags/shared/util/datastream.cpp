@@ -22,6 +22,7 @@
 
 #include "util/datastream.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -153,3 +154,4 @@ size_t DataStream::WriteAndConvertArrayOfInt64(const int64_t *buffer, size_t cou
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

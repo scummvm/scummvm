@@ -22,6 +22,8 @@
 
 #include "ac/dynobj/scriptviewframe.h"
 
+namespace AGS3 {
+
 int ScriptViewFrame::Dispose(const char *address, bool force) {
 	// always dispose a ViewFrame
 	delete this;
@@ -59,3 +61,5 @@ ScriptViewFrame::ScriptViewFrame() {
 	loop = -1;
 	frame = -1;
 }
+
+} // namespace AGS3

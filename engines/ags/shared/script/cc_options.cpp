@@ -22,6 +22,8 @@
 
 #include "cc_options.h"
 
+namespace AGS3 {
+
 int ccCompOptions = SCOPT_LEFTTORIGHT;
 
 void ccSetOption(int optbit, int onoroff) {
@@ -37,3 +39,5 @@ int ccGetOption(int optbit) {
 
 	return 0;
 }
+
+} // namespace AGS3

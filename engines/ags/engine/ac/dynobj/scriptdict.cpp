@@ -22,6 +22,8 @@
 
 #include "ac/dynobj/scriptdict.h"
 
+namespace AGS3 {
+
 int ScriptDictBase::Dispose(const char *address, bool force) {
 	Clear();
 	delete this;
@@ -34,7 +36,7 @@ const char *ScriptDictBase::GetType() {
 
 int ScriptDictBase::Serialize(const char *address, char *buffer, int bufsize) {
 	size_t total_sz = CalcSerializeSize() + sizeof(int32_t) * 2;
-	if (bufsize < 0 || total_sz > (size_t)bufsize) {
+	if (bufsize < 0 || total_sz >(size_t)bufsize) {
 		// buffer not big enough, ask for a bigger one
 		return -((int)total_sz);
 	}
@@ -52,3 +54,5 @@ void ScriptDictBase::Unserialize(int index, const char *serializedData, int data
 	UnserializeContainer(serializedData);
 	ccRegisterUnserializedObject(index, this, this);
 }
+
+} // namespace AGS3

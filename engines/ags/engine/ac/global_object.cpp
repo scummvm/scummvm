@@ -45,6 +45,8 @@
 #include "gfx/bitmap.h"
 #include "gfx/gfx_def.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 #define OVERLAPPING_OBJECT 1000
@@ -60,7 +62,7 @@ extern int displayed_room;
 extern SpriteCache spriteset;
 extern int actSpsCount;
 extern Bitmap **actsps;
-extern IDriverDependantBitmap * *actspsbmp;
+extern IDriverDependantBitmap **actspsbmp;
 extern IGraphicsDriver *gfxDriver;
 
 // Used for deciding whether a char or obj was closer
@@ -91,7 +93,7 @@ int GetObjectIDAtRoom(int roomx, int roomy) {
 		Bitmap *theImage = GetObjectImage(aa, &isflipped);
 
 		if (is_pos_in_sprite(roomx, roomy, xxx, yyy - spHeight, theImage,
-		                     spWidth, spHeight, isflipped) == FALSE)
+			spWidth, spHeight, isflipped) == FALSE)
 			continue;
 
 		int usebasel = objs[aa].get_baseline();
@@ -106,9 +108,9 @@ int GetObjectIDAtRoom(int roomx, int roomy) {
 
 void SetObjectTint(int obj, int red, int green, int blue, int opacity, int luminance) {
 	if ((red < 0) || (green < 0) || (blue < 0) ||
-	        (red > 255) || (green > 255) || (blue > 255) ||
-	        (opacity < 0) || (opacity > 100) ||
-	        (luminance < 0) || (luminance > 100))
+		(red > 255) || (green > 255) || (blue > 255) ||
+		(opacity < 0) || (opacity > 100) ||
+		(luminance < 0) || (luminance > 100))
 		quit("!SetObjectTint: invalid parameter. R,G,B must be 0-255, opacity & luminance 0-100");
 
 	if (!is_valid_object(obj))
@@ -473,7 +475,7 @@ int AreThingsOverlapping(int thing1, int thing2) {
 		return 0;
 
 	if ((r1.x2 > r2.x1) && (r1.x1 < r2.x2) &&
-	        (r1.y2 > r2.y1) && (r1.y1 < r2.y2)) {
+		(r1.y2 > r2.y1) && (r1.y1 < r2.y2)) {
 		// determine how far apart they are
 		// take the smaller of the X distances as the overlapping amount
 		int xdist = abs(r1.x2 - r2.x1);
@@ -515,3 +517,5 @@ Bitmap *GetObjectImage(int obj, int *isFlipped) {
 	}
 	return spriteset[objs[obj].num];
 }
+
+} // namespace AGS3

@@ -34,6 +34,8 @@
 #include "plugin/agsplugin.h"
 #include "plugin/pluginobjectreader.h"
 
+namespace AGS3 {
+
 extern CCGUIObject ccDynamicGUIObject;
 extern CCCharacter ccDynamicCharacter;
 extern CCHotspot   ccDynamicHotspot;
@@ -122,3 +124,4 @@ void AGSDeSerializer::Unserialize(int index, const char *objectType, const char 
 
 AGSDeSerializer ccUnserializer;
 
+} // namespace AGS3

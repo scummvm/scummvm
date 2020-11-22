@@ -32,6 +32,8 @@
 #include "util/path.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 int32_t FileOpenCMode(const char *fnmm, const char *cmode) {
@@ -57,7 +59,7 @@ int32_t FindFreeFileSlot() {
 	}
 
 	if (useindx >= num_open_script_files &&
-	        num_open_script_files >= MAX_OPEN_SCRIPT_FILES) {
+		num_open_script_files >= MAX_OPEN_SCRIPT_FILES) {
 		quit("!FileOpen: tried to open more than 10 files simultaneously - close some first");
 		return -1;
 	}
@@ -174,3 +176,5 @@ void FileWriteRawChar(int32_t handle, int chartoWrite) {
 
 	out->WriteInt8(chartoWrite);
 }
+
+} // namespace AGS3

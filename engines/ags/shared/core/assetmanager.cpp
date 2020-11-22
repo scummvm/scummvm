@@ -26,7 +26,7 @@
 #include "util/path.h"
 #include "util/string_utils.h"
 
-
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -145,8 +145,8 @@ AssetError AssetManager::ReadDataFileTOC(const String &data_file, AssetLibInfo &
 }
 
 /* static */ Stream *AssetManager::OpenAsset(const String &asset_name,
-        FileOpenMode open_mode,
-        FileWorkMode work_mode) {
+	FileOpenMode open_mode,
+	FileWorkMode work_mode) {
 	assert(_theAssetManager != NULL);
 	if (!_theAssetManager) {
 		return nullptr;
@@ -240,7 +240,7 @@ const AssetLibInfo &AssetManager::_GetLibraryTOC() const {
 
 bool AssetManager::_DoesAssetExist(const String &asset_name) {
 	return FindAssetByFileName(asset_name) != nullptr ||
-	       File::TestReadFile(asset_name);
+		File::TestReadFile(asset_name);
 }
 
 AssetError AssetManager::RegisterAssetLib(const String &data_file, const String &password) {
@@ -330,11 +330,11 @@ bool AssetManager::GetAssetByPriority(const String &asset_name, AssetLocation &l
 	if (_searchPriority == kAssetPriorityDir) {
 		// check for disk, otherwise use datafile
 		return GetAssetFromDir(asset_name, loc, open_mode, work_mode) ||
-		       GetAssetFromLib(asset_name, loc, open_mode, work_mode);
+			GetAssetFromLib(asset_name, loc, open_mode, work_mode);
 	} else if (_searchPriority == kAssetPriorityLib) {
 		// check datafile first, then scan directory
 		return GetAssetFromLib(asset_name, loc, open_mode, work_mode) ||
-		       GetAssetFromDir(asset_name, loc, open_mode, work_mode);
+			GetAssetFromDir(asset_name, loc, open_mode, work_mode);
 	}
 	return false;
 }
@@ -369,3 +369,4 @@ String GetAssetErrorText(AssetError err) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

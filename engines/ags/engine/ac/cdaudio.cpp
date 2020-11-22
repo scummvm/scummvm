@@ -23,6 +23,8 @@
 #include "ac/cdaudio.h"
 #include "platform/base/agsplatformdriver.h"
 
+namespace AGS3 {
+
 int use_cdplayer = 0;
 bool triedToUseCdAudioCommand = false;
 int need_to_stop_cd = 0;
@@ -42,3 +44,5 @@ int cd_manager(int cmdd, int datt) {
 
 	return platform->CDPlayerCommand(cmdd, datt);
 }
+
+} // namespace AGS3

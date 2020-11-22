@@ -51,6 +51,8 @@
 #include "media/audio/soundcache.h"
 #include "util/mutex_lock.h"
 
+namespace AGS3 {
+
 #if defined JGMOD_MOD_PLAYER && defined DUMB_MOD_PLAYER
 #error JGMOD_MOD_PLAYER and DUMB_MOD_PLAYER macros cannot be defined at the same time.
 #endif
@@ -61,7 +63,7 @@
 
 extern "C"
 {
-// Load MIDI from PACKFILE stream
+	// Load MIDI from PACKFILE stream
 	MIDI *load_midi_pf(PACKFILE *pf);
 }
 
@@ -349,4 +351,6 @@ void remove_mod_player() {
 	dumb_exit();
 }
 
-#endif  // DUMB_MOD_PLAYER
+} // namespace AGS3
+
+#endif

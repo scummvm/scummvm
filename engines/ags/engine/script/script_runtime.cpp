@@ -45,6 +45,8 @@
 #include "script/systemimports.h"
 #include "ac/statobj/staticobject.h"
 
+namespace AGS3 {
+
 extern ccInstance *current_instance; // in script/cc_instance
 
 bool ccAddExternalStaticFunction(const String &name, ScriptAPIFunction *pfn) {
@@ -83,10 +85,10 @@ void ccRemoveAllSymbols() {
 	simp.clear();
 }
 
-ccInstance *loadedInstances[MAX_LOADED_INSTANCES] = {nullptr,
-                                                     nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
-                                                     nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
-                                                    };
+ccInstance *loadedInstances[MAX_LOADED_INSTANCES] = { nullptr,
+													 nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr,
+													 nullptr, nullptr, nullptr, nullptr, nullptr, nullptr
+};
 
 void nullfree(void *data) {
 	if (data != nullptr)
@@ -209,52 +211,62 @@ int call_function(intptr_t addr, const RuntimeScriptValue *object, int numparm, 
 	//
 
 	switch (numparm) {
-	case 0: {
+	case 0:
+	{
 		int (*fparam)();
 		fparam = (int (*)())addr;
 		return fparam();
 	}
-	case 1: {
+	case 1:
+	{
 		int (*fparam)(intptr_t);
 		fparam = (int (*)(intptr_t))addr;
 		return fparam(parm_value[0]);
 	}
-	case 2: {
+	case 2:
+	{
 		int (*fparam)(intptr_t, intptr_t);
 		fparam = (int (*)(intptr_t, intptr_t))addr;
 		return fparam(parm_value[0], parm_value[1]);
 	}
-	case 3: {
+	case 3:
+	{
 		int (*fparam)(intptr_t, intptr_t, intptr_t);
 		fparam = (int (*)(intptr_t, intptr_t, intptr_t))addr;
 		return fparam(parm_value[0], parm_value[1], parm_value[2]);
 	}
-	case 4: {
+	case 4:
+	{
 		int (*fparam)(intptr_t, intptr_t, intptr_t, intptr_t);
 		fparam = (int (*)(intptr_t, intptr_t, intptr_t, intptr_t))addr;
 		return fparam(parm_value[0], parm_value[1], parm_value[2], parm_value[3]);
 	}
-	case 5: {
+	case 5:
+	{
 		int (*fparam)(intptr_t, intptr_t, intptr_t, intptr_t, intptr_t);
 		fparam = (int (*)(intptr_t, intptr_t, intptr_t, intptr_t, intptr_t))addr;
 		return fparam(parm_value[0], parm_value[1], parm_value[2], parm_value[3], parm_value[4]);
 	}
-	case 6: {
+	case 6:
+	{
 		int (*fparam)(intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t);
 		fparam = (int (*)(intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t))addr;
 		return fparam(parm_value[0], parm_value[1], parm_value[2], parm_value[3], parm_value[4], parm_value[5]);
 	}
-	case 7: {
+	case 7:
+	{
 		int (*fparam)(intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t);
 		fparam = (int (*)(intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t))addr;
 		return fparam(parm_value[0], parm_value[1], parm_value[2], parm_value[3], parm_value[4], parm_value[5], parm_value[6]);
 	}
-	case 8: {
+	case 8:
+	{
 		int (*fparam)(intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t);
 		fparam = (int (*)(intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t))addr;
 		return fparam(parm_value[0], parm_value[1], parm_value[2], parm_value[3], parm_value[4], parm_value[5], parm_value[6], parm_value[7]);
 	}
-	case 9: {
+	case 9:
+	{
 		int (*fparam)(intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t);
 		fparam = (int (*)(intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t, intptr_t))addr;
 		return fparam(parm_value[0], parm_value[1], parm_value[2], parm_value[3], parm_value[4], parm_value[5], parm_value[6], parm_value[7], parm_value[8]);
@@ -264,3 +276,5 @@ int call_function(intptr_t addr, const RuntimeScriptValue *object, int numparm, 
 	cc_error("too many arguments in call to function");
 	return -1;
 }
+
+} // namespace AGS3

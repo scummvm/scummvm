@@ -32,6 +32,7 @@
 
 #include "platform/base/agsplatformdriver.h"
 
+namespace AGS3 {
 
 void MYMP3::poll() {
 	if (state_ != SoundClipPlaying) {
@@ -181,4 +182,6 @@ MYMP3::MYMP3() : SOUNDCLIP() {
 	chunksize = 0;
 }
 
-#endif // !NO_MP3_PLAYER
+} // namespace AGS3
+
+#endif

@@ -24,6 +24,7 @@
 #include <string.h>
 #include "script/systemimports.h"
 
+namespace AGS3 {
 
 extern void quit(const char *);
 
@@ -53,9 +54,9 @@ int SystemImports::add(const String &name, const RuntimeScriptValue &value, ccIn
 	btree[name] = ixof;
 	if (ixof == imports.size())
 		imports.push_back(ScriptImport());
-	imports[ixof].Name          = name; // TODO: rather make a string copy here for safety reasons
-	imports[ixof].Value         = value;
-	imports[ixof].InstancePtr   = anotherscr;
+	imports[ixof].Name = name; // TODO: rather make a string copy here for safety reasons
+	imports[ixof].Value = value;
+	imports[ixof].InstancePtr = anotherscr;
 	return 0;
 }
 
@@ -129,3 +130,5 @@ void SystemImports::clear() {
 	btree.clear();
 	imports.clear();
 }
+
+} // namespace AGS3

@@ -32,6 +32,8 @@
 #include "util/string.h"
 #include "util/string_compat.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetupStruct game;
@@ -207,8 +209,8 @@ int parse_sentence(const char *src_text, int *numwords, short *wordarray, short 
 				}
 				if (word <= 0)
 					quitprintf("!Said: supplied word '%s' is not in dictionary or is an ignored word\nText: %s", thisword, src_text);
-				if (word == ANYWORD) { }
-				else if (word != compareto[comparing]) {
+				if (word == ANYWORD) {
+				} else if (word != compareto[comparing]) {
 					// words don't match - if a comma then a list of possibles,
 					// so allow retry
 					if (text[0] == ',')
@@ -329,10 +331,10 @@ RuntimeScriptValue Sc_Said(const RuntimeScriptValue *params, int32_t param_count
 
 
 void RegisterParserAPI() {
-	ccAddExternalStaticFunction("Parser::FindWordID^1",     Sc_Parser_FindWordID);
-	ccAddExternalStaticFunction("Parser::ParseText^1",      Sc_ParseText);
+	ccAddExternalStaticFunction("Parser::FindWordID^1", Sc_Parser_FindWordID);
+	ccAddExternalStaticFunction("Parser::ParseText^1", Sc_ParseText);
 	ccAddExternalStaticFunction("Parser::SaidUnknownWord^0", Sc_Parser_SaidUnknownWord);
-	ccAddExternalStaticFunction("Parser::Said^1",           Sc_Said);
+	ccAddExternalStaticFunction("Parser::Said^1", Sc_Said);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -341,3 +343,5 @@ void RegisterParserAPI() {
 	ccAddExternalFunctionForPlugin("Parser::SaidUnknownWord^0", (void *)Parser_SaidUnknownWord);
 	ccAddExternalFunctionForPlugin("Parser::Said^1", (void *)Said);
 }
+
+} // namespace ASG3

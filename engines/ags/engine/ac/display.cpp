@@ -55,6 +55,8 @@
 #include "media/audio/audio_system.h"
 #include "ac/timer.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Shared::BitmapHelper;
 
@@ -134,7 +136,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	}
 
 	const Rect &ui_view = play.GetUIViewport();
-	if (xx == OVR_AUTOPLACE) ;
+	if (xx == OVR_AUTOPLACE);
 	// centre text in middle of screen
 	else if (yy < 0) yy = ui_view.GetHeight() / 2 - disp.fulltxtheight / 2 - padding;
 	// speech, so it wants to be above the character's head
@@ -185,7 +187,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 	int adjustedXX = xx;
 	int adjustedYY = yy;
 
-	if ((strlen(todis) < 1) || (strcmp(todis, "  ") == 0) || (wii == 0)) ;
+	if ((strlen(todis) < 1) || (strcmp(todis, "  ") == 0) || (wii == 0));
 	// if it's an empty speech line, don't draw anything
 	else if (asspch) { //text_color = ds->GetCompatibleColor(12);
 		int ttxleft = 0, ttxtop = paddingScaled, oriwid = wii - padding * 2;
@@ -215,7 +217,7 @@ int _display_main(int xx, int yy, int wii, const char *text, int disp_type, int 
 			// centre the text
 			if (asspch < 0) {
 				if ((usingGui >= 0) &&
-				        ((game.options[OPT_SPEECHTYPE] >= 2) || (isThought)))
+					((game.options[OPT_SPEECHTYPE] >= 2) || (isThought)))
 					text_color = text_window_ds->GetCompatibleColor(guis[usingGui].FgColor);
 				else
 					text_color = text_window_ds->GetCompatibleColor(-asspch);
@@ -451,10 +453,10 @@ void wouttextxy_AutoOutline_Semitransparent2Opaque(Bitmap *map) {
 			int const transparency = geta(px);
 			if (0 < transparency && transparency < 255)
 				px = makeacol32(
-				         getr32(px),
-				         getg32(px),
-				         getb32(px),
-				         std::min(85 + transparency * 2, 255));
+					getr32(px),
+					getg32(px),
+					getb32(px),
+					std::min(85 + transparency * 2, 255));
 		}
 	}
 }
@@ -488,7 +490,7 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 	wouttextxy_AutoOutline_Semitransparent2Opaque(texx_stencil);
 #endif
 
-	void(Bitmap::*pfn_drawstencil)(Bitmap * src, int dst_x, int dst_y);
+	void(Bitmap:: * pfn_drawstencil)(Bitmap * src, int dst_x, int dst_y);
 	if (antialias) {
 		// NOTE: we must set out blender AFTER wouttextxy, or it will be overidden
 		set_argb2any_blender();
@@ -512,8 +514,8 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 
 		// extend the outline stencil to the top and bottom
 		for (int y_diff = largest_y_diff_reached_so_far + 1;
-		        y_diff <= thickness && y_diff * y_diff  <= y_term_limit;
-		        y_diff++) {
+			y_diff <= thickness && y_diff * y_diff <= y_term_limit;
+			y_diff++) {
 			(outline_stencil.*pfn_drawstencil)(&texx_stencil, 0, thickness - y_diff);
 			if (y_diff > 0)
 				(outline_stencil.*pfn_drawstencil)(&texx_stencil, 0, thickness + y_diff);
@@ -568,8 +570,8 @@ int getfontheight_outlined(int font) {
 
 int getfontspacing_outlined(int font) {
 	return use_default_linespacing(font) ?
-	       getfontheight_outlined(font) :
-	       getfontlinespacing(font);
+		getfontheight_outlined(font) :
+		getfontlinespacing(font);
 }
 
 int getfontlinegap(int font) {
@@ -629,9 +631,9 @@ void draw_button_background(Bitmap *ds, int xx1, int yy1, int xx2, int yy2, GUIM
 		int topBottomHeight = game.SpriteInfos[get_but_pic(iep, 6)].Height;
 		if (iep->BgImage > 0) {
 			if ((loaded_game_file_version <= kGameVersion_272) // 2.xx
-			        && (spriteset[iep->BgImage]->GetWidth() == 1)
-			        && (spriteset[iep->BgImage]->GetHeight() == 1)
-			        && (*((unsigned int *)spriteset[iep->BgImage]->GetData()) == 0x00FF00FF)) {
+				&& (spriteset[iep->BgImage]->GetWidth() == 1)
+				&& (spriteset[iep->BgImage]->GetHeight() == 1)
+				&& (*((unsigned int *)spriteset[iep->BgImage]->GetData()) == 0x00FF00FF)) {
 				// Don't draw fully transparent dummy GUI backgrounds
 			} else {
 				// offset the background image and clip it so that it is drawn
@@ -681,7 +683,7 @@ int get_textwindow_border_width(int twgui) {
 		quit("!GUI set as text window but is not actually a text window GUI");
 
 	int borwid = game.SpriteInfos[get_but_pic(&guis[twgui], 4)].Width +
-	             game.SpriteInfos[get_but_pic(&guis[twgui], 5)].Width;
+		game.SpriteInfos[get_but_pic(&guis[twgui], 5)].Width;
 
 	return borwid;
 }
@@ -713,7 +715,7 @@ int get_textwindow_padding(int ifnum) {
 }
 
 void draw_text_window(Bitmap **text_window_ds, bool should_free_ds,
-                      int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight, int ifnum) {
+	int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight, int ifnum) {
 
 	Bitmap *ds = *text_window_ds;
 	if (ifnum < 0)
@@ -756,7 +758,7 @@ void draw_text_window(Bitmap **text_window_ds, bool should_free_ds,
 }
 
 void draw_text_window_and_bar(Bitmap **text_window_ds, bool should_free_ds,
-                              int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight, int ifnum) {
+	int *xins, int *yins, int *xx, int *yy, int *wii, color_t *set_text_color, int ovrheight, int ifnum) {
 
 	draw_text_window(text_window_ds, should_free_ds, xins, yins, xx, yy, wii, set_text_color, ovrheight, ifnum);
 
@@ -792,3 +794,5 @@ void draw_text_window_and_bar(Bitmap **text_window_ds, bool should_free_ds,
 	} else if (topBar.wantIt)
 		topBar.wantIt = 0;
 }
+
+} // namespace AGS3

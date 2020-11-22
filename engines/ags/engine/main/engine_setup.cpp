@@ -44,6 +44,8 @@
 #include "media/video/video.h"
 #include "platform/base/agsplatformdriver.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -131,7 +133,7 @@ void engine_init_resolution_settings(const Size game_size) {
 	usetup.textheight = getfontheight_outlined(0) + 1;
 
 	Debug::Printf(kDbgMsg_Info, "Game native resolution: %d x %d (%d bit)%s", game_size.Width, game_size.Height, game.color_depth * 8,
-	              game.IsLegacyLetterbox() ? " letterbox-by-design" : "");
+		game.IsLegacyLetterbox() ? " letterbox-by-design" : "");
 
 	convert_gui_to_game_resolution(loaded_game_file_version);
 	convert_objects_to_data_resolution(loaded_game_file_version);
@@ -268,12 +270,12 @@ void engine_post_gfxmode_mouse_setup(const DisplayMode &dm, const Size &init_des
 		Size cur_desktop;
 		if (get_desktop_resolution(&cur_desktop.Width, &cur_desktop.Height) == 0)
 			Mouse::SetSpeedUnit(Math::Max((float)cur_desktop.Width / (float)init_desktop.Width,
-			                              (float)cur_desktop.Height / (float)init_desktop.Height));
+			(float)cur_desktop.Height / (float)init_desktop.Height));
 	}
 
 	Mouse_EnableControl(usetup.mouse_ctrl_enabled);
 	Debug::Printf(kDbgMsg_Info, "Mouse control: %s, base: %f, speed: %f", Mouse::IsControlEnabled() ? "on" : "off",
-	              Mouse::GetSpeedUnit(), Mouse::GetSpeed());
+		Mouse::GetSpeedUnit(), Mouse::GetSpeed());
 
 	on_coordinates_scaling_changed();
 
@@ -340,3 +342,5 @@ void on_coordinates_scaling_changed() {
 	else
 		Mouse::SetMoveLimit(Rect(play.mboundx1, play.mboundy1, play.mboundx2, play.mboundy2));
 }
+
+} // namespace AGS3

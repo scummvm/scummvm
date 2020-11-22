@@ -55,6 +55,7 @@
 #include "script/runtimescriptvalue.h"
 #include "util/string_compat.h"
 
+namespace AGS3 {
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
@@ -334,8 +335,8 @@ void process_interface_click(int ifce, int btn, int mbut) {
 	if (btn < 0) {
 		// click on GUI background
 		QueueScriptFunction(kScInstGame, guis[ifce].OnClickHandler, 2,
-		                    RuntimeScriptValue().SetDynamicObject(&scrGui[ifce], &ccDynamicGUI),
-		                    RuntimeScriptValue().SetInt32(mbut));
+			RuntimeScriptValue().SetDynamicObject(&scrGui[ifce], &ccDynamicGUI),
+			RuntimeScriptValue().SetInt32(mbut));
 		return;
 	}
 
@@ -349,7 +350,7 @@ void process_interface_click(int ifce, int btn, int mbut) {
 		rtype = kGUIAction_RunScript;
 	else quit("unknown GUI object triggered process_interface");
 
-	if (rtype == kGUIAction_None) ;
+	if (rtype == kGUIAction_None);
 	else if (rtype == kGUIAction_SetMode)
 		set_cursor_mode(rdata);
 	else if (rtype == kGUIAction_RunScript) {
@@ -357,20 +358,20 @@ void process_interface_click(int ifce, int btn, int mbut) {
 		// if the object has a special handler script then run it;
 		// otherwise, run interface_click
 		if ((theObj->GetEventCount() > 0) &&
-		        (!theObj->EventHandlers[0].IsEmpty()) &&
-		        (!gameinst->GetSymbolAddress(theObj->EventHandlers[0]).IsNull())) {
+			(!theObj->EventHandlers[0].IsEmpty()) &&
+			(!gameinst->GetSymbolAddress(theObj->EventHandlers[0]).IsNull())) {
 			// control-specific event handler
 			if (strchr(theObj->GetEventArgs(0), ',') != nullptr)
 				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0], 2,
-				                    RuntimeScriptValue().SetDynamicObject(theObj, &ccDynamicGUIObject),
-				                    RuntimeScriptValue().SetInt32(mbut));
+					RuntimeScriptValue().SetDynamicObject(theObj, &ccDynamicGUIObject),
+					RuntimeScriptValue().SetInt32(mbut));
 			else
 				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0], 1,
-				                    RuntimeScriptValue().SetDynamicObject(theObj, &ccDynamicGUIObject));
+					RuntimeScriptValue().SetDynamicObject(theObj, &ccDynamicGUIObject));
 		} else
 			QueueScriptFunction(kScInstGame, "interface_click", 2,
-			                    RuntimeScriptValue().SetInt32(ifce),
-			                    RuntimeScriptValue().SetInt32(btn));
+				RuntimeScriptValue().SetInt32(ifce),
+				RuntimeScriptValue().SetInt32(btn));
 	}
 }
 
@@ -586,7 +587,7 @@ int gui_get_interactable(int x, int y) {
 int gui_on_mouse_move() {
 	int mouse_over_gui = -1;
 	// If all GUIs are off, skip the loop
-	if ((game.options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0)) ;
+	if ((game.options[OPT_DISABLEOFF] == 3) && (all_buttons_disabled > 0));
 	else {
 		// Scan for mouse-y-pos GUIs, and pop one up if appropriate
 		// Also work out the mouse-over GUI while we're at it
@@ -870,45 +871,45 @@ RuntimeScriptValue Sc_GUI_ProcessClick(const RuntimeScriptValue *params, int32_t
 }
 
 void RegisterGUIAPI() {
-	ccAddExternalObjectFunction("GUI::Centre^0",                Sc_GUI_Centre);
-	ccAddExternalObjectFunction("GUI::Click^1",                 Sc_GUI_Click);
-	ccAddExternalStaticFunction("GUI::GetAtScreenXY^2",         Sc_GetGUIAtLocation);
-	ccAddExternalStaticFunction("GUI::ProcessClick^3",          Sc_GUI_ProcessClick);
-	ccAddExternalObjectFunction("GUI::SetPosition^2",           Sc_GUI_SetPosition);
-	ccAddExternalObjectFunction("GUI::SetSize^2",               Sc_GUI_SetSize);
-	ccAddExternalObjectFunction("GUI::get_BackgroundGraphic",   Sc_GUI_GetBackgroundGraphic);
-	ccAddExternalObjectFunction("GUI::set_BackgroundGraphic",   Sc_GUI_SetBackgroundGraphic);
-	ccAddExternalObjectFunction("GUI::get_BackgroundColor",     Sc_GUI_GetBackgroundColor);
-	ccAddExternalObjectFunction("GUI::set_BackgroundColor",     Sc_GUI_SetBackgroundColor);
-	ccAddExternalObjectFunction("GUI::get_BorderColor",         Sc_GUI_GetBorderColor);
-	ccAddExternalObjectFunction("GUI::set_BorderColor",         Sc_GUI_SetBorderColor);
-	ccAddExternalObjectFunction("GUI::get_Clickable",           Sc_GUI_GetClickable);
-	ccAddExternalObjectFunction("GUI::set_Clickable",           Sc_GUI_SetClickable);
-	ccAddExternalObjectFunction("GUI::get_ControlCount",        Sc_GUI_GetControlCount);
-	ccAddExternalObjectFunction("GUI::geti_Controls",           Sc_GUI_GetiControls);
-	ccAddExternalObjectFunction("GUI::get_Height",              Sc_GUI_GetHeight);
-	ccAddExternalObjectFunction("GUI::set_Height",              Sc_GUI_SetHeight);
-	ccAddExternalObjectFunction("GUI::get_ID",                  Sc_GUI_GetID);
-	ccAddExternalObjectFunction("GUI::get_AsTextWindow",        Sc_GUI_AsTextWindow);
-	ccAddExternalObjectFunction("GUI::get_PopupStyle",          Sc_GUI_GetPopupStyle);
-	ccAddExternalObjectFunction("GUI::get_PopupYPos",           Sc_GUI_GetPopupYPos);
-	ccAddExternalObjectFunction("GUI::set_PopupYPos",           Sc_GUI_SetPopupYPos);
+	ccAddExternalObjectFunction("GUI::Centre^0", Sc_GUI_Centre);
+	ccAddExternalObjectFunction("GUI::Click^1", Sc_GUI_Click);
+	ccAddExternalStaticFunction("GUI::GetAtScreenXY^2", Sc_GetGUIAtLocation);
+	ccAddExternalStaticFunction("GUI::ProcessClick^3", Sc_GUI_ProcessClick);
+	ccAddExternalObjectFunction("GUI::SetPosition^2", Sc_GUI_SetPosition);
+	ccAddExternalObjectFunction("GUI::SetSize^2", Sc_GUI_SetSize);
+	ccAddExternalObjectFunction("GUI::get_BackgroundGraphic", Sc_GUI_GetBackgroundGraphic);
+	ccAddExternalObjectFunction("GUI::set_BackgroundGraphic", Sc_GUI_SetBackgroundGraphic);
+	ccAddExternalObjectFunction("GUI::get_BackgroundColor", Sc_GUI_GetBackgroundColor);
+	ccAddExternalObjectFunction("GUI::set_BackgroundColor", Sc_GUI_SetBackgroundColor);
+	ccAddExternalObjectFunction("GUI::get_BorderColor", Sc_GUI_GetBorderColor);
+	ccAddExternalObjectFunction("GUI::set_BorderColor", Sc_GUI_SetBorderColor);
+	ccAddExternalObjectFunction("GUI::get_Clickable", Sc_GUI_GetClickable);
+	ccAddExternalObjectFunction("GUI::set_Clickable", Sc_GUI_SetClickable);
+	ccAddExternalObjectFunction("GUI::get_ControlCount", Sc_GUI_GetControlCount);
+	ccAddExternalObjectFunction("GUI::geti_Controls", Sc_GUI_GetiControls);
+	ccAddExternalObjectFunction("GUI::get_Height", Sc_GUI_GetHeight);
+	ccAddExternalObjectFunction("GUI::set_Height", Sc_GUI_SetHeight);
+	ccAddExternalObjectFunction("GUI::get_ID", Sc_GUI_GetID);
+	ccAddExternalObjectFunction("GUI::get_AsTextWindow", Sc_GUI_AsTextWindow);
+	ccAddExternalObjectFunction("GUI::get_PopupStyle", Sc_GUI_GetPopupStyle);
+	ccAddExternalObjectFunction("GUI::get_PopupYPos", Sc_GUI_GetPopupYPos);
+	ccAddExternalObjectFunction("GUI::set_PopupYPos", Sc_GUI_SetPopupYPos);
 	ccAddExternalObjectFunction("TextWindowGUI::get_TextColor", Sc_GUI_GetTextColor);
 	ccAddExternalObjectFunction("TextWindowGUI::set_TextColor", Sc_GUI_SetTextColor);
 	ccAddExternalObjectFunction("TextWindowGUI::get_TextPadding", Sc_GUI_GetTextPadding);
 	ccAddExternalObjectFunction("TextWindowGUI::set_TextPadding", Sc_GUI_SetTextPadding);
-	ccAddExternalObjectFunction("GUI::get_Transparency",        Sc_GUI_GetTransparency);
-	ccAddExternalObjectFunction("GUI::set_Transparency",        Sc_GUI_SetTransparency);
-	ccAddExternalObjectFunction("GUI::get_Visible",             Sc_GUI_GetVisible);
-	ccAddExternalObjectFunction("GUI::set_Visible",             Sc_GUI_SetVisible);
-	ccAddExternalObjectFunction("GUI::get_Width",               Sc_GUI_GetWidth);
-	ccAddExternalObjectFunction("GUI::set_Width",               Sc_GUI_SetWidth);
-	ccAddExternalObjectFunction("GUI::get_X",                   Sc_GUI_GetX);
-	ccAddExternalObjectFunction("GUI::set_X",                   Sc_GUI_SetX);
-	ccAddExternalObjectFunction("GUI::get_Y",                   Sc_GUI_GetY);
-	ccAddExternalObjectFunction("GUI::set_Y",                   Sc_GUI_SetY);
-	ccAddExternalObjectFunction("GUI::get_ZOrder",              Sc_GUI_GetZOrder);
-	ccAddExternalObjectFunction("GUI::set_ZOrder",              Sc_GUI_SetZOrder);
+	ccAddExternalObjectFunction("GUI::get_Transparency", Sc_GUI_GetTransparency);
+	ccAddExternalObjectFunction("GUI::set_Transparency", Sc_GUI_SetTransparency);
+	ccAddExternalObjectFunction("GUI::get_Visible", Sc_GUI_GetVisible);
+	ccAddExternalObjectFunction("GUI::set_Visible", Sc_GUI_SetVisible);
+	ccAddExternalObjectFunction("GUI::get_Width", Sc_GUI_GetWidth);
+	ccAddExternalObjectFunction("GUI::set_Width", Sc_GUI_SetWidth);
+	ccAddExternalObjectFunction("GUI::get_X", Sc_GUI_GetX);
+	ccAddExternalObjectFunction("GUI::set_X", Sc_GUI_SetX);
+	ccAddExternalObjectFunction("GUI::get_Y", Sc_GUI_GetY);
+	ccAddExternalObjectFunction("GUI::set_Y", Sc_GUI_SetY);
+	ccAddExternalObjectFunction("GUI::get_ZOrder", Sc_GUI_GetZOrder);
+	ccAddExternalObjectFunction("GUI::set_ZOrder", Sc_GUI_SetZOrder);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -938,3 +939,5 @@ void RegisterGUIAPI() {
 	ccAddExternalFunctionForPlugin("GUI::get_ZOrder", (void *)GUI_GetZOrder);
 	ccAddExternalFunctionForPlugin("GUI::set_ZOrder", (void *)GUI_SetZOrder);
 }
+
+} // namespace AGS3

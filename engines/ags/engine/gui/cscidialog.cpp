@@ -43,6 +43,8 @@
 #include "platform/base/agsplatformdriver.h"
 #include "ac/timer.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Bitmap;
 namespace BitmapHelper = AGS::Shared::BitmapHelper;
 
@@ -165,7 +167,7 @@ int CSCIWaitMessage(CSCIMessage *cscim) {
 			} else if (keywas == 27) {
 				cscim->id = finddefaultcontrol(CNF_CANCEL);
 				cscim->code = CM_COMMAND;
-			} else if ((keywas < 32) && (keywas != 8)) ;
+			} else if ((keywas < 32) && (keywas != 8));
 			else if ((keywas >= 372) & (keywas <= 381) & (finddefaultcontrol(CNT_LISTBOX) >= 0))
 				vobjs[finddefaultcontrol(CNT_LISTBOX)]->processmessage(CTB_KEYPRESS, keywas, 0);
 			else if (finddefaultcontrol(CNT_TEXTBOX) >= 0)
@@ -306,3 +308,5 @@ int finddefaultcontrol(int flagmask) {
 int GetBaseWidth() {
 	return play.GetUIViewport().GetWidth();
 }
+
+} // namespace AGS3

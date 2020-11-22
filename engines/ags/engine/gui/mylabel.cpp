@@ -29,6 +29,8 @@
 #include "gui/mylabel.h"
 #include "gui/guidialoginternaldefs.h"
 
+namespace AGS3 {
+
 using namespace Shared;
 
 extern GameSetup usetup;
@@ -64,3 +66,5 @@ int MyLabel::pressedon(int mousex, int mousey) {
 int MyLabel::processmessage(int mcode, int wParam, long lParam) {
 	return -1;                  // doesn't support messages
 }
+
+} // namespace AGS3

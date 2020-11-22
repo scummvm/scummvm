@@ -60,6 +60,8 @@
 #include "ac/sys_events.h" // j for ags_iskeypressed
 #endif
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -76,7 +78,7 @@ int real_mouse_x = 0, real_mouse_y = 0;
 int boundx1 = 0, boundx2 = 99999, boundy1 = 0, boundy2 = 99999;
 int disable_mgetgraphpos = 0;
 char ignore_bounds = 0;
-extern char alpha_blend_cursor ;
+extern char alpha_blend_cursor;
 Bitmap *mousecurs[MAXCURSORS];
 extern color palette[256];
 extern volatile bool switched_away;
@@ -106,8 +108,8 @@ void mgraphconfine(int x1, int y1, int x2, int y2) {
 	Mouse::ControlRect = Rect(x1, y1, x2, y2);
 	set_mouse_range(Mouse::ControlRect.Left, Mouse::ControlRect.Top, Mouse::ControlRect.Right, Mouse::ControlRect.Bottom);
 	Debug::Printf("Mouse confined: (%d,%d)-(%d,%d) (%dx%d)",
-	              Mouse::ControlRect.Left, Mouse::ControlRect.Top, Mouse::ControlRect.Right, Mouse::ControlRect.Bottom,
-	              Mouse::ControlRect.GetWidth(), Mouse::ControlRect.GetHeight());
+		Mouse::ControlRect.Left, Mouse::ControlRect.Top, Mouse::ControlRect.Right, Mouse::ControlRect.Bottom,
+		Mouse::ControlRect.GetWidth(), Mouse::ControlRect.GetHeight());
 }
 
 void mgetgraphpos() {
@@ -116,7 +118,7 @@ void mgetgraphpos() {
 		// The cursor coordinates are provided from alternate source;
 		// in this case we completely ignore actual cursor movement.
 		if (!ignore_bounds &&
-		        (mousex < boundx1 || mousey < boundy1 || mousex > boundx2 || mousey > boundy2)) {
+			(mousex < boundx1 || mousey < boundy1 || mousex > boundx2 || mousey > boundy2)) {
 			mousex = Math::Clamp(mousex, boundx1, boundx2);
 			mousey = Math::Clamp(mousey, boundy1, boundy2);
 			msetgraphpos(mousex, mousey);
@@ -173,7 +175,7 @@ void mgetgraphpos() {
 	mousey = real_mouse_y;
 
 	if (!ignore_bounds &&
-	        (mousex < boundx1 || mousey < boundy1 || mousex > boundx2 || mousey > boundy2)) {
+		(mousex < boundx1 || mousey < boundy1 || mousex > boundx2 || mousey > boundy2)) {
 		mousex = Math::Clamp(mousex, boundx1, boundx2);
 		mousey = Math::Clamp(mousey, boundy1, boundy2);
 		msetgraphpos(mousex, mousey);
@@ -247,7 +249,7 @@ int mgetbutton() {
 	poll_mouse();
 	int butis = mouse_b;
 
-	if ((butis > 0) & (butwas > 0))
+	if ((butis > 0) &(butwas > 0))
 		return NONE;  // don't allow holding button down
 
 	if (butis & 1) {
@@ -356,3 +358,5 @@ void Mouse::SetSpeed(float speed) {
 float Mouse::GetSpeed() {
 	return SpeedVal;
 }
+
+} // namespace AGS3

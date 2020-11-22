@@ -39,6 +39,8 @@
 
 #include "route_finder_jps.inl"
 
+namespace AGS3 {
+
 extern MoveList *mls;
 
 using AGS::Shared::Bitmap;
@@ -265,3 +267,4 @@ int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int
 } // namespace RouteFinder
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3

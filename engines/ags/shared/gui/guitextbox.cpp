@@ -26,6 +26,8 @@
 #include "util/stream.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
+
 #define GUITEXTBOX_LEGACY_TEXTLEN 200
 
 std::vector<AGS::Shared::GUITextBox> guitext;
@@ -137,3 +139,4 @@ void GUITextBox::WriteToSavegame(Stream *out) const {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

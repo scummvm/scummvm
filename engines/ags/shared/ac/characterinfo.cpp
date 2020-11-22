@@ -24,6 +24,8 @@
 #include "ac/characterinfo.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 
@@ -159,3 +161,5 @@ void ConvertOldCharacterToNew(OldCharacterInfo *oci, CharacterInfo *ci) {
 	ci->talkcolor = (oci->flags & OCHF_SPEECHCOL) >> OCHF_SPEECHCOLSHIFT;
 	ci->flags = ci->flags & (~OCHF_SPEECHCOL);
 }
+
+} // namespace AGS3

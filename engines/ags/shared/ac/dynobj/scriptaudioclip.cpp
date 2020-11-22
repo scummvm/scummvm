@@ -23,6 +23,8 @@
 #include "ac/dynobj/scriptaudioclip.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 void ScriptAudioClip::ReadFromFile(Stream *in) {
@@ -37,3 +39,5 @@ void ScriptAudioClip::ReadFromFile(Stream *in) {
 	defaultVolume = in->ReadInt16();
 	in->ReadInt32(); // reserved
 }
+
+} // namespace AGS3

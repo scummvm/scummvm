@@ -23,11 +23,13 @@
 #include "ac/dynobj/scriptfile.h"
 #include "ac/global_file.h"
 
+namespace AGS3 {
+
 // CHECKME: actually NULLs here will be equal to kFile_Open & kFile_Read
 const Common::FileOpenMode sc_File::fopenModes[] =
-{Common::kFile_Open/*CHECKME, was undefined*/, Common::kFile_Open, Common::kFile_CreateAlways, Common::kFile_Create};
+{ Common::kFile_Open/*CHECKME, was undefined*/, Common::kFile_Open, Common::kFile_CreateAlways, Common::kFile_Create };
 const Common::FileWorkMode sc_File::fworkModes[] =
-{Common::kFile_Read/*CHECKME, was undefined*/, Common::kFile_Read, Common::kFile_Write, Common::kFile_Write};
+{ Common::kFile_Read/*CHECKME, was undefined*/, Common::kFile_Read, Common::kFile_Write, Common::kFile_Write };
 
 int sc_File::Dispose(const char *address, bool force) {
 	Close();
@@ -100,3 +102,5 @@ void sc_File::WriteInt32(const char *address, intptr_t offset, int32_t val) {
 
 void sc_File::WriteFloat(const char *address, intptr_t offset, float val) {
 }
+
+} // namespace AGS3

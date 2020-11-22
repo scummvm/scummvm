@@ -52,6 +52,8 @@
 #include "gfx/bitmap.h"
 #include "util/scaling.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -444,3 +446,5 @@ void update_room_invreg_and_reset(int view_index, Bitmap *ds, Bitmap *src, bool 
 	update_invalid_region(ds, src, RoomCamRects[view_index], no_transform);
 	RoomCamRects[view_index].Reset();
 }
+
+} // namespace AGS3

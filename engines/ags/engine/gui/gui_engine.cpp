@@ -44,6 +44,8 @@
 #include "gfx/bitmap.h"
 #include "gfx/blender.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 // For engine these are defined in ac.cpp
@@ -68,10 +70,10 @@ bool GUIMain::HasAlphaChannel() const {
 	}
 	// transparent background, enable alpha blending
 	return game.GetColorDepth() >= 24 &&
-	       // transparent background have alpha channel only since 3.2.0;
-	       // "classic" gui rendering mode historically had non-alpha transparent backgrounds
-	       // (3.2.0 broke the compatibility, now we restore it)
-	       loaded_game_file_version >= kGameVersion_320 && game.options[OPT_NEWGUIALPHA] != kGuiAlphaRender_Legacy;
+		// transparent background have alpha channel only since 3.2.0;
+		// "classic" gui rendering mode historically had non-alpha transparent backgrounds
+		// (3.2.0 broke the compatibility, now we restore it)
+		loaded_game_file_version >= kGameVersion_320 && game.options[OPT_NEWGUIALPHA] != kGuiAlphaRender_Legacy;
 }
 
 //=============================================================================
@@ -158,3 +160,4 @@ void GUIButton::PrepareTextToDraw() {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

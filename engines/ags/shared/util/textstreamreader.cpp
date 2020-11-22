@@ -24,6 +24,7 @@
 #include "util/stream.h"
 #include "util/textstreamreader.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -134,3 +135,4 @@ String TextStreamReader::ReadAll() {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

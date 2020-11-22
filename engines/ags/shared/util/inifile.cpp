@@ -26,6 +26,8 @@
 #include "util/textstreamreader.h"
 #include "util/textstreamwriter.h"
 
+namespace AGS3 {
+
 // TODO: replace with C++11 std::isblank library function
 namespace agsstd {
 inline int isblank(int ch) {
@@ -164,7 +166,7 @@ const char *SkipSpace(const char *line, const char *endl) {
 // The 'endl' must point beyond the last character of the string
 // (e.g. terminator).
 const char *ParsePaddedString(const char *line, const char *endl,
-                              const char *&str_at, const char *&str_end) {
+	const char *&str_at, const char *&str_end) {
 	// skip left padding
 	for (; line != endl && agsstd::isblank(*line); ++line);
 	str_at = line;
@@ -206,7 +208,7 @@ void IniFile::Read(Stream *in) {
 
 		// Detect the kind of string we found
 		if ((endl - pstr >= 2 && *pstr == '/' && *(pstr + 1) == '/') ||
-		        (endl - pstr >= 1 && (*pstr == '#' || *pstr == ';'))) {
+			(endl - pstr >= 1 && (*pstr == '#' || *pstr == ';'))) {
 			StrPos nullpos(0, 0);
 			cur_section->InsertItem(cur_section->End(), ItemDef(line, nullpos, nullpos, -1));
 			continue;
@@ -268,3 +270,4 @@ void IniFile::Write(Stream *out) const {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

@@ -60,6 +60,8 @@
 #include "util/filestream.h" // TODO: needed only because plugins expect file handle
 #include "media/audio/audio_system.h"
 
+namespace AGS3 {
+
 using namespace Shared;
 
 extern GameSetupStruct game;
@@ -1261,3 +1263,4 @@ HSaveError WriteAllCommon(PStream out) {
 } // namespace SavegameBlocks
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3

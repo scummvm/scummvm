@@ -39,6 +39,8 @@
 #include "ac/common.h"
 #include "main/main.h"
 
+namespace AGS3 {
+
 void AGSMacInitPaths(char gamename[256], char appdata[PATH_MAX]);
 void AGSMacGetBundleDir(char gamepath[PATH_MAX]);
 //bool PlayMovie(char const *name, int skipType);
@@ -147,5 +149,7 @@ AGSPlatformDriver *AGSPlatformDriver::GetDriver() {
 		instance = new AGSMac();
 	return instance;
 }
+
+} // namespace AGS3
 
 #endif

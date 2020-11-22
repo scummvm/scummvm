@@ -28,6 +28,8 @@
 #include "debug/debug_log.h"
 #include "game/roomstruct.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern RoomStruct thisroom;
@@ -94,5 +96,4 @@ int GetWalkableAreaAtRoom(int x, int y) {
 	return area >= 0 && area < (MAX_WALK_AREAS + 1) ? area : 0;
 }
 
-//=============================================================================
-
+} // namespace AGS3

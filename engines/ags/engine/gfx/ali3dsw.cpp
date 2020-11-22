@@ -37,6 +37,8 @@
 #include "platform/base/agsplatformdriver.h"
 #include "ac/timer.h"
 
+namespace AGS3 {
+
 #if AGS_DDRAW_GAMMA_CONTROL
 // NOTE: this struct and variables are defined internally in Allegro
 typedef struct DDRAW_SURFACE {
@@ -49,7 +51,7 @@ typedef struct DDRAW_SURFACE {
 } DDRAW_SURFACE;
 
 extern "C" extern LPDIRECTDRAW2 directdraw;
-extern "C" DDRAW_SURFACE *gfx_directx_primary_surface;
+extern "C" DDRAW_SURFACE * gfx_directx_primary_surface;
 #endif // AGS_DDRAW_GAMMA_CONTROL
 
 #ifndef AGS_NO_VIDEO_PLAYER
@@ -116,8 +118,8 @@ bool ALSoftwareGraphicsDriver::IsModeSupported(const DisplayMode &mode) {
 		// between loads of unsupported resolutions
 		for (int i = 0; i < _gfxModeList->num_modes; i++) {
 			if ((_gfxModeList->mode[i].width == mode.Width) &&
-			        (_gfxModeList->mode[i].height == mode.Height) &&
-			        (_gfxModeList->mode[i].bpp == mode.ColorDepth)) {
+				(_gfxModeList->mode[i].height == mode.Height) &&
+				(_gfxModeList->mode[i].bpp == mode.ColorDepth)) {
 				return true;
 			}
 		}
@@ -211,8 +213,8 @@ bool ALSoftwareGraphicsDriver::SetDisplayMode(const DisplayMode &mode, volatile 
 		ddrawCaps.dwSize = sizeof(ddrawCaps);
 		IDirectDraw2_GetCaps(directdraw, &ddrawCaps, NULL);
 
-		if ((ddrawCaps.dwCaps2 & DDCAPS2_PRIMARYGAMMA) == 0) { }
-		else if (IDirectDrawSurface2_QueryInterface(gfx_directx_primary_surface->id, IID_IDirectDrawGammaControl, (void **)&dxGammaControl) == 0) {
+		if ((ddrawCaps.dwCaps2 & DDCAPS2_PRIMARYGAMMA) == 0) {
+		} else if (IDirectDrawSurface2_QueryInterface(gfx_directx_primary_surface->id, IID_IDirectDrawGammaControl, (void **)&dxGammaControl) == 0) {
 			dxGammaControl->GetGammaRamp(0, &defaultGammaRamp);
 		}
 	}
@@ -438,7 +440,7 @@ void ALSoftwareGraphicsDriver::RenderToBackBuffer() {
 			RenderSpriteBatch(batch, surface, transform.X, transform.Y);
 			if (!batch.IsVirtualScreen)
 				virtualScreen->StretchBlt(surface, RectWH(view_offx, view_offy, viewport.GetWidth(), viewport.GetHeight()),
-				                          batch.Opaque ? kBitmap_Copy : kBitmap_Transparency);
+					batch.Opaque ? kBitmap_Copy : kBitmap_Transparency);
 		} else {
 			RenderSpriteBatch(batch, virtualScreen, view_offx + transform.X, view_offy + transform.Y);
 		}
@@ -468,9 +470,10 @@ void ALSoftwareGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch, Com
 		int drawAtX = drawlist[i].x + surf_offx;
 		int drawAtY = drawlist[i].y + surf_offy;
 
-		if (bitmap->_transparency >= 255) {} // fully transparent, do nothing
-		else if ((bitmap->_opaque) && (bitmap->_bmp == surface) && (bitmap->_transparency == 0)) {}
-		else if (bitmap->_opaque) {
+		if (bitmap->_transparency >= 255) {
+		} // fully transparent, do nothing
+		else if ((bitmap->_opaque) && (bitmap->_bmp == surface) && (bitmap->_transparency == 0)) {
+		} else if (bitmap->_opaque) {
 			surface->Blit(bitmap->_bmp, 0, 0, drawAtX, drawAtY, bitmap->_bmp->GetWidth(), bitmap->_bmp->GetHeight());
 			// TODO: we need to also support non-masked translucent blend, but...
 			// Allegro 4 **does not have such function ready** :( (only masked blends, where it skips magenta pixels);
@@ -486,23 +489,23 @@ void ALSoftwareGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch, Com
 		} else {
 			// here _transparency is used as alpha (between 1 and 254), but 0 means opaque!
 			GfxUtil::DrawSpriteWithTransparency(surface, bitmap->_bmp, drawAtX, drawAtY,
-			                                    bitmap->_transparency ? bitmap->_transparency : 255);
+				bitmap->_transparency ? bitmap->_transparency : 255);
 		}
 	}
 	// NOTE: following is experimental tint code (currently unused)
 	/*  This alternate method gives the correct (D3D-style) result, but is just too slow!
-	    if ((_spareTintingScreen != NULL) &&
-	        ((_spareTintingScreen->GetWidth() != surface->GetWidth()) || (_spareTintingScreen->GetHeight() != surface->GetHeight())))
-	    {
-	      destroy_bitmap(_spareTintingScreen);
-	      _spareTintingScreen = NULL;
-	    }
-	    if (_spareTintingScreen == NULL)
-	    {
-	      _spareTintingScreen = BitmapHelper::CreateBitmap_(GetColorDepth(surface), surface->GetWidth(), surface->GetHeight());
-	    }
-	    tint_image(surface, _spareTintingScreen, _tint_red, _tint_green, _tint_blue, 100, 255);
-	    Blit(_spareTintingScreen, surface, 0, 0, 0, 0, _spareTintingScreen->GetWidth(), _spareTintingScreen->GetHeight());*/
+		if ((_spareTintingScreen != NULL) &&
+			((_spareTintingScreen->GetWidth() != surface->GetWidth()) || (_spareTintingScreen->GetHeight() != surface->GetHeight())))
+		{
+		  destroy_bitmap(_spareTintingScreen);
+		  _spareTintingScreen = NULL;
+		}
+		if (_spareTintingScreen == NULL)
+		{
+		  _spareTintingScreen = BitmapHelper::CreateBitmap_(GetColorDepth(surface), surface->GetWidth(), surface->GetHeight());
+		}
+		tint_image(surface, _spareTintingScreen, _tint_red, _tint_green, _tint_blue, 100, 255);
+		Blit(_spareTintingScreen, surface, 0, 0, 0, 0, _spareTintingScreen->GetWidth(), _spareTintingScreen->GetHeight());*/
 }
 
 void ALSoftwareGraphicsDriver::Render(int xoff, int yoff, GlobalFlipType flip) {
@@ -561,11 +564,11 @@ bool ALSoftwareGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destination, bo
 }
 
 /**
-    fade.c - High Color Fading Routines
+	fade.c - High Color Fading Routines
 
-    Last Revision: 21 June, 2002
+	Last Revision: 21 June, 2002
 
-    Author: Matthew Leverton
+	Author: Matthew Leverton
 **/
 void ALSoftwareGraphicsDriver::highcolor_fade_in(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) {
 	Bitmap *bmp_orig = vs;
@@ -703,7 +706,7 @@ void ALSoftwareGraphicsDriver::BoxOutEffect(bool blackingOut, int speed, int del
 			boxhit += yspeed;
 			int vcentre = _srcRect.GetHeight() / 2;
 			bmp_orig->FillRect(Rect(_srcRect.GetWidth() / 2 - boxwid / 2, vcentre - boxhit / 2,
-			                        _srcRect.GetWidth() / 2 + boxwid / 2, vcentre + boxhit / 2), 0);
+				_srcRect.GetWidth() / 2 + boxwid / 2, vcentre + boxhit / 2), 0);
 			bmp_buff->Fill(0);
 			bmp_buff->Blit(bmp_orig);
 			if (_drawPostScreenCallback) {
@@ -808,3 +811,4 @@ AllegroGfxFilter *ALSWGraphicsFactory::CreateFilter(const String &id) {
 } // namespace ALSW
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3

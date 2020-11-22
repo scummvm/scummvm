@@ -22,6 +22,7 @@
 
 #include "util/proxystream.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -154,3 +155,4 @@ bool ProxyStream::Seek(soff_t offset, StreamSeek origin) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

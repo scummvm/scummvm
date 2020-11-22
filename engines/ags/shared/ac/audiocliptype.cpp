@@ -23,6 +23,8 @@
 #include "ac/audiocliptype.h"
 #include "util/stream.h"
 
+namespace AGS3 {
+
 using AGS::Shared::Stream;
 
 void AudioClipType::ReadFromFile(Stream *in) {
@@ -50,3 +52,5 @@ void AudioClipType::WriteToSavegame(Common::Stream *out) const {
 	out->WriteInt32(volume_reduction_while_speech_playing);
 	out->WriteInt32(crossfadeSpeed);
 }
+
+} // namespace AGS3

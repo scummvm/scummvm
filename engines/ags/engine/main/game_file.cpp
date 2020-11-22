@@ -53,6 +53,8 @@
 #include "plugin/agsplugin.h"
 #include "script/script.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -88,9 +90,9 @@ String get_caps_list(const std::set<String> &caps) {
 HGameFileError game_file_first_open(MainGameSource &src) {
 	HGameFileError err = OpenMainGameFileFromDefaultAsset(src);
 	if (err ||
-	        err->Code() == kMGFErr_SignatureFailed ||
-	        err->Code() == kMGFErr_FormatVersionTooOld ||
-	        err->Code() == kMGFErr_FormatVersionNotSupported) {
+		err->Code() == kMGFErr_SignatureFailed ||
+		err->Code() == kMGFErr_FormatVersionTooOld ||
+		err->Code() == kMGFErr_FormatVersionNotSupported) {
 		// Log data description for debugging
 		Debug::Printf(kDbgMsg_Info, "Opened game data file: %s", src.Filename.GetCStr());
 		Debug::Printf(kDbgMsg_Info, "Game data version: %d", src.DataVersion);
@@ -117,7 +119,7 @@ void PreReadSaveFileInfo(Stream *in, GameDataVersion data_ver) {
 	AlignedStream align_s(in, Common::kAligned_Read);
 	game.ReadFromFile(&align_s);
 	// Discard game messages we do not need here
-	delete [] game.load_messages;
+	delete[] game.load_messages;
 	game.load_messages = nullptr;
 	game.read_savegame_info(in, data_ver);
 }
@@ -153,5 +155,7 @@ HError load_game_file() {
 
 void display_game_file_error(HError err) {
 	platform->DisplayAlert("Loading game failed with error:\n%s.\n\nThe game files may be incomplete, corrupt or from unsupported version of AGS.",
-	                       err->FullMessage().GetCStr());
+		err->FullMessage().GetCStr());
 }
+
+} // namespace AGS3

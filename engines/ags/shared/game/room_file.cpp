@@ -35,6 +35,8 @@
 #include "util/compress.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
+
 // default number of hotspots to read from the room file
 #define MIN_ROOM_HOTSPOTS  20
 #define LEGACY_HOTSPOT_NAME_LEN 30
@@ -102,26 +104,26 @@ HRoomFileError OpenRoomFile(const String &filename, RoomDataSource &src) {
 
 
 enum RoomFileBlock {
-	kRoomFblk_None              = 0,
+	kRoomFblk_None = 0,
 	// Main room data
-	kRoomFblk_Main              = 1,
+	kRoomFblk_Main = 1,
 	// Room script text source (was present in older room formats)
-	kRoomFblk_Script            = 2,
+	kRoomFblk_Script = 2,
 	// Old versions of compiled script (no longer supported)
-	kRoomFblk_CompScript        = 3,
-	kRoomFblk_CompScript2       = 4,
+	kRoomFblk_CompScript = 3,
+	kRoomFblk_CompScript2 = 4,
 	// Names of the room objects
-	kRoomFblk_ObjectNames       = 5,
+	kRoomFblk_ObjectNames = 5,
 	// Secondary room backgrounds
-	kRoomFblk_AnimBg            = 6,
+	kRoomFblk_AnimBg = 6,
 	// Contemporary compiled script
-	kRoomFblk_CompScript3       = 7,
+	kRoomFblk_CompScript3 = 7,
 	// Custom properties
-	kRoomFblk_Properties        = 8,
+	kRoomFblk_Properties = 8,
 	// Script names of the room objects
-	kRoomFblk_ObjectScNames     = 9,
+	kRoomFblk_ObjectScNames = 9,
 	// End of room data tag
-	kRoomFile_EOF               = 0xFF
+	kRoomFile_EOF = 0xFF
 };
 
 
@@ -199,8 +201,8 @@ HRoomFileError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_
 	if (polypoint_areas > 0)
 		return new RoomFileError(kRoomFileErr_IncompatibleEngine, "Legacy poly-point areas are no longer supported.");
 	/* NOTE: implementation hidden in room_file_deprecated.cpp
-	    for (size_t i = 0; i < polypoint_areas; ++i)
-	        wallpoints[i].Read(in);
+		for (size_t i = 0; i < polypoint_areas; ++i)
+			wallpoints[i].Read(in);
 	*/
 
 	update_polled_stuff_if_runtime();
@@ -331,7 +333,7 @@ HRoomFileError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_
 		if (fullanim_count > 0)
 			return new RoomFileError(kRoomFileErr_IncompatibleEngine, "Room animations are no longer supported.");
 		/* NOTE: implementation hidden in room_file_deprecated.cpp
-		    in->ReadArray(&fullanims[0], sizeof(FullAnimation), fullanim_count);
+			in->ReadArray(&fullanims[0], sizeof(FullAnimation), fullanim_count);
 		*/
 	}
 
@@ -340,7 +342,7 @@ HRoomFileError ReadMainBlock(RoomStruct *room, Stream *in, RoomFileVersion data_
 	if ((data_ver >= kRoomVersion_pre114_4) && (data_ver < kRoomVersion_250a)) {
 		return new RoomFileError(kRoomFileErr_IncompatibleEngine, "Pre-2.5 graphical scripts are no longer supported.");
 		/* NOTE: implementation hidden in room_file_deprecated.cpp
-		    ReadPre250Scripts(in);
+			ReadPre250Scripts(in);
 		*/
 	}
 
@@ -411,7 +413,7 @@ HRoomFileError ReadObjNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion d
 	int name_count = in->ReadByte();
 	if (name_count != room->ObjectCount)
 		return new RoomFileError(kRoomFileErr_InconsistentData,
-		                         String::FromFormat("In the object names block, expected name count: %d, got %d", room->ObjectCount, name_count));
+			String::FromFormat("In the object names block, expected name count: %d, got %d", room->ObjectCount, name_count));
 
 	for (size_t i = 0; i < room->ObjectCount; ++i) {
 		if (data_ver >= kRoomVersion_3415)
@@ -427,7 +429,7 @@ HRoomFileError ReadObjScNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion
 	int name_count = in->ReadByte();
 	if (name_count != room->ObjectCount)
 		return new RoomFileError(kRoomFileErr_InconsistentData,
-		                         String::FromFormat("In the object script names block, expected name count: %d, got %d", room->ObjectCount, name_count));
+			String::FromFormat("In the object script names block, expected name count: %d, got %d", room->ObjectCount, name_count));
 
 	for (size_t i = 0; i < room->ObjectCount; ++i) {
 		if (data_ver >= kRoomVersion_3415)
@@ -507,10 +509,10 @@ HRoomFileError ReadRoomBlock(RoomStruct *room, Stream *in, RoomFileBlock block, 
 	case kRoomFblk_CompScript:
 	case kRoomFblk_CompScript2:
 		return new RoomFileError(kRoomFileErr_OldBlockNotSupported,
-		                         String::FromFormat("Type: %d.", block));
+			String::FromFormat("Type: %d.", block));
 	default:
 		return new RoomFileError(kRoomFileErr_UnknownBlockType,
-		                         String::FromFormat("Type: %d, known range: %d - %d.", block, kRoomFblk_Main, kRoomFblk_ObjectScNames));
+			String::FromFormat("Type: %d, known range: %d - %d.", block, kRoomFblk_Main, kRoomFblk_ObjectScNames));
 	}
 
 	if (!err)
@@ -519,10 +521,10 @@ HRoomFileError ReadRoomBlock(RoomStruct *room, Stream *in, RoomFileBlock block, 
 	soff_t cur_pos = in->GetPosition();
 	if (cur_pos > block_end) {
 		return new RoomFileError(kRoomFileErr_BlockDataOverlapping,
-		                         String::FromFormat("Type: %d, expected to end at offset: %u, finished reading at %u.", block, block_end, cur_pos));
+			String::FromFormat("Type: %d, expected to end at offset: %u, finished reading at %u.", block, block_end, cur_pos));
 	} else if (cur_pos < block_end) {
 		Debug::Printf(kDbgMsg_Warn, "WARNING: room data blocks nonsequential, block type %d expected to end at %u, finished reading at %u",
-		              block, block_end, cur_pos);
+			block, block_end, cur_pos);
 		in->Seek(block_end, Common::kSeekBegin);
 	}
 	return HRoomFileError::None();
@@ -883,3 +885,4 @@ HRoomFileError WriteRoomData(const RoomStruct *room, Stream *out, RoomFileVersio
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

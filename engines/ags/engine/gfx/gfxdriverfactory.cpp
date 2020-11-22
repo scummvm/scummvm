@@ -42,6 +42,7 @@
 
 #include "main/main_allegro.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
@@ -72,3 +73,4 @@ IGfxDriverFactory *GetGfxDriverFactory(const String id) {
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3

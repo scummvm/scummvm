@@ -23,6 +23,10 @@
 #include "ac/global_record.h"
 #include "ac/common.h"
 
+namespace AGS3 {
+
 void scStartRecording(int keyToStop) {
 	quit("!StartRecording: not supported");
 }
+
+} // namespace AGS3

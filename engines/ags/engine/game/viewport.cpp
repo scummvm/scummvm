@@ -26,6 +26,8 @@
 #include "game/roomstruct.h"
 #include "game/viewport.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern RoomStruct thisroom;
@@ -202,3 +204,5 @@ VpPoint Viewport::ScreenToRoom(int scrx, int scry, bool clip, bool convert_cam_t
 	}
 	return std::make_pair(p, _id);
 }
+
+} // namespace AGS3

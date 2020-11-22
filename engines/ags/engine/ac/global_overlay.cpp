@@ -35,6 +35,8 @@
 #include "ac/system.h"
 #include "gfx/bitmap.h"
 
+namespace AGS3 {
+
 using namespace Shared;
 using namespace Engine;
 
@@ -99,3 +101,5 @@ int IsOverlayValid(int ovrid) {
 
 	return 1;
 }
+
+} // namespace AGS3

@@ -32,6 +32,8 @@
 #include "gui/guidefines.h" // MAXLINE
 #include "util/string_utils.h"
 
+namespace AGS3 {
+
 #define STD_BUFFER_SIZE 3000
 
 using namespace AGS::Shared;
@@ -40,8 +42,8 @@ namespace AGS {
 namespace Shared {
 
 struct Font {
-	IAGSFontRenderer   *Renderer;
-	IAGSFontRenderer2  *Renderer2;
+	IAGSFontRenderer *Renderer;
+	IAGSFontRenderer2 *Renderer2;
 	FontInfo            Info;
 
 	Font();
@@ -327,10 +329,10 @@ bool wloadfont_size(size_t fontNumber, const FontInfo &font_info) {
 	params.SizeMultiplier = font_info.SizeMultiplier;
 
 	if (ttfRenderer.LoadFromDiskEx(fontNumber, font_info.SizePt, &params)) {
-		fonts[fontNumber].Renderer  = &ttfRenderer;
+		fonts[fontNumber].Renderer = &ttfRenderer;
 		fonts[fontNumber].Renderer2 = &ttfRenderer;
 	} else if (wfnRenderer.LoadFromDiskEx(fontNumber, font_info.SizePt, &params)) {
-		fonts[fontNumber].Renderer  = &wfnRenderer;
+		fonts[fontNumber].Renderer = &wfnRenderer;
 		fonts[fontNumber].Renderer2 = &wfnRenderer;
 	}
 
@@ -371,3 +373,5 @@ void free_all_fonts() {
 	}
 	fonts.clear();
 }
+
+} // namespace AGS3

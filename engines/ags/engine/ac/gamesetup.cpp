@@ -23,6 +23,8 @@
 #include "util/wgt2allg.h" // DIGI_AUTODETECT & MIDI_AUTODETECT
 #include "ac/gamesetup.h"
 
+namespace AGS3 {
+
 GameSetup::GameSetup() {
 	digicard = DIGI_AUTODETECT;
 	midicard = MIDI_AUTODETECT;
@@ -50,3 +52,5 @@ GameSetup::GameSetup() {
 	Screen.FsGameFrame = GameFrameSetup(kFrame_MaxProportional);
 	Screen.WinGameFrame = GameFrameSetup(kFrame_MaxRound);
 }
+
+} // namespace AGS3

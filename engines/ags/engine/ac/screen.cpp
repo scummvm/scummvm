@@ -36,6 +36,8 @@
 #include "gfx/bitmap.h"
 #include "gfx/graphicsdriver.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -206,3 +208,5 @@ void RegisterScreenAPI() {
 	ccAddExternalStaticFunction("Screen::ScreenToRoomPoint", Sc_Screen_ScreenToRoomPoint);
 	ccAddExternalStaticFunction("Screen::RoomToScreenPoint", Sc_Screen_RoomToScreenPoint);
 }
+
+} // namespace AGS3

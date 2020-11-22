@@ -42,6 +42,8 @@
 #include "media/audio/audio_system.h"
 #include "ac/timer.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
@@ -67,7 +69,7 @@ int evblocknum;
 int inside_processevent = 0;
 int eventClaimed = EVENT_NONE;
 
-const char *tsnames[4] = {nullptr, REP_EXEC_NAME, "on_key_press", "on_mouse_click"};
+const char *tsnames[4] = { nullptr, REP_EXEC_NAME, "on_key_press", "on_mouse_click" };
 
 
 int run_claimable_event(const char *tsname, bool includeRoom, int numParams, const RuntimeScriptValue *params, bool *eventWasClaimed) {
@@ -186,7 +188,7 @@ void process_event(EventHappened *evp) {
 
 			evblockbasename = "room";
 			if (evp->data3 == 5) {
-				in_enters_screen ++;
+				in_enters_screen++;
 				run_on_event(GE_ENTER_ROOM, RuntimeScriptValue().SetInt32(displayed_room));
 
 			}
@@ -204,7 +206,7 @@ void process_event(EventHappened *evp) {
 		evblocknum = oldblocknum;
 
 		if ((evp->data3 == 5) && (evp->data1 == EVB_ROOM))
-			in_enters_screen --;
+			in_enters_screen--;
 	} else if (evp->type == EV_FADEIN) {
 		// if they change the transition type before the fadein, make
 		// sure the screen doesn't freeze up
@@ -227,7 +229,7 @@ void process_event(EventHappened *evp) {
 
 		const bool ignore_transition = (play.screen_tint > 0);
 		if (((theTransition == FADE_CROSSFADE) || (theTransition == FADE_DISSOLVE)) &&
-		        (saved_viewport_bitmap == nullptr) && !ignore_transition) {
+			(saved_viewport_bitmap == nullptr) && !ignore_transition) {
 			// transition type was not crossfade/dissolve when the screen faded out,
 			// but it is now when the screen fades in (Eg. a save game was restored
 			// with a different setting). Therefore just fade normally.
@@ -272,7 +274,7 @@ void process_event(EventHappened *evp) {
 					int lyp = viewport.GetHeight() / 2 - boxhit / 2;
 					gfxDriver->Vsync();
 					temp_scr->Blit(saved_backbuf, lxp, lyp, lxp, lyp,
-					               boxwid, boxhit);
+						boxwid, boxhit);
 					render_to_screen();
 					update_polled_mp3();
 					WaitForNextFrame();
@@ -312,7 +314,7 @@ void process_event(EventHappened *evp) {
 			set_palette_range(palette, 0, 255, 0);
 			gfxDriver->DestroyDDB(ddb);
 		} else if (theTransition == FADE_DISSOLVE) {
-			int pattern[16] = {0, 4, 14, 9, 5, 11, 2, 8, 10, 3, 12, 7, 15, 6, 13, 1};
+			int pattern[16] = { 0, 4, 14, 9, 5, 11, 2, 8, 10, 3, 12, 7, 15, 6, 13, 1 };
 			int aa, bb, cc;
 			color interpal[256];
 
@@ -401,3 +403,5 @@ void ClaimEvent() {
 
 	eventClaimed = EVENT_CLAIMED;
 }
+
+} // namespace AGS3

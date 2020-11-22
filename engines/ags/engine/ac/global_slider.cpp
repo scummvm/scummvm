@@ -27,6 +27,8 @@
 #include "gui/guimain.h"
 #include "gui/guislider.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern GameSetupStruct game;
@@ -48,3 +50,5 @@ int GetSliderValue(int guin, int objn) {
 	GUISlider *guisl = (GUISlider *)guis[guin].GetControl(objn);
 	return Slider_GetValue(guisl);
 }
+
+} // namespace AGS3

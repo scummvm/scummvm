@@ -29,6 +29,7 @@
 #include "util/filestream.h"
 #include "util/bufferedstream.h"
 
+namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
@@ -153,3 +154,4 @@ Stream *File::OpenFile(const String &filename, FileOpenMode open_mode, FileWorkM
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

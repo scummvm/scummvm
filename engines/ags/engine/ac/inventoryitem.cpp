@@ -33,6 +33,7 @@
 #include "script/runtimescriptvalue.h"
 #include "ac/dynobj/cc_inventory.h"
 
+namespace AGS3 {
 
 extern GameSetupStruct game;
 extern ScriptInvItem scrInv[MAX_INV];
@@ -213,23 +214,23 @@ RuntimeScriptValue Sc_InventoryItem_GetName_New(void *self, const RuntimeScriptV
 
 
 void RegisterInventoryItemAPI() {
-	ccAddExternalStaticFunction("InventoryItem::GetAtScreenXY^2",           Sc_GetInvAtLocation);
-	ccAddExternalObjectFunction("InventoryItem::IsInteractionAvailable^1",  Sc_InventoryItem_CheckInteractionAvailable);
-	ccAddExternalObjectFunction("InventoryItem::GetName^1",                 Sc_InventoryItem_GetName);
-	ccAddExternalObjectFunction("InventoryItem::GetProperty^1",             Sc_InventoryItem_GetProperty);
-	ccAddExternalObjectFunction("InventoryItem::GetPropertyText^2",         Sc_InventoryItem_GetPropertyText);
-	ccAddExternalObjectFunction("InventoryItem::GetTextProperty^1",         Sc_InventoryItem_GetTextProperty);
-	ccAddExternalObjectFunction("InventoryItem::SetProperty^2",             Sc_InventoryItem_SetProperty);
-	ccAddExternalObjectFunction("InventoryItem::SetTextProperty^2",         Sc_InventoryItem_SetTextProperty);
-	ccAddExternalObjectFunction("InventoryItem::RunInteraction^1",          Sc_InventoryItem_RunInteraction);
-	ccAddExternalObjectFunction("InventoryItem::SetName^1",                 Sc_InventoryItem_SetName);
-	ccAddExternalObjectFunction("InventoryItem::get_CursorGraphic",         Sc_InventoryItem_GetCursorGraphic);
-	ccAddExternalObjectFunction("InventoryItem::set_CursorGraphic",         Sc_InventoryItem_SetCursorGraphic);
-	ccAddExternalObjectFunction("InventoryItem::get_Graphic",               Sc_InventoryItem_GetGraphic);
-	ccAddExternalObjectFunction("InventoryItem::set_Graphic",               Sc_InventoryItem_SetGraphic);
-	ccAddExternalObjectFunction("InventoryItem::get_ID",                    Sc_InventoryItem_GetID);
-	ccAddExternalObjectFunction("InventoryItem::get_Name",                  Sc_InventoryItem_GetName_New);
-	ccAddExternalObjectFunction("InventoryItem::set_Name",                  Sc_InventoryItem_SetName);
+	ccAddExternalStaticFunction("InventoryItem::GetAtScreenXY^2", Sc_GetInvAtLocation);
+	ccAddExternalObjectFunction("InventoryItem::IsInteractionAvailable^1", Sc_InventoryItem_CheckInteractionAvailable);
+	ccAddExternalObjectFunction("InventoryItem::GetName^1", Sc_InventoryItem_GetName);
+	ccAddExternalObjectFunction("InventoryItem::GetProperty^1", Sc_InventoryItem_GetProperty);
+	ccAddExternalObjectFunction("InventoryItem::GetPropertyText^2", Sc_InventoryItem_GetPropertyText);
+	ccAddExternalObjectFunction("InventoryItem::GetTextProperty^1", Sc_InventoryItem_GetTextProperty);
+	ccAddExternalObjectFunction("InventoryItem::SetProperty^2", Sc_InventoryItem_SetProperty);
+	ccAddExternalObjectFunction("InventoryItem::SetTextProperty^2", Sc_InventoryItem_SetTextProperty);
+	ccAddExternalObjectFunction("InventoryItem::RunInteraction^1", Sc_InventoryItem_RunInteraction);
+	ccAddExternalObjectFunction("InventoryItem::SetName^1", Sc_InventoryItem_SetName);
+	ccAddExternalObjectFunction("InventoryItem::get_CursorGraphic", Sc_InventoryItem_GetCursorGraphic);
+	ccAddExternalObjectFunction("InventoryItem::set_CursorGraphic", Sc_InventoryItem_SetCursorGraphic);
+	ccAddExternalObjectFunction("InventoryItem::get_Graphic", Sc_InventoryItem_GetGraphic);
+	ccAddExternalObjectFunction("InventoryItem::set_Graphic", Sc_InventoryItem_SetGraphic);
+	ccAddExternalObjectFunction("InventoryItem::get_ID", Sc_InventoryItem_GetID);
+	ccAddExternalObjectFunction("InventoryItem::get_Name", Sc_InventoryItem_GetName_New);
+	ccAddExternalObjectFunction("InventoryItem::set_Name", Sc_InventoryItem_SetName);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -249,3 +250,5 @@ void RegisterInventoryItemAPI() {
 	ccAddExternalFunctionForPlugin("InventoryItem::get_Name", (void *)InventoryItem_GetName_New);
 	ccAddExternalFunctionForPlugin("InventoryItem::set_Name", (void *)InventoryItem_SetName);
 }
+
+} // namespace AGS3

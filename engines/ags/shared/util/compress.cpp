@@ -37,6 +37,8 @@
 #include "util/bbop.h"
 #endif
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 void cpackbitl(const uint8_t *line, int size, Stream *out) {
@@ -322,7 +324,7 @@ void save_lzw(Stream *out, const Bitmap *bmpp, const color *pall) {
 
 void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, color *pall) {
 	soff_t        uncompsiz;
-	int           *loptr;
+	int *loptr;
 	unsigned char *membuffer;
 	int           arin;
 
@@ -345,11 +347,13 @@ void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, color *pall) {
 	loptr[1] = BBOp::SwapBytesInt32(loptr[1]);
 	int bitmapNumPixels = loptr[0] * loptr[1] / dst_bpp;
 	switch (dst_bpp) { // bytes per pixel!
-	case 1: {
+	case 1:
+	{
 		// all done
 		break;
 	}
-	case 2: {
+	case 2:
+	{
 		short *sp = (short *)membuffer;
 		for (int i = 0; i < bitmapNumPixels; ++i) {
 			sp[i] = BBOp::SwapBytesInt16(sp[i]);
@@ -357,7 +361,8 @@ void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, color *pall) {
 		// all done
 		break;
 	}
-	case 4: {
+	case 4:
+	{
 		int *ip = (int *)membuffer;
 		for (int i = 0; i < bitmapNumPixels; ++i) {
 			ip[i] = BBOp::SwapBytesInt32(ip[i]);
@@ -397,7 +402,7 @@ void load_lzw(Stream *in, Bitmap **dst_bmp, int dst_bpp, color *pall) {
 
 void savecompressed_allegro(Stream *out, const Bitmap *bmpp, const color *pall) {
 	unsigned char *wgtbl = (unsigned char *)malloc(bmpp->GetWidth() * bmpp->GetHeight() + 4);
-	short         *sss = (short *)wgtbl;
+	short *sss = (short *)wgtbl;
 
 	sss[0] = bmpp->GetWidth();
 	sss[1] = bmpp->GetHeight();
@@ -427,3 +432,5 @@ void loadcompressed_allegro(Stream *in, Bitmap **bimpp, color *pall) {
 	in->Seek(768);  // skip palette
 	*bimpp = bim;
 }
+
+} // namespace AGS3

@@ -41,6 +41,8 @@
 #include "gfx/graphicsdriver.h"
 #include "script/runtimescriptvalue.h"
 
+namespace AGS3 {
+
 using namespace Shared;
 using namespace Engine;
 
@@ -114,8 +116,8 @@ void DynamicSprite_Resize(ScriptDynamicSprite *sds, int width, int height) {
 	// resize the sprite to the requested size
 	Bitmap *newPic = BitmapHelper::CreateBitmap(width, height, spriteset[sds->slot]->GetColorDepth());
 	newPic->StretchBlt(spriteset[sds->slot],
-	                   RectWH(0, 0, game.SpriteInfos[sds->slot].Width, game.SpriteInfos[sds->slot].Height),
-	                   RectWH(0, 0, width, height));
+		RectWH(0, 0, game.SpriteInfos[sds->slot].Width, game.SpriteInfos[sds->slot].Height),
+		RectWH(0, 0, width, height));
 
 	delete spriteset[sds->slot];
 
@@ -150,7 +152,7 @@ void DynamicSprite_CopyTransparencyMask(ScriptDynamicSprite *sds, int sourceSpri
 		quit("!DynamicSprite.CopyTransparencyMask: sprite has been deleted");
 
 	if ((game.SpriteInfos[sds->slot].Width != game.SpriteInfos[sourceSprite].Width) ||
-	        (game.SpriteInfos[sds->slot].Height != game.SpriteInfos[sourceSprite].Height)) {
+		(game.SpriteInfos[sds->slot].Height != game.SpriteInfos[sourceSprite].Height)) {
 		quit("!DynamicSprite.CopyTransparencyMask: sprites are not the same size");
 	}
 
@@ -246,7 +248,7 @@ void DynamicSprite_Rotate(ScriptDynamicSprite *sds, int angle, int width, int he
 	// rotate the sprite about its centre
 	// (+ width%2 fixes one pixel offset problem)
 	newPic->RotateBlt(spriteset[sds->slot], width / 2 + width % 2, height / 2,
-	                  game.SpriteInfos[sds->slot].Width / 2, game.SpriteInfos[sds->slot].Height / 2, itofix(angle));
+		game.SpriteInfos[sds->slot].Width / 2, game.SpriteInfos[sds->slot].Height / 2, itofix(angle));
 
 	delete spriteset[sds->slot];
 
@@ -413,7 +415,7 @@ ScriptDynamicSprite *DynamicSprite_CreateFromBackground(int frame, int x1, int y
 		width = play.room_width;
 		height = play.room_height;
 	} else if ((x1 < 0) || (y1 < 0) || (width < 1) || (height < 1) ||
-	           (x1 + width > play.room_width) || (y1 + height > play.room_height))
+		(x1 + width > play.room_width) || (y1 + height > play.room_height))
 		quit("!DynamicSprite.CreateFromBackground: invalid co-ordinates specified");
 
 	data_to_game_coords(&x1, &y1);
@@ -618,28 +620,28 @@ RuntimeScriptValue Sc_DynamicSprite_CreateFromScreenShot(const RuntimeScriptValu
 
 
 void RegisterDynamicSpriteAPI() {
-	ccAddExternalObjectFunction("DynamicSprite::ChangeCanvasSize^4",        Sc_DynamicSprite_ChangeCanvasSize);
-	ccAddExternalObjectFunction("DynamicSprite::CopyTransparencyMask^1",    Sc_DynamicSprite_CopyTransparencyMask);
-	ccAddExternalObjectFunction("DynamicSprite::Crop^4",                    Sc_DynamicSprite_Crop);
-	ccAddExternalObjectFunction("DynamicSprite::Delete",                    Sc_DynamicSprite_Delete);
-	ccAddExternalObjectFunction("DynamicSprite::Flip^1",                    Sc_DynamicSprite_Flip);
-	ccAddExternalObjectFunction("DynamicSprite::GetDrawingSurface^0",       Sc_DynamicSprite_GetDrawingSurface);
-	ccAddExternalObjectFunction("DynamicSprite::Resize^2",                  Sc_DynamicSprite_Resize);
-	ccAddExternalObjectFunction("DynamicSprite::Rotate^3",                  Sc_DynamicSprite_Rotate);
-	ccAddExternalObjectFunction("DynamicSprite::SaveToFile^1",              Sc_DynamicSprite_SaveToFile);
-	ccAddExternalObjectFunction("DynamicSprite::Tint^5",                    Sc_DynamicSprite_Tint);
-	ccAddExternalObjectFunction("DynamicSprite::get_ColorDepth",            Sc_DynamicSprite_GetColorDepth);
-	ccAddExternalObjectFunction("DynamicSprite::get_Graphic",               Sc_DynamicSprite_GetGraphic);
-	ccAddExternalObjectFunction("DynamicSprite::get_Height",                Sc_DynamicSprite_GetHeight);
-	ccAddExternalObjectFunction("DynamicSprite::get_Width",                 Sc_DynamicSprite_GetWidth);
-	ccAddExternalStaticFunction("DynamicSprite::Create^3",                  Sc_DynamicSprite_Create);
-	ccAddExternalStaticFunction("DynamicSprite::CreateFromBackground",      Sc_DynamicSprite_CreateFromBackground);
+	ccAddExternalObjectFunction("DynamicSprite::ChangeCanvasSize^4", Sc_DynamicSprite_ChangeCanvasSize);
+	ccAddExternalObjectFunction("DynamicSprite::CopyTransparencyMask^1", Sc_DynamicSprite_CopyTransparencyMask);
+	ccAddExternalObjectFunction("DynamicSprite::Crop^4", Sc_DynamicSprite_Crop);
+	ccAddExternalObjectFunction("DynamicSprite::Delete", Sc_DynamicSprite_Delete);
+	ccAddExternalObjectFunction("DynamicSprite::Flip^1", Sc_DynamicSprite_Flip);
+	ccAddExternalObjectFunction("DynamicSprite::GetDrawingSurface^0", Sc_DynamicSprite_GetDrawingSurface);
+	ccAddExternalObjectFunction("DynamicSprite::Resize^2", Sc_DynamicSprite_Resize);
+	ccAddExternalObjectFunction("DynamicSprite::Rotate^3", Sc_DynamicSprite_Rotate);
+	ccAddExternalObjectFunction("DynamicSprite::SaveToFile^1", Sc_DynamicSprite_SaveToFile);
+	ccAddExternalObjectFunction("DynamicSprite::Tint^5", Sc_DynamicSprite_Tint);
+	ccAddExternalObjectFunction("DynamicSprite::get_ColorDepth", Sc_DynamicSprite_GetColorDepth);
+	ccAddExternalObjectFunction("DynamicSprite::get_Graphic", Sc_DynamicSprite_GetGraphic);
+	ccAddExternalObjectFunction("DynamicSprite::get_Height", Sc_DynamicSprite_GetHeight);
+	ccAddExternalObjectFunction("DynamicSprite::get_Width", Sc_DynamicSprite_GetWidth);
+	ccAddExternalStaticFunction("DynamicSprite::Create^3", Sc_DynamicSprite_Create);
+	ccAddExternalStaticFunction("DynamicSprite::CreateFromBackground", Sc_DynamicSprite_CreateFromBackground);
 	ccAddExternalStaticFunction("DynamicSprite::CreateFromDrawingSurface^5", Sc_DynamicSprite_CreateFromDrawingSurface);
 	ccAddExternalStaticFunction("DynamicSprite::CreateFromExistingSprite^1", Sc_DynamicSprite_CreateFromExistingSprite_Old);
 	ccAddExternalStaticFunction("DynamicSprite::CreateFromExistingSprite^2", Sc_DynamicSprite_CreateFromExistingSprite);
-	ccAddExternalStaticFunction("DynamicSprite::CreateFromFile",            Sc_DynamicSprite_CreateFromFile);
-	ccAddExternalStaticFunction("DynamicSprite::CreateFromSaveGame",        Sc_DynamicSprite_CreateFromSaveGame);
-	ccAddExternalStaticFunction("DynamicSprite::CreateFromScreenShot",      Sc_DynamicSprite_CreateFromScreenShot);
+	ccAddExternalStaticFunction("DynamicSprite::CreateFromFile", Sc_DynamicSprite_CreateFromFile);
+	ccAddExternalStaticFunction("DynamicSprite::CreateFromSaveGame", Sc_DynamicSprite_CreateFromSaveGame);
+	ccAddExternalStaticFunction("DynamicSprite::CreateFromScreenShot", Sc_DynamicSprite_CreateFromScreenShot);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -666,3 +668,5 @@ void RegisterDynamicSpriteAPI() {
 	ccAddExternalFunctionForPlugin("DynamicSprite::CreateFromSaveGame", (void *)DynamicSprite_CreateFromSaveGame);
 	ccAddExternalFunctionForPlugin("DynamicSprite::CreateFromScreenShot", (void *)DynamicSprite_CreateFromScreenShot);
 }
+
+} // namespace AGS3

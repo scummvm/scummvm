@@ -54,6 +54,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <string.h>
 #if !AGS_PLATFORM_OS_WINDOWS
 #include <dirent.h>
 #endif
@@ -62,14 +63,14 @@
 #include "util/file.h"
 #include "util/stream.h"
 
+namespace AGS3 {
 
 using namespace AGS::Shared;
 
 #if !defined (AGS_CASE_SENSITIVE_FILESYSTEM)
-#include <string.h>
 /* File Name Concatenator basically on Windows / DOS */
 char *ci_find_file(const char *dir_name, const char *file_name) {
-	char  *diamond = NULL;
+	char *diamond = NULL;
 
 	if (dir_name == NULL && file_name == NULL)
 		return NULL;
@@ -90,12 +91,12 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 /* Case Insensitive File Find */
 char *ci_find_file(const char *dir_name, const char *file_name) {
 	struct stat   statbuf;
-	struct dirent *entry     = nullptr;
-	DIR           *rough     = nullptr;
-	DIR           *prevdir   = nullptr;
-	char          *diamond   = nullptr;
-	char          *directory = nullptr;
-	char          *filename  = nullptr;
+	struct dirent *entry = nullptr;
+	DIR *rough = nullptr;
+	DIR *prevdir = nullptr;
+	char *diamond = nullptr;
+	char *directory = nullptr;
+	char *filename = nullptr;
 
 	if (dir_name == nullptr && file_name == nullptr)
 		return nullptr;
@@ -117,16 +118,16 @@ char *ci_find_file(const char *dir_name, const char *file_name) {
 	}
 
 	if (directory == nullptr) {
-		char  *match    = nullptr;
+		char *match = nullptr;
 		int   match_len = 0;
-		int   dir_len   = 0;
+		int   dir_len = 0;
 
 		match = get_filename(filename);
 		if (match == nullptr)
 			return nullptr;
 
 		match_len = strlen(match);
-		dir_len   = (match - filename);
+		dir_len = (match - filename);
 
 		if (dir_len == 0) {
 			directory = (char *)malloc(2);
@@ -192,7 +193,7 @@ Stream *ci_fopen(const char *file_name, FileOpenMode open_mode, FileWorkMode wor
 	char *fullpath = ci_find_file(nullptr, (char *)file_name);
 
 	/* If I didn't find a file, this could be writing a new file,
-	    so use whatever file_name they passed */
+		so use whatever file_name they passed */
 	if (fullpath == nullptr) {
 		fs = File::OpenFile(file_name, open_mode, work_mode);
 	} else {
@@ -203,3 +204,5 @@ Stream *ci_fopen(const char *file_name, FileOpenMode open_mode, FileWorkMode wor
 	return fs;
 #endif
 }
+
+} // namespace AGS3

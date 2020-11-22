@@ -26,6 +26,8 @@
 #include "util/stream.h"
 #include "util/string_utils.h"
 
+namespace AGS3 {
+
 std::vector<AGS::Shared::GUIButton> guibuts;
 int numguibuts = 0;
 
@@ -94,7 +96,7 @@ void GUIButton::Draw(Bitmap *ds) {
 	check_font(&Font);
 	// if it's "Unchanged when disabled" or "GUI Off", don't grey out
 	if (gui_disabled_style == GUIDIS_UNCHANGED ||
-	        gui_disabled_style == GUIDIS_GUIOFF) {
+		gui_disabled_style == GUIDIS_GUIOFF) {
 		draw_disabled = false;
 	}
 	// TODO: should only change properties in reaction to particular events
@@ -269,7 +271,7 @@ void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
 		GUIButtonPlaceholder place = _placeholder;
 		if (place == kButtonPlace_InvItemAuto) {
 			if ((get_adjusted_spritewidth(gui_inv_pic) > Width - 6) ||
-			        (get_adjusted_spriteheight(gui_inv_pic) > Height - 6)) {
+				(get_adjusted_spriteheight(gui_inv_pic) > Height - 6)) {
 				place = kButtonPlace_InvItemStretch;
 			} else {
 				place = kButtonPlace_InvItemCenter;
@@ -280,17 +282,17 @@ void GUIButton::DrawImageButton(Bitmap *ds, bool draw_disabled) {
 			ds->StretchBlt(spriteset[gui_inv_pic], RectWH(X + 3, Y + 3, Width - 6, Height - 6), Common::kBitmap_Transparency);
 		} else if (place == kButtonPlace_InvItemCenter) {
 			draw_gui_sprite(ds, gui_inv_pic,
-			                X + Width / 2 - get_adjusted_spritewidth(gui_inv_pic) / 2,
-			                Y + Height / 2 - get_adjusted_spriteheight(gui_inv_pic) / 2,
-			                true);
+				X + Width / 2 - get_adjusted_spritewidth(gui_inv_pic) / 2,
+				Y + Height / 2 - get_adjusted_spriteheight(gui_inv_pic) / 2,
+				true);
 		}
 	}
 
 	if ((draw_disabled) && (gui_disabled_style == GUIDIS_GREYOUT)) {
 		// darken the button when disabled
 		GUI::DrawDisabledEffect(ds, RectWH(X, Y,
-		                                   spriteset[CurrentImage]->GetWidth(),
-		                                   spriteset[CurrentImage]->GetHeight()));
+			spriteset[CurrentImage]->GetWidth(),
+			spriteset[CurrentImage]->GetHeight()));
 	}
 	ds->SetClip(Rect(0, 0, ds->GetWidth() - 1, ds->GetHeight() - 1));
 
@@ -348,3 +350,4 @@ void GUIButton::DrawTextButton(Bitmap *ds, bool draw_disabled) {
 
 } // namespace Shared
 } // namespace AGS
+} // namespace AGS3

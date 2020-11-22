@@ -23,6 +23,8 @@
 #include "ac/slider.h"
 #include "ac/common.h"
 
+namespace AGS3 {
+
 // *** SLIDER FUNCTIONS
 
 void Slider_SetMax(GUISlider *guisl, int valn) {
@@ -182,18 +184,18 @@ RuntimeScriptValue Sc_Slider_SetValue(void *self, const RuntimeScriptValue *para
 
 
 void RegisterSliderAPI() {
-	ccAddExternalObjectFunction("Slider::get_BackgroundGraphic",    Sc_Slider_GetBackgroundGraphic);
-	ccAddExternalObjectFunction("Slider::set_BackgroundGraphic",    Sc_Slider_SetBackgroundGraphic);
-	ccAddExternalObjectFunction("Slider::get_HandleGraphic",        Sc_Slider_GetHandleGraphic);
-	ccAddExternalObjectFunction("Slider::set_HandleGraphic",        Sc_Slider_SetHandleGraphic);
-	ccAddExternalObjectFunction("Slider::get_HandleOffset",         Sc_Slider_GetHandleOffset);
-	ccAddExternalObjectFunction("Slider::set_HandleOffset",         Sc_Slider_SetHandleOffset);
-	ccAddExternalObjectFunction("Slider::get_Max",                  Sc_Slider_GetMax);
-	ccAddExternalObjectFunction("Slider::set_Max",                  Sc_Slider_SetMax);
-	ccAddExternalObjectFunction("Slider::get_Min",                  Sc_Slider_GetMin);
-	ccAddExternalObjectFunction("Slider::set_Min",                  Sc_Slider_SetMin);
-	ccAddExternalObjectFunction("Slider::get_Value",                Sc_Slider_GetValue);
-	ccAddExternalObjectFunction("Slider::set_Value",                Sc_Slider_SetValue);
+	ccAddExternalObjectFunction("Slider::get_BackgroundGraphic", Sc_Slider_GetBackgroundGraphic);
+	ccAddExternalObjectFunction("Slider::set_BackgroundGraphic", Sc_Slider_SetBackgroundGraphic);
+	ccAddExternalObjectFunction("Slider::get_HandleGraphic", Sc_Slider_GetHandleGraphic);
+	ccAddExternalObjectFunction("Slider::set_HandleGraphic", Sc_Slider_SetHandleGraphic);
+	ccAddExternalObjectFunction("Slider::get_HandleOffset", Sc_Slider_GetHandleOffset);
+	ccAddExternalObjectFunction("Slider::set_HandleOffset", Sc_Slider_SetHandleOffset);
+	ccAddExternalObjectFunction("Slider::get_Max", Sc_Slider_GetMax);
+	ccAddExternalObjectFunction("Slider::set_Max", Sc_Slider_SetMax);
+	ccAddExternalObjectFunction("Slider::get_Min", Sc_Slider_GetMin);
+	ccAddExternalObjectFunction("Slider::set_Min", Sc_Slider_SetMin);
+	ccAddExternalObjectFunction("Slider::get_Value", Sc_Slider_GetValue);
+	ccAddExternalObjectFunction("Slider::set_Value", Sc_Slider_SetValue);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -210,3 +212,5 @@ void RegisterSliderAPI() {
 	ccAddExternalFunctionForPlugin("Slider::get_Value", (void *)Slider_GetValue);
 	ccAddExternalFunctionForPlugin("Slider::set_Value", (void *)Slider_SetValue);
 }
+
+} // namespace AGS3

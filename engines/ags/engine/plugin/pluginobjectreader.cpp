@@ -23,5 +23,9 @@
 #include "plugin/pluginobjectreader.h"
 #include "ac/runtime_defines.h"
 
+namespace AGS3 {
+
 PluginObjectReader pluginReaders[MAX_PLUGIN_OBJECT_READERS];
 int numPluginReaders = 0;
+
+} // namespace AGS3

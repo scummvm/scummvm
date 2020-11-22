@@ -33,6 +33,8 @@
 #include "gfx/bitmap.h"
 #include "script/runtimescriptvalue.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared;
 
 extern RoomStruct thisroom;
@@ -217,23 +219,23 @@ RuntimeScriptValue Sc_Hotspot_GetWalkToY(void *self, const RuntimeScriptValue *p
 
 
 void RegisterHotspotAPI() {
-	ccAddExternalStaticFunction("Hotspot::GetAtRoomXY^2",       Sc_GetHotspotAtRoom);
-	ccAddExternalStaticFunction("Hotspot::GetAtScreenXY^2",     Sc_GetHotspotAtScreen);
-	ccAddExternalStaticFunction("Hotspot::GetDrawingSurface",   Sc_Hotspot_GetDrawingSurface);
-	ccAddExternalObjectFunction("Hotspot::GetName^1",           Sc_Hotspot_GetName);
-	ccAddExternalObjectFunction("Hotspot::GetProperty^1",       Sc_Hotspot_GetProperty);
-	ccAddExternalObjectFunction("Hotspot::GetPropertyText^2",   Sc_Hotspot_GetPropertyText);
-	ccAddExternalObjectFunction("Hotspot::GetTextProperty^1",   Sc_Hotspot_GetTextProperty);
-	ccAddExternalObjectFunction("Hotspot::SetProperty^2",       Sc_Hotspot_SetProperty);
-	ccAddExternalObjectFunction("Hotspot::SetTextProperty^2",   Sc_Hotspot_SetTextProperty);
+	ccAddExternalStaticFunction("Hotspot::GetAtRoomXY^2", Sc_GetHotspotAtRoom);
+	ccAddExternalStaticFunction("Hotspot::GetAtScreenXY^2", Sc_GetHotspotAtScreen);
+	ccAddExternalStaticFunction("Hotspot::GetDrawingSurface", Sc_Hotspot_GetDrawingSurface);
+	ccAddExternalObjectFunction("Hotspot::GetName^1", Sc_Hotspot_GetName);
+	ccAddExternalObjectFunction("Hotspot::GetProperty^1", Sc_Hotspot_GetProperty);
+	ccAddExternalObjectFunction("Hotspot::GetPropertyText^2", Sc_Hotspot_GetPropertyText);
+	ccAddExternalObjectFunction("Hotspot::GetTextProperty^1", Sc_Hotspot_GetTextProperty);
+	ccAddExternalObjectFunction("Hotspot::SetProperty^2", Sc_Hotspot_SetProperty);
+	ccAddExternalObjectFunction("Hotspot::SetTextProperty^2", Sc_Hotspot_SetTextProperty);
 	ccAddExternalObjectFunction("Hotspot::IsInteractionAvailable^1", Sc_Hotspot_IsInteractionAvailable);
-	ccAddExternalObjectFunction("Hotspot::RunInteraction^1",    Sc_Hotspot_RunInteraction);
-	ccAddExternalObjectFunction("Hotspot::get_Enabled",         Sc_Hotspot_GetEnabled);
-	ccAddExternalObjectFunction("Hotspot::set_Enabled",         Sc_Hotspot_SetEnabled);
-	ccAddExternalObjectFunction("Hotspot::get_ID",              Sc_Hotspot_GetID);
-	ccAddExternalObjectFunction("Hotspot::get_Name",            Sc_Hotspot_GetName_New);
-	ccAddExternalObjectFunction("Hotspot::get_WalkToX",         Sc_Hotspot_GetWalkToX);
-	ccAddExternalObjectFunction("Hotspot::get_WalkToY",         Sc_Hotspot_GetWalkToY);
+	ccAddExternalObjectFunction("Hotspot::RunInteraction^1", Sc_Hotspot_RunInteraction);
+	ccAddExternalObjectFunction("Hotspot::get_Enabled", Sc_Hotspot_GetEnabled);
+	ccAddExternalObjectFunction("Hotspot::set_Enabled", Sc_Hotspot_SetEnabled);
+	ccAddExternalObjectFunction("Hotspot::get_ID", Sc_Hotspot_GetID);
+	ccAddExternalObjectFunction("Hotspot::get_Name", Sc_Hotspot_GetName_New);
+	ccAddExternalObjectFunction("Hotspot::get_WalkToX", Sc_Hotspot_GetWalkToX);
+	ccAddExternalObjectFunction("Hotspot::get_WalkToY", Sc_Hotspot_GetWalkToY);
 
 	/* ----------------------- Registering unsafe exports for plugins -----------------------*/
 
@@ -251,3 +253,5 @@ void RegisterHotspotAPI() {
 	ccAddExternalFunctionForPlugin("Hotspot::get_WalkToX", (void *)Hotspot_GetWalkToX);
 	ccAddExternalFunctionForPlugin("Hotspot::get_WalkToY", (void *)Hotspot_GetWalkToY);
 }
+
+} // namespace AGS3

@@ -29,6 +29,8 @@
 #include <crtdbg.h>
 #include "main/main.h"
 
+namespace AGS3 {
+
 CONTEXT cpustate;
 EXCEPTION_RECORD excinfo;
 int miniDumpResultCode = 0;
@@ -111,5 +113,7 @@ int CustomExceptionHandler(LPEXCEPTION_POINTERS exinfo) {
 
 	return EXCEPTION_EXECUTE_HANDLER;
 }
+
+} // namespace AGS3
 
 #endif  // AGS_PLATFORM_OS_WINDOWS && !AGS_PLATFORM_DEBUG

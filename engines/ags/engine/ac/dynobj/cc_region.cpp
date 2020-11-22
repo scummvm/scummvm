@@ -25,6 +25,8 @@
 #include "ac/common_defines.h"
 #include "game/roomstruct.h"
 
+namespace AGS3 {
+
 extern ScriptRegion scrRegion[MAX_ROOM_REGIONS];
 
 // return the type name of the object
@@ -46,3 +48,5 @@ void CCRegion::Unserialize(int index, const char *serializedData, int dataSize) 
 	int num = UnserializeInt();
 	ccRegisterUnserializedObject(index, &scrRegion[num], this);
 }
+
+} // namespace AGS3

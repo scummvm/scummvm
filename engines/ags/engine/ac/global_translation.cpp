@@ -33,6 +33,8 @@
 #include "util/memory.h"
 #include "core/types.h"
 
+namespace AGS3 {
+
 using namespace AGS::Shared::Memory;
 
 extern GameState play;
@@ -89,3 +91,5 @@ int GetTranslationName(char *buffer) {
 
 	return IsTranslationAvailable();
 }
+
+} // namespace AGS3
