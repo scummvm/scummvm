@@ -5469,6 +5469,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16	},
 
+	// Space Quest 5 - Russian DOS
+	// VERSION file reports "1.04"
+	{"sq5", "", {
+		{"resource.map", 0, "31ce07f482d5af535fb0a2d365b2be76", 6676},
+		{"resource.000", 0, "654a7d7647d09e13502f0ec69e3ab05c", 5644028},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16	},
+
 #ifdef ENABLE_SCI32
 
 #define GUIO_SQ6_DEMO GUIO3(GUIO_NOLAUNCHLOAD, \
