@@ -215,29 +215,28 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 }
 
 void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color) { // drawDoubleLetter
-	int32 left, top, right, bottom;
-
-	if (character != ' ') {
-		// shadow color
-		setFontColor(0);
-		drawCharacter(x + 2, y + 4, character);
-
-		// text color
-		setFontColor(color);
-		drawCharacter(x, y, character);
-
-		left = x;
-		top = y;
-		// FIXME: get right font size
-		right = x + 32;
-		bottom = y + 38;
-
-		_engine->copyBlockPhys(left, top, right, bottom);
+	if (character == ' ') {
+		return;
 	}
+	// shadow color
+	setFontColor(0);
+	drawCharacter(x + 2, y + 4, character);
+
+	// text color
+	setFontColor(color);
+	drawCharacter(x, y, character);
+
+	int32 left = x;
+	int32 top = y;
+	// FIXME: get right font size
+	int32 right = x + 32;
+	int32 bottom = y + 38;
+
+	_engine->copyBlockPhys(left, top, right, bottom);
 }
 
-void Text::drawText(int32 x, int32 y, const char *dialogue) { // Font
-	                                                          // if the font is not defined
+void Text::drawText(int32 x, int32 y, const char *dialogue) {
+	// if the font is not defined
 	if (_engine->_resources->fontPtr == nullptr) {
 		return;
 	}
@@ -266,9 +265,10 @@ int32 Text::getTextSize(const char *dialogue) { // SizeFont
 	_dialTextSize = 0;
 
 	do {
-		uint8 currChar = (uint8) * (dialogue++);
-		if (currChar == 0)
+		const uint8 currChar = (uint8) * (dialogue++);
+		if (currChar == 0) {
 			break;
+		}
 
 		if (currChar == ' ') {
 			_dialTextSize += _dialCharSpace;
@@ -326,14 +326,13 @@ void Text::initText(int32 index) {
 }
 
 void Text::initProgressiveTextBuffer() {
-	int32 i = 0;
-
 	buf2[0] = '\0';
 
+	int32 i = 0;
 	while (i < _dialTextBufferSize) {
 		strncat(buf2, " ", sizeof(buf2));
 		i++;
-	};
+	}
 
 	_progressiveTextBuffer = buf2;
 	_addLineBreakX = 16;
