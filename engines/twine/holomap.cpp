@@ -138,6 +138,7 @@ void Holomap::drawHolomapTitle(int32 width, int32 height) {
 }
 
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
+	debug("Draw trajectory index %i", trajectoryIndex);
 	// TODO
 }
 
