@@ -207,7 +207,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 	case Common::EVENT_DEBUGGER: {
 		GUI::Debugger *debugger = g_engine ? g_engine->getOrCreateDebugger() : nullptr;
-		if (debugger) {
+		if (debugger && !debugger->isActive()) {
 			debugger->attach();
 			debugger->onFrame();
 			forwardEvent = false;
