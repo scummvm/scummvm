@@ -419,8 +419,8 @@ void Text::processTextLine() {
 
 		buffer += wordSize.inChar;
 		printText8Var8 = buffer;
-		strncat(_progressiveTextBuffer, wordBuf, sizeof(_progressiveTextBuffer));
-		strncat(_progressiveTextBuffer, " ", sizeof(_progressiveTextBuffer)); // not 100% accurate
+		strncat(_progressiveTextBuffer, wordBuf, sizeof(_progressiveTextBuffer) - strlen(_progressiveTextBuffer) - 1);
+		strncat(_progressiveTextBuffer, " ", sizeof(_progressiveTextBuffer) - strlen(_progressiveTextBuffer) - 1); // not 100% accurate
 		printText8PrepareBufferVar2++;
 
 		lineBreakX += wordSize.inPixel + _dialCharSpace;
@@ -657,7 +657,7 @@ void Text::setFontCrossColor(int32 color) {
 	_dialTextStepSize = -1;
 	_dialTextBufferSize = 14;
 	_dialTextStartColor = color << 4;
-	_dialTextStopColor = (color << 4) + 12;
+	_dialTextStopColor = _dialTextStartColor + 12;
 }
 
 void Text::setFontColor(int32 color) {
@@ -734,21 +734,24 @@ bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 	return true;
 }
 
-void Text::textClipFull() { // newGame2
-	_dialTextBoxLeft = 8;
-	_dialTextBoxTop = 8;
-	_dialTextBoxRight = 631;
+void Text::textClipFull() {
+	const int padding = 9;
+	_dialTextBoxLeft = padding - 1;
+	_dialTextBoxTop = padding - 1;
+	_dialTextBoxRight = SCREEN_WIDTH - padding;
+	_dialTextBoxBottom = SCREEN_HEIGHT - padding;
 
-	_dialTextBoxBottom = 471;
 	_dialTextBoxLines = 11;
 	_dialTextBoxParam2 = 607;
 }
 
-void Text::textClipSmall() { // newGame4
-	_dialTextBoxLeft = 16;
+void Text::textClipSmall() {
+	const int padding = 17;
+	_dialTextBoxLeft = padding - 1;
 	_dialTextBoxTop = 334;
-	_dialTextBoxRight = 623;
-	_dialTextBoxBottom = 463;
+	_dialTextBoxRight = SCREEN_WIDTH - padding;
+	_dialTextBoxBottom = SCREEN_HEIGHT - padding;
+
 	_dialTextBoxLines = 3;
 	_dialTextBoxParam2 = 591;
 }
