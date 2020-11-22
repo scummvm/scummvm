@@ -9,6 +9,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for The Longest Journey.
    - Added support for Myst 3: Exile.
    - Added support for Hades' Challenge.
+   - Added support for Little Big Adventure.
 
  General:
    - Switched ScummVM GUI output to UTF-32.
