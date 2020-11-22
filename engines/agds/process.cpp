@@ -70,6 +70,16 @@ void Process::error(const char *str, ...) {
 	_status = kStatusError;
 }
 
+uint8 Process::next() {
+	const Object::CodeType & code = _object->getCode();
+	if (_ip < code.size()) {
+		return code[_ip++];
+	} else {
+		_status = kStatusError;
+		return 0;
+	}
+}
+
 void Process::jump(int16 delta) {
 	debug("jump %+d", delta);
 	_ip += delta;
