@@ -592,11 +592,12 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame, uint32 &shape
 
 	shape = weaponinfo->_overlayShape;
 
-	WpnOvlayDat *wpnovlay = GameData::get_instance()->getWeaponOverlay();
+	const WpnOvlayDat *wpnovlay = GameData::get_instance()->getWeaponOverlay();
 	frame = wpnovlay->getOverlayFrame(action, weaponinfo->_overlayType,
 	                                  _direction, _animFrame);
 
-	if (frame == 0) shape = 0;
+	if (frame == nullptr)
+		shape = 0;
 }
 
 int16 MainActor::getMaxEnergy() {
