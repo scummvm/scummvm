@@ -411,7 +411,7 @@ HRoomFileError ReadCompSc3Block(RoomStruct *room, Stream *in, RoomFileVersion da
 // Room object names
 HRoomFileError ReadObjNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	int name_count = in->ReadByte();
-	if (name_count != room->ObjectCount)
+	if (name_count != (int)room->ObjectCount)
 		return new RoomFileError(kRoomFileErr_InconsistentData,
 			String::FromFormat("In the object names block, expected name count: %d, got %d", room->ObjectCount, name_count));
 
@@ -525,7 +525,7 @@ HRoomFileError ReadRoomBlock(RoomStruct *room, Stream *in, RoomFileBlock block, 
 	} else if (cur_pos < block_end) {
 		Debug::Printf(kDbgMsg_Warn, "WARNING: room data blocks nonsequential, block type %d expected to end at %u, finished reading at %u",
 			block, block_end, cur_pos);
-		in->Seek(block_end, Common::kSeekBegin);
+		in->Seek(block_end, Shared::kSeekBegin);
 	}
 	return HRoomFileError::None();
 }
@@ -718,10 +718,10 @@ void WriteBlock(const RoomStruct *room, RoomFileBlock block, PfnWriteBlock write
 	soff_t end_at = out->GetPosition();
 	soff_t block_size = (end_at - sz_at) - sizeof(int64_t);
 	// ...return back and write block's size in the placeholder
-	out->Seek(sz_at, Common::kSeekBegin);
+	out->Seek(sz_at, Shared::kSeekBegin);
 	out->WriteInt64(block_size);
 	// ...and get back to the end of the file
-	out->Seek(0, Common::kSeekEnd);
+	out->Seek(0, Shared::kSeekEnd);
 }
 
 void WriteInteractionScripts(const InteractionScripts *interactions, Stream *out) {
@@ -742,9 +742,9 @@ void WriteMainBlock(const RoomStruct *room, Stream *out) {
 		out->WriteInt16(room->Hotspots[i].WalkTo.Y);
 	}
 	for (size_t i = 0; i < room->HotspotCount; ++i)
-		Common::StrUtil::WriteString(room->Hotspots[i].Name, out);
+		Shared::StrUtil::WriteString(room->Hotspots[i].Name, out);
 	for (size_t i = 0; i < room->HotspotCount; ++i)
-		Common::StrUtil::WriteString(room->Hotspots[i].ScriptName, out);
+		Shared::StrUtil::WriteString(room->Hotspots[i].ScriptName, out);
 
 	out->WriteInt32(0); // legacy poly-point areas
 
@@ -828,13 +828,13 @@ void WriteCompSc3Block(const RoomStruct *room, Stream *out) {
 void WriteObjNamesBlock(const RoomStruct *room, Stream *out) {
 	out->WriteByte((int8_t)room->ObjectCount);
 	for (size_t i = 0; i < room->ObjectCount; ++i)
-		Common::StrUtil::WriteString(room->Objects[i].Name, out);
+		Shared::StrUtil::WriteString(room->Objects[i].Name, out);
 }
 
 void WriteObjScNamesBlock(const RoomStruct *room, Stream *out) {
 	out->WriteByte((int8_t)room->ObjectCount);
 	for (size_t i = 0; i < room->ObjectCount; ++i)
-		Common::StrUtil::WriteString(room->Objects[i].ScriptName, out);
+		Shared::StrUtil::WriteString(room->Objects[i].ScriptName, out);
 }
 
 void WriteAnimBgBlock(const RoomStruct *room, Stream *out) {

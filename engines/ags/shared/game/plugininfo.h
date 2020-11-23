@@ -29,7 +29,7 @@
 #ifndef AGS_SHARED_GAME_PLUGININFO_H
 #define AGS_SHARED_GAME_PLUGININFO_H
 
-//include <memory>
+#include "ags/std/memory.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {

@@ -42,10 +42,10 @@ struct AudioClipType {
 	int crossfadeSpeed;
 	int reservedForFuture;
 
-	void ReadFromFile(Common::Stream *in);
-	void WriteToFile(Common::Stream *out);
-	void ReadFromSavegame(Common::Stream *in);
-	void WriteToSavegame(Common::Stream *out) const;
+	void ReadFromFile(Shared::Stream *in);
+	void WriteToFile(Shared::Stream *out);
+	void ReadFromSavegame(Shared::Stream *in);
+	void WriteToSavegame(Shared::Stream *out) const;
 };
 
 } // namespace AGS3

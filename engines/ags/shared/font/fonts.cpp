@@ -21,7 +21,7 @@
  */
 
 //include <cstdio>
-//include <vector>
+#include "ags/std/vector.h"
 //include <alfont.h>
 #include "ags/shared/ac/common.h" // set_our_eip
 #include "ags/shared/ac/gamestructdefines.h"

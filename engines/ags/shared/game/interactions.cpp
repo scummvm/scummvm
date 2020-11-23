@@ -80,7 +80,7 @@ void InteractionCommand::Reset() {
 }
 
 void InteractionCommand::ReadValues_Aligned(Stream *in) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < MAX_ACTION_ARGS; ++i) {
 		Data[i].Read(&align_s);
 		align_s.Reset();
@@ -96,7 +96,7 @@ void InteractionCommand::Read_v321(Stream *in, bool &has_children) {
 }
 
 void InteractionCommand::WriteValues_Aligned(Stream *out) const {
-	AlignedStream align_s(out, Common::kAligned_Write);
+	AlignedStream align_s(out, Shared::kAligned_Write);
 	for (int i = 0; i < MAX_ACTION_ARGS; ++i) {
 		Data[i].Write(&align_s);
 		align_s.Reset();
@@ -139,7 +139,7 @@ void InteractionCommandList::Reset() {
 }
 
 void InteractionCommandList::Read_Aligned(Stream *in, std::vector<bool> &cmd_children) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (size_t i = 0; i < Cmds.size(); ++i) {
 		bool has_children;
 		Cmds[i].Read_v321(&align_s, has_children);
@@ -167,7 +167,7 @@ void InteractionCommandList::Read_v321(Stream *in) {
 }
 
 void InteractionCommandList::Write_Aligned(Stream *out) const {
-	AlignedStream align_s(out, Common::kAligned_Write);
+	AlignedStream align_s(out, Shared::kAligned_Write);
 	for (InterCmdVector::const_iterator it = Cmds.begin(); it != Cmds.end(); ++it) {
 		it->Write_v321(&align_s);
 		align_s.Reset();
@@ -351,7 +351,7 @@ void InteractionVariable::Read(Stream *in) {
 	Value = in->ReadInt32();
 }
 
-void InteractionVariable::Write(Common::Stream *out) const {
+void InteractionVariable::Write(Shared::Stream *out) const {
 	out->Write(Name, INTER_VAR_NAME_LENGTH);
 	out->WriteInt8(Type);
 	out->WriteInt32(Value);

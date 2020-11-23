@@ -26,10 +26,10 @@
 namespace AGS3 {
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 class Stream;
 } // namespace Shared
-namespace SharedGS
+} // namespace AGS
 
 using namespace AGS; // FIXME later
 
@@ -46,10 +46,10 @@ struct MouseCursor {
 	char  flags;
 	MouseCursor();
 
-	void ReadFromFile(Common::Stream *in);
-	void WriteToFile(Common::Stream *out);
-	void ReadFromSavegame(Common::Stream *in);
-	void WriteToSavegame(Common::Stream *out) const;
+	void ReadFromFile(Shared::Stream *in);
+	void WriteToFile(Shared::Stream *out);
+	void ReadFromSavegame(Shared::Stream *in);
+	void WriteToSavegame(Shared::Stream *out) const;
 };
 
 } // namespace AGS3

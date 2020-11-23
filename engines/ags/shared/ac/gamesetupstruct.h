@@ -23,7 +23,8 @@
 #ifndef AGS_SHARED_AC_GAMESETUPSTRUCT_H
 #define AGS_SHARED_AC_GAMESETUPSTRUCT_H
 
-//include <vector>
+#include "ags/std/vector.h"
+#include "ags/std/memory.h"
 #include "ags/shared/ac/audiocliptype.h"
 #include "ags/shared/ac/characterinfo.h" // TODO: constants to separate header
 #include "ags/shared/ac/gamesetupstructbase.h"
@@ -36,10 +37,10 @@
 namespace AGS3 {
 
 namespace AGS {
-namespace Common {
+namespace Shared {
 struct AssetLibInfo;
 struct Interaction;
-namespace SharedonScripts;
+struct InteractionScripts;
 typedef std::shared_ptr<Interaction> PInteraction;
 typedef std::shared_ptr<InteractionScripts> PInteractionScripts;
 } // namespace Shared
@@ -128,39 +129,39 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// Do not call these directly
 	//------------------------------
 	// Part 1
-	void read_savegame_info(Common::Stream *in, GameDataVersion data_ver);
-	void read_font_infos(Common::Stream *in, GameDataVersion data_ver);
-	HGameFileError read_cursors(Common::Stream *in, GameDataVersion data_ver);
-	void read_interaction_scripts(Common::Stream *in, GameDataVersion data_ver);
-	void read_words_dictionary(Common::Stream *in);
+	void read_savegame_info(Shared::Stream *in, GameDataVersion data_ver);
+	void read_font_infos(Shared::Stream *in, GameDataVersion data_ver);
+	HGameFileError read_cursors(Shared::Stream *in, GameDataVersion data_ver);
+	void read_interaction_scripts(Shared::Stream *in, GameDataVersion data_ver);
+	void read_words_dictionary(Shared::Stream *in);
 
-	void ReadInvInfo_Aligned(Common::Stream *in);
-	void WriteInvInfo_Aligned(Common::Stream *out);
-	void ReadMouseCursors_Aligned(Common::Stream *in);
-	void WriteMouseCursors_Aligned(Common::Stream *out);
+	void ReadInvInfo_Aligned(Shared::Stream *in);
+	void WriteInvInfo_Aligned(Shared::Stream *out);
+	void ReadMouseCursors_Aligned(Shared::Stream *in);
+	void WriteMouseCursors_Aligned(Shared::Stream *out);
 	//------------------------------
 	// Part 2
-	void read_characters(Common::Stream *in, GameDataVersion data_ver);
-	void read_lipsync(Common::Stream *in, GameDataVersion data_ver);
-	void read_messages(Common::Stream *in, GameDataVersion data_ver);
+	void read_characters(Shared::Stream *in, GameDataVersion data_ver);
+	void read_lipsync(Shared::Stream *in, GameDataVersion data_ver);
+	void read_messages(Shared::Stream *in, GameDataVersion data_ver);
 
-	void ReadCharacters_Aligned(Common::Stream *in);
-	void WriteCharacters_Aligned(Common::Stream *out);
+	void ReadCharacters_Aligned(Shared::Stream *in);
+	void WriteCharacters_Aligned(Shared::Stream *out);
 	//------------------------------
 	// Part 3
-	HGameFileError read_customprops(Common::Stream *in, GameDataVersion data_ver);
-	HGameFileError read_audio(Common::Stream *in, GameDataVersion data_ver);
-	void read_room_names(Common::Stream *in, GameDataVersion data_ver);
+	HGameFileError read_customprops(Shared::Stream *in, GameDataVersion data_ver);
+	HGameFileError read_audio(Shared::Stream *in, GameDataVersion data_ver);
+	void read_room_names(Shared::Stream *in, GameDataVersion data_ver);
 
-	void ReadAudioClips_Aligned(Common::Stream *in, size_t count);
+	void ReadAudioClips_Aligned(Shared::Stream *in, size_t count);
 	//--------------------------------------------------------------------
 
 	// Functions for reading and writing appropriate data from/to save game
-	void ReadFromSaveGame_v321(Common::Stream *in, char *gswas, ccScript *compsc, CharacterInfo *chwas,
+	void ReadFromSaveGame_v321(Shared::Stream *in, char *gswas, ccScript *compsc, CharacterInfo *chwas,
 		WordsDictionary *olddict, char **mesbk);
 
-	void ReadFromSavegame(Common::PStream in);
-	void WriteForSavegame(Common::PStream out);
+	void ReadFromSavegame(Shared::PStream in);
+	void WriteForSavegame(Shared::PStream out);
 };
 
 //=============================================================================

@@ -128,8 +128,8 @@ struct CharacterInfo {
 	void update_character_idle(CharacterExtras *chex, int &doing_nothing);
 	void update_character_follower(int &char_index, int &numSheep, int *followingAsSheep, int &doing_nothing);
 
-	void ReadFromFile(Common::Stream *in);
-	void WriteToFile(Common::Stream *out);
+	void ReadFromFile(Shared::Stream *in);
+	void WriteToFile(Shared::Stream *out);
 };
 
 

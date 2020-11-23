@@ -20,6 +20,18 @@ MODULE_OBJS = \
 	lib/allegro/sound.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
+	shared/ac/dynobj/scriptaudioclip.o \
+	shared/ac/audiocliptype.o \
+	shared/ac/characterinfo.o \
+	shared/ac/common.o \
+	shared/ac/dialogtopic.o \
+	shared/ac/gamesetupstruct.o \
+	shared/ac/gamesetupstructbase.o \
+	shared/ac/inventoryiteminfo.o \
+	shared/ac/mousecursor.o \
+	shared/ac/spritecache.o \
+	shared/ac/view.o \
+	shared/ac/wordsdictionary.o \
 	shared/gfx/allegrobitmap.o \
 	shared/gfx/bitmap.o \
 	shared/gfx/image.o \

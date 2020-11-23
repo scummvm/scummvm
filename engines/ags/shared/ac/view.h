@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_AC_VIEW_H
 #define AGS_SHARED_AC_VIEW_H
 
-//include <vector>
+#include "ags/std/vector.h"
 
 namespace AGS3 {
 
@@ -46,8 +46,8 @@ struct ViewFrame {
 	int   reserved_for_future[2];
 	ViewFrame();
 
-	void ReadFromFile(Common::Stream *in);
-	void WriteToFile(Common::Stream *out);
+	void ReadFromFile(Shared::Stream *in);
+	void WriteToFile(Shared::Stream *out);
 };
 
 #define LOOPFLAG_RUNNEXTLOOP 1
@@ -61,10 +61,10 @@ struct ViewLoopNew {
 	void Initialize(int frameCount);
 	void Dispose();
 	bool RunNextLoop();
-	void WriteToFile_v321(Common::Stream *out);
-	void ReadFromFile_v321(Common::Stream *in);
-	void WriteFrames_Aligned(Common::Stream *out);
-	void ReadFrames_Aligned(Common::Stream *in);
+	void WriteToFile_v321(Shared::Stream *out);
+	void ReadFromFile_v321(Shared::Stream *in);
+	void WriteFrames_Aligned(Shared::Stream *out);
+	void ReadFrames_Aligned(Shared::Stream *in);
 };
 
 struct ViewStruct {
@@ -74,8 +74,8 @@ struct ViewStruct {
 	ViewStruct();
 	void Initialize(int loopCount);
 	void Dispose();
-	void WriteToFile(Common::Stream *out);
-	void ReadFromFile(Common::Stream *in);
+	void WriteToFile(Shared::Stream *out);
+	void ReadFromFile(Shared::Stream *in);
 };
 
 struct ViewStruct272 {
@@ -85,7 +85,7 @@ struct ViewStruct272 {
 	ViewFrame frames[16][20];
 
 	ViewStruct272();
-	void ReadFromFile(Common::Stream *in);
+	void ReadFromFile(Shared::Stream *in);
 };
 
 void Convert272ViewsToNew(const std::vector<ViewStruct272> &oldv, ViewStruct *newv);

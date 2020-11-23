@@ -55,8 +55,8 @@ struct WordsDictionary {
 extern const char *passwencstring;
 
 extern void decrypt_text(char *toenc);
-extern void read_string_decrypt(Common::Stream *in, char *buf, size_t buf_sz);
-extern void read_dictionary(WordsDictionary *dict, Common::Stream *in);
+extern void read_string_decrypt(Shared::Stream *in, char *buf, size_t buf_sz);
+extern void read_dictionary(WordsDictionary *dict, Shared::Stream *in);
 
 #if defined (OBSOLETE)
 // TODO: not a part of wordsdictionary, move to obsoletes
@@ -64,8 +64,8 @@ extern void freadmissout(short *pptr, Common::Stream *in);
 #endif
 
 extern void encrypt_text(char *toenc);
-extern void write_string_encrypt(Common::Stream *out, const char *s);
-extern void write_dictionary(WordsDictionary *dict, Common::Stream *out);
+extern void write_string_encrypt(Shared::Stream *out, const char *s);
+extern void write_dictionary(WordsDictionary *dict, Shared::Stream *out);
 
 } // namespace AGS3
 

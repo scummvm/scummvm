@@ -107,7 +107,7 @@ ScriptAudioClip *GetAudioClipForOldStyleNumber(GameSetupStruct &game, bool is_mu
 //-----------------------------------------------------------------------------
 // Reading Part 1
 
-void GameSetupStruct::read_savegame_info(Common::Stream *in, GameDataVersion data_ver) {
+void GameSetupStruct::read_savegame_info(Shared::Stream *in, GameDataVersion data_ver) {
 	if (data_ver > kGameVersion_272) { // only 3.x
 		in->Read(&guid[0], MAX_GUID_LENGTH);
 		in->Read(&saveGameFileExtension[0], MAX_SG_EXT_LENGTH);
@@ -115,7 +115,7 @@ void GameSetupStruct::read_savegame_info(Common::Stream *in, GameDataVersion dat
 	}
 }
 
-void GameSetupStruct::read_font_infos(Common::Stream *in, GameDataVersion data_ver) {
+void GameSetupStruct::read_font_infos(Shared::Stream *in, GameDataVersion data_ver) {
 	fonts.resize(numfonts);
 	if (data_ver < kGameVersion_350) {
 		for (int i = 0; i < numfonts; ++i)
@@ -147,7 +147,7 @@ void GameSetupStruct::read_font_infos(Common::Stream *in, GameDataVersion data_v
 }
 
 void GameSetupStruct::ReadInvInfo_Aligned(Stream *in) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int iteratorCount = 0; iteratorCount < numinvitems; ++iteratorCount) {
 		invinfo[iteratorCount].ReadFromFile(&align_s);
 		align_s.Reset();
@@ -155,14 +155,14 @@ void GameSetupStruct::ReadInvInfo_Aligned(Stream *in) {
 }
 
 void GameSetupStruct::WriteInvInfo_Aligned(Stream *out) {
-	AlignedStream align_s(out, Common::kAligned_Write);
+	AlignedStream align_s(out, Shared::kAligned_Write);
 	for (int iteratorCount = 0; iteratorCount < numinvitems; ++iteratorCount) {
 		invinfo[iteratorCount].WriteToFile(&align_s);
 		align_s.Reset();
 	}
 }
 
-HGameFileError GameSetupStruct::read_cursors(Common::Stream *in, GameDataVersion data_ver) {
+HGameFileError GameSetupStruct::read_cursors(Shared::Stream *in, GameDataVersion data_ver) {
 	if (numcursors > MAX_CURSOR)
 		return new MainGameFileError(kMGFErr_TooManyCursors, String::FromFormat("Count: %d, max: %d", numcursors, MAX_CURSOR));
 
@@ -170,7 +170,7 @@ HGameFileError GameSetupStruct::read_cursors(Common::Stream *in, GameDataVersion
 	return HGameFileError::None();
 }
 
-void GameSetupStruct::read_interaction_scripts(Common::Stream *in, GameDataVersion data_ver) {
+void GameSetupStruct::read_interaction_scripts(Shared::Stream *in, GameDataVersion data_ver) {
 	numGlobalVars = 0;
 
 	if (data_ver > kGameVersion_272) { // 3.x
@@ -194,7 +194,7 @@ void GameSetupStruct::read_interaction_scripts(Common::Stream *in, GameDataVersi
 	}
 }
 
-void GameSetupStruct::read_words_dictionary(Common::Stream *in) {
+void GameSetupStruct::read_words_dictionary(Shared::Stream *in) {
 	if (load_dictionary) {
 		dict = new WordsDictionary();
 		read_dictionary(dict, in);
@@ -202,7 +202,7 @@ void GameSetupStruct::read_words_dictionary(Common::Stream *in) {
 }
 
 void GameSetupStruct::ReadMouseCursors_Aligned(Stream *in) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int iteratorCount = 0; iteratorCount < numcursors; ++iteratorCount) {
 		mcurs[iteratorCount].ReadFromFile(&align_s);
 		align_s.Reset();
@@ -210,7 +210,7 @@ void GameSetupStruct::ReadMouseCursors_Aligned(Stream *in) {
 }
 
 void GameSetupStruct::WriteMouseCursors_Aligned(Stream *out) {
-	AlignedStream align_s(out, Common::kAligned_Write);
+	AlignedStream align_s(out, Shared::kAligned_Write);
 	for (int iteratorCount = 0; iteratorCount < numcursors; ++iteratorCount) {
 		mcurs[iteratorCount].WriteToFile(&align_s);
 		align_s.Reset();
@@ -220,18 +220,18 @@ void GameSetupStruct::WriteMouseCursors_Aligned(Stream *out) {
 //-----------------------------------------------------------------------------
 // Reading Part 2
 
-void GameSetupStruct::read_characters(Common::Stream *in, GameDataVersion data_ver) {
+void GameSetupStruct::read_characters(Shared::Stream *in, GameDataVersion data_ver) {
 	chars = new CharacterInfo[numcharacters + 5]; // TODO: why +5, is this really needed?
 
 	ReadCharacters_Aligned(in);
 }
 
-void GameSetupStruct::read_lipsync(Common::Stream *in, GameDataVersion data_ver) {
+void GameSetupStruct::read_lipsync(Shared::Stream *in, GameDataVersion data_ver) {
 	if (data_ver >= kGameVersion_254) // lip syncing was introduced in 2.54
 		in->ReadArray(&lipSyncFrameLetters[0][0], MAXLIPSYNCFRAMES, 50);
 }
 
-void GameSetupStruct::read_messages(Common::Stream *in, GameDataVersion data_ver) {
+void GameSetupStruct::read_messages(Shared::Stream *in, GameDataVersion data_ver) {
 	for (int ee = 0; ee < MAXGLOBALMES; ee++) {
 		if (!load_messages[ee]) continue;
 		messages[ee] = new char[GLOBALMESLENGTH];
@@ -254,7 +254,7 @@ void GameSetupStruct::read_messages(Common::Stream *in, GameDataVersion data_ver
 }
 
 void GameSetupStruct::ReadCharacters_Aligned(Stream *in) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int iteratorCount = 0; iteratorCount < numcharacters; ++iteratorCount) {
 		chars[iteratorCount].ReadFromFile(&align_s);
 		align_s.Reset();
@@ -262,7 +262,7 @@ void GameSetupStruct::ReadCharacters_Aligned(Stream *in) {
 }
 
 void GameSetupStruct::WriteCharacters_Aligned(Stream *out) {
-	AlignedStream align_s(out, Common::kAligned_Write);
+	AlignedStream align_s(out, Shared::kAligned_Write);
 	for (int iteratorCount = 0; iteratorCount < numcharacters; ++iteratorCount) {
 		chars[iteratorCount].WriteToFile(&align_s);
 		align_s.Reset();
@@ -272,7 +272,7 @@ void GameSetupStruct::WriteCharacters_Aligned(Stream *out) {
 //-----------------------------------------------------------------------------
 // Reading Part 3
 
-HGameFileError GameSetupStruct::read_customprops(Common::Stream *in, GameDataVersion data_ver) {
+HGameFileError GameSetupStruct::read_customprops(Shared::Stream *in, GameDataVersion data_ver) {
 	dialogScriptNames.resize(numdialog);
 	viewNames.resize(numviews);
 	if (data_ver >= kGameVersion_260) { // >= 2.60
@@ -304,7 +304,7 @@ HGameFileError GameSetupStruct::read_customprops(Common::Stream *in, GameDataVer
 	return HGameFileError::None();
 }
 
-HGameFileError GameSetupStruct::read_audio(Common::Stream *in, GameDataVersion data_ver) {
+HGameFileError GameSetupStruct::read_audio(Shared::Stream *in, GameDataVersion data_ver) {
 	if (data_ver >= kGameVersion_320) {
 		size_t audiotype_count = in->ReadInt32();
 		audioClipTypes.resize(audiotype_count);
@@ -342,8 +342,8 @@ void GameSetupStruct::read_room_names(Stream *in, GameDataVersion data_ver) {
 	}
 }
 
-void GameSetupStruct::ReadAudioClips_Aligned(Common::Stream *in, size_t count) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+void GameSetupStruct::ReadAudioClips_Aligned(Shared::Stream *in, size_t count) {
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (size_t i = 0; i < count; ++i) {
 		audioClips[i].ReadFromFile(&align_s);
 		align_s.Reset();

@@ -93,7 +93,7 @@ void ViewLoopNew::WriteToFile_v321(Stream *out) {
 }
 
 void ViewLoopNew::WriteFrames_Aligned(Stream *out) {
-	AlignedStream align_s(out, Common::kAligned_Write);
+	AlignedStream align_s(out, Shared::kAligned_Write);
 	for (int i = 0; i < numFrames; ++i) {
 		frames[i].WriteToFile(&align_s);
 		align_s.Reset();
@@ -111,7 +111,7 @@ void ViewLoopNew::ReadFromFile_v321(Stream *in) {
 }
 
 void ViewLoopNew::ReadFrames_Aligned(Stream *in) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < numFrames; ++i) {
 		frames[i].ReadFromFile(&align_s);
 		align_s.Reset();
