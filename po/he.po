@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-22 17:20+0000\n"
-"PO-Revision-Date: 2020-11-23 12:17+0000\n"
+"PO-Revision-Date: 2020-11-23 12:19+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
@@ -5079,11 +5079,8 @@ msgid "Would you like to save or restore a game?"
 msgstr "האם אתה רוצה לטעון או לשמור את המשחק?"
 
 #: engines/lab/speciallocks.cpp:149
-#, fuzzy
 msgid "This puzzle is not available in the trial version of the game"
 msgstr ""
-"חקר מעבר לנקודה זו זמין רק בגירסה המלאה של\n"
-"המשחק."
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:106
 #: engines/sherlock/detection.cpp:111
@@ -5503,9 +5500,8 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "השתמש במבוא משחק אלטרנטיבי (גרסת CD בלבד)"
 
 #: engines/saga/saga.cpp:247
-#, fuzzy
 msgid "Error loading game resources."
-msgstr "שגיאה בקריאת שמירת הקובץ"
+msgstr "שגיאה בקריאת שמירת הקובץ."
 
 #: engines/sci/detection.cpp:143
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -5729,9 +5725,8 @@ msgstr ""
 "שלך על מנת להימנע משגיאות ו / או בעיות לא צפויות בהמשך."
 
 #: engines/sci/sci.cpp:518
-#, fuzzy
 msgid "Download patch"
-msgstr "ההורדה הושלמה."
+msgstr "ההורדה הושלמה"
 
 #: engines/sci/sci.cpp:519
 msgid ""
@@ -7022,12 +7017,12 @@ msgstr ""
 #: engines/ultima/shared/engine/data_archive.cpp:81
 #, c-format
 msgid "Could not locate engine data %s"
-msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'."
+msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'"
 
 #: engines/ultima/shared/engine/data_archive.cpp:99
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
-msgstr "נמצאה גרסה שגויה של קובץ נתוני המנוע. צפה %d.%d אך קיבל %d.%d."
+msgstr "נמצאה גרסה שגויה של קובץ נתוני המנוע. צפה %d.%d אך קיבל %d.%d"
 
 #: engines/ultima/nuvie/nuvie.cpp:382
 #, fuzzy, c-format
