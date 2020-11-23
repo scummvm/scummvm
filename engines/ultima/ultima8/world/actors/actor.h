@@ -348,6 +348,7 @@ public:
 	INTRINSIC(I_getLastActivityNo);
 	INTRINSIC(I_getCurrentActivityNo);
 	INTRINSIC(I_turnToward);
+	INTRINSIC(I_isKneeling);
 
 	enum ActorFlags {
 		ACT_INVINCIBLE     = 0x000001, // flags from npcdata byte 0x1B

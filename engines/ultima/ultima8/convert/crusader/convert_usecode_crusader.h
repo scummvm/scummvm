@@ -95,9 +95,9 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Item::I_pop(Item *)", // same code as U8
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"void Item::I_receiveHit(Item *, other, dir, damage, damagetype)", // based on disasm
-	"byte Actor::I_isBusy(4 bytes)", // same code as U8
+	"byte Actor::I_isBusy(Actor *)", // same code as U8
 	"int16 Item::I_getDirFromTo16(x1, y1, x2, y2)",
-	"byte Actor::I_isKneeling(Item *)",
+	"byte Actor::I_isKneeling(Actor *)",
 	"int16 Actor::I_doAnim(12 bytes)", // v. similar code to U8
 	"byte MainActor::I_addItemCru(4 bytes)", // same coff as 0B8
 	"void AudioProcess::I_stopSFXCru(Item *, int16 sndno)",
