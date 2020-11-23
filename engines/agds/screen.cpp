@@ -251,10 +251,10 @@ void Screen::save(const PatchPtr &patch) {
 	patch->objects.clear();
 	for (ChildrenType::const_iterator i = _children.begin(); i != _children.end(); ++i) {
 		ObjectPtr object = *i;
-		if (!object->persistent())
+		if (!object->persistent() || !object->inScene())
 			continue;
 		debug("saving patch object %s %d", object->getName().c_str(), object->inScene());
-		patch->objects.push_back(Patch::Object(object->getName(), object->inScene()));
+		patch->objects.push_back(Patch::Object(object->getName(), 1));
 	}
 }
 
