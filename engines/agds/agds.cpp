@@ -50,7 +50,8 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
 																			 _shadowIntensity(0),
 																			 _processes(MaxProcesses),
                                                                              _mjpgPlayer(), _filmStarted(0),
-																			 _currentScreen(), _currentCharacter(),
+																			 _currentScreen(), _loadingScreen(false),
+																			 _currentCharacter(),
                                                                              _defaultMouseCursor(),
                                                                              _mouse(400, 300),
 																			 _userEnabled(true), _systemUserEnabled(true),
@@ -215,7 +216,7 @@ ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::Strin
 void AGDSEngine::runObject(const ObjectPtr &object) {
 	if (_currentScreen) {
 		auto patch = getPatch(_currentScreenName);
-		if (patch && patch->getFlag(object->getName()) <= 0) {
+		if (_loadingScreen && patch && patch->getFlag(object->getName()) <= 0) {
 			debug("object %s is not present in the patch", object->getName().c_str());
 		} else if (_currentScreen->add(object)) {
 			runProcess(object);
@@ -280,6 +281,7 @@ PatchPtr AGDSEngine::createPatch(const Common::String &screenName) {
 }
 
 void AGDSEngine::loadScreen(const Common::String &name) {
+	_loadingScreen = true;
 	_nextScreenName.clear();
 	debug("loadScreen %s", name.c_str());
 	if (_currentScreen && !_currentScreenName.empty())
@@ -322,6 +324,7 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 			loadDefaultMouseCursor(patch->defaultMouseCursor);
 	}
 	reAddInventory();
+	_loadingScreen = false;
 }
 
 void AGDSEngine::resetCurrentScreen() {

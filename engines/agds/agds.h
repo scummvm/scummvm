@@ -314,6 +314,7 @@ private:
 	Common::String				_filmProcess;
 	Screen *					_currentScreen;
 	Common::String				_currentScreenName;
+	bool						_loadingScreen;
 	Character *					_currentCharacter;
 	Character *					_jokes;
 	Common::String				_currentCharacterName;
