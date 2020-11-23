@@ -20,13 +20,14 @@
  *
  */
 
-//include <aastr.h>
 #include "ags/shared/gfx/allegrobitmap.h"
+#include "ags/shared/gfx/image.h"
 #include "ags/shared/debugging/assert.h"
+#include "ags/lib/aastr-0.1.1/aastr.h"
 
 namespace AGS3 {
 
-extern void __my_setcolor(int *ctset, int newcol, int wantColDep);
+extern void __my_setcolor(color_t *ctset, color_t newcol, int wantColDep);
 
 namespace AGS {
 namespace Shared {

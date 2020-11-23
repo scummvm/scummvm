@@ -28,6 +28,13 @@
 
 namespace AGS3 {
 
+#define PALETTE_COUNT 256
+#define MASK_COLOR_8       0
+#define MASK_COLOR_15      0x7C1F
+#define MASK_COLOR_16      0xF81F
+#define MASK_COLOR_24      0xFF00FF
+#define MASK_COLOR_32      0xFF00FF
+
 #include "common/pack-start.h"  // START STRUCT PACKING
 
 struct color {
@@ -35,7 +42,9 @@ struct color {
 } PACKED_STRUCT;
 
 typedef color RGB;
-typedef color PALETTE[256];
+typedef color PALETTE[PALETTE_COUNT];
+
+AL_VAR(PALETTE, _current_palette);
 
 #include "common/pack-end.h"    // END STRUCT PACKING
 
@@ -60,6 +69,18 @@ extern int _rgb_a_shift_32;
 AL_FUNC(void, set_color, (int idx, AL_CONST RGB *p));
 AL_FUNC(void, set_palette, (AL_CONST PALETTE p));
 AL_FUNC(void, set_palette_range, (AL_CONST PALETTE p, int from, int to, int retracesync));
+
+
+extern int makecol15(int r, int g, int b);
+extern int makecol16(int r, int g, int b);
+extern int makecol24(int r, int g, int b);
+extern int makecol32(int r, int g, int b);
+extern int makeacol32(int r, int g, int b, int a);
+extern int getr8(int c);
+extern int getg8(int c);
+extern int getb8(int c);
+extern int makecol(byte r, byte g, byte b);
+extern int makecol8(byte r, byte g, byte b);
 
 } // namespace AGS3
 

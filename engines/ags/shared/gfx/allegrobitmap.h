@@ -125,12 +125,12 @@ public:
 	// Gets a pointer to underlying graphic data
 	// FIXME: actually not a very good idea, since there's no 100% guarantee the scanline positions in memory are sequential
 	inline const unsigned char *GetData() const {
-		return (unsigned char *)_alBitmap->getPixels();
+		return _alBitmap->getPixels();
 	}
 
 	// Get scanline for direct reading
 	inline const unsigned char *GetScanLine(int index) const {
-		return (index >= 0 && index < GetHeight()) ? (unsigned char *)_alBitmap->getBasePtr(0, index) : nullptr;
+		return (index >= 0 && index < GetHeight()) ? _alBitmap->getBasePtr(0, index) : nullptr;
 	}
 
 	void    SetMaskColor(color_t color);
@@ -212,10 +212,10 @@ public:
 	// TODO: think how to increase safety over this (some fixed memory buffer class with iterator?)
 	// Gets scanline for directly writing into it
 	inline unsigned char *GetScanLineForWriting(int index) {
-		return (index >= 0 && index < GetHeight()) ? (unsigned char *)_alBitmap->getBasePtr(0, index) : nullptr;
+		return (index >= 0 && index < GetHeight()) ? _alBitmap->getBasePtr(0, index) : nullptr;
 	}
 	inline unsigned char *GetDataForWriting() {
-		return (unsigned char *)_alBitmap->getPixels();
+		return _alBitmap->getPixels();
 	}
 	// Copies buffer contents into scanline
 	void    SetScanLine(int index, unsigned char *data, int data_size = -1);
