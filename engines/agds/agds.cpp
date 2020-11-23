@@ -214,7 +214,10 @@ ObjectPtr AGDSEngine::loadObject(const Common::String &name, const Common::Strin
 
 void AGDSEngine::runObject(const ObjectPtr &object) {
 	if (_currentScreen) {
-		if (_currentScreen->add(object)) {
+		auto patch = getPatch(_currentScreenName);
+		if (patch && patch->getFlag(object->getName()) <= 0) {
+			debug("object %s is not present in the patch", object->getName().c_str());
+		} else if (_currentScreen->add(object)) {
 			runProcess(object);
 		} else if (!object->inScene()) {
 			debug("marking object %s as in-scene...", object->getName().c_str());
