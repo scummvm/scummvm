@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-22 17:20+0000\n"
-"PO-Revision-Date: 2020-09-26 12:37+0000\n"
-"Last-Translator: Matan Bareket <mataniko@gmail.com>\n"
+"PO-Revision-Date: 2020-11-23 12:10+0000\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
 "Language: he\n"
@@ -2234,11 +2234,10 @@ msgid "This game is not supported."
 msgstr "מזהה המשחק אינו נתמך"
 
 #: engines/engine.cpp:659
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
-msgstr "המשחק שנחבר אינו תומך בטעינת משחקים מתוך המשגר."
+msgstr "המשחק הזה לא נתמך מהסיבות הבאות:\n"
 
 #: engines/engine.cpp:798
 msgid "Loading game is currently unavailable"
