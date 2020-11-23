@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-23 16:13+0000\n"
+"POT-Creation-Date: 2020-11-23 16:28+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -4175,12 +4175,12 @@ msgid ""
 "ScummVM."
 msgstr ""
 
-#: engines/cge/detection.cpp:113
+#: engines/cge/detection.cpp:123
 #, fuzzy
 msgid "Color Blind Mode"
 msgstr "Mode clic"
 
-#: engines/cge/detection.cpp:114
+#: engines/cge/detection.cpp:124
 #, fuzzy
 msgid "Enable Color Blind Mode by default"
 msgstr "Mode clic"
