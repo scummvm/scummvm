@@ -67,7 +67,7 @@ AssetManager::~AssetManager() {
 }
 
 /* static */ bool AssetManager::IsDataFile(const String &data_file) {
-	Stream *in = ci_fopen(data_file, Common::kFile_Open, Common::kFile_Read);
+	Stream *in = ci_fopen(data_file, Shared::kFile_Open, Shared::kFile_Read);
 	if (in) {
 		MFLUtil::MFLError err = MFLUtil::TestIsMFL(in, true);
 		delete in;
@@ -77,7 +77,7 @@ AssetManager::~AssetManager() {
 }
 
 AssetError AssetManager::ReadDataFileTOC(const String &data_file, AssetLibInfo &lib) {
-	Stream *in = ci_fopen(data_file, Common::kFile_Open, Common::kFile_Read);
+	Stream *in = ci_fopen(data_file, Shared::kFile_Open, Shared::kFile_Read);
 	if (in) {
 		MFLUtil::MFLError err = MFLUtil::ReadHeader(lib, in);
 		delete in;
@@ -248,7 +248,7 @@ AssetError AssetManager::RegisterAssetLib(const String &data_file, const String 
 	_basePath = ".";
 
 	// open data library
-	Stream *in = ci_fopen(data_file, Common::kFile_Open, Common::kFile_Read);
+	Stream *in = ci_fopen(data_file, Shared::kFile_Open, Shared::kFile_Read);
 	if (!in)
 		return kAssetErrNoLibFile; // can't be opened, return error code
 
@@ -300,7 +300,7 @@ String AssetManager::MakeLibraryFileNameForAsset(const AssetInfo *asset) {
 }
 
 bool AssetManager::GetAssetFromLib(const String &asset_name, AssetLocation &loc, FileOpenMode open_mode, FileWorkMode work_mode) {
-	if (open_mode != Common::kFile_Open || work_mode != Common::kFile_Read)
+	if (open_mode != Shared::kFile_Open || work_mode != Shared::kFile_Read)
 		return false; // creating/writing is allowed only for common files on disk
 
 	AssetInfo *asset = FindAssetByFileName(asset_name);
