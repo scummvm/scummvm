@@ -445,11 +445,11 @@ void TwinEEngine::processInventoryAction() {
 		_gameState->usingSabre = false;
 		break;
 	case kiUseSabre:
-		if (_scene->sceneHero->body != InventoryItems::kiUseSabre) {
+		if (_scene->sceneHero->body != 2) {
 			if (_actor->heroBehaviour == HeroBehaviourType::kProtoPack) {
 				_actor->setBehaviour(HeroBehaviourType::kNormal);
 			}
-			_actor->initModelActor(InventoryItems::kiUseSabre, OWN_ACTOR_SCENE_INDEX);
+			_actor->initModelActor(2, OWN_ACTOR_SCENE_INDEX);
 			_animations->initAnim(AnimationTypes::kSabreUnknown, 1, AnimationTypes::kStanding, OWN_ACTOR_SCENE_INDEX);
 
 			_gameState->usingSabre = true;
