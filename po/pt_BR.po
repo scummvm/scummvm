@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-22 17:20+0000\n"
-"PO-Revision-Date: 2020-11-15 00:39+0000\n"
+"PO-Revision-Date: 2020-11-23 12:00+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -309,7 +309,7 @@ msgstr "Mapeamento de Teclas"
 
 #: gui/editgamedialog.cpp:246 gui/options.cpp:1833 engines/dialogs.cpp:333
 msgid "Backend"
-msgstr ""
+msgstr "Backend"
 
 #: gui/editgamedialog.cpp:260 gui/options.cpp:1847 engines/dialogs.cpp:301
 msgid "Audio"
@@ -2206,10 +2206,8 @@ msgid "Could not apply filtering setting."
 msgstr "Não foi possível a aplicar configuração de filtragem."
 
 #: engines/engine.cpp:420
-#, fuzzy
-#| msgid "No error"
 msgid "Error"
-msgstr "Nenhum erro"
+msgstr "Erro"
 
 #: engines/engine.cpp:507
 msgid ""
