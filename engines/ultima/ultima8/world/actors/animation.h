@@ -136,8 +136,8 @@ enum Sequence {
 	slowCombatRollLeft = 61,
 	slowCombatRollRight = 62,
 	finishFiring = 63,
-	teleportInReplacement = 0x1020,	//!< See notes in Actor::I_doAnim
-	teleportOutReplacement = 0x1021	//!< See notes in Actor::I_doAnim
+	teleportInReplacement = 0x1020,	//!< See notes in Actor::receiveHitCru
+	teleportOutReplacement = 0x1021	//!< See notes in Actor::receiveHitCru
 };
 
 enum Result {
