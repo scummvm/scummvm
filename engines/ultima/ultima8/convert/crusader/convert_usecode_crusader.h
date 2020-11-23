@@ -55,7 +55,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Actor::I_GetNPCDataField0x63_00B(Actor *)", // Some unknown value set for NPCs based on Q of egg.
 	"void Ultima8Engine::I_setAvatarInStasis(int)",
 	"byte Item::I_getDirToItem(Item *, itemno)", // based on disasm
-	"int16 Actor::I_turnToward(Actor *, direction, unk)", // TODO: work out what unk is
+	"int16 Actor::I_turnToward(Actor *, direction, dir_16)",
 	"void I_playFlic(void), int16 I_playFlic(Item *, char *name, int16 sizex, int16 sizey)",
 	// 0010
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff as 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
