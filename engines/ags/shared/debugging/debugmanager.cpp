@@ -64,7 +64,7 @@ void DebugOutput::SetAllGroupFilters(MessageType verbosity) {
 	for (auto &group : _groupFilter)
 		group = verbosity;
 	for (auto &group : _unresolvedGroups)
-		group.second = verbosity;
+		group._value = verbosity;
 }
 
 void DebugOutput::ClearGroupFilters() {
@@ -83,7 +83,7 @@ void DebugOutput::ResolveGroupID(DebugGroupID id) {
 			_groupFilter.resize(id.ID + 1, _defaultVerbosity);
 		GroupNameToMTMap::const_iterator it = _unresolvedGroups.find(real_id.SID);
 		if (it != _unresolvedGroups.end()) {
-			_groupFilter[real_id.ID] = it->second;
+			_groupFilter[real_id.ID] = it->_value;
 			_unresolvedGroups.erase(it);
 		}
 	}
@@ -112,14 +112,14 @@ DebugGroup DebugManager::GetGroup(DebugGroupID id) {
 		return id.ID < _groups.size() ? _groups[id.ID] : DebugGroup();
 	} else if (!id.SID.IsEmpty()) {
 		GroupByStringMap::const_iterator it = _groupByStrLookup.find(id.SID);
-		return it != _groupByStrLookup.end() ? _groups[it->second.ID] : DebugGroup();
+		return it != _groupByStrLookup.end() ? _groups[it->_value.ID] : DebugGroup();
 	}
 	return DebugGroup();
 }
 
 PDebugOutput DebugManager::GetOutput(const String &id) {
 	OutMap::const_iterator it = _outputs.find(id);
-	return it != _outputs.end() ? it->second.Target : PDebugOutput();
+	return it != _outputs.end() ? it->_value.Target : PDebugOutput();
 }
 
 DebugGroup DebugManager::RegisterGroup(const String &id, const String &out_name) {
@@ -132,7 +132,7 @@ DebugGroup DebugManager::RegisterGroup(const String &id, const String &out_name)
 
 	// Resolve group reference on every output target
 	for (OutMap::const_iterator it = _outputs.begin(); it != _outputs.end(); ++it) {
-		it->second.Target->ResolveGroupID(group.UID);
+		it->_value.Target->ResolveGroupID(group.UID);
 	}
 	return group;
 }
@@ -172,14 +172,14 @@ void DebugManager::Print(DebugGroupID group_id, MessageType mt, const String &te
 	DebugMessage msg(text, group.UID.ID, group.OutputName, mt);
 
 	for (OutMap::iterator it = _outputs.begin(); it != _outputs.end(); ++it) {
-		SendMessage(it->second, msg);
+		SendMessage(it->_value, msg);
 	}
 }
 
 void DebugManager::SendMessage(const String &out_id, const DebugMessage &msg) {
 	OutMap::iterator it = _outputs.find(out_id);
 	if (it != _outputs.end())
-		SendMessage(it->second, msg);
+		SendMessage(it->_value, msg);
 }
 
 void DebugManager::SendMessage(OutputSlot &out, const DebugMessage &msg) {

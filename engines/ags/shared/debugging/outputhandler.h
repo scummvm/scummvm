@@ -35,15 +35,15 @@
 
 namespace AGS3 {
 namespace AGS {
-namespace Common {
+namespace Shared {
 
 struct DebugMessage {
 	String       Text;
-namespace SharedoupID;
+	uint32_t     GroupID;
 	String       GroupName;
 	MessageType  MT;
 
-	DebugMessage() : GroupID(kDbgGroup_None), MT(kDbgMsg_None) {
+	DebugMessage() : GroupID((uint32_t)kDbgGroup_None), MT(kDbgMsg_None) {
 	}
 	DebugMessage(const String &text, uint32_t group_id, const String &group_name, MessageType mt)
 		: Text(text)
@@ -62,7 +62,7 @@ public:
 	virtual void PrintMessage(const DebugMessage &msg) = 0;
 };
 
-} // namespace Common
+} // namespace Shared
 } // namespace AGS
 } // namespace AGS3
 
