@@ -20,7 +20,7 @@
  *
  */
 
-#include "gfx/gfxfilter_scaling.h"
+#include "ags/shared/gfx/gfxfilter_scaling.h"
 
 namespace AGS3 {
 namespace AGS {

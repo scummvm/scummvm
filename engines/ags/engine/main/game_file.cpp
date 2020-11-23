@@ -24,34 +24,34 @@
 // Game data file management
 //
 
-#include "main/mainheader.h"
-#include "main/game_file.h"
-#include "ac/common.h"
-#include "ac/character.h"
-#include "ac/charactercache.h"
-#include "ac/dialogtopic.h"
-#include "ac/draw.h"
-#include "ac/game.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/gamestructdefines.h"
-#include "ac/gui.h"
-#include "ac/viewframe.h"
-#include "debug/debug_log.h"
-#include "debug/out.h"
-#include "gui/guilabel.h"
-#include "main/main.h"
-#include "platform/base/agsplatformdriver.h"
-#include "util/stream.h"
-#include "gfx/bitmap.h"
-#include "gfx/blender.h"
-#include "core/assetmanager.h"
-#include "util/alignedstream.h"
-#include "ac/gamesetup.h"
-#include "game/main_game_file.h"
-#include "game/game_init.h"
-#include "plugin/agsplugin.h"
-#include "script/script.h"
+#include "ags/engine/main/mainheader.h"
+#include "ags/engine/main/game_file.h"
+#include "ags/shared/ac/common.h"
+#include "ags/engine/ac/character.h"
+#include "ags/engine/ac/charactercache.h"
+#include "ags/shared/ac/dialogtopic.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/game.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/ac/gamestructdefines.h"
+#include "ags/engine/ac/gui.h"
+#include "ags/engine/ac/viewframe.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/shared/gui/guilabel.h"
+#include "ags/engine/main/main.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/engine/gfx/blender.h"
+#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/util/alignedstream.h"
+#include "ags/engine/ac/gamesetup.h"
+#include "ags/shared/game/main_game_file.h"
+#include "ags/engine/game/game_init.h"
+#include "ags/engine/plugin/agsplugin.h"
+#include "ags/engine/script/script.h"
 
 namespace AGS3 {
 
@@ -72,7 +72,7 @@ extern int numScriptModules;
 bool test_game_caps(const std::set<String> &caps, std::set<String> &failed_caps) {
 	// Currently we support nothing special
 	failed_caps = caps;
-	return caps.size() == 0;
+	return caps.empty();
 }
 
 // Forms a simple list of capability names
@@ -97,7 +97,7 @@ HGameFileError game_file_first_open(MainGameSource &src) {
 		Debug::Printf(kDbgMsg_Info, "Opened game data file: %s", src.Filename.GetCStr());
 		Debug::Printf(kDbgMsg_Info, "Game data version: %d", src.DataVersion);
 		Debug::Printf(kDbgMsg_Info, "Compiled with: %s", src.CompiledWith.GetCStr());
-		if (src.Caps.size() > 0) {
+		if (!src.Caps.empty()) {
 			String caps_list = get_caps_list(src.Caps);
 			Debug::Printf(kDbgMsg_Info, "Requested engine caps: %s", caps_list.GetCStr());
 		}
@@ -116,7 +116,7 @@ HGameFileError game_file_first_open(MainGameSource &src) {
 }
 
 void PreReadSaveFileInfo(Stream *in, GameDataVersion data_ver) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	game.ReadFromFile(&align_s);
 	// Discard game messages we do not need here
 	delete[] game.load_messages;

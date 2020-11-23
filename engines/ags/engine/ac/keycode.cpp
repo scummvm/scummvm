@@ -20,7 +20,7 @@
  *
  */
 
-#include "ac/keycode.h"
+#include "ags/shared/ac/keycode.h"
 
 #include "ags/lib/allegro.h"
 

@@ -20,18 +20,18 @@
  *
  */
 
-#include "ac/common.h"
-#include "ac/object.h"
-#include "ac/character.h"
-#include "ac/gamestate.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/object.h"
-#include "ac/room.h"
-#include "ac/roomobject.h"
-#include "ac/roomstatus.h"
-#include "ac/walkablearea.h"
-#include "game/roomstruct.h"
-#include "gfx/bitmap.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/object.h"
+#include "ags/shared/ac/character.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/object.h"
+#include "ags/shared/ac/room.h"
+#include "ags/shared/ac/roomobject.h"
+#include "ags/shared/ac/roomstatus.h"
+#include "ags/shared/ac/walkablearea.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/gfx/bitmap.h"
 
 namespace AGS3 {
 

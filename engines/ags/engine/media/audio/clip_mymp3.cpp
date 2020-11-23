@@ -20,17 +20,17 @@
  *
  */
 
-#include "media/audio/audiodefines.h"
+#include "ags/shared/media/audio/audiodefines.h"
 
 #ifndef NO_MP3_PLAYER
 
-#include "media/audio/clip_mymp3.h"
-#include "media/audio/audiointernaldefs.h"
-#include "ac/common.h"               // quit()
-#include "ac/asset_helper.h"
-#include "util/mutex_lock.h"
+#include "ags/shared/media/audio/clip_mymp3.h"
+#include "ags/shared/media/audio/audiointernaldefs.h"
+#include "ags/shared/ac/common.h"               // quit()
+#include "ags/shared/ac/asset_helper.h"
+#include "ags/shared/util/mutex_lock.h"
 
-#include "platform/base/agsplatformdriver.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
 
 namespace AGS3 {
 

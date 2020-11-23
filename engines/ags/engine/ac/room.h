@@ -23,10 +23,10 @@
 #ifndef AGS_ENGINE_AC_ROOM_H
 #define AGS_ENGINE_AC_ROOM_H
 
-#include "ac/dynobj/scriptdrawingsurface.h"
-#include "ac/characterinfo.h"
-#include "script/runtimescriptvalue.h"
-#include "game/roomstruct.h"
+#include "ags/engine/ac/dynobj/scriptdrawingsurface.h"
+#include "ags/shared/ac/characterinfo.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/shared/game/roomstruct.h"
 
 namespace AGS3 {
 

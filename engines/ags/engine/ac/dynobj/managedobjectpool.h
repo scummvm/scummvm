@@ -23,12 +23,12 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_MANAGEDOBJECTPOOL_H
 #define AGS_ENGINE_AC_DYNOBJ_MANAGEDOBJECTPOOL_H
 
-#include <vector>
-#include <queue>
-#include <unordered_map>
+#include "ags/std/vector.h"
+//include <queue>
+//include <unordered_map>
 
-#include "script/runtimescriptvalue.h"
-#include "ac/dynobj/cc_dynamicobject.h"   // ICCDynamicObject
+#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/shared/ac/dynobj/cc_dynamicobject.h"   // ICCDynamicObject
 
 namespace AGS3 {
 namespace AGS {
@@ -87,8 +87,8 @@ public:
 	void RunGarbageCollectionIfAppropriate();
 	int AddObject(const char *address, ICCDynamicObject *callback, bool plugin_object);
 	int AddUnserializedObject(const char *address, ICCDynamicObject *callback, bool plugin_object, int handle);
-	void WriteToDisk(Common::Stream *out);
-	int ReadFromDisk(Common::Stream *in, ICCObjectReader *reader);
+	void WriteToDisk(Shared::Stream *out);
+	int ReadFromDisk(Shared::Stream *in, ICCObjectReader *reader);
 	void reset();
 	ManagedObjectPool();
 

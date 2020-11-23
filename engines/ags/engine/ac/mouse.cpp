@@ -20,27 +20,27 @@
  *
  */
 
-#include "ac/mouse.h"
-#include "ac/common.h"
-#include "ac/characterinfo.h"
-#include "ac/draw.h"
-#include "ac/dynobj/scriptmouse.h"
-#include "ac/dynobj/scriptsystem.h"
-#include "ac/gamesetup.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_mouse.h"
-#include "ac/global_plugin.h"
-#include "ac/global_screen.h"
-#include "ac/system.h"
-#include "ac/viewframe.h"
-#include "debug/debug_log.h"
-#include "gui/guibutton.h"
-#include "gui/guimain.h"
-#include "device/mousew32.h"
-#include "ac/spritecache.h"
-#include "gfx/graphicsdriver.h"
-#include "gfx/gfxfilter.h"
+#include "ags/shared/ac/mouse.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/characterinfo.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/dynobj/scriptmouse.h"
+#include "ags/shared/ac/dynobj/scriptsystem.h"
+#include "ags/shared/ac/gamesetup.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_mouse.h"
+#include "ags/shared/ac/global_plugin.h"
+#include "ags/shared/ac/global_screen.h"
+#include "ags/shared/ac/system.h"
+#include "ags/shared/ac/viewframe.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/gui/guibutton.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/device/mousew32.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/shared/gfx/gfxfilter.h"
 
 namespace AGS3 {
 
@@ -455,10 +455,10 @@ int find_previous_enabled_cursor(int startwith) {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
-#include "ac/global_game.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/ac/global_game.h"
 
 // void  (int curs, int newslot)
 RuntimeScriptValue Sc_ChangeCursorGraphic(const RuntimeScriptValue *params, int32_t param_count) {

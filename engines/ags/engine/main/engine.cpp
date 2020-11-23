@@ -24,60 +24,63 @@
 // Engine initialization
 //
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
-#include <errno.h>
+//include <errno.h>
 #if AGS_PLATFORM_OS_WINDOWS
-#include <process.h>  // _spawnl
+//include <process.h>  // _spawnl
 #endif
 
-#include "main/mainheader.h"
-#include "ac/asset_helper.h"
-#include "ac/common.h"
-#include "ac/character.h"
-#include "ac/characterextras.h"
-#include "ac/characterinfo.h"
-#include "ac/draw.h"
-#include "ac/game.h"
-#include "ac/gamesetup.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/global_character.h"
-#include "ac/global_game.h"
-#include "ac/gui.h"
-#include "ac/lipsync.h"
-#include "ac/objectcache.h"
-#include "ac/path_helper.h"
-#include "ac/sys_events.h"
-#include "ac/roomstatus.h"
-#include "ac/speech.h"
-#include "ac/spritecache.h"
-#include "ac/translation.h"
-#include "ac/viewframe.h"
-#include "ac/dynobj/scriptobject.h"
-#include "ac/dynobj/scriptsystem.h"
-#include "core/assetmanager.h"
-#include "debug/debug_log.h"
-#include "debug/debugger.h"
-#include "debug/out.h"
-#include "font/agsfontrenderer.h"
-#include "font/fonts.h"
-#include "gfx/graphicsdriver.h"
-#include "gfx/gfxdriverfactory.h"
-#include "gfx/ddb.h"
-#include "main/config.h"
-#include "main/game_file.h"
-#include "main/game_start.h"
-#include "main/engine.h"
-#include "main/engine_setup.h"
-#include "main/graphics_mode.h"
-#include "main/main.h"
-#include "main/main_allegro.h"
-#include "media/audio/audio_system.h"
-#include "platform/util/pe.h"
-#include "util/directory.h"
-#include "util/error.h"
-#include "util/misc.h"
-#include "util/path.h"
+#include "ags/engine/main/mainheader.h"
+#include "ags/engine/ac/asset_helper.h"
+#include "ags/shared/ac/common.h"
+#include "ags/engine/ac/character.h"
+#include "ags/engine/ac/characterextras.h"
+#include "ags/shared/ac/characterinfo.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/game.h"
+#include "ags/engine/ac/gamesetup.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/engine/ac/global_character.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/gui.h"
+#include "ags/engine/ac/lipsync.h"
+#include "ags/engine/ac/objectcache.h"
+#include "ags/engine/ac/path_helper.h"
+#include "ags/engine/ac/sys_events.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/speech.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/engine/ac/translation.h"
+#include "ags/engine/ac/viewframe.h"
+#include "ags/engine/ac/dynobj/scriptobject.h"
+#include "ags/engine/ac/dynobj/scriptsystem.h"
+#include "ags/shared/core/assetmanager.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/shared/font/agsfontrenderer.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/gfxdriverfactory.h"
+#include "ags/engine/gfx/ddb.h"
+#include "ags/engine/main/config.h"
+#include "ags/engine/main/game_file.h"
+#include "ags/engine/main/game_start.h"
+#include "ags/engine/main/engine.h"
+#include "ags/engine/main/engine_setup.h"
+#include "ags/engine/main/graphics_mode.h"
+#include "ags/engine/main/main.h"
+#include "ags/engine/main/main_allegro.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/platform/util/pe.h"
+#include "ags/shared/gfx/image.h"
+#include "ags/shared/util/directory.h"
+#include "ags/shared/util/error.h"
+#include "ags/shared/util/misc.h"
+#include "ags/shared/util/path.h"
+#include "ags/ags.h"
+#include "common/fs.h"
 
 namespace AGS3 {
 
@@ -122,7 +125,7 @@ bool engine_init_allegro() {
 	our_eip = -199;
 	// Initialize allegro
 	set_uformat(U_ASCII);
-	if (install_allegro(SYSTEM_AUTODETECT, &errno, atexit)) {
+	if (install_allegro()) {
 		const char *al_err = get_allegro_error();
 		const char *user_hint = platform->GetAllegroFailUserHint();
 		platform->DisplayAlert("Unable to initialize Allegro system driver.\n%s\n\n%s",
@@ -150,7 +153,7 @@ void engine_setup_window() {
 	Debug::Printf(kDbgMsg_Info, "Setting up window");
 
 	our_eip = -198;
-	set_window_title("Adventure Game Studio");
+	//set_window_title("Adventure Game Studio");
 	set_close_button_callback(winclosehook);
 	our_eip = -197;
 
@@ -208,44 +211,44 @@ void engine_force_window() {
 }
 
 String find_game_data_in_directory(const String &path) {
-	al_ffblk ff;
-	String test_file;
+	Common::String test_file;
 	String first_nonstd_fn;
-	String pattern = path;
-	pattern.Append("/*");
 
-	if (al_findfirst(pattern, &ff, FA_ALL & ~(FA_DIREC)) != 0)
-		return "";
-	// Select first found data file; files with standart names (*.ags) have
-	// higher priority over files with custom names.
-	do {
-		test_file = ff.name;
-		// Add a bit of sanity and do not parse contents of the 10k-files-large
-		// digital sound libraries.
-		// NOTE: we could certainly benefit from any kind of flag in file lib
-		// that would tell us this is the main lib without extra parsing.
-		if (test_file.CompareRightNoCase(".vox") == 0)
-			continue;
+	Common::FSNode folder(path);
+	Common::FSList files;
+	if (folder.getChildren(files, Common::FSNode::kListFilesOnly)) {
+		// Select first found data file; files with standart names (*.ags) have
+		// higher priority over files with custom names.
+		for (Common::FSList::iterator it = files.begin(); it != files.end(); ++it) {
+			test_file = it->getName();
 
-		// *.ags is a standart cross-platform file pattern for AGS games,
-		// ac2game.dat is a legacy file name for very old games,
-		// *.exe is a MS Win executable; it is included to this case because
-		// users often run AGS ports with Windows versions of games.
-		bool is_std_name = test_file.CompareRightNoCase(".ags") == 0 ||
-		                   test_file.CompareNoCase("ac2game.dat") == 0 ||
-		                   test_file.CompareRightNoCase(".exe") == 0;
-		if (is_std_name || first_nonstd_fn.IsEmpty()) {
-			test_file.Format("%s/%s", path.GetCStr(), ff.name);
-			if (IsMainGameLibrary(test_file)) {
-				if (is_std_name) {
-					al_findclose(&ff);
-					return test_file;
-				} else
-					first_nonstd_fn = test_file;
+			// Add a bit of sanity and do not parse contents of the 10k-files-large
+			// digital sound libraries.
+			// NOTE: we could certainly benefit from any kind of flag in file lib
+			// that would tell us this is the main lib without extra parsing.
+			if (test_file.hasSuffixIgnoreCase(".vox"))
+				continue;
+
+			// *.ags is a standart cross-platform file pattern for AGS games,
+			// ac2game.dat is a legacy file name for very old games,
+			// *.exe is a MS Win executable; it is included to this case because
+			// users often run AGS ports with Windows versions of games.
+			bool is_std_name = test_file.hasSuffixIgnoreCase(".ags") ||
+				test_file.equalsIgnoreCase("ac2game.dat") ||
+				test_file.hasSuffixIgnoreCase(".exe");
+			if (is_std_name || first_nonstd_fn.IsEmpty()) {
+				test_file = it->getName();
+
+				if (IsMainGameLibrary(test_file)) {
+					if (is_std_name) {
+						return test_file;
+					} else
+						first_nonstd_fn = test_file;
+				}
 			}
 		}
-	} while (al_findnext(&ff) == 0);
-	al_findclose(&ff);
+	}
+
 	return first_nonstd_fn;
 }
 
@@ -271,7 +274,7 @@ bool search_for_game_data_file(String &filename, String &search_path) {
 		//
 		// this will use argument zero, the executable's name
 		filename = GetPathFromCmdArg(0);
-		if (filename.IsEmpty() || !Common::AssetManager::IsDataFile(filename)) {
+		if (filename.IsEmpty() || !Shared::AssetManager::IsDataFile(filename)) {
 			// 3.2 Look in current directory
 			search_path = Directory::GetCurrentDirectory();
 			filename = find_game_data_in_directory(search_path);
@@ -329,7 +332,7 @@ void engine_locate_speech_pak() {
 		String speech_filepath = find_assetlib(speech_file);
 		if (!speech_filepath.IsEmpty()) {
 			Debug::Printf("Initializing speech vox");
-			if (AssetManager::SetDataFile(speech_filepath) != Common::kAssetNoError) {
+			if (AssetManager::SetDataFile(speech_filepath) != Shared::kAssetNoError) {
 				platform->DisplayAlert("Unable to read voice pack, file could be corrupted or of unknown format.\nSpeech voice-over will be disabled.");
 				AssetManager::SetDataFile(ResPaths.GamePak.Path); // switch back to the main data pack
 				return;
@@ -393,7 +396,7 @@ void engine_init_keyboard() {
 	install_keyboard();
 #endif
 #if AGS_PLATFORM_OS_LINUX
-	setlocale(LC_NUMERIC, "C"); // needed in X platform because install keyboard affects locale of printfs
+//	setlocale(LC_NUMERIC, "C"); // needed in X platform because install keyboard affects locale of printfs
 #endif
 }
 
@@ -567,8 +570,8 @@ void engine_init_exit_handler() {
 }
 
 void engine_init_rand() {
-	play.randseed = time(nullptr);
-	srand(play.randseed);
+	play.randseed = g_system->getMillis();
+	::AGS::g_vm->setRandomNumberSeed(play.randseed);
 }
 
 void engine_init_pathfinder() {
@@ -612,7 +615,7 @@ int engine_check_register_game() {
 
 void engine_init_title() {
 	our_eip = -91;
-	set_window_title(game.gamename);
+	::AGS::g_vm->set_window_title(game.gamename);
 	Debug::Printf(kDbgMsg_Info, "Game title: '%s'", game.gamename);
 }
 
@@ -631,7 +634,7 @@ void engine_init_directories() {
 
 	ResPaths.DataDir = usetup.data_files_dir;
 	ResPaths.GamePak.Path = usetup.main_data_filepath;
-	ResPaths.GamePak.Name = get_filename(usetup.main_data_filepath);
+	ResPaths.GamePak.Name = Shared::Path::get_filename(usetup.main_data_filepath);
 
 	set_install_dir(usetup.install_dir, usetup.install_audio_dir, usetup.install_voice_dir);
 	if (!usetup.install_dir.IsEmpty()) {
@@ -671,14 +674,14 @@ int check_write_access() {
 	// The Save Game Dir is the only place that we should write to
 	String svg_dir = get_save_game_directory();
 	String tempPath = String::FromFormat("%s""tmptest.tmp", svg_dir.GetCStr());
-	Stream *temp_s = Common::File::CreateFile(tempPath);
+	Stream *temp_s = Shared::File::CreateFile(tempPath);
 	if (!temp_s)
 		// TODO: move this somewhere else (Android platform driver init?)
 #if AGS_PLATFORM_OS_ANDROID
 	{
-		put_backslash(android_base_directory);
+//		put_backslash(android_base_directory);
 		tempPath.Format("%s""tmptest.tmp", android_base_directory);
-		temp_s = Common::File::CreateFile(tempPath);
+		temp_s = Shared::File::CreateFile(tempPath);
 		if (temp_s == NULL) return 0;
 		else SetCustomSaveParent(android_base_directory);
 	}
@@ -1154,7 +1157,7 @@ bool define_gamedata_location(const String &exe_path) {
 	// On success: set all the necessary path and filename settings,
 	// derive missing ones from available.
 	if (usetup.main_data_filename.IsEmpty()) {
-		usetup.main_data_filename = get_filename(usetup.main_data_filepath);
+		usetup.main_data_filename = Shared::Path::get_filename(usetup.main_data_filepath);
 	} else if (usetup.main_data_filepath.IsEmpty()) {
 		if (usetup.data_files_dir.IsEmpty() || !is_relative_filename(usetup.main_data_filename))
 			usetup.main_data_filepath = usetup.main_data_filename;
@@ -1221,8 +1224,8 @@ void engine_prepare_config(ConfigTree &cfg, const String &exe_path, const Config
 	engine_read_config(exe_path, cfg);
 	// Merge startup options in
 	for (const auto &sectn : startup_opts)
-		for (const auto &opt : sectn.second)
-			cfg[sectn.first][opt.first] = opt.second;
+		for (const auto &opt : sectn._value)
+			cfg[sectn._key][opt._key] = opt._value;
 
 	// Add "meta" config settings to let setup application(s)
 	// display correct properties to the user
@@ -1278,9 +1281,9 @@ static void engine_print_info(const std::set<String> &keys, const String &exe_pa
 	}
 	if ((all || keys.count("config") > 0) && user_cfg) {
 		for (const auto &sectn : *user_cfg) {
-			String cfg_sectn = String::FromFormat("config@%s", sectn.first.GetCStr());
-			for (const auto &opt : sectn.second)
-				data[cfg_sectn][opt.first] = opt.second;
+			String cfg_sectn = String::FromFormat("config@%s", sectn._key.GetCStr());
+			for (const auto &opt : sectn._value)
+				data[cfg_sectn][opt._key] = opt._value;
 		}
 	}
 	if (all || keys.count("data") > 0) {

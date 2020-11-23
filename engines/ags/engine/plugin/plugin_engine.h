@@ -29,9 +29,9 @@
 #ifndef AGS_ENGINE_PLUGIN_PLUGIN_ENGINE_H
 #define AGS_ENGINE_PLUGIN_PLUGIN_ENGINE_H
 
-#include <vector>
-#include "game/game_init.h"
-#include "game/plugininfo.h"
+#include "ags/std/vector.h"
+#include "ags/engine/game/game_init.h"
+#include "ags/shared/game/plugininfo.h"
 
 namespace AGS3 {
 
@@ -52,7 +52,7 @@ int  pl_run_plugin_hooks(int event, int data);
 void pl_run_plugin_init_gfx_hooks(const char *driverName, void *data);
 int  pl_run_plugin_debug_hooks(const char *scriptfile, int linenum);
 // Tries to register plugins, either by loading dynamic libraries, or getting any kind of replacement
-Engine::GameInitError pl_register_plugins(const std::vector<Common::PluginInfo> &infos);
+Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> &infos);
 bool pl_is_plugin_loaded(const char *pl_name);
 
 //returns whether _any_ plugins want a particular event

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_KEYBOARD_H
-#define AGS_STUBS_ALLEGRO_KEYBOARD_H
+#ifndef AGS_LIB_ALLEGRO_KEYBOARD_H
+#define AGS_LIB_ALLEGRO_KEYBOARD_H
 
 #include "common/keyboard.h"
 
@@ -31,9 +31,13 @@ namespace AGS3 {
 #define KB_CTRL_FLAG Common::KBD_CTRL
 #define KB_ALT_FLAG Common::KBD_ALT
 
-#define KEY_F9 Common::KEYCODE_F9
+#define KEY_LSHIFT Common::KEYCODE_LSHIFT
+#define KEY_RSHIFT Common::KEYCODE_RSHIFT
+#define KEY_ALT Common::KEYCODE_LALT
 #define KEY_LCONTROL Common::KEYCODE_LCTRL
 #define KEY_RCONTROL Common::KEYCODE_RCTRL
+#define KEY_ALTGR 0
+#define KEY_F9 Common::KEYCODE_F9
 
 #define __allegro_KEY_LSHIFT Common::KEYCODE_LSHIFT
 #define __allegro_KEY_RSHIFT Common::KEYCODE_RSHIFT
@@ -93,7 +97,6 @@ namespace AGS3 {
 #define __allegro_KEY_SCRLOCK Common::KEYCODE_SCROLLOCK
 #define __allegro_KEY_NUMLOCK Common::KEYCODE_NUMLOCK
 #define __allegro_KEY_CAPSLOCK Common::KEYCODE_CAPSLOCK
-
 
 extern bool key[Common::KEYCODE_LAST];
 

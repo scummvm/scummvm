@@ -23,11 +23,11 @@
 #ifndef AGS_ENGINE_DEBUGGING_LOG_H
 #define AGS_ENGINE_DEBUGGING_LOG_H
 
-#include "script/cc_instance.h"
-#include "ac/runtime_defines.h"
-#include "ac/gamestate.h"
-#include "platform/base/agsplatformdriver.h"
-#include "util/ini_util.h"
+#include "ags/engine/script/cc_instance.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/shared/util/ini_util.h"
 
 namespace AGS3 {
 

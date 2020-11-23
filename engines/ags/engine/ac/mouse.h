@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_MOUSE_H
 #define AGS_ENGINE_AC_MOUSE_H
 
-#include "ac/dynobj/scriptmouse.h"
+#include "ags/engine/ac/dynobj/scriptmouse.h"
 
 namespace AGS3 {
 

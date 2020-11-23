@@ -20,21 +20,21 @@
  *
  */
 
-#include "ac/common.h"
-#include "ac/game.h"
-#include "ac/gamesetup.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_audio.h"
-#include "ac/lipsync.h"
-#include "ac/path_helper.h"
-#include "debug/debug_log.h"
-#include "debug/debugger.h"
-#include "game/roomstruct.h"
-#include "main/engine.h"
-#include "media/audio/audio_system.h"
-#include "ac/timer.h"
-#include "util/string_compat.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/game.h"
+#include "ags/shared/ac/gamesetup.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_audio.h"
+#include "ags/shared/ac/lipsync.h"
+#include "ags/shared/ac/path_helper.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/debug/debugger.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/main/engine.h"
+#include "ags/shared/media/audio/audio_system.h"
+#include "ags/shared/ac/timer.h"
+#include "ags/shared/util/string_compat.h"
 
 namespace AGS3 {
 

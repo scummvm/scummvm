@@ -23,10 +23,10 @@
 #ifndef AGS_ENGINE_AC_ROOMSTATUS_H
 #define AGS_ENGINE_AC_ROOMSTATUS_H
 
-#include "ac/roomobject.h"
-#include "game/roomstruct.h"
-#include "game/interactions.h"
-#include "util/string_types.h"
+#include "ags/engine/ac/roomobject.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/game/interactions.h"
+#include "ags/shared/util/string_types.h"
 
 namespace AGS3 {
 
@@ -54,9 +54,9 @@ struct RoomStatus {
 	Interaction intrRegion[MAX_ROOM_REGIONS];
 	Interaction intrRoom;
 
-	Common::StringIMap roomProps;
-	Common::StringIMap hsProps[MAX_ROOM_HOTSPOTS];
-	Common::StringIMap objProps[MAX_ROOM_OBJECTS];
+	Shared::StringIMap roomProps;
+	Shared::StringIMap hsProps[MAX_ROOM_HOTSPOTS];
+	Shared::StringIMap objProps[MAX_ROOM_OBJECTS];
 	// [IKM] 2012-06-22: not used anywhere
 #ifdef UNUSED_CODE
 	EventBlock hscond[MAX_ROOM_HOTSPOTS];
@@ -74,10 +74,10 @@ struct RoomStatus {
 	void FreeScriptData();
 	void FreeProperties();
 
-	void ReadFromFile_v321(Common::Stream *in);
-	void ReadRoomObjects_Aligned(Common::Stream *in);
-	void ReadFromSavegame(Common::Stream *in);
-	void WriteToSavegame(Common::Stream *out) const;
+	void ReadFromFile_v321(Shared::Stream *in);
+	void ReadRoomObjects_Aligned(Shared::Stream *in);
+	void ReadFromSavegame(Shared::Stream *in);
+	void WriteToSavegame(Shared::Stream *out) const;
 };
 
 // Replaces all accesses to the roomstats array

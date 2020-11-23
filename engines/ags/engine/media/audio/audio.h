@@ -23,15 +23,15 @@
 #ifndef AGS_ENGINE_MEDIA_AUDIO_AUDIO_H
 #define AGS_ENGINE_MEDIA_AUDIO_AUDIO_H
 
-#include <array>
-#include "media/audio/audiodefines.h"
-#include "ac/dynobj/scriptaudioclip.h"
-#include "ac/dynobj/scriptaudiochannel.h"
-#include "media/audio/ambientsound.h"
-#include "util/mutex.h"
-#include "util/mutex_lock.h"
-#include "util/thread.h"
-#include "ac/timer.h"
+#include "ags/std/array.h"
+#include "ags/engine/media/audio/audiodefines.h"
+#include "ags/shared/ac/dynobj/scriptaudioclip.h"
+#include "ags/engine/ac/dynobj/scriptaudiochannel.h"
+#include "ags/engine/media/audio/ambientsound.h"
+#include "ags/engine/util/mutex.h"
+#include "ags/engine/util/mutex_lock.h"
+#include "ags/engine/util/thread.h"
+#include "ags/engine/ac/timer.h"
 
 namespace AGS3 {
 
@@ -156,7 +156,7 @@ extern int crossFadeVolumeAtStart;
 extern SOUNDCLIP *cachedQueuedMusic;
 
 // TODO: double check that ambient sounds array actually needs +1
-extern std::array < AmbientSound, MAX_SOUND_CHANNELS + 1 > ambient;
+extern std::array<AmbientSound> ambient(MAX_SOUND_CHANNELS + 1);
 
 } // namespace AGS3
 

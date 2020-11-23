@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_AC_MOVE_H
 #define AGS_ENGINE_AC_MOVE_H
 
-#include "util/wgt2allg.h" // fixed type
-#include "game/savegame.h"
+#include "ags/shared/util/wgt2allg.h" // fixed type
+#include "ags/engine/game/savegame.h"
 
 namespace AGS3 {
 
@@ -49,9 +49,9 @@ struct MoveList {
 	char  doneflag;
 	char  direct;  // MoveCharDirect was used or not
 
-	void ReadFromFile_Legacy(Common::Stream *in);
-	AGS::Engine::HSaveError ReadFromFile(Common::Stream *in, int32_t cmp_ver);
-	void WriteToFile(Common::Stream *out);
+	void ReadFromFile_Legacy(Shared::Stream *in);
+	AGS::Engine::HSaveError ReadFromFile(Shared::Stream *in, int32_t cmp_ver);
+	void WriteToFile(Shared::Stream *out);
 };
 
 } // namespace AGS3

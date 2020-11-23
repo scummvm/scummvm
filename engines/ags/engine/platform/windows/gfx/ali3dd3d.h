@@ -29,22 +29,22 @@
 #ifndef AGS_ENGINE_PLATFORM_WINDOWS_ALI3DD3D_H
 #define AGS_ENGINE_PLATFORM_WINDOWS_ALI3DD3D_H
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if ! AGS_PLATFORM_OS_WINDOWS
 #error This file should only be included on the Windows build
 #endif
 
-#include <memory>
+#include "ags/std/memory.h"
 #include "ags/lib/allegro.h"
-#include <winalleg.h>
-#include <d3d9.h>
-#include "gfx/bitmap.h"
-#include "gfx/ddb.h"
-#include "gfx/gfxdriverfactorybase.h"
-#include "gfx/gfxdriverbase.h"
-#include "util/library.h"
-#include "util/string.h"
+//include <winalleg.h>
+//include <d3d9.h>
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gfx/ddb.h"
+#include "ags/shared/gfx/gfxdriverfactorybase.h"
+#include "ags/shared/gfx/gfxdriverbase.h"
+#include "ags/shared/util/library.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 

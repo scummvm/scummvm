@@ -20,12 +20,12 @@
  *
  */
 
-#include "ac/global_label.h"
-#include "ac/common.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/label.h"
-#include "ac/string.h"
-#include "gui/guimain.h"
+#include "ags/shared/ac/global_label.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/label.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/gui/guimain.h"
 
 namespace AGS3 {
 

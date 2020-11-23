@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_AC_AUDIOCHANNEL_H
 #define AGS_ENGINE_AC_AUDIOCHANNEL_H
 
-#include "ac/dynobj/scriptaudioclip.h"
-#include "ac/dynobj/scriptaudiochannel.h"
+#include "ags/shared/ac/dynobj/scriptaudioclip.h"
+#include "ags/engine/ac/dynobj/scriptaudiochannel.h"
 
 namespace AGS3 {
 

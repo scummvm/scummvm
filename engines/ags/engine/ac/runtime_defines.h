@@ -159,6 +159,6 @@ const int LegacyRoomVolumeFactor = 30;
 
 } // namespace AGS3
 
-#include "ac/common_defines.h"
+#include "ags/shared/ac/common_defines.h"
 
 #endif

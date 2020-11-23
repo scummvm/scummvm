@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_MAIN_MAIN_H
 #define AGS_ENGINE_MAIN_MAIN_H
 
-#include "core/platform.h"
-#include "util/version.h"
+#include "ags/shared/core/platform.h"
+#include "ags/shared/util/version.h"
 
 namespace AGS3 {
 

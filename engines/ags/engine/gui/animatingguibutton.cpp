@@ -20,8 +20,8 @@
  *
  */
 
-#include "gui/animatingguibutton.h"
-#include "util/stream.h"
+#include "ags/shared/gui/animatingguibutton.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

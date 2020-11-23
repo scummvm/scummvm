@@ -20,26 +20,26 @@
  *
  */
 
-#include "ac/common.h"
-#include "ac/draw.h"
-#include "ac/gamesetup.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/mouse.h"
-#include "ac/string.h"
-#include "ac/system.h"
-#include "ac/dynobj/scriptsystem.h"
-#include "debug/debug_log.h"
-#include "debug/out.h"
-#include "main/engine.h"
-#include "main/main.h"
-#include "gfx/graphicsdriver.h"
-#include "ac/dynobj/cc_audiochannel.h"
-#include "main/graphics_mode.h"
-#include "ac/global_debug.h"
-#include "ac/global_translation.h"
-#include "media/audio/audio_system.h"
-#include "util/string_compat.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/gamesetup.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/mouse.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/ac/system.h"
+#include "ags/shared/ac/dynobj/scriptsystem.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/main/engine.h"
+#include "ags/shared/main/main.h"
+#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/shared/ac/dynobj/cc_audiochannel.h"
+#include "ags/shared/main/graphics_mode.h"
+#include "ags/shared/ac/global_debug.h"
+#include "ags/shared/ac/global_translation.h"
+#include "ags/shared/media/audio/audio_system.h"
+#include "ags/shared/util/string_compat.h"
 
 namespace AGS3 {
 
@@ -227,10 +227,10 @@ void System_SetRenderAtScreenResolution(int enable) {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
-#include "ac/dynobj/scriptstring.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

@@ -20,12 +20,12 @@
  *
  */
 
-#include "util/wgt2allg.h"
-#include "gfx/ali3dexception.h"
-#include "gfx/bitmap.h"
-#include "gfx/gfxfilter.h"
-#include "gfx/gfxdriverbase.h"
-#include "gfx/gfx_util.h"
+#include "ags/shared/util/wgt2allg.h"
+#include "ags/shared/gfx/ali3dexception.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gfx/gfxfilter.h"
+#include "ags/shared/gfx/gfxdriverbase.h"
+#include "ags/shared/gfx/gfx_util.h"
 
 namespace AGS3 {
 

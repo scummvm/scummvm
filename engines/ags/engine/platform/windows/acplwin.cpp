@@ -20,33 +20,33 @@
  *
  */
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
 
 // ********* WINDOWS *********
 
-#include <string.h>
+//include <string.h>
 #include "ags/lib/allegro.h"
-#include <allegro/platform/aintwin.h>
-#include "ac/common.h"
-#include "ac/draw.h"
-#include "ac/gamesetup.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/global_display.h"
-#include "ac/runtime_defines.h"
-#include "ac/string.h"
-#include "debug/out.h"
-#include "gfx/graphicsdriver.h"
-#include "gfx/bitmap.h"
-#include "main/engine.h"
-#include "platform/base/agsplatformdriver.h"
-#include "platform/windows/setup/winsetup.h"
-#include "plugin/agsplugin.h"
-#include "util/file.h"
-#include "util/stream.h"
-#include "util/string_compat.h"
-#include "media/audio/audio_system.h"
+//include <allegro/platform/aintwin.h>
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/gamesetup.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/global_display.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/main/engine.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/platform/windows/setup/winsetup.h"
+#include "ags/shared/plugin/agsplugin.h"
+#include "ags/shared/util/file.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_compat.h"
+#include "ags/shared/media/audio/audio_system.h"
 
 namespace AGS3 {
 
@@ -66,14 +66,14 @@ extern int our_eip;
 extern IGraphicsDriver *gfxDriver;
 extern color palette[256];
 
-#include <shlobj.h>
-#include <time.h>
-#include <shlwapi.h>
-#include <windows.h>
-#include <rpcsal.h>
-#include <gameux.h>
+//include <shlobj.h>
+//include <time.h>
+//include <shlwapi.h>
+//include <windows.h>
+//include <rpcsal.h>
+//include <gameux.h>
 
-#include <libcda.h>
+//include <libcda.h>
 
 
 #ifndef CSIDL_LOCAL_APPDATA

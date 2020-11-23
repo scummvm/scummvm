@@ -20,13 +20,13 @@
  *
  */
 
-#include <string.h>
-#include "ac/common.h"
-#include "ac/global_string.h"
-#include "ac/global_translation.h"
-#include "ac/runtime_defines.h"
-#include "ac/string.h"
-#include "util/string_compat.h"
+//include <string.h>
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/global_string.h"
+#include "ags/shared/ac/global_translation.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/util/string_compat.h"
 
 namespace AGS3 {
 

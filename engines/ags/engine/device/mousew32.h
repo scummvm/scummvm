@@ -31,11 +31,11 @@
 //
 //=============================================================================
 
-#include "util/geometry.h"
+#include "ags/shared/util/geometry.h"
 
 #define MAXCURSORS 20
 
-#include "util/geometry.h"
+#include "ags/shared/util/geometry.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -101,6 +101,6 @@ extern int hotx, hoty;
 extern int disable_mgetgraphpos;
 extern char currentcursor;
 
-extern Common::Bitmap *mousecurs[MAXCURSORS];
+extern Shared::Bitmap *mousecurs[MAXCURSORS];
 
 } // namespace AGS3

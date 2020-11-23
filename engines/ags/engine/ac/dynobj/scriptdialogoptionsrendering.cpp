@@ -20,7 +20,7 @@
  *
  */
 
-#include "ac/dynobj/scriptdialogoptionsrendering.h"
+#include "ags/shared/ac/dynobj/scriptdialogoptionsrendering.h"
 
 namespace AGS3 {
 

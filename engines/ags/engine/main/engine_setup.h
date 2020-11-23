@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_MAIN_ENGINESETUP_H
 #define AGS_ENGINE_MAIN_ENGINESETUP_H
 
-#include "util/geometry.h"
-#include "gfx/gfxdefines.h"
+#include "ags/shared/util/geometry.h"
+#include "ags/engine/gfx/gfxdefines.h"
 
 namespace AGS3 {
 

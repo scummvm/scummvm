@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_GFX_HQ2X3X_H
 #define AGS_ENGINE_GFX_HQ2X3X_H
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 namespace AGS3 {
 

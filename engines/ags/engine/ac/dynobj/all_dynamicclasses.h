@@ -23,18 +23,18 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_ALLDYNAMICCLASSES_H
 #define AGS_ENGINE_AC_DYNOBJ_ALLDYNAMICCLASSES_H
 
-#include "ac/dynobj/cc_agsdynamicobject.h"
-#include "ac/dynobj/cc_audiochannel.h"
-#include "ac/dynobj/cc_audioclip.h"
-#include "ac/dynobj/cc_character.h"
-#include "ac/dynobj/cc_dialog.h"
-#include "ac/dynobj/cc_gui.h"
-#include "ac/dynobj/cc_guiobject.h"
-#include "ac/dynobj/cc_hotspot.h"
-#include "ac/dynobj/cc_inventory.h"
-#include "ac/dynobj/cc_object.h"
-#include "ac/dynobj/cc_region.h"
+#include "ags/shared/ac/dynobj/cc_agsdynamicobject.h"
+#include "ags/shared/ac/dynobj/cc_audiochannel.h"
+#include "ags/shared/ac/dynobj/cc_audioclip.h"
+#include "ags/shared/ac/dynobj/cc_character.h"
+#include "ags/shared/ac/dynobj/cc_dialog.h"
+#include "ags/shared/ac/dynobj/cc_gui.h"
+#include "ags/shared/ac/dynobj/cc_guiobject.h"
+#include "ags/shared/ac/dynobj/cc_hotspot.h"
+#include "ags/shared/ac/dynobj/cc_inventory.h"
+#include "ags/shared/ac/dynobj/cc_object.h"
+#include "ags/shared/ac/dynobj/cc_region.h"
 
-#include "ac/dynobj/cc_serializer.h"
+#include "ags/shared/ac/dynobj/cc_serializer.h"
 
 #endif

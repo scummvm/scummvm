@@ -20,9 +20,9 @@
  *
  */
 
-#include "ac/dynobj/scriptviewport.h"
-#include "ac/gamestate.h"
-#include "util/bbop.h"
+#include "ags/shared/ac/dynobj/scriptviewport.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/util/bbop.h"
 
 namespace AGS3 {
 

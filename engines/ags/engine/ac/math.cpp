@@ -20,10 +20,10 @@
  *
  */
 
-#include <cmath>
-#include "ac/math.h"
-#include "ac/common.h" // quit
-#include "util/math.h"
+//include <cmath>
+#include "ags/shared/ac/math.h"
+#include "ags/shared/ac/common.h" // quit
+#include "ags/shared/util/math.h"
 
 namespace AGS3 {
 
@@ -148,9 +148,9 @@ int __Rand(int upto) {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
 
 // float (float value)
 RuntimeScriptValue Sc_Math_ArcCos(const RuntimeScriptValue *params, int32_t param_count) {

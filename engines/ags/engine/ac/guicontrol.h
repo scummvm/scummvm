@@ -23,14 +23,14 @@
 #ifndef AGS_ENGINE_AC_GUICONTROL_H
 #define AGS_ENGINE_AC_GUICONTROL_H
 
-#include "gui/guiobject.h"
-#include "gui/guibutton.h"
-#include "gui/guiinv.h"
-#include "gui/guilabel.h"
-#include "gui/guilistbox.h"
-#include "gui/guislider.h"
-#include "gui/guitextbox.h"
-#include "ac/dynobj/scriptgui.h"
+#include "ags/shared/gui/guiobject.h"
+#include "ags/shared/gui/guibutton.h"
+#include "ags/shared/gui/guiinv.h"
+#include "ags/shared/gui/guilabel.h"
+#include "ags/shared/gui/guilistbox.h"
+#include "ags/shared/gui/guislider.h"
+#include "ags/shared/gui/guitextbox.h"
+#include "ags/engine/ac/dynobj/scriptgui.h"
 
 namespace AGS3 {
 

@@ -20,18 +20,18 @@
  *
  */
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
-#include <new.h>
+//include <new.h>
 #include "ags/lib/allegro.h"
-#include <winalleg.h>
-#include "ac/common.h"
-#include "ac/common_defines.h"
-#include "debug/debugger.h"
-#include "debug/out.h"
-#include "main/main.h"
-#include "util/ini_util.h"
+//include <winalleg.h>
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/common_defines.h"
+#include "ags/shared/debug/debugger.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/main/main.h"
+#include "ags/shared/util/ini_util.h"
 
 #if !AGS_PLATFORM_DEBUG
 #define USE_CUSTOM_EXCEPTION_HANDLER

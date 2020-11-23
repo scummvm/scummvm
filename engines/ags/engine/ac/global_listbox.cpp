@@ -20,10 +20,10 @@
  *
  */
 
-#include "ac/global_listbox.h"
-#include "ac/common.h"
-#include "ac/listbox.h"
-#include "ac/string.h"
+#include "ags/shared/ac/global_listbox.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/listbox.h"
+#include "ags/shared/ac/string.h"
 
 namespace AGS3 {
 

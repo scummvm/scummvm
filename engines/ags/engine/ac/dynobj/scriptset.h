@@ -35,12 +35,12 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTSET_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTSET_H
 
-#include <set>
-#include <unordered_set>
-#include <string.h>
-#include "ac/dynobj/cc_agsdynamicobject.h"
-#include "util/string.h"
-#include "util/string_types.h"
+//include <set>
+//include <unordered_set>
+//include <string.h>
+#include "ags/shared/ac/dynobj/cc_agsdynamicobject.h"
+#include "ags/shared/util/string.h"
+#include "ags/shared/util/string_types.h"
 
 namespace AGS3 {
 

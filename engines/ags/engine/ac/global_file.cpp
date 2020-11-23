@@ -20,17 +20,17 @@
  *
  */
 
-#include <string.h>
-#include "ac/global_file.h"
-#include "ac/common.h"
-#include "ac/file.h"
-#include "ac/path_helper.h"
-#include "ac/runtime_defines.h"
-#include "ac/string.h"
-#include "debug/debug_log.h"
-#include "util/directory.h"
-#include "util/path.h"
-#include "util/stream.h"
+//include <string.h>
+#include "ags/shared/ac/global_file.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/file.h"
+#include "ags/shared/ac/path_helper.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/util/directory.h"
+#include "ags/shared/util/path.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

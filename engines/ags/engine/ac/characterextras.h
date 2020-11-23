@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_CHARACTEREXTRAS_H
 #define AGS_ENGINE_AC_CHARACTEREXTRAS_H
 
-#include "ac/runtime_defines.h"
+#include "ags/engine/ac/runtime_defines.h"
 
 namespace AGS3 {
 
@@ -56,8 +56,8 @@ struct CharacterExtras {
 	char  slow_move_counter;
 	short animwait;
 
-	void ReadFromFile(Common::Stream *in);
-	void WriteToFile(Common::Stream *out);
+	void ReadFromFile(Shared::Stream *in);
+	void WriteToFile(Shared::Stream *out);
 };
 
 } // namespace AGS3

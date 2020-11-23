@@ -29,22 +29,22 @@
 #ifndef AGS_ENGINE_GFX_ALI3DSW_H
 #define AGS_ENGINE_GFX_ALI3DSW_H
 
-#include <memory>
+#include "ags/std/memory.h"
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 #define AGS_DDRAW_GAMMA_CONTROL (AGS_PLATFORM_OS_WINDOWS)
 
 #include "ags/lib/allegro.h"
 
 #if AGS_DDRAW_GAMMA_CONTROL
-#include <winalleg.h>
-#include <ddraw.h>
+//include <winalleg.h>
+//include <ddraw.h>
 #endif
 
-#include "gfx/bitmap.h"
-#include "gfx/ddb.h"
-#include "gfx/gfxdriverfactorybase.h"
-#include "gfx/gfxdriverbase.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gfx/ddb.h"
+#include "ags/shared/gfx/gfxdriverfactorybase.h"
+#include "ags/shared/gfx/gfxdriverbase.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -263,7 +263,7 @@ private:
 	// Unset parameters and release resources related to the display mode
 	void ReleaseDisplayMode();
 	// Renders single sprite batch on the precreated surface
-	void RenderSpriteBatch(const ALSpriteBatch &batch, Common::Bitmap *surface, int surf_offx, int surf_offy);
+	void RenderSpriteBatch(const ALSpriteBatch &batch, Shared::Bitmap *surface, int surf_offx, int surf_offy);
 
 	void highcolor_fade_in(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue);
 	void highcolor_fade_out(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue);

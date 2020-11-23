@@ -30,8 +30,8 @@
 #ifndef AGS_ENGINE_GAME_GAMEINIT_H
 #define AGS_ENGINE_GAME_GAMEINIT_H
 
-#include "game/main_game_file.h"
-#include "util/string.h"
+#include "ags/shared/game/main_game_file.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 namespace AGS {

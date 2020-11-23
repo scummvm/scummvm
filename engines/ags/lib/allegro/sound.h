@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_SOUND_H
-#define AGS_STUBS_ALLEGRO_SOUND_H
+#ifndef AGS_LIB_ALLEGRO_SOUND_H
+#define AGS_LIB_ALLEGRO_SOUND_H
 
 #include "common/scummsys.h"
 #include "ags/lib/allegro/base.h"

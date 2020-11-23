@@ -33,16 +33,16 @@
 #ifndef AGS_ENGINE_GFX_GFXDRIVERFACTORY_H
 #define AGS_ENGINE_GFX_GFXDRIVERFACTORY_H
 
-#include <memory>
-#include "util/string.h"
-#include "util/string_types.h"
+#include "ags/std/memory.h"
+#include "ags/shared/util/string.h"
+#include "ags/shared/util/string_types.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
-using Common::String;
-using Common::StringV;
+using Shared::String;
+using Shared::StringV;
 class IGraphicsDriver;
 class IGfxFilter;
 struct GfxFilterInfo;

@@ -31,33 +31,33 @@
 //
 //=============================================================================
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #define AGS_SIMULATE_RIGHT_CLICK (AGS_PLATFORM_OS_MACOS)
 
 #if AGS_PLATFORM_OS_WINDOWS
-#include <dos.h>
-#include <conio.h>
-#include <process.h>
+//include <dos.h>
+//include <conio.h>
+//include <process.h>
 #endif
 
-#include "util/wgt2allg.h"
+#include "ags/shared/util/wgt2allg.h"
 
 #ifndef TRUE
 #define TRUE 1
 #define FALSE 0
 #endif
 
-#include "ac/gamestate.h"
-#include "debug/out.h"
-#include "device/mousew32.h"
-#include "gfx/bitmap.h"
-#include "gfx/gfx_util.h"
-#include "main/graphics_mode.h"
-#include "platform/base/agsplatformdriver.h"
-#include "util/math.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/device/mousew32.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gfx/gfx_util.h"
+#include "ags/shared/main/graphics_mode.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/util/math.h"
 #if AGS_SIMULATE_RIGHT_CLICK
-#include "ac/sys_events.h" // j for ags_iskeypressed
+#include "ags/shared/ac/sys_events.h" // j for ags_iskeypressed
 #endif
 
 namespace AGS3 {

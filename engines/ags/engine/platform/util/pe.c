@@ -18,11 +18,11 @@
 
 #if defined(ANDROID) || defined(PSP)
 
-#include "pe.h"
+#include "ags/shared/pe.h"
 
-#include <string.h>
-#include <stdlib.h>
-#include "util/stdio_compat.h"
+//include <string.h>
+//include <stdlib.h>
+#include "ags/shared/util/stdio_compat.h"
 
 
 // Simplified structs for PE files

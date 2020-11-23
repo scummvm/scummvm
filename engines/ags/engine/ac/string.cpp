@@ -20,19 +20,19 @@
  *
  */
 
-#include <cstdio>
-#include "ac/string.h"
-#include "ac/common.h"
-#include "ac/display.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_translation.h"
-#include "ac/runtime_defines.h"
-#include "ac/dynobj/scriptstring.h"
-#include "font/fonts.h"
-#include "debug/debug_log.h"
-#include "script/runtimescriptvalue.h"
-#include "util/string_compat.h"
+//include <cstdio>
+#include "ags/shared/ac/string.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/display.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_translation.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/dynobj/scriptstring.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/shared/util/string_compat.h"
 
 namespace AGS3 {
 
@@ -298,10 +298,10 @@ void my_strncpy(char *dest, const char *src, int len) {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
-#include "ac/math.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/ac/math.h"
 
 // int (const char *thisString)
 RuntimeScriptValue Sc_String_IsNullOrEmpty(const RuntimeScriptValue *params, int32_t param_count) {

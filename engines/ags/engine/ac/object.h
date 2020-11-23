@@ -31,8 +31,8 @@
 #ifndef AGS_ENGINE_AC_OBJECT_H
 #define AGS_ENGINE_AC_OBJECT_H
 
-#include "ac/common_defines.h"
-#include "ac/dynobj/scriptobject.h"
+#include "ags/shared/ac/common_defines.h"
+#include "ags/engine/ac/dynobj/scriptobject.h"
 
 namespace AGS3 {
 
@@ -98,7 +98,7 @@ const char *Object_GetTextProperty(ScriptObject *objj, const char *property);
 void    move_object(int objj, int tox, int toy, int spee, int ignwal);
 void    get_object_blocking_rect(int objid, int *x1, int *y1, int *width, int *y2);
 int     isposinbox(int mmx, int mmy, int lf, int tp, int rt, int bt);
-int     is_pos_in_sprite(int xx, int yy, int arx, int ary, Common::Bitmap *sprit, int spww, int sphh, int flipped = 0);
+int     is_pos_in_sprite(int xx, int yy, int arx, int ary, Shared::Bitmap *sprit, int spww, int sphh, int flipped = 0);
 // X and Y co-ordinates must be in native format
 // X and Y are ROOM coordinates
 int     check_click_on_object(int roomx, int roomy, int mood);

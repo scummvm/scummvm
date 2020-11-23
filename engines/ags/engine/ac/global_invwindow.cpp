@@ -20,12 +20,12 @@
  *
  */
 
-#include "ac/gamestate.h"
-#include "ac/global_invwindow.h"
-#include "ac/global_translation.h"
-#include "ac/properties.h"
-#include "gui/guiinv.h"
-#include "script/executingscript.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_invwindow.h"
+#include "ags/shared/ac/global_translation.h"
+#include "ags/shared/ac/properties.h"
+#include "ags/shared/gui/guiinv.h"
+#include "ags/shared/script/executingscript.h"
 
 namespace AGS3 {
 

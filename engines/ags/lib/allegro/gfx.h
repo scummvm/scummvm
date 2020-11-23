@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_GRAPHICS_H
-#define AGS_STUBS_ALLEGRO_GRAPHICS_H
+#ifndef AGS_LIB_ALLEGRO_GRAPHICS_H
+#define AGS_LIB_ALLEGRO_GRAPHICS_H
 
 #include "graphics/managed_surface.h"
 #include "ags/lib/allegro/base.h"

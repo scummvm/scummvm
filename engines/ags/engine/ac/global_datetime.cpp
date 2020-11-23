@@ -20,10 +20,10 @@
  *
  */
 
-#include <time.h>
-#include "ac/global_datetime.h"
-#include "ac/datetime.h"
-#include "ac/common.h"
+//include <time.h>
+#include "ags/shared/ac/global_datetime.h"
+#include "ags/shared/ac/datetime.h"
+#include "ags/shared/ac/common.h"
 
 namespace AGS3 {
 

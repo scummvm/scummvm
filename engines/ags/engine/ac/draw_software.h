@@ -30,9 +30,9 @@
 #ifndef AGS_ENGINE_AC_DRAWSOFTWARE_H
 #define AGS_ENGINE_AC_DRAWSOFTWARE_H
 
-#include "gfx/bitmap.h"
-#include "gfx/ddb.h"
-#include "util/geometry.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/engine/gfx/ddb.h"
+#include "ags/shared/util/geometry.h"
 
 namespace AGS3 {
 

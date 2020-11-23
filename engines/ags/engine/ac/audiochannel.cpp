@@ -20,14 +20,14 @@
  *
  */
 
-#include "ac/audiochannel.h"
-#include "ac/gamestate.h"
-#include "ac/global_audio.h"
-#include "ac/dynobj/cc_audioclip.h"
-#include "debug/debug_log.h"
-#include "game/roomstruct.h"
-#include "script/runtimescriptvalue.h"
-#include "media/audio/audio_system.h"
+#include "ags/engine/ac/audiochannel.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_audio.h"
+#include "ags/engine/ac/dynobj/cc_audioclip.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/media/audio/audio_system.h"
 
 namespace AGS3 {
 
@@ -202,9 +202,9 @@ void AudioChannel_SetRoomLocation(ScriptAudioChannel *channel, int xPos, int yPo
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
 
 // int | ScriptAudioChannel *channel
 RuntimeScriptValue Sc_AudioChannel_GetID(void *self, const RuntimeScriptValue *params, int32_t param_count) {

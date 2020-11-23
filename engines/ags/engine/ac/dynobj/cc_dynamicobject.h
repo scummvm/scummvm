@@ -29,8 +29,8 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_CCDYNAMICOBJECT_H
 #define AGS_ENGINE_AC_DYNOBJ_CCDYNAMICOBJECT_H
 
-#include <utility>
-#include "core/types.h"
+#include "ags/std/utility.h"
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 
@@ -114,9 +114,9 @@ extern int   ccUnRegisterManagedObject(const void *object);
 // remove all registered objects
 extern void  ccUnregisterAllObjects();
 // serialize all objects to disk
-extern void  ccSerializeAllObjects(Common::Stream *out);
+extern void  ccSerializeAllObjects(Shared::Stream *out);
 // un-serialise all objects (will remove all currently registered ones)
-extern int   ccUnserializeAllObjects(Common::Stream *in, ICCObjectReader *callback);
+extern int   ccUnserializeAllObjects(Shared::Stream *in, ICCObjectReader *callback);
 // dispose the object if RefCount==0
 extern void  ccAttemptDisposeObject(int32_t handle);
 // translate between object handles and memory addresses

@@ -20,27 +20,27 @@
  *
  */
 
-#include "ac/draw.h"
-#include "ac/drawingsurface.h"
-#include "ac/common.h"
-#include "ac/charactercache.h"
-#include "ac/display.h"
-#include "ac/game.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_translation.h"
-#include "ac/objectcache.h"
-#include "ac/roomobject.h"
-#include "ac/roomstatus.h"
-#include "ac/string.h"
-#include "ac/walkbehind.h"
-#include "debug/debug_log.h"
-#include "font/fonts.h"
-#include "gui/guimain.h"
-#include "ac/spritecache.h"
-#include "script/runtimescriptvalue.h"
-#include "gfx/gfx_def.h"
-#include "gfx/gfx_util.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/drawingsurface.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/charactercache.h"
+#include "ags/shared/ac/display.h"
+#include "ags/shared/ac/game.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_translation.h"
+#include "ags/shared/ac/objectcache.h"
+#include "ags/shared/ac/roomobject.h"
+#include "ags/shared/ac/roomstatus.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/ac/walkbehind.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/shared/gfx/gfx_def.h"
+#include "ags/shared/gfx/gfx_util.h"
 
 namespace AGS3 {
 
@@ -447,9 +447,9 @@ int DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y) {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
 
 // void (ScriptDrawingSurface *sds, int colour)
 RuntimeScriptValue Sc_DrawingSurface_Clear(void *self, const RuntimeScriptValue *params, int32_t param_count) {

@@ -20,20 +20,20 @@
  *
  */
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_WINDOWS || AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_LINUX
 
-#include <algorithm>
-#include "gfx/ali3dexception.h"
-#include "gfx/ali3dogl.h"
-#include "gfx/gfxfilter_ogl.h"
-#include "gfx/gfxfilter_aaogl.h"
-#include "gfx/gfx_util.h"
-#include "main/main_allegro.h"
-#include "platform/base/agsplatformdriver.h"
-#include "util/math.h"
-#include "ac/timer.h"
+//include <algorithm>
+#include "ags/shared/gfx/ali3dexception.h"
+#include "ags/shared/gfx/ali3dogl.h"
+#include "ags/shared/gfx/gfxfilter_ogl.h"
+#include "ags/shared/gfx/gfxfilter_aaogl.h"
+#include "ags/shared/gfx/gfx_util.h"
+#include "ags/shared/main/main_allegro.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/util/math.h"
+#include "ags/shared/ac/timer.h"
 
 namespace AGS3 {
 

@@ -37,8 +37,8 @@
 #ifndef AGS_ENGINE_SCRIPT_SCRIPT_RUNTIME_H
 #define AGS_ENGINE_SCRIPT_SCRIPT_RUNTIME_H
 
-#include "script/cc_script.h"      // ccScript
-#include "script/cc_instance.h"    // ccInstance
+#include "ags/shared/script/cc_script.h"      // ccScript
+#include "ags/engine/script/cc_instance.h"    // ccInstance
 
 namespace AGS3 {
 

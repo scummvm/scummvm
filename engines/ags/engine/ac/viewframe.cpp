@@ -20,16 +20,16 @@
  *
  */
 
-#include "ac/gamesetupstruct.h"
-#include "ac/viewframe.h"
-#include "debug/debug_log.h"
-#include "ac/spritecache.h"
-#include "gfx/bitmap.h"
-#include "script/runtimescriptvalue.h"
-#include "ac/dynobj/cc_audioclip.h"
-#include "ac/draw.h"
-#include "ac/game_version.h"
-#include "media/audio/audio_system.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/viewframe.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/shared/ac/dynobj/cc_audioclip.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/media/audio/audio_system.h"
 
 } // namespace AGS3
 
@@ -178,9 +178,9 @@ void DrawViewFrame(Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
 
 // int (ScriptViewFrame *svf)
 RuntimeScriptValue Sc_ViewFrame_GetFlipped(void *self, const RuntimeScriptValue *params, int32_t param_count) {

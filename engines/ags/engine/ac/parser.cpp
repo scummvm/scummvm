@@ -20,17 +20,17 @@
  *
  */
 
-#include <cctype> //isalnum()
-#include <cstdio>
-#include "ac/common.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/parser.h"
-#include "ac/string.h"
-#include "ac/wordsdictionary.h"
-#include "debug/debug_log.h"
-#include "util/string.h"
-#include "util/string_compat.h"
+//include <cctype> //isalnum()
+//include <cstdio>
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/parser.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/ac/wordsdictionary.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/util/string.h"
+#include "ags/shared/util/string_compat.h"
 
 namespace AGS3 {
 
@@ -301,10 +301,10 @@ int parse_sentence(const char *src_text, int *numwords, short *wordarray, short 
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
-#include "ac/dynobj/scriptstring.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

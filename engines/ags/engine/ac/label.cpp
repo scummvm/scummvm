@@ -20,12 +20,12 @@
  *
  */
 
-#include <string.h>
-#include "ac/label.h"
-#include "ac/common.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/global_translation.h"
-#include "ac/string.h"
+//include <string.h>
+#include "ags/shared/ac/label.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/global_translation.h"
+#include "ags/shared/ac/string.h"
 
 namespace AGS3 {
 
@@ -92,10 +92,10 @@ void Label_SetFont(GUILabel *guil, int fontnum) {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
-#include "ac/dynobj/scriptstring.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

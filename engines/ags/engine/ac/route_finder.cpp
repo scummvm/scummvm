@@ -20,12 +20,12 @@
  *
  */
 
-#include "ac/route_finder.h"
+#include "ags/shared/ac/route_finder.h"
 
-#include "ac/route_finder_impl.h"
-#include "ac/route_finder_impl_legacy.h"
+#include "ags/shared/ac/route_finder_impl.h"
+#include "ags/shared/ac/route_finder_impl_legacy.h"
 
-#include "debug/out.h"
+#include "ags/shared/debug/out.h"
 
 namespace AGS3 {
 

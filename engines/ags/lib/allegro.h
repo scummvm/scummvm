@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_H
-#define AGS_STUBS_ALLEGRO_H
+#ifndef ALLEGRO_H
+#define ALLEGRO_H
 
 #include "ags/lib/allegro/alconfig.h"
 #include "ags/lib/allegro/base.h"

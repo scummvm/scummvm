@@ -20,9 +20,9 @@
  *
  */
 
-#include "ac/dynobj/cc_inventory.h"
-#include "ac/dynobj/scriptinvitem.h"
-#include "ac/characterinfo.h"
+#include "ags/shared/ac/dynobj/cc_inventory.h"
+#include "ags/shared/ac/dynobj/scriptinvitem.h"
+#include "ags/shared/ac/characterinfo.h"
 
 namespace AGS3 {
 

@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_GUI_GUIDIALOGDEFINES_H
 #define AGS_ENGINE_GUI_GUIDIALOGDEFINES_H
 
-#include "ac/gamesetup.h"
+#include "ags/shared/ac/gamesetup.h"
 
 namespace AGS3 {
 

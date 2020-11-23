@@ -20,7 +20,7 @@
  *
  */
 
-#include "ac/dynobj/scriptset.h"
+#include "ags/shared/ac/dynobj/scriptset.h"
 
 namespace AGS3 {
 

@@ -23,13 +23,13 @@
 #ifndef AGS_ENGINE_AC_CHARACTER_H
 #define AGS_ENGINE_AC_CHARACTER_H
 
-#include "ac/characterinfo.h"
-#include "ac/characterextras.h"
-#include "ac/dynobj/scriptobject.h"
-#include "ac/dynobj/scriptinvitem.h"
-#include "ac/dynobj/scriptoverlay.h"
-#include "game/viewport.h"
-#include "util/geometry.h"
+#include "ags/shared/ac/characterinfo.h"
+#include "ags/engine/ac/characterextras.h"
+#include "ags/engine/ac/dynobj/scriptobject.h"
+#include "ags/engine/ac/dynobj/scriptinvitem.h"
+#include "ags/engine/ac/dynobj/scriptoverlay.h"
+#include "ags/engine/game/viewport.h"
+#include "ags/shared/util/geometry.h"
 
 namespace AGS3 {
 
@@ -193,14 +193,14 @@ int  is_valid_character(int newchar);
 int  wantMoveNow(CharacterInfo *chi, CharacterExtras *chex);
 void setup_player_character(int charid);
 void CheckViewFrameForCharacter(CharacterInfo *chi);
-Common::Bitmap *GetCharacterImage(int charid, int *isFlipped);
+Shared::Bitmap *GetCharacterImage(int charid, int *isFlipped);
 CharacterInfo *GetCharacterAtScreen(int xx, int yy);
 // Get character ID at the given room coordinates
 int is_pos_on_character(int xx, int yy);
 void get_char_blocking_rect(int charid, int *x1, int *y1, int *width, int *y2);
 // Check whether the source char has walked onto character ww
 int is_char_on_another(int sourceChar, int ww, int *fromxptr, int *cwidptr);
-int my_getpixel(Common::Bitmap *blk, int x, int y);
+int my_getpixel(Shared::Bitmap *blk, int x, int y);
 // X and Y co-ordinates must be in 320x200 format
 int check_click_on_character(int xx, int yy, int mood);
 int is_pos_on_character(int xx, int yy);

@@ -31,15 +31,15 @@
 #ifndef AGS_ENGINE_DEBUGGING_MESSAGEBUFFER_H
 #define AGS_ENGINE_DEBUGGING_MESSAGEBUFFER_H
 
-#include <vector>
-#include "debug/outputhandler.h"
+#include "ags/std/vector.h"
+#include "ags/shared/debugging/outputhandler.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
-using Common::String;
-using Common::DebugMessage;
+using Shared::String;
+using Shared::DebugMessage;
 
 class MessageBuffer : public AGS::Shared::IOutputHandler {
 public:

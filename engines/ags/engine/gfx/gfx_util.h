@@ -35,14 +35,14 @@
 #ifndef AGS_ENGINE_GFX_GFXUTIL_H
 #define AGS_ENGINE_GFX_GFXUTIL_H
 
-#include "gfx/bitmap.h"
-#include "gfx/gfx_def.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gfx/gfx_def.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
-using Common::Bitmap;
+using Shared::Bitmap;
 
 namespace GfxUtil {
 // Creates a COPY of the source bitmap, converted to the given format.

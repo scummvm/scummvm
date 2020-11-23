@@ -1,15 +1,15 @@
 // Microsoft Visual C++ generated resource script.
 //
-#include "resource.h"
+#include "ags/shared/resource.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
 //
 // Generated from the TEXTINCLUDE 2 resource.
 //
-#include <WinResrc.h>
+//include <WinResrc.h>
 #define IDC_STATIC -1
-#include "../../Common/core/def_version.h"
+#include "ags/shared/../../Common/core/def_version.h"
 
 /////////////////////////////////////////////////////////////////////////////
 #undef APSTUDIO_READONLY_SYMBOLS
@@ -86,9 +86,9 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
-    "#include <WinResrc.h>\r\n"
+    "//include <WinResrc.h>\r\n"
     "#define IDC_STATIC -1\r\n"
-    "#include ""../../Common/core/def_version.h""\r\n"
+    "#include "ags/shared/"../../Common/core/def_version.h""\r\n"
     "\0"
 END
 

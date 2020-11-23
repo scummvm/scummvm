@@ -20,26 +20,26 @@
  *
  */
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_ANDROID
 
 #include "ags/lib/allegro.h"
-#include "platform/base/agsplatformdriver.h"
-#include "ac/runtime_defines.h"
-#include "main/config.h"
-#include "plugin/agsplugin.h"
-#include <stdio.h>
-#include <dirent.h>
-#include <sys/stat.h>
-#include <ctype.h>
-#include <unistd.h>
-#include "util/string_compat.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/main/config.h"
+#include "ags/shared/plugin/agsplugin.h"
+//include <stdio.h>
+//include <dirent.h>
+//include <sys/stat.h>
+//include <ctype.h>
+//include <unistd.h>
+#include "ags/shared/util/string_compat.h"
 
 
 
-#include <jni.h>
-#include <android/log.h>
+//include <jni.h>
+//include <android/log.h>
 
 namespace AGS3 {
 

@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_SCRIPT_EXECUTINGSCRIPT_H
 #define AGS_ENGINE_SCRIPT_EXECUTINGSCRIPT_H
 
-#include "script/cc_instance.h"
+#include "ags/engine/script/cc_instance.h"
 
 namespace AGS3 {
 
@@ -49,7 +49,7 @@ enum ScriptInstType {
 };
 
 struct QueuedScript {
-	Common::String     FnName;
+	Shared::String     FnName;
 	ScriptInstType     Instance;
 	size_t             ParamCount;
 	RuntimeScriptValue Param1;

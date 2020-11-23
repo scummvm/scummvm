@@ -23,10 +23,10 @@
 #ifndef AGS_ENGINE_SCRIPT_NONBLOCKINGSCRIPTFUNCTION_H
 #define AGS_ENGINE_SCRIPT_NONBLOCKINGSCRIPTFUNCTION_H
 
-#include "ac/runtime_defines.h"
-#include "script/runtimescriptvalue.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/script/runtimescriptvalue.h"
 
-#include <vector>
+#include "ags/std/vector.h"
 
 namespace AGS3 {
 

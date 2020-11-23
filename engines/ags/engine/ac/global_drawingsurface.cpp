@@ -20,22 +20,22 @@
  *
  */
 
-#include "ac/common.h"
-#include "ac/display.h"
-#include "ac/draw.h"
-#include "ac/game.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_drawingsurface.h"
-#include "ac/global_translation.h"
-#include "ac/string.h"
-#include "debug/debug_log.h"
-#include "font/fonts.h"
-#include "game/roomstruct.h"
-#include "gui/guidefines.h"
-#include "ac/spritecache.h"
-#include "gfx/gfx_def.h"
-#include "gfx/gfx_util.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/display.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/game.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_drawingsurface.h"
+#include "ags/shared/ac/global_translation.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/gui/guidefines.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/gfx/gfx_def.h"
+#include "ags/shared/gfx/gfx_util.h"
 
 namespace AGS3 {
 

@@ -28,24 +28,24 @@
 //
 //=============================================================================
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_WINDOWS && ! defined (AGS_NO_VIDEO_PLAYER)
 
 //#define ALLEGRO_STATICLINK  // already defined in project settings
 #include "ags/lib/allegro.h"
-#include <winalleg.h>
-#include <windows.h>
-#include <stdlib.h>
-#include <amstream.h>
-#include <mmstream.h>   // Multimedia stream interfaces
-#include <ddstream.h>   // DirectDraw multimedia stream interfaces
-#include <initguid.h>   // Defines DEFINE_GUID macro and enables GUID initialization
-#include "ac/draw.h"
-#include "gfx/bitmap.h"
-#include "gfx/graphicsdriver.h"
-#include "main/game_run.h"
-#include "platform/base/agsplatformdriver.h"
+//include <winalleg.h>
+//include <windows.h>
+//include <stdlib.h>
+//include <amstream.h>
+//include <mmstream.h>   // Multimedia stream interfaces
+//include <ddstream.h>   // DirectDraw multimedia stream interfaces
+//include <initguid.h>   // Defines DEFINE_GUID macro and enables GUID initialization
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/shared/main/game_run.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
 
 namespace AGS3 {
 

@@ -20,13 +20,13 @@
  *
  */
 
-#include <stdio.h>
-#include <string.h>
-#include "ac/game_version.h"
-#include "script/cc_error.h"
-#include "script/runtimescriptvalue.h"
-#include "script/script_api.h"
-#include "util/math.h"
+//include <stdio.h>
+//include <string.h>
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/util/math.h"
 
 namespace AGS3 {
 

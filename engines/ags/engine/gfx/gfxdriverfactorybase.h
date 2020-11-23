@@ -33,9 +33,9 @@
 #ifndef AGS_ENGINE_GFX_GFXDRIVERFACTORYBASE_H
 #define AGS_ENGINE_GFX_GFXDRIVERFACTORYBASE_H
 
-#include <vector>
-#include "gfx/gfxdriverfactory.h"
-#include "gfx/gfxfilter.h"
+#include "ags/std/vector.h"
+#include "ags/shared/gfx/gfxdriverfactory.h"
+#include "ags/shared/gfx/gfxfilter.h"
 
 namespace AGS3 {
 namespace AGS {

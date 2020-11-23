@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_COLOR_H
-#define AGS_STUBS_ALLEGRO_COLOR_H
+#ifndef AGS_LIB_ALLEGRO_COLOR_H
+#define AGS_LIB_ALLEGRO_COLOR_H
 
 #include "common/scummsys.h"
 #include "ags/lib/allegro/alconfig.h"

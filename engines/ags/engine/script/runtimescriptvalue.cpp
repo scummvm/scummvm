@@ -20,13 +20,13 @@
  *
  */
 
-#include "script/cc_error.h"
-#include "script/runtimescriptvalue.h"
-#include "ac/dynobj/cc_dynamicobject.h"
-#include "ac/statobj/staticobject.h"
-#include "util/memory.h"
+#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/shared/ac/dynobj/cc_dynamicobject.h"
+#include "ags/shared/ac/statobj/staticobject.h"
+#include "ags/shared/util/memory.h"
 
-#include <string.h> // for memcpy()
+//include <string.h> // for memcpy()
 
 namespace AGS3 {
 

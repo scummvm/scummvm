@@ -20,13 +20,13 @@
  *
  */
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
 
-#include "platform/windows/debug/namedpipesagsdebugger.h"
+#include "ags/shared/platform/windows/debug/namedpipesagsdebugger.h"
 
-#include <stdio.h> // sprintf
+//include <stdio.h> // sprintf
 
 namespace AGS3 {
 

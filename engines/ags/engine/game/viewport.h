@@ -29,10 +29,10 @@
 #ifndef AGS_ENGINE_GAME_VIEWPORT_H
 #define AGS_ENGINE_GAME_VIEWPORT_H
 
-#include <memory>
-#include <vector>
-#include "util/geometry.h"
-#include "util/scaling.h"
+#include "ags/std/memory.h"
+#include "ags/std/vector.h"
+#include "ags/shared/util/geometry.h"
+#include "ags/engine/util/scaling.h"
 
 namespace AGS3 {
 

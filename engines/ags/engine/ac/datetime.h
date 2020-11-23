@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_DATETIME_H
 #define AGS_ENGINE_AC_DATETIME_H
 
-#include "ac/dynobj/scriptdatetime.h"
+#include "ags/engine/ac/dynobj/scriptdatetime.h"
 
 namespace AGS3 {
 

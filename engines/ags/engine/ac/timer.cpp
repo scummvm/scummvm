@@ -20,16 +20,16 @@
  *
  */
 
-#include "ac/timer.h"
+#include "ags/shared/ac/timer.h"
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 #if AGS_PLATFORM_DEBUG && defined (__GNUC__)
-#include <stdio.h>
-#include <execinfo.h>
-#include <unistd.h>
+//include <stdio.h>
+//include <execinfo.h>
+//include <unistd.h>
 #endif
-#include <thread>
-#include "platform/base/agsplatformdriver.h"
+//include <thread>
+#include "ags/shared/platform/base/agsplatformdriver.h"
 
 namespace AGS3 {
 

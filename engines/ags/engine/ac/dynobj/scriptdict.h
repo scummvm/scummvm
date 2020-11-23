@@ -36,12 +36,12 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTDICT_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTDICT_H
 
-#include <map>
-#include <unordered_map>
-#include <string.h>
-#include "ac/dynobj/cc_agsdynamicobject.h"
-#include "util/string.h"
-#include "util/string_types.h"
+//include <map>
+//include <unordered_map>
+//include <string.h>
+#include "ags/shared/ac/dynobj/cc_agsdynamicobject.h"
+#include "ags/shared/util/string.h"
+#include "ags/shared/util/string_types.h"
 
 namespace AGS3 {
 

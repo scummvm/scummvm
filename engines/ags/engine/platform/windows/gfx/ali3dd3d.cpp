@@ -26,24 +26,24 @@
 //
 //=============================================================================
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
 
-#include "platform/windows/gfx/ali3dd3d.h"
+#include "ags/shared/platform/windows/gfx/ali3dd3d.h"
 
 #include "ags/lib/allegro.h"
-#include <allegro/platform/aintwin.h>
-#include "ac/timer.h"
-#include "debug/assert.h"
-#include "debug/out.h"
-#include "gfx/ali3dexception.h"
-#include "gfx/gfxfilter_d3d.h"
-#include "gfx/gfxfilter_aad3d.h"
-#include "gfx/gfx_util.h"
-#include "main/main_allegro.h"
-#include "platform/base/agsplatformdriver.h"
-#include "util/library.h"
+//include <allegro/platform/aintwin.h>
+#include "ags/shared/ac/timer.h"
+#include "ags/shared/debug/assert.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/gfx/ali3dexception.h"
+#include "ags/shared/gfx/gfxfilter_d3d.h"
+#include "ags/shared/gfx/gfxfilter_aad3d.h"
+#include "ags/shared/gfx/gfx_util.h"
+#include "ags/shared/main/main_allegro.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/util/library.h"
 
 namespace AGS3 {
 

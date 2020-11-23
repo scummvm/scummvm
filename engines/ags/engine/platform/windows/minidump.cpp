@@ -20,14 +20,14 @@
  *
  */
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_WINDOWS && !AGS_PLATFORM_DEBUG
 #define UNICODE
-#include <stdio.h> // sprintf
-#include "windows.h"
-#include <crtdbg.h>
-#include "main/main.h"
+//include <stdio.h> // sprintf
+#include "ags/shared/windows.h"
+//include <crtdbg.h>
+#include "ags/shared/main/main.h"
 
 namespace AGS3 {
 

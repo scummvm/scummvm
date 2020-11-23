@@ -23,7 +23,8 @@
 #ifndef AGS_ENGINE_AC_SCREENOVERLAY_H
 #define AGS_ENGINE_AC_SCREENOVERLAY_H
 
-#include <stdint.h>
+//include <stdint.h>
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 
@@ -46,7 +47,7 @@ using namespace AGS; // FIXME later
 
 struct ScreenOverlay {
 	Engine::IDriverDependantBitmap *bmp = nullptr;
-	Common::Bitmap *pic = nullptr;
+	Shared::Bitmap *pic = nullptr;
 	int type = 0, x = 0, y = 0, timeout = 0;
 	int bgSpeechForChar = 0;
 	int associatedOverlayHandle = 0;
@@ -55,8 +56,8 @@ struct ScreenOverlay {
 	bool hasSerializedBitmap = false;
 	int _offsetX = 0, _offsetY = 0;
 
-	void ReadFromFile(Common::Stream *in, int32_t cmp_ver);
-	void WriteToFile(Common::Stream *out) const;
+	void ReadFromFile(Shared::Stream *in, int32_t cmp_ver);
+	void WriteToFile(Shared::Stream *out) const;
 };
 
 } // namespace AGS3

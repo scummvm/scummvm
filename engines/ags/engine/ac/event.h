@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_AC_EVENT_H
 #define AGS_ENGINE_AC_EVENT_H
 
-#include "ac/runtime_defines.h"
-#include "script/runtimescriptvalue.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/script/runtimescriptvalue.h"
 
 namespace AGS3 {
 

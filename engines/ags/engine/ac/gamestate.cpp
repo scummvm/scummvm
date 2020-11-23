@@ -20,24 +20,24 @@
  *
  */
 
-#include <algorithm>
-#include "ac/draw.h"
-#include "ac/game_version.h"
-#include "ac/gamestate.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/timer.h"
-#include "ac/dynobj/scriptcamera.h"
-#include "ac/dynobj/scriptsystem.h"
-#include "ac/dynobj/scriptviewport.h"
-#include "debug/debug_log.h"
-#include "device/mousew32.h"
-#include "game/customproperties.h"
-#include "game/roomstruct.h"
-#include "game/savegame_internal.h"
-#include "main/engine.h"
-#include "media/audio/audio_system.h"
-#include "util/alignedstream.h"
-#include "util/string_utils.h"
+//include <algorithm>
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/timer.h"
+#include "ags/shared/ac/dynobj/scriptcamera.h"
+#include "ags/shared/ac/dynobj/scriptsystem.h"
+#include "ags/shared/ac/dynobj/scriptviewport.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/device/mousew32.h"
+#include "ags/shared/game/customproperties.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/game/savegame_internal.h"
+#include "ags/shared/main/engine.h"
+#include "ags/shared/media/audio/audio_system.h"
+#include "ags/shared/util/alignedstream.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 
@@ -372,7 +372,7 @@ bool GameState::ShouldPlayVoiceSpeech() const {
 		(play.want_speech >= 1) && (!ResPaths.SpeechPak.Name.IsEmpty());
 }
 
-void GameState::ReadFromSavegame(Common::Stream *in, GameStateSvgVersion svg_ver, RestoredData &r_data) {
+void GameState::ReadFromSavegame(Shared::Stream *in, GameStateSvgVersion svg_ver, RestoredData &r_data) {
 	const bool old_save = svg_ver < kGSSvgVersion_Initial;
 	score = in->ReadInt32();
 	usedmode = in->ReadInt32();
@@ -595,7 +595,7 @@ void GameState::ReadFromSavegame(Common::Stream *in, GameStateSvgVersion svg_ver
 	}
 }
 
-void GameState::WriteForSavegame(Common::Stream *out) const {
+void GameState::WriteForSavegame(Shared::Stream *out) const {
 	// NOTE: following parameters are never saved:
 	// recording, playback, gamestep, screen_is_faded_out, room_changes
 	out->WriteInt32(score);
@@ -776,7 +776,7 @@ void GameState::WriteForSavegame(Common::Stream *out) const {
 	out->WriteInt32(voice_speech_flags);
 }
 
-void GameState::ReadQueuedAudioItems_Aligned(Common::Stream *in) {
+void GameState::ReadQueuedAudioItems_Aligned(Shared::Stream *in) {
 	AlignedStream align_s(in, Common::kAligned_Read);
 	for (int i = 0; i < MAX_QUEUED_MUSIC; ++i) {
 		new_music_queue[i].ReadFromFile(&align_s);
@@ -807,7 +807,7 @@ void GameState::FreeViewportsAndCameras() {
 	_scCameraRefs.clear();
 }
 
-void GameState::ReadCustomProperties_v340(Common::Stream *in) {
+void GameState::ReadCustomProperties_v340(Shared::Stream *in) {
 	if (loaded_game_file_version >= kGameVersion_340_4) {
 		// After runtime property values were read we also copy missing default,
 		// because we do not keep defaults in the saved game, and also in case
@@ -820,7 +820,7 @@ void GameState::ReadCustomProperties_v340(Common::Stream *in) {
 	}
 }
 
-void GameState::WriteCustomProperties_v340(Common::Stream *out) const {
+void GameState::WriteCustomProperties_v340(Shared::Stream *out) const {
 	if (loaded_game_file_version >= kGameVersion_340_4) {
 		// We temporarily remove properties that kept default values
 		// just for the saving data time to avoid getting lots of

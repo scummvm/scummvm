@@ -35,8 +35,8 @@
 #ifndef AGS_ENGINE_DEBUGGING_LOGFILE_H
 #define AGS_ENGINE_DEBUGGING_LOGFILE_H
 
-#include <memory>
-#include "debug/outputhandler.h"
+#include "ags/std/memory.h"
+#include "ags/shared/debugging/outputhandler.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -47,9 +47,9 @@ class Stream;
 
 namespace Engine {
 
-using Common::DebugMessage;
-using Common::Stream;
-using Common::String;
+using Shared::DebugMessage;
+using Shared::Stream;
+using Shared::String;
 
 class LogFile : public AGS::Shared::IOutputHandler {
 public:
@@ -62,7 +62,7 @@ public:
 public:
 	LogFile();
 
-	void PrintMessage(const Common::DebugMessage &msg) override;
+	void PrintMessage(const Shared::DebugMessage &msg) override;
 
 	// Open file using given file path, optionally appending if one exists
 	//

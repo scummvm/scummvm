@@ -20,16 +20,16 @@
  *
  */
 
-#include "ac/global_region.h"
-#include "ac/common.h"
-#include "ac/game_version.h"
-#include "ac/region.h"
-#include "ac/room.h"
-#include "ac/roomstatus.h"
-#include "debug/debug_log.h"
-#include "game/roomstruct.h"
-#include "gfx/bitmap.h"
-#include "script/script.h"
+#include "ags/shared/ac/global_region.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/ac/region.h"
+#include "ags/shared/ac/room.h"
+#include "ags/shared/ac/roomstatus.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/script/script.h"
 
 namespace AGS3 {
 

@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_HOTSPOT_H
 #define AGS_ENGINE_AC_HOTSPOT_H
 
-#include "ac/dynobj/scripthotspot.h"
+#include "ags/engine/ac/dynobj/scripthotspot.h"
 
 namespace AGS3 {
 

@@ -20,40 +20,40 @@
  *
  */
 
-#include <math.h>
+//include <math.h>
 
-#include "ac/display.h"
-#include "ac/common.h"
-#include "font/agsfontrenderer.h"
-#include "font/fonts.h"
-#include "ac/character.h"
-#include "ac/draw.h"
-#include "ac/game.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_audio.h"
-#include "ac/global_game.h"
-#include "ac/gui.h"
-#include "ac/mouse.h"
-#include "ac/overlay.h"
-#include "ac/sys_events.h"
-#include "ac/screenoverlay.h"
-#include "ac/speech.h"
-#include "ac/string.h"
-#include "ac/system.h"
-#include "ac/topbarsettings.h"
-#include "debug/debug_log.h"
-#include "gfx/blender.h"
-#include "gui/guibutton.h"
-#include "gui/guimain.h"
-#include "main/game_run.h"
-#include "platform/base/agsplatformdriver.h"
-#include "ac/spritecache.h"
-#include "gfx/gfx_util.h"
-#include "util/string_utils.h"
-#include "ac/mouse.h"
-#include "media/audio/audio_system.h"
-#include "ac/timer.h"
+#include "ags/shared/ac/display.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/font/agsfontrenderer.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/ac/character.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/game.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_audio.h"
+#include "ags/shared/ac/global_game.h"
+#include "ags/shared/ac/gui.h"
+#include "ags/shared/ac/mouse.h"
+#include "ags/shared/ac/overlay.h"
+#include "ags/shared/ac/sys_events.h"
+#include "ags/shared/ac/screenoverlay.h"
+#include "ags/shared/ac/speech.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/ac/system.h"
+#include "ags/shared/ac/topbarsettings.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/gfx/blender.h"
+#include "ags/shared/gui/guibutton.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/main/game_run.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/gfx/gfx_util.h"
+#include "ags/shared/util/string_utils.h"
+#include "ags/shared/ac/mouse.h"
+#include "ags/shared/media/audio/audio_system.h"
+#include "ags/shared/ac/timer.h"
 
 namespace AGS3 {
 
@@ -530,7 +530,7 @@ void wouttextxy_AutoOutline(Bitmap *ds, size_t font, int32_t color, const char *
 }
 
 // Draw an outline if requested, then draw the text on top
-void wouttext_outline(Common::Bitmap *ds, int xxp, int yyp, int font, color_t text_color, const char *texx) {
+void wouttext_outline(Shared::Bitmap *ds, int xxp, int yyp, int font, color_t text_color, const char *texx) {
 	size_t const text_font = static_cast<size_t>(font);
 	// Draw outline (a backdrop) if requested
 	color_t const outline_color = ds->GetCompatibleColor(play.speech_text_shadow);

@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_AC_OVERLAY_H
 #define AGS_ENGINE_AC_OVERLAY_H
 
-#include <vector>
-#include "ac/screenoverlay.h"
-#include "ac/dynobj/scriptoverlay.h"
+#include "ags/std/vector.h"
+#include "ags/engine/ac/screenoverlay.h"
+#include "ags/engine/ac/dynobj/scriptoverlay.h"
 
 namespace AGS3 {
 
@@ -51,8 +51,8 @@ int  find_overlay_of_type(int type);
 void remove_screen_overlay(int type);
 // Calculates overlay position in screen coordinates
 void get_overlay_position(const ScreenOverlay &over, int *x, int *y);
-size_t add_screen_overlay(int x, int y, int type, Common::Bitmap *piccy, bool alphaChannel = false);
-size_t add_screen_overlay(int x, int y, int type, Common::Bitmap *piccy, int pic_offx, int pic_offy, bool alphaChannel = false);
+size_t add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, bool alphaChannel = false);
+size_t add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic_offx, int pic_offy, bool alphaChannel = false);
 void remove_screen_overlay_index(size_t over_idx);
 void recreate_overlay_ddbs();
 

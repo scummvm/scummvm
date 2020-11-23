@@ -23,27 +23,27 @@
 #ifndef AGS_ENGINE_MAIN_MAINHEADER_H
 #define AGS_ENGINE_MAIN_MAINHEADER_H
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
-#include "main/maindefines_ex.h"
+#include "ags/engine/main/maindefines_ex.h"
 
-#include "ac/math.h"
-#include "script/script_runtime.h"
-#include "gui/animatingguibutton.h"
-#include "gui/guibutton.h"
-#include "gfx/gfxfilter.h"
-#include "util/string_utils.h"
-#include "device/mousew32.h"
-#include "ac/route_finder.h"
-#include "util/misc.h"
-#include "script/cc_error.h"
+#include "ags/engine/ac/math.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/gui/animatingguibutton.h"
+#include "ags/shared/gui/guibutton.h"
+#include "ags/engine/gfx/gfxfilter.h"
+#include "ags/shared/util/string_utils.h"
+#include "ags/engine/device/mousew32.h"
+#include "ags/engine/ac/route_finder.h"
+#include "ags/shared/util/misc.h"
+#include "ags/shared/script/cc_error.h"
 
 // include last since we affect windows includes
-#include "ac/file.h"
+#include "ags/engine/ac/file.h"
 
 #if AGS_PLATFORM_OS_ANDROID
-#include <sys/stat.h>
-#include <android/log.h>
+//include <sys/stat.h>
+//include <android/log.h>
 
 namespace AGS3 {
 

@@ -30,33 +30,33 @@
 // What about other platforms?
 //
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 #define AGS_PLATFORM_DEFINES_PSP_VARS (AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_ANDROID)
 
-#include <set>
-#include "ac/common.h"
-#include "ac/gamesetup.h"
-#include "ac/gamestate.h"
-#include "core/def_version.h"
-#include "debug/debugger.h"
-#include "debug/debug_log.h"
-#include "debug/out.h"
-#include "main/config.h"
-#include "main/engine.h"
-#include "main/mainheader.h"
-#include "main/main.h"
-#include "platform/base/agsplatformdriver.h"
-#include "ac/route_finder.h"
-#include "core/assetmanager.h"
-#include "util/directory.h"
-#include "util/path.h"
-#include "util/string_compat.h"
+//include <set>
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetup.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/core/def_version.h"
+#include "ags/shared/debug/debugger.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/main/config.h"
+#include "ags/shared/main/engine.h"
+#include "ags/shared/main/mainheader.h"
+#include "ags/shared/main/main.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/ac/route_finder.h"
+#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/util/directory.h"
+#include "ags/shared/util/path.h"
+#include "ags/shared/util/string_compat.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
-#include "platform/windows/win_ex_handling.h"
+#include "ags/shared/platform/windows/win_ex_handling.h"
 #endif
 #if AGS_PLATFORM_DEBUG
-#include "test/test_all.h"
+#include "ags/shared/test/test_all.h"
 #endif
 
 #if AGS_PLATFORM_OS_WINDOWS && !AGS_PLATFORM_DEBUG

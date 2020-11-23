@@ -20,35 +20,35 @@
  *
  */
 
-#include "media/video/video.h"
+#include "ags/shared/media/video/video.h"
 
 #ifndef AGS_NO_VIDEO_PLAYER
 
-#include "apeg.h"
-#include "core/platform.h"
+#include "ags/shared/apeg.h"
+#include "ags/shared/core/platform.h"
 #define AGS_FLI_FROM_PACK_FILE ((ALLEGRO_DATE >= 20190303) || \
                                 AGS_PLATFORM_OS_WINDOWS || AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_MACOS)
 
-#include "debug/debug_log.h"
-#include "debug/out.h"
-#include "ac/asset_helper.h"
-#include "ac/common.h"
-#include "ac/draw.h"
-#include "ac/game_version.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_display.h"
-#include "ac/mouse.h"
-#include "ac/sys_events.h"
-#include "ac/runtime_defines.h"
-#include "ac/system.h"
-#include "core/assetmanager.h"
-#include "gfx/bitmap.h"
-#include "gfx/ddb.h"
-#include "gfx/graphicsdriver.h"
-#include "main/game_run.h"
-#include "util/stream.h"
-#include "media/audio/audio_system.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/ac/asset_helper.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_display.h"
+#include "ags/shared/ac/mouse.h"
+#include "ags/shared/ac/sys_events.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/system.h"
+#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gfx/ddb.h"
+#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/shared/main/game_run.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/media/audio/audio_system.h"
 
 namespace AGS3 {
 

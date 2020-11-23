@@ -20,10 +20,10 @@
  *
  */
 
-#include "core/platform.h"
-#include "gfx/gfxfilter_d3d.h"
+#include "ags/shared/core/platform.h"
+#include "ags/shared/gfx/gfxfilter_d3d.h"
 #if AGS_PLATFORM_OS_WINDOWS
-#include <d3d9.h>
+//include <d3d9.h>
 #endif
 
 namespace AGS3 {

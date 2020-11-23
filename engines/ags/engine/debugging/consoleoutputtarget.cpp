@@ -20,9 +20,9 @@
  *
  */
 
-#include <string.h>
-#include "consoleoutputtarget.h"
-#include "debug/debug_log.h"
+//include <string.h>
+#include "ags/engine/debugging/consoleoutputtarget.h"
+#include "ags/engine/debugging/debug_log.h"
 
 namespace AGS3 {
 namespace AGS {

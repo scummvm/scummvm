@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_MEDIA_AUDIO_CLIP_MYMIDI_H
 #define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYMIDI_H
 
-#include "media/audio/soundclip.h"
+#include "ags/shared/media/audio/soundclip.h"
 
 namespace AGS3 {
 

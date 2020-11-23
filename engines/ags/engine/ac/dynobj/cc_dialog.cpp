@@ -20,10 +20,10 @@
  *
  */
 
-#include "ac/dynobj/cc_dialog.h"
-#include "ac/dialog.h"
-#include "ac/dialogtopic.h"
-#include "ac/gamestructdefines.h"
+#include "ags/shared/ac/dynobj/cc_dialog.h"
+#include "ags/shared/ac/dialog.h"
+#include "ags/shared/ac/dialogtopic.h"
+#include "ags/shared/ac/gamestructdefines.h"
 
 namespace AGS3 {
 

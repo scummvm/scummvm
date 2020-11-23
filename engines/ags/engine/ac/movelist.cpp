@@ -20,9 +20,9 @@
  *
  */
 
-#include "ac/movelist.h"
-#include "ac/common.h"
-#include "util/stream.h"
+#include "ags/shared/ac/movelist.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

@@ -20,8 +20,8 @@
  *
  */
 
-#include "screenoverlay.h"
-#include "util/stream.h"
+#include "ags/shared/screenoverlay.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

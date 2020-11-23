@@ -20,20 +20,20 @@
  *
  */
 
-#include "ac/common.h"
-#include "ac/gamesetup.h"
-#include "ac/draw.h"
-#include "ac/gamesetup.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_game.h"
-#include "ac/global_screen.h"
-#include "ac/runtime_defines.h"
-#include "ac/screen.h"
-#include "debug/debug_log.h"
-#include "platform/base/agsplatformdriver.h"
-#include "gfx/graphicsdriver.h"
-#include "gfx/bitmap.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetup.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/gamesetup.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_game.h"
+#include "ags/shared/ac/global_screen.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/screen.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/shared/gfx/bitmap.h"
 
 namespace AGS3 {
 

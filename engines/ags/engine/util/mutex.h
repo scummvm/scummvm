@@ -23,10 +23,9 @@
 #ifndef AGS_ENGINE_UTIL_MUTEX_H
 #define AGS_ENGINE_UTIL_MUTEX_H
 
+namespace AGS3 {
 namespace AGS {
 namespace Engine {
-
-namespace AGS3 {
 
 class BaseMutex {
 public:
@@ -50,7 +49,7 @@ public:
 #if 0
 // insert platforms here
 #else
-#include "mutex_std.h"
+#include "ags/engine/util/mutex_std.h"
 #endif
 
 #endif

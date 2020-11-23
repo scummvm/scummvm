@@ -26,17 +26,17 @@
 //
 //=============================================================================
 
-#include <thread>
-#include "util/wgt2allg.h"
-#include "platform/base/agsplatformdriver.h"
-#include "ac/common.h"
-#include "ac/runtime_defines.h"
-#include "util/string_utils.h"
-#include "util/stream.h"
-#include "gfx/bitmap.h"
-#include "plugin/agsplugin.h"
-#include "ac/timer.h"
-#include "media/audio/audio_system.h"
+//include <thread>
+#include "ags/shared/util/wgt2allg.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/util/string_utils.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/plugin/agsplugin.h"
+#include "ags/shared/ac/timer.h"
+#include "ags/shared/media/audio/audio_system.h"
 
 namespace AGS3 {
 
@@ -44,7 +44,7 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 #if defined (AGS_HAS_CD_AUDIO)
-#include "libcda.h"
+#include "ags/shared/libcda.h"
 #endif
 
 // We don't have many places where we delay longer than a frame, but where we
@@ -170,7 +170,7 @@ void AGSPlatformDriver::UnlockMouse() {
 //-----------------------------------------------
 // IOutputHandler implementation
 //-----------------------------------------------
-void AGSPlatformDriver::PrintMessage(const Common::DebugMessage &msg) {
+void AGSPlatformDriver::PrintMessage(const Shared::DebugMessage &msg) {
 	if (_logToStdErr) {
 		if (msg.GroupName.IsEmpty())
 			WriteStdErr("%s", msg.Text.GetCStr());

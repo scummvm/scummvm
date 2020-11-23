@@ -30,6 +30,7 @@
 #define AGS_SHARED_UTIL_PATH_H
 
 #include "ags/shared/util/string.h"
+#include "common/fs.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -83,6 +84,11 @@ String  FixupSharedFilename(const String &filename);
 String  GetPathInASCII(const String &path);
 // Converts filepath from command line's argument into ASCII variant
 String  GetCmdLinePathInASCII(const char *arg, int arg_index);
+
+inline String get_filename(const String &pathAndName) {
+	return Common::FSNode(pathAndName).getName();
+}
+
 } // namespace Path
 
 } // namespace Shared

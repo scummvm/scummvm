@@ -20,24 +20,24 @@
  *
  */
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_MACOS
 
 // ********* MacOS PLACEHOLDER DRIVER *********
 
-//#include "util/wgt2allg.h"
-//#include "gfx/ali3d.h"
-//#include "ac/runtime_defines.h"
-//#include "main/config.h"
-//#include "plugin/agsplugin.h"
-//#include <libcda.h>
-//#include <pwd.h>
-//#include <sys/stat.h>
-#include "platform/base/agsplatformdriver.h"
-#include "util/directory.h"
-#include "ac/common.h"
-#include "main/main.h"
+//#include "ags/shared/util/wgt2allg.h"
+//#include "ags/shared/gfx/ali3d.h"
+//#include "ags/shared/ac/runtime_defines.h"
+//#include "ags/shared/main/config.h"
+//#include "ags/shared/plugin/agsplugin.h"
+////include <libcda.h>
+////include <pwd.h>
+////include <sys/stat.h>
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/util/directory.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/main/main.h"
 
 namespace AGS3 {
 

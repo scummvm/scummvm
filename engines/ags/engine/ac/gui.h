@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_AC_GUI_H
 #define AGS_ENGINE_AC_GUI_H
 
-#include "ac/dynobj/scriptgui.h"
-#include "gui/guimain.h"
+#include "ags/engine/ac/dynobj/scriptgui.h"
+#include "ags/shared/gui/guimain.h"
 
 namespace AGS3 {
 

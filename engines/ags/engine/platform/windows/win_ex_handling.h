@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_PLATFORM_WINDOWS_WIN_EX_HANDLING_H
 #define AGS_ENGINE_PLATFORM_WINDOWS_WIN_EX_HANDLING_H
 
-#include "util/ini_util.h"
+#include "ags/shared/util/ini_util.h"
 
 namespace AGS3 {
 

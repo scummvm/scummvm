@@ -20,17 +20,17 @@
  *
  */
 
-#include <set>
-#include "ac/listbox.h"
-#include "ac/common.h"
-#include "ac/game.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_game.h"
-#include "ac/path_helper.h"
-#include "ac/string.h"
-#include "gui/guimain.h"
-#include "debug/debug_log.h"
+//include <set>
+#include "ags/shared/ac/listbox.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/game.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_game.h"
+#include "ags/shared/ac/path_helper.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/debug/debug_log.h"
 
 namespace AGS3 {
 
@@ -384,10 +384,10 @@ GUIListBox *is_valid_listbox(int guin, int objn) {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
-#include "ac/dynobj/scriptstring.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

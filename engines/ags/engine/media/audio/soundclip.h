@@ -29,7 +29,7 @@
 #ifndef AGS_ENGINE_MEDIA_AUDIO_SOUNDCLIP_H
 #define AGS_ENGINE_MEDIA_AUDIO_SOUNDCLIP_H
 
-#include "util/mutex.h"
+#include "ags/engine/util/mutex.h"
 
 namespace AGS3 {
 

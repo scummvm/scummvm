@@ -30,11 +30,11 @@
 #ifndef AGS_ENGINE_SCRIPT_SCRIPTAPI_H
 #define AGS_ENGINE_SCRIPT_SCRIPTAPI_H
 
-#include <stdarg.h>
-#include "core/types.h"
-#include "ac/runtime_defines.h"
-#include "ac/statobj/agsstaticobject.h"
-#include "debug/out.h"
+//include <stdarg.h>
+#include "ags/shared/core/types.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/statobj/agsstaticobject.h"
+#include "ags/shared/debugging/out.h"
 
 namespace AGS3 {
 

@@ -29,15 +29,15 @@
 #ifndef AGS_ENGINE_GFX_ALI3DOGL_H
 #define AGS_ENGINE_GFX_ALI3DOGL_H
 
-#include <memory>
-#include "gfx/bitmap.h"
-#include "gfx/ddb.h"
-#include "gfx/gfxdriverfactorybase.h"
-#include "gfx/gfxdriverbase.h"
-#include "util/string.h"
-#include "util/version.h"
+#include "ags/std/memory.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gfx/ddb.h"
+#include "ags/shared/gfx/gfxdriverfactorybase.h"
+#include "ags/shared/gfx/gfxdriverbase.h"
+#include "ags/shared/util/string.h"
+#include "ags/shared/util/version.h"
 
-#include "ogl_headers.h"
+#include "ags/shared/ogl_headers.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -45,8 +45,8 @@ namespace Engine {
 
 namespace OGL {
 
-using Common::Bitmap;
-using Common::String;
+using Shared::Bitmap;
+using Shared::String;
 using Common::Version;
 
 typedef struct _OGLVECTOR {

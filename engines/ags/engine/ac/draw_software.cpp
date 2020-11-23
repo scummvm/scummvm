@@ -46,11 +46,11 @@
 //
 //=============================================================================
 
-#include <string.h>
-#include <vector>
-#include "ac/draw_software.h"
-#include "gfx/bitmap.h"
-#include "util/scaling.h"
+//include <string.h>
+#include "ags/std/vector.h"
+#include "ags/shared/ac/draw_software.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/util/scaling.h"
 
 namespace AGS3 {
 

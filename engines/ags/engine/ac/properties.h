@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_PROPERTIES_H
 #define AGS_ENGINE_AC_PROPERTIES_H
 
-#include "game/customproperties.h"
+#include "ags/engine/game/customproperties.h"
 
 namespace AGS3 {
 

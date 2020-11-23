@@ -29,9 +29,9 @@
 #ifndef AGS_ENGINE_SCRIPT_RUNTIMESCRIPTVALUE_H
 #define AGS_ENGINE_SCRIPT_RUNTIMESCRIPTVALUE_H
 
-#include "script/script_api.h"
-#include "util/memory.h"
-#include "ac/dynobj/cc_dynamicobject.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/shared/util/memory.h"
+#include "ags/engine/ac/dynobj/cc_dynamicobject.h"
 
 namespace AGS3 {
 

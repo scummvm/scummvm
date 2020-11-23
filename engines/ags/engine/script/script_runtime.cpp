@@ -34,16 +34,16 @@
 //
 //=============================================================================
 
-#include <stdlib.h>
-#include <stdarg.h>
-#include <string.h>
-#include "script/script_runtime.h"
-#include "script/script_common.h"
-#include "script/cc_error.h"
-#include "script/cc_options.h"
-#include "ac/dynobj/cc_dynamicarray.h"
-#include "script/systemimports.h"
-#include "ac/statobj/staticobject.h"
+//include <stdlib.h>
+//include <stdarg.h>
+//include <string.h>
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/script/script_common.h"
+#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_options.h"
+#include "ags/shared/ac/dynobj/cc_dynamicarray.h"
+#include "ags/shared/script/systemimports.h"
+#include "ags/shared/ac/statobj/staticobject.h"
 
 namespace AGS3 {
 

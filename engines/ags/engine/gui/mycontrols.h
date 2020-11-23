@@ -29,9 +29,9 @@
 #ifndef AGS_ENGINE_GUI_MYCONTROLS_H
 #define AGS_ENGINE_GUI_MYCONTROLS_H
 
-#include "gui/mylabel.h"
-#include "gui/mylistbox.h"
-#include "gui/mypushbutton.h"
-#include "gui/mytextbox.h"
+#include "ags/shared/gui/mylabel.h"
+#include "ags/shared/gui/mylistbox.h"
+#include "ags/shared/gui/mypushbutton.h"
+#include "ags/shared/gui/mytextbox.h"
 
 #endif

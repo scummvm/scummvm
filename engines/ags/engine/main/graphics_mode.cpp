@@ -24,21 +24,21 @@
 // Graphics initialization
 //
 
-#include <algorithm>
-#include "core/platform.h"
-#include "ac/draw.h"
-#include "debug/debugger.h"
-#include "debug/out.h"
-#include "gfx/ali3dexception.h"
-#include "gfx/bitmap.h"
-#include "gfx/gfxdriverfactory.h"
-#include "gfx/gfxfilter.h"
-#include "gfx/graphicsdriver.h"
-#include "main/config.h"
-#include "main/engine_setup.h"
-#include "main/graphics_mode.h"
-#include "main/main_allegro.h"
-#include "platform/base/agsplatformdriver.h"
+//include <algorithm>
+#include "ags/shared/core/platform.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/gfx/ali3dexception.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/engine/gfx/gfxdriverfactory.h"
+#include "ags/engine/gfx/gfxfilter.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/main/config.h"
+#include "ags/engine/main/engine_setup.h"
+#include "ags/engine/main/graphics_mode.h"
+#include "ags/engine/main/main_allegro.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
 
 namespace AGS3 {
 
@@ -469,20 +469,20 @@ bool graphics_mode_init_any(const Size game_size, const ScreenSetup &setup, cons
 		if (it->CompareNoCase(setup.DriverID) == 0) break;
 	}
 	if (it != ids.end())
-		std::rotate(ids.begin(), it, ids.end());
+		ids.rotate(it);
 	else
 		Debug::Printf(kDbgMsg_Error, "Requested graphics driver '%s' not found, will try existing drivers instead", setup.DriverID.GetCStr());
 
 	// Try to create renderer and init gfx mode, choosing one factory at a time
 	bool result = false;
-	for (StringV::const_iterator it = ids.begin(); it != ids.end(); ++it) {
+	for (StringV::const_iterator sit = ids.begin(); sit != ids.end(); ++sit) {
 		result =
 #ifdef USE_SIMPLE_GFX_INIT
 			simple_create_gfx_driver_and_init_mode
 #else
 			create_gfx_driver_and_init_mode_any
 #endif
-			(*it, game_size, setup.DisplayMode, color_depth, gameframe, setup.Filter);
+			(*sit, game_size, setup.DisplayMode, color_depth, gameframe, setup.Filter);
 
 		if (result)
 			break;

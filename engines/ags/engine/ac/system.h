@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_SYSTEMAUDIO_H
 #define AGS_ENGINE_AC_SYSTEMAUDIO_H
 
-#include "ac/dynobj/scriptaudiochannel.h"
+#include "ags/engine/ac/dynobj/scriptaudiochannel.h"
 
 namespace AGS3 {
 

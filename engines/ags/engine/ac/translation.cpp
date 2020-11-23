@@ -20,21 +20,21 @@
  *
  */
 
-#include <cstdio>
-#include "ac/asset_helper.h"
-#include "ac/common.h"
-#include "ac/gamesetup.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_game.h"
-#include "ac/runtime_defines.h"
-#include "ac/translation.h"
-#include "ac/tree_map.h"
-#include "ac/wordsdictionary.h"
-#include "debug/out.h"
-#include "util/misc.h"
-#include "util/stream.h"
-#include "core/assetmanager.h"
+//include <cstdio>
+#include "ags/shared/ac/asset_helper.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetup.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_game.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/translation.h"
+#include "ags/shared/ac/tree_map.h"
+#include "ags/shared/ac/wordsdictionary.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/util/misc.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/core/assetmanager.h"
 
 namespace AGS3 {
 

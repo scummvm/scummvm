@@ -20,9 +20,9 @@
  *
  */
 
-#include "core/types.h"
-#include "gfx/blender.h"
-#include "util/wgt2allg.h"
+#include "ags/shared/core/types.h"
+#include "ags/shared/gfx/blender.h"
+#include "ags/shared/util/wgt2allg.h"
 
 namespace AGS3 {
 

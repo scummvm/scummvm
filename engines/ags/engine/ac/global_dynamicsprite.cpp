@@ -20,15 +20,15 @@
  *
  */
 
-#include "ac/global_dynamicsprite.h"
-#include "util/wgt2allg.h" // Allegro RGB, PALETTE
-#include "ac/draw.h"
-#include "ac/dynamicsprite.h"
-#include "ac/path_helper.h"
-#include "ac/spritecache.h"
-#include "ac/runtime_defines.h" //MAX_PATH
-#include "gfx/graphicsdriver.h"
-#include "gfx/bitmap.h"
+#include "ags/shared/ac/global_dynamicsprite.h"
+#include "ags/shared/util/wgt2allg.h" // Allegro RGB, PALETTE
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/dynamicsprite.h"
+#include "ags/shared/ac/path_helper.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/ac/runtime_defines.h" //MAX_PATH
+#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/shared/gfx/bitmap.h"
 
 namespace AGS3 {
 

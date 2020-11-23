@@ -23,14 +23,15 @@
 #ifndef AGS_ENGINE_AC_TIMER_H
 #define AGS_ENGINE_AC_TIMER_H
 
-#include <type_traits>
-#include <chrono>
+#include "ags/std/type_traits.h"
+#include "ags/std/chrono.h"
+#include "ags/std/xtr1common.h"
 
 namespace AGS3 {
 
 // use high resolution clock only if we know it is monotonic/steady.
 // refer to https://stackoverflow.com/a/38253266/84262
-using AGS_Clock = std::conditional <
+using AGS_Clock = std::conditional<
 	std::chrono::high_resolution_clock::is_steady,
 	std::chrono::high_resolution_clock, std::chrono::steady_clock
 >::type;

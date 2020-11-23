@@ -20,24 +20,24 @@
  *
  */
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_LINUX
 
 // ********* LINUX PLACEHOLDER DRIVER *********
 
-#include <stdio.h>
+//include <stdio.h>
 #include "ags/lib/allegro.h"
-#include <xalleg.h>
-#include "ac/runtime_defines.h"
-#include "gfx/gfxdefines.h"
-#include "platform/base/agsplatformdriver.h"
-#include "plugin/agsplugin.h"
-#include "util/string.h"
-#include <libcda.h>
+//include <xalleg.h>
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/gfx/gfxdefines.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/plugin/agsplugin.h"
+#include "ags/shared/util/string.h"
+//include <libcda.h>
 
-#include <pwd.h>
-#include <sys/stat.h>
+//include <pwd.h>
+//include <sys/stat.h>
 
 namespace AGS3 {
 
@@ -46,7 +46,7 @@ using AGS::Shared::String;
 
 // Replace the default Allegro icon. The original defintion is in the
 // Allegro 4.4 source under "src/x/xwin.c".
-#include "icon.xpm"
+#include "ags/shared/icon.xpm"
 void *allegro_icon = icon_xpm;
 String CommonDataDirectory;
 String UserDataDirectory;

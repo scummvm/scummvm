@@ -20,7 +20,7 @@
  *
  */
 
-#include "gfx/gfxfilter_allegro.h"
+#include "ags/shared/gfx/gfxfilter_allegro.h"
 
 namespace AGS3 {
 namespace AGS {

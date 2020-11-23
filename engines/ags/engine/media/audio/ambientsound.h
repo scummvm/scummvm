@@ -44,8 +44,8 @@ struct AmbientSound {
 
 	bool IsPlaying();
 
-	void ReadFromFile(Common::Stream *in);
-	void WriteToFile(Common::Stream *out);
+	void ReadFromFile(Shared::Stream *in);
+	void WriteToFile(Shared::Stream *out);
 };
 
 } // namespace AGS3

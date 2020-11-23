@@ -20,26 +20,26 @@
  *
  */
 
-#include <cstdio>
-#include <stdarg.h>
-#include "ac/common.h"
-#include "ac/character.h"
-#include "ac/display.h"
-#include "ac/draw.h"
-#include "ac/game.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_character.h"
-#include "ac/global_display.h"
-#include "ac/global_screen.h"
-#include "ac/global_translation.h"
-#include "ac/runtime_defines.h"
-#include "ac/speech.h"
-#include "ac/string.h"
-#include "ac/topbarsettings.h"
-#include "debug/debug_log.h"
-#include "game/roomstruct.h"
-#include "main/game_run.h"
+//include <cstdio>
+//include <stdarg.h>
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/character.h"
+#include "ags/shared/ac/display.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/game.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_character.h"
+#include "ags/shared/ac/global_display.h"
+#include "ags/shared/ac/global_screen.h"
+#include "ags/shared/ac/global_translation.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/speech.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/ac/topbarsettings.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/main/game_run.h"
 
 namespace AGS3 {
 

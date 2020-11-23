@@ -26,30 +26,30 @@
 //
 //=============================================================================
 
-#include <ctype.h> // for toupper
+//include <ctype.h> // for toupper
 
-#include "core/platform.h"
-#include "util/wgt2allg.h"
-#include "ac/file.h"
-#include "media/audio/audiodefines.h"
-#include "media/audio/sound.h"
-#include "media/audio/audiointernaldefs.h"
-#include "media/audio/clip_mywave.h"
+#include "ags/shared/core/platform.h"
+#include "ags/shared/util/wgt2allg.h"
+#include "ags/shared/ac/file.h"
+#include "ags/shared/media/audio/audiodefines.h"
+#include "ags/shared/media/audio/sound.h"
+#include "ags/shared/media/audio/audiointernaldefs.h"
+#include "ags/shared/media/audio/clip_mywave.h"
 #ifndef NO_MP3_PLAYER
-#include "media/audio/clip_mymp3.h"
-#include "media/audio/clip_mystaticmp3.h"
+#include "ags/shared/media/audio/clip_mymp3.h"
+#include "ags/shared/media/audio/clip_mystaticmp3.h"
 #endif
-#include "media/audio/clip_myogg.h"
-#include "media/audio/clip_mystaticogg.h"
-#include "media/audio/clip_mymidi.h"
+#include "ags/shared/media/audio/clip_myogg.h"
+#include "ags/shared/media/audio/clip_mystaticogg.h"
+#include "ags/shared/media/audio/clip_mymidi.h"
 #ifdef JGMOD_MOD_PLAYER
-#include "media/audio/clip_myjgmod.h"
+#include "ags/shared/media/audio/clip_myjgmod.h"
 #endif
 #ifdef DUMB_MOD_PLAYER
-#include "media/audio/clip_mydumbmod.h"
+#include "ags/shared/media/audio/clip_mydumbmod.h"
 #endif
-#include "media/audio/soundcache.h"
-#include "util/mutex_lock.h"
+#include "ags/shared/media/audio/soundcache.h"
+#include "ags/shared/util/mutex_lock.h"
 
 namespace AGS3 {
 

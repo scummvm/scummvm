@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_FILE_H
-#define AGS_STUBS_ALLEGRO_FILE_H
+#ifndef AGS_LIB_ALLEGRO_FILE_H
+#define AGS_LIB_ALLEGRO_FILE_H
 
 namespace AGS3 {
 
