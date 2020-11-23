@@ -20,14 +20,14 @@
  *
  */
 
-#include "gui/guiinv.h"
-#include "gui/guimain.h"
-#include "ac/draw.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/characterextras.h"
-#include "ac/spritecache.h"
-#include "gfx/bitmap.h"
+#include "ags/shared/gui/guiinv.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/characterextras.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/gfx/bitmap.h"
 
 namespace AGS3 {
 

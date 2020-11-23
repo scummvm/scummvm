@@ -20,15 +20,15 @@
  *
  */
 
-#include <string.h>
-#include "util/wgt2allg.h"
-#include "ac/common.h"
-#include "ac/gamesetup.h"
-#include "font/fonts.h"
-#include "gfx/bitmap.h"
-#include "gui/guidialog.h"
-#include "gui/guidialoginternaldefs.h"
-#include "gui/mylistbox.h"
+//include <string.h>
+#include "ags/shared/util/wgt2allg.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetup.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gui/guidialog.h"
+#include "ags/shared/gui/guidialoginternaldefs.h"
+#include "ags/shared/gui/mylistbox.h"
 
 namespace AGS3 {
 

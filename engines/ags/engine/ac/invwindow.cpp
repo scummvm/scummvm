@@ -20,30 +20,30 @@
  *
  */
 
-#include "ac/invwindow.h"
-#include "ac/common.h"
-#include "ac/characterextras.h"
-#include "ac/characterinfo.h"
-#include "ac/draw.h"
-#include "ac/event.h"
-#include "ac/gamestate.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/global_character.h"
-#include "ac/global_display.h"
-#include "ac/global_room.h"
-#include "ac/mouse.h"
-#include "ac/sys_events.h"
-#include "debug/debug_log.h"
-#include "gui/guidialog.h"
-#include "main/game_run.h"
-#include "platform/base/agsplatformdriver.h"
-#include "ac/spritecache.h"
-#include "script/runtimescriptvalue.h"
-#include "ac/dynobj/cc_character.h"
-#include "ac/dynobj/cc_inventory.h"
-#include "util/math.h"
-#include "media/audio/audio_system.h"
-#include "ac/timer.h"
+#include "ags/shared/ac/invwindow.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/characterextras.h"
+#include "ags/shared/ac/characterinfo.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/event.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/global_character.h"
+#include "ags/shared/ac/global_display.h"
+#include "ags/shared/ac/global_room.h"
+#include "ags/shared/ac/mouse.h"
+#include "ags/shared/ac/sys_events.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/gui/guidialog.h"
+#include "ags/shared/main/game_run.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/shared/ac/dynobj/cc_character.h"
+#include "ags/shared/ac/dynobj/cc_inventory.h"
+#include "ags/shared/util/math.h"
+#include "ags/shared/media/audio/audio_system.h"
+#include "ags/shared/ac/timer.h"
 
 namespace AGS3 {
 
@@ -526,9 +526,9 @@ int invscreen() {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
 
 // void (GUIInvWindow *guii)
 RuntimeScriptValue Sc_InvWindow_ScrollDown(void *self, const RuntimeScriptValue *params, int32_t param_count) {

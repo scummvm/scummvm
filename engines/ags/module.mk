@@ -76,8 +76,16 @@ MODULE_OBJS = \
 	shared/util/textstreamreader.o \
 	shared/util/textstreamwriter.o \
 	shared/util/version.o \
-	shared/util/wgt2allg.o
-
+	shared/util/wgt2allg.o \
+	engine/main/config.o \
+	engine/main/engine.o \
+	engine/main/engine_setup.o \
+	engine/main/game_file.o \
+	engine/main/game_run.o \
+	engine/main/game_start.o \
+	engine/main/graphics_mode.o \
+	engine/main/quit.o \
+	engine/main/update.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_AGS), DYNAMIC_PLUGIN)

@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_UTIL_PSP_THREAD_H
 #define AGS_ENGINE_UTIL_PSP_THREAD_H
 
-#include <pspsdk.h>
-#include <pspkernel.h>
-#include <pspthreadman.h>
+//include <pspsdk.h>
+//include <pspkernel.h>
+//include <pspthreadman.h>
 
 namespace AGS3 {
 namespace AGS {

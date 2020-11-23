@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_UTIL_LIBRARY_PSP_H
 #define AGS_ENGINE_UTIL_LIBRARY_PSP_H
 
-#include <pspsdk.h>
-#include "util/string.h"
-#include "debug/out.h"
+//include <pspsdk.h>
+#include "ags/shared/util/string.h"
+#include "ags/shared/debug/out.h"
 
 namespace AGS3 {
 namespace AGS {

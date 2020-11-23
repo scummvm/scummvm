@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_FILE_H
 #define AGS_ENGINE_AC_GLOBAL_FILE_H
 
-#include "util/file.h"
+#include "ags/shared/util/file.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -34,7 +34,7 @@ class Stream;
 
 using namespace AGS; // FIXME later
 
-int32_t FileOpen(const char *fnmm, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode);
+int32_t FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode);
 // NOTE: FileOpenCMode is a backwards-compatible replacement for old-style global script function FileOpen
 int32_t FileOpenCMode(const char *fnmm, const char *cmode);
 void  FileClose(int32_t handle);

@@ -20,11 +20,11 @@
  *
  */
 
-#include "ac/common.h"
-#include "ac/draw.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_palette.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_palette.h"
 
 namespace AGS3 {
 

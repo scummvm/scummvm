@@ -29,7 +29,7 @@
 #ifndef AGS_ENGINE_AC_PATHHELPER_H
 #define AGS_ENGINE_AC_PATHHELPER_H
 
-#include "util/string.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 

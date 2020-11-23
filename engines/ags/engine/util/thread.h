@@ -56,7 +56,7 @@ public:
 #if 0
 // insert platforms here
 #else
-#include "thread_std.h"
+#include "ags/engine/util/thread_std.h"
 #endif
 
 

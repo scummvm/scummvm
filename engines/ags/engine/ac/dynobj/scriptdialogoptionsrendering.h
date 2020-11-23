@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTDIALOGOPTIONSRENDERING_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTDIALOGOPTIONSRENDERING_H
 
-#include "ac/dynobj/scriptdrawingsurface.h"
+#include "ags/shared/ac/dynobj/scriptdrawingsurface.h"
 
 namespace AGS3 {
 

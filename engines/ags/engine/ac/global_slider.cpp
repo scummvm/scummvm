@@ -20,12 +20,12 @@
  *
  */
 
-#include "ac/global_slider.h"
-#include "ac/common.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/slider.h"
-#include "gui/guimain.h"
-#include "gui/guislider.h"
+#include "ags/shared/ac/global_slider.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/slider.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/gui/guislider.h"
 
 namespace AGS3 {
 

@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_MIDI_H
-#define AGS_STUBS_ALLEGRO_MIDI_H
+#ifndef AGS_LIB_ALLEGRO_MIDI_H
+#define AGS_LIB_ALLEGRO_MIDI_H
 
 #include "common/scummsys.h"
 #include "ags/lib/allegro/base.h"

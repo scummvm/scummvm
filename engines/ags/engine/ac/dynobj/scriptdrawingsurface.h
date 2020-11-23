@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTDRAWINGSURFACE_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTDRAWINGSURFACE_H
 
-#include "ac/dynobj/cc_agsdynamicobject.h"
-#include "game/roomstruct.h"
+#include "ags/engine/ac/dynobj/cc_agsdynamicobject.h"
+#include "ags/shared/game/roomstruct.h"
 
 namespace AGS3 {
 
@@ -42,20 +42,20 @@ struct ScriptDrawingSurface final : AGSCCDynamicObject {
 	int dynamicSpriteNumber;
 	int dynamicSurfaceNumber;
 	bool isLinkedBitmapOnly;
-	Common::Bitmap *linkedBitmapOnly;
+	Shared::Bitmap *linkedBitmapOnly;
 	int currentColour;
 	int currentColourScript;
 	int highResCoordinates;
 	int modified;
 	int hasAlphaChannel;
-	//Common::Bitmap* abufBackup;
+	//Shared::Bitmap* abufBackup;
 
 	int Dispose(const char *address, bool force) override;
 	const char *GetType() override;
 	int Serialize(const char *address, char *buffer, int bufsize) override;
 	void Unserialize(int index, const char *serializedData, int dataSize) override;
-	Common::Bitmap *GetBitmapSurface();
-	Common::Bitmap *StartDrawing();
+	Shared::Bitmap *GetBitmapSurface();
+	Shared::Bitmap *StartDrawing();
 	void PointToGameResolution(int *xcoord, int *ycoord);
 	void SizeToGameResolution(int *width, int *height);
 	void SizeToGameResolution(int *adjustValue);

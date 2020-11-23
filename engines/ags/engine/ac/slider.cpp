@@ -20,8 +20,8 @@
  *
  */
 
-#include "ac/slider.h"
-#include "ac/common.h"
+#include "ags/shared/ac/slider.h"
+#include "ags/shared/ac/common.h"
 
 namespace AGS3 {
 
@@ -118,9 +118,9 @@ void Slider_SetHandleOffset(GUISlider *guisl, int newOffset) {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
 
 // int (GUISlider *guisl)
 RuntimeScriptValue Sc_Slider_GetBackgroundGraphic(void *self, const RuntimeScriptValue *params, int32_t param_count) {

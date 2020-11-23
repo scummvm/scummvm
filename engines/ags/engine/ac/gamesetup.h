@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_AC_GAMESETUP_H
 #define AGS_ENGINE_AC_GAMESETUP_H
 
-#include "main/graphics_mode.h"
-#include "util/string.h"
+#include "ags/engine/main/graphics_mode.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 

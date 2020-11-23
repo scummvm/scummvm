@@ -20,12 +20,12 @@
  *
  */
 
-#include "media/audio/audiodefines.h"
+#include "ags/shared/media/audio/audiodefines.h"
 
 #ifdef DUMB_MOD_PLAYER
 
-#include "media/audio/clip_mydumbmod.h"
-#include "media/audio/audiointernaldefs.h"
+#include "ags/shared/media/audio/clip_mydumbmod.h"
+#include "ags/shared/media/audio/audiointernaldefs.h"
 
 namespace AGS3 {
 

@@ -23,10 +23,10 @@
 #ifndef AGS_ENGINE_UTIL_LIBRARY_POSIX_H
 #define AGS_ENGINE_UTIL_LIBRARY_POSIX_H
 
-#include <dlfcn.h>
-#include "core/platform.h"
-#include "util/string.h"
-#include "debug/out.h"
+//include <dlfcn.h>
+#include "ags/shared/core/platform.h"
+#include "ags/shared/util/string.h"
+#include "ags/shared/debug/out.h"
 
 namespace AGS3 {
 

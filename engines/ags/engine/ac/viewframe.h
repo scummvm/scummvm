@@ -23,11 +23,11 @@
 #ifndef AGS_ENGINE_AC_VIEWFRAME_H
 #define AGS_ENGINE_AC_VIEWFRAME_H
 
-#include "ac/runtime_defines.h"
-#include "ac/view.h"
-#include "ac/dynobj/scriptaudioclip.h"
-#include "ac/dynobj/scriptviewframe.h"
-#include "gfx/bitmap.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/shared/ac/view.h"
+#include "ags/shared/ac/dynobj/scriptaudioclip.h"
+#include "ags/engine/ac/dynobj/scriptviewframe.h"
+#include "ags/shared/gfx/bitmap.h"
 
 namespace AGS3 {
 
@@ -54,7 +54,7 @@ int  ViewFrame_GetFrame(ScriptViewFrame *svf);
 void precache_view(int view);
 void CheckViewFrame(int view, int loop, int frame, int sound_volume = SCR_NO_VALUE);
 // draws a view frame, flipped if appropriate
-void DrawViewFrame(Common::Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha_blend = false);
+void DrawViewFrame(Shared::Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha_blend = false);
 
 } // namespace AGS3
 

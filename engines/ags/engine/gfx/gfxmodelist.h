@@ -29,8 +29,8 @@
 #ifndef AGS_ENGINE_GFX_GFXMODELIST_H
 #define AGS_ENGINE_GFX_GFXMODELIST_H
 
-#include "core/types.h"
-#include "gfx/gfxdefines.h"
+#include "ags/shared/core/types.h"
+#include "ags/engine/gfx/gfxdefines.h"
 
 namespace AGS3 {
 namespace AGS {

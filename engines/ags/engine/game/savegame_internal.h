@@ -23,11 +23,11 @@
 #ifndef AGS_ENGINE_GAME_SAVEGAMEINTERNAL_H
 #define AGS_ENGINE_GAME_SAVEGAMEINTERNAL_H
 
-#include <memory>
-#include <vector>
-#include "ac/common_defines.h"
-#include "gfx/bitmap.h"
-#include "media/audio/audiodefines.h"
+#include "ags/std/memory.h"
+#include "ags/std/vector.h"
+#include "ags/shared/ac/common_defines.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/media/audio/audiodefines.h"
 
 namespace AGS3 {
 namespace AGS {

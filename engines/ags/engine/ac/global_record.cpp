@@ -20,8 +20,8 @@
  *
  */
 
-#include "ac/global_record.h"
-#include "ac/common.h"
+#include "ags/shared/ac/global_record.h"
+#include "ags/shared/ac/common.h"
 
 namespace AGS3 {
 

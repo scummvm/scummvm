@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_UTIL_THREAD_WII_H
 #define AGS_ENGINE_UTIL_THREAD_WII_H
 
-#include <gccore.h>
+//include <gccore.h>
 
 namespace AGS3 {
 namespace AGS {

@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_GAME_SAVEGAMECOMPONENTS_H
 #define AGS_ENGINE_GAME_SAVEGAMECOMPONENTS_H
 
-#include "game/savegame.h"
-#include "util/stream.h"
+#include "ags/shared/game/savegame.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -35,7 +35,7 @@ struct Interaction;
 
 namespace Engine {
 
-using Common::Stream;
+using Shared::Stream;
 typedef std::shared_ptr<Stream> PStream;
 
 struct PreservedParams;

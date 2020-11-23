@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_AC_DYNAMICSPRITE_H
 #define AGS_ENGINE_AC_DYNAMICSPRITE_H
 
-#include "ac/dynobj/scriptdynamicsprite.h"
-#include "ac/dynobj/scriptdrawingsurface.h"
+#include "ags/engine/ac/dynobj/scriptdynamicsprite.h"
+#include "ags/engine/ac/dynobj/scriptdrawingsurface.h"
 
 namespace AGS3 {
 
@@ -52,7 +52,7 @@ ScriptDynamicSprite *DynamicSprite_CreateFromExistingSprite_Old(int slot);
 ScriptDynamicSprite *DynamicSprite_CreateFromBackground(int frame, int x1, int y1, int width, int height);
 
 
-void    add_dynamic_sprite(int gotSlot, Common::Bitmap *redin, bool hasAlpha = false);
+void    add_dynamic_sprite(int gotSlot, Shared::Bitmap *redin, bool hasAlpha = false);
 void    free_dynamic_sprite(int gotSlot);
 
 } // namespace AGS3

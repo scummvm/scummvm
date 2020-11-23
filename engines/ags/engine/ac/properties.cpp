@@ -20,13 +20,13 @@
  *
  */
 
-#include "ac/common.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/properties.h"
-#include "ac/string.h"
-#include "ac/dynobj/scriptstring.h"
-#include "script/runtimescriptvalue.h"
-#include "util/string_utils.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/properties.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/ac/dynobj/scriptstring.h"
+#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 

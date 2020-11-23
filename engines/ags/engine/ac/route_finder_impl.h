@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_ROUTE_FINDER_IMPL
 #define AGS_ENGINE_AC_ROUTE_FINDER_IMPL
 
-#include "ac/game_version.h"
+#include "ags/shared/ac/game_version.h"
 
 namespace AGS3 {
 

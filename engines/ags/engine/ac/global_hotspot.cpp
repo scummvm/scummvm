@@ -20,22 +20,22 @@
  *
  */
 
-#include "ac/global_hotspot.h"
-#include "ac/common.h"
-#include "ac/common_defines.h"
-#include "ac/characterinfo.h"
-#include "ac/draw.h"
-#include "ac/event.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/global_character.h"
-#include "ac/global_translation.h"
-#include "ac/hotspot.h"
-#include "ac/properties.h"
-#include "ac/roomstatus.h"
-#include "ac/string.h"
-#include "debug/debug_log.h"
-#include "game/roomstruct.h"
-#include "script/script.h"
+#include "ags/shared/ac/global_hotspot.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/common_defines.h"
+#include "ags/shared/ac/characterinfo.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/event.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/global_character.h"
+#include "ags/shared/ac/global_translation.h"
+#include "ags/shared/ac/hotspot.h"
+#include "ags/shared/ac/properties.h"
+#include "ags/shared/ac/roomstatus.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/script/script.h"
 
 namespace AGS3 {
 

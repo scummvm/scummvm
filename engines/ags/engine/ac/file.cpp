@@ -20,31 +20,31 @@
  *
  */
 
-#include "aldumb.h"
-#include "ac/asset_helper.h"
-#include "ac/audiocliptype.h"
-#include "ac/file.h"
-#include "ac/common.h"
-#include "ac/game.h"
-#include "ac/gamesetup.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/global_file.h"
-#include "ac/path_helper.h"
-#include "ac/runtime_defines.h"
-#include "ac/string.h"
-#include "debug/debug_log.h"
-#include "debug/debugger.h"
-#include "util/misc.h"
-#include "platform/base/agsplatformdriver.h"
-#include "util/stream.h"
-#include "core/assetmanager.h"
-#include "core/asset.h"
-#include "main/engine.h"
-#include "main/game_file.h"
-#include "util/directory.h"
-#include "util/path.h"
-#include "util/string.h"
-#include "util/string_utils.h"
+#include "ags/shared/aldumb.h"
+#include "ags/shared/ac/asset_helper.h"
+#include "ags/shared/ac/audiocliptype.h"
+#include "ags/shared/ac/file.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/game.h"
+#include "ags/shared/ac/gamesetup.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/global_file.h"
+#include "ags/shared/ac/path_helper.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/debug/debugger.h"
+#include "ags/shared/util/misc.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/core/asset.h"
+#include "ags/shared/main/engine.h"
+#include "ags/shared/main/game_file.h"
+#include "ags/shared/util/directory.h"
+#include "ags/shared/util/path.h"
+#include "ags/shared/util/string.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 
@@ -613,10 +613,10 @@ Stream *get_valid_file_stream_from_handle(int32_t handle, const char *operation_
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
-#include "ac/dynobj/scriptstring.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

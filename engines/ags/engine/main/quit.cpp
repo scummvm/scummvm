@@ -24,28 +24,29 @@
 // Quit game procedure
 //
 
-#include "core/platform.h"
-#include "ac/cdaudio.h"
-#include "ac/gamesetup.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/roomstatus.h"
-#include "ac/translation.h"
-#include "debug/agseditordebugger.h"
-#include "debug/debug_log.h"
-#include "debug/debugger.h"
-#include "debug/out.h"
-#include "font/fonts.h"
-#include "main/config.h"
-#include "main/engine.h"
-#include "main/main.h"
-#include "main/mainheader.h"
-#include "main/quit.h"
-#include "ac/spritecache.h"
-#include "gfx/graphicsdriver.h"
-#include "gfx/bitmap.h"
-#include "core/assetmanager.h"
-#include "plugin/plugin_engine.h"
-#include "media/audio/audio_system.h"
+#include "ags/shared/core/platform.h"
+#include "ags/engine/ac/cdaudio.h"
+#include "ags/engine/ac/gamesetup.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/translation.h"
+#include "ags/engine/debugging/agseditordebugger.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/engine/main/config.h"
+#include "ags/engine/main/engine.h"
+#include "ags/engine/main/main.h"
+#include "ags/engine/main/mainheader.h"
+#include "ags/engine/main/quit.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/core/assetmanager.h"
+#include "ags/engine/plugin/plugin_engine.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -194,10 +195,11 @@ void quit_release_data() {
 	_CrtMemCheckpoint(&memstart);
 	_CrtMemDumpStatistics( &memstart );*/
 
-	Common::AssetManager::DestroyInstance();
+	Shared::AssetManager::DestroyInstance();
 }
 
 void quit_delete_temp_files() {
+#ifdef TODO
 	al_ffblk    dfb;
 	int dun = al_findfirst("~ac*.tmp", &dfb, FA_SEARCH);
 	while (!dun) {
@@ -205,6 +207,7 @@ void quit_delete_temp_files() {
 		dun = al_findnext(&dfb);
 	}
 	al_findclose(&dfb);
+#endif
 }
 
 // TODO: move to test unit
@@ -294,7 +297,7 @@ void quit(const char *quitmsg) {
 	shutdown_debug();
 
 	our_eip = 9904;
-	exit(EXIT_NORMAL);
+	error("%s", qmsg.GetNullableCStr());
 }
 
 extern "C" {

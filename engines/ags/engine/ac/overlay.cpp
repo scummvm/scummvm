@@ -20,23 +20,23 @@
  *
  */
 
-#include "ac/overlay.h"
-#include "ac/common.h"
-#include "ac/view.h"
-#include "ac/character.h"
-#include "ac/characterextras.h"
-#include "ac/display.h"
-#include "ac/draw.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_overlay.h"
-#include "ac/global_translation.h"
-#include "ac/runtime_defines.h"
-#include "ac/screenoverlay.h"
-#include "ac/string.h"
-#include "gfx/graphicsdriver.h"
-#include "gfx/bitmap.h"
-#include "script/runtimescriptvalue.h"
+#include "ags/shared/ac/overlay.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/view.h"
+#include "ags/shared/ac/character.h"
+#include "ags/shared/ac/characterextras.h"
+#include "ags/shared/ac/display.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_overlay.h"
+#include "ags/shared/ac/global_translation.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/screenoverlay.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/script/runtimescriptvalue.h"
 
 namespace AGS3 {
 
@@ -197,7 +197,7 @@ size_t add_screen_overlay(int x, int y, int type, Bitmap *piccy, bool alphaChann
 	return add_screen_overlay(x, y, type, piccy, 0, 0, alphaChannel);
 }
 
-size_t add_screen_overlay(int x, int y, int type, Common::Bitmap *piccy, int pic_offx, int pic_offy, bool alphaChannel) {
+size_t add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic_offx, int pic_offy, bool alphaChannel) {
 	if (type == OVER_COMPLETE) is_complete_overlay++;
 	if (type == OVER_TEXTMSG) is_text_overlay++;
 	if (type == OVER_CUSTOM) {
@@ -287,9 +287,9 @@ void recreate_overlay_ddbs() {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
 
 // ScriptOverlay* (int x, int y, int slot, int transparent)
 RuntimeScriptValue Sc_Overlay_CreateGraphical(const RuntimeScriptValue *params, int32_t param_count) {

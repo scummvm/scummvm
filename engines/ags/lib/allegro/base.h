@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_BASE_H
-#define AGS_STUBS_ALLEGRO_BASE_H
+#ifndef AGS_LIB_ALLEGRO_BASE_H
+#define AGS_LIB_ALLEGRO_BASE_H
 
 #include "common/scummsys.h"
 #include "common/algorithm.h"

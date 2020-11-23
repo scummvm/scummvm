@@ -26,8 +26,8 @@
 //
 //=============================================================================
 
-#include <alfont.h>
-#include "ac/gamesetupstruct.h"
+//include <alfont.h>
+#include "ags/shared/ac/gamesetupstruct.h"
 
 namespace AGS3 {
 

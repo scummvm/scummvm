@@ -23,14 +23,14 @@
 #ifndef AGS_ENGINE_GUI_PUSHBUTTON_H
 #define AGS_ENGINE_GUI_PUSHBUTTON_H
 
-#include "gui/newcontrol.h"
+#include "ags/shared/gui/newcontrol.h"
 
 namespace AGS3 {
 
 struct MyPushButton : public NewControl {
 	char text[50];
 	MyPushButton(int xx, int yy, int wi, int hi, const char *tex);
-	void draw(Common::Bitmap *ds) override;
+	void draw(Shared::Bitmap *ds) override;
 	int pressedon(int mousex, int mousey) override;
 	int processmessage(int mcode, int wParam, long lParam) override;
 };

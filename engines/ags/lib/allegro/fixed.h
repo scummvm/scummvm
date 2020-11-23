@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_FIXED_H
-#define AGS_STUBS_ALLEGRO_FIXED_H
+#ifndef AGS_LIB_ALLEGRO_FIXED_H
+#define AGS_LIB_ALLEGRO_FIXED_H
 
 #include "common/scummsys.h"
 

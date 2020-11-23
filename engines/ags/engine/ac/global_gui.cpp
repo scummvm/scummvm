@@ -20,21 +20,21 @@
  *
  */
 
-#include "ac/common.h"
-#include "ac/display.h"
-#include "ac/draw.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/global_game.h"
-#include "ac/global_gui.h"
-#include "ac/gui.h"
-#include "ac/guicontrol.h"
-#include "ac/mouse.h"
-#include "ac/string.h"
-#include "debug/debug_log.h"
-#include "font/fonts.h"
-#include "gui/guimain.h"
-#include "script/runtimescriptvalue.h"
-#include "util/string_compat.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/display.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/global_game.h"
+#include "ags/shared/ac/global_gui.h"
+#include "ags/shared/ac/gui.h"
+#include "ags/shared/ac/guicontrol.h"
+#include "ags/shared/ac/mouse.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/shared/util/string_compat.h"
 
 namespace AGS3 {
 

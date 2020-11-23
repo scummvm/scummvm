@@ -20,13 +20,13 @@
  *
  */
 
-#include "ac/global_textbox.h"
-#include "ac/common.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/string.h"
-#include "ac/textbox.h"
-#include "gui/guimain.h"
-#include "gui/guitextbox.h"
+#include "ags/shared/ac/global_textbox.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/ac/textbox.h"
+#include "ags/shared/gui/guimain.h"
+#include "ags/shared/gui/guitextbox.h"
 
 namespace AGS3 {
 

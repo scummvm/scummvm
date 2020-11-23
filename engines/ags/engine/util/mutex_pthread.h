@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_UTIL_MUTEX_PTHREAD_H
 #define AGS_ENGINE_UTIL_MUTEX_PTHREAD_H
 
-#include <pthread.h>
+//include <pthread.h>
 
 namespace AGS3 {
 namespace AGS {

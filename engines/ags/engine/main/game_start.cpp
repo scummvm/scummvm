@@ -24,25 +24,26 @@
 // Game initialization
 //
 
-#include "ac/common.h"
-#include "ac/characterinfo.h"
-#include "ac/game.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_game.h"
-#include "ac/mouse.h"
-#include "ac/room.h"
-#include "ac/screen.h"
-#include "debug/debug_log.h"
-#include "debug/debugger.h"
-#include "debug/out.h"
-#include "gfx/ali3dexception.h"
-#include "main/mainheader.h"
-#include "main/game_run.h"
-#include "main/game_start.h"
-#include "script/script.h"
-#include "media/audio/audio_system.h"
-#include "ac/timer.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/characterinfo.h"
+#include "ags/engine/ac/game.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/room.h"
+#include "ags/engine/ac/screen.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/gfx/ali3dexception.h"
+#include "ags/engine/main/mainheader.h"
+#include "ags/engine/main/game_run.h"
+#include "ags/engine/main/game_start.h"
+#include "ags/engine/script/script.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/ac/timer.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -123,7 +124,7 @@ void do_start_game() {
 		start_game();
 }
 
-void initialize_start_and_play_game(int override_start_room, const char *loadSaveGameOnStartup) {
+void initialize_start_and_play_game(int override_start_room, const char *loadSaveOnStartup) {
 	try { // BEGIN try for ALI3DEXception
 
 		set_cursor_mode(MODE_WALK);
@@ -138,7 +139,7 @@ void initialize_start_and_play_game(int override_start_room, const char *loadSav
 			game.options[OPT_ALWAYSSPCH] = oldalways;
 		}
 
-		srand(play.randseed);
+		::AGS::g_vm->setRandomNumberSeed(play.randseed);
 		if (override_start_room)
 			playerchar->room = override_start_room;
 

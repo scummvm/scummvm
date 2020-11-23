@@ -20,18 +20,18 @@
  *
  */
 
-#include "ac/dynobj/cc_hotspot.h"
-#include "ac/hotspot.h"
-#include "ac/gamestate.h"
-#include "ac/global_hotspot.h"
-#include "ac/global_translation.h"
-#include "ac/properties.h"
-#include "ac/room.h"
-#include "ac/roomstatus.h"
-#include "ac/string.h"
-#include "game/roomstruct.h"
-#include "gfx/bitmap.h"
-#include "script/runtimescriptvalue.h"
+#include "ags/shared/ac/dynobj/cc_hotspot.h"
+#include "ags/shared/ac/hotspot.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_hotspot.h"
+#include "ags/shared/ac/global_translation.h"
+#include "ags/shared/ac/properties.h"
+#include "ags/shared/ac/room.h"
+#include "ags/shared/ac/roomstatus.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/script/runtimescriptvalue.h"
 
 namespace AGS3 {
 
@@ -128,10 +128,10 @@ int get_hotspot_at(int xpp, int ypp) {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
-#include "ac/dynobj/scriptstring.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

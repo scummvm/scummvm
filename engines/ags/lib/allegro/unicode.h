@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_UNICODE_H
-#define AGS_STUBS_ALLEGRO_UNICODE_H
+#ifndef AGS_LIB_ALLEGRO_UNICODE_H
+#define AGS_LIB_ALLEGRO_UNICODE_H
 
 #include "ags/lib/allegro/base.h"
 

@@ -67,7 +67,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// TODO: why we do not use this in the engine instead of
 	// loaded_game_file_version?
 	int               filever;  // just used by editor
-	Common::String    compiled_with; // version of AGS this data was created by
+	Shared::String    compiled_with; // version of AGS this data was created by
 	char              lipSyncFrameLetters[MAXLIPSYNCFRAMES][50];
 	AGS::Shared::PropertySchema propSchema;
 	std::vector<AGS::Shared::StringIMap> charProps;
@@ -75,9 +75,9 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// NOTE: although the view names are stored in game data, they are never
 	// used, nor registered as script exports; numeric IDs are used to
 	// reference views instead.
-	std::vector<Common::String> viewNames;
-	Common::String    invScriptNames[MAX_INV];
-	std::vector<Common::String> dialogScriptNames;
+	std::vector<Shared::String> viewNames;
+	Shared::String    invScriptNames[MAX_INV];
+	std::vector<Shared::String> dialogScriptNames;
 	char              guid[MAX_GUID_LENGTH];
 	char              saveGameFileExtension[MAX_SG_EXT_LENGTH];
 	char              saveGameFolderName[MAX_SG_FOLDER_LEN];

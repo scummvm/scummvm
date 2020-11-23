@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_INVENTORYITEM_H
 #define AGS_ENGINE_AC_INVENTORYITEM_H
 
-#include "ac/dynobj/scriptinvitem.h"
+#include "ags/engine/ac/dynobj/scriptinvitem.h"
 
 namespace AGS3 {
 

@@ -25,7 +25,7 @@
 
 namespace AGS3 {
 
-struct BITMAP;
+class BITMAP;
 
 // WARNING: this interface is exposed for plugins and declared for the second time in agsplugin.h
 class IAGSFontRenderer {

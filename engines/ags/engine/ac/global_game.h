@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_GAME_H
 #define AGS_ENGINE_AC_GLOBAL_GAME_H
 
-#include "util/string.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 

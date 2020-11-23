@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_SLIDER_H
 #define AGS_ENGINE_AC_SLIDER_H
 
-#include "gui/guislider.h"
+#include "ags/shared/gui/guislider.h"
 
 namespace AGS3 {
 

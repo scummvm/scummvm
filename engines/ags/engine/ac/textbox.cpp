@@ -20,11 +20,11 @@
  *
  */
 
-#include <string.h>
-#include "ac/textbox.h"
-#include "ac/common.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/string.h"
+//include <string.h>
+#include "ags/shared/ac/textbox.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/string.h"
 
 namespace AGS3 {
 
@@ -90,10 +90,10 @@ void TextBox_SetShowBorder(GUITextBox *guit, bool on) {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
-#include "ac/dynobj/scriptstring.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

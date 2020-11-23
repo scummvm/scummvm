@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_MAIN_ENGINE_H
 #define AGS_ENGINE_MAIN_ENGINE_H
 
-#include "util/ini_util.h"
+#include "ags/shared/util/ini_util.h"
 
 namespace AGS3 {
 

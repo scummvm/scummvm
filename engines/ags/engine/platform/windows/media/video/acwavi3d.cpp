@@ -27,28 +27,28 @@
 //
 //=============================================================================
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_WINDOWS && ! defined (AGS_NO_VIDEO_PLAYER)
 
 //#define ALLEGRO_STATICLINK  // already defined in project settings
 #include "ags/lib/allegro.h"
-#include <winalleg.h>
-#include <allegro/platform/aintwin.h>
-#include <d3d9.h>
-#include <strmif.h>
+//include <winalleg.h>
+//include <allegro/platform/aintwin.h>
+//include <d3d9.h>
+//include <strmif.h>
 #define DWORD_PTR DWORD*
 #define LONG_PTR LONG*
 #define LPD3DVECTOR D3DVECTOR*
 #define _D3DTYPES_H_
 #define _STRSAFE_H_INCLUDED_
 typedef float D3DVALUE, *LPD3DVALUE;
-#include "ac/common.h"
-#include "main/game_run.h"
-#include "media/video/VMR9Graph.h"
-#include "platform/base/agsplatformdriver.h"
-//#include <atlbase.h>
-#include "media/audio/audio_system.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/main/game_run.h"
+#include "ags/shared/media/video/VMR9Graph.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+////include <atlbase.h>
+#include "ags/shared/media/audio/audio_system.h"
 
 namespace AGS3 {
 
@@ -147,7 +147,7 @@ int dxmedia_play_video_3d(const char *filename, IDirect3DDevice9 *device, bool u
 //////////////////////////////////////////////////////////////////////
 
 
-//#include <atlbase.h>
+////include <atlbase.h>
 
 #if AGS_PLATFORM_DEBUG
 #undef THIS_FILE

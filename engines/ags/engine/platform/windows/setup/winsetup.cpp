@@ -20,33 +20,33 @@
  *
  */
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
 
-#include <windows.h>
-#include <commctrl.h>
-#include <crtdbg.h>
-#include <shlobj.h>
-#include <shlwapi.h>
-#include <memory>
-#include <algorithm>
-#include <set>
-#include <vector>
-#include "ac/gamestructdefines.h"
+//include <windows.h>
+//include <commctrl.h>
+//include <crtdbg.h>
+//include <shlobj.h>
+//include <shlwapi.h>
+#include "ags/std/memory.h"
+//include <algorithm>
+//include <set>
+#include "ags/std/vector.h"
+#include "ags/shared/ac/gamestructdefines.h"
 #undef RGB
 #undef PALETTE
 #define RGB void*
 #define PALETTE void*
-#include "gfx/gfxdriverfactory.h"
-#include "gfx/gfxfilter.h"
-#include "gfx/graphicsdriver.h"
-#include "main/config.h"
-#include "main/graphics_mode.h"
-#include "platform/base/agsplatformdriver.h"
-#include "resource/resource.h"
-#include "util/file.h"
-#include "util/string_utils.h"
+#include "ags/shared/gfx/gfxdriverfactory.h"
+#include "ags/shared/gfx/gfxfilter.h"
+#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/shared/main/config.h"
+#include "ags/shared/main/graphics_mode.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/resource/resource.h"
+#include "ags/shared/util/file.h"
+#include "ags/shared/util/string_utils.h"
 
 namespace AGS3 {
 

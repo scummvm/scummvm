@@ -28,13 +28,14 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 class Bitmap;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 // stores cached info about the character
 struct CharacterCache {
-	Common::Bitmap *image;
+	Shared::Bitmap *image;
 	int sppic;
 	int scaling;
 	int inUse;

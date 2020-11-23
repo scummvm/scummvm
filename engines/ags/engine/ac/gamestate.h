@@ -23,18 +23,17 @@
 #ifndef AGS_ENGINE_AC_GAMESTATE_H
 #define AGS_ENGINE_AC_GAMESTATE_H
 
-#include <memory>
-#include <vector>
-
-#include "ac/characterinfo.h"
-#include "ac/runtime_defines.h"
-#include "game/roomstruct.h"
-#include "game/viewport.h"
-#include "media/audio/queuedaudioitem.h"
-#include "util/geometry.h"
-#include "util/string_types.h"
-#include "util/string.h"
-#include "ac/timer.h"
+#include "ags/std/memory.h"
+#include "ags/std/vector.h"
+#include "ags/shared/ac/characterinfo.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/engine/game/viewport.h"
+#include "ags/engine/media/audio/queuedaudioitem.h"
+#include "ags/shared/util/geometry.h"
+#include "ags/shared/util/string_types.h"
+#include "ags/shared/util/string.h"
+#include "ags/engine/ac/timer.h"
 
 namespace AGS3 {
 
@@ -185,7 +184,7 @@ struct GameState {
 	char  bad_parsed_word[100];
 	int   raw_color;
 	int   raw_modified[MAX_ROOM_BGFRAMES];
-	Common::PBitmap raw_drawing_surface;
+	Shared::PBitmap raw_drawing_surface;
 	short filenumbers[MAXSAVEGAMES];
 	int   room_changes;
 	int   mouse_cursor_hidden;
@@ -354,11 +353,11 @@ struct GameState {
 	//
 	// Serialization
 	//
-	void ReadQueuedAudioItems_Aligned(Common::Stream *in);
-	void ReadCustomProperties_v340(Common::Stream *in);
-	void WriteCustomProperties_v340(Common::Stream *out) const;
-	void ReadFromSavegame(Common::Stream *in, GameStateSvgVersion svg_ver, AGS::Engine::RestoredData &r_data);
-	void WriteForSavegame(Common::Stream *out) const;
+	void ReadQueuedAudioItems_Aligned(Shared::Stream *in);
+	void ReadCustomProperties_v340(Shared::Stream *in);
+	void WriteCustomProperties_v340(Shared::Stream *out) const;
+	void ReadFromSavegame(Shared::Stream *in, GameStateSvgVersion svg_ver, AGS::Engine::RestoredData &r_data);
+	void WriteForSavegame(Shared::Stream *out) const;
 	void FreeProperties();
 	void FreeViewportsAndCameras();
 

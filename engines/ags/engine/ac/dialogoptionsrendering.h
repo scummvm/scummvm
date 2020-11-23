@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_AC_DIALOGOPTIONSRENDERING_H
 #define AGS_ENGINE_AC_DIALOGOPTIONSRENDERING_H
 
-#include "ac/dynobj/scriptdialog.h"
-#include "ac/dynobj/scriptdialogoptionsrendering.h"
+#include "ags/engine/ac/dynobj/scriptdialog.h"
+#include "ags/engine/ac/dynobj/scriptdialogoptionsrendering.h"
 
 namespace AGS3 {
 

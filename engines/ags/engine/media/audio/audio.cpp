@@ -20,32 +20,32 @@
  *
  */
 
-#include <math.h>
+//include <math.h>
 
-#include "core/platform.h"
-#include "util/wgt2allg.h"
-#include "media/audio/audio.h"
-#include "ac/audiocliptype.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/dynobj/cc_audioclip.h"
-#include "ac/dynobj/cc_audiochannel.h"
-#include "ac/gamestate.h"
-#include "script/script_runtime.h"
-#include "ac/audiochannel.h"
-#include "ac/audioclip.h"
-#include "ac/gamesetup.h"
-#include "ac/path_helper.h"
-#include "media/audio/sound.h"
-#include "debug/debug_log.h"
-#include "debug/debugger.h"
-#include "ac/common.h"
-#include "ac/file.h"
-#include "ac/global_audio.h"
-#include <math.h>
-#include "util/stream.h"
-#include "core/assetmanager.h"
-#include "ac/timer.h"
-#include "main/game_run.h"
+#include "ags/shared/core/platform.h"
+#include "ags/shared/util/wgt2allg.h"
+#include "ags/shared/media/audio/audio.h"
+#include "ags/shared/ac/audiocliptype.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/dynobj/cc_audioclip.h"
+#include "ags/shared/ac/dynobj/cc_audiochannel.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/ac/audiochannel.h"
+#include "ags/shared/ac/audioclip.h"
+#include "ags/shared/ac/gamesetup.h"
+#include "ags/shared/ac/path_helper.h"
+#include "ags/shared/media/audio/sound.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/debug/debugger.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/file.h"
+#include "ags/shared/ac/global_audio.h"
+//include <math.h>
+#include "ags/shared/util/stream.h"
+#include "ags/shared/core/assetmanager.h"
+#include "ags/shared/ac/timer.h"
+#include "ags/shared/main/game_run.h"
 
 namespace AGS3 {
 

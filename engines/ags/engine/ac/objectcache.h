@@ -27,7 +27,7 @@ namespace AGS3 {
 
 // stores cached object info
 struct ObjectCache {
-	Common::Bitmap *image;
+	Shared::Bitmap *image;
 	int   sppic;
 	short tintredwas, tintgrnwas, tintbluwas, tintamntwas, tintlightwas;
 	short lightlevwas, mirroredWas, zoomWas;

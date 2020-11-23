@@ -26,10 +26,10 @@
 //
 //=============================================================================
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
-#include "util/wgt2allg.h"
-#include "gfx/bitmap.h"
+#include "ags/shared/util/wgt2allg.h"
+#include "ags/shared/gfx/bitmap.h"
 
 namespace AGS3 {
 

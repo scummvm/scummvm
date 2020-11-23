@@ -20,32 +20,33 @@
  *
  */
 
-#include <memory>
-#include <limits>
-#include "core/platform.h"
-#include "ac/common.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/runtime_defines.h"
-#include "debug/agseditordebugger.h"
-#include "debug/debug_log.h"
-#include "debug/debugger.h"
-#include "debug/debugmanager.h"
-#include "debug/out.h"
-#include "debug/consoleoutputtarget.h"
-#include "debug/logfile.h"
-#include "debug/messagebuffer.h"
-#include "main/config.h"
-#include "media/audio/audio_system.h"
-#include "platform/base/agsplatformdriver.h"
-#include "plugin/plugin_engine.h"
-#include "script/script.h"
-#include "script/script_common.h"
-#include "script/cc_error.h"
-#include "util/string_utils.h"
-#include "util/textstreamwriter.h"
+#include "ags/std/initializer_list.h"
+#include "ags/std/limits.h"
+#include "ags/std/memory.h"
+#include "ags/shared/core/platform.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/debugging/agseditordebugger.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/shared/debugging/debugmanager.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/debugging/consoleoutputtarget.h"
+#include "ags/engine/debugging/logfile.h"
+#include "ags/engine/debugging/messagebuffer.h"
+#include "ags/engine/main/config.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/plugin/plugin_engine.h"
+#include "ags/engine/script/script.h"
+#include "ags/shared/script/script_common.h"
+#include "ags/shared/script/cc_error.h"
+#include "ags/shared/util/string_utils.h"
+#include "ags/shared/util/textstreamwriter.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
-#include <winalleg.h>
+//include <winalleg.h>
 #endif
 
 namespace AGS3 {
@@ -70,7 +71,7 @@ volatile int game_paused_in_debugger = 0;
 
 #if AGS_PLATFORM_OS_WINDOWS
 
-#include "platform/windows/debug/namedpipesagsdebugger.h"
+#include "ags/shared/platform/windows/debug/namedpipesagsdebugger.h"
 
 HWND editor_window_handle = 0;
 
@@ -167,8 +168,8 @@ MessageType get_messagetype_from_string(const String &mt) {
 typedef std::pair<CommonDebugGroup, MessageType> DbgGroupOption;
 
 void apply_log_config(const ConfigTree &cfg, const String &log_id,
-	bool def_enabled,
-	std::initializer_list<DbgGroupOption> def_opts) {
+		bool def_enabled,
+		std::initializer_list<DbgGroupOption> def_opts) {
 	String value = INIreadstring(cfg, "log", log_id);
 	if (value.IsEmpty() && !def_enabled)
 		return;

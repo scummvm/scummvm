@@ -33,8 +33,8 @@
 #pragma once
 #endif
 
-#include <dshow.h>
-#include <Vmr9.h>
+//include <dshow.h>
+//include <Vmr9.h>
 
 namespace AGS3 {
 

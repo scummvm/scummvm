@@ -29,16 +29,16 @@
 #ifndef AGS_ENGINE_GFX_ALLEGROGFXFILTER_H
 #define AGS_ENGINE_GFX_ALLEGROGFXFILTER_H
 
-#include "gfx/bitmap.h"
-#include "gfx/gfxfilter_scaling.h"
-#include "gfx/gfxdefines.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gfx/gfxfilter_scaling.h"
+#include "ags/shared/gfx/gfxdefines.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
 namespace ALSW {
 
-using Common::Bitmap;
+using Shared::Bitmap;
 
 class AllegroGfxFilter : public ScalingGfxFilter {
 public:

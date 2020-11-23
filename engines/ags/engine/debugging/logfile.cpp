@@ -20,10 +20,10 @@
  *
  */
 
-#include <string.h>
-#include "debug/logfile.h"
-#include "util/file.h"
-#include "util/stream.h"
+//include <string.h>
+#include "ags/engine/debugging/logfile.h"
+#include "ags/shared/util/file.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -39,8 +39,8 @@ void LogFile::PrintMessage(const DebugMessage &msg) {
 	if (!_file.get()) {
 		if (_filePath.IsEmpty())
 			return;
-		_file.reset(File::OpenFile(_filePath, _openMode == kLogFile_Append ? Common::kFile_Create : Common::kFile_CreateAlways,
-			Common::kFile_Write));
+		_file.reset(File::OpenFile(_filePath, _openMode == kLogFile_Append ? Shared::kFile_Create : Shared::kFile_CreateAlways,
+			Shared::kFile_Write));
 		if (!_file) {
 			Debug::Printf("Unable to write log to '%s'.", _filePath.GetCStr());
 			_filePath = "";
@@ -69,8 +69,8 @@ bool LogFile::OpenFile(const String &file_path, OpenMode open_mode) {
 		return File::TestWriteFile(_filePath);
 	} else {
 		_file.reset(File::OpenFile(file_path,
-			open_mode == kLogFile_Append ? Common::kFile_Create : Common::kFile_CreateAlways,
-			Common::kFile_Write));
+			open_mode == kLogFile_Append ? Shared::kFile_Create : Shared::kFile_CreateAlways,
+			Shared::kFile_Write));
 		return _file.get() != nullptr;
 	}
 }

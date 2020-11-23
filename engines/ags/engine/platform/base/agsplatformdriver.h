@@ -29,11 +29,11 @@
 #ifndef AGS_ENGINE_PLATFORM_BASE_AGSPLATFORMDRIVER_H
 #define AGS_ENGINE_PLATFORM_BASE_AGSPLATFORMDRIVER_H
 
-#include <errno.h>
-#include <vector>
-#include "ac/datetime.h"
-#include "debug/outputhandler.h"
-#include "util/ini_util.h"
+//include <errno.h>
+#include "ags/std/vector.h"
+#include "ags/engine/ac/datetime.h"
+#include "ags/shared/debugging/outputhandler.h"
+#include "ags/shared/util/ini_util.h"
 
 namespace AGS3 {
 
@@ -120,7 +120,7 @@ struct AGSPlatformDriver
 	virtual void PostAllegroInit(bool windowed);
 	virtual void PostAllegroExit() = 0;
 	virtual void FinishedUsingGraphicsMode();
-	virtual SetupReturnValue RunSetup(const Common::ConfigTree &cfg_in, Common::ConfigTree &cfg_out);
+	virtual SetupReturnValue RunSetup(const Shared::ConfigTree &cfg_in, Shared::ConfigTree &cfg_out);
 	virtual void SetGameWindowIcon();
 	// Formats message and writes to standard platform's output;
 	// Always adds trailing '\n' after formatted string

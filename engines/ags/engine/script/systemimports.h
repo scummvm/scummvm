@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_SCRIPT_SYSTEMIMPORTS_H
 #define AGS_ENGINE_SCRIPT_SYSTEMIMPORTS_H
 
-#include <map>
-#include "script/cc_instance.h"    // ccInstance
+//include <map>
+#include "ags/shared/script/cc_instance.h"    // ccInstance
 
 namespace AGS3 {
 

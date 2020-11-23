@@ -20,20 +20,20 @@
  *
  */
 
-#include "ac/characterinfo.h"
-#include "ac/common.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/character.h"
-#include "ac/characterextras.h"
-#include "ac/gamestate.h"
-#include "ac/global_character.h"
-#include "ac/math.h"
-#include "ac/viewframe.h"
-#include "debug/debug_log.h"
-#include "game/roomstruct.h"
-#include "main/maindefines_ex.h"    // RETURN_CONTINUE
-#include "main/update.h"
-#include "media/audio/audio_system.h"
+#include "ags/shared/ac/characterinfo.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/character.h"
+#include "ags/shared/ac/characterextras.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_character.h"
+#include "ags/shared/ac/math.h"
+#include "ags/shared/ac/viewframe.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/main/maindefines_ex.h"    // RETURN_CONTINUE
+#include "ags/shared/main/update.h"
+#include "ags/shared/media/audio/audio_system.h"
 
 namespace AGS3 {
 

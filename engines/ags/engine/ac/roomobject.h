@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_ROOMOBJECT_H
 #define AGS_ENGINE_AC_ROOMOBJECT_H
 
-#include "ac/common_defines.h"
+#include "ags/shared/ac/common_defines.h"
 
 namespace AGS3 {
 
@@ -71,8 +71,8 @@ struct RoomObject {
 	void update_cycle_view_forwards();
 	void update_cycle_view_backwards();
 
-	void ReadFromFile(Common::Stream *in);
-	void WriteToFile(Common::Stream *out) const;
+	void ReadFromFile(Shared::Stream *in);
+	void WriteToFile(Shared::Stream *out) const;
 };
 
 } // namespace AGS3

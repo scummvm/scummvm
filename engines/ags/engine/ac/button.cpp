@@ -20,17 +20,22 @@
  *
  */
 
-#include "ac/button.h"
-#include "ac/common.h"
-#include "ac/gui.h"
-#include "ac/view.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/global_translation.h"
-#include "ac/string.h"
-#include "ac/viewframe.h"
-#include "debug/debug_log.h"
-#include "gui/animatingguibutton.h"
-#include "gui/guimain.h"
+#include "ags/engine/ac/button.h"
+#include "ags/shared/ac/common.h"
+#include "ags/engine/ac/gui.h"
+#include "ags/shared/ac/view.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/viewframe.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/gui/animatingguibutton.h"
+#include "ags/shared/gui/guimain.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
 
 namespace AGS3 {
 
@@ -300,11 +305,6 @@ void Button_SetTextAlignment(GUIButton *butt, int align) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
-#include "ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

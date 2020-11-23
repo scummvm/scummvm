@@ -20,19 +20,27 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_DYNOBJ_CC_AUDIOCHANNEL_H
-#define AGS_ENGINE_AC_DYNOBJ_CC_AUDIOCHANNEL_H
-
-#include "ags/engine/ac/dynobj/cc_agsdynamicobject.h"
+#ifndef AGS_STD_XTR1COMMON_H
+#define AGS_STD_XTR1COMMON_H
 
 namespace AGS3 {
+namespace std {
 
-struct CCAudioChannel final : AGSCCDynamicObject {
-	const char *GetType() override;
-	int Serialize(const char *address, char *buffer, int bufsize) override;
-	void Unserialize(int index, const char *serializedData, int dataSize) override;
+// STRUCT TEMPLATE conditional
+template <bool _Test, class _Ty1, class _Ty2>
+struct conditional { // Choose _Ty1 if _Test is true, and _Ty2 otherwise
+	using type = _Ty1;
 };
 
+template <class _Ty1, class _Ty2>
+struct conditional<false, _Ty1, _Ty2> {
+	using type = _Ty2;
+};
+
+template <bool _Test, class _Ty1, class _Ty2>
+using conditional_t = typename conditional<_Test, _Ty1, _Ty2>::type;
+
+} // namespace std
 } // namespace AGS3
 
 #endif

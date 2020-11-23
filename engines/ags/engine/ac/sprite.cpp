@@ -20,17 +20,17 @@
  *
  */
 
-#include "ac/common.h"
-#include "ac/draw.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/sprite.h"
-#include "ac/system.h"
-#include "platform/base/agsplatformdriver.h"
-#include "plugin/agsplugin.h"
-#include "plugin/plugin_engine.h"
-#include "ac/spritecache.h"
-#include "gfx/bitmap.h"
-#include "gfx/graphicsdriver.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/sprite.h"
+#include "ags/shared/ac/system.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/plugin/agsplugin.h"
+#include "ags/shared/plugin/plugin_engine.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gfx/graphicsdriver.h"
 
 namespace AGS3 {
 

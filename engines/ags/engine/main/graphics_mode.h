@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_MAIN_GRAPHICSMODE_H
 #define AGS_ENGINE_MAIN_GRAPHICSMODE_H
 
-#include "gfx/gfxdefines.h"
-#include "util/scaling.h"
-#include "util/string.h"
+#include "ags/engine/gfx/gfxdefines.h"
+#include "ags/engine/util/scaling.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
@@ -85,7 +85,7 @@ enum ScreenSizeDefinition {
 // Configuration that is used to determine the size of the screen
 struct ScreenSizeSetup {
 	ScreenSizeDefinition SizeDef;       // a method used to determine screen size
-	::Size               Size;          // explicitly defined screen metrics
+	AGS3::Size           Size;          // explicitly defined screen metrics
 	bool                 MatchDeviceRatio; // whether to choose resolution matching device aspect ratio
 
 	ScreenSizeSetup();

@@ -29,7 +29,7 @@
 #ifndef AGS_ENGINE_GFX_HQ2XGFXFILTER_H
 #define AGS_ENGINE_GFX_HQ2XGFXFILTER_H
 
-#include "gfx/gfxfilter_allegro.h"
+#include "ags/shared/gfx/gfxfilter_allegro.h"
 
 namespace AGS3 {
 namespace AGS {

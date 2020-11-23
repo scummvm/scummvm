@@ -26,14 +26,14 @@
 //
 //=============================================================================
 
-#include "ac/dynobj/scriptcamera.h"
-#include "ac/dynobj/scriptviewport.h"
-#include "ac/dynobj/scriptuserobject.h"
-#include "ac/draw.h"
-#include "ac/gamestate.h"
-#include "debug/debug_log.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
+#include "ags/shared/ac/dynobj/scriptcamera.h"
+#include "ags/shared/ac/dynobj/scriptviewport.h"
+#include "ags/shared/ac/dynobj/scriptuserobject.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
 
 namespace AGS3 {
 

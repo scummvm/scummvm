@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_MOUSE_H
-#define AGS_STUBS_ALLEGRO_MOUSE_H
+#ifndef AGS_LIB_ALLEGRO_MOUSE_H
+#define AGS_LIB_ALLEGRO_MOUSE_H
 
 #include "common/events.h"
 #include "ags/lib/allegro/base.h"

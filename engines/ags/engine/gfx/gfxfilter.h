@@ -29,15 +29,15 @@
 #ifndef AGS_ENGINE_GFX_GFXFILTER_H
 #define AGS_ENGINE_GFX_GFXFILTER_H
 
-#include <memory>
-#include "util/geometry.h"
-#include "util/string.h"
+#include "ags/std/memory.h"
+#include "ags/shared/util/geometry.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
-using Common::String;
+using Shared::String;
 
 struct GfxFilterInfo {
 	String   Id;

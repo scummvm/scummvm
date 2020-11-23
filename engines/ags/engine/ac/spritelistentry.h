@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_SPRITELISTENTRY_H
 #define AGS_ENGINE_AC_SPRITELISTENTRY_H
 
-#include "gfx/ddb.h"
+#include "ags/engine/gfx/ddb.h"
 
 namespace AGS3 {
 

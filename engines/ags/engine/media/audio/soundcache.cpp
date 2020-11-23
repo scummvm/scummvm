@@ -20,16 +20,16 @@
  *
  */
 
-#include <stdlib.h>
-#include <string.h>
-#include "ac/file.h"
-#include "util/wgt2allg.h"
-#include "media/audio/soundcache.h"
-#include "media/audio/audiointernaldefs.h"
-#include "util/mutex.h"
-#include "util/mutex_lock.h"
-#include "util/string.h"
-#include "debug/out.h"
+//include <stdlib.h>
+//include <string.h>
+#include "ags/shared/ac/file.h"
+#include "ags/shared/util/wgt2allg.h"
+#include "ags/shared/media/audio/soundcache.h"
+#include "ags/shared/media/audio/audiointernaldefs.h"
+#include "ags/shared/util/mutex.h"
+#include "ags/shared/util/mutex_lock.h"
+#include "ags/shared/util/string.h"
+#include "ags/shared/debug/out.h"
 
 namespace AGS3 {
 

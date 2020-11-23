@@ -29,17 +29,17 @@
 #ifndef AGS_ENGINE_GFX_GRAPHICSDRIVER_H
 #define AGS_ENGINE_GFX_GRAPHICSDRIVER_H
 
-#include <memory>
-#include "gfx/gfxdefines.h"
-#include "gfx/gfxmodelist.h"
-#include "util/geometry.h"
+#include "ags/std/memory.h"
+#include "ags/engine/gfx/gfxdefines.h"
+#include "ags/engine/gfx/gfxmodelist.h"
+#include "ags/shared/util/geometry.h"
 
 namespace AGS3 {
 namespace AGS {
 
 namespace Shared {
 class Bitmap;
-typedef std::shared_ptr<Common::Bitmap> PBitmap;
+typedef std::shared_ptr<Shared::Bitmap> PBitmap;
 } // namespace Shared
 
 namespace Engine {
@@ -48,7 +48,7 @@ namespace Engine {
 class IDriverDependantBitmap;
 class IGfxFilter;
 typedef std::shared_ptr<IGfxFilter> PGfxFilter;
-using Common::PBitmap;
+using Shared::PBitmap;
 
 enum TintMethod {
 	TintReColourise = 0,
@@ -124,8 +124,8 @@ public:
 	// Gets closest recommended bitmap format (currently - only color depth) for the given original format.
 	// Engine needs to have game bitmaps brought to the certain range of formats, easing conversion into the video bitmaps.
 	virtual int  GetCompatibleBitmapFormat(int color_depth) = 0;
-	virtual IDriverDependantBitmap *CreateDDBFromBitmap(Common::Bitmap *bitmap, bool hasAlpha, bool opaque = false) = 0;
-	virtual void UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Common::Bitmap *bitmap, bool hasAlpha) = 0;
+	virtual IDriverDependantBitmap *CreateDDBFromBitmap(Shared::Bitmap *bitmap, bool hasAlpha, bool opaque = false) = 0;
+	virtual void UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Shared::Bitmap *bitmap, bool hasAlpha) = 0;
 	virtual void DestroyDDB(IDriverDependantBitmap *bitmap) = 0;
 
 	// Prepares next sprite batch, a list of sprites with defined viewport and optional
@@ -151,7 +151,7 @@ public:
 	// Copies contents of the game screen into bitmap using simple blit or pixel copy.
 	// Bitmap must be of supported size and pixel format. If it's not the method will
 	// fail and optionally write wanted destination format into 'want_fmt' pointer.
-	virtual bool GetCopyOfScreenIntoBitmap(Common::Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt = nullptr) = 0;
+	virtual bool GetCopyOfScreenIntoBitmap(Shared::Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt = nullptr) = 0;
 	virtual void EnableVsyncBeforeRender(bool enabled) = 0;
 	virtual void Vsync() = 0;
 	// Enables or disables rendering mode that draws sprite list directly into
@@ -178,14 +178,14 @@ public:
 	virtual void SetGamma(int newGamma) = 0;
 	// Returns the virtual screen. Will return NULL if renderer does not support memory backbuffer.
 	// In normal case you should use GetStageBackBuffer() instead.
-	virtual Common::Bitmap *GetMemoryBackBuffer() = 0;
+	virtual Shared::Bitmap *GetMemoryBackBuffer() = 0;
 	// Sets custom backbuffer bitmap to render to.
 	// Passing NULL pointer will tell renderer to switch back to its original virtual screen.
 	// Note that only software renderer supports this.
-	virtual void SetMemoryBackBuffer(Common::Bitmap *backBuffer) = 0;
+	virtual void SetMemoryBackBuffer(Shared::Bitmap *backBuffer) = 0;
 	// Returns memory backbuffer for the current rendering stage (or base virtual screen if called outside of render pass).
 	// All renderers should support this.
-	virtual Common::Bitmap *GetStageBackBuffer() = 0;
+	virtual Shared::Bitmap *GetStageBackBuffer() = 0;
 	virtual bool RequiresFullRedrawEachFrame() = 0;
 	virtual bool HasAcceleratedTransform() = 0;
 	virtual bool UsesMemoryBackBuffer() = 0;

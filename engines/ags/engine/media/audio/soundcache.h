@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_MEDIA_AUDIO_SOUNDCACHE_H
 #define AGS_ENGINE_MEDIA_AUDIO_SOUNDCACHE_H
 
-#include "ac/asset_helper.h"
+#include "ags/engine/ac/asset_helper.h"
 
 namespace AGS3 {
 

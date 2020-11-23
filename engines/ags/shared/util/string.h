@@ -339,8 +339,9 @@ public:
 	inline bool operator <(const char *cstr) const {
 		return Compare(cstr) < 0;
 	}
-	Common::String operator()() const {
-		return Common::String(GetCStr());
+	// Converts an AGS string to a ScummVM one
+	operator Common::String() const {
+		return Common::String(GetNullableCStr());
 	}
 
 private:

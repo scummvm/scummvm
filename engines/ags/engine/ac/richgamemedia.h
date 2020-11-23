@@ -54,8 +54,8 @@ typedef struct _RICH_GAME_MEDIA_HEADER {
 	unsigned short szLevelName[RM_MAXLENGTH];
 	unsigned short szComments[RM_MAXLENGTH];
 
-	void ReadFromFile(Common::Stream *in);
-	void WriteToFile(Common::Stream *out);
+	void ReadFromFile(Shared::Stream *in);
+	void WriteToFile(Shared::Stream *out);
 } RICH_GAME_MEDIA_HEADER;
 #pragma pack(pop)
 

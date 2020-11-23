@@ -29,13 +29,12 @@
 #ifndef AGS_ENGINE_SCRIPT_CCINSTANCE_H
 #define AGS_ENGINE_SCRIPT_CCINSTANCE_H
 
-#include <memory>
-#include <unordered_map>
-
-#include "script/script_common.h"
-#include "script/cc_script.h"  // ccScript
-#include "script/nonblockingscriptfunction.h"
-#include "util/string.h"
+#include "ags/std/map.h"
+#include "ags/std/memory.h"
+#include "ags/shared/script/script_common.h"
+#include "ags/shared/script/cc_script.h"  // ccScript
+#include "ags/engine/script/nonblockingscriptfunction.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
@@ -96,12 +95,12 @@ struct ScriptPosition {
 		: Line(0) {
 	}
 
-	ScriptPosition(const Common::String &section, int32_t line)
+	ScriptPosition(const Shared::String &section, int32_t line)
 		: Section(section)
 		, Line(line) {
 	}
 
-	Common::String  Section;
+	Shared::String  Section;
 	int32_t         Line;
 };
 
@@ -173,7 +172,7 @@ public:
 	int     Run(int32_t curpc);
 
 	// Get the script's execution position and callstack as human-readable text
-	Common::String GetCallStack(int maxLines);
+	Shared::String GetCallStack(int maxLines);
 	// Get the script's execution position
 	void    GetScriptPosition(ScriptPosition &script_pos);
 	// Get the address of an exported symbol (function or variable) in the script

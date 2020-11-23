@@ -26,10 +26,10 @@
 //
 //=============================================================================
 
-#include <string.h>
-#include "ac/global_plugin.h"
-#include "ac/mouse.h"
-#include "util/string_compat.h"
+//include <string.h>
+#include "ags/shared/ac/global_plugin.h"
+#include "ags/shared/ac/mouse.h"
+#include "ags/shared/util/string_compat.h"
 
 namespace AGS3 {
 
@@ -45,7 +45,7 @@ void PluginSimulateMouseClick(int pluginButtonID) {
 //
 //=============================================================================
 
-#include "script/script_runtime.h"
+#include "ags/shared/script/script_runtime.h"
 
 RuntimeScriptValue Sc_PluginStub_Void(const RuntimeScriptValue *params, int32_t param_count) {
 	return RuntimeScriptValue((int32_t)0);

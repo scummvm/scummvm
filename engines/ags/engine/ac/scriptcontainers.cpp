@@ -26,16 +26,16 @@
 //
 //=============================================================================
 
-#include "ac/common.h" // quit
-#include "ac/string.h"
-#include "ac/dynobj/cc_dynamicarray.h"
-#include "ac/dynobj/cc_dynamicobject.h"
-#include "ac/dynobj/scriptdict.h"
-#include "ac/dynobj/scriptset.h"
-#include "ac/dynobj/scriptstring.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
-#include "util/bbop.h"
+#include "ags/shared/ac/common.h" // quit
+#include "ags/shared/ac/string.h"
+#include "ags/shared/ac/dynobj/cc_dynamicarray.h"
+#include "ags/shared/ac/dynobj/cc_dynamicobject.h"
+#include "ags/shared/ac/dynobj/scriptdict.h"
+#include "ags/shared/ac/dynobj/scriptset.h"
+#include "ags/shared/ac/dynobj/scriptstring.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/util/bbop.h"
 
 namespace AGS3 {
 

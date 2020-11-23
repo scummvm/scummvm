@@ -20,10 +20,10 @@
  *
  */
 
-#include "ac/dynobj/cc_hotspot.h"
-#include "ac/dynobj/scripthotspot.h"
-#include "ac/common_defines.h"
-#include "game/roomstruct.h"
+#include "ags/shared/ac/dynobj/cc_hotspot.h"
+#include "ags/shared/ac/dynobj/scripthotspot.h"
+#include "ags/shared/ac/common_defines.h"
+#include "ags/shared/game/roomstruct.h"
 
 namespace AGS3 {
 

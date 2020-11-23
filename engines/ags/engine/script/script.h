@@ -23,15 +23,15 @@
 #ifndef AGS_ENGINE_SCRIPT_SCRIPT_H
 #define AGS_ENGINE_SCRIPT_SCRIPT_H
 
-#include <vector>
+#include "ags/std/vector.h"
 
-#include "game/roomstruct.h" // MAX_ROOM_OBJECTS
-#include "script/cc_instance.h"
-#include "script/executingscript.h"
-#include "script/nonblockingscriptfunction.h"
-#include "ac/dynobj/scriptsystem.h"
-#include "game/interactions.h"
-#include "util/string.h"
+#include "ags/shared/game/roomstruct.h" // MAX_ROOM_OBJECTS
+#include "ags/engine/script/cc_instance.h"
+#include "ags/engine/script/executingscript.h"
+#include "ags/engine/script/nonblockingscriptfunction.h"
+#include "ags/engine/ac/dynobj/scriptsystem.h"
+#include "ags/shared/game/interactions.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 

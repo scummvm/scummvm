@@ -20,12 +20,12 @@
  *
  */
 
-#include <string.h>
-#include "util/wgt2allg.h"
-#include "font/fonts.h"
-#include "gui/mytextbox.h"
-#include "gui/guidialoginternaldefs.h"
-#include "gfx/bitmap.h"
+//include <string.h>
+#include "ags/shared/util/wgt2allg.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/gui/mytextbox.h"
+#include "ags/shared/gui/guidialoginternaldefs.h"
+#include "ags/shared/gfx/bitmap.h"
 
 namespace AGS3 {
 

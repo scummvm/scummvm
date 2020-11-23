@@ -26,16 +26,16 @@
 //
 //=============================================================================
 
-#include "gfx/ali3dsw.h"
+#include "ags/shared/gfx/ali3dsw.h"
 
-#include "core/platform.h"
-#include "gfx/ali3dexception.h"
-#include "gfx/gfxfilter_allegro.h"
-#include "gfx/gfxfilter_hqx.h"
-#include "gfx/gfx_util.h"
-#include "main/main_allegro.h"
-#include "platform/base/agsplatformdriver.h"
-#include "ac/timer.h"
+#include "ags/shared/core/platform.h"
+#include "ags/shared/gfx/ali3dexception.h"
+#include "ags/shared/gfx/gfxfilter_allegro.h"
+#include "ags/shared/gfx/gfxfilter_hqx.h"
+#include "ags/shared/gfx/gfx_util.h"
+#include "ags/shared/main/main_allegro.h"
+#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/shared/ac/timer.h"
 
 namespace AGS3 {
 
@@ -449,7 +449,7 @@ void ALSoftwareGraphicsDriver::RenderToBackBuffer() {
 	ClearDrawLists();
 }
 
-void ALSoftwareGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch, Common::Bitmap *surface, int surf_offx, int surf_offy) {
+void ALSoftwareGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch, Shared::Bitmap *surface, int surf_offx, int surf_offy) {
 	const std::vector<ALDrawListEntry> &drawlist = batch.List;
 	for (size_t i = 0; i < drawlist.size(); i++) {
 		if (drawlist[i].bitmap == nullptr) {

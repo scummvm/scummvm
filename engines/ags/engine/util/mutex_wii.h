@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_UTIL_WII_MUTEX_H
 #define AGS_ENGINE_UTIL_WII_MUTEX_H
 
-#include <gccore.h>
+//include <gccore.h>
 
 namespace AGS3 {
 namespace AGS {

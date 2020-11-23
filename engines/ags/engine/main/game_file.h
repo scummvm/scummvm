@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_MAIN_GAMEFILE_H
 #define AGS_ENGINE_MAIN_GAMEFILE_H
 
-#include "util/error.h"
-#include "util/string.h"
+#include "ags/shared/util/error.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 

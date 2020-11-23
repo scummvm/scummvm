@@ -23,8 +23,9 @@
 #ifndef AGS_ENGINE_UTIL_THREAD_STD_H
 #define AGS_ENGINE_UTIL_THREAD_STD_H
 
-#include <system_error>
-#include <thread>
+//include <system_error>
+#include "ags/engine/util/thread.h"
+#include "ags/std/thread.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -60,11 +61,11 @@ public:
 			return false;
 		}
 
-		try {
+//		try {
 			thread_ = std::thread(thread_start_, this);
-		} catch (std::system_error) {
-			return false;
-		}
+//		} catch (std::system_error) {
+//			return false;
+//		}
 		return thread_.joinable();
 	}
 

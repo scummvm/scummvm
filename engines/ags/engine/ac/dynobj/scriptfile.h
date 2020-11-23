@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTFILE_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTFILE_H
 
-#include "ac/dynobj/cc_dynamicobject.h"
-#include "util/file.h"
+#include "ags/engine/ac/dynobj/cc_dynamicobject.h"
+#include "ags/shared/util/file.h"
 
 namespace AGS3 {
 
@@ -37,8 +37,8 @@ using namespace AGS; // FIXME later
 struct sc_File final : ICCDynamicObject {
 	int32_t             handle;
 
-	static const Common::FileOpenMode fopenModes[];
-	static const Common::FileWorkMode fworkModes[];
+	static const Shared::FileOpenMode fopenModes[];
+	static const Shared::FileWorkMode fworkModes[];
 
 	int Dispose(const char *address, bool force) override;
 

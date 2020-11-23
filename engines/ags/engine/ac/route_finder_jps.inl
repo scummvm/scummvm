@@ -17,13 +17,13 @@
 //
 //=============================================================================
 
-#include <queue>
-#include <vector>
-#include <algorithm>
-#include <functional>
-#include <assert.h>
-#include <stddef.h>
-#include <math.h>
+//include <queue>
+#include "ags/std/vector.h"
+//include <algorithm>
+//include <functional>
+//include <assert.h>
+//include <stddef.h>
+//include <math.h>
 
 // TODO: this could be cleaned up/simplified ...
 

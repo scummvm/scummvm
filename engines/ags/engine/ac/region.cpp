@@ -20,17 +20,17 @@
  *
  */
 
-#include "ac/region.h"
-#include "ac/common_defines.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_region.h"
-#include "ac/room.h"
-#include "ac/roomstatus.h"
-#include "ac/dynobj/cc_region.h"
-#include "ac/dynobj/scriptdrawingsurface.h"
-#include "game/roomstruct.h"
-#include "script/runtimescriptvalue.h"
+#include "ags/shared/ac/region.h"
+#include "ags/shared/ac/common_defines.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/global_region.h"
+#include "ags/shared/ac/room.h"
+#include "ags/shared/ac/roomstatus.h"
+#include "ags/shared/ac/dynobj/cc_region.h"
+#include "ags/shared/ac/dynobj/scriptdrawingsurface.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/script/runtimescriptvalue.h"
 
 namespace AGS3 {
 
@@ -136,9 +136,9 @@ void generate_light_table() {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
 
 // ScriptRegion *(int xx, int yy)
 RuntimeScriptValue Sc_GetRegionAtRoom(const RuntimeScriptValue *params, int32_t param_count) {

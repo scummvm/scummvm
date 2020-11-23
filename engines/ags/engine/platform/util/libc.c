@@ -16,15 +16,15 @@
 //
 //=============================================================================
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if ! AGS_PLATFORM_OS_WINDOWS
 
-#include <string.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <wchar.h>
-#include <ctype.h>
+//include <string.h>
+//include <stdio.h>
+//include <stdlib.h>
+//include <wchar.h>
+//include <ctype.h>
 
 size_t mbstowcs(wchar_t *wcstr, const char *mbstr, size_t max)
 {

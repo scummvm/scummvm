@@ -20,14 +20,14 @@
  *
  */
 
-#include <string.h>
-#include "ac/display.h"
-#include "ac/gamesetup.h"
-#include "ac/string.h"
-#include "font/fonts.h"
-#include "gui/guidefines.h"
-#include "gui/mylabel.h"
-#include "gui/guidialoginternaldefs.h"
+//include <string.h>
+#include "ags/shared/ac/display.h"
+#include "ags/shared/ac/gamesetup.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/font/fonts.h"
+#include "ags/shared/gui/guidefines.h"
+#include "ags/shared/gui/mylabel.h"
+#include "ags/shared/gui/guidialoginternaldefs.h"
 
 namespace AGS3 {
 

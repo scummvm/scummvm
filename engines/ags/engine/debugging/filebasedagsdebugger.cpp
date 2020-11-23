@@ -20,13 +20,15 @@
  *
  */
 
-#include <cstdio>
-#include "debug/filebasedagsdebugger.h"
-#include "ac/file.h"                    // filelength()
-#include "util/stream.h"
-#include "util/textstreamwriter.h"
-#include "util/wgt2allg.h"              // exists()
-#include "platform/base/agsplatformdriver.h"
+//include <cstdio>
+#include "ags/engine/debugging/filebasedagsdebugger.h"
+#include "ags/engine/ac/file.h"                    // filelength()
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/textstreamwriter.h"
+#include "ags/shared/util/wgt2allg.h"              // exists()
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "common/system.h"
+#include "common/savefile.h"
 
 namespace AGS3 {
 
@@ -35,9 +37,21 @@ using AGS::Shared::TextStreamWriter;
 
 const char *SENT_MESSAGE_FILE_NAME = "dbgrecv.tmp";
 
+static bool exists(const char *filename) {
+	Common::InSaveFile *save = g_system->getSavefileManager()->openForLoading(filename);
+	bool result = save != nullptr;
+	delete save;
+
+	return result;
+}
+
+static bool remove(const char *filename) {
+	return g_system->getSavefileManager()->removeSavefile(filename);
+}
+
 bool FileBasedAGSDebugger::Initialize() {
 	if (exists(SENT_MESSAGE_FILE_NAME)) {
-		::remove(SENT_MESSAGE_FILE_NAME);
+		remove(SENT_MESSAGE_FILE_NAME);
 	}
 	return true;
 }
@@ -50,7 +64,7 @@ bool FileBasedAGSDebugger::SendMessageToEditor(const char *message) {
 		platform->YieldCPU();
 	}
 
-	Stream *out = Common::File::CreateFile(SENT_MESSAGE_FILE_NAME);
+	Stream *out = Shared::File::CreateFile(SENT_MESSAGE_FILE_NAME);
 	// CHECKME: originally the file was opened as "wb" for some reason,
 	// which means the message should be written as a binary array;
 	// or shouldn't it?
@@ -64,7 +78,7 @@ bool FileBasedAGSDebugger::IsMessageAvailable() {
 }
 
 char *FileBasedAGSDebugger::GetNextMessage() {
-	Stream *in = Common::File::OpenFileRead("dbgsend.tmp");
+	Stream *in = Shared::File::OpenFileRead("dbgsend.tmp");
 	if (in == nullptr) {
 		// check again, because the editor might have deleted the file in the meantime
 		return nullptr;

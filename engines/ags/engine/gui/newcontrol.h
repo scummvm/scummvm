@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_GUI_NEWCONTROL_H
 #define AGS_ENGINE_GUI_NEWCONTROL_H
 
-#include "gfx/bitmap.h"
+#include "ags/shared/gfx/bitmap.h"
 
 namespace AGS3 {
 
@@ -33,7 +33,7 @@ struct NewControl {
 	int x, y, wid, hit, state, typeandflags, wlevel;
 	char visible, enabled;        // not implemented
 	char needredraw;
-	virtual void draw(Common::Bitmap *ds) = 0;
+	virtual void draw(Shared::Bitmap *ds) = 0;
 	virtual int pressedon(int mousex, int mousey) = 0;
 	virtual int processmessage(int, int, long) = 0;
 

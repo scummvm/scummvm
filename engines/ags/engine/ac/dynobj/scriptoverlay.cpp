@@ -20,11 +20,11 @@
  *
  */
 
-#include "ac/dynobj/scriptoverlay.h"
-#include "ac/common.h"
-#include "ac/overlay.h"
-#include "ac/runtime_defines.h"
-#include "ac/screenoverlay.h"
+#include "ags/shared/ac/dynobj/scriptoverlay.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/overlay.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/screenoverlay.h"
 
 namespace AGS3 {
 

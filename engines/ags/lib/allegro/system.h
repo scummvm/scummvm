@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_SYSTEM_H
-#define AGS_STUBS_ALLEGRO_SYSTEM_H
+#ifndef AGS_LIB_ALLEGRO_SYSTEM_H
+#define AGS_LIB_ALLEGRO_SYSTEM_H
 
 #include "ags/lib/allegro/base.h"
 #include "ags/lib/allegro/color.h"

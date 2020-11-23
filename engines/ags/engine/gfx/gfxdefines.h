@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_GFX_GFXDEFINES_H
 #define AGS_ENGINE_GFX_GFXDEFINES_H
 
-#include "core/types.h"
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 namespace AGS {

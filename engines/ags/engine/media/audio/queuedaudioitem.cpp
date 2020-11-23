@@ -20,9 +20,9 @@
  *
  */
 
-#include "media/audio/queuedaudioitem.h"
-#include "ac/common_defines.h"
-#include "util/stream.h"
+#include "ags/shared/media/audio/queuedaudioitem.h"
+#include "ags/shared/ac/common_defines.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

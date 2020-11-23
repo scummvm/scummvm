@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_AC_INVWINDOW_H
 #define AGS_ENGINE_AC_INVWINDOW_H
 
-#include "ac/characterinfo.h"
-#include "ac/dynobj/scriptinvitem.h"
-#include "gui/guiinv.h"
+#include "ags/shared/ac/characterinfo.h"
+#include "ags/engine/ac/dynobj/scriptinvitem.h"
+#include "ags/shared/gui/guiinv.h"
 
 namespace AGS3 {
 

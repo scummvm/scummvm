@@ -33,9 +33,9 @@
 #pragma warning (disable: 4996 4312)  // disable deprecation warnings
 #endif
 
-#include "ac/gamestructdefines.h"
-#include "ac/spritecache.h"
-#include "util/compress.h"
+#include "ags/shared/ac/gamestructdefines.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/util/compress.h"
 
 namespace AGS3 {
 

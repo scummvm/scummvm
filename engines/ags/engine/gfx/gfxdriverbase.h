@@ -29,16 +29,16 @@
 #ifndef AGS_ENGINE_GFX_GFXDRIVERBASE_H
 #define AGS_ENGINE_GFX_GFXDRIVERBASE_H
 
-#include <vector>
-#include "gfx/ddb.h"
-#include "gfx/graphicsdriver.h"
-#include "util/scaling.h"
+#include "ags/std/vector.h"
+#include "ags/shared/gfx/ddb.h"
+#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/shared/util/scaling.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
-using Common::Bitmap;
+using Shared::Bitmap;
 
 // Sprite batch, defines viewport and an optional model transformation for the list of sprites
 struct SpriteBatchDesc {

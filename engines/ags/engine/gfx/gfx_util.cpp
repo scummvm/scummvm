@@ -20,9 +20,9 @@
  *
  */
 
-#include "core/platform.h"
-#include "gfx/gfx_util.h"
-#include "gfx/blender.h"
+#include "ags/shared/core/platform.h"
+#include "ags/shared/gfx/gfx_util.h"
+#include "ags/shared/gfx/blender.h"
 
 namespace AGS3 {
 

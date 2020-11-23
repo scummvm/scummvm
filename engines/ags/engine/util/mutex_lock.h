@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_UTIL_MUTEX_LOCK_H
 #define AGS_ENGINE_UTIL_MUTEX_LOCK_H
 
-#include "util/mutex.h"
+#include "ags/engine/util/mutex.h"
 
 namespace AGS3 {
 namespace AGS {

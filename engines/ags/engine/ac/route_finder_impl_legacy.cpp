@@ -27,17 +27,17 @@
 //
 //=============================================================================
 
-#include "ac/route_finder_impl_legacy.h"
+#include "ags/shared/ac/route_finder_impl_legacy.h"
 
-#include <string.h>
-#include <math.h>
+//include <string.h>
+//include <math.h>
 
-#include "ac/common.h"   // quit()
-#include "ac/common_defines.h"
-#include "game/roomstruct.h"
-#include "ac/movelist.h"     // MoveList
-#include "gfx/bitmap.h"
-#include "debug/out.h"
+#include "ags/shared/ac/common.h"   // quit()
+#include "ags/shared/ac/common_defines.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/ac/movelist.h"     // MoveList
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/debug/out.h"
 
 namespace AGS3 {
 

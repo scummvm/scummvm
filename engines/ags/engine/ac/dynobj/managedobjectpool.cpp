@@ -20,15 +20,15 @@
  *
  */
 
-#include <vector>
-#include <string.h>
-#include "ac/dynobj/managedobjectpool.h"
-#include "ac/dynobj/cc_dynamicarray.h" // globalDynamicArray, constants
-#include "debug/out.h"
-#include "util/string_utils.h"               // fputstring, etc
-#include "script/cc_error.h"
-#include "script/script_common.h"
-#include "util/stream.h"
+#include "ags/std/vector.h"
+//include <string.h>
+#include "ags/shared/ac/dynobj/managedobjectpool.h"
+#include "ags/shared/ac/dynobj/cc_dynamicarray.h" // globalDynamicArray, constants
+#include "ags/shared/debug/out.h"
+#include "ags/shared/util/string_utils.h"               // fputstring, etc
+#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/script_common.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

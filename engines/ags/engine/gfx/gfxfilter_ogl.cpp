@@ -20,12 +20,12 @@
  *
  */
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_WINDOWS || AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_LINUX
 
-#include "gfx/gfxfilter_ogl.h"
-#include "ogl_headers.h"
+#include "ags/shared/gfx/gfxfilter_ogl.h"
+#include "ags/shared/ogl_headers.h"
 
 namespace AGS3 {
 namespace AGS {

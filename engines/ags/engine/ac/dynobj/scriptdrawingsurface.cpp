@@ -20,15 +20,15 @@
  *
  */
 
-#include "ac/dynobj/scriptdrawingsurface.h"
-#include "ac/spritecache.h"
-#include "ac/runtime_defines.h"
-#include "ac/common.h"
-#include "ac/drawingsurface.h"
-#include "ac/gamestate.h"
-#include "ac/gamesetupstruct.h"
-#include "game/roomstruct.h"
-#include "gfx/bitmap.h"
+#include "ags/shared/ac/dynobj/scriptdrawingsurface.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/drawingsurface.h"
+#include "ags/shared/ac/gamestate.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/game/roomstruct.h"
+#include "ags/shared/gfx/bitmap.h"
 
 namespace AGS3 {
 

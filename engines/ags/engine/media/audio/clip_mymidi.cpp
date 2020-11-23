@@ -20,10 +20,10 @@
  *
  */
 
-#include "media/audio/audiodefines.h"
-#include "util/wgt2allg.h"
-#include "media/audio/clip_mymidi.h"
-#include "media/audio/audiointernaldefs.h"
+#include "ags/shared/media/audio/audiodefines.h"
+#include "ags/shared/util/wgt2allg.h"
+#include "ags/shared/media/audio/clip_mymidi.h"
+#include "ags/shared/media/audio/audiointernaldefs.h"
 
 namespace AGS3 {
 

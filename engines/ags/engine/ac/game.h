@@ -29,9 +29,9 @@
 #ifndef AGS_ENGINE_AC_GAME_H
 #define AGS_ENGINE_AC_GAME_H
 
-#include "ac/dynobj/scriptviewframe.h"
-#include "main/game_file.h"
-#include "util/string.h"
+#include "ags/engine/ac/dynobj/scriptviewframe.h"
+#include "ags/engine/main/game_file.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
@@ -94,7 +94,7 @@ int Game_GetDialogCount();
 
 // Defines a custom save parent directory, which will replace $MYDOCS$/GameName
 // when a new save directory is set from the script
-bool SetCustomSaveParent(const Common::String &path);
+bool SetCustomSaveParent(const Shared::String &path);
 // If explicit_path flag is false, the actual path will be constructed
 // as a relative to system's user saves directory
 bool SetSaveGameDirectoryPath(const char *newFolder, bool explicit_path = false);
@@ -149,28 +149,28 @@ void set_debug_mode(bool on);
 void set_game_speed(int new_fps);
 void setup_for_dialog();
 void restore_after_dialog();
-Common::String get_save_game_directory();
-Common::String get_save_game_suffix();
-void set_save_game_suffix(const Common::String &suffix);
-Common::String get_save_game_path(int slotNum);
+Shared::String get_save_game_directory();
+Shared::String get_save_game_suffix();
+void set_save_game_suffix(const Shared::String &suffix);
+Shared::String get_save_game_path(int slotNum);
 void restore_game_dialog();
 void save_game_dialog();
 void free_do_once_tokens();
 // Free all the memory associated with the game
 void unload_game_file();
 void save_game(int slotn, const char *descript);
-bool read_savedgame_description(const Common::String &savedgame, Common::String &description);
-bool read_savedgame_screenshot(const Common::String &savedgame, int &want_shot);
+bool read_savedgame_description(const Shared::String &savedgame, Shared::String &description);
+bool read_savedgame_screenshot(const Shared::String &savedgame, int &want_shot);
 // Tries to restore saved game and displays an error on failure; if the error occured
 // too late, when the game data was already overwritten, shuts engine down.
 bool try_restore_save(int slot);
-bool try_restore_save(const Common::String &path, int slot);
-void serialize_bitmap(const Common::Bitmap *thispic, Common::Stream *out);
+bool try_restore_save(const Shared::String &path, int slot);
+void serialize_bitmap(const Shared::Bitmap *thispic, Shared::Stream *out);
 // On Windows we could just use IIDFromString but this is platform-independant
 void convert_guid_from_text_to_binary(const char *guidText, unsigned char *buffer);
-Common::Bitmap *read_serialized_bitmap(Common::Stream *in);
-void skip_serialized_bitmap(Common::Stream *in);
-long write_screen_shot_for_vista(Common::Stream *out, Common::Bitmap *screenshot);
+Shared::Bitmap *read_serialized_bitmap(Shared::Stream *in);
+void skip_serialized_bitmap(Shared::Stream *in);
+long write_screen_shot_for_vista(Shared::Stream *out, Shared::Bitmap *screenshot);
 
 bool is_in_cutscene();
 CutsceneSkipStyle get_cutscene_skipstyle();

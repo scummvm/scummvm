@@ -20,14 +20,14 @@
  *
  */
 
-#include <string.h> // memset
-#include <stdlib.h> // free
-#include "ac/common.h"
-#include "ac/game_version.h"
-#include "ac/roomstatus.h"
-#include "game/customproperties.h"
-#include "game/savegame_components.h"
-#include "util/alignedstream.h"
+//include <string.h> // memset
+//include <stdlib.h> // free
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/ac/roomstatus.h"
+#include "ags/shared/game/customproperties.h"
+#include "ags/shared/game/savegame_components.h"
+#include "ags/shared/util/alignedstream.h"
 
 namespace AGS3 {
 
@@ -102,7 +102,7 @@ void RoomStatus::ReadFromFile_v321(Stream *in) {
 	}
 }
 
-void RoomStatus::ReadRoomObjects_Aligned(Common::Stream *in) {
+void RoomStatus::ReadRoomObjects_Aligned(Shared::Stream *in) {
 	AlignedStream align_s(in, Common::kAligned_Read);
 	for (int i = 0; i < MAX_ROOM_OBJECTS; ++i) {
 		obj[i].ReadFromFile(&align_s);

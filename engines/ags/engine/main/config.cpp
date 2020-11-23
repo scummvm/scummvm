@@ -23,27 +23,27 @@
 //
 // Game configuration
 //
-#include <ctype.h> // toupper
+//include <ctype.h> // toupper
 
-#include "core/platform.h"
-#include "ac/gamesetup.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/gamestate.h"
-#include "ac/global_translation.h"
-#include "ac/path_helper.h"
-#include "ac/spritecache.h"
-#include "ac/system.h"
-#include "debug/debugger.h"
-#include "debug/debug_log.h"
-#include "main/mainheader.h"
-#include "main/config.h"
-#include "platform/base/agsplatformdriver.h"
-#include "util/directory.h"
-#include "util/ini_util.h"
-#include "util/textstreamreader.h"
-#include "util/path.h"
-#include "util/string_utils.h"
-#include "media/audio/audio_system.h"
+#include "ags/shared/core/platform.h"
+#include "ags/engine/ac/gamesetup.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/path_helper.h"
+#include "ags/shared/ac/spritecache.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/main/mainheader.h"
+#include "ags/engine/main/config.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/shared/util/directory.h"
+#include "ags/shared/util/ini_util.h"
+#include "ags/shared/util/textstreamreader.h"
+#include "ags/shared/util/path.h"
+#include "ags/shared/util/string_utils.h"
+#include "ags/engine/media/audio/audio_system.h"
 
 namespace AGS3 {
 
@@ -85,9 +85,9 @@ void INIgetdirec(char *wasgv, const char *inifil) {
 bool INIreaditem(const ConfigTree &cfg, const String &sectn, const String &item, String &value) {
 	ConfigNode sec_it = cfg.find(sectn);
 	if (sec_it != cfg.end()) {
-		StrStrOIter item_it = sec_it->second.find(item);
-		if (item_it != sec_it->second.end()) {
-			value = item_it->second;
+		StrStrOIter item_it = sec_it->_value.find(item);
+		if (item_it != sec_it->_value.end()) {
+			value = item_it->_value;
 			return true;
 		}
 	}
@@ -272,7 +272,7 @@ void graphics_mode_get_defaults(bool windowed, ScreenSizeSetup &scsz_setup, Game
 String find_default_cfg_file(const char *alt_cfg_file) {
 	// Try current directory for config first; else try exe dir
 	String filename = String::FromFormat("%s/%s", Directory::GetCurrentDirectory().GetCStr(), DefaultConfigFileName.GetCStr());
-	if (!Common::File::TestReadFile(filename)) {
+	if (!Shared::File::TestReadFile(filename)) {
 		char conffilebuf[512];
 		strcpy(conffilebuf, alt_cfg_file);
 		fix_filename_case(conffilebuf);

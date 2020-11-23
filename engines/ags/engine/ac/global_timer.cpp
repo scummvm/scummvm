@@ -20,10 +20,10 @@
  *
  */
 
-#include "ac/global_timer.h"
-#include "ac/runtime_defines.h"
-#include "ac/common.h"
-#include "ac/gamestate.h"
+#include "ags/shared/ac/global_timer.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamestate.h"
 
 namespace AGS3 {
 

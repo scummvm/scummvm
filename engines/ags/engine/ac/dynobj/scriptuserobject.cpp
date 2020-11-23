@@ -20,8 +20,8 @@
  *
  */
 
-#include <memory.h>
-#include "scriptuserobject.h"
+//include <memory.h>
+#include "ags/shared/scriptuserobject.h"
 
 namespace AGS3 {
 

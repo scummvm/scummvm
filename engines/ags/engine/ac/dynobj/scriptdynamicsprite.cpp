@@ -20,8 +20,8 @@
  *
  */
 
-#include "ac/dynobj/scriptdynamicsprite.h"
-#include "ac/dynamicsprite.h"
+#include "ags/shared/ac/dynobj/scriptdynamicsprite.h"
+#include "ags/shared/ac/dynamicsprite.h"
 
 namespace AGS3 {
 

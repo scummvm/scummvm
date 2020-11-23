@@ -23,10 +23,10 @@
 #ifndef AGS_ENGINE_GAME_SAVEGAME_H
 #define AGS_ENGINE_GAME_SAVEGAME_H
 
-#include <memory>
-#include "ac/game_version.h"
-#include "util/error.h"
-#include "util/version.h"
+#include "ags/std/memory.h"
+#include "ags/shared/ac/game_version.h"
+#include "ags/shared/util/error.h"
+#include "ags/shared/util/version.h"
 
 namespace AGS3 {
 
@@ -38,12 +38,12 @@ class Stream;
 
 namespace Engine {
 
-using Common::Bitmap;
-using Common::ErrorHandle;
-using Common::TypedCodeError;
-using Common::Stream;
-using Common::String;
-using Common::Version;
+using Shared::Bitmap;
+using Shared::ErrorHandle;
+using Shared::TypedCodeError;
+using Shared::Stream;
+using Shared::String;
+using Shared::Version;
 
 typedef std::shared_ptr<Stream> PStream;
 

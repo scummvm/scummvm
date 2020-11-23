@@ -36,14 +36,14 @@
 
 //#define DEBUG_MANAGED_OBJECTS
 
-#include <stdlib.h>
-#include <string.h>
-#include "ac/dynobj/cc_dynamicobject.h"
-#include "ac/dynobj/managedobjectpool.h"
-#include "debug/out.h"
-#include "script/cc_error.h"
-#include "script/script_common.h"
-#include "util/stream.h"
+//include <stdlib.h>
+//include <string.h>
+#include "ags/shared/ac/dynobj/cc_dynamicobject.h"
+#include "ags/shared/ac/dynobj/managedobjectpool.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/script_common.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 

@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_DEBUGGING_NAMEDPIPESAGSDEBUGGER_H
 #define AGS_ENGINE_DEBUGGING_NAMEDPIPESAGSDEBUGGER_H
 
-#include <windows.h>
-#include <io.h>
-#include "debug/agseditordebugger.h"
+//include <windows.h>
+//include <io.h>
+#include "ags/shared/debug/agseditordebugger.h"
 
 namespace AGS3 {
 

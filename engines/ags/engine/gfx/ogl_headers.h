@@ -26,35 +26,35 @@
 //
 //=============================================================================
 
-#include "core/platform.h"
+#include "ags/shared/core/platform.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
 #include "ags/lib/allegro.h"
-#include <winalleg.h>
-#include <allegro/platform/aintwin.h>
+//include <winalleg.h>
+//include <allegro/platform/aintwin.h>
 
-#include "glad/glad.h"
-#include "glad/glad_wgl.h"
+#include "ags/shared/glad/glad.h"
+#include "ags/shared/glad/glad_wgl.h"
 
 #elif AGS_PLATFORM_OS_LINUX
 #include "ags/lib/allegro.h"
-#include <xalleg.h>
-#include <X11/Xatom.h>
+//include <xalleg.h>
+//include <X11/Xatom.h>
 
-#include "glad/glad.h"
-#include "glad/glad_glx.h"
+#include "ags/shared/glad/glad.h"
+#include "ags/shared/glad/glad_glx.h"
 
 #elif AGS_PLATFORM_OS_ANDROID
 
-#include <GLES/gl.h>
-#include <GLES2/gl2.h>
+//include <GLES/gl.h>
+//include <GLES2/gl2.h>
 
 #ifndef GL_GLEXT_PROTOTYPES
 #define GL_GLEXT_PROTOTYPES
 #endif
 
 // TODO: we probably should not use GLExt since we use GLES2
-#include <GLES/glext.h>
+//include <GLES/glext.h>
 
 #define HDC void*
 #define HGLRC void*
@@ -63,14 +63,14 @@
 
 #elif AGS_PLATFORM_OS_IOS
 
-#include <OpenGLES/ES1/gl.h>
-#include <OpenGLES/ES2/gl.h>
+//include <OpenGLES/ES1/gl.h>
+//include <OpenGLES/ES2/gl.h>
 
 #ifndef GL_GLEXT_PROTOTYPES
 #define GL_GLEXT_PROTOTYPES
 #endif
 
-#include <OpenGLES/ES1/glext.h>
+//include <OpenGLES/ES1/glext.h>
 
 #define HDC void*
 #define HGLRC void*

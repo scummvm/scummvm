@@ -20,31 +20,31 @@
  *
  */
 
-#include "ac/object.h"
-#include "ac/common.h"
-#include "ac/gamesetupstruct.h"
-#include "ac/draw.h"
-#include "ac/character.h"
-#include "ac/global_object.h"
-#include "ac/global_translation.h"
-#include "ac/objectcache.h"
-#include "ac/properties.h"
-#include "ac/room.h"
-#include "ac/roomstatus.h"
-#include "ac/runtime_defines.h"
-#include "ac/string.h"
-#include "ac/system.h"
-#include "ac/view.h"
-#include "ac/walkablearea.h"
-#include "debug/debug_log.h"
-#include "main/game_run.h"
-#include "ac/route_finder.h"
-#include "gfx/graphicsdriver.h"
-#include "gfx/bitmap.h"
-#include "gfx/gfx_def.h"
-#include "script/runtimescriptvalue.h"
-#include "ac/dynobj/cc_object.h"
-#include "ac/movelist.h"
+#include "ags/shared/ac/object.h"
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/shared/ac/draw.h"
+#include "ags/shared/ac/character.h"
+#include "ags/shared/ac/global_object.h"
+#include "ags/shared/ac/global_translation.h"
+#include "ags/shared/ac/objectcache.h"
+#include "ags/shared/ac/properties.h"
+#include "ags/shared/ac/room.h"
+#include "ags/shared/ac/roomstatus.h"
+#include "ags/shared/ac/runtime_defines.h"
+#include "ags/shared/ac/string.h"
+#include "ags/shared/ac/system.h"
+#include "ags/shared/ac/view.h"
+#include "ags/shared/ac/walkablearea.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/main/game_run.h"
+#include "ags/shared/ac/route_finder.h"
+#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/shared/gfx/gfx_def.h"
+#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/shared/ac/dynobj/cc_object.h"
+#include "ags/shared/ac/movelist.h"
 
 namespace AGS3 {
 
@@ -558,10 +558,10 @@ int check_click_on_object(int roomx, int roomy, int mood) {
 //
 //=============================================================================
 
-#include "debug/out.h"
-#include "script/script_api.h"
-#include "script/script_runtime.h"
-#include "ac/dynobj/scriptstring.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

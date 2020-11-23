@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_GLOBALDISPLAY_H
 #define AGS_ENGINE_AC_GLOBALDISPLAY_H
 
-#include "ac/speech.h"
+#include "ags/engine/ac/speech.h"
 
 namespace AGS3 {
 

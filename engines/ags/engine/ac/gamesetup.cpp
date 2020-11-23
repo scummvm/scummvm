@@ -20,8 +20,8 @@
  *
  */
 
-#include "util/wgt2allg.h" // DIGI_AUTODETECT & MIDI_AUTODETECT
-#include "ac/gamesetup.h"
+#include "ags/shared/util/wgt2allg.h" // DIGI_AUTODETECT & MIDI_AUTODETECT
+#include "ags/shared/ac/gamesetup.h"
 
 namespace AGS3 {
 

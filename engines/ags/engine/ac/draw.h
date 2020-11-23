@@ -23,18 +23,18 @@
 #ifndef AGS_ENGINE_AC_DRAW_H
 #define AGS_ENGINE_AC_DRAW_H
 
-#include <memory>
-#include "core/types.h"
-#include "ac/common_defines.h"
-#include "gfx/gfx_def.h"
-#include "util/wgt2allg.h"
+#include "ags/std/memory.h"
+#include "ags/shared/core/types.h"
+#include "ags/shared/ac/common_defines.h"
+#include "ags/shared/gfx/gfx_def.h"
+#include "ags/shared/util/wgt2allg.h"
 
 namespace AGS3 {
 
 namespace AGS {
 namespace Shared {
 class Bitmap;
-typedef std::shared_ptr<Common::Bitmap> PBitmap;
+typedef std::shared_ptr<Shared::Bitmap> PBitmap;
 }
 namespace Engine {
 class IDriverDependantBitmap;
@@ -104,8 +104,8 @@ void invalidate_rect(int x1, int y1, int x2, int y2, bool in_room);
 void mark_current_background_dirty();
 void invalidate_cached_walkbehinds();
 // Avoid freeing and reallocating the memory if possible
-Common::Bitmap *recycle_bitmap(Common::Bitmap *bimp, int coldep, int wid, int hit, bool make_transparent = false);
-Engine::IDriverDependantBitmap *recycle_ddb_bitmap(Engine::IDriverDependantBitmap *bimp, Common::Bitmap *source, bool hasAlpha = false, bool opaque = false);
+Shared::Bitmap *recycle_bitmap(Shared::Bitmap *bimp, int coldep, int wid, int hit, bool make_transparent = false);
+Engine::IDriverDependantBitmap *recycle_ddb_bitmap(Engine::IDriverDependantBitmap *bimp, Shared::Bitmap *source, bool hasAlpha = false, bool opaque = false);
 // Draw everything
 void render_graphics(Engine::IDriverDependantBitmap *extraBitmap = nullptr, int extraX = 0, int extraY = 0);
 // Construct game scene, scheduling drawing list for the renderer
@@ -115,27 +115,27 @@ void construct_game_screen_overlay(bool draw_mouse = true);
 // Construct engine overlay with debugging tools (fps, console)
 void construct_engine_overlay();
 void add_to_sprite_list(Engine::IDriverDependantBitmap *spp, int xx, int yy, int baseline, int trans, int sprNum, bool isWalkBehind = false);
-void tint_image(Common::Bitmap *g, Common::Bitmap *source, int red, int grn, int blu, int light_level, int luminance = 255);
-void draw_sprite_support_alpha(Common::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, Common::Bitmap *image, bool src_has_alpha,
-	Common::BlendMode blend_mode = Common::kBlendMode_Alpha, int alpha = 0xFF);
-void draw_sprite_slot_support_alpha(Common::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, int src_slot,
-	Common::BlendMode blend_mode = Common::kBlendMode_Alpha, int alpha = 0xFF);
-void draw_gui_sprite(Common::Bitmap *ds, int pic, int x, int y, bool use_alpha, Common::BlendMode blend_mode);
-void draw_gui_sprite_v330(Common::Bitmap *ds, int pic, int x, int y, bool use_alpha = true, Common::BlendMode blend_mode = Common::kBlendMode_Alpha);
+void tint_image(Shared::Bitmap *g, Shared::Bitmap *source, int red, int grn, int blu, int light_level, int luminance = 255);
+void draw_sprite_support_alpha(Shared::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, Shared::Bitmap *image, bool src_has_alpha,
+	Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);
+void draw_sprite_slot_support_alpha(Shared::Bitmap *ds, bool ds_has_alpha, int xpos, int ypos, int src_slot,
+	Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha, int alpha = 0xFF);
+void draw_gui_sprite(Shared::Bitmap *ds, int pic, int x, int y, bool use_alpha, Shared::BlendMode blend_mode);
+void draw_gui_sprite_v330(Shared::Bitmap *ds, int pic, int x, int y, bool use_alpha = true, Shared::BlendMode blend_mode = Shared::kBlendMode_Alpha);
 // Render game on screen
 void render_to_screen();
 // Callbacks for the graphics driver
 void draw_game_screen_callback();
 void GfxDriverOnInitCallback(void *data);
 bool GfxDriverNullSpriteCallback(int x, int y);
-void putpixel_compensate(Common::Bitmap *g, int xx, int yy, int col);
+void putpixel_compensate(Shared::Bitmap *g, int xx, int yy, int col);
 // create the actsps[aa] image with the object drawn correctly
 // returns 1 if nothing at all has changed and actsps is still
 // intact from last time; 0 otherwise
 int construct_object_gfx(int aa, int *drawnWidth, int *drawnHeight, bool alwaysUseSoftware);
 void clear_letterbox_borders();
 
-void draw_and_invalidate_text(Common::Bitmap *ds, int x1, int y1, int font, color_t text_color, const char *text);
+void draw_and_invalidate_text(Shared::Bitmap *ds, int x1, int y1, int font, color_t text_color, const char *text);
 
 void setpal();
 
@@ -167,17 +167,17 @@ extern AGS_INLINE void defgame_to_finalgame_coords(int &x, int &y);
 // TODO: this helper function was meant to remove bitmap deletion from the GraphicsDriver's
 // implementations while keeping code changes to minimum. The proper solution would probably
 // be to use shared pointers when storing Bitmaps, or make Bitmap reference-counted object.
-Common::Bitmap *ReplaceBitmapWithSupportedFormat(Common::Bitmap *bitmap);
+Shared::Bitmap *ReplaceBitmapWithSupportedFormat(Shared::Bitmap *bitmap);
 // Checks if the bitmap needs any kind of adjustments before it may be used
 // in AGS sprite operations. Also handles number of certain special cases
 // (old systems or uncommon gfx modes, and similar stuff).
 // Original bitmap **gets deleted** if a new bitmap had to be created.
-Common::Bitmap *PrepareSpriteForUse(Common::Bitmap *bitmap, bool has_alpha);
+Shared::Bitmap *PrepareSpriteForUse(Shared::Bitmap *bitmap, bool has_alpha);
 // Same as above, but compatible for std::shared_ptr.
-Common::PBitmap PrepareSpriteForUse(Common::PBitmap bitmap, bool has_alpha);
+Shared::PBitmap PrepareSpriteForUse(Shared::PBitmap bitmap, bool has_alpha);
 // Makes a screenshot corresponding to the last screen render and returns it as a bitmap
 // of the requested width and height and game's native color depth.
-Common::Bitmap *CopyScreenIntoBitmap(int width, int height, bool at_native_res = false);
+Shared::Bitmap *CopyScreenIntoBitmap(int width, int height, bool at_native_res = false);
 
 } // namespace AGS3
 

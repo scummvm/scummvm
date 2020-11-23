@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_MATH_H
 #define AGS_ENGINE_AC_MATH_H
 
-#include "core/types.h"
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 

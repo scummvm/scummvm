@@ -31,7 +31,7 @@
 #ifndef AGS_ENGINE_AC_STATICOBJ_STATICOBJECT_H
 #define AGS_ENGINE_AC_STATICOBJ_STATICOBJECT_H
 
-#include "core/types.h"
+#include "ags/shared/core/types.h"
 
 namespace AGS3 {
 

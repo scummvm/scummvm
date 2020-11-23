@@ -1,6 +1,6 @@
 #import <Cocoa/Cocoa.h>
 
-#include <stdio.h>
+//include <stdio.h>
 
 void AGSMacInitPaths(char gamename[256], char appdata[PATH_MAX])
 {

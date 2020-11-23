@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_GUI_MYLISTBOX_H
 #define AGS_ENGINE_GUI_MYLISTBOX_H
 
-#include "gui/newcontrol.h"
+#include "ags/shared/gui/newcontrol.h"
 
 namespace AGS3 {
 
@@ -37,7 +37,7 @@ struct MyListBox : public NewControl {
 	void clearlist();
 	~MyListBox() override;
 
-	void draw(Common::Bitmap *ds) override;
+	void draw(Shared::Bitmap *ds) override;
 	int pressedon(int mousex, int mousey) override;
 	void additem(char *texx);
 	int processmessage(int mcode, int wParam, long lParam) override;

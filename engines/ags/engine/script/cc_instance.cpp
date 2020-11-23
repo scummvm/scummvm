@@ -20,31 +20,31 @@
  *
  */
 
-#include <cstdio>
-#include <string.h>
-#include "ac/common.h"
-#include "ac/dynobj/cc_dynamicarray.h"
-#include "ac/dynobj/managedobjectpool.h"
-#include "gui/guidefines.h"
-#include "script/cc_error.h"
-#include "script/cc_instance.h"
-#include "debug/debug_log.h"
-#include "debug/out.h"
-#include "script/cc_options.h"
-#include "script/script.h"
-#include "script/script_runtime.h"
-#include "script/systemimports.h"
-#include "util/bbop.h"
-#include "util/stream.h"
-#include "util/misc.h"
-#include "util/textstreamwriter.h"
-#include "ac/dynobj/scriptstring.h"
-#include "ac/dynobj/scriptuserobject.h"
-#include "ac/statobj/agsstaticobject.h"
-#include "ac/statobj/staticarray.h"
-#include "ac/dynobj/cc_dynamicobject_addr_and_manager.h"
-#include "util/memory.h"
-#include "util/string_utils.h" // linux strnicmp definition
+//include <cstdio>
+//include <string.h>
+#include "ags/shared/ac/common.h"
+#include "ags/shared/ac/dynobj/cc_dynamicarray.h"
+#include "ags/shared/ac/dynobj/managedobjectpool.h"
+#include "ags/shared/gui/guidefines.h"
+#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_instance.h"
+#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/debug/out.h"
+#include "ags/shared/script/cc_options.h"
+#include "ags/shared/script/script.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/script/systemimports.h"
+#include "ags/shared/util/bbop.h"
+#include "ags/shared/util/stream.h"
+#include "ags/shared/util/misc.h"
+#include "ags/shared/util/textstreamwriter.h"
+#include "ags/shared/ac/dynobj/scriptstring.h"
+#include "ags/shared/ac/dynobj/scriptuserobject.h"
+#include "ags/shared/ac/statobj/agsstaticobject.h"
+#include "ags/shared/ac/statobj/staticarray.h"
+#include "ags/shared/ac/dynobj/cc_dynamicobject_addr_and_manager.h"
+#include "ags/shared/util/memory.h"
+#include "ags/shared/util/string_utils.h" // linux strnicmp definition
 
 namespace AGS3 {
 
