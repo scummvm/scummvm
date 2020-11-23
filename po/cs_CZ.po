@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-22 17:20+0000\n"
+"POT-Creation-Date: 2020-11-23 16:13+0000\n"
 "PO-Revision-Date: 2020-09-26 12:37+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -1857,7 +1857,7 @@ msgstr "GFX zakázáno"
 msgid "Standard renderer"
 msgstr "Standardní vykreslovač"
 
-#: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:679
+#: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:681
 msgid "Standard"
 msgstr "Standardní"
 
@@ -5938,36 +5938,36 @@ msgstr "~P~ředchozí"
 msgid "~N~ext"
 msgstr "~D~alší"
 
-#: engines/scumm/dialogs.cpp:618
+#: engines/scumm/dialogs.cpp:620
 msgid "Speech Only"
 msgstr "Pouze Řeč"
 
-#: engines/scumm/dialogs.cpp:619
+#: engines/scumm/dialogs.cpp:621
 msgid "Speech and Subtitles"
 msgstr "Řeč a Titulky"
 
-#: engines/scumm/dialogs.cpp:620
+#: engines/scumm/dialogs.cpp:622
 msgid "Subtitles Only"
 msgstr "Pouze Titulky"
 
-#: engines/scumm/dialogs.cpp:628
+#: engines/scumm/dialogs.cpp:630
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Řeč a Titulky"
 
-#: engines/scumm/dialogs.cpp:674
+#: engines/scumm/dialogs.cpp:676
 msgid "Select a Proficiency Level."
 msgstr "Vyberte úroveň odbornosti."
 
-#: engines/scumm/dialogs.cpp:676
+#: engines/scumm/dialogs.cpp:678
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Pro nápovědu si přečtěte manuál Loom(TM)."
 
-#: engines/scumm/dialogs.cpp:680
+#: engines/scumm/dialogs.cpp:682
 msgid "Practice"
 msgstr "Cvičení"
 
-#: engines/scumm/dialogs.cpp:681
+#: engines/scumm/dialogs.cpp:683
 msgid "Expert"
 msgstr "Pokročilý"
 

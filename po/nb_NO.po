@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-22 17:20+0000\n"
+"POT-Creation-Date: 2020-11-23 16:13+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -1892,7 +1892,7 @@ msgstr "Deaktivert GFX"
 msgid "Standard renderer"
 msgstr "Standard tegner"
 
-#: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:679
+#: gui/ThemeEngine.cpp:279 engines/scumm/dialogs.cpp:681
 msgid "Standard"
 msgstr "Standard"
 
@@ -5969,36 +5969,36 @@ msgstr "~F~orrige"
 msgid "~N~ext"
 msgstr "~N~este"
 
-#: engines/scumm/dialogs.cpp:618
+#: engines/scumm/dialogs.cpp:620
 msgid "Speech Only"
 msgstr "Kun tale"
 
-#: engines/scumm/dialogs.cpp:619
+#: engines/scumm/dialogs.cpp:621
 msgid "Speech and Subtitles"
 msgstr "Tale og undertekster"
 
-#: engines/scumm/dialogs.cpp:620
+#: engines/scumm/dialogs.cpp:622
 msgid "Subtitles Only"
 msgstr "Kun undertekster"
 
-#: engines/scumm/dialogs.cpp:628
+#: engines/scumm/dialogs.cpp:630
 msgctxt "lowres"
 msgid "Speech & Subs"
 msgstr "Tekst & Tale"
 
-#: engines/scumm/dialogs.cpp:674
+#: engines/scumm/dialogs.cpp:676
 msgid "Select a Proficiency Level."
 msgstr "Velg ferdighetsnivå."
 
-#: engines/scumm/dialogs.cpp:676
+#: engines/scumm/dialogs.cpp:678
 msgid "Refer to your Loom(TM) manual for help."
 msgstr "Referer til Loom(TM)-håndboka di for hjelp."
 
-#: engines/scumm/dialogs.cpp:680
+#: engines/scumm/dialogs.cpp:682
 msgid "Practice"
 msgstr "Trening"
 
-#: engines/scumm/dialogs.cpp:681
+#: engines/scumm/dialogs.cpp:683
 msgid "Expert"
 msgstr "Ekspert"
 
