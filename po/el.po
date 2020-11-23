@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-22 17:20+0000\n"
-"PO-Revision-Date: 2020-11-22 17:19+0000\n"
+"PO-Revision-Date: 2020-11-23 12:00+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -2243,10 +2243,8 @@ msgid "Could not apply filtering setting."
 msgstr "Δεν ήταν δυνατή η εφαρμογή ρύθμισης φιλτραρίσματος."
 
 #: engines/engine.cpp:420
-#, fuzzy
-#| msgid "No error"
 msgid "Error"
-msgstr "Κανένα σφάλμα"
+msgstr "Σφάλμα"
 
 #: engines/engine.cpp:507
 msgid ""
