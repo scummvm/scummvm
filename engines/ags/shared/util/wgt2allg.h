@@ -55,7 +55,7 @@ using namespace AGS; // FIXME later
 //=============================================================================
 
 // [IKM] 2012-09-13: this function is now defined in engine and editor separately
-extern void __my_setcolor(int *ctset, int newcol, int wantColDep);
+extern void __my_setcolor(color_t *ctset, color_t newcol, int wantColDep);
 
 #ifdef __cplusplus
 extern "C"

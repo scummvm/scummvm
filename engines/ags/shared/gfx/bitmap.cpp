@@ -117,7 +117,7 @@ struct PixelTransCpy24 {
 struct PixelTransCpy32 {
 	static const size_t BPP = 4;
 	inline void operator()(uint8_t *dst, const uint8_t *src, color_t mask_color, bool use_alpha) const {
-		if (*(const uint32_t *)src == mask_color)
+		if (*(const uint32_t *)src == (uint32_t)mask_color)
 			*(uint32_t *)dst = mask_color;
 		else if (use_alpha)
 			dst[3] = src[3]; // copy alpha channel
@@ -128,7 +128,7 @@ struct PixelTransCpy32 {
 
 struct PixelTransSkip32 {
 	inline bool operator()(uint8_t *data, color_t mask_color, bool use_alpha) const {
-		return *(uint32_t *)data == mask_color || (use_alpha && data[3] == 0);
+		return *(uint32_t *)data == (uint32_t)mask_color || (use_alpha && data[3] == 0);
 	}
 };
 

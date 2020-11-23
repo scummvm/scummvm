@@ -71,7 +71,7 @@ typedef int64 int64_t;
 typedef int64 soff_t;
 
 #define fixed_t int32_t // fixed point type
-#define color_t int32_t
+#define color_t int
 
 #undef INT32_MIN
 #undef INT32_MAX

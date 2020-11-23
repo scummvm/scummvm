@@ -3,6 +3,9 @@ MODULE := engines/ags
 MODULE_OBJS = \
 	ags.o \
 	metaengine.o \
+	lib/aastr-0.1.1/aarot.o \
+	lib/aastr-0.1.1/aastr.o \
+	lib/aastr-0.1.1/aautil.o \
 	stubs/allegro.o \
 	stubs/allegro/color.o \
 	stubs/allegro/config.o \
@@ -17,6 +20,9 @@ MODULE_OBJS = \
 	stubs/allegro/sound.o \
 	stubs/allegro/system.o \
 	stubs/allegro/unicode.o \
+	shared/gfx/allegrobitmap.o \
+	shared/gfx/bitmap.o \
+	shared/gfx/image.o \
 	shared/gui/guibutton.o \
 	shared/gui/guiinv.o \
 	shared/gui/guilabel.o \
