@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-22 17:20+0000\n"
-"PO-Revision-Date: 2020-11-14 01:54+0000\n"
+"PO-Revision-Date: 2020-11-23 12:00+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -308,7 +308,7 @@ msgstr "Mappa tasti"
 
 #: gui/editgamedialog.cpp:246 gui/options.cpp:1833 engines/dialogs.cpp:333
 msgid "Backend"
-msgstr ""
+msgstr "Backend"
 
 #: gui/editgamedialog.cpp:260 gui/options.cpp:1847 engines/dialogs.cpp:301
 msgid "Audio"
@@ -2210,10 +2210,8 @@ msgid "Could not apply filtering setting."
 msgstr "Impossibile applicare l'impostazione del filtro grafico."
 
 #: engines/engine.cpp:420
-#, fuzzy
-#| msgid "No error"
 msgid "Error"
-msgstr "Nessun errore"
+msgstr "Errore"
 
 #: engines/engine.cpp:507
 msgid ""
@@ -7053,7 +7051,7 @@ msgstr "Usa la versione americana"
 
 #: engines/twine/metaengine.cpp:133
 msgid "Enable the USA specific version flags"
-msgstr ""
+msgstr "Attiva le opzioni specifiche della versione americana del gioco"
 
 #: engines/twine/metaengine.cpp:166
 msgid "Debug Next Room"
@@ -7092,14 +7090,12 @@ msgid "Debug Grid Camera Right"
 msgstr "Debug: Camera Griglia Destra"
 
 #: engines/twine/metaengine.cpp:212
-#, fuzzy
-#| msgid "Debug print"
 msgid "Debug Menu"
-msgstr "Visualizza output del debugger"
+msgstr "Menù di debug"
 
 #: engines/twine/metaengine.cpp:217
 msgid "Debug Menu Execute"
-msgstr ""
+msgstr "Esegui comando menù di debug"
 
 #: engines/twine/metaengine.cpp:222
 msgid "Normal Behaviour"
