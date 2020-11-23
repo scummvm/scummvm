@@ -169,6 +169,7 @@ void Character::paint(Graphics::Surface &backbuffer) {
 int Character::z() const {
 	int y = _pos.y + _animationPos.y;
 	//fixme: add temp var : _movePos?
+	//debug("char z = %d", y);
 	return y;
 }
 
