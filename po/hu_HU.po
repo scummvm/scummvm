@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-22 17:20+0000\n"
-"PO-Revision-Date: 2020-11-15 06:45+0000\n"
+"PO-Revision-Date: 2020-11-23 12:00+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -307,7 +307,7 @@ msgstr "Billentyûzet"
 
 #: gui/editgamedialog.cpp:246 gui/options.cpp:1833 engines/dialogs.cpp:333
 msgid "Backend"
-msgstr ""
+msgstr "Háttér"
 
 #: gui/editgamedialog.cpp:260 gui/options.cpp:1847 engines/dialogs.cpp:301
 msgid "Audio"
@@ -2184,10 +2184,8 @@ msgid "Could not apply filtering setting."
 msgstr "Nem sikerült alkalmazni a szûrési beállítást."
 
 #: engines/engine.cpp:420
-#, fuzzy
-#| msgid "No error"
 msgid "Error"
-msgstr "Nincs hiba"
+msgstr "Hiba"
 
 #: engines/engine.cpp:507
 msgid ""
