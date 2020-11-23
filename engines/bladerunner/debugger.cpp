@@ -629,7 +629,7 @@ bool Debugger::cmdMusic(int argc, const char** argv) {
 	if (argc != 2) {
 		debugPrintf("Play the specified music track, list the available tracks\nor stop the current playing track.\n");
 		debugPrintf("Usage: %s (list|stop|<musicId>)\n", argv[0]);
-		debugPrintf("musicId can be in [0, %d]\n", argv[0], (int)_vm->_gameInfo->getMusicTrackCount() - 1);
+		debugPrintf("musicId can be in [0, %d]\n", (int)_vm->_gameInfo->getMusicTrackCount() - 1);
 		return true;
 	}
 
