@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-22 17:20+0000\n"
 "PO-Revision-Date: 2020-11-23 12:17+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
 "Language: he\n"
@@ -4647,9 +4647,8 @@ msgid "Examine/Look"
 msgstr "בדיקה"
 
 #: engines/grim/grim.cpp:1333
-#, fuzzy
 msgid "Error: the game could not be saved."
-msgstr "מצטערים, לא ניתן היה ליצור את savegame"
+msgstr ""
 
 #: engines/grim/md5check.cpp:560
 #, c-format
