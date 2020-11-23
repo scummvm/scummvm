@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/stubs/allegro/mouse.h"
+#include "ags/lib/allegro/mouse.h"
 #include "common/textconsole.h"
 
 namespace AGS3 {

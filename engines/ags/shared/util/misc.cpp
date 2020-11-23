@@ -59,7 +59,7 @@
 //include <dirent.h>
 #endif
 
-#include "ags/stubs/allegro.h"
+#include "ags/lib/allegro.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/stream.h"
 

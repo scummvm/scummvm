@@ -21,7 +21,7 @@
  */
 
 #include "ags/shared/gfx/image.h"
-#include "ags/stubs/allegro.h"
+#include "ags/lib/allegro.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 

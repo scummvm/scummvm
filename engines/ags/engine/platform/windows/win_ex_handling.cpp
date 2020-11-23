@@ -24,7 +24,7 @@
 
 #if AGS_PLATFORM_OS_WINDOWS
 #include <new.h>
-#include "ags/stubs/allegro.h"
+#include "ags/lib/allegro.h"
 #include <winalleg.h>
 #include "ac/common.h"
 #include "ac/common_defines.h"

@@ -32,7 +32,7 @@
 #ifndef AGS_SHARED_GFX_ALLEGROBITMAP_H
 #define AGS_SHARED_GFX_ALLEGROBITMAP_H
 
-#include "ags/stubs/allegro.h"
+#include "ags/lib/allegro.h"
 #include "ags/shared/core/types.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/util/geometry.h"

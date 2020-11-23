@@ -24,8 +24,8 @@
 #define AGS_STUBS_ALLEGRO_SOUND_H
 
 #include "common/scummsys.h"
-#include "ags/stubs/allegro/base.h"
-#include "ags/stubs/allegro/alconfig.h"
+#include "ags/lib/allegro/base.h"
+#include "ags/lib/allegro/alconfig.h"
 
 namespace AGS3 {
 

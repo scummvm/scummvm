@@ -6,20 +6,20 @@ MODULE_OBJS = \
 	lib/aastr-0.1.1/aarot.o \
 	lib/aastr-0.1.1/aastr.o \
 	lib/aastr-0.1.1/aautil.o \
-	stubs/allegro.o \
-	stubs/allegro/color.o \
-	stubs/allegro/config.o \
-	stubs/allegro/digi.o \
-	stubs/allegro/error.o \
-	stubs/allegro/file.o \
-	stubs/allegro/fixed.o \
-	stubs/allegro/gfx.o \
-	stubs/allegro/keyboard.o \
-	stubs/allegro/midi.o \
-	stubs/allegro/mouse.o \
-	stubs/allegro/sound.o \
-	stubs/allegro/system.o \
-	stubs/allegro/unicode.o \
+	lib/allegro.o \
+	lib/allegro/color.o \
+	lib/allegro/config.o \
+	lib/allegro/digi.o \
+	lib/allegro/error.o \
+	lib/allegro/file.o \
+	lib/allegro/fixed.o \
+	lib/allegro/gfx.o \
+	lib/allegro/keyboard.o \
+	lib/allegro/midi.o \
+	lib/allegro/mouse.o \
+	lib/allegro/sound.o \
+	lib/allegro/system.o \
+	lib/allegro/unicode.o \
 	shared/gfx/allegrobitmap.o \
 	shared/gfx/bitmap.o \
 	shared/gfx/image.o \

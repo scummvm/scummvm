@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_GFX_IMAGE_H
 #define AGS_SHARED_GFX_IMAGE_H
 
-#include "ags/stubs/allegro.h"
+#include "ags/lib/allegro.h"
 
 namespace AGS3 {
 

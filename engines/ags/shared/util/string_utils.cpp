@@ -26,7 +26,7 @@
 #include "ags/shared/util/math.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/shared/util/stream.h"
-#include "ags/stubs/allegro/error.h"
+#include "ags/lib/allegro/error.h"
 
 namespace AGS3 {
 

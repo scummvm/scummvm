@@ -20,18 +20,22 @@
  *
  */
 
-#include "ags/stubs/allegro/unicode.h"
-#include "common/textconsole.h"
+#ifndef AGS_STUBS_ALLEGRO_UNICODE_H
+#define AGS_STUBS_ALLEGRO_UNICODE_H
+
+#include "ags/lib/allegro/base.h"
 
 namespace AGS3 {
 
-void set_uformat(int format) {
-	// TODO: implementation
-}
+#define U_ASCII         AL_ID('A','S','C','8')
+#define U_ASCII_CP      AL_ID('A','S','C','P')
+#define U_UNICODE       AL_ID('U','N','I','C')
+#define U_UTF8          AL_ID('U','T','F','8')
+#define U_CURRENT       AL_ID('c','u','r','.')
 
-size_t ustrsize(const char *s) {
-	error("TODO: ustrsize");
-}
-
+extern void set_uformat(int format);
+extern size_t ustrsize(const char *s);
 
 } // namespace AGS3
+
+#endif

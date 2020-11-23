@@ -22,7 +22,7 @@
 
 #include "ac/keycode.h"
 
-#include "ags/stubs/allegro.h"
+#include "ags/lib/allegro.h"
 
 namespace AGS3 {
 

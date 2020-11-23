@@ -23,9 +23,9 @@
 #ifndef AGS_STUBS_ALLEGRO_SYSTEM_H
 #define AGS_STUBS_ALLEGRO_SYSTEM_H
 
-#include "ags/stubs/allegro/base.h"
-#include "ags/stubs/allegro/color.h"
-#include "ags/stubs/allegro/gfx.h"
+#include "ags/lib/allegro/base.h"
+#include "ags/lib/allegro/color.h"
+#include "ags/lib/allegro/gfx.h"
 
 namespace AGS3 {
 

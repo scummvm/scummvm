@@ -38,7 +38,7 @@
 #ifndef AGS_LIB_AASTR_AAUTIL_H
 #define AGS_LIB_AASTR_AAUTIL_H
 
-#include "ags/stubs/allegro.h"
+#include "ags/lib/allegro.h"
 
 namespace AGS3 {
 

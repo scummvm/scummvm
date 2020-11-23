@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/stubs/allegro/keyboard.h"
+#include "ags/lib/allegro/keyboard.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 

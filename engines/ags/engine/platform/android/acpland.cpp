@@ -24,7 +24,7 @@
 
 #if AGS_PLATFORM_OS_ANDROID
 
-#include "ags/stubs/allegro.h"
+#include "ags/lib/allegro.h"
 #include "platform/base/agsplatformdriver.h"
 #include "ac/runtime_defines.h"
 #include "main/config.h"

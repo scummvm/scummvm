@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/stubs/allegro/sound.h"
+#include "ags/lib/allegro/sound.h"
 #include "common/textconsole.h"
 
 namespace AGS3 {

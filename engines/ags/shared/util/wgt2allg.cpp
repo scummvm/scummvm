@@ -25,7 +25,7 @@
 #include "ags/shared/gfx/allegrobitmap.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/wgt2allg.h"
-#include "ags/stubs/allegro.h"
+#include "ags/lib/allegro.h"
 
 namespace AGS3 {
 

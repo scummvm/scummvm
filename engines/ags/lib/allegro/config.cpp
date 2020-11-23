@@ -20,11 +20,13 @@
  *
  */
 
-#include "ags/stubs/allegro/error.h"
+#include "ags/lib/allegro/config.h"
+#include "common/textconsole.h"
 
 namespace AGS3 {
 
-int errnum;
-int *allegro_errno = &errnum;
+void override_config_data(const char *data, int length) {
+	// No implementation
+}
 
 } // namespace AGS3

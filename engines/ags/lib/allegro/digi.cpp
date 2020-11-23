@@ -20,26 +20,20 @@
  *
  */
 
-#include "ags/stubs/allegro/midi.h"
+#include "ags/lib/allegro/digi.h"
 
 namespace AGS3 {
 
-MIDI_DRIVER *midi_driver;
+DIGI_DRIVER *digi_driver;
 
-MIDI_DRIVER *midi_input_driver;
+DIGI_DRIVER *digi_input_driver;
 
-int midi_card;
+int digi_card;
 
-int midi_input_card;
-
-volatile long midi_pos;       /* current position in the midi file, in beats */
-volatile long midi_time;      /* current position in the midi file, in seconds */
-
-long midi_loop_start;         /* where to loop back to at EOF */
-long midi_loop_end;           /* loop when we hit this position */
+int digi_input_card;
 
 
-int detect_midi_driver(int driver_id) {
+int detect_digi_driver(int driver_id) {
 	return 0;
 }
 

@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/stubs/allegro/color.h"
+#include "ags/lib/allegro/color.h"
 #include "common/textconsole.h"
 #include "common/system.h"
 #include "graphics/palette.h"
