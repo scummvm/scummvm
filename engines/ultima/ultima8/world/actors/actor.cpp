@@ -2385,5 +2385,12 @@ uint32 Actor::I_turnToward(const uint8 *args, unsigned int /*argsize*/) {
 	return actor->turnTowardDir(Direction_FromUsecodeDir(dir));
 }
 
+uint32 Actor::I_isKneeling(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->hasFlags(ACT_KNEELING) ? 1 : 0;
+}
+
 } // End of namespace Ultima8
 } // End of namespace Ultima
