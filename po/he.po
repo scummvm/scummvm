@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-22 17:20+0000\n"
-"PO-Revision-Date: 2020-11-23 12:10+0000\n"
-"Last-Translator: anonymous <noreply@weblate.org>\n"
+"PO-Revision-Date: 2020-11-23 12:17+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
 "Language: he\n"
@@ -1656,7 +1656,7 @@ msgstr "חיבור האחסון נכשל."
 
 #: gui/options.cpp:3085
 msgid "Failed to connect storage: "
-msgstr "חיבור האחסון נכשל:"
+msgstr "חיבור האחסון נכשל: "
 
 #: gui/options.cpp:3105
 msgid ""
@@ -1722,12 +1722,12 @@ msgstr "ערוך"
 #: gui/recorderdialog.cpp:84 gui/recorderdialog.cpp:240
 #: gui/recorderdialog.cpp:250
 msgid "Author: "
-msgstr "מחבר:"
+msgstr "מחבר: "
 
 #: gui/recorderdialog.cpp:85 gui/recorderdialog.cpp:241
 #: gui/recorderdialog.cpp:251
 msgid "Notes: "
-msgstr "הערות:"
+msgstr "הערות: "
 
 #: gui/recorderdialog.cpp:154
 msgid "Do you really want to delete this record?"
@@ -1777,15 +1777,15 @@ msgstr "האם אתה באמת רוצה למחוק את המשחק השמור ה
 
 #: gui/saveload-dialog.cpp:596 gui/saveload-dialog.cpp:1116
 msgid "Date: "
-msgstr "תאריך:"
+msgstr "תאריך: "
 
 #: gui/saveload-dialog.cpp:600 gui/saveload-dialog.cpp:1122
 msgid "Time: "
-msgstr "זמן:"
+msgstr "זמן: "
 
 #: gui/saveload-dialog.cpp:606 gui/saveload-dialog.cpp:1130
 msgid "Playtime: "
-msgstr "זמן משחק:"
+msgstr "זמן משחק: "
 
 #: gui/saveload-dialog.cpp:619 gui/saveload-dialog.cpp:707
 msgid "Untitled saved game"
@@ -1809,7 +1809,7 @@ msgstr "צור משחק שמור חדש"
 
 #: gui/saveload-dialog.cpp:1109
 msgid "Name: "
-msgstr "שם:"
+msgstr "שם: "
 
 #: gui/saveload-dialog.cpp:1185
 #, c-format
@@ -2229,15 +2229,16 @@ msgid "Start anyway"
 msgstr "התחל בכל מקרה"
 
 #: engines/engine.cpp:659
-#, fuzzy
 msgid "This game is not supported."
-msgstr "מזהה המשחק אינו נתמך"
+msgstr "מזהה המשחק אינו נתמך."
 
 #: engines/engine.cpp:659
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
-msgstr "המשחק הזה לא נתמך מהסיבות הבאות:\n"
+msgstr ""
+"המשחק הזה לא נתמך מהסיבות הבאות:\n"
+"\n"
 
 #: engines/engine.cpp:798
 msgid "Loading game is currently unavailable"
@@ -2267,7 +2268,7 @@ msgstr "מזהי משחק תואמים למנוע %s:"
 
 #: engines/metaengine.cpp:55
 msgid "Default game keymap"
-msgstr "מיפוי מקלדת "
+msgstr "מיפוי מקלדת"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:162
 #: backends/platform/symbian/src/SymbianActions.cpp:44
@@ -2692,9 +2693,8 @@ msgid "Toggle linear filtered scaling"
 msgstr "השתמש בסינון לינארי בעת קנה המידה של גרפיקה"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:410
-#, fuzzy
 msgid "Cycle through stretch modes"
-msgstr "לא ניתן היה לעבור למצב מתיחה '% s'."
+msgstr ""
 
 #: backends/graphics/sdl/sdl-graphics.cpp:416
 #, fuzzy
@@ -3017,7 +3017,7 @@ msgstr "או בחר ספרייה (פועלת ב- Chrome בלבד):"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:74
 msgid "Index of "
-msgstr "אינדקס של"
+msgstr "אינדקס של "
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
@@ -4321,31 +4321,31 @@ msgstr "לא ניתן היה להתחיל את המשחק AdvSys"
 
 #: engines/glk/scott/scott.cpp:100
 msgid "I don't understand your command. "
-msgstr "אני לא מבין את הפקודה שלך."
+msgstr "אני לא מבין את הפקודה שלך. "
 
 #: engines/glk/scott/scott.cpp:103
 msgid "I can't do that yet. "
-msgstr "אני עדיין לא יכול לעשות את זה."
+msgstr "אני עדיין לא יכול לעשות את זה. "
 
 #: engines/glk/scott/scott.cpp:119
 msgid "Light has run out! "
-msgstr "האור אזל!"
+msgstr "האור אזל! "
 
 #: engines/glk/scott/scott.cpp:121
 msgid "Your light has run out. "
-msgstr "האור שלך אזל."
+msgstr "האור שלך אזל. "
 
 #: engines/glk/scott/scott.cpp:130
 msgid "Light runs out in "
-msgstr "האור אוזל פנימה"
+msgstr "האור אוזל פנימה "
 
 #: engines/glk/scott/scott.cpp:132
 msgid " turns. "
-msgstr " מסתובב."
+msgstr " מסתובב. "
 
 #: engines/glk/scott/scott.cpp:135
 msgid "Your light is growing dim. "
-msgstr "האור שלך הולך ומתעמעם."
+msgstr "האור שלך הולך ומתעמעם. "
 
 #: engines/glk/scott/scott.cpp:412
 msgid "North"
@@ -4387,7 +4387,7 @@ msgid ""
 "Obvious exits: "
 msgstr ""
 "\n"
-"יציאות ברורות:"
+"יציאות ברורות: "
 
 #: engines/glk/scott/scott.cpp:456
 msgid "none"
@@ -4399,7 +4399,7 @@ msgid ""
 "You can also see: "
 msgstr ""
 "\n"
-"אתה יכול גם לראות:"
+"אתה יכול גם לראות: "
 
 #: engines/glk/scott/scott.cpp:468
 msgid ""
@@ -4407,7 +4407,7 @@ msgid ""
 "I can also see: "
 msgstr ""
 "\n"
-"אני יכול לראות גם:"
+"אני יכול לראות גם: "
 
 #: engines/glk/scott/scott.cpp:551
 msgid "Saved.\n"
@@ -4415,16 +4415,16 @@ msgstr "נשמר.\n"
 
 #: engines/glk/scott/scott.cpp:644
 msgid "You use word(s) I don't know! "
-msgstr "אתה משתמש במילים שאני לא יודע!"
+msgstr "אתה משתמש במילים שאני לא יודע! "
 
 #: engines/glk/scott/scott.cpp:774 engines/glk/scott/scott.cpp:1097
 #: engines/glk/scott/scott.cpp:1119
 msgid "You are carrying too much. "
-msgstr "אתה סוחב יותר מדי."
+msgstr "אתה סוחב יותר מדי. "
 
 #: engines/glk/scott/scott.cpp:776
 msgid "I've too much to carry! "
-msgstr "יש לי יותר מדי מה לשאת!"
+msgstr "יש לי יותר מדי מה לשאת! "
 
 #: engines/glk/scott/scott.cpp:807
 msgid "You are dead.\n"
@@ -4440,15 +4440,15 @@ msgstr "המשחק נגמר.\n"
 
 #: engines/glk/scott/scott.cpp:836
 msgid "You have stored "
-msgstr "שמרת"
+msgstr "שמרת "
 
 #: engines/glk/scott/scott.cpp:838
 msgid "I've stored "
-msgstr "אחסתי"
+msgstr "אחסתי "
 
 #: engines/glk/scott/scott.cpp:840
 msgid " treasures.  On a scale of 0 to 100, that rates "
-msgstr " אוצרות. בסולם של 0 עד 100, זה מדרג"
+msgstr " אוצרות. בסולם של 0 עד 100, זה מדרג "
 
 #: engines/glk/scott/scott.cpp:844
 msgid "Well done.\n"
@@ -4472,23 +4472,23 @@ msgstr "תן לי גם כיוון."
 
 #: engines/glk/scott/scott.cpp:1008
 msgid "Dangerous to move in the dark! "
-msgstr "מסוכן לנוע בחושך!"
+msgstr "מסוכן לנוע בחושך! "
 
 #: engines/glk/scott/scott.cpp:1016
 msgid "You fell down and broke your neck. "
-msgstr "נפלת ושברת את צווארך."
+msgstr "נפלת ושברת את צווארך. "
 
 #: engines/glk/scott/scott.cpp:1018
 msgid "I fell down and broke my neck. "
-msgstr "נפלתי ושברתי את צווארי."
+msgstr "נפלתי ושברתי את צווארי. "
 
 #: engines/glk/scott/scott.cpp:1023
 msgid "You can't go in that direction. "
-msgstr "אתה לא יכול ללכת לכיוון הזה."
+msgstr "אתה לא יכול ללכת לכיוון הזה. "
 
 #: engines/glk/scott/scott.cpp:1025
 msgid "I can't go in that direction. "
-msgstr "אני לא יכול ללכת לכיוון הזה."
+msgstr "אני לא יכול ללכת לכיוון הזה. "
 
 #: engines/glk/scott/scott.cpp:1083
 msgid "It is dark.\n"
@@ -4496,7 +4496,7 @@ msgstr "חשוך.\n"
 
 #: engines/glk/scott/scott.cpp:1099 engines/glk/scott/scott.cpp:1121
 msgid "I've too much to carry. "
-msgstr "יש לי יותר מדי מה לשאת."
+msgstr "יש לי יותר מדי מה לשאת. "
 
 #: engines/glk/scott/scott.cpp:1104 engines/glk/scott/scott.cpp:1152
 msgid ": O.K.\n"
@@ -4508,19 +4508,19 @@ msgstr "שום דבר לא נלקח."
 
 #: engines/glk/scott/scott.cpp:1114 engines/glk/scott/scott.cpp:1162
 msgid "What ? "
-msgstr "מה ?"
+msgstr "מה ? "
 
 #: engines/glk/scott/scott.cpp:1127
 msgid "It is beyond your power to do that. "
-msgstr "זה מעבר לכוחך לעשות זאת."
+msgstr "זה מעבר לכוחך לעשות זאת. "
 
 #: engines/glk/scott/scott.cpp:1129
 msgid "It's beyond my power to do that. "
-msgstr "זה מעבר לכוח שלי לעשות זאת."
+msgstr "זה מעבר לכוח שלי לעשות זאת. "
 
 #: engines/glk/scott/scott.cpp:1133
 msgid "O.K. "
-msgstr "בסדר."
+msgstr "בסדר. "
 
 #: engines/glk/scott/scott.cpp:1158
 msgid "Nothing dropped.\n"
@@ -5244,7 +5244,7 @@ msgid ""
 "You're missing a Riven executable. The Windows executable is 'riven.exe' or "
 "'rivendmo.exe'. "
 msgstr ""
-"חסר לך הפעלה של Riven. ההפעלה של Windows היא 'riven.exe' או 'rivendmo.exe'."
+"חסר לך הפעלה של Riven. ההפעלה של Windows היא 'riven.exe' או 'rivendmo.exe'. "
 
 #: engines/mohawk/riven.cpp:160
 msgid ""
@@ -6045,15 +6045,15 @@ msgstr "* שים לב כי באמצעות ctrl-f ו-"
 
 #: engines/scumm/help.cpp:108
 msgid "  ctrl-g are not recommended"
-msgstr "  ctrl-g אינם מומלצים"
+msgstr "  ctrl-g אינם מומלצים"
 
 #: engines/scumm/help.cpp:109
 msgid "  since they may cause crashes"
-msgstr "  מכיוון שהם עלולים לגרום לקריסות"
+msgstr "  מכיוון שהם עלולים לגרום לקריסות"
 
 #: engines/scumm/help.cpp:110
 msgid "  or incorrect game behavior."
-msgstr "  או התנהגות שגויה של המשחק."
+msgstr "  או התנהגות שגויה של המשחק."
 
 #: engines/scumm/help.cpp:114
 msgid "Spinning drafts on the keyboard:"
@@ -6625,9 +6625,8 @@ msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
 #: engines/stark/stark.cpp:291
-#, fuzzy
 msgid "You are missing recommended data files:"
-msgstr "חסרים לך קבצי הנתונים Riven הבאים:\n"
+msgstr "חסרים לך קבצי הנתונים Riven הבאים:"
 
 #: engines/stark/stark.cpp:305
 msgid ""
