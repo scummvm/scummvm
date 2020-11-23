@@ -35,6 +35,11 @@ MODULE_OBJS = \
 	shared/core/asset.o \
 	shared/core/assetmanager.o \
 	shared/debugging/debugmanager.o \
+	shared/game/customproperties.o \
+	shared/game/interactions.o \
+	shared/game/room_file.o \
+	shared/game/room_file_deprecated.o \
+	shared/game/roomstruct.o \
 	shared/gfx/allegrobitmap.o \
 	shared/gfx/bitmap.o \
 	shared/gfx/image.o \

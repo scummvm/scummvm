@@ -20,7 +20,6 @@
  *
  */
 
-//include <cstdio>
 #include "ags/shared/ac/audiocliptype.h"
 #include "ags/shared/ac/dialogtopic.h"
 #include "ags/shared/ac/gamesetupstruct.h"
@@ -34,10 +33,12 @@
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/util/alignedstream.h"
+#include "ags/shared/util/directory.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/shared/font/fonts.h"
+#include "common/fs.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -204,7 +205,7 @@ HGameFileError ReadScriptModules(std::vector<PScript> &sc_mods, Stream *in, Game
 }
 
 void ReadViewStruct272_Aligned(std::vector<ViewStruct272> &oldv, Stream *in, size_t count) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	oldv.resize(count);
 	for (size_t i = 0; i < count; ++i) {
 		oldv[i].ReadFromFile(&align_s);
@@ -434,7 +435,7 @@ void UpgradeFonts(GameSetupStruct &game, GameDataVersion data_ver) {
 		}
 	}
 	if (data_ver < kGameVersion_351) {
-		for (size_t font = 0; font < game.numfonts; font++) {
+		for (size_t font = 0; font < (size_t)game.numfonts; font++) {
 			FontInfo &finfo = game.fonts[font];
 			// Thickness that corresponds to 1 game pixel
 			finfo.AutoOutlineThickness =
@@ -498,15 +499,16 @@ void UpgradeAudio(GameSetupStruct &game, GameDataVersion data_ver) {
 		}
 	}
 	// Append contents of the game directory
-	// TODO: use explicit path instead of cwd? keep this consistent with AssetManager!
 	{
-		al_ffblk ff;
-		if (al_findfirst("*.*", &ff, FA_ALL & ~(FA_DIREC)) == 0) {
-			do {
-				if (ags_strnicmp(ff.name, "music", 5) == 0 || ags_strnicmp(ff.name, "sound", 5) == 0)
-					assets.push_back(ff.name);
-			} while (al_findnext(&ff) == 0);
-			al_findclose(&ff);
+		Common::FSNode folder(Directory::GetCurrentDirectory().GetNullableCStr());
+		Common::FSList files;
+		folder.getChildren(files, Common::FSNode::kListFilesOnly);
+
+		for (uint idx = 0; idx < files.size(); ++idx) {
+			Common::String name = files[idx].getName();
+			if (name.hasPrefixIgnoreCase("music") || name.hasPrefixIgnoreCase("sound")) {
+				assets.push_back(name);
+			}
 		}
 	}
 	BuildAudioClipArray(assets, audioclips);
@@ -627,7 +629,8 @@ HGameFileError ReadSpriteFlags(LoadedGameEntities &ents, Stream *in, GameDataVer
 	else
 		sprcount = in->ReadInt32();
 	if (sprcount > (uint32_t)SpriteCache::MAX_SPRITE_INDEX + 1)
-		return new MainGameFileError(kMGFErr_TooManySprites, String::FromFormat("Count: %u, max: %u", sprcount, (uint32_t)SpriteCache::MAX_SPRITE_INDEX + 1));
+		return new MainGameFileError(kMGFErr_TooManySprites, String::FromFormat("Count: %u, max: %u",
+			sprcount, (uint32_t)SpriteCache::MAX_SPRITE_INDEX + 1));
 
 	ents.SpriteCount = sprcount;
 	ents.SpriteFlags.reset(new char[sprcount]);
@@ -639,7 +642,7 @@ HGameFileError ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersio
 	GameSetupStruct &game = ents.Game;
 
 	{
-		AlignedStream align_s(in, Common::kAligned_Read);
+		AlignedStream align_s(in, Shared::kAligned_Read);
 		game.GameSetupStructBase::ReadFromFile(&align_s);
 	}
 
