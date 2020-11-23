@@ -25,7 +25,7 @@
 //include <windows.h>
 #endif
 
-#include "ags/stubs/allegro/file.h"
+#include "ags/lib/allegro/file.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/stdio_compat.h"
 

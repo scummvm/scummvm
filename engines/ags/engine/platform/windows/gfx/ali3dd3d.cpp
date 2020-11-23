@@ -32,7 +32,7 @@
 
 #include "platform/windows/gfx/ali3dd3d.h"
 
-#include "ags/stubs/allegro.h"
+#include "ags/lib/allegro.h"
 #include <allegro/platform/aintwin.h>
 #include "ac/timer.h"
 #include "debug/assert.h"

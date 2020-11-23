@@ -20,21 +20,18 @@
  *
  */
 
-#include "ags/stubs/allegro/digi.h"
+#include "ags/lib/allegro/unicode.h"
+#include "common/textconsole.h"
 
 namespace AGS3 {
 
-DIGI_DRIVER *digi_driver;
-
-DIGI_DRIVER *digi_input_driver;
-
-int digi_card;
-
-int digi_input_card;
-
-
-int detect_digi_driver(int driver_id) {
-	return 0;
+void set_uformat(int format) {
+	// TODO: implementation
 }
+
+size_t ustrsize(const char *s) {
+	error("TODO: ustrsize");
+}
+
 
 } // namespace AGS3

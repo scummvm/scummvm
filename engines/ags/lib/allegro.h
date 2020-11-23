@@ -20,21 +20,29 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_UNICODE_H
-#define AGS_STUBS_ALLEGRO_UNICODE_H
+#ifndef AGS_STUBS_ALLEGRO_H
+#define AGS_STUBS_ALLEGRO_H
 
-#include "ags/stubs/allegro/base.h"
+#include "ags/lib/allegro/alconfig.h"
+#include "ags/lib/allegro/base.h"
+#include "ags/lib/allegro/color.h"
+#include "ags/lib/allegro/config.h"
+#include "ags/lib/allegro/digi.h"
+#include "ags/lib/allegro/error.h"
+#include "ags/lib/allegro/file.h"
+#include "ags/lib/allegro/fixed.h"
+#include "ags/lib/allegro/gfx.h"
+#include "ags/lib/allegro/keyboard.h"
+#include "ags/lib/allegro/midi.h"
+#include "ags/lib/allegro/mouse.h"
+#include "ags/lib/allegro/sound.h"
+#include "ags/lib/allegro/system.h"
+#include "ags/lib/allegro/unicode.h"
 
 namespace AGS3 {
 
-#define U_ASCII         AL_ID('A','S','C','8')
-#define U_ASCII_CP      AL_ID('A','S','C','P')
-#define U_UNICODE       AL_ID('U','N','I','C')
-#define U_UTF8          AL_ID('U','T','F','8')
-#define U_CURRENT       AL_ID('c','u','r','.')
-
-extern void set_uformat(int format);
-extern size_t ustrsize(const char *s);
+extern int install_allegro();
+extern void allegro_exit();
 
 } // namespace AGS3
 

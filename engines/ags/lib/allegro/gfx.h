@@ -24,8 +24,8 @@
 #define AGS_STUBS_ALLEGRO_GRAPHICS_H
 
 #include "graphics/managed_surface.h"
-#include "ags/stubs/allegro/base.h"
-#include "ags/stubs/allegro/fixed.h"
+#include "ags/lib/allegro/base.h"
+#include "ags/lib/allegro/fixed.h"
 #include "common/array.h"
 
 namespace AGS3 {

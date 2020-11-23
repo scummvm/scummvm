@@ -29,7 +29,7 @@
 #include "core/platform.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
-#include "ags/stubs/allegro.h"
+#include "ags/lib/allegro.h"
 #include <winalleg.h>
 #include <allegro/platform/aintwin.h>
 
@@ -37,7 +37,7 @@
 #include "glad/glad_wgl.h"
 
 #elif AGS_PLATFORM_OS_LINUX
-#include "ags/stubs/allegro.h"
+#include "ags/lib/allegro.h"
 #include <xalleg.h>
 #include <X11/Xatom.h>
 

@@ -20,46 +20,11 @@
  *
  */
 
-#include "ags/stubs/allegro/system.h"
-#include "common/system.h"
+#include "ags/lib/allegro/error.h"
 
 namespace AGS3 {
 
-int color_depth;
-
-SYSTEM_DRIVER system_none;
-SYSTEM_DRIVER *system_driver;
-
-_DRIVER_INFO _system_driver_list[] = {
-//	{ SYSTEM_IOS, &system_none, true  },
-	{ SYSTEM_NONE, &system_none, false },
-	{ 0, nullptr , 0     }
-};
-
-
-void set_color_depth(int depth) {
-	color_depth = depth;
-}
-
-int get_color_depth() {
-	return color_depth;
-}
-
-int get_desktop_resolution(int *width, int *height) {
-	if (*width)
-		*width = g_system->getWidth();
-	if (*height)
-		*height = g_system->getHeight();
-
-	return 0;
-}
-
-void request_refresh_rate(int rate) {
-	// No implementation
-}
-
-void set_close_button_callback(void(*proc)()) {
-	// No implementation
-}
+int errnum;
+int *allegro_errno = &errnum;
 
 } // namespace AGS3

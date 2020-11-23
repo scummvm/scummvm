@@ -20,8 +20,8 @@
  *
  */
 
-#include "ags/stubs/allegro/fixed.h"
-#include "ags/stubs/allegro/error.h"
+#include "ags/lib/allegro/fixed.h"
+#include "ags/lib/allegro/error.h"
 
 namespace AGS3 {
 

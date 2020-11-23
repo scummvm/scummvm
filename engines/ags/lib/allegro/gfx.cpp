@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/stubs/allegro/gfx.h"
+#include "ags/lib/allegro/gfx.h"
 #include "common/textconsole.h"
 #include "graphics/screen.h"
 

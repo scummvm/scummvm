@@ -20,16 +20,38 @@
  *
  */
 
-#include "ags/stubs/allegro.h"
+#include "ags/lib/allegro/file.h"
+#include "common/str.h"
 
 namespace AGS3 {
 
-int install_allegro() {
-	errnum = 0;
-	return 0;
+char *fix_filename_case(char *path) {
+	return path;
 }
 
-void allegro_exit() {
+char *fix_filename_slashes(char *path) {
+	return path;
+}
+
+char *append_filename(char *dest, const char *path, const char *filename, int size) {
+	strncpy(dest, path, size);
+	strncat(dest, filename, size);
+	return dest;
+}
+
+char *canonicalize_filename(char *dest, const char *filename, int size) {
+	strncpy(dest, filename, size);
+	return dest;
+}
+
+char *make_relative_filename(char *dest, const char *path, const char *filename, int size) {
+	strncpy(dest, filename, size);
+	return dest;
+}
+
+int is_relative_filename(const char *filename) {
+	Common::String fname(filename);
+	return !fname.contains('/') && !fname.contains('\\') ? 0 : -1;
 }
 
 } // namespace AGS3

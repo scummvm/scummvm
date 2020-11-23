@@ -20,30 +20,27 @@
  *
  */
 
-#ifndef AGS_STUBS_ALLEGRO_H
-#define AGS_STUBS_ALLEGRO_H
-
-#include "ags/stubs/allegro/alconfig.h"
-#include "ags/stubs/allegro/base.h"
-#include "ags/stubs/allegro/color.h"
-#include "ags/stubs/allegro/config.h"
-#include "ags/stubs/allegro/digi.h"
-#include "ags/stubs/allegro/error.h"
-#include "ags/stubs/allegro/file.h"
-#include "ags/stubs/allegro/fixed.h"
-#include "ags/stubs/allegro/gfx.h"
-#include "ags/stubs/allegro/keyboard.h"
-#include "ags/stubs/allegro/midi.h"
-#include "ags/stubs/allegro/mouse.h"
-#include "ags/stubs/allegro/sound.h"
-#include "ags/stubs/allegro/system.h"
-#include "ags/stubs/allegro/unicode.h"
+#include "ags/lib/allegro/midi.h"
 
 namespace AGS3 {
 
-extern int install_allegro();
-extern void allegro_exit();
+MIDI_DRIVER *midi_driver;
+
+MIDI_DRIVER *midi_input_driver;
+
+int midi_card;
+
+int midi_input_card;
+
+volatile long midi_pos;       /* current position in the midi file, in beats */
+volatile long midi_time;      /* current position in the midi file, in seconds */
+
+long midi_loop_start;         /* where to loop back to at EOF */
+long midi_loop_end;           /* loop when we hit this position */
+
+
+int detect_midi_driver(int driver_id) {
+	return 0;
+}
 
 } // namespace AGS3
-
-#endif

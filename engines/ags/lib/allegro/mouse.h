@@ -24,9 +24,9 @@
 #define AGS_STUBS_ALLEGRO_MOUSE_H
 
 #include "common/events.h"
-#include "ags/stubs/allegro/base.h"
-#include "ags/stubs/allegro/alconfig.h"
-#include "ags/stubs/allegro/gfx.h"
+#include "ags/lib/allegro/base.h"
+#include "ags/lib/allegro/alconfig.h"
+#include "ags/lib/allegro/gfx.h"
 
 namespace AGS3 {
 
