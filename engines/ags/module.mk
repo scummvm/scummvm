@@ -34,6 +34,7 @@ MODULE_OBJS = \
 	shared/ac/wordsdictionary.o \
 	shared/core/asset.o \
 	shared/core/assetmanager.o \
+	shared/debugging/debugmanager.o \
 	shared/gfx/allegrobitmap.o \
 	shared/gfx/bitmap.o \
 	shared/gfx/image.o \
