@@ -154,7 +154,7 @@ void Redraw::blitBackgroundAreas() {
 	const RedrawStruct *currentArea = currentRedrawList;
 
 	for (int32 i = 0; i < numOfRedrawBox; i++) {
-		_engine->_interface->blitBox(currentArea->left, currentArea->top, currentArea->right, currentArea->bottom, (const int8 *)_engine->workVideoBuffer.getPixels(), currentArea->left, currentArea->top, (int8 *)_engine->frontVideoBuffer.getPixels());
+		_engine->_interface->blitBox(currentArea->left, currentArea->top, currentArea->right, currentArea->bottom, _engine->workVideoBuffer, currentArea->left, currentArea->top, _engine->frontVideoBuffer);
 		currentArea++;
 	}
 }
@@ -294,7 +294,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 							drawList[drawListPos].x = _engine->_actor->shadowX;
 							drawList[drawListPos].y = _engine->_actor->shadowY;
 							drawList[drawListPos].z = _engine->_actor->shadowZ;
-							drawList[drawListPos].field_A = 2;
+							drawList[drawListPos].offset = 2;
 							drawListPos++;
 						}
 					}
@@ -330,7 +330,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 							drawList[drawListPos].x = _engine->_actor->shadowX;
 							drawList[drawListPos].y = _engine->_actor->shadowY;
 							drawList[drawListPos].z = _engine->_actor->shadowZ;
-							drawList[drawListPos].field_A = 0;
+							drawList[drawListPos].offset = 0;
 							drawListPos++;
 						}
 					}
@@ -395,7 +395,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 							addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom);
 
 							if (actor2->staticFlags.bIsBackgrounded && bgRedraw == 1) {
-								_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom, (const int8 *)_engine->frontVideoBuffer.getPixels(), _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8 *)_engine->workVideoBuffer.getPixels());
+								_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, renderRight, renderBottom, _engine->frontVideoBuffer, _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->workVideoBuffer);
 							}
 						}
 					}
@@ -409,7 +409,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				_engine->_renderer->projectPositionOnScreen(shadow.x - _engine->_grid->cameraX, shadow.y - _engine->_grid->cameraY, shadow.z - _engine->_grid->cameraZ);
 
 				int32 spriteWidth, spriteHeight;
-				_engine->_grid->getSpriteSize(shadow.field_A, &spriteWidth, &spriteHeight, _engine->_resources->spriteShadowPtr);
+				_engine->_grid->getSpriteSize(shadow.offset, &spriteWidth, &spriteHeight, _engine->_resources->spriteShadowPtr);
 
 				// calculate sprite size and position on screen
 				renderLeft = _engine->_renderer->projPosX - (spriteWidth / 2);
@@ -420,7 +420,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
 
 				if (_engine->_interface->textWindowLeft <= _engine->_interface->textWindowRight && _engine->_interface->textWindowTop <= _engine->_interface->textWindowBottom) {
-					_engine->_grid->drawSprite(shadow.field_A, renderLeft, renderTop, _engine->_resources->spriteShadowPtr);
+					_engine->_grid->drawSprite(shadow.offset, renderLeft, renderTop, _engine->_resources->spriteShadowPtr);
 				}
 
 				const int32 tmpX = (shadow.x + 0x100) >> 9;
@@ -437,8 +437,9 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 			// Drawing unknown
 			else if (flags < 0x1000) {
 				// TODO reverse this part of the code
+				warning("Not yet reversed part of the rendering code");
 			}
-			// Drawing sprite actors
+			// Drawing sprite actors, doors and entities
 			else if (flags == 0x1000) {
 				const uint8 *spritePtr = _engine->_resources->spriteTable[actor2->entity];
 
@@ -457,7 +458,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				renderBottom = renderTop + spriteHeight;
 
 				if (actor2->staticFlags.bUsesClipping) {
-					_engine->_interface->setClip(_engine->_renderer->projPosXScreen + actor2->info0, _engine->_renderer->projPosYScreen + actor2->info1, _engine->_renderer->projPosXScreen + actor2->info2, _engine->_renderer->projPosYScreen + actor2->info3);
+					_engine->_interface->setClip(_engine->_renderer->projPosXScreen + actor2->cropLeft, _engine->_renderer->projPosYScreen + actor2->cropTop, _engine->_renderer->projPosXScreen + actor2->cropRight, _engine->_renderer->projPosYScreen + actor2->cropBottom);
 				} else {
 					_engine->_interface->setClip(renderLeft, renderTop, renderRight, renderBottom);
 				}
@@ -483,7 +484,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 					addRedrawArea(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom);
 
 					if (actor2->staticFlags.bIsBackgrounded && bgRedraw == 1) {
-						_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom, (const int8 *)_engine->frontVideoBuffer.getPixels(), _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, (int8 *)_engine->workVideoBuffer.getPixels());
+						_engine->_interface->blitBox(_engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->_interface->textWindowRight, _engine->_interface->textWindowBottom, _engine->frontVideoBuffer, _engine->_interface->textWindowLeft, _engine->_interface->textWindowTop, _engine->workVideoBuffer);
 					}
 
 					// show clipping area
@@ -725,7 +726,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 	}
 
 	if (_engine->zoomScreen) {
-		//zoomScreenScale();
+		zoomScreenScale();
 	}
 }
 
@@ -765,10 +766,11 @@ void Redraw::drawBubble(int32 actorIdx) {
 }
 
 void Redraw::zoomScreenScale() {
+#if 0
+	// TODO: this is broken
 	Graphics::ManagedSurface zoomWorkVideoBuffer;
 	zoomWorkVideoBuffer.copyFrom(_engine->workVideoBuffer);
 
-	// TODO: this is broken
 	const uint8 *src = (const uint8 *)zoomWorkVideoBuffer.getPixels();
 	uint8 *dest = (uint8 *)_engine->workVideoBuffer.getPixels();
 	for (int h = 0; h < zoomWorkVideoBuffer.h; h++) {
@@ -781,6 +783,7 @@ void Redraw::zoomScreenScale() {
 	}
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	zoomWorkVideoBuffer.free();
+#endif
 }
 
 } // namespace TwinE

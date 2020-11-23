@@ -61,23 +61,23 @@ void Room::love1Tick1() {
 	case BOTTLETYPE_N2O:
 		strcpy(_roomVar.love.bottleAnimation, "btle1");
 		_roomVar.love.itemInNozzle = OBJECT_IN2O;
-		goto common;
+		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
+		break;
 	case BOTTLETYPE_NH3:
 		strcpy(_roomVar.love.bottleAnimation, "btle2");
 		_roomVar.love.itemInNozzle = OBJECT_INH3;
-		goto common;
+		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
+		break;
 	case BOTTLETYPE_H2O:
 		strcpy(_roomVar.love.bottleAnimation, "btle3");
 		_roomVar.love.itemInNozzle = OBJECT_IH2O;
-		goto common;
+		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
+		break;
 	case BOTTLETYPE_RLG:
 		strcpy(_roomVar.love.bottleAnimation, "btle4");
 		_roomVar.love.itemInNozzle = OBJECT_IRLG;
-		goto common;
-
-common:
 		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
-	// fall through
+		break;
 
 	case BOTTLETYPE_NONE:
 	default:

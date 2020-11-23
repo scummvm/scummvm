@@ -13,6 +13,8 @@
 #define ID_GDF_XML __GDF_XML
 
 CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "dists/win32/scummvm.exe.manifest"
+
+// Common resources
 IDI_ICON               ICON    "icons/scummvm.ico"
 IDI_COUNT              ICON    "icons/count.ico"
 
@@ -22,14 +24,16 @@ scummclassic.zip       FILE    "gui/themes/scummclassic.zip"
 scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
 scummremastered.zip    FILE    "gui/themes/scummremastered.zip"
 residualvm.zip         FILE    "gui/themes/residualvm.zip"
+encoding.dat           FILE    "dists/engine-data/encoding.dat"
 
+// Engine or feature specific resources
 #ifdef BUILTIN_RESOURCES
 #if PLUGIN_ENABLED_STATIC(GRIM)
 grim-patch.lab         FILE    "dists/engine-data/grim-patch.lab"
 monkey4-patch.m4b      FILE    "dists/engine-data/monkey4-patch.m4b"
 #endif
 #if PLUGIN_ENABLED_STATIC(MYST3)
-myst3.dat                       FILE    "dists/engine-data/myst3.dat"
+myst3.dat              FILE    "dists/engine-data/myst3.dat"
 #endif
 #ifdef USE_TRANSLATION
 translations.dat       FILE    "gui/themes/translations.dat"
@@ -157,24 +161,24 @@ shaders/stark_shadow.fragment        FILE    "engines/stark/shaders/stark_shadow
 shaders/stark_shadow.vertex          FILE    "engines/stark/shaders/stark_shadow.vertex"
 #endif
 #if PLUGIN_ENABLED_STATIC(WINTERMUTE)
-shaders/wme_fade.fragment            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.fragment"
-shaders/wme_fade.vertex              FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex"
+shaders/wme_fade.fragment               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.fragment"
+shaders/wme_fade.vertex                 FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex"
 shaders/wme_flat_shadow_mask.fragment   FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.fragment"
 shaders/wme_flat_shadow_mask.vertex     FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.vertex"
 shaders/wme_flat_shadow_modelx.fragment FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.fragment"
 shaders/wme_flat_shadow_modelx.vertex   FILE "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.vertex"
-shaders/wme_geometry.fragment        FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.fragment"
-shaders/wme_geometry.vertex          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.vertex"
-shaders/wme_line.fragment            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.fragment"
-shaders/wme_line.vertex              FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.vertex"
-shaders/wme_modelx.fragment          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.fragment"
-shaders/wme_modelx.vertex            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.vertex"
-shaders/wme_shadow_mask.fragment     FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.fragment"
-shaders/wme_shadow_mask.vertex       FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.vertex"
-shaders/wme_shadow_volume.fragment   FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.fragment"
-shaders/wme_shadow_volume.vertex     FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.vertex"
-shaders/wme_sprite.fragment          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.fragment"
-shaders/wme_sprite.vertex            FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.vertex"
+shaders/wme_geometry.fragment           FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.fragment"
+shaders/wme_geometry.vertex             FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.vertex"
+shaders/wme_line.fragment               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.fragment"
+shaders/wme_line.vertex                 FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.vertex"
+shaders/wme_modelx.fragment             FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.fragment"
+shaders/wme_modelx.vertex               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.vertex"
+shaders/wme_shadow_mask.fragment        FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.fragment"
+shaders/wme_shadow_mask.vertex          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.vertex"
+shaders/wme_shadow_volume.fragment      FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.fragment"
+shaders/wme_shadow_volume.vertex        FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.vertex"
+shaders/wme_sprite.fragment             FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.fragment"
+shaders/wme_sprite.vertex               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.vertex"
 #endif
 #endif
 #endif

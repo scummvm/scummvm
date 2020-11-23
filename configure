@@ -171,7 +171,6 @@ _taskbar=auto
 _updates=no
 _libunity=auto
 _dialogs=auto
-_iconv=auto
 _tts=auto
 _gtk=auto
 _fribidi=auto
@@ -1181,9 +1180,6 @@ Optional Libraries:
   --with-libcurl-prefix=DIR    prefix where libcurl is installed (optional)
   --disable-libcurl        disable libcurl networking library [autodetect]
 
-  --with-iconv-prefix=DIR    prefix where libiconv is installed (optional)
-  --disable-iconv        disable libiconv encoding conversion library [autodetect]
-
   --with-discord-prefix=DIR   prefix where discord-rpc is installed (optional)
   --disable-discord       disable Discord rich presence integration [autodetect]
 
@@ -1349,8 +1345,6 @@ for ac_option in $@; do
 	--disable-eventrecorder)     _eventrec=no            ;;
 	--enable-text-console)       _text_console=yes       ;;
 	--disable-text-console)      _text_console=no        ;;
-	--enable-iconv)              _iconv=yes              ;;
-	--disable-iconv)             _iconv=no               ;;
 	--with-fluidsynth-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDSYNTH_CFLAGS="-I$arg/include"
@@ -1469,11 +1463,6 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		GLEW_CFLAGS="-I$arg/include"
 		GLEW_LIBS="-L$arg/lib"
-		;;
-	--with-iconv-prefix=*)
-		arg=`echo $ac_option | cut -d '=' -f 2`
-		ICONV_CFLAGS="-I$arg/include"
-		ICONV_LIBS="-L$arg/lib"
 		;;
 	--with-discord-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2906,24 +2895,27 @@ case $_host_os in
 		# A workaround is to set the LC_VERSION_MIN_MACOSX load command's sdk value
 		# to n/a (i.e. 0.0). See bug #11430 for details.
 		echocheck "macOS deployement target"
-		_macos_min_version=undefined
-		for _macos_min_version_check in 1030 1040 1050 1060 1070 1080 1090 101000 101100 101200 101300 101400 101500 101600; do
-			cat > $TMPC << EOF
+		cat > $TMPC << EOF
 #include "AvailabilityMacros.h"
-#if MAC_OS_X_VERSION_MIN_REQUIRED > ${_macos_min_version_check}
-error
-#endif
-int main(int argc, char *argv[]) { return 0; }
+
+#define _DIGIT(x) #x
+#define DIGIT(x) _DIGIT(x)
+
+const char version[] = "Version:" DIGIT(MAC_OS_X_VERSION_MIN_REQUIRED);
+const char *_version() { char *s = (char *)version; return s; }
+
+int main(int argc, char *argv[]) { _version(); return 0; }
 EOF
-			cc_check
-			if test "$TMPR" -eq 0; then
-				_macos_min_version=$_macos_min_version_check
-				break
-			fi
-		done
+		cc_check_no_clean
+		if $_strings $TMPO$HOSTEXEEXT | grep Version: >/dev/null; then
+			_macos_min_version=`$_strings $TMPO$HOSTEXEEXT | grep Version:`
+			_macos_min_version="${_macos_min_version#Version:}"
+		fi
+		cc_check_clean
+
 		# Also get a dot version of the min version
 		_macos_min_version_dot=undefined
-		if test "$_macos_min_version" != undefined ; then
+		if test -n "$_macos_min_version" ; then
 			if test "$_macos_min_version" -lt 101000; then
 				_macos_min_ver_major=$((${_macos_min_version}/100))
 				_macos_min_ver_minor=$((${_macos_min_version}/10 - 10*${_macos_min_ver_major}))
@@ -2953,15 +2945,18 @@ EOF
 			append_var LDFLAGS "$_macos_ldflags_platform_version"
 		fi
 
-		# When building for MacOS X 10.5 or below we need to use the legacy icon
-		if test "$_macos_min_version" != undefined -a "$_macos_min_version" -lt 1060 ; then
-			add_line_to_config_mk 'MACOSX_USE_LEGACY_ICONS = 1'
-		fi
+		# Version-specific quirks
+		if test -n "$_macos_min_version" ; then
+			# When building for MacOS X 10.5 or below we need to use the legacy icon
+			if test "$_macos_min_version" -lt 1060 ; then
+				add_line_to_config_mk 'MACOSX_USE_LEGACY_ICONS = 1'
+			fi
 
-		# When building with SDK 10.14 or above, we cannot compile the 32 bits dock plugin
-		# Assume the SDK version is the same as the min version.
-		if test "$_macos_min_version" != undefined -a "$_macos_min_version" -gt 101399 ; then
-			add_line_to_config_mk 'MACOSX_64_BITS_ONLY = 1'
+			# When building with SDK 10.14 or above, we cannot compile the 32 bits dock plugin
+			# Assume the SDK version is the same as the min version.
+			if test "$_macos_min_version" -gt 101399 ; then
+				add_line_to_config_mk 'MACOSX_64_BITS_ONLY = 1'
+			fi
 		fi
 
 		# Use pandoc to generate README and NEWS file for the bundle
@@ -5511,86 +5506,6 @@ fi
 
 
 #
-# Check for iconv
-#
-echo_n "Checking whether iconv.h is present... "
-if test "$_iconv" = auto ; then
-	_iconv=no
-	cat > $TMPC << EOF
-#include <iconv.h>
-int main(int, char **) {
-	return 0;
-}
-EOF
-	cc_check $ICONV_CFLAGS $ICONV_LIBS && _iconv=yes
-fi
-
-create_iconv_test() {
-	cat > $TMPC << EOF
-#include <iconv.h>
-int main(int, char **) {
-	iconv_t iconv = iconv_open("UTF-32", "SJIS");
-	iconv_close(iconv);
-	return 0;
-}
-EOF
-}
-echo "$_iconv"
-
-if test "$_iconv" = yes ; then
-	echo_n "Checking whether iconv needs linking against libiconv... "
-
-	needs_iconvlib='auto'
-	create_iconv_test
-	cc_check $ICONV_CFLAGS $ICONV_LIBS -liconv && needs_iconvlib='yes'
-	# We do check linking without -liconv here too, just in case
-	# it would fail otherwise too
-	create_iconv_test
-	cc_check $ICONV_CFLAGS $ICONV_LIBS && needs_iconvlib='no'
-
-	if test "$needs_iconvlib" = auto ; then
-		_iconv=no
-		echo "does not link at all"
-	else
-		if test "$needs_iconvlib" = yes ; then
-			append_var ICONV_LIBS "-liconv"
-		fi
-		echo "$needs_iconvlib"
-
-		echo_n "Checking signature of iconv... "
-		uses_const=no
-
-		cat > $TMPC << EOF
-#include <iconv.h>
-int main(int argc, char **argv) {
-	iconv_t iconvP;
-	const char **inbuf = 0;
-	iconv(iconvP, inbuf, 0, 0, 0);
-	return 0;
-}
-EOF
-		cc_check $ICONV_CFLAGS $ICONV_LIBS && uses_const=yes
-
-		if test "$uses_const" = yes ; then
-			echo "iconv_t, const char **, size_t *, char **, size_t *"
-		else
-			echo "iconv_t, char **, size_t *, char **, size_t *"
-		fi
-
-		define_in_config_if_yes "$uses_const" 'ICONV_USES_CONST'
-	fi
-fi
-
-if test "$_iconv" = yes ; then
-	append_var LIBS "$ICONV_LIBS"
-	append_var INCLUDES "$ICONV_CFLAGS"
-fi
-
-echocheck "iconv"
-define_in_config_if_yes "$_iconv" 'USE_ICONV'
-echo "$_iconv"
-
-#
 # Check for Linux CD-ROM support
 #
 case $_host_os in
@@ -5832,8 +5747,12 @@ if test "$_dialogs" = "no"; then
 	echo "no"
 else
 	case $_host_os in
-	morphos*)
-		echo "morphos"
+	amigaos*)
+		echo "amigaos (asl)"
+		_dialogs=yes
+		;;
+	darwin*)
+		echo "osx"
 		_dialogs=yes
 		;;
 	mingw*)
@@ -5841,8 +5760,8 @@ else
 		echo "win32"
 		_dialogs=yes
 		;;
-	darwin*)
-		echo "osx"
+	morphos*)
+		echo "morphos"
 		_dialogs=yes
 		;;
 	*)

@@ -134,8 +134,11 @@ bool AIScriptRachael::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	switch (newGoalNumber) {
 	case kGoalRachaelLeavesAfterTyrellMeeting:
 		AI_Movement_Track_Flush(kActorRachael);
-		AI_Movement_Track_Append(kActorRachael, 379, 0);
-		AI_Movement_Track_Append(kActorRachael, 39, 0);
+		// TODO Wouldn't it be better to use only waypoint 468 and then flush movement (or pause)
+		//      at CompletedMovementTrack()
+		//      instead of having her walk to waypoint 39 (in kSetFreeSlotG)?
+		AI_Movement_Track_Append(kActorRachael, 379, 0); // kSetTB07
+		AI_Movement_Track_Append(kActorRachael, 39, 0);  // kSetFreeSlotG
 		AI_Movement_Track_Repeat(kActorRachael);
 		break;
 
@@ -173,8 +176,11 @@ bool AIScriptRachael::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		// Rachael's goal is set to this when the player walks in the MA07 scene and if her goal is already kGoalRachaelIsOutsideMcCoysBuildingAct3
 		AI_Movement_Track_Flush(kActorRachael);
 		// This makes Rachael (who is right outside McCoy's building) head towards the Police Station (left)
-		AI_Movement_Track_Append(kActorRachael, 468, 0);
-		AI_Movement_Track_Append(kActorRachael, 39, 0);
+		// TODO Wouldn't it be better to use only waypoint 468 and then flush movement (or pause)
+		//      at CompletedMovementTrack()
+		//      instead of having her walk to waypoint 39 (in kSetFreeSlotG)?
+		AI_Movement_Track_Append(kActorRachael, 468, 0); // kSetMA07
+		AI_Movement_Track_Append(kActorRachael, 39, 0);  // kSetFreeSlotG
 		AI_Movement_Track_Repeat(kActorRachael);
 		break;
 
@@ -185,6 +191,7 @@ bool AIScriptRachael::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		// added goal for restored content
 		// fall through
 	case kGoalRachaelAtEndOfAct3IfMetWithMcCoy:
+		AI_Movement_Track_Pause(kActorRachael);
 		Actor_Put_In_Set(kActorRachael, kSetFreeSlotG);
 		Actor_Set_At_Waypoint(kActorRachael, 39, 0);
 		break;
@@ -495,7 +502,7 @@ void AIScriptRachael::dialogue_agenda2() {
 		Actor_Says(kActorMcCoy, 2760, 14);                   // InterestingGuyYourUncleCharacterator-Rachael
 		Actor_Says(kActorRachael, 50, 15);                   // IDontThinkHeDAppreciateBeingCalledThat  new anim 15
 		Actor_Says(kActorMcCoy, 2765, 16);                   // ImSureHeIsABrilliantMan  new anim 16
-		Actor_Says(kActorMcCoy, 2770, 17);                   // AnyoneWhoCouldCreateNexus6StateOfArt  new anim 17
+		Actor_Says_With_Pause(kActorMcCoy, 2770, 0.0f, 17);  // AnyoneWhoCouldCreateNexus6StateOfArt  new anim 17
 		Actor_Says(kActorRachael, 60, 14);                   // KeepingPeopleLikeYouEmployedIsntHe
 		Actor_Says(kActorMcCoy, 2775, 16);                   // IdJustAsSoonNotDoThisJob.
 		Actor_Says(kActorRachael, 70, 13);                   // DoYouReallyExpectMeToBelieveThat
@@ -516,7 +523,7 @@ void AIScriptRachael::dialogue_agenda2() {
 		// original code - missing some quotes or removing some quotes to make it fit better
 		Actor_Says(kActorRachael, 50, 15);                  // I don't think he'd appreciate being called that
 		Actor_Says(kActorMcCoy, 2765, 16);                  // Oh i'm sure brilliant man
-		Actor_Says(kActorMcCoy, 2770, 17);                  // anyone who could create nexus -6
+		Actor_Says_With_Pause(kActorMcCoy, 2770, 0.0f, 17); // anyone who could create nexus -6
 		Actor_Says(kActorRachael, 60, 14);                  // keeping people like you employed
 		Actor_Says(kActorMcCoy, 2775, 16);                  // IdJustAsSoonNotDoThisJob
 		Actor_Says(kActorRachael, 70, 13);                  // do you really expect me to believe that
@@ -562,9 +569,9 @@ void AIScriptRachael::dialogue_act4() {
 	Actor_Says(kActorRachael, 400, 13);  //  MaybeAllSomeoneElsesFantasy
 	Actor_Says(kActorMcCoy, 2895, 14);   //  That would make us a fantasy
 	Actor_Says(kActorRachael, 410, 15);  //  ThatsRightAndInTheBlinkOfAnEyeGoesAway
-	Actor_Says(kActorMcCoy, 2900, 16);   //  But just yesterday
+	Actor_Says_With_Pause(kActorMcCoy, 2900, 0.0f, 16);   //  But just yesterday
 	Actor_Says(kActorRachael, 420, 14);  //  YesterdayTwoMonthsAgo
-	Actor_Says(kActorMcCoy, 2905, 13);   //  ButIfWeBothRemembered
+	Actor_Says_With_Pause(kActorMcCoy, 2905, 0.0f, 13);   //  ButIfWeBothRemembered
 	Actor_Says(kActorRachael, 430, 16);  //  CopiesOnlyCopies
 	Actor_Says(kActorRachael, 440, 12);  //  OnlyThingWeCanTrustIsNow
 	Actor_Says(kActorMcCoy, 2910, 14);   //  NotLosingMyMindEscapedReplicant

@@ -63,12 +63,12 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 	_testListDisplay->setEditable(false);
 
 	if (selected > (tsList.size() - selected)) {
-		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", Common::U32String("Deselect All"), Common::U32String(""), kTestbedDeselectAll, 0);
+		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", Common::U32String("Deselect All"), Common::U32String(), kTestbedDeselectAll, 0);
 	} else {
-		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", Common::U32String("Select All"), Common::U32String(""), kTestbedSelectAll, 0);
+		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", Common::U32String("Select All"), Common::U32String(), kTestbedSelectAll, 0);
 	}
-	new GUI::ButtonWidget(this, "TestbedOptions.RunTests", Common::U32String("Run tests"), Common::U32String(""), GUI::kCloseCmd);
-	new GUI::ButtonWidget(this, "TestbedOptions.Quit", Common::U32String("Exit Testbed"), Common::U32String(""), kTestbedQuitCmd);
+	new GUI::ButtonWidget(this, "TestbedOptions.RunTests", Common::U32String("Run tests"), Common::U32String(), GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, "TestbedOptions.Quit", Common::U32String("Exit Testbed"), Common::U32String(), kTestbedQuitCmd);
 }
 
 TestbedOptionsDialog::~TestbedOptionsDialog() {}
@@ -152,7 +152,7 @@ void TestbedInteractionDialog::addButton(uint w, uint h, const Common::String na
 		xOffset = _xOffset;
 	}
 	_yOffset += yPadding;
-	_buttonArray.push_back(new GUI::ButtonWidget(this, xOffset, _yOffset, w, h, name, Common::U32String(""), cmd));
+	_buttonArray.push_back(new GUI::ButtonWidget(this, xOffset, _yOffset, w, h, name, Common::U32String(), cmd));
 	_yOffset += h;
 }
 
@@ -166,7 +166,7 @@ void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, const Com
 }
 
 void TestbedInteractionDialog::addButtonXY(uint x, uint /* y */, uint w, uint h, const Common::String name, uint32 cmd) {
-	_buttonArray.push_back(new GUI::ButtonWidget(this, x, _yOffset, w, h, name, Common::U32String(""), cmd));
+	_buttonArray.push_back(new GUI::ButtonWidget(this, x, _yOffset, w, h, name, Common::U32String(), cmd));
 }
 
 void TestbedInteractionDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {

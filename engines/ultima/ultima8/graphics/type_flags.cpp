@@ -267,6 +267,9 @@ void TypeFlags::loadWeaponInfo() {
 		else
 			wi->_small = 0;
 
+		// TODO: get from real data.
+		wi->_defaultAmmo = 37;
+
 		// TODO: this should be 1, 2, or 3 depending on weapon.
 		// It's used in the AttackProcess
 		wi->_field8 = 1;

@@ -46,22 +46,22 @@ UnknownGameDialog::UnknownGameDialog(const DetectedGame &detectedGame) :
 		_detectedGame(detectedGame) {
 
 	if (detectedGame.canBeAdded) {
-		_addAnywayButton = new ButtonWidget(this, "UnknownGameDialog.Add", _("Add anyway"), Common::U32String(""), kAddAnyway);
+		_addAnywayButton = new ButtonWidget(this, "UnknownGameDialog.Add", _("Add anyway"), Common::U32String(), kAddAnyway);
 	} else {
 		_addAnywayButton = nullptr;
 	}
 
-	_closeButton = new ButtonWidget(this, "UnknownGameDialog.Close", detectedGame.canBeAdded ? _("Cancel") : _("Close"), Common::U32String(""), kClose);
+	_closeButton = new ButtonWidget(this, "UnknownGameDialog.Close", detectedGame.canBeAdded ? _("Cancel") : _("Close"), Common::U32String(), kClose);
 
 	//Check if we have clipboard functionality
 	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
-		_copyToClipboardButton = new ButtonWidget(this, "UnknownGameDialog.Copy", _("Copy to clipboard"), Common::U32String(""), kCopyToClipboard);
+		_copyToClipboardButton = new ButtonWidget(this, "UnknownGameDialog.Copy", _("Copy to clipboard"), Common::U32String(), kCopyToClipboard);
 	} else
 		_copyToClipboardButton = nullptr;
 
 	//Check if we have support for opening URLs
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
-		_openBugTrackerUrlButton = new ButtonWidget(this, "UnknownGameDialog.Report", _("Report game"), Common::U32String(""), kOpenBugtrackerURL);
+		_openBugTrackerUrlButton = new ButtonWidget(this, "UnknownGameDialog.Report", _("Report game"), Common::U32String(), kOpenBugtrackerURL);
 	} else
 		_openBugTrackerUrlButton = nullptr;
 

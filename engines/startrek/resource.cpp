@@ -40,27 +40,114 @@ Resource::Resource(Common::Platform platform, bool isDemo) : _platform(platform)
 			error("Could not load Star Trek Data");
 		assert(_macResFork->hasDataFork() && _macResFork->hasResFork());
 	}
+
+	readIndexFile();
 }
 
 Resource::~Resource() {
 	delete _macResFork;
 }
 
-/**
- * TODO:
- *   - Should return nullptr on failure to open a file?
- *   - This is supposed to cache results, return same FileStream on multiple accesses.
- *   - This is supposed to read from a "patches" folder which overrides files in the
- *     packed blob.
- */
-Common::MemoryReadStreamEndian *Resource::loadFile(Common::String filename, int fileIndex) {
-	filename.toUppercase();
+void Resource::readIndexFile() {
+	Common::SeekableReadStream *indexFile;
 
+	if (_platform == Common::kPlatformAmiga) {
+		indexFile = SearchMan.createReadStreamForMember("data000.dir");
+	} else if (_platform == Common::kPlatformMacintosh) {
+		indexFile = _macResFork->getResource("Directory");
+	} else {
+		indexFile = SearchMan.createReadStreamForMember("data.dir");
+	}
+
+	if (!indexFile)
+		error("Could not open directory file");
+
+	while (!indexFile->eos() && !indexFile->err()) {
+		_resources.push_back(getIndexEntry(indexFile));
+	}
+
+	delete indexFile;
+}
+
+Common::List<ResourceIndex> Resource::searchIndex(Common::String filename) {
+	Common::List<ResourceIndex> result;
+
+	for (Common::List<ResourceIndex>::const_iterator i = _resources.begin(), end = _resources.end(); i != end; ++i) {
+		if (i->fileName.contains(filename)) {
+			result.push_back(*i);
+		}
+	}
+
+	return result;
+}
+
+ResourceIndex Resource::getIndex(Common::String filename) {
+	ResourceIndex index;
+
+	for (Common::List<ResourceIndex>::const_iterator i = _resources.begin(), end = _resources.end(); i != end; ++i) {
+		if (filename.matchString(i->fileName, true)) {
+			index = *i;
+			index.foundData = true;
+			return index;
+		}
+	}
+
+	return index;
+}
+
+ResourceIndex Resource::getIndexEntry(Common::SeekableReadStream *indexFile) {
+	ResourceIndex index;
+
+	Common::String currentFile;
+	for (byte i = 0; i < 8; i++) {
+		char c = indexFile->readByte();
+		if (c)
+			currentFile += c;
+	}
+
+	// The demo version has an empty entry in the end
+	if (currentFile.size() == 0)
+		return index;
+
+	currentFile += '.';
+
+	// Read extension
+	for (byte i = 0; i < 3; i++)
+		currentFile += indexFile->readByte();
+
+	index.fileName = currentFile;
+
+	if (_isDemo && _platform == Common::kPlatformDOS) {
+		indexFile->readByte();                       // Always 0?
+		index.fileCount = indexFile->readUint16LE(); // Always 1
+		assert(index.fileCount == 1);
+		index.indexOffset = indexFile->readUint32LE();
+		index.uncompressedSize = indexFile->readUint16LE();
+	} else {
+		if (_platform == Common::kPlatformAmiga)
+			index.indexOffset = (indexFile->readByte() << 16) + (indexFile->readByte() << 8) + indexFile->readByte();
+		else
+			index.indexOffset = indexFile->readByte() + (indexFile->readByte() << 8) + (indexFile->readByte() << 16);
+
+		if (index.indexOffset & (1 << 23)) {
+			index.fileCount = (index.indexOffset >> 16) & 0x7F;
+			index.indexOffset = index.indexOffset & 0xFFFF;
+			if (index.fileCount == 0)
+				error("fileCount is 0 for %s", index.fileName.c_str());
+		} else {
+			index.fileCount = 1;
+		}
+	}
+
+	return index;
+}
+
+// Files can be accessed "sequentially" if their filenames are the same except for
+// the last character being incremented by one.
+Common::MemoryReadStreamEndian *Resource::loadSequentialFile(Common::String filename, int fileIndex) {
 	Common::String basename, extension;
 
-	bool bigEndian = _platform == Common::kPlatformAmiga;
-
-	for (int i = filename.size() - 1; ; i--) {
+	for (int i = filename.size() - 1;; i--) {
 		if (filename[i] == '.') {
 			basename = filename;
 			extension = filename;
@@ -70,151 +157,97 @@ Common::MemoryReadStreamEndian *Resource::loadFile(Common::String filename, int 
 		}
 	}
 
-	// FIXME: don't know if this is right, or if it goes here
-	while (!basename.empty() && basename.lastChar() == ' ') {
-		basename.erase(basename.size() - 1, 1);
+	if ((basename.lastChar() >= '1' && basename.lastChar() <= '9') ||
+	    (basename.lastChar() >= 'b' && basename.lastChar() <= 'z') ||
+	    (basename.lastChar() >= 'B' && basename.lastChar() <= 'Z')) {
+		basename.setChar(basename.lastChar() - 1, basename.size() - 1);
+		return loadFile(basename + "." + extension, fileIndex + 1);
+	} else {
+		return nullptr;
+	}
+}
+
+uint32 Resource::getSequentialFileOffset(uint32 offset, int fileIndex) {
+	Common::SeekableReadStream *dataRunFile = SearchMan.createReadStreamForMember("data.run"); // FIXME: Amiga & Mac need this implemented
+	if (!dataRunFile)
+		error("Could not open sequential file");
+
+	dataRunFile->seek(offset);
+
+	offset = dataRunFile->readByte() + (dataRunFile->readByte() << 8) + (dataRunFile->readByte() << 16);
+	//offset &= 0xFFFFFE;
+
+	for (uint16 i = 0; i < fileIndex; i++) {
+		offset += dataRunFile->readUint16LE();
 	}
 
-	filename = basename + '.' + extension;
+	delete dataRunFile;
 
-	// TODO: Re-enable this when more work has been done on the demo
-	/*
-	// The Judgment Rites demo has its files not in the standard archive
-	if (getGameType() == GType_STJR && _isDemo) {
-		Common::File *file = new Common::File();
-		if (!file->open(filename.c_str())) {
-			delete file;
-			error("Could not find file \'%s\'", filename.c_str());
-		}
-		int32 size = file->size();
+	return offset;
+}
+
+/**
+ * TODO:
+ *   - This is supposed to cache results, return same FileStream on multiple accesses.
+ */
+Common::MemoryReadStreamEndian *Resource::loadFile(Common::String filename, int fileIndex, bool errorOnNotFound) {
+	bool bigEndian = _platform == Common::kPlatformAmiga;
+
+	// Load external patches
+	if (Common::File::exists(filename)) {
+		Common::File *patch = new Common::File();
+		patch->open(filename);
+		int32 size = patch->size();
 		byte *data = (byte *)malloc(size);
-		file->read(data, size);
-		delete file;
+		patch->read(data, size);
+		delete patch;
 		return new Common::MemoryReadStreamEndian(data, size, bigEndian, DisposeAfterUse::YES);
 	}
-	*/
 
-	Common::SeekableReadStream *indexFile = 0;
+	ResourceIndex index = getIndex(filename);
 
-	if (_platform == Common::kPlatformAmiga) {
-		indexFile = SearchMan.createReadStreamForMember("data000.dir");
-		if (!indexFile)
-			error("Could not open data000.dir");
-	} else if (_platform == Common::kPlatformMacintosh) {
-		indexFile = _macResFork->getResource("Directory");
-		if (!indexFile)
-			error("Could not find 'Directory' resource in 'Star Trek Data'");
-	} else {
-		indexFile = SearchMan.createReadStreamForMember("data.dir");
-		if (!indexFile)
-			error("Could not open data.dir");
-	}
-
-	uint32 indexOffset = 0;
-	bool foundData = false;
-	uint16 fileCount = 1;
-	uint16 uncompressedSize = 0;
-
-	while (!indexFile->eos() && !indexFile->err()) {
-		Common::String testfile;
-		for (byte i = 0; i < 8; i++) {
-			char c = indexFile->readByte();
-			if (c)
-				testfile += c;
-		}
-		testfile += '.';
-
-		for (byte i = 0; i < 3; i++)
-			testfile += indexFile->readByte();
-
-		if (_isDemo && _platform == Common::kPlatformDOS) {
-			indexFile->readByte(); // Always 0?
-			fileCount = indexFile->readUint16LE(); // Always 1
-			indexOffset = indexFile->readUint32LE();
-			uncompressedSize = indexFile->readUint16LE();
+	if (!index.foundData) {
+		Common::MemoryReadStreamEndian *result = loadSequentialFile(filename, fileIndex);
+		if (result) {
+			return result;
 		} else {
-			if (_platform == Common::kPlatformAmiga)
-				indexOffset = (indexFile->readByte() << 16) + (indexFile->readByte() << 8) + indexFile->readByte();
+			if (errorOnNotFound)
+				error("Could not find file \'%s\'", filename.c_str());
 			else
-				indexOffset = indexFile->readByte() + (indexFile->readByte() << 8) + (indexFile->readByte() << 16);
-
-			if (indexOffset & (1 << 23)) {
-				fileCount = (indexOffset >> 16) & 0x7F;
-				indexOffset = indexOffset & 0xFFFF;
-				assert(fileCount > 1);
-			} else {
-				fileCount = 1;
-			}
-		}
-
-		if (filename.matchString(testfile)) {
-			foundData = true;
-			break;
+				return nullptr;
 		}
 	}
 
-	delete indexFile;
-
-	if (!foundData) {
-		// Files can be accessed "sequentially" if their filenames are the same except for
-		// the last character being incremented by one.
-		if ((basename.lastChar() >= '1' && basename.lastChar() <= '9') ||
-		        (basename.lastChar() >= 'B' && basename.lastChar() <= 'Z')) {
-			basename.setChar(basename.lastChar() - 1, basename.size() - 1);
-			return loadFile(basename + "." + extension, fileIndex + 1);
-		} else
-			error("Could not find file \'%s\'", filename.c_str());
-	}
-
-	if (fileIndex >= fileCount)
-		error("Tried to access file index %d for file '%s' which doesn't exist.", fileIndex, filename.c_str());
+	if (fileIndex >= index.fileCount)
+		error("Tried to access file index %d for file '%s', which doesn't exist.", fileIndex, filename.c_str());
 
 	Common::SeekableReadStream *dataFile = 0;
-	Common::SeekableReadStream *dataRunFile = 0; // FIXME: Amiga & Mac need this implemented
 
 	if (_platform == Common::kPlatformAmiga) {
 		dataFile = SearchMan.createReadStreamForMember("data.000");
-		if (!dataFile)
-			error("Could not open data.000");
 	} else if (_platform == Common::kPlatformMacintosh) {
 		dataFile = _macResFork->getDataFork();
-		if (!dataFile)
-			error("Could not get 'Star Trek Data' data fork");
 	} else {
 		dataFile = SearchMan.createReadStreamForMember("data.001");
-		if (!dataFile)
-			error("Could not open data.001");
-		dataRunFile = SearchMan.createReadStreamForMember("data.run");
-		if (!dataFile)
-			error("Could not open data.run");
 	}
+
+	if (!dataFile)
+		error("Could not open data file");
+
+	if (index.fileCount != 1)
+		index.indexOffset = getSequentialFileOffset(index.indexOffset, fileIndex);
+	dataFile->seek(index.indexOffset);
 
 	Common::SeekableReadStream *stream;
 	if (_isDemo && _platform == Common::kPlatformDOS) {
-		assert(fileCount == 1); // Sanity check...
-		stream = dataFile->readStream(uncompressedSize);
+		stream = dataFile->readStream(index.uncompressedSize);
 	} else {
-		if (fileCount != 1) {
-			dataRunFile->seek(indexOffset);
-
-			indexOffset = dataRunFile->readByte() + (dataRunFile->readByte() << 8) + (dataRunFile->readByte() << 16);
-			//indexOffset &= 0xFFFFFE;
-
-			for (uint16 i = 0; i < fileIndex; i++) {
-				uint16 size = dataRunFile->readUint16LE();
-				indexOffset += size;
-			}
-		}
-		dataFile->seek(indexOffset);
-
-		uncompressedSize = (_platform == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
-		uint16 compressedSize = (_platform == Common::kPlatformAmiga) ? dataFile->readUint16BE() : dataFile->readUint16LE();
-
+		uint16 uncompressedSize = bigEndian ? dataFile->readUint16BE() : dataFile->readUint16LE();
+		uint16   compressedSize = bigEndian ? dataFile->readUint16BE() : dataFile->readUint16LE();
 		stream = decodeLZSS(dataFile->readStream(compressedSize), uncompressedSize);
 	}
 
 	delete dataFile;
-	delete dataRunFile;
 
 	int32 size = stream->size();
 	byte *data = (byte *)malloc(size);

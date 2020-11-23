@@ -57,8 +57,8 @@ void MenuOptions::newGame() {
 	// intro screen 1 - twinsun
 	_engine->_screens->loadImage(RESSHQR_INTROSCREEN1IMG);
 
-	_engine->_text->newGameVar4 = 0;
-	_engine->_text->newGameVar5 = 1;
+	_engine->_text->drawTextBoxBackground = false;
+	_engine->_text->renderTextTriangle = true;
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->textClipFull();
@@ -91,8 +91,8 @@ void MenuOptions::newGame() {
 	_engine->_screens->clearScreen();
 	_engine->flip();
 
-	_engine->_text->newGameVar4 = 1;
-	_engine->_text->newGameVar5 = 0;
+	_engine->_text->drawTextBoxBackground = true;
+	_engine->_text->renderTextTriangle = false;
 
 	// set main palette back
 	_engine->setPalette(_engine->_screens->paletteRGBA);
@@ -137,7 +137,7 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y, bool selected) {
 	if (selected) {
 		_engine->_interface->drawSplittedBox(left, top, right, bottom, 91);
 	} else {
-		_engine->_interface->blitBox(left, top, right, bottom, (const int8 *)_engine->workVideoBuffer.getPixels(), left, top, (int8 *)_engine->frontVideoBuffer.getPixels());
+		_engine->_interface->blitBox(left, top, right, bottom, _engine->workVideoBuffer, left, top, _engine->frontVideoBuffer);
 		_engine->_interface->drawTransparentBox(left, top, right, bottom, 4);
 	}
 
@@ -341,7 +341,8 @@ int MenuOptions::chooseSave(int textIdx, bool showEmptySlots) {
 
 	if (showEmptySlots) {
 		while (saveFiles.getButtonCount() < maxButtons) {
-			saveFiles.addButton("EMPTY");
+			// the first button is the back button - to subtract that one again to get the real slot index
+			saveFiles.addButton("EMPTY", saveFiles.getButtonCount() - 1);
 		}
 	}
 
@@ -352,8 +353,9 @@ int MenuOptions::chooseSave(int textIdx, bool showEmptySlots) {
 		case TextId::kReturnMenu:
 			return -1;
 		default:
-			// the first button is the back button - to subtract that one again to get the real slot index
-			return saveFiles.getButtonState(id);
+			const int16 slot = saveFiles.getButtonState(id);
+			debug("Selected slot %d for saving", slot);
+			return slot;
 		}
 	}
 

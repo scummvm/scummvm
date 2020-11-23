@@ -211,6 +211,10 @@ struct TrekEvent {
 	uint32 tick;
 };
 
+struct ComputerTopic {
+	Common::String fileName;
+	Common::String topic;
+};
 
 class Graphics;
 class IWFile;
@@ -232,8 +236,13 @@ public:
 	void runTransportSequence(const Common::String &name);
 
 	// Bridge
-	void initBridge(bool b) {}; // TODO
-	void cleanupBridge() {}; // TODO
+	void initBridge(bool b);
+	void loadBridge();
+	void loadBridgeActors();
+	void cleanupBridge();
+	void runBridge();
+	void handleBridgeEvents();
+	void handleBridgeComputer();
 
 	void playMovie(Common::String filename);
 	void playMovieMac(Common::String filename);
@@ -498,8 +507,10 @@ public:
 	 * Effectively replaces the "readTextFromRdf" function.
 	 */
 	String readTextFromArrayWithChoices(int choiceIndex, uintptr data, String *headerTextOutput);
+	Common::String readTextFromFoundComputerTopics(int choiceIndex, uintptr data, String *headerTextOutput);
 
 	Common::String showCodeInputBox();
+	Common::String showComputerInputBox();
 	void redrawTextInput();
 	void addCharToTextInputBuffer(char c);
 	/**
@@ -536,6 +547,7 @@ public:
 	 */
 	void drawMenuButtonOutline(Bitmap *bitmap, byte color);
 	void showOptionsMenu(int x, int y);
+	void showBridgeMenu(Common::String menu, int x, int y);
 	/**
 	 * Show the "action selection" menu, ie. look, talk, etc.
 	 */
@@ -728,10 +740,18 @@ public:
 	Resource *_resource;
 
 private:
+	int leftClickEvent();
+	int rightClickEvent();
+	int mouseMoveEvent();
+	int lookupNextAction(const int *lookupArray, int action);
+	void loadBridgeComputerTopics();
+	void bridgeLeftClick();
+
 	Common::RandomSource _randomSource;
 	Common::SineTable _sineTable;
 	Common::CosineTable _cosineTable;
 	Room *_room;
+	Common::List<ComputerTopic> _computerTopics;
 };
 
 // Static function

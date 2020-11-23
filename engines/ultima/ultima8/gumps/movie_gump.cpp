@@ -77,6 +77,8 @@ void MovieGump::InitGump(Gump *newparent, bool take_focus) {
 void MovieGump::Close(bool no_del) {
 	Mouse::get_instance()->popMouseCursor();
 
+	_player->stop();
+
 	ModalGump::Close(no_del);
 }
 
@@ -190,6 +192,37 @@ uint32 MovieGump::I_playMovieOverlay(const uint8 *args,
 
 	return 0;
 }
+
+uint32 MovieGump::I_playMovieCutscene(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ITEM_FROM_PTR(item);
+	ARG_STRING(name);
+	ARG_UINT16(x);
+	ARG_UINT16(y);
+
+	FileSystem *filesys = FileSystem::get_instance();
+	if (item) {
+		const Std::string filename = Std::string::format("@game/flics/%s.avi", name.c_str());
+		Common::SeekableReadStream *rs = filesys->ReadFile(filename);
+		if (!rs) {
+			// Try with a "0" in the name
+			const Std::string adjustedfn = Std::string::format("@game/flics/0%s.avi", name.c_str());
+			rs = filesys->ReadFile(adjustedfn);
+			if (!rs) {
+				warning("I_playMovieCutscene: movie %s not found", name.c_str());
+				return 0;
+			}
+		}
+
+		// TODO: Support playback with gap lines for the CRT effect
+		Gump *gump = new MovieGump(x * 3, y * 3, rs, false);
+		gump->InitGump(nullptr, true);
+		gump->setRelativePosition(CENTER);
+	}
+
+	return 0;
+
+}
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

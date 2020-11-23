@@ -74,6 +74,8 @@ private:
 
 	void outputFilter(std::ostream &filters, const FileEntries &files, const std::string &action);
 	void outputFiles(std::ostream &projectFile, const FileEntries &files, const std::string &action);
+
+	void outputNasmCommand(std::ostream &projectFile, const std::string &config, const std::string &prefix);
 };
 
 } // namespace CreateProjectTool

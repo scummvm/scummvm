@@ -170,7 +170,7 @@ public:
 
   // Set a window caption or any other comparable status display to the
   // given value.
-  void setWindowCaption(const char *caption);
+  void setWindowCaption(const Common::U32String &caption);
 
   // Modulatized backend
   Audio::Mixer *getMixer() { return _mixer; }

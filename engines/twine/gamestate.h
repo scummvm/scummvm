@@ -92,6 +92,30 @@ private:
 public:
 	GameState(TwinEEngine *engine);
 
+	inline bool inventoryDisabled() const {
+		return gameFlags[GAMEFLAG_INVENTORY_DISABLED] != 0;
+	}
+
+	inline bool hasOpenedFunfrocksSafe() const {
+		return gameFlags[30] != 0;
+	}
+
+	inline bool hasItem(InventoryItems item) const {
+		return gameFlags[item] != 0;
+	}
+
+	inline void giveItem(InventoryItems item) {
+		gameFlags[item] = 1;
+	}
+
+	inline void removeItem(InventoryItems item) {
+		gameFlags[item] = 0;
+	}
+
+	inline void setFlag(uint8 index, uint8 value) {
+		gameFlags[index] = value;
+	}
+
 	/**
 	 * LBA engine game flags to save quest states
 	 *
@@ -113,7 +137,25 @@ public:
 	// TODO: why not NUM_GAME_FLAGS?
 	uint8 gameFlags[256];
 
-	/** LBA engine chapter */
+	/**
+	 * LBA engine chapter
+	 *  0: Inprisoned
+	 *  1: Escape from the citadel
+	 *  2: Zoe got captured
+	 *  3: - looking for a young girl
+	 *  4: - looking for a "friend"
+	 *  5: The legend of Sendell
+	 *  6: The book of Bu
+	 *  7: Pirate LeBorne
+	 *  8: - "good day"
+	 *  9: - "good day"
+	 * 10: - ?? nothing
+	 * 11: - ?? nothing
+	 * 12: - ?? nothing
+	 * 13: - looking for plans
+	 * 14: - still looking for plans
+	 * 15: The final showdown - "good day"
+	 */
 	int16 gameChapter = 0;
 
 	/** Magic ball type index */
@@ -141,7 +183,10 @@ public:
 	/** Its using FunFrock Sabre */
 	bool usingSabre = false;
 
-	/** Inventory used flags */
+	/**
+	 * Inventory used flags
+	 * 0 means never used, 1 means already used and automatic re-use
+	 */
 	uint8 inventoryFlags[NUM_INVENTORY_ITEMS];
 
 	uint8 holomapFlags[NUM_LOCATIONS]; // GV14

@@ -75,12 +75,12 @@ static bool World_FinishedAvatarMoveTimeout() {
 
 
 static inline int32 randomOf(int32 max) {
-	return getRandom() % max;
+	return (max > 0 ? getRandom() % max : 0);
 }
 
 AttackProcess::AttackProcess() : Process(), _block(0), _target(1), _tactic(0), _tacticDat(nullptr),
 _tacticDatReadStream(nullptr), _tacticDatStartOffset(0), _soundNo(-1), _playedStartSound(false),
-_npcInitialDir(dir_invalid), _field57(0), _field59(0), _field7f(false), _field96(false),
+_npcInitialDir(dir_invalid), _field57(0), _field59(0), _field7f(false), _field96(false), _field97(false),
 _isActivity9orB(false), _isActivityAorB(false), _timer3set(false), _timer2set(false),
 _doubleDelay(false), _wpnField8(1), _wpnBasedTimeout(0), _difficultyBasedTimeout(0), _timer2(0),
 _timer3(0), _timer4(0), _timer5(0), _soundTimestamp(0), _fireTimestamp(0) {
@@ -91,7 +91,7 @@ _timer3(0), _timer4(0), _timer5(0), _soundTimestamp(0), _fireTimestamp(0) {
 
 AttackProcess::AttackProcess(Actor *actor) : _block(0), _target(1), _tactic(0), _tacticDat(nullptr),
 _tacticDatReadStream(nullptr), _tacticDatStartOffset(0), _soundNo(-1), _playedStartSound(false),
-_field57(0), _field59(0), _field7f(false), _field96(false), _isActivity9orB(false),
+_field57(0), _field59(0), _field7f(false), _field96(false), _field97(false), _isActivity9orB(false),
 _isActivityAorB(false), _timer3set(false), _timer2set(false), _doubleDelay(false), _wpnField8(1),
 _wpnBasedTimeout(0), _difficultyBasedTimeout(0), _timer2(0), _timer3(0), _timer4(0), _timer5(0),
 _soundTimestamp(0), _fireTimestamp(0) {
@@ -465,7 +465,10 @@ void AttackProcess::run() {
 		{
 			uint16 offset = readNextWordRaw();
 			uint16 val = getAttackData(offset);
-			setAttackData(opcode, val / readNextWordWithData());
+			uint16 divisor = readNextWordWithData();
+			if (!divisor)
+				divisor = 1; // shouldn't happen in real data, but just to be sure..
+			setAttackData(offset, val / divisor);
 			return;
 		}
 		case 0xb4:

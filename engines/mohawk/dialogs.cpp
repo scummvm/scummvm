@@ -124,16 +124,16 @@ MystOptionsWidget::MystOptionsWidget(GuiObject *boss, const Common::String &name
 		assert(vm);
 
 		// I18N: Drop book page
-		_dropPageButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.DropPage", _("~D~rop Page"), Common::U32String(""), kDropCmd);
+		_dropPageButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.DropPage", _("~D~rop Page"), Common::U32String(), kDropCmd);
 
 		// Myst ME only has maps
 		if (vm->isGameVariant(GF_ME)) {
-			_showMapButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.ShowMap", _("Show ~M~ap"), Common::U32String(""), kMapCmd);
+			_showMapButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.ShowMap", _("Show ~M~ap"), Common::U32String(), kMapCmd);
 		}
 
 		// Myst demo only has a menu
 		if (vm->isGameVariant(GF_DEMO)) {
-			_returnToMenuButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.MainMenu", _("Main Men~u~"), Common::U32String(""), kMenuCmd);
+			_returnToMenuButton = new GUI::ButtonWidget(widgetsBoss(), "MystOptionsDialog.MainMenu", _("Main Men~u~"), Common::U32String(), kMenuCmd);
 		}
 
 		if (vm->isGameVariant(GF_25TH)) {

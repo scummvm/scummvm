@@ -25,6 +25,10 @@
 
 #include "common/scummsys.h"
 
+namespace Graphics {
+class ManagedSurface;
+}
+
 namespace TwinE {
 
 /** Screen top limit to display the texts */
@@ -75,7 +79,7 @@ public:
 	 * @param topDest start height to draw the button in destination buffer
 	 * @param dest destination screen buffer, in this case front buffer
 	 */
-	void blitBox(int32 left, int32 top, int32 right, int32 bottom, const int8 *source, int32 leftDest, int32 topDest, int8 *dest);
+	void blitBox(int32 left, int32 top, int32 right, int32 bottom, const Graphics::ManagedSurface &source, int32 leftDest, int32 topDest, Graphics::ManagedSurface &dest);
 
 	/**
 	 * Draws inside buttons transparent area

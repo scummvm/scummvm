@@ -57,8 +57,8 @@ SaveLoadCloudSyncProgressDialog::SaveLoadCloudSyncProgressDialog(bool canRunInBa
 	_progressBar->setValue(progress);
 	_progressBar->setEnabled(false);
 	_percentLabel = new StaticTextWidget(this, "SaveLoadCloudSyncProgress.PercentText", Common::String::format("%u %%", progress));
-	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", _("Cancel"), Common::U32String(""), kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
-	ButtonWidget *backgroundButton = new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", _("Run in background"), Common::U32String(""), kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
+	new ButtonWidget(this, "SaveLoadCloudSyncProgress.Cancel", _("Cancel"), Common::U32String(), kCancelSyncCmd, Common::ASCII_ESCAPE);	// Cancel dialog
+	ButtonWidget *backgroundButton = new ButtonWidget(this, "SaveLoadCloudSyncProgress.Background", _("Run in background"), Common::U32String(), kBackgroundSyncCmd, Common::ASCII_RETURN);	// Confirm dialog
 	backgroundButton->setEnabled(canRunInBackground);
 	g_gui.scheduleTopDialogRedraw();
 }
@@ -390,11 +390,11 @@ SaveLoadChooserSimple::SaveLoadChooserSimple(const U32String &title, const U32St
 	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, _("No playtime saved"), Graphics::kTextAlignCenter);
 
 	// Buttons
-	new ButtonWidget(this, "SaveLoadChooser.Cancel", _("Cancel"), Common::U32String(""), kCloseCmd);
-	_chooseButton = new ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, Common::U32String(""), kChooseCmd);
+	new ButtonWidget(this, "SaveLoadChooser.Cancel", _("Cancel"), Common::U32String(), kCloseCmd);
+	_chooseButton = new ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, Common::U32String(), kChooseCmd);
 	_chooseButton->setEnabled(false);
 
-	_deleteButton = new ButtonWidget(this, "SaveLoadChooser.Delete", _("Delete"), Common::U32String(""), kDelCmd);
+	_deleteButton = new ButtonWidget(this, "SaveLoadChooser.Delete", _("Delete"), Common::U32String(), kDelCmd);
 	_deleteButton->setEnabled(false);
 
 	_delSupport = _metaInfoSupport = _thumbnailSupport = false;
@@ -467,7 +467,9 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 				_metaEngine->removeSaveState(_target.c_str(), _saveList[selItem].getSaveSlot());
 
 				setResult(-1);
-				_list->setSelected(-1);
+				int scrollPos = _list->getCurrentScrollPos();
+				_list->setSelected(-1); // resets scroll pos
+				_list->scrollTo(scrollPos);
 
 				updateSaveList();
 				updateSelection(true);
@@ -616,7 +618,7 @@ void SaveLoadChooserSimple::updateSelection(bool redraw) {
 
 			if (_chooseButton->isEnabled() && _list->getSelectedString() == _("Untitled saved game") &&
 					_list->getSelectionColor() == ThemeEngine::kFontColorAlternate) {
-				_list->setEditString(Common::U32String(""));
+				_list->setEditString(Common::U32String());
 				_list->setEditColor(ThemeEngine::kFontColorNormal);
 			}
 		}
@@ -764,11 +766,11 @@ SaveLoadChooserGrid::SaveLoadChooserGrid(const Common::U32String &title, bool sa
 	list->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
 
 	// Buttons
-	new ButtonWidget(this, "SaveLoadChooser.Delete", _("Cancel"), Common::U32String(""), kCloseCmd);
-	_nextButton = new ButtonWidget(this, "SaveLoadChooser.Choose", _("Next"), Common::U32String(""), kNextCmd);
+	new ButtonWidget(this, "SaveLoadChooser.Delete", _("Cancel"), Common::U32String(), kCloseCmd);
+	_nextButton = new ButtonWidget(this, "SaveLoadChooser.Choose", _("Next"), Common::U32String(), kNextCmd);
 	_nextButton->setEnabled(false);
 
-	_prevButton = new ButtonWidget(this, "SaveLoadChooser.Cancel", _("Prev"), Common::U32String(""), kPrevCmd);
+	_prevButton = new ButtonWidget(this, "SaveLoadChooser.Cancel", _("Prev"), Common::U32String(), kPrevCmd);
 	_prevButton->setEnabled(false);
 
 	// Page display
@@ -994,7 +996,7 @@ void SaveLoadChooserGrid::reflowLayout() {
 				buttonCmd += 1;
 			}
 
-			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, Common::U32String(""), buttonCmd);
+			PicButtonWidget *button = new PicButtonWidget(container, dstX, dstY, buttonWidth, buttonHeight, Common::U32String(), buttonCmd);
 			dstY += buttonHeight;
 
 			StaticTextWidget *description = new StaticTextWidget(container, dstX, dstY, buttonWidth, kLineHeight, Common::String(), Graphics::kTextAlignStart);
@@ -1160,10 +1162,10 @@ SavenameDialog::SavenameDialog()
 	: Dialog("SavenameDialog") {
 	_title = new StaticTextWidget(this, "SavenameDialog.DescriptionText", Common::String());
 
-	new ButtonWidget(this, "SavenameDialog.Cancel", _("Cancel"), Common::U32String(""), kCloseCmd);
-	new ButtonWidget(this, "SavenameDialog.Ok", _("OK"), Common::U32String(""), kOKCmd);
+	new ButtonWidget(this, "SavenameDialog.Cancel", _("Cancel"), Common::U32String(), kCloseCmd);
+	new ButtonWidget(this, "SavenameDialog.Ok", _("OK"), Common::U32String(), kOKCmd);
 
-	_description = new EditTextWidget(this, "SavenameDialog.Description", Common::U32String(), Common::U32String(""), 0, kOKCmd);
+	_description = new EditTextWidget(this, "SavenameDialog.Description", Common::U32String(), Common::U32String(), 0, kOKCmd);
 
 	_targetSlot = 0;
 }

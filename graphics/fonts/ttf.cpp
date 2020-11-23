@@ -31,7 +31,7 @@
 #include "graphics/font.h"
 #include "graphics/surface.h"
 
-#include "common/encoding.h"
+#include "common/ustr.h"
 #include "common/file.h"
 #include "common/config-manager.h"
 #include "common/singleton.h"
@@ -883,9 +883,7 @@ static bool matchFaceName(const Common::U32String &faceName, const FT_Face &face
 			if (aname.encoding_id == TT_MS_ID_SYMBOL_CS ||
 			        aname.encoding_id == TT_MS_ID_UNICODE_CS) {
 				// MS local name in UTF-16
-				char *u32 = Common::Encoding::convert("utf-32", "utf-16be", (char *)aname.string, aname.string_len);
-				Common::U32String localName((uint32 *)u32);
-				free(u32);
+				Common::U32String localName = Common::U32String::decodeUTF16BE((uint16 *) aname.string, aname.string_len);
 
 				if (faceName == localName) {
 					return true;

@@ -155,6 +155,7 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 
 	mixer->stopHandle(_soundHandle);
 	_soundHandle = Audio::SoundHandle();
+	_currentTrack = track;
 
 	if (track > 0) {
 		// TODO: It's a bit ugly having this here.  Should be in GameData.
@@ -201,6 +202,27 @@ bool RemorseMusicProcess::loadData(Common::ReadStream *rs, uint32 version) {
 
 	return true;
 }
+
+bool RemorseMusicProcess::isPlaying() {
+	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
+	return _currentTrack != 0 && mixer && mixer->isSoundHandleActive(_soundHandle);
+}
+
+void RemorseMusicProcess::pauseMusic() {
+	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
+	assert(mixer);
+	if (mixer->isSoundHandleActive(_soundHandle))
+		mixer->pauseHandle(_soundHandle, true);
+}
+
+void RemorseMusicProcess::unpauseMusic() {
+	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
+	assert(mixer);
+	if (mixer->isSoundHandleActive(_soundHandle))
+		mixer->pauseHandle(_soundHandle, false);
+}
+
+
 
 } // End of namespace Ultima8
 } // End of namespace Ultima

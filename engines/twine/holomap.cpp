@@ -86,11 +86,9 @@ void Holomap::loadGfxSub2() {
 }
 
 void Holomap::loadHolomapGFX() {
-	uint8 *videoPtr1 = (uint8 *)_engine->workVideoBuffer.getPixels();
-	uint8 *videoPtr3 = videoPtr1 + 7854;
-	uint8 *videoPtr4 = videoPtr1 + 8398;
-
-	uint8 *videoPtr5 = videoPtr1 + 73934;
+	uint8 *videoPtr3 = (uint8 *)_engine->workVideoBuffer.getBasePtr(174, 12);
+	uint8 *videoPtr4 = (uint8 *)_engine->workVideoBuffer.getBasePtr(78, 13);
+	uint8 *videoPtr5 = (uint8 *)_engine->workVideoBuffer.getBasePtr(334, 115);
 
 	HQR::getEntry(videoPtr3, Resources::HQR_RESS_FILE, RESSHQR_HOLOSURFACE);
 	HQR::getEntry(videoPtr4, Resources::HQR_RESS_FILE, RESSHQR_HOLOIMG);
@@ -106,6 +104,7 @@ void Holomap::loadHolomapGFX() {
 	loadGfxSub(videoPtr8);
 
 	// TODO:
+	// uint8 *videoPtr1 = (uint8 *)_engine->workVideoBuffer.getPixels();
 	// uint8 *videoPtr2 = videoPtr1 + 4488;
 	// uint8 *videoPtr11 = videoPtr8 + HQR::getEntry(videoPtr8, Resources::HQR_RESS_FILE, RESSHQR_HOLOPOINTMDL);
 	// uint8 *videoPtr10 = videoPtr11 + 4488;
@@ -139,6 +138,7 @@ void Holomap::drawHolomapTitle(int32 width, int32 height) {
 }
 
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
+	debug("Draw trajectory index %i", trajectoryIndex);
 	// TODO
 }
 
@@ -158,15 +158,15 @@ void Holomap::processHolomap() {
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
 	loadHolomapGFX();
-	drawHolomapTitle(320, 25);
-	_engine->_renderer->setCameraPosition(320, 190, 128, 1024, 1024);
+	drawHolomapTitle(SCREEN_WIDTH / 2, 25);
+	_engine->_renderer->setCameraPosition(SCREEN_WIDTH / 2, 190, 128, 1024, 1024);
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->setFontCrossColor(9);
 
 	// TODO
 
-	_engine->_text->newGameVar4 = 1;
+	_engine->_text->drawTextBoxBackground = true;
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
 	_engine->_scene->alphaLight = alphaLightTmp;
 	_engine->_scene->betaLight = betaLightTmp;

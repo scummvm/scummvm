@@ -93,7 +93,8 @@ struct MouseStatusStruct {
 class ScopedKeyMap {
 private:
 	TwinEEngine* _engine;
-	Common::String _prevKeyMap;
+	bool _changed;
+	Common::String _keymap;
 public:
 	ScopedKeyMap(TwinEEngine* engine, const char *id);
 	~ScopedKeyMap();
@@ -109,14 +110,12 @@ private:
 public:
 	Input(TwinEEngine *engine);
 
-	int16 cursorKeys = 0;
-	int16 pressedKey = 0;
-
 	/**
 	 * @brief Dependent on the context we are currently in the game, we might want to disable certain keymaps.
 	 * Like disabling ui keymaps when we are in-game - or vice versa.
 	 */
 	void enableKeyMap(const char *id);
+	bool enableAdditionalKeyMap(const char *id, bool enable);
 
 	const Common::String currentKeyMap() const;
 
@@ -128,6 +127,8 @@ public:
 	 * @sa isPressed()
 	 */
 	bool isActionActive(TwinEActionType actionType, bool onlyFirstTime = true) const;
+
+	bool isMouseHovering(int32 left, int32 top, int32 right, int32 bottom) const;
 
 	/**
 	 * @brief If the action is active, the internal state is reset and a following call of this method won't return
@@ -147,9 +148,12 @@ public:
 	 */
 	void getMousePositions(MouseStatusStruct *mouseData);
 
+	/**
+	 * @brief Updates the internal action states
+	 */
 	void readKeys();
-	uint8 processCustomEngineEventStart(const Common::Event& event);
-	uint8 processCustomEngineEventEnd(const Common::Event& event);
+	void processCustomEngineEventStart(const Common::Event& event);
+	void processCustomEngineEventEnd(const Common::Event& event);
 };
 
 inline const Common::String Input::currentKeyMap() const {

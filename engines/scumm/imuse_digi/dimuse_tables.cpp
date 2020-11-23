@@ -473,6 +473,27 @@ const imuseComiTable _comiSeqMusicTable[] = {
 	{0,   -1, "",                0, 0,    0, ""}
 };
 
+const imuseComiTable _comiDemoStateMusicTable[] = {
+	{ 0, 1000, "STATE_NULL",      0, 0,    0, "" },         /* 00 */
+	{ 0, 1001, "stateNoChange",   0, 0,    0, "" },         /* 01 */
+	{ 3, 1100, "stateHold1",      2, 0,   60, "in1.imx" },  /* 02 */
+	{ 0, 1001, "empty",           0, 0,    0, "" },         /* 03 */
+	{ 3, 1120, "stateHold2",      4, 0,   60, "in2.imx" },  /* 04 */
+	{ 0, 1001, "empty",           0, 0,    0, "" },         /* 05 */
+	{ 0, 1001, "empty",           0, 0,    0, "" },         /* 06 */
+	{ 0, 1001, "empty",           0, 0,    0, "" },         /* 07 */
+	{ 3, 1140, "stateWaterline1", 2, 0,   60, "out1.imx" }, /* 08 */
+	{ 3, 1150, "stateWaterline2", 4, 0,   60, "out2.imx" }, /* 09 */
+	{ 0, 1001, "empty",           0, 0,    0, "" },         /* 10 */
+	{ 0, 1001, "empty",           0, 0,    0, "" },         /* 11 */
+	{ 0, 1001, "empty",           0, 0,    0, "" },         /* 12 */
+	{ 0, 1001, "empty",           0, 0,    0, "" },         /* 13 */
+	{ 0, 1001, "empty",           0, 0,    0, "" },         /* 14 */
+	{ 0, 1001, "empty",           0, 0,    0, "" },         /* 15 */
+	{ 3, 1210, "stateCannon",     4, 0,   60, "gun.imx" },  /* 16 */
+	{ 0,   -1, "",                0, 0,    0, "" }
+};
+
 const imuseFtStateTable _ftStateMusicTable[] = {
 	{"",         0,  0,    "STATE_NULL"          },
 	{"",         4,  127,  "stateKstandOutside"  },

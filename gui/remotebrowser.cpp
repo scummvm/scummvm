@@ -57,8 +57,8 @@ RemoteBrowserDialog::RemoteBrowserDialog(const Common::U32String &title):
 		new ButtonWidget(this, "Browser.Up", _("Go up"), _("Go to previous directory level"), kGoUpCmd);
 	else
 		new ButtonWidget(this, "Browser.Up", _c("Go up", "lowres"), _("Go to previous directory level"), kGoUpCmd);
-	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), Common::U32String(""), kCloseCmd);
-	new ButtonWidget(this, "Browser.Choose", _("Choose"), Common::U32String(""), kChooseCmd);
+	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), Common::U32String(), kCloseCmd);
+	new ButtonWidget(this, "Browser.Choose", _("Choose"), Common::U32String(), kChooseCmd);
 }
 
 RemoteBrowserDialog::~RemoteBrowserDialog() {

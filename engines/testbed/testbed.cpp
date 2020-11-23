@@ -40,7 +40,6 @@
 #include "testbed/networking.h"
 #include "testbed/savegame.h"
 #include "testbed/sound.h"
-#include "testbed/encoding.h"
 #include "testbed/testbed.h"
 #ifdef USE_CLOUD
 #include "testbed/cloud.h"
@@ -169,8 +168,6 @@ void TestbedEngine::pushTestsuites(Common::Array<Testsuite *> &testsuiteList) {
 	ts = new WebserverTestSuite();
 	testsuiteList.push_back(ts);
 #endif
-	ts = new EncodingTestSuite();
-	testsuiteList.push_back(ts);
 }
 
 TestbedEngine::~TestbedEngine() {

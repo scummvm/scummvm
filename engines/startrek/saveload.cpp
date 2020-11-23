@@ -250,6 +250,7 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 				for (uint j = 0; j < 16 - a->animFilename.size() - 1; ++j)
 					ser.syncAsByte(filler);	// make sure that exactly 16 bytes are synced
 			}
+			a->animFilename.trim();
 
 			ser.syncAsUint16LE(a->animType);
 
@@ -261,6 +262,8 @@ bool StarTrekEngine::saveOrLoadGameData(Common::SeekableReadStream *in, Common::
 				for (uint j = 0; j < 10 - a->bitmapFilename.size() - 1; ++j)
 					ser.syncAsByte(filler);	// make sure that exactly 10 bytes are synced
 			}
+			a->bitmapFilename.trim();
+
 			a->scale.saveLoadWithSerializer(ser);
 			// Can't save "animFile" (will be reloaded)
 			ser.syncAsUint16LE(a->numAnimFrames);

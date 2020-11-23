@@ -72,6 +72,14 @@ public:
 	//! Bring back the track state from before it was put on hold
 	virtual void restoreTrackState() = 0;
 
+	//! Is a track currently playing?
+	virtual bool isPlaying() = 0;
+
+	//! Pause the currently playing track
+	virtual void pauseMusic() = 0;
+	//! Resume the current track after pausing
+	virtual void unpauseMusic() = 0;
+
 	INTRINSIC(I_playMusic);
 	INTRINSIC(I_stopMusic);
 	INTRINSIC(I_pauseMusic);

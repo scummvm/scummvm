@@ -40,6 +40,18 @@ struct ActorMoveStruct {
 	int16 to = 0;
 	int16 numOfStep = 0;
 	int32 timeOfChange = 0;
+
+	/**
+	 * Get actor real angle
+	 * @param time engine time used for interpolation
+	 */
+	int32 getRealAngle(int32 time);
+
+	/**
+	 * Get actor step
+	 * @param time engine time used for interpolation
+	 */
+	int32 getRealValue(int32 time);
 };
 
 /** Actors zone volumique points structure */
@@ -70,7 +82,7 @@ struct StaticFlagsStruct {
 	uint16 bCanBePushed : 1;                // 0x0010
 	uint16 bComputeLowCollision : 1;        // 0x0020
 	uint16 bCanDrown : 1;                   // 0x0040
-	uint16 bUnk80 : 1;                      // 0x0080
+	uint16 bComputeCollisionWithFloor : 1;  // 0x0080
 	uint16 bUnk0100 : 1;                    // 0x0100
 	uint16 bIsHidden : 1;                   // 0x0200
 	uint16 bIsSpriteActor : 1;              // 0x0400
@@ -102,12 +114,41 @@ struct DynamicFlagsStruct {
 	uint16 bUnk8000 : 1;          // 0x8000 unused
 };
 
-/** Actors structure */
+/**
+ * Bonus type flags - a bitfield value, of which the bits mean:
+ * bit 8: clover leaf,
+ * bit 7: small key,
+ * bit 6: magic,
+ * bit 5: life,
+ * bit 4: money,
+ * If more than one type of bonus is selected, the actual type of bonus
+ * will be chosen randomly each time player uses Action.
+ */
+struct BonusParameter {
+	uint16 unk1 : 1;
+	uint16 unk2 : 1;
+	uint16 unk3 : 1;
+	uint16 unk4 : 1;
+	uint16 kashes : 1;
+	uint16 lifepoints : 1;
+	uint16 magicpoints : 1;
+	uint16 key : 1;
+	uint16 cloverleaf : 1;
+	uint16 unused : 7;
+};
+
+/**
+ * Actors structure
+ *
+ * Such as characters, doors, moving plataforms, invisible actors, ...
+ */
 class ActorStruct {
 private:
 	ShapeType _brickShape = ShapeType::kNone; // field_3
 	bool _brickCausesDamage = false;
 public:
+	~ActorStruct();
+
 	StaticFlagsStruct staticFlags;
 	DynamicFlagsStruct dynamicFlags;
 
@@ -115,8 +156,18 @@ public:
 	inline void setBrickShape(ShapeType shapeType) { _brickShape = shapeType; _brickCausesDamage = false; }
 	inline void setBrickCausesDamage() { _brickCausesDamage = true; }
 	inline bool brickCausesDamage() { return _brickCausesDamage; }
+	void loadModel(int32 modelIndex);
 
 	int32 entity = 0; // costumeIndex
+	/**
+	 * 0: tunic + medallion
+	 * 1: tunic
+	 * 2: tunic + medallion + sword
+	 * 3: prison suit
+	 * 4: nurse outfit
+	 * 5: tunic + medallion + horn
+	 * 6: snowboard (WARNING, this can crash the game when you change behavior)
+	 */
 	int32 body = 0;
 	AnimationTypes anim = AnimationTypes::kAnimNone;
 	AnimationTypes animExtra = AnimationTypes::kStanding;  //field_2
@@ -130,14 +181,15 @@ public:
 	int32 z = 0;
 	int32 strengthOfHit = 0; // field_66
 	int32 hitBy = 0;
-	int32 bonusParameter = 0; // field_10
+	BonusParameter bonusParameter; // field_10
 	int32 angle = 0;
 	int32 speed = 0;
 	ControlMode controlMode = ControlMode::kNoMove;
-	int32 info0 = 0;         // cropLeft
-	int32 info1 = 0;         // cropTop
-	int32 info2 = 0;         // cropRight
-	int32 info3 = 0;         // cropBottom
+	int32 delayInMillis = 0;
+	int32 cropLeft = 0;
+	int32 cropTop = 0;
+	int32 cropRight = 0;
+	int32 cropBottom = 0;
 	int32 followedActor = 0; // same as info3
 	int32 bonusAmount = 0;   // field_12
 	int32 talkColor = 0;
@@ -173,6 +225,7 @@ public:
 	int32 previousAnimIdx = 0;
 	int32 doorStatus = 0;
 	int32 animPosition = 0;
+	// 0 == loop
 	int32 animType = 0;   // field_78
 	int32 brickSound = 0; // field_7A
 

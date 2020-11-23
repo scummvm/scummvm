@@ -119,12 +119,16 @@ public:
 	virtual Common::KeymapArray getGlobalKeymaps() override;
 	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;
 
+	virtual void registerDefaultSettings(const Common::String &target) const override;
+	virtual GUI::OptionsContainerWidget *buildBackendOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	virtual void applyBackendSettings() override;
+
 	virtual uint32 getMillis(bool skipRecord = false) override;
 	virtual void delayMillis(uint msecs) override;
 
 	virtual void quit() override;
 
-	virtual void setWindowCaption(const char *caption) override;
+	virtual void setWindowCaption(const Common::U32String &caption) override;
 
 	virtual Audio::Mixer *getMixer() override;
 	virtual void getTimeAndDate(TimeDate &t) const override;
@@ -136,7 +140,6 @@ public:
 	virtual bool setTextInClipboard(const Common::U32String &text) override;
 	virtual bool isConnectionLimited() override;
 	virtual Common::String getSystemLanguage() const override;
-	virtual char *convertEncoding(const char *to, const char *from, const char *string, size_t length) override;
 };
 
 #endif

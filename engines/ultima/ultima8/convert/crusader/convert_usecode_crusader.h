@@ -264,7 +264,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	// 00D0
 	"int16 Item::I_use(Item *)", // same coff as 080, 0D5
 	"void AudioProcess:I_stopAllSFX(void)", // based on disasm.
-	"void I_playFlic0D2(int *item,char *flicname,word sizex,word sizey)", // play flic
+	"void I_playMovieCutscene(int *item,char *flicname,word sizex,word sizey)", // play flic
 	"void Intrinsic0D3(void)", // clears some globals and calls a kernel function.. TODO: work out what those globals do?
 	"void I_playSFX(2 bytes)", // same coff as 0AA.  Based on disasm.
 	"int16 Item::I_use(Item *)", // same coff as 080, 0D0

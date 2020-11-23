@@ -417,7 +417,7 @@ void GUIErrorMessage(const Common::String &msg, const char *url) {
 }
 
 void GUIErrorMessage(const Common::U32String &msg, const char *url) {
-	g_system->setWindowCaption("Error");
+	g_system->setWindowCaption(_("Error"));
 	g_system->beginGFXTransaction();
 		initCommonGFX();
 		g_system->initSize(320, 200);
@@ -639,6 +639,7 @@ void Engine::openMainMenuDialog() {
 		ttsMan->popState();
 #endif
 
+	g_system->applyBackendSettings();
 	applyGameSettings();
 	syncSoundSettings();
 }

@@ -29,7 +29,7 @@
 
 namespace Saga {
 
-const int Font::_charMap[128] = {
+const int DefaultFont::_charMap[128] = {
 	// Characters 0 - 127 are mapped directly to ISO 8859-1
 	199,		// 128 LATIN CAPITAL LETTER C WITH CEDILLA
 	252,		// 129 LATIN SMALL LETTER U WITH DIAERESIS

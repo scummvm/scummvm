@@ -111,12 +111,12 @@ private:
 
 	struct bodyHeaderStruct {
 		int16 bodyFlag = 0;
-		int16 unk0 = 0;
-		int16 unk1 = 0;
-		int16 bottomleft = 0;
-		int16 topright = 0;
-		int16 unk4 = 0;
-		int16 unk5 = 0;
+		int16 minsx = 0;
+		int16 maxsx = 0;
+		int16 minsy = 0;
+		int16 maxsy = 0;
+		int16 minsz = 0;
+		int16 maxsz = 0;
 		int16 offsetToData = 0;
 		int8 *ptrToKeyFrame = nullptr;
 		int32 keyFrameTime = 0;
@@ -239,9 +239,9 @@ public:
 
 	void copyActorInternAnim(const uint8 *bodyPtrSrc, uint8 *bodyPtrDest);
 
-	void renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 Y, int32 angle, uint8 *entityPtr);
+	void renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, uint8 *entityPtr);
 
-	void renderInventoryItem(int32 X, int32 Y, uint8 *itemBodyPtr, int32 angle, int32 param);
+	void renderInventoryItem(int32 x, int32 y, uint8 *itemBodyPtr, int32 angle, int32 param);
 };
 
 } // namespace TwinE

@@ -127,7 +127,7 @@ SaveStateList HDBMetaEngine::listSaves(const char *target) const {
 				}
 				desc.setThumbnail(thumbnail);
 
-				uint32 timeSeconds = in->readUint32LE();;
+				uint32 timeSeconds = in->readUint32LE();
 				in->read(mapName, 32);
 
 				debug(1, "mapName: %s playtime: %d", mapName, timeSeconds);

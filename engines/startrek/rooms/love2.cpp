@@ -563,17 +563,23 @@ void Room::love2UseSynthesizer() {
 					showDescription(51, true);
 					showText(TX_SPEAKER_KIRK, 2, true);
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
-					goto closeSynthesizerDoor;
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(SND_DOOR1);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_CURE_SAMPLE: // Wet goo
-wetGooFailure:
 					showDescription(50, true);
 					showText(TX_SPEAKER_MCCOY, 21, true);
 					loadActorStandAnim(OBJECT_CURESAMPLE);
-					goto closeSynthesizerDoor;
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(SND_DOOR1);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_BOTTLE: // Nothing happens
-bottleFailure:
 					showText(TX_SPEAKER_SPOCK, 28, true);
 					break;
 
@@ -581,32 +587,33 @@ bottleFailure:
 				default:
 					_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_H2O;
 					strcpy(_roomVar.love.chamberOutputAnim, "btle3");
-produceBottle:
+					// Produce bottle
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
 					playSoundEffectIndex(SND_DOOR1);
-					break;
-
-closeSynthesizerDoor:
-					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
-					playSoundEffectIndex(SND_DOOR1);
-					_awayMission->love.synthesizerContents = 0;
 					break;
 				}
 			} else if (c1 == CANTYPE_H2 && c2 == CANTYPE_N2) {
 				switch (_awayMission->love.synthesizerContents) {
 				case SYNTHITEM_PBC: // Inert matter
-inertMatterFailure:
 					showDescription(49, true);
 					showText(TX_SPEAKER_SPOCK, 39, true); // BUGFIX: original didn't play audio
 					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
-					goto closeSynthesizerDoor;
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(SND_DOOR1);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_VIRUS_SAMPLE: // Colorless goo (with useful information about virus in ammonia)
 					showDescription(48, true);
 					showText(TX_SPEAKER_SPOCK, 34, true); // BUGFIX: original didn't play audio
 					showText(TX_SPEAKER_MCCOY, 23, true);
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
-					goto closeSynthesizerDoor;
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(SND_DOOR1);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_CURE_SAMPLE: // Cure
 					loadActorStandAnim(OBJECT_CURESAMPLE);
@@ -615,36 +622,62 @@ inertMatterFailure:
 					break;
 
 				case SYNTHITEM_BOTTLE: // Nothing happens
-					goto bottleFailure;
+					showText(TX_SPEAKER_SPOCK, 28, true);
+					break;
 
 				case SYNTHITEM_NONE: // Ammonia
 				default:
 					_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_NH3;
 					strcpy(_roomVar.love.chamberOutputAnim, "btle2");
-					goto produceBottle;
+					// Produce bottle
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
+					playSoundEffectIndex(SND_DOOR1);
+					break;
 				}
 			} else if (c1 == CANTYPE_O2 && c2 == CANTYPE_N2) {
 				switch (_awayMission->love.synthesizerContents) {
 				case SYNTHITEM_PBC: // Inert matter
-					goto inertMatterFailure;
+					showDescription(49, true);
+					showText(TX_SPEAKER_SPOCK, 39, true); // BUGFIX: original didn't play audio
+					loadActorStandAnim(OBJECT_POLYBERYLCARBONATE);
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(SND_DOOR1);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_VIRUS_SAMPLE: // Wet goo
 					showDescription(47, true);
 					showText(TX_SPEAKER_MCCOY, 17, true);
 					loadActorStandAnim(OBJECT_VIRUSSAMPLE);
-					goto closeSynthesizerDoor;
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(SND_DOOR1);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_CURE_SAMPLE: // Wet goo
-					goto wetGooFailure;
+					showDescription(50, true);
+					showText(TX_SPEAKER_MCCOY, 21, true);
+					loadActorStandAnim(OBJECT_CURESAMPLE);
+					// Close synthesizer door
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d5", 0x8a, 0x8d, 0);
+					playSoundEffectIndex(SND_DOOR1);
+					_awayMission->love.synthesizerContents = 0;
+					break;
 
 				case SYNTHITEM_BOTTLE: // Nothing happens
-					goto bottleFailure;
+					showText(TX_SPEAKER_SPOCK, 28, true);
+					break;
 
 				case SYNTHITEM_NONE: // Laughing gas
 				default:
 					_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_N2O;
 					strcpy(_roomVar.love.chamberOutputAnim, "btle1");
-					goto produceBottle;
+					// Produce bottle
+					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
+					playSoundEffectIndex(SND_DOOR1);
+					break;
 				}
 			}
 		} else {

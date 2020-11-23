@@ -36,12 +36,29 @@ class MacResManager;
 
 namespace StarTrek {
 
+struct ResourceIndex {
+	uint32 indexOffset;
+	bool foundData;
+	uint16 fileCount;
+	uint16 uncompressedSize;	// used in the demo
+	Common::String fileName;
+
+	ResourceIndex() {
+		indexOffset = 0;
+		foundData = 0;
+		fileCount = 0;
+		uncompressedSize = 0;
+		fileName = "";
+	}
+};
+
 class Resource {
 public:
 	Resource(Common::Platform platform, bool isDemo);
 	virtual ~Resource();
 
-	Common::MemoryReadStreamEndian *loadFile(Common::String filename, int fileIndex = 0);
+	Common::List<ResourceIndex> searchIndex(Common::String filename);
+	Common::MemoryReadStreamEndian *loadFile(Common::String filename, int fileIndex = 0, bool errorOnNotFound = true);
 	Common::MemoryReadStreamEndian *loadBitmapFile(Common::String baseName);
 
 	/**
@@ -59,12 +76,21 @@ public:
 		_txtFilename = txtFileName;
 	}
 
+	Common::List<ResourceIndex> _resources;
+
 private:
+	void readIndexFile();
+	ResourceIndex getIndex(Common::String filename);
+	ResourceIndex getIndexEntry(Common::SeekableReadStream *indexFile);
+	Common::MemoryReadStreamEndian *loadSequentialFile(Common::String filename, int fileIndex = 0);
+	uint32 getSequentialFileOffset(uint32 offset, int fileIndex);
+
 	//IWFile *_iwFile;
 	Common::MacResManager *_macResFork;
 	Common::Platform _platform;
 	bool _isDemo;
 	Common::String _txtFilename;
+	//Common::List<ResourceIndex> _resources;
 };
 
 } // End of namespace StarTrek

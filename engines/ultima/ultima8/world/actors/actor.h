@@ -280,6 +280,9 @@ public:
 
 	bool activeWeaponIsSmall() const;
 
+	// A cru-specific behavior - mostly make "ugh" noises, or explode for some robots.
+	void tookHitCru();
+
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	INTRINSIC(I_isNPC);

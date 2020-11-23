@@ -34,6 +34,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  SAGA:
    - Unterstützung für ITE GOG Mac CD v1.1 hinzugefügt.
+   - Unterstützung für die japanische Version von ITE PC-98 hinzugefügt.
 
  SCI:
    - Unterstützung für RGB-Rendering (16/32bpp) für SCI0 - SCI1.1-Spiele hinzugefügt. Dadurch werden Probleme
@@ -42,6 +43,7 @@ Programmcodes finden Sie auf Englisch unter:
      Wenn diese Mods aktiviert werden, wird die grafische Darstellung in diesen beiden Spielen verbessert.
    - Unterstützung für die koreanischen Fan-Übersetzungen von Castle of Dr. Brain, Eco Quest, Gabriel Knight,
      King's Quest 1, 5 und 6, Laura Bow 2: Dagger of Amon Ra und Space Quest 4 hinzugefügt.
+   - Unterstützung für zahlreiche koreanische Übersetzungen des scummkor-Projektes hinzugefügt.
 
  SCUMM:
    - Textdarstellung in der chinesischen, japanischen und koreanischen Version von The Dig und
@@ -49,6 +51,7 @@ Programmcodes finden Sie auf Englisch unter:
      Verbesserungen an der Textdarstellung (hauptsächlich bezüglich der Formatierung von Text-Umbrüchen).
    - Darstellung des Pause- und Neustart-Dialogs in der chinesischen, japanischen und koreanischen Version
      der Benutzeroberfläche korrigiert.
+   - Unterstützung für zahlreiche koreanische Übersetzungen des scummkor-Projektes hinzugefügt.
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
@@ -70,6 +73,10 @@ Programmcodes finden Sie auf Englisch unter:
  Xeen:
    - Gelegentliche Grafikfehler in Kampf-Szenen korrigiert.
    - Verbesserte Unterstützung für Zwischensequenzen, die nun dem Original genauer entsprechen.
+
+ MorphOS-Portierung:
+   - Unterstützung für native Dateisystem-Dialoge hinzugefügt.
+   - Unterstützung für die Cloud-Anbindung hinzugefügt.
 
 #### 2.2.0 "Interactive Fantasy" (27.09.2020)
 

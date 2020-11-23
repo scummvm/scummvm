@@ -527,6 +527,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
+	// Conquests of the Longbow - Russian translation, based on English DOS version
+	// SCI interpreter version 1.000.510
+	{"longbow", "", {
+		{"resource.002", 0, "7f6ce331219d58d5087731e4475ab4f1", 1237962},
+		{"resource.003", 0, "1867136d01ece57b531032d466910522", 828298},
+		{"resource.000", 0, "65d37f5fa8fa4d34178c9f6707d4dac0", 1306162},
+		{"resource.001", 0, "9ac939e628229d19ce04d9d42890f9bd", 1384306},
+		{"resource.map", 0, "78fb253c30797fac24bd52e9c9f43050", 6051},
+		{"resource.004", 0, "9cfce07e204a329e94fda8b5657621da", 1262638},
+		{"resource.005", 0, "21ebe6b39b57a73fc449f67f013765aa", 1287832},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16	},
+		
 	// Eco Quest - English DOS Non-Interactive Demo (from FRG)
 	// Executable scanning reports "x.yyy.zzz"
 	// SCI interpreter version 1.001.069 (just a guess)
@@ -5453,6 +5466,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "82e6e9b4270a4007578a119b6a51860c", 6493},
 		{"resource.000", 0, "6f9ed21e1001526b4137f6703ed476af", 6103778},
 		{"resource.msg", 0, "0a8931990cd2eac1691602391c68ab85", 147580},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16	},
+
+	// Space Quest 5 - Russian DOS
+	// VERSION file reports "1.04"
+	{"sq5", "", {
+		{"resource.map", 0, "31ce07f482d5af535fb0a2d365b2be76", 6676},
+		{"resource.000", 0, "654a7d7647d09e13502f0ec69e3ab05c", 5644028},
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16	},
 

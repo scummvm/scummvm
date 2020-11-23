@@ -41,7 +41,18 @@ enum CodePage {
 	kWindows1257,
 	kWindows932,
 	kWindows949,
-	kWindows950
+	kWindows950,
+	kISO8859_1,
+	kISO8859_2,
+	kISO8859_5,
+	kMacCentralEurope,
+	kDos850,
+	kDos866,
+	kASCII,
+
+	kLatin1 = kISO8859_1,
+	kBig5 = kWindows950,
+	kLastEncoding = kASCII
 };
 
 U32String convertUtf8ToUtf32(const String &str);
@@ -49,6 +60,7 @@ String convertUtf32ToUtf8(const U32String &str);
 
 U32String convertToU32String(const char *str, CodePage page = kUtf8);
 String convertFromU32String(const U32String &str, CodePage page = kUtf8);
+uint16 convertUHCToUCS(uint8 high, uint8 low);
 } // End of namespace Common
 
 #endif

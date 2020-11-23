@@ -170,6 +170,11 @@ private:
 	TwineGameType _gameType;
 	EngineState _state = EngineState::Menu;
 
+	void processInventoryAction();
+	void processOptionsMenu();
+	/** recenter screen on followed actor automatically */
+	void centerScreenOnActor();
+
 public:
 	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, TwineGameType gameType);
 	~TwinEEngine() override;
@@ -248,9 +253,6 @@ public:
 	Graphics::ManagedSurface workVideoBuffer;
 	/** Main game video buffer */
 	Graphics::ManagedSurface frontVideoBuffer;
-
-	/** temporary screen table */
-	int32 screenLookupTable[2000]{0};
 
 	int32 loopInventoryItem = 0;
 	int32 loopActorStep = 0;

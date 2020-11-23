@@ -21,6 +21,7 @@
  */
 
 #include "twine/interface.h"
+#include "graphics/managed_surface.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -51,7 +52,6 @@ int32 Interface::checkClipping(int32 x, int32 y) {
 // TODO: check if Graphics::drawLine() works here
 void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, int32 lineColor) {
 	int32 currentLineColor = lineColor;
-	uint8 *out;
 
 	// draw line from left to right
 	if (startWidth > endWidth) {
@@ -68,8 +68,8 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 	int32 outcode0 = checkClipping(startWidth, startHeight);
 	int32 outcode1 = checkClipping(endWidth, endHeight);
 
-	while ((outcode0 | outcode1) != 0) {
-		if ((outcode0 & outcode1) != 0 && outcode0 != INSIDE) {
+	while ((outcode0 | outcode1) != INSIDE) {
+		if ((outcode0 & outcode1) != INSIDE && outcode0 != INSIDE) {
 			return; // Reject lines which are behind one clipping plane
 		}
 
@@ -112,7 +112,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		endHeight = -endHeight;
 	}
 
-	out = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[startHeight] + startWidth;
+	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(startWidth, startHeight);
 
 	int16 color = currentLineColor;
 	if (endWidth < endHeight) { // significant slope
@@ -152,9 +152,9 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 	}
 }
 
-void Interface::blitBox(int32 left, int32 top, int32 right, int32 bottom, const int8 *source, int32 leftDest, int32 topDest, int8 *dest) {
-	const int8 *s = _engine->screenLookupTable[top] + source + left;
-	int8 *d = _engine->screenLookupTable[topDest] + dest + leftDest;
+void Interface::blitBox(int32 left, int32 top, int32 right, int32 bottom, const Graphics::ManagedSurface &source, int32 leftDest, int32 topDest, Graphics::ManagedSurface &dest) {
+	const int8 *s = (const int8 *)source.getBasePtr(left, top);
+	int8 *d = (int8 *)dest.getBasePtr(left, top);
 
 	int32 width = right - left + 1;
 	int32 height = bottom - top + 1;
@@ -202,7 +202,7 @@ void Interface::drawTransparentBox(int32 left, int32 top, int32 right, int32 bot
 		bottom = SCREEN_TEXTLIMIT_BOTTOM;
 	}
 
-	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
+	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getBasePtr(left, top);
 	const int32 height = bottom - top;
 	int32 height2 = height + 1;
 	const int32 width = right - left + 1;
@@ -245,7 +245,7 @@ void Interface::drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom
 	// cropping
 	int32 offset = -((right - left) - SCREEN_WIDTH);
 
-	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getPixels() + _engine->screenLookupTable[top] + left;
+	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getBasePtr(left, top);
 
 	for (int32 x = top; x < bottom; x++) {
 		for (int32 y = left; y < right; y++) {

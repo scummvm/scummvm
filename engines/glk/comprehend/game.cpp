@@ -805,7 +805,6 @@ void ComprehendGame::read_input() {
 	Sentence tempSentence;
 	bool handled;
 
-	beforePrompt();
 	doBeforeTurn();
 	if (_ended)
 		return;
@@ -816,10 +815,14 @@ void ComprehendGame::read_input() {
 		g_comprehend->print("\n");
 
 	for (;;) {
+		beforePrompt();
+
 		g_comprehend->print("> ");
 		g_comprehend->readLine(_inputLine, INPUT_LINE_SIZE);
 		if (g_comprehend->shouldQuit())
 			return;
+
+		afterPrompt();
 
 		_inputLineIndex = 0;
 		if (strlen(_inputLine) != 0)

@@ -28,7 +28,6 @@
 #include "common/file.h"
 #include "common/translation.h"
 #include "common/unzip.h"
-#include "common/encoding.h"
 
 namespace Networking {
 

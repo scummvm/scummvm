@@ -26,7 +26,6 @@
 #include "engines/myst3/state.h"
 
 #include "common/archive.h"
-#include "common/iconv.h"
 
 #include "graphics/fontman.h"
 #include "graphics/font.h"
@@ -244,17 +243,16 @@ void FontSubtitles::createTexture() {
 	}
 }
 
-#ifdef USE_ICONV
 /** Return an encoding from a GDI Charset as provided to CreateFont */
-static Common::IconvEncoding getEncodingFromCharsetCode(uint32 gdiCharset) {
+static Common::CodePage getEncodingFromCharsetCode(uint32 gdiCharset) {
 	static const struct {
 		uint32 charset;
-		Common::IconvEncoding encoding;
+		Common::CodePage encoding;
 	} codepages[] = {
-			{ 128, Common::kEncodingCP932            }, // SHIFTJIS_CHARSET
-			{ 177, Common::kEncodingCP1255           }, // HEBREW_CHARSET
-			{ 204, Common::kEncodingCP1251           }, // RUSSIAN_CHARSET
-			{ 238, Common::kEncodingMacCentralEurope }  // EASTEUROPE_CHARSET
+			{ 128, Common::kWindows932            }, // SHIFTJIS_CHARSET
+			{ 177, Common::kWindows1255           }, // HEBREW_CHARSET
+			{ 204, Common::kWindows1251           }, // RUSSIAN_CHARSET
+			{ 238, Common::kMacCentralEurope }  // EASTEUROPE_CHARSET
 	};
 
 	for (uint i = 0; i < ARRAYSIZE(codepages); i++) {
@@ -265,7 +263,6 @@ static Common::IconvEncoding getEncodingFromCharsetCode(uint32 gdiCharset) {
 
 	error("Unknown font charset code '%d'", gdiCharset);
 }
-#endif
 
 void FontSubtitles::drawToTexture(const Phrase *phrase) {
 	const Graphics::Font *font;
@@ -288,13 +285,9 @@ void FontSubtitles::drawToTexture(const Phrase *phrase) {
 	if (_fontCharsetCode == 0) {
 		font->drawString(_surface, phrase->string, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter, 0, false);
 	} else {
-#ifdef USE_ICONV
-		Common::IconvEncoding encoding = getEncodingFromCharsetCode(_fontCharsetCode);
-		Common::U32String unicode = Common::convertToU32String(encoding, phrase->string);
+		Common::CodePage encoding = getEncodingFromCharsetCode(_fontCharsetCode);
+		Common::U32String unicode = Common::U32String(phrase->string, encoding);
 		font->drawString(_surface, unicode, 0, _singleLineTop * _scale, _surface->w, 0xFFFFFFFF, Graphics::kTextAlignCenter, 0, false);
-#else
-		warning("Unable to display charset '%d' subtitles, iconv support is not compiled in.", _fontCharsetCode);
-#endif
 	}
 
 	// Update the texture

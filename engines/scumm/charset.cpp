@@ -360,12 +360,10 @@ void CharsetRendererCommon::setCurID(int32 id) {
 	_numChars = READ_LE_UINT16(_fontPtr + 2);
 
 	if (_vm->_useMultiFont) {
-		if (id == 6) {	// HACK: Fix inventory font error
-			_vm->_2byteFontPtr = _vm->_2byteMultiFontPtr[0];
-			_vm->_2byteWidth = _vm->_2byteMultiWidth[0];
-			_vm->_2byteHeight = _vm->_2byteMultiHeight[0];
-			_vm->_2byteShadow = _vm->_2byteMultiShadow[0];
-		} else if (_vm->_2byteMultiFontPtr[id]) {
+		if (id == 6)    // HACK: Fix monkey1cd/monkey2/dott font error
+			id = 0;
+
+		if (_vm->_2byteMultiFontPtr[id]) {
 			_vm->_2byteFontPtr = _vm->_2byteMultiFontPtr[id];
 			_vm->_2byteWidth = _vm->_2byteMultiWidth[id];
 			_vm->_2byteHeight = _vm->_2byteMultiHeight[id];
@@ -410,12 +408,7 @@ void CharsetRendererV3::setCurID(int32 id) {
 	_fontPtr += _numChars;
 
 	if (_vm->_useMultiFont) {
-		if (id == 6) {	// HACK: Fix inventory font error
-			_vm->_2byteFontPtr = _vm->_2byteMultiFontPtr[0];
-			_vm->_2byteWidth = _vm->_2byteMultiWidth[0];
-			_vm->_2byteHeight = _vm->_2byteMultiHeight[0];
-			_vm->_2byteShadow = _vm->_2byteMultiShadow[0];
-		} else if (_vm->_2byteMultiFontPtr[id]) {
+		if (_vm->_2byteMultiFontPtr[id]) {
 			_vm->_2byteFontPtr = _vm->_2byteMultiFontPtr[id];
 			_vm->_2byteWidth = _vm->_2byteMultiWidth[id];
 			_vm->_2byteHeight = _vm->_2byteMultiHeight[id];
@@ -753,7 +746,6 @@ void CharsetRendererPC::drawBits1Kor(Graphics::Surface &dest, int x1, int y1, co
 
 	// HACK: Since Korean fonts don't have shadow/stroke information,
 	//	   we use NUT-Renderer-like shadow drawing method.
-	//bool useOldShadow = false;
 
 	int offsetX[14] = {-2, -2, -2, -1, 0, -1, 0, 1, -1, 1, -1, 0, 1, 0};
 	int offsetY[14] = {0, 1, 2, 2, 2, -1, -1, -1, 0, 0, 1, 1, 1, 0};
@@ -785,15 +777,10 @@ void CharsetRendererPC::drawBits1Kor(Graphics::Surface &dest, int x1, int y1, co
 		dst = origDst;
 
 		for (y = 0; y < height && y + drawTop + offsetY[i] < dest.h; y++) {
-			for (x = 0; x < width && x + offsetY[i] < dest.w; x++) {
+			for (x = 0; x < width && x + x1 + offsetX[i] < dest.w; x++) {
 				if ((x % 8) == 0)
 					bits = *src++;
-				if ((bits & revBitMask(x % 8)) && y + drawTop >= 0) {
-					if (_enableShadow) {
-						*(dst + 1) = _shadowColor;
-						*(dst + dest.pitch) = _shadowColor;
-						*(dst + dest.pitch + 1) = _shadowColor;
-					}
+				if ((bits & revBitMask(x % 8)) && y + drawTop + offsetY[i] >= 0 && x + x1 + offsetX[i] >= 0) {
 					*(dst + (dest.pitch * offsetY[i]) + offsetX[i]) = cTable[i];
 				}
 				dst++;

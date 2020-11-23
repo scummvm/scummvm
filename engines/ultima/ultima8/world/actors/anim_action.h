@@ -36,16 +36,19 @@ struct AnimFrame {
 	int _deltaZ;
 	int _deltaDir;
 	int _sfx;
-	uint16 _unk1;
-	uint16 _unk2;
 	uint32 _flags;
 
 	enum AnimFrameFlags {
-		AFF_UNK1     = 0x0001,
-		AFF_ONGROUND = 0x0002,
-		AFF_FLIPPED  = 0x0020,
-		AFF_SPECIAL  = 0x0800,
-		AFF_USECODE  = 0x4000
+		AFF_UNK1     = 0x00000001,
+		AFF_ONGROUND = 0x00000002,
+		AFF_FLIPPED  = 0x00000020,
+		AFF_CRUFLIP  = 0x00000080,
+		AFF_SPECIAL  = 0x00000800, // U8 only
+		AFF_HURTY    = 0x00001000, // Crusader only - TODO: find a better name for this.
+		AFF_USECODE  = 0x00004000,
+		AFF_NOSTOP   = 0x00008000  // Crusader only - Probably - applied to most death animations
+		//AFF_UNKNOWN  = 0xF0E0B01C,
+		//AFF_FIRE     = 0x0F1F00C0
 	};
 
 	inline bool is_flipped() const {
@@ -117,7 +120,8 @@ public:
 		AAF_LOOPING2     = 0x0010, // CHECKME: guessing at this flag
 		AAF_HANGING      = 0x0080,
 		AAF_CRUS_16DIRS  = 0x4000, // Crusader
-		AAF_DESTROYACTOR = 0x8000  // destroy actor after animation finishes
+		AAF_DESTROYACTOR = 0x8000, // destroy actor after animation finishes
+		AAF_UNKFLAGS     = 0x3F60
 	};
 
 private:

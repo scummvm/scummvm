@@ -39,8 +39,6 @@ void DebugGrid::changeGridCamera() {
 		return;
 	}
 
-	ScopedKeyMap scopedKeyMap(_engine, mainKeyMapId);
-
 	if (_engine->_input->isActionActive(TwinEActionType::DebugGridCameraPressUp)) {
 		_engine->_grid->newCameraZ--;
 		_engine->_redraw->reqBgRedraw = true;

@@ -98,6 +98,10 @@ void Sound::playMidiTrack(int track) {
 	if (!_vm->_musicEnabled || !_vm->_musicWorking)
 		return;
 
+	// TODO: Demo music
+	if (_vm->getFeatures() & GF_DEMO)
+		return;
+
 	assert(loadedSoundData != nullptr);
 
 	// Check if a midi slot for this track exists already
@@ -147,6 +151,8 @@ bool Sound::isMidiPlaying() {
 }
 
 void Sound::loadMusicFile(const Common::String &baseSoundName) {
+	bool isDemo = _vm->getFeatures() & GF_DEMO;
+
 	clearAllMidiSlots();
 
 	if (baseSoundName == _loadedMidiFilename)
@@ -154,16 +160,15 @@ void Sound::loadMusicFile(const Common::String &baseSoundName) {
 
 	_loadedMidiFilename = baseSoundName;
 
-	/*
-	if (_vm->getPlatform() == Common::kPlatformAmiga)
-		playAmigaSound(baseSoundName);
-	else if (_vm->getPlatform() == Common::kPlatformMacintosh)
-		playMacSMFSound(baseSoundName);
-	else if (_vm->getFeatures() & GF_DEMO)
-		playSMFSound(baseSoundName);
-	else
-	*/
-	loadPCMusicFile(baseSoundName);
+	if (_vm->getPlatform() == Common::kPlatformDOS && !isDemo) {
+		loadPCMusicFile(baseSoundName);
+	} else if (_vm->getPlatform() == Common::kPlatformDOS && isDemo) {
+		//playSMFSound(baseSoundName);
+	} else if (_vm->getPlatform() == Common::kPlatformAmiga) {
+		//playAmigaSound(baseSoundName);
+	} else if (_vm->getPlatform() == Common::kPlatformMacintosh) {
+		//playMacSMFSound(baseSoundName);
+	}
 }
 
 void Sound::playMidiMusicTracks(int startTrack, int loopTrack) {
@@ -340,6 +345,10 @@ void Sound::playSoundEffectIndex(int index) {
 	}
 }
 
+void Sound::toggleMusic() {
+	setMusicEnabled(!_vm->_musicEnabled);
+}
+
 void Sound::setMusicEnabled(bool enable) {
 	if (!_vm->_musicWorking || _vm->_musicEnabled == enable)
 		return;
@@ -350,6 +359,10 @@ void Sound::setMusicEnabled(bool enable) {
 		playMidiMusicTracks(_loopingMidiTrack, _loopingMidiTrack);
 	else
 		clearMidiSlot(0);
+}
+
+void Sound::toggleSfx() {
+	setSfxEnabled(!_vm->_sfxEnabled);
 }
 
 void Sound::setSfxEnabled(bool enable) {

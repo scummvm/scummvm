@@ -55,6 +55,7 @@ namespace TwinE {
 
 #define RESSHQR_ALARMREDPAL 22
 #define RESSHQR_DARKPAL 24
+#define RESSHQR_TWINSEN_ZOE_SENDELL  25
 
 #define RESSHQR_ADELINEIMG 27
 #define RESSHQR_ADELINEPAL 28
@@ -91,6 +92,28 @@ namespace TwinE {
 #define SPRITEHQR_MAGICBALL_GREEN 42
 #define SPRITEHQR_MAGICBALL_RED 43
 #define SPRITEHQR_MAGICBALL_YELLOW_TRANS 44
+#define SPRITEHQR_EXPLOSION_FIRST_FRAME 97 // 7 frames
+#define SPRITEHQR_FENCE_1 18
+#define SPRITEHQR_FENCE_2 19
+#define SPRITEHQR_FENCE_3 22
+#define SPRITEHQR_FENCE_4 23
+#define SPRITEHQR_FENCE_METAL 35
+#define SPRITEHQR_FENCE_METAL_2 54
+#define SPRITEHQR_FENCE_METAL_3 83
+#define SPRITEHQR_MUSHROOM 92
+#define SPRITEHQR_DOOR_WODDEN_1 31
+#define SPRITEHQR_DOOR_WODDEN_2 32
+#define SPRITEHQR_DOOR_PRISON_WODDEN 37
+#define SPRITEHQR_DOOR_PADLOCK 58
+#define SPRITEHQR_DOOR_BRICKED_UP 76
+#define SPRITEHQR_DOOR_1 104
+#define SPRITEHQR_DOOR_2 107
+#define SPRITEHQR_DOOR_3 24
+#define SPRITEHQR_DOOR_4 11
+#define SPRITEHQR_DOOR_5 12
+#define SPRITEHQR_DOOR_PRISON_GRID 15
+#define SPRITEHQR_DOOR_PRISON_HARMED 16
+#define SPRITEHQR_DOOR_PRISON_WITH_F_LETTER 17
 #define SPRITEHQR_MAGICBALL_GREEN_TRANS 109
 #define SPRITEHQR_MAGICBALL_RED_TRANS 110
 
@@ -151,6 +174,17 @@ public:
 	uint32 spriteBoundingBoxSize = 0;
 	uint8 *spriteBoundingBoxPtr = nullptr;
 
+	uint32 holomapSurfaceSize = 0;
+	uint8 *holomapSurfacePtr = nullptr;
+	uint32 holomapImageSize = 0;
+	uint8 *holomapImagePtr = nullptr;
+	uint32 holomapTwinsenModelSize = 0;
+	uint8 *holomapTwinsenModelPtr = nullptr;
+	uint32 holomapTwinsenArrowSize = 0;
+	uint8 *holomapTwinsenArrowPtr = nullptr;
+	uint32 holomapArrowSize = 0;
+	uint8 *holomapArrowPtr = nullptr;
+
 	/** Initialize resource pointers */
 	void initResources();
 
@@ -172,6 +206,7 @@ public:
 	 * isometric bricks, which are some kind of tiles, that are used for building the terrains in LBA 1 isometric scenes.
 	 * One brick is the tiniest piece of a grid, which has 64 x 64 x 25 cells. Bricks cannot be used directly on a grid,
 	 * but instead they are grouped into blocks by block libraries, which are then referenced by grids
+	 * Bricks are images or sprites in a special format.
 	 */
 	static constexpr const char *HQR_LBA_BRK_FILE = "lba_brk.hqr";
 	// scenes (active area content (actors, scripts, etc.))

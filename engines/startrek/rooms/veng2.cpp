@@ -674,6 +674,24 @@ void Room::veng2SpockReachedImpulseConsole() {
 	loadActorAnimC(OBJECT_SPOCK, "susemn", -1, -1, &Room::veng2SpockUsedImpulseConsole);
 }
 
+void Room::veng2PowerWeapons() {
+	if (_awayMission->veng.poweredSystem == 2) {
+		playVoc("LD6BMOFF");
+		loadActorAnim2(OBJECT_DAMAGE_DISPLAY_1, "s7r2sh3", DAMAGE_DISPLAY_1_X, DAMAGE_DISPLAY_1_Y);
+	}
+	_awayMission->veng.poweredSystem = 1;
+	showText(TX_SPEAKER_KIJE, 88, true);
+	if (_awayMission->veng.toldElasiToBeamOver) {
+		showText(TX_SPEAKER_SPOCK, 52, true);
+		_awayMission->veng.elasiShieldsDown = true;
+		_awayMission->veng.counterUntilElasiBoardWithInvitation = 900;
+	}
+	if (_awayMission->veng.elasiShipDecloaked && !_awayMission->veng.elasiHailedRepublic) {
+		showText(TX_SPEAKER_SPOCK, 33, true);
+		_awayMission->veng.counterUntilElasiBoardWithShieldsDown = 1800;
+	}
+}
+
 void Room::veng2SpockUsedImpulseConsole() {
 	_awayMission->disableInput = false;
 	showText(TX_SPEAKER_SPOCK, 69, true);
@@ -687,29 +705,14 @@ void Room::veng2SpockUsedImpulseConsole() {
 	int choice = showMultipleTexts(choices);
 
 	if (choice == 0) { // Weapons
-		if (_awayMission->veng.toldElasiToBeamOver) {
-powerWeapons:
-			if (_awayMission->veng.poweredSystem == 2) {
-				playVoc("LD6BMOFF");
-				loadActorAnim2(OBJECT_DAMAGE_DISPLAY_1, "s7r2sh3", DAMAGE_DISPLAY_1_X, DAMAGE_DISPLAY_1_Y);
-			}
-			_awayMission->veng.poweredSystem = 1;
-			showText(TX_SPEAKER_KIJE, 88, true);
-			if (_awayMission->veng.toldElasiToBeamOver) {
-				showText(TX_SPEAKER_SPOCK, 52, true);
-				_awayMission->veng.elasiShieldsDown = true;
-				_awayMission->veng.counterUntilElasiBoardWithInvitation = 900;
-			}
-			if (_awayMission->veng.elasiShipDecloaked && !_awayMission->veng.elasiHailedRepublic) {
-				showText(TX_SPEAKER_SPOCK, 33, true);
-				_awayMission->veng.counterUntilElasiBoardWithShieldsDown = 1800;
-			}
-		} else if (_awayMission->veng.countdownStarted)
+		if (_awayMission->veng.toldElasiToBeamOver)
+			veng2PowerWeapons();
+		else if (_awayMission->veng.countdownStarted)
 			showText(TX_SPEAKER_SPOCK, 35, true);
 		else if (_awayMission->veng.poweredSystem == 1) // Weapons already powered
 			showText(TX_SPEAKER_KIJE, 91, true);
 		else
-			goto powerWeapons;
+			veng2PowerWeapons();
 	} else if (choice == 1) { // Shields
 		if (_awayMission->veng.poweredSystem == 2) // Shields already powered
 			showText(TX_SPEAKER_KIJE, 89, true);

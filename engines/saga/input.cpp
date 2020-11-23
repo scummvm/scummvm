@@ -39,6 +39,13 @@ int SagaEngine::processInput() {
 	Common::Event event;
 
 	while (_eventMan->pollEvent(event)) {
+		// Scale down mouse coordinates for the Japanese version which runs in double resolution internally.
+		if ((event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN ||
+			event.type == Common::EVENT_WHEELUP || event.type == Common::EVENT_WHEELDOWN) && getLanguage() == Common::JA_JPN) {
+				event.mouse.x >>= 1;
+				event.mouse.y >>= 1;
+		}
+
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (_interface->_textInput || _interface->_statusTextInput) {
@@ -145,7 +152,14 @@ int SagaEngine::processInput() {
 }
 
 Point SagaEngine::mousePos() const {
-	return _eventMan->getMousePos();
+	Common::Point pos = _eventMan->getMousePos();
+	// Scale down mouse coordinates for the Japanese version which runs in double resolution internally.
+	if (getLanguage() == Common::JA_JPN) {
+		pos.x >>= 1;
+		pos.y >>= 1;
+	}
+
+	return pos;
 }
 
 } // End of namespace Saga

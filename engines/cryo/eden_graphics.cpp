@@ -262,7 +262,7 @@ void EdenGraphics::sundcurs(int16 x, int16 y) {
 			*keep++ = *scr++;
 		scr += 640 - 48;
 	}
-	_game->setCursorSaved(true);;
+	_game->setCursorSaved(true);
 }
 
 void EdenGraphics::rundcurs() {
@@ -1260,7 +1260,7 @@ void EdenGraphics::playHNM(int16 num) {
 		showMovie(1);
 	_cursKeepPos = Common::Point(-1, -1);
 	if (_game->getSpecialTextMode()) {
-		_game->setMusicFade(3);;
+		_game->setMusicFade(3);
 		_game->musicspy();
 		_game->_globals->_characterPtr = perso;
 		_game->_globals->_dialogType = oldDialogType;

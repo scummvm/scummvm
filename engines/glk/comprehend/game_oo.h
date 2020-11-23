@@ -38,6 +38,7 @@ private:
 	YesNo _noFloodfill, _lightOn;
 	int _stringVal1, _stringVal2;
 	bool _printComputerMsg, _shipNotWorking;
+	int _currentRoomCopy;
 
 	/**
 	 * Randomizes a guard to different locations
@@ -80,7 +81,8 @@ public:
 
 	void beforeGame() override;
 	void beforeTurn() override;
-	void afterTurn() override;
+	void beforePrompt() override;
+	void afterPrompt() override;
 	int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) override;
 	void handleSpecialOpcode(uint8 operand) override;
 	bool handle_restart() override;

@@ -182,6 +182,15 @@ Common::Error Comprehend::readSaveData(Common::SeekableReadStream *rs) {
 	_game->synchronizeSave(s);
 
 	_game->_updateFlags = UPDATE_ALL;
+
+	if (isInputLineActive()) {
+		// Restored game using GMM, so update grpahics and print room description
+		g_comprehend->print("\n");
+		_game->update();
+
+		g_comprehend->print("> ");
+	}
+
 	return Common::kNoError;
 }
 
@@ -243,6 +252,10 @@ void Comprehend::showGraphics() {
 			160 * SCALE_FACTOR, wintype_Graphics, 2);
 		_graphicsEnabled = true;
 	}
+}
+
+bool Comprehend::isInputLineActive() const {
+	return _bottomWindow->_lineRequest || _bottomWindow->_lineRequestUni;
 }
 
 } // namespace Comprehend

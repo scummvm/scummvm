@@ -26,6 +26,8 @@
 #include "common/util.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
+#include "twine/debug_grid.h"
+#include "twine/debug_scene.h"
 #include "twine/extra.h"
 #include "twine/gamestate.h"
 #include "twine/grid.h"
@@ -41,55 +43,89 @@
 
 namespace TwinE {
 
-void Scene::setActorStaticFlags(int32 actorIdx, uint16 staticFlags) {
+Scene::~Scene() {
+	free(currentScene);
+}
+
+void Scene::setActorStaticFlags(ActorStruct* act, uint16 staticFlags) {
 	if (staticFlags & 0x1) {
-		_sceneActors[actorIdx].staticFlags.bComputeCollisionWithObj = 1;
+		act->staticFlags.bComputeCollisionWithObj = 1;
 	}
 	if (staticFlags & 0x2) {
-		_sceneActors[actorIdx].staticFlags.bComputeCollisionWithBricks = 1;
+		act->staticFlags.bComputeCollisionWithBricks = 1;
 	}
 	if (staticFlags & 0x4) {
-		_sceneActors[actorIdx].staticFlags.bIsZonable = 1;
+		act->staticFlags.bIsZonable = 1;
 	}
 	if (staticFlags & 0x8) {
-		_sceneActors[actorIdx].staticFlags.bUsesClipping = 1;
+		act->staticFlags.bUsesClipping = 1;
 	}
 	if (staticFlags & 0x10) {
-		_sceneActors[actorIdx].staticFlags.bCanBePushed = 1;
+		act->staticFlags.bCanBePushed = 1;
 	}
 	if (staticFlags & 0x20) {
-		_sceneActors[actorIdx].staticFlags.bComputeLowCollision = 1;
+		act->staticFlags.bComputeLowCollision = 1;
 	}
 	if (staticFlags & 0x40) {
-		_sceneActors[actorIdx].staticFlags.bCanDrown = 1;
+		act->staticFlags.bCanDrown = 1;
 	}
 	if (staticFlags & 0x80) {
-		_sceneActors[actorIdx].staticFlags.bUnk80 = 1;
+		act->staticFlags.bComputeCollisionWithFloor = 1;
 	}
 
 	if (staticFlags & 0x100) {
-		_sceneActors[actorIdx].staticFlags.bUnk0100 = 1;
+		act->staticFlags.bUnk0100 = 1;
 	}
 	if (staticFlags & 0x200) {
-		_sceneActors[actorIdx].staticFlags.bIsHidden = 1;
+		act->staticFlags.bIsHidden = 1;
 	}
 	if (staticFlags & 0x400) {
-		_sceneActors[actorIdx].staticFlags.bIsSpriteActor = 1;
+		act->staticFlags.bIsSpriteActor = 1;
 	}
 	if (staticFlags & 0x800) {
-		_sceneActors[actorIdx].staticFlags.bCanFall = 1;
+		act->staticFlags.bCanFall = 1;
 	}
 	if (staticFlags & 0x1000) {
-		_sceneActors[actorIdx].staticFlags.bDoesntCastShadow = 1;
+		act->staticFlags.bDoesntCastShadow = 1;
 	}
 	if (staticFlags & 0x2000) {
 		//sceneActors[actorIdx].staticFlags.bIsBackgrounded = 1;
 	}
 	if (staticFlags & 0x4000) {
-		_sceneActors[actorIdx].staticFlags.bIsCarrierActor = 1;
+		act->staticFlags.bIsCarrierActor = 1;
 	}
 	if (staticFlags & 0x8000) {
-		_sceneActors[actorIdx].staticFlags.bUseMiniZv = 1;
+		act->staticFlags.bUseMiniZv = 1;
+	}
+}
+
+void Scene::setBonusParameterFlags(ActorStruct* act, uint16 bonusFlags) {
+	if (bonusFlags & 0x1) {
+		act->bonusParameter.unk1 = 1;
+	}
+	if (bonusFlags & 0x2) {
+		act->bonusParameter.unk2 = 1;
+	}
+	if (bonusFlags & 0x4) {
+		act->bonusParameter.unk3 = 1;
+	}
+	if (bonusFlags & 0x8) {
+		act->bonusParameter.unk4 = 1;
+	}
+	if (bonusFlags & 0x10) {
+		act->bonusParameter.kashes = 1;
+	}
+	if (bonusFlags & 0x20) {
+		act->bonusParameter.lifepoints = 1;
+	}
+	if (bonusFlags & 0x40) {
+		act->bonusParameter.magicpoints = 1;
+	}
+	if (bonusFlags & 0x80) {
+		act->bonusParameter.key = 1;
+	}
+	if (bonusFlags & 0x100) {
+		act->bonusParameter.cloverleaf = 1;
 	}
 }
 
@@ -98,7 +134,7 @@ bool Scene::loadSceneLBA1() {
 
 	// load scene ambience properties
 	sceneTextBank = stream.readByte();
-	currentGameOverScene = stream.readByte();
+	_currentGameOverScene = stream.readByte();
 	stream.skip(4);
 
 	alphaLight = stream.readUint16LE();
@@ -108,31 +144,31 @@ bool Scene::loadSceneLBA1() {
 	alphaLight = 896;
 	betaLight = 950;
 
-	sampleAmbiance[0] = stream.readUint16LE();
-	sampleRepeat[0] = stream.readUint16LE();
-	sampleRound[0] = stream.readUint16LE();
+	_sampleAmbiance[0] = stream.readUint16LE();
+	_sampleRepeat[0] = stream.readUint16LE();
+	_sampleRound[0] = stream.readUint16LE();
 
-	sampleAmbiance[1] = stream.readUint16LE();
-	sampleRepeat[1] = stream.readUint16LE();
-	sampleRound[1] = stream.readUint16LE();
+	_sampleAmbiance[1] = stream.readUint16LE();
+	_sampleRepeat[1] = stream.readUint16LE();
+	_sampleRound[1] = stream.readUint16LE();
 
-	sampleAmbiance[2] = stream.readUint16LE();
-	sampleRepeat[2] = stream.readUint16LE();
-	sampleRound[2] = stream.readUint16LE();
+	_sampleAmbiance[2] = stream.readUint16LE();
+	_sampleRepeat[2] = stream.readUint16LE();
+	_sampleRound[2] = stream.readUint16LE();
 
-	sampleAmbiance[3] = stream.readUint16LE();
-	sampleRepeat[3] = stream.readUint16LE();
-	sampleRound[3] = stream.readUint16LE();
+	_sampleAmbiance[3] = stream.readUint16LE();
+	_sampleRepeat[3] = stream.readUint16LE();
+	_sampleRound[3] = stream.readUint16LE();
 
-	sampleMinDelay = stream.readUint16LE();
-	sampleMinDelayRnd = stream.readUint16LE();
+	_sampleMinDelay = stream.readUint16LE();
+	_sampleMinDelayRnd = stream.readUint16LE();
 
-	sceneMusic = stream.readByte();
+	_sceneMusic = stream.readByte();
 
 	// load hero properties
-	sceneHeroX = stream.readUint16LE();
-	sceneHeroY = stream.readUint16LE();
-	sceneHeroZ = stream.readUint16LE();
+	_sceneHeroX = stream.readUint16LE();
+	_sceneHeroY = stream.readUint16LE();
+	_sceneHeroZ = stream.readUint16LE();
 
 	sceneHero->moveScriptSize = stream.readUint16LE();
 	sceneHero->moveScript = currentScene + stream.pos();
@@ -143,18 +179,14 @@ bool Scene::loadSceneLBA1() {
 	stream.skip(sceneHero->lifeScriptSize);
 
 	sceneNumActors = stream.readUint16LE();
-	for (int32 i = 1; i < sceneNumActors; i++) {
+	int cnt = 1;
+	for (int32 i = 1; i < sceneNumActors; i++, cnt++) {
 		_engine->_actor->resetActor(i);
 
-		const uint16 staticFlags = stream.readUint16LE();
-		setActorStaticFlags(i, staticFlags);
-
 		ActorStruct* act = &_sceneActors[i];
-		act->entity = stream.readUint16LE();
+		setActorStaticFlags(act, stream.readUint16LE());
 
-		if (!act->staticFlags.bIsSpriteActor) {
-			act->entityDataSize = HQR::getAllocEntry(&act->entityDataPtr, Resources::HQR_FILE3D_FILE, act->entity);
-		}
+		act->loadModel(stream.readUint16LE());
 
 		act->body = stream.readByte();
 		act->anim = (AnimationTypes) stream.readByte();
@@ -166,16 +198,16 @@ bool Scene::loadSceneLBA1() {
 		act->z = stream.readUint16LE();
 		act->collisionZ = act->z;
 		act->strengthOfHit = stream.readByte();
-		act->bonusParameter = stream.readUint16LE();
-		act->bonusParameter &= 0xFE;
+		setBonusParameterFlags(act, stream.readUint16LE());
 		act->angle = stream.readUint16LE();
 		act->speed = stream.readUint16LE();
 		act->controlMode = (ControlMode)stream.readUint16LE();
-		act->info0 = stream.readUint16LE();
-		act->info1 = stream.readUint16LE();
-		act->info2 = stream.readUint16LE();
-		act->info3 = stream.readUint16LE();
-		act->followedActor = act->info3;
+		act->cropLeft = stream.readSint16LE();
+		act->delayInMillis = act->cropLeft; // TODO: this might not be needed
+		act->cropTop = stream.readSint16LE();
+		act->cropRight = stream.readSint16LE();
+		act->cropBottom = stream.readSint16LE();
+		act->followedActor = act->cropBottom; // TODO: is this needed? and valid?
 		act->bonusAmount = stream.readByte();
 		act->talkColor = stream.readByte();
 		act->armor = stream.readByte();
@@ -188,6 +220,11 @@ bool Scene::loadSceneLBA1() {
 		act->lifeScriptSize = stream.readUint16LE();
 		act->lifeScript = currentScene + stream.pos();
 		stream.skip(act->lifeScriptSize);
+
+		if (_engine->_debugScene->onlyLoadActor != -1 && _engine->_debugScene->onlyLoadActor != cnt) {
+			sceneNumActors--;
+			i--;
+		}
 	}
 
 	sceneNumZones = stream.readUint16LE();
@@ -253,7 +290,7 @@ void Scene::resetScene() {
 
 void Scene::changeScene() {
 	// change twinsen house destroyed hard-coded
-	if (needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->gameFlags[30] != 0) {
+	if (needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->hasOpenedFunfrocksSafe()) {
 		needChangeScene = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;
 	}
 
@@ -284,15 +321,15 @@ void Scene::changeScene() {
 	_engine->_grid->initGrid(needChangeScene);
 
 	if (heroPositionType == ScenePositionType::kZone) {
-		newHeroX = zoneHeroX;
-		newHeroY = zoneHeroY;
-		newHeroZ = zoneHeroZ;
+		newHeroX = _zoneHeroX;
+		newHeroY = _zoneHeroY;
+		newHeroZ = _zoneHeroZ;
 	}
 
 	if (heroPositionType == ScenePositionType::kScene || heroPositionType == ScenePositionType::kNoPosition) {
-		newHeroX = sceneHeroX;
-		newHeroY = sceneHeroY;
-		newHeroZ = sceneHeroZ;
+		newHeroX = _sceneHeroX;
+		newHeroY = _sceneHeroY;
+		newHeroZ = _sceneHeroZ;
 	}
 
 	sceneHero->x = newHeroX;
@@ -316,7 +353,7 @@ void Scene::changeScene() {
 	_engine->_gameState->inventoryNumKeys = 0;
 	_engine->disableScreenRecenter = false;
 	heroPositionType = ScenePositionType::kNoPosition;
-	sampleAmbienceTime = 0;
+	_sampleAmbienceTime = 0;
 
 	_engine->_grid->newCameraX = _sceneActors[currentlyFollowedActor].x >> 9;
 	_engine->_grid->newCameraY = _sceneActors[currentlyFollowedActor].y >> 8;
@@ -335,8 +372,8 @@ void Scene::changeScene() {
 
 	_engine->_renderer->setLightVector(alphaLight, betaLight, 0);
 
-	if (sceneMusic != -1) {
-		_engine->_music->playTrackMusic(sceneMusic);
+	if (_sceneMusic != -1) {
+		_engine->_music->playTrackMusic(_sceneMusic);
 	}
 }
 
@@ -347,20 +384,20 @@ ActorStruct *Scene::getActor(int32 actorIdx) {
 }
 
 void Scene::initSceneVars() {
-	sampleAmbiance[0] = -1;
-	sampleAmbiance[1] = -1;
-	sampleAmbiance[2] = -1;
-	sampleAmbiance[3] = -1;
+	_sampleAmbiance[0] = -1;
+	_sampleAmbiance[1] = -1;
+	_sampleAmbiance[2] = -1;
+	_sampleAmbiance[3] = -1;
 
-	sampleRepeat[0] = 0;
-	sampleRepeat[1] = 0;
-	sampleRepeat[2] = 0;
-	sampleRepeat[3] = 0;
+	_sampleRepeat[0] = 0;
+	_sampleRepeat[1] = 0;
+	_sampleRepeat[2] = 0;
+	_sampleRepeat[3] = 0;
 
-	sampleRound[0] = 0;
-	sampleRound[1] = 0;
-	sampleRound[2] = 0;
-	sampleRound[3] = 0;
+	_sampleRound[0] = 0;
+	_sampleRound[1] = 0;
+	_sampleRound[2] = 0;
+	_sampleRound[3] = 0;
 
 	sceneNumActors = 0;
 	sceneNumZones = 0;
@@ -368,21 +405,21 @@ void Scene::initSceneVars() {
 }
 
 void Scene::processEnvironmentSound() {
-	if (_engine->lbaTime >= sampleAmbienceTime) {
+	if (_engine->lbaTime >= _sampleAmbienceTime) {
 		int16 currentAmb = _engine->getRandomNumber(4); // random ambiance
 
 		for (int32 s = 0; s < 4; s++) {
-			if (!(samplePlayed & (1 << currentAmb))) { // if not already played
-				samplePlayed |= (1 << currentAmb);     // make sample played
+			if (!(_samplePlayed & (1 << currentAmb))) { // if not already played
+				_samplePlayed |= (1 << currentAmb);     // make sample played
 
-				if (samplePlayed == 15) { // reset if all samples played
-					samplePlayed = 0;
+				if (_samplePlayed == 15) { // reset if all samples played
+					_samplePlayed = 0;
 				}
 
-				int16 sampleIdx = sampleAmbiance[currentAmb];
+				const int16 sampleIdx = _sampleAmbiance[currentAmb];
 				if (sampleIdx != -1) {
-					int16 decal = sampleRound[currentAmb];
-					int16 repeat = sampleRepeat[currentAmb];
+					int16 decal = _sampleRound[currentAmb];
+					int16 repeat = _sampleRepeat[currentAmb];
 
 					_engine->_sound->playSample(sampleIdx, (4096 + _engine->getRandomNumber(decal) - (decal / 2)), repeat, 110, -1, 110);
 					break;
@@ -394,39 +431,27 @@ void Scene::processEnvironmentSound() {
 		}
 
 		// compute next ambiance timer
-		sampleAmbienceTime = _engine->lbaTime + (_engine->getRandomNumber(sampleMinDelayRnd) + sampleMinDelay) * 50;
+		_sampleAmbienceTime = _engine->lbaTime + (_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay) * 50;
 	}
 }
 
 void Scene::processZoneExtraBonus(ZoneStruct *zone) {
-	// bonus not used yet
 	if (zone->infoData.Bonus.used) {
 		return;
 	}
-	int8 bonusTable[8];
-	int32 numBonus = 0;
-	for (int32 a = 0; a < 5; a++) {
-		if (zone->infoData.Bonus.typesFlag & (1 << (a + 4))) {
-			bonusTable[numBonus++] = a;
-		}
+
+	const int bonusSprite = _engine->_extra->getBonusSprite(zone->infoData.Bonus.typesFlag);
+	if (bonusSprite == -1) {
+		return;
 	}
 
-	if (numBonus) {
-		int8 currentBonus = bonusTable[_engine->getRandomNumber(numBonus)];
+	const int16 amount = zone->infoData.Bonus.amount;
+	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, sceneHero->x, sceneHero->z);
+	const int32 index = _engine->_extra->addExtraBonus(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, zone->topRight.y, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, 180, angle, bonusSprite, amount);
 
-		// if bonus is magic an no magic level yet, then give life points
-		if (!_engine->_gameState->magicLevelIdx && currentBonus == 2) {
-			currentBonus = 1;
-		}
-
-		const int16 amount = zone->infoData.Bonus.amount;
-		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, sceneHero->x, sceneHero->z);
-		const int32 index = _engine->_extra->addExtraBonus(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, zone->topRight.y, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, 180, angle, currentBonus + 3, amount);
-
-		if (index != -1) {
-			_engine->_extra->extraList[index].type |= 0x400;
-			zone->infoData.Bonus.used = 1; // set as used
-		}
+	if (index != -1) {
+		_engine->_extra->extraList[index].type |= 0x400;
+		zone->infoData.Bonus.used = 1; // set as used
 	}
 }
 
@@ -455,14 +480,14 @@ void Scene::processActorZones(int32 actorIdx) {
 			case kCube:
 				if (IS_HERO(actorIdx) && actor->life > 0) {
 					needChangeScene = zone->infoData.ChangeScene.newSceneIdx;
-					zoneHeroX = actor->x - zone->bottomLeft.x + zone->infoData.ChangeScene.x;
-					zoneHeroY = actor->y - zone->bottomLeft.y + zone->infoData.ChangeScene.y;
-					zoneHeroZ = actor->z - zone->bottomLeft.z + zone->infoData.ChangeScene.z;
+					_zoneHeroX = actor->x - zone->bottomLeft.x + zone->infoData.ChangeScene.x;
+					_zoneHeroY = actor->y - zone->bottomLeft.y + zone->infoData.ChangeScene.y;
+					_zoneHeroZ = actor->z - zone->bottomLeft.z + zone->infoData.ChangeScene.z;
 					heroPositionType = ScenePositionType::kZone;
 				}
 				break;
 			case kCamera:
-				if (currentlyFollowedActor == actorIdx) {
+				if (currentlyFollowedActor == actorIdx && !_engine->_debugGrid->useFreeCamera) {
 					_engine->disableScreenRecenter = true;
 					if (_engine->_grid->newCameraX != zone->infoData.CameraView.x || _engine->_grid->newCameraY != zone->infoData.CameraView.y || _engine->_grid->newCameraZ != zone->infoData.CameraView.z) {
 						_engine->_grid->newCameraX = zone->infoData.CameraView.x;
@@ -491,13 +516,13 @@ void Scene::processActorZones(int32 actorIdx) {
 				}
 				break;
 			case kObject:
-				if (IS_HERO(actorIdx) && _engine->_movements->heroAction) {
+				if (IS_HERO(actorIdx) && _engine->_movements->shouldTriggerZoneAction()) {
 					_engine->_animations->initAnim(AnimationTypes::kAction, 1, AnimationTypes::kStanding, 0);
 					processZoneExtraBonus(zone);
 				}
 				break;
 			case kText:
-				if (IS_HERO(actorIdx) && _engine->_movements->heroAction) {
+				if (IS_HERO(actorIdx) && _engine->_movements->shouldTriggerZoneAction()) {
 					_engine->freezeTime();
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);
 					talkingActor = actorIdx;
@@ -508,12 +533,12 @@ void Scene::processActorZones(int32 actorIdx) {
 				break;
 			case kLadder:
 				if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour != HeroBehaviourType::kProtoPack && (actor->anim == AnimationTypes::kForward || actor->anim == AnimationTypes::kTopLadder || actor->anim == AnimationTypes::kClimbLadder)) {
-					_engine->_movements->rotateActor(actor->boudingBox.x.bottomLeft, actor->boudingBox.z.bottomLeft, actor->angle + 0x580);
+					_engine->_movements->rotateActor(actor->boudingBox.x.bottomLeft, actor->boudingBox.z.bottomLeft, actor->angle + ANGLE_360 + ANGLE_135);
 					_engine->_renderer->destX += _engine->_movements->processActorX;
 					_engine->_renderer->destZ += _engine->_movements->processActorZ;
 
 					if (_engine->_renderer->destX >= 0 && _engine->_renderer->destZ >= 0 && _engine->_renderer->destX <= 0x7E00 && _engine->_renderer->destZ <= 0x7E00) {
-						if (_engine->_grid->getBrickShape(_engine->_renderer->destX, actor->y + 0x100, _engine->_renderer->destZ) != ShapeType::kNone) {
+						if (_engine->_grid->getBrickShape(_engine->_renderer->destX, actor->y + ANGLE_90, _engine->_renderer->destZ) != ShapeType::kNone) {
 							currentActorInZone = true;
 							if (actor->y >= ABS(zone->bottomLeft.y + zone->topRight.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, 2, AnimationTypes::kStanding, actorIdx); // reached end of ladder
@@ -537,6 +562,7 @@ void Scene::processActorZones(int32 actorIdx) {
 }
 
 void Scene::stopRunningGame() {
+	free(currentScene);
 	currentScene = nullptr;
 }
 

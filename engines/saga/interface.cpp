@@ -921,19 +921,21 @@ void Interface::drawPanelText(InterfacePanel *panel, PanelButton *panelButton) {
 	} else {
 		// The standard case is used for the things that look a bit like buttons
 		// but are not clickable, e.g. texts like "Music", "Sound", etc.
-		if (_vm->getGameId() == GID_ITE) {
+		if (_vm->getGameId() == GID_ITE && _vm->getPlatform() != Common::kPlatformPC98) {
 			rect.left = rect.right - textWidth - 3;
 		} else {
 			rect.left = (rect.right + rect.left - textWidth) / 2;
+			if (_vm->getGameId() == GID_ITE)
+				rect.left += 4;
 		}
 		rect.top = (rect.top + rect.bottom - textHeight) / 2;
 	}
 
 	textPoint.x = rect.left;
-	textPoint.y = rect.top + 1;
+	textPoint.y = rect.top + (_vm->getPlatform() == Common::kPlatformPC98 ? 0 : 1);
 
 	_vm->_font->textDraw(textFont, text, textPoint,
-						_vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(textShadowKnownColor), kFontShadow);
+						_vm->KnownColor2ColorId(kKnownColorVerbText), _vm->KnownColor2ColorId(textShadowKnownColor), _vm->getPlatform() == Common::kPlatformPC98 ?  kFontOutline : kFontShadow);
 }
 
 void Interface::drawOption() {
@@ -2390,7 +2392,7 @@ void Interface::drawPanelButtonText(InterfacePanel *panel, PanelButton *panelBut
 	}
 
 	_vm->_font->textDraw(textFont, text, point,
-		_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(textShadowKnownColor), kFontShadow);
+		_vm->KnownColor2ColorId(textColor), _vm->KnownColor2ColorId(textShadowKnownColor), _vm->getPlatform() == Common::kPlatformPC98 ?  kFontOutline : kFontShadow);
 }
 
 void Interface::drawPanelButtonArrow(InterfacePanel *panel, PanelButton *panelButton) {
@@ -2443,7 +2445,7 @@ void Interface::drawVerbPanelText(PanelButton *panelButton, KnownColor textKnown
 
 	_vm->_font->textDraw(kKnownFontVerb, text, point,
 						_vm->KnownColor2ColorId(textKnownColor), _vm->KnownColor2ColorId(textShadowKnownColor),
-						(textShadowKnownColor != kKnownColorTransparent) ? kFontShadow : kFontNormal);
+						(textShadowKnownColor != kKnownColorTransparent) ? (_vm->getPlatform() == Common::kPlatformPC98 ?  kFontOutline : kFontShadow) : kFontNormal);
 }
 
 
@@ -2553,9 +2555,10 @@ void Interface::converseDisplayTextLines() {
 	byte bulletForegnd;
 	byte bulletBackgnd;
 	const char *str;
-	char bullet[2] = {
-		(char)0xb7, 0
+	static const char bulletStr[3][3] = {
+		"\xb7", "\x81\x45", ">"
 	};
+	const char *bullet = (_vm->getGameId() == GID_ITE) ? (_vm->getPlatform() == Common::kPlatformPC98 ? bulletStr[1] : bulletStr[0]) : bulletStr[2];
 
 	assert(_conversePanel.buttonsCount >= 6);
 	Rect rect(8, _vm->getDisplayInfo().converseTextLines * _vm->getDisplayInfo().converseTextHeight);
@@ -2569,7 +2572,6 @@ void Interface::converseDisplayTextLines() {
 	} else {
 		bulletForegnd = _vm->KnownColor2ColorId(kKnownColorBrightWhite);
 		bulletBackgnd = _vm->KnownColor2ColorId(kKnownColorBlack);
-		bullet[0] = '>';				// different bullet in IHNM
 	}
 
 	if (_vm->getGameId() == GID_ITE)
@@ -2614,14 +2616,14 @@ void Interface::converseDisplayTextLines() {
 			textPoint.y = rect.top;
 
 			if (_vm->getGameId() == GID_ITE)
-				_vm->_font->textDraw(kKnownFontSmall, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
+				_vm->_font->textDraw(kKnownFontSmall, bullet, textPoint, bulletForegnd, bulletBackgnd, _vm->getPlatform() == Common::kPlatformPC98 ?  kFontNormal : (FontEffectFlags)(kFontShadow | kFontDontmap));
 			else
 				_vm->_font->textDraw(kKnownFontVerb, bullet, textPoint, bulletForegnd, bulletBackgnd, (FontEffectFlags)(kFontShadow | kFontDontmap));
 		}
 		textPoint.x = rect.left + 1;
 		textPoint.y = rect.top;
 		if (_vm->getGameId() == GID_ITE)
-			_vm->_font->textDraw(kKnownFontSmall, str, textPoint, foregnd, kITEColorBlack, kFontShadow);
+			_vm->_font->textDraw(kKnownFontSmall, str, textPoint, foregnd, kITEColorBlack, _vm->getPlatform() == Common::kPlatformPC98 ?  kFontNormal : kFontShadow);
 		else
 			_vm->_font->textDraw(kKnownFontVerb, str, textPoint, foregnd, _vm->KnownColor2ColorId(kKnownColorBlack), kFontShadow);
 	}

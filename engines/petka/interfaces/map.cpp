@@ -116,7 +116,7 @@ void InterfaceMap::onMouseMove(Common::Point p) {
 			setText(Common::convertToU32String(obj->_name.c_str(), Common::kWindows1251), fmt.RGBToColor(0x80, 0, 0), fmt.RGBToColor(0xA, 0xA, 0xA));
 		}
 	} else if (oldObj && !_objUnderCursor) {
-		setText(Common::U32String(""), 0, 0);
+		setText(Common::U32String(), 0, 0);
 	}
 }
 

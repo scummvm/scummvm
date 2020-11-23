@@ -24,6 +24,7 @@
 
 #include "ultima/ultima8/games/game_data.h"
 #include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/item_selection_process.h"
@@ -42,7 +43,8 @@ namespace Ultima8 {
 ItemSelectionProcess *ItemSelectionProcess::_instance = nullptr;
 
 static const uint32 SELECTOR_SHAPE = 0x5a3;
-static const uint16 SELECTION_FAILED_SOUND = 0xb0;
+static const uint16 SELECT_FAILED_SFX_REMORSE = 0xb0;
+static const uint16 SELECT_FAILED_SFX_REGRET = 0x1a7;
 
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(ItemSelectionProcess)
@@ -102,7 +104,9 @@ bool ItemSelectionProcess::selectNextItem() {
 		AudioProcess *audio = AudioProcess::get_instance();
 		assert(audio);
 		// Play the "beeboop" selection failed sound.
-		audio->playSFX(SELECTION_FAILED_SOUND, 0x10, 0, 1);
+		uint16 sfxno = GAME_IS_REGRET ? SELECT_FAILED_SFX_REGRET : SELECT_FAILED_SFX_REMORSE;
+		if (!audio->isSFXPlaying(sfxno))
+			audio->playSFX(sfxno, 0x10, 0, 1);
 		clearSelection();
 		return false;
 	}

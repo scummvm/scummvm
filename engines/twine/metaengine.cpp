@@ -247,7 +247,8 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 
 		act = new Action("CHANGEBEHAVIOUR", _("Change Behaviour"));
 		act->setCustomEngineActionEvent(TwinEActionType::BehaviourMenu);
-		act->addDefaultInputMapping("CTRL");
+		act->addDefaultInputMapping("LCTRL");
+		act->addDefaultInputMapping("RCTRL");
 		gameKeyMap->addAction(act);
 
 		act = new Action("OPTIONSMENU", _("Options Menu"));
@@ -263,13 +264,14 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 
 		act = new Action("USESELECTEDOBJECT", _("Use Selected Object"));
 		act->setCustomEngineActionEvent(TwinEActionType::UseSelectedObject);
-		act->addDefaultInputMapping("SHIFT+RETURN");
-		act->addDefaultInputMapping("SHIFT+KP_ENTER");
+		act->addDefaultInputMapping("S+RETURN");
+		act->addDefaultInputMapping("S+KP_ENTER");
 		gameKeyMap->addAction(act);
 
 		act = new Action("THROWMAGICBALL", _("Throw Magic Ball"));
 		act->setCustomEngineActionEvent(TwinEActionType::ThrowMagicBall);
-		act->addDefaultInputMapping("ALT");
+		act->addDefaultInputMapping("LALT");
+		act->addDefaultInputMapping("RALT");
 		gameKeyMap->addAction(act);
 
 		act = new Action("MOVEFORWARD", _("Move Forward"));

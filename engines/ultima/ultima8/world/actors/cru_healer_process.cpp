@@ -25,6 +25,7 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/get_object.h"
+#include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/ultima8.h"
 #include "ultima/ultima8/audio/audio_process.h"
 
@@ -33,12 +34,16 @@
 namespace Ultima {
 namespace Ultima8 {
 
+
+// These SFX IDs are the same in both No Regret and No Remorse.
+static const uint16 HEAL_START_SFX = 0xdb;
+static const uint16 HEAL_GOING_SFX = 0xba;
+
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruHealerProcess)
 
 CruHealerProcess::CruHealerProcess() : Process() {
-	// TODO: This should be the "current" avatar (if controlling a robot etc)
-	MainActor *avatar = getMainActor();
+	MainActor *avatar = dynamic_cast<MainActor *>(getActor(World::get_instance()->getControlledNPCNum()));
 	if (!avatar) {
 		_itemNum = 0;
 		_targetMaxHP = 0;
@@ -48,7 +53,7 @@ CruHealerProcess::CruHealerProcess() : Process() {
 		AudioProcess *audio = AudioProcess::get_instance();
 		if (audio) {
 			// Sound num is the same in both No Remorse and No Regret
-			audio->playSFX(0xdb, 0x80, _itemNum, 1, false);
+			audio->playSFX(HEAL_START_SFX, 0x80, _itemNum, 1, false);
 		}
 	}
 	Ultima8Engine::get_instance()->setAvatarInStasis(true);
@@ -56,8 +61,7 @@ CruHealerProcess::CruHealerProcess() : Process() {
 }
 
 void CruHealerProcess::run() {
-	// TODO: This should be the "current" avatar (if controlling a robot etc)
-	MainActor *avatar = getMainActor();
+	MainActor *avatar = dynamic_cast<MainActor *>(getActor(World::get_instance()->getControlledNPCNum()));
 	AudioProcess *audio = AudioProcess::get_instance();
 
 	if (!avatar || avatar->isDead() || avatar->getHP() >= _targetMaxHP) {
@@ -66,13 +70,13 @@ void CruHealerProcess::run() {
 		}
 		// dead or finished healing
 		if (audio)
-			audio->stopSFX(0xdb, _itemNum);
+			audio->stopSFX(HEAL_START_SFX, _itemNum);
 		terminate();
 		return;
 	}
 
-    if (audio && !audio->isSFXPlayingForObject(0xba, _itemNum))
-		audio->playSFX(0xba, 0x80, _itemNum, 1);
+    if (audio && !audio->isSFXPlayingForObject(HEAL_GOING_SFX, _itemNum))
+		audio->playSFX(HEAL_GOING_SFX, 0x80, _itemNum, 1);
 
 	uint16 newHP = avatar->getHP() + 1;
 	if (newHP > _targetMaxHP)

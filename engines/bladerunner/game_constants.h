@@ -2754,7 +2754,7 @@ enum ActorTimers {
 
 // Certain tracks are available at Frank Klepacki's website/portfolio for Blade Runner
 // Those are noted with their "official" name in a side-comment here, as they appear at the website
-// A few may not match the incremental number given in-game (eg kMusicGothic3 is "Gothic Club 2")
+// A few may not match the incremental number given in-game (eg. kMusicGothic3 is "Gothic Club 2")
 enum MusicTracks {
 	kMusicArabLoop =  0, // Animoid Row track     (Not available at Frank Klepacki's website/portfolio for Blade Runner)
 	kMusicBatl226M =  1, // "Battle Theme"
@@ -2765,18 +2765,18 @@ enum MusicTracks {
 	kMusicArkdFly1 =  6,
 	kMusicArkDnce1 =  7,
 	kMusicTaffy2   =  8, // "Taffy's Club 2"
-	kMusicTaffy3   =  9,
-	kMusicTaffy4   = 10,
-	kMusicBeating1 = 11,
-	kMusicCrysDie1 = 12,
+	kMusicTaffy3   =  9, // "Enigma Drift"
+	kMusicTaffy4   = 10, // "Late Call"
+	kMusicBeating1 = 11, // "Nexus"
+	kMusicCrysDie1 = 12, // "Awakenings"
 	kMusicGothic1  = 13, // "Gothic Club"
-	kMusicGothic2  = 14,
-	kMusicStrip1   = 15,
+	kMusicGothic2  = 14, // "Transition"
+	kMusicStrip1   = 15, // "The Eyes Follow"
 	kMusicDkoDnce1 = 16,
-	kMusicCredits  = 17, // "Blade Runner End Credits"
-	kMusicMoraji   = 18,
-	kMusicClovDie1 = 19,
-	kMusicClovDies = 20,
+	kMusicCredits  = 17, // "End Credits"
+	kMusicMoraji   = 18, // "Ending"
+	kMusicClovDie1 = 19, // "Remorse"
+	kMusicClovDies = 20, // "Solitude"
 	kMusicLoveSong = 21  // "Love Theme" (Lucy, Dektora, Subway drive ending)
 };
 
@@ -3143,7 +3143,7 @@ enum SFXSounds {
 	kSfxSTONDOR1 = 359,
 	kSfxSTONDOR2 = 360,
 	kSfxSEXYAD2  = 361,
-	kSfxMUSBLEED = 362,  //           - Looping
+	kSfxMUSBLEED = 362,  //           - Looping ("Iron Fist" track from Command & Conquer - The Covert Operations (OST))
 	kSfxSUNROOM1 = 363,
 	kSfxSUNROOM2 = 364,
 	kSfxSUNROOM3 = 365,

@@ -20,42 +20,28 @@
  *
  */
 
-#ifndef COMMON_ICONV_H
-#define COMMON_ICONV_H
-
+#ifndef COMMON_ENC_INTERNAL
+#define COMMON_ENC_INTERNAL 1
 #include "common/scummsys.h"
-
-#ifdef USE_ICONV
 
 namespace Common {
 
-class String;
-class U32String;
+extern const uint16 kWindows1250ConversionTable[128];
+extern const uint16 kWindows1251ConversionTable[128];
+extern const uint16 kWindows1252ConversionTable[128];
+extern const uint16 kWindows1253ConversionTable[128];
+extern const uint16 kWindows1254ConversionTable[128];
+extern const uint16 kWindows1255ConversionTable[128];
+extern const uint16 kWindows1256ConversionTable[128];
+extern const uint16 kWindows1257ConversionTable[128];
+extern const uint16 kMacCentralEuropeConversionTable[128];
+extern const uint16 kLatin1ConversionTable[128];
+extern const uint16 kLatin2ConversionTable[128];
+extern const uint16 kISO5ConversionTable[128];
+extern const uint16 kASCIIConversionTable[128];
+extern const uint16 kDos850ConversionTable[128];
+extern const uint16 kDos866ConversionTable[128];
 
-enum IconvEncoding {
-	/** Windows codepage 1250 (Eastern European, Latin alphabet) */
-	kEncodingCP1250,
+}
 
-	/** Windows codepage 1251 (Eastern European, Cyrillic alphabet) */
-	kEncodingCP1251,
-
-	/** Windows codepage 1252 (Western European, Latin alphabet) */
-	kEncodingCP1252,
-
-	/** Windows codepage 1255 (Hebrew) */
-	kEncodingCP1255,
-
-	/** Windows codepage 932 (Japanese, extended Shift-JIS) */
-	kEncodingCP932,
-
-	/** Macintosh Central European (Eastern European, Latin alphabet) */
-	kEncodingMacCentralEurope
-};
-
-U32String convertToU32String(IconvEncoding fromEncoding, const String &string);
-
-} // End of namespace Common
-
-#endif // USE_ICONV
-
-#endif // COMMON_ICONV_H
+#endif

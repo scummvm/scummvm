@@ -483,14 +483,14 @@ bool hasEnding(std::string const &fullString, std::string const &ending) {
 	}
 }
 
-namespace {
-
-inline void outputNasmCommand(std::ostream &projectFile, const std::string &config, const std::string &prefix) {
+void MSBuildProvider::outputNasmCommand(std::ostream &projectFile, const std::string &config, const std::string &prefix) {
 	projectFile << "\t\t\t<Command Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">nasm.exe -f win32 -g -o \"$(IntDir)" << prefix << "%(Filename).obj\" \"%(FullPath)\"</Command>\n"
 	            << "\t\t\t<Outputs Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">$(IntDir)" << prefix << "%(Filename).obj;%(Outputs)</Outputs>\n";
+	if (_version >= 15) {
+		projectFile << "\t\t\t<OutputItemType Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">Object</OutputItemType>\n"
+		            << "\t\t\t<BuildInParallel Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">true</BuildInParallel>\n";
+	}
 }
-
-} // End of anonymous namespace
 
 void MSBuildProvider::writeFileListToProject(const FileNode &dir, std::ofstream &projectFile, const int,
                                              const std::string &objPrefix, const std::string &filePrefix) {

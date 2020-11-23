@@ -68,31 +68,31 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 
 	_tabWidget->addTab(_("Reverb"), "FluidSynthSettings_Reverb");
 
-	_reverbActivate = new CheckboxWidget(_tabWidget, "FluidSynthSettings_Reverb.EnableTabCheckbox", _("Active"), Common::U32String(""), kActivateReverbCmd);
+	_reverbActivate = new CheckboxWidget(_tabWidget, "FluidSynthSettings_Reverb.EnableTabCheckbox", _("Active"), Common::U32String(), kActivateReverbCmd);
 
 	_reverbRoomSizeDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeText", _("Room:"));
-	_reverbRoomSizeSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeSlider", Common::U32String(""), kReverbRoomSizeChangedCmd);
+	_reverbRoomSizeSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeSlider", Common::U32String(), kReverbRoomSizeChangedCmd);
 	// 0.00 - 1.20, Default: 0.20
 	_reverbRoomSizeSlider->setMinValue(0);
 	_reverbRoomSizeSlider->setMaxValue(120);
 	_reverbRoomSizeLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.RoomSizeLabel", Common::U32String("20"));
 
 	_reverbDampingDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.DampingText", _("Damp:"));
-	_reverbDampingSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.DampingSlider", Common::U32String(""), kReverbDampingChangedCmd);
+	_reverbDampingSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.DampingSlider", Common::U32String(), kReverbDampingChangedCmd);
 	// 0.00 - 1.00, Default: 0.00
 	_reverbDampingSlider->setMinValue(0);
 	_reverbDampingSlider->setMaxValue(100);
 	_reverbDampingLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.DampingLabel", Common::U32String("0"));
 
 	_reverbWidthDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthText", _("Width:"));
-	_reverbWidthSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthSlider", Common::U32String(""), kReverbWidthChangedCmd);
+	_reverbWidthSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthSlider", Common::U32String(), kReverbWidthChangedCmd);
 	// 0 - 100, Default: 1
 	_reverbWidthSlider->setMinValue(0);
 	_reverbWidthSlider->setMaxValue(100);
 	_reverbWidthLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.WidthLabel", Common::U32String("1"));
 
 	_reverbLevelDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Reverb.LevelText", _("Level:"));
-	_reverbLevelSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.LevelSlider", Common::U32String(""), kReverbLevelChangedCmd);
+	_reverbLevelSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Reverb.LevelSlider", Common::U32String(), kReverbLevelChangedCmd);
 	// 0.00 - 1.00, Default: 0.90
 	_reverbLevelSlider->setMinValue(0);
 	_reverbLevelSlider->setMaxValue(100);
@@ -100,31 +100,31 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 
 	_tabWidget->addTab(_("Chorus"), "FluidSynthSettings_Chorus");
 
-	_chorusActivate = new CheckboxWidget(_tabWidget, "FluidSynthSettings_Chorus.EnableTabCheckbox", _("Active"), Common::U32String(""), kActivateChorusCmd);
+	_chorusActivate = new CheckboxWidget(_tabWidget, "FluidSynthSettings_Chorus.EnableTabCheckbox", _("Active"), Common::U32String(), kActivateChorusCmd);
 
 	_chorusVoiceCountDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.VoiceCountText", _("N:"));
-	_chorusVoiceCountSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Chorus.VoiceCountSlider", Common::U32String(""), kChorusVoiceCountChangedCmd);
+	_chorusVoiceCountSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Chorus.VoiceCountSlider", Common::U32String(), kChorusVoiceCountChangedCmd);
 	// 0-99, Default: 3
 	_chorusVoiceCountSlider->setMinValue(0);
 	_chorusVoiceCountSlider->setMaxValue(99);
 	_chorusVoiceCountLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.VoiceCountLabel", Common::U32String("3"));
 
 	_chorusLevelDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.LevelText", _("Level:"));
-	_chorusLevelSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Chorus.LevelSlider", Common::U32String(""), kChorusLevelChangedCmd);
+	_chorusLevelSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Chorus.LevelSlider", Common::U32String(), kChorusLevelChangedCmd);
 	// 0.00 - 1.00, Default: 1.00
 	_chorusLevelSlider->setMinValue(0);
 	_chorusLevelSlider->setMaxValue(100);
 	_chorusLevelLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.LevelLabel", Common::U32String("100"));
 
 	_chorusSpeedDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.SpeedText", _("Speed:"));
-	_chorusSpeedSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Chorus.SpeedSlider", Common::U32String(""), kChorusSpeedChangedCmd);
+	_chorusSpeedSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Chorus.SpeedSlider", Common::U32String(), kChorusSpeedChangedCmd);
 	// 0.30 - 5.00, Default: 0.30
 	_chorusSpeedSlider->setMinValue(30);
 	_chorusSpeedSlider->setMaxValue(500);
 	_chorusSpeedLabel = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.SpeedLabel", Common::U32String("30"));
 
 	_chorusDepthDesc = new StaticTextWidget(_tabWidget, "FluidSynthSettings_Chorus.DepthText", _("Depth:"));
-	_chorusDepthSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Chorus.DepthSlider", Common::U32String(""), kChorusDepthChangedCmd);
+	_chorusDepthSlider = new SliderWidget(_tabWidget, "FluidSynthSettings_Chorus.DepthSlider", Common::U32String(), kChorusDepthChangedCmd);
 	// 0.00 - 21.00, Default: 8.00
 	_chorusDepthSlider->setMinValue(0);
 	_chorusDepthSlider->setMaxValue(210);
@@ -150,8 +150,8 @@ FluidSynthSettingsDialog::FluidSynthSettingsDialog()
 
 	new ButtonWidget(this, "FluidSynthSettings.ResetSettings", _("Reset"), _("Reset all FluidSynth settings to their default values."), kResetSettingsCmd);
 
-	new ButtonWidget(this, "FluidSynthSettings.Cancel", _("Cancel"), Common::U32String(""), kCloseCmd);
-	new ButtonWidget(this, "FluidSynthSettings.Ok", _("OK"), Common::U32String(""), kOKCmd);
+	new ButtonWidget(this, "FluidSynthSettings.Cancel", _("Cancel"), Common::U32String(), kCloseCmd);
+	new ButtonWidget(this, "FluidSynthSettings.Ok", _("OK"), Common::U32String(), kOKCmd);
 }
 
 FluidSynthSettingsDialog::~FluidSynthSettingsDialog() {

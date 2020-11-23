@@ -94,7 +94,9 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 
 	// Original sets up bytes 0-3 of rdf file as "remote function caller"
 
-	_room->loadMapFile(getScreenName());
+	bool isDemo = getFeatures() & GF_DEMO;
+	if (!isDemo)
+		_room->loadMapFile(getScreenName());
 
 	_awayMission.activeAction = ACTION_WALK;
 
@@ -105,14 +107,16 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 	int16 den = _room->getMaxY() - _room->getMinY() + 1;
 	_playerActorScale = Fixed16(num) / den;
 
-	int16 addr = _room->getBanDataStart();
-	while (addr != _room->getBanDataEnd()) {
-		Common::String name((char *)&_room->_rdfData[addr]);
-		loadBanFile(name);
-		addr += strlen((char *)&_room->_rdfData[addr]) + 1;
-	}
-
 	_actionQueue.clear();
+
+	if (!isDemo) {
+		int16 addr = _room->getBanDataStart();
+		while (addr != _room->getBanDataEnd()) {
+			Common::String name((char *)&_room->_rdfData[addr]);
+			loadBanFile(name);
+			addr += strlen((char *)&_room->_rdfData[addr]) + 1;
+		}
+	}
 }
 
 void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
@@ -165,7 +169,7 @@ void StarTrekEngine::initAwayCrewPositions(int warpEntryIndex) {
 		_warpHotspotsActive = true;
 		break;
 	case 6:
-		error("initAwayCrewPositions(6) unimplemented");
+		loadBridgeActors();
 		break;
 	default:
 		warning("Invalid parameter (%d) to initAwayCrewPositions", warpEntryIndex);
@@ -219,14 +223,21 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				awayMissionSelectAction(true);
 				break;
 
-			case Common::KEYCODE_w:
-				hideInventoryIcons();
-				_awayMission.activeAction = ACTION_WALK;
-				break;
-
 			case Common::KEYCODE_t:
 				hideInventoryIcons();
 				_awayMission.activeAction = ACTION_TALK;
+				awayMissionSelectAction(false);
+				break;
+
+			case Common::KEYCODE_l:
+				hideInventoryIcons();
+				_awayMission.activeAction = ACTION_LOOK;
+				awayMissionSelectAction(false);
+				break;
+
+			case Common::KEYCODE_g:
+				hideInventoryIcons();
+				_awayMission.activeAction = ACTION_GET;
 				awayMissionSelectAction(false);
 				break;
 
@@ -234,6 +245,11 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				hideInventoryIcons();
 				_awayMission.activeAction = ACTION_USE;
 				awayMissionSelectAction(false);
+				break;
+
+			case Common::KEYCODE_w:
+				hideInventoryIcons();
+				_awayMission.activeAction = ACTION_WALK;
 				break;
 
 			case Common::KEYCODE_i:
@@ -258,16 +274,34 @@ void StarTrekEngine::handleAwayMissionEvents() {
 				awayMissionLeftClick();
 				break;
 
-			case Common::KEYCODE_g:
-				hideInventoryIcons();
-				_awayMission.activeAction = ACTION_GET;
-				awayMissionSelectAction(false);
+			case Common::KEYCODE_c:
+				// Bridge computer, where the player can ask about various topics.
+				// ENHANCEMENT: Normally, this is only available when in the bridge.
+				// We also show it in missions.
+				handleBridgeComputer();
 				break;
 
-			case Common::KEYCODE_l:
-				hideInventoryIcons();
-				_awayMission.activeAction = ACTION_LOOK;
-				awayMissionSelectAction(false);
+			case Common::KEYCODE_p:
+				// Pause game
+				// TODO
+				break;
+
+			case Common::KEYCODE_e:
+				if (event.kbd.flags && Common::KBD_CTRL) {
+					_sound->toggleSfx();
+				}
+				break;
+
+			case Common::KEYCODE_m:
+				if (event.kbd.flags && Common::KBD_CTRL) {
+					_sound->toggleMusic();
+				}
+				break;
+
+			case Common::KEYCODE_q:
+				if (event.kbd.flags && Common::KBD_CTRL) {
+					showQuitGamePrompt(20, 20);
+				}
 				break;
 
 			default:

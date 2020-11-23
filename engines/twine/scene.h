@@ -51,6 +51,9 @@ struct ScenePoint {
 	int16 z = 0;
 };
 
+/**
+ * Special actions, like change scene, climbing a ladder, ...
+ */
 struct ZoneStruct {
 	ScenePoint bottomLeft;
 	ScenePoint topRight;
@@ -74,23 +77,15 @@ struct ZoneStruct {
 		struct {
 			int16 newGrid;
 		} CeillingGrid;
+
+		/** show a text (e.g. when reading a sign) */
 		struct {
-			int16 textIdx;
-			int16 textColor;
+			int16 textIdx;		/*!< text index in the current active text bank */
+			int16 textColor;	/*!< text color (see @c ActorStruct::talkColor) */
 		} DisplayText;
 		struct {
 			int16 info0;
-			/**
-			 * Bonus type flags - a bitfield value, of which the bits mean:
-			 * bit 8: clover leaf,
-			 * bit 7: small key,
-			 * bit 6: magic,
-			 * bit 5: life,
-			 * bit 4: money,
-			 * If more than one type of bonus is selected, the actual type of bonus
-			 * will be chosen randomly each time player uses Action.
-			 */
-			int16 typesFlag;
+			BonusParameter typesFlag;
 			int16 amount;
 			/**
 			 * Already used
@@ -246,13 +241,33 @@ enum LBA1SceneId {
 #define IS_HERO(x) (x) == OWN_ACTOR_SCENE_INDEX
 
 class TwinEEngine;
+
+/**
+ * scene 0: 23 actors
+ *
+ * scene 1: 14 actors
+ * actor 1 - car
+ * actor 2 - elephant
+ * actor 3 - soldier at the house
+ * actor 4 - patrolling soldier before gate
+ * actor 5 - soldier after gate
+ * actor 6 - ??
+ * actor 7 - ??
+ * actor 8 - left gate
+ * actor 9 - ??
+ * actor 10 - door after leaving truck
+ * actor 11 - door subway
+ * actor 12 - guy at rubbish
+ * actor 13 - ??
+ */
 class Scene {
 private:
 	TwinEEngine *_engine;
 
 	/** Process zone extra bonus */
 	void processZoneExtraBonus(ZoneStruct *zone);
-	void setActorStaticFlags(int32 actorIdx, uint16 staticFlags);
+	void setActorStaticFlags(ActorStruct* act, uint16 staticFlags);
+	void setBonusParameterFlags(ActorStruct* act, uint16 bonusFlags);
 	bool loadSceneLBA1();
 	/** Initialize new scene */
 	bool initScene(int32 index);
@@ -264,28 +279,29 @@ private:
 	int32 _currentSceneSize = 0;
 
 	/** Timer for the next sample ambience in scene */
-	int32 sampleAmbienceTime = 0;
-	int16 sampleAmbiance[4] {0};
-	int16 sampleRepeat[4] {0};
-	int16 sampleRound[4] {0};
-	int16 sampleMinDelay = 0;
-	int16 sampleMinDelayRnd = 0;
+	int32 _sampleAmbienceTime = 0;
+	int16 _sampleAmbiance[4] {0};
+	int16 _sampleRepeat[4] {0};
+	int16 _sampleRound[4] {0};
+	int16 _sampleMinDelay = 0;
+	int16 _sampleMinDelayRnd = 0;
 
-	int16 samplePlayed = 0;
+	int16 _samplePlayed = 0;
 
-	int16 sceneMusic = 0;
+	int16 _sceneMusic = 0;
 
-	int16 sceneHeroX = 0; // newTwinsenXByScene
-	int16 sceneHeroY = 0; // newTwinsenYByScene
-	int16 sceneHeroZ = 0; // newTwinsenZByScene
+	int16 _sceneHeroX = 0; // newTwinsenXByScene
+	int16 _sceneHeroY = 0; // newTwinsenYByScene
+	int16 _sceneHeroZ = 0; // newTwinsenZByScene
 
-	int16 zoneHeroX = 0; // newTwinsenXByZone
-	int16 zoneHeroY = 0; // newTwinsenYByZone
-	int16 zoneHeroZ = 0; // newTwinsenZByZone
-	int32 currentGameOverScene = 0;
+	int16 _zoneHeroX = 0; // newTwinsenXByZone
+	int16 _zoneHeroY = 0; // newTwinsenYByZone
+	int16 _zoneHeroZ = 0; // newTwinsenZByZone
+	int32 _currentGameOverScene = 0;
 
 public:
 	Scene(TwinEEngine *engine) : _engine(engine) {}
+	~Scene();
 
 	uint8 *currentScene = nullptr;
 
@@ -324,7 +340,7 @@ public:
 
 	int16 talkingActor = 0;
 
-	// TRACKS
+	// TRACKS Tell the actor where to go
 
 	int32 sceneNumTracks = 0;
 	ScenePoint sceneTracks[NUM_MAX_TRACKS];

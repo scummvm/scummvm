@@ -114,8 +114,11 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm), _awayMissi
 		_numRoomActions = 0;
 	}
 
-	loadRoomMessages();
-	loadOtherRoomMessages();
+	bool isDemo = _vm->getFeatures() & GF_DEMO;
+	if (!isDemo) {
+		loadRoomMessages();
+		loadOtherRoomMessages();
+	}
 	memset(&_roomVar, 0, sizeof(_roomVar));
 }
 
@@ -376,8 +379,14 @@ bool Room::handleActionWithBitmask(byte type, byte b1, byte b2, byte b3) {
 }
 
 Common::Point Room::getBeamInPosition(int crewmanIndex) {
-	int base = RDF_BEAM_IN_POSITIONS + crewmanIndex * 4;
-	return Common::Point(readRdfWord(base), readRdfWord(base + 2));
+	bool isDemo = _vm->getFeatures() & GF_DEMO;
+	if (!isDemo) {
+		int base = RDF_BEAM_IN_POSITIONS + crewmanIndex * 4;
+		return Common::Point(readRdfWord(base), readRdfWord(base + 2));
+	} else {
+		// TODO
+		return Common::Point(86, 158);
+	}
 }
 
 Common::Point Room::getSpawnPosition(int crewmanIndex) {
@@ -691,8 +700,6 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 			break;
 		}
 	}
-
-	_vm->_roomIndexToLoad = 0;
 }
 
 void Room::showGameOverMenu() { // TODO: takes an optional parameter?

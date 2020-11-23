@@ -43,6 +43,7 @@ Actor::Actor(TwinEEngine *engine) : _engine(engine) {
 }
 
 Actor::~Actor() {
+	_engine->_scene->getActor(OWN_ACTOR_SCENE_INDEX)->entityDataPtr = nullptr;
 	free(heroEntityNORMAL);
 	free(heroEntityATHLETIC);
 	free(heroEntityAGGRESSIVE);
@@ -210,9 +211,6 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoun
 				if (!(bodyIndex & 0x8000)) {
 					index = currentPositionInBodyPtrTab;
 					currentPositionInBodyPtrTab++;
-					if (bodyTable[index]) {
-						free(bodyTable[index]);
-					}
 					bodyTableSize[index] = HQR::getAllocEntry(&bodyTable[index], Resources::HQR_BODY_FILE, bodyIndex & 0xFFFF);
 					if (bodyTableSize[index] == 0) {
 						error("HQR ERROR: Loading body entities");
@@ -343,7 +341,7 @@ void Actor::initActor(int16 actorIdx) {
 
 		initSpriteActor(actorIdx);
 
-		_engine->_movements->setActorAngleSafe(0, 0, 0, &actor->move);
+		_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, 0, &actor->move);
 
 		if (actor->staticFlags.bUsesClipping) {
 			actor->lastX = actor->x;
@@ -390,10 +388,10 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->speed = 40;
 	actor->controlMode = ControlMode::kNoMove;
 
-	actor->info0 = 0;
-	actor->info1 = 0;
-	actor->info2 = 0;
-	actor->info3 = 0;
+	actor->cropLeft = 0;
+	actor->cropTop = 0;
+	actor->cropRight = 0;
+	actor->cropBottom = 0;
 
 	actor->setBrickShape(ShapeType::kNone);
 	actor->collision = -1;
@@ -402,6 +400,7 @@ void Actor::resetActor(int16 actorIdx) {
 
 	memset(&actor->staticFlags, 0, sizeof(StaticFlagsStruct));
 	memset(&actor->dynamicFlags, 0, sizeof(DynamicFlagsStruct));
+	memset(&actor->bonusParameter, 0, sizeof(BonusParameter));
 
 	actor->life = 50;
 	actor->armor = 1;
@@ -415,7 +414,7 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->animType = 0;
 	actor->animPosition = 0;
 
-	_engine->_movements->setActorAngleSafe(0, 0, 0, &actor->move);
+	_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, 0, &actor->move);
 
 	actor->positionInMoveScript = -1;
 	actor->positionInLifeScript = 0;
@@ -480,39 +479,73 @@ void Actor::processActorCarrier(int32 actorIdx) { // CheckCarrier
 void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 
-	int32 numBonus = 0;
-
-	int8 bonusTable[8];
-	for (int32 a = 0; a < 5; a++) {
-		if (actor->bonusParameter & (1 << (a + 4))) {
-			bonusTable[numBonus++] = a;
-		}
-	}
-
-	if (numBonus == 0) {
+	const int bonusSprite = _engine->_extra->getBonusSprite(actor->bonusParameter);
+	if (bonusSprite == -1) {
 		return;
 	}
-
-	const int bonusIndex = _engine->getRandomNumber(numBonus);
-	assert(bonusIndex >= 0);
-	assert(bonusIndex < numBonus);
-	int8 currentBonus = bonusTable[bonusIndex];
-	// if bonus is magic an no magic level yet, then give life points
-	if (!_engine->_gameState->magicLevelIdx && currentBonus == 2) {
-		currentBonus = 1;
-	}
-	currentBonus += 3;
-
 	if (actor->dynamicFlags.bIsDead) {
-		_engine->_extra->addExtraBonus(actor->x, actor->y, actor->z, 0x100, 0, currentBonus, actor->bonusAmount);
+		_engine->_extra->addExtraBonus(actor->x, actor->y, actor->z, ANGLE_90, 0, bonusSprite, actor->bonusAmount);
 		// FIXME add constant for sample index
-		_engine->_sound->playSample(Samples::ItemPopup, 0x1000, 1, actor->x, actor->y, actor->z, actorIdx);
+		_engine->_sound->playSample(Samples::ItemPopup, 4096, 1, actor->x, actor->y, actor->z, actorIdx);
 	} else {
-		int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->z);
-		_engine->_extra->addExtraBonus(actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, 200, angle, currentBonus, actor->bonusAmount);
+		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->z);
+		_engine->_extra->addExtraBonus(actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, 200, angle, bonusSprite, actor->bonusAmount);
 		// FIXME add constant for sample index
-		_engine->_sound->playSample(Samples::ItemPopup, 0x1000, 1, actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, actorIdx);
+		_engine->_sound->playSample(Samples::ItemPopup, 4096, 1, actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, actorIdx);
 	}
 }
+
+ActorStruct::~ActorStruct() {
+	free(entityDataPtr);
+}
+
+void ActorStruct::loadModel(int32 modelIndex) {
+	entity = modelIndex;
+	if (!staticFlags.bIsSpriteActor) {
+		entityDataSize = HQR::getAllocEntry(&entityDataPtr, Resources::HQR_FILE3D_FILE, modelIndex);
+	} else {
+		entityDataSize = 0;
+		free(entityDataPtr);
+		entityDataPtr = nullptr;
+	}
+}
+
+int32 ActorMoveStruct::getRealAngle(int32 time) {
+	if (numOfStep) {
+		const int32 timePassed = time - timeOfChange;
+
+		if (timePassed >= numOfStep) { // rotation is finished
+			numOfStep = 0;
+			return to;
+		}
+
+		int32 remainingAngle = NormalizeAngle(to - from);
+		remainingAngle *= timePassed;
+		remainingAngle /= numOfStep;
+		remainingAngle += from;
+
+		return remainingAngle;
+	}
+
+	return to;
+}
+
+int32 ActorMoveStruct::getRealValue(int32 time) {
+	if (!numOfStep) {
+		return to;
+	}
+
+	if (time - timeOfChange >= numOfStep) {
+		numOfStep = 0;
+		return to;
+	}
+
+	int32 tempStep = to - from;
+	tempStep *= time - timeOfChange;
+	tempStep /= numOfStep;
+
+	return tempStep + from;
+}
+
 
 } // namespace TwinE

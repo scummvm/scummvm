@@ -33,7 +33,7 @@ namespace Director {
 
 Frame::Frame(Score *score, int numChannels) {
 	_score = score;
-	_vm = score->getMovie()->getVM();;
+	_vm = score->getMovie()->getVM();
 	_transDuration = 0;
 	_transType = kTransNone;
 	_transArea = 0;

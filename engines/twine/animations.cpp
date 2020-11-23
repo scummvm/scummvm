@@ -129,7 +129,7 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bo
 	currentStepZ = READ_LE_INT16(ptrToData + 4);
 
 	processRotationByAnim = READ_LE_INT16(ptrToData + 6);
-	processLastRotationAngle = READ_LE_INT16(ptrToData + 10);
+	processLastRotationAngle = ToAngle(READ_LE_INT16(ptrToData + 10));
 
 	return 1;
 }
@@ -143,32 +143,29 @@ int32 Animations::getStartKeyframe(const uint8 *animPtr) {
 }
 
 void Animations::applyAnimStepRotation(uint8 **ptr, int32 bp, int32 bx, const uint8 **keyFramePtr, const uint8 **lastKeyFramePtr) {
-	int16 lastAngle = READ_LE_INT16(*lastKeyFramePtr);
+	const int16 lastAngle = ClampAngle(READ_LE_INT16(*lastKeyFramePtr));
 	*lastKeyFramePtr += 2;
 
-	int16 newAngle = READ_LE_INT16(*keyFramePtr);
+	const int16 newAngle = ClampAngle(READ_LE_INT16(*keyFramePtr));
 	*keyFramePtr += 2;
 
-	lastAngle &= 0x3FF;
-	newAngle &= 0x3FF;
-
-	int16 angleDif = newAngle - lastAngle;
+	int16 angleDiff = newAngle - lastAngle;
 
 	int16 computedAngle;
-	if (angleDif) {
-		if (angleDif < -0x200) {
-			angleDif += 0x400;
-		} else if (angleDif > 0x200) {
-			angleDif -= 0x400;
+	if (angleDiff) {
+		if (angleDiff < -ANGLE_180) {
+			angleDiff += ANGLE_360;
+		} else if (angleDiff > ANGLE_180) {
+			angleDiff -= ANGLE_360;
 		}
 
-		computedAngle = lastAngle + (angleDif * bp) / bx;
+		computedAngle = lastAngle + (angleDiff * bp) / bx;
 	} else {
 		computedAngle = lastAngle;
 	}
 
 	int16 *dest = (int16 *)*(ptr);
-	*dest = computedAngle & 0x3FF;
+	*dest = ClampAngle(computedAngle);
 	*(ptr) = *(ptr) + 2;
 }
 
@@ -263,7 +260,7 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 		currentStepZ = READ_LE_INT16(keyFramePtr + 6);
 
 		processRotationByAnim = READ_LE_INT16(keyFramePtr + 8);
-		processLastRotationAngle = READ_LE_INT16(keyFramePtr + 12);
+		processLastRotationAngle = ToAngle(READ_LE_INT16(keyFramePtr + 12));
 
 		return true;
 	}
@@ -273,7 +270,7 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	keyFramePtr += 8;
 
 	processRotationByAnim = READ_LE_INT16(keyFramePtr);
-	processLastRotationAngle = (READ_LE_INT16(keyFramePtr + 4) * eax) / keyFrameLength;
+	processLastRotationAngle = ToAngle((READ_LE_INT16(keyFramePtr + 4) * eax) / keyFrameLength);
 
 	lastKeyFramePtr += 8;
 	keyFramePtr += 8;
@@ -424,7 +421,7 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 		currentStepZ = READ_LE_INT16(keyFramePtr + 6);
 
 		processRotationByAnim = READ_LE_INT16(keyFramePtr + 8);
-		processLastRotationAngle = READ_LE_INT16(keyFramePtr + 12);
+		processLastRotationAngle = ToAngle(READ_LE_INT16(keyFramePtr + 12));
 
 		return 1;
 	}
@@ -434,7 +431,7 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 	keyFramePtr += 8;
 
 	processRotationByAnim = READ_LE_INT16(keyFramePtr);
-	processLastRotationAngle = (READ_LE_INT16(keyFramePtr + 4) * eax) / keyFrameLength;
+	processLastRotationAngle = ToAngle((READ_LE_INT16(keyFramePtr + 4) * eax) / keyFrameLength);
 
 	lastKeyFramePtr += 8;
 	keyFramePtr += 8;
@@ -448,7 +445,7 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 
 void Animations::processAnimActions(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (!actor->animExtraPtr) {
+	if (actor->animExtraPtr == nullptr) {
 		return; // avoid null pointers
 	}
 
@@ -462,11 +459,10 @@ void Animations::processAnimActions(int32 actorIdx) {
 			return;
 		}
 
-		int32 animPos;
 		switch (actionType) {
 		case ACTION_HITTING: {
-			animPos = stream.readByte() - 1;
-			const int8 strength = stream.readByte();
+			const int32 animPos = stream.readByte() - 1;
+			const int32 strength = stream.readByte();
 
 			if (animPos == actor->animPosition) {
 				actor->strengthOfHit = strength;
@@ -475,7 +471,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			break;
 		}
 		case ACTION_SAMPLE: {
-			animPos = stream.readByte();
+			const int32 animPos = stream.readByte();
 			const int16 sampleIdx = stream.readSint16LE();
 
 			if (animPos == actor->animPosition) {
@@ -484,7 +480,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			break;
 		}
 		case ACTION_SAMPLE_FREQ: {
-			animPos = stream.readByte();
+			const int32 animPos = stream.readByte();
 			const int16 sampleIdx = stream.readSint16LE();
 			int16 frequency = stream.readSint16LE();
 
@@ -495,34 +491,34 @@ void Animations::processAnimActions(int32 actorIdx) {
 			break;
 		}
 		case ACTION_THROW_EXTRA_BONUS: {
-			animPos = stream.readByte();
+			const int32 animPos = stream.readByte();
 			const int32 yHeight = stream.readSint16LE();
 			const int32 sprite = stream.readByte();
-			const int32 cx = stream.readSint16LE();
-			const int32 dx = actor->angle + stream.readSint16LE();
-			const int32 var_24 = stream.readSint16LE();
-			const int32 var_14 = stream.readByte();
+			const int32 xAngle = ToAngle(stream.readSint16LE());
+			const int32 yAngle = actor->angle + ToAngle(stream.readSint16LE());
+			const int32 xRotPoint = stream.readSint16LE();
+			const int32 extraAngle = ToAngle(stream.readByte());
 			const int32 strengthOfHit = stream.readByte();
 
 			if (animPos == actor->animPosition) {
-				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + yHeight, actor->z, sprite, cx, dx, var_24, var_14, strengthOfHit);
+				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + yHeight, actor->z, sprite, xAngle, yAngle, xRotPoint, extraAngle, strengthOfHit);
 			}
 			break;
 		}
 		case ACTION_THROW_MAGIC_BALL: {
-			animPos = stream.readByte();
-			const int32 var_8 = stream.readSint16LE();
-			const int32 dx = stream.readSint16LE();
-			const int32 var_24 = stream.readSint16LE();
-			const int32 var_14 = stream.readByte();
+			const int32 animPos = stream.readByte();
+			const int32 yOffset = stream.readSint16LE();
+			const int32 xAngle = ToAngle(stream.readSint16LE());
+			const int32 xRotPoint = stream.readSint16LE();
+			const int32 extraAngle = stream.readByte();
 
 			if (_engine->_gameState->magicBallIdx == -1 && animPos == actor->animPosition) {
-				_engine->_extra->addExtraThrowMagicball(actor->x, actor->y + var_8, actor->z, dx, actor->angle, var_24, var_14);
+				_engine->_extra->addExtraThrowMagicball(actor->x, actor->y + yOffset, actor->z, xAngle, actor->angle, xRotPoint, extraAngle);
 			}
 			break;
 		}
 		case ACTION_SAMPLE_REPEAT: {
-			animPos = stream.readByte();
+			const int32 animPos = stream.readByte();
 			const int16 sampleIdx = stream.readSint16LE();
 			const int16 repeat = stream.readSint16LE();
 
@@ -531,78 +527,82 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_UNKNOWN_6:
-			animPos = stream.readByte();
+		case ACTION_UNKNOWN_6: {
+			const int32 animPos = stream.readByte();
 			if (animPos == actor->animPosition) {
-				//The folowing fetches 7 bytes, but the else block skips only 6 bytes.
+				// TODO: The folowing fetches 7 bytes, but the else block skips only 6 bytes.
 				// Please check if that's correct.
-				const int32 var_8 = stream.readSint16LE();
-				const int32 var_C = stream.readByte();
-				const int32 dx = stream.readByte();
-				const int32 var_24 = stream.readSint16LE();
-				const int32 temp = stream.readByte();
+				const int32 yOffset = stream.readSint16LE();
+				const int32 spriteIdx = stream.readByte();
+				const int32 targetActorIdx = stream.readByte();
+				const int32 maxSpeed = stream.readSint16LE();
+				const int32 strengthOfHit = stream.readByte();
 
-				_engine->_extra->addExtraAiming(actorIdx, actor->x, actor->y + var_8, actor->z, var_C, dx, var_24, temp);
+				_engine->_extra->addExtraAiming(actorIdx, actor->x, actor->y + yOffset, actor->z, spriteIdx, targetActorIdx, maxSpeed, strengthOfHit);
 			} else {
 				stream.skip(6);
 			}
 			break;
+		}
 		case ACTION_UNKNOWN_7: {
-			animPos = stream.readByte();
+			const int32 animPos = stream.readByte();
 			const int32 yHeight = stream.readSint16LE();
-			const int32 var_C = stream.readByte();
-			const int32 dx = stream.readSint16LE();
-			const int32 cx = actor->angle + stream.readSint16LE();
-			const int32 var_24 = stream.readSint16LE();
-			const int32 var_14 = stream.readByte();
-			const int32 var = stream.readByte();
+			const int32 spriteIdx = stream.readByte();
+			const int32 xAngle = ToAngle(stream.readSint16LE());
+			const int32 yAngle = actor->angle + ToAngle(stream.readSint16LE());
+			const int32 xRotPoint = stream.readSint16LE();
+			const int32 extraAngle = ToAngle(stream.readByte());
+			const int32 strengthOfHit = stream.readByte();
 
 			if (animPos == actor->animPosition) {
-				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + yHeight, actor->z, var_C, dx, cx, var_24, var_14, var);
+				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + yHeight, actor->z, spriteIdx, xAngle, yAngle, xRotPoint, extraAngle, strengthOfHit);
 			}
 			break;
 		}
 		case ACTION_SAMPLE_STOP: {
-			animPos = stream.readByte();
+			const int32 animPos = stream.readByte();
 			const int32 sampleIdx = stream.readByte(); //why is it reading a byte but saving it in a 32bit variable?
-			stream.skip(1);               //what is the meaning of this extra byte?
+			stream.skip(1);               // TODO what is the meaning of this extra byte?
 
 			if (animPos == actor->animPosition) {
 				_engine->_sound->stopSample(sampleIdx);
 			}
 			break;
 		}
-		case ACTION_SAMPLE_BRICK_1:
-			animPos = stream.readByte();
+		case ACTION_SAMPLE_BRICK_1: {
+			const int32 animPos = stream.readByte();
 			if (animPos == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
 				const int16 sampleIdx = (actor->brickSound & 0x0F) + Samples::WalkFloorBegin;
 				_engine->_sound->playSample(sampleIdx, _engine->getRandomNumber(1000) + 3596, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
-		case ACTION_SAMPLE_BRICK_2:
-			animPos = stream.readByte();
+		}
+		case ACTION_SAMPLE_BRICK_2: {
+			const int32 animPos = stream.readByte();
 			if (animPos == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
 				const int16 sampleIdx = (actor->brickSound & 0x0F) + Samples::WalkFloorBegin;
 				_engine->_sound->playSample(sampleIdx, _engine->getRandomNumber(1000) + 3596, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
-		case ACTION_HERO_HITTING:
-			animPos = stream.readByte() - 1;
+		}
+		case ACTION_HERO_HITTING: {
+			const int32 animPos = stream.readByte() - 1;
 			if (animPos == actor->animPosition) {
 				actor->strengthOfHit = magicLevelStrengthOfHit[_engine->_gameState->magicLevelIdx];
 				actor->dynamicFlags.bIsHitting = 1;
 			}
 			break;
+		}
 		case ACTION_UNKNOWN_13: {
-			animPos = stream.readByte();
+			const int32 animPos = stream.readByte();
 			const int32 distanceX = stream.readSint16LE();
 			const int32 distanceY = stream.readSint16LE();
 			const int32 distanceZ = stream.readSint16LE();
 			const int32 spriteIdx = stream.readByte();
-			const int32 param1 = stream.readSint16LE();
-			const int32 param2 = stream.readSint16LE();
-			const int32 param3 = stream.readSint16LE();
-			const int32 param4 = stream.readByte();
+			const int32 xAngle = ToAngle(stream.readSint16LE());
+			const int32 yAngle = ToAngle(stream.readSint16LE());
+			const int32 xRotPoint = stream.readSint16LE();
+			const int32 extraAngle = ToAngle(stream.readByte());
 			const int32 strength = stream.readByte();
 
 			if (animPos == actor->animPosition) {
@@ -613,20 +613,20 @@ void Animations::processAnimActions(int32 actorIdx) {
 				const int32 throwZ = _engine->_renderer->destZ + actor->z;
 
 				_engine->_extra->addExtraThrow(actorIdx, throwX, throwY, throwZ, spriteIdx,
-				                               param1, param2 + actor->angle, param3, param4, strength);
+				                               xAngle, yAngle + actor->angle, xRotPoint, extraAngle, strength);
 			}
 			break;
 		}
 		case ACTION_UNKNOWN_14: {
-			animPos = stream.readByte();
+			const int32 animPos = stream.readByte();
 			const int32 distanceX = stream.readSint16LE();
 			const int32 distanceY = stream.readSint16LE();
 			const int32 distanceZ = stream.readSint16LE();
 			const int32 spriteIdx = stream.readByte();
-			const int32 param1 = stream.readSint16LE();
-			const int32 param2 = stream.readSint16LE();
-			const int32 param3 = stream.readSint16LE();
-			const int32 param4 = stream.readByte();
+			const int32 xAngle = ToAngle(stream.readSint16LE());
+			const int32 yAngle = ToAngle(stream.readSint16LE());
+			const int32 xRotPoint = stream.readSint16LE();
+			const int32 extraAngle = ToAngle(stream.readByte());
 			const int32 strength = stream.readByte();
 
 			if (animPos == actor->animPosition) {
@@ -639,24 +639,24 @@ void Animations::processAnimActions(int32 actorIdx) {
 				const int32 throwZ = _engine->_renderer->destZ + actor->z;
 
 				_engine->_extra->addExtraThrow(actorIdx, throwX, throwY, throwZ, spriteIdx,
-				                               param1 + newAngle, param2 + actor->angle, param3, param4, strength);
+				                               xAngle + newAngle, yAngle + actor->angle, xRotPoint, extraAngle, strength);
 			}
 			break;
 		}
 		case ACTION_UNKNOWN_15: {
-			animPos = stream.readByte();
+			const int32 animPos = stream.readByte();
 			const int32 distanceX = stream.readSint16LE();
 			const int32 distanceY = stream.readSint16LE();
 			const int32 distanceZ = stream.readSint16LE();
 			const int32 spriteIdx = stream.readByte();
 			const int32 targetActor = stream.readByte();
-			const int32 param3 = stream.readSint16LE();
-			const int32 param4 = stream.readByte();
+			const int32 finalAngle = ToAngle(stream.readSint16LE());
+			const int32 strengthOfHit = stream.readByte();
 
 			if (animPos == actor->animPosition) {
 				_engine->_movements->rotateActor(distanceX, distanceZ, actor->angle);
 				_engine->_extra->addExtraAiming(actorIdx, actor->x + _engine->_renderer->destX, actor->y + distanceY, actor->z + distanceZ, spriteIdx,
-				                                targetActor, param3, param4);
+				                                targetActor, finalAngle, strengthOfHit);
 			}
 			break;
 		}
@@ -767,16 +767,16 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 		if (!actor->dynamicFlags.bIsFalling) {
 			if (actor->speed) {
-				int32 angle = _engine->_movements->getRealValue(&actor->move);
-				if (!angle) {
+				int32 xAxisRotation = actor->move.getRealValue(_engine->lbaTime);
+				if (!xAxisRotation) {
 					if (actor->move.to > 0) {
-						angle = 1;
+						xAxisRotation = 1;
 					} else {
-						angle = -1;
+						xAxisRotation = -1;
 					}
 				}
 
-				_engine->_movements->rotateActor(angle, 0, actor->animType);
+				_engine->_movements->rotateActor(xAxisRotation, 0, actor->animType);
 
 				_engine->_movements->processActorY = actor->y - _engine->_renderer->destZ;
 
@@ -785,18 +785,18 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 				_engine->_movements->processActorX = actor->x + _engine->_renderer->destX;
 				_engine->_movements->processActorZ = actor->z + _engine->_renderer->destZ;
 
-				_engine->_movements->setActorAngle(0, actor->speed, 50, &actor->move);
+				_engine->_movements->setActorAngle(ANGLE_0, actor->speed, 50, &actor->move);
 
 				if (actor->dynamicFlags.bIsSpriteMoving) {
 					if (actor->doorStatus) { // open door
 						if (_engine->_movements->getDistance2D(_engine->_movements->processActorX, _engine->_movements->processActorZ, actor->lastX, actor->lastZ) >= actor->doorStatus) {
-							if (actor->angle == 0) {
+							if (actor->angle == ANGLE_0) {
 								_engine->_movements->processActorZ = actor->lastZ + actor->doorStatus;
-							} else if (actor->angle == 0x100) {
+							} else if (actor->angle == ANGLE_90) {
 								_engine->_movements->processActorX = actor->lastX + actor->doorStatus;
-							} else if (actor->angle == 0x200) {
+							} else if (actor->angle == ANGLE_180) {
 								_engine->_movements->processActorZ = actor->lastZ - actor->doorStatus;
-							} else if (actor->angle == 0x300) {
+							} else if (actor->angle == ANGLE_270) {
 								_engine->_movements->processActorX = actor->lastX - actor->doorStatus;
 							}
 
@@ -804,23 +804,23 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 							actor->speed = 0;
 						}
 					} else { // close door
-						int16 updatePos = 0;
+						bool updatePos = false;
 
-						if (actor->angle == 0) {
+						if (actor->angle == ANGLE_0) {
 							if (_engine->_movements->processActorZ <= actor->lastZ) {
-								updatePos = 1;
+								updatePos = true;
 							}
-						} else if (actor->angle == 256) {
+						} else if (actor->angle == ANGLE_90) {
 							if (_engine->_movements->processActorX <= actor->lastX) {
-								updatePos = 1;
+								updatePos = true;
 							}
-						} else if (actor->angle == 512) {
+						} else if (actor->angle == ANGLE_180) {
 							if (_engine->_movements->processActorZ >= actor->lastZ) {
-								updatePos = 1;
+								updatePos = true;
 							}
-						} else if (actor->angle == 768) {
+						} else if (actor->angle == ANGLE_270) {
 							if (_engine->_movements->processActorX >= actor->lastX) {
-								updatePos = 1;
+								updatePos = true;
 							}
 						}
 
@@ -853,10 +853,9 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		}
 	} else { // 3D actor
 		if (actor->previousAnimIdx != -1) {
-			int32 keyFramePassed;
 			uint8 *animPtr = _engine->_resources->animTable[actor->previousAnimIdx];
 
-			keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animPtr, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+			int32 keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animPtr, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 
 			if (processRotationByAnim) {
 				actor->dynamicFlags.bIsRotationByAnim = 1;
@@ -864,7 +863,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 				actor->dynamicFlags.bIsRotationByAnim = 0;
 			}
 
-			actor->angle = (actor->angle + processLastRotationAngle - actor->lastRotationAngle) & 0x3FF;
+			actor->angle = ClampAngle(actor->angle + processLastRotationAngle - actor->lastRotationAngle);
 			actor->lastRotationAngle = processLastRotationAngle;
 
 			_engine->_movements->rotateActor(currentStepX, currentStepZ, actor->angle);
@@ -995,7 +994,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 		// process wall hit while running
 		if (_engine->_collision->causeActorDamage && !actor->dynamicFlags.bIsFalling && !currentlyProcessedActorIdx && _engine->_actor->heroBehaviour == HeroBehaviourType::kAthletic && actor->anim == AnimationTypes::kForward) {
-			_engine->_movements->rotateActor(actor->boudingBox.x.bottomLeft, actor->boudingBox.z.bottomLeft, actor->angle + 0x580);
+			_engine->_movements->rotateActor(actor->boudingBox.x.bottomLeft, actor->boudingBox.z.bottomLeft, actor->angle + ANGLE_360 + ANGLE_135);
 
 			_engine->_renderer->destX += _engine->_movements->processActorX;
 			_engine->_renderer->destZ += _engine->_movements->processActorZ;

@@ -25,6 +25,7 @@
 #include "graphics/cursorman.h"
 
 #include "startrek/graphics.h"
+#include "startrek/resource.h"
 #include "startrek/room.h"
 
 
@@ -363,13 +364,27 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 				if (scrollOffset == 0)
 					disableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
-				goto readjustScroll;
+				textboxSprite.bitmapChanged = true;
+				drawMainText(
+				    textBitmap,
+				    numTextLines - scrollOffset,
+				    numTextboxLines,
+				    lineFormattedText.c_str() + scrollOffset * (TEXTBOX_WIDTH - 2),
+				    numChoicesWithNames != 0);
+				break;
 
 			case TEXTBUTTON_GOTO_TOP:
 				scrollOffset = 0;
 				disableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
-				goto readjustScroll;
+				textboxSprite.bitmapChanged = true;
+				drawMainText(
+				    textBitmap,
+				    numTextLines - scrollOffset,
+				    numTextboxLines,
+				    lineFormattedText.c_str() + scrollOffset * (TEXTBOX_WIDTH - 2),
+				    numChoicesWithNames != 0);
+				break;
 
 			case TEXTBUTTON_SCROLLDOWN:
 			case TEXTBUTTON_SCROLLDOWN_ONELINE:
@@ -381,15 +396,19 @@ int StarTrekEngine::showText(TextGetterFunc textGetter, uintptr var, int xoffset
 					scrollOffset = numTextLines - 1;
 				if (scrollOffset + numTextboxLines >= numTextLines)
 					disableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
-				goto readjustScroll;
+				textboxSprite.bitmapChanged = true;
+				drawMainText(
+				    textBitmap,
+				    numTextLines - scrollOffset,
+				    numTextboxLines,
+				    lineFormattedText.c_str() + scrollOffset * (TEXTBOX_WIDTH - 2),
+				    numChoicesWithNames != 0);
+				break;
 
 			case TEXTBUTTON_GOTO_BOTTOM:
 				scrollOffset = numTextLines - numTextboxLines;
 				enableMenuButtons(1 << TEXTBUTTON_SCROLLUP);
 				disableMenuButtons(1 << TEXTBUTTON_SCROLLDOWN);
-				goto readjustScroll;
-
-readjustScroll:
 				textboxSprite.bitmapChanged = true;
 				drawMainText(
 				    textBitmap,
@@ -672,9 +691,40 @@ String StarTrekEngine::readTextFromArrayWithChoices(int choiceIndex, uintptr dat
 	return String(mainText);
 }
 
+Common::String StarTrekEngine::readTextFromFoundComputerTopics(int choiceIndex, uintptr data, String *headerTextOutput) {
+	if (choiceIndex >= 10)
+		return Common::String();
+
+	Common::String topicFile = (char *)data + 8 * choiceIndex;
+	topicFile.trim();
+
+	if (topicFile.empty())
+		return Common::String();
+
+	Common::MemoryReadStreamEndian *content = _resource->loadFile(Common::String(topicFile) + ".db");
+	Common::String headerText = content->readLine();
+	Common::String mainText;
+	Common::String line;
+	while (!content->eos() && !content->err()) {
+		line = content->readLine();
+		if (line == "$")
+			break;
+		mainText += line;
+	}
+	delete content;
+
+	*headerTextOutput = "R: " + headerText;
+	return mainText;
+}
+
 Common::String StarTrekEngine::showCodeInputBox() {
 	memset(_textInputBuffer, 0, TEXT_INPUT_BUFFER_SIZE - 1);
-	return showTextInputBox(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, "Code:\n                    ");
+	return showTextInputBox(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, "Code:\n                   ");
+}
+
+Common::String StarTrekEngine::showComputerInputBox() {
+	memset(_textInputBuffer, 0, TEXT_INPUT_BUFFER_SIZE - 1);
+	return showTextInputBox(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, "Computer:\n               ");
 }
 
 void StarTrekEngine::redrawTextInput() {
@@ -884,6 +934,7 @@ void StarTrekEngine::initTextInputSprite(int16 textboxX, int16 textboxY, const C
 	_textInputSprite.field8 = "System";
 	_textInputSprite.setXYAndPriority(textboxX, textboxY, 15);
 	_textInputSprite.drawPriority2 = 8;
+	_gfx->addSprite(&_textInputSprite);
 
 	_gfx->drawAllSprites();
 }

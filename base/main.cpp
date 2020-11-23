@@ -237,7 +237,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 	if (caption.empty())
 		caption = target;
 	if (!caption.empty())	{
-		system.setWindowCaption(caption.c_str());
+		system.setWindowCaption(caption.decode());
 	}
 
 	//
@@ -298,6 +298,8 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		keymapper->addGameKeymap(gameKeymaps[i]);
 	}
 
+	system.applyBackendSettings();
+
 	// Inform backend that the engine is about to be run
 	system.engineInit();
 
@@ -353,6 +355,8 @@ static void setupGraphics(OSystem &system) {
 			system.setShader(ConfMan.get("shader").c_str());
 	system.endGFXTransaction();
 
+	system.applyBackendSettings();
+
 	// When starting up launcher for the first time, the user might have specified
 	// a --gui-theme option, to allow that option to be working, we need to initialize
 	// GUI here.
@@ -360,7 +364,7 @@ static void setupGraphics(OSystem &system) {
 	GUI::GuiManager::instance();
 
 	// Set initial window caption
-	system.setWindowCaption(gScummVMFullVersion);
+	system.setWindowCaption(Common::U32String(gScummVMFullVersion));
 
 	// Clear the main screen
 	system.fillScreen(0);
@@ -400,6 +404,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	// Register config manager defaults
 	Base::registerDefaults();
+	system.registerDefaultSettings(Common::ConfigManager::kApplicationDomain);
 
 	// Parse the command line
 	Common::StringMap settings;

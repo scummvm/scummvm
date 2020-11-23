@@ -107,6 +107,14 @@ Item *ItemFactory::createItem(uint32 shape, uint32 frame, uint16 quality,
 			if (info->_damageInfo && info->_damageInfo->takesDamage()) {
 				item->setDamagePoints(info->_damageInfo->damagePoints());
 			}
+			if (info->_family == ShapeInfo::SF_CRUWEAPON && info->_weaponInfo &&
+				info->_weaponInfo->_defaultAmmo) {
+				item->setQuality(info->_weaponInfo->_defaultAmmo);
+			}
+			if (info->_family == ShapeInfo::SF_CRUAMMO ||
+					 info->_family == ShapeInfo::SF_CRUBOMB) {
+				item->setQuality(1);
+			}
 		}
 	}
 
