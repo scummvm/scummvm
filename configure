@@ -5747,8 +5747,12 @@ if test "$_dialogs" = "no"; then
 	echo "no"
 else
 	case $_host_os in
-	morphos*)
-		echo "morphos"
+	amigaos*)
+		echo "amigaos (asl)"
+		_dialogs=yes
+		;;
+	darwin*)
+		echo "osx"
 		_dialogs=yes
 		;;
 	mingw*)
@@ -5756,8 +5760,8 @@ else
 		echo "win32"
 		_dialogs=yes
 		;;
-	darwin*)
-		echo "osx"
+	morphos*)
+		echo "morphos"
 		_dialogs=yes
 		;;
 	*)
