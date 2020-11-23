@@ -32,6 +32,8 @@ MODULE_OBJS = \
 	shared/ac/spritecache.o \
 	shared/ac/view.o \
 	shared/ac/wordsdictionary.o \
+	shared/core/asset.o \
+	shared/core/assetmanager.o \
 	shared/gfx/allegrobitmap.o \
 	shared/gfx/bitmap.o \
 	shared/gfx/image.o \
