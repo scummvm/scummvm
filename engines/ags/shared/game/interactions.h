@@ -49,8 +49,8 @@
 #ifndef AGS_SHARED_GAME_INTEREACTIONS_H
 #define AGS_SHARED_GAME_INTEREACTIONS_H
 
-//include <memory>
 #include "ags/shared/util/string_types.h"
+#include "ags/std/memory.h"
 
 namespace AGS3 {
 
@@ -130,8 +130,8 @@ struct InteractionCommandList {
 	void Write_v321(Stream *out) const;
 
 protected:
-	void Read_Aligned(Common::Stream *in, std::vector<bool> &cmd_children);
-	void Write_Aligned(Common::Stream *out) const;
+	void Read_Aligned(Stream *in, std::vector<bool> &cmd_children);
+	void Write_Aligned(Stream *out) const;
 };
 
 

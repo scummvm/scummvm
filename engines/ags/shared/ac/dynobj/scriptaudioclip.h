@@ -51,8 +51,8 @@ enum AudioFileType {
 #define SCRIPTAUDIOCLIP_FILENAMELENGTH      15
 struct ScriptAudioClip {
 	int id = 0;
-	Common::String scriptName;
-	Common::String fileName;
+	Shared::String scriptName;
+	Shared::String fileName;
 	char bundlingType = AUCL_BUNDLE_EXE;
 	char type = 0;
 	char fileType = eAudioFileOGG;
@@ -60,7 +60,7 @@ struct ScriptAudioClip {
 	short defaultPriority = 50;
 	short defaultVolume = 100;
 
-	void ReadFromFile(Common::Stream *in);
+	void ReadFromFile(Shared::Stream *in);
 };
 
 } // namespace AGS3

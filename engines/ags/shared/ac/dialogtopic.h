@@ -70,10 +70,10 @@ struct DialogTopic {
 	int           numoptions;
 	int           topicFlags;
 
-	void ReadFromFile(Common::Stream *in);
+	void ReadFromFile(Shared::Stream *in);
 
-	void ReadFromSavegame(Common::Stream *in);
-	void WriteToSavegame(Common::Stream *out) const;
+	void ReadFromSavegame(Shared::Stream *in);
+	void WriteToSavegame(Shared::Stream *out) const;
 };
 
 } // namespace AGS3

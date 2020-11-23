@@ -29,7 +29,7 @@
 #ifndef AGS_SHARED_CORE_ASSET_H
 #define AGS_SHARED_CORE_ASSET_H
 
-//include <vector>
+#include "ags/std/vector.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {

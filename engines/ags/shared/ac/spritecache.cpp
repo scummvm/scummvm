@@ -41,6 +41,7 @@
 #include "ags/shared/util/compress.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/stream.h"
+#include "common/system.h"
 
 namespace AGS3 {
 
@@ -172,7 +173,7 @@ void SpriteCache::SetEmptySprite(sprkey_t index, bool as_asset) {
 	RemapSpriteToSprite0(index);
 }
 
-void SpriteCache::SubstituteBitmap(sprkey_t index, Common::Bitmap *sprite) {
+void SpriteCache::SubstituteBitmap(sprkey_t index, Shared::Bitmap *sprite) {
 	if (!DoesSpriteExist(index)) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SubstituteBitmap: attempt to set for non-existing sprite %d", index);
 		return;
@@ -510,19 +511,19 @@ void SpriteCache::UnCompressSprite(Bitmap *sprite, Stream *in) {
 }
 
 int SpriteCache::SaveToFile(const char *filename, bool compressOutput, SpriteFileIndex &index) {
-	Stream *output = Common::File::CreateFile(filename);
+	Stream *output = Shared::File::CreateFile(filename);
 	if (output == nullptr)
 		return -1;
 
 	if (compressOutput) {
 		// re-open the file so that it can be seeked
 		delete output;
-		output = File::OpenFile(filename, Common::kFile_Open, Common::kFile_ReadWrite); // CHECKME why mode was "r+" here?
+		output = File::OpenFile(filename, Shared::kFile_Open, Shared::kFile_ReadWrite); // CHECKME why mode was "r+" here?
 		if (output == nullptr)
 			return -1;
 	}
 
-	int spriteFileIDCheck = (int)time(nullptr);
+	int spriteFileIDCheck = g_system->getMillis();
 
 	// sprite file version
 	output->WriteInt16(kSprfVersion_Current);
@@ -678,7 +679,7 @@ HError SpriteCache::InitFile(const char *filename, const char *sprindex_filename
 	soff_t spr_initial_offs = 0;
 	int spriteFileID = 0;
 
-	_stream.reset(Common::AssetManager::OpenAsset(filename));
+	_stream.reset(Shared::AssetManager::OpenAsset(filename));
 	if (_stream == nullptr)
 		return new Error(String::FromFormat("Failed to open spriteset file '%s'.", filename));
 
@@ -780,7 +781,7 @@ HError SpriteCache::RebuildSpriteIndex(AGS::Shared::Stream *in, sprkey_t topmost
 }
 
 bool SpriteCache::LoadSpriteIndexFile(const char *filename, int expectedFileID, soff_t spr_initial_offs, sprkey_t topmost) {
-	Stream *fidx = Common::AssetManager::OpenAsset(filename);
+	Stream *fidx = Shared::AssetManager::OpenAsset(filename);
 	if (fidx == nullptr) {
 		return false;
 	}
@@ -855,7 +856,7 @@ void SpriteCache::DetachFile() {
 }
 
 int SpriteCache::AttachFile(const char *filename) {
-	_stream.reset(Common::AssetManager::OpenAsset((char *)filename));
+	_stream.reset(Shared::AssetManager::OpenAsset((char *)filename));
 	if (_stream == nullptr)
 		return -1;
 	return 0;

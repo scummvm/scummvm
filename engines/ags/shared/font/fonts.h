@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_FONT_FONTS_H
 #define AGS_SHARED_FONT_FONTS_H
 
-//include <vector>
+#include "ags/std/vector.h"
 #include "ags/shared/core/types.h"
 #include "ags/shared/util/string.h"
 

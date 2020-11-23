@@ -70,13 +70,13 @@ struct GameSetupStructBase {
 	int               default_lipsync_frame; // used for unknown chars
 	int               invhotdotsprite;
 	int               reserved[NUM_INTS_RESERVED];
-	char             *messages[MAXGLOBALMES];
-	WordsDictionary  *dict;
-	char             *globalscript;
-	CharacterInfo    *chars;
-	ccScript         *compiled_script;
+	char *messages[MAXGLOBALMES];
+	WordsDictionary *dict;
+	char *globalscript;
+	CharacterInfo *chars;
+	ccScript *compiled_script;
 
-	int             *load_messages;
+	int *load_messages;
 	bool             load_dictionary;
 	bool             load_compiled_script;
 	// [IKM] 2013-03-30
@@ -91,8 +91,8 @@ struct GameSetupStructBase {
 	void SetDefaultResolution(Size game_res);
 	void SetGameResolution(GameResolutionType type);
 	void SetGameResolution(Size game_res);
-	void ReadFromFile(Common::Stream *in);
-	void WriteToFile(Common::Stream *out);
+	void ReadFromFile(Shared::Stream *in);
+	void WriteToFile(Shared::Stream *out);
 
 
 	//
@@ -187,7 +187,7 @@ struct GameSetupStructBase {
 	inline bool IsLegacyHiRes() const {
 		if (_resolutionType == kGameResolution_Custom)
 			return (_gameResolution.Width * _gameResolution.Height) > (320 * 240);
-		return ::IsLegacyHiRes(_resolutionType);
+		return AGS3::IsLegacyHiRes(_resolutionType);
 	}
 	// Tells if data has coordinates in default game resolution
 	inline bool IsDataInNativeCoordinates() const {
@@ -247,6 +247,6 @@ private:
 	int _screenUpscaleMult;
 };
 
-// namespace AGS3
+} // namespace AGS3
 
 #endif

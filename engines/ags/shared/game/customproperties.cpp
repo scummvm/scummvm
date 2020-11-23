@@ -76,7 +76,7 @@ void WriteSchema(const PropertySchema &schema, Stream *out) {
 	out->WriteInt32(schema.size());
 	for (PropertySchema::const_iterator it = schema.begin();
 		it != schema.end(); ++it) {
-		const PropertyDesc &prop = it->second;
+		const PropertyDesc &prop = it->_value;
 		StrUtil::WriteString(prop.Name, out);
 		out->WriteInt32(prop.Type);
 		StrUtil::WriteString(prop.Description, out);
@@ -111,8 +111,8 @@ void WriteValues(const StringIMap &map, Stream *out) {
 	out->WriteInt32(map.size());
 	for (StringIMap::const_iterator it = map.begin();
 		it != map.end(); ++it) {
-		StrUtil::WriteString(it->first, out);
-		StrUtil::WriteString(it->second, out);
+		StrUtil::WriteString(it->_key, out);
+		StrUtil::WriteString(it->_value, out);
 	}
 }
 
