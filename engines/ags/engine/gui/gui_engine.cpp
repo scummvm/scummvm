@@ -27,7 +27,7 @@
 //=============================================================================
 
 // Headers, as they are in acgui.cpp
-#pragma unmanaged
+//pragma unmanaged
 #include "ags/shared/ac/game_version.h"
 #include "ags/engine/ac/system.h"
 #include "ags/shared/font/fonts.h"

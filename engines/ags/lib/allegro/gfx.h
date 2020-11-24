@@ -236,6 +236,7 @@ extern void pivot_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int cx
 
 extern bool is_screen_bitmap(BITMAP *bmp);
 extern bool is_video_bitmap(BITMAP *bmp);
+extern bool is_linear_bitmap(BITMAP *bmp);
 extern bool is_planar_bitmap(BITMAP *bmp);
 extern void bmp_select(BITMAP *bmp);
 extern long bmp_write_line(BITMAP *bmp, int line);

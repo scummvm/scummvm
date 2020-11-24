@@ -35,8 +35,6 @@ namespace AGS3 {
 
 class IAGSEngine;
 
-using namespace AGS; // FIXME later
-
 //  Initial implementation for apps to register their own inbuilt plugins
 
 struct InbuiltPluginDetails {
