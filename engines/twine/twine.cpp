@@ -292,6 +292,7 @@ static int getLanguageTypeIndex(const char *languageName) {
 
 #define ConfGetOrDefault(key, defaultVal) (ConfMan.hasKey(key) ? ConfMan.get(key) : Common::String(defaultVal))
 #define ConfGetIntOrDefault(key, defaultVal) (ConfMan.hasKey(key) ? atoi(ConfMan.get(key).c_str()) : (defaultVal))
+#define ConfGetBoolOrDefault(key, defaultVal) (ConfMan.hasKey(key) ? ConfMan.get(key) == "true" || atoi(ConfMan.get(key).c_str()) == 1 : (defaultVal))
 
 void TwinEEngine::initConfigurations() {
 	// TODO: use existing entries for some of the settings - like volume and so on.
@@ -317,20 +318,33 @@ void TwinEEngine::initConfigurations() {
 		}
 	}
 	cfgfile.Version = ConfGetIntOrDefault("version", EUROPE_VERSION);
-	cfgfile.UseCD = ConfGetIntOrDefault("usecd", 0) == 1;
-	cfgfile.Sound = ConfGetIntOrDefault("sound", 1) == 1;
+	cfgfile.UseCD = ConfGetBoolOrDefault("usecd", false);
+	cfgfile.Sound = ConfGetBoolOrDefault("sound", true);
 	cfgfile.Movie = ConfGetIntOrDefault("movie", CONF_MOVIE_FLA);
 	cfgfile.Fps = ConfGetIntOrDefault("fps", DEFAULT_FRAMES_PER_SECOND);
-	cfgfile.Debug = ConfGetIntOrDefault("debug", 0) == 1;
+	cfgfile.Debug = ConfGetBoolOrDefault("debug", false);
 
-	cfgfile.UseAutoSaving = ConfGetIntOrDefault("useautosaving", 0);
-	cfgfile.CrossFade = ConfGetIntOrDefault("crossfade", 0);
-	cfgfile.WallCollision = ConfGetIntOrDefault("wallcollision", 0);
+	cfgfile.UseAutoSaving = ConfGetBoolOrDefault("useautosaving", false);
+	cfgfile.CrossFade = ConfGetBoolOrDefault("crossfade", false);
+	cfgfile.WallCollision = ConfGetBoolOrDefault("wallcollision", false);
 
-	_actor->autoAgressive = ConfGetIntOrDefault("combatauto", 1) == 1;
+	_actor->autoAgressive = ConfGetBoolOrDefault("combatauto", true);
 	cfgfile.ShadowMode = ConfGetIntOrDefault("shadow", 2);
-	cfgfile.SceZoom = ConfGetIntOrDefault("scezoom", 0) == 0;
+	cfgfile.SceZoom = ConfGetBoolOrDefault("scezoom", false);
 	cfgfile.PolygonDetails = ConfGetIntOrDefault("polygondetails", 2);
+
+	debug("UseCD:          %s", (cfgfile.UseCD ? "true" : "false"));
+	debug("Sound:          %s", (cfgfile.Sound ? "true" : "false"));
+	debug("Movie:          %i", cfgfile.Movie);
+	debug("Fps:            %i", cfgfile.Fps);
+	debug("Debug:          %s", (cfgfile.Debug ? "true" : "false"));
+	debug("UseAutoSaving:  %s", (cfgfile.UseAutoSaving ? "true" : "false"));
+	debug("CrossFade:      %s", (cfgfile.CrossFade ? "true" : "false"));
+	debug("WallCollision:  %s", (cfgfile.WallCollision ? "true" : "false"));
+	debug("AutoAgressive:  %s", (_actor->autoAgressive ? "true" : "false"));
+	debug("ShadowMode:     %i", cfgfile.ShadowMode);
+	debug("PolygonDetails: %i", cfgfile.PolygonDetails);
+	debug("SceZoom:        %s", (cfgfile.SceZoom ? "true" : "false"));
 }
 
 void TwinEEngine::initEngine() {
