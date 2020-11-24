@@ -60,9 +60,11 @@ extern CCDynamicArray globalDynamicArray;
 
 // Helper functions for setting up dynamic arrays.
 namespace DynamicArrayHelpers {
+
 // Create array of managed strings
 DynObjectRef CreateStringArray(const std::vector<const char *>);
-};
+
+} // namespace DynamicArrayHelpers
 
 } // namespace AGS3
 

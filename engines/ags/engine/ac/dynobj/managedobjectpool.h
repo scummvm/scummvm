@@ -58,8 +58,8 @@ private:
 		ManagedObject()
 			: obj_type(kScValUndefined), handle(0), addr(nullptr), callback(nullptr), refCount(0) {
 		}
-		ManagedObject(ScriptValueType obj_type, int32_t handle, const char *addr, ICCDynamicObject *callback)
-			: obj_type(obj_type), handle(handle), addr(addr), callback(callback), refCount(0) {
+		ManagedObject(ScriptValueType obj_type_, int32_t handle_, const char *addr_, ICCDynamicObject *callback_)
+			: obj_type(obj_type_), handle(handle_), addr(addr_), callback(callback_), refCount(0) {
 		}
 	};
 

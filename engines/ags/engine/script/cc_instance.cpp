@@ -832,10 +832,10 @@ int ccInstance::Run(int32_t curpc) {
 		case SCMD_MEMWRITEPTR: {
 
 			int32_t handle = registers[SREG_MAR].ReadInt32();
-			char *address = nullptr;
+			const char *address = nullptr;
 
 			if (reg1.Type == kScValStaticArray && reg1.StcArr->GetDynamicManager()) {
-				address = (char *)reg1.StcArr->GetElementPtr(reg1.Ptr, reg1.IValue);
+				address = (const char *)reg1.StcArr->GetElementPtr(reg1.Ptr, reg1.IValue);
 			} else if (reg1.Type == kScValDynamicObject ||
 			           reg1.Type == kScValPluginObject) {
 				address = reg1.Ptr;
@@ -1152,7 +1152,7 @@ int ccInstance::Run(int32_t curpc) {
 				int currentStackSize = registers[SREG_SP].RValue - &stack[0];
 				int currentDataSize = stackdata_ptr - stackdata;
 				if (currentStackSize + 1 >= CC_STACK_SIZE ||
-				        currentDataSize + arg1.IValue >= CC_STACK_DATA_SIZE) {
+				        currentDataSize + arg1.IValue >= (int)CC_STACK_DATA_SIZE) {
 					cc_error("stack overflow, attempted grow to %d bytes", currentDataSize + arg1.IValue);
 					return -1;
 				}

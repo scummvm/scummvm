@@ -96,10 +96,12 @@ protected:
 };
 
 struct ICCObjectReader {
+	virtual ~ICCObjectReader() {}
 	// TODO: pass savegame format version
 	virtual void Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) = 0;
 };
 struct ICCStringClass {
+	virtual ~ICCStringClass() {}
 	virtual DynObjectRef CreateString(const char *fromText) = 0;
 };
 

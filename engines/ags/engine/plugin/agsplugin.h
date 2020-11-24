@@ -218,6 +218,8 @@ public:
 	int32 pluginId;   // used internally, do not touch this
 
 public:
+	virtual ~IAGSEditor() {}
+
 	// get the HWND of the main editor frame
 	AGSIFUNC(HWND) GetEditorHandle();
 	// get the HWND of the current active window
@@ -326,6 +328,8 @@ public:
 	int32 pluginId;   // used internally, do not touch
 
 public:
+	virtual ~IAGSEngine() {}
+
 	// quit the game
 	AGSIFUNC(void) AbortGame(const char *reason);
 	// get engine version

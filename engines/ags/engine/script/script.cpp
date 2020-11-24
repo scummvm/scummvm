@@ -322,7 +322,7 @@ bool DoRunScriptFuncCantBlock(ccInstance *sci, NonBlockingScriptFunction *funcTo
 	int result = 0;
 
 	if (funcToRun->numParameters < 3) {
-		result = sci->CallScriptFunction((char *)funcToRun->functionName, funcToRun->numParameters, funcToRun->params);
+		result = sci->CallScriptFunction((const char *)funcToRun->functionName, funcToRun->numParameters, funcToRun->params);
 	} else
 		quit("DoRunScriptFuncCantBlock called with too many parameters");
 
@@ -503,10 +503,10 @@ String GetScriptName(ccInstance *sci) {
 char bname[MAX_FUNCTION_NAME_LEN + 1], bne[MAX_FUNCTION_NAME_LEN + 1];
 char *make_ts_func_name(const char *base, int iii, int subd) {
 	int err = snprintf(bname, MAX_FUNCTION_NAME_LEN, base, iii);
-	if (err >= sizeof(bname))
+	if (err >= (int)sizeof(bname))
 		debug_script_warn("Function name length limit exceeded: %s (%d)", base, iii);
 	err = snprintf(bne, MAX_FUNCTION_NAME_LEN, "%s_%c", bname, subd + 'a');
-	if (err >= sizeof(bne))
+	if (err >= (int)sizeof(bne))
 		debug_script_warn("Function name length limit exceeded: %s", bname);
 	return &bne[0];
 }
