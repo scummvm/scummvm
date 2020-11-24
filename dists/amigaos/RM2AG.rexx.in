@@ -208,7 +208,7 @@ Creating sub link nodes.
 */
 DO WHILE EOF(readme_read) = 0
 	/*
-	Change html/markdown links to Amiga guide ones.
+	Change html/markdown links to AmigaGuide ones.
 	*/
 	IF POS('[here](',working_line) > 0 THEN DO
 		working_line=INSERT('@{"',working_line,POS('[',working_line)-1)
