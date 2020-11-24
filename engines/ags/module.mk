@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	lib/allegro/sound.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
+	lib/system/datetime.o \
 	shared/ac/dynobj/scriptaudioclip.o \
 	shared/ac/audiocliptype.o \
 	shared/ac/characterinfo.o \
@@ -99,7 +100,12 @@ MODULE_OBJS = \
 	engine/main/game_start.o \
 	engine/main/graphics_mode.o \
 	engine/main/quit.o \
-	engine/main/update.o
+	engine/main/update.o \
+	engine/platform/base/agsplatformdriver.o \
+	engine/platform/windows/acplwin.o \
+	engine/platform/windows/minidump.o \
+	engine/platform/windows/win_ex_handling.o
+
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_AGS), DYNAMIC_PLUGIN)

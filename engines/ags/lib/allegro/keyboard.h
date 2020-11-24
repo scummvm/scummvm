@@ -38,6 +38,7 @@ namespace AGS3 {
 #define KEY_RCONTROL Common::KEYCODE_RCTRL
 #define KEY_ALTGR 0
 #define KEY_F9 Common::KEYCODE_F9
+#define KEY_A Common::KEYCODE_a
 
 #define __allegro_KEY_LSHIFT Common::KEYCODE_LSHIFT
 #define __allegro_KEY_RSHIFT Common::KEYCODE_RSHIFT
