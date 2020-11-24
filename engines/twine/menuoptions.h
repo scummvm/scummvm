@@ -23,6 +23,9 @@
 #ifndef TWINE_MENUOPTIONS_H
 #define TWINE_MENUOPTIONS_H
 
+#define ONSCREENKEYBOARD_WIDTH 14
+#define ONSCREENKEYBOARD_HEIGHT 5
+
 #include "common/scummsys.h"
 #include "twine/actor.h"
 
@@ -32,14 +35,18 @@ class MenuOptions {
 private:
 	TwinEEngine *_engine;
 
+	uint8 _onScreenKeyboardDirty[ONSCREENKEYBOARD_WIDTH * ONSCREENKEYBOARD_HEIGHT] { 0 };
+
 	int _onScreenKeyboardX = 0;
 	int _onScreenKeyboardY = 0;
 	bool _onScreenKeyboardLeaveViaOkButton = false;
 
+	void setOnScreenKeyboard(int x, int y);
+
 	bool enterPlayerName(int32 textIdx);
 	void drawSelectableCharacters();
 	void drawPlayerName(int32 centerx, int32 top, int32 type);
-	void drawSelectableCharacter(int32 x, int32 y, bool selected);
+	void drawSelectableCharacter(int32 x, int32 y);
 	int chooseSave(int textIdx, bool showEmptySlots = false);
 
 public:

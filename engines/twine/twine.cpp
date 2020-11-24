@@ -35,6 +35,7 @@
 #include "engines/metaengine.h"
 #include "engines/util.h"
 #include "graphics/colormasks.h"
+#include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/font.h"
 #include "graphics/managed_surface.h"
@@ -79,6 +80,14 @@ ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine* engine) : _engine(engine) {
 
 ScopedEngineFreeze::~ScopedEngineFreeze() {
 	_engine->unfreezeTime();
+}
+
+ScopedCursor::ScopedCursor(const TwinEEngine* engine) {
+	CursorMan.showMouse(engine->cfgfile.Mouse);
+}
+
+ScopedCursor::~ScopedCursor() {
+	CursorMan.showMouse(false);
 }
 
 TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, TwineGameType gameType)
@@ -323,6 +332,7 @@ void TwinEEngine::initConfigurations() {
 	cfgfile.Movie = ConfGetIntOrDefault("movie", CONF_MOVIE_FLA);
 	cfgfile.Fps = ConfGetIntOrDefault("fps", DEFAULT_FRAMES_PER_SECOND);
 	cfgfile.Debug = ConfGetBoolOrDefault("debug", false);
+	cfgfile.Mouse = ConfGetIntOrDefault("mouse", true);
 
 	cfgfile.UseAutoSaving = ConfGetBoolOrDefault("useautosaving", false);
 	cfgfile.CrossFade = ConfGetBoolOrDefault("crossfade", false);
@@ -939,6 +949,10 @@ void TwinEEngine::setPalette(const uint32 *palette) {
 void TwinEEngine::flip() {
 	g_system->copyRectToScreen(frontVideoBuffer.getPixels(), frontVideoBuffer.pitch, 0, 0, frontVideoBuffer.w, frontVideoBuffer.h);
 	g_system->updateScreen();
+}
+
+void TwinEEngine::copyBlockPhys(const Common::Rect &rect) {
+	copyBlockPhys(rect.left, rect.top, rect.right, rect.bottom);
 }
 
 void TwinEEngine::copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom) {

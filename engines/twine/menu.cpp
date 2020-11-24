@@ -30,6 +30,7 @@
 #include "common/scummsys.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "graphics/cursorman.h"
 #include "twine/actor.h"
 #include "twine/animations.h"
 #include "twine/gamestate.h"
@@ -231,11 +232,15 @@ void Menu::processPlasmaEffect(int32 left, int32 top, int32 color) {
 	}
 }
 
+void Menu::drawBox(const Common::Rect &rect) {
+	_engine->_interface->drawLine(rect.left, rect.top, rect.right, rect.top, 79);           // top line
+	_engine->_interface->drawLine(rect.left, rect.top, rect.left, rect.bottom, 79);         // left line
+	_engine->_interface->drawLine(rect.right, rect.top + 1, rect.right, rect.bottom, 73);   // right line
+	_engine->_interface->drawLine(rect.left + 1, rect.bottom, rect.right, rect.bottom, 73); // bottom line
+}
+
 void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
-	_engine->_interface->drawLine(left, top, right, top, 79);           // top line
-	_engine->_interface->drawLine(left, top, left, bottom, 79);         // left line
-	_engine->_interface->drawLine(right, top + 1, right, bottom, 73);   // right line
-	_engine->_interface->drawLine(left + 1, bottom, right, bottom, 73); // bottom line
+	drawBox(Common::Rect(left, top, right, bottom));
 }
 
 void Menu::drawButtonGfx(const MenuSettings *menuSettings, int32 left, int32 top, int32 right, int32 bottom, int32 buttonId, const char *dialText, bool hover) {
@@ -506,19 +511,20 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 		}
 
 		if (buttonsNeedRedraw) {
-			menuSettings->setActiveButton(currentButton);
-
 			// draw all buttons
 			const int16 mouseButtonHovered = drawButtons(menuSettings, false);
 			if (mouseButtonHovered != -1) {
 				currentButton = mouseButtonHovered;
 			}
-			buttonsNeedRedraw = false;
+			menuSettings->setActiveButton(currentButton);
 		}
 
 		// draw plasma effect for the current selected button
 		const int16 mouseButtonHovered = drawButtons(menuSettings, true);
 		if (mouseButtonHovered != -1) {
+			if (mouseButtonHovered != currentButton) {
+				buttonsNeedRedraw = true;
+			}
 			currentButton = mouseButtonHovered;
 		}
 
@@ -543,6 +549,7 @@ int32 Menu::advoptionsMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
 
+	ScopedCursor scoped(_engine);
 	for (;;) {
 		switch (processMenu(&advOptionsMenuState)) {
 		case TextId::kReturnMenu: {
@@ -567,6 +574,7 @@ int32 Menu::savemanageMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
 
+	ScopedCursor scoped(_engine);
 	for (;;) {
 		switch (processMenu(&saveManageMenuState)) {
 		case TextId::kReturnMenu:
@@ -592,6 +600,7 @@ int32 Menu::volumeMenu() {
 	_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->flip();
 
+	ScopedCursor scoped(_engine);
 	for (;;) {
 		switch (processMenu(&volumeMenuState)) {
 		case TextId::kReturnMenu:
@@ -631,6 +640,7 @@ int32 Menu::optionsMenu() {
 	_engine->_sound->stopSamples();
 	//_engine->_music->playCDtrack(9);
 
+	ScopedCursor scoped(_engine);
 	for (;;) {
 		switch (processMenu(&optionsMenuState)) {
 		case TextId::kReturnGame:
@@ -659,10 +669,37 @@ int32 Menu::optionsMenu() {
 	return 0;
 }
 
+static const byte cursorArrow[] = {
+	1, 1, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+	1, 0, 1, 3, 3, 3, 3, 3, 3, 3, 3,
+	1, 0, 0, 1, 3, 3, 3, 3, 3, 3, 3,
+	1, 0, 0, 0, 1, 3, 3, 3, 3, 3, 3,
+	1, 0, 0, 0, 0, 1, 3, 3, 3, 3, 3,
+	1, 0, 0, 0, 0, 0, 1, 3, 3, 3, 3,
+	1, 0, 0, 0, 0, 0, 0, 1, 3, 3, 3,
+	1, 0, 0, 0, 0, 0, 0, 0, 1, 3, 3,
+	1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3,
+	1, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1,
+	1, 0, 0, 1, 0, 0, 1, 3, 3, 3, 3,
+	1, 0, 1, 3, 1, 0, 0, 1, 3, 3, 3,
+	1, 1, 3, 3, 1, 0, 0, 1, 3, 3, 3,
+	1, 3, 3, 3, 3, 1, 0, 0, 1, 3, 3,
+	3, 3, 3, 3, 3, 1, 0, 0, 1, 3, 3,
+	3, 3, 3, 3, 3, 3, 1, 1, 1, 3, 3
+};
+
+static const byte cursorPalette[] = {
+	0, 0, 0,
+	0xff, 0xff, 0xff
+};
+
 bool Menu::init() {
 	// load menu effect file only once
 	plasmaEffectPtr = (uint8 *)malloc(kPlasmaEffectFilesize);
 	memset(plasmaEffectPtr, 0, kPlasmaEffectFilesize);
+
+	CursorMan.pushCursor(cursorArrow, 11, 16, 1, 1, 3);
+	CursorMan.pushCursorPalette(cursorPalette, 0, 2);
 	return HQR::getEntry(plasmaEffectPtr, Resources::HQR_RESS_FILE, RESSHQR_PLASMAEFFECT) > 0;
 }
 
@@ -673,6 +710,7 @@ EngineState Menu::run() {
 	_engine->_music->playTrackMusic(9); // LBA's Theme
 	_engine->_sound->stopSamples();
 
+	ScopedCursor scoped(_engine);
 	switch (processMenu(&mainMenuState)) {
 	case TextId::kNewGame: {
 		if (_engine->_menuOptions->newGameMenu()) {
@@ -713,6 +751,8 @@ int32 Menu::giveupMenu() {
 	} else {
 		localMenu = &giveUpMenuWithSaveState;
 	}
+
+	ScopedCursor scoped(_engine);
 
 	int32 menuId;
 	do {
@@ -800,8 +840,7 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 	_engine->copyBlockPhys(left, top, left + 450, top + 135);
 }
 
-// TODO: convert cantDrawBox to bool
-void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDrawBox) {
+Common::Rect Menu::calcBehaviourRect(HeroBehaviourType behaviour) const {
 	const int border = 110;
 	const int32 padding = 11;
 	const int32 width = 99;
@@ -811,15 +850,24 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDra
 	const int32 boxRight = boxLeft + width;
 	const int32 boxTop = border;
 	const int32 boxBottom = boxTop + height;
+	return Common::Rect(boxLeft, boxTop, boxRight, boxBottom);
+}
 
+bool Menu::isBehaviourHovered(HeroBehaviourType behaviour) const {
+	const Common::Rect &boxRect = calcBehaviourRect(behaviour);
+	return _engine->_input->isMouseHovering(boxRect);
+}
+
+void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDrawBox) {
+	const Common::Rect &boxRect = calcBehaviourRect(behaviour);
 	const int titleOffset = 10;
 	const int titleHeight = 40;
-	const int32 titleBoxLeft = border;
+	const int32 titleBoxLeft = 110;
 	const int32 titleBoxRight = 540;
-	const int32 titleBoxTop = boxBottom + titleOffset;
+	const int32 titleBoxTop = boxRect.bottom + titleOffset;
 	const int32 titleBoxBottom = titleBoxTop + titleHeight;
 
-	uint8 *currentAnim = _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)behaviour]];
+	const uint8 *currentAnim = _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)behaviour]];
 	int16 currentAnimState = behaviourAnimState[(byte)behaviour];
 
 	if (_engine->_animations->setModelAnimation(currentAnimState, currentAnim, behaviourEntity, &behaviourAnimData[(byte)behaviour])) {
@@ -830,17 +878,19 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDra
 		behaviourAnimState[(byte)behaviour] = currentAnimState;
 	}
 
-	if (cantDrawBox == 0) {
-		drawBox(boxLeft - 1, boxTop - 1, boxRight + 1, boxBottom + 1);
+	if (!cantDrawBox) {
+		Common::Rect boxRectCopy(boxRect);
+		boxRectCopy.grow(1);
+		drawBox(boxRectCopy);
 	}
 
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
 
 	if (behaviour != _engine->_actor->heroBehaviour) { // unselected
-		_engine->_interface->drawSplittedBox(boxLeft, boxTop, boxRight, boxBottom, 0);
+		_engine->_interface->drawSplittedBox(boxRect, 0);
 	} else { // selected
-		_engine->_interface->drawSplittedBox(boxLeft, boxTop, boxRight, boxBottom, 69);
+		_engine->_interface->drawSplittedBox(boxRect, 69);
 
 		// behaviour menu title
 		_engine->_interface->drawSplittedBox(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom, 0);
@@ -851,12 +901,12 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDra
 		char dialText[256];
 		_engine->_text->getMenuText(_engine->_actor->getTextIdForBehaviour(), dialText, sizeof(dialText));
 
-		_engine->_text->drawText((650 - _engine->_text->getTextSize(dialText)) / 2, titleBoxTop + 1, dialText);
+		_engine->_text->drawText(SCREEN_WIDTH / 2 - _engine->_text->getTextSize(dialText) / 2, titleBoxTop + 1, dialText);
 	}
 
-	_engine->_renderer->renderBehaviourModel(boxLeft, boxTop, boxRight, boxBottom, -600, angle, behaviourEntity);
+	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, behaviourEntity);
 
-	_engine->copyBlockPhys(boxLeft, boxTop, boxRight, boxBottom);
+	_engine->copyBlockPhys(boxRect);
 	_engine->copyBlockPhys(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom);
 
 	_engine->_interface->loadClip();
@@ -864,7 +914,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDra
 
 void Menu::prepareAndDrawBehaviour(int32 angle, HeroBehaviourType behaviour) {
 	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)behaviour], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)behaviour]], behaviourEntity, &behaviourAnimData[(byte)behaviour]);
-	drawBehaviour(behaviour, angle, 0);
+	drawBehaviour(behaviour, angle, false);
 }
 
 void Menu::drawBehaviourMenu(int32 angle) {
@@ -911,9 +961,24 @@ void Menu::processBehaviourMenu() {
 
 	int32 tmpTime = _engine->lbaTime;
 
-	ScopedKeyMap scoped(_engine, uiKeyMapId);
+#if 0
+	ScopedCursor scopedCursor(_engine);
+#endif
+	ScopedKeyMap scopedKeyMap(_engine, uiKeyMapId);
 	while (_engine->_input->isActionActive(TwinEActionType::BehaviourMenu) || _engine->_input->isQuickBehaviourActionActive()) {
 		_engine->readKeys();
+
+#if 0
+		if (isBehaviourHovered(HeroBehaviourType::kNormal)) {
+			_engine->_actor->heroBehaviour = HeroBehaviourType::kNormal;
+		} else if (isBehaviourHovered(HeroBehaviourType::kAthletic)) {
+			_engine->_actor->heroBehaviour = HeroBehaviourType::kAthletic;
+		} else if (isBehaviourHovered(HeroBehaviourType::kAggressive)) {
+			_engine->_actor->heroBehaviour = HeroBehaviourType::kAggressive;
+		} else if (isBehaviourHovered(HeroBehaviourType::kDiscrete)) {
+			_engine->_actor->heroBehaviour = HeroBehaviourType::kDiscrete;
+		}
+#endif
 
 		int heroBehaviour = (int)_engine->_actor->heroBehaviour;
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
@@ -931,13 +996,13 @@ void Menu::processBehaviourMenu() {
 		_engine->_actor->heroBehaviour = (HeroBehaviourType)heroBehaviour;
 
 		if (tmpHeroBehaviour != _engine->_actor->heroBehaviour) {
-			drawBehaviour(tmpHeroBehaviour, _engine->_scene->sceneHero->angle, 1);
+			drawBehaviour(tmpHeroBehaviour, _engine->_scene->sceneHero->angle, true);
 			tmpHeroBehaviour = _engine->_actor->heroBehaviour;
 			_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - ANGLE_90, 50, &moveMenu);
 			_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour]], behaviourEntity, &behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
 		}
 
-		drawBehaviour(_engine->_actor->heroBehaviour, -1, 1);
+		drawBehaviour(_engine->_actor->heroBehaviour, -1, true);
 
 		_engine->_system->delayMillis(1000 / 50);
 		_engine->lbaTime++;
@@ -1023,9 +1088,10 @@ void Menu::processInventoryMenu() {
 	_engine->_text->setFontCrossColor(4);
 	_engine->_text->initDialogueBox();
 
-	Common::Keymapper *keymapper = g_system->getEventManager()->getKeymapper();
-	keymapper->getKeymap(uiKeyMapId)->setEnabled(true);
-
+#if 0
+	ScopedCursor scopedCursor(_engine);
+#endif
+	ScopedKeyMap scopedKeyMap(_engine, uiKeyMapId);
 	for (;;) {
 		_engine->readKeys();
 		int32 prevSelectedItem = inventorySelectedItem;
@@ -1113,8 +1179,6 @@ void Menu::processInventoryMenu() {
 
 		_engine->_system->delayMillis(1);
 	}
-
-	keymapper->getKeymap(uiKeyMapId)->setEnabled(false);
 
 	_engine->_text->_hasValidTextHandle = false;
 
