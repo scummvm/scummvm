@@ -489,10 +489,10 @@ void SpriteCache::CompressSprite(Bitmap *sprite, Stream *out) {
 			cpackbitl(&sprite->GetScanLineForWriting(y)[0], sprite->GetWidth(), out);
 	} else if (depth == 2) {
 		for (int y = 0; y < sprite->GetHeight(); y++)
-			cpackbitl16((unsigned short *)&sprite->GetScanLine(y)[0], sprite->GetWidth(), out);
+			cpackbitl16((const unsigned short *)&sprite->GetScanLine(y)[0], sprite->GetWidth(), out);
 	} else {
 		for (int y = 0; y < sprite->GetHeight(); y++)
-			cpackbitl32((unsigned int *)&sprite->GetScanLine(y)[0], sprite->GetWidth(), out);
+			cpackbitl32((const unsigned int *)&sprite->GetScanLine(y)[0], sprite->GetWidth(), out);
 	}
 }
 
@@ -856,7 +856,7 @@ void SpriteCache::DetachFile() {
 }
 
 int SpriteCache::AttachFile(const char *filename) {
-	_stream.reset(Shared::AssetManager::OpenAsset((char *)filename));
+	_stream.reset(Shared::AssetManager::OpenAsset((const char *)filename));
 	if (_stream == nullptr)
 		return -1;
 	return 0;

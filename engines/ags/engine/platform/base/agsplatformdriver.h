@@ -29,11 +29,11 @@
 #ifndef AGS_ENGINE_PLATFORM_BASE_AGSPLATFORMDRIVER_H
 #define AGS_ENGINE_PLATFORM_BASE_AGSPLATFORMDRIVER_H
 
-//include <errno.h>
 #include "ags/std/vector.h"
 #include "ags/engine/ac/datetime.h"
 #include "ags/shared/debugging/outputhandler.h"
 #include "ags/shared/util/ini_util.h"
+#include "ags/lib/allegro/error.h"
 
 namespace AGS3 {
 
@@ -73,7 +73,7 @@ struct AGSPlatformDriver
 	virtual void DisplayAlert(const char *, ...) = 0;
 	virtual void AttachToParentConsole();
 	virtual int  GetLastSystemError() {
-		return errno;
+		return errnum;
 	}
 	// Get root directory for storing per-game shared data
 	virtual const char *GetAllUsersDataDirectory() {

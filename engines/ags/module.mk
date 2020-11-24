@@ -106,7 +106,16 @@ MODULE_OBJS = \
 	engine/platform/windows/minidump.o \
 	engine/platform/windows/win_ex_handling.o \
 	engine/plugin/agsplugin.o \
-	engine/plugin/pluginobjectreader.o
+	engine/plugin/pluginobjectreader.o \
+	engine/script/cc_instance.o \
+	engine/script/executingscript.o \
+	engine/script/exports.o \
+	engine/script/runtimescriptvalue.o \
+	engine/script/script.o \
+	engine/script/script_api.o \
+	engine/script/script_engine.o \
+	engine/script/script_runtime.o \
+	engine/script/systemimports.o
 
 
 # This module can be built as a plugin

@@ -54,7 +54,7 @@ void DebugOutput::SetEnabled(bool enable) {
 
 void DebugOutput::SetGroupFilter(DebugGroupID id, MessageType verbosity) {
 	uint32_t key = DbgMgr.GetGroup(id).UID.ID;
-	if (key != kDbgGroup_None)
+	if (key != (uint32_t)kDbgGroup_None)
 		_groupFilter[key] = verbosity;
 	else
 		_unresolvedGroups.insert(std::make_pair(id.SID, verbosity));
@@ -91,7 +91,7 @@ void DebugOutput::ResolveGroupID(DebugGroupID id) {
 
 bool DebugOutput::TestGroup(DebugGroupID id, MessageType mt) const {
 	DebugGroupID real_id = DbgMgr.GetGroup(id).UID;
-	if (real_id.ID == kDbgGroup_None || real_id.ID >= _groupFilter.size())
+	if (real_id.ID == (uint32_t)kDbgGroup_None || real_id.ID >= _groupFilter.size())
 		return false;
 	return (_groupFilter[real_id.ID] >= mt) != 0;
 }
@@ -108,7 +108,7 @@ DebugManager::DebugManager() {
 }
 
 DebugGroup DebugManager::GetGroup(DebugGroupID id) {
-	if (id.ID != kDbgGroup_None) {
+	if (id.ID != (uint32_t)kDbgGroup_None) {
 		return id.ID < _groups.size() ? _groups[id.ID] : DebugGroup();
 	} else if (!id.SID.IsEmpty()) {
 		GroupByStringMap::const_iterator it = _groupByStrLookup.find(id.SID);

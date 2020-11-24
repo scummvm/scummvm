@@ -80,7 +80,7 @@ _aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
 	_sw <<= aa_BITS;
 	dsx = _sw / _dw;
 
-	if (dsx < aa_SIZE) {
+	if (dsx < (int)aa_SIZE) {
 		/* Exploding by x.  */
 		_dw--;
 		_sw -= aa_SIZE;
@@ -91,7 +91,7 @@ _aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
 	_sh <<= aa_BITS;
 	dsy = _sh / _dh;
 
-	if (dsy < aa_SIZE) {
+	if (dsy < (int)aa_SIZE) {
 		/* Exploding by y.  */
 		_dh--;
 		_sh -= aa_SIZE;
@@ -101,9 +101,9 @@ _aa_stretch_blit(BITMAP *_src, BITMAP *_dst,
 	num = dsx * dsy;
 
 	if (num > aa_MAX_NUM) {
-		if (dsx > aa_MAX_SIZE)
+		if (dsx > (int)aa_MAX_SIZE)
 			dsx = aa_MAX_SIZE;
-		if (dsy > aa_MAX_SIZE)
+		if (dsy > (int)aa_MAX_SIZE)
 			dsy = aa_MAX_SIZE;
 		num = dsx * dsy;
 	}

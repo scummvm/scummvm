@@ -21,9 +21,9 @@
  */
 
 #include "ags/shared/script/cc_error.h"
-#include "ags/shared/script/runtimescriptvalue.h"
-#include "ags/shared/ac/dynobj/cc_dynamicobject.h"
-#include "ags/shared/ac/statobj/staticobject.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/ac/dynobj/cc_dynamicobject.h"
+#include "ags/engine/ac/statobj/staticobject.h"
 #include "ags/shared/util/memory.h"
 
 //include <string.h> // for memcpy()
