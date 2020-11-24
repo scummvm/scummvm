@@ -427,7 +427,7 @@ HRoomFileError ReadObjNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion d
 // Room object script names
 HRoomFileError ReadObjScNamesBlock(RoomStruct *room, Stream *in, RoomFileVersion data_ver) {
 	int name_count = in->ReadByte();
-	if (name_count != room->ObjectCount)
+	if (name_count != (int)room->ObjectCount)
 		return new RoomFileError(kRoomFileErr_InconsistentData,
 			String::FromFormat("In the object script names block, expected name count: %d, got %d", room->ObjectCount, name_count));
 

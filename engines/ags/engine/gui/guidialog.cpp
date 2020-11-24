@@ -21,18 +21,20 @@
  */
 
 //include <cstdio>
-#include "ags/shared/gui/guidialog.h"
+#include "ags/engine/gui/guidialog.h"
 
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/game.h"
-#include "ags/shared/ac/gamesetup.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/game.h"
+#include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/gui/cscidialog.h"
+#include "ags/engine/gui/cscidialog.h"
 //include <cctype> //isdigit()
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/graphicsdriver.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "engines/savestate.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -295,46 +297,24 @@ int savegamedialog() {
 void preparesavegamelist(int ctrllist) {
 	numsaves = 0;
 	toomanygames = 0;
-	al_ffblk ffb;
-	int bufix = 0;
 
-	String svg_dir = get_save_game_directory();
-	String svg_suff = get_save_game_suffix();
-	String searchPath = String::FromFormat("%s""agssave.*%s", svg_dir.GetCStr(), svg_suff.GetCStr());
+	// Get a list of savegames
+	SaveStateList saveList = ::AGS::g_vm->listSaves();
 
-	int don = al_findfirst(searchPath, &ffb, -1);
-	while (!don) {
-		bufix = 0;
-		if (numsaves >= MAXSAVEGAMES) {
-			toomanygames = 1;
-			break;
-		}
+	for (SaveStateList::iterator it = saveList.begin(); it != saveList.end(); ++it) {
+		Common::String desc = it->getDescription();
 
-		// only list games .000 to .099 (to allow higher slots for other purposes)
-		if (strstr(ffb.name, ".0") == nullptr) {
-			don = al_findnext(&ffb);
-			continue;
-		}
+		// TODO: Casting pointer to long is nasty
+		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0, (long)desc.c_str());
 
-		const char *numberExtension = strstr(ffb.name, ".0") + 1;
-		int sgNumber = atoi(numberExtension);
-
-		String thisGamePath = get_save_game_path(sgNumber);
-
-		// get description
-		String description;
-		read_savedgame_description(thisGamePath, description);
-
-		CSCISendControlMessage(ctrllist, CLB_ADDITEM, 0, (long)description.GetCStr());
 		// Select the first item
 		CSCISendControlMessage(ctrllist, CLB_SETCURSEL, 0, 0);
-		filenumbers[numsaves] = sgNumber;
-		filedates[numsaves] = (long int)ffb.time;
-		numsaves++;
-		don = al_findnext(&ffb);
+		filenumbers[numsaves] = it->getSaveSlot();
+		filedates[numsaves] = 0;		// TODO: How to handle file dates in ScummVM
+
+		++numsaves;
 	}
 
-	al_findclose(&ffb);
 	if (numsaves >= MAXSAVEGAMES)
 		toomanygames = 1;
 
@@ -442,7 +422,7 @@ int roomSelectorWindow(int currentRoom, int numRooms, int *roomNumbers, char **r
 		if (mes.code == CM_COMMAND) {
 			if (mes.id == ctrlok) {
 				CSCISendControlMessage(ctrltbox, CTB_GETTEXT, 0, (long)&buffer2[0]);
-				if (isdigit(buffer2[0])) {
+				if (Common::isDigit(buffer2[0])) {
 					toret = atoi(buffer2);
 				}
 			} else if (mes.id == ctrlcancel) {

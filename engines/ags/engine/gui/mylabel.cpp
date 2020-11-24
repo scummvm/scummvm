@@ -21,13 +21,13 @@
  */
 
 //include <string.h>
-#include "ags/shared/ac/display.h"
-#include "ags/shared/ac/gamesetup.h"
-#include "ags/shared/ac/string.h"
+#include "ags/engine/ac/display.h"
+#include "ags/engine/ac/gamesetup.h"
+#include "ags/engine/ac/string.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/guidefines.h"
-#include "ags/shared/gui/mylabel.h"
-#include "ags/shared/gui/guidialoginternaldefs.h"
+#include "ags/engine/gui/mylabel.h"
+#include "ags/engine/gui/guidialoginternaldefs.h"
 
 namespace AGS3 {
 
@@ -59,7 +59,7 @@ void MyLabel::draw(Bitmap *ds) {
 	}
 }
 
-int MyLabel::pressedon(int mousex, int mousey) {
+int MyLabel::pressedon(int mouseX, int mouseY) {
 	return 0;
 }
 

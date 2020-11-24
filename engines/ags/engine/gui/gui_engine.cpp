@@ -29,7 +29,7 @@
 // Headers, as they are in acgui.cpp
 #pragma unmanaged
 #include "ags/shared/ac/game_version.h"
-#include "ags/shared/ac/system.h"
+#include "ags/engine/ac/system.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/gui/guibutton.h"
@@ -38,11 +38,11 @@
 #include "ags/shared/gui/guitextbox.h"
 //include <ctype.h>
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/global_translation.h"
-#include "ags/shared/ac/string.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/string.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/blender.h"
+#include "ags/engine/gfx/blender.h"
 
 namespace AGS3 {
 

@@ -23,25 +23,25 @@
 //include <cctype>
 #include "ags/shared/util/wgt2allg.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/gamesetup.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/gui.h"
-#include "ags/shared/ac/keycode.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/sys_events.h"
-#include "ags/shared/ac/runtime_defines.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/gamesetup.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/gui.h"
+#include "ags/engine/ac/keycode.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/sys_events.h"
+#include "ags/engine/ac/runtime_defines.h"
 #include "ags/shared/font/fonts.h"
-#include "ags/shared/gui/cscidialog.h"
-#include "ags/shared/gui/guidialog.h"
+#include "ags/engine/gui/cscidialog.h"
+#include "ags/engine/gui/guidialog.h"
 #include "ags/shared/gui/guimain.h"
-#include "ags/shared/gui/mycontrols.h"
-#include "ags/shared/main/game_run.h"
-#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/engine/gui/mycontrols.h"
+#include "ags/engine/main/game_run.h"
+#include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/media/audio/audio_system.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
-#include "ags/shared/ac/timer.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/ac/timer.h"
 
 namespace AGS3 {
 
@@ -275,15 +275,15 @@ void multiply_up(int *x1, int *y1, int *x2, int *y2) {
 
 int checkcontrols() {
 	// NOTE: this is because old code was working with full game screen
-	const int mousex = ::mousex - win_x;
-	const int mousey = ::mousey - win_y;
+	const int mouseX = AGS3::mousex - win_x;
+	const int mouseY = AGS3::mousey - win_y;
 
 	smcode = 0;
 	for (int kk = 0; kk < MAXCONTROLS; kk++) {
 		if (vobjs[kk] != nullptr) {
-			if (vobjs[kk]->mouseisinarea(mousex, mousey)) {
+			if (vobjs[kk]->mouseisinarea(mouseX, mouseY)) {
 				controlid = kk;
-				return vobjs[kk]->pressedon(mousex, mousey);
+				return vobjs[kk]->pressedon(mouseX, mouseY);
 			}
 		}
 	}
