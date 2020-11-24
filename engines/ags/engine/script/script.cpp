@@ -21,36 +21,36 @@
  */
 
 //include <string.h>
-#include "ags/shared/script/script.h"
+#include "ags/engine/script/script.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/character.h"
-#include "ags/shared/ac/dialog.h"
-#include "ags/shared/ac/event.h"
-#include "ags/shared/ac/game.h"
+#include "ags/engine/ac/character.h"
+#include "ags/engine/ac/dialog.h"
+#include "ags/engine/ac/event.h"
+#include "ags/engine/ac/game.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_audio.h"
-#include "ags/shared/ac/global_character.h"
-#include "ags/shared/ac/global_dialog.h"
-#include "ags/shared/ac/global_display.h"
-#include "ags/shared/ac/global_game.h"
-#include "ags/shared/ac/global_gui.h"
-#include "ags/shared/ac/global_hotspot.h"
-#include "ags/shared/ac/global_object.h"
-#include "ags/shared/ac/global_room.h"
-#include "ags/shared/ac/invwindow.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/room.h"
-#include "ags/shared/ac/roomobject.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_audio.h"
+#include "ags/engine/ac/global_character.h"
+#include "ags/engine/ac/global_dialog.h"
+#include "ags/engine/ac/global_display.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/global_gui.h"
+#include "ags/engine/ac/global_hotspot.h"
+#include "ags/engine/ac/global_object.h"
+#include "ags/engine/ac/global_room.h"
+#include "ags/engine/ac/invwindow.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/room.h"
+#include "ags/engine/ac/roomobject.h"
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/script/cc_options.h"
-#include "ags/shared/debug/debugger.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/main/game_run.h"
-#include "ags/shared/media/video/video.h"
-#include "ags/shared/script/script_runtime.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/main/game_run.h"
+#include "ags/engine/media/video/video.h"
+#include "ags/engine/script/script_runtime.h"
 #include "ags/shared/util/string_compat.h"
-#include "ags/shared/media/audio/audio_system.h"
+#include "ags/engine/media/audio/audio_system.h"
 
 namespace AGS3 {
 
@@ -718,11 +718,11 @@ int run_interaction_commandlist(InteractionCommandList *nicl, int *timesrun, int
 			break;
 		case 9:
 		{ // Run Dialog
-			int room_was = play.room_changes;
+			int roomWas = play.room_changes;
 			RunDialog(IPARAM1);
 			// if they changed room within the dialog script,
 			// the interaction command list is no longer valid
-			if (room_was != play.room_changes)
+			if (roomWas != play.room_changes)
 				return -1;
 		}
 		break;

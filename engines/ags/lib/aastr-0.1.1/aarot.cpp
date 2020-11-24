@@ -126,13 +126,13 @@ _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle,
 
 	sw <<= aa_BITS;
 	dsx = sw / dw;
-	if (dsx < aa_SIZE)
+	if (dsx < (int)aa_SIZE)
 		dsx = aa_SIZE;
 	sw -= dsx;
 
 	sh <<= aa_BITS;
 	dsy = sh / dh;
-	if (dsy < aa_SIZE)
+	if (dsy < (int)aa_SIZE)
 		dsy = aa_SIZE;
 	sh -= dsy;
 
@@ -140,9 +140,9 @@ _aa_rotate_bitmap(BITMAP *_src, BITMAP *_dst, int _x, int _y, fixed _angle,
 
 	/* Avoid overflow.  */
 	if (num > aa_MAX_NUM) {
-		if (dsx > aa_MAX_SIZE)
+		if (dsx > (int)aa_MAX_SIZE)
 			dsx = aa_MAX_SIZE;
-		if (dsy > aa_MAX_SIZE)
+		if (dsy > (int)aa_MAX_SIZE)
 			dsy = aa_MAX_SIZE;
 		num = dsx * dsy;
 	}

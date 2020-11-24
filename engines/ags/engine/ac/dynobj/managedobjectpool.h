@@ -24,11 +24,11 @@
 #define AGS_ENGINE_AC_DYNOBJ_MANAGEDOBJECTPOOL_H
 
 #include "ags/std/vector.h"
-//include <queue>
-//include <unordered_map>
-
-#include "ags/shared/script/runtimescriptvalue.h"
-#include "ags/shared/ac/dynobj/cc_dynamicobject.h"   // ICCDynamicObject
+#include "ags/std/queue.h"
+#include "ags/std/map.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/ac/dynobj/cc_dynamicobject.h"   // ICCDynamicObject
+#include "ags/shared/util/string_types.h"
 
 namespace AGS3 {
 namespace AGS {

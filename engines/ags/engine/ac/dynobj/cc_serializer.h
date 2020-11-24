@@ -28,7 +28,7 @@
 namespace AGS3 {
 
 struct AGSDeSerializer : ICCObjectReader {
-
+	virtual ~AGSDeSerializer() {}
 	void Unserialize(int index, const char *objectType, const char *serializedData, int dataSize) override;
 };
 

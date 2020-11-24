@@ -24,7 +24,7 @@
 #define AGS_ENGINE_AC_DYNOBJ_CCDYNAMICARRAY_H
 
 #include "ags/std/vector.h"
-#include "ags/shared/ac/dynobj/cc_dynamicobject.h"   // ICCDynamicObject
+#include "ags/engine/ac/dynobj/cc_dynamicobject.h"   // ICCDynamicObject
 
 namespace AGS3 {
 

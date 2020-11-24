@@ -67,10 +67,11 @@ typedef int16 int16_t;
 typedef int32 int32_t;
 typedef int64 int64_t;
 
-// Stream offset type
-typedef int64 soff_t;
+typedef int64 soff_t;		// Stream offset type
+typedef int64 intptr_t;
 
-#define fixed_t int32_t // fixed point type
+// fixed point type
+#define fixed_t int32_t
 #define color_t int
 
 #undef INT32_MIN

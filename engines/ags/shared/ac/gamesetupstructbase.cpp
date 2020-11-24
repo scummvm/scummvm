@@ -250,6 +250,8 @@ Size ResolutionTypeToSize(GameResolutionType resolution, bool letterbox) {
 		return Size(1024, 768);
 	case kGameResolution_1280x720:
 		return Size(1280, 720);
+	default:
+		break;
 	}
 	return Size();
 }

@@ -201,6 +201,8 @@ Bitmap *RoomStruct::GetMask(RoomAreaMask mask) const {
 		return WalkAreaMask.get();
 	case kRoomAreaRegion:
 		return RegionMask.get();
+	default:
+		break;
 	}
 	return nullptr;
 }
@@ -213,6 +215,8 @@ float RoomStruct::GetMaskScale(RoomAreaMask mask) const {
 	case kRoomAreaWalkable:
 	case kRoomAreaRegion:
 		return 1.f / MaskResolution;
+	default:
+		break;
 	}
 	return 0.f;
 }

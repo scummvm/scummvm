@@ -23,26 +23,26 @@
 //include <cstdio>
 //include <string.h>
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/dynobj/cc_dynamicarray.h"
-#include "ags/shared/ac/dynobj/managedobjectpool.h"
+#include "ags/engine/ac/dynobj/cc_dynamicarray.h"
+#include "ags/engine/ac/dynobj/managedobjectpool.h"
 #include "ags/shared/gui/guidefines.h"
 #include "ags/shared/script/cc_error.h"
-#include "ags/shared/script/cc_instance.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/debug/out.h"
+#include "ags/engine/script/cc_instance.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/shared/debugging/out.h"
 #include "ags/shared/script/cc_options.h"
-#include "ags/shared/script/script.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/script/systemimports.h"
+#include "ags/engine/script/script.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/script/systemimports.h"
 #include "ags/shared/util/bbop.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/misc.h"
 #include "ags/shared/util/textstreamwriter.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
-#include "ags/shared/ac/dynobj/scriptuserobject.h"
-#include "ags/shared/ac/statobj/agsstaticobject.h"
-#include "ags/shared/ac/statobj/staticarray.h"
-#include "ags/shared/ac/dynobj/cc_dynamicobject_addr_and_manager.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/ac/dynobj/scriptuserobject.h"
+#include "ags/engine/ac/statobj/agsstaticobject.h"
+#include "ags/engine/ac/statobj/staticarray.h"
+#include "ags/engine/ac/dynobj/cc_dynamicobject_addr_and_manager.h"
 #include "ags/shared/util/memory.h"
 #include "ags/shared/util/string_utils.h" // linux strnicmp definition
 
@@ -1319,8 +1319,8 @@ bool ccInstance::_Create(PScript scri, ccInstance *joined) {
 			code = (intptr_t *)malloc(codesize * sizeof(intptr_t));
 			// 64 bit: Read code into 8 byte array, necessary for being able to perform
 			// relocations on the references.
-			for (int i = 0; i < codesize; ++i)
-				code[i] = scri->code[i];
+			for (int idx = 0; idx < codesize; ++idx)
+				code[idx] = scri->code[idx];
 		}
 	}
 
@@ -1558,7 +1558,7 @@ ScriptVariable *ccInstance::FindGlobalVar(int32_t var_addr) {
 		Debug::Printf(kDbgMsg_Warn, "WARNING: looking up for global variable beyond allocated buffer (%d, %d)", var_addr, globaldatasize);
 	}
 	ScVarMap::iterator it = globalvars->find(var_addr);
-	return it != globalvars->end() ? &it->second : nullptr;
+	return it != globalvars->end() ? &it->_value : nullptr;
 }
 
 bool ccInstance::CreateRuntimeCodeFixups(PScript scri) {

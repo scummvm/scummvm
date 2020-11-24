@@ -20,45 +20,16 @@
  *
  */
 
-#ifndef AGS_STD_MAP_H
-#define AGS_STD_MAP_H
+#ifndef AGS_STD_QUEUE_H
+#define AGS_STD_QUEUE_H
 
-#include "common/hashmap.h"
-#include "ags/std/utility.h"
+#include "common/queue.h"
 
 namespace AGS3 {
 namespace std {
 
-template<class Key, class Val, class HashFunc = Common::Hash<Key>,
-         class EqualFunc = Common::EqualTo<Key> >
-class map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
-public:
-	using iterator = typename Common::HashMap<Key, Val, HashFunc, EqualFunc>::iterator;
-
-	void insert(pair<Key, Val> elem) {
-		this->operator[](elem.first) = elem.second;
-	}
-
-	// FUNCTION TEMPLATE lower_bound
-	iterator lower_bound(Key &val) {
-		iterator it;
-		for (it = this->begin(); it != this->end(); ++it) {
-			if (it->_key >= val)
-				break;
-		}
-
-		return it;
-	}
-};
-
-template<class Key, class Val, class HashFunc = Common::Hash<Key>,
-         class EqualFunc = Common::EqualTo<Key> >
-class unordered_map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
-public:
-	void insert(pair<Key, Val> elem) {
-		this->operator[](elem.first) = elem.second;
-	}
-};
+template<class T>
+using queue = Common::Queue<T>;
 
 } // namespace std
 } // namespace AGS3

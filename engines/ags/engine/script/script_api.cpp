@@ -24,8 +24,8 @@
 //include <string.h>
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/script/cc_error.h"
-#include "ags/shared/script/runtimescriptvalue.h"
-#include "ags/shared/script/script_api.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/script/script_api.h"
 #include "ags/shared/util/math.h"
 
 namespace AGS3 {
