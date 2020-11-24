@@ -61,6 +61,7 @@ void msethotspot(int xx, int yy);
 int minstalled();
 
 namespace Mouse {
+
 // Get if mouse is locked to the game window
 bool IsLockedToWindow();
 // Try locking mouse to the game window
@@ -82,9 +83,11 @@ float GetSpeedUnit();
 void SetSpeed(float speed);
 // Get speed factor
 float GetSpeed();
-}
+
+} // namespace Mouse
 
 namespace Mouse {
+
 // Updates limits of the area inside which the standard OS cursor is not shown;
 // uses game's main viewport (in native coordinates) to calculate real area on screen
 void SetGraphicArea();
@@ -93,7 +96,8 @@ void SetGraphicArea();
 void SetMoveLimit(const Rect &r);
 // Set actual OS cursor position on screen; parameter must be in native game coordinates
 void SetPosition(const Point p);
-}
+
+} // namespace Mouse
 
 
 extern int mousex, mousey;

@@ -38,8 +38,9 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 // A pair of managed handle and abstract object pointer

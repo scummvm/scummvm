@@ -23,7 +23,7 @@
 #ifndef _AGS_ENGINE_AC_STATICOBJ_STATICARRAY_H
 #define _AGS_ENGINE_AC_STATICOBJ_STATICARRAY_H
 
-#include "ags/shared/ac/statobj/staticobject.h"
+#include "ags/engine/ac/statobj/staticobject.h"
 
 namespace AGS3 {
 

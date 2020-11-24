@@ -28,7 +28,8 @@
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
-//include <class PThreadThread : public BaseThread {
+
+class PThreadThread : public BaseThread {
 public:
 	PThreadThread() {
 		_thread = 0;

@@ -34,6 +34,7 @@ namespace Shared {
 class Stream;
 } // namespace Shared
 } // namespace AGS
+
 using namespace AGS; // FIXME later
 
 #define MAXNEEDSTAGES 256

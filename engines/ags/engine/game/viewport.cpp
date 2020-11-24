@@ -20,11 +20,11 @@
  *
  */
 
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/roomstruct.h"
-#include "ags/shared/game/viewport.h"
+#include "ags/engine/game/viewport.h"
 
 namespace AGS3 {
 

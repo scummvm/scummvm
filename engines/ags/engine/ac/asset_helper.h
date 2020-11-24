@@ -38,8 +38,9 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 class Stream;
-}
-}
+} // namespace Shared
+} // namespace AGS
+
 using AGS::Shared::Stream;
 using AGS::Shared::String;
 

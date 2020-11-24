@@ -20,47 +20,48 @@
  *
  */
 
-#include "ags/shared/ac/character.h"
+#include "ags/engine/ac/character.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/dynamicsprite.h"
-#include "ags/shared/ac/event.h"
-#include "ags/shared/ac/game.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/dynamicsprite.h"
+#include "ags/engine/ac/event.h"
+#include "ags/engine/ac/game.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/gamesetup.h"
-#include "ags/shared/ac/global_audio.h"
-#include "ags/shared/ac/global_character.h"
-#include "ags/shared/ac/gui.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/overlay.h"
-#include "ags/shared/ac/region.h"
-#include "ags/shared/ac/richgamemedia.h"
-#include "ags/shared/ac/room.h"
-#include "ags/shared/ac/roomstatus.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/gamesetup.h"
+#include "ags/engine/ac/global_audio.h"
+#include "ags/engine/ac/global_character.h"
+#include "ags/engine/ac/gui.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/overlay.h"
+#include "ags/engine/ac/region.h"
+#include "ags/engine/ac/richgamemedia.h"
+#include "ags/engine/ac/room.h"
+#include "ags/engine/ac/roomstatus.h"
 #include "ags/shared/ac/spritecache.h"
-#include "ags/shared/ac/system.h"
-#include "ags/shared/ac/timer.h"
-#include "ags/shared/debug/out.h"
-#include "ags/shared/device/mousew32.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/ac/timer.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/device/mousew32.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/ddb.h"
-#include "ags/shared/gfx/graphicsdriver.h"
-#include "ags/shared/game/savegame.h"
-#include "ags/shared/game/savegame_components.h"
-#include "ags/shared/game/savegame_internal.h"
-#include "ags/shared/main/engine.h"
-#include "ags/shared/main/main.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
-#include "ags/shared/plugin/agsplugin.h"
-#include "ags/shared/plugin/plugin_engine.h"
-#include "ags/shared/script/script.h"
+#include "ags/engine/gfx/ddb.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/game/savegame.h"
+#include "ags/engine/game/savegame_components.h"
+#include "ags/engine/game/savegame_internal.h"
+#include "ags/engine/main/engine.h"
+#include "ags/engine/main/main.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/plugin/agsplugin.h"
+#include "ags/engine/plugin/plugin_engine.h"
+#include "ags/engine/script/script.h"
 #include "ags/shared/script/cc_error.h"
 #include "ags/shared/util/alignedstream.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_utils.h"
-#include "ags/shared/media/audio/audio_system.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -507,7 +508,7 @@ HSaveError DoAfterRestore(const PreservedParams &pp, const RestoredData &r_data)
 	// ensure that the current cursor is locked
 	spriteset.Precache(game.mcurs[r_data.CursorID].pic);
 
-	set_window_title(play.game_name);
+	::AGS::g_vm->set_window_title(play.game_name);
 
 	update_polled_stuff_if_runtime();
 
@@ -680,8 +681,16 @@ void WriteDescription(Stream *out, const String &user_text, const Bitmap *user_i
 	WriteSaveImage(out, user_image);
 }
 
+static void uconvert(const char *src, unsigned short *dest, int maxSize) {
+	do {
+		*dest++ = *src;
+	} while (*src++ != 0 && --maxSize > 1);
+
+	*dest = '\0';
+}
+
 PStream StartSavegame(const String &filename, const String &user_text, const Bitmap *user_image) {
-	Stream *out = Common::File::CreateFile(filename);
+	Stream *out = Shared::File::CreateFile(filename);
 	if (!out)
 		return PStream();
 
@@ -695,8 +704,15 @@ PStream StartSavegame(const String &filename, const String &user_text, const Bit
 	vistaHeader.dwThumbnailOffsetLowerDword = 0;
 	vistaHeader.dwThumbnailSize = 0;
 	convert_guid_from_text_to_binary(game.guid, &vistaHeader.guidGameId[0]);
+
+#if 1
+	Common::String name = Common::String::format("%s %s", game.gamename, user_text.GetNullableCStr());
+	uconvert(name.c_str(), vistaHeader.szSaveName, RM_MAXLENGTH);
+#else
 	uconvert(game.gamename, U_ASCII, (char *)&vistaHeader.szGameName[0], U_UNICODE, RM_MAXLENGTH);
 	uconvert(user_text, U_ASCII, (char *)&vistaHeader.szSaveName[0], U_UNICODE, RM_MAXLENGTH);
+#endif
+
 	vistaHeader.szLevelName[0] = 0;
 	vistaHeader.szComments[0] = 0;
 	// MS Windows Vista rich media header

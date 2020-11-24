@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_DYNOBJ_CCGUI_H
-#define AGS_ENGINE_AC_DYNOBJ_CCGUI_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_CCGUIOBJECT_H
+#define AGS_ENGINE_AC_DYNOBJ_CCGUIOBJECT_H
 
-#include "ags/shared/ac/dynobj/cc_agsdynamicobject.h"
+#include "ags/engine/ac/dynobj/cc_agsdynamicobject.h"
 
 namespace AGS3 {
 
