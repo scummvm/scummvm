@@ -125,7 +125,7 @@ void do_start_game() {
 }
 
 void initialize_start_and_play_game(int override_start_room, const char *loadSaveOnStartup) {
-	try { // BEGIN try for ALI3DEXception
+//	try { // BEGIN try for ALI3DEXception
 
 		set_cursor_mode(MODE_WALK);
 
@@ -154,9 +154,9 @@ void initialize_start_and_play_game(int override_start_room, const char *loadSav
 
 		RunGameUntilAborted();
 
-	} catch (Ali3DException gfxException) {
-		quit((char *)gfxException._message);
-	}
+//	} catch (Ali3DException gfxException) {
+//		quit((char *)gfxException._message);
+//	}
 }
 
 } // namespace AGS3

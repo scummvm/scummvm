@@ -20,31 +20,30 @@
  *
  */
 
-#ifndef AGS_LIB_ALLEGRO_H
-#define AGS_LIB_ALLEGRO_H
+#ifndef AGS_LIB_SYSTEM_DATETIME_H
+#define AGS_LIB_SYSTEM_DATETIME_H
 
-#define ALLEGRO_H
-
-#include "ags/lib/allegro/alconfig.h"
-#include "ags/lib/allegro/base.h"
-#include "ags/lib/allegro/color.h"
-#include "ags/lib/allegro/config.h"
-#include "ags/lib/allegro/digi.h"
-#include "ags/lib/allegro/error.h"
-#include "ags/lib/allegro/file.h"
-#include "ags/lib/allegro/fixed.h"
-#include "ags/lib/allegro/gfx.h"
-#include "ags/lib/allegro/keyboard.h"
-#include "ags/lib/allegro/midi.h"
-#include "ags/lib/allegro/mouse.h"
-#include "ags/lib/allegro/sound.h"
-#include "ags/lib/allegro/system.h"
-#include "ags/lib/allegro/unicode.h"
+#include "common/scummsys.h"
+#include "common/system.h"
 
 namespace AGS3 {
 
-extern int install_allegro();
-extern void allegro_exit();
+struct tm : public TimeDate {
+	int tm_yday;  // days since January 1 - [0, 365]
+	int tm_isdst; // daylight savings time flag
+};
+
+typedef int64 time_t;
+
+/**
+ * Returns the current date and time
+ */
+extern void localTime(tm *time);
+
+/**
+ * Returns the Unix 2038-end time
+ */
+extern time_t getUnixTime();
 
 } // namespace AGS3
 

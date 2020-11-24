@@ -40,11 +40,13 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 class Stream;
-}
+} // namespace Shared
+
 namespace Engine {
 struct DisplayMode;
-}
-}
+} // namespace Engine
+} // namespace AGS
+
 using namespace AGS; // FIXME later
 
 enum eScriptSystemOSID {

@@ -26,26 +26,27 @@
 //
 //=============================================================================
 
-//include <thread>
 #include "ags/shared/util/wgt2allg.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/runtime_defines.h"
+#include "ags/engine/ac/runtime_defines.h"
 #include "ags/shared/util/string_utils.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/plugin/agsplugin.h"
-#include "ags/shared/ac/timer.h"
-#include "ags/shared/media/audio/audio_system.h"
+#include "ags/engine/plugin/agsplugin.h"
+#include "ags/engine/ac/timer.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/lib/system/datetime.h"
+#include "ags/std/algorithm.h"
+
+#if defined (AGS_HAS_CD_AUDIO)
+#include "libcda.h"
+#endif
 
 namespace AGS3 {
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
-
-#if defined (AGS_HAS_CD_AUDIO)
-#include "ags/shared/libcda.h"
-#endif
 
 // We don't have many places where we delay longer than a frame, but where we
 // do, we should give the audio layer a chance to update.
@@ -99,36 +100,37 @@ const char *AGSPlatformDriver::GetDiskWriteAccessTroubleshootingText() {
 }
 
 void AGSPlatformDriver::GetSystemTime(ScriptDateTime *sdt) {
-	time_t t = time(nullptr);
+	time_t t = getUnixTime();
 
 	//note: subject to year 2038 problem due to shoving time_t in an integer
 	sdt->rawUnixTime = static_cast<int>(t);
 
-	struct tm *newtime = localtime(&t);
-	sdt->hour = newtime->tm_hour;
-	sdt->minute = newtime->tm_min;
-	sdt->second = newtime->tm_sec;
-	sdt->day = newtime->tm_mday;
-	sdt->month = newtime->tm_mon + 1;
-	sdt->year = newtime->tm_year + 1900;
+	tm newTime;
+	localTime(&newTime);
+	sdt->hour = newTime.tm_hour;
+	sdt->minute = newTime.tm_min;
+	sdt->second = newTime.tm_sec;
+	sdt->day = newTime.tm_mday;
+	sdt->month = newTime.tm_mon + 1;
+	sdt->year = newTime.tm_year + 1900;
 }
 
 void AGSPlatformDriver::WriteStdOut(const char *fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
-	vprintf(fmt, args);
+	Common::String str = Common::String::vformat(fmt, args);
 	va_end(args);
-	printf("\n");
-	fflush(stdout);
+
+	debug("%s\n", str.c_str());
 }
 
 void AGSPlatformDriver::WriteStdErr(const char *fmt, ...) {
 	va_list args;
 	va_start(args, fmt);
-	vfprintf(stderr, fmt, args);
+	Common::String str = Common::String::vformat(fmt, args);
 	va_end(args);
-	fprintf(stderr, "\n");
-	fflush(stdout);
+
+	debug("ERROR: %s\n", str.c_str());
 }
 
 void AGSPlatformDriver::YieldCPU() {
@@ -242,7 +244,7 @@ void AGSPlatformDriver::Delay(int millis) {
 			break;
 		}
 
-		auto duration = std::min<std::chrono::nanoseconds>(delayUntil - now, MaximumDelayBetweenPolling);
+		auto duration = std::min<std::chrono::milliseconds>(delayUntil - now, MaximumDelayBetweenPolling);
 		std::this_thread::sleep_for(duration);
 		now = AGS_Clock::now(); // update now
 
