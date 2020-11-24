@@ -163,7 +163,9 @@ void Sound::stopSamples() {
 		return;
 	}
 
-	_engine->_system->getMixer()->stopAll();
+	for (int i = 0; i < NUM_CHANNELS; i++) {
+		_engine->_system->getMixer()->stopHandle(samplesPlaying[i]);
+	}
 	memset(samplesPlayingActors, -1, sizeof(samplesPlayingActors));
 }
 
