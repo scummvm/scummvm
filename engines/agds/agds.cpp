@@ -828,9 +828,11 @@ Graphics::TransparentSurface *AGDSEngine::convertToTransparent(Graphics::Surface
 	Graphics::TransparentSurface *t = new Graphics::TransparentSurface(*surface, true);
 	assert(t->format.bytesPerPixel == 4);
 	uint32* pixels = static_cast<uint32 *>(t->getPixels());
-	for (int i = 0; i < t->h; i++) {
-		for (int j = 0; j < t->w; j++) {
-			uint32 pix = pixels[i * t->w + j];
+	uint8 shadowAlpha = 255 * _shadowIntensity / 100;
+	uint delta = t->pitch - t->w * t->format.bytesPerPixel;
+	for (uint16 i = 0; i < t->h; ++i, pixels = reinterpret_cast<uint32*>((reinterpret_cast<uint8*>(pixels) + delta))) {
+		for (uint16 j = 0; j < t->w; ++j, ++pixels) {
+			uint32 pix = *pixels;
 			uint8 r, g, b, a;
 			t->format.colorToARGB(pix, a, r, g, b);
 			if (r == _colorKey.r && g == _colorKey.g && b == _colorKey.b) {
@@ -841,9 +843,11 @@ Graphics::TransparentSurface *AGDSEngine::convertToTransparent(Graphics::Surface
 				b >= _minShadowColor.b && b <= _maxShadowColor.b
 			) {
 				r = g = b = 0;
-				a = (255 * _shadowIntensity / 100);
-			}
-			pixels[i * t->w + j] = t->format.ARGBToColor(a, r, g, b);
+				a = shadowAlpha;
+			} else
+				continue;
+
+			*pixels = t->format.ARGBToColor(a, r, g, b);
 		}
 	}
 	surface->free();
