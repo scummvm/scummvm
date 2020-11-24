@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_GUI_GUIDIALOGINTERNALDEFS_H
 #define AGS_ENGINE_GUI_GUIDIALOGINTERNALDEFS_H
 
-#include "ags/shared/gui/guidialogdefines.h"
+#include "ags/engine/gui/guidialogdefines.h"
 
 namespace AGS3 {
 

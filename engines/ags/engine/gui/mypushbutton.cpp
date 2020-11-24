@@ -23,15 +23,15 @@
 //include <string.h>
 #include "ags/shared/util/wgt2allg.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/mouse.h"
+#include "ags/engine/ac/mouse.h"
 #include "ags/shared/font/fonts.h"
-#include "ags/shared/gui/mypushbutton.h"
-#include "ags/shared/gui/guidialog.h"
-#include "ags/shared/gui/guidialoginternaldefs.h"
-#include "ags/shared/main/game_run.h"
+#include "ags/engine/gui/mypushbutton.h"
+#include "ags/engine/gui/guidialog.h"
+#include "ags/engine/gui/guidialoginternaldefs.h"
+#include "ags/engine/main/game_run.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
-#include "ags/shared/ac/timer.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/ac/timer.h"
 
 namespace AGS3 {
 

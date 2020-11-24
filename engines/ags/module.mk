@@ -77,6 +77,15 @@ MODULE_OBJS = \
 	shared/util/textstreamwriter.o \
 	shared/util/version.o \
 	shared/util/wgt2allg.o \
+	engine/gui/animatingguibutton.o \
+	engine/gui/cscidialog.o \
+	engine/gui/guidialog.o \
+	engine/gui/gui_engine.o \
+	engine/gui/mylabel.o \
+	engine/gui/mylistbox.o \
+	engine/gui/mypushbutton.o \
+	engine/gui/mytextbox.o \
+	engine/gui/newcontrol.o \
 	engine/main/config.o \
 	engine/main/engine.o \
 	engine/main/engine_setup.o \

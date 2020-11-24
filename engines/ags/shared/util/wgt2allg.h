@@ -34,6 +34,7 @@
 #define _WGT45_
 
 #include "ags/shared/core/platform.h"
+#include "ags/shared/core/types.h"
 #include "ags/lib/allegro.h"
 
 namespace AGS3 {

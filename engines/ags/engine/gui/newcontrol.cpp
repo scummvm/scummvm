@@ -20,9 +20,9 @@
  *
  */
 
-#include "ags/shared/gui/newcontrol.h"
-#include "ags/shared/gui/guidialog.h"
-#include "ags/shared/gui/guidialoginternaldefs.h"
+#include "ags/engine/gui/newcontrol.h"
+#include "ags/engine/gui/guidialog.h"
+#include "ags/engine/gui/guidialoginternaldefs.h"
 
 namespace AGS3 {
 

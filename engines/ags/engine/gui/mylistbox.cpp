@@ -23,12 +23,12 @@
 //include <string.h>
 #include "ags/shared/util/wgt2allg.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/gamesetup.h"
+#include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gui/guidialog.h"
-#include "ags/shared/gui/guidialoginternaldefs.h"
-#include "ags/shared/gui/mylistbox.h"
+#include "ags/engine/gui/guidialog.h"
+#include "ags/engine/gui/guidialoginternaldefs.h"
+#include "ags/engine/gui/mylistbox.h"
 
 namespace AGS3 {
 

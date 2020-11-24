@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_GUI_MYLABEL_H
 #define AGS_ENGINE_GUI_MYLABEL_H
 
-#include "ags/shared/gui/newcontrol.h"
+#include "ags/engine/gui/newcontrol.h"
 
 namespace AGS3 {
 
@@ -33,7 +33,7 @@ struct MyLabel : public NewControl {
 
 	void draw(Shared::Bitmap *ds) override;
 
-	int pressedon(int mousex, int mousey) override;
+	int pressedon(int mouseX, int mouseY) override;
 
 	int processmessage(int mcode, int wParam, long lParam) override;
 };

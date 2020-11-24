@@ -27,8 +27,8 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 class Bitmap;
-}
-}
+} // namespace Shared
+} // namespace AGS
 
 // Functions for handling hard-coded GUIs
 // Prepares GUI bitmaps which will be passed to the renderer's draw chain
