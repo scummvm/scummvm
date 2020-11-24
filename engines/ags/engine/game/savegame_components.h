@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_GAME_SAVEGAMECOMPONENTS_H
 #define AGS_ENGINE_GAME_SAVEGAMECOMPONENTS_H
 
-#include "ags/shared/game/savegame.h"
+#include "ags/engine/game/savegame.h"
 #include "ags/shared/util/stream.h"
 
 namespace AGS3 {
@@ -60,5 +60,6 @@ void ReadLegacyCameraState(Stream *in, RestoredData &r_data);
 
 } // namespace Engine
 } // namespace AGS
+} // namespace AGS3
 
 #endif

@@ -27,13 +27,13 @@
 #include "ags/std/vector.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/media/audio/audiodefines.h"
+#include "ags/engine/media/audio/audiodefines.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
-using AGS::Shared::Bitmap;
+using Shared::Bitmap;
 
 typedef std::shared_ptr<Bitmap> PBitmap;
 

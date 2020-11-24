@@ -23,29 +23,29 @@
 //include <map>
 
 #include "ags/shared/ac/audiocliptype.h"
-#include "ags/shared/ac/character.h"
+#include "ags/engine/ac/character.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/dialogtopic.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/dynamicsprite.h"
-#include "ags/shared/ac/game.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/dynamicsprite.h"
+#include "ags/engine/ac/game.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/gui.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/movelist.h"
-#include "ags/shared/ac/overlay.h"
-#include "ags/shared/ac/roomstatus.h"
-#include "ags/shared/ac/screenoverlay.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/gui.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/movelist.h"
+#include "ags/engine/ac/overlay.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/screenoverlay.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/ac/view.h"
-#include "ags/shared/ac/system.h"
-#include "ags/shared/ac/dynobj/cc_serializer.h"
-#include "ags/shared/debug/out.h"
-#include "ags/shared/game/savegame_components.h"
-#include "ags/shared/game/savegame_internal.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/ac/dynobj/cc_serializer.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/game/savegame_components.h"
+#include "ags/engine/game/savegame_internal.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gui/animatingguibutton.h"
+#include "ags/engine/gui/animatingguibutton.h"
 #include "ags/shared/gui/guibutton.h"
 #include "ags/shared/gui/guiinv.h"
 #include "ags/shared/gui/guilabel.h"
@@ -53,12 +53,12 @@
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/gui/guislider.h"
 #include "ags/shared/gui/guitextbox.h"
-#include "ags/shared/plugin/agsplugin.h"
-#include "ags/shared/plugin/plugin_engine.h"
+#include "ags/engine/plugin/agsplugin.h"
+#include "ags/engine/plugin/plugin_engine.h"
 #include "ags/shared/script/cc_error.h"
-#include "ags/shared/script/script.h"
+#include "ags/engine/script/script.h"
 #include "ags/shared/util/filestream.h" // TODO: needed only because plugins expect file handle
-#include "ags/shared/media/audio/audio_system.h"
+#include "ags/engine/media/audio/audio_system.h"
 
 namespace AGS3 {
 
@@ -1183,7 +1183,7 @@ HSaveError ReadComponent(PStream in, SvgCmpReadHelper &hlp, ComponentInfo &info)
 	const ComponentHandler *handler = nullptr;
 	std::map<String, ComponentHandler>::const_iterator it_hdr = hlp.Handlers.find(info.Name);
 	if (it_hdr != hlp.Handlers.end())
-		handler = &it_hdr->second;
+		handler = &it_hdr->_value;
 
 	if (!handler || !handler->Unserialize)
 		return new SavegameError(kSvgErr_UnsupportedComponent);
