@@ -24,16 +24,16 @@
 
 #if defined(__amigaos4__)
 
-#include "backends/fs/amigaos4/amigaos4-fs.h"
+#include "backends/fs/amigaos/amigaos-fs.h"
 #include "backends/platform/sdl/amigaos/amigaos.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
 int main(int argc, char *argv[]) {
 
-	// The following will gather the application name and add the binary path
-	// to a variable in AmigaOS4's ENV(ARC) system. It will then be placed in
-	// AppPaths, so that ScummVM becomes AmiUpdate aware.
+	// The following will gather ScummVM's system application name
+	// and add the binary path to a variable in AmigaOS ENV(ARC) system.
+	// It will be added to AppPaths, so ScummVM becomes AmiUpdate aware.
 	const char *const appname = "ScummVM";
 
 	BPTR lock;
