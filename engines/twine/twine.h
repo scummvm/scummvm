@@ -25,6 +25,7 @@
 
 #include "backends/keymapper/keymap.h"
 #include "common/random.h"
+#include "common/rect.h"
 #include "engines/engine.h"
 
 #include "graphics/managed_surface.h"
@@ -111,6 +112,7 @@ struct ConfigFile {
 	bool WallCollision = false;
 	/** Use original autosaving system or save when you want */
 	bool UseAutoSaving = false;
+	bool Mouse = false;
 
 	// these settings can be changed in-game - and must be persisted
 	/** Shadow mode type, value: all, character only, none */
@@ -159,6 +161,11 @@ struct ScopedEngineFreeze {
 	TwinEEngine* _engine;
 	ScopedEngineFreeze(TwinEEngine* engine);
 	~ScopedEngineFreeze();
+};
+
+struct ScopedCursor {
+	ScopedCursor(const TwinEEngine* engine);
+	~ScopedCursor();
 };
 
 class TwinEEngine : public Engine {
@@ -298,6 +305,7 @@ public:
 	 * @param bottom bottom position to start copy
 	 */
 	void copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom);
+	void copyBlockPhys(const Common::Rect &rect);
 
 	/** Cross fade feature
 	 * @param buffer screen buffer

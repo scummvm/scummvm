@@ -228,7 +228,11 @@ void Interface::drawTransparentBox(int32 left, int32 top, int32 right, int32 bot
 	} while (height2 > 0);
 }
 
-void Interface::drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom, uint8 e) { // Box
+void Interface::drawSplittedBox(const Common::Rect &rect, uint8 colorIndex) {
+	drawSplittedBox(rect.left, rect.top, rect.right, rect.bottom, colorIndex);
+}
+
+void Interface::drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom, uint8 colorIndex) { // Box
 	if (left > SCREEN_TEXTLIMIT_RIGHT) {
 		return;
 	}
@@ -249,7 +253,7 @@ void Interface::drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom
 
 	for (int32 x = top; x < bottom; x++) {
 		for (int32 y = left; y < right; y++) {
-			*(ptr++) = e;
+			*(ptr++) = colorIndex;
 		}
 		ptr += offset;
 	}

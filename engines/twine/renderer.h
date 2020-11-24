@@ -24,6 +24,7 @@
 #define TWINE_RENDERER_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 #define POLYGONTYPE_FLAT 0
 #define POLYGONTYPE_COPPER 1
@@ -240,6 +241,7 @@ public:
 	void copyActorInternAnim(const uint8 *bodyPtrSrc, uint8 *bodyPtrDest);
 
 	void renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, uint8 *entityPtr);
+	void renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, uint8 *entityPtr);
 
 	void renderInventoryItem(int32 x, int32 y, uint8 *itemBodyPtr, int32 angle, int32 param);
 };

@@ -164,4 +164,12 @@ bool Input::isMouseHovering(int32 left, int32 top, int32 right, int32 bottom) co
 	return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom;
 }
 
+bool Input::isMouseHovering(const Common::Rect &rect) const {
+	if (!_engine->cfgfile.Mouse) {
+		return false;
+	}
+	Common::Point point = g_system->getEventManager()->getMousePos();
+	return point.x >= rect.left && point.x <= rect.right && point.y >= rect.top && point.y <= rect.bottom;
+}
+
 } // namespace TwinE

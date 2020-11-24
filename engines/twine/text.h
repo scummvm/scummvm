@@ -140,8 +140,6 @@ private:
 	 * @param counter The amount of characters to handle - max 32
 	 */
 	void fadeInCharacters(int32 counter, int32 fontColor);
-	int32 getCharWidth(uint8 chr) const;
-	int32 getCharHeight(uint8 chr) const;
 	/**
 	 * Copy dialogue text
 	 * @param src source text buffer
@@ -254,6 +252,8 @@ public:
 	 * @param dialogue ascii text to display
 	 */
 	int32 getTextSize(const char *dialogue);
+	int32 getCharWidth(uint8 chr) const;
+	int32 getCharHeight(uint8 chr) const;
 
 	void initDialogueBox();
 	void initInventoryDialogueBox();

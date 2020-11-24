@@ -128,6 +128,13 @@ static const ExtraGuiOption OptMovies = {
 	true
 };
 
+static const ExtraGuiOption OptMouse = {
+	_s("Enable mouse"),
+	_s("Enable the mouse for the UI"),
+	"mouse",
+	true
+};
+
 static const ExtraGuiOption OptUSAVersion = {
 	_s("Use the USA version"),
 	_s("Enable the USA specific version flags"),
@@ -147,6 +154,7 @@ const ExtraGuiOptions TwinEMetaEngine::getExtraGuiOptions(const Common::String &
 	options.push_back(OptUSAVersion);
 	options.push_back(OptVoices);
 	options.push_back(OptText);
+	options.push_back(OptMouse);
 	return options;
 }
 
@@ -335,11 +343,13 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->setCustomEngineActionEvent(TwinEActionType::UIEnter);
 		act->addDefaultInputMapping("RETURN");
 		act->addDefaultInputMapping("KP_ENTER");
+		act->addDefaultInputMapping("MOUSE_LEFT");
 		uiKeyMap->addAction(act);
 
 		act = new Action("ABORT", _("Abort"));
 		act->setCustomEngineActionEvent(TwinEActionType::UIAbort);
 		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("MOUSE_RIGHT");
 		uiKeyMap->addAction(act);
 
 		act = new Action("UP", _("Up"));
@@ -358,12 +368,14 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->setCustomEngineActionEvent(TwinEActionType::UIRight);
 		act->addDefaultInputMapping("RIGHT");
 		act->addDefaultInputMapping("KP6");
+		act->addDefaultInputMapping("MOUSE_WHEEL_UP");
 		uiKeyMap->addAction(act);
 
 		act = new Action("LEFT", _("Left"));
 		act->setCustomEngineActionEvent(TwinEActionType::UILeft);
 		act->addDefaultInputMapping("LEFT");
 		act->addDefaultInputMapping("KP4");
+		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN");
 		uiKeyMap->addAction(act);
 
 		act = new Action("NEXTPAGE", _("Next Page"));

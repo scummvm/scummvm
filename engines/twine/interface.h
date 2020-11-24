@@ -24,6 +24,7 @@
 #define TWINE_INTERFACE_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace Graphics {
 class ManagedSurface;
@@ -91,7 +92,8 @@ public:
 	 */
 	void drawTransparentBox(int32 left, int32 top, int32 right, int32 bottom, int32 colorAdj);
 
-	void drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom, uint8 e);
+	void drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom, uint8 colorIndex);
+	void drawSplittedBox(const Common::Rect &rect, uint8 colorIndex);
 
 	void setClip(int32 left, int32 top, int32 right, int32 bottom);
 	void saveClip(); // saveTextWindow

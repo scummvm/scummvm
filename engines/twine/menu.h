@@ -165,7 +165,9 @@ private:
 	/** Used to run the save game management menu */
 	int32 savemanageMenu();
 	void drawInfoMenu(int16 left, int16 top);
-	void drawBehaviour(HeroBehaviourType behaviour, int32 angle, int16 cantDrawBox);
+	Common::Rect calcBehaviourRect(HeroBehaviourType behaviour) const;
+	bool isBehaviourHovered(HeroBehaviourType behaviour) const;
+	void drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDrawBox);
 	void drawInventoryItems();
 	void prepareAndDrawBehaviour(int32 angle, HeroBehaviourType behaviour);
 	void drawBehaviourMenu(int32 angle);
@@ -218,7 +220,7 @@ public:
 	 * @param bottom end height to draw the button
 	 */
 	void drawBox(int32 left, int32 top, int32 right, int32 bottom);
-
+	void drawBox(const Common::Rect &rect);
 	/**
 	 * Where the main menu options are processed
 	 * @param menuSettings menu settings array with the information to build the menu options

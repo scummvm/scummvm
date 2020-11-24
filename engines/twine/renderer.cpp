@@ -1688,6 +1688,10 @@ void Renderer::copyActorInternAnim(const uint8 *bodyPtrSrc, uint8 *bodyPtrDest) 
 	}
 }
 
+void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, uint8 *entityPtr) {
+	renderBehaviourModel(rect.left, rect.top, rect.right, rect.bottom, y, angle, entityPtr);
+}
+
 void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, uint8 *entityPtr) {
 	int32 tmpBoxRight = boxRight;
 
