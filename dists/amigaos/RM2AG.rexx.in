@@ -152,7 +152,7 @@ DO WHILE EOF(readme_read) = 0
 		If a single number main chapter is found (1.0 upto 9.0),
 		prepare and write the link node.
 		Just for the record:
-		A "\" (backslash) is treated as escape character in AmigaGuides.
+		A "\" (backslash) is treated as escape character in Amiga guides.
 		Remove it from the node links.
 		*/
 		IF POS('- [<>',working_line) = 3 THEN DO
@@ -208,7 +208,7 @@ Creating sub link nodes.
 */
 DO WHILE EOF(readme_read) = 0
 	/*
-	Change html/markdown links to AmigaGuide ones.
+	Change html/markdown links to Amiga guide ones.
 	*/
 	IF POS('[here](',working_line) > 0 THEN DO
 		working_line=INSERT('@{"',working_line,POS('[',working_line)-1)
