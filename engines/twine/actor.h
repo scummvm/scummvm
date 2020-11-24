@@ -214,7 +214,6 @@ public:
 
 	//int costumeIndex;
 	int32 collision = 0;
-	int32 standPosition = 0;
 	int32 standOn = 0;
 	int32 zone = 0;
 
