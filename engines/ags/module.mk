@@ -104,7 +104,9 @@ MODULE_OBJS = \
 	engine/platform/base/agsplatformdriver.o \
 	engine/platform/windows/acplwin.o \
 	engine/platform/windows/minidump.o \
-	engine/platform/windows/win_ex_handling.o
+	engine/platform/windows/win_ex_handling.o \
+	engine/plugin/agsplugin.o \
+	engine/plugin/pluginobjectreader.o
 
 
 # This module can be built as a plugin

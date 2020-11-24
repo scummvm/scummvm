@@ -28,58 +28,52 @@
 #include "ags/shared/util/wgt2allg.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/view.h"
-#include "ags/shared/ac/charactercache.h"
-#include "ags/shared/ac/display.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/dynamicsprite.h"
-#include "ags/shared/ac/gamesetup.h"
+#include "ags/engine/ac/charactercache.h"
+#include "ags/engine/ac/display.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/dynamicsprite.h"
+#include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/global_audio.h"
-#include "ags/shared/ac/global_plugin.h"
-#include "ags/shared/ac/global_walkablearea.h"
-#include "ags/shared/ac/keycode.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/movelist.h"
-#include "ags/shared/ac/objectcache.h"
-#include "ags/shared/ac/parser.h"
-#include "ags/shared/ac/path_helper.h"
-#include "ags/shared/ac/roomstatus.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/ac/dynobj/cc_dynamicobject_addr_and_manager.h"
+#include "ags/engine/ac/global_audio.h"
+#include "ags/engine/ac/global_plugin.h"
+#include "ags/engine/ac/global_walkablearea.h"
+#include "ags/engine/ac/keycode.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/movelist.h"
+#include "ags/engine/ac/objectcache.h"
+#include "ags/engine/ac/parser.h"
+#include "ags/engine/ac/path_helper.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/dynobj/cc_dynamicobject_addr_and_manager.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/util/string_compat.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/debug/debugger.h"
-#include "ags/shared/device/mousew32.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/engine/device/mousew32.h"
 #include "ags/shared/gui/guidefines.h"
-#include "ags/shared/main/game_run.h"
-#include "ags/shared/main/engine.h"
-#include "ags/shared/plugin/agsplugin.h"
-#include "ags/shared/plugin/plugin_engine.h"
-#include "ags/shared/plugin/plugin_builtin.h"
-#include "ags/shared/plugin/pluginobjectreader.h"
-#include "ags/shared/script/script.h"
-#include "ags/shared/script/script_runtime.h"
+#include "ags/engine/main/game_run.h"
+#include "ags/engine/main/engine.h"
+#include "ags/engine/plugin/agsplugin.h"
+#include "ags/engine/plugin/plugin_engine.h"
+#include "ags/engine/plugin/plugin_builtin.h"
+#include "ags/engine/plugin/pluginobjectreader.h"
+#include "ags/engine/script/script.h"
+#include "ags/engine/script/script_runtime.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/graphicsdriver.h"
-#include "ags/shared/gfx/gfxfilter.h"
-#include "ags/shared/script/runtimescriptvalue.h"
-#include "ags/shared/debug/out.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
-#include "ags/shared/main/graphics_mode.h"
-#include "ags/shared/gfx/gfx_util.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/gfxfilter.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/main/graphics_mode.h"
+#include "ags/engine/gfx/gfx_util.h"
 #include "ags/shared/util/memory.h"
 #include "ags/shared/util/filestream.h"
-#include "ags/shared/media/audio/audio_system.h"
-
-namespace AGS3 {
-
-using namespace AGS::Shared;
-using namespace AGS::Shared::Memory;
-using namespace AGS::Engine;
-
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/util/library.h"
 
 #if defined(BUILTIN_PLUGINS)
 #include "ags/shared/../Plugins/AGSflashlight/agsflashlight.h"
@@ -92,6 +86,11 @@ using namespace AGS::Engine;
 #endif // AGS_PLATFORM_OS_IOS
 #endif // BUILTIN_PLUGINS
 
+namespace AGS3 {
+
+using namespace AGS::Shared;
+using namespace AGS::Shared::Memory;
+using namespace AGS::Engine;
 
 extern IGraphicsDriver *gfxDriver;
 extern int mousex, mousey;
@@ -115,9 +114,6 @@ extern RuntimeScriptValue GlobalReturnValue;
 extern ScriptString myScriptStringImpl;
 
 // **************** PLUGIN IMPLEMENTATION ****************
-
-
-#include "ags/shared/util/library.h"
 
 
 
@@ -260,7 +256,7 @@ unsigned char **IAGSEngine::GetRawBitmapSurface(BITMAP *bmp) {
 	if (stage && bmp == stage->GetAllegroBitmap())
 		plugins[this->pluginId].invalidatedRegion = 0;
 
-	return bmp->line;
+	return (unsigned char **)bmp->getPixels();
 }
 
 void IAGSEngine::ReleaseBitmapSurface(BITMAP *bmp) {
@@ -554,7 +550,7 @@ void IAGSEngine::PrintDebugConsole(const char *text) {
 	platform->WriteStdOut("[PLUGIN] %s", text);
 }
 int IAGSEngine::IsChannelPlaying(int32 channel) {
-	return ::IsChannelPlaying(channel);
+	return AGS3::IsChannelPlaying(channel);
 }
 void IAGSEngine::PlaySoundChannel(int32 channel, int32 soundType, int32 volume, int32 loop, const char *filename) {
 	stop_and_destroy_channel(channel);
@@ -752,19 +748,19 @@ void IAGSEngine::AddManagedObjectReader(const char *typeName, IAGSManagedObjectR
 	numPluginReaders++;
 }
 
-void IAGSEngine::RegisterUnserializedObject(int key, const void *object, IAGSScriptManagedObject *callback) {
+void IAGSEngine::RegisterUnserializedObject(int key_, const void *object, IAGSScriptManagedObject *callback) {
 	GlobalReturnValue.SetPluginObject((void *)object, (ICCDynamicObject *)callback);
-	ccRegisterUnserializedObject(key, object, (ICCDynamicObject *)callback, true);
+	ccRegisterUnserializedObject(key_, object, (ICCDynamicObject *)callback, true);
 }
 
 int IAGSEngine::GetManagedObjectKeyByAddress(const char *address) {
 	return ccGetObjectHandleFromAddress(address);
 }
 
-void *IAGSEngine::GetManagedObjectAddressByKey(int key) {
+void *IAGSEngine::GetManagedObjectAddressByKey(int key_) {
 	void *object;
 	ICCDynamicObject *manager;
-	ScriptValueType obj_type = ccGetObjectAddressAndManagerFromHandle(key, object, manager);
+	ScriptValueType obj_type = ccGetObjectAddressAndManagerFromHandle(key_, object, manager);
 	if (obj_type == kScValPluginObject) {
 		GlobalReturnValue.SetPluginObject(object, manager);
 	} else {
@@ -977,10 +973,10 @@ bool pl_use_builtin_plugin(EnginePlugin *apl) {
 	return false;
 }
 
-Engine::GameInitError pl_register_plugins(const std::vector<Common::PluginInfo> &infos) {
+Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> &infos) {
 	numPlugins = 0;
 	for (size_t inf_index = 0; inf_index < infos.size(); ++inf_index) {
-		const Common::PluginInfo &info = infos[inf_index];
+		const Shared::PluginInfo &info = infos[inf_index];
 		String name = info.Name;
 		if (name.GetLast() == '!')
 			continue; // editor-only plugin, ignore it

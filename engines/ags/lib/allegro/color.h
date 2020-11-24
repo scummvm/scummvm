@@ -70,6 +70,8 @@ AL_FUNC(void, set_color, (int idx, AL_CONST RGB *p));
 AL_FUNC(void, set_palette, (AL_CONST PALETTE p));
 AL_FUNC(void, set_palette_range, (AL_CONST PALETTE p, int from, int to, int retracesync));
 
+extern int makeacol(int r, int g, int b, int a);
+extern int makeacol_depth(int color_depth, int r, int g, int b, int a);
 
 extern int makecol15(int r, int g, int b);
 extern int makecol16(int r, int g, int b);
@@ -81,6 +83,11 @@ extern int getg8(int c);
 extern int getb8(int c);
 extern int makecol(byte r, byte g, byte b);
 extern int makecol8(byte r, byte g, byte b);
+
+extern int getr_depth(int color_depth, int c);
+extern int getg_depth(int color_depth, int c);
+extern int getb_depth(int color_depth, int c);
+extern int geta_depth(int color_depth, int c);
 
 } // namespace AGS3
 

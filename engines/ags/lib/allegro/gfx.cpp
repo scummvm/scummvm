@@ -244,6 +244,10 @@ bool is_planar_bitmap(BITMAP *bmp) {
 	return false;
 }
 
+bool is_linear_bitmap(BITMAP *bmp) {
+	return true;
+}
+
 void bmp_select(BITMAP *bmp) {
 	// No implementation needed
 }

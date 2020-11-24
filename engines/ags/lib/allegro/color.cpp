@@ -71,6 +71,13 @@ void set_palette_range(const PALETTE p, int from, int to, int retracesync) {
 	g_system->getPaletteManager()->setPalette(&palette[from], from, to - from + 1);
 }
 
+int makeacol(int r, int g, int b, int a) {
+	error("TODO: makeacol");
+}
+
+int makeacol_depth(int color_depth, int r, int g, int b, int a) {
+	error("makeacol_depth");
+}
 
 int makecol15(int r, int g, int b) {
 	return (((r >> 3) << _rgb_r_shift_15) |
@@ -121,6 +128,22 @@ int makecol(byte r, byte g, byte b) {
 
 int makecol8(byte r, byte g, byte b) {
 	return (b) | (g << 8) | (r << 16);
+}
+
+int getr_depth(int color_depth, int c) {
+	error("TOD: getr_depth");
+}
+
+int getg_depth(int color_depth, int c) {
+	error("TOD: getg_depth");
+}
+
+int getb_depth(int color_depth, int c) {
+	error("TOD: getb_depth");
+}
+
+int geta_depth(int color_depth, int c) {
+	error("TOD: geta_depth");
 }
 
 } // namespace AGS3
