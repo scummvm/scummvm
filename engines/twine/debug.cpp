@@ -37,7 +37,7 @@ namespace TwinE {
 
 void Debug::debugFillButton(int32 x, int32 y, int32 width, int32 height, int8 color) {
 	uint8 *ptr = (uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y);
-	int32 offset = SCREEN_WIDTH - width;
+	const int32 offset = SCREEN_WIDTH - width;
 
 	for (int32 i = 0; i < height; i++) {
 		for (int32 j = 0; j < width; j++) {
@@ -61,31 +61,32 @@ void Debug::debugDrawWindowBox(const Common::Rect &rect, int32 alpha) {
 }
 
 void Debug::debugDrawWindowButtons(int32 w) {
-	int32 b;
-
-	for (b = 0; b < debugWindows[w].numButtons; b++) {
-		const char *text = debugWindows[w].debugButtons[b].text;
-		int32 textLeft = debugWindows[w].debugButtons[b].textLeft;
-		int32 textTop = debugWindows[w].debugButtons[b].textTop;
-		int32 isActive = debugWindows[w].debugButtons[b].isActive;
-		int8 color = debugWindows[w].debugButtons[b].color;
+	DebugWindowStruct &window = debugWindows[w];
+	for (int32 b = 0; b < window.numButtons; b++) {
+		DebugButtonStruct &btn = window.debugButtons[b];
+		const char *text = btn.text;
+		const int32 textLeft = btn.textLeft;
+		const int32 textTop = btn.textTop;
+		const int32 isActive = btn.isActive;
+		int8 color = btn.color;
 		if (isActive > 0) {
-			color = debugWindows[w].debugButtons[b].activeColor;
+			color = btn.activeColor;
 		}
 
-		debugDrawButton(debugWindows[w].debugButtons[b].rect, text, textLeft, textTop, isActive, color);
+		debugDrawButton(btn.rect, text, textLeft, textTop, isActive, color);
 	}
 }
 
 void Debug::debugDrawWindow(int32 w) {
-	const Common::Rect &rect = debugWindows[w].rect;
-	int32 alpha = debugWindows[w].alpha;
+	DebugWindowStruct &window = debugWindows[w];
+	const Common::Rect &rect = window.rect;
+	const int32 alpha = window.alpha;
 
 	debugDrawWindowBox(rect, alpha);
 
-	if (debugWindows[w].numLines > 0) {
-		for (int32 l = 0; l < debugWindows[w].numLines; l++) {
-			_engine->drawText(rect.left + 10, rect.top + l * 20 + 5, debugWindows[w].text[l], 0);
+	if (window.numLines > 0) {
+		for (int32 l = 0; l < window.numLines; l++) {
+			_engine->drawText(rect.left + 10, rect.top + l * 20 + 5, window.text[l], 0);
 		}
 	}
 
@@ -96,14 +97,16 @@ void Debug::debugDrawWindow(int32 w) {
 
 int32 Debug::debugTypeUseMenu(int32 type) {
 	for (int32 w = 0; w < numDebugWindows; w++) {
-		if (debugWindows[w].isActive <= 0) {
+		DebugWindowStruct &window = debugWindows[w];
+		if (window.isActive <= 0) {
 			continue;
 		}
-		for (int32 b = 0; b < debugWindows[w].numButtons; b++) {
-			if (debugWindows[w].debugButtons[b].type != type) {
+		for (int32 b = 0; b < window.numButtons; b++) {
+			DebugButtonStruct &btn = window.debugButtons[b];
+			if (btn.type != type) {
 				continue;
 			}
-			int submenu = debugWindows[w].debugButtons[b].submenu;
+			int submenu = btn.submenu;
 			if (submenu > 0) {
 				debugWindows[submenu].isActive = !debugWindows[submenu].isActive;
 			}
@@ -115,41 +118,45 @@ int32 Debug::debugTypeUseMenu(int32 type) {
 
 void Debug::debugResetButtonsState() {
 	for (int32 w = 0; w < numDebugWindows; w++) {
-		if (debugWindows[w].isActive <= 0) {
+		DebugWindowStruct &window = debugWindows[w];
+		if (window.isActive <= 0) {
 			continue;
 		}
-		for (int32 b = 0; b < debugWindows[w].numButtons; b++) {
-			if (debugWindows[w].debugButtons[b].type > -1) {
+		for (int32 b = 0; b < window.numButtons; b++) {
+			DebugButtonStruct &btn = window.debugButtons[b];
+			if (btn.type > -1) {
 				continue;
 			}
-			debugWindows[w].debugButtons[b].isActive = 0;
+			btn.isActive = 0;
 		}
 	}
 }
 
 void Debug::debugRefreshButtons(int32 type) {
 	for (int32 w = 0; w < numDebugWindows; w++) {
-		if (debugWindows[w].isActive <= 0) {
+		DebugWindowStruct &window = debugWindows[w];
+		if (window.isActive <= 0) {
 			continue;
 		}
-		for (int32 b = 0; b < debugWindows[w].numButtons; b++) {
-			if (debugWindows[w].debugButtons[b].type != type) {
+		for (int32 b = 0; b < window.numButtons; b++) {
+			DebugButtonStruct &btn = window.debugButtons[b];
+			if (btn.type != type) {
 				continue;
 			}
-			const char *text = debugWindows[w].debugButtons[b].text;
-			const int32 textLeft = debugWindows[w].debugButtons[b].textLeft;
-			const int32 textTop = debugWindows[w].debugButtons[b].textTop;
-			int8 color = debugWindows[w].debugButtons[b].color;
-			const int32 isActive = debugWindows[w].debugButtons[b].isActive = !debugWindows[w].debugButtons[b].isActive;
+			const char *text = btn.text;
+			const int32 textLeft = btn.textLeft;
+			const int32 textTop = btn.textTop;
+			int8 color = btn.color;
+			const int32 isActive = btn.isActive = !btn.isActive;
 
 			if (isActive > 0) {
-				color = debugWindows[w].debugButtons[b].activeColor;
+				color = btn.activeColor;
 			}
 
-			debugDrawButton(debugWindows[w].debugButtons[b].rect, text, textLeft, textTop, isActive, color);
+			debugDrawButton(btn.rect, text, textLeft, textTop, isActive, color);
 
-			if (debugWindows[w].debugButtons[b].submenu && isActive > 0) {
-				debugDrawWindow(debugWindows[w].debugButtons[b].submenu);
+			if (btn.submenu && isActive > 0) {
+				debugDrawWindow(btn.submenu);
 			}
 		}
 	}
@@ -157,7 +164,8 @@ void Debug::debugRefreshButtons(int32 type) {
 
 void Debug::debugDrawWindows() {
 	for (int32 w = 0; w < numDebugWindows; w++) {
-		if (debugWindows[w].isActive > 0) {
+		DebugWindowStruct &window = debugWindows[w];
+		if (window.isActive > 0) {
 			debugDrawWindow(w);
 		}
 	}
@@ -165,15 +173,17 @@ void Debug::debugDrawWindows() {
 
 void Debug::debugResetButton(int32 type) {
 	for (int32 w = 0; w < numDebugWindows; w++) {
-		if (debugWindows[w].isActive <= 0) {
+		DebugWindowStruct &window = debugWindows[w];
+		if (window.isActive <= 0) {
 			continue;
 		}
-		for (int32 b = 0; b < debugWindows[w].numButtons; b++) {
-			if (debugWindows[w].debugButtons[b].type != type) {
+		for (int32 b = 0; b < window.numButtons; b++) {
+			DebugButtonStruct &btn = window.debugButtons[b];
+			if (btn.type != type) {
 				continue;
 			}
-			int submenu = debugWindows[w].debugButtons[b].submenu;
-			debugWindows[w].debugButtons[b].isActive = 0;
+			int submenu = btn.submenu;
+			btn.isActive = 0;
 			if (submenu > 0) {
 				debugWindows[submenu].debugButtons[b].isActive = !debugWindows[submenu].debugButtons[b].isActive;
 			}
@@ -312,16 +322,17 @@ void Debug::debugSetActions(int32 type) {
 }
 
 void Debug::debugAddButton(int32 window, const Common::Rect &rect, const char *text, int32 textLeft, int32 textTop, int32 isActive, int32 color, int32 activeColor, int32 submenu, int32 type) {
-	int32 button = debugWindows[window].numButtons;
-	debugWindows[window].debugButtons[button].rect = rect;
-	debugWindows[window].debugButtons[button].text = text;
-	debugWindows[window].debugButtons[button].textLeft = textLeft;
-	debugWindows[window].debugButtons[button].textTop = textTop;
-	debugWindows[window].debugButtons[button].isActive = debugGetActionsState(type);
-	debugWindows[window].debugButtons[button].color = color;
-	debugWindows[window].debugButtons[button].activeColor = activeColor;
-	debugWindows[window].debugButtons[button].submenu = submenu;
-	debugWindows[window].debugButtons[button].type = type;
+	const int32 button = debugWindows[window].numButtons;
+	DebugButtonStruct &btn = debugWindows[window].debugButtons[button];
+	btn.rect = rect;
+	btn.text = text;
+	btn.textLeft = textLeft;
+	btn.textTop = textTop;
+	btn.isActive = debugGetActionsState(type);
+	btn.color = color;
+	btn.activeColor = activeColor;
+	btn.submenu = submenu;
+	btn.type = type;
 	debugWindows[window].numButtons++;
 }
 
@@ -380,8 +391,8 @@ int32 Debug::debugProcessButton(int32 x, int32 y) {
 	for (int32 i = 0; i < numDebugWindows; i++) {
 		for (int32 j = 0; j < debugWindows[i].numButtons; j++) {
 			const Common::Rect &rect = debugWindows[i].debugButtons[j].rect;
-			if (x > rect.left && x < rect.right && y > rect.top && y < rect.bottom) {
-				return (debugWindows[i].debugButtons[j].type);
+			if (rect.contains(x, y)) {
+				return debugWindows[i].debugButtons[j].type;
 			}
 		}
 	}
