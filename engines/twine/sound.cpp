@@ -58,7 +58,7 @@ void Sound::setSamplePosition(int32 chan, int32 x, int32 y, int32 z) {
 #endif
 }
 
-void Sound::playFlaSample(int32 index, int32 frequency, int32 repeat, int32 x, int32 y) {
+void Sound::playFlaSample(int32 index, int32 repeat, int32 x, int32 y) {
 	if (!_engine->cfgfile.Sound) {
 		return;
 	}
@@ -79,7 +79,7 @@ void Sound::playFlaSample(int32 index, int32 frequency, int32 repeat, int32 x, i
 	playSample(channelIdx, index, sampPtr, sampSize, repeat, Resources::HQR_FLASAMP_FILE);
 }
 
-void Sound::playSample(int32 index, int32 frequency, int32 repeat, int32 x, int32 y, int32 z, int32 actorIdx) {
+void Sound::playSample(int32 index, int32 repeat, int32 x, int32 y, int32 z, int32 actorIdx) {
 	if (!_engine->cfgfile.Sound) {
 		return;
 	}

@@ -486,12 +486,12 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 	if (actor->dynamicFlags.bIsDead) {
 		_engine->_extra->addExtraBonus(actor->x, actor->y, actor->z, ANGLE_90, 0, bonusSprite, actor->bonusAmount);
 		// FIXME add constant for sample index
-		_engine->_sound->playSample(Samples::ItemPopup, 4096, 1, actor->x, actor->y, actor->z, actorIdx);
+		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->x, actor->y, actor->z, actorIdx);
 	} else {
 		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->z);
 		_engine->_extra->addExtraBonus(actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, 200, angle, bonusSprite, actor->bonusAmount);
 		// FIXME add constant for sample index
-		_engine->_sound->playSample(Samples::ItemPopup, 4096, 1, actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, actorIdx);
+		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, actorIdx);
 	}
 }
 

@@ -746,7 +746,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				_animations->initAnim(AnimationTypes::kLandDeath, 4, AnimationTypes::kStanding, 0);
 				actor->controlMode = ControlMode::kNoMove;
 			} else {
-				_sound->playSample(Samples::Explode, getRandomNumber(2000) + 3096, 1, actor->x, actor->y, actor->z, a);
+				_sound->playSample(Samples::Explode, 1, actor->x, actor->y, actor->z, a);
 
 				if (a == _scene->mecaPinguinIdx) {
 					_extra->addExtraExplode(actor->x, actor->y, actor->z);
@@ -804,8 +804,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 							actor->staticFlags.bCanDrown |= 0x10; // TODO: doesn't make sense
 						}
 					} else {
-						const int32 rnd = getRandomNumber(2000) + 3096;
-						_sound->playSample(Samples::Explode, rnd, 1, actor->x, actor->y, actor->z, a);
+						_sound->playSample(Samples::Explode, 1, actor->x, actor->y, actor->z, a);
 						if (actor->bonusParameter.cloverleaf || actor->bonusParameter.kashes || actor->bonusParameter.key || actor->bonusParameter.lifepoints || actor->bonusParameter.magicpoints) {
 							if (!actor->bonusParameter.unk1) {
 								_actor->processActorExtraBonus(a);

@@ -76,12 +76,11 @@ public:
 	/**
 	 * Play FLA movie samples
 	 * @param index sample index under flasamp.hqr file
-	 * @param frequency frequency used to play the sample
 	 * @param repeat number of times to repeat the sample
 	 * @param x unknown x variable
 	 * @param y unknown y variable
 	 */
-	void playFlaSample(int32 index, int32 frequency, int32 repeat, int32 x, int32 y);
+	void playFlaSample(int32 index, int32 repeat, int32 x, int32 y);
 
 	/** Update sample position in channel */
 	void setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z);
@@ -89,14 +88,13 @@ public:
 	/**
 	 * Play samples
 	 * @param index sample index under flasamp.hqr file
-	 * @param frequency frequency used to play the sample
 	 * @param repeat number of times to repeat the sample
 	 * @param x sound generating entity x position
 	 * @param y sound generating entity y position
 	 * @param z sound generating entity z position
 	 * @param actorIdx
 	 */
-	void playSample(int32 index, int32 frequency = 4096, int32 repeat = 1, int32 x = 128, int32 y = 128, int32 z = 128, int32 actorIdx = -1);
+	void playSample(int32 index, int32 repeat = 1, int32 x = 128, int32 y = 128, int32 z = 128, int32 actorIdx = -1);
 
 	/** Pause samples */
 	void pauseSamples();
