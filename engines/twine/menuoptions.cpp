@@ -146,7 +146,7 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y) {
 	if (selected) {
 		_engine->_interface->drawSplittedBox(rect, 91);
 	} else {
-		_engine->_interface->blitBox(rect, _engine->workVideoBuffer, rect.left, rect.top, _engine->frontVideoBuffer);
+		_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 		_engine->_interface->drawTransparentBox(rect, 4);
 	}
 

@@ -69,11 +69,9 @@ public:
 	/**
 	 * Blit button box from working buffer to front buffer
 	 * @param source source screen buffer, in this case working buffer
-	 * @param leftDest start width to draw the button in destination buffer
-	 * @param topDest start height to draw the button in destination buffer
 	 * @param dest destination screen buffer, in this case front buffer
 	 */
-	void blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, int32 leftDest, int32 topDest, Graphics::ManagedSurface &dest);
+	void blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, Graphics::ManagedSurface &dest);
 	/**
 	 * Draws inside buttons transparent area
 	 * @param colorAdj index to adjust the transparent box color

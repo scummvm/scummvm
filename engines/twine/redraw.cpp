@@ -158,7 +158,7 @@ void Redraw::blitBackgroundAreas() {
 	const Common::Rect *currentArea = currentRedrawList;
 
 	for (int32 i = 0; i < numOfRedrawBox; i++) {
-		_engine->_interface->blitBox(*currentArea, _engine->workVideoBuffer, currentArea->left, currentArea->top, _engine->frontVideoBuffer);
+		_engine->_interface->blitBox(*currentArea, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 		currentArea++;
 	}
 }
@@ -400,7 +400,7 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 							addRedrawArea(rect);
 
 							if (actor2->staticFlags.bIsBackgrounded && bgRedraw == 1) {
-								_engine->_interface->blitBox(rect, _engine->frontVideoBuffer, _engine->_interface->textWindow.left, _engine->_interface->textWindow.top, _engine->workVideoBuffer);
+								_engine->_interface->blitBox(rect, _engine->frontVideoBuffer, _engine->workVideoBuffer);
 							}
 						}
 					}
@@ -487,10 +487,10 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 						_engine->_grid->drawOverSpriteActor(tmpX, tmpY, tmpZ);
 					}
 
-					addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, _engine->_interface->textWindow.right, _engine->_interface->textWindow.bottom);
+					addRedrawArea(_engine->_interface->textWindow);
 
 					if (actor2->staticFlags.bIsBackgrounded && bgRedraw == 1) {
-						_engine->_interface->blitBox(_engine->_interface->textWindow, _engine->frontVideoBuffer, _engine->_interface->textWindow.left, _engine->_interface->textWindow.top, _engine->workVideoBuffer);
+						_engine->_interface->blitBox(_engine->_interface->textWindow, _engine->frontVideoBuffer, _engine->workVideoBuffer);
 					}
 
 					// show clipping area
