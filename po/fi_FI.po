@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-25 16:14+0000\n"
-"PO-Revision-Date: 2020-11-25 18:42+0000\n"
+"PO-Revision-Date: 2020-11-25 20:52+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -6972,16 +6972,12 @@ msgid "Enable the cutscenes for the game"
 msgstr "Laita videot päälle pelissä"
 
 #: engines/twine/metaengine.cpp:132
-#, fuzzy
-#| msgid "Enable movies"
 msgid "Enable mouse"
-msgstr "Videot päälle"
+msgstr "Käytä hiirtä"
 
 #: engines/twine/metaengine.cpp:133
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Enable the mouse for the UI"
-msgstr "Laita pelin äänet päälle"
+msgstr "Käytä hiirtä käyttöliittymässä"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Use the USA version"
