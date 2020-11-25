@@ -39,7 +39,7 @@ namespace AGS3 {
 #endif
 
 #ifndef AL_CONST
-#define AL_CONST
+#define AL_CONST                                const
 #endif
 
 #ifndef AL_VAR

@@ -21,8 +21,8 @@
  */
 
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/gfxfilter_hqx.h"
-#include "ags/shared/gfx/hq2x3x.h"
+#include "ags/engine/gfx/gfxfilter_hqx.h"
+#include "ags/engine/gfx/hq2x3x.h"
 
 namespace AGS3 {
 namespace AGS {

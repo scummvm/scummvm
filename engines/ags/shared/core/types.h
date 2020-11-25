@@ -87,6 +87,11 @@ typedef int64 intptr_t;
 #define UINT_MAX      0xffffffff
 #define SIZE_MAX      0xffffffff
 
+#undef TRUE
+#undef FALSE
+#define TRUE true
+#define FALSE false
+
 // TODO: use distinct fixed point class
 enum {
 	kShift = 16,

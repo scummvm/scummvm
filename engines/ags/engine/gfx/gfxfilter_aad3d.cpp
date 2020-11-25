@@ -21,8 +21,7 @@
  */
 
 #include "ags/shared/core/platform.h"
-#include "ags/shared/stdio.h"
-#include "ags/shared/gfx/gfxfilter_aad3d.h"
+#include "ags/engine/gfx/gfxfilter_aad3d.h"
 
 #if AGS_PLATFORM_OS_WINDOWS
 //include <d3d9.h>

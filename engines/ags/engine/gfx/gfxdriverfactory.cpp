@@ -20,27 +20,27 @@
  *
  */
 
-#include "ags/shared/gfx/gfxdriverfactory.h"
+#include "ags/engine/gfx/gfxdriverfactory.h"
 
 #include "ags/shared/core/platform.h"
 
 #define AGS_HAS_DIRECT3D (AGS_PLATFORM_OS_WINDOWS)
 #define AGS_HAS_OPENGL (AGS_PLATFORM_OS_WINDOWS || AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_LINUX)
 
-#include "ags/shared/gfx/ali3dsw.h"
-#include "ags/shared/gfx/gfxfilter_allegro.h"
+#include "ags/engine/gfx/ali3dsw.h"
+#include "ags/engine/gfx/gfxfilter_allegro.h"
 
 #if AGS_HAS_OPENGL
-#include "ags/shared/gfx/ali3dogl.h"
-#include "ags/shared/gfx/gfxfilter_ogl.h"
+#include "ags/engine/gfx/ali3dogl.h"
+#include "ags/engine/gfx/gfxfilter_ogl.h"
 #endif
 
 #if AGS_HAS_DIRECT3D
-#include "ags/shared/platform/windows/gfx/ali3dd3d.h"
-#include "ags/shared/gfx/gfxfilter_d3d.h"
+#include "ags/engine/platform/windows/gfx/ali3dd3d.h"
+#include "ags/engine/gfx/gfxfilter_d3d.h"
 #endif
 
-#include "ags/shared/main/main_allegro.h"
+#include "ags/engine/main/main_allegro.h"
 
 namespace AGS3 {
 namespace AGS {

@@ -41,6 +41,9 @@ int _rgb_g_shift_32 = 0;
 int _rgb_b_shift_32 = 0;
 int _rgb_a_shift_32 = 0;
 
+AL_ARRAY(int, _rgb_scale_5);
+AL_ARRAY(int, _rgb_scale_6);
+
 PALETTE _current_palette;
 
 int bestfit_color(const PALETTE pal, int r, int g, int b) {
@@ -53,9 +56,9 @@ void set_color(int idx, const RGB *p) {
 }
 
 void set_palette(const PALETTE p) {
-	for (int idx = 0; idx < PALETTE_COUNT; ++idx)
+	for (int idx = 0; idx < PAL_SIZE; ++idx)
 		_current_palette[idx] = p[idx];
-	g_system->getPaletteManager()->setPalette((const byte *)p, 0, PALETTE_COUNT);
+	g_system->getPaletteManager()->setPalette((const byte *)p, 0, PAL_SIZE);
 }
 
 void set_palette_range(const PALETTE p, int from, int to, int retracesync) {
@@ -76,7 +79,15 @@ int makeacol(int r, int g, int b, int a) {
 }
 
 int makeacol_depth(int color_depth, int r, int g, int b, int a) {
-	error("makeacol_depth");
+	error("TODO: makeacol_depth");
+}
+
+void hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b) {
+	error("TODO: hsv_to_rgb");
+}
+
+void rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v) {
+	error("TODO: rgb_to_hsv");
 }
 
 int makecol15(int r, int g, int b) {
@@ -120,6 +131,46 @@ int getg8(int c) {
 
 int getb8(int c) {
 	return (int)_current_palette[c].b;
+}
+
+int getr15(int c) {
+   return _rgb_scale_5[(c >> _rgb_r_shift_15) & 0x1F];
+}
+
+int getg15(int c) {
+	return _rgb_scale_5[(c >> _rgb_g_shift_15) & 0x1F];
+}
+
+int getb15(int c) {
+   return _rgb_scale_5[(c >> _rgb_b_shift_15) & 0x1F];
+}
+
+int getr16(int c) {
+   return _rgb_scale_5[(c >> _rgb_r_shift_16) & 0x1F];
+}
+
+int getg16(int c) {
+   return _rgb_scale_6[(c >> _rgb_g_shift_16) & 0x3F];
+}
+
+int getb16(int c) {
+   return _rgb_scale_5[(c >> _rgb_b_shift_16) & 0x1F];
+}
+
+int getr32(int c) {
+	error("TODO: getr32");
+}
+
+int getg32(int c) {
+	error("TODO: getg32");
+}
+
+int getb32(int c) {
+	error("TODO: getb32");
+}
+
+int geta32(int c) {
+	error("TODO: geta32");
 }
 
 int makecol(byte r, byte g, byte b) {

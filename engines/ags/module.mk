@@ -20,6 +20,7 @@ MODULE_OBJS = \
 	lib/allegro/sound.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
+	lib/opengl/opengl.o \
 	lib/system/datetime.o \
 	shared/ac/dynobj/scriptaudioclip.o \
 	shared/ac/audiocliptype.o \
@@ -83,6 +84,20 @@ MODULE_OBJS = \
 	engine/game/savegame.o \
 	engine/game/savegame_components.o \
 	engine/game/viewport.o \
+	engine/gfx/all3dd3d.o \
+	engine/gfx/ali3dogl.o \
+	engine/gfx/ali3dsw.o \
+	engine/gfx/blender.o \
+	engine/gfx/color_engine.o \
+	engine/gfx/gfx_util.o \
+	engine/gfx/gfxdriverbase.o \
+	engine/gfx/gfxdriverfactory.o \
+	engine/gfx/gfxfilter_aad3d.o \
+	engine/gfx/gfxfilter_allegro.o \
+	engine/gfx/gfxfilter_d3d.o \
+	engine/gfx/gfxfilter_hqx.o \
+	engine/gfx/gfxfilter_ogl.o \
+	engine/gfx/gfxfilter_scaling.o \
 	engine/gui/animatingguibutton.o \
 	engine/gui/cscidialog.o \
 	engine/gui/guidialog.o \

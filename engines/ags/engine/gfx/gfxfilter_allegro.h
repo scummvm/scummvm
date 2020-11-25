@@ -30,8 +30,8 @@
 #define AGS_ENGINE_GFX_ALLEGROGFXFILTER_H
 
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/gfxfilter_scaling.h"
-#include "ags/shared/gfx/gfxdefines.h"
+#include "ags/engine/gfx/gfxfilter_scaling.h"
+#include "ags/engine/gfx/gfxdefines.h"
 
 namespace AGS3 {
 namespace AGS {

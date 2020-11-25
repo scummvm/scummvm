@@ -21,8 +21,9 @@
  */
 
 #include "ags/shared/core/types.h"
-#include "ags/shared/gfx/blender.h"
+#include "ags/engine/gfx/blender.h"
 #include "ags/shared/util/wgt2allg.h"
+#include "ags/lib/allegro/color.h"
 
 namespace AGS3 {
 

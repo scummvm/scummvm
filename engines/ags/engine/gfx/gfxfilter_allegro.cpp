@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/shared/gfx/gfxfilter_allegro.h"
+#include "ags/engine/gfx/gfxfilter_allegro.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -98,13 +98,13 @@ void AllegroGfxFilter::RenderScreenFlipped(Bitmap *toRender, int x, int y, Globa
 
 	switch (flipType) {
 	case kFlip_Horizontal:
-		virtualScreen->FlipBlt(toRender, 0, 0, Common::kBitmap_HFlip);
+		virtualScreen->FlipBlt(toRender, 0, 0, Shared::kBitmap_HFlip);
 		break;
 	case kFlip_Vertical:
-		virtualScreen->FlipBlt(toRender, 0, 0, Common::kBitmap_VFlip);
+		virtualScreen->FlipBlt(toRender, 0, 0, Shared::kBitmap_VFlip);
 		break;
 	case kFlip_Both:
-		virtualScreen->FlipBlt(toRender, 0, 0, Common::kBitmap_HVFlip);
+		virtualScreen->FlipBlt(toRender, 0, 0, Shared::kBitmap_HVFlip);
 		break;
 	default:
 		virtualScreen->Blit(toRender, 0, 0);
