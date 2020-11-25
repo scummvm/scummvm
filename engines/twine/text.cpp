@@ -472,7 +472,7 @@ void Text::renderContinueReadingTriangle() {
 
 	_engine->_renderer->renderPolygons(POLYGONTYPE_FLAT, _dialTextStopColor);
 
-	_engine->copyBlockPhys(left, top, right, bottom);
+	_engine->copyBlockPhys(Common::Rect(left, top, right, bottom));
 }
 
 void Text::fadeInCharacters(int32 counter, int32 fontColor) {
