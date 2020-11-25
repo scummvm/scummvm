@@ -938,7 +938,7 @@ void Menu::drawBehaviourMenu(int32 angle) {
 	prepareAndDrawBehaviour(angle, HeroBehaviourType::kAggressive);
 	prepareAndDrawBehaviour(angle, HeroBehaviourType::kDiscrete);
 
-	drawInfoMenu(titleRect.left, titleRect.top);
+	drawInfoMenu(titleRect.left, titleRect.bottom + 10);
 
 	_engine->copyBlockPhys(titleRect);
 }
