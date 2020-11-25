@@ -478,7 +478,7 @@ void GameState::processGameoverAnimation() {
 		_engine->_system->delayMillis(15);
 	}
 
-	_engine->_sound->playSample(Samples::Explode, _engine->getRandomNumber(2000) + 3096);
+	_engine->_sound->playSample(Samples::Explode);
 	_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
 	_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
