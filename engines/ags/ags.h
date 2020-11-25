@@ -33,6 +33,9 @@
 #include "engines/savestate.h"
 #include "graphics/surface.h"
 
+#include "ags/shared/gfx/bitmap.h"
+#include "ags/lib/allegro/system.h"
+
 namespace AGS {
 
 #define SCREEN_WIDTH 320
@@ -49,6 +52,9 @@ class AGSEngine : public Engine {
 private:
 	const AGSGameDescription *_gameDescription;
 	Common::RandomSource _randomSource;
+public:
+	::AGS3::BITMAP *_screen;
+	::AGS3::GFX_DRIVER *_gfxDriver;
 protected:
 	// Engine APIs
 	virtual Common::Error run();
@@ -84,6 +90,8 @@ public:
 };
 
 extern AGSEngine *g_vm;
+#define screen ::AGS::g_vm->_screen
+#define gfx_driver ::AGS::g_vm->_gfxDriver
 
 } // namespace AGS
 

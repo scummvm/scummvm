@@ -725,7 +725,7 @@ _aa_add_rgb32 (BITMAP *_src, int _sx1, int _sx2, int _sy1, int _sy2, unsigned lo
 void
 _aa_put_rgb8 (unsigned long _addr, int _x)
 {
-  bmp_write8 (_addr + _x, makecol8 (_aa.r, _aa.g, _aa.b));
+  bmp_write8 (_addr + _x, makecol8(_aa.r, _aa.g, _aa.b));
 }
 #ifdef ALLEGRO_COLOR16
 void

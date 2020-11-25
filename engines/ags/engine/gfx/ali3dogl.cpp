@@ -24,16 +24,17 @@
 
 #if AGS_PLATFORM_OS_WINDOWS || AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_LINUX
 
-//include <algorithm>
-#include "ags/shared/gfx/ali3dexception.h"
-#include "ags/shared/gfx/ali3dogl.h"
-#include "ags/shared/gfx/gfxfilter_ogl.h"
-#include "ags/shared/gfx/gfxfilter_aaogl.h"
-#include "ags/shared/gfx/gfx_util.h"
-#include "ags/shared/main/main_allegro.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/std/algorithm.h"
+#include "ags/engine/gfx/ali3dexception.h"
+#include "ags/engine/gfx/ali3dogl.h"
+#include "ags/engine/gfx/gfxfilter_ogl.h"
+#include "ags/engine/gfx/gfxfilter_aaogl.h"
+#include "ags/engine/gfx/gfx_util.h"
+#include "ags/engine/main/main_allegro.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/shared/util/math.h"
-#include "ags/shared/ac/timer.h"
+#include "ags/engine/ac/timer.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -131,6 +132,8 @@ using namespace AGS::Shared;
 void ogl_dummy_vsync() { }
 
 #define GFX_OPENGL  AL_ID('O','G','L',' ')
+
+static const char *empty_string = "";
 
 GFX_DRIVER gfx_opengl = {
 	GFX_OPENGL,
@@ -335,6 +338,7 @@ void OGLGraphicsDriver::FirstTimeInit() {
 	_firstTimeInit = true;
 }
 
+#if !AGS_PLATFORM_SCUMMVM
 #if AGS_PLATFORM_OS_LINUX
 Atom get_x_atom(const char *atom_name) {
 	Atom atom = XInternAtom(_xwin.display, atom_name, False);
@@ -343,6 +347,7 @@ Atom get_x_atom(const char *atom_name) {
 	}
 	return atom;
 }
+#endif
 #endif
 
 bool OGLGraphicsDriver::InitGlScreen(const DisplayMode &mode) {
@@ -397,6 +402,9 @@ bool OGLGraphicsDriver::InitGlScreen(const DisplayMode &mode) {
 
 	CreateDesktopScreen(mode.Width, mode.Height, mode.ColorDepth);
 	win_grab_input();
+#elif AGS_PLATFORM_SCUMMVM
+	warning("TODO: InitGlScreen");
+
 #elif AGS_PLATFORM_OS_LINUX
 	if (!_have_window) {
 		// Use Allegro to create our window. We don't care what size Allegro uses
@@ -516,7 +524,9 @@ void OGLGraphicsDriver::InitGlParams(const DisplayMode &mode) {
 	glEnableClientState(GL_VERTEX_ARRAY);
 	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
+#if !AGS_PLATFORM_SCUMMVM
 	auto interval = mode.Vsync ? 1 : 0;
+#endif
 	bool vsyncEnabled = false;
 
 #if AGS_PLATFORM_OS_WINDOWS
@@ -525,6 +535,7 @@ void OGLGraphicsDriver::InitGlParams(const DisplayMode &mode) {
 	}
 #endif
 
+#if !AGS_PLATFORM_SCUMMVM
 #if AGS_PLATFORM_OS_LINUX
 	if (GLAD_GLX_EXT_swap_control) {
 		glXSwapIntervalEXT(_xwin.display, _xwin.window, interval);
@@ -535,6 +546,7 @@ void OGLGraphicsDriver::InitGlParams(const DisplayMode &mode) {
 	} else if (GLAD_GLX_SGI_swap_control) {
 		vsyncEnabled = glXSwapIntervalSGI(interval) == 0;
 	}
+#endif
 #endif
 
 	// TODO: find out how to implement SwapInterval on other platforms, and how to check if it's supported
@@ -559,7 +571,9 @@ void OGLGraphicsDriver::InitGlParams(const DisplayMode &mode) {
 }
 
 bool OGLGraphicsDriver::CreateGlContext(const DisplayMode &mode) {
-#if AGS_PLATFORM_OS_WINDOWS
+#if AGS_PLATFORM_SCUMMVM
+	warning("TODO: CreateGlContext");
+#elif AGS_PLATFORM_OS_WINDOWS
 	PIXELFORMATDESCRIPTOR pfd = {
 		sizeof(PIXELFORMATDESCRIPTOR),
 		1,
@@ -594,8 +608,7 @@ bool OGLGraphicsDriver::CreateGlContext(const DisplayMode &mode) {
 
 	if (!wglMakeCurrent(_hDC, _hRC))
 		return false;
-#endif // AGS_PLATFORM_OS_WINDOWS
-#if AGS_PLATFORM_OS_LINUX
+#elif AGS_PLATFORM_OS_LINUX
 	int attrib[] = { GLX_RGBA, GLX_DOUBLEBUFFER, None };
 	XVisualInfo *vi = glXChooseVisual(_xwin.display, DefaultScreen(_xwin.display), attrib);
 	if (!vi) {
@@ -617,7 +630,9 @@ bool OGLGraphicsDriver::CreateGlContext(const DisplayMode &mode) {
 }
 
 void OGLGraphicsDriver::DeleteGlContext() {
-#if AGS_PLATFORM_OS_WINDOWS
+#if AGS_PLATFORM_SCUMMVM
+	warning("TODO: DeleteGlContext");
+#elif AGS_PLATFORM_OS_WINDOWS
 	if (_hRC) {
 		wglMakeCurrent(NULL, NULL);
 		wglDeleteContext(_hRC);
@@ -663,6 +678,7 @@ void OGLGraphicsDriver::TestRenderToTexture() {
 }
 
 void OGLGraphicsDriver::TestSupersampling() {
+#if !AGS_PLATFORM_SCUMMVM
 	if (!_can_render_to_texture)
 		return;
 	// Disable super-sampling if it would cause a too large texture size
@@ -672,6 +688,7 @@ void OGLGraphicsDriver::TestSupersampling() {
 		if ((max < _srcRect.GetWidth() * _super_sampling) || (max < _srcRect.GetHeight() * _super_sampling))
 			_super_sampling = 1;
 	}
+#endif
 }
 
 void OGLGraphicsDriver::CreateShaders() {
@@ -768,6 +785,7 @@ void OGLGraphicsDriver::CreateLightShader() {
 
 void OGLGraphicsDriver::CreateShaderProgram(ShaderProgram &prg, const char *name, const char *fragment_shader_src,
         const char *sampler_var, const char *color_var, const char *aux_var) {
+#if !AGS_PLATFORM_SCUMMVM
 	GLint fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragment_shader, 1, &fragment_shader_src, nullptr);
 	glCompileShader(fragment_shader);
@@ -797,6 +815,7 @@ void OGLGraphicsDriver::CreateShaderProgram(ShaderProgram &prg, const char *name
 	prg.ColorVar = glGetUniformLocation(program, color_var);
 	prg.AuxVar = glGetUniformLocation(program, aux_var);
 	Debug::Printf("OGL: %s shader program created successfully", name);
+#endif
 }
 
 void OGLGraphicsDriver::DeleteShaderProgram(ShaderProgram &prg) {
@@ -806,6 +825,7 @@ void OGLGraphicsDriver::DeleteShaderProgram(ShaderProgram &prg) {
 }
 
 void OGLGraphicsDriver::OutputShaderError(GLuint obj_id, const String &obj_name, bool is_shader) {
+#ifdef TODO
 	GLint log_len;
 	if (is_shader)
 		glGetShaderiv(obj_id, GL_INFO_LOG_LENGTH, &log_len);
@@ -827,6 +847,9 @@ void OGLGraphicsDriver::OutputShaderError(GLuint obj_id, const String &obj_name,
 	} else {
 		Debug::Printf(kDbgMsg_Error, "Shader info log was empty.");
 	}
+#else
+	error("Obj Id=%u, Name=%s, Is Shader=%d", obj_id, obj_name.GetNullableCStr(), (int)is_shader);
+#endif
 }
 
 void OGLGraphicsDriver::SetupBackbufferTexture() {
@@ -835,7 +858,7 @@ void OGLGraphicsDriver::SetupBackbufferTexture() {
 	// both native size set and context capabilities test passed.
 	if (!IsNativeSizeValid() || !_can_render_to_texture)
 		return;
-
+#if !AGS_PLATFORM_SCUMMVM
 	DeleteBackbufferTexture();
 
 	// _backbuffer_texture_coordinates defines translation from wanted texture size to actual supported texture size
@@ -863,7 +886,7 @@ void OGLGraphicsDriver::SetupBackbufferTexture() {
 	glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, _backbuffer, 0);
 
 	glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
-
+#endif
 	// Assign vertices of the backbuffer texture position in the scene
 	_backbuffer_vertices[0] = _backbuffer_vertices[4] = 0;
 	_backbuffer_vertices[2] = _backbuffer_vertices[6] = _srcRect.GetWidth();
@@ -901,17 +924,17 @@ bool OGLGraphicsDriver::SetDisplayMode(const DisplayMode &mode, volatile int *lo
 		return false;
 	}
 
-	try {
+//	try {
 		if (!InitGlScreen(mode))
 			return false;
 		if (!_firstTimeInit)
 			FirstTimeInit();
 		InitGlParams(mode);
-	} catch (Ali3DException exception) {
+/*	} catch (Ali3DException exception) {
 		if (exception._message != get_allegro_error())
 			set_allegro_error(exception._message);
 		return false;
-	}
+	}*/
 
 	OnInit(loopTimer);
 
@@ -1307,7 +1330,9 @@ void OGLGraphicsDriver::_render(bool clearDrawListAfterwards) {
 
 	glFinish();
 
-#if AGS_PLATFORM_OS_WINDOWS
+#if AGS_PLATFORM_SCUMMVM
+	g_system->updateScreen();
+#elif AGS_PLATFORM_OS_WINDOWS
 	SwapBuffers(_hDC);
 #elif AGS_PLATFORM_OS_LINUX
 	glXSwapBuffers(_xwin.display, _xwin.window);

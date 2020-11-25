@@ -31,11 +31,30 @@ SYSTEM_DRIVER system_none;
 SYSTEM_DRIVER *system_driver;
 
 _DRIVER_INFO _system_driver_list[] = {
-//	{ SYSTEM_IOS, &system_none, true  },
 	{ SYSTEM_NONE, &system_none, false },
 	{ 0, nullptr , 0     }
 };
 
+
+GFX_MODE_LIST *get_gfx_mode_list(int card) {
+	assert(card == 0);
+
+	GFX_MODE_LIST *list = new GFX_MODE_LIST();
+	list->num_modes = 1;
+	list->mode = new GFX_MODE[1];
+
+	GFX_MODE &gm = list->mode[0];
+	gm.width = 320;
+	gm.height = 200;
+	gm.bpp = 16;
+
+	return list;
+}
+
+void destroy_gfx_mode_list(GFX_MODE_LIST *list) {
+	delete[] list->mode;
+	delete list;
+}
 
 void set_color_depth(int depth) {
 	color_depth = depth;

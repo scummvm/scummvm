@@ -42,9 +42,9 @@
 #endif
 
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/ddb.h"
-#include "ags/shared/gfx/gfxdriverfactorybase.h"
-#include "ags/shared/gfx/gfxdriverbase.h"
+#include "ags/engine/gfx/ddb.h"
+#include "ags/engine/gfx/gfxdriverfactorybase.h"
+#include "ags/engine/gfx/gfxdriverbase.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -124,7 +124,7 @@ public:
 
 class ALSoftwareGfxModeList : public IGfxModeList {
 public:
-	ALSoftwareGfxModeList(GFX_MODE_LIST *alsw_gfx_mode_list)
+	ALSoftwareGfxModeList(const GFX_MODE_LIST *alsw_gfx_mode_list)
 		: _gfxModeList(alsw_gfx_mode_list) {
 	}
 
@@ -135,7 +135,7 @@ public:
 	bool GetMode(int index, DisplayMode &mode) const override;
 
 private:
-	GFX_MODE_LIST *_gfxModeList;
+	const GFX_MODE_LIST *_gfxModeList;
 };
 
 

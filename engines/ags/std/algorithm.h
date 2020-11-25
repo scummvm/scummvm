@@ -36,6 +36,11 @@ template<typename T> inline T clip(T v, T amin, T amax) { return CLIP(v, amin, a
 template<typename T> inline T sqrt(T x) { return ::sqrt(x); }
 template<typename T> inline void swap(T a, T b) { SWAP(a, b); }
 
+template<class In, class Value>
+In fill(In first, In last, const Value &val) {
+	return Common::fill(first, last, val);
+}
+
 template<typename T, class StrictWeakOrdering>
 void sort(T first, T last, StrictWeakOrdering comp) {
 	Common::sort<T, StrictWeakOrdering>(first, last, comp);

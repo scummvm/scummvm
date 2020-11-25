@@ -28,7 +28,9 @@
 
 #include "ags/shared/core/platform.h"
 
-#if AGS_PLATFORM_OS_WINDOWS
+#if AGS_PLATFORM_SCUMMVM
+#include "ags/lib/opengl/opengl.h"
+#elif AGS_PLATFORM_OS_WINDOWS
 #include "ags/lib/allegro.h"
 //include <winalleg.h>
 //include <allegro/platform/aintwin.h>
@@ -41,8 +43,8 @@
 //include <xalleg.h>
 //include <X11/Xatom.h>
 
-#include "ags/shared/glad/glad.h"
-#include "ags/shared/glad/glad_glx.h"
+//include "glad/glad.h"
+//include "glad/glad_glx.h"
 
 #elif AGS_PLATFORM_OS_ANDROID
 

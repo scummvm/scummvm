@@ -26,16 +26,19 @@
 //
 //=============================================================================
 
-#include "ags/shared/gfx/ali3dsw.h"
-
+#include "ags/engine/gfx/ali3dsw.h"
 #include "ags/shared/core/platform.h"
-#include "ags/shared/gfx/ali3dexception.h"
-#include "ags/shared/gfx/gfxfilter_allegro.h"
-#include "ags/shared/gfx/gfxfilter_hqx.h"
-#include "ags/shared/gfx/gfx_util.h"
-#include "ags/shared/main/main_allegro.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
-#include "ags/shared/ac/timer.h"
+#include "ags/engine/gfx/ali3dexception.h"
+#include "ags/engine/gfx/gfxfilter_allegro.h"
+#include "ags/engine/gfx/gfxfilter_hqx.h"
+#include "ags/engine/gfx/gfx_util.h"
+#include "ags/engine/main/main_allegro.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/ac/timer.h"
+#include "ags/lib/allegro/color.h"
+#include "ags/lib/opengl/opengl.h"
+#include "ags/std/algorithm.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 

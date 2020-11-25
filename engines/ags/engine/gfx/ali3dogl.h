@@ -31,13 +31,13 @@
 
 #include "ags/std/memory.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/ddb.h"
-#include "ags/shared/gfx/gfxdriverfactorybase.h"
-#include "ags/shared/gfx/gfxdriverbase.h"
+#include "ags/engine/gfx/ddb.h"
+#include "ags/engine/gfx/gfxdriverfactorybase.h"
+#include "ags/engine/gfx/gfxdriverbase.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/version.h"
 
-#include "ags/shared/ogl_headers.h"
+#include "ags/engine/gfx/ogl_headers.h"
 
 namespace AGS3 {
 namespace AGS {
@@ -47,7 +47,7 @@ namespace OGL {
 
 using Shared::Bitmap;
 using Shared::String;
-using Common::Version;
+using Shared::Version;
 
 typedef struct _OGLVECTOR {
 	float x;
