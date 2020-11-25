@@ -15,6 +15,13 @@
 
 /**
 
+@defgroup graphics Graphics API
+@brief API related to on-screen graphics - surfaces, pixels, cursors, fonts, palettes, and renderers.
+
+*/
+
+/**
+
 @defgroup image Image API
 @brief API of various image decoders used in engines.
 
