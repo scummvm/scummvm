@@ -130,23 +130,7 @@ DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist
 }
 
 const char *ScummMetaEngineDetection::getName() const {
-	return "SCUMM ["
-
-#if defined(ENABLE_SCUMM_7_8) && defined(ENABLE_HE)
-		"all games"
-#else
-
-		"v0-v6 games"
-
-#if defined(ENABLE_SCUMM_7_8)
-		", v7 & v8 games"
-#endif
-#if defined(ENABLE_HE)
-		", HE71+ games"
-#endif
-
-#endif
-		"]";
+	return "SCUMM";
 }
 
 const char *ScummMetaEngineDetection::getOriginalCopyright() const {
