@@ -142,14 +142,15 @@ bool Music::playTrackMusic(int32 track) {
 	if (track == currentMusic) {
 		return true;
 	}
-	currentMusic = track;
 
 	stopMusic();
 	if (playTrackMusicCd(track)) {
+		currentMusic = track;
 		debug("Play cd music track %i", track);
 		return true;
 	}
 	if (playMidiMusic(track)) {
+		currentMusic = track;
 		debug("Play midi music track %i", track);
 		return true;
 	}
