@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-23 16:28+0000\n"
-"PO-Revision-Date: 2020-11-24 17:05+0000\n"
+"PO-Revision-Date: 2020-11-25 18:42+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -563,7 +563,7 @@ msgstr "Seitsemännen asteen"
 #. I18N: Button to reset keymap mappings to defaults
 #: gui/fluidsynth-dialog.cpp:151 backends/keymapper/remap-widget.cpp:319
 msgid "Reset"
-msgstr "Tyhjää valinnat"
+msgstr "Vakioasetukset"
 
 #: gui/fluidsynth-dialog.cpp:151
 msgid "Reset all FluidSynth settings to their default values."
@@ -1173,7 +1173,7 @@ msgstr "Molemmat"
 
 #: gui/options.cpp:1507
 msgid "Subtitle speed:"
-msgstr "Tekstityksen nopeus:"
+msgstr "Tekstien nopeus:"
 
 #: gui/options.cpp:1509
 msgctxt "lowres"
@@ -1200,7 +1200,7 @@ msgstr "Näytä tekstitys ja käytä puhetta"
 #: gui/options.cpp:1517
 msgctxt "lowres"
 msgid "Subtitle speed:"
-msgstr "Tekstityksen nopeus:"
+msgstr "Tekstien nopeus:"
 
 #: gui/options.cpp:1533
 msgid "Music volume:"
@@ -1374,7 +1374,7 @@ msgstr "Tarkista nyt"
 
 #: gui/options.cpp:2171
 msgid "Active storage:"
-msgstr "Aktiivinen tallennustila:"
+msgstr "Tallennustila:"
 
 #: gui/options.cpp:2171
 msgid "Active cloud storage"
@@ -2913,7 +2913,7 @@ msgstr "Palauta vakioasetukset"
 
 #: backends/keymapper/remap-widget.cpp:291
 msgid "Clear mapping"
-msgstr "Tyhjennä valinnat"
+msgstr "Vakioasetukset"
 
 #: backends/keymapper/virtual-mouse.cpp:157
 msgid "Virtual mouse up"
@@ -6515,7 +6515,7 @@ msgstr "Musiikin äänenvoimakkuus: "
 
 #: engines/scumm/input.cpp:595
 msgid "Subtitle speed: "
-msgstr "Tekstityksen nopeus: "
+msgstr "Tekstien nopeus: "
 
 #: engines/scumm/metaengine.cpp:331
 msgid ""
