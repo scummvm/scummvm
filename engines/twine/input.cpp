@@ -36,6 +36,7 @@ const char *cutsceneKeyMapId = "cutsceneKeyMap";
 
 ScopedKeyMap::ScopedKeyMap(TwinEEngine* engine, const char *id) : _engine(engine) {
 	_changed = _engine->_input->enableAdditionalKeyMap(id, true);
+	_keymap = id;
 }
 
 ScopedKeyMap::~ScopedKeyMap() {
