@@ -161,8 +161,8 @@ bool Input::isMouseHovering(const Common::Rect &rect) const {
 	if (!_engine->cfgfile.Mouse) {
 		return false;
 	}
-	Common::Point point = getMousePositions();
-	return point.x >= rect.left && point.x <= rect.right && point.y >= rect.top && point.y <= rect.bottom;
+	const Common::Point &point = getMousePositions();
+	return rect.contains(point);
 }
 
 } // namespace TwinE
