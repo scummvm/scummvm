@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-25 16:14+0000\n"
-"PO-Revision-Date: 2020-11-22 21:32+0000\n"
-"Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
+"PO-Revision-Date: 2020-11-25 20:23+0000\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
 "Language: es_ES\n"
@@ -7038,10 +7038,8 @@ msgid "Enable the cutscenes for the game"
 msgstr "Activa las escenas cinemáticas del juego"
 
 #: engines/twine/metaengine.cpp:132
-#, fuzzy
-#| msgid "Enable movies"
 msgid "Enable mouse"
-msgstr "Activar vídeos"
+msgstr "Activar ratón"
 
 #: engines/twine/metaengine.cpp:133
 #, fuzzy
