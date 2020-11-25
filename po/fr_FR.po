@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-23 16:28+0000\n"
-"PO-Revision-Date: 2020-11-16 09:07+0000\n"
+"PO-Revision-Date: 2020-11-25 12:44+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -2214,10 +2214,8 @@ msgid "Could not apply filtering setting."
 msgstr "Impossible d'appliquer l'option de filtrage."
 
 #: engines/engine.cpp:420
-#, fuzzy
-#| msgid "No error"
 msgid "Error"
-msgstr "Pas d'erreur"
+msgstr "Erreur"
 
 #: engines/engine.cpp:507
 msgid ""
