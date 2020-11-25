@@ -117,7 +117,9 @@ const JNINativeMethod JNI::_natives[] = {
 	{ "pushEvent", "(IIIIIII)V",
 		(void *)JNI::pushEvent },
 	{ "setPause", "(Z)V",
-		(void *)JNI::setPause }
+		(void *)JNI::setPause },
+	{ "getNativeVersionInfo", "()Ljava/lang/String;",
+		(void *)JNI::getNativeVersionInfo }
 };
 
 JNI::JNI() {
@@ -719,6 +721,11 @@ void JNI::setPause(JNIEnv *env, jobject self, jboolean value) {
 	}
 }
 
+
+jstring JNI::getNativeVersionInfo(JNIEnv *env, jobject self) {
+	return convertToJString(env, Common::U32String(gScummVMVersion));
+}
+
 jstring JNI::convertToJString(JNIEnv *env, const Common::U32String &str) {
 	uint len = 0;
 	uint16 *u16str = str.encodeUTF16Native(&len);
@@ -738,6 +745,7 @@ Common::U32String JNI::convertFromJString(JNIEnv *env, const jstring &jstr) {
 	return str;
 }
 
+// TODO should this be a U32String array?
 Common::Array<Common::String> JNI::getAllStorageLocations() {
 	Common::Array<Common::String> *res = new Common::Array<Common::String>();
 
@@ -827,6 +835,5 @@ void JNI::closeFileWithSAF(const Common::String &hackyFilename) {
 	}
 
 }
-
 
 #endif

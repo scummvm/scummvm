@@ -147,6 +147,7 @@ private:
 							int arg2, int arg3, int arg4, int arg5, int arg6);
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
 
+	static jstring getNativeVersionInfo(JNIEnv *env, jobject self);
 	static jstring convertToJString(JNIEnv *env, const Common::U32String &str);
 	static Common::U32String convertFromJString(JNIEnv *env, const jstring &jstr);
 
