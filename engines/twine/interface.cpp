@@ -152,7 +152,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 	}
 }
 
-void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, int32 leftDest, int32 topDest, Graphics::ManagedSurface &dest) {
+void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, Graphics::ManagedSurface &dest) {
 	int32 left = rect.left;
 	const int32 top = rect.top;
 	const int32 right = rect.right;

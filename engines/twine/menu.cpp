@@ -287,7 +287,7 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 			}
 		}
 	} else {
-		_engine->_interface->blitBox(rect, _engine->workVideoBuffer, rect.left, rect.top, _engine->frontVideoBuffer);
+		_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 		_engine->_interface->drawTransparentBox(rect, 4);
 	}
 

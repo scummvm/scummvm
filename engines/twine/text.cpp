@@ -283,7 +283,7 @@ int32 Text::getTextSize(const char *dialogue) { // SizeFont
 }
 
 void Text::initDialogueBox() { // InitDialWindow
-	_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _dialTextBox.left, _dialTextBox.top, _engine->frontVideoBuffer);
+	_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 
 	if (drawTextBoxBackground) {
 		_engine->_menu->drawBox(_dialTextBox);
@@ -294,11 +294,11 @@ void Text::initDialogueBox() { // InitDialWindow
 
 	_engine->copyBlockPhys(_dialTextBox);
 	_fadeInCharactersPos = 0;
-	_engine->_interface->blitBox(_dialTextBox, _engine->frontVideoBuffer, _dialTextBox.left, _dialTextBox.top, _engine->workVideoBuffer);
+	_engine->_interface->blitBox(_dialTextBox, _engine->frontVideoBuffer, _engine->workVideoBuffer);
 }
 
 void Text::initInventoryDialogueBox() { // SecondInitDialWindow
-	_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _dialTextBox.left, _dialTextBox.top, _engine->frontVideoBuffer);
+	_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->copyBlockPhys(_dialTextBox);
 	_fadeInCharactersPos = 0;
 }
@@ -517,7 +517,7 @@ int Text::updateProgressiveText() {
 			return 0;
 		}
 		if (_progressiveTextNextPage) {
-			_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _dialTextBox.left, _dialTextBox.top, _engine->frontVideoBuffer);
+			_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 			_engine->copyBlockPhys(_dialTextBox);
 			_fadeInCharactersPos = 0;
 			_progressiveTextNextPage = false;
