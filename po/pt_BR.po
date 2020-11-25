@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-25 16:14+0000\n"
-"PO-Revision-Date: 2020-11-23 12:00+0000\n"
+"PO-Revision-Date: 2020-11-26 08:43+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -7025,16 +7025,12 @@ msgid "Enable the cutscenes for the game"
 msgstr "Habilita as cenas do jogo"
 
 #: engines/twine/metaengine.cpp:132
-#, fuzzy
-#| msgid "Enable movies"
 msgid "Enable mouse"
-msgstr "Habilitar filmes"
+msgstr "Habilitar mouse"
 
 #: engines/twine/metaengine.cpp:133
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Enable the mouse for the UI"
-msgstr "Habilita o som do jogo"
+msgstr "Habilita o mouse na interface"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Use the USA version"
