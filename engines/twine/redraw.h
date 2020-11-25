@@ -73,15 +73,8 @@ private:
 	/** Draw list array to grab the necessary */
 	DrawListStruct drawList[150];
 
-	struct RedrawStruct {
-		uint16 left = 0;
-		uint16 top = 0;
-		uint16 right = 0;
-		uint16 bottom = 0;
-	};
-
-	RedrawStruct currentRedrawList[300];
-	RedrawStruct nextRedrawList[300];
+	Common::Rect currentRedrawList[300];
+	Common::Rect nextRedrawList[300];
 
 	int16 overlayRotation = 0;
 	/**
@@ -105,14 +98,8 @@ private:
 public:
 	Redraw(TwinEEngine *engine) : _engine(engine) {}
 
-	/** Auxiliar object render left position on screen */
-	int32 renderLeft = 0;
-	/** Auxiliar object render right position on screen */
-	int32 renderRight = 0;
-	/** Auxiliar object render top position on screen */
-	int32 renderTop = 0;
-	/** Auxiliar object render bottom position on screen */
-	int32 renderBottom = 0;
+	/** Auxiliar object render position on screen */
+	Common::Rect renderRect { 0, 0, 0, 0 };
 
 	bool drawInGameTransBox = false;
 

@@ -439,30 +439,30 @@ void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 co
 	int16 var_x = ((*(shapeTable++)) * size) >> 4;
 	int16 var_z = ((*(shapeTable++)) * size) >> 4;
 
-	_engine->_redraw->renderLeft = 0x7D00;
-	_engine->_redraw->renderRight = -0x7D00;
-	_engine->_redraw->renderTop = 0x7D00;
-	_engine->_redraw->renderBottom = -0x7D00;
+	_engine->_redraw->renderRect.left = 0x7D00;
+	_engine->_redraw->renderRect.right = -0x7D00;
+	_engine->_redraw->renderRect.top = 0x7D00;
+	_engine->_redraw->renderRect.bottom = -0x7D00;
 
 	_engine->_movements->rotateActor(var_x, var_z, angle);
 
 	int32 computedX = _engine->_renderer->destX + x;
 	int32 computedY = _engine->_renderer->destZ + y;
 
-	if (computedX < _engine->_redraw->renderLeft) {
-		_engine->_redraw->renderLeft = computedX;
+	if (computedX < _engine->_redraw->renderRect.left) {
+		_engine->_redraw->renderRect.left = computedX;
 	}
 
-	if (computedX > _engine->_redraw->renderRight) {
-		_engine->_redraw->renderRight = computedX;
+	if (computedX > _engine->_redraw->renderRect.right) {
+		_engine->_redraw->renderRect.right = computedX;
 	}
 
-	if (computedY < _engine->_redraw->renderTop) {
-		_engine->_redraw->renderTop = computedY;
+	if (computedY < _engine->_redraw->renderRect.top) {
+		_engine->_redraw->renderRect.top = computedY;
 	}
 
-	if (computedY > _engine->_redraw->renderBottom) {
-		_engine->_redraw->renderBottom = computedY;
+	if (computedY > _engine->_redraw->renderRect.bottom) {
+		_engine->_redraw->renderRect.bottom = computedY;
 	}
 
 	int32 numEntries = 1;
@@ -485,20 +485,20 @@ void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 co
 		currentX = _engine->_renderer->destX + x;
 		currentY = _engine->_renderer->destZ + y;
 
-		if (currentX < _engine->_redraw->renderLeft) {
-			_engine->_redraw->renderLeft = currentX;
+		if (currentX < _engine->_redraw->renderRect.left) {
+			_engine->_redraw->renderRect.left = currentX;
 		}
 
-		if (currentX > _engine->_redraw->renderRight) {
-			_engine->_redraw->renderRight = currentX;
+		if (currentX > _engine->_redraw->renderRect.right) {
+			_engine->_redraw->renderRect.right = currentX;
 		}
 
-		if (currentY < _engine->_redraw->renderTop) {
-			_engine->_redraw->renderTop = currentY;
+		if (currentY < _engine->_redraw->renderRect.top) {
+			_engine->_redraw->renderRect.top = currentY;
 		}
 
-		if (currentY > _engine->_redraw->renderBottom) {
-			_engine->_redraw->renderBottom = currentY;
+		if (currentY > _engine->_redraw->renderRect.bottom) {
+			_engine->_redraw->renderRect.bottom = currentY;
 		}
 
 		_engine->_renderer->projPosX = currentX;

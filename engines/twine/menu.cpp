@@ -279,7 +279,7 @@ void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &r
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
 			}
-			_engine->_interface->drawSplittedBox(newWidth, rect.top, rect.right, rect.bottom, 68);
+			_engine->_interface->drawSplittedBox(Common::Rect(newWidth, rect.top, rect.right, rect.bottom), 68);
 		} else {
 			processPlasmaEffect(rect.left, rect.top, 64);
 			if (!(_engine->getRandomNumber() % 5)) {
@@ -633,9 +633,9 @@ int32 Menu::volumeMenu() {
 
 void Menu::inGameOptionsMenu() {
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
-	_engine->_menu->optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
+	optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
-	_engine->_menu->optionsMenu();
+	optionsMenu();
 	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 	optionsMenuState.setButtonTextId(0, TextId::kReturnMenu);
 }
@@ -792,7 +792,7 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 	const int32 width = 450;
 	const int32 height = 80;
 	drawBox(left, top, left + width, top + height);
-	_engine->_interface->drawSplittedBox(left + 1, top + 1, left + width - 1, top + height - 1, 0);
+	_engine->_interface->drawSplittedBox(Common::Rect(left + 1, top + 1, left + width - 1, top + height - 1), 0);
 
 	int32 newBoxLeft2 = left + 9;
 
@@ -804,13 +804,13 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 
 	int32 boxTop = top + 10;
 	int32 boxBottom = top + 25;
-	_engine->_interface->drawSplittedBox(newBoxLeft, boxTop, boxLeft, boxBottom, 91);
+	_engine->_interface->drawSplittedBox(Common::Rect(newBoxLeft, boxTop, boxLeft, boxBottom), 91);
 	drawBox(left + 25, top + 10, left + 324, top + 10 + 14);
 
 	if (!_engine->_gameState->inventoryDisabled() && _engine->_gameState->hasItem(InventoryItems::kiTunic)) {
 		_engine->_grid->drawSprite(0, newBoxLeft2, top + 36, _engine->_resources->spriteTable[SPRITEHQR_MAGICPOINTS]);
 		if (_engine->_gameState->magicLevelIdx > 0) {
-			_engine->_interface->drawSplittedBox(newBoxLeft, top + 35, _engine->_screens->crossDot(newBoxLeft, boxRight, 80, _engine->_gameState->inventoryMagicPoints), top + 50, 75);
+			_engine->_interface->drawSplittedBox(Common::Rect(newBoxLeft, top + 35, _engine->_screens->crossDot(newBoxLeft, boxRight, 80, _engine->_gameState->inventoryMagicPoints), top + 50), 75);
 		}
 		drawBox(left + 25, top + 35, left + _engine->_gameState->magicLevelIdx * 80 + 20, top + 35 + 15);
 	}
@@ -873,6 +873,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 	const int32 titleBoxRight = 540;
 	const int32 titleBoxTop = boxRect.bottom + titleOffset;
 	const int32 titleBoxBottom = titleBoxTop + titleHeight;
+	const Common::Rect titleRect(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom);
 
 	const uint8 *currentAnim = _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)behaviour]];
 	int16 currentAnimState = behaviourAnimState[(byte)behaviour];
@@ -900,8 +901,8 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 		_engine->_interface->drawSplittedBox(boxRect, 69);
 
 		// behaviour menu title
-		_engine->_interface->drawSplittedBox(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom, 0);
-		drawBox(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom);
+		_engine->_interface->drawSplittedBox(titleRect, 0);
+		drawBox(titleRect);
 
 		_engine->_text->setFontColor(15);
 
@@ -914,7 +915,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, behaviourEntity);
 
 	_engine->copyBlockPhys(boxRect);
-	_engine->copyBlockPhys(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom);
+	_engine->copyBlockPhys(titleRect);
 
 	_engine->_interface->loadClip();
 }
@@ -925,17 +926,21 @@ void Menu::prepareAndDrawBehaviour(int32 angle, HeroBehaviourType behaviour) {
 }
 
 void Menu::drawBehaviourMenu(int32 angle) {
-	drawBox(100, 100, 550, 290);
-	_engine->_interface->drawTransparentBox(101, 101, 549, 289, 2);
+	const Common::Rect titleRect(100, 100, 550, 290);
+	drawBox(titleRect);
+
+	Common::Rect boxRect(titleRect);
+	boxRect.grow(-1);
+	_engine->_interface->drawTransparentBox(boxRect, 2);
 
 	prepareAndDrawBehaviour(angle, HeroBehaviourType::kNormal);
 	prepareAndDrawBehaviour(angle, HeroBehaviourType::kAthletic);
 	prepareAndDrawBehaviour(angle, HeroBehaviourType::kAggressive);
 	prepareAndDrawBehaviour(angle, HeroBehaviourType::kDiscrete);
 
-	drawInfoMenu(100, 300);
+	drawInfoMenu(titleRect.left, titleRect.top);
 
-	_engine->copyBlockPhys(100, 100, 550, 290);
+	_engine->copyBlockPhys(titleRect);
 }
 
 void Menu::processBehaviourMenu() {
@@ -1039,9 +1044,8 @@ void Menu::drawItem(int32 item) {
 	const int32 right = itemX + 37;
 	const int32 top = itemY - 32;
 	const int32 bottom = itemY + 32;
-
-	_engine->_interface->drawSplittedBox(left, top, right, bottom,
-	                                     inventorySelectedItem == item ? inventorySelectedColor : 0);
+	const Common::Rect rect(left, top, right, bottom);
+	_engine->_interface->drawSplittedBox(rect, inventorySelectedItem == item ? inventorySelectedColor : 0);
 
 	if (item < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)item) && !_engine->_gameState->inventoryDisabled()) {
 		_engine->_renderer->prepareIsoModel(_engine->_resources->inventoryTable[item]);
@@ -1055,15 +1059,16 @@ void Menu::drawItem(int32 item) {
 		}
 	}
 
-	drawBox(left, top, right, bottom);
-	_engine->copyBlockPhys(left, top, right, bottom);
+	drawBox(rect);
+	_engine->copyBlockPhys(rect);
 }
 
 void Menu::drawInventoryItems() {
-	_engine->_interface->drawTransparentBox(17, 10, 622, 320, 4);
-	drawBox(17, 10, 622, 320);
+	const Common::Rect rect(17, 10, 622, 320);
+	_engine->_interface->drawTransparentBox(rect, 4);
+	drawBox(rect);
 	drawMagicItemsBox(110, 18, 188, 311, 75);
-	_engine->copyBlockPhys(17, 10, 622, 320);
+	_engine->copyBlockPhys(rect);
 
 	for (int32 item = 0; item < NUM_INVENTORY_ITEMS; item++) {
 		drawItem(item);

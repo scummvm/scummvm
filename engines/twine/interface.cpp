@@ -36,14 +36,14 @@ const int32 BOTTOM = 8; // 1000
 
 int32 Interface::checkClipping(int32 x, int32 y) {
 	int32 code = INSIDE;
-	if (x < textWindowLeft) {
+	if (x < textWindow.left) {
 		code |= LEFT;
-	} else if (x > textWindowRight) {
+	} else if (x > textWindow.right) {
 		code |= RIGHT;
 	}
-	if (y < textWindowTop) {
+	if (y < textWindow.top) {
 		code |= TOP;
-	} else if (y > textWindowBottom) {
+	} else if (y > textWindow.bottom) {
 		code |= BOTTOM;
 	}
 	return code;
@@ -79,17 +79,17 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		int32 x = 0;
 		int32 y = 0;
 		if (outcodeOut & TOP) { // point is above the clip rectangle
-			x = startWidth + (int)((endWidth - startWidth) * (float)(textWindowTop - startHeight) / (float)(endHeight - startHeight));
-			y = textWindowTop;
+			x = startWidth + (int)((endWidth - startWidth) * (float)(textWindow.top - startHeight) / (float)(endHeight - startHeight));
+			y = textWindow.top;
 		} else if (outcodeOut & BOTTOM) { // point is below the clip rectangle
-			x = startWidth + (int)((endWidth - startWidth) * (float)(textWindowBottom - startHeight) / (float)(endHeight - startHeight));
-			y = textWindowBottom;
+			x = startWidth + (int)((endWidth - startWidth) * (float)(textWindow.bottom - startHeight) / (float)(endHeight - startHeight));
+			y = textWindow.bottom;
 		} else if (outcodeOut & RIGHT) { // point is to the right of clip rectangle
-			y = startHeight + (int)((endHeight - startHeight) * (float)(textWindowRight - startWidth) / (float)(endWidth - startWidth));
-			x = textWindowRight;
+			y = startHeight + (int)((endHeight - startHeight) * (float)(textWindow.right - startWidth) / (float)(endWidth - startWidth));
+			x = textWindow.right;
 		} else if (outcodeOut & LEFT) { // point is to the left of clip rectangle
-			y = startHeight + (int)((endHeight - startHeight) * (float)(textWindowLeft - startWidth) / (float)(endWidth - startWidth));
-			x = textWindowLeft;
+			y = startHeight + (int)((endHeight - startHeight) * (float)(textWindow.left - startWidth) / (float)(endWidth - startWidth));
+			x = textWindow.left;
 		}
 
 		// Clip the point
@@ -153,10 +153,11 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 }
 
 void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, int32 leftDest, int32 topDest, Graphics::ManagedSurface &dest) {
-	blitBox(rect.left, rect.top, rect.right, rect.bottom, source, leftDest, topDest, dest);
-}
+	int32 left = rect.left;
+	const int32 top = rect.top;
+	const int32 right = rect.right;
+	const int32 bottom = rect.bottom;
 
-void Interface::blitBox(int32 left, int32 top, int32 right, int32 bottom, const Graphics::ManagedSurface &source, int32 leftDest, int32 topDest, Graphics::ManagedSurface &dest) {
 	const int8 *s = (const int8 *)source.getBasePtr(left, top);
 	int8 *d = (int8 *)dest.getBasePtr(left, top);
 
@@ -180,10 +181,11 @@ void Interface::blitBox(int32 left, int32 top, int32 right, int32 bottom, const 
 }
 
 void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
-	drawTransparentBox(rect.left, rect.top, rect.right, rect.bottom, colorAdj);
-}
+	int32 left = rect.left;
+	int32 top = rect.top;
+	int32 right = rect.right;
+	int32 bottom = rect.bottom;
 
-void Interface::drawTransparentBox(int32 left, int32 top, int32 right, int32 bottom, int32 colorAdj) {
 	if (left > SCREEN_TEXTLIMIT_RIGHT) {
 		return;
 	}
@@ -237,10 +239,11 @@ void Interface::drawTransparentBox(int32 left, int32 top, int32 right, int32 bot
 }
 
 void Interface::drawSplittedBox(const Common::Rect &rect, uint8 colorIndex) {
-	drawSplittedBox(rect.left, rect.top, rect.right, rect.bottom, colorIndex);
-}
+	const int32 left = rect.left;
+	const int32 top = rect.top;
+	const int32 right = rect.right;
+	const int32 bottom = rect.bottom;
 
-void Interface::drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom, uint8 colorIndex) { // Box
 	if (left > SCREEN_TEXTLIMIT_RIGHT) {
 		return;
 	}
@@ -268,49 +271,50 @@ void Interface::drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom
 }
 
 void Interface::setClip(const Common::Rect &rect) {
-	setClip(rect.left, rect.top, rect.right, rect.bottom);
-}
+	int32 left = rect.left;
+	int32 top = rect.top;
+	int32 right = rect.right;
+	int32 bottom = rect.bottom;
 
-void Interface::setClip(int32 left, int32 top, int32 right, int32 bottom) {
 	if (left < 0) {
 		left = 0;
 	}
-	textWindowLeft = left;
+	textWindow.left = left;
 
 	if (top < 0) {
 		top = 0;
 	}
-	textWindowTop = top;
+	textWindow.top = top;
 
 	if (right >= SCREEN_WIDTH) {
 		right = SCREEN_TEXTLIMIT_RIGHT;
 	}
-	textWindowRight = right;
+	textWindow.right = right;
 
 	if (bottom >= SCREEN_HEIGHT) {
 		bottom = SCREEN_TEXTLIMIT_BOTTOM;
 	}
-	textWindowBottom = bottom;
+	textWindow.bottom = bottom;
 }
 
 void Interface::saveClip() { // saveTextWindow
-	textWindowLeftSave = textWindowLeft;
-	textWindowTopSave = textWindowTop;
-	textWindowRightSave = textWindowRight;
-	textWindowBottomSave = textWindowBottom;
+	textWindowLeftSave = textWindow.left;
+	textWindowTopSave = textWindow.top;
+	textWindowRightSave = textWindow.right;
+	textWindowBottomSave = textWindow.bottom;
 }
 
 void Interface::loadClip() { // loadSavedTextWindow
-	textWindowLeft = textWindowLeftSave;
-	textWindowTop = textWindowTopSave;
-	textWindowRight = textWindowRightSave;
-	textWindowBottom = textWindowBottomSave;
+	textWindow.left = textWindowLeftSave;
+	textWindow.top = textWindowTopSave;
+	textWindow.right = textWindowRightSave;
+	textWindow.bottom = textWindowBottomSave;
 }
 
 void Interface::resetClip() {
-	textWindowTop = textWindowLeft = SCREEN_TEXTLIMIT_TOP;
-	textWindowRight = SCREEN_TEXTLIMIT_RIGHT;
-	textWindowBottom = SCREEN_TEXTLIMIT_BOTTOM;
+	textWindow.top = textWindow.left = SCREEN_TEXTLIMIT_TOP;
+	textWindow.right = SCREEN_TEXTLIMIT_RIGHT;
+	textWindow.bottom = SCREEN_TEXTLIMIT_BOTTOM;
 }
 
 } // namespace TwinE
