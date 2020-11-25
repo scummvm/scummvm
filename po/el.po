@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-25 16:14+0000\n"
-"PO-Revision-Date: 2020-11-23 12:00+0000\n"
+"PO-Revision-Date: 2020-11-26 08:43+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -7122,16 +7122,12 @@ msgid "Enable the cutscenes for the game"
 msgstr "Ενεργοποίηση των ταινιών (cutscenes) για το παιχνίδι"
 
 #: engines/twine/metaengine.cpp:132
-#, fuzzy
-#| msgid "Enable movies"
 msgid "Enable mouse"
-msgstr "Ενεργοποίηση ταινιών"
+msgstr "Χρήση ποντικιού"
 
 #: engines/twine/metaengine.cpp:133
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Enable the mouse for the UI"
-msgstr "Ενεργοποίηση του ήχου για το παιχνίδι"
+msgstr "Ενεργοποίηση του ποντικιού για το περιβάλλον διεπαφής (UI)"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Use the USA version"
