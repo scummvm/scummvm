@@ -24,6 +24,7 @@
 #define TWINE_DEBUG_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace TwinE {
 
@@ -50,10 +51,7 @@ enum WindowType {
 };
 
 struct DebugButtonStruct {
-	int32 left = 0;
-	int32 top = 0;
-	int32 right = 0;
-	int32 bottom = 0;
+	Common::Rect rect { 0, 0, 0, 0 };
 	const char *text = "";
 	int32 textLeft = 0;
 	int32 textTop = 0;
@@ -65,10 +63,7 @@ struct DebugButtonStruct {
 };
 
 struct DebugWindowStruct {
-	int32 left = 0;
-	int32 top = 0;
-	int32 right = 0;
-	int32 bottom = 0;
+	Common::Rect rect { 0, 0, 0, 0 };
 	int32 alpha = 0;
 	int32 isActive = 0;
 	int32 numLines = 0;
@@ -85,9 +80,9 @@ private:
 
 	DebugWindowStruct debugWindows[10];
 	int32 numDebugWindows = 0;
-	void debugFillButton(int32 X, int32 Y, int32 width, int32 height, int8 color);
-	void debugDrawButton(int32 left, int32 top, int32 right, int32 bottom, const char *text, int32 textLeft, int32 textRight, int32 isActive, int8 color);
-	void debugDrawWindowBox(int32 left, int32 top, int32 right, int32 bottom, int32 alpha);
+	void debugFillButton(int32 x, int32 y, int32 width, int32 height, int8 color);
+	void debugDrawButton(const Common::Rect &rect, const char *text, int32 textLeft, int32 textRight, int32 isActive, int8 color);
+	void debugDrawWindowBox(const Common::Rect &rect, int32 alpha);
 	void debugDrawWindowButtons(int32 w);
 	void debugDrawWindow(int32 w);
 	int32 debugTypeUseMenu(int32 type);
@@ -98,11 +93,11 @@ private:
 	void debugRedrawScreen();
 	int32 debugGetActionsState(int32 type);
 	void debugSetActions(int32 type);
-	void debugAddButton(int32 window, int32 left, int32 top, int32 right, int32 bottom, const char *text, int32 textLeft, int32 textTop, int32 isActive, int32 color, int32 activeColor, int32 submenu, int32 type);
+	void debugAddButton(int32 window, const Common::Rect &rect, const char *text, int32 textLeft, int32 textTop, int32 isActive, int32 color, int32 activeColor, int32 submenu, int32 type);
 	void debugAddWindowText(int32 window, const char *text);
-	void debugAddWindow(int32 left, int32 top, int32 right, int32 bottom, int32 alpha, int32 isActive);
+	void debugAddWindow(const Common::Rect &rect, int32 alpha, int32 isActive);
 	void debugLeftMenu();
-	int32 debugProcessButton(int32 X, int32 Y);
+	int32 debugProcessButton(int32 x, int32 y);
 	void debugPlasmaWindow(const char *text, int32 color);
 	void debugProcessWindow();
 
