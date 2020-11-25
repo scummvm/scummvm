@@ -153,22 +153,15 @@ void Input::readKeys() {
 	}
 }
 
-void Input::getMousePositions(MouseStatusStruct *mouseData) {
-	Common::Point point = g_system->getEventManager()->getMousePos();
-	mouseData->x = point.x;
-	mouseData->y = point.y;
-}
-
-bool Input::isMouseHovering(int32 left, int32 top, int32 right, int32 bottom) const {
-	Common::Point point = g_system->getEventManager()->getMousePos();
-	return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom;
+Common::Point Input::getMousePositions() const {
+	return g_system->getEventManager()->getMousePos();
 }
 
 bool Input::isMouseHovering(const Common::Rect &rect) const {
 	if (!_engine->cfgfile.Mouse) {
 		return false;
 	}
-	Common::Point point = g_system->getEventManager()->getMousePos();
+	Common::Point point = getMousePositions();
 	return point.x >= rect.left && point.x <= rect.right && point.y >= rect.top && point.y <= rect.bottom;
 }
 

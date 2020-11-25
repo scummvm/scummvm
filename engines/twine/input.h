@@ -83,11 +83,6 @@ enum TwinEActionType {
 	Max
 };
 
-struct MouseStatusStruct {
-	int32 x = 0;
-	int32 y = 0;
-};
-
 /**
  * @brief Activates the given key map id that is registered in the meta engine
  */
@@ -129,7 +124,6 @@ public:
 	 */
 	bool isActionActive(TwinEActionType actionType, bool onlyFirstTime = true) const;
 
-	bool isMouseHovering(int32 left, int32 top, int32 right, int32 bottom) const;
 	bool isMouseHovering(const Common::Rect &rect) const;
 
 	/**
@@ -148,7 +142,7 @@ public:
 	 * Gets mouse positions
 	 * @param mouseData structure that contains mouse position info
 	 */
-	void getMousePositions(MouseStatusStruct *mouseData);
+	Common::Point getMousePositions() const;
 
 	/**
 	 * @brief Updates the internal action states

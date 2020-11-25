@@ -102,6 +102,10 @@ void Redraw::addRedrawCurrentArea(int32 left, int32 top, int32 right, int32 bott
 	numOfRedrawBox++;
 }
 
+void Redraw::addRedrawArea(const Common::Rect &rect) {
+	addRedrawArea(rect.left, rect.top, rect.right, rect.bottom);
+}
+
 void Redraw::addRedrawArea(int32 left, int32 top, int32 right, int32 bottom) {
 	if (left < SCREEN_TEXTLIMIT_LEFT) {
 		left = SCREEN_TEXTLIMIT_LEFT;
@@ -640,9 +644,10 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 			}
 			case koInventoryItem: {
 				const int32 item = overlay->info0;
+				const Common::Rect rect(10, 10, 69, 69);
 
-				_engine->_interface->drawSplittedBox(10, 10, 69, 69, 0);
-				_engine->_interface->setClip(10, 10, 69, 69);
+				_engine->_interface->drawSplittedBox(rect, 0);
+				_engine->_interface->setClip(rect);
 
 				_engine->_renderer->prepareIsoModel(_engine->_resources->inventoryTable[item]);
 				_engine->_renderer->setCameraPosition(40, 40, 128, 200, 200);
@@ -651,8 +656,8 @@ void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
 				overlayRotation += 1; // overlayRotation += 8;
 
 				_engine->_renderer->renderIsoModel(0, 0, 0, 0, overlayRotation, 0, _engine->_resources->inventoryTable[item]);
-				_engine->_menu->drawBox(10, 10, 69, 69);
-				addRedrawArea(10, 10, 69, 69);
+				_engine->_menu->drawBox(rect);
+				addRedrawArea(rect);
 				_engine->_gameState->initEngineProjections();
 				break;
 			}

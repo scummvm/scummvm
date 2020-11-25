@@ -150,7 +150,7 @@ private:
 	 * @param dialText
 	 * @param hover flag to know if should draw as a hover button or not
 	 */
-	void drawButtonGfx(const MenuSettings *menuSettings, int32 left, int32 top, int32 right, int32 bottom, int32 buttonId, const char *dialText, bool hover);
+	void drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &rect, int32 buttonId, const char *dialText, bool hover);
 	void plasmaEffectRenderFrame();
 	/**
 	 * Process the menu button draw

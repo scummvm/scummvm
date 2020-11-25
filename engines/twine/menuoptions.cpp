@@ -127,12 +127,9 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y) {
 	const int32 buttonDistanceY = halfButtonHeight * 2 + 5;
 	const int32 centerX = x * buttonDistanceX + borderLeft;
 	const int32 centerY = y * buttonDistanceY + borderTop;
-	const int32 left = centerX - halfButtonWidth;
-	const int32 right = centerX + halfButtonWidth;
-	const int32 top = centerY - halfButtonHeight;
-	const int32 bottom = centerY + halfButtonHeight;
+	const Common::Rect rect(centerX - halfButtonWidth, centerY - halfButtonHeight, centerX + halfButtonWidth, centerY + halfButtonHeight);
 
-	if (_engine->_input->isMouseHovering(left, top, right, bottom)) {
+	if (_engine->_input->isMouseHovering(rect)) {
 		setOnScreenKeyboard(x, y);
 	}
 
@@ -147,13 +144,13 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y) {
 
 	const bool selected = _onScreenKeyboardX == x && _onScreenKeyboardY == y;
 	if (selected) {
-		_engine->_interface->drawSplittedBox(left, top, right, bottom, 91);
+		_engine->_interface->drawSplittedBox(rect, 91);
 	} else {
-		_engine->_interface->blitBox(left, top, right, bottom, _engine->workVideoBuffer, left, top, _engine->frontVideoBuffer);
-		_engine->_interface->drawTransparentBox(left, top, right, bottom, 4);
+		_engine->_interface->blitBox(rect, _engine->workVideoBuffer, rect.left, rect.top, _engine->frontVideoBuffer);
+		_engine->_interface->drawTransparentBox(rect, 4);
 	}
 
-	_engine->_menu->drawBox(left, top, right, bottom);
+	_engine->_menu->drawBox(rect);
 
 	_engine->_text->setFontColor(15);
 	const uint8 character = (uint8)allowedCharIndex[idx];
@@ -161,7 +158,7 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y) {
 	const int32 textY = centerY - _engine->_text->getCharHeight(character) / 2;
 	_engine->_text->drawText(textX, textY, buffer);
 
-	_engine->copyBlockPhys(left, top, right, bottom);
+	_engine->copyBlockPhys(rect);
 }
 
 void MenuOptions::setOnScreenKeyboard(int x, int y) {
