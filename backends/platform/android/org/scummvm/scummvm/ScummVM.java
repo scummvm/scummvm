@@ -55,6 +55,8 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 	final public native void pushEvent(int type, int arg1, int arg2, int arg3,
 										int arg4, int arg5, int arg6);
 
+	final public native String getNativeVersionInfo();
+
 	// Callbacks from C++ peer instance
 	abstract protected void getDPI(float[] values);
 	abstract protected void displayMessageOnOSD(String msg);
@@ -78,6 +80,10 @@ public abstract class ScummVM implements SurfaceHolder.Callback, Runnable {
 		_sem_surface = new Object();
 		_svm_destroyed_callback = scummVMDestroyedCallback;
 		holder.addCallback(this);
+	}
+
+	final public String getInstallingScummVMVersionInfo() {
+		return getNativeVersionInfo();
 	}
 
 	// SurfaceHolder callback
