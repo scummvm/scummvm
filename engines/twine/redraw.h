@@ -24,6 +24,7 @@
 #define TWINE_REDRAW_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace TwinE {
 
@@ -139,6 +140,7 @@ public:
 	 * @param bottom end height to redraw the region
 	 */
 	void addRedrawArea(int32 left, int32 top, int32 right, int32 bottom);
+	void addRedrawArea(const Common::Rect &rect);
 
 	/**
 	 * Flip currentRedrawList regions in the screen

@@ -81,7 +81,7 @@ public:
 	 * @param dest destination screen buffer, in this case front buffer
 	 */
 	void blitBox(int32 left, int32 top, int32 right, int32 bottom, const Graphics::ManagedSurface &source, int32 leftDest, int32 topDest, Graphics::ManagedSurface &dest);
-
+	void blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, int32 leftDest, int32 topDest, Graphics::ManagedSurface &dest);
 	/**
 	 * Draws inside buttons transparent area
 	 * @param left start width to draw the button
@@ -91,11 +91,13 @@ public:
 	 * @param colorAdj index to adjust the transparent box color
 	 */
 	void drawTransparentBox(int32 left, int32 top, int32 right, int32 bottom, int32 colorAdj);
+	void drawTransparentBox(const Common::Rect &rect, int32 colorAdj);
 
 	void drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom, uint8 colorIndex);
 	void drawSplittedBox(const Common::Rect &rect, uint8 colorIndex);
 
 	void setClip(int32 left, int32 top, int32 right, int32 bottom);
+	void setClip(const Common::Rect &rect);
 	void saveClip(); // saveTextWindow
 	void loadClip(); // loadSavedTextWindow
 	void resetClip();

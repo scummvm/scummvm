@@ -152,6 +152,10 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 	}
 }
 
+void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, int32 leftDest, int32 topDest, Graphics::ManagedSurface &dest) {
+	blitBox(rect.left, rect.top, rect.right, rect.bottom, source, leftDest, topDest, dest);
+}
+
 void Interface::blitBox(int32 left, int32 top, int32 right, int32 bottom, const Graphics::ManagedSurface &source, int32 leftDest, int32 topDest, Graphics::ManagedSurface &dest) {
 	const int8 *s = (const int8 *)source.getBasePtr(left, top);
 	int8 *d = (int8 *)dest.getBasePtr(left, top);
@@ -173,6 +177,10 @@ void Interface::blitBox(int32 left, int32 top, int32 right, int32 bottom, const 
 		d += insideLine;
 		s += insideLine;
 	}
+}
+
+void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
+	drawTransparentBox(rect.left, rect.top, rect.right, rect.bottom, colorAdj);
 }
 
 void Interface::drawTransparentBox(int32 left, int32 top, int32 right, int32 bottom, int32 colorAdj) {
@@ -257,6 +265,10 @@ void Interface::drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom
 		}
 		ptr += offset;
 	}
+}
+
+void Interface::setClip(const Common::Rect &rect) {
+	setClip(rect.left, rect.top, rect.right, rect.bottom);
 }
 
 void Interface::setClip(int32 left, int32 top, int32 right, int32 bottom) {

@@ -426,12 +426,11 @@ void Debug::debugProcessWindow() {
 			if (_engine->shouldQuit()) {
 				break;
 			}
-			MouseStatusStruct mouseData;
-			_engine->_input->getMousePositions(&mouseData);
+			const Common::Point &point = _engine->_input->getMousePositions();
 
 			if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugMenuActivate)) {
 				int type = 0;
-				if ((type = debugProcessButton(mouseData.x, mouseData.y)) != NO_ACTION) { // process menu item
+				if ((type = debugProcessButton(point.x, point.y)) != NO_ACTION) { // process menu item
 					if (debugTypeUseMenu(type)) {
 						_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 						_engine->copyBlockPhys(205, 55, 634, 474);

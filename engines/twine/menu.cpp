@@ -243,62 +243,62 @@ void Menu::drawBox(int32 left, int32 top, int32 right, int32 bottom) {
 	drawBox(Common::Rect(left, top, right, bottom));
 }
 
-void Menu::drawButtonGfx(const MenuSettings *menuSettings, int32 left, int32 top, int32 right, int32 bottom, int32 buttonId, const char *dialText, bool hover) {
+void Menu::drawButtonGfx(const MenuSettings *menuSettings, const Common::Rect &rect, int32 buttonId, const char *dialText, bool hover) {
 	if (hover) {
 		if (menuSettings == &volumeMenuState && buttonId <= MenuButtonTypes::kMasterVolume && buttonId >= MenuButtonTypes::kMusicVolume) {
 			int32 newWidth = 0;
 			switch (buttonId) {
 			case MenuButtonTypes::kMusicVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kMusicSoundType);
-				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
+				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
 			case MenuButtonTypes::kSoundVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSFXSoundType);
-				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
+				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
 			case MenuButtonTypes::kCDVolume: {
 				const AudioCDManager::Status status = _engine->_system->getAudioCDManager()->getStatus();
-				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, status.volume);
+				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, status.volume);
 				break;
 			}
 			case MenuButtonTypes::kLineVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType);
-				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
+				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
 			case MenuButtonTypes::kMasterVolume: {
 				const int volume = _engine->_system->getMixer()->getVolumeForSoundType(Audio::Mixer::kPlainSoundType);
-				newWidth = _engine->_screens->crossDot(left, right, Audio::Mixer::kMaxMixerVolume, volume);
+				newWidth = _engine->_screens->crossDot(rect.left, rect.right, Audio::Mixer::kMaxMixerVolume, volume);
 				break;
 			}
 			}
 
-			processPlasmaEffect(left, top, 80);
+			processPlasmaEffect(rect.left, rect.top, 80);
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % 140 * 10 + 1900] = 255;
 			}
-			_engine->_interface->drawSplittedBox(newWidth, top, right, bottom, 68);
+			_engine->_interface->drawSplittedBox(newWidth, rect.top, rect.right, rect.bottom, 68);
 		} else {
-			processPlasmaEffect(left, top, 64);
+			processPlasmaEffect(rect.left, rect.top, 64);
 			if (!(_engine->getRandomNumber() % 5)) {
 				plasmaEffectPtr[_engine->getRandomNumber() % 320 * 10 + 6400] = 255;
 			}
 		}
 	} else {
-		_engine->_interface->blitBox(left, top, right, bottom, _engine->workVideoBuffer, left, top, _engine->frontVideoBuffer);
-		_engine->_interface->drawTransparentBox(left, top, right, bottom, 4);
+		_engine->_interface->blitBox(rect, _engine->workVideoBuffer, rect.left, rect.top, _engine->frontVideoBuffer);
+		_engine->_interface->drawTransparentBox(rect, 4);
 	}
 
-	drawBox(left, top, right, bottom);
+	drawBox(rect);
 
 	_engine->_text->setFontColor(15);
 	_engine->_text->setFontParameters(2, 8);
 	const int32 textSize = _engine->_text->getTextSize(dialText);
-	_engine->_text->drawText((SCREEN_WIDTH / 2) - (textSize / 2), top + 7, dialText);
+	_engine->_text->drawText((SCREEN_WIDTH / 2) - (textSize / 2), rect.top + 7, dialText);
 
-	_engine->copyBlockPhys(left, top, right, bottom);
+	_engine->copyBlockPhys(rect);
 }
 
 int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
@@ -360,24 +360,21 @@ int16 Menu::drawButtons(MenuSettings *menuSettings, bool hover) {
 		}
 		const int32 menuItemId = menuSettings->getButtonState(i);
 		const char *text = menuSettings->getButtonText(_engine->_text, i);
-		const uint16 mainMenuButtonWidthHalf = 550 / 2;
-		const uint16 mainMenuButtonHeightHalf = 50 / 2;
-		const int32 left = (SCREEN_WIDTH / 2) - mainMenuButtonWidthHalf;
-		const int32 right = (SCREEN_WIDTH / 2) + mainMenuButtonWidthHalf;
-		const int32 top = topHeight - mainMenuButtonHeightHalf;
-		const int32 bottom = topHeight + mainMenuButtonHeightHalf;
+		const int32 border = 45;
+		const int32 mainMenuButtonHeightHalf = 25;
+		const Common::Rect rect(border, topHeight - mainMenuButtonHeightHalf, SCREEN_WIDTH - border, topHeight + mainMenuButtonHeightHalf);
 		if (hover) {
 			if (i == buttonNumber) {
-				drawButtonGfx(menuSettings, left, top, right, bottom, menuItemId, text, hover);
+				drawButtonGfx(menuSettings, rect, menuItemId, text, hover);
 			}
 		} else {
 			if (i == buttonNumber) {
-				drawButtonGfx(menuSettings, left, top, right, bottom, menuItemId, text, true);
+				drawButtonGfx(menuSettings, rect, menuItemId, text, true);
 			} else {
-				drawButtonGfx(menuSettings, left, top, right, bottom, menuItemId, text, false);
+				drawButtonGfx(menuSettings, rect, menuItemId, text, false);
 			}
 		}
-		if (_engine->_input->isMouseHovering(left, top, right, bottom)) {
+		if (_engine->_input->isMouseHovering(rect)) {
 			mouseActiveButton = i;
 		}
 
