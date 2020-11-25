@@ -414,8 +414,8 @@ void TwinEEngine::initAll() {
 
 	_scene->sceneHero = _scene->getActor(OWN_ACTOR_SCENE_INDEX);
 
-	_redraw->renderRight = SCREEN_TEXTLIMIT_RIGHT;
-	_redraw->renderBottom = SCREEN_TEXTLIMIT_BOTTOM;
+	_redraw->renderRect.right = SCREEN_TEXTLIMIT_RIGHT;
+	_redraw->renderRect.bottom = SCREEN_TEXTLIMIT_BOTTOM;
 	// Set clip to fullscreen by default, allows main menu to render properly after load
 	_interface->resetClip();
 

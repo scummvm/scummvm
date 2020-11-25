@@ -203,11 +203,14 @@ void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
 
 	const int right = SCREEN_WIDTH - left;
 	const int bottom = top + PLASMA_HEIGHT;
-	_engine->_menu->drawBox(left, top, right, bottom);
-	_engine->_interface->drawTransparentBox(left + 1, top + 1, right - 1, bottom - 1, 3);
+	const Common::Rect rect(left, top, right, bottom);
+	Common::Rect rectBox(rect);
+	rectBox.grow(-1);
+	_engine->_menu->drawBox(rect);
+	_engine->_interface->drawTransparentBox(rectBox, 3);
 
 	_engine->_text->drawText(centerx - _engine->_text->getTextSize(playerName) / 2, top + 6, playerName);
-	_engine->copyBlockPhys(left, top, right, bottom);
+	_engine->copyBlockPhys(rect);
 }
 
 /**

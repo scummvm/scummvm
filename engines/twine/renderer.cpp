@@ -1273,10 +1273,10 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 	// prepare to render elements
 
 	if (numOfPrimitives == 0) {
-		_engine->_redraw->renderRight = -1;
-		_engine->_redraw->renderBottom = -1;
-		_engine->_redraw->renderLeft = -1;
-		_engine->_redraw->renderTop = -1;
+		_engine->_redraw->renderRect.right = -1;
+		_engine->_redraw->renderRect.bottom = -1;
+		_engine->_redraw->renderRect.left = -1;
+		_engine->_redraw->renderRect.top = -1;
 		return -1;
 	}
 
@@ -1335,20 +1335,20 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 
 			circleParam3 += 3;
 
-			if (circleParam4 + circleParam3 > _engine->_redraw->renderRight) {
-				_engine->_redraw->renderRight = circleParam4 + circleParam3;
+			if (circleParam4 + circleParam3 > _engine->_redraw->renderRect.right) {
+				_engine->_redraw->renderRect.right = circleParam4 + circleParam3;
 			}
 
-			if (circleParam4 - circleParam3 < _engine->_redraw->renderLeft) {
-				_engine->_redraw->renderLeft = circleParam4 - circleParam3;
+			if (circleParam4 - circleParam3 < _engine->_redraw->renderRect.left) {
+				_engine->_redraw->renderRect.left = circleParam4 - circleParam3;
 			}
 
-			if (circleParam5 + circleParam3 > _engine->_redraw->renderBottom) {
-				_engine->_redraw->renderBottom = circleParam5 + circleParam3;
+			if (circleParam5 + circleParam3 > _engine->_redraw->renderRect.bottom) {
+				_engine->_redraw->renderRect.bottom = circleParam5 + circleParam3;
 			}
 
-			if (circleParam5 - circleParam3 < _engine->_redraw->renderTop) {
-				_engine->_redraw->renderTop = circleParam5 - circleParam3;
+			if (circleParam5 - circleParam3 < _engine->_redraw->renderRect.top) {
+				_engine->_redraw->renderRect.top = circleParam5 - circleParam3;
 			}
 
 			circleParam3 -= 3;
@@ -1424,18 +1424,18 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEnt
 			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / 512 + orthoProjY;
 			pointPtrDest->z = coZ - coX - coY;
 
-			if (pointPtrDest->x < _engine->_redraw->renderLeft) {
-				_engine->_redraw->renderLeft = pointPtrDest->x;
+			if (pointPtrDest->x < _engine->_redraw->renderRect.left) {
+				_engine->_redraw->renderRect.left = pointPtrDest->x;
 			}
-			if (pointPtrDest->x > _engine->_redraw->renderRight) {
-				_engine->_redraw->renderRight = pointPtrDest->x;
+			if (pointPtrDest->x > _engine->_redraw->renderRect.right) {
+				_engine->_redraw->renderRect.right = pointPtrDest->x;
 			}
 
-			if (pointPtrDest->y < _engine->_redraw->renderTop) {
-				_engine->_redraw->renderTop = pointPtrDest->y;
+			if (pointPtrDest->y < _engine->_redraw->renderRect.top) {
+				_engine->_redraw->renderRect.top = pointPtrDest->y;
 			}
-			if (pointPtrDest->y > _engine->_redraw->renderBottom) {
-				_engine->_redraw->renderBottom = pointPtrDest->y;
+			if (pointPtrDest->y > _engine->_redraw->renderRect.bottom) {
+				_engine->_redraw->renderRect.bottom = pointPtrDest->y;
 			}
 
 			pointPtr++;
@@ -1463,12 +1463,12 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEnt
 
 				pointPtrDest->x = coX;
 
-				if (pointPtrDest->x < _engine->_redraw->renderLeft) {
-					_engine->_redraw->renderLeft = pointPtrDest->x;
+				if (pointPtrDest->x < _engine->_redraw->renderRect.left) {
+					_engine->_redraw->renderRect.left = pointPtrDest->x;
 				}
 
-				if (pointPtrDest->x > _engine->_redraw->renderRight) {
-					_engine->_redraw->renderRight = pointPtrDest->x;
+				if (pointPtrDest->x > _engine->_redraw->renderRect.right) {
+					_engine->_redraw->renderRect.right = pointPtrDest->x;
 				}
 			}
 
@@ -1482,10 +1482,10 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEnt
 
 				pointPtrDest->y = coY;
 
-				if (pointPtrDest->y < _engine->_redraw->renderTop)
-					_engine->_redraw->renderTop = pointPtrDest->y;
-				if (pointPtrDest->y > _engine->_redraw->renderBottom)
-					_engine->_redraw->renderBottom = pointPtrDest->y;
+				if (pointPtrDest->y < _engine->_redraw->renderRect.top)
+					_engine->_redraw->renderRect.top = pointPtrDest->y;
+				if (pointPtrDest->y > _engine->_redraw->renderRect.bottom)
+					_engine->_redraw->renderRect.bottom = pointPtrDest->y;
 			}
 
 			// Z projection
@@ -1612,10 +1612,10 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 	renderAngleZ = angleZ;
 
 	// model render size reset
-	_engine->_redraw->renderLeft = 32767;
-	_engine->_redraw->renderTop = 32767;
-	_engine->_redraw->renderRight = -32767;
-	_engine->_redraw->renderBottom = -32767;
+	_engine->_redraw->renderRect.left = 32767;
+	_engine->_redraw->renderRect.top = 32767;
+	_engine->_redraw->renderRect.right = -32767;
+	_engine->_redraw->renderRect.bottom = -32767;
 
 	if (isUsingOrhoProjection) {
 		renderX = x;
@@ -1702,7 +1702,7 @@ void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight,
 	xpos >>= 1;
 
 	setOrthoProjection(xpos, ypos, 0);
-	_engine->_interface->setClip(boxLeft, boxTop, tmpBoxRight, boxBottom);
+	_engine->_interface->setClip(Common::Rect(boxLeft, boxTop, tmpBoxRight, boxBottom));
 
 	if (angle == -1) {
 		ActorMoveStruct &move = _engine->_menu->moveMenu;

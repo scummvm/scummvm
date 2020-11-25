@@ -1768,8 +1768,9 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lCLEAR_TEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	drawVar1 = 0;
-	engine->_interface->drawSplittedBox(0, 0, 639, 240, 0);
-	engine->copyBlockPhys(0, 0, 639, 240);
+	const Common::Rect rect(0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT / 2);
+	engine->_interface->drawSplittedBox(rect, 0);
+	engine->copyBlockPhys(rect);
 	return 0;
 }
 

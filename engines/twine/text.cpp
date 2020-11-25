@@ -283,21 +283,23 @@ int32 Text::getTextSize(const char *dialogue) { // SizeFont
 }
 
 void Text::initDialogueBox() { // InitDialWindow
-	_engine->_interface->blitBox(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom, _engine->workVideoBuffer, _dialTextBoxLeft, _dialTextBoxTop, _engine->frontVideoBuffer);
+	_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _dialTextBox.left, _dialTextBox.top, _engine->frontVideoBuffer);
 
 	if (drawTextBoxBackground) {
-		_engine->_menu->drawBox(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom);
-		_engine->_interface->drawTransparentBox(_dialTextBoxLeft + 1, _dialTextBoxTop + 1, _dialTextBoxRight - 1, _dialTextBoxBottom - 1, 3);
+		_engine->_menu->drawBox(_dialTextBox);
+		Common::Rect rect(_dialTextBox);
+		rect.grow(-1);
+		_engine->_interface->drawTransparentBox(rect, 3);
 	}
 
-	_engine->copyBlockPhys(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom);
+	_engine->copyBlockPhys(_dialTextBox);
 	_fadeInCharactersPos = 0;
-	_engine->_interface->blitBox(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom, _engine->frontVideoBuffer, _dialTextBoxLeft, _dialTextBoxTop, _engine->workVideoBuffer);
+	_engine->_interface->blitBox(_dialTextBox, _engine->frontVideoBuffer, _dialTextBox.left, _dialTextBox.top, _engine->workVideoBuffer);
 }
 
 void Text::initInventoryDialogueBox() { // SecondInitDialWindow
-	_engine->_interface->blitBox(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom, _engine->workVideoBuffer, _dialTextBoxLeft, _dialTextBoxTop, _engine->frontVideoBuffer);
-	_engine->copyBlockPhys(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom);
+	_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _dialTextBox.left, _dialTextBox.top, _engine->frontVideoBuffer);
+	_engine->copyBlockPhys(_dialTextBox);
 	_fadeInCharactersPos = 0;
 }
 
@@ -315,10 +317,10 @@ void Text::initText(int32 index) {
 	_dialTextBoxCurrentLine = 0;
 	_progressiveTextBuffer[0] = '\0';
 	_fadeInCharactersPos = 0;
-	_dialTextYPos = _dialTextBoxLeft + 8;
+	_dialTextYPos = _dialTextBox.left + 8;
 	_progressiveTextEnd = false;
 	_progressiveTextNextPage = false;
-	_dialTextXPos = _dialTextBoxTop + 8;
+	_dialTextXPos = _dialTextBox.top + 8;
 	printText8Var8 = _currDialTextPtr;
 
 	// lba font is get while engine start
@@ -449,10 +451,10 @@ void Text::processTextLine() {
 }
 
 void Text::renderContinueReadingTriangle() {
-	const int32 right = _dialTextBoxRight - 3;
-	const int32 left = _dialTextBoxRight - 24;
-	const int32 top = _dialTextBoxBottom - 24;
-	const int32 bottom = _dialTextBoxBottom - 3;
+	const int32 right = _dialTextBox.right - 3;
+	const int32 left = _dialTextBox.right - 24;
+	const int32 top = _dialTextBox.bottom - 24;
+	const int32 bottom = _dialTextBox.bottom - 3;
 
 	_engine->_renderer->vertexCoordinates[0] = _dialTextStopColor;
 	_engine->_renderer->vertexCoordinates[1] = right;
@@ -515,12 +517,12 @@ int Text::updateProgressiveText() {
 			return 0;
 		}
 		if (_progressiveTextNextPage) {
-			_engine->_interface->blitBox(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom, _engine->workVideoBuffer, _dialTextBoxLeft, _dialTextBoxTop, _engine->frontVideoBuffer);
-			_engine->copyBlockPhys(_dialTextBoxLeft, _dialTextBoxTop, _dialTextBoxRight, _dialTextBoxBottom);
+			_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _dialTextBox.left, _dialTextBox.top, _engine->frontVideoBuffer);
+			_engine->copyBlockPhys(_dialTextBox);
 			_fadeInCharactersPos = 0;
 			_progressiveTextNextPage = false;
-			_dialTextYPos = _dialTextBoxLeft + 8;
-			_dialTextXPos = _dialTextBoxTop + 8;
+			_dialTextYPos = _dialTextBox.left + 8;
+			_dialTextXPos = _dialTextBox.top + 8;
 		}
 		if (*printText8Var8 == '\0') {
 			initProgressiveTextBuffer();
@@ -558,7 +560,7 @@ int Text::updateProgressiveText() {
 
 	const int32 lineHeight = 38;
 	_dialTextXPos += lineHeight;
-	_dialTextYPos = _dialTextBoxLeft + 8;
+	_dialTextYPos = _dialTextBox.left + 8;
 
 	if (_progressiveTextNextPage && !_progressiveTextEnd) {
 		renderContinueReadingTriangle();
@@ -736,10 +738,10 @@ bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 
 void Text::textClipFull() {
 	const int padding = 9;
-	_dialTextBoxLeft = padding - 1;
-	_dialTextBoxTop = padding - 1;
-	_dialTextBoxRight = SCREEN_WIDTH - padding;
-	_dialTextBoxBottom = SCREEN_HEIGHT - padding;
+	_dialTextBox.left = padding - 1;
+	_dialTextBox.top = padding - 1;
+	_dialTextBox.right = SCREEN_WIDTH - padding;
+	_dialTextBox.bottom = SCREEN_HEIGHT - padding;
 
 	_dialTextBoxLines = 11;
 	_dialTextBoxParam2 = 607;
@@ -747,10 +749,10 @@ void Text::textClipFull() {
 
 void Text::textClipSmall() {
 	const int padding = 17;
-	_dialTextBoxLeft = padding - 1;
-	_dialTextBoxTop = 334;
-	_dialTextBoxRight = SCREEN_WIDTH - padding;
-	_dialTextBoxBottom = SCREEN_HEIGHT - padding;
+	_dialTextBox.left = padding - 1;
+	_dialTextBox.top = 334;
+	_dialTextBox.right = SCREEN_WIDTH - padding;
+	_dialTextBox.bottom = SCREEN_HEIGHT - padding;
 
 	_dialTextBoxLines = 3;
 	_dialTextBoxParam2 = 591;

@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/rect.h"
 
 namespace TwinE {
 
@@ -205,10 +206,7 @@ private:
 	/** Dialogue text buffer size for cross coloring dialogues */
 	int32 _dialTextBufferSize = 0;
 
-	int32 _dialTextBoxLeft = 0;   // dialogueBoxLeft
-	int32 _dialTextBoxTop = 0;    // dialogueBoxTop
-	int32 _dialTextBoxRight = 0;  // dialogueBoxRight
-	int32 _dialTextBoxBottom = 0; // dialogueBoxBottom
+	Common::Rect _dialTextBox { 0, 0, 0, 0};
 
 	int32 _dialTextBoxLines = 0; // dialogueBoxParam1
 	int32 _dialTextBoxParam2 = 0; // dialogueBoxParam2
