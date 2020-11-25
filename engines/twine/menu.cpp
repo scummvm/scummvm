@@ -388,6 +388,8 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 	bool buttonsNeedRedraw = true;
 	const int32 numEntry = menuSettings->getButtonCount();
 	int32 maxButton = numEntry - 1;
+	Common::Point mousepos = _engine->_input->getMousePositions();
+	bool useMouse = true;
 
 	_engine->_input->enableKeyMap(uiKeyMapId);
 
@@ -401,17 +403,25 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 	do {
 		_engine->readKeys();
 
+		Common::Point newmousepos = _engine->_input->getMousePositions();
+		if (mousepos != newmousepos) {
+			useMouse = true;
+			mousepos = newmousepos;
+		}
+
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UIDown)) {
 			currentButton++;
 			if (currentButton == numEntry) { // if current button is the last, than next button is the first
 				currentButton = 0;
 			}
+			useMouse = false;
 			buttonsNeedRedraw = true;
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIUp)) {
 			currentButton--;
 			if (currentButton < 0) { // if current button is the first, than previous button is the last
 				currentButton = maxButton;
 			}
+			useMouse = false;
 			buttonsNeedRedraw = true;
 		}
 
@@ -510,7 +520,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 		if (buttonsNeedRedraw) {
 			// draw all buttons
 			const int16 mouseButtonHovered = drawButtons(menuSettings, false);
-			if (mouseButtonHovered != -1) {
+			if (useMouse && mouseButtonHovered != -1) {
 				currentButton = mouseButtonHovered;
 			}
 			menuSettings->setActiveButton(currentButton);
@@ -518,7 +528,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 
 		// draw plasma effect for the current selected button
 		const int16 mouseButtonHovered = drawButtons(menuSettings, true);
-		if (mouseButtonHovered != -1) {
+		if (useMouse && mouseButtonHovered != -1) {
 			if (mouseButtonHovered != currentButton) {
 				buttonsNeedRedraw = true;
 			}
