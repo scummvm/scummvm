@@ -11,7 +11,9 @@ From the Launcher, highlight a game on the games list, then select **Edit Game**
 .. figure:: ../images/settings/game.png
 
     The Game tab in the game-specific settings
-    
+
+All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description. 
+
 ,,,,,,,
 
 .. _gameid:

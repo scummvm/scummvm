@@ -18,6 +18,8 @@ For a comprehensive look at how to use these settings, check out our :doc:`../ad
 
     The Graphics tab in the global settings
 
+All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description. 
+
 ,,,,,,,
 
 .. _gfxmode:

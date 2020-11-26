@@ -4,12 +4,10 @@ Keyboard shortcuts
 
 ScummVM supports various in-game keyboard and mouse shortcuts, and since version 2.2.0 these can be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`, or in the :doc:`configuration file <../advanced_topics/configuration_file>`.
 
-For game-specific shortcuts, see the `wiki entry <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ for the game you are playing. 
+For game-specific controls, see the `wiki entry <https://wiki.scummvm.org/index.php?title=Category:Supported_Games>`_ for the game you are playing. 
 
+Default shortcuts are shown in the table. 
 
-
-Default keyboard shortcuts
-============================
 
 .. csv-table:: 
       :widths: 30 70
