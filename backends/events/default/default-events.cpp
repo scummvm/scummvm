@@ -174,7 +174,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			PauseToken pt;
 			if (g_engine)
 				pt = g_engine->pauseEngine();
-			GUI::MessageDialog alert(_("Do you really want to return to the Launcher?"), _("Launcher"), _("Cancel"));
+			GUI::MessageDialog alert(_("Do you really want to return to the Launcher?\nAny unsaved in-game progress will be lost."), _("Launcher"), _("Cancel"));
 			forwardEvent = _shouldReturnToLauncher = (alert.runModal() == GUI::kMessageOK);
 		} else
 			_shouldReturnToLauncher = true;
@@ -197,7 +197,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				PauseToken pt;
 				if (g_engine)
 					pt = g_engine->pauseEngine();
-				GUI::MessageDialog alert(_("Do you really want to quit?"), _("Quit"), _("Cancel"));
+				GUI::MessageDialog alert(_("Do you really want to quit?\nAny unsaved in-game progress will be lost."), _("Quit"), _("Cancel"));
 				forwardEvent = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
 			}
 			_confirmExitDialogActive = false;
