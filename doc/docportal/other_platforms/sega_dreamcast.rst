@@ -2,11 +2,10 @@
 Sega Dreamcast
 =============================
 
-Run ScummVM
-================
+This page contains all the information you need to get ScummVM up and running on a Sega Dreamcast.
 
-Prerequisites
-****************************
+What you'll need
+=================
 
 - A CD-R disc (80min/700mb).
 - A CD-RW drive.
@@ -14,8 +13,8 @@ Prerequisites
 - Software to create a bootable disc image, such as `BootDreams <https://dcemulation.org/index.php?title=BootDreams>`_ 
 - CD burning software such as Nero Burning ROM, ImgBurn or Alcohol120%.  
 
-Download the package
-*************************
+Running ScummVM
+==================================
 There are two ways to get ScummVM running on the Dreamcast:
 
 1. Download the ready-to-go Nero Image and Demos package and burn the extracted ``.nrg`` image to a CD-R using Nero Burning ROM. 
@@ -23,12 +22,12 @@ There are two ways to get ScummVM running on the Dreamcast:
 
 Both packages are available from the ScummVM `Downloads page <https://www.scummvm.org/downloads/>`_
 
-Create a disc from the Dreamcast Nero Image and Demos package
+Creating a disc from the Dreamcast Nero Image and Demos package
 ********************************************************************
 Use Nero Burning ROM to burn the ``.nrg`` file contained in the package to a CD-R disc. 
 
-Create a disc from the Dreamcast plain files package
-******************************************************
+Creating a disc from the Dreamcast plain files package
+********************************************************
 Create a directory on your computer. In this example, the directory is called ``ScummVMDC``.
 
 Copy the downloaded ``SCUMMVM.BIN`` and ``IP.BIN`` files into the ``ScummVMDC`` directory. These are the main boot and engine files required for ScummVM to run.
@@ -78,8 +77,8 @@ To burn the resulting image to disc, use any software capable of using those ima
 
     Use the lowest possible burning speed for best results; the Dreamcast is an older system and as such can have problems reading discs burned at high speeds.  If available, the 4x speed is ideal. Ensure that you use good quality discs from a reputable manufacturer. If possible, use archival grade discs.  
 
-Transfer game files
-=======================
+Transferring game files
+========================
 
 Game files can be included on the same CD as the ScummVM binary file, or on a separate disc.
 
@@ -90,12 +89,8 @@ ScummVM for the Dreamcast supports disc swapping from the GUI. It rescans after 
 Controls
 =================
 
-
 Default control map
 *********************
-
-These controls can also be manually configured in the :doc:`Keymaps tab <../settings/keymaps>`. See the :doc:`../use_scummvm/keyboard_shortcuts` page for common keyboard shortcuts. 
-
 
 .. csv-table::
     :header-rows: 2

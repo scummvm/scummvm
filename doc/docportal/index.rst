@@ -4,28 +4,29 @@
       :caption: The basics
       :hidden:
 
-      trial/*
-
-.. toctree::
-      :caption: Using ScummVM
-      :glob:
-      :hidden:
-
+      use_scummvm/install_computer
       use_scummvm/the_launcher
       use_scummvm/game_files
       use_scummvm/add_play_games
       use_scummvm/save_load_games
+      use_scummvm/keyboard_shortcuts
+      use_scummvm/how_to_settings
       use_scummvm/connect_cloud
       use_scummvm/LAN
-      use_scummvm/keyboard_shortcuts
-
-
+      
 .. toctree::
-      :caption: Settings
+      :caption: Other platforms
       :glob:
       :hidden:
 
-      settings/how_to_settings
+      other_platforms/*
+
+
+.. toctree::
+      :caption: The settings
+      :glob:
+      :hidden:
+
       settings/game
       settings/engine
       settings/graphics
@@ -68,13 +69,7 @@
       release_notes/*  
 
 
-.. toctree::
-      :caption: Other platforms
-      :glob:
-      :hidden:
 
-      get_started/*
-      ports/*
 
 
 ====================
@@ -91,69 +86,52 @@ While ScummVM was originally designed to run LucasArts' SCUMM games, over time s
 
 .. _firststeps:
 
-The basics
+Start here!
 ================
 
-We have guides to show you how to get ScummVM up and running on many different platforms:
+We have a user manual section covering all the basics:
 
 .. panels::
       :container: text-center mb-4
 
-      :doc:`trial/computer`
+      Installation
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      :doc:`Installing ScummVM on a computer <use_scummvm/install_computer>`
+
+      :doc:`use_scummvm/the_launcher`
 
       ---
-
-      :doc:`trial/phones`
-
-      ---
-
-      :doc:`trial/console`
-
-      ---
-
-      Other operating systems
-
       
-
-
-How do I use ScummVM?
-=========================
-
-So you have ScummVM installed, but now you need to know how to play some games! We have lots of useful information to help you out:
-
-.. panels::
-      :container: text-center mb-4
-
-      Understanding the interface
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-      :doc:`The Launcher <use_scummvm/the_launcher>` 
-
-      ---
-
       Playing games
-      ^^^^^^^^^^^^^^
+      ^^^^^^^^^^^^^^^
       :doc:`use_scummvm/game_files`
-      
+
       :doc:`use_scummvm/add_play_games`
 
       :doc:`use_scummvm/save_load_games`
 
+      ---
+   
+
+      Controls and settings
+      ^^^^^^^^^^^^^^^^^^^^^^^
       :doc:`use_scummvm/keyboard_shortcuts`
 
-      ---
+      :doc:`use_scummvm/how_to_settings`
 
-      Exploring the features
-      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      ---
+     
+      Useful features
+      ^^^^^^^^^^^^^^^^
+
       :doc:`use_scummvm/connect_cloud`
 
       :doc:`use_scummvm/LAN`
 
-      ---
 
-      Changing settings
-      ^^^^^^^^^^^^^^^^^^^^^
-      :doc:`settings/how_to_settings`
 
+
+      
 
 
 

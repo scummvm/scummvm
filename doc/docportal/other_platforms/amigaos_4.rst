@@ -2,16 +2,15 @@
 AmigaOS 4
 =============================
 
-Install ScummVM
-===================
+This page contains all the information you need to get ScummVM up and running on AmigaOS 4. 
 
-Prerequisites
-****************
+What you'll need
+===================
 
 - A system running Amiga OS 4
 
-Download and install ScummVM
-*********************************
+Installing ScummVM
+=====================================
 
 ScummVM is available for download from the `ScummVM Downloads page <https://www.scummvm.org/downloads/>`_ or the `OS4 Depot <http://www.os4depot.net>`_. 
 
@@ -26,10 +25,10 @@ Run the extracted ``ScummVM_Install`` script. This installer guides you through 
 To automatically keep ScummVM up to date through AmiUpdate, run the ``Autoinstall`` script. 
 
 
-Transfer game files
-=======================
+Transferring game files
+=========================
 
-See :doc:`../use_scummvm/add_play_games` for more information. 
+See :doc:`../use_scummvm/game_files` for more information. 
 
 For games on PC or Mac formatted discs, use the original platform to access the data files, and then transfer these to Amiga. Alternatively, if you have external hardware such as a Catweazel floppy disc controller, you might be able to use this to access the files. 
 
