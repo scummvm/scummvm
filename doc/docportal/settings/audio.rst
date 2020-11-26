@@ -16,6 +16,8 @@ Audio settings are found on four tabs:
 
 For a comprehensive look at how to use ScummVM's extensive audio settings, check out our :doc:`../advanced_topics/understand_audio` guide. 
 
+All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description. 
+
 .. _audiotab:
 
 The Audio tab 
@@ -72,7 +74,7 @@ Subtitle speed
 The Volume tab
 -----------------
 
-Use the Volume tab to set the relative volumes for various sounds.
+Use the Volume tab to set the relative volumes for various in-game sounds.
 
 
 .. figure:: ../images/settings/volume_game.png
@@ -118,7 +120,7 @@ Mute All
 The MIDI tab 
 ------------------------------
 
-Use the MIDI tab to change the settings of General MIDI devices.
+Use the MIDI tab to change the settings of General MIDI (GM) devices. 
 
 
 .. figure:: ../images/settings/MIDI.png
@@ -130,7 +132,7 @@ Use the MIDI tab to change the settings of General MIDI devices.
 .. _gm:
 
 GM Device
-	Specifies a preferred General MIDI (GM) device, which ScummVM uses if the **Preferred device** is set to **<default>** and General MIDI playback is required.   
+	Specifies a preferred General MIDI device, which ScummVM uses if the **Preferred device** is set to **<default>** and General MIDI playback is required.   
 
 	*gm_device* 
 
@@ -279,7 +281,7 @@ Interpolation
 The MT-32 tab 
 -----------------
 
-Use the MT-32 tab to change the settings of MT-32 devices.
+Use the MT-32 tab to change the settings of Roland MT-32 devices.
 
 
 .. figure:: ../images/settings/MT32.png

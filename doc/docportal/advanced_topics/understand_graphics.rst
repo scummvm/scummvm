@@ -28,11 +28,11 @@ A comparison of graphics modes
    
 .. figure:: /images/graphics/graphics_mode/2x.png
 
-   **2x**: No filtering, factor 2x. Default for non 640x480 games.
+   **2x**: No filtering, scales the image by a factor of 2. Default for non 640x480 games.
 
 .. figure:: ../images/graphics/graphics_mode/3x.png
    
-   **3x**: No filtering, factor 3x.
+   **3x**: No filtering, scales the image by a factor of 3.
 
 .. figure:: ../images/graphics/graphics_mode/2xsai.png
 
@@ -56,15 +56,15 @@ A comparison of graphics modes
 
 .. figure:: ../images/graphics/graphics_mode/hq2x.png
 
-    **HQ2x**: Very nice high quality filter, but slow. Factor 2x.
+    **HQ2x**: Very nice high quality filter, but slow. Uses lookup tables to create anti-aliased output. Factor 2x.
 
 .. figure:: ../images/graphics/graphics_mode/hq3x.png
 
-    **HQ3x**: Very nice high quality filter, but slow. Factor 3x.
+    **HQ3x**: Very nice high quality filter, but slow. Uses lookup tables to create anti-aliased output. Factor 3x.
 
 .. figure:: ../images/graphics/graphics_mode/tv2x.png
 
-    **TV2x**: Interlace filter, tries to emulate a TV. Factor 2x.
+    **TV2x**: Interlace filter. Introduces scan lines to emulate a TV. Factor 2x.
 
 .. figure:: ../images/graphics/graphics_mode/dotmatrix.png
 
@@ -80,9 +80,11 @@ To switch between graphics modes, press :kbd:`Ctrl + Alt` and :kbd:`1` to :kbd:`
 OpenGL mode
 **************
 
-OpenGL graphics mode works a little differently to the other graphics modes. Instead of applying the aspect ratio and stretch mode settings one after the other (and after the graphics mode scaling has been applied), it does all the scaling and stretching in one step, going directly from the original game resolution to the final display resolution. 
+OpenGL graphics mode works a little differently to the other graphics modes. Instead of applying the aspect ratio and stretch mode settings one after the other (and after the graphics mode scaling has been applied), it does all the scaling and stretching in one step, going directly from the original game resolution to the final display resolution. OpenGL mode uses hardware rendering, instead of software rendering. 
 
 Output is controlled by your window size (or screen resolution if in full screen) and the stretch mode selected, as well as the **Filter graphics** option. 
+
+
 
 .. _aspect:
 
@@ -152,5 +154,7 @@ Filter graphics
 ----------------
 
 When enabled, ScummVM uses bilinear interpolation instead of nearest neighbor for the :ref:`aspect ratio <aspect>` and :ref:`stretch mode <stretch>`. It does not affect the graphics mode scaling unless OpenGL is selected, in which case it determines how the OpenGL scaling is done. 
+
+Nearest neighbor is a simple way to scale an image; each pixel becomes multiple pixels of the same color. While this preserves the sharper details in a pixel art image, it also creates "jagged" edges as the image is scaled up. Bilinear interpolation finds the average color between pixel color values and fills in missing pixel, which results in a "smoothed" image. 
 
 To toggle between bilinear interpolation and nearest neighbor, press :kbd:`Ctrl+Alt+f`.
