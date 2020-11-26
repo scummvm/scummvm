@@ -291,6 +291,10 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 		if (!patch)
 			patch = PatchPtr(new Patch());
 		_currentScreen->save(patch);
+		if (!_previousScreenName.empty()) {
+			patch->prevScreenName = _previousScreenName;
+			patch->hasPreviousScreen = 1;
+		}
 		patch->characterPresent = _currentCharacter != nullptr;
 		if (_currentCharacter) {
 			patch->characterPosition = _currentCharacter->position();
@@ -323,6 +327,8 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 		}
 		if (!patch->defaultMouseCursor.empty())
 			loadDefaultMouseCursor(patch->defaultMouseCursor);
+		if (patch->hasPreviousScreen)
+			_previousScreenName = patch->prevScreenName;
 	}
 	reAddInventory();
 	_navigatedToPreviousScreen = false;
