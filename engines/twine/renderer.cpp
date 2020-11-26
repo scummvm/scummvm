@@ -1026,15 +1026,10 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
 }
 
 int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, renderTabEntry **renderTabEntryPtr) {
-	int16 counter;
-	int16 type;
-
 	int32 bestDepth;
 	int32 currentDepth;
 	int32 bestPoly = 0;
 	//	int32 ecx;
-
-	pointTab *currentVertex;
 
 	// prepare polygons
 
@@ -1065,7 +1060,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 				pointer += 2;
 				edi += 4;
 
-				counter = destinationHeader->numOfVertex;
+				int16 counter = destinationHeader->numOfVertex;
 
 				bestDepth = -32000;
 				renderV19 = edi;
@@ -1079,7 +1074,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 
 					currentComputedVertex->shadeValue = shadeValue;
 
-					currentVertex = &flattenPoints[currentPolyVertex->dataOffset / sizeof(pointTab)];
+					pointTab *currentVertex = &flattenPoints[currentPolyVertex->dataOffset / sizeof(pointTab)];
 					pointTab *destinationVertex = (pointTab *)(edi + 2);
 
 					destinationVertex->x = currentVertex->x;
@@ -1093,7 +1088,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
-				} while (--counter);
+				} while (--counter > 0);
 			} else if (polyRenderType >= POLYGONTYPE_GOURAUD) { // only 1 shade value is used
 				polyHeader *destinationHeader = (polyHeader *)edi;
 
@@ -1111,13 +1106,13 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 				edi += 4;
 				renderV19 = edi;
 				bestDepth = -32000;
-				counter = destinationHeader->numOfVertex;
+				int16 counter = destinationHeader->numOfVertex;
 
 				do {
 					int32 eax = *((const int16 *)pointer);
 					pointer += 2;
 
-					currentVertex = &flattenPoints[eax / sizeof(pointTab)];
+					pointTab *currentVertex = &flattenPoints[eax / sizeof(pointTab)];
 
 					pointTab *destinationVertex = (pointTab *)(edi + 2);
 
@@ -1131,7 +1126,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
-				} while (--counter);
+				} while (--counter > 0);
 			} else { // no shade is used
 				polyHeader *destinationHeader = (polyHeader *)edi;
 
@@ -1145,13 +1140,13 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 				bestDepth = -32000;
 				renderV19 = edi;
 				int32 eax = 0;
-				counter = currentPolyHeader->numOfVertex;
+				int16 counter = currentPolyHeader->numOfVertex;
 
 				do {
 					eax = *((const int16 *)pointer);
 					pointer += 2;
 
-					currentVertex = &flattenPoints[eax / sizeof(pointTab)];
+					pointTab *currentVertex = &flattenPoints[eax / sizeof(pointTab)];
 
 					pointTab *destinationVertex = (pointTab *)(edi + 2);
 
@@ -1165,7 +1160,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
-				} while (--(counter));
+				} while (--counter > 0);
 			}
 
 			uint8 *render24 = edi;
@@ -1310,7 +1305,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 	renderV19 = pointer;
 
 	do {
-		type = renderTabEntryPtr2->renderType;
+		int16 type = renderTabEntryPtr2->renderType;
 		pointer = renderTabEntryPtr2->dataPtr;
 		renderV19 += 8;
 
