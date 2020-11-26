@@ -5498,6 +5498,35 @@ static const uint16 kq6PatchRoom407LookMessage[] = {
 	PATCH_END
 };
 
+// After lighting the torch in the dark catacombs room and then re-entering,
+//  using items such as a book results in a message that the room is too dark.
+//  rm406:scriptCheck tests for darkness with a local variable that is set when
+//  lighting the torch instead of a persistent global. We could change the
+//  darkness test but it turns out that this method is never called in the dark.
+//  KQ6Room:setScript only calls scriptCheck when ego:view is 900 and that is
+//  only true once the torch is lit.
+//
+// We fix this by patching rm406:scriptCheck to always allow items since the
+//  condition it tries to prevent can never occur.
+//
+// Applies to: All versions
+// Responsible method: rm406:scriptCheck
+static const uint16 kq6SignatureDarkRoomInventory[] = {
+	0x3f, 0x01,                         // link 01
+	0x35, 0x00,                         // ldi 00
+	0xa5, 0x00,                         // sat temp0
+	0x8b, SIG_MAGICDWORD, 0x01,         // lsl 01
+	0x35, 0x64,                         // ldi 64
+	0x22,                               // lt? [ has lightItUp not run yet? ]
+	SIG_END
+};
+
+static const uint16 kq6PatchDarkRoomInventory[] = {
+	0x35, 0x01,                         // ldi 01
+	0x48,                               // ret [ return true, allow items ]
+	PATCH_END
+};
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2.
 //  This patch gets enabled when the user selects "both" in the ScummVM
 //  "Speech + Subtitles" menu. We currently use global[98d] to hold a kMemory
@@ -5945,6 +5974,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffItemFloatFix,            kq6PatchCliffItemFloatFix },
 	{  true,   405, "fix catacombs room message",                     1, kq6SignatureRoom405LookMessage,           kq6PatchRoom405LookMessage },
+	{  true,   406, "fix catacombs dark room inventory",              1, kq6SignatureDarkRoomInventory,           kq6PatchDarkRoomInventory },
 	{  true,   407, "fix catacombs room message",                     1, kq6SignatureRoom407LookMessage,           kq6PatchRoom407LookMessage },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
 	{  true,   480, "fix getting baby tears",                         1, kq6SignatureGetBabyTears,                 kq6PatchGetBabyTears },
