@@ -21,8 +21,8 @@
  */
 
 //include <string.h>
-#include "ags/shared/ac/statobj/staticarray.h"
-#include "ags/shared/ac/dynobj/cc_dynamicobject.h"
+#include "ags/engine/ac/statobj/staticarray.h"
+#include "ags/engine/ac/dynobj/cc_dynamicobject.h"
 
 namespace AGS3 {
 

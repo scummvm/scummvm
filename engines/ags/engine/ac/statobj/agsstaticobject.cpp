@@ -21,9 +21,9 @@
  */
 
 //include <string.h>
-#include "ags/shared/ac/statobj/agsstaticobject.h"
-#include "ags/shared/ac/game.h"
-#include "ags/shared/ac/gamestate.h"
+#include "ags/engine/ac/statobj/agsstaticobject.h"
+#include "ags/engine/ac/game.h"
+#include "ags/engine/ac/gamestate.h"
 
 namespace AGS3 {
 
