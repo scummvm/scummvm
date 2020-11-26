@@ -579,11 +579,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Note: There are four versions of the binary included on the disc.
 	// 5.6, 6, and 9 Meg variants all exist too.
 	MACGAME("jewels", "", "Jewels 11 Meg", "339c89a148c4ff2c5c815c62ac006325", -1, 400),
-	MACDEMO("jewels", "Two-Minute Demo", "Two-Minute Demo", "01be45e7241194dad07938e7059b88e3", -1, 400),
 
 	WINGAME("jewels", "", "JEWELS.EXE", "bb6d81471d166088260090472c6c3a87", -1, 400),
 	WINDEMO("jewels", "Demo", "JEWELS.EXE", "abcc448c035e88d4edb4a29034fd1e34", -1, 400),
-	WINDEMO("jewels", "Two-Minute Demo", "DEMO.EXE", "ebee52d3c4280674c600177df5b09da0", -1, 400),
 
 	MACGAME("jman", "Turbo!", "JMP Turbo", "cc3321069072b90f091f220bba16e4d4", -1, 400), // original name is JMP Turbo™
 	MACGAME("jman", "Making Of", "The Journey", "cc3321069072b90f091f220bba16e4d4", -1, 400),
