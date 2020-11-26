@@ -164,7 +164,8 @@ struct ScopedEngineFreeze {
 };
 
 struct ScopedCursor {
-	ScopedCursor(const TwinEEngine* engine);
+	TwinEEngine* _engine;
+	ScopedCursor(TwinEEngine* engine);
 	~ScopedCursor();
 };
 
@@ -172,6 +173,7 @@ class TwinEEngine : public Engine {
 private:
 	int32 isTimeFreezed = 0;
 	int32 saveFreezedTime = 0;
+	int32 _mouseCursorState = 0;
 	ActorMoveStruct loopMovePtr; // mainLoopVar1
 	PauseToken _pauseToken;
 	TwineGameType _gameType;
@@ -198,6 +200,9 @@ public:
 	void wipeSaveSlot(int slot);
 	SaveStateList getSaveSlots() const;
 	void autoSave();
+
+	void pushMouseCursorVisible();
+	void popMouseCursorVisible();
 
 	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; };
 	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; };
