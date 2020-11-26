@@ -882,6 +882,7 @@ public class CustomKeyboardView extends View implements View.OnClickListener {
     }
 
     private void detectAndSendKey(int index, int x, int y, long eventTime, boolean isRepeated, boolean isReleaseKey) {
+        //Log.d(ScummVM.LOG_TAG, "CustomKeyboardView:: index =" + index + "isRelease: "+ isReleaseKey);
         if (index != NOT_A_KEY && index < mKeys.length) {
             final CustomKeyboard.CustomKey key = mKeys[index];
             if (key.text != null) {
