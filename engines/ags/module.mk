@@ -79,6 +79,34 @@ MODULE_OBJS = \
 	shared/util/textstreamwriter.o \
 	shared/util/version.o \
 	shared/util/wgt2allg.o \
+	engine/ac/dynobj/cc_agsdynamicobject.o \
+	engine/ac/dynobj/cc_audiochannel.o \
+	engine/ac/dynobj/cc_audioclip.o \
+	engine/ac/dynobj/cc_character.o \
+	engine/ac/dynobj/cc_dialog.o \
+	engine/ac/dynobj/cc_dynamicarray.o \
+	engine/ac/dynobj/cc_dynamicobject.o \
+	engine/ac/dynobj/cc_gui.o \
+	engine/ac/dynobj/cc_guiobject.o \
+	engine/ac/dynobj/cc_hotspot.o \
+	engine/ac/dynobj/cc_inventory.o \
+	engine/ac/dynobj/cc_object.o \
+	engine/ac/dynobj/cc_region.o \
+	engine/ac/dynobj/cc_serializer.o \
+	engine/ac/dynobj/managedobjectpool.o \
+	engine/ac/dynobj/scriptcamera.o \
+	engine/ac/dynobj/scriptdatetime.o \
+	engine/ac/dynobj/scriptdialogoptionsrendering.o \
+	engine/ac/dynobj/scriptdict.o \
+	engine/ac/dynobj/scriptdrawingsurface.o \
+	engine/ac/dynobj/scriptdynamicsprite.o \
+	engine/ac/dynobj/scriptfile.o \
+	engine/ac/dynobj/scriptoverlay.o \
+	engine/ac/dynobj/scriptstring.o \
+	engine/ac/dynobj/scriptuserobject.o \
+	engine/ac/dynobj/scriptviewframe.o \
+	engine/ac/dynobj/scriptviewport.o \
+	engine/ac/dynobj/scriptset.o \
 	engine/debugging/consoleoutputtarget.o \
 	engine/debugging/debug.o \
 	engine/debugging/filebasedagsdebugger.o \

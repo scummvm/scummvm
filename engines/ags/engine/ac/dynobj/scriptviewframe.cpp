@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/shared/ac/dynobj/scriptviewframe.h"
+#include "ags/engine/ac/dynobj/scriptviewframe.h"
 
 namespace AGS3 {
 

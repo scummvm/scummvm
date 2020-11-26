@@ -20,8 +20,8 @@
  *
  */
 
-#include "ags/shared/ac/dynobj/cc_hotspot.h"
-#include "ags/shared/ac/dynobj/scripthotspot.h"
+#include "ags/engine/ac/dynobj/cc_hotspot.h"
+#include "ags/engine/ac/dynobj/scripthotspot.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/game/roomstruct.h"
 

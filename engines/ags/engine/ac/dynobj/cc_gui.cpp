@@ -20,8 +20,8 @@
  *
  */
 
-#include "ags/shared/ac/dynobj/cc_gui.h"
-#include "ags/shared/ac/dynobj/scriptgui.h"
+#include "ags/engine/ac/dynobj/cc_gui.h"
+#include "ags/engine/ac/dynobj/scriptgui.h"
 
 namespace AGS3 {
 

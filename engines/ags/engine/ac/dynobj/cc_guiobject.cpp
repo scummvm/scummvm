@@ -20,8 +20,8 @@
  *
  */
 
-#include "ags/shared/ac/dynobj/cc_guiobject.h"
-#include "ags/shared/ac/dynobj/scriptgui.h"
+#include "ags/engine/ac/dynobj/cc_guiobject.h"
+#include "ags/engine/ac/dynobj/scriptgui.h"
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/gui/guiobject.h"
 

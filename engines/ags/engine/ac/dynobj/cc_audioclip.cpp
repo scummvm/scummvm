@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/shared/ac/dynobj/cc_audioclip.h"
+#include "ags/engine/ac/dynobj/cc_audioclip.h"
 #include "ags/shared/ac/dynobj/scriptaudioclip.h"
 #include "ags/shared/ac/gamesetupstruct.h"
 

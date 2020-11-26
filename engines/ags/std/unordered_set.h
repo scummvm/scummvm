@@ -20,48 +20,24 @@
  *
  */
 
-#ifndef AGS_STD_MAP_H
-#define AGS_STD_MAP_H
+#ifndef AGS_STD_UNORDERED_SET_H
+#define AGS_STD_UNORDERED_SET_H
 
-#include "common/hashmap.h"
-#include "ags/std/utility.h"
+#include "common/array.h"
+//#include <unordered_set>
 
 namespace AGS3 {
 namespace std {
 
-template<class Key, class Val, class HashFunc = Common::Hash<Key>,
-         class EqualFunc = Common::EqualTo<Key> >
-class map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
+template <class Key, class Hash = Common::Hash<Key>, class Pred = Common::EqualTo<Key> >
+class unordered_set {
+private:
+	Hash _hash;
+	Pred _comparitor;
 public:
-	using iterator = typename Common::HashMap<Key, Val, HashFunc, EqualFunc>::iterator;
+	unordered_set() {}
 
-	void insert(pair<Key, Val> elem) {
-		this->operator[](elem.first) = elem.second;
-	}
-
-	// FUNCTION TEMPLATE lower_bound
-	iterator lower_bound(Key &val) {
-		iterator it;
-		for (it = this->begin(); it != this->end(); ++it) {
-			if (it->_key >= val)
-				break;
-		}
-
-		return it;
-	}
-};
-
-template<class Key, class Val, class HashFunc = Common::Hash<Key>,
-         class EqualFunc = Common::EqualTo<Key> >
-class unordered_map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
-public:
-	void insert(pair<Key, Val> elem) {
-		this->operator[](elem.first) = elem.second;
-	}
-
-	void reserve(size_t size) {
-		// No implementation
-	}
+	// TODO: Implement whatever unordered_set methods are needed
 };
 
 } // namespace std

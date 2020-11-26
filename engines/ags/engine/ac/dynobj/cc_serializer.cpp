@@ -21,18 +21,18 @@
  */
 
 //include <string.h>
-#include "ags/shared/ac/dynobj/cc_serializer.h"
-#include "ags/shared/ac/dynobj/all_dynamicclasses.h"
-#include "ags/shared/ac/dynobj/all_scriptclasses.h"
-#include "ags/shared/ac/dynobj/scriptcamera.h"
-#include "ags/shared/ac/dynobj/scriptcontainers.h"
-#include "ags/shared/ac/dynobj/scriptfile.h"
-#include "ags/shared/ac/dynobj/scriptuserobject.h"
-#include "ags/shared/ac/dynobj/scriptviewport.h"
-#include "ags/shared/ac/game.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/plugin/agsplugin.h"
-#include "ags/shared/plugin/pluginobjectreader.h"
+#include "ags/engine/ac/dynobj/cc_serializer.h"
+#include "ags/engine/ac/dynobj/all_dynamicclasses.h"
+#include "ags/engine/ac/dynobj/all_scriptclasses.h"
+#include "ags/engine/ac/dynobj/scriptcamera.h"
+#include "ags/engine/ac/dynobj/scriptcontainers.h"
+#include "ags/engine/ac/dynobj/scriptfile.h"
+#include "ags/engine/ac/dynobj/scriptuserobject.h"
+#include "ags/engine/ac/dynobj/scriptviewport.h"
+#include "ags/engine/ac/game.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/plugin/agsplugin.h"
+#include "ags/engine/plugin/pluginobjectreader.h"
 
 namespace AGS3 {
 

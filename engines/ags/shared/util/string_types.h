@@ -78,6 +78,12 @@ struct IgnoreCase_Hash {
 	}
 };
 
+struct IgnoreCase_LessThan {
+	bool operator()(const AGS3::AGS::Shared::String &x, const AGS3::AGS::Shared::String &y) const {
+		return x.CompareNoCase(y) < 0;
+	}
+};
+
 } // namespace AGS3
 
 namespace Common {
@@ -100,33 +106,6 @@ struct Hash<AGS3::AGS::Shared::String> {
 namespace AGS3 {
 namespace AGS {
 namespace Shared {
-
-#if 0
-//
-// Various comparison functors
-//
-
-// Test case-insensitive String equality
-struct StrEqNoCase : public std::binary_function<String, String, bool> {
-	bool operator()(const String &s1, const String &s2) const {
-		return s1.CompareNoCase(s2) == 0;
-	}
-};
-
-// Case-insensitive String less
-struct StrLessNoCase : public std::binary_function<String, String, bool> {
-	bool operator()(const String &s1, const String &s2) const {
-		return s1.CompareNoCase(s2) < 0;
-	}
-};
-
-// Compute case-insensitive hash for a String object
-struct HashStrNoCase : public std::unary_function<String, size_t> {
-	size_t operator()(const String &key) const {
-		return FNV::Hash_LowerCase(key.GetCStr(), key.GetLength());
-	}
-};
-#endif
 
 typedef std::vector<String> StringV;
 typedef std::unordered_map<String, String> StringMap;

@@ -20,8 +20,8 @@
  *
  */
 
-//include <memory.h>
-#include "ags/shared/scriptuserobject.h"
+#include "ags/std/memory.h"
+#include "ags/engine/ac/dynobj/scriptuserobject.h"
 
 namespace AGS3 {
 

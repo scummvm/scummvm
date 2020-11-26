@@ -31,11 +31,11 @@ namespace std {
 /**
  * Derives the ScummVM SortedArray to match the std::set class
  */
-template<class T, class EqualFunc = Common::Less<T> >
+template<class T, class Comparitor = Common::Less<T> >
 class set : public Common::SortedArray<T, const T &> {
 private:
 	static int ComparatorFn(const T &a, const T &b) {
-		return EqualFunc()(a, b) ? -1 : 0;
+		return Comparitor()(a, b) ? -1 : 0;
 	}
 public:
 	using const_iterator = typename Common::SortedArray<T, const T &>::const_iterator;
