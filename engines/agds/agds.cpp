@@ -310,16 +310,17 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 	_animations.clear();
 
 	auto patch = getPatch(name);
+	auto screenObject = loadObject(name);
+	bool doPatch = patch && _navigatedToPreviousScreen;
 
 	_currentScreenName = name;
-	auto screenObject = loadObject(name);
 	_currentScreen = new Screen(this, screenObject);
-	if (patch)
+	if (doPatch)
 		screenObject->allowCalls(false);
 
 	runProcess(screenObject);
 
-	if (patch &&_navigatedToPreviousScreen) {
+	if (doPatch) {
 		_currentScreen->load(patch);
 		if (_currentCharacter && patch->characterPresent) {
 			_currentCharacter->position(patch->characterPosition);
