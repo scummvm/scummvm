@@ -184,8 +184,6 @@ private:
 	/** Current dialogue text size */
 	int32 _currDialTextSize = 0;
 
-	/** Dialogue text size */
-	int32 _dialTextSize = 0;
 	/** Pixel size between dialogue text */
 	int32 _dialSpaceBetween = 0;
 	/** Pixel size of the space character */
