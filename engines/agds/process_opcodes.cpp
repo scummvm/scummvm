@@ -1237,7 +1237,8 @@ void Process::setNextScreenSaveInHistory() {
 
 void Process::loadPreviousScreen() {
 	debug("loadPreviousScreen");
-	suspend(kExitCodeLoadPreviousScreenObject);
+	_engine->returnToPreviousScreen();
+	suspend();
 }
 
 void Process::disableInventory() {

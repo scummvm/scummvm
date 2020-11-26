@@ -40,8 +40,6 @@ namespace AGDS {
 		kExitCodeExitScreen						= 15,
 		kExitCodeCloseInventory					= 16,
 		kExitCodeSaveGame						= 17,
-
-		kExitCodeLoadPreviousScreenObject		= 99
 	};
 
 }
