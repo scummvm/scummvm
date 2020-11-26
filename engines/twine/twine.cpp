@@ -660,6 +660,16 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			processInventoryAction();
 		}
 
+		if (_input->toggleActionIfActive(TwinEActionType::ChangeBehaviourNormal)) {
+			_actor->setBehaviour(HeroBehaviourType::kNormal);
+		} else if (_input->toggleActionIfActive(TwinEActionType::ChangeBehaviourAthletic)) {
+			_actor->setBehaviour(HeroBehaviourType::kAthletic);
+		} else if (_input->toggleActionIfActive(TwinEActionType::ChangeBehaviourAggressive)) {
+			_actor->setBehaviour(HeroBehaviourType::kAggressive);
+		} else if (_input->toggleActionIfActive(TwinEActionType::ChangeBehaviourDiscreet)) {
+			_actor->setBehaviour(HeroBehaviourType::kDiscrete);
+		}
+
 		// Process behaviour menu
 		if ((_input->isActionActive(TwinEActionType::BehaviourMenu, false) ||
 		     _input->isActionActive(TwinEActionType::QuickBehaviourNormal, false) ||

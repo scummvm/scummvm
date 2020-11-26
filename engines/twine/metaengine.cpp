@@ -227,22 +227,42 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("MOUSE_LEFT");
 		gameKeyMap->addAction(act);
 
-		act = new Action("NORMALBEHAVIOUR", _("Normal Behaviour"));
+		act = new Action("CHANGETONORMALBEHAVIOUR", _("Normal Behaviour"));
+		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourNormal);
+		act->addDefaultInputMapping("1");
+		gameKeyMap->addAction(act);
+
+		act = new Action("CHANGETOATHLETICBEHAVIOUR", _("Athletic Behaviour"));
+		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourAthletic);
+		act->addDefaultInputMapping("2");
+		gameKeyMap->addAction(act);
+
+		act = new Action("CHANGETOAGGRESSIVEBEHAVIOUR", _("Aggressive Behaviour"));
+		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourAggressive);
+		act->addDefaultInputMapping("3");
+		gameKeyMap->addAction(act);
+
+		act = new Action("CHANGETODISCREETBEHAVIOUR", _("Discreet Behaviour"));
+		act->setCustomEngineActionEvent(TwinEActionType::ChangeBehaviourDiscreet);
+		act->addDefaultInputMapping("4");
+		gameKeyMap->addAction(act);
+
+		act = new Action("NORMALBEHAVIOUR", _("Normal Behaviour UI"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourNormal);
 		act->addDefaultInputMapping("F1");
 		gameKeyMap->addAction(act);
 
-		act = new Action("ATHLETICBEHAVIOUR", _("Athletic Behaviour"));
+		act = new Action("ATHLETICBEHAVIOUR", _("Athletic Behaviour UI"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourAthletic);
 		act->addDefaultInputMapping("F2");
 		gameKeyMap->addAction(act);
 
-		act = new Action("AGGRESSIVEBEHAVIOUR", _("Aggressive Behaviour"));
+		act = new Action("AGGRESSIVEBEHAVIOUR", _("Aggressive Behaviour UI"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourAggressive);
 		act->addDefaultInputMapping("F3");
 		gameKeyMap->addAction(act);
 
-		act = new Action("DISCREETBEHAVIOUR", _("Discreet Behaviour"));
+		act = new Action("DISCREETBEHAVIOUR", _("Discreet Behaviour UI"));
 		act->setCustomEngineActionEvent(TwinEActionType::QuickBehaviourDiscreet);
 		act->addDefaultInputMapping("F4");
 		gameKeyMap->addAction(act);
