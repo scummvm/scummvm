@@ -28,7 +28,7 @@
    color: #cc6600;
 }
 
-/* Change header size*/
+/* Change H4 header size*/
 
 h4 {
    font-size: 100% !important;
@@ -40,4 +40,20 @@ h4 {
    padding: 5px !important;
    white-space: normal;
    color: #000000;
+}
+
+/* Change color of tabs*/
+
+.tabbed-set>input:checked+label {
+   border-color: #cc6600 !important;
+   color: #cc6600 !important;
+}
+
+.tabbed-set>label {
+   color: #ffbb77 !important;
+}
+
+.tabbed-content {
+   box-shadow: 0 -.0625rem #ffd3a8,0 .0625rem #ffd3a8 !important;
+
 }

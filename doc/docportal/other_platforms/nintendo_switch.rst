@@ -2,16 +2,15 @@
 Nintendo Switch
 =============================
 
-Install ScummVM
-===================
+This page contains all the information you need to get ScummVM up and running on a Nintendo Switch.
 
-Prerequisites
-****************
+What you'll need
+===================
 
 - A homebrew-enabled Nintendo Switch console. How to enable homebrew is outside the scope of this documentation.
 
-Download and install ScummVM
-*******************************
+Installing ScummVM
+=======================================
 
 The Nintendo Switch package is available for download on the ScummVM `Downloads page <https://www.scummvm.org/downloads>`_.
 
@@ -20,7 +19,7 @@ Download the zip file to a computer, and extract the files.
 Copy the extracted ``scummvm`` folder to your Nintendo Switch microSD card, into the ``/switch/`` folder. 
 
 
-Transfer game files
+Transferring game files
 =======================
 
 Copy the folders containing game files into the ``/switch/scummvm/`` folder on the microSD card. 

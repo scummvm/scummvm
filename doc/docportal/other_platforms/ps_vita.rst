@@ -2,23 +2,22 @@
 PlayStation Vita
 =====================
 
-Install ScummVM
-=======================
+This page contains all the information you need to get ScummVM up and running on a PS Vita.
 
-Prerequisites
-*******************
+What you'll need
+=======================
 
 - A homebrew-enabled PS Vita console with `Vitashell <https://github.com/TheOfficialFloW/VitaShell/releases/tag/v2.02>`_ installed. How to enable homebrew is outside the scope of this documentation.
 
-Download and install ScummVM
-******************************
+Installing ScummVM
+======================================
 
 The PS Vita package is available for download on the ScummVM `Downloads page <https://www.scummvm.org/downloads>`_.
 
 Copy the ``.vpk`` to the PS Vita and install it using VitaShell. 
 
 
-Transfer game files
+Transferring game files
 =======================
 
 There are a few ways to transfer game files to the PS Vita. 
@@ -115,6 +114,9 @@ Touch support
 ****************
 
 For multi-touch gestures, the fingers have to be far enough apart from each other that the Vita will not recognize them as a single finger, otherwise the pointer will jump around.
+
+Touchpad mouse mode
+^^^^^^^^^^^^^^^^^^^^^^^
 
 The touch control scheme can be switched in the global settings. Go to **Options > Control**:
 
