@@ -107,6 +107,8 @@ MODULE_OBJS = \
 	engine/ac/dynobj/scriptviewframe.o \
 	engine/ac/dynobj/scriptviewport.o \
 	engine/ac/dynobj/scriptset.o \
+	engine/ac/statobj/agsstaticobject.o \
+    engine/ac/statobj/staticarray.o \
 	engine/debugging/consoleoutputtarget.o \
 	engine/debugging/debug.o \
 	engine/debugging/filebasedagsdebugger.o \
