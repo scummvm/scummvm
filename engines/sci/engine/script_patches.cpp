@@ -7715,6 +7715,45 @@ static const uint16 laurabow1PatchLillianBedFix[] = {
 	PATCH_END
 };
 
+// Entering Laura's bedroom resets the cursor position to the upper right corner
+//  of the screen as if the game were starting. Room44:init calls kSetCursor to
+//  initialize the game because it's the first room where the user has control,
+//  but this part of the script is missing the startup test and so it happens
+//  every time. We fix this by adding the missing startup test.
+//
+// Applies to: All versions
+// Responsible method: Room44:init
+static const uint16 laurabow1SignatureRoom44CursorFix[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                         // ldi 00
+	0xa1, 0xbe,                         // sag be [ global190 = 0 ]
+	0x39, SIG_SELECTOR8(init),          // pushi init
+	0x76,                               // push0
+	0x57, 0x37, 0x04,                   // super Rm 04 [ super init: ]
+	SIG_ADDTOOFFSET(+10),
+	0x43, 0x28, 0x08,                   // callk SetCursor 08 [ SetCursor 997 1 300 0 ]
+	SIG_ADDTOOFFSET(+439),
+	0x89, 0xa5,                         // lsg a5
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?
+	0x30,                               // bnt
+	SIG_END
+};
+
+static const uint16 laurabow1PatchRoom44CursorFix[] = {
+	0x39, PATCH_SELECTOR8(init),        // pushi init
+	0x76,                               // push0
+	0x57, 0x37, 0x04,                   // super Rm 04 [ super init: ]
+	0x81, 0xcb,                         // lag cb [ global203 == 0 when game is starting ]
+	0x2f, 0x0d,                         // bt 0d  [ skip SetCursor if game already started ]
+	PATCH_ADDTOOFFSET(+452),
+	0x76,                               // push0
+	0xa9, 0xbe,                         // ssg be [ global190 = 0 ]
+	0x81, 0xa5,                         // lag a5
+	0x2e,                               // bt
+	PATCH_END
+};
+
 // When you tell Lilly about Gertie in room 35, Lilly will then walk to the
 // left and off the screen. If Laura (ego) is in the way, the whole game will
 // basically block and you won't be able to do anything except saving or
@@ -8000,6 +8039,7 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,    37, "armor move to fix",                        2, laurabow1SignatureArmorMoveToFix,                  laurabow1PatchArmorMoveToFix },
 	{  true,    37, "allowing input, after oiling arm",         1, laurabow1SignatureArmorOilingArmFix,               laurabow1PatchArmorOilingArmFix },
 	{  true,    44, "lillian bed fix",                          1, laurabow1SignatureLillianBedFix,                   laurabow1PatchLillianBedFix },
+	{  true,    44, "room 44 cursor fix",                       1, laurabow1SignatureRoom44CursorFix,                 laurabow1PatchRoom44CursorFix },
 	{  true,    47, "attic stairs lockup fix",                  1, laurabow1SignatureAtticStairsLockupFix,            laurabow1PatchAtticStairsLockupFix },
 	{  true,    47, "left stairs lockup fix",                   3, laurabow1SignatureLeftStairsLockupFix,             laurabow1PatchLeftStairsLockupFix },
 	{  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
