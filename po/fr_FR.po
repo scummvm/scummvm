@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-25 16:14+0000\n"
-"PO-Revision-Date: 2020-11-25 12:44+0000\n"
+"PO-Revision-Date: 2020-11-26 08:43+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
@@ -1345,11 +1345,11 @@ msgstr "Langue :"
 
 #: gui/options.cpp:2106
 msgid "Language of ScummVM GUI"
-msgstr "Langue de l'interface graphique de ScummVM"
+msgstr "Langue de l'interface utilisateur de ScummVM"
 
 #: gui/options.cpp:2132
 msgid "Switch the ScummVM GUI language to the game language"
-msgstr "Adapter la langue de l'interface ScummVM à celle du jeu"
+msgstr "Adapter la langue de l'interface de ScummVM à celle du jeu"
 
 #: gui/options.cpp:2133
 msgid ""
@@ -7059,16 +7059,12 @@ msgid "Enable the cutscenes for the game"
 msgstr "Active les scènes cinématiques du jeu"
 
 #: engines/twine/metaengine.cpp:132
-#, fuzzy
-#| msgid "Enable movies"
 msgid "Enable mouse"
-msgstr "Activer les films"
+msgstr "Activer la souris"
 
 #: engines/twine/metaengine.cpp:133
-#, fuzzy
-#| msgid "Enable the sound for the game"
 msgid "Enable the mouse for the UI"
-msgstr "Active les sons du jeu"
+msgstr "Active la souris dans l'interface utilisateur"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Use the USA version"
