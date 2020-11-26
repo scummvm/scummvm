@@ -19,6 +19,8 @@ The original game graphics are upscaled using different graphical filters, which
 
 If the game originally ran at a resolution of 320x200—which is typical for most SCUMM games—then using a graphics mode with a scale factor of 2x yields 640x400 graphics. A 3x scale factor yields 960x600.
 
+There is always a speed penalty when using any form of filtering.
+
 A comparison of graphics modes
 *************************************
 
@@ -71,9 +73,9 @@ A comparison of graphics modes
     **DotMatrix**: Dot matrix effect. Factor 2x.
 
 
-Not all engines support all, or even any, of the graphics modes. 
-
-There is always a speed penalty when using any form of anti-aliasing/linear filtering.
+.. note::
+    
+    Not all platforms support all the graphics modes. 
 
 To switch between graphics modes, press :kbd:`Ctrl + Alt` and :kbd:`1` to :kbd:`8`. 
 
@@ -92,6 +94,8 @@ Aspect ratio correction
 ------------------------------------
 
 Older games were designed to be run at 320x200 pixels, but on systems where each pixel was rectangular instead of square. This means that on modern systems these games look wider and flatter than they are supposed to. Aspect ratio correction duplicates lines of pixels to correct this. 
+
+For a game with an original resolution of 320x200, aspect ratio correction results in a resolution of 320x240. 
 
 .. figure:: ../images/graphics/aspect_ratio/no_aspect_ratio.png
 
@@ -112,7 +116,10 @@ Stretch modes
 There are five stretch modes:
 
 - Center: centers the image in the window. 
-- Pixel-perfect scaling: scales the image to a multiple of the original game resolution as much as possible (for example, 2x, 3x, 4x), and fills the remaining empty space with black borders. 
+- Pixel-perfect scaling: scales the image to the highest multiple of the game resolution that fits the window, or that fits the screen if in fullscreen mode. Any empty space is filled with black bars. 
+
+    - For example, a game with an original resolution of 320x200 with aspect ratio correction applied (320x240) and a 3x graphics mode, will be stretched to a multiple of 900x720 pixels: 1800x1440, 2700x2160 and so on.
+
 - Fit to window: fits the image to the window, but maintains the aspect ratio and does not stretch it to fill the window.
 - Stretch: stretches the image to fill the window
 - Fit to window (4:3): fits the image to the window, at a forced 4:3 aspect ratio.

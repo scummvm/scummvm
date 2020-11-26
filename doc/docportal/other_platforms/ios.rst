@@ -3,74 +3,76 @@
 iOS
 ==============
 
-Install ScummVM
+This page contains all the information you need to get ScummVM up and running on an iOS device.
+
+
+Installing ScummVM
 =====================
-There are two methods to install ScummVM onto an iOS device, and the method use depends on whether or not the device is jailbroken. 
+There are two ways to install ScummVM on an iOS device, and the method you use depends on whether or not the device has custom firmware installed. 
 
-No Jailbreak
-^^^^^^^^^^^^^^^^
+Devices without custom firmware
+************************************
 
-This method is a little complex, however it is currently the only way to install ScummVM onto an iOS device that is not jailbroken. While a rudimentary knowledge of the command line would be useful, the following instructions, if followed carefully, can be completed by anyone. 
+To installing ScummVM on an iOS device without custom firmware you need to build the app from the source code, and then install it on your device. While a basic knowledge of the command line would be useful, the following instructions, if followed carefully, can be completed by anyone. 
 
-Prerequisites
-****************
+What you'll need
+^^^^^^^^^^^^^^^^^^^^
 
 - A Mac computer with Xcode installed. Xcode is a free App, available from the Mac App Store.
 - An Apple Developer account. You can sign up for a free account on the `Apple Developer Member Center <https://developer.apple.com/membercenter/>`_ with your Apple ID. 
-- The ScummVM `iOS Libraries <https://www.scummvm.org/frs/build/scummvm-ios7-libs-v2.zip>`_ downloaded. 
+- The ScummVM `iOS Libraries <https://www.scummvm.org/frs/build/scummvm-ios7-libs-v2.zip>`_ downloaded, and the zip file extracted. 
 
 .. note::
 
     If you have a free Apple developer account, each build will only be valid for 7 days, which means you will need to repeat these steps and rebuild ScummVM every week.
 
-Create the Xcode project
-***************************
+Step 1: Setting up the Xcode project
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The first step is to download the repository containing the code required to build the app. The next steps require use of the command line. Go to **Applications > Utilities > Terminal** and copy and paste the following, then press :kbd:`return` :
+The first step is to download the repository containing the code required to build the app. The next steps require use of the command line. Go to **Applications > Utilities > Terminal** and copy and paste the following, then press :kbd:`return`. This downloads (clones) the source code into your Home directory, into a folder called ``scummvm``:
 
 .. code-block:: bash
 
-    git clone https://github.com/scummvm/scummvm.git
+    git clone --depth 1 -b branch-2-2-0 https://github.com/scummvm/scummvm.git
 
-.. note::
-    The default branch of the ScummVM repository will be the master branch. To build a specific version of ScummVM, checkout the appropriate branch. For example, to build version 2.2.0, use the following command:
+.. tip::
 
-    .. code-block::
+    To view the Home directory in the Finder, select **Go > Home** in the menu bar, or press :kbd:`command+shift+H`.
 
-        git checkout branch-2-2-0
+If you haven't done so before now, open Xcode from the Applications folder, and accept the End User License Agreement. Starting Xcode for the first time also installs the command line tools required. 
 
-If you haven't done so before now, open Xcode from the Applications folder, and accept the End User License Agreement. Starting Xcode for the first time will also install the command line tools required. 
+Create a new directory called ``build`` at the same level as the repository you just cloned, using either the Finder, or the command line as follows:
 
-The next step changes the present working directory and then generates the tools required to create the Xcode project.
+.. code-block::
+
+    mkdir build
+
+Copy the contents of the ``scummvm-ios7-libs-v2`` folder you extracted earlier into the ``build`` directory, using either the Finder, or the command line as follows: 
+
+.. code-block::
+
+    cp -r ~/Downloads/scummvm-ios7-libs-v2/* ~/build/
+
+If your downloaded iOS library folder is not in the Downloads folder as it is in the preceding example, change the path to where the folder actually is. 
+
+Now let's change the present working directory and then set up the tools required to create the Xcode project:
 
 .. code-block:: bash
 
     cd scummvm/devtools/create_project/xcode
     xcodebuild
 
-The next command creates a new directory called ``build`` at the same level as the repository:
 
-.. code-block:: bash
+Step 2: Generating the Xcode project
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-    cd ../../../..
-    mkdir build
-    cd build
+Change your present working directory to the ``build`` directory:
 
-The present working directory will now be the new ``build`` directory. Extract the contents of the downloaded iOS libraries package into the build folder by using the following command:
+.. code-block::
 
-.. code-block:: bash
+    cd ~/build
 
-    unzip ~/Downloads/scummvm-ios7-libs-v2.zip
-
-.. note::
-
-    In newer versions of macOS, the archive is extracted automatically. If this is the case, the ``unzip`` command will not work as expected. Instead, copy the contents of the ``scummvm-ios7-libs-v2`` folder into the ``build`` directory. It is simplest to do this in the Finder. 
-
-
-Generate the Xcode project
-*****************************
-
-It's time to generate the Xcode project. Ensure the present working directory is still the ``build`` directory, and then run the following on the command line:
+It's time to generate the Xcode project. Run the following on the command line:
 
 .. code::
 
@@ -88,9 +90,6 @@ The resulting directory structure looks like this:
          |-- engines
          '-- scummvm.xcodeproj
 
-.. tip::
-
-    To view the Home directory in the Finder, select **Go > Home** in the menu bar, or press :kbd:`command+shift+H`.
 
 Open the ``scummvm.xcodeproj`` file from the Finder, or from the command line:
 
@@ -98,8 +97,8 @@ Open the ``scummvm.xcodeproj`` file from the Finder, or from the command line:
 
     open scummvm.xcodeproj
 
-Build ScummVM
-*****************
+Step 3: Building the ScummVM app
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 When Xcode is open, connect a device to install ScummVM onto. At the top of the window, select **ScummVM-iOS** and then select the device you just connected. You will need to "Trust" the device for it to show up on the list of connected devices. 
 
@@ -122,19 +121,18 @@ If you have not added your developer account to Xcode, do this now. Click **Add 
 In the upper left-hand corner, press the play button to build ScummVM. When the build is finished, it launches on your connected device. 
 
 
-Jailbreak
-^^^^^^^^^^^^
+Devices with custom firmware
+*******************************
 
+What you'll need
+^^^^^^^^^^^^^^^^^^^
 
-Prerequisites
-***************
-
-- A jailbroken iOS device. How to jailbreak a device is outside the scope of this documentation.
+- An iOS device with custom firmware installed (jailbroken). How to jailbreak a device is outside the scope of this documentation.
 - A file manager app such as Filza installed on the device.
 
 
-Install ScummVM
-*******************
+Downloading and installing ScummVM
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Go to the `ScummVM downloads page <https://www.scummvm.org/downloads>`_ and download the recommended ``.deb`` or ``.ipa`` package. When the device asks how to open the file, choose Filza.
 
@@ -142,7 +140,7 @@ Ensure the package is saved somewhere in the ``/var/mobile/`` directory. It defa
 
 Restart your device for the install to complete. 
 
-Transfer game files 
+Transferring game files 
 ========================
 
 There are multiple ways to transfer game files to your iOS device. 
@@ -182,7 +180,7 @@ Controls
        
 
 Touch controls
-^^^^^^^^^^^^^^^^^
+*******************
 The touch control scheme can be switched in the global settings. From the Launcher, go to **Options > Control > Touchpad mouse mode**.
 
     - When touchpad mouse mode is off, the touch controls are direct. The pointer jumps to where the finger touches the screen.
@@ -192,38 +190,38 @@ The touch control scheme can be switched in the global settings. From the Launch
 .. _twofinger:
 
 Two finger tap
-******************
+^^^^^^^^^^^^^^^^^^^^^
 
 For a two finger tap, hold one finger down and then tap with a second finger. 
 
 .. _twofingerdouble:
 
 Two finger double tap
-************************
+^^^^^^^^^^^^^^^^^^^^^^^
 
 For a two finger double tap, hold one finger down and then double tap with a second finger.
 
 
 Click and drag mode
-*********************
+^^^^^^^^^^^^^^^^^^^^^^^
 
 Simulates a left mouse click when you touch the screen. The mouse pointer drags to wherever you slide your finger, and releases where you lift your finger.
 
 If you press down a second finger in this mode, it releases the simulated left mouse button, and presses down the simulated right mouse button. The right mouse button is released when you lift your finger again. 
 
 Keyboard
-**********
+^^^^^^^^^^^^^^^^^^^^
 If no external keyboard is connected, the pinch gesture shows and hides the onscreen keyboard. When an external keyboard is connected, the pinch gesture enables/disables inputs from the external keyboard.
 
 Paths
 =======
 
 Saved games
-^^^^^^^^^^^^^^^^^
+**************
 
 ``/var/mobile/Library/ScummVM/Savegames/`` if the device is jailbroken, or ``Savegames/`` in the ScummVM folder for a non-jailbroken device. Access this folder through the Finder or iTunes. 
 
 Configuration file
-^^^^^^^^^^^^^^^^^^^^^^^
+*********************
 
 ``/var/mobile/Library/ScummVM/Preferences`` if the device is jailbroken, or ``Preferences`` in the ScummVM folder for a non-jailbroken device. Access this folder through the Finder or iTunes. 
