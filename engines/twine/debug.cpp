@@ -193,7 +193,7 @@ void Debug::debugResetButton(int32 type) {
 }
 
 void Debug::debugRedrawScreen() {
-	_engine->_redraw->redrawEngineActions(1);
+	_engine->_redraw->redrawEngineActions(true);
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 	debugDrawWindows();
 }

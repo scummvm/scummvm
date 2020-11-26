@@ -554,7 +554,7 @@ void TwinEEngine::processInventoryAction() {
 	}
 	case kiBonusList: {
 		unfreezeTime();
-		_redraw->redrawEngineActions(1);
+		_redraw->redrawEngineActions(true);
 		freezeTime();
 		_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 		_text->textClipFull();
@@ -576,7 +576,7 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	}
 
-	_redraw->redrawEngineActions(1);
+	_redraw->redrawEngineActions(true);
 }
 
 void TwinEEngine::processOptionsMenu() {
@@ -585,7 +585,7 @@ void TwinEEngine::processOptionsMenu() {
 	_menu->inGameOptionsMenu();
 	// TODO: play music
 	_sound->resumeSamples();
-	_redraw->redrawEngineActions(1);
+	_redraw->redrawEngineActions(true);
 }
 
 void TwinEEngine::centerScreenOnActor() {
@@ -640,14 +640,14 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			}
 			if (giveUp == 1) {
 				unfreezeTime();
-				_redraw->redrawEngineActions(1);
+				_redraw->redrawEngineActions(true);
 				ScopedEngineFreeze freeze(this);
 				autoSave();
 				quitGame = 0;
 				return 0;
 			}
 			unfreezeTime();
-			_redraw->redrawEngineActions(1);
+			_redraw->redrawEngineActions(true);
 		}
 
 		if (_input->toggleActionIfActive(TwinEActionType::OptionsMenu)) {
@@ -689,7 +689,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			freezeTime();
 			_menu->processBehaviourMenu();
 			unfreezeTime();
-			_redraw->redrawEngineActions(1);
+			_redraw->redrawEngineActions(true);
 		}
 
 		// use Proto-Pack
@@ -723,7 +723,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			_holomap->processHolomap();
 			_screens->lockPalette = true;
 			unfreezeTime();
-			_redraw->redrawEngineActions(1);
+			_redraw->redrawEngineActions(true);
 		}
 
 		// Process Pause
@@ -740,7 +740,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 				g_system->delayMillis(10);
 			} while (!_input->toggleActionIfActive(TwinEActionType::Pause));
 			unfreezeTime();
-			_redraw->redrawEngineActions(1);
+			_redraw->redrawEngineActions(true);
 		}
 	}
 
@@ -907,7 +907,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	// workaround to fix hero redraw after drowning
 	if (_actor->cropBottomScreen && _redraw->reqBgRedraw) {
 		_scene->sceneHero->staticFlags.bIsHidden = 1;
-		_redraw->redrawEngineActions(1);
+		_redraw->redrawEngineActions(true);
 		_scene->sceneHero->staticFlags.bIsHidden = 0;
 	}
 

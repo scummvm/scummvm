@@ -528,7 +528,7 @@ void Scene::processActorZones(int32 actorIdx) {
 					talkingActor = actorIdx;
 					_engine->_text->drawTextFullscreen(zone->infoData.DisplayText.textIdx);
 					_engine->unfreezeTime();
-					_engine->_redraw->redrawEngineActions(1);
+					_engine->_redraw->redrawEngineActions(true);
 				}
 				break;
 			case kLadder:
