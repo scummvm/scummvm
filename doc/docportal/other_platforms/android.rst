@@ -3,7 +3,9 @@
 Android
 ===============
 
-Prerequisites
+This page contains all the information you need to get ScummVM up and running on an Android device. 
+
+What you'll need
 ================
 
 - An Android device running Android 4.1 (Jelly Bean) or newer.
@@ -12,19 +14,19 @@ Prerequisites
 
     ScummVM has been tested to work up to Android 10. Currently there are some file browsing limitations with Android 11. The ScummVM team are working to resolve these.  
 
-Install ScummVM
+Installing ScummVM
 ====================================
 
 There are two ways to install ScummVM on an Android device; install it from the Google Play Store, or manually download and install the APK package from the ScummVM downloads page. 
 
-From the Google Play Store
-****************************
+Installing from the Google Play Store
+***************************************
 
-Go to the Google Play Store to download and install ScummVM. 
+The latest supported version of ScummVM is on the Google Play Store; search for ScummVM on the Google Play Store and select **Install**. 
 
 
-From the APK package 
-***********************
+Manually installing the APK package 
+*************************************
 
 On your device, use a web browser app to navigate to the `ScummVM downloads page <https://www.scummvm.org/downloads>`_. The recommended download section on the page suggests the correct ``.apk`` package, however if it does not, scroll down to select the correct package. 
 
@@ -41,7 +43,7 @@ Click on the correct package to start the download. After it has downloaded, go 
     - For Android 7 or lower, go to **Settings > Security > Device Administration**, scroll down to **Device Administration** and enable **Unknown Sources**.
     - For Android 8 or higher, go to **Settings > Apps and Notification** and select **Install Unknown Apps**. 
     
-Transfer game files 
+Transferring game files 
 ========================================
 
 Transfer all the required game data files to your device, into a folder accessible by the ScummVM app. 
@@ -118,8 +120,8 @@ Configuration file
 
 The configuration file is in the internal app folder, and this path cannot be changed. 
 
-Access the internal app folder
-********************************
+Accessing the internal app folder
+************************************
 
 To access the internal app folder, use ScummVM's built-in LAN functionality:
 

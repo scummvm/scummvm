@@ -2,17 +2,16 @@
 RISC OS
 =============================
 
-Install ScummVM
-===================
+This page contains all the information you need to get ScummVM up and running on the RISC operating system. 
 
-Prerequisites
-****************
+WHat you'll need
+===================
 
 - A system running RISC OS 5
 - The `SharedUnixLibrary <https://www.riscos.info/index.php/SharedUnixLibrary>`_, `DRenderer <https://www.riscos.info/packages/LibraryDetails.html#DRendererarm>`_ and `Iconv <https://www.netsurf-browser.org/projects/iconv/>`_ modules installed. SharedUnixLibrary and DRenderer can be installed using `Packman <https://www.riscos.info/index.php/PackMan>`_.
 
-Download and install ScummVM
-*********************************
+Installing ScummVM
+======================================
 
 Download the RISC OS package from the `ScummVM Downloads page <https://www.scummvm.org/downloads/>`_. 
 
@@ -20,7 +19,7 @@ Use a tool such as SparkFS to extract the archive. It is important that the arch
 
 
 
-Transfer game files
+Transferring game files
 =======================
 
 Copy data files directly from the original discs on machines that have CD and/or floppy drives, or use a USB drive to transfer the files from another system. 
