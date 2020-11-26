@@ -252,18 +252,18 @@ void Text::drawText(int32 x, int32 y, const char *dialogue) {
 		if (currChar == ' ') {
 			x += _dialCharSpace;
 		} else {
-			_dialTextSize = getCharWidth(currChar);
+			int32 dialTextSize = getCharWidth(currChar);
 			drawCharacter(x, y, currChar); // draw the character on screen
 			// add the length of the space between 2 characters
 			x += _dialSpaceBetween;
 			// add the length of the current character
-			x += _dialTextSize;
+			x += dialTextSize;
 		}
 	} while (1);
 }
 
 int32 Text::getTextSize(const char *dialogue) { // SizeFont
-	_dialTextSize = 0;
+	int32 dialTextSize = 0;
 
 	do {
 		const uint8 currChar = (uint8) * (dialogue++);
@@ -272,14 +272,14 @@ int32 Text::getTextSize(const char *dialogue) { // SizeFont
 		}
 
 		if (currChar == ' ') {
-			_dialTextSize += _dialCharSpace;
+			dialTextSize += _dialCharSpace;
 		} else {
-			_dialTextSize += _dialSpaceBetween;
-			_dialTextSize += getCharWidth(currChar);
+			dialTextSize += _dialSpaceBetween;
+			dialTextSize += getCharWidth(currChar);
 		}
 	} while (1);
 
-	return _dialTextSize;
+	return dialTextSize;
 }
 
 void Text::initDialogueBox() { // InitDialWindow
