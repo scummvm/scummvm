@@ -1,5 +1,5 @@
 =======================
-How to change settings
+Changing settings
 =======================
 
 From the Launcher

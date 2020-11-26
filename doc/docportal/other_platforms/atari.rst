@@ -2,17 +2,16 @@
 Atari/FreeMiNT
 =============================
 
-Install ScummVM
-===================
+This page contains all the information you need to get ScummVM up and running on an Atari system. 
 
-Prerequisites
-****************
+What you'll need
+=================
 
-- A powerful Atari system or clone; minimum CPU 68060. 
+- A powerful Atari system or clone; recommended minimum CPU 68060. 
 - FreeMiNT, TOS or MagiC operating system.
 
-Download and install ScummVM
-*********************************
+Installing ScummVM
+=====================================
 
 Binary packages are provided for the m68000 CPU, the m68020 to m68060 range of CPUs, and the Coldfire (FireBee) CPU. All are available for download from the ScummVM `Downloads page <https://www.scummvm.org/downloads>`_.  To install ScummVM, extract the selected ScummVM archive into a folder on the hard disk.
 
@@ -26,8 +25,8 @@ To run ScummVM from a FreeMiNT Command Line Interface, make the program executab
 
 For the best performance, run ScummVM under FreeMiNT, from the command line, and without the AES started. 
 
-Transfer game files
-=======================
+Transferring game files
+=========================
 
 Transfer files to the Atari as you normally would, such as through a network connection or by optical disc. 
 
@@ -58,7 +57,11 @@ For more information, see the Settings section of the documentation. Only platfo
 Graphics
 ************
 
-For video rendering, define the variable ``SDL_VIDEODRIVER=XBIOS`` in your environmental variables. Either XBIOS or GEM might be set by default. XBIOS works better than GEM, because GEM rendering is slower. Note that this is not a ScummVM setting, but rather a system-wide setting. 
+For video rendering, define the variable ``SDL_VIDEODRIVER=XBIOS`` in your environmental variables. Either XBIOS or GEM might be set by default. This is not a ScummVM setting, but rather a system-wide setting. 
+
+.. tip::
+
+    XBIOS works better than GEM, because GEM rendering is generally slower.
 
 Audio
 *******
@@ -75,7 +78,7 @@ Known issues
 
 - There is no cloud/LAN functionality.
 
-- The built-in MIDI driver (STMIDI) does not work. 
+- The Atari built-in MIDI driver (STMIDI) does not work. 
 
 - FLAC, OGG and MP3 decoding libraries are extremely CPU intensive and greatly slow down the user experience.  ScummVM is best run with uncompressed audio, when available.
 

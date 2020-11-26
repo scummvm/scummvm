@@ -2,42 +2,41 @@
 Nintendo 3DS
 =============================
 
-Install ScummVM
-===================
+This page contains all the information you need to get ScummVM up and running on a Nintendo 3DS.
 
-Prerequisites
-****************
+What you'll need
+===================
 
 - A Nintendo 3DS with a Homebrew Launcher or custom firmware. How to enable homebrew is outside the scope of this documentation. 
 
-Download and install ScummVM
-*********************************
+Installing ScummVM
+======================================
 
 Download the Nintendo 3DS package from the `ScummVM Downloads page <https://www.scummvm.org/downloads/>`_. Extract the archive. 
 
 There are two ways to install ScummVM: using the 3DSX format, or the CIA format. 
 
-3DSX
-^^^^^^
+Using the 3DSX format
+***********************
 Copy the extracted files to your SD card into the ``/3ds/scummvm`` directory. 
 
 Launch ScummVM using the Homebrew Launcher. 
 
-CIA
-^^^^^
+Using the CIA format
+***********************
 
 Use any CIA installation software to install the ``scummvm.cia`` file.
 
 The CIA format requires a DSP binary dump saved on your SD card as ``/3ds/dspfirm.cdc``. This is not an optional step, because without this you will not have proper audio support. Documenting this process is outside the scope of this documentation.  
 
-Transfer game files
-=======================
+Transferring game files
+========================
 
 Transfer game folders onto the SD card. The exact location is not important. 
 
 ScummVM for the Nintendo 3DS also has cloud functionality. See :doc:`../use_scummvm/connect_cloud`. 
 
-See :doc:`../use_scummvm/add_play_games` for more information about how to add games to ScummVM. 
+See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
 
 Controls
@@ -86,11 +85,11 @@ Magnify mode increases the scale factor of the top screen back to 1, but the bot
 
 When activating magnify mode, touchscreen controls are automatically switched to :ref:`hover` mode to reduce the risk of the user accidentally inputting a click when changing the magnified area with the stylus. Clicking can still be done as in normal hover mode. Turning off magnify mode will revert controls back to what was used previously. It will also restore the top screen's previous scale factor.
 
-Currently magnify mode can only be used when the following conditions are met:
+Magnify mode can only be used when the following conditions are met:
 
-- In the 3DS config menu, **Use Screen** is set to **Both**
-- A game is played
-- The horizontal and/or vertical resolution in-game is greater than that of the top screen
+- In the 3DS config menu, the **Use Screen** option is set to **Both**.
+- The horizontal and/or vertical in-game resolution is greater than that of the top screen.
+- You're playing a game.
 
 Magnify mode cannot be used in the Launcher menu.
 
@@ -113,8 +112,8 @@ Settings
 
 For more information about Settings, see the Settings section of the documentation. Only platform-specific differences are listed here. 
 
-3DS config menu
-****************
+The 3DS config menu
+*********************
 
 .. figure:: ../images/3ds/config.png
 

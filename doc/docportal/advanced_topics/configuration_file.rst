@@ -5,7 +5,7 @@ Configuration file
 
 The configuration file provides a way to edit both global and game-specific settings. It is a text file containing configuration keywords and parameters. 
 
-Settings are also accessible directly from the Launcher. See :doc:`../settings/how_to_settings`. 
+Settings are also accessible directly from the Launcher. See :doc:`../use_scummvm/how_to_settings`. 
 
 Location
 ==========
@@ -88,7 +88,7 @@ The configuration file saves to different default locations, depending on the pl
 Using the configuration file
 ==================================
 
-Global settings are listed under the ``[scummvm]`` heading. Global :doc:`keymaps settings <../settings/keymaps>` are listed under the ``[keymapper]`` heading. Game-specific settings, including keymaps, are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keywords_ to change settings. 
+Global settings are listed under the ``[scummvm]`` heading. Global :doc:`keymaps settings <../settings/keymaps>` are listed under the ``[keymapper]`` heading. Game-specific settings, including keymaps, are listed under the heading for that game, for example ``[queen]`` for Flight of the Amazon Queen. Use the configuration keys to change settings. 
 
 
 Example of a configuration file

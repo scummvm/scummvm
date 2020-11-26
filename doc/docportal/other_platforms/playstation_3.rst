@@ -2,18 +2,17 @@
 PlayStation 3
 =============================
 
-Install ScummVM
-===================
+This page contains all the information you need to get ScummVM up and running on a PlayStation 3.
 
-Prerequisites
-****************
+What you'll need
+===================
 
 - A Homebrew enabled Playstation 3 console. How to enable homebrew is outside the scope of this documentation.
 - A USB drive
 - A computer
 
-Download and install ScummVM
-*********************************
+Installing ScummVM
+=====================================
 
 Download the Playstation 3 package from the `ScummVM Downloads page <https://www.scummvm.org/downloads/>`_. Copy the ``.pkg`` file to a USB drive. 
 
@@ -22,7 +21,7 @@ Plug the USB drive into the PS3.  Go to the XMB, then go to **Games > Install Pa
 To launch ScummVM, go to the XMB, then go to **Games > PlayStation 3 > ScummVM**. 
 
 
-Transfer game files
+Transferring game files
 =======================
 
 Games can be launched from either a USB drive, or from the internal hard drive. The hard drive has better performance.  
