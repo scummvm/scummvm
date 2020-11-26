@@ -198,9 +198,6 @@ void Process::run() {
 			_engine->setNextScreenName(getExitArg1(), true);
 			done();
 			break;
-		case kExitCodeLoadPreviousScreenObject:
-			_engine->returnToPreviousScreen();
-			break;
 		case kExitCodeMouseAreaChange:
 			_engine->changeMouseArea(getExitIntArg1(), getExitIntArg2());
 			activate();
