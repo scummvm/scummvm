@@ -223,7 +223,7 @@ endif
 # Get the current version information
 ######################################################################
 
-# AmigaOS4's grep has a problem with "./" in pathnames, so use cat piped into grep.
+# AmigaOS grep command has a problem with "./" in pathnames, so use cat piped into grep instead.
 VERSION = $(shell cat "${srcdir}/base/internal_version.h" | grep SCUMMVM_VERSION | cut -d\" -f2)
 VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
 VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
@@ -231,12 +231,12 @@ VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
 VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
 
 ifdef AMIGAOS
-# Amiga needs date in specific format for the version cookie
+# AmigaOS needs the date in a specific format for the version cookie.
 AMIGA_DATE = $(shell gdate '+%d.%m.%Y')
 VERFLAGS += -DAMIGA_DATE=\"$(AMIGA_DATE)\"
 endif
 ifdef MORPHOS
-# MorphOS needs date in specific format for the version cookie
+# MorphOS needs the date in a specific format for the version cookie.
 AMIGA_DATE = $(shell date +"%-d.%-m.%Y")
 VERFLAGS += -DAMIGA_DATE=\"$(AMIGA_DATE)\"
 endif

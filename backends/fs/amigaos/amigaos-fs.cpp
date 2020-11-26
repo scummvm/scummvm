@@ -22,7 +22,7 @@
 
 #if defined(__amigaos4__)
 
-#include "backends/fs/amigaos4/amigaos4-fs.h"
+#include "backends/fs/amigaos/amigaos-fs.h"
 #include "backends/fs/stdiostream.h"
 #include "common/debug.h"
 #include "common/util.h"
@@ -83,7 +83,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 	_bIsValid = false;
 
 	// WORKAROUND:
-	// This is a workaround for a bug present in AmigaOS4's
+	// This is a workaround for a bug present in AmigaOS
 	// newlib.library 53.30 and lower.
 	// It will be removed once a fixed version of said library is
 	// available to the public.
@@ -481,4 +481,4 @@ bool AmigaOSFilesystemNode::createDirectory() {
 	return _bIsValid && _bIsDirectory;
 }
 
-#endif //defined(__amigaos4__)
+#endif

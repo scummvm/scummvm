@@ -63,7 +63,7 @@ typedef void (*sighandler_t)(int);
  * Include header files needed for the getFilesystemFactory() method.
  */
 #if defined(__amigaos4__)
-	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
+	#include "backends/fs/amigaos/amigaos-fs-factory.h"
 #elif defined(__MORPHOS__)
 	#include "backends/fs/morphos/morphos-fs-factory.h"
 #elif defined(POSIX)

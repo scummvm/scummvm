@@ -1742,7 +1742,7 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 		format = GL_BGRA;
 		dataType = GL_UNSIGNED_INT_8_8_8_8;
 #else
-		// AmigaOS' MiniGL does not understand GL_UNSIGNED_INT_8_8_8_8 yet.
+		// MiniGL on AmigaOS4 doesn't understand GL_UNSIGNED_INT_8_8_8_8 yet.
 		format = GL_BGRA;
 		dataType = GL_UNSIGNED_BYTE;
 #endif
@@ -1752,7 +1752,7 @@ void GfxOpenGL::prepareMovieFrame(Graphics::Surface *frame) {
 		format = GL_BGRA;
 		dataType = GL_UNSIGNED_INT_8_8_8_8;
 #else
-		// AmigaOS' MiniGL does not understand GL_UNSIGNED_INT_8_8_8_8 yet.
+		// MiniGL on AmigaOS4 doesn't understand GL_UNSIGNED_INT_8_8_8_8 yet.
 		format = GL_BGRA;
 		dataType = GL_UNSIGNED_BYTE;
 #endif
