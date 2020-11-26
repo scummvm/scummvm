@@ -82,12 +82,12 @@ ScopedEngineFreeze::~ScopedEngineFreeze() {
 	_engine->unfreezeTime();
 }
 
-ScopedCursor::ScopedCursor(const TwinEEngine* engine) {
-	CursorMan.showMouse(engine->cfgfile.Mouse);
+ScopedCursor::ScopedCursor(TwinEEngine* engine) : _engine(engine) {
+	_engine->pushMouseCursorVisible();
 }
 
 ScopedCursor::~ScopedCursor() {
-	CursorMan.showMouse(false);
+	_engine->popMouseCursorVisible();
 }
 
 TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, TwineGameType gameType)
@@ -153,6 +153,23 @@ TwinEEngine::~TwinEEngine() {
 	delete _input;
 	delete _debug;
 	delete _debugScene;
+}
+
+void TwinEEngine::pushMouseCursorVisible() {
+	++_mouseCursorState;
+	if (!cfgfile.Mouse) {
+		return;
+	}
+	if (_mouseCursorState == 1) {
+		CursorMan.showMouse(cfgfile.Mouse);
+	}
+}
+
+void TwinEEngine::popMouseCursorVisible() {
+	--_mouseCursorState;
+	if (_mouseCursorState == 0) {
+		CursorMan.showMouse(false);
+	}
 }
 
 Common::Error TwinEEngine::run() {
