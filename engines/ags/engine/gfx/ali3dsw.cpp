@@ -459,7 +459,7 @@ void ALSoftwareGraphicsDriver::RenderSpriteBatch(const ALSpriteBatch &batch, Sha
 			if (_nullSpriteCallback)
 				_nullSpriteCallback(drawlist[i].x, drawlist[i].y);
 			else
-				throw Ali3DException("Unhandled attempt to draw null sprite");
+				error("Unhandled attempt to draw null sprite");
 
 			continue;
 		} else if (drawlist[i].bitmap == (ALSoftwareBitmap *)0x1) {
@@ -727,7 +727,7 @@ void ALSoftwareGraphicsDriver::BoxOutEffect(bool blackingOut, int speed, int del
 		delete bmp_buff;
 		SetMemoryBackBuffer(bmp_orig);
 	} else {
-		throw Ali3DException("BoxOut fade-in not implemented in sw gfx driver");
+		error("BoxOut fade-in not implemented in sw gfx driver");
 	}
 }
 // end fading routines

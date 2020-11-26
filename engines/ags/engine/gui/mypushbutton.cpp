@@ -50,7 +50,7 @@ MyPushButton::MyPushButton(int xx, int yy, int wi, int hi, const char *tex) {
 	state = 0;
 	strncpy(text, tex, 50);
 	text[49] = 0;
-};
+}
 
 void MyPushButton::draw(Bitmap *ds) {
 	color_t text_color = ds->GetCompatibleColor(0);

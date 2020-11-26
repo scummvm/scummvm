@@ -433,7 +433,7 @@ int D3DGraphicsDriver::FirstTimeInit() {
 
 void D3DGraphicsDriver::initD3DDLL(const DisplayMode &mode) {
 	if (!IsModeSupported(mode)) {
-		throw Ali3DException(get_allegro_error());
+		error(get_allegro_error());
 	}
 
 	_enter_critical();
@@ -442,7 +442,7 @@ void D3DGraphicsDriver::initD3DDLL(const DisplayMode &mode) {
 	// Set the display mode in the window's thread
 	if (wnd_call_proc(wnd_create_device)) {
 		_exit_critical();
-		throw Ali3DException(get_allegro_error());
+		error(get_allegro_error());
 	}
 
 	availableVideoMemory = direct3ddevice->GetAvailableTextureMem();
@@ -845,10 +845,10 @@ void D3DGraphicsDriver::CreateVirtualScreen() {
 	            D3DPOOL_DEFAULT,
 	            &pNativeTexture,
 	            NULL) != D3D_OK) {
-		throw Ali3DException("CreateTexture failed");
+		error("CreateTexture failed");
 	}
 	if (pNativeTexture->GetSurfaceLevel(0, &pNativeSurface) != D3D_OK) {
-		throw Ali3DException("GetSurfaceLevel failed");
+		error("GetSurfaceLevel failed");
 	}
 
 	direct3ddevice->ColorFill(pNativeSurface, NULL, 0);
@@ -1000,16 +1000,16 @@ bool D3DGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_n
 			            D3DPOOL_SYSTEMMEM,
 			            &surface,
 			            NULL) != D3D_OK) {
-				throw Ali3DException("CreateOffscreenPlainSurface failed");
+				error("CreateOffscreenPlainSurface failed");
 			}
 			if (direct3ddevice->GetRenderTargetData(pNativeSurface, surface) != D3D_OK) {
-				throw Ali3DException("GetRenderTargetData failed");
+				error("GetRenderTargetData failed");
 			}
 
 		}
 		// Get the back buffer surface
 		else if (direct3ddevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &surface) != D3D_OK) {
-			throw Ali3DException("IDirect3DDevice9::GetBackBuffer failed");
+			error("IDirect3DDevice9::GetBackBuffer failed");
 		}
 
 		if (_pollingCallback)
@@ -1017,7 +1017,7 @@ bool D3DGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_n
 
 		D3DLOCKED_RECT lockedRect;
 		if (surface->LockRect(&lockedRect, (at_native_res ? NULL : &viewport_rect), D3DLOCK_READONLY) != D3D_OK) {
-			throw Ali3DException("IDirect3DSurface9::LockRect failed");
+			error("IDirect3DSurface9::LockRect failed");
 		}
 
 		BitmapHelper::ReadPixelsFromMemory(destination, (uint8_t *)lockedRect.pBits, lockedRect.Pitch);
@@ -1032,7 +1032,7 @@ bool D3DGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_n
 }
 
 void D3DGraphicsDriver::RenderToBackBuffer() {
-	throw Ali3DException("D3D driver does not have a back buffer");
+	error("D3D driver does not have a back buffer");
 }
 
 void D3DGraphicsDriver::Render() {
@@ -1139,7 +1139,7 @@ void D3DGraphicsDriver::_renderSprite(const D3DDrawListEntry *drawListEntry, con
 		hr = direct3ddevice->SetStreamSource(0, bmpToDraw->_vertex, 0, sizeof(CUSTOMVERTEX));
 	}
 	if (hr != D3D_OK) {
-		throw Ali3DException("IDirect3DDevice9::SetStreamSource failed");
+		error("IDirect3DDevice9::SetStreamSource failed");
 	}
 
 	float width = bmpToDraw->GetWidthToRender();
@@ -1195,7 +1195,7 @@ void D3DGraphicsDriver::_renderSprite(const D3DDrawListEntry *drawListEntry, con
 
 		hr = direct3ddevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, ti * 4, 2);
 		if (hr != D3D_OK) {
-			throw Ali3DException("IDirect3DDevice9::DrawPrimitive failed");
+			error("IDirect3DDevice9::DrawPrimitive failed");
 		}
 
 	}
@@ -1203,7 +1203,7 @@ void D3DGraphicsDriver::_renderSprite(const D3DDrawListEntry *drawListEntry, con
 
 void D3DGraphicsDriver::_renderFromTexture() {
 	if (direct3ddevice->SetStreamSource(0, vertexbuffer, 0, sizeof(CUSTOMVERTEX)) != D3D_OK) {
-		throw Ali3DException("IDirect3DDevice9::SetStreamSource failed");
+		error("IDirect3DDevice9::SetStreamSource failed");
 	}
 
 	float width = _srcRect.GetWidth();
@@ -1224,7 +1224,7 @@ void D3DGraphicsDriver::_renderFromTexture() {
 	direct3ddevice->SetTexture(0, pNativeTexture);
 
 	if (direct3ddevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2) != D3D_OK) {
-		throw Ali3DException("IDirect3DDevice9::DrawPrimitive failed");
+		error("IDirect3DDevice9::DrawPrimitive failed");
 	}
 }
 
@@ -1237,19 +1237,19 @@ void D3DGraphicsDriver::_render(bool clearDrawListAfterwards) {
 	IDirect3DSurface9 *pBackBuffer = NULL;
 
 	if (direct3ddevice->GetRenderTarget(0, &pBackBuffer) != D3D_OK) {
-		throw Ali3DException("IDirect3DSurface9::GetRenderTarget failed");
+		error("IDirect3DSurface9::GetRenderTarget failed");
 	}
 	direct3ddevice->ColorFill(pBackBuffer, nullptr, D3DCOLOR_RGBA(0, 0, 0, 255));
 
 	if (!_renderSprAtScreenRes) {
 		if (direct3ddevice->SetRenderTarget(0, pNativeSurface) != D3D_OK) {
-			throw Ali3DException("IDirect3DSurface9::SetRenderTarget failed");
+			error("IDirect3DSurface9::SetRenderTarget failed");
 		}
 	}
 
 	direct3ddevice->Clear(0, NULL, D3DCLEAR_TARGET, D3DCOLOR_RGBA(0, 0, 0, 255), 0.5f, 0);
 	if (direct3ddevice->BeginScene() != D3D_OK)
-		throw Ali3DException("IDirect3DDevice9::BeginScene failed");
+		error("IDirect3DDevice9::BeginScene failed");
 
 	// if showing at 2x size, the sprite can get distorted otherwise
 	direct3ddevice->SetSamplerState(0, D3DSAMP_ADDRESSU, D3DTADDRESS_CLAMP);
@@ -1260,7 +1260,7 @@ void D3DGraphicsDriver::_render(bool clearDrawListAfterwards) {
 
 	if (!_renderSprAtScreenRes) {
 		if (direct3ddevice->SetRenderTarget(0, pBackBuffer) != D3D_OK) {
-			throw Ali3DException("IDirect3DSurface9::SetRenderTarget failed");
+			error("IDirect3DSurface9::SetRenderTarget failed");
 		}
 		direct3ddevice->SetViewport(&_d3dViewport);
 		_renderFromTexture();
@@ -1426,7 +1426,7 @@ void D3DGraphicsDriver::UpdateTextureRegion(D3DTextureTile *tile, Bitmap *bitmap
 	D3DLOCKED_RECT lockedRegion;
 	HRESULT hr = newTexture->LockRect(0, &lockedRegion, NULL, D3DLOCK_NOSYSLOCK | D3DLOCK_DISCARD);
 	if (hr != D3D_OK) {
-		throw Ali3DException("Unable to lock texture");
+		error("Unable to lock texture");
 	}
 
 	bool usingLinearFiltering = _filter->NeedToColourEdgeLines();
@@ -1443,10 +1443,10 @@ void D3DGraphicsDriver::UpdateTextureRegion(D3DTextureTile *tile, Bitmap *bitmap
 void D3DGraphicsDriver::UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Bitmap *bitmap, bool hasAlpha) {
 	D3DBitmap *target = (D3DBitmap *)bitmapToUpdate;
 	if (target->_width != bitmap->GetWidth() || target->_height != bitmap->GetHeight())
-		throw Ali3DException("UpdateDDBFromBitmap: mismatched bitmap size");
+		error("UpdateDDBFromBitmap: mismatched bitmap size");
 	const int color_depth = bitmap->GetColorDepth();
 	if (color_depth != target->_colDepth)
-		throw Ali3DException("UpdateDDBFromBitmap: mismatched colour depths");
+		error("UpdateDDBFromBitmap: mismatched colour depths");
 
 	target->_hasAlpha = hasAlpha;
 	if (color_depth == 8)
@@ -1516,7 +1516,7 @@ IDriverDependantBitmap *D3DGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, b
 	int allocatedWidth = bitmap->GetWidth();
 	int allocatedHeight = bitmap->GetHeight();
 	if (bitmap->GetColorDepth() != GetCompatibleBitmapFormat(bitmap->GetColorDepth()))
-		throw Ali3DException("CreateDDBFromBitmap: bitmap colour depth not supported");
+		error("CreateDDBFromBitmap: bitmap colour depth not supported");
 	int colourDepth = bitmap->GetColorDepth();
 
 	D3DBitmap *ddb = new D3DBitmap(bitmap->GetWidth(), bitmap->GetHeight(), colourDepth, opaque);
@@ -1563,12 +1563,12 @@ IDriverDependantBitmap *D3DGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, b
 			free(tiles);
 			char errorMessage[200];
 			sprintf(errorMessage, "Direct3DDevice9::CreateVertexBuffer(Length=%d) for texture failed: error code %08X", vertexBufferSize, hr);
-			throw Ali3DException(errorMessage);
+			error(errorMessage);
 		}
 
 		if (ddb->_vertex->Lock(0, 0, (void **)&vertices, D3DLOCK_DISCARD) != D3D_OK) {
 			free(tiles);
-			throw Ali3DException("Failed to lock vertex buffer");
+			error("Failed to lock vertex buffer");
 		}
 	}
 
@@ -1614,7 +1614,7 @@ IDriverDependantBitmap *D3DGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, b
 			if (hr != D3D_OK) {
 				char errorMessage[200];
 				sprintf(errorMessage, "Direct3DDevice9::CreateTexture(X=%d, Y=%d, FMT=%d) failed: error code %08X", thisAllocatedWidth, thisAllocatedHeight, textureFormat, hr);
-				throw Ali3DException(errorMessage);
+				error(errorMessage);
 			}
 
 		}

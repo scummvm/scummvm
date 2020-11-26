@@ -88,7 +88,7 @@ template <class TPx, size_t BPP_>
 struct PixelTransCpy {
 	static const size_t BPP = BPP_;
 	inline void operator()(uint8_t *dst, const uint8_t *src, color_t mask_color, bool use_alpha) const {
-		if (*(TPx *)src == mask_color)
+		if (*(const TPx *)src == mask_color)
 			*(TPx *)dst = mask_color;
 	}
 };
