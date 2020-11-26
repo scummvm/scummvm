@@ -10,6 +10,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Myst 3: Exile.
    - Added support for Hades' Challenge.
    - Added support for Little Big Adventure.
+   - Added support for Red Comrades 1: Save the Galaxy.
+   - Added support for Red Comrades 2: For the Great Justice.
 
  General:
    - Switched ScummVM GUI output to UTF-32.
