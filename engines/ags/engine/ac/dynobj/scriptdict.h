@@ -36,10 +36,9 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTDICT_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTDICT_H
 
-//include <map>
-//include <unordered_map>
 //include <string.h>
-#include "ags/shared/ac/dynobj/cc_agsdynamicobject.h"
+#include "ags/std/map.h"
+#include "ags/engine/ac/dynobj/cc_agsdynamicobject.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_types.h"
 
@@ -183,9 +182,9 @@ private:
 };
 
 typedef ScriptDictImpl< std::map<String, String>, true, true > ScriptDict;
-typedef ScriptDictImpl< std::map<String, String, StrLessNoCase>, true, false > ScriptDictCI;
+typedef ScriptDictImpl< std::map<String, String, IgnoreCase_LessThan>, true, false > ScriptDictCI;
 typedef ScriptDictImpl< std::unordered_map<String, String>, false, true > ScriptHashDict;
-typedef ScriptDictImpl< std::unordered_map<String, String, HashStrNoCase, StrEqNoCase>, false, false > ScriptHashDictCI;
+typedef ScriptDictImpl< std::unordered_map<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo>, false, false > ScriptHashDictCI;
 
 } // namespace AGS3
 

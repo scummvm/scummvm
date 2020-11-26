@@ -20,9 +20,9 @@
  *
  */
 
-#include "ags/shared/ac/dynobj/cc_audiochannel.h"
-#include "ags/shared/ac/dynobj/scriptaudiochannel.h"
-#include "ags/shared/media/audio/audio_system.h"
+#include "ags/engine/ac/dynobj/cc_audiochannel.h"
+#include "ags/engine/ac/dynobj/scriptaudiochannel.h"
+#include "ags/engine/media/audio/audio_system.h"
 
 namespace AGS3 {
 

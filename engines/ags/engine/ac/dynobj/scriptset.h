@@ -35,10 +35,10 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTSET_H
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTSET_H
 
-//include <set>
-//include <unordered_set>
-//include <string.h>
-#include "ags/shared/ac/dynobj/cc_agsdynamicobject.h"
+#include "ags/std/set.h"
+#include "ags/std/unordered_set.h"
+#include "ags/std/map.h"
+#include "ags/engine/ac/dynobj/cc_agsdynamicobject.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_types.h"
 
@@ -148,9 +148,9 @@ private:
 };
 
 typedef ScriptSetImpl< std::set<String>, true, true > ScriptSet;
-typedef ScriptSetImpl< std::set<String, StrLessNoCase>, true, false > ScriptSetCI;
+typedef ScriptSetImpl< std::set<String, IgnoreCase_LessThan>, true, false > ScriptSetCI;
 typedef ScriptSetImpl< std::unordered_set<String>, false, true > ScriptHashSet;
-typedef ScriptSetImpl< std::unordered_set<String, HashStrNoCase, StrEqNoCase>, false, false > ScriptHashSetCI;
+typedef ScriptSetImpl< std::unordered_set<String, IgnoreCase_Hash, IgnoreCase_EqualTo>, false, false > ScriptHashSetCI;
 
 } // namespace AGS3
 

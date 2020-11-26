@@ -20,8 +20,8 @@
  *
  */
 
-#include "ags/shared/ac/dynobj/cc_dialog.h"
-#include "ags/shared/ac/dialog.h"
+#include "ags/engine/ac/dynobj/cc_dialog.h"
+#include "ags/engine/ac/dialog.h"
 #include "ags/shared/ac/dialogtopic.h"
 #include "ags/shared/ac/gamestructdefines.h"
 

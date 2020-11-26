@@ -20,8 +20,8 @@
  *
  */
 
-#include "ags/shared/ac/dynobj/scriptstring.h"
-#include "ags/shared/ac/string.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/ac/string.h"
 //include <stdlib.h>
 //include <string.h>
 

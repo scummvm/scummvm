@@ -20,12 +20,12 @@
  *
  */
 
-#include "ags/shared/ac/dynobj/scriptdrawingsurface.h"
+#include "ags/engine/ac/dynobj/scriptdrawingsurface.h"
 #include "ags/shared/ac/spritecache.h"
-#include "ags/shared/ac/runtime_defines.h"
+#include "ags/engine/ac/runtime_defines.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/drawingsurface.h"
-#include "ags/shared/ac/gamestate.h"
+#include "ags/engine/ac/drawingsurface.h"
+#include "ags/engine/ac/gamestate.h"
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/shared/game/roomstruct.h"
 #include "ags/shared/gfx/bitmap.h"

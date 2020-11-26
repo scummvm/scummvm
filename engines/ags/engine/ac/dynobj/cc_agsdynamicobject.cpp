@@ -22,7 +22,7 @@
 
 //include <string.h>
 #include "ags/shared/core/types.h"
-#include "ags/shared/ac/dynobj/cc_agsdynamicobject.h"
+#include "ags/engine/ac/dynobj/cc_agsdynamicobject.h"
 #include "ags/shared/ac/common.h"               // quit()
 #include "ags/shared/util/bbop.h"
 
