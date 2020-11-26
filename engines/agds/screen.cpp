@@ -238,10 +238,10 @@ void Screen::load(const PatchPtr &patch) {
 		if (object.flag <= 0)
 			remove(object.name);
 		else {
-			// auto instance = find(object.name); //find by name finds removed objects too
-			// if (!instance || !instance->inScene()) {
-			// 	_engine->runObject(object.name);
-			// }
+			auto instance = find(object.name); //find by name finds removed objects too
+			if (!instance || !instance->inScene()) {
+				_engine->runObject(object.name);
+			}
 		}
 	}
 	_applyingPatch = false;
