@@ -48,13 +48,13 @@
 #define FALSE 0
 #endif
 
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/debug/out.h"
-#include "ags/shared/device/mousew32.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/device/mousew32.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/gfx_util.h"
-#include "ags/shared/main/graphics_mode.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/engine/gfx/gfx_util.h"
+#include "ags/engine/main/graphics_mode.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/shared/util/math.h"
 #if AGS_SIMULATE_RIGHT_CLICK
 #include "ags/shared/ac/sys_events.h" // j for ags_iskeypressed
@@ -200,7 +200,7 @@ void domouse(int str) {
 	*/
 	int poow = mousecurs[currentcursor]->GetWidth();
 	int pooh = mousecurs[currentcursor]->GetHeight();
-	int smx = mousex - hotxwas, smy = mousey - hotywas;
+	//int smx = mousex - hotxwas, smy = mousey - hotywas;
 	const Rect &viewport = play.GetMainViewport();
 
 	mgetgraphpos();
@@ -238,8 +238,7 @@ void mfreemem() {
 void mloadwcursor(char *namm) {
 	color dummypal[256];
 	if (wloadsprites(&dummypal[0], namm, mousecurs, 0, MAXCURSORS)) {
-		//printf("C_Load_wCursor: Error reading mouse cursor file\n");
-		exit(1);
+		error("mloadwcursor: Error reading mouse cursor file");
 	}
 }
 
