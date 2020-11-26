@@ -488,201 +488,11 @@ void Renderer::computePolygons(int16 polyRenderType, vertexData *vertices, int32
 	}
 }
 
-void Renderer::renderPolygons(int32 renderType, vertexData *vertices, int32 /*numVertices*/, int32 color, int vleft, int vright, int vtop, int vbottom) {
-	uint8 *out2;
-	int32 currentLine;
-
-	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, vtop);
-
-	int16 *ptr1 = &polyTab[vtop];
-	int16 *ptr2 = &polyTab2[vtop];
-
-	int32 vsize = vbottom - vtop;
-	vsize++;
-
-	switch (renderType) {
-	case POLYGONTYPE_FLAT: {
-		currentLine = vtop;
-		do {
-			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				int16 stop = ptr1[SCREEN_HEIGHT];
-				int16 start = ptr1[0];
-
-				ptr1++;
-				int32 hsize = stop - start;
-
-				if (hsize >= 0) {
-					hsize++;
-					out2 = start + out;
-
-					for (int32 j = start; j < hsize + start; j++) {
-						if (j >= 0 && j < SCREEN_WIDTH) {
-							out[j] = color;
-						}
-					}
-				}
-			}
-			out += SCREEN_WIDTH;
-			currentLine++;
-		} while (--vsize);
-		break;
-	}
-	case POLYGONTYPE_COPPER: {
-		currentLine = vtop;
-		do {
-			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				int16 start = ptr1[0];
-				int16 stop = ptr1[SCREEN_HEIGHT];
-
-				ptr1++;
-				int32 hsize = stop - start;
-
-				if (hsize >= 0) {
-					uint16 mask = 0x43DB;
-					uint16 dx;
-					int32 startCopy;
-
-					dx = (uint8)color;
-					dx |= 0x300;
-
-					hsize++;
-					out2 = start + out;
-					startCopy = start;
-
-					for (int32 j = startCopy; j < hsize + startCopy; j++) {
-						start += mask;
-						start = (start & 0xFF00) | ((start & 0xFF) & (uint8)(dx >> 8));
-						start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
-						if (j >= 0 && j < SCREEN_WIDTH) {
-							out[j] = start & 0xFF;
-						}
-						mask = (mask << 2) | (mask >> 14);
-						mask++;
-					}
-				}
-			}
-			out += SCREEN_WIDTH;
-			currentLine++;
-		} while (--vsize);
-		break;
-	}
-	case POLYGONTYPE_BOPPER: { // FIXME: buggy
-		currentLine = vtop;
-		do {
-			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				int16 start = ptr1[0];
-				int16 stop = ptr1[SCREEN_HEIGHT];
-				ptr1++;
-				int32 hsize = stop - start;
-
-				if (hsize >= 0) {
-					hsize++;
-					out2 = start + out;
-					for (int32 j = start; j < hsize + start; j++) {
-						if ((start + (vtop % 1)) & 1) {
-							if (j >= 0 && j < SCREEN_WIDTH) {
-								out[j] = color;
-							}
-						}
-						out2++;
-					}
-				}
-			}
-			out += SCREEN_WIDTH;
-			currentLine++;
-		} while (--vsize);
-		break;
-	}
-	case POLYGONTYPE_MARBLE: { // TODO: implement this
-		break;
-	}
-	case POLYGONTYPE_TELE: { // FIXME: buggy
-		int ax;
-		int bx;
-		unsigned short int dx;
-		unsigned short int temp;
-		bx = (unsigned short)color << 0x10;
-		int32 renderLoop = vsize;
-		do {
-			int16 start;
-			int16 stop;
-			int32 hsize;
-			while (1) {
-				start = ptr1[0];
-				stop = ptr1[SCREEN_HEIGHT];
-				ptr1++;
-				hsize = stop - start;
-
-				if (hsize) {
-					break;
-				}
-
-				out2 = start + out;
-				*out2 = ((unsigned short)(bx >> 0x18)) & 0x0F;
-
-				color = *(out2 + 1);
-
-				out += SCREEN_WIDTH;
-
-				--renderLoop;
-				if (!renderLoop) {
-					return;
-				}
-			}
-
-			if (stop >= start) {
-				hsize++;
-				bx = (unsigned short)(color >> 0x10);
-				out2 = start + out;
-
-				ax = (bx & 0xF0) << 8;
-				bx = bx << 8;
-				ax += (bx & 0x0F);
-				ax -= bx;
-				ax++;
-				ax = ax >> 16;
-
-				ax = ax / hsize;
-				temp = (ax & 0xF0);
-				temp = temp >> 8;
-				temp += (ax & 0x0F);
-				ax = temp;
-
-				dx = ax;
-
-				ax = (ax & 0x0F) + (bx & 0xF0);
-				hsize++;
-
-				if (hsize & 1) {
-					ax = 0; // not sure about this
-				}
-
-				int32 j = hsize >> 1;
-
-				while (1) {
-					*(out2++) = ax & 0x0F;
-					ax += dx;
-
-					--j;
-					if (!j) {
-						break;
-					}
-
-					*(out2++) = ax & 0x0F;
-					ax += dx;
-				}
-			}
-
-			out += SCREEN_WIDTH;
-			--renderLoop;
-
-		} while (renderLoop);
-		break;
-	}
-	case POLYGONTYPE_TRAS: { // FIXME: buggy
-		do {
-			unsigned short int bx;
-
+void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	int32 currentLine = vtop;
+	do {
+		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
 			int16 start = ptr1[0];
 			int16 stop = ptr1[SCREEN_HEIGHT];
 
@@ -690,140 +500,445 @@ void Renderer::renderPolygons(int32 renderType, vertexData *vertices, int32 /*nu
 			int32 hsize = stop - start;
 
 			if (hsize >= 0) {
-				hsize++;
-				out2 = start + out;
+				uint16 mask = 0x43DB;
+				uint16 dx;
+				int32 startCopy;
 
-				if ((hsize >> 1) < 0) {
-					bx = color & 0xFF;
-					bx = bx << 8;
-					bx += color & 0xFF;
+				dx = (uint8)color;
+				dx |= 0x300;
+
+				hsize++;
+				startCopy = start;
+
+				for (int32 j = startCopy; j < hsize + startCopy; j++) {
+					start += mask;
+					start = (start & 0xFF00) | ((start & 0xFF) & (uint8)(dx >> 8));
+					start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
+					if (j >= 0 && j < SCREEN_WIDTH) {
+						out[j] = start & 0xFF;
+					}
+					mask = (mask << 2) | (mask >> 14);
+					mask++;
+				}
+			}
+		}
+		out += SCREEN_WIDTH;
+		currentLine++;
+	} while (--vsize);
+}
+
+void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	int32 currentLine = vtop;
+	do {
+		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+			int16 start = ptr1[0];
+			int16 stop = ptr1[SCREEN_HEIGHT];
+			ptr1++;
+			int32 hsize = stop - start;
+
+			if (hsize >= 0) {
+				hsize++;
+				for (int32 j = start; j < hsize + start; j++) {
+					if ((start + (vtop % 1)) & 1) {
+						if (j >= 0 && j < SCREEN_WIDTH) {
+							out[j] = color;
+						}
+					}
+				}
+			}
+		}
+		out += SCREEN_WIDTH;
+		currentLine++;
+	} while (--vsize);
+}
+
+void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	int32 currentLine = vtop;
+	do {
+		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+			int16 stop = ptr1[SCREEN_HEIGHT];
+			int16 start = ptr1[0];
+
+			ptr1++;
+			int32 hsize = stop - start;
+
+			if (hsize >= 0) {
+				hsize++;
+
+				for (int32 j = start; j < hsize + start; j++) {
+					if (j >= 0 && j < SCREEN_WIDTH) {
+						out[j] = color;
+					}
+				}
+			}
+		}
+		out += SCREEN_WIDTH;
+		currentLine++;
+	} while (--vsize);
+}
+
+void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	int ax;
+	int bx;
+	unsigned short int dx;
+	unsigned short int temp;
+	bx = (unsigned short)color << 0x10;
+	int32 renderLoop = vsize;
+	do {
+		int16 start;
+		int16 stop;
+		int32 hsize;
+		while (1) {
+			start = ptr1[0];
+			stop = ptr1[SCREEN_HEIGHT];
+			ptr1++;
+			hsize = stop - start;
+
+			if (hsize) {
+				break;
+			}
+
+			uint8 *out2 = start + out;
+			*out2 = ((unsigned short)(bx >> 0x18)) & 0x0F;
+
+			color = *(out2 + 1);
+
+			out += SCREEN_WIDTH;
+
+			--renderLoop;
+			if (!renderLoop) {
+				return;
+			}
+		}
+
+		if (stop >= start) {
+			hsize++;
+			bx = (unsigned short)(color >> 0x10);
+			uint8 *out2 = start + out;
+
+			ax = (bx & 0xF0) << 8;
+			bx = bx << 8;
+			ax += (bx & 0x0F);
+			ax -= bx;
+			ax++;
+			ax = ax >> 16;
+
+			ax = ax / hsize;
+			temp = (ax & 0xF0);
+			temp = temp >> 8;
+			temp += (ax & 0x0F);
+			ax = temp;
+
+			dx = ax;
+
+			ax = (ax & 0x0F) + (bx & 0xF0);
+			hsize++;
+
+			if (hsize & 1) {
+				ax = 0; // not sure about this
+			}
+
+			int32 j = hsize >> 1;
+
+			while (1) {
+				*(out2++) = ax & 0x0F;
+				ax += dx;
+
+				--j;
+				if (!j) {
+					break;
+				}
+
+				*(out2++) = ax & 0x0F;
+				ax += dx;
+			}
+		}
+
+		out += SCREEN_WIDTH;
+		--renderLoop;
+
+	} while (renderLoop);
+}
+
+// FIXME: buggy
+void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	do {
+		unsigned short int bx;
+
+		int16 start = ptr1[0];
+		int16 stop = ptr1[SCREEN_HEIGHT];
+
+		ptr1++;
+		int32 hsize = stop - start;
+
+		if (hsize >= 0) {
+			hsize++;
+			uint8 *out2 = start + out;
+
+			if ((hsize >> 1) < 0) {
+				bx = color & 0xFF;
+				bx = bx << 8;
+				bx += color & 0xFF;
+				for (int32 j = 0; j < hsize; j++) {
+					*(out2) = (*(out2)&0x0F0F) | bx;
+				}
+			} else {
+				*(out2) = (*(out2)&0x0F) | color;
+				out2++;
+			}
+		}
+		out += SCREEN_WIDTH;
+	} while (--vsize);
+}
+
+// FIXME: buggy
+void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	unsigned char bh = 0;
+
+	int32 currentLine = vtop;
+	do {
+		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+			int16 start = ptr1[0];
+			int16 stop = ptr1[SCREEN_HEIGHT];
+			ptr1++;
+			int32 hsize = stop - start;
+
+			if (hsize >= 0) {
+				hsize++;
+				uint8 *out2 = start + out;
+
+				hsize /= 2;
+				if (hsize > 1) {
+					uint16 ax;
+					bh ^= 1;
+					ax = (uint16)(*out2);
+					ax &= 1;
+					if (ax ^ bh) {
+						out2++;
+					}
+
 					for (int32 j = 0; j < hsize; j++) {
-						*(out2) = (*(out2)&0x0F0F) | bx;
+						*(out2) = (uint8)color;
+						out2 += 2;
+					}
+				}
+			}
+		}
+		out += SCREEN_WIDTH;
+		currentLine++;
+	} while (--vsize);
+}
+
+void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr2 = &polyTab2[vtop];
+	int32 renderLoop = vsize;
+	int32 currentLine = vtop;
+	do {
+		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+			uint16 startColor = ptr2[0];
+			uint16 stopColor = ptr2[SCREEN_HEIGHT];
+
+			int16 colorSize = stopColor - startColor;
+
+			int16 stop = ptr1[SCREEN_HEIGHT]; // stop
+			int16 start = ptr1[0];  // start
+
+			ptr1++;
+			uint8 *out2 = start + out;
+			int32 hsize = stop - start;
+
+			//varf2 = ptr2[SCREEN_HEIGHT];
+			//varf3 = ptr2[0];
+
+			ptr2++;
+
+			//varf4 = (float)((int32)varf2 - (int32)varf3);
+
+			if (hsize == 0) {
+				if (start >= 0 && start < SCREEN_WIDTH) {
+					*out2 = ((startColor + stopColor) / 2) >> 8; // moyenne des 2 couleurs
+				}
+			} else if (hsize > 0) {
+				if (hsize == 1) {
+					if (start >= -1 && start < SCREEN_WIDTH - 1) {
+						*(out2 + 1) = stopColor >> 8;
+					}
+
+					if (start >= 0 && start < SCREEN_WIDTH) {
+						*(out2) = startColor >> 8;
+					}
+				} else if (hsize == 2) {
+					if (start >= -2 && start < SCREEN_WIDTH - 2) {
+						*(out2 + 2) = stopColor >> 8;
+					}
+
+					if (start >= -1 && start < SCREEN_WIDTH - 1) {
+						*(out2 + 1) = ((startColor + stopColor) / 2) >> 8;
+					}
+
+					if (start >= 0 && start < SCREEN_WIDTH) {
+						*(out2) = startColor >> 8;
 					}
 				} else {
-					*(out2) = (*(out2)&0x0F) | color;
-					out2++;
-				}
-			}
-			out += SCREEN_WIDTH;
-		} while (--vsize);
-		break;
-	}
-	case POLYGONTYPE_TRAME: { // FIXME: buggy
-		unsigned char bh = 0;
-
-		currentLine = vtop;
-		do {
-			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				int16 start = ptr1[0];
-				int16 stop = ptr1[SCREEN_HEIGHT];
-				ptr1++;
-				int32 hsize = stop - start;
-
-				if (hsize >= 0) {
+					int32 currentXPos = start;
+					colorSize /= hsize;
 					hsize++;
-					out2 = start + out;
 
-					hsize /= 2;
-					if (hsize > 1) {
-						uint16 ax;
-						bh ^= 1;
-						ax = (uint16)(*out2);
-						ax &= 1;
-						if (ax ^ bh) {
-							out2++;
+					if (hsize % 2) {
+						hsize /= 2;
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2) = startColor >> 8;
 						}
-
-						for (int32 j = 0; j < hsize; j++) {
-							*(out2) = (uint8)color;
-							out2 += 2;
-						}
+						out2++;
+						currentXPos++;
+						startColor += colorSize;
+					} else {
+						hsize /= 2;
 					}
+
+					do {
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2) = startColor >> 8;
+						}
+
+						currentXPos++;
+						startColor += colorSize;
+
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2 + 1) = startColor >> 8;
+						}
+
+						currentXPos++;
+						out2 += 2;
+						startColor += colorSize;
+					} while (--hsize);
 				}
 			}
-			out += SCREEN_WIDTH;
-			currentLine++;
-		} while (--vsize);
-		break;
-	}
-	case POLYGONTYPE_GOURAUD: {
-		int32 renderLoop = vsize;
-		currentLine = vtop;
-		do {
-			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+		}
+		out += SCREEN_WIDTH;
+		currentLine++;
+	} while (--renderLoop);
+}
+
+void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr2 = &polyTab2[vtop];
+	int32 renderLoop = vsize;
+
+	int32 currentLine = vtop;
+	do {
+		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+			int16 stop = ptr1[SCREEN_HEIGHT]; // stop
+			int16 start = ptr1[0];  // start
+			ptr1++;
+			int32 hsize = stop - start;
+
+			if (hsize >= 0) {
 				uint16 startColor = ptr2[0];
 				uint16 stopColor = ptr2[SCREEN_HEIGHT];
+				int32 currentXPos = start;
 
-				int16 colorSize = stopColor - startColor;
-
-				int16 stop = ptr1[SCREEN_HEIGHT]; // stop
-				int16 start = ptr1[0];  // start
-
-				ptr1++;
-				out2 = start + out;
-				int32 hsize = stop - start;
-
-				//varf2 = ptr2[SCREEN_HEIGHT];
-				//varf3 = ptr2[0];
-
+				uint8 *out2 = start + out;
 				ptr2++;
 
-				//varf4 = (float)((int32)varf2 - (int32)varf3);
-
 				if (hsize == 0) {
-					if (start >= 0 && start < SCREEN_WIDTH) {
-						*out2 = ((startColor + stopColor) / 2) >> 8; // moyenne des 2 couleurs
+					if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+						*(out2) = (uint8)(((startColor + stopColor) / 2) >> 8);
 					}
-				} else if (hsize > 0) {
+				} else {
+					int16 colorSize = stopColor - startColor;
 					if (hsize == 1) {
-						if (start >= -1 && start < SCREEN_WIDTH - 1) {
-							*(out2 + 1) = stopColor >> 8;
+						uint16 currentColor = startColor;
+						hsize++;
+						hsize /= 2;
+
+						currentColor &= 0xFF;
+						currentColor += startColor;
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2) = currentColor >> 8;
 						}
 
-						if (start >= 0 && start < SCREEN_WIDTH) {
-							*(out2) = startColor >> 8;
+						currentColor &= 0xFF;
+						startColor += colorSize;
+						currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+						currentColor += startColor;
+
+						currentXPos++;
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2 + 1) = currentColor >> 8;
 						}
 					} else if (hsize == 2) {
-						if (start >= -2 && start < SCREEN_WIDTH - 2) {
-							*(out2 + 2) = stopColor >> 8;
+						uint16 currentColor = startColor;
+						hsize++;
+						hsize /= 2;
+
+						currentColor &= 0xFF;
+						colorSize /= 2;
+						currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+						currentColor += startColor;
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2) = currentColor >> 8;
 						}
 
-						if (start >= -1 && start < SCREEN_WIDTH - 1) {
-							*(out2 + 1) = ((startColor + stopColor) / 2) >> 8;
+						out2++;
+						currentXPos++;
+						startColor += colorSize;
+
+						currentColor &= 0xFF;
+						currentColor += startColor;
+
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2) = currentColor >> 8;
 						}
 
-						if (start >= 0 && start < SCREEN_WIDTH) {
-							*(out2) = startColor >> 8;
+						currentColor &= 0xFF;
+						startColor += colorSize;
+						currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+						currentColor += startColor;
+
+						currentXPos++;
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2 + 1) = currentColor >> 8;
 						}
 					} else {
-						int32 currentXPos = start;
+						uint16 currentColor = startColor;
 						colorSize /= hsize;
 						hsize++;
 
 						if (hsize % 2) {
 							hsize /= 2;
+							currentColor &= 0xFF;
+							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+							currentColor += startColor;
 							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2) = startColor >> 8;
+								*(out2) = currentColor >> 8;
 							}
 							out2++;
 							currentXPos++;
-							startColor += colorSize;
 						} else {
 							hsize /= 2;
 						}
 
 						do {
+							currentColor &= 0xFF;
+							currentColor += startColor;
 							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2) = startColor >> 8;
+								*(out2) = currentColor >> 8;
 							}
-
 							currentXPos++;
+							currentColor &= 0xFF;
 							startColor += colorSize;
-
+							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+							currentColor += startColor;
 							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2 + 1) = startColor >> 8;
+								*(out2 + 1) = currentColor >> 8;
 							}
-
 							currentXPos++;
 							out2 += 2;
 							startColor += colorSize;
@@ -831,140 +946,51 @@ void Renderer::renderPolygons(int32 renderType, vertexData *vertices, int32 /*nu
 					}
 				}
 			}
-			out += SCREEN_WIDTH;
-			currentLine++;
-		} while (--renderLoop);
+		}
+		out += SCREEN_WIDTH;
+		currentLine++;
+	} while (--renderLoop);
+}
+
+void Renderer::renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const {
+}
+
+void Renderer::renderPolygons(int32 renderType, vertexData *vertices, int32 /*numVertices*/, int32 color, int vleft, int vright, int vtop, int vbottom) {
+	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, vtop);
+	const int32 vsize = vbottom - vtop + 1;
+
+	switch (renderType) {
+	case POLYGONTYPE_FLAT:
+		renderPolygonsFlat(out, vtop, vsize, color);
 		break;
-	}
-	case POLYGONTYPE_DITHER: { // dithering
-		int32 renderLoop = vsize;
-
-		currentLine = vtop;
-		do {
-			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				int16 stop = ptr1[SCREEN_HEIGHT]; // stop
-				int16 start = ptr1[0];  // start
-				ptr1++;
-				int32 hsize = stop - start;
-
-				if (hsize >= 0) {
-					uint16 startColor = ptr2[0];
-					uint16 stopColor = ptr2[SCREEN_HEIGHT];
-					int32 currentXPos = start;
-
-					out2 = start + out;
-					ptr2++;
-
-					if (hsize == 0) {
-						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-							*(out2) = (uint8)(((startColor + stopColor) / 2) >> 8);
-						}
-					} else {
-						int16 colorSize = stopColor - startColor;
-						if (hsize == 1) {
-							uint16 currentColor = startColor;
-							hsize++;
-							hsize /= 2;
-
-							currentColor &= 0xFF;
-							currentColor += startColor;
-							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2) = currentColor >> 8;
-							}
-
-							currentColor &= 0xFF;
-							startColor += colorSize;
-							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-							currentColor += startColor;
-
-							currentXPos++;
-							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2 + 1) = currentColor >> 8;
-							}
-						} else if (hsize == 2) {
-							uint16 currentColor = startColor;
-							hsize++;
-							hsize /= 2;
-
-							currentColor &= 0xFF;
-							colorSize /= 2;
-							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-							currentColor += startColor;
-							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2) = currentColor >> 8;
-							}
-
-							out2++;
-							currentXPos++;
-							startColor += colorSize;
-
-							currentColor &= 0xFF;
-							currentColor += startColor;
-
-							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2) = currentColor >> 8;
-							}
-
-							currentColor &= 0xFF;
-							startColor += colorSize;
-							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-							currentColor += startColor;
-
-							currentXPos++;
-							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2 + 1) = currentColor >> 8;
-							}
-						} else {
-							uint16 currentColor = startColor;
-							colorSize /= hsize;
-							hsize++;
-
-							if (hsize % 2) {
-								hsize /= 2;
-								currentColor &= 0xFF;
-								currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-								currentColor += startColor;
-								if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-									*(out2) = currentColor >> 8;
-								}
-								out2++;
-								currentXPos++;
-							} else {
-								hsize /= 2;
-							}
-
-							do {
-								currentColor &= 0xFF;
-								currentColor += startColor;
-								if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-									*(out2) = currentColor >> 8;
-								}
-								currentXPos++;
-								currentColor &= 0xFF;
-								startColor += colorSize;
-								currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-								currentColor += startColor;
-								if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-									*(out2 + 1) = currentColor >> 8;
-								}
-								currentXPos++;
-								out2 += 2;
-								startColor += colorSize;
-							} while (--hsize);
-						}
-					}
-				}
-			}
-			out += SCREEN_WIDTH;
-			currentLine++;
-		} while (--renderLoop);
+	case POLYGONTYPE_COPPER:
+		renderPolygonsCopper(out, vtop, vsize, color);
 		break;
-	}
-	default: {
+	case POLYGONTYPE_BOPPER:
+		renderPolygonsBopper(out, vtop, vsize, color);
+		break;
+	case POLYGONTYPE_TELE:
+		renderPolygonsTele(out, vtop, vsize, color);
+		break;
+	case POLYGONTYPE_TRAS:
+		renderPolygonsTras(out, vtop, vsize, color);
+		break;
+	case POLYGONTYPE_TRAME:
+		renderPolygonTrame(out, vtop, vsize, color);
+		break;
+	case POLYGONTYPE_GOURAUD:
+		renderPolygonsGouraud(out, vtop, vsize, color);
+		break;
+	case POLYGONTYPE_DITHER:
+		renderPolygonsDither(out, vtop, vsize, color);
+		break;
+	case POLYGONTYPE_MARBLE:
+		renderPolygonsMarble(out, vtop, vsize, color);
+		break;
+	default:
 		warning("RENDER WARNING: Unsuported render type %d", renderType);
 		break;
 	}
-	};
 }
 
 void Renderer::renderPolygons(int32 polyRenderType, int32 color) {

@@ -198,6 +198,16 @@ private:
 
 	bool isUsingOrhoProjection = false;
 
+	void renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const;
+
 	void computePolygons(int16 polyRenderType, vertexData *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom);
 	void renderPolygons(int32 renderType, vertexData *vertices, int32 numVertices, int32 color, int vleft, int vright, int vtop, int vbottom);
 
