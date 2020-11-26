@@ -154,7 +154,7 @@ int pluginsWantingDebugHooks = 0;
 std::vector<InbuiltPluginDetails> _registered_builtin_plugins;
 
 void IAGSEngine::AbortGame(const char *reason) {
-	quit((char *)reason);
+	quit((const char *)reason);
 }
 const char *IAGSEngine::GetEngineVersion() {
 	return get_engine_version();
@@ -368,7 +368,7 @@ void IAGSEngine::SetVirtualScreen(BITMAP *bmp) {
 }
 
 int IAGSEngine::LookupParserWord(const char *word) {
-	return find_word_in_dictionary((char *)word);
+	return find_word_in_dictionary((const char *)word);
 }
 
 void IAGSEngine::BlitBitmap(int32 x, int32 y, BITMAP *bmp, int32 masked) {
@@ -515,7 +515,7 @@ int IAGSEngine::GetWalkbehindBaseline(int32 wa) {
 	return croom->walkbehind_base[wa];
 }
 void *IAGSEngine::GetScriptFunctionAddress(const char *funcName) {
-	return ccGetSymbolAddressForPlugin((char *)funcName);
+	return ccGetSymbolAddressForPlugin((const char *)funcName);
 }
 int IAGSEngine::GetBitmapTransparentColor(BITMAP *bmp) {
 	return bitmap_mask_color(bmp);
@@ -543,7 +543,7 @@ void IAGSEngine::GetTextExtent(int32 font, const char *text, int32 *width, int32
 	if (width != nullptr)
 		width[0] = wgettextwidth_compensate(text, font);
 	if (height != nullptr)
-		height[0] = wgettextheight((char *)text, font);
+		height[0] = wgettextheight((const char *)text, font);
 }
 void IAGSEngine::PrintDebugConsole(const char *text) {
 	debug_script_log("[PLUGIN] %s", text);
@@ -681,7 +681,7 @@ int IAGSEngine::CallGameScriptFunction(const char *name, int32 globalScript, int
 	params[0].SetPluginArgument(arg1);
 	params[1].SetPluginArgument(arg2);
 	params[2].SetPluginArgument(arg3);
-	int toret = RunScriptFunctionIfExists(toRun, (char *)name, numArgs, params);
+	int toret = RunScriptFunctionIfExists(toRun, (const char *)name, numArgs, params);
 	return toret;
 }
 

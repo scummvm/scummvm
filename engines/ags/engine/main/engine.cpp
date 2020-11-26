@@ -488,7 +488,7 @@ void engine_init_audio() {
 	digi_id = digi_drv.first;
 	midi_id = midi_drv.first;
 	const int max_digi_voices = digi_drv.second;
-	const int max_midi_voices = midi_drv.second;
+	//const int max_midi_voices = midi_drv.second;
 	if (digi_voices > max_digi_voices)
 		digi_voices = max_digi_voices;
 	// NOTE: we do not specify number of MIDI voices, so don't have to calculate available here

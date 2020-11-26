@@ -39,7 +39,8 @@ NewControl::NewControl(int xx, int yy, int wi, int hi) {
 	visible = 1;
 	enabled = 1;
 	needredraw = 1;
-};
+}
+
 NewControl::NewControl() {
 	x = y = wid = hit = 0;
 	state = 0;
@@ -49,6 +50,7 @@ NewControl::NewControl() {
 	enabled = 1;
 	needredraw = 1;
 }
+
 int NewControl::mouseisinarea(int mousex, int mousey) {
 	if (topwindowhandle != wlevel)
 		return 0;
@@ -58,6 +60,7 @@ int NewControl::mouseisinarea(int mousex, int mousey) {
 
 	return 0;
 }
+
 void NewControl::drawifneeded() {
 	if (topwindowhandle != wlevel)
 		return;
@@ -66,6 +69,7 @@ void NewControl::drawifneeded() {
 		draw(get_gui_screen());
 	}
 }
+
 void NewControl::drawandmouse() {
 	//    ags_domouse(DOMOUSE_DISABLE);
 	draw(get_gui_screen());

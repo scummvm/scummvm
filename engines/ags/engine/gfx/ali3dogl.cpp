@@ -1087,7 +1087,7 @@ bool OGLGraphicsDriver::GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_n
 }
 
 void OGLGraphicsDriver::RenderToBackBuffer() {
-	throw Ali3DException("OGL driver does not have a back buffer");
+	error("OGL driver does not have a back buffer");
 }
 
 void OGLGraphicsDriver::Render() {
@@ -1565,10 +1565,10 @@ void OGLGraphicsDriver::UpdateTextureRegion(OGLTextureTile *tile, Bitmap *bitmap
 void OGLGraphicsDriver::UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Bitmap *bitmap, bool hasAlpha) {
 	OGLBitmap *target = (OGLBitmap *)bitmapToUpdate;
 	if (target->_width != bitmap->GetWidth() || target->_height != bitmap->GetHeight())
-		throw Ali3DException("UpdateDDBFromBitmap: mismatched bitmap size");
+		error("UpdateDDBFromBitmap: mismatched bitmap size");
 	const int color_depth = bitmap->GetColorDepth();
 	if (color_depth != target->_colDepth)
-		throw Ali3DException("UpdateDDBFromBitmap: mismatched colour depths");
+		error("UpdateDDBFromBitmap: mismatched colour depths");
 
 	target->_hasAlpha = hasAlpha;
 	if (color_depth == 8)
@@ -1620,7 +1620,7 @@ IDriverDependantBitmap *OGLGraphicsDriver::CreateDDBFromBitmap(Bitmap *bitmap, b
 	int allocatedHeight = bitmap->GetHeight();
 	// NOTE: original bitmap object is not modified in this function
 	if (bitmap->GetColorDepth() != GetCompatibleBitmapFormat(bitmap->GetColorDepth()))
-		throw Ali3DException("CreateDDBFromBitmap: bitmap colour depth not supported");
+		error("CreateDDBFromBitmap: bitmap colour depth not supported");
 	int colourDepth = bitmap->GetColorDepth();
 
 	OGLBitmap *ddb = new OGLBitmap(bitmap->GetWidth(), bitmap->GetHeight(), colourDepth, opaque);

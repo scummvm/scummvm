@@ -175,6 +175,8 @@ String make_scaling_option(FrameScaleDefinition scale_def, int scale_factor) {
 		return "stretch";
 	case kFrame_MaxProportional:
 		return "proportional";
+	default:
+		break;
 	}
 	return String::FromFormat("%d", scale_factor);
 }

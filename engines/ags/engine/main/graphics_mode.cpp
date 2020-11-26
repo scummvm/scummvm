@@ -260,6 +260,8 @@ Size precalc_screen_size(const Size &game_size, const DisplayModeSetup &dm_setup
 		// Set as big as current device size
 		screen_size = device_size;
 		break;
+	default:
+		break;
 	}
 	return screen_size;
 }

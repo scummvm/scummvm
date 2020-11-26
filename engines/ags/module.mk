@@ -84,7 +84,6 @@ MODULE_OBJS = \
 	engine/game/savegame.o \
 	engine/game/savegame_components.o \
 	engine/game/viewport.o \
-	engine/gfx/all3dd3d.o \
 	engine/gfx/ali3dogl.o \
 	engine/gfx/ali3dsw.o \
 	engine/gfx/blender.o \
