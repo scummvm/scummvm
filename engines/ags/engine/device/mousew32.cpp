@@ -198,8 +198,8 @@ void domouse(int str) {
 	   TO USE THIS ROUTINE YOU MUST LOAD A MOUSE CURSOR USING mloadcursor.
 	   YOU MUST ALSO REMEMBER TO CALL mfreemem AT THE END OF THE PROGRAM.
 	*/
-	int poow = mousecurs[currentcursor]->GetWidth();
-	int pooh = mousecurs[currentcursor]->GetHeight();
+	int poow = mousecurs[(int)currentcursor]->GetWidth();
+	int pooh = mousecurs[(int)currentcursor]->GetHeight();
 	//int smx = mousex - hotxwas, smy = mousey - hotywas;
 	const Rect &viewport = play.GetMainViewport();
 

@@ -54,7 +54,7 @@ IDriverDependantBitmap *dialogDDB;
 
 #undef MAXSAVEGAMES
 #define MAXSAVEGAMES 20
-DisplayProperties dispp;
+//DisplayProperties dispp;
 char *lpTemp, *lpTemp2;
 char bufTemp[260], buffer2[260];
 int numsaves = 0, toomanygames;

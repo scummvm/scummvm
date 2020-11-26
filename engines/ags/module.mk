@@ -84,7 +84,6 @@ MODULE_OBJS = \
 	engine/debugging/filebasedagsdebugger.o \
 	engine/debugging/logfile.o \
 	engine/debugging/messagebuffer.o \
-	engine/debugging/namedpipesagsdebugger.o \
 	engine/device/mousew32.o \
 	engine/font/fonts_engine.o \
 	engine/game/game_init.o \
