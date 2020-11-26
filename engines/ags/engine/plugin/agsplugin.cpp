@@ -727,7 +727,8 @@ void IAGSEngine::QueueGameScriptFunction(const char *name, int32 globalScript, i
 }
 
 int IAGSEngine::RegisterManagedObject(const void *object, IAGSScriptManagedObject *callback) {
-	GlobalReturnValue.SetPluginObject((void *)object, (ICCDynamicObject *)callback);
+	// TODO: handle loss of const better
+	GlobalReturnValue.SetPluginObject(const_cast<void *>(object), (ICCDynamicObject *)callback);
 	return ccRegisterManagedObject(object, (ICCDynamicObject *)callback, true);
 }
 
@@ -749,7 +750,8 @@ void IAGSEngine::AddManagedObjectReader(const char *typeName, IAGSManagedObjectR
 }
 
 void IAGSEngine::RegisterUnserializedObject(int key_, const void *object, IAGSScriptManagedObject *callback) {
-	GlobalReturnValue.SetPluginObject((void *)object, (ICCDynamicObject *)callback);
+	// TODO: handle loss of const better
+	GlobalReturnValue.SetPluginObject(const_cast<void *>(object), (ICCDynamicObject *)callback);
 	ccRegisterUnserializedObject(key_, object, (ICCDynamicObject *)callback, true);
 }
 
@@ -772,7 +774,8 @@ void *IAGSEngine::GetManagedObjectAddressByKey(int key_) {
 const char *IAGSEngine::CreateScriptString(const char *fromText) {
 	const char *string = CreateNewScriptString(fromText);
 	// Should be still standard dynamic object, because not managed by plugin
-	GlobalReturnValue.SetDynamicObject((void *)string, &myScriptStringImpl);
+	// TODO: handle loss of const better
+	GlobalReturnValue.SetDynamicObject(const_cast<char *>(string), &myScriptStringImpl);
 	return string;
 }
 
