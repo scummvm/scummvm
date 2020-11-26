@@ -240,7 +240,9 @@ void Screen::load(const PatchPtr &patch) {
 		else {
 			auto instance = find(object.name); //find by name finds removed objects too
 			if (!instance || !instance->inScene()) {
-				_engine->runObject(object.name);
+				instance = _engine->loadObject(object.name);
+				instance->allowCalls(false);
+				_engine->runObject(instance);
 			}
 		}
 	}
