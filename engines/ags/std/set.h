@@ -23,102 +23,39 @@
 #ifndef AGS_STD_SET_H
 #define AGS_STD_SET_H
 
+#include "common/array.h"
+
 namespace AGS3 {
 namespace std {
 
-template<class T>
-class set {
-	struct Comparitor {
-		bool operator()(const T &a, const T &b) const {
-			return a == b;
-		}
-	};
-
-	class Items : public Common::Array<T> {
-	public:
-		void swap(Items &arr) {
-			SWAP(this->_capacity, arr._capacity);
-			SWAP(this->_size, arr._size);
-			SWAP(this->_storage, arr._storage);
-		}
-	};
+/**
+ * Derives the ScummVM SortedArray to match the std::set class
+ */
+template<class T, class EqualFunc = Common::Less<T> >
+class set : public Common::SortedArray<T, const T &> {
 private:
-	Items _items;
-	Comparitor _comparitor;
+	static int ComparatorFn(const T &a, const T &b) {
+		return EqualFunc()(a, b) ? -1 : 0;
+	}
 public:
-	typedef T *iterator;
-	typedef const T *const_iterator;
-
-	iterator begin() {
-		return _items.begin();
-	}
-	iterator end() {
-		return _items.end();
-	}
-	const_iterator begin() const {
-		return _items.begin();
-	}
-	const_iterator end() const {
-		return _items.end();
-	}
+	using const_iterator = typename Common::SortedArray<T, const T &>::const_iterator;
 
 	/**
-	 * Clear the set
+	 * Constructor
 	 */
-	void clear() {
-		_items.clear();
-	}
+	set() : Common::SortedArray<T, const T &>(ComparatorFn) {}
 
 	/**
-	 * Inserts a new item
-	 */
-	void insert(T val) {
-		_items.push_back(val);
-		Common::sort(begin(), end(), _comparitor);
-	}
-
-	/**
-	 * Inserts a range of items
-	 */
-	void insert(iterator first, iterator last) {
-		for (; first != last; ++first)
-			_items.push_back(*first);
-		Common::sort(begin(), end(), _comparitor);
-	}
-
-	/**
-	 * Swaps a set
-	 */
-	void swap(set<T> &arr) {
-		_items.swap(arr);
-	}
-
-	/**
-	 * Find an item
-	 */
-	iterator find(const T item) {
-		iterator it = begin();
-		for (; it != end() && *it != item; ++it) {}
-		return it;
-	}
-	const_iterator find(const T item) const {
-		const_iterator it = begin();
-		for (; it != end() && *it != item; ++it) {
-		}
-		return it;
-	}
-	bool empty() const {
-		return _items.empty();
-	}
-
-	/**
-	 * Returns the number of matching entries
+	 * Returns the number of keys that match the specified key
 	 */
 	size_t count(const T item) const {
 		size_t total = 0;
-		for (const_iterator it = begin(); it != end(); ++it) {
+		for (const_iterator it = this->begin(); it != this->end(); ++it) {
 			if (*it == item)
 				++total;
+			else if (!ComparatorFn(item, *it))
+				// Passed beyond possibility of matches
+				break;
 		}
 
 		return total;
