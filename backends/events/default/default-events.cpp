@@ -95,8 +95,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	event = _eventQueue.pop();
 	bool forwardEvent = true;
 
-	// If the backend has the kFeatureNoQuit, replace Quit event with Return to Launcher
-	if (event.type == Common::EVENT_QUIT && g_system->hasFeature(OSystem::kFeatureNoQuit))
+	// If the backend has the kFeatureNoQuit or the "Return to Launcher at Exit" option is enabled,
+	// replace "Quit" event with "Return to Launcher"
+	if (event.type == Common::EVENT_QUIT && (g_system->hasFeature(OSystem::kFeatureNoQuit) || (ConfMan.getBool("gui_return_to_launcher_at_exit") && g_engine)))
 		event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 
 	switch (event.type) {
