@@ -220,6 +220,7 @@ public:
 	SystemVariable *getSystemVariable(const Common::String &name);
 
 	void setNextScreenName(const Common::String &nextScreenName, bool savePrev) {
+		_navigatedToPreviousScreen = false;
 		if (_currentScreen && savePrev) {
 			_previousScreenName = _currentScreenName;
 		}
@@ -228,6 +229,7 @@ public:
 
 	void returnToPreviousScreen() {
 		if (!_previousScreenName.empty()) {
+			_navigatedToPreviousScreen = true;
 			_nextScreenName = _previousScreenName;
 			_previousScreenName.clear();
 		}
@@ -321,6 +323,7 @@ private:
 	Common::String				_nextScreenName;
 	Common::String				_previousScreenName;
 	Common::String 				_defaultMouseCursorName;
+	bool						_navigatedToPreviousScreen;
 	Animation *					_defaultMouseCursor;
 	Common::Point				_mouse;
 	MouseRegion *				_currentRegion;

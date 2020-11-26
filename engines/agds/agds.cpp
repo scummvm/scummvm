@@ -52,6 +52,7 @@ AGDSEngine::AGDSEngine(OSystem *system, const ADGameDescription *gameDesc) : Eng
                                                                              _mjpgPlayer(), _filmStarted(0),
 																			 _currentScreen(), _loadingScreen(false),
 																			 _currentCharacter(),
+																			 _navigatedToPreviousScreen(false),
                                                                              _defaultMouseCursor(),
                                                                              _mouse(400, 300),
 																			 _userEnabled(true), _systemUserEnabled(true),
@@ -283,7 +284,7 @@ PatchPtr AGDSEngine::createPatch(const Common::String &screenName) {
 void AGDSEngine::loadScreen(const Common::String &name) {
 	_loadingScreen = true;
 	_nextScreenName.clear();
-	debug("loadScreen %s", name.c_str());
+	debug("loadScreen %s [return to previous: %d]", name.c_str(), _navigatedToPreviousScreen);
 	if (_currentScreen && !_currentScreenName.empty())
 	{
 		PatchPtr &patch = _patches[_currentScreenName];
@@ -314,7 +315,7 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 
 	runProcess(screenObject);
 
-	if (patch) {
+	if (patch &&_navigatedToPreviousScreen) {
 		_currentScreen->load(patch);
 		if (_currentCharacter && patch->characterPresent) {
 			_currentCharacter->position(patch->characterPosition);
@@ -324,6 +325,7 @@ void AGDSEngine::loadScreen(const Common::String &name) {
 			loadDefaultMouseCursor(patch->defaultMouseCursor);
 	}
 	reAddInventory();
+	_navigatedToPreviousScreen = false;
 	_loadingScreen = false;
 }
 
