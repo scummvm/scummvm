@@ -1705,6 +1705,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_guiLanguagePopUp = nullptr;
 	_guiLanguageUseGameLanguageCheckbox = nullptr;
 	_useSystemDialogsCheckbox = nullptr;
+	_guiReturnToLauncherAtExit = nullptr;
 #ifdef USE_UPDATES
 	_updatesPopUpDesc = nullptr;
 	_updatesPopUp = nullptr;
@@ -2095,12 +2096,27 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 		_autosavePeriodPopUp->appendEntry(_(savePeriodLabels[i]), savePeriodValues[i]);
 	}
 
+	if (!g_system->hasFeature(OSystem::kFeatureNoQuit)) {
+		_guiReturnToLauncherAtExit = new CheckboxWidget(boss, prefix + "ReturnToLauncherAtExit",
+			_("Always return to the launcher when leaving a game"),
+			_("Always return to the launcher when leaving a game instead of closing ScummVM.")
+		);
+
+		_guiReturnToLauncherAtExit->setState(ConfMan.getBool("gui_return_to_launcher_at_exit", _domain));
+	}
+
+	_guiConfirmExit = new CheckboxWidget(boss, prefix + "ConfirmExit",
+		_("Ask for confirmation on exit"),
+		_("Ask for permission when closing ScummVM or leaving a game.")
+	);
+
+	_guiConfirmExit->setState(ConfMan.getBool("confirm_exit", _domain));
+
 #ifdef GUI_ENABLE_KEYSDIALOG
 	new ButtonWidget(boss, prefix + "KeysButton", _("Keys"), Common::U32String(), kChooseKeyMappingCmd);
 #endif
 
 	// TODO: joystick setting
-
 
 #ifdef USE_TRANSLATION
 	_guiLanguagePopUpDesc = new StaticTextWidget(boss, prefix + "GuiLanguagePopupDesc", _("GUI language:"), _("Language of ScummVM GUI"));
@@ -2400,6 +2416,14 @@ void GlobalOptionsDialog::apply() {
 
 	if (_useSystemDialogsCheckbox) {
 		ConfMan.setBool("gui_browser_native", _useSystemDialogsCheckbox->getState(), _domain);
+	}
+
+	if (_guiReturnToLauncherAtExit) {
+		ConfMan.setBool("gui_return_to_launcher_at_exit", _guiReturnToLauncherAtExit->getState(), _domain);
+	}
+
+	if (_guiConfirmExit) {
+		ConfMan.setBool("confirm_exit", _guiConfirmExit->getState(), _domain);
 	}
 
 	GUI::ThemeEngine::GraphicsMode gfxMode = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
