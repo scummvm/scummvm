@@ -20,45 +20,50 @@
  *
  */
 
-#include "ags/shared/ac/dialog.h"
+#include "ags/engine/ac/dialog.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/character.h"
+#include "ags/engine/ac/character.h"
 #include "ags/shared/ac/characterinfo.h"
 #include "ags/shared/ac/dialogtopic.h"
-#include "ags/shared/ac/display.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/gamestate.h"
+#include "ags/engine/ac/display.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/gamestate.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/global_character.h"
-#include "ags/shared/ac/global_dialog.h"
-#include "ags/shared/ac/global_display.h"
-#include "ags/shared/ac/global_game.h"
-#include "ags/shared/ac/global_gui.h"
-#include "ags/shared/ac/global_room.h"
-#include "ags/shared/ac/global_translation.h"
-#include "ags/shared/ac/keycode.h"
-#include "ags/shared/ac/overlay.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/parser.h"
-#include "ags/shared/ac/sys_events.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/ac/dynobj/scriptdialogoptionsrendering.h"
-#include "ags/shared/ac/dynobj/scriptdrawingsurface.h"
-#include "ags/shared/ac/system.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/ac/global_character.h"
+#include "ags/engine/ac/global_dialog.h"
+#include "ags/engine/ac/global_display.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/global_gui.h"
+#include "ags/engine/ac/global_room.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/keycode.h"
+#include "ags/engine/ac/overlay.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/parser.h"
+#include "ags/engine/ac/sys_events.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/dynobj/scriptdialogoptionsrendering.h"
+#include "ags/engine/ac/dynobj/scriptdrawingsurface.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/font/fonts.h"
-#include "ags/shared/script/cc_instance.h"
+#include "ags/engine/script/cc_instance.h"
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/gui/guitextbox.h"
-#include "ags/shared/main/game_run.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
-#include "ags/shared/script/script.h"
+#include "ags/engine/main/game_run.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/script/script.h"
 #include "ags/shared/ac/spritecache.h"
-#include "ags/shared/gfx/ddb.h"
-#include "ags/shared/gfx/gfx_util.h"
-#include "ags/shared/gfx/graphicsdriver.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/media/audio/audio_system.h"
+#include "ags/engine/gfx/ddb.h"
+#include "ags/engine/gfx/gfx_util.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/media/audio/audio_system.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
 
 namespace AGS3 {
 
@@ -582,16 +587,16 @@ void DialogOptions::Show() {
 		}
 	} else {
 		//dlgyp=(play.viewport.GetHeight()-numdisp*txthit)-1;
-		const Rect &ui_view = play.GetUIViewport();
-		areawid = ui_view.GetWidth() - 5;
+		const Rect &uiView = play.GetUIViewport();
+		areawid = uiView.GetWidth() - 5;
 		padding = TEXTWINDOW_PADDING_DEFAULT;
 		GET_OPTIONS_HEIGHT
-		dlgyp = ui_view.GetHeight() - needheight;
+		dlgyp = uiView.GetHeight() - needheight;
 
 		dirtyx = 0;
 		dirtyy = dlgyp - 1;
-		dirtywidth = ui_view.GetWidth();
-		dirtyheight = ui_view.GetHeight() - dirtyy;
+		dirtywidth = uiView.GetWidth();
+		dirtyheight = uiView.GetHeight() - dirtyy;
 		dialog_abs_x = 0;
 	}
 	if (!is_textwindow)
@@ -1147,11 +1152,6 @@ void do_conversation(int dlgnum) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

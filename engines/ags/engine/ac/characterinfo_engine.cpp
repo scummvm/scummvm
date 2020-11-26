@@ -23,17 +23,18 @@
 #include "ags/shared/ac/characterinfo.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/character.h"
-#include "ags/shared/ac/characterextras.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_character.h"
-#include "ags/shared/ac/math.h"
-#include "ags/shared/ac/viewframe.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/ac/character.h"
+#include "ags/engine/ac/characterextras.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_character.h"
+#include "ags/engine/ac/math.h"
+#include "ags/engine/ac/viewframe.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/roomstruct.h"
-#include "ags/shared/main/maindefines_ex.h"    // RETURN_CONTINUE
-#include "ags/shared/main/update.h"
-#include "ags/shared/media/audio/audio_system.h"
+#include "ags/engine/main/maindefines_ex.h"    // RETURN_CONTINUE
+#include "ags/engine/main/update.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -470,7 +471,7 @@ void CharacterInfo::update_character_idle(CharacterExtras *chex, int &doing_noth
 			// if there arent enough loops to do the current one.
 			if ((idletime > 0) && (useloop >= maxLoops)) {
 				do {
-					useloop = rand() % maxLoops;
+					useloop = ::AGS::g_vm->getRandomNumber(maxLoops - 1);
 					// don't select a loop which is a continuation of a previous one
 				} while ((useloop > 0) && (views[idleview].loops[useloop - 1].RunNextLoop()));
 			}

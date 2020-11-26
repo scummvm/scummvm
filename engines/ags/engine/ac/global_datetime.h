@@ -25,8 +25,8 @@
 
 namespace AGS3 {
 
-int sc_GetTime(int whatti);
-int GetRawTime();
+extern int sc_GetTime(int whatti);
+extern int GetRawTime();
 
 } // namespace AGS3
 

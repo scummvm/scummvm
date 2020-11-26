@@ -25,57 +25,62 @@
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/string_utils.h" //strlwr()
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/charactercache.h"
-#include "ags/shared/ac/characterextras.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/event.h"
-#include "ags/shared/ac/game.h"
-#include "ags/shared/ac/gamesetup.h"
+#include "ags/engine/ac/charactercache.h"
+#include "ags/engine/ac/characterextras.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/event.h"
+#include "ags/engine/ac/game.h"
+#include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_audio.h"
-#include "ags/shared/ac/global_character.h"
-#include "ags/shared/ac/global_game.h"
-#include "ags/shared/ac/global_object.h"
-#include "ags/shared/ac/global_translation.h"
-#include "ags/shared/ac/movelist.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/objectcache.h"
-#include "ags/shared/ac/overlay.h"
-#include "ags/shared/ac/properties.h"
-#include "ags/shared/ac/region.h"
-#include "ags/shared/ac/sys_events.h"
-#include "ags/shared/ac/room.h"
-#include "ags/shared/ac/roomobject.h"
-#include "ags/shared/ac/roomstatus.h"
-#include "ags/shared/ac/screen.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/ac/system.h"
-#include "ags/shared/ac/walkablearea.h"
-#include "ags/shared/ac/walkbehind.h"
-#include "ags/shared/ac/dynobj/scriptobject.h"
-#include "ags/shared/ac/dynobj/scripthotspot.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_audio.h"
+#include "ags/engine/ac/global_character.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/global_object.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/movelist.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/objectcache.h"
+#include "ags/engine/ac/overlay.h"
+#include "ags/engine/ac/properties.h"
+#include "ags/engine/ac/region.h"
+#include "ags/engine/ac/sys_events.h"
+#include "ags/engine/ac/room.h"
+#include "ags/engine/ac/roomobject.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/screen.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/ac/walkablearea.h"
+#include "ags/engine/ac/walkbehind.h"
+#include "ags/engine/ac/dynobj/scriptobject.h"
+#include "ags/engine/ac/dynobj/scripthotspot.h"
 #include "ags/shared/gui/guidefines.h"
-#include "ags/shared/script/cc_instance.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/debug/debugger.h"
-#include "ags/shared/debug/out.h"
+#include "ags/engine/script/cc_instance.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/shared/debugging/out.h"
 #include "ags/shared/game/room_version.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
-#include "ags/shared/plugin/agsplugin.h"
-#include "ags/shared/plugin/plugin_engine.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/plugin/agsplugin.h"
+#include "ags/engine/plugin/plugin_engine.h"
 #include "ags/shared/script/cc_error.h"
-#include "ags/shared/script/script.h"
-#include "ags/shared/script/script_runtime.h"
+#include "ags/engine/script/script.h"
+#include "ags/engine/script/script_runtime.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/util/stream.h"
-#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/shared/core/assetmanager.h"
-#include "ags/shared/ac/dynobj/all_dynamicclasses.h"
+#include "ags/engine/ac/dynobj/all_dynamicclasses.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/gfxfilter.h"
+#include "ags/engine/gfx/gfxfilter.h"
 #include "ags/shared/util/math.h"
-#include "ags/shared/media/audio/audio_system.h"
+#include "ags/engine/media/audio/audio_system.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
 
 namespace AGS3 {
 
@@ -462,8 +467,8 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	if (newnum == 0) {
 		// support both room0.crm and intro.crm
 		// 2.70: Renamed intro.crm to room0.crm, to stop it causing confusion
-		if ((loaded_game_file_version < kGameVersion_270 && Common::AssetManager::DoesAssetExist("intro.crm")) ||
-		        (loaded_game_file_version >= kGameVersion_270 && !Common::AssetManager::DoesAssetExist(room_filename))) {
+		if ((loaded_game_file_version < kGameVersion_270 && Shared::AssetManager::DoesAssetExist("intro.crm")) ||
+		        (loaded_game_file_version >= kGameVersion_270 && !Shared::AssetManager::DoesAssetExist(room_filename))) {
 			room_filename = "intro.crm";
 		}
 	}
@@ -1101,11 +1106,6 @@ void convert_move_path_to_room_resolution(MoveList *ml) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

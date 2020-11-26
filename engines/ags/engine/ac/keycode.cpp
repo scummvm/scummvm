@@ -20,8 +20,7 @@
  *
  */
 
-#include "ags/shared/ac/keycode.h"
-
+#include "ags/engine/ac/keycode.h"
 #include "ags/lib/allegro.h"
 
 namespace AGS3 {
@@ -31,10 +30,10 @@ int GetKeyForKeyPressCb(int keycode) {
 	return (keycode >= 'a' && keycode <= 'z') ? keycode - 32 : keycode;
 }
 
-int PlatformKeyFromAgsKey(int key) {
+int PlatformKeyFromAgsKey(int key_) {
 	int platformKey = -1;
 
-	switch (key) {
+	switch (key_) {
 		// ctrl-[A-Z] keys are numbered 1-26 for A-Z
 	case eAGSKeyCodeCtrlA:
 		platformKey = 1;

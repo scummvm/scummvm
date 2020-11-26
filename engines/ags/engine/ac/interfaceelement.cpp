@@ -20,8 +20,8 @@
  *
  */
 
-//include <string.h>
 #include "ags/shared/ac/interfaceelement.h"
+#include "common/str.h"
 
 namespace AGS3 {
 

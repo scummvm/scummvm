@@ -10,6 +10,7 @@ MODULE_OBJS = \
 	lib/allegro/color.o \
 	lib/allegro/config.o \
 	lib/allegro/digi.o \
+	lib/allegro/draw.o \
 	lib/allegro/error.o \
 	lib/allegro/file.o \
 	lib/allegro/fixed.o \
@@ -109,6 +110,97 @@ MODULE_OBJS = \
 	engine/ac/dynobj/scriptset.o \
 	engine/ac/statobj/agsstaticobject.o \
     engine/ac/statobj/staticarray.o \
+    engine/ac/audiochannel.o \
+    engine/ac/audioclip.o \
+    engine/ac/button.o \
+    engine/ac/cdaudio.o \
+    engine/ac/character.o \
+    engine/ac/characterextras.o \
+    engine/ac/characterinfo_engine.o \
+    engine/ac/datetime.o \
+    engine/ac/dialog.o \
+    engine/ac/dialogoptionsrendering.o \
+    engine/ac/display.o \
+    engine/ac/draw.o \
+    engine/ac/drawingsurface.o \
+    engine/ac/draw_software.o \
+    engine/ac/dynamicsprite.o \
+    engine/ac/event.o \
+    engine/ac/file.o \
+    engine/ac/game.o \
+    engine/ac/gamesetup.o \
+    engine/ac/gamestate.o \
+    engine/ac/global_api.o \
+    engine/ac/global_audio.o \
+    engine/ac/global_button.o \
+    engine/ac/global_character.o \
+    engine/ac/global_datetime.o \
+    engine/ac/global_debug.o \
+    engine/ac/global_dialog.o \
+    engine/ac/global_display.o \
+    engine/ac/global_drawingsurface.o \
+    engine/ac/global_dynamicsprite.o \
+    engine/ac/global_file.o \
+    engine/ac/global_game.o \
+    engine/ac/global_gui.o \
+    engine/ac/global_hotspot.o \
+    engine/ac/global_inventoryitem.o \
+    engine/ac/global_invwindow.o \
+    engine/ac/global_label.o \
+    engine/ac/global_listbox.o \
+    engine/ac/global_mouse.o \
+    engine/ac/global_object.o \
+    engine/ac/global_overlay.o \
+    engine/ac/global_palette.o \
+    engine/ac/global_parser.o \
+    engine/ac/global_record.o \
+    engine/ac/global_region.o \
+    engine/ac/global_room.o \
+    engine/ac/global_screen.o \
+    engine/ac/global_slider.o \
+    engine/ac/global_string.o \
+    engine/ac/global_textbox.o \
+    engine/ac/global_timer.o \
+    engine/ac/global_translation.o \
+    engine/ac/global_video.o \
+    engine/ac/global_viewframe.o \
+    engine/ac/global_viewport.o \
+    engine/ac/global_walkablearea.o \
+    engine/ac/global_walkbehind.o \
+    engine/ac/gui.o \
+    engine/ac/guicontrol.o \
+    engine/ac/guiinv.o \
+    engine/ac/hotspot.o \
+    engine/ac/interfacebutton.o \
+    engine/ac/interfaceelement.o \
+    engine/ac/inventoryitem.o \
+    engine/ac/invwindow.o \
+    engine/ac/keycode.o \
+    engine/ac/label.o \
+    engine/ac/listbox.o \
+    engine/ac/math.o \
+    engine/ac/mouse.o \
+    engine/ac/movelist.o \
+    engine/ac/object.o \
+    engine/ac/overlay.o \
+    engine/ac/parser.o \
+    engine/ac/properties.o \
+    engine/ac/route_finder_impl.o \
+    engine/ac/route_finder_impl_legacy.o \
+    engine/ac/scriptcontainers.o \
+    engine/ac/sys_events.o \
+    engine/ac/region.o \
+    engine/ac/richgamemedia.o \
+    engine/ac/room.o \
+    engine/ac/roomobject.o \
+    engine/ac/roomstatus.o \
+    engine/ac/route_finder.o \
+    engine/ac/screen.o \
+    engine/ac/screenoverlay.o \
+    engine/ac/slider.o \
+    engine/ac/speech.o \
+    engine/ac/sprite.o \
+    engine/ac/spritecache_engine.o \
 	engine/debugging/consoleoutputtarget.o \
 	engine/debugging/debug.o \
 	engine/debugging/filebasedagsdebugger.o \

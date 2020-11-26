@@ -23,6 +23,9 @@
 #include "ags/lib/allegro/keyboard.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
+#include "common/system.h"
+#include "common/events.h"
+#include "common/textconsole.h"
 
 namespace AGS3 {
 
@@ -34,6 +37,43 @@ int install_keyboard() {
 }
 
 void remove_keyboard() {
+}
+
+bool keyboard_needs_poll() {
+	// TODO: Check if it's okay to be hardcoded for events, since I'm not sure
+	// how to check with ScummVM event manager for pending events
+	return true;
+}
+
+int poll_keyboard() {
+	warning("TODO: poll_keyboard");
+	return false;
+}
+
+void simulate_keypress(int keycode) {
+	simulate_ukeypress(keycode, keycode);
+}
+
+void simulate_ukeypress(int keycode, int scancode) {
+	Common::Event event;
+
+	event.type = Common::EVENT_KEYDOWN;
+	event.kbd.ascii = scancode;
+	event.kbd.keycode = (Common::KeyCode)keycode;
+	g_system->getEventManager()->pushEvent(event);
+
+	event.type = Common::EVENT_KEYUP;
+	g_system->getEventManager()->pushEvent(event);
+}
+
+bool keypressed() {
+	warning("TODO: keypressed");
+	return true;
+}
+
+int readkey(void) {
+	warning("TODO: readkey");
+	return 0;
 }
 
 } // namespace AGS3

@@ -35,8 +35,8 @@
 #include "ags/lib/allegro.h"
 //include <allegro/platform/aintwin.h>
 #include "ags/shared/ac/timer.h"
-#include "ags/shared/debug/assert.h"
-#include "ags/shared/debug/out.h"
+#include "ags/shared/debugging/assert.h"
+#include "ags/shared/debugging/out.h"
 #include "ags/shared/gfx/ali3dexception.h"
 #include "ags/shared/gfx/gfxfilter_d3d.h"
 #include "ags/shared/gfx/gfxfilter_aad3d.h"

@@ -24,50 +24,51 @@
 
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/audiocliptype.h"
-#include "ags/shared/ac/global_game.h"
+#include "ags/shared/util/path.h"
+#include "ags/engine/ac/global_game.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/view.h"
-#include "ags/shared/ac/character.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/dynamicsprite.h"
-#include "ags/shared/ac/event.h"
-#include "ags/shared/ac/game.h"
-#include "ags/shared/ac/gamesetup.h"
+#include "ags/engine/ac/character.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/dynamicsprite.h"
+#include "ags/engine/ac/event.h"
+#include "ags/engine/ac/game.h"
+#include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_character.h"
-#include "ags/shared/ac/global_gui.h"
-#include "ags/shared/ac/global_hotspot.h"
-#include "ags/shared/ac/global_inventoryitem.h"
-#include "ags/shared/ac/global_translation.h"
-#include "ags/shared/ac/gui.h"
-#include "ags/shared/ac/hotspot.h"
-#include "ags/shared/ac/keycode.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/object.h"
-#include "ags/shared/ac/path_helper.h"
-#include "ags/shared/ac/sys_events.h"
-#include "ags/shared/ac/room.h"
-#include "ags/shared/ac/roomstatus.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/ac/system.h"
-#include "ags/shared/debug/debugger.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/gui/guidialog.h"
-#include "ags/shared/main/engine.h"
-#include "ags/shared/main/game_start.h"
-#include "ags/shared/main/game_run.h"
-#include "ags/shared/main/graphics_mode.h"
-#include "ags/shared/script/script.h"
-#include "ags/shared/script/script_runtime.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_character.h"
+#include "ags/engine/ac/global_gui.h"
+#include "ags/engine/ac/global_hotspot.h"
+#include "ags/engine/ac/global_inventoryitem.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/gui.h"
+#include "ags/engine/ac/hotspot.h"
+#include "ags/engine/ac/keycode.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/object.h"
+#include "ags/engine/ac/path_helper.h"
+#include "ags/engine/ac/sys_events.h"
+#include "ags/engine/ac/room.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/gui/guidialog.h"
+#include "ags/engine/main/engine.h"
+#include "ags/engine/main/game_start.h"
+#include "ags/engine/main/game_run.h"
+#include "ags/engine/main/graphics_mode.h"
+#include "ags/engine/script/script.h"
+#include "ags/engine/script/script_runtime.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/shared/core/assetmanager.h"
-#include "ags/shared/main/config.h"
-#include "ags/shared/main/game_file.h"
+#include "ags/engine/main/config.h"
+#include "ags/engine/main/game_file.h"
 #include "ags/shared/util/string_utils.h"
-#include "ags/shared/media/audio/audio_system.h"
+#include "ags/engine/media/audio/audio_system.h"
 
 namespace AGS3 {
 
@@ -136,7 +137,7 @@ void DeleteSaveSlot(int slnum) {
 		String thisname;
 		for (int i = MAXSAVEGAMES; i > slnum; i--) {
 			thisname = get_save_game_path(i);
-			if (Common::File::TestReadFile(thisname)) {
+			if (Shared::File::TestReadFile(thisname)) {
 				// Rename the highest save game to fill in the gap
 				rename(thisname, nametouse);
 				break;
@@ -252,7 +253,7 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 		// need to copy, since the script gets destroyed
 		get_install_dir_path(gamefilenamebuf, newgame);
 		ResPaths.GamePak.Path = gamefilenamebuf;
-		ResPaths.GamePak.Name = get_filename(gamefilenamebuf);
+		ResPaths.GamePak.Name = Shared::Path::get_filename(gamefilenamebuf);
 		play.takeover_data = data;
 		load_new_game_restore = -1;
 
@@ -276,7 +277,7 @@ int RunAGSGame(const char *newgame, unsigned int mode, int data) {
 	// Adjust config (NOTE: normally, RunAGSGame would need a redesign to allow separate config etc per each game)
 	usetup.translation = ""; // reset to default, prevent from trying translation file of game A in game B
 
-	if (Common::AssetManager::SetDataFile(ResPaths.GamePak.Path) != Common::kAssetNoError)
+	if (Shared::AssetManager::SetDataFile(ResPaths.GamePak.Path) != Shared::kAssetNoError)
 		quitprintf("!RunAGSGame: unable to load new game file '%s'", ResPaths.GamePak.Path.GetCStr());
 
 	show_preload();
@@ -1113,7 +1114,7 @@ int WaitImpl(int skip_type, int nloops) {
 
 	if (game.options[OPT_BASESCRIPTAPI] < kScriptAPI_v351) {
 		// < 3.5.1 return 1 is skipped by user input, otherwise 0
-		return (play.wait_skipped_by & (SKIP_KEYPRESS | SKIP_MOUSECLICK) != 0) ? 1 : 0;
+		return (play.wait_skipped_by & (SKIP_KEYPRESS | SKIP_MOUSECLICK)) != 0 ? 1 : 0;
 	}
 	// >= 3.5.1 return positive keycode, negative mouse button code, or 0 as time-out
 	switch (play.wait_skipped_by) {

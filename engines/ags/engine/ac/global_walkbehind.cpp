@@ -20,13 +20,13 @@
  *
  */
 
-#include "ags/shared/ac/global_walkbehind.h"
+#include "ags/engine/ac/global_walkbehind.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/common_defines.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/roomstatus.h"
-#include "ags/shared/ac/walkbehind.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/walkbehind.h"
+#include "ags/engine/debugging/debug_log.h"
 
 namespace AGS3 {
 

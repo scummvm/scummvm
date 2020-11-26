@@ -23,6 +23,8 @@
 #ifndef AGS_STD_QUEUE_H
 #define AGS_STD_QUEUE_H
 
+#include "ags/std/algorithm.h"
+#include "ags/std/vector.h"
 #include "common/queue.h"
 
 namespace AGS3 {
@@ -30,6 +32,26 @@ namespace std {
 
 template<class T>
 using queue = Common::Queue<T>;
+
+template<class T, class Container = vector<T>, class Comparitor = typename Common::Less<T> >
+class priority_queue {
+private:
+	Container _container;
+	Comparitor _comparitor;
+public:
+	priority_queue();
+
+	bool empty() const { return _container.empty(); }
+
+	const T &top() const { return _container.front(); }
+
+	void push(const T &item) {
+		_container.push_back(item);
+		Common::sort(_container.begin(), _container.end(), _comparitor);
+	}
+
+	void pop() { _container.remove_at(0); }
+};
 
 } // namespace std
 } // namespace AGS3

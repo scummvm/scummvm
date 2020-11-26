@@ -84,6 +84,9 @@ public:
 			return !operator==(rhs);
 		}
 	};
+
+	using iterator = typename Common::Array<T>::iterator;
+	using const_iterator = typename Common::Array<T>::const_iterator;
 public:
 	typedef T reference;
 	typedef const T const_reference;
@@ -97,12 +100,12 @@ public:
 		resize(newSize, elem);
 	}
 
-	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator pos) {
+	iterator erase(iterator pos) {
 		return Common::Array<T>::erase(pos);
 	}
 
-	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator first,
-	        typename Common::Array<T>::iterator last) {
+	iterator erase(iterator first,
+	        iterator last) {
 		Common::copy(last, this->_storage + this->_size, first);
 
 		int count = (last - first);
@@ -125,7 +128,7 @@ public:
 	 * Rotates the array so that the item pointed to by the iterator becomes
 	 * the first item, and the predeceding item becomes the last one
 	 */
-	void rotate(typename Common::Array<T>::iterator it) {
+	void rotate(iterator it) {
 		if (it != Common::Array<T>::end()) {
 			size_t count = it - Common::Array<T>::begin();
 			for (size_t ctr = 0; ctr < count; ++ctr) {
@@ -164,6 +167,30 @@ public:
 
 	T at(size_t index) const {
 		return (*this)[index];
+	}
+
+	/**
+	 * Adds an item to the array
+	 */
+	void insert(const T &element) {
+		Common::Array<T>::push_back(element);
+	}
+
+	/**
+	 * Adds an item to the array at a specified index
+	 */
+	void insert(iterator pos, const T &element) {
+		Common::Array<T>::insert(pos, element);
+	}
+
+	/**
+	 * Adds a range of items at the specified position in the array
+	 */
+	void insert(iterator position, const_iterator first, const_iterator last) {
+		int destIndex = position - this->begin();
+		for (; first != last; ++first) {
+			this->insert_at(destIndex++, *first);
+		}
 	}
 };
 

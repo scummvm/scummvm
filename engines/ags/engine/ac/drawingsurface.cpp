@@ -20,27 +20,32 @@
  *
  */
 
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/drawingsurface.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/drawingsurface.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/charactercache.h"
-#include "ags/shared/ac/display.h"
-#include "ags/shared/ac/game.h"
+#include "ags/engine/ac/charactercache.h"
+#include "ags/engine/ac/display.h"
+#include "ags/engine/ac/game.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_translation.h"
-#include "ags/shared/ac/objectcache.h"
-#include "ags/shared/ac/roomobject.h"
-#include "ags/shared/ac/roomstatus.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/ac/walkbehind.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/objectcache.h"
+#include "ags/engine/ac/roomobject.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/walkbehind.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/ac/spritecache.h"
-#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/engine/script/runtimescriptvalue.h"
 #include "ags/shared/gfx/gfx_def.h"
-#include "ags/shared/gfx/gfx_util.h"
+#include "ags/engine/gfx/gfx_util.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
 
 namespace AGS3 {
 
@@ -427,13 +432,13 @@ int DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y) {
 	int colDepth = ds->GetColorDepth();
 
 	if (rawPixel == maskColor) {
-		rawPixel = SCR_COLOR_TRANSPARENT;
+		rawPixel = (unsigned int)SCR_COLOR_TRANSPARENT;
 	} else if (colDepth > 8) {
 		int r = getr_depth(colDepth, rawPixel);
-		int ds = getg_depth(colDepth, rawPixel);
+		int g = getg_depth(colDepth, rawPixel);
 		int b = getb_depth(colDepth, rawPixel);
 
-		rawPixel = Game_GetColorFromRGB(r, ds, b);
+		rawPixel = Game_GetColorFromRGB(r, g, b);
 	}
 
 	sds->FinishedDrawingReadOnly();
@@ -446,10 +451,6 @@ int DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
 
 // void (ScriptDrawingSurface *sds, int colour)
 RuntimeScriptValue Sc_DrawingSurface_Clear(void *self, const RuntimeScriptValue *params, int32_t param_count) {

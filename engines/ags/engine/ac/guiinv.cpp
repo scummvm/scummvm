@@ -22,10 +22,10 @@
 
 #include "ags/shared/gui/guiinv.h"
 #include "ags/shared/gui/guimain.h"
-#include "ags/shared/ac/draw.h"
+#include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/characterextras.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/characterextras.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/gfx/bitmap.h"
 

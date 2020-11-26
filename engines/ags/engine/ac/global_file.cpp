@@ -21,13 +21,13 @@
  */
 
 //include <string.h>
-#include "ags/shared/ac/global_file.h"
+#include "ags/engine/ac/global_file.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/file.h"
-#include "ags/shared/ac/path_helper.h"
-#include "ags/shared/ac/runtime_defines.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/ac/file.h"
+#include "ags/engine/ac/path_helper.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/stream.h"
@@ -37,14 +37,14 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 int32_t FileOpenCMode(const char *fnmm, const char *cmode) {
-	Common::FileOpenMode open_mode;
-	Common::FileWorkMode work_mode;
+	Shared::FileOpenMode open_mode;
+	Shared::FileWorkMode work_mode;
 	// NOTE: here we ignore the text-mode flag. AGS 2.62 did not let
 	// game devs to open files in text mode. The file reading and
 	// writing logic in AGS makes extra control characters added for
 	// security reasons, and FileWriteRawLine adds CR/LF to the end
 	// of string on its own.
-	if (!Common::File::GetFileModesFromCMode(cmode, open_mode, work_mode)) {
+	if (!Shared::File::GetFileModesFromCMode(cmode, open_mode, work_mode)) {
 		return 0;
 	}
 	return FileOpen(fnmm, open_mode, work_mode);
@@ -66,7 +66,7 @@ int32_t FindFreeFileSlot() {
 	return useindx;
 }
 
-int32_t FileOpen(const char *fnmm, Common::FileOpenMode open_mode, Common::FileWorkMode work_mode) {
+int32_t FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode) {
 	int32_t useindx = FindFreeFileSlot();
 	if (useindx < 0)
 		return 0;

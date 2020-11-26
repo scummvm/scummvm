@@ -24,9 +24,17 @@
 #define AGS_STD_XUTILITY_H
 
 #include "common/algorithm.h"
+#include "common/util.h"
 
 namespace AGS3 {
 namespace std {
+
+template <class T>
+void reverse(T *First, T *Last) {
+	for (; First < Last; ++First, --Last) {
+		SWAP(*First, *Last);
+	}
+}
 
 } // namespace std
 } // namespace AGS3

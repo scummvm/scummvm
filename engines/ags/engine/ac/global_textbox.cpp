@@ -20,11 +20,11 @@
  *
  */
 
-#include "ags/shared/ac/global_textbox.h"
+#include "ags/engine/ac/global_textbox.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/ac/textbox.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/textbox.h"
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/gui/guitextbox.h"
 

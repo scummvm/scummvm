@@ -31,7 +31,7 @@
 #include "ags/shared/ac/dynobj/scriptuserobject.h"
 #include "ags/shared/ac/draw.h"
 #include "ags/shared/ac/gamestate.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/debugging/debug_log.h"
 #include "ags/shared/script/script_api.h"
 #include "ags/shared/script/script_runtime.h"
 

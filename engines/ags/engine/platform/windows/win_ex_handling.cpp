@@ -28,8 +28,8 @@
 //include <winalleg.h>
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/common_defines.h"
-#include "ags/shared/debug/debugger.h"
-#include "ags/shared/debug/out.h"
+#include "ags/shared/debugging/debugger.h"
+#include "ags/shared/debugging/out.h"
 #include "ags/shared/main/main.h"
 #include "ags/shared/util/ini_util.h"
 

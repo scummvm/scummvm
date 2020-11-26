@@ -20,16 +20,16 @@
  *
  */
 
-#include "ags/shared/ac/global_dialog.h"
+#include "ags/engine/ac/global_dialog.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/dialog.h"
+#include "ags/engine/ac/dialog.h"
 #include "ags/shared/ac/dialogtopic.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/debug/debugger.h"
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script.h"
 
 namespace AGS3 {
 

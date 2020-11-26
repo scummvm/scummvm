@@ -20,19 +20,19 @@
  *
  */
 
-#include "ags/shared/ac/global_overlay.h"
+#include "ags/engine/ac/global_overlay.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/display.h"
-#include "ags/shared/ac/draw.h"
+#include "ags/engine/ac/display.h"
+#include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_translation.h"
-#include "ags/shared/ac/overlay.h"
-#include "ags/shared/ac/runtime_defines.h"
-#include "ags/shared/ac/screenoverlay.h"
-#include "ags/shared/ac/string.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/overlay.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/screenoverlay.h"
+#include "ags/engine/ac/string.h"
 #include "ags/shared/ac/spritecache.h"
-#include "ags/shared/ac/system.h"
+#include "ags/engine/ac/system.h"
 #include "ags/shared/gfx/bitmap.h"
 
 namespace AGS3 {

@@ -46,11 +46,11 @@
 //
 //=============================================================================
 
-//include <string.h>
+#include "ags/std/utility.h"
 #include "ags/std/vector.h"
-#include "ags/shared/ac/draw_software.h"
+#include "ags/engine/ac/draw_software.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/util/scaling.h"
+#include "ags/engine/util/scaling.h"
 
 namespace AGS3 {
 
@@ -288,7 +288,7 @@ void invalidate_rect_on_surf(int x1, int y1, int x2, int y2, DirtyRects &rects) 
 			dirtyRow[a].numSpans++;
 		} else {
 			// didn't fit in an existing span, and there are none spare
-			int nearestDist = 99999, nearestWas = -1, extendLeft;
+			int nearestDist = 99999, nearestWas = -1, extendLeft = 0;
 			int tleft, tright;
 			// find the nearest span, and enlarge that to include this rect
 			for (s = 0; s < dirtyRow[a].numSpans; s++) {

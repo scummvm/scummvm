@@ -29,7 +29,7 @@
 #include "ags/shared/util/mutex.h"
 #include "ags/shared/util/mutex_lock.h"
 #include "ags/shared/util/string.h"
-#include "ags/shared/debug/out.h"
+#include "ags/shared/debugging/out.h"
 
 namespace AGS3 {
 

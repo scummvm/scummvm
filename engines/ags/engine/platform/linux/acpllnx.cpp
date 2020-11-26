@@ -100,10 +100,10 @@ size_t BuildXDGPath(char *destPath, size_t destSize) {
 		// No evironment variable, so we fall back to home dir in /etc/passwd
 		struct passwd *p = getpwuid(getuid());
 		l = snprintf(destPath, destSize, "%s/.local", p->pw_dir);
-		if (mkdir(destPath, 0755) != 0 && errno != EEXIST)
+		if (mkdir(destPath, 0755) != 0 && errnum != EEXIST)
 			return 0;
 		l += snprintf(destPath + l, destSize - l, "/share");
-		if (mkdir(destPath, 0755) != 0 && errno != EEXIST)
+		if (mkdir(destPath, 0755) != 0 && errnum != EEXIST)
 			return 0;
 	}
 	return l;

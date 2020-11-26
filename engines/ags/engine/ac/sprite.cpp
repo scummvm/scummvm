@@ -21,16 +21,16 @@
  */
 
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/draw.h"
+#include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/sprite.h"
-#include "ags/shared/ac/system.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
-#include "ags/shared/plugin/agsplugin.h"
-#include "ags/shared/plugin/plugin_engine.h"
+#include "ags/engine/ac/sprite.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/plugin/agsplugin.h"
+#include "ags/engine/plugin/plugin_engine.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/graphicsdriver.h"
 
 namespace AGS3 {
 
@@ -158,7 +158,7 @@ void initialize_sprite(int ee) {
 				quit("Not enough memory to load sprite graphics");
 			tmpdbl->Acquire();
 			curspr->Acquire();
-			tmpdbl->StretchBlt(curspr, RectWH(0, 0, tmpdbl->GetWidth(), tmpdbl->GetHeight()), Common::kBitmap_Transparency);
+			tmpdbl->StretchBlt(curspr, RectWH(0, 0, tmpdbl->GetWidth(), tmpdbl->GetHeight()), Shared::kBitmap_Transparency);
 			curspr->Release();
 			tmpdbl->Release();
 			delete curspr;

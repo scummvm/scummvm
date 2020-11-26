@@ -27,14 +27,14 @@
 //=============================================================================
 
 #include "ags/shared/ac/common.h" // quit
-#include "ags/shared/ac/string.h"
-#include "ags/shared/ac/dynobj/cc_dynamicarray.h"
-#include "ags/shared/ac/dynobj/cc_dynamicobject.h"
-#include "ags/shared/ac/dynobj/scriptdict.h"
-#include "ags/shared/ac/dynobj/scriptset.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/dynobj/cc_dynamicarray.h"
+#include "ags/engine/ac/dynobj/cc_dynamicobject.h"
+#include "ags/engine/ac/dynobj/scriptdict.h"
+#include "ags/engine/ac/dynobj/scriptset.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
 #include "ags/shared/util/bbop.h"
 
 namespace AGS3 {

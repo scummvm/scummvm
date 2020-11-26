@@ -20,14 +20,14 @@
  *
  */
 
-#include "ags/shared/ac/roomobject.h"
+#include "ags/engine/ac/roomobject.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/runtime_defines.h"
-#include "ags/shared/ac/viewframe.h"
-#include "ags/shared/main/update.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/viewframe.h"
+#include "ags/engine/main/update.h"
 #include "ags/shared/util/stream.h"
 
 namespace AGS3 {

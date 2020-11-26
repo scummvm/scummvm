@@ -23,9 +23,12 @@
 #ifndef AGS_LIB_ALLEGRO_KEYBOARD_H
 #define AGS_LIB_ALLEGRO_KEYBOARD_H
 
+#include "ags/lib/allegro/alconfig.h"
 #include "common/keyboard.h"
 
 namespace AGS3 {
+
+#define __allegro_KEY_MAX Common::KEYCODE_LAST
 
 #define KB_SHIFT_FLAG Common::KBD_SHIFT
 #define KB_CTRL_FLAG Common::KBD_CTRL
@@ -100,10 +103,83 @@ namespace AGS3 {
 #define __allegro_KEY_NUMLOCK Common::KEYCODE_NUMLOCK
 #define __allegro_KEY_CAPSLOCK Common::KEYCODE_CAPSLOCK
 
+#define __allegro_KEY_0 Common::KEYCODE_0
+#define __allegro_KEY_1 Common::KEYCODE_1
+#define __allegro_KEY_2 Common::KEYCODE_2
+#define __allegro_KEY_3 Common::KEYCODE_3
+#define __allegro_KEY_4 Common::KEYCODE_4
+#define __allegro_KEY_5 Common::KEYCODE_5
+#define __allegro_KEY_6 Common::KEYCODE_6
+#define __allegro_KEY_7 Common::KEYCODE_7
+#define __allegro_KEY_8 Common::KEYCODE_8
+#define __allegro_KEY_9 Common::KEYCODE_9
+
+#define __allegro_KEY_A Common::KEYCODE_a
+#define __allegro_KEY_B Common::KEYCODE_b
+#define __allegro_KEY_C Common::KEYCODE_c
+#define __allegro_KEY_D Common::KEYCODE_d
+#define __allegro_KEY_E Common::KEYCODE_e
+#define __allegro_KEY_F Common::KEYCODE_f
+#define __allegro_KEY_G Common::KEYCODE_g
+#define __allegro_KEY_H Common::KEYCODE_h
+#define __allegro_KEY_I Common::KEYCODE_i
+#define __allegro_KEY_J Common::KEYCODE_j
+#define __allegro_KEY_K Common::KEYCODE_k
+#define __allegro_KEY_L Common::KEYCODE_l
+#define __allegro_KEY_M Common::KEYCODE_m
+#define __allegro_KEY_N Common::KEYCODE_n
+#define __allegro_KEY_O Common::KEYCODE_o
+#define __allegro_KEY_P Common::KEYCODE_p
+#define __allegro_KEY_Q Common::KEYCODE_q
+#define __allegro_KEY_R Common::KEYCODE_r
+#define __allegro_KEY_S Common::KEYCODE_s
+#define __allegro_KEY_T Common::KEYCODE_t
+#define __allegro_KEY_U Common::KEYCODE_u
+#define __allegro_KEY_V Common::KEYCODE_v
+#define __allegro_KEY_W Common::KEYCODE_w
+#define __allegro_KEY_X Common::KEYCODE_x
+#define __allegro_KEY_Y Common::KEYCODE_y
+#define __allegro_KEY_Z Common::KEYCODE_z
+
+
+#define __allegro_KEY_BACKSPACE Common::KEYCODE_BACKSPACE
+#define __allegro_KEY_TAB Common::KEYCODE_TAB
+#define __allegro_KEY_ENTER Common::KEYCODE_RETURN
+#define __allegro_KEY_ENTER_PAD Common::KEYCODE_KP_ENTER
+#define __allegro_KEY_ESC Common::KEYCODE_ESCAPE
+#define __allegro_KEY_SPACE Common::KEYCODE_SPACE
+#define __allegro_KEY_QUOTE Common::KEYCODE_QUOTE
+#define __allegro_KEY_COMMA Common::KEYCODE_COMMA
+#define __allegro_KEY_STOP 0
+#define __allegro_KEY_SLASH Common::KEYCODE_SLASH
+#define __allegro_KEY_SLASH_PAD Common::KEYCODE_KP_DIVIDE
+#define __allegro_KEY_BACKSLASH Common::KEYCODE_BACKSLASH
+#define __allegro_KEY_BACKSLASH2 Common::KEYCODE_BACKSLASH
+#define __allegro_KEY_SEMICOLON Common::KEYCODE_SEMICOLON
+#define __allegro_KEY_EQUALS Common::KEYCODE_EQUALS
+#define __allegro_KEY_EQUALS_PAD Common::KEYCODE_KP_EQUALS
+#define __allegro_KEY_OPENBRACE 123
+#define __allegro_KEY_CLOSEBRACE 125
+#define __allegro_KEY_PLUS_PAD Common::KEYCODE_KP_PLUS
+#define __allegro_KEY_MINUS Common::KEYCODE_MINUS
+#define __allegro_KEY_MINUS_PAD Common::KEYCODE_KP_MINUS
+#define __allegro_KEY_COLON Common::KEYCODE_COLON
+#define __allegro_KEY_COLON2 Common::KEYCODE_COLON
+#define __allegro_KEY_ASTERISK Common::KEYCODE_ASTERISK
+#define __allegro_KEY_AT Common::KEYCODE_AT
+
 extern bool key[Common::KEYCODE_LAST];
+
+AL_FUNC(bool, keyboard_needs_poll, (void));
+AL_FUNC(int, poll_keyboard, (void));
 
 extern int install_keyboard();
 extern void remove_keyboard();
+AL_FUNC(void, simulate_keypress, (int keycode));
+AL_FUNC(void, simulate_ukeypress, (int keycode, int scancode));
+
+AL_FUNC(bool, keypressed, (void));
+AL_FUNC(int, readkey, (void));
 
 } // namespace AGS3
 

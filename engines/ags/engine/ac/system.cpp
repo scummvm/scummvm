@@ -29,8 +29,8 @@
 #include "ags/shared/ac/string.h"
 #include "ags/shared/ac/system.h"
 #include "ags/shared/ac/dynobj/scriptsystem.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/debug/out.h"
+#include "ags/shared/debugging/debug_log.h"
+#include "ags/shared/debugging/out.h"
 #include "ags/shared/main/engine.h"
 #include "ags/shared/main/main.h"
 #include "ags/shared/gfx/graphicsdriver.h"
@@ -40,6 +40,11 @@
 #include "ags/shared/ac/global_translation.h"
 #include "ags/shared/media/audio/audio_system.h"
 #include "ags/shared/util/string_compat.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/ac/dynobj/scriptstring.h"
 
 namespace AGS3 {
 
@@ -226,11 +231,6 @@ void System_SetRenderAtScreenResolution(int enable) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

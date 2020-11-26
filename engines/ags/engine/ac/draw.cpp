@@ -20,56 +20,56 @@
  *
  */
 
-//include <algorithm>
-//include <cmath>
-#include "ags/shared/aastr.h"
+#include "ags/std/algorithm.h"
+#include "ags/std/math.h"
+#include "ags/lib/aastr-0.1.1/aastr.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/util/compress.h"
 #include "ags/shared/ac/view.h"
-#include "ags/shared/ac/charactercache.h"
-#include "ags/shared/ac/characterextras.h"
+#include "ags/engine/ac/charactercache.h"
+#include "ags/engine/ac/characterextras.h"
 #include "ags/shared/ac/characterinfo.h"
-#include "ags/shared/ac/display.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/draw_software.h"
-#include "ags/shared/ac/gamesetup.h"
+#include "ags/engine/ac/display.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/draw_software.h"
+#include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_game.h"
-#include "ags/shared/ac/global_gui.h"
-#include "ags/shared/ac/global_region.h"
-#include "ags/shared/ac/gui.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/objectcache.h"
-#include "ags/shared/ac/overlay.h"
-#include "ags/shared/ac/sys_events.h"
-#include "ags/shared/ac/roomobject.h"
-#include "ags/shared/ac/roomstatus.h"
-#include "ags/shared/ac/runtime_defines.h"
-#include "ags/shared/ac/screenoverlay.h"
-#include "ags/shared/ac/sprite.h"
-#include "ags/shared/ac/spritelistentry.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/ac/system.h"
-#include "ags/shared/ac/viewframe.h"
-#include "ags/shared/ac/walkablearea.h"
-#include "ags/shared/ac/walkbehind.h"
-#include "ags/shared/ac/dynobj/scriptsystem.h"
-#include "ags/shared/debug/debugger.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/global_gui.h"
+#include "ags/engine/ac/global_region.h"
+#include "ags/engine/ac/gui.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/objectcache.h"
+#include "ags/engine/ac/overlay.h"
+#include "ags/engine/ac/sys_events.h"
+#include "ags/engine/ac/roomobject.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/screenoverlay.h"
+#include "ags/engine/ac/sprite.h"
+#include "ags/engine/ac/spritelistentry.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/ac/viewframe.h"
+#include "ags/engine/ac/walkablearea.h"
+#include "ags/engine/ac/walkbehind.h"
+#include "ags/engine/ac/dynobj/scriptsystem.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/font/fonts.h"
 #include "ags/shared/gui/guimain.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
-#include "ags/shared/plugin/agsplugin.h"
-#include "ags/shared/plugin/plugin_engine.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/plugin/agsplugin.h"
+#include "ags/engine/plugin/plugin_engine.h"
 #include "ags/shared/ac/spritecache.h"
-#include "ags/shared/gfx/gfx_util.h"
-#include "ags/shared/gfx/graphicsdriver.h"
-#include "ags/shared/gfx/ali3dexception.h"
-#include "ags/shared/gfx/blender.h"
-#include "ags/shared/media/audio/audio_system.h"
-#include "ags/shared/ac/game.h"
+#include "ags/engine/gfx/gfx_util.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/ali3dexception.h"
+#include "ags/engine/gfx/blender.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/ac/game.h"
 
 namespace AGS3 {
 
@@ -447,16 +447,16 @@ AGS_INLINE void defgame_to_finalgame_coords(int &x, int &y) {
 void create_blank_image(int coldepth) {
 	// this is the first time that we try to use the graphics driver,
 	// so it's the most likey place for a crash
-	try {
+//	try {
 		Bitmap *blank = BitmapHelper::CreateBitmap(16, 16, coldepth);
 		blank = ReplaceBitmapWithSupportedFormat(blank);
 		blank->Clear();
 		blankImage = gfxDriver->CreateDDBFromBitmap(blank, false, true);
 		blankSidebarImage = gfxDriver->CreateDDBFromBitmap(blank, false, true);
 		delete blank;
-	} catch (Ali3DException gfxException) {
+/*	} catch (Ali3DException gfxException) {
 		quit((char *)gfxException._message);
-	}
+	}*/
 }
 
 void destroy_blank_image() {
@@ -703,7 +703,7 @@ void render_to_screen() {
 
 	bool succeeded = false;
 	while (!succeeded) {
-		try {
+//		try {
 			// For software renderer, need to blacken upper part of the game frame when shaking screen moves image down
 			const Rect &viewport = play.GetMainViewport();
 			if (play.shake_screen_yoff > 0 && !gfxDriver->RequiresFullRedrawEachFrame())
@@ -719,9 +719,9 @@ void render_to_screen() {
 #endif
 
 			succeeded = true;
-		} catch (Ali3DFullscreenLostException) {
+/*		} catch (Ali3DFullscreenLostException) {
 			platform->Delay(500);
-		}
+		}*/
 	}
 }
 
@@ -1255,15 +1255,15 @@ int scale_and_flip_sprite(int useindx, int coldept, int zoom_level,
 			Bitmap *tempspr = BitmapHelper::CreateBitmap(newwidth, newheight, coldept);
 			tempspr->Fill(actsps[useindx]->GetMaskColor());
 			if ((IS_ANTIALIAS_SPRITES) && ((game.SpriteInfos[sppic].Flags & SPF_ALPHACHANNEL) == 0))
-				tempspr->AAStretchBlt(spriteset[sppic], RectWH(0, 0, newwidth, newheight), Common::kBitmap_Transparency);
+				tempspr->AAStretchBlt(spriteset[sppic], RectWH(0, 0, newwidth, newheight), Shared::kBitmap_Transparency);
 			else
-				tempspr->StretchBlt(spriteset[sppic], RectWH(0, 0, newwidth, newheight), Common::kBitmap_Transparency);
-			active_spr->FlipBlt(tempspr, 0, 0, Common::kBitmap_HFlip);
+				tempspr->StretchBlt(spriteset[sppic], RectWH(0, 0, newwidth, newheight), Shared::kBitmap_Transparency);
+			active_spr->FlipBlt(tempspr, 0, 0, Shared::kBitmap_HFlip);
 			delete tempspr;
 		} else if ((IS_ANTIALIAS_SPRITES) && ((game.SpriteInfos[sppic].Flags & SPF_ALPHACHANNEL) == 0))
-			active_spr->AAStretchBlt(spriteset[sppic], RectWH(0, 0, newwidth, newheight), Common::kBitmap_Transparency);
+			active_spr->AAStretchBlt(spriteset[sppic], RectWH(0, 0, newwidth, newheight), Shared::kBitmap_Transparency);
 		else
-			active_spr->StretchBlt(spriteset[sppic], RectWH(0, 0, newwidth, newheight), Common::kBitmap_Transparency);
+			active_spr->StretchBlt(spriteset[sppic], RectWH(0, 0, newwidth, newheight), Shared::kBitmap_Transparency);
 
 		/*  AASTR2 version of code (doesn't work properly, gives black borders)
 		if (IS_ANTIALIAS_SPRITES) {
@@ -1280,7 +1280,7 @@ int scale_and_flip_sprite(int useindx, int coldept, int zoom_level,
 		Bitmap *tempspr = BitmapHelper::CreateBitmap_ (coldept, newwidth, newheight);
 		->Clear (tempspr, ->GetMaskColor(actsps[useindx]));
 		->StretchBlt (tempspr, spriteset[sppic], 0, 0, newwidth, newheight);
-		->FlipBlt(Common::kBitmap_HFlip, (actsps[useindx], tempspr, 0, 0);
+		->FlipBlt(Shared::kBitmap_HFlip, (actsps[useindx], tempspr, 0, 0);
 		wfreeblock (tempspr);
 		}
 		else
@@ -1295,7 +1295,7 @@ int scale_and_flip_sprite(int useindx, int coldept, int zoom_level,
 		our_eip = 339;
 
 		if (isMirrored)
-			active_spr->FlipBlt(spriteset[sppic], 0, 0, Common::kBitmap_HFlip);
+			active_spr->FlipBlt(spriteset[sppic], 0, 0, Shared::kBitmap_HFlip);
 		else
 			actsps_used = 0;
 		//->Blit (spriteset[sppic], actsps[useindx], 0, 0, 0, 0, actsps[useindx]->GetWidth(), actsps[useindx]->GetHeight());

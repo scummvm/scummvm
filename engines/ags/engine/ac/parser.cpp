@@ -24,13 +24,18 @@
 //include <cstdio>
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/parser.h"
-#include "ags/shared/ac/string.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/parser.h"
+#include "ags/engine/ac/string.h"
 #include "ags/shared/ac/wordsdictionary.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_compat.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
 
 namespace AGS3 {
 
@@ -89,7 +94,7 @@ int find_word_in_dictionary(const char *lookfor) {
 }
 
 int is_valid_word_char(char theChar) {
-	if ((isalnum((unsigned char)theChar)) || (theChar == '\'') || (theChar == '-')) {
+	if ((Common::isAlnum((unsigned char)theChar)) || (theChar == '\'') || (theChar == '-')) {
 		return 1;
 	}
 	return 0;
@@ -239,7 +244,7 @@ int parse_sentence(const char *src_text, int *numwords, short *wordarray, short 
 
 						const char *textStart = &text[1];
 
-						while ((text[0] == ',') || (isalnum((unsigned char)text[0]) != 0))
+						while ((text[0] == ',') || (Common::isAlnum((unsigned char)text[0]) != 0))
 							text++;
 
 						continueSearching = 0;
@@ -300,11 +305,6 @@ int parse_sentence(const char *src_text, int *numwords, short *wordarray, short 
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

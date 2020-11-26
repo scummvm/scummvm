@@ -38,6 +38,19 @@ BITMAP::BITMAP(Graphics::ManagedSurface *owner) : _owner(owner),
 		line[y] = (byte *)_owner->getBasePtr(0, y);
 }
 
+int BITMAP::getpixel(int x, int y) const {
+	if (x < 0 || y < 0 || x >= w || y >= h)
+		return -1;
+
+	const byte *pixel = (const byte *)getBasePtr(x, y);
+	if (format.bytesPerPixel == 1)
+		return *pixel;
+	else if (format.bytesPerPixel == 2)
+		return *(const uint16 *)pixel;
+	else
+		return *(const uint32 *)pixel;
+}
+
 /*-------------------------------------------------------------------*/
 
 /**

@@ -26,50 +26,55 @@
 //
 //=============================================================================
 
-#include "ags/shared/ac/character.h"
+#include "ags/engine/ac/character.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/shared/ac/view.h"
-#include "ags/shared/ac/display.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/event.h"
-#include "ags/shared/ac/game.h"
-#include "ags/shared/ac/global_audio.h"
-#include "ags/shared/ac/global_character.h"
-#include "ags/shared/ac/global_game.h"
-#include "ags/shared/ac/global_object.h"
-#include "ags/shared/ac/global_region.h"
-#include "ags/shared/ac/global_room.h"
-#include "ags/shared/ac/global_translation.h"
-#include "ags/shared/ac/gui.h"
-#include "ags/shared/ac/lipsync.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/object.h"
-#include "ags/shared/ac/overlay.h"
-#include "ags/shared/ac/properties.h"
-#include "ags/shared/ac/room.h"
-#include "ags/shared/ac/screenoverlay.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/ac/system.h"
-#include "ags/shared/ac/viewframe.h"
-#include "ags/shared/ac/walkablearea.h"
+#include "ags/engine/ac/display.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/event.h"
+#include "ags/engine/ac/game.h"
+#include "ags/engine/ac/global_audio.h"
+#include "ags/engine/ac/global_character.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/global_object.h"
+#include "ags/engine/ac/global_region.h"
+#include "ags/engine/ac/global_room.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/gui.h"
+#include "ags/engine/ac/lipsync.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/object.h"
+#include "ags/engine/ac/overlay.h"
+#include "ags/engine/ac/properties.h"
+#include "ags/engine/ac/room.h"
+#include "ags/engine/ac/screenoverlay.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/ac/viewframe.h"
+#include "ags/engine/ac/walkablearea.h"
 #include "ags/shared/gui/guimain.h"
-#include "ags/shared/ac/route_finder.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/main/game_run.h"
-#include "ags/shared/main/update.h"
+#include "ags/engine/ac/route_finder.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/main/game_run.h"
+#include "ags/engine/main/update.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/util/string_compat.h"
 //include <math.h>
-#include "ags/shared/gfx/graphicsdriver.h"
-#include "ags/shared/script/runtimescriptvalue.h"
-#include "ags/shared/ac/dynobj/cc_character.h"
-#include "ags/shared/ac/dynobj/cc_inventory.h"
-#include "ags/shared/script/script_runtime.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/ac/dynobj/cc_character.h"
+#include "ags/engine/ac/dynobj/cc_inventory.h"
+#include "ags/engine/script/script_runtime.h"
 #include "ags/shared/gfx/gfx_def.h"
-#include "ags/shared/media/audio/audio_system.h"
-#include "ags/shared/ac/movelist.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/ac/movelist.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
 
 namespace AGS3 {
 
@@ -2236,7 +2241,7 @@ int my_getpixel(Bitmap *blk, int x, int y) {
 	// strip the alpha channel
 	// TODO: is there a way to do this vtable thing with Bitmap?
 	BITMAP *al_bmp = (BITMAP *)blk->GetAllegroBitmap();
-	return al_bmp->vtable->getpixel(al_bmp, x, y) & 0x00ffffff;
+	return al_bmp->getpixel(x, y) & 0x00ffffff;
 }
 
 int check_click_on_character(int xx, int yy, int mood) {
@@ -2847,11 +2852,6 @@ PViewport FindNearestViewport(int charid) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

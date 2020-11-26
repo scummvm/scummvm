@@ -20,83 +20,88 @@
  *
  */
 
-#include "ags/shared/ac/game.h"
+#include "ags/engine/ac/game.h"
 
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/view.h"
 #include "ags/shared/ac/audiocliptype.h"
-#include "ags/shared/ac/audiochannel.h"
-#include "ags/shared/ac/character.h"
-#include "ags/shared/ac/charactercache.h"
-#include "ags/shared/ac/characterextras.h"
+#include "ags/engine/ac/audiochannel.h"
+#include "ags/engine/ac/character.h"
+#include "ags/engine/ac/charactercache.h"
+#include "ags/engine/ac/characterextras.h"
 #include "ags/shared/ac/dialogtopic.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/dynamicsprite.h"
-#include "ags/shared/ac/event.h"
-#include "ags/shared/ac/gamesetup.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/dynamicsprite.h"
+#include "ags/engine/ac/event.h"
+#include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_audio.h"
-#include "ags/shared/ac/global_character.h"
-#include "ags/shared/ac/global_display.h"
-#include "ags/shared/ac/global_game.h"
-#include "ags/shared/ac/global_gui.h"
-#include "ags/shared/ac/global_object.h"
-#include "ags/shared/ac/global_translation.h"
-#include "ags/shared/ac/gui.h"
-#include "ags/shared/ac/hotspot.h"
-#include "ags/shared/ac/lipsync.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/movelist.h"
-#include "ags/shared/ac/objectcache.h"
-#include "ags/shared/ac/overlay.h"
-#include "ags/shared/ac/path_helper.h"
-#include "ags/shared/ac/sys_events.h"
-#include "ags/shared/ac/region.h"
-#include "ags/shared/ac/richgamemedia.h"
-#include "ags/shared/ac/room.h"
-#include "ags/shared/ac/roomobject.h"
-#include "ags/shared/ac/roomstatus.h"
-#include "ags/shared/ac/runtime_defines.h"
-#include "ags/shared/ac/screenoverlay.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_audio.h"
+#include "ags/engine/ac/global_character.h"
+#include "ags/engine/ac/global_display.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/global_gui.h"
+#include "ags/engine/ac/global_object.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/gui.h"
+#include "ags/engine/ac/hotspot.h"
+#include "ags/engine/ac/lipsync.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/movelist.h"
+#include "ags/engine/ac/objectcache.h"
+#include "ags/engine/ac/overlay.h"
+#include "ags/engine/ac/path_helper.h"
+#include "ags/engine/ac/sys_events.h"
+#include "ags/engine/ac/region.h"
+#include "ags/engine/ac/richgamemedia.h"
+#include "ags/engine/ac/room.h"
+#include "ags/engine/ac/roomobject.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/screenoverlay.h"
 #include "ags/shared/ac/spritecache.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/ac/system.h"
-#include "ags/shared/ac/timer.h"
-#include "ags/shared/ac/translation.h"
-#include "ags/shared/ac/dynobj/all_dynamicclasses.h"
-#include "ags/shared/ac/dynobj/all_scriptclasses.h"
-#include "ags/shared/ac/dynobj/cc_audiochannel.h"
-#include "ags/shared/ac/dynobj/cc_audioclip.h"
-#include "ags/shared/ac/dynobj/scriptcamera.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/debug/out.h"
-#include "ags/shared/device/mousew32.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/ac/timer.h"
+#include "ags/engine/ac/translation.h"
+#include "ags/engine/ac/dynobj/all_dynamicclasses.h"
+#include "ags/engine/ac/dynobj/all_scriptclasses.h"
+#include "ags/engine/ac/dynobj/cc_audiochannel.h"
+#include "ags/engine/ac/dynobj/cc_audioclip.h"
+#include "ags/engine/ac/dynobj/scriptcamera.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/device/mousew32.h"
 #include "ags/shared/font/fonts.h"
-#include "ags/shared/game/savegame.h"
-#include "ags/shared/game/savegame_components.h"
-#include "ags/shared/game/savegame_internal.h"
-#include "ags/shared/gui/animatingguibutton.h"
+#include "ags/engine/game/savegame.h"
+#include "ags/engine/game/savegame_components.h"
+#include "ags/engine/game/savegame_internal.h"
+#include "ags/engine/gui/animatingguibutton.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/graphicsdriver.h"
-#include "ags/shared/gfx/gfxfilter.h"
-#include "ags/shared/gui/guidialog.h"
-#include "ags/shared/main/engine.h"
-#include "ags/shared/main/graphics_mode.h"
-#include "ags/shared/main/main.h"
-#include "ags/shared/media/audio/audio_system.h"
-#include "ags/shared/plugin/agsplugin.h"
-#include "ags/shared/plugin/plugin_engine.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/gfxfilter.h"
+#include "ags/engine/gui/guidialog.h"
+#include "ags/engine/main/engine.h"
+#include "ags/engine/main/graphics_mode.h"
+#include "ags/engine/main/main.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/plugin/agsplugin.h"
+#include "ags/engine/plugin/plugin_engine.h"
 #include "ags/shared/script/cc_error.h"
-#include "ags/shared/script/runtimescriptvalue.h"
-#include "ags/shared/script/script.h"
-#include "ags/shared/script/script_runtime.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/script/script.h"
+#include "ags/engine/script/script_runtime.h"
 #include "ags/shared/util/alignedstream.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/filestream.h" // TODO: needed only because plugins expect file handle
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string_utils.h"
-#include "ags/shared/ac/keycode.h"
+#include "ags/engine/ac/keycode.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -436,12 +441,12 @@ bool SetSaveGameDirectoryPath(const char *newFolder, bool explicit_path) {
 	}
 
 	String newFolderTempFile = String::FromFormat("%s""agstmp.tmp", newSaveGameDir.GetCStr());
-	if (!Common::File::TestCreateFile(newFolderTempFile))
+	if (!Shared::File::TestCreateFile(newFolderTempFile))
 		return false;
 
 	// copy the Restart Game file, if applicable
 	String restartGamePath = String::FromFormat("%s""agssave.%d%s", saveGameDirectory.GetCStr(), RESTART_POINT_SAVE_GAME_NUMBER, saveGameSuffix.GetCStr());
-	Stream *restartGameFile = Common::File::OpenFileRead(restartGamePath);
+	Stream *restartGameFile = Shared::File::OpenFileRead(restartGamePath);
 	if (restartGameFile != nullptr) {
 		long fileSize = restartGameFile->GetLength();
 		char *mbuffer = (char *)malloc(fileSize);
@@ -449,7 +454,7 @@ bool SetSaveGameDirectoryPath(const char *newFolder, bool explicit_path) {
 		delete restartGameFile;
 
 		restartGamePath.Format("%s""agssave.%d%s", newSaveGameDir.GetCStr(), RESTART_POINT_SAVE_GAME_NUMBER, saveGameSuffix.GetCStr());
-		restartGameFile = Common::File::CreateFile(restartGamePath);
+		restartGameFile = Shared::File::CreateFile(restartGamePath);
 		restartGameFile->Write(mbuffer, fileSize);
 		delete restartGameFile;
 		free(mbuffer);
@@ -771,7 +776,7 @@ const char *Game_GetName() {
 void Game_SetName(const char *newName) {
 	strncpy(play.game_name, newName, 99);
 	play.game_name[99] = 0;
-	set_window_title(play.game_name);
+	::AGS::g_vm->set_window_title(play.game_name);
 }
 
 int Game_GetSkippingCutscene() {
@@ -876,8 +881,8 @@ ScriptCamera *Game_GetAnyCamera(int index) {
 	return play.GetScriptCamera(index);
 }
 
-void Game_SimulateKeyPress(int key) {
-	int platformKey = GetKeyForKeyPressCb(key);
+void Game_SimulateKeyPress(int key_) {
+	int platformKey = GetKeyForKeyPressCb(key_);
 	platformKey = PlatformKeyFromAgsKey(platformKey);
 	if (platformKey >= 0) {
 		simulate_keypress(platformKey);
@@ -985,6 +990,7 @@ void skip_serialized_bitmap(Stream *in) {
 }
 
 long write_screen_shot_for_vista(Stream *out, Bitmap *screenshot) {
+#ifdef TODO
 	long fileSize = 0;
 	String tempFileName = String::FromFormat("%s""_tmpscht.bmp", saveGameDirectory.GetCStr());
 
@@ -996,7 +1002,7 @@ long write_screen_shot_for_vista(Stream *out, Bitmap *screenshot) {
 		fileSize = file_size_ex(tempFileName);
 		char *buffer = (char *)malloc(fileSize);
 
-		Stream *temp_in = Common::File::OpenFileRead(tempFileName);
+		Stream *temp_in = Shared::File::OpenFileRead(tempFileName);
 		temp_in->Read(buffer, fileSize);
 		delete temp_in;
 		::remove(tempFileName);
@@ -1005,10 +1011,13 @@ long write_screen_shot_for_vista(Stream *out, Bitmap *screenshot) {
 		free(buffer);
 	}
 	return fileSize;
+#else
+	error("TODO: write_screen_shot_for_vista");
+#endif
 }
 
 void WriteGameSetupStructBase_Aligned(Stream *out) {
-	AlignedStream align_s(out, Common::kAligned_Write);
+	AlignedStream align_s(out, Shared::kAligned_Write);
 	game.GameSetupStructBase::WriteToFile(&align_s);
 }
 
@@ -1056,7 +1065,7 @@ void save_game(int slotn, const char *descript) {
 	// Screenshot
 	create_savegame_screenshot(screenShot);
 
-	Common::PStream out = StartSavegame(nametouse, descript, screenShot);
+	Shared::PStream out = StartSavegame(nametouse, descript, screenShot);
 	if (out == nullptr)
 		quit("save_game: unable to open savegame file for writing");
 
@@ -1071,7 +1080,7 @@ void save_game(int slotn, const char *descript) {
 
 		update_polled_stuff_if_runtime();
 
-		out.reset(Common::File::OpenFile(nametouse, Common::kFile_Open, Common::kFile_ReadWrite));
+		out.reset(Shared::File::OpenFile(nametouse, Shared::kFile_Open, Shared::kFile_ReadWrite));
 		out->Seek(12, kSeekBegin);
 		out->WriteInt32(screenShotOffset);
 		out->Seek(4);
@@ -1121,7 +1130,7 @@ HSaveError restore_game_scripts(Stream *in, const PreservedParams &pp, RestoredD
 	r_data.ScriptModules.resize(numScriptModules);
 	for (int i = 0; i < numScriptModules; ++i) {
 		size_t module_size = in->ReadInt32();
-		if (pp.ScMdDataSize[i] != module_size) {
+		if (pp.ScMdDataSize[i] != (int)module_size) {
 			return new SavegameError(kSvgErr_GameContentAssertion, String::FromFormat("Mismatching size of script module data, module %d.", i));
 		}
 		r_data.ScriptModules[i].Len = module_size;
@@ -1132,7 +1141,7 @@ HSaveError restore_game_scripts(Stream *in, const PreservedParams &pp, RestoredD
 }
 
 void ReadRoomStatus_Aligned(RoomStatus *roomstat, Stream *in) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	roomstat->ReadFromFile_v321(&align_s);
 }
 
@@ -1162,7 +1171,7 @@ void restore_game_room_state(Stream *in) {
 }
 
 void ReadGameState_Aligned(Stream *in, RestoredData &r_data) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	play.ReadFromSavegame(&align_s, kGSSvgVersion_OldFormat, r_data);
 }
 
@@ -1193,7 +1202,7 @@ void restore_game_play(Stream *in, RestoredData &r_data) {
 }
 
 void ReadMoveList_Aligned(Stream *in) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < game.numcharacters + MAX_ROOM_OBJECTS + 1; ++i) {
 		mls[i].ReadFromFile_Legacy(&align_s);
 
@@ -1202,12 +1211,12 @@ void ReadMoveList_Aligned(Stream *in) {
 }
 
 void ReadGameSetupStructBase_Aligned(Stream *in) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	game.GameSetupStructBase::ReadFromFile(&align_s);
 }
 
 void ReadCharacterExtras_Aligned(Stream *in) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < game.numcharacters; ++i) {
 		charextra[i].ReadFromFile(&align_s);
 		align_s.Reset();
@@ -1232,7 +1241,7 @@ void restore_game_more_dynamic_values(Stream *in) {
 }
 
 void ReadAnimatedButtons_Aligned(Stream *in) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < numAnimButs; ++i) {
 		animbuts[i].ReadFromFile(&align_s);
 		align_s.Reset();
@@ -1255,7 +1264,7 @@ HSaveError restore_game_gui(Stream *in, int numGuisWas) {
 }
 
 HSaveError restore_game_audiocliptypes(Stream *in) {
-	if (in->ReadInt32() != game.audioClipTypes.size()) {
+	if (in->ReadInt32() != (int)game.audioClipTypes.size()) {
 		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of Audio Clip Types.");
 	}
 
@@ -1288,7 +1297,7 @@ void restore_game_ambientsounds(Stream *in, RestoredData &r_data) {
 }
 
 void ReadOverlays_Aligned(Stream *in) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (auto &over : screenover) {
 		over.ReadFromFile(&align_s, 0);
 		align_s.Reset();
@@ -1374,7 +1383,7 @@ HSaveError restore_game_views(Stream *in) {
 }
 
 HSaveError restore_game_audioclips_and_crossfade(Stream *in, RestoredData &r_data) {
-	if (in->ReadInt32() != game.audioClips.size()) {
+	if (in->ReadInt32() != (int)game.audioClips.size()) {
 		return new SavegameError(kSvgErr_GameContentAssertion, "Mismatching number of Audio Clips.");
 	}
 
@@ -1383,7 +1392,7 @@ HSaveError restore_game_audioclips_and_crossfade(Stream *in, RestoredData &r_dat
 		chan_info.Pos = 0;
 		chan_info.ClipID = in->ReadInt32();
 		if (chan_info.ClipID >= 0) {
-			if ((size_t)chan_info.ClipID >= game.audioClips.size()) {
+			if ((size_t)chan_info.ClipID >= (int)game.audioClips.size()) {
 				return new SavegameError(kSvgErr_GameObjectInitFailed, "Invalid audio clip index.");
 			}
 
@@ -1576,12 +1585,12 @@ HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten)
 		// Try to find wanted game's executable; if it does not exist,
 		// continue loading savedgame in current game, and pray for the best
 		get_install_dir_path(gamefilenamebuf, desc.MainDataFilename);
-		if (Common::File::TestReadFile(gamefilenamebuf)) {
+		if (Shared::File::TestReadFile(gamefilenamebuf)) {
 			RunAGSGame(desc.MainDataFilename, 0, 0);
 			load_new_game_restore = slotNumber;
 			return HSaveError::None();
 		}
-		Common::Debug::Printf(kDbgMsg_Warn, "WARNING: the saved game '%s' references game file '%s', but it cannot be found in the current directory. Trying to restore in the running game instead.",
+		Shared::Debug::Printf(kDbgMsg_Warn, "WARNING: the saved game '%s' references game file '%s', but it cannot be found in the current directory. Trying to restore in the running game instead.",
 		                      path.GetCStr(), desc.MainDataFilename.GetCStr());
 	}
 
@@ -1936,10 +1945,6 @@ bool unserialize_audio_script_object(int index, const char *objectType, const ch
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
 
 // int  (int audioType);
 RuntimeScriptValue Sc_Game_IsAudioPlaying(const RuntimeScriptValue *params, int32_t param_count) {
