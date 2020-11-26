@@ -48,7 +48,7 @@ To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any o
     .. panels::
         :column: col-lg-12
 
-        The following examples assume that the path to ScummVM is ``C:``Games``LucasArts``scummvm.exe``. 
+        The following examples assume that the path to ScummVM is ``C:\Program Files\ScummVM\scummvm.exe``. 
 
         ^^^^
 
@@ -56,7 +56,7 @@ To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any o
 
         .. code-block:: 
 
-            C:``Games``LucasArts``scummvm.exe -f monkey
+            C:\Program Files\ScummVM\scummvm.exe -f monkey
         
     
 
@@ -64,7 +64,7 @@ To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any o
 
         .. code-block::
 
-            C:``Games``LucasArts``scummvm.exe -f -n -pD:``resource``ft
+            C:\Program Files\ScummVM\scummvm.exe -f -n -pD:``resource``ft
 
 .. tabbed:: Linux/Unix
     

@@ -2,8 +2,6 @@
 
 @media (min-width: 385px){
     .wy-table-responsive table td {
-       /* !important prevents the common CSS stylesheets from overriding
-          this as on RTD they are loaded after this stylesheet */
        white-space: normal !important;
         
     }
@@ -20,6 +18,8 @@
     }
    }
 
+/* Change theme colors*/
+
 .wy-side-nav-search, .wy-nav-top  {
       background-color: #cc6600 !important;
    }
@@ -28,3 +28,16 @@
    color: #cc6600;
 }
 
+/* Change header size*/
+
+h4 {
+   font-size: 100% !important;
+}
+
+/* Change inline code formatting*/
+
+.rst-content code.literal {
+   padding: 5px !important;
+   white-space: normal;
+   color: #000000;
+}

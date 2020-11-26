@@ -17,14 +17,14 @@ Install ScummVM
 
 There are two ways to install ScummVM on an Android device; install it from the Google Play Store, or manually download and install the APK package from the ScummVM downloads page. 
 
-Google Play Store
-*********************
+From the Google Play Store
+****************************
 
 Go to the Google Play Store to download and install ScummVM. 
 
 
-APK package 
-************
+From the APK package 
+***********************
 
 On your device, use a web browser app to navigate to the `ScummVM downloads page <https://www.scummvm.org/downloads>`_. The recommended download section on the page suggests the correct ``.apk`` package, however if it does not, scroll down to select the correct package. 
 

@@ -103,6 +103,10 @@ Some games which contain MIDI music data have tracks designed specifically for t
 
 Place these ROMs in the game directory, in your extrapath, or in the directory where your ScummVM executable resides. ScummVM also looks for ``CM32L_PCM.ROM`` and ``CM32L_CONTROL.ROM``—the ROMs from the CM-32L device—and uses these instead of the MT32 ROMs if they are available. 
 
+.. note::
+
+    The MT-32 ROMs are copyrighted, and are not provided by ScummVM. These must be taken from your own MT-32 module. 
+
 ScummVM uses the MT-32 emulator if it is set as the **Preferred device** or **Music device**, or if it is specified in the MT-32 tab when **Preferred device** or **Music device** is set to **<default>** and ScummVM chooses MT-32 output automatically. 
 
 You don't need to enable **True Roland MT-32** in the MT-32 tab, ScummVM does this automatically. 
