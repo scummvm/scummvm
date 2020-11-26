@@ -209,7 +209,7 @@ private:
 	void renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const;
 
 	void computePolygons(int16 polyRenderType, vertexData *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom);
-	void renderPolygons(int32 renderType, vertexData *vertices, int32 numVertices, int32 color, int vleft, int vright, int vtop, int vbottom);
+	void renderPolygons(int32 renderType, int32 color, int vleft, int vright, int vtop, int vbottom);
 
 public:
 	Renderer(TwinEEngine *engine) : _engine(engine) {}

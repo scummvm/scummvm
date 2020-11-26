@@ -955,7 +955,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 void Renderer::renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const {
 }
 
-void Renderer::renderPolygons(int32 renderType, vertexData *vertices, int32 /*numVertices*/, int32 color, int vleft, int vright, int vtop, int vbottom) {
+void Renderer::renderPolygons(int32 renderType, int32 color, int vleft, int vright, int vtop, int vbottom) {
 	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, vtop);
 	const int32 vsize = vbottom - vtop + 1;
 
@@ -1000,7 +1000,7 @@ void Renderer::renderPolygons(int32 polyRenderType, int32 color) {
 	int vbottom = 0;
 	vertexData *vertices = (vertexData *)vertexCoordinates;
 	computePolygons(polyRenderType, vertices, numOfVertex, vleft, vright, vtop, vbottom);
-	renderPolygons(polyRenderType, vertices, numOfVertex, color, vleft, vright, vtop, vbottom);
+	renderPolygons(polyRenderType, color, vleft, vright, vtop, vbottom);
 }
 
 void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
