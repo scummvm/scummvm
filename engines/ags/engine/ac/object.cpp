@@ -20,31 +20,36 @@
  *
  */
 
-#include "ags/shared/ac/object.h"
+#include "ags/engine/ac/object.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/character.h"
-#include "ags/shared/ac/global_object.h"
-#include "ags/shared/ac/global_translation.h"
-#include "ags/shared/ac/objectcache.h"
-#include "ags/shared/ac/properties.h"
-#include "ags/shared/ac/room.h"
-#include "ags/shared/ac/roomstatus.h"
-#include "ags/shared/ac/runtime_defines.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/ac/system.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/character.h"
+#include "ags/engine/ac/global_object.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/objectcache.h"
+#include "ags/engine/ac/properties.h"
+#include "ags/engine/ac/room.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/system.h"
 #include "ags/shared/ac/view.h"
-#include "ags/shared/ac/walkablearea.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/main/game_run.h"
-#include "ags/shared/ac/route_finder.h"
-#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/engine/ac/walkablearea.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/main/game_run.h"
+#include "ags/engine/ac/route_finder.h"
+#include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/gfx/gfx_def.h"
-#include "ags/shared/script/runtimescriptvalue.h"
-#include "ags/shared/ac/dynobj/cc_object.h"
-#include "ags/shared/ac/movelist.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/ac/dynobj/cc_object.h"
+#include "ags/engine/ac/movelist.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
 
 namespace AGS3 {
 
@@ -557,11 +562,6 @@ int check_click_on_object(int roomx, int roomy, int mood) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

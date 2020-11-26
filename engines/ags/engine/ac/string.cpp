@@ -30,9 +30,14 @@
 #include "ags/shared/ac/runtime_defines.h"
 #include "ags/shared/ac/dynobj/scriptstring.h"
 #include "ags/shared/font/fonts.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/debugging/debug_log.h"
 #include "ags/shared/script/runtimescriptvalue.h"
 #include "ags/shared/util/string_compat.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
+#include "ags/shared/ac/math.h"
 
 namespace AGS3 {
 
@@ -297,11 +302,6 @@ void my_strncpy(char *dest, const char *src, int len) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/math.h"
 
 // int (const char *thisString)
 RuntimeScriptValue Sc_String_IsNullOrEmpty(const RuntimeScriptValue *params, int32_t param_count) {

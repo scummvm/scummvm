@@ -23,13 +23,13 @@
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/keycode.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/sys_events.h"
-#include "ags/shared/device/mousew32.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
-#include "ags/shared/ac/timer.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/keycode.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/sys_events.h"
+#include "ags/engine/device/mousew32.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/ac/timer.h"
 
 namespace AGS3 {
 

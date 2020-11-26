@@ -21,25 +21,29 @@
  */
 
 //include <math.h>
-#include "ags/shared/ac/dynamicsprite.h"
+#include "ags/engine/ac/dynamicsprite.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/charactercache.h"
-#include "ags/shared/ac/draw.h"
+#include "ags/engine/ac/charactercache.h"
+#include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/global_dynamicsprite.h"
-#include "ags/shared/ac/global_game.h"
-#include "ags/shared/ac/math.h"    // M_PI
-#include "ags/shared/ac/objectcache.h"
-#include "ags/shared/ac/path_helper.h"
-#include "ags/shared/ac/roomobject.h"
-#include "ags/shared/ac/roomstatus.h"
-#include "ags/shared/ac/system.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/ac/global_dynamicsprite.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/math.h"    // M_PI
+#include "ags/engine/ac/objectcache.h"
+#include "ags/engine/ac/path_helper.h"
+#include "ags/engine/ac/roomobject.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/roomstruct.h"
 #include "ags/shared/gui/guibutton.h"
 #include "ags/shared/ac/spritecache.h"
-#include "ags/shared/gfx/graphicsdriver.h"
-#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
 
 namespace AGS3 {
 
@@ -135,11 +139,11 @@ void DynamicSprite_Flip(ScriptDynamicSprite *sds, int direction) {
 	Bitmap *newPic = BitmapHelper::CreateTransparentBitmap(game.SpriteInfos[sds->slot].Width, game.SpriteInfos[sds->slot].Height, spriteset[sds->slot]->GetColorDepth());
 
 	if (direction == 1)
-		newPic->FlipBlt(spriteset[sds->slot], 0, 0, Common::kBitmap_HFlip);
+		newPic->FlipBlt(spriteset[sds->slot], 0, 0, Shared::kBitmap_HFlip);
 	else if (direction == 2)
-		newPic->FlipBlt(spriteset[sds->slot], 0, 0, Common::kBitmap_VFlip);
+		newPic->FlipBlt(spriteset[sds->slot], 0, 0, Shared::kBitmap_VFlip);
 	else if (direction == 3)
-		newPic->FlipBlt(spriteset[sds->slot], 0, 0, Common::kBitmap_HVFlip);
+		newPic->FlipBlt(spriteset[sds->slot], 0, 0, Shared::kBitmap_HVFlip);
 
 	delete spriteset[sds->slot];
 
@@ -503,10 +507,6 @@ void free_dynamic_sprite(int gotSlot) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
 
 // void (ScriptDynamicSprite *sds, int width, int height, int x, int y)
 RuntimeScriptValue Sc_DynamicSprite_ChangeCanvasSize(void *self, const RuntimeScriptValue *params, int32_t param_count) {

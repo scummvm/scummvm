@@ -21,9 +21,17 @@
  */
 
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/runtime_defines.h"
-#include "ags/shared/ac/speech.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/speech.h"
+#include "ags/engine/debugging/debug_log.h"
+
+#include "ags/shared/ac/gamesetupstruct.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_audio.h"
+#include "ags/engine/ac/global_display.h"
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
 
 namespace AGS3 {
 
@@ -77,14 +85,6 @@ SkipSpeechStyle internal_skip_speech_to_user(int internal_val) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_audio.h"
-#include "ags/shared/ac/global_display.h"
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
 
 extern GameSetupStruct game;
 extern GameState play;

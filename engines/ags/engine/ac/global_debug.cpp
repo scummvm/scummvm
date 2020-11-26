@@ -20,32 +20,32 @@
  *
  */
 
-#include "ags/shared/ac/global_debug.h"
+#include "ags/engine/ac/global_debug.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/characterinfo.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/game.h"
-#include "ags/shared/ac/gamesetup.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/game.h"
+#include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_character.h"
-#include "ags/shared/ac/global_display.h"
-#include "ags/shared/ac/global_room.h"
-#include "ags/shared/ac/movelist.h"
-#include "ags/shared/ac/properties.h"
-#include "ags/shared/ac/sys_events.h"
-#include "ags/shared/ac/tree_map.h"
-#include "ags/shared/ac/walkablearea.h"
-#include "ags/shared/gfx/gfxfilter.h"
-#include "ags/shared/gui/guidialog.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_character.h"
+#include "ags/engine/ac/global_display.h"
+#include "ags/engine/ac/global_room.h"
+#include "ags/engine/ac/movelist.h"
+#include "ags/engine/ac/properties.h"
+#include "ags/engine/ac/sys_events.h"
+#include "ags/engine/ac/tree_map.h"
+#include "ags/engine/ac/walkablearea.h"
+#include "ags/engine/gfx/gfxfilter.h"
+#include "ags/engine/gui/guidialog.h"
 #include "ags/shared/script/cc_options.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/debug/debugger.h"
-#include "ags/shared/main/main.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/engine/main/main.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/graphicsdriver.h"
-#include "ags/shared/main/graphics_mode.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/main/graphics_mode.h"
 
 namespace AGS3 {
 
@@ -120,7 +120,7 @@ void script_debug(int cmdd, int dataa) {
 		const Rect &camera = play.GetRoomCamera(camera_index)->GetRect();
 		Bitmap *view_bmp = BitmapHelper::CreateBitmap(viewport.GetWidth(), viewport.GetHeight());
 		Rect mask_src = Rect(camera.Left / thisroom.MaskResolution, camera.Top / thisroom.MaskResolution, camera.Right / thisroom.MaskResolution, camera.Bottom / thisroom.MaskResolution);
-		view_bmp->StretchBlt(tempw, mask_src, RectWH(0, 0, viewport.GetWidth(), viewport.GetHeight()), Common::kBitmap_Transparency);
+		view_bmp->StretchBlt(tempw, mask_src, RectWH(0, 0, viewport.GetWidth(), viewport.GetHeight()), Shared::kBitmap_Transparency);
 
 		IDriverDependantBitmap *ddb = gfxDriver->CreateDDBFromBitmap(view_bmp, false, true);
 		render_graphics(ddb, viewport.Left, viewport.Top);
@@ -174,7 +174,7 @@ void script_debug(int cmdd, int dataa) {
 		const Rect &camera = play.GetRoomCamera(camera_index)->GetRect();
 		Bitmap *view_bmp = BitmapHelper::CreateBitmap(viewport.GetWidth(), viewport.GetHeight());
 		Rect mask_src = Rect(camera.Left / thisroom.MaskResolution, camera.Top / thisroom.MaskResolution, camera.Right / thisroom.MaskResolution, camera.Bottom / thisroom.MaskResolution);
-		view_bmp->StretchBlt(tempw, mask_src, RectWH(0, 0, viewport.GetWidth(), viewport.GetHeight()), Common::kBitmap_Transparency);
+		view_bmp->StretchBlt(tempw, mask_src, RectWH(0, 0, viewport.GetWidth(), viewport.GetHeight()), Shared::kBitmap_Transparency);
 
 		IDriverDependantBitmap *ddb = gfxDriver->CreateDDBFromBitmap(view_bmp, false, true);
 		render_graphics(ddb, viewport.Left, viewport.Top);

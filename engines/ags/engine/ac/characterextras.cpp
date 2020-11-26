@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/shared/ac/characterextras.h"
+#include "ags/engine/ac/characterextras.h"
 #include "ags/shared/util/stream.h"
 
 namespace AGS3 {

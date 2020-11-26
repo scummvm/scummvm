@@ -36,6 +36,14 @@ namespace AGS3 {
 #define SYSTEM_AUTODETECT  0
 #define SYSTEM_NONE        AL_ID('N','O','N','E')
 
+#define SWITCH_NONE           0
+#define SWITCH_PAUSE          1
+#define SWITCH_AMNESIA        2
+#define SWITCH_BACKGROUND     3
+#define SWITCH_BACKAMNESIA    4
+
+#define SWITCH_IN             0
+#define SWITCH_OUT            1
 
 struct GFX_MODE {
 	int width, height, bpp;
@@ -140,6 +148,8 @@ extern GFX_MODE_LIST *get_gfx_mode_list(int card);
 extern void destroy_gfx_mode_list(GFX_MODE_LIST *list);
 
 inline void vsync() {}
+inline int set_display_switch_callback(int dir, AL_METHOD(void, cb, (void))) { return 0; }
+inline int set_display_switch_mode(int v) { return -1; }
 
 } // namespace AGS3
 

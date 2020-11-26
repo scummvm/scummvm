@@ -31,7 +31,7 @@
 #include "ags/shared/ac/translation.h"
 #include "ags/shared/ac/tree_map.h"
 #include "ags/shared/ac/wordsdictionary.h"
-#include "ags/shared/debug/out.h"
+#include "ags/shared/debugging/out.h"
 #include "ags/shared/util/misc.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/core/assetmanager.h"

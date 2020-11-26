@@ -20,18 +20,23 @@
  *
  */
 
-#include "ags/shared/ac/inventoryitem.h"
+#include "ags/engine/ac/inventoryitem.h"
 #include "ags/shared/ac/characterinfo.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_inventoryitem.h"
-#include "ags/shared/ac/global_translation.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/properties.h"
-#include "ags/shared/ac/runtime_defines.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/script/runtimescriptvalue.h"
-#include "ags/shared/ac/dynobj/cc_inventory.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_inventoryitem.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/properties.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/ac/dynobj/cc_inventory.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
 
 namespace AGS3 {
 
@@ -125,11 +130,6 @@ void set_inv_item_cursorpic(int invItemId, int piccy) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

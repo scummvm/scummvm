@@ -20,27 +20,27 @@
  *
  */
 
-#include "ags/shared/event.h"
+#include "ags/engine/ac/event.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/draw.h"
+#include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_game.h"
-#include "ags/shared/ac/global_room.h"
-#include "ags/shared/ac/global_screen.h"
-#include "ags/shared/ac/gui.h"
-#include "ags/shared/ac/roomstatus.h"
-#include "ags/shared/ac/screen.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/global_room.h"
+#include "ags/engine/ac/global_screen.h"
+#include "ags/engine/ac/gui.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/screen.h"
 #include "ags/shared/script/cc_error.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
-#include "ags/shared/plugin/agsplugin.h"
-#include "ags/shared/plugin/plugin_engine.h"
-#include "ags/shared/script/script.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/plugin/agsplugin.h"
+#include "ags/engine/plugin/plugin_engine.h"
+#include "ags/engine/script/script.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/ddb.h"
-#include "ags/shared/gfx/graphicsdriver.h"
-#include "ags/shared/media/audio/audio_system.h"
-#include "ags/shared/ac/timer.h"
+#include "ags/engine/gfx/ddb.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/ac/timer.h"
 
 namespace AGS3 {
 
@@ -121,12 +121,12 @@ void run_room_event(int id) {
 	}
 }
 
-void run_event_block_inv(int invNum, int event) {
+void run_event_block_inv(int invNum, int event_) {
 	evblockbasename = "inventory%d";
 	if (loaded_game_file_version > kGameVersion_272) {
-		run_interaction_script(game.invScripts[invNum].get(), event);
+		run_interaction_script(game.invScripts[invNum].get(), event_);
 	} else {
-		run_interaction_event(game.intrInv[invNum].get(), event);
+		run_interaction_event(game.intrInv[invNum].get(), event_);
 	}
 
 }
@@ -238,7 +238,7 @@ void process_event(EventHappened *evp) {
 		}
 
 		// TODO: use normal coordinates instead of "native_size" and multiply_up_*?
-		const Size &data_res = game.GetDataRes();
+		//const Size &data_res = game.GetDataRes();
 		const Rect &viewport = play.GetMainViewport();
 
 		if ((theTransition == FADE_INSTANT) || ignore_transition)

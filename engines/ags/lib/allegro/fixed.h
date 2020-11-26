@@ -27,7 +27,7 @@
 
 namespace AGS3 {
 
-typedef long fixed;
+typedef int32 fixed;
 
 extern fixed fixtorad_r;
 extern fixed radtofix_r;
@@ -50,13 +50,6 @@ extern fixed fixsin(fixed x);
 extern fixed fixtan(fixed x);
 extern fixed fixacos(fixed x);
 extern fixed fixasin(fixed x);
-
-#if 0
-extern fixed fixsqrt(fixed x);
-extern fixed fixhypot(fixed x, fixed y);
-extern fixed fixatan(fixed x);
-extern fixed fixatan2(fixed y, fixed x);
-#endif
 
 } // namespace AGS3
 

@@ -20,17 +20,25 @@
  *
  */
 
-//include <set>
-#include "ags/shared/ac/listbox.h"
+#include "ags/std/set.h"
+#include "ags/engine/ac/listbox.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/game.h"
+#include "ags/engine/ac/game.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_game.h"
-#include "ags/shared/ac/path_helper.h"
-#include "ags/shared/ac/string.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/path_helper.h"
+#include "ags/engine/ac/string.h"
 #include "ags/shared/gui/guimain.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/debugging/debug_log.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
+#include "common/fs.h"
+#include "common/savefile.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -63,13 +71,12 @@ void ListBox_Clear(GUIListBox *listbox) {
 }
 
 void FillDirList(std::set<String> &files, const String &path) {
-	al_ffblk dfb;
-	int dun = al_findfirst(path, &dfb, FA_SEARCH);
-	while (!dun) {
-		files.insert(dfb.name);
-		dun = al_findnext(&dfb);
-	}
-	al_findclose(&dfb);
+	Common::FSNode folder(path);
+	Common::FSList fsList;
+	folder.getChildren(fsList, Common::FSNode::kListAll);
+
+	for (uint idx = 0; idx < fsList.size(); ++idx)
+		files.insert(fsList[idx].getName());
 }
 
 void ListBox_FillDirList(GUIListBox *listbox, const char *filemask) {
@@ -101,34 +108,22 @@ int ListBox_FillSaveGameList(GUIListBox *listbox) {
 	listbox->Clear();
 
 	int numsaves = 0;
-	int bufix = 0;
-	al_ffblk ffb;
 	long filedates[MAXSAVEGAMES];
-	char buff[200];
 
-	String svg_dir = get_save_game_directory();
-	String searchPath = String::FromFormat("%s""agssave.*", svg_dir.GetCStr());
+	SaveStateList saveList = ::AGS::g_vm->listSaves();
 
-	int don = al_findfirst(searchPath, &ffb, FA_SEARCH);
-	while (!don) {
-		bufix = 0;
+	for (uint idx = 0; idx < saveList.size(); ++idx) {
 		if (numsaves >= MAXSAVEGAMES)
 			break;
-		// only list games .000 to .099 (to allow higher slots for other perposes)
-		if (strstr(ffb.name, ".0") == nullptr) {
-			don = al_findnext(&ffb);
-			continue;
-		}
-		const char *numberExtension = strstr(ffb.name, ".0") + 1;
-		int saveGameSlot = atoi(numberExtension);
-		GetSaveSlotDescription(saveGameSlot, buff);
-		listbox->AddItem(buff);
+
+		int saveGameSlot = saveList[idx].getSaveSlot();
+		Common::String desc = saveList[idx].getDescription();
+
+		listbox->AddItem(desc);
 		listbox->SavedGameIndex[numsaves] = saveGameSlot;
-		filedates[numsaves] = (long int)ffb.time;
+		filedates[numsaves] = 0;
 		numsaves++;
-		don = al_findnext(&ffb);
 	}
-	al_findclose(&ffb);
 
 	int nn;
 	for (nn = 0; nn < numsaves - 1; nn++) {
@@ -383,11 +378,6 @@ GUIListBox *is_valid_listbox(int guin, int objn) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

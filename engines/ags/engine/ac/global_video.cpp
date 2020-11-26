@@ -21,16 +21,16 @@
  */
 
 #include "ags/lib/allegro.h"
-#include "ags/shared/ac/gamesetup.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_audio.h"
-#include "ags/shared/ac/global_game.h"
-#include "ags/shared/ac/global_video.h"
-#include "ags/shared/ac/path_helper.h"
-#include "ags/shared/debug/debugger.h"
-#include "ags/shared/media/video/video.h"
-#include "ags/shared/media/audio/audio_system.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/engine/ac/gamesetup.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_audio.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/global_video.h"
+#include "ags/engine/ac/path_helper.h"
+#include "ags/engine/debugging/debugger.h"
+#include "ags/engine/media/video/video.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/shared/util/string_compat.h"
 
 namespace AGS3 {

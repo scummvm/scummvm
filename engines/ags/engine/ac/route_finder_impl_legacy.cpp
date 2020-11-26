@@ -27,7 +27,7 @@
 //
 //=============================================================================
 
-#include "ags/shared/ac/route_finder_impl_legacy.h"
+#include "ags/engine/ac/route_finder_impl_legacy.h"
 
 //include <string.h>
 //include <math.h>
@@ -35,9 +35,9 @@
 #include "ags/shared/ac/common.h"   // quit()
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/game/roomstruct.h"
-#include "ags/shared/ac/movelist.h"     // MoveList
+#include "ags/engine/ac/movelist.h"     // MoveList
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/debug/out.h"
+#include "ags/shared/debugging/out.h"
 
 namespace AGS3 {
 
@@ -123,7 +123,7 @@ void get_lastcpos(int &lastcx_, int &lastcy_) {
 int find_nearest_walkable_area(Bitmap *tempw, int fromX, int fromY, int toX, int toY, int destX, int destY, int granularity) {
 	assert(tempw != nullptr);
 
-	int ex, ey, nearest = 99999, thisis, nearx, neary;
+	int ex, ey, nearest = 99999, thisis, nearx = 0, neary = 0;
 	if (fromX < 0) fromX = 0;
 	if (fromY < 0) fromY = 0;
 	if (toX >= tempw->GetWidth()) toX = tempw->GetWidth() - 1;

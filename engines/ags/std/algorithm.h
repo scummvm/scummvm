@@ -43,7 +43,17 @@ In fill(In first, In last, const Value &val) {
 
 template<typename T, class StrictWeakOrdering>
 void sort(T first, T last, StrictWeakOrdering comp) {
-	Common::sort<T, StrictWeakOrdering>(first, last, comp);
+	Common::sort(first, last, comp);
+}
+
+template<typename T>
+void sort(T *first, T *last) {
+	Common::sort(first, last, Common::Less<T>());
+}
+
+template<class T>
+void sort(T first, T last) {
+	Common::sort(first, last);
 }
 
 } // namespace std

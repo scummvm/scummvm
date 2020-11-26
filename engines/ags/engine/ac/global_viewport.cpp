@@ -20,9 +20,9 @@
  *
  */
 
-#include "ags/shared/ac/global_viewport.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/ac/global_viewport.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/debugging/debug_log.h"
 
 namespace AGS3 {
 

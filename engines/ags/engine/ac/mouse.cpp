@@ -20,27 +20,32 @@
  *
  */
 
-#include "ags/shared/ac/mouse.h"
+#include "ags/engine/ac/mouse.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/characterinfo.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/dynobj/scriptmouse.h"
-#include "ags/shared/ac/dynobj/scriptsystem.h"
-#include "ags/shared/ac/gamesetup.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/dynobj/scriptmouse.h"
+#include "ags/engine/ac/dynobj/scriptsystem.h"
+#include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_mouse.h"
-#include "ags/shared/ac/global_plugin.h"
-#include "ags/shared/ac/global_screen.h"
-#include "ags/shared/ac/system.h"
-#include "ags/shared/ac/viewframe.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_mouse.h"
+#include "ags/engine/ac/global_plugin.h"
+#include "ags/engine/ac/global_screen.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/ac/viewframe.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/gui/guibutton.h"
 #include "ags/shared/gui/guimain.h"
-#include "ags/shared/device/mousew32.h"
+#include "ags/engine/device/mousew32.h"
 #include "ags/shared/ac/spritecache.h"
-#include "ags/shared/gfx/graphicsdriver.h"
-#include "ags/shared/gfx/gfxfilter.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/gfxfilter.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/global_game.h"
 
 namespace AGS3 {
 
@@ -454,11 +459,6 @@ int find_previous_enabled_cursor(int startwith) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/global_game.h"
 
 // void  (int curs, int newslot)
 RuntimeScriptValue Sc_ChangeCursorGraphic(const RuntimeScriptValue *params, int32_t param_count) {

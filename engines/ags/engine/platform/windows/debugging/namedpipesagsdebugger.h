@@ -25,7 +25,7 @@
 
 //include <windows.h>
 //include <io.h>
-#include "ags/shared/debug/agseditordebugger.h"
+#include "ags/shared/debugging/agseditordebugger.h"
 
 namespace AGS3 {
 

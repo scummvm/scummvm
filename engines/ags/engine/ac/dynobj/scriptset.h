@@ -113,7 +113,7 @@ public:
 
 private:
 	bool TryAddItem(const char *item, size_t len) {
-		return _set.insert(String(item, len)).second;
+		return _set.insert(String(item, len))._value;
 	}
 	void DeleteItem(ConstIterator it) {
 		/* do nothing */

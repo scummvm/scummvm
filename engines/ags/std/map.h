@@ -35,8 +35,9 @@ class map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
 public:
 	using iterator = typename Common::HashMap<Key, Val, HashFunc, EqualFunc>::iterator;
 
-	void insert(pair<Key, Val> elem) {
+	pair<Key, Val> insert(pair<Key, Val> elem) {
 		this->operator[](elem.first) = elem.second;
+		return elem;
 	}
 
 	// FUNCTION TEMPLATE lower_bound
@@ -55,8 +56,9 @@ template<class Key, class Val, class HashFunc = Common::Hash<Key>,
          class EqualFunc = Common::EqualTo<Key> >
 class unordered_map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
 public:
-	void insert(pair<Key, Val> elem) {
+	pair<Key, Val> insert(pair<Key, Val> elem) {
 		this->operator[](elem.first) = elem.second;
+		return elem;
 	}
 
 	void reserve(size_t size) {

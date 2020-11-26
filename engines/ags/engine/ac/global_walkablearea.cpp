@@ -20,12 +20,12 @@
  *
  */
 
-#include "ags/shared/ac/global_walkablearea.h"
+#include "ags/engine/ac/global_walkablearea.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/common_defines.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/walkablearea.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/walkablearea.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/roomstruct.h"
 
 namespace AGS3 {

@@ -22,17 +22,17 @@
 
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/global_gui.h"
-#include "ags/shared/ac/global_inventoryitem.h"
-#include "ags/shared/ac/global_translation.h"
-#include "ags/shared/ac/inventoryitem.h"
-#include "ags/shared/ac/invwindow.h"
-#include "ags/shared/ac/properties.h"
-#include "ags/shared/ac/string.h"
+#include "ags/engine/ac/global_gui.h"
+#include "ags/engine/ac/global_inventoryitem.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/inventoryitem.h"
+#include "ags/engine/ac/invwindow.h"
+#include "ags/engine/ac/properties.h"
+#include "ags/engine/ac/string.h"
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/gui/guiinv.h"
-#include "ags/shared/ac/event.h"
-#include "ags/shared/ac/gamestate.h"
+#include "ags/engine/ac/event.h"
+#include "ags/engine/ac/gamestate.h"
 
 namespace AGS3 {
 

@@ -20,22 +20,22 @@
  *
  */
 
-//include <algorithm>
-#include "ags/shared/ac/draw.h"
+#include "ags/std/algorithm.h"
+#include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/game_version.h"
-#include "ags/shared/ac/gamestate.h"
+#include "ags/engine/ac/gamestate.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/timer.h"
-#include "ags/shared/ac/dynobj/scriptcamera.h"
-#include "ags/shared/ac/dynobj/scriptsystem.h"
-#include "ags/shared/ac/dynobj/scriptviewport.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/device/mousew32.h"
+#include "ags/engine/ac/timer.h"
+#include "ags/engine/ac/dynobj/scriptcamera.h"
+#include "ags/engine/ac/dynobj/scriptsystem.h"
+#include "ags/engine/ac/dynobj/scriptviewport.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/device/mousew32.h"
 #include "ags/shared/game/customproperties.h"
 #include "ags/shared/game/roomstruct.h"
-#include "ags/shared/game/savegame_internal.h"
-#include "ags/shared/main/engine.h"
-#include "ags/shared/media/audio/audio_system.h"
+#include "ags/engine/game/savegame_internal.h"
+#include "ags/engine/main/engine.h"
+#include "ags/engine/media/audio/audio_system.h"
 #include "ags/shared/util/alignedstream.h"
 #include "ags/shared/util/string_utils.h"
 
@@ -130,7 +130,7 @@ void GameState::UpdateViewports() {
 		}
 		_roomViewportZOrderChanged = false;
 	}
-	size_t vp_changed = -1;
+	size_t vp_changed = (size_t)-1;
 	for (size_t i = _roomViewportsSorted.size(); i-- > 0;) {
 		auto vp = _roomViewportsSorted[i];
 		if (vp->HasChangedSize() || vp->HasChangedPosition() || vp->HasChangedVisible()) {
@@ -777,7 +777,7 @@ void GameState::WriteForSavegame(Shared::Stream *out) const {
 }
 
 void GameState::ReadQueuedAudioItems_Aligned(Shared::Stream *in) {
-	AlignedStream align_s(in, Common::kAligned_Read);
+	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int i = 0; i < MAX_QUEUED_MUSIC; ++i) {
 		new_music_queue[i].ReadFromFile(&align_s);
 		align_s.Reset();

@@ -20,35 +20,12 @@
  *
  */
 
-#include "ags/engine/ac/global_slider.h"
-#include "ags/shared/ac/common.h"
-#include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/engine/ac/slider.h"
-#include "ags/shared/gui/guimain.h"
-#include "ags/shared/gui/guislider.h"
+#include "ags/lib/allegro/draw.h"
 
 namespace AGS3 {
 
-using namespace AGS::Shared;
-
-extern GameSetupStruct game;
-
-void SetSliderValue(int guin, int objn, int valn) {
-	if ((guin < 0) | (guin >= game.numgui)) quit("!SetSliderValue: invalid GUI number");
-	if (guis[guin].GetControlType(objn) != kGUISlider)
-		quit("!SetSliderValue: specified control is not a slider");
-
-	GUISlider *guisl = (GUISlider *)guis[guin].GetControl(objn);
-	Slider_SetValue(guisl, valn);
-}
-
-int GetSliderValue(int guin, int objn) {
-	if ((guin < 0) | (guin >= game.numgui)) quit("!GetSliderValue: invalid GUI number");
-	if (guis[guin].GetControlType(objn) != kGUISlider)
-		quit("!GetSliderValue: specified control is not a slider");
-
-	GUISlider *guisl = (GUISlider *)guis[guin].GetControl(objn);
-	return Slider_GetValue(guisl);
+void do_line(BITMAP *bmp, int x1, int y_1, int x2, int y2, int d, DrawMethod proc) {
+	warning("TODO: do_line");
 }
 
 } // namespace AGS3

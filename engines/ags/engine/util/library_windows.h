@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_UTIL_LIBRARY_WINDOWS_H
 #define AGS_ENGINE_UTIL_LIBRARY_WINDOWS_H
 
-#include "ags/shared/debug/out.h"
+#include "ags/shared/debugging/out.h"
 #include "ags/shared/platform/windows/winapi_exclusive.h"
 #include "ags/shared/util/string.h"
 

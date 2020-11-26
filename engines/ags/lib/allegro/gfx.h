@@ -37,6 +37,13 @@ namespace AGS3 {
 #define GFX_SAFE                       AL_ID('S','A','F','E')
 #define GFX_NONE                       AL_ID('N','O','N','E')
 
+/* Bitfield for relaying graphics driver type information */
+#define GFX_TYPE_UNKNOWN     0
+#define GFX_TYPE_WINDOWED    1
+#define GFX_TYPE_FULLSCREEN  2
+#define GFX_TYPE_DEFINITE    4
+#define GFX_TYPE_MAGIC       8
+
 /* drawing modes for draw_sprite_ex() */
 #define DRAW_SPRITE_NORMAL 0
 #define DRAW_SPRITE_LIT 1
@@ -194,6 +201,8 @@ public:
 	uint getTransparentColor() const {
 		return _owner->getTransparentColor();
 	}
+
+	int getpixel(int x, int y) const;
 };
 
 AL_FUNC(void, set_color_conversion, (int mode));

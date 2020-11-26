@@ -21,20 +21,20 @@
  */
 
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/draw.h"
+#include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_game.h"
-#include "ags/shared/ac/global_screen.h"
-#include "ags/shared/ac/screen.h"
-#include "ags/shared/ac/dynobj/scriptviewport.h"
-#include "ags/shared/ac/dynobj/scriptuserobject.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
-#include "ags/shared/plugin/agsplugin.h"
-#include "ags/shared/plugin/plugin_engine.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/global_screen.h"
+#include "ags/engine/ac/screen.h"
+#include "ags/engine/ac/dynobj/scriptviewport.h"
+#include "ags/engine/ac/dynobj/scriptuserobject.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/plugin/agsplugin.h"
+#include "ags/engine/plugin/plugin_engine.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/engine/gfx/graphicsdriver.h"
 
 namespace AGS3 {
 

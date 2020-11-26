@@ -91,12 +91,16 @@ public:
 		_dic.clear();
 	}
 	bool Contains(const char *key) override {
+#ifdef AGS_PLATFORM_SCUMMVM
+		return _dic.find(String::Wrapper(key)) != _dic.end();
+#else
 		return _dic.count(String::Wrapper(key)) != 0;
+#endif
 	}
 	const char *Get(const char *key) override {
 		auto it = _dic.find(String::Wrapper(key));
 		if (it == _dic.end()) return nullptr;
-		return it->second.GetNullableCStr();
+		return it->_value.GetNullableCStr();
 	}
 	bool Remove(const char *key) override {
 		auto it = _dic.find(String::Wrapper(key));
@@ -116,11 +120,11 @@ public:
 	}
 	void GetKeys(std::vector<const char *> &buf) const override {
 		for (auto it = _dic.begin(); it != _dic.end(); ++it)
-			buf.push_back(it->first.GetCStr()); // keys cannot be null
+			buf.push_back(it->_key.GetCStr()); // keys cannot be null
 	}
 	void GetValues(std::vector<const char *> &buf) const override {
 		for (auto it = _dic.begin(); it != _dic.end(); ++it)
-			buf.push_back(it->second.GetNullableCStr()); // values may be null
+			buf.push_back(it->_value.GetNullableCStr()); // values may be null
 	}
 
 private:
@@ -139,8 +143,8 @@ private:
 	size_t CalcSerializeSize() override {
 		size_t total_sz = sizeof(int32_t);
 		for (auto it = _dic.begin(); it != _dic.end(); ++it) {
-			total_sz += sizeof(int32_t) + it->first.GetLength();
-			total_sz += sizeof(int32_t) + it->second.GetLength();
+			total_sz += sizeof(int32_t) + it->_key.GetLength();
+			total_sz += sizeof(int32_t) + it->_value.GetLength();
 		}
 		return total_sz;
 	}
@@ -148,13 +152,13 @@ private:
 	void SerializeContainer() override {
 		SerializeInt((int)_dic.size());
 		for (auto it = _dic.begin(); it != _dic.end(); ++it) {
-			SerializeInt((int)it->first.GetLength());
-			memcpy(&serbuffer[bytesSoFar], it->first.GetCStr(), it->first.GetLength());
-			bytesSoFar += it->first.GetLength();
-			if (it->second.GetNullableCStr()) { // values may be null
-				SerializeInt((int)it->second.GetLength());
-				memcpy(&serbuffer[bytesSoFar], it->second.GetCStr(), it->second.GetLength());
-				bytesSoFar += it->second.GetLength();
+			SerializeInt((int)it->_key.GetLength());
+			memcpy(&serbuffer[bytesSoFar], it->_key.GetCStr(), it->_key.GetLength());
+			bytesSoFar += it->_key.GetLength();
+			if (it->_value.GetNullableCStr()) { // values may be null
+				SerializeInt((int)it->_value.GetLength());
+				memcpy(&serbuffer[bytesSoFar], it->_value.GetCStr(), it->_value.GetLength());
+				bytesSoFar += it->_value.GetLength();
 			} else {
 				SerializeInt(-1);
 			}
@@ -182,7 +186,8 @@ private:
 };
 
 typedef ScriptDictImpl< std::map<String, String>, true, true > ScriptDict;
-typedef ScriptDictImpl< std::map<String, String, IgnoreCase_LessThan>, true, false > ScriptDictCI;
+// TODO: Not sure if current std::map implement works for LessThan to give a key ordering
+typedef ScriptDictImpl< std::map<String, String, IgnoreCase_Hash, IgnoreCase_LessThan>, true, false > ScriptDictCI;
 typedef ScriptDictImpl< std::unordered_map<String, String>, false, true > ScriptHashDict;
 typedef ScriptDictImpl< std::unordered_map<String, String, IgnoreCase_Hash, IgnoreCase_EqualTo>, false, false > ScriptHashDictCI;
 

@@ -20,23 +20,27 @@
  *
  */
 
-#include "ags/shared/ac/overlay.h"
+#include "ags/engine/ac/overlay.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/view.h"
-#include "ags/shared/ac/character.h"
-#include "ags/shared/ac/characterextras.h"
-#include "ags/shared/ac/display.h"
-#include "ags/shared/ac/draw.h"
+#include "ags/engine/ac/character.h"
+#include "ags/engine/ac/characterextras.h"
+#include "ags/engine/ac/display.h"
+#include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_overlay.h"
-#include "ags/shared/ac/global_translation.h"
-#include "ags/shared/ac/runtime_defines.h"
-#include "ags/shared/ac/screenoverlay.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_overlay.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/screenoverlay.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
 
 namespace AGS3 {
 
@@ -202,7 +206,7 @@ size_t add_screen_overlay(int x, int y, int type, Shared::Bitmap *piccy, int pic
 	if (type == OVER_TEXTMSG) is_text_overlay++;
 	if (type == OVER_CUSTOM) {
 		// find an unused custom ID; TODO: find a better approach!
-		for (int id = OVER_CUSTOM + 1; id < screenover.size() + OVER_CUSTOM + 1; ++id) {
+		for (int id = OVER_CUSTOM + 1; id < (int)screenover.size() + OVER_CUSTOM + 1; ++id) {
 			if (find_overlay_of_type(id) == -1) {
 				type = id;
 				break;
@@ -286,10 +290,6 @@ void recreate_overlay_ddbs() {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
 
 // ScriptOverlay* (int x, int y, int slot, int transparent)
 RuntimeScriptValue Sc_Overlay_CreateGraphical(const RuntimeScriptValue *params, int32_t param_count) {

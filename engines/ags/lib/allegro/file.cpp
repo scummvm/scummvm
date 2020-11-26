@@ -22,6 +22,7 @@
 
 #include "ags/lib/allegro/file.h"
 #include "common/str.h"
+#include "common/textconsole.h"
 
 namespace AGS3 {
 
@@ -52,6 +53,106 @@ char *make_relative_filename(char *dest, const char *path, const char *filename,
 int is_relative_filename(const char *filename) {
 	Common::String fname(filename);
 	return !fname.contains('/') && !fname.contains('\\') ? 0 : -1;
+}
+
+void packfile_password(AL_CONST char *password) {
+	error("TODO: packfile_password");
+}
+
+PACKFILE *pack_fopen(AL_CONST char *filename, AL_CONST char *mode) {
+	error("TODO: pack_fopen");
+}
+
+PACKFILE *pack_fopen_vtable(AL_CONST PACKFILE_VTABLE *vtable, void *userdata) {
+	error("TODO: pack_fopen_vtable");
+}
+
+int pack_fclose(PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+int pack_fseek(PACKFILE *f, int offset) {
+	error("TODO: xxx");
+}
+
+PACKFILE *pack_fopen_chunk(PACKFILE *f, int pack) {
+	error("TODO: xxx");
+}
+
+PACKFILE *pack_fclose_chunk(PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+int pack_getc(PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+int pack_putc(int c, PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+int pack_feof(PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+int pack_ferror(PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+int pack_igetw(PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+long pack_igetl(PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+int pack_iputw(int w, PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+long pack_iputl(long l, PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+int pack_mgetw(PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+long pack_mgetl(PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+int pack_mputw(int w, PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+long pack_mputl(long l, PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+long pack_fread(void *p, long n, PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+long pack_fwrite(AL_CONST void *p, long n, PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+int pack_ungetc(int c, PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+char *pack_fgets(char *p, int max, PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+int pack_fputs(AL_CONST char *p, PACKFILE *f) {
+	error("TODO: xxx");
+}
+
+void *pack_get_userdata(PACKFILE *f) {
+	error("TODO: xxx");
 }
 
 } // namespace AGS3

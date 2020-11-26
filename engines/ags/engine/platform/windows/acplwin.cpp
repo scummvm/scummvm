@@ -36,7 +36,7 @@
 #include "ags/shared/ac/global_display.h"
 #include "ags/shared/ac/runtime_defines.h"
 #include "ags/shared/ac/string.h"
-#include "ags/shared/debug/out.h"
+#include "ags/shared/debugging/out.h"
 #include "ags/shared/gfx/graphicsdriver.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/main/engine.h"
@@ -618,7 +618,7 @@ void DetermineAppOutputDirectory() {
 	if (win32SavedGamesDirectory[0]) {
 		win32OutputDirectory = win32SavedGamesDirectory;
 		win32OutputDirectory.Append("\\.ags");
-		log_to_saves_dir = mkdir(win32OutputDirectory) == 0 || errno == EEXIST;
+		log_to_saves_dir = mkdir(win32OutputDirectory) == 0 || errnum == EEXIST;
 	}
 
 	if (!log_to_saves_dir) {

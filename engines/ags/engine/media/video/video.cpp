@@ -29,8 +29,8 @@
 #define AGS_FLI_FROM_PACK_FILE ((ALLEGRO_DATE >= 20190303) || \
                                 AGS_PLATFORM_OS_WINDOWS || AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_MACOS)
 
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/debug/out.h"
+#include "ags/shared/debugging/debug_log.h"
+#include "ags/shared/debugging/out.h"
 #include "ags/shared/ac/asset_helper.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/draw.h"

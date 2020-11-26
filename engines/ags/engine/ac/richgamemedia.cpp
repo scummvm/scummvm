@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/shared/ac/richgamemedia.h"
+#include "ags/engine/ac/richgamemedia.h"
 #include "ags/shared/util/stream.h"
 
 namespace AGS3 {

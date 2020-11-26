@@ -20,30 +20,34 @@
  *
  */
 
-#include "ags/shared/ac/invwindow.h"
+#include "ags/engine/ac/invwindow.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/characterextras.h"
+#include "ags/engine/ac/characterextras.h"
 #include "ags/shared/ac/characterinfo.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/event.h"
-#include "ags/shared/ac/gamestate.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/event.h"
+#include "ags/engine/ac/gamestate.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/global_character.h"
-#include "ags/shared/ac/global_display.h"
-#include "ags/shared/ac/global_room.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/sys_events.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/gui/guidialog.h"
-#include "ags/shared/main/game_run.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/engine/ac/global_character.h"
+#include "ags/engine/ac/global_display.h"
+#include "ags/engine/ac/global_room.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/sys_events.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/gui/guidialog.h"
+#include "ags/engine/main/game_run.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/shared/ac/spritecache.h"
-#include "ags/shared/script/runtimescriptvalue.h"
-#include "ags/shared/ac/dynobj/cc_character.h"
-#include "ags/shared/ac/dynobj/cc_inventory.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/ac/dynobj/cc_character.h"
+#include "ags/engine/ac/dynobj/cc_inventory.h"
 #include "ags/shared/util/math.h"
-#include "ags/shared/media/audio/audio_system.h"
-#include "ags/shared/ac/timer.h"
+#include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/ac/timer.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
 
 namespace AGS3 {
 
@@ -333,7 +337,7 @@ void InventoryScreen::Draw(Bitmap *ds) {
 	if (top_item > 0)
 		wputblock(ds, windowwid - ARROWBUTTONWID, buttonyp + get_fixed_pixel_size(2), arrowblock, 1);
 	if (top_item + num_visible_items < numitems)
-		arrowblock->FlipBlt(arrowblock, windowwid - ARROWBUTTONWID, buttonyp + get_fixed_pixel_size(4) + ARROWBUTTONWID, Common::kBitmap_VFlip);
+		arrowblock->FlipBlt(arrowblock, windowwid - ARROWBUTTONWID, buttonyp + get_fixed_pixel_size(4) + ARROWBUTTONWID, Shared::kBitmap_VFlip);
 	delete arrowblock;
 }
 
@@ -362,11 +366,11 @@ bool InventoryScreen::Run() {
 	refresh_gui_screen();
 
 	// NOTE: this is because old code was working with full game screen
-	const int mousex = ::mousex - windowxp;
-	const int mousey = ::mousey - windowyp;
+	const int mouseX = AGS3::mousex - windowxp;
+	const int mouseY = AGS3::mousey - windowyp;
 
-	int isonitem = ((mousey - bartop) / highest) * ICONSPERLINE + (mousex - barxp) / widest;
-	if (mousey <= bartop) isonitem = -1;
+	int isonitem = ((mouseY - bartop) / highest) * ICONSPERLINE + (mouseX - barxp) / widest;
+	if (mouseY <= bartop) isonitem = -1;
 	else if (isonitem >= 0) isonitem += top_item;
 	if ((isonitem < 0) | (isonitem >= numitems) | (isonitem >= top_item + num_visible_items))
 		isonitem = -1;
@@ -377,9 +381,9 @@ bool InventoryScreen::Run() {
 	}
 
 	if (mclick == LEFT) {
-		if ((mousey < 0) | (mousey > windowhit) | (mousex < 0) | (mousex > windowwid))
+		if ((mouseY < 0) | (mouseY > windowhit) | (mouseX < 0) | (mouseX > windowwid))
 			return true; // continue inventory screen loop
-		if (mousey < buttonyp) {
+		if (mouseY < buttonyp) {
 			int clickedon = isonitem;
 			if (clickedon < 0) return true; // continue inventory screen loop
 			evblocknum = dii[clickedon].num;
@@ -430,8 +434,8 @@ bool InventoryScreen::Run() {
 			//        break;
 			return true; // continue inventory screen loop
 		} else {
-			if (mousex >= windowwid - ARROWBUTTONWID) {
-				if (mousey < buttonyp + get_fixed_pixel_size(2) + ARROWBUTTONWID) {
+			if (mouseX >= windowwid - ARROWBUTTONWID) {
+				if (mouseY < buttonyp + get_fixed_pixel_size(2) + ARROWBUTTONWID) {
 					if (top_item > 0) {
 						top_item -= ICONSPERLINE;
 						//ags_domouse(DOMOUSE_DISABLE);
@@ -439,7 +443,7 @@ bool InventoryScreen::Run() {
 						break_code = Redraw();
 						return break_code == 0;
 					}
-				} else if ((mousey < buttonyp + get_fixed_pixel_size(4) + ARROWBUTTONWID * 2) && (top_item + num_visible_items < numitems)) {
+				} else if ((mouseY < buttonyp + get_fixed_pixel_size(4) + ARROWBUTTONWID * 2) && (top_item + num_visible_items < numitems)) {
 					top_item += ICONSPERLINE;
 					//ags_domouse(DOMOUSE_DISABLE);
 
@@ -449,7 +453,7 @@ bool InventoryScreen::Run() {
 				return true; // continue inventory screen loop
 			}
 
-			int buton = mousex - 2;
+			int buton = mouseX - 2;
 			if (buton < 0) return true; // continue inventory screen loop
 			buton /= BUTTONWID;
 			if (buton >= 3) return true; // continue inventory screen loop
@@ -525,10 +529,6 @@ int invscreen() {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
 
 // void (GUIInvWindow *guii)
 RuntimeScriptValue Sc_InvWindow_ScrollDown(void *self, const RuntimeScriptValue *params, int32_t param_count) {

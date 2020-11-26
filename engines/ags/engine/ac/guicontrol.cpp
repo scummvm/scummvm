@@ -21,9 +21,9 @@
  */
 
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/guicontrol.h"
-#include "ags/shared/ac/global_gui.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/engine/ac/guicontrol.h"
+#include "ags/engine/ac/global_gui.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/gui/guibutton.h"
 #include "ags/shared/gui/guiinv.h"
 #include "ags/shared/gui/guilabel.h"
@@ -31,9 +31,13 @@
 #include "ags/shared/gui/guimain.h"
 #include "ags/shared/gui/guislider.h"
 #include "ags/shared/gui/guitextbox.h"
-#include "ags/shared/script/runtimescriptvalue.h"
-#include "ags/shared/ac/dynobj/cc_gui.h"
-#include "ags/shared/ac/dynobj/cc_guiobject.h"
+#include "ags/engine/script/runtimescriptvalue.h"
+#include "ags/engine/ac/dynobj/cc_gui.h"
+#include "ags/engine/ac/dynobj/cc_guiobject.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
 
 namespace AGS3 {
 
@@ -236,10 +240,6 @@ void GUIControl_BringToFront(GUIObject *guio) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
 
 // void (GUIObject *guio)
 RuntimeScriptValue Sc_GUIControl_BringToFront(void *self, const RuntimeScriptValue *params, int32_t param_count) {

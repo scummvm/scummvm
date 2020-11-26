@@ -21,39 +21,43 @@
  */
 
 //include <cstdio>
-#include "ags/shared/ac/gui.h"
+#include "ags/engine/ac/gui.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/event.h"
-#include "ags/shared/ac/gamesetup.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/event.h"
+#include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/global_character.h"
-#include "ags/shared/ac/global_game.h"
-#include "ags/shared/ac/global_gui.h"
-#include "ags/shared/ac/global_inventoryitem.h"
-#include "ags/shared/ac/global_screen.h"
-#include "ags/shared/ac/guicontrol.h"
+#include "ags/engine/ac/global_character.h"
+#include "ags/engine/ac/global_game.h"
+#include "ags/engine/ac/global_gui.h"
+#include "ags/engine/ac/global_inventoryitem.h"
+#include "ags/engine/ac/global_screen.h"
+#include "ags/engine/ac/guicontrol.h"
 #include "ags/shared/ac/interfacebutton.h"
-#include "ags/shared/ac/invwindow.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/runtime_defines.h"
-#include "ags/shared/ac/system.h"
-#include "ags/shared/ac/dynobj/cc_guiobject.h"
-#include "ags/shared/ac/dynobj/scriptgui.h"
-#include "ags/shared/script/cc_instance.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/device/mousew32.h"
-#include "ags/shared/gfx/gfxfilter.h"
+#include "ags/engine/ac/invwindow.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/ac/dynobj/cc_guiobject.h"
+#include "ags/engine/ac/dynobj/scriptgui.h"
+#include "ags/engine/script/cc_instance.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/device/mousew32.h"
+#include "ags/engine/gfx/gfxfilter.h"
 #include "ags/shared/gui/guibutton.h"
 #include "ags/shared/gui/guimain.h"
-#include "ags/shared/script/script.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/engine/script/script.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/ac/dynobj/cc_gui.h"
-#include "ags/shared/ac/dynobj/cc_guiobject.h"
-#include "ags/shared/script/runtimescriptvalue.h"
+#include "ags/engine/ac/dynobj/cc_gui.h"
+#include "ags/engine/ac/dynobj/cc_guiobject.h"
+#include "ags/engine/script/runtimescriptvalue.h"
 #include "ags/shared/util/string_compat.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
 
 namespace AGS3 {
 
@@ -341,7 +345,7 @@ void process_interface_click(int ifce, int btn, int mbut) {
 	}
 
 	int btype = guis[ifce].GetControlType(btn);
-	int rtype = kGUIAction_None, rdata;
+	int rtype = kGUIAction_None, rdata = 0;
 	if (btype == kGUIButton) {
 		GUIButton *gbuto = (GUIButton *)guis[ifce].GetControl(btn);
 		rtype = gbuto->ClickAction[kMouseLeft];
@@ -684,10 +688,6 @@ void gui_on_mouse_down(const int guin, const int mbut) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
 
 // void GUI_Centre(ScriptGUI *sgui)
 RuntimeScriptValue Sc_GUI_Centre(void *self, const RuntimeScriptValue *params, int32_t param_count) {

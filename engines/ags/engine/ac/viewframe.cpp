@@ -22,7 +22,7 @@
 
 #include "ags/shared/ac/gamesetupstruct.h"
 #include "ags/shared/ac/viewframe.h"
-#include "ags/shared/debug/debug_log.h"
+#include "ags/shared/debugging/debug_log.h"
 #include "ags/shared/ac/spritecache.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/script/runtimescriptvalue.h"
@@ -30,6 +30,10 @@
 #include "ags/shared/ac/draw.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/media/audio/audio_system.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/shared/script/script_api.h"
+#include "ags/shared/script/script_runtime.h"
 
 } // namespace AGS3
 
@@ -159,16 +163,16 @@ void DrawViewFrame(Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha
 		Bitmap *src = vf_bmp;
 		if (vframe->flags & VFLG_FLIPSPRITE) {
 			src = new Bitmap(vf_bmp->GetWidth(), vf_bmp->GetHeight(), vf_bmp->GetColorDepth());
-			src->FlipBlt(vf_bmp, 0, 0, Common::kBitmap_HFlip);
+			src->FlipBlt(vf_bmp, 0, 0, Shared::kBitmap_HFlip);
 		}
 		draw_sprite_support_alpha(ds, true, x, y, src, (game.SpriteInfos[vframe->pic].Flags & SPF_ALPHACHANNEL) != 0);
 		if (src != vf_bmp)
 			delete src;
 	} else {
 		if (vframe->flags & VFLG_FLIPSPRITE)
-			ds->FlipBlt(spriteset[vframe->pic], x, y, Common::kBitmap_HFlip);
+			ds->FlipBlt(spriteset[vframe->pic], x, y, Shared::kBitmap_HFlip);
 		else
-			ds->Blit(spriteset[vframe->pic], x, y, Common::kBitmap_Transparency);
+			ds->Blit(spriteset[vframe->pic], x, y, Shared::kBitmap_Transparency);
 	}
 }
 
@@ -177,10 +181,6 @@ void DrawViewFrame(Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
 
 // int (ScriptViewFrame *svf)
 RuntimeScriptValue Sc_ViewFrame_GetFlipped(void *self, const RuntimeScriptValue *params, int32_t param_count) {

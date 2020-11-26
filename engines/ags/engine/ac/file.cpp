@@ -20,31 +20,36 @@
  *
  */
 
-#include "ags/shared/aldumb.h"
-#include "ags/shared/ac/asset_helper.h"
+#include "ags/lib/aldumb.h"
+#include "ags/engine/ac/asset_helper.h"
 #include "ags/shared/ac/audiocliptype.h"
-#include "ags/shared/ac/file.h"
+#include "ags/engine/ac/file.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/game.h"
-#include "ags/shared/ac/gamesetup.h"
+#include "ags/engine/ac/game.h"
+#include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/global_file.h"
-#include "ags/shared/ac/path_helper.h"
-#include "ags/shared/ac/runtime_defines.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/debug/debug_log.h"
-#include "ags/shared/debug/debugger.h"
+#include "ags/engine/ac/global_file.h"
+#include "ags/engine/ac/path_helper.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/debugging/debugger.h"
 #include "ags/shared/util/misc.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/core/assetmanager.h"
 #include "ags/shared/core/asset.h"
-#include "ags/shared/main/engine.h"
-#include "ags/shared/main/game_file.h"
+#include "ags/engine/main/engine.h"
+#include "ags/engine/main/game_file.h"
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/path.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_utils.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
 
 namespace AGS3 {
 
@@ -85,7 +90,7 @@ int File_Delete(const char *fnmm) {
 
 	if (::remove(rp.FullPath) == 0)
 		return 1;
-	if (errno == ENOENT && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
+	if (errnum == ENOENT && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
 		return ::remove(rp.AltPath) == 0 ? 1 : 0;
 	return 0;
 }
@@ -535,7 +540,7 @@ String get_known_assetlib(const String &filename) {
 }
 
 Stream *find_open_asset(const String &filename) {
-	Stream *asset_s = Common::AssetManager::OpenAsset(filename);
+	Stream *asset_s = Shared::AssetManager::OpenAsset(filename);
 	if (!asset_s && Path::ComparePaths(ResPaths.DataDir, installDirectory) != 0) {
 		// Just in case they're running in Debug, try standalone file in compiled folder
 		asset_s = ci_fopen(String::FromFormat("%s/%s", installDirectory.GetCStr(), filename.GetCStr()));
@@ -612,11 +617,6 @@ Stream *get_valid_file_stream_from_handle(int32_t handle, const char *operation_
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
 
 extern ScriptString myScriptStringImpl;
 

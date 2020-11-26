@@ -21,9 +21,14 @@
  */
 
 //include <cmath>
-#include "ags/shared/ac/math.h"
+#include "ags/engine/ac/math.h"
 #include "ags/shared/ac/common.h" // quit
 #include "ags/shared/util/math.h"
+
+#include "ags/shared/debugging/out.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -137,8 +142,8 @@ float Math_Sqrt(float value) {
 int __Rand(int upto) {
 	upto++;
 	if (upto < 1)
-		quit("!Random: invalid parameter passed -- must be at least 0.");
-	return rand() % upto;
+		quit("!Random: invalid parameter passed -- must be at least 1.");
+	return ::AGS::g_vm->getRandomNumber(upto - 1);
 }
 
 
@@ -147,10 +152,6 @@ int __Rand(int upto) {
 // Script API Functions
 //
 //=============================================================================
-
-#include "ags/shared/debug/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
 
 // float (float value)
 RuntimeScriptValue Sc_Math_ArcCos(const RuntimeScriptValue *params, int32_t param_count) {
