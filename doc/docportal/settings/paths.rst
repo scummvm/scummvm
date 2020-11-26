@@ -16,6 +16,8 @@ Use the Paths tab to tell ScummVM where to look for files.
 
     The Paths tab in the global settings
 
+All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description. 
+
 ,,,,,,,,,,,,,,,,,
 
 .. _savepath:

@@ -125,7 +125,9 @@ Supported audio file formats:
 - OGG
 - Uncompressed audio
 
-Games run faster if audio files are in the ``.mp3`` file format.
+.. tip::
+
+   Games run faster if audio files are in the ``.mp3`` file format.
 
 
 Paths
