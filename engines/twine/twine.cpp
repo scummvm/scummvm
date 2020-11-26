@@ -919,7 +919,7 @@ bool TwinEEngine::gameEngineLoop() {
 			if (runGameEngine()) {
 				return true;
 			}
-			g_system->delayMillis(10);
+			g_system->delayMillis(1);
 		}
 		lbaTime++;
 		if (shouldQuit()) {
