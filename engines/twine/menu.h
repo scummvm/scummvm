@@ -30,7 +30,7 @@
 namespace TwinE {
 
 #define MAX_BUTTONS 10
-#define PLASMA_WIDTH 320
+#define PLASMA_WIDTH (SCREEN_WIDTH / 2)
 #define PLASMA_HEIGHT 50
 #define kQuitEngine 9998
 
