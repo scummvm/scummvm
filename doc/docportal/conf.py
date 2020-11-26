@@ -65,6 +65,8 @@ html_theme_options = {
 
 html_static_path = ['_static']
 
+html_extra_path = ['images/donate/ppdonate.png','images/donate/GOG_button_small.png']
+html_favicon = 'scummvm.ico'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,

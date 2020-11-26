@@ -5,7 +5,7 @@ Configuration file
 
 The configuration file provides a way to edit both global and game-specific settings. It is a text file containing configuration keywords and parameters. 
 
-Settings are also accessible directly from the Launcher. See :doc:`../use_scummvm/how_to_settings`. 
+Settings are also accessible directly from the Launcher. See :doc:`../settings/how_to_settings`. 
 
 Location
 ==========
@@ -17,7 +17,7 @@ The configuration file saves to different default locations, depending on the pl
 	.. panels::
 		:column: col-lg-12 mb-2
 
-		``~/Library/Preferences/ScummVM Preferences``, where ``~`` is your Home directory. 
+		``~/Library/Preferences/ScummVM Preferences``
 
 		.. note::
 
@@ -25,7 +25,7 @@ The configuration file saves to different default locations, depending on the pl
 		
 		.. tip::
 			
-			To see the Library folder you will need to view hidden files by using the keyboard shortcut :kbd:`Cmd + Shift + .` 
+			To see the Library folder, press :kbd:`Option` when clicking **Go** in the Finder menu.
 		
 	
 .. tabbed:: Windows
@@ -36,7 +36,7 @@ The configuration file saves to different default locations, depending on the pl
 		95/98/ME
 		^^^^^^^^^^ 
 	
-		``<windir>\scummvm.ini``, where ``<windir>`` is the Windows directory. Most commonly, this is ``C:\WINDOWS``.
+		``C:\WINDOWS\scummvm.ini``
 		
 	
 		---
@@ -45,7 +45,7 @@ The configuration file saves to different default locations, depending on the pl
 		Windows NT4 
 		^^^^^^^^^^^^
 
-		``<windir>\Profiles\username\Application Data\ScummVM\scummvm.ini``, where ``<windir>`` is the Windows directory. Most commonly, this is ``C:\WINDOWS``.
+		``C:\WINDOWS\Profiles\username\Application Data\ScummVM\scummvm.ini``
 
 		---
 		:column: col-lg-12 mb-2
@@ -59,31 +59,21 @@ The configuration file saves to different default locations, depending on the pl
 
 		Window Vista/7/8/10
 		^^^^^^^^^^^^^^^^^^^^^^
-		``\Users\username\AppData\Roaming\ScummVM\scummvm.ini``
+		``%APPDATA%\ScummVM\scummvm.ini``
 
-		.. tip::
-
-			The AppData folder is hidden. The steps to view hidden files and folders depends on the Windows version. 
-
-			For more information, see this `Windows support page <https://support.microsoft.com/en-us/help/14201/windows-show-hidden-files>`_.
-
-
-	.. note::
-	
-		If an earlier version of ScummVM was installed under Windows, the configuration file remains in the previous default location of ``<windir>\scummvm.ini`` 
 
 .. tabbed:: Linux/Unix
 
 	.. panels::
 		:column: col-lg-12 mb-2
 
-		We follow the XDG Base Directory Specification, so by default the configuration file is found at ``/~.config/scummvm/scummvm.ini``, but its location might vary depending on the value of the ``XDG_CONFIG_HOME`` environment variable.
+		ScummVM follows the XDG Base Directory Specification, so by default the configuration file is found at ``~/.config/scummvm/scummvm.ini``, but its location might vary depending on the value of the ``XDG_CONFIG_HOME`` environment variable.
 		
 		If ScummVM was installed using Snap, the configuration file can be found at ``~/snap/scummvm/current/.config/scummvm/scummvm.ini``
 
 		.. note::
 			
-			``.config`` is a hidden directory. To view it use ``ls -a`` on the command line, or, if you are using a GUI file manager, press :kbd:`Ctrl + H`.
+			``.config`` is a hidden directory. To view it use ``ls -a`` on the command line.
 
 	
 
@@ -142,10 +132,10 @@ Example of a configuration file
     music_driver=windows
 
 
-Keywords
-===========
+Configuration keys
+=====================
 
-There are many recognized configuration keywords. In the table below, each keyword is linked to an explanatory description in the Settings pages. 
+There are many recognized configuration keys. In the table below, each keyword is linked to an explanatory description in the Settings pages. 
 
 .. csv-table:: 
 	:widths: 35 15 25 25
