@@ -192,9 +192,9 @@ void Redraw::addOverlay(int16 type, int16 info0, int16 x, int16 y, int16 info1, 
 	}
 }
 
-void Redraw::updateOverlayTypePosition(int16 X1, int16 Y1, int16 X2, int16 Y2) {
-	const int16 newX = X2 - X1;
-	const int16 newY = Y2 - Y1;
+void Redraw::updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2) {
+	const int16 newX = x2 - x1;
+	const int16 newY = y2 - y1;
 
 	for (int32 i = 0; i < ARRAYSIZE(overlayList); i++) {
 		OverlayListStruct *overlay = &overlayList[i];
@@ -206,7 +206,7 @@ void Redraw::updateOverlayTypePosition(int16 X1, int16 Y1, int16 X2, int16 Y2) {
 }
 
 // TODO: convert to bool and check if this isn't always true...
-void Redraw::redrawEngineActions(int32 bgRedraw) { // fullRedraw
+void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 	int16 tmp_projPosX = _engine->_renderer->projPosXScreen;
 	int16 tmp_projPosY = _engine->_renderer->projPosYScreen;
 

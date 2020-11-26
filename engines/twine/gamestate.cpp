@@ -274,7 +274,7 @@ void GameState::processFoundItem(int32 item) {
 
 	// Hide hero in scene
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 1;
-	_engine->_redraw->redrawEngineActions(1);
+	_engine->_redraw->redrawEngineActions(true);
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 0;
 
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
@@ -436,7 +436,7 @@ void GameState::processGameoverAnimation() {
 
 	// workaround to fix hero redraw after drowning
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 1;
-	_engine->_redraw->redrawEngineActions(1);
+	_engine->_redraw->redrawEngineActions(true);
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 0;
 
 	// TODO: drawInGameTransBox
