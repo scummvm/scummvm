@@ -79,6 +79,7 @@ MODULE_OBJS = \
 	shared/util/textstreamwriter.o \
 	shared/util/version.o \
 	shared/util/wgt2allg.o \
+	engine/device/mousew32.o \
 	engine/font/fonts_engine.o \
 	engine/game/game_init.o \
 	engine/game/savegame.o \
