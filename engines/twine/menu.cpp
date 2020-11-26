@@ -207,8 +207,9 @@ void Menu::plasmaEffectRenderFrame() {
 	// flip the double-buffer while scrolling the effect vertically:
 	uint8 *dest = plasmaEffectPtr;
 	const uint8 *src = plasmaEffectPtr + (PLASMA_HEIGHT + 1) * PLASMA_WIDTH;
-	for (int32 i = 0; i < PLASMA_HEIGHT * PLASMA_WIDTH; i++)
+	for (int32 i = 0; i < PLASMA_HEIGHT * PLASMA_WIDTH; i++) {
 		*(dest++) = *(src++);
+	}
 }
 
 void Menu::processPlasmaEffect(int32 left, int32 top, int32 color) {
@@ -220,14 +221,18 @@ void Menu::processPlasmaEffect(int32 left, int32 top, int32 color) {
 	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(left, top);
 
 	for (int32 y = 0; y < PLASMA_HEIGHT / 2; y++) {
+		int32 yOffset = y * SCREEN_WIDTH;
+		const uint8 *colPtr = &in[y * PLASMA_WIDTH];
 		for (int32 x = 0; x < PLASMA_WIDTH; x++) {
-			const uint8 c = MIN(in[y * PLASMA_WIDTH + x] / 2 + color, max_value);
+			const uint8 c = MIN(*colPtr / 2 + color, max_value);
 			/* 2x2 squares sharing the same pixel color: */
-			const int32 target = 2 * (y * SCREEN_WIDTH + x);
+			const int32 target = 2 * yOffset;
 			out[target + 0] = c;
 			out[target + 1] = c;
 			out[target + SCREEN_WIDTH + 0] = c;
 			out[target + SCREEN_WIDTH + 1] = c;
+			++colPtr;
+			++yOffset;
 		}
 	}
 }
@@ -791,8 +796,11 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 	_engine->_interface->resetClip();
 	const int32 width = 450;
 	const int32 height = 80;
-	drawBox(left, top, left + width, top + height);
-	_engine->_interface->drawSplittedBox(Common::Rect(left + 1, top + 1, left + width - 1, top + height - 1), 0);
+	const Common::Rect rect(left, top, left + width, top + height);
+	drawBox(rect);
+	Common::Rect splittedBoxRect(rect);
+	splittedBoxRect.grow(-1);
+	_engine->_interface->drawSplittedBox(splittedBoxRect, 0);
 
 	int32 newBoxLeft2 = left + 9;
 
@@ -805,14 +813,14 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 	int32 boxTop = top + 10;
 	int32 boxBottom = top + 25;
 	_engine->_interface->drawSplittedBox(Common::Rect(newBoxLeft, boxTop, boxLeft, boxBottom), 91);
-	drawBox(left + 25, top + 10, left + 324, top + 10 + 14);
+	drawBox(newBoxLeft, boxTop, left + 324, boxTop + 14);
 
 	if (!_engine->_gameState->inventoryDisabled() && _engine->_gameState->hasItem(InventoryItems::kiTunic)) {
 		_engine->_grid->drawSprite(0, newBoxLeft2, top + 36, _engine->_resources->spriteTable[SPRITEHQR_MAGICPOINTS]);
 		if (_engine->_gameState->magicLevelIdx > 0) {
 			_engine->_interface->drawSplittedBox(Common::Rect(newBoxLeft, top + 35, _engine->_screens->crossDot(newBoxLeft, boxRight, 80, _engine->_gameState->inventoryMagicPoints), top + 50), 75);
 		}
-		drawBox(left + 25, top + 35, left + _engine->_gameState->magicLevelIdx * 80 + 20, top + 35 + 15);
+		drawBox(newBoxLeft, top + 35, left + _engine->_gameState->magicLevelIdx * 80 + 20, top + 35 + 15);
 	}
 
 	boxLeft = left + 340;
@@ -844,7 +852,7 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 		_engine->_grid->drawSprite(0, _engine->_screens->crossDot(left + 25, left + 325, 10, i) + 2, top + 60, _engine->_resources->spriteTable[SPRITEHQR_CLOVERLEAF]);
 	}
 
-	_engine->copyBlockPhys(left, top, left + 450, top + 135);
+	_engine->copyBlockPhys(left, top, left + width, top + 135);
 }
 
 Common::Rect Menu::calcBehaviourRect(HeroBehaviourType behaviour) const {

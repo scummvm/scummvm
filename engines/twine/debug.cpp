@@ -401,15 +401,15 @@ int32 Debug::debugProcessButton(int32 x, int32 y) {
 }
 
 void Debug::debugPlasmaWindow(const char *text, int32 color) {
-	int32 textSize;
 	_engine->_menu->processPlasmaEffect(0, 5, color);
 	if (!(_engine->getRandomNumber() % 5)) {
-		_engine->_menu->plasmaEffectPtr[_engine->getRandomNumber() % 320 * 10 + 6400] = 255;
+		_engine->_menu->plasmaEffectPtr[_engine->getRandomNumber() % PLASMA_WIDTH * 10 + 6400] = 255;
 	}
-	textSize = _engine->_text->getTextSize(text);
+	int32 textSize = _engine->_text->getTextSize(text);
 	_engine->_text->drawText((SCREEN_WIDTH / 2) - (textSize / 2), 10, text);
-	_engine->_menu->drawBox(5, 5, 634, 50);
-	_engine->copyBlockPhys(5, 5, 634, 50);
+	const Common::Rect rect(5, 5, 634, 50);
+	_engine->_menu->drawBox(rect);
+	_engine->copyBlockPhys(rect);
 }
 
 void Debug::debugProcessWindow() {
