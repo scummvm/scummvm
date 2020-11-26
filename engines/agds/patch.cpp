@@ -20,13 +20,12 @@ void Patch::load(Common::SeekableReadStream *stream) {
 	if (extended == 0)
 		return;
 
-	unk41 = stream->readUint32LE();
+	hasPreviousScreen = stream->readUint32LE();
 	characterPosition.x = stream->readUint32LE();
 	characterPosition.y = stream->readUint32LE();
 	characterDirection = stream->readUint32LE();
 	characterPresent = stream->readUint32LE();
 	debug("character %s at %u,%u with dir: %u", characterPresent? "[present]": "[absent]", characterPosition.x, characterPosition.y, characterDirection);
-	debug("some screen loading flag: %u", unk41);
 	uint object_count = stream->readUint32LE();
 	debug("objects in this patch: %u", object_count);
 	if (stream->read(palette, sizeof(palette)) != sizeof(palette)) {
@@ -52,7 +51,7 @@ void Patch::save(Common::SeekableWriteStream *stream) {
 	if (extended == 0)
 		return;
 
-	stream->writeUint32LE(unk41);
+	stream->writeUint32LE(hasPreviousScreen);
 	stream->writeUint32LE(characterPosition.x);
 	stream->writeUint32LE(characterPosition.y);
 	stream->writeUint32LE(characterDirection);

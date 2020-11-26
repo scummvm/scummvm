@@ -46,7 +46,7 @@ struct Patch {
 	Common::String screenRegionName;
 	Common::String prevScreenName;
 
-	uint unk41 = 0;
+	uint hasPreviousScreen = 0;
 	Common::Point characterPosition;
 	uint characterDirection = 0;
 	bool characterPresent = false;
