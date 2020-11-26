@@ -444,7 +444,7 @@ void Renderer::computePolygons(int16 polyRenderType, vertexData *vertices, int32
 		int16 cvalue;
 		int16 cdelta;
 		int16 ypos;
-		int16 xpos;
+		float xpos;
 		if (direction * oldVertexX > direction * currentVertexX) { // if we are going up right
 			xpos = currentVertexX;
 			ypos = currentVertexY;
@@ -459,7 +459,7 @@ void Renderer::computePolygons(int16 polyRenderType, vertexData *vertices, int32
 		}
 		int16 *outPtr = &polyTab[ypos + (up ? SCREEN_HEIGHT : 0)]; // outPtr is the output ptr in the renderTab
 
-		int64 slope = (int64)hsize / (int64)vsize;
+		float slope = (float)hsize / (float)vsize;
 		slope = up ? -slope : slope;
 
 		for (int32  i = 0; i < vsize + 2; i++) {
@@ -768,7 +768,7 @@ void Renderer::renderPolygons(int32 renderType, vertexData *vertices, int32 /*nu
 
 				ptr2++;
 
-				//varf4 = (int64)((int32)varf2 - (int32)varf3);
+				//varf4 = (float)((int32)varf2 - (int32)varf3);
 
 				if (hsize == 0) {
 					if (start >= 0 && start < SCREEN_WIDTH) {
@@ -984,7 +984,7 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
 		double width;
 
 		if (ABS(currentLine) != radius) {
-			width = sin(acos((int64)currentLine / (int64)radius));
+			width = sin(acos((float)currentLine / (float)radius));
 		} else {
 			width = 0;
 		}

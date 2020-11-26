@@ -77,7 +77,7 @@ void Movements::setActorAngle(int16 startAngle, int16 endAngle, int16 stepAngle,
 int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2, int32 z2) {
 	/*
 	//Pythagoras
-    targetActorDistance = (int32)sqrt((int64)(((z2 - z1)*(z2 - z1) + (x2 - x1)*(x2 - x1))));
+    targetActorDistance = (int32)sqrt((float)(((z2 - z1)*(z2 - z1) + (x2 - x1)*(x2 - x1))));
 
 	if (targetActorDistance == 0)
         return 0;
@@ -85,7 +85,7 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
     //given two points, we calculate its arc-tangent in radians
     //Then we convert from radians (360 degrees == 2*M_PI) to a 10bit value (360 degrees == 1024) and invert the rotation direction
     //Then we add an offset of 90 degrees (256) and limit it to the 10bit value range.
-    return (256 + ((int32)floor((-1024 * atan2((int64)(z2-z1), (int32)(x2-x1))) / (2*M_PI)))) % 1024;
+    return (256 + ((int32)floor((-1024 * atan2((float)(z2-z1), (int32)(x2-x1))) / (2*M_PI)))) % 1024;
 	*/
 
 	int32 difZ = z2 - z1;
@@ -106,7 +106,7 @@ int32 Movements::getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2,
 		flag = false;
 	}
 
-	targetActorDistance = (int32)sqrt((int64)newX + (int64)newZ);
+	targetActorDistance = (int32)sqrt((float)(newX + newZ));
 
 	if (!targetActorDistance) {
 		return 0;
@@ -147,11 +147,11 @@ void Movements::rotateActor(int32 x, int32 z, int32 angle) {
 }
 
 int32 Movements::getDistance2D(int32 x1, int32 z1, int32 x2, int32 z2) {
-	return (int32)sqrt(((int64)(x2 - x1) * (int64)(x2 - x1) + (int64)(z2 - z1) * (int64)(z2 - z1)));
+	return (int32)sqrt((float)((x2 - x1) * (x2 - x1) + (z2 - z1) * (z2 - z1)));
 }
 
 int32 Movements::getDistance3D(int32 x1, int32 y1, int32 z1, int32 x2, int32 y2, int32 z2) {
-	return (int32)sqrt(((int64)(x2 - x1) * (int64)(x2 - x1) + (int64)(y2 - y1) * (int64)(y2 - y1) + (int64)(z2 - z1) * (int64)(z2 - z1)));
+	return (int32)sqrt((float)((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1) + (z2 - z1) * (z2 - z1)));
 }
 
 void Movements::moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) { // ManualRealAngle
