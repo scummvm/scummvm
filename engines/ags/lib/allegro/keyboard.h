@@ -36,6 +36,7 @@ namespace AGS3 {
 #define KEY_ALT Common::KEYCODE_LALT
 #define KEY_LCONTROL Common::KEYCODE_LCTRL
 #define KEY_RCONTROL Common::KEYCODE_RCTRL
+#define KEY_SCRLOCK Common::KEYCODE_SCROLLOCK
 #define KEY_ALTGR 0
 #define KEY_F9 Common::KEYCODE_F9
 #define KEY_A Common::KEYCODE_a

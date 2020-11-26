@@ -79,6 +79,12 @@ MODULE_OBJS = \
 	shared/util/textstreamwriter.o \
 	shared/util/version.o \
 	shared/util/wgt2allg.o \
+	engine/debugging/consoleoutputtarget.o \
+	engine/debugging/debug.o \
+	engine/debugging/filebasedagsdebugger.o \
+	engine/debugging/logfile.o \
+	engine/debugging/messagebuffer.o \
+	engine/debugging/namedpipesagsdebugger.o \
 	engine/device/mousew32.o \
 	engine/font/fonts_engine.o \
 	engine/game/game_init.o \
