@@ -2670,9 +2670,10 @@ void EoBEngine::seq_segaShowStats() {
 	int styles = _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat;
 	int cs = _screen->setFontStyles(_screen->_currentFont, styles);
 
-	_txt->printShadedText(_finBonusStrings[2], 90, 8, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadedText(_finBonusStrings[2], 199 - _screen->getTextWidth(_finBonusStrings[2]), 8, 0xFF, 0x00, -1, -1, 0, false);
 
-	styles |= Font::kStyleNarrow2;
+	if (_flags.lang != Common::JA_JPN)
+		styles |= Font::kStyleNarrow2;
 	_screen->setFontStyles(_screen->_currentFont, styles);
 
 	_txt->printShadedText(_finBonusStrings[3], 48, 28, 0xFF, 0x00, -1, -1, 0, false);
@@ -2693,7 +2694,7 @@ void EoBEngine::seq_segaShowStats() {
 			++specialSearches;
 	}
 
-	_txt->printShadedText(Common::String::format("%u:%02u:%02u", _totalPlaySecs / 3600, (_totalPlaySecs % 3600) / 60, (_totalPlaySecs % 3600) % 60).c_str(), 148, 28, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadedText(Common::String::format("%u%s%02u%s%02u%s", _totalPlaySecs / 3600, _finBonusStrings[9], (_totalPlaySecs % 3600) / 60, _finBonusStrings[10], (_totalPlaySecs % 3600) % 60, _finBonusStrings[11]).c_str(), 148, 28, 0xFF, 0x00, -1, -1, 0, false);
 	_txt->printShadedText(Common::String::format("%u", _totalEnemiesKilled).c_str(), 148, 40, 0xFF, 0x00, -1, -1, 0, false);
 	_txt->printShadedText(Common::String::format("%u", _totalSteps).c_str(), 148, 52, 0xFF, 0x00, -1, -1, 0, false);
 	_txt->printShadedText(Common::String::format("%u(%u%%)", partyArrows, partyArrows * 100 / 26).c_str(), 148, 64, 0xFF, 0x00, -1, -1, 0, false);
@@ -2712,9 +2713,18 @@ void EoBEngine::seq_segaShowStats() {
 		}
 		password[5] = pwgen[v];
 
-		_txt->printShadedText(_finBonusStrings[0], 30, 108, 0x22, 0x00, -1, -1, 0, false);
-		_txt->printShadedText(_finBonusStrings[1], 30, 132, 0x22, 0x00, -1, -1, 0, false);
-		_txt->printShadedText(password, 140, 156, 0xFF, 0x00, -1, -1, 0, false);
+		static const int16 bnXJp[] = { 124, 10, 44, 188 };
+		static const int16 bnXEn[] = { 30, 30, 100, 140 };
+		const int16 *bnX = (_flags.lang == Common::JA_JPN) ? bnXJp : bnXEn;
+		const int16 bnLineHeight = (_flags.lang == Common::JA_JPN) ? 20 : 24;
+		int bnY = 108;
+
+		_txt->printShadedText(_finBonusStrings[0], bnX[0], bnY, 0x22, 0x00, -1, -1, 0, false);
+		bnY += bnLineHeight;
+		_txt->printShadedText(_finBonusStrings[1], bnX[1], bnY, 0x22, 0x00, -1, -1, 0, false);
+		bnY += bnLineHeight;
+		_txt->printShadedText(_finBonusStrings[12], bnX[2], bnY, 0x22, 0x00, -1, -1, 0, false);
+		_txt->printShadedText(password, bnX[3], bnY, 0xFF, 0x00, -1, -1, 0, false);
 	}
 
 	_screen->sega_loadTextBufferToVRAM(0, 32, 28160);
