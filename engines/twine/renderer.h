@@ -86,7 +86,10 @@ private:
 	static_assert(sizeof(elementEntry) == 38, "Unexpected elementEntry size");
 
 	struct lineCoordinates {
-		int32 data = 0;
+		uint8 colorIndex = 0;
+		uint8 unk1 = 0;
+		uint8 unk2 = 0;
+		uint8 unk3 = 0;
 		int16 x1 = 0;
 		int16 y1 = 0;
 		int16 x2 = 0;
@@ -94,7 +97,10 @@ private:
 	};
 
 	struct lineData {
-		int32 data = 0;
+		uint8 colorIndex = 0;
+		uint8 unk1 = 0;
+		uint8 unk2 = 0;
+		uint8 unk3 = 0;
 		int16 p1 = 0;
 		int16 p2 = 0;
 	};
@@ -138,7 +144,7 @@ private:
 	};
 
 	int32 renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEntryPtr);
-	void circleFill(int32 x, int32 y, int32 radius, int8 color);
+	void circleFill(int32 x, int32 y, int32 radius, uint8 color);
 	int32 renderModelElements(int32 numOfPrimitives, uint8 *pointer, renderTabEntry** renderTabEntryPtr);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);

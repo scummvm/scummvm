@@ -1005,7 +1005,7 @@ void Renderer::renderPolygons(const polyHeader &polyHeader) {
 	renderPolygons(polyHeader.renderType, polyHeader.colorIndex, vleft, vright, vtop, vbottom);
 }
 
-void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
+void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 color) {
 	radius += 1;
 
 	for (int32 currentLine = -radius; currentLine <= radius; currentLine++) {
@@ -1027,7 +1027,7 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
 	}
 }
 
-int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, renderTabEntry **renderTabEntryPtr) {
+int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTabEntry **renderTabEntryPtr) {
 	int32 bestDepth;
 	int32 currentDepth;
 	int32 bestPoly = 0;
@@ -1036,7 +1036,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 	// prepare polygons
 
 	// TODO: proper size
-	Common::MemoryReadStream stream(pointer, 100000);
+	Common::MemoryReadStream stream(ptr, 100000);
 	int16 numPolygons = stream.readSint16LE();
 
 	uint8 *edi = renderTab7;           // renderTab7 coordinates buffer
@@ -1213,9 +1213,10 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 		numOfPrimitives += temp;
 		do {
 			lineData line;
-			line.data = stream.readSint32LE();
-			line.p1 = stream.readSint16LE();;
-			line.p2 = stream.readSint16LE();;
+			line.colorIndex = stream.readByte();
+			stream.skip(3);
+			line.p1 = stream.readSint16LE();
+			line.p2 = stream.readSint16LE();
 			lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)edi;
 
 			if (line.p1 % 6 != 0 || line.p2 % 6 != 0) {
@@ -1224,8 +1225,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 
 			const int32 point1 = line.p1 / 6;
 			const int32 point2 = line.p2 / 6;
-			const int32 param = line.data;
-			lineCoordinatesPtr->data = param;
+			lineCoordinatesPtr->colorIndex = line.colorIndex;
 			lineCoordinatesPtr->x1 = flattenPoints[point1].x;
 			lineCoordinatesPtr->y1 = flattenPoints[point1].y;
 			lineCoordinatesPtr->x2 = flattenPoints[point2].x;
@@ -1303,46 +1303,46 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 	}
 
 	int16 primitiveCounter = numOfPrimitives;
-	renderV19 = pointer + stream.pos();
+	renderV19 = ptr + stream.pos();
 
 	do {
 		int16 type = renderTabEntryPtr2->renderType;
-		pointer = renderTabEntryPtr2->dataPtr;
+		uint8 *pointer = renderTabEntryPtr2->dataPtr;
 		renderV19 += 8;
 
 		switch (type) {
 		case RENDERTYPE_DRAWLINE: { // draw a line
-			const lineCoordinates *lineCoordinatesPtr = (const lineCoordinates *)pointer;
-			int16 color = (lineCoordinatesPtr->data & 0xFF00) >> 8;
-
-			const int32 x1 = lineCoordinatesPtr->x1;
-			const int32 y1 = lineCoordinatesPtr->y1;
-			const int32 x2 = lineCoordinatesPtr->x2;
-			const int32 y2 = lineCoordinatesPtr->y2;
-
-			_engine->_interface->drawLine(x1, y1, x2, y2, color);
+			Common::MemoryReadStream typeStream(pointer, 12);
+			lineCoordinates lineCoords;
+			lineCoords.colorIndex = typeStream.readByte();
+			typeStream.skip(3);
+			lineCoords.x1 = typeStream.readSint16LE();
+			lineCoords.y1 = typeStream.readSint16LE();
+			lineCoords.x2 = typeStream.readSint16LE();
+			lineCoords.y2 = typeStream.readSint16LE();
+			const int32 x1 = lineCoords.x1;
+			const int32 y1 = lineCoords.y1;
+			const int32 x2 = lineCoords.x2;
+			const int32 y2 = lineCoords.y2;
+			_engine->_interface->drawLine(x1, y1, x2, y2, lineCoords.colorIndex);
 			break;
 		}
 		case RENDERTYPE_DRAWPOLYGON: { // draw a polygon
-			int32 eax = *((const int *)pointer);
-			pointer += 4;
-
-			int16 polyRenderType = eax & 0xFF;
-			uint8 numOfVertex = (eax & 0xFF00) >> 8;
-			int16 color = (eax & 0xFF0000) >> 16;
+			// TODO: size
+			Common::MemoryReadStream typeStream(pointer, 10000);
+			polyHeader polyHeader;
+			polyHeader.renderType = typeStream.readByte();
+			polyHeader.numOfVertex = typeStream.readByte();
+			polyHeader.colorIndex = typeStream.readByte();
+			typeStream.skip(1);
 
 			uint8 *destPtr = (uint8 *)vertexCoordinates;
-			const int32 triangleCount = numOfVertex * 3;
+			const int32 triangleCount = polyHeader.numOfVertex * 3;
 			for (int32 i = 0; i < triangleCount; i++) {
-				*((int16 *)destPtr) = *((const int16 *)pointer);
+				*((int16 *)destPtr) = typeStream.readSint16LE();
 				destPtr += 2;
-				pointer += 2;
 			}
 
-			polyHeader polyHeader;
-			polyHeader.renderType = polyRenderType;
-			polyHeader.numOfVertex = numOfVertex;
-			polyHeader.colorIndex = color;
 			renderPolygons(polyHeader);
 			break;
 		}
@@ -1385,7 +1385,6 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 			break;
 		}
 
-		pointer = renderV19;
 		renderTabEntryPtr2++;
 	} while (--primitiveCounter);
 	return 0;
