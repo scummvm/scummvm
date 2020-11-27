@@ -260,15 +260,10 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	case kSciAudioCD:
+		debugC(kDebugLevelSound, "kDoAudio: CD audio subop");
+		return kDoCdAudio(s, argc - 1, argv + 1);
 
-		if (getSciVersion() <= SCI_VERSION_1_1) {
-			debugC(kDebugLevelSound, "kDoAudio: CD audio subop");
-			return kDoCdAudio(s, argc - 1, argv + 1);
-		}
-		// fall through
-		// FIXME: fall through intended?
-
-		// 3 new subops in Pharkas CD (including CD demo). kDoAudio in Pharkas sits at seg026:038C
+	// 3 new subops in Pharkas CD (including CD demo). kDoAudio in Pharkas sits at seg026:038C
 	case 11:
 		// Not sure where this is used yet
 		warning("kDoAudio: Unhandled case 11, %d extra arguments passed", argc - 1);
