@@ -1012,15 +1012,9 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 color) {
 		double width;
 
 		if (ABS(currentLine) != radius) {
-			width = sin(acos((float)currentLine / (float)radius));
+			width = ABS(sin(acos((float)currentLine / (float)radius)) * radius);
 		} else {
-			width = 0;
-		}
-
-		width *= radius;
-
-		if (width < 0) {
-			width = -width;
+			width = 0.0;
 		}
 
 		_engine->_interface->drawLine((int32)(x - width), currentLine + y, (int32)(x + width), currentLine + y, color);
