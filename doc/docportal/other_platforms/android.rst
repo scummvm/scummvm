@@ -56,7 +56,7 @@ There are a few other options to transfer the game files:
  - USB transfer from a computer. To complete file transfer by USB cable, tap the **Charging this device via USB notification** when the device is connected. Select **Use USB for** and then **File Transfer**. An Android File Transfer window opens.   
  - Download games such as freeware games or those from digital distributors directly to your device.
 
-For more information on which files ScummVM requires, and how to add and play games, see :doc:`../use_scummvm/add_play_games`.
+See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
 
 

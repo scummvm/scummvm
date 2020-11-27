@@ -28,7 +28,7 @@ Transferring game files
 
 Transfer game files onto the PSP as described in the installation section above. They can be copied to any folder; location doesn't matter. 
 
-For more information, see :doc:`../use_scummvm/add_play_games`. 
+See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
 Controls
 =================

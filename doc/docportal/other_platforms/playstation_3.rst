@@ -28,7 +28,7 @@ Games can be launched from either a USB drive, or from the internal hard drive. 
 
 To copy game files to the hard drive, use the USB drive, or use ScummVM's :doc:`cloud functionality <../use_scummvm/connect_cloud>`. 
 
-See :doc:`../use_scummvm/add_play_games` for more information. 
+See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
 Controls
 =================

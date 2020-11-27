@@ -26,7 +26,7 @@ Copy the folders containing game files into the ``/switch/scummvm/`` folder on t
 
 ScummVM on the Nintendo switch supports :doc:`cloud functionality <../use_scummvm/connect_cloud>`. 
 
-For more information on how to add and play games, see the :doc:`../use_scummvm/add_play_games` page.
+See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
 Controls
 =================

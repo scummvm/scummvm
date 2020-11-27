@@ -28,11 +28,11 @@ To automatically keep ScummVM up to date through AmiUpdate, run the ``Autoinstal
 Transferring game files
 =========================
 
-See :doc:`../use_scummvm/game_files` for more information. 
-
 For games on PC or Mac formatted discs, use the original platform to access the data files, and then transfer these to Amiga. Alternatively, if you have external hardware such as a Catweazel floppy disc controller, you might be able to use this to access the files. 
 
 ScummVM for Amiga OS has Cloud and LAN functionality, to help manage the transfer of files. See :doc:`../use_scummvm/connect_cloud` and :doc:`../use_scummvm/LAN`. 
+
+See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
 Controls
 =================
