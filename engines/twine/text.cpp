@@ -468,9 +468,11 @@ void Text::renderContinueReadingTriangle() {
 	_engine->_renderer->vertexCoordinates[7] = _engine->_renderer->vertexCoordinates[1];
 	_engine->_renderer->vertexCoordinates[8] = _engine->_renderer->vertexCoordinates[5];
 
-	_engine->_renderer->numOfVertex = 3;
-
-	_engine->_renderer->renderPolygons(POLYGONTYPE_FLAT, _dialTextStopColor);
+	polyHeader polyHdr;
+	polyHdr.numOfVertex = 3;
+	polyHdr.colorIndex = _dialTextStopColor;
+	polyHdr.renderType = POLYGONTYPE_FLAT;
+	_engine->_renderer->renderPolygons(polyHdr);
 
 	_engine->copyBlockPhys(Common::Rect(left, top, right, bottom));
 }

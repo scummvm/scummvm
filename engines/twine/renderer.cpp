@@ -995,14 +995,14 @@ void Renderer::renderPolygons(int32 renderType, int32 color, int vleft, int vrig
 	}
 }
 
-void Renderer::renderPolygons(int32 polyRenderType, int32 color) {
+void Renderer::renderPolygons(const polyHeader &polyHeader) {
 	int vleft = 0;
 	int vright = 0;
 	int vtop = 0;
 	int vbottom = 0;
 	vertexData *vertices = (vertexData *)vertexCoordinates;
-	computePolygons(polyRenderType, vertices, numOfVertex, vleft, vright, vtop, vbottom);
-	renderPolygons(polyRenderType, color, vleft, vright, vtop, vbottom);
+	computePolygons(polyHeader.renderType, vertices, polyHeader.numOfVertex, vleft, vright, vtop, vbottom);
+	renderPolygons(polyHeader.renderType, polyHeader.colorIndex, vleft, vright, vtop, vbottom);
 }
 
 void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
@@ -1328,19 +1328,22 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 			pointer += 4;
 
 			int16 polyRenderType = eax & 0xFF;
-			numOfVertex = (eax & 0xFF00) >> 8;
+			uint8 numOfVertex = (eax & 0xFF00) >> 8;
 			int16 color = (eax & 0xFF0000) >> 16;
 
 			uint8 *destPtr = (uint8 *)vertexCoordinates;
-
-			for (int32 i = 0; i < (numOfVertex * 3); i++) {
+			const int32 triangleCount = numOfVertex * 3;
+			for (int32 i = 0; i < triangleCount; i++) {
 				*((int16 *)destPtr) = *((const int16 *)pointer);
 				destPtr += 2;
 				pointer += 2;
 			}
 
-			renderPolygons(polyRenderType, color);
-
+			polyHeader polyHeader;
+			polyHeader.renderType = polyRenderType;
+			polyHeader.numOfVertex = numOfVertex;
+			polyHeader.colorIndex = color;
+			renderPolygons(polyHeader);
 			break;
 		}
 		case RENDERTYPE_DRAWSPHERE: { // draw a sphere

@@ -40,6 +40,12 @@ namespace TwinE {
 
 class TwinEEngine;
 
+struct polyHeader {
+	uint8 renderType = 0; //FillVertic_AType
+	uint8 numOfVertex = 0;
+	int16 colorIndex = 0;
+};
+
 class Renderer {
 private:
 	TwinEEngine *_engine;
@@ -91,12 +97,6 @@ private:
 		int32 data = 0;
 		int16 p1 = 0;
 		int16 p2 = 0;
-	};
-
-	struct polyHeader {
-		uint8 renderType = 0; //FillVertic_AType
-		uint8 numOfVertex = 0;
-		int16 colorIndex = 0;
 	};
 
 	struct polyVertexHeader {
@@ -231,13 +231,12 @@ public:
 
 	const int16 *shadeAngleTab3 = nullptr; // tab3
 
-	int32 numOfVertex = 0;
 	int16 vertexCoordinates[193] {0};
 
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 
 	void prepareIsoModel(uint8 *bodyPtr); // loadGfxSub
-	void renderPolygons(int32 polyRenderType, int32 color);
+	void renderPolygons(const polyHeader &polyHeader);
 
 	int32 projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
 	void setCameraPosition(int32 x, int32 y, int32 cX, int32 cY, int32 cZ);
