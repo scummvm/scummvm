@@ -596,7 +596,7 @@ void EoBCoreEngine::loadFonts() {
 		_conFont = _invFont3 = Screen::FID_SJIS_FNT;
 	} else if (_flags.platform == Common::kPlatformSegaCD) {
 		_screen->loadFont(Screen::FID_8_FNT, "FONTK12");
-		_screen->setFontStyles(Screen::FID_8_FNT, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat);
+		_screen->setFontStyles(Screen::FID_8_FNT, Font::kStyleNone);
 		_invFont1 = _invFont2 = _conFont = Screen::FID_8_FNT;
 	}
 }

@@ -408,8 +408,10 @@ void EoBIntroPlayer::start(int part) {
 	if (part != kOnlyIntro) {
 		openingCredits();
 
-		if (part == kOnlyCredits)
+		if (part == kOnlyCredits) {
+			_vm->_allowSkip = false;
 			return;
+		}
 
 		if (!_vm->shouldQuit() && !_vm->skipFlag()) {
 			_vm->snd_playSong(2);
@@ -2174,8 +2176,13 @@ int EoBEngine::mainMenu() {
 				_screen->sega_getRenderer()->fillRectWithTiles(1, 7, 25, 25, 1, 0x4E3, true);
 				_screen->sega_getRenderer()->fillRectWithTiles(1, 6, 21, 1, 5, 0);
 				_screen->setFontStyles(_screen->_currentFont, Font::kStyleNarrow1);
+				// Apparently the Japanese version does not have halfwidth versions of the Latin small characters.
+				// We can't use the fullwidth characters either, since their height is too large. So we just use
+				// capital letters...
+				if (_flags.lang == Common::JA_JPN)
+					versionString.toUppercase();
 				_txt->printShadedText(versionString.c_str(), 200 - versionString.size() * 8, _ttlCfg->versionStrYOffs, 0x88);
-				_screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
+				_screen->setFontStyles(_screen->_currentFont, Font::kStyleFullWidth);
 			} else {
 				_screen->_curPage = 2;
 				of = _screen->setFont(Screen::FID_6_FNT);
@@ -2195,8 +2202,8 @@ int EoBEngine::mainMenu() {
 			menuChoice = mainMenuLoop();
 			_allowImport = false;
 
-			if (_flags.platform == Common::kPlatformSegaCD && _flags.lang != Common::JA_JPN)
-				_screen->setFontStyles(_screen->_currentFont, Font::kStyleFat);
+			if (_flags.platform == Common::kPlatformSegaCD)
+				_screen->setFontStyles(_screen->_currentFont, Font::kStyleNone);
 
 			}
 			break;
@@ -2256,9 +2263,20 @@ int EoBEngine::mainMenu() {
 
 int EoBEngine::mainMenuLoop() {
 	int sel = -1;
+
+	int col1 = (_configRenderMode == Common::kRenderCGA) ? 1 : guiSettings()->colors.guiColorWhite;
+	int col2 = guiSettings()->colors.guiColorLightRed;
+	int col3 = guiSettings()->colors.guiColorBlack;
+
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		col1 = 0xff;
+		col2 = 0x55;
+		col3 = _flags.lang == Common::JA_JPN ? 0 : 0x11;
+	}
+
 	do {
 		_screen->setScreenDim(28);
-		_gui->simpleMenu_setup(8, 0, _mainMenuStrings, -1, 0, 0);
+		_gui->simpleMenu_setup(8, 0, _mainMenuStrings, -1, 0, 0, col1, col2, col3);
 		if (_flags.platform == Common::kPlatformSegaCD)
 			_screen->sega_getRenderer()->render(0);
 		_screen->updateScreen();
@@ -2610,19 +2628,23 @@ void EoBEngine::seq_segaFinalCredits() {
 				curStr++;
 			} else {
 
-				int styles = _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat;
-				//int extraSpacing = 6;
+				int styles = /*_flags.lang == Common::JA_JPN ? Font::kStyleNone :*/ Font::kStyleFullWidth;
+				int charSpacing1 = _flags.lang == Common::JA_JPN ? 2 : 0;
+				int charSpacing2 = 6;
 
 				if (c == '<') {
 					styles |= Font::kStyleNarrow1;
-					//extraSpacing = 4;
-					pos++;
+					charSpacing2 = 4;
+					c = *pos++;
 				}
-				if (c == ';')
+				if (c == ';') {
 					pos++;
+					charSpacing1 = 0;
+				}
 
 				_screen->setFontStyles(_screen->_currentFont, styles);
-				_txt->printShadedText(pos, 120 - (_screen->getTextWidth(pos) >> 1), 0, 0xFF, 0xCC, -1, -1, 0, false);
+				int x = 120 - (_flags.lang == Common::JA_JPN ? _screen->getNumberOfCharacters(pos) * ((charSpacing1 >> 1) + charSpacing2) : (_screen->getTextWidth(pos) >> 1));
+				_txt->printShadedText(pos, x, 0, 0xFF, 0xCC, -1, -1, 0, false);
 				curStr++;
 			}
 		} else {
@@ -2638,7 +2660,7 @@ void EoBEngine::seq_segaFinalCredits() {
 
 	_screen->sega_fadeToBlack(1);
 
-	_screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat);
+	_screen->setFontStyles(_screen->_currentFont, Font::kStyleNone);
 	r->setupPlaneAB(512, 512);
 	scrMan->setVScrollTimers(0, 1, 0, 0, 1, 0);
 	scrMan->updateScrollTimers();
@@ -2667,7 +2689,7 @@ void EoBEngine::seq_segaShowStats() {
 	SegaRenderer *r = _screen->sega_getRenderer();
 	_txt->clearDim(5);
 
-	int styles = _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat;
+	int styles = Font::kStyleFullWidth;
 	int cs = _screen->setFontStyles(_screen->_currentFont, styles);
 
 	_txt->printShadedText(_finBonusStrings[2], 199 - _screen->getTextWidth(_finBonusStrings[2]), 8, 0xFF, 0x00, -1, -1, 0, false);

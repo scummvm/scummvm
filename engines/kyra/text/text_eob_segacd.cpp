@@ -52,7 +52,7 @@ void TextDisplayer_SegaCD::printDialogueText(int id, const char *string1, const 
 }
 
 void TextDisplayer_SegaCD::printDialogueText(const char *str, bool wait) {
-	int cs = _screen->setFontStyles(Screen::FID_8_FNT, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat | Font::kStyleForceTwoByte);
+	int cs = _screen->setFontStyles(Screen::FID_8_FNT, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleNone : Font::kStyleFullWidth);
 	clearDim(_curDim);
 
 	if (wait) {
@@ -112,7 +112,8 @@ int TextDisplayer_SegaCD::clearDim(int dim) {
 
 void TextDisplayer_SegaCD::displayText(char *str, ...) {
 	_screen->sega_setTextBuffer(_msgRenderBuffer, _msgRenderBufferSize);
-	int cs = _screen->setFontStyles(Screen::FID_8_FNT, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat | Font::kStyleForceTwoByte);
+	int cs = _screen->setFontStyles(Screen::FID_8_FNT, Font::kStyleFullWidth);
+	_screen->setFontStyles(Screen::FID_8_FNT, cs | Font::kStyleFullWidth);
 	char tmp[3] = "  ";
 	int posX = _curPosX;
 	bool updated = false;

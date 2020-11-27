@@ -1524,6 +1524,7 @@ GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen), _n
 
 	_menuLineSpacing = 0;
 	_menuLastInFlags = 0;
+	_menuTextColor = _menuHighlightColor = _menuShadowColor = 0;
 	_menuCur = 0;
 	_menuNumItems = 0;
 
@@ -2072,7 +2073,7 @@ int GUI_EoB::processButtonList(Kyra::Button *buttonList, uint16 inputFlags, int8
 	return result;
 }
 
-void GUI_EoB::simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int itemOffset, int lineSpacing) {
+void GUI_EoB::simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int itemOffset, int lineSpacing, int textColor, int highlightColor, int shadowColor) {
 	simpleMenu_initMenuItemsMask(sd, maxItem, menuItemsMask, itemOffset);
 
 	const ScreenDim *dm = _screen->getScreenDim(19 + sd);
@@ -2085,16 +2086,19 @@ void GUI_EoB::simpleMenu_setup(int sd, int maxItem, const char *const *strings, 
 		int item = simpleMenu_getMenuItem(i, menuItemsMask, itemOffset);
 		int ty = i * (lineSpacing + _screen->getCharHeight(' '));
 		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-			_vm->_txt->printShadedText(strings[item], 4, (sd == 8 ? 2 : 20) + ty, item == v ? 0x55 : 0xff, sd == 8 ? 0x11 : 0x99);
+			_vm->_txt->printShadedText(strings[item], 4, (sd == 8 ? 2 : 20) + ty, item == v ? highlightColor : textColor, shadowColor);
 		} else {
-			_screen->printShadedText(strings[item], x, y + ty, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
+			_screen->printShadedText(strings[item], x, y + ty, textColor, 0, shadowColor);
 			if (item == v)
-				_screen->printText(strings[item], x, y + ty, _vm->guiSettings()->colors.guiColorLightRed, 0);
+				_screen->printText(strings[item], x, y + ty, highlightColor, 0);
 		}
 	}
 
 	_menuLineSpacing = lineSpacing;
 	_menuLastInFlags = 0;
+	_menuTextColor = textColor;
+	_menuHighlightColor = highlightColor;
+	_menuShadowColor = shadowColor;
 	_vm->removeInputTop();
 }
 
@@ -2141,17 +2145,17 @@ int GUI_EoB::simpleMenu_process(int sd, const char *const *strings, void *b, int
 
 	if (newItem != currentItem) {
 		if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
-			_vm->_txt->printShadedText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], 4, (sd == 8 ? 2 : 20) + currentItem * lineH, 0xFF, sd == 8 ? 0x11 : 0x99);
-			_vm->_txt->printShadedText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], 4, (sd == 8 ? 2 : 20) + newItem * lineH, 0x55, sd == 8 ? 0x11 : 0x99);
+			_vm->_txt->printShadedText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], 4, (sd == 8 ? 2 : 20) + currentItem * lineH, _menuTextColor, _menuShadowColor);
+			_vm->_txt->printShadedText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], 4, (sd == 8 ? 2 : 20) + newItem * lineH, _menuHighlightColor, _menuShadowColor);
 		} else {
-			_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, (_vm->_configRenderMode == Common::kRenderCGA) ? 1 : _vm->guiSettings()->colors.guiColorWhite, 0);
-			_screen->printText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], x, y + newItem * lineH, _vm->guiSettings()->colors.guiColorLightRed, 0);
+			_screen->printText(strings[simpleMenu_getMenuItem(currentItem, menuItemsMask, itemOffset)], x, y + currentItem * lineH, _menuTextColor, 0);
+			_screen->printText(strings[simpleMenu_getMenuItem(newItem, menuItemsMask, itemOffset)], x, y + newItem * lineH, _menuHighlightColor, 0);
 		}
 	}
 
 	if (result != -1) {
 		result = simpleMenu_getMenuItem(result, menuItemsMask, itemOffset);
-		simpleMenu_flashSelection(strings[result], x, y + newItem * lineH, _vm->guiSettings()->colors.guiColorWhite, _vm->guiSettings()->colors.guiColorLightRed, 0);
+		simpleMenu_flashSelection(strings[result], x, y + newItem * lineH, _vm->guiSettings()->colors.guiColorWhite, _menuHighlightColor, 0);
 	}
 
 	_menuCur = newItem;
@@ -2835,7 +2839,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 						if (len == destMaxLen)
 							dest[len * bytesPerChar] = 0;
 					} else {
-						dest[pos++] = in;
+						dest[pos++] = (in == 0x89 && _csjis[1]) ? _csjis[0] : in;
 						if (len == destMaxLen)
 							dest[len] = 0;
 					}
@@ -2850,7 +2854,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 						dest[pos * bytesPerChar + 1] = _csjis[1];
 						dest[++pos * bytesPerChar] = 0;
 					} else {
-						dest[pos++] = in;
+						dest[pos++] = (in == 0x89 && _csjis[1]) ? _csjis[0] : in;
 						dest[pos] = 0;
 					}
 				}
@@ -2866,7 +2870,9 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 		if (_vm->_flags.platform == Common::kPlatformSegaCD) {
 			memset(segaCharBuf, 0, destMaxLen << 5);
 			_screen->sega_setTextBuffer(segaCharBuf, destMaxLen << 5);
+			int cs = _screen->setFontStyles(_screen->_currentFont, Font::kStyleForceOneByte);
 			_vm->_txt->printShadedText(dest, 0, 0, textColor1, 0, -1, -1, 0, false);
+			_screen->setFontStyles(_screen->_currentFont, cs);
 			_screen->sega_loadTextBufferToVRAM(0, ((y >> 3) * 40 + x + 1) << 5, destMaxLen << 5);
 			_screen->sega_getRenderer()->render(0, x, y >> 3, destMaxLen, 1);
 			_screen->sega_setTextBuffer(0, 0);
@@ -2910,7 +2916,7 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 	return _keyPressed.keycode == Common::KEYCODE_ESCAPE ? -1 : len;
 }
 
-int GUI_EoB::checkClickableCharactersSelection() {
+uint16 GUI_EoB::checkClickableCharactersSelection() {
 	if (_vm->_flags.platform != Common::kPlatformFMTowns)
 		return 0;
 
@@ -3826,6 +3832,8 @@ bool GUI_EoB::restParty() {
 	for (int l = 0; !res && restLoop && !_vm->shouldQuit();) {
 		l++;
 
+		int cs = (_vm->gameFlags().platform == Common::kPlatformSegaCD && _vm->gameFlags().lang == Common::JA_JPN) ? _screen->setFontStyles(_screen->_currentFont, Font::kStyleNarrow1) : -1;
+
 		// Regenerate spells
 		for (int i = 0; i < 6; i++) {
 			crs[i]++;
@@ -3915,6 +3923,7 @@ bool GUI_EoB::restParty() {
 					injured--;
 
 					_vm->_txt->printMessage(Common::String::format(_vm->_menuStringsRest2[2], _vm->_characters[i].name, _vm->_characters[injured].name).c_str());
+
 					_vm->delay(80);
 
 					_vm->_characters[injured].hitPointsCur += healHp;
@@ -3925,6 +3934,9 @@ bool GUI_EoB::restParty() {
 				}
 			}
 		}
+
+		if (cs != -1)
+			_screen->setFontStyles(_screen->_currentFont, cs);
 
 		if (l == 6) {
 			l = 0;
