@@ -33,10 +33,13 @@ Autosave
 
 	*autosave_period* 
 
+
 GUI Language
 	Chooses the language of the ScummVM Launcher.
 
 	*gui_language* 
+
+.. _guilanguage:
 
 Switch the ScummVM GUI language to the game language
 	If ticked, the Launcher language is the same as the game language. 
