@@ -89,7 +89,7 @@ While ScummVM was originally designed to run LucasArts' SCUMM games, over time s
 Start here!
 ================
 
-We have a user manual section covering all the basics:
+We have a user manual section covering **THE BASICS**:
 
 .. panels::
       :container: text-center mb-4
@@ -129,8 +129,50 @@ We have a user manual section covering all the basics:
       :doc:`use_scummvm/LAN`
 
 
+We also have guides on how to get ScummVM running on a wide range of **OTHER PLATFORMS**:
 
 
+.. panels::
+      :container: text-center mb-4
+
+      Handheld consoles
+      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      :doc:`other_platforms/nintendo_3ds`
+
+      :doc:`other_platforms/nintendo_switch`
+
+      :doc:`other_platforms/playstation_portable`
+
+      :doc:`other_platforms/playstation_vita`
+
+      ---
+      
+      Other consoles
+      ^^^^^^^^^^^^^^^^
+
+      :doc:`other_platforms/playstation_3`
+
+      :doc:`other_platforms/sega_dreamcast`
+
+      ---
+
+      Phones and tablets
+      ^^^^^^^^^^^^^^^
+      :doc:`other_platforms/ios`
+
+      :doc:`other_platforms/android`
+
+      ---
+
+      Other operating systems
+      ^^^^^^^^^^^^^^^^^^^^^^^
+      :doc:`other_platforms/amigaos_4`
+
+      :doc:`other_platforms/atari`
+
+      :doc:`other_platforms/risc_os`
+
+      
       
 
 
@@ -184,7 +226,7 @@ If you are having problems with any aspect of ScummVM, take a look at our help s
 What's changed since I was last here?
 ======================================
 
-We have a Release Notes section where you can see what's changed in both current and past releases. 
+We have a **RELEASE NOTES** section on the sidebar; here you can see what's changed in both current and past releases. 
 
 
 The ScummVM Project
