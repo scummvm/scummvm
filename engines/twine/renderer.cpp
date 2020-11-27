@@ -1022,8 +1022,6 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 color) {
 }
 
 int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTabEntry **renderTabEntryPtr) {
-	int32 bestDepth;
-	int32 currentDepth;
 	int32 bestPoly = 0;
 	//	int32 ecx;
 
@@ -1035,7 +1033,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 	uint8 *edi = renderTab7;           // renderTab7 coordinates buffer
 
-	uint8 *renderV19 = nullptr; // RECHECK THIS
+	uint8 *afterPolyHeaderPtr = nullptr; // RECHECK THIS
 
 	if (numPolygons > 0) {
 		int16 primitiveCounter = numPolygons; // the number of primitives = the number of polygons
@@ -1048,6 +1046,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			currentPolyHeader.colorIndex = stream.readSint16LE();
 			//ecx = *((int32*) pointer);
 			int16 polyRenderType = currentPolyHeader.renderType;
+			int32 bestDepth = -32000;
 
 			// TODO: RECHECK coordinates axis
 			if (polyRenderType >= 9) {
@@ -1061,8 +1060,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 				int16 counter = destinationHeader->numOfVertex;
 
-				bestDepth = -32000;
-				renderV19 = edi;
+				afterPolyHeaderPtr = edi;
 
 				do {
 					polyVertexHeader currentPolyVertex;
@@ -1083,8 +1081,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 					edi += sizeof(pointTab);
 
-					currentDepth = currentVertex->z;
-
+					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
@@ -1102,8 +1099,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 				*((int16 *)(edi + 2)) = color + shadeTable[shadeEntry];
 
 				edi += 4;
-				renderV19 = edi;
-				bestDepth = -32000;
+				afterPolyHeaderPtr = edi;
 				int16 counter = destinationHeader->numOfVertex;
 
 				do {
@@ -1118,8 +1114,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 					edi += sizeof(pointTab);
 
-					currentDepth = currentVertex->z;
-
+					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
@@ -1133,8 +1128,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 				edi += 4;
 
-				bestDepth = -32000;
-				renderV19 = edi;
+				afterPolyHeaderPtr = edi;
 				int32 eax = 0;
 				int16 counter = currentPolyHeader.numOfVertex;
 
@@ -1150,47 +1144,38 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 					edi += sizeof(pointTab);
 
-					currentDepth = currentVertex->z;
-
+					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
 				} while (--counter > 0);
 			}
 
-			uint8 *render24 = edi;
-			edi = renderV19;
+			int16 ax = *((const int16 *)(afterPolyHeaderPtr + 4));
+			int16 bx = *((const int16 *)(afterPolyHeaderPtr + 8));
 
-			int32 render25 = bestDepth;
-
-			int16 ax = *((const int16 *)(edi + 4));
-			int16 bx = *((const int16 *)(edi + 8));
-
-			ax -= *((const int16 *)(edi + 16));
-			bx -= *((const int16 *)(edi + 2));
+			ax -= *((const int16 *)(afterPolyHeaderPtr + 16));
+			bx -= *((const int16 *)(afterPolyHeaderPtr + 2));
 
 			ax *= bx;
 
-			bestDepth = ax;
+			int32 bestDepth2 = ax;
 
-			ax = *((const int16 *)(edi + 2));
-			int16 cx = *((const int16 *)(edi + 10));
+			ax = *((const int16 *)(afterPolyHeaderPtr + 2));
+			int16 cx = *((const int16 *)(afterPolyHeaderPtr + 10));
 
-			ax -= *((const int16 *)(edi + 14));
-			cx -= *((const int16 *)(edi + 4));
+			ax -= *((const int16 *)(afterPolyHeaderPtr + 14));
+			cx -= *((const int16 *)(afterPolyHeaderPtr + 4));
 
 			ax *= cx;
-			ax -= bestDepth;
+			ax -= bestDepth2;
 
-			currentDepth = 1;
 			numOfPrimitives++;
 
-			(*renderTabEntryPtr)->depth = render25;
+			(*renderTabEntryPtr)->depth = bestDepth;
 			(*renderTabEntryPtr)->renderType = 1;
 			(*renderTabEntryPtr)->dataPtr = render23;
 			(*renderTabEntryPtr)++;
-
-			edi = render24;
 		} while (--primitiveCounter);
 	}
 
@@ -1218,7 +1203,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			lineCoordinatesPtr->y1 = flattenPoints[point1].y;
 			lineCoordinatesPtr->x2 = flattenPoints[point2].x;
 			lineCoordinatesPtr->y2 = flattenPoints[point2].y;
-			bestDepth = flattenPoints[point1].z;
+			int32 bestDepth = flattenPoints[point1].z;
 			int32 depth = flattenPoints[point2].z;
 
 			if (depth >= bestDepth) {
@@ -1291,12 +1276,12 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 	}
 
 	int16 primitiveCounter = numOfPrimitives;
-	renderV19 = ptr + stream.pos();
+	afterPolyHeaderPtr = ptr + stream.pos();
 
 	do {
 		int16 type = renderTabEntryPtr2->renderType;
 		uint8 *pointer = renderTabEntryPtr2->dataPtr;
-		renderV19 += 8;
+		afterPolyHeaderPtr += 8;
 
 		switch (type) {
 		case RENDERTYPE_DRAWLINE: { // draw a line
