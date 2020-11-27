@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-26 21:14+0000\n"
-"PO-Revision-Date: 2020-11-26 08:43+0000\n"
+"PO-Revision-Date: 2020-11-27 10:10+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -7101,28 +7101,20 @@ msgid "Discreet Behaviour"
 msgstr "Comportamento Discreto"
 
 #: engines/twine/metaengine.cpp:250
-#, fuzzy
-#| msgid "Normal Behaviour"
 msgid "Normal Behaviour UI"
-msgstr "Comportamento Normal"
+msgstr "Interface de Comportamento Normal"
 
 #: engines/twine/metaengine.cpp:255
-#, fuzzy
-#| msgid "Athletic Behaviour"
 msgid "Athletic Behaviour UI"
-msgstr "Comportamento Atlético"
+msgstr "Interface de Comportamento Atlético"
 
 #: engines/twine/metaengine.cpp:260
-#, fuzzy
-#| msgid "Aggressive Behaviour"
 msgid "Aggressive Behaviour UI"
-msgstr "Comportamento Agressivo"
+msgstr "Interface de Comportamento Agressivo"
 
 #: engines/twine/metaengine.cpp:265
-#, fuzzy
-#| msgid "Discreet Behaviour"
 msgid "Discreet Behaviour UI"
-msgstr "Comportamento Discreto"
+msgstr "Interface de Comportamento Discreto"
 
 #: engines/twine/metaengine.cpp:270
 msgid "Behaviour Action"
