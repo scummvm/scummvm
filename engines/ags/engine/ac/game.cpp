@@ -931,7 +931,7 @@ void convert_guid_from_text_to_binary(const char *guidText, unsigned char *buffe
 		tempString[1] = guidText[1];
 		tempString[2] = 0;
 		int thisByte = 0;
-		sscanf(tempString, "%X", &thisByte);
+		sscanf(tempString, "%X", (unsigned int *)&thisByte);
 
 		buffer[bytesDone] = thisByte;
 		guidText += 2;
@@ -1392,7 +1392,7 @@ HSaveError restore_game_audioclips_and_crossfade(Stream *in, RestoredData &r_dat
 		chan_info.Pos = 0;
 		chan_info.ClipID = in->ReadInt32();
 		if (chan_info.ClipID >= 0) {
-			if ((size_t)chan_info.ClipID >= (int)game.audioClips.size()) {
+			if (chan_info.ClipID >= (int)game.audioClips.size()) {
 				return new SavegameError(kSvgErr_GameObjectInitFailed, "Invalid audio clip index.");
 			}
 
@@ -1500,7 +1500,7 @@ HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const Pres
 	if (!err)
 		return err;
 
-	if (in->ReadInt32() != MAGICNUMBER + 1) {
+	if (in->ReadInt32() != (int32)(MAGICNUMBER + 1)) {
 		return new SavegameError(kSvgErr_InconsistentFormat, "MAGICNUMBER not found before Audio Clips.");
 	}
 
@@ -1512,7 +1512,7 @@ HSaveError restore_game_data(Stream *in, SavegameVersion svg_version, const Pres
 	pl_set_file_handle(pluginFileHandle, in);
 	pl_run_plugin_hooks(AGSE_RESTOREGAME, pluginFileHandle);
 	pl_clear_file_handle();
-	if (in->ReadInt32() != (unsigned)MAGICNUMBER)
+	if (in->ReadInt32() != (int32)MAGICNUMBER)
 		return new SavegameError(kSvgErr_InconsistentPlugin);
 
 	// save the new room music vol for later use

@@ -96,21 +96,21 @@ int do_movelist_move(short *mlnum, int *xx, int *yy) {
 
 		int adjAmnt = 3;
 		// 2.70: if the X permove is also <=1, don't do the skipping
-		if (((xpermove & 0xffff0000) == 0xffff0000) ||
-			((xpermove & 0xffff0000) == 0x00000000))
+		if ((((uint32)xpermove & 0xffff0000) == 0xffff0000) ||
+			(((uint32)xpermove & 0xffff0000) == 0x00000000))
 			adjAmnt = 2;
 
 		// 2.61 RC1: correct this to work with > -1 as well as < 1
 		if (ypermove == 0) {
 		}
 		// Y per move is < 1, so finish the move
-		else if ((ypermove & 0xffff0000) == 0)
+		else if (((uint32)ypermove & 0xffff0000) == 0)
 			targety -= adjAmnt;
 		// Y per move is -1 exactly, don't snap to finish
-		else if (ypermove == 0xffff0000) {
+		else if ((uint32)ypermove == 0xffff0000) {
 		}
 		// Y per move is > -1, so finish the move
-		else if ((ypermove & 0xffff0000) == 0xffff0000)
+		else if (((uint32)ypermove & 0xffff0000) == 0xffff0000)
 			targety += adjAmnt;
 	} else xps = cmls->fromx + (int)(fixtof(xpermove) * (float)cmls->onpart);
 
@@ -120,20 +120,20 @@ int do_movelist_move(short *mlnum, int *xx, int *yy) {
 		int adjAmnt = 3;
 
 		// if the Y permove is also <=1, don't skip as far
-		if (((ypermove & 0xffff0000) == 0xffff0000) ||
+		if ((((uint32)ypermove & 0xffff0000) == 0xffff0000) ||
 			((ypermove & 0xffff0000) == 0x00000000))
 			adjAmnt = 2;
 
 		if (xpermove == 0) {
 		}
 		// Y per move is < 1, so finish the move
-		else if ((xpermove & 0xffff0000) == 0)
+		else if (((uint32)xpermove & 0xffff0000) == 0)
 			targetx -= adjAmnt;
 		// X per move is -1 exactly, don't snap to finish
-		else if (xpermove == 0xffff0000) {
+		else if ((uint32)xpermove == 0xffff0000) {
 		}
 		// X per move is > -1, so finish the move
-		else if ((xpermove & 0xffff0000) == 0xffff0000)
+		else if (((uint32)xpermove & 0xffff0000) == 0xffff0000)
 			targetx += adjAmnt;
 
 		/*    int xpmm=(xpermove >> 16) & 0x0000ffff;

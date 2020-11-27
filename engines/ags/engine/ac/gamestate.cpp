@@ -139,7 +139,7 @@ void GameState::UpdateViewports() {
 			vp->ClearChangedFlags();
 		}
 	}
-	if (vp_changed != -1)
+	if (vp_changed != (size_t)-1)
 		detect_roomviewport_overlaps(vp_changed);
 	for (auto cam : _roomCameras) {
 		if (cam->HasChangedSize() || cam->HasChangedPosition()) {

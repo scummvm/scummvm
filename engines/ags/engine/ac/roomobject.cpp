@@ -162,7 +162,7 @@ void RoomObject::ReadFromFile(Stream *in) {
 void RoomObject::WriteToFile(Stream *out) const {
 	out->WriteArrayOfInt32(&x, 3);
 	out->WriteArrayOfInt16(&tint_r, 15);
-	out->WriteArrayOfInt8((int8_t *)&cycling, 4);
+	out->WriteArrayOfInt8((const int8_t *)&cycling, 4);
 	out->WriteArrayOfInt16(&blocking_width, 2);
 }
 

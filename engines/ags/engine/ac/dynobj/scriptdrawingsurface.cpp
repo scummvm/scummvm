@@ -84,7 +84,7 @@ const char *ScriptDrawingSurface::GetType() {
 
 int ScriptDrawingSurface::Serialize(const char *address, char *buffer, int bufsize) {
 	StartSerialize(buffer);
-	SerializeInt(roomBackgroundNumber & 0xFFFF | (roomMaskType << 16));
+	SerializeInt((roomBackgroundNumber & 0xFFFF) | (roomMaskType << 16));
 	SerializeInt(dynamicSpriteNumber);
 	SerializeInt(dynamicSurfaceNumber);
 	SerializeInt(currentColour);
