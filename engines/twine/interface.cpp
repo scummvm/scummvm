@@ -50,8 +50,8 @@ int32 Interface::checkClipping(int32 x, int32 y) {
 }
 
 // TODO: check if Graphics::drawLine() works here
-void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, int32 lineColor) {
-	int32 currentLineColor = lineColor;
+void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, uint8 lineColor) {
+	uint8 currentLineColor = lineColor;
 
 	// draw line from left to right
 	if (startWidth > endWidth) {
@@ -114,7 +114,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 
 	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(startWidth, startHeight);
 
-	int16 color = currentLineColor;
+	uint8 color = currentLineColor;
 	if (endWidth < endHeight) { // significant slope
 		int16 xchg = endWidth;
 		endWidth = endHeight;
@@ -125,7 +125,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		endHeight <<= 1;
 		endWidth++;
 		do {
-			*out = (uint8)color;
+			*out = color;
 			startHeight -= endHeight;
 			if (startHeight > 0) {
 				out += flag2;
@@ -141,7 +141,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		endHeight <<= 1;
 		endWidth++;
 		do {
-			*out = (uint8)color;
+			*out = color;
 			out++;
 			startHeight -= endHeight;
 			if (startHeight < 0) {
