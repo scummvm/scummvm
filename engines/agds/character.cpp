@@ -29,6 +29,7 @@
 #include "common/debug.h"
 #include "common/error.h"
 #include "common/stream.h"
+#include "common/system.h"
 #include "common/textconsole.h"
 #include "common/util.h"
 
@@ -170,7 +171,7 @@ int Character::z() const {
 	int y = _pos.y + _animationPos.y;
 	//fixme: add temp var : _movePos?
 	//debug("char z = %d", y);
-	return y;
+	return g_system->getHeight() - y;
 }
 
 
