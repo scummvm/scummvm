@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	lib/aastr-0.1.1/aarot.o \
 	lib/aastr-0.1.1/aastr.o \
 	lib/aastr-0.1.1/aautil.o \
+	lib/alfont/alfont.o \
 	lib/allegro.o \
 	lib/allegro/color.o \
 	lib/allegro/config.o \
@@ -38,6 +39,10 @@ MODULE_OBJS = \
 	shared/core/asset.o \
 	shared/core/assetmanager.o \
 	shared/debugging/debugmanager.o \
+	shared/font/fonts.o \
+	shared/font/ttffontrenderer.o \
+	shared/font/wfnfont.o \
+	shared/font/wfnfontrenderer.o \
 	shared/game/customproperties.o \
 	shared/game/interactions.o \
 	shared/game/room_file.o \

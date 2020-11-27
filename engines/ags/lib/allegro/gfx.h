@@ -225,7 +225,6 @@ AL_FUNC(void, release_bitmap, (BITMAP *bitmap));
 AL_FUNC(void, draw_sprite, (BITMAP *bmp, const BITMAP *sprite, int x, int y));
 AL_FUNC(void, stretch_sprite, (BITMAP *bmp, const BITMAP *sprite, int x, int y, int w, int h));
 
-
 extern void clear_to_color(BITMAP *bitmap, int color);
 extern int bitmap_color_depth(BITMAP *bmp);
 extern int bitmap_mask_color(BITMAP *bmp);

@@ -23,12 +23,11 @@
 #ifndef AGS_SHARED_FONT_TTFFONTRENDERER_H
 #define AGS_SHARED_FONT_TTFFONTRENDERER_H
 
-//include <map>
+#include "ags/std/map.h"
+#include "ags/lib/alfont/alfont.h"
 #include "ags/shared/font/agsfontrenderer.h"
 
 namespace AGS3 {
-
-struct ALFONT_FONT;
 
 class TTFFontRenderer : public IAGSFontRenderer, public IAGSFontRenderer2 {
 public:

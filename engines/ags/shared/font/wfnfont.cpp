@@ -109,7 +109,12 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 	}
 	// sort offsets vector and remove any duplicates
 	std::sort(offs.begin(), offs.end());
+#if AGS_PLATFORM_SCUMMVM
+	// TODO: See if this works correctly
+	std::unique(offs.begin(), offs.end());
+#else
 	std::vector<uint16_t>(offs.begin(), std::unique(offs.begin(), offs.end())).swap(offs);
+#endif
 
 	// Now that we know number of valid character items, parse and store character data
 	WFNChar init_ch;
@@ -155,7 +160,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 		_items[i].RestrictToBytes(src_size);
 
 		assert(pixel_it + pixel_data_size <= _pixelData.end()); // should not normally fail
-		std::copy(raw_data + raw_off, raw_data + raw_off + src_size, pixel_it);
+		Common::copy(raw_data + raw_off, raw_data + raw_off + src_size, pixel_it);
 		_items[i].Data = &(*pixel_it);
 		pixel_it += pixel_data_size;
 	}

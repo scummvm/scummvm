@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_FONT_WFNFONTRENDERER_H
 #define AGS_SHARED_FONT_WFNFONTRENDERER_H
 
-//include <map>
+#include "ags/std/map.h"
 #include "ags/shared/font/agsfontrenderer.h"
 
 namespace AGS3 {

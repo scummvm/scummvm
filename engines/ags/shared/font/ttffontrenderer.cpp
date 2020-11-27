@@ -20,7 +20,8 @@
  *
  */
 
-//include <alfont.h>
+#include "ags/lib/alfont/alfont.h"
+#include "ags/lib/allegro/gfx.h"
 #include "ags/shared/core/platform.h"
 
 #define AGS_OUTLINE_FONT_FIX (!AGS_PLATFORM_OS_WINDOWS)
@@ -91,21 +92,8 @@ bool TTFFontRenderer::IsBitmapFont() {
 
 bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize, const FontRenderParams *params) {
 	String file_name = String::FromFormat("agsfnt%d.ttf", fontNumber);
-	Stream *reader = AssetManager::OpenAsset(file_name);
-	char *membuffer;
 
-	if (reader == nullptr)
-		return false;
-
-	long lenof = AssetManager::GetLastAssetSize();
-
-	membuffer = (char *)malloc(lenof);
-	reader->ReadArray(membuffer, lenof, 1);
-	delete reader;
-
-	ALFONT_FONT *alfptr = alfont_load_font_from_mem(membuffer, lenof);
-	free(membuffer);
-
+	ALFONT_FONT *alfptr = alfont_loadFont(file_name);
 	if (alfptr == nullptr)
 		return false;
 
