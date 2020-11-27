@@ -799,7 +799,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame == 6) {
 			Scene_Loop_Set_Default(0); // // HC01 - MainLoop
 			Scene_Loop_Start_Special(kSceneLoopModeOnce, 2, true); // HC01 - IzoFlashLoop
-			Player_Set_Combat_Mode(kActorSteele);
+			Player_Set_Combat_Mode(true);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(311)) {
 			*animation = 297;
