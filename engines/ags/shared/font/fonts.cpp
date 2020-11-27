@@ -20,9 +20,8 @@
  *
  */
 
-//include <cstdio>
 #include "ags/std/vector.h"
-//include <alfont.h>
+#include "ags/lib/alfont/alfont.h"
 #include "ags/shared/ac/common.h" // set_our_eip
 #include "ags/shared/ac/gamestructdefines.h"
 #include "ags/shared/font/fonts.h"
@@ -241,7 +240,7 @@ size_t split_lines(const char *todis, SplitLines &lines, int wii, int fonnt, siz
 	size_t splitAt;
 	char nextCharWas;
 	while (1) {
-		splitAt = -1;
+		splitAt = (size_t)-1;
 
 		if (theline[i] == 0) {
 			// end of the text, add the last line if necessary
@@ -294,7 +293,7 @@ size_t split_lines(const char *todis, SplitLines &lines, int wii, int fonnt, siz
 			// skip the space or new line that caused the line break
 			if ((theline[0] == ' ') || (theline[0] == '\n'))
 				theline++;
-			i = -1;
+			i = (size_t)-1;
 		}
 
 		i++;
@@ -302,7 +301,7 @@ size_t split_lines(const char *todis, SplitLines &lines, int wii, int fonnt, siz
 	return lines.Count();
 }
 
-void wouttextxy(Common::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, const char *texx) {
+void wouttextxy(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, const char *texx) {
 	if (fontNumber >= fonts.size())
 		return;
 	yyy += fonts[fontNumber].Info.YOffset;
@@ -343,7 +342,7 @@ bool wloadfont_size(size_t fontNumber, const FontInfo &font_info) {
 	return false;
 }
 
-void wgtprintf(Common::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, char *fmt, ...) {
+void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, char *fmt, ...) {
 	if (fontNumber >= fonts.size())
 		return;
 

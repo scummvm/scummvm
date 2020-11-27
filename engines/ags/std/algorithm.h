@@ -56,6 +56,37 @@ void sort(T first, T last) {
 	Common::sort(first, last);
 }
 
+template<class T>
+T unique(T first, T last) {
+	T pos;
+	for (pos = first + 1; pos < last; ++pos) {
+		// Check for duplicate
+		for (T existingPos = first; existingPos < last; ++existingPos) {
+			if (*pos == *existingPos) {
+				// Found a match, so shift values over the duplicate
+				while (pos < (last - 1)) {
+					*pos++ = *(pos + 1);
+				}
+
+				--last;
+				break;
+			}
+		}
+	}
+
+	return pos;
+}
+
+template<class ForwardIt, class T>
+ForwardIt lower_bound(ForwardIt first, ForwardIt last, const T &value) {
+	for (ForwardIt it = first; it < last; ++it) {
+		if (*it >= value)
+			return it;
+	}
+
+	return last;
+}
+
 } // namespace std
 } // namespace AGS3
 
