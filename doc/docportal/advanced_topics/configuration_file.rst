@@ -128,13 +128,13 @@ Example of a configuration file
 Configuration keys
 =====================
 
-There are many recognized configuration keys. In the table below, each keyword is linked to an explanatory description in the Settings pages. 
+There are many recognized configuration keys. In the table below, each key is either linked to an explanatory description in the Settings pages, or has further information in the **Decription/Options** column. 
 
 .. csv-table:: 
 	:widths: 37 13 25 25
   	:header-rows: 1 
 
-		Keyword,Type,Default,Description/Options
+		Key,Type,Default,Description/Options
 		alsa_port,integer,,Specifies which ALSA port ScummVM uses when using the ALSA music driver (Linux).
 		":ref:`alt_intro <altintro>`",boolean,false,
 		":ref:`altamigapalette <altamiga>`",boolean,false,
