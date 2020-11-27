@@ -282,6 +282,8 @@ void SceneScriptHF06::steelInterruption() {
 	Actor_Says(kActorSteele, 280, 58);
 	Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
 	Player_Set_Combat_Mode(true);
+	// TODO revisit setting kActorMcCoy to Combat Aim via Actor_Change_Animation_Mode()
+	//      (see notes in Gordo AI script in his CompletedMovementTrack())
 	Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim);
 	Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatWalk);
 	Loop_Actor_Walk_To_XYZ(kActorSteele, 92.0f, 367.93f, 107.0f, 0, false, false, false);
