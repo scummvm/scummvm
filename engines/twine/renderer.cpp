@@ -1172,7 +1172,6 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			ax *= bx;
 
 			bestDepth = ax;
-			bx = currentDepth;
 
 			ax = *((const int16 *)(edi + 2));
 			int16 cx = *((const int16 *)(edi + 10));
@@ -1181,22 +1180,17 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			cx -= *((const int16 *)(edi + 4));
 
 			ax *= cx;
-
 			ax -= bestDepth;
-			currentDepth -= (bx)-1; // peut-etre une erreur la
 
-			if (currentDepth < 0) {
-				edi = render23;
-			} else {
-				numOfPrimitives++;
+			currentDepth = 1;
+			numOfPrimitives++;
 
-				(*renderTabEntryPtr)->depth = render25;
-				(*renderTabEntryPtr)->renderType = 1;
-				(*renderTabEntryPtr)->dataPtr = render23;
-				(*renderTabEntryPtr)++;
+			(*renderTabEntryPtr)->depth = render25;
+			(*renderTabEntryPtr)->renderType = 1;
+			(*renderTabEntryPtr)->dataPtr = render23;
+			(*renderTabEntryPtr)++;
 
-				edi = render24;
-			}
+			edi = render24;
 		} while (--primitiveCounter);
 	}
 
