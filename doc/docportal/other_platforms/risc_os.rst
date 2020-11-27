@@ -4,7 +4,7 @@ RISC OS
 
 This page contains all the information you need to get ScummVM up and running on the RISC operating system. 
 
-WHat you'll need
+What you'll need
 ===================
 
 - A system running RISC OS 5
@@ -24,7 +24,7 @@ Transferring game files
 
 Copy data files directly from the original discs on machines that have CD and/or floppy drives, or use a USB drive to transfer the files from another system. 
 
-See :doc:`../use_scummvm/add_play_games` for more information. 
+See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
 Controls
 =================
