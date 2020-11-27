@@ -750,7 +750,7 @@ void Character_SayAt(CharacterInfo *chaa, int x, int y, int width, const char *t
 
 ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx) {
 
-	int ovltype = DisplaySpeechBackground(chaa->index_id, (char *)texx);
+	int ovltype = DisplaySpeechBackground(chaa->index_id, (const char *)texx);
 	int ovri = find_overlay_of_type(ovltype);
 	if (ovri < 0)
 		quit("!SayBackground internal error: no overlay");
@@ -2291,7 +2291,7 @@ void _DisplayThoughtCore(int chid, const char *displbuf) {
 		ypp = -1;
 	}
 
-	_displayspeech((char *)displbuf, chid, xpp, ypp, width, 1);
+	_displayspeech((const char *)displbuf, chid, xpp, ypp, width, 1);
 }
 
 void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int isThought) {
@@ -2448,7 +2448,7 @@ void _displayspeech(const char *texx, int aschar, int xx, int yy, int widd, int 
 
 		if (tdyp < 0) {
 			int sppic = views[speakingChar->view].loops[speakingChar->loop].frames[0].pic;
-			int height = (charextra[aschar].height < 1) ? game.SpriteInfos[sppic].Height : height = charextra[aschar].height;
+			int height = (charextra[aschar].height < 1) ? game.SpriteInfos[sppic].Height : charextra[aschar].height;
 			tdyp = view->RoomToScreen(0, data_to_game_coord(game.chars[aschar].get_effective_y()) - height).first.Y
 			       - get_fixed_pixel_size(5);
 			if (isThought) // if it's a thought, lift it a bit further up

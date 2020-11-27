@@ -132,6 +132,9 @@ public:
 	inline const unsigned char *GetScanLine(int index) const {
 		return (index >= 0 && index < GetHeight()) ? _alBitmap->getBasePtr(0, index) : nullptr;
 	}
+	inline unsigned char *GetScanLine(int index) {
+		return (index >= 0 && index < GetHeight()) ? (unsigned char *)_alBitmap->getBasePtr(0, index) : nullptr;
+	}
 
 	void    SetMaskColor(color_t color);
 	inline color_t GetMaskColor() const {

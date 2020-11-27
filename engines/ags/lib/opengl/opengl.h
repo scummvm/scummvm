@@ -122,7 +122,7 @@ inline void glViewport(GLint x, GLint y, GLsizei width, GLsizei height) {}
 inline void glMatrixMode(GLenum mode) {}
 inline void glLoadIdentity() {}
 inline void glOrtho(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top,
-	GLdouble nearVal, GLdouble farVal);
+	GLdouble nearVal, GLdouble farVal) {}
 inline void glEnableClientState(GLenum arr) {}
 inline void glDisableClientState(GLenum arr) {}
 inline void glUseProgram(GLuint program) {}
@@ -131,10 +131,10 @@ inline void glUniform3f(GLint location, GLfloat v0, GLfloat v1, GLfloat v2) {}
 inline void glUniform1i(GLint location, GLint v0) {}
 inline void glTranslatef(GLfloat x, GLfloat y, GLfloat z) {}
 inline void glMultMatrixf(const GLfloat *m) {}
-inline void glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z);
-inline void glScalef(GLfloat x, GLfloat y, GLfloat z);
+inline void glRotatef(GLfloat angle, GLfloat x, GLfloat y, GLfloat z) {}
+inline void glScalef(GLfloat x, GLfloat y, GLfloat z) {}
 inline void glBindTexture(GLenum target, GLuint texture) {}
-inline void glTexCoordPointer(GLint size, GLenum type, GLsizei stride, const void *pointer);
+inline void glTexCoordPointer(GLint size, GLenum type, GLsizei stride, const void *pointer) {}
 inline void glVertexPointer(GLint size, GLenum type, GLsizei stride, const void *pointer) {}
 inline void glBindFramebufferEXT(GLenum v1, uint v2) {}
 inline void glDeleteFramebuffersEXT(int v1, uint *v2) {}

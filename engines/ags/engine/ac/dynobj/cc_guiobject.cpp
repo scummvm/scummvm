@@ -37,7 +37,7 @@ const char *CCGUIObject::GetType() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int CCGUIObject::Serialize(const char *address, char *buffer, int bufsize) {
-	GUIObject *guio = (GUIObject *)address;
+	const GUIObject *guio = (const GUIObject *)address;
 	StartSerialize(buffer);
 	SerializeInt(guio->ParentId);
 	SerializeInt(guio->Id);
