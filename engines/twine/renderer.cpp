@@ -1225,11 +1225,11 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 			const int32 point1 = line.p1 / 6;
 			const int32 point2 = line.p2 / 6;
 			const int32 param = line.data;
-			*((int32 *)&lineCoordinatesPtr->data) = param;
-			*((int16 *)&lineCoordinatesPtr->x1) = flattenPoints[point1].x;
-			*((int16 *)&lineCoordinatesPtr->y1) = flattenPoints[point1].y;
-			*((int16 *)&lineCoordinatesPtr->x2) = flattenPoints[point2].x;
-			*((int16 *)&lineCoordinatesPtr->y2) = flattenPoints[point2].y;
+			lineCoordinatesPtr->data = param;
+			lineCoordinatesPtr->x1 = flattenPoints[point1].x;
+			lineCoordinatesPtr->y1 = flattenPoints[point1].y;
+			lineCoordinatesPtr->x2 = flattenPoints[point2].x;
+			lineCoordinatesPtr->y2 = flattenPoints[point2].y;
 			bestDepth = flattenPoints[point1].z;
 			int32 depth = flattenPoints[point2].z;
 
@@ -1313,12 +1313,12 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 		switch (type) {
 		case RENDERTYPE_DRAWLINE: { // draw a line
 			const lineCoordinates *lineCoordinatesPtr = (const lineCoordinates *)pointer;
-			int16 color = (*((const int32 *)&lineCoordinatesPtr->data) & 0xFF00) >> 8;
+			int16 color = (lineCoordinatesPtr->data & 0xFF00) >> 8;
 
-			const int32 x1 = *((const int16 *)&lineCoordinatesPtr->x1);
-			const int32 y1 = *((const int16 *)&lineCoordinatesPtr->y1);
-			const int32 x2 = *((const int16 *)&lineCoordinatesPtr->x2);
-			const int32 y2 = *((const int16 *)&lineCoordinatesPtr->y2);
+			const int32 x1 = lineCoordinatesPtr->x1;
+			const int32 y1 = lineCoordinatesPtr->y1;
+			const int32 x2 = lineCoordinatesPtr->x2;
+			const int32 y2 = lineCoordinatesPtr->y2;
 
 			_engine->_interface->drawLine(x1, y1, x2, y2, color);
 			break;
