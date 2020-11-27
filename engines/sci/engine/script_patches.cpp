@@ -5527,6 +5527,38 @@ static const uint16 kq6PatchDarkRoomInventory[] = {
 	PATCH_END
 };
 
+// The Girl In The Tower theme plays from a CD audio track during the credits.
+//  In ScummVM this requires an actual CD, or a mounted CD image, or extracting
+//  the audio to a "track1" file ahead of time. If the track can't be played
+//  then there is silence for the entire credits, but the game includes a 5 MB
+//  Audio version to fall back on when CD audio is unavailable. The script plays
+//  this when the CD audio driver fails to load, though this never occurs in our
+//  our implementation and doesn't address a missing track.
+//
+// We ensure that the credits theme always plays by patching the script to also
+//  fall back on the Audio version when CD audio playback fails.
+//
+// Applies to: PC CD
+// Responsible method: sCredits:init
+static const uint16 kq6CDSignatureGirlInTheTowerPlayback[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x05,                         // pushi 05
+	0x39, 0x0a,                         // pushi 0a   [ kSciAudioCD ]
+	0x7a,                               // push2      [ play ]
+	0x7a,                               // push2      [ track ]
+	0x76,                               // push0      [ start ]
+	0x38, SIG_UINT16(0x00ec),           // pushi 00ec [ end ]
+	0x43, 0x75, 0x0a,                   // callk DoAudio 0a
+	0x33,                               // jmp [ skip Audio version ]
+	SIG_END
+};
+
+static const uint16 kq6CDPatchGirlInTheTowerPlayback[] = {
+	PATCH_ADDTOOFFSET(+13),
+	0x2f,                               // bt [ skip Audio version if CD audio succeeded ]
+	PATCH_END
+};
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2.
 //  This patch gets enabled when the user selects "both" in the ScummVM
 //  "Speech + Subtitles" menu. We currently use global[98d] to hold a kMemory
@@ -5968,13 +6000,14 @@ static const uint16 kq6CDPatchAudioTextMenuSupport[] = {
 
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq6Signatures[] = {
+	{  true,    52, "CD: Girl In The Tower playback",                 1, kq6CDSignatureGirlInTheTowerPlayback,     kq6CDPatchGirlInTheTowerPlayback },
 	{  true,    87, "fix Drink Me bottle",                            1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	{ false,    87, "Mac: Drink Me pic",                              1, kq6SignatureMacDrinkMePic,                kq6PatchMacDrinkMePic },
 	{  true,   281, "fix pawnshop genie eye",                         1, kq6SignaturePawnshopGenieEye,             kq6PatchPawnshopGenieEye },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffItemFloatFix,            kq6PatchCliffItemFloatFix },
 	{  true,   405, "fix catacombs room message",                     1, kq6SignatureRoom405LookMessage,           kq6PatchRoom405LookMessage },
-	{  true,   406, "fix catacombs dark room inventory",              1, kq6SignatureDarkRoomInventory,           kq6PatchDarkRoomInventory },
+	{  true,   406, "fix catacombs dark room inventory",              1, kq6SignatureDarkRoomInventory,            kq6PatchDarkRoomInventory },
 	{  true,   407, "fix catacombs room message",                     1, kq6SignatureRoom407LookMessage,           kq6PatchRoom407LookMessage },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
 	{  true,   480, "fix getting baby tears",                         1, kq6SignatureGetBabyTears,                 kq6PatchGetBabyTears },
