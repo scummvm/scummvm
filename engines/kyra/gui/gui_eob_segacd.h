@@ -51,7 +51,7 @@ private:
 	void updateOptionsStrings() override;
 	void restParty_updateRestTime(int hours, bool init) override;
 
-	int checkClickableCharactersSelection() override;
+	uint16 checkClickableCharactersSelection() override;
 	void printClickableCharacters(int page) override;
 	void printClickableCharacter(int id, int col);
 	char fetchClickableCharacter(int id) const;

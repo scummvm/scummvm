@@ -595,7 +595,7 @@ void SegaSequencePlayer::s_displayTextEn(const uint8 *pos) {
 	_vm->_txt->clearDim(2);
 
 	if (_playingID >= 55) {
-		int cs = _screen->setFontStyles(_screen->_currentFont, Font::kStyleForceTwoByte | Font::kStyleFat);
+		int cs = _screen->setFontStyles(_screen->_currentFont, Font::kStyleFullWidth);
 		_vm->_txt->printShadedText(str, 0, 0, -1, 0xEE);
 		_screen->setFontStyles(_screen->_currentFont, cs);
 	} else {

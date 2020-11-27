@@ -89,6 +89,8 @@ private:
 	uint16 _chargenMinStats[7];
 	uint16 _chargenMaxStats[7];
 
+	const uint8 _menuColor1, _menuColor2, _menuColor3;
+
 	const char *const *_chargenStrings1;
 	const char *const *_chargenStrings2;
 	const char *const *_chargenStatStrings;
@@ -133,7 +135,10 @@ private:
 
 CharacterGenerator::CharacterGenerator(EoBCoreEngine *vm, Screen_EoB *screen) : _vm(vm), _screen(screen),
 	_characters(0), _faceShapes(0), _chargenMagicShapes(0), _chargenMagicShapeTimer(0), _wndBackgrnd(0),
-	_updateBoxShapesIndex(0), _lastUpdateBoxShapesIndex(0), _magicShapesBox(6), _activeBox(0) {
+	_updateBoxShapesIndex(0), _lastUpdateBoxShapesIndex(0), _magicShapesBox(6), _activeBox(0),
+	_menuColor1(vm->gameFlags().platform == Common::kPlatformSegaCD ? 0xFF : (vm->_configRenderMode == Common::kRenderCGA ? 1 : vm->guiSettings()->colors.guiColorWhite)),
+	_menuColor2(vm->gameFlags().platform == Common::kPlatformSegaCD ? 0x55 : vm->guiSettings()->colors.guiColorLightRed),
+	_menuColor3(vm->gameFlags().platform == Common::kPlatformSegaCD ? 0x99 : vm->guiSettings()->colors.guiColorBlack) {
 
 	_chargenStatStrings = _vm->_chargenStatStrings;
 	_chargenRaceSexStrings = _vm->_chargenRaceSexStrings;
@@ -474,7 +479,7 @@ void CharacterGenerator::checkForCompleteParty() {
 	if (_vm->gameFlags().platform == Common::kPlatformSegaCD) {
 		_screen->sega_loadTextBackground(_wndBackgrnd, 10240);
 		_screen->sega_getRenderer()->fillRectWithTiles(0, 18, 8, 20, 16, 0);
-		cs = _screen->setFontStyles(_screen->_currentFont, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
+		cs = _screen->setFontStyles(_screen->_currentFont, _vm->gameFlags().lang == Common::JA_JPN ? Font::kStyleNone : Font::kStyleFullWidth);
 		_vm->_txt->printShadedText(_chargenStrings1[8], 0, 0, -1, 0x99);
 	} else {
 		_screen->printShadedText(_chargenStrings1[8], x, 16, _vm->guiSettings()->colors.guiColorWhite, 0, _vm->guiSettings()->colors.guiColorBlack);
@@ -698,7 +703,7 @@ int CharacterGenerator::raceSexMenu() {
 	}
 	_vm->removeInputTop();
 
-	_vm->_gui->simpleMenu_setup(1, 0, _chargenRaceSexStrings, -1, 0, 0);
+	_vm->_gui->simpleMenu_setup(1, 0, _chargenRaceSexStrings, -1, 0, 0, _menuColor1, _menuColor2, _menuColor3);
 	if (_vm->_flags.platform == Common::kPlatformSegaCD)
 		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
 	_screen->updateScreen();
@@ -738,7 +743,7 @@ int CharacterGenerator::classMenu(int raceSex) {
 	drawButton(5, 0, 0);
 
 	itemsMask &= _classMenuMasks[raceSex / 2];
-	_vm->_gui->simpleMenu_setup(2, 15, _chargenClassStrings, itemsMask, 0, 0);
+	_vm->_gui->simpleMenu_setup(2, 15, _chargenClassStrings, itemsMask, 0, 0, _menuColor1, _menuColor2, _menuColor3);
 	if (_vm->_flags.platform == Common::kPlatformSegaCD)
 		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
 	_screen->updateScreen();
@@ -798,7 +803,7 @@ int CharacterGenerator::alignmentMenu(int cClass) {
 	drawButton(5, 0, 0);
 
 	itemsMask &= _alignmentMenuMasks[cClass];
-	_vm->_gui->simpleMenu_setup(3, 9, _chargenAlignmentStrings, itemsMask, 0, 0);
+	_vm->_gui->simpleMenu_setup(3, 9, _chargenAlignmentStrings, itemsMask, 0, 0, _menuColor1, _menuColor2, _menuColor3);
 	if (_vm->_flags.platform == Common::kPlatformSegaCD)
 		_screen->sega_getRenderer()->render(0, 18, 8, 20, 16);
 	_screen->updateScreen();

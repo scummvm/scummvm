@@ -1046,8 +1046,8 @@ void SegaAnimator::update() {
 	_needUpdate = false;
 }
 
-SegaCDFont::SegaCDFont(const uint16 *convTable1, const uint16 *convTable2, const uint8 *widthTable1, const uint8 *widthTable2, const uint8 *widthTable3) : Font(),
-	_style(0), _forceTwoByte(false), _fixedWidth(false), _convTable1(convTable1), _convTable2(convTable2), _widthTable1(widthTable1), _widthTable2(widthTable2),
+SegaCDFont::SegaCDFont(Common::Language lang, const uint16 *convTable1, const uint16 *convTable2, const uint8 *widthTable1, const uint8 *widthTable2, const uint8 *widthTable3) : Font(),
+	_lang(lang), _style(0), _forceTwoByte(false), _forceOneByte(false), _convTable1(convTable1), _convTable2(convTable2), _widthTable1(widthTable1), _widthTable2(widthTable2),
 		_widthTable3(widthTable3), _buffer(0), _data(0), _colorMap(0), _width(12), _height(12) {
 }
 
@@ -1064,6 +1064,11 @@ bool SegaCDFont::load(Common::SeekableReadStream &file) {
 	uint8 *newData = new uint8[size];
 	file.read(newData, size);
 	_buffer = newData;
+	_data = _buffer;
+	if (_lang == Common::EN_ANY)
+		_data += 131072;
+	else if (_lang != Common::JA_JPN)
+		error("SegaCDFont::load(): Unsupported language");
 
 	return true;
 }
@@ -1082,9 +1087,8 @@ int SegaCDFont::getCharHeight(uint16 c) const {
 
 void SegaCDFont::setStyles(int styles) {
 	assert(_buffer);
-	_forceTwoByte = (styles & kStyleForceTwoByte);
-	_data = (styles & kStyleFat) ? _buffer + 131072 : _buffer;
-	_fixedWidth = (styles & kStyleFixedWidth);
+	_forceTwoByte = (styles & kStyleFullWidth);
+	_forceOneByte = (styles & kStyleForceOneByte);
 	_style = (styles & kStyleNarrow1) ? 1 : (styles & kStyleNarrow2 ? 2 : 0);
 }
 
@@ -1144,7 +1148,7 @@ const uint8 *SegaCDFont::getGlyphData(uint16 c, uint8 &charWidth, uint8 &charHei
 			lo = c & 0xFF;
 		} else {
 			if (c < 128) {
-				if (c >= 96)
+				if (_lang != Common::JA_JPN && c >= 96)
 					c += 96;
 				else
 					c -= 32;
@@ -1196,15 +1200,19 @@ const uint8 *SegaCDFont::getGlyphData(uint16 c, uint8 &charWidth, uint8 &charHei
 		vrnt = 1;
 
 	if (vrnt == 0) {
-		charWidth = (!_fixedWidth && (c < 188)) ? _widthTable1[c] : 12;
+		charWidth = (_lang != Common::JA_JPN && (c < 188)) ? _widthTable1[c] : 12;
 		charHeight = pitch = 12;
 		res = &_data[0x19A0 + 18 * c];
+	} else if (_lang == Common::JA_JPN) {
+		charWidth = pitch = 8;
+		charHeight = 12;
+		res = &_data[0x800 + 12 * c];
 	} else if (_style == 2) {
-		charWidth = (!_fixedWidth && (c < 188)) ? _widthTable3[c] : 12;
+		charWidth = (c < 188) ? _widthTable3[c] : 8;
 		charHeight = pitch = 12;
 		res = &_data[0x3410 + 18 * c];
 	} else {
-		charWidth = (!_fixedWidth && (c < 188)) ? _widthTable2[c] : 12;
+		charWidth = (c < 188) ? _widthTable2[c] : 8;
 		charHeight = 12;
 		pitch = 8;
 		res = &_data[0x800 + 12 * c];
