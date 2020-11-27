@@ -28,7 +28,7 @@ Folders containing game files can be copied anywhere on the SD card.
 
 ScummVM on the PS Vita supports :doc:`cloud functionality <../use_scummvm/connect_cloud>`. 
 
-For more information on how to add and play games, see the :doc:`../use_scummvm/add_play_games` page.
+See :doc:`../use_scummvm/game_files` for more information about game file requirements.
 
 
 Controls

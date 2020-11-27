@@ -86,6 +86,8 @@ The Dreamcast port does not use the normal ScummVM Launcher. It uses its own cus
 
 ScummVM for the Dreamcast supports disc swapping from the GUI. It rescans after a new disc is inserted and repopulates the games list. 
 
+See :doc:`../use_scummvm/game_files` for more information about game file requirements.
+
 Controls
 =================
 

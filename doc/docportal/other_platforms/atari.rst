@@ -30,6 +30,8 @@ Transferring game files
 
 Transfer files to the Atari as you normally would, such as through a network connection or by optical disc. 
 
+See :doc:`../use_scummvm/game_files` for more information about game file requirements.
+
 Controls
 =================
 

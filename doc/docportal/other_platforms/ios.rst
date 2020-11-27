@@ -156,7 +156,7 @@ Another way to transfer files (for macOS Catalina and newer) to your device is b
 .. image:: ../images/ios/ios_transfer_files.gif
    
 
-For more information on which files ScummVM requires, and how to add and play games, see :doc:`../use_scummvm/add_play_games`. 
+See :doc:`../use_scummvm/game_files` for more information about game file requirements. 
 
 Controls
 ============
