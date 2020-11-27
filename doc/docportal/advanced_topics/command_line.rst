@@ -17,6 +17,29 @@ Usage
 To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any of the options documented below, and/or the path to the game you wish to start. If a game has already been added to the games list in the Launcher, you can pass the game id instead of the path to the game. 
 
 
+.. tabbed:: Windows
+    
+    .. panels::
+        :column: col-lg-12
+
+        The following examples assume that the path to ScummVM is ``C:\Program Files\ScummVM\scummvm.exe``. 
+
+        ^^^^
+
+        To run Monkey Island, fullscreen (``-f``):
+
+        .. code-block:: 
+
+            C:\Program Files\ScummVM\scummvm.exe -f monkey
+        
+    
+
+        To run Full Throttle, fullscreen (``-f``) and with subtitles enabled (``-n``), specifying the path to the game on a CD (``-p``): 
+
+        .. code-block::
+
+            C:\Program Files\ScummVM\scummvm.exe -f -n -pD:``resource``ft
+
 .. tabbed:: macOS
     
     .. panels::
@@ -43,30 +66,7 @@ To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any o
 
             /Applications/ScummVM.app/Contents/MacOS/scummvm -f -n -p/cdrom/resource/ft
 
-.. tabbed:: Windows
-    
-    .. panels::
-        :column: col-lg-12
-
-        The following examples assume that the path to ScummVM is ``C:\Program Files\ScummVM\scummvm.exe``. 
-
-        ^^^^
-
-        To run Monkey Island, fullscreen (``-f``):
-
-        .. code-block:: 
-
-            C:\Program Files\ScummVM\scummvm.exe -f monkey
-        
-    
-
-        To run Full Throttle, fullscreen (``-f``) and with subtitles enabled (``-n``), specifying the path to the game on a CD (``-p``): 
-
-        .. code-block::
-
-            C:\Program Files\ScummVM\scummvm.exe -f -n -pD:``resource``ft
-
-.. tabbed:: Linux/Unix
+.. tabbed:: Linux
     
     .. panels::
         :column: col-lg-12
@@ -103,7 +103,7 @@ Option parameters are shown below in capitals, and need to be replaced with real
 Short options are listed where they are available. 
 
 .. csv-table:: 
-    :widths: 30 10 60
+    :widths: 35 10 55
     :header-rows: 1
     
 		Option,Short,Description
@@ -116,6 +116,7 @@ Short options are listed where they are available.
         ``--boot-param=NUM``,``-b``,"Pass number to the boot script (`boot param <https://wiki.scummvm.org/index.php/Boot_Params>`_)."
         ``--cdrom=DRIVE``,,"Sets the CD drive to play CD audio from. This can be a drive, path, or numeric index (default: 0)"
         ``--config=FILE``,``-c``,"Uses alternate configuration file"
+        ``--console``,,"Enables the console window (default: enabled). Win32 and Symbian32 only." 
         ``--copy-protection``,,"Enables copy protection"
         ``--debug-channels-only``,,"Shows only the specified debug channels"
         ``--debugflags=FLAGS``,,"Enables engine specific debug flags"
@@ -123,6 +124,7 @@ Short options are listed where they are available.
         ``--demo-mode``,,"Starts demo mode of Maniac Mansion or The 7th Guest"
         ``--detect``,,"Displays a list of games with their game id from the current or specified directory. This does not add the game to the games list. Use ``--path=PATH`` before ``--detect`` to specify a directory."
         ``--dimuse-tempo=NUM``,,"Sets internal Digital iMuse tempo (10 - 100) per second (default: 10)"
+        ``--engine-speed=NUM``,,"Sets frames per second limit (0 - 100) for Grim Fandango or Escape from Monkey Island (default: 60)."  
         ``--dump-scripts``,``-u``,"Enables script dumping if a directory called 'dumps' exists in the current directory"
         ``--enable-gs``,,":ref:`Enables Roland GS mode for MIDI playback <gs>`"
         ``--extrapath=PATH``,,":ref:`Extra path to additional game data <extra>`"
@@ -136,8 +138,9 @@ Short options are listed where they are available.
         ``--language``,``-q``,":ref:`Selects language <lang>` (en, de, fr, it, pt, es, jp, zh, kr, se, gb, hb, ru, cz)"
         ``--list-audio-devices``,,"Lists all available audio devices"
         ``--list-saves --game=TARGET``,,"Displays a list of saved games for the game (TARGET) specified"
-        ``--list-targets``,``-t``,"Displays list of configured targets and exit"
+        ``--list-targets``,``-t``,"Displays list of configured targets and exits"
         ``--list-themes``,,"Displays list of all usable GUI themes"
+        ``--logfile=PATH``,-l,"Uses alternate path for log file (SDL backend only)." 
         ``--midi-gain=NUM``,,":ref:`Sets the gain for MIDI playback <gain>`. 0-1000 (default: 100). Only supported by some MIDI drivers"
         ``--multi-midi``,,":ref:`Enables combination AdLib and native MIDI <multi>`"
         ``--music-driver=MODE``,``-e``,":ref:`Selects preferred music device <device>`"
