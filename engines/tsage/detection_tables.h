@@ -20,6 +20,8 @@
  *
  */
 
+#include "common/translation.h"
+
 namespace TsAGE {
 
 static const tSageGameDescription gameDescriptions[] = {
@@ -140,23 +142,23 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_BlueForce,
 		GF_CD | GF_ALT_REGIONS
 	},
-#if 0
+
 	// Blue Force Spanish doesn't yet work
 	// Blue Force Spanish CD
 	{
 		{
 			"blueforce",
-			"CD",
+			_s("Spanish CD version is not yet supported"),
 			AD_ENTRY1s("blue.rlb", "5b2b35c51b62e82d82b0791540bfae2d", 10082565),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
-			ADGF_CD | ADGF_UNSTABLE,
+			ADGF_CD | ADGF_UNSUPPORTED,
 			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
 		},
 		GType_BlueForce,
 		GF_CD | GF_ALT_REGIONS
 	},
-#endif
+
 	// Return to Ringworld
 	{
 		{
