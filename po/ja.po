@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-28 18:11+0000\n"
-"PO-Revision-Date: 2020-11-28 14:24+0000\n"
+"PO-Revision-Date: 2020-11-28 18:44+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1916,7 +1916,7 @@ msgstr ""
 
 #: common/achievements.cpp:93
 msgid "Achievement unlocked!"
-msgstr ""
+msgstr "実績がアンロックされました!"
 
 #: common/error.cpp:38
 msgid "No error"
@@ -1924,7 +1924,7 @@ msgstr "エラーなし"
 
 #: common/error.cpp:40
 msgid "Game data not found"
-msgstr "ゲームデータを見つかりませんでした"
+msgstr "ゲームデータが見つかりません"
 
 #: common/error.cpp:42
 msgid "Game id not supported"
@@ -2162,9 +2162,8 @@ msgid "Could not apply filtering setting."
 msgstr ""
 
 #: engines/engine.cpp:420
-#, fuzzy
 msgid "Error"
-msgstr "エラーなし"
+msgstr "エラー"
 
 #: engines/engine.cpp:507
 msgid ""
@@ -4941,9 +4940,8 @@ msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
 #: engines/made/detection_tables.h:360
-#, fuzzy
 msgid "The game is using unsupported engine"
-msgstr "未対応のゲームID。"
+msgstr "このゲームはサポートされていないエンジンを使用しています"
 
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
@@ -5168,9 +5166,8 @@ msgid "Unable to locate the '%s' engine data file"
 msgstr ""
 
 #: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
-#, fuzzy
 msgid "PS2 version is not yet supported"
-msgstr "未対応のゲームID。"
+msgstr "PS2版はまだサポートされていません"
 
 #: engines/myst3/detection.cpp:182
 #, fuzzy
@@ -6533,9 +6530,8 @@ msgid ""
 msgstr ""
 
 #: engines/tinsel/detection_tables.h:466
-#, fuzzy
 msgid "Saturn CD version is not yet supported"
-msgstr "未対応のゲームID。"
+msgstr "セガサターン版はまだサポートされていません"
 
 #: engines/tony/tony.cpp:257
 #, c-format
@@ -6568,9 +6564,8 @@ msgid "Unable to locate the '%s' data file."
 msgstr ""
 
 #: engines/tsage/detection_tables.h:151
-#, fuzzy
 msgid "Spanish CD version is not yet supported"
-msgstr "未対応のゲームID。"
+msgstr "スペイン版(CDバージョン)はまだサポートされていません"
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
