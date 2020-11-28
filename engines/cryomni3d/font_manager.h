@@ -44,7 +44,7 @@ class CryoString : public Common::BaseString<Common::u32char_type_t> {
 public:
 	CryoString() : Common::BaseString<Common::u32char_type_t>() {}
 
-	CryoString(const CryoString &str) : BaseString<Common::u32char_type_t>(str) {}
+	CryoString(const CryoString &str) : Common::BaseString<Common::u32char_type_t>(str) {}
 	CryoString &operator=(const CryoString &str) {
 		assign(str);
 		return *this;
