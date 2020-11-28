@@ -266,6 +266,7 @@ MODULE_OBJS = \
     engine/media/audio/sound.o \
     engine/media/audio/soundcache.o \
     engine/media/audio/soundclip.o \
+	engine/media/video/video.o \
 	engine/platform/base/agsplatformdriver.o \
 	engine/platform/windows/acplwin.o \
 	engine/platform/windows/minidump.o \

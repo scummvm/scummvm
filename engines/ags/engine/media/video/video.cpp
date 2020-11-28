@@ -20,37 +20,40 @@
  *
  */
 
-#include "ags/shared/media/video/video.h"
+#include "ags/engine/media/video/video.h"
 
-#ifndef AGS_NO_VIDEO_PLAYER
-
-#include "ags/shared/apeg.h"
+//include "apeg.h"
 #include "ags/shared/core/platform.h"
 #define AGS_FLI_FROM_PACK_FILE ((ALLEGRO_DATE >= 20190303) || \
-                                AGS_PLATFORM_OS_WINDOWS || AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_MACOS)
+	AGS_PLATFORM_OS_WINDOWS || AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_MACOS)
 
-#include "ags/shared/debugging/debug_log.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/shared/ac/asset_helper.h"
+#include "ags/engine/ac/asset_helper.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/draw.h"
+#include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/global_display.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/sys_events.h"
-#include "ags/shared/ac/runtime_defines.h"
-#include "ags/shared/ac/system.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/global_display.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/sys_events.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/system.h"
 #include "ags/shared/core/assetmanager.h"
 #include "ags/shared/gfx/bitmap.h"
-#include "ags/shared/gfx/ddb.h"
-#include "ags/shared/gfx/graphicsdriver.h"
-#include "ags/shared/main/game_run.h"
+#include "ags/engine/gfx/ddb.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/main/game_run.h"
 #include "ags/shared/util/stream.h"
-#include "ags/shared/media/audio/audio_system.h"
+#include "ags/engine/media/audio/audio_system.h"
 
 namespace AGS3 {
+
+// TODO: Enable video playback
+#define AGS_NO_VIDEO_PLAYER
+
+#ifndef AGS_NO_VIDEO_PLAYER
 
 using namespace AGS::Shared;
 using namespace AGS::Engine;
@@ -397,10 +400,14 @@ void video_on_gfxmode_changed() {
 #else
 
 void play_theora_video(const char *name, int skip, int flags) {
+	warning("TODO: play_theora_video");
 }
 void play_flc_file(int numb, int playflags) {
+	warning("TODO: play_flc_file");
 }
+
 void video_on_gfxmode_changed() {
+	warning("TODO: video_on_gfxmode_changed");
 }
 
 #endif

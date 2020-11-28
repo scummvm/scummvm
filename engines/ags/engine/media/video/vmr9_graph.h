@@ -22,16 +22,12 @@
 
 //=============================================================================
 //
-// VMR9Graph.h: interface for the CVMR9Graph class.
+// vmr9_graph.h: interface for the CVMR9Graph class.
 //
 //=============================================================================
 
-#if !defined(AFX_VMR9GRAPH_H__449FDB5B_6719_4134_B5A7_B651C08D109E__INCLUDED_)
-#define AFX_VMR9GRAPH_H__449FDB5B_6719_4134_B5A7_B651C08D109E__INCLUDED_
-
-#if _MSC_VER > 1000
-#pragma once
-#endif
+#ifndef AGS_ENGINE_MEDIA_VIDEO_VMR9_GRAPH_H
+#define AGS_ENGINE_MEDIA_VIDEO_VMR9_GRAPH_H
 
 //include <dshow.h>
 //include <Vmr9.h>
