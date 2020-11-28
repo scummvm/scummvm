@@ -97,23 +97,22 @@ static const tSageGameDescription gameDescriptions[] = {
 		GType_Ringworld,
 		GF_FLOPPY | GF_DEMO | GF_ALT_REGIONS
 	},
-#if 0
-	// FIXME: Compute new MD5s based on 5000 bytes instead of 0 (unlimited)
-	// Blue Force floppy
+
+	// Blue Force floppy, uninstalled
 	{
 		{
 			"blueforce",
-			"Floppy",
-			AD_ENTRY1s("blue.rlb", "17c3993415e8a2cf93040eef7e88ec93", 1156508),
+			"Floppy, Uninstalled",
+			AD_ENTRY1s("blue.rlb", "0625e9f985e52bf221107f50672bd4c3", 1156508),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO2(GUIO_NOSPEECH, GUIO_NOSFX)
 		},
 		GType_BlueForce,
-		GF_FLOPPY
+		GF_FLOPPY | GF_UNINSTALLED
 	},
-#endif
+
 	// Blue Force
 	{
 		{
