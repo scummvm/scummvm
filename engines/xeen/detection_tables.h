@@ -28,11 +28,8 @@ static const XeenGameDescription gameDescriptions[] = {
 		{
 			"worldofxeen",
 			nullptr,
-			{
-				{ "xeen.cc", 0, "0cffbab533d9afe140e69ec93096f43e", 13435646 },
-				{ "dark.cc", 0, "df194483ecea6abc0511637d712ced7c", 11217676 },
-				AD_LISTEND
-			},
+			AD_ENTRY2s("xeen.cc", "0cffbab533d9afe140e69ec93096f43e", 13435646,
+					   "dark.cc", "df194483ecea6abc0511637d712ced7c", 11217676),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -67,11 +64,8 @@ static const XeenGameDescription gameDescriptions[] = {
 		{
 			"worldofxeen",
 			nullptr,
-			{
-				{ "xeen.cc", 0, "f4e4b3ddc43bd102dbe1637f480f1fa1", 13214150 },
-				{ "dark.cc", 0, "84a86bbbc5f2fe96c0b0325485ed8203", 11168312 },
-				AD_LISTEND
-			},
+			AD_ENTRY2s("xeen.cc", "f4e4b3ddc43bd102dbe1637f480f1fa1", 13214150,
+					   "dark.cc", "84a86bbbc5f2fe96c0b0325485ed8203", 11168312),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
@@ -86,11 +80,8 @@ static const XeenGameDescription gameDescriptions[] = {
 		{
 			"worldofxeen",
 			"CD",
-			{
-				{"xeen.cc", 0, "964078c53f649937ce9a1a3596ce3d9f", 13438429},
-				{"dark.cc", 0, "7f755ce39ea614fa6adb016f8bfc6e43", 11288403},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("xeen.cc", "964078c53f649937ce9a1a3596ce3d9f", 13438429,
+					   "dark.cc", "7f755ce39ea614fa6adb016f8bfc6e43", 11288403),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
@@ -105,10 +96,7 @@ static const XeenGameDescription gameDescriptions[] = {
 		{
 			"cloudsofxeen",
 			nullptr,
-			{
-				{ "xeen.cc", 0, "0cffbab533d9afe140e69ec93096f43e", 13435646 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("xeen.cc", "0cffbab533d9afe140e69ec93096f43e", 13435646),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -123,10 +111,7 @@ static const XeenGameDescription gameDescriptions[] = {
 		{
 			"cloudsofxeen",
 			nullptr,
-			{
-				{ "xeen.cc", 0, "f4e4b3ddc43bd102dbe1637f480f1fa1", 13214150 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("xeen.cc", "f4e4b3ddc43bd102dbe1637f480f1fa1", 13214150),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
@@ -141,10 +126,7 @@ static const XeenGameDescription gameDescriptions[] = {
 		{
 			"darksideofxeen",
 			nullptr,
-			{
-				{ "dark.cc", 0, "df194483ecea6abc0511637d712ced7c", 11217676 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("dark.cc", "df194483ecea6abc0511637d712ced7c", 11217676),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -159,10 +141,7 @@ static const XeenGameDescription gameDescriptions[] = {
 		{
 			"darksideofxeen",
 			nullptr,
-			{
-				{ "dark.cc", 0, "84a86bbbc5f2fe96c0b0325485ed8203", 11168312 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("dark.cc", "84a86bbbc5f2fe96c0b0325485ed8203", 11168312),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
@@ -177,11 +156,8 @@ static const XeenGameDescription gameDescriptions[] = {
 		{
 			"darksideofxeen",
 			nullptr,
-			{
-				{ "dark.cc", 0, "84a86bbbc5f2fe96c0b0325485ed8203", 11173657},
-				{ "intro.cc", 0, "e47a7ab0223cf32b2d87eed91d024c35", 8899953},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("dark.cc",  "84a86bbbc5f2fe96c0b0325485ed8203", 11173657,
+					   "intro.cc", "e47a7ab0223cf32b2d87eed91d024c35", 8899953),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
@@ -196,10 +172,7 @@ static const XeenGameDescription gameDescriptions[] = {
 		{
 			"swordsofxeen",
 			nullptr,
-			{
-				{"swrd.cc", 0, "0d51c3457070cc7d1a596da9241924a5", 13026924 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("swrd.cc", "0d51c3457070cc7d1a596da9241924a5", 13026924),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
