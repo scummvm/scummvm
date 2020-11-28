@@ -20,6 +20,7 @@
  *
  */
 
+#include "common/translation.h"
 namespace Tinsel {
 
 static const TinselGameDescription gameDescriptions[] = {
@@ -462,7 +463,7 @@ static const TinselGameDescription gameDescriptions[] = {
 	{	// English Saturn CD
 		{
 			"dw",
-			"Saturn CD version is not yet supported",
+			_s("Saturn CD version is not yet supported"),
 			AD_ENTRY2s("dw.scn", "6803f293c88758057cc685b9437f7637", 382248,
 					   "english.smp", NULL, -1),
 			Common::EN_ANY,
