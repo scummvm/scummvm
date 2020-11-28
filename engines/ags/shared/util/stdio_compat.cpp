@@ -28,7 +28,7 @@
 
 namespace AGS3 {
 
-int	 ags_fseek(Common::Stream *stream, file_off_t offset, int whence) {
+int ags_fseek(Common::Stream *stream, file_off_t offset, int whence) {
 	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
 	Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(stream);
 
@@ -40,8 +40,10 @@ int	 ags_fseek(Common::Stream *stream, file_off_t offset, int whence) {
 		error("Seek on null stream");
 }
 
-file_off_t ags_ftell(FILE *stream) {
-	return stream->pos();
+file_off_t ags_ftell(Common::Stream *stream) {
+	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(stream);
+	assert(rs);
+	return rs->pos();
 }
 
 int  ags_file_exists(const char *path) {

@@ -84,6 +84,7 @@ MODULE_OBJS = \
 	shared/util/mutifilelib.o \
 	shared/util/path.o \
 	shared/util/proxystream.o \
+	shared/util/stdio_compat.o \
 	shared/util/stream.o \
 	shared/util/string.o \
 	shared/util/string_compat.o \
