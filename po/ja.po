@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-26 21:14+0000\n"
-"PO-Revision-Date: 2020-11-12 19:44+0000\n"
-"Last-Translator: Matthew Duggan <mgithub@guarana.org>\n"
+"PO-Revision-Date: 2020-11-28 14:24+0000\n"
+"Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
 "Language: ja\n"
@@ -284,7 +284,7 @@ msgstr "全般の画像設定を上書きする"
 #: gui/editgamedialog.cpp:210
 msgctxt "lowres"
 msgid "Override global graphic settings"
-msgstr "全般の画像設定を上書きする"
+msgstr "共通設定に優先して適用する"
 
 #: gui/editgamedialog.cpp:220 gui/options.cpp:1792
 msgid "Shader"
@@ -1555,7 +1555,7 @@ msgstr ""
 #: gui/options.cpp:2251
 msgctxt "lowres"
 msgid "Closing options dialog will stop the server."
-msgstr "設定ウインドーを閉じるとさばーが停止されます。"
+msgstr "設定ウィンドウを閉じると、サーバーは停止されます。"
 
 #: gui/options.cpp:2253
 msgid "Run server to manage files with browser (in the same network)."
@@ -1567,7 +1567,7 @@ msgstr "設定ウインドーを閉じるとさばーが停止されます。"
 
 #: gui/options.cpp:2266
 msgid "Use Text to speech"
-msgstr "音声合成を使用する"
+msgstr "テキストの読み上げ機能を使用する"
 
 #: gui/options.cpp:2266
 msgid "Will read text in gui on mouse over."
@@ -1579,7 +1579,7 @@ msgstr "なし"
 
 #: gui/options.cpp:2354
 msgid "Failed to change cloud storage!"
-msgstr "クラウドストーレジを変えることを失敗しました！"
+msgstr "クラウドストレージの変更に失敗しました!"
 
 #: gui/options.cpp:2357
 msgid "Another cloud storage is already active."
@@ -1587,7 +1587,7 @@ msgstr "他のクラウドストーレジは既に使用中です。"
 
 #: gui/options.cpp:2432
 msgid "Theme does not support selected language!"
-msgstr "テーマは選択された言語を対応できません！"
+msgstr "テーマは選択された言語をサポートしていません!"
 
 #: gui/options.cpp:2435
 msgid "Theme cannot be loaded!"
@@ -1617,11 +1617,11 @@ msgstr "追加ファイルのフォルダーを選択してください"
 
 #: gui/options.cpp:2533
 msgid "Select directory for plugins"
-msgstr "拡張のフォルダーを選択してください"
+msgstr "プラグインのフォルダーを選択してください"
 
 #: gui/options.cpp:2546
 msgid "Select directory for Files Manager /root/"
-msgstr ""
+msgstr "ルートディレクトリーとして使用するフォルダーを選択してください"
 
 #: gui/options.cpp:2658
 msgid ""
@@ -1631,11 +1631,11 @@ msgstr ""
 
 #: gui/options.cpp:2683
 msgid "Another Storage is working now. Do you want to interrupt it?"
-msgstr ""
+msgstr "すでに別のストレージが使用されています。切断してもよろしいですか?"
 
 #: gui/options.cpp:2692 gui/options.cpp:2730
 msgid "Wait until current Storage finishes up and try again."
-msgstr ""
+msgstr "ストレージへのアップロード完了後に再実施してください。"
 
 #: gui/options.cpp:2705
 msgid "Connecting..."
@@ -1643,7 +1643,7 @@ msgstr "接続中..."
 
 #: gui/options.cpp:2721
 msgid "This Storage is working now. Do you want to interrupt it?"
-msgstr "ストーレジは使用中。切断してもよろしいですか？"
+msgstr "ストレージを使用中です。切断してもよろしいですか?"
 
 #: gui/options.cpp:2919 backends/cloud/cloudmanager.cpp:157
 msgid "<right now>"
@@ -1651,7 +1651,7 @@ msgstr "＜只今＞"
 
 #: gui/options.cpp:3028
 msgid "Stop server"
-msgstr "サバーを停止"
+msgstr "サーバーを停止"
 
 #: gui/options.cpp:3029
 msgid "Stop local webserver"
@@ -1663,17 +1663,19 @@ msgstr "ストーレジ接続済み。"
 
 #: gui/options.cpp:3083
 msgid "Failed to connect storage."
-msgstr "ストーレジの接続を失敗しました。"
+msgstr "ストレージの接続に失敗しました。"
 
 #: gui/options.cpp:3085
 msgid "Failed to connect storage: "
-msgstr "ストーレジの接続を失敗しました： "
+msgstr "ストレージの接続に失敗しました： "
 
 #: gui/options.cpp:3105
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
 msgstr ""
+"リクエストが完了しませんでした。\n"
+"インターネットへの接続状態を確認してください。"
 
 #. I18N: You must leave "#" as is, only word 'next' is translatable
 #: gui/predictivedialog.cpp:106
