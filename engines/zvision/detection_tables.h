@@ -118,11 +118,8 @@ static const ZVisionGameDescription gameDescriptions[] = {
 		{
 			"znemesis",
 			0,
-			{
-				{ "CSCR.ZFS", 0, "f04113357b4748c13efcb58b4629887c", 2577873 },
-				{ "NEMESIS.STR", 0, "333bcb17bbb7f57cae742fbbe44f56f3", 9219 },
-				AD_LISTEND
-			},
+			AD_ENTRY2s("CSCR.ZFS",		"f04113357b4748c13efcb58b4629887c", 2577873,
+					   "NEMESIS.STR",	"333bcb17bbb7f57cae742fbbe44f56f3", 9219),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -136,11 +133,8 @@ static const ZVisionGameDescription gameDescriptions[] = {
 		{
 			"znemesis",
 			0,
-			{
-				{ "CSCR.ZFS", 0, "f04113357b4748c13efcb58b4629887c", 2577873 },
-				{ "NEMESIS.STR", 0, "3d1a12b907751653866cffc6d4dfb331", 9505 },
-				AD_LISTEND
-			},
+			AD_ENTRY2s("CSCR.ZFS",		"f04113357b4748c13efcb58b4629887c", 2577873,
+					   "NEMESIS.STR",	"3d1a12b907751653866cffc6d4dfb331", 9505),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -154,11 +148,8 @@ static const ZVisionGameDescription gameDescriptions[] = {
 		{
 			"znemesis",
 			0,
-			{
-				{ "CSCR.ZFS", 0, "f04113357b4748c13efcb58b4629887c", 2577873 },
-				{ "NEMESIS.STR", 0, "7c568feca8d9f9ae855c47183612c305", 9061 },
-				AD_LISTEND
-			},
+			AD_ENTRY2s("CSCR.ZFS",		"f04113357b4748c13efcb58b4629887c", 2577873,
+					   "NEMESIS.STR",	"7c568feca8d9f9ae855c47183612c305", 9061),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
