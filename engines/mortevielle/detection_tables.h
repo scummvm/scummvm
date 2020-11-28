@@ -28,11 +28,8 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 		{
 			"mortevielle",
 			"",
-			{
-				{"menufr.mor", 0, "e413f36b9e14eef16130adc347a9391f", 144},
-				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("menufr.mor",	"e413f36b9e14eef16130adc347a9391f", 144,
+					   "dxx.mor",		"949e68e829ecd5ad29e36a00347a9e7e", 207744),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -44,11 +41,8 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 		{
 			"mortevielle",
 			"",
-			{
-				{"menual.mor", 0, "792aea282b07a1d74c4a4abeabc90c19", 144},
-				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("menual.mor",	"792aea282b07a1d74c4a4abeabc90c19", 144,
+					   "dxx.mor",		"949e68e829ecd5ad29e36a00347a9e7e", 207744),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -61,11 +55,8 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 //		{
 //			"mortevielle",
 //			"Improved Translation",
-//			{
-//				{"menual.mor", 0, "792aea282b07a1d74c4a4abeabc90c19", 144},
-//				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-//				AD_LISTEND
-//			},
+//			AD_ENTRY2s("menual.mor",	"792aea282b07a1d74c4a4abeabc90c19", 144,
+//					   "dxx.mor",		"949e68e829ecd5ad29e36a00347a9e7e", 207744),
 //			Common::DE_DEU,
 //			Common::kPlatformDOS,
 //			ADGF_NO_FLAGS,
@@ -80,12 +71,9 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 	{
 		{
 			"mortevielle",
-				"",
-			{
-				{"menufr.mor", 0, "e413f36b9e14eef16130adc347a9391f", 144},
-				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-				AD_LISTEND
-			},
+			"",
+			AD_ENTRY2s("menufr.mor",	"e413f36b9e14eef16130adc347a9391f", 144,
+					   "dxx.mor",		"949e68e829ecd5ad29e36a00347a9e7e", 207744),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -97,12 +85,9 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 	{
 		{
 			"mortevielle",
-				"",
-			{
-				{"menual.mor", 0, "792aea282b07a1d74c4a4abeabc90c19", 144},
-				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-				AD_LISTEND
-			},
+			"",
+			AD_ENTRY2s("menual.mor",	"792aea282b07a1d74c4a4abeabc90c19", 144,
+					   "dxx.mor",		"949e68e829ecd5ad29e36a00347a9e7e", 207744),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -115,11 +100,8 @@ static const MortevielleGameDescription MortevielleGameDescriptions[] = {
 		{
 			"mortevielle",
 			"",
-			{
-				{"menu.mor", 0, "3fef0a3f8fca99fdcb6dbca8cbcef46f", 160},
-				{"dxx.mor", 0, "949e68e829ecd5ad29e36a00347a9e7e", 207744},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("menu.mor",	"3fef0a3f8fca99fdcb6dbca8cbcef46f", 160,
+					   "dxx.mor",	"949e68e829ecd5ad29e36a00347a9e7e", 207744),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
