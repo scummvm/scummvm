@@ -29,6 +29,7 @@
 #include "common/config-manager.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/thumbnail.h"
 
 #include "saga/animation.h"
@@ -109,6 +110,25 @@ bool Saga::SagaEngine::hasFeature(EngineFeature f) const {
 
 bool SagaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Saga::SAGAGameDescription *gd = (const Saga::SAGAGameDescription *)desc;
+
+	switch (gd->gameId) {
+	case Saga::GID_IHNM:
+#ifndef ENABLE_IHNM
+		Engine::errorUnsupportedGame(_("I Have No Mouth support not compiled in"));
+		return false;
+#endif
+		break;
+	case Saga::GID_DINO:
+	case Saga::GID_FTA2:
+#ifndef ENABLE_SAGA2
+		Engine::errorUnsupportedGame(_("SAGA2 support not compiled in"));
+		return false;
+#endif
+		break;
+	default:
+		break;
+	}
+
 	if (gd) {
 		*engine = new Saga::SagaEngine(syst, gd);
 	}
