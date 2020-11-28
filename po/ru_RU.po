@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-28 18:11+0000\n"
-"PO-Revision-Date: 2020-11-28 18:12+0000\n"
+"PO-Revision-Date: 2020-11-28 18:44+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Русский\n"
 
@@ -5406,9 +5406,8 @@ msgid "Unable to locate the '%s' engine data file"
 msgstr "Не удалось найти файл движка '%s'"
 
 #: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
-#, fuzzy
 msgid "PS2 version is not yet supported"
-msgstr "Эта игра не поддерживается."
+msgstr "Версия для PS2 ещё не поддерживается"
 
 #: engines/myst3/detection.cpp:182
 msgid "Widescreen mod"
@@ -6572,11 +6571,11 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:429
 msgid "HE v71+ support is not compiled in"
-msgstr ""
+msgstr "Поддержка для версии HE v71+ не скомпилирована"
 
 #: engines/scumm/metaengine.cpp:453
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr ""
+msgstr "Поддержка для версии SCUMM v7-8 не скомпилирована"
 
 #: engines/scumm/scumm.cpp:1918
 #, c-format
@@ -6906,9 +6905,8 @@ msgstr ""
 "распакуйте его"
 
 #: engines/tinsel/detection_tables.h:466
-#, fuzzy
 msgid "Saturn CD version is not yet supported"
-msgstr "Эта игра не поддерживается."
+msgstr "Версия для Saturn CD ещё не поддерживается"
 
 #: engines/tony/tony.cpp:257
 #, c-format
@@ -6941,9 +6939,8 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Не удалось найти файл движка '%s'."
 
 #: engines/tsage/detection_tables.h:151
-#, fuzzy
 msgid "Spanish CD version is not yet supported"
-msgstr "Эта игра не поддерживается."
+msgstr "Spanish CD версия ещё не поддерживается"
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
