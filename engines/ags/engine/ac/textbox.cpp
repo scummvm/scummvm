@@ -21,15 +21,15 @@
  */
 
 //include <string.h>
-#include "ags/shared/ac/textbox.h"
+#include "ags/engine/ac/textbox.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/string.h"
+#include "ags/engine/ac/string.h"
 
 #include "ags/shared/debugging/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
 
 namespace AGS3 {
 

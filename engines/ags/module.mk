@@ -212,6 +212,17 @@ MODULE_OBJS = \
     engine/ac/speech.o \
     engine/ac/sprite.o \
     engine/ac/spritecache_engine.o \
+	engine/ac/string.o \
+	engine/ac/sys_events.o \
+	engine/ac/system.o \
+	engine/ac/textbox.o \
+	engine/ac/timer.o \
+	engine/ac/translation.o \
+	engine/ac/tree_map.o \
+	engine/ac/viewframe.o \
+	engine/ac/viewport_script.o \
+	engine/ac/walkablearea.o \
+	engine/ac/walkbehind.o \
 	engine/debugging/consoleoutputtarget.o \
 	engine/debugging/debug.o \
 	engine/debugging/filebasedagsdebugger.o \

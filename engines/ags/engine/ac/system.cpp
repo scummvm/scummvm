@@ -21,30 +21,30 @@
  */
 
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/draw.h"
-#include "ags/shared/ac/gamesetup.h"
+#include "ags/engine/ac/draw.h"
+#include "ags/engine/ac/gamesetup.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/ac/mouse.h"
-#include "ags/shared/ac/string.h"
-#include "ags/shared/ac/system.h"
-#include "ags/shared/ac/dynobj/scriptsystem.h"
-#include "ags/shared/debugging/debug_log.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/ac/mouse.h"
+#include "ags/engine/ac/string.h"
+#include "ags/engine/ac/system.h"
+#include "ags/engine/ac/dynobj/scriptsystem.h"
+#include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/shared/main/engine.h"
-#include "ags/shared/main/main.h"
-#include "ags/shared/gfx/graphicsdriver.h"
-#include "ags/shared/ac/dynobj/cc_audiochannel.h"
-#include "ags/shared/main/graphics_mode.h"
-#include "ags/shared/ac/global_debug.h"
-#include "ags/shared/ac/global_translation.h"
-#include "ags/shared/media/audio/audio_system.h"
+#include "ags/engine/main/engine.h"
+#include "ags/engine/main/main.h"
+#include "ags/engine/gfx/graphicsdriver.h"
+#include "ags/engine/ac/dynobj/cc_audiochannel.h"
+#include "ags/engine/main/graphics_mode.h"
+#include "ags/engine/ac/global_debug.h"
+#include "ags/engine/ac/global_translation.h"
+#include "ags/engine/media/audio/audio_system.h"
 #include "ags/shared/util/string_compat.h"
 
 #include "ags/shared/debugging/out.h"
-#include "ags/shared/script/script_api.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/dynobj/scriptstring.h"
+#include "ags/engine/script/script_api.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/dynobj/scriptstring.h"
 
 namespace AGS3 {
 
@@ -130,12 +130,7 @@ int System_GetScrollLock() {
 }
 
 void System_SetNumLock(int newValue) {
-	// doesn't work ... maybe allegro doesn't implement this on windows
-	int ledState = key_shifts & (KB_SCROLOCK_FLAG | KB_CAPSLOCK_FLAG);
-	if (newValue) {
-		ledState |= KB_NUMLOCK_FLAG;
-	}
-	set_leds(ledState);
+	// No implementation
 }
 
 int System_GetVsync() {
