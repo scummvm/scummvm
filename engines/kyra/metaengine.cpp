@@ -30,6 +30,7 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
@@ -108,11 +109,14 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	case Kyra::GI_KYRA3:
 		*engine = new Kyra::KyraEngine_MR(syst, flags);
 		break;
-#ifdef ENABLE_LOL
 	case Kyra::GI_LOL:
+#ifdef ENABLE_LOL
 		*engine = new Kyra::LoLEngine(syst, flags);
-		break;
+#else
+		Engine::errorUnsupportedGame(_("Lands of Lore support is not compiled in"));
+		res = false;
 #endif // ENABLE_LOL
+		break;
 #ifdef ENABLE_EOB
 	case Kyra::GI_EOB1:
 		*engine = new Kyra::EoBEngine(syst, flags);
@@ -120,9 +124,18 @@ bool KyraMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	case Kyra::GI_EOB2:
 		 if (Common::parseRenderMode(ConfMan.get("render_mode")) == Common::kRenderEGA)
 			 flags.useHiRes = true;
-		 if (platform == Common::kPlatformFMTowns && !flags.useHiColorMode)
-			 error("EOB II FM-TOWNS requires support of 16bit color modes which has not been activated in your ScummVM build (The 'USE_RGB_COLOR' define has not been set).");
+		 if (platform == Common::kPlatformFMTowns && !flags.useHiColorMode) {
+			 Engine::errorUnsupportedGame(_("EOB II FM-TOWNS requires support of 16bit color modes which has not been activated in your ScummVM build"));
+			 res = false;
+			 break;
+		 }
 		*engine = new Kyra::DarkMoonEngine(syst, flags);
+		break;
+#else
+	case Kyra::GI_EOB1:
+	case Kyra::GI_EOB2:
+		Engine::errorUnsupportedGame(_("Eye of Beholder support is not compiled in"));
+		res = false;
 		break;
 #endif // ENABLE_EOB
 	default:
