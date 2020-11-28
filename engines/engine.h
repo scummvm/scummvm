@@ -432,9 +432,9 @@ public:
 	 * Display an error message to the user that the game is not supported.
 	 *
 	 * @param extraMsg    This will be appended to the default message.
-	 *						
+	 *
 	 */
-	static void errorUnsupportedGame(Common::String &extraMsg);
+	static void errorUnsupportedGame(Common::String extraMsg);
 
 	/**
 	 * Get the total play time.
