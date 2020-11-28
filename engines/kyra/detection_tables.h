@@ -1748,13 +1748,9 @@ const PlainGameDescriptor gameList[] = {
 	{ "kyra1", "The Legend of Kyrandia" },
 	{ "kyra2", "The Legend of Kyrandia: The Hand of Fate" },
 	{ "kyra3", "The Legend of Kyrandia: Malcolm's Revenge" },
-#ifdef ENABLE_LOL
 	{ "lol", "Lands of Lore: The Throne of Chaos" },
-#endif // ENABLE_LOL
-#ifdef ENABLE_EOB
 	{ "eob", "Eye of the Beholder" },
 	{ "eob2", "Eye of the Beholder II: The Legend of Darkmoon" },
-#endif // ENABLE_EOB
 	{ 0, 0 }
 };
 
