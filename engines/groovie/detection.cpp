@@ -125,7 +125,6 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT7G, 0
 	},
 
-#ifdef ENABLE_GROOVIE2
 	// The 11th Hour DOS English
 	{
 		{
@@ -285,7 +284,6 @@ static const GroovieGameDescription gameDescriptions[] = {
 		},
 		kGroovieV2, 1
 	},
-#endif
 
 	{AD_TABLE_END_MARKER, kGroovieT7G, 0}
 };
