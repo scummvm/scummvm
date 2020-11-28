@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/lib/aldumb.h"
+#include "ags/lib/audio/aldumb.h"
 #include "ags/engine/ac/asset_helper.h"
 #include "ags/shared/ac/audiocliptype.h"
 #include "ags/engine/ac/file.h"

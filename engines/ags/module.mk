@@ -19,7 +19,7 @@ MODULE_OBJS = \
 	lib/allegro/mouse.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
-	lib/audio/audio.o \
+	lib/audio/aldumb.o \
 	lib/audio/digi.o \
 	lib/audio/midi.o \
 	lib/audio/mp3.o \

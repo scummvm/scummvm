@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_MEDIA_AUDIO_CLIP_MYDUMBMOD_H
 #define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYDUMBMOD_H
 
-#include "ags/lib/aldumb.h"
+#include "ags/lib/audio/aldumb.h"
 #include "ags/engine/media/audio/soundclip.h"
 
 namespace AGS3 {
