@@ -1129,24 +1129,14 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 				} while (--counter > 0);
 			}
 
-			int16 ax = vertices[0].y;
-			int16 bx = vertices[1].x;
-
-			ax -= vertices[2].y;
-			bx -= vertices[0].x;
-
+			const int16 bx = vertices[1].x - vertices[0].x;
+			int16 ax = vertices[0].y - vertices[2].y;
 			ax *= bx;
 
-			int32 bestDepth2 = ax;
-
-			ax = vertices[0].x;
-			int16 cx = vertices[1].y;
-
-			ax -= vertices[2].x;
-			cx -= vertices[0].y;
-
-			ax *= cx;
-			ax -= bestDepth2;
+			const int16 cx = vertices[1].y - vertices[0].y;
+			int16 dx = vertices[0].x - vertices[2].x;
+			dx *= cx;
+			dx -= ax;
 
 			numOfPrimitives++;
 
