@@ -29,10 +29,6 @@ namespace AGS3 {
 
 typedef int64 file_off_t;
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 int  ags_fseek(Common::Stream *stream, file_off_t offset, int whence);
 file_off_t ags_ftell(Common::Stream *stream);
 
@@ -40,10 +36,6 @@ int ags_file_exists(const char *path);
 int ags_directory_exists(const char *path);
 int ags_path_exists(const char *path);
 file_off_t ags_file_size(const char *path);
-
-#ifdef __cplusplus
-}
-#endif
 
 } // namespace AGS3
 
