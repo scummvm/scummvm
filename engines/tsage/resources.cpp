@@ -148,14 +148,69 @@ TLib::TLib(MemoryManager &memManager, const Common::String &filename) :
 		}
 	}
 
-	if (!_file.open(filename))
-		error("Missing file %s", filename.c_str());
+	if (g_vm->getFeatures() & GF_UNINSTALLED && g_vm->getGameID() == GType_BlueForce &&
+			(filename.equals("BLUE.RLB") || filename.equals("FILES.RLB"))) {
+
+		// Let's recostruct the files from the parts. File headers are just skipped
+		byte *data;
+		uint32 size;
+
+		Common::File f;
+		if (!f.open(filename))
+			error("Missing file %s", filename.c_str());
+
+		size = f.size() - 18; // First file header
+		data = (byte *)malloc(size);
+		f.skip(18);
+		f.read(data, size);
+
+		f.close();
+
+		if (filename.equals("BLUE.RLB")) {
+			for (int i = 2; i < 9; i++) {
+				Common::String partname = Common::String::format("BLUE.#0%d", i);
+
+				if (!f.open(partname))
+					error("Missing file %s", partname.c_str());
+
+				uint32 partsize = f.size() - 4;	// Further headers
+				byte *newdata = (byte *)realloc(data, size + partsize);
+
+				if (!newdata)
+					error("Cannot realloc %d bytes", size + partsize);
+
+				data = newdata;
+
+				f.skip(4);
+				f.read(data + size, partsize);
+				size += partsize;
+
+				f.close();
+			}
+		}
+
+		warning("File %s: resulting size is %d bytes", filename.c_str(), size);
+
+		Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
+
+		_file = stream;
+
+	} else {
+		Common::File *f = new Common::File;
+
+		if (!f->open(filename))
+			error("Missing file %s", filename.c_str());
+
+		_file = f;
+	}
 
 	loadIndex();
 }
 
 TLib::~TLib() {
 	_resStrings.clear();
+
+	delete _file;
 }
 
 /**
@@ -163,7 +218,7 @@ TLib::~TLib() {
  */
 void TLib::loadSection(uint32 fileOffset) {
 	_resources.clear();
-	_file.seek(fileOffset);
+	_file->seek(fileOffset);
 	_sections.fileOffset = fileOffset;
 
 	ResourceManager::loadSection(_file, _resources);
@@ -196,8 +251,8 @@ byte *TLib::getResource(uint16 id, bool suppressErrors) {
 	if (!re->isCompressed) {
 		// Read in the resource data and return it
 		byte *dataP = _memoryManager.allocate2(re->size);
-		_file.seek(_sections.fileOffset + re->fileOffset);
-		_file.read(dataP, re->size);
+		_file->seek(_sections.fileOffset + re->fileOffset);
+		_file->read(dataP, re->size);
 
 		return dataP;
 	}
@@ -206,8 +261,8 @@ byte *TLib::getResource(uint16 id, bool suppressErrors) {
 	 * Decompress the data block
 	 */
 
-	_file.seek(_sections.fileOffset + re->fileOffset);
-	Common::ReadStream *compStream = _file.readStream(re->size);
+	_file->seek(_sections.fileOffset + re->fileOffset);
+	Common::ReadStream *compStream = _file->readStream(re->size);
 	BitReader bitReader(*compStream);
 
 	byte *dataOut = _memoryManager.allocate2(re->uncompressedSize);
@@ -541,7 +596,7 @@ bool ResourceManager::scanIndex(Common::File &f, ResourceType resType, int rlbNu
 									  ResourceEntry &resEntry) {
 	// Load the root section index
 	ResourceList resList;
-	loadSection(f, resList);
+	loadSection(&f, resList);
 
 	// Loop through the index for the desired entry
 	ResourceList::iterator iter;
@@ -562,21 +617,21 @@ bool ResourceManager::scanIndex(Common::File &f, ResourceType resType, int rlbNu
 /**
  * Inner logic for decoding a section index into a passed resource list object
  */
-void ResourceManager::loadSection(Common::File &f, ResourceList &resources) {
-	if (f.readUint32BE() != 0x544D492D)
+void ResourceManager::loadSection(Common::SeekableReadStream *f, ResourceList &resources) {
+	if (f->readUint32BE() != 0x544D492D)
 		error("Data block is not valid Rlb data");
 
-	/*uint8 unknown1 = */f.readByte();
-	uint16 numEntries = f.readByte();
+	/*uint8 unknown1 = */f->readByte();
+	uint16 numEntries = f->readByte();
 
 	for (uint i = 0; i < numEntries; ++i) {
-		uint16 id = f.readUint16LE();
-		uint16 size = f.readUint16LE();
-		uint16 uncSize = f.readUint16LE();
-		uint8 sizeHi = f.readByte();
-		uint8 type = f.readByte() >> 5;
+		uint16 id = f->readUint16LE();
+		uint16 size = f->readUint16LE();
+		uint16 uncSize = f->readUint16LE();
+		uint8 sizeHi = f->readByte();
+		uint8 type = f->readByte() >> 5;
 		assert(type <= 1);
-		uint32 offset = f.readUint32LE();
+		uint32 offset = f->readUint32LE();
 
 		ResourceEntry re;
 		re.id = id;
