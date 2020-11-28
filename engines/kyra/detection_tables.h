@@ -1029,7 +1029,8 @@ const KYRAGameDescription adGameDescs[] = {
 			{
 				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
 				{ "ALBUM.TRG", 0, "5e40de0c74cc2321928a15019252d468", -1 },
-				{ "AUD.PAK", 0, 0, -1 }
+				{ "AUD.PAK", 0, 0, -1 },
+				AD_LISTEND
 			},
 			Common::RU_RUS,
 			Common::kPlatformDOS,
