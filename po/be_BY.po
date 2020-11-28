@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 18:06+0000\n"
+"POT-Creation-Date: 2020-11-28 18:11+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -5877,19 +5877,19 @@ msgstr ""
 "Тады вам можа спатрэбіцца ўжыць арыгінальны патч Sierra.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:142
+#: engines/scumm/detection.cpp:158
 msgid "Show Object Line"
 msgstr "Паказваць радок аб'ектаў"
 
-#: engines/scumm/detection.cpp:143
+#: engines/scumm/detection.cpp:159
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Паказваць назвы аб'ектаў унізе экрана"
 
-#: engines/scumm/detection.cpp:149
+#: engines/scumm/detection.cpp:165
 msgid "Use NES Classic Palette"
 msgstr "Выкарыстоўваць класічную палітру NES"
 
-#: engines/scumm/detection.cpp:150
+#: engines/scumm/detection.cpp:166
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "Выкарыстоўваць нейтральнейшую палітру, вельмі блізкую да NES Classic"
 
