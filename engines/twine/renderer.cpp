@@ -1022,11 +1022,6 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 color) {
 }
 
 int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTabEntry **renderTabEntryPtr) {
-	int32 bestPoly = 0;
-	//	int32 ecx;
-
-	// prepare polygons
-
 	// TODO: proper size
 	Common::MemoryReadStream stream(ptr, 100000);
 	int16 numPolygons = stream.readSint16LE();
@@ -1044,7 +1039,6 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			currentPolyHeader.renderType = stream.readByte();
 			currentPolyHeader.numOfVertex = stream.readByte();
 			currentPolyHeader.colorIndex = stream.readSint16LE();
-			//ecx = *((int32*) pointer);
 			int16 polyRenderType = currentPolyHeader.renderType;
 			int32 bestDepth = -32000;
 
@@ -1247,6 +1241,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 	const renderTabEntry *renderTabEntryPtr2 = renderTab;
 
 	renderTabEntry *renderTabSortedPtr = renderTabSorted;
+	int32 bestPoly = 0;
 	for (int32 i = 0; i < numOfPrimitives; i++) { // then we sort the polygones | WARNING: very slow | TODO: improve this
 		renderTabEntryPtr2 = renderTab;
 		int16 bestZ = -0x7FFF;
