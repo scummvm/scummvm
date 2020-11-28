@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 17:59+0000\n"
+"POT-Creation-Date: 2020-11-28 18:06+0000\n"
 "PO-Revision-Date: 2020-11-28 16:52+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -5897,19 +5897,19 @@ msgstr ""
 "Sierra.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:158
+#: engines/scumm/detection.cpp:142
 msgid "Show Object Line"
 msgstr "Показувати лінії об'єктів"
 
-#: engines/scumm/detection.cpp:159
+#: engines/scumm/detection.cpp:143
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Показувати назви об'єктів внизу екрану"
 
-#: engines/scumm/detection.cpp:165
+#: engines/scumm/detection.cpp:149
 msgid "Use NES Classic Palette"
 msgstr "Використовувати класичну палітру NES"
 
-#: engines/scumm/detection.cpp:166
+#: engines/scumm/detection.cpp:150
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "Використовувати більш нейтральну палітру, яка подібна до NES Classic"
 
@@ -6562,6 +6562,14 @@ msgid ""
 msgstr ""
 "Російська версія \"Пижама Сэм 2\" не підтримуюється через неповний "
 "програмний код."
+
+#: engines/scumm/metaengine.cpp:429
+msgid "HE v71+ support is not compiled in"
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:453
+msgid "SCUMM v7-8 support is not compiled in"
+msgstr ""
 
 #: engines/scumm/scumm.cpp:1918
 #, c-format

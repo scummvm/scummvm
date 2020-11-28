@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 17:59+0000\n"
+"POT-Creation-Date: 2020-11-28 18:06+0000\n"
 "PO-Revision-Date: 2020-11-23 12:19+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -5808,20 +5808,20 @@ msgstr ""
 "במקרה כזה יתכן שתצטרך להחיל את תיקון הסיירה המקורי.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:158
+#: engines/scumm/detection.cpp:142
 msgid "Show Object Line"
 msgstr "הצג קו אובייקט"
 
-#: engines/scumm/detection.cpp:159
+#: engines/scumm/detection.cpp:143
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "הצגת שמות של אובייקטים בתחתית המסך"
 
-#: engines/scumm/detection.cpp:165
+#: engines/scumm/detection.cpp:149
 #, fuzzy
 msgid "Use NES Classic Palette"
 msgstr "השתמש בפלטה חלופית"
 
-#: engines/scumm/detection.cpp:166
+#: engines/scumm/detection.cpp:150
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 
@@ -6472,6 +6472,14 @@ msgstr ""
 msgid ""
 "The Russian version of Pajama Sam 2 is not supported yet due to incomplete "
 "code."
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:429
+msgid "HE v71+ support is not compiled in"
+msgstr ""
+
+#: engines/scumm/metaengine.cpp:453
+msgid "SCUMM v7-8 support is not compiled in"
 msgstr ""
 
 #: engines/scumm/scumm.cpp:1918
