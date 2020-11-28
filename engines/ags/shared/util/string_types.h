@@ -23,8 +23,8 @@
 #ifndef AGS_SHARED_UTIL_STRINGTYPES_H
 #define AGS_SHARED_UTIL_STRINGTYPES_H
 
-#include "ags/std/map.h"
-#include "ags/std/vector.h"
+#include "ags/lib/std/map.h"
+#include "ags/lib/std/vector.h"
 #include "ags/shared/util/string.h"
 #include "common/hash-str.h"
 

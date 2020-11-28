@@ -35,7 +35,7 @@
 #error This file should only be included on the Windows build
 #endif
 
-#include "ags/std/memory.h"
+#include "ags/lib/std/memory.h"
 #include "ags/lib/allegro.h"
 //include <winalleg.h>
 //include <d3d9.h>

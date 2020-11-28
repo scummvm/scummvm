@@ -20,50 +20,37 @@
  *
  */
 
-#ifndef AGS_STD_MAP_H
-#define AGS_STD_MAP_H
+#ifndef AGS_STD_QUEUE_H
+#define AGS_STD_QUEUE_H
 
-#include "common/hashmap.h"
-#include "ags/std/utility.h"
+#include "ags/lib/std/algorithm.h"
+#include "ags/lib/std/vector.h"
+#include "common/queue.h"
 
 namespace AGS3 {
 namespace std {
 
-template<class Key, class Val, class HashFunc = Common::Hash<Key>,
-         class EqualFunc = Common::EqualTo<Key> >
-class map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
+template<class T>
+using queue = Common::Queue<T>;
+
+template<class T, class Container = vector<T>, class Comparitor = typename Common::Less<T> >
+class priority_queue {
+private:
+	Container _container;
+	Comparitor _comparitor;
 public:
-	using iterator = typename Common::HashMap<Key, Val, HashFunc, EqualFunc>::iterator;
+	priority_queue();
 
-	pair<Key, Val> insert(pair<Key, Val> elem) {
-		this->operator[](elem.first) = elem.second;
-		return elem;
+	bool empty() const { return _container.empty(); }
+
+	const T &top() const { return _container.front(); }
+
+	void push(const T &item) {
+		_container.push_back(item);
+		Common::sort(_container.begin(), _container.end(), _comparitor);
 	}
 
-	// FUNCTION TEMPLATE lower_bound
-	iterator lower_bound(Key &val) {
-		iterator it;
-		for (it = this->begin(); it != this->end(); ++it) {
-			if (it->_key >= val)
-				break;
-		}
-
-		return it;
-	}
-};
-
-template<class Key, class Val, class HashFunc = Common::Hash<Key>,
-         class EqualFunc = Common::EqualTo<Key> >
-class unordered_map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
-public:
-	pair<Key, Val> insert(pair<Key, Val> elem) {
-		this->operator[](elem.first) = elem.second;
-		return elem;
-	}
-
-	void reserve(size_t size) {
-		// No implementation
-	}
+	void pop() { _container.remove_at(0); }
 };
 
 } // namespace std

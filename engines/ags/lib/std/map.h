@@ -20,46 +20,50 @@
  *
  */
 
-#ifndef AGS_STD_THREAD_H
-#define AGS_STD_THREAD_H
+#ifndef AGS_STD_MAP_H
+#define AGS_STD_MAP_H
 
-#include "ags/std/chrono.h"
-#include "common/textconsole.h"
+#include "common/hashmap.h"
+#include "ags/lib/std/utility.h"
 
 namespace AGS3 {
 namespace std {
 
-class thread {
+template<class Key, class Val, class HashFunc = Common::Hash<Key>,
+         class EqualFunc = Common::EqualTo<Key> >
+class map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
 public:
-	template <class _Fn, class... _Args>
-	explicit thread(_Fn &&_Fx, _Args &&... _Ax) {
-		warning("TODO: thread::constructor");
+	using iterator = typename Common::HashMap<Key, Val, HashFunc, EqualFunc>::iterator;
+
+	pair<Key, Val> insert(pair<Key, Val> elem) {
+		this->operator[](elem.first) = elem.second;
+		return elem;
 	}
 
-	thread() {
-		warning("TODO: thread::constructor");
-	}
+	// FUNCTION TEMPLATE lower_bound
+	iterator lower_bound(Key &val) {
+		iterator it;
+		for (it = this->begin(); it != this->end(); ++it) {
+			if (it->_key >= val)
+				break;
+		}
 
-	void join() {
-		warning("TODO: thread::join");
-	}
-	bool joinable() const {
-		warning("TODO: thread::joinable");
-		return true;
+		return it;
 	}
 };
 
-class this_thread {
+template<class Key, class Val, class HashFunc = Common::Hash<Key>,
+         class EqualFunc = Common::EqualTo<Key> >
+class unordered_map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
 public:
-	static void yield() {
-		warning("TODO: this_thread::yield");
+	pair<Key, Val> insert(pair<Key, Val> elem) {
+		this->operator[](elem.first) = elem.second;
+		return elem;
 	}
 
-	static void sleep_for(uint32 milli) {
-		g_system->delayMillis(milli);
+	void reserve(size_t size) {
+		// No implementation
 	}
-//	template <class Rep, class Period>
-//	static void sleep_for(const chrono::duration<Rep, Period> &rel_time);
 };
 
 } // namespace std

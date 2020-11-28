@@ -31,7 +31,7 @@
 #ifndef AGS_ENGINE_DEBUGGING_MESSAGEBUFFER_H
 #define AGS_ENGINE_DEBUGGING_MESSAGEBUFFER_H
 
-#include "ags/std/vector.h"
+#include "ags/lib/std/vector.h"
 #include "ags/shared/debugging/outputhandler.h"
 
 namespace AGS3 {

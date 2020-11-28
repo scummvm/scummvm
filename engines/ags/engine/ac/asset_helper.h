@@ -29,8 +29,8 @@
 #ifndef AGS_ENGINE_AC_ASSETHELPER_H
 #define AGS_ENGINE_AC_ASSETHELPER_H
 
-#include "ags/std/memory.h"
-#include "ags/std/utility.h"
+#include "ags/lib/std/memory.h"
+#include "ags/lib/std/utility.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {

@@ -20,39 +20,49 @@
  *
  */
 
-//=============================================================================
-//
-// PluginInfo - a struct defining general information on game plugin.
-//
-//=============================================================================
+#ifndef AGS_STD_THREAD_H
+#define AGS_STD_THREAD_H
 
-#ifndef AGS_SHARED_GAME_PLUGININFO_H
-#define AGS_SHARED_GAME_PLUGININFO_H
-
-#include "ags/lib/std/memory.h"
-#include "ags/shared/util/string.h"
+#include "ags/lib/std/chrono.h"
+#include "common/textconsole.h"
 
 namespace AGS3 {
+namespace std {
 
-// TODO: why 10 MB limit?
-#define PLUGIN_SAVEBUFFERSIZE 10247680
+class thread {
+public:
+	template <class _Fn, class... _Args>
+	explicit thread(_Fn &&_Fx, _Args &&... _Ax) {
+		warning("TODO: thread::constructor");
+	}
 
-namespace AGS {
-namespace Shared {
+	thread() {
+		warning("TODO: thread::constructor");
+	}
 
-struct PluginInfo {
-	// (File)name of plugin
-	String      Name;
-	// Custom data for plugin
-	std::shared_ptr<char> Data;
-	size_t      DataLen;
-
-	PluginInfo() : DataLen(0) {
+	void join() {
+		warning("TODO: thread::join");
+	}
+	bool joinable() const {
+		warning("TODO: thread::joinable");
+		return true;
 	}
 };
 
-} // namespace Shared
-} // namespace AGS
+class this_thread {
+public:
+	static void yield() {
+		warning("TODO: this_thread::yield");
+	}
+
+	static void sleep_for(uint32 milli) {
+		g_system->delayMillis(milli);
+	}
+//	template <class Rep, class Period>
+//	static void sleep_for(const chrono::duration<Rep, Period> &rel_time);
+};
+
+} // namespace std
 } // namespace AGS3
 
 #endif

@@ -29,10 +29,10 @@
 //include <crtdbg.h>
 //include <shlobj.h>
 //include <shlwapi.h>
-#include "ags/std/memory.h"
+#include "ags/lib/std/memory.h"
 //include <algorithm>
 //include <set>
-#include "ags/std/vector.h"
+#include "ags/lib/std/vector.h"
 #include "ags/shared/ac/gamestructdefines.h"
 #undef RGB
 #undef PALETTE

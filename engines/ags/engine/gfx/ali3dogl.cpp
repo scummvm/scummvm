@@ -24,7 +24,7 @@
 
 #if AGS_PLATFORM_OS_WINDOWS || AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_LINUX
 
-#include "ags/std/algorithm.h"
+#include "ags/lib/std/algorithm.h"
 #include "ags/engine/gfx/ali3dexception.h"
 #include "ags/engine/gfx/ali3dogl.h"
 #include "ags/engine/gfx/gfxfilter_ogl.h"

@@ -31,9 +31,9 @@
 #ifndef AGS_SHARED_GAME_MAINGAMEFILE_H
 #define AGS_SHARED_GAME_MAINGAMEFILE_H
 
-#include "ags/std/memory.h"
-#include "ags/std/set.h"
-#include "ags/std/vector.h"
+#include "ags/lib/std/memory.h"
+#include "ags/lib/std/set.h"
+#include "ags/lib/std/vector.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/game/plugininfo.h"
 #include "ags/shared/script/cc_script.h"

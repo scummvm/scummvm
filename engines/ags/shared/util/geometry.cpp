@@ -21,8 +21,8 @@
  */
 
 #include "ags/shared/util/geometry.h"
-#include "ags/std/algorithm.h"
-#include "ags/std/algorithm.h"
+#include "ags/lib/std/algorithm.h"
+#include "ags/lib/std/algorithm.h"
 //include <cmath>
 
 namespace AGS3 {

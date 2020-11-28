@@ -26,7 +26,7 @@
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/script/runtimescriptvalue.h"
 
-#include "ags/std/vector.h"
+#include "ags/lib/std/vector.h"
 
 namespace AGS3 {
 

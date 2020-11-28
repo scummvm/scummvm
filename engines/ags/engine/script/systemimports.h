@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_SCRIPT_SYSTEMIMPORTS_H
 #define AGS_ENGINE_SCRIPT_SYSTEMIMPORTS_H
 
-#include "ags/std/map.h"
+#include "ags/lib/std/map.h"
 #include "ags/engine/script/cc_instance.h"    // ccInstance
 #include "ags/shared/util/string_types.h"
 

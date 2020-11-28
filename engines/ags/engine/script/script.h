@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_SCRIPT_SCRIPT_H
 #define AGS_ENGINE_SCRIPT_SCRIPT_H
 
-#include "ags/std/vector.h"
+#include "ags/lib/std/vector.h"
 
 #include "ags/shared/game/roomstruct.h" // MAX_ROOM_OBJECTS
 #include "ags/engine/script/cc_instance.h"

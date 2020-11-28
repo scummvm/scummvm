@@ -37,7 +37,7 @@
 #include "ags/engine/ac/timer.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/opengl/opengl.h"
-#include "ags/std/algorithm.h"
+#include "ags/lib/std/algorithm.h"
 #include "ags/ags.h"
 
 namespace AGS3 {

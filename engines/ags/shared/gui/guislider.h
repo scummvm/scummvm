@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_GUI_GUISLIDER_H
 #define AGS_SHARED_GUI_GUISLIDER_H
 
-#include "ags/std/vector.h"
+#include "ags/lib/std/vector.h"
 #include "ags/shared/gui/guiobject.h"
 
 namespace AGS3 {

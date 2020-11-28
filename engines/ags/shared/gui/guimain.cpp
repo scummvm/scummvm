@@ -33,7 +33,7 @@
 #include "ags/shared/gui/guitextbox.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_utils.h"
-#include "ags/std/algorithm.h"
+#include "ags/lib/std/algorithm.h"
 
 namespace AGS3 {
 

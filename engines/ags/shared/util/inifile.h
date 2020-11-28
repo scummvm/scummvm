@@ -34,8 +34,8 @@
 #define AGS_SHARED_UTIL_INIFILE_H
 
 #include "ags/shared/util/string.h"
-#include "ags/std/utility.h"
-#include "ags/std/list.h"
+#include "ags/lib/std/utility.h"
+#include "ags/lib/std/list.h"
 
 namespace AGS3 {
 namespace AGS {

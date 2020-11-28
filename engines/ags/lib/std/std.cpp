@@ -20,23 +20,25 @@
  *
  */
 
-#ifndef AGS_STD_MATH_H
-#define AGS_STD_MATH_H
+// Dummy include of STD mockup headers so they'll appear in the Visual Studio project
 
-#include "common/hashmap.h"
-#include "ags/std/utility.h"
-
-namespace AGS3 {
-namespace std {
-
-#ifndef NAN
-#define NAN        ((float)(INFINITY * 0.0F))
-#endif
-
-template<class T>
-inline bool isnan(T val) { return val == NAN; }
-
-} // namespace std
-} // namespace AGS3
-
-#endif
+#include "ags/lib/std/algorithm.h"
+#include "ags/lib/std/array.h"
+#include "ags/lib/std/chrono.h"
+#include "ags/lib/std/functional.h"
+#include "ags/lib/std/initializer_list.h"
+#include "ags/lib/std/limits.h"
+#include "ags/lib/std/list.h"
+#include "ags/lib/std/map.h"
+#include "ags/lib/std/math.h"
+#include "ags/lib/std/memory.h"
+#include "ags/lib/std/mutex.h"
+#include "ags/lib/std/queue.h"
+#include "ags/lib/std/set.h"
+#include "ags/lib/std/thread.h"
+#include "ags/lib/std/type_traits.h"
+#include "ags/lib/std/unordered_set.h"
+#include "ags/lib/std/utility.h"
+#include "ags/lib/std/vector.h"
+#include "ags/lib/std/xtr1common.h"
+#include "ags/lib/std/xutility.h"

@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_GAME_SAVEGAMEINTERNAL_H
 #define AGS_ENGINE_GAME_SAVEGAMEINTERNAL_H
 
-#include "ags/std/memory.h"
-#include "ags/std/vector.h"
+#include "ags/lib/std/memory.h"
+#include "ags/lib/std/vector.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/media/audio/audiodefines.h"

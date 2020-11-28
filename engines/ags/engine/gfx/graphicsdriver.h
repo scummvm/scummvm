@@ -29,7 +29,7 @@
 #ifndef AGS_ENGINE_GFX_GRAPHICSDRIVER_H
 #define AGS_ENGINE_GFX_GRAPHICSDRIVER_H
 
-#include "ags/std/memory.h"
+#include "ags/lib/std/memory.h"
 #include "ags/engine/gfx/gfxdefines.h"
 #include "ags/engine/gfx/gfxmodelist.h"
 #include "ags/shared/util/geometry.h"

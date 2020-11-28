@@ -36,7 +36,7 @@
 #ifndef AGS_SHARED_GAME_CUSTOMPROPERTIES_H
 #define AGS_SHARED_GAME_CUSTOMPROPERTIES_H
 
-#include "ags/std/map.h"
+#include "ags/lib/std/map.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_types.h"
 

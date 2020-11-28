@@ -20,8 +20,8 @@
  *
  */
 
-#include "ags/std/algorithm.h"
-#include "ags/std/math.h"
+#include "ags/lib/std/algorithm.h"
+#include "ags/lib/std/math.h"
 #include "ags/lib/aastr-0.1.1/aastr.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/common.h"

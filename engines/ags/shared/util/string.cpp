@@ -24,7 +24,7 @@
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_compat.h"
-#include "ags/std/algorithm.h"
+#include "ags/lib/std/algorithm.h"
 
 namespace AGS3 {
 namespace AGS {

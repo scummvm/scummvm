@@ -52,7 +52,7 @@
 #include "ags/shared/game/interactions.h"
 #include "ags/shared/util/geometry.h"
 #include "ags/shared/util/wgt2allg.h" // color (allegro RGB)
-#include "ags/std/memory.h"
+#include "ags/lib/std/memory.h"
 
 namespace AGS3 {
 

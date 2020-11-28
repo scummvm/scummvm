@@ -29,7 +29,7 @@
 #ifndef AGS_ENGINE_GFX_GFXFILTER_H
 #define AGS_ENGINE_GFX_GFXFILTER_H
 
-#include "ags/std/memory.h"
+#include "ags/lib/std/memory.h"
 #include "ags/shared/util/geometry.h"
 #include "ags/shared/util/string.h"
 

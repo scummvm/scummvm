@@ -33,7 +33,7 @@
 #ifndef AGS_ENGINE_GFX_GFXDRIVERFACTORYBASE_H
 #define AGS_ENGINE_GFX_GFXDRIVERFACTORYBASE_H
 
-#include "ags/std/vector.h"
+#include "ags/lib/std/vector.h"
 #include "ags/engine/gfx/gfxdriverfactory.h"
 #include "ags/engine/gfx/gfxfilter.h"
 

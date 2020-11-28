@@ -27,6 +27,7 @@ MODULE_OBJS = \
 	lib/audio/sound.o \
 	lib/audio/wav.o \
 	lib/opengl/opengl.o \
+	lib/std/std.o \
 	lib/system/datetime.o \
 	shared/ac/dynobj/scriptaudioclip.o \
 	shared/ac/audiocliptype.o \

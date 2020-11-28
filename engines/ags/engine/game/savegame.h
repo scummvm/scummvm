@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_GAME_SAVEGAME_H
 #define AGS_ENGINE_GAME_SAVEGAME_H
 
-#include "ags/std/memory.h"
+#include "ags/lib/std/memory.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/util/error.h"
 #include "ags/shared/util/version.h"

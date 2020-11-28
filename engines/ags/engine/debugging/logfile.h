@@ -35,7 +35,7 @@
 #ifndef AGS_ENGINE_DEBUGGING_LOGFILE_H
 #define AGS_ENGINE_DEBUGGING_LOGFILE_H
 
-#include "ags/std/memory.h"
+#include "ags/lib/std/memory.h"
 #include "ags/shared/debugging/outputhandler.h"
 
 namespace AGS3 {

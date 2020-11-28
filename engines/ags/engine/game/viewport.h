@@ -29,8 +29,8 @@
 #ifndef AGS_ENGINE_GAME_VIEWPORT_H
 #define AGS_ENGINE_GAME_VIEWPORT_H
 
-#include "ags/std/memory.h"
-#include "ags/std/vector.h"
+#include "ags/lib/std/memory.h"
+#include "ags/lib/std/vector.h"
 #include "ags/shared/util/geometry.h"
 #include "ags/engine/util/scaling.h"
 

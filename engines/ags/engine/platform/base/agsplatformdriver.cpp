@@ -37,7 +37,7 @@
 #include "ags/engine/ac/timer.h"
 #include "ags/engine/media/audio/audio_system.h"
 #include "ags/lib/system/datetime.h"
-#include "ags/std/algorithm.h"
+#include "ags/lib/std/algorithm.h"
 
 #if defined (AGS_HAS_CD_AUDIO)
 #include "libcda.h"
