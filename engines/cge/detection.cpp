@@ -45,16 +45,16 @@ static const ADGameDescription gameDescriptions[] = {
 		Common::PL_POL, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 	},
 	{
-		"soltys", "Demo (not supported)",
+		"soltys", _s("Missing game code"),
 		AD_ENTRY2s("vol.cat", "1e077c8ff58109a187f07ac54b0c873a", 18788,
 				   "vol.dat", "75d385a6074c58b69f7730481f256051", 1796710),
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO , GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 	},
 	{
-		"soltys", "Demo (not supported)",
+		"soltys", _s("Missing game code"),
 		AD_ENTRY2s("vol.cat", "f17987487fab1ebddd781d8d02fedecc", 7168,
 				   "vol.dat", "c5d9b15863cab61dc125551576dece04", 1075272),
-		Common::PL_POL, Common::kPlatformDOS, ADGF_DEMO , GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
+		Common::PL_POL, Common::kPlatformDOS, ADGF_DEMO | ADGF_UNSUPPORTED , GUIO1(GAMEOPTION_COLOR_BLIND_DEFAULT_OFF)
 	},
 	{
 		"soltys", "Freeware v1.0",
