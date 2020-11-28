@@ -286,6 +286,7 @@ MODULE_OBJS = \
 	engine/platform/base/agsplatformdriver.o \
 	engine/platform/linux/acpllnx.o \
 	engine/plugin/agsplugin.o \
+	engine/plugin/library.o \
 	engine/plugin/pluginobjectreader.o \
 	engine/script/cc_instance.o \
 	engine/script/executingscript.o \
