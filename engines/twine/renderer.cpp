@@ -1068,12 +1068,11 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 					currentComputedVertex->shadeValue = shadeValue;
 
 					pointTab *currentVertex = &flattenPoints[currentPolyVertex.dataOffset / sizeof(pointTab)];
-					pointTab *destinationVertex = (pointTab *)(edi + 2);
 
-					destinationVertex->x = currentVertex->x;
-					destinationVertex->y = currentVertex->y;
+					currentComputedVertex->x = currentVertex->x;
+					currentComputedVertex->y = currentVertex->y;
 
-					edi += sizeof(pointTab);
+					edi += 6;
 
 					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
@@ -1085,12 +1084,9 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 				destinationHeader->renderType = currentPolyHeader.renderType - 7;
 				destinationHeader->numOfVertex = currentPolyHeader.numOfVertex;
-
-				int16 color = currentPolyHeader.colorIndex;
-
-				int16 shadeEntry = stream.readSint16LE();
-
-				*((int16 *)(edi + 2)) = color + shadeTable[shadeEntry];
+				const int16 shadeEntry = stream.readSint16LE();
+				const int16 shadeValue = currentPolyHeader.colorIndex + shadeTable[shadeEntry];
+				destinationHeader->colorIndex = shadeValue;
 
 				edi += 4;
 				afterPolyHeaderPtr = edi;
@@ -1101,12 +1097,12 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 					pointTab *currentVertex = &flattenPoints[eax / sizeof(pointTab)];
 
-					pointTab *destinationVertex = (pointTab *)(edi + 2);
+					computedVertex *currentComputedVertex = (computedVertex *)edi;
+					//currentComputedVertex->shadeValue = 0;
+					currentComputedVertex->x = currentVertex->x;
+					currentComputedVertex->y = currentVertex->y;
 
-					destinationVertex->x = currentVertex->x;
-					destinationVertex->y = currentVertex->y;
-
-					edi += sizeof(pointTab);
+					edi += 6;
 
 					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
@@ -1131,12 +1127,12 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 					pointTab *currentVertex = &flattenPoints[eax / sizeof(pointTab)];
 
-					pointTab *destinationVertex = (pointTab *)(edi + 2);
+					computedVertex *currentComputedVertex = (computedVertex *)edi;
+					//currentComputedVertex->shadeValue = 0;
+					currentComputedVertex->x = currentVertex->x;
+					currentComputedVertex->y = currentVertex->y;
 
-					destinationVertex->x = currentVertex->x;
-					destinationVertex->y = currentVertex->y;
-
-					edi += sizeof(pointTab);
+					edi += 6;
 
 					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
