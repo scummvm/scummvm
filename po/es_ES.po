@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 14:24+0000\n"
+"POT-Creation-Date: 2020-11-28 17:44+0100\n"
 "PO-Revision-Date: 2020-11-27 14:05+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
@@ -4152,16 +4152,16 @@ msgid ""
 msgstr "El fantraductor desea que su traducción no sea incorporada en ScummVM."
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
+#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
 #, fuzzy
-#| msgid "Main game controls:"
 msgid "Missing game code"
 msgstr "Controles básicos:"
 
-#: engines/cge/detection.cpp:99
+#: engines/cge/detection.cpp:99 engines/cge2/detection.cpp:91
 msgid "Color Blind Mode"
 msgstr "Modo para daltónicos"
 
-#: engines/cge/detection.cpp:100
+#: engines/cge/detection.cpp:100 engines/cge2/detection.cpp:92
 msgid "Enable Color Blind Mode by default"
 msgstr "Activar el modo para daltónicos por defecto"
 
@@ -5196,6 +5196,11 @@ msgstr ""
 "Utiliza un narrador TTS para leer las descripciones (si el conversor texto-"
 "voz está disponible)"
 
+#: engines/made/detection_tables.h:360
+#, fuzzy
+msgid "The game is using unsupported engine"
+msgstr "Este juego no es compatible."
+
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
 msgstr "Interfaz de ratón sencilla"
@@ -5435,6 +5440,11 @@ msgstr ""
 #, c-format
 msgid "Unable to locate the '%s' engine data file"
 msgstr "No se puede localizar el archivo de datos del motor '%s'"
+
+#: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
+#, fuzzy
+msgid "PS2 version is not yet supported"
+msgstr "Este juego no es compatible."
 
 #: engines/myst3/detection.cpp:182
 msgid "Widescreen mod"
@@ -6734,19 +6744,19 @@ msgstr "Modo rápido"
 msgid "Toggle really fast mode"
 msgstr "Modo muy rápido"
 
-#: engines/stark/detection.cpp:368
+#: engines/stark/detection.cpp:322
 msgid "Load modded assets"
 msgstr "Cargar archivos modificados"
 
-#: engines/stark/detection.cpp:369
+#: engines/stark/detection.cpp:323
 msgid "Enable loading of external replacement assets."
 msgstr "Permite cargar archivos externos como sustitutos."
 
-#: engines/stark/detection.cpp:377
+#: engines/stark/detection.cpp:331
 msgid "Enable linear filtering of the backgrounds images"
 msgstr "Filtrado lineal de los fondos"
 
-#: engines/stark/detection.cpp:378
+#: engines/stark/detection.cpp:332
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
@@ -6754,11 +6764,11 @@ msgstr ""
 "Al aplicar un filtro lineal, los gráficos de los fondos se mostrarán más "
 "suaves a pantalla completa, pero se perderán algunos detalles."
 
-#: engines/stark/detection.cpp:386
+#: engines/stark/detection.cpp:340
 msgid "Enable font anti-aliasing"
 msgstr "Suavizar bordes de fuentes"
 
-#: engines/stark/detection.cpp:387
+#: engines/stark/detection.cpp:341
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr "Al activar esta opción, los textos se mostrarán más suavizados."
 
@@ -6967,6 +6977,11 @@ msgstr "No se pudo cargar rápidamente la partida %d"
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "No se puede localizar el archivo de datos «%s»."
+
+#: engines/tsage/detection_tables.h:151
+#, fuzzy
+msgid "Spanish CD version is not yet supported"
+msgstr "Este juego no es compatible."
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 14:24+0000\n"
+"POT-Creation-Date: 2020-11-28 17:44+0100\n"
 "PO-Revision-Date: 2020-11-23 12:19+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -2163,7 +2163,6 @@ msgstr "לא ניתן להחיל את הגדרת הסינון."
 
 #: engines/engine.cpp:420
 #, fuzzy
-#| msgid "No error"
 msgid "Error"
 msgstr "אין שגיאה"
 
@@ -4104,16 +4103,16 @@ msgid ""
 msgstr ""
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
+#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
 #, fuzzy
-#| msgid "Main game controls:"
 msgid "Missing game code"
 msgstr "בקרות משחק עיקריות:"
 
-#: engines/cge/detection.cpp:99
+#: engines/cge/detection.cpp:99 engines/cge2/detection.cpp:91
 msgid "Color Blind Mode"
 msgstr "מצב עיוור צבע"
 
-#: engines/cge/detection.cpp:100
+#: engines/cge/detection.cpp:100 engines/cge2/detection.cpp:92
 msgid "Enable Color Blind Mode by default"
 msgstr "אפשר מצב עיוור צבע כברירת מחדל"
 
@@ -5098,6 +5097,11 @@ msgstr ""
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
+#: engines/made/detection_tables.h:360
+#, fuzzy
+msgid "The game is using unsupported engine"
+msgstr "מזהה המשחק אינו נתמך."
+
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
 msgstr "ממשק עכבר קל"
@@ -5341,6 +5345,11 @@ msgstr ""
 #, fuzzy, c-format
 msgid "Unable to locate the '%s' engine data file"
 msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'."
+
+#: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
+#, fuzzy
+msgid "PS2 version is not yet supported"
+msgstr "מזהה המשחק אינו נתמך."
 
 #: engines/myst3/detection.cpp:182
 #, fuzzy
@@ -6595,31 +6604,31 @@ msgstr "מצב מהיר"
 msgid "Toggle really fast mode"
 msgstr "הפעל במצב מהיר ממש (*)"
 
-#: engines/stark/detection.cpp:368
+#: engines/stark/detection.cpp:322
 #, fuzzy
 msgid "Load modded assets"
 msgstr "טוען משחק"
 
-#: engines/stark/detection.cpp:369
+#: engines/stark/detection.cpp:323
 msgid "Enable loading of external replacement assets."
 msgstr ""
 
-#: engines/stark/detection.cpp:377
+#: engines/stark/detection.cpp:331
 msgid "Enable linear filtering of the backgrounds images"
 msgstr ""
 
-#: engines/stark/detection.cpp:378
+#: engines/stark/detection.cpp:332
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
 
-#: engines/stark/detection.cpp:386
+#: engines/stark/detection.cpp:340
 #, fuzzy
 msgid "Enable font anti-aliasing"
 msgstr "אפשר צנזורה של תוכן"
 
-#: engines/stark/detection.cpp:387
+#: engines/stark/detection.cpp:341
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 
@@ -6802,6 +6811,11 @@ msgstr "לא ניתן היה לטעון במהירות את המשחק השמו�
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'."
+
+#: engines/tsage/detection_tables.h:151
+#, fuzzy
+msgid "Spanish CD version is not yet supported"
+msgstr "מזהה המשחק אינו נתמך."
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
