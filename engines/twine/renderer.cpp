@@ -1026,7 +1026,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 	Common::MemoryReadStream stream(ptr, 100000);
 	int16 numPolygons = stream.readSint16LE();
 
-	uint8 *edi = renderTab7;           // renderTab7 coordinates buffer
+	uint8 *renderBufferPtr = renderCoordinatesBuffer;
 
 	uint8 *afterPolyHeaderPtr = nullptr; // RECHECK THIS
 
@@ -1034,27 +1034,24 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 		int16 primitiveCounter = numPolygons; // the number of primitives = the number of polygons
 
 		do { // loop that load all the polygons
-			uint8 *render23 = edi;
 			polyHeader currentPolyHeader;
 			currentPolyHeader.renderType = stream.readByte();
 			currentPolyHeader.numOfVertex = stream.readByte();
 			currentPolyHeader.colorIndex = stream.readSint16LE();
-			int16 polyRenderType = currentPolyHeader.renderType;
 			int32 bestDepth = -32000;
+			polyHeader *destinationHeader = (polyHeader *)renderBufferPtr;
 
 			// TODO: RECHECK coordinates axis
-			if (polyRenderType >= 9) {
-				polyHeader *destinationHeader = (polyHeader *)edi;
-
+			if (currentPolyHeader.renderType >= 9) {
 				destinationHeader->renderType = currentPolyHeader.renderType - 2;
 				destinationHeader->numOfVertex = currentPolyHeader.numOfVertex;
 				destinationHeader->colorIndex = currentPolyHeader.colorIndex;
 
-				edi += 4;
+				renderBufferPtr += 4;
 
 				int16 counter = destinationHeader->numOfVertex;
 
-				afterPolyHeaderPtr = edi;
+				afterPolyHeaderPtr = renderBufferPtr;
 
 				do {
 					polyVertexHeader currentPolyVertex;
@@ -1063,7 +1060,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 					int16 shadeValue = currentPolyHeader.colorIndex + shadeTable[currentPolyVertex.shadeEntry];
 
-					computedVertex *currentComputedVertex = (computedVertex *)edi;
+					computedVertex *currentComputedVertex = (computedVertex *)renderBufferPtr;
 
 					currentComputedVertex->shadeValue = shadeValue;
 
@@ -1072,24 +1069,22 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 					currentComputedVertex->x = currentVertex->x;
 					currentComputedVertex->y = currentVertex->y;
 
-					edi += 6;
+					renderBufferPtr += 6;
 
 					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
 				} while (--counter > 0);
-			} else if (polyRenderType >= POLYGONTYPE_GOURAUD) { // only 1 shade value is used
-				polyHeader *destinationHeader = (polyHeader *)edi;
-
-				destinationHeader->renderType = currentPolyHeader.renderType - 7;
+			} else if (currentPolyHeader.renderType >= POLYGONTYPE_GOURAUD) { // only 1 shade value is used
+				destinationHeader->renderType = currentPolyHeader.renderType - POLYGONTYPE_GOURAUD;
 				destinationHeader->numOfVertex = currentPolyHeader.numOfVertex;
 				const int16 shadeEntry = stream.readSint16LE();
 				const int16 shadeValue = currentPolyHeader.colorIndex + shadeTable[shadeEntry];
 				destinationHeader->colorIndex = shadeValue;
 
-				edi += 4;
-				afterPolyHeaderPtr = edi;
+				renderBufferPtr += 4;
+				afterPolyHeaderPtr = renderBufferPtr;
 				int16 counter = destinationHeader->numOfVertex;
 
 				do {
@@ -1097,12 +1092,12 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 					pointTab *currentVertex = &flattenPoints[eax / sizeof(pointTab)];
 
-					computedVertex *currentComputedVertex = (computedVertex *)edi;
+					computedVertex *currentComputedVertex = (computedVertex *)renderBufferPtr;
 					//currentComputedVertex->shadeValue = 0;
 					currentComputedVertex->x = currentVertex->x;
 					currentComputedVertex->y = currentVertex->y;
 
-					edi += 6;
+					renderBufferPtr += 6;
 
 					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
@@ -1110,29 +1105,26 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 					}
 				} while (--counter > 0);
 			} else { // no shade is used
-				polyHeader *destinationHeader = (polyHeader *)edi;
-
 				destinationHeader->renderType = currentPolyHeader.renderType;
 				destinationHeader->numOfVertex = currentPolyHeader.numOfVertex;
 				destinationHeader->colorIndex = currentPolyHeader.colorIndex;
 
-				edi += 4;
+				renderBufferPtr += 4;
 
-				afterPolyHeaderPtr = edi;
-				int32 eax = 0;
+				afterPolyHeaderPtr = renderBufferPtr;
 				int16 counter = currentPolyHeader.numOfVertex;
 
 				do {
-					eax = stream.readSint16LE();
+					int32 eax = stream.readSint16LE();
 
 					pointTab *currentVertex = &flattenPoints[eax / sizeof(pointTab)];
 
-					computedVertex *currentComputedVertex = (computedVertex *)edi;
+					computedVertex *currentComputedVertex = (computedVertex *)renderBufferPtr;
 					//currentComputedVertex->shadeValue = 0;
 					currentComputedVertex->x = currentVertex->x;
 					currentComputedVertex->y = currentVertex->y;
 
-					edi += 6;
+					renderBufferPtr += 6;
 
 					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
@@ -1164,7 +1156,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 			(*renderTabEntryPtr)->depth = bestDepth;
 			(*renderTabEntryPtr)->renderType = 1;
-			(*renderTabEntryPtr)->dataPtr = render23;
+			(*renderTabEntryPtr)->dataPtr = (uint8*)destinationHeader;
 			(*renderTabEntryPtr)++;
 		} while (--primitiveCounter);
 	}
@@ -1180,7 +1172,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			stream.skip(3);
 			line.p1 = stream.readSint16LE();
 			line.p2 = stream.readSint16LE();
-			lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)edi;
+			lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)renderBufferPtr;
 
 			if (line.p1 % 6 != 0 || line.p2 % 6 != 0) {
 				error("RENDER ERROR: lineDataPtr reference is malformed!");
@@ -1202,10 +1194,10 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 			(*renderTabEntryPtr)->depth = bestDepth;
 			(*renderTabEntryPtr)->renderType = 0;
-			(*renderTabEntryPtr)->dataPtr = edi;
+			(*renderTabEntryPtr)->dataPtr = renderBufferPtr;
 			(*renderTabEntryPtr)++;
 
-			edi += 12;
+			renderBufferPtr += 12;
 		} while (--temp);
 	}
 
@@ -1220,17 +1212,17 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			int16 size = stream.readUint16LE();
 			int16 center = stream.readUint16LE();
 
-			*(uint8 *)edi = color2;
-			*((int16 *)(edi + 1)) = flattenPoints[center / sizeof(pointTab)].x;
-			*((int16 *)(edi + 3)) = flattenPoints[center / sizeof(pointTab)].y;
-			*((int16 *)(edi + 5)) = size;
+			*(uint8 *)renderBufferPtr = color2;
+			*((int16 *)(renderBufferPtr + 1)) = flattenPoints[center / sizeof(pointTab)].x;
+			*((int16 *)(renderBufferPtr + 3)) = flattenPoints[center / sizeof(pointTab)].y;
+			*((int16 *)(renderBufferPtr + 5)) = size;
 
 			(*renderTabEntryPtr)->depth = flattenPoints[center / sizeof(pointTab)].z;
 			(*renderTabEntryPtr)->renderType = 2;
-			(*renderTabEntryPtr)->dataPtr = edi;
+			(*renderTabEntryPtr)->dataPtr = renderBufferPtr;
 			(*renderTabEntryPtr)++;
 
-			edi += 7;
+			renderBufferPtr += 7;
 		} while (--temp);
 	}
 
