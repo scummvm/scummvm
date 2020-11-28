@@ -1040,7 +1040,6 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_FAN_FLAGS(Common::RU_RUS, Common::DE_DEU)
 	},
 
-#ifdef ENABLE_LOL
 	// Lands of Lore CD
 	{
 		{
@@ -1559,8 +1558,6 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		LOL_DEMO_FLAGS
 	},
-#endif // ENABLE_LOL
-#ifdef ENABLE_EOB
 
 	{
 		{
@@ -1743,7 +1740,6 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		EOB2_FLAGS
 	},
-#endif // ENABLE_EOB
 
 	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0, 0, 0, 0) }
 };
