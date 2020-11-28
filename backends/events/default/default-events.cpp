@@ -174,7 +174,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			PauseToken pt;
 			if (g_engine)
 				pt = g_engine->pauseEngine();
-			GUI::MessageDialog alert(_("Do you really want to return to the Launcher?\nAny unsaved progress will be lost."), _("Launcher"), _("Cancel"));
+			GUI::MessageDialog alert(_("Do you really want to return to the Launcher?\nAny unsaved progress will be lost."), _("Yes"), _("Cancel"));
 			forwardEvent = _shouldReturnToLauncher = (alert.runModal() == GUI::kMessageOK);
 		} else
 			_shouldReturnToLauncher = true;
