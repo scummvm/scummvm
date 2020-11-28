@@ -56,6 +56,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Tinsel:
    - Enabled the Return to Launcher feature.
 
+ TsAGE:
+   - Added support for uninstalled floppy version.
+
  Stark:
    - Added support for Hungarian translation.
 
