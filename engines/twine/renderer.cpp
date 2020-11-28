@@ -1054,18 +1054,15 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 				afterPolyHeaderPtr = renderBufferPtr;
 
 				do {
-					polyVertexHeader currentPolyVertex;
-					currentPolyVertex.shadeEntry = stream.readSint16LE();
-					currentPolyVertex.dataOffset = stream.readSint16LE();
+					const int16 shadeEntry = stream.readSint16LE();
+					const int16 shadeValue = currentPolyHeader.colorIndex + shadeTable[shadeEntry];
 
-					int16 shadeValue = currentPolyHeader.colorIndex + shadeTable[currentPolyVertex.shadeEntry];
+					const int16 vertexOffset = stream.readSint16LE();
+					const int16 vertexIndex = vertexOffset / sizeof(pointTab);
+					const pointTab *currentVertex = &flattenPoints[vertexIndex];
 
 					computedVertex *currentComputedVertex = (computedVertex *)renderBufferPtr;
-
 					currentComputedVertex->shadeValue = shadeValue;
-
-					pointTab *currentVertex = &flattenPoints[currentPolyVertex.dataOffset / sizeof(pointTab)];
-
 					currentComputedVertex->x = currentVertex->x;
 					currentComputedVertex->y = currentVertex->y;
 
@@ -1088,9 +1085,9 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 				int16 counter = destinationHeader->numOfVertex;
 
 				do {
-					int32 eax = stream.readSint16LE();
-
-					pointTab *currentVertex = &flattenPoints[eax / sizeof(pointTab)];
+					const int16 vertexOffset = stream.readSint16LE();
+					const int16 vertexIndex = vertexOffset / sizeof(pointTab);
+					pointTab *currentVertex = &flattenPoints[vertexIndex];
 
 					computedVertex *currentComputedVertex = (computedVertex *)renderBufferPtr;
 					//currentComputedVertex->shadeValue = 0;
@@ -1115,9 +1112,9 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 				int16 counter = currentPolyHeader.numOfVertex;
 
 				do {
-					int32 eax = stream.readSint16LE();
-
-					pointTab *currentVertex = &flattenPoints[eax / sizeof(pointTab)];
+					const int16 vertexOffset = stream.readSint16LE();
+					const int16 vertexIndex = vertexOffset / sizeof(pointTab);
+					pointTab *currentVertex = &flattenPoints[vertexIndex];
 
 					computedVertex *currentComputedVertex = (computedVertex *)renderBufferPtr;
 					//currentComputedVertex->shadeValue = 0;
