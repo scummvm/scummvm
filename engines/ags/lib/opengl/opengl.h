@@ -24,6 +24,7 @@
 #define AGS_LIB_OPENGL_OPENGL_H
 
 #include "common/scummsys.h"
+#include "common/endian.h"
 
 namespace AGS3 {
 
