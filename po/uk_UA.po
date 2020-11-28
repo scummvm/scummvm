@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-28 17:44+0100\n"
-"PO-Revision-Date: 2020-11-28 00:10+0000\n"
+"PO-Revision-Date: 2020-11-28 16:52+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Українська\n"
 
@@ -4135,9 +4135,8 @@ msgstr "Автор перекладу проти того, щоб його пе�
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#, fuzzy
 msgid "Missing game code"
-msgstr "Основні опції керування:"
+msgstr "Відсутній код для гри"
 
 #: engines/cge/detection.cpp:99 engines/cge2/detection.cpp:91
 msgid "Color Blind Mode"
@@ -5165,9 +5164,8 @@ msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Використовувати автоматичний читач текста (якщо TTS доступне)"
 
 #: engines/made/detection_tables.h:360
-#, fuzzy
 msgid "The game is using unsupported engine"
-msgstr "Ця гра не підтримується."
+msgstr "Ця гра використовує двигун, який не підтримується"
 
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
@@ -5408,9 +5406,8 @@ msgid "Unable to locate the '%s' engine data file"
 msgstr "Не вдалося знайти файл даних движка '%s'"
 
 #: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
-#, fuzzy
 msgid "PS2 version is not yet supported"
-msgstr "Ця гра не підтримується."
+msgstr "Версія для PS2 ще не підтримується"
 
 #: engines/myst3/detection.cpp:182
 msgid "Widescreen mod"
@@ -6923,9 +6920,8 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Не вдалося знайти файл даних '%s'."
 
 #: engines/tsage/detection_tables.h:151
-#, fuzzy
 msgid "Spanish CD version is not yet supported"
-msgstr "Ця гра не підтримується."
+msgstr "Spanish CD версія ще не підтримується"
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
