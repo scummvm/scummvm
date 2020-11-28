@@ -20,35 +20,21 @@
  *
  */
 
-#ifndef AGS_LIB_ALLEGRO_H
-#define AGS_LIB_ALLEGRO_H
-
-#define ALLEGRO_H
+#ifndef AGS_LIB_ALLEGRO_COLBLEND_H
+#define AGS_LIB_ALLEGRO_COLBLEND_H
 
 #include "ags/lib/allegro/alconfig.h"
-#include "ags/lib/allegro/base.h"
-#include "ags/lib/allegro/colblend.h"
-#include "ags/lib/allegro/color.h"
-#include "ags/lib/allegro/config.h"
-#include "ags/lib/allegro/draw.h"
-#include "ags/lib/allegro/error.h"
-#include "ags/lib/allegro/file.h"
-#include "ags/lib/allegro/fixed.h"
-#include "ags/lib/allegro/fmaths.h"
-#include "ags/lib/allegro/gfx.h"
-#include "ags/lib/allegro/keyboard.h"
-#include "ags/lib/allegro/mouse.h"
-#include "ags/lib/allegro/system.h"
-#include "ags/lib/allegro/unicode.h"
-
-#include "ags/lib/audio/sound.h"
-#include "ags/lib/audio/digi.h"
-#include "ags/lib/audio/midi.h"
 
 namespace AGS3 {
 
-extern int install_allegro();
-extern void allegro_exit();
+extern unsigned long _blender_black(unsigned long x, unsigned long y, unsigned long n);
+
+extern unsigned long _blender_trans15(unsigned long x, unsigned long y, unsigned long n);
+extern unsigned long _blender_trans16(unsigned long x, unsigned long y, unsigned long n);
+
+extern unsigned long _blender_alpha15(unsigned long x, unsigned long y, unsigned long n);
+extern unsigned long _blender_alpha16(unsigned long x, unsigned long y, unsigned long n);
+extern unsigned long _blender_alpha24(unsigned long x, unsigned long y, unsigned long n);
 
 } // namespace AGS3
 
