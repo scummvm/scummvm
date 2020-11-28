@@ -27,17 +27,17 @@
 // ********* LINUX PLACEHOLDER DRIVER *********
 
 //include <stdio.h>
-#include "ags/lib/allegro.h"
 //include <xalleg.h>
-#include "ags/shared/ac/runtime_defines.h"
-#include "ags/shared/gfx/gfxdefines.h"
-#include "ags/shared/platform/base/agsplatformdriver.h"
-#include "ags/shared/plugin/agsplugin.h"
-#include "ags/shared/util/string.h"
 //include <libcda.h>
-
 //include <pwd.h>
 //include <sys/stat.h>
+#include "ags/lib/allegro.h"
+#include "ags/lib/opengl/opengl.h"
+#include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/gfx/gfxdefines.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/engine/plugin/agsplugin.h"
+#include "ags/shared/util/string.h"
 
 namespace AGS3 {
 
@@ -46,8 +46,8 @@ using AGS::Shared::String;
 
 // Replace the default Allegro icon. The original defintion is in the
 // Allegro 4.4 source under "src/x/xwin.c".
-#include "ags/shared/icon.xpm"
-void *allegro_icon = icon_xpm;
+//include "ags/shared/icon.xpm"
+//void *allegro_icon = icon_xpm;
 String CommonDataDirectory;
 String UserDataDirectory;
 
@@ -75,7 +75,9 @@ struct AGSLinux : AGSPlatformDriver {
 
 
 int AGSLinux::CDPlayerCommand(int cmdd, int datt) {
-	return cd_player_control(cmdd, datt);
+	warning("CDPlayerCommand(%d,%d)", cmdd, datt);
+	//return cd_player_control(cmdd, datt);
+	return 0;
 }
 
 void AGSLinux::DisplayAlert(const char *text, ...) {
@@ -85,12 +87,13 @@ void AGSLinux::DisplayAlert(const char *text, ...) {
 	vsprintf(displbuf, text, ap);
 	va_end(ap);
 	if (_logToStdErr)
-		fprintf(stderr, "%s\n", displbuf);
+		debug("ERROR: %s\n", displbuf);
 	else
-		fprintf(stdout, "%s\n", displbuf);
+		debug("ERROR: %s\n", displbuf);
 }
 
 size_t BuildXDGPath(char *destPath, size_t destSize) {
+#ifdef TODO
 	// Check to see if XDG_DATA_HOME is set in the enviroment
 	const char *home_dir = getenv("XDG_DATA_HOME");
 	size_t l = 0;
@@ -107,9 +110,12 @@ size_t BuildXDGPath(char *destPath, size_t destSize) {
 			return 0;
 	}
 	return l;
+#endif
+	return 0;
 }
 
 void DetermineDataDirectories() {
+#ifdef TODO
 	if (!UserDataDirectory.IsEmpty())
 		return;
 	char xdg_path[256];
@@ -119,6 +125,7 @@ void DetermineDataDirectories() {
 	mkdir(UserDataDirectory.GetCStr(), 0755);
 	CommonDataDirectory.Format("%s/ags-common", xdg_path);
 	mkdir(CommonDataDirectory.GetCStr(), 0755);
+#endif
 }
 
 const char *AGSLinux::GetAllUsersDataDirectory() {
@@ -162,7 +169,8 @@ eScriptSystemOSID AGSLinux::GetSystemOSID() {
 }
 
 int AGSLinux::InitializeCDPlayer() {
-	return cd_player_init();
+	//return cd_player_init();
+	return 0;
 }
 
 void AGSLinux::PostAllegroExit() {
@@ -174,7 +182,7 @@ void AGSLinux::SetGameWindowIcon() {
 }
 
 void AGSLinux::ShutdownCDPlayer() {
-	cd_exit();
+	//cd_exit();
 }
 
 AGSPlatformDriver *AGSPlatformDriver::GetDriver() {
@@ -184,13 +192,19 @@ AGSPlatformDriver *AGSPlatformDriver::GetDriver() {
 }
 
 bool AGSLinux::LockMouseToWindow() {
+#if 0
 	return XGrabPointer(_xwin.display, _xwin.window, False,
 	                    PointerMotionMask | ButtonPressMask | ButtonReleaseMask,
 	                    GrabModeAsync, GrabModeAsync, _xwin.window, None, CurrentTime) == GrabSuccess;
+#else
+	return false;
+#endif
 }
 
 void AGSLinux::UnlockMouse() {
+#if 0
 	XUngrabPointer(_xwin.display, CurrentTime);
+#endif
 }
 
 void AGSLinux::GetSystemDisplayModes(std::vector<Engine::DisplayMode> &dms) {

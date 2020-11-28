@@ -269,9 +269,7 @@ MODULE_OBJS = \
     engine/media/audio/soundclip.o \
 	engine/media/video/video.o \
 	engine/platform/base/agsplatformdriver.o \
-	engine/platform/windows/acplwin.o \
-	engine/platform/windows/minidump.o \
-	engine/platform/windows/win_ex_handling.o \
+	engine/platform/linux/acpllnx.o \
 	engine/plugin/agsplugin.o \
 	engine/plugin/pluginobjectreader.o \
 	engine/script/cc_instance.o \
