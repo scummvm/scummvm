@@ -166,10 +166,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Contains Coarsegold address
 		{
 			"hires1", "",
-			{
-				{ "mysthous", 0, "8df0b3b3e609a2e40237e2419c1cb767", 116480 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("mysthous", "8df0b3b3e609a2e40237e2419c1cb767", 116480),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
@@ -181,10 +178,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	{ // Hi-Res Adventure #1: Mystery House - Apple II - Roberta Williams Anthology
 		{
 			"hires1", "",
-			{
-				{ "mysthous", 0, "54d20eb1ef0084ac3c2d16c31c5b7eb7", 143360 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("mysthous", "54d20eb1ef0084ac3c2d16c31c5b7eb7", 143360),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
@@ -196,10 +190,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	{ // Hi-Res Adventure #2: Wizard and the Princess - Apple II - Roberta Williams Anthology
 		{
 			"hires2", "",
-			{
-				{ "wizard", 0, "72b114bf8f94fafe5672daac2a70c765", 143360 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("wizard", "72b114bf8f94fafe5672daac2a70c765", 143360),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
@@ -211,10 +202,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	{ // Hi-Res Adventure #0: Mission Asteroid - Apple II - Roberta Williams Anthology
 		{
 			"hires0", "",
-			{
-				{ "mission", 0, "6bc53f51a3c8ee65c020af55fb8bd875", 116480 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("mission", "6bc53f51a3c8ee65c020af55fb8bd875", 116480),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
@@ -226,10 +214,7 @@ static const AdlGameDescription gameDiskDescriptions[] = {
 	{ // Hi-Res Adventure #3: Cranston Manor - Apple II
 		{
 			"hires3", "",
-			{
-				{ "cranston", 0, "e4d35440791a36e55299c7be1ccd2b04", 116480 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("cranston", "e4d35440791a36e55299c7be1ccd2b04", 116480),
 			Common::EN_ANY,
 			Common::kPlatformApple2,
 			ADGF_NO_FLAGS,
