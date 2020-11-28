@@ -21,11 +21,10 @@
  */
 
 #include "ags/lib/allegro/system.h"
+#include "ags/lib/allegro/aintern.h"
 #include "common/system.h"
 
 namespace AGS3 {
-
-int color_depth;
 
 SYSTEM_DRIVER system_none;
 SYSTEM_DRIVER *system_driver;
@@ -57,11 +56,11 @@ void destroy_gfx_mode_list(GFX_MODE_LIST *list) {
 }
 
 void set_color_depth(int depth) {
-	color_depth = depth;
+	_color_depth = depth;
 }
 
 int get_color_depth() {
-	return color_depth;
+	return _color_depth;
 }
 
 int get_desktop_resolution(int *width, int *height) {

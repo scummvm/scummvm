@@ -24,6 +24,7 @@
 #define AGS_LIB_ALLEGRO_COLOR_H
 
 #include "common/scummsys.h"
+#include "ags/lib/allegro/base.h"
 #include "ags/lib/allegro/alconfig.h"
 
 namespace AGS3 {

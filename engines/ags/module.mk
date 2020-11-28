@@ -15,6 +15,7 @@ MODULE_OBJS = \
 	lib/allegro/file.o \
 	lib/allegro/fixed.o \
 	lib/allegro/gfx.o \
+	lib/allegro/graphics.o \
 	lib/allegro/keyboard.o \
 	lib/allegro/mouse.o \
 	lib/allegro/system.o \
