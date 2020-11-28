@@ -22,6 +22,8 @@
 
 // Game detection information and MD5s
 
+#include "common/translation.h"
+
 // From sage/scene.h, these are some defines that also
 // help with detection.
 #include "saga/shared_detection_defines.h"
@@ -174,7 +176,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 
 	// ITE Demos //////////////////////////////////////////////////////////////////////////////////////////////
 
-#if 0
 	// Note: This version is NOT supported yet
 	// Based on a very early version of the engine
 
@@ -183,7 +184,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 	{
 		{
 			"ite",
-			"Demo", // Game title
+			_s("Missing game code"), // Reason for being unsupported
 			{
 				{"ite.rsc",		GAME_RESOURCEFILE,					"986c79c4d2939dbe555576529fd37932", -1},
 				//{"ite.dmo",	GAME_DEMOFILE,						"0b9a70eb4e120b6f00579b46c8cae29e", -1},
@@ -193,7 +194,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSUPPORTED,
 			GUIO1(GUIO_NOSPEECH)
 		},
 		GID_ITE,
@@ -204,7 +205,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEDEMO_GameFonts,
 		NULL,
 	},
-#endif
 
 	// Inherit the earth - MAC Demo version
 	{
@@ -599,14 +599,13 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,
 	},
 
-#if 0
 	// Inherit the earth - Windows Trial
 	// Not supported and will not be supported, as fixing it
 	// enables whole game. Currently, it crashes.
 	{
 		{
 			"ite",
-			"Trial/Not supported",
+			_s("Missing game code"),
 			{
 				{"ite.rsc",		GAME_RESOURCEFILE,	"a6433e34b97b15e64fe8214651012db9", 8927169},
 				{"scripts.rsc",	GAME_SCRIPTFILE,	"bbf929f1e6d6f2af30c41d078798f5c1", 335927},
@@ -614,7 +613,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			},
 			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_CD,
+			ADGF_CD | ADGF_UNSUPPORTED,
 			GUIO0()
 		},
 		GID_ITE,
@@ -625,7 +624,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITE_GameFonts,
 		NULL,
 	},
-#endif
 
 	// Inherit the Earth - Japanese PC-98 CD version
  	{
