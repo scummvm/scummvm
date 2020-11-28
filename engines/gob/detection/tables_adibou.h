@@ -193,11 +193,8 @@
 	{
 		"adibou2",
 		"Non-Interactive Demo",
-		{
-			{"demogb.scn", 0, "9291455a908ac0e6aaaca686e532609b", 105},
-			{"demogb.vmd", 0, "bc9c1db97db7bec8f566332444fa0090", 14320840},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("demogb.scn", "9291455a908ac0e6aaaca686e532609b", 105,
+				   "demogb.vmd", "bc9c1db97db7bec8f566332444fa0090", 14320840),
 		EN_GRB,
 		kPlatformDOS,
 		ADGF_DEMO,
@@ -211,11 +208,8 @@
 	{
 		"adibou2",
 		"Non-Interactive Demo",
-		{
-			{"demoall.scn", 0, "c8fd308c037b829800006332b2c32674", 106},
-			{"demoall.vmd", 0, "4672b2deacc6fca97484840424b1921b", 14263433},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("demoall.scn", "c8fd308c037b829800006332b2c32674", 106,
+				   "demoall.vmd", "4672b2deacc6fca97484840424b1921b", 14263433),
 		DE_DEU,
 		kPlatformDOS,
 		ADGF_DEMO,
@@ -229,11 +223,8 @@
 	{
 		"adibou2",
 		"Non-Interactive Demo",
-		{
-			{"demofra.scn", 0, "d1b2b1618af384ea1120def8b986c02b", 106},
-			{"demofra.vmd", 0, "b494cdec1aac7e54c3f2480512d2880e", 14297100},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("demofra.scn", "d1b2b1618af384ea1120def8b986c02b", 106,
+				   "demofra.vmd", "b494cdec1aac7e54c3f2480512d2880e", 14297100),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_DEMO,
