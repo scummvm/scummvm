@@ -196,7 +196,7 @@ private:
 
 	renderTabEntry renderTab[1000];
 	renderTabEntry renderTabSorted[1000];
-	uint8 renderTab7[10000] {0};
+	uint8 renderCoordinatesBuffer[10000] {0};
 
 	int16 polyTab[960] {0};
 	int16 polyTab2[960] {0};
