@@ -33,6 +33,9 @@ namespace AGS3 {
 #define KB_SHIFT_FLAG Common::KBD_SHIFT
 #define KB_CTRL_FLAG Common::KBD_CTRL
 #define KB_ALT_FLAG Common::KBD_ALT
+#define KB_NUMLOCK_FLAG Common::KBD_NUM
+#define KB_CAPSLOCK_FLAG Common::KBD_CAPS
+#define KB_SCROLOCK_FLAG Common::KBD_SCRL
 
 #define KEY_LSHIFT Common::KEYCODE_LSHIFT
 #define KEY_RSHIFT Common::KEYCODE_RSHIFT
@@ -169,6 +172,7 @@ namespace AGS3 {
 #define __allegro_KEY_AT Common::KEYCODE_AT
 
 extern bool key[Common::KEYCODE_LAST];
+extern uint key_shifts;
 
 AL_FUNC(bool, keyboard_needs_poll, (void));
 AL_FUNC(int, poll_keyboard, (void));

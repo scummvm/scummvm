@@ -21,15 +21,15 @@
  */
 
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/object.h"
-#include "ags/shared/ac/character.h"
-#include "ags/shared/ac/gamestate.h"
+#include "ags/engine/ac/object.h"
+#include "ags/engine/ac/character.h"
+#include "ags/engine/ac/gamestate.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/object.h"
-#include "ags/shared/ac/room.h"
-#include "ags/shared/ac/roomobject.h"
-#include "ags/shared/ac/roomstatus.h"
-#include "ags/shared/ac/walkablearea.h"
+#include "ags/engine/ac/object.h"
+#include "ags/engine/ac/room.h"
+#include "ags/engine/ac/roomobject.h"
+#include "ags/engine/ac/roomstatus.h"
+#include "ags/engine/ac/walkablearea.h"
 #include "ags/shared/game/roomstruct.h"
 #include "ags/shared/gfx/bitmap.h"
 

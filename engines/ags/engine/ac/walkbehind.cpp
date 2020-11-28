@@ -20,11 +20,11 @@
  *
  */
 
-#include "ags/shared/ac/walkbehind.h"
+#include "ags/engine/ac/walkbehind.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/common_defines.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/gfx/graphicsdriver.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/shared/gfx/bitmap.h"
 
 namespace AGS3 {

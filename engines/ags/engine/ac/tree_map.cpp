@@ -20,10 +20,9 @@
  *
  */
 
-//include <string.h>
-//include <stdlib.h>
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/tree_map.h"
+#include "ags/engine/ac/tree_map.h"
+#include "common/str.h"
 
 namespace AGS3 {
 
