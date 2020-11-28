@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-28 21:43+0100\n"
-"PO-Revision-Date: 2020-11-28 18:44+0000\n"
+"PO-Revision-Date: 2020-11-28 21:00+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Русский\n"
 
@@ -4784,9 +4784,8 @@ msgid "Play movies at an increased speed"
 msgstr "Воспроизводит видеоролики с увеличенной скоростью"
 
 #: engines/groovie/metaengine.cpp:53
-#, fuzzy
 msgid "GroovieV2 support is not compiled in"
-msgstr "Поддержка для версии HE v71+ не скомпилирована"
+msgstr "Поддержка для версии GroovieV2 не скомпилирована"
 
 #: engines/groovie/script.cpp:484
 msgid "Failed to save game"
@@ -4911,20 +4910,20 @@ msgid "Left button to attack, right button to pick up items"
 msgstr "Левая кнопка для атаки, правая кнопка для выбора предметов"
 
 #: engines/kyra/metaengine.cpp:116
-#, fuzzy
 msgid "Lands of Lore support is not compiled in"
-msgstr "Поддержка для версии HE v71+ не скомпилирована"
+msgstr "Поддержка для Lands of Lore не скомпилирована"
 
 #: engines/kyra/metaengine.cpp:128
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
 msgstr ""
+"EOB II FM-TOWNS требует поддержки режимов 16-битного цвета, но они не были "
+"активированы в вашей сборке ScummVM"
 
 #: engines/kyra/metaengine.cpp:137
-#, fuzzy
 msgid "Eye of Beholder support is not compiled in"
-msgstr "Поддержка для версии HE v71+ не скомпилирована"
+msgstr "Поддержка для Eye of Beholder не скомпилирована"
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
@@ -5266,24 +5265,20 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Игра приостановлена. Для продолжения нажмите любую кнопку."
 
 #: engines/mohawk/metaengine.cpp:272
-#, fuzzy
 msgid "Myst ME support not compiled in"
-msgstr "Поддержка для версии HE v71+ не скомпилирована"
+msgstr "Поддержка для Myst ME не скомпилирована"
 
 #: engines/mohawk/metaengine.cpp:279
-#, fuzzy
 msgid "Myst support not compiled in"
-msgstr "Поддержка для версии HE v71+ не скомпилирована"
+msgstr "Поддержка для Myst не скомпилирована"
 
 #: engines/mohawk/metaengine.cpp:287
-#, fuzzy
 msgid "Riven support not compiled in"
-msgstr "Поддержка для версии HE v71+ не скомпилирована"
+msgstr "Поддержка для Riven не скомпилирована"
 
 #: engines/mohawk/metaengine.cpp:302
-#, fuzzy
 msgid "CSTime support not compiled in"
-msgstr "Поддержка для версии HE v71+ не скомпилирована"
+msgstr "Поддержка для CSTime не скомпилирована"
 
 #: engines/mohawk/myst.cpp:552 engines/mohawk/riven.cpp:822
 msgid "Open main menu"
@@ -5618,14 +5613,12 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Использовать альтернативное вступление (только для CD-версии игры)"
 
 #: engines/saga/metaengine.cpp:117
-#, fuzzy
 msgid "I Have No Mouth support not compiled in"
-msgstr "Поддержка для версии HE v71+ не скомпилирована"
+msgstr "Поддержка для I Have No Mouth не скомпилирована"
 
 #: engines/saga/metaengine.cpp:124
-#, fuzzy
 msgid "SAGA2 support not compiled in"
-msgstr "Поддержка для версии HE v71+ не скомпилирована"
+msgstr "Поддержка для SAGA2 не скомпилирована"
 
 #: engines/saga/saga.cpp:247
 msgid "Error loading game resources."
@@ -7289,19 +7282,16 @@ msgid "Apply bilinear filtering to individual sprites"
 msgstr "Применить билинейную фильтрацию для индивидуальных спрайтов"
 
 #: engines/wintermute/metaengine.cpp:67
-#, fuzzy
 msgid "FoxTail support is not compiled in"
-msgstr "Поддержка для версии HE v71+ не скомпилирована"
+msgstr "Поддержка для FoxTail не скомпилирована"
 
 #: engines/wintermute/metaengine.cpp:74
-#, fuzzy
 msgid "Hero Craft support is not compiled in"
-msgstr "Поддержка для версии HE v71+ не скомпилирована"
+msgstr "Поддержка для Hero Craft не скомпилирована"
 
 #: engines/wintermute/metaengine.cpp:81
-#, fuzzy
 msgid "Wintermute3D support is not compiled in"
-msgstr "Поддержка для версии HE v71+ не скомпилирована"
+msgstr "Поддержка для Wintermute3D не скомпилирована"
 
 #: engines/wintermute/wintermute.cpp:176
 msgid "This game requires PNG, JPEG and Vorbis support."
