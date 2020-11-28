@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-28 18:11+0000\n"
-"PO-Revision-Date: 2020-11-25 18:46+0000\n"
+"PO-Revision-Date: 2020-11-28 19:14+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -4152,9 +4152,8 @@ msgstr ""
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#, fuzzy
 msgid "Missing game code"
-msgstr "Hauptspielsteuerung:"
+msgstr "Fehlender Spiel-Code"
 
 #: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
@@ -5198,9 +5197,8 @@ msgstr ""
 "ist)"
 
 #: engines/made/detection_tables.h:360
-#, fuzzy
 msgid "The game is using unsupported engine"
-msgstr "Dieses Spiel wird nicht unterstützt."
+msgstr "Dieses Spiel verwendet eine nicht unterstützte Engine."
 
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
@@ -5447,9 +5445,8 @@ msgid "Unable to locate the '%s' engine data file"
 msgstr "Engine-Datendatei '%s' konnte nicht gefunden werden"
 
 #: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
-#, fuzzy
 msgid "PS2 version is not yet supported"
-msgstr "Dieses Spiel wird nicht unterstützt."
+msgstr "Die PS2-Version wird noch nicht unterstützt"
 
 #: engines/myst3/detection.cpp:182
 msgid "Widescreen mod"
@@ -6630,11 +6627,11 @@ msgstr ""
 
 #: engines/scumm/metaengine.cpp:429
 msgid "HE v71+ support is not compiled in"
-msgstr ""
+msgstr "Unterstützung für HE v71+ ist nicht eingebaut"
 
 #: engines/scumm/metaengine.cpp:453
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr ""
+msgstr "Unterstützung für SCUMM v7-8 ist nicht eingebaut"
 
 #: engines/scumm/scumm.cpp:1918
 #, c-format
@@ -6977,9 +6974,8 @@ msgstr ""
 "dieser ausführbaren Datei nicht miteingebunden. Bitte entpacken Sie die Datei"
 
 #: engines/tinsel/detection_tables.h:466
-#, fuzzy
 msgid "Saturn CD version is not yet supported"
-msgstr "Dieses Spiel wird nicht unterstützt."
+msgstr "Die Saturn CD-Version wird noch nicht unterstützt"
 
 #: engines/tony/tony.cpp:257
 #, c-format
@@ -7012,9 +7008,8 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Datendatei '%s' kann nicht gefunden werden."
 
 #: engines/tsage/detection_tables.h:151
-#, fuzzy
 msgid "Spanish CD version is not yet supported"
-msgstr "Dieses Spiel wird nicht unterstützt."
+msgstr "Die spanische CD-Version wird noch nicht unterstützt"
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
