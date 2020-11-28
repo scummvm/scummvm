@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-26 21:14+0000\n"
+"POT-Creation-Date: 2020-11-28 14:24+0000\n"
 "PO-Revision-Date: 2020-11-27 19:22+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -4133,11 +4133,17 @@ msgid ""
 "ScummVM."
 msgstr "Автор перевода не желает, чтобы его перевод был добавлен в ScummVM."
 
-#: engines/cge/detection.cpp:123
+#: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
+#, fuzzy
+#| msgid "Main game controls:"
+msgid "Missing game code"
+msgstr "Основное управление игрой:"
+
+#: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
 msgstr "Режим без цвета"
 
-#: engines/cge/detection.cpp:124
+#: engines/cge/detection.cpp:100
 msgid "Enable Color Blind Mode by default"
 msgstr "Включить режим для людей со слабым восприятием цвета"
 
@@ -4770,11 +4776,11 @@ msgstr ""
 "Заметьте, что релизы c GOG.com и Steam уже содержат объединённый "
 "FullMonkeyMap.imt"
 
-#: engines/groovie/detection.cpp:320
+#: engines/groovie/detection.cpp:302
 msgid "Fast movie speed"
 msgstr "Режим ускоренного видео"
 
-#: engines/groovie/detection.cpp:321
+#: engines/groovie/detection.cpp:303
 msgid "Play movies at an increased speed"
 msgstr "Воспроизводит видеоролики с увеличенной скоростью"
 

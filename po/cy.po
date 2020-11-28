@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-26 21:14+0000\n"
+"POT-Creation-Date: 2020-11-28 14:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -3973,11 +3973,15 @@ msgid ""
 "ScummVM."
 msgstr ""
 
-#: engines/cge/detection.cpp:123
+#: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
+msgid "Missing game code"
+msgstr ""
+
+#: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
 msgstr ""
 
-#: engines/cge/detection.cpp:124
+#: engines/cge/detection.cpp:100
 msgid "Enable Color Blind Mode by default"
 msgstr ""
 
@@ -4547,11 +4551,11 @@ msgid ""
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
 
-#: engines/groovie/detection.cpp:320
+#: engines/groovie/detection.cpp:302
 msgid "Fast movie speed"
 msgstr ""
 
-#: engines/groovie/detection.cpp:321
+#: engines/groovie/detection.cpp:303
 msgid "Play movies at an increased speed"
 msgstr ""
 

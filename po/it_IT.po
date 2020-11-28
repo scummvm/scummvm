@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-26 21:14+0000\n"
+"POT-Creation-Date: 2020-11-28 14:24+0000\n"
 "PO-Revision-Date: 2020-11-27 14:05+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -4152,11 +4152,17 @@ msgstr ""
 "Il fan che ha realizzato questa traduzione ha preferito che non venisse "
 "incorporata in ScummVM."
 
-#: engines/cge/detection.cpp:123
+#: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
+#, fuzzy
+#| msgid "Main game controls:"
+msgid "Missing game code"
+msgstr "Controlli principali di gioco:"
+
+#: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
 msgstr "Modalità daltonici"
 
-#: engines/cge/detection.cpp:124
+#: engines/cge/detection.cpp:100
 msgid "Enable Color Blind Mode by default"
 msgstr "Abilita di default la modalità daltonici"
 
@@ -4796,11 +4802,11 @@ msgstr ""
 "In alternativa, le edizioni Steam e GOG contengono già il file FullMonkeyMap."
 "int completo"
 
-#: engines/groovie/detection.cpp:320
+#: engines/groovie/detection.cpp:302
 msgid "Fast movie speed"
 msgstr "Filmati ad alta velocità"
 
-#: engines/groovie/detection.cpp:321
+#: engines/groovie/detection.cpp:303
 msgid "Play movies at an increased speed"
 msgstr "Aumenta la velocità di riproduzione dei filmati"
 

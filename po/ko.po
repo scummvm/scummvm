@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-26 21:14+0000\n"
+"POT-Creation-Date: 2020-11-28 14:24+0000\n"
 "PO-Revision-Date: 2020-11-14 10:56+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4093,11 +4093,17 @@ msgid ""
 "ScummVM."
 msgstr ""
 
-#: engines/cge/detection.cpp:123
+#: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
+#, fuzzy
+#| msgid "Main game controls:"
+msgid "Missing game code"
+msgstr "주 게임 조작:"
+
+#: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
 msgstr "색맹 모드"
 
-#: engines/cge/detection.cpp:124
+#: engines/cge/detection.cpp:100
 msgid "Enable Color Blind Mode by default"
 msgstr "색맹 모드를 기본으로 활성화합니다."
 
@@ -4715,11 +4721,11 @@ msgstr ""
 "\n"
 "혹은, Steam이나 GOG 버전의 통합된 FullMonkeyMap.imt을 사용해도 됩니다."
 
-#: engines/groovie/detection.cpp:320
+#: engines/groovie/detection.cpp:302
 msgid "Fast movie speed"
 msgstr "동영상 빠르게 재생"
 
-#: engines/groovie/detection.cpp:321
+#: engines/groovie/detection.cpp:303
 msgid "Play movies at an increased speed"
 msgstr "동영상을 빠른 속도로 재생합니다."
 

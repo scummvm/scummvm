@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-26 21:14+0000\n"
+"POT-Creation-Date: 2020-11-28 14:24+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -4171,11 +4171,17 @@ msgid ""
 "ScummVM."
 msgstr ""
 
-#: engines/cge/detection.cpp:123
+#: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
+#, fuzzy
+#| msgid "Main game controls:"
+msgid "Missing game code"
+msgstr "Hovedkontrollar for spel:"
+
+#: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
 msgstr "Fargeblindmodus"
 
-#: engines/cge/detection.cpp:124
+#: engines/cge/detection.cpp:100
 msgid "Enable Color Blind Mode by default"
 msgstr "Slå på fargeblindmodus som standard"
 
@@ -4787,11 +4793,11 @@ msgid ""
 "Alternatively, a Steam or GOG copy has a combined FullMonkeyMap.imt"
 msgstr ""
 
-#: engines/groovie/detection.cpp:320
+#: engines/groovie/detection.cpp:302
 msgid "Fast movie speed"
 msgstr "Rask filmfart"
 
-#: engines/groovie/detection.cpp:321
+#: engines/groovie/detection.cpp:303
 msgid "Play movies at an increased speed"
 msgstr "Spel filmar med auka hastighet"
 
