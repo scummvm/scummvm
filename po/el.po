@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 14:24+0000\n"
+"POT-Creation-Date: 2020-11-28 17:44+0100\n"
 "PO-Revision-Date: 2020-11-27 14:05+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4198,16 +4198,16 @@ msgstr ""
 "ScummVM."
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
+#: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
 #, fuzzy
-#| msgid "Main game controls:"
 msgid "Missing game code"
 msgstr "Κύριοι χειρισμοί παιχνιδιού:"
 
-#: engines/cge/detection.cpp:99
+#: engines/cge/detection.cpp:99 engines/cge2/detection.cpp:91
 msgid "Color Blind Mode"
 msgstr "Λειτουργία για Άτομα με Αχρωματοψία"
 
-#: engines/cge/detection.cpp:100
+#: engines/cge/detection.cpp:100 engines/cge2/detection.cpp:92
 msgid "Enable Color Blind Mode by default"
 msgstr "Ενεργοποίηση λειτουργίας για Άτομα με Αχρωματοψία εξ'ορισμού"
 
@@ -5248,6 +5248,11 @@ msgstr ""
 "Χρήση λειτουργίας Αφήγησης Κειμένου (TTS) για την ανάγνωση περιγραφών (αν "
 "είναι διαθέσιμη)"
 
+#: engines/made/detection_tables.h:360
+#, fuzzy
+msgid "The game is using unsupported engine"
+msgstr "Αυτό το παιχνίδι δεν υποστηρίζεται."
+
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
 msgstr "Εύκολη διεπαφή ποντικιού"
@@ -5493,6 +5498,11 @@ msgstr ""
 #, c-format
 msgid "Unable to locate the '%s' engine data file"
 msgstr "Αδυναμία εύρεσης του αρχείου μηχανής '%s'"
+
+#: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
+#, fuzzy
+msgid "PS2 version is not yet supported"
+msgstr "Αυτό το παιχνίδι δεν υποστηρίζεται."
 
 #: engines/myst3/detection.cpp:182
 msgid "Widescreen mod"
@@ -6806,21 +6816,21 @@ msgstr "Εναλλαγή γρήγορης λειτουργίας"
 msgid "Toggle really fast mode"
 msgstr "Εναλλαγή πολύ γρήγορης λειτουργίας"
 
-#: engines/stark/detection.cpp:368
+#: engines/stark/detection.cpp:322
 msgid "Load modded assets"
 msgstr "Φόρτωση τροποποιημένων στοιχείων"
 
-#: engines/stark/detection.cpp:369
+#: engines/stark/detection.cpp:323
 msgid "Enable loading of external replacement assets."
 msgstr ""
 "Ενεργοποίηση φόρτωσης εξωτερικών στοιχείων (assets) που θα αντικαταστήσουν "
 "αυτά του παιχνιδιού."
 
-#: engines/stark/detection.cpp:377
+#: engines/stark/detection.cpp:331
 msgid "Enable linear filtering of the backgrounds images"
 msgstr "Ενεργοποίηση γραμμικού φίλτρου στις εικόνες φόντου"
 
-#: engines/stark/detection.cpp:378
+#: engines/stark/detection.cpp:332
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
@@ -6829,11 +6839,11 @@ msgstr ""
 "ομαλά σε λειτουργία πλήρους οθόνης, με αντίτιμο την απώλεια κάποιας "
 "λεπτομέρειας."
 
-#: engines/stark/detection.cpp:386
+#: engines/stark/detection.cpp:340
 msgid "Enable font anti-aliasing"
 msgstr "Ενεργοποίηση εξομάλυνσης γραμματοσειράς"
 
-#: engines/stark/detection.cpp:387
+#: engines/stark/detection.cpp:341
 msgid "When font anti-aliasing is enabled, the text is smoother."
 msgstr ""
 "Όταν η εξομάλυνση γραμματοσειράς (font anti-aliasing) είναι ενεργοποιημένη, "
@@ -7050,6 +7060,11 @@ msgstr "Δεν ήταν δυνατή η γρήγορη φόρτωση του α�
 #, c-format
 msgid "Unable to locate the '%s' data file."
 msgstr "Αδυναμία εντοπισμού του αρχείου παιχνιδιού '%s'."
+
+#: engines/tsage/detection_tables.h:151
+#, fuzzy
+msgid "Spanish CD version is not yet supported"
+msgstr "Αυτό το παιχνίδι δεν υποστηρίζεται."
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
