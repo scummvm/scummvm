@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 17:53+0100\n"
+"POT-Creation-Date: 2020-11-28 16:54+0000\n"
 "PO-Revision-Date: 2020-11-27 14:05+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
@@ -4158,11 +4158,11 @@ msgstr ""
 msgid "Missing game code"
 msgstr "Controlli principali di gioco:"
 
-#: engines/cge/detection.cpp:99 engines/cge2/detection.cpp:91
+#: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
 msgstr "Modalità daltonici"
 
-#: engines/cge/detection.cpp:100 engines/cge2/detection.cpp:92
+#: engines/cge/detection.cpp:100
 msgid "Enable Color Blind Mode by default"
 msgstr "Abilita di default la modalità daltonici"
 

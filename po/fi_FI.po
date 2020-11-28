@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 17:53+0100\n"
+"POT-Creation-Date: 2020-11-28 16:54+0000\n"
 "PO-Revision-Date: 2020-11-25 20:52+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4126,11 +4126,11 @@ msgstr ""
 msgid "Missing game code"
 msgstr "Pelin tärkeimmät kontrollit:"
 
-#: engines/cge/detection.cpp:99 engines/cge2/detection.cpp:91
+#: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
 msgstr "Värisokeustila"
 
-#: engines/cge/detection.cpp:100 engines/cge2/detection.cpp:92
+#: engines/cge/detection.cpp:100
 msgid "Enable Color Blind Mode by default"
 msgstr "Aktivoi värisokeustila vakiona"
 
