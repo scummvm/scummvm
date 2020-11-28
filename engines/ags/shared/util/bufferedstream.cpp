@@ -20,8 +20,8 @@
  *
  */
 
-#include "ags/std/algorithm.h"
-#include "ags/std/memory.h"
+#include "ags/lib/std/algorithm.h"
+#include "ags/lib/std/memory.h"
 #include "ags/shared/util/bufferedstream.h"
 #include "ags/shared/util/stdio_compat.h"
 #include "ags/shared/util/string.h"

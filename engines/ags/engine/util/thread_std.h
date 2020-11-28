@@ -25,7 +25,7 @@
 
 //include <system_error>
 #include "ags/engine/util/thread.h"
-#include "ags/std/thread.h"
+#include "ags/lib/std/thread.h"
 
 namespace AGS3 {
 namespace AGS {

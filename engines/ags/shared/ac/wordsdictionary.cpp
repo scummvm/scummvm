@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/std/algorithm.h"
+#include "ags/lib/std/algorithm.h"
 //include <string.h>
 #include "ags/shared/ac/wordsdictionary.h"
 #include "ags/shared/util/stream.h"

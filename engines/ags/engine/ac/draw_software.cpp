@@ -46,8 +46,8 @@
 //
 //=============================================================================
 
-#include "ags/std/utility.h"
-#include "ags/std/vector.h"
+#include "ags/lib/std/utility.h"
+#include "ags/lib/std/vector.h"
 #include "ags/engine/ac/draw_software.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/util/scaling.h"

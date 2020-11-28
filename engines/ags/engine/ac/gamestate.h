@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_AC_GAMESTATE_H
 #define AGS_ENGINE_AC_GAMESTATE_H
 
-#include "ags/std/memory.h"
-#include "ags/std/vector.h"
+#include "ags/lib/std/memory.h"
+#include "ags/lib/std/vector.h"
 #include "ags/shared/ac/characterinfo.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/shared/game/roomstruct.h"

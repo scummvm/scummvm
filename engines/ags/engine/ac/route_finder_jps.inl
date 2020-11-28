@@ -27,11 +27,11 @@
 //
 //=============================================================================
 
-#include "ags/std/queue.h"
-#include "ags/std/vector.h"
-#include "ags/std/algorithm.h"
-#include "ags/std/functional.h"
-#include "ags/std/xutility.h"
+#include "ags/lib/std/queue.h"
+#include "ags/lib/std/vector.h"
+#include "ags/lib/std/algorithm.h"
+#include "ags/lib/std/functional.h"
+#include "ags/lib/std/xutility.h"
 //include <assert.h>
 //include <stddef.h>
 //include <math.h>

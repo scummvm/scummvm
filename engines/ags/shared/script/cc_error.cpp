@@ -22,7 +22,7 @@
 
 #include "ags/shared/script/script_common.h"  // current_line
 #include "ags/shared/util/string.h"
-#include "ags/std/utility.h"
+#include "ags/lib/std/utility.h"
 
 namespace AGS3 {
 

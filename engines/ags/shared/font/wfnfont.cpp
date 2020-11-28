@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/std/algorithm.h"
+#include "ags/lib/std/algorithm.h"
 #include "ags/shared/font/wfnfont.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/util/memory.h"

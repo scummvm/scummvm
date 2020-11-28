@@ -29,7 +29,7 @@
 #ifndef AGS_ENGINE_GFX_ALI3DSW_H
 #define AGS_ENGINE_GFX_ALI3DSW_H
 
-#include "ags/std/memory.h"
+#include "ags/lib/std/memory.h"
 
 #include "ags/shared/core/platform.h"
 #define AGS_DDRAW_GAMMA_CONTROL (AGS_PLATFORM_OS_WINDOWS)

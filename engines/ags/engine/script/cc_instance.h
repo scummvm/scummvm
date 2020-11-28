@@ -29,8 +29,8 @@
 #ifndef AGS_ENGINE_SCRIPT_CCINSTANCE_H
 #define AGS_ENGINE_SCRIPT_CCINSTANCE_H
 
-#include "ags/std/map.h"
-#include "ags/std/memory.h"
+#include "ags/lib/std/map.h"
+#include "ags/lib/std/memory.h"
 #include "ags/shared/script/script_common.h"
 #include "ags/shared/script/cc_script.h"  // ccScript
 #include "ags/engine/script/nonblockingscriptfunction.h"

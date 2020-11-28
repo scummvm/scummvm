@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/std/vector.h"
+#include "ags/lib/std/vector.h"
 #include "ags/shared/core/platform.h"
 #if AGS_PLATFORM_OS_WINDOWS
 #include "ags/shared/platform/windows/winapi_exclusive.h"

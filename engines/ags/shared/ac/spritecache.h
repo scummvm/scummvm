@@ -45,8 +45,8 @@
 #ifndef AGS_SHARED_AC_SPRITECACHE_H
 #define AGS_SHARED_AC_SPRITECACHE_H
 
-#include "ags/std/memory.h"
-#include "ags/std/vector.h"
+#include "ags/lib/std/memory.h"
+#include "ags/lib/std/vector.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/error.h"
 

@@ -29,8 +29,8 @@
 #include "ags/shared/util/error.h"
 #include "ags/shared/util/geometry.h"
 #include "ags/shared/util/string.h"
-#include "ags/std/utility.h"
-#include "ags/std/vector.h"
+#include "ags/lib/std/utility.h"
+#include "ags/lib/std/vector.h"
 
 namespace AGS3 {
 

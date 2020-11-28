@@ -20,9 +20,9 @@
  *
  */
 
-#include "ags/std/initializer_list.h"
-#include "ags/std/limits.h"
-#include "ags/std/memory.h"
+#include "ags/lib/std/initializer_list.h"
+#include "ags/lib/std/limits.h"
+#include "ags/lib/std/memory.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/gamesetupstruct.h"

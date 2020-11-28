@@ -23,9 +23,9 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_MANAGEDOBJECTPOOL_H
 #define AGS_ENGINE_AC_DYNOBJ_MANAGEDOBJECTPOOL_H
 
-#include "ags/std/vector.h"
-#include "ags/std/queue.h"
-#include "ags/std/map.h"
+#include "ags/lib/std/vector.h"
+#include "ags/lib/std/queue.h"
+#include "ags/lib/std/map.h"
 #include "ags/engine/script/runtimescriptvalue.h"
 #include "ags/engine/ac/dynobj/cc_dynamicobject.h"   // ICCDynamicObject
 #include "ags/shared/util/string_types.h"

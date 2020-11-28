@@ -24,8 +24,8 @@
 // Game loop
 //
 
-#include "ags/std/limits.h"
-#include "ags/std/chrono.h"
+#include "ags/lib/std/limits.h"
+#include "ags/lib/std/chrono.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/characterextras.h"
 #include "ags/shared/ac/characterinfo.h"

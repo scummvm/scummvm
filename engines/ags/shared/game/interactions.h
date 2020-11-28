@@ -50,7 +50,7 @@
 #define AGS_SHARED_GAME_INTEREACTIONS_H
 
 #include "ags/shared/util/string_types.h"
-#include "ags/std/memory.h"
+#include "ags/lib/std/memory.h"
 
 namespace AGS3 {
 

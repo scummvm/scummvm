@@ -33,7 +33,7 @@
 #ifndef AGS_ENGINE_GFX_GFXDRIVERFACTORY_H
 #define AGS_ENGINE_GFX_GFXDRIVERFACTORY_H
 
-#include "ags/std/memory.h"
+#include "ags/lib/std/memory.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_types.h"
 

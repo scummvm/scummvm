@@ -29,7 +29,7 @@
 #ifndef AGS_ENGINE_GFX_GFXDRIVERBASE_H
 #define AGS_ENGINE_GFX_GFXDRIVERBASE_H
 
-#include "ags/std/vector.h"
+#include "ags/lib/std/vector.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/engine/gfx/graphicsdriver.h"
 #include "ags/engine/util/scaling.h"

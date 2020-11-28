@@ -29,7 +29,7 @@
 #ifndef AGS_ENGINE_AC_DYNOBJ_CCDYNAMICOBJECT_H
 #define AGS_ENGINE_AC_DYNOBJ_CCDYNAMICOBJECT_H
 
-#include "ags/std/utility.h"
+#include "ags/lib/std/utility.h"
 #include "ags/shared/core/types.h"
 
 namespace AGS3 {

@@ -20,38 +20,21 @@
  *
  */
 
-#ifndef AGS_STD_QUEUE_H
-#define AGS_STD_QUEUE_H
+#ifndef AGS_STD_MATH_H
+#define AGS_STD_MATH_H
 
-#include "ags/std/algorithm.h"
-#include "ags/std/vector.h"
-#include "common/queue.h"
+#include "common/hashmap.h"
+#include "ags/lib/std/utility.h"
 
 namespace AGS3 {
 namespace std {
 
+#ifndef NAN
+#define NAN        ((float)(INFINITY * 0.0F))
+#endif
+
 template<class T>
-using queue = Common::Queue<T>;
-
-template<class T, class Container = vector<T>, class Comparitor = typename Common::Less<T> >
-class priority_queue {
-private:
-	Container _container;
-	Comparitor _comparitor;
-public:
-	priority_queue();
-
-	bool empty() const { return _container.empty(); }
-
-	const T &top() const { return _container.front(); }
-
-	void push(const T &item) {
-		_container.push_back(item);
-		Common::sort(_container.begin(), _container.end(), _comparitor);
-	}
-
-	void pop() { _container.remove_at(0); }
-};
+inline bool isnan(T val) { return val == NAN; }
 
 } // namespace std
 } // namespace AGS3

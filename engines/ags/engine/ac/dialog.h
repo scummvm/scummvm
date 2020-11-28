@@ -23,7 +23,7 @@
 #ifndef AGS_ENGINE_AC_DIALOG_H
 #define AGS_ENGINE_AC_DIALOG_H
 
-#include "ags/std/vector.h"
+#include "ags/lib/std/vector.h"
 #include "ags/engine/ac/dynobj/scriptdialog.h"
 
 namespace AGS3 {

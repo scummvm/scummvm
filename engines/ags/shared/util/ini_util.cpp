@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/std/memory.h"
+#include "ags/lib/std/memory.h"
 #include "ags/shared/util/file.h"
 #include "ags/shared/util/ini_util.h"
 #include "ags/shared/util/inifile.h"

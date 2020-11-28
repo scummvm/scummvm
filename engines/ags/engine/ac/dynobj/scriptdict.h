@@ -37,7 +37,7 @@
 #define AGS_ENGINE_AC_DYNOBJ_SCRIPTDICT_H
 
 //include <string.h>
-#include "ags/std/map.h"
+#include "ags/lib/std/map.h"
 #include "ags/engine/ac/dynobj/cc_agsdynamicobject.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_types.h"

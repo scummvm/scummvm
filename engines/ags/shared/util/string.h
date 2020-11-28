@@ -47,7 +47,7 @@
 #define AGS_SHARED_UTIL_STRING_H
 
 //include <stdarg.h>
-#include "ags/std/vector.h"
+#include "ags/lib/std/vector.h"
 #include "ags/shared/core/platform.h"
 #include "ags/shared/core/types.h"
 #include "ags/shared/debugging/assert.h"

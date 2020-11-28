@@ -23,7 +23,7 @@
 #ifndef AGS_SHARED_FONT_TTFFONTRENDERER_H
 #define AGS_SHARED_FONT_TTFFONTRENDERER_H
 
-#include "ags/std/map.h"
+#include "ags/lib/std/map.h"
 #include "ags/lib/alfont/alfont.h"
 #include "ags/shared/font/agsfontrenderer.h"
 

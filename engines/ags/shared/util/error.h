@@ -30,7 +30,7 @@
 #ifndef AGS_SHARED_UTIL_ERROR_H
 #define AGS_SHARED_UTIL_ERROR_H
 
-#include "ags/std/memory.h"
+#include "ags/lib/std/memory.h"
 #include "ags/shared/util/string.h"
 
 namespace AGS3 {

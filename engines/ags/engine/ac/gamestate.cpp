@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/std/algorithm.h"
+#include "ags/lib/std/algorithm.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/engine/ac/gamestate.h"

@@ -29,7 +29,7 @@
 #ifndef AGS_ENGINE_GFX_ALI3DOGL_H
 #define AGS_ENGINE_GFX_ALI3DOGL_H
 
-#include "ags/std/memory.h"
+#include "ags/lib/std/memory.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/ddb.h"
 #include "ags/engine/gfx/gfxdriverfactorybase.h"
