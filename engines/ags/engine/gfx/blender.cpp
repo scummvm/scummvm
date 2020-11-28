@@ -24,20 +24,9 @@
 #include "ags/engine/gfx/blender.h"
 #include "ags/shared/util/wgt2allg.h"
 #include "ags/lib/allegro/color.h"
+#include "ags/lib/allegro/colblend.h"
 
 namespace AGS3 {
-
-extern "C" {
-	// Fallback routine for when we don't have anything better to do.
-	unsigned long _blender_black(unsigned long x, unsigned long y, unsigned long n);
-	// Standard Allegro 4 trans blenders for 16 and 15-bit color modes
-	unsigned long _blender_trans15(unsigned long x, unsigned long y, unsigned long n);
-	unsigned long _blender_trans16(unsigned long x, unsigned long y, unsigned long n);
-	// Standard Allegro 4 alpha blenders for 16 and 15-bit color modes
-	unsigned long _blender_alpha15(unsigned long x, unsigned long y, unsigned long n);
-	unsigned long _blender_alpha16(unsigned long x, unsigned long y, unsigned long n);
-	unsigned long _blender_alpha24(unsigned long x, unsigned long y, unsigned long n);
-}
 
 // the allegro "inline" ones are not actually inline, so #define
 // over them to speed it up
