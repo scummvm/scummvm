@@ -50,7 +50,7 @@ bool GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADG
 	if (gd) {
 #ifndef ENABLE_GROOVIE2
 		if (((const GroovieGameDescription *)gd)->version == kGroovieV2) {
-			Engine::errorUnsupportedGame(_("GroovieV2 support is not compiled in"));
+			Engine::errorUnsupportedGame(_("11h Hour support is not compiled in"));
 			return false;
 		}
 #endif
