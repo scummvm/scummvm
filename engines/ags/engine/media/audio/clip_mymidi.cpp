@@ -20,10 +20,10 @@
  *
  */
 
-#include "ags/shared/media/audio/audiodefines.h"
+#include "ags/engine/media/audio/audiodefines.h"
 #include "ags/shared/util/wgt2allg.h"
-#include "ags/shared/media/audio/clip_mymidi.h"
-#include "ags/shared/media/audio/audiointernaldefs.h"
+#include "ags/engine/media/audio/clip_mymidi.h"
+#include "ags/engine/media/audio/audiointernaldefs.h"
 
 namespace AGS3 {
 
@@ -40,7 +40,7 @@ void MYMIDI::adjust_volume() {
 	if (!is_playing()) {
 		return;
 	}
-	::set_volume(-1, get_final_volume());
+	AGS3::set_volume(-1, get_final_volume());
 }
 
 void MYMIDI::set_volume(int newvol) {
@@ -112,7 +112,7 @@ int MYMIDI::play() {
 	}
 
 	lengthInSeconds = get_midi_length(tune);
-	if (::play_midi(tune, repeat)) {
+	if (AGS3::play_midi(tune, repeat)) {
 		return 0;
 	}
 

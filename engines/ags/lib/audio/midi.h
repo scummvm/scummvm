@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef AGS_LIB_ALLEGRO_MIDI_H
-#define AGS_LIB_ALLEGRO_MIDI_H
+#ifndef AGS_LIB_AUDIO_MIDI_H
+#define AGS_LIB_AUDIO_MIDI_H
 
 #include "common/scummsys.h"
 #include "ags/lib/allegro/base.h"
@@ -117,6 +117,15 @@ AL_VAR(long, midi_loop_end);           /* loop when we hit this position */
 
 
 AL_FUNC(int, detect_midi_driver, (int driver_id));
+
+extern void stop_midi();
+extern void destroy_midi(MIDI *tune);
+extern int play_midi(MIDI *tune, bool repeat);
+extern size_t get_midi_length(MIDI *tune);
+extern void midi_seek(int target);
+extern void midi_pause();
+extern void midi_resume();
+extern int load_midi_patches();
 
 } // namespace AGS3
 

@@ -20,7 +20,7 @@
  *
  */
 
-#include "ags/shared/media/audio/queuedaudioitem.h"
+#include "ags/engine/media/audio/queuedaudioitem.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/util/stream.h"
 

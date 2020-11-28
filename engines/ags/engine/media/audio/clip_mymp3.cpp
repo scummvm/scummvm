@@ -20,17 +20,17 @@
  *
  */
 
-#include "ags/shared/media/audio/audiodefines.h"
+#include "ags/engine/media/audio/audiodefines.h"
 
 #ifndef NO_MP3_PLAYER
 
-#include "ags/shared/media/audio/clip_mymp3.h"
-#include "ags/shared/media/audio/audiointernaldefs.h"
+#include "ags/engine/media/audio/clip_mymp3.h"
+#include "ags/engine/media/audio/audiointernaldefs.h"
 #include "ags/shared/ac/common.h"               // quit()
-#include "ags/shared/ac/asset_helper.h"
-#include "ags/shared/util/mutex_lock.h"
+#include "ags/engine/ac/asset_helper.h"
+#include "ags/engine/util/mutex_lock.h"
 
-#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
 
 namespace AGS3 {
 
@@ -38,7 +38,7 @@ void MYMP3::poll() {
 	if (state_ != SoundClipPlaying) {
 		return;
 	}
-
+#if !AGS_PLATFORM_SCUMMVM
 	// update the buffer
 	char *tempbuf = nullptr;
 	{
@@ -60,7 +60,7 @@ void MYMP3::poll() {
 			almp3_free_mp3stream_buffer(stream, free_val);
 		}
 	}
-
+#endif
 	{
 		AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
 		if (almp3_poll_mp3stream(stream) == ALMP3_POLL_PLAYJUSTFINISHED) {

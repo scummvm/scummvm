@@ -20,27 +20,15 @@
  *
  */
 
-#include "ags/lib/allegro/midi.h"
+#include "ags/lib/audio/ogg.h"
+#include "common/textconsole.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
-MIDI_DRIVER *midi_driver;
-
-MIDI_DRIVER *midi_input_driver;
-
-int midi_card;
-
-int midi_input_card;
-
-volatile long midi_pos;       /* current position in the midi file, in beats */
-volatile long midi_time;      /* current position in the midi file, in seconds */
-
-long midi_loop_start;         /* where to loop back to at EOF */
-long midi_loop_end;           /* loop when we hit this position */
-
-
-int detect_midi_driver(int driver_id) {
-	return 0;
+int alogg_poll_ogg(ALOGG_OGG *ogg) {
+	return ::AGS::g_vm->_mixer->isSoundHandleActive(ogg->_handle) ? 0 : ALOGG_POLL_PLAYJUSTFINISHED;
 }
+
 
 } // namespace AGS3

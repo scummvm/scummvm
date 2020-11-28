@@ -20,75 +20,64 @@
  *
  */
 
-#include "ags/engine/media/audio/audiodefines.h"
-
-#ifdef JGMOD_MOD_PLAYER
-
-#include "ags/engine/media/audio/clip_myjgmod.h"
-#include "ags/engine/media/audio/audiointernaldefs.h"
+#include "ags/lib/audio/midi.h"
+#include "common/textconsole.h"
 
 namespace AGS3 {
 
-int MYMOD::poll() {
-	if (done)
-		return done;
+MIDI_DRIVER *midi_driver;
 
-	if (is_mod_playing() == 0)
-		done = 1;
+MIDI_DRIVER *midi_input_driver;
 
-	return done;
-}
+int midi_card;
 
-void MYMOD::set_volume(int newvol) {
-	vol = newvol;
-	if (!done)
-		set_mod_volume(newvol);
-}
+int midi_input_card;
 
-void MYMOD::destroy() {
-	stop_mod();
-	destroy_mod(tune);
-	tune = NULL;
-}
+volatile long midi_pos;       /* current position in the midi file, in beats */
+volatile long midi_time;      /* current position in the midi file, in seconds */
 
-void MYMOD::seek(int patnum) {
-	if (is_mod_playing() != 0)
-		goto_mod_track(patnum);
-}
+long midi_loop_start;         /* where to loop back to at EOF */
+long midi_loop_end;           /* loop when we hit this position */
 
-int MYMOD::get_pos() {
-	if (!is_mod_playing())
-		return -1;
-	return mi.trk;
-}
 
-int MYMOD::get_pos_ms() {
-	return 0;                   // we don't know ms offset
-}
-
-int MYMOD::get_length_ms() {
-	// we don't know ms
+int detect_midi_driver(int driver_id) {
 	return 0;
 }
 
-int MYMOD::get_voice() {
-	// MOD uses so many different voices it's not practical to keep track
-	return -1;
+
+void stop_midi() {
+	warning("TODO: stop_midi");
 }
 
-int MYMOD::get_sound_type() {
-	return MUS_MOD;
+void destroy_midi(MIDI *midi) {
+	delete midi;
 }
 
-int MYMOD::play() {
-	play_mod(tune, repeat);
-
-	return 1;
+int play_midi(MIDI *tune, bool repeat) {
+	warning("TODO: play_midi");
+	return 0;
 }
 
-MYMOD::MYMOD() : SOUNDCLIP() {
+size_t get_midi_length(MIDI *tune) {
+	warning("TODO: get_midi_length");
+	return 0;
+}
+
+void midi_seek(int target) {
+	warning("TODO: midi_seek");
+}
+
+void midi_pause() {
+	warning("TODO: midi_pause");
+}
+
+void midi_resume() {
+	warning("TODO: midi_resume");
+}
+
+int load_midi_patches() {
+	warning("TODO: load_midi_patches");
+	return 0;
 }
 
 } // namespace AGS3
-
-#endif

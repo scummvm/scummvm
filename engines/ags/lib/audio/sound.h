@@ -29,6 +29,15 @@
 
 namespace AGS3 {
 
+struct SAMPLE;
+
+struct AUDIOSTREAM {
+	int voice = -1;
+	SAMPLE *samp = nullptr;
+	bool active = false;
+	void *locked = nullptr;
+};
+
 AL_FUNC(void, reserve_voices, (int digi_voices, int midi_voices));
 AL_FUNC(void, set_volume_per_voice, (int scale));
 
@@ -51,6 +60,10 @@ AL_FUNC(int, get_mixer_bits, (void));
 AL_FUNC(int, get_mixer_channels, (void));
 AL_FUNC(int, get_mixer_voices, (void));
 AL_FUNC(int, get_mixer_buffer_length, (void));
+
+
+extern void stop_audio_stream(AUDIOSTREAM *stream);
+extern void set_volume(int channel, int vol);
 
 } // namespace AGS3
 

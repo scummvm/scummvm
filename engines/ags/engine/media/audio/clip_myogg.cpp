@@ -20,29 +20,23 @@
  *
  */
 
-#include "ags/shared/media/audio/audiodefines.h"
-#include "ags/shared/media/audio/clip_myogg.h"
-#include "ags/shared/media/audio/audiointernaldefs.h"
+#include "ags/lib/audio/digi.h"
+#include "ags/engine/media/audio/audiodefines.h"
+#include "ags/engine/media/audio/clip_myogg.h"
+#include "ags/engine/media/audio/audiointernaldefs.h"
 #include "ags/shared/ac/common.h"               // quit()
-#include "ags/shared/ac/asset_helper.h"
-#include "ags/shared/util/mutex_lock.h"
+#include "ags/engine/ac/asset_helper.h"
+#include "ags/engine/util/mutex_lock.h"
 
-#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
 
 namespace AGS3 {
-
-extern "C" {
-	extern int alogg_is_end_of_oggstream(ALOGG_OGGSTREAM *ogg);
-	extern int alogg_is_end_of_ogg(ALOGG_OGG *ogg);
-	extern int alogg_get_ogg_freq(ALOGG_OGG *ogg);
-	extern int alogg_get_ogg_stereo(ALOGG_OGG *ogg);
-}
 
 void MYOGG::poll() {
 	if (state_ != SoundClipPlaying) {
 		return;
 	}
-
+#if !AGS_PLATFORM_SCUMMVM
 	AGS_PACKFILE_OBJ *obj = (AGS_PACKFILE_OBJ *)in->userdata;
 	if (obj->remains > 0) {
 		// update the buffer
@@ -57,7 +51,7 @@ void MYOGG::poll() {
 			alogg_free_oggstream_buffer(stream, free_val);
 		}
 	}
-
+#endif
 	int ret = alogg_poll_oggstream(stream);
 	if (ret == ALOGG_OK || ret == ALOGG_POLL_BUFFERUNDERRUN)
 		get_pos_ms();  // call this to keep the last_but_one stuff up to date
