@@ -132,7 +132,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 					   "russia.fnt", "57f85ff62aeca6334fdcaf718e313b49", 18344),
 			Common::UNK_LANG,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_BRA,
@@ -146,7 +146,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("russia.fnt", "0dd55251d2886d6783718df2b184bf97", 10649),
 			Common::UNK_LANG,
 			Common::kPlatformDOS,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_BRA,
@@ -160,7 +160,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("request.win", "7a844b9518310e4cc72eabb9c0340314", 6497),
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
-			ADGF_NO_FLAGS,
+			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_BRA,
@@ -174,7 +174,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("request.win", "3b6a99ffd626e324b663839bbad59cb3", 5326),
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSTABLE,
 			GUIO1(GUIO_NOSPEECH)
 		},
 		GType_BRA,
