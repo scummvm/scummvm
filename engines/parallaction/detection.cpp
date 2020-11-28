@@ -90,11 +90,8 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		{
 			"nippon",
 			"Demo",
-			{
-				{ "disk0",	0, "6fed2e18a6bfe5e8bb49144fcc95fd11", 624640},
-				{ "fr",		0, "72f04be4320dfac719431419ec2b9a0d", 12778},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("disk0",	"6fed2e18a6bfe5e8bb49144fcc95fd11", 624640,
+					   "fr",	"72f04be4320dfac719431419ec2b9a0d", 12778),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_DEMO,
@@ -131,11 +128,8 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		{
 			"bra",
 			"Multi-lingual",
-			{
-				{ "tbra.bmp",	0, "3174c095a0e1a4eaf05c403445711e9b", 80972 },
-				{ "russia.fnt",	0, "57f85ff62aeca6334fdcaf718e313b49", 18344 },
-				AD_LISTEND
-			},
+			AD_ENTRY2s("tbra.bmp",	 "3174c095a0e1a4eaf05c403445711e9b", 80972,
+					   "russia.fnt", "57f85ff62aeca6334fdcaf718e313b49", 18344),
 			Common::UNK_LANG,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -149,10 +143,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		{
 			"bra",
 			"Demo",
-			{
-				{ "russia.fnt",	0, "0dd55251d2886d6783718df2b184bf97", 10649 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("russia.fnt", "0dd55251d2886d6783718df2b184bf97", 10649),
 			Common::UNK_LANG,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
@@ -166,10 +157,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		{
 			"bra",
 			"Multi-lingual",
-			{
-				{ "request.win", 0, "7a844b9518310e4cc72eabb9c0340314", 6497 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("request.win", "7a844b9518310e4cc72eabb9c0340314", 6497),
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
@@ -183,10 +171,7 @@ static const PARALLACTIONGameDescription gameDescriptions[] = {
 		{
 			"bra",
 			"Demo",
-			{
-				{ "request.win", 0, "3b6a99ffd626e324b663839bbad59cb3", 5326 },
-				AD_LISTEND
-			},
+			AD_ENTRY1s("request.win", "3b6a99ffd626e324b663839bbad59cb3", 5326),
 			Common::UNK_LANG,
 			Common::kPlatformAmiga,
 			ADGF_DEMO,
