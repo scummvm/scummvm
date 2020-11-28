@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 16:54+0000\n"
+"POT-Creation-Date: 2020-11-28 17:59+0000\n"
 "PO-Revision-Date: 2020-10-26 12:06+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -2404,7 +2404,7 @@ msgstr "OPL2LPT"
 msgid "OPL3LPT"
 msgstr "OPL3LPT"
 
-#: audio/mididrv.cpp:259
+#: audio/mididrv.cpp:220
 #, c-format
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
@@ -2413,12 +2413,12 @@ msgstr ""
 "Het geselecteerde audioapparaat '%s' was niet gevonden (staat misschien uit "
 "of is losgekoppeld)."
 
-#: audio/mididrv.cpp:260 audio/mididrv.cpp:274 audio/mididrv.cpp:312
-#: audio/mididrv.cpp:329
+#: audio/mididrv.cpp:221 audio/mididrv.cpp:235 audio/mididrv.cpp:273
+#: audio/mididrv.cpp:290
 msgid "Attempting to fall back to the next available device..."
 msgstr "Poging om terug te vallen op het volgende beschikbare apparaat..."
 
-#: audio/mididrv.cpp:273
+#: audio/mididrv.cpp:234
 #, c-format
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
@@ -2427,7 +2427,7 @@ msgstr ""
 "Het geselecteerde audioapparaat '%s' kan niet gebruikt worden. Zie het log "
 "bestand voor meer informatie."
 
-#: audio/mididrv.cpp:311
+#: audio/mididrv.cpp:272
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
@@ -2436,7 +2436,7 @@ msgstr ""
 "Het voorkeursaudioapparaat '%s' was niet gevonden (staat misschien uit of is "
 "losgekoppeld)."
 
-#: audio/mididrv.cpp:328
+#: audio/mididrv.cpp:289
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
@@ -2445,7 +2445,7 @@ msgstr ""
 "Het voorkeursaudioapparaat '%s' kan niet gebruikt worden. Zie het logbestand "
 "voor meer informatie."
 
-#: audio/mididrv.cpp:725
+#: audio/mididrv.cpp:454
 msgid "Starting MIDI dump"
 msgstr "Opstarten MIDI dump"
 
