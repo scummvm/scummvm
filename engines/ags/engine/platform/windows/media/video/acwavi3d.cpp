@@ -45,7 +45,7 @@
 typedef float D3DVALUE, *LPD3DVALUE;
 #include "ags/shared/ac/common.h"
 #include "ags/shared/main/game_run.h"
-#include "ags/shared/media/video/VMR9Graph.h"
+#include "ags/shared/media/video/vmr9_graph.h"
 #include "ags/shared/platform/base/agsplatformdriver.h"
 ////include <atlbase.h>
 #include "ags/shared/media/audio/audio_system.h"
