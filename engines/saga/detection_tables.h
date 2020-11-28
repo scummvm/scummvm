@@ -751,7 +751,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 
 	// TODO: Add the Amiga versions here (not supported yet)
 
-#ifdef ENABLE_IHNM
 	// IHNM Section ///////////////////////////////////////////////////////////////////////////////////////////
 
 	// I Have No Mouth And I Must Scream - Demo version
@@ -1044,9 +1043,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		IHNMCD_GameFonts,
 		NULL,
 	},
-#endif
-
-#ifdef ENABLE_SAGA2
 
 	// Dinotopia Section //////////////////////////////////////////////////////////////////////////////////////
 	{
@@ -1105,8 +1101,6 @@ static const SAGAGameDescription gameDescriptions[] = {
 		NULL,	// font array
 		NULL,
 	},
-
-#endif
 
 	{ AD_TABLE_END_MARKER, 0, 0, 0, NULL, 0, NULL, NULL }
 };

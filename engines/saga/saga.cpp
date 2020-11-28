@@ -231,12 +231,19 @@ Common::Error SagaEngine::run() {
 		case GID_IHNM:
 			_resource = new Resource_RES(this);
 			break;
+#else
+		case GID_IHNM:
+			return Common::Error(Common::kUnsupportedGameidError, _s("I Have No Mouth and I Must Scream support is not compiled in"));
 #endif
 #ifdef ENABLE_SAGA2
 		case GID_DINO:
 		case GID_FTA2:
 			_resource = new Resource_HRS(this);
 			break;
+#else
+		case GID_DINO:
+		case GID_FTA2:
+			return Common::Error(Common::kUnsupportedGameidError, _s("SAGA 2 support is not compiled in"));
 #endif
 		default:
 			break;
