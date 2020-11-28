@@ -40,6 +40,7 @@
 #include "common/macresman.h"
 #include "common/stuffit.h"
 #include "common/textconsole.h"
+#include "common/translation.h"
 
 #include "backends/audiocd/audiocd.h"
 #include "engines/util.h"
@@ -90,6 +91,12 @@ GroovieEngine::~GroovieEngine() {
 }
 
 Common::Error GroovieEngine::run() {
+#ifndef ENABLE_GROOVIE2
+	if (_gameDescription->version == kGroovieV2) {
+		return Common::Error(Common::kUnsupportedGameidError, _s("Groovie 2 support is not compiled in"));
+	}
+#endif
+
 	if (_gameDescription->version == kGroovieV2 && getPlatform() == Common::kPlatformMacintosh) {
 		// Load the Mac installer with the lowest priority (in case the user has installed
 		// the game and has the MIDI folder present; faster to just load them)

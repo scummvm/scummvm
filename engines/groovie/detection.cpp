@@ -33,13 +33,10 @@ namespace Groovie {
 static const PlainGameDescriptor groovieGames[] = {
 	// Games
 	{"t7g", "The 7th Guest"},
-
-#ifdef ENABLE_GROOVIE2
 	{"11h", "The 11th Hour: The Sequel to The 7th Guest"},
 	{"clandestiny", "Clandestiny"},
 	{"unclehenry", "Uncle Henry's Playhouse"},
 	{"tlc", "Tender Loving Care"},
-#endif
 
 	{0, 0}
 };
@@ -125,7 +122,6 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT7G, 0
 	},
 
-#ifdef ENABLE_GROOVIE2
 	// The 11th Hour DOS English
 	{
 		{
@@ -285,7 +281,6 @@ static const GroovieGameDescription gameDescriptions[] = {
 		},
 		kGroovieV2, 1
 	},
-#endif
 
 	{AD_TABLE_END_MARKER, kGroovieT7G, 0}
 };

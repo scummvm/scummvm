@@ -1,2 +1,3 @@
 engines/groovie/detection.cpp
+engines/groovie/groovie.cpp
 engines/groovie/script.cpp
