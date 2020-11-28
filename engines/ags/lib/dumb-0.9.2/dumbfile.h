@@ -39,8 +39,8 @@
  *                                                       \__/
  */
 
-#ifndef AGS_LIB_DUMB_H
-#define AGS_LIB_DUMB_H
+#ifndef AGS_LIB_DUMB_DUMBFILE_H
+#define AGS_LIB_DUMB_DUMBFILE_H
 
 #include "common/stream.h"
 

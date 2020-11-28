@@ -26,6 +26,7 @@ MODULE_OBJS = \
 	lib/audio/ogg.o \
 	lib/audio/sound.o \
 	lib/audio/wav.o \
+	lib/dumb-0.9.2/dumbfile.o \
 	lib/hq2x/hq2x3x.o \
 	lib/opengl/opengl.o \
 	lib/std/std.o \
