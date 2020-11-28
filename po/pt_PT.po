@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 17:53+0100\n"
+"POT-Creation-Date: 2020-11-28 16:54+0000\n"
 "PO-Revision-Date: 2020-09-18 03:43+0000\n"
 "Last-Translator: Daniel <supsuper@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) <https://translations.scummvm.org/"
@@ -4108,11 +4108,11 @@ msgstr ""
 msgid "Missing game code"
 msgstr ""
 
-#: engines/cge/detection.cpp:99 engines/cge2/detection.cpp:91
+#: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
 msgstr "Modo para daltónicos"
 
-#: engines/cge/detection.cpp:100 engines/cge2/detection.cpp:92
+#: engines/cge/detection.cpp:100
 msgid "Enable Color Blind Mode by default"
 msgstr "Ativar modo para daltónicos por defeito"
 
