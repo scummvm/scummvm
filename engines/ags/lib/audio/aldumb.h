@@ -43,13 +43,9 @@
 #define AGS_LIB_ALDUMB_H
 
 #include "ags/lib/allegro.h"
-#include "ags/lib/dumb.h"
+#include "ags/lib/audio/dumb.h"
 
 namespace AGS3 {
-
-#ifdef __cplusplus
-extern "C" {
-#endif
 
 /* Packfile Support */
 
@@ -107,10 +103,6 @@ DUH_SIGRENDERER *al_duh_decompose_to_sigrenderer(AL_DUH_PLAYER *dp);
 	 * these functions.
 	 */
 
-#endif
-
-#ifdef __cplusplus
-}
 #endif
 
 } // namespace AGS3
