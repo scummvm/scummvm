@@ -1028,8 +1028,6 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 	uint8 *renderBufferPtr = renderCoordinatesBuffer;
 
-	uint8 *afterPolyHeaderPtr = nullptr; // RECHECK THIS
-
 	if (numPolygons > 0) {
 		int16 primitiveCounter = numPolygons; // the number of primitives = the number of polygons
 
@@ -1041,6 +1039,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			currentPolyHeader.colorIndex = stream.readSint16LE();
 			int32 bestDepth = -32000;
 			polyHeader *destinationHeader = (polyHeader *)renderBufferPtr;
+			computedVertex * const vertices = (computedVertex *)(renderBufferPtr + 4);
 
 			// TODO: RECHECK coordinates axis
 			if (currentPolyHeader.renderType >= 9) {
@@ -1052,8 +1051,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 				int16 counter = destinationHeader->numOfVertex;
 
-				afterPolyHeaderPtr = renderBufferPtr;
-
+				computedVertex *currentComputedVertex = vertices;
 				do {
 					const int16 shadeEntry = stream.readSint16LE();
 					const int16 shadeValue = currentPolyHeader.colorIndex + shadeTable[shadeEntry];
@@ -1062,7 +1060,6 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 					const int16 vertexIndex = vertexOffset / sizeof(pointTab);
 					const pointTab *currentVertex = &flattenPoints[vertexIndex];
 
-					computedVertex *currentComputedVertex = (computedVertex *)renderBufferPtr;
 					currentComputedVertex->shadeValue = shadeValue;
 					currentComputedVertex->x = currentVertex->x;
 					currentComputedVertex->y = currentVertex->y;
@@ -1073,6 +1070,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
+					++currentComputedVertex;
 				} while (--counter > 0);
 			} else if (currentPolyHeader.renderType >= POLYGONTYPE_GOURAUD) { // only 1 shade value is used
 				destinationHeader->renderType = currentPolyHeader.renderType - POLYGONTYPE_GOURAUD;
@@ -1082,7 +1080,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 				destinationHeader->colorIndex = shadeValue;
 
 				renderBufferPtr += 4;
-				afterPolyHeaderPtr = renderBufferPtr;
+				computedVertex *currentComputedVertex = vertices;
 				int16 counter = destinationHeader->numOfVertex;
 
 				do {
@@ -1090,7 +1088,6 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 					const int16 vertexIndex = vertexOffset / sizeof(pointTab);
 					pointTab *currentVertex = &flattenPoints[vertexIndex];
 
-					computedVertex *currentComputedVertex = (computedVertex *)renderBufferPtr;
 					//currentComputedVertex->shadeValue = 0;
 					currentComputedVertex->x = currentVertex->x;
 					currentComputedVertex->y = currentVertex->y;
@@ -1101,6 +1098,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
+					++currentComputedVertex;
 				} while (--counter > 0);
 			} else { // no shade is used
 				destinationHeader->renderType = currentPolyHeader.renderType;
@@ -1109,7 +1107,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 				renderBufferPtr += 4;
 
-				afterPolyHeaderPtr = renderBufferPtr;
+				computedVertex *currentComputedVertex = vertices;
 				int16 counter = currentPolyHeader.numOfVertex;
 
 				do {
@@ -1117,7 +1115,6 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 					const int16 vertexIndex = vertexOffset / sizeof(pointTab);
 					pointTab *currentVertex = &flattenPoints[vertexIndex];
 
-					computedVertex *currentComputedVertex = (computedVertex *)renderBufferPtr;
 					//currentComputedVertex->shadeValue = 0;
 					currentComputedVertex->x = currentVertex->x;
 					currentComputedVertex->y = currentVertex->y;
@@ -1128,24 +1125,25 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
+					++currentComputedVertex;
 				} while (--counter > 0);
 			}
 
-			int16 ax = *((const int16 *)(afterPolyHeaderPtr + 4));
-			int16 bx = *((const int16 *)(afterPolyHeaderPtr + 8));
+			int16 ax = vertices[0].y;
+			int16 bx = vertices[1].x;
 
-			ax -= *((const int16 *)(afterPolyHeaderPtr + 16));
-			bx -= *((const int16 *)(afterPolyHeaderPtr + 2));
+			ax -= vertices[2].y;
+			bx -= vertices[0].x;
 
 			ax *= bx;
 
 			int32 bestDepth2 = ax;
 
-			ax = *((const int16 *)(afterPolyHeaderPtr + 2));
-			int16 cx = *((const int16 *)(afterPolyHeaderPtr + 10));
+			ax = vertices[0].x;
+			int16 cx = vertices[1].y;
 
-			ax -= *((const int16 *)(afterPolyHeaderPtr + 14));
-			cx -= *((const int16 *)(afterPolyHeaderPtr + 4));
+			ax -= vertices[2].x;
+			cx -= vertices[0].y;
 
 			ax *= cx;
 			ax -= bestDepth2;
@@ -1257,7 +1255,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 	}
 
 	int16 primitiveCounter = numOfPrimitives;
-	afterPolyHeaderPtr = ptr + stream.pos();
+	uint8* afterPolyHeaderPtr = ptr + stream.pos();
 
 	do {
 		int16 type = renderTabEntryPtr2->renderType;
