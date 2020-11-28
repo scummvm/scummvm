@@ -407,11 +407,8 @@
 	{
 		"gob1",
 		"",
-		{
-			{"intro.stk", 0, "f5f028ee39c456fa51fa63b606583918", 313472},
-			{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "f5f028ee39c456fa51fa63b606583918", 313472,
+				   "musmac1.mid", "4f66903b33df8a20edd4c748809c0b56", 8161),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -425,11 +422,8 @@
 	{
 		"gob1",
 		"",
-		{
-			{"intro.stk", 0, "f5f028ee39c456fa51fa63b606583918", 313472},
-			{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "f5f028ee39c456fa51fa63b606583918", 313472,
+			       "musmac1.mid", "4f66903b33df8a20edd4c748809c0b56", 8161),
 		IT_ITA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -443,11 +437,8 @@
 	{
 		"gob1",
 		"",
-		{
-			{"intro.stk", 0, "f5f028ee39c456fa51fa63b606583918", 313472},
-			{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "f5f028ee39c456fa51fa63b606583918", 313472,
+				   "musmac1.mid", "4f66903b33df8a20edd4c748809c0b56", 8161),
 		EN_GRB,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -461,11 +452,8 @@
 	{
 		"gob1",
 		"",
-		{
-			{"intro.stk", 0, "f5f028ee39c456fa51fa63b606583918", 313472},
-			{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "f5f028ee39c456fa51fa63b606583918", 313472,
+				   "musmac1.mid", "4f66903b33df8a20edd4c748809c0b56", 8161),
 		DE_DEU,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -479,11 +467,8 @@
 	{
 		"gob1",
 		"",
-		{
-			{"intro.stk", 0, "f5f028ee39c456fa51fa63b606583918", 313472},
-			{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "f5f028ee39c456fa51fa63b606583918", 313472,
+				   "musmac1.mid", "4f66903b33df8a20edd4c748809c0b56", 8161),
 		ES_ESP,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -497,11 +482,8 @@
 	{
 		"gob1",
 		"",
-		{
-			{"intro.stk", 0, "e157cb59c6d330ca70d12ab0ef1dd12b", 288972},
-			{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "e157cb59c6d330ca70d12ab0ef1dd12b", 288972,
+				   "musmac1.mid", "4f66903b33df8a20edd4c748809c0b56", 8161),
 		EN_GRB,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -515,11 +497,8 @@
 	{
 		"gob1",
 		"",
-		{
-			{"intro.stk", 0, "e157cb59c6d330ca70d12ab0ef1dd12b", 288972},
-			{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "e157cb59c6d330ca70d12ab0ef1dd12b", 288972,
+				   "musmac1.mid", "4f66903b33df8a20edd4c748809c0b56", 8161),
 		FR_FRA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -533,11 +512,8 @@
 	{
 		"gob1",
 		"",
-		{
-			{"intro.stk", 0, "e157cb59c6d330ca70d12ab0ef1dd12b", 288972},
-			{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "e157cb59c6d330ca70d12ab0ef1dd12b", 288972,
+				   "musmac1.mid", "4f66903b33df8a20edd4c748809c0b56", 8161),
 		ES_ESP,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -551,11 +527,8 @@
 	{
 		"gob1",
 		"",
-		{
-			{"intro.stk", 0, "e157cb59c6d330ca70d12ab0ef1dd12b", 288972},
-			{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "e157cb59c6d330ca70d12ab0ef1dd12b", 288972,
+				   "musmac1.mid", "4f66903b33df8a20edd4c748809c0b56", 8161),
 		IT_ITA,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -569,11 +542,8 @@
 	{
 		"gob1",
 		"",
-		{
-			{"intro.stk", 0, "e157cb59c6d330ca70d12ab0ef1dd12b", 288972},
-			{"musmac1.mid", 0, "4f66903b33df8a20edd4c748809c0b56", 8161},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",   "e157cb59c6d330ca70d12ab0ef1dd12b", 288972,
+				   "musmac1.mid", "4f66903b33df8a20edd4c748809c0b56", 8161),
 		DE_DEU,
 		kPlatformWindows,
 		ADGF_NO_FLAGS,

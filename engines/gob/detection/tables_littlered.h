@@ -247,11 +247,8 @@
 	{
 		"littlered",
 		"",
-		{
-			{"intro.stk", 0, "0b72992f5d8b5e6e0330572a5753ea25", 256490},
-			{"mod.babayaga", 0, "43484cde74e0860785f8e19f0bc776d1", 60248},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",		"0b72992f5d8b5e6e0330572a5753ea25", 256490,
+				   "mod.babayaga",	"43484cde74e0860785f8e19f0bc776d1", 60248),
 		UNK_LANG,
 		kPlatformAmiga,
 		ADGF_NO_FLAGS,
