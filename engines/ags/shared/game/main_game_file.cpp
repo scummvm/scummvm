@@ -633,8 +633,10 @@ HGameFileError ReadSpriteFlags(LoadedGameEntities &ents, Stream *in, GameDataVer
 			sprcount, (uint32_t)SpriteCache::MAX_SPRITE_INDEX + 1));
 
 	ents.SpriteCount = sprcount;
-	ents.SpriteFlags.reset(new char[sprcount]);
-	in->Read(ents.SpriteFlags.get(), sprcount);
+	ents.SpriteFlags.clear();
+	ents.SpriteFlags.resize(sprcount);
+
+	in->Read(&ents.SpriteFlags[0], sprcount);
 	return HGameFileError::None();
 }
 

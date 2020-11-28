@@ -119,7 +119,7 @@ struct LoadedGameEntities {
 
 	// Original sprite data (when it was read into const-sized arrays)
 	size_t                  SpriteCount;
-	std::unique_ptr<char[]> SpriteFlags;
+	Common::Array<byte>     SpriteFlags;
 
 	// Old dialog support
 	// legacy compiled dialog script of its own format,

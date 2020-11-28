@@ -51,6 +51,7 @@ MODULE_OBJS = \
 	shared/font/wfnfontrenderer.o \
 	shared/game/customproperties.o \
 	shared/game/interactions.o \
+	shared/game/main_game_file.o \
 	shared/game/room_file.o \
 	shared/game/room_file_deprecated.o \
 	shared/game/roomstruct.o \
