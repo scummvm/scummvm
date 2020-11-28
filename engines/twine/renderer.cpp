@@ -1037,6 +1037,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			polyHeader currentPolyHeader;
 			currentPolyHeader.renderType = stream.readByte();
 			currentPolyHeader.numOfVertex = stream.readByte();
+			assert(currentPolyHeader.numOfVertex <= 16);
 			currentPolyHeader.colorIndex = stream.readSint16LE();
 			int32 bestDepth = -32000;
 			polyHeader *destinationHeader = (polyHeader *)renderBufferPtr;
