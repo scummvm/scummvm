@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 18:06+0000\n"
+"POT-Creation-Date: 2020-11-28 18:11+0000\n"
 "PO-Revision-Date: 2020-11-25 20:52+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -5884,19 +5884,19 @@ msgstr ""
 "Sierran päivityspaketin.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:142
+#: engines/scumm/detection.cpp:158
 msgid "Show Object Line"
 msgstr "Näytä esineiden tiedot"
 
-#: engines/scumm/detection.cpp:143
+#: engines/scumm/detection.cpp:159
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Näytä esineiden nimet näytön alalaidassa"
 
-#: engines/scumm/detection.cpp:149
+#: engines/scumm/detection.cpp:165
 msgid "Use NES Classic Palette"
 msgstr "Käytä NES Classic-palettia"
 
-#: engines/scumm/detection.cpp:150
+#: engines/scumm/detection.cpp:166
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "Käytä neutraalimpaa väripalettia joka emuloi paremmin NES Classic:ia"
 

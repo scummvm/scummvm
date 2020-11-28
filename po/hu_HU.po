@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 18:06+0000\n"
+"POT-Creation-Date: 2020-11-28 18:11+0000\n"
 "PO-Revision-Date: 2020-11-28 17:59+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -5873,19 +5873,19 @@ msgstr ""
 "Ebben az esetben szükség lehet az eredeti Sierra folt alkalmazására.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:142
+#: engines/scumm/detection.cpp:158
 msgid "Show Object Line"
 msgstr "Tárgynév sor látható"
 
-#: engines/scumm/detection.cpp:143
+#: engines/scumm/detection.cpp:159
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Tárgyak neveinek megjelenítése a képernyõ alján"
 
-#: engines/scumm/detection.cpp:149
+#: engines/scumm/detection.cpp:165
 msgid "Use NES Classic Palette"
 msgstr "NES klasszikus paletta használata"
 
-#: engines/scumm/detection.cpp:150
+#: engines/scumm/detection.cpp:166
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "Semlegesebb színpaletta használata, amely utánozza a NES Classic-ot"
 

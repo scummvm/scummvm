@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 18:06+0000\n"
+"POT-Creation-Date: 2020-11-28 18:11+0000\n"
 "PO-Revision-Date: 2020-11-28 18:12+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
-"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Українська\n"
 
@@ -5897,19 +5897,19 @@ msgstr ""
 "Sierra.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:142
+#: engines/scumm/detection.cpp:158
 msgid "Show Object Line"
 msgstr "Показувати лінії об'єктів"
 
-#: engines/scumm/detection.cpp:143
+#: engines/scumm/detection.cpp:159
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Показувати назви об'єктів внизу екрану"
 
-#: engines/scumm/detection.cpp:149
+#: engines/scumm/detection.cpp:165
 msgid "Use NES Classic Palette"
 msgstr "Використовувати класичну палітру NES"
 
-#: engines/scumm/detection.cpp:150
+#: engines/scumm/detection.cpp:166
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr "Використовувати більш нейтральну палітру, яка подібна до NES Classic"
 
