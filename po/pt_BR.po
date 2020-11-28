@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 17:44+0100\n"
+"POT-Creation-Date: 2020-11-28 17:53+0100\n"
 "PO-Revision-Date: 2020-11-27 10:10+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
@@ -6934,6 +6934,11 @@ msgid ""
 msgstr ""
 "O arquivo teenagent.dat está compactado e zlib não foi incluso neste "
 "executável. Favor descompactá-lo"
+
+#: engines/tinsel/detection_tables.h:466
+#, fuzzy
+msgid "Saturn CD version is not yet supported"
+msgstr "Este jogo não é suportado."
 
 #: engines/tony/tony.cpp:257
 #, c-format

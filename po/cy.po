@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 17:44+0100\n"
+"POT-Creation-Date: 2020-11-28 17:53+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
@@ -6471,6 +6471,10 @@ msgstr ""
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
+msgstr ""
+
+#: engines/tinsel/detection_tables.h:466
+msgid "Saturn CD version is not yet supported"
 msgstr ""
 
 #: engines/tony/tony.cpp:257

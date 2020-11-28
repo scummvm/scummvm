@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 17:44+0100\n"
+"POT-Creation-Date: 2020-11-28 17:53+0100\n"
 "PO-Revision-Date: 2020-09-29 17:13+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
@@ -6829,6 +6829,11 @@ msgid ""
 msgstr ""
 "Plik teenagent.dat jest skompresowany, a ScummVM nie zawiera obsługi zlib. "
 "Rozpakuj plik"
+
+#: engines/tinsel/detection_tables.h:466
+#, fuzzy
+msgid "Saturn CD version is not yet supported"
+msgstr "Identyfikator gry nie jest wspierany"
 
 #: engines/tony/tony.cpp:257
 #, c-format
