@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-26 21:14+0000\n"
+"POT-Creation-Date: 2020-11-28 14:24+0000\n"
 "PO-Revision-Date: 2020-11-25 20:52+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4120,11 +4120,17 @@ msgid ""
 msgstr ""
 "Fanikääntäjä ei halua että hänen käännöstyönsä lisätään osaksi ScummvM:ää."
 
-#: engines/cge/detection.cpp:123
+#: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
+#, fuzzy
+#| msgid "Main game controls:"
+msgid "Missing game code"
+msgstr "Pelin tärkeimmät kontrollit:"
+
+#: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
 msgstr "Värisokeustila"
 
-#: engines/cge/detection.cpp:124
+#: engines/cge/detection.cpp:100
 msgid "Enable Color Blind Mode by default"
 msgstr "Aktivoi värisokeustila vakiona"
 
@@ -4760,11 +4766,11 @@ msgstr ""
 "Voit myös käyttää pelin Steam- tai GOG-versioita, joissa tiedostot on "
 "yhdistetty"
 
-#: engines/groovie/detection.cpp:320
+#: engines/groovie/detection.cpp:302
 msgid "Fast movie speed"
 msgstr "Nopea videontoisto"
 
-#: engines/groovie/detection.cpp:321
+#: engines/groovie/detection.cpp:303
 msgid "Play movies at an increased speed"
 msgstr "Toista videot nopeampana"
 
