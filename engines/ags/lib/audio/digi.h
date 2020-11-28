@@ -20,12 +20,13 @@
  *
  */
 
-#ifndef AGS_LIB_ALLEGRO_DIGI_H
-#define AGS_LIB_ALLEGRO_DIGI_H
+#ifndef AGS_LIB_AUDIO_DIGI_H
+#define AGS_LIB_AUDIO_DIGI_H
 
 #include "common/scummsys.h"
 #include "ags/lib/allegro/base.h"
 #include "ags/lib/allegro/alconfig.h"
+#include "ags/lib/allegro/file.h"
 
 namespace AGS3 {
 
@@ -139,6 +140,20 @@ AL_VAR(int, digi_card);
 AL_VAR(int, digi_input_card);
 
 AL_FUNC(int, detect_digi_driver, (int driver_id));
+
+
+extern SAMPLE *load_wav_pf(PACKFILE *f);
+extern void destroy_sample(SAMPLE *spl);
+extern int play_sample(SAMPLE *spl, int vol, int pan, int freq, int loop);
+extern void stop_sample(SAMPLE *spl);
+
+extern void voice_start(int voice);
+extern void voice_stop(int voice);
+extern int voice_get_position(int voice);
+extern void voice_set_position(int voice, int position);
+extern void voice_set_volume(int voice, int volume);
+extern int voice_get_frequency(int voice);
+extern void voice_set_pan(int voice, int pan);
 
 } // namespace AGS3
 

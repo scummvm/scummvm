@@ -29,7 +29,6 @@
 #include "ags/lib/allegro/base.h"
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/config.h"
-#include "ags/lib/allegro/digi.h"
 #include "ags/lib/allegro/draw.h"
 #include "ags/lib/allegro/error.h"
 #include "ags/lib/allegro/file.h"
@@ -37,11 +36,13 @@
 #include "ags/lib/allegro/fmaths.h"
 #include "ags/lib/allegro/gfx.h"
 #include "ags/lib/allegro/keyboard.h"
-#include "ags/lib/allegro/midi.h"
 #include "ags/lib/allegro/mouse.h"
-#include "ags/lib/allegro/sound.h"
 #include "ags/lib/allegro/system.h"
 #include "ags/lib/allegro/unicode.h"
+
+#include "ags/lib/audio/sound.h"
+#include "ags/lib/audio/digi.h"
+#include "ags/lib/audio/midi.h"
 
 namespace AGS3 {
 

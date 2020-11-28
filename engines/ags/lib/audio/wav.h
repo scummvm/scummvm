@@ -20,37 +20,15 @@
  *
  */
 
-#include "ags/engine/media/audio/ambientsound.h"
-#include "ags/engine/media/audio/audio.h"
-#include "ags/engine/media/audio/soundclip.h"
-#include "ags/shared/util/stream.h"
+#ifndef AGS_LIB_AUDIO_WAV_H
+#define AGS_LIB_AUDIO_WAV_H
+
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 namespace AGS3 {
 
-using AGS::Shared::Stream;
-
-bool AmbientSound::IsPlaying() {
-	if (channel <= 0)
-		return false;
-	return channel_is_playing(channel);
-}
-
-void AmbientSound::ReadFromFile(Stream *in) {
-	channel = in->ReadInt32();
-	x = in->ReadInt32();
-	y = in->ReadInt32();
-	vol = in->ReadInt32();
-	num = in->ReadInt32();
-	maxdist = in->ReadInt32();
-}
-
-void AmbientSound::WriteToFile(Stream *out) {
-	out->WriteInt32(channel);
-	out->WriteInt32(x);
-	out->WriteInt32(y);
-	out->WriteInt32(vol);
-	out->WriteInt32(num);
-	out->WriteInt32(maxdist);
-}
 
 } // namespace AGS3
+
+#endif

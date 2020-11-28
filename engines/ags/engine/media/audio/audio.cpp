@@ -20,32 +20,30 @@
  *
  */
 
-//include <math.h>
-
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/wgt2allg.h"
-#include "ags/shared/media/audio/audio.h"
+#include "ags/engine/media/audio/audio.h"
 #include "ags/shared/ac/audiocliptype.h"
 #include "ags/shared/ac/gamesetupstruct.h"
-#include "ags/shared/ac/dynobj/cc_audioclip.h"
-#include "ags/shared/ac/dynobj/cc_audiochannel.h"
-#include "ags/shared/ac/gamestate.h"
-#include "ags/shared/script/script_runtime.h"
-#include "ags/shared/ac/audiochannel.h"
-#include "ags/shared/ac/audioclip.h"
-#include "ags/shared/ac/gamesetup.h"
-#include "ags/shared/ac/path_helper.h"
-#include "ags/shared/media/audio/sound.h"
-#include "ags/shared/debugging/debug_log.h"
-#include "ags/shared/debugging/debugger.h"
+#include "ags/engine/ac/dynobj/cc_audioclip.h"
+#include "ags/engine/ac/dynobj/cc_audiochannel.h"
+#include "ags/engine/ac/gamestate.h"
+#include "ags/engine/script/script_runtime.h"
+#include "ags/engine/ac/audiochannel.h"
+#include "ags/engine/ac/audioclip.h"
+#include "ags/engine/ac/gamesetup.h"
+#include "ags/engine/ac/path_helper.h"
+#include "ags/engine/media/audio/sound.h"
+#include "ags/engine/debugging/debug_log.h"
+#include "ags/engine/debugging/debugger.h"
 #include "ags/shared/ac/common.h"
-#include "ags/shared/ac/file.h"
-#include "ags/shared/ac/global_audio.h"
-//include <math.h>
+#include "ags/engine/ac/file.h"
+#include "ags/engine/ac/global_audio.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/core/assetmanager.h"
-#include "ags/shared/ac/timer.h"
-#include "ags/shared/main/game_run.h"
+#include "ags/engine/ac/timer.h"
+#include "ags/engine/main/game_run.h"
+#include "ags/lib/audio/sound.h"
 
 namespace AGS3 {
 
@@ -55,7 +53,7 @@ using namespace AGS::Engine;
 //-----------------------
 //sound channel management; all access goes through here, which can't be done without a lock
 
-static std::array < SOUNDCLIP *, MAX_SOUND_CHANNELS + 1 > _channels;
+static std::array<SOUNDCLIP *> _channels(MAX_SOUND_CHANNELS + 1);
 AGS::Engine::Mutex AudioChannelsLock::s_mutex;
 
 SOUNDCLIP *AudioChannelsLock::GetChannel(int index) {
@@ -546,7 +544,7 @@ void force_audiostream_include() {
 }
 
 // TODO: double check that ambient sounds array actually needs +1
-std::array < AmbientSound, MAX_SOUND_CHANNELS + 1 > ambient;
+std::array<AmbientSound> ambient(MAX_SOUND_CHANNELS + 1);
 
 int get_volume_adjusted_for_distance(int volume, int sndX, int sndY, int sndMaxDist) {
 	int distx = playerchar->x - sndX;
@@ -682,9 +680,9 @@ static int play_sound_priority(int val1, int priority) {
 			if (usechan >= 0) {
 				// channel will hold a different clip here
 				assert(usechan == i);
-				auto *ch = lock.GetChannel(usechan);
-				if (ch)
-					ch->priority = priority;
+				auto *chan = lock.GetChannel(usechan);
+				if (chan)
+					chan->priority = priority;
 			}
 			return usechan;
 		} else if (ch->priority < lowest_pri) {

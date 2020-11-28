@@ -23,8 +23,9 @@
 #ifndef AGS_ENGINE_MEDIA_AUDIO_CLIP_MYMP3_H
 #define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYMP3_H
 
-#include "ags/shared/almp3.h"
-#include "ags/shared/media/audio/soundclip.h"
+#include "ags/lib/audio/mp3.h"
+#include "ags/lib/allegro/file.h"
+#include "ags/engine/media/audio/soundclip.h"
 
 namespace AGS3 {
 

@@ -21,10 +21,10 @@
  */
 
 #include "ags/shared/util/wgt2allg.h"
-#include "ags/shared/media/audio/audio.h"
-#include "ags/shared/media/audio/audiodefines.h"
-#include "ags/shared/media/audio/soundclip.h"
-#include "ags/shared/media/audio/audiointernaldefs.h"
+#include "ags/engine/media/audio/audio.h"
+#include "ags/engine/media/audio/audiodefines.h"
+#include "ags/engine/media/audio/soundclip.h"
+#include "ags/engine/media/audio/audiointernaldefs.h"
 
 namespace AGS3 {
 

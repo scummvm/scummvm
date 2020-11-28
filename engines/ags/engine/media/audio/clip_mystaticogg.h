@@ -23,8 +23,8 @@
 #ifndef AGS_ENGINE_MEDIA_AUDIO_CLIP_MYSTATICOGG_H
 #define AGS_ENGINE_MEDIA_AUDIO_CLIP_MYSTATICOGG_H
 
-#include "ags/shared/alogg.h"
-#include "ags/shared/media/audio/soundclip.h"
+#include "ags/lib/audio/ogg.h"
+#include "ags/engine/media/audio/soundclip.h"
 
 namespace AGS3 {
 

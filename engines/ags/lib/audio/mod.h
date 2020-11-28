@@ -20,21 +20,15 @@
  *
  */
 
-#include "ags/lib/allegro/digi.h"
+#ifndef AGS_LIB_AUDIO_MOD_H
+#define AGS_LIB_AUDIO_MOD_H
+
+#include "audio/audiostream.h"
+#include "audio/mixer.h"
 
 namespace AGS3 {
 
-DIGI_DRIVER *digi_driver;
-
-DIGI_DRIVER *digi_input_driver;
-
-int digi_card;
-
-int digi_input_card;
-
-
-int detect_digi_driver(int driver_id) {
-	return 0;
-}
 
 } // namespace AGS3
+
+#endif

@@ -20,22 +20,17 @@
  *
  */
 
-#include "ags/shared/media/audio/audiodefines.h"
-#include "ags/shared/media/audio/clip_mystaticogg.h"
-#include "ags/shared/media/audio/audiointernaldefs.h"
-#include "ags/shared/media/audio/soundcache.h"
-#include "ags/shared/util/mutex_lock.h"
+#include "ags/engine/media/audio/audiodefines.h"
+#include "ags/engine/media/audio/clip_mystaticogg.h"
+#include "ags/engine/media/audio/audiointernaldefs.h"
+#include "ags/engine/media/audio/soundcache.h"
+#include "ags/engine/util/mutex_lock.h"
 
-#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/lib/audio/digi.h"
+#include "ags/lib/audio/ogg.h"
 
 namespace AGS3 {
-
-extern "C" {
-	extern int alogg_is_end_of_oggstream(ALOGG_OGGSTREAM *ogg);
-	extern int alogg_is_end_of_ogg(ALOGG_OGG *ogg);
-	extern int alogg_get_ogg_freq(ALOGG_OGG *ogg);
-	extern int alogg_get_ogg_stereo(ALOGG_OGG *ogg);
-}
 
 extern int use_extra_sound_offset;  // defined in ac.cpp
 

@@ -20,14 +20,15 @@
  *
  */
 
+#include "ags/lib/audio/digi.h"
 #include "ags/shared/util/wgt2allg.h"
-#include "ags/shared/media/audio/audiodefines.h"
-#include "ags/shared/media/audio/clip_mywave.h"
-#include "ags/shared/media/audio/audiointernaldefs.h"
-#include "ags/shared/media/audio/soundcache.h"
-#include "ags/shared/util/mutex_lock.h"
+#include "ags/engine/media/audio/audiodefines.h"
+#include "ags/engine/media/audio/clip_mywave.h"
+#include "ags/engine/media/audio/audiointernaldefs.h"
+#include "ags/engine/media/audio/soundcache.h"
+#include "ags/engine/util/mutex_lock.h"
 
-#include "ags/shared/platform/base/agsplatformdriver.h"
+#include "ags/engine/platform/base/agsplatformdriver.h"
 
 namespace AGS3 {
 

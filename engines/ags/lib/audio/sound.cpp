@@ -105,7 +105,4 @@ void stop_audio_stream(AUDIOSTREAM *stream) {
 	warning("TODO: stop_audio_stream");
 }
 
-void set_volume(int channel, int vol) {
-	warning("TODO: set_volume(%d, %d)", channel, vol);
-}
 } // namespace AGS3

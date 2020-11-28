@@ -30,26 +30,26 @@
 
 #include "ags/shared/core/platform.h"
 #include "ags/shared/util/wgt2allg.h"
-#include "ags/shared/ac/file.h"
-#include "ags/shared/media/audio/audiodefines.h"
-#include "ags/shared/media/audio/sound.h"
-#include "ags/shared/media/audio/audiointernaldefs.h"
-#include "ags/shared/media/audio/clip_mywave.h"
+#include "ags/engine/ac/file.h"
+#include "ags/engine/media/audio/audiodefines.h"
+#include "ags/engine/media/audio/sound.h"
+#include "ags/engine/media/audio/audiointernaldefs.h"
+#include "ags/engine/media/audio/clip_mywave.h"
 #ifndef NO_MP3_PLAYER
-#include "ags/shared/media/audio/clip_mymp3.h"
-#include "ags/shared/media/audio/clip_mystaticmp3.h"
+#include "ags/engine/media/audio/clip_mymp3.h"
+#include "ags/engine/media/audio/clip_mystaticmp3.h"
 #endif
-#include "ags/shared/media/audio/clip_myogg.h"
-#include "ags/shared/media/audio/clip_mystaticogg.h"
-#include "ags/shared/media/audio/clip_mymidi.h"
+#include "ags/engine/media/audio/clip_myogg.h"
+#include "ags/engine/media/audio/clip_mystaticogg.h"
+#include "ags/engine/media/audio/clip_mymidi.h"
 #ifdef JGMOD_MOD_PLAYER
-#include "ags/shared/media/audio/clip_myjgmod.h"
+#include "ags/engine/media/audio/clip_myjgmod.h"
 #endif
 #ifdef DUMB_MOD_PLAYER
-#include "ags/shared/media/audio/clip_mydumbmod.h"
+#include "ags/engine/media/audio/clip_mydumbmod.h"
 #endif
-#include "ags/shared/media/audio/soundcache.h"
-#include "ags/shared/util/mutex_lock.h"
+#include "ags/engine/media/audio/soundcache.h"
+#include "ags/engine/util/mutex_lock.h"
 
 namespace AGS3 {
 
@@ -94,6 +94,7 @@ PACKFILE *mp3in;
 #ifndef NO_MP3_PLAYER
 
 MYMP3 *thistune;
+
 SOUNDCLIP *my_load_mp3(const AssetPath &asset_name, int voll) {
 	size_t asset_size;
 	mp3in = PackfileFromAsset(asset_name, asset_size);
@@ -111,7 +112,7 @@ SOUNDCLIP *my_load_mp3(const AssetPath &asset_name, int voll) {
 	thistune->filesize = asset_size;
 	thistune->vol = voll;
 
-	if (thistune->chunksize > thistune->filesize)
+	if (thistune->chunksize > (int)thistune->filesize)
 		thistune->chunksize = thistune->filesize;
 
 	pack_fread(tmpbuffer, thistune->chunksize, mp3in);
@@ -230,7 +231,7 @@ SOUNDCLIP *my_load_ogg(const AssetPath &asset_name, int voll) {
 	thisogg->last_ms_offs = 0;
 	thisogg->last_but_one_but_one = 0;
 
-	if (thisogg->chunksize > asset_size)
+	if (thisogg->chunksize > (int)asset_size)
 		thisogg->chunksize = asset_size;
 
 	pack_fread(tmpbuffer, thisogg->chunksize, mp3in);

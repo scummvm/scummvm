@@ -22,12 +22,12 @@
 
 //include <stdlib.h>
 //include <string.h>
-#include "ags/shared/ac/file.h"
+#include "ags/engine/ac/file.h"
 #include "ags/shared/util/wgt2allg.h"
-#include "ags/shared/media/audio/soundcache.h"
-#include "ags/shared/media/audio/audiointernaldefs.h"
-#include "ags/shared/util/mutex.h"
-#include "ags/shared/util/mutex_lock.h"
+#include "ags/engine/media/audio/soundcache.h"
+#include "ags/engine/media/audio/audiointernaldefs.h"
+#include "ags/engine/util/mutex.h"
+#include "ags/engine/util/mutex_lock.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/debugging/out.h"
 

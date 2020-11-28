@@ -10,18 +10,22 @@ MODULE_OBJS = \
 	lib/allegro.o \
 	lib/allegro/color.o \
 	lib/allegro/config.o \
-	lib/allegro/digi.o \
 	lib/allegro/draw.o \
 	lib/allegro/error.o \
 	lib/allegro/file.o \
 	lib/allegro/fixed.o \
 	lib/allegro/gfx.o \
 	lib/allegro/keyboard.o \
-	lib/allegro/midi.o \
 	lib/allegro/mouse.o \
-	lib/allegro/sound.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
+	lib/audio/audio.o \
+	lib/audio/digi.o \
+	lib/audio/midi.o \
+	lib/audio/mp3.o \
+	lib/audio/ogg.o \
+	lib/audio/sound.o \
+	lib/audio/wav.o \
 	lib/opengl/opengl.o \
 	lib/system/datetime.o \
 	shared/ac/dynobj/scriptaudioclip.o \
@@ -248,6 +252,20 @@ MODULE_OBJS = \
 	engine/main/graphics_mode.o \
 	engine/main/quit.o \
 	engine/main/update.o \
+    engine/media/audio/ambientsound.o \
+    engine/media/audio/audio.o \
+    engine/media/audio/clip_mydumbmod.o \
+    engine/media/audio/clip_myjgmod.o \
+    engine/media/audio/clip_mymidi.o \
+    engine/media/audio/clip_mymp3.o \
+    engine/media/audio/clip_myogg.o \
+    engine/media/audio/clip_mystaticmp3.o \
+    engine/media/audio/clip_mystaticogg.o \
+    engine/media/audio/clip_mywave.o \
+    engine/media/audio/queuedaudioitem.o \
+    engine/media/audio/sound.o \
+    engine/media/audio/soundcache.o \
+    engine/media/audio/soundclip.o \
 	engine/platform/base/agsplatformdriver.o \
 	engine/platform/windows/acplwin.o \
 	engine/platform/windows/minidump.o \
