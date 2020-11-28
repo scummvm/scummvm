@@ -156,9 +156,27 @@ std::vector<InbuiltPluginDetails> _registered_builtin_plugins;
 void IAGSEngine::AbortGame(const char *reason) {
 	quit((const char *)reason);
 }
+
 const char *IAGSEngine::GetEngineVersion() {
 	return get_engine_version();
 }
+
+#ifdef WINDOWS_VERSION
+
+HWND IAGSEngine::GetWindowHandle() {
+	return (HWND)0;
+}
+
+LPDIRECTDRAW2 IAGSEngine::GetDirectDraw2() {
+	return nullptr;
+}
+
+LPDIRECTDRAWSURFACE2 IAGSEngine::GetBitmapSurface(BITMAP *) {
+	return nullptr;
+}
+
+#endif
+
 void IAGSEngine::RegisterScriptFunction(const char *name, void *addy) {
 	ccAddExternalPluginFunction(name, addy);
 }
