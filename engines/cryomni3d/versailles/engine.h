@@ -246,7 +246,7 @@ public:
 		return prepareFileName(baseName, extensions);
 	}
 	Common::String prepareFileName(const Common::String &baseName,
-	                                       const char *const *extensions) const override;
+	                               const char *const *extensions) const override;
 
 	void setupPalette(const byte *colors, uint start, uint num) override { setupPalette(colors, start, num, true); }
 	void makeTranslucent(Graphics::Surface &dst, const Graphics::Surface &src) const override;
@@ -560,8 +560,8 @@ private:
 	IMG_CB(88003d);
 	IMG_CB(88003e);
 	IMG_CB(88003f);
-	Common::U32String _bombAlphabet; // For Japanese edition
-	Common::U32String _bombPassword;
+	CryoString _bombAlphabet; // For Japanese edition
+	CryoString _bombPassword;
 	static const uint kBombPasswordSmallLength = 40;
 	static const uint kBombPasswordMaxLength = 60;
 	static const uint16 kBombLettersPos[2][kBombPasswordMaxLength][2];

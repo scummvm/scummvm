@@ -155,7 +155,7 @@ void FontManager::loadTTFList(const Common::String &ttfList, Common::CodePage co
 #endif
 }
 
-Common::U32String FontManager::toU32(const Common::String &str) const {
+CryoString FontManager::toU32(const Common::String &str) const {
 	assert(_codepage != Common::kCodePageInvalid);
 
 	if (_toUnicode) {
@@ -170,7 +170,7 @@ Common::U32String FontManager::toU32(const Common::String &str) const {
 	case Common::kWindows950: {
 		/* if high-order bit is 1, then character is 2 bytes else it's 1 byte
 		 * We don't check validity of the codepoint */
-		Common::U32String ret;
+		CryoString ret;
 		for (uint32 i = 0; i < str.size(); i++) {
 			uint32 c = (byte)str[i];
 			if ((c & 0x80) && (i + 1 < str.size())) {
@@ -208,18 +208,18 @@ void FontManager::setSpaceWidth(uint additionalSpace) {
 }
 
 uint FontManager::displayStr_(uint x, uint y,
-                              const Common::U32String &text) const {
+                              const CryoString &text) const {
 	uint offset = 0;
-	for (Common::U32String::const_iterator it = text.begin(); it != text.end(); it++) {
+	for (CryoString::const_iterator it = text.begin(); it != text.end(); it++) {
 		_currentFont->drawChar(_currentSurface, *it, x + offset, y, _foreColor);
 		offset += _currentFont->getCharWidth(*it) + _charSpacing;
 	}
 	return offset;
 }
 
-uint FontManager::getStrWidth(const Common::U32String &text) const {
+uint FontManager::getStrWidth(const CryoString &text) const {
 	uint width = 0;
-	for (Common::U32String::const_iterator it = text.begin(); it != text.end(); it++) {
+	for (CryoString::const_iterator it = text.begin(); it != text.end(); it++) {
 		uint32 c = *it;
 		if (c == ' ') {
 			width += _spaceWidth;
@@ -230,11 +230,11 @@ uint FontManager::getStrWidth(const Common::U32String &text) const {
 	return width;
 }
 
-bool FontManager::displayBlockText(const Common::U32String &text,
-                                   Common::U32String::const_iterator begin) {
+bool FontManager::displayBlockText(const CryoString &text,
+                                   CryoString::const_iterator begin) {
 	bool notEnoughSpace = false;
-	Common::U32String::const_iterator ptr = begin;
-	Common::Array<Common::U32String> words;
+	CryoString::const_iterator ptr = begin;
+	Common::Array<CryoString> words;
 
 	if (begin != text.end()) {
 		_blockTextRemaining = nullptr;
@@ -251,7 +251,7 @@ bool FontManager::displayBlockText(const Common::U32String &text,
 			} else {
 				spaceWidthPerWord = (double)spacesWidth / (double)words.size();
 			}
-			Common::Array<Common::U32String>::const_iterator word;
+			Common::Array<CryoString>::const_iterator word;
 			uint word_i;
 			for (word = words.begin(), word_i = 0; word != words.end(); word++, word_i++) {
 				_blockPos.x += displayStr_(_blockPos.x, _blockPos.y, *word);
@@ -276,7 +276,7 @@ bool FontManager::displayBlockText(const Common::U32String &text,
 	return notEnoughSpace;
 }
 
-uint FontManager::getLinesCount(const Common::U32String &text, uint width) {
+uint FontManager::getLinesCount(const CryoString &text, uint width) {
 	if (text.size() == 0) {
 		// One line even if it's empty
 		return 1;
@@ -287,11 +287,11 @@ uint FontManager::getLinesCount(const Common::U32String &text, uint width) {
 	}
 
 	uint lineCount = 0;
-	Common::U32String::const_iterator textP = text.begin();
+	CryoString::const_iterator textP = text.begin();
 	uint len = text.size();
 
 	while (len > 0) {
-		Common::U32String buffer;
+		CryoString buffer;
 		uint lineWidth = 0;
 		lineCount++;
 		while (lineWidth < width && len > 0 && *textP != '\r') {
@@ -348,14 +348,14 @@ uint FontManager::getLinesCount(const Common::U32String &text, uint width) {
 	return lineCount;
 }
 
-void FontManager::calculateWordWrap(const Common::U32String &text,
-                                    Common::U32String::const_iterator *position, uint *finalPos, bool *hasCr,
-                                    Common::Array<Common::U32String> &words) const {
+void FontManager::calculateWordWrap(const CryoString &text,
+                                    CryoString::const_iterator *position, uint *finalPos, bool *hasCr,
+                                    Common::Array<CryoString> &words) const {
 	*hasCr = false;
 	uint offset = 0;
 	bool wordWrap = false;
 	uint lineWidth = _blockRect.right - _blockRect.left;
-	Common::U32String::const_iterator ptr = *position;
+	CryoString::const_iterator ptr = *position;
 
 	words.clear();
 
@@ -368,9 +368,9 @@ void FontManager::calculateWordWrap(const Common::U32String &text,
 	}
 
 	while (!wordWrap) {
-		Common::U32String::const_iterator begin = ptr;
+		CryoString::const_iterator begin = ptr;
 		for (; ptr != text.end() && *ptr != '\r' && (!_useSpaceDelimiter || *ptr != ' '); ptr++) { }
-		Common::U32String word(begin, ptr);
+		CryoString word(begin, ptr);
 		uint width = getStrWidth(word);
 		if (width + offset >= lineWidth) {
 			wordWrap = true;
@@ -391,10 +391,10 @@ void FontManager::calculateWordWrap(const Common::U32String &text,
 		offset -= _spaceWidth;
 	} /**/ else {
 		// couldn't get a word (too long): we are at start of line
-		Common::U32String::const_iterator begin = ptr;
+		CryoString::const_iterator begin = ptr;
 		// Start with one character
 		for (ptr++; ptr != text.end(); ptr++) {
-			Common::U32String word(begin, ptr);
+			CryoString word(begin, ptr);
 			uint width = getStrWidth(word);
 			if (width >= lineWidth) {
 				break;
@@ -406,7 +406,7 @@ void FontManager::calculateWordWrap(const Common::U32String &text,
 			ptr--;
 		}
 		if (_keepASCIIjoined) {
-			Common::U32String::const_iterator end = ptr;
+			CryoString::const_iterator end = ptr;
 			// Until now ptr was pointing after the last character
 			// As we want to look at it, go back
 			if (ptr != begin) {
@@ -429,7 +429,7 @@ void FontManager::calculateWordWrap(const Common::U32String &text,
 				ptr++;
 			}
 		}
-		Common::U32String word(begin, ptr);
+		CryoString word(begin, ptr);
 		words.push_back(word);
 	} /**/
 	*finalPos = offset;
