@@ -1155,7 +1155,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			numOfPrimitives++;
 
 			(*renderTabEntryPtr)->depth = bestDepth;
-			(*renderTabEntryPtr)->renderType = 1;
+			(*renderTabEntryPtr)->renderType = RENDERTYPE_DRAWPOLYGON;
 			(*renderTabEntryPtr)->dataPtr = (uint8*)destinationHeader;
 			(*renderTabEntryPtr)++;
 		} while (--primitiveCounter);
@@ -1193,7 +1193,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			}
 
 			(*renderTabEntryPtr)->depth = bestDepth;
-			(*renderTabEntryPtr)->renderType = 0;
+			(*renderTabEntryPtr)->renderType = RENDERTYPE_DRAWLINE;
 			(*renderTabEntryPtr)->dataPtr = renderBufferPtr;
 			(*renderTabEntryPtr)++;
 
@@ -1218,7 +1218,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			*((int16 *)(renderBufferPtr + 5)) = size;
 
 			(*renderTabEntryPtr)->depth = flattenPoints[center / sizeof(pointTab)].z;
-			(*renderTabEntryPtr)->renderType = 2;
+			(*renderTabEntryPtr)->renderType = RENDERTYPE_DRAWSPHERE;
 			(*renderTabEntryPtr)->dataPtr = renderBufferPtr;
 			(*renderTabEntryPtr)++;
 
