@@ -120,6 +120,8 @@ If you have not added your developer account to Xcode, do this now. Click **Add 
 
 In the upper left-hand corner, press the play button to build ScummVM. When the build is finished, it launches on your connected device. 
 
+If ScummVM does not launch and you get an error message advising that the app failed to launch due to an invalid code signature, inadequate entitlements or because its profile has not been explicitly trusted by the user, you need to trust the apps that you have built. On your iOS device, go to **Settings > General > Device Management > Developer App > Trust "Apple Development:yourAppleIDhere" > Trust**.
+
 
 Devices with custom firmware
 *******************************
