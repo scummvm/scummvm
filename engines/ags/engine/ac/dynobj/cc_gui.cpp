@@ -35,7 +35,7 @@ const char *CCGUI::GetType() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int CCGUI::Serialize(const char *address, char *buffer, int bufsize) {
-	ScriptGUI *shh = (ScriptGUI *)address;
+	ScriptGUI *shh = (ScriptGUI *)const_cast<char *>(address);
 	StartSerialize(buffer);
 	SerializeInt(shh->id);
 	return EndSerialize();
