@@ -568,7 +568,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Eco Quest - Korean fan translation, based on English DOS CD 1.1
 	// SCI interpreter version 1.001.064
 	// The checksums for the audio file have been removed, to also allow
-	// versions compressed with the compress_sci tool 
+	// versions compressed with the compress_sci tool
 	{"ecoquest", "CD", {
 		{"resource.aud", 0, NULL,                               -1},
 		{"resource.map", 0, "a4b73d5d2b55bdb6e44345e99c8fbdd0", 4804},
@@ -4803,25 +4803,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// the SCI scripts themselves. Thus, they cannot be directly
 	// supported, unless their whole room logic is rewritten from
 	// scratch, which classifies Shivers 2 as "not SCI"
-#if 0
-
 	// Shivers2 - English Windows Demo
 	// Executable scanning reports "3.000.000"
-	{"shivers2", "Demo", {
+	{"shivers2", _s("Missing game code"), {
 		{"resmap.000", 0, "d8659188b84beaef076bd869837cd530", 634},
 		{"ressci.000", 0, "7fbac0807a044c9543e8ac376d200e59", 4925003},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSTABLE, GUIO5(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO | ADGF_UNSUPPORTED, GUIO5(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
 
 	// Shivers 2 - English Windows (from abevi)
 	// VERSION.TXT Version 1.0 (3/25/97)
-	{"shivers2", "", {
+	{"shivers2", _s("Missing game code"), {
 		{"ressci.001", 0, "a79d03d6eb75be0a79324f14e3d2ace4", 95346793},
 		{"resmap.001", 0, "a4804d436d90c4ec2e46b537f5e954db", 6268},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO6(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
-
-#endif
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSUPPORTED, GUIO6(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
 
 	// Slater & Charlie Go Camping - English DOS Demo
 	// Executable scanning reports "1.cfs.081", VERSION file reports "1.000"
