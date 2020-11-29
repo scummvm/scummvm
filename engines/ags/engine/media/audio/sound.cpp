@@ -50,6 +50,7 @@
 #endif
 #include "ags/engine/media/audio/soundcache.h"
 #include "ags/engine/util/mutex_lock.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -117,7 +118,7 @@ SOUNDCLIP *my_load_mp3(const AssetPath &asset_name, int voll) {
 	thistune->buffer = (char *)tmpbuffer;
 
 	{
-		AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+		AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 		thistune->stream = almp3_create_mp3stream(tmpbuffer, thistune->chunksize, (thistune->filesize < 1));
 	}
 
@@ -152,7 +153,7 @@ SOUNDCLIP *my_load_static_mp3(const AssetPath &asset_name, int voll, bool loop) 
 	thismp3->repeat = loop;
 
 	{
-		AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+		AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 		thismp3->tune = almp3_create_mp3(mp3buffer, muslen);
 	}
 

@@ -30,6 +30,7 @@
 #include "ags/engine/util/mutex_lock.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/debugging/out.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -38,11 +39,8 @@ using namespace Shared;
 sound_cache_entry_t *sound_cache_entries = nullptr;
 unsigned int sound_cache_counter = 0;
 
-AGS::Engine::Mutex _sound_cache_mutex;
-
-
 void clear_sound_cache() {
-	AGS::Engine::MutexLock _lock(_sound_cache_mutex);
+	AGS::Engine::MutexLock _lock(::AGS::g_vm->_soundCacheMutex);
 
 	if (sound_cache_entries) {
 		int i;
@@ -62,7 +60,7 @@ void clear_sound_cache() {
 }
 
 void sound_cache_free(char *buffer, bool is_wave) {
-	AGS::Engine::MutexLock _lock(_sound_cache_mutex);
+	AGS::Engine::MutexLock _lock(::AGS::g_vm->_soundCacheMutex);
 
 #ifdef SOUND_CACHE_DEBUG
 	Debug::Printf("sound_cache_free(%p %d)\n", buffer, (unsigned int)is_wave);
@@ -95,7 +93,7 @@ void sound_cache_free(char *buffer, bool is_wave) {
 
 
 char *get_cached_sound(const AssetPath &asset_name, bool is_wave, size_t &size) {
-	AGS::Engine::MutexLock _lock(_sound_cache_mutex);
+	AGS::Engine::MutexLock _lock(::AGS::g_vm->_soundCacheMutex);
 
 #ifdef SOUND_CACHE_DEBUG
 	Debug::Printf("get_cached_sound(%s %d)\n", asset_name.first.GetCStr(), (unsigned int)is_wave);

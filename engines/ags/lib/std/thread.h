@@ -44,8 +44,8 @@ public:
 		warning("TODO: thread::join");
 	}
 	bool joinable() const {
-		warning("TODO: thread::joinable");
-		return true;
+		// TODO: thread::joinable
+		return false;
 	}
 };
 

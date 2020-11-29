@@ -102,7 +102,7 @@ extern int cur_mode, cur_cursor;
 static int ShouldStayInWaitMode();
 
 static int numEventsAtStartOfFunction;
-static auto t1 = AGS_Clock::now();  // timer for FPS // ... 't1'... how very appropriate.. :)
+static uint32 t1 = 0; // AGS_Clock::now();  // timer for FPS // ... 't1'... how very appropriate.. :)
 
 #define UNTIL_ANIMEND   1
 #define UNTIL_MOVEEND   2

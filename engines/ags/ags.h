@@ -35,6 +35,7 @@
 
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/lib/allegro/system.h"
+#include "ags/engine/util/mutex_std.h"
 
 namespace AGS {
 
@@ -55,6 +56,9 @@ private:
 public:
 	::AGS3::BITMAP *_screen;
 	::AGS3::GFX_DRIVER *_gfxDriver;
+	::AGS3::AGS::Engine::Mutex _sMutex;
+	::AGS3::AGS::Engine::Mutex _soundCacheMutex;
+	::AGS3::AGS::Engine::Mutex _mp3Mutex;
 protected:
 	// Engine APIs
 	virtual Common::Error run();
