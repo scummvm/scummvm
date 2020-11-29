@@ -1471,6 +1471,16 @@ int CGameObject::getRandomNumber(int max, int *oldVal) {
 	}
 }
 
+bool CGameObject::isBotDisallowedLocation() {
+	// 1) At the Embarkation SuccUBus
+	// 2) in front of the Deskbot's desk
+	// 3) When in the Gondola
+	// 4) At the top of the well
+	CString fullName = getFullViewName();
+	return fullName == "EmbLobby.Node 2.W" || fullName == "EmbLobby.Node 4.E" ||
+		fullName == "TopOfWell.Node 29.N" || fullName == "TopOfWell.Node 21.S";
+}
+
 /*------------------------------------------------------------------------*/
 
 CRoomItem *CGameObject::getRoom() const {
