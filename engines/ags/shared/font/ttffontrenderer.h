@@ -31,6 +31,8 @@ namespace AGS3 {
 
 class TTFFontRenderer : public IAGSFontRenderer, public IAGSFontRenderer2 {
 public:
+	virtual ~TTFFontRenderer() {}
+
 	// IAGSFontRenderer implementation
 	bool LoadFromDisk(int fontNumber, int fontSize) override;
 	void FreeMemory(int fontNumber) override;

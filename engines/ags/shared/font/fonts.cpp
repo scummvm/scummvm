@@ -273,7 +273,7 @@ size_t split_lines(const char *todis, SplitLines &lines, int wii, int fonnt, siz
 		// restore the character that was there before
 		theline[i + 1] = nextCharWas;
 
-		if (splitAt != -1) {
+		if (splitAt != (size_t)-1) {
 			if (splitAt == 0 && !((theline[0] == ' ') || (theline[0] == '\n'))) {
 				// cannot split with current width restriction
 				lines.Reset();

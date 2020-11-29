@@ -801,7 +801,7 @@ int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int
 		numstages++;
 		nearestindx = -1;
 
-		int lastpbs = pathbackstage;
+//		int lastpbs = pathbackstage;
 
 stage_again:
 		nearestpos = 0;
@@ -835,7 +835,7 @@ stage_again:
 #ifdef DEBUG_PATHFINDER
 			AGS::Shared::Debug::Printf("Added: %d, %d pbs:%d", srcx, srcy, pathbackstage);
 #endif
-			lastpbs = pathbackstage;
+//			lastpbs = pathbackstage;
 			pathbackstage = nearestindx;
 			goto stage_again;
 		}
