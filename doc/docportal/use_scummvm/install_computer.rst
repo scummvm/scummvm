@@ -1,11 +1,13 @@
 
 =====================================
-Installing ScummVM on a computer
+Installing ScummVM 
 =====================================
+
+This page explains how to install ScummVM on a computer. For all other platforms, see the relevant :ref:`platform guide <platformspecific>`.
 
 .. tabbed:: Windows
 
-    There are two ways to install ScummVM on a computer running Windows; download and use the installer, or install manually. 
+    There are two ways to install ScummVM on Windows: use the installer, or install manually. 
 
     .. dropdown:: Installing ScummVM using the installer
         :open:
@@ -36,7 +38,7 @@ Installing ScummVM on a computer
 .. tabbed:: Linux
 
 
-   There are multiple ways to install ScummVM on a computer running Linux: use the Snap Store, Flathub or the software repository, or install the release binary. 
+   There are multiple ways to install ScummVM on Linux: use the Snap Store, Flathub or the software repository, or manually install the release binary. 
 
     .. dropdown::  Installing ScummVM using the Snap Store
         :open:

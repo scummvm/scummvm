@@ -3,7 +3,7 @@
 Saving and loading a game
 ===============================
 
-This guide explains how to save and load a game from the Global Main Menu, or load a game directly from the Launcher. 
+This page explains how to save and load a game from the Global Main Menu, or load a game directly from the Launcher. 
 
 .. note::
 
@@ -49,15 +49,6 @@ The save directory can be changed with the savepath setting in the :doc:`Paths t
 
 Default saved game paths are shown below. 
 
-.. tabbed:: macOS
-
-	.. panels::
-		:column: col-lg-12 mb-2
-
-		macOS/Mac OSX
-		^^^^^^^^^^
-		``~/Documents/ScummVM Savegames/``, where ``~`` is your Home directory. 
-	
 .. tabbed:: Windows
 
 	.. panels::
@@ -66,8 +57,8 @@ Default saved game paths are shown below.
 		Windows NT4 
 		^^^^^^^^^^^^
 
-		``<windir>\Profiles\username\Application Data\ScummVM\Saved games\`` where ``<windir>`` refers to the Windows directory. Most commonly, this is ``C:\WINDOWS``.
-
+		``C:\WINDOWS\Profiles\username\Application Data\ScummVM\Saved games\`` 
+		
 		---
 		:column: col-lg-12 mb-2
 
@@ -81,7 +72,15 @@ Default saved game paths are shown below.
 		Window Vista/7/8/10
 		^^^^^^^^^^^^^^^^^^^^^^
 		``%APPDATA%\ScummVM\Saved games``
- 
+
+
+.. tabbed:: macOS
+
+	.. panels::
+		:column: col-lg-12 mb-2
+
+		``~/Documents/ScummVM Savegames/``
+	
 
 .. tabbed:: Linux/Unix
 
@@ -96,14 +95,6 @@ Default saved game paths are shown below.
 		If ScummVM was installed using Snap, the saves can be found at ``~/snap/scummvm/current/.local/share/scummvm/saves/``
 
 	
-
-.. tabbed:: Other
-
-	.. panels::
-		:column: col-lg-12 mb-2
-
-		See the relevant Platform page for details. 
-
 
 
 Loading a game

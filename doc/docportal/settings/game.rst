@@ -33,7 +33,7 @@ All settings can also be changed in the :doc:`../advanced_topics/configuration_f
 .. _lang:
 
 **Language**
-	For multi-language games, this changes the language of the game. For games that have a single language hardcoded, this changes the font of the subtitles. For example, selecting German will add an umlaut to German subtitles, and selecting Spanish will add the tilde to Spanish subtitles. 
+	For games that were released with support for multiple languages, this options changes the language of the game. For games that have a single language hardcoded, this option does not change the language of the game, it only affects the subtitles. Select the correct language to ensure that subtitles display correctly, especially for non-English games.  
 
 	*language* 
 
