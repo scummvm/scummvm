@@ -38,6 +38,14 @@ struct Surface;
 
 namespace Image {
 
+/**
+ * @defgroup image_cel CEL decoder
+ * @ingroup image
+ *
+ * @brief Decoder for CEL images.
+ * @{
+ */
+
 class Codec;
 
 class Cel3DODecoder : public ImageDecoder {
@@ -57,7 +65,7 @@ private:
 	byte *_palette;
 	uint16 _paletteColorCount;
 };
-
+/** @} */
 } // End of namespace Image
 
 #endif
