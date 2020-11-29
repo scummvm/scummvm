@@ -355,9 +355,10 @@ void Scene::changeScene() {
 	heroPositionType = ScenePositionType::kNoPosition;
 	_sampleAmbienceTime = 0;
 
-	_engine->_grid->newCameraX = _sceneActors[currentlyFollowedActor].x >> 9;
-	_engine->_grid->newCameraY = _sceneActors[currentlyFollowedActor].y >> 8;
-	_engine->_grid->newCameraZ = _sceneActors[currentlyFollowedActor].z >> 9;
+	ActorStruct *followedActor = getActor(currentlyFollowedActor);
+	_engine->_grid->newCameraX = followedActor->x >> 9;
+	_engine->_grid->newCameraY = followedActor->y >> 8;
+	_engine->_grid->newCameraZ = followedActor->z >> 9;
 
 	_engine->_gameState->magicBallIdx = -1;
 	_engine->_movements->heroMoved = true;

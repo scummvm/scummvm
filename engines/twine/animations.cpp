@@ -446,9 +446,10 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 void Animations::processAnimActions(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->animExtraPtr == nullptr) {
-		return; // avoid null pointers
+		return;
 	}
 
+	// TODO: fix size
 	Common::MemoryReadStream stream(actor->animExtraPtr, 1000000);
 
 	int32 index = 0;
