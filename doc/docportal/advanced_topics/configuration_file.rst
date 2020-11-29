@@ -69,7 +69,7 @@ The configuration file saves to different default locations, depending on the pl
 
 		ScummVM follows the XDG Base Directory Specification, so by default the configuration file is found at ``~/.config/scummvm/scummvm.ini``, but its location might vary depending on the value of the ``XDG_CONFIG_HOME`` environment variable.
 		
-		If ScummVM was installed using Snap, the configuration file can be found at ``~/snap/scummvm/current/.config/scummvm/scummvm.ini``
+		If ScummVM was installed using Snap, the configuration file is found at ``~/snap/scummvm/current/.config/scummvm/scummvm.ini``
 
 		.. note::
 			
@@ -244,7 +244,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`herculesfont <herc>`",boolean,false,
 		":ref:`hpbargraphs <hp>`",boolean,true,
 		":ref:`hypercheat <hyper>`",boolean,false,
-		iconpath,string,, "Specifies the path to icons to use as overlay for the ScummVM icon in the Windows taskbar or the macOS Dock when running a game. The icon files should be named after the gameid and be an ico file on Windows, or a png file on macOS." 
+		iconpath,string,, "Specifies the path to icons to use as overlay for the ScummVM icon in the Windows taskbar or the macOS Dock when running a game. The icon files should be named after the :ref:`gameid <gameid>`, and be an ICO file on Windows, or a PNG file on macOS." 
 		":ref:`improved <improved>`",boolean,true,
 		":ref:`InvObjectsAnimated <objanimated>`",boolean,true,
 		":ref:`joystick_deadzone <deadzone>`",integer, 3
@@ -415,7 +415,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		":ref:`transparentdialogboxes <transparentdialog>`",boolean,false,
 		":ref:`tts_enabled <ttsenabled>`",boolean,false,
 		":ref:`tts_narrator <ttsnarrator>`",boolean,false,
-		use_cdaudio,boolean,true, 
+		use_cdaudio,boolean,true, "If true, ScummVM uses audio from the game CD."
 		versioninfo,string,,Shows the ScummVM version that created the configuration file. 
 		":ref:`window_style <style>`",boolean,true,
 		":ref:`windows_cursors <wincursors>`",boolean,false,

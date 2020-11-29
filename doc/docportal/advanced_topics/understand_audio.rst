@@ -1,12 +1,12 @@
 ======================================================
-Understand the audio settings
+Understanding the audio settings
 ======================================================
 
-This guide is designed to expand on the information contained on the :doc:`audio settings <../settings/audio>` page. 
+This guide expands on the information contained on the :doc:`audio settings <../settings/audio>` page. 
 
 
-How do the settings work together?
-=====================================
+How do the audio settings work together?
+==========================================
 
 The **Preferred device** in the global settings Audio tab, or the **Music device** in the game-specific settings Audio tab, specifies the device that ScummVM uses to output audio. This device can be an emulated sound device or a software synthesizer, or an actual hardware device such as a soundcard or a hardware MIDI synthesizer. When set to **<default>**, ScummVM will automatically choose the most appropriate option for the played game. 
 

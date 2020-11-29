@@ -23,7 +23,7 @@ All settings can also be changed in the :doc:`../advanced_topics/configuration_f
 .. _savepath:
 
 Save Path
-	Sets the path to the folder in which ScummVM stores saved games. If this is not set, saved games will generally be stored in the current directory, although there are exceptions to this. For more information, see the :ref:`Save and Load games <savelocation>` page.
+	Sets the path to the folder in which ScummVM stores saved games. For more information on the default location of saved games, see the :ref:`Save and Load games <savelocation>` page, or the guide for the platform you're using. 
 	
 	*savepath* 
 
