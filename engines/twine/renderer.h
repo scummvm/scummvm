@@ -57,6 +57,12 @@ struct CmdRenderPolygon {
 	// followed by Vertex array
 };
 
+struct Matrix {
+	int32 row1[3] {0, 0, 0};
+	int32 row2[3] {0, 0, 0};
+	int32 row3[3] {0, 0, 0};
+};
+
 class Renderer {
 private:
 	TwinEEngine *_engine;
@@ -154,11 +160,11 @@ private:
 	int32 renderModelElements(int32 numOfPrimitives, uint8 *pointer, RenderCommand** renderCmds, ModelData *modelData);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
-	void applyRotation(int32 *targetMatrix, const int32 *currentMatrix);
-	void applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const int32 *rotationMatrix);
-	void processRotatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData);
-	void applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const int32 *translationMatrix);
-	void processTranslatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData);
+	void applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix);
+	void applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const Matrix *rotationMatrix);
+	void processRotatedElement(Matrix *targetMatrix, const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData);
+	void applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const Matrix *translationMatrix);
+	void processTranslatedElement(Matrix *targetMatrix, const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData);
 	void translateGroup(int16 ax, int16 bx, int16 cx);
 
 	// ---- variables ----
@@ -187,11 +193,9 @@ private:
 
 	// ---
 
-	int32 baseMatrix[3 * 3] {0};
-
-	int32 matricesTable[30 * 3 * 3 + 1] {0};
-
-	int32 shadeMatrix[3 * 3] {0};
+	Matrix baseMatrix;
+	Matrix matricesTable[30 + 1];
+	Matrix shadeMatrix;
 	int32 lightX = 0;
 	int32 lightY = 0;
 	int32 lightZ = 0;
