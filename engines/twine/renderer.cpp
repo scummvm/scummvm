@@ -95,9 +95,9 @@ void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
 }
 
 void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
-	destX = (baseMatrix[0] * x + baseMatrix[1] * y + baseMatrix[2] * z) >> 14;
-	destY = (baseMatrix[3] * x + baseMatrix[4] * y + baseMatrix[5] * z) >> 14;
-	destZ = (baseMatrix[6] * x + baseMatrix[7] * y + baseMatrix[8] * z) >> 14;
+	destX = (baseMatrix.row1[0] * x + baseMatrix.row1[1] * y + baseMatrix.row1[2] * z) >> 14;
+	destY = (baseMatrix.row2[0] * x + baseMatrix.row2[1] * y + baseMatrix.row2[2] * z) >> 14;
+	destZ = (baseMatrix.row3[0] * x + baseMatrix.row3[1] * y + baseMatrix.row3[2] * z) >> 14;
 }
 
 void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
@@ -107,23 +107,23 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
 	double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 	double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 
-	baseMatrix[0] = (int32)(sin(Zradians) * sin(Yradians) * 16384);
-	baseMatrix[1] = (int32)(-cos(Zradians) * 16384);
-	baseMatrix[2] = (int32)(sin(Zradians) * cos(Yradians) * 16384);
-	baseMatrix[3] = (int32)(cos(Zradians) * sin(Xradians) * 16384);
-	baseMatrix[4] = (int32)(sin(Zradians) * sin(Xradians) * 16384);
-	baseMatrix[6] = (int32)(cos(Zradians) * cos(Xradians) * 16384);
-	baseMatrix[7] = (int32)(sin(Zradians) * cos(Xradians) * 16384);
+	baseMatrix.row1[0] = (int32)(sin(Zradians) * sin(Yradians) * 16384);
+	baseMatrix.row1[1] = (int32)(-cos(Zradians) * 16384);
+	baseMatrix.row1[2] = (int32)(sin(Zradians) * cos(Yradians) * 16384);
+	baseMatrix.row2[0] = (int32)(cos(Zradians) * sin(Xradians) * 16384);
+	baseMatrix.row2[1] = (int32)(sin(Zradians) * sin(Xradians) * 16384);
+	baseMatrix.row3[0] = (int32)(cos(Zradians) * cos(Xradians) * 16384);
+	baseMatrix.row3[1] = (int32)(sin(Zradians) * cos(Xradians) * 16384);
 
-	int32 matrixElem = baseMatrix[3];
+	int32 matrixElem = baseMatrix.row2[0];
 
-	baseMatrix[3] = (int32)(sin(Yradians) * matrixElem + 16384 * cos(Yradians) * cos(Xradians));
-	baseMatrix[5] = (int32)(cos(Yradians) * matrixElem - 16384 * sin(Yradians) * cos(Xradians));
+	baseMatrix.row2[0] = (int32)(sin(Yradians) * matrixElem + 16384 * cos(Yradians) * cos(Xradians));
+	baseMatrix.row2[2] = (int32)(cos(Yradians) * matrixElem - 16384 * sin(Yradians) * cos(Xradians));
 
-	matrixElem = baseMatrix[6];
+	matrixElem = baseMatrix.row3[0];
 
-	baseMatrix[6] = (int32)(sin(Yradians) * matrixElem - 16384 * sin(Xradians) * cos(Yradians));
-	baseMatrix[8] = (int32)(cos(Yradians) * matrixElem + 16384 * sin(Xradians) * sin(Yradians));
+	baseMatrix.row3[0] = (int32)(sin(Yradians) * matrixElem - 16384 * sin(Xradians) * cos(Yradians));
+	baseMatrix.row3[2] = (int32)(cos(Yradians) * matrixElem + 16384 * sin(Xradians) * sin(Yradians));
 
 	getBaseRotationPosition(baseTransPosX, baseTransPosY, baseTransPosZ);
 
@@ -133,9 +133,9 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
 }
 
 void Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
-	destX = (baseMatrix[0] * x + baseMatrix[3] * y + baseMatrix[6] * z) >> 14;
-	destY = (baseMatrix[1] * x + baseMatrix[4] * y + baseMatrix[7] * z) >> 14;
-	destZ = (baseMatrix[2] * x + baseMatrix[5] * y + baseMatrix[8] * z) >> 14;
+	destX = (baseMatrix.row1[0] * x + baseMatrix.row2[0] * y + baseMatrix.row3[0] * z) >> 14;
+	destY = (baseMatrix.row1[1] * x + baseMatrix.row2[1] * y + baseMatrix.row3[1] * z) >> 14;
+	destZ = (baseMatrix.row1[2] * x + baseMatrix.row2[2] * y + baseMatrix.row3[2] * z) >> 14;
 }
 
 void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6) {
@@ -154,9 +154,9 @@ void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ,
 	baseTransPosZ = destZ;
 }
 
-void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
-	int32 matrix1[9];
-	int32 matrix2[9];
+void Renderer::applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix) {
+	Matrix matrix1;
+	Matrix matrix2;
 
 	if (renderAngleX) {
 		int32 angle = renderAngleX;
@@ -164,20 +164,18 @@ void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
 		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
-		matrix1[0] = currentMatrix[0];
-		matrix1[3] = currentMatrix[3];
-		matrix1[6] = currentMatrix[6];
+		matrix1.row1[0] = currentMatrix->row1[0];
+		matrix1.row2[0] = currentMatrix->row2[0];
+		matrix1.row3[0] = currentMatrix->row3[0];
 
-		matrix1[1] = (currentMatrix[2] * angleVar2 + currentMatrix[1] * angleVar1) >> 14;
-		matrix1[2] = (currentMatrix[2] * angleVar1 - currentMatrix[1] * angleVar2) >> 14;
-		matrix1[4] = (currentMatrix[5] * angleVar2 + currentMatrix[4] * angleVar1) >> 14;
-		matrix1[5] = (currentMatrix[5] * angleVar1 - currentMatrix[4] * angleVar2) >> 14;
-		matrix1[7] = (currentMatrix[8] * angleVar2 + currentMatrix[7] * angleVar1) >> 14;
-		matrix1[8] = (currentMatrix[8] * angleVar1 - currentMatrix[7] * angleVar2) >> 14;
+		matrix1.row1[1] = (currentMatrix->row1[2] * angleVar2 + currentMatrix->row1[1] * angleVar1) >> 14;
+		matrix1.row1[2] = (currentMatrix->row1[2] * angleVar1 - currentMatrix->row1[1] * angleVar2) >> 14;
+		matrix1.row2[1] = (currentMatrix->row2[2] * angleVar2 + currentMatrix->row2[1] * angleVar1) >> 14;
+		matrix1.row2[2] = (currentMatrix->row2[2] * angleVar1 - currentMatrix->row2[1] * angleVar2) >> 14;
+		matrix1.row3[1] = (currentMatrix->row3[2] * angleVar2 + currentMatrix->row3[1] * angleVar1) >> 14;
+		matrix1.row3[2] = (currentMatrix->row3[2] * angleVar1 - currentMatrix->row3[1] * angleVar2) >> 14;
 	} else {
-		for (int32 i = 0; i < 9; i++) {
-			matrix1[i] = currentMatrix[i];
-		}
+		matrix1 = *currentMatrix;
 	}
 
 	if (renderAngleZ) {
@@ -186,20 +184,18 @@ void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
 		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
-		matrix2[2] = matrix1[2];
-		matrix2[5] = matrix1[5];
-		matrix2[8] = matrix1[8];
+		matrix2.row1[2] = matrix1.row1[2];
+		matrix2.row2[2] = matrix1.row2[2];
+		matrix2.row3[2] = matrix1.row3[2];
 
-		matrix2[0] = (matrix1[1] * angleVar2 + matrix1[0] * angleVar1) >> 14;
-		matrix2[1] = (matrix1[1] * angleVar1 - matrix1[0] * angleVar2) >> 14;
-		matrix2[3] = (matrix1[4] * angleVar2 + matrix1[3] * angleVar1) >> 14;
-		matrix2[4] = (matrix1[4] * angleVar1 - matrix1[3] * angleVar2) >> 14;
-		matrix2[6] = (matrix1[7] * angleVar2 + matrix1[6] * angleVar1) >> 14;
-		matrix2[7] = (matrix1[7] * angleVar1 - matrix1[6] * angleVar2) >> 14;
+		matrix2.row1[0] = (matrix1.row1[1] * angleVar2 + matrix1.row1[0] * angleVar1) >> 14;
+		matrix2.row1[1] = (matrix1.row1[1] * angleVar1 - matrix1.row1[0] * angleVar2) >> 14;
+		matrix2.row2[0] = (matrix1.row2[1] * angleVar2 + matrix1.row2[0] * angleVar1) >> 14;
+		matrix2.row2[1] = (matrix1.row2[1] * angleVar1 - matrix1.row2[0] * angleVar2) >> 14;
+		matrix2.row3[0] = (matrix1.row3[1] * angleVar2 + matrix1.row3[0] * angleVar1) >> 14;
+		matrix2.row3[1] = (matrix1.row3[1] * angleVar1 - matrix1.row3[0] * angleVar2) >> 14;
 	} else {
-		for (int32 i = 0; i < 9; i++) {
-			matrix2[i] = matrix1[i];
-		}
+		matrix2 = matrix1;
 	}
 
 	if (renderAngleY) {
@@ -208,25 +204,23 @@ void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
 		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
-		targetMatrix[1] = matrix2[1];
-		targetMatrix[4] = matrix2[4];
-		targetMatrix[7] = matrix2[7];
+		targetMatrix->row1[1] = matrix2.row1[1];
+		targetMatrix->row2[1] = matrix2.row2[1];
+		targetMatrix->row3[1] = matrix2.row3[1];
 
-		targetMatrix[0] = (matrix2[0] * angleVar1 - matrix2[2] * angleVar2) >> 14;
-		targetMatrix[2] = (matrix2[0] * angleVar2 + matrix2[2] * angleVar1) >> 14;
-		targetMatrix[3] = (matrix2[3] * angleVar1 - matrix2[5] * angleVar2) >> 14;
-		targetMatrix[5] = (matrix2[3] * angleVar2 + matrix2[5] * angleVar1) >> 14;
+		targetMatrix->row1[0] = (matrix2.row1[0] * angleVar1 - matrix2.row1[2] * angleVar2) >> 14;
+		targetMatrix->row1[2] = (matrix2.row1[0] * angleVar2 + matrix2.row1[2] * angleVar1) >> 14;
+		targetMatrix->row2[0] = (matrix2.row2[0] * angleVar1 - matrix2.row2[2] * angleVar2) >> 14;
+		targetMatrix->row2[2] = (matrix2.row2[0] * angleVar2 + matrix2.row2[2] * angleVar1) >> 14;
 
-		targetMatrix[6] = (matrix2[6] * angleVar1 - matrix2[8] * angleVar2) >> 14;
-		targetMatrix[8] = (matrix2[6] * angleVar2 + matrix2[8] * angleVar1) >> 14;
+		targetMatrix->row3[0] = (matrix2.row3[0] * angleVar1 - matrix2.row3[2] * angleVar2) >> 14;
+		targetMatrix->row3[2] = (matrix2.row3[0] * angleVar2 + matrix2.row3[2] * angleVar1) >> 14;
 	} else {
-		for (int32 i = 0; i < 9; i++) {
-			targetMatrix[i] = matrix2[i];
-		}
+		*targetMatrix = matrix2;
 	}
 }
 
-void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const int32 *rotationMatrix) {
+void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const Matrix *rotationMatrix) {
 	int32 numOfPoints2 = numPoints;
 
 	do {
@@ -234,16 +228,16 @@ void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, p
 		const int16 tmpY = pointsPtr->y;
 		const int16 tmpZ = pointsPtr->z;
 
-		destPoints->x = ((rotationMatrix[0] * tmpX + rotationMatrix[1] * tmpY + rotationMatrix[2] * tmpZ) >> 14) + destX;
-		destPoints->y = ((rotationMatrix[3] * tmpX + rotationMatrix[4] * tmpY + rotationMatrix[5] * tmpZ) >> 14) + destY;
-		destPoints->z = ((rotationMatrix[6] * tmpX + rotationMatrix[7] * tmpY + rotationMatrix[8] * tmpZ) >> 14) + destZ;
+		destPoints->x = ((rotationMatrix->row1[0] * tmpX + rotationMatrix->row1[1] * tmpY + rotationMatrix->row1[2] * tmpZ) >> 14) + destX;
+		destPoints->y = ((rotationMatrix->row2[0] * tmpX + rotationMatrix->row2[1] * tmpY + rotationMatrix->row2[2] * tmpZ) >> 14) + destY;
+		destPoints->z = ((rotationMatrix->row3[0] * tmpX + rotationMatrix->row3[1] * tmpY + rotationMatrix->row3[2] * tmpZ) >> 14) + destZ;
 
 		destPoints++;
 		pointsPtr++;
 	} while (--numOfPoints2);
 }
 
-void Renderer::processRotatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData) { // unsigned char * elemPtr) // loadPart
+void Renderer::processRotatedElement(Matrix *targetMatrix, const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData) { // unsigned char * elemPtr) // loadPart
 	int32 firstPoint = elemPtr->firstPoint;
 	int32 numOfPoints2 = elemPtr->numOfPoints;
 
@@ -255,20 +249,20 @@ void Renderer::processRotatedElement(int32 *targetMatrix, const uint8 *pointsPtr
 		error("RENDER ERROR: invalid firstPoint in process_rotated_element func");
 	}
 
-	//baseElement = *((unsigned short int*)elemPtr+6);
-	const int16 baseElement = elemPtr->baseElement;
-
-	const int32 *currentMatrix;
+	const Matrix *currentMatrix;
 	// if its the first point
-	if (baseElement == -1) {
-		currentMatrix = baseMatrix;
+	if (elemPtr->baseElement == -1) {
+		currentMatrix = &baseMatrix;
 
 		destX = 0;
 		destY = 0;
 		destZ = 0;
 	} else {
-		int32 pointIdx = (elemPtr->basePoint) / sizeof(pointTab);
-		currentMatrix = &matricesTable[baseElement / sizeof(int32)];
+		const int32 pointIdx = elemPtr->basePoint / sizeof(pointTab);
+		assert(elemPtr->baseElement % 36 == 0);
+		const int32 matrixIndex = elemPtr->baseElement / 36;
+		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(matricesTable));
+		currentMatrix = &matricesTable[matrixIndex];
 
 		destX = modelData->computedPoints[pointIdx].x;
 		destY = modelData->computedPoints[pointIdx].y;
@@ -284,7 +278,7 @@ void Renderer::processRotatedElement(int32 *targetMatrix, const uint8 *pointsPtr
 	applyPointsRotation((const pointTab *)(pointsPtr + firstPoint), numOfPoints2, &modelData->computedPoints[firstPoint / sizeof(pointTab)], targetMatrix);
 }
 
-void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const int32 *translationMatrix) {
+void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const Matrix *translationMatrix) {
 	int32 numOfPoints2 = numPoints;
 
 	do {
@@ -292,16 +286,16 @@ void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints
 		const int16 tmpY = pointsPtr->y + renderAngleY;
 		const int16 tmpZ = pointsPtr->z + renderAngleX;
 
-		destPoints->x = ((translationMatrix[0] * tmpX + translationMatrix[1] * tmpY + translationMatrix[2] * tmpZ) >> 14) + destX;
-		destPoints->y = ((translationMatrix[3] * tmpX + translationMatrix[4] * tmpY + translationMatrix[5] * tmpZ) >> 14) + destY;
-		destPoints->z = ((translationMatrix[6] * tmpX + translationMatrix[7] * tmpY + translationMatrix[8] * tmpZ) >> 14) + destZ;
+		destPoints->x = ((translationMatrix->row1[0] * tmpX + translationMatrix->row1[1] * tmpY + translationMatrix->row1[2] * tmpZ) >> 14) + destX;
+		destPoints->y = ((translationMatrix->row2[0] * tmpX + translationMatrix->row2[1] * tmpY + translationMatrix->row2[2] * tmpZ) >> 14) + destY;
+		destPoints->z = ((translationMatrix->row3[0] * tmpX + translationMatrix->row3[1] * tmpY + translationMatrix->row3[2] * tmpZ) >> 14) + destZ;
 
 		destPoints++;
 		pointsPtr++;
 	} while (--numOfPoints2);
 }
 
-void Renderer::processTranslatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData) {
+void Renderer::processTranslatedElement(Matrix *targetMatrix, const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData) {
 	renderAngleX = rotX;
 	renderAngleY = rotY;
 	renderAngleZ = rotZ;
@@ -311,23 +305,17 @@ void Renderer::processTranslatedElement(int32 *targetMatrix, const uint8 *points
 		destY = 0;
 		destZ = 0;
 
-		int32 *dest = targetMatrix;
-
-		for (int32 i = 0; i < 9; i++) {
-			dest[i] = baseMatrix[i];
-		}
+		*targetMatrix = baseMatrix;
 	} else { // dependent
 		const int pointsIdx = elemPtr->basePoint / 6;
 		destX = modelData->computedPoints[pointsIdx].x;
 		destY = modelData->computedPoints[pointsIdx].y;
 		destZ = modelData->computedPoints[pointsIdx].z;
 
-		const int32 *source = &matricesTable[elemPtr->baseElement / sizeof(int32)];
-		int32 *dest = targetMatrix;
-
-		for (int32 i = 0; i < 9; i++) {
-			dest[i] = source[i];
-		}
+		assert(elemPtr->baseElement % 36 == 0);
+		const int32 matrixIndex = elemPtr->baseElement / 36;
+		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(matricesTable));
+		*targetMatrix = matricesTable[matrixIndex];
 	}
 
 	applyPointsTranslation((const pointTab *)(pointsPtr + elemPtr->firstPoint), elemPtr->numOfPoints, &modelData->computedPoints[elemPtr->firstPoint / sizeof(pointTab)], targetMatrix);
@@ -338,32 +326,32 @@ void Renderer::translateGroup(int16 ax, int16 bx, int16 cx) {
 	int32 ebx = bx;
 	int32 ecx = cx;
 
-	int32 edi = shadeMatrix[0];
-	int32 eax = shadeMatrix[1];
+	int32 edi = shadeMatrix.row1[0];
+	int32 eax = shadeMatrix.row1[1];
 	edi *= ebp;
 	eax *= ebx;
 	edi += eax;
-	eax = shadeMatrix[2];
+	eax = shadeMatrix.row1[2];
 	eax *= ecx;
 	eax += edi;
 	eax >>= 14;
 
 	destX = eax;
 
-	edi = shadeMatrix[3];
-	eax = shadeMatrix[4];
+	edi = shadeMatrix.row2[0];
+	eax = shadeMatrix.row2[1];
 	edi *= ebp;
 	eax *= ebx;
 	edi += eax;
-	eax = shadeMatrix[5];
+	eax = shadeMatrix.row2[2];
 	eax *= ecx;
 	eax += edi;
 	eax >>= 14;
 	destY = eax;
 
-	ebp *= shadeMatrix[6];
-	ebx *= shadeMatrix[7];
-	ecx *= shadeMatrix[8];
+	ebp *= shadeMatrix.row3[0];
+	ebx *= shadeMatrix.row3[1];
+	ecx *= shadeMatrix.row3[2];
 	ebx += ebp;
 	ebx += ecx;
 	ebx >>= 14;
@@ -380,7 +368,7 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	renderAngleY = angleY;
 	renderAngleZ = angleZ;
 
-	applyRotation(shadeMatrix, baseMatrix);
+	applyRotation(&shadeMatrix, &baseMatrix);
 	translateGroup(0, 0, 59);
 
 	lightX = destX;
@@ -1281,7 +1269,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 	uint8 *elementsPtr = bodyPtr;
 	const uint8 *elementsPtr2 = elementsPtr;
 
-	int32 *modelMatrix = matricesTable;
+	Matrix *modelMatrix = &matricesTable[0];
 
 	processRotatedElement(modelMatrix, pointsPtr, renderAngleX, renderAngleY, renderAngleZ, (const elementEntry *)elementsPtr, modelData);
 
@@ -1293,7 +1281,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 
 	if (numOfElements - 1 != 0) {
 		numOfPrimitives = numOfElements - 1;
-		modelMatrix = &matricesTable[9];
+		modelMatrix = &matricesTable[1];
 
 		do {
 			int16 boneType = elemEntryPtr->flag;
@@ -1304,7 +1292,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 				processTranslatedElement(modelMatrix, pointsPtr, elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr, modelData); // translation
 			}
 
-			modelMatrix += 9;
+			++modelMatrix;
 			elementsPtr += sizeof(elementEntry);
 			elemEntryPtr = (elementEntry *)elementsPtr;
 		} while (--numOfPrimitives);
@@ -1413,7 +1401,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 
 	if (numOfShades) { // process normal data
 		uint8 *currentShadeDestination = (uint8 *)modelData->shadeTable;
-		int32 *lightMatrix = matricesTable;
+		Matrix *lightMatrix = &matricesTable[0];
 		const uint8 *pri2Ptr3;
 
 		numOfPrimitives = numOfElements;
@@ -1426,17 +1414,17 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 			if (numOfShades) {
 				int32 numShades = numOfShades;
 
-				shadeMatrix[0] = (*lightMatrix) * lightX;
-				shadeMatrix[1] = (*(lightMatrix + 1)) * lightX;
-				shadeMatrix[2] = (*(lightMatrix + 2)) * lightX;
+				shadeMatrix.row1[0] = lightMatrix->row1[0] * lightX;
+				shadeMatrix.row1[1] = lightMatrix->row1[1] * lightX;
+				shadeMatrix.row1[2] = lightMatrix->row1[2] * lightX;
 
-				shadeMatrix[3] = (*(lightMatrix + 3)) * lightY;
-				shadeMatrix[4] = (*(lightMatrix + 4)) * lightY;
-				shadeMatrix[5] = (*(lightMatrix + 5)) * lightY;
+				shadeMatrix.row2[0] = lightMatrix->row2[0] * lightY;
+				shadeMatrix.row2[1] = lightMatrix->row2[1] * lightY;
+				shadeMatrix.row2[2] = lightMatrix->row2[2] * lightY;
 
-				shadeMatrix[6] = (*(lightMatrix + 6)) * lightZ;
-				shadeMatrix[7] = (*(lightMatrix + 7)) * lightZ;
-				shadeMatrix[8] = (*(lightMatrix + 8)) * lightZ;
+				shadeMatrix.row3[0] = lightMatrix->row3[0] * lightZ;
+				shadeMatrix.row3[1] = lightMatrix->row3[1] * lightZ;
+				shadeMatrix.row3[2] = lightMatrix->row3[2] * lightZ;
 
 				do { // for each normal
 					const int16 *colPtr = (const int16 *)shadePtr;
@@ -1445,9 +1433,10 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 					int16 col2 = *((const int16 *)colPtr++);
 					int16 col3 = *((const int16 *)colPtr++);
 
-					int32 color = shadeMatrix[0] * col1 + shadeMatrix[1] * col2 + shadeMatrix[2] * col3;
-					color += shadeMatrix[3] * col1 + shadeMatrix[4] * col2 + shadeMatrix[5] * col3;
-					color += shadeMatrix[6] * col1 + shadeMatrix[7] * col2 + shadeMatrix[8] * col3;
+					int32 color = 0;
+					color += shadeMatrix.row1[0] * col1 + shadeMatrix.row1[1] * col2 + shadeMatrix.row1[2] * col3;
+					color += shadeMatrix.row2[0] * col1 + shadeMatrix.row2[1] * col2 + shadeMatrix.row2[2] * col3;
+					color += shadeMatrix.row3[0] * col1 + shadeMatrix.row3[1] * col2 + shadeMatrix.row3[2] * col3;
 
 					int32 shade = 0;
 
@@ -1466,7 +1455,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 
 			tmpElemPtr = pri2Ptr3 = pri2Ptr3 + sizeof(elementEntry); // next element
 
-			/*tmpLightMatrix =*/lightMatrix = lightMatrix + 9;
+			++lightMatrix;
 		} while (--numOfPrimitives);
 	}
 
@@ -1508,7 +1497,7 @@ void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
 	}
 }
 
-int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, uint8 *bodyPtr) { // AffObjetIso
+int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, uint8 *bodyPtr) {
 	renderAngleX = angleX;
 	renderAngleY = angleY;
 	renderAngleZ = angleZ;
