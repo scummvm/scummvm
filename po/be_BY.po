@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 20:45+0000\n"
+"POT-Creation-Date: 2020-11-28 23:49+0000\n"
 "PO-Revision-Date: 2020-09-26 21:13+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Belarusian <https://translations.scummvm.org/projects/scummvm/"
@@ -6952,7 +6952,7 @@ msgstr "Не атрымалася хутка загрузіць захавану
 msgid "Unable to locate the '%s' data file."
 msgstr "Не магчыма знайсці файл дадзеных '%s'."
 
-#: engines/tsage/detection_tables.h:151
+#: engines/tsage/detection_tables.h:150
 #, fuzzy
 msgid "Spanish CD version is not yet supported"
 msgstr "Game id не падтрымваецца"

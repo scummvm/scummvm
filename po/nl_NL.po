@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 20:45+0000\n"
+"POT-Creation-Date: 2020-11-28 23:49+0000\n"
 "PO-Revision-Date: 2020-10-26 12:06+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -7011,7 +7011,7 @@ msgstr "Kon opgeslagen spel #%d niet snelladen"
 msgid "Unable to locate the '%s' data file."
 msgstr "Kan de '%s' data file niet vinden."
 
-#: engines/tsage/detection_tables.h:151
+#: engines/tsage/detection_tables.h:150
 #, fuzzy
 msgid "Spanish CD version is not yet supported"
 msgstr "Spel-ID niet ondersteund"
