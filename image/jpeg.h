@@ -20,16 +20,6 @@
  *
  */
 
-/**
- * @file
- * Image decoder used in engines:
- *  - groovie
- *  - mohawk
- *  - wintermute
- *
- * Used by PICT/QuickTime.
- */
-
 #ifndef IMAGE_JPEG_H
 #define IMAGE_JPEG_H
 
@@ -42,6 +32,19 @@ class SeekableReadStream;
 }
 
 namespace Image {
+
+/**
+ * @defgroup image_jpeg JPEG decoder
+ * @ingroup image
+ *
+ * @brief Decoder for JPEG images.
+ *
+ * Used in engines:
+ * - Groovie
+ * - Mohawk
+ * - Wintermute
+ * @{
+ */
 
 class JPEGDecoder : public ImageDecoder, public Codec {
 public:
@@ -106,7 +109,7 @@ private:
 
 	Graphics::PixelFormat getByteOrderRgbPixelFormat() const;
 };
-
+/** @} */
 } // End of namespace Image
 
 #endif

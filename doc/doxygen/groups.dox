@@ -12,3 +12,10 @@
 @brief Functions for the Lua programming language. See @linkLua.
 
 */
+
+/**
+
+@defgroup image Image API
+@brief API of various image decoders used in engines.
+
+*/

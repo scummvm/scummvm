@@ -20,14 +20,6 @@
  *
  */
 
-/**
- * PCX decoder used in engines:
- *  - dreamweb
- *  - hugo
- *  - queen
- *  - tucker
- */
-
 #ifndef IMAGE_PCX_H
 #define IMAGE_PCX_H
 
@@ -40,6 +32,20 @@ class SeekableReadStream;
 }
 
 namespace Image {
+
+/**
+ * @defgroup image_pcx PCX decoder
+ * @ingroup image
+ *
+ * @brief Decoder for PCX images.
+ *
+ * Used in engines:
+ * - Dreamweb
+ * - Hugo
+ * - Queen
+ * - Tucker
+ * @{
+ */
 
 class PCXDecoder : public ImageDecoder {
 public:
@@ -60,7 +66,7 @@ private:
 	byte *_palette;
 	uint16 _paletteColorCount;
 };
-
+/** @} */
 } // End of namespace Image
 
 #endif
