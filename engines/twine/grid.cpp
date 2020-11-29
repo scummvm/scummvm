@@ -638,7 +638,7 @@ void Grid::redrawGrid() {
 
 	memset(brickInfoBuffer, 0, sizeof(brickInfoBuffer));
 
-	if (_engine->_scene->changeRoomVar10 == 0) {
+	if (!_engine->_scene->changeRoomVar10) {
 		return;
 	}
 
