@@ -24,10 +24,25 @@ namespace AGS {
 
 static const PlainGameDescriptor AGS_GAMES[] = {
 	{ "ags", "Adventure Game Studio Game" },
+
+	{ "bcremake", "Black Cauldron Remake" },
 	{ 0, 0 }
 };
 
+
 static const AGSGameDescription GAME_DESCRIPTIONS[] = {
+	{
+		{
+			"bcremake",
+			nullptr,
+			AD_ENTRY1s("bc.exe", "0710e2ec71042617f565c01824f0cf3c", 7683255),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOSPEECH)
+		}
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 
