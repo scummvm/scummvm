@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-29 15:46+0000\n"
-"PO-Revision-Date: 2020-11-27 14:05+0000\n"
+"PO-Revision-Date: 2020-11-29 22:50+0000\n"
 "Last-Translator: Walter Agazzi <tag2015@gmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -4155,9 +4155,8 @@ msgstr ""
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
 #: engines/sci/detection_tables.h:4808 engines/sci/detection_tables.h:4816
-#, fuzzy
 msgid "Missing game code"
-msgstr "Controlli principali di gioco:"
+msgstr "Codice gioco mancante"
 
 #: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
@@ -4812,9 +4811,8 @@ msgid "Play movies at an increased speed"
 msgstr "Aumenta la velocità di riproduzione dei filmati"
 
 #: engines/groovie/metaengine.cpp:53
-#, fuzzy
 msgid "GroovieV2 support is not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per GroovieV2 non è stato incluso nella compilazione"
 
 #: engines/groovie/script.cpp:484
 msgid "Failed to save game"
@@ -4940,20 +4938,20 @@ msgstr ""
 "Pulsante sinistro per attaccare, pulsante destro per raccogliere gli oggetti"
 
 #: engines/kyra/metaengine.cpp:116
-#, fuzzy
 msgid "Lands of Lore support is not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per Lands of Lore non è stato incluso nella compilazione"
 
 #: engines/kyra/metaengine.cpp:128
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
 msgstr ""
+"La versione FM-TOWNS di EOB II richiede il supporto per la grafica con "
+"colori a 16 bit, che non è stata abilitata nel tua versione di ScummVM"
 
 #: engines/kyra/metaengine.cpp:137
-#, fuzzy
 msgid "Eye of Beholder support is not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per Eye of Beholder non è stato incluso nella compilazione"
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
@@ -5214,9 +5212,8 @@ msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Legge le descrizioni utilizzando la sintesi vocale (se disponibile)"
 
 #: engines/made/detection_tables.h:360
-#, fuzzy
 msgid "The game is using unsupported engine"
-msgstr "Questo gioco non è supportato."
+msgstr "Questo gioco utilizza un motore non supportato"
 
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
@@ -5299,24 +5296,20 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Gioco in pausa. Premi un tasto per continuare."
 
 #: engines/mohawk/metaengine.cpp:272
-#, fuzzy
 msgid "Myst ME support not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per Myst ME non è stato incluso nella compilazione"
 
 #: engines/mohawk/metaengine.cpp:279
-#, fuzzy
 msgid "Myst support not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per Myst non è stato incluso nella compilazione"
 
 #: engines/mohawk/metaengine.cpp:287
-#, fuzzy
 msgid "Riven support not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per Riven non è stato incluso nella compilazione"
 
 #: engines/mohawk/metaengine.cpp:302
-#, fuzzy
 msgid "CSTime support not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per CSTime non è stato incluso nella compilazione"
 
 #: engines/mohawk/myst.cpp:552 engines/mohawk/riven.cpp:822
 msgid "Open main menu"
@@ -5479,9 +5472,8 @@ msgid "Unable to locate the '%s' engine data file"
 msgstr "File dati del motore '%s' non trovato"
 
 #: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
-#, fuzzy
 msgid "PS2 version is not yet supported"
-msgstr "Questo gioco non è supportato."
+msgstr "La versione per PS2 non è ancora supportata"
 
 #: engines/myst3/detection.cpp:182
 msgid "Widescreen mod"
@@ -5653,14 +5645,12 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Usa un'introduzione alternativa (solo versione CD)"
 
 #: engines/saga/metaengine.cpp:117
-#, fuzzy
 msgid "I Have No Mouth support not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per I Have No Mouth non è stato incluso nella compilazione"
 
 #: engines/saga/metaengine.cpp:124
-#, fuzzy
 msgid "SAGA2 support not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per SAGA2 non è stato incluso nella compilazione"
 
 #: engines/saga/saga.cpp:247
 msgid "Error loading game resources."
@@ -5854,9 +5844,8 @@ msgstr ""
 "profondità di colore massima di 8bpp"
 
 #: engines/sci/metaengine.cpp:325
-#, fuzzy
 msgid "SCI32 support not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per SCI32 non è stato incluso nella compilazione"
 
 #: engines/sci/resource/resource.cpp:845
 msgid ""
@@ -6670,14 +6659,12 @@ msgstr ""
 "incompleto."
 
 #: engines/scumm/metaengine.cpp:429
-#, fuzzy
 msgid "HE v71+ support is not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per HE v71+ non è stato incluso nella compilazione"
 
 #: engines/scumm/metaengine.cpp:453
-#, fuzzy
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per SCUMM v7-8 non è stato incluso nella compilazione"
 
 #: engines/scumm/scumm.cpp:1918
 #, c-format
@@ -7023,9 +7010,8 @@ msgstr ""
 "eseguibile. Si prega di decomprimerlo"
 
 #: engines/tinsel/detection_tables.h:466
-#, fuzzy
 msgid "Saturn CD version is not yet supported"
-msgstr "Questo gioco non è supportato."
+msgstr "La versione CD per Saturn non è ancora supportata"
 
 #: engines/tony/tony.cpp:257
 #, c-format
@@ -7058,9 +7044,8 @@ msgid "Unable to locate the '%s' data file."
 msgstr "File dati '%s' non trovato."
 
 #: engines/tsage/detection_tables.h:150
-#, fuzzy
 msgid "Spanish CD version is not yet supported"
-msgstr "Questo gioco non è supportato."
+msgstr "La versione CD spagnola non è ancora supportata"
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
@@ -7347,19 +7332,16 @@ msgid "Apply bilinear filtering to individual sprites"
 msgstr "Applica un filtro grafico bilineare ad ogni sprite"
 
 #: engines/wintermute/metaengine.cpp:67
-#, fuzzy
 msgid "FoxTail support is not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per FoxTail non è stato incluso nella compilazione"
 
 #: engines/wintermute/metaengine.cpp:74
-#, fuzzy
 msgid "Hero Craft support is not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per Hero Craft non è stato incluso nella compilazione"
 
 #: engines/wintermute/metaengine.cpp:81
-#, fuzzy
 msgid "Wintermute3D support is not compiled in"
-msgstr "Funzionalità incluse:"
+msgstr "Il supporto per Wintermute3D non è stato incluso nella compilazione"
 
 #: engines/wintermute/wintermute.cpp:176
 msgid "This game requires PNG, JPEG and Vorbis support."
