@@ -512,7 +512,7 @@ void EoBCoreEngine::gui_drawInventoryItem(int slot, int redraw, int pageNum) {
 		}
 
 		if (_flags.platform == Common::kPlatformSegaCD)
-			_screen->copyRegion(x - 1, y - 1, x - 1, y - 1, wh - 2, wh - 2, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(x, y, x, y, wh - 2, wh - 2, 2, 0, Screen::CR_NO_P_CHECK);
 		else
 			gui_drawBox(x - 1, y - 1, wh, wh, col1, col2, slot == 16 ? -1 : guiSettings()->colors.fill);
 
