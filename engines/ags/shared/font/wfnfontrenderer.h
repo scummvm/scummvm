@@ -32,6 +32,8 @@ class WFNFont;
 
 class WFNFontRenderer : public IAGSFontRenderer, public IAGSFontRenderer2 {
 public:
+	virtual ~WFNFontRenderer() {}
+
 	bool LoadFromDisk(int fontNumber, int fontSize) override;
 	void FreeMemory(int fontNumber) override;
 	bool SupportsExtendedCharacters(int fontNumber) override;

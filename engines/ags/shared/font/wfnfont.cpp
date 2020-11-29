@@ -67,7 +67,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 	}
 
 	const soff_t table_addr = static_cast<uint16_t>(in->ReadInt16()); // offset table relative address
-	if (table_addr < WFN_FILE_SIG_LENGTH + sizeof(uint16_t) || table_addr >= used_data_size) {
+	if ((int)table_addr < WFN_FILE_SIG_LENGTH + sizeof(uint16_t) || table_addr >= used_data_size) {
 		Debug::Printf(kDbgMsg_Error, "\tWFN: bad table address: %lld (%d - %d)", table_addr, WFN_FILE_SIG_LENGTH + sizeof(uint16_t), used_data_size);
 		return kWFNErr_BadTableAddress; // bad table address
 	}
@@ -99,7 +99,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 	offs.reserve(char_count); // reserve max possible offsets
 	for (size_t i = 0; i < char_count; ++i) {
 		const uint16_t off = offset_table[i];
-		if (off < raw_data_offset || off + MinCharDataSize > table_addr) {
+		if (off < raw_data_offset || (int)(off + MinCharDataSize) > table_addr) {
 			Debug::Printf("\tWFN: character %d -- bad item offset: %d (%d - %d, +%d)",
 				i, off, raw_data_offset, table_addr, MinCharDataSize);
 			err = kWFNErr_HasBadCharacters; // warn about potentially corrupt format
@@ -142,7 +142,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 		}
 		const uint16_t raw_off = offs[i] - raw_data_offset + MinCharDataSize; // offset in raw array
 		size_t src_size = pixel_data_size;
-		if (i + 1 != _items.size() && raw_off + src_size > offs[i + 1] - raw_data_offset) {
+		if (i + 1 != _items.size() && (int)(raw_off + src_size) > (offs[i + 1] - raw_data_offset)) {
 			// character pixel data overlaps next character
 			Debug::Printf("\tWFN: item at off %d -- pixel data overlaps next known item (at %d, +%d)",
 				offs[i], offs[i + 1], MinCharDataSize + src_size);
@@ -170,7 +170,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 	for (size_t i = 0; i < char_count; ++i) {
 		const uint16_t off = offset_table[i];
 		// if bad character offset - reference empty character
-		if (off < raw_data_offset || off + MinCharDataSize > table_addr) {
+		if (off < raw_data_offset || (int)(off + MinCharDataSize) > table_addr) {
 			_refs[i] = &_emptyChar;
 		} else {
 			// in usual case the offset table references items in strict order

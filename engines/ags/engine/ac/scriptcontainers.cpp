@@ -71,7 +71,7 @@ ScriptDictBase *Dict_Create(bool sorted, bool case_sensitive) {
 
 // TODO: we need memory streams
 ScriptDictBase *Dict_Unserialize(int index, const char *serializedData, int dataSize) {
-	if (dataSize < sizeof(int32_t) * 2)
+	if (dataSize < (int)sizeof(int32_t) * 2)
 		quit("Dict_Unserialize: not enough data.");
 	const char *ptr = serializedData;
 	const int sorted = BBOp::Int32FromLE(*((int *)ptr));

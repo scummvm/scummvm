@@ -58,7 +58,7 @@ void CCCharacter::WriteInt16(const char *address, intptr_t offset, int16_t val) 
 	// inventory for older games that reply on the previous behaviour.
 	if (loaded_game_file_version < kGameVersion_270) {
 		const int invoffset = 112;
-		if (offset >= invoffset && offset < (invoffset + MAX_INV * sizeof(short))) {
+		if (offset >= invoffset && (int)offset < (invoffset + MAX_INV * sizeof(short))) {
 			update_invorder();
 		}
 	}

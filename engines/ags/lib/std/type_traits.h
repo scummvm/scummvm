@@ -23,6 +23,8 @@
 #ifndef AGS_STD_TYPE_TRAITS_H
 #define AGS_STD_TYPE_TRAITS_H
 
+#include "common/scummsys.h"
+
 namespace AGS3 {
 namespace std {
 

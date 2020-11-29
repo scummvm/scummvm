@@ -23,6 +23,7 @@
 #include "ags/lib/allegro/color.h"
 #include "ags/lib/allegro/system.h"
 #include "ags/lib/allegro/aintern.h"
+#include "ags/shared/core/types.h"
 #include "common/textconsole.h"
 #include "common/system.h"
 #include "graphics/palette.h"

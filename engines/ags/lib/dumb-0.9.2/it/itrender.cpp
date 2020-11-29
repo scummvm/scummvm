@@ -1731,7 +1731,7 @@ Yxy             This uses a table 4 times larger (hence 4 times slower) than
 						case IT_S_SET_SURROUND_SOUND:
 							if ((effectvalue & 15) == 1)
 								channel->pan = IT_SURROUND;
-								channel->truepan = channel->pan << IT_ENVELOPE_SHIFT;
+							channel->truepan = channel->pan << IT_ENVELOPE_SHIFT;
 							break;
 						case IT_S_SET_HIGH_OFFSET:
 							channel->high_offset = effectvalue & 15;
