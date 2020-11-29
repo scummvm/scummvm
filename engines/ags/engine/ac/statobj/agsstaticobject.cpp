@@ -81,7 +81,7 @@ void StaticGame::WriteInt32(const char *address, intptr_t offset, int32_t val) {
 		set_debug_mode(val != 0);
 	} else if (offset == 99 * sizeof(int32_t) || offset == 112 * sizeof(int32_t)) {
 		// game.text_align, game.speech_text_align
-		*(int32_t *)(address + offset) = ReadScriptAlignment(val);
+		*(int32_t *)(const_cast<char *>(address) + offset) = ReadScriptAlignment(val);
 	} else {
 		*(int32_t *)(const_cast<char *>(address) + offset) = val;
 	}

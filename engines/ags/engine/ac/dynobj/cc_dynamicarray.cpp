@@ -37,7 +37,7 @@ int CCDynamicArray::Dispose(const char *address, bool force) {
 	// except if this array is forcefully removed from the managed pool,
 	// in which case just ignore these.
 	if (!force) {
-		int *elementCount = (int *)address;
+		int *elementCount = (int *)const_cast<char *>(address);
 		if (elementCount[0] & ARRAY_MANAGED_TYPE_FLAG) {
 			elementCount[0] &= ~ARRAY_MANAGED_TYPE_FLAG;
 			for (int i = 0; i < elementCount[0]; i++) {
@@ -55,7 +55,7 @@ int CCDynamicArray::Dispose(const char *address, bool force) {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int CCDynamicArray::Serialize(const char *address, char *buffer, int bufsize) {
-	int *sizeInBytes = &((int *)address)[-1];
+	const int *sizeInBytes = &((const int *)address)[-1];
 	int sizeToWrite = *sizeInBytes + 8;
 	if (sizeToWrite > bufsize) {
 		// buffer not big enough, ask for a bigger one
@@ -98,39 +98,39 @@ void CCDynamicArray::Read(const char *address, intptr_t offset, void *dest, int 
 }
 
 uint8_t CCDynamicArray::ReadInt8(const char *address, intptr_t offset) {
-	return *(uint8_t *)(address + offset);
+	return *(const uint8_t *)(address + offset);
 }
 
 int16_t CCDynamicArray::ReadInt16(const char *address, intptr_t offset) {
-	return *(int16_t *)(address + offset);
+	return *(const int16_t *)(address + offset);
 }
 
 int32_t CCDynamicArray::ReadInt32(const char *address, intptr_t offset) {
-	return *(int32_t *)(address + offset);
+	return *(const int32_t *)(address + offset);
 }
 
 float CCDynamicArray::ReadFloat(const char *address, intptr_t offset) {
-	return *(float *)(address + offset);
+	return *(const float *)(address + offset);
 }
 
 void CCDynamicArray::Write(const char *address, intptr_t offset, void *src, int size) {
-	memcpy((void *)(address + offset), src, size);
+	memcpy((void *)(const_cast<char *>(address) + offset), src, size);
 }
 
 void CCDynamicArray::WriteInt8(const char *address, intptr_t offset, uint8_t val) {
-	*(uint8_t *)(address + offset) = val;
+	*(uint8_t *)(const_cast<char *>(address) + offset) = val;
 }
 
 void CCDynamicArray::WriteInt16(const char *address, intptr_t offset, int16_t val) {
-	*(int16_t *)(address + offset) = val;
+	*(int16_t *)(const_cast<char *>(address) + offset) = val;
 }
 
 void CCDynamicArray::WriteInt32(const char *address, intptr_t offset, int32_t val) {
-	*(int32_t *)(address + offset) = val;
+	*(int32_t *)(const_cast<char *>(address) + offset) = val;
 }
 
 void CCDynamicArray::WriteFloat(const char *address, intptr_t offset, float val) {
-	*(float *)(address + offset) = val;
+	*(float *)(const_cast<char *>(address) + offset) = val;
 }
 
 CCDynamicArray globalDynamicArray;

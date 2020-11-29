@@ -37,7 +37,7 @@ const char *CCObject::GetType() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int CCObject::Serialize(const char *address, char *buffer, int bufsize) {
-	ScriptObject *shh = (ScriptObject *)address;
+	ScriptObject *shh = (ScriptObject *)const_cast<char *>(address);
 	StartSerialize(buffer);
 	SerializeInt(shh->id);
 	return EndSerialize();

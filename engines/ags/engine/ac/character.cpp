@@ -745,7 +745,7 @@ void Character_Say(CharacterInfo *chaa, const char *text) {
 
 void Character_SayAt(CharacterInfo *chaa, int x, int y, int width, const char *texx) {
 
-	DisplaySpeechAt(x, y, width, chaa->index_id, (char *)texx);
+	DisplaySpeechAt(x, y, width, chaa->index_id, texx);
 }
 
 ScriptOverlay *Character_SayBackground(CharacterInfo *chaa, const char *texx) {
