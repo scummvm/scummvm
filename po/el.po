@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-29 15:46+0000\n"
-"PO-Revision-Date: 2020-11-29 12:36+0000\n"
+"PO-Revision-Date: 2020-11-29 19:29+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -3062,7 +3062,7 @@ msgid ""
 msgstr ""
 "Η σελίδα δεν είναι διαθέσιμη χωρίς τους απαιτούμενους πόρους. Επιβεβαιώστε "
 "ότι το αρχείο wwwroot.zip της διανομής ScummVM είναι διαθέσιμο στη διαδρομή "
-"θέματος  'themepath'."
+"θέματος 'themepath'."
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:67
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:68
@@ -3294,8 +3294,8 @@ msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
-"Η Λειτουργία Μεγέθυνσης Απενεργοποιήθηκε. \n"
-"Επαναφορά Λειτουργίας Drag.\n"
+"Η Λειτουργία Μεγέθυνσης Απενεργοποιήθηκε. Επανενεργοποίηση Λειτουργίας Drag."
+"\n"
 "Επιστροφή στο Launcher..."
 
 #: backends/platform/3ds/osystem-events.cpp:362
@@ -5129,13 +5129,14 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
-"Το ακόλουθο αποθηκευμένο αρχείο του αρχικού παιχνιδιού έχει βρεθεί στο "
-"φάκελο του παιχνιδιού σας:\n"
+"Το ακόλουθο αποθηκευμένο αρχείο του αρχικού παιχνιδιού (original saved game) "
+"έχει βρεθεί στο φάκελο του παιχνιδιού σας:\n"
 "\n"
 "%s %s\n"
 "\n"
 "Θέλετε να χρησιμοποιήσετε αυτό το αποθηκευμένο αρχείο παιχνιδιού με το "
 "ScummVM;\n"
+"\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:629
 #, c-format
@@ -5156,12 +5157,9 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
-"%d πρωτότυπα αποθηκευμένα αρχεία παιχνιδιού εισήχθησαν επιτυχώς στο\n"
-"ScummVM. Αν αργότερα θελήσετε να εισάγετε πρωτότυπα αποθηκευμένα αρχεία \n"
-"παιχνιδιού χειροκίνητα, θα χρειαστεί να ανοίξετε το τερματικό "
-"αποσφαλμάτωσης \n"
-"(debug console) του ScummVM και να χρησιμοποιήσετε την εντολή "
-"'import_savefile'.\n"
+"%d αποθηκευμένα αρχεία του αρχικού παιχνιδιού εισήχθησαν επιτυχώς στο\n"
+"ScummVM. Για να εισάγετε τέτοια αποθηκευμένα αρχεία χειροκίνητα αργότερα, \n"
+"δώστε την εντολή 'import_savefile' στην κονσόλα αποσφαλμάτωσης του ScummVM.\n"
 "\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:280
@@ -5910,9 +5908,8 @@ msgstr ""
 "Αδυναμία αναπαραγωγής βίντεο %dbpp σε σύστημα με μέγιστο βάθος χρώματος 8bpp"
 
 #: engines/sci/metaengine.cpp:325
-#, fuzzy
 msgid "SCI32 support not compiled in"
-msgstr "Η υποστήριξη για το SAGA2 δεν έχει ενσωματωθεί στο εκτελέσιμο"
+msgstr "Η υποστήριξη της SCI32 μηχανής δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
 #: engines/sci/resource/resource.cpp:845
 msgid ""
@@ -6021,7 +6018,7 @@ msgstr ""
 "χαρακτήρων αποθηκευμένα με τον πρωτότυπο διερμηνευτή πρέπει να τοποθετηθούν "
 "στον φάκελο αποθηκευμένων παιχνιδιών του ScummVM. Έπειτα, πρέπει να "
 "προστεθεί σε κάθε τέτοιο αρχείο ένα πρόθεμα το οποίο διαφέρει ανάλογα με το "
-"παιχνίδι στο οποίο δημιουργήθηκε, όπως για παράδειγμα: πρόθεμα  'qfg1-' για "
+"παιχνίδι στο οποίο δημιουργήθηκε, όπως για παράδειγμα: πρόθεμα 'qfg1-' για "
 "το Quest for Glory 1, πρόθεμα 'qfg2-' για το Quest for Glory 2. Παράδειγμα "
 "αρχείου με το πρόθεμα: 'qfg2-thief.sav'."
 
