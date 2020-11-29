@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-29 15:46+0000\n"
-"PO-Revision-Date: 2020-09-26 21:13+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-11-29 18:15+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
 "Language: ca_ES\n"
@@ -2177,23 +2177,23 @@ msgid "~K~eys"
 msgstr "~T~ecles"
 
 #: engines/engine.cpp:319
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "No s'ha pogut canviar al mode de vídeo: '"
+msgstr "No s'ha pogut canviar al mode de vídeo: '%dx%d'."
 
 #: engines/engine.cpp:328
 msgid "Could not initialize color format."
 msgstr "No s'ha pogut iniciar el format de color."
 
 #: engines/engine.cpp:337
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to video mode '%s'."
-msgstr "No s'ha pogut canviar al mode de vídeo: '"
+msgstr "No s'ha pogut canviar al mode de vídeo: '%s'."
 
 #: engines/engine.cpp:345
-#, fuzzy, c-format
+#, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "No s'ha pogut canviar al mode de vídeo: '"
+msgstr "No s'ha pogut canviar al mode de vídeo: '%s'."
 
 #: engines/engine.cpp:352
 msgid "Could not apply aspect ratio setting."
@@ -5837,7 +5837,7 @@ msgstr ""
 #: engines/sci/engine/savegame.cpp:1409
 #, fuzzy, c-format
 msgid "Savegame version is %d, maximum supported is %0d"
-msgstr "Identificador de joc no suportat"
+msgstr "Identificador de joc %d no suportat, el màxim admès és %0d"
 
 #: engines/sci/engine/savegame.cpp:1420
 msgid ""
@@ -6959,9 +6959,7 @@ msgstr ""
 #: engines/toon/toon.cpp:225
 #, fuzzy, c-format
 msgid "Saved game in slot #%d "
-msgstr ""
-"No s'ha pogut desar a l'espai %i\n"
-"\n"
+msgstr "No s'ha pogut desar a l'espai %d "
 
 #: engines/toon/toon.cpp:229
 #, fuzzy, c-format
