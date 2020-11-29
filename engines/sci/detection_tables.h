@@ -569,8 +569,10 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Eco Quest - Korean fan translation, based on English DOS CD 1.1
 	// SCI interpreter version 1.001.064
+	// The checksums for the audio file have been removed, to also allow
+	// versions compressed with the compress_sci tool 
 	{"ecoquest", "CD", {
-		{"resource.aud", 0, "1971dcb007a0c064c152175400f4021b", 305187924},
+		{"resource.aud", 0, NULL,                               -1},
 		{"resource.map", 0, "a4b73d5d2b55bdb6e44345e99c8fbdd0", 4804},
 		{"resource.000", 0, "d908dbef56816ac6c60dd145fdeafb2b", 3536046},
 		{"resource.msg", 0, "0c68a203302841adb9faa47ff61edd93", 561801},
