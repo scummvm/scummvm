@@ -1153,13 +1153,6 @@ uint8 *Renderer::preparePolygons(Common::MemoryReadStream &stream, int32 &numOfP
 			} while (--counter > 0);
 		}
 
-#if 0
-		const int16 bx = vertices[1].x - vertices[0].x;
-		const int16 ax = (vertices[0].y - vertices[2].y) * bx;
-
-		const int16 cx = vertices[1].y - vertices[0].y;
-		const int16 dx = (vertices[0].x - vertices[2].x) * cx - ax;
-#endif
 		numOfPrimitives++;
 
 		(*renderCmds)->depth = bestDepth;
