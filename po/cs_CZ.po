@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-29 16:57+0100\n"
+"POT-Creation-Date: 2020-11-29 15:46+0000\n"
 "PO-Revision-Date: 2020-09-26 12:37+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
@@ -4190,11 +4190,11 @@ msgstr ""
 msgid "Missing game code"
 msgstr "Hlavní ovládací prvky:"
 
-#: engines/cge/detection.cpp:99 engines/cge2/detection.cpp:91
+#: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
 msgstr "Režim pro barvoslepé"
 
-#: engines/cge/detection.cpp:100 engines/cge2/detection.cpp:92
+#: engines/cge/detection.cpp:100
 msgid "Enable Color Blind Mode by default"
 msgstr "Standardně zapínat režim pro barvoslepé"
 
