@@ -48,7 +48,7 @@ static const uint16 *hotspot_dealloc_set[4] = {&dealloc_list_1[0], &dealloc_list
 static const AnimSoundSequence soundList[] = {
 	{9, 0x45, 2, 0, true}, {27, 0x48, 5, 0, false}, {24, 0x46, 3, 0, false}, {24, 0x37, 1, 0, false}, {3, 0x37, 1, 1, false},
 	{3, 0x37, 1, 2, false}, {3, 0x37, 1, 3, false}, {3, 0x37, 1, 4, false}, {4, 0x37, 1, 5, false}, {7, 0x47, 4, 6, false},
-	{31, 0x00, 6, 0, true}, {0, 0, 0, 0}
+	{31, 0x00, 6, 0, true}, {0, 0, 0, 0, false}
 };
 
 /*------------------------------------------------------------------------*/
