@@ -29,34 +29,34 @@ BEGIN_MESSAGE_MAP(CSummonBots, CRobotController)
 	ON_MESSAGE(SummonBotMsg)
 END_MESSAGE_MAP()
 
-CSummonBots::CSummonBots() : CRobotController(), _string2("NULL"),
-		_fieldC8(0), _fieldCC(0) {
+CSummonBots::CSummonBots() : CRobotController(), _validSummonLocations("NULL"),
+		_canSummonBellbot(0), _canSummonDoorbot(0) {
 }
 
 void CSummonBots::save(SimpleFile *file, int indent) {
 	file->writeNumberLine(1, indent);
-	file->writeNumberLine(_fieldC8, indent);
-	file->writeNumberLine(_fieldCC, indent);
-	file->writeQuotedLine(_string2, indent);
+	file->writeNumberLine(_canSummonBellbot, indent);
+	file->writeNumberLine(_canSummonDoorbot, indent);
+	file->writeQuotedLine(_validSummonLocations, indent);
 
 	CRobotController::save(file, indent);
 }
 
 void CSummonBots::load(SimpleFile *file) {
 	file->readNumber();
-	_fieldC8 = file->readNumber();
-	_fieldCC = file->readNumber();
-	_string2 = file->readString();
+	_canSummonBellbot = file->readNumber();
+	_canSummonDoorbot = file->readNumber();
+	_validSummonLocations = file->readString();
 
 	CRobotController::load(file);
 }
 
 bool CSummonBots::SummonBotQueryMsg(CSummonBotQueryMsg *msg) {
 	if (msg->_npcName == "BellBot") {
-		if (_fieldC8 && !petCheckNode(_string2))
+		if (_canSummonBellbot && !petCheckNode(_validSummonLocations))
 			return true;
 	} else if (msg->_npcName == "DoorBot") {
-		if (_fieldCC && !petCheckNode(_string2))
+		if (_canSummonDoorbot && !petCheckNode(_validSummonLocations))
 			return true;
 	}
 
@@ -65,13 +65,13 @@ bool CSummonBots::SummonBotQueryMsg(CSummonBotQueryMsg *msg) {
 
 bool CSummonBots::SummonBotMsg(CSummonBotMsg *msg) {
 	if (msg->_npcName == "BellBot") {
-		if (!_fieldC8)
+		if (!_canSummonBellbot)
 			return false;
 
 		if (!petDismissBot("BellBot"))
 			petOnSummonBot("Bellbot", msg->_value);
 	} else if (msg->_npcName == "DoorBot") {
-		if (!_fieldCC)
+		if (!_canSummonDoorbot)
 			return false;
 
 		if (!petDismissBot("Doorbot"))
