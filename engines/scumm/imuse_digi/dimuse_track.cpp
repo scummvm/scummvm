@@ -439,9 +439,6 @@ int IMuseDigital::transformVolumeLinearToEqualPow(int volume, int mode) {
 		case 5:  // Logarithmic 3
 			eqPowValue = 1 + 0.7 * log10(mappedValue);
 			break;
-		case 6:  // Half sine curve
-			eqPowValue = (1.0 - cos(mappedValue * M_PI)) / 2.0;
-			break;
 		default: // Fallback to linear
 			eqPowValue = mappedValue;
 			break;
@@ -483,9 +480,6 @@ int IMuseDigital::transformVolumeEqualPowToLinear(int volume, int mode) {
 			break;
 		case 5:  // Logarithmic 3
 			linearValue = 0.0372759 * pow(M_E, 3.28941 * mappedValue);
-			break;
-		case 6:  // Half sine curve
-			linearValue = (2 * asin(sqrt(mappedValue))) / M_PI; // Ricontrolla
 			break;
 		default: // Fallback to linear
 			linearValue = mappedValue;

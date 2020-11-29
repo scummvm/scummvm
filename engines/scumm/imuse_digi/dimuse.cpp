@@ -100,6 +100,7 @@ void IMuseDigital::resetState() {
 	_stopingSequence = 0;
 	_radioChatterSFX = 0;
 	_triggerUsed = false;
+	_speechIsPlaying = false;
 }
 
 static void syncWithSerializer(Common::Serializer &s, Track &t) {
@@ -203,6 +204,17 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 void IMuseDigital::callback() {
 	Common::StackLock lock(_mutex, "IMuseDigital::callback()");
 
+	_speechIsPlaying = false;
+	// Check for any track playing a speech line
+	if (_vm->_game.id == GID_CMI)
+		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+			if (_track[l]->used && _track[l]->soundId == kTalkSoundID) {
+				// Set flag and break
+				_speechIsPlaying = true;
+				break;
+			}
+		}
+
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
 		if (track->used) {
@@ -277,6 +289,29 @@ void IMuseDigital::callback() {
 				}
  				debug(5, "Fade: sound(%d), Vol(%d) in track(%d)", track->soundId, track->vol / 1000, track->trackId);
 			}
+
+			// Music gain reduction during speech
+			if (_vm->_game.id == GID_CMI && track->volGroupId == IMUSE_VOLGRP_MUSIC)
+				if (_speechIsPlaying) {
+					// Check if we have to fade down or the reduction volume is already at the right value
+					if (track->gainReduction >= track->gainRedFadeDest) {
+						track->gainRedFadeUsed = false;
+						track->gainReduction = track->gainRedFadeDest; // Clip to destination volume
+					} else {
+						track->gainRedFadeUsed = true;
+					}
+					// Gradually bring up the gain reduction (20 ms)
+					if (track->gainRedFadeUsed && track->gainReduction < track->gainRedFadeDest) {
+						int tempReduction = transformVolumeEqualPowToLinear(track->gainReduction, 2); // Equal power to linear...
+						tempReduction += (track->gainRedFadeDest - track->gainReduction) * 60 * (1000 / _callbackFps) / (1000 * 20); // Add step...
+						track->gainReduction = transformVolumeLinearToEqualPow(tempReduction, 2); // Linear to equal power...
+						debug(5, "Gain reduction: sound(%d), reduction amount(%d) in track(%d)", track->soundId, track->gainReduction / 1000, track->trackId);
+					}
+				} else if (!_speechIsPlaying && track->gainReduction > 0) {
+					// Just like the original interpreter, disable gain reduction immediately without a fade
+					track->gainReduction = 0;
+					debug(5, "Gain reduction: no speech playing reduction stopped for sound(%d) in track(%d)", track->soundId, track->trackId);
+				}
 
 			if (!track->souStreamUsed) {
 				assert(track->stream);
@@ -387,7 +422,13 @@ void IMuseDigital::callback() {
 				} while (feedSize != 0);
 			}
 			if (_mixer->isReady()) {
-				_mixer->setChannelVolume(track->mixChanHandle, track->getVol());
+				int effVol = track->getVol();
+				if (_vm->_game.id == GID_CMI && track->volGroupId == IMUSE_VOLGRP_MUSIC) {
+					effVol -= track->gainReduction / 1000;
+					if (effVol < 0) // In case a music crossfading happens during gain reduction...
+						effVol = 0;
+				}
+				_mixer->setChannelVolume(track->mixChanHandle, effVol);
 				_mixer->setChannelBalance(track->mixChanHandle, track->getPan());
 			}
 		}
