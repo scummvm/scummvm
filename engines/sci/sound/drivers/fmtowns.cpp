@@ -28,7 +28,7 @@
 
 #include "audio/softsynth/fmtowns_pc98/towns_audio.h"
 
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/sound/drivers/mididriver.h"
 
 namespace Sci {

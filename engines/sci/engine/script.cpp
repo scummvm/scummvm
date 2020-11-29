@@ -22,7 +22,7 @@
 
 #include "sci/console.h"
 #include "sci/sci.h"
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/util.h"
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"

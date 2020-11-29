@@ -20,15 +20,15 @@
  *
  */
 
-#ifndef SCI_RESOURCE_H
-#define SCI_RESOURCE_H
+#ifndef SCI_RESOURCE_RESOURCE_H
+#define SCI_RESOURCE_RESOURCE_H
 
 #include "common/str.h"
 #include "common/list.h"
 #include "common/hashmap.h"
 
 #include "sci/graphics/helpers.h"		// for ViewType
-#include "sci/decompressor.h"
+#include "sci/resource/decompressor.h"
 #include "sci/sci.h"
 #include "sci/util.h"
 
@@ -715,4 +715,4 @@ ResourceId convertPatchNameBase36(ResourceType type, const Common::String &filen
 
 } // End of namespace Sci
 
-#endif // SCI_RESOURCE_H
+#endif // SCI_RESOURCE_RESOURCE_H

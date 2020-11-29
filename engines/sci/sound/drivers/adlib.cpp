@@ -29,7 +29,7 @@
 #include "audio/fmopl.h"
 #include "audio/mididrv.h"
 
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/util.h"
 

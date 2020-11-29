@@ -21,7 +21,7 @@
  */
 
 #include "sci/sci.h"
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/graphics/cursor.h"

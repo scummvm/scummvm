@@ -27,7 +27,7 @@
 #include "common/util.h"
 #include "sci/sci.h"
 #include "sci/sound/decoders/sol.h"
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 
 namespace Sci {
 

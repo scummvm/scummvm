@@ -33,9 +33,9 @@
 
 #include "sci/engine/workarounds.h"
 #include "sci/parser/vocabulary.h"
-#include "sci/resource.h"
-#include "sci/resource_intern.h"
-#include "sci/resource_patcher.h"
+#include "sci/resource/resource.h"
+#include "sci/resource/resource_intern.h"
+#include "sci/resource/resource_patcher.h"
 #include "sci/util.h"
 
 namespace Sci {

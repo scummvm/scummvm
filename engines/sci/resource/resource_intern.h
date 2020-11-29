@@ -20,10 +20,10 @@
  *
  */
 
-#ifndef SCI_RESOURCE_INTERN_H
-#define SCI_RESOURCE_INTERN_H
+#ifndef SCI_RESOURCE_RESOURCE_INTERN_H
+#define SCI_RESOURCE_RESOURCE_INTERN_H
 
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 
 namespace Common {
 class MacResManager;
@@ -240,4 +240,4 @@ protected:
 
 } // End of namespace Sci
 
-#endif // SCI_RESOURCE_INTERN_H
+#endif // SCI_RESOURCE_RESOURCE_INTERN_H
