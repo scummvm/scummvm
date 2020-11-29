@@ -1719,11 +1719,11 @@ static int32 lPROJ_ISO(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lPROJ_3D(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_screens->copyScreen(engine->frontVideoBuffer, engine->workVideoBuffer);
 	engine->flip();
-	engine->_scene->changeRoomVar10 = 0;
+	engine->_scene->changeRoomVar10 = false;
 
 	engine->_renderer->setCameraPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 128, 1024, 1024);
 	engine->_renderer->setCameraAngle(0, 1500, 0, 25, -128, 0, 13000);
-	engine->_renderer->setLightVector(896, 950, 0);
+	engine->_renderer->setLightVector(896, 950, ANGLE_0);
 
 	engine->_text->initTextBank(TextBankId::Credits);
 

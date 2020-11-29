@@ -1295,7 +1295,6 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 
 	numOfPrimitives = numOfPoints;
 
-	// TODO: stack var will maybe exceed max stack size on some platforms - 27300 bytes
 	const pointTab *pointPtr = &modelData->computedPoints[0];
 	pointTab *pointPtrDest = &modelData->flattenPoints[0];
 
