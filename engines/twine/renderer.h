@@ -101,8 +101,8 @@ private:
 		uint8 unk1 = 0;
 		uint8 unk2 = 0;
 		uint8 unk3 = 0;
-		int16 p1 = 0;
-		int16 p2 = 0;
+		int16 firstPointOffset = 0;  /**< byte offsets */
+		int16 secondPointOffset = 0; /**< byte offsets */
 	};
 
 	struct polyVertexHeader {
@@ -114,6 +114,13 @@ private:
 		int16 shadeValue = 0;
 		int16 x = 0;
 		int16 y = 0;
+	};
+
+	struct sphereData {
+		int8 colorIndex = 0;
+		int16 x = 0;
+		int16 y = 0;
+		int16 radius = 0;
 	};
 
 	struct bodyHeaderStruct {
