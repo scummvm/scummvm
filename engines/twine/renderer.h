@@ -96,7 +96,7 @@ private:
 	#include "common/pack-end.h"
 	static_assert(sizeof(elementEntry) == 38, "Unexpected elementEntry size");
 
-	struct lineCoordinates {
+	struct CmdRenderLine {
 		uint8 colorIndex = 0;
 		uint8 unk1 = 0;
 		uint8 unk2 = 0;
@@ -121,7 +121,7 @@ private:
 		int16 dataOffset = 0;
 	};
 
-	struct sphereData {
+	struct CmdRenderSphere {
 		int8 colorIndex = 0;
 		int16 x = 0;
 		int16 y = 0;

@@ -1024,7 +1024,7 @@ uint8 *Renderer::prepareSpheres(Common::MemoryReadStream &stream, int32 &numOfPr
 	}
 	numOfPrimitives += numSpheres;
 	do {
-		sphereData *sphere = (sphereData *)renderBufferPtr;
+		CmdRenderSphere *sphere = (CmdRenderSphere *)renderBufferPtr;
 		stream.skip(1);
 		sphere->colorIndex = stream.readByte();
 		stream.skip(2);
@@ -1039,7 +1039,7 @@ uint8 *Renderer::prepareSpheres(Common::MemoryReadStream &stream, int32 &numOfPr
 		(*renderCmds)->dataPtr = renderBufferPtr;
 		(*renderCmds)++;
 
-		renderBufferPtr += sizeof(sphereData);
+		renderBufferPtr += sizeof(CmdRenderSphere);
 	} while (--numSpheres);
 
 	return renderBufferPtr;
@@ -1058,7 +1058,7 @@ uint8 *Renderer::prepareLines(Common::MemoryReadStream &stream, int32 &numOfPrim
 		stream.skip(3);
 		line.firstPointOffset = stream.readSint16LE();
 		line.secondPointOffset = stream.readSint16LE();
-		lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)renderBufferPtr;
+		CmdRenderLine *lineCoordinatesPtr = (CmdRenderLine *)renderBufferPtr;
 
 		if (line.firstPointOffset % 6 != 0 || line.secondPointOffset % 6 != 0) {
 			error("RENDER ERROR: lineDataPtr reference is malformed!");
@@ -1076,7 +1076,7 @@ uint8 *Renderer::prepareLines(Common::MemoryReadStream &stream, int32 &numOfPrim
 		(*renderCmds)->dataPtr = renderBufferPtr;
 		(*renderCmds)++;
 
-		renderBufferPtr += sizeof(lineCoordinates);
+		renderBufferPtr += sizeof(CmdRenderLine);
 	} while (--numLines);
 
 	return renderBufferPtr;
@@ -1174,9 +1174,10 @@ uint8 *Renderer::preparePolygons(Common::MemoryReadStream &stream, int32 &numOfP
 const Renderer::RenderCommand *Renderer::depthSortRenderCommands(int32 numOfPrimitives) {
 	RenderCommand *sortedCmd = _renderCmdsSortedByDepth;
 	int32 bestPoly = 0;
+	const int16 minDepth = -32767;
 	for (int32 i = 0; i < numOfPrimitives; i++) { // then we sort the polygones | WARNING: very slow | TODO: improve this
 		const RenderCommand *cmd = _renderCmds;
-		int16 bestZ = -32767;
+		int16 bestZ = minDepth;
 		for (int32 j = 0; j < numOfPrimitives; j++) {
 			if (cmd->depth > bestZ) {
 				bestZ = cmd->depth;
@@ -1186,7 +1187,7 @@ const Renderer::RenderCommand *Renderer::depthSortRenderCommands(int32 numOfPrim
 		}
 		*sortedCmd = _renderCmds[bestPoly];
 		sortedCmd++;
-		_renderCmds[bestPoly].depth = -32767;
+		_renderCmds[bestPoly].depth = minDepth;
 	}
 
 	return _renderCmdsSortedByDepth;
@@ -1218,7 +1219,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, RenderCom
 
 		switch (type) {
 		case RENDERTYPE_DRAWLINE: {
-			const lineCoordinates *lineCoords = (const lineCoordinates *)pointer;
+			const CmdRenderLine *lineCoords = (const CmdRenderLine *)pointer;
 			const int32 x1 = lineCoords->x1;
 			const int32 y1 = lineCoords->y1;
 			const int32 x2 = lineCoords->x2;
@@ -1233,7 +1234,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, RenderCom
 			break;
 		}
 		case RENDERTYPE_DRAWSPHERE: {
-			sphereData *sphere = (sphereData *)pointer;
+			CmdRenderSphere *sphere = (CmdRenderSphere *)pointer;
 			int32 radius = sphere->radius;
 
 			if (!isUsingOrhoProjection) {
