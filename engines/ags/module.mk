@@ -8,6 +8,7 @@ MODULE_OBJS = \
 	lib/aastr-0.1.1/aautil.o \
 	lib/alfont/alfont.o \
 	lib/allegro.o \
+	lib/allegro/colblend.o \
 	lib/allegro/color.o \
 	lib/allegro/config.o \
 	lib/allegro/draw.o \
@@ -17,6 +18,7 @@ MODULE_OBJS = \
 	lib/allegro/gfx.o \
 	lib/allegro/graphics.o \
 	lib/allegro/keyboard.o \
+	lib/allegro/math.o \
 	lib/allegro/mouse.o \
 	lib/allegro/system.o \
 	lib/allegro/unicode.o \
@@ -27,7 +29,12 @@ MODULE_OBJS = \
 	lib/audio/ogg.o \
 	lib/audio/sound.o \
 	lib/audio/wav.o \
+	lib/dumb-0.9.2/dumb.o \
 	lib/dumb-0.9.2/dumbfile.o \
+	lib/dumb-0.9.2/helpers/clickrem.o \
+	lib/dumb-0.9.2/it/itmisc.o \
+	lib/dumb-0.9.2/it/itrender.o \
+	lib/dumb-0.9.2/it/itunload.o \
 	lib/hq2x/hq2x3x.o \
 	lib/opengl/opengl.o \
 	lib/std/std.o \
@@ -246,6 +253,7 @@ MODULE_OBJS = \
 	engine/gfx/gfxdriverbase.o \
 	engine/gfx/gfxdriverfactory.o \
 	engine/gfx/gfxfilter_aad3d.o \
+	engine/gfx/gfxfilter_aaogl.o \
 	engine/gfx/gfxfilter_allegro.o \
 	engine/gfx/gfxfilter_d3d.o \
 	engine/gfx/gfxfilter_hqx.o \

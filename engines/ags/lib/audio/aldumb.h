@@ -43,7 +43,7 @@
 #define AGS_LIB_ALDUMB_H
 
 #include "ags/lib/allegro.h"
-#include "ags/lib/dumb-0.9.2/dumbfile.h"
+#include "ags/lib/dumb-0.9.2/dumb.h"
 
 namespace AGS3 {
 

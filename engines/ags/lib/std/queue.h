@@ -39,7 +39,7 @@ private:
 	Container _container;
 	Comparitor _comparitor;
 public:
-	priority_queue();
+	priority_queue() {}
 
 	bool empty() const { return _container.empty(); }
 

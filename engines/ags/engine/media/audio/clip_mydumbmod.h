@@ -30,7 +30,7 @@ namespace AGS3 {
 
 #define VOLUME_TO_DUMB_VOL(vol) ((float)vol) / 256.0
 
-void al_duh_set_loop(AL_DUH_PLAYER *dp, int loop);
+extern void al_duh_set_loop(AL_DUH_PLAYER *dp, int loop);
 
 // MOD/XM (DUMB)
 struct MYMOD : public SOUNDCLIP {

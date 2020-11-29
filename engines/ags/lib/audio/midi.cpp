@@ -21,9 +21,13 @@
  */
 
 #include "ags/lib/audio/midi.h"
+#include "ags/lib/allegro/file.h"
 #include "common/textconsole.h"
 
 namespace AGS3 {
+
+BEGIN_MIDI_DRIVER_LIST
+END_MIDI_DRIVER_LIST
 
 MIDI_DRIVER *midi_driver;
 
@@ -78,6 +82,10 @@ void midi_resume() {
 int load_midi_patches() {
 	warning("TODO: load_midi_patches");
 	return 0;
+}
+
+MIDI *load_midi_pf(PACKFILE *fp) {
+	error("TODO: load_midi_pf");
 }
 
 } // namespace AGS3
