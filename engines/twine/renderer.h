@@ -63,6 +63,34 @@ struct Matrix {
 	int32 row3[3] {0, 0, 0};
 };
 
+struct Model {
+	struct BodyFlags {
+		uint16 unk1 : 1;
+		uint16 animated : 1;
+		uint16 unk3 : 1;
+		uint16 unk4 : 1;
+		uint16 unk5 : 1;
+		uint16 unk6 : 1;
+		uint16 unk7 : 1;
+		uint16 alreadyPrepared : 1;
+		uint16 unk9 : 1;
+		uint16 unk10 : 1;
+		uint16 unk11 : 1;
+		uint16 unk12 : 1;
+		uint16 unk13 : 1;
+		uint16 unk14 : 1;
+		uint16 unk15 : 1;
+		uint16 unk16 : 1;
+	} bodyFlag;
+	int16 minsx = 0;
+	int16 maxsx = 0;
+	int16 minsy = 0;
+	int16 maxsy = 0;
+	int16 minsz = 0;
+	int16 maxsz = 0;
+	int16 offsetToData = 0;
+};
+
 class Renderer {
 private:
 	TwinEEngine *_engine;
@@ -132,19 +160,6 @@ private:
 	struct polyVertexHeader {
 		int16 shadeEntry = 0;
 		int16 dataOffset = 0;
-	};
-
-	struct bodyHeaderStruct {
-		int16 bodyFlag = 0;
-		int16 minsx = 0;
-		int16 maxsx = 0;
-		int16 minsy = 0;
-		int16 maxsy = 0;
-		int16 minsz = 0;
-		int16 maxsz = 0;
-		int16 offsetToData = 0;
-		int8 *ptrToKeyFrame = nullptr;
-		int32 keyFrameTime = 0;
 	};
 
 	struct ModelData {
