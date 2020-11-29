@@ -1154,34 +1154,27 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			lineData line;
 			line.colorIndex = stream.readByte();
 			stream.skip(3);
-			line.p1 = stream.readSint16LE();
-			line.p2 = stream.readSint16LE();
+			line.firstPointOffset = stream.readSint16LE();
+			line.secondPointOffset = stream.readSint16LE();
 			lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)renderBufferPtr;
 
-			if (line.p1 % 6 != 0 || line.p2 % 6 != 0) {
+			if (line.firstPointOffset % 6 != 0 || line.secondPointOffset % 6 != 0) {
 				error("RENDER ERROR: lineDataPtr reference is malformed!");
 			}
 
-			const int32 point1 = line.p1 / 6;
-			const int32 point2 = line.p2 / 6;
+			const int32 point1Index = line.firstPointOffset / 6;
+			const int32 point2Index = line.secondPointOffset / 6;
 			lineCoordinatesPtr->colorIndex = line.colorIndex;
-			lineCoordinatesPtr->x1 = flattenPoints[point1].x;
-			lineCoordinatesPtr->y1 = flattenPoints[point1].y;
-			lineCoordinatesPtr->x2 = flattenPoints[point2].x;
-			lineCoordinatesPtr->y2 = flattenPoints[point2].y;
-			int32 bestDepth = flattenPoints[point1].z;
-			int32 depth = flattenPoints[point2].z;
-
-			if (depth >= bestDepth) {
-				bestDepth = depth;
-			}
-
-			(*renderTabEntryPtr)->depth = bestDepth;
+			lineCoordinatesPtr->x1 = flattenPoints[point1Index].x;
+			lineCoordinatesPtr->y1 = flattenPoints[point1Index].y;
+			lineCoordinatesPtr->x2 = flattenPoints[point2Index].x;
+			lineCoordinatesPtr->y2 = flattenPoints[point2Index].y;
+			(*renderTabEntryPtr)->depth = MAX(flattenPoints[point1Index].z, flattenPoints[point2Index].z);
 			(*renderTabEntryPtr)->renderType = RENDERTYPE_DRAWLINE;
 			(*renderTabEntryPtr)->dataPtr = renderBufferPtr;
 			(*renderTabEntryPtr)++;
 
-			renderBufferPtr += 12;
+			renderBufferPtr += sizeof(lineCoordinates);
 		} while (--temp);
 	}
 
@@ -1190,23 +1183,22 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 	if (temp) {
 		numOfPrimitives += temp;
 		do {
+			sphereData *sphere = (sphereData *)renderBufferPtr;
 			stream.skip(1);
-			uint8 color2 = stream.readByte();
+			sphere->colorIndex = stream.readByte();
 			stream.skip(2);
-			int16 size = stream.readUint16LE();
-			int16 center = stream.readUint16LE();
+			sphere->radius = stream.readUint16LE();
+			const int16 centerOffset = stream.readUint16LE();
+			const int16 centerIndex = centerOffset / 6;
+			sphere->x = flattenPoints[centerIndex].x;
+			sphere->y = flattenPoints[centerIndex].y;
 
-			*(uint8 *)renderBufferPtr = color2;
-			*((int16 *)(renderBufferPtr + 1)) = flattenPoints[center / sizeof(pointTab)].x;
-			*((int16 *)(renderBufferPtr + 3)) = flattenPoints[center / sizeof(pointTab)].y;
-			*((int16 *)(renderBufferPtr + 5)) = size;
-
-			(*renderTabEntryPtr)->depth = flattenPoints[center / sizeof(pointTab)].z;
+			(*renderTabEntryPtr)->depth = flattenPoints[centerOffset / sizeof(pointTab)].z;
 			(*renderTabEntryPtr)->renderType = RENDERTYPE_DRAWSPHERE;
 			(*renderTabEntryPtr)->dataPtr = renderBufferPtr;
 			(*renderTabEntryPtr)++;
 
-			renderBufferPtr += 7;
+			renderBufferPtr += sizeof(sphereData);
 		} while (--temp);
 	}
 
