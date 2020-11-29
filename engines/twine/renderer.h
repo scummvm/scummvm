@@ -141,16 +141,24 @@ private:
 		int32 keyFrameTime = 0;
 	};
 
-	int32 renderAnimatedModel(uint8 *bodyPtr, RenderCommand *renderCmds);
+	struct ModelData {
+		pointTab computedPoints[800];
+		pointTab flattenPoints[800];
+		int16 shadeTable[500] {0};
+	};
+
+	ModelData _modelData;
+
+	int32 renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, RenderCommand *renderCmds);
 	void circleFill(int32 x, int32 y, int32 radius, uint8 color);
-	int32 renderModelElements(int32 numOfPrimitives, uint8 *pointer, RenderCommand** renderCmds);
+	int32 renderModelElements(int32 numOfPrimitives, uint8 *pointer, RenderCommand** renderCmds, ModelData *modelData);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
 	void applyRotation(int32 *targetMatrix, const int32 *currentMatrix);
 	void applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const int32 *rotationMatrix);
-	void processRotatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr);
+	void processRotatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData);
 	void applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const int32 *translationMatrix);
-	void processTranslatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr);
+	void processTranslatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData);
 	void translateGroup(int16 ax, int16 bx, int16 cx);
 
 	// ---- variables ----
@@ -188,10 +196,6 @@ private:
 	int32 lightY = 0;
 	int32 lightZ = 0;
 
-	pointTab computedPoints[800]; // _projectedPointTable
-	pointTab flattenPoints[800];  // _flattenPointTable
-	int16 shadeTable[500] {0};
-
 	RenderCommand _renderCmds[1000];
 	RenderCommand _renderCmdsSortedByDepth[1000];
 	uint8 renderCoordinatesBuffer[10000] {0};
@@ -215,9 +219,9 @@ private:
 	void computePolygons(int16 polyRenderType, Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom);
 
 	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
-	uint8* preparePolygons(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr);
-	uint8* prepareSpheres(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr);
-	uint8* prepareLines(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr);
+	uint8* preparePolygons(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);
+	uint8* prepareSpheres(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);
+	uint8* prepareLines(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);
 
 public:
 	Renderer(TwinEEngine *engine) : _engine(engine) {}
