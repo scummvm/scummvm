@@ -208,7 +208,7 @@ void draw_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y) {
 	bmpS.blitFrom(spriteS, Common::Point(x, y));
 }
 
-void stretch_sprite(BITMAP *bmp, BITMAP *sprite, int x, int y, int w, int h) {
+void stretch_sprite(BITMAP *bmp, const BITMAP *sprite, int x, int y, int w, int h) {
 	Graphics::ManagedSurface &bmpS = **bmp;
 	Graphics::ManagedSurface &spriteS = **sprite;
 
@@ -402,5 +402,10 @@ void floodfill(BITMAP *bmp, int x, int y, int color) {
 void circlefill(BITMAP *bmp, int x, int y, int radius, int color) {
 	error("TODO: circlefill");
 }
+
+void clear_bitmap(BITMAP *bmp) {
+	error("TODO: clear_bitmap");
+}
+
 
 } // namespace AGS3

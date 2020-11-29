@@ -114,4 +114,9 @@ AUDIOSTREAM *almp3_get_audiostream_mp3stream(ALMP3_MP3STREAM *mp3) {
 	return nullptr;
 }
 
+int almp3_get_length_msecs_mp3stream(ALMP3_MP3STREAM *mp3, int total_size) {
+	warning("TODO: almp3_get_length_msecs_mp3stream");
+	return 0;
+}
+
 } // namespace AGS3

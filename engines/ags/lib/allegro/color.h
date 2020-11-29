@@ -42,6 +42,7 @@ class BITMAP;
 
 struct color {
 	byte r, g, b;
+	byte filler;
 } PACKED_STRUCT;
 
 typedef color RGB;

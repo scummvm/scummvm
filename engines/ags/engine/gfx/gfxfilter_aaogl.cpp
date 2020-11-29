@@ -22,10 +22,10 @@
 
 #include "ags/shared/core/platform.h"
 
-#if 1
+#if AGS_PLATFORM_OS_WINDOWS || AGS_PLATFORM_OS_ANDROID || AGS_PLATFORM_OS_IOS || AGS_PLATFORM_OS_LINUX
 
-#include "ags/shared/gfx/gfxfilter_aaogl.h"
-#include "ags/shared/ogl_headers.h"
+#include "ags/engine/gfx/gfxfilter_aaogl.h"
+#include "ags/engine/gfx/ogl_headers.h"
 
 namespace AGS3 {
 namespace AGS {

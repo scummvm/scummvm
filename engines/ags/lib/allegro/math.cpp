@@ -23,13 +23,12 @@
 #ifndef AGS_LIB_ALLEGRO_MATH_H
 #define AGS_LIB_ALLEGRO_MATH_H
 
+#include "ags/lib/allegro/error.h"
 #include "ags/lib/allegro/fixed.h"
 
 namespace AGS3 {
 
-
-fixed _cos_tbl[512] =
-{
+fixed _cos_tbl[512] = {
 	/* precalculated fixed point (16.16) cosines for a full circle (0-255) */
 
 	65536L,  65531L,  65516L,  65492L,  65457L,  65413L,  65358L,  65294L,
@@ -98,10 +97,7 @@ fixed _cos_tbl[512] =
 	65220L,  65294L,  65358L,  65413L,  65457L,  65492L,  65516L,  65531L
 };
 
-
-
-fixed _tan_tbl[256] =
-{
+fixed _tan_tbl[256] = {
 	/* precalculated fixed point (16.16) tangents for a half circle (0-127) */
 
 	0L,      804L,    1609L,   2414L,   3220L,   4026L,   4834L,   5644L,
@@ -138,10 +134,7 @@ fixed _tan_tbl[256] =
 	-6455L,  -5644L,  -4834L,  -4026L,  -3220L,  -2414L,  -1609L,  -804L
 };
 
-
-
-fixed _acos_tbl[513] =
-{
+fixed _acos_tbl[513] = {
 	/* precalculated fixed point (16.16) inverse cosines (-1 to 1) */
 
 	0x800000L,  0x7C65C7L,  0x7AE75AL,  0x79C19EL,  0x78C9BEL,  0x77EF25L,  0x772953L,  0x76733AL,
@@ -210,7 +203,6 @@ fixed _acos_tbl[513] =
 	0xA366FL,   0x98CC6L,   0x8D6ADL,   0x810DBL,   0x73642L,   0x63E62L,   0x518A6L,   0x39A39L,
 	0x0L
 };
-
 
 
 /* fixatan:

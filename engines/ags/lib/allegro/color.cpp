@@ -43,10 +43,9 @@ int _rgb_g_shift_32 = 0;
 int _rgb_b_shift_32 = 0;
 int _rgb_a_shift_32 = 0;
 
-AL_ARRAY(int, _rgb_scale_5);
-AL_ARRAY(int, _rgb_scale_6);
+RGB_MAP *rgb_map;
+COLOR_MAP *color_map;
 
-PALETTE _current_palette;
 
 void set_color(int idx, const RGB *p) {
 	_current_palette[idx] = *p;

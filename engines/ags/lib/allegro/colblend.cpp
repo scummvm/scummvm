@@ -21,6 +21,7 @@
  */
 
 #include "ags/lib/allegro/colblend.h"
+#include "ags/lib/allegro/color.h"
 
 namespace AGS3 {
 

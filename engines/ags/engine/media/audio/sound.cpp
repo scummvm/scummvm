@@ -61,11 +61,8 @@ namespace AGS3 {
 #error Either JGMOD_MOD_PLAYER or DUMB_MOD_PLAYER should be defined.
 #endif
 
-extern "C"
-{
-	// Load MIDI from PACKFILE stream
-	MIDI *load_midi_pf(PACKFILE *pf);
-}
+// Load MIDI from PACKFILE stream
+extern MIDI *load_midi_pf(PACKFILE *pf);
 
 
 int use_extra_sound_offset = 0;
