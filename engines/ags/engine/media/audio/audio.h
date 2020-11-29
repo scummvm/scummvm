@@ -48,10 +48,7 @@ private:
 	AudioChannelsLock &operator=(AudioChannelsLock const &); // not copy-assignable
 
 public:
-	static AGS::Engine::Mutex s_mutex;
-	AudioChannelsLock()
-		: MutexLock(s_mutex) {
-	}
+	AudioChannelsLock();
 
 	// Gets a clip from the channel
 	SOUNDCLIP *GetChannel(int index);

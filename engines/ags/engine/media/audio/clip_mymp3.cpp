@@ -29,8 +29,8 @@
 #include "ags/shared/ac/common.h"               // quit()
 #include "ags/engine/ac/asset_helper.h"
 #include "ags/engine/util/mutex_lock.h"
-
 #include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -42,7 +42,7 @@ void MYMP3::poll() {
 	// update the buffer
 	char *tempbuf = nullptr;
 	{
-		AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+		AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 		tempbuf = (char *)almp3_get_mp3stream_buffer(stream);
 	}
 
@@ -56,13 +56,13 @@ void MYMP3::poll() {
 		pack_fread(tempbuf, chunksize, in);
 
 		{
-			AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+			AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 			almp3_free_mp3stream_buffer(stream, free_val);
 		}
 	}
 #endif
 	{
-		AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+		AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 		if (almp3_poll_mp3stream(stream) == ALMP3_POLL_PLAYJUSTFINISHED) {
 			state_ = SoundClipStopped;
 		}
@@ -73,7 +73,7 @@ void MYMP3::adjust_stream() {
 	if (!is_playing()) {
 		return;
 	}
-	AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+	AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 	almp3_adjust_mp3stream(stream, get_final_volume(), panning, speed);
 }
 
@@ -98,7 +98,7 @@ void MYMP3::set_speed(int new_speed) {
 
 void MYMP3::destroy() {
 	if (stream) {
-		AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+		AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 		almp3_stop_mp3stream(stream);
 		almp3_destroy_mp3stream(stream);
 	}
@@ -129,7 +129,7 @@ int MYMP3::get_pos_ms() {
 	if (!is_playing()) {
 		return -1;
 	}
-	AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+	AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 	return almp3_get_pos_msecs_mp3stream(stream);
 }
 
@@ -137,7 +137,7 @@ int MYMP3::get_length_ms() {
 	if (!is_playing()) {
 		return -1;
 	}
-	AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+	AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 	return almp3_get_length_msecs_mp3stream(stream, filesize);
 }
 
@@ -145,7 +145,7 @@ int MYMP3::get_voice() {
 	if (!is_playing()) {
 		return -1;
 	}
-	AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+	AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 	AUDIOSTREAM *ast = almp3_get_audiostream_mp3stream(stream);
 	return (ast != nullptr ? ast->voice : -1);
 }
@@ -160,7 +160,7 @@ int MYMP3::play() {
 	}
 
 	{
-		AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+		AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 		if (almp3_play_mp3stream(stream, chunksize, (vol > 230) ? vol : vol + 20, panning) != ALMP3_OK) {
 			return 0;
 		}

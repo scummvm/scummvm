@@ -44,6 +44,7 @@
 #include "ags/engine/ac/timer.h"
 #include "ags/engine/main/game_run.h"
 #include "ags/lib/audio/sound.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
@@ -54,7 +55,9 @@ using namespace AGS::Engine;
 //sound channel management; all access goes through here, which can't be done without a lock
 
 static std::array<SOUNDCLIP *> _channels(MAX_SOUND_CHANNELS + 1);
-AGS::Engine::Mutex AudioChannelsLock::s_mutex;
+
+AudioChannelsLock::AudioChannelsLock() : MutexLock(::AGS::g_vm->_sMutex) {
+}
 
 SOUNDCLIP *AudioChannelsLock::GetChannel(int index) {
 	return _channels[index];
@@ -731,7 +734,7 @@ SOUNDCLIP *cachedQueuedMusic = nullptr;
 // Music update is scheduled when the voice speech stops;
 // we do a small delay before reverting any volume adjustments
 static bool music_update_scheduled = false;
-static auto music_update_at = AGS_Clock::now();
+static uint32 music_update_at = 0; // AGS_Clock::now();
 
 void cancel_scheduled_music_update() {
 	music_update_scheduled = false;

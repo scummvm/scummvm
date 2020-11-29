@@ -40,8 +40,8 @@ const auto MAXIMUM_FALL_BEHIND = 3;
 auto tick_duration = std::chrono::microseconds(1000000LL / 40);
 auto framerate_maxed = false;
 
-auto last_tick_time = AGS_Clock::now();
-auto next_frame_timestamp = AGS_Clock::now();
+uint32 last_tick_time = 0; // AGS_Clock::now();
+uint32 next_frame_timestamp = 0; // AGS_Clock::now();
 
 }
 

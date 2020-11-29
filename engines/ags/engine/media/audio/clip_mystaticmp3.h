@@ -28,8 +28,6 @@
 
 namespace AGS3 {
 
-extern AGS::Engine::Mutex _mp3_mutex;
-
 // pre-loaded (non-streaming) MP3 file
 struct MYSTATICMP3 : public SOUNDCLIP {
 	ALMP3_MP3 *tune;

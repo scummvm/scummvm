@@ -28,16 +28,12 @@
 #include "ags/engine/media/audio/audiointernaldefs.h"
 #include "ags/engine/media/audio/soundcache.h"
 #include "ags/engine/util/mutex_lock.h"
-
 #include "ags/engine/platform/base/agsplatformdriver.h"
+#include "ags/ags.h"
 
 namespace AGS3 {
 
 extern int our_eip;
-
-// ALMP3 functions are not reentrant! This mutex should be locked before calling any
-// of the mp3 functions and unlocked afterwards.
-AGS::Engine::Mutex _mp3_mutex;
 
 void MYSTATICMP3::poll() {
 	if (state_ != SoundClipPlaying) {
@@ -47,7 +43,7 @@ void MYSTATICMP3::poll() {
 	int oldeip = our_eip;
 	our_eip = 5997;
 
-	AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+	AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 	int result = almp3_poll_mp3(tune);
 
 	if (result == ALMP3_POLL_PLAYJUSTFINISHED) {
@@ -62,7 +58,7 @@ void MYSTATICMP3::adjust_stream() {
 	if (!is_playing()) {
 		return;
 	}
-	AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+	AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 	almp3_adjust_mp3(tune, get_final_volume(), panning, speed, repeat);
 }
 
@@ -82,7 +78,7 @@ void MYSTATICMP3::set_speed(int new_speed) {
 
 void MYSTATICMP3::destroy() {
 	if (tune) {
-		AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+		AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 		almp3_stop_mp3(tune);
 		almp3_destroy_mp3(tune);
 	}
@@ -100,7 +96,7 @@ void MYSTATICMP3::seek(int pos) {
 	if (!is_playing()) {
 		return;
 	}
-	AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+	AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 	almp3_seek_abs_msecs_mp3(tune, pos);
 }
 
@@ -108,7 +104,7 @@ int MYSTATICMP3::get_pos() {
 	if (!is_playing()) {
 		return -1;
 	}
-	AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+	AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 	return almp3_get_pos_msecs_mp3(tune);
 }
 
@@ -121,7 +117,7 @@ int MYSTATICMP3::get_length_ms() {
 	if (tune == nullptr) {
 		return -1;
 	}
-	AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+	AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 	return almp3_get_length_msecs_mp3(tune);
 }
 
@@ -129,7 +125,7 @@ int MYSTATICMP3::get_voice() {
 	if (!is_playing()) {
 		return -1;
 	}
-	AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+	AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 	AUDIOSTREAM *ast = almp3_get_audiostream_mp3(tune);
 	return (ast != nullptr ? ast->voice : -1);
 }
@@ -144,7 +140,7 @@ int MYSTATICMP3::play() {
 	}
 
 	{
-		AGS::Engine::MutexLock _lockMp3(_mp3_mutex);
+		AGS::Engine::MutexLock _lockMp3(::AGS::g_vm->_mp3Mutex);
 		int result = almp3_play_ex_mp3(tune, 16384, vol, panning, 1000, repeat);
 		if (result != ALMP3_OK) {
 			return 0;
