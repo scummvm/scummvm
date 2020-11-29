@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-28 20:45+0000\n"
-"PO-Revision-Date: 2020-11-28 18:44+0000\n"
+"PO-Revision-Date: 2020-11-29 08:37+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -4795,9 +4795,8 @@ msgid "Play movies at an increased speed"
 msgstr "Reproduz filmes em velocidade acelerada"
 
 #: engines/groovie/metaengine.cpp:53
-#, fuzzy
 msgid "GroovieV2 support is not compiled in"
-msgstr "O suporte ao HE v71+ não está compilado"
+msgstr "O suporte a GroovieV2 não está compilado"
 
 #: engines/groovie/script.cpp:484
 msgid "Failed to save game"
@@ -4922,20 +4921,20 @@ msgid "Left button to attack, right button to pick up items"
 msgstr "Botão esquerdo para atacar, botão direito pra pegar itens"
 
 #: engines/kyra/metaengine.cpp:116
-#, fuzzy
 msgid "Lands of Lore support is not compiled in"
-msgstr "O suporte ao HE v71+ não está compilado"
+msgstr "O suporte a Lands of Lore não está compilado"
 
 #: engines/kyra/metaengine.cpp:128
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
 msgstr ""
+"EOB II versão FM-TOWNS requer suporte de modos de cor de 16 bits que não "
+"foram ativados em sua compilação do ScummVM"
 
 #: engines/kyra/metaengine.cpp:137
-#, fuzzy
 msgid "Eye of Beholder support is not compiled in"
-msgstr "O suporte ao HE v71+ não está compilado"
+msgstr "O suporte a Eye of Beholder não está compilado"
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
@@ -5281,24 +5280,20 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Jogo pausado. Pressione qualquer tecla para continuar."
 
 #: engines/mohawk/metaengine.cpp:272
-#, fuzzy
 msgid "Myst ME support not compiled in"
-msgstr "O suporte ao HE v71+ não está compilado"
+msgstr "O suporte a Myst ME não está compilado"
 
 #: engines/mohawk/metaengine.cpp:279
-#, fuzzy
 msgid "Myst support not compiled in"
-msgstr "O suporte ao HE v71+ não está compilado"
+msgstr "O suporte a Myst não está compilado"
 
 #: engines/mohawk/metaengine.cpp:287
-#, fuzzy
 msgid "Riven support not compiled in"
-msgstr "O suporte ao HE v71+ não está compilado"
+msgstr "O suporte a Riven não está compilado"
 
 #: engines/mohawk/metaengine.cpp:302
-#, fuzzy
 msgid "CSTime support not compiled in"
-msgstr "O suporte ao HE v71+ não está compilado"
+msgstr "O suporte a CSTime não está compilado"
 
 #: engines/mohawk/myst.cpp:552 engines/mohawk/riven.cpp:822
 msgid "Open main menu"
@@ -5637,14 +5632,12 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Utiliza introdução alternativa do jogo (somente versão em CD)"
 
 #: engines/saga/metaengine.cpp:117
-#, fuzzy
 msgid "I Have No Mouth support not compiled in"
-msgstr "O suporte ao HE v71+ não está compilado"
+msgstr "O suporte a I Have No Mouth não está compilado"
 
 #: engines/saga/metaengine.cpp:124
-#, fuzzy
 msgid "SAGA2 support not compiled in"
-msgstr "O suporte ao HE v71+ não está compilado"
+msgstr "O suporte a SAGA2 não está compilado"
 
 #: engines/saga/saga.cpp:247
 msgid "Error loading game resources."
@@ -7327,19 +7320,16 @@ msgid "Apply bilinear filtering to individual sprites"
 msgstr "Aplica filtro bilinear individualmente para sprites"
 
 #: engines/wintermute/metaengine.cpp:67
-#, fuzzy
 msgid "FoxTail support is not compiled in"
-msgstr "O suporte ao HE v71+ não está compilado"
+msgstr "O suporte a FoxTail não está compilado"
 
 #: engines/wintermute/metaengine.cpp:74
-#, fuzzy
 msgid "Hero Craft support is not compiled in"
-msgstr "O suporte ao HE v71+ não está compilado"
+msgstr "O suporte a Hero Craft não está compilado"
 
 #: engines/wintermute/metaengine.cpp:81
-#, fuzzy
 msgid "Wintermute3D support is not compiled in"
-msgstr "O suporte ao HE v71+ não está compilado"
+msgstr "O suporte a Wintermute3D não está compilado"
 
 #: engines/wintermute/wintermute.cpp:176
 msgid "This game requires PNG, JPEG and Vorbis support."
