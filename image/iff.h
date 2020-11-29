@@ -20,15 +20,6 @@
  *
  */
 
-/**
- * @file
- * Image decoder used in engines:
- *  - gob
- *  - parallaction
- *  - queen
- *  - saga
- */
-
 #ifndef IMAGE_IFF_H
 #define IMAGE_IFF_H
 
@@ -47,6 +38,20 @@ struct Surface;
 }
 
 namespace Image {
+
+/**
+ * @defgroup image_iff IFF decoder
+ * @ingroup image
+ *
+ * @brief Decoder for images encoded as Interchange File Format (IFF).
+ *
+ * Used in engines:
+ * - Gob
+ * - Parallaction
+ * - Queen
+ * - Saga
+ * @{
+ */
 
 class IFFDecoder : public ImageDecoder {
 public:
@@ -120,7 +125,7 @@ private:
 	void loadBitmap(Common::SeekableReadStream &stream);
 	void packPixels(byte *scanlines, byte *data, const uint16 scanlinePitch, const uint16 outPitch);
 };
-
+/** @} */	
 } // End of namespace Image
 
 #endif

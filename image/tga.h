@@ -43,6 +43,14 @@ class SeekableReadStream;
 
 namespace Image {
 
+/**
+ * @defgroup image_tga TGA (TARGA) decoder
+ * @ingroup image
+ *
+ * @brief Decoder for TGA images.
+ * @{
+ */
+
 /** TarGa image-decoder
  * The following variations of TGA are supported:
  * - Type 1 - Color-mapped images in 16/24/32 bpp with 8 bit indexes
@@ -95,7 +103,7 @@ private:
 	bool readDataRLE(Common::SeekableReadStream &tga, byte imageType, byte pixelDepth);
 	bool readColorMap(Common::SeekableReadStream &tga, byte imageType, byte pixelDepth);
 };
-
+/** @} */
 } // End of namespace Image
 
 #endif
