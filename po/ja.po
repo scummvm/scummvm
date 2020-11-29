@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-28 23:49+0000\n"
-"PO-Revision-Date: 2020-11-28 18:44+0000\n"
+"PO-Revision-Date: 2020-11-29 14:33+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1563,7 +1563,7 @@ msgstr ""
 
 #: gui/options.cpp:2254
 msgid "Closing options dialog will stop the server."
-msgstr "設定ウインドーを閉じるとさばーが停止されます。"
+msgstr "設定ウィンドウを閉じると、サーバーは停止されます。"
 
 #: gui/options.cpp:2266
 msgid "Use Text to speech"
@@ -4623,12 +4623,11 @@ msgstr ""
 
 #: engines/hdb/metaengine.cpp:193
 msgid "Move up"
-msgstr ""
+msgstr "上"
 
 #: engines/hdb/metaengine.cpp:199
-#, fuzzy
 msgid "Move down"
-msgstr "下を見る"
+msgstr "下"
 
 #: engines/hdb/metaengine.cpp:217 engines/scumm/help.cpp:128
 #: engines/scumm/help.cpp:152 engines/scumm/help.cpp:170
@@ -5206,9 +5205,8 @@ msgid "PS2 version is not yet supported"
 msgstr "PS2版はまだサポートされていません"
 
 #: engines/myst3/detection.cpp:182
-#, fuzzy
 msgid "Widescreen mod"
-msgstr "全面モード"
+msgstr "ワイドスクリーン対応MOD"
 
 #: engines/myst3/detection.cpp:183
 msgid "Enable widescreen rendering in fullscreen mode."
@@ -6397,9 +6395,8 @@ msgid "Open control panel"
 msgstr ""
 
 #: engines/sky/metaengine.cpp:118
-#, fuzzy
 msgid "Toggle fast mode"
-msgstr "消音の切替"
+msgstr "高速モードの切り替え"
 
 #: engines/sky/metaengine.cpp:123
 msgid "Toggle really fast mode"
@@ -6620,18 +6617,16 @@ msgid "Enable the original wall collision damage"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:75
-#, fuzzy
 msgid "Enable cross fade"
-msgstr "有効にする"
+msgstr "クロスフェードを有効にする"
 
 #: engines/twine/metaengine.cpp:76
 msgid "Enable cross fading of images and scenes"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:83
-#, fuzzy
 msgid "Disable save menu"
-msgstr "無名のセーブ"
+msgstr "セーブメニューを無効にする"
 
 #: engines/twine/metaengine.cpp:84
 msgid ""
@@ -6655,24 +6650,20 @@ msgid "Enable the original audio cd track"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:104
-#, fuzzy
 msgid "Enable sound"
-msgstr "有効にする"
+msgstr "音声を有効にする"
 
 #: engines/twine/metaengine.cpp:105
-#, fuzzy
 msgid "Enable the sound for the game"
-msgstr "ゲームのフルネーム"
+msgstr "ゲームの音声を有効にする"
 
 #: engines/twine/metaengine.cpp:111
-#, fuzzy
 msgid "Enable voices"
-msgstr "有効にする"
+msgstr "音声を有効にする"
 
 #: engines/twine/metaengine.cpp:112
-#, fuzzy
 msgid "Enable the voices for the game"
-msgstr "ゲームのフルネーム"
+msgstr "ゲーム音声を有効にする"
 
 #: engines/twine/metaengine.cpp:118
 #, fuzzy
@@ -6685,23 +6676,20 @@ msgid "Enable the text for the game"
 msgstr "ゲームのフルネーム"
 
 #: engines/twine/metaengine.cpp:125
-#, fuzzy
 msgid "Enable movies"
-msgstr "有効にする"
+msgstr "ムービーを有効にする"
 
 #: engines/twine/metaengine.cpp:126
 msgid "Enable the cutscenes for the game"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:132
-#, fuzzy
 msgid "Enable mouse"
-msgstr "有効にする"
+msgstr "マウス操作を有効にする"
 
 #: engines/twine/metaengine.cpp:133
-#, fuzzy
 msgid "Enable the mouse for the UI"
-msgstr "ゲームのフルネーム"
+msgstr "マウスでのUI操作を有効にする"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Use the USA version"
@@ -6796,7 +6784,6 @@ msgid "Change Behaviour"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:282
-#, fuzzy
 msgid "Options Menu"
 msgstr "設定"
 
@@ -7390,11 +7377,11 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Zoom out"
-msgstr ""
+msgstr "ズームアウト"
 
 #: engines/wintermute/keymapper_tables.h:1383
 msgid "Zoom in"
-msgstr ""
+msgstr "ズームイン"
 
 #: engines/wintermute/keymapper_tables.h:1396
 #: engines/wintermute/keymapper_tables.h:1511
@@ -7423,35 +7410,35 @@ msgstr "落とす"
 
 #: engines/wintermute/keymapper_tables.h:1594
 msgid "Player 1: Up"
-msgstr ""
+msgstr "1P：上"
 
 #: engines/wintermute/keymapper_tables.h:1599
 msgid "Player 1: Left"
-msgstr ""
+msgstr "1P：左"
 
 #: engines/wintermute/keymapper_tables.h:1604
 msgid "Player 1: Down"
-msgstr ""
+msgstr "1P：下"
 
 #: engines/wintermute/keymapper_tables.h:1609
 msgid "Player 1: Right"
-msgstr ""
+msgstr "1P：右"
 
 #: engines/wintermute/keymapper_tables.h:1614
 msgid "Player 2: Up"
-msgstr ""
+msgstr "2P：上"
 
 #: engines/wintermute/keymapper_tables.h:1619
 msgid "Player 2: Left"
-msgstr ""
+msgstr "2P：左"
 
 #: engines/wintermute/keymapper_tables.h:1624
 msgid "Player 2: Down"
-msgstr ""
+msgstr "2P：下"
 
 #: engines/wintermute/keymapper_tables.h:1629
 msgid "Player 2: Right"
-msgstr ""
+msgstr "2P：右"
 
 #: engines/wintermute/keymapper_tables.h:1634
 msgid "Debug FPS"
@@ -7485,7 +7472,7 @@ msgstr ""
 
 #: engines/xeen/saves.cpp:291
 msgid "Failed to autosave"
-msgstr ""
+msgstr "オートセーブに失敗しました"
 
 #: engines/zvision/detection_tables.h:60
 msgid "Double FPS"
@@ -7493,7 +7480,7 @@ msgstr ""
 
 #: engines/zvision/detection_tables.h:61
 msgid "Increase framerate from 30 to 60 FPS"
-msgstr ""
+msgstr "フレームレートを30→60fpsへ引き上げる"
 
 #: engines/zvision/detection_tables.h:70
 msgid "Enable Venus"
@@ -7513,11 +7500,11 @@ msgstr ""
 
 #: engines/zvision/detection_tables.h:90
 msgid "Use high resolution MPEG video"
-msgstr ""
+msgstr "高解像度なMPEGファイルを使用する"
 
 #: engines/zvision/detection_tables.h:91
 msgid "Use MPEG video from the DVD version instead of lower resolution AVI"
-msgstr ""
+msgstr "低解像度なAVIファイルを、DVD版のMPEGファイルで代替する"
 
 #: engines/zvision/file/save_manager.cpp:222
 #, c-format
@@ -7525,6 +7512,7 @@ msgid ""
 "This saved game uses version %u, but this engine only supports up to version "
 "%d. You will need an updated version of the engine to use this saved game."
 msgstr ""
+"セーブされたゲームのエンジンはバージョン%uですが、ScummVMはバージョン%d以降のみ対応しています。エンジンをバージョンアップしてください。"
 
 #: engines/zvision/metaengine.cpp:129
 msgid "Look Up"
