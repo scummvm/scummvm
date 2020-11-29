@@ -30,7 +30,7 @@
 #include "audio/mididrv.h"
 #include "audio/mt32gm.h"
 
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/engine/features.h"
 #include "sci/sound/drivers/gm_names.h"
 #include "sci/sound/drivers/mididriver.h"

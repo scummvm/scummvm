@@ -23,8 +23,8 @@
 #include "common/scummsys.h"
 #include "common/textconsole.h"
 #include "sci/sci.h"
-#include "sci/resource.h"
-#include "sci/resource_patcher.h"
+#include "sci/resource/resource.h"
+#include "sci/resource/resource_patcher.h"
 
 namespace Sci {
 

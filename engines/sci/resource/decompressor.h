@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef SCI_DECOMPRESSOR_H
-#define SCI_DECOMPRESSOR_H
+#ifndef SCI_RESOURCE_DECOMPRESSOR_H
+#define SCI_RESOURCE_DECOMPRESSOR_H
 
 #include "common/scummsys.h"
 
@@ -196,4 +196,4 @@ protected:
 
 } // End of namespace Sci
 
-#endif // SCI_SCICORE_DECOMPRESSOR_H
+#endif // SCI_RESOURCE_DECOMPRESSOR_H

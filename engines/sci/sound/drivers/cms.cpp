@@ -28,7 +28,7 @@
 
 #include "common/system.h"
 
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/util.h"
 
 #define SCI0_CMS_ORIGINAL_BUG		1

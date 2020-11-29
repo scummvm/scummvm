@@ -26,8 +26,8 @@
 #include "common/file.h"
 #include "common/textconsole.h"
 #include "common/memstream.h"
-#include "sci/resource.h"
-#include "sci/resource_intern.h"
+#include "sci/resource/resource.h"
+#include "sci/resource/resource_intern.h"
 #include "sci/util.h"
 
 namespace Sci {

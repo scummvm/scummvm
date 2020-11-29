@@ -28,7 +28,7 @@
 
 #include "audio/softsynth/fmtowns_pc98/pc98_audio.h"
 
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/sound/drivers/mididriver.h"
 
 /*	PC-98 sound driver for:
