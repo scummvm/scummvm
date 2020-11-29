@@ -598,10 +598,9 @@ bool isAllZeroes(Common::String valStr) {
 
 // Tracks marked as (G) are only available in-game ie. not in the official OST by Frank Klepacki on his site.
 //
-// Note that there are a few tracks that are not proper music tracks but rather SFX tracks.
-// For example, the re-used track "Iron Fist"
-// from Command & Conquer - The Covert Operations (OST)
-// which is played at the NightClub Row (NR01), is "kSfxMUSBLEED" (looping)
+// Note, that there are a few tracks that are not proper music tracks but rather SFX tracks.
+// For example, the re-used track "Iron Fist" from Command & Conquer - The Covert Operations (OST),
+// which is played at the NightClub Row (NR01), is "kSfxMUSBLEED" (looping).
 // TODO maybe support those too?
 const char* kMusicTracksArr[] = {"Animoid Row (G)",                 // kMusicArabLoop
                                  "Battle Theme",                    // kMusicBatl226M
@@ -630,7 +629,7 @@ bool Debugger::cmdMusic(int argc, const char** argv) {
 	if (argc != 2) {
 		debugPrintf("Play the specified music track, list the available tracks\nor stop the current playing track.\n");
 		debugPrintf("Usage: %s (list|stop|<musicId>)\n", argv[0]);
-		debugPrintf("Usage: %s <musicId>\nmusicId can be in [0, %d]\n", argv[0], (int)_vm->_gameInfo->getMusicTrackCount() - 1);
+		debugPrintf("musicId can be in [0, %d]\n", (int)_vm->_gameInfo->getMusicTrackCount() - 1);
 		return true;
 	}
 

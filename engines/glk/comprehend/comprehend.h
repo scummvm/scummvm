@@ -207,6 +207,11 @@ public:
 	void setDisableSaves(bool flag) {
 		_disableSaves = flag;
 	}
+
+	/**
+	 * Returns true if an input line is currently active
+	 */
+	bool isInputLineActive() const;
 };
 
 extern Comprehend *g_comprehend;

@@ -5434,7 +5434,7 @@ EOF
 	# Try different library names
 	if test "$_opengl_game_es2" = yes ; then
 		# 1) GLESv2    This is generally used by nearly all platforms for OpenGL ES 2
-		# 2) ogles2    This is used by AmigaOS4 (and probably others)
+		# 2) ogles2    This is used by AmigaOS4 for OpenGL ES 2
 		_opengl_game_es2=no
 		for lib in "-lGLESv2" "-logles2"; do
 			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
@@ -5747,8 +5747,12 @@ if test "$_dialogs" = "no"; then
 	echo "no"
 else
 	case $_host_os in
-	morphos*)
-		echo "morphos"
+	amigaos*)
+		echo "amigaos (asl)"
+		_dialogs=yes
+		;;
+	darwin*)
+		echo "osx"
 		_dialogs=yes
 		;;
 	mingw*)
@@ -5756,8 +5760,8 @@ else
 		echo "win32"
 		_dialogs=yes
 		;;
-	darwin*)
-		echo "osx"
+	morphos*)
+		echo "morphos"
 		_dialogs=yes
 		;;
 	*)

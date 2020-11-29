@@ -40,7 +40,7 @@ public:
 	virtual void initBackend() override;
 	virtual void quit() override;
 	virtual void fatalError() override;
-	virtual void setWindowCaption(const char *caption) override;
+	virtual void setWindowCaption(const Common::U32String &caption) override;
 	virtual Common::HardwareInputSet *getHardwareInputSet() override;
 	virtual Common::KeymapArray getGlobalKeymaps() override;
 	virtual Common::KeymapperDefaultBindings *getKeymapperDefaultBindings() override;

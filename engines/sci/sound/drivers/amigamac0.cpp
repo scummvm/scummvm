@@ -33,7 +33,7 @@
 
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/sound/drivers/macmixer.h"
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 
 #include "common/file.h"
 #include "common/memstream.h"

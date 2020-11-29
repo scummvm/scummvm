@@ -414,20 +414,36 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 	ImuseDigiSndMgr::SoundDesc *soundDesc = track->soundDesc;
 	if (_triggerUsed && track->soundDesc->numMarkers) {
 		if (_sound->checkForTriggerByRegionAndMarker(soundDesc, track->curRegion, _triggerParams.marker)) {
-			debug(5, "SwToNeReg(trackId:%d) - trigger %s reached", track->trackId, _triggerParams.marker);
-			debug(5, "SwToNeReg(trackId:%d) - exit current region %d", track->trackId, track->curRegion);
-			debug(5, "SwToNeReg(trackId:%d) - call cloneToFadeOutTrack(delay:%d)", track->trackId, _triggerParams.fadeOutDelay);
-			Track *fadeTrack = cloneToFadeOutTrack(track, _triggerParams.fadeOutDelay);
-			if (fadeTrack) {
-				fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
-				fadeTrack->regionOffset = 0;
-				debug(5, "SwToNeReg(trackId:%d)-sound(%d) select region %d, curHookId: %d", fadeTrack->trackId, fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
-				fadeTrack->curHookId = 0;
+			if (_vm->_game.id != GID_CMI) {
+				debug(5, "SwToNeReg(trackId:%d) - trigger %s reached", track->trackId, _triggerParams.marker);
+				debug(5, "SwToNeReg(trackId:%d) - exit current region %d", track->trackId, track->curRegion);
+				debug(5, "SwToNeReg(trackId:%d) - call cloneToFadeOutTrack(delay:%d)", track->trackId, _triggerParams.fadeOutDelay);
+				Track *fadeTrack = cloneToFadeOutTrack(track, _triggerParams.fadeOutDelay);
+				if (fadeTrack) {
+					fadeTrack->dataOffset = _sound->getRegionOffset(fadeTrack->soundDesc, fadeTrack->curRegion);
+					fadeTrack->regionOffset = 0;
+					debug(5, "SwToNeReg(trackId:%d)-sound(%d) select region %d, curHookId: %d", fadeTrack->trackId, fadeTrack->soundId, fadeTrack->curRegion, fadeTrack->curHookId);
+					fadeTrack->curHookId = 0;
+				}
+				flushTrack(track);
+				startMusic(_triggerParams.filename, _triggerParams.soundId, _triggerParams.hookId, _triggerParams.volume);
+				_triggerUsed = false;
+				return;
+			} else {
+				// Behavior for "_end" (and "exit") marker
+				debug(5, "SwToNeReg(trackId:%d) - trigger %s reached", track->trackId, _triggerParams.marker);
+				debug(5, "SwToNeReg(trackId:%d) - exit current region %d", track->trackId, track->curRegion);
+				debug(5, "SwToNeReg(trackId:%d) - call handleComiFadeOut(delay:%d)", track->trackId, _triggerParams.fadeOutDelay);
+				handleComiFadeOut(track, _triggerParams.fadeOutDelay);
+				track->dataOffset = _sound->getRegionOffset(track->soundDesc, track->curRegion);
+				track->regionOffset = 0;
+				debug(5, "SwToNeReg(trackId:%d)-sound(%d) select region %d, curHookId: %d", track->trackId, track->soundId, track->curRegion, track->curHookId);
+				track->curHookId = 0;
+				if (!scumm_stricmp(_triggerParams.marker, "exit"))
+					startMusic(_triggerParams.filename, _triggerParams.soundId, _triggerParams.hookId, _triggerParams.volume);
+				_triggerUsed = false;
+				return;
 			}
-			flushTrack(track);
-			startMusic(_triggerParams.filename, _triggerParams.soundId, _triggerParams.hookId, _triggerParams.volume);
-			_triggerUsed = false;
-			return;
 		}
 	}
 
@@ -459,9 +475,16 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 			track->curRegion = region;
 			debug(5, "SwToNeReg(trackId:%d) - sound(%d) jump to region %d, curHookId: %d", track->trackId, track->soundId, track->curRegion, track->curHookId);
 			track->curHookId = 0;
-			
 		} else {
-			debug(5, "SwToNeReg(trackId:%d) - Normal switch region, sound(%d), hookId(%d)", track->trackId, track->soundId, track->curHookId);
+			// Check if the jump led to a  "start" marker; if so, we have to enforce it anyway.
+			// Fixes bug/edge-case #11956;
+			// Go see ImuseDigiSndMgr::getJumpIdByRegionAndHookId(...) for further information.
+			if (_vm->_game.id == GID_CMI && soundDesc->jump[jumpId].dest == soundDesc->marker[2].pos && !scumm_stricmp(soundDesc->marker[2].ptr, "start")) {
+				track->curRegion = region;
+				debug(5, "SwToNeReg(trackId:%d) - Enforced sound(%d) jump to region %d marked with a \"start\" marker, hookId(%d)", track->trackId, track->soundId, track->curRegion, track->curHookId);
+			} else {
+				debug(5, "SwToNeReg(trackId:%d) - Normal switch region, sound(%d), hookId(%d)", track->trackId, track->soundId, track->curHookId);
+			}
 		}
 	} else {
 		debug(5, "SwToNeReg(trackId:%d) - Normal switch region, sound(%d), hookId(%d)", track->trackId, track->soundId, track->curHookId);

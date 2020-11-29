@@ -42,9 +42,6 @@
 
 namespace TwinE {
 
-#define ONSCREENKEYBOARD_WIDTH 14
-#define ONSCREENKEYBOARD_HEIGHT 5
-
 static const char allowedCharIndex[] = " ABCDEFGHIJKLM.NOPQRSTUVWXYZ-abcdefghijklm?nopqrstuvwxyz!0123456789\040\b\r\0";
 
 void MenuOptions::newGame() {
@@ -57,8 +54,8 @@ void MenuOptions::newGame() {
 	// intro screen 1 - twinsun
 	_engine->_screens->loadImage(RESSHQR_INTROSCREEN1IMG);
 
-	_engine->_text->newGameVar4 = 0;
-	_engine->_text->newGameVar5 = 1;
+	_engine->_text->drawTextBoxBackground = false;
+	_engine->_text->renderTextTriangle = true;
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->textClipFull();
@@ -91,8 +88,8 @@ void MenuOptions::newGame() {
 	_engine->_screens->clearScreen();
 	_engine->flip();
 
-	_engine->_text->newGameVar4 = 1;
-	_engine->_text->newGameVar5 = 0;
+	_engine->_text->drawTextBoxBackground = true;
+	_engine->_text->renderTextTriangle = false;
 
 	// set main palette back
 	_engine->setPalette(_engine->_screens->paletteRGBA);
@@ -121,38 +118,79 @@ void MenuOptions::showCredits() {
 	_engine->setPalette(_engine->_screens->paletteRGBA);
 }
 
-void MenuOptions::drawSelectableCharacter(int32 x, int32 y, bool selected) {
-	char buffer[2];
+void MenuOptions::drawSelectableCharacter(int32 x, int32 y) {
+	const int32 borderTop = 200;
+	const int32 borderLeft = 25;
+	const int32 halfButtonHeight = 25;
+	const int32 halfButtonWidth = 20;
+	const int32 buttonDistanceX = halfButtonWidth * 2 + 5;
+	const int32 buttonDistanceY = halfButtonHeight * 2 + 5;
+	const int32 centerX = x * buttonDistanceX + borderLeft;
+	const int32 centerY = y * buttonDistanceY + borderTop;
+	const Common::Rect rect(centerX - halfButtonWidth, centerY - halfButtonHeight, centerX + halfButtonWidth, centerY + halfButtonHeight);
 
-	buffer[0] = allowedCharIndex[y + x * ONSCREENKEYBOARD_WIDTH];
-	buffer[1] = '\0';
-
-	const int32 centerX = y * 45 + 25;
-	const int32 left = centerX - 20;
-	const int32 right = centerX + 20;
-	const int32 top = x * 56 + 200 - 25;
-	const int32 centerY = x * 56 + 200;
-	const int32 bottom = x * 56 + 200 + 25;
-
-	if (selected) {
-		_engine->_interface->drawSplittedBox(left, top, right, bottom, 91);
-	} else {
-		_engine->_interface->blitBox(left, top, right, bottom, _engine->workVideoBuffer, left, top, _engine->frontVideoBuffer);
-		_engine->_interface->drawTransparentBox(left, top, right, bottom, 4);
+	if (_engine->_input->isMouseHovering(rect)) {
+		setOnScreenKeyboard(x, y);
 	}
 
-	_engine->_menu->drawBox(left, top, right, bottom);
+	const int idx = x + y * ONSCREENKEYBOARD_WIDTH;
+	if (_onScreenKeyboardDirty[idx] == 0) {
+		return;
+	}
+
+	--_onScreenKeyboardDirty[idx];
+
+	const char buffer[] { allowedCharIndex[idx], '\0' };
+
+	const bool selected = _onScreenKeyboardX == x && _onScreenKeyboardY == y;
+	if (selected) {
+		_engine->_interface->drawSplittedBox(rect, 91);
+	} else {
+		_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
+		_engine->_interface->drawTransparentBox(rect, 4);
+	}
+
+	_engine->_menu->drawBox(rect);
 
 	_engine->_text->setFontColor(15);
-	_engine->_text->drawText(centerX - _engine->_text->getTextSize(buffer) / 2, centerY - 18, buffer);
+	const uint8 character = (uint8)allowedCharIndex[idx];
+	const int32 textX = centerX - _engine->_text->getCharWidth(character) / 2;
+	const int32 textY = centerY - _engine->_text->getCharHeight(character) / 2;
+	_engine->_text->drawText(textX, textY, buffer);
 
-	_engine->copyBlockPhys(left, top, right, bottom);
+	_engine->copyBlockPhys(rect);
+}
+
+void MenuOptions::setOnScreenKeyboard(int x, int y) {
+	if (x < 0) {
+		x = ONSCREENKEYBOARD_WIDTH - 1;
+	} else if (x >= ONSCREENKEYBOARD_WIDTH) {
+		x = 0;
+	}
+
+	if (y < 0) {
+		y = ONSCREENKEYBOARD_HEIGHT - 1;
+	} else if (y >= ONSCREENKEYBOARD_HEIGHT) {
+		y = 0;
+	}
+
+	if (_onScreenKeyboardX == x && _onScreenKeyboardY == y) {
+		return;
+	}
+
+	++_onScreenKeyboardDirty[_onScreenKeyboardX + _onScreenKeyboardY * ONSCREENKEYBOARD_WIDTH];
+	++_onScreenKeyboardDirty[x + y * ONSCREENKEYBOARD_WIDTH];
+
+	_onScreenKeyboardX = x;
+	_onScreenKeyboardY = y;
+
+	_onScreenKeyboardLeaveViaOkButton = true;
 }
 
 void MenuOptions::drawSelectableCharacters() {
-	for (int8 x = 0; x < ONSCREENKEYBOARD_HEIGHT; x++) {
-		for (int8 y = 0; y < ONSCREENKEYBOARD_WIDTH; y++) {
-			drawSelectableCharacter(x, y, _onScreenKeyboardY == x && _onScreenKeyboardX == y);
+	for (int8 x = 0; x < ONSCREENKEYBOARD_WIDTH; x++) {
+		for (int8 y = 0; y < ONSCREENKEYBOARD_HEIGHT; y++) {
+			drawSelectableCharacter(x, y);
 		}
 	}
 }
@@ -165,11 +203,14 @@ void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
 
 	const int right = SCREEN_WIDTH - left;
 	const int bottom = top + PLASMA_HEIGHT;
-	_engine->_menu->drawBox(left, top, right, bottom);
-	_engine->_interface->drawTransparentBox(left + 1, top + 1, right - 1, bottom - 1, 3);
+	const Common::Rect rect(left, top, right, bottom);
+	Common::Rect rectBox(rect);
+	rectBox.grow(-1);
+	_engine->_menu->drawBox(rect);
+	_engine->_interface->drawTransparentBox(rectBox, 3);
 
 	_engine->_text->drawText(centerx - _engine->_text->getTextSize(playerName) / 2, top + 6, playerName);
-	_engine->copyBlockPhys(left, top, right, bottom);
+	_engine->copyBlockPhys(rect);
 }
 
 /**
@@ -202,6 +243,7 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 	_engine->copyBlockPhys(0, 0, SCREEN_WIDTH - 1, 99);
 	_engine->flip();
 
+	Common::fill(&_onScreenKeyboardDirty[0], &_onScreenKeyboardDirty[ARRAYSIZE(_onScreenKeyboardDirty)], 1);
 	ScopedFeatureState scopedVirtualKeyboard(OSystem::kFeatureVirtualKeyboard, true);
 	for (;;) {
 		Common::Event event;
@@ -246,30 +288,14 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 					return false;
 				}
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UILeft)) {
-					--_onScreenKeyboardX;
-					if (_onScreenKeyboardX < 0) {
-						_onScreenKeyboardX = ONSCREENKEYBOARD_WIDTH - 1;
-					}
-					_onScreenKeyboardLeaveViaOkButton = true;
+					setOnScreenKeyboard(_onScreenKeyboardX - 1, _onScreenKeyboardY);
 				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIRight)) {
-					++_onScreenKeyboardX;
-					if (_onScreenKeyboardX >= ONSCREENKEYBOARD_WIDTH) {
-						_onScreenKeyboardX = 0;
-					}
-					_onScreenKeyboardLeaveViaOkButton = true;
+					setOnScreenKeyboard(_onScreenKeyboardX + 1, _onScreenKeyboardY);
 				}
 				if (_engine->_input->toggleActionIfActive(TwinEActionType::UIUp)) {
-					--_onScreenKeyboardY;
-					if (_onScreenKeyboardY < 0) {
-						_onScreenKeyboardY = ONSCREENKEYBOARD_HEIGHT - 1;
-					}
-					_onScreenKeyboardLeaveViaOkButton = true;
+					setOnScreenKeyboard(_onScreenKeyboardX, _onScreenKeyboardY - 1);
 				} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIDown)) {
-					++_onScreenKeyboardY;
-					if (_onScreenKeyboardY >= ONSCREENKEYBOARD_HEIGHT) {
-						_onScreenKeyboardY = 0;
-					}
-					_onScreenKeyboardLeaveViaOkButton = true;
+					setOnScreenKeyboard(_onScreenKeyboardX, _onScreenKeyboardY + 1);
 				}
 
 				break;

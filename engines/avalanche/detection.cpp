@@ -42,11 +42,8 @@ static const PlainGameDescriptor avalancheGames[] = {
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"avalanche", 0,
-		{
-			{"avalot.sez", 0, "de10eb353228013da3d3297784f81ff9", 48763},
-			{"mainmenu.avd", 0, "89f31211af579a872045b175cc264298", 18880},
-			AD_LISTEND
-		},
+		AD_ENTRY2s("avalot.sez",	"de10eb353228013da3d3297784f81ff9", 48763,
+				   "mainmenu.avd",	"89f31211af579a872045b175cc264298", 18880),
 		Common::EN_ANY,
 		Common::kPlatformDOS,
 		ADGF_UNSTABLE,

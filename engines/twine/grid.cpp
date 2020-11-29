@@ -61,7 +61,7 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSu
 	int32 right = *ptr + left - 1;
 	int32 bottom = *(ptr + 1) + top - 1;
 
-	if (left > _engine->_interface->textWindowRight || right < _engine->_interface->textWindowLeft || bottom < _engine->_interface->textWindowTop || top > _engine->_interface->textWindowBottom) {
+	if (left > _engine->_interface->textWindow.right || right < _engine->_interface->textWindow.left || bottom < _engine->_interface->textWindow.top || top > _engine->_interface->textWindow.bottom) {
 		return;
 	}
 
@@ -82,8 +82,8 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSu
 	bottom++;
 
 	// if line on top aren't in the blitting area...
-	if (absY < _engine->_interface->textWindowTop) {
-		int numOfLineToRemove = _engine->_interface->textWindowTop - absY;
+	if (absY < _engine->_interface->textWindow.top) {
+		int numOfLineToRemove = _engine->_interface->textWindow.top - absY;
 
 		vSize -= numOfLineToRemove;
 		if (vSize <= 0) {
@@ -101,8 +101,8 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSu
 	}
 
 	// reduce the vSize to remove lines on bottom
-	if (absY + vSize - 1 > _engine->_interface->textWindowBottom) {
-		vSize = _engine->_interface->textWindowBottom - absY + 1;
+	if (absY + vSize - 1 > _engine->_interface->textWindow.bottom) {
+		vSize = _engine->_interface->textWindow.bottom - absY + 1;
 		if (vSize <= 0) {
 			return;
 		}
@@ -129,7 +129,7 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSu
 			temp = *(ptr++); // copy size
 
 			for (int32 j = 0; j < temp; j++) {
-				if (absX >= _engine->_interface->textWindowLeft && absX <= _engine->_interface->textWindowRight) {
+				if (absX >= _engine->_interface->textWindow.left && absX <= _engine->_interface->textWindow.right) {
 					*outPtr = *inPtr;
 				}
 
@@ -147,14 +147,14 @@ void Grid::copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSu
 }
 
 void Grid::drawOverModelActor(int32 x, int32 y, int32 z) {
-	const int32 copyBlockPhysLeft = ((_engine->_interface->textWindowLeft + 24) / 24) - 1;
-	const int32 copyBlockPhysRight = ((_engine->_interface->textWindowRight + 24) / 24);
+	const int32 copyBlockPhysLeft = ((_engine->_interface->textWindow.left + 24) / 24) - 1;
+	const int32 copyBlockPhysRight = ((_engine->_interface->textWindow.right + 24) / 24);
 
 	for (int32 j = copyBlockPhysLeft; j <= copyBlockPhysRight; j++) {
 		for (int32 i = 0; i < brickInfoBuffer[j]; i++) {
 			BrickEntry *currBrickEntry = &bricksDataBuffer[j][i];
 
-			if (currBrickEntry->posY + 38 > _engine->_interface->textWindowTop && currBrickEntry->posY <= _engine->_interface->textWindowBottom && currBrickEntry->y >= y) {
+			if (currBrickEntry->posY + 38 > _engine->_interface->textWindow.top && currBrickEntry->posY <= _engine->_interface->textWindow.bottom && currBrickEntry->y >= y) {
 				if (currBrickEntry->x + currBrickEntry->z > z + x) {
 					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, _engine->workVideoBuffer);
 				}
@@ -164,14 +164,14 @@ void Grid::drawOverModelActor(int32 x, int32 y, int32 z) {
 }
 
 void Grid::drawOverSpriteActor(int32 x, int32 y, int32 z) {
-	const int32 copyBlockPhysLeft = ((_engine->_interface->textWindowLeft + 24) / 24) - 1;
-	const int32 copyBlockPhysRight = (_engine->_interface->textWindowRight + 24) / 24;
+	const int32 copyBlockPhysLeft = ((_engine->_interface->textWindow.left + 24) / 24) - 1;
+	const int32 copyBlockPhysRight = (_engine->_interface->textWindow.right + 24) / 24;
 
 	for (int32 j = copyBlockPhysLeft; j <= copyBlockPhysRight; j++) {
 		for (int32 i = 0; i < brickInfoBuffer[j]; i++) {
 			BrickEntry *currBrickEntry = &bricksDataBuffer[j][i];
 
-			if (currBrickEntry->posY + 38 > _engine->_interface->textWindowTop && currBrickEntry->posY <= _engine->_interface->textWindowBottom && currBrickEntry->y >= y) {
+			if (currBrickEntry->posY + 38 > _engine->_interface->textWindow.top && currBrickEntry->posY <= _engine->_interface->textWindow.bottom && currBrickEntry->y >= y) {
 				if ((currBrickEntry->x == x) && (currBrickEntry->z == z)) {
 					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, _engine->workVideoBuffer);
 				}
@@ -507,7 +507,7 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 					if (!(temp & 0x40)) {
 						temp = *(ptr++);
 						for (int32 i = 0; i < iteration; i++) {
-							if (x >= _engine->_interface->textWindowLeft && x < _engine->_interface->textWindowRight && y >= _engine->_interface->textWindowTop && y < _engine->_interface->textWindowBottom) {
+							if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top && y < _engine->_interface->textWindow.bottom) {
 								*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = temp;
 							}
 
@@ -516,7 +516,7 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 						}
 					} else {
 						for (int32 i = 0; i < iteration; i++) {
-							if (x >= _engine->_interface->textWindowLeft && x < _engine->_interface->textWindowRight && y >= _engine->_interface->textWindowTop && y < _engine->_interface->textWindowBottom) {
+							if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top && y < _engine->_interface->textWindow.bottom) {
 								*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = *ptr;
 							}
 

@@ -24,6 +24,7 @@
 #define TWINE_INTERFACE_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace Graphics {
 class ManagedSurface;
@@ -53,10 +54,7 @@ private:
 
 public:
 	Interface(TwinEEngine *engine);
-	int32 textWindowTop = 0;
-	int32 textWindowLeft = 0;
-	int32 textWindowRight = 0;
-	int32 textWindowBottom = 0;
+	Common::Rect textWindow { 0, 0, 0, 0 };
 
 	/**
 	 * Draw button line
@@ -66,34 +64,23 @@ public:
 	 * @param endHeight height value where the line ends
 	 * @param lineColor line color in the current palette
 	 */
-	void drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, int32 lineColor);
+	void drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, uint8 lineColor);
 
 	/**
 	 * Blit button box from working buffer to front buffer
-	 * @param left start width to draw the button
-	 * @param top start height to draw the button
-	 * @param right end width to draw the button
-	 * @param bottom end height to draw the button
 	 * @param source source screen buffer, in this case working buffer
-	 * @param leftDest start width to draw the button in destination buffer
-	 * @param topDest start height to draw the button in destination buffer
 	 * @param dest destination screen buffer, in this case front buffer
 	 */
-	void blitBox(int32 left, int32 top, int32 right, int32 bottom, const Graphics::ManagedSurface &source, int32 leftDest, int32 topDest, Graphics::ManagedSurface &dest);
-
+	void blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, Graphics::ManagedSurface &dest);
 	/**
 	 * Draws inside buttons transparent area
-	 * @param left start width to draw the button
-	 * @param top start height to draw the button
-	 * @param right end width to draw the button
-	 * @param bottom end height to draw the button
 	 * @param colorAdj index to adjust the transparent box color
 	 */
-	void drawTransparentBox(int32 left, int32 top, int32 right, int32 bottom, int32 colorAdj);
+	void drawTransparentBox(const Common::Rect &rect, int32 colorAdj);
 
-	void drawSplittedBox(int32 left, int32 top, int32 right, int32 bottom, uint8 e);
+	void drawSplittedBox(const Common::Rect &rect, uint8 colorIndex);
 
-	void setClip(int32 left, int32 top, int32 right, int32 bottom);
+	void setClip(const Common::Rect &rect);
 	void saveClip(); // saveTextWindow
 	void loadClip(); // loadSavedTextWindow
 	void resetClip();

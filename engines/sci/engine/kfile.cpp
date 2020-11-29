@@ -46,7 +46,7 @@
 #include "sci/engine/guest_additions.h"
 #endif
 #include "sci/engine/message.h"
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 
 namespace Sci {
 

@@ -22,6 +22,7 @@
 
 #include "twine/gamestate.h"
 #include "common/file.h"
+#include "common/rect.h"
 #include "common/str.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -41,6 +42,7 @@
 #include "twine/resources.h"
 #include "twine/scene.h"
 #include "twine/screens.h"
+#include "twine/shared.h"
 #include "twine/sound.h"
 #include "twine/text.h"
 #include "twine/twine.h"
@@ -150,14 +152,17 @@ void GameState::initEngineVars() {
 	_engine->_actor->previousHeroBehaviour = HeroBehaviourType::kNormal;
 }
 
+// http://lbafileinfo.kazekr.net/index.php?title=LBA1:Savegame
 bool GameState::loadGame(Common::SeekableReadStream *file) {
 	if (file == nullptr) {
 		return false;
 	}
 
-	initEngineVars();
+	if (file->readByte() != 0x03) {
+		return false;
+	}
 
-	file->skip(1); // skip save game id
+	initEngineVars();
 
 	int playerNameIdx = 0;
 	do {
@@ -191,7 +196,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	_engine->_scene->newHeroX = file->readSint16LE();
 	_engine->_scene->newHeroY = file->readSint16LE();
 	_engine->_scene->newHeroZ = file->readSint16LE();
-	_engine->_scene->sceneHero->angle = file->readSint16LE();
+	_engine->_scene->sceneHero->angle = ToAngle(file->readSint16LE());
 	_engine->_actor->previousHeroAngle = _engine->_scene->sceneHero->angle;
 	_engine->_scene->sceneHero->body = file->readByte();
 
@@ -237,10 +242,12 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeByte(magicLevelIdx);
 	file->writeByte(inventoryMagicPoints);
 	file->writeByte(inventoryNumLeafsBox);
-	file->writeSint16LE(_engine->_scene->sceneHero->x);
-	file->writeSint16LE(_engine->_scene->sceneHero->y);
-	file->writeSint16LE(_engine->_scene->sceneHero->z);
-	file->writeSint16LE(_engine->_scene->sceneHero->angle);
+	// we don't save the whole scene state - so we have to make sure that the hero is
+	// respawned at the start of the scene - and not at its current position
+	file->writeSint16LE(_engine->_scene->newHeroX);
+	file->writeSint16LE(_engine->_scene->newHeroY);
+	file->writeSint16LE(_engine->_scene->newHeroZ);
+	file->writeSint16LE(FromAngle(_engine->_scene->sceneHero->angle));
 	file->writeByte(_engine->_scene->sceneHero->body);
 
 	// number of holomap locations
@@ -254,7 +261,8 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->write(inventoryFlags, NUM_INVENTORY_ITEMS);
 
 	file->writeByte(inventoryNumLeafs);
-	file->writeByte(usingSabre);
+	file->writeByte(usingSabre ? 1 : 0);
+	file->writeByte(0);
 
 	return true;
 }
@@ -266,7 +274,7 @@ void GameState::processFoundItem(int32 item) {
 
 	// Hide hero in scene
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 1;
-	_engine->_redraw->redrawEngineActions(1);
+	_engine->_redraw->redrawEngineActions(true);
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 0;
 
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
@@ -276,7 +284,7 @@ void GameState::processFoundItem(int32 item) {
 	const int32 itemCameraZ = _engine->_grid->newCameraZ << 9;
 
 	_engine->_renderer->renderIsoModel(_engine->_scene->sceneHero->x - itemCameraX, _engine->_scene->sceneHero->y - itemCameraY, _engine->_scene->sceneHero->z - itemCameraZ, 0, 0x80, 0, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity]);
-	_engine->_interface->setClip(_engine->_redraw->renderLeft, _engine->_redraw->renderTop, _engine->_redraw->renderRight, _engine->_redraw->renderBottom);
+	_engine->_interface->setClip(_engine->_redraw->renderRect);
 
 	const int32 itemX = (_engine->_scene->sceneHero->x + 0x100) >> 9;
 	int32 itemY = _engine->_scene->sceneHero->y >> 8;
@@ -295,7 +303,7 @@ void GameState::processFoundItem(int32 item) {
 	const int32 boxTopLeftY = _engine->_renderer->projPosY - 65;
 	const int32 boxBottomRightX = _engine->_renderer->projPosX + 65;
 	const int32 boxBottomRightY = _engine->_renderer->projPosY + 65;
-
+	const Common::Rect boxRect(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
 	_engine->_sound->playSample(Samples::BigItemFound);
 
 	// process vox play
@@ -327,16 +335,16 @@ void GameState::processFoundItem(int32 item) {
 		_engine->_interface->resetClip();
 		_engine->_redraw->currNumOfRedrawBox = 0;
 		_engine->_redraw->blitBackgroundAreas();
-		_engine->_interface->drawTransparentBox(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY, 4);
+		_engine->_interface->drawTransparentBox(boxRect, 4);
 
-		_engine->_interface->setClip(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
+		_engine->_interface->setClip(boxRect);
 
 		_engine->_menu->itemAngle[item] += 8;
 
 		_engine->_renderer->renderInventoryItem(_engine->_renderer->projPosX, _engine->_renderer->projPosY, _engine->_resources->inventoryTable[item], _engine->_menu->itemAngle[item], 10000);
 
-		_engine->_menu->drawBox(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
-		_engine->_redraw->addRedrawArea(boxTopLeftX, boxTopLeftY, boxBottomRightX, boxBottomRightY);
+		_engine->_menu->drawBox(boxRect);
+		_engine->_redraw->addRedrawArea(boxRect);
 		_engine->_interface->resetClip();
 		initEngineProjections();
 
@@ -347,14 +355,14 @@ void GameState::processFoundItem(int32 item) {
 			}
 		}
 
-		_engine->_renderer->renderIsoModel(_engine->_scene->sceneHero->x - itemCameraX, _engine->_scene->sceneHero->y - itemCameraY, _engine->_scene->sceneHero->z - itemCameraZ, 0, 0x80, 0, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity]);
-		_engine->_interface->setClip(_engine->_redraw->renderLeft, _engine->_redraw->renderTop, _engine->_redraw->renderRight, _engine->_redraw->renderBottom);
+		_engine->_renderer->renderIsoModel(_engine->_scene->sceneHero->x - itemCameraX, _engine->_scene->sceneHero->y - itemCameraY, _engine->_scene->sceneHero->z - itemCameraZ, ANGLE_0, ANGLE_45, ANGLE_0, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity]);
+		_engine->_interface->setClip(_engine->_redraw->renderRect);
 		_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
-		_engine->_redraw->addRedrawArea(_engine->_redraw->renderLeft, _engine->_redraw->renderTop, _engine->_redraw->renderRight, _engine->_redraw->renderBottom);
+		_engine->_redraw->addRedrawArea(_engine->_redraw->renderRect);
 
 		if (textState) {
 			_engine->_interface->resetClip();
-			textState = _engine->_text->printText10();
+			textState = _engine->_text->updateProgressiveText();
 		}
 
 		if (textState == 0 || textState == 2) {
@@ -428,7 +436,7 @@ void GameState::processGameoverAnimation() {
 
 	// workaround to fix hero redraw after drowning
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 1;
-	_engine->_redraw->redrawEngineActions(1);
+	_engine->_redraw->redrawEngineActions(true);
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 0;
 
 	// TODO: drawInGameTransBox
@@ -443,12 +451,13 @@ void GameState::processGameoverAnimation() {
 	const int32 top = 120;
 	const int32 right = 519;
 	const int32 bottom = 359;
+	const Common::Rect rect(left, top, right, bottom);
 	_engine->_renderer->prepareIsoModel(gameOverPtr);
 	_engine->_sound->stopSamples();
 	_engine->_music->stopMidiMusic(); // stop fade music
 	_engine->_renderer->setCameraPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 128, 200, 200);
 	int32 startLbaTime = _engine->lbaTime;
-	_engine->_interface->setClip(left, top, right, bottom);
+	_engine->_interface->setClip(rect);
 
 	while (!_engine->_input->toggleAbortAction() && (_engine->lbaTime - startLbaTime) <= 500) {
 		_engine->readKeys();
@@ -460,20 +469,20 @@ void GameState::processGameoverAnimation() {
 		const int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->lbaTime - startLbaTime);
 		const int32 cdot = _engine->_screens->crossDot(1, 1024, 100, (_engine->lbaTime - startLbaTime) % 100);
 
-		_engine->_interface->blitBox(left, top, right, bottom, _engine->workVideoBuffer, 120, 120, _engine->frontVideoBuffer);
+		_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);
 		_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
-		_engine->copyBlockPhys(left, top, right, bottom);
+		_engine->copyBlockPhys(rect);
 
 		_engine->lbaTime++;
 		_engine->_system->delayMillis(15);
 	}
 
-	_engine->_sound->playSample(Samples::Explode, _engine->getRandomNumber(2000) + 3096);
-	_engine->_interface->blitBox(left, top, right, bottom, _engine->workVideoBuffer, 120, 120, _engine->frontVideoBuffer);
+	_engine->_sound->playSample(Samples::Explode);
+	_engine->_interface->blitBox(rect, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->_renderer->setCameraAngle(0, 0, 0, 0, 0, 0, 3200);
 	_engine->_renderer->renderIsoModel(0, 0, 0, 0, 0, 0, gameOverPtr);
-	_engine->copyBlockPhys(left, top, right, bottom);
+	_engine->copyBlockPhys(rect);
 
 	_engine->delaySkip(2000);
 

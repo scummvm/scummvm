@@ -588,6 +588,10 @@ int CPetControl::canSummonBot(const CString &name) {
 	if (!room)
 		return SUMMON_CANT;
 
+	// WORKAROUND: Handle special disallowed locations
+	if (isBotDisallowedLocation())
+		return SUMMON_CANT;
+
 	// Query current room to see whether the bot can be summoned to it
 	CSummonBotQueryMsg queryMsg(name);
 	return queryMsg.execute(room) ? SUMMON_CAN : SUMMON_CANT;

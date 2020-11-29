@@ -26,7 +26,7 @@
 /* VM and kernel declarations */
 
 #include "sci/engine/vm_types.h"	// for reg_t
-#include "sci/resource.h"	// for SciVersion
+#include "sci/resource/resource.h"	// for SciVersion
 
 #include "common/util.h"
 

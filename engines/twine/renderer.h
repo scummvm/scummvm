@@ -24,6 +24,7 @@
 #define TWINE_RENDERER_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 #define POLYGONTYPE_FLAT 0
 #define POLYGONTYPE_COPPER 1
@@ -38,6 +39,12 @@
 namespace TwinE {
 
 class TwinEEngine;
+
+struct polyHeader {
+	uint8 renderType = 0; //FillVertic_AType
+	uint8 numOfVertex = 0;
+	int16 colorIndex = 0;
+};
 
 class Renderer {
 private:
@@ -79,7 +86,10 @@ private:
 	static_assert(sizeof(elementEntry) == 38, "Unexpected elementEntry size");
 
 	struct lineCoordinates {
-		int32 data = 0;
+		uint8 colorIndex = 0;
+		uint8 unk1 = 0;
+		uint8 unk2 = 0;
+		uint8 unk3 = 0;
 		int16 x1 = 0;
 		int16 y1 = 0;
 		int16 x2 = 0;
@@ -87,15 +97,12 @@ private:
 	};
 
 	struct lineData {
-		int32 data = 0;
+		uint8 colorIndex = 0;
+		uint8 unk1 = 0;
+		uint8 unk2 = 0;
+		uint8 unk3 = 0;
 		int16 p1 = 0;
 		int16 p2 = 0;
-	};
-
-	struct polyHeader {
-		uint8 renderType = 0; //FillVertic_AType
-		uint8 numOfVertex = 0;
-		int16 colorIndex = 0;
 	};
 
 	struct polyVertexHeader {
@@ -137,7 +144,7 @@ private:
 	};
 
 	int32 renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEntryPtr);
-	void circleFill(int32 x, int32 y, int32 radius, int8 color);
+	void circleFill(int32 x, int32 y, int32 radius, uint8 color);
 	int32 renderModelElements(int32 numOfPrimitives, uint8 *pointer, renderTabEntry** renderTabEntryPtr);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
@@ -197,8 +204,18 @@ private:
 
 	bool isUsingOrhoProjection = false;
 
+	void renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 color) const;
+	void renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const;
+
 	void computePolygons(int16 polyRenderType, vertexData *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom);
-	void renderPolygons(int32 renderType, vertexData *vertices, int32 numVertices, int32 color, int vleft, int vright, int vtop, int vbottom);
+	void renderPolygons(int32 renderType, int32 color, int vleft, int vright, int vtop, int vbottom);
 
 public:
 	Renderer(TwinEEngine *engine) : _engine(engine) {}
@@ -220,13 +237,12 @@ public:
 
 	const int16 *shadeAngleTab3 = nullptr; // tab3
 
-	int32 numOfVertex = 0;
 	int16 vertexCoordinates[193] {0};
 
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 
 	void prepareIsoModel(uint8 *bodyPtr); // loadGfxSub
-	void renderPolygons(int32 polyRenderType, int32 color);
+	void renderPolygons(const polyHeader &polyHeader);
 
 	int32 projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
 	void setCameraPosition(int32 x, int32 y, int32 cX, int32 cY, int32 cZ);
@@ -239,7 +255,8 @@ public:
 
 	void copyActorInternAnim(const uint8 *bodyPtrSrc, uint8 *bodyPtrDest);
 
-	void renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 Y, int32 angle, uint8 *entityPtr);
+	void renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, uint8 *entityPtr);
+	void renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, uint8 *entityPtr);
 
 	void renderInventoryItem(int32 x, int32 y, uint8 *itemBodyPtr, int32 angle, int32 param);
 };

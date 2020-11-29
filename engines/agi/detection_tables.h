@@ -290,11 +290,8 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"goldrush",
 			"2.01 1988-12-22",
-			{
-				{ "grdir", 0, "db733d199238d4009a9e95f11ece34e9", 2399},
-				{ "vol.0", 0, "4b6423d143674d3757ab1b875d25951d", 25070},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("grdir", "db733d199238d4009a9e95f11ece34e9", 2399,
+					   "vol.0", "4b6423d143674d3757ab1b875d25951d", 25070),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
@@ -613,11 +610,8 @@ static const AGIGameDescription gameDescriptions[] = {
 		{
 			"sq2",
 			"2.0F 1986-12-09 [VOL.2->PICTURE.16 broken]",
-			{
-				{ "logdir", 0, "28add5125484302d213911df60d2aded", 426},
-				{ "object", 0, "5dc52be721257719f4b311a84ce22b16", 372},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("logdir", "28add5125484302d213911df60d2aded", 426,
+					   "object", "5dc52be721257719f4b311a84ce22b16", 372),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,

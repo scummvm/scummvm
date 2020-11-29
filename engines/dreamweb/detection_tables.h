@@ -55,11 +55,8 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		{
 			"dreamweb",
 			"CD",
-			{
-				{"dreamweb.r00", 0, "3b5c87717fc40cc5a5ae19c155662ee3", 152918},
-				{"dreamweb.r02", 0, "d6fe5e3590ec1eea42ff65c10b023e0f", 198681},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("dreamweb.r00", "3b5c87717fc40cc5a5ae19c155662ee3", 152918,
+					   "dreamweb.r02", "d6fe5e3590ec1eea42ff65c10b023e0f", 198681),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
@@ -93,11 +90,8 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		{
 			"dreamweb",
 			"CD",
-			{
-				{"dreamweb.r00", 0, "8acafd7f4418d08d0e16b65b8b10bc50", 152983},
-				{"dreamweb.r02", 0, "c0c363715ddf14ab54f2379906a3aa01", 198707},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("dreamweb.r00", "8acafd7f4418d08d0e16b65b8b10bc50", 152983,
+					   "dreamweb.r02", "c0c363715ddf14ab54f2379906a3aa01", 198707),
 			Common::EN_USA,
 			Common::kPlatformDOS,
 			ADGF_CD,
@@ -110,11 +104,8 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		{
 			"dreamweb",
 			"CD",
-			{
-				{"dreamwfr.r00", 0, "e354582a8564faf5c515df92f207e8d1", 154657},
-				{"dreamwfr.r02", 0, "57f3f08d5aefd04184eac76927eced80", 200575},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("dreamwfr.r00", "e354582a8564faf5c515df92f207e8d1", 154657,
+					   "dreamwfr.r02", "57f3f08d5aefd04184eac76927eced80", 200575),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_CD,
@@ -128,11 +119,8 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		{
 			"dreamweb",
 			"CD",
-			{
-				{"dreamwfr.r00", 0, "e354582a8564faf5c515df92f207e8d1", 154657},
-				{"dreamwfr.r02", 0, "cb99f08d5aefd04184eac76927eced80", 200575},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("dreamwfr.r00", "e354582a8564faf5c515df92f207e8d1", 154657,
+					   "dreamwfr.r02", "cb99f08d5aefd04184eac76927eced80", 200575),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_CD,
@@ -145,11 +133,8 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		{
 			"dreamweb",
 			"",
-			{
-				{"dreamweb.r00", 0, "9960dc3baddabc6ad2a6fd75292b149c", 155886},
-				{"dreamweb.r02", 0, "48e1f42a53402f963ca2d1ed969f4084", 212823},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("dreamweb.r00", "9960dc3baddabc6ad2a6fd75292b149c", 155886,
+					   "dreamweb.r02", "48e1f42a53402f963ca2d1ed969f4084", 212823),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			0,
@@ -162,11 +147,8 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		{
 			"dreamweb",
 			"CD",
-			{
-				{"dreamweb.r00", 0, "9960dc3baddabc6ad2a6fd75292b149c", 155886},
-				{"dreamweb.r02", 0, "076ca7cd326cb2abfb2091c6cf46ae08", 201038},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("dreamweb.r00", "9960dc3baddabc6ad2a6fd75292b149c", 155886,
+					   "dreamweb.r02", "076ca7cd326cb2abfb2091c6cf46ae08", 201038),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_CD,
@@ -179,11 +161,8 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		{
 			"dreamweb",
 			"",
-			{
-				{"dreamweb.r00", 0, "2df07174321de39c4f17c9ff654b268a", 153608},
-				{"dreamweb.r02", 0, "f97d435ad5da08fb1bcf6ea3dd6e0b9e", 199499},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("dreamweb.r00", "2df07174321de39c4f17c9ff654b268a", 153608,
+					   "dreamweb.r02", "f97d435ad5da08fb1bcf6ea3dd6e0b9e", 199499),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			0,
@@ -196,11 +175,8 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		{
 			"dreamweb",
 			"CD",
-			{
-				{"dreamwsp.r00", 0, "2df07174321de39c4f17c9ff654b268a", 153608},
-				{"dreamwsp.r02", 0, "577d435ad5da08fb1bcf6ea3dd6e0b9e", 199499},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("dreamwsp.r00", "2df07174321de39c4f17c9ff654b268a", 153608,
+					   "dreamwsp.r02", "577d435ad5da08fb1bcf6ea3dd6e0b9e", 199499),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_CD,
@@ -214,11 +190,8 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		{
 			"dreamweb",
 			"CD",
-			{
-				{"dreamwsp.r00", 0, "2df07174321de39c4f17c9ff654b268a", 153608},
-				{"dreamwsp.r02", 0, "f97d435ad5da08fb1bcf6ea3dd6e0b9e", 199499},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("dreamwsp.r00", "2df07174321de39c4f17c9ff654b268a", 153608,
+					   "dreamwsp.r02", "f97d435ad5da08fb1bcf6ea3dd6e0b9e", 199499),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_CD,
@@ -231,11 +204,8 @@ static const DreamWebGameDescription gameDescriptions[] = {
 		{
 			"dreamweb",
 			"",
-			{
-				{"dreamweb.r00", 0, "66dcab08354232f423c590156335f819", 155448},
-				{"dreamweb.r02", 0, "87a026e9f80ed4f94169381f871ee305", 199676},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("dreamweb.r00", "66dcab08354232f423c590156335f819", 155448,
+					   "dreamweb.r02", "87a026e9f80ed4f94169381f871ee305", 199676),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			0,

@@ -31,7 +31,7 @@
 
 #include "sci/sci.h"
 #include "sci/event.h"
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/engine/features.h"
 #include "sci/engine/guest_additions.h"
 #include "sci/engine/savegame.h"

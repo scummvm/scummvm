@@ -114,7 +114,6 @@ bool WintermuteEngine::hasFeature(EngineFeature f) const {
 
 Common::Error WintermuteEngine::run() {
 	// Initialize graphics using following:
-#if !defined(ENABLE_WME3D) || (!defined(USE_OPENGL_GAME) && !defined(USE_OPENGL_SHADERS) && !defined(USE_GLES2))
 	Graphics::PixelFormat format(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	if (_gameDescription->adDesc.flags & GF_LOWSPEC_ASSETS) {
 		initGraphics(320, 240, &format);
@@ -128,9 +127,6 @@ Common::Error WintermuteEngine::run() {
 	if (g_system->getScreenFormat() != format) {
 		return Common::kUnsupportedColorMode;
 	}
-#else
-	initGraphics3d(800, 600);
-#endif
 
 	// Create debugger console. It requires GFX to be initialized
 	_dbgController = new DebuggerController(this);

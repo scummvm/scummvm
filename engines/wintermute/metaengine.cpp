@@ -61,6 +61,28 @@ public:
 		assert(syst);
 		assert(engine);
 		const WMEGameDescription *gd = (const WMEGameDescription *)desc;
+
+#ifndef ENABLE_FOXTAIL
+		if (gd->targetExecutable >= FOXTAIL_OLDEST_VERSION && gd->targetExecutable <= FOXTAIL_LATEST_VERSION) {
+			Engine::errorUnsupportedGame(_("FoxTail support is not compiled in"));
+			return false;
+		}
+#endif
+
+#ifndef ENABLE_HEROCRAFT
+		if (gd->targetExecutable == WME_HEROCRAFT) {
+			Engine::errorUnsupportedGame(_("Hero Craft support is not compiled in"));
+			return false;
+		}
+#endif
+
+#ifndef ENABLE_WME3D
+		if (gd->adDesc.flags & GF_3D) {
+			Engine::errorUnsupportedGame(_("Wintermute3D support is not compiled in"));
+			return false;
+		}
+#endif
+
 		*engine = new Wintermute::WintermuteEngine(syst, gd);
 		return true;
 	}

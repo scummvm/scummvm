@@ -138,6 +138,7 @@ void Holomap::drawHolomapTitle(int32 width, int32 height) {
 }
 
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
+	debug("Draw trajectory index %i", trajectoryIndex);
 	// TODO
 }
 
@@ -165,7 +166,7 @@ void Holomap::processHolomap() {
 
 	// TODO
 
-	_engine->_text->newGameVar4 = 1;
+	_engine->_text->drawTextBoxBackground = true;
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
 	_engine->_scene->alphaLight = alphaLightTmp;
 	_engine->_scene->betaLight = betaLightTmp;

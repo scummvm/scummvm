@@ -341,7 +341,7 @@ void Actor::initActor(int16 actorIdx) {
 
 		initSpriteActor(actorIdx);
 
-		_engine->_movements->setActorAngleSafe(0, 0, 0, &actor->move);
+		_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, 0, &actor->move);
 
 		if (actor->staticFlags.bUsesClipping) {
 			actor->lastX = actor->x;
@@ -414,7 +414,7 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->animType = 0;
 	actor->animPosition = 0;
 
-	_engine->_movements->setActorAngleSafe(0, 0, 0, &actor->move);
+	_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, 0, &actor->move);
 
 	actor->positionInMoveScript = -1;
 	actor->positionInLifeScript = 0;
@@ -484,14 +484,14 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 		return;
 	}
 	if (actor->dynamicFlags.bIsDead) {
-		_engine->_extra->addExtraBonus(actor->x, actor->y, actor->z, 0x100, 0, bonusSprite, actor->bonusAmount);
+		_engine->_extra->addExtraBonus(actor->x, actor->y, actor->z, ANGLE_90, 0, bonusSprite, actor->bonusAmount);
 		// FIXME add constant for sample index
-		_engine->_sound->playSample(Samples::ItemPopup, 0x1000, 1, actor->x, actor->y, actor->z, actorIdx);
+		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->x, actor->y, actor->z, actorIdx);
 	} else {
 		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->z);
 		_engine->_extra->addExtraBonus(actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, 200, angle, bonusSprite, actor->bonusAmount);
 		// FIXME add constant for sample index
-		_engine->_sound->playSample(Samples::ItemPopup, 0x1000, 1, actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, actorIdx);
+		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, actorIdx);
 	}
 }
 
@@ -509,5 +509,43 @@ void ActorStruct::loadModel(int32 modelIndex) {
 		entityDataPtr = nullptr;
 	}
 }
+
+int32 ActorMoveStruct::getRealAngle(int32 time) {
+	if (numOfStep) {
+		const int32 timePassed = time - timeOfChange;
+
+		if (timePassed >= numOfStep) { // rotation is finished
+			numOfStep = 0;
+			return to;
+		}
+
+		int32 remainingAngle = NormalizeAngle(to - from);
+		remainingAngle *= timePassed;
+		remainingAngle /= numOfStep;
+		remainingAngle += from;
+
+		return remainingAngle;
+	}
+
+	return to;
+}
+
+int32 ActorMoveStruct::getRealValue(int32 time) {
+	if (!numOfStep) {
+		return to;
+	}
+
+	if (time - timeOfChange >= numOfStep) {
+		numOfStep = 0;
+		return to;
+	}
+
+	int32 tempStep = to - from;
+	tempStep *= time - timeOfChange;
+	tempStep /= numOfStep;
+
+	return tempStep + from;
+}
+
 
 } // namespace TwinE

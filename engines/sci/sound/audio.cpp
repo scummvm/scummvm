@@ -20,7 +20,7 @@
  *
  */
 
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/sound/audio.h"
@@ -515,8 +515,7 @@ int AudioPlayer::audioCdPlay(int track, int start, int duration) {
 
 		// Subtract one from track. KQ6 starts at track 1, while ScummVM
 		// ignores the data track and considers track 2 to be track 1.
-		g_system->getAudioCDManager()->play(track - 1, 1, start, duration);
-		return 1;
+		return g_system->getAudioCDManager()->play(track - 1, 1, start, duration) ? 1 : 0;
 	} else {
 		// Jones in the Fast Lane CD Audio format
 		uint32 length = 0;

@@ -290,7 +290,7 @@ void Scene::resetScene() {
 
 void Scene::changeScene() {
 	// change twinsen house destroyed hard-coded
-	if (needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->gameFlags[30] != 0) {
+	if (needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->hasOpenedFunfrocksSafe()) {
 		needChangeScene = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;
 	}
 
@@ -418,10 +418,10 @@ void Scene::processEnvironmentSound() {
 
 				const int16 sampleIdx = _sampleAmbiance[currentAmb];
 				if (sampleIdx != -1) {
-					int16 decal = _sampleRound[currentAmb];
+					/*int16 decal = _sampleRound[currentAmb];*/
 					int16 repeat = _sampleRepeat[currentAmb];
 
-					_engine->_sound->playSample(sampleIdx, (4096 + _engine->getRandomNumber(decal) - (decal / 2)), repeat, 110, -1, 110);
+					_engine->_sound->playSample(sampleIdx, repeat, 110, -1, 110);
 					break;
 				}
 			}
@@ -516,29 +516,29 @@ void Scene::processActorZones(int32 actorIdx) {
 				}
 				break;
 			case kObject:
-				if (IS_HERO(actorIdx) && _engine->_movements->heroAction) {
+				if (IS_HERO(actorIdx) && _engine->_movements->shouldTriggerZoneAction()) {
 					_engine->_animations->initAnim(AnimationTypes::kAction, 1, AnimationTypes::kStanding, 0);
 					processZoneExtraBonus(zone);
 				}
 				break;
 			case kText:
-				if (IS_HERO(actorIdx) && _engine->_movements->heroAction) {
+				if (IS_HERO(actorIdx) && _engine->_movements->shouldTriggerZoneAction()) {
 					_engine->freezeTime();
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);
 					talkingActor = actorIdx;
 					_engine->_text->drawTextFullscreen(zone->infoData.DisplayText.textIdx);
 					_engine->unfreezeTime();
-					_engine->_redraw->redrawEngineActions(1);
+					_engine->_redraw->redrawEngineActions(true);
 				}
 				break;
 			case kLadder:
 				if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour != HeroBehaviourType::kProtoPack && (actor->anim == AnimationTypes::kForward || actor->anim == AnimationTypes::kTopLadder || actor->anim == AnimationTypes::kClimbLadder)) {
-					_engine->_movements->rotateActor(actor->boudingBox.x.bottomLeft, actor->boudingBox.z.bottomLeft, actor->angle + 0x580);
+					_engine->_movements->rotateActor(actor->boudingBox.x.bottomLeft, actor->boudingBox.z.bottomLeft, actor->angle + ANGLE_360 + ANGLE_135);
 					_engine->_renderer->destX += _engine->_movements->processActorX;
 					_engine->_renderer->destZ += _engine->_movements->processActorZ;
 
 					if (_engine->_renderer->destX >= 0 && _engine->_renderer->destZ >= 0 && _engine->_renderer->destX <= 0x7E00 && _engine->_renderer->destZ <= 0x7E00) {
-						if (_engine->_grid->getBrickShape(_engine->_renderer->destX, actor->y + 0x100, _engine->_renderer->destZ) != ShapeType::kNone) {
+						if (_engine->_grid->getBrickShape(_engine->_renderer->destX, actor->y + ANGLE_90, _engine->_renderer->destZ) != ShapeType::kNone) {
 							currentActorInZone = true;
 							if (actor->y >= ABS(zone->bottomLeft.y + zone->topRight.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, 2, AnimationTypes::kStanding, actorIdx); // reached end of ladder

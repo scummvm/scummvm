@@ -37,6 +37,71 @@ class ManagedSurface;
 
 namespace CryOmni3D {
 
+// This is a special simplified U32String which can contain either conforming UTF-32 data, 16-bits CJK codepoints or 8-bits characters
+// We must use this because depending on the localization, all of those were used and we don't always know which encoding is which
+// This class is only used when displaying stuff, hence its location
+class CryoString : public Common::BaseString<Common::u32char_type_t> {
+public:
+	CryoString() : Common::BaseString<Common::u32char_type_t>() {}
+
+	CryoString(const CryoString &str) : Common::BaseString<Common::u32char_type_t>(str) {}
+	CryoString &operator=(const CryoString &str) {
+		assign(str);
+		return *this;
+	}
+
+	// Constructor to build UTF-32 based strings
+	CryoString(const Common::U32String &ustr) : Common::BaseString<Common::u32char_type_t>(ustr) {}
+
+	// Constructors to build 8-bits strings
+	CryoString(const char *str, uint32 len) {
+		initWithChars(str, len);
+	}
+	explicit CryoString(const char *str) {
+		if (str == nullptr) {
+			return;
+		}
+		uint32 len = 0;
+		const char *s = str;
+		while (*s++) {
+			++len;
+		}
+		initWithChars(str, len);
+	}
+	CryoString(const Common::String &str) {
+		initWithChars(str.c_str(), str.size());
+	}
+
+	// Used when building 16-bits CJK strings
+	CryoString &operator+=(value_type c) {
+		assignAppend(c);
+		return *this;
+	}
+
+	// Various constructors
+	CryoString(const value_type *beginP, const value_type *endP) :
+		Common::BaseString<Common::u32char_type_t>(beginP, endP) {}
+	CryoString(const value_type *str, uint32 len) :
+		Common::BaseString<Common::u32char_type_t>(str, len) {}
+#ifdef USE_CXX11
+	explicit CryoString(const uint32 *str) :
+		Common::BaseString<Common::u32char_type_t>((const value_type *) str) {}
+	CryoString(const uint32 *str, uint32 len) :
+		Common::BaseString<Common::u32char_type_t>((const value_type *) str, len) {}
+	CryoString(const uint32 *beginP, const uint32 *endP) :
+		Common::BaseString<Common::u32char_type_t>((const value_type *) beginP,
+		        (const value_type *) endP) {}
+#endif
+private:
+	void initWithChars(const char *str, uint32 len) {
+		ensureCapacity(len, false);
+		for (; len > 0; str++, len--) {
+			_str[_size++] = (uint8)(*str);
+		}
+		_str[_size] = 0;
+	}
+};
+
 class FontManager {
 public:
 	FontManager();
@@ -61,9 +126,9 @@ public:
 		            toU32(Common::String::format("%d", value)));
 	}
 	void displayStr(uint x, uint y, const Common::String &text) const { displayStr_(x, y, toU32(text)); }
-	void displayStr(uint x, uint y, const Common::U32String &text) const { displayStr_(x, y, text); }
+	void displayStr(uint x, uint y, const CryoString &text) const { displayStr_(x, y, text); }
 	uint getStrWidth(const Common::String &text) const { return getStrWidth(toU32(text)); }
-	uint getStrWidth(const Common::U32String &text) const;
+	uint getStrWidth(const CryoString &text) const;
 
 	uint getLinesCount(const Common::String &text, uint width) { return getLinesCount(toU32(text), width); }
 
@@ -81,13 +146,13 @@ public:
 	Common::Point blockTextLastPos() { return _blockPos; }
 
 private:
-	Common::U32String toU32(const Common::String &text) const;
+	CryoString toU32(const Common::String &text) const;
 
-	uint displayStr_(uint x, uint y, const Common::U32String &text) const;
-	uint getLinesCount(const Common::U32String &text, uint width);
-	bool displayBlockText(const Common::U32String &text, Common::U32String::const_iterator begin);
-	void calculateWordWrap(const Common::U32String &text, Common::U32String::const_iterator *position,
-	                       uint *finalPos, bool *has_br, Common::Array<Common::U32String> &words) const;
+	uint displayStr_(uint x, uint y, const CryoString &text) const;
+	uint getLinesCount(const CryoString &text, uint width);
+	bool displayBlockText(const CryoString &text, CryoString::const_iterator begin);
+	void calculateWordWrap(const CryoString &text, CryoString::const_iterator *position,
+	                       uint *finalPos, bool *has_br, Common::Array<CryoString> &words) const;
 
 	Common::CodePage _codepage;
 	bool _toUnicode;
@@ -106,8 +171,8 @@ private:
 	Common::Point _blockPos;
 	int _lineHeight;
 	bool _justifyText;
-	Common::U32String _blockTextStr;
-	Common::U32String::const_iterator _blockTextRemaining;
+	CryoString _blockTextStr;
+	CryoString::const_iterator _blockTextRemaining;
 
 	// Specific parameters for non alphabetic languages
 	void setupWrapParameters();

@@ -170,11 +170,11 @@ static const ToltecsGameDescription gameDescriptions[] = {
 		{
 			"toltecs",
 			0,
-				AD_ENTRY1s("WESTERN", "57503131c0217c76b07d0b5c14805631", 337644552),
-				Common::CZ_CZE,
-				Common::kPlatformDOS,
-				ADGF_NO_FLAGS,
-				GUIO1(GUIO_NONE)
+			AD_ENTRY1s("WESTERN", "57503131c0217c76b07d0b5c14805631", 337644552),
+			Common::CZ_CZE,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NONE)
 		},
 	},
 

@@ -25,6 +25,10 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <signal.h>
+// sighandler_t is a GNU extension exposed when _GNU_SOURCE is defined
+#ifndef _GNU_SOURCE
+typedef void (*sighandler_t)(int);
+#endif
 #elif defined(WIN32)
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -59,7 +63,7 @@
  * Include header files needed for the getFilesystemFactory() method.
  */
 #if defined(__amigaos4__)
-	#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
+	#include "backends/fs/amigaos/amigaos-fs-factory.h"
 #elif defined(__MORPHOS__)
 	#include "backends/fs/morphos/morphos-fs-factory.h"
 #elif defined(POSIX)

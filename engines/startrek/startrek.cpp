@@ -133,9 +133,9 @@ Common::Error StarTrekEngine::run() {
 
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
 	initializeEventsAndMouse();
+	loadBridgeComputerTopics();
 
 	_gfx->setMouseBitmap(!isDemo ? "pushbtn" : "cursor");
-	_gfx->toggleMouse(true);
 
 	bool loadedSave = false;
 
@@ -149,7 +149,7 @@ Common::Error StarTrekEngine::run() {
 		if (!isDemo) {
 			playIntro();
 			_missionToLoad = "DEMON";
-			runGameMode(GAMEMODE_BEAMDOWN, false);
+			runGameMode(GAMEMODE_BRIDGE, false);
 		} else {
 			_missionToLoad = "DEMO";
 			runGameMode(GAMEMODE_AWAYMISSION, false);
@@ -163,6 +163,8 @@ Common::Error StarTrekEngine::run() {
 }
 
 Common::Error StarTrekEngine::runGameMode(int mode, bool resume) {
+	_gfx->toggleMouse(true);
+
 	if (!resume) { // Only run this if not just resuming from a savefile
 		_frameIndex = 0;
 		_lastGameMode = -1;

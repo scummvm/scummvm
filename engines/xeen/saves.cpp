@@ -45,7 +45,7 @@ SavesManager::~SavesManager() {
 	delete File::_darkSave;
 }
 
-const char *const SAVEGAME_STR = "XEEN";
+static const char *const SAVEGAME_STR = "XEEN";
 #define SAVEGAME_STR_SIZE 6
 
 WARN_UNUSED_RESULT bool SavesManager::readSavegameHeader(Common::InSaveFile *in, XeenSavegameHeader &header, bool skipThumbnail) {

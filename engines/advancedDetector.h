@@ -65,6 +65,12 @@ struct ADGameFileDescription {
  */
 #define AD_ENTRY1s(f, x, s) {{ f, 0, x, s}, AD_LISTEND}
 
+/**
+ * A shortcut to produce a list of ADGameFileDescription records with only two
+ * records that contains just a filename with an MD5, plus a file size.
+ */
+#define AD_ENTRY2s(f1, x1, s1, f2, x2, s2) {{f1, 0, x1, s1}, {f2, 0, x2, s2}, AD_LISTEND}
+
 enum ADGameFlags {
 	ADGF_NO_FLAGS        =  0,
 	ADGF_REMASTERED      = (1 << 18), ///< add "-remastered' to gameid

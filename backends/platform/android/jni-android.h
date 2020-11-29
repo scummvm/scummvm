@@ -58,7 +58,7 @@ public:
 
 	static void setReadyForEvents(bool ready);
 
-	static void setWindowCaption(const Common::String &caption);
+	static void setWindowCaption(const Common::U32String &caption);
 	static void getDPI(float *values);
 	static void displayMessageOnOSD(const Common::U32String &msg);
 	static bool openUrl(const Common::String &url);
@@ -147,6 +147,7 @@ private:
 							int arg2, int arg3, int arg4, int arg5, int arg6);
 	static void setPause(JNIEnv *env, jobject self, jboolean value);
 
+	static jstring getNativeVersionInfo(JNIEnv *env, jobject self);
 	static jstring convertToJString(JNIEnv *env, const Common::U32String &str);
 	static Common::U32String convertFromJString(JNIEnv *env, const jstring &jstr);
 

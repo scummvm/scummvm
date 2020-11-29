@@ -31,11 +31,8 @@
 	{
 		"playtoons1",
 		"",
-		{
-			{"playtoon.stk", 0, "8c98e9a11be9bb203a55e8c6e68e519b", 25574338},
-			{"archi.stk", 0, "8d44b2a0d4e3139471213f9f0ed21e81", 5524674},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"8c98e9a11be9bb203a55e8c6e68e519b", 25574338,
+				   "archi.stk",		"8d44b2a0d4e3139471213f9f0ed21e81", 5524674),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -49,11 +46,8 @@
 	{
 		"playtoons1",
 		"Pack mes histoires anim\xE9""es",
-		{
-			{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
-			{"archi.stk", 0, "8d44b2a0d4e3139471213f9f0ed21e81", 5524674},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"55f0293202963854192e39474e214f5f", 30448474,
+				   "archi.stk",		"8d44b2a0d4e3139471213f9f0ed21e81", 5524674),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -67,11 +61,8 @@
 	{
 		"playtoons1",
 		"",
-		{
-			{"playtoon.stk", 0, "c5ca2a288cdaefca9556cd9ae4b579cf", 25158926},
-			{"archi.stk", 0, "8d44b2a0d4e3139471213f9f0ed21e81", 5524674},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"c5ca2a288cdaefca9556cd9ae4b579cf", 25158926,
+				   "archi.stk",		"8d44b2a0d4e3139471213f9f0ed21e81", 5524674),
 		DE_DEU,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -85,11 +76,8 @@
 	{
 		"playtoons1",
 		"",
-		{
-			{"playtoon.stk", 0, "9e513e993a5b0e2496add3f50c08764b", 30448506},
-			{"archi.stk", 0, "00d8274519dfcf8a0d8ae3099daea0f8", 5532135},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
+				   "archi.stk",		"00d8274519dfcf8a0d8ae3099daea0f8", 5532135),
 		EN_ANY,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -126,11 +114,8 @@
 	{
 		"playtoons1",
 		"Non-Interactive Demo",
-		{
-			{"e.scn", 0, "8a0db733c3f77be86e74e8242e5caa61", 124},
-			{"demarchg.vmd", 0, "d14a95da7d8792faf5503f649ffcbc12", 5619415},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("e.scn",			"8a0db733c3f77be86e74e8242e5caa61", 124,
+				   "demarchg.vmd",	"d14a95da7d8792faf5503f649ffcbc12", 5619415),
 		EN_ANY,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -190,11 +175,8 @@
 	{
 		"playtoons2",
 		"",
-		{
-			{"playtoon.stk", 0, "4772c96be88a57f0561519e4a1526c62", 24406262},
-			{"spirou.stk", 0, "5d9c7644d0c47840169b4d016765cc1a", 9816201},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"4772c96be88a57f0561519e4a1526c62", 24406262,
+				   "spirou.stk",	"5d9c7644d0c47840169b4d016765cc1a", 9816201),
 		EN_ANY,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -208,11 +190,8 @@
 	{
 		"playtoons2",
 		"",
-		{
-			{"playtoon.stk", 0, "55a85036dd93cce93532d8f743d90074", 17467154},
-			{"spirou.stk", 0, "e3e1b6148dd72fafc3637f1a8e5764f5", 9812043},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"55a85036dd93cce93532d8f743d90074", 17467154,
+				   "spirou.stk",	"e3e1b6148dd72fafc3637f1a8e5764f5", 9812043),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -226,11 +205,8 @@
 	{
 		"playtoons2",
 		"",
-		{
-			{"playtoon.stk", 0, "8c98e9a11be9bb203a55e8c6e68e519b", 25574338},
-			{"spirou.stk", 0, "91080dc148de1bbd6a97321c1a1facf3", 9817086},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"8c98e9a11be9bb203a55e8c6e68e519b", 25574338,
+				   "spirou.stk",	"91080dc148de1bbd6a97321c1a1facf3", 9817086),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -244,11 +220,8 @@
 	{
 		"playtoons2",
 		"",
-		{
-			{"playtoon.stk", 0, "c5ca2a288cdaefca9556cd9ae4b579cf", 25158926},
-			{"spirou.stk", 0, "91080dc148de1bbd6a97321c1a1facf3", 9817086},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"c5ca2a288cdaefca9556cd9ae4b579cf", 25158926,
+				   "spirou.stk",	"91080dc148de1bbd6a97321c1a1facf3", 9817086),
 		DE_DEU,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -262,11 +235,8 @@
 	{
 		"playtoons2",
 		"",
-		{
-			{"playtoon.stk", 0, "2572685400852d12759a2fbf09ec88eb", 9698780},
-			{"spirou.stk", 0, "d3cfeff920b6343a2ece55088f530dba", 7076608},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"2572685400852d12759a2fbf09ec88eb", 9698780,
+				  "spirou.stk",		"d3cfeff920b6343a2ece55088f530dba", 7076608),
 		IT_ITA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -280,11 +250,8 @@
 	{
 		"playtoons2",
 		"",
-		{
-			{"playtoon.stk", 0, "9e513e993a5b0e2496add3f50c08764b", 30448506},
-			{"spirou.stk", 0, "993737f112ca6a9b33c814273280d832", 9825760},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
+				   "spirou.stk",	"993737f112ca6a9b33c814273280d832", 9825760),
 		EN_ANY,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -301,11 +268,8 @@
 	{
 		"playtoons3",
 		"",
-		{
-			{"playtoon.stk", 0, "8c98e9a11be9bb203a55e8c6e68e519b", 25574338},
-			{"chato.stk", 0, "4fa4ed96a427c344e9f916f9f236598d", 6033793},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"8c98e9a11be9bb203a55e8c6e68e519b", 25574338,
+				   "chato.stk",		"4fa4ed96a427c344e9f916f9f236598d", 6033793),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -319,11 +283,8 @@
 	{
 		"playtoons3",
 		"",
-		{
-			{"playtoon.stk", 0, "9e513e993a5b0e2496add3f50c08764b", 30448506},
-			{"chato.stk", 0, "8fc8d0da5b3e758908d1d7298d497d0b", 6041026},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
+				   "chato.stk",		"8fc8d0da5b3e758908d1d7298d497d0b", 6041026),
 		EN_ANY,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -337,11 +298,8 @@
 	{
 		"playtoons3",
 		"Pack mes histoires anim\xE9""es",
-		{
-			{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
-			{"chato.stk", 0, "4fa4ed96a427c344e9f916f9f236598d", 6033793},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"55f0293202963854192e39474e214f5f", 30448474,
+				   "chato.stk",		"4fa4ed96a427c344e9f916f9f236598d", 6033793),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -355,11 +313,8 @@
 	{
 		"playtoons3",
 		"",
-		{
-			{"playtoon.stk", 0, "c5ca2a288cdaefca9556cd9ae4b579cf", 25158926},
-			{"chato.stk", 0, "3c6cb3ac8a5a7cf681a19971a92a748d", 6033791},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"c5ca2a288cdaefca9556cd9ae4b579cf", 25158926,
+				   "chato.stk", 	"3c6cb3ac8a5a7cf681a19971a92a748d", 6033791),
 		DE_DEU,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -373,11 +328,8 @@
 	{
 		"playtoons3",
 		"",
-		{
-			{"playtoon.stk", 0, "4772c96be88a57f0561519e4a1526c62", 24406262},
-			{"chato.stk", 0, "bdef407387112bfcee90e664865ac3af", 6033867},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"4772c96be88a57f0561519e4a1526c62", 24406262,
+				   "chato.stk",		"bdef407387112bfcee90e664865ac3af", 6033867),
 		EN_ANY,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -394,11 +346,8 @@
 	{
 		"playtoons4",
 		"",
-		{
-			{"playtoon.stk", 0, "b7f5afa2dc1b0f75970b7c07d175db1b", 24340406},
-			{"manda.stk", 0, "92529e0b927191d9898a34c2892e9a3a", 6485072},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"b7f5afa2dc1b0f75970b7c07d175db1b", 24340406,
+				   "manda.stk",		"92529e0b927191d9898a34c2892e9a3a", 6485072),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -412,11 +361,8 @@
 	{
 		"playtoons4",
 		"",
-		{
-			{"playtoon.stk", 0, "9e513e993a5b0e2496add3f50c08764b", 30448506},
-			{"manda.stk", 0, "69a79c9f61b2618e482726f2ff68078d", 6499208},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"9e513e993a5b0e2496add3f50c08764b", 30448506,
+				   "manda.stk",		"69a79c9f61b2618e482726f2ff68078d", 6499208),
 		EN_ANY,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -433,11 +379,8 @@
 	{
 		"playtoons5",
 		"",
-		{
-			{"playtoon.stk", 0, "55f0293202963854192e39474e214f5f", 30448474},
-			{"wakan.stk", 0, "f493bf82851bc5ba74d57de6b7e88df8", 5520153},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"55f0293202963854192e39474e214f5f", 30448474,
+				   "wakan.stk",		"f493bf82851bc5ba74d57de6b7e88df8", 5520153),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -454,11 +397,8 @@
 	{
 		"playtnck1",
 		"",
-		{
-			{"playtoon.stk", 0, "5f9aae29265f1f105ad8ec195dff81de", 68382024},
-			{"dan.itk", 0, "906d67b3e438d5e95ec7ea9e781a94f3", 3000320},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"5f9aae29265f1f105ad8ec195dff81de", 68382024,
+				   "dan.itk",		"906d67b3e438d5e95ec7ea9e781a94f3", 3000320),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -475,11 +415,8 @@
 	{
 		"playtnck2",
 		"",
-		{
-			{"playtoon.stk", 0, "5f9aae29265f1f105ad8ec195dff81de", 68382024},
-			{"dan.itk", 0, "74eeb075bd2cb47b243349730264af01", 3213312},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"5f9aae29265f1f105ad8ec195dff81de", 68382024,
+				   "dan.itk",		"74eeb075bd2cb47b243349730264af01", 3213312),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -496,11 +433,8 @@
 	{
 		"playtnck3",
 		"",
-		{
-			{"playtoon.stk", 0, "5f9aae29265f1f105ad8ec195dff81de", 68382024},
-			{"dan.itk", 0, "9a8f62809eca5a52f429b5b6a8e70f8f", 2861056},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("playtoon.stk",	"5f9aae29265f1f105ad8ec195dff81de", 68382024,
+				   "dan.itk",		"9a8f62809eca5a52f429b5b6a8e70f8f", 2861056),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,
@@ -517,11 +451,8 @@
 	{
 		"bambou",
 		"",
-		{
-			{"intro.stk", 0, "2f8db6963ff8d72a8331627ebda918f4", 3613238},
-			{"bambou.itk", 0, "0875914d31126d0749313428f10c7768", 114440192},
-			{0, 0, 0, 0}
-		},
+		AD_ENTRY2s("intro.stk",		"2f8db6963ff8d72a8331627ebda918f4", 3613238,
+				   "bambou.itk",	"0875914d31126d0749313428f10c7768", 114440192),
 		FR_FRA,
 		kPlatformDOS,
 		ADGF_NO_FLAGS,

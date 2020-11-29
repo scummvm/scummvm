@@ -36,8 +36,8 @@
 namespace TwinE {
 
 void Debug::debugFillButton(int32 x, int32 y, int32 width, int32 height, int8 color) {
-	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getBasePtr(x, y);
-	int32 offset = SCREEN_WIDTH - width;
+	uint8 *ptr = (uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y);
+	const int32 offset = SCREEN_WIDTH - width;
 
 	for (int32 i = 0; i < height; i++) {
 		for (int32 j = 0; j < width; j++) {
@@ -47,111 +47,116 @@ void Debug::debugFillButton(int32 x, int32 y, int32 width, int32 height, int8 co
 	}
 }
 
-void Debug::debugDrawButton(int32 left, int32 top, int32 right, int32 bottom, const char *text, int32 textLeft, int32 textRight, int32 isActive, int8 color) {
-	debugFillButton(left + 1, top + 1, right - left - 1, bottom - top - 1, color);
-	_engine->_menu->drawBox(left, top, right, bottom);
+void Debug::debugDrawButton(const Common::Rect &rect, const char *text, int32 textLeft, int32 textRight, int32 isActive, int8 color) {
+	debugFillButton(rect.left + 1, rect.top + 1, rect.right - rect.left - 1, rect.bottom - rect.top - 1, color);
+	_engine->_menu->drawBox(rect);
 	_engine->drawText(textLeft, textRight, text, 0);
-	_engine->copyBlockPhys(left, top, right, bottom);
+	_engine->copyBlockPhys(rect);
 }
 
-void Debug::debugDrawWindowBox(int32 left, int32 top, int32 right, int32 bottom, int32 alpha) {
-	_engine->_interface->drawTransparentBox(left, top, right, bottom, alpha);
-	_engine->_menu->drawBox(left, top, right, bottom);
-	//_engine->copyBlockPhys(left,top,right,bottom);
+void Debug::debugDrawWindowBox(const Common::Rect &rect, int32 alpha) {
+	_engine->_interface->drawTransparentBox(rect, alpha);
+	_engine->_menu->drawBox(rect);
+	//_engine->copyBlockPhys(rect);
 }
 
 void Debug::debugDrawWindowButtons(int32 w) {
-	int32 b;
-
-	for (b = 0; b < debugWindows[w].numButtons; b++) {
-		int32 left = debugWindows[w].debugButtons[b].left;
-		int32 top = debugWindows[w].debugButtons[b].top;
-		int32 right = debugWindows[w].debugButtons[b].right;
-		int32 bottom = debugWindows[w].debugButtons[b].bottom;
-		const char *text = debugWindows[w].debugButtons[b].text;
-		int32 textLeft = debugWindows[w].debugButtons[b].textLeft;
-		int32 textTop = debugWindows[w].debugButtons[b].textTop;
-		int32 isActive = debugWindows[w].debugButtons[b].isActive;
-		int8 color = debugWindows[w].debugButtons[b].color;
+	DebugWindowStruct &window = debugWindows[w];
+	for (int32 b = 0; b < window.numButtons; b++) {
+		DebugButtonStruct &btn = window.debugButtons[b];
+		const char *text = btn.text;
+		const int32 textLeft = btn.textLeft;
+		const int32 textTop = btn.textTop;
+		const int32 isActive = btn.isActive;
+		int8 color = btn.color;
 		if (isActive > 0) {
-			color = debugWindows[w].debugButtons[b].activeColor;
+			color = btn.activeColor;
 		}
 
-		debugDrawButton(left, top, right, bottom, text, textLeft, textTop, isActive, color);
+		debugDrawButton(btn.rect, text, textLeft, textTop, isActive, color);
 	}
 }
 
 void Debug::debugDrawWindow(int32 w) {
-	int32 left = debugWindows[w].left;
-	int32 top = debugWindows[w].top;
-	int32 right = debugWindows[w].right;
-	int32 bottom = debugWindows[w].bottom;
-	int32 alpha = debugWindows[w].alpha;
+	DebugWindowStruct &window = debugWindows[w];
+	const Common::Rect &rect = window.rect;
+	const int32 alpha = window.alpha;
 
-	debugDrawWindowBox(left, top, right, bottom, alpha);
+	debugDrawWindowBox(rect, alpha);
 
-	if (debugWindows[w].numLines > 0) {
-		for (int32 l = 0; l < debugWindows[w].numLines; l++) {
-			_engine->drawText(left + 10, top + l * 20 + 5, debugWindows[w].text[l], 0);
+	if (window.numLines > 0) {
+		for (int32 l = 0; l < window.numLines; l++) {
+			_engine->drawText(rect.left + 10, rect.top + l * 20 + 5, window.text[l], 0);
 		}
 	}
 
-	_engine->copyBlockPhys(left, top, right, bottom);
+	_engine->copyBlockPhys(rect);
 
 	debugDrawWindowButtons(w);
 }
 
 int32 Debug::debugTypeUseMenu(int32 type) {
 	for (int32 w = 0; w < numDebugWindows; w++) {
-		if (debugWindows[w].isActive > 0) {
-			for (int32 b = 0; b < debugWindows[w].numButtons; b++) {
-				if (debugWindows[w].debugButtons[b].type == type) {
-					int submenu = debugWindows[w].debugButtons[b].submenu;
-					if (submenu > 0) {
-						debugWindows[submenu].isActive = !debugWindows[submenu].isActive;
-					}
-					return submenu;
-				}
+		DebugWindowStruct &window = debugWindows[w];
+		if (window.isActive <= 0) {
+			continue;
+		}
+		for (int32 b = 0; b < window.numButtons; b++) {
+			DebugButtonStruct &btn = window.debugButtons[b];
+			if (btn.type != type) {
+				continue;
 			}
+			int submenu = btn.submenu;
+			if (submenu > 0) {
+				debugWindows[submenu].isActive = !debugWindows[submenu].isActive;
+			}
+			return submenu;
 		}
 	}
 	return 0;
 }
 
 void Debug::debugResetButtonsState() {
-	for (int32  w = 0; w < numDebugWindows; w++) {
-		if (debugWindows[w].isActive > 0) {
-			for (int32  b = 0; b < debugWindows[w].numButtons; b++) {
-				if (debugWindows[w].debugButtons[b].type <= -1)
-					debugWindows[w].debugButtons[b].isActive = 0;
+	for (int32 w = 0; w < numDebugWindows; w++) {
+		DebugWindowStruct &window = debugWindows[w];
+		if (window.isActive <= 0) {
+			continue;
+		}
+		for (int32 b = 0; b < window.numButtons; b++) {
+			DebugButtonStruct &btn = window.debugButtons[b];
+			if (btn.type > -1) {
+				continue;
 			}
+			btn.isActive = 0;
 		}
 	}
 }
 
 void Debug::debugRefreshButtons(int32 type) {
 	for (int32 w = 0; w < numDebugWindows; w++) {
-		if (debugWindows[w].isActive > 0) {
-			for (int32 b = 0; b < debugWindows[w].numButtons; b++) {
-				if (debugWindows[w].debugButtons[b].type == type) {
-					int32 left = debugWindows[w].debugButtons[b].left;
-					int32 top = debugWindows[w].debugButtons[b].top;
-					int32 right = debugWindows[w].debugButtons[b].right;
-					int32 bottom = debugWindows[w].debugButtons[b].bottom;
-					const char *text = debugWindows[w].debugButtons[b].text;
-					int32 textLeft = debugWindows[w].debugButtons[b].textLeft;
-					int32 textTop = debugWindows[w].debugButtons[b].textTop;
-					int8 color = debugWindows[w].debugButtons[b].color;
-					int32 isActive = debugWindows[w].debugButtons[b].isActive = !debugWindows[w].debugButtons[b].isActive;
+		DebugWindowStruct &window = debugWindows[w];
+		if (window.isActive <= 0) {
+			continue;
+		}
+		for (int32 b = 0; b < window.numButtons; b++) {
+			DebugButtonStruct &btn = window.debugButtons[b];
+			if (btn.type != type) {
+				continue;
+			}
+			const char *text = btn.text;
+			const int32 textLeft = btn.textLeft;
+			const int32 textTop = btn.textTop;
+			int8 color = btn.color;
+			const int32 isActive = btn.isActive = !btn.isActive;
 
-					if (isActive > 0)
-						color = debugWindows[w].debugButtons[b].activeColor;
+			if (isActive > 0) {
+				color = btn.activeColor;
+			}
 
-					debugDrawButton(left, top, right, bottom, text, textLeft, textTop, isActive, color);
+			debugDrawButton(btn.rect, text, textLeft, textTop, isActive, color);
 
-					if (debugWindows[w].debugButtons[b].submenu && isActive > 0)
-						debugDrawWindow(debugWindows[w].debugButtons[b].submenu);
-				}
+			if (btn.submenu && isActive > 0) {
+				debugDrawWindow(btn.submenu);
 			}
 		}
 	}
@@ -159,7 +164,8 @@ void Debug::debugRefreshButtons(int32 type) {
 
 void Debug::debugDrawWindows() {
 	for (int32 w = 0; w < numDebugWindows; w++) {
-		if (debugWindows[w].isActive > 0) {
+		DebugWindowStruct &window = debugWindows[w];
+		if (window.isActive > 0) {
 			debugDrawWindow(w);
 		}
 	}
@@ -167,24 +173,27 @@ void Debug::debugDrawWindows() {
 
 void Debug::debugResetButton(int32 type) {
 	for (int32 w = 0; w < numDebugWindows; w++) {
-		if (debugWindows[w].isActive > 0) {
-			for (int32 b = 0; b < debugWindows[w].numButtons; b++) {
-				if (debugWindows[w].debugButtons[b].type == type) {
-					int submenu = debugWindows[w].debugButtons[b].submenu;
-					debugWindows[w].debugButtons[b].isActive = 0;
-					if (submenu > 0) {
-						debugWindows[submenu].debugButtons[b].isActive = !debugWindows[submenu].debugButtons[b].isActive;
-					}
-
-					return;
-				}
+		DebugWindowStruct &window = debugWindows[w];
+		if (window.isActive <= 0) {
+			continue;
+		}
+		for (int32 b = 0; b < window.numButtons; b++) {
+			DebugButtonStruct &btn = window.debugButtons[b];
+			if (btn.type != type) {
+				continue;
 			}
+			int submenu = btn.submenu;
+			btn.isActive = 0;
+			if (submenu > 0) {
+				debugWindows[submenu].debugButtons[b].isActive = !debugWindows[submenu].debugButtons[b].isActive;
+			}
+			break;
 		}
 	}
 }
 
 void Debug::debugRedrawScreen() {
-	_engine->_redraw->redrawEngineActions(1);
+	_engine->_redraw->redrawEngineActions(true);
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 	debugDrawWindows();
 }
@@ -312,20 +321,18 @@ void Debug::debugSetActions(int32 type) {
 	}
 }
 
-void Debug::debugAddButton(int32 window, int32 left, int32 top, int32 right, int32 bottom, const char *text, int32 textLeft, int32 textTop, int32 isActive, int32 color, int32 activeColor, int32 submenu, int32 type) {
-	int32 button = debugWindows[window].numButtons;
-	debugWindows[window].debugButtons[button].left = left;
-	debugWindows[window].debugButtons[button].top = top;
-	debugWindows[window].debugButtons[button].right = right;
-	debugWindows[window].debugButtons[button].bottom = bottom;
-	debugWindows[window].debugButtons[button].text = text;
-	debugWindows[window].debugButtons[button].textLeft = textLeft;
-	debugWindows[window].debugButtons[button].textTop = textTop;
-	debugWindows[window].debugButtons[button].isActive = debugGetActionsState(type);
-	debugWindows[window].debugButtons[button].color = color;
-	debugWindows[window].debugButtons[button].activeColor = activeColor;
-	debugWindows[window].debugButtons[button].submenu = submenu;
-	debugWindows[window].debugButtons[button].type = type;
+void Debug::debugAddButton(int32 window, const Common::Rect &rect, const char *text, int32 textLeft, int32 textTop, int32 isActive, int32 color, int32 activeColor, int32 submenu, int32 type) {
+	const int32 button = debugWindows[window].numButtons;
+	DebugButtonStruct &btn = debugWindows[window].debugButtons[button];
+	btn.rect = rect;
+	btn.text = text;
+	btn.textLeft = textLeft;
+	btn.textTop = textTop;
+	btn.isActive = debugGetActionsState(type);
+	btn.color = color;
+	btn.activeColor = activeColor;
+	btn.submenu = submenu;
+	btn.type = type;
 	debugWindows[window].numButtons++;
 }
 
@@ -335,11 +342,8 @@ void Debug::debugAddWindowText(int32 window, const char *text) {
 	debugWindows[window].numLines++;
 }
 
-void Debug::debugAddWindow(int32 left, int32 top, int32 right, int32 bottom, int32 alpha, int32 isActive) {
-	debugWindows[numDebugWindows].left = left;
-	debugWindows[numDebugWindows].top = top;
-	debugWindows[numDebugWindows].right = right;
-	debugWindows[numDebugWindows].bottom = bottom;
+void Debug::debugAddWindow(const Common::Rect &rect, int32 alpha, int32 isActive) {
+	debugWindows[numDebugWindows].rect = rect;
 	debugWindows[numDebugWindows].alpha = alpha;
 	debugWindows[numDebugWindows].numButtons = 0;
 	debugWindows[numDebugWindows].isActive = isActive;
@@ -348,17 +352,17 @@ void Debug::debugAddWindow(int32 left, int32 top, int32 right, int32 bottom, int
 
 void Debug::debugLeftMenu() {
 	// left menu window
-	debugAddWindow(5, 60, 200, 474, 4, 1);
-	debugAddButton(0, 5, 55, 160, 75, "Use free camera", 30, 60, 0, 87, 119, NO_MENU, FREE_CAMERA);
-	debugAddButton(0, 161, 55, 200, 75, "info", 171, 60, 0, 87, 119, FREE_CAMERA_INFO_MENU, -1);
-	debugAddButton(0, 5, 76, 160, 96, "Change scenes", 30, 81, 0, 87, 119, NO_MENU, CHANGE_SCENE);
-	debugAddButton(0, 161, 76, 200, 96, "info", 171, 81, 0, 87, 119, CHANGE_SCENE_INFO_MENU, -2);
-	debugAddButton(0, 5, 97, 200, 117, "Show celling grids", 30, 102, 0, 87, 119, NO_MENU, 3);
-	debugAddButton(0, 5, 118, 200, 138, "Show zones", 30, 123, 0, 87, 119, ZONES_MENU, SHOW_ZONES);
+	debugAddWindow(Common::Rect(5, 60, 200, 474), 4, 1);
+	debugAddButton(0, Common::Rect(5, 55, 160, 75), "Use free camera", 30, 60, 0, 87, 119, NO_MENU, FREE_CAMERA);
+	debugAddButton(0, Common::Rect(161, 55, 200, 75), "info", 171, 60, 0, 87, 119, FREE_CAMERA_INFO_MENU, -1);
+	debugAddButton(0, Common::Rect(5, 76, 160, 96), "Change scenes", 30, 81, 0, 87, 119, NO_MENU, CHANGE_SCENE);
+	debugAddButton(0, Common::Rect(161, 76, 200, 96), "info", 171, 81, 0, 87, 119, CHANGE_SCENE_INFO_MENU, -2);
+	debugAddButton(0, Common::Rect(5, 97, 200, 117), "Show celling grids", 30, 102, 0, 87, 119, NO_MENU, 3);
+	debugAddButton(0, Common::Rect(5, 118, 200, 138), "Show zones", 30, 123, 0, 87, 119, ZONES_MENU, SHOW_ZONES);
 
 	// add submenu windows
 	//   - free camera window
-	debugAddWindow(205, 55, 634, 160, 4, 0);
+	debugAddWindow(Common::Rect(205, 55, 634, 160), 4, 0);
 	debugAddWindowText(FREE_CAMERA_INFO_MENU, "When enable, use the following keys to browse through the scenes:");
 	debugAddWindowText(FREE_CAMERA_INFO_MENU, "           - S to go North");
 	debugAddWindowText(FREE_CAMERA_INFO_MENU, "           - X to go South");
@@ -366,28 +370,29 @@ void Debug::debugLeftMenu() {
 	debugAddWindowText(FREE_CAMERA_INFO_MENU, "           - C to go East");
 
 	//   - change scene window
-	debugAddWindow(205, 55, 634, 137, 4, 0);
+	debugAddWindow(Common::Rect(205, 55, 634, 137), 4, 0);
 	debugAddWindowText(CHANGE_SCENE_INFO_MENU, "When enable, use the following keys to change to another scene:");
 	debugAddWindowText(CHANGE_SCENE_INFO_MENU, "           - R to go Next Scene");
 	debugAddWindowText(CHANGE_SCENE_INFO_MENU, "           - F to go Previous Scene");
 
 	//   - zones window
-	debugAddWindow(205, 55, 634, 97, 4, 0);
+	debugAddWindow(Common::Rect(205, 55, 634, 97), 4, 0);
 	debugAddWindowText(ZONES_MENU, "You can enable or disable each zone type:");
-	debugAddButton(ZONES_MENU, 205, 118, 350, 138, "Cube Zones", 215, 123, 1, 87, 119, 0, SHOW_ZONE_CUBE);
-	debugAddButton(ZONES_MENU, 205, 139, 350, 159, "Camera Zones", 215, 144, 2, 87, 119, 0, SHOW_ZONE_CAMERA);
-	debugAddButton(ZONES_MENU, 205, 160, 350, 180, "Scenaric Zones", 215, 165, 3, 87, 119, 0, SHOW_ZONE_SCENARIC);
-	debugAddButton(ZONES_MENU, 205, 181, 350, 201, "Celling Grid Zones", 215, 186, 4, 87, 119, 0, SHOW_ZONE_CELLINGGRID);
-	debugAddButton(ZONES_MENU, 205, 202, 350, 222, "Object Zones", 215, 207, 5, 87, 119, 0, SHOW_ZONE_OBJECT);
-	debugAddButton(ZONES_MENU, 205, 223, 350, 243, "Text Zones", 215, 228, 6, 87, 119, 0, SHOW_ZONE_TEXT);
-	debugAddButton(ZONES_MENU, 205, 244, 350, 264, "Ladder Zones", 215, 249, 7, 87, 119, 0, SHOW_ZONE_LADDER);
+	debugAddButton(ZONES_MENU, Common::Rect(205, 118, 350, 138), "Cube Zones", 215, 123, 1, 87, 119, 0, SHOW_ZONE_CUBE);
+	debugAddButton(ZONES_MENU, Common::Rect(205, 139, 350, 159), "Camera Zones", 215, 144, 2, 87, 119, 0, SHOW_ZONE_CAMERA);
+	debugAddButton(ZONES_MENU, Common::Rect(205, 160, 350, 180), "Scenaric Zones", 215, 165, 3, 87, 119, 0, SHOW_ZONE_SCENARIC);
+	debugAddButton(ZONES_MENU, Common::Rect(205, 181, 350, 201), "Celling Grid Zones", 215, 186, 4, 87, 119, 0, SHOW_ZONE_CELLINGGRID);
+	debugAddButton(ZONES_MENU, Common::Rect(205, 202, 350, 222), "Object Zones", 215, 207, 5, 87, 119, 0, SHOW_ZONE_OBJECT);
+	debugAddButton(ZONES_MENU, Common::Rect(205, 223, 350, 243), "Text Zones", 215, 228, 6, 87, 119, 0, SHOW_ZONE_TEXT);
+	debugAddButton(ZONES_MENU, Common::Rect(205, 244, 350, 264), "Ladder Zones", 215, 249, 7, 87, 119, 0, SHOW_ZONE_LADDER);
 }
 
 int32 Debug::debugProcessButton(int32 x, int32 y) {
 	for (int32 i = 0; i < numDebugWindows; i++) {
 		for (int32 j = 0; j < debugWindows[i].numButtons; j++) {
-			if (x > (debugWindows[i].debugButtons[j].left) && x < (debugWindows[i].debugButtons[j].right) && y > (debugWindows[i].debugButtons[j].top) && y < (debugWindows[i].debugButtons[j].bottom)) {
-				return (debugWindows[i].debugButtons[j].type);
+			const Common::Rect &rect = debugWindows[i].debugButtons[j].rect;
+			if (rect.contains(x, y)) {
+				return debugWindows[i].debugButtons[j].type;
 			}
 		}
 	}
@@ -396,15 +401,15 @@ int32 Debug::debugProcessButton(int32 x, int32 y) {
 }
 
 void Debug::debugPlasmaWindow(const char *text, int32 color) {
-	int32 textSize;
 	_engine->_menu->processPlasmaEffect(0, 5, color);
 	if (!(_engine->getRandomNumber() % 5)) {
-		_engine->_menu->plasmaEffectPtr[_engine->getRandomNumber() % 320 * 10 + 6400] = 255;
+		_engine->_menu->plasmaEffectPtr[_engine->getRandomNumber() % PLASMA_WIDTH * 10 + 6400] = 255;
 	}
-	textSize = _engine->_text->getTextSize(text);
+	int32 textSize = _engine->_text->getTextSize(text);
 	_engine->_text->drawText((SCREEN_WIDTH / 2) - (textSize / 2), 10, text);
-	_engine->_menu->drawBox(5, 5, 634, 50);
-	_engine->copyBlockPhys(5, 5, 634, 50);
+	const Common::Rect rect(5, 5, 634, 50);
+	_engine->_menu->drawBox(rect);
+	_engine->copyBlockPhys(rect);
 }
 
 void Debug::debugProcessWindow() {
@@ -426,12 +431,11 @@ void Debug::debugProcessWindow() {
 			if (_engine->shouldQuit()) {
 				break;
 			}
-			MouseStatusStruct mouseData;
-			_engine->_input->getMousePositions(&mouseData);
+			const Common::Point &point = _engine->_input->getMousePositions();
 
 			if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugMenuActivate)) {
 				int type = 0;
-				if ((type = debugProcessButton(mouseData.x, mouseData.y)) != NO_ACTION) { // process menu item
+				if ((type = debugProcessButton(point.x, point.y)) != NO_ACTION) { // process menu item
 					if (debugTypeUseMenu(type)) {
 						_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 						_engine->copyBlockPhys(205, 55, 634, 474);

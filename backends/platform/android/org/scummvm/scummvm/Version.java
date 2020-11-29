@@ -21,7 +21,7 @@ public class Version implements Comparable<Version> {
 		} else {
 			this.versionDescription = version;
 			// cleanup from any non-digit characters in the version string
-			String strippedVersion = version.replaceAll("[^\\d.]", "");
+			final String strippedVersion = version.replaceAll("[^\\d.]", "");
 			if (!strippedVersion.matches("[0-9]+(\\.[0-9]+)*")) {
 				this.versionOnlyDigits = "0";
 			} else {
@@ -29,6 +29,14 @@ public class Version implements Comparable<Version> {
 			}
 		}
 	}
+
+	// Here a version is considered "dirty" if it contains other characters in the description string than the expected digits (and dots) of a "clean" proper version
+	// eg. 2.3.0pre or 2.3.0git or 2.3.0git9272-gc71ac4748b are dirty
+	//     2.3.0 is NOT dirty
+	public boolean isDirty() {
+		return (versionOnlyDigits.compareTo(versionDescription) != 0);
+	}
+
 
 	@Override public int compareTo(Version that) {
 		if(that == null)

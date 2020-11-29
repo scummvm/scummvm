@@ -91,12 +91,12 @@ void CharacterInfo::execute(int charIndex) {
 			if (_buttonValue < (int)(oldMode == MODE_COMBAT ? combat._combatParty.size() : party._activeParty.size())) {
 				charIndex = _buttonValue;
 				c = (oldMode != MODE_COMBAT) ? &party._activeParty[charIndex] : combat._combatParty[charIndex];
+
+				intf.highlightChar(_buttonValue);
+				redrawFlag = true;
 			} else {
 				_vm->_mode = MODE_CHARACTER_INFO;
 			}
-
-			intf.highlightChar(_buttonValue);
-			redrawFlag = true;
 			break;
 
 		case Common::KEYCODE_UP:

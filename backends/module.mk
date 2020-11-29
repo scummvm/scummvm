@@ -241,8 +241,9 @@ endif
 
 ifdef AMIGAOS
 MODULE_OBJS += \
-	fs/amigaos4/amigaos4-fs.o \
-	fs/amigaos4/amigaos4-fs-factory.o \
+	dialogs/amigaos/amigaos-dialogs.o \
+	fs/amigaos/amigaos-fs.o \
+	fs/amigaos/amigaos-fs-factory.o \
 	midi/camd.o
 endif
 

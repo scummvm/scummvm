@@ -34,9 +34,6 @@ public class SplashActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		hideSystemUI();
 
-		Version _currentScummVMVersion = new Version(BuildConfig.VERSION_NAME);
-		Log.d(ScummVM.LOG_TAG, "Splash: Current ScummVM version running is: " + _currentScummVMVersion.getDescription() + " (" + _currentScummVMVersion.get() + ")");
-
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
 		    && (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED
 		        || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)

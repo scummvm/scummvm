@@ -1,7 +1,7 @@
 /*
 $VER: RM2AG.rexx 0.24 (23.08.2020) README(.md) to .guide converter.
 This script converts a given markdown README file (right now, only
-ScummVM is supported) to a basic hypertext Amiga guide file and installs
+ScummVM is supported) to a basic hypertext AmigaGuide file and installs
 it to a given path, if available.
 */
 
@@ -75,7 +75,7 @@ IF ~OPEN(guide_write,'README.guide','W') THEN DO
 END
 
 /*
-Prepare the Amiga guide file, add intro and fixed text.
+Prepare the AmigaGuide file, add intro and fixed text.
 */
 CALL WRITELN guide_write,'@DATABASE ScummVM README.guide'
 CALL WRITELN guide_write,'@$VER: ScummVM Readme 2.3.0git'
@@ -124,7 +124,6 @@ DO WHILE EOF(readme_read) = 0
 		Two chapters (1.0 and 7.8) are "empty", consisting of only
 		it`s chapter names. Link them to their respective sub chapters
 		(1.1 and 7.8.1) to not display a blank page.
-
 		If chapter 1.0 is found, add a link node to chapter 1.1.
 		*/
 		IF POS('  - [<>1.0<>)',working_line) = 1 THEN DO
@@ -228,7 +227,6 @@ DO WHILE EOF(readme_read) = 0
 		Two chapters (1.0 and 7.8) are "empty", consisting of only
 		it`s chapter names. Link them to their respective sub chapters
 		(1.1 and 7.8.1) to not display a blank page.
-
 		If chapter 1.1 is found, don`t close the NODE, just write the line.
 		*/
 		IF POS('<>1.1<>',working_line) = 1 THEN DO

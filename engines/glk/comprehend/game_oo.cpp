@@ -45,7 +45,7 @@ enum OOToposFlag {
 	OO_FLAG_SUFFICIENT_FUEL = 51,
 	OO_FLAG_REVERSE_VIDEO = 53,	// Effect of wearing goggles
 	OO_FLAG_55 = 55,
-	OO_FLAG_56 = 56,
+	OO_FLAG_TOO_BRIGHT = 56,
 	OO_FLAG_58 = 58,
 	OO_FLAG_59 = 59,
 	OO_FLAG_READY_TO_DEPART = 60,
@@ -62,7 +62,7 @@ static const GameStrings OO_STRINGS = {
 
 OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE),
 		_noFloodfill(UNSET), _lightOn(UNSET), _stringVal1(0), _stringVal2(0),
-		_printComputerMsg(true), _shipNotWorking(false) {
+		_printComputerMsg(true), _shipNotWorking(false), _currentRoomCopy(-1) {
 	_gameDataFile = "g0";
 
 	// Extra strings are (annoyingly) stored in the game binary
@@ -121,35 +121,18 @@ int OOToposGame::roomIsSpecial(unsigned room_index, unsigned *roomDescString) {
 }
 
 void OOToposGame::beforeTurn() {
-#if 0
-	Room *room = &_rooms[_currentRoom];
-
-	/*
-	 * Check if the room needs to be redrawn because the flashlight
-	 * was switch off or on.
-	 */
-	if (_flags[OO_FLAG_FLASHLIGHT_ON] != _lightOn &&
-	        (room->_flags & OO_ROOM_FLAG_DARK)) {
-		_lightOn = _flags[OO_FLAG_FLASHLIGHT_ON];
-		_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
-	}
-
-	/*
-	 * Check if the room needs to be redrawn because the goggles were
-	 * put on or removed.
-	 */
-	if (_flags[OO_FLAG_WEARING_GOGGLES] != _wearingGoggles &&
-	        _currentRoom == OO_BRIGHT_ROOM) {
-		_wearingGoggles = _flags[OO_FLAG_WEARING_GOGGLES];
-		_updateFlags |= UPDATE_GRAPHICS | UPDATE_ROOM_DESC;
-	}
-#endif
 	ComprehendGameV2::beforeTurn();
+
+	// Make  a copy of the current room
+	_currentRoomCopy = _currentRoom;
 
 	if (_flags[OO_FLAG_55]) {
 		_currentRoom = 55;
-	} else if (_flags[OO_FLAG_56]) {
+		_updateFlags |= UPDATE_GRAPHICS;
+	} else if (_flags[OO_FLAG_TOO_BRIGHT]) {
+		// Show placeholder room if room is too bright
 		_currentRoom = 54;
+		_updateFlags |= UPDATE_GRAPHICS;
 	} else {
 		YesNo nff = _flags[OO_FLAG_REVERSE_VIDEO] ? YES : NO;
 
@@ -163,13 +146,19 @@ void OOToposGame::beforeTurn() {
 				g_comprehend->_drawFlags &= ~IMAGEF_REVERSE;
 		}
 	}
+}
 
+void OOToposGame::beforePrompt() {
 	// Handle the computer console if in front of it
 	computerConsole();
 }
 
-void OOToposGame::afterTurn() {
-	ComprehendGameV2::afterTurn();
+void OOToposGame::afterPrompt() {
+	ComprehendGameV2::afterPrompt();
+
+	if (_currentRoom != _currentRoomCopy)
+		_updateFlags |= UPDATE_GRAPHICS;
+	_currentRoom = _currentRoomCopy;
 }
 
 void OOToposGame::handleSpecialOpcode(uint8 operand) {
@@ -250,10 +239,16 @@ bool OOToposGame::handle_restart() {
 }
 
 void OOToposGame::synchronizeSave(Common::Serializer &s) {
+	if (s.isSaving())
+		_currentRoom = _currentRoomCopy;
+
 	ComprehendGameV2::synchronizeSave(s);
 
 	if (s.isLoading()) {
 		_noFloodfill = UNSET;
+		_currentRoomCopy = _currentRoom;
+
+		beforeTurn();
 	}
 }
 

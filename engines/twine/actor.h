@@ -40,6 +40,18 @@ struct ActorMoveStruct {
 	int16 to = 0;
 	int16 numOfStep = 0;
 	int32 timeOfChange = 0;
+
+	/**
+	 * Get actor real angle
+	 * @param time engine time used for interpolation
+	 */
+	int32 getRealAngle(int32 time);
+
+	/**
+	 * Get actor step
+	 * @param time engine time used for interpolation
+	 */
+	int32 getRealValue(int32 time);
 };
 
 /** Actors zone volumique points structure */
@@ -125,7 +137,11 @@ struct BonusParameter {
 	uint16 unused : 7;
 };
 
-/** Actors structure */
+/**
+ * Actors structure
+ *
+ * Such as characters, doors, moving plataforms, invisible actors, ...
+ */
 class ActorStruct {
 private:
 	ShapeType _brickShape = ShapeType::kNone; // field_3
@@ -143,6 +159,15 @@ public:
 	void loadModel(int32 modelIndex);
 
 	int32 entity = 0; // costumeIndex
+	/**
+	 * 0: tunic + medallion
+	 * 1: tunic
+	 * 2: tunic + medallion + sword
+	 * 3: prison suit
+	 * 4: nurse outfit
+	 * 5: tunic + medallion + horn
+	 * 6: snowboard (WARNING, this can crash the game when you change behavior)
+	 */
 	int32 body = 0;
 	AnimationTypes anim = AnimationTypes::kAnimNone;
 	AnimationTypes animExtra = AnimationTypes::kStanding;  //field_2
@@ -189,7 +214,6 @@ public:
 
 	//int costumeIndex;
 	int32 collision = 0;
-	int32 standPosition = 0;
 	int32 standOn = 0;
 	int32 zone = 0;
 
@@ -200,6 +224,7 @@ public:
 	int32 previousAnimIdx = 0;
 	int32 doorStatus = 0;
 	int32 animPosition = 0;
+	// 0 == loop
 	int32 animType = 0;   // field_78
 	int32 brickSound = 0; // field_7A
 

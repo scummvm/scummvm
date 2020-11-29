@@ -162,11 +162,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"lzone", "",
-			{
-				{"L_ZONE.EXE", 0, "65d06b5fef155a2473434571aff5bc29", 370009},
-				{"SYNER_01.MMM", 0, "56b6f1c68e85a96bcdd01028bdec2d35", 460594},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("L_ZONE.EXE",	"65d06b5fef155a2473434571aff5bc29", 370009,
+					   "SYNER_01.MMM",	"56b6f1c68e85a96bcdd01028bdec2d35", 460594),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -225,11 +222,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"wrath", "",
-			{
-				{"000WRATH.EXE", 0, "3162423a1d0885eb1eb94f557a86b258", 372970},
-				{"SHARDCST.MMM", 0, "22af72fba773cc5313d99c91b2e5aea9", 3432948},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("000WRATH.EXE", "3162423a1d0885eb1eb94f557a86b258", 372970,
+					   "SHARDCST.MMM", "22af72fba773cc5313d99c91b2e5aea9", 3432948),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -242,11 +236,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"wrath", "Demo",
-			{
-				{"000WRATH.EXE", 0, "3162423a1d0885eb1eb94f557a86b258", 372970},
-				{"SHARDCST.MMM", 0, "85d166abe18730d96e9d4137c66255a1", 3553330},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("000WRATH.EXE", "3162423a1d0885eb1eb94f557a86b258", 372970,
+					   "SHARDCST.MMM", "85d166abe18730d96e9d4137c66255a1", 3553330),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_DEMO,
@@ -263,11 +254,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"ybr1", "",
-			{
-				{"YBR.EXE", 0, "2cc9e2dacb90fb130f6ee9519b66c5a8", 369007},
-				{"START.MMM", 0, "69012b34b3f0e6f1886133b807db4476", 2566872},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("YBR.EXE",	"2cc9e2dacb90fb130f6ee9519b66c5a8", 369007,
+					   "START.MMM",	"69012b34b3f0e6f1886133b807db4476", 2566872),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -280,11 +268,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"ybr1", "",
-			{
-				{"YBR", 0, "f5277c53bacd27936158dd3867e587e2", 414498},
-				{"START", 0, "ca4a6650d8f8ce04b26bcbc941bf0a86", 2417242},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("YBR",	"f5277c53bacd27936158dd3867e587e2", 414498,
+					   "START",	"ca4a6650d8f8ce04b26bcbc941bf0a86", 2417242),
 			Common::JA_JPN,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -297,11 +282,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"ybr1", "",
-			{
-				{"YBR.EXE", 0, "2cc9e2dacb90fb130f6ee9519b66c5a8", 369007},
-				{"START.MMM", 0, "9e02f41270708101b1d5d04cb822a784", 2563274},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("YBR.EXE",	"2cc9e2dacb90fb130f6ee9519b66c5a8", 369007,
+					   "START.MMM",	"9e02f41270708101b1d5d04cb822a784", 2563274),
 			Common::JA_JPN,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -388,11 +370,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"hamsterland1", "Danish alt",
-			{
-				{"Hamsterland", 0, "bcd3c718db258701496b3c5bcb827ef2", 483774},
-				{"AIRDK", 0, "f74f18a9d454db63465dac151a6b5706", 8425728},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("Hamsterland",	"bcd3c718db258701496b3c5bcb827ef2", 483774,
+					   "AIRDK",			"f74f18a9d454db63465dac151a6b5706", 8425728),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -405,11 +384,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"hamsterland1", "Swedish alt",
-			{
-				{"Hamsterland", 0, "bcd3c718db258701496b3c5bcb827ef2", 483774},
-				{"AIRSW", 0, "ccf7c642796c5aeb9fee4c663bdd02d9", 7588992},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("Hamsterland",	"bcd3c718db258701496b3c5bcb827ef2", 483774,
+					   "AIRSW",			"ccf7c642796c5aeb9fee4c663bdd02d9", 7588992),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -422,11 +398,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"hamsterland1", "Danish alt",
-			{
-				{"HAMSTER.EXE", 0, "2bb6e93d9aab502f46dbf163d51eb785", 785327},
-				{"AIRDK", 0, "ad98bbbd724e31a8a125e284a74d0241", 8425546},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("HAMSTER.EXE",	"2bb6e93d9aab502f46dbf163d51eb785", 785327,
+					   "AIRDK",			"ad98bbbd724e31a8a125e284a74d0241", 8425546),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -439,11 +412,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"hamsterland1", "Spanish alt",
-			{
-				{"HAMSTER.EXE", 0, "a0d2cfdf10ec14c00338329277bc8acc", 727653},
-				{"AIRSP", 0, "9b5b82d488b96b2fcf5e78ec8769e29a", 8432260},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("HAMSTER.EXE",	"a0d2cfdf10ec14c00338329277bc8acc", 727653,
+					   "AIRSP",			"9b5b82d488b96b2fcf5e78ec8769e29a", 8432260),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -456,11 +426,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"hamsterland1", "Swedish alt",
-			{
-				{"HAMSTER.EXE", 0, "2bb6e93d9aab502f46dbf163d51eb785", 785327},
-				{"AIRSW", 0, "410efb55564b8eb2042eea61d0f8025b", 7588828},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("HAMSTER.EXE",	"2bb6e93d9aab502f46dbf163d51eb785", 785327,
+					   "AIRSW",			"410efb55564b8eb2042eea61d0f8025b", 7588828),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -501,11 +468,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"improv", "Dolan Game",
-			{
-				{"IMPROV (PowerPC)", 0, "096e0aacbc1670c80a354c3c49b3fabe", 60324},
-				{"INTRO.DIR", 0, "dd667e45e402729581c70f278140f3a5", 3400832},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("IMPROV (PowerPC)",	"096e0aacbc1670c80a354c3c49b3fabe", 60324,
+					   "INTRO.DIR",			"dd667e45e402729581c70f278140f3a5", 3400832),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -518,11 +482,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"improv", "Shirley Game",
-			{
-				{"IMPROV (PowerPC)", 0, "096e0aacbc1670c80a354c3c49b3fabe", 60324},
-				{"INTRO.DIR", 0, "62695e977e1a29647e630f70349a3690", 2926976},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("IMPROV (PowerPC)",	"096e0aacbc1670c80a354c3c49b3fabe", 60324,
+					   "INTRO.DIR",			"62695e977e1a29647e630f70349a3690", 2926976),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -535,11 +496,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"improv", "Dolan Game",
-			{
-				{"IMPROV.EXE", 0, "097276acd3caee9bc79b85af79278643", 730079},
-				{"INTRO.DIR", 0, "075c3c7bd7c059280ca86c6b906bf97b", 46366},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("IMPROV.EXE",	"097276acd3caee9bc79b85af79278643", 730079,
+					   "INTRO.DIR",		"075c3c7bd7c059280ca86c6b906bf97b", 46366),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -552,11 +510,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"improv", "Shirley Game",
-			{
-				{"IMPROV.EXE", 0, "097276acd3caee9bc79b85af79278643", 730079},
-				{"INTRO.DIR", 0, "37f2d3c0b6f805e7a0f3a3ea62f8297c", 44532},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("IMPROV.EXE",	"097276acd3caee9bc79b85af79278643", 730079,
+					   "INTRO.DIR",		"37f2d3c0b6f805e7a0f3a3ea62f8297c", 44532),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -579,11 +534,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Note: There are four versions of the binary included on the disc.
 	// 5.6, 6, and 9 Meg variants all exist too.
 	MACGAME("jewels", "", "Jewels 11 Meg", "339c89a148c4ff2c5c815c62ac006325", -1, 400),
-	MACDEMO("jewels", "Two-Minute Demo", "Two-Minute Demo", "01be45e7241194dad07938e7059b88e3", -1, 400),
 
 	WINGAME("jewels", "", "JEWELS.EXE", "bb6d81471d166088260090472c6c3a87", -1, 400),
 	WINDEMO("jewels", "Demo", "JEWELS.EXE", "abcc448c035e88d4edb4a29034fd1e34", -1, 400),
-	WINDEMO("jewels", "Two-Minute Demo", "DEMO.EXE", "ebee52d3c4280674c600177df5b09da0", -1, 400),
 
 	MACGAME("jman", "Turbo!", "JMP Turbo", "cc3321069072b90f091f220bba16e4d4", -1, 400), // original name is JMP Turbo™
 	MACGAME("jman", "Making Of", "The Journey", "cc3321069072b90f091f220bba16e4d4", -1, 400),
@@ -667,11 +620,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"operafatal", "",
-			{
-				{"OPERA FATAL", 0, "f5033f237ad1b1639fc46d01a82ac380", 285566},
-				{"SPRINT.Dxr", 0, "3e86f01eeac5fa3349c5177378997a7f", 694912},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("OPERA FATAL",	"f5033f237ad1b1639fc46d01a82ac380", 285566,
+					   "SPRINT.Dxr",	"3e86f01eeac5fa3349c5177378997a7f", 694912),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -684,11 +634,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	{
 		{
 			"operafatal", "",
-			{
-				{"OPERA FATAL", 0, "f5033f237ad1b1639fc46d01a82ac380", 285566},
-				{"SPRINT.Dxr", 0, "3eb6f5568c9ced258059e2cfd30751c5", 479616},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("OPERA FATAL",	"f5033f237ad1b1639fc46d01a82ac380", 285566,
+					   "SPRINT.Dxr",	"3eb6f5568c9ced258059e2cfd30751c5", 479616),
 			Common::IT_ITA,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -802,11 +749,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 			// Masters of the Elements - English (from lotharsm)
 
 			"melements", "",
-			{
-				{"check.dxr", 0, "36f42340e819d1532c850880afe16581", 898206},
-				{"Masters of the Elements", 0, 0, 1034962},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("check.dxr", "36f42340e819d1532c850880afe16581", 898206,
+					   "Masters of the Elements", 0, 1034962),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -824,11 +768,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 			// The game disc is a hybrid CD-ROM containing both the Windows and the Macintosh release.
 
 			"melements", "",
-			{
-				{"CHECK.DXR", 0, "c31ee30eebd24a8cf31691fc9926daa4", 901820},
-				{"MVM.EXE", 0, 0, 2565921},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("CHECK.DXR", "c31ee30eebd24a8cf31691fc9926daa4", 901820,
+					   "MVM.EXE", 0, 2565921),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
@@ -843,11 +784,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 			// Masters of the Elements - German (from lotharsm)
 
 			"melements", "",
-			{
-				{"check.dxr", 0, "9c81934b7616ab077f44825b8afaa83e", 575426},
-				{"Meister Zufall", 0, 0, 1034962},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("check.dxr", "9c81934b7616ab077f44825b8afaa83e", 575426,
+					   "Meister Zufall", 0, 1034962),
 			Common::DE_DEU,
 			Common::kPlatformMacintosh,
 			ADGF_MACRESFORK,
@@ -866,11 +804,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 			// The game disc is a hybrid CD-ROM containing both the Windows and the Macintosh release.
 
 			"melements", "",
-			{
-				{"CHECK.DXR", 0, "d1cd0ed95b0e30597e0089bf3e5caf0f", 575414},
-				{"MVM.EXE", 0, 0, 1512503},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("CHECK.DXR", "d1cd0ed95b0e30597e0089bf3e5caf0f", 575414,
+					   "MVM.EXE", 0, 1512503),
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,

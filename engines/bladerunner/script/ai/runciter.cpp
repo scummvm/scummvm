@@ -112,6 +112,8 @@ void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatM
 		Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
 		Actor_Says(kActorRunciter, 420, 12);
 		Actor_Face_Actor(kActorMcCoy, kActorRunciter, true);
+		// TODO revisit setting kActorMcCoy to Combat Aim via Actor_Change_Animation_Mode()
+		//      (see notes in Gordo AI script in his CompletedMovementTrack())
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim);
 		if (Actor_Clue_Query(kActorMcCoy, kClueZubensMotive)) {
 			Actor_Says(kActorMcCoy, 4770, -1);

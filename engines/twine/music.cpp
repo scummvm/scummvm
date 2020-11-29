@@ -130,10 +130,6 @@ bool Music::playTrackMusicCd(int32 track) {
 }
 
 void Music::stopTrackMusicCd() {
-	if (!_engine->cfgfile.UseCD) {
-		return;
-	}
-
 	AudioCDManager *cdrom = g_system->getAudioCDManager();
 	cdrom->stop();
 }
@@ -146,13 +142,16 @@ bool Music::playTrackMusic(int32 track) {
 	if (track == currentMusic) {
 		return true;
 	}
-	currentMusic = track;
 
 	stopMusic();
 	if (playTrackMusicCd(track)) {
+		currentMusic = track;
+		debug("Play cd music track %i", track);
 		return true;
 	}
 	if (playMidiMusic(track)) {
+		currentMusic = track;
+		debug("Play midi music track %i", track);
 		return true;
 	}
 	warning("Failed to play track %i", track);
@@ -197,24 +196,16 @@ bool Music::playMidiMusic(int32 midiIdx, int32 loop) {
 		return false;
 	}
 	_midiPlayer.play(midiPtr, midiSize);
-	debug("Play midi music %i from %s", midiIdx, filename);
 	return true;
 }
 
 void Music::stopMidiMusic() {
-	if (!_engine->cfgfile.Sound) {
-		return;
-	}
-
 	_midiPlayer.stop();
 	free(midiPtr);
 	midiPtr = nullptr;
 }
 
 bool Music::initCdrom() {
-	if (!_engine->cfgfile.Sound) {
-		return false;
-	}
 	AudioCDManager* cdrom = g_system->getAudioCDManager();
 	_engine->cfgfile.UseCD = cdrom->open();
 	return _engine->cfgfile.UseCD;

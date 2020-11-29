@@ -322,6 +322,8 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		return;
 	}
 
+	TriggerParams trigger;
+
 	switch (table->transitionType) {
 	case 0:
 	default:
@@ -330,12 +332,33 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 		setHookIdForMusic(table->hookId);
 		break;
 	case 9:
-		_stopingSequence = 1;
+		// Setup the trigger
+		strcpy(trigger.marker, "_end"); trigger.fadeOutDelay = table->fadeOutDelay;
+		strcpy(trigger.filename, table->filename); trigger.soundId = table->soundId;
+		trigger.hookId = table->hookId; trigger.volume = 127;
+		setTrigger(&trigger);
+
 		setHookIdForMusic(table->hookId);
+		break;
+	case 4:
+		if (table->filename[0] == 0) {
+			fadeOutMusic(60);
+			return;
+		}
+		if (getCurMusicSoundId() == table->soundId)
+			return;
+
+		// Setup the trigger
+		strcpy(trigger.marker, "_end"); trigger.fadeOutDelay = table->fadeOutDelay;
+		strcpy(trigger.filename, table->filename); trigger.soundId = table->soundId;
+		trigger.hookId = table->hookId; trigger.volume = 127;
+		setTrigger(&trigger);
+
+		fadeOutMusic(table->fadeOutDelay);
+		startMusic(table->filename, table->soundId, hookId, 127);
 		break;
 	case 2:
 	case 3:
-	case 4:
 	case 12:
 		if (table->filename[0] == 0) {
 			fadeOutMusic(60);
@@ -352,7 +375,7 @@ void IMuseDigital::playComiMusic(const char *songName, const imuseComiTable *tab
 				(table->attribPos == _comiStateMusicTable[_curMusicState].attribPos)) {
 			fadeOutMusicAndStartNew(table->fadeOutDelay, table->filename, table->soundId);
 		} else if (table->transitionType == 12) {
-			TriggerParams trigger;
+			// Setup the trigger
 			strcpy(trigger.marker, "exit"); trigger.fadeOutDelay = table->fadeOutDelay;
 			strcpy(trigger.filename, table->filename); trigger.soundId = table->soundId;
 			trigger.hookId = table->hookId; trigger.volume = 127;

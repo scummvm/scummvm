@@ -25,6 +25,7 @@
 
 #include "backends/keymapper/keymap.h"
 #include "common/random.h"
+#include "common/rect.h"
 #include "engines/engine.h"
 
 #include "graphics/managed_surface.h"
@@ -49,7 +50,7 @@ namespace TwinE {
 /** Original screen height */
 #define SCREEN_HEIGHT 480
 /** Default frames per second */
-#define DEFAULT_FRAMES_PER_SECOND 19
+#define DEFAULT_FRAMES_PER_SECOND 20
 
 /** Number of colors used in the game */
 #define NUMOFCOLORS 256
@@ -111,6 +112,7 @@ struct ConfigFile {
 	bool WallCollision = false;
 	/** Use original autosaving system or save when you want */
 	bool UseAutoSaving = false;
+	bool Mouse = false;
 
 	// these settings can be changed in-game - and must be persisted
 	/** Shadow mode type, value: all, character only, none */
@@ -161,14 +163,26 @@ struct ScopedEngineFreeze {
 	~ScopedEngineFreeze();
 };
 
+struct ScopedCursor {
+	TwinEEngine* _engine;
+	ScopedCursor(TwinEEngine* engine);
+	~ScopedCursor();
+};
+
 class TwinEEngine : public Engine {
 private:
 	int32 isTimeFreezed = 0;
 	int32 saveFreezedTime = 0;
+	int32 _mouseCursorState = 0;
 	ActorMoveStruct loopMovePtr; // mainLoopVar1
 	PauseToken _pauseToken;
 	TwineGameType _gameType;
 	EngineState _state = EngineState::Menu;
+
+	void processInventoryAction();
+	void processOptionsMenu();
+	/** recenter screen on followed actor automatically */
+	void centerScreenOnActor();
 
 public:
 	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, TwineGameType gameType);
@@ -186,6 +200,9 @@ public:
 	void wipeSaveSlot(int slot);
 	SaveStateList getSaveSlots() const;
 	void autoSave();
+
+	void pushMouseCursorVisible();
+	void popMouseCursorVisible();
 
 	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; };
 	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; };
@@ -293,6 +310,7 @@ public:
 	 * @param bottom bottom position to start copy
 	 */
 	void copyBlockPhys(int32 left, int32 top, int32 right, int32 bottom);
+	void copyBlockPhys(const Common::Rect &rect);
 
 	/** Cross fade feature
 	 * @param buffer screen buffer

@@ -9,6 +9,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for The Longest Journey.
    - Added support for Myst 3: Exile.
    - Added support for Hades' Challenge.
+   - Added support for Little Big Adventure.
+   - Added support for Red Comrades 1: Save the Galaxy.
+   - Added support for Red Comrades 2: For the Great Justice.
 
  General:
    - Switched ScummVM GUI output to UTF-32.
@@ -33,6 +36,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  SAGA:
    - Added support for ITE GOG Mac CD v1.1.
+   - Added support for ITE PC-98 Japanese.
 
  SCI:
    - Added RGB rendering mode (16/32bpp) for SCI0 - SCI1.1 games, which addresses palette
@@ -52,6 +56,9 @@ For a more comprehensive changelog of the latest experimental code, see:
  Tinsel:
    - Enabled the Return to Launcher feature.
 
+ TsAGE:
+   - Added support for uninstalled floppy version.
+
  Stark:
    - Added support for Hungarian translation.
 
@@ -69,6 +76,10 @@ For a more comprehensive changelog of the latest experimental code, see:
  Xeen:
    - Fixed occasional border corruption during fights.
    - Improvements to cutscenes to better match the original games.
+
+ MorphOS port:
+   - Add native system file browser feature
+   - Add Cloud feature
 
 #### 2.2.0 "Interactive Fantasy" (2020-09-27)
 

@@ -39,42 +39,27 @@ namespace Gnap {
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"gnap", "",
-		{
-			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12515823},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("stock_n.dat", "46819043d019a2f36b727cc2bdd6980f", 12515823),
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
 	},
 	{
 		"gnap", "",
-		{
-			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 13497301},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("stock_n.dat", "46819043d019a2f36b727cc2bdd6980f", 13497301),
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
 	},
 	{
 		"gnap", "",
-		{
-			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12995485},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("stock_n.dat", "46819043d019a2f36b727cc2bdd6980f", 12995485),
 		Common::RU_RUS, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
 	},
 	{
 		"gnap", "Fargus",
-		{
-			{"stock_n.dat", 0, "46819043d019a2f36b727cc2bdd6980f", 12847726},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("stock_n.dat", "46819043d019a2f36b727cc2bdd6980f", 12847726),
 		Common::RU_RUS, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
 	},
 	{
 		"gnap", "",
-		{
-			{"stock_n.dat", 0, "9729e1c77a74f2f23c53596fae385bfa", 13428133},
-			AD_LISTEND
-		},
+		AD_ENTRY1s("stock_n.dat", "9729e1c77a74f2f23c53596fae385bfa", 13428133),
 		Common::PL_POL, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO0()
 	},
 

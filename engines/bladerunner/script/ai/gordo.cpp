@@ -130,11 +130,30 @@ void AIScriptGordo::CompletedMovementTrack() {
 			Actor_Force_Stop_Walking(kActorMcCoy);
 			Player_Loses_Control();
 			Player_Set_Combat_Mode(true);
-			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim); // TODO: check this, it was set directly by calling actor script
+			// we need to set McCoy to Combat Aim via callChangeAnimationMode() (which is forced)
+			// Changing the animation to "combat aim" via Actor_Change_Animation_Mode() won't work here
+			// (probably because we just switched to combat mode and animation was just set to combat idle)
+			// Also note that changing the animation via Actor_Says does not work when in combat mode (at all)!
+			// callChangeAnimationMode() does not actually set the _animationMode member for the actor's AI
+			// it just changes the animation, so to return back to idle (while player has not control)
+			// we will call the callChangeAnimationMode() again.
+			// Note the calling the Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatAim) won't work
+			//		and McCoy will still use the Combat Idle animation in that case
+			// see also: kGoalEarlyQNR04McCoyPulledGun for Early Q AI script
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatIdle);
+			_vm->_aiScripts->callChangeAnimationMode(kActorMcCoy, kAnimationModeCombatAim);
 			Actor_Face_Actor(kActorMcCoy, kActorGordo, true);
 			Actor_Face_Actor(kActorGordo, kActorMcCoy, true);
+			if (_vm->_cutContent) {
+				Actor_Says(kActorMcCoy, 460, kAnimationModeCombatAim);
+			}
 			Actor_Says(kActorGordo, 50, 13);
-			Actor_Says(kActorMcCoy, 465, kAnimationModeCombatAim);
+			if (_vm->_cutContent) {
+				_vm->_aiScripts->callChangeAnimationMode(kActorMcCoy, kAnimationModeCombatIdle);
+				Actor_Says(kActorMcCoy, 465, kAnimationModeCombatIdle);
+			} else {
+				Actor_Says(kActorMcCoy, 465, kAnimationModeCombatAim);
+			}
 			Actor_Says(kActorGordo, 60, 14);
 			Player_Set_Combat_Mode(false);
 			Player_Gains_Control();

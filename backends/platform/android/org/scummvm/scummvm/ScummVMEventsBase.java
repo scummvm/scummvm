@@ -171,7 +171,7 @@ public class ScummVMEventsBase implements
 //			default:
 //				actionStr = e.toString();
 //		}
-//		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onKEY:::" + keyCode + " Action::" + actionStr + " View:: " + actionView); // Called
+//		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onKEY:::" + keyCode + " Action::" + actionStr); // Called
 
 		final int action = e.getAction();
 
@@ -216,7 +216,7 @@ public class ScummVMEventsBase implements
 			}
 		}
 
-		if (e.isSystem()) {
+		if (e.isSystem() || keyCode == KeyEvent.KEYCODE_MENU) {
 			// no repeats for system keys
 			if (e.getRepeatCount() > 0) {
 				return false;
@@ -355,7 +355,8 @@ public class ScummVMEventsBase implements
 			break;
 		}
 
-		//_scummvm.displayMessageOnOSD("GetKey: " + keyCode + " unic=" + eventUnicodeChar+ " arg3= " + (eventUnicodeChar& KeyCharacterMap.COMBINING_ACCENT_MASK));
+		//_scummvm.displayMessageOnOSD("GetKey: " + keyCode + " unic=" + eventUnicodeChar+ " arg3= " + (eventUnicodeChar& KeyCharacterMap.COMBINING_ACCENT_MASK) + " meta: " + e.getMetaState());
+		//Log.d(ScummVM.LOG_TAG,"GetKey: " + keyCode + " unic=" + eventUnicodeChar+ " arg3= " + (eventUnicodeChar& KeyCharacterMap.COMBINING_ACCENT_MASK) + " meta: " + e.getMetaState());
 
 		// look in events.cpp for how this is handled
 		_scummvm.pushEvent(type,

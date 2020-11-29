@@ -20,13 +20,13 @@
  *
  */
 
-#ifndef SCI_RESOURCE_PATCHER_H
-#define SCI_RESOURCE_PATCHER_H
+#ifndef SCI_RESOURCE_RESOURCE_PATCHER_H
+#define SCI_RESOURCE_RESOURCE_PATCHER_H
 
 #include "common/language.h"
 #include "sci/sci.h"
-#include "sci/resource.h"
-#include "sci/resource_intern.h"
+#include "sci/resource/resource.h"
+#include "sci/resource/resource_intern.h"
 
 namespace Sci {
 
@@ -148,4 +148,4 @@ private:
 };
 } // End of namespace Sci
 
-#endif
+#endif	// SCI_RESOURCE_RESOURCE_PATCHER_H

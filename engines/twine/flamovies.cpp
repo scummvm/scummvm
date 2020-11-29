@@ -220,7 +220,7 @@ void FlaMovies::processFrame() {
 			sample.dummy = stream.readSByte();
 			sample.x = stream.readByte();
 			sample.y = stream.readByte();
-			_engine->_sound->playFlaSample(sample.sampleNum, sample.freq, sample.repeat, sample.x, sample.y);
+			_engine->_sound->playFlaSample(sample.sampleNum, sample.repeat, sample.x, sample.y);
 			break;
 		}
 		case kStopSample: {

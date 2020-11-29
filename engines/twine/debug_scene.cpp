@@ -39,20 +39,20 @@ void DebugScene::drawBoundingBoxProjectPoints(ScenePoint *pPoint3d, ScenePoint *
 	pPoint3dProjected->y = _engine->_renderer->projPosY;
 	pPoint3dProjected->z = _engine->_renderer->projPosZ;
 
-	if (_engine->_redraw->renderLeft > _engine->_renderer->projPosX) {
-		_engine->_redraw->renderLeft = _engine->_renderer->projPosX;
+	if (_engine->_redraw->renderRect.left > _engine->_renderer->projPosX) {
+		_engine->_redraw->renderRect.left = _engine->_renderer->projPosX;
 	}
 
-	if (_engine->_redraw->renderRight < _engine->_renderer->projPosX) {
-		_engine->_redraw->renderRight = _engine->_renderer->projPosX;
+	if (_engine->_redraw->renderRect.right < _engine->_renderer->projPosX) {
+		_engine->_redraw->renderRect.right = _engine->_renderer->projPosX;
 	}
 
-	if (_engine->_redraw->renderTop > _engine->_renderer->projPosY) {
-		_engine->_redraw->renderTop = _engine->_renderer->projPosY;
+	if (_engine->_redraw->renderRect.top > _engine->_renderer->projPosY) {
+		_engine->_redraw->renderRect.top = _engine->_renderer->projPosY;
 	}
 
-	if (_engine->_redraw->renderBottom < _engine->_renderer->projPosY) {
-		_engine->_redraw->renderBottom = _engine->_renderer->projPosY;
+	if (_engine->_redraw->renderRect.bottom < _engine->_renderer->projPosY) {
+		_engine->_redraw->renderRect.bottom = _engine->_renderer->projPosY;
 	}
 }
 

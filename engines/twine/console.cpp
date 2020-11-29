@@ -40,6 +40,8 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("toggle_freecamera", WRAP_METHOD(TwinEConsole, doToggleFreeCamera));
 	registerCmd("toggle_scenechanges", WRAP_METHOD(TwinEConsole, doToggleSceneChanges));
 	registerCmd("scene_actor", WRAP_METHOD(TwinEConsole, doSkipSceneActorsBut));
+	registerCmd("game_flag", WRAP_METHOD(TwinEConsole, doSetGameFlag));
+	registerCmd("inventory_flag", WRAP_METHOD(TwinEConsole, doSetInventoryFlag));
 }
 
 TwinEConsole::~TwinEConsole() {
@@ -59,9 +61,6 @@ TwinEConsole::~TwinEConsole() {
 
 bool TwinEConsole::doToggleZoneRendering(int argc, const char **argv) {
 	TOGGLE_DEBUG(_engine->_debugScene->showingZones, "zone rendering")
-	if (argc == 1) {
-		// TODO: support typeZones
-	}
 	return true;
 }
 
@@ -86,6 +85,36 @@ bool TwinEConsole::doToggleSceneChanges(int argc, const char **argv) {
 	return true;
 }
 
+bool TwinEConsole::doSetInventoryFlag(int argc, const char **argv) {
+	if (argc <= 1) {
+		warning("Expected to get a inventory flag index as first parameter");
+		return false;
+	}
+
+	const uint8 idx = atoi(argv[1]);
+	if (idx >= NUM_INVENTORY_ITEMS) {
+		warning("given index exceeds the max allowed value of %i", NUM_INVENTORY_ITEMS - 1);
+		return false;
+	}
+	const uint8 val = argc == 3 ? atoi(argv[2]) : 0;
+	_engine->_gameState->inventoryFlags[idx] = val;
+
+	return true;
+}
+
+bool TwinEConsole::doSetGameFlag(int argc, const char **argv) {
+	if (argc <= 1) {
+		warning("Expected to get a game flag index as first parameter");
+		return false;
+	}
+
+	const uint8 idx = atoi(argv[1]);
+	const uint8 val = argc == 3 ? atoi(argv[2]) : 0;
+	_engine->_gameState->gameFlags[idx] = val;
+
+	return true;
+}
+
 bool TwinEConsole::doGiveKey(int argc, const char **argv) {
 	int amount = 1;
 	if (argc >= 1) {
@@ -107,6 +136,7 @@ bool TwinEConsole::doToggleDebug(int argc, const char **argv) {
 }
 
 bool TwinEConsole::doListMenuText(int argc, const char **argv) {
+	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	for (int32 i = 0; i < 1000; ++i) {
 		char buf[256];
 		if (_engine->_text->getMenuText(i, buf, sizeof(buf))) {
@@ -136,6 +166,7 @@ bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
 		_engine->_gameState->gameFlags[i] = 1;
 		_engine->_gameState->inventoryFlags[i] = 1;
 	}
+	_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] = 0;
 	int amount = 10;
 	if (argc > 1) {
 		amount = atoi(argv[1]);

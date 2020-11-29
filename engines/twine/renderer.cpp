@@ -21,8 +21,11 @@
  */
 
 #include "twine/renderer.h"
+#include "common/memstream.h"
+#include "common/stream.h"
 #include "common/textconsole.h"
 #include "common/util.h"
+#include "twine/actor.h"
 #include "twine/interface.h"
 #include "twine/menu.h"
 #include "twine/movements.h"
@@ -157,9 +160,9 @@ void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
 
 	if (renderAngleX) {
 		int32 angle = renderAngleX;
-		int32 angleVar2 = shadeAngleTable[angle & 0x3FF];
-		angle += 0x100;
-		int32 angleVar1 = shadeAngleTable[angle & 0x3FF];
+		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
+		angle += 256;
+		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
 		matrix1[0] = currentMatrix[0];
 		matrix1[3] = currentMatrix[3];
@@ -179,9 +182,9 @@ void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
 
 	if (renderAngleZ) {
 		int32 angle = renderAngleZ;
-		int32 angleVar2 = shadeAngleTable[angle & 0x3FF];
-		angle += 0x100;
-		int32 angleVar1 = shadeAngleTable[angle & 0x3FF];
+		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
+		angle += 256;
+		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
 		matrix2[2] = matrix1[2];
 		matrix2[5] = matrix1[5];
@@ -201,9 +204,9 @@ void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
 
 	if (renderAngleY) {
 		int32 angle = renderAngleY;
-		int32 angleVar2 = shadeAngleTable[angle & 0x3FF]; // esi
-		angle += 0x100;
-		int32 angleVar1 = shadeAngleTable[angle & 0x3FF]; // ecx
+		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
+		angle += 256;
+		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
 		targetMatrix[1] = matrix2[1];
 		targetMatrix[4] = matrix2[4];
@@ -443,7 +446,7 @@ void Renderer::computePolygons(int16 polyRenderType, vertexData *vertices, int32
 		int16 cvalue;
 		int16 cdelta;
 		int16 ypos;
-		int16 xpos;
+		float xpos;
 		if (direction * oldVertexX > direction * currentVertexX) { // if we are going up right
 			xpos = currentVertexX;
 			ypos = currentVertexY;
@@ -458,7 +461,7 @@ void Renderer::computePolygons(int16 polyRenderType, vertexData *vertices, int32
 		}
 		int16 *outPtr = &polyTab[ypos + (up ? SCREEN_HEIGHT : 0)]; // outPtr is the output ptr in the renderTab
 
-		int64 slope = (int64)hsize / (int64)vsize;
+		float slope = (float)hsize / (float)vsize;
 		slope = up ? -slope : slope;
 
 		for (int32  i = 0; i < vsize + 2; i++) {
@@ -487,201 +490,11 @@ void Renderer::computePolygons(int16 polyRenderType, vertexData *vertices, int32
 	}
 }
 
-void Renderer::renderPolygons(int32 renderType, vertexData *vertices, int32 /*numVertices*/, int32 color, int vleft, int vright, int vtop, int vbottom) {
-	uint8 *out2;
-	int32 currentLine;
-
-	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, vtop);
-
-	int16 *ptr1 = &polyTab[vtop];
-	int16 *ptr2 = &polyTab2[vtop];
-
-	int32 vsize = vbottom - vtop;
-	vsize++;
-
-	switch (renderType) {
-	case POLYGONTYPE_FLAT: {
-		currentLine = vtop;
-		do {
-			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				int16 stop = ptr1[SCREEN_HEIGHT];
-				int16 start = ptr1[0];
-
-				ptr1++;
-				int32 hsize = stop - start;
-
-				if (hsize >= 0) {
-					hsize++;
-					out2 = start + out;
-
-					for (int32 j = start; j < hsize + start; j++) {
-						if (j >= 0 && j < SCREEN_WIDTH) {
-							out[j] = color;
-						}
-					}
-				}
-			}
-			out += SCREEN_WIDTH;
-			currentLine++;
-		} while (--vsize);
-		break;
-	}
-	case POLYGONTYPE_COPPER: {
-		currentLine = vtop;
-		do {
-			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				int16 start = ptr1[0];
-				int16 stop = ptr1[SCREEN_HEIGHT];
-
-				ptr1++;
-				int32 hsize = stop - start;
-
-				if (hsize >= 0) {
-					uint16 mask = 0x43DB;
-					uint16 dx;
-					int32 startCopy;
-
-					dx = (uint8)color;
-					dx |= 0x300;
-
-					hsize++;
-					out2 = start + out;
-					startCopy = start;
-
-					for (int32 j = startCopy; j < hsize + startCopy; j++) {
-						start += mask;
-						start = (start & 0xFF00) | ((start & 0xFF) & (uint8)(dx >> 8));
-						start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
-						if (j >= 0 && j < SCREEN_WIDTH) {
-							out[j] = start & 0xFF;
-						}
-						mask = (mask << 2) | (mask >> 14);
-						mask++;
-					}
-				}
-			}
-			out += SCREEN_WIDTH;
-			currentLine++;
-		} while (--vsize);
-		break;
-	}
-	case POLYGONTYPE_BOPPER: { // FIXME: buggy
-		currentLine = vtop;
-		do {
-			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				int16 start = ptr1[0];
-				int16 stop = ptr1[SCREEN_HEIGHT];
-				ptr1++;
-				int32 hsize = stop - start;
-
-				if (hsize >= 0) {
-					hsize++;
-					out2 = start + out;
-					for (int32 j = start; j < hsize + start; j++) {
-						if ((start + (vtop % 1)) & 1) {
-							if (j >= 0 && j < SCREEN_WIDTH) {
-								out[j] = color;
-							}
-						}
-						out2++;
-					}
-				}
-			}
-			out += SCREEN_WIDTH;
-			currentLine++;
-		} while (--vsize);
-		break;
-	}
-	case POLYGONTYPE_MARBLE: { // TODO: implement this
-		break;
-	}
-	case POLYGONTYPE_TELE: { // FIXME: buggy
-		int ax;
-		int bx;
-		unsigned short int dx;
-		unsigned short int temp;
-		bx = (unsigned short)color << 0x10;
-		int32 renderLoop = vsize;
-		do {
-			int16 start;
-			int16 stop;
-			int32 hsize;
-			while (1) {
-				start = ptr1[0];
-				stop = ptr1[SCREEN_HEIGHT];
-				ptr1++;
-				hsize = stop - start;
-
-				if (hsize) {
-					break;
-				}
-
-				out2 = start + out;
-				*out2 = ((unsigned short)(bx >> 0x18)) & 0x0F;
-
-				color = *(out2 + 1);
-
-				out += SCREEN_WIDTH;
-
-				--renderLoop;
-				if (!renderLoop) {
-					return;
-				}
-			}
-
-			if (stop >= start) {
-				hsize++;
-				bx = (unsigned short)(color >> 0x10);
-				out2 = start + out;
-
-				ax = (bx & 0xF0) << 8;
-				bx = bx << 8;
-				ax += (bx & 0x0F);
-				ax -= bx;
-				ax++;
-				ax = ax >> 16;
-
-				ax = ax / hsize;
-				temp = (ax & 0xF0);
-				temp = temp >> 8;
-				temp += (ax & 0x0F);
-				ax = temp;
-
-				dx = ax;
-
-				ax = (ax & 0x0F) + (bx & 0xF0);
-				hsize++;
-
-				if (hsize & 1) {
-					ax = 0; // not sure about this
-				}
-
-				int32 j = hsize >> 1;
-
-				while (1) {
-					*(out2++) = ax & 0x0F;
-					ax += dx;
-
-					--j;
-					if (!j) {
-						break;
-					}
-
-					*(out2++) = ax & 0x0F;
-					ax += dx;
-				}
-			}
-
-			out += SCREEN_WIDTH;
-			--renderLoop;
-
-		} while (renderLoop);
-		break;
-	}
-	case POLYGONTYPE_TRAS: { // FIXME: buggy
-		do {
-			unsigned short int bx;
-
+void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	int32 currentLine = vtop;
+	do {
+		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
 			int16 start = ptr1[0];
 			int16 stop = ptr1[SCREEN_HEIGHT];
 
@@ -689,140 +502,445 @@ void Renderer::renderPolygons(int32 renderType, vertexData *vertices, int32 /*nu
 			int32 hsize = stop - start;
 
 			if (hsize >= 0) {
-				hsize++;
-				out2 = start + out;
+				uint16 mask = 0x43DB;
+				uint16 dx;
+				int32 startCopy;
 
-				if ((hsize >> 1) < 0) {
-					bx = color & 0xFF;
-					bx = bx << 8;
-					bx += color & 0xFF;
+				dx = (uint8)color;
+				dx |= 0x300;
+
+				hsize++;
+				startCopy = start;
+
+				for (int32 j = startCopy; j < hsize + startCopy; j++) {
+					start += mask;
+					start = (start & 0xFF00) | ((start & 0xFF) & (uint8)(dx >> 8));
+					start = (start & 0xFF00) | ((start & 0xFF) + (dx & 0xFF));
+					if (j >= 0 && j < SCREEN_WIDTH) {
+						out[j] = start & 0xFF;
+					}
+					mask = (mask << 2) | (mask >> 14);
+					mask++;
+				}
+			}
+		}
+		out += SCREEN_WIDTH;
+		currentLine++;
+	} while (--vsize);
+}
+
+void Renderer::renderPolygonsBopper(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	int32 currentLine = vtop;
+	do {
+		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+			int16 start = ptr1[0];
+			int16 stop = ptr1[SCREEN_HEIGHT];
+			ptr1++;
+			int32 hsize = stop - start;
+
+			if (hsize >= 0) {
+				hsize++;
+				for (int32 j = start; j < hsize + start; j++) {
+					if ((start + (vtop % 1)) & 1) {
+						if (j >= 0 && j < SCREEN_WIDTH) {
+							out[j] = color;
+						}
+					}
+				}
+			}
+		}
+		out += SCREEN_WIDTH;
+		currentLine++;
+	} while (--vsize);
+}
+
+void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	int32 currentLine = vtop;
+	do {
+		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+			int16 stop = ptr1[SCREEN_HEIGHT];
+			int16 start = ptr1[0];
+
+			ptr1++;
+			int32 hsize = stop - start;
+
+			if (hsize >= 0) {
+				hsize++;
+
+				for (int32 j = start; j < hsize + start; j++) {
+					if (j >= 0 && j < SCREEN_WIDTH) {
+						out[j] = color;
+					}
+				}
+			}
+		}
+		out += SCREEN_WIDTH;
+		currentLine++;
+	} while (--vsize);
+}
+
+void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	int ax;
+	int bx;
+	unsigned short int dx;
+	unsigned short int temp;
+	bx = (unsigned short)color << 0x10;
+	int32 renderLoop = vsize;
+	do {
+		int16 start;
+		int16 stop;
+		int32 hsize;
+		while (1) {
+			start = ptr1[0];
+			stop = ptr1[SCREEN_HEIGHT];
+			ptr1++;
+			hsize = stop - start;
+
+			if (hsize) {
+				break;
+			}
+
+			uint8 *out2 = start + out;
+			*out2 = ((unsigned short)(bx >> 0x18)) & 0x0F;
+
+			color = *(out2 + 1);
+
+			out += SCREEN_WIDTH;
+
+			--renderLoop;
+			if (!renderLoop) {
+				return;
+			}
+		}
+
+		if (stop >= start) {
+			hsize++;
+			bx = (unsigned short)(color >> 0x10);
+			uint8 *out2 = start + out;
+
+			ax = (bx & 0xF0) << 8;
+			bx = bx << 8;
+			ax += (bx & 0x0F);
+			ax -= bx;
+			ax++;
+			ax = ax >> 16;
+
+			ax = ax / hsize;
+			temp = (ax & 0xF0);
+			temp = temp >> 8;
+			temp += (ax & 0x0F);
+			ax = temp;
+
+			dx = ax;
+
+			ax = (ax & 0x0F) + (bx & 0xF0);
+			hsize++;
+
+			if (hsize & 1) {
+				ax = 0; // not sure about this
+			}
+
+			int32 j = hsize >> 1;
+
+			while (1) {
+				*(out2++) = ax & 0x0F;
+				ax += dx;
+
+				--j;
+				if (!j) {
+					break;
+				}
+
+				*(out2++) = ax & 0x0F;
+				ax += dx;
+			}
+		}
+
+		out += SCREEN_WIDTH;
+		--renderLoop;
+
+	} while (renderLoop);
+}
+
+// FIXME: buggy
+void Renderer::renderPolygonsTras(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	do {
+		unsigned short int bx;
+
+		int16 start = ptr1[0];
+		int16 stop = ptr1[SCREEN_HEIGHT];
+
+		ptr1++;
+		int32 hsize = stop - start;
+
+		if (hsize >= 0) {
+			hsize++;
+			uint8 *out2 = start + out;
+
+			if ((hsize >> 1) < 0) {
+				bx = color & 0xFF;
+				bx = bx << 8;
+				bx += color & 0xFF;
+				for (int32 j = 0; j < hsize; j++) {
+					*(out2) = (*(out2)&0x0F0F) | bx;
+				}
+			} else {
+				*(out2) = (*(out2)&0x0F) | color;
+				out2++;
+			}
+		}
+		out += SCREEN_WIDTH;
+	} while (--vsize);
+}
+
+// FIXME: buggy
+void Renderer::renderPolygonTrame(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	unsigned char bh = 0;
+
+	int32 currentLine = vtop;
+	do {
+		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+			int16 start = ptr1[0];
+			int16 stop = ptr1[SCREEN_HEIGHT];
+			ptr1++;
+			int32 hsize = stop - start;
+
+			if (hsize >= 0) {
+				hsize++;
+				uint8 *out2 = start + out;
+
+				hsize /= 2;
+				if (hsize > 1) {
+					uint16 ax;
+					bh ^= 1;
+					ax = (uint16)(*out2);
+					ax &= 1;
+					if (ax ^ bh) {
+						out2++;
+					}
+
 					for (int32 j = 0; j < hsize; j++) {
-						*(out2) = (*(out2)&0x0F0F) | bx;
+						*(out2) = (uint8)color;
+						out2 += 2;
+					}
+				}
+			}
+		}
+		out += SCREEN_WIDTH;
+		currentLine++;
+	} while (--vsize);
+}
+
+void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr2 = &polyTab2[vtop];
+	int32 renderLoop = vsize;
+	int32 currentLine = vtop;
+	do {
+		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+			uint16 startColor = ptr2[0];
+			uint16 stopColor = ptr2[SCREEN_HEIGHT];
+
+			int16 colorSize = stopColor - startColor;
+
+			int16 stop = ptr1[SCREEN_HEIGHT]; // stop
+			int16 start = ptr1[0];  // start
+
+			ptr1++;
+			uint8 *out2 = start + out;
+			int32 hsize = stop - start;
+
+			//varf2 = ptr2[SCREEN_HEIGHT];
+			//varf3 = ptr2[0];
+
+			ptr2++;
+
+			//varf4 = (float)((int32)varf2 - (int32)varf3);
+
+			if (hsize == 0) {
+				if (start >= 0 && start < SCREEN_WIDTH) {
+					*out2 = ((startColor + stopColor) / 2) >> 8; // moyenne des 2 couleurs
+				}
+			} else if (hsize > 0) {
+				if (hsize == 1) {
+					if (start >= -1 && start < SCREEN_WIDTH - 1) {
+						*(out2 + 1) = stopColor >> 8;
+					}
+
+					if (start >= 0 && start < SCREEN_WIDTH) {
+						*(out2) = startColor >> 8;
+					}
+				} else if (hsize == 2) {
+					if (start >= -2 && start < SCREEN_WIDTH - 2) {
+						*(out2 + 2) = stopColor >> 8;
+					}
+
+					if (start >= -1 && start < SCREEN_WIDTH - 1) {
+						*(out2 + 1) = ((startColor + stopColor) / 2) >> 8;
+					}
+
+					if (start >= 0 && start < SCREEN_WIDTH) {
+						*(out2) = startColor >> 8;
 					}
 				} else {
-					*(out2) = (*(out2)&0x0F) | color;
-					out2++;
-				}
-			}
-			out += SCREEN_WIDTH;
-		} while (--vsize);
-		break;
-	}
-	case POLYGONTYPE_TRAME: { // FIXME: buggy
-		unsigned char bh = 0;
-
-		currentLine = vtop;
-		do {
-			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				int16 start = ptr1[0];
-				int16 stop = ptr1[SCREEN_HEIGHT];
-				ptr1++;
-				int32 hsize = stop - start;
-
-				if (hsize >= 0) {
+					int32 currentXPos = start;
+					colorSize /= hsize;
 					hsize++;
-					out2 = start + out;
 
-					hsize /= 2;
-					if (hsize > 1) {
-						uint16 ax;
-						bh ^= 1;
-						ax = (uint16)(*out2);
-						ax &= 1;
-						if (ax ^ bh) {
-							out2++;
+					if (hsize % 2) {
+						hsize /= 2;
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2) = startColor >> 8;
 						}
-
-						for (int32 j = 0; j < hsize; j++) {
-							*(out2) = (uint8)color;
-							out2 += 2;
-						}
+						out2++;
+						currentXPos++;
+						startColor += colorSize;
+					} else {
+						hsize /= 2;
 					}
+
+					do {
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2) = startColor >> 8;
+						}
+
+						currentXPos++;
+						startColor += colorSize;
+
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2 + 1) = startColor >> 8;
+						}
+
+						currentXPos++;
+						out2 += 2;
+						startColor += colorSize;
+					} while (--hsize);
 				}
 			}
-			out += SCREEN_WIDTH;
-			currentLine++;
-		} while (--vsize);
-		break;
-	}
-	case POLYGONTYPE_GOURAUD: {
-		int32 renderLoop = vsize;
-		currentLine = vtop;
-		do {
-			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+		}
+		out += SCREEN_WIDTH;
+		currentLine++;
+	} while (--renderLoop);
+}
+
+void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 color) const {
+	const int16 *ptr1 = &polyTab[vtop];
+	const int16 *ptr2 = &polyTab2[vtop];
+	int32 renderLoop = vsize;
+
+	int32 currentLine = vtop;
+	do {
+		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
+			int16 stop = ptr1[SCREEN_HEIGHT]; // stop
+			int16 start = ptr1[0];  // start
+			ptr1++;
+			int32 hsize = stop - start;
+
+			if (hsize >= 0) {
 				uint16 startColor = ptr2[0];
 				uint16 stopColor = ptr2[SCREEN_HEIGHT];
+				int32 currentXPos = start;
 
-				int16 colorSize = stopColor - startColor;
-
-				int16 stop = ptr1[SCREEN_HEIGHT]; // stop
-				int16 start = ptr1[0];  // start
-
-				ptr1++;
-				out2 = start + out;
-				int32 hsize = stop - start;
-
-				//varf2 = ptr2[SCREEN_HEIGHT];
-				//varf3 = ptr2[0];
-
+				uint8 *out2 = start + out;
 				ptr2++;
 
-				//varf4 = (int64)((int32)varf2 - (int32)varf3);
-
 				if (hsize == 0) {
-					if (start >= 0 && start < SCREEN_WIDTH) {
-						*out2 = ((startColor + stopColor) / 2) >> 8; // moyenne des 2 couleurs
+					if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+						*(out2) = (uint8)(((startColor + stopColor) / 2) >> 8);
 					}
-				} else if (hsize > 0) {
+				} else {
+					int16 colorSize = stopColor - startColor;
 					if (hsize == 1) {
-						if (start >= -1 && start < SCREEN_WIDTH - 1) {
-							*(out2 + 1) = stopColor >> 8;
+						uint16 currentColor = startColor;
+						hsize++;
+						hsize /= 2;
+
+						currentColor &= 0xFF;
+						currentColor += startColor;
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2) = currentColor >> 8;
 						}
 
-						if (start >= 0 && start < SCREEN_WIDTH) {
-							*(out2) = startColor >> 8;
+						currentColor &= 0xFF;
+						startColor += colorSize;
+						currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+						currentColor += startColor;
+
+						currentXPos++;
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2 + 1) = currentColor >> 8;
 						}
 					} else if (hsize == 2) {
-						if (start >= -2 && start < SCREEN_WIDTH - 2) {
-							*(out2 + 2) = stopColor >> 8;
+						uint16 currentColor = startColor;
+						hsize++;
+						hsize /= 2;
+
+						currentColor &= 0xFF;
+						colorSize /= 2;
+						currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+						currentColor += startColor;
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2) = currentColor >> 8;
 						}
 
-						if (start >= -1 && start < SCREEN_WIDTH - 1) {
-							*(out2 + 1) = ((startColor + stopColor) / 2) >> 8;
+						out2++;
+						currentXPos++;
+						startColor += colorSize;
+
+						currentColor &= 0xFF;
+						currentColor += startColor;
+
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2) = currentColor >> 8;
 						}
 
-						if (start >= 0 && start < SCREEN_WIDTH) {
-							*(out2) = startColor >> 8;
+						currentColor &= 0xFF;
+						startColor += colorSize;
+						currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+						currentColor += startColor;
+
+						currentXPos++;
+						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
+							*(out2 + 1) = currentColor >> 8;
 						}
 					} else {
-						int32 currentXPos = start;
+						uint16 currentColor = startColor;
 						colorSize /= hsize;
 						hsize++;
 
 						if (hsize % 2) {
 							hsize /= 2;
+							currentColor &= 0xFF;
+							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+							currentColor += startColor;
 							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2) = startColor >> 8;
+								*(out2) = currentColor >> 8;
 							}
 							out2++;
 							currentXPos++;
-							startColor += colorSize;
 						} else {
 							hsize /= 2;
 						}
 
 						do {
+							currentColor &= 0xFF;
+							currentColor += startColor;
 							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2) = startColor >> 8;
+								*(out2) = currentColor >> 8;
 							}
-
 							currentXPos++;
+							currentColor &= 0xFF;
 							startColor += colorSize;
-
+							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
+							currentColor += startColor;
 							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2 + 1) = startColor >> 8;
+								*(out2 + 1) = currentColor >> 8;
 							}
-
 							currentXPos++;
 							out2 += 2;
 							startColor += colorSize;
@@ -830,382 +948,252 @@ void Renderer::renderPolygons(int32 renderType, vertexData *vertices, int32 /*nu
 					}
 				}
 			}
-			out += SCREEN_WIDTH;
-			currentLine++;
-		} while (--renderLoop);
+		}
+		out += SCREEN_WIDTH;
+		currentLine++;
+	} while (--renderLoop);
+}
+
+void Renderer::renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const {
+}
+
+void Renderer::renderPolygons(int32 renderType, int32 color, int vleft, int vright, int vtop, int vbottom) {
+	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, vtop);
+	const int32 vsize = vbottom - vtop + 1;
+
+	switch (renderType) {
+	case POLYGONTYPE_FLAT:
+		renderPolygonsFlat(out, vtop, vsize, color);
 		break;
-	}
-	case POLYGONTYPE_DITHER: { // dithering
-		int32 renderLoop = vsize;
-
-		currentLine = vtop;
-		do {
-			if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-				int16 stop = ptr1[SCREEN_HEIGHT]; // stop
-				int16 start = ptr1[0];  // start
-				ptr1++;
-				int32 hsize = stop - start;
-
-				if (hsize >= 0) {
-					uint16 startColor = ptr2[0];
-					uint16 stopColor = ptr2[SCREEN_HEIGHT];
-					int32 currentXPos = start;
-
-					out2 = start + out;
-					ptr2++;
-
-					if (hsize == 0) {
-						if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-							*(out2) = (uint8)(((startColor + stopColor) / 2) >> 8);
-						}
-					} else {
-						int16 colorSize = stopColor - startColor;
-						if (hsize == 1) {
-							uint16 currentColor = startColor;
-							hsize++;
-							hsize /= 2;
-
-							currentColor &= 0xFF;
-							currentColor += startColor;
-							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2) = currentColor >> 8;
-							}
-
-							currentColor &= 0xFF;
-							startColor += colorSize;
-							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-							currentColor += startColor;
-
-							currentXPos++;
-							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2 + 1) = currentColor >> 8;
-							}
-						} else if (hsize == 2) {
-							uint16 currentColor = startColor;
-							hsize++;
-							hsize /= 2;
-
-							currentColor &= 0xFF;
-							colorSize /= 2;
-							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-							currentColor += startColor;
-							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2) = currentColor >> 8;
-							}
-
-							out2++;
-							currentXPos++;
-							startColor += colorSize;
-
-							currentColor &= 0xFF;
-							currentColor += startColor;
-
-							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2) = currentColor >> 8;
-							}
-
-							currentColor &= 0xFF;
-							startColor += colorSize;
-							currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-							currentColor += startColor;
-
-							currentXPos++;
-							if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-								*(out2 + 1) = currentColor >> 8;
-							}
-						} else {
-							uint16 currentColor = startColor;
-							colorSize /= hsize;
-							hsize++;
-
-							if (hsize % 2) {
-								hsize /= 2;
-								currentColor &= 0xFF;
-								currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-								currentColor += startColor;
-								if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-									*(out2) = currentColor >> 8;
-								}
-								out2++;
-								currentXPos++;
-							} else {
-								hsize /= 2;
-							}
-
-							do {
-								currentColor &= 0xFF;
-								currentColor += startColor;
-								if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-									*(out2) = currentColor >> 8;
-								}
-								currentXPos++;
-								currentColor &= 0xFF;
-								startColor += colorSize;
-								currentColor = ((currentColor & (0xFF00)) | ((((currentColor & 0xFF) << (hsize & 0xFF))) & 0xFF));
-								currentColor += startColor;
-								if (currentXPos >= 0 && currentXPos < SCREEN_WIDTH) {
-									*(out2 + 1) = currentColor >> 8;
-								}
-								currentXPos++;
-								out2 += 2;
-								startColor += colorSize;
-							} while (--hsize);
-						}
-					}
-				}
-			}
-			out += SCREEN_WIDTH;
-			currentLine++;
-		} while (--renderLoop);
+	case POLYGONTYPE_COPPER:
+		renderPolygonsCopper(out, vtop, vsize, color);
 		break;
-	}
-	default: {
+	case POLYGONTYPE_BOPPER:
+		renderPolygonsBopper(out, vtop, vsize, color);
+		break;
+	case POLYGONTYPE_TELE:
+		renderPolygonsTele(out, vtop, vsize, color);
+		break;
+	case POLYGONTYPE_TRAS:
+		renderPolygonsTras(out, vtop, vsize, color);
+		break;
+	case POLYGONTYPE_TRAME:
+		renderPolygonTrame(out, vtop, vsize, color);
+		break;
+	case POLYGONTYPE_GOURAUD:
+		renderPolygonsGouraud(out, vtop, vsize, color);
+		break;
+	case POLYGONTYPE_DITHER:
+		renderPolygonsDither(out, vtop, vsize, color);
+		break;
+	case POLYGONTYPE_MARBLE:
+		renderPolygonsMarble(out, vtop, vsize, color);
+		break;
+	default:
 		warning("RENDER WARNING: Unsuported render type %d", renderType);
 		break;
 	}
-	};
 }
 
-void Renderer::renderPolygons(int32 polyRenderType, int32 color) {
+void Renderer::renderPolygons(const polyHeader &polyHeader) {
 	int vleft = 0;
 	int vright = 0;
 	int vtop = 0;
 	int vbottom = 0;
 	vertexData *vertices = (vertexData *)vertexCoordinates;
-	computePolygons(polyRenderType, vertices, numOfVertex, vleft, vright, vtop, vbottom);
-	renderPolygons(polyRenderType, vertices, numOfVertex, color, vleft, vright, vtop, vbottom);
+	computePolygons(polyHeader.renderType, vertices, polyHeader.numOfVertex, vleft, vright, vtop, vbottom);
+	renderPolygons(polyHeader.renderType, polyHeader.colorIndex, vleft, vright, vtop, vbottom);
 }
 
-void Renderer::circleFill(int32 x, int32 y, int32 radius, int8 color) {
+void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 color) {
 	radius += 1;
 
 	for (int32 currentLine = -radius; currentLine <= radius; currentLine++) {
 		double width;
 
 		if (ABS(currentLine) != radius) {
-			width = sin(acos((int64)currentLine / (int64)radius));
+			width = ABS(sin(acos((float)currentLine / (float)radius)) * radius);
 		} else {
-			width = 0;
-		}
-
-		width *= radius;
-
-		if (width < 0) {
-			width = -width;
+			width = 0.0;
 		}
 
 		_engine->_interface->drawLine((int32)(x - width), currentLine + y, (int32)(x + width), currentLine + y, color);
 	}
 }
 
-int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, renderTabEntry **renderTabEntryPtr) {
-	int16 counter;
-	int16 type;
-
-	int32 bestDepth;
-	int32 currentDepth;
-	int32 bestPoly = 0;
-	//	int32 ecx;
-
-	pointTab *currentVertex;
-
-	// prepare polygons
+int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTabEntry **renderTabEntryPtr) {
+	// TODO: proper size
+	Common::MemoryReadStream stream(ptr, 100000);
+	int16 numPolygons = stream.readSint16LE();
 
 	uint8 *edi = renderTab7;           // renderTab7 coordinates buffer
-	int16 temp = *((const int16 *)pointer); // we read the number of polygons
-	pointer += 2;
 
-	uint8 *renderV19 = nullptr; // RECHECK THIS
+	uint8 *afterPolyHeaderPtr = nullptr; // RECHECK THIS
 
-	if (temp) {
-		int16 primitiveCounter = temp; // the number of primitives = the number of polygons
+	if (numPolygons > 0) {
+		int16 primitiveCounter = numPolygons; // the number of primitives = the number of polygons
 
 		do { // loop that load all the polygons
 			uint8 *render23 = edi;
-			const polyHeader *currentPolyHeader = (const polyHeader *)pointer;
-			//ecx = *((int32*) pointer);
-			pointer += 2;
-			int16 polyRenderType = currentPolyHeader->renderType;
+			polyHeader currentPolyHeader;
+			currentPolyHeader.renderType = stream.readByte();
+			currentPolyHeader.numOfVertex = stream.readByte();
+			currentPolyHeader.colorIndex = stream.readSint16LE();
+			int16 polyRenderType = currentPolyHeader.renderType;
+			int32 bestDepth = -32000;
 
 			// TODO: RECHECK coordinates axis
 			if (polyRenderType >= 9) {
 				polyHeader *destinationHeader = (polyHeader *)edi;
 
-				destinationHeader->renderType = currentPolyHeader->renderType - 2;
-				destinationHeader->numOfVertex = currentPolyHeader->numOfVertex;
-				destinationHeader->colorIndex = currentPolyHeader->colorIndex;
+				destinationHeader->renderType = currentPolyHeader.renderType - 2;
+				destinationHeader->numOfVertex = currentPolyHeader.numOfVertex;
+				destinationHeader->colorIndex = currentPolyHeader.colorIndex;
 
-				pointer += 2;
 				edi += 4;
 
-				counter = destinationHeader->numOfVertex;
+				int16 counter = destinationHeader->numOfVertex;
 
-				bestDepth = -32000;
-				renderV19 = edi;
+				afterPolyHeaderPtr = edi;
 
 				do {
-					const polyVertexHeader *currentPolyVertex = (const polyVertexHeader *)pointer;
+					polyVertexHeader currentPolyVertex;
+					currentPolyVertex.shadeEntry = stream.readSint16LE();
+					currentPolyVertex.dataOffset = stream.readSint16LE();
 
-					int16 shadeValue = currentPolyHeader->colorIndex + shadeTable[currentPolyVertex->shadeEntry];
+					int16 shadeValue = currentPolyHeader.colorIndex + shadeTable[currentPolyVertex.shadeEntry];
 
 					computedVertex *currentComputedVertex = (computedVertex *)edi;
 
 					currentComputedVertex->shadeValue = shadeValue;
 
-					currentVertex = &flattenPoints[currentPolyVertex->dataOffset / sizeof(pointTab)];
-					pointTab *destinationVertex = (pointTab *)(edi + 2);
+					pointTab *currentVertex = &flattenPoints[currentPolyVertex.dataOffset / sizeof(pointTab)];
 
-					destinationVertex->x = currentVertex->x;
-					destinationVertex->y = currentVertex->y;
+					currentComputedVertex->x = currentVertex->x;
+					currentComputedVertex->y = currentVertex->y;
 
-					edi += sizeof(pointTab);
-					pointer += 4;
+					edi += 6;
 
-					currentDepth = currentVertex->z;
-
+					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
-				} while (--counter);
+				} while (--counter > 0);
 			} else if (polyRenderType >= POLYGONTYPE_GOURAUD) { // only 1 shade value is used
 				polyHeader *destinationHeader = (polyHeader *)edi;
 
-				destinationHeader->renderType = currentPolyHeader->renderType - 7;
-				destinationHeader->numOfVertex = currentPolyHeader->numOfVertex;
-
-				int16 color = currentPolyHeader->colorIndex;
-
-				int16 shadeEntry = *((const int16 *)(pointer + 2));
-
-				pointer += 4;
-
-				*((int16 *)(edi + 2)) = color + shadeTable[shadeEntry];
+				destinationHeader->renderType = currentPolyHeader.renderType - 7;
+				destinationHeader->numOfVertex = currentPolyHeader.numOfVertex;
+				const int16 shadeEntry = stream.readSint16LE();
+				const int16 shadeValue = currentPolyHeader.colorIndex + shadeTable[shadeEntry];
+				destinationHeader->colorIndex = shadeValue;
 
 				edi += 4;
-				renderV19 = edi;
-				bestDepth = -32000;
-				counter = destinationHeader->numOfVertex;
+				afterPolyHeaderPtr = edi;
+				int16 counter = destinationHeader->numOfVertex;
 
 				do {
-					int32 eax = *((const int16 *)pointer);
-					pointer += 2;
+					int32 eax = stream.readSint16LE();
 
-					currentVertex = &flattenPoints[eax / sizeof(pointTab)];
+					pointTab *currentVertex = &flattenPoints[eax / sizeof(pointTab)];
 
-					pointTab *destinationVertex = (pointTab *)(edi + 2);
+					computedVertex *currentComputedVertex = (computedVertex *)edi;
+					//currentComputedVertex->shadeValue = 0;
+					currentComputedVertex->x = currentVertex->x;
+					currentComputedVertex->y = currentVertex->y;
 
-					destinationVertex->x = currentVertex->x;
-					destinationVertex->y = currentVertex->y;
+					edi += 6;
 
-					edi += sizeof(pointTab);
-
-					currentDepth = currentVertex->z;
-
+					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
-				} while (--counter);
+				} while (--counter > 0);
 			} else { // no shade is used
 				polyHeader *destinationHeader = (polyHeader *)edi;
 
-				destinationHeader->renderType = currentPolyHeader->renderType;
-				destinationHeader->numOfVertex = currentPolyHeader->numOfVertex;
-				destinationHeader->colorIndex = currentPolyHeader->colorIndex;
+				destinationHeader->renderType = currentPolyHeader.renderType;
+				destinationHeader->numOfVertex = currentPolyHeader.numOfVertex;
+				destinationHeader->colorIndex = currentPolyHeader.colorIndex;
 
-				pointer += 2;
 				edi += 4;
 
-				bestDepth = -32000;
-				renderV19 = edi;
+				afterPolyHeaderPtr = edi;
 				int32 eax = 0;
-				counter = currentPolyHeader->numOfVertex;
+				int16 counter = currentPolyHeader.numOfVertex;
 
 				do {
-					eax = *((const int16 *)pointer);
-					pointer += 2;
+					eax = stream.readSint16LE();
 
-					currentVertex = &flattenPoints[eax / sizeof(pointTab)];
+					pointTab *currentVertex = &flattenPoints[eax / sizeof(pointTab)];
 
-					pointTab *destinationVertex = (pointTab *)(edi + 2);
+					computedVertex *currentComputedVertex = (computedVertex *)edi;
+					//currentComputedVertex->shadeValue = 0;
+					currentComputedVertex->x = currentVertex->x;
+					currentComputedVertex->y = currentVertex->y;
 
-					destinationVertex->x = currentVertex->x;
-					destinationVertex->y = currentVertex->y;
+					edi += 6;
 
-					edi += sizeof(pointTab);
-
-					currentDepth = currentVertex->z;
-
+					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
 						bestDepth = currentDepth;
 					}
-				} while (--(counter));
+				} while (--counter > 0);
 			}
 
-			uint8 *render24 = edi;
-			edi = renderV19;
+			int16 ax = *((const int16 *)(afterPolyHeaderPtr + 4));
+			int16 bx = *((const int16 *)(afterPolyHeaderPtr + 8));
 
-			int32 render25 = bestDepth;
-
-			int16 ax = *((const int16 *)(edi + 4));
-			int16 bx = *((const int16 *)(edi + 8));
-
-			ax -= *((const int16 *)(edi + 16));
-			bx -= *((const int16 *)(edi + 2));
+			ax -= *((const int16 *)(afterPolyHeaderPtr + 16));
+			bx -= *((const int16 *)(afterPolyHeaderPtr + 2));
 
 			ax *= bx;
 
-			bestDepth = ax;
-			bx = currentDepth;
+			int32 bestDepth2 = ax;
 
-			ax = *((const int16 *)(edi + 2));
-			int16 cx = *((const int16 *)(edi + 10));
+			ax = *((const int16 *)(afterPolyHeaderPtr + 2));
+			int16 cx = *((const int16 *)(afterPolyHeaderPtr + 10));
 
-			ax -= *((const int16 *)(edi + 14));
-			cx -= *((const int16 *)(edi + 4));
+			ax -= *((const int16 *)(afterPolyHeaderPtr + 14));
+			cx -= *((const int16 *)(afterPolyHeaderPtr + 4));
 
 			ax *= cx;
+			ax -= bestDepth2;
 
-			ax -= bestDepth;
-			currentDepth -= (bx)-1; // peut-etre une erreur la
+			numOfPrimitives++;
 
-			if (currentDepth < 0) {
-				edi = render23;
-			} else {
-				numOfPrimitives++;
-
-				(*renderTabEntryPtr)->depth = render25;
-				(*renderTabEntryPtr)->renderType = 1;
-				(*renderTabEntryPtr)->dataPtr = render23;
-				(*renderTabEntryPtr)++;
-
-				edi = render24;
-			}
+			(*renderTabEntryPtr)->depth = bestDepth;
+			(*renderTabEntryPtr)->renderType = 1;
+			(*renderTabEntryPtr)->dataPtr = render23;
+			(*renderTabEntryPtr)++;
 		} while (--primitiveCounter);
 	}
 
 	// prepare lines
 
-	temp = *((const int16 *)pointer);
-	pointer += 2;
+	int16 temp = stream.readSint16LE();
 	if (temp) {
 		numOfPrimitives += temp;
 		do {
-			const lineData *lineDataPtr = (const lineData *)pointer;
+			lineData line;
+			line.colorIndex = stream.readByte();
+			stream.skip(3);
+			line.p1 = stream.readSint16LE();
+			line.p2 = stream.readSint16LE();
 			lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)edi;
 
-			if (*((const int16 *)&lineDataPtr->p1) % 6 != 0 || *((const int16 *)&lineDataPtr->p2) % 6 != 0) {
+			if (line.p1 % 6 != 0 || line.p2 % 6 != 0) {
 				error("RENDER ERROR: lineDataPtr reference is malformed!");
 			}
 
-			const int32 point1 = *((const int16 *)&lineDataPtr->p1) / 6;
-			const int32 point2 = *((const int16 *)&lineDataPtr->p2) / 6;
-			const int32 param = *((const int32 *)&lineDataPtr->data);
-			*((int32 *)&lineCoordinatesPtr->data) = param;
-			*((int16 *)&lineCoordinatesPtr->x1) = flattenPoints[point1].x;
-			*((int16 *)&lineCoordinatesPtr->y1) = flattenPoints[point1].y;
-			*((int16 *)&lineCoordinatesPtr->x2) = flattenPoints[point2].x;
-			*((int16 *)&lineCoordinatesPtr->y2) = flattenPoints[point2].y;
-			bestDepth = flattenPoints[point1].z;
+			const int32 point1 = line.p1 / 6;
+			const int32 point2 = line.p2 / 6;
+			lineCoordinatesPtr->colorIndex = line.colorIndex;
+			lineCoordinatesPtr->x1 = flattenPoints[point1].x;
+			lineCoordinatesPtr->y1 = flattenPoints[point1].y;
+			lineCoordinatesPtr->x2 = flattenPoints[point2].x;
+			lineCoordinatesPtr->y2 = flattenPoints[point2].y;
+			int32 bestDepth = flattenPoints[point1].z;
 			int32 depth = flattenPoints[point2].z;
 
 			if (depth >= bestDepth) {
@@ -1217,21 +1205,20 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 			(*renderTabEntryPtr)->dataPtr = edi;
 			(*renderTabEntryPtr)++;
 
-			pointer += 8;
 			edi += 12;
 		} while (--temp);
 	}
 
 	// prepare spheres
-
-	temp = *((const int16 *)pointer);
-	pointer += 2;
+	temp = stream.readSint16LE();
 	if (temp) {
 		numOfPrimitives += temp;
 		do {
-			uint8 color2 = *(pointer + 1);
-			int16 center = *((const uint16 *)(pointer + 6));
-			int16 size = *((const uint16 *)(pointer + 4));
+			stream.skip(1);
+			uint8 color2 = stream.readByte();
+			stream.skip(2);
+			int16 size = stream.readUint16LE();
+			int16 center = stream.readUint16LE();
 
 			*(uint8 *)edi = color2;
 			*((int16 *)(edi + 1)) = flattenPoints[center / sizeof(pointTab)].x;
@@ -1243,7 +1230,6 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 			(*renderTabEntryPtr)->dataPtr = edi;
 			(*renderTabEntryPtr)++;
 
-			pointer += 8;
 			edi += 7;
 		} while (--temp);
 	}
@@ -1251,6 +1237,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 	const renderTabEntry *renderTabEntryPtr2 = renderTab;
 
 	renderTabEntry *renderTabSortedPtr = renderTabSorted;
+	int32 bestPoly = 0;
 	for (int32 i = 0; i < numOfPrimitives; i++) { // then we sort the polygones | WARNING: very slow | TODO: improve this
 		renderTabEntryPtr2 = renderTab;
 		int16 bestZ = -0x7FFF;
@@ -1272,52 +1259,55 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 	// prepare to render elements
 
 	if (numOfPrimitives == 0) {
-		_engine->_redraw->renderRight = -1;
-		_engine->_redraw->renderBottom = -1;
-		_engine->_redraw->renderLeft = -1;
-		_engine->_redraw->renderTop = -1;
+		_engine->_redraw->renderRect.right = -1;
+		_engine->_redraw->renderRect.bottom = -1;
+		_engine->_redraw->renderRect.left = -1;
+		_engine->_redraw->renderRect.top = -1;
 		return -1;
 	}
 
 	int16 primitiveCounter = numOfPrimitives;
-	renderV19 = pointer;
+	afterPolyHeaderPtr = ptr + stream.pos();
 
 	do {
-		type = renderTabEntryPtr2->renderType;
-		pointer = renderTabEntryPtr2->dataPtr;
-		renderV19 += 8;
+		int16 type = renderTabEntryPtr2->renderType;
+		uint8 *pointer = renderTabEntryPtr2->dataPtr;
+		afterPolyHeaderPtr += 8;
 
 		switch (type) {
 		case RENDERTYPE_DRAWLINE: { // draw a line
-			const lineCoordinates *lineCoordinatesPtr = (const lineCoordinates *)pointer;
-			int16 color = (*((const int32 *)&lineCoordinatesPtr->data) & 0xFF00) >> 8;
-
-			const int32 x1 = *((const int16 *)&lineCoordinatesPtr->x1);
-			const int32 y1 = *((const int16 *)&lineCoordinatesPtr->y1);
-			const int32 x2 = *((const int16 *)&lineCoordinatesPtr->x2);
-			const int32 y2 = *((const int16 *)&lineCoordinatesPtr->y2);
-
-			_engine->_interface->drawLine(x1, y1, x2, y2, color);
+			Common::MemoryReadStream typeStream(pointer, 12);
+			lineCoordinates lineCoords;
+			lineCoords.colorIndex = typeStream.readByte();
+			typeStream.skip(3);
+			lineCoords.x1 = typeStream.readSint16LE();
+			lineCoords.y1 = typeStream.readSint16LE();
+			lineCoords.x2 = typeStream.readSint16LE();
+			lineCoords.y2 = typeStream.readSint16LE();
+			const int32 x1 = lineCoords.x1;
+			const int32 y1 = lineCoords.y1;
+			const int32 x2 = lineCoords.x2;
+			const int32 y2 = lineCoords.y2;
+			_engine->_interface->drawLine(x1, y1, x2, y2, lineCoords.colorIndex);
 			break;
 		}
 		case RENDERTYPE_DRAWPOLYGON: { // draw a polygon
-			int32 eax = *((const int *)pointer);
-			pointer += 4;
-
-			int16 polyRenderType = eax & 0xFF;
-			numOfVertex = (eax & 0xFF00) >> 8;
-			int16 color = (eax & 0xFF0000) >> 16;
+			// TODO: size
+			Common::MemoryReadStream typeStream(pointer, 10000);
+			polyHeader polyHeader;
+			polyHeader.renderType = typeStream.readByte();
+			polyHeader.numOfVertex = typeStream.readByte();
+			polyHeader.colorIndex = typeStream.readByte();
+			typeStream.skip(1);
 
 			uint8 *destPtr = (uint8 *)vertexCoordinates;
-
-			for (int32 i = 0; i < (numOfVertex * 3); i++) {
-				*((int16 *)destPtr) = *((const int16 *)pointer);
+			const int32 triangleCount = polyHeader.numOfVertex * 3;
+			for (int32 i = 0; i < triangleCount; i++) {
+				*((int16 *)destPtr) = typeStream.readSint16LE();
 				destPtr += 2;
-				pointer += 2;
 			}
 
-			renderPolygons(polyRenderType, color);
-
+			renderPolygons(polyHeader);
 			break;
 		}
 		case RENDERTYPE_DRAWSPHERE: { // draw a sphere
@@ -1334,20 +1324,20 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 
 			circleParam3 += 3;
 
-			if (circleParam4 + circleParam3 > _engine->_redraw->renderRight) {
-				_engine->_redraw->renderRight = circleParam4 + circleParam3;
+			if (circleParam4 + circleParam3 > _engine->_redraw->renderRect.right) {
+				_engine->_redraw->renderRect.right = circleParam4 + circleParam3;
 			}
 
-			if (circleParam4 - circleParam3 < _engine->_redraw->renderLeft) {
-				_engine->_redraw->renderLeft = circleParam4 - circleParam3;
+			if (circleParam4 - circleParam3 < _engine->_redraw->renderRect.left) {
+				_engine->_redraw->renderRect.left = circleParam4 - circleParam3;
 			}
 
-			if (circleParam5 + circleParam3 > _engine->_redraw->renderBottom) {
-				_engine->_redraw->renderBottom = circleParam5 + circleParam3;
+			if (circleParam5 + circleParam3 > _engine->_redraw->renderRect.bottom) {
+				_engine->_redraw->renderRect.bottom = circleParam5 + circleParam3;
 			}
 
-			if (circleParam5 - circleParam3 < _engine->_redraw->renderTop) {
-				_engine->_redraw->renderTop = circleParam5 - circleParam3;
+			if (circleParam5 - circleParam3 < _engine->_redraw->renderRect.top) {
+				_engine->_redraw->renderRect.top = circleParam5 - circleParam3;
 			}
 
 			circleParam3 -= 3;
@@ -1359,7 +1349,6 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *pointer, rende
 			break;
 		}
 
-		pointer = renderV19;
 		renderTabEntryPtr2++;
 	} while (--primitiveCounter);
 	return 0;
@@ -1423,18 +1412,18 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEnt
 			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / 512 + orthoProjY;
 			pointPtrDest->z = coZ - coX - coY;
 
-			if (pointPtrDest->x < _engine->_redraw->renderLeft) {
-				_engine->_redraw->renderLeft = pointPtrDest->x;
+			if (pointPtrDest->x < _engine->_redraw->renderRect.left) {
+				_engine->_redraw->renderRect.left = pointPtrDest->x;
 			}
-			if (pointPtrDest->x > _engine->_redraw->renderRight) {
-				_engine->_redraw->renderRight = pointPtrDest->x;
+			if (pointPtrDest->x > _engine->_redraw->renderRect.right) {
+				_engine->_redraw->renderRect.right = pointPtrDest->x;
 			}
 
-			if (pointPtrDest->y < _engine->_redraw->renderTop) {
-				_engine->_redraw->renderTop = pointPtrDest->y;
+			if (pointPtrDest->y < _engine->_redraw->renderRect.top) {
+				_engine->_redraw->renderRect.top = pointPtrDest->y;
 			}
-			if (pointPtrDest->y > _engine->_redraw->renderBottom) {
-				_engine->_redraw->renderBottom = pointPtrDest->y;
+			if (pointPtrDest->y > _engine->_redraw->renderRect.bottom) {
+				_engine->_redraw->renderRect.bottom = pointPtrDest->y;
 			}
 
 			pointPtr++;
@@ -1462,12 +1451,12 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEnt
 
 				pointPtrDest->x = coX;
 
-				if (pointPtrDest->x < _engine->_redraw->renderLeft) {
-					_engine->_redraw->renderLeft = pointPtrDest->x;
+				if (pointPtrDest->x < _engine->_redraw->renderRect.left) {
+					_engine->_redraw->renderRect.left = pointPtrDest->x;
 				}
 
-				if (pointPtrDest->x > _engine->_redraw->renderRight) {
-					_engine->_redraw->renderRight = pointPtrDest->x;
+				if (pointPtrDest->x > _engine->_redraw->renderRect.right) {
+					_engine->_redraw->renderRect.right = pointPtrDest->x;
 				}
 			}
 
@@ -1481,10 +1470,10 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEnt
 
 				pointPtrDest->y = coY;
 
-				if (pointPtrDest->y < _engine->_redraw->renderTop)
-					_engine->_redraw->renderTop = pointPtrDest->y;
-				if (pointPtrDest->y > _engine->_redraw->renderBottom)
-					_engine->_redraw->renderBottom = pointPtrDest->y;
+				if (pointPtrDest->y < _engine->_redraw->renderRect.top)
+					_engine->_redraw->renderRect.top = pointPtrDest->y;
+				if (pointPtrDest->y > _engine->_redraw->renderRect.bottom)
+					_engine->_redraw->renderRect.bottom = pointPtrDest->y;
 			}
 
 			// Z projection
@@ -1611,10 +1600,10 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 	renderAngleZ = angleZ;
 
 	// model render size reset
-	_engine->_redraw->renderLeft = 32767;
-	_engine->_redraw->renderTop = 32767;
-	_engine->_redraw->renderRight = -32767;
-	_engine->_redraw->renderBottom = -32767;
+	_engine->_redraw->renderRect.left = 32767;
+	_engine->_redraw->renderRect.top = 32767;
+	_engine->_redraw->renderRect.right = -32767;
+	_engine->_redraw->renderRect.bottom = -32767;
 
 	if (isUsingOrhoProjection) {
 		renderX = x;
@@ -1687,6 +1676,10 @@ void Renderer::copyActorInternAnim(const uint8 *bodyPtrSrc, uint8 *bodyPtrDest) 
 	}
 }
 
+void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, uint8 *entityPtr) {
+	renderBehaviourModel(rect.left, rect.top, rect.right, rect.bottom, y, angle, entityPtr);
+}
+
 void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, uint8 *entityPtr) {
 	int32 tmpBoxRight = boxRight;
 
@@ -1697,12 +1690,13 @@ void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight,
 	xpos >>= 1;
 
 	setOrthoProjection(xpos, ypos, 0);
-	_engine->_interface->setClip(boxLeft, boxTop, tmpBoxRight, boxBottom);
+	_engine->_interface->setClip(Common::Rect(boxLeft, boxTop, tmpBoxRight, boxBottom));
 
 	if (angle == -1) {
-		const int16 newAngle = _engine->_movements->getRealAngle(&_engine->_menu->moveMenu);
-		if (_engine->_menu->moveMenu.numOfStep == 0) {
-			_engine->_movements->setActorAngleSafe(newAngle, newAngle - 256, 50, &_engine->_menu->moveMenu);
+		ActorMoveStruct &move = _engine->_menu->moveMenu;
+		const int16 newAngle = move.getRealAngle(_engine->lbaTime);
+		if (move.numOfStep == 0) {
+			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, 50, &move);
 		}
 		renderIsoModel(0, y, 0, 0, newAngle, 0, entityPtr);
 	} else {

@@ -2,18 +2,18 @@
 amigaosdist: $(EXECUTABLE) $(PLUGINS)
 	mkdir -p $(AMIGAOSPATH)
 	mkdir -p $(AMIGAOSPATH)/extras
-	cp ${srcdir}/dists/amiga/scummvm_drawer.info $(AMIGAOSPATH).info
-	cp ${srcdir}/dists/amiga/scummvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info
+	cp ${srcdir}/dists/amigaos/scummvm_drawer.info $(AMIGAOSPATH).info
+	cp ${srcdir}/dists/amigaos/scummvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info
 ifdef DIST_FILES_DOCS
 	mkdir -p $(AMIGAOSPATH)/doc
 	cp -r $(srcdir)/doc/ $(AMIGAOSPATH)
 	cp $(DIST_FILES_DOCS) $(AMIGAOSPATH)/doc/
 	# Prepare README.md for AmigaGuide conversion.
-	cat ${srcdir}/README.md | sed -f ${srcdir}/dists/amiga/convertRM.sed > README.conv
+	cat ${srcdir}/README.md | sed -f ${srcdir}/dists/amigaos/convertRM.sed > README.conv
 	# AmigaOS AREXX has a problem when ${srcdir} is '.'.
 	# It will break with a "Program not found" error.
 	# Copy the script to cwd and, once it has finished, remove it.
-	cp ${srcdir}/dists/amiga/RM2AG.rexx .
+	cp ${srcdir}/dists/amigaos/RM2AG.rexx .
 	rx RM2AG.rexx README.conv $(AMIGAOSPATH)/doc/
 	rm README.conv
 	rm RM2AG.rexx
@@ -40,7 +40,7 @@ ifdef DYNAMIC_MODULES
 	# Not every AmigaOS installation, especially vanilla ones,
 	# come with every mandatory shared library.
 	mkdir -p $(AMIGAOSPATH)/sobjs
-	cp ${srcdir}/dists/amiga/Ext_Inst_so.rexx .
+	cp ${srcdir}/dists/amigaos/Ext_Inst_so.rexx .
 	rx Ext_Inst_so.rexx $(EXECUTABLE) $(AMIGAOSPATH)
 	rm Ext_Inst_so.rexx
 endif

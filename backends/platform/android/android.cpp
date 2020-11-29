@@ -343,8 +343,6 @@ void OSystem_Android::initBackend() {
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 	ConfMan.registerDefault("filtering", false);
-	ConfMan.registerDefault("touchpad_mouse_mode", true);
-	ConfMan.registerDefault("onscreen_control", true);
 	ConfMan.registerDefault("autosave_period", 0);
 
 	// explicitly set this, since fullscreen cannot be changed from GUI
@@ -369,16 +367,6 @@ void OSystem_Android::initBackend() {
 	//       the default used by OSystem::setStretchMode() (common/system.h)
 	//       is the one returned by getDefaultStretchMode() (backends/graphics/opengl-graphics.cpp)
 	//       which currently is STRETCH_FIT
-
-	if (!ConfMan.hasKey("touchpad_mouse_mode")) {
-		ConfMan.setBool("touchpad_mouse_mode", true);
-	}
-	_touchpad_mode = ConfMan.getBool("touchpad_mouse_mode");
-
-	if (!ConfMan.hasKey("onscreen_control")) {
-		ConfMan.setBool("onscreen_control", true);
-	}
-	JNI::showKeyboardControl(ConfMan.getBool("onscreen_control"));
 
 	if (!ConfMan.hasKey("autosave_period")) {
 		ConfMan.setInt("autosave_period", 0);
@@ -456,8 +444,6 @@ bool OSystem_Android::hasFeature(Feature f) {
 		return false;
 	if (f == kFeatureVirtualKeyboard ||
 			f == kFeatureOpenUrl ||
-			f == kFeatureTouchpadMode ||
-			f == kFeatureOnScreenControl ||
 			f == kFeatureClipboardSupport) {
 		return true;
 	}
@@ -472,14 +458,6 @@ void OSystem_Android::setFeatureState(Feature f, bool enable) {
 		_virtkeybd_on = enable;
 		JNI::showVirtualKeyboard(enable);
 		break;
-	case kFeatureTouchpadMode:
-		ConfMan.setBool("touchpad_mouse_mode", enable);
-		_touchpad_mode = enable;
-		break;
-	case kFeatureOnScreenControl:
-		ConfMan.setBool("onscreen_control", enable);
-		JNI::showKeyboardControl(enable);
-		break;
 	default:
 		ModularGraphicsBackend::setFeatureState(f, enable);
 		break;
@@ -490,10 +468,6 @@ bool OSystem_Android::getFeatureState(Feature f) {
 	switch (f) {
 	case kFeatureVirtualKeyboard:
 		return _virtkeybd_on;
-	case kFeatureTouchpadMode:
-		return ConfMan.getBool("touchpad_mouse_mode");
-	case kFeatureOnScreenControl:
-		return ConfMan.getBool("onscreen_control");
 	default:
 		return ModularGraphicsBackend::getFeatureState(f);
 	}
@@ -581,9 +555,7 @@ void OSystem_Android::quit() {
 	pthread_join(_timer_thread, 0);
 }
 
-void OSystem_Android::setWindowCaption(const char *caption) {
-	ENTER("%s", caption);
-
+void OSystem_Android::setWindowCaption(const Common::U32String &caption) {
 	JNI::setWindowCaption(caption);
 }
 

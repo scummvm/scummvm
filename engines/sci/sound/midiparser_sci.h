@@ -23,7 +23,7 @@
 #ifndef SCI_MIDIPARSER_H
 #define SCI_MIDIPARSER_H
 
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/sound/music.h"
 #include "audio/midiparser.h"
 

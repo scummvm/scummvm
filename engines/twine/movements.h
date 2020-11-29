@@ -34,16 +34,37 @@ class Movements {
 private:
 	TwinEEngine *_engine;
 
-	// enter, space, ...
-	int32 heroPressedKey = 0;
-	// cursor buttons
-	int32 heroPressedKey2 = 0;
+	struct ChangedCursorKeys {
+		uint8 forwardChange = 0;
+		uint8 backwardChange = 0;
+		uint8 leftChange = 0;
+		uint8 rightChange = 0;
+		uint8 forwardDown = 0;
+		uint8 backwardDown = 0;
+		uint8 leftDown = 0;
+		uint8 rightDown = 0;
+
+		void update(TwinEEngine* engine);
+
+		inline bool operator==(const ChangedCursorKeys& rhs) const {
+			return forwardChange == rhs.forwardChange && backwardChange == rhs.backwardChange && leftChange == rhs.leftChange && rightChange == rhs.rightChange;
+		}
+
+		inline operator bool () const {
+			return forwardChange && backwardChange && leftChange && rightChange;
+		}
+
+		inline bool operator!=(const ChangedCursorKeys& rhs) const {
+			return forwardChange != rhs.forwardChange || backwardChange != rhs.backwardChange || leftChange != rhs.leftChange || rightChange != rhs.rightChange;
+		}
+	};
+
 	// enter, space, ...
 	int16 heroActionKey = 0;
-	// enter, space, ...
-	int32 loopCursorKeys = 0;
-	// cursor keys
 	int32 previousLoopActionKey = 0;
+	// cursor keys
+	ChangedCursorKeys changedCursorKeys;
+	ChangedCursorKeys previousChangedCursorKeys;
 
 	/**
 	 * The Actor is controlled by the player. This works well only for the Hero Actor in general.
@@ -82,17 +103,37 @@ private:
 	 */
 	void processSameXZAction(int actorIdx);
 
+	/**
+	 * @return A value of @c true means that the actor should e.g. start reading a sign or checking
+	 * a locker for loot or secrets
+	 */
+	bool processBehaviourExecution(int actorIdx);
+	bool processAttackExecution(int actorIdx);
+	void processMovementExecution(int actorIdx);
+	void processRotationExecution(int actorIdx);
+
+	bool heroAction = false;
+
+	/**
+	 * @brief This is a bitmask of 4 bits that is changed whenever a cursor key has changed. A set bit
+	 * does not mean that the cursor is pressed - but that a change has happened in this particular frame
+	 *
+	 * @note This value is reset with every single call to @c readKeys()
+	 */
+	uint8 cursorKeyMask = 0;
+
 public:
 	Movements(TwinEEngine *engine);
 
 	void update();
 
-	/** Hero moved */
-	bool heroMoved = false; // twinsenMove
 	/**
 	 * Hero executes the current action of the trigger zone
 	 */
-	bool heroAction = false;
+	bool shouldTriggerZoneAction() const;
+
+	/** Hero moved */
+	bool heroMoved = false; // twinsenMove
 
 	/** Process actor.x coordinate */
 	int16 processActorX = 0;
@@ -152,18 +193,6 @@ public:
 	int32 getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2, int32 z2);
 
 	/**
-	 * Get actor real angle
-	 * @param movePtr time pointer to process
-	 */
-	int32 getRealAngle(ActorMoveStruct *movePtr);
-
-	/**
-	 * Get actor step
-	 * @param movePtr time pointer to process
-	 */
-	int32 getRealValue(ActorMoveStruct *movePtr);
-
-	/**
 	 * Rotate actor with a given angle
 	 * @param x Actor current X coordinate
 	 * @param z Actor current Z coordinate
@@ -202,6 +231,10 @@ public:
 
 	void processActorMovements(int32 actorIdx);
 };
+
+inline bool Movements::shouldTriggerZoneAction() const {
+	return heroAction;
+}
 
 } // namespace TwinE
 
