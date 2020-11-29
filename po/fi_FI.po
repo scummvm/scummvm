@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-29 15:46+0000\n"
-"PO-Revision-Date: 2020-11-29 18:15+0000\n"
+"PO-Revision-Date: 2020-11-29 19:29+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -4123,9 +4123,8 @@ msgstr ""
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
 #: engines/sci/detection_tables.h:4808 engines/sci/detection_tables.h:4816
-#, fuzzy
 msgid "Missing game code"
-msgstr "Pelin tärkeimmät kontrollit:"
+msgstr "Pelimoottori puuttuu"
 
 #: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
@@ -4910,6 +4909,8 @@ msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
 msgstr ""
+"EoB II FM-TOWNS tarvitsee tuen 16-bittisille väritiloille, joita ei ole "
+"käännetty mukaan tähän ScummVM-versioon"
 
 #: engines/kyra/metaengine.cpp:137
 msgid "Eye of Beholder support is not compiled in"
@@ -7263,9 +7264,8 @@ msgid "Hero Craft support is not compiled in"
 msgstr "Hero Craft-tukea ei ole käännetty mukaan"
 
 #: engines/wintermute/metaengine.cpp:81
-#, fuzzy
 msgid "Wintermute3D support is not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "Wintermute3D-tukea ei ole käännetty mukaan"
 
 #: engines/wintermute/wintermute.cpp:176
 msgid "This game requires PNG, JPEG and Vorbis support."
