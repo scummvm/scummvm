@@ -3,8 +3,8 @@
 Adding and playing a game
 =================================
 
-The games
-------------
+Where to get the games
+=============================
 
 One of the most frequently asked questions is, "Where do I get the games?!?". If you still have your old floppy discs or CDs lying around, and have a way to read them, then you can use the game files from those original discs. 
 
@@ -19,7 +19,7 @@ Make sure to check out the `compatibility list <https://www.scummvm.org/compatib
 .. _add and play games:
 
 Adding games to the Launcher
----------------------------------
+==============================
 
 The following steps explain how to add a game to ScummVM, and assume you have access to the data files for each game. If you're not sure how to access the game data files, see the :doc:`game_files` page. 
 
@@ -34,7 +34,7 @@ To add multiple games at once, click the expander arrow next to **Add Game**, an
 
 .. image:: ../images/Launcher/mass_add.png
 
-3.  Use the file browser to locate the folder containing the game data files. For the ScummVM file browser: Double click on a folder to open it, and use **Go up** to go back up one level. Click **Choose** to select the folder. 
+3.  Use the file browser to locate the folder containing the game data files. For the ScummVM file browser: Double click on a folder to open it, and use **Go up** to go back up one level. Highlight the folder by clicking on it, and then click **Choose** 
 
 .. image:: ../images/Launcher/choose_game_directory.png
    :class: with-shadow
@@ -43,13 +43,24 @@ To add multiple games at once, click the expander arrow next to **Add Game**, an
 
    The **Use Native file browser**  option in the :doc:`Misc <../settings/misc>` tab of the global settings controls whether ScummVM uses the system file browser, or its own file browser. 
 
-3a. If you are using **Mass Add**, select **Yes** to run the mass game detector. A dialog opens to advise which games were added to the games list.
+If you are using **Mass Add**, select **Yes** to run the mass game detector. A dialog opens to advise which games were added to the games list.
 
 .. image:: ../images/Launcher/mass_add_confirm.png
 
 .. image:: ../images/Launcher/mass_add_success.png
 
-4.  The **Edit Game** dialog opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should be OK at the default settings. Any settings changed here override the global settings. Click **Ok**. 
+
+Sometimes, ScummVM detects multiple versions of a single game. In this case, highlight the correct version and click **Choose** to continue. 
+
+.. figure:: ../images/Launcher/choose_version.png
+
+.. caution::
+   
+   If you are using **Mass Add**, ScummVM adds all versions of a game. 
+
+If you are adding an unknown version of a game, ScummVM is not able to add the game to the games list. An error message appears to warn you that the game has not been added. 
+
+4. The **Edit Game** dialog opens to allow configuration of various settings for the game. These can be reconfigured at any time, but for now everything should be OK at the default settings. Any settings changed here override the global settings. Click **Ok**. 
 
 .. image:: ../images/Launcher/game_settings.png
    :class: with-shadow
@@ -58,7 +69,7 @@ To add multiple games at once, click the expander arrow next to **Add Game**, an
    
    The **Edit Game** dialog does not open when **Mass Add** is used. 
 
-5. Games are now ready to play! To play, highlight a game in the games list and click **Start**, or double-click the game in the games list.
+6. Games are now ready to play! To play, highlight a game in the games list and click **Start**, or double-click the game in the games list.
 
 .. image:: ../images/Launcher/start_game.png
    :class: with-shadow
@@ -66,7 +77,7 @@ To add multiple games at once, click the expander arrow next to **Add Game**, an
 Games can also be launched directly from the command line. For more information, see the `Command line options <../advanced_topics/command_line>`_ page.
 
 A note about copyright 
-------------------------
+==============================
 
 ScummVM has a strict anti-piracy stance and the team wil not tolerate discussions around pirated games in any part of the project, including on the Forum or on Discord. 
 

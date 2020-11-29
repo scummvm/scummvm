@@ -15,7 +15,7 @@
       use_scummvm/LAN
       
 .. toctree::
-      :caption: Other platforms
+      :caption: Platform guides
       :glob:
       :hidden:
 
@@ -128,8 +128,9 @@ We have a user manual section covering **THE BASICS**:
 
       :doc:`use_scummvm/LAN`
 
+.. _platformspecific:
 
-We also have guides on how to get ScummVM running on a wide range of **OTHER PLATFORMS**:
+We also have guides on how to get ScummVM running on a wide range of other platforms:
 
 
 .. panels::
