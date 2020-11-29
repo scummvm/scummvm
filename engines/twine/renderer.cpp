@@ -1028,16 +1028,15 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 		int16 primitiveCounter = numPolygons; // the number of primitives = the number of polygons
 
 		do { // loop that load all the polygons
-			Polygon currentPolygon;
-			currentPolygon.renderType = stream.readByte();
-			currentPolygon.numVertices = stream.readByte();
-			assert(currentPolygon.numVertices <= 16);
-			currentPolygon.colorIndex = stream.readSint16LE();
+			const uint8 renderType = stream.readByte();
+			const uint8 numVertices = stream.readByte();
+			assert(numVertices <= 16);
+			const int16 colorIndex = stream.readSint16LE();
 
 			int16 bestDepth = -32000;
 
 			Polygon *destinationPolygon = (Polygon *)renderBufferPtr;
-			destinationPolygon->numVertices = currentPolygon.numVertices;
+			destinationPolygon->numVertices = numVertices;
 
 			renderBufferPtr += sizeof(Polygon);
 
@@ -1048,13 +1047,13 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			int16 counter = destinationPolygon->numVertices;
 
 			// TODO: RECHECK coordinates axis
-			if (currentPolygon.renderType >= 9) {
-				destinationPolygon->renderType = currentPolygon.renderType - 2;
-				destinationPolygon->colorIndex = currentPolygon.colorIndex;
+			if (renderType >= 9) {
+				destinationPolygon->renderType = renderType - 2;
+				destinationPolygon->colorIndex = colorIndex;
 
 				do {
 					const int16 shadeEntry = stream.readSint16LE();
-					const int16 shadeValue = currentPolygon.colorIndex + shadeTable[shadeEntry];
+					const int16 shadeValue = colorIndex + shadeTable[shadeEntry];
 
 					const int16 vertexOffset = stream.readSint16LE();
 					const int16 vertexIndex = vertexOffset / 6;
@@ -1066,30 +1065,18 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 					bestDepth = MAX(bestDepth, point->z);
 					++vertex;
 				} while (--counter > 0);
-			} else if (currentPolygon.renderType >= POLYGONTYPE_GOURAUD) {
-				// only 1 shade value is used
-				destinationPolygon->renderType = currentPolygon.renderType - POLYGONTYPE_GOURAUD;
-				destinationPolygon->numVertices = currentPolygon.numVertices;
-				const int16 shadeEntry = stream.readSint16LE();
-				const int16 shadeValue = currentPolygon.colorIndex + shadeTable[shadeEntry];
-				destinationPolygon->colorIndex = shadeValue;
-
-				do {
-					const int16 vertexOffset = stream.readSint16LE();
-					const int16 vertexIndex = vertexOffset / 6;
-					const pointTab *point = &flattenPoints[vertexIndex];
-
-					vertex->colorIndex = 0;
-					vertex->x = point->x;
-					vertex->y = point->y;
-					bestDepth = MAX(bestDepth, point->z);
-					++vertex;
-				} while (--counter > 0);
 			} else {
-				// no shade is used
-				destinationPolygon->renderType = currentPolygon.renderType;
-				destinationPolygon->numVertices = currentPolygon.numVertices;
-				destinationPolygon->colorIndex = currentPolygon.colorIndex;
+				if (renderType >= POLYGONTYPE_GOURAUD) {
+					// only 1 shade value is used
+					destinationPolygon->renderType = renderType - POLYGONTYPE_GOURAUD;
+					const int16 shadeEntry = stream.readSint16LE();
+					const int16 shadeValue = colorIndex + shadeTable[shadeEntry];
+					destinationPolygon->colorIndex = shadeValue;
+				} else {
+					// no shade is used
+					destinationPolygon->renderType = renderType;
+					destinationPolygon->colorIndex = colorIndex;
+				}
 
 				do {
 					const int16 vertexOffset = stream.readSint16LE();
