@@ -103,9 +103,9 @@ void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
 void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
 	shadeAngleTab3 = &shadeAngleTable[384];
 
-	double Xradians = (double)((256 - x) % 1024) * 2 * M_PI / 1024;
-	double Yradians = (double)((256 - y) % 1024) * 2 * M_PI / 1024;
-	double Zradians = (double)((256 - z) % 1024) * 2 * M_PI / 1024;
+	double Xradians = (double)((ANGLE_90 - x) % ANGLE_360) * 2 * M_PI / ANGLE_360;
+	double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
+	double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 
 	baseMatrix[0] = (int32)(sin(Zradians) * sin(Yradians) * 16384);
 	baseMatrix[1] = (int32)(-cos(Zradians) * 16384);
@@ -161,7 +161,7 @@ void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
 	if (renderAngleX) {
 		int32 angle = renderAngleX;
 		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
-		angle += 256;
+		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
 		matrix1[0] = currentMatrix[0];
@@ -183,7 +183,7 @@ void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
 	if (renderAngleZ) {
 		int32 angle = renderAngleZ;
 		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
-		angle += 256;
+		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
 		matrix2[2] = matrix1[2];
@@ -205,7 +205,7 @@ void Renderer::applyRotation(int32 *targetMatrix, const int32 *currentMatrix) {
 	if (renderAngleY) {
 		int32 angle = renderAngleY;
 		int32 angleVar2 = shadeAngleTable[ClampAngle(angle)];
-		angle += 256;
+		angle += ANGLE_90;
 		int32 angleVar1 = shadeAngleTable[ClampAngle(angle)];
 
 		targetMatrix[1] = matrix2[1];
