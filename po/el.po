@@ -3294,8 +3294,8 @@ msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
-"Η Λειτουργία Μεγέθυνσης Απενεργοποιήθηκε. Επανενεργοποίηση Λειτουργίας Drag."
-"\n"
+"Η Λειτουργία Μεγέθυνσης Απενεργοποιήθηκε. Επανενεργοποίηση Λειτουργίας "
+"Drag.\n"
 "Επιστροφή στο Launcher..."
 
 #: backends/platform/3ds/osystem-events.cpp:362
