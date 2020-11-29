@@ -29,6 +29,15 @@
 namespace Graphics {
 
 /**
+ * @defgroup graphics_renderer Renderer
+ * @ingroup graphics
+ *
+ * @brief API for managing renderer engines.
+ *
+ * @{
+ */
+
+/**
  * List of renderer types
  *
  * It specifies which rendering driver to use
@@ -56,7 +65,7 @@ Common::String getRendererTypeCode(RendererType type);
 
 /** Get the best matching renderer among available renderers */
 RendererType getBestMatchingAvailableRendererType(RendererType desired);
-
+ /** @} */
 } // End of namespace Graphics
 
 #endif
