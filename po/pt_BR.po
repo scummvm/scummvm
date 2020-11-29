@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-29 15:46+0000\n"
-"PO-Revision-Date: 2020-11-29 08:37+0000\n"
+"PO-Revision-Date: 2020-11-29 16:03+0000\n"
 "Last-Translator: Marcel Souza Lemes <marcosoutsider@gmail.com>\n"
 "Language-Team: Portuguese (Brazil) <https://translations.scummvm.org/"
 "projects/scummvm/scummvm/pt_BR/>\n"
@@ -5828,9 +5828,8 @@ msgstr ""
 "cor máxima de 8bpp"
 
 #: engines/sci/metaengine.cpp:325
-#, fuzzy
 msgid "SCI32 support not compiled in"
-msgstr "O suporte a SAGA2 não está compilado"
+msgstr "O suporte a SCI32 não está compilado"
 
 #: engines/sci/resource/resource.cpp:845
 msgid ""
