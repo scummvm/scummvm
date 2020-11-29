@@ -37,7 +37,7 @@ Launches the highlighted game.
 Load 
 ^^^^^^^
 
-Opens the load game window, from which you can run a previously saved state without having to start the game first. 
+Opens the load game window, from which you can go to a saved game without having to start the game first. 
 
 See the :doc:`save_load_games` page.
 
@@ -98,17 +98,17 @@ Closes the GMM and resumes the game.
 Load
 ^^^^^^
 
-Opens the load game window, to load a saved game state.
+Opens the load game window. From here, you can load a saved game.
 
 Save
 ^^^^^^
 
-Opens the save game window, to save a game state. 
+Opens the save game window. From here, you can save a game. 
 
 Options
 ^^^^^^^^
 
-Opens a dialog which provides gameplay options, such as sound volume, subtitle and keymap settings. 
+Opens a dialog which provides some gameplay options, such as sound volume, subtitle and keymap settings. 
 
 
 About
