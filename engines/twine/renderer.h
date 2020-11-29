@@ -67,6 +67,24 @@ private:
 		uint8 *dataPtr = nullptr;
 	};
 
+	struct CmdRenderLine {
+		uint8 colorIndex = 0;
+		uint8 unk1 = 0;
+		uint8 unk2 = 0;
+		uint8 unk3 = 0;
+		int16 x1 = 0;
+		int16 y1 = 0;
+		int16 x2 = 0;
+		int16 y2 = 0;
+	};
+
+	struct CmdRenderSphere {
+		int8 colorIndex = 0;
+		int16 x = 0;
+		int16 y = 0;
+		int16 radius = 0;
+	};
+
 	#include "common/pack-start.h"
 	struct pointTab {
 		int16 x = 0;
@@ -96,17 +114,6 @@ private:
 	#include "common/pack-end.h"
 	static_assert(sizeof(elementEntry) == 38, "Unexpected elementEntry size");
 
-	struct CmdRenderLine {
-		uint8 colorIndex = 0;
-		uint8 unk1 = 0;
-		uint8 unk2 = 0;
-		uint8 unk3 = 0;
-		int16 x1 = 0;
-		int16 y1 = 0;
-		int16 x2 = 0;
-		int16 y2 = 0;
-	};
-
 	struct lineData {
 		uint8 colorIndex = 0;
 		uint8 unk1 = 0;
@@ -121,13 +128,6 @@ private:
 		int16 dataOffset = 0;
 	};
 
-	struct CmdRenderSphere {
-		int8 colorIndex = 0;
-		int16 x = 0;
-		int16 y = 0;
-		int16 radius = 0;
-	};
-
 	struct bodyHeaderStruct {
 		int16 bodyFlag = 0;
 		int16 minsx = 0;
@@ -139,14 +139,6 @@ private:
 		int16 offsetToData = 0;
 		int8 *ptrToKeyFrame = nullptr;
 		int32 keyFrameTime = 0;
-	};
-
-	union packed16 {
-		struct {
-			uint8 al = 0;
-			uint8 ah = 0;
-		} bit;
-		uint16 temp = 0;
 	};
 
 	int32 renderAnimatedModel(uint8 *bodyPtr, RenderCommand *renderCmds);
