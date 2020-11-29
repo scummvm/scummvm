@@ -320,6 +320,13 @@ bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	const GameIdStrToEnum *g = s_gameIdStrToEnum;
 	for (; g->gameidStr; ++g) {
 		if (0 == strcmp(desc->gameId, g->gameidStr)) {
+#ifndef ENABLE_SCI32
+			if (g->isSci32) {
+				Engine::errorUnsupportedGame(_("SCI32 support not compiled in"));
+				return false;
+			}
+#endif
+
 			*engine = new SciEngine(syst, desc, g->gameidEnum);
 			return true;
 		}
