@@ -2819,8 +2819,9 @@ int GUI_EoB::getTextInput(char *dest, int x, int y, int destMaxLen, int textColo
 
 		} else if ((in > 31 && in < 126) || (in == 0x89)) {
 			if (!(in == 32 && pos == 0)) {
-				// The SegaCD and PC-98 versions of EOB I are the only versions that allow small characters
-				if (in >= 97 && in <= 122 && !(_vm->_flags.gameID == GI_EOB1 && (_vm->_flags.platform == Common::kPlatformPC98 || _vm->_flags.platform == Common::kPlatformSegaCD)))
+				// The PC-98 version and the English Sega-CD version of EOB I are the only versions that allow small characters.
+				// For all other versions we convert to capital characters.
+				if (in >= 97 && in <= 122 && !(_vm->_flags.gameID == GI_EOB1 && (_vm->_flags.platform == Common::kPlatformPC98 || (_vm->_flags.platform == Common::kPlatformSegaCD && _vm->_flags.lang != Common::JA_JPN))))
 					in -= 32;
 
 				if (pos < len) {
