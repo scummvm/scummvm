@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-29 15:46+0000\n"
-"PO-Revision-Date: 2020-11-25 20:52+0000\n"
+"PO-Revision-Date: 2020-11-29 18:15+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -4776,9 +4776,8 @@ msgid "Play movies at an increased speed"
 msgstr "Toista videot nopeampana"
 
 #: engines/groovie/metaengine.cpp:53
-#, fuzzy
 msgid "GroovieV2 support is not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "GroovieV2-tukea ei ole käännetty mukaan"
 
 #: engines/groovie/script.cpp:484
 msgid "Failed to save game"
@@ -4903,9 +4902,8 @@ msgid "Left button to attack, right button to pick up items"
 msgstr "Vasen painike hyökkää, oikea painike poimii esineitä"
 
 #: engines/kyra/metaengine.cpp:116
-#, fuzzy
 msgid "Lands of Lore support is not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "Lands of Lore-tukea ei ole käännetty mukaan"
 
 #: engines/kyra/metaengine.cpp:128
 msgid ""
@@ -4914,9 +4912,8 @@ msgid ""
 msgstr ""
 
 #: engines/kyra/metaengine.cpp:137
-#, fuzzy
 msgid "Eye of Beholder support is not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "Eye of Beholder-tukea ei ole käännetty mukaan"
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
@@ -5174,9 +5171,8 @@ msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Käytä TTS:ää kuvauksien lukemiseen (jos TTS on saatavilla)"
 
 #: engines/made/detection_tables.h:360
-#, fuzzy
 msgid "The game is using unsupported engine"
-msgstr "Tämä peli ei ole tuettu."
+msgstr "Tämä peli käyttää moottoria joka ei ole tuettu"
 
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
@@ -5257,24 +5253,20 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Pause. Paina mitä tahansa nappia jatkaaksesi."
 
 #: engines/mohawk/metaengine.cpp:272
-#, fuzzy
 msgid "Myst ME support not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "Myst ME-tukea ei ole käännetty mukaan"
 
 #: engines/mohawk/metaengine.cpp:279
-#, fuzzy
 msgid "Myst support not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "Myst-tukea ei ole käännetty mukaan"
 
 #: engines/mohawk/metaengine.cpp:287
-#, fuzzy
 msgid "Riven support not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "Riven-tukea ei ole käännetty mukaan"
 
 #: engines/mohawk/metaengine.cpp:302
-#, fuzzy
 msgid "CSTime support not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "CSTime-tukea ei ole käännetty mukaan"
 
 #: engines/mohawk/myst.cpp:552 engines/mohawk/riven.cpp:822
 msgid "Open main menu"
@@ -5435,9 +5427,8 @@ msgid "Unable to locate the '%s' engine data file"
 msgstr "Pelimoottorin datatiedostoa \"%s\" ei löydetty"
 
 #: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
-#, fuzzy
 msgid "PS2 version is not yet supported"
-msgstr "Tämä peli ei ole tuettu."
+msgstr "PS2-versio ei ole vielä tuettu"
 
 #: engines/myst3/detection.cpp:182
 msgid "Widescreen mod"
@@ -5606,14 +5597,12 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Käytä vaihtoehtoista pelin introa (vain CD versiossa)"
 
 #: engines/saga/metaengine.cpp:117
-#, fuzzy
 msgid "I Have No Mouth support not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "I Have No Mouth-tukea ei ole käännetty mukaan"
 
 #: engines/saga/metaengine.cpp:124
-#, fuzzy
 msgid "SAGA2 support not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "SAGA2-tukea ei ole käännetty mukaan"
 
 #: engines/saga/saga.cpp:247
 msgid "Error loading game resources."
@@ -5799,9 +5788,8 @@ msgstr ""
 "on 8-bittinen"
 
 #: engines/sci/metaengine.cpp:325
-#, fuzzy
 msgid "SCI32 support not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "SCI32-tukea ei ole käännetty mukaan"
 
 #: engines/sci/resource/resource.cpp:845
 msgid ""
@@ -6609,14 +6597,12 @@ msgstr ""
 "kehityksen vuoksi."
 
 #: engines/scumm/metaengine.cpp:429
-#, fuzzy
 msgid "HE v71+ support is not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "HE v71+ tukea ei ole käännetty mukaan"
 
 #: engines/scumm/metaengine.cpp:453
-#, fuzzy
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "SCUMM v7-8 tukea ei ole käännetty mukaan"
 
 #: engines/scumm/scumm.cpp:1918
 #, c-format
@@ -6950,9 +6936,8 @@ msgstr ""
 "ScummVM:ään. Pura teenagent.dat"
 
 #: engines/tinsel/detection_tables.h:466
-#, fuzzy
 msgid "Saturn CD version is not yet supported"
-msgstr "Tämä peli ei ole tuettu."
+msgstr "Saturn CD-versio ei ole vielä tuettu"
 
 #: engines/tony/tony.cpp:257
 #, c-format
@@ -6985,9 +6970,8 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Datatiedostoa \"%s\" ei löydetty."
 
 #: engines/tsage/detection_tables.h:150
-#, fuzzy
 msgid "Spanish CD version is not yet supported"
-msgstr "Tämä peli ei ole tuettu."
+msgstr "Espanjalainen CD-versio ei ole vielä tuettu"
 
 #: engines/twine/metaengine.cpp:68
 msgid "Enable wall collisions"
@@ -7271,14 +7255,12 @@ msgid "Apply bilinear filtering to individual sprites"
 msgstr "Käytä bilineaarista suodatusta yksittäisiin spriteihin"
 
 #: engines/wintermute/metaengine.cpp:67
-#, fuzzy
 msgid "FoxTail support is not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "FoxTail-tukea ei ole käännetty mukaan"
 
 #: engines/wintermute/metaengine.cpp:74
-#, fuzzy
 msgid "Hero Craft support is not compiled in"
-msgstr "Tähän versioon käännetyt ominaisuudet:"
+msgstr "Hero Craft-tukea ei ole käännetty mukaan"
 
 #: engines/wintermute/metaengine.cpp:81
 #, fuzzy
