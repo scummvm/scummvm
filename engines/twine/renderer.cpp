@@ -957,7 +957,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 void Renderer::renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const {
 }
 
-void Renderer::renderPolygons(const Polygon &polygon, Vertex *vertices) {
+void Renderer::renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices) {
 	int vleft = 0;
 	int vright = 0;
 	int vtop = 0;
@@ -1097,10 +1097,10 @@ uint8 *Renderer::preparePolygons(Common::MemoryReadStream &stream, int32 &numOfP
 
 		int16 bestDepth = -32000;
 
-		Polygon *destinationPolygon = (Polygon *)renderBufferPtr;
+		CmdRenderPolygon *destinationPolygon = (CmdRenderPolygon *)renderBufferPtr;
 		destinationPolygon->numVertices = numVertices;
 
-		renderBufferPtr += sizeof(Polygon);
+		renderBufferPtr += sizeof(CmdRenderPolygon);
 
 		Vertex *const vertices = (Vertex *)renderBufferPtr;
 		renderBufferPtr += destinationPolygon->numVertices * sizeof(Vertex);
@@ -1228,8 +1228,8 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, RenderCom
 			break;
 		}
 		case RENDERTYPE_DRAWPOLYGON: {
-			const Polygon *header = (const Polygon *)pointer;
-			Vertex *vertices = (Vertex *)(pointer + sizeof(Polygon));
+			const CmdRenderPolygon *header = (const CmdRenderPolygon *)pointer;
+			Vertex *vertices = (Vertex *)(pointer + sizeof(CmdRenderPolygon));
 			renderPolygons(*header, vertices);
 			break;
 		}

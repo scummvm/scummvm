@@ -50,7 +50,7 @@ struct Vertex {
 	int16 y = 0;
 };
 
-struct Polygon {
+struct CmdRenderPolygon {
 	uint8 renderType = 0;
 	uint8 numVertices = 0;
 	int16 colorIndex = 0;
@@ -244,7 +244,7 @@ public:
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 
 	void prepareIsoModel(uint8 *bodyPtr); // loadGfxSub
-	void renderPolygons(const Polygon &polygon, Vertex *vertices);
+	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices);
 
 	int32 projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
 	void setCameraPosition(int32 x, int32 y, int32 cX, int32 cY, int32 cZ);

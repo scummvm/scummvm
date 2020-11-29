@@ -74,7 +74,7 @@ void Holomap::clearHolomapPosition(int32 locationIdx) {
 }
 
 void Holomap::loadGfxSub(uint8 *modelPtr) {
-	// TODO
+	// TODO is this prepareIsoModel?
 }
 
 void Holomap::loadGfxSub1() {
