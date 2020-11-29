@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-29 15:46+0000\n"
-"PO-Revision-Date: 2020-11-28 21:03+0000\n"
+"PO-Revision-Date: 2020-11-29 16:07+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -5219,7 +5219,7 @@ msgstr ""
 
 #: engines/made/detection_tables.h:360
 msgid "The game is using unsupported engine"
-msgstr "Dieses Spiel verwendet eine nicht unterstützte Engine."
+msgstr "Dieses Spiel verwendet eine nicht unterstützte Engine"
 
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
@@ -5856,9 +5856,8 @@ msgstr ""
 "von 8bpp abgespielt werden"
 
 #: engines/sci/metaengine.cpp:325
-#, fuzzy
 msgid "SCI32 support not compiled in"
-msgstr "Unterstützung für SAGA2 ist nicht eingebaut"
+msgstr "Unterstützung für SCI32 ist nicht eingebaut"
 
 #: engines/sci/resource/resource.cpp:845
 msgid ""
