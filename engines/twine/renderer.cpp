@@ -957,51 +957,48 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 void Renderer::renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const {
 }
 
-void Renderer::renderPolygons(int32 renderType, int32 color, int vleft, int vright, int vtop, int vbottom) {
-	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, vtop);
-	const int32 vsize = vbottom - vtop + 1;
-
-	switch (renderType) {
-	case POLYGONTYPE_FLAT:
-		renderPolygonsFlat(out, vtop, vsize, color);
-		break;
-	case POLYGONTYPE_COPPER:
-		renderPolygonsCopper(out, vtop, vsize, color);
-		break;
-	case POLYGONTYPE_BOPPER:
-		renderPolygonsBopper(out, vtop, vsize, color);
-		break;
-	case POLYGONTYPE_TELE:
-		renderPolygonsTele(out, vtop, vsize, color);
-		break;
-	case POLYGONTYPE_TRAS:
-		renderPolygonsTras(out, vtop, vsize, color);
-		break;
-	case POLYGONTYPE_TRAME:
-		renderPolygonTrame(out, vtop, vsize, color);
-		break;
-	case POLYGONTYPE_GOURAUD:
-		renderPolygonsGouraud(out, vtop, vsize, color);
-		break;
-	case POLYGONTYPE_DITHER:
-		renderPolygonsDither(out, vtop, vsize, color);
-		break;
-	case POLYGONTYPE_MARBLE:
-		renderPolygonsMarble(out, vtop, vsize, color);
-		break;
-	default:
-		warning("RENDER WARNING: Unsuported render type %d", renderType);
-		break;
-	}
-}
-
 void Renderer::renderPolygons(const Polygon &polygon, Vertex *vertices) {
 	int vleft = 0;
 	int vright = 0;
 	int vtop = 0;
 	int vbottom = 0;
 	computePolygons(polygon.renderType, vertices, polygon.numVertices, vleft, vright, vtop, vbottom);
-	renderPolygons(polygon.renderType, polygon.colorIndex, vleft, vright, vtop, vbottom);
+
+	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, vtop);
+	const int32 vsize = vbottom - vtop + 1;
+
+	switch (polygon.renderType) {
+	case POLYGONTYPE_FLAT:
+		renderPolygonsFlat(out, vtop, vsize, polygon.colorIndex);
+		break;
+	case POLYGONTYPE_COPPER:
+		renderPolygonsCopper(out, vtop, vsize, polygon.colorIndex);
+		break;
+	case POLYGONTYPE_BOPPER:
+		renderPolygonsBopper(out, vtop, vsize, polygon.colorIndex);
+		break;
+	case POLYGONTYPE_TELE:
+		renderPolygonsTele(out, vtop, vsize, polygon.colorIndex);
+		break;
+	case POLYGONTYPE_TRAS:
+		renderPolygonsTras(out, vtop, vsize, polygon.colorIndex);
+		break;
+	case POLYGONTYPE_TRAME:
+		renderPolygonTrame(out, vtop, vsize, polygon.colorIndex);
+		break;
+	case POLYGONTYPE_GOURAUD:
+		renderPolygonsGouraud(out, vtop, vsize, polygon.colorIndex);
+		break;
+	case POLYGONTYPE_DITHER:
+		renderPolygonsDither(out, vtop, vsize, polygon.colorIndex);
+		break;
+	case POLYGONTYPE_MARBLE:
+		renderPolygonsMarble(out, vtop, vsize, polygon.colorIndex);
+		break;
+	default:
+		warning("RENDER WARNING: Unsuported render type %d", polygon.renderType);
+		break;
+	}
 }
 
 void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 color) {
