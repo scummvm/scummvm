@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-11-28 20:45+0000\n"
+"POT-Creation-Date: 2020-11-28 23:49+0000\n"
 "PO-Revision-Date: 2020-11-03 12:06+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -6563,7 +6563,7 @@ msgstr ""
 msgid "Unable to locate the '%s' data file."
 msgstr ""
 
-#: engines/tsage/detection_tables.h:151
+#: engines/tsage/detection_tables.h:150
 msgid "Spanish CD version is not yet supported"
 msgstr ""
 
