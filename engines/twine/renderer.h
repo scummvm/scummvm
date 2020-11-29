@@ -40,10 +40,17 @@ namespace TwinE {
 
 class TwinEEngine;
 
-struct polyHeader {
-	uint8 renderType = 0; //FillVertic_AType
-	uint8 numOfVertex = 0;
+struct Vertex {
 	int16 colorIndex = 0;
+	int16 x = 0;
+	int16 y = 0;
+};
+
+struct Polygon {
+	uint8 renderType = 0;
+	uint8 numVertices = 0;
+	int16 colorIndex = 0;
+	// followed by Vertex array
 };
 
 class Renderer {
@@ -110,12 +117,6 @@ private:
 		int16 dataOffset = 0;
 	};
 
-	struct computedVertex {
-		int16 shadeValue = 0;
-		int16 x = 0;
-		int16 y = 0;
-	};
-
 	struct sphereData {
 		int8 colorIndex = 0;
 		int16 x = 0;
@@ -134,12 +135,6 @@ private:
 		int16 offsetToData = 0;
 		int8 *ptrToKeyFrame = nullptr;
 		int32 keyFrameTime = 0;
-	};
-
-	struct vertexData {
-		uint8 param = 0;
-		int16 x = 0;
-		int16 y = 0;
 	};
 
 	union packed16 {
@@ -221,7 +216,7 @@ private:
 	void renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 color) const;
 	void renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const;
 
-	void computePolygons(int16 polyRenderType, vertexData *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom);
+	void computePolygons(int16 polyRenderType, Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom);
 	void renderPolygons(int32 renderType, int32 color, int vleft, int vright, int vtop, int vbottom);
 
 public:
@@ -249,7 +244,7 @@ public:
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 
 	void prepareIsoModel(uint8 *bodyPtr); // loadGfxSub
-	void renderPolygons(const polyHeader &polyHeader);
+	void renderPolygons(const Polygon &polygon, Vertex *vertices);
 
 	int32 projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
 	void setCameraPosition(int32 x, int32 y, int32 cX, int32 cY, int32 cZ);
