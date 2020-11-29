@@ -50,6 +50,6 @@ To help you report a bug, you can find error messages in the ScummVM log file. T
 	        Window Vista/7/8/10
 		^^^^^^^^^^^^^^^^^^^^^^
 		
-                ``%APPDATA\ScummVM\scummvm.log``
+                ``%APPDATA%\ScummVM\scummvm.log``
 
             

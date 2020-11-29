@@ -1,8 +1,8 @@
 =====================================
-Understand the graphics settings
+Understanding the graphics settings
 =====================================
 
-This guide is designed to expand on the information contained on the :doc:`graphics settings <../settings/graphics>` page. 
+This guide expands on the information contained on the :doc:`graphics settings <../settings/graphics>` page. 
 
 How do the graphics settings work together?
 ----------------------------------------------
@@ -103,7 +103,7 @@ For a game with an original resolution of 320x200, aspect ratio correction resul
 
 .. figure:: ../images/graphics/aspect_ratio/aspect_ratio.png
 
-    Aspect ratio correction applied. Notice the moon is actually round now.  
+    Aspect ratio correction applied. The moon is actually round, as it should be!  
 
 To toggle aspect ratio on and off, press :kbd:`Ctrl+Alt+a`.
 
