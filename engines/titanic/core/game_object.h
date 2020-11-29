@@ -547,6 +547,13 @@ protected:
 	 * Gets a new random number
 	 */
 	int getRandomNumber(int max, int *oldVal = nullptr);
+
+	/**
+	 * Returns true if the current location is one that Doorbot/Bellbot
+	 * shouldn't be allowed to be summoned to, but isn't disallowed by
+	 * the original game
+	 */
+	bool isBotDisallowedLocation();
 public:
 	Rect _bounds;
 	bool _isPendingMail;
