@@ -5709,7 +5709,8 @@ msgstr "Χρήση εναλλακτικής εισαγωγής παιχνιδι�
 
 #: engines/saga/metaengine.cpp:117
 msgid "I Have No Mouth support not compiled in"
-msgstr "Η υποστήριξη για το I Have No Mouth δεν έχει ενσωματωθεί στο εκτελέσιμο"
+msgstr ""
+"Η υποστήριξη για το I Have No Mouth δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
 #: engines/saga/metaengine.cpp:124
 msgid "SAGA2 support not compiled in"
