@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-28 20:45+0000\n"
-"PO-Revision-Date: 2020-11-28 17:59+0000\n"
+"PO-Revision-Date: 2020-11-29 08:37+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -4766,7 +4766,7 @@ msgstr "Filmek lejátszása nagyobb sebességgel"
 
 #: engines/groovie/metaengine.cpp:53
 msgid "GroovieV2 support is not compiled in"
-msgstr ""
+msgstr "GroovieV2 támogatás nincs lefordítva"
 
 #: engines/groovie/script.cpp:484
 msgid "Failed to save game"
@@ -4892,17 +4892,19 @@ msgstr "Bal gomb a támadás, jobb gomb a tárgyak felvétele"
 
 #: engines/kyra/metaengine.cpp:116
 msgid "Lands of Lore support is not compiled in"
-msgstr ""
+msgstr "Lands of Lore támogatás nincs lefordítva"
 
 #: engines/kyra/metaengine.cpp:128
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
 msgstr ""
+"Az EOB II FM-TOWNS 16 bites színmódok támogatását igényli, amely nincs "
+"aktiválva ebben a ScummVM buildben"
 
 #: engines/kyra/metaengine.cpp:137
 msgid "Eye of Beholder support is not compiled in"
-msgstr ""
+msgstr "Eye of Beholder támogatás nincs lefordítva"
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
@@ -5243,21 +5245,19 @@ msgstr "A játék szünetel. Nyomj egy gombot a folytatáshoz."
 
 #: engines/mohawk/metaengine.cpp:272
 msgid "Myst ME support not compiled in"
-msgstr ""
+msgstr "Myst ME támogatás nincs lefordítva"
 
 #: engines/mohawk/metaengine.cpp:279
-#, fuzzy
 msgid "Myst support not compiled in"
-msgstr "Lefordított összetevõk:"
+msgstr "Myst támogatás nincs lefordítva"
 
 #: engines/mohawk/metaengine.cpp:287
-#, fuzzy
 msgid "Riven support not compiled in"
-msgstr "Lefordított összetevõk:"
+msgstr "Riven támogatás nincs lefordítva"
 
 #: engines/mohawk/metaengine.cpp:302
 msgid "CSTime support not compiled in"
-msgstr ""
+msgstr "CSTime támogatás nincs lefordítva"
 
 #: engines/mohawk/myst.cpp:552 engines/mohawk/riven.cpp:822
 msgid "Open main menu"
@@ -5592,11 +5592,11 @@ msgstr "Alternatív játékintro használata (csak CD verziónál)"
 
 #: engines/saga/metaengine.cpp:117
 msgid "I Have No Mouth support not compiled in"
-msgstr ""
+msgstr "I Have No Mouth támogatás nincs lefordítva"
 
 #: engines/saga/metaengine.cpp:124
 msgid "SAGA2 support not compiled in"
-msgstr ""
+msgstr "SAGA2 támogatás nincs lefordítva"
 
 #: engines/saga/saga.cpp:247
 msgid "Error loading game resources."
@@ -6583,11 +6583,11 @@ msgstr "A Pajama Sam 2 Orosz változata még nem támogatott a hiányos kód mia
 
 #: engines/scumm/metaengine.cpp:429
 msgid "HE v71+ support is not compiled in"
-msgstr ""
+msgstr "HE v71+ támogatás nincs lefordítva"
 
 #: engines/scumm/metaengine.cpp:453
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr ""
+msgstr "SCUMM v7-8 támogatás nincs lefordítva"
 
 #: engines/scumm/scumm.cpp:1918
 #, c-format
@@ -7253,18 +7253,16 @@ msgid "Apply bilinear filtering to individual sprites"
 msgstr "Bilineáris szûrés alkalmazása egyes sprite-okhoz"
 
 #: engines/wintermute/metaengine.cpp:67
-#, fuzzy
 msgid "FoxTail support is not compiled in"
-msgstr "Lefordított összetevõk:"
+msgstr "FoxTail támogatás nincs lefordítva"
 
 #: engines/wintermute/metaengine.cpp:74
-#, fuzzy
 msgid "Hero Craft support is not compiled in"
-msgstr "Lefordított összetevõk:"
+msgstr "Hero Craft támogatás nincs lefordítva"
 
 #: engines/wintermute/metaengine.cpp:81
 msgid "Wintermute3D support is not compiled in"
-msgstr ""
+msgstr "Wintermute3D támogatás nincs lefordítva"
 
 #: engines/wintermute/wintermute.cpp:176
 msgid "This game requires PNG, JPEG and Vorbis support."
