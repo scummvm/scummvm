@@ -27,6 +27,15 @@
 #include "common/noncopyable.h"
 
 /**
+ * @defgroup graphics_palette PaletteManager
+ * @ingroup graphics
+ *
+ * @brief The PaletteManager class.
+ *
+ * @{
+ */
+
+/**
  * The PaletteManager is part of the OSystem backend API and responsible
  * for handling the (possibly emulated) "hardware" palette needed for
  * many old games (e.g. in EGA and VGA mode).
@@ -98,5 +107,5 @@ public:
 	 */
 	virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
 };
-
+ /** @} */
 #endif

@@ -28,6 +28,15 @@
 namespace Graphics {
 
 /**
+ * @defgroup graphics_vector_renderer_spec Specialized vector renderer
+ * @ingroup graphics
+ *
+ * @brief VectorRendererSpec class.
+ *
+ * @{
+ */
+
+/**
  * VectorRendererSpec: Specialized Vector Renderer Class
  *
  * This templated class implements the basic subset of vector operations for
@@ -379,6 +388,6 @@ protected:
 	    int baseLeft = 0, int baseRight = 0);
 };
 #endif
-
+/** @} */
 }
 #endif

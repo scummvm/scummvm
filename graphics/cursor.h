@@ -28,6 +28,15 @@
 namespace Graphics {
 
 /**
+ * @defgroup graphics_cursor Cursor
+ * @ingroup graphics
+ *
+ * @brief Cursor class used for representing the mouse cursor on the screen.
+ *
+ * @{
+ */
+
+/**
  * A simple cursor representation
  * TODO: Switch to using Graphics::Surface instead of a byte*
  */
@@ -57,7 +66,7 @@ public:
 	/** Return the number of colors in the palette. */
 	virtual uint16 getPaletteCount() const = 0;
 };
-
+/** @} */
 } // End of namespace Graphics
 
 #endif

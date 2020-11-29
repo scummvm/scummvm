@@ -48,6 +48,15 @@
 
 namespace Graphics {
 
+/**
+ * @defgroup graphics_sjis Shift JIS font
+ * @ingroup graphics
+ *
+ * @brief FontSJIS class for handling Japanese characters.
+ *
+ * @{
+ */
+
 struct Surface;
 
 /**
@@ -285,7 +294,7 @@ private:
 };
 
 // TODO: Consider adding support for PC98 ROM
-
+ /** @} */
 } // End of namespace Graphics
 
 #endif

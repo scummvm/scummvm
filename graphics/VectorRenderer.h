@@ -38,6 +38,14 @@ namespace Graphics {
 class VectorRenderer;
 struct DrawStep;
 
+/**
+ * @defgroup graphics_vector_renderer Vector renderer
+ * @ingroup graphics
+ *
+ * @brief VectorRenderer for drawing on a given surface.
+ *
+ * @{
+ */
 
 typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const Graphics::DrawStep &);
 
@@ -557,7 +565,7 @@ protected:
 
 	int _gradientFactor; /**< Multiplication factor of the active gradient */
 };
-
+/** @} */
 } // End of namespace Graphics
 
 #endif
