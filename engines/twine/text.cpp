@@ -470,7 +470,7 @@ void Text::renderContinueReadingTriangle() {
 	vertices[2].x = _engine->_renderer->vertexCoordinates[1];
 	vertices[2].y = _engine->_renderer->vertexCoordinates[5];
 
-	Polygon polygon;
+	CmdRenderPolygon polygon;
 	polygon.numVertices = 3;
 	polygon.colorIndex = _dialTextStopColor;
 	polygon.renderType = POLYGONTYPE_FLAT;
