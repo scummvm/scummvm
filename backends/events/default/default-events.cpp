@@ -186,7 +186,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		break;
 
 	case Common::EVENT_QUIT:
-		if (ConfMan.getBool("confirm_exit")) {
+		if (g_engine && ConfMan.getBool("confirm_exit")) {
 			if (_confirmExitDialogActive) {
 				forwardEvent = false;
 				break;
@@ -195,13 +195,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 			{
 				PauseToken pt;
-				if (g_engine) {
-					pt = g_engine->pauseEngine();
-					GUI::MessageDialog alert(_("Do you really want to quit?\nAny unsaved progress will be lost."), _("Quit"), _("Cancel"));
-					forwardEvent = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
-				} else {
-					_shouldQuit = true;
-				}
+				pt = g_engine->pauseEngine();
+				GUI::MessageDialog alert(_("Do you really want to quit?\nAny unsaved progress will be lost."), _("Quit"), _("Cancel"));
+				forwardEvent = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
 			}
 			_confirmExitDialogActive = false;
 		} else {
