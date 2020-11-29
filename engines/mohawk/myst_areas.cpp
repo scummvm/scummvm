@@ -192,10 +192,6 @@ MystAreaVideo::MystAreaVideo(MohawkEngine_Myst *vm, ResourceType type, Common::S
 		rlstStream->skip(1);
 	}
 
-	// Trim method does not remove extra trailing nulls
-	while (_videoFile.size() != 0 && _videoFile.lastChar() == 0)
-		_videoFile.deleteLastChar();
-
 	_videoFile = convertMystVideoName(_videoFile);
 	_videoFile = _vm->selectLocalizedMovieFilename(_videoFile);
 
