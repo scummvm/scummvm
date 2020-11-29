@@ -1457,20 +1457,20 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 }
 
 void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
-	bodyHeaderStruct *bodyHeader;
 	int32 bp = 36;
 	int32 bx = sizeof(elementEntry);
 
-	bodyHeader = (bodyHeaderStruct *)bodyPtr;
+	Model *bodyHeader = (Model *)bodyPtr;
 
 	// This function should only be called ONCE, otherwise it corrupts the model data.
 	// The following code implements an unused flag to indicate that a model was already processed.
-	if ((bodyHeader->bodyFlag & 0x80)) {
+	if (bodyHeader->bodyFlag.alreadyPrepared) {
 		return;
 	}
-	bodyHeader->bodyFlag |= 0x80;
+	bodyHeader->bodyFlag.alreadyPrepared = 1;
 
-	if (!(bodyHeader->bodyFlag & 2)) { // no animation applicable
+	// no animation applicable
+	if (!bodyHeader->bodyFlag.animated) {
 		return;
 	}
 
@@ -1514,12 +1514,10 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 		renderZ = destZ - baseRotPosZ;
 	}
 
-	int16 bodyHeader = *((const uint16 *)bodyPtr);
-
-	// jump after the header
-	uint8 *ptr = bodyPtr + 16 + *((const uint16 *)(bodyPtr + 14));
-
-	if (bodyHeader & 2) { // if animated
+	Model *bodyHeader = (Model *)bodyPtr;
+	if (bodyHeader->bodyFlag.animated) {
+		// jump after the header
+		uint8 *ptr = bodyPtr + 16 + *((const uint16 *)(bodyPtr + 14));
 		// the mostly used renderer code
 		// restart at the beginning of the renderTable
 		return renderAnimatedModel(&_modelData, ptr, _renderCmds);
@@ -1530,11 +1528,14 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 
 void Renderer::copyActorInternAnim(const uint8 *bodyPtrSrc, uint8 *bodyPtrDest) {
 	// check if both characters allow animation
-	if (!(*((const int16 *)bodyPtrSrc) & 2)) {
+
+	const Model *srcBodyHeader = (const Model *)bodyPtrSrc;
+	if (!srcBodyHeader->bodyFlag.animated) {
 		return;
 	}
 
-	if (!(*((const int16 *)bodyPtrDest) & 2)) {
+	Model *destBodyHeader = (Model *)bodyPtrDest;
+	if (!destBodyHeader->bodyFlag.animated) {
 		return;
 	}
 
@@ -1542,20 +1543,20 @@ void Renderer::copyActorInternAnim(const uint8 *bodyPtrSrc, uint8 *bodyPtrDest) 
 	bodyPtrSrc += 16;
 	bodyPtrDest += 16;
 
-	*((uint32 *)bodyPtrDest) = *((const uint32 *)bodyPtrSrc);
-	*((uint32 *)(bodyPtrDest + 4)) = *((const uint32 *)(bodyPtrSrc + 4));
+	*(uint32 *)(bodyPtrDest + 0) = *(const uint32 *)(bodyPtrSrc + 0);
+	*(uint32 *)(bodyPtrDest + 4) = *(const uint32 *)(bodyPtrSrc + 4);
 
-	bodyPtrSrc = bodyPtrSrc + *((const int16 *)(bodyPtrSrc - 2));
-	const int32 srcNumPoints = *((const int16 *)bodyPtrSrc);
+	bodyPtrSrc += srcBodyHeader->offsetToData;
+	const int32 srcNumPoints = *(const int16 *)bodyPtrSrc;
 	// skip vertices
-	bodyPtrSrc = bodyPtrSrc + srcNumPoints * sizeof(pointTab) + 2;
-	int16 cx = *((const int16 *)bodyPtrSrc);
+	bodyPtrSrc += srcNumPoints * sizeof(pointTab) + 2;
+	int16 cx = *(const int16 *)bodyPtrSrc;
 
-	bodyPtrDest = bodyPtrDest + *((const int16 *)(bodyPtrDest - 2));
-	const int32 destNumPoints = *((const int16 *)bodyPtrDest);
+	bodyPtrDest += destBodyHeader->offsetToData;
+	const int32 destNumPoints = *(const int16 *)bodyPtrDest;
 	// skip vertices
-	bodyPtrDest = bodyPtrDest + destNumPoints * sizeof(pointTab) + 2;
-	int16 ax = *((const int16 *)bodyPtrDest);
+	bodyPtrDest += destNumPoints * sizeof(pointTab) + 2;
+	const int16 ax = *(const int16 *)bodyPtrDest;
 
 	if (cx > ax) {
 		cx = ax;
@@ -1565,8 +1566,8 @@ void Renderer::copyActorInternAnim(const uint8 *bodyPtrSrc, uint8 *bodyPtrDest) 
 	bodyPtrDest += 10;
 
 	for (int32 i = 0; i < cx; i++) {
-		*((uint32 *)bodyPtrDest) = *((const uint32 *)bodyPtrSrc);
-		*((uint32 *)(bodyPtrDest + 4)) = *((const uint32 *)(bodyPtrSrc + 4));
+		*(uint32 *)(bodyPtrDest + 0) = *(const uint32 *)(bodyPtrSrc + 0);
+		*(uint32 *)(bodyPtrDest + 4) = *(const uint32 *)(bodyPtrSrc + 4);
 
 		bodyPtrDest += 30;
 		bodyPtrSrc += 30;

@@ -209,9 +209,8 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 
 	int32 keyFrameLength = READ_LE_INT16(keyFramePtr);
 
-	int16 bodyHeader = READ_LE_INT16(bodyPtr);
-
-	if (!(bodyHeader & 2)) {
+	const Model *bodyHeader = (Model *)bodyPtr;
+	if (!bodyHeader->bodyFlag.animated) {
 		return false;
 	}
 
@@ -227,10 +226,9 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 
 	const uint8* lastKeyFramePtr = ebx;
 
-	int32 eax = READ_LE_INT16(edi - 2);
-	edi += eax;
+	edi += bodyHeader->offsetToData;
 
-	eax = READ_LE_INT16(edi);
+	int16 eax = READ_LE_INT16(edi);
 	eax = eax + eax * 2;
 	edi = edi + eax * 2 + 12;
 
@@ -350,9 +348,9 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 
 int32 Animations::stockAnimation(uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	uint8 *animPtr = animBuffer2;
-	int32 playAnim = READ_LE_INT16(bodyPtr);
+	int32 bodyHeader = READ_LE_INT16(bodyPtr);
 
-	if (!(playAnim & 2)) {
+	if (!(bodyHeader & 2)) {
 		return 0;
 	}
 	const uint8 *ptr = (bodyPtr + 0x10);
