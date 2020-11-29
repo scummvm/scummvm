@@ -36,6 +36,10 @@
 #define POLYGONTYPE_GOURAUD 7
 #define POLYGONTYPE_DITHER 8
 
+namespace Common {
+class MemoryReadStream;
+}
+
 namespace TwinE {
 
 class TwinEEngine;
@@ -57,7 +61,7 @@ class Renderer {
 private:
 	TwinEEngine *_engine;
 
-	struct renderTabEntry {
+	struct RenderCommand {
 		int16 depth = 0;
 		int16 renderType = 0;
 		uint8 *dataPtr = nullptr;
@@ -145,9 +149,9 @@ private:
 		uint16 temp = 0;
 	};
 
-	int32 renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEntryPtr);
+	int32 renderAnimatedModel(uint8 *bodyPtr, RenderCommand *renderCmds);
 	void circleFill(int32 x, int32 y, int32 radius, uint8 color);
-	int32 renderModelElements(int32 numOfPrimitives, uint8 *pointer, renderTabEntry** renderTabEntryPtr);
+	int32 renderModelElements(int32 numOfPrimitives, uint8 *pointer, RenderCommand** renderCmds);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
 	void applyRotation(int32 *targetMatrix, const int32 *currentMatrix);
@@ -196,8 +200,8 @@ private:
 	pointTab flattenPoints[800];  // _flattenPointTable
 	int16 shadeTable[500] {0};
 
-	renderTabEntry renderTab[1000];
-	renderTabEntry renderTabSorted[1000];
+	RenderCommand _renderCmds[1000];
+	RenderCommand _renderCmdsSortedByDepth[1000];
 	uint8 renderCoordinatesBuffer[10000] {0};
 
 	int16 polyTab[960] {0};
@@ -217,6 +221,11 @@ private:
 	void renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const;
 
 	void computePolygons(int16 polyRenderType, Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom);
+
+	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
+	uint8* preparePolygons(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr);
+	uint8* prepareSpheres(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr);
+	uint8* prepareLines(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr);
 
 public:
 	Renderer(TwinEEngine *engine) : _engine(engine) {}

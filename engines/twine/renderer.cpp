@@ -281,7 +281,7 @@ void Renderer::processRotatedElement(int32 *targetMatrix, const uint8 *pointsPtr
 		warning("RENDER WARNING: No points in this model!");
 	}
 
-	applyPointsRotation((const pointTab*)(pointsPtr + firstPoint), numOfPoints2, &computedPoints[firstPoint / sizeof(pointTab)], targetMatrix);
+	applyPointsRotation((const pointTab *)(pointsPtr + firstPoint), numOfPoints2, &computedPoints[firstPoint / sizeof(pointTab)], targetMatrix);
 }
 
 void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const int32 *translationMatrix) {
@@ -330,7 +330,7 @@ void Renderer::processTranslatedElement(int32 *targetMatrix, const uint8 *points
 		}
 	}
 
-	applyPointsTranslation((const pointTab*)(pointsPtr + elemPtr->firstPoint), elemPtr->numOfPoints, &computedPoints[elemPtr->firstPoint / sizeof(pointTab)], targetMatrix);
+	applyPointsTranslation((const pointTab *)(pointsPtr + elemPtr->firstPoint), elemPtr->numOfPoints, &computedPoints[elemPtr->firstPoint / sizeof(pointTab)], targetMatrix);
 }
 
 void Renderer::translateGroup(int16 ax, int16 bx, int16 cx) {
@@ -464,7 +464,7 @@ void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 num
 		float slope = (float)hsize / (float)vsize;
 		slope = up ? -slope : slope;
 
-		for (int32  i = 0; i < vsize + 2; i++) {
+		for (int32 i = 0; i < vsize + 2; i++) {
 			if (outPtr - polyTab < ARRAYSIZE(polyTab)) {
 				if (outPtr - polyTab > 0) {
 					*outPtr = xpos;
@@ -749,7 +749,7 @@ void Renderer::renderPolygonsGouraud(uint8 *out, int vtop, int32 vsize, int32 co
 			int16 colorSize = stopColor - startColor;
 
 			int16 stop = ptr1[SCREEN_HEIGHT]; // stop
-			int16 start = ptr1[0];  // start
+			int16 start = ptr1[0];            // start
 
 			ptr1++;
 			uint8 *out2 = start + out;
@@ -837,7 +837,7 @@ void Renderer::renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 col
 	do {
 		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
 			int16 stop = ptr1[SCREEN_HEIGHT]; // stop
-			int16 start = ptr1[0];  // start
+			int16 start = ptr1[0];            // start
 			ptr1++;
 			int32 hsize = stop - start;
 
@@ -964,7 +964,7 @@ void Renderer::renderPolygons(const Polygon &polygon, Vertex *vertices) {
 	int vbottom = 0;
 	computePolygons(polygon.renderType, vertices, polygon.numVertices, vleft, vright, vtop, vbottom);
 
-	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, vtop);
+	uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(0, vtop);
 	const int32 vsize = vbottom - vtop + 1;
 
 	switch (polygon.renderType) {
@@ -1017,176 +1017,189 @@ void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 color) {
 	}
 }
 
-int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTabEntry **renderTabEntryPtr) {
-	// TODO: proper size
-	Common::MemoryReadStream stream(ptr, 100000);
+uint8 *Renderer::prepareSpheres(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr) {
+	int16 numSpheres = stream.readSint16LE();
+	if (numSpheres <= 0) {
+		return renderBufferPtr;
+	}
+	numOfPrimitives += numSpheres;
+	do {
+		sphereData *sphere = (sphereData *)renderBufferPtr;
+		stream.skip(1);
+		sphere->colorIndex = stream.readByte();
+		stream.skip(2);
+		sphere->radius = stream.readUint16LE();
+		const int16 centerOffset = stream.readUint16LE();
+		const int16 centerIndex = centerOffset / 6;
+		sphere->x = flattenPoints[centerIndex].x;
+		sphere->y = flattenPoints[centerIndex].y;
+
+		(*renderCmds)->depth = flattenPoints[centerIndex].z;
+		(*renderCmds)->renderType = RENDERTYPE_DRAWSPHERE;
+		(*renderCmds)->dataPtr = renderBufferPtr;
+		(*renderCmds)++;
+
+		renderBufferPtr += sizeof(sphereData);
+	} while (--numSpheres);
+
+	return renderBufferPtr;
+}
+
+uint8 *Renderer::prepareLines(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr) {
+	int16 numLines = stream.readSint16LE();
+	if (numLines <= 0) {
+		return renderBufferPtr;
+	}
+	numOfPrimitives += numLines;
+
+	do {
+		lineData line;
+		line.colorIndex = stream.readByte();
+		stream.skip(3);
+		line.firstPointOffset = stream.readSint16LE();
+		line.secondPointOffset = stream.readSint16LE();
+		lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)renderBufferPtr;
+
+		if (line.firstPointOffset % 6 != 0 || line.secondPointOffset % 6 != 0) {
+			error("RENDER ERROR: lineDataPtr reference is malformed!");
+		}
+
+		const int32 point1Index = line.firstPointOffset / 6;
+		const int32 point2Index = line.secondPointOffset / 6;
+		lineCoordinatesPtr->colorIndex = line.colorIndex;
+		lineCoordinatesPtr->x1 = flattenPoints[point1Index].x;
+		lineCoordinatesPtr->y1 = flattenPoints[point1Index].y;
+		lineCoordinatesPtr->x2 = flattenPoints[point2Index].x;
+		lineCoordinatesPtr->y2 = flattenPoints[point2Index].y;
+		(*renderCmds)->depth = MAX(flattenPoints[point1Index].z, flattenPoints[point2Index].z);
+		(*renderCmds)->renderType = RENDERTYPE_DRAWLINE;
+		(*renderCmds)->dataPtr = renderBufferPtr;
+		(*renderCmds)++;
+
+		renderBufferPtr += sizeof(lineCoordinates);
+	} while (--numLines);
+
+	return renderBufferPtr;
+}
+
+uint8 *Renderer::preparePolygons(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr) {
 	int16 numPolygons = stream.readSint16LE();
+	if (numPolygons <= 0) {
+		return renderBufferPtr;
+	}
+	int16 primitiveCounter = numPolygons; // the number of primitives = the number of polygons
 
-	uint8 *renderBufferPtr = renderCoordinatesBuffer;
+	do { // loop that load all the polygons
+		const uint8 renderType = stream.readByte();
+		const uint8 numVertices = stream.readByte();
+		assert(numVertices <= 16);
+		const int16 colorIndex = stream.readSint16LE();
 
-	if (numPolygons > 0) {
-		int16 primitiveCounter = numPolygons; // the number of primitives = the number of polygons
+		int16 bestDepth = -32000;
 
-		do { // loop that load all the polygons
-			const uint8 renderType = stream.readByte();
-			const uint8 numVertices = stream.readByte();
-			assert(numVertices <= 16);
-			const int16 colorIndex = stream.readSint16LE();
+		Polygon *destinationPolygon = (Polygon *)renderBufferPtr;
+		destinationPolygon->numVertices = numVertices;
 
-			int16 bestDepth = -32000;
+		renderBufferPtr += sizeof(Polygon);
 
-			Polygon *destinationPolygon = (Polygon *)renderBufferPtr;
-			destinationPolygon->numVertices = numVertices;
+		Vertex *const vertices = (Vertex *)renderBufferPtr;
+		renderBufferPtr += destinationPolygon->numVertices * sizeof(Vertex);
 
-			renderBufferPtr += sizeof(Polygon);
+		Vertex *vertex = vertices;
+		int16 counter = destinationPolygon->numVertices;
 
-			Vertex * const vertices = (Vertex *)renderBufferPtr;
-			renderBufferPtr += destinationPolygon->numVertices * sizeof(Vertex);
+		// TODO: RECHECK coordinates axis
+		if (renderType >= 9) {
+			destinationPolygon->renderType = renderType - 2;
+			destinationPolygon->colorIndex = colorIndex;
 
-			Vertex *vertex = vertices;
-			int16 counter = destinationPolygon->numVertices;
+			do {
+				const int16 shadeEntry = stream.readSint16LE();
+				const int16 shadeValue = colorIndex + shadeTable[shadeEntry];
 
-			// TODO: RECHECK coordinates axis
-			if (renderType >= 9) {
-				destinationPolygon->renderType = renderType - 2;
-				destinationPolygon->colorIndex = colorIndex;
+				const int16 vertexOffset = stream.readSint16LE();
+				const int16 vertexIndex = vertexOffset / 6;
+				const pointTab *point = &flattenPoints[vertexIndex];
 
-				do {
-					const int16 shadeEntry = stream.readSint16LE();
-					const int16 shadeValue = colorIndex + shadeTable[shadeEntry];
-
-					const int16 vertexOffset = stream.readSint16LE();
-					const int16 vertexIndex = vertexOffset / 6;
-					const pointTab *point = &flattenPoints[vertexIndex];
-
-					vertex->colorIndex = shadeValue;
-					vertex->x = point->x;
-					vertex->y = point->y;
-					bestDepth = MAX(bestDepth, point->z);
-					++vertex;
-				} while (--counter > 0);
+				vertex->colorIndex = shadeValue;
+				vertex->x = point->x;
+				vertex->y = point->y;
+				bestDepth = MAX(bestDepth, point->z);
+				++vertex;
+			} while (--counter > 0);
+		} else {
+			if (renderType >= POLYGONTYPE_GOURAUD) {
+				// only 1 shade value is used
+				destinationPolygon->renderType = renderType - POLYGONTYPE_GOURAUD;
+				const int16 shadeEntry = stream.readSint16LE();
+				const int16 shadeValue = colorIndex + shadeTable[shadeEntry];
+				destinationPolygon->colorIndex = shadeValue;
 			} else {
-				if (renderType >= POLYGONTYPE_GOURAUD) {
-					// only 1 shade value is used
-					destinationPolygon->renderType = renderType - POLYGONTYPE_GOURAUD;
-					const int16 shadeEntry = stream.readSint16LE();
-					const int16 shadeValue = colorIndex + shadeTable[shadeEntry];
-					destinationPolygon->colorIndex = shadeValue;
-				} else {
-					// no shade is used
-					destinationPolygon->renderType = renderType;
-					destinationPolygon->colorIndex = colorIndex;
-				}
-
-				do {
-					const int16 vertexOffset = stream.readSint16LE();
-					const int16 vertexIndex = vertexOffset / 6;
-					const pointTab *point = &flattenPoints[vertexIndex];
-
-					vertex->colorIndex = 0;
-					vertex->x = point->x;
-					vertex->y = point->y;
-					bestDepth = MAX(bestDepth, point->z);
-					++vertex;
-				} while (--counter > 0);
+				// no shade is used
+				destinationPolygon->renderType = renderType;
+				destinationPolygon->colorIndex = colorIndex;
 			}
+
+			do {
+				const int16 vertexOffset = stream.readSint16LE();
+				const int16 vertexIndex = vertexOffset / 6;
+				const pointTab *point = &flattenPoints[vertexIndex];
+
+				vertex->colorIndex = destinationPolygon->colorIndex;
+				vertex->x = point->x;
+				vertex->y = point->y;
+				bestDepth = MAX(bestDepth, point->z);
+				++vertex;
+			} while (--counter > 0);
+		}
 
 #if 0
-			const int16 bx = vertices[1].x - vertices[0].x;
-			const int16 ax = (vertices[0].y - vertices[2].y) * bx;
+		const int16 bx = vertices[1].x - vertices[0].x;
+		const int16 ax = (vertices[0].y - vertices[2].y) * bx;
 
-			const int16 cx = vertices[1].y - vertices[0].y;
-			const int16 dx = (vertices[0].x - vertices[2].x) * cx - ax;
+		const int16 cx = vertices[1].y - vertices[0].y;
+		const int16 dx = (vertices[0].x - vertices[2].x) * cx - ax;
 #endif
-			numOfPrimitives++;
+		numOfPrimitives++;
 
-			(*renderTabEntryPtr)->depth = bestDepth;
-			(*renderTabEntryPtr)->renderType = RENDERTYPE_DRAWPOLYGON;
-			(*renderTabEntryPtr)->dataPtr = (uint8*)destinationPolygon;
-			(*renderTabEntryPtr)++;
-		} while (--primitiveCounter);
-	}
+		(*renderCmds)->depth = bestDepth;
+		(*renderCmds)->renderType = RENDERTYPE_DRAWPOLYGON;
+		(*renderCmds)->dataPtr = (uint8 *)destinationPolygon;
+		(*renderCmds)++;
+	} while (--primitiveCounter);
 
-	// prepare lines
+	return renderBufferPtr;
+}
 
-	int16 temp = stream.readSint16LE();
-	if (temp) {
-		numOfPrimitives += temp;
-		do {
-			lineData line;
-			line.colorIndex = stream.readByte();
-			stream.skip(3);
-			line.firstPointOffset = stream.readSint16LE();
-			line.secondPointOffset = stream.readSint16LE();
-			lineCoordinates *lineCoordinatesPtr = (lineCoordinates *)renderBufferPtr;
-
-			if (line.firstPointOffset % 6 != 0 || line.secondPointOffset % 6 != 0) {
-				error("RENDER ERROR: lineDataPtr reference is malformed!");
-			}
-
-			const int32 point1Index = line.firstPointOffset / 6;
-			const int32 point2Index = line.secondPointOffset / 6;
-			lineCoordinatesPtr->colorIndex = line.colorIndex;
-			lineCoordinatesPtr->x1 = flattenPoints[point1Index].x;
-			lineCoordinatesPtr->y1 = flattenPoints[point1Index].y;
-			lineCoordinatesPtr->x2 = flattenPoints[point2Index].x;
-			lineCoordinatesPtr->y2 = flattenPoints[point2Index].y;
-			(*renderTabEntryPtr)->depth = MAX(flattenPoints[point1Index].z, flattenPoints[point2Index].z);
-			(*renderTabEntryPtr)->renderType = RENDERTYPE_DRAWLINE;
-			(*renderTabEntryPtr)->dataPtr = renderBufferPtr;
-			(*renderTabEntryPtr)++;
-
-			renderBufferPtr += sizeof(lineCoordinates);
-		} while (--temp);
-	}
-
-	// prepare spheres
-	temp = stream.readSint16LE();
-	if (temp) {
-		numOfPrimitives += temp;
-		do {
-			sphereData *sphere = (sphereData *)renderBufferPtr;
-			stream.skip(1);
-			sphere->colorIndex = stream.readByte();
-			stream.skip(2);
-			sphere->radius = stream.readUint16LE();
-			const int16 centerOffset = stream.readUint16LE();
-			const int16 centerIndex = centerOffset / 6;
-			sphere->x = flattenPoints[centerIndex].x;
-			sphere->y = flattenPoints[centerIndex].y;
-
-			(*renderTabEntryPtr)->depth = flattenPoints[centerOffset / sizeof(pointTab)].z;
-			(*renderTabEntryPtr)->renderType = RENDERTYPE_DRAWSPHERE;
-			(*renderTabEntryPtr)->dataPtr = renderBufferPtr;
-			(*renderTabEntryPtr)++;
-
-			renderBufferPtr += sizeof(sphereData);
-		} while (--temp);
-	}
-
-	const renderTabEntry *renderTabEntryPtr2 = renderTab;
-
-	renderTabEntry *renderTabSortedPtr = renderTabSorted;
+const Renderer::RenderCommand *Renderer::depthSortRenderCommands(int32 numOfPrimitives) {
+	RenderCommand *sortedCmd = _renderCmdsSortedByDepth;
 	int32 bestPoly = 0;
 	for (int32 i = 0; i < numOfPrimitives; i++) { // then we sort the polygones | WARNING: very slow | TODO: improve this
-		renderTabEntryPtr2 = renderTab;
-		int16 bestZ = -0x7FFF;
+		const RenderCommand *cmd = _renderCmds;
+		int16 bestZ = -32767;
 		for (int32 j = 0; j < numOfPrimitives; j++) {
-			if (renderTabEntryPtr2->depth > bestZ) {
-				bestZ = renderTabEntryPtr2->depth;
+			if (cmd->depth > bestZ) {
+				bestZ = cmd->depth;
 				bestPoly = j;
 			}
-			renderTabEntryPtr2++;
+			cmd++;
 		}
-		renderTabSortedPtr->depth = renderTab[bestPoly].depth;
-		renderTabSortedPtr->renderType = renderTab[bestPoly].renderType;
-		renderTabSortedPtr->dataPtr = renderTab[bestPoly].dataPtr;
-		renderTabSortedPtr++;
-		renderTab[bestPoly].depth = -0x7FFF;
+		*sortedCmd = _renderCmds[bestPoly];
+		sortedCmd++;
+		_renderCmds[bestPoly].depth = -32767;
 	}
-	renderTabEntryPtr2 = renderTabSorted;
 
-	// prepare to render elements
+	return _renderCmdsSortedByDepth;
+}
+
+int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, RenderCommand **renderCmds) {
+	// TODO: proper size
+	Common::MemoryReadStream stream(ptr, 100000);
+
+	uint8 *renderBufferPtr = renderCoordinatesBuffer;
+	renderBufferPtr = preparePolygons(stream, numOfPrimitives, renderCmds, renderBufferPtr);
+	renderBufferPtr = prepareLines(stream, numOfPrimitives, renderCmds, renderBufferPtr);
+	renderBufferPtr = prepareSpheres(stream, numOfPrimitives, renderCmds, renderBufferPtr);
 
 	if (numOfPrimitives == 0) {
 		_engine->_redraw->renderRect.right = -1;
@@ -1195,18 +1208,17 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 		_engine->_redraw->renderRect.top = -1;
 		return -1;
 	}
+	const RenderCommand *cmds = depthSortRenderCommands(numOfPrimitives);
 
 	int16 primitiveCounter = numOfPrimitives;
-	uint8* afterPolyHeaderPtr = ptr + stream.pos();
 
 	do {
-		int16 type = renderTabEntryPtr2->renderType;
-		uint8 *pointer = renderTabEntryPtr2->dataPtr;
-		afterPolyHeaderPtr += 8;
+		int16 type = cmds->renderType;
+		uint8 *pointer = cmds->dataPtr;
 
 		switch (type) {
-		case RENDERTYPE_DRAWLINE: { // draw a line
-			const lineCoordinates *lineCoords = (const lineCoordinates*)pointer;
+		case RENDERTYPE_DRAWLINE: {
+			const lineCoordinates *lineCoords = (const lineCoordinates *)pointer;
 			const int32 x1 = lineCoords->x1;
 			const int32 y1 = lineCoords->y1;
 			const int32 x2 = lineCoords->x2;
@@ -1214,15 +1226,15 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			_engine->_interface->drawLine(x1, y1, x2, y2, lineCoords->colorIndex);
 			break;
 		}
-		case RENDERTYPE_DRAWPOLYGON: { // draw a polygon
-			const Polygon* header = (const Polygon*)pointer;
-			Vertex* vertices = (Vertex*)(pointer + sizeof(Polygon));
+		case RENDERTYPE_DRAWPOLYGON: {
+			const Polygon *header = (const Polygon *)pointer;
+			Vertex *vertices = (Vertex *)(pointer + sizeof(Polygon));
 			renderPolygons(*header, vertices);
 			break;
 		}
-		case RENDERTYPE_DRAWSPHERE: { // draw a sphere
-			sphereData* sphere = (sphereData*)pointer;
-			int32 radius =  sphere->radius;
+		case RENDERTYPE_DRAWSPHERE: {
+			sphereData *sphere = (sphereData *)pointer;
+			int32 radius = sphere->radius;
 
 			if (!isUsingOrhoProjection) {
 				radius = (radius * cameraPosY) / (cameraPosX + *(const int16 *)pointer); // TODO: this does not make sense.
@@ -1257,12 +1269,12 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			break;
 		}
 
-		renderTabEntryPtr2++;
+		cmds++;
 	} while (--primitiveCounter);
 	return 0;
 }
 
-int32 Renderer::renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEntryPtr) {
+int32 Renderer::renderAnimatedModel(uint8 *bodyPtr, RenderCommand *renderCmds) {
 	//	int32 *tmpLightMatrix;
 	int32 numOfPoints = *((const uint16 *)bodyPtr);
 	bodyPtr += 2;
@@ -1464,7 +1476,7 @@ int32 Renderer::renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEnt
 		} while (--numOfPrimitives);
 	}
 
-	return renderModelElements(numOfPrimitives, (uint8 *)shadePtr, &renderTabEntryPtr);
+	return renderModelElements(numOfPrimitives, (uint8 *)shadePtr, &renderCmds);
 }
 
 void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
@@ -1533,7 +1545,7 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 	if (bodyHeader & 2) { // if animated
 		// the mostly used renderer code
 		// restart at the beginning of the renderTable
-		return renderAnimatedModel(ptr, renderTab);
+		return renderAnimatedModel(ptr, _renderCmds);
 	}
 	error("Unsupported unanimated model render!");
 	return 0;
