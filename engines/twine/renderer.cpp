@@ -237,7 +237,7 @@ void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, p
 	} while (--numOfPoints2);
 }
 
-void Renderer::processRotatedElement(Matrix *targetMatrix, const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData) { // unsigned char * elemPtr) // loadPart
+void Renderer::processRotatedElement(Matrix *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData) {
 	int32 firstPoint = elemPtr->firstPoint;
 	int32 numOfPoints2 = elemPtr->numOfPoints;
 
@@ -275,7 +275,7 @@ void Renderer::processRotatedElement(Matrix *targetMatrix, const uint8 *pointsPt
 		warning("RENDER WARNING: No points in this model!");
 	}
 
-	applyPointsRotation((const pointTab *)(pointsPtr + firstPoint), numOfPoints2, &modelData->computedPoints[firstPoint / sizeof(pointTab)], targetMatrix);
+	applyPointsRotation(&pointsPtr[firstPoint / sizeof(pointTab)], numOfPoints2, &modelData->computedPoints[firstPoint / sizeof(pointTab)], targetMatrix);
 }
 
 void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const Matrix *translationMatrix) {
@@ -295,7 +295,7 @@ void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints
 	} while (--numOfPoints2);
 }
 
-void Renderer::processTranslatedElement(Matrix *targetMatrix, const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData) {
+void Renderer::processTranslatedElement(Matrix *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData) {
 	renderAngleX = rotX;
 	renderAngleY = rotY;
 	renderAngleZ = rotZ;
@@ -318,7 +318,7 @@ void Renderer::processTranslatedElement(Matrix *targetMatrix, const uint8 *point
 		*targetMatrix = matricesTable[matrixIndex];
 	}
 
-	applyPointsTranslation((const pointTab *)(pointsPtr + elemPtr->firstPoint), elemPtr->numOfPoints, &modelData->computedPoints[elemPtr->firstPoint / sizeof(pointTab)], targetMatrix);
+	applyPointsTranslation(&pointsPtr[elemPtr->firstPoint / sizeof(pointTab)], elemPtr->numOfPoints, &modelData->computedPoints[elemPtr->firstPoint / sizeof(pointTab)], targetMatrix);
 }
 
 void Renderer::translateGroup(int16 ax, int16 bx, int16 cx) {
@@ -1259,7 +1259,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, RenderCom
 int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, RenderCommand *renderCmds) {
 	int32 numOfPoints = *((const uint16 *)bodyPtr);
 	bodyPtr += 2;
-	const uint8 *pointsPtr = bodyPtr;
+	const pointTab *pointsPtr = (const pointTab *)bodyPtr;
 
 	bodyPtr += numOfPoints * sizeof(pointTab);
 
@@ -1301,8 +1301,8 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 	numOfPrimitives = numOfPoints;
 
 	// TODO: stack var will maybe exceed max stack size on some platforms - 27300 bytes
-	const pointTab *pointPtr = (pointTab *)modelData->computedPoints;
-	pointTab *pointPtrDest = (pointTab *)modelData->flattenPoints;
+	const pointTab *pointPtr = &modelData->computedPoints[0];
+	pointTab *pointPtrDest = &modelData->flattenPoints[0];
 
 	if (isUsingOrhoProjection) { // use standard projection
 		do {
