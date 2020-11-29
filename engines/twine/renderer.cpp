@@ -1033,95 +1033,74 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			currentPolygon.numVertices = stream.readByte();
 			assert(currentPolygon.numVertices <= 16);
 			currentPolygon.colorIndex = stream.readSint16LE();
-			int32 bestDepth = -32000;
+
+			int16 bestDepth = -32000;
+
 			Polygon *destinationPolygon = (Polygon *)renderBufferPtr;
-			Vertex * const vertices = (Vertex *)(renderBufferPtr + sizeof(Polygon));
+			destinationPolygon->numVertices = currentPolygon.numVertices;
+
+			renderBufferPtr += sizeof(Polygon);
+
+			Vertex * const vertices = (Vertex *)renderBufferPtr;
+			renderBufferPtr += destinationPolygon->numVertices * sizeof(Vertex);
+
+			Vertex *vertex = vertices;
+			int16 counter = destinationPolygon->numVertices;
 
 			// TODO: RECHECK coordinates axis
 			if (currentPolygon.renderType >= 9) {
 				destinationPolygon->renderType = currentPolygon.renderType - 2;
-				destinationPolygon->numVertices = currentPolygon.numVertices;
 				destinationPolygon->colorIndex = currentPolygon.colorIndex;
 
-				renderBufferPtr += sizeof(Polygon);
-
-				int16 counter = destinationPolygon->numVertices;
-
-				Vertex *currentComputedVertex = vertices;
 				do {
 					const int16 shadeEntry = stream.readSint16LE();
 					const int16 shadeValue = currentPolygon.colorIndex + shadeTable[shadeEntry];
 
 					const int16 vertexOffset = stream.readSint16LE();
 					const int16 vertexIndex = vertexOffset / 6;
-					const pointTab *currentVertex = &flattenPoints[vertexIndex];
+					const pointTab *point = &flattenPoints[vertexIndex];
 
-					currentComputedVertex->colorIndex = shadeValue;
-					currentComputedVertex->x = currentVertex->x;
-					currentComputedVertex->y = currentVertex->y;
-
-					renderBufferPtr += sizeof(Vertex);
-
-					int32 currentDepth = currentVertex->z;
-					if (currentDepth > bestDepth) {
-						bestDepth = currentDepth;
-					}
-					++currentComputedVertex;
+					vertex->colorIndex = shadeValue;
+					vertex->x = point->x;
+					vertex->y = point->y;
+					bestDepth = MAX(bestDepth, point->z);
+					++vertex;
 				} while (--counter > 0);
-			} else if (currentPolygon.renderType >= POLYGONTYPE_GOURAUD) { // only 1 shade value is used
+			} else if (currentPolygon.renderType >= POLYGONTYPE_GOURAUD) {
+				// only 1 shade value is used
 				destinationPolygon->renderType = currentPolygon.renderType - POLYGONTYPE_GOURAUD;
 				destinationPolygon->numVertices = currentPolygon.numVertices;
 				const int16 shadeEntry = stream.readSint16LE();
 				const int16 shadeValue = currentPolygon.colorIndex + shadeTable[shadeEntry];
 				destinationPolygon->colorIndex = shadeValue;
 
-				renderBufferPtr += sizeof(Polygon);
-				Vertex *currentComputedVertex = vertices;
-				int16 counter = destinationPolygon->numVertices;
-
 				do {
 					const int16 vertexOffset = stream.readSint16LE();
 					const int16 vertexIndex = vertexOffset / 6;
-					const pointTab *currentVertex = &flattenPoints[vertexIndex];
+					const pointTab *point = &flattenPoints[vertexIndex];
 
-					//currentVertex->shadeValue = 0;
-					currentComputedVertex->x = currentVertex->x;
-					currentComputedVertex->y = currentVertex->y;
-
-					renderBufferPtr += sizeof(Vertex);
-
-					int32 currentDepth = currentVertex->z;
-					if (currentDepth > bestDepth) {
-						bestDepth = currentDepth;
-					}
-					++currentComputedVertex;
+					vertex->colorIndex = 0;
+					vertex->x = point->x;
+					vertex->y = point->y;
+					bestDepth = MAX(bestDepth, point->z);
+					++vertex;
 				} while (--counter > 0);
-			} else { // no shade is used
+			} else {
+				// no shade is used
 				destinationPolygon->renderType = currentPolygon.renderType;
 				destinationPolygon->numVertices = currentPolygon.numVertices;
 				destinationPolygon->colorIndex = currentPolygon.colorIndex;
 
-				renderBufferPtr += sizeof(Polygon);
-
-				Vertex *currentComputedVertex = vertices;
-				int16 counter = currentPolygon.numVertices;
-
 				do {
 					const int16 vertexOffset = stream.readSint16LE();
 					const int16 vertexIndex = vertexOffset / 6;
-					const pointTab *currentVertex = &flattenPoints[vertexIndex];
+					const pointTab *point = &flattenPoints[vertexIndex];
 
-					//currentVertex->shadeValue = 0;
-					currentComputedVertex->x = currentVertex->x;
-					currentComputedVertex->y = currentVertex->y;
-
-					renderBufferPtr += sizeof(Vertex);
-
-					int32 currentDepth = currentVertex->z;
-					if (currentDepth > bestDepth) {
-						bestDepth = currentDepth;
-					}
-					++currentComputedVertex;
+					vertex->colorIndex = 0;
+					vertex->x = point->x;
+					vertex->y = point->y;
+					bestDepth = MAX(bestDepth, point->z);
+					++vertex;
 				} while (--counter > 0);
 			}
 
