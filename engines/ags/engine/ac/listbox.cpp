@@ -489,7 +489,7 @@ RuntimeScriptValue Sc_ListBox_GetItemCount(void *self, const RuntimeScriptValue 
 
 // const char* (GUIListBox *listbox, int index)
 RuntimeScriptValue Sc_ListBox_GetItems(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ_PINT(GUIListBox, const char, myScriptStringImpl, ListBox_GetItems);
+	API_CONST_OBJCALL_OBJ_PINT(GUIListBox, const char, myScriptStringImpl, ListBox_GetItems);
 }
 
 // int (GUIListBox *listbox)

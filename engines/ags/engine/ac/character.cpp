@@ -2930,7 +2930,7 @@ RuntimeScriptValue Sc_Character_GetPropertyText(void *self, const RuntimeScriptV
 
 // const char* (CharacterInfo *chaa, const char *property)
 RuntimeScriptValue Sc_Character_GetTextProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ_POBJ(CharacterInfo, const char, myScriptStringImpl, Character_GetTextProperty, const char);
+	API_CONST_OBJCALL_OBJ_POBJ(CharacterInfo, const char, myScriptStringImpl, Character_GetTextProperty, const char);
 }
 
 RuntimeScriptValue Sc_Character_SetProperty(void *self, const RuntimeScriptValue *params, int32_t param_count) {
@@ -3364,7 +3364,7 @@ RuntimeScriptValue Sc_Character_GetDestinationY(void *self, const RuntimeScriptV
 
 // const char* (CharacterInfo *chaa)
 RuntimeScriptValue Sc_Character_GetName(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ(CharacterInfo, const char, myScriptStringImpl, Character_GetName);
+	API_CONST_OBJCALL_OBJ(CharacterInfo, const char, myScriptStringImpl, Character_GetName);
 }
 
 // void (CharacterInfo *chaa, const char *newName)
