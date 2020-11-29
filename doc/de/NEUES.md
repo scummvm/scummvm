@@ -59,6 +59,9 @@ Programmcodes finden Sie auf Englisch unter:
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
 
+ TsAGE:
+   - Unterstützung für eine weitere Disketten-Version hinzugefügt.
+
  Stark:
    - Unterstützung für die ungarische Übersetzung hinzugefügt.
 
