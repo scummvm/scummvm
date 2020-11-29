@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-29 15:46+0000\n"
-"PO-Revision-Date: 2020-10-26 12:06+0000\n"
+"PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/nl/>\n"
@@ -306,8 +306,9 @@ msgid "Keymaps"
 msgstr "Toetskoppelingen"
 
 #: gui/editgamedialog.cpp:246 gui/options.cpp:1833 engines/dialogs.cpp:333
+#, fuzzy
 msgid "Backend"
-msgstr ""
+msgstr "Backend"
 
 #: gui/editgamedialog.cpp:260 gui/options.cpp:1847 engines/dialogs.cpp:301
 msgid "Audio"
@@ -2202,9 +2203,8 @@ msgid "Could not apply filtering setting."
 msgstr "Kon filterinstelling niet toepassen."
 
 #: engines/engine.cpp:420
-#, fuzzy
 msgid "Error"
-msgstr "Geen fout"
+msgstr "Fout"
 
 #: engines/engine.cpp:507
 msgid ""
@@ -2269,16 +2269,16 @@ msgid "Start anyway"
 msgstr "Evengoed starten"
 
 #: engines/engine.cpp:659
-#, fuzzy
 msgid "This game is not supported."
-msgstr "Spel-ID niet ondersteund"
+msgstr "Dit spel wordt niet ondersteund."
 
 #: engines/engine.cpp:659
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
-msgstr "Dit spel ondersteunt het laden van spelen vanaf het startmenu niet."
+msgstr ""
+"Dit spel wordt niet ondersteunt om de volgende reden:\n"
+"\n"
 
 #: engines/engine.cpp:798
 msgid "Loading game is currently unavailable"
@@ -2374,7 +2374,7 @@ msgstr "OpenGL"
 
 #: graphics/renderer.cpp:34
 msgid "OpenGL with shaders"
-msgstr ""
+msgstr "OpenGL met shaders"
 
 #: audio/adlib.cpp:2293
 msgid "AdLib emulator"
@@ -4134,14 +4134,13 @@ msgstr ""
 msgid ""
 "The fan translator does not wish his translation to be incorporated into "
 "ScummVM."
-msgstr ""
+msgstr "De vertaler wil niet dat zijn vertaling geïntegreerd wordt in ScummVM."
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
 #: engines/sci/detection_tables.h:4808 engines/sci/detection_tables.h:4816
-#, fuzzy
 msgid "Missing game code"
-msgstr "Hoofd spel besturing:"
+msgstr "Ontbrekende spel code"
 
 #: engines/cge/detection.cpp:99
 msgid "Color Blind Mode"
@@ -4796,9 +4795,8 @@ msgid "Play movies at an increased speed"
 msgstr "Speel films sneller af"
 
 #: engines/groovie/metaengine.cpp:53
-#, fuzzy
 msgid "GroovieV2 support is not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "GroovieV2 ondersteuning is niet mee gecompileerd"
 
 #: engines/groovie/script.cpp:484
 msgid "Failed to save game"
@@ -4923,20 +4921,20 @@ msgid "Left button to attack, right button to pick up items"
 msgstr "Linkerknop om aan te vallen, rechterknop om voorwerpen op te pakken"
 
 #: engines/kyra/metaengine.cpp:116
-#, fuzzy
 msgid "Lands of Lore support is not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "Lands of Lore ondersteuning is niet mee gecompileerd"
 
 #: engines/kyra/metaengine.cpp:128
 msgid ""
 "EOB II FM-TOWNS requires support of 16bit color modes which has not been "
 "activated in your ScummVM build"
 msgstr ""
+"EOB II FM-TOWNS vereist 16bit kleurenmodus ondersteuning welke niet is mee "
+"gecompileerd in deze versie van ScummVM"
 
 #: engines/kyra/metaengine.cpp:137
-#, fuzzy
 msgid "Eye of Beholder support is not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "Eye of the Beholder ondersteuning is niet mee gecompileerd"
 
 #: engines/kyra/engine/eobcommon.cpp:366 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
@@ -5198,9 +5196,8 @@ msgstr ""
 "Gebruik TTS voor het lezen van de omschrijvingen (als TTS beschikbaar is)"
 
 #: engines/made/detection_tables.h:360
-#, fuzzy
 msgid "The game is using unsupported engine"
-msgstr "Spel-ID niet ondersteund"
+msgstr "Het spel gebruikt een niet ondersteunde engine"
 
 #: engines/mads/detection.cpp:55
 msgid "Easy mouse interface"
@@ -5281,24 +5278,20 @@ msgid "The game is paused. Press any key to continue."
 msgstr "Spel is gepauzeerd. Druk op een toets om verder te gaan."
 
 #: engines/mohawk/metaengine.cpp:272
-#, fuzzy
 msgid "Myst ME support not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "Myst ME ondersteuning niet mee gecompileerd"
 
 #: engines/mohawk/metaengine.cpp:279
-#, fuzzy
 msgid "Myst support not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "Myst ondersteuning niet mee gecompileerd"
 
 #: engines/mohawk/metaengine.cpp:287
-#, fuzzy
 msgid "Riven support not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "Riven ondersteuning niet mee gecompileerd"
 
 #: engines/mohawk/metaengine.cpp:302
-#, fuzzy
 msgid "CSTime support not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "CSTime ondersteuning niet mee gecompileerd"
 
 #: engines/mohawk/myst.cpp:552 engines/mohawk/riven.cpp:822
 msgid "Open main menu"
@@ -5462,9 +5455,8 @@ msgid "Unable to locate the '%s' engine data file"
 msgstr "Kon de '%s' engine data file niet vinden"
 
 #: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
-#, fuzzy
 msgid "PS2 version is not yet supported"
-msgstr "Spel-ID niet ondersteund"
+msgstr "PS2 versie wordt nog niet ondersteund"
 
 #: engines/myst3/detection.cpp:182
 msgid "Widescreen mod"
@@ -5638,14 +5630,12 @@ msgstr ""
 "Gebruik een alternatieve versie van de intro (alleen voor de CD versie)"
 
 #: engines/saga/metaengine.cpp:117
-#, fuzzy
 msgid "I Have No Mouth support not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "I Have No Mouth ondersteuning niet mee gecompileerd"
 
 #: engines/saga/metaengine.cpp:124
-#, fuzzy
 msgid "SAGA2 support not compiled in"
-msgstr "Features meegecompileerd:"
+msgstr "SAGA2 ondersteuning niet mee gecompileerd"
 
 #: engines/saga/saga.cpp:247
 msgid "Error loading game resources."
@@ -5752,11 +5742,11 @@ msgstr "Schaal videos op naar dubbele grootte"
 
 #: engines/sci/detection.cpp:270
 msgid "Use RGB rendering"
-msgstr ""
+msgstr "Gebruik RGB rendering"
 
 #: engines/sci/detection.cpp:271
 msgid "Use RGB rendering to improve screen transitions"
-msgstr ""
+msgstr "Gebruik RGB rendering om schermovergangen te verbeteren"
 
 #: engines/sci/detection.cpp:281
 msgid "Use per-resource modified palettes"
