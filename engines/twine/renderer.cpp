@@ -1257,25 +1257,21 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, RenderCom
 }
 
 int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, RenderCommand *renderCmds) {
-	int32 numOfPoints = *((const uint16 *)bodyPtr);
+	const int32 numOfPoints = *((const uint16 *)bodyPtr);
 	bodyPtr += 2;
 	const pointTab *pointsPtr = (const pointTab *)bodyPtr;
 
 	bodyPtr += numOfPoints * sizeof(pointTab);
 
-	int32 numOfElements = *((const uint16 *)bodyPtr);
+	const int32 numOfElements = *((const uint16 *)bodyPtr);
 	bodyPtr += 2;
-
-	uint8 *elementsPtr = bodyPtr;
-	const uint8 *elementsPtr2 = elementsPtr;
+	const elementEntry *elemEntryPtr = (const elementEntry *)bodyPtr;
 
 	Matrix *modelMatrix = &matricesTable[0];
 
-	processRotatedElement(modelMatrix, pointsPtr, renderAngleX, renderAngleY, renderAngleZ, (const elementEntry *)elementsPtr, modelData);
+	processRotatedElement(modelMatrix, pointsPtr, renderAngleX, renderAngleY, renderAngleZ, elemEntryPtr, modelData);
 
-	elementsPtr += sizeof(elementEntry);
-
-	const elementEntry *elemEntryPtr = (const elementEntry *)elementsPtr;
+	++elemEntryPtr;
 
 	int32 numOfPrimitives = 0;
 
@@ -1287,14 +1283,13 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 			int16 boneType = elemEntryPtr->flag;
 
 			if (boneType == 0) {
-				processRotatedElement(modelMatrix, pointsPtr, elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr, modelData); // rotation
+				processRotatedElement(modelMatrix, pointsPtr, elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr, modelData);
 			} else if (boneType == 1) {
-				processTranslatedElement(modelMatrix, pointsPtr, elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr, modelData); // translation
+				processTranslatedElement(modelMatrix, pointsPtr, elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr, modelData);
 			}
 
 			++modelMatrix;
-			elementsPtr += sizeof(elementEntry);
-			elemEntryPtr = (elementEntry *)elementsPtr;
+			++elemEntryPtr;
 		} while (--numOfPrimitives);
 	}
 
@@ -1393,7 +1388,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 		} while (--numOfPrimitives);
 	}
 
-	int32 *shadePtr = (int32 *)elementsPtr;
+	int32 *shadePtr = (int32 *)(bodyPtr + numOfElements * sizeof(elementEntry));
 
 	int32 numOfShades = *((const uint16 *)shadePtr);
 
@@ -1402,11 +1397,11 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 	if (numOfShades) { // process normal data
 		uint8 *currentShadeDestination = (uint8 *)modelData->shadeTable;
 		Matrix *lightMatrix = &matricesTable[0];
-		const uint8 *pri2Ptr3;
 
 		numOfPrimitives = numOfElements;
 
-		const uint8 *tmpElemPtr = pri2Ptr3 = elementsPtr2 + 18;
+		const uint8 *tmpElemPtr = bodyPtr + 18;
+		const uint8 *pri2Ptr3 = tmpElemPtr;
 
 		do { // for each element
 			numOfShades = *((const uint16 *)tmpElemPtr);
