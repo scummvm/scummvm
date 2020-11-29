@@ -33,6 +33,7 @@ using AGS::Shared::Bitmap;
 
 class IRouteFinder {
 public:
+	virtual ~IRouteFinder() {}
 	virtual void init_pathfinder() = 0;
 	virtual void shutdown_pathfinder() = 0;
 	virtual void set_wallscreen(Bitmap *wallscreen) = 0;
@@ -45,6 +46,8 @@ public:
 
 class AGSRouteFinder : public IRouteFinder {
 public:
+	virtual ~AGSRouteFinder() {}
+
 	void init_pathfinder() override {
 		AGS::Engine::RouteFinder::init_pathfinder();
 	}
@@ -73,6 +76,8 @@ public:
 
 class AGSLegacyRouteFinder : public IRouteFinder {
 public:
+	virtual ~AGSLegacyRouteFinder() {}
+
 	void init_pathfinder() override {
 		AGS::Engine::RouteFinderLegacy::init_pathfinder();
 	}

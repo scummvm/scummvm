@@ -315,7 +315,7 @@ RuntimeScriptValue Sc_Button_Animate(void *self, const RuntimeScriptValue *param
 
 // const char* | GUIButton *butt
 RuntimeScriptValue Sc_Button_GetText_New(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ(GUIButton, const char, myScriptStringImpl, Button_GetText_New);
+	API_CONST_OBJCALL_OBJ(GUIButton, const char, myScriptStringImpl, Button_GetText_New);
 }
 
 // void | GUIButton *butt, char *buffer

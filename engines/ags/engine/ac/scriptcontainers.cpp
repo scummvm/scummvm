@@ -147,7 +147,7 @@ RuntimeScriptValue Sc_Dict_Contains(void *self, const RuntimeScriptValue *params
 }
 
 RuntimeScriptValue Sc_Dict_Get(void *self, const RuntimeScriptValue *params, int32_t param_count) {
-	API_OBJCALL_OBJ_POBJ(ScriptDictBase, const char, myScriptStringImpl, Dict_Get, const char);
+	API_CONST_OBJCALL_OBJ_POBJ(ScriptDictBase, const char, myScriptStringImpl, Dict_Get, const char);
 }
 
 RuntimeScriptValue Sc_Dict_Remove(void *self, const RuntimeScriptValue *params, int32_t param_count) {
