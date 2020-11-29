@@ -153,7 +153,7 @@ bool SoundManager::initCustomTimbres(bool canAbort) {
 	// Locate timbre data
 	uint32 headerSize = READ_LE_UINT32(_soundData->data() + 2); // Skip past the number of sounds
 	uint16 timbreDataHeaderOffset = _soundsTotal * 4 + 2;
-	if (timbreDataHeaderOffset + 6 > headerSize) {
+	if (timbreDataHeaderOffset + 6u > headerSize) {
 		warning("SoundManager::initCustomTimbres - could not find timbre data header");
 		return false;
 	}
