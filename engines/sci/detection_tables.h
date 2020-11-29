@@ -192,7 +192,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::JA_JPN, Common::kPlatformPC98, ADGF_ADDENGLISH, GUIO_STD16_HIRES	},
 
-#ifdef ENABLE_SCI32
 	// Inside the Chest / Behind the Developer's Shield
 	// SCI interpreter version 2.000.000
 	{"chest", "", {
@@ -200,7 +199,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "e4efcd042f86679dd4e1834bb3a38edb", 3770943},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO7(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GUIO_NOASPECT)	},
-#endif
 
 	// Christmas Card 1988 - English DOS
 	// SCI interpreter version 0.000.294
@@ -539,7 +537,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "21ebe6b39b57a73fc449f67f013765aa", 1287832},
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16	},
-		
+
 	// Eco Quest - English DOS Non-Interactive Demo (from FRG)
 	// Executable scanning reports "x.yyy.zzz"
 	// SCI interpreter version 1.001.069 (just a guess)
@@ -801,7 +799,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_SPEECH	},
 
-#ifdef ENABLE_SCI32
 #define GUIO_GK1_FLOPPY GUIO2(GUIO_NOSPEECH, \
                               GAMEOPTION_ORIGINAL_SAVELOAD)
 #define GUIO_GK1_CD_DOS GUIO4(GUIO_LINKSPEECHTOSFX, \
@@ -1073,8 +1070,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_GK2
 #undef GUIO_GK2_MAC
 
-#endif // ENABLE_SCI32
-
 	// Hoyle 1 - English DOS (supplied by ssburnout in bug report #3049193)
 	// 1.000.104 3x5.25" (label:INT.0.000.519)
 	{"hoyle1", "", {
@@ -1292,7 +1287,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_STD16_MAC },
 
-#ifdef ENABLE_SCI32
 #define GUIO_HOYLE5 GUIO5(GUIO_NOMIDI, \
                           GUIO_NOLAUNCHLOAD, \
                           GUIO_LINKMUSICTOSFX, \
@@ -1374,8 +1368,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #undef GUIO_HOYLE5
 #undef GUIO_HOYLE5_SAVELOAD
-
-#endif // ENABLE_SCI32
 
 	// ImagiNation Network (INN) Demo
 	// SCI interpreter version 1.001.097
@@ -2130,8 +2122,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_KQ6_CD
 #undef GUIO_KQ6_CD_WINDOWS
 
-#ifdef ENABLE_SCI32
-
 #define GUIO_KQ7_DEMO GUIO5(GUIO_NOSUBTITLES, \
                             GUIO_NOLAUNCHLOAD, \
                             GUIO_LINKMUSICTOSFX, \
@@ -2328,8 +2318,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "93a2251fa64e729d7a7d2fe56b217c8e", 502},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO7(GUIO_NOSUBTITLES, GUIO_NOMUSIC, GUIO_NOSPEECH, GUIO_NOSFX, GUIO_NOMIDI, GUIO_NOLAUNCHLOAD, GAMEOPTION_RGB_RENDERING)	},
-
-#endif // ENABLE_SCI32
 
 	// Laura Bow - English Amiga
 	// Executable scanning reports "1.002.030"
@@ -3111,8 +3099,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-#ifdef ENABLE_SCI32
-
 #define GUIO_LSL6HIRES GUIO3(GUIO_NOASPECT, \
                              GUIO_LINKSPEECHTOSFX, \
                              GAMEOPTION_ORIGINAL_SAVELOAD)
@@ -3384,8 +3370,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_LIGHTHOUSE
 #undef GUIO_LIGHTHOUSE_MAC
 
-#endif // ENABLE_SCI32
-
 	// Mixed-Up Fairy Tales v1.000 - English DOS Non-Interactive Demo
 	{"fairytales", "Demo", {
 		{"resource.map", 0, "c2cf672c3f4251e7472d4542af3bf764", 933},
@@ -3502,8 +3486,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::JA_JPN, Common::kPlatformFMTowns, ADGF_ADDENGLISH, GUIO5(GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE, GAMEOPTION_RGB_RENDERING)	},
 
-#ifdef ENABLE_SCI32
-
 #define GUIO_MOTHERGOOSEHIRES GUIO4(GUIO_NOSUBTITLES, \
                                     GUIO_NOASPECT, \
                                     GUIO_LINKSPEECHTOSFX, \
@@ -3537,8 +3519,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #undef GUIO_MOTHERGOOSEHIRES
 
-#endif // ENABLE_SCI32
-
 	// Ms. Astro Chicken - English DOS
 	// SCI interpreter version 1.000.679
 	{"msastrochicken", "", {
@@ -3546,8 +3526,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "453ea81ef66a50cbe33ce06302afe47f", 229737},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
-
-#ifdef ENABLE_SCI32
 
 #define GUIO_PHANTASMAGORIA_DEMO GUIO6(GUIO_NOSUBTITLES, \
                                        GUIO_NOASPECT, \
@@ -3847,8 +3825,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_PHANTASMAGORIA2
 #undef GUIO_PHANTASMAGORIA2_CENSORED
 
-#endif // ENABLE_SCI32
-
 	// Pepper's Adventure In Time 1.000 English
 	// Executable scanning reports "1.001.072", VERSION file reports "1.000"
 	{"pepper", "", {
@@ -4084,8 +4060,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-#ifdef ENABLE_SCI32
-
 #define GUIO_PQ4_FLOPPY GUIO2(GUIO_NOSPEECH, \
                               GAMEOPTION_ORIGINAL_SAVELOAD)
 #define GUIO_PQ4_CD     GUIO3(GUIO_LINKSPEECHTOSFX, \
@@ -4229,8 +4203,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 #undef GUIO_PQSWAT_DEMO
 #undef GUIO_PQSWAT
-
-#endif // ENABLE_SCI32
 
 	// Quest for Glory 1 / Hero's Quest - English DOS 3.5" Floppy (supplied by merkur in bug report #2718784)
 	// Executable scanning reports "0.000.566"
@@ -4604,8 +4576,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16 },
 
-#ifdef ENABLE_SCI32
-
 #define GUIO_QFG4_FLOPPY GUIO2(GUIO_NOSPEECH, \
                                GAMEOPTION_ORIGINAL_SAVELOAD)
 #define GUIO_QFG4_CD     GUIO3(GUIO_LINKSPEECHTOSFX, \
@@ -4852,8 +4822,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_UNSTABLE, GUIO6(GAMEOPTION_ENABLE_BLACK_LINED_VIDEO, GUIO_NOSPEECH, GUIO_NOASPECT, GAMEOPTION_PREFER_DIGITAL_SFX, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_MIDI_MODE)	},
 
 #endif
-
-#endif // ENABLE_SCI32
 
 	// Slater & Charlie Go Camping - English DOS Demo
 	// Executable scanning reports "1.cfs.081", VERSION file reports "1.000"
@@ -5479,8 +5447,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-#ifdef ENABLE_SCI32
-
 #define GUIO_SQ6_DEMO GUIO3(GUIO_NOLAUNCHLOAD, \
                             GUIO_LINKSPEECHTOSFX, \
                             GUIO_NOASPECT)
@@ -5564,8 +5530,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_SQ6
 #undef GUIO_SQ6_MAC
 
-#endif // ENABLE_SCI32
-
 	// The Island of Dr. Brain - English DOS CD (from jvprat)
 	// Executable scanning reports "1.001.053", VERSION file reports "1.0 10.27.92"
 	{"islandbrain", "", {
@@ -5589,8 +5553,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "b3acd9b9dd7fe53c4ee133ac9a1acfab", 586560},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16	},
-
-#ifdef ENABLE_SCI32
 
 #define GUIO_TORIN_DEMO GUIO3(GUIO_NOMIDI, \
                               GUIO_NOLAUNCHLOAD, \
@@ -5740,8 +5702,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #undef GUIO_TORIN_DEMO
 #undef GUIO_TORIN
 #undef GUIO_TORIN_MAC
-
-#endif // ENABLE_SCI32
 
 	// SCI Fanmade Games
 	FANMADE("120 Degrees Below Zero", "57f6135bd073802215c9b97f32d6aea3", 504, "03adf530a34557dfc20f848c9572f4d0", 320749),
