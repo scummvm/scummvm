@@ -1039,7 +1039,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 			currentPolyHeader.colorIndex = stream.readSint16LE();
 			int32 bestDepth = -32000;
 			polyHeader *destinationHeader = (polyHeader *)renderBufferPtr;
-			computedVertex * const vertices = (computedVertex *)(renderBufferPtr + 4);
+			computedVertex * const vertices = (computedVertex *)(renderBufferPtr + sizeof(polyHeader));
 
 			// TODO: RECHECK coordinates axis
 			if (currentPolyHeader.renderType >= 9) {
@@ -1047,7 +1047,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 				destinationHeader->numOfVertex = currentPolyHeader.numOfVertex;
 				destinationHeader->colorIndex = currentPolyHeader.colorIndex;
 
-				renderBufferPtr += 4;
+				renderBufferPtr += sizeof(polyHeader);
 
 				int16 counter = destinationHeader->numOfVertex;
 
@@ -1057,14 +1057,14 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 					const int16 shadeValue = currentPolyHeader.colorIndex + shadeTable[shadeEntry];
 
 					const int16 vertexOffset = stream.readSint16LE();
-					const int16 vertexIndex = vertexOffset / sizeof(pointTab);
+					const int16 vertexIndex = vertexOffset / 6;
 					const pointTab *currentVertex = &flattenPoints[vertexIndex];
 
 					currentComputedVertex->shadeValue = shadeValue;
 					currentComputedVertex->x = currentVertex->x;
 					currentComputedVertex->y = currentVertex->y;
 
-					renderBufferPtr += 6;
+					renderBufferPtr += sizeof(pointTab);
 
 					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
@@ -1079,20 +1079,20 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 				const int16 shadeValue = currentPolyHeader.colorIndex + shadeTable[shadeEntry];
 				destinationHeader->colorIndex = shadeValue;
 
-				renderBufferPtr += 4;
+				renderBufferPtr += sizeof(polyHeader);
 				computedVertex *currentComputedVertex = vertices;
 				int16 counter = destinationHeader->numOfVertex;
 
 				do {
 					const int16 vertexOffset = stream.readSint16LE();
-					const int16 vertexIndex = vertexOffset / sizeof(pointTab);
+					const int16 vertexIndex = vertexOffset / 6;
 					pointTab *currentVertex = &flattenPoints[vertexIndex];
 
 					//currentComputedVertex->shadeValue = 0;
 					currentComputedVertex->x = currentVertex->x;
 					currentComputedVertex->y = currentVertex->y;
 
-					renderBufferPtr += 6;
+					renderBufferPtr += sizeof(pointTab);
 
 					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
@@ -1105,21 +1105,21 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 				destinationHeader->numOfVertex = currentPolyHeader.numOfVertex;
 				destinationHeader->colorIndex = currentPolyHeader.colorIndex;
 
-				renderBufferPtr += 4;
+				renderBufferPtr += sizeof(polyHeader);
 
 				computedVertex *currentComputedVertex = vertices;
 				int16 counter = currentPolyHeader.numOfVertex;
 
 				do {
 					const int16 vertexOffset = stream.readSint16LE();
-					const int16 vertexIndex = vertexOffset / sizeof(pointTab);
+					const int16 vertexIndex = vertexOffset / 6;
 					pointTab *currentVertex = &flattenPoints[vertexIndex];
 
 					//currentComputedVertex->shadeValue = 0;
 					currentComputedVertex->x = currentVertex->x;
 					currentComputedVertex->y = currentVertex->y;
 
-					renderBufferPtr += 6;
+					renderBufferPtr += sizeof(pointTab);
 
 					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
