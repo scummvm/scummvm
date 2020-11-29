@@ -392,7 +392,7 @@ FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
 }
 
-void Renderer::computePolygons(int16 polyRenderType, vertexData *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) {
+void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) {
 	vleft = vtop = 32767;
 	vright = vbottom = -32768;
 
@@ -417,7 +417,7 @@ void Renderer::computePolygons(int16 polyRenderType, vertexData *vertices, int32
 		}
 	}
 
-	uint8 vertexParam1 = vertices[numVertices - 1].param;
+	uint8 vertexParam1 = vertices[numVertices - 1].colorIndex;
 	uint8 vertexParam2 = vertexParam1;
 	int16 currentVertexX = vertices[numVertices - 1].x;
 	int16 currentVertexY = vertices[numVertices - 1].y;
@@ -427,7 +427,7 @@ void Renderer::computePolygons(int16 polyRenderType, vertexData *vertices, int32
 		int16 oldVertexX = currentVertexX;
 		uint8 oldVertexParam = vertexParam1;
 
-		vertexParam1 = vertexParam2 = vertices[nVertex].param;
+		vertexParam1 = vertexParam2 = vertices[nVertex].colorIndex;
 		currentVertexX = vertices[nVertex].x;
 		currentVertexY = vertices[nVertex].y;
 
@@ -995,14 +995,13 @@ void Renderer::renderPolygons(int32 renderType, int32 color, int vleft, int vrig
 	}
 }
 
-void Renderer::renderPolygons(const polyHeader &polyHeader) {
+void Renderer::renderPolygons(const Polygon &polygon, Vertex *vertices) {
 	int vleft = 0;
 	int vright = 0;
 	int vtop = 0;
 	int vbottom = 0;
-	vertexData *vertices = (vertexData *)vertexCoordinates;
-	computePolygons(polyHeader.renderType, vertices, polyHeader.numOfVertex, vleft, vright, vtop, vbottom);
-	renderPolygons(polyHeader.renderType, polyHeader.colorIndex, vleft, vright, vtop, vbottom);
+	computePolygons(polygon.renderType, vertices, polygon.numVertices, vleft, vright, vtop, vbottom);
+	renderPolygons(polygon.renderType, polygon.colorIndex, vleft, vright, vtop, vbottom);
 }
 
 void Renderer::circleFill(int32 x, int32 y, int32 radius, uint8 color) {
@@ -1032,39 +1031,39 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 		int16 primitiveCounter = numPolygons; // the number of primitives = the number of polygons
 
 		do { // loop that load all the polygons
-			polyHeader currentPolyHeader;
-			currentPolyHeader.renderType = stream.readByte();
-			currentPolyHeader.numOfVertex = stream.readByte();
-			assert(currentPolyHeader.numOfVertex <= 16);
-			currentPolyHeader.colorIndex = stream.readSint16LE();
+			Polygon currentPolygon;
+			currentPolygon.renderType = stream.readByte();
+			currentPolygon.numVertices = stream.readByte();
+			assert(currentPolygon.numVertices <= 16);
+			currentPolygon.colorIndex = stream.readSint16LE();
 			int32 bestDepth = -32000;
-			polyHeader *destinationHeader = (polyHeader *)renderBufferPtr;
-			computedVertex * const vertices = (computedVertex *)(renderBufferPtr + sizeof(polyHeader));
+			Polygon *destinationPolygon = (Polygon *)renderBufferPtr;
+			Vertex * const vertices = (Vertex *)(renderBufferPtr + sizeof(Polygon));
 
 			// TODO: RECHECK coordinates axis
-			if (currentPolyHeader.renderType >= 9) {
-				destinationHeader->renderType = currentPolyHeader.renderType - 2;
-				destinationHeader->numOfVertex = currentPolyHeader.numOfVertex;
-				destinationHeader->colorIndex = currentPolyHeader.colorIndex;
+			if (currentPolygon.renderType >= 9) {
+				destinationPolygon->renderType = currentPolygon.renderType - 2;
+				destinationPolygon->numVertices = currentPolygon.numVertices;
+				destinationPolygon->colorIndex = currentPolygon.colorIndex;
 
-				renderBufferPtr += sizeof(polyHeader);
+				renderBufferPtr += sizeof(Polygon);
 
-				int16 counter = destinationHeader->numOfVertex;
+				int16 counter = destinationPolygon->numVertices;
 
-				computedVertex *currentComputedVertex = vertices;
+				Vertex *currentComputedVertex = vertices;
 				do {
 					const int16 shadeEntry = stream.readSint16LE();
-					const int16 shadeValue = currentPolyHeader.colorIndex + shadeTable[shadeEntry];
+					const int16 shadeValue = currentPolygon.colorIndex + shadeTable[shadeEntry];
 
 					const int16 vertexOffset = stream.readSint16LE();
 					const int16 vertexIndex = vertexOffset / 6;
 					const pointTab *currentVertex = &flattenPoints[vertexIndex];
 
-					currentComputedVertex->shadeValue = shadeValue;
+					currentComputedVertex->colorIndex = shadeValue;
 					currentComputedVertex->x = currentVertex->x;
 					currentComputedVertex->y = currentVertex->y;
 
-					renderBufferPtr += sizeof(pointTab);
+					renderBufferPtr += sizeof(Vertex);
 
 					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
@@ -1072,27 +1071,27 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 					}
 					++currentComputedVertex;
 				} while (--counter > 0);
-			} else if (currentPolyHeader.renderType >= POLYGONTYPE_GOURAUD) { // only 1 shade value is used
-				destinationHeader->renderType = currentPolyHeader.renderType - POLYGONTYPE_GOURAUD;
-				destinationHeader->numOfVertex = currentPolyHeader.numOfVertex;
+			} else if (currentPolygon.renderType >= POLYGONTYPE_GOURAUD) { // only 1 shade value is used
+				destinationPolygon->renderType = currentPolygon.renderType - POLYGONTYPE_GOURAUD;
+				destinationPolygon->numVertices = currentPolygon.numVertices;
 				const int16 shadeEntry = stream.readSint16LE();
-				const int16 shadeValue = currentPolyHeader.colorIndex + shadeTable[shadeEntry];
-				destinationHeader->colorIndex = shadeValue;
+				const int16 shadeValue = currentPolygon.colorIndex + shadeTable[shadeEntry];
+				destinationPolygon->colorIndex = shadeValue;
 
-				renderBufferPtr += sizeof(polyHeader);
-				computedVertex *currentComputedVertex = vertices;
-				int16 counter = destinationHeader->numOfVertex;
+				renderBufferPtr += sizeof(Polygon);
+				Vertex *currentComputedVertex = vertices;
+				int16 counter = destinationPolygon->numVertices;
 
 				do {
 					const int16 vertexOffset = stream.readSint16LE();
 					const int16 vertexIndex = vertexOffset / 6;
-					pointTab *currentVertex = &flattenPoints[vertexIndex];
+					const pointTab *currentVertex = &flattenPoints[vertexIndex];
 
-					//currentComputedVertex->shadeValue = 0;
+					//currentVertex->shadeValue = 0;
 					currentComputedVertex->x = currentVertex->x;
 					currentComputedVertex->y = currentVertex->y;
 
-					renderBufferPtr += sizeof(pointTab);
+					renderBufferPtr += sizeof(Vertex);
 
 					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
@@ -1101,25 +1100,25 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 					++currentComputedVertex;
 				} while (--counter > 0);
 			} else { // no shade is used
-				destinationHeader->renderType = currentPolyHeader.renderType;
-				destinationHeader->numOfVertex = currentPolyHeader.numOfVertex;
-				destinationHeader->colorIndex = currentPolyHeader.colorIndex;
+				destinationPolygon->renderType = currentPolygon.renderType;
+				destinationPolygon->numVertices = currentPolygon.numVertices;
+				destinationPolygon->colorIndex = currentPolygon.colorIndex;
 
-				renderBufferPtr += sizeof(polyHeader);
+				renderBufferPtr += sizeof(Polygon);
 
-				computedVertex *currentComputedVertex = vertices;
-				int16 counter = currentPolyHeader.numOfVertex;
+				Vertex *currentComputedVertex = vertices;
+				int16 counter = currentPolygon.numVertices;
 
 				do {
 					const int16 vertexOffset = stream.readSint16LE();
 					const int16 vertexIndex = vertexOffset / 6;
-					pointTab *currentVertex = &flattenPoints[vertexIndex];
+					const pointTab *currentVertex = &flattenPoints[vertexIndex];
 
-					//currentComputedVertex->shadeValue = 0;
+					//currentVertex->shadeValue = 0;
 					currentComputedVertex->x = currentVertex->x;
 					currentComputedVertex->y = currentVertex->y;
 
-					renderBufferPtr += sizeof(pointTab);
+					renderBufferPtr += sizeof(Vertex);
 
 					int32 currentDepth = currentVertex->z;
 					if (currentDepth > bestDepth) {
@@ -1140,7 +1139,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 			(*renderTabEntryPtr)->depth = bestDepth;
 			(*renderTabEntryPtr)->renderType = RENDERTYPE_DRAWPOLYGON;
-			(*renderTabEntryPtr)->dataPtr = (uint8*)destinationHeader;
+			(*renderTabEntryPtr)->dataPtr = (uint8*)destinationPolygon;
 			(*renderTabEntryPtr)++;
 		} while (--primitiveCounter);
 	}
@@ -1244,73 +1243,51 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, renderTab
 
 		switch (type) {
 		case RENDERTYPE_DRAWLINE: { // draw a line
-			Common::MemoryReadStream typeStream(pointer, 12);
-			lineCoordinates lineCoords;
-			lineCoords.colorIndex = typeStream.readByte();
-			typeStream.skip(3);
-			lineCoords.x1 = typeStream.readSint16LE();
-			lineCoords.y1 = typeStream.readSint16LE();
-			lineCoords.x2 = typeStream.readSint16LE();
-			lineCoords.y2 = typeStream.readSint16LE();
-			const int32 x1 = lineCoords.x1;
-			const int32 y1 = lineCoords.y1;
-			const int32 x2 = lineCoords.x2;
-			const int32 y2 = lineCoords.y2;
-			_engine->_interface->drawLine(x1, y1, x2, y2, lineCoords.colorIndex);
+			const lineCoordinates *lineCoords = (const lineCoordinates*)pointer;
+			const int32 x1 = lineCoords->x1;
+			const int32 y1 = lineCoords->y1;
+			const int32 x2 = lineCoords->x2;
+			const int32 y2 = lineCoords->y2;
+			_engine->_interface->drawLine(x1, y1, x2, y2, lineCoords->colorIndex);
 			break;
 		}
 		case RENDERTYPE_DRAWPOLYGON: { // draw a polygon
-			// TODO: size
-			Common::MemoryReadStream typeStream(pointer, 10000);
-			polyHeader polyHeader;
-			polyHeader.renderType = typeStream.readByte();
-			polyHeader.numOfVertex = typeStream.readByte();
-			polyHeader.colorIndex = typeStream.readByte();
-			typeStream.skip(1);
-
-			uint8 *destPtr = (uint8 *)vertexCoordinates;
-			const int32 triangleCount = polyHeader.numOfVertex * 3;
-			for (int32 i = 0; i < triangleCount; i++) {
-				*((int16 *)destPtr) = typeStream.readSint16LE();
-				destPtr += 2;
-			}
-
-			renderPolygons(polyHeader);
+			const Polygon* header = (const Polygon*)pointer;
+			Vertex* vertices = (Vertex*)(pointer + sizeof(Polygon));
+			renderPolygons(*header, vertices);
 			break;
 		}
 		case RENDERTYPE_DRAWSPHERE: { // draw a sphere
-			const int32 circleParam1 = *(const uint8 *)pointer;
-			const int32 circleParam4 = *((const int16 *)(pointer + 1));
-			const int32 circleParam5 = *((const int16 *)(pointer + 3));
-			int32 circleParam3 = *((const int16 *)(pointer + 5));
+			sphereData* sphere = (sphereData*)pointer;
+			int32 radius =  sphere->radius;
 
 			if (!isUsingOrhoProjection) {
-				circleParam3 = (circleParam3 * cameraPosY) / (cameraPosX + *(const int16 *)pointer);
+				radius = (radius * cameraPosY) / (cameraPosX + *(const int16 *)pointer); // TODO: this does not make sense.
 			} else {
-				circleParam3 = (circleParam3 * 34) >> 9;
+				radius = (radius * 34) >> 9;
 			}
 
-			circleParam3 += 3;
+			radius += 3;
 
-			if (circleParam4 + circleParam3 > _engine->_redraw->renderRect.right) {
-				_engine->_redraw->renderRect.right = circleParam4 + circleParam3;
+			if (sphere->x + radius > _engine->_redraw->renderRect.right) {
+				_engine->_redraw->renderRect.right = sphere->x + radius;
 			}
 
-			if (circleParam4 - circleParam3 < _engine->_redraw->renderRect.left) {
-				_engine->_redraw->renderRect.left = circleParam4 - circleParam3;
+			if (sphere->x - radius < _engine->_redraw->renderRect.left) {
+				_engine->_redraw->renderRect.left = sphere->x - radius;
 			}
 
-			if (circleParam5 + circleParam3 > _engine->_redraw->renderRect.bottom) {
-				_engine->_redraw->renderRect.bottom = circleParam5 + circleParam3;
+			if (sphere->y + radius > _engine->_redraw->renderRect.bottom) {
+				_engine->_redraw->renderRect.bottom = sphere->y + radius;
 			}
 
-			if (circleParam5 - circleParam3 < _engine->_redraw->renderRect.top) {
-				_engine->_redraw->renderRect.top = circleParam5 - circleParam3;
+			if (sphere->y - radius < _engine->_redraw->renderRect.top) {
+				_engine->_redraw->renderRect.top = sphere->y - radius;
 			}
 
-			circleParam3 -= 3;
+			radius -= 3;
 
-			circleFill(circleParam4, circleParam5, circleParam3, circleParam1);
+			circleFill(sphere->x, sphere->y, radius, sphere->colorIndex);
 			break;
 		}
 		default:
