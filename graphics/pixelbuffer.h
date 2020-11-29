@@ -32,6 +32,15 @@
 
 namespace Graphics {
 
+/**
+ * @defgroup graphics_pixelbuffer Pixel buffers
+ * @ingroup graphics
+ *
+ * @brief Class for managing pixel buffers.
+ *
+ * @{
+ */
+
 class PixelBuffer {
 public:
 	/**
@@ -269,5 +278,5 @@ private:
 };
 
 }
-
+ /** @} */
 #endif
