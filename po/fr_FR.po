@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-29 15:46+0000\n"
-"PO-Revision-Date: 2020-11-29 08:37+0000\n"
-"Last-Translator: Purple T <ZEONK@hotmail.com>\n"
+"PO-Revision-Date: 2020-11-29 16:25+0000\n"
+"Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fr/>\n"
 "Language: fr_FR\n"
@@ -652,7 +652,7 @@ msgstr "Sélectionnez une action et cliquez sur 'Affecter'"
 #: gui/KeysDialog.cpp:81 gui/KeysDialog.cpp:103 gui/KeysDialog.cpp:138
 #, c-format
 msgid "Associated key : %s"
-msgstr "Touche associée: %s"
+msgstr "Touche associée : %s"
 
 #: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:140
 msgid "Associated key : none"
@@ -1852,7 +1852,7 @@ msgstr "Crée une nouvelle sauvegarde"
 
 #: gui/saveload-dialog.cpp:1109
 msgid "Name: "
-msgstr "Nom: "
+msgstr "Nom : "
 
 #: gui/saveload-dialog.cpp:1185
 #, c-format
@@ -1953,7 +1953,7 @@ msgstr "Effacer la valeur"
 
 #: base/main.cpp:619
 msgid "Error running game:"
-msgstr "Erreur lors de l'exécution du jeu : "
+msgstr "Erreur lors de l'exécution du jeu :"
 
 #: base/main.cpp:667
 msgid "Could not find any engine capable of running the selected game"
@@ -5123,8 +5123,8 @@ msgid ""
 "should be located in the AmigaDOS system 'Fonts/' folder.\n"
 "Please copy them into the EOB game data directory.\n"
 msgstr ""
-"Cette version AMIGA nécessite les fichiers de polices de caractères "
-"suivants:\n"
+"Cette version AMIGA nécessite les fichiers de polices de caractères suivants "
+":\n"
 "\n"
 "EOBF6.FONT\n"
 "EOBF6/6\n"
@@ -5133,8 +5133,8 @@ msgstr ""
 "\n"
 "Si vous avez utilisé le programme d'installation d'origine pour "
 "l'installation,\n"
-"ces fichiers doivent se trouver dans le dossier 'Fonts/' du système "
-"AmigaDOS.\n"
+"ces fichiers doivent se trouver dans le dossier 'Fonts/' du système AmigaDOS."
+"\n"
 "Veuillez les copier dans le répertoire de données de jeu de EOB.\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:288
@@ -5158,8 +5158,8 @@ msgid ""
 "Please copy the correct font files into your EOB II game data directory.\n"
 "\n"
 msgstr ""
-"Cette version AMIGA nécessite les fichiers de polices de caractères "
-"suivants:\n"
+"Cette version AMIGA nécessite les fichiers de polices de caractères suivants "
+":\n"
 "\n"
 "EOBF6.FONT\n"
 "EOBF6/6\n"
@@ -5177,6 +5177,7 @@ msgstr ""
 "s'afficheront pas.\n"
 "Veuillez copier les fichiers de polices corrects dans le répertoire de "
 "données de jeu de EOB II.\n"
+"\n"
 
 #: engines/lab/engine.cpp:125
 msgid ""
@@ -5851,9 +5852,8 @@ msgstr ""
 "couleur maximale de 8bpp"
 
 #: engines/sci/metaengine.cpp:325
-#, fuzzy
 msgid "SCI32 support not compiled in"
-msgstr "La prise en charge de SAGA2 n'est pas incluse"
+msgstr "La prise en charge des jeux SCI32 n'est pas incluse"
 
 #: engines/sci/resource/resource.cpp:845
 msgid ""
@@ -5927,7 +5927,7 @@ msgid ""
 "(or click 'Download patch' button. But note - it only downloads, you will "
 "have to continue from there)\n"
 msgstr ""
-"(ou cliquer su le bouton 'Télécharger le patch'. Nota: Il ne sera que "
+"(ou cliquer sur le bouton 'Télécharger le patch'. Nota : Il ne sera que "
 "téléchargé, vous devrez continuer depuis ici)\n"
 
 #: engines/sci/sci.cpp:526
@@ -5942,7 +5942,7 @@ msgstr ""
 "GK2 possède des sous-titres faits par un fan, disponible grâce aux personnes "
 "dévouées de SierraHelp.\n"
 "\n"
-"Installation:\n"
+"Installation :\n"
 "- télécharger http://www.sierrahelp.com/Files/Patches/GabrielKnight/"
 "GK2Subtitles.zip\n"
 
@@ -5966,7 +5966,7 @@ msgid ""
 "The selected audio driver requires the following file(s):\n"
 "\n"
 msgstr ""
-"Le pilote audio sélectionné nécessite le/les fichier(s) suivant(s):\n"
+"Le pilote audio sélectionné nécessite le/les fichier(s) suivant(s) :\n"
 "\n"
 
 #: engines/sci/sound/music.cpp:164
@@ -6717,7 +6717,8 @@ msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
 msgstr ""
-"Pour cette version AMIGA, il manque (au moins) le(s) fichier(s) suivant(s):\n"
+"Pour cette version AMIGA, il manque (au moins) le(s) fichier(s) suivant(s) :"
+"\n"
 "\n"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:659
@@ -7278,7 +7279,8 @@ msgstr "Les données %s du moteur n'ont pas pu être trouvées"
 #, c-format
 msgid "Out of date engine data. Expected %d.%d, but got version %d.%d"
 msgstr ""
-"Données du moteur périmées. Version attendue: %d.%d ; version trouvée: %d.%d"
+"Données du moteur périmées. Version attendue : %d.%d ; version trouvée : "
+"%d.%d"
 
 #: engines/ultima/nuvie/nuvie.cpp:382
 #, c-format
