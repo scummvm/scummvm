@@ -65,7 +65,9 @@ T unique(T first, T last) {
 			if (*pos == *existingPos) {
 				// Found a match, so shift values over the duplicate
 				while (pos < (last - 1)) {
-					*pos++ = *(pos + 1);
+					T &prior = pos;
+					++pos;
+					prior = pos;
 				}
 
 				--last;
