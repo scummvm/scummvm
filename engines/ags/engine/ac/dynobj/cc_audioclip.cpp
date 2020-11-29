@@ -33,7 +33,7 @@ const char *CCAudioClip::GetType() {
 }
 
 int CCAudioClip::Serialize(const char *address, char *buffer, int bufsize) {
-	ScriptAudioClip *ach = (ScriptAudioClip *)address;
+	ScriptAudioClip *ach = (ScriptAudioClip *)const_cast<char *>(address);
 	StartSerialize(buffer);
 	SerializeInt(ach->id);
 	return EndSerialize();

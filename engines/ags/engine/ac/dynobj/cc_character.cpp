@@ -38,7 +38,7 @@ const char *CCCharacter::GetType() {
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
 int CCCharacter::Serialize(const char *address, char *buffer, int bufsize) {
-	CharacterInfo *chaa = (CharacterInfo *)address;
+	CharacterInfo *chaa = (CharacterInfo *)const_cast<char *>(address);
 	StartSerialize(buffer);
 	SerializeInt(chaa->index_id);
 	return EndSerialize();
@@ -51,7 +51,7 @@ void CCCharacter::Unserialize(int index, const char *serializedData, int dataSiz
 }
 
 void CCCharacter::WriteInt16(const char *address, intptr_t offset, int16_t val) {
-	*(int16_t *)(address + offset) = val;
+	*(int16_t *)(const_cast<char *>(address) + offset) = val;
 
 	// Detect when a game directly modifies the inventory, which causes the displayed
 	// and actual inventory to diverge since 2.70. Force an update of the displayed
