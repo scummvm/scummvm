@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-29 15:46+0000\n"
-"PO-Revision-Date: 2020-11-29 16:03+0000\n"
+"PO-Revision-Date: 2020-11-29 16:04+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -2175,7 +2175,7 @@ msgstr "~К~лавіші"
 #: engines/engine.cpp:319
 #, c-format
 msgid "Could not switch to resolution '%dx%d'."
-msgstr "Не вдалося переключитися до відеорежиму  '%dx%d'."
+msgstr "Не вдалося переключитися до відеорежиму '%dx%d'."
 
 #: engines/engine.cpp:328
 msgid "Could not initialize color format."
@@ -2189,7 +2189,7 @@ msgstr "Не вдалося переключитися до відеорежим
 #: engines/engine.cpp:345
 #, c-format
 msgid "Could not switch to stretch mode '%s'."
-msgstr "Не вдалося переключитися до відеорежиму з розтягуванням  '%s'."
+msgstr "Не вдалося переключитися до відеорежиму з розтягуванням '%s'."
 
 #: engines/engine.cpp:352
 msgid "Could not apply aspect ratio setting."
@@ -5421,7 +5421,9 @@ msgstr "Грати вступні відео"
 msgid ""
 "Exploration beyond this point available only within the full version of\n"
 "the game."
-msgstr "Дослідування поза цією межою доступне тільки у повнії версії гри."
+msgstr ""
+"Дослідування поза цією межою доступне тільки у повній\n"
+"версії гри."
 
 #: engines/mohawk/riven_stacks/aspit.cpp:429
 msgid ""
