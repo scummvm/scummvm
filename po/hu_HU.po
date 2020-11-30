@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-29 20:25+0000\n"
-"PO-Revision-Date: 2020-11-29 16:03+0000\n"
-"Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
+"PO-Revision-Date: 2020-11-30 08:45+0000\n"
+"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
 "Language: hu_HU\n"
@@ -5423,7 +5423,7 @@ msgstr "Nem található '%s' motor adatfájl"
 
 #: engines/myst3/detection.cpp:149 engines/myst3/detection.cpp:163
 msgid "PS2 version is not yet supported"
-msgstr "A PS2 verzió még nem támogatott."
+msgstr "A PS2 verzió még nem támogatott"
 
 #: engines/myst3/detection.cpp:182
 msgid "Widescreen mod"
@@ -6925,7 +6925,7 @@ msgstr ""
 
 #: engines/tinsel/detection_tables.h:466
 msgid "Saturn CD version is not yet supported"
-msgstr "A Saturn CD verzió még nem támogatott."
+msgstr "A Saturn CD verzió még nem támogatott"
 
 #: engines/tony/tony.cpp:257
 #, c-format
