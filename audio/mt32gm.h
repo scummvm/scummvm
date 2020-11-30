@@ -27,7 +27,15 @@
 #include "common/mutex.h"
 #include "common/queue.h"
 
-/*
+/**
+ * @defgroup audio_mt32_gm MIDI driver for MT-32 and GM
+ * @ingroup audio
+ *
+ * @brief MIDI driver for MT-32 and GM compatible emulators and devices.
+ * @{
+ */
+
+/**
  * MIDI driver for MT-32 and GM compatible emulators and devices.
  * 
  * This class contains some commonly needed functionality for these devices and
@@ -661,5 +669,5 @@ public:
 			driver->_timer_proc(driver->_timer_param);
 	}
 };
-
+/** @} */
 #endif

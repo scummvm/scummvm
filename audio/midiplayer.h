@@ -32,6 +32,14 @@ class MidiParser;
 namespace Audio {
 
 /**
+ * @defgroup audio_midiplayer MIDI player
+ * @ingroup audio
+ *
+ * @brief MidiPlayer class for playing MIDI sounds.
+ * @{
+ */
+
+/**
  * Simple MIDI playback class.
  *
  * @note Currently incomplete, as it lacks play() methods. This is just a
@@ -182,7 +190,7 @@ protected:
 	bool _nativeMT32;
 };
 
-
+/** @} */
 } // End of namespace Audio
 
 #endif
