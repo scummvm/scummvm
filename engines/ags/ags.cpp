@@ -49,6 +49,9 @@
 #include "ags/shared/util/directory.h"
 #include "ags/shared/util/path.h"
 
+#ifdef ENABLE_AGS_TESTS
+#include "ags/tests/test_all.h"
+#endif
 
 namespace AGS3 {
 
@@ -343,8 +346,9 @@ Common::Error AGSEngine::run() {
 	const char *ARGV[] = { nullptr, filename };
 	const int ARGC = 2;
 
-#ifdef AGS_RUN_TESTS
-	Test_DoAllTests();
+#ifdef ENABLE_AGS_TESTS
+	AGS3::Test_DoAllTests();
+	return Common::kNoError;
 #endif
 	AGS3::main_init(ARGC, ARGV);
 

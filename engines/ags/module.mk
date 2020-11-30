@@ -308,6 +308,18 @@ MODULE_OBJS = \
 	engine/script/script_runtime.o \
 	engine/script/systemimports.o
 
+ifdef ENABLE_AGS_TESTS
+MODULE_OBJS += \
+	tests/test_all.o \
+	tests/test_file.o \
+	tests/test_gfx.o \
+	tests/test_inifile.o \
+	tests/test_math.o \
+	tests/test_memory.o \
+	tests/test_sprintf.o \
+	tests/test_string.o \
+	tests/test_version.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_AGS), DYNAMIC_PLUGIN)
