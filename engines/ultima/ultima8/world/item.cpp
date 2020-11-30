@@ -2853,9 +2853,9 @@ uint32 Item::I_avatarStoleSomething(const uint8 *args, unsigned int /*argsize*/)
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	// Check if dead to match original game behavior here..
+	// Abort if npc && dead to match original game behavior
 	Actor *actor = dynamic_cast<Actor *>(item);
-	if (!actor || actor->isDead())
+	if (actor && actor->isDead())
 		return 0;
 
 	ARG_UINT16(arg);
