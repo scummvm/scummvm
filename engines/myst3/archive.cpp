@@ -286,17 +286,14 @@ Common::String ResourceDescription::getTextData(uint index) const {
 	// extract the wanted one
 	cnt = 0;
 	int i = 0;
-	Common::String text;
-	while (cnt <= index && i < 89) {
-		if (cnt == index)
-			text += decrypted[i];
-
+	while (cnt < index) {
 		if (!decrypted[i])
 			cnt++;
 
 		i++;
 	}
 
+	Common::String text((const char *)&decrypted[i]);
 	return text;
 }
 
