@@ -26,6 +26,13 @@
 #include "common/scummsys.h"
 
 namespace Audio {
+/**
+ * @defgroup audio_rate Sample rate
+ * @ingroup audio
+ *
+ * @brief API for managing sound sample rate.
+ * @{
+ */
 
 class AudioStream;
 
@@ -79,7 +86,7 @@ public:
 };
 
 RateConverter *makeRateConverter(st_rate_t inrate, st_rate_t outrate, bool stereo, bool reverseStereo = false);
-
+/** @} */
 } // End of namespace Audio
 
 #endif

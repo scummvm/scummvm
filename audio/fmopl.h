@@ -41,6 +41,14 @@ namespace OPL {
 
 class OPL;
 
+/**
+ * @defgroup audio_fmopl OPL emulation
+ * @ingroup audio
+ *
+ * @brief OPL class for managing an OPS emulator.
+ * @{
+ */
+
 class Config {
 public:
 	enum OplFlags {
@@ -279,7 +287,7 @@ private:
 
 	Audio::SoundHandle *_handle;
 };
-
+/** @} */
 } // End of namespace OPL
 
 #endif
