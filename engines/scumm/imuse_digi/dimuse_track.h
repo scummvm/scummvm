@@ -89,7 +89,7 @@ struct Track {
 		volFadeDelay = 0;
 		volFadeUsed = false;
 		gainReduction = 0;
-		gainRedFadeDest = 127 * 280; // About 4 dB of gain reduction
+		gainRedFadeDest = 127 * 290; // About 4 dB of gain reduction
 		gainRedFadeUsed = false;
 		soundId = 0;
 		memset(soundName, 0, sizeof(soundName));
