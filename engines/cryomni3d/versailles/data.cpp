@@ -102,12 +102,11 @@ void CryOmni3DEngine_Versailles::loadStaticData() {
 	_epigraphContent = data->readString16();
 	_epigraphPassword = data->readString16();
 
-	// Japanese is the only language (for now) where the password isn't 8-bit ASCII string
 	if (getLanguage() == Common::JA_JPN) {
 		_bombAlphabet = data->readString16().decode(Common::kWindows932);
 		_bombPassword = data->readString16().decode(Common::kWindows932);
 	} else {
-		_bombAlphabet = CryoString("ABCDEFGHIJKLMNOPQRSTUVWXYZ '");
+		_bombAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ '";
 		_bombPassword = data->readString16();
 	}
 

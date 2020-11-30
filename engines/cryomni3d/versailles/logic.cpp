@@ -3222,7 +3222,7 @@ void CryOmni3DEngine_Versailles::drawBombLetters(Graphics::ManagedSurface &surfa
 			surface.fillRect(rct, 239);
 
 			uint32 letter = bombPossibilites[i][bombCurrentLetters[i]];
-			CryoString str(&letter, 1);
+			Common::U32String str(&letter, 1);
 
 			_fontManager.displayStr(rct.left + (34 - _fontManager.getStrWidth(str)) / 2,
 			                        rct.top + 5, str);
