@@ -34,6 +34,13 @@ void SceneScriptTB05::InitializeScene() {
 	}
 	Scene_Exit_Add_2D_Exit(0, 62, 193, 206, 419, 0);
 	Scene_Exit_Add_2D_Exit(1,  0, 455, 639, 479, 2);
+	if (_vm->_cutContent
+	    && Game_Flag_Query(kFlagTB05MonitorIntro)
+	    && !Game_Flag_Query(kFlagMcCoyCommentsOnTB05Monitors)) {
+		// in order not to confuse the player (much) with a red herring region,
+		// we enable this region *after* the player has accessed the correct pc / panel
+		Scene_2D_Region_Add(0, 382, 255, 634, 325); // monitors and panels other than the "main monitor"
+	}
 	Ambient_Sounds_Add_Looping_Sound(kSfxTB5LOOP1, 100, 0, 1);
 	Ambient_Sounds_Add_Looping_Sound(kSfxTB5LOOP2, 100, 0, 1);
 	Ambient_Sounds_Add_Sound(kSfxHUMMER1,  5, 30, 25, 33, -100, 100, -101, -101, 0, 0);
@@ -81,6 +88,11 @@ bool SceneScriptTB05::ClickedOn3DObject(const char *objectName, bool a2) {
 				Actor_Voice_Over(2190, kActorVoiceOver);
 				Actor_Voice_Over(2200, kActorVoiceOver);
 				Game_Flag_Set(kFlagTB05MonitorIntro);
+				if (_vm->_cutContent) {
+					// in order not to confuse the player (much) with a red herring region,
+					// we enable this region *after* the player has accessed the correct pc / panel
+					Scene_2D_Region_Add(0, 382, 255, 634, 325); // monitors and panels other than the "main monitor"
+				}
 				return true;
 			}
 
@@ -192,6 +204,17 @@ bool SceneScriptTB05::ClickedOnExit(int exitId) {
 }
 
 bool SceneScriptTB05::ClickedOn2DRegion(int region) {
+	if (_vm->_cutContent) {
+		if (!Game_Flag_Query(kFlagMcCoyCommentsOnTB05Monitors) && region == 0) {
+			Game_Flag_Set(kFlagMcCoyCommentsOnTB05Monitors);
+			Actor_Force_Stop_Walking(kActorMcCoy);
+			Actor_Face_Heading(kActorMcCoy, 64, false);
+			Actor_Voice_Over(2210, kActorVoiceOver);
+			Actor_Voice_Over(2220, kActorVoiceOver);
+			Scene_2D_Region_Remove(0);
+			return true;
+		}
+	}
 	return false;
 }
 

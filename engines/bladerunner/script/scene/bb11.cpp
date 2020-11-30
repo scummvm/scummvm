@@ -104,6 +104,7 @@ bool SceneScriptBB11::ClickedOn2DRegion(int region) {
 	if (_vm->_cutContent) {
 		if (!Game_Flag_Query(kFlagMcCoyCommentsOnFans) && (region == 0 || region == 1) ) {
 			Game_Flag_Set(kFlagMcCoyCommentsOnFans);
+			Actor_Force_Stop_Walking(kActorMcCoy);
 			Actor_Face_Heading(kActorMcCoy, 550, false);
 			Actor_Voice_Over(3740, kActorVoiceOver);
 			Actor_Voice_Over(3750, kActorVoiceOver);
