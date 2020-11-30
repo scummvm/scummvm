@@ -32,6 +32,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die Version in brasilianischem Portugiesisch von Grim Fandango hinzugefügt.
    - Unterstützung für die russische Version von Escape from Monkey Island hinzugefügt.
 
+ Kyra:
+   - Unterstützung für die japanische Sega-CD-Version von Eye of the Beholder hinzugefügt.
+
  Lure:
    - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines Spielstands abgespielt.
 
