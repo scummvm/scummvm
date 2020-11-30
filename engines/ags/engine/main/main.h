@@ -37,7 +37,7 @@ extern AGS::Shared::Version SavedgameLowestForwardCompatVersion;
 
 //=============================================================================
 
-extern char **global_argv;
+extern const char **global_argv;
 
 // Location of the engine executable
 extern AGS::Shared::String appDirectory;

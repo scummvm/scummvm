@@ -61,7 +61,7 @@ using namespace Engine;
 String appDirectory; // Needed for library loading
 String cmdGameDataPath;
 
-char **global_argv = nullptr;
+const char **global_argv = nullptr;
 int    global_argc = 0;
 
 extern GameSetup usetup;
@@ -135,7 +135,7 @@ void main_create_platform_driver() {
 	platform = AGSPlatformDriver::GetDriver();
 }
 
-void main_init(int argc, char *argv[]) {
+void main_init(int argc, const char *argv[]) {
 	EngineVersion = Version(ACI_VERSION_STR " " SPECIAL_VERSION);
 
 	SavedgameLowestBackwardCompatVersion = Version(SVG_VERSION_BWCOMPAT_MAJOR, SVG_VERSION_BWCOMPAT_MINOR, SVG_VERSION_BWCOMPAT_RELEASE, SVG_VERSION_BWCOMPAT_REVISION);
@@ -159,7 +159,7 @@ void main_print_help() {
 	// No implementation
 }
 
-static int main_process_cmdline(ConfigTree &cfg, int argc, char *argv[]) {
+static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 	int datafile_argv = 0;
 	for (int ee = 1; ee < argc; ++ee) {
 		const char *arg = argv[ee];
@@ -267,7 +267,7 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, char *argv[]) {
 	return 0;
 }
 
-void main_set_gamedir(int argc, char *argv[]) {
+void main_set_gamedir(int argc, const char *argv[]) {
 	appDirectory = Path::GetDirectoryPath(GetPathFromCmdArg(0));
 
 	if ((loadSaveGameOnStartup != nullptr) && (argv[0] != nullptr)) {
@@ -339,16 +339,14 @@ uint32 AGSEngine::getFeatures() const {
 }
 
 Common::Error AGSEngine::run() {
-	char exeName[16], gameName[16];
-	strcpy(exeName, "scummvm.exe");
-	strcpy(gameName, "bc.exe");
-	int argc = 3;
-	char *argv[] = { exeName, gameName };
+	const char *filename = _gameDescription->desc.filesDescriptions[0].fileName;
+	const char *ARGV[] = { nullptr, filename };
+	const int ARGC = 2;
 
 #ifdef AGS_RUN_TESTS
 	Test_DoAllTests();
 #endif
-	AGS3::main_init(argc, argv);
+	AGS3::main_init(ARGC, ARGV);
 
 #if AGS_PLATFORM_OS_WINDOWS
 	setup_malloc_handling();
@@ -356,7 +354,7 @@ Common::Error AGSEngine::run() {
 	AGS3::debug_flags = 0;
 
 	AGS3::ConfigTree startup_opts;
-	int res = AGS3::main_process_cmdline(startup_opts, argc, argv);
+	int res = AGS3::main_process_cmdline(startup_opts, ARGC, ARGV);
 	if (res != 0)
 		return Common::kUnknownError;
 
@@ -375,7 +373,7 @@ Common::Error AGSEngine::run() {
 	AGS3::init_debug(startup_opts, AGS3::justTellInfo);
 	AGS3::Debug::Printf("%s", AGS3::get_engine_string().GetNullableCStr());
 
-	AGS3::main_set_gamedir(argc, argv);
+	AGS3::main_set_gamedir(ARGC, ARGV);
 
 	// Update shell associations and exit
 	if (AGS3::debug_flags & DBG_REGONLY)
