@@ -427,6 +427,9 @@ void IMuseDigital::callback() {
 					effVol -= track->gainReduction / 1000;
 					if (effVol < 0) // In case a music crossfading happens during gain reduction...
 						effVol = 0;
+					effVol = int(round(effVol * 1.8)); // Adjust default music mix for COMI
+				} else if (_vm->_game.id == GID_CMI && track->volGroupId == IMUSE_VOLGRP_SFX) {
+					effVol = int(round(effVol * 1.1)); // Adjust default sfx mix for COMI
 				}
 				_mixer->setChannelVolume(track->mixChanHandle, effVol);
 				_mixer->setChannelBalance(track->mixChanHandle, track->getPan());
