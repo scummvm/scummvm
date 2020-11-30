@@ -1,3 +1,4 @@
 # This file is included from the main "configure" script
 # add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
-add_engine ags "Adventure Game Studio" no "" "" "cxx11"
+add_engine ags "Adventure Game Studio" no "ags_tests" "" "cxx11"
+add_engine ags_tests "AGS Tests" no "" "" ""

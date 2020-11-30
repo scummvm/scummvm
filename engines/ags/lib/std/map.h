@@ -50,6 +50,20 @@ public:
 
 		return it;
 	}
+
+	/**
+	 * Checks if the maps have identical contents
+	 */
+	bool operator==(const map &rhs) {
+		if (this->size() != rhs.size())
+			return false;
+		for (iterator it = this->begin(); it != this->end(); ++it) {
+			if (!(it->_value == rhs[it->_key]))
+				return false;
+		}
+
+		return true;
+	}
 };
 
 template<class Key, class Val, class HashFunc = Common::Hash<Key>,
