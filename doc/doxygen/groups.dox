@@ -26,3 +26,16 @@
 @brief API of various image decoders used in engines.
 
 */
+
+/**
+
+@defgroup audio Audio API
+@brief APIs for managing in-game audio.
+
+*/
+/**
+
+@defgroup image Image API
+@brief API of various image decoders used in engines.
+
+*/

@@ -33,6 +33,14 @@
 
 namespace Audio {
 
+/**
+ * @defgroup audio_miles Miles and XMIDI
+ * @ingroup audio
+ *
+ * @brief API for managing XMIDI files used by Miles Sound System.
+ * @{
+ */
+
 // Miles Audio supported controllers for control change messages
 #define MILES_CONTROLLER_SELECT_PATCH_BANK 114
 #define MILES_CONTROLLER_PROTECT_VOICE 112
@@ -299,7 +307,7 @@ extern MidiDriver *MidiDriver_Miles_AdLib_create(const Common::String &filenameA
 extern MidiDriver_Miles_Midi *MidiDriver_Miles_MT32_create(const Common::String &instrumentDataFilename);
 
 extern MidiDriver_Miles_Midi *MidiDriver_Miles_MIDI_create(MusicType midiType, const Common::String &instrumentDataFilename);
-
+/** @} */
 } // End of namespace Audio
 
 #endif // AUDIO_MILES_MIDIDRIVER_H

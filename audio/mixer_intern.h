@@ -30,6 +30,14 @@
 namespace Audio {
 
 /**
+ * @defgroup audio_mixer_intern Mixer implementation
+ * @ingroup audio
+ *
+ * @brief The (default) implementation of the ScummVM audio mixing subsystem.
+ * @{
+ */
+
+/**
  * The (default) implementation of the ScummVM audio mixing subsystem.
  *
  * Backends are responsible for allocating (and later releasing) an instance
@@ -141,7 +149,7 @@ public:
 	void setReady(bool ready);
 };
 
-
+/** @} */
 } // End of namespace Audio
 
 #endif
