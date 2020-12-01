@@ -577,6 +577,11 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 					ttsMan->setLanguage("en");
 #endif // USE_TTS
 #endif // USE_TRANSLATION
+
+				// No font, cleanup TextDrawData
+				delete _texts[textId];
+				_texts[textId] = nullptr;
+
 				return false; // fall-back attempt failed
 			}
 			// Success in fall-back attempt to standard (non-localized) font.
@@ -592,6 +597,10 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &language, const
 #endif // USE_TRANSLATION
 			// Returning true here, would allow falling back to standard fonts for the missing ones,
 			// but that leads to "garbage" glyphs being displayed on screen for non-Latin languages
+			// No font, cleanup TextDrawData
+			delete _texts[textId];
+			_texts[textId] = nullptr;
+
 			return false;
 		}
 	}

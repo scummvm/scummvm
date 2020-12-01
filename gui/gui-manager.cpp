@@ -182,8 +182,10 @@ bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx, 
 	newTheme = new ThemeEngine(id, gfx);
 	assert(newTheme);
 
-	if (!newTheme->init())
+	if (!newTheme->init()) {
+		delete newTheme;
 		return false;
+	}
 
 	//
 	// Disable and delete the old theme
