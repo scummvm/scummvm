@@ -133,9 +133,12 @@ void UCMachine::reset() {
 	// clear _globals
 	_globals->setSize(0x1000);
 
-	if (GAME_IS_CRUSADER) {
-		// slight hack: set global 003C to start as avatar number.
+	// slight HACK: set global 003C (remorse) / 001E (regret)
+	// to start as avatar number.
+	if (GAME_IS_REMORSE) {
 		_globals->setEntries(0x3C, 2, 1);
+	} else if (GAME_IS_REGRET) {
+		_globals->setEntries(0x1E, 2, 1);
 	}
 
 	// clear strings, lists
