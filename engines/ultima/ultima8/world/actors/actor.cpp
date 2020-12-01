@@ -910,7 +910,7 @@ void Actor::receiveHitCru(uint16 other, Direction dir, int damage, uint16 damage
 
 void Actor::tookHitCru() {
 	Animation::Sequence lastanim = getLastAnim();
-	if ((lastanim == Animation::unknownAnim30) || (lastanim == Animation::startRunWithLargeWeapon)) {
+	if (lastanim == Animation::unknownAnim30 || lastanim == Animation::startRunWithLargeWeapon) {
 		//uint16 controllednpc = World::get_instance()->getControlledNPCNum();
 		bool canseecontrolled = true; //this->canSee(controllednpc);
 		if (canseecontrolled) {
