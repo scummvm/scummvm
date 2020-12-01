@@ -80,6 +80,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed occasional border corruption during fights.
    - Improvements to cutscenes to better match the original games.
 
+ AmigaOS port:
+   - Add native system file browser feature
+   - Re-activate nuked OPL Adlib driver
+
  MorphOS port:
    - Add native system file browser feature
    - Add Cloud feature
