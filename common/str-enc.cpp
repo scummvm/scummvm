@@ -621,22 +621,26 @@ void String::encodeUTF8(const U32String &src) {
 }
 
 #define decodeUTF16Template(suffix, read)				\
-Common::U32String U32String::decodeUTF16 ## suffix (const uint16 *start, uint len) { \
+Common::U32String U32String::decodeUTF16 ## suffix (const uint16 *start, uint len) {	\
 	const uint16 *ptr = start;					\
 	Common::U32String dst;						\
 	dst.ensureCapacity(len, false);					\
 									\
-	while (len-- > 0) {						\
+	while (len > 0) {						\
 		uint16 c = read(ptr++);					\
+		len--;							\
 		if (c >= 0xD800 && c <= 0xDBFF && len > 0) {		\
-			uint16 low = read(ptr++);			\
-			if (low >= 0xDC00 && low <= 0xDFFF)		\
-				dst += ((c & 0x3ff) << 10)              \
-					| (low & 0x3ff);                \
-			else						\
+			uint16 low = read(ptr);				\
+			if (low >= 0xDC00 && low <= 0xDFFF) {		\
+				/* low is OK, we can advance pointer */	\
+				ptr++; len--;				\
+				dst += ((c & 0x3ff) << 10)		\
+					| (low & 0x3ff);		\
+			} else {					\
 				dst += invalidCode;			\
+			}						\
 			continue;					\
-                }							\
+		}							\
 									\
 		if (c >= 0xD800 && c <= 0xDFFF) {			\
 			dst += invalidCode;				\
@@ -668,7 +672,7 @@ uint16 *U32String::encodeUTF16 ## suffix (uint *len) const {		\
 	}								\
 									\
 	write(ptr, 0);							\
-        if (len)							\
+	if (len)							\
 		*len = ptr - out;					\
 									\
 	return out;							\
