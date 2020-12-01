@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 
 			// Set the AppPaths variable to the path the binary was run from.
 			IDOS->AddPart(apppath, appname, 1024);
-			IDOS->SetVar(apppath, progpath, -1, GVF_GLOBAL_ONLY|GVF_SAVE_VAR );
+			IDOS->SetVar(apppath, progpath, -1, GVF_GLOBAL_ONLY|GVF_SAVE_VAR);
 
 			// Turn system requester back on.
 			IDOS->SetProcWindow(reqwin);
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Set a stack cookie to avoid crashes from a too low stack.
-	static const char *stack_cookie __attribute__((used)) = "$STACK: 20971520";
+	static const char *stack_cookie __attribute__((used)) = "$STACK: 2048000";
 
 	// Create our OSystem instance.
 	g_system = new OSystem_AmigaOS();
