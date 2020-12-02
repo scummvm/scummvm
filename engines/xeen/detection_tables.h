@@ -122,7 +122,7 @@ static const XeenGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Dark Side of Xeen
+		// Darkside of Xeen
 		{
 			"darksideofxeen",
 			nullptr,
@@ -137,7 +137,7 @@ static const XeenGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Dark Side of Xeen (GOG German)
+		// Darkside of Xeen (GOG German)
 		{
 			"darksideofxeen",
 			nullptr,
@@ -152,7 +152,7 @@ static const XeenGameDescription gameDescriptions[] = {
 	},
 
 	{
-		// Dark Side of Xeen (Bestseller Games Magazine #8 German)
+		// Darkside of Xeen (Bestseller Games Magazine #8 German)
 		{
 			"darksideofxeen",
 			nullptr,

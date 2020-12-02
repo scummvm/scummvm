@@ -51,7 +51,7 @@ private:
 	void animatePharoah(int frame, bool showBall = true);
 
 	/**
-	 * Shows the Dark Side of Xeen title screen
+	 * Shows the Darkside of Xeen title screen
 	 */
 	bool showDarkSideTitle(bool seenIntro);
 
@@ -114,12 +114,12 @@ public:
 	DarkSideCutscenes(XeenEngine *vm) : Cutscenes(vm) {}
 
 	/**
-	 * Shows the Dark Side of Xeen intro sequence
+	 * Shows the Darkside of Xeen intro sequence
 	 */
 	bool showDarkSideIntro(bool seenIntro);
 
 	/**
-	 * Shows the Dark Side of Xeen ending sequence
+	 * Shows the Darkside of Xeen ending sequence
 	 */
 	void showDarkSideEnding(uint endingScore);
 };
