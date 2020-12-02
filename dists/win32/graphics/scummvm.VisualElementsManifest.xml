@@ -1,0 +1,9 @@
+<Application xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
+  <VisualElements
+      ShowNameOnSquare150x150Logo='on'
+      Square150x150Logo='icons\scummvm-tile.png'
+      Square70x70Logo='icons\scummvm-tile-small.png'
+      Square44x44Logo='icons\scummvm-tile-small.png'
+      ForegroundText='light'
+      BackgroundColor='#CC6600'/>
+</Application>
