@@ -289,3 +289,8 @@ Source: SDL2.dll; DestDir: {app}; Flags: replacesameversion
 ; Migration script for saved games in Windows NT4 onwards
 Source: migration.bat; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
 Source: migration.txt; DestDir: {app}; Flags: ignoreversion; MinVersion: 0, 1
+
+; Win8 and Win10 start menu tiles
+Source: dists\win32\graphics\scummvm-tile.png; DestDir: {app}/icons; Flags: ignoreversion
+Source: dists\win32\graphics\scummvm-tile-small.png; DestDir: {app}/icons; Flags: ignoreversion
+Source: dists\win32\graphics\scummvm.VisualElementsManifest.xml DestDir: {app}; Flags: ignoreversion
