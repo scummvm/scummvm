@@ -842,19 +842,18 @@ void ComprehendGame::read_input() {
 		_nounState = NOUNSTATE_STANDARD;
 
 		read_sentence(&tempSentence);
-		_sentence.copyFrom(tempSentence, tempSentence._formattedWords[0] || prevNounState != NOUNSTATE_QUERY);
+		_sentence.copyFrom(tempSentence, tempSentence._formattedWords[0] || prevNounState != NOUNSTATE_STANDARD);
 
 		handled = handle_sentence(&_sentence);
-		if (handled)
-			afterTurn();
+		if (!handled)
+			return;
 
 		/* FIXME - handle the 'before you can continue' case */
 		if (_inputLine[_inputLineIndex] == '\0')
 			break;
-
-		if (handled)
-			doBeforeTurn();
 	}
+
+	afterTurn();
 }
 
 void ComprehendGame::playGame() {
