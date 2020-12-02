@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-11-30 23:17+0000\n"
-"PO-Revision-Date: 2020-11-29 14:33+0000\n"
+"PO-Revision-Date: 2020-12-02 20:28+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -1911,9 +1911,8 @@ msgid "Error running game:"
 msgstr "ゲームを実行のエラー："
 
 #: base/main.cpp:667
-#, fuzzy
 msgid "Could not find any engine capable of running the selected game"
-msgstr "選択されたゲームを実行できるエンジンは見つかりませんでした！"
+msgstr "選択されたゲームに対応するエンジンが見つかりません"
 
 #: common/achievements.cpp:93
 msgid "Achievement unlocked!"
@@ -1976,9 +1975,8 @@ msgid "Could not find suitable engine plugin"
 msgstr ""
 
 #: common/error.cpp:70
-#, fuzzy
 msgid "Engine plugin does not support saved games"
-msgstr "テーマは選択された言語をサポートしていません!"
+msgstr "エンジンプラグインは保存されたゲームをサポートしていません"
 
 #: common/error.cpp:73
 msgid "User canceled"
@@ -2152,9 +2150,8 @@ msgid "Could not switch to stretch mode '%s'."
 msgstr ""
 
 #: engines/engine.cpp:352
-#, fuzzy
 msgid "Could not apply aspect ratio setting."
-msgstr "縦横比修正適用"
+msgstr "アスペクト比の設定を適用できませんでした"
 
 #: engines/engine.cpp:357
 msgid "Could not apply fullscreen setting."
@@ -2897,9 +2894,8 @@ msgid "Windows MIDI"
 msgstr "ウインドーズMIDI"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:60
-#, fuzzy
 msgid "Can't create directory here!"
-msgstr "フォルダーではありません"
+msgstr "指定された場所にはディレクトリーを生成できません!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:66
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:73
@@ -2917,9 +2913,8 @@ msgid "Invalid path!"
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:84
-#, fuzzy
 msgid "Parent directory doesn't exists!"
-msgstr "フォルダーは存在しません"
+msgstr "ひとつ上のディレクトリーが存在しません!"
 
 #: backends/networking/sdl_net/handlers/createdirectoryhandler.cpp:88
 msgid "Can't create a directory within a file!"
@@ -2947,19 +2942,16 @@ msgid "Back to parent directory"
 msgstr "フォルダーではありません"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:67
-#, fuzzy
 msgid "The file doesn't exist!"
-msgstr "フォルダーは存在しません"
+msgstr "ファイルが見つかりません!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't download a directory!"
-msgstr "フォルダーではありません"
+msgstr "ディレクトリーをダウンロードできません!"
 
 #: backends/networking/sdl_net/handlers/downloadfilehandler.cpp:76
-#, fuzzy
 msgid "Failed to read the file!"
-msgstr "音声合成で文章を読み上げる"
+msgstr "ファイルを読み込めません!"
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:59
 msgid ""
@@ -3067,9 +3059,8 @@ msgid "Invalid request: headers are too long!"
 msgstr ""
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:155
-#, fuzzy
 msgid "Failed to upload the file!"
-msgstr "オートセーブに失敗しました"
+msgstr "ファイルのアップロードに失敗しました!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:184
 msgid "No file was passed!"
@@ -3487,16 +3478,14 @@ msgstr ""
 #: backends/platform/ios7/ios7_osys_events.cpp:340
 #: backends/platform/ios7/ios7_osys_events.cpp:476
 #: backends/platform/iphone/osys_events.cpp:313
-#, fuzzy
 msgid "Touchpad mode enabled."
-msgstr "タッチパッドマウスモード"
+msgstr "タッチパッド操作を有効にする"
 
 #: backends/platform/ios7/ios7_osys_events.cpp:342
 #: backends/platform/ios7/ios7_osys_events.cpp:478
 #: backends/platform/iphone/osys_events.cpp:315
-#, fuzzy
 msgid "Touchpad mode disabled."
-msgstr "タッチパッドマウスモード"
+msgstr "タッチパッド操作を無効にする"
 
 #: backends/platform/maemo/maemo.cpp:158
 #, fuzzy
@@ -3937,9 +3926,8 @@ msgstr ""
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
 #: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
 #: engines/zvision/file/save_manager.cpp:62
-#, fuzzy
 msgid "Restore game:"
-msgstr "ゲームを報告する"
+msgstr "ゲームを復元する:"
 
 #: engines/agi/saveload.cpp:772 engines/avalanche/parser.cpp:1907
 #: engines/cine/various.cpp:361 engines/dm/dm.cpp:276
@@ -4002,9 +3990,8 @@ msgid ""
 msgstr ""
 
 #: engines/bladerunner/bladerunner.cpp:363
-#, fuzzy
 msgid "Failed to initialize resources"
-msgstr "ストレージの接続に失敗しました。"
+msgstr "リソースの初期化に失敗しました"
 
 #: engines/bladerunner/bladerunner.cpp:1067
 msgid "A required game resource was not found"
@@ -4245,14 +4232,12 @@ msgid "Could not start AdvSys game"
 msgstr ""
 
 #: engines/glk/advsys/advsys.cpp:48 engines/glk/advsys/vm.cpp:320
-#, fuzzy
 msgid "Sorry, the savegame couldn't be restored"
-msgstr "エラー：ゲームをセーブできませんでした。"
+msgstr "保存されたゲームが復元できませんでした"
 
 #: engines/glk/advsys/vm.cpp:315
-#, fuzzy
 msgid "Sorry, the savegame couldn't be created"
-msgstr "エラー：ゲームをセーブできませんでした。"
+msgstr "保存されたゲームが復元できませんでした"
 
 #: engines/glk/advsys/vm.cpp:561
 msgid "Speak up! I can't hear you!\n"
@@ -4390,9 +4375,8 @@ msgid ""
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:551
-#, fuzzy
 msgid "Saved.\n"
-msgstr "セーブ"
+msgstr "セーブしました。"
 
 #: engines/glk/scott/scott.cpp:644
 msgid "You use word(s) I don't know! "
@@ -6769,9 +6753,9 @@ msgid "Saved game #%d quick loaded"
 msgstr ""
 
 #: engines/toon/toon.cpp:246
-#, fuzzy, c-format
+#, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "セーブデータをロードしますか？"
+msgstr "保存されたゲーム#%dのクイックセーブがロードできませんでした"
 
 #: engines/toon/toon.cpp:1528
 #, c-format
