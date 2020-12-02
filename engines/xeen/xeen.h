@@ -56,7 +56,7 @@
  *
  * Games using this engine:
  * - Might & Magic 4: Clouds of Xeen
- * - Might & Magic 5: Dark Side of Xeen
+ * - Might & Magic 5: Darkside of Xeen
  * - Might & Magic: World of Xeen
  * - Might & Magic: Swords of Xeen
  */
