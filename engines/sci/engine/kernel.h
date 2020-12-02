@@ -34,13 +34,20 @@
 
 namespace Sci {
 
+/**
+ * @defgroup engine_sci SCI engine
+ * @ingroup engines_engines
+ * @{
+ */
+
 struct Node;	// from segment.h
 struct List;	// from segment.h
 struct SelectorCache;	// from selector.h
 struct SciWorkaroundEntry;	// from workarounds.h
 
 /**
- * @defgroup VocabularyResources	Vocabulary resources in SCI
+ * @defgroup vocabulary_resources_sci Vocabulary resources in SCI
+ * @ingroup engine_sci
  *
  * vocab.999 / 999.voc (unneeded) contains names of the kernel functions which
  * are implemented by the interpreter. In Sierra SCI, they are used exclusively
@@ -736,7 +743,7 @@ reg_t kFileIOGetCWD(EngineState *s, int argc, reg_t *argv);
 reg_t kFileIOIsValidDirectory(EngineState *s, int argc, reg_t *argv);
 #endif
 
-//@}
+/** @} */
 
 } // End of namespace Sci
 
