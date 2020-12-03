@@ -56,6 +56,7 @@ BaseLocation::~BaseLocation() {
 	for (uint idx = 0; idx < _townSprites.size(); ++idx)
 		_townSprites[idx].clear();
 	intf.mainIconsPrint();
+	intf.unhighlightChar();
 }
 
 int BaseLocation::show() {

@@ -26,7 +26,7 @@
 // for dynamic engine plugins.
 // If you plan to use this code in another engine, you will have
 // to add the proper define check here.
-#if !(defined(ENABLE_KYRA) || defined(ENABLE_SCI) || defined(ENABLE_SCUMM) || defined(DYNAMIC_MODULES))
+#if !(defined(ENABLE_KYRA) || defined(ENABLE_SCI) || defined(ENABLE_SCUMM) || defined(ENABLE_SAGA) || defined(DYNAMIC_MODULES))
 
 // If neither of the above mentioned is enabled, do not include the SJIS code.
 
@@ -47,6 +47,15 @@
 #include "common/platform.h"
 
 namespace Graphics {
+
+/**
+ * @defgroup graphics_sjis Shift JIS font
+ * @ingroup graphics
+ *
+ * @brief FontSJIS class for handling Japanese characters.
+ *
+ * @{
+ */
 
 struct Surface;
 
@@ -285,7 +294,7 @@ private:
 };
 
 // TODO: Consider adding support for PC98 ROM
-
+ /** @} */
 } // End of namespace Graphics
 
 #endif

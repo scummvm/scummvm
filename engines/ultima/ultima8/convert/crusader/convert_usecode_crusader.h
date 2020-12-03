@@ -55,7 +55,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Actor::I_GetNPCDataField0x63_00B(Actor *)", // Some unknown value set for NPCs based on Q of egg.
 	"void Ultima8Engine::I_setAvatarInStasis(int)",
 	"byte Item::I_getDirToItem(Item *, itemno)", // based on disasm
-	"int16 Actor::I_turnToward(Actor *, direction, unk)", // TODO: work out what unk is
+	"int16 Actor::I_turnToward(Actor *, direction, dir_16)",
 	"void I_playFlic(void), int16 I_playFlic(Item *, char *name, int16 sizex, int16 sizey)",
 	// 0010
 	"int16 Item::I_getQLo(Item *)", // same as 02B based on same coff as 02B, 066, 084, 0A1, 0AE, 0D9, 0EA
@@ -95,9 +95,9 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Item::I_pop(Item *)", // same code as U8
 	"void Item::I_andStatus(Item *, uint16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"void Item::I_receiveHit(Item *, other, dir, damage, damagetype)", // based on disasm
-	"byte Actor::I_isBusy(4 bytes)", // same code as U8
+	"byte Actor::I_isBusy(Actor *)", // same code as U8
 	"int16 Item::I_getDirFromTo16(x1, y1, x2, y2)",
-	"byte Actor::I_isKneeling(Item *)",
+	"byte Actor::I_isKneeling(Actor *)",
 	"int16 Actor::I_doAnim(12 bytes)", // v. similar code to U8
 	"byte MainActor::I_addItemCru(4 bytes)", // same coff as 0B8
 	"void AudioProcess::I_stopSFXCru(Item *, int16 sndno)",

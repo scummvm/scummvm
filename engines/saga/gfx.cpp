@@ -40,11 +40,17 @@ namespace Saga {
 #define RID_IHNM_HOURGLASS_CURSOR 11 // not in demo
 
 Gfx::Gfx(SagaEngine *vm, OSystem *system, int width, int height) : _vm(vm), _system(system) {
-	initGraphics(width, height);
+	if (vm->getLanguage() == Common::JA_JPN)
+		initGraphics(width << 1, height << 1);
+	else
+		initGraphics(width, height);
 
 	debug(5, "Init screen %dx%d", width, height);
 	// Convert surface data to R surface data
 	_backBuffer.create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+
+	if (vm->getLanguage() == Common::JA_JPN)
+		_sjisBackBuffer.create(width << 1, height << 1, Graphics::PixelFormat::createFormatCLUT8());
 
 	// Start with the cursor shown. It will be hidden before the intro, if
 	// there is an intro. (With boot params, there may not be.)
@@ -54,6 +60,7 @@ Gfx::Gfx(SagaEngine *vm, OSystem *system, int width, int height) : _vm(vm), _sys
 
 Gfx::~Gfx() {
 	_backBuffer.free();
+	_sjisBackBuffer.free();
 }
 
 #ifdef SAGA_DEBUG
@@ -464,7 +471,7 @@ void Gfx::setCursor(CursorType cursorType) {
 		const byte A = kITEColorLightGrey;
 		const byte B = kITEColorWhite;
 
-		const byte cursor_img[CURSOR_W * CURSOR_H] = {
+		const byte cursor_img_default[CURSOR_W * CURSOR_H] = {
 			0, 0, 0, A, 0, 0, 0,
 			0, 0, 0, A, 0, 0, 0,
 			0, 0, 0, A, 0, 0, 0,
@@ -474,7 +481,29 @@ void Gfx::setCursor(CursorType cursorType) {
 			0, 0, 0, A, 0, 0, 0,
 		};
 
-		CursorMan.replaceCursor(cursor_img, CURSOR_W, CURSOR_H, 3, 3, 0);
+		const byte cursor_img_pc98[CURSOR_PC98_W * CURSOR_PC98_H] = {
+			A, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, B, A, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, B, B, A, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, B, B, B, A, 0, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, B, B, B, B, A, 0, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, B, B, B, B, B, A, 0, 0, 0, 0, 0, 0,
+			A, B, B, B, B, B, B, B, B, B, A, 0, 0, 0, 0, 0,
+			A, B, B, B, B, B, B, B, B, B, B, A, 0, 0, 0, 0,
+			A, B, B, B, B, B, B, B, B, B, B, B, A, 0, 0, 0,
+			A, B, B, B, B, B, B, B, B, B, B, B, B, A, 0, 0,
+			A, A, A, A, A, A, B, B, B, A, A, A, A, A, A, 0,
+			0, 0, 0, 0, 0, 0, A, B, B, B, A, 0, 0, 0, 0, 0,
+			0, 0, 0, 0, 0, 0, 0, A, A, A, A, A, 0, 0, 0, 0
+		};
+
+		if (_vm->getPlatform() == Common::kPlatformPC98)
+			CursorMan.replaceCursor(cursor_img_pc98, CURSOR_PC98_W, CURSOR_PC98_H, 0, 0, 0);
+		else
+			CursorMan.replaceCursor(cursor_img_default, CURSOR_W, CURSOR_H, 3, 3, 0);
 	} else {
 		uint32 resourceId;
 
@@ -552,24 +581,31 @@ void Gfx::drawFrame(const Common::Point &p1, const Common::Point &p2, int color)
 // This method adds a dirty rectangle automatically
 void Gfx::drawRect(const Common::Rect &destRect, int color) {
 	_backBuffer.drawRect(destRect, color);
+	_sjisBackBuffer.clearRect2x(destRect);
 	_vm->_render->addDirtyRect(destRect);
 }
 
 // This method adds a dirty rectangle automatically
 void Gfx::fillRect(const Common::Rect &destRect, uint32 color) {
 	_backBuffer.fillRect(destRect, color);
+	// Clear corresponding area of the sjis text layer (if the pixels buffer was actually created)
+	_sjisBackBuffer.clearRect2x(destRect);
 	_vm->_render->addDirtyRect(destRect);
 }
 
 // This method adds a dirty rectangle automatically
 void Gfx::drawRegion(const Common::Rect &destRect, const byte *sourceBuffer) {
 	_backBuffer.blit(destRect, sourceBuffer);
+	// Clear corresponding area of the sjis text layer (if the pixels buffer was actually created)
+	_sjisBackBuffer.clearRect2x(destRect);
 	_vm->_render->addDirtyRect(destRect);
 }
 
 // This method does not add a dirty rectangle automatically
 void Gfx::drawBgRegion(const Common::Rect &destRect, const byte *sourceBuffer) {
 	_backBuffer.blit(destRect, sourceBuffer);
+	// Clear corresponding area of the sjis text layer (if the pixels buffer was actually created)
+	_sjisBackBuffer.clearRect2x(destRect);
 }
 
 

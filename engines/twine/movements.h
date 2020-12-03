@@ -193,18 +193,6 @@ public:
 	int32 getAngleAndSetTargetActorDistance(int32 x1, int32 z1, int32 x2, int32 z2);
 
 	/**
-	 * Get actor real angle
-	 * @param movePtr time pointer to process
-	 */
-	int32 getRealAngle(ActorMoveStruct *movePtr);
-
-	/**
-	 * Get actor step
-	 * @param movePtr time pointer to process
-	 */
-	int32 getRealValue(ActorMoveStruct *movePtr);
-
-	/**
 	 * Rotate actor with a given angle
 	 * @param x Actor current X coordinate
 	 * @param z Actor current Z coordinate

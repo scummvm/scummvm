@@ -177,7 +177,7 @@ struct DarkMoonShapeDef {
 struct EoBCharacter {
 	byte id;
 	byte flags;
-	char name[11];
+	//char name[11];
 	int8 strengthCur, strengthMax;
 	int8 strengthExtCur, strengthExtMax;
 	int8 intelligenceCur, intelligenceMax;

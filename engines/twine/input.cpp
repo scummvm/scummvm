@@ -36,6 +36,7 @@ const char *cutsceneKeyMapId = "cutsceneKeyMap";
 
 ScopedKeyMap::ScopedKeyMap(TwinEEngine* engine, const char *id) : _engine(engine) {
 	_changed = _engine->_input->enableAdditionalKeyMap(id, true);
+	_keymap = id;
 }
 
 ScopedKeyMap::~ScopedKeyMap() {
@@ -153,15 +154,16 @@ void Input::readKeys() {
 	}
 }
 
-void Input::getMousePositions(MouseStatusStruct *mouseData) {
-	Common::Point point = g_system->getEventManager()->getMousePos();
-	mouseData->x = point.x;
-	mouseData->y = point.y;
+Common::Point Input::getMousePositions() const {
+	return g_system->getEventManager()->getMousePos();
 }
 
-bool Input::isMouseHovering(int32 left, int32 top, int32 right, int32 bottom) const {
-	Common::Point point = g_system->getEventManager()->getMousePos();
-	return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom;
+bool Input::isMouseHovering(const Common::Rect &rect) const {
+	if (!_engine->cfgfile.Mouse) {
+		return false;
+	}
+	const Common::Point &point = getMousePositions();
+	return rect.contains(point);
 }
 
 } // namespace TwinE

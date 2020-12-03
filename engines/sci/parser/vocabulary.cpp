@@ -23,7 +23,7 @@
 // Main vocabulary support functions and word lookup
 
 #include "sci/parser/vocabulary.h"
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/console.h"

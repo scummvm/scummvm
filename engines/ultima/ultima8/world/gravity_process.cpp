@@ -20,13 +20,16 @@
  *
  */
 
+#include "ultima/ultima8/world/gravity_process.h"
+
+#include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/kernel/kernel.h"
+#include "ultima/ultima8/kernel/core_app.h"
 #include "ultima/ultima8/misc/pent_include.h"
 #include "ultima/ultima8/misc/direction.h"
-#include "ultima/ultima8/world/gravity_process.h"
 #include "ultima/ultima8/world/actors/actor.h"
-#include "ultima/ultima8/audio/audio_process.h"
+#include "ultima/ultima8/world/actors/actor_anim_process.h"
 #include "ultima/ultima8/world/current_map.h"
-#include "ultima/ultima8/kernel/kernel.h"
 #include "ultima/ultima8/world/world.h"
 #include "ultima/ultima8/world/get_object.h"
 
@@ -302,39 +305,81 @@ void GravityProcess::fallStopped() {
 	Actor *actor = getActor(_itemNum);
 	if (actor && !actor->isDead()) {
 		int height = actor->getFallStart() - actor->getZ();
+		if (GAME_IS_U8)
+			actorFallStoppedU8(actor, height);
+		else
+			actorFallStoppedCru(actor, height);
+	}
+}
 
-		if (height >= 80) {
-			int damage = 0;
+void GravityProcess::actorFallStoppedU8(Actor *actor, int height) {
+	if (height >= 80) {
+		int damage = 0;
 
-			if (height < 104) {
-				// medium fall: take some damage
-				damage = (height - 72) / 4;
-			} else {
-				// high fall: die
-				damage = actor->getHP();
-			}
-
-			actor->receiveHit(0, actor->getDir(), damage,
-			                  WeaponInfo::DMG_FALLING | WeaponInfo::DMG_PIERCE);
-
-			// 'ooof'
-			AudioProcess *audioproc = AudioProcess::get_instance();
-			if (audioproc) audioproc->playSFX(51, 250, _itemNum, 0); // CONSTANT!
+		if (height < 104) {
+			// medium fall: take some damage
+			damage = (height - 72) / 4;
+		} else {
+			// high fall: die
+			damage = actor->getHP();
 		}
 
-		if (!actor->isDead() && actor->getLastAnim() != Animation::die) {
+		actor->receiveHit(0, actor->getDir(), damage,
+						  WeaponInfo::DMG_FALLING | WeaponInfo::DMG_PIERCE);
 
-			// play land animation, overriding other animations
-			Kernel::get_instance()->killProcesses(_itemNum, 0xF0, false); // CONSTANT!
-			ProcId lpid = actor->doAnim(Animation::land, dir_current);
+		// 'ooof'
+		AudioProcess *audioproc = AudioProcess::get_instance();
+		if (audioproc) audioproc->playSFX(51, 250, _itemNum, 0); // CONSTANT!
+	}
 
-			if (actor->isInCombat()) {
-				// need to get back to a combat stance to prevent weapon from
-				// being drawn again
-				ProcId spid = actor->doAnim(Animation::combatStand, dir_current);
-				Process *sp = Kernel::get_instance()->getProcess(spid);
-				sp->waitFor(lpid);
-			}
+	if (!actor->isDead() && actor->getLastAnim() != Animation::die) {
+		Kernel *kernel = Kernel::get_instance();
+
+		// play land animation, overriding other animations
+		kernel->killProcesses(_itemNum, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE, false); // CONSTANT!
+		ProcId lpid = actor->doAnim(Animation::land, dir_current);
+
+		if (actor->isInCombat()) {
+			// need to get back to a combat stance to prevent weapon from
+			// being drawn again
+			ProcId spid = actor->doAnim(Animation::combatStand, dir_current);
+			Process *sp = kernel->getProcess(spid);
+			sp->waitFor(lpid);
+		}
+	}
+}
+
+void GravityProcess::actorFallStoppedCru(Actor *actor, int height) {
+	Animation::Sequence lastanim = actor->getLastAnim();
+	Kernel *kernel = Kernel::get_instance();
+
+	if (height / 8 > 2 &&
+		(lastanim != Animation::anotherJump &&
+		 lastanim != Animation::slowCombatRollLeft &&
+		 lastanim != Animation::slowCombatRollRight &&
+		 lastanim != Animation::combatRollLeft &&
+		 lastanim != Animation::combatRollRight &&
+		 lastanim != Animation::run &&
+		 lastanim != Animation::jumpForward &&
+		 lastanim != Animation::unknownAnim30 &&
+		 lastanim != Animation::runWithLargeWeapon)) {
+		// play land animation, overriding other animations
+		kernel->killProcesses(_itemNum, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE, false); // CONSTANT!
+		ProcId lpid = actor->doAnim(Animation::jumpLanding, dir_current);
+
+		Animation::Sequence nextanim = actor->isInCombat() ? Animation::combatStand : Animation::stand;
+		ProcId spid = actor->doAnim(nextanim, dir_current);
+		Process *sp = kernel->getProcess(spid);
+		sp->waitFor(lpid);
+
+		// 'ooof' (Note: same sound no is used in No Remorse and No Regret)
+		AudioProcess *audioproc = AudioProcess::get_instance();
+		if (audioproc) audioproc->playSFX(0x8f, 250, _itemNum, 0); // CONSTANT!
+	} else {
+		Process *currentanim = kernel->findProcess(_itemNum, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE);
+		if (currentanim) {
+			// TODO: Is this the right thing?
+			currentanim->wakeUp(0);
 		}
 	}
 }

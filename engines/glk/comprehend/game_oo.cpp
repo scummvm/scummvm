@@ -44,7 +44,7 @@ enum OOToposFlag {
 	OO_FLAG_44 = 44,
 	OO_FLAG_SUFFICIENT_FUEL = 51,
 	OO_FLAG_REVERSE_VIDEO = 53,	// Effect of wearing goggles
-	OO_FLAG_55 = 55,
+	OO_FLAG_TOO_DARK = 55,
 	OO_FLAG_TOO_BRIGHT = 56,
 	OO_FLAG_58 = 58,
 	OO_FLAG_59 = 59,
@@ -62,7 +62,7 @@ static const GameStrings OO_STRINGS = {
 
 OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE),
 		_noFloodfill(UNSET), _lightOn(UNSET), _stringVal1(0), _stringVal2(0),
-		_printComputerMsg(true), _shipNotWorking(false), _currentRoomCopy(-1) {
+		_printComputerMsg(true), _shipNotWorking(false) {
 	_gameDataFile = "g0";
 
 	// Extra strings are (annoyingly) stored in the game binary
@@ -123,10 +123,8 @@ int OOToposGame::roomIsSpecial(unsigned room_index, unsigned *roomDescString) {
 void OOToposGame::beforeTurn() {
 	ComprehendGameV2::beforeTurn();
 
-	// Make  a copy of the current room
-	_currentRoomCopy = _currentRoom;
-
-	if (_flags[OO_FLAG_55]) {
+	if (_flags[OO_FLAG_TOO_DARK]) {
+		// Show placeholder room if room is too dark
 		_currentRoom = 55;
 		_updateFlags |= UPDATE_GRAPHICS;
 	} else if (_flags[OO_FLAG_TOO_BRIGHT]) {

@@ -592,11 +592,12 @@ void MainActor::getWeaponOverlay(const WeaponOverlayFrame *&frame, uint32 &shape
 
 	shape = weaponinfo->_overlayShape;
 
-	WpnOvlayDat *wpnovlay = GameData::get_instance()->getWeaponOverlay();
+	const WpnOvlayDat *wpnovlay = GameData::get_instance()->getWeaponOverlay();
 	frame = wpnovlay->getOverlayFrame(action, weaponinfo->_overlayType,
 	                                  _direction, _animFrame);
 
-	if (frame == 0) shape = 0;
+	if (frame == nullptr)
+		shape = 0;
 }
 
 int16 MainActor::getMaxEnergy() {
@@ -930,6 +931,20 @@ int MainActor::receiveShieldHit(int damage, uint16 damage_type) {
 		}
 	}
 	return damage;
+}
+
+void MainActor::detonateBomb() {
+	// search area for shape 0x55F (1375) - DETPAC
+	UCList uclist(2);
+	LOOPSCRIPT(script, LS_SHAPE_EQUAL(0x55F));
+	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
+	currentmap->areaSearch(&uclist, script, sizeof(script), nullptr,
+							0x800, true, _x, _y);
+	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
+		Item *founditem = getItem(uclist.getuint16(i));
+		founditem->callUsecodeEvent_use();
+	}
+	return;
 }
 
 

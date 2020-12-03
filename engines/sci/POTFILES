@@ -1,4 +1,5 @@
 engines/sci/detection.cpp
+engines/sci/detection_tables.h
 engines/sci/engine/guest_additions.cpp
 engines/sci/engine/kfile.cpp
 engines/sci/engine/kgraphics.cpp
@@ -8,6 +9,6 @@ engines/sci/engine/savegame.cpp
 engines/sci/graphics/controls32.cpp
 engines/sci/graphics/video32.cpp
 engines/sci/metaengine.cpp
-engines/sci/resource.cpp
+engines/sci/resource/resource.cpp
 engines/sci/sci.cpp
 engines/sci/sound/music.cpp

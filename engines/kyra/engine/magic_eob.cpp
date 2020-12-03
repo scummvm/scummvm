@@ -220,7 +220,13 @@ void EoBCoreEngine::castSpell(int spell, int weaponSlot) {
 		}
 	}
 
+
+	int cs = (_flags.platform == Common::kPlatformSegaCD && _flags.lang == Common::JA_JPN) ? _screen->setFontStyles(_screen->_currentFont, Font::kStyleNarrow1) : -1;
+
 	_txt->printMessage(_magicStrings1[4], -1, c->name, s->name);
+
+	if (cs != -1)
+		_screen->setFontStyles(_screen->_currentFont, cs);
 
 	if (s->flags & 0x20) {
 		castOnWhomDialogue();

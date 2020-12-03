@@ -29,6 +29,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 class Item;
+class Actor;
 
 class GravityProcess : public Process {
 public:
@@ -54,6 +55,9 @@ public:
 
 protected:
 	void fallStopped();
+
+	void actorFallStoppedU8(Actor *actor, int height);
+	void actorFallStoppedCru(Actor *actor, int height);
 
 	int _gravity;
 	int _xSpeed, _ySpeed, _zSpeed;

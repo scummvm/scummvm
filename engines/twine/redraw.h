@@ -24,6 +24,7 @@
 #define TWINE_REDRAW_H
 
 #include "common/scummsys.h"
+#include "common/rect.h"
 
 namespace TwinE {
 
@@ -72,15 +73,8 @@ private:
 	/** Draw list array to grab the necessary */
 	DrawListStruct drawList[150];
 
-	struct RedrawStruct {
-		uint16 left = 0;
-		uint16 top = 0;
-		uint16 right = 0;
-		uint16 bottom = 0;
-	};
-
-	RedrawStruct currentRedrawList[300];
-	RedrawStruct nextRedrawList[300];
+	Common::Rect currentRedrawList[300];
+	Common::Rect nextRedrawList[300];
 
 	int16 overlayRotation = 0;
 	/**
@@ -104,14 +98,8 @@ private:
 public:
 	Redraw(TwinEEngine *engine) : _engine(engine) {}
 
-	/** Auxiliar object render left position on screen */
-	int32 renderLeft = 0;
-	/** Auxiliar object render right position on screen */
-	int32 renderRight = 0;
-	/** Auxiliar object render top position on screen */
-	int32 renderTop = 0;
-	/** Auxiliar object render bottom position on screen */
-	int32 renderBottom = 0;
+	/** Auxiliar object render position on screen */
+	Common::Rect renderRect { 0, 0, 0, 0 };
 
 	bool drawInGameTransBox = false;
 
@@ -139,6 +127,7 @@ public:
 	 * @param bottom end height to redraw the region
 	 */
 	void addRedrawArea(int32 left, int32 top, int32 right, int32 bottom);
+	void addRedrawArea(const Common::Rect &rect);
 
 	/**
 	 * Flip currentRedrawList regions in the screen
@@ -153,7 +142,7 @@ public:
 	 * This is responsible for the entire game screen redraw
 	 * @param bgRedraw true if we want to redraw background grid, false if we want to update certain screen areas
 	 */
-	void redrawEngineActions(int32 bgRedraw);
+	void redrawEngineActions(bool bgRedraw);
 
 	/** Draw dialogue sprite image */
 	void drawBubble(int32 actorIdx);

@@ -88,7 +88,7 @@ enum {
 	AMETA_ALT_MASK   = AMETA_ALT_ON   | AMETA_ALT_LEFT_ON   | AMETA_ALT_RIGHT_ON
 };
 
-// map android key codes to our kbd codes
+// map android key codes to our kbd codes (common/keyboard.h)
 static const Common::KeyCode jkeymap[] = {
 	Common::KEYCODE_INVALID, // AKEYCODE_UNKNOWN
 	Common::KEYCODE_LEFTSOFT, // AKEYCODE_SOFT_LEFT
@@ -465,16 +465,56 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			break;
 		}
 
+		// arg4 is the metastate of the key press event
+		// check for "Shift" key modifier
 		if (arg4 & AMETA_SHIFT_MASK)
 			e.kbd.flags |= Common::KBD_SHIFT;
-		// JMETA_ALT is Fn on physical keyboards!
+
+		// We revert the commit to disable the Alt modifier
+		// TODO revisit this old comment from commit https://github.com/scummvm/scummvm/commit/bfecb37501b6fdc35f2802216db5fb2b0e54b8ee
+		//      for possible issues with physical keyboards and Fn key combos.
+		//      It still seems like a bad idea to disable Alt key combos over Fn key combos
+		//      and our keymapper should be able to handle this issue anyway
+		//      (since it explicitly shows what key combination results from pressing keys, when the user edits a key mapping)
+		//      More info: Back then we were checking for JMETA_ALT (defined as 0x02) which is now NDK's AMETA_ALT_ON (0x02) (see https://developer.android.com/ndk/reference/group/input)
+		//      JMETA_ALT was defined in our own enum. (see full old file: https://github.com/scummvm/scummvm/blob/bfecb37501b6fdc35f2802216db5fb2b0e54b8ee/backends/platform/android/events.cpp#L113)
+		// Old comment:
+		// JMETA_ALT (0x02) is Fn on physical keyboards!
 		// when mapping this to ALT - as we know it from PC keyboards - all
 		// Fn combos will be broken (like Fn+q, which needs to end as 1 and
 		// not ALT+1). Do not want.
-		//if (arg4 & AMETA_ALT_MASK)
+		//if (arg4 & JMETA_ALT)
 		//	e.kbd.flags |= Common::KBD_ALT;
-		if (arg4 & (AMETA_SYM_ON | AMETA_CTRL_MASK))
+		// end of old comment --
+		// check for "Alt" key modifier
+		if (arg4 & (AMETA_ALT_MASK)) {
+			e.kbd.flags |= Common::KBD_ALT;
+		}
+
+		// check for "Ctrl" key modifier (We set Sym key to also behave as Ctrl)
+		if (arg4 & (AMETA_SYM_ON | AMETA_CTRL_MASK)) {
 			e.kbd.flags |= Common::KBD_CTRL;
+		}
+
+		// check for "Meta" key modifier
+		if (arg4 & (AMETA_META_MASK)) {
+			e.kbd.flags |= Common::KBD_META;
+		}
+
+		//  check for CAPS key modifier
+		if (arg4 & (AMETA_CAPS_LOCK_ON)) {
+			e.kbd.flags |= Common::KBD_CAPS;
+		}
+
+		//  check for NUM Lock key modifier
+		if (arg4 & (AMETA_NUM_LOCK_ON)) {
+			e.kbd.flags |= Common::KBD_NUM;
+		}
+
+		//  check for Scroll Lock key modifier
+		if (arg4 & (AMETA_SCROLL_LOCK_ON)) {
+			e.kbd.flags |= Common::KBD_SCRL;
+		}
 
 		pushEvent(e);
 

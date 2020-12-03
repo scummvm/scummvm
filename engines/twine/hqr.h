@@ -62,7 +62,8 @@ int32 numEntries(const char *filename);
 
 /**
  * Get a HQR entry pointer with memory allocation
- * @param ptr pointer to save the entry
+ * @param ptr pointer to save the entry. This pointer is automatically freed and therefore must be initialized
+ * to @c nullptr on the first run.
  * @param filename HQR file name
  * @param index entry index to extract
  * @return entry real size
@@ -79,7 +80,8 @@ int32 getAllocEntry(uint8 **ptr, const char *filename, int32 index);
 int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenIndex);
 /**
  * Get a HQR entry pointer with memory allocation
- * @param ptr pointer to save the entry
+ * @param ptr pointer to save the entry. This pointer is automatically freed and therefore must be initialized
+ * to @c nullptr on the first run.
  * @param filename HQR file name
  * @param index entry index to extract
  * @return entry real size

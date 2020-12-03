@@ -75,6 +75,7 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 			altfire = (wpninfo && (wpninfo->_overlayShape == 0x36e || wpninfo->_overlayShape == 0x33b));
 		}
 
+		//
 		// For crusader the actions have different IDs.  Rather than
 		// rewrite everything, we just translate them here for all the ones
 		// we want to use programmatically.  There are more, but they are
@@ -82,7 +83,13 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 		//
 		// We also translate based on weapon.  See the function at 1128:2104
 		//
-		// TODO: Also handle kneeling weapon animations
+		// First, if the animation is >= 0x1000 then it's from the usecode -
+		// use directly and don't translate.
+		//
+		const uint32 action_int = static_cast<uint32>(action);
+		if (action_int >= 0x1000)
+			return action_int - 0x1000;
+
 		switch (action) {
 		case Animation::stand:
 			return 0;
@@ -130,12 +137,8 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 			return 0;
 		case Animation::lookRight:
 			return 0;
-		case Animation::teleportInReplacement:
-			return Animation::teleportIn;
-		case Animation::teleportOutReplacement:
-			return Animation::teleportOut;
 		default:
-			return static_cast<uint32>(action);
+			return action_int;
 		}
 	}
 }

@@ -153,6 +153,7 @@ Debugger::Debugger() : Shared::Debugger() {
 	registerCmd("MainActor::nextInvItem", WRAP_METHOD(Debugger, cmdNextInventory));
 	registerCmd("MainActor::useInventoryItem", WRAP_METHOD(Debugger, cmdUseInventoryItem));
 	registerCmd("MainActor::useMedikit", WRAP_METHOD(Debugger, cmdUseMedikit));
+	registerCmd("MainActor::detonateBomb", WRAP_METHOD(Debugger, cmdDetonateBomb));
 	registerCmd("MainActor::toggleCombat", WRAP_METHOD(Debugger, cmdToggleCombat));
 	registerCmd("ItemSelectionProcess::startSelection", WRAP_METHOD(Debugger, cmdStartSelection));
 	registerCmd("ItemSelectionProcess::useSelectedItem", WRAP_METHOD(Debugger, cmdUseSelection));
@@ -1154,6 +1155,16 @@ bool Debugger::cmdUseMedikit(int argc, const char **argv) {
 	}
 	MainActor *av = getMainActor();
 	av->useInventoryItem(0x351);
+	return false;
+}
+
+bool Debugger::cmdDetonateBomb(int argc, const char **argv) {
+	if (Ultima8Engine::get_instance()->isAvatarInStasis()) {
+		debugPrintf("Can't detonate bomb: avatarInStasis\n");
+		return false;
+	}
+	MainActor *av = getMainActor();
+	av->detonateBomb();
 	return false;
 }
 

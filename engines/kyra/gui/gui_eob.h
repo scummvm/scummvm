@@ -55,7 +55,7 @@ public:
 	int processButtonList(Button *buttonList, uint16 inputFlags, int8 mouseWheel) override;
 
 	// Non button based menu handling (main menu, character generation)
-	void simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int itemOffset, int lineSpacing);
+	void simpleMenu_setup(int sd, int maxItem, const char *const *strings, int32 menuItemsMask, int itemOffset, int lineSpacing, int textColor, int highlightColor, int shadowColor);
 	int simpleMenu_process(int sd, const char *const *strings, void *b, int32 menuItemsMask, int itemOffset);
 
 	// Button based menus (camp menu, load menu)
@@ -107,7 +107,7 @@ private:
 	bool restParty();
 
 	virtual void drawCampMenu() {}
-	virtual void initMemorizePrayMenu() {}
+	virtual void initMemorizePrayMenu(int) {}
 	virtual void initScribeScrollMenu() {}
 	virtual void printScribeScrollSpellString(const int16 *menuItems, int id, bool highlight);
 	virtual bool confirmDialogue(int id);
@@ -149,6 +149,9 @@ private:
 
 	int _menuLineSpacing;
 	int _menuLastInFlags;
+	int _menuTextColor;
+	int _menuHighlightColor;
+	int _menuShadowColor;
 
 	uint8 _numPages;
 	uint8 _numVisPages;
@@ -173,7 +176,7 @@ private:
 	static const uint8 _highlightColorTableSegaCD[];
 
 	// FM-Towns / SegaCD specific
-	virtual int checkClickableCharactersSelection();
+	virtual uint16 checkClickableCharactersSelection();
 	virtual void printClickableCharacters(int page);
 };
 

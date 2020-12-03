@@ -2,38 +2,38 @@
 Game
 =============
 
-The Game tab
----------------
-
-Choose a game, then go to **Edit Game**.
-
-Use the game tab to display and change information about how the game is
+Use the Game tab to display and change information about how the game is
 identified by ScummVM.
+
+From the Launcher, highlight a game on the games list, then select **Edit Game**. The **Game** tab is the first tab shown.  
+
 
 .. figure:: ../images/settings/game.png
 
     The Game tab in the game-specific settings
-    
+
+All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description. 
+
 ,,,,,,,
 
 .. _gameid:
 
 **ID**
-	This field shows the short name of the game. This ID can be used for launching the game from the command line.
+	Shows the short name of the game. This ID can be used for launching the game from the command line.
 
 	*gameid* 
 
 .. _description:
 
 **Name**
-	This field shows the full title of the game, as well as some basic information such as original platform and language.
+	Shows the full title of the game, as well as some basic information such as original platform and language.
 	 
 	*description* 
 
 .. _lang:
 
 **Language**
-	For multi-language games, this option changes the language of the game. However, for games that have the language hardcoded, this option only changes the font of the subtitles. For instance, selecting German will add an umlaut to German subtitles, and selecting Spanish will add the tilde in Spanish subtitles. 
+	For games that were released with support for multiple languages, this options changes the language of the game. For games that have a single language hardcoded, this option does not change the language of the game, it only affects the subtitles. Select the correct language to ensure that subtitles display correctly, especially for non-English games.  
 
 	*language* 
 

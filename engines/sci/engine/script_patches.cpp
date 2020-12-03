@@ -5498,6 +5498,67 @@ static const uint16 kq6PatchRoom407LookMessage[] = {
 	PATCH_END
 };
 
+// After lighting the torch in the dark catacombs room and then re-entering,
+//  using items such as a book results in a message that the room is too dark.
+//  rm406:scriptCheck tests for darkness with a local variable that is set when
+//  lighting the torch instead of a persistent global. We could change the
+//  darkness test but it turns out that this method is never called in the dark.
+//  KQ6Room:setScript only calls scriptCheck when ego:view is 900 and that is
+//  only true once the torch is lit.
+//
+// We fix this by patching rm406:scriptCheck to always allow items since the
+//  condition it tries to prevent can never occur.
+//
+// Applies to: All versions
+// Responsible method: rm406:scriptCheck
+static const uint16 kq6SignatureDarkRoomInventory[] = {
+	0x3f, 0x01,                         // link 01
+	0x35, 0x00,                         // ldi 00
+	0xa5, 0x00,                         // sat temp0
+	0x8b, SIG_MAGICDWORD, 0x01,         // lsl 01
+	0x35, 0x64,                         // ldi 64
+	0x22,                               // lt? [ has lightItUp not run yet? ]
+	SIG_END
+};
+
+static const uint16 kq6PatchDarkRoomInventory[] = {
+	0x35, 0x01,                         // ldi 01
+	0x48,                               // ret [ return true, allow items ]
+	PATCH_END
+};
+
+// The Girl In The Tower theme plays from a CD audio track during the credits.
+//  In ScummVM this requires an actual CD, or a mounted CD image, or extracting
+//  the audio to a "track1" file ahead of time. If the track can't be played
+//  then there is silence for the entire credits, but the game includes a 5 MB
+//  Audio version to fall back on when CD audio is unavailable. The script plays
+//  this when the CD audio driver fails to load, though this never occurs in our
+//  our implementation and doesn't address a missing track.
+//
+// We ensure that the credits theme always plays by patching the script to also
+//  fall back on the Audio version when CD audio playback fails.
+//
+// Applies to: PC CD
+// Responsible method: sCredits:init
+static const uint16 kq6CDSignatureGirlInTheTowerPlayback[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x05,                         // pushi 05
+	0x39, 0x0a,                         // pushi 0a   [ kSciAudioCD ]
+	0x7a,                               // push2      [ play ]
+	0x7a,                               // push2      [ track ]
+	0x76,                               // push0      [ start ]
+	0x38, SIG_UINT16(0x00ec),           // pushi 00ec [ end ]
+	0x43, 0x75, 0x0a,                   // callk DoAudio 0a
+	0x33,                               // jmp [ skip Audio version ]
+	SIG_END
+};
+
+static const uint16 kq6CDPatchGirlInTheTowerPlayback[] = {
+	PATCH_ADDTOOFFSET(+13),
+	0x2f,                               // bt [ skip Audio version if CD audio succeeded ]
+	PATCH_END
+};
+
 // Audio + subtitles support - SHARED! - used for King's Quest 6 and Laura Bow 2.
 //  This patch gets enabled when the user selects "both" in the ScummVM
 //  "Speech + Subtitles" menu. We currently use global[98d] to hold a kMemory
@@ -5939,12 +6000,14 @@ static const uint16 kq6CDPatchAudioTextMenuSupport[] = {
 
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq6Signatures[] = {
+	{  true,    52, "CD: Girl In The Tower playback",                 1, kq6CDSignatureGirlInTheTowerPlayback,     kq6CDPatchGirlInTheTowerPlayback },
 	{  true,    87, "fix Drink Me bottle",                            1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	{ false,    87, "Mac: Drink Me pic",                              1, kq6SignatureMacDrinkMePic,                kq6PatchMacDrinkMePic },
 	{  true,   281, "fix pawnshop genie eye",                         1, kq6SignaturePawnshopGenieEye,             kq6PatchPawnshopGenieEye },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffItemFloatFix,            kq6PatchCliffItemFloatFix },
 	{  true,   405, "fix catacombs room message",                     1, kq6SignatureRoom405LookMessage,           kq6PatchRoom405LookMessage },
+	{  true,   406, "fix catacombs dark room inventory",              1, kq6SignatureDarkRoomInventory,            kq6PatchDarkRoomInventory },
 	{  true,   407, "fix catacombs room message",                     1, kq6SignatureRoom407LookMessage,           kq6PatchRoom407LookMessage },
 	{  true,   480, "CD: fix wallflower dance",                       1, kq6CDSignatureWallFlowerDanceFix,         kq6CDPatchWallFlowerDanceFix },
 	{  true,   480, "fix getting baby tears",                         1, kq6SignatureGetBabyTears,                 kq6PatchGetBabyTears },
@@ -7685,6 +7748,45 @@ static const uint16 laurabow1PatchLillianBedFix[] = {
 	PATCH_END
 };
 
+// Entering Laura's bedroom resets the cursor position to the upper right corner
+//  of the screen as if the game were starting. Room44:init calls kSetCursor to
+//  initialize the game because it's the first room where the user has control,
+//  but this part of the script is missing the startup test and so it happens
+//  every time. We fix this by adding the missing startup test.
+//
+// Applies to: All versions
+// Responsible method: Room44:init
+static const uint16 laurabow1SignatureRoom44CursorFix[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                         // ldi 00
+	0xa1, 0xbe,                         // sag be [ global190 = 0 ]
+	0x39, SIG_SELECTOR8(init),          // pushi init
+	0x76,                               // push0
+	0x57, 0x37, 0x04,                   // super Rm 04 [ super init: ]
+	SIG_ADDTOOFFSET(+10),
+	0x43, 0x28, 0x08,                   // callk SetCursor 08 [ SetCursor 997 1 300 0 ]
+	SIG_ADDTOOFFSET(+439),
+	0x89, 0xa5,                         // lsg a5
+	0x35, 0x00,                         // ldi 00
+	0x1a,                               // eq?
+	0x30,                               // bnt
+	SIG_END
+};
+
+static const uint16 laurabow1PatchRoom44CursorFix[] = {
+	0x39, PATCH_SELECTOR8(init),        // pushi init
+	0x76,                               // push0
+	0x57, 0x37, 0x04,                   // super Rm 04 [ super init: ]
+	0x81, 0xcb,                         // lag cb [ global203 == 0 when game is starting ]
+	0x2f, 0x0d,                         // bt 0d  [ skip SetCursor if game already started ]
+	PATCH_ADDTOOFFSET(+452),
+	0x76,                               // push0
+	0xa9, 0xbe,                         // ssg be [ global190 = 0 ]
+	0x81, 0xa5,                         // lag a5
+	0x2e,                               // bt
+	PATCH_END
+};
+
 // When you tell Lilly about Gertie in room 35, Lilly will then walk to the
 // left and off the screen. If Laura (ego) is in the way, the whole game will
 // basically block and you won't be able to do anything except saving or
@@ -7970,6 +8072,7 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,    37, "armor move to fix",                        2, laurabow1SignatureArmorMoveToFix,                  laurabow1PatchArmorMoveToFix },
 	{  true,    37, "allowing input, after oiling arm",         1, laurabow1SignatureArmorOilingArmFix,               laurabow1PatchArmorOilingArmFix },
 	{  true,    44, "lillian bed fix",                          1, laurabow1SignatureLillianBedFix,                   laurabow1PatchLillianBedFix },
+	{  true,    44, "room 44 cursor fix",                       1, laurabow1SignatureRoom44CursorFix,                 laurabow1PatchRoom44CursorFix },
 	{  true,    47, "attic stairs lockup fix",                  1, laurabow1SignatureAtticStairsLockupFix,            laurabow1PatchAtticStairsLockupFix },
 	{  true,    47, "left stairs lockup fix",                   3, laurabow1SignatureLeftStairsLockupFix,             laurabow1PatchLeftStairsLockupFix },
 	{  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },

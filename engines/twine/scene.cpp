@@ -290,7 +290,7 @@ void Scene::resetScene() {
 
 void Scene::changeScene() {
 	// change twinsen house destroyed hard-coded
-	if (needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->gameFlags[30] != 0) {
+	if (needChangeScene == LBA1SceneId::Citadel_Island_near_twinsens_house && _engine->_gameState->hasOpenedFunfrocksSafe()) {
 		needChangeScene = LBA1SceneId::Citadel_Island_Twinsens_house_destroyed;
 	}
 
@@ -418,10 +418,10 @@ void Scene::processEnvironmentSound() {
 
 				const int16 sampleIdx = _sampleAmbiance[currentAmb];
 				if (sampleIdx != -1) {
-					int16 decal = _sampleRound[currentAmb];
+					/*int16 decal = _sampleRound[currentAmb];*/
 					int16 repeat = _sampleRepeat[currentAmb];
 
-					_engine->_sound->playSample(sampleIdx, (4096 + _engine->getRandomNumber(decal) - (decal / 2)), repeat, 110, -1, 110);
+					_engine->_sound->playSample(sampleIdx, repeat, 110, -1, 110);
 					break;
 				}
 			}
@@ -528,7 +528,7 @@ void Scene::processActorZones(int32 actorIdx) {
 					talkingActor = actorIdx;
 					_engine->_text->drawTextFullscreen(zone->infoData.DisplayText.textIdx);
 					_engine->unfreezeTime();
-					_engine->_redraw->redrawEngineActions(1);
+					_engine->_redraw->redrawEngineActions(true);
 				}
 				break;
 			case kLadder:

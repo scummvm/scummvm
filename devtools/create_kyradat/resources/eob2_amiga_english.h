@@ -1053,3 +1053,13 @@ static const char *const kEoB2HornStringsAmigaEnglish[4] = {
 
 static const StringListProvider kEoB2HornStringsAmigaEnglishProvider = { ARRAYSIZE(kEoB2HornStringsAmigaEnglish), kEoB2HornStringsAmigaEnglish };
 
+static const char *const kEoB2NpcPresetsNamesAmigaEnglish[6] = {
+	"Insal",
+	"Calandra",
+	"Shorn",
+	"San-raal",
+	"Tanglor",
+	"Amber"
+};
+
+static const StringListProvider kEoB2NpcPresetsNamesAmigaEnglishProvider = { ARRAYSIZE(kEoB2NpcPresetsNamesAmigaEnglish), kEoB2NpcPresetsNamesAmigaEnglish };

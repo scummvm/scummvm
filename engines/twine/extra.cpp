@@ -439,30 +439,30 @@ void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 co
 	int16 var_x = ((*(shapeTable++)) * size) >> 4;
 	int16 var_z = ((*(shapeTable++)) * size) >> 4;
 
-	_engine->_redraw->renderLeft = 0x7D00;
-	_engine->_redraw->renderRight = -0x7D00;
-	_engine->_redraw->renderTop = 0x7D00;
-	_engine->_redraw->renderBottom = -0x7D00;
+	_engine->_redraw->renderRect.left = 0x7D00;
+	_engine->_redraw->renderRect.right = -0x7D00;
+	_engine->_redraw->renderRect.top = 0x7D00;
+	_engine->_redraw->renderRect.bottom = -0x7D00;
 
 	_engine->_movements->rotateActor(var_x, var_z, angle);
 
 	int32 computedX = _engine->_renderer->destX + x;
 	int32 computedY = _engine->_renderer->destZ + y;
 
-	if (computedX < _engine->_redraw->renderLeft) {
-		_engine->_redraw->renderLeft = computedX;
+	if (computedX < _engine->_redraw->renderRect.left) {
+		_engine->_redraw->renderRect.left = computedX;
 	}
 
-	if (computedX > _engine->_redraw->renderRight) {
-		_engine->_redraw->renderRight = computedX;
+	if (computedX > _engine->_redraw->renderRect.right) {
+		_engine->_redraw->renderRect.right = computedX;
 	}
 
-	if (computedY < _engine->_redraw->renderTop) {
-		_engine->_redraw->renderTop = computedY;
+	if (computedY < _engine->_redraw->renderRect.top) {
+		_engine->_redraw->renderRect.top = computedY;
 	}
 
-	if (computedY > _engine->_redraw->renderBottom) {
-		_engine->_redraw->renderBottom = computedY;
+	if (computedY > _engine->_redraw->renderRect.bottom) {
+		_engine->_redraw->renderRect.bottom = computedY;
 	}
 
 	int32 numEntries = 1;
@@ -485,20 +485,20 @@ void Extra::drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 co
 		currentX = _engine->_renderer->destX + x;
 		currentY = _engine->_renderer->destZ + y;
 
-		if (currentX < _engine->_redraw->renderLeft) {
-			_engine->_redraw->renderLeft = currentX;
+		if (currentX < _engine->_redraw->renderRect.left) {
+			_engine->_redraw->renderRect.left = currentX;
 		}
 
-		if (currentX > _engine->_redraw->renderRight) {
-			_engine->_redraw->renderRight = currentX;
+		if (currentX > _engine->_redraw->renderRect.right) {
+			_engine->_redraw->renderRect.right = currentX;
 		}
 
-		if (currentY < _engine->_redraw->renderTop) {
-			_engine->_redraw->renderTop = currentY;
+		if (currentY < _engine->_redraw->renderRect.top) {
+			_engine->_redraw->renderRect.top = currentY;
 		}
 
-		if (currentY > _engine->_redraw->renderBottom) {
-			_engine->_redraw->renderBottom = currentY;
+		if (currentY > _engine->_redraw->renderRect.bottom) {
+			_engine->_redraw->renderRect.bottom = currentY;
 		}
 
 		_engine->_renderer->projPosX = currentX;
@@ -661,7 +661,7 @@ void Extra::processExtras() {
 			}
 
 			const int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->y, 0, currentExtraY, _engine->_movements->targetActorDistance);
-			int32 pos = _engine->_movements->getRealAngle(&extra->trackActorMove);
+			int32 pos = extra->trackActorMove.getRealAngle(_engine->lbaTime);
 			if (!pos) {
 				pos = 1;
 			}
@@ -694,7 +694,7 @@ void Extra::processExtras() {
 			int32 angle = ClampAngle(tmpAngle - extra->angle);
 
 			if (angle > ToAngle(400) && angle < ToAngle(600)) {
-				_engine->_sound->playSample(Samples::ItemFound, 4096, 1, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->y, _engine->_scene->sceneHero->z, 0);
+				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->y, _engine->_scene->sceneHero->z, 0);
 
 				if (extraKey->info1 > 1) {
 					_engine->_renderer->projectPositionOnScreen(extraKey->x - _engine->_grid->cameraX, extraKey->y - _engine->_grid->cameraY, extraKey->z - _engine->_grid->cameraZ);
@@ -711,7 +711,7 @@ void Extra::processExtras() {
 				continue;
 			}
 			int32 angle2 = _engine->_movements->getAngleAndSetTargetActorDistance(extra->y, 0, extraKey->y, _engine->_movements->targetActorDistance);
-			int32 pos = _engine->_movements->getRealAngle(&extra->trackActorMove);
+			int32 pos = extra->trackActorMove.getRealAngle(_engine->lbaTime);
 
 			if (!pos) {
 				pos = 1;
@@ -727,7 +727,7 @@ void Extra::processExtras() {
 			_engine->_movements->setActorAngle(0, extra->destZ, 50, &extra->trackActorMove);
 
 			if (actorIdx == _engine->_collision->checkExtraCollisionWithExtra(extra, _engine->_gameState->magicBallIdx)) {
-				_engine->_sound->playSample(Samples::ItemFound, 4096, 1, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->y, _engine->_scene->sceneHero->z, 0);
+				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->y, _engine->_scene->sceneHero->z, 0);
 
 				if (extraKey->info1 > 1) {
 					_engine->_renderer->projectPositionOnScreen(extraKey->x - _engine->_grid->cameraX, extraKey->y - _engine->_grid->cameraY, extraKey->z - _engine->_grid->cameraZ);
@@ -802,7 +802,7 @@ void Extra::processExtras() {
 				}
 				// if extra is magic ball
 				if (i == _engine->_gameState->magicBallIdx) {
-					_engine->_sound->playSample(Samples::Hit, _engine->getRandomNumber(300) + 3946, 1, extra->x, extra->y, extra->z);
+					_engine->_sound->playSample(Samples::Hit, 1, extra->x, extra->y, extra->z);
 
 					// cant bounce with not magic points
 					if (_engine->_gameState->magicBallNumBounce <= 0) {
@@ -875,7 +875,7 @@ void Extra::processExtras() {
 		if ((extra->type & 0x20) && !(extra->type & 0x2)) {
 			// if hero touch extra
 			if (_engine->_collision->checkExtraCollisionWithActors(extra, -1) == 0) {
-				_engine->_sound->playSample(Samples::ItemFound, 4096, 1, extra->x, extra->y, extra->z);
+				_engine->_sound->playSample(Samples::ItemFound, 1, extra->x, extra->y, extra->z);
 
 				if (extra->info1 > 1 && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
 					_engine->_renderer->projectPositionOnScreen(extra->x - _engine->_grid->cameraX, extra->y - _engine->_grid->cameraY, extra->z - _engine->_grid->cameraZ);

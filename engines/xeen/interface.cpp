@@ -23,6 +23,7 @@
 #include "xeen/interface.h"
 #include "xeen/dialogs/dialogs_char_info.h"
 #include "xeen/dialogs/dialogs_control_panel.h"
+#include "xeen/dialogs/dialogs_dismiss.h"
 #include "xeen/dialogs/dialogs_message.h"
 #include "xeen/dialogs/dialogs_quick_fight.h"
 #include "xeen/dialogs/dialogs_info.h"
@@ -533,6 +534,11 @@ void Interface::perform() {
 			chargeStep();
 			doStepCode();
 		}
+		break;
+
+	case Common::KEYCODE_d:
+		// Show dismiss dialog
+		Dismiss::show(_vm);
 		break;
 
 	case Common::KEYCODE_i:

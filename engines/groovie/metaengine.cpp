@@ -24,6 +24,7 @@
 #include "groovie/saveload.h"
 
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 #include "groovie/detection.h"
@@ -47,6 +48,13 @@ public:
 
 bool GroovieMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	if (gd) {
+#ifndef ENABLE_GROOVIE2
+		if (((const GroovieGameDescription *)gd)->version == kGroovieV2) {
+			Engine::errorUnsupportedGame(_("GroovieV2 support is not compiled in"));
+			return false;
+		}
+#endif
+
 		*engine = new GroovieEngine(syst, (const GroovieGameDescription *)gd);
 	}
 	return gd != 0;

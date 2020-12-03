@@ -261,12 +261,12 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 		break;
 	case kcFLAG_GAME: {
 		int32 flagIdx = ctx.stream.readByte();
-		if (!engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] ||
-		    (engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] && flagIdx >= MaxInventoryItems)) {
+		if (!engine->_gameState->inventoryDisabled() ||
+		    (engine->_gameState->inventoryDisabled() && flagIdx >= MaxInventoryItems)) {
 			engine->_scene->currentScriptValue = engine->_gameState->gameFlags[flagIdx];
 		} else {
 			if (flagIdx == GAMEFLAG_INVENTORY_DISABLED) {
-				engine->_scene->currentScriptValue = engine->_gameState->gameFlags[flagIdx];
+				engine->_scene->currentScriptValue = engine->_gameState->inventoryDisabled();
 			} else {
 				engine->_scene->currentScriptValue = 0;
 			}
@@ -322,11 +322,11 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 	case kcUSE_INVENTORY: {
 		int32 item = ctx.stream.readByte();
 
-		if (!engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED]) {
+		if (!engine->_gameState->inventoryDisabled()) {
 			if (item == engine->loopInventoryItem) {
 				engine->_scene->currentScriptValue = 1;
 			} else {
-				if (engine->_gameState->inventoryFlags[item] == 1 && engine->_gameState->gameFlags[item] == 1) {
+				if (engine->_gameState->inventoryFlags[item] == 1 && engine->_gameState->hasItem((InventoryItems)item)) {
 					engine->_scene->currentScriptValue = 1;
 				} else {
 					engine->_scene->currentScriptValue = 0;
@@ -652,7 +652,7 @@ static int32 lMESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->talkingActor = ctx.actorIdx;
 	engine->_text->drawTextFullscreen(textIdx);
 	engine->unfreezeTime();
-	engine->_redraw->redrawEngineActions(1);
+	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
 }
@@ -786,11 +786,9 @@ static int32 lEND_COMPORTEMENT(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x24
  */
 static int32 lSET_FLAG_GAME(TwinEEngine *engine, LifeScriptContext &ctx) {
-	const int32 flagIdx = ctx.stream.readByte();
-	const int32 flagValue = ctx.stream.readByte();
-
-	engine->_gameState->gameFlags[flagIdx] = flagValue;
-
+	const uint8 flagIdx = ctx.stream.readByte();
+	const uint8 flagValue = ctx.stream.readByte();
+	engine->_gameState->setFlag(flagIdx, flagValue);
 	return 0;
 }
 
@@ -919,7 +917,7 @@ static int32 lMESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_scene->talkingActor = otherActorIdx;
 	engine->_text->drawTextFullscreen(textIdx);
 	engine->unfreezeTime();
-	engine->_redraw->redrawEngineActions(1);
+	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
 }
@@ -943,7 +941,7 @@ static int32 lFOUND_OBJECT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->freezeTime();
 	engine->_gameState->processFoundItem(item);
 	engine->unfreezeTime();
-	engine->_redraw->redrawEngineActions(1);
+	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
 }
@@ -1284,7 +1282,7 @@ static int32 lASK_CHOICE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_gameState->processGameChoices(choiceIdx);
 	engine->_gameState->numChoices = 0;
 	engine->unfreezeTime();
-	engine->_redraw->redrawEngineActions(1);
+	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
 }
@@ -1306,7 +1304,7 @@ static int32 lBIG_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_text->drawTextFullscreen(textIdx);
 	engine->_text->textClipSmall();
 	engine->unfreezeTime();
-	engine->_redraw->redrawEngineActions(1);
+	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
 }
@@ -1332,7 +1330,7 @@ static int32 lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	static int32 location = ctx.stream.readByte();
 	engine->_holomap->setHolomapPosition(location);
-	if (engine->_gameState->gameFlags[InventoryItems::kiHolomap]) {
+	if (engine->_gameState->hasItem(InventoryItems::kiHolomap)) {
 		engine->_redraw->addOverlay(koInventoryItem, 0, 0, 0, 0, koNormal, 3);
 	}
 
@@ -1444,7 +1442,7 @@ static int32 lGRM_OFF(TwinEEngine *engine, LifeScriptContext &ctx) {
 		engine->_grid->useCellingGrid = -1;
 		engine->_grid->cellingGridIdx = -1;
 		engine->_grid->createGridMap();
-		engine->_redraw->redrawEngineActions(1);
+		engine->_redraw->redrawEngineActions(true);
 	}
 
 	return 0;
@@ -1571,7 +1569,7 @@ static int32 lASK_CHOICE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_gameState->processGameChoices(choiceIdx);
 	engine->_gameState->numChoices = 0;
 	engine->unfreezeTime();
-	engine->_redraw->redrawEngineActions(1);
+	engine->_redraw->redrawEngineActions(true);
 
 	return 0;
 }
@@ -1610,14 +1608,14 @@ static int32 lSET_NORMAL_PAL(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	ScopedEngineFreeze scoped(engine);
 	engine->_screens->fadeToBlack(engine->_screens->paletteRGBA);
-	engine->_screens->loadImage(25);
+	engine->_screens->loadImage(RESSHQR_TWINSEN_ZOE_SENDELL);
 	engine->_text->textClipFull();
 	engine->_text->setFontCrossColor(15);
-	engine->_text->newGameVar4 = 0;
+	engine->_text->drawTextBoxBackground = false;
 	const bool tmpFlagDisplayText = engine->cfgfile.FlagDisplayText;
 	engine->cfgfile.FlagDisplayText = true;
 	engine->_text->drawTextFullscreen(6);
-	engine->_text->newGameVar4 = 1;
+	engine->_text->drawTextBoxBackground = true;
 	engine->_text->textClipSmall();
 	engine->_screens->fadeToBlack(engine->_screens->paletteRGBACustom);
 	engine->_screens->clearScreen();
@@ -1651,8 +1649,8 @@ static int32 lANIM_SET(TwinEEngine *engine, LifeScriptContext &ctx) {
  * @note Opcode @c 0x60
  */
 static int32 lHOLOMAP_TRAJ(TwinEEngine *engine, LifeScriptContext &ctx) {
-	ctx.stream.skip(1); // index of the holomap trajectory
-	return -1;
+	engine->_holomap->drawHolomapTrajectory(ctx.stream.readByte());
+	return 0;
 }
 
 /**
@@ -1770,8 +1768,9 @@ static int32 lTEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
  */
 static int32 lCLEAR_TEXT(TwinEEngine *engine, LifeScriptContext &ctx) {
 	drawVar1 = 0;
-	engine->_interface->drawSplittedBox(0, 0, 639, 240, 0);
-	engine->copyBlockPhys(0, 0, 639, 240);
+	const Common::Rect rect(0, 0, SCREEN_WIDTH - 1, SCREEN_HEIGHT / 2);
+	engine->_interface->drawSplittedBox(rect, 0);
+	engine->copyBlockPhys(rect);
 	return 0;
 }
 

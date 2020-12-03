@@ -71,7 +71,6 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 		}
 	},
 
-#ifdef ENABLE_LOL
 	// LoL options
 
 	{
@@ -110,9 +109,7 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			false
 		}
 	},
-#endif
 
-#ifdef ENABLE_EOB
 	// EoB options
 
 	{
@@ -136,8 +133,6 @@ const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			false
 		}
 	},
-
-#endif
 
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
 };

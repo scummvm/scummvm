@@ -283,7 +283,7 @@ void AIScriptSteele::CompletedMovementTrack() {
 
 	case kGoalSteeleApprehendIzo:
 		if (Actor_Query_Goal_Number(kActorSteele) == kGoalSteeleApprehendIzo) { //why is this here? double check?
-			Player_Set_Combat_Mode(kActorMcCoy);
+			Player_Set_Combat_Mode(false);
 
 			if (Actor_Query_Goal_Number(kActorIzo) != kGoalIzoDie) {
 				if (Actor_Query_In_Between_Two_Actors(kActorMcCoy, kActorSteele, kActorIzo)) {
@@ -314,7 +314,7 @@ void AIScriptSteele::CompletedMovementTrack() {
 		break;
 
 	case kGoalSteeleKP06Enter:
-		Player_Set_Combat_Mode(kActorMcCoy);
+		Player_Set_Combat_Mode(false);
 		Actor_Face_Actor(kActorMcCoy, kActorSteele, true);
 		Actor_Says(kActorMcCoy, 2265, 11);
 		Actor_Says(kActorSteele, 640, 58);
@@ -325,7 +325,7 @@ void AIScriptSteele::CompletedMovementTrack() {
 		Actor_Says(kActorSteele, 660, 60);
 		Actor_Says(kActorSteele, 670, 59);
 		Actor_Set_Goal_Number(kActorSteele, kGoalSteeleKP06Leave);
-		Player_Set_Combat_Mode(kActorSteele);
+		Player_Set_Combat_Mode(true);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -731.0f, 8.26f, -657.0f, 0, false, false, false);
 		Ambient_Sounds_Remove_All_Non_Looping_Sounds(true);
 		Ambient_Sounds_Remove_All_Looping_Sounds(1);

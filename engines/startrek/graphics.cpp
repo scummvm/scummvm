@@ -517,7 +517,7 @@ void Graphics::drawAllSprites(bool updateScreenFlag) {
 
 		for (int i = 0; i < numDirtyRects; i++) {
 			Common::Rect &r = dirtyRects[i];
-			if (r.width() == 0 || r.height() == 0)
+			if (r.width() == 0 || r.height() == 0 || r.left < 0 || r.top < 0)
 				continue;
 
 			int offset = r.top * SCREEN_WIDTH + r.left;
@@ -535,7 +535,7 @@ void Graphics::drawAllSprites(bool updateScreenFlag) {
 				for (int j = 0; j < numDirtyRects; j++) {
 					Common::Rect rect1 = spr->drawRect.findIntersectingRect(dirtyRects[j]);
 
-					if (rect1.width() != 0 && rect1.height() != 0) {
+					if (rect1.width() != 0 && rect1.height() != 0 && rect1.left >= 0 && rect1.top >= 0) {
 						if (mustRedrawSprite)
 							rect2.extend(rect1);
 						else
@@ -556,7 +556,7 @@ void Graphics::drawAllSprites(bool updateScreenFlag) {
 		// Copy dirty rects to screen
 		for (int j = 0; j < numDirtyRects; j++) {
 			Common::Rect &r = dirtyRects[j];
-			if (r.width() == 0 || r.height() == 0)
+			if (r.width() == 0 || r.height() == 0 || r.left < 0 || r.top < 0)
 				continue;
 
 			int offset = r.left + r.top * SCREEN_WIDTH;

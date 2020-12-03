@@ -41,7 +41,7 @@
 #include "sci/engine/features.h"    // for GameFeatures
 #include "sci/engine/guest_additions.h" // for GuestAdditions
 #include "sci/engine/vm_types.h"    // for reg_t, make_reg, NULL_REG
-#include "sci/resource.h"           // for ResourceId, ResourceType::kResour...
+#include "sci/resource/resource.h"  // for ResourceId, ResourceType::kResour...
 #include "sci/sci.h"                // for SciEngine, g_sci, getSciVersion
 #include "sci/sound/decoders/sol.h" // for makeSOLStream
 

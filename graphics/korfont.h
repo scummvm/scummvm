@@ -29,6 +29,15 @@
 namespace Graphics {
 
 /**
+ * @defgroup graphics_fontman Korean font
+ * @ingroup graphics
+ *
+ * @brief FontKorean class used to handle Korean characters.
+ *
+ * @{
+ */
+
+/**
  * A font that is able to draw Korean encoded characters.
  */
 class FontKorean {
@@ -219,7 +228,7 @@ private:
 
 	bool englishLoadData(const char *fontFile);
 };
-
+ /** @} */
 } // End of namespace Graphics
 
 #endif

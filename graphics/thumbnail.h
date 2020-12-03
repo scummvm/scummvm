@@ -32,6 +32,15 @@ class WriteStream;
 
 namespace Graphics {
 
+/**
+ * @defgroup graphics_thumbnail Thumbnails
+ * @ingroup graphics
+ *
+ * @brief API for managing screen thumbnails used for save games.
+ *
+ * @{
+ */
+
 struct Surface;
 
 /**
@@ -82,7 +91,7 @@ bool createScreenShot(Graphics::Surface &surf);
  */
 Graphics::Surface *scale(const Graphics::Surface &srcImage, int xSize, int ySize);
 
-
+/** @} */
 } // End of namespace Graphics
 
 #endif

@@ -49,7 +49,7 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const override {
-		return "Red Comrades (C) S.K.I.F";
+		return "Red Comrades (C) S.K.I.F.";
 	}
 };
 

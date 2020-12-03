@@ -149,8 +149,7 @@ Common::Error StarTrekEngine::run() {
 		if (!isDemo) {
 			playIntro();
 			_missionToLoad = "DEMON";
-			runGameMode(GAMEMODE_BEAMDOWN, false);
-			//runGameMode(GAMEMODE_BRIDGE, false);
+			runGameMode(GAMEMODE_BRIDGE, false);
 		} else {
 			_missionToLoad = "DEMO";
 			runGameMode(GAMEMODE_AWAYMISSION, false);

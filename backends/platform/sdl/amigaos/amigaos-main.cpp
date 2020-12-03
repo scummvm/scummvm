@@ -24,44 +24,40 @@
 
 #if defined(__amigaos4__)
 
-#include "backends/fs/amigaos4/amigaos4-fs.h"
+#include "backends/fs/amigaos/amigaos-fs.h"
 #include "backends/platform/sdl/amigaos/amigaos.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
 int main(int argc, char *argv[]) {
 
-	// The following will gather the application name and add the binary path
-	// to a variable in AmigaOS4's ENV(ARC) system. It will then be placed in
-	// AppPaths, so that ScummVM becomes AmiUpdate aware.
+	// Update support (AmiUpdate):
+	// This will save ScummVM's system application name and add it's binary
+	// path to a variable in the platforms native ENV(ARC) system.
 	const char *const appname = "ScummVM";
 
 	BPTR lock;
-	APTR oldwin;
+	APTR reqwin;
 
-	// Obtain a lock to the home directory.
+	// Obtain a lock to it's home directory.
 	if ((lock = IDOS->GetProgramDir())) {
 		TEXT progpath[2048];
 		TEXT apppath[1024] = "AppPaths";
 
-		if (IDOS->DevNameFromLock(lock,
-			progpath,
-			sizeof(progpath),
-			DN_FULLPATH)) {
+		if (IDOS->DevNameFromLock(lock,	progpath, sizeof(progpath),	DN_FULLPATH)) {
+			// Stop any "Please insert volume ..." type system requester.
+			reqwin = IDOS->SetProcWindow((APTR)-1);
 
-			// Stop any "Insert volume..." type requesters.
-			oldwin = IDOS->SetProcWindow((APTR)-1);
+			// Set the AppPaths variable to the path the binary was run from.
+			IDOS->AddPart(apppath, appname, 1024);
+			IDOS->SetVar(apppath, progpath, -1, GVF_GLOBAL_ONLY|GVF_SAVE_VAR);
 
-			// Finally, set the variable to the path the executable was run from.
-			IDOS->AddPart( apppath, appname, 1024);
-			IDOS->SetVar( apppath, progpath, -1, GVF_GLOBAL_ONLY|GVF_SAVE_VAR );
-
-			// Turn system requesters back on.
-			IDOS->SetProcWindow( oldwin );
+			// Turn system requester back on.
+			IDOS->SetProcWindow(reqwin);
 		}
 	}
 
-	// Set up a stack cookie to avoid crashes from a stack set too low.
+	// Set a stack cookie to avoid crashes from a too low stack.
 	static const char *stack_cookie __attribute__((used)) = "$STACK: 2048000";
 
 	// Create our OSystem instance.

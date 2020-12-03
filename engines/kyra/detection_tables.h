@@ -222,11 +222,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			0,
-			{
-				{ "GEMCUT.PAK", 0, "2bd1da653eaefd691e050e4a9eb68a64", -1 },
-				{ "GEMCUT.EMC", 0, "2a3f44e179f1e9f7643e90083c747571", -1 },
-				{ NULL, 0, NULL, 0 }
-			},
+			AD_ENTRY2s("GEMCUT.PAK", "2bd1da653eaefd691e050e4a9eb68a64", -1,
+					   "GEMCUT.EMC", "2a3f44e179f1e9f7643e90083c747571", -1),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
@@ -239,11 +236,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			0,
-			{
-				{ "GEMCUT.PAK", 0, "2bd1da653eaefd691e050e4a9eb68a64", -1 },
-				{ "GEMCUT.EMC", 0, "74f99e9ed99abf8d0429826d78485a2a", -1 },
-				{ NULL, 0, NULL, 0 }
-			},
+			AD_ENTRY2s("GEMCUT.PAK", "2bd1da653eaefd691e050e4a9eb68a64", -1,
+					   "GEMCUT.EMC", "74f99e9ed99abf8d0429826d78485a2a", -1),
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
@@ -256,11 +250,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			0,
-			{
-				{ "GEMCUT.EMC", 0, "796e44863dd22fa635b042df1bf16673", -1 },
-				{ "BEAD.CPS", 0, "3038466f65b7751451844707187aa401", -1 },
-				{ NULL, 0, NULL, 0 }
-			},
+			AD_ENTRY2s("GEMCUT.EMC", "796e44863dd22fa635b042df1bf16673", -1,
+					   "BEAD.CPS",   "3038466f65b7751451844707187aa401", -1),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
@@ -273,11 +264,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			0,
-			{
-				{ "EMC.PAK", 0, "a046bb0b422061aab8e4c4689400343a", -1 },
-				{ "TWMUSIC.PAK", 0, "e53bca3a3e3fb49107d59463ec387a59", -1 },
-				{ NULL, 0, NULL, 0 }
-			},
+			AD_ENTRY2s("EMC.PAK",	  "a046bb0b422061aab8e4c4689400343a", -1,
+					   "TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59", -1),
 			Common::EN_ANY,
 			Common::kPlatformFMTowns,
 			ADGF_NO_FLAGS,
@@ -289,11 +277,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			0,
-			{
-				{ "JMC.PAK", 0, "9c5707a2a478e8167e44283246612d2c", -1 },
-				{ "TWMUSIC.PAK", 0, "e53bca3a3e3fb49107d59463ec387a59", -1 },
-				{ NULL, 0, NULL, 0 }
-			},
+			AD_ENTRY2s("JMC.PAK",	  "9c5707a2a478e8167e44283246612d2c", -1,
+					   "TWMUSIC.PAK", "e53bca3a3e3fb49107d59463ec387a59", -1),
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
 			ADGF_NO_FLAGS,
@@ -308,11 +293,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			"",
-			{
-				{ "JMC.PAK", 0, "9c5707a2a478e8167e44283246612d2c", -1 },
-				{ "MUSIC98.PAK", 0, "02fc212f799331b769b274e33d87b37f", -1 },
-				{ NULL, 0, NULL, 0 }
-			},
+			AD_ENTRY2s("JMC.PAK",	  "9c5707a2a478e8167e44283246612d2c", -1,
+					   "MUSIC98.PAK", "02fc212f799331b769b274e33d87b37f", -1),
 			Common::JA_JPN,
 			Common::kPlatformPC98,
 			ADGF_NO_FLAGS,
@@ -388,11 +370,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			"CD",
-			{
-				{ "GEMCUT.PAK", 0, "d3d4b281cd357230aabcec46843d04bd", -1 },
-				{ "BEAD.CPS", 0, "3038466f65b7751451844707187aa401", -1 },
-				{ NULL, 0, NULL, 0 }
-			},
+			AD_ENTRY2s("GEMCUT.PAK", "d3d4b281cd357230aabcec46843d04bd", -1,
+					   "BEAD.CPS",   "3038466f65b7751451844707187aa401", -1),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_CD,
@@ -404,11 +383,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			"CD",
-			{
-				{ "GEMCUT.PAK", 0, "8ddf09fd6bfafdb27b4cf31c5a6fc91d", -1 },
-				{ "BEAD.CPS", 0, "3038466f65b7751451844707187aa401", -1 },
-				{ NULL, 0, NULL, 0 }
-			},
+			AD_ENTRY2s("GEMCUT.PAK", "8ddf09fd6bfafdb27b4cf31c5a6fc91d", -1,
+					   "BEAD.CPS",	 "3038466f65b7751451844707187aa401", -1),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_CD,
@@ -420,11 +396,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			"CD",
-			{
-				{ "GEMCUT.PAK", 0, "4a0cb720e824295bcbccbd1407652110", -1 },
-				{ "BEAD.CPS", 0, "3038466f65b7751451844707187aa401", -1 },
-				{ NULL, 0, NULL, 0 }
-			},
+			AD_ENTRY2s("GEMCUT.PAK", "4a0cb720e824295bcbccbd1407652110", -1,
+					   "BEAD.CPS",	 "3038466f65b7751451844707187aa401", -1),
 			Common::DE_DEU,
 			Common::kPlatformMacintosh,
 			ADGF_CD,
@@ -436,11 +409,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			"CD",
-			{
-				{ "GEMCUT.PAK", 0, "b71ee090aa12e80ed2ba068826d92bed", -1 },
-				{ "BEAD.CPS", 0, "3038466f65b7751451844707187aa401", -1 },
-				{ NULL, 0, NULL, 0 }
-			},
+			AD_ENTRY2s("GEMCUT.PAK", "b71ee090aa12e80ed2ba068826d92bed", -1,
+					   "BEAD.CPS",   "3038466f65b7751451844707187aa401", -1),
 			Common::FR_FRA,
 			Common::kPlatformMacintosh,
 			ADGF_CD,
@@ -853,11 +823,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
-				{ "WESTWOOD.001", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
+					   "WESTWOOD.001", 0, -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -869,11 +836,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
-				{ "WESTWOOD.001", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
+					   "WESTWOOD.001", 0, -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -885,11 +849,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
-				{ "WESTWOOD.001", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
+					   "WESTWOOD.001", 0, -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -903,11 +864,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
+					   "AUD.PAK", 0, -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -919,11 +877,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
+					   "AUD.PAK", 0, -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -935,11 +890,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
+					   "AUD.PAK", 0, -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -953,11 +905,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
+					   "AUD.PAK", 0, -1),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_DROPLANGUAGE,
@@ -969,11 +918,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
+					   "AUD.PAK", 0, -1),
 			Common::DE_DEU,
 			Common::kPlatformMacintosh,
 			ADGF_DROPLANGUAGE,
@@ -985,11 +931,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "3833ff312757b8e6147f464cca0a6587", -1,
+					   "AUD.PAK", 0, -1),
 			Common::FR_FRA,
 			Common::kPlatformMacintosh,
 			ADGF_DROPLANGUAGE,
@@ -1003,11 +946,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "9aaca21d2a205ca02ec53132f2911794", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "9aaca21d2a205ca02ec53132f2911794", -1,
+					"AUD.PAK", 0, -1),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1019,11 +959,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "9aaca21d2a205ca02ec53132f2911794", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "9aaca21d2a205ca02ec53132f2911794", -1,
+					"AUD.PAK", 0, -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1035,11 +972,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "9aaca21d2a205ca02ec53132f2911794", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "9aaca21d2a205ca02ec53132f2911794", -1,
+					   "AUD.PAK", 0, -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1053,11 +987,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "ee2d4d056a5de5333a3c6bda055b3cb4", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "ee2d4d056a5de5333a3c6bda055b3cb4", -1,
+					   "AUD.PAK", 0, -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1069,11 +1000,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "ee2d4d056a5de5333a3c6bda055b3cb4", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "ee2d4d056a5de5333a3c6bda055b3cb4", -1,
+					   "AUD.PAK", 0, -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1085,11 +1013,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra3",
 			0,
-			{
-				{ "ONETIME.PAK", 0, "ee2d4d056a5de5333a3c6bda055b3cb4", -1 },
-				{ "AUD.PAK", 0, 0, -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("ONETIME.PAK", "ee2d4d056a5de5333a3c6bda055b3cb4", -1,
+					   "AUD.PAK", 0, -1),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE,
@@ -1104,7 +1029,8 @@ const KYRAGameDescription adGameDescs[] = {
 			{
 				{ "ONETIME.PAK", 0, "3833ff312757b8e6147f464cca0a6587", -1 },
 				{ "ALBUM.TRG", 0, "5e40de0c74cc2321928a15019252d468", -1 },
-				{ "AUD.PAK", 0, 0, -1 }
+				{ "AUD.PAK", 0, 0, -1 },
+				AD_LISTEND
 			},
 			Common::RU_RUS,
 			Common::kPlatformDOS,
@@ -1114,17 +1040,13 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA3_CD_FAN_FLAGS(Common::RU_RUS, Common::DE_DEU)
 	},
 
-#ifdef ENABLE_LOL
 	// Lands of Lore CD
 	{
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
-				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"05a4f588fb81dc9c0ef1f2ec20d89e24", -1,
+					   "L01.PAK",		"759a0ac26808d77ea968bd392355ba1d", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1137,11 +1059,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
-				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"05a4f588fb81dc9c0ef1f2ec20d89e24", -1,
+					   "L01.PAK",		"759a0ac26808d77ea968bd392355ba1d", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1154,11 +1073,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
-				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"05a4f588fb81dc9c0ef1f2ec20d89e24", -1,
+					   "L01.PAK",		"759a0ac26808d77ea968bd392355ba1d", -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1171,11 +1087,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
-				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"9e4bab499b7ea9337b91ac29fcba6d13", -1,
+					   "L01.PAK",		"759a0ac26808d77ea968bd392355ba1d", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1188,11 +1101,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
-				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"9e4bab499b7ea9337b91ac29fcba6d13", -1,
+					   "L01.PAK",		"759a0ac26808d77ea968bd392355ba1d", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1205,11 +1115,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
-				{ "L01.PAK", 0, "759a0ac26808d77ea968bd392355ba1d", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"9e4bab499b7ea9337b91ac29fcba6d13", -1,
+					   "L01.PAK",		"759a0ac26808d77ea968bd392355ba1d", -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1223,11 +1130,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
-				{ "L01.PAK", 0, "174d37f21e0336c5d91020f8c58717ef", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"19354b0f464295c38c801d30588df062", -1,
+					   "L01.PAK",		"174d37f21e0336c5d91020f8c58717ef", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1241,11 +1145,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
-				{ "L01.PAK", 0, "d9b9644b709de55f990d5ef73e0f6d44", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"19354b0f464295c38c801d30588df062", -1,
+					   "L01.PAK",		"d9b9644b709de55f990d5ef73e0f6d44", -1),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1259,11 +1160,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
-				{ "L01.PAK", 0, "8aa1860a3e9f84c6f11118a0181bcfaf", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"19354b0f464295c38c801d30588df062", -1,
+					   "L01.PAK",		"8aa1860a3e9f84c6f11118a0181bcfaf", -1),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1276,12 +1174,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-
-				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
-				{ "L01.PAK", 0, "174d37f21e0336c5d91020f8c58717ef", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"19354b0f464295c38c801d30588df062", -1,
+					   "L01.PAK",		"174d37f21e0336c5d91020f8c58717ef", -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1294,11 +1188,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "19354b0f464295c38c801d30588df062", -1 },
-				{ "L01.PAK", 0, "174d37f21e0336c5d91020f8c58717ef", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"19354b0f464295c38c801d30588df062", -1,
+					   "L01.PAK",		"174d37f21e0336c5d91020f8c58717ef", -1),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1312,11 +1203,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
-				{ "L01.PAK", 0, "898485c0eb7bb4403fdd63bf5191f37e", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"05a4f588fb81dc9c0ef1f2ec20d89e24", -1,
+					   "L01.PAK",		"898485c0eb7bb4403fdd63bf5191f37e", -1),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1329,11 +1217,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
-				{ "L01.PAK", 0, "898485c0eb7bb4403fdd63bf5191f37e", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"05a4f588fb81dc9c0ef1f2ec20d89e24", -1,
+					   "L01.PAK",		"898485c0eb7bb4403fdd63bf5191f37e", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1346,11 +1231,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "05a4f588fb81dc9c0ef1f2ec20d89e24", -1 },
-				{ "L01.PAK", 0, "898485c0eb7bb4403fdd63bf5191f37e", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"05a4f588fb81dc9c0ef1f2ec20d89e24", -1,
+					   "L01.PAK",		"898485c0eb7bb4403fdd63bf5191f37e", -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1363,11 +1245,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
-				{ "L01.PAK", 0, "898485c0eb7bb4403fdd63bf5191f37e", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"9e4bab499b7ea9337b91ac29fcba6d13", -1,
+					   "L01.PAK",		"898485c0eb7bb4403fdd63bf5191f37e", -1),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1380,11 +1259,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
-				{ "L01.PAK", 0, "898485c0eb7bb4403fdd63bf5191f37e", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"9e4bab499b7ea9337b91ac29fcba6d13", -1,
+					   "L01.PAK",		"898485c0eb7bb4403fdd63bf5191f37e", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1397,11 +1273,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "GENERAL.PAK", 0, "9e4bab499b7ea9337b91ac29fcba6d13", -1 },
-				{ "L01.PAK", 0, "898485c0eb7bb4403fdd63bf5191f37e", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"9e4bab499b7ea9337b91ac29fcba6d13", -1,
+					   "L01.PAK",		"898485c0eb7bb4403fdd63bf5191f37e", -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1414,11 +1287,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"CD",
-			{
-				{ "LEVEL01.FRE", 0, "3f5a8856e86b8bc6207becd73426017c", -1 },
-				{ "LEVEL02.FRE", 0, "03cf8239fd4b4ead22e6b771af84b036", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("LEVEL01.FRE", "3f5a8856e86b8bc6207becd73426017c", -1,
+					   "LEVEL02.FRE", "03cf8239fd4b4ead22e6b771af84b036", -1),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_DROPLANGUAGE | ADGF_CD,
@@ -1431,10 +1301,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			0,
-			{
-				{ "WESTWOOD.1", 0, "c656aa9a2b4032d341e3dc8e3525b917", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("WESTWOOD.1", "c656aa9a2b4032d341e3dc8e3525b917", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1447,10 +1314,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			0,
-			{
-				{ "WESTWOOD.1", 0, "320b2828be595c491903f467094f05eb", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("WESTWOOD.1", "320b2828be595c491903f467094f05eb", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1463,10 +1327,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			0,
-			{
-				{ "WESTWOOD.1", 0, "3c61cb7de5b2ec452f5851f5075207ee", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("WESTWOOD.1", "3c61cb7de5b2ec452f5851f5075207ee", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1479,10 +1340,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			0,
-			{
-				{ "WESTWOOD.1", 0, "43857e24d1fc6731f3b13d9ed6db8c3a", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("WESTWOOD.1", "43857e24d1fc6731f3b13d9ed6db8c3a", -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1495,11 +1353,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"Extracted",
-			{
-				{ "GENERAL.PAK", 0, "2aaa30e120c08af87196820e9dd4bf73", -1 },
-				{ "CHAPTER7.PAK", 0, "eb92bf7ebb4e890add1233a6b0c810ff", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",  "2aaa30e120c08af87196820e9dd4bf73", -1,
+					   "CHAPTER7.PAK", "eb92bf7ebb4e890add1233a6b0c810ff", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1512,11 +1367,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"Extracted",
-			{
-				{ "GENERAL.PAK", 0, "0f1fabc1f67b772a30d8e05ece720ac5", -1 },
-				{ "CHAPTER7.PAK", 0, "482308aba1c40ee32449b91b0c63b990", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",  "0f1fabc1f67b772a30d8e05ece720ac5", -1,
+					   "CHAPTER7.PAK", "482308aba1c40ee32449b91b0c63b990", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1529,11 +1381,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"Extracted",
-			{
-				{ "GENERAL.PAK", 0, "d119e3b57f8e5edcbb90980ca6f4215a", -1 },
-				{ "CHAPTER7.PAK", 0, "71a3d3cb1554294646a389e5c345cf28", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",  "d119e3b57f8e5edcbb90980ca6f4215a", -1,
+					   "CHAPTER7.PAK", "71a3d3cb1554294646a389e5c345cf28", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1546,11 +1395,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"Extracted",
-			{
-				{ "GENERAL.PAK", 0, "996e66e81054d36249907a1d8158da3d", -1 },
-				{ "CHAPTER7.PAK", 0, "cabee57f00d6d84b65a732b6868a4959", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",  "996e66e81054d36249907a1d8158da3d", -1,
+					   "CHAPTER7.PAK", "cabee57f00d6d84b65a732b6868a4959", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1563,11 +1409,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"Extracted",
-			{
-				{"GENERAL.PAK", 0, "a9e22c450c4f1de6a600261183430394", -1 },
-				{"CHAPTER7.PAK", 0, "fb5294f7445318876741c8db39ba0b1a", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",  "a9e22c450c4f1de6a600261183430394", -1,
+					   "CHAPTER7.PAK", "fb5294f7445318876741c8db39ba0b1a", -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1580,11 +1423,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"Extracted",
-			{
-				{ "GENERAL.PAK", 0, "f4fd14f244bd7c7fa08d026fafe44cc5", -1 },
-				{ "CHAPTER7.PAK", 0, "733e33c8444c93843dac3b683c283eaa", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",  "f4fd14f244bd7c7fa08d026fafe44cc5", -1,
+					   "CHAPTER7.PAK", "733e33c8444c93843dac3b683c283eaa", -1),
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1597,11 +1437,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"Extracted",
-			{
-				{"GENERAL.PAK", 0, "ca1208aa60c5f3e3a7e06a0420a11526", -1 },
-				{"CHAPTER7.PAK", 0, "1f11dc4ba0473eec9d6d93bbf2ee9c8a", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",  "ca1208aa60c5f3e3a7e06a0420a11526", -1,
+					   "CHAPTER7.PAK", "1f11dc4ba0473eec9d6d93bbf2ee9c8a", -1),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1614,11 +1451,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"Extracted",
-			{
-				{"GENERAL.PAK", 0, "f2c305bfb10c08371e947ab4d0a2f5f5", -1 },
-				{"CHAPTER7.PAK", 0, "f3cbab6d945ceda35149a5c9a324a8fe", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",  "f2c305bfb10c08371e947ab4d0a2f5f5", -1,
+					   "CHAPTER7.PAK", "f3cbab6d945ceda35149a5c9a324a8fe", -1),
 			Common::ZH_CNA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1631,11 +1465,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"Extracted",
-			{
-				{ "GENERAL.PAK", 0, "8e144826df680397876e0fd7ce30c701", -1 },
-				{ "CHAPTER7.PAK", 0, "1240fb870aba719f5887ca7270227699", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",  "8e144826df680397876e0fd7ce30c701", -1,
+					   "CHAPTER7.PAK", "1240fb870aba719f5887ca7270227699", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1648,11 +1479,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"Extracted",
-			{
-				{ "GENERAL.PAK", 0, "8902b233405461025e25093b9c4c8d2c", -1 },
-				{ "CHAPTER7.PAK", 0, "32a46c338a3d6249c273cc3b3881bb8a", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",  "8902b233405461025e25093b9c4c8d2c", -1,
+					   "CHAPTER7.PAK", "32a46c338a3d6249c273cc3b3881bb8a", -1),
 			Common::JA_JPN,
 			Common::kPlatformPC98,
 			ADGF_NO_FLAGS,
@@ -1666,11 +1494,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"Extracted",
-			{
-				{ "GENERAL.PAK", 0, "d8f4c1153aed2418f41f886c3fb27543", -1 },
-				{ "CHAPTER7.PAK", 0, "f0b8a2fdff951738834fadc12248ac1f", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",  "d8f4c1153aed2418f41f886c3fb27543", -1,
+					   "CHAPTER7.PAK", "f0b8a2fdff951738834fadc12248ac1f", -1),
 			Common::RU_RUS,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1683,11 +1508,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			0,
-			{
-				{ "GENERAL.PAK", 0, "3fe6539b9b09084c0984eaf7170464e9", -1 },
-				{ "MUS.PAK", 0, "008dc69d8cbcdb6bae30e270fab26e76", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"3fe6539b9b09084c0984eaf7170464e9", -1,
+					   "MUS.PAK",		"008dc69d8cbcdb6bae30e270fab26e76", -1),
 			Common::JA_JPN,
 			Common::kPlatformPC98,
 			ADGF_NO_FLAGS,
@@ -1700,11 +1522,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			0,
-			{
-				{ "GENERAL.PAK", 0, "2e4d4ce54bac9162e11fcba6907b576e", -1 },
-				{ "TMUS.PAK", 0, "5543dae575164e51856f5a49cfd6b368", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("GENERAL.PAK",	"2e4d4ce54bac9162e11fcba6907b576e", -1,
+					   "TMUS.PAK",		"5543dae575164e51856f5a49cfd6b368", -1),
 			Common::JA_JPN,
 			Common::kPlatformFMTowns,
 			ADGF_NO_FLAGS,
@@ -1717,11 +1536,8 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"Demo",
-			{
-				{ "INTRO.PAK", 0, "4bc22a3b57f19a49212c5de58ab014d6", -1 },
-				{ "INTROVOC.PAK", 0, "7e578e4f1da31c1f294e14a8e8f3cc44", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("INTRO.PAK",		"4bc22a3b57f19a49212c5de58ab014d6", -1,
+					   "INTROVOC.PAK",	"7e578e4f1da31c1f294e14a8e8f3cc44", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
@@ -1734,10 +1550,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"lol",
 			"Demo",
-			{
-				{ "GENERAL.PAK", 0, "e94863d86c4597a2d581d05481c152ba", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("GENERAL.PAK", "e94863d86c4597a2d581d05481c152ba", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
@@ -1745,17 +1558,12 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		LOL_DEMO_FLAGS
 	},
-#endif // ENABLE_LOL
-#ifdef ENABLE_EOB
 
 	{
 		{
 			"eob",
 			0,
-			{
-				{ "EOBDATA3.PAK", 0, "61aff543131bd61a8b7d7dc901a8278b", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("EOBDATA3.PAK", "61aff543131bd61a8b7d7dc901a8278b", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1768,10 +1576,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob",
 			0,
-			{
-				{ "TEXT.DAT", 0, "fb59b50f97fd1806756911d986b9b2b5", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("TEXT.DAT", "fb59b50f97fd1806756911d986b9b2b5", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1784,10 +1589,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob",
 			0,
-			{
-				{ "EOBDATA3.PAK", 0, "3ed915ab5b94d60dbfe1b55379889c51", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("EOBDATA3.PAK", "3ed915ab5b94d60dbfe1b55379889c51", -1),
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1800,10 +1602,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob",
 			0,
-			{
-				{ "EOBDATA3.PAK", 0, "a7800a8ea8251f678530eb952de7b815", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("EOBDATA3.PAK", "a7800a8ea8251f678530eb952de7b815", -1),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1816,10 +1615,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob",
 			0,
-			{
-				{ "TEXT.CPS", 0, "e9c2a9d81c8ce2dc35d92ece5950c45d", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("TEXT.CPS", "e9c2a9d81c8ce2dc35d92ece5950c45d", -1),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
@@ -1832,10 +1628,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob",
 			0,
-			{
-				{ "TEXT.CPS", 0, "66253c0f435c5947e6f7166bd94f21e3", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("TEXT.CPS", "66253c0f435c5947e6f7166bd94f21e3", -1),
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
@@ -1848,10 +1641,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob",
 			0,
-			{
-				{ "BRICK3.BIN", 0, "7fb13157102accf6ddb806d5ad36c833", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("BRICK3.BIN", "7fb13157102accf6ddb806d5ad36c833", -1),
 			Common::JA_JPN,
 			Common::kPlatformPC98,
 			ADGF_NO_FLAGS,
@@ -1864,11 +1654,23 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob",
 			0,
-			{
-				{ "PLAYFLD", 0, "e9dbc6944e6c00801f3932808f98e443", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY2s("L12",		"190804270d12e806b5c7264fd9690200", -1,
+					   "PLAYFLD",	"e9dbc6944e6c00801f3932808f98e443", -1),
 			Common::EN_ANY,
+			Common::kPlatformSegaCD,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDISEGACD, GAMEOPTION_EOB_MOUSESWAP)
+		},
+		EOB_FLAGS
+	},
+
+	{
+		{
+			"eob",
+			0,
+			AD_ENTRY2s("L12",		"2095d1612a37264281e37996bd8c3bc2", -1,
+					   "PLAYFLD",	"e9dbc6944e6c00801f3932808f98e443", -1),
+			Common::JA_JPN,
 			Common::kPlatformSegaCD,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSPEECH, GUIO_MIDISEGACD, GAMEOPTION_EOB_MOUSESWAP)
@@ -1880,10 +1682,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob2",
 			0,
-			{
-				{ "LEVEL15.INF", 0, "10f19eab75c73d0476dc58bcf70fff7a", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("LEVEL15.INF", "10f19eab75c73d0476dc58bcf70fff7a", -1),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1896,10 +1695,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob2",
 			0,
-			{
-				{ "LEVEL15.INF", 0, "ce54243ad1ca4447f521340428da2c91", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("LEVEL15.INF", "ce54243ad1ca4447f521340428da2c91", -1),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1912,10 +1708,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob2",
 			0,
-			{
-				{ "LEVEL15.INF", 0, "099c683dc4e66171b19b64ea3e90aa12", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("LEVEL15.INF", "099c683dc4e66171b19b64ea3e90aa12", -1),
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
@@ -1928,14 +1721,11 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob2",
 			0,
-			{
-				{ "AZURE.SDT", 0, "2915098f2d1bdcfa518f857a26bb3324", -1 },
-				{ 0, 0, 0, 0 }
-			},
-				Common::JA_JPN,
-				Common::kPlatformFMTowns,
-				ADGF_NO_FLAGS,
-				GUIO5(GUIO_NOSPEECH, GUIO_MIDITOWNS, GUIO_RENDERFMTOWNS, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
+			AD_ENTRY1s("AZURE.SDT", "2915098f2d1bdcfa518f857a26bb3324", -1),
+			Common::JA_JPN,
+			Common::kPlatformFMTowns,
+			ADGF_NO_FLAGS,
+			GUIO5(GUIO_NOSPEECH, GUIO_MIDITOWNS, GUIO_RENDERFMTOWNS, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
 		},
 		EOB2_FMTOWNS_FLAGS
 	},
@@ -1944,10 +1734,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob2",
 			0,
-			{
-				{ "TEXT.CPS", 0, "e7350914bd7ca68039a4bc6aa42c43d4", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("TEXT.CPS", "e7350914bd7ca68039a4bc6aa42c43d4", -1),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
@@ -1960,10 +1747,7 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob2",
 			0,
-			{
-				{ "TEXT.CPS", 0, "562adb7c1780481205b4d86ce1a54f20", -1 },
-				{ 0, 0, 0, 0 }
-			},
+			AD_ENTRY1s("TEXT.CPS", "562adb7c1780481205b4d86ce1a54f20", -1),
 			Common::DE_DEU,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
@@ -1971,7 +1755,6 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		EOB2_FLAGS
 	},
-#endif // ENABLE_EOB
 
 	{ AD_TABLE_END_MARKER, FLAGS(0, 0, 0, 0, 0, 0, 0, 0, 0, 0) }
 };
@@ -1980,13 +1763,9 @@ const PlainGameDescriptor gameList[] = {
 	{ "kyra1", "The Legend of Kyrandia" },
 	{ "kyra2", "The Legend of Kyrandia: The Hand of Fate" },
 	{ "kyra3", "The Legend of Kyrandia: Malcolm's Revenge" },
-#ifdef ENABLE_LOL
 	{ "lol", "Lands of Lore: The Throne of Chaos" },
-#endif // ENABLE_LOL
-#ifdef ENABLE_EOB
 	{ "eob", "Eye of the Beholder" },
 	{ "eob2", "Eye of the Beholder II: The Legend of Darkmoon" },
-#endif // ENABLE_EOB
 	{ 0, 0 }
 };
 

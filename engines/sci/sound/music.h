@@ -29,7 +29,7 @@
 #include "audio/mixer.h"
 
 #include "sci/sci.h"
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/sound/drivers/mididriver.h"
 #ifdef ENABLE_SCI32
 #include "sci/sound/audio32.h"

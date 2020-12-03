@@ -307,6 +307,8 @@ protected:
 	PopUpWidget *_guiLanguagePopUp;
 	CheckboxWidget *_guiLanguageUseGameLanguageCheckbox;
 	CheckboxWidget *_useSystemDialogsCheckbox;
+	CheckboxWidget *_guiReturnToLauncherAtExit;
+	CheckboxWidget *_guiConfirmExit;
 
 
 #ifdef USE_UPDATES

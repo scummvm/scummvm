@@ -95,11 +95,8 @@ static const PrinceGameDescription gameDescriptions[] = {
 		{
 			"prince",
 			"w/translation",
-			{
-				{"databank.ptc", 0, "5fa03833177331214ec1354761b1d2ee", 3565031},
-				{"prince_translation.dat", 0, 0, -1},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("databank.ptc", "5fa03833177331214ec1354761b1d2ee", 3565031,
+					   "prince_translation.dat", 0, -1),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			GF_TRANSLATED | ADGF_DROPPLATFORM,
@@ -111,11 +108,8 @@ static const PrinceGameDescription gameDescriptions[] = {
 		{
 			"prince",
 			"w/translation",
-			{
-				{"databank.ptc", 0, "48ec9806bda9d152acbea8ce31c93c49", 3435298},
-				{"prince_translation.dat", 0, 0, -1},
-				AD_LISTEND
-			},
+			AD_ENTRY2s("databank.ptc", "48ec9806bda9d152acbea8ce31c93c49", 3435298,
+					   "prince_translation.dat", 0, -1),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			GF_TRANSLATED | ADGF_DROPPLATFORM,

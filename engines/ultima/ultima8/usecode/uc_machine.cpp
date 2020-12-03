@@ -223,33 +223,33 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("pop dword\t%s = %08Xh\n", print_bp(si8a), ui32a));
 			break;
 
-		case 0x03:
+		case 0x03: {
 			// 03 xx yy
 			// pop yy bytes into bp+xx
-		{
 			si8a = static_cast<int8>(cs.readByte());
 			uint8 size = cs.readByte();
 			uint8 buf[256];
 			p->_stack.pop(buf, size);
 			p->_stack.assign(p->_bp + si8a, buf, size);
 			LOGPF(("pop huge\t%s %i\n", print_bp(si8a), size));
+			break;
 		}
-		break;
+
+		// 0x04 ASSIGN_MEMBER_CHAR (Unused)
+		// 0x05 ASSIGN_MEMBER_INT (Unused)
+		// 0x06 ASSIGN_MEMBER_LONG (Unused)
+		// 0x07 ASSIGN_MEMBER_HUGE (Unused)
 
 		case 0x08:
 			// 08
-			// pop 32bits into result register
-			//! what is this result register exactly??
-			//! probably a member of the Process?
-			//! is the result in 0x08 and 0x6D the same var?
+			// pop 32bits into process result register
 			LOGPF(("pop dword\tprocess result\n"));
 			p->_result = p->_stack.pop4();
 			break;
 
-		case 0x09:
+		case 0x09: {
 			// 09 xx yy zz
 			// pop yy bytes into an element of list bp+xx (or slist if zz set)
-		{
 			si8a = static_cast<int8>(cs.readByte());
 			ui32a = cs.readByte();
 			si8b = static_cast<int8>(cs.readByte());
@@ -278,8 +278,8 @@ void UCMachine::execProcess(UCProcess *p) {
 				l->assign(ui16a, p->_stack.access());
 				p->_stack.addSP(ui32a);
 			}
+			break;
 		}
-		break;
 
 		// PUSH opcodes
 
@@ -307,10 +307,9 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("push dword\t%08Xh\n", ui32a));
 			break;
 
-		case 0x0D:
+		case 0x0D: {
 			// 0D xx xx yy ... yy 00
 			// push string (yy ... yy) of length xx xx onto the stack
-		{
 			ui16a = cs.readUint16LE();
 			char *str = new char[ui16a + 1];
 			cs.read(str, ui16a);
@@ -325,7 +324,6 @@ void UCMachine::execProcess(UCProcess *p) {
 				}
 			}
 
-
 			LOGPF(("push string\t\"%s\"\n", str));
 			ui16b = cs.readByte();
 			if (ui16b != 0) {
@@ -335,14 +333,13 @@ void UCMachine::execProcess(UCProcess *p) {
 			}
 			p->_stack.push2(assignString(str));
 			delete[] str;
+			break;
 		}
-		break;
 
-		case 0x0E:
+		case 0x0E: {
 			// 0E xx yy
 			// pop yy values of size xx and push the resulting list
 			// (list is created in reverse order)
-		{
 			ui16a = cs.readByte();
 			ui16b = cs.readByte();
 			UCList *l = new UCList(ui16a, ui16b);
@@ -354,18 +351,16 @@ void UCMachine::execProcess(UCProcess *p) {
 			p->_stack.addSP(ui16a * (ui16b + 1));
 			p->_stack.push2(assignList(l));
 			LOGPF(("create list\t%02X (%02X)\n", ui16b, ui16a));
+			break;
 		}
-		break;
 
 		// Usecode function and intrinsic calls
 
-
-		case 0x0F:
+		case 0x0F: {
 			// 0F xx yyyy
 			// intrinsic call. xx is number of argument bytes
 			// (includes this pointer, if present)
 			// NB: do not actually pop these argument bytes
-		{
 			uint16 arg_bytes = cs.readByte();
 			uint16 func = cs.readUint16LE();
 			LOGPF(("calli\t\t%04Xh (%02Xh arg bytes) %s\n", func, arg_bytes, _convUse->intrinsics()[func]));
@@ -413,8 +408,6 @@ void UCMachine::execProcess(UCProcess *p) {
 				delete[] argbuf;
 			}
 
-
-
 			// REALLY MAJOR HACK:
 			// see docs/u8bugs.txt and
 			// https://sourceforge.net/tracker/index.php?func=detail&aid=1018748&group_id=53819&atid=471709
@@ -422,18 +415,17 @@ void UCMachine::execProcess(UCProcess *p) {
 				// 0xD0 = setAvatarInStasis
 				_globals->setEntries(0, 1, 1);
 			}
-
+			break;
 		}
-		break;
 
+		// 0x10 NEAR_ROUTINE_CALL (Unused in U8 and Crusader)
 
-		case 0x11:
+		case 0x11: {
 			// 11 xx xx yy yy
 			// Ultima 8:
 			// call the function at offset yy yy of class xx xx
 			// Crusader:
 			// call function number yy yy of class xx xx
-		{
 			uint16 new_classid = cs.readUint16LE();
 			uint16 new_offset = cs.readUint16LE();
 			LOGPF(("call\t\t%04X:%04X\n", new_classid, new_offset));
@@ -452,8 +444,8 @@ void UCMachine::execProcess(UCProcess *p) {
 			cs.seek(p->_ip);
 
 			// Resume execution
+			break;
 		}
-		break;
 
 		case 0x12:
 			// 12
@@ -464,8 +456,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x13:
 			// 13
-			// pop 32bits into temp register
-			// NB: 0x13 isn't used AFAIK, but this is a 'logical' guess
+			// pop 32bits into temp register. (Not actually used in U8 or Crusader)
 			p->_temp32 = p->_stack.pop4();
 			LOGPF(("pop long\t\ttemp = %08X\n", p->_temp32));
 			break;
@@ -490,7 +481,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("add long\n"));
 			break;
 
-
 		case 0x16:
 			// 16
 			// pop two strings from the stack and push the concatenation
@@ -508,11 +498,10 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("concat\t\t= %s\n", _stringHeap[ui16b].c_str()));
 			break;
 
-		case 0x17:
+		case 0x17: {
 			// 17
 			// pop two lists from the stack and push the 'sum' of the lists
 			// (freeing the originals)
-		{
 			ui16a = p->_stack.pop2();
 			ui16b = p->_stack.pop2();
 			UCList *listA = getList(ui16a);
@@ -545,8 +534,9 @@ void UCMachine::execProcess(UCProcess *p) {
 				}
 			}
 			LOGPF(("append\n"));
+			break;
 		}
-		break;
+		// 0x18 EXCLUSIVE_ADD_LIST (Unused in U8 and Crusader)
 
 		case 0x19: {
 			// 19 02
@@ -573,11 +563,9 @@ void UCMachine::execProcess(UCProcess *p) {
 			break;
 		}
 		case 0x1A: {
-			// 1A
+			// 1A 02
 			// subtract string list
-			// NB: this one takes a length parameter in crusader. (not in U8)!!
-			// (or rather, it seems it takes one after all? -wjp,20030511)
-			ui32a = cs.readByte(); // elementsize
+			ui32a = cs.readByte(); // elementsize (always 02)
 			ui32a = 2;
 			ui16a = p->_stack.pop2();
 			ui16b = p->_stack.pop2();
@@ -596,9 +584,9 @@ void UCMachine::execProcess(UCProcess *p) {
 		}
 		case 0x1B: {
 			// 1B xx
-			// pop two lists from the stack and remove the 2nd from the 1st
+			// pop two lists from the stack of element size xx and
+			// remove the 2nd from the 1st
 			// (free the originals? order?)
-			// only occurs in crusader.
 			ui32a = cs.readByte(); // elementsize
 			ui16a = p->_stack.pop2();
 			ui16b = p->_stack.pop2();
@@ -681,9 +669,8 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x22:
 			// 22
-			// 16 bit mod    (order?)
-			// is this a C-style %?
-			// or return values between 0 and si16a-1 ?
+			// 16 bit mod, b % a
+			// Appears to be C-style %
 			si16a = static_cast<int16>(p->_stack.pop2());
 			si16b = static_cast<int16>(p->_stack.pop2());
 			if (si16a != 0) {
@@ -697,8 +684,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x23:
 			// 23
-			// 32 bit mod   (order)?
-			// also see 0x22
+			// 32 bit mod
 			si32a = static_cast<int16>(p->_stack.pop4());
 			si32b = static_cast<int16>(p->_stack.pop4());
 			if (si32a != 0) {
@@ -736,7 +722,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("cmp long\n"));
 			break;
 
-
 		case 0x26:
 			// 26
 			// compare two strings
@@ -752,6 +737,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("strcmp\n"));
 			break;
 
+		// 0x27 EQUALS_HUGE (Unused in U8 and Crusader)
 
 		case 0x28:
 			// 28
@@ -869,22 +855,21 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("not\n"));
 			break;
 
-
 		case 0x31:
 			// 31
-			// 32 bit boolean not (both input and output 32 bit?)
+			// 32 bit boolean not (not used in U8 or Crusader)
 			ui32a = p->_stack.pop4();
 			if (!ui32a) {
-				p->_stack.push4(1);
+				p->_stack.push2(1);
 			} else {
-				p->_stack.push4(0);
+				p->_stack.push2(0);
 			}
 			LOGPF(("not long\n"));
 			break;
 
 		case 0x32:
 			// 32
-			// 16 bit boolean and
+			// 16 bit logical and
 			ui16a = p->_stack.pop2();
 			ui16b = p->_stack.pop2();
 			if (ui16a && ui16b) {
@@ -897,7 +882,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x33:
 			// 33
-			// 32 bit boolean and
+			// 32 bit logical and (not used in U8 or Crusader)
 			ui32a = p->_stack.pop4();
 			ui32b = p->_stack.pop4();
 			if (ui32a && ui32b) {
@@ -910,7 +895,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x34:
 			// 34
-			// 16 bit boolean or
+			// 16 bit logical or
 			ui16a = p->_stack.pop2();
 			ui16b = p->_stack.pop2();
 			if (ui16a || ui16b) {
@@ -923,7 +908,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x35:
 			// 35
-			// 32 bit boolean or
+			// 32 bit logical or (not used in U8 or Crusader)
 			ui32a = p->_stack.pop4();
 			ui32b = p->_stack.pop4();
 			if (ui32a || ui32b) {
@@ -949,7 +934,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x37:
 			// 37
-			// 32 bit not-equal
+			// 32 bit not-equal (only used in Crusader)
 			si32a = static_cast<int16>(p->_stack.pop4());
 			si32b = static_cast<int16>(p->_stack.pop4());
 			if (si32a != si32b) {
@@ -959,7 +944,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			}
 			LOGPF(("ne long\n"));
 			break;
-
 
 		case 0x38: {
 			// 38 xx yy
@@ -1040,8 +1024,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x3D:
 			// 3D
-			// 16 bit right shift
-			// !! sign-extend or not?
+			// 16 bit right shift (sign-extended - game uses SAR opcode)
 			// operand order is different between U8 and crusader!
 			if (GAME_IS_U8) {
 				si16a = static_cast<int16>(p->_stack.pop2());
@@ -1081,23 +1064,20 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("push dword\t%s = %08Xh\n", print_bp(si8a), ui32a));
 			break;
 
-		case 0x41:
+		case 0x41: {
 			// 41 xx
 			// push the string local var xx
 			// duplicating the string?
-		{
 			si8a = static_cast<int8>(cs.readByte());
 			ui16a = p->_stack.access2(p->_bp + si8a);
 			p->_stack.push2(duplicateString(ui16a));
 			LOGPF(("push string\t%s\n", print_bp(si8a)));
+			break;
 		}
-		break;
-
-		case 0x42:
+		case 0x42: {
 			// 42 xx yy
 			// push the list (with yy size elements) at BP+xx
 			// duplicating the list?
-		{
 			si8a = static_cast<int8>(cs.readByte());
 			ui16a = cs.readByte();
 			ui16b = p->_stack.access2(p->_bp + si8a);
@@ -1114,16 +1094,13 @@ void UCMachine::execProcess(UCProcess *p) {
 			p->_stack.push2(newlistid);
 			LOGPF(("push list\t%s (%04X, copy %04X, %d elements)\n",
 			       print_bp(si8a), ui16b, newlistid, l->getSize()));
+			break;
 		}
-		break;
-
-		case 0x43:
+		case 0x43: {
 			// 43 xx
 			// push the stringlist local var xx
 			// duplicating the list, duplicating the strings in the list
-		{
 			si8a = static_cast<int8>(cs.readByte());
-//!U8               ui16a = cs.readByte();
 			ui16a = 2;
 			ui16b = p->_stack.access2(p->_bp + si8a);
 			UCList *l = new UCList(ui16a);
@@ -1137,10 +1114,9 @@ void UCMachine::execProcess(UCProcess *p) {
 			}
 			p->_stack.push2(assignList(l));
 			LOGPF(("push slist\t%s\n", print_bp(si8a)));
+			break;
 		}
-		break;
-
-		case 0x44:
+		case 0x44: {
 			// 44 xx yy
 			// push element from the second last var pushed onto the stack
 			// (a list/slist), indexed by the last element pushed onto the list
@@ -1150,7 +1126,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			// duplicate string if YY? yy = 1 only occurs
 			// in two places in U8: once it pops into temp afterwards,
 			// once it is indeed freed. So, guessing we should duplicate.
-		{
 			ui32a = cs.readByte();
 			ui32b = cs.readByte();
 			ui16a = p->_stack.pop2() - 1; // index
@@ -1176,9 +1151,8 @@ void UCMachine::execProcess(UCProcess *p) {
 				}
 			}
 			LOGPF(("push element\t%02X slist==%02X\n", ui32a, ui32b));
+			break;
 		}
-		break;
-
 		case 0x45:
 			// 45 xx yy
 			// push huge of size yy from BP+xx
@@ -1188,6 +1162,12 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("push huge\t%s %02X\n", print_bp(si8a), ui16b));
 			break;
 
+		// 0x46 BYTE_MEMBER_REFERENCE (Unused)
+		// 0x47 INT_MEMBER_REFERENCE (Unused)
+		// 0x48 LONG_MEMBER_REFERENCE (Unused)
+		// 0x49 HUGE_MEMBER_REFERENCE (Unused)
+		// 0x4a THIS_REFERENCE (Unused)
+
 		case 0x4B:
 			// 4B xx
 			// push 32 bit pointer address of BP+XX
@@ -1196,12 +1176,11 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("push addr\t%s\n", print_bp(si8a)));
 			break;
 
-		case 0x4C:
+		case 0x4C: {
 			// 4C xx
 			// indirect push,
 			// pops a 32 bit pointer off the stack and pushes xx bytes
 			// from the location referenced by the pointer
-		{
 			ui16a = cs.readByte();
 			ui32a = p->_stack.pop4();
 
@@ -1217,15 +1196,14 @@ void UCMachine::execProcess(UCProcess *p) {
 			} else {
 				LOGPF(("\n"));
 			}
+			break;
 		}
-		break;
 
-		case 0x4D:
+		case 0x4D: {
 			// 4D xx
 			// indirect pop
 			// pops a 32 bit pointer off the stack and pushes xx bytes
 			// from the location referenced by the pointer
-		{
 			ui16a = cs.readByte();
 			ui32a = p->_stack.pop4();
 
@@ -1236,8 +1214,8 @@ void UCMachine::execProcess(UCProcess *p) {
 			}
 
 			LOGPF(("pop indirect\t%02Xh bytes\n", ui16a));
+			break;
 		}
-		break;
 
 		case 0x4E:
 			// 4E xx xx yy
@@ -1275,7 +1253,6 @@ void UCMachine::execProcess(UCProcess *p) {
 		case 0x50:
 			// 50
 			// return from function
-
 			if (p->ret()) { // returning from process
 				LOGPF(("ret\t\tfrom process\n"));
 				p->terminateDeferred();
@@ -1330,19 +1307,19 @@ void UCMachine::execProcess(UCProcess *p) {
 			cede = true;
 			break;
 
-		case 0x54:
+		case 0x54: {
 			// 54 01 01
 			// implies
-			// this seems to link two processes (two pids are popped)
-			// the '01 01' variety most likely causes one process
-			// to wait for the other to finish.
-			// the first _pid pushed is often the current _pid in U8
-
-			// question: can multiple processes be waiting for a single proc?
-			// can a process be waiting for multiple processes?
+			// Links two processes (two pids are popped) a and b, meaning
+			// b->waitfor(a)
+			//
+			// In the disassembly, '01 01' is the number of processes to
+			// pop, but in practice only ever appears as 01 01.
+			//
+			// pid a is often the current pid in U8
 
 			// 'implies' seems to push a value too, although it is very
-			// often ignored. It looks like it's a _pid, but which one?
+			// often ignored. It looks like it's a pid, but which one?
 
 			// additionally, it is possible that 'implies' puts the result
 			// of a process in the 'process result' variable,
@@ -1351,11 +1328,10 @@ void UCMachine::execProcess(UCProcess *p) {
 			// 0x6D (push process result) only seems to occur soon after
 			// an 'implies'
 
-		{
 			cs.readUint16LE(); // skip the 01 01
 			ui16a = p->_stack.pop2();
 			ui16b = p->_stack.pop2();
-			p->_stack.push2(ui16a); //!! which _pid do we need to push!?
+			p->_stack.push2(ui16a); //!! which pid do we need to push!?
 			LOGPF(("implies\n"));
 
 			Process *proc = Kernel::get_instance()->getProcess(ui16b);
@@ -1381,17 +1357,19 @@ void UCMachine::execProcess(UCProcess *p) {
 				if ((ui16a && !proc2) || (ui16b && !proc))
 					error = true;
 			}
+			break;
 		}
-		break;
 
-		case 0x57:
+		// 0x55: AND_IMPLIES (only does push 0x402 in disasm, unused in U8 and Crusader)
+		// 0x56: OR_IMPLIES (only does push 0x404 in disasm, unused in U8 and Crusader)
+
+		case 0x57: {
 			// 57 aa tt xx xx yy yy
 			// spawn process function yyyy in class xxxx
 			// aa = number of arg bytes pushed (not including this pointer which is 4 bytes)
 			// tt = sizeof this pointer object
 			// only remove the this pointer from stack (4 bytes)
 			// put PID of spawned process in temp
-		{
 			int arg_bytes = cs.readByte();
 			int this_size = cs.readByte();
 			uint16 classid = cs.readUint16LE();
@@ -1411,6 +1389,9 @@ void UCMachine::execProcess(UCProcess *p) {
 			                                   this_size,
 			                                   p->_stack.access(),
 			                                   arg_bytes);
+			// Note: order of execution of this process and the new one is
+			// relevant. Currently, the spawned processes is executed once
+			// immediately, after which the current process resumes
 			p->_temp32 = Kernel::get_instance()->addProcessExec(newproc);
 
 #ifdef DEBUG
@@ -1421,25 +1402,14 @@ void UCMachine::execProcess(UCProcess *p) {
 				     << Std::dec << Std::endl;
 			}
 #endif
-
-
-			// Note: order of execution of this process and the new one is
-			// relevant. Currently, the spawned processes is executed once
-			// immediately, after which the current process resumes
-
-
-			// cede = true;
+			break;
 		}
-		break;
 
-
-		case 0x58:
+		case 0x58: {
 			// 58 xx xx yy yy zz zz tt uu
 			// spawn inline process function yyyy in class xxxx at offset zzzz
 			// tt = size of this pointer
-			// uu = unknown (occurring values: 00, 02, 05)
-
-		{
+			// uu = unknown (occurring values: 00, 02, 05) - seems unused in original
 			uint16 classid = cs.readUint16LE();
 			uint16 offset = cs.readUint16LE();
 			uint16 delta = cs.readUint16LE();
@@ -1455,6 +1425,7 @@ void UCMachine::execProcess(UCProcess *p) {
 			UCProcess *newproc = new UCProcess(classid, offset + delta,
 			                                   thisptr, this_size);
 
+			// as with 'spawn', run the spawned process once immediately
 			uint16 newpid = Kernel::get_instance()->addProcessExec(newproc);
 
 #ifdef DEBUG
@@ -1464,19 +1435,13 @@ void UCMachine::execProcess(UCProcess *p) {
 				     << ", offset " << p->_ip << Std::dec << Std::endl;
 			}
 #endif
-
-			// as with 'spawn', run execute the spawned process once
-			// immediately
-
-			p->_stack.push2(newpid); //! push _pid of newproc?
-
-			// cede = true;
+			p->_stack.push2(newpid); //! push pid of new proc
+			break;
 		}
-		break;
 
 		case 0x59:
 			// 59
-			// push process id
+			// push current process id
 			p->_stack.push2(p->_pid);
 			LOGPF(("push\t\tpid = %04Xh\n", p->_pid));
 			break;
@@ -1493,6 +1458,28 @@ void UCMachine::execProcess(UCProcess *p) {
 				p->_stack.push0(ui16a);
 			}
 			break;
+
+		case 0x5B:
+			// 5B xx xx
+			// debug line no xx xx
+			ui16a = cs.readUint16LE(); // source line number
+			debug(10, "ignore debug opcode %02X: line offset %d", opcode, ui16a);
+			LOGPF(("line number %d\n", ui16a));
+			break;
+
+		case 0x5C: {
+			// 5C xx xx char[9]
+			// debug line no xx xx in class str
+			ui16a = cs.readUint16LE(); // source line number
+			char name[10] = {0};
+			for (int x = 0; x < 9; x++) {
+				// skip over class name and null terminator
+				name[x] = cs.readByte();
+			}
+			LOGPF(("line number %s %d\n", name, ui16a));
+			debug(10, "ignore debug opcode %02X: %s line offset %d", opcode, name, ui16a);
+			break;
+		}
 
 		case 0x5D:
 			// 5D
@@ -1590,6 +1577,8 @@ void UCMachine::execProcess(UCProcess *p) {
 			LOGPF(("free slist\t%s = %04x\n", print_sp(si8a), ui16a));
 			break;
 
+		// 0x68 COPY_STRING (unused in U8 and Crusader)
+
 		case 0x69:
 			// 69 xx
 			// push the string in var BP+xx as 32 bit pointer
@@ -1598,6 +1587,8 @@ void UCMachine::execProcess(UCProcess *p) {
 			p->_stack.push4(stringToPtr(ui16a));
 			LOGPF(("str to ptr\t%s\n", print_bp(si8a)));
 			break;
+
+		// 0x6A Convert pointer to string (unused in U8 and Crusader)
 
 		case 0x6B:
 			// 6B
@@ -1662,9 +1653,7 @@ void UCMachine::execProcess(UCProcess *p) {
 
 		case 0x6D:
 			// 6D
-			// push 32bit result of process
-			// (of which process? pop anything?)
-			// (also see comment for 0x54 'implies')
+			// push 32bit result of current process
 			LOGPF(("push dword\tprocess result\n"));
 			p->_stack.push4(p->_result);
 			break;
@@ -1677,7 +1666,6 @@ void UCMachine::execProcess(UCProcess *p) {
 			p->_stack.addSP(-si8a);
 			LOGPF(("move sp\t\t%s%02Xh\n", si8a < 0 ? "-" : "", si8a < 0 ? -si8a : si8a));
 			break;
-
 
 		case 0x6F:
 			// 6F xx
@@ -1698,12 +1686,11 @@ void UCMachine::execProcess(UCProcess *p) {
 		// we expect SP to be at the end of that area when 0x73 is executed
 		// a 'loop script' (created by 0x74) is used to select items
 
-		case 0x70:
+		case 0x70: {
 			// 70 xx yy zz
 			// loop something. Stores 'current object' in var xx
 			// yy == num bytes in string
 			// zz == type
-		{
 			si16a = cs.readSByte();
 			uint32 scriptsize = cs.readByte();
 			uint32 searchtype = cs.readByte();
@@ -1835,10 +1822,12 @@ void UCMachine::execProcess(UCProcess *p) {
 		}
 		// Intentional fall-through
 
-		case 0x73:
+		// 0x71 SEARCH_RECURSIVE (Unused)
+		// 0x72 SEARCH_SURFACE (Unused)
+
+		case 0x73: {
 			// 73
 			// next loop object. pushes false if end reached
-		{
 			unsigned int sp = p->_stack.getSP();
 			uint16 itemlistID = p->_stack.access2(sp);
 			UCList *itemlist = getList(itemlistID);
@@ -1889,8 +1878,8 @@ void UCMachine::execProcess(UCProcess *p) {
 			if (opcode == 0x73) { // because of the fall-through
 				LOGPF(("loopnext\n"));
 			}
+			break;
 		}
-		break;
 
 		case 0x74:
 			// 74 xx
@@ -2039,23 +2028,8 @@ void UCMachine::execProcess(UCProcess *p) {
 			error = true;
 			break;
 
-		case 0x5B: {
-			ui16a = cs.readUint16LE(); // source line number
-			debug(10, "ignore debug opcode %02X: line offset %d", opcode, ui16a);
-			LOGPF(("line number %d\n", ui16a));
-			break;
-		}
-		case 0x5C: {
-			ui16a = cs.readUint16LE(); // source line number
-			char name[10] = {0};
-			for (int x = 0; x < 9; x++) {
-				// skip over class name and null terminator
-				name[x] = cs.readByte();
-			}
-			LOGPF(("line number %s %d\n", name, ui16a));
-			debug(10, "ignore debug opcode %02X: %s line offset %d", opcode, name, ui16a);
-			break;
-		}
+		// 0x7B REGRESS (Unused)
+
 		default:
 			perr.Print("unhandled opcode %02X\n", opcode);
 

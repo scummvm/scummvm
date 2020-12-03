@@ -25,6 +25,7 @@
 
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
@@ -268,14 +269,14 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 #ifdef ENABLE_MYST
 #ifndef ENABLE_MYSTME
 			if (gd->features & Mohawk::GF_ME) {
-				warning("Myst ME support not compiled in");
+				Engine::errorUnsupportedGame(_("Myst ME support not compiled in"));
 				return false;
 			}
 #endif
 			*engine = new Mohawk::MohawkEngine_Myst(syst, gd);
 			break;
 #else
-			warning("Myst support not compiled in");
+			Engine::errorUnsupportedGame(_("Myst support not compiled in"));
 			return false;
 #endif
 		case Mohawk::GType_RIVEN:
@@ -283,7 +284,7 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 			*engine = new Mohawk::MohawkEngine_Riven(syst, gd);
 			break;
 #else
-			warning("Riven support not compiled in");
+			Engine::errorUnsupportedGame(_("Riven support not compiled in"));
 			return false;
 #endif
 		case Mohawk::GType_LIVINGBOOKSV1:
@@ -298,7 +299,7 @@ bool MohawkMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGa
 			*engine = new Mohawk::MohawkEngine_CSTime(syst, gd);
 			break;
 #else
-			warning("CSTime support not compiled in");
+			Engine::errorUnsupportedGame(_("CSTime support not compiled in"));
 			return false;
 #endif
 		default:

@@ -20,14 +20,6 @@
  *
  */
 
-/*
- * PNG decoder used in engines:
- *  - sword25
- *  - wintermute
- * Dependencies:
- *  - libpng
- */
-
 #ifndef IMAGE_PNG_H
 #define IMAGE_PNG_H
 
@@ -46,6 +38,20 @@ struct Surface;
 }
 
 namespace Image {
+
+/**
+ * @defgroup image_png PNG decoder
+ * @ingroup image
+ *
+ * @brief Decoder for PNG images.
+ *
+ * This decoder has a dependency on the libpng library.
+ *
+ * Used in engines:
+ * - Sword25
+ * - Wintermute
+ * @{
+ */
 
 class PNGDecoder : public ImageDecoder {
 public:
@@ -80,7 +86,7 @@ private:
  * Outputs a compressed PNG stream of the given input surface.
  */
 bool writePNG(Common::WriteStream &out, const Graphics::Surface &input);
-
+/** @} */
 } // End of namespace Image
 
 #endif

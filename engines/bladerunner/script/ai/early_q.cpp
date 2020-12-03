@@ -340,7 +340,7 @@ bool AIScriptEarlyQ::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		break;
 
 	case kGoalEarlyQNR04McCoyPulledGun:
-		Player_Set_Combat_Mode(kActorSteele);
+		Player_Set_Combat_Mode(true);
 		Actor_Face_Actor(kActorEarlyQ, kActorMcCoy, true);
 		Actor_Face_Actor(kActorMcCoy, kActorEarlyQ, true);
 		Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeCombatIdle);

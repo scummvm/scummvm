@@ -300,7 +300,7 @@ static int32 mWAIT_NUM_ANIM(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 static int32 mSAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
-	engine->_sound->playSample(sampleIdx, 4096, 1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
+	engine->_sound->playSample(sampleIdx, 1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
 	return 0;
 }
 
@@ -520,9 +520,8 @@ static int32 mWAIT_DOOR(TwinEEngine *engine, MoveScriptContext &ctx) {
  * @note Opcode @c 0x1B
  */
 static int32 mSAMPLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
-	int32 freq = engine->getRandomNumber(2048) + 2048;
 	int32 sampleIdx = ctx.stream.readSint16LE();
-	engine->_sound->playSample(sampleIdx, freq, 1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
+	engine->_sound->playSample(sampleIdx, 1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
 	return 0;
 }
 
@@ -533,7 +532,7 @@ static int32 mSAMPLE_RND(TwinEEngine *engine, MoveScriptContext &ctx) {
 static int32 mSAMPLE_ALWAYS(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
 	if (!engine->_sound->isSamplePlaying(sampleIdx)) { // if its not playing
-		engine->_sound->playSample(sampleIdx, 4096, -1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
+		engine->_sound->playSample(sampleIdx, -1, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
 	}
 	return 0;
 }
@@ -588,7 +587,7 @@ static int32 mREPEAT_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
  */
 static int32 mSIMPLE_SAMPLE(TwinEEngine *engine, MoveScriptContext &ctx) {
 	int32 sampleIdx = ctx.stream.readSint16LE();
-	engine->_sound->playSample(sampleIdx, 4096, ctx.numRepeatSample, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
+	engine->_sound->playSample(sampleIdx, ctx.numRepeatSample, ctx.actor->x, ctx.actor->y, ctx.actor->z, ctx.actorIdx);
 	ctx.numRepeatSample = 1;
 	return 0;
 }

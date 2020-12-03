@@ -346,6 +346,7 @@ enum kExtractID {
 	kEoBBaseEncodeMonsterDefs21,
 
 	kEoBBaseNpcPresets,
+	kEoBBaseNpcPresetsNames,
 
 	kEoBBaseWllFlagPreset,
 	kEoBBaseDscShapeCoords,
@@ -450,6 +451,8 @@ enum kExtractID {
 
 	kEoBBaseTextInputCharacterLines,
 	kEoBBaseTextInputSelectStrings,
+
+	kEoBBaseSaveNamePatterns,
 
 	kEoB1DefaultPartyStats,
 	kEoB1DefaultPartyNames,
@@ -1047,7 +1050,6 @@ enum kExtractID {
 	kEoB2FontDmpSearchTbl,
 	kEoB2Ascii2SjisTables,
 	kEoB2Ascii2SjisTables2,
-	kEoB2SaveNamePatterns,
 	kEoB2PcmSoundEffectsIngame,
 	kEoB2PcmSoundEffectsIntro,
 	kEoB2PcmSoundEffectsFinale,

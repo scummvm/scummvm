@@ -1679,17 +1679,12 @@ uint32 Actor::I_doAnim(const uint8 *args, unsigned int /*argsize*/) {
 	if (!actor) return 0;
 
 	//
-	// HACK: In Crusader, anims 32 and 33 are teleport in/out.  In U8 they are
-	// turn left/right.  We want to remap those numbers in most cases, but when
-	// they come out of usecode we don't want to remap them.  Here we give them
-	// temporary values so we can set them back later.
+	// HACK: In Crusader, we do translation on the animations so we want to remap
+	// most of them, but for direct commands from the usecode we add 0x1000 for
+	// no remapping
 	//
 	if (GAME_IS_CRUSADER) {
-		Animation::Sequence seq = static_cast<Animation::Sequence>(anim);
-		if (seq == Animation::teleportIn)
-			anim = static_cast<uint16>(Animation::teleportInReplacement);
-		else if (seq == Animation::teleportOut)
-			anim = static_cast<uint16>(Animation::teleportOutReplacement);
+		anim += 0x1000;
 	}
 
 	return actor->doAnim(static_cast<Animation::Sequence>(anim), Direction_FromUsecodeDir(dir));
@@ -2379,10 +2374,25 @@ uint32 Actor::I_turnToward(const uint8 *args, unsigned int /*argsize*/) {
 	if (!actor) return 0;
 
 	ARG_UINT16(dir);
-	ARG_UINT16(unk);
-	warning("Actor::I_turnToward: Ignoring unknown param %d", unk);
+	ARG_UINT16(dir16);
 
-	return actor->turnTowardDir(Direction_FromUsecodeDir(dir));
+	Direction newdir = Direction_FromUsecodeDir(dir);
+	Direction curdir = actor->getDir();
+	Direction oneleft = Direction_OneLeft(curdir, dirmode_16dirs);
+	Direction oneright = Direction_OneRight(curdir, dirmode_16dirs);
+
+	if (curdir == newdir ||
+		(!dir16 && (newdir == oneleft || newdir == oneright)))
+		return 0;
+
+	return actor->turnTowardDir(newdir);
+}
+
+uint32 Actor::I_isKneeling(const uint8 *args, unsigned int /*argsize*/) {
+	ARG_ACTOR_FROM_PTR(actor);
+	if (!actor) return 0;
+
+	return actor->hasFlags(ACT_KNEELING) ? 1 : 0;
 }
 
 } // End of namespace Ultima8

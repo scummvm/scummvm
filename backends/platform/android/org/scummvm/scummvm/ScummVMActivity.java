@@ -439,7 +439,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 										key -= 100000;
 										compiledMetaState |= KeyEvent.META_SHIFT_LEFT_ON;
 									}
-
 									// update the eventTime after the above check for first time "hit"
 									KeyEvent compiledKeyEvent = new KeyEvent(builtinKeyboard.mEventPressTime,
 										SystemClock.uptimeMillis(),
@@ -893,8 +892,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		takeKeyEvents(true);
 
 		_clipboardManager = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-		_currentScummVMVersion = new Version(BuildConfig.VERSION_NAME);
-		Log.d(ScummVM.LOG_TAG, "Current ScummVM version running is: " + _currentScummVMVersion.getDescription() + " (" + _currentScummVMVersion.get() + ")");
 
 		// REMOVED: Since getFilesDir() is guaranteed to exist, getFilesDir().mkdirs() might be related to crashes in Android version 9+ (Pie or above, API 28+)!
 
@@ -918,6 +915,10 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		                                                        }
 		                                                    });
 
+		// Currently in release builds version string does not contain the revision info
+		// but in debug builds (daily builds) this should be there (see base/internal_version_h)
+		_currentScummVMVersion = new Version(_scummvm.getInstallingScummVMVersionInfo());
+		Log.d(ScummVM.LOG_TAG, "Current ScummVM version launching is: " + _currentScummVMVersion.getDescription() + " (" + _currentScummVMVersion.get() + ")");
 		//
 		// seekAndInitScummvmConfiguration() returns false if something went wrong
 		// when initializing configuration (or when seeking and trying to use an existing ini file) for ScummVM
@@ -1679,7 +1680,19 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		//      A more efficient way would be to compare hash (when we deem that an upgrade is happening, so we will also still have to compare versions)
 		// Note that isSideUpgrading is also true each time we re-launch the app
 		// Also even during a side-upgrade we cleanup any redundant files (no longer part of our assets)
-		boolean isSideUpgrading = (maxOldVersionFound.compareTo(_currentScummVMVersion) == 0);
+
+		// By first checking for isDirty() and then comparing the Version objects,
+		// we don't need to also compare the Version descriptions (full version text) for a match too,
+		// since, if the full versions text do not match, it's because at least one of them is dirty.
+		// TODO: This does mean that "pre" (or similar) versions (eg. 2.2.1pre) will always be considered non-side-upgrades
+		//        and will re-copy the assets upon each launch
+		//       This should have a slight performance impact (for launch time) for those intermediate version releases,
+		//       but it's better than the alternative (comparing MD5 hashes for all files), and it should go away with the next proper release.
+		//       This solution should cover "git" versions properly
+		//       (ie. developer builds, built with release configuration (eg 2.3.0git) or debug configuration (eg. 2.3.0git9272-gc71ac4748b))
+		boolean isSideUpgrading = (!_currentScummVMVersion.isDirty()
+		                           && !maxOldVersionFound.isDirty()
+		                           && maxOldVersionFound.compareTo(_currentScummVMVersion) == 0);
 		copyAssetsToInternalMemory(isSideUpgrading);
 
 		//

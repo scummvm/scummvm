@@ -467,7 +467,9 @@ void SaveLoadChooserSimple::handleCommand(CommandSender *sender, uint32 cmd, uin
 				_metaEngine->removeSaveState(_target.c_str(), _saveList[selItem].getSaveSlot());
 
 				setResult(-1);
-				_list->setSelected(-1);
+				int scrollPos = _list->getCurrentScrollPos();
+				_list->setSelected(-1); // resets scroll pos
+				_list->scrollTo(scrollPos);
 
 				updateSaveList();
 				updateSelection(true);

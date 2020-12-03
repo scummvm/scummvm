@@ -32,9 +32,9 @@ class CSummonBots : public CRobotController {
 	bool SummonBotQueryMsg(CSummonBotQueryMsg *msg);
 	bool SummonBotMsg(CSummonBotMsg *msg);
 protected:
-	CString _string2;
-	int _fieldC8;
-	int _fieldCC;
+	CString _validSummonLocations;
+	bool _canSummonBellbot;
+	bool _canSummonDoorbot;
 public:
 	CLASSDEF;
 	CSummonBots();

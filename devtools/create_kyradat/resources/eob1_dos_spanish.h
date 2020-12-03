@@ -940,3 +940,17 @@ static const char *const kEoB1IntroStringsTunnelDOSSpanish[2] = {
 };
 
 static const StringListProvider kEoB1IntroStringsTunnelDOSSpanishProvider = { ARRAYSIZE(kEoB1IntroStringsTunnelDOSSpanish), kEoB1IntroStringsTunnelDOSSpanish };
+
+static const char *const kEoB1NpcPresetsNamesDOSSpanish[9] = {
+	"Anya",
+	"Beohram",
+	"Kirath",
+	"Ileria",
+	"Tyrra",
+	"Tod Uphill",
+	"Taghor",
+	"Dohrum",
+	"Keirgar"
+};
+
+static const StringListProvider kEoB1NpcPresetsNamesDOSSpanishProvider = { ARRAYSIZE(kEoB1NpcPresetsNamesDOSSpanish), kEoB1NpcPresetsNamesDOSSpanish };

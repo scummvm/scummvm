@@ -2702,19 +2702,27 @@ case $_host_os in
 		append_var LIBS "-lcitro3d"
 		;;
 	amigaos*)
+		# On building dynamic, everything (possible) should be built as plugin.
+		if test "$_dynamic_modules" = yes ; then
+			_detection_features_static=no
+			_plugins_default=dynamic
+		fi
+		# We have to use 'long' for our 4 byte typedef, because AmigaOS
+		# already typedefs (u)int32 as (unsigned) long  and consequently we'd
+		# get a compiler error otherwise.
+		type_4_byte='long'
+		# Supress format warnings as the long 4 byte causes noisy warnings.
+		append_var CXXFLAGS "-Wno-format"
+		# Enable optimizations for non-debug builds
 		if test "$_debug_build" = no; then
 			_optimization_level=-O2
 		fi
 		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/sdk/local/newlib/lib"
-		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
-		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
-		type_4_byte='long'
-		# Supress format warnings as the long 4 byte causes noisy warnings.
-		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
-		_nuked_opl=no
+		# Leave out resources by default, save binary size.
+		_builtin_resources=no
 		;;
 	android)
 		case $_host in
@@ -5434,7 +5442,7 @@ EOF
 	# Try different library names
 	if test "$_opengl_game_es2" = yes ; then
 		# 1) GLESv2    This is generally used by nearly all platforms for OpenGL ES 2
-		# 2) ogles2    This is used by AmigaOS4 (and probably others)
+		# 2) ogles2    This is used by AmigaOS4 for OpenGL ES 2
 		_opengl_game_es2=no
 		for lib in "-lGLESv2" "-logles2"; do
 			if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib
@@ -5747,8 +5755,12 @@ if test "$_dialogs" = "no"; then
 	echo "no"
 else
 	case $_host_os in
-	morphos*)
-		echo "morphos"
+	amigaos*)
+		echo "amigaos (asl)"
+		_dialogs=yes
+		;;
+	darwin*)
+		echo "osx"
 		_dialogs=yes
 		;;
 	mingw*)
@@ -5756,8 +5768,8 @@ else
 		echo "win32"
 		_dialogs=yes
 		;;
-	darwin*)
-		echo "osx"
+	morphos*)
+		echo "morphos"
 		_dialogs=yes
 		;;
 	*)

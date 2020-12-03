@@ -23,7 +23,7 @@
 #ifndef SCI_INCLUDE_FEATURES_H
 #define SCI_INCLUDE_FEATURES_H
 
-#include "sci/resource.h"
+#include "sci/resource/resource.h"
 #include "sci/engine/seg_manager.h"
 
 namespace Sci {

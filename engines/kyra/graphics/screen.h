@@ -126,8 +126,8 @@ public:
 		kStyleFat			=	1	<<	1,
 		kStyleNarrow1		=	1	<<	2,
 		kStyleNarrow2		=	1	<<	3,
-		kStyleForceTwoByte	=	1	<<	4,
-		kStyleFixedWidth	=	1	<<	5
+		kStyleFullWidth		=	1	<<	4,
+		kStyleForceOneByte	=	1	<<	5
 	};
 
 	/**
@@ -508,6 +508,7 @@ public:
 	int getCharWidth(uint16 c) const;
 	int getCharHeight(uint16 c) const;
 	int getTextWidth(const char *str, bool nextWordOnly = false);
+	int getNumberOfCharacters(const char *str);
 
 	void printText(const char *str, int x, int y, uint8 color1, uint8 color2, int pitch = -1);
 

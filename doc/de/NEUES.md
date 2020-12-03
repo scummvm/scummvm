@@ -10,12 +10,15 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für The Longest Journey hinzugefügt.
    - Unterstützung für Myst 3: Exile hinzugefügt.
    - Unterstützung für Hades' Challenge hinzugefügt.
+   - Unterstützung für Little Big Adventure hinzugefügt.
+   - Unterstützung für Red Comrades 1: Save the Galaxy hinzugefügt.
+   - Unterstützung für Red Comrades 2: For the Great Justice hinzugefügt.
 
  Allgemein:
    - Die ScummVM-Benutzeroberfläche unterstützt nun UTF-32.
    - Code der Roland MT-32-Emulation auf Munt 2.4.1 aktualisiert.
 
- GLK:
+ Glk:
    - Probleme mit Spielständen in mehreren Sub-Engines behoben.
    - Speicherüberlauf im Erkennungsmechanismus für Level9-Spiele behoben.
    - Unterstützung für die Spiele der IF Comp 2020 hinzugefügt.
@@ -29,11 +32,15 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die Version in brasilianischem Portugiesisch von Grim Fandango hinzugefügt.
    - Unterstützung für die russische Version von Escape from Monkey Island hinzugefügt.
 
+ Kyra:
+   - Unterstützung für die japanische Sega-CD-Version von Eye of the Beholder hinzugefügt.
+
  Lure:
    - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines Spielstands abgespielt.
 
  SAGA:
    - Unterstützung für ITE GOG Mac CD v1.1 hinzugefügt.
+   - Unterstützung für die japanische Version von ITE PC-98 hinzugefügt.
 
  SCI:
    - Unterstützung für RGB-Rendering (16/32bpp) für SCI0 - SCI1.1-Spiele hinzugefügt. Dadurch werden Probleme
@@ -55,6 +62,9 @@ Programmcodes finden Sie auf Englisch unter:
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
 
+ TsAGE:
+   - Unterstützung für eine weitere Disketten-Version hinzugefügt.
+
  Stark:
    - Unterstützung für die ungarische Übersetzung hinzugefügt.
 
@@ -72,6 +82,10 @@ Programmcodes finden Sie auf Englisch unter:
  Xeen:
    - Gelegentliche Grafikfehler in Kampf-Szenen korrigiert.
    - Verbesserte Unterstützung für Zwischensequenzen, die nun dem Original genauer entsprechen.
+
+ MorphOS-Portierung:
+   - Unterstützung für native Dateisystem-Dialoge hinzugefügt.
+   - Unterstützung für die Cloud-Anbindung hinzugefügt.
 
 #### 2.2.0 "Interactive Fantasy" (27.09.2020)
 

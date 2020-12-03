@@ -25,7 +25,8 @@
 #ifdef __amigaos4__
 
 #include "backends/platform/sdl/amigaos/amigaos.h"
-#include "backends/fs/amigaos4/amigaos4-fs-factory.h"
+#include "backends/fs/amigaos/amigaos-fs-factory.h"
+#include "backends/dialogs/amigaos/amigaos-dialogs.h"
 
 void OSystem_AmigaOS::init() {
 	// Initialze File System Factory
@@ -33,6 +34,18 @@ void OSystem_AmigaOS::init() {
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
+
+#if defined(USE_SYSDIALOGS)
+	_dialogManager = new AmigaOSDialogManager();
+#endif
 }
 
+bool OSystem_AmigaOS::hasFeature(Feature f) {
+#if defined(USE_SYSDIALOGS)
+	if (f == kFeatureSystemBrowserDialog)
+		return true;
+#endif
+
+	return OSystem_SDL::hasFeature(f);
+}
 #endif
