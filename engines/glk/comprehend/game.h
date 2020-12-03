@@ -79,6 +79,7 @@ protected:
 	Sentence _sentence;
 	char _inputLine[INPUT_LINE_SIZE];
 	int _inputLineIndex;
+	int _currentRoomCopy;
 public:
 	const GameStrings *_gameStrings;
 

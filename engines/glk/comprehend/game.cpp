@@ -116,7 +116,7 @@ void Sentence::format() {
 
 
 ComprehendGame::ComprehendGame() : _gameStrings(nullptr), _ended(false),
-		_nounState(NOUNSTATE_INITIAL), _inputLineIndex(0) {
+		_nounState(NOUNSTATE_INITIAL), _inputLineIndex(0), _currentRoomCopy(-1) {
 	Common::fill(&_inputLine[0], &_inputLine[INPUT_LINE_SIZE], 0);
 }
 
@@ -389,7 +389,7 @@ void ComprehendGame::update_graphics() {
 	if (!g_comprehend->isGraphicsEnabled())
 		return;
 
-	type = roomIsSpecial(_currentRoom, NULL);
+	type = roomIsSpecial(_currentRoomCopy, NULL);
 
 	switch (type) {
 	case ROOM_IS_DARK:
@@ -790,6 +790,9 @@ void ComprehendGame::parse_sentence_word_pairs(Sentence *sentence) {
 }
 
 void ComprehendGame::doBeforeTurn() {
+	// Make  a copy of the current room
+	_currentRoomCopy = _currentRoom;
+
 	beforeTurn();
 
 	if (!_ended)
