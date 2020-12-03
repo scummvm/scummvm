@@ -3088,9 +3088,8 @@ EOF
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'MORPHOS = 1'
 		_port_mk="backends/platform/sdl/morphos/morphos.mk"
-		# for use SDL2
+		# use SDL2
 		_sdlconfig=sdl2-config
-		_nuked_opl=no
 		;;
 	msys)
 		echo ERROR: Using the MSYS shell in msys mode is not supported. Please use the MSYS shell in mingw mode instead.
