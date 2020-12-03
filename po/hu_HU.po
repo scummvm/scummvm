@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-02 22:39+0000\n"
-"PO-Revision-Date: 2020-11-30 08:45+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-12-03 11:44+0000\n"
+"Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
 "Language: hu_HU\n"
@@ -1318,20 +1318,22 @@ msgstr "Automentés:"
 
 #: gui/options.cpp:2101
 msgid "Always return to the launcher when leaving a game"
-msgstr ""
+msgstr "Mindig térjen vissza az indítóhoz ha kilép a játékból"
 
 #: gui/options.cpp:2102
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
 msgstr ""
+"Mindig térjen vissza az indítóhoz ha kilép a játékból a ScummVM bezárása "
+"helyett."
 
 #: gui/options.cpp:2109
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "Kérjen megerősítést kilépéskor"
 
 #: gui/options.cpp:2110
 msgid "Ask for permission when closing ScummVM or leaving a game."
-msgstr ""
+msgstr "Kérjen megerősítést ha bezárja a ScummVM-et vagy ha kilép a játékból."
 
 #: gui/options.cpp:2116
 msgid "Keys"
@@ -2543,25 +2545,20 @@ msgid "Download failed."
 msgstr "Letöltés nem sikerült."
 
 #: backends/events/default/default-events.cpp:177
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to start a new game? All unsaved progress will be "
-#| "lost."
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Biztos, hogy új játékot szeretnél kezdeni? Minden nem mentett változás el "
-"fog veszni."
+"Tényleg vissza akarsz térni az Indítóhoz?\n"
+"Minden nem mentett változás el fog veszni."
 
 #: backends/events/default/default-events.cpp:199
-#, fuzzy
-#| msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Biztosan ki szeretnél lépni? Minden nem mentett változás el fog veszni."
+"Biztosan ki szeretnél lépni?\n"
+"Minden nem mentett változás el fog veszni."
 
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:316
