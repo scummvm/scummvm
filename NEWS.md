@@ -79,6 +79,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  Xeen:
    - Fixed occasional border corruption during fights.
    - Improvements to cutscenes to better match the original games.
+   - Fixes for character selection, deselection, and dismissing to better match original.
 
  AmigaOS port:
    - Add native system file browser feature
