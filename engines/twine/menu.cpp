@@ -494,6 +494,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 				} else if (_engine->_input->isActionActive(TwinEActionType::UIRight)) {
 					status.volume += 4;
 				}
+				status.volume = CLIP(status.volume, 0, 255);
 				_engine->_system->getAudioCDManager()->setVolume(status.volume);
 				break;
 			}
