@@ -451,7 +451,12 @@ bool ScummEngine::newLine() {
 	if (_charset->_center) {
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
-			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
+			// The commented out part of the next line was meant as a fix for Kanji text glitches in DIG.
+			// But these glitches couldn't be reproduced in recent tests. So the underlying issue might
+			// have been taken care of in a different manner. And the fix actually caused other text glitches
+			// (FT/German, if you look at the sign on the container at game start). After counterchecking
+			// the original code it seems that setting _nextLeft to 0 is the right thing to do here.
+			_nextLeft = /*_game.version >= 6 ? _string[0].xpos :*/ 0;
 	} else if (_game.version >= 4 && _game.version < 7 && _game.heversion == 0 && _language == Common::HE_ISR) {
 		if (_game.id == GID_MONKEY && _charset->getCurID() == 4) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
