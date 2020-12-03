@@ -270,6 +270,7 @@ bool search_for_game_data_file(String &filename, String &search_path) {
 	}
 	// 3. Look in known locations
 	else {
+#ifdef DEPRECATED
 		// 3.1. Look for attachment in the running executable
 		//
 		// this will use argument zero, the executable's name
@@ -286,6 +287,7 @@ bool search_for_game_data_file(String &filename, String &search_path) {
 				}
 			}
 		}
+#endif
 	}
 
 	// Finally, store game file's absolute path, or report error

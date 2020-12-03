@@ -258,7 +258,7 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 	}
 
 	if (datafile_argv > 0) {
-		cmdGameDataPath = GetPathFromCmdArg(datafile_argv);
+		cmdGameDataPath = "./";
 	} else {
 		// assign standard path for mobile/consoles (defined in their own platform implementation)
 		cmdGameDataPath = psp_game_file_name;
@@ -271,8 +271,8 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 }
 
 void main_set_gamedir(int argc, const char *argv[]) {
-	appDirectory = Path::GetDirectoryPath(GetPathFromCmdArg(0));
-
+	appDirectory = Path::GetDirectoryPath("./");
+#ifdef DEPRECATED
 	if ((loadSaveGameOnStartup != nullptr) && (argv[0] != nullptr)) {
 		// When launched by double-clicking a save game file, the curdir will
 		// be the save game folder unless we correct it
@@ -290,16 +290,7 @@ void main_set_gamedir(int argc, const char *argv[]) {
 		else
 			Debug::Printf(kDbgMsg_Error, "Unable to determine current directory: GetPathInASCII failed.\nArg: %s", cur_dir.GetCStr());
 	}
-}
-
-String GetPathFromCmdArg(int arg_index) {
-	if (arg_index < 0 || arg_index >= global_argc)
-		return "";
-	String path = Path::GetCmdLinePathInASCII(global_argv[arg_index], arg_index);
-	if (!path.IsEmpty())
-		return Path::MakeAbsolutePath(path);
-	Debug::Printf(kDbgMsg_Error, "Unable to determine path: GetCmdLinePathInASCII failed.\nCommand line argument %i: %s", arg_index, global_argv[arg_index]);
-	return global_argv[arg_index];
+#endif
 }
 
 const char *get_allegro_error() {
@@ -343,7 +334,7 @@ uint32 AGSEngine::getFeatures() const {
 
 Common::Error AGSEngine::run() {
 	const char *filename = _gameDescription->desc.filesDescriptions[0].fileName;
-	const char *ARGV[] = { nullptr, filename };
+	const char *ARGV[] = { "scummvm.exe", filename };
 	const int ARGC = 2;
 
 #ifdef ENABLE_AGS_TESTS
