@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-03 03:13+0000\n"
-"PO-Revision-Date: 2020-12-03 20:45+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2020-12-03 20:46+0000\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -2206,9 +2206,8 @@ msgid "Could not apply filtering setting."
 msgstr "Nelze použít nastavení filtrování."
 
 #: engines/engine.cpp:420
-#, fuzzy
 msgid "Error"
-msgstr "Žádná chyba"
+msgstr "Chyba"
 
 #: engines/engine.cpp:507
 msgid ""
@@ -2272,16 +2271,14 @@ msgid "Start anyway"
 msgstr "Přesto spustit"
 
 #: engines/engine.cpp:659
-#, fuzzy
 msgid "This game is not supported."
-msgstr "Id hry není podporováno"
+msgstr "Tato hra není podporována"
 
 #: engines/engine.cpp:659
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
-msgstr "Tato hra nepodporuje spouštění her ze spouštěče."
+msgstr "Tato hra není podporována z důvodu"
 
 #: engines/engine.cpp:798
 msgid "Loading game is currently unavailable"
