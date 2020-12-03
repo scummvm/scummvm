@@ -88,6 +88,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  MorphOS port:
    - Add native system file browser feature
    - Add Cloud feature
+   - Re-activate nuked OPL Adlib driver
 
  MorphOS port :
    - Add native system file browser feature
