@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-03 03:13+0000\n"
 "PO-Revision-Date: 2020-12-03 20:46+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
 "Language: cs_CZ\n"
@@ -2545,11 +2545,12 @@ msgid "Download failed."
 msgstr "Stažení selhalo."
 
 #: backends/events/default/default-events.cpp:177
-#, fuzzy
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
-msgstr "   Jste si jisti, že chcete odejít ?   "
+msgstr ""
+"Jste si jisti, že chcete odejít ?  \n"
+" Neuložené pozice budou ztraceny"
 
 #: backends/events/default/default-events.cpp:199
 #, fuzzy
