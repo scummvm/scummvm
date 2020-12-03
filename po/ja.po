@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-02 22:39+0000\n"
-"PO-Revision-Date: 2020-12-02 20:28+0000\n"
-"Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
+"PO-Revision-Date: 2020-12-03 11:44+0000\n"
+"Last-Translator: Matthew Duggan <mgithub@guarana.org>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
 "Language: ja\n"
@@ -2169,7 +2169,7 @@ msgstr ""
 
 #: engines/engine.cpp:352
 msgid "Could not apply aspect ratio setting."
-msgstr "アスペクト比の設定を適用できませんでした"
+msgstr "アスペクト比の設定を適用できませんでした。"
 
 #: engines/engine.cpp:357
 msgid "Could not apply fullscreen setting."
