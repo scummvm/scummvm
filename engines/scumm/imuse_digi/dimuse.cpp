@@ -423,16 +423,22 @@ void IMuseDigital::callback() {
 			}
 			if (_mixer->isReady()) {
 				int effVol = track->getVol();
+				int effPan = track->getPan();
 				if (_vm->_game.id == GID_CMI && track->volGroupId == IMUSE_VOLGRP_MUSIC) {
 					effVol -= track->gainReduction / 1000;
 					if (effVol < 0) // In case a music crossfading happens during gain reduction...
 						effVol = 0;
 					effVol = int(round(effVol * 1.9)); // Adjust default music mix for COMI
-				} else if (_vm->_game.id == GID_CMI) {
-					effVol = int(round(effVol * 1.2)); // Adjust default sfx and speech mix for COMI
+				} else if (_vm->_game.id == GID_CMI && track->volGroupId == IMUSE_VOLGRP_VOICE) {
+					// Just in case the speakingActor is not being set...
+					// This allows for a fallback to pan = 64 (center) and volume = 127 (full)
+					if (track->speakingActor != nullptr) {
+						effVol = track->speakingActor->_talkVolume;
+						effPan = (track->speakingActor->_talkPan != 64) ? 2 * track->speakingActor->_talkPan - 127 : 0;
+					}
 				}
 				_mixer->setChannelVolume(track->mixChanHandle, effVol);
-				_mixer->setChannelBalance(track->mixChanHandle, track->getPan());
+				_mixer->setChannelBalance(track->mixChanHandle, effPan);
 			}
 		}
 	}

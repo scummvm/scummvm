@@ -74,15 +74,16 @@ struct Track {
 	int32 mixerFlags;	   // flags for sound mixer's channel (kFlagStereo, kFlag16Bits, kFlagUnsigned)
 
 	ImuseDigiSndMgr::SoundDesc *soundDesc;	// sound handle used by iMuse sound manager
-	Audio::SoundHandle mixChanHandle;					// sound mixer's channel handle
+	Audio::SoundHandle mixChanHandle;		// sound mixer's channel handle
 	Audio::QueuingAudioStream *stream;		// sound mixer's audio stream handle for *.la1 and *.bun
+	Actor *speakingActor;					// actor reference for CMI speech
 
 	Track() : soundId(-1), used(false), stream(nullptr) {
 	}
 
 	void reset() {
 		trackId = 0;
-		pan = 0;
+		pan = 64;
 		vol = 0;
 		volFadeDest = 0;
 		volFadeStep = 0;
@@ -108,6 +109,7 @@ struct Track {
 		mixerFlags = 0;
 		soundDesc = nullptr;
 		stream = nullptr;
+		speakingActor = nullptr;
 	}
 
 	int getPan() const { return (pan != 64) ? 2 * pan - 127 : 0; }
