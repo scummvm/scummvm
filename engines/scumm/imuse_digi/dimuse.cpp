@@ -434,6 +434,7 @@ void IMuseDigital::callback() {
 					// This allows for a fallback to pan = 64 (center) and volume = 127 (full)
 					if (track->speakingActor != nullptr) {
 						effVol = track->speakingActor->_talkVolume;
+						effVol = int(round(effVol * 1.04));
 						effPan = (track->speakingActor->_talkPan != 64) ? 2 * track->speakingActor->_talkPan - 127 : 0;
 					}
 				}
