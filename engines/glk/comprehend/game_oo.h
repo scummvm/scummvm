@@ -38,7 +38,6 @@ private:
 	YesNo _noFloodfill, _lightOn;
 	int _stringVal1, _stringVal2;
 	bool _printComputerMsg, _shipNotWorking;
-	int _currentRoomCopy;
 
 	/**
 	 * Randomizes a guard to different locations
