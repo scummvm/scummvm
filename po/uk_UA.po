@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-02 22:39+0000\n"
-"PO-Revision-Date: 2020-11-29 16:04+0000\n"
+"PO-Revision-Date: 2020-12-03 00:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -17,8 +17,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Українська\n"
 
@@ -1329,20 +1329,23 @@ msgstr "Автозбереж.:"
 
 #: gui/options.cpp:2101
 msgid "Always return to the launcher when leaving a game"
-msgstr ""
+msgstr "Завжди повертатися до головного меню після виходу з гри"
 
 #: gui/options.cpp:2102
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
 msgstr ""
+"Завжди повертатися до головного меню після виходу з гри замість того, щоб "
+"закривати ScummVM."
 
 #: gui/options.cpp:2109
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "Запитувати підтвердження виходу"
 
 #: gui/options.cpp:2110
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr ""
+"Запитувати підтвердження виходу під час закриття ScummVM або виходу з гри."
 
 #: gui/options.cpp:2116
 msgid "Keys"
@@ -2562,25 +2565,20 @@ msgid "Download failed."
 msgstr "Помилка завантаження."
 
 #: backends/events/default/default-events.cpp:177
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to start a new game? All unsaved progress will be "
-#| "lost."
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Ви впевнені, що хочете почати нову гру? Весь незбережений прогрес буде "
-"втрачено."
+"Ви впевнені, що хочете повернутися до головного меню?\n"
+"Весь незбережений прогрес буде втрачено."
 
 #: backends/events/default/default-events.cpp:199
-#, fuzzy
-#| msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Ви впевнені, що хочете вийти? Незбережений прогрес у грі буде втрачено."
+"Ви впевнені, що хочете вийти?\n"
+"Незбережений прогрес у грі буде втрачено."
 
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:316
