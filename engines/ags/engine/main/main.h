@@ -44,8 +44,6 @@ extern AGS::Shared::String appDirectory;
 // Game path from the startup options (before reading config)
 extern AGS::Shared::String cmdGameDataPath;
 
-AGS::Shared::String GetPathFromCmdArg(int arg_index);
-
 // Startup flags, set from parameters to engine
 extern int force_window;
 extern int override_start_room;
