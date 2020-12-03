@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.7.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-03 03:13+0000\n"
-"PO-Revision-Date: 2020-09-26 12:37+0000\n"
+"PO-Revision-Date: 2020-12-03 20:45+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Czech <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/cs/>\n"
@@ -1002,7 +1002,7 @@ msgstr "Režim celé obrazovky"
 
 #: gui/options.cpp:1317
 msgid "V-Sync in 3D Games"
-msgstr ""
+msgstr "V-Sync ve 3D hrách"
 
 #: gui/options.cpp:1317
 msgid "Wait for the vertical sync to refresh the screen in 3D renderer"
@@ -1014,9 +1014,8 @@ msgid "Game 3D Renderer:"
 msgstr "Vykreslovač GUI:"
 
 #: gui/options.cpp:1328
-#, fuzzy
 msgid "3D Anti-aliasing:"
-msgstr "S vyhlazenými hranami"
+msgstr "3D Anti-aliasing:"
 
 #: gui/options.cpp:1332 engines/mohawk/dialogs.cpp:328
 msgid "Disabled"
@@ -1324,7 +1323,7 @@ msgstr "Autoukládání:"
 
 #: gui/options.cpp:2101
 msgid "Always return to the launcher when leaving a game"
-msgstr ""
+msgstr "Při opuštění hry se vždy se vraťte ke spouštěči"
 
 #: gui/options.cpp:2102
 msgid ""
@@ -1333,11 +1332,11 @@ msgstr ""
 
 #: gui/options.cpp:2109
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "Žádat potvrzení opuštění"
 
 #: gui/options.cpp:2110
 msgid "Ask for permission when closing ScummVM or leaving a game."
-msgstr ""
+msgstr "požádat o povolení při uzavření ScummVM nebo opuštění hry"
 
 #: gui/options.cpp:2116
 msgid "Keys"
