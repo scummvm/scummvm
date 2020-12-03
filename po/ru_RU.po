@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-02 22:39+0000\n"
-"PO-Revision-Date: 2020-11-29 16:03+0000\n"
+"PO-Revision-Date: 2020-12-03 00:55+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Русский\n"
 
@@ -1328,20 +1328,22 @@ msgstr "Автосохр.:"
 
 #: gui/options.cpp:2101
 msgid "Always return to the launcher when leaving a game"
-msgstr ""
+msgstr "Всегда возвращаться в главное меню при выходе из игры"
 
 #: gui/options.cpp:2102
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
 msgstr ""
+"Всегда возвращаться в главное меню при выходе из игры вместо того, чтобы "
+"закрывать ScummVM."
 
 #: gui/options.cpp:2109
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "Запрашивать подтверждение выхода"
 
 #: gui/options.cpp:2110
 msgid "Ask for permission when closing ScummVM or leaving a game."
-msgstr ""
+msgstr "Запрашивать подтверждение во время закрытия ScummVM или выхода из игры."
 
 #: gui/options.cpp:2116
 msgid "Keys"
@@ -2560,25 +2562,20 @@ msgid "Download failed."
 msgstr "Ошибка загрузки."
 
 #: backends/events/default/default-events.cpp:177
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to start a new game? All unsaved progress will be "
-#| "lost."
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Вы действительно хотите начать новую игру? Все несохранённые действия будут "
-"утеряны."
+"Вы действительно хотите возвратиться в главное меню?\n"
+"Все несохранённые действия будут утеряны."
 
 #: backends/events/default/default-events.cpp:199
-#, fuzzy
-#| msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Вы уверены, что хотите выйти? Все несохранённые действия будут утеряны."
+"Вы уверены, что хотите выйти?\n"
+"Все несохранённые действия будут утеряны."
 
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:316
