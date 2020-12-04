@@ -1706,6 +1706,7 @@ GlobalOptionsDialog::GlobalOptionsDialog(LauncherDialog *launcher)
 	_guiLanguageUseGameLanguageCheckbox = nullptr;
 	_useSystemDialogsCheckbox = nullptr;
 	_guiReturnToLauncherAtExit = nullptr;
+	_guiConfirmExit = nullptr;
 #ifdef USE_UPDATES
 	_updatesPopUpDesc = nullptr;
 	_updatesPopUp = nullptr;
