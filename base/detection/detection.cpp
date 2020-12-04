@@ -23,9 +23,9 @@
 #ifndef DETECTION_STATIC
 
 #include "base/plugins.h"
+#include "base/detection/detection.h"
 #include "engines/metaengine.h"
 #include "engines/advancedDetector.h"
-#include "engines/detection.h"
 
 
 class DetectionDynamic : public Detection {

@@ -30,7 +30,7 @@
 #include "common/fs.h"
 #endif
 
-#include "engines/detection.h"
+#include "base/detection/detection.h"
 
 // Plugin versioning
 
