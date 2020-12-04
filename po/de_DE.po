@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-12-04 22:08+0000\n"
+"POT-Creation-Date: 2020-12-04 22:43+0000\n"
 "PO-Revision-Date: 2020-11-29 16:07+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -66,8 +66,8 @@ msgstr "Pfad hoch"
 #: gui/saveload-dialog.cpp:1165 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:652
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
-#: backends/events/default/default-events.cpp:177
-#: backends/events/default/default-events.cpp:199
+#: backends/events/default/default-events.cpp:183
+#: backends/events/default/default-events.cpp:207
 #: backends/platform/wii/options.cpp:48 engines/cine/saveload.cpp:864
 #: engines/drascula/saveload.cpp:49 engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/myst_stacks/menu.cpp:301
@@ -131,7 +131,7 @@ msgstr ""
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:398 gui/launcher.cpp:419 gui/launcher.cpp:462
 #: gui/options.cpp:2708 gui/options.cpp:2746
-#: backends/events/default/default-events.cpp:177
+#: backends/events/default/default-events.cpp:183
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -2568,7 +2568,7 @@ msgstr "Download abgeschlossen."
 msgid "Download failed."
 msgstr "Download fehlgeschlagen."
 
-#: backends/events/default/default-events.cpp:177
+#: backends/events/default/default-events.cpp:183
 #, fuzzy
 #| msgid ""
 #| "Are you sure you want to start a new game? All unsaved progress will be "
@@ -2580,7 +2580,7 @@ msgstr ""
 "Sind Sie sicher, dass Sie ein neues Spiel starten möchten? Jeder nicht "
 "gespeicherte Fortschritt geht dabei verloren."
 
-#: backends/events/default/default-events.cpp:199
+#: backends/events/default/default-events.cpp:207
 #, fuzzy
 #| msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgid ""
@@ -2590,8 +2590,8 @@ msgstr ""
 "Möchten Sie das Spiel wirklich beenden? Jeder nicht gespeicherte Fortschritt "
 "geht dabei verloren."
 
-#: backends/events/default/default-events.cpp:199
-#: backends/events/default/default-events.cpp:316
+#: backends/events/default/default-events.cpp:207
+#: backends/events/default/default-events.cpp:324
 #: backends/platform/symbian/src/SymbianActions.cpp:54
 #: engines/hdb/metaengine.cpp:255 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:185
@@ -2600,23 +2600,23 @@ msgstr ""
 msgid "Quit"
 msgstr "Beenden"
 
-#: backends/events/default/default-events.cpp:293
+#: backends/events/default/default-events.cpp:301
 msgid "Global"
 msgstr "Allgemein"
 
-#: backends/events/default/default-events.cpp:296
+#: backends/events/default/default-events.cpp:304
 msgid "Global Main Menu"
 msgstr "Hauptmenü"
 
-#: backends/events/default/default-events.cpp:303
+#: backends/events/default/default-events.cpp:311
 msgid "Display keyboard"
 msgstr "Tastatur anzeigen"
 
-#: backends/events/default/default-events.cpp:310
+#: backends/events/default/default-events.cpp:318
 msgid "Toggle mute"
 msgstr "Stummschaltung umschalten"
 
-#: backends/events/default/default-events.cpp:338
+#: backends/events/default/default-events.cpp:346
 msgid "Open Debugger"
 msgstr "Debugger öffnen"
 
