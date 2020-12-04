@@ -46,13 +46,11 @@ static const PlainGameDescriptor agosGames[] = {
 	{"waxworks", "Waxworks"},
 	{"simon1", "Simon the Sorcerer 1"},
 	{"simon2", "Simon the Sorcerer 2"},
-#ifdef ENABLE_AGOS2
 	{"feeble", "The Feeble Files"},
 	{"dimp", "Demon in my Pocket"},
 	{"jumble", "Jumble"},
 	{"puzzle", "NoPatience"},
 	{"swampy", "Swampy Adventures"},
-#endif
 	{0, 0}
 };
 

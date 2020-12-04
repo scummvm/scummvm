@@ -24,6 +24,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/installshield_cab.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
@@ -97,6 +98,10 @@ Common::Error AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, con
 		else
 			*engine = new AGOS::AGOSEngine_PuzzlePack(syst, gd);
 		break;
+#else
+	case AGOS::GType_FF:
+	case AGOS::GType_PP:
+		return Common::Error(Common::kUnsupportedGameidError, _s("AGOS 2 support is not compiled in"));
 #endif
 	default:
 		return Common::kUnsupportedGameidError;
