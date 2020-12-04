@@ -1,9 +1,9 @@
-MODULE := detection
+MODULE := base/detection
 
-DETECT_OBJS_DYNAMIC=$(addprefix ../,$(DETECT_OBJS))
+DETECT_OBJS_DYNAMIC=$(addprefix ../../,$(DETECT_OBJS))
 
 MODULE_OBJS := \
-	../engines/detection.o \
+	detection.o \
 	$(DETECT_OBJS_DYNAMIC)
 
 # Reset detect objects, so none of them build into the executable.
