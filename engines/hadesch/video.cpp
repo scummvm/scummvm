@@ -789,7 +789,7 @@ Audio::RewindableAudioStream *VideoRoom::getAudioStream(const Common::String &so
 }
 
 void VideoRoom::playSoundInternal(const Common::String &soundName, EventHandlerWrapper callbackEvent, bool loop,
-				  bool skippable) {
+				  bool skippable, Audio::Mixer::SoundType soundType) {
 	Audio::RewindableAudioStream *rewSoundStream;
 	Audio::AudioStream *soundStream;
 	Animation anim;
@@ -801,29 +801,39 @@ void VideoRoom::playSoundInternal(const Common::String &soundName, EventHandlerW
 	anim._finished = false;
 	anim._keepLastFrame = false;
 	anim._skippable = skippable;
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &anim._soundHandle, soundStream,
+	g_system->getMixer()->playStream(soundType, &anim._soundHandle, soundStream,
 					 -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 	_anims.push_back(anim);
 }
 
-void VideoRoom::playSound(const Common::String &soundName, EventHandlerWrapper callbackEvent) {
-	playSoundInternal(soundName, callbackEvent, false, false);
+void VideoRoom::playSFX(const Common::String &soundName, EventHandlerWrapper callbackEvent) {
+	playSoundInternal(soundName, callbackEvent, false, false, Audio::Mixer::kSFXSoundType);
 }
 
-void VideoRoom::playSkippableSound(const Common::String &soundName, EventHandlerWrapper callbackEvent) {
-	playSoundInternal(soundName, callbackEvent, false, true);
+void VideoRoom::playMusic(const Common::String &soundName, EventHandlerWrapper callbackEvent) {
+	playSoundInternal(soundName, callbackEvent, false, false, Audio::Mixer::kMusicSoundType);
 }
 
-void VideoRoom::playSoundLoop(const Common::String &soundName) {
-	playSoundInternal(soundName, EventHandlerWrapper(), true, false);
+void VideoRoom::playSpeech(const TranscribedSound &sound,
+				    EventHandlerWrapper callbackEvent) {
+	playSoundInternal(sound.soundName, callbackEvent, false, true, Audio::Mixer::kSpeechSoundType);
 }
 
-void VideoRoom::playAnimWithSound(const LayerId &animName,
-				  const Common::String &soundName,
-				  int zValue,
-				  PlayAnimParams params,
-				  EventHandlerWrapper callbackEvent,
-				  Common::Point offset) {
+void VideoRoom::playSFXLoop(const Common::String &soundName) {
+	playSoundInternal(soundName, EventHandlerWrapper(), true, false, Audio::Mixer::kSFXSoundType);
+}
+
+void VideoRoom::playMusicLoop(const Common::String &soundName) {
+	playSoundInternal(soundName, EventHandlerWrapper(), true, false, Audio::Mixer::kMusicSoundType);
+}
+
+void VideoRoom::playAnimWithSoundInternal(const LayerId &animName,
+					  const Common::String &soundName,
+					  Audio::Mixer::SoundType soundType,
+					  int zValue,
+					  PlayAnimParams params,
+					  EventHandlerWrapper callbackEvent,
+					  Common::Point offset) {
 	Audio::AudioStream *soundStream;
 
 	if (!doesLayerExist(animName)) {
@@ -844,9 +854,36 @@ void VideoRoom::playAnimWithSound(const LayerId &animName,
 	anim._finished = false;
 	anim._keepLastFrame = params.getKeepLastFrame();
 	anim._skippable = false;
-	g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, &anim._soundHandle, soundStream,
+	g_system->getMixer()->playStream(soundType, &anim._soundHandle, soundStream,
 					 -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::YES);
 	_anims.push_back(anim);
+}
+
+void VideoRoom::playAnimWithSpeech(const LayerId &animName,
+				   const TranscribedSound &sound,
+				   int zValue,
+				   PlayAnimParams params,
+				   EventHandlerWrapper callbackEvent,
+				   Common::Point offset) {
+	playAnimWithSoundInternal(animName, sound.soundName, Audio::Mixer::kSpeechSoundType, zValue, params, callbackEvent, offset);
+}
+
+void VideoRoom::playAnimWithSFX(const LayerId &animName,
+				const Common::String &soundName,
+				int zValue,
+				PlayAnimParams params,
+				EventHandlerWrapper callbackEvent,
+				Common::Point offset) {
+	playAnimWithSoundInternal(animName, soundName, Audio::Mixer::kSFXSoundType, zValue, params, callbackEvent, offset);
+}
+
+void VideoRoom::playAnimWithMusic(const LayerId &animName,
+				  const Common::String &soundName,
+				  int zValue,
+				  PlayAnimParams params,
+				  EventHandlerWrapper callbackEvent,
+				  Common::Point offset) {
+	playAnimWithSoundInternal(animName, soundName, Audio::Mixer::kMusicSoundType, zValue, params, callbackEvent, offset);
 }
 
 void VideoRoom::playAnim(const LayerId &animName, int zValue,

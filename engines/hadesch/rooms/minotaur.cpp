@@ -24,6 +24,7 @@
 #include "hadesch/hadesch.h"
 #include "hadesch/video.h"
 #include "hadesch/ambient.h"
+#include "common/translation.h"
 
 namespace Hadesch {
 static const char *kHighlightImage = "r6010ol0";
@@ -83,32 +84,35 @@ enum {
 	kRerenderLabyrinth = 1017001
 };
 
-static const char *daedalusSounds[] = {
+static const char *daedalusSoundSMK[] = {
 	"R6100nA0",
 	"R6100wA0",
 	"R6100nB0",
 	"R6100wC0",
 	"R6100nD0",
-	"R6100nH0",
-	"R6100nL0",
-	"R6100nG0",
-	"R6100nK0",
-	"R6170nA0",
-	"R6150nA0",
-	"R6150nB0",
-	"R6150nC0",
-	"R6150nD0",
-	"R6180nA0",
-	"R6180nC0",
-	"R6180nD0",
-	"R6170nC0",
-	"R6170nD0",
-	"R6170nE0",
-	"R6170nF0",
-	"R6160nA0",
-	"R6090eA0",
-	"R6190nA0",
-	"R6190nB0",
+};
+
+static const TranscribedSound daedalusSoundsAIF[] = {
+	{"R6100nH0", _s("Help us to move the walls so that they are strong enough to stop the minotaur")},
+	{"R6100nL0", _s("Click on a square to rotate the walls")},
+	{"R6100nG0", _s("Some walls are already locked in place and won't rotate")},
+	{"R6100nK0", _s("If you need help, refer to workman's equations")},
+	{"R6170nA0", _s("Careful, my friend. Some of the walls are not strong enough")},
+	{"R6150nA0", _s("You're a brave bullfighter, my friend")},
+	{"R6150nB0", _s("Keep it up. It looks like he's tiring")},
+	{"R6150nC0", _s("That's taking the bull by the horns")},
+	{"R6150nD0", _s("Don't give up. You can't beat him")},
+	{"R6180nA0", _s("You have beaten the Minotaur. You have the makings of a hero")},
+	{"R6180nC0", _s("You have beaten the beast at last")},
+	{"R6180nD0", _s("You have done it. The people of Crete are once again safe")},
+	{"R6170nC0", _s("Let's try again")},
+	{"R6170nD0", _s("Warn the people of Crete: the Minotaur has escaped. Workers, keep the Minotaur back in the labyrinth")},
+	{"R6170nE0", _s("I believe you and the Minotaur have not seen the last of one another")},
+	{"R6170nF0", _s("Ah that was a nobble effort, my friend")},
+	{"R6160nA0", _s("The Minotaur has broken though a critical wall. Workers, calm on the beast")},
+	{"R6090eA0", _s("Eh. Hm")},
+	{"R6190nA0", _s("Ok. Onto level two")},
+	{"R6190nB0", _s("Onto level three")},
 };
 
 struct Wall {
@@ -235,7 +239,10 @@ private:
 		// TODO: balance
 		_currentSound = index;
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
-		room->playSound(daedalusSounds[index], 17953);
+		if (index < ARRAYSIZE(daedalusSoundSMK))
+			room->playVideo(daedalusSoundSMK[index], 17953);
+		else
+			room->playSpeech(daedalusSoundsAIF[index-ARRAYSIZE(daedalusSoundSMK)], 17953);
 	}
 
 	void playDaedalusSoundWrap() {
