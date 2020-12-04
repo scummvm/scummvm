@@ -114,9 +114,10 @@ private:
 	bool isPixelWhite(int16 x, int16 y) const;
 
 	void floodFillRow(int16 x, int16 y, uint32 fillColor);
-	void dumpToScreen();
 public:
 	void floodFill(int16 x, int16 y, uint32 fillColor);
+
+	void dumpToScreen();
 };
 
 class DrawSurface : public FloodFillSurface {
