@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-03 03:13+0000\n"
-"PO-Revision-Date: 2020-11-29 20:25+0000\n"
+"PO-Revision-Date: 2020-12-04 22:08+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -1325,20 +1325,22 @@ msgstr "Autom. tallennus:"
 
 #: gui/options.cpp:2101
 msgid "Always return to the launcher when leaving a game"
-msgstr ""
+msgstr "Palaa aina alkunäkymään pelin sulkeuduttua"
 
 #: gui/options.cpp:2102
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
 msgstr ""
+"Palaa aina alkunäkymään pelin sulkeuduttua, sen sijaan että ScummVM "
+"suljetaan kokonaan."
 
 #: gui/options.cpp:2109
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "Varmista että ohjelma halutaan sulkea"
 
 #: gui/options.cpp:2110
 msgid "Ask for permission when closing ScummVM or leaving a game."
-msgstr ""
+msgstr "Kysy lupaa sulkea ScummVM peliä sulkiessa."
 
 #: gui/options.cpp:2116
 msgid "Keys"
@@ -2552,24 +2554,20 @@ msgid "Download failed."
 msgstr "Lataus epäonnistui."
 
 #: backends/events/default/default-events.cpp:177
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to start a new game? All unsaved progress will be "
-#| "lost."
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Haluatko varmasti aloittaa uuden pelin? Menetät tallentamattoman "
-"edistymisesi."
+"Haluatko varmasti palata alkunäkymään?\n"
+"Menetät tallentamattoman edistymisesi."
 
 #: backends/events/default/default-events.cpp:199
-#, fuzzy
-#| msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
-msgstr "Haluatko varmasti lopettaa? Menetät tallentamattoman edistymisesi."
+msgstr ""
+"Haluatko varmasti lopettaa?\n"
+"Menetät tallentamattoman edistymisesi."
 
 #: backends/events/default/default-events.cpp:199
 #: backends/events/default/default-events.cpp:316
