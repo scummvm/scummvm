@@ -2551,7 +2551,6 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE | GF_WAVSFX
 	},
 
-#ifdef ENABLE_AGOS2
 	// The Feeble Files - English DOS Demo
 	{
 		{
@@ -3194,7 +3193,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GID_SWAMPY,
 		GF_OLD_BUNDLE | GF_TALKIE
 	},
-#endif
+
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }
 };
 
