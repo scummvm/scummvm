@@ -255,6 +255,8 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		break;
 	}
 
+	//ctx->_drawSurface->dumpToScreen();
+
 	return false;
 }
 

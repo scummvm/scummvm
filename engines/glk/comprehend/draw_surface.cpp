@@ -391,13 +391,11 @@ bool FloodFillSurface::isPixelWhite(int16 x, int16 y) const {
 	}
 }
 
-#define SCALE 4
-
 void FloodFillSurface::dumpToScreen() {
-	Graphics::ManagedSurface s(w * SCALE, h * SCALE, format);
-	s.transBlitFrom(*this, Common::Rect(0, 0, w, h), Common::Rect(0, 0, w * SCALE,h * SCALE), 0x888888);
-	g_system->copyRectToScreen(s.getPixels(), s.pitch, 0, 0,
-		MIN(s.w, (uint16)g_system->getWidth()), MIN(s.h, (uint16)g_system->getHeight()));
+	Graphics::ManagedSurface s(w * 2, h * 2, g_system->getScreenFormat());
+	s.transBlitFrom(*this, Common::Rect(0, 0, w, h), Common::Rect(0, 0, w * 2, h * 2), 0x888888);
+
+	g_system->copyRectToScreen(s.getPixels(), s.pitch, 0, 0, w * 2, h * 2);
 	g_system->updateScreen();
 }
 
