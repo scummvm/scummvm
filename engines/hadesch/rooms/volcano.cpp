@@ -64,8 +64,8 @@ public:
 			room->stopAnim("pain still");
 			room->stopAnim("panic still");
 			_boulder1Anim.hide();
-			room->playAnimWithSound("first boulder falls", "first boulder falls sound", 400,
-						PlayAnimParams::disappear(), 16023);
+			room->playAnimWithSFX("first boulder falls", "first boulder falls sound", 400,
+					      PlayAnimParams::disappear(), 16023);
 			return;
 		}
 
@@ -85,7 +85,7 @@ public:
 		if (name == "helmet") {
 			persistent->_volcanoPuzzleState = Persistent::VOLCANO_HELMET_SHOWN;
 			g_vm->getHeroBelt()->placeToInventory(kHelmet);
-			room->playSound("skeleton revealed sfx");
+			room->playSFX("skeleton revealed sfx");
 			room->playAnimKeepLastFrame("helmet", kHelmetZ);
 			return;
 		}
@@ -115,7 +115,7 @@ public:
 			break;
 		case 16007:
 			room->stopAnim("gem overlay");
-			room->playSound("morph music", 16009);
+			room->playMusic("morph music", 16009);
 			room->playVideo("morphing gems", 500, 16005, Common::Point(10, 10));
 			break;
 		case 16008:
@@ -137,8 +137,8 @@ public:
 			break;
 		case 16023:
 			squashedPanic();
-			room->playAnimWithSound("second boulder", "second boulder sound",
-						401, PlayAnimParams::keepLastFrame(), 16024);
+			room->playAnimWithSFX("second boulder", "second boulder sound",
+					      401, PlayAnimParams::keepLastFrame(), 16024);
 			persistent->_volcanoPuzzleState = Persistent::VOLCANO_SQUASHED_PANIC;
 			break;
 		case 16024:
@@ -149,7 +149,7 @@ public:
 			room->enableHotzone("second boulder");
 			break;
 		case 16025:
-			room->playSound("volcanic rumble", 16028);
+			room->playSFX("volcanic rumble", 16028);
 			room->selectFrame("volcano plug boulder", 400, 0);
 			g_vm->addTimer(16026, 500);
 			break;
@@ -158,7 +158,7 @@ public:
 			g_vm->addTimer(16030, 2500);
 			break;
 		case 16030:
-			room->playSound("explosion sound", 16033);
+			room->playSFX("explosion sound", 16033);
 			g_vm->addTimer(16031, 1000);
 			break;
 		case 16031:
@@ -171,8 +171,8 @@ public:
 			room->enableHotzone("helmet");
 			// TODO: 16035 timer
 			// TODO: Or is it "lava flow sound 1"
-			room->playAnimWithSound("final lava flow", "final lava flow sound", 500,
-						PlayAnimParams::loop());
+			room->playAnimWithSFX("final lava flow", "final lava flow sound", 500,
+					      PlayAnimParams::loop());
 			break;
 		}
 	}
@@ -208,9 +208,9 @@ public:
 
 		if (quest < kMedusaQuest || (quest == kMedusaQuest && persistent->_volcanoPuzzleState <= Persistent::VOLCANO_SQUASHED_PANIC)) {
 			for (int i = 1; i <= 3; i++) {
-				room->playAnimWithSound(Common::String::format("lava flow %d", i),
-							Common::String::format("lava flow sound %d", i),
-							500, PlayAnimParams::loop());
+				room->playAnimWithSFX(Common::String::format("lava flow %d", i),
+						      Common::String::format("lava flow sound %d", i),
+						      500, PlayAnimParams::loop());
 			}
 		}
 
@@ -228,15 +228,15 @@ public:
 			room->selectFrame("helmet", kHelmetZ, 0);
 			room->enableHotzone("helmet");
 			// TODO: Or is it "lava flow sound 1"
-			room->playAnimWithSound("final lava flow", "final lava flow sound", 500,
-						PlayAnimParams::loop());
+			room->playAnimWithSFX("final lava flow", "final lava flow sound", 500,
+					      PlayAnimParams::loop());
 			room->selectFrame("volcano plug boulder", 400, 0);
 		}
 
 		if (quest > kMedusaQuest || (quest == kMedusaQuest && persistent->_volcanoPuzzleState == Persistent::VOLCANO_HELMET_SHOWN)) {
 			room->selectFrame("helmet", kHelmetZ, -1);
-			room->playAnimWithSound("final lava flow", "final lava flow sound", 500,
-						PlayAnimParams::loop());
+			room->playAnimWithSFX("final lava flow", "final lava flow sound", 500,
+					      PlayAnimParams::loop());
 			room->selectFrame("volcano plug boulder", 400, 0);
 		}
 
@@ -247,9 +247,9 @@ public:
 		}
 
 		if (quest == kRescuePhilQuest) {
-			room->playSound("theme music");
+			room->playMusic("theme music");
 		} else {
-			room->playSoundLoop("W1010eA0");
+			room->playMusicLoop("W1010eA0");
 		}
 
 		room->playAnimLoop("waves", 900);
@@ -261,6 +261,7 @@ public:
 
 private:
 	void squashedPanic() {
+		// TODO: transcribe and change to speech sound type
 		_painAnim = AmbientAnim("squashed pain", "squashed pain sound", 425, 5000, 10000, AmbientAnim::KEEP_LOOP,
 					Common::Point(0, 0), AmbientAnim::PAN_ANY);
 		_panicAnim = AmbientAnim("squashed panic", "squashed panic sound", 425, 5000, 10000, AmbientAnim::KEEP_LOOP,

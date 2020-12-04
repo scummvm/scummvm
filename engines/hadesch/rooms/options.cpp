@@ -383,7 +383,7 @@ public:
 
 			if (ucode == '\b' && _typedSlotName.size() > 0) {
 				_typedSlotName.deleteLastChar();
-				room->playSound("keyclick");
+				room->playSFX("keyclick");
 				renderSaveName();
 				return;
 			}
@@ -393,7 +393,7 @@ public:
 
 			if (_typedSlotName.size() < 11) {
 				_typedSlotName += ucode;
-				room->playSound("keyclick");
+				room->playSFX("keyclick");
 				renderSaveName();
 			}
 		}

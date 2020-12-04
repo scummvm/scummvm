@@ -142,6 +142,21 @@ private:
 	int _msperframe;
 };
 
+struct TranscribedSound {
+	const char *soundName;
+	const char *transcript;
+
+	TranscribedSound(const char *s, const char *t) {
+		soundName = s;
+		transcript = t;
+	}
+
+	TranscribedSound() {
+		soundName = nullptr;
+		transcript = nullptr;
+	}
+};
+
 class VideoRoom {
 public:
 	VideoRoom(const Common::String &dir, const Common::String &pod,
@@ -185,7 +200,19 @@ public:
 	int getNumFrames(const LayerId &animName);
 
 	// Main animation API
-	void playAnimWithSound(const LayerId &animName,
+	void playAnimWithSpeech(const LayerId &animName,
+				const TranscribedSound &sound,
+				int zValue,
+				PlayAnimParams params,
+				EventHandlerWrapper callbackEvent = EventHandlerWrapper(),
+				Common::Point offset = Common::Point(0, 0));
+	void playAnimWithSFX(const LayerId &animName,
+			     const Common::String &soundName,
+			     int zValue,
+			     PlayAnimParams params,
+			     EventHandlerWrapper callbackEvent = EventHandlerWrapper(),
+			     Common::Point offset = Common::Point(0, 0));
+    	void playAnimWithMusic(const LayerId &animName,
 			       const Common::String &soundName,
 			       int zValue,
 			       PlayAnimParams params,
@@ -256,11 +283,14 @@ public:
 	int computeStringWidth(const Common::String &font, const Common::U32String &str, int fontDelta = 0);
 	
 	// Misc
-	void playSound(const Common::String &soundName,
+	void playSFX(const Common::String &soundName,
+		     EventHandlerWrapper callbackEvent = EventHandlerWrapper());
+	void playMusic(const Common::String &soundName,
 		       EventHandlerWrapper callbackEvent = EventHandlerWrapper());
-	void playSkippableSound(const Common::String &soundName,
-				EventHandlerWrapper callbackEvent = EventHandlerWrapper());
-	void playSoundLoop(const Common::String &soundName);
+	void playSFXLoop(const Common::String &soundName);
+	void playMusicLoop(const Common::String &soundName);
+	void playSpeech(const TranscribedSound &sound,
+				 EventHandlerWrapper callbackEvent = EventHandlerWrapper());
 	void playStatueSMK(StatueId id, const LayerId &animName, int zValue,
 			   const Common::Array<Common::String> &smkNames,
 			   int startOfLoop, int startOfEnd,
@@ -292,6 +322,13 @@ private:
 		int scale; // From 0 to 100
 	};
 
+	void playAnimWithSoundInternal(const LayerId &animName,
+				       const Common::String &soundName,
+				       Audio::Mixer::SoundType soundType,
+				       int zValue,
+				       PlayAnimParams params,
+				       EventHandlerWrapper callbackEvent = EventHandlerWrapper(),
+				       Common::Point offset = Common::Point(0, 0));
 	void addLayer(Renderable *renderable, const LayerId &name,
 		      int zValue,
 		      bool isEnabled = true, Common::Point offset = Common::Point(0, 0));
@@ -302,7 +339,7 @@ private:
 	Common::String mapAsset(const LayerId &name);
 	void addAnimLayerInternal(const LayerId &name, int zValue, Common::Point offset = Common::Point(0, 0));
 	void playSoundInternal(const Common::String &soundName, EventHandlerWrapper callbackEvent, bool loop,
-			       bool skippable);
+			       bool skippable, Audio::Mixer::SoundType soundType);
 	static int layerComparator (const Layer &a, const Layer &b);
 	void loadFontWidth(const Common::String &font);
 

@@ -92,8 +92,8 @@ private:
 	
 class AmbientAnimWeightedSet {
 public:
-	void readTableFilePriam(const TextTable &table);
-	void readTableFile(const TextTable &table, AmbientAnim::PanType pan);
+	void readTableFilePriamSFX(const TextTable &table);
+	void readTableFileSFX(const TextTable &table, AmbientAnim::PanType pan);
 	void tick();
 	void firstFrame();
 	void pause(const Common::String &name);
@@ -119,10 +119,12 @@ public:
 		_table = table;
 	}
 	void readTable(Common::SharedPtr<Hadesch::VideoRoom> room,
-		       const Common::String &name);
+		       const Common::String &name,
+		       const TranscribedSound *transcriptionTable);
 
 private:
 	TextTable _table;
+	Common::HashMap<Common::String, Common::String> _transcriptions;
 	Common::HashMap<Common::String, int> _counters;
 };
 
