@@ -49,6 +49,7 @@ lib*.a
 /CONTRIBUTING.html
 /doc/de/NEUES
 /doc/de/NEUES.html
+/doc/docportal/_build
 
 /build*
 /staging
