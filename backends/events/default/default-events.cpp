@@ -171,11 +171,19 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 #endif
 	case Common::EVENT_RETURN_TO_LAUNCHER:
 		if (ConfMan.getBool("confirm_exit")) {
-			PauseToken pt;
-			if (g_engine)
-				pt = g_engine->pauseEngine();
-			GUI::MessageDialog alert(_("Do you really want to return to the Launcher?\nAny unsaved progress will be lost."), _("Yes"), _("Cancel"));
-			forwardEvent = _shouldReturnToLauncher = (alert.runModal() == GUI::kMessageOK);
+			if (_confirmExitDialogActive) {
+				forwardEvent = false;
+				break;
+			}
+			_confirmExitDialogActive = true;
+			{
+				PauseToken pt;
+				if (g_engine)
+					pt = g_engine->pauseEngine();
+				GUI::MessageDialog alert(_("Do you really want to return to the Launcher?\nAny unsaved progress will be lost."), _("Yes"), _("Cancel"));
+				forwardEvent = _shouldReturnToLauncher = (alert.runModal() == GUI::kMessageOK);
+			}
+			_confirmExitDialogActive = false;
 		} else
 			_shouldReturnToLauncher = true;
 		break;
