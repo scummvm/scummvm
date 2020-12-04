@@ -322,8 +322,7 @@ Common::Error SciMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 		if (0 == strcmp(desc->gameId, g->gameidStr)) {
 #ifndef ENABLE_SCI32
 			if (g->isSci32) {
-				Engine::errorUnsupportedGame(_("SCI32 support not compiled in"));
-				return false;
+				return Common::Error(Common::kUnsupportedGameidError, _s("SCI32 support not compiled in"));
 			}
 #endif
 
