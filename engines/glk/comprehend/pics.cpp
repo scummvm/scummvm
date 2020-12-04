@@ -141,7 +141,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		break;
 
 	case OPCODE_TEXT_CHAR:
-	case OPCODE_TEXT_OUTLINE:
+	case OPCODE_TEXT_OUTLINE: {
 		// Text outline mode draws a bunch of pixels that sort of looks like the char
 		// TODO: See if the outline mode is ever used
 		if (opcode == OPCODE_TEXT_OUTLINE)
@@ -153,10 +153,16 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 			a = '?';
 		}
 
+		uint color = ctx->_fillColor;
+		// FIXME: Properly display text color in Crimson Crown
+		if (g_vm->getGameID() == "crimsoncrown" && color == 0x000000ff)
+			color = G_COLOR_WHITE;
+
 		debugC(kDebugGraphics, "draw_char(%c)", a);
-		ctx->_font->drawChar(ctx->_drawSurface, a, ctx->_textX, ctx->_textY, ctx->_fillColor);
+		ctx->_font->drawChar(ctx->_drawSurface, a, ctx->_textX, ctx->_textY, color);
 		ctx->_textX += ctx->_font->getCharWidth(a);
 		break;
+	}
 
 	case OPCODE_SET_SHAPE:
 		debugC(kDebugGraphics, "set_shape_type(%.2x)", param);
