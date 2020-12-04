@@ -88,7 +88,7 @@ void Typhoon::handleEvent(int eventId) {
 	case 15152:
 		room->enableMouse();
 		room->playAnimLoop("v7210bx0", 490);
-		room->playSound("v7210ed0");
+		room->playSFX("v7210ed0");
 		_battleground->_isInFight = true;
 		typhoonA();
 		for (unsigned i = 0; i < ARRAYSIZE(_headIsAlive); i++) {
@@ -104,7 +104,7 @@ void Typhoon::handleEvent(int eventId) {
 	case 15154:
 		if (!_battleground->_isInFight || _isKilled || _battleground->_monsterNum != kTyphoon)
 			return;
-		room->playSound("v7050ea0");
+		room->playSFX("v7050ea0");
 		schedule15154();
 		break;
 	case 15159:
@@ -126,8 +126,8 @@ void Typhoon::handleEvent(int eventId) {
 	case 15163:
 		if (!_battleground->_isInFight || _isKilled || _battleground->_monsterNum != kTyphoon)
 			return;
-		room->playSound(g_vm->getHeroBelt()->getSelectedStrength() == kPowerStrength
-				? "v7210eb0" : "v7210ea0");
+		room->playSFX(g_vm->getHeroBelt()->getSelectedStrength() == kPowerStrength
+			      ? "v7210eb0" : "v7210ea0");
 		g_vm->addTimer(15163, g_vm->getRnd().getRandomNumberRng(3000, 7000));
 		break;
 /*
@@ -146,7 +146,7 @@ void Typhoon::enterTyphoon(int level) {
 	room->playAnim("v7210ba0", kTyphoonZ,
 		       PlayAnimParams::disappear(),
 		       15152);
-	room->playSound("v7050eb0");
+	room->playSFX("v7050eb0");
 	for (unsigned i = 0; i < ARRAYSIZE(typhonHeadInfo); i++) {
 		room->enableHotzone(typhonHeadInfo[i]._hotZone);
 		room->setHotZoneOffset(typhonHeadInfo[i]._hotZone, typhonHeadInfo[i].getPosition());
@@ -183,11 +183,11 @@ void Typhoon::typhoonA() {
 		room->playAnim("v7050ba0", 500, PlayAnimParams::disappear(), 15153);
 	} else if (g_vm->getRnd().getRandomBit()) {
 		room->playAnim("v7210bi0", 500, PlayAnimParams::disappear().partial(0, 6), 15160);
-		room->playSound("v7140ec0");
+		room->playSFX("v7140ec0");
 	}
 	else {
 		room->playAnim("v7210bj0", 500, PlayAnimParams::disappear().partial(0, 6), 15159);
-		room->playSound("v7140ec0");
+		room->playSFX("v7140ec0");
 	}
 }
 
@@ -245,7 +245,7 @@ public:
 		_typhoon->_headIsAlive[_idx] = true;
 		if (!_typhoon->_playingTyphoonRespawnSound) {
 			_typhoon->_playingTyphoonRespawnSound = true;
-			room->playSound("v7050ed0", 15105);
+			room->playSFX("v7050ed0", 15105);
 		}
 		_typhoon->hideHead(_idx);
 		room->playAnim(LayerId(typhonHeadInfo[_idx]._animRespawn, _idx, "head"),
@@ -308,7 +308,7 @@ void Typhoon::hitTyphoonHead(Common::SharedPtr<Typhoon> backRef, int idx) {
 		return;
 
 	if (!_playingTyphoonDieSound) {
-		room->playSound("v7050ec0", 15104);
+		room->playSFX("v7050ec0", 15104);
 		_playingTyphoonDieSound = true;
 	}
 	_headIsAlive[idx] = false;
@@ -330,7 +330,7 @@ void Typhoon::hitTyphoonHead(Common::SharedPtr<Typhoon> backRef, int idx) {
 	_battleground->stopFight();
 
 	room->disableMouse();
-	room->playAnimWithSound("v7210bw0", "v7050ee0", 500, PlayAnimParams::disappear(), 15168);
+	room->playAnimWithSFX("v7210bw0", "v7050ee0", 500, PlayAnimParams::disappear(), 15168);
 }
 
 void Typhoon::stopAnims() {

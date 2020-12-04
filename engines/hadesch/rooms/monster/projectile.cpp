@@ -272,9 +272,9 @@ bool Projectile::tick(Common::SharedPtr <Projectile> backRef) {
 		} else {
 			FlightPosition fp = getFlightPosition(_flightCounterMs / (double) _flightLengthMs);
 			LayerId l = LayerId(_hitAnim, _projectileId, "projectile");
-			room->playAnimWithSound(l, "v7130ea0", 400, PlayAnimParams::disappear(),
-						Common::SharedPtr<EventHandler>(new HandlerProjectile(backRef, 15053)),
-						fp.centerPos - Common::Point(182, 205));
+			room->playAnimWithSFX(l, "v7130ea0", 400, PlayAnimParams::disappear(),
+					      Common::SharedPtr<EventHandler>(new HandlerProjectile(backRef, 15053)),
+					      fp.centerPos - Common::Point(182, 205));
 			_pending = 1;
 			// TODO: fade to red, in 100 ms, callback 15055
 			// TODO: shake camera for 1s
@@ -296,9 +296,9 @@ void Projectile::handleAbsoluteClick(Common::SharedPtr <Projectile> backRef, Com
 	_isFlightFinished = true;
 	_pending = 1;
 	LayerId l = LayerId(_interceptAnim, _projectileId, "projectile");
-	room->playAnimWithSound(l, "v7130eg0", 400, PlayAnimParams::disappear(),
-				Common::SharedPtr<EventHandler>(new HandlerProjectile(backRef, 15054)),
-				fp.centerPos - Common::Point(186, 210) * (fp.scale / 100.0));
+	room->playAnimWithSFX(l, "v7130eg0", 400, PlayAnimParams::disappear(),
+			      Common::SharedPtr<EventHandler>(new HandlerProjectile(backRef, 15054)),
+			      fp.centerPos - Common::Point(186, 210) * (fp.scale / 100.0));
 }
 
 }

@@ -161,7 +161,7 @@ public:
 			if (_specialPigeonIsDown) {
 				_specialPigeonCounter++;
 				if (_specialPigeonCounter > 2) {
-					room->playAnimWithSound(
+					room->playAnimWithSFX(
 						"AnimSpecialPigeonUp",
 						"SndSpecialPigeonUp",
 						500,
@@ -174,7 +174,7 @@ public:
 					return;
 				}
 			} else {
-				room->playAnimWithSound(
+				room->playAnimWithSFX(
 						"AnimSpecialPigeonDown",
 						"SndSpecialPigeonDown",
 						500,
@@ -194,7 +194,7 @@ public:
 			}
 			break;
 		case 20016:
-			room->playSound("HelenMusic", 20022);
+			room->playMusic("HelenMusic", 20022);
 			room->playAnimKeepLastFrame("AnimCrackedWallOverlay",
 						    999, 20011,
 						    Common::Point(-10, -10));
@@ -228,7 +228,7 @@ public:
 				       PlayAnimParams::disappear(), 20026);
 			room->playAnim("AnimCollapseR", 111,
 				       PlayAnimParams::disappear(), 20027);
-			room->playSound("BigCollapseSnd");
+			room->playSFX("BigCollapseSnd");
 			break;
 		case 20026:
 		case 20027:
@@ -245,11 +245,11 @@ public:
 		Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 		room->loadHotZones("priam.HOT");
 		room->addStaticLayer("Background", 10000, Common::Point(-10, -10));
-		room->playSound("IntroMusic");
-		room->playSoundLoop("T4010eA0");
+		room->playMusic("IntroMusic");
+		room->playMusicLoop("T4010eA0");
 		TextTable prAmb = TextTable(
 			Common::SharedPtr<Common::SeekableReadStream>(room->openFile("PrAmb.txt")), 6);
-		_ambients.readTableFilePriam(prAmb);
+		_ambients.readTableFilePriamSFX(prAmb);
 		g_vm->addTimer(20001, 100, -1);
 		g_vm->addTimer(20014, 3000, -1);
 		_ambients.firstFrame();
@@ -257,7 +257,6 @@ public:
 		g_vm->getHeroBelt()->setColour(HeroBelt::kCool);
 		_specialPigeonIsDown = true;
 		_specialPigeonIsBusy = false;
-		room->playSoundLoop("T4010eA0");
 		room->playAnim("AnimPigeons", 600, PlayAnimParams::disappear(), kAnimPigeonsEnd);
 	}
 

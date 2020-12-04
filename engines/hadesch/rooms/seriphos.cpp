@@ -24,6 +24,7 @@
 #include "hadesch/hadesch.h"
 #include "hadesch/video.h"
 #include "hadesch/ambient.h"
+#include "common/translation.h"
 
 namespace Hadesch {
 static const char *kApolloHighlight = "c7400ba0";
@@ -39,6 +40,33 @@ static const char *questHovelNames[] = {
 	"HovelsTroy",
 	"HovelsMedusa",
 	"HovelsPhil"
+};
+
+// TODO: fill this
+static const TranscribedSound seClickTranscript[] = {
+	{"c7320wb0", _s("You know, you've got to say one thing for that Oedipus: he loved his mother")},
+	{"c7320wc0", _s("Did you ever wonder: if Atlas is holding up the world, what's the heck is he standing on?") },
+	{"c7320wd0", _s("Do you know ho many narcisses it takes to screw in an oil lamp? One. He holds the lamp and the world revolves around him") },
+	{"c7320we0", _s("My dear, these hovels are small. Even the mice are crammed") },
+	{"c7320wf0", _s("Happiness is seeing king Polydectes' picture on the side of a milk bucket") },
+	{"c7330xa0", _s("You know what would look really good on king Polydectes? A pitbull")}, // unclear: I'm unable to hear beginning of the utterance
+	{"c7330xc0", _s("That Perseus kid: brave, strong, steady as rock. And if he takes one look at Medusa and it's where he's gonna be. Yeah, well, keep your fingers crossed, he's all over in snakes right now.")},
+	{"c7340xa0", _s("Did you hear Daedalus is building a huge labyrinth to catch Minotaur? Works great except now he can't find his way out. I heard he's building some wings made of wax. He-he. Good luch getting that idea off the ground")},
+	{"c7340xc0", _s("Boy our king is mean. Did you know that when Oedipus went blind the king rearranged the furniture? But at least we're not as bad off as the Crete: they have a rotten king, the dangerous Minotaur and lousy parking. Good luck finding a place for your chariot")},
+	{"c7350xa0", _s("That beautiful Helen is still being held captive in Troy. How awful for her. They've got such a lousy shopping there. When is this trojan war going to be over? Then maybe we'll start peloponesean war.")},
+	{"c7350xc0", _s("Gee, Odysseus failed to get into the city. Helen is still a prisonner and morale is low. What else can go wrong? He's just found out his chariot needs new shocks. That's gonna be expensive")},
+	{"c7360xa0", _s("Oh, it's a good thing Perseus killed Medusa otherwise Polydectes would still be king. Perseus is a much better king than Polydectes was. Now that I think of it, my dog would be a much better king than Polydectes was")},
+//	"c7360wc0"
+//	"c7360wd0"
+//	"c7310xc0"
+//	"c7310xa0"
+//	"c7310xb0"
+//	"c7310xd0"
+//	"c7310xe0"
+//	"c7310xf0"
+//	"c7310xh0"
+//	"c7310xg0"
+	{ nullptr, nullptr }
 };
 
 enum {
@@ -124,7 +152,7 @@ public:
 		if (name == kStrawCartHotzone) {
 			room->selectFrame(kStrawCartEmpty, kCartZ, 0);
 			_seIdles.hide(kStrawCartFull);
-			room->playSound("c7380mb0");
+			room->playMusic("c7380mb0");
 			g_vm->getHeroBelt()->placeToInventory(kStraw, kStrawTaken);
 			room->disableHotzone(kStrawCartHotzone);
 			room->disableMouse();
@@ -159,7 +187,7 @@ public:
 			int genericidx = -1;
 			_hovelsCounter++;
 			room->disableMouse();
-			room->playAnimWithSound("c7320ba0", "C7320EA0", 3101, PlayAnimParams::loop());
+			room->playAnimWithSFX("c7320ba0", "C7320EA0", 3101, PlayAnimParams::loop());
 			switch(persistent->_quest) {
 			case kRescuePhilQuest:
 				if (_hovelsCounter == 1) {
@@ -196,11 +224,11 @@ public:
 			_ambients.tick();
 			break;
 		case 26009:
-			room->playSound("c7290ma0", 26012);
+			room->playMusic("c7290ma0", 26012);
 			room->playVideo("c7290ba0", 111, 26010, Common::Point(90, 76));
 			break;
 		case 26010:
-			room->playSound("c7160ea0", 26013);
+			room->playSFX("c7160ea0", 26013);
 			break;
 		case 26013:
 			room->playVideo("c7290bd0", 111, 26014, Common::Point(92, 76));
@@ -242,7 +270,7 @@ public:
 		Common::String seAmbFn = quest > kMedusaQuest ? "SeAmb2.txt" : "SeAmb.txt";
 		TextTable seAmb = TextTable(
 			Common::SharedPtr<Common::SeekableReadStream>(room->openFile(seAmbFn)), 9);
-		_ambients.readTableFile(seAmb, AmbientAnim::PAN_ANY);
+		_ambients.readTableFileSFX(seAmb, AmbientAnim::PAN_ANY);
 
 		if (quest == kMedusaQuest && !persistent->_seriphosPlayedMedusa) {
 			g_vm->addTimer(26009, 500, 1);
@@ -256,15 +284,15 @@ public:
 			room->playAnimLoop("c7320bb0", 1101);
 		}
 
-		room->playSoundLoop(quest > kMedusaQuest ? "c7010eb0" : "c7010ea0");
+		room->playMusicLoop(quest > kMedusaQuest ? "c7010eb0" : "c7010ea0");
 
-		_seClick.readTable(room, "SeClick.txt");
+		_seClick.readTable(room, "SeClick.txt", seClickTranscript);
 
 		g_vm->getHeroBelt()->setColour(quest > kMedusaQuest ? HeroBelt::kWarm : HeroBelt::kCool);
 
 		TextTable seIdles = TextTable(
 				Common::SharedPtr<Common::SeekableReadStream>(room->openFile("SeIdles.txt")), 14);
-		_seIdles.readTableFile(seIdles, AmbientAnim::PAN_ANY);
+		_seIdles.readTableFileSFX(seIdles, AmbientAnim::PAN_ANY);
 		_seIdles.firstFrame();
 
 		if (quest == kCreteQuest && !persistent->_seriphosStrawCartTaken) {

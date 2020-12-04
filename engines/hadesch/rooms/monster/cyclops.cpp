@@ -91,7 +91,7 @@ void Cyclops::handleClick(Common::Point p) {
 		return;
 	room->disableMouse();
 	_battleground->stopFight();
-	room->playAnimWithSound("v7180bj0", "v7180xc0", 500, PlayAnimParams::disappear(), 15352);
+	room->playAnimWithSFX("v7180bj0", "v7180xc0", 500, PlayAnimParams::disappear(), 15352);
 }
 
 bool Cyclops::cyclopsIsHit(Common::Point p, int frame) {
@@ -122,16 +122,16 @@ void Cyclops::cyclopsState1() {
 	Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 	_currentCyclopsState = 1;
 
-	room->playAnimWithSound("v7040ba0", "v7040ea0",
-				kCyclopsZ,
-				PlayAnimParams::disappear(),
-				15257);
+	room->playAnimWithSFX("v7040ba0", "v7040ea0",
+			      kCyclopsZ,
+			      PlayAnimParams::disappear(),
+			      15257);
 }
 
 void Cyclops::cyclopsState2() {
 	Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 
-	room->playAnimWithSound(
+	room->playAnimWithSFX(
 		"v7180be0", "v7180ee0", kCyclopsZ,
 		PlayAnimParams::disappear()
 		.partial(0, 4), 15258);
@@ -147,20 +147,20 @@ void Cyclops::cyclopsState3() {
 void Cyclops::cyclopsState4() {
 	Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 	_currentCyclopsState = 4;
-	room->playAnimWithSound("v7180bk0", "v7180sc0", kCyclopsZ, PlayAnimParams::disappear(), 15260);
+	room->playAnimWithSFX("v7180bk0", "v7180sc0", kCyclopsZ, PlayAnimParams::disappear(), 15260);
 }
 
 void Cyclops::cyclopsState5() {
 	Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 	_currentCyclopsState = 5;
-	room->playAnimWithSound("v7180bi0", "v7180sa0", kCyclopsZ, PlayAnimParams::disappear().partial(0, 4), 15262);
+	room->playAnimWithSFX("v7180bi0", "v7180sa0", kCyclopsZ, PlayAnimParams::disappear().partial(0, 4), 15262);
 }
 
 void Cyclops::cyclopsState6() {
 	Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 	_currentCyclopsState = 6;
 
-	room->playAnimWithSound("v7180bi0", "v7180ee0", kCyclopsZ, PlayAnimParams::disappear().partial(5, 11), 15264);
+	room->playAnimWithSFX("v7180bi0", "v7180ee0", kCyclopsZ, PlayAnimParams::disappear().partial(5, 11), 15264);
 }
 
 Cyclops::Cyclops(Common::SharedPtr<Battleground> battleground) {
@@ -170,9 +170,9 @@ Cyclops::Cyclops(Common::SharedPtr<Battleground> battleground) {
 void Cyclops::enterCyclops(int level) {
 	Common::SharedPtr<VideoRoom> room = g_vm->getVideoRoom();
 	room->playAnimKeepLastFrame("v7180oa0", 600);
-	room->playAnimWithSound("v7180ba0", "v7180ea0", kCyclopsZ,
-				PlayAnimParams::disappear(),
-				15252);
+	room->playAnimWithSFX("v7180ba0", "v7180ea0", kCyclopsZ,
+			      PlayAnimParams::disappear(),
+			      15252);
 	Typhoon::disableHotzones();
 	_cyclopsProximityCheckCountdown = 0;
 	_currentCyclopsState = 0;
@@ -371,7 +371,7 @@ void Cyclops::handleEvent(int eventId) {
 		for (int i = 0; i < _battleground->getNumOfProjectiles(); i++) {
 			_battleground->launchProjectile(50, Common::Point(60, 203), 0);
 		}
-		room->playSound("v7140eb0");
+		room->playSFX("v7140eb0");
 		break;
 	case kCyclopsShootingEyeClosedMidAnim:
 		room->playAnim(kCyclopsShootingEyeClosed, kCyclopsZ, PlayAnimParams::disappear().partial(12, -1), 15255);

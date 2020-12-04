@@ -95,11 +95,11 @@ public:
 
 		if (name == "Guard" && !_guardIsBusy) {
 			_guardIsBusy = true;
-			room->playAnimWithSound("AnimGuardGrunt",
-						"SndGuardGrunt",
-						kGuardZ,
-						PlayAnimParams::keepLastFrame(),
-						kGuardGruntCleanup);
+			room->playAnimWithSFX("AnimGuardGrunt",
+					      "SndGuardGrunt",
+					      kGuardZ,
+					      PlayAnimParams::keepLastFrame(),
+					      kGuardGruntCleanup);
 			room->stopAnim(kGuardLooking);
 			return;
 		}
@@ -142,7 +142,7 @@ public:
 				"R3160eC0",
 				"R3160eD0",
 			};
-			room->playSound(sounds[g_vm->getRnd().getRandomNumberRng(0, 3)]);
+			room->playSFX(sounds[g_vm->getRnd().getRandomNumberRng(0, 3)]);
 			if (item == kHornedStatue) {
 				g_vm->getHeroBelt()->removeFromInventory(item);
 //				room->selectFrame(kStatues, 0);
@@ -212,18 +212,18 @@ public:
 			break;
 		case kGuardPeriodic:
 			if (!_guardIsBusy)
-				room->playAnimWithSound(kGuardLooking,
-							"SndGuardLooking",
-							kGuardZ,
-							PlayAnimParams::keepLastFrame());
+				room->playAnimWithSFX(kGuardLooking,
+						      "SndGuardLooking",
+						      kGuardZ,
+						      PlayAnimParams::keepLastFrame());
 			g_vm->addTimer(kGuardPeriodic, g_vm->getRnd().getRandomNumberRng(5000, 10000));
 			break;
 		case kMinosPeriodic:
 			if (!_minosIsBusy)
-				room->playAnimWithSound(kAnimMinosEating,
-							"SndMinosEating",
-							kMinosZ,
-							PlayAnimParams::keepLastFrame());
+				room->playAnimWithSFX(kAnimMinosEating,
+						      "SndMinosEating",
+						      kMinosZ,
+						      PlayAnimParams::keepLastFrame());
 			g_vm->addTimer(kMinosPeriodic, g_vm->getRnd().getRandomNumberRng(5000, 10000));
 			break;
 		case kInstructionMovieCompleted:
@@ -295,7 +295,7 @@ public:
 			persistent->_creteShowHornless4 = true;
 		}
 
-		room->playSound(persistent->isInInventory(kHornedStatue)
+		room->playMusic(persistent->isInInventory(kHornedStatue)
 				? "HornedIntroMusic" : "NormalIntroMusic");
 
 		if (persistent->_creteDaedalusRoomAvailable) {
@@ -304,7 +304,7 @@ public:
 
 		TextTable miAmb = TextTable(
 			Common::SharedPtr<Common::SeekableReadStream>(room->openFile("MiAmb.txt")), 6);
-		_ambients.readTableFilePriam(miAmb);
+		_ambients.readTableFilePriamSFX(miAmb);
 		g_vm->addTimer(14006, 100, -1);
 		_ambients.firstFrame();
 	}
