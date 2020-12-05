@@ -98,6 +98,13 @@ DO WHILE i>0
 			ELSE DO
 				IF EXISTS('SDK:gcc/lib/gcc/ppc-amigaos/'gcc_version'/'lib.so) THEN
 					ADDRESS COMMAND 'copy clone SDK:gcc/lib/gcc/ppc-amigaos/'gcc_version'/'lib.so install_path'/sobjs/'
+				ELSE DO
+					/*
+					If a shared library is not found, abort.
+					*/
+					SAY lib.so' not found! Aborting!'
+					EXIT
+				END
 			END
 		END
 	END
