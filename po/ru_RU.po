@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-04 23:04+0000\n"
-"PO-Revision-Date: 2020-12-03 00:55+0000\n"
+"PO-Revision-Date: 2020-12-05 11:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ru/>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Plural-Forms: nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<="
+"4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
 "X-Generator: Weblate 4.0.4\n"
 "X-Language-name: Русский\n"
 
@@ -4053,10 +4053,8 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Файл заставки '%s' не найден!"
 
 #: engines/agos/metaengine.cpp:104
-#, fuzzy
-#| msgid "SAGA2 support not compiled in"
 msgid "AGOS 2 support is not compiled in"
-msgstr "Поддержка для SAGA2 не скомпилирована"
+msgstr "Поддержка для AGOS 2 не скомпилирована"
 
 #: engines/agos/midi.cpp:144 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -4219,10 +4217,8 @@ msgid "Load anyway"
 msgstr "Всё равно загрузить"
 
 #: engines/cryomni3d/metaengine.cpp:142
-#, fuzzy
-#| msgid "FoxTail support is not compiled in"
 msgid "Versailles 1685 support is not compiled in"
-msgstr "Поддержка для FoxTail не скомпилирована"
+msgstr "Поддержка для Versailles 1685 не скомпилирована"
 
 #: engines/dragons/dragons.cpp:1803
 #, c-format
@@ -4770,10 +4766,8 @@ msgstr ""
 "Последующие запуски игры будут проходить без подобной проверки."
 
 #: engines/grim/metaengine.cpp:63
-#, fuzzy
-#| msgid "Eye of Beholder support is not compiled in"
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr "Поддержка для Eye of Beholder не скомпилирована"
+msgstr "Поддержка для Escape from Monkey Island не скомпилирована"
 
 #: engines/grim/resource.cpp:100
 msgid ""
