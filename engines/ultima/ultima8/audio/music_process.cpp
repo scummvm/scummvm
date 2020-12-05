@@ -62,14 +62,14 @@ uint32 MusicProcess::I_playMusic(const uint8 *args,
 uint32 MusicProcess::I_pauseMusic(const uint8 *args,
 								 unsigned int /*argsize*/) {
 	// This is only used in Crusader: No Regret.
-	warning("TODO: MusicProcess::I_pauseMusic Implement me");
+	if (_theMusicProcess) _theMusicProcess->pauseMusic();
 	return 0;
 }
 
 uint32 MusicProcess::I_unpauseMusic(const uint8 *args,
 								 unsigned int /*argsize*/) {
 	// This is only used in Crusader: No Regret.
-	warning("TODO: MusicProcess::I_unpauseMusic Implement me");
+	if (_theMusicProcess) _theMusicProcess->unpauseMusic();
 	return 0;
 }
 
