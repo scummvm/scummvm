@@ -26,6 +26,9 @@ scummremastered.zip    FILE    "gui/themes/scummremastered.zip"
 residualvm.zip         FILE    "gui/themes/residualvm.zip"
 encoding.dat           FILE    "dists/engine-data/encoding.dat"
 
+scummvm-tile-small.png     FILE    "dists/win32/graphics/scummvm-tile-small.png"
+scummvm-tile.png           FILE    "dists/win32/graphics/scummvm-tile.png"
+
 // Engine or feature specific resources
 #ifdef BUILTIN_RESOURCES
 #if PLUGIN_ENABLED_STATIC(GRIM)
