@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-04 23:04+0000\n"
-"PO-Revision-Date: 2020-12-04 22:08+0000\n"
+"PO-Revision-Date: 2020-12-05 18:38+0000\n"
 "Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
@@ -4044,10 +4044,8 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Videotiedostoa '%s' ei löytynyt!"
 
 #: engines/agos/metaengine.cpp:104
-#, fuzzy
-#| msgid "SAGA2 support not compiled in"
 msgid "AGOS 2 support is not compiled in"
-msgstr "SAGA2-tukea ei ole käännetty mukaan"
+msgstr "AGOS 2-tukea ei ole käännetty mukaan"
 
 #: engines/agos/midi.cpp:144 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -4210,10 +4208,8 @@ msgid "Load anyway"
 msgstr "Lataa silti"
 
 #: engines/cryomni3d/metaengine.cpp:142
-#, fuzzy
-#| msgid "FoxTail support is not compiled in"
 msgid "Versailles 1685 support is not compiled in"
-msgstr "FoxTail-tukea ei ole käännetty mukaan"
+msgstr "Versailles 1685-tukea ei ole käännetty mukaan"
 
 #: engines/dragons/dragons.cpp:1803
 #, c-format
@@ -4763,10 +4759,8 @@ msgstr ""
 "Seuraavilla kerroilla tätä tarkistusta ei enää tehdä."
 
 #: engines/grim/metaengine.cpp:63
-#, fuzzy
-#| msgid "Eye of Beholder support is not compiled in"
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr "Eye of Beholder-tukea ei ole käännetty mukaan"
+msgstr "Escape from Monkey Island-tukea ei ole käännetty mukaan"
 
 #: engines/grim/resource.cpp:100
 msgid ""
