@@ -283,12 +283,6 @@ void initHardware() {
 	vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
 	vramSetBankE(VRAM_E_MAIN_SPRITE);
 
-	REG_BG2CNT = BG_BMP16_256x256;
-	REG_BG2PA = 256;
-	REG_BG2PB = 0;
-	REG_BG2PC = 0;
-	REG_BG2PD = 256;
-
 	scX = 0;
 	scY = 0;
 	subScX = 0;
@@ -320,7 +314,7 @@ void OSystem_DS::initGraphics() {
 	oamInit(&oamMain, SpriteMapping_Bmp_1D_128, false);
 	_cursorSprite = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_Bmp);
 
-	_overlay.create(256, 192, _pfABGR1555);
+	_overlay.create(256, 192, true, 2, false, 0);
 }
 
 bool OSystem_DS::hasFeature(Feature f) {
@@ -444,7 +438,7 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		{
 			u16 paletteValue = red | (green << 5) | (blue << 10);
 
-			if (!_isOverlayShown) {
+			if (!_overlay.isVisible()) {
 				BG_PALETTE[r] = paletteValue;
 #ifdef DISABLE_TEXT_CONSOLE
 				BG_PALETTE_SUB[r] = paletteValue;
@@ -527,9 +521,8 @@ void OSystem_DS::updateScreen() {
 	       SpriteColorFormat_Bmp, _cursorSprite, 0, false, !_cursorVisible, false, false, false);
 	oamUpdate(&oamMain);
 
-	if (_isOverlayShown) {
-		u16 *back = (u16 *)_overlay.getPixels();
-		dmaCopy(back, BG_GFX, 256 * 192 * 2);
+	if (_overlay.isVisible()) {
+		_overlay.update();
 	} else if (_graphicsEnable) {
 		u16 *base = BG_GFX + 0x10000;
 		if (_graphicsMode == GFX_SWSCALE) {
@@ -566,15 +559,13 @@ void OSystem_DS::setShakePos(int shakeXOffset, int shakeYOffset) {
 }
 
 void OSystem_DS::showOverlay() {
-	dmaFillHalfWords(0, BG_GFX, 256 * 192 * 2);
-	videoBgEnable(2);
+	_overlay.reset();
+	_overlay.show();
 	lcdMainOnBottom();
-	_isOverlayShown = true;
 }
 
 void OSystem_DS::hideOverlay() {
-	videoBgDisable(2);
-	_isOverlayShown = false;
+	_overlay.hide();
 
 	if (DS::gameScreenSwap) {
 		lcdMainOnTop();
@@ -584,20 +575,15 @@ void OSystem_DS::hideOverlay() {
 }
 
 bool OSystem_DS::isOverlayVisible() const {
-	return _isOverlayShown;
+	return _overlay.isVisible();
 }
 
 void OSystem_DS::clearOverlay() {
-	memset(_overlay.getPixels(), 0, _overlay.pitch * _overlay.h);
+	_overlay.clear();
 }
 
 void OSystem_DS::grabOverlay(void *buf, int pitch) {
-	byte *dst = (byte *)buf;
-
-	for (int y = 0; y < _overlay.h; ++y) {
-		memcpy(dst, _overlay.getBasePtr(0, y), _overlay.w * _overlay.format.bytesPerPixel);
-		dst += pitch;
-	}
+	_overlay.grab((byte *)buf, pitch);
 }
 
 void OSystem_DS::copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) {
@@ -617,7 +603,7 @@ Graphics::PixelFormat OSystem_DS::getOverlayFormat() const {
 }
 
 Common::Point OSystem_DS::transformPoint(uint16 x, uint16 y) {
-	return DS::transformPoint(x, y, _isOverlayShown);
+	return DS::transformPoint(x, y, _overlay.isVisible());
 }
 
 bool OSystem_DS::showMouse(bool visible) {
@@ -627,7 +613,7 @@ bool OSystem_DS::showMouse(bool visible) {
 }
 
 void OSystem_DS::warpMouse(int x, int y) {
-	_cursorPos = DS::warpMouse(x, y, _isOverlayShown);
+	_cursorPos = DS::warpMouse(x, y, _overlay.isVisible());
 }
 
 void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
