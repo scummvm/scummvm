@@ -79,7 +79,7 @@ public:
 
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
+	virtual bool setGraphicsMode(int mode, uint flags);
 	virtual int getGraphicsMode() const;
 
 	virtual const GraphicsMode *getSupportedStretchModes() const;
