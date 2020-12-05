@@ -29,7 +29,13 @@ namespace DS {
 
 class Background : public Graphics::Surface {
 public:
-	void create(uint16 width, uint16 height, bool isRGB, int layer, bool isSub, int mapBase);
+	Background();
+
+	size_t getRequiredVRAM(uint16 width, uint16 height, bool isRGB, bool swScale);
+	void create(uint16 width, uint16 height, bool isRGB);
+	void create(uint16 width, uint16 height, bool isRGB, int layer, bool isSub, int mapBase, bool swScale);
+	void init(Background *surface);
+	void init(Background *surface, int layer, bool isSub, int mapBase, bool swScale);
 
 	void update();
 	void reset();
@@ -51,8 +57,9 @@ public:
 
 protected:
 	int _bg;
-	bool _visible;
-	int _realPitch;
+	bool _visible, _swScale;
+	uint16 _realPitch, _realHeight;
+	const Graphics::PixelFormat _pfCLUT8, _pfABGR1555;
 };
 
 } // End of namespace DS

@@ -23,17 +23,32 @@
 #include <nds.h>
 
 #include "backends/platform/ds/background.h"
+#include "backends/platform/ds/blitters.h"
 
 namespace DS {
 
-BgSize getBgSize(int width, int height, bool isRGB, int &realPitch) {
+Background::Background() :
+	_bg(-1), _visible(true), _swScale(false),
+	_realPitch(0), _realHeight(0),
+	_pfCLUT8(Graphics::PixelFormat::createFormatCLUT8()),
+	_pfABGR1555(Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15)) {
+}
+
+static BgSize getBgSize(uint16 width, uint16 height, bool isRGB, bool swScale, uint16 &realPitch, uint16 &realHeight) {
+	if (swScale) {
+		isRGB = true;
+		width = (width * 4) / 5;
+	}
+
 	BgSize size;
 	if (width > 512 && !isRGB) {
 		size = BgSize_B8_1024x512;
 		realPitch = 1024;
+		realHeight = 512;
 	} else if (height > 512 && !isRGB) {
 		size = BgSize_B8_512x1024;
 		realPitch = 512;
+		realHeight = 1024;
 	} else if (height > 256) {
 		if (isRGB) {
 			size = BgSize_B16_512x512;
@@ -42,6 +57,7 @@ BgSize getBgSize(int width, int height, bool isRGB, int &realPitch) {
 			size = BgSize_B8_512x512;
 			realPitch = 512;
 		}
+		realHeight = 512;
 	} else if (width > 256) {
 		if (isRGB) {
 			size = BgSize_B16_512x256;
@@ -50,6 +66,7 @@ BgSize getBgSize(int width, int height, bool isRGB, int &realPitch) {
 			size = BgSize_B8_512x256;
 			realPitch = 512;
 		}
+		realHeight = 256;
 	} else if (width > 128 || height > 128) {
 		if (isRGB) {
 			size = BgSize_B16_256x256;
@@ -58,6 +75,7 @@ BgSize getBgSize(int width, int height, bool isRGB, int &realPitch) {
 			size = BgSize_B8_256x256;
 			realPitch = 256;
 		}
+		realHeight = 256;
 	} else {
 		if (isRGB) {
 			size = BgSize_B16_128x128;
@@ -66,42 +84,133 @@ BgSize getBgSize(int width, int height, bool isRGB, int &realPitch) {
 			size = BgSize_B8_128x128;
 			realPitch = 128;
 		}
+		realHeight = 128;
 	}
 	return size;
 }
 
-void Background::create(uint16 width, uint16 height, bool isRGB, int layer, bool isSub, int mapBase) {
-	const Graphics::PixelFormat f = isRGB ? Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15) : Graphics::PixelFormat::createFormatCLUT8();
+size_t Background::getRequiredVRAM(uint16 width, uint16 height, bool isRGB, bool swScale) {
+	uint16 realPitch, realHeight;
+	/* BgSize size = */ getBgSize(width, height, isRGB, swScale, realPitch, realHeight);
+	return realPitch * realHeight;
+}
+
+void Background::create(uint16 width, uint16 height, bool isRGB) {
+	const Graphics::PixelFormat f = isRGB ? _pfABGR1555 : _pfCLUT8;
+	Surface::create(width, height, f);
+	_bg = -1;
+	_swScale = false;
+}
+
+void Background::create(uint16 width, uint16 height, bool isRGB, int layer, bool isSub, int mapBase, bool swScale) {
+	const Graphics::PixelFormat f = isRGB ? _pfABGR1555 : _pfCLUT8;
 	Surface::create(width, height, f);
 
-	BgType type = isRGB ? BgType_Bmp16 : BgType_Bmp8;
-	BgSize size = getBgSize(width, height, isRGB, _realPitch);
+	BgType type = (isRGB || swScale) ? BgType_Bmp16 : BgType_Bmp8;
+	BgSize size = getBgSize(width, height, isRGB, swScale, _realPitch, _realHeight);
 
 	if (isSub) {
 		_bg = bgInitSub(layer, type, size, mapBase, 0);
 	} else {
 		_bg = bgInit(layer, type, size, mapBase, 0);
 	}
+
+	_swScale = swScale;
+}
+
+void Background::init(Background *surface) {
+	Surface::init(surface->w, surface->h, surface->pitch, surface->pixels, surface->format);
+	_bg = -1;
+	_swScale = false;
+}
+
+void Background::init(Background *surface, int layer, bool isSub, int mapBase, bool swScale) {
+	Surface::init(surface->w, surface->h, surface->pitch, surface->pixels, surface->format);
+
+	bool isRGB = (format != _pfCLUT8);
+	BgType type = (isRGB || swScale) ? BgType_Bmp16 : BgType_Bmp8;
+	BgSize size = getBgSize(w, h, isRGB, swScale, _realPitch, _realHeight);
+
+	if (isSub) {
+		_bg = bgInitSub(layer, type, size, mapBase, 0);
+	} else {
+		_bg = bgInit(layer, type, size, mapBase, 0);
+	}
+
+	_swScale = swScale;
+}
+
+static void dmaBlit(uint16 *dst, const uint dstPitch, const uint16 *src, const uint srcPitch,
+                    const uint w, const uint h, const uint bytesPerPixel) {
+	if (dstPitch == srcPitch && ((w * bytesPerPixel) == dstPitch)) {
+		dmaCopy(src, dst, dstPitch * h);
+		return;
+	}
+
+	// The DS video RAM doesn't support 8-bit writes because Nintendo wanted
+	// to save a few pennies/euro cents on the hardware.
+
+	uint row = w * bytesPerPixel;
+
+	for (uint dy = 0; dy < h; dy += 2) {
+		const u16 *src1 = src;
+		src += (srcPitch >> 1);
+		DC_FlushRange(src1, row << 1);
+
+		const u16 *src2 = src;
+		src += (srcPitch >> 1);
+		DC_FlushRange(src2, row << 1);
+
+		u16 *dest1 = dst;
+		dst += (dstPitch >> 1);
+		DC_FlushRange(dest1, row << 1);
+
+		u16 *dest2 = dst;
+		dst += (dstPitch >> 1);
+		DC_FlushRange(dest2, row << 1);
+
+		dmaCopyHalfWordsAsynch(2, src1, dest1, row);
+		dmaCopyHalfWordsAsynch(3, src2, dest2, row);
+
+		while (dmaBusy(2) || dmaBusy(3));
+	}
 }
 
 void Background::update() {
-	u16 *src = (u16 *)getPixels();
+	if (_bg < 0)
+		return;
+
 	u16 *dst = bgGetGfxPtr(_bg);
-	dmaCopy(src, dst, _realPitch * h);
+	if (_swScale) {
+		if (format == _pfCLUT8) {
+			Rescale_320x256xPAL8_To_256x256x1555(
+				dst, (const u8 *)getPixels(), _realPitch / 2, pitch, BG_PALETTE, h);
+		} else {
+			Rescale_320x256x1555_To_256x256x1555(
+				dst, (const u16 *)getPixels(), _realPitch / 2, pitch / 2);
+		}
+	} else {
+		dmaBlit(dst, _realPitch, (const u16 *)getPixels(), pitch, w, h, format.bytesPerPixel);
+	}
 }
 
 void Background::reset() {
+	if (_bg < 0)
+		return;
+
 	u16 *dst = bgGetGfxPtr(_bg);
 	dmaFillHalfWords(0, dst, _realPitch * h);
 }
 
 void Background::show() {
-	bgShow(_bg);
+	if (_bg >= 0)
+		bgShow(_bg);
 	_visible = true;
 }
 
 void Background::hide() {
-	bgHide(_bg);
+	if (_bg >= 0)
+		bgHide(_bg);
 	_visible = false;
 }
 

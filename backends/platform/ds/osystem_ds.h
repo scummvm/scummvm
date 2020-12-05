@@ -39,9 +39,11 @@ enum {
 
 class OSystem_DS : public ModularMutexBackend, public ModularMixerBackend, public PaletteManager {
 protected:
-	DS::Background _overlay;
-	Graphics::Surface _framebuffer, _cursor;
-	bool _graphicsEnable, _isOverlayShown;
+	DS::Background _framebuffer, _overlay;
+#ifdef DISABLE_TEXT_CONSOLE
+	DS::Background _subScreen;
+#endif
+	Graphics::Surface _cursor;
 	int _graphicsMode, _stretchMode;
 
 	static OSystem_DS *_instance;
@@ -59,9 +61,6 @@ protected:
 	DSEventSource *_eventSource;
 
 	void initGraphics();
-
-	void dmaBlit(uint16 *dst, const uint dstPitch, const uint16 *src, const uint srcPitch,
-	             const uint w, const uint h, const uint bytesPerPixel);
 
 	bool _disableCursorPalette;
 
@@ -137,9 +136,6 @@ public:
 
 	virtual void setFocusRectangle(const Common::Rect& rect);
 	virtual void clearFocusRectangle();
-
-	virtual void engineInit();
-	virtual void engineDone();
 
 	virtual void initBackend();
 
