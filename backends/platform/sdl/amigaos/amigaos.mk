@@ -10,13 +10,12 @@ ifdef DIST_FILES_DOCS
 	cp $(DIST_FILES_DOCS) $(AMIGAOSPATH)/doc/
 	# Prepare README.md for AmigaGuide conversion.
 	cat ${srcdir}/README.md | sed -f ${srcdir}/dists/amigaos/convertRM.sed > README.conv
-	# AmigaOS AREXX has a problem when ${srcdir} is '.'.
-	# It will break with a "Program not found" error.
-	# Copy the script to cwd and, once it has finished, remove it.
+	# AmigaOS AREXX will break with a "Program not found" error, if srcdir is
+	# '.'. Copy the script to cwd instead.
 	cp ${srcdir}/dists/amigaos/RM2AG.rexx .
 	rx RM2AG.rexx README.conv $(AMIGAOSPATH)/doc/
-	rm README.conv
-	rm RM2AG.rexx
+	rm -f README.conv
+	rm -f RM2AG.rexx
 endif
 	# Copy mandatory installation files.
 ifdef DIST_FILES_ENGINEDATA
@@ -36,12 +35,15 @@ endif
 ifdef DYNAMIC_MODULES
 	mkdir -p $(AMIGAOSPATH)/plugins
 	$(foreach plugin, $(PLUGINS), $(STRIP) $(plugin) -o $(AMIGAOSPATH)/$(plugin);)
-	# Extract and install compiled-in shared libraries.
-	# Not every AmigaOS installation, especially vanilla ones,
-	# come with every mandatory shared library.
+	# Shared objects on AmigaOS change. To avoid conflicts with old or
+	# outdated .so's, always remove and install them completely.
+	rm -rf $(AMIGAOSPATH)/sobjs
 	mkdir -p $(AMIGAOSPATH)/sobjs
+	# Extract and install compiled-in shared libraries.
+	# Not every AmigaOS installation, especially vanilla ones, have
+	# every mandatory shared library installed in the correct place.
 	cp ${srcdir}/dists/amigaos/Ext_Inst_so.rexx .
 	rx Ext_Inst_so.rexx $(EXECUTABLE) $(AMIGAOSPATH)
-	rm Ext_Inst_so.rexx
+	rm -f Ext_Inst_so.rexx
 endif
 	$(STRIP) $(EXECUTABLE) -o $(AMIGAOSPATH)/$(EXECUTABLE)
