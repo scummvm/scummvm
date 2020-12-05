@@ -27,6 +27,7 @@
 #include "backends/modular-backend.h"
 #include "backends/events/ds/ds-events.h"
 #include "backends/mixer/mixer.h"
+#include "backends/platform/ds/background.h"
 #include "graphics/surface.h"
 #include "graphics/palette.h"
 
@@ -38,7 +39,8 @@ enum {
 
 class OSystem_DS : public ModularMutexBackend, public ModularMixerBackend, public PaletteManager {
 protected:
-	Graphics::Surface _framebuffer, _overlay, _cursor;
+	DS::Background _overlay;
+	Graphics::Surface _framebuffer, _cursor;
 	bool _graphicsEnable, _isOverlayShown;
 	int _graphicsMode, _stretchMode;
 
