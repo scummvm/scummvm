@@ -41,8 +41,6 @@
 
 #define VERSION_NUMBER 4
 
-Common::File outputFile;
-
 void NORETURN_PRE error(const char *s, ...) {
 	printf("%s\n", s);
 	exit(1);
@@ -60,6 +58,7 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
+	Common::File outputFile;
 	if (!outputFile.open("xeen.ccs", Common::kFileWriteMode)) {
 		error("Could not open input file");
 	}
