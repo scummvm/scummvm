@@ -349,7 +349,7 @@ int OSystem_DS::getDefaultGraphicsMode() const {
 	return GFX_HWSCALE;
 }
 
-bool OSystem_DS::setGraphicsMode(int mode) {
+bool OSystem_DS::setGraphicsMode(int mode, uint flags) {
 	switch (mode) {
 	case GFX_NOSCALE:
 	case GFX_HWSCALE:
