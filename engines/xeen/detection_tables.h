@@ -122,6 +122,21 @@ static const XeenGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Clouds of Xeen, Russian fan-translation
+		{
+			"cloudsofxeen",
+			nullptr,
+			AD_ENTRY1s("xeen.cc", "1dead179f65bbb1ba11dd51d69768489", 13417817),
+			Common::RU_RUS,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+		},
+		GType_Clouds,
+		0
+	},
+
+	{
 		// Darkside of Xeen
 		{
 			"darksideofxeen",
