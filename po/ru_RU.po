@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-12-06 18:13+0000\n"
+"POT-Creation-Date: 2020-12-06 18:26+0000\n"
 "PO-Revision-Date: 2020-12-05 11:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -4166,7 +4166,7 @@ msgstr "Автор перевода не желает, чтобы его пер�
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#: engines/sci/detection_tables.h:4816 engines/sci/detection_tables.h:4824
+#: engines/sci/detection_tables.h:4824 engines/sci/detection_tables.h:4832
 msgid "Missing game code"
 msgstr "Отсутствует код для игры"
 
