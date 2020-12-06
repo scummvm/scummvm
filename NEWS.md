@@ -36,6 +36,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Lure:
    - Fix fire animation in first room when loading saves.
+   - Fixed MT-32 support.
 
  SAGA:
    - Added support for ITE GOG Mac CD v1.1.
