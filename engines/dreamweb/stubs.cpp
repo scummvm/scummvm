@@ -1270,13 +1270,22 @@ void DreamWebEngine::commandWithOb(uint8 command, uint8 type, uint8 index) {
 	const char *command3Fr = "Aller vers";
 	if (command == 3 && getLanguage() == Common::FR_FRA)
 		string = (const uint8 *)command3Fr;
-	printDirect(string, _textAddressX, _textAddressY, textLen, (bool)(textLen & 1));
 
-	copyName(type, index, commandLine);
-	uint16 x = _lastXPos;
-	if (command != 0)
-		x += 5;
-	printDirect(commandLine, x, _textAddressY, textLen, (bool)(textLen & 1));
+	if (getLanguage() != Common::RU_RUS) {
+		printDirect(string, _textAddressX, _textAddressY, textLen, (bool)(textLen & 1));
+
+		copyName(type, index, commandLine);
+
+		uint16 x = _lastXPos;
+		if (command != 0)
+			x += 5;
+		printDirect(commandLine, x, _textAddressY, textLen, (bool)(textLen & 1));
+	} else {
+		copyName(type, index, commandLine);
+		printDirect(commandLine, _textAddressX, _textAddressY, textLen, (bool)(textLen & 1));
+
+		printDirect(string, _lastXPos, _textAddressY, textLen, (bool)(textLen & 1));
+	}
 	_newTextLine = 1;
 }
 
