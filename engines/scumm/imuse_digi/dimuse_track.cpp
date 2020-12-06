@@ -164,6 +164,8 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 		} else
 			error("IMuseDigital::startSound(): Can't handle %d bit samples", bits);
 
+		track->littleEndian = track->soundDesc->littleEndian;
+
 		int fadeDelay = 30; // Default fade value if not found anywhere else
 
 		if (otherTrack && otherTrack->used && !otherTrack->toBeRemoved) {
