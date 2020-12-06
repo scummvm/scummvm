@@ -3129,6 +3129,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::FR_FRA, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LSL6HIRES },
 
+	// Larry 6 - Russian DOS CD - HIRES (by CDS, Ltd)
+	// SCI interpreter version 2.100.002
+	{"lsl6hires", "Hi-res", {
+		{"resource.map", 0, "343089c5fc86d156b15087dccf30712c", 8872},
+		{"resource.000", 0, "9a9f4870504444cda863dd14d077a680", 18508781},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LSL6HIRES },
+
 	// Larry 6 - English Macintosh CD - HIRES (provided by michaelklaube in bug report #11218)
 	{"lsl6hires", "Hi-res", {
 		{"Data1", 0, "2c4e00a6910490831d4d84e9e6a49ec4", 3456494},
