@@ -83,9 +83,14 @@ Programmcodes finden Sie auf Englisch unter:
    - Gelegentliche Grafikfehler in Kampf-Szenen korrigiert.
    - Verbesserte Unterstützung für Zwischensequenzen, die nun dem Original genauer entsprechen.
 
+ AmigaOS-Portierung:
+   - Unterstützung für native Dateisystem-Dialoge hinzugefügt.
+   - Der nuked OPL Adlib-Treiber ist wieder aktiviert.
+
  MorphOS-Portierung:
    - Unterstützung für native Dateisystem-Dialoge hinzugefügt.
    - Unterstützung für die Cloud-Anbindung hinzugefügt.
+   - Der nuked OPL Adlib-Treiber ist wieder aktiviert.
 
 #### 2.2.0 "Interactive Fantasy" (27.09.2020)
 
