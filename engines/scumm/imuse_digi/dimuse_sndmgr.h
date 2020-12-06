@@ -82,6 +82,7 @@ public:
 		uint16 freq;		// frequency
 		byte channels;		// stereo or mono
 		byte bits;			// 8, 12, 16
+		bool littleEndian;      // Endianness: default is big for original files and native for recompressed ones
 
 		int numJumps;		// number of Jumps
 		Region *region;
@@ -117,7 +118,7 @@ private:
 
 	bool checkForProperHandle(SoundDesc *soundDesc);
 	SoundDesc *allocSlot();
-	void prepareSound(byte *ptr, SoundDesc *sound);
+	void prepareSound(byte *ptr, SoundDesc *sound, bool uncompressedBundle);
 	void prepareSoundFromRMAP(Common::SeekableReadStream *file, SoundDesc *sound, int32 offset, int32 size);
 
 	ScummEngine *_vm;

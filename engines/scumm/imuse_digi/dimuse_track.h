@@ -72,6 +72,7 @@ struct Track {
 	int32 feedSize;		   // size of sound data needed to be filled at each callback iteration
 	int32 dataMod12Bit;	   // value used between all callback to align 12 bit source of data
 	int32 mixerFlags;	   // flags for sound mixer's channel (kFlagStereo, kFlag16Bits, kFlagUnsigned)
+	bool littleEndian;	   // Endianness: default is big for original files and native for recompressed ones
 
 	ImuseDigiSndMgr::SoundDesc *soundDesc;	// sound handle used by iMuse sound manager
 	Audio::SoundHandle mixChanHandle;		// sound mixer's channel handle
@@ -110,6 +111,7 @@ struct Track {
 		soundDesc = nullptr;
 		stream = nullptr;
 		speakingActor = nullptr;
+		littleEndian = false;
 	}
 
 	int getPan() const { return (pan != 64) ? 2 * pan - 127 : 0; }
