@@ -86,6 +86,8 @@ static int32 makeMixerFlags(Track *track) {
 	if (track->sndDataExtComp)
 		mixerFlags |= Audio::FLAG_LITTLE_ENDIAN;
 #endif
+	if (track->littleEndian)
+		mixerFlags |= Audio::FLAG_LITTLE_ENDIAN;
 	if (flags & kFlagStereo)
 		mixerFlags |= Audio::FLAG_STEREO;
 	return mixerFlags;
@@ -182,6 +184,7 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 			int freq = _sound->getFreq(track->soundDesc);
 			track->feedSize = freq * channels;
 			track->mixerFlags = 0;
+			track->littleEndian = track->soundDesc->littleEndian;
 			if (channels == 2)
 				track->mixerFlags = kFlagStereo;
 

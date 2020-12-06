@@ -84,6 +84,7 @@ private:
 	int _curSampleId;
 	BaseScummFile *_file;
 	bool _compTableLoaded;
+	bool _isUncompressed;
 	int _fileBundleId;
 	byte _compOutputBuff[0x2000];
 	byte *_compInputBuff;
@@ -100,8 +101,8 @@ public:
 	bool open(const char *filename, bool &compressed, bool errorFlag = false);
 	void close();
 	Common::SeekableReadStream *getFile(const char *filename, int32 &offset, int32 &size);
-	int32 decompressSampleByName(const char *name, int32 offset, int32 size, byte **compFinal, bool headerOutside);
-	int32 decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **compFinal, int header_size, bool headerOutside);
+	int32 decompressSampleByName(const char *name, int32 offset, int32 size, byte **compFinal, bool headerOutside, bool &uncompressedBundle);
+	int32 decompressSampleByIndex(int32 index, int32 offset, int32 size, byte **compFinal, int header_size, bool headerOutside, bool &uncompressedBundle);
 	int32 decompressSampleByCurIndex(int32 offset, int32 size, byte **compFinal, int headerSize, bool headerOutside);
 };
 
