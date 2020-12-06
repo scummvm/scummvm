@@ -96,6 +96,7 @@ const Game kyra3Games[] = {
 	{ kKyra3, kPlatformDOS, kTalkieVersion, DE_DEU },
 	{ kKyra3, kPlatformDOS, kTalkieVersion, IT_ITA },
 	{ kKyra3, kPlatformDOS, kTalkieVersion, ES_ESP },
+	{ kKyra3, kPlatformDOS, kTalkieVersion, RU_RUS },
 
 	GAME_DUMMY_ENTRY
 };
