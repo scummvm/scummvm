@@ -46,7 +46,7 @@ void NORETURN_PRE error(const char *s, ...) {
 	exit(1);
 }
 
-void writeVersion(CCArchive &cc) {
+static void writeVersion(CCArchive &cc) {
 	Common::MemFile f;
 	f.writeLong(VERSION_NUMBER);
 	cc.add("VERSION", f);	
