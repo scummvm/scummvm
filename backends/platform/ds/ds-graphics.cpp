@@ -265,10 +265,6 @@ void setTalkPos(int x, int y) {
 void initHardware() {
 	powerOn(POWER_ALL);
 
-	for (int r = 0; r < 255; r++) {
-		BG_PALETTE[r] = 0;
-	}
-
 	videoSetMode(MODE_5_2D | DISPLAY_BG3_ACTIVE);
 	vramSetBankA(VRAM_A_MAIN_BG_0x06000000);
 	vramSetBankB(VRAM_B_MAIN_BG_0x06020000);
@@ -316,7 +312,7 @@ bool OSystem_DS::hasFeature(Feature f) {
 void OSystem_DS::setFeatureState(Feature f, bool enable) {
 	if (f == kFeatureCursorPalette) {
 		_disableCursorPalette = !enable;
-		refreshCursor(_cursorSprite, _cursor, !_disableCursorPalette ? _cursorPalette : _palette);
+		_cursorDirty = true;
 	}
 }
 
@@ -433,25 +429,13 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		int green = *(colors + 1);
 		int blue = *(colors + 2);
 
-		red >>= 3;
-		green >>= 3;
-		blue >>= 3;
-
-		{
-			u16 paletteValue = red | (green << 5) | (blue << 10);
-
-			if (!_overlay.isVisible()) {
-				BG_PALETTE[r] = paletteValue;
-#ifdef DISABLE_TEXT_CONSOLE
-				BG_PALETTE_SUB[r] = paletteValue;
-#endif
-			}
-
-			_palette[r] = paletteValue;
-		}
-
+		_palette[r] = RGB8(red, green, blue);
 		colors += 3;
 	}
+
+	_paletteDirty = true;
+	if (_disableCursorPalette)
+		_cursorDirty = true;
 }
 
 void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
@@ -461,25 +445,19 @@ void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 		int green = *(colors + 1);
 		int blue = *(colors + 2);
 
-		red >>= 3;
-		green >>= 3;
-		blue >>= 3;
-
-		u16 paletteValue = red | (green << 5) | (blue << 10);
-		_cursorPalette[r] = paletteValue;
-
+		_cursorPalette[r] = RGB8(red, green, blue);
 		colors += 3;
 	}
 
 	_disableCursorPalette = false;
-	refreshCursor(_cursorSprite, _cursor, !_disableCursorPalette ? _cursorPalette : _palette);
+	_cursorDirty = true;
 }
 
 void OSystem_DS::grabPalette(unsigned char *colors, uint start, uint num) const {
 	for (unsigned int r = start; r < start + num; r++) {
-		*colors++ = (BG_PALETTE[r] & 0x001F) << 3;
-		*colors++ = (BG_PALETTE[r] & 0x03E0) >> 5 << 3;
-		*colors++ = (BG_PALETTE[r] & 0x7C00) >> 10 << 3;
+		*colors++ = (_palette[r] & 0x001F) << 3;
+		*colors++ = (_palette[r] & 0x03E0) >> 5 << 3;
+		*colors++ = (_palette[r] & 0x7C00) >> 10 << 3;
 	}
 }
 
@@ -488,6 +466,10 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 }
 
 void OSystem_DS::updateScreen() {
+	if (_cursorDirty) {
+		refreshCursor(_cursorSprite, _cursor, !_disableCursorPalette ? _cursorPalette : _palette);
+		_cursorDirty = false;
+	}
 	oamSet(&oamMain, 0, _cursorPos.x - _cursorHotX, _cursorPos.y - _cursorHotY, 0, 15, SpriteSize_64x64,
 	       SpriteColorFormat_Bmp, _cursorSprite, 0, false, !_cursorVisible, false, false, false);
 	oamUpdate(&oamMain);
@@ -495,6 +477,14 @@ void OSystem_DS::updateScreen() {
 	if (_overlay.isVisible()) {
 		_overlay.update();
 	} else {
+		if (_paletteDirty) {
+			dmaCopyHalfWords(3, _palette, BG_PALETTE, 256 * 2);
+#ifdef DISABLE_TEXT_CONSOLE
+			dmaCopyHalfWords(3, _palette, BG_PALETTE_SUB, 256 * 2);
+#endif
+			_paletteDirty = false;
+		}
+
 		_framebuffer.update();
 #ifdef DISABLE_TEXT_CONSOLE
 		_subScreen.update();
@@ -583,7 +573,7 @@ void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, i
 		_cursor.convertToInPlace(_pfABGR1555);
 	}
 
-	refreshCursor(_cursorSprite, _cursor, !_disableCursorPalette ? _cursorPalette : _palette);
+	_cursorDirty = true;
 }
 
 void OSystem_DS::refreshCursor(u16 *dst, const Graphics::Surface &src, const uint16 *palette) {
