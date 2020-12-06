@@ -3981,7 +3981,7 @@ msgstr ""
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#: engines/sci/detection_tables.h:4808 engines/sci/detection_tables.h:4816
+#: engines/sci/detection_tables.h:4816 engines/sci/detection_tables.h:4824
 msgid "Missing game code"
 msgstr ""
 
