@@ -1286,8 +1286,8 @@ enum AnimationModes {
 	// 27 - 28 not used
 	// 29 stand up
 	// 30 - 37 not used
-	// 38 ???
-	// 39 not used
+	// 38 McCoy searches inside big dumpster
+	// 39 McCoy agonizing death animation - not used
 	// 40 McCoy throws body
 	kAnimationModeSpinnerGetIn    = 41,
 	kAnimationModeSpinnerGetOut   = 42,
@@ -1301,7 +1301,7 @@ enum AnimationModes {
 	// 50 Luther, Tyrell Guard ???
 	// 51 Steele, Maggie ???
 	kAnimationModeFeeding         = 52,
-	kAnimationModeSit             = 53, // more like sitting than sitting down
+	kAnimationModeSit             = 53, // sitting (eg. for McCoy used in NR04, NR05 rotating couch) (McCoy, Clovis, Dektora, Guzza, Gordo)
 	// 54 Clovis, Maggie ???
 	// 55 transient, Tyrell Guard, Maggie
 	// 56 Maggie ???
@@ -1314,14 +1314,14 @@ enum AnimationModes {
 	kAnimationModeClimbDown       = 65,
 	kAnimationModeCombatClimbUp   = 66,
 	kAnimationModeCombatClimbDown = 67
-	// 68 McCoy getting kicked
+	// 68 McCoy getting kicked (while down)
 	// 69 not used
 	// 70 Dektora ???
 	// 71 Dektora ???
 	// 72 Desk Clerk, Leon ???
 	// 73 EarlyQ ???
 	// 74 EarlyQ ???
-	// 75 McCoy drinking ???
+	// 75 McCoy drinking
 	// 76 EarlyQ ???
 	// 77 not used
 	// 78 Hanoi ???
@@ -1864,7 +1864,27 @@ enum GameModelAnimations {
 	// 838 - 845: Mama Isabella animations
 	// 846 - 856: Leon animations
 	// 857 - 862: Rat (Free Slot A/B) animations
+	kModelAnimationRatJumpAttack                   = 857,
+	kModelAnimationRatRunning                      = 858,
+	kModelAnimationRatDying                        = 859,
+	kModelAnimationRatHurt                         = 860,
+	kModelAnimationRatIdle                         = 861,
+	kModelAnimationRatSlowWalk                     = 862,
 	// 863 - 876: Maggie animations
+	kModelAnimationMaggieWalking                   = 863,
+	kModelAnimationMaggieStandingIdle              = 864,
+	kModelAnimationMaggieBarking                   = 865,
+	kModelAnimationMaggieLayingDown                = 866,
+	kModelAnimationMaggieLayingIdleTailWagging     = 867,
+	kModelAnimationMaggieLayingStandingUp          = 868,
+	kModelAnimationMaggieStandingOnTwoFeet         = 869,
+	kModelAnimationMaggieBarkingOrHeadUp           = 870,
+	kModelAnimationMaggieLayingDead                = 871,
+	kModelAnimationMaggieWalkingTrapped            = 872,
+	kModelAnimationMaggieStandingOnTwoFeetTrapped  = 873,
+	kModelAnimationMaggieExploding                 = 874,
+	kModelAnimationMaggieStandingIdleTrapped       = 875,
+	kModelAnimationMaggieToggleLaySleepingWakeUp   = 876,
 	// 877 - 884: Hysteria Patron1 (dancer) animations
 	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp = 877,
 	kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion   = 878,
