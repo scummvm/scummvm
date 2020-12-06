@@ -50,6 +50,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die koreanischen Fan-Übersetzungen von Castle of Dr. Brain, Eco Quest, Gabriel Knight,
      King's Quest 1, 5 und 6, Laura Bow 2: Dagger of Amon Ra und Space Quest 4 hinzugefügt.
    - Unterstützung für zahlreiche koreanische Übersetzungen des scummkor-Projektes hinzugefügt.
+   - Unterstützung für die russische Version von LSL6 hinzugefügt.
 
  SCUMM:
    - Textdarstellung in der chinesischen, japanischen und koreanischen Version von The Dig und
