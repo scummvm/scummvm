@@ -45,6 +45,7 @@ protected:
 #endif
 	Graphics::Surface _cursor;
 	int _graphicsMode, _stretchMode;
+	bool _paletteDirty, _cursorDirty;
 
 	static OSystem_DS *_instance;
 
