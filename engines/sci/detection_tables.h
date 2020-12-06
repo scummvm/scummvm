@@ -3209,10 +3209,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LSL7 },
 
-	// Larry 7 - Russian DOS CD (from StalinEXE bug report #10638)
-	{"lsl7", "", {
+	// Larry 7 - Russian DOS CD (from StalinEXE bug report #10638), Softclub
+	{"lsl7", "Softclub", {
 		{"resmap.000", 0, "39cc96426409572e825a5d9a4e9507b9", 8188},
 		{"ressci.000", 0, "07002ad7b1cff28c6701eea201dcf6c8", 145215917},
+		AD_LISTEND},
+		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LSL7 },
+
+	// Larry 7 - Russian DOS CD (Fargus)
+	// SCI interpreter version 3.000.000
+	{"lsl7", "Fargus", {
+		{"resmap.000", 0, "6c2f829436c18f0304b5a189295aeea6", 8188},
+		{"ressci.000", 0, "f7ed06aa59c74d55027d481405b22c2f", 67069114},
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_LSL7 },
 
