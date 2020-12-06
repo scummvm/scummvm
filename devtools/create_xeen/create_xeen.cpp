@@ -42,7 +42,7 @@
 #define VERSION_NUMBER 4
 
 void NORETURN_PRE error(const char *s, ...) {
-	printf("%s\n", s);
+	fprintf(stderr, "%s\n", s);
 	exit(1);
 }
 
@@ -54,8 +54,7 @@ static void writeVersion(CCArchive &cc) {
 
 int main(int argc, char *argv[]) {
 	if (argc != 3) {
-		printf("Format: %s dark.cc \"swords xeen.dat\"\n", argv[0]);
-		return 1;
+		error("Format: %s dark.cc \"swords xeen.dat\"", argv[0]);
 	}
 
 	Common::File outputFile;
