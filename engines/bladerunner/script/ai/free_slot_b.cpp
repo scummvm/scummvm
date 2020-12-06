@@ -264,15 +264,15 @@ bool AIScriptFreeSlotB::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptFreeSlotB::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 861;
+		*animation = kModelAnimationRatIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(861)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRatIdle)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 1:
-		*animation = 862;
+		*animation = kModelAnimationRatSlowWalk;
 		if (_var1) {
 			--_var1;
 		} else {
@@ -293,25 +293,25 @@ bool AIScriptFreeSlotB::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
-		*animation = 862;
+		*animation = kModelAnimationRatSlowWalk;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(862) - 1) {
-			*animation = 861;
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationRatSlowWalk) - 1) {
+			*animation = kModelAnimationRatIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 3:
-		*animation = 858;
+		*animation = kModelAnimationRatRunning;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(858)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRatRunning)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 4:
-		*animation = 857;
+		*animation = kModelAnimationRatJumpAttack;
 		++_animationFrame;
 		if (_animationFrame == 3) {
 			int snd;
@@ -326,7 +326,7 @@ bool AIScriptFreeSlotB::UpdateAnimation(int *animation, int *frame) {
 			Actor_Combat_AI_Hit_Attempt(kActorFreeSlotB);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			*animation = 861;
+			*animation = kModelAnimationRatIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
@@ -335,11 +335,11 @@ bool AIScriptFreeSlotB::UpdateAnimation(int *animation, int *frame) {
 	case 5:
 		// This is an animation for Maggie (exploding) but is also used for generic death states (rats, generic walkers)
 		// probably for debug purposes
-		*animation = 874;
+		*animation = kModelAnimationMaggieExploding;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieExploding) - 1) {
 			_animationState = 8;
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(874) - 1;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieExploding) - 1;
 		}
 		break;
 
@@ -347,9 +347,9 @@ bool AIScriptFreeSlotB::UpdateAnimation(int *animation, int *frame) {
 		if (_animationFrame == 1) {
 			Ambient_Sounds_Play_Sound(kSfxRATTY3, 99, 0, 0, 20);
 		}
-		*animation = 860;
+		*animation = kModelAnimationRatHurt;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(860)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRatHurt)) {
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorFreeSlotB, kAnimationModeIdle);
@@ -357,27 +357,27 @@ bool AIScriptFreeSlotB::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 7:
-		*animation = 859;
+		*animation = kModelAnimationRatDying;
 		++_animationFrame;
 		if (_animationFrame == 1) {
 			Ambient_Sounds_Play_Sound(kSfxRATTY5, 99, 0, 0, 25);
 		}
 #if BLADERUNNER_ORIGINAL_BUGS
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(859) - 1) {
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(859) - 1;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRatDying) - 1) {
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationRatDying) - 1;
 		}
 		_animationState = 8;
 #else
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(859) - 1) {
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(859) - 1;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationRatDying) - 1) {
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationRatDying) - 1;
 			_animationState = 8;
 		}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		break;
 
 	case 8:
-		*animation = 859;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(859) - 1;
+		*animation = kModelAnimationRatDying;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationRatDying) - 1;
 		break;
 
 	default:

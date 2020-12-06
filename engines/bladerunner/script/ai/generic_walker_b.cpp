@@ -272,9 +272,9 @@ bool AIScriptGenericWalkerB::UpdateAnimation(int *animation, int *frame) {
 	case kGenericWalkerBStatesDie:
 		// This is an animation for Maggie (exploding) but is also used for generic death states (rats, generic walkers)
 		// probably for debug purposes
-		*animation = 874;
+		*animation = kModelAnimationMaggieExploding;
 		++_animationFrame;
-		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874))
+		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieExploding))
 		{
 			_animationFrame = 0;
 			Actor_Set_Goal_Number(kActorGenwalkerB, kGoalGenwalkerDefault);

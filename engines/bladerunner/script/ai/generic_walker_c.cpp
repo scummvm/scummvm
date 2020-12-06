@@ -26,8 +26,7 @@ namespace BladeRunner {
 enum kGenericWalkerCStates {
 	kGenericWalkerCStatesIdle = 0,
 	kGenericWalkerCStatesWalk = 1,
-	kGenericWalkerCStatesDie  = 2,
-	kGenericWalkerCStatesGun  = 3
+	kGenericWalkerCStatesDie  = 2
 };
 
 AIScriptGenericWalkerC::AIScriptGenericWalkerC(BladeRunnerEngine *vm) : AIScriptBase(vm) {
@@ -273,9 +272,9 @@ bool AIScriptGenericWalkerC::UpdateAnimation(int *animation, int *frame) {
 	case kGenericWalkerCStatesDie:
 		// This is an animation for Maggie (exploding) but is also used for generic death states (rats, generic walkers)
 		// probably for debug purposes
-		*animation = 874;
+		*animation = kModelAnimationMaggieExploding;
 		++_animationFrame;
-		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(874))
+		if (++_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMaggieExploding))
 		{
 			_animationFrame = 0;
 			Actor_Set_Goal_Number(kActorGenwalkerC, kGoalGenwalkerDefault);
