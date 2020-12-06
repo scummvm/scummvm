@@ -18,8 +18,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Updated the Roland MT-32 emulation code to Munt 2.4.1.
 
  Glk:
-   - Fix savegame issues with several subengines.
-   - Fix memory overrun in Level9 game detector.
+   - Fixed savegame issues with several subengines.
+   - Fixed memory overrun in Level9 game detector.
    - Added detections for 2020 IF Comp games.
    - Enabled Glulx sub-engine.
 
@@ -35,7 +35,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for the Japanese Sega-CD version of Eye of the Beholder.
 
  Lure:
-   - Fix fire animation in first room when loading saves.
+   - Fixed fire animation in first room when loading saves.
    - Fixed MT-32 support.
 
  SAGA:
@@ -89,8 +89,8 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Re-activate nuked OPL Adlib driver
 
  MorphOS port:
-   - Add native system file browser feature
-   - Add Cloud feature
+   - Added native system file browser feature
+   - Added Cloud feature
    - Re-activate nuked OPL Adlib driver
 
 #### 2.2.0 "Interactive Fantasy" (2020-09-27)
