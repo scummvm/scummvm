@@ -62,12 +62,14 @@ KYRARPG_COMMON_OBJ_ORIG := $(KYRARPG_COMMON_OBJ)
 # Skip rules for these files, by resetting the LOAD_RULES_MK
 LOAD_RULES_MK :=
 
+ifdef DETECTION_FULL
 # Reset detection objects, which uptill now are filled with only
 # enabled engines.
 DETECT_OBJS :=
 
 # Include all engine's module files, which populate DETECT_OBJS
 -include $(srcdir)/engines/*/module.mk
+endif
 
 # Reset stuff
 MODULES := $(MODULES_ORIG)
