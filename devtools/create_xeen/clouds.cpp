@@ -85,6 +85,6 @@ void writeCloudsData(CCArchive &cc, const char *darkName) {
 
 		darkFile.close();
 	} else {
-		printf("Could not find %s to get Clouds data\n", darkName);
+		error("Could not find %s to get Clouds data", darkName);
 	}
 }
