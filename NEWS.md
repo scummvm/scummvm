@@ -50,6 +50,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      King's Quest 1, 5 and 6, Laura Bow 2: Dagger of Amon Ra and Space Quest 4.
    - Added support for numerous Korean translations from scummkor project.
    - Added detection for LSL6 Russian.
+   - Added detection for alternate LSL7 Russian.
 
  SCUMM:
    - Fixed Chinese, Japanese and Korean text display for The Dig and for The Curse of Monkey Island. These fixes
