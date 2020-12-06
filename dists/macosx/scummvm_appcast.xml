@@ -8,15 +8,15 @@
 		<item>
 			<title>Version 2.2.0</title>
 			<sparkle:releaseNotesLink>
-				https://scummvm.org/frs/scummvm/2.2.0/ReleaseNotes.html
+				https://www.scummvm.org/frs/scummvm/2.2.0/ReleaseNotes.html
 			</sparkle:releaseNotesLink>
-			<pubDate>Tue, 31 Mar 2020 15:50:00 +0000</pubDate>
-			<enclosure url="https://www.scummvm.org/frs/scummvm/2.2.0/scummvm-2.2.0-macosx.dmg"
+			<pubDate>Sun, 27 Sep 2020 18:00:00 +0000</pubDate>
+			<enclosure url="https://downloads.scummvm.org/frs/scummvm/2.2.0/scummvm-2.2.0-macosx.dmg"
 						sparkle:version="2.2.0" length="46591847" type="application/octet-stream"
 						sparkle:dsaSignature="MC0CFBUwsv3XcCXeRslwobbP4WrebtQUAhUApD2mdO/HOgeWaotWYdYBWKw8Iic="/>
 
 			<enclosure sparkle:os="windows"
-						url="https://www.scummvm.org/frs/scummvm/2.2.0/scummvm-2.2.0-win32.exe"
+						url="https://downloads.scummvm.org/frs/scummvm/2.2.0/scummvm-2.2.0-win32.exe"
 						sparkle:version="2.2.0" length="80707413" type="application/octet-stream"
 						sparkle:dsaSignature="MC0CFQCYM8EqRx1KNa50u5FeULi524xxKAIUHViwggcYxy08ovrK7A4SilhoO3E="/>
 		</item>
