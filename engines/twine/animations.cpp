@@ -199,18 +199,12 @@ int32 Animations::getAnimMode(uint8 **ptr, const uint8 **keyFramePtr, const uint
 }
 
 bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	int32 numOfPointInAnim = READ_LE_INT16(animPtr + 2);
-
-	const uint8* keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animPtr + 8;
-
-	const int32 keyFrameLength = READ_LE_INT16(keyFramePtr);
-
-	const Model *bodyHeader = (Model *)bodyPtr;
-	if (!bodyHeader->bodyFlag.animated) {
+	if (!Model::isAnimated(bodyPtr)) {
 		return false;
 	}
-
-	uint8 *edi = bodyPtr + 16;
+	int32 numOfPointInAnim = READ_LE_INT16(animPtr + 2);
+	const uint8* keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animPtr + 8;
+	const int32 keyFrameLength = READ_LE_INT16(keyFramePtr);
 
 	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
 	int32 remainingFrameTime = animTimerDataPtr->time;
@@ -220,20 +214,22 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 		remainingFrameTime = keyFrameLength;
 	}
 
-	edi += bodyHeader->offsetToData;
+	uint8 *verticesBase = bodyPtr + 0x1A;
 
-	int16 eax = READ_LE_INT16(edi);
-	eax = eax + eax * 2;
-	edi = edi + eax * 2 + 12;
+	const int16 numVertices = READ_LE_INT16(verticesBase);
+	verticesBase += 2;
+	uint8* bonesBase = verticesBase + numVertices * 6;
 
-	const int32 numOfPointInBody = READ_LE_INT16(edi - 10);
+	const int32 numBones = READ_LE_INT16(bonesBase);
+	bonesBase += 2;
 
-	if (numOfPointInAnim > numOfPointInBody) {
-		numOfPointInAnim = numOfPointInBody;
+	if (numOfPointInAnim > numBones) {
+		numOfPointInAnim = numBones;
 	}
 
 	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
 
+	uint8* edi = bonesBase + 8;
 	if (deltaTime >= keyFrameLength) {
 		const int32 *sourcePtr = (const int32 *)(keyFramePtr + 8);
 		int32 *destPtr = (int32 *)edi; // keyframe
