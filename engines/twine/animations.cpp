@@ -48,31 +48,6 @@ static const int32 magicLevelStrengthOfHit[] = {
 	0
 };
 
-enum ActionType {
-	ACTION_NOP = 0,
-	ACTION_BODY = 1,
-	ACTION_BODP = 2,
-	ACTION_ANIM = 3,
-	ACTION_ANIP = 4,
-	ACTION_HITTING = 5,
-	ACTION_SAMPLE = 6,
-	ACTION_SAMPLE_FREQ = 7,
-	ACTION_THROW_EXTRA_BONUS = 8,
-	ACTION_THROW_MAGIC_BALL = 9,
-	ACTION_SAMPLE_REPEAT = 10,
-	ACTION_THROW_SEARCH = 11,
-	ACTION_THROW_ALPHA = 12,
-	ACTION_SAMPLE_STOP = 13,
-	ACTION_ZV = 14, // unused
-	ACTION_LEFT_STEP = 15,
-	ACTION_RIGHT_STEP = 16,
-	ACTION_HERO_HITTING = 17,
-	ACTION_THROW_3D = 18,
-	ACTION_THROW_3D_ALPHA = 19,
-	ACTION_THROW_3D_SEARCH = 20,
-	ACTION_LAST
-};
-
 Animations::Animations(TwinEEngine *engine) : _engine(engine), animBuffer((uint8 *)malloc(5000 * sizeof(uint8))) {
 	animBufferPos = animBuffer;
 }
@@ -305,19 +280,19 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 
 int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	const uint8 *bodyPtr = actor->entityDataPtr;
+	const uint8 *entityDataPtr = actor->entityDataPtr;
 
 	do {
-		const uint8 type = *bodyPtr++;
+		const uint8 type = *entityDataPtr++;
 		if (type == 0xFF) {
 			currentActorAnimExtraPtr = nullptr;
 			return -1;
 		}
 
-		const uint8 *ptr = (bodyPtr + 1);
+		const uint8 *ptr = (entityDataPtr + 1);
 
 		if (type == 3) {
-			if (animIdx == (AnimationTypes)*bodyPtr) {
+			if (animIdx == (AnimationTypes)*entityDataPtr) {
 				ptr++;
 				uint16 realAnimIdx = READ_LE_INT16(ptr);
 				ptr += 2;
@@ -332,7 +307,7 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 			}
 		}
 
-		bodyPtr = *ptr + ptr;
+		entityDataPtr = *ptr + ptr;
 	} while (1);
 
 	return 0;
@@ -437,12 +412,12 @@ void Animations::processAnimActions(int32 actorIdx) {
 	const int32 endAnimEntityIdx = stream.readByte();
 	while (index++ < endAnimEntityIdx) {
 		const int32 actionType = stream.readByte();
-		if (actionType >= ACTION_LAST) {
+		if (actionType >= ActionType::ACTION_LAST) {
 			return;
 		}
 
 		switch (actionType) {
-		case ACTION_HITTING: {
+		case ActionType::ACTION_HITTING: {
 			const int32 animFrame = stream.readByte() - 1;
 			const int32 strength = stream.readByte();
 
@@ -452,7 +427,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_SAMPLE: {
+		case ActionType::ACTION_SAMPLE: {
 			const int32 animFrame = stream.readByte();
 			const int16 sampleIdx = stream.readSint16LE();
 
@@ -461,7 +436,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_SAMPLE_FREQ: {
+		case ActionType::ACTION_SAMPLE_FREQ: {
 			const int32 animFrame = stream.readByte();
 			const int16 sampleIdx = stream.readSint16LE();
 			/*int16 frequency = */stream.readSint16LE();
@@ -471,7 +446,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_THROW_EXTRA_BONUS: {
+		case ActionType::ACTION_THROW_EXTRA_BONUS: {
 			const int32 animFrame = stream.readByte();
 			const int32 yHeight = stream.readSint16LE();
 			const int32 sprite = stream.readByte();
@@ -486,7 +461,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_THROW_MAGIC_BALL: {
+		case ActionType::ACTION_THROW_MAGIC_BALL: {
 			const int32 animFrame = stream.readByte();
 			const int32 yOffset = stream.readSint16LE();
 			const int32 xAngle = ToAngle(stream.readSint16LE());
@@ -498,7 +473,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_SAMPLE_REPEAT: {
+		case ActionType::ACTION_SAMPLE_REPEAT: {
 			const int32 animFrame = stream.readByte();
 			const int16 sampleIdx = stream.readSint16LE();
 			const int16 repeat = stream.readSint16LE();
@@ -508,7 +483,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_THROW_SEARCH: {
+		case ActionType::ACTION_THROW_SEARCH: {
 			const int32 animFrame = stream.readByte();
 			const int32 yOffset = stream.readSint16LE();
 			const int32 spriteIdx = stream.readByte();
@@ -520,7 +495,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_THROW_ALPHA: {
+		case ActionType::ACTION_THROW_ALPHA: {
 			const int32 animFrame = stream.readByte();
 			const int32 yHeight = stream.readSint16LE();
 			const int32 spriteIdx = stream.readByte();
@@ -535,7 +510,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_SAMPLE_STOP: {
+		case ActionType::ACTION_SAMPLE_STOP: {
 			const int32 animFrame = stream.readByte();
 			const int32 sampleIdx = stream.readByte(); //why is it reading a byte but saving it in a 32bit variable?
 			stream.skip(1);               // TODO what is the meaning of this extra byte?
@@ -545,8 +520,8 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_LEFT_STEP:
-		case ACTION_RIGHT_STEP: {
+		case ActionType::ACTION_LEFT_STEP:
+		case ActionType::ACTION_RIGHT_STEP: {
 			const int32 animFrame = stream.readByte();
 			if (animFrame == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
 				const int16 sampleIdx = (actor->brickSound & 0x0F) + Samples::WalkFloorBegin;
@@ -554,7 +529,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_HERO_HITTING: {
+		case ActionType::ACTION_HERO_HITTING: {
 			const int32 animFrame = stream.readByte() - 1;
 			if (animFrame == actor->animPosition) {
 				actor->strengthOfHit = magicLevelStrengthOfHit[_engine->_gameState->magicLevelIdx];
@@ -562,7 +537,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_THROW_3D: {
+		case ActionType::ACTION_THROW_3D: {
 			const int32 animFrame = stream.readByte();
 			const int32 distanceX = stream.readSint16LE();
 			const int32 distanceY = stream.readSint16LE();
@@ -586,7 +561,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_THROW_3D_ALPHA: {
+		case ActionType::ACTION_THROW_3D_ALPHA: {
 			const int32 animFrame = stream.readByte();
 			const int32 distanceX = stream.readSint16LE();
 			const int32 distanceY = stream.readSint16LE();
@@ -612,7 +587,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_THROW_3D_SEARCH: {
+		case ActionType::ACTION_THROW_3D_SEARCH: {
 			const int32 animFrame = stream.readByte();
 			const int32 distanceX = stream.readSint16LE();
 			const int32 distanceY = stream.readSint16LE();
@@ -629,7 +604,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_ZV:
+		case ActionType::ACTION_ZV:
 		default:
 			break;
 		}

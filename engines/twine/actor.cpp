@@ -231,7 +231,7 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoun
 					return index;
 				}
 
-				if (stream.readByte() != 14) {
+				if (stream.readByte() != ActionType::ACTION_ZV) {
 					return index;
 				}
 
