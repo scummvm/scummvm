@@ -158,7 +158,7 @@ public:
 	inline bool brickCausesDamage() { return _brickCausesDamage; }
 	void loadModel(int32 modelIndex);
 
-	int32 entity = 0; // costumeIndex
+	int32 entity = 0; // costumeIndex - index into bodyTable
 	/**
 	 * 0: tunic + medallion
 	 * 1: tunic
