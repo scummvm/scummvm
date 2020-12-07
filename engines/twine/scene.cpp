@@ -284,7 +284,7 @@ void Scene::resetScene() {
 		_engine->_redraw->overlayList[i].info0 = -1;
 	}
 
-	_engine->_actor->currentPositionInBodyPtrTab = 0;
+	_engine->_actor->clearBodyTable();
 	_engine->_screens->useAlternatePalette = false;
 }
 
