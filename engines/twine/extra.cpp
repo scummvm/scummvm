@@ -523,7 +523,7 @@ void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y) {
 
 	switch (specialType) {
 	case ExtraSpecialType::kHitStars:
-		drawSpecialShape(hitStarsShapeTable, x, y, 15, (_engine->lbaTime << 5) & 0x300, 4);
+		drawSpecialShape(hitStarsShapeTable, x, y, 15, (_engine->lbaTime << 5) & ANGLE_270, 4);
 		break;
 	case ExtraSpecialType::kExplodeCloud: {
 		int32 cloudTime = 1 + _engine->lbaTime - extra->lifeTime;
