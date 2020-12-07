@@ -45,17 +45,21 @@ Sound::~Sound() {
 	_engine->_system->getMixer()->stopAll();
 }
 
-void Sound::setSamplePosition(int32 chan, int32 x, int32 y, int32 z) {
-	int32 distance;
-	distance = ABS(_engine->_movements->getDistance3D(_engine->_grid->newCameraX << 9, _engine->_grid->newCameraY << 8, _engine->_grid->newCameraZ << 9, x, y, z));
+void Sound::setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z) {
+	if (channelIdx < 0 || channelIdx >= NUM_CHANNELS) {
+		return;
+	}
+	const int32 camX = _engine->_grid->newCameraX << 9;
+	const int32 camY = _engine->_grid->newCameraY << 8;
+	const int32 camZ = _engine->_grid->newCameraZ << 9;
+	int32 distance = _engine->_movements->getDistance3D(camX, camY, camZ, x, y, z);
 	distance = _engine->_collision->getAverageValue(0, distance, 10000, 255);
 	if (distance > 255) { // don't play it if its to far away
 		distance = 255;
 	}
 
-#if 0 // TODO
-	Mix_SetDistance(chan, distance);
-#endif
+	const byte targetVolume = CLIP(255 - distance, 0, 255);
+	_engine->_system->getMixer()->setChannelVolume(samplesPlaying[channelIdx], targetVolume);
 }
 
 void Sound::playFlaSample(int32 index, int32 repeat, int32 x, int32 y) {
