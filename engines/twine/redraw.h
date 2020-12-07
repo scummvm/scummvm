@@ -49,7 +49,7 @@ struct OverlayListStruct {
 	int16 info0 = 0; // sprite/3d model entry | number | number range
 	int16 x = 0;
 	int16 y = 0;
-	int16 info1 = 0; // followed actor | total coins
+	int16 info1 = 0; // text = actor | total coins
 	OverlayPosType posType = OverlayPosType::koNormal;
 	int16 lifeTime = 0;
 };

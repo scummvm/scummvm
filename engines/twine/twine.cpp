@@ -570,7 +570,7 @@ void TwinEEngine::processInventoryAction() {
 				_scene->sceneHero->life = 50;
 				_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;
 				_gameState->inventoryNumLeafs--;
-				_redraw->addOverlay(OverlayType::koInventoryItem, 27, 0, 0, 0, OverlayPosType::koNormal, 3);
+				_redraw->addOverlay(OverlayType::koInventoryItem, InventoryItems::kiCloverLeaf, 0, 0, 0, OverlayPosType::koNormal, 3);
 			}
 		}
 		break;
