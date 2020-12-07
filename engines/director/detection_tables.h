@@ -562,8 +562,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO("jman2", "Gallery", "BIT Gallery", "01be45e7241194dad07938e7059b88e3", 484284, 400),
 	MACDEMO("jman2", "Overview", "BIT Overview", "01be45e7241194dad07938e7059b88e3", 484284, 400),
 
+	// Original Taiwan release is called 塔克拉玛干—敦煌传奇 (Taklamakan: Dunhuang Chuanqi)
 	MACGAME("karma", "", "Karma", "ea646eccc9a53f44ce082459d4809a06", 485535, 400),
 	WINGAME("karma", "", "KARMA.EXE", "e830af6b5dfca4964184e7d61039e120", 697047, 400),
+	WINGAME_l("karma", "", "DH.EXE", "f917ac9c649bff9eaf538ae69432a145", 690991, Common::ZH_TWN, 400),
 
 	MACGAME("kyoto", "v2.0", "Cosmology of KYOTO", "8719de9c083aca942fc0e5c0a127b6dc", 484370, 400),
 	WINGAME("kyoto", "", "PLAY_E.EXE", "84cc8880f8c46b4da121b4c9f184418a", 691269, 400),
