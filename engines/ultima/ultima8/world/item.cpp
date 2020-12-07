@@ -1381,13 +1381,17 @@ unsigned int Item::countNearby(uint32 shape, uint16 range) {
 uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 	uint32  class_id = _shape;
 
-	// Non-monster NPCs use _objId/_npcNum + 1024
+	// Non-monster NPCs use _objId/_npcNum + 1024 (2048 in crusader)
 	// Note: in the original, a non-monster NPC is specified with
 	// the FAST_ONLY flag. However, this causes some summoned monster which
 	// do not receive the FAST_ONLY flag to behave strangely. (Confirmed that
 	// happens in the original as well.) -wjp 20050128
-	if (_objId < 256 && (_extendedFlags & EXT_PERMANENT_NPC))
-		class_id = _objId + 1024;
+	if (_objId < 256 && (_extendedFlags & EXT_PERMANENT_NPC)) {
+		if (GAME_IS_U8)
+			class_id = _objId + 1024;
+		else
+			class_id = _objId + 2048;
+	}
 
 	// CHECKME: to make Pentagram behave as much like the original as possible,
 	// don't call any usecode if the original would call the wrong class

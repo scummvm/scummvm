@@ -217,7 +217,7 @@ public:
 	INTRINSIC(I_canExistAtPoint);
 
 private:
-	void loadItems(Std::list<Item *> itemlist, bool callCacheIn);
+	void loadItems(const Std::list<Item *> &itemlist, bool callCacheIn);
 	void createEggHatcher();
 
 	//! clip the given map chunk numbers to iterate over them safely
