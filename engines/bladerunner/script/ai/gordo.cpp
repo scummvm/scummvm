@@ -739,7 +739,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 	case 0:
 		switch (_state) {
 		case 0:
-			*animation = 116;
+			*animation = kModelAnimationGordoIdle;
 			if (_counter < _counterTarget) {
 				_animationFrame += _frameDelta;
 				if (_animationFrame > _frameMax) {
@@ -783,19 +783,19 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			}
 			break;
 		case 1:
-			*animation = 117;
+			*animation = kModelAnimationGordoBrushOffShoulder;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(117)) {
-				*animation = 116;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoBrushOffShoulder)) {
+				*animation = kModelAnimationGordoIdle;
 				_animationFrame = 0;
 				_state = 0;
 			}
 			break;
 		case 2:
-			*animation = 118;
+			*animation = kModelAnimationGordoChecksHand;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(118)) {
-				*animation = 116;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoChecksHand)) {
+				*animation = kModelAnimationGordoIdle;
 				_animationFrame = 0;
 				_state = 0;
 			}
@@ -806,8 +806,8 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 	case 1:
 		switch (_state) {
 		case 0:
-			*animation = 116;
-			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(116) / 2) {
+			*animation = kModelAnimationGordoIdle;
+			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoIdle) / 2) {
 				_animationFrame += 2;
 			} else {
 				_animationFrame -= 2;
@@ -819,18 +819,18 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			}
 			break;
 		case 1:
-			*animation = 117;
+			*animation = kModelAnimationGordoBrushOffShoulder;
 			_animationFrame += 2;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(117)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoBrushOffShoulder)) {
 				*animation = _animationNext;
 				_animationFrame = 0;
 				_animationState = _animationStateNext;
 			}
 			break;
 		case 2:
-			*animation = 118;
+			*animation = kModelAnimationGordoChecksHand;
 			_animationFrame += 2;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(118)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoChecksHand)) {
 				*animation = _animationNext;
 				_animationFrame = 0;
 				_animationState = _animationStateNext;
@@ -840,7 +840,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
-		*animation = 114;
+		*animation = kModelAnimationGordoSitting;
 		if (Random_Query(0, 1)) {
 			++_animationFrame;
 		}
@@ -850,10 +850,10 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 3:
-		*animation = 115;
+		*animation = kModelAnimationGordoWavesGetsUpAndPays;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(115)) {
-			*animation = 116;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWavesGetsUpAndPays)) {
+			*animation = kModelAnimationGordoIdle;
 			_animationState = 0;
 			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeIdle);
@@ -862,9 +862,9 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 4:
-		*animation = 120;
+		*animation = kModelAnimationGordoIdleTalk;
 		if (_animationFrame == 0 && var_45B078) {
-			*animation = 116;
+			*animation = kModelAnimationGordoIdle;
 			_animationState = 0;
 		} else {
 			++_animationFrame;
@@ -875,117 +875,118 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 5:
-		*animation = 121;
+		*animation = kModelAnimationGordoSuggestingTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(121)) {
-			*animation = 120;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoSuggestingTalk)) {
+			*animation = kModelAnimationGordoIdleTalk;
 			_animationFrame = 0;
 			_animationState = 4;
 		}
 		break;
 
 	case 6:
-		*animation = 122;
+		*animation = kModelAnimationGordoSuggestAndPointTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(122)) {
-			*animation = 120;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoSuggestAndPointTalk)) {
+			*animation = kModelAnimationGordoIdleTalk;
 			_animationFrame = 0;
 			_animationState = 4;
 		}
 		break;
 
 	case 7:
-		*animation = 123;
+		*animation = kModelAnimationGordoSuggestAndDismissTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(123)) {
-			*animation = 120;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoSuggestAndDismissTalk)) {
+			*animation = kModelAnimationGordoIdleTalk;
 			_animationFrame = 0;
 			_animationState = 4;
 		}
 		break;
 
 	case 8:
-		*animation = 124;
+		*animation = kModelAnimationGordoDismissiveTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(124)) {
-			*animation = 120;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoDismissiveTalk)) {
+			*animation = kModelAnimationGordoIdleTalk;
 			_animationFrame = 0;
 			_animationState = 4;
 		}
 		break;
 
 	case 9:
-		*animation = 125;
+		*animation = kModelAnimationGordoUpsetTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(125)) {
-			*animation = 120;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoUpsetTalk)) {
+			*animation = kModelAnimationGordoIdleTalk;
 			_animationFrame = 0;
 			_animationState = 4;
 		}
 		break;
 
 	case 10:
-		*animation = 126;
+		*animation = kModelAnimationGordoExplainAndPointTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(126)) {
-			*animation = 120;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoExplainAndPointTalk)) {
+			*animation = kModelAnimationGordoIdleTalk;
 			_animationFrame = 0;
 			_animationState = 4;
 		}
 		break;
 
 	case 11:
-		*animation = 127;
+		*animation = kModelAnimationGordoAdjustBowtieTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(127)) {
-			*animation = 120;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoAdjustBowtieTalk)) {
+			*animation = kModelAnimationGordoIdleTalk;
 			_animationFrame = 0;
 			_animationState = 4;
 		}
 		break;
 
 	case 12:
-		*animation = 127;
+		// TODO this case is identical with case 11 (is this correct?)
+		*animation = kModelAnimationGordoAdjustBowtieTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(127)) {
-			*animation = 120;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoAdjustBowtieTalk)) {
+			*animation = kModelAnimationGordoIdleTalk;
 			_animationFrame = 0;
 			_animationState = 4;
 		}
 		break;
 
 	case 13:
-		*animation = 114;
+		*animation = kModelAnimationGordoSitting;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(114)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoSitting)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 14:
-		*animation = 103;
+		*animation = kModelAnimationGordoWithGunUnholsterGun;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(103)) {
-			*animation = 93;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunUnholsterGun)) {
+			*animation = kModelAnimationGordoWithGunIdle;
 			_animationFrame = 0;
 			_animationState = 16;
 		}
 		break;
 
 	case 15:
-		*animation = 104;
+		*animation = kModelAnimationGordoWithGunHolsterGun;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(104)) {
-			*animation = 116;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunHolsterGun)) {
+			*animation = kModelAnimationGordoIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 16:
-		*animation = 93;
+		*animation = kModelAnimationGordoWithGunIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(93)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunIdle)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -994,7 +995,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 18:
-		*animation = 105;
+		*animation = kModelAnimationGordoWithGunShooting;
 		++_animationFrame;
 		if (_animationFrame == 1) {
 			Sound_Play_Speech_Line(kActorGordo, Random_Query(0, 1) ? 9010 : 9015, 75, 0, 99);
@@ -1003,7 +1004,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 			Actor_Combat_AI_Hit_Attempt(kActorGordo);
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
-			*animation = 93;
+			*animation = kModelAnimationGordoWithGunIdle;
 			_animationFrame = 0;
 			_animationState = 16;
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeCombatIdle);
@@ -1011,10 +1012,10 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 19:
-		*animation = 111;
+		*animation = kModelAnimationGordoGotHitRight;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(111)) {
-			*animation = 116;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoGotHitRight)) {
+			*animation = kModelAnimationGordoIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeIdle);
@@ -1022,10 +1023,10 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 20:
-		*animation = 112;
+		*animation = kModelAnimationGordoGotHitLeft;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(112)) {
-			*animation = 116;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoGotHitLeft)) {
+			*animation = kModelAnimationGordoIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeIdle);
@@ -1033,10 +1034,10 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 21:
-		*animation = 96;
+		*animation = kModelAnimationGordoWithGunGotHitRight;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(96)) {
-			*animation = 93;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunGotHitRight)) {
+			*animation = kModelAnimationGordoWithGunIdle;
 			_animationFrame = 0;
 			_animationState = 16;
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeCombatIdle);
@@ -1044,10 +1045,10 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 22:
-		*animation = 97;
+		*animation = kModelAnimationGordoWithGunGotHitLeft;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(97)) {
-			*animation = 93;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunGotHitLeft)) {
+			*animation = kModelAnimationGordoWithGunIdle;
 			_animationFrame = 0;
 			_animationState = 16;
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeCombatIdle);
@@ -1055,88 +1056,88 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 23:
-		*animation = 113;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(113) - 1) {
+		*animation = kModelAnimationGordoShotDead;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoShotDead) - 1) {
 			++_animationFrame;
 		}
 		break;
 
 	case 24:
-		*animation = 100;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(100) - 1) {
+		*animation = kModelAnimationGordoWithGunShotDead;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunShotDead) - 1) {
 			++_animationFrame;
 		}
 		break;
 
 	case 25:
-		*animation = 107;
+		*animation = kModelAnimationGordoWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(107)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWalking)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 26:
-		*animation = 108;
+		*animation = kModelAnimationGordoRunning;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(108)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoRunning)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 27:
-		*animation = 98;
+		*animation = kModelAnimationGordoWithGunWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(98)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunWalking)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 28:
-		*animation = 99;
+		*animation = kModelAnimationGordoWithGunRunning;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(99)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunRunning)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 29:
-		*animation = 109;
+		*animation = kModelAnimationGordoClimbStairsUp;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(109)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoClimbStairsUp)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 30:
-		*animation = 110;
+		*animation = kModelAnimationGordoClimbStairsDown;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(110)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoClimbStairsDown)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 31:
-		*animation = 101;
+		*animation = kModelAnimationGordoWithGunClimbStairsUp;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(101)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunClimbStairsUp)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 32:
-		*animation = 102;
+		*animation = kModelAnimationGordoWithGunClimbStairsDown;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(102)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunClimbStairsDown)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 33:
-		*animation = 106;
+		*animation = kModelAnimationGordoWithGunJumpingDown;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(106)) {
-			*animation = 93;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunJumpingDown)) {
+			*animation = kModelAnimationGordoWithGunIdle;
 			_animationState = 16;
 			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeCombatIdle);
@@ -1148,9 +1149,9 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 34:
-		*animation = 119;
+		*animation = kModelAnimationGordoLeavesSomethingOnCounter;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(119)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoLeavesSomethingOnCounter)) {
 			if (Game_Flag_Query(kFlagNR02GordoLeaveLighter)) {
 				Game_Flag_Reset(kFlagNR02GordoLeaveLighter);
 				if (Game_Flag_Query(kFlagGordoIsReplicant)) {
@@ -1160,7 +1161,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 				}
 				Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02GoToPodium);
 			}
-			*animation = 116;
+			*animation = kModelAnimationGordoIdle;
 			_animationState = 0;
 			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeIdle);
@@ -1168,9 +1169,9 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 35:
-		*animation = 128;
+		*animation = kModelAnimationGordoWithGunWithHostageATalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(128)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunWithHostageATalk)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -1178,12 +1179,12 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 	case 36:
 		if (_animationFrame == 0 && var_45B078) {
 			Actor_Change_Animation_Mode(kActorGordo, 80);
-			*animation = 128;
+			*animation = kModelAnimationGordoWithGunWithHostageATalk;
 			_animationState = 35;
 		} else {
-			*animation = 129;
+			*animation = kModelAnimationGordoWithGunWithHostageBTalk;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(129)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunWithHostageBTalk)) {
 				_animationFrame = 0;
 			}
 		}
@@ -1192,19 +1193,19 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 	case 37:
 		if (_animationFrame == 0 && var_45B078) {
 			Actor_Change_Animation_Mode(kActorGordo, 80);
-			*animation = 128;
+			*animation = kModelAnimationGordoWithGunWithHostageATalk;
 			_animationState = 35;
 		} else {
-			*animation = 130;
+			*animation = kModelAnimationGordoWithGunWithHostageCTalk;
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(130)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGordoWithGunWithHostageCTalk)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 38:
-		*animation = 131;
+		*animation = kModelAnimationGordoWithGunWithHostageLetsGo;
 		++_animationFrame;
 		if (_animationFrame == 7) {
 			if (Actor_Query_Goal_Number(kActorGordo) == kGoalGordoNR01HostageDie) {
@@ -1215,19 +1216,19 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeCombatIdle);
-			*animation = 93;
+			*animation = kModelAnimationGordoWithGunIdle;
 			_animationFrame = 0;
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR01RunAway);
 		}
 		break;
 
 	case 39:
-		*animation = 132;
+		*animation = kModelAnimationGordoWithGunWithHostageGetsShot;
 		++_animationFrame;
 		if (_animationFrame == 6) {
 			Actor_Set_Goal_Number(kActorTaffyPatron, 250);
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeCombatDie);
-			*animation = 100;
+			*animation = kModelAnimationGordoWithGunShotDead;
 			_animationFrame = 0;
 			_animationState = 24;
 		}
@@ -1286,7 +1287,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 4;
-			_animationNext = 120;
+			_animationNext = kModelAnimationGordoIdleTalk;
 		}
 		var_45B078 = 0;
 		break;
@@ -1337,7 +1338,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 5;
-			_animationNext = 121;
+			_animationNext = kModelAnimationGordoSuggestingTalk;
 		}
 		var_45B078 = 0;
 		break;
@@ -1349,7 +1350,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 6;
-			_animationNext = 122;
+			_animationNext = kModelAnimationGordoSuggestAndPointTalk;
 		}
 		var_45B078 = 0;
 		break;
@@ -1361,7 +1362,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 7;
-			_animationNext = 123;
+			_animationNext = kModelAnimationGordoSuggestAndDismissTalk;
 		}
 		var_45B078 = 0;
 		break;
@@ -1373,7 +1374,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 8;
-			_animationNext = 124;
+			_animationNext = kModelAnimationGordoDismissiveTalk;
 		}
 		var_45B078 = 0;
 		break;
@@ -1385,7 +1386,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 9;
-			_animationNext = 125;
+			_animationNext = kModelAnimationGordoUpsetTalk;
 		}
 		var_45B078 = 0;
 		break;
@@ -1397,7 +1398,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 10;
-			_animationNext = 126;
+			_animationNext = kModelAnimationGordoExplainAndPointTalk;
 		}
 		var_45B078 = 0;
 		break;
@@ -1409,7 +1410,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 11;
-			_animationNext = 127;
+			_animationNext = kModelAnimationGordoAdjustBowtieTalk;
 		}
 		var_45B078 = 0;
 		break;
@@ -1421,7 +1422,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 12;
-			_animationNext = 127;
+			_animationNext = kModelAnimationGordoAdjustBowtieTalk;
 		}
 		var_45B078 = 0;
 		break;
