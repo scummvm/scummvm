@@ -206,7 +206,7 @@ void IMuseDigital::callback() {
 
 	_speechIsPlaying = false;
 	// Check for any track playing a speech line
-	if (_vm->_game.id == GID_CMI)
+	if (_vm->_game.id == GID_CMI) {
 		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			if (_track[l]->used && _track[l]->soundId == kTalkSoundID) {
 				// Set flag and break
@@ -214,6 +214,7 @@ void IMuseDigital::callback() {
 				break;
 			}
 		}
+	}
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		Track *track = _track[l];
@@ -291,7 +292,7 @@ void IMuseDigital::callback() {
 			}
 
 			// Music gain reduction during speech
-			if (_vm->_game.id == GID_CMI && track->volGroupId == IMUSE_VOLGRP_MUSIC)
+			if (_vm->_game.id == GID_CMI && track->volGroupId == IMUSE_VOLGRP_MUSIC) {
 				if (_speechIsPlaying) {
 					// Check if we have to fade down or the reduction volume is already at the right value
 					if (track->gainReduction >= track->gainRedFadeDest) {
@@ -312,6 +313,7 @@ void IMuseDigital::callback() {
 					track->gainReduction = 0;
 					debug(5, "Gain reduction: no speech playing reduction stopped for sound(%d) in track(%d)", track->soundId, track->trackId);
 				}
+			}
 
 			if (!track->souStreamUsed) {
 				assert(track->stream);
