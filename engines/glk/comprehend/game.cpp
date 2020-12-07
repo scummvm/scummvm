@@ -889,6 +889,9 @@ void ComprehendGame::doMovementVerb(uint verbNum) {
 
 void ComprehendGame::weighInventory() {
 	_totalInventoryWeight = 0;
+	if (!g_debugger->_invLimit)
+		// Allow for an unlimited number of items in inventory
+		return;
 
 	for (int idx = _itemCount - 1; idx > 0; --idx) {
 		Item *item = get_item(idx);
