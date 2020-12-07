@@ -49,22 +49,27 @@ static const int32 magicLevelStrengthOfHit[] = {
 };
 
 enum ActionType {
-	ACTION_HITTING = 0,
-	ACTION_SAMPLE = 1,
-	ACTION_SAMPLE_FREQ = 2,
-	ACTION_THROW_EXTRA_BONUS = 3,
-	ACTION_THROW_MAGIC_BALL = 4,
-	ACTION_SAMPLE_REPEAT = 5,
-	ACTION_THROW_SEARCH = 6,
-	ACTION_THROW_ALPHA = 7,
-	ACTION_SAMPLE_STOP = 8,
-	ACTION_ZV = 9, // unused
-	ACTION_SAMPLE_BRICK_1 = 10,
-	ACTION_SAMPLE_BRICK_2 = 11,
-	ACTION_HERO_HITTING = 12,
-	ACTION_THROW_3D = 13,
-	ACTION_THROW_3D_ALPHA = 14,
-	ACTION_THROW_3D_SEARCH = 15,
+	ACTION_NOP = 0,
+	ACTION_BODY = 1,
+	ACTION_BODP = 2,
+	ACTION_ANIM = 3,
+	ACTION_ANIP = 4,
+	ACTION_HITTING = 5,
+	ACTION_SAMPLE = 6,
+	ACTION_SAMPLE_FREQ = 7,
+	ACTION_THROW_EXTRA_BONUS = 8,
+	ACTION_THROW_MAGIC_BALL = 9,
+	ACTION_SAMPLE_REPEAT = 10,
+	ACTION_THROW_SEARCH = 11,
+	ACTION_THROW_ALPHA = 12,
+	ACTION_SAMPLE_STOP = 13,
+	ACTION_ZV = 14, // unused
+	ACTION_LEFT_STEP = 15,
+	ACTION_RIGHT_STEP = 16,
+	ACTION_HERO_HITTING = 17,
+	ACTION_THROW_3D = 18,
+	ACTION_THROW_3D_ALPHA = 19,
+	ACTION_THROW_3D_SEARCH = 20,
 	ACTION_LAST
 };
 
@@ -434,7 +439,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 	int32 index = 0;
 	const int32 endAnimEntityIdx = stream.readByte();
 	while (index++ < endAnimEntityIdx) {
-		const int32 actionType = stream.readByte() - 5;
+		const int32 actionType = stream.readByte();
 		if (actionType >= ACTION_LAST) {
 			return;
 		}
@@ -543,8 +548,8 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_SAMPLE_BRICK_1:
-		case ACTION_SAMPLE_BRICK_2: {
+		case ACTION_LEFT_STEP:
+		case ACTION_RIGHT_STEP: {
 			const int32 animFrame = stream.readByte();
 			if (animFrame == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
 				const int16 sampleIdx = (actor->brickSound & 0x0F) + Samples::WalkFloorBegin;
@@ -628,7 +633,6 @@ void Animations::processAnimActions(int32 actorIdx) {
 			break;
 		}
 		case ACTION_ZV:
-			break;
 		default:
 			break;
 		}
