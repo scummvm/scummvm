@@ -260,10 +260,10 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle
 			continue;
 		}
 		extra->info0 = type;
-		extra->type = 0x4071;
+		extra->type = ExtraType::TIME_OUT | ExtraType::TAKABLE | ExtraType::FLASH | ExtraType::STOP_COL | ExtraType::BONUS;
 
 		/*if(type == SPRITEHQR_KEY) {
-			extra->type = 0x4030;
+			extra->type = ExtraFlag::STOP_COL | ExtraFlag::TAKABLE | ExtraFlag::BONUS;
 		}*/
 
 		extra->x = x;
@@ -290,7 +290,7 @@ int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spri
 			continue;
 		}
 		extra->info0 = spriteIdx;
-		extra->type = 0x210C;
+		extra->type = ExtraType::UNK2 | ExtraType::UNK3 | ExtraType::UNK8 | ExtraType::WAIT_NO_COL;
 		extra->x = x;
 		extra->y = y;
 		extra->z = z;
@@ -619,7 +619,7 @@ void Extra::processExtras() {
 
 				// if can take extra on ground
 				if (extra->type & ExtraType::TAKABLE) {
-					extra->type &= 0xFFED;
+					extra->type &= ~(ExtraType::FLY | ExtraType::STOP_COL);
 				} else {
 					extra->info0 = -1;
 				}
@@ -630,7 +630,7 @@ void Extra::processExtras() {
 		//
 		if (extra->type & ExtraType::BONUS) {
 			if (_engine->lbaTime - extra->lifeTime > 40) {
-				extra->type &= 0xBFFF;
+				extra->type &= ~ExtraType::BONUS;
 			}
 			continue;
 		}
@@ -791,7 +791,7 @@ void Extra::processExtras() {
 			} else {
 				// if touch the ground
 				if (extra->type & ExtraType::WAIT_NO_COL) {
-					extra->type &= 0xDFFF; // set flag out of ground
+					extra->type &= ~ExtraType::WAIT_NO_COL; // set flag out of ground
 				}
 			}
 
@@ -858,7 +858,7 @@ void Extra::processExtras() {
 			} else {
 				// if touch the ground
 				if (extra->type & ExtraType::WAIT_NO_COL) {
-					extra->type &= 0xDFFF; // set flag out of ground
+					extra->type &= ~ExtraType::WAIT_NO_COL; // set flag out of ground
 				}
 			}
 
@@ -867,7 +867,7 @@ void Extra::processExtras() {
 				stream.seek(extra->info0 * 16);
 				stream.skip(8);
 				extra->y = (_engine->_collision->collisionY << 8) + 0x100 - stream.readSint16LE();
-				extra->type &= 0xFFED;
+				extra->type &= ~(ExtraType::STOP_COL | ExtraType::FLY);
 				continue;
 			}
 		}
