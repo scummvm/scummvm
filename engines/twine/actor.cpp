@@ -283,7 +283,6 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 
 	localActor->entity = entityIdx;
 	localActor->body = bodyIdx;
-	int currentIndex = localActor->entity;
 
 	if (actorBoundingBox.hasBoundingBox) {
 		ZVBox &bbox = localActor->boudingBox;
@@ -325,16 +324,6 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		bbox.z.bottomLeft = -result;
 		bbox.z.topRight = result;
 	}
-
-	if (currentIndex == -1) {
-		return;
-	}
-
-	if (localActor->previousAnimIdx == -1) {
-		return;
-	}
-
-	_engine->_renderer->copyActorInternAnim(bodyTable[currentIndex], bodyTable[localActor->entity]);
 }
 
 void Actor::initActor(int16 actorIdx) {

@@ -284,8 +284,6 @@ public:
 
 	int32 renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, uint8 *bodyPtr);
 
-	void copyActorInternAnim(const uint8 *bodyPtrSrc, uint8 *bodyPtrDest);
-
 	void renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, uint8 *entityPtr);
 	void renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, uint8 *entityPtr);
 
