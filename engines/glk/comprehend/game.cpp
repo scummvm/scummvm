@@ -732,7 +732,9 @@ void ComprehendGame::read_sentence(Sentence *sentence) {
 		Common::String wordStr(word_string, p);
 
 		// Check for end of sentence
-		if (*p == ',' || *p == '\n') {
+		// FIXME: The below is a hacked simplified version of how the
+		// original handles cases like "get item1, item2"
+		if (*p == ',' || *p == '\n' || wordStr.equalsIgnoreCase("and")) {
 			// Sentence separator
 			++p;
 			sentence_end = true;
