@@ -76,8 +76,8 @@ void EggHatcherProcess::run() {
 
 		// 'justTeleported':
 		// if the avatar teleports, set the 'justTeleported' flag.
-		// if this is set, don't hatch any teleport _eggs
-		// unset it when you're out of range of any teleport _eggs
+		// if this is set, don't hatch any teleport eggs
+		// unset it when you're out of range of any teleport eggs
 		TeleportEgg *tegg = dynamic_cast<TeleportEgg *>(egg);
 
 		if (x1 <= ax && ax - axs < x2 && y1 <= ay && ay - ays < y2 &&
@@ -103,7 +103,7 @@ void EggHatcherProcess::saveData(Common::WriteStream *ws) {
 bool EggHatcherProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	if (!Process::loadData(rs, version)) return false;
 
-	// the _eggs will be re-added to the EggHatcherProcess when they're
+	// the eggs will be re-added to the EggHatcherProcess when they're
 	// re-added to the CurrentMap
 
 	return true;
