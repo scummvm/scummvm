@@ -387,13 +387,13 @@ int32 Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *anim
 	return var2;
 }
 
-int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+bool Animations::verifyAnimAtKeyframe(int32 animIdx, const uint8 *animPtr, const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	const int32 numOfPointInAnim = READ_LE_INT16(animPtr + 2);
 	const uint8 *keyFramePtr = ((numOfPointInAnim * 8 + 8) * animIdx) + animPtr + 8;
 	const int32 keyFrameLength = READ_LE_INT16(keyFramePtr);
 	const int16 bodyHeader = READ_LE_INT16(bodyPtr);
 	if (!(bodyHeader & 2)) {
-		return 0;
+		return false;
 	}
 
 	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
@@ -417,7 +417,7 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 		processRotationByAnim = READ_LE_INT16(keyFramePtr + 8);
 		processLastRotationAngle = ToAngle(READ_LE_INT16(keyFramePtr + 12));
 
-		return 1;
+		return true;
 	}
 	const uint8 *keyFramePtrOld = keyFramePtr;
 
@@ -434,7 +434,7 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 	currentStepY = (READ_LE_INT16(keyFramePtrOld + 4) * deltaTime) / keyFrameLength;
 	currentStepZ = (READ_LE_INT16(keyFramePtrOld + 6) * deltaTime) / keyFrameLength;
 
-	return 0;
+	return false;
 }
 
 void Animations::processAnimActions(int32 actorIdx) {
@@ -847,9 +847,9 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		}
 	} else { // 3D actor
 		if (actor->previousAnimIdx != -1) {
-			uint8 *animPtr = _engine->_resources->animTable[actor->previousAnimIdx];
+			const uint8 *animPtr = _engine->_resources->animTable[actor->previousAnimIdx];
 
-			int32 keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animPtr, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+			bool keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animPtr, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 
 			if (processRotationByAnim) {
 				actor->dynamicFlags.bIsRotationByAnim = 1;

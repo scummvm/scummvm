@@ -45,7 +45,7 @@ private:
 	 * @param bodyPtr Body model poitner
 	 * @param animTimerDataPtr Animation time data
 	 */
-	int32 verifyAnimAtKeyframe(int32 animPos, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	bool verifyAnimAtKeyframe(int32 animPos, const uint8 *animPtr, const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
 
 	uint8 *const animBuffer;
 	uint8 *animBufferPos = nullptr;
