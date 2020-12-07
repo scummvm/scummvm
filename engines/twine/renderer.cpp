@@ -1526,54 +1526,6 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 	return 0;
 }
 
-void Renderer::copyActorInternAnim(const uint8 *bodyPtrSrc, uint8 *bodyPtrDest) {
-	// check if both characters allow animation
-
-	const Model *srcBodyHeader = (const Model *)bodyPtrSrc;
-	if (!srcBodyHeader->bodyFlag.animated) {
-		return;
-	}
-
-	Model *destBodyHeader = (Model *)bodyPtrDest;
-	if (!destBodyHeader->bodyFlag.animated) {
-		return;
-	}
-
-	// skip header
-	bodyPtrSrc += 16;
-	bodyPtrDest += 16;
-
-	*(uint32 *)(bodyPtrDest + 0) = *(const uint32 *)(bodyPtrSrc + 0);
-	*(uint32 *)(bodyPtrDest + 4) = *(const uint32 *)(bodyPtrSrc + 4);
-
-	bodyPtrSrc += srcBodyHeader->offsetToData;
-	const int32 srcNumPoints = *(const int16 *)bodyPtrSrc;
-	// skip vertices
-	bodyPtrSrc += srcNumPoints * sizeof(pointTab) + 2;
-	int16 cx = *(const int16 *)bodyPtrSrc;
-
-	bodyPtrDest += destBodyHeader->offsetToData;
-	const int32 destNumPoints = *(const int16 *)bodyPtrDest;
-	// skip vertices
-	bodyPtrDest += destNumPoints * sizeof(pointTab) + 2;
-	const int16 ax = *(const int16 *)bodyPtrDest;
-
-	if (cx > ax) {
-		cx = ax;
-	}
-
-	bodyPtrSrc += 10;
-	bodyPtrDest += 10;
-
-	for (int32 i = 0; i < cx; i++) {
-		*(uint32 *)(bodyPtrDest + 0) = *(const uint32 *)(bodyPtrSrc + 0);
-		*(uint32 *)(bodyPtrDest + 4) = *(const uint32 *)(bodyPtrSrc + 4);
-
-		bodyPtrDest += 30;
-		bodyPtrSrc += 30;
-	}
-}
-
 void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, uint8 *entityPtr) {
 	renderBehaviourModel(rect.left, rect.top, rect.right, rect.bottom, y, angle, entityPtr);
 }
