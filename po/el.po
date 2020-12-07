@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-12-06 18:26+0000\n"
+"POT-Creation-Date: 2020-12-07 00:36+0000\n"
 "PO-Revision-Date: 2020-11-29 19:29+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -4234,8 +4234,11 @@ msgstr ""
 "ScummVM."
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
+#: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
+#: engines/kyra/detection_tables.h:579 engines/kyra/detection_tables.h:1763
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#: engines/sci/detection_tables.h:4824 engines/sci/detection_tables.h:4832
+#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4824
+#: engines/sci/detection_tables.h:4832
 msgid "Missing game code"
 msgstr "Λείπουν τμήματα απαραίτητου κώδικα για αυτή την έκδοση του παιχνιδιού"
 
@@ -5314,7 +5317,7 @@ msgstr ""
 "Χρήση λειτουργίας Αφήγησης Κειμένου (TTS) για την ανάγνωση περιγραφών (αν "
 "είναι διαθέσιμη)"
 
-#: engines/made/detection_tables.h:360
+#: engines/made/detection_tables.h:387
 msgid "The game is using unsupported engine"
 msgstr "Αυτό το παιχνίδι χρησιμοποιεί μηχανή που δεν υποστηρίζεται"
 

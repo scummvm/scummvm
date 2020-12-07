@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-12-06 18:26+0000\n"
+"POT-Creation-Date: 2020-12-07 00:36+0000\n"
 "PO-Revision-Date: 2020-12-05 10:44+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
@@ -4145,8 +4145,11 @@ msgstr ""
 "A rajongói fordító nem kívánja, hogy fordítását beépítsék a ScummVM-be."
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
+#: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
+#: engines/kyra/detection_tables.h:579 engines/kyra/detection_tables.h:1763
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#: engines/sci/detection_tables.h:4824 engines/sci/detection_tables.h:4832
+#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4824
+#: engines/sci/detection_tables.h:4832
 msgid "Missing game code"
 msgstr "Hiányzik a játék kódja"
 
@@ -5201,7 +5204,7 @@ msgstr "TTS Narrátor"
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Használja a TTS-t a leírás olvasásához (ha a TTS elérhetõ)"
 
-#: engines/made/detection_tables.h:360
+#: engines/made/detection_tables.h:387
 msgid "The game is using unsupported engine"
 msgstr "A játék nem támogatott motort használ"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-12-06 18:26+0000\n"
+"POT-Creation-Date: 2020-12-07 00:36+0000\n"
 "PO-Revision-Date: 2020-10-26 22:27+0000\n"
 "Last-Translator: anonymous <noreply@weblate.org>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -4207,8 +4207,11 @@ msgid ""
 msgstr ""
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
+#: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
+#: engines/kyra/detection_tables.h:579 engines/kyra/detection_tables.h:1763
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
-#: engines/sci/detection_tables.h:4824 engines/sci/detection_tables.h:4832
+#: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4824
+#: engines/sci/detection_tables.h:4832
 #, fuzzy
 msgid "Missing game code"
 msgstr "Huvudkontroller:"
@@ -5226,7 +5229,7 @@ msgstr ""
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
-#: engines/made/detection_tables.h:360
+#: engines/made/detection_tables.h:387
 #, fuzzy
 msgid "The game is using unsupported engine"
 msgstr "Spel-ID stöds inte"
