@@ -543,14 +543,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_SAMPLE_BRICK_1: {
-			const int32 animFrame = stream.readByte();
-			if (animFrame == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
-				const int16 sampleIdx = (actor->brickSound & 0x0F) + Samples::WalkFloorBegin;
-				_engine->_sound->playSample(sampleIdx, 1, actor->x, actor->y, actor->z, actorIdx);
-			}
-			break;
-		}
+		case ACTION_SAMPLE_BRICK_1:
 		case ACTION_SAMPLE_BRICK_2: {
 			const int32 animFrame = stream.readByte();
 			if (animFrame == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
