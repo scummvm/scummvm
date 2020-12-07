@@ -115,7 +115,7 @@ public:
 	virtual int16 getOverlayWidth();
 	virtual Graphics::PixelFormat getOverlayFormat() const;
 
-	Common::Point transformPoint(uint16 x, uint16 y);
+	Common::Point transformPoint(int16 x, int16 y);
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
@@ -148,6 +148,9 @@ public:
 	void refreshCursor(u16 *dst, const Graphics::Surface &src, const uint16 *palette);
 
 	virtual void logMessage(LogMessageType::Type type, const char *message);
+
+	void setMainScreen(int32 x, int32 y, int32 sx, int32 sy);
+	void setSubScreen(int32 x, int32 y, int32 sx, int32 sy);
 
 	int _currentTimeMillis, _callbackTimer;
 };
