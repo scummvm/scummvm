@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-07 05:28+0000\n"
-"PO-Revision-Date: 2020-12-07 16:08+0000\n"
+"PO-Revision-Date: 2020-12-07 16:34+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -1540,7 +1540,7 @@ msgstr "¡Este almacenamiento no está conectado todavía! Para conectar,"
 
 #: gui/options.cpp:2232
 msgid "1. Open this link:"
-msgstr "1. Abre este enlace:"
+msgstr "1. Entra aquí:"
 
 #: gui/options.cpp:2235
 msgctxt "lowres"
@@ -2695,7 +2695,7 @@ msgstr "Ajustar a la ventana"
 #: backends/graphics/opengl/opengl-graphics.cpp:247
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:86
 msgid "Stretch to window"
-msgstr "Estirar a la ventana"
+msgstr "Ajustar a la ventana"
 
 #: backends/graphics/opengl/opengl-graphics.cpp:248
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:87
@@ -2784,7 +2784,7 @@ msgstr "Escalado con filtro lineal"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:410
 msgid "Cycle through stretch modes"
-msgstr "Probar distintos modos de ajuste"
+msgstr "Cambiar modo de ajuste"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:416
 msgid "Increase the scale factor"
@@ -2961,7 +2961,7 @@ msgstr "Stick dcho. Y"
 #: backends/keymapper/remap-widget.cpp:290
 #: backends/keymapper/remap-widget.cpp:320
 msgid "Reset to defaults"
-msgstr "Asignación por defecto"
+msgstr "Ajustes por defecto"
 
 #: backends/keymapper/remap-widget.cpp:291
 msgid "Clear mapping"
