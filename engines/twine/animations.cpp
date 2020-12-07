@@ -278,6 +278,7 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	return false;
 }
 
+// see Actor::initBody
 int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	const uint8 *entityDataPtr = actor->entityDataPtr;
