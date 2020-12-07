@@ -2371,7 +2371,9 @@ msgstr ""
 msgid ""
 "The selected audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
-msgstr "選択されたオーディオデバイス'%s'が見つかりませんでした(電源が入っていないか、未接続の可能性があります)。"
+msgstr ""
+"選択されたオーディオデバイス'%s'が見つかりませんでした(電源が入っていないか、"
+"未接続の可能性があります)。"
 
 #: audio/mididrv.cpp:221 audio/mididrv.cpp:235 audio/mididrv.cpp:273
 #: audio/mididrv.cpp:290
@@ -2383,21 +2385,27 @@ msgstr ""
 msgid ""
 "The selected audio device '%s' cannot be used. See log file for more "
 "information."
-msgstr "選択されたオーディオデバイス'%s'は使用できません。詳細はログファイルを参照してください。"
+msgstr ""
+"選択されたオーディオデバイス'%s'は使用できません。詳細はログファイルを参照し"
+"てください。"
 
 #: audio/mididrv.cpp:272
 #, c-format
 msgid ""
 "The preferred audio device '%s' was not found (e.g. might be turned off or "
 "disconnected)."
-msgstr "優先オーディオデバイス'%s'が見つかりませんでした(電源が入っていないか、未接続の可能性があります)。"
+msgstr ""
+"優先オーディオデバイス'%s'が見つかりませんでした(電源が入っていないか、未接続"
+"の可能性があります)。"
 
 #: audio/mididrv.cpp:289
 #, c-format
 msgid ""
 "The preferred audio device '%s' cannot be used. See log file for more "
 "information."
-msgstr "優先オーディオデバイス'%s'は使用できません。詳細はログファイルを参照してください。"
+msgstr ""
+"優先オーディオデバイス'%s'は使用できません。詳細はログファイルを参照してくだ"
+"さい。"
 
 #: audio/mididrv.cpp:454
 msgid "Starting MIDI dump"
