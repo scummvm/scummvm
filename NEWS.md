@@ -58,6 +58,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      also include some improvements to the common text display (mainly the formatting of wrapped texts).
    - Fixed display of Chinese, Japanese and Korean pause and restart dialogs.
    - Added support for numerous Korean translations from scummkor project.
+   - Added support for Russobit-M versions of Pajama2 and SpyOzone.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
