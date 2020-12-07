@@ -191,6 +191,7 @@ int32 Actor::getTextIdForBehaviour() const {
 	return (int32)_engine->_actor->heroBehaviour;
 }
 
+// see Animations::getBodyAnimIndex
 int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox) {
 	if (bodyIdx == -1) {
 		return -1;
