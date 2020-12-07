@@ -30,7 +30,7 @@ namespace TwinE {
 
 #define OVERLAY_MAX_ENTRIES 10
 
-enum OverlayType {
+enum class OverlayType {
 	koSprite = 0,
 	koNumber = 1,
 	koNumberRange = 2,
@@ -38,19 +38,19 @@ enum OverlayType {
 	koText = 4
 };
 
-enum OverlayPosType {
+enum class OverlayPosType {
 	koNormal = 0,
 	koFollowActor = 1
 };
 
 /** Overlay list structure */
 struct OverlayListStruct {
-	OverlayType type = koSprite;
+	OverlayType type = OverlayType::koSprite;
 	int16 info0 = 0; // sprite/3d model entry | number | number range
 	int16 x = 0;
 	int16 y = 0;
 	int16 info1 = 0; // followed actor | total coins
-	OverlayPosType posType = koNormal;
+	OverlayPosType posType = OverlayPosType::koNormal;
 	int16 lifeTime = 0;
 };
 

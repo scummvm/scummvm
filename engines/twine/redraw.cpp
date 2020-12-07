@@ -198,7 +198,9 @@ void Redraw::updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 	for (int32 i = 0; i < ARRAYSIZE(overlayList); i++) {
 		OverlayListStruct *overlay = &overlayList[i];
-		if (overlay->type == koFollowActor) {
+		// TODO: this comparison is wrong - either posType or koNumber
+		//if (overlay->type == OverlayPosType::koFollowActor) {
+		if (overlay->posType == OverlayPosType::koFollowActor) {
 			overlay->x = newX;
 			overlay->y = newY;
 		}
@@ -549,13 +551,13 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 		if (overlay->info0 != -1) {
 			// process position overlay
 			switch (overlay->posType) {
-			case koNormal:
+			case OverlayPosType::koNormal:
 				if (_engine->lbaTime >= overlay->lifeTime) {
 					overlay->info0 = -1;
 					continue;
 				}
 				break;
-			case koFollowActor: {
+			case OverlayPosType::koFollowActor: {
 				ActorStruct *actor2 = _engine->_scene->getActor(overlay->info1);
 
 				_engine->_renderer->projectPositionOnScreen(actor2->x - _engine->_grid->cameraX, actor2->y + actor2->boudingBox.y.topRight - _engine->_grid->cameraY, actor2->z - _engine->_grid->cameraZ);
@@ -573,7 +575,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 
 			// process overlay type
 			switch (overlay->type) {
-			case koSprite: {
+			case OverlayType::koSprite: {
 				const uint8 *spritePtr = _engine->_resources->spriteTable[overlay->info0];
 
 				int32 spriteWidth, spriteHeight;
@@ -596,7 +598,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 				}
 				break;
 			}
-			case koNumber: {
+			case OverlayType::koNumber: {
 				char text[10];
 				snprintf(text, sizeof(text), "%d", overlay->info0);
 
@@ -619,7 +621,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 				}
 				break;
 			}
-			case koNumberRange: {
+			case OverlayType::koNumberRange: {
 				const int32 range = _engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->lbaTime - 50);
 
 				char text[10];
@@ -644,7 +646,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 				}
 				break;
 			}
-			case koInventoryItem: {
+			case OverlayType::koInventoryItem: {
 				const int32 item = overlay->info0;
 				const Common::Rect rect(10, 10, 69, 69);
 
@@ -663,7 +665,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 				_engine->_gameState->initEngineProjections();
 				break;
 			}
-			case koText: {
+			case OverlayType::koText: {
 				char text[256];
 				_engine->_text->getMenuText(overlay->info0, text, sizeof(text));
 

@@ -334,7 +334,7 @@ static int32 processLifeConditions(TwinEEngine *engine, LifeScriptContext &ctx) 
 			}
 
 			if (engine->_scene->currentScriptValue == 1) {
-				engine->_redraw->addOverlay(koInventoryItem, item, 0, 0, 0, koNormal, 3);
+				engine->_redraw->addOverlay(OverlayType::koInventoryItem, item, 0, 0, 0, OverlayPosType::koNormal, 3);
 			}
 		} else {
 			engine->_scene->currentScriptValue = 0;
@@ -834,7 +834,7 @@ static int32 lUSE_ONE_LITTLE_KEY(TwinEEngine *engine, LifeScriptContext &ctx) {
 		engine->_gameState->inventoryNumKeys = 0;
 	}
 
-	engine->_redraw->addOverlay(koSprite, SPRITEHQR_KEY, 0, 0, 0, koFollowActor, 1);
+	engine->_redraw->addOverlay(OverlayType::koSprite, SPRITEHQR_KEY, 0, 0, 0, OverlayPosType::koFollowActor, 1);
 
 	return 0;
 }
@@ -853,11 +853,11 @@ static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx) {
 		engine->_gameState->inventoryNumKashes = 0;
 	}
 
-	engine->_redraw->addOverlay(koSprite, SPRITEHQR_KASHES, 10, 15, 0, koNormal, 3);
+	engine->_redraw->addOverlay(OverlayType::koSprite, SPRITEHQR_KASHES, 10, 15, 0, OverlayPosType::koNormal, 3);
 
 	for (int16 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		OverlayListStruct *overlay = &engine->_redraw->overlayList[i];
-		if (overlay->info0 != -1 && overlay->type == koNumberRange) {
+		if (overlay->info0 != -1 && overlay->type == OverlayType::koNumberRange) {
 			overlay->info0 = engine->_collision->getAverageValue(overlay->info1, overlay->info0, 100, overlay->lifeTime - engine->lbaTime - 50);
 			overlay->info1 = engine->_gameState->inventoryNumKashes;
 			overlay->lifeTime = engine->lbaTime + 150;
@@ -867,7 +867,7 @@ static int32 lGIVE_GOLD_PIECES(TwinEEngine *engine, LifeScriptContext &ctx) {
 	}
 
 	if (!hideRange) {
-		engine->_redraw->addOverlay(koNumberRange, oldNumKashes, 50, 20, engine->_gameState->inventoryNumKashes, koNormal, 3);
+		engine->_redraw->addOverlay(OverlayType::koNumberRange, oldNumKashes, 50, 20, engine->_gameState->inventoryNumKashes, OverlayPosType::koNormal, 3);
 	}
 
 	return 0;
@@ -1331,7 +1331,7 @@ static int32 lSET_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	static int32 location = ctx.stream.readByte();
 	engine->_holomap->setHolomapPosition(location);
 	if (engine->_gameState->hasItem(InventoryItems::kiHolomap)) {
-		engine->_redraw->addOverlay(koInventoryItem, 0, 0, 0, 0, koNormal, 3);
+		engine->_redraw->addOverlay(OverlayType::koInventoryItem, 0, 0, 0, 0, OverlayPosType::koNormal, 3);
 	}
 
 	return 0;
@@ -1388,7 +1388,7 @@ static int32 lSET_GRM(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSAY_MESSAGE(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int16 textEntry = ctx.stream.readSint16LE();
 
-	engine->_redraw->addOverlay(koText, textEntry, 0, 0, ctx.actorIdx, koFollowActor, 2);
+	engine->_redraw->addOverlay(OverlayType::koText, textEntry, 0, 0, ctx.actorIdx, OverlayPosType::koFollowActor, 2);
 
 	ScopedEngineFreeze scoped(engine);
 	engine->_text->initVoxToPlay(textEntry);
@@ -1404,7 +1404,7 @@ static int32 lSAY_MESSAGE_OBJ(TwinEEngine *engine, LifeScriptContext &ctx) {
 	int32 otherActorIdx = ctx.stream.readByte();
 	int16 textEntry = ctx.stream.readSint16LE();
 
-	engine->_redraw->addOverlay(koText, textEntry, 0, 0, otherActorIdx, koFollowActor, 2);
+	engine->_redraw->addOverlay(OverlayType::koText, textEntry, 0, 0, otherActorIdx, OverlayPosType::koFollowActor, 2);
 
 	ScopedEngineFreeze scoped(engine);
 	engine->_text->initVoxToPlay(textEntry);
