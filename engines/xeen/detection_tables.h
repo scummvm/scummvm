@@ -137,6 +137,21 @@ static const XeenGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// Clouds of Xeen (Chinese)
+		{
+			"cloudsofxeen",
+			nullptr,
+			AD_ENTRY1s("xeen.cc", "1fea0587fe139b13f4effa2b5791bd80", 13859999),
+			Common::ZH_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+		},
+		GType_Clouds,
+		0
+	},
+
+	{
 		// Darkside of Xeen
 		{
 			"darksideofxeen",
@@ -174,6 +189,21 @@ static const XeenGameDescription gameDescriptions[] = {
 			AD_ENTRY2s("dark.cc",  "84a86bbbc5f2fe96c0b0325485ed8203", 11173657,
 					   "intro.cc", "e47a7ab0223cf32b2d87eed91d024c35", 8899953),
 			Common::DE_DEU,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
+		},
+		GType_DarkSide,
+		0
+	},
+
+	{
+		// Darkside of Xeen (Chinese)
+		{
+			"darksideofxeen",
+			nullptr,
+			AD_ENTRY1s("dark.cc", "4dcbcdb0be885afebc2ab6c9e60c434e", 11137412),
+			Common::ZH_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
 			GUIO2(GAMEOPTION_SHOW_ITEM_COSTS, GAMEOPTION_DURABLE_ARMOR)
