@@ -32,6 +32,7 @@
 #include "scumm/imuse_digi/dimuse.h"
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
+#include "scumm/he/localizer.h"
 #endif
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -336,7 +337,11 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 			buffer += 14;
 			if (_game.heversion >= 60) {
+#ifdef ENABLE_HE
+				((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
+#else
 				((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
+#endif
 			} else {
 				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
 			}
@@ -406,7 +411,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			}
 			value[i] = 0;
 			//talk_sound_b = atoi(value);
-			((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
+			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
 			break;
 		case 104:
 			_haveMsg = 0;
@@ -429,7 +434,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			value[i] = 0;
 			talk_sound_a = atoi(value);
 			//talk_sound_b = 0;
-			((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
+			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
 			break;
 		case 119:
 			_haveMsg = 0xFF;

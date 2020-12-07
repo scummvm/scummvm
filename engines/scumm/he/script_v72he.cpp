@@ -31,6 +31,7 @@
 #include "scumm/dialogs.h"
 #include "scumm/file.h"
 #include "scumm/he/intern_he.h"
+#include "scumm/he/localizer.h"
 #include "scumm/object.h"
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -317,6 +318,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 	int args[31];
 	int num, len, val;
 	byte chr, string[1024];
+	byte *dst0 = dst;
 	memset(args, 0, sizeof(args));
 	memset(string, 0, sizeof(string));
 
@@ -333,6 +335,10 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 	} else {
 		copyScriptString(string, sizeof(string));
 		len = resStrLen(string) + 1;
+	}
+
+	if (_localizer) {
+		strncpy((char *) string, _localizer->translate((char *) string).c_str(), sizeof(string) - 1);
 	}
 
 	// Decode string
@@ -372,6 +378,10 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 		}
 	}
 	*dst = 0;
+
+	if (_localizer) {
+		strncpy((char *) dst0, _localizer->translate((char *) dst0).c_str(), sizeof(string) - 1);
+	}
 }
 
 int ScummEngine_v72he::findObject(int x, int y, int num, int *args) {
