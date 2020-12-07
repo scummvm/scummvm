@@ -255,22 +255,6 @@ private:
 	uint8 *heroEntityPROTOPACK = nullptr; // file3D4
 	int32 heroEntityPROTOPACKSize = 0;
 
-	struct ActorBoundingBox {
-		/** Bottom left X coordinate */
-		int16 bottomLeftX = 0;
-		/** Bottom left Y coordinate */
-		int16 bottomLeftY = 0;
-		/** Bottom left Z coordinate */
-		int16 bottomLeftZ = 0;
-		/** Top left X coordinate */
-		int16 topRightX = 0;
-		/** Top left Y coordinate */
-		int16 topRightY = 0;
-		/** Top left Z coordinate */
-		int16 topRightZ = 0;
-		bool hasBoundingBox = false;
-	};
-
 	void initSpriteActor(int32 actorIdx);
 
 	/**
