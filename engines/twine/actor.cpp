@@ -257,6 +257,8 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		return;
 	}
 
+	debug("Load body %i for actor %i", bodyIdx, actorIdx);
+
 	if (IS_HERO(actorIdx) && heroBehaviour == HeroBehaviourType::kProtoPack && localActor->armor != 0 && localActor->armor != 1) {
 		setBehaviour(HeroBehaviourType::kNormal);
 	}
@@ -274,6 +276,7 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		bbox.y.topRight = 0;
 		bbox.z.bottomLeft = 0;
 		bbox.z.topRight = 0;
+		debug("Failed to initialize body %i for actor %i", bodyIdx, actorIdx);
 		return;
 	}
 
@@ -348,6 +351,7 @@ void Actor::initActor(int16 actorIdx) {
 	} else {
 		actor->entity = -1;
 
+		debug("Init actor %i with model %i", actorIdx, actor->body);
 		initModelActor(actor->body, actorIdx);
 
 		actor->previousAnimIdx = -1;
@@ -499,6 +503,7 @@ ActorStruct::~ActorStruct() {
 void ActorStruct::loadModel(int32 modelIndex) {
 	entity = modelIndex;
 	if (!staticFlags.bIsSpriteActor) {
+		debug("Init actor with model %i", modelIndex);
 		entityDataSize = HQR::getAllocEntry(&entityDataPtr, Resources::HQR_FILE3D_FILE, modelIndex);
 	} else {
 		entityDataSize = 0;
