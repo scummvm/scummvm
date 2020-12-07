@@ -31,9 +31,9 @@
 namespace TwinE {
 
 struct EntityBody {
-	int index;
+	int index;		/**< index in file3d.hqr */
 	ActorBoundingBox actorBoundingBox;
-	int bodyIndex;
+	int bodyIndex;	/**< index in body.hqr */
 };
 
 struct EntityAnim {
@@ -74,9 +74,10 @@ private:
 public:
 	bool loadFromStream(Common::SeekableReadStream &stream);
 
-	bool loadFromBuffer(const uint8* buf, uint32 size);
+	bool loadFromBuffer(const uint8 *buf, uint32 size);
 
-	const EntityBody* getBody(const int index) const;
+	const Common::Array<EntityAnim::Action> *getActions(AnimationTypes animation) const;
+	const EntityBody *getBody(const int index) const;
 	int32 getAnimIndex(AnimationTypes animation) const;
 };
 

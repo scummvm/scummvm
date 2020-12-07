@@ -167,10 +167,22 @@ bool EntityData::loadFromStream(Common::SeekableReadStream &stream) {
 
 bool EntityData::loadFromBuffer(const uint8* buf, uint32 size) {
 	if (size == 0) {
-		error("Failed to load entity data");
+		return false;
 	}
 	Common::MemoryReadStream stream(buf, size);
 	return loadFromStream(stream);
+}
+
+const Common::Array<EntityAnim::Action>* EntityData::getActions(AnimationTypes animation) const {
+	for (const EntityAnim& anim : _animations) {
+		if (anim.animation == animation) {
+			if (anim._actions.empty()) {
+				return nullptr;
+			}
+			return &anim._actions;
+		}
+	}
+	return nullptr;
 }
 
 const EntityBody* EntityData::getBody(const int index) const {
