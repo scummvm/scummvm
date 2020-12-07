@@ -82,15 +82,13 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bo
 		return numOfKeyframeInAnim;
 	}
 
+	if (!Model::isAnimated(bodyPtr)) {
+		return 0;
+	}
+
 	int16 numOfBonesInAnim = READ_LE_INT16(animPtr + 2);
 
 	const uint8 *ptrToData = (const uint8 *)((numOfBonesInAnim * 8 + 8) * keyframeIdx + animPtr + 8);
-
-	const int16 bodyHeader = READ_LE_INT16(bodyPtr);
-
-	if (!(bodyHeader & 2)) {
-		return 0;
-	}
 
 	uint8 *ptrToBodyData = bodyPtr + 14;
 
@@ -345,12 +343,11 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 }
 
 int32 Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	uint8 *animPtr = animBufferPos;
-	int32 bodyHeader = READ_LE_INT16(bodyPtr);
-
-	if (!(bodyHeader & 2)) {
+	if (!Model::isAnimated(bodyPtr)) {
 		return 0;
 	}
+	uint8 *animPtr = animBufferPos;
+
 	const uint8 *ptr = bodyPtr + 16;
 
 	animTimerDataPtr->time = _engine->lbaTime;
@@ -387,14 +384,10 @@ int32 Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *anim
 	return var2;
 }
 
-bool Animations::verifyAnimAtKeyframe(int32 animIdx, const uint8 *animPtr, const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+bool Animations::verifyAnimAtKeyframe(int32 animIdx, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	const int32 numOfPointInAnim = READ_LE_INT16(animPtr + 2);
 	const uint8 *keyFramePtr = ((numOfPointInAnim * 8 + 8) * animIdx) + animPtr + 8;
 	const int32 keyFrameLength = READ_LE_INT16(keyFramePtr);
-	const int16 bodyHeader = READ_LE_INT16(bodyPtr);
-	if (!(bodyHeader & 2)) {
-		return false;
-	}
 
 	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
 	int32 remainingFrameTime = animTimerDataPtr->time;
@@ -849,7 +842,10 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		if (actor->previousAnimIdx != -1) {
 			const uint8 *animPtr = _engine->_resources->animTable[actor->previousAnimIdx];
 
-			bool keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animPtr, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+			bool keyFramePassed = false;
+			if (Model::isAnimated(_engine->_actor->bodyTable[actor->entity])) {
+				keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animPtr, &actor->animTimerData);;
+			}
 
 			if (processRotationByAnim) {
 				actor->dynamicFlags.bIsRotationByAnim = 1;
