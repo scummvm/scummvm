@@ -55,16 +55,16 @@ enum ActionType {
 	ACTION_THROW_EXTRA_BONUS = 3,
 	ACTION_THROW_MAGIC_BALL = 4,
 	ACTION_SAMPLE_REPEAT = 5,
-	ACTION_UNKNOWN_6 = 6,
-	ACTION_UNKNOWN_7 = 7,
+	ACTION_THROW_SEARCH = 6,
+	ACTION_THROW_ALPHA = 7,
 	ACTION_SAMPLE_STOP = 8,
-	ACTION_UNKNOWN_9 = 9, // unused
+	ACTION_ZV = 9, // unused
 	ACTION_SAMPLE_BRICK_1 = 10,
 	ACTION_SAMPLE_BRICK_2 = 11,
 	ACTION_HERO_HITTING = 12,
-	ACTION_UNKNOWN_13 = 13,
-	ACTION_UNKNOWN_14 = 14,
-	ACTION_UNKNOWN_15 = 15,
+	ACTION_THROW_3D = 13,
+	ACTION_THROW_3D_ALPHA = 14,
+	ACTION_THROW_3D_SEARCH = 15,
 	ACTION_LAST
 };
 
@@ -441,36 +441,36 @@ void Animations::processAnimActions(int32 actorIdx) {
 
 		switch (actionType) {
 		case ACTION_HITTING: {
-			const int32 animPos = stream.readByte() - 1;
+			const int32 animFrame = stream.readByte() - 1;
 			const int32 strength = stream.readByte();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				actor->strengthOfHit = strength;
 				actor->dynamicFlags.bIsHitting = 1;
 			}
 			break;
 		}
 		case ACTION_SAMPLE: {
-			const int32 animPos = stream.readByte();
+			const int32 animFrame = stream.readByte();
 			const int16 sampleIdx = stream.readSint16LE();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_sound->playSample(sampleIdx, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
 		}
 		case ACTION_SAMPLE_FREQ: {
-			const int32 animPos = stream.readByte();
+			const int32 animFrame = stream.readByte();
 			const int16 sampleIdx = stream.readSint16LE();
 			/*int16 frequency = */stream.readSint16LE();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_sound->playSample(sampleIdx, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
 		}
 		case ACTION_THROW_EXTRA_BONUS: {
-			const int32 animPos = stream.readByte();
+			const int32 animFrame = stream.readByte();
 			const int32 yHeight = stream.readSint16LE();
 			const int32 sprite = stream.readByte();
 			const int32 xAngle = ToAngle(stream.readSint16LE());
@@ -479,52 +479,47 @@ void Animations::processAnimActions(int32 actorIdx) {
 			const int32 extraAngle = ToAngle(stream.readByte());
 			const int32 strengthOfHit = stream.readByte();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + yHeight, actor->z, sprite, xAngle, yAngle, xRotPoint, extraAngle, strengthOfHit);
 			}
 			break;
 		}
 		case ACTION_THROW_MAGIC_BALL: {
-			const int32 animPos = stream.readByte();
+			const int32 animFrame = stream.readByte();
 			const int32 yOffset = stream.readSint16LE();
 			const int32 xAngle = ToAngle(stream.readSint16LE());
 			const int32 xRotPoint = stream.readSint16LE();
 			const int32 extraAngle = stream.readByte();
 
-			if (_engine->_gameState->magicBallIdx == -1 && animPos == actor->animPosition) {
+			if (_engine->_gameState->magicBallIdx == -1 && animFrame == actor->animPosition) {
 				_engine->_extra->addExtraThrowMagicball(actor->x, actor->y + yOffset, actor->z, xAngle, actor->angle, xRotPoint, extraAngle);
 			}
 			break;
 		}
 		case ACTION_SAMPLE_REPEAT: {
-			const int32 animPos = stream.readByte();
+			const int32 animFrame = stream.readByte();
 			const int16 sampleIdx = stream.readSint16LE();
 			const int16 repeat = stream.readSint16LE();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_sound->playSample(sampleIdx, repeat, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
 		}
-		case ACTION_UNKNOWN_6: {
-			const int32 animPos = stream.readByte();
-			if (animPos == actor->animPosition) {
-				// TODO: The folowing fetches 7 bytes, but the else block skips only 6 bytes.
-				// Please check if that's correct.
-				const int32 yOffset = stream.readSint16LE();
-				const int32 spriteIdx = stream.readByte();
-				const int32 targetActorIdx = stream.readByte();
-				const int32 finalAngle = stream.readSint16LE();
-				const int32 strengthOfHit = stream.readByte();
-
+		case ACTION_THROW_SEARCH: {
+			const int32 animFrame = stream.readByte();
+			const int32 yOffset = stream.readSint16LE();
+			const int32 spriteIdx = stream.readByte();
+			const int32 targetActorIdx = stream.readByte();
+			const int32 finalAngle = stream.readSint16LE();
+			const int32 strengthOfHit = stream.readByte();
+			if (animFrame == actor->animPosition) {
 				_engine->_extra->addExtraAiming(actorIdx, actor->x, actor->y + yOffset, actor->z, spriteIdx, targetActorIdx, finalAngle, strengthOfHit);
-			} else {
-				stream.skip(6);
 			}
 			break;
 		}
-		case ACTION_UNKNOWN_7: {
-			const int32 animPos = stream.readByte();
+		case ACTION_THROW_ALPHA: {
+			const int32 animFrame = stream.readByte();
 			const int32 yHeight = stream.readSint16LE();
 			const int32 spriteIdx = stream.readByte();
 			const int32 xAngle = ToAngle(stream.readSint16LE());
@@ -533,47 +528,47 @@ void Animations::processAnimActions(int32 actorIdx) {
 			const int32 extraAngle = ToAngle(stream.readByte());
 			const int32 strengthOfHit = stream.readByte();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + yHeight, actor->z, spriteIdx, xAngle, yAngle, xRotPoint, extraAngle, strengthOfHit);
 			}
 			break;
 		}
 		case ACTION_SAMPLE_STOP: {
-			const int32 animPos = stream.readByte();
+			const int32 animFrame = stream.readByte();
 			const int32 sampleIdx = stream.readByte(); //why is it reading a byte but saving it in a 32bit variable?
 			stream.skip(1);               // TODO what is the meaning of this extra byte?
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_sound->stopSample(sampleIdx);
 			}
 			break;
 		}
 		case ACTION_SAMPLE_BRICK_1: {
-			const int32 animPos = stream.readByte();
-			if (animPos == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
+			const int32 animFrame = stream.readByte();
+			if (animFrame == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
 				const int16 sampleIdx = (actor->brickSound & 0x0F) + Samples::WalkFloorBegin;
 				_engine->_sound->playSample(sampleIdx, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
 		}
 		case ACTION_SAMPLE_BRICK_2: {
-			const int32 animPos = stream.readByte();
-			if (animPos == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
+			const int32 animFrame = stream.readByte();
+			if (animFrame == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
 				const int16 sampleIdx = (actor->brickSound & 0x0F) + Samples::WalkFloorBegin;
 				_engine->_sound->playSample(sampleIdx, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
 		}
 		case ACTION_HERO_HITTING: {
-			const int32 animPos = stream.readByte() - 1;
-			if (animPos == actor->animPosition) {
+			const int32 animFrame = stream.readByte() - 1;
+			if (animFrame == actor->animPosition) {
 				actor->strengthOfHit = magicLevelStrengthOfHit[_engine->_gameState->magicLevelIdx];
 				actor->dynamicFlags.bIsHitting = 1;
 			}
 			break;
 		}
-		case ACTION_UNKNOWN_13: {
-			const int32 animPos = stream.readByte();
+		case ACTION_THROW_3D: {
+			const int32 animFrame = stream.readByte();
 			const int32 distanceX = stream.readSint16LE();
 			const int32 distanceY = stream.readSint16LE();
 			const int32 distanceZ = stream.readSint16LE();
@@ -584,7 +579,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			const int32 extraAngle = ToAngle(stream.readByte());
 			const int32 strength = stream.readByte();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_movements->rotateActor(distanceX, distanceZ, actor->angle);
 
 				const int32 throwX = _engine->_renderer->destX + actor->x;
@@ -596,8 +591,8 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_UNKNOWN_14: {
-			const int32 animPos = stream.readByte();
+		case ACTION_THROW_3D_ALPHA: {
+			const int32 animFrame = stream.readByte();
 			const int32 distanceX = stream.readSint16LE();
 			const int32 distanceY = stream.readSint16LE();
 			const int32 distanceZ = stream.readSint16LE();
@@ -608,7 +603,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			const int32 extraAngle = ToAngle(stream.readByte());
 			const int32 strength = stream.readByte();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->y, 0, _engine->_scene->sceneHero->y, _engine->_movements->getDistance2D(actor->x, actor->z, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->z));
 
 				_engine->_movements->rotateActor(distanceX, distanceZ, actor->angle);
@@ -622,8 +617,8 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_UNKNOWN_15: {
-			const int32 animPos = stream.readByte();
+		case ACTION_THROW_3D_SEARCH: {
+			const int32 animFrame = stream.readByte();
 			const int32 distanceX = stream.readSint16LE();
 			const int32 distanceY = stream.readSint16LE();
 			const int32 distanceZ = stream.readSint16LE();
@@ -632,14 +627,14 @@ void Animations::processAnimActions(int32 actorIdx) {
 			const int32 finalAngle = ToAngle(stream.readSint16LE());
 			const int32 strengthOfHit = stream.readByte();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_movements->rotateActor(distanceX, distanceZ, actor->angle);
 				_engine->_extra->addExtraAiming(actorIdx, actor->x + _engine->_renderer->destX, actor->y + distanceY, actor->z + distanceZ, spriteIdx,
 				                                targetActor, finalAngle, strengthOfHit);
 			}
 			break;
 		}
-		case ACTION_UNKNOWN_9:
+		case ACTION_ZV:
 			break;
 		default:
 			break;
