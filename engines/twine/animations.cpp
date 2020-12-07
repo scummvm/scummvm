@@ -533,10 +533,10 @@ void Animations::processAnimActions(int32 actorIdx) {
 				const int32 yOffset = stream.readSint16LE();
 				const int32 spriteIdx = stream.readByte();
 				const int32 targetActorIdx = stream.readByte();
-				const int32 maxSpeed = stream.readSint16LE();
+				const int32 finalAngle = stream.readSint16LE();
 				const int32 strengthOfHit = stream.readByte();
 
-				_engine->_extra->addExtraAiming(actorIdx, actor->x, actor->y + yOffset, actor->z, spriteIdx, targetActorIdx, maxSpeed, strengthOfHit);
+				_engine->_extra->addExtraAiming(actorIdx, actor->x, actor->y + yOffset, actor->z, spriteIdx, targetActorIdx, finalAngle, strengthOfHit);
 			} else {
 				stream.skip(6);
 			}
