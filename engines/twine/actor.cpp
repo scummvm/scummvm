@@ -87,28 +87,44 @@ void Actor::loadHeroEntities() {
 		error("Failed to load actor athletic 3d data");
 	}
 	sceneHero->entityDataPtr = heroEntityATHLETIC;
+	sceneHero->entityDataSize = heroEntityATHLETICSize;
 	heroAnimIdxATHLETIC = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
+	if (heroAnimIdxATHLETIC == -1) {
+		error("Could not find athletic animation data");
+	}
 
 	heroEntityAGGRESSIVESize = HQR::getAllocEntry(&heroEntityAGGRESSIVE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROAGGRESSIVE);
 	if (heroEntityAGGRESSIVESize == 0) {
 		error("Failed to load actor aggressive 3d data");
 	}
 	sceneHero->entityDataPtr = heroEntityAGGRESSIVE;
+	sceneHero->entityDataSize = heroEntityAGGRESSIVESize;
 	heroAnimIdxAGGRESSIVE = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
+	if (heroAnimIdxAGGRESSIVE == -1) {
+		error("Could not find aggressive animation data");
+	}
 
 	heroEntityDISCRETESize = HQR::getAllocEntry(&heroEntityDISCRETE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERODISCRETE);
 	if (heroEntityDISCRETESize == 0) {
 		error("Failed to load actor discrete 3d data");
 	}
 	sceneHero->entityDataPtr = heroEntityDISCRETE;
+	sceneHero->entityDataSize = heroEntityDISCRETESize;
 	heroAnimIdxDISCRETE = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
+	if (heroAnimIdxDISCRETE == -1) {
+		error("Could not find discrete animation data");
+	}
 
 	heroEntityPROTOPACKSize = HQR::getAllocEntry(&heroEntityPROTOPACK, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROPROTOPACK);
 	if (heroEntityPROTOPACKSize == 0) {
 		error("Failed to load actor protopack 3d data");
 	}
 	sceneHero->entityDataPtr = heroEntityPROTOPACK;
+	sceneHero->entityDataSize = heroEntityPROTOPACKSize;
 	heroAnimIdxPROTOPACK = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
+	if (heroAnimIdxPROTOPACK == -1) {
+		error("Could not find protopack animation data");
+	}
 
 	heroEntityNORMALSize = HQR::getAllocEntry(&heroEntityNORMAL, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERONORMAL);
 	if (heroEntityNORMALSize == 0) {
@@ -117,6 +133,9 @@ void Actor::loadHeroEntities() {
 	sceneHero->entityDataPtr = heroEntityNORMAL;
 	sceneHero->entityDataSize = heroEntityNORMALSize;
 	heroAnimIdxNORMAL = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
+	if (heroAnimIdxNORMAL == -1) {
+		error("Could not find normal animation data");
+	}
 
 	sceneHero->animExtraPtr = _engine->_animations->currentActorAnimExtraPtr;
 }
