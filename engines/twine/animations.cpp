@@ -68,12 +68,12 @@ enum ActionType {
 	ACTION_LAST
 };
 
-Animations::Animations(TwinEEngine *engine) : _engine(engine) {
-	animBuffer1 = animBuffer2 = (uint8 *)malloc(5000 * sizeof(uint8));
+Animations::Animations(TwinEEngine *engine) : _engine(engine), animBuffer((uint8 *)malloc(5000 * sizeof(uint8))) {
+	animBufferPos = animBuffer;
 }
 
 Animations::~Animations() {
-	free(animBuffer1);
+	free(animBuffer);
 }
 
 int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
@@ -344,14 +344,14 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 	return 0;
 }
 
-int32 Animations::stockAnimation(uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	uint8 *animPtr = animBuffer2;
+int32 Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+	uint8 *animPtr = animBufferPos;
 	int32 bodyHeader = READ_LE_INT16(bodyPtr);
 
 	if (!(bodyHeader & 2)) {
 		return 0;
 	}
-	const uint8 *ptr = (bodyPtr + 0x10);
+	const uint8 *ptr = bodyPtr + 16;
 
 	animTimerDataPtr->time = _engine->lbaTime;
 	animTimerDataPtr->ptr = animPtr;
@@ -378,10 +378,10 @@ int32 Animations::stockAnimation(uint8 *bodyPtr, AnimTimerDataStruct *animTimerD
 		esi = (const int32 *)(((const int8 *)esi) + 30);
 	} while (counter--);
 
-	animBuffer2 += var2;
+	animBufferPos += var2;
 
-	if (animBuffer1 + 4488 < animBuffer2) {
-		animBuffer2 = animBuffer1;
+	if (animBuffer + 4488 < animBufferPos) {
+		animBufferPos = animBuffer;
 	}
 
 	return var2;
@@ -708,9 +708,9 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 	if (actor->previousAnimIdx == -1) { // if no previous animation
 		setAnimAtKeyframe(0, _engine->_resources->animTable[animIndex], _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 	} else { // interpolation between animations
-		animBuffer2 += stockAnimation(_engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
-		if (animBuffer1 + 4488 < animBuffer2) {
-			animBuffer2 = animBuffer1;
+		animBufferPos += stockAnimation(_engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+		if (animBuffer + 4488 < animBufferPos) {
+			animBufferPos = animBuffer;
 		}
 	}
 
