@@ -40,13 +40,12 @@
 namespace TwinE {
 
 static const int32 magicLevelStrengthOfHit[] = {
-	MagicballStrengthType::kNoBallStrength,
-	MagicballStrengthType::kYellowBallStrength,
-	MagicballStrengthType::kGreenBallStrength,
-	MagicballStrengthType::kRedBallStrength,
-	MagicballStrengthType::kFireBallStrength,
-	0
-};
+    MagicballStrengthType::kNoBallStrength,
+    MagicballStrengthType::kYellowBallStrength,
+    MagicballStrengthType::kGreenBallStrength,
+    MagicballStrengthType::kRedBallStrength,
+    MagicballStrengthType::kFireBallStrength,
+    0};
 
 Animations::Animations(TwinEEngine *engine) : _engine(engine), animBuffer((uint8 *)malloc(5000 * sizeof(uint8))) {
 	animBufferPos = animBuffer;
@@ -68,6 +67,8 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uin
 
 	int16 numOfBonesInAnim = READ_LE_INT16(animPtr + 2);
 
+	// A bones is 8 bytes - length uint16, x, y and z as sint16
+	// additional 8 bytes for the animation header numkeyframes, numboneframes, loopframe and unkown uint16 fields
 	const uint8 *ptrToData = (const uint8 *)((numOfBonesInAnim * 8 + 8) * keyframeIdx + animPtr + 8);
 
 	animTimerDataPtr->ptr = ptrToData;
@@ -183,7 +184,7 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 		return false;
 	}
 	int32 numOfPointInAnim = READ_LE_INT16(animPtr + 2);
-	const uint8* keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animPtr + 8;
+	const uint8 *keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animPtr + 8;
 	const int32 keyFrameLength = READ_LE_INT16(keyFramePtr);
 
 	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
@@ -198,7 +199,7 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 
 	const int16 numVertices = READ_LE_INT16(verticesBase);
 	verticesBase += 2;
-	uint8* bonesBase = verticesBase + numVertices * 6;
+	uint8 *bonesBase = verticesBase + numVertices * 6;
 
 	const int32 numBones = READ_LE_INT16(bonesBase);
 	bonesBase += 2;
@@ -209,7 +210,7 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 
 	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
 
-	uint8* edi = bonesBase + 8;
+	uint8 *edi = bonesBase + 8;
 	if (deltaTime >= keyFrameLength) {
 		const int32 *sourcePtr = (const int32 *)(keyFramePtr + 8);
 		int32 *destPtr = (int32 *)edi; // keyframe
@@ -252,13 +253,13 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 			const int16 animOpcode = getAnimMode(&edi, &keyFramePtr, &lastKeyFramePtr);
 
 			switch (animOpcode) {
-			case 0:  // allow global rotate
+			case 0: // allow global rotate
 				applyAnimStepRotation(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				applyAnimStepRotation(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				applyAnimStepRotation(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				break;
-			case 1:  // dissallow global rotate
-			case 2:  // dissallow global rotate + hide
+			case 1: // dissallow global rotate
+			case 2: // dissallow global rotate + hide
 				applyAnimStep(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				applyAnimStep(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				applyAnimStep(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
@@ -803,7 +804,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 			bool keyFramePassed = false;
 			if (Model::isAnimated(_engine->_actor->bodyTable[actor->entity])) {
-				keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animPtr, &actor->animTimerData);;
+				keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animPtr, &actor->animTimerData);
 			}
 
 			if (processRotationByAnim) {
