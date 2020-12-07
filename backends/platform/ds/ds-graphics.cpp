@@ -46,22 +46,13 @@ static int subScreenWidth = SCUMM_GAME_WIDTH;
 static int subScreenHeight = SCUMM_GAME_HEIGHT;
 static int subScreenScale = 256;
 
-static bool gameScreenSwap = false;
-
 // Shake
 static int s_shakeXOffset = 0;
 static int s_shakeYOffset = 0;
 
-// Touch
-static int touchScX, touchScY, touchX, touchY;
-
 // 8-bit surface size
 static int gameWidth = 320;
 static int gameHeight = 200;
-
-void setGameScreenSwap(bool enable) {
-	gameScreenSwap = enable;
-}
 
 void setTopScreenZoom(int percentage) {
 	s32 scale = (percentage << 8) / 100;
@@ -85,111 +76,12 @@ void setTopScreenTarget(int x, int y) {
 void setGameSize(int width, int height) {
 	gameWidth = width;
 	gameHeight = height;
-
-	if (g_system->getGraphicsMode() == GFX_SWSCALE) {
-		REG_BG3PA = 256;
-		REG_BG3PB = 0;
-		REG_BG3PC = 0;
-		REG_BG3PD = (int) ((200.0f / 192.0f) * 256);
-
-	} else {
-		REG_BG3PA = (int) (((float) (gameWidth) / 256.0f) * 256);
-		REG_BG3PB = 0;
-		REG_BG3PC = 0;
-		REG_BG3PD = (int) ((200.0f / 192.0f) * 256);
-	}
-
-#ifdef DISABLE_TEXT_CONSOLE
-	REG_BG3PA_SUB = (int) (subScreenWidth / 256.0f * 256);
-	REG_BG3PB_SUB = 0;
-	REG_BG3PC_SUB = 0;
-	REG_BG3PD_SUB = (int) (subScreenHeight / 192.0f * 256);
-#endif
+	setTopScreenTarget(width / 2, height / 2);
 }
 
 void setShakePos(int shakeXOffset, int shakeYOffset) {
 	s_shakeXOffset = shakeXOffset;
 	s_shakeYOffset = shakeYOffset;
-}
-
-Common::Point warpMouse(int penX, int penY, bool isOverlayShown) {
-	int storedMouseX, storedMouseY;
-	if (!isOverlayShown) {
-		storedMouseX = ((penX - touchX) << 8) / touchScX;
-		storedMouseY = ((penY - touchY) << 8) / touchScY;
-	} else {
-		storedMouseX = penX;
-		storedMouseY = penY;
-	}
-
-	return Common::Point(storedMouseX, storedMouseY);
-}
-
-void setMainScreenScroll(int x, int y) {
-		REG_BG3X = x;
-		REG_BG3Y = y;
-
-		if (!gameScreenSwap) {
-			touchX = x >> 8;
-			touchY = y >> 8;
-		}
-}
-
-void setMainScreenScale(int x, int y) {
-		if ((g_system->getGraphicsMode() == GFX_SWSCALE) && (x==320)) {
-			REG_BG3PA = 256;
-			REG_BG3PB = 0;
-			REG_BG3PC = 0;
-			REG_BG3PD = y;
-		} else {
-			REG_BG3PA = x;
-			REG_BG3PB = 0;
-			REG_BG3PC = 0;
-			REG_BG3PD = y;
-		}
-
-		if (!gameScreenSwap) {
-			touchScX = x;
-			touchScY = y;
-		}
-}
-
-void setZoomedScreenScroll(int x, int y, bool shake) {
-		if (gameScreenSwap) {
-			touchX = x >> 8;
-			touchY = y >> 8;
-		}
-
-#ifdef DISABLE_TEXT_CONSOLE
-		REG_BG3X_SUB = x;
-		REG_BG3Y_SUB = y;
-#endif
-}
-
-void setZoomedScreenScale(int x, int y) {
-		if (gameScreenSwap) {
-			touchScX = x;
-			touchScY = y;
-		}
-
-#ifdef DISABLE_TEXT_CONSOLE
-		REG_BG3PA_SUB = x;
-		REG_BG3PB_SUB = 0;
-		REG_BG3PC_SUB = 0;
-		REG_BG3PD_SUB = y;
-#endif
-}
-
-Common::Point transformPoint(uint16 x, uint16 y, bool isOverlayShown) {
-	if (!isOverlayShown) {
-		x = ((x * touchScX) >> 8) + touchX;
-		x = CLIP<uint16>(x, 0, gameWidth  - 1);
-
-		y = ((y * touchScY) >> 8) + touchY;
-		y = CLIP<uint16>(y, 0, gameHeight - 1);
-	}
-
-	return Common::Point(x, y);
 }
 
 void VBlankHandler(void) {
@@ -218,6 +110,7 @@ void VBlankHandler(void) {
 
 	subScX += (subScTargetX - subScX) >> 2;
 	subScY += (subScTargetY - subScY) >> 2;
+	OSystem_DS::instance()->setSubScreen(subScX, subScY, subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
 
 	if (g_system->getGraphicsMode() == GFX_NOSCALE) {
 		if (scX + 256 > gameWidth - 1) {
@@ -236,11 +129,7 @@ void VBlankHandler(void) {
 			scY = 0;
 		}
 
-		setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
-		setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
-
-		setMainScreenScroll((scX << 8) + (s_shakeXOffset << 8), (scY << 8) + (s_shakeYOffset << 8));
-		setMainScreenScale(256, 256);		// 1:1 scale
+		OSystem_DS::instance()->setMainScreen((scX << 8) + (s_shakeXOffset << 8), (scY << 8) + (s_shakeYOffset << 8), 256, 256);
 	} else {
 		if (scY > gameHeight - 192 - 1) {
 			scY = gameHeight - 192 - 1;
@@ -250,16 +139,8 @@ void VBlankHandler(void) {
 			scY = 0;
 		}
 
-		setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
-		setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
-
-		setMainScreenScroll(64 + (s_shakeXOffset << 8), (scY << 8) + (s_shakeYOffset << 8));
-		setMainScreenScale(320, 256);		// 1:1 scale
+		OSystem_DS::instance()->setMainScreen(64 + (s_shakeXOffset << 8), (scY << 8) + (s_shakeYOffset << 8), gameWidth, ((gameHeight * (256 << 8)) / 192) >> 8);
 	}
-}
-
-void setTalkPos(int x, int y) {
-	setTopScreenTarget(x, y);
 }
 
 void initHardware() {
@@ -303,6 +184,18 @@ void OSystem_DS::initGraphics() {
 	_cursorSprite = oamAllocateGfx(&oamMain, SpriteSize_64x64, SpriteColorFormat_Bmp);
 
 	_overlay.create(256, 192, true, 2, false, 0, false);
+}
+
+void OSystem_DS::setMainScreen(int32 x, int32 y, int32 sx, int32 sy) {
+	_framebuffer.setScalef(sx, sy);
+	_framebuffer.setScrollf(x, y);
+}
+
+void OSystem_DS::setSubScreen(int32 x, int32 y, int32 sx, int32 sy) {
+#ifdef DISABLE_TEXT_CONSOLE
+	_subScreen.setScalef(sx, sy);
+	_subScreen.setScrollf(x, y);
+#endif
 }
 
 bool OSystem_DS::hasFeature(Feature f) {
@@ -402,7 +295,6 @@ void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *
 	} else {
 		_framebuffer.reset();
 		_framebuffer.create(width, height, isRGB, 3, false, 8, swScale);
-		DS::setGameSize(width, height);
 	}
 
 #ifdef DISABLE_TEXT_CONSOLE
@@ -413,6 +305,8 @@ void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *
 		_subScreen.init(&_framebuffer, 3, true, 0, false);
 	}
 #endif
+
+	DS::setGameSize(width, height);
 }
 
 int16 OSystem_DS::getHeight() {
@@ -466,6 +360,9 @@ void OSystem_DS::copyRectToScreen(const void *buf, int pitch, int x, int y, int 
 }
 
 void OSystem_DS::updateScreen() {
+	swiWaitForVBlank();
+	bgUpdate();
+
 	if (_cursorDirty) {
 		refreshCursor(_cursorSprite, _cursor, !_disableCursorPalette ? _cursorPalette : _palette);
 		_cursorDirty = false;
@@ -499,17 +396,10 @@ void OSystem_DS::setShakePos(int shakeXOffset, int shakeYOffset) {
 void OSystem_DS::showOverlay() {
 	_overlay.reset();
 	_overlay.show();
-	lcdMainOnBottom();
 }
 
 void OSystem_DS::hideOverlay() {
 	_overlay.hide();
-
-	if (DS::gameScreenSwap) {
-		lcdMainOnTop();
-	} else {
-		lcdMainOnBottom();
-	}
 }
 
 bool OSystem_DS::isOverlayVisible() const {
@@ -540,8 +430,11 @@ Graphics::PixelFormat OSystem_DS::getOverlayFormat() const {
 	return _overlay.format;
 }
 
-Common::Point OSystem_DS::transformPoint(uint16 x, uint16 y) {
-	return DS::transformPoint(x, y, _overlay.isVisible());
+Common::Point OSystem_DS::transformPoint(int16 x, int16 y) {
+	if (_overlay.isVisible())
+		return Common::Point(x, y);
+	else
+		return _framebuffer.realToScaled(x, y);
 }
 
 bool OSystem_DS::showMouse(bool visible) {
@@ -551,7 +444,10 @@ bool OSystem_DS::showMouse(bool visible) {
 }
 
 void OSystem_DS::warpMouse(int x, int y) {
-	_cursorPos = DS::warpMouse(x, y, _overlay.isVisible());
+	if (_overlay.isVisible())
+		_cursorPos = Common::Point(x, y);
+	else
+		_cursorPos = _framebuffer.scaledToReal(x, y);
 }
 
 void OSystem_DS::setMouseCursor(const void *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, bool dontScale, const Graphics::PixelFormat *format) {
@@ -614,7 +510,7 @@ void OSystem_DS::unlockScreen() {
 }
 
 void OSystem_DS::setFocusRectangle(const Common::Rect& rect) {
-	DS::setTalkPos(rect.left + rect.width() / 2, rect.top + rect.height() / 2);
+	DS::setTopScreenTarget(rect.left + rect.width() / 2, rect.top + rect.height() / 2);
 }
 
 void OSystem_DS::clearFocusRectangle() {

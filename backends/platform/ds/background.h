@@ -24,6 +24,7 @@
 #define DS_BACKGROUND_H
 
 #include "graphics/surface.h"
+#include "common/rect.h"
 
 namespace DS {
 
@@ -44,6 +45,14 @@ public:
 	void hide();
 	inline bool isVisible() const { return _visible; }
 
+	void setScalef(int32 sx, int32 sy);
+	inline void setScale(int sx, int sy) { setScalef(sx << 8, sy << 8); }
+	void setScrollf(int32 x, int32 y);
+	inline void setScroll(int x, int y) { setScrollf(x << 8, y << 8); }
+
+	Common::Point realToScaled(int16 x, int16 y);
+	Common::Point scaledToReal(int16 x, int16 y);
+
 	inline void clear() {
 		memset(getPixels(), 0, pitch * h);
 	}
@@ -60,6 +69,7 @@ protected:
 	bool _visible, _swScale;
 	uint16 _realPitch, _realHeight;
 	const Graphics::PixelFormat _pfCLUT8, _pfABGR1555;
+	int32 _scrollX, _scrollY, _scaleX, _scaleY;
 };
 
 } // End of namespace DS

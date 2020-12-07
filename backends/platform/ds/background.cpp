@@ -29,6 +29,7 @@ namespace DS {
 
 Background::Background() :
 	_bg(-1), _visible(true), _swScale(false),
+	_scaleX(1 << 8), _scaleY(1 << 8), _scrollX(0), _scrollY(0),
 	_realPitch(0), _realHeight(0),
 	_pfCLUT8(Graphics::PixelFormat::createFormatCLUT8()),
 	_pfABGR1555(Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15)) {
@@ -100,6 +101,10 @@ void Background::create(uint16 width, uint16 height, bool isRGB) {
 	Surface::create(width, height, f);
 	_bg = -1;
 	_swScale = false;
+	_scaleX = 1 << 8;
+	_scaleY = 1 << 8;
+	_scrollX = 0;
+	_scrollY = 0;
 }
 
 void Background::create(uint16 width, uint16 height, bool isRGB, int layer, bool isSub, int mapBase, bool swScale) {
@@ -116,12 +121,20 @@ void Background::create(uint16 width, uint16 height, bool isRGB, int layer, bool
 	}
 
 	_swScale = swScale;
+	_scaleX = 1 << 8;
+	_scaleY = 1 << 8;
+	_scrollX = 0;
+	_scrollY = 0;
 }
 
 void Background::init(Background *surface) {
 	Surface::init(surface->w, surface->h, surface->pitch, surface->pixels, surface->format);
 	_bg = -1;
 	_swScale = false;
+	_scaleX = 1 << 8;
+	_scaleY = 1 << 8;
+	_scrollX = 0;
+	_scrollY = 0;
 }
 
 void Background::init(Background *surface, int layer, bool isSub, int mapBase, bool swScale) {
@@ -138,6 +151,10 @@ void Background::init(Background *surface, int layer, bool isSub, int mapBase, b
 	}
 
 	_swScale = swScale;
+	_scaleX = 1 << 8;
+	_scaleY = 1 << 8;
+	_scrollX = 0;
+	_scrollY = 0;
 }
 
 static void dmaBlit(uint16 *dst, const uint dstPitch, const uint16 *src, const uint srcPitch,
@@ -212,6 +229,36 @@ void Background::hide() {
 	if (_bg >= 0)
 		bgHide(_bg);
 	_visible = false;
+}
+
+void Background::setScalef(int32 sx, int32 sy) {
+	if (_bg < 0 || (_scaleX == sx && _scaleY == sy))
+			return;
+
+	bgSetScale(_bg, _swScale ? 256 : sx, sy);
+	_scaleX = sx;
+	_scaleY = sy;
+}
+
+void Background::setScrollf(int32 x, int32 y) {
+	if (_bg < 0 || (_scrollX == x && _scrollY == y))
+			return;
+
+	bgSetScrollf(_bg, x, y);
+	_scrollX = x;
+	_scrollY = y;
+}
+
+Common::Point Background::realToScaled(int16 x, int16 y) {
+	x = CLIP<int16>(((x * _scaleX) + _scrollX) >> 8, 0, w  - 1);
+	y = CLIP<int16>(((y * _scaleY) + _scrollY) >> 8, 0, h - 1);
+	return Common::Point(x, y);
+}
+
+Common::Point Background::scaledToReal(int16 x, int16 y) {
+	x = ((x << 8) - _scrollX) / _scaleX;
+	y = ((y << 8) - _scrollY) / _scaleY;
+	return Common::Point(x, y);
 }
 
 } // End of namespace DS
