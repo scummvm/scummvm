@@ -304,15 +304,12 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 }
 
 int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
-	const uint8 *costumePtr = nullptr;
-
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	const uint8 *bodyPtr = actor->entityDataPtr;
 
 	do {
-		int8 type = *(bodyPtr++);
-
-		if (type == -1) {
+		const uint8 type = *bodyPtr++;
+		if (type == 0xFF) {
 			currentActorAnimExtraPtr = nullptr;
 			return -1;
 		}
@@ -326,6 +323,7 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 				ptr += 2;
 				const uint8 *ptr2 = ptr;
 				ptr++;
+				const uint8 *costumePtr = nullptr;
 				if (*ptr2 != 0) {
 					costumePtr = ptr - 1;
 				}
@@ -335,7 +333,6 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 		}
 
 		bodyPtr = *ptr + ptr;
-
 	} while (1);
 
 	return 0;
