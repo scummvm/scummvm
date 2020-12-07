@@ -698,10 +698,10 @@ void Extra::processExtras() {
 
 				if (extraKey->info1 > 1) {
 					_engine->_renderer->projectPositionOnScreen(extraKey->x - _engine->_grid->cameraX, extraKey->y - _engine->_grid->cameraY, extraKey->z - _engine->_grid->cameraZ);
-					_engine->_redraw->addOverlay(koNumber, extraKey->info1, _engine->_renderer->projPosX, _engine->_renderer->projPosY, koNormal, 0, 2);
+					_engine->_redraw->addOverlay(koNumber, extraKey->info1, _engine->_renderer->projPosX, _engine->_renderer->projPosY, 0, koNormal, 2);
 				}
 
-				_engine->_redraw->addOverlay(koSprite, SPRITEHQR_KEY, 10, 30, koNormal, 0, 2);
+				_engine->_redraw->addOverlay(koSprite, SPRITEHQR_KEY, 10, 30, 0, koNormal, 2);
 
 				_engine->_gameState->inventoryNumKeys += extraKey->info1;
 				extraKey->info0 = -1;
@@ -731,10 +731,10 @@ void Extra::processExtras() {
 
 				if (extraKey->info1 > 1) {
 					_engine->_renderer->projectPositionOnScreen(extraKey->x - _engine->_grid->cameraX, extraKey->y - _engine->_grid->cameraY, extraKey->z - _engine->_grid->cameraZ);
-					_engine->_redraw->addOverlay(koNumber, extraKey->info1, _engine->_renderer->projPosX, _engine->_renderer->projPosY, koNormal, 0, 2);
+					_engine->_redraw->addOverlay(koNumber, extraKey->info1, _engine->_renderer->projPosX, _engine->_renderer->projPosY, 0, koNormal, 2);
 				}
 
-				_engine->_redraw->addOverlay(koSprite, SPRITEHQR_KEY, 10, 30, koNormal, 0, 2);
+				_engine->_redraw->addOverlay(koSprite, SPRITEHQR_KEY, 10, 30, 0, koNormal, 2);
 
 				_engine->_gameState->inventoryNumKeys += extraKey->info1;
 				extraKey->info0 = -1;

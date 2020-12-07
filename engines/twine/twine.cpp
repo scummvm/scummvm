@@ -599,12 +599,12 @@ void TwinEEngine::centerScreenOnActor() {
 			_grid->newCameraY = actor->y >> 8;
 			_grid->newCameraZ = ((actor->z + 0x100) >> 9) + (((actor->z + 0x100) >> 9) - _grid->newCameraZ) / 2;
 
-			if (_grid->newCameraX >= 64) {
-				_grid->newCameraX = 63;
+			if (_grid->newCameraX >= GRID_SIZE_X) {
+				_grid->newCameraX = GRID_SIZE_X - 1;
 			}
 
-			if (_grid->newCameraZ >= 64) {
-				_grid->newCameraZ = 63;
+			if (_grid->newCameraZ >= GRID_SIZE_Z) {
+				_grid->newCameraZ = GRID_SIZE_Z - 1;
 			}
 
 			_redraw->reqBgRedraw = true;

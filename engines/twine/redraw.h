@@ -45,12 +45,12 @@ enum OverlayPosType {
 
 /** Overlay list structure */
 struct OverlayListStruct {
-	int16 type = 0;
+	OverlayType type = koSprite;
 	int16 info0 = 0; // sprite/3d model entry | number | number range
 	int16 x = 0;
 	int16 y = 0;
 	int16 info1 = 0; // followed actor | total coins
-	int16 posType = 0;
+	OverlayPosType posType = koNormal;
 	int16 lifeTime = 0;
 };
 
@@ -117,7 +117,7 @@ public:
 
 	OverlayListStruct overlayList[OVERLAY_MAX_ENTRIES];
 
-	void addOverlay(int16 type, int16 info0, int16 x, int16 y, int16 info1, int16 posType, int16 lifeTime);
+	void addOverlay(OverlayType type, int16 info0, int16 x, int16 y, int16 info1, OverlayPosType posType, int16 lifeTime);
 
 	/**
 	 * Add a certain region to redraw list array

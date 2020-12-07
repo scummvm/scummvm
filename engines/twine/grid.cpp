@@ -724,12 +724,12 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 		blockPtr += READ_LE_UINT32(blockPtr + blockIdx * 4 - 4);
 		blockPtr += 3;
 
-		uint8 tmpBrickIdx = *(blockBufferPtr + 1);
+		const uint8 tmpBrickIdx = *(blockBufferPtr + 1);
 		blockPtr = blockPtr + tmpBrickIdx * 4;
 
-		ShapeType brickShape = (ShapeType)*blockPtr;
+		const ShapeType brickShape = (ShapeType)*blockPtr;
 
-		int32 newY = (y2 + 255) >> 8;
+		const int32 newY = (y2 + 255) >> 8;
 		int32 currY = _engine->_collision->collisionY;
 
 		for (int32 i = 0; i < newY; i++) {
@@ -747,9 +747,9 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 
 		return brickShape;
 	}
-	ShapeType brickShape = (ShapeType)*(blockBufferPtr + 1);
+	const ShapeType brickShape = (ShapeType)*(blockBufferPtr + 1);
 
-	int32 newY = (y2 + 255) >> 8;
+	const int32 newY = (y2 + 255) >> 8;
 	int32 currY = _engine->_collision->collisionY;
 
 	for (int32 i = 0; i < newY; i++) {

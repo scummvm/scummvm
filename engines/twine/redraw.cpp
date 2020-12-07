@@ -176,7 +176,7 @@ void Redraw::sortDrawingList(DrawListStruct *list, int32 listSize) {
 	}
 }
 
-void Redraw::addOverlay(int16 type, int16 info0, int16 x, int16 y, int16 info1, int16 posType, int16 lifeTime) {
+void Redraw::addOverlay(OverlayType type, int16 info0, int16 x, int16 y, int16 info1, OverlayPosType posType, int16 lifeTime) {
 	for (int32 i = 0; i < ARRAYSIZE(overlayList); i++) {
 		OverlayListStruct *overlay = &overlayList[i];
 		if (overlay->info0 == -1) {
