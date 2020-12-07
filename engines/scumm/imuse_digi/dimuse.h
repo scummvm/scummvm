@@ -88,6 +88,7 @@ private:
 	int32 _curMusicCue;		// current cue for current music. used in FT
 	int _stopingSequence;
 	bool _radioChatterSFX;
+	bool _speechIsPlaying;
 
 	static void timer_handler(void *refConf);
 	void callback();
