@@ -77,7 +77,7 @@ public:
 	 * @param bodyPtr Body model poitner
 	 * @param animTimerDataPtr Animation time data
 	 */
-	int32 setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	int32 setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Get total number of keyframes in animation

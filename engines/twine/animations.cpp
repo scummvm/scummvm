@@ -76,7 +76,7 @@ Animations::~Animations() {
 	free(animBuffer);
 }
 
-int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	const int16 numOfKeyframeInAnim = READ_LE_INT16(animPtr);
 	if (keyframeIdx >= numOfKeyframeInAnim) {
 		return numOfKeyframeInAnim;
@@ -90,21 +90,20 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bo
 
 	const uint8 *ptrToData = (const uint8 *)((numOfBonesInAnim * 8 + 8) * keyframeIdx + animPtr + 8);
 
-	uint8 *ptrToBodyData = bodyPtr + 14;
-
 	animTimerDataPtr->ptr = ptrToData;
 	animTimerDataPtr->time = _engine->lbaTime;
 
-	ptrToBodyData = ptrToBodyData + READ_LE_INT16(ptrToBodyData) + 2;
+	uint8 *verticesBase = bodyPtr + 0x1A;
+	int32 numVertices = READ_LE_INT16(verticesBase);
 
-	const int16 numOfElementInBody = READ_LE_INT16(ptrToBodyData);
+	uint8 *bonesBase = verticesBase + numVertices * 6 + 2;
+	const int16 numBones = READ_LE_INT16(bonesBase);
 
-	ptrToBodyData = ptrToBodyData + numOfElementInBody * 6 + 12;
+	uint8 *bonesPtr = bonesBase + 2;
+	bonesPtr += 8;
 
-	const int16 numOfPointInBody = READ_LE_INT16(ptrToBodyData - 10); // num elements
-
-	if (numOfBonesInAnim > numOfPointInBody) {
-		numOfBonesInAnim = numOfPointInBody;
+	if (numOfBonesInAnim > numBones) {
+		numOfBonesInAnim = numBones;
 	}
 
 	const uint8 *ptrToDataBackup = ptrToData;
@@ -113,16 +112,15 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bo
 
 	do {
 		for (int32 i = 0; i < 8; i++) {
-			*(ptrToBodyData++) = *(ptrToData++);
+			*bonesPtr++ = *ptrToData++;
 		}
 
-		ptrToBodyData += 30;
-
+		bonesPtr += 30;
 	} while (--numOfBonesInAnim);
 
 	ptrToData = ptrToDataBackup + 2;
 
-	currentStepX = READ_LE_INT16(ptrToData);
+	currentStepX = READ_LE_INT16(ptrToData + 0);
 	currentStepY = READ_LE_INT16(ptrToData + 2);
 	currentStepZ = READ_LE_INT16(ptrToData + 4);
 
