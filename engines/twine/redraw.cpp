@@ -316,7 +316,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 			if (extra->type & ExtraType::TIME_IN) {
 				if (_engine->lbaTime - extra->lifeTime > 35) {
 					extra->lifeTime = _engine->lbaTime;
-					extra->type &= 0xFBFF;
+					extra->type &= ~ExtraType::TIME_IN;
 					_engine->_sound->playSample(Samples::ItemPopup, 1, extra->x, extra->y, extra->z);
 				}
 			} else {
