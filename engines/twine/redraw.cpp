@@ -320,7 +320,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 					_engine->_sound->playSample(Samples::ItemPopup, 1, extra->x, extra->y, extra->z);
 				}
 			} else {
-				if ((extra->type & 1) || (extra->type & 0x40) || (extra->actorIdx + extra->lifeTime - 150 < _engine->lbaTime) || (!((_engine->lbaTime + extra->lifeTime) & 8))) {
+				if ((extra->type & 1) || (extra->type & 0x40) || (extra->spawnTime + extra->lifeTime - 150 < _engine->lbaTime) || (!((_engine->lbaTime + extra->lifeTime) & 8))) {
 					_engine->_renderer->projectPositionOnScreen(extra->x - _engine->_grid->cameraX, extra->y - _engine->_grid->cameraY, extra->z - _engine->_grid->cameraZ);
 
 					if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < 680 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < 580) {
