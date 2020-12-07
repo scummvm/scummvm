@@ -207,7 +207,7 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 
 	const uint8* keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animPtr + 8;
 
-	int32 keyFrameLength = READ_LE_INT16(keyFramePtr);
+	const int32 keyFrameLength = READ_LE_INT16(keyFramePtr);
 
 	const Model *bodyHeader = (Model *)bodyPtr;
 	if (!bodyHeader->bodyFlag.animated) {
@@ -216,15 +216,13 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 
 	uint8 *edi = bodyPtr + 16;
 
-	const uint8 *ebx = animTimerDataPtr->ptr;
-	int32 ebp = animTimerDataPtr->time;
+	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
+	int32 remainingFrameTime = animTimerDataPtr->time;
 
-	if (!ebx) {
-		ebx = keyFramePtr;
-		ebp = keyFrameLength;
+	if (!lastKeyFramePtr) {
+		lastKeyFramePtr = keyFramePtr;
+		remainingFrameTime = keyFrameLength;
 	}
-
-	const uint8* lastKeyFramePtr = ebx;
 
 	edi += bodyHeader->offsetToData;
 
@@ -232,15 +230,15 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	eax = eax + eax * 2;
 	edi = edi + eax * 2 + 12;
 
-	int32 numOfPointInBody = READ_LE_INT16(edi - 10);
+	const int32 numOfPointInBody = READ_LE_INT16(edi - 10);
 
 	if (numOfPointInAnim > numOfPointInBody) {
 		numOfPointInAnim = numOfPointInBody;
 	}
 
-	eax = _engine->lbaTime - ebp;
+	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
 
-	if (eax >= keyFrameLength) {
+	if (deltaTime >= keyFrameLength) {
 		const int32 *sourcePtr = (const int32 *)(keyFramePtr + 8);
 		int32 *destPtr = (int32 *)edi; // keyframe
 
@@ -268,7 +266,7 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	keyFramePtr += 8;
 
 	processRotationByAnim = READ_LE_INT16(keyFramePtr);
-	processLastRotationAngle = ToAngle((READ_LE_INT16(keyFramePtr + 4) * eax) / keyFrameLength);
+	processLastRotationAngle = ToAngle((READ_LE_INT16(keyFramePtr + 4) * deltaTime) / keyFrameLength);
 
 	lastKeyFramePtr += 8;
 	keyFramePtr += 8;
@@ -279,19 +277,19 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 		int16 tmpNumOfPoints = numOfPointInAnim;
 
 		do {
-			int16 animOpcode = getAnimMode(&edi, &keyFramePtr, &lastKeyFramePtr);
+			const int16 animOpcode = getAnimMode(&edi, &keyFramePtr, &lastKeyFramePtr);
 
 			switch (animOpcode) {
 			case 0:  // allow global rotate
-				applyAnimStepRotation(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStepRotation(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStepRotation(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStepRotation(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStepRotation(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStepRotation(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				break;
 			case 1:  // dissallow global rotate
 			case 2:  // dissallow global rotate + hide
-				applyAnimStep(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStep(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStep(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStep(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStep(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStep(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				break;
 			default:
 				error("Unsupported animation rotation mode %d", animOpcode);
@@ -301,9 +299,9 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 		} while (--tmpNumOfPoints);
 	}
 
-	currentStepX = (READ_LE_INT16(keyFramePtrOld + 2) * eax) / keyFrameLength;
-	currentStepY = (READ_LE_INT16(keyFramePtrOld + 4) * eax) / keyFrameLength;
-	currentStepZ = (READ_LE_INT16(keyFramePtrOld + 6) * eax) / keyFrameLength;
+	currentStepX = (READ_LE_INT16(keyFramePtrOld + 2) * deltaTime) / keyFrameLength;
+	currentStepY = (READ_LE_INT16(keyFramePtrOld + 4) * deltaTime) / keyFrameLength;
+	currentStepZ = (READ_LE_INT16(keyFramePtrOld + 6) * deltaTime) / keyFrameLength;
 
 	return false;
 }
@@ -398,19 +396,17 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 		return 0;
 	}
 
-	const uint8 *ebx = animTimerDataPtr->ptr;
-	int32 ebp = animTimerDataPtr->time;
+	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
+	int32 remainingFrameTime = animTimerDataPtr->time;
 
-	if (!ebx) {
-		ebx = keyFramePtr;
-		ebp = keyFrameLength;
+	if (!lastKeyFramePtr) {
+		lastKeyFramePtr = keyFramePtr;
+		remainingFrameTime = keyFrameLength;
 	}
 
-	const uint8* lastKeyFramePtr = ebx;
+	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
 
-	const int32 eax = _engine->lbaTime - ebp;
-
-	if (eax >= keyFrameLength) {
+	if (deltaTime >= keyFrameLength) {
 		animTimerDataPtr->ptr = keyFramePtr;
 		animTimerDataPtr->time = _engine->lbaTime;
 
@@ -429,14 +425,14 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 	keyFramePtr += 8;
 
 	processRotationByAnim = READ_LE_INT16(keyFramePtr);
-	processLastRotationAngle = ToAngle((READ_LE_INT16(keyFramePtr + 4) * eax) / keyFrameLength);
+	processLastRotationAngle = ToAngle((READ_LE_INT16(keyFramePtr + 4) * deltaTime) / keyFrameLength);
 
 	lastKeyFramePtr += 8;
 	keyFramePtr += 8;
 
-	currentStepX = (READ_LE_INT16(keyFramePtrOld + 2) * eax) / keyFrameLength;
-	currentStepY = (READ_LE_INT16(keyFramePtrOld + 4) * eax) / keyFrameLength;
-	currentStepZ = (READ_LE_INT16(keyFramePtrOld + 6) * eax) / keyFrameLength;
+	currentStepX = (READ_LE_INT16(keyFramePtrOld + 2) * deltaTime) / keyFrameLength;
+	currentStepY = (READ_LE_INT16(keyFramePtrOld + 4) * deltaTime) / keyFrameLength;
+	currentStepZ = (READ_LE_INT16(keyFramePtrOld + 6) * deltaTime) / keyFrameLength;
 
 	return 0;
 }

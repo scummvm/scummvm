@@ -117,8 +117,8 @@ int32 Extra::addExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx
 		extra->x = x;
 		extra->y = y;
 		extra->z = z;
-		extra->spawnTime = actorIdx;
-		extra->lifeTime = targetActor;
+		extra->payload.actorIdx = actorIdx;
+		extra->spawnTime = targetActor;
 		extra->destZ = maxSpeed;
 		extra->strengthOfHit = strengthOfHit;
 
@@ -142,8 +142,8 @@ int32 Extra::addExtraExplode(int32 x, int32 y, int32 z) {
 		extra->x = x;
 		extra->y = y;
 		extra->z = z;
-		extra->spawnTime = 40;
-		extra->lifeTime = _engine->lbaTime;
+		extra->payload.lifeTime = 40;
+		extra->spawnTime = _engine->lbaTime;
 		extra->strengthOfHit = 0;
 		return i;
 	}
@@ -175,10 +175,10 @@ void Extra::throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32
 	extra->destZ = _engine->_renderer->destZ;
 
 	extra->angle = extraAngle;
-	extra->lifeTime = _engine->lbaTime;
+	extra->spawnTime = _engine->lbaTime;
 }
 
-void Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) { // InitSpecial
+int32 Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) { // InitSpecial
 	const int16 flag = 0x8000 + (int16)type;
 
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
@@ -200,10 +200,8 @@ void Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) { 
 			throwExtra(extra, _engine->getRandomNumber(ANGLE_90) + ANGLE_45, _engine->getRandomNumber(ANGLE_360), 50, 20);
 
 			extra->strengthOfHit = 0;
-			extra->lifeTime = _engine->lbaTime;
-			extra->spawnTime = 100;
-		}
-		if (type == ExtraSpecialType::kExplodeCloud) {
+			extra->payload.lifeTime = 100;
+		} else if (type == ExtraSpecialType::kExplodeCloud) {
 			extra->type = ExtraType::TIME_OUT;
 
 			extra->x = x;
@@ -211,11 +209,12 @@ void Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) { 
 			extra->z = z;
 
 			extra->strengthOfHit = 0;
-			extra->lifeTime = _engine->lbaTime;
-			extra->spawnTime = 5;
+			extra->spawnTime = _engine->lbaTime;
+			extra->payload.lifeTime = 5;
 		}
-		break;
+		return i;
 	}
+	return -1;
 }
 
 int Extra::getBonusSprite(BonusParameter bonusParameter) const {
@@ -274,8 +273,7 @@ int32 Extra::addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle
 		throwExtra(extra, xAngle, yAngle, 40, ToAngle(15));
 
 		extra->strengthOfHit = 0;
-		extra->lifeTime = _engine->lbaTime;
-		extra->spawnTime = 1000;
+		extra->payload.lifeTime = 1000;
 		extra->info1 = bonusAmount;
 		return i;
 	}
@@ -299,8 +297,8 @@ int32 Extra::addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spri
 		throwExtra(extra, xAngle, yAngle, xRotPoint, extraAngle);
 
 		extra->strengthOfHit = strengthOfHit;
-		extra->lifeTime = _engine->lbaTime;
-		extra->spawnTime = actorIdx;
+		extra->spawnTime = _engine->lbaTime;
+		extra->payload.actorIdx = actorIdx;
 		extra->info1 = 0;
 
 		return i;
@@ -321,8 +319,8 @@ int32 Extra::addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spr
 		extra->x = x;
 		extra->y = y;
 		extra->z = z;
-		extra->spawnTime = actorIdx;
-		extra->lifeTime = targetActorIdx;
+		extra->payload.actorIdx = actorIdx;
+		extra->spawnTime = targetActorIdx;
 		extra->destZ = finalAngle;
 		extra->strengthOfHit = strengthOfHit;
 		_engine->_movements->setActorAngle(ANGLE_0, finalAngle, 50, &extra->trackActorMove);
@@ -360,7 +358,7 @@ int32 Extra::addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int3
 		extra->x = x;
 		extra->y = y;
 		extra->z = z;
-		extra->spawnTime = extraIdx;
+		extra->payload.extraIdx = extraIdx;
 		extra->destZ = 4000;
 		extra->strengthOfHit = 0;
 		_engine->_movements->setActorAngle(ANGLE_0, 4000, 50, &extra->trackActorMove);
@@ -526,7 +524,7 @@ void Extra::drawExtraSpecial(int32 extraIdx, int32 x, int32 y) {
 		drawSpecialShape(hitStarsShapeTable, x, y, 15, (_engine->lbaTime << 5) & ANGLE_270, 4);
 		break;
 	case ExtraSpecialType::kExplodeCloud: {
-		int32 cloudTime = 1 + _engine->lbaTime - extra->lifeTime;
+		int32 cloudTime = 1 + _engine->lbaTime - extra->spawnTime;
 
 		if (cloudTime > 32) {
 			cloudTime = 32;
@@ -556,7 +554,7 @@ void Extra::processMagicballBounce(ExtraListStruct *extra, int32 x, int32 y, int
 	extra->z = z;
 	extra->lastZ = z;
 
-	extra->lifeTime = _engine->lbaTime;
+	extra->spawnTime = _engine->lbaTime;
 }
 
 void Extra::processExtras() {
@@ -571,7 +569,7 @@ void Extra::processExtras() {
 		}
 		// process extra life time
 		if (extra->type & ExtraType::TIME_OUT) {
-			if (extra->spawnTime + extra->lifeTime <= _engine->lbaTime) {
+			if (extra->payload.lifeTime + extra->spawnTime <= _engine->lbaTime) {
 				extra->info0 = -1;
 				continue;
 			}
@@ -583,7 +581,7 @@ void Extra::processExtras() {
 		}
 		//
 		if (extra->type & ExtraType::UNK12) {
-			extra->info0 = _engine->_collision->getAverageValue(97, 100, 30, _engine->lbaTime - extra->lifeTime);
+			extra->info0 = _engine->_collision->getAverageValue(97, 100, 30, _engine->lbaTime - extra->spawnTime);
 			continue;
 		}
 		// process extra moving
@@ -592,14 +590,14 @@ void Extra::processExtras() {
 			currentExtraY = extra->y;
 			currentExtraZ = extra->z;
 
-			int32 currentExtraSpeedX = extra->destX * (_engine->lbaTime - extra->lifeTime);
+			int32 currentExtraSpeedX = extra->destX * (_engine->lbaTime - extra->spawnTime);
 			extra->x = currentExtraSpeedX + extra->lastX;
 
-			int32 currentExtraSpeedY = extra->destY * (_engine->lbaTime - extra->lifeTime);
+			int32 currentExtraSpeedY = extra->destY * (_engine->lbaTime - extra->spawnTime);
 			currentExtraSpeedY += extra->lastY;
-			extra->y = currentExtraSpeedY - ABS(((extra->angle * (_engine->lbaTime - extra->lifeTime)) * (_engine->lbaTime - extra->lifeTime)) >> 4);
+			extra->y = currentExtraSpeedY - ABS(((extra->angle * (_engine->lbaTime - extra->spawnTime)) * (_engine->lbaTime - extra->spawnTime)) >> 4);
 
-			extra->z = extra->destZ * (_engine->lbaTime - extra->lifeTime) + extra->lastZ;
+			extra->z = extra->destZ * (_engine->lbaTime - extra->spawnTime) + extra->lastZ;
 
 			// check if extra is out of scene
 			if (extra->y < 0 || extra->x < 0 || extra->x > 0x7E00 || extra->z < 0 || extra->z > 0x7E00) {
@@ -629,15 +627,15 @@ void Extra::processExtras() {
 		}
 		//
 		if (extra->type & ExtraType::BONUS) {
-			if (_engine->lbaTime - extra->lifeTime > 40) {
+			if (_engine->lbaTime - extra->spawnTime > 40) {
 				extra->type &= ~ExtraType::BONUS;
 			}
 			continue;
 		}
 		// process actor target hit
 		if (extra->type & ExtraType::UNK7) {
-			int32 actorIdxAttacked = extra->lifeTime;
-			int32 actorIdx = extra->spawnTime;
+			int32 actorIdxAttacked = extra->spawnTime;
+			int32 actorIdx = extra->payload.actorIdx;
 
 			const ActorStruct *actor = _engine->_scene->getActor(actorIdxAttacked);
 			currentExtraX = actor->x;
@@ -687,8 +685,8 @@ void Extra::processExtras() {
 		// process magic ball extra aiming for key
 		if (extra->type & ExtraType::UNK9) {
 			//				int32 actorIdxAttacked = extra->lifeTime;
-			ExtraListStruct *extraKey = &extraList[extra->spawnTime];
-			int32 actorIdx = extra->spawnTime;
+			ExtraListStruct *extraKey = &extraList[extra->payload.extraIdx];
+			int32 extraIdx = extra->payload.extraIdx;
 
 			int32 tmpAngle = _engine->_movements->getAngleAndSetTargetActorDistance(extra->x, extra->z, extraKey->x, extraKey->z);
 			int32 angle = ClampAngle(tmpAngle - extra->angle);
@@ -726,7 +724,7 @@ void Extra::processExtras() {
 
 			_engine->_movements->setActorAngle(0, extra->destZ, 50, &extra->trackActorMove);
 
-			if (actorIdx == _engine->_collision->checkExtraCollisionWithExtra(extra, _engine->_gameState->magicBallIdx)) {
+			if (extraIdx == _engine->_collision->checkExtraCollisionWithExtra(extra, _engine->_gameState->magicBallIdx)) {
 				_engine->_sound->playSample(Samples::ItemFound, 1, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->y, _engine->_scene->sceneHero->z, 0);
 
 				if (extraKey->info1 > 1) {
@@ -760,7 +758,7 @@ void Extra::processExtras() {
 		}
 		// process extra collision with actors
 		if (extra->type & ExtraType::UNK2) {
-			if (_engine->_collision->checkExtraCollisionWithActors(extra, extra->spawnTime) != -1) {
+			if (_engine->_collision->checkExtraCollisionWithActors(extra, extra->payload.actorIdx) != -1) {
 				// if extra is Magic Ball
 				if (i == _engine->_gameState->magicBallIdx) {
 					int32 spriteIdx = SPRITEHQR_MAGICBALL_YELLOW_TRANS;

@@ -66,8 +66,13 @@ struct ExtraListStruct {
 	int16 destZ = 0; // field_12
 	uint16 type = 0;  /**< ExtraType bitmask */
 	int16 angle = 0; // field_16
-	int32 lifeTime = 0;
-	int16 spawnTime = 0;      // field_ 1C
+	int32 spawnTime = 0;
+	union payload { // field_ 1C
+		int16 lifeTime;
+		int16 actorIdx;
+		int16 extraIdx;
+		int16 unknown;
+	} payload{0};
 	int16 strengthOfHit = 0; // field_1E
 	int16 info1 = 0;         // field_20
 };
@@ -81,7 +86,7 @@ private:
 	void throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x, int32 extraAngle);
 	void processMagicballBounce(ExtraListStruct *extra, int32 x, int32 y, int32 z);
 	int32 findExtraKey();
-	int32 addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 spawnTime);
+	int32 addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx);
 	void drawSpecialShape(const int16 *shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size);
 
 public:
@@ -101,7 +106,7 @@ public:
 	/** Reset all used extras */
 	void resetExtras();
 
-	void addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type);
+	int32 addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type);
 	int32 addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 type, int32 bonusAmount);
 	int32 addExtraThrow(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle, int32 strengthOfHit);
 	int32 addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 targetActorIdx, int32 finalAngle, int32 strengthOfHit);

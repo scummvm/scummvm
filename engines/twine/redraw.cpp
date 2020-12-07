@@ -314,13 +314,13 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 		ExtraListStruct *extra = &_engine->_extra->extraList[i];
 		if (extra->info0 != -1) {
 			if (extra->type & ExtraType::TIME_IN) {
-				if (_engine->lbaTime - extra->lifeTime > 35) {
-					extra->lifeTime = _engine->lbaTime;
+				if (_engine->lbaTime - extra->spawnTime > 35) {
+					extra->spawnTime = _engine->lbaTime;
 					extra->type &= ~ExtraType::TIME_IN;
 					_engine->_sound->playSample(Samples::ItemPopup, 1, extra->x, extra->y, extra->z);
 				}
 			} else {
-				if ((extra->type & ExtraType::TIME_OUT) || (extra->type & ExtraType::FLASH) || (extra->spawnTime + extra->lifeTime - 150 < _engine->lbaTime) || (!((_engine->lbaTime + extra->lifeTime) & 8))) {
+				if ((extra->type & ExtraType::TIME_OUT) || (extra->type & ExtraType::FLASH) || (extra->payload.lifeTime + extra->spawnTime - 150 < _engine->lbaTime) || (!((_engine->lbaTime + extra->spawnTime) & 8))) {
 					_engine->_renderer->projectPositionOnScreen(extra->x - _engine->_grid->cameraX, extra->y - _engine->_grid->cameraY, extra->z - _engine->_grid->cameraZ);
 
 					if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < 680 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < 580) {
