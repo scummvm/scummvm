@@ -146,6 +146,7 @@ indy3	Indiana Jones and the Last Crusade
 	399b217b0c8d65d0398076da486363a9	6295	de	DOS	VGA	VGA	VGA v1.02 from 7 Nov 91	Peter Eckerlein, Fingolfin
 	17b5d5e6af4ae89d62631641d66d5a05	-1	it	DOS	VGA	VGA	IBM 256 color v2.1 from 3 May 01	Andrea Petrucci, Peter Eckerlein
 	3cce1913a3bc586b51a75c3892ff18dd	-1	ru	DOS	VGA	VGA	VGA
+	60f4faa74d802b700f6748bf136e5361	6295	ru	DOS	VGA	VGA	VGA
 
 	04687cdf7f975a89d2474929f7b80946	7552	en	FM-TOWNS	FM-TOWNS	-	v1.00 1/23/91	Fingolfin
 	3a0c35f3c147b98a2bdf8d400cfc4ab5	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
