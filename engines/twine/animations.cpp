@@ -348,25 +348,23 @@ int32 Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *anim
 	}
 	uint8 *animPtr = animBufferPos;
 
-	const uint8 *ptr = bodyPtr + 16;
+	const uint8 *verticesBase = bodyPtr + 0x1A;
 
 	animTimerDataPtr->time = _engine->lbaTime;
 	animTimerDataPtr->ptr = animPtr;
 
-	int32 var0 = READ_LE_INT16(ptr - 2);
-	ptr = ptr + var0;
+	int32 numVertices = READ_LE_INT16(verticesBase);
+	const uint8 *ptr = verticesBase + numVertices * 6 + 2;
 
-	int32 var1 = READ_LE_INT16(ptr);
-	var1 = var1 + var1 * 2;
+	int32 numBones = READ_LE_INT16(ptr);
+	ptr += 2;
 
-	ptr = ptr + var1 * 2 + 2;
-
-	int32 var2 = READ_LE_INT16(ptr);
-	int32 counter = var2;
-	var2 = (var2 * 8) + 8;
+	int32 counter = numBones;
+	// 8 = 4xint16 - firstpoint, numpoints, basepoint, baseelement - see elementEntry
+	int32 var2 = (numBones * 8) + 8;
 
 	int32 *edi = (int32 *)(animPtr + 8);
-	const int32 *esi = (const int32 *)(ptr + 10);
+	const int32 *esi = (const int32 *)(ptr + 8);
 
 	do {
 		*(edi++) = *(esi++);
@@ -698,9 +696,11 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 		animType = 2;
 	}
 
-	if (actor->previousAnimIdx == -1) { // if no previous animation
+	if (actor->previousAnimIdx == -1) {
+		// if no previous animation
 		setAnimAtKeyframe(0, _engine->_resources->animTable[animIndex], _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
-	} else { // interpolation between animations
+	} else {
+		// interpolation between animations
 		animBufferPos += stockAnimation(_engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 		if (animBuffer + 4488 < animBufferPos) {
 			animBufferPos = animBuffer;
