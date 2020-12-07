@@ -496,6 +496,10 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 	}
 }
 
+void Actor::clearBodyTable() {
+	currentPositionInBodyPtrTab = 0;
+}
+
 ActorStruct::~ActorStruct() {
 	free(entityDataPtr);
 }

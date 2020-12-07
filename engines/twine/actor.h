@@ -309,6 +309,7 @@ public:
 
 	/** Current position in body table */
 	int32 currentPositionInBodyPtrTab;
+	void clearBodyTable();
 
 	/** Restart hero variables while opening new scenes */
 	void restartHeroScene();

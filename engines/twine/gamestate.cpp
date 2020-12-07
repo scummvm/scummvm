@@ -91,7 +91,7 @@ void GameState::initGameStateVars() {
 		holomapFlags[i] = 0;
 	}
 
-	_engine->_actor->currentPositionInBodyPtrTab = 0;
+	_engine->_actor->clearBodyTable();
 }
 
 void GameState::initHeroVars() {
