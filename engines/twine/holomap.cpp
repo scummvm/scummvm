@@ -73,10 +73,6 @@ void Holomap::clearHolomapPosition(int32 locationIdx) {
 	_engine->_gameState->holomapFlags[locationIdx] |= 0x40;
 }
 
-void Holomap::loadGfxSub(uint8 *modelPtr) {
-	// TODO is this prepareIsoModel?
-}
-
 void Holomap::loadGfxSub1() {
 	// TODO
 }
@@ -97,11 +93,10 @@ void Holomap::loadHolomapGFX() {
 	uint8 *videoPtr7 = videoPtr6 + HQR::getEntry(videoPtr6, Resources::HQR_RESS_FILE, RESSHQR_HOLOARROWMDL);
 	uint8 *videoPtr8 = videoPtr7 + HQR::getEntry(videoPtr7, Resources::HQR_RESS_FILE, RESSHQR_HOLOTWINARROWMDL);
 
-	loadGfxSub(videoPtr5);
-	loadGfxSub(videoPtr6);
-	loadGfxSub(videoPtr7);
-
-	loadGfxSub(videoPtr8);
+	_engine->_renderer->prepareIsoModel(videoPtr5);
+	_engine->_renderer->prepareIsoModel(videoPtr6);
+	_engine->_renderer->prepareIsoModel(videoPtr7);
+	_engine->_renderer->prepareIsoModel(videoPtr8);
 
 	// TODO:
 	// uint8 *videoPtr1 = (uint8 *)_engine->workVideoBuffer.getPixels();
