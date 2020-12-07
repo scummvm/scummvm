@@ -40,11 +40,11 @@
 namespace TwinE {
 
 static const int32 magicLevelStrengthOfHit[] = {
-	kNoBallStrength,
-	kYellowBallStrength,
-	kGreenBallStrength,
-	kRedBallStrength,
-	kFireBallStrength,
+	MagicballStrengthType::kNoBallStrength,
+	MagicballStrengthType::kYellowBallStrength,
+	MagicballStrengthType::kGreenBallStrength,
+	MagicballStrengthType::kRedBallStrength,
+	MagicballStrengthType::kFireBallStrength,
 	0
 };
 
