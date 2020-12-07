@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-07 05:28+0000\n"
-"PO-Revision-Date: 2020-11-29 16:07+0000\n"
+"PO-Revision-Date: 2020-12-07 20:32+0000\n"
 "Last-Translator: Lothar Serra Mari <serra@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1335,20 +1335,24 @@ msgstr "Autospeichern:"
 
 #: gui/options.cpp:2102
 msgid "Always return to the launcher when leaving a game"
-msgstr ""
+msgstr "Beim Verlassen eines Spiels immer zum Launcher zurückkehren"
 
 #: gui/options.cpp:2103
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
 msgstr ""
+"Beim Verlassen eines Spiels immer zum Launcher zurückkehren, anstatt ScummVM "
+"zu beenden."
 
 #: gui/options.cpp:2110
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "Beim Verlassen um Bestätigung bitten"
 
 #: gui/options.cpp:2111
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr ""
+"Bittet beim Verlassen eines Spiels oder von ScummVM um eine zusätzliche "
+"Bestätigung."
 
 #: gui/options.cpp:2117
 msgid "Keys"
@@ -2569,26 +2573,20 @@ msgid "Download failed."
 msgstr "Download fehlgeschlagen."
 
 #: backends/events/default/default-events.cpp:183
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to start a new game? All unsaved progress will be "
-#| "lost."
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Sind Sie sicher, dass Sie ein neues Spiel starten möchten? Jeder nicht "
-"gespeicherte Fortschritt geht dabei verloren."
+"Möchtest Du wirklich zum Launcher zurückkehren?\n"
+"Jeder nicht gespeicherte Fortschritt geht dabei verloren."
 
 #: backends/events/default/default-events.cpp:207
-#, fuzzy
-#| msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Möchten Sie das Spiel wirklich beenden? Jeder nicht gespeicherte Fortschritt "
-"geht dabei verloren."
+"Möchtest Du ScummVM wirklich beenden?\n"
+"Jeder nicht gespeicherte Fortschritt geht dabei verloren."
 
 #: backends/events/default/default-events.cpp:207
 #: backends/events/default/default-events.cpp:324
@@ -4069,10 +4067,8 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Zwischensequenz \"%s\" nicht gefunden!"
 
 #: engines/agos/metaengine.cpp:104
-#, fuzzy
-#| msgid "SAGA2 support not compiled in"
 msgid "AGOS 2 support is not compiled in"
-msgstr "Unterstützung für SAGA2 ist nicht eingebaut"
+msgstr "Unterstützung für AGOS 2ist nicht eingebaut"
 
 #: engines/agos/midi.cpp:144 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -4243,10 +4239,8 @@ msgid "Load anyway"
 msgstr "Trotzdem laden"
 
 #: engines/cryomni3d/metaengine.cpp:142
-#, fuzzy
-#| msgid "FoxTail support is not compiled in"
 msgid "Versailles 1685 support is not compiled in"
-msgstr "Unterstützung für FoxTail ist nicht eingebaut"
+msgstr "Unterstützung für Versailles 1685 ist nicht eingebaut"
 
 #: engines/dragons/dragons.cpp:1803
 #, c-format
@@ -4800,10 +4794,8 @@ msgstr ""
 "Zukünftig werden sie nicht mehr überprüft."
 
 #: engines/grim/metaengine.cpp:63
-#, fuzzy
-#| msgid "Eye of Beholder support is not compiled in"
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr "Unterstützung für Eye of the Beholder ist nicht eingebaut"
+msgstr "Unterstützung für Escape from Monkey Island ist nicht eingebaut"
 
 #: engines/grim/resource.cpp:100
 msgid ""
