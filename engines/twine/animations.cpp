@@ -677,9 +677,7 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 	actor->dynamicFlags.bAnimEnded = 0;
 	actor->dynamicFlags.bAnimFrameReached = 1;
 
-	if (actor->animExtraPtr) {
-		processAnimActions(actorIdx);
-	}
+	processAnimActions(actorIdx);
 
 	actor->lastRotationAngle = 0;
 	actor->lastX = 0;
@@ -836,9 +834,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 				actor->animPosition++;
 
 				// if actor have animation actions to process
-				if (actor->animExtraPtr) {
-					processAnimActions(actorIdx);
-				}
+				processAnimActions(actorIdx);
 
 				int16 numKeyframe = actor->animPosition;
 				if (numKeyframe == getNumKeyframes(animPtr)) {
@@ -862,9 +858,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 						actor->strengthOfHit = 0;
 					}
 
-					if (actor->animExtraPtr) {
-						processAnimActions(actorIdx);
-					}
+					processAnimActions(actorIdx);
 
 					actor->dynamicFlags.bAnimEnded = 1;
 				}
