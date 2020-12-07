@@ -112,7 +112,7 @@ int32 Extra::addExtra(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx
 			continue;
 		}
 		extra->info0 = spriteIdx;
-		extra->type = 0x80;
+		extra->type = ExtraType::UNK7;
 		extra->info1 = 0;
 		extra->x = x;
 		extra->y = y;
@@ -137,7 +137,7 @@ int32 Extra::addExtraExplode(int32 x, int32 y, int32 z) {
 			continue;
 		}
 		extra->info0 = SPRITEHQR_EXPLOSION_FIRST_FRAME;
-		extra->type = 0x1001;
+		extra->type = ExtraType::TIME_OUT | ExtraType::UNK12;
 		extra->info1 = 0;
 		extra->x = x;
 		extra->y = y;
@@ -159,7 +159,7 @@ void Extra::resetExtras() {
 }
 
 void Extra::throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x, int32 extraAngle) { // InitFly
-	extra->type |= 2;
+	extra->type |= ExtraType::FLY;
 
 	extra->lastX = extra->x;
 	extra->lastY = extra->y;
@@ -190,7 +190,7 @@ void Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) { 
 		extra->info1 = 0;
 
 		if (type == ExtraSpecialType::kHitStars) {
-			extra->type = 9;
+			extra->type = ExtraType::TIME_OUT | ExtraType::UNK3;
 
 			extra->x = x;
 			extra->y = y;
@@ -204,7 +204,7 @@ void Extra::addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type) { 
 			extra->spawnTime = 100;
 		}
 		if (type == ExtraSpecialType::kExplodeCloud) {
-			extra->type = 1;
+			extra->type = ExtraType::TIME_OUT;
 
 			extra->x = x;
 			extra->y = y;
@@ -316,7 +316,7 @@ int32 Extra::addExtraAiming(int32 actorIdx, int32 x, int32 y, int32 z, int32 spr
 			continue;
 		}
 		extra->info0 = spriteIdx;
-		extra->type = 0x80;
+		extra->type = ExtraType::UNK7;
 		extra->info1 = 0;
 		extra->x = x;
 		extra->y = y;
@@ -355,7 +355,7 @@ int32 Extra::addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int3
 			continue;
 		}
 		extra->info0 = spriteIdx;
-		extra->type = 0x200;
+		extra->type = ExtraType::UNK9;
 		extra->info1 = 0;
 		extra->x = x;
 		extra->y = y;
@@ -570,24 +570,24 @@ void Extra::processExtras() {
 			continue;
 		}
 		// process extra life time
-		if (extra->type & 0x1) {
+		if (extra->type & ExtraType::TIME_OUT) {
 			if (extra->spawnTime + extra->lifeTime <= _engine->lbaTime) {
 				extra->info0 = -1;
 				continue;
 			}
 		}
 		// reset extra
-		if (extra->type & 0x800) {
+		if (extra->type & ExtraType::UNK11) {
 			extra->info0 = -1;
 			continue;
 		}
 		//
-		if (extra->type & 0x1000) {
+		if (extra->type & ExtraType::UNK12) {
 			extra->info0 = _engine->_collision->getAverageValue(97, 100, 30, _engine->lbaTime - extra->lifeTime);
 			continue;
 		}
 		// process extra moving
-		if (extra->type & 0x2) {
+		if (extra->type & ExtraType::FLY) {
 			currentExtraX = extra->x;
 			currentExtraY = extra->y;
 			currentExtraZ = extra->z;
@@ -618,7 +618,7 @@ void Extra::processExtras() {
 				}
 
 				// if can take extra on ground
-				if (extra->type & 0x20) {
+				if (extra->type & ExtraType::TAKABLE) {
 					extra->type &= 0xFFED;
 				} else {
 					extra->info0 = -1;
@@ -628,14 +628,14 @@ void Extra::processExtras() {
 			}
 		}
 		//
-		if (extra->type & 0x4000) {
+		if (extra->type & ExtraType::BONUS) {
 			if (_engine->lbaTime - extra->lifeTime > 40) {
 				extra->type &= 0xBFFF;
 			}
 			continue;
 		}
 		// process actor target hit
-		if (extra->type & 0x80) {
+		if (extra->type & ExtraType::UNK7) {
 			int32 actorIdxAttacked = extra->lifeTime;
 			int32 actorIdx = extra->spawnTime;
 
@@ -685,7 +685,7 @@ void Extra::processExtras() {
 			}
 		}
 		// process magic ball extra aiming for key
-		if (extra->type & 0x200) {
+		if (extra->type & ExtraType::UNK9) {
 			//				int32 actorIdxAttacked = extra->lifeTime;
 			ExtraListStruct *extraKey = &extraList[extra->spawnTime];
 			int32 actorIdx = extra->spawnTime;
@@ -759,7 +759,7 @@ void Extra::processExtras() {
 			}
 		}
 		// process extra collision with actors
-		if (extra->type & 0x4) {
+		if (extra->type & ExtraType::UNK2) {
 			if (_engine->_collision->checkExtraCollisionWithActors(extra, extra->spawnTime) != -1) {
 				// if extra is Magic Ball
 				if (i == _engine->_gameState->magicBallIdx) {
@@ -780,24 +780,24 @@ void Extra::processExtras() {
 			}
 		}
 		// process extra collision with scene ground
-		if (extra->type & 0x8) {
+		if (extra->type & ExtraType::UNK3) {
 			int32 process = 0;
 
 			if (_engine->_collision->checkExtraCollisionWithBricks(currentExtraX, currentExtraY, currentExtraZ, extra->x, extra->y, extra->z)) {
 				// if not touch the ground
-				if (!(extra->type & 0x2000)) {
+				if (!(extra->type & ExtraType::WAIT_NO_COL)) {
 					process = 1;
 				}
 			} else {
 				// if touch the ground
-				if (extra->type & 0x2000) {
+				if (extra->type & ExtraType::WAIT_NO_COL) {
 					extra->type &= 0xDFFF; // set flag out of ground
 				}
 			}
 
 			if (process) {
 				// show explode cloud
-				if (extra->type & 0x100) {
+				if (extra->type & ExtraType::UNK8) {
 					addExtraSpecial(currentExtraX, currentExtraY, currentExtraZ, ExtraSpecialType::kExplodeCloud);
 				}
 				// if extra is magic ball
@@ -847,17 +847,17 @@ void Extra::processExtras() {
 			}
 		}
 		// extra stop moving while collision with bricks
-		if (extra->type & 0x10) {
+		if (extra->type & ExtraType::STOP_COL) {
 			int32 process = 0;
 
 			if (_engine->_collision->checkExtraCollisionWithBricks(currentExtraX, currentExtraY, currentExtraZ, extra->x, extra->y, extra->z)) {
 				// if not touch the ground
-				if (!(extra->type & 0x2000)) {
+				if (!(extra->type & ExtraType::WAIT_NO_COL)) {
 					process = 1;
 				}
 			} else {
 				// if touch the ground
-				if (extra->type & 0x2000) {
+				if (extra->type & ExtraType::WAIT_NO_COL) {
 					extra->type &= 0xDFFF; // set flag out of ground
 				}
 			}
@@ -872,7 +872,7 @@ void Extra::processExtras() {
 			}
 		}
 		// get extras on ground
-		if ((extra->type & 0x20) && !(extra->type & 0x2)) {
+		if ((extra->type & ExtraType::TAKABLE) && !(extra->type & ExtraType::FLY)) {
 			// if hero touch extra
 			if (_engine->_collision->checkExtraCollisionWithActors(extra, -1) == 0) {
 				_engine->_sound->playSample(Samples::ItemFound, 1, extra->x, extra->y, extra->z);
