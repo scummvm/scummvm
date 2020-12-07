@@ -90,6 +90,7 @@ class Player_Towns;
 class ScummEngine;
 class ScummDebugger;
 class Sound;
+class Localizer;
 
 struct Box;
 struct BoxCoords;
@@ -1107,6 +1108,8 @@ protected:
 	byte _msgCount;
 
 	int _nextLeft, _nextTop;
+
+	Localizer *_localizer;
 
 	void restoreCharsetBg();
 	void clearCharsetMask();
