@@ -472,7 +472,7 @@ void ComprehendGame::move_to(uint8 room) {
 	if (room >= (int)_rooms.size())
 		error("Attempted to move to invalid room %.2x\n", room);
 
-	_currentRoom = room;
+	_currentRoom = _currentRoomCopy = room;
 	_updateFlags = (UPDATE_GRAPHICS | UPDATE_ROOM_DESC |
 	                      UPDATE_ITEM_LIST);
 }
