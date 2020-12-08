@@ -28,12 +28,14 @@
 #include "common/util.h"
 #include "twine/actor.h"
 #include "twine/collision.h"
+#include "twine/entity.h"
 #include "twine/gamestate.h"
 #include "twine/grid.h"
 #include "twine/movements.h"
 #include "twine/renderer.h"
 #include "twine/resources.h"
 #include "twine/scene.h"
+#include "twine/shared.h"
 #include "twine/sound.h"
 #include "twine/twine.h"
 
@@ -279,40 +281,15 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	return false;
 }
 
-// see Actor::initBody
 int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	const uint8 *entityDataPtr = actor->entityDataPtr;
-
-	do {
-		const uint8 type = *entityDataPtr++;
-		if (type == 0xFF) {
-			currentActorAnimExtraPtr = nullptr;
-			return -1;
-		}
-
-		const uint8 *ptr = (entityDataPtr + 1);
-
-		if (type == 3) {
-			if (animIdx == (AnimationTypes)*entityDataPtr) {
-				ptr++;
-				uint16 realAnimIdx = READ_LE_INT16(ptr);
-				ptr += 2;
-				const uint8 *ptr2 = ptr;
-				ptr++;
-				const uint8 *costumePtr = nullptr;
-				if (*ptr2 != 0) {
-					costumePtr = ptr - 1;
-				}
-				currentActorAnimExtraPtr = costumePtr;
-				return realAnimIdx;
-			}
-		}
-
-		entityDataPtr = *ptr + ptr;
-	} while (1);
-
-	return 0;
+	EntityData entityData;
+	entityData.loadFromBuffer(actor->entityDataPtr, actor->entityDataSize);
+	const int32 bodyAnimIndex = entityData.getAnimIndex(animIdx);
+	if (bodyAnimIndex != -1) {
+		currentActorAnimExtraPtr = animIdx;
+	}
+	return bodyAnimIndex;
 }
 
 int32 Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
@@ -403,209 +380,106 @@ bool Animations::verifyAnimAtKeyframe(int32 animIdx, const uint8 *animPtr, AnimT
 
 void Animations::processAnimActions(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	if (actor->animExtraPtr == nullptr) {
+	if (actor->entityDataPtr == nullptr || actor->animExtraPtr == AnimationTypes::kAnimNone) {
 		return;
 	}
 
-	// TODO: fix size
-	Common::MemoryReadStream stream(actor->animExtraPtr, 1000000);
-
-	int32 index = 0;
-	const int32 endAnimEntityIdx = stream.readByte();
-	while (index++ < endAnimEntityIdx) {
-		const int32 actionType = stream.readByte();
-		if (actionType >= ActionType::ACTION_LAST) {
-			return;
-		}
-
-		switch (actionType) {
-		case ActionType::ACTION_HITTING: {
-			const int32 animFrame = stream.readByte() - 1;
-			const int32 strength = stream.readByte();
-
-			if (animFrame == actor->animPosition) {
-				actor->strengthOfHit = strength;
+	EntityData entityData;
+	entityData.loadFromBuffer(actor->entityDataPtr, actor->entityDataSize);
+	const Common::Array<EntityAnim::Action> *actions = entityData.getActions(actor->animExtraPtr);
+	if (actions == nullptr) {
+		return;
+	}
+	for (const EntityAnim::Action &action : *actions) {
+		switch (action.type) {
+		case ActionType::ACTION_HITTING:
+			if (action.animFrame - 1 == actor->animPosition) {
+				actor->strengthOfHit = action.strength;
 				actor->dynamicFlags.bIsHitting = 1;
 			}
 			break;
-		}
-		case ActionType::ACTION_SAMPLE: {
-			const int32 animFrame = stream.readByte();
-			const int16 sampleIdx = stream.readSint16LE();
-
-			if (animFrame == actor->animPosition) {
-				_engine->_sound->playSample(sampleIdx, 1, actor->x, actor->y, actor->z, actorIdx);
+		case ActionType::ACTION_SAMPLE:
+		case ActionType::ACTION_SAMPLE_FREQ:
+			if (action.animFrame == actor->animPosition) {
+				_engine->_sound->playSample(action.sampleIndex, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
-		}
-		case ActionType::ACTION_SAMPLE_FREQ: {
-			const int32 animFrame = stream.readByte();
-			const int16 sampleIdx = stream.readSint16LE();
-			/*int16 frequency = */stream.readSint16LE();
-
-			if (animFrame == actor->animPosition) {
-				_engine->_sound->playSample(sampleIdx, 1, actor->x, actor->y, actor->z, actorIdx);
+		case ActionType::ACTION_THROW_EXTRA_BONUS:
+			if (action.animFrame == actor->animPosition) {
+				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + action.yHeight, actor->z, action.spriteIndex, action.xAngle, action.yAngle, action.xRotPoint, action.extraAngle, action.strength);
 			}
 			break;
-		}
-		case ActionType::ACTION_THROW_EXTRA_BONUS: {
-			const int32 animFrame = stream.readByte();
-			const int32 yHeight = stream.readSint16LE();
-			const int32 sprite = stream.readByte();
-			const int32 xAngle = ToAngle(stream.readSint16LE());
-			const int32 yAngle = actor->angle + ToAngle(stream.readSint16LE());
-			const int32 xRotPoint = stream.readSint16LE();
-			const int32 extraAngle = ToAngle(stream.readByte());
-			const int32 strengthOfHit = stream.readByte();
-
-			if (animFrame == actor->animPosition) {
-				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + yHeight, actor->z, sprite, xAngle, yAngle, xRotPoint, extraAngle, strengthOfHit);
+		case ActionType::ACTION_THROW_MAGIC_BALL:
+			if (_engine->_gameState->magicBallIdx == -1 && action.animFrame == actor->animPosition) {
+				_engine->_extra->addExtraThrowMagicball(actor->x, actor->y + action.yHeight, actor->z, action.xAngle, actor->angle + action.yAngle, action.xRotPoint, action.extraAngle);
 			}
 			break;
-		}
-		case ActionType::ACTION_THROW_MAGIC_BALL: {
-			const int32 animFrame = stream.readByte();
-			const int32 yOffset = stream.readSint16LE();
-			const int32 xAngle = ToAngle(stream.readSint16LE());
-			const int32 xRotPoint = stream.readSint16LE();
-			const int32 extraAngle = stream.readByte();
-
-			if (_engine->_gameState->magicBallIdx == -1 && animFrame == actor->animPosition) {
-				_engine->_extra->addExtraThrowMagicball(actor->x, actor->y + yOffset, actor->z, xAngle, actor->angle, xRotPoint, extraAngle);
+		case ActionType::ACTION_SAMPLE_REPEAT:
+			if (action.animFrame == actor->animPosition) {
+				_engine->_sound->playSample(action.sampleIndex, action.repeat, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
-		}
-		case ActionType::ACTION_SAMPLE_REPEAT: {
-			const int32 animFrame = stream.readByte();
-			const int16 sampleIdx = stream.readSint16LE();
-			const int16 repeat = stream.readSint16LE();
-
-			if (animFrame == actor->animPosition) {
-				_engine->_sound->playSample(sampleIdx, repeat, actor->x, actor->y, actor->z, actorIdx);
+		case ActionType::ACTION_THROW_SEARCH:
+			if (action.animFrame == actor->animPosition) {
+				_engine->_extra->addExtraAiming(actorIdx, actor->x, actor->y + action.yHeight, actor->z, action.spriteIndex, action.targetActor, action.finalAngle, action.strength);
 			}
 			break;
-		}
-		case ActionType::ACTION_THROW_SEARCH: {
-			const int32 animFrame = stream.readByte();
-			const int32 yOffset = stream.readSint16LE();
-			const int32 spriteIdx = stream.readByte();
-			const int32 targetActorIdx = stream.readByte();
-			const int32 finalAngle = stream.readSint16LE();
-			const int32 strengthOfHit = stream.readByte();
-			if (animFrame == actor->animPosition) {
-				_engine->_extra->addExtraAiming(actorIdx, actor->x, actor->y + yOffset, actor->z, spriteIdx, targetActorIdx, finalAngle, strengthOfHit);
+		case ActionType::ACTION_THROW_ALPHA:
+			if (action.animFrame == actor->animPosition) {
+				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + action.yHeight, actor->z, action.spriteIndex, action.xAngle, actor->angle + action.yAngle, action.xRotPoint, action.extraAngle, action.strength);
 			}
 			break;
-		}
-		case ActionType::ACTION_THROW_ALPHA: {
-			const int32 animFrame = stream.readByte();
-			const int32 yHeight = stream.readSint16LE();
-			const int32 spriteIdx = stream.readByte();
-			const int32 xAngle = ToAngle(stream.readSint16LE());
-			const int32 yAngle = actor->angle + ToAngle(stream.readSint16LE());
-			const int32 xRotPoint = stream.readSint16LE();
-			const int32 extraAngle = ToAngle(stream.readByte());
-			const int32 strengthOfHit = stream.readByte();
-
-			if (animFrame == actor->animPosition) {
-				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + yHeight, actor->z, spriteIdx, xAngle, yAngle, xRotPoint, extraAngle, strengthOfHit);
+		case ActionType::ACTION_SAMPLE_STOP:
+			if (action.animFrame == actor->animPosition) {
+				_engine->_sound->stopSample(action.sampleIndex);
 			}
 			break;
-		}
-		case ActionType::ACTION_SAMPLE_STOP: {
-			const int32 animFrame = stream.readByte();
-			const int32 sampleIdx = stream.readByte(); //why is it reading a byte but saving it in a 32bit variable?
-			stream.skip(1);               // TODO what is the meaning of this extra byte?
-
-			if (animFrame == actor->animPosition) {
-				_engine->_sound->stopSample(sampleIdx);
-			}
-			break;
-		}
 		case ActionType::ACTION_LEFT_STEP:
-		case ActionType::ACTION_RIGHT_STEP: {
-			const int32 animFrame = stream.readByte();
-			if (animFrame == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
+		case ActionType::ACTION_RIGHT_STEP:
+			if (action.animFrame == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
 				const int16 sampleIdx = (actor->brickSound & 0x0F) + Samples::WalkFloorBegin;
 				_engine->_sound->playSample(sampleIdx, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
-		}
-		case ActionType::ACTION_HERO_HITTING: {
-			const int32 animFrame = stream.readByte() - 1;
-			if (animFrame == actor->animPosition) {
+		case ActionType::ACTION_HERO_HITTING:
+			if (action.animFrame - 1 == actor->animPosition) {
 				actor->strengthOfHit = magicLevelStrengthOfHit[_engine->_gameState->magicLevelIdx];
 				actor->dynamicFlags.bIsHitting = 1;
 			}
 			break;
-		}
-		case ActionType::ACTION_THROW_3D: {
-			const int32 animFrame = stream.readByte();
-			const int32 distanceX = stream.readSint16LE();
-			const int32 distanceY = stream.readSint16LE();
-			const int32 distanceZ = stream.readSint16LE();
-			const int32 spriteIdx = stream.readByte();
-			const int32 xAngle = ToAngle(stream.readSint16LE());
-			const int32 yAngle = ToAngle(stream.readSint16LE());
-			const int32 xRotPoint = stream.readSint16LE();
-			const int32 extraAngle = ToAngle(stream.readByte());
-			const int32 strength = stream.readByte();
-
-			if (animFrame == actor->animPosition) {
-				_engine->_movements->rotateActor(distanceX, distanceZ, actor->angle);
+		case ActionType::ACTION_THROW_3D:
+			if (action.animFrame == actor->animPosition) {
+				_engine->_movements->rotateActor(action.distanceX, action.distanceZ, actor->angle);
 
 				const int32 throwX = _engine->_renderer->destX + actor->x;
-				const int32 throwY = distanceY + actor->y;
+				const int32 throwY = action.distanceY + actor->y;
 				const int32 throwZ = _engine->_renderer->destZ + actor->z;
 
-				_engine->_extra->addExtraThrow(actorIdx, throwX, throwY, throwZ, spriteIdx,
-				                               xAngle, yAngle + actor->angle, xRotPoint, extraAngle, strength);
+				_engine->_extra->addExtraThrow(actorIdx, throwX, throwY, throwZ, action.spriteIndex,
+				                               action.xAngle, action.yAngle + actor->angle, action.xRotPoint, action.extraAngle, action.strength);
 			}
 			break;
-		}
-		case ActionType::ACTION_THROW_3D_ALPHA: {
-			const int32 animFrame = stream.readByte();
-			const int32 distanceX = stream.readSint16LE();
-			const int32 distanceY = stream.readSint16LE();
-			const int32 distanceZ = stream.readSint16LE();
-			const int32 spriteIdx = stream.readByte();
-			const int32 xAngle = ToAngle(stream.readSint16LE());
-			const int32 yAngle = ToAngle(stream.readSint16LE());
-			const int32 xRotPoint = stream.readSint16LE();
-			const int32 extraAngle = ToAngle(stream.readByte());
-			const int32 strength = stream.readByte();
-
-			if (animFrame == actor->animPosition) {
+		case ActionType::ACTION_THROW_3D_ALPHA:
+			if (action.animFrame == actor->animPosition) {
 				const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->y, 0, _engine->_scene->sceneHero->y, _engine->_movements->getDistance2D(actor->x, actor->z, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->z));
 
-				_engine->_movements->rotateActor(distanceX, distanceZ, actor->angle);
+				_engine->_movements->rotateActor(action.distanceX, action.distanceZ, actor->angle);
 
 				const int32 throwX = _engine->_renderer->destX + actor->x;
-				const int32 throwY = distanceY + actor->y;
+				const int32 throwY = action.distanceY + actor->y;
 				const int32 throwZ = _engine->_renderer->destZ + actor->z;
 
-				_engine->_extra->addExtraThrow(actorIdx, throwX, throwY, throwZ, spriteIdx,
-				                               xAngle + newAngle, yAngle + actor->angle, xRotPoint, extraAngle, strength);
+				_engine->_extra->addExtraThrow(actorIdx, throwX, throwY, throwZ, action.spriteIndex,
+				                               action.xAngle + newAngle, action.yAngle + actor->angle, action.xRotPoint, action.extraAngle, action.strength);
 			}
 			break;
-		}
-		case ActionType::ACTION_THROW_3D_SEARCH: {
-			const int32 animFrame = stream.readByte();
-			const int32 distanceX = stream.readSint16LE();
-			const int32 distanceY = stream.readSint16LE();
-			const int32 distanceZ = stream.readSint16LE();
-			const int32 spriteIdx = stream.readByte();
-			const int32 targetActor = stream.readByte();
-			const int32 finalAngle = ToAngle(stream.readSint16LE());
-			const int32 strengthOfHit = stream.readByte();
-
-			if (animFrame == actor->animPosition) {
-				_engine->_movements->rotateActor(distanceX, distanceZ, actor->angle);
-				_engine->_extra->addExtraAiming(actorIdx, actor->x + _engine->_renderer->destX, actor->y + distanceY, actor->z + distanceZ, spriteIdx,
-				                                targetActor, finalAngle, strengthOfHit);
+		case ActionType::ACTION_THROW_3D_SEARCH:
+			if (action.animFrame == actor->animPosition) {
+				_engine->_movements->rotateActor(action.distanceX, action.distanceZ, actor->angle);
+				_engine->_extra->addExtraAiming(actorIdx, actor->x + _engine->_renderer->destX, actor->y + action.distanceY, actor->z + action.distanceZ, action.spriteIndex,
+				                                action.targetActor, action.finalAngle, action.strength);
 			}
 			break;
-		}
 		case ActionType::ACTION_ZV:
 		default:
 			break;
