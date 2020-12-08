@@ -746,6 +746,11 @@ void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *
 	Room *room = get_room(_currentRoom);
 	Item *item;
 
+	// In case a single opcode is being executed outside of a function, use a dummy function state
+	FunctionState dummyState;
+	if (!func_state)
+		func_state = &dummyState;
+
 	if ((instr->_opcode & 0x30) == 0x30) {
 		// First operand comes from entered sentence noun, shifting out existing operands
 		instrCopy = *instr;
