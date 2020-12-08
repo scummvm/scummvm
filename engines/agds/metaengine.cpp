@@ -28,7 +28,7 @@ namespace AGDS {
 
 class AGDSMetaEngine : public AdvancedMetaEngine {
 public:
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override {
 		switch (f) {
 		case kSimpleSavesNames:
@@ -78,11 +78,9 @@ public:
 	}
 };
 
-bool AGDSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new AGDS::AGDSEngine(syst, desc);
-	}
-	return *engine;
+Common::Error AGDSMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new AGDS::AGDSEngine(syst, desc);
+	return Common::Error(Common::kNoError);
 }
 
 }
