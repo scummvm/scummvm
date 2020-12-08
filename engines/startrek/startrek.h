@@ -216,6 +216,22 @@ struct ComputerTopic {
 	Common::String topic;
 };
 
+struct EnterpriseState {
+	bool shields;
+	bool weapons;
+	bool underAttack;
+	bool inOrbit;
+	bool targetAnalysis;
+
+	EnterpriseState() {
+		shields = false;
+		weapons = false;
+		underAttack = false;
+		inOrbit = false;
+		targetAnalysis = false;
+	}
+};
+
 class Graphics;
 class IWFile;
 class Sound;
@@ -548,6 +564,9 @@ public:
 	void drawMenuButtonOutline(Bitmap *bitmap, byte color);
 	void showOptionsMenu(int x, int y);
 	void showBridgeMenu(Common::String menu, int x, int y);
+	void handleBridgeMenu(int menuEvent);
+	void captainsLog();
+
 	/**
 	 * Show the "action selection" menu, ie. look, talk, etc.
 	 */
@@ -738,6 +757,8 @@ public:
 	Sound *_sound;
 	IWFile *_iwFile;
 	Resource *_resource;
+
+	EnterpriseState _enterpriseState;
 
 private:
 	int leftClickEvent();
