@@ -24,6 +24,7 @@
 #define TWINE_ACTOR_H
 
 #include "common/scummsys.h"
+#include "twine/entity.h"
 #include "twine/shared.h"
 
 namespace TwinE {
@@ -148,6 +149,8 @@ private:
 	bool _brickCausesDamage = false;
 public:
 	~ActorStruct();
+
+	EntityData entityData;
 
 	StaticFlagsStruct staticFlags;
 	DynamicFlagsStruct dynamicFlags;

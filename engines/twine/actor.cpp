@@ -89,6 +89,7 @@ void Actor::loadHeroEntities() {
 	}
 	sceneHero->entityDataPtr = heroEntityATHLETIC;
 	sceneHero->entityDataSize = heroEntityATHLETICSize;
+	sceneHero->entityData.loadFromBuffer(sceneHero->entityDataPtr, sceneHero->entityDataSize);
 	heroAnimIdxATHLETIC = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 	if (heroAnimIdxATHLETIC == -1) {
 		error("Could not find athletic animation data");
@@ -100,6 +101,7 @@ void Actor::loadHeroEntities() {
 	}
 	sceneHero->entityDataPtr = heroEntityAGGRESSIVE;
 	sceneHero->entityDataSize = heroEntityAGGRESSIVESize;
+	sceneHero->entityData.loadFromBuffer(sceneHero->entityDataPtr, sceneHero->entityDataSize);
 	heroAnimIdxAGGRESSIVE = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 	if (heroAnimIdxAGGRESSIVE == -1) {
 		error("Could not find aggressive animation data");
@@ -111,6 +113,7 @@ void Actor::loadHeroEntities() {
 	}
 	sceneHero->entityDataPtr = heroEntityDISCRETE;
 	sceneHero->entityDataSize = heroEntityDISCRETESize;
+	sceneHero->entityData.loadFromBuffer(sceneHero->entityDataPtr, sceneHero->entityDataSize);
 	heroAnimIdxDISCRETE = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 	if (heroAnimIdxDISCRETE == -1) {
 		error("Could not find discrete animation data");
@@ -122,6 +125,7 @@ void Actor::loadHeroEntities() {
 	}
 	sceneHero->entityDataPtr = heroEntityPROTOPACK;
 	sceneHero->entityDataSize = heroEntityPROTOPACKSize;
+	sceneHero->entityData.loadFromBuffer(sceneHero->entityDataPtr, sceneHero->entityDataSize);
 	heroAnimIdxPROTOPACK = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 	if (heroAnimIdxPROTOPACK == -1) {
 		error("Could not find protopack animation data");
@@ -133,6 +137,7 @@ void Actor::loadHeroEntities() {
 	}
 	sceneHero->entityDataPtr = heroEntityNORMAL;
 	sceneHero->entityDataSize = heroEntityNORMALSize;
+	sceneHero->entityData.loadFromBuffer(sceneHero->entityDataPtr, sceneHero->entityDataSize);
 	heroAnimIdxNORMAL = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 	if (heroAnimIdxNORMAL == -1) {
 		error("Could not find normal animation data");
@@ -529,6 +534,7 @@ void ActorStruct::loadModel(int32 modelIndex) {
 	if (!staticFlags.bIsSpriteActor) {
 		debug("Init actor with model %i", modelIndex);
 		entityDataSize = HQR::getAllocEntry(&entityDataPtr, Resources::HQR_FILE3D_FILE, modelIndex);
+		entityData.loadFromBuffer(entityDataPtr, entityDataSize);
 	} else {
 		entityDataSize = 0;
 		free(entityDataPtr);
