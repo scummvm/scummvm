@@ -29,7 +29,7 @@ namespace Glk {
 namespace Comprehend {
 
 enum OOToposRoomFlag {
-	OO_ROOM_FLAG_FUEL = 1,
+	OO_ROOM_IN_SHIP = 1,
 	OO_ROOM_FLAG_DARK = 2
 };
 
@@ -331,7 +331,7 @@ void OOToposGame::checkShipFuel() {
 	for (int idx = 168; idx < 175; ++idx, ++_stringVal1, ++_stringVal2) {
 		if (_flags[idx]) {
 			Item *item = get_item(ITEMS[_stringVal2] - 1);
-			if (item->_room == ROOM_INVENTORY || (get_room(item->_room)->_flags & OO_ROOM_FLAG_FUEL) != 0) {
+			if (item->_room == ROOM_INVENTORY || (get_room(item->_room)->_flags & OO_ROOM_IN_SHIP) != 0) {
 				Instruction varAdd(0x86, 0x4B, _stringVal1);
 				execute_opcode(&varAdd, nullptr, nullptr);
 			}
@@ -364,7 +364,7 @@ void OOToposGame::checkShipDepart() {
 
 	if (!_shipNotWorking && _flags[OO_FLAG_SUFFICIENT_FUEL]) {
 		Item *item = get_item(ITEM_SERUM_VIAL - 1);
-		if (item->_room == ROOM_INVENTORY || (get_room(item->_room)->_flags & OO_ROOM_FLAG_FUEL) != 0) {
+		if (item->_room == ROOM_INVENTORY || (get_room(item->_room)->_flags & OO_ROOM_IN_SHIP) != 0) {
 			if (!_flags[OO_TRACTOR_BEAM]) {
 				// I detect a tractor beam
 				console_println(_strings2[77].c_str());
