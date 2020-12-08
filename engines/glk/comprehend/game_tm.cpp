@@ -22,6 +22,7 @@
 
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/game_tm.h"
+#include "glk/comprehend/pics.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -42,6 +43,18 @@ TalismanGame::TalismanGame() : ComprehendGameV2() {
 	_itemGraphicFiles.push_back("OB");
 	_itemGraphicFiles.push_back("OE");
 	_itemGraphicFiles.push_back("OF");
+
+	_titleGraphicFile = "t0";
+}
+
+void TalismanGame::beforeGame() {
+	// Draw the title
+	g_comprehend->drawPicture(TITLE_IMAGE);
+
+	// Print game information
+	g_comprehend->readChar();
+
+	g_comprehend->glk_window_clear(g_comprehend->_bottomWindow);
 }
 
 } // namespace Comprehend
