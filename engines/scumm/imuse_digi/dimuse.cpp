@@ -252,6 +252,13 @@ void IMuseDigital::runScheduledCrossfades() {
 			// in their iMUSE map (0 means shifted forward, default is -8820)
 			if (newTrack->volGroupId == IMUSE_VOLGRP_SFX || newTrack->comiLoopShifted) {
 				newTrack->regionOffset = 0;
+			} else if (!scumm_stricmp(newTrack->soundName, "2311-S~1.IMX")) {
+				// Special cases for the song in Part 3
+				newTrack->regionOffset = newTrack->regionOffset - ((oldTrack->feedSize / _callbackFps));
+				if (newTrack->soundId == 2317)
+					newTrack->regionOffset += (oldTrack->feedSize / _callbackFps) / 2;
+				else
+					newTrack->regionOffset -= (oldTrack->feedSize / _callbackFps) / 2;
 			} else {
 				newTrack->regionOffset -= (oldTrack->feedSize / _callbackFps);
 			}
