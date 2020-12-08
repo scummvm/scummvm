@@ -171,7 +171,7 @@ public:
 	int32 body = 0;
 	AnimationTypes anim = AnimationTypes::kAnimNone;
 	AnimationTypes animExtra = AnimationTypes::kStanding;  //field_2
-	const uint8 *animExtraPtr = nullptr;
+	AnimationTypes animExtraPtr = AnimationTypes::kAnimNone;
 	int32 sprite = 0; // field_8
 	uint8 *entityDataPtr = nullptr;
 	int32 entityDataSize = 0;

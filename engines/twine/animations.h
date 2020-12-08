@@ -68,7 +68,7 @@ public:
 	/** Current process actor index */
 	int16 currentlyProcessedActorIdx = 0;
 	/** Current actor anim extra pointer */
-	const uint8 *currentActorAnimExtraPtr = nullptr;
+	AnimationTypes currentActorAnimExtraPtr = AnimationTypes::kAnimNone;
 
 	/**
 	 * Set animation keyframe
