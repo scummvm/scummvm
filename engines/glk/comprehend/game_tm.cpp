@@ -27,8 +27,6 @@
 namespace Glk {
 namespace Comprehend {
 
-/* FIXME - This is broken */
-
 TalismanGame::TalismanGame() : ComprehendGameV2() {
 	_gameDataFile = "G0";
 
