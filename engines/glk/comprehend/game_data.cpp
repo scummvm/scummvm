@@ -243,6 +243,10 @@ void GameData::parse_vm(FileBuffer *fb) {
 			break;
 
 		_functions.push_back(func);
+
+		// WORKAROUND: Parsing functions for Talisman
+		if (_functions.size() == 0x1d8 && g_vm->getGameID() == "talisman")
+			break;
 	}
 }
 
@@ -478,11 +482,13 @@ done:
 
 void GameData::parse_string_table(FileBuffer *fb, unsigned start_addr,
                                uint32 end_addr, StringTable *table) {
-	fb->seek(start_addr);
-	while (1) {
-		table->push_back(parseString(fb));
-		if (fb->pos() >= (int32)end_addr)
-			break;
+	if (start_addr < end_addr) {
+		fb->seek(start_addr);
+		while (1) {
+			table->push_back(parseString(fb));
+			if (fb->pos() >= (int32)end_addr)
+				break;
+		}
 	}
 }
 
