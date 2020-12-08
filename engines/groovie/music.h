@@ -144,7 +144,9 @@ public:
 	MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName);
 	~MusicPlayerXMI();
 
+	using MusicPlayerMidi::send;
 	void send(int8 source, uint32 b) override;
+	using MusicPlayerMidi::metaEvent;
 	void metaEvent(int8 source, byte type, byte *data, uint16 length) override;
 	void stopAllNotes(bool stopSustainedNotes) override;
 	void processXMIDITimbreChunk(const byte *timbreListPtr, uint32 timbreListSize) override {
