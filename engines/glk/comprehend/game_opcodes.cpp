@@ -774,6 +774,7 @@ void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *
 
 	case OPCODE_DRAW_ROOM:
 		g_comprehend->drawLocationPicture(instr->_operand[0] - 1);
+		g_comprehend->readChar();
 		break;
 
 	case OPCODE_INVENTORY_FULL:

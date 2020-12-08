@@ -186,8 +186,8 @@ void OOToposGame::handleSpecialOpcode(uint8 operand) {
 		break;
 
 	case 5:
-		// Won the game, or fall-through from case 3
-		game_restart();
+		// Won the game
+		g_comprehend->quitGame();
 		break;
 
 	case 6:
