@@ -391,7 +391,7 @@ void Game::displayChuteAnimation() {
 	ValueTableData &fields = res.fieldList();
 	Palette palette(CHUTE_PALETTE_ID);
 
-	mouse.setCursorNum(CursorType::CURSOR_DISK);
+	mouse.setCursorNum(CURSOR_DISK);
 	if (!LureEngine::getReference().isEGA())
 		Screen::getReference().paletteFadeOut();
 
@@ -428,7 +428,7 @@ void Game::displayBarrelAnimation() {
 	LureEngine &engine = LureEngine::getReference();
 	Screen &screen = Screen::getReference();
 
-	mouse.setCursorNum(CursorType::CURSOR_DISK);
+	mouse.setCursorNum(CURSOR_DISK);
 	if (!engine.isEGA())
 		screen.paletteFadeOut();
 
