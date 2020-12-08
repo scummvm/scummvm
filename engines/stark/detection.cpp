@@ -120,7 +120,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Norwegian DLC-edition (DVD?)
 	{
 		"tlj", "DVD",
-		AD_ENTRY2s("x.arc",			"de8327850d7bba90b690b141eaa23f61", 3032,
+		AD_ENTRY2s("x.xarc",		"de8327850d7bba90b690b141eaa23f61", 3032,
 				   "chapters.ini",	"f358f604abd1aa1476ed05d6d271ac70", 473),
 		Common::NB_NOR,
 		Common::kPlatformWindows,
@@ -132,7 +132,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// German DVD version supplied by Vorph on the forums
 	{
 		"tlj", "DVD",
-		AD_ENTRY2s("x.arc",			"de8327850d7bba90b690b141eaa23f61", 3032,
+		AD_ENTRY2s("x.xarc",		"de8327850d7bba90b690b141eaa23f61", 3032,
 				   "chapters.ini",	"e4611d143a87b263d8d7a54edc7e7cd7", 515),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
@@ -144,7 +144,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// German 4CD
 	{
 		"tlj", "4 CD",
-		AD_ENTRY2s("x.arc",			"a0559457126caadab0cadac02d35f26f", 3032,
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
 				   "chapters.ini",	"e4611d143a87b263d8d7a54edc7e7cd7", 515),
 		Common::DE_DEU,
 		Common::kPlatformWindows,
@@ -156,7 +156,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Italian DVD version
 	{
 		"tlj", "DVD",
-		AD_ENTRY2s("x.arc",			"de8327850d7bba90b690b141eaa23f61", 3032,
+		AD_ENTRY2s("x.xarc",		"de8327850d7bba90b690b141eaa23f61", 3032,
 				   "chapters.ini",	"9a81ea4e6f5b84511dd4e56d04a64e2e", 498),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
@@ -168,7 +168,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Italian 4CD
 	{
 		"tlj", "4 CD",
-		AD_ENTRY2s("x.arc",			"a0559457126caadab0cadac02d35f26f", 3032,
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
 				   "chapters.ini",	"9a81ea4e6f5b84511dd4e56d04a64e2e", 498),
 		Common::IT_ITA,
 		Common::kPlatformWindows,
@@ -180,7 +180,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Dutch 4CD
 	{
 		"tlj", "4 CD",
-		AD_ENTRY2s("x.arc",			"a0559457126caadab0cadac02d35f26f", 3032,
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
 				   "chapters.ini",	"c8dadd9a3b41640734d6213e89cd5635", 508),
 		Common::NL_NLD,
 		Common::kPlatformWindows,
@@ -192,7 +192,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Spanish 4CD
 	{
 		"tlj", "4 CD",
-		AD_ENTRY2s("x.arc",			"a0559457126caadab0cadac02d35f26f", 3032,
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
 				   "chapters.ini",	"3640df6d536b186bff228337284d9631", 525),
 		Common::ES_ESP,
 		Common::kPlatformWindows,
@@ -204,7 +204,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// French 2CD
 	{
 		"tlj", "2 CD",
-		AD_ENTRY2s("x.arc",			"de8327850d7bba90b690b141eaa23f61", 3032,
+		AD_ENTRY2s("x.xarc",		"de8327850d7bba90b690b141eaa23f61", 3032,
 				   "chapters.ini",	"e54f6370dca06496069790840409cf95", 506),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
@@ -216,7 +216,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// French 4CD
 	{
 		"tlj", "4 CD",
-		AD_ENTRY2s("x.arc",			"a0559457126caadab0cadac02d35f26f", 3032,
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
 				   "chapters.ini",	"e54f6370dca06496069790840409cf95", 506),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
@@ -228,7 +228,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Swedish Demo
 	{
 		"tlj", "Demo",
-		AD_ENTRY2s("x.arc",			"97abc1bb9239dee4c208e533f3c97e1c", 98,
+		AD_ENTRY2s("x.xarc",		"97abc1bb9239dee4c208e533f3c97e1c", 98,
 				   "chapters.ini",	"f6a2007300209492b7b90b4c0467832d", 462),
 		Common::SE_SWE,
 		Common::kPlatformWindows,
@@ -240,7 +240,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Swedish 4CD
 	{
 		"tlj", "4 CD",
-		AD_ENTRY2s("x.arc",			"a0559457126caadab0cadac02d35f26f", 3032,
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
 				   "chapters.ini",	"f6a2007300209492b7b90b4c0467832d", 462),
 		Common::SE_SWE,
 		Common::kPlatformWindows,
@@ -252,7 +252,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Swedish DVD Nordic Special Edition - supplied by L0ngcat
 	{
 		"tlj", "DVD",
-		AD_ENTRY2s("x.arc",			"de8327850d7bba90b690b141eaa23f61", 3032,
+		AD_ENTRY2s("x.xarc",		"de8327850d7bba90b690b141eaa23f61", 3032,
 				   "chapters.ini",	"f6a2007300209492b7b90b4c0467832d", 462),
 		Common::SE_SWE,
 		Common::kPlatformWindows,
@@ -264,7 +264,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Polish 4CD
 	{
 		"tlj", "4 CD",
-		AD_ENTRY2s("x.arc",			"a0559457126caadab0cadac02d35f26f", 3032,
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
 				   "chapters.ini",	"6abc5c38e6e31face4b675355b117620", 499),
 		Common::PL_POL,
 		Common::kPlatformWindows,
@@ -276,7 +276,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Russian 2CD by 1C
 	{
 		"tlj", "2 CD/Fargus",
-		AD_ENTRY2s("x.arc",			"de8327850d7bba90b690b141eaa23f61", 3032,
+		AD_ENTRY2s("x.xarc",		"de8327850d7bba90b690b141eaa23f61", 3032,
 				   "chapters.ini",	"740b97b94e97ed11f064f5fa125ebee1", 486),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
@@ -288,7 +288,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Russian 2CD by 7Wolf
 	{
 		"tlj", "2 CD/7Wolf",
-		AD_ENTRY2s("x.arc",			"a0559457126caadab0cadac02d35f26f", 3032,
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
 				   "chapters.ini",	"8e08025c89575d2573c2edf0daa1cb34", 406),
 		Common::RU_RUS,
 		Common::kPlatformWindows,
@@ -300,7 +300,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Hungarian fan-made
 	{
 		"tlj", "Fanmade",
-		AD_ENTRY2s("x.arc",			"a0559457126caadab0cadac02d35f26f", 3032,
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
 				   "chapters.ini",	"790b51a88b5493bff5168a77738e0e84", 451),
 		Common::HU_HUN,
 		Common::kPlatformWindows,

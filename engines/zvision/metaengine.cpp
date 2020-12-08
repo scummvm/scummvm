@@ -59,7 +59,7 @@ public:
 
     bool hasFeature(MetaEngineFeature f) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -232,12 +232,9 @@ Common::KeymapArray ZVisionMetaEngine::initKeymaps(const char *target) const {
 	return keymaps;
 }
 
-bool ZVisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const ZVision::ZVisionGameDescription *gd = (const ZVision::ZVisionGameDescription *)desc;
-	if (gd) {
-		*engine = new ZVision::ZVision(syst, gd);
-	}
-	return gd != 0;
+Common::Error ZVisionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new ZVision::ZVision(syst, (const ZVision::ZVisionGameDescription *)desc);
+	return Common::kNoError;
 }
 
 SaveStateList ZVisionMetaEngine::listSaves(const char *target) const {

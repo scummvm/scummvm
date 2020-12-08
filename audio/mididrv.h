@@ -32,6 +32,14 @@
 class MidiChannel;
 
 /**
+ * @defgroup audio_mididrv MIDI drivers
+ * @ingroup audio
+ *
+ * @brief API for managing MIDI drivers.
+ * @{
+ */
+
+/**
  * Music types that music drivers can implement and engines can rely on.
  */
 enum MusicType {
@@ -462,5 +470,5 @@ public:
 	// SysEx messages
 	virtual void sysEx_customInstrument(uint32 type, const byte *instr) = 0;
 };
-
+/** @} */
 #endif

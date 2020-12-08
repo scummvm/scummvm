@@ -346,8 +346,7 @@ public:
 	ScenePoint sceneTracks[NUM_MAX_TRACKS];
 
 	// TODO: check what is this
-	int16 changeRoomVar10 = 0;
-	int16 changeRoomVar11 = 0;
+	bool changeRoomVar10 = false;
 
 	uint8 sceneFlags[NUM_SCENES_FLAGS] {0}; // cubeFlags
 

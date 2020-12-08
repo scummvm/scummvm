@@ -91,7 +91,7 @@ Intrinsic RemorseIntrinsics[] = {
 	Item::I_receiveHit, // void Intrinsic032(12 bytes)
 	Actor::I_isBusy, // int Intrinsic033(4 bytes)
 	Item::I_getDirFromTo16,
-	0, // TODO: Actor::I_getSomeFlagProbablyCrouch(Actor *)
+	Actor::I_isKneeling,
 	Actor::I_doAnim, // void Intrinsic036(12 bytes)
 	MainActor::I_addItemCru, // int Intrinsic037(4 bytes)
 	AudioProcess::I_stopSFXCru, // takes Item *, sndno (from disasm)

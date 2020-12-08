@@ -52,7 +52,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
@@ -127,22 +127,19 @@ SaveStateDescriptor IllusionsMetaEngine::querySaveMetaInfos(const char *target, 
 	return SaveStateDescriptor();
 }
 
-bool IllusionsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error IllusionsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Illusions::IllusionsGameDescription *gd = (const Illusions::IllusionsGameDescription *)desc;
-	if (gd) {
-		switch (gd->gameId) {
-		case Illusions::kGameIdBBDOU:
-			*engine = new Illusions::IllusionsEngine_BBDOU(syst, gd);
-			break;
-		case Illusions::kGameIdDuckman:
-			*engine = new Illusions::IllusionsEngine_Duckman(syst, gd);
-			break;
-		default:
-			error("Unknown game id");
-			break;
-		}
+	switch (gd->gameId) {
+	case Illusions::kGameIdBBDOU:
+		*engine = new Illusions::IllusionsEngine_BBDOU(syst, gd);
+		break;
+	case Illusions::kGameIdDuckman:
+		*engine = new Illusions::IllusionsEngine_Duckman(syst, gd);
+		break;
+	default:
+		return Common::kUnsupportedGameidError;
 	}
-	return desc != 0;
+	return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(ILLUSIONS)

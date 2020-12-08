@@ -218,6 +218,32 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_FLOPPY_FLAGS
 	},
 
+	{ // from trembyle
+		{
+			"kyra1",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1("GEMCUT.EMC", "3f319d6908830a46ff42229a39a2c7ec"),
+			Common::ZH_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUIO5(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA1_FLOPPY_FLAGS
+	},
+
+	{ // from trembyle
+		{
+			"kyra1",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1("GEMCUT.EMC", "57907d931675dbd16386c1d81d18fee4"),
+			Common::KO_KOR,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
+			GUIO5(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA1_FLOPPY_FLAGS
+	},
+
 	{
 		{
 			"kyra1",
@@ -542,6 +568,19 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
+			GUIO6(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA2_FLOPPY_FLAGS
+	},
+
+	{ // Floppy version extracted
+		{
+			"kyra2",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1("FATE.PAK", "5bfc4dd48778ca1f3a9e001e345a9774"),
+			Common::ZH_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
 			GUIO6(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
 		},
 		KYRA2_FLOPPY_FLAGS
@@ -1654,8 +1693,23 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"eob",
 			0,
-			AD_ENTRY1s("PLAYFLD", "e9dbc6944e6c00801f3932808f98e443", -1),
+			AD_ENTRY2s("L12",		"190804270d12e806b5c7264fd9690200", -1,
+					   "PLAYFLD",	"e9dbc6944e6c00801f3932808f98e443", -1),
 			Common::EN_ANY,
+			Common::kPlatformSegaCD,
+			ADGF_NO_FLAGS,
+			GUIO3(GUIO_NOSPEECH, GUIO_MIDISEGACD, GAMEOPTION_EOB_MOUSESWAP)
+		},
+		EOB_FLAGS
+	},
+
+	{
+		{
+			"eob",
+			0,
+			AD_ENTRY2s("L12",		"2095d1612a37264281e37996bd8c3bc2", -1,
+					   "PLAYFLD",	"e9dbc6944e6c00801f3932808f98e443", -1),
+			Common::JA_JPN,
 			Common::kPlatformSegaCD,
 			ADGF_NO_FLAGS,
 			GUIO3(GUIO_NOSPEECH, GUIO_MIDISEGACD, GAMEOPTION_EOB_MOUSESWAP)
@@ -1697,6 +1751,20 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
+			GUIO7(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
+		},
+		EOB2_FLAGS
+	},
+
+
+	{
+		{
+			"eob2",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("LEVEL15.INF", "f972f628d21bae404a7d52bb287c0012", -1),
+			Common::ZH_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSUPPORTED,
 			GUIO7(GUIO_NOSPEECH, GUIO_MIDIADLIB, GUIO_MIDIPCSPK, GUIO_RENDERVGA, GUIO_RENDEREGA, GAMEOPTION_EOB_HPGRAPHS, GAMEOPTION_EOB_MOUSESWAP)
 		},
 		EOB2_FLAGS

@@ -1146,7 +1146,7 @@ bool RestartRestoreDialog::show() {
 	LureEngine &engine = LureEngine::getReference();
 
 	Sound.killSounds();
-	Sound.musicInterface_Play(60, 0);
+	Sound.musicInterface_Play(188, 0, true);
 	mouse.setCursorNum(CURSOR_ARROW);
 
 	// See if there are any savegames that can be restored
@@ -1433,6 +1433,58 @@ void CopyProtectionDialog::chooseCharacters() {
 	(*curHotspot)->copyTo(&screen.screen());
 
 	screen.update();
+}
+
+AudioInitIcon::AudioInitIcon() : _visible(false) {
+	if (LureEngine::getReference().isEGA()) {
+		// The icon is not shown on EGA
+		_iconSurface = 0;
+	} else {
+		// Load icon
+		_iconSurface = new Surface(Disk::getReference().getEntry(AUDIO_INIT_ICON_RESOURCE_ID), 14, 14);
+
+		Screen &screen = Screen::getReference();
+
+		// Add the colors needed for displaying the icon to the current palette
+		Palette combinedPalette;
+		Palette defaultPalette(GAME_PALETTE_RESOURCE_ID);
+		combinedPalette.palette()->copyFrom(screen.getPalette().palette(), 0, 0, 4 * 0xF8);
+		combinedPalette.palette()->copyFrom(defaultPalette.palette(), 4 * 0xF8, 4 * 0xF8, 4 * 6);
+		screen.setPalette(&combinedPalette);
+	}
+}
+
+AudioInitIcon::~AudioInitIcon() {
+	if (_iconSurface)
+		delete _iconSurface;
+}
+
+void AudioInitIcon::show() {
+	if (!LureEngine::getReference().isEGA()) {
+		Screen &screen = Screen::getReference();
+
+		_iconSurface->copyTo(&screen.screen(), 0, 185);
+		screen.update();
+		_visible = true;
+	}
+}
+
+void AudioInitIcon::hide() {
+	if (!LureEngine::getReference().isEGA()) {
+		Screen &screen = Screen::getReference();
+
+		screen.screen().fillRect(Common::Rect(0, 185, 14, 199), 0);
+		screen.update();
+		_visible = false;
+	}
+}
+
+void AudioInitIcon::toggleVisibility() {
+	if (_visible) {
+		hide();
+	} else {
+		show();
+	}
 }
 
 } // End of namespace Lure

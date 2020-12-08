@@ -41,7 +41,7 @@ public:
 		return ConfMan.getInt("autosave_period") ? 4 : 3;
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	virtual int getAutosaveSlot() const override {
 		return 4;
@@ -69,11 +69,9 @@ bool Griffon::GriffonEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
-bool GriffonMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc)
-		*engine = new Griffon::GriffonEngine(syst);
-
-	return desc != nullptr;
+Common::Error GriffonMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Griffon::GriffonEngine(syst);
+	return Common::kNoError;
 }
 
 Common::KeymapArray GriffonMetaEngine::initKeymaps(const char *target) const {

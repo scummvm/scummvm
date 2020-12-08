@@ -69,7 +69,7 @@ public:
 		return "tinsel";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
     bool hasFeature(MetaEngineFeature f) const override;
 	SaveStateList listSaves(const char *target) const override;
@@ -169,12 +169,9 @@ SaveStateList TinselMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-bool TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const Tinsel::TinselGameDescription *gd = (const Tinsel::TinselGameDescription *)desc;
-	if (gd) {
-		*engine = new Tinsel::TinselEngine(syst, gd);
-	}
-	return gd != 0;
+Common::Error TinselMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Tinsel::TinselEngine(syst, (const Tinsel::TinselGameDescription *)desc);
+	return Common::kNoError;
 }
 
 int TinselMetaEngine::getMaximumSaveSlot() const { return 99; }

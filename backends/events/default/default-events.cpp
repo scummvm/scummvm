@@ -95,8 +95,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	event = _eventQueue.pop();
 	bool forwardEvent = true;
 
-	// If the backend has the kFeatureNoQuit, replace Quit event with Return to Launcher
-	if (event.type == Common::EVENT_QUIT && g_system->hasFeature(OSystem::kFeatureNoQuit))
+	// If the backend has the kFeatureNoQuit or the "Return to Launcher at Exit" option is enabled,
+	// replace "Quit" event with "Return to Launcher"
+	if (event.type == Common::EVENT_QUIT && (g_system->hasFeature(OSystem::kFeatureNoQuit) || (ConfMan.getBool("gui_return_to_launcher_at_exit") && g_engine)))
 		event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 
 	switch (event.type) {
@@ -170,11 +171,19 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 #endif
 	case Common::EVENT_RETURN_TO_LAUNCHER:
 		if (ConfMan.getBool("confirm_exit")) {
-			PauseToken pt;
-			if (g_engine)
-				pt = g_engine->pauseEngine();
-			GUI::MessageDialog alert(_("Do you really want to return to the Launcher?"), _("Launcher"), _("Cancel"));
-			forwardEvent = _shouldReturnToLauncher = (alert.runModal() == GUI::kMessageOK);
+			if (_confirmExitDialogActive) {
+				forwardEvent = false;
+				break;
+			}
+			_confirmExitDialogActive = true;
+			{
+				PauseToken pt;
+				if (g_engine)
+					pt = g_engine->pauseEngine();
+				GUI::MessageDialog alert(_("Do you really want to return to the Launcher?\nAny unsaved progress will be lost."), _("Yes"), _("Cancel"));
+				forwardEvent = _shouldReturnToLauncher = (alert.runModal() == GUI::kMessageOK);
+			}
+			_confirmExitDialogActive = false;
 		} else
 			_shouldReturnToLauncher = true;
 		break;
@@ -185,7 +194,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		break;
 
 	case Common::EVENT_QUIT:
-		if (ConfMan.getBool("confirm_exit")) {
+		if (g_engine && ConfMan.getBool("confirm_exit")) {
 			if (_confirmExitDialogActive) {
 				forwardEvent = false;
 				break;
@@ -194,9 +203,8 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 
 			{
 				PauseToken pt;
-				if (g_engine)
-					pt = g_engine->pauseEngine();
-				GUI::MessageDialog alert(_("Do you really want to quit?"), _("Quit"), _("Cancel"));
+				pt = g_engine->pauseEngine();
+				GUI::MessageDialog alert(_("Do you really want to quit?\nAny unsaved progress will be lost."), _("Quit"), _("Cancel"));
 				forwardEvent = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
 			}
 			_confirmExitDialogActive = false;

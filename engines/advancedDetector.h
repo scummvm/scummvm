@@ -34,14 +34,22 @@ namespace Common {
 class Error;
 class FSList;
 }
-
+/**
+ * @defgroup engines_advdetector Advanced Detector
+ * @ingroup engines
+ *
+ * @brief The Advanced Detector (AD) provides a standard framework for filename and MD5-based game detection.
+ *
+ * @{
+ */
+ 
 /**
  * A record describing a file to be matched for detecting a specific game
  * variant. A list of such records is used inside every ADGameDescription to
  * enable detection.
  */
 struct ADGameFileDescription {
-	const char *fileName; ///< Name of described file.
+	const char *fileName; ///< Name of the described file.
 	uint16 fileType;      ///< Optional. Not used during detection, only by engines.
 	const char *md5;      ///< MD5 of (the beginning of) the described file. Optional. Set to NULL to ignore.
 	int32 fileSize;       ///< Size of the described file. Set to -1 to ignore.
@@ -67,70 +75,118 @@ struct ADGameFileDescription {
 
 /**
  * A shortcut to produce a list of ADGameFileDescription records with only two
- * records that contains just a filename with an MD5, plus a file size.
+ * records that contain just a filename with an MD5, plus a file size.
  */
 #define AD_ENTRY2s(f1, x1, s1, f2, x2, s2) {{f1, 0, x1, s1}, {f2, 0, x2, s2}, AD_LISTEND}
 
+/**
+ * Flags used in the game description.
+ */
 enum ADGameFlags {
-	ADGF_NO_FLAGS        =  0,
-	ADGF_REMASTERED      = (1 << 18), ///< add "-remastered' to gameid
-	ADGF_AUTOGENTARGET   = (1 << 19), ///< automatically generate gameid from extra
-	ADGF_UNSTABLE        = (1 << 20), ///< flag to designate not yet officially-supported games that are not fit for public testing
-	ADGF_TESTING         = (1 << 21), ///< flag to designate not yet officially-supported games that are fit for public testing
-	ADGF_PIRATED         = (1 << 22), ///< flag to designate well known pirated versions with cracks
-	ADGF_UNSUPPORTED     = (1 << 23), ///< flag to mark certain versions (like fan translations) not to be run for various reasons. A custom message can be provided in the ADGameDescription::extra field.
-	ADGF_ADDENGLISH      = (1 << 24), ///< always add English as language option
-	ADGF_MACRESFORK      = (1 << 25), ///< the md5 for this entry will be calculated from the resource fork
-	ADGF_USEEXTRAASTITLE = (1 << 26), ///< Extra field value will be used as main game title, not gameid
-	ADGF_DROPLANGUAGE    = (1 << 27), ///< don't add language to gameid
-	ADGF_DROPPLATFORM    = (1 << 28), ///< don't add platform to gameid
-	ADGF_CD              = (1 << 29), ///< add "-cd" to gameid
-	ADGF_DEMO            = (1 << 30)  ///< add "-demo" to gameid
+	ADGF_NO_FLAGS        =  0,        ///< No flags.
+	ADGF_REMASTERED      = (1 << 18), ///< Add "-remastered' to gameid.
+	ADGF_AUTOGENTARGET   = (1 << 19), ///< Automatically generate gameid from @ref ADGameDescription::extra.
+	ADGF_UNSTABLE        = (1 << 20), ///< Flag to designate not yet officially supported games that are not fit for public testing.
+	ADGF_TESTING         = (1 << 21), ///< Flag to designate not yet officially supported games that are fit for public testing.
+	ADGF_PIRATED         = (1 << 22), ///< Flag to designate well-known pirated versions with cracks.
+	ADGF_UNSUPPORTED     = (1 << 23), /*!< Flag to mark certain versions (like fan translations) not to be run for various reasons.
+	                                       A custom message can be provided in the @ref ADGameDescription::extra field. */
+	ADGF_ADDENGLISH      = (1 << 24), ///< Always add English as a language option.
+	ADGF_MACRESFORK      = (1 << 25), ///< Calculate the MD5 for this entry from the resource fork.
+	ADGF_USEEXTRAASTITLE = (1 << 26), ///< Use @ref ADGameDescription::extra as the main game title, not gameid.
+	ADGF_DROPLANGUAGE    = (1 << 27), ///< Do not add language to gameid.
+	ADGF_DROPPLATFORM    = (1 << 28), ///< Do not add platform to gameid.
+	ADGF_CD              = (1 << 29), ///< Add "-cd" to gameid.
+	ADGF_DEMO            = (1 << 30)  ///< Add "-demo" to gameid.
 };
 
+/**
+ * Data table describing a game variant.
+ */
 struct ADGameDescription {
+	/**
+	 * The gameid that identifies the game.
+	 *
+	 * Mainly used for taking the game description from the @ref PlainGameDescriptor table.
+	 */
 	const char *gameId;
+
+	/**
+	 * Field that is used to distinguish between different variants of a game.
+	 *
+	 * The content of this field is inserted in the generated description for the config file game entry.
+	 * If the @ref kADFlagUseExtraAsHint ADFlag is set, the contents of this field are stored
+	 * in the config file, and are used to additionally distinguish between game variants.
+	 * Also, if the ADGF_USEEXTRAASTITLE game flag is set, the contents of this field
+	 * will be used as a description instead the one extracted from the @ref PlainGameDescriptor table.
+	 */
 	const char *extra;
+
+	/**
+	 * A list of individual file entries used for detection.
+	 *
+	 * 13 files (last is zero-terminated) is the maximum number of files currently used in ScummVM. 
+	 * A hardcoded number is used here due to a C++ limitation for defining const arrays.
+	 */
 	ADGameFileDescription filesDescriptions[14];
+
+	/**
+	 * Language of the game variant.
+	 */
 	Common::Language language;
+
+	/**
+	 * Platform of the game variant.
+	 */
 	Common::Platform platform;
 
 	/**
-	 * A bitmask of extra flags. The top 16 bits are reserved for generic flags
-	 * defined in the ADGameFlags. This leaves 16 bits to be used by client
-	 * code.
+	 * A bitmask of extra flags.
+	 *
+	 * The top 16 bits are reserved for generic flags defined in @ref ADGameFlags.
+	 * This leaves 16 bits to be used by the client code.
 	 */
 	uint32 flags;
 
+	/**
+	 * Game features that are user-controllable.
+	 *
+	 * This list reflects which features of the GUI should be turned on or off in order to minimize user confusion. 
+	 * For instance, there is no point in changing game language in single-language games
+	 * or have MIDI controls in a game that only supports digital music.
+	 */
 	const char *guiOptions;
 };
 
 /**
- * A game installation matching an AD game description
+ * A game installation matching an AD game description.
  */
 struct ADDetectedGame {
-	bool hasUnknownFiles;
-	FilePropertiesMap matchedFiles;
-	const ADGameDescription *desc;
+	bool hasUnknownFiles;           /*!< Whether the game has unknown files. */
+	FilePropertiesMap matchedFiles; /*!< List of the files that were used to match the game. */
+	const ADGameDescription *desc;  /*!< Human-readable game title. */
 
 	ADDetectedGame() : desc(nullptr), hasUnknownFiles(false) {}
+	/**
+	 * Construct an ADDetectedGame object.
+	 */
 	explicit ADDetectedGame(const ADGameDescription *d) : desc(d), hasUnknownFiles(false) {}
 };
 
-/** A list of games detected by the AD */
+/** A list of games detected by the AD. */
 typedef Common::Array<ADDetectedGame> ADDetectedGames;
 
 /**
- * End marker for a table of ADGameDescription structs. Use this to
- * terminate a list to be passed to the AdvancedDetector API.
+ * End marker for a table of @ref ADGameDescription structures. Use this to
+ * terminate a list to be passed to the Advanced Detector API.
  */
 #define AD_TABLE_END_MARKER	\
 	{ NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, ADGF_NO_FLAGS, GUIO0() }
 
 struct ADFileBasedFallback {
 	/**
-	 * Pointer to an ADGameDescription or subclass thereof which will get
-	 * returned if there's a detection match.
+	 * Pointer to an @ref ADGameDescription or its subclass that will be
+	 * returned if there is a detection match.
 	 */
 	const ADGameDescription *desc;
 
@@ -144,9 +200,11 @@ struct ADFileBasedFallback {
 
 enum ADFlags {
 	/**
-	 * Store value of extra field in config file, and use it as a hint
-	 * on subsequent runs. Could be used when there is no way to autodetect
-	 * game (when more than one game sits in same directory), and user picks
+	 * Store the value of the @ref ADGameDescription::extra field 
+	 * in the config file, and use it as a hint on subsequent runs.
+	 *
+	 * This can be used when there is no way to autodetect the game
+	 * (when more than one game are located in same directory), and the user picks
 	 * up a variant manually.
 	 * In addition, this is useful if two variants of a game sharing the same
 	 * gameid are contained in a single directory.
@@ -156,39 +214,34 @@ enum ADFlags {
 
 
 /**
- * Map entry for mapping GUIO_GAMEOPTIONS* to their ExtraGuiOption
+ * Map entry for mapping GUIO_GAMEOPTIONS* to their @ref ExtraGuiOption
  * description.
  */
 struct ADExtraGuiOptionsMap {
-	/**
-	 * GUIO_GAMEOPTION* string.
-	 */
-	const char *guioFlag;
-
-	/**
-	 * The associated option.
-	 */
-	ExtraGuiOption option;
+	const char *guioFlag;  /*!< GUIO_GAMEOPTION* string. */
+	ExtraGuiOption option; /*!< The associated option. */
 };
 
 #define AD_EXTRA_GUI_OPTIONS_TERMINATOR { 0, { 0, 0, 0, 0 } }
 
 /**
- * A MetaEngineDetection implementation based around the advanced detector code.
+ * A @ref MetaEngineDetection implementation based on the Advanced Detector code.
  */
 class AdvancedMetaEngineDetection : public MetaEngineDetection {
 protected:
 	/**
 	 * Pointer to an array of objects which are either ADGameDescription
-	 * or superset structures (i.e. start with an ADGameDescription member.
+	 * or superset structures (i.e. start with an ADGameDescription member).
+	 *
 	 * The list is terminated by an entry with a gameid equal to 0
-	 * (see AD_TABLE_END_MARKER).
+	 * (see @ref AD_TABLE_END_MARKER).
 	 */
 	const byte *_gameDescriptors;
 
 	/**
-	 * The size of a single entry of the above descs array. Always
-	 * must be >= sizeof(ADGameDescription).
+	 * The size of a single entry of the above descriptions array.
+	 *
+	 * Always must be >= sizeof(ADGameDescription).
 	 */
 	const uint _descItemSize;
 
@@ -204,10 +257,11 @@ protected:
 	const ADExtraGuiOptionsMap * const _extraGuiOptions;
 
 	/**
-	 * The number of bytes to compute MD5 sum for. The AdvancedDetector
-	 * is primarily based on computing and matching MD5 checksums of files.
-	 * Since doing that for large files can be slow, it can be restricted
-	 * to a subset of all files.
+	 * The number of bytes to compute the MD5 checksum for.
+	 *
+	 * The Advanced Detector is primarily based on computing and matching
+	 * MD5 checksums of files. Since doing that for large files can be slow,
+	 * it can be restricted to a subset of all files.
 	 * Typically this will be set to something between 5 and 50 kilobytes,
 	 * but arbitrary non-zero values are possible. The default is 5000.
 	 */
@@ -215,78 +269,112 @@ protected:
 
 	/**
 	 * A bitmask of flags which can be used to configure the behavior
-	 * of the AdvancedDetector. Refer to ADFlags for a list of flags
-	 * that can be ORed together and passed here.
+	 * of the Advanced Detector.
+	 *
+	 * See @ref ADFlags for a list of flags that can be ORed together and passed here.
 	 */
 	uint32 _flags;
 
 	/**
 	 * A list of game GUI options which will be added to each
-	 * entry in addition to per-game options. Refer to GameGUIOption
-	 * enum for the list.
+	 * entry in addition to per-game options. 
+	 *
+	 * Refer to @ref GameGUIOption enum for the list.
 	 */
 	Common::String _guiOptions;
 
 	/**
 	 * Maximum depth of directories to look up.
-	 * If set to 0, the depth is 1 level
+	 *
+	 * If set to 0, the depth is 1 level.
 	 */
 	uint32 _maxScanDepth;
 
 	/**
-	 * Case-insensitive list of directory globs which could be used for
+	 * Case-insensitive list of directory globs that can be used for
 	 * going deeper into the directory structure.
-	 * @see String::matchString() method for format description.
 	 *
-	 * @note Last item must be 0
+	 * See @ref String::matchString() method for format description.
+	 *
+	 * @note The last item must be 0.
 	 */
 	const char * const *_directoryGlobs;
 
 	/**
 	 * If true, filenames will be matched against the entire path, relative to
-	 * the root detection directory (e.g. "foo/bar.000" for a file at
-	 * "<root>/foo/bar.000"). Otherwise, filenames only match the basename
-	 * (e.g. "bar.000" for the same file).
+	 * the root detection directory.
 	 *
-	 * @note _maxScanDepth and _directoryGlobs must still be configured to allow
+	 * For example: "foo/bar.000" for a file at "<root>/foo/bar.000").
+	 * Otherwise, filenames only match the base name (e.g. "bar.000" for the same file).
+	 *
+	 * @note @c _maxScanDepth and @c _directoryGlobs must still be configured to allow
 	 * the detector to find files inside subdirectories.
 	 */
 	bool _matchFullPaths;
 
 	/**
-	 * If we use ADGF_AUTOGENTARGET, then this specifies the max length
-	 * of the autogenerated name. The default is 15
+	 * If ADGF_AUTOGENTARGET is used, then this specifies the max length
+	 * of the autogenerated name.
+	 * The default is 15.
 	 */
 	int _maxAutogenLength;
 
 public:
+	/**
+	 * Initialize game detection using AdvancedMetaEngineDetection.
+	 */
 	AdvancedMetaEngineDetection(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
 
 	/**
-	 * Returns list of targets supported by the engine.
-	 * Distinguishes engines with single ID
+	 * Return a list of targets supported by the engine.
+	 *
+	 * Distinguishes engines with a single ID.
 	 */
 	PlainGameList getSupportedGames() const override;
 
+	/** Query the engine for a @ref PlainGameDescriptor for the specified gameid, if any. */
 	PlainGameDescriptor findGame(const char *gameId) const override;
 
+	/**
+	 * Run the engine's game detector on the given list of files, and return a
+	 * (possibly empty) list of games supported by the engine that were
+	 * found among the given files.
+	 */
 	DetectedGames detectGames(const Common::FSList &fslist) const override;
 
 	/**
 	 * A generic createInstance.
+	 *
 	 * For instantiating engine objects, this method is called first,
 	 * and then the subclass implemented createInstance is called from within.
 	 */
 	Common::Error createInstance(OSystem *syst, Engine **engine) const;
 
+	/**
+	 * Return a list of extra GUI options for the specified target.
+	 *
+	 * If no target is specified, all of the available custom GUI options are
+	 * returned for the plugin (used to set default values).
+	 *
+	 * Currently, this only supports options with checkboxes.
+	 *
+	 * The default implementation returns an empty list.
+	 *
+	 * @param target    Name of a config manager target.
+	 *
+	 * @return A list of extra GUI options for an engine plugin and target.
+	 */
 	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
 protected:
+	/**
+	 * A hashmap of files and their MD5 checksums.
+	 */
 	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
 	/**
-	 * An (optional) generic fallback detect function which is invoked
-	 * if the regular MD5 based detection failed to detect anything.
+	 * An (optional) generic fallback detection function that is invoked
+	 * if the regular MD5-based detection failed to detect anything.
 	 */
 	virtual ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist) const {
 		return ADDetectedGame();
@@ -297,45 +385,48 @@ private:
 
 protected:
 	/**
-	 * Detect games in specified directory.
-	 * Parameters language and platform are used to pass on values
+	 * Detect games in the specified directory.
+	 *
+	 * Parameters @p language and @p platform are used to pass the values
 	 * specified by the user. This is used to restrict search scope.
 	 *
-	 * @param allFiles	list of all present files, as computed by composeFileHashMap
-	 * @param language	restrict results to specified language
-	 * @param platform	restrict results to specified platform
-	 * @param extra		restrict results to specified extra string (only if kADFlagUseExtraAsHint is set)
-	 * @return	list of ADGameDescription pointers corresponding to matched games
+	 * @param parent    Parent node of this file node.
+	 * @param allFiles  List of all present files, as computed by the @ref composeFileHashMap.
+	 * @param language  Restrict results to the specified language.
+	 * @param platform  Restrict results to the specified platform.
+	 * @param extra     Restrict results to the specified @c extra string (only if @ref kADFlagUseExtraAsHint is set).
+	 *
+	 * @return A list of @ref ADGameDescription pointers corresponding to the matched games.
 	 */
 	virtual ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) const;
 
 	/**
-	 * Iterates over all ADFileBasedFallback records inside fileBasedFallback.
-	 * This then returns the record (or rather, the ADGameDescription
+	 * Iterate over all @ref ADFileBasedFallback records inside @p fileBasedFallback
+	 * and return the record (or rather, the ADGameDescription
 	 * contained in it) for which all files described by it are present, and
 	 * among those the one with the maximal number of matching files.
+	 *
 	 * In case of a tie, the entry coming first in the list is chosen.
 	 *
-	 * @param allFiles	a map describing all present files
-	 * @param fslist	a list of nodes for all present files
-	 * @param fileBasedFallback	a list of ADFileBasedFallback records, zero-terminated
-	 * @param filesProps	if not 0, return a map of properties for all detected files here
+	 * @param allFiles           Map describing all present files
+	 * @param fileBasedFallback  List of ADFileBasedFallback records, zero-terminated.
 	 */
 	ADDetectedGame detectGameFilebased(const FileMap &allFiles, const ADFileBasedFallback *fileBasedFallback) const;
 
 	/**
-	 * Compose a hashmap of all files in fslist.
-	 * Includes nifty stuff like removing trailing dots and ignoring case.
+	 * Compose a hashmap of all files in @p fslist.
+	 *
+	 * Removes trailing dots and ignores case in the process.
 	 */
 	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName = Common::String()) const;
 
 	/** Get the properties (size and MD5) of this file. */
 	bool getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
 
-	/** Convert an AD game description into the shared game description format */
+	/** Convert an AD game description into the shared game description format. */
 	virtual DetectedGame toDetectedGame(const ADDetectedGame &adGame) const;
 
-	friend class FileMapArchive; // for FileMap
+	friend class FileMapArchive;
 };
 
 /**
@@ -344,41 +435,48 @@ protected:
 class AdvancedMetaEngine : public MetaEngine {
 public:
 	/**
-	 * Base createInstance for AMEC.
-	 * The AME provides a default createInstance which is called first, so we should invoke that
-	 * first.
-	 * By the point of time we call this, we assume that we only have one
+	 * Base createInstance for AdvancedMetaEngine.
+	 *
+	 * The AdvancedMetaEngine provides a default createInstance that is called first, 
+	 * so this should be invoked first.
+	 * By the time this is called, it is assumed that there is only one
 	 * plugin engine loaded in memory.
 	 */
 	virtual Common::Error createInstance(OSystem *syst, Engine **engine) const override;
 
 	/**
-	 * To be implemented by subclasses, which is called after we call the base
-	 * createInstance function above.
+	 * A createInstance implementation for subclasses. To be called after the base
+	 * createInstance function above is called.
 	 */
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const = 0;
 
 	/**
-	 * Provide the engineID here, must match the one from MetaEngine.
+	 * Return the name of the engine plugin based on the engineID.
+	 *
+	 * The the engineID must match the one from MetaEngine.
 	 *
 	 * @see MetaEngineConnect::getName().
 	 */
 	virtual const char *getName() const override = 0;
 
 public:
+	/**
+	 * A hashmap of files and their MD5 checksums.
+	 */
 	typedef Common::HashMap<Common::String, Common::FSNode, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
 
 	/**
-	 * An (optional) generic fallback detect function which is invoked
-	 * if the regular MD5 based detection failed to detect anything.
-	 * NOTE: This is only meant to be used if fallback detection is heavily dependant on engine resources.
+	 * An (optional) generic fallback detection function that is invoked
+	 * if the regular MD5-based detection failed to detect anything.
+	 
+	 * @note This is only meant to be used if fallback detection heavily depends on engine resources.
 	 *
 	 * To use this, implement the intended fallbackDetectExtern inside the relevant MetaEngineConnect class.
 	 * Then, override the method "fallbackDetect" inside your MetaEngine class.
-	 * Finally, provide a "hook" to fetch the relevant MetaEngineConnect class and then use the orignal detection
+	 * Finally, provide a "hook" to fetch the relevant MetaEngineConnect class and then use the original detection
 	 * method.
 	 *
-	 * An example for the way this is used can be found in the Wintermute Engine.
+	 * An example of how this is implemented can be found in the Wintermute Engine.
 	 */
 	virtual ADDetectedGame fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist) const {
 		return ADDetectedGame();
@@ -386,9 +484,10 @@ public:
 
 	/**
 	 * Get the properties (size and MD5) of this file.
-	 * Based on MetaEngine::getFileProperties.
+	 *
+	 * Based on @ref MetaEngine::getFileProperties.
 	 */
 	bool getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String fname, FileProperties &fileProps) const;
 };
-
+/** @} */
 #endif

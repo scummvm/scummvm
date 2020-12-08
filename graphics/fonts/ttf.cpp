@@ -861,7 +861,7 @@ Font *loadTTFFontFromArchive(const Common::String &filename, int size, TTFSizeMo
 }
 
 static bool matchFaceName(const Common::U32String &faceName, const FT_Face &face) {
-	if (faceName == Common::U32String(face->family_name)) {
+	if (faceName == Common::U32String(face->family_name, Common::kASCII)) {
 		// International name in ASCII match
 		return true;
 	}
@@ -883,21 +883,22 @@ static bool matchFaceName(const Common::U32String &faceName, const FT_Face &face
 			if (aname.encoding_id == TT_MS_ID_SYMBOL_CS ||
 			        aname.encoding_id == TT_MS_ID_UNICODE_CS) {
 				// MS local name in UTF-16
-				Common::U32String localName = Common::U32String::decodeUTF16BE((uint16 *) aname.string, aname.string_len);
+				// string_len is in bytes length, we take wchar_t length
+				Common::U32String localName = Common::U32String::decodeUTF16BE((uint16 *) aname.string, aname.string_len / 2);
 
 				if (faceName == localName) {
 					return true;
 				}
 			} else {
-				// No conversion
-				if (faceName == Common::U32String((char *)aname.string, aname.string_len)) {
+				// No conversion: try to match with 1 byte encoding
+				if (faceName == Common::U32String((char *)aname.string, aname.string_len, Common::kLatin1)) {
 					return true;
 				}
 			}
 		} else if (aname.platform_id == TT_PLATFORM_MACINTOSH &&
 		           aname.language_id != TT_MAC_LANGID_ENGLISH) {
 			// No conversion
-			if (faceName == Common::U32String((char *)aname.string, aname.string_len)) {
+			if (faceName == Common::U32String((char *)aname.string, aname.string_len, Common::kLatin1)) {
 				return true;
 			}
 		}

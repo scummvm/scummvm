@@ -29,28 +29,45 @@
 namespace Lure {
 
 struct AnimRecord {
+	// The resource ID of the animation
 	uint16 resourceId;
+	// The index of the palette to use
 	uint8 paletteIndex;
+	// The time that should pass before starting the animation
 	uint16 initialPause;
+	// The time that should pass at the last screen of the animation
 	uint16 endingPause;
+	// The number of the sound that should play during the animation
 	uint8 soundNumber;
+	// True if the sound should fade out before the transition
+	bool fadeOutSound;
+	// The time that should pass on the last animation screen before the
+	// next sound is played
+	uint16 soundTransitionPause;
+	// The number of the sound that should be played on the last screen
+	// (0xFF for none)
+	uint8 soundNumber2;
 };
 
 static const uint16 start_screens[] = {0x18, 0x1A, 0x1E, 0x1C, 0};
 static const AnimRecord anim_screens[] = {
-	{0x40, 0, 0x35A, 0x2C8, 0x80},		// The kingdom was at peace
-	{0x42, 1, 0, 0x5FA, 0x81},			// Cliff overhang
-	{0x44, 2, 0, 0, 0x82},				// Siluette in moonlight
-	{0x24, 3, 0, 0x328 + 0x24, 0xff},	// Exposition of reaching town
-	{0x46, 3, 0, 0, 0x83},				// Skorl approaches
-	{0, 0, 0, 0, 0xff}};
+	// Note that the ending pause of the first anim is about 8 seconds in the
+	// original interpreter vs about 14 seconds here. 8 seconds is quite short
+	// to read the screen, so I kept it at 14. Conveniently, the first music
+	// track is much longer than what was actually used in the game.
+	{0x40, 0, 0x314, 0x2BE, 0x00, true, 0x1F4, 0x01},		// The kingdom was at peace
+	{0x42, 1, 0, 0x5FA, 0x01, false, 0, 0xFF},				// Cliff overhang
+	{0x44, 2, 0, 0, 0x02, false, 0, 0xFF},					// Siluette in moonlight
+	{0x24, 3, 0, 0x62C + 0x24, 0xFF, false, 0x328, 0x03},	// Exposition of reaching town
+	{0x46, 3, 0, 0, 0x03, false, 0, 0xFF},					// Skorl approaches
+	{0, 0, 0, 0, 0xFF, false, 0, 0xFF}};
 
 // showScreen
 // Shows a screen by loading it from the given resource, and then fading it in
 // with a palette in the following resource. Returns true if the introduction
 // should be aborted
 
-bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize) {
+bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySize, bool fadeOut) {
 	Screen &screen = Screen::getReference();
 	bool isEGA = LureEngine::getReference().isEGA();
 	screen.screen().loadScreen(screenId);
@@ -65,7 +82,7 @@ bool Introduction::showScreen(uint16 screenId, uint16 paletteId, uint16 delaySiz
 	bool result = interruptableDelay(delaySize);
 	if (LureEngine::getReference().shouldQuit()) return true;
 
-	if (!isEGA)
+	if (fadeOut && !isEGA)
 		screen.paletteFadeOut();
 
 	return result;
@@ -100,9 +117,21 @@ bool Introduction::show() {
 
 	// Initial game company and then game screen
 
-	for (int ctr = 0; start_screens[ctr]; ++ctr)
+	for (int ctr = 0; ctr < 3; ++ctr)
 		if (showScreen(start_screens[ctr], start_screens[ctr] + 1, 5000))
 			return true;
+
+	// Title screen
+	if (showScreen(start_screens[3], start_screens[3] + 1, 5000, false))
+		return true;
+
+	bool result = Sound.initCustomTimbres(true);
+	if (result)
+		return true;
+
+	// Fade out title screen
+	if (!isEGA)
+		screen.paletteFadeOut();
 
 	PaletteCollection coll(0x32);
 	Palette EgaPalette(0x1D);
@@ -110,19 +139,11 @@ bool Introduction::show() {
 	// Animated screens
 
 	AnimationSequence *anim;
-	bool result;
-	uint8 currentSound = 0xff;
+	_currentSound = 0xFF;
 	const AnimRecord *curr_anim = anim_screens;
 	for (; curr_anim->resourceId; ++curr_anim) {
 		// Handle sound selection
-		if (curr_anim->soundNumber != 0xff) {
-			if (currentSound != 0xff)
-				// Stop the previous sound
-				Sound.musicInterface_KillAll();
-
-			currentSound = curr_anim->soundNumber;
-			Sound.musicInterface_Play(currentSound, 0);
-		}
+		playMusic(curr_anim->soundNumber, false);
 
 		bool fadeIn = curr_anim == anim_screens;
 		anim = new AnimationSequence(curr_anim->resourceId,
@@ -140,7 +161,21 @@ bool Introduction::show() {
 		switch (anim->show()) {
 		case ABORT_NONE:
 			if (curr_anim->endingPause != 0) {
-				result = interruptableDelay(curr_anim->endingPause * 1000 / 50);
+				if (curr_anim->soundTransitionPause != 0) {
+					uint16 pause = curr_anim->soundTransitionPause * 1000 / 50;
+					if (curr_anim->fadeOutSound) {
+						pause -= 3500;
+					}
+					// Wait before transitioning to the next track
+					result = interruptableDelay(pause);
+				}
+
+				if (!result)
+					result = playMusic(curr_anim->soundNumber2, curr_anim->fadeOutSound);
+
+				if (!result)
+					// Wait remaining time before the next animation
+					result = interruptableDelay((curr_anim->endingPause - curr_anim->soundTransitionPause) * 1000 / 50);
 			}
 			break;
 
@@ -160,13 +195,21 @@ bool Introduction::show() {
 		}
 	}
 
+	// Fade out last cutscene screen
+	if (!isEGA)
+		screen.paletteFadeOut();
+
 	// Show battle pictures one frame at a time
 
 	result = false;
 	anim = new AnimationSequence(0x48, isEGA ? EgaPalette : coll.getPalette(4), false);
 	do {
 		result = interruptableDelay(2000);
-		screen.paletteFadeOut();
+		if (isEGA) {
+			screen.empty();
+		} else {
+			screen.paletteFadeOut();
+		}
 		if (!result) result = interruptableDelay(500);
 		if (result) break;
 	} while (anim->step());
@@ -175,17 +218,39 @@ bool Introduction::show() {
 	if (!result) {
 		// Show final introduction animation
 		if (!isEGA)
-			showScreen(0x22, 0x21, 10000);
+			showScreen(0x22, 0x21, 33300);
 		else {
 			Palette finalPalette(0x21);
 			anim = new AnimationSequence(0x22, finalPalette, false);
 			delete anim;
-			interruptableDelay(10000);
+			interruptableDelay(34000);
 		}
 	}
 
 	Sound.musicInterface_KillAll();
 	return false;
+}
+
+bool Introduction::playMusic(uint8 soundNumber, bool fadeOut) {
+	bool result = false;
+
+	if (soundNumber != 0xFF && _currentSound != soundNumber) {
+		// Stop the previous sound
+		if (fadeOut) {
+			result = Sound.fadeOut();
+			if (!result)
+				result = interruptableDelay(500);
+		} else {
+			Sound.musicInterface_KillAll();
+		}
+
+		if (!result) {
+			_currentSound = soundNumber;
+			Sound.musicInterface_Play(_currentSound, 0, true);
+		}
+	}
+
+	return result;
 }
 
 } // End of namespace Lure

@@ -40,73 +40,50 @@
 namespace TwinE {
 
 static const int32 magicLevelStrengthOfHit[] = {
-	kNoBallStrength,
-	kYellowBallStrength,
-	kGreenBallStrength,
-	kRedBallStrength,
-	kFireBallStrength,
+	MagicballStrengthType::kNoBallStrength,
+	MagicballStrengthType::kYellowBallStrength,
+	MagicballStrengthType::kGreenBallStrength,
+	MagicballStrengthType::kRedBallStrength,
+	MagicballStrengthType::kFireBallStrength,
 	0
 };
 
-enum ActionType {
-	ACTION_HITTING = 0,
-	ACTION_SAMPLE = 1,
-	ACTION_SAMPLE_FREQ = 2,
-	ACTION_THROW_EXTRA_BONUS = 3,
-	ACTION_THROW_MAGIC_BALL = 4,
-	ACTION_SAMPLE_REPEAT = 5,
-	ACTION_UNKNOWN_6 = 6,
-	ACTION_UNKNOWN_7 = 7,
-	ACTION_SAMPLE_STOP = 8,
-	ACTION_UNKNOWN_9 = 9, // unused
-	ACTION_SAMPLE_BRICK_1 = 10,
-	ACTION_SAMPLE_BRICK_2 = 11,
-	ACTION_HERO_HITTING = 12,
-	ACTION_UNKNOWN_13 = 13,
-	ACTION_UNKNOWN_14 = 14,
-	ACTION_UNKNOWN_15 = 15,
-	ACTION_LAST
-};
-
-Animations::Animations(TwinEEngine *engine) : _engine(engine) {
-	animBuffer1 = animBuffer2 = (uint8 *)malloc(5000 * sizeof(uint8));
+Animations::Animations(TwinEEngine *engine) : _engine(engine), animBuffer((uint8 *)malloc(5000 * sizeof(uint8))) {
+	animBufferPos = animBuffer;
 }
 
 Animations::~Animations() {
-	free(animBuffer1);
+	free(animBuffer);
 }
 
-int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	const int16 numOfKeyframeInAnim = READ_LE_INT16(animPtr);
 	if (keyframeIdx >= numOfKeyframeInAnim) {
 		return numOfKeyframeInAnim;
+	}
+
+	if (!Model::isAnimated(bodyPtr)) {
+		return 0;
 	}
 
 	int16 numOfBonesInAnim = READ_LE_INT16(animPtr + 2);
 
 	const uint8 *ptrToData = (const uint8 *)((numOfBonesInAnim * 8 + 8) * keyframeIdx + animPtr + 8);
 
-	const int16 bodyHeader = READ_LE_INT16(bodyPtr);
-
-	if (!(bodyHeader & 2)) {
-		return 0;
-	}
-
-	uint8 *ptrToBodyData = bodyPtr + 14;
-
 	animTimerDataPtr->ptr = ptrToData;
 	animTimerDataPtr->time = _engine->lbaTime;
 
-	ptrToBodyData = ptrToBodyData + READ_LE_INT16(ptrToBodyData) + 2;
+	uint8 *verticesBase = bodyPtr + 0x1A;
+	int32 numVertices = READ_LE_INT16(verticesBase);
 
-	const int16 numOfElementInBody = READ_LE_INT16(ptrToBodyData);
+	uint8 *bonesBase = verticesBase + numVertices * 6 + 2;
+	const int16 numBones = READ_LE_INT16(bonesBase);
 
-	ptrToBodyData = ptrToBodyData + numOfElementInBody * 6 + 12;
+	uint8 *bonesPtr = bonesBase + 2;
+	bonesPtr += 8;
 
-	const int16 numOfPointInBody = READ_LE_INT16(ptrToBodyData - 10); // num elements
-
-	if (numOfBonesInAnim > numOfPointInBody) {
-		numOfBonesInAnim = numOfPointInBody;
+	if (numOfBonesInAnim > numBones) {
+		numOfBonesInAnim = numBones;
 	}
 
 	const uint8 *ptrToDataBackup = ptrToData;
@@ -115,16 +92,15 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bo
 
 	do {
 		for (int32 i = 0; i < 8; i++) {
-			*(ptrToBodyData++) = *(ptrToData++);
+			*bonesPtr++ = *ptrToData++;
 		}
 
-		ptrToBodyData += 30;
-
+		bonesPtr += 30;
 	} while (--numOfBonesInAnim);
 
 	ptrToData = ptrToDataBackup + 2;
 
-	currentStepX = READ_LE_INT16(ptrToData);
+	currentStepX = READ_LE_INT16(ptrToData + 0);
 	currentStepY = READ_LE_INT16(ptrToData + 2);
 	currentStepZ = READ_LE_INT16(ptrToData + 4);
 
@@ -203,46 +179,38 @@ int32 Animations::getAnimMode(uint8 **ptr, const uint8 **keyFramePtr, const uint
 }
 
 bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	int32 numOfPointInAnim = READ_LE_INT16(animPtr + 2);
-
-	const uint8* keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animPtr + 8;
-
-	int32 keyFrameLength = READ_LE_INT16(keyFramePtr);
-
-	int16 bodyHeader = READ_LE_INT16(bodyPtr);
-
-	if (!(bodyHeader & 2)) {
+	if (!Model::isAnimated(bodyPtr)) {
 		return false;
 	}
+	int32 numOfPointInAnim = READ_LE_INT16(animPtr + 2);
+	const uint8* keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animPtr + 8;
+	const int32 keyFrameLength = READ_LE_INT16(keyFramePtr);
 
-	uint8 *edi = bodyPtr + 16;
+	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
+	int32 remainingFrameTime = animTimerDataPtr->time;
 
-	const uint8 *ebx = animTimerDataPtr->ptr;
-	int32 ebp = animTimerDataPtr->time;
-
-	if (!ebx) {
-		ebx = keyFramePtr;
-		ebp = keyFrameLength;
+	if (!lastKeyFramePtr) {
+		lastKeyFramePtr = keyFramePtr;
+		remainingFrameTime = keyFrameLength;
 	}
 
-	const uint8* lastKeyFramePtr = ebx;
+	uint8 *verticesBase = bodyPtr + 0x1A;
 
-	int32 eax = READ_LE_INT16(edi - 2);
-	edi += eax;
+	const int16 numVertices = READ_LE_INT16(verticesBase);
+	verticesBase += 2;
+	uint8* bonesBase = verticesBase + numVertices * 6;
 
-	eax = READ_LE_INT16(edi);
-	eax = eax + eax * 2;
-	edi = edi + eax * 2 + 12;
+	const int32 numBones = READ_LE_INT16(bonesBase);
+	bonesBase += 2;
 
-	int32 numOfPointInBody = READ_LE_INT16(edi - 10);
-
-	if (numOfPointInAnim > numOfPointInBody) {
-		numOfPointInAnim = numOfPointInBody;
+	if (numOfPointInAnim > numBones) {
+		numOfPointInAnim = numBones;
 	}
 
-	eax = _engine->lbaTime - ebp;
+	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
 
-	if (eax >= keyFrameLength) {
+	uint8* edi = bonesBase + 8;
+	if (deltaTime >= keyFrameLength) {
 		const int32 *sourcePtr = (const int32 *)(keyFramePtr + 8);
 		int32 *destPtr = (int32 *)edi; // keyframe
 
@@ -270,7 +238,7 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	keyFramePtr += 8;
 
 	processRotationByAnim = READ_LE_INT16(keyFramePtr);
-	processLastRotationAngle = ToAngle((READ_LE_INT16(keyFramePtr + 4) * eax) / keyFrameLength);
+	processLastRotationAngle = ToAngle((READ_LE_INT16(keyFramePtr + 4) * deltaTime) / keyFrameLength);
 
 	lastKeyFramePtr += 8;
 	keyFramePtr += 8;
@@ -281,19 +249,19 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 		int16 tmpNumOfPoints = numOfPointInAnim;
 
 		do {
-			int16 animOpcode = getAnimMode(&edi, &keyFramePtr, &lastKeyFramePtr);
+			const int16 animOpcode = getAnimMode(&edi, &keyFramePtr, &lastKeyFramePtr);
 
 			switch (animOpcode) {
 			case 0:  // allow global rotate
-				applyAnimStepRotation(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStepRotation(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStepRotation(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStepRotation(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStepRotation(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStepRotation(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				break;
 			case 1:  // dissallow global rotate
 			case 2:  // dissallow global rotate + hide
-				applyAnimStep(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStep(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStep(&edi, eax, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStep(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStep(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStep(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				break;
 			default:
 				error("Unsupported animation rotation mode %d", animOpcode);
@@ -303,36 +271,35 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 		} while (--tmpNumOfPoints);
 	}
 
-	currentStepX = (READ_LE_INT16(keyFramePtrOld + 2) * eax) / keyFrameLength;
-	currentStepY = (READ_LE_INT16(keyFramePtrOld + 4) * eax) / keyFrameLength;
-	currentStepZ = (READ_LE_INT16(keyFramePtrOld + 6) * eax) / keyFrameLength;
+	currentStepX = (READ_LE_INT16(keyFramePtrOld + 2) * deltaTime) / keyFrameLength;
+	currentStepY = (READ_LE_INT16(keyFramePtrOld + 4) * deltaTime) / keyFrameLength;
+	currentStepZ = (READ_LE_INT16(keyFramePtrOld + 6) * deltaTime) / keyFrameLength;
 
 	return false;
 }
 
+// see Actor::initBody
 int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
-	uint8 *costumePtr = nullptr;
-
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	uint8 *bodyPtr = actor->entityDataPtr;
+	const uint8 *entityDataPtr = actor->entityDataPtr;
 
 	do {
-		int8 type = *(bodyPtr++);
-
-		if (type == -1) {
+		const uint8 type = *entityDataPtr++;
+		if (type == 0xFF) {
 			currentActorAnimExtraPtr = nullptr;
 			return -1;
 		}
 
-		uint8 *ptr = (bodyPtr + 1);
+		const uint8 *ptr = (entityDataPtr + 1);
 
 		if (type == 3) {
-			if (animIdx == (AnimationTypes)*bodyPtr) {
+			if (animIdx == (AnimationTypes)*entityDataPtr) {
 				ptr++;
 				uint16 realAnimIdx = READ_LE_INT16(ptr);
 				ptr += 2;
-				uint8 *ptr2 = ptr;
+				const uint8 *ptr2 = ptr;
 				ptr++;
+				const uint8 *costumePtr = nullptr;
 				if (*ptr2 != 0) {
 					costumePtr = ptr - 1;
 				}
@@ -341,39 +308,35 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 			}
 		}
 
-		bodyPtr = *ptr + ptr;
-
+		entityDataPtr = *ptr + ptr;
 	} while (1);
 
 	return 0;
 }
 
-int32 Animations::stockAnimation(uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	uint8 *animPtr = animBuffer2;
-	int32 playAnim = READ_LE_INT16(bodyPtr);
-
-	if (!(playAnim & 2)) {
+int32 Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+	if (!Model::isAnimated(bodyPtr)) {
 		return 0;
 	}
-	const uint8 *ptr = (bodyPtr + 0x10);
+	uint8 *animPtr = animBufferPos;
+
+	const uint8 *verticesBase = bodyPtr + 0x1A;
 
 	animTimerDataPtr->time = _engine->lbaTime;
 	animTimerDataPtr->ptr = animPtr;
 
-	int32 var0 = READ_LE_INT16(ptr - 2);
-	ptr = ptr + var0;
+	int32 numVertices = READ_LE_INT16(verticesBase);
+	const uint8 *ptr = verticesBase + numVertices * 6 + 2;
 
-	int32 var1 = READ_LE_INT16(ptr);
-	var1 = var1 + var1 * 2;
+	int32 numBones = READ_LE_INT16(ptr);
+	ptr += 2;
 
-	ptr = ptr + var1 * 2 + 2;
-
-	int32 var2 = READ_LE_INT16(ptr);
-	int32 counter = var2;
-	var2 = (var2 * 8) + 8;
+	int32 counter = numBones;
+	// 8 = 4xint16 - firstpoint, numpoints, basepoint, baseelement - see elementEntry
+	int32 var2 = (numBones * 8) + 8;
 
 	int32 *edi = (int32 *)(animPtr + 8);
-	const int32 *esi = (const int32 *)(ptr + 10);
+	const int32 *esi = (const int32 *)(ptr + 8);
 
 	do {
 		*(edi++) = *(esi++);
@@ -382,37 +345,31 @@ int32 Animations::stockAnimation(uint8 *bodyPtr, AnimTimerDataStruct *animTimerD
 		esi = (const int32 *)(((const int8 *)esi) + 30);
 	} while (counter--);
 
-	animBuffer2 += var2;
+	animBufferPos += var2;
 
-	if (animBuffer1 + 4488 < animBuffer2) {
-		animBuffer2 = animBuffer1;
+	if (animBuffer + 4488 < animBufferPos) {
+		animBufferPos = animBuffer;
 	}
 
 	return var2;
 }
 
-int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+bool Animations::verifyAnimAtKeyframe(int32 animIdx, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	const int32 numOfPointInAnim = READ_LE_INT16(animPtr + 2);
 	const uint8 *keyFramePtr = ((numOfPointInAnim * 8 + 8) * animIdx) + animPtr + 8;
 	const int32 keyFrameLength = READ_LE_INT16(keyFramePtr);
-	const int16 bodyHeader = READ_LE_INT16(bodyPtr);
-	if (!(bodyHeader & 2)) {
-		return 0;
+
+	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
+	int32 remainingFrameTime = animTimerDataPtr->time;
+
+	if (!lastKeyFramePtr) {
+		lastKeyFramePtr = keyFramePtr;
+		remainingFrameTime = keyFrameLength;
 	}
 
-	const uint8 *ebx = animTimerDataPtr->ptr;
-	int32 ebp = animTimerDataPtr->time;
+	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
 
-	if (!ebx) {
-		ebx = keyFramePtr;
-		ebp = keyFrameLength;
-	}
-
-	const uint8* lastKeyFramePtr = ebx;
-
-	const int32 eax = _engine->lbaTime - ebp;
-
-	if (eax >= keyFrameLength) {
+	if (deltaTime >= keyFrameLength) {
 		animTimerDataPtr->ptr = keyFramePtr;
 		animTimerDataPtr->time = _engine->lbaTime;
 
@@ -423,7 +380,7 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 		processRotationByAnim = READ_LE_INT16(keyFramePtr + 8);
 		processLastRotationAngle = ToAngle(READ_LE_INT16(keyFramePtr + 12));
 
-		return 1;
+		return true;
 	}
 	const uint8 *keyFramePtrOld = keyFramePtr;
 
@@ -431,66 +388,67 @@ int32 Animations::verifyAnimAtKeyframe(int32 animIdx, uint8 *animPtr, uint8 *bod
 	keyFramePtr += 8;
 
 	processRotationByAnim = READ_LE_INT16(keyFramePtr);
-	processLastRotationAngle = ToAngle((READ_LE_INT16(keyFramePtr + 4) * eax) / keyFrameLength);
+	processLastRotationAngle = ToAngle((READ_LE_INT16(keyFramePtr + 4) * deltaTime) / keyFrameLength);
 
 	lastKeyFramePtr += 8;
 	keyFramePtr += 8;
 
-	currentStepX = (READ_LE_INT16(keyFramePtrOld + 2) * eax) / keyFrameLength;
-	currentStepY = (READ_LE_INT16(keyFramePtrOld + 4) * eax) / keyFrameLength;
-	currentStepZ = (READ_LE_INT16(keyFramePtrOld + 6) * eax) / keyFrameLength;
+	currentStepX = (READ_LE_INT16(keyFramePtrOld + 2) * deltaTime) / keyFrameLength;
+	currentStepY = (READ_LE_INT16(keyFramePtrOld + 4) * deltaTime) / keyFrameLength;
+	currentStepZ = (READ_LE_INT16(keyFramePtrOld + 6) * deltaTime) / keyFrameLength;
 
-	return 0;
+	return false;
 }
 
 void Animations::processAnimActions(int32 actorIdx) {
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
 	if (actor->animExtraPtr == nullptr) {
-		return; // avoid null pointers
+		return;
 	}
 
+	// TODO: fix size
 	Common::MemoryReadStream stream(actor->animExtraPtr, 1000000);
 
 	int32 index = 0;
 	const int32 endAnimEntityIdx = stream.readByte();
 	while (index++ < endAnimEntityIdx) {
-		const int32 actionType = stream.readByte() - 5;
-		if (actionType >= ACTION_LAST) {
+		const int32 actionType = stream.readByte();
+		if (actionType >= ActionType::ACTION_LAST) {
 			return;
 		}
 
 		switch (actionType) {
-		case ACTION_HITTING: {
-			const int32 animPos = stream.readByte() - 1;
+		case ActionType::ACTION_HITTING: {
+			const int32 animFrame = stream.readByte() - 1;
 			const int32 strength = stream.readByte();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				actor->strengthOfHit = strength;
 				actor->dynamicFlags.bIsHitting = 1;
 			}
 			break;
 		}
-		case ACTION_SAMPLE: {
-			const int32 animPos = stream.readByte();
+		case ActionType::ACTION_SAMPLE: {
+			const int32 animFrame = stream.readByte();
 			const int16 sampleIdx = stream.readSint16LE();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_sound->playSample(sampleIdx, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
 		}
-		case ACTION_SAMPLE_FREQ: {
-			const int32 animPos = stream.readByte();
+		case ActionType::ACTION_SAMPLE_FREQ: {
+			const int32 animFrame = stream.readByte();
 			const int16 sampleIdx = stream.readSint16LE();
 			/*int16 frequency = */stream.readSint16LE();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_sound->playSample(sampleIdx, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
 		}
-		case ACTION_THROW_EXTRA_BONUS: {
-			const int32 animPos = stream.readByte();
+		case ActionType::ACTION_THROW_EXTRA_BONUS: {
+			const int32 animFrame = stream.readByte();
 			const int32 yHeight = stream.readSint16LE();
 			const int32 sprite = stream.readByte();
 			const int32 xAngle = ToAngle(stream.readSint16LE());
@@ -499,52 +457,47 @@ void Animations::processAnimActions(int32 actorIdx) {
 			const int32 extraAngle = ToAngle(stream.readByte());
 			const int32 strengthOfHit = stream.readByte();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + yHeight, actor->z, sprite, xAngle, yAngle, xRotPoint, extraAngle, strengthOfHit);
 			}
 			break;
 		}
-		case ACTION_THROW_MAGIC_BALL: {
-			const int32 animPos = stream.readByte();
+		case ActionType::ACTION_THROW_MAGIC_BALL: {
+			const int32 animFrame = stream.readByte();
 			const int32 yOffset = stream.readSint16LE();
 			const int32 xAngle = ToAngle(stream.readSint16LE());
 			const int32 xRotPoint = stream.readSint16LE();
 			const int32 extraAngle = stream.readByte();
 
-			if (_engine->_gameState->magicBallIdx == -1 && animPos == actor->animPosition) {
+			if (_engine->_gameState->magicBallIdx == -1 && animFrame == actor->animPosition) {
 				_engine->_extra->addExtraThrowMagicball(actor->x, actor->y + yOffset, actor->z, xAngle, actor->angle, xRotPoint, extraAngle);
 			}
 			break;
 		}
-		case ACTION_SAMPLE_REPEAT: {
-			const int32 animPos = stream.readByte();
+		case ActionType::ACTION_SAMPLE_REPEAT: {
+			const int32 animFrame = stream.readByte();
 			const int16 sampleIdx = stream.readSint16LE();
 			const int16 repeat = stream.readSint16LE();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_sound->playSample(sampleIdx, repeat, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
 		}
-		case ACTION_UNKNOWN_6: {
-			const int32 animPos = stream.readByte();
-			if (animPos == actor->animPosition) {
-				// TODO: The folowing fetches 7 bytes, but the else block skips only 6 bytes.
-				// Please check if that's correct.
-				const int32 yOffset = stream.readSint16LE();
-				const int32 spriteIdx = stream.readByte();
-				const int32 targetActorIdx = stream.readByte();
-				const int32 maxSpeed = stream.readSint16LE();
-				const int32 strengthOfHit = stream.readByte();
-
-				_engine->_extra->addExtraAiming(actorIdx, actor->x, actor->y + yOffset, actor->z, spriteIdx, targetActorIdx, maxSpeed, strengthOfHit);
-			} else {
-				stream.skip(6);
+		case ActionType::ACTION_THROW_SEARCH: {
+			const int32 animFrame = stream.readByte();
+			const int32 yOffset = stream.readSint16LE();
+			const int32 spriteIdx = stream.readByte();
+			const int32 targetActorIdx = stream.readByte();
+			const int32 finalAngle = stream.readSint16LE();
+			const int32 strengthOfHit = stream.readByte();
+			if (animFrame == actor->animPosition) {
+				_engine->_extra->addExtraAiming(actorIdx, actor->x, actor->y + yOffset, actor->z, spriteIdx, targetActorIdx, finalAngle, strengthOfHit);
 			}
 			break;
 		}
-		case ACTION_UNKNOWN_7: {
-			const int32 animPos = stream.readByte();
+		case ActionType::ACTION_THROW_ALPHA: {
+			const int32 animFrame = stream.readByte();
 			const int32 yHeight = stream.readSint16LE();
 			const int32 spriteIdx = stream.readByte();
 			const int32 xAngle = ToAngle(stream.readSint16LE());
@@ -553,47 +506,40 @@ void Animations::processAnimActions(int32 actorIdx) {
 			const int32 extraAngle = ToAngle(stream.readByte());
 			const int32 strengthOfHit = stream.readByte();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_extra->addExtraThrow(actorIdx, actor->x, actor->y + yHeight, actor->z, spriteIdx, xAngle, yAngle, xRotPoint, extraAngle, strengthOfHit);
 			}
 			break;
 		}
-		case ACTION_SAMPLE_STOP: {
-			const int32 animPos = stream.readByte();
+		case ActionType::ACTION_SAMPLE_STOP: {
+			const int32 animFrame = stream.readByte();
 			const int32 sampleIdx = stream.readByte(); //why is it reading a byte but saving it in a 32bit variable?
 			stream.skip(1);               // TODO what is the meaning of this extra byte?
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_sound->stopSample(sampleIdx);
 			}
 			break;
 		}
-		case ACTION_SAMPLE_BRICK_1: {
-			const int32 animPos = stream.readByte();
-			if (animPos == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
+		case ActionType::ACTION_LEFT_STEP:
+		case ActionType::ACTION_RIGHT_STEP: {
+			const int32 animFrame = stream.readByte();
+			if (animFrame == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
 				const int16 sampleIdx = (actor->brickSound & 0x0F) + Samples::WalkFloorBegin;
 				_engine->_sound->playSample(sampleIdx, 1, actor->x, actor->y, actor->z, actorIdx);
 			}
 			break;
 		}
-		case ACTION_SAMPLE_BRICK_2: {
-			const int32 animPos = stream.readByte();
-			if (animPos == actor->animPosition && (actor->brickSound & 0x0F0) != 0x0F0) {
-				const int16 sampleIdx = (actor->brickSound & 0x0F) + Samples::WalkFloorBegin;
-				_engine->_sound->playSample(sampleIdx, 1, actor->x, actor->y, actor->z, actorIdx);
-			}
-			break;
-		}
-		case ACTION_HERO_HITTING: {
-			const int32 animPos = stream.readByte() - 1;
-			if (animPos == actor->animPosition) {
+		case ActionType::ACTION_HERO_HITTING: {
+			const int32 animFrame = stream.readByte() - 1;
+			if (animFrame == actor->animPosition) {
 				actor->strengthOfHit = magicLevelStrengthOfHit[_engine->_gameState->magicLevelIdx];
 				actor->dynamicFlags.bIsHitting = 1;
 			}
 			break;
 		}
-		case ACTION_UNKNOWN_13: {
-			const int32 animPos = stream.readByte();
+		case ActionType::ACTION_THROW_3D: {
+			const int32 animFrame = stream.readByte();
 			const int32 distanceX = stream.readSint16LE();
 			const int32 distanceY = stream.readSint16LE();
 			const int32 distanceZ = stream.readSint16LE();
@@ -604,7 +550,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			const int32 extraAngle = ToAngle(stream.readByte());
 			const int32 strength = stream.readByte();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_movements->rotateActor(distanceX, distanceZ, actor->angle);
 
 				const int32 throwX = _engine->_renderer->destX + actor->x;
@@ -616,8 +562,8 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_UNKNOWN_14: {
-			const int32 animPos = stream.readByte();
+		case ActionType::ACTION_THROW_3D_ALPHA: {
+			const int32 animFrame = stream.readByte();
 			const int32 distanceX = stream.readSint16LE();
 			const int32 distanceY = stream.readSint16LE();
 			const int32 distanceZ = stream.readSint16LE();
@@ -628,7 +574,7 @@ void Animations::processAnimActions(int32 actorIdx) {
 			const int32 extraAngle = ToAngle(stream.readByte());
 			const int32 strength = stream.readByte();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				const int32 newAngle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->y, 0, _engine->_scene->sceneHero->y, _engine->_movements->getDistance2D(actor->x, actor->z, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->z));
 
 				_engine->_movements->rotateActor(distanceX, distanceZ, actor->angle);
@@ -642,8 +588,8 @@ void Animations::processAnimActions(int32 actorIdx) {
 			}
 			break;
 		}
-		case ACTION_UNKNOWN_15: {
-			const int32 animPos = stream.readByte();
+		case ActionType::ACTION_THROW_3D_SEARCH: {
+			const int32 animFrame = stream.readByte();
 			const int32 distanceX = stream.readSint16LE();
 			const int32 distanceY = stream.readSint16LE();
 			const int32 distanceZ = stream.readSint16LE();
@@ -652,15 +598,14 @@ void Animations::processAnimActions(int32 actorIdx) {
 			const int32 finalAngle = ToAngle(stream.readSint16LE());
 			const int32 strengthOfHit = stream.readByte();
 
-			if (animPos == actor->animPosition) {
+			if (animFrame == actor->animPosition) {
 				_engine->_movements->rotateActor(distanceX, distanceZ, actor->angle);
 				_engine->_extra->addExtraAiming(actorIdx, actor->x + _engine->_renderer->destX, actor->y + distanceY, actor->z + distanceZ, spriteIdx,
 				                                targetActor, finalAngle, strengthOfHit);
 			}
 			break;
 		}
-		case ACTION_UNKNOWN_9:
-			break;
+		case ActionType::ACTION_ZV:
 		default:
 			break;
 		}
@@ -710,12 +655,14 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 		animType = 2;
 	}
 
-	if (actor->previousAnimIdx == -1) { // if no previous animation
+	if (actor->previousAnimIdx == -1) {
+		// if no previous animation
 		setAnimAtKeyframe(0, _engine->_resources->animTable[animIndex], _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
-	} else { // interpolation between animations
-		animBuffer2 += stockAnimation(_engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
-		if (animBuffer1 + 4488 < animBuffer2) {
-			animBuffer2 = animBuffer1;
+	} else {
+		// interpolation between animations
+		animBufferPos += stockAnimation(_engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+		if (animBuffer + 4488 < animBufferPos) {
+			animBufferPos = animBuffer;
 		}
 	}
 
@@ -852,9 +799,12 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 		}
 	} else { // 3D actor
 		if (actor->previousAnimIdx != -1) {
-			uint8 *animPtr = _engine->_resources->animTable[actor->previousAnimIdx];
+			const uint8 *animPtr = _engine->_resources->animTable[actor->previousAnimIdx];
 
-			int32 keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animPtr, _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
+			bool keyFramePassed = false;
+			if (Model::isAnimated(_engine->_actor->bodyTable[actor->entity])) {
+				keyFramePassed = verifyAnimAtKeyframe(actor->animPosition, animPtr, &actor->animTimerData);;
+			}
 
 			if (processRotationByAnim) {
 				actor->dynamicFlags.bIsRotationByAnim = 1;

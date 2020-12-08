@@ -27,6 +27,47 @@
 
 namespace TwinE {
 
+struct ActorBoundingBox {
+	/** Bottom left X coordinate */
+	int16 bottomLeftX = 0;
+	/** Bottom left Y coordinate */
+	int16 bottomLeftY = 0;
+	/** Bottom left Z coordinate */
+	int16 bottomLeftZ = 0;
+	/** Top left X coordinate */
+	int16 topRightX = 0;
+	/** Top left Y coordinate */
+	int16 topRightY = 0;
+	/** Top left Z coordinate */
+	int16 topRightZ = 0;
+	bool hasBoundingBox = false;
+};
+
+enum ActionType {
+	ACTION_NOP = 0,
+	ACTION_BODY = 1,
+	ACTION_BODP = 2,
+	ACTION_ANIM = 3,
+	ACTION_ANIP = 4,
+	ACTION_HITTING = 5,
+	ACTION_SAMPLE = 6,
+	ACTION_SAMPLE_FREQ = 7,
+	ACTION_THROW_EXTRA_BONUS = 8,
+	ACTION_THROW_MAGIC_BALL = 9,
+	ACTION_SAMPLE_REPEAT = 10,
+	ACTION_THROW_SEARCH = 11,
+	ACTION_THROW_ALPHA = 12,
+	ACTION_SAMPLE_STOP = 13,
+	ACTION_ZV = 14,
+	ACTION_LEFT_STEP = 15,
+	ACTION_RIGHT_STEP = 16,
+	ACTION_HERO_HITTING = 17,
+	ACTION_THROW_3D = 18,
+	ACTION_THROW_3D_ALPHA = 19,
+	ACTION_THROW_3D_SEARCH = 20,
+	ACTION_LAST
+};
+
 enum class ShapeType {
 	kNone = 0,
 	kSolid = 1,
@@ -123,6 +164,8 @@ enum class ExtraSpecialType {
 #define ANGLE_180 512
 #define ANGLE_135 384
 #define ANGLE_90 256
+#define ANGLE_70 200
+#define ANGLE_63 180
 #define ANGLE_45 128
 #define ANGLE_0 0
 

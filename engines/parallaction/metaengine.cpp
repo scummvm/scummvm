@@ -46,7 +46,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -64,9 +64,8 @@ bool Parallaction::Parallaction::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher);
 }
 
-bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Parallaction::PARALLACTIONGameDescription *gd = (const Parallaction::PARALLACTIONGameDescription *)desc;
-	bool res = true;
 
 	switch (gd->gameType) {
 	case Parallaction::GType_Nippon:
@@ -76,11 +75,10 @@ bool ParallactionMetaEngine::createInstance(OSystem *syst, Engine **engine, cons
 		*engine = new Parallaction::Parallaction_br(syst, gd);
 		break;
 	default:
-		res = false;
-		error("Parallaction engine: unknown gameType");
+		return Common::kUnsupportedGameidError;
 	}
 
-	return res;
+	return Common::kNoError;
 }
 
 SaveStateList ParallactionMetaEngine::listSaves(const char *target) const {

@@ -28,6 +28,16 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 
+// The initialization of the static const integral data members is done in the class definition,
+// but we still need to provide a definition if they are odr-used.
+const uint8 MidiDriver_MT32GM::MAXIMUM_SOURCES;
+const uint16 MidiDriver_MT32GM::DEFAULT_SOURCE_NEUTRAL_VOLUME;
+const uint8 MidiDriver_MT32GM::MT32_DEFAULT_CHANNEL_VOLUME;
+const uint8 MidiDriver_MT32GM::GM_DEFAULT_CHANNEL_VOLUME;
+const uint8 MidiDriver_MT32GM::MAXIMUM_MT32_ACTIVE_NOTES;
+const uint8 MidiDriver_MT32GM::MAXIMUM_GM_ACTIVE_NOTES;
+const uint16 MidiDriver_MT32GM::FADING_DELAY;
+
 // These are the power-on default instruments of the Roland MT-32 family.
 const byte MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS[8] = {
 	0x44, 0x30, 0x5F, 0x4E, 0x29, 0x03, 0x6E, 0x7A

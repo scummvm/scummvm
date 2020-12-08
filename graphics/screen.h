@@ -30,6 +30,15 @@
 
 namespace Graphics {
 
+/**
+ * @defgroup graphics_screen Screen
+ * @ingroup graphics
+ *
+ * @brief Screen class for managing the screen.
+ *
+ * @{
+ */
+
 #define PALETTE_COUNT 256
 #define PALETTE_SIZE (256 * 3)
 
@@ -117,7 +126,7 @@ public:
 	 */
 	void clearPalette();
 };
-
+ /** @} */
 } // End of namespace Graphics
 
 #endif

@@ -32,14 +32,12 @@ public:
 	}
 
 protected:
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 };
 
-bool LastExpressMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	if (gd) {
-		*engine = new LastExpressEngine(syst, (const ADGameDescription *)gd);
-	}
-	return gd != 0;
+Common::Error LastExpressMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+	*engine = new LastExpressEngine(syst, (const ADGameDescription *)gd);
+	return Common::kNoError;
 }
 
 bool LastExpressEngine::isDemo() const {

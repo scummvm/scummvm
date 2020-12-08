@@ -39,7 +39,7 @@ public:
 		return "cge2";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
@@ -47,11 +47,9 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 };
 
-bool CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc)
-		*engine = new CGE2::CGE2Engine(syst, desc);
-
-	return desc != 0;
+Common::Error CGE2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new CGE2::CGE2Engine(syst, desc);
+	return Common::kNoError;
 }
 
 bool CGE2MetaEngine::hasFeature(MetaEngineFeature f) const {

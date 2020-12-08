@@ -151,7 +151,7 @@ void ImuseDigiSndMgr::prepareSoundFromRMAP(Common::SeekableReadStream *file, Sou
 	}
 }
 
-void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
+void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound, bool rawBundle) {
 	if (READ_BE_UINT32(ptr) == MKTAG('C','r','e','a')) {
 		bool quit = false;
 		int len;
@@ -251,6 +251,8 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 			switch (tag) {
 			case MKTAG('F','R','M','T'):
 				ptr += 12;
+				sound->littleEndian = READ_BE_UINT32(ptr) == 16 && rawBundle;
+
 				sound->bits = READ_BE_UINT32(ptr); ptr += 4;
 				sound->freq = READ_BE_UINT32(ptr); ptr += 4;
 				sound->channels = READ_BE_UINT32(ptr); ptr += 4;
@@ -389,6 +391,7 @@ bool ImuseDigiSndMgr::openVoiceBundle(SoundDesc *sound, int &disk) {
 ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char *soundName, int soundType, int volGroupId, int disk) {
 	assert(soundId >= 0);
 	assert(soundType);
+	bool rawBundle = false;
 
 	SoundDesc *sound = allocSlot();
 	if (!sound) {
@@ -440,13 +443,13 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 			sound->disk = disk;
 			return sound;
 		} else if (soundName[0] == 0) {
-			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside) == 0 || ptr == NULL) {
+			if (sound->bundle->decompressSampleByIndex(soundId, 0, 0x2000, &ptr, 0, header_outside, rawBundle) == 0 || ptr == NULL) {
 				closeSound(sound);
 				free(ptr);
 				return NULL;
 			}
 		} else {
-			if (sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside) == 0 || ptr == NULL) {
+			if (sound->bundle->decompressSampleByName(soundName, 0, 0x2000, &ptr, header_outside, rawBundle) == 0 || ptr == NULL) {
 				closeSound(sound);
 				free(ptr);
 				return NULL;
@@ -463,7 +466,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 	sound->type = soundType;
 	sound->volGroupId = volGroupId;
 	sound->disk = _disk;
-	prepareSound(ptr, sound);
+	prepareSound(ptr, sound, rawBundle);
 	if ((soundType == IMUSE_BUNDLE) && !sound->compressed) {
 		free(ptr);
 	}

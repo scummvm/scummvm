@@ -118,10 +118,12 @@ public:
 		AAF_LOOPING      = 0x0004,
 		AAF_UNSTOPPABLE  = 0x0008,
 		AAF_LOOPING2     = 0x0010, // CHECKME: guessing at this flag
+		AAF_LOOPING3     = 0x0040, // CHECKME: Crusader triggers a new anim in the terminate if this flag is set and the start point was null
 		AAF_HANGING      = 0x0080,
+		AAF_CRUS_ROTATED = 0x1000,
 		AAF_CRUS_16DIRS  = 0x4000, // Crusader
 		AAF_DESTROYACTOR = 0x8000, // destroy actor after animation finishes
-		AAF_UNKFLAGS     = 0x3F60
+		AAF_UNKFLAGS     = 0x3F20
 	};
 
 private:

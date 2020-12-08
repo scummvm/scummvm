@@ -32,6 +32,7 @@
 #include "scumm/imuse_digi/dimuse.h"
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
+#include "scumm/he/localizer.h"
 #endif
 #include "scumm/resource.h"
 #include "scumm/scumm.h"
@@ -336,7 +337,11 @@ bool ScummEngine::handleNextCharsetCode(Actor *a, int *code) {
 			talk_sound_b = buffer[8] | (buffer[9] << 8) | (buffer[12] << 16) | (buffer[13] << 24);
 			buffer += 14;
 			if (_game.heversion >= 60) {
+#ifdef ENABLE_HE
+				((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
+#else
 				((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
+#endif
 			} else {
 				_sound->talkSound(talk_sound_a, talk_sound_b, 2);
 			}
@@ -406,7 +411,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			}
 			value[i] = 0;
 			//talk_sound_b = atoi(value);
-			((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
+			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
 			break;
 		case 104:
 			_haveMsg = 0;
@@ -429,7 +434,7 @@ bool ScummEngine_v72he::handleNextCharsetCode(Actor *a, int *code) {
 			value[i] = 0;
 			talk_sound_a = atoi(value);
 			//talk_sound_b = 0;
-			((SoundHE *)_sound)->startHETalkSound(talk_sound_a);
+			((SoundHE *)_sound)->startHETalkSound(_localizer ? _localizer->mapTalk(talk_sound_a) : talk_sound_a);
 			break;
 		case 119:
 			_haveMsg = 0xFF;
@@ -451,7 +456,12 @@ bool ScummEngine::newLine() {
 	if (_charset->_center) {
 		_nextLeft -= _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) / 2;
 		if (_nextLeft < 0)
-			_nextLeft = _game.version >= 6 ? _string[0].xpos : 0;
+			// The commented out part of the next line was meant as a fix for Kanji text glitches in DIG.
+			// But these glitches couldn't be reproduced in recent tests. So the underlying issue might
+			// have been taken care of in a different manner. And the fix actually caused other text glitches
+			// (FT/German, if you look at the sign on the container at game start). After counterchecking
+			// the original code it seems that setting _nextLeft to 0 is the right thing to do here.
+			_nextLeft = /*_game.version >= 6 ? _string[0].xpos :*/ 0;
 	} else if (_game.version >= 4 && _game.version < 7 && _game.heversion == 0 && _language == Common::HE_ISR) {
 		if (_game.id == GID_MONKEY && _charset->getCurID() == 4) {
 			_nextLeft = _screenWidth - _charset->getStringWidth(0, _charsetBuffer + _charsetBufPos) - _nextLeft;
@@ -1627,14 +1637,6 @@ void ScummEngine_v7::loadLanguageBundle() {
 	}
 	ScummFile file;
 	int32 size;
-
-	// if game is manually set to English, don't try to load localized text
-	if ((_language == Common::EN_ANY) || (_language == Common::EN_USA) || (_language == Common::EN_GRB)) {
-		warning("Language file is forced to be ignored");
-
-		_existLanguageFile = false;
-		return;
-	}
 
 	if (_game.id == GID_DIG) {
 		openFile(file, "language.bnd");

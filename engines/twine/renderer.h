@@ -23,6 +23,7 @@
 #ifndef TWINE_RENDERER_H
 #define TWINE_RENDERER_H
 
+#include "common/endian.h"
 #include "common/scummsys.h"
 #include "common/rect.h"
 
@@ -36,24 +37,92 @@
 #define POLYGONTYPE_GOURAUD 7
 #define POLYGONTYPE_DITHER 8
 
+namespace Common {
+class MemoryReadStream;
+}
+
 namespace TwinE {
 
 class TwinEEngine;
 
-struct polyHeader {
-	uint8 renderType = 0; //FillVertic_AType
-	uint8 numOfVertex = 0;
+struct Vertex {
 	int16 colorIndex = 0;
+	int16 x = 0;
+	int16 y = 0;
+};
+
+struct CmdRenderPolygon {
+	uint8 renderType = 0;
+	uint8 numVertices = 0;
+	int16 colorIndex = 0;
+	// followed by Vertex array
+};
+
+struct Matrix {
+	int32 row1[3] {0, 0, 0};
+	int32 row2[3] {0, 0, 0};
+	int32 row3[3] {0, 0, 0};
+};
+
+struct Model {
+	struct BodyFlags {
+		uint16 unk1 : 1;            // 1 << 0
+		uint16 animated : 1;        // 1 << 1
+		uint16 unk3 : 1;            // 1 << 2
+		uint16 unk4 : 1;            // 1 << 3
+		uint16 unk5 : 1;            // 1 << 4
+		uint16 unk6 : 1;            // 1 << 5
+		uint16 unk7 : 1;            // 1 << 6
+		uint16 alreadyPrepared : 1; // 1 << 7
+		uint16 unk9 : 1;            // 1 << 8
+		uint16 unk10 : 1;           // 1 << 9
+		uint16 unk11 : 1;           // 1 << 10
+		uint16 unk12 : 1;           // 1 << 11
+		uint16 unk13 : 1;           // 1 << 12
+		uint16 unk14 : 1;           // 1 << 13
+		uint16 unk15 : 1;           // 1 << 14
+		uint16 unk16 : 1;           // 1 << 15
+	} bodyFlag;
+	int16 minsx = 0;
+	int16 maxsx = 0;
+	int16 minsy = 0;
+	int16 maxsy = 0;
+	int16 minsz = 0;
+	int16 maxsz = 0;
+	int16 offsetToData = 0;
+
+	static inline bool isAnimated(const uint8* bodyPtr) {
+		const int16 bodyHeader = READ_LE_INT16(bodyPtr);
+		return (bodyHeader & 2) != 0;
+	}
 };
 
 class Renderer {
 private:
 	TwinEEngine *_engine;
 
-	struct renderTabEntry {
+	struct RenderCommand {
 		int16 depth = 0;
 		int16 renderType = 0;
 		uint8 *dataPtr = nullptr;
+	};
+
+	struct CmdRenderLine {
+		uint8 colorIndex = 0;
+		uint8 unk1 = 0;
+		uint8 unk2 = 0;
+		uint8 unk3 = 0;
+		int16 x1 = 0;
+		int16 y1 = 0;
+		int16 x2 = 0;
+		int16 y2 = 0;
+	};
+
+	struct CmdRenderSphere {
+		int8 colorIndex = 0;
+		int16 x = 0;
+		int16 y = 0;
+		int16 radius = 0;
 	};
 
 	#include "common/pack-start.h"
@@ -85,24 +154,13 @@ private:
 	#include "common/pack-end.h"
 	static_assert(sizeof(elementEntry) == 38, "Unexpected elementEntry size");
 
-	struct lineCoordinates {
-		uint8 colorIndex = 0;
-		uint8 unk1 = 0;
-		uint8 unk2 = 0;
-		uint8 unk3 = 0;
-		int16 x1 = 0;
-		int16 y1 = 0;
-		int16 x2 = 0;
-		int16 y2 = 0;
-	};
-
 	struct lineData {
 		uint8 colorIndex = 0;
 		uint8 unk1 = 0;
 		uint8 unk2 = 0;
 		uint8 unk3 = 0;
-		int16 p1 = 0;
-		int16 p2 = 0;
+		int16 firstPointOffset = 0;  /**< byte offsets */
+		int16 secondPointOffset = 0; /**< byte offsets */
 	};
 
 	struct polyVertexHeader {
@@ -110,49 +168,24 @@ private:
 		int16 dataOffset = 0;
 	};
 
-	struct computedVertex {
-		int16 shadeValue = 0;
-		int16 x = 0;
-		int16 y = 0;
+	struct ModelData {
+		pointTab computedPoints[800];
+		pointTab flattenPoints[800];
+		int16 shadeTable[500] {0};
 	};
 
-	struct bodyHeaderStruct {
-		int16 bodyFlag = 0;
-		int16 minsx = 0;
-		int16 maxsx = 0;
-		int16 minsy = 0;
-		int16 maxsy = 0;
-		int16 minsz = 0;
-		int16 maxsz = 0;
-		int16 offsetToData = 0;
-		int8 *ptrToKeyFrame = nullptr;
-		int32 keyFrameTime = 0;
-	};
+	ModelData _modelData;
 
-	struct vertexData {
-		uint8 param = 0;
-		int16 x = 0;
-		int16 y = 0;
-	};
-
-	union packed16 {
-		struct {
-			uint8 al = 0;
-			uint8 ah = 0;
-		} bit;
-		uint16 temp = 0;
-	};
-
-	int32 renderAnimatedModel(uint8 *bodyPtr, renderTabEntry *renderTabEntryPtr);
+	int32 renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, RenderCommand *renderCmds);
 	void circleFill(int32 x, int32 y, int32 radius, uint8 color);
-	int32 renderModelElements(int32 numOfPrimitives, uint8 *pointer, renderTabEntry** renderTabEntryPtr);
+	int32 renderModelElements(int32 numOfPrimitives, uint8 *pointer, RenderCommand** renderCmds, ModelData *modelData);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
-	void applyRotation(int32 *targetMatrix, const int32 *currentMatrix);
-	void applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const int32 *rotationMatrix);
-	void processRotatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr);
-	void applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const int32 *translationMatrix);
-	void processTranslatedElement(int32 *targetMatrix, const uint8 *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr);
+	void applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix);
+	void applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const Matrix *rotationMatrix);
+	void processRotatedElement(Matrix *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData);
+	void applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const Matrix *translationMatrix);
+	void processTranslatedElement(Matrix *targetMatrix, const pointTab *pointsPtr, int32 rotX, int32 rotY, int32 rotZ, const elementEntry *elemPtr, ModelData *modelData);
 	void translateGroup(int16 ax, int16 bx, int16 cx);
 
 	// ---- variables ----
@@ -181,22 +214,16 @@ private:
 
 	// ---
 
-	int32 baseMatrix[3 * 3] {0};
-
-	int32 matricesTable[30 * 3 * 3 + 1] {0};
-
-	int32 shadeMatrix[3 * 3] {0};
+	Matrix baseMatrix;
+	Matrix matricesTable[30 + 1];
+	Matrix shadeMatrix;
 	int32 lightX = 0;
 	int32 lightY = 0;
 	int32 lightZ = 0;
 
-	pointTab computedPoints[800]; // _projectedPointTable
-	pointTab flattenPoints[800];  // _flattenPointTable
-	int16 shadeTable[500] {0};
-
-	renderTabEntry renderTab[1000];
-	renderTabEntry renderTabSorted[1000];
-	uint8 renderTab7[10000] {0};
+	RenderCommand _renderCmds[1000];
+	RenderCommand _renderCmdsSortedByDepth[1000];
+	uint8 renderCoordinatesBuffer[10000] {0};
 
 	int16 polyTab[960] {0};
 	int16 polyTab2[960] {0};
@@ -214,8 +241,12 @@ private:
 	void renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 color) const;
 	void renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const;
 
-	void computePolygons(int16 polyRenderType, vertexData *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom);
-	void renderPolygons(int32 renderType, int32 color, int vleft, int vright, int vtop, int vbottom);
+	void computePolygons(int16 polyRenderType, Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom);
+
+	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
+	uint8* preparePolygons(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);
+	uint8* prepareSpheres(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);
+	uint8* prepareLines(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);
 
 public:
 	Renderer(TwinEEngine *engine) : _engine(engine) {}
@@ -242,7 +273,7 @@ public:
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 
 	void prepareIsoModel(uint8 *bodyPtr); // loadGfxSub
-	void renderPolygons(const polyHeader &polyHeader);
+	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices);
 
 	int32 projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);
 	void setCameraPosition(int32 x, int32 y, int32 cX, int32 cY, int32 cZ);

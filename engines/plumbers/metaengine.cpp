@@ -36,15 +36,13 @@ class PlumbersMetaEngine : public AdvancedMetaEngine {
 		return "plumbers";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 };
 
-bool PlumbersMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc)
-		*engine = new Plumbers::PlumbersGame(syst, desc);
-
-	return desc != nullptr;
+Common::Error PlumbersMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new Plumbers::PlumbersGame(syst, desc);
+	return Common::kNoError;
 }
 
 bool PlumbersMetaEngine::hasFeature(MetaEngineFeature f) const {

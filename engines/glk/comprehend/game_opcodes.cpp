@@ -23,6 +23,7 @@
 #include "glk/comprehend/game_opcodes.h"
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/comprehend.h"
+#include "glk/comprehend/debugger.h"
 #include "common/algorithm.h"
 #include "common/textconsole.h"
 
@@ -471,8 +472,12 @@ void ComprehendGameV1::execute_opcode(const Instruction *instr, const Sentence *
 	case OPCODE_INVENTORY_FULL:
 		item = get_item_by_noun(noun);
 
-		func_set_test_result(func_state, _variables[VAR_INVENTORY_WEIGHT] +
+		if (g_debugger->_invLimit)
+			func_set_test_result(func_state, _variables[VAR_INVENTORY_WEIGHT] +
 			(item->_flags & ITEMF_WEIGHT_MASK) > _variables[VAR_INVENTORY_LIMIT]);
+		else
+			// Allow for an unlimited number of items in inventory
+			func_set_test_result(func_state, false);
 		break;
 
 	case OPCODE_OBJECT_NOT_PRESENT:
@@ -741,6 +746,11 @@ void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *
 	Room *room = get_room(_currentRoom);
 	Item *item;
 
+	// In case a single opcode is being executed outside of a function, use a dummy function state
+	FunctionState dummyState;
+	if (!func_state)
+		func_state = &dummyState;
+
 	if ((instr->_opcode & 0x30) == 0x30) {
 		// First operand comes from entered sentence noun, shifting out existing operands
 		instrCopy = *instr;
@@ -764,6 +774,7 @@ void ComprehendGameV2::execute_opcode(const Instruction *instr, const Sentence *
 
 	case OPCODE_DRAW_ROOM:
 		g_comprehend->drawLocationPicture(instr->_operand[0] - 1);
+		g_comprehend->readChar();
 		break;
 
 	case OPCODE_INVENTORY_FULL:

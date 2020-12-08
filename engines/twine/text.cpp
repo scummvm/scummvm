@@ -456,23 +456,25 @@ void Text::renderContinueReadingTriangle() {
 	const int32 top = _dialTextBox.bottom - 24;
 	const int32 bottom = _dialTextBox.bottom - 3;
 
-	_engine->_renderer->vertexCoordinates[0] = _dialTextStopColor;
-	_engine->_renderer->vertexCoordinates[1] = right;
-	_engine->_renderer->vertexCoordinates[2] = top;
+	Vertex vertices[3];
 
-	_engine->_renderer->vertexCoordinates[3] = _dialTextStopColor;
-	_engine->_renderer->vertexCoordinates[4] = left;
-	_engine->_renderer->vertexCoordinates[5] = bottom;
+	vertices[0].colorIndex = _dialTextStopColor;
+	vertices[0].x = right;
+	vertices[0].y = top;
 
-	_engine->_renderer->vertexCoordinates[6] = _dialTextStartColor;
-	_engine->_renderer->vertexCoordinates[7] = _engine->_renderer->vertexCoordinates[1];
-	_engine->_renderer->vertexCoordinates[8] = _engine->_renderer->vertexCoordinates[5];
+	vertices[1].colorIndex = _dialTextStopColor;
+	vertices[1].x = left;
+	vertices[1].y = bottom;
 
-	polyHeader polyHdr;
-	polyHdr.numOfVertex = 3;
-	polyHdr.colorIndex = _dialTextStopColor;
-	polyHdr.renderType = POLYGONTYPE_FLAT;
-	_engine->_renderer->renderPolygons(polyHdr);
+	vertices[2].colorIndex = _dialTextStartColor;
+	vertices[2].x = _engine->_renderer->vertexCoordinates[1];
+	vertices[2].y = _engine->_renderer->vertexCoordinates[5];
+
+	CmdRenderPolygon polygon;
+	polygon.numVertices = 3;
+	polygon.colorIndex = _dialTextStopColor;
+	polygon.renderType = POLYGONTYPE_FLAT;
+	_engine->_renderer->renderPolygons(polygon, vertices);
 
 	_engine->copyBlockPhys(Common::Rect(left, top, right, bottom));
 }

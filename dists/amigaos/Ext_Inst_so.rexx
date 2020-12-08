@@ -1,5 +1,5 @@
 /*
-$VER: Ext_Inst_so.rexx 0.4 (23.10.2019) Extract and install compiled-in shared libraries from a given ELF binary.
+$VER: Ext_Inst_so.rexx 0.5 (05.12.2020) Extract and install compiled-in shared libraries from a given ELF binary.
 */
 
 PARSE ARG executable install_path
@@ -14,10 +14,10 @@ IF ~ARG() THEN DO
 END
 
 /*
-If the given filename/path has spaces in it, AmigaDOS/CLI
-will add extra quotation marks to secure a sane working path.
-Get rid of them to make AREXX find the file and remove leading
-and trailing spaces.
+If the given filename/path has spaces in it, AmigaDOS/CLI will add extra
+quotation marks to secure a sane working path.
+Get rid of them to make AREXX find the file and remove leading and trailing
+spaces.
 */
 IF ~EXISTS(executable) THEN DO
 	SAY executable' not available!'
@@ -43,9 +43,14 @@ ELSE DO
 END
 
 /*
+Save used gcc version. Needed later to install libgcc.so.
+*/
+ADDRESS COMMAND 'gcc -dumpversion >so_dump'
+
+/*
 Create shared objects dump.
 */
-ADDRESS COMMAND 'readelf -d 'executable' >so_dump'
+ADDRESS COMMAND 'readelf -d 'executable' >>so_dump'
 
 /*
 Error check, if I/O went wrong.
@@ -56,8 +61,13 @@ IF ~OPEN(SO_read,'so_dump','R') THEN DO
 END
 
 /*
-We know that the dumped shared library entries always start
-at line 4. Skip unneeded lines to speed up processing.
+Get used gcc version.
+*/
+gcc_version=READLN(SO_read)
+
+/*
+We know that the dumped shared library entries always start at line 4 (line 5
+now with the added gcc version). Skip unneeded lines to speed up processing.
 */
 working_line=CALL READLN(SO_read)
 working_line=CALL READLN(SO_read)
@@ -74,20 +84,28 @@ DO WHILE i>0
 		*/
 		lib.so=SUBSTR(working_line,59,LASTPOS(']', working_line)-59)
 		/*
-		Check whether the installed shared libraries are placed in the SDK
-		(most of them) or AmigaOS SOBJS: drawer (few of them) and copy them accordingly.
+		- Find and install the mandatory shared libraries from their varying
+		  home directories.
+		- libgcc.so is deeply hidden inside the gcc install directory tree
+		  by default. Since people can use different gcc versions we have
+		  determine which to use the correct path.
 		*/
 		IF EXISTS('SDK:local/newlib/lib/'lib.so) THEN
 			ADDRESS COMMAND 'copy clone SDK:local/newlib/lib/'lib.so install_path'/sobjs/'
-		ELSE
+		ELSE DO
 			IF EXISTS('SDK:gcc/lib/'lib.so) THEN
-				ADDRESS COMMAND 'copy clone SYS:SOBJS/'lib.so install_path'/sobjs/'
+				ADDRESS COMMAND 'copy clone SDK:gcc/lib/'lib.so install_path'/sobjs/'
 			ELSE DO
-				/*
-				If a shared library is not found, abort.
-				*/
-				SAY lib.so' not found! Aborting!'
-				EXIT
+				IF EXISTS('SDK:gcc/lib/gcc/ppc-amigaos/'gcc_version'/'lib.so) THEN
+					ADDRESS COMMAND 'copy clone SDK:gcc/lib/gcc/ppc-amigaos/'gcc_version'/'lib.so install_path'/sobjs/'
+				ELSE DO
+					/*
+					If a shared library is not found, abort.
+					*/
+					SAY lib.so' not found! Aborting!'
+					EXIT
+				END
+			END
 		END
 	END
 	ELSE

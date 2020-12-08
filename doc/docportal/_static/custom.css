@@ -1,0 +1,59 @@
+/* override table width restrictions */
+
+@media (min-width: 385px){
+    .wy-table-responsive table td {
+       white-space: normal !important;
+        
+    }
+ 
+    .wy-table-responsive {
+       overflow: visible !important;
+      
+    }
+    .wy-table-responsive table {
+
+      table-layout: fixed !important;
+      width: 100% !important;
+
+    }
+   }
+
+/* Change theme colors*/
+
+.wy-side-nav-search, .wy-nav-top  {
+      background-color: #cc6600 !important;
+   }
+
+.caption-text, .icon-home {
+   color: #cc6600;
+}
+
+/* Change H4 header size*/
+
+h4 {
+   font-size: 100% !important;
+}
+
+/* Change inline code formatting*/
+
+.rst-content code.literal {
+   padding: 5px !important;
+   white-space: normal;
+   color: #000000;
+}
+
+/* Change color of tabs*/
+
+.tabbed-set>input:checked+label {
+   border-color: #cc6600 !important;
+   color: #cc6600 !important;
+}
+
+.tabbed-set>label {
+   color: #fd962e !important;
+}
+
+.tabbed-content {
+   box-shadow: 0 -.0625rem #ffd3a8,0 .0625rem #ffd3a8 !important;
+
+}

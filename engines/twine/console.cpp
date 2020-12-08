@@ -117,7 +117,7 @@ bool TwinEConsole::doSetGameFlag(int argc, const char **argv) {
 
 bool TwinEConsole::doGiveKey(int argc, const char **argv) {
 	int amount = 1;
-	if (argc >= 1) {
+	if (argc >= 2) {
 		amount = atoi(argv[1]);
 	}
 	_engine->_gameState->inventoryNumKeys += amount;
@@ -168,7 +168,7 @@ bool TwinEConsole::doGiveAllItems(int argc, const char **argv) {
 	}
 	_engine->_gameState->gameFlags[GAMEFLAG_INVENTORY_DISABLED] = 0;
 	int amount = 10;
-	if (argc > 1) {
+	if (argc >= 2) {
 		amount = atoi(argv[1]);
 	}
 	_engine->_gameState->inventoryNumKeys += amount;

@@ -114,8 +114,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME("amandastories", "3.0", "AmandaStories", "1687f456d7f2bcf98e84fec6d3a03c17", 353985, 300),
 
+	// From Isaac Asimov's The Ultimate Robot CD-ROM
+	WINGAME("asimovrat", "", "TOOLKIT.EXE", "65d06b5fef155a2473434571aff5bc29", 1858955, 310), // confirm director version
+
 	MACGAME("beyondthewall", "", "Beyond The Wall Of Stars", "107c6a6d3cce957eaa26d427e672000c", 465523, 300),
 	WINGAME("beyondthewall", "", "WALL.EXE", "5c6862a40a48881913ee7c50d25cd984", 225253, 300),
+
+	WINDEMO("bpmc", "", "BPMC.EXE", "1998188253fc8657198e3e78efe823a8", 370291, 313), // confirm director version
 
 	MACGAME("chaos", "", "The C.H.A.O.S. Continuum", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384481, 300), // original name is The C.H.A.O.S. Continuum™
 	WINGAME("chaos", "", "CHAOS.EXE", "7c8230a804abf9353b05627a675b5ffb", 375294, 300),
@@ -141,6 +146,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 		GID_GENERIC,
 		300
 	},
+
+	MACGAME("hhouse", "", "The Ultimate Haunted House", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384475, 313),
 
 	MACGAME("ironhelix", "", "Iron Helix Minimum", "1ae45c23586b41997ba52e2e7c771c4c", 1652052, 300),
 	MACDEMO("ironhelix", "Demo", "IRON HELIX DEMO", "7c80091b84d4d5d48f7c773b30b10598", 1634901, 300),
@@ -354,6 +361,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME("easternmind", "", "Eastern Mind", "78138a77207907642744d0960c14d9e5", 483746, 400),
 	WINGAME("easternmind", "", "ESTRNMND.EXE", "2597cfb5466d193b5a18fc7b0e3a3fa5", 685789, 400),
 
+	WINGAME("einstein", "", "EINSTEIN.EXE", "5f2b54a1cbf0c62913d4f1fa07b5f3a9", 711759, 404),
+	WINGAME("flw", "", "FLW.EXE", "7d02787f74f2adfc0c66f34646380c0e", 720683, 400),
+
 	MACGAME("frankenstein", "", "Frankenstein", "01be45e7241194dad07938e7059b88e3", 483771, 403),
 	WINGAME("frankenstein", "", "FRANKIE.EXE", "a9a4e3a07f3ecda7e59215aabb844532", 2229509, 404),
 	WINDEMO("frankenstein", "Demo", "FRNKDEMO.EXE", "ed00aa67138b715a8bee6f41756852c5", 7365699, 400),
@@ -442,6 +452,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME_l("hamsterland2", "", "HL2SP.EXE", "8dd22b8bde300c9fb5b66808905300f7", 875665, Common::ES_ESP, 400),
 	MACGAME("hamsterland2", "", "The Time Machine", "2c7d0c0d55cbe3f622c7d68cedb671e0", 483774, 400),
 	WINGAME("hamsterland2", "", "HL2EN.EXE", "4c812a63165c1f50242e879aae62718d", 859681, 400),
+
+	WINGAME("hhouse", "", "HHOUSE.EXE", "e798a08ba6057705af028673f7a9a2ef", 3181345, 400),
 
 	MACGAME("horrortour1", "", "ZEDDAS(7M)", "da0da5d543b237051975ad70bec129f4", 483443, 400),
 	WINGAME("horrortour1", "", "ZEDDAS.EXE", "d3ce91f305dd0f4d2f5e9ff6d4e41a3b", 741818, 400),
@@ -550,8 +562,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO("jman2", "Gallery", "BIT Gallery", "01be45e7241194dad07938e7059b88e3", 484284, 400),
 	MACDEMO("jman2", "Overview", "BIT Overview", "01be45e7241194dad07938e7059b88e3", 484284, 400),
 
+	// Original Taiwan release is called 塔克拉玛干—敦煌传奇 (Taklamakan: Dunhuang Chuanqi)
 	MACGAME("karma", "", "Karma", "ea646eccc9a53f44ce082459d4809a06", 485535, 400),
 	WINGAME("karma", "", "KARMA.EXE", "e830af6b5dfca4964184e7d61039e120", 697047, 400),
+	WINGAME_l("karma", "", "DH.EXE", "f917ac9c649bff9eaf538ae69432a145", 690991, Common::ZH_TWN, 400),
 
 	MACGAME("kyoto", "v2.0", "Cosmology of KYOTO", "8719de9c083aca942fc0e5c0a127b6dc", 484370, 400),
 	WINGAME("kyoto", "", "PLAY_E.EXE", "84cc8880f8c46b4da121b4c9f184418a", 691269, 400),
@@ -714,6 +728,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME_l("twistynight2", "", "Twisty Night 2", "8ea9e9a699c61edddffd79ddd0c994d7", 290682, Common::JA_JPN, 402),
 	MACGAME_l("twistynight3", "", "Twisty Night 3", "8ea9e9a699c61edddffd79ddd0c994d7", 290682, Common::JA_JPN, 402),
 
+	WINGAME("ushistory", "", "HISTORY.EXE", "0ca49c80588dd50f985d5aa6192b973e", 703629, 404),
+
 	MACGAME_l("ybr2", "", "YBR2", "b797956eb3a4dabcc15bfadf6fc66591", 504153, Common::JA_JPN, 400),
 	WINGAME_l("ybr2", "", "YBR2.EXE", "dbe273c1df60305be98a1a582ddd2c3b", 860579, Common::JA_JPN, 400),
 	WINDEMO_l("ybr2", "Demo", "YBR2DEMO.EXE", "25ecc053e02a0ef537d34d615119c814", 900973, Common::JA_JPN, 400),
@@ -820,6 +836,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINGAME("noir", "", "NOIR.EXE", "2e62abdad839e42068afdcd0644d7dcf", 1020879, 500),
 
+	// Use 32-bit Windows executable in SUPPORT/WIN_95
+	MACGAME("saillusion", "", "Illusion", "3f3285490a1764d200c9a82041bf4937", 719289, 501),
+	MACGAME_l("saillusion", "", "Illusion", "06ed90580400cd9e263525f84c8075fd", 705673, Common::DE_DEU, 500),
+	WINGAME("saillusion", "", "ILLUSION.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1411175, 501),
+	WINGAME_l("saillusion", "", "Illusion.exe", "1c1fa9c5797b8d2cdc04ad283d9e41d7", 1412949, Common::DE_DEU, 501),
+
+	MACGAME("sauniverse", "", "UNIVPPC", "f488a0465587e739b67e53d224449b9a", 94329, 500),
+	WINGAME("sauniverse", "", "UNIV32.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1468873, 501),
+
 	MACGAME("staytooned", "", "Power Mac Stay Tooned!", "d692140f81aaf86096538f66d6477404", 94301, 500),
 	WINGAME("staytooned", "", "START32.EXE", "3460ad87d2ba57104e2810a77b53c220", 1394421, 500),
 
@@ -845,6 +870,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME("trekpedia98", "", "Ency98 Player", "b0b0e36586489ca6070d20feeff52fa5", 1091806, 600),
 	WINGAME("trekpedia98", "", "ENCY98.EXE", "35f1550747fcf691283b0f2486144e2b", 1707566, 600),
+
+	// Disc 2 has no director content
+	WINGAME("xfua", "", "X-FILES.EXE", "518a98696fe1122e08410b0f157f21bf", 1719387, 602),
 
 ////////////////////////////////////////
 //

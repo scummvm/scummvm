@@ -96,6 +96,7 @@ const Game kyra3Games[] = {
 	{ kKyra3, kPlatformDOS, kTalkieVersion, DE_DEU },
 	{ kKyra3, kPlatformDOS, kTalkieVersion, IT_ITA },
 	{ kKyra3, kPlatformDOS, kTalkieVersion, ES_ESP },
+	{ kKyra3, kPlatformDOS, kTalkieVersion, RU_RUS },
 
 	GAME_DUMMY_ENTRY
 };
@@ -112,6 +113,7 @@ const Game eob1Games[] = {
 	{ kEoB1, kPlatformPC98, kNoSpecial, JA_JPN },
 
 	{ kEoB1, kPlatformSegaCD, kNoSpecial, EN_ANY },
+	{ kEoB1, kPlatformSegaCD, kNoSpecial, JA_JPN },
 
 	GAME_DUMMY_ENTRY
 };
@@ -1430,6 +1432,7 @@ const int eob1FloppyNeed[] = {
 	kEoBBaseMonsterDistAttStrings,
 	kEoBBaseEncodeMonsterDefs,
 	kEoBBaseNpcPresets,
+	kEoBBaseNpcPresetsNames,
 
 	kEoBBaseSoundFilesIntro,
 	kEoBBaseSoundFilesIngame,
@@ -1724,6 +1727,7 @@ const int eob1FloppyOldNeed[] = {
 	kEoBBaseMonsterDistAttStrings,
 	kEoBBaseEncodeMonsterDefs,
 	kEoBBaseNpcPresets,
+	kEoBBaseNpcPresetsNames,
 
 	kEoBBaseSoundFilesIntro,
 	kEoBBaseSoundFilesIngame,
@@ -2005,6 +2009,7 @@ const int eob1AmigaNeed[] = {
 	kEoBBaseMonsterDistAttStrings,
 	kEoBBaseEncodeMonsterDefs,
 	kEoBBaseNpcPresets,
+	kEoBBaseNpcPresetsNames,
 
 	kEoBBaseSoundMap,
 	kEoBBaseLevelSoundFiles1,
@@ -2303,6 +2308,7 @@ const int eob1PC98Need[] = {
 	kEoBBaseMonsterDistAttStrings,
 	kEoBBaseEncodeMonsterDefs,
 	kEoBBaseNpcPresets,
+	kEoBBaseNpcPresetsNames,
 
 	kEoBBaseSoundFilesIntro,
 	kEoBBaseSoundFilesIngame,
@@ -2422,11 +2428,11 @@ const int eob1SegaCDNeed[] = {
 	kEoBBaseCancelStrings,
 
 	kEoBBaseMenuStringsSaveLoad,
-	kEoBBaseMenuStringsOnOff,
+	//kEoBBaseMenuStringsOnOff,
 	kEoBBaseMenuStringsSpells,
 	kEoBBaseMenuStringsRest,
 	kEoBBaseMenuStringsDrop,
-	kEoBBaseMenuStringsExit,
+	//kEoBBaseMenuStringsExit,
 	kEoBBaseMenuStringsStarve,
 	kEoBBaseMenuStringsScribe,
 	kEoBBaseMenuStringsDrop2,
@@ -2444,7 +2450,7 @@ const int eob1SegaCDNeed[] = {
 	kEoBBaseNumSpellsPal,
 	kEoBBaseNumSpellsMage,
 
-	kEoBBaseCharGuiStringsIn,
+	//kEoBBaseCharGuiStringsIn,
 
 	kEoBBaseCharStatusStrings7,
 	kEoBBaseCharStatusStrings81,
@@ -2712,6 +2718,9 @@ const int eob1SegaCDNeed[] = {
 	kEoBBaseTextInputSelectStrings,
 
 	kEoBBaseNpcPresets,
+	kEoBBaseNpcPresetsNames,
+
+	kEoBBaseSaveNamePatterns,
 
 	-1
 };
@@ -3015,6 +3024,7 @@ const int eob2FloppyNeed[] = {
 	kEoBBaseMonsterDistAttStrings,
 	kEoBBaseEncodeMonsterDefs,
 	kEoBBaseNpcPresets,
+	kEoBBaseNpcPresetsNames,
 	kEoB2Npc1Strings,
 	kEoB2Npc2Strings,
 	kEoB2MonsterDustStrings,
@@ -3341,6 +3351,7 @@ const int eob2AmigaNeed[] = {
 	kEoBBaseMonsterDistAttStrings,
 	kEoBBaseEncodeMonsterDefs,
 	kEoBBaseNpcPresets,
+	kEoBBaseNpcPresetsNames,
 	kEoB2Npc1Strings,
 	kEoB2Npc2Strings,
 	kEoB2MonsterDustStrings,
@@ -3677,6 +3688,7 @@ const int eob2PC98Need[] = {
 	kEoBBaseMonsterDistAttStrings,
 	kEoBBaseEncodeMonsterDefs,
 	kEoBBaseNpcPresets,
+	kEoBBaseNpcPresetsNames,
 	kEoB2Npc1Strings,
 	kEoB2Npc2Strings,
 	kEoB2MonsterDustStrings,
@@ -4019,6 +4031,7 @@ const int eob2FMTownsNeed[] = {
 	kEoBBaseMonsterDirChangeTable,
 	kEoBBaseMonsterDistAttStrings,
 	kEoBBaseNpcPresets,
+	kEoBBaseNpcPresetsNames,
 	kEoB2Npc1Strings,
 	kEoB2Npc2Strings,
 	kEoB2MonsterDustStrings,
@@ -4259,7 +4272,7 @@ const int eob2FMTownsNeed[] = {
 	kEoB2FontDmpSearchTbl,
 	kEoB2Ascii2SjisTables,
 	kEoB2Ascii2SjisTables2,
-	kEoB2SaveNamePatterns,
+	kEoBBaseSaveNamePatterns,
 
 	kEoBBaseSoundFilesIntro,
 	kEoBBaseSoundFilesFinale,

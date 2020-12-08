@@ -28,7 +28,7 @@
 
 static const PlainGameDescriptor XeenGames[] = {
 	{ "cloudsofxeen", "Might and Magic IV: Clouds of Xeen" },
-	{ "darksideofxeen", "Might and Magic V: Dark Side of Xeen" },
+	{ "darksideofxeen", "Might and Magic V: Darkside of Xeen" },
 	{ "worldofxeen", "Might and Magic: World of Xeen" },
 	{ "swordsofxeen", "Might and Magic: Swords of Xeen" },
 	{0, 0}

@@ -137,6 +137,7 @@ MODULE_OBJS += \
 	he/script_v100he.o \
 	he/sprite_he.o \
 	he/wiz_he.o \
+	he/localizer.o \
 	he/logic/baseball2001.o \
 	he/logic/basketball.o \
 	he/logic/football.o \

@@ -32,8 +32,12 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die Version in brasilianischem Portugiesisch von Grim Fandango hinzugefügt.
    - Unterstützung für die russische Version von Escape from Monkey Island hinzugefügt.
 
+ Kyra:
+   - Unterstützung für die japanische Sega-CD-Version von Eye of the Beholder hinzugefügt.
+
  Lure:
    - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines Spielstands abgespielt.
+   - Unterstützung für MT-32 korrigiert.
 
  SAGA:
    - Unterstützung für ITE GOG Mac CD v1.1 hinzugefügt.
@@ -47,6 +51,8 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für die koreanischen Fan-Übersetzungen von Castle of Dr. Brain, Eco Quest, Gabriel Knight,
      King's Quest 1, 5 und 6, Laura Bow 2: Dagger of Amon Ra und Space Quest 4 hinzugefügt.
    - Unterstützung für zahlreiche koreanische Übersetzungen des scummkor-Projektes hinzugefügt.
+   - Unterstützung für die russische Version von LSL6 hinzugefügt.
+   - Unterstützung für eine alternative russische Version von LSL7 hinzugefügt.
 
  SCUMM:
    - Textdarstellung in der chinesischen, japanischen und koreanischen Version von The Dig und
@@ -80,9 +86,14 @@ Programmcodes finden Sie auf Englisch unter:
    - Gelegentliche Grafikfehler in Kampf-Szenen korrigiert.
    - Verbesserte Unterstützung für Zwischensequenzen, die nun dem Original genauer entsprechen.
 
+ AmigaOS-Portierung:
+   - Unterstützung für native Dateisystem-Dialoge hinzugefügt.
+   - Der nuked OPL Adlib-Treiber ist wieder aktiviert.
+
  MorphOS-Portierung:
    - Unterstützung für native Dateisystem-Dialoge hinzugefügt.
    - Unterstützung für die Cloud-Anbindung hinzugefügt.
+   - Der nuked OPL Adlib-Treiber ist wieder aktiviert.
 
 #### 2.2.0 "Interactive Fantasy" (27.09.2020)
 

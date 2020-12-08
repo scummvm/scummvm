@@ -44,6 +44,33 @@ BridgeActorAndMenu bridgeActorsAndMenus[] = {
 	{ 7, "bstndsc", "eng",      30,   30 },	// Scotty
 };
 
+enum BridgeMenuEvent {
+	kBridgeSpockTalk = 0,
+	kBridgeUnk1 = 1,
+	kBridgeUnk2 = 2,
+	kBridgeUnk3 = 3,
+	kBridgeKirkCaptainsLog = 16,
+	kBridgeKirkTransporter = 17,
+	kBridgeKirkOptions = 18,
+	kBridgeSpockNothingToReport = 32,
+	kBridgeSpockConsultComputer = 33,
+	kBridgeScottyDamageControl = 48,
+	kBridgeScottyEmergencyPower = 49,
+	kBridgeUhuraCommunications = 64,
+	kBridgeSuluOrbit = 80,
+	kBridgeSuluShields = 81,
+	kBridgeChekovNavigation = 96,
+	kBridgeChekovWeapons = 97,
+	kBridgeChekovRepairShields = 112,
+	kBridgeChekovRepairPhasers = 113,
+	kBridgeChekovRepairPhotonTorpedoes = 114,
+	kBridgeChekovRepairSensors = 115,
+	kBridgeChekovRepairBridge = 116,
+	kBridgeChekovRepairHull = 117,
+	kBridgeChekovRepairWarpDrives = 118,
+	kBridgeSuluTargetAnalysis = 119
+};
+
 void StarTrekEngine::initBridge(bool b) {
 	_gfx->loadPalette("bridge");
 	_sound->loadMusicFile("bridge");
@@ -168,21 +195,17 @@ void StarTrekEngine::handleBridgeEvents() {
 
 		case TREKEVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
-			case Common::KEYCODE_w:
-				// Toggle weapons on/off
-				// TODO
+			case Common::KEYCODE_w:	// Toggle weapons on/off
+				handleBridgeMenu(kBridgeChekovWeapons);
 				break;
-			case Common::KEYCODE_s:
-				// Toggle shields on/off
-				// TODO
+			case Common::KEYCODE_s:	// Toggle shields on/off
+				handleBridgeMenu(kBridgeSuluShields);
 				break;
-			case Common::KEYCODE_a:
-				// Target analysis
-				// TODO
+			case Common::KEYCODE_a:	// Target analysis
+				handleBridgeMenu(kBridgeSuluTargetAnalysis);
 				break;
-			case Common::KEYCODE_d:
-				// Damage control
-				// TODO
+			case Common::KEYCODE_d:	// Damage control
+				handleBridgeMenu(kBridgeScottyDamageControl);
 				break;
 			case Common::KEYCODE_RETURN:
 			case Common::KEYCODE_KP_ENTER:
@@ -190,85 +213,64 @@ void StarTrekEngine::handleBridgeEvents() {
 				// Fire phasers
 				// TODO
 				break;
-			case Common::KEYCODE_SPACE:
-				// Fire photon torpedoes
+			case Common::KEYCODE_SPACE:	// Fire photon torpedoes
 				// TODO
 				break;
-			case Common::KEYCODE_v:
-				// Toggle between the normal bridge view and full screen view
+			case Common::KEYCODE_v:	// Toggle between the normal bridge view and full screen view
 				// TODO
 				break;
-			case Common::KEYCODE_TAB:
-				// Toggle between movement/fire mode and crew selection mode
+			case Common::KEYCODE_TAB:	// Toggle between movement/fire mode and crew selection mode
 				// TODO
 				break;
-			case Common::KEYCODE_COMMA:
-				// Reduce the main view screen magnification
+			case Common::KEYCODE_COMMA:	// Reduce the main view screen magnification
 				// TODO
 				break;
-			case Common::KEYCODE_PERIOD:
-				// Enlarge the main view screen magnification
+			case Common::KEYCODE_PERIOD:	// Enlarge the main view screen magnification
 				// TODO
 				break;
-			case Common::KEYCODE_o:
-				// Enter/exit orbit
+			case Common::KEYCODE_o:	// Enter/exit orbit
+				handleBridgeMenu(kBridgeSuluOrbit);
+				break;
+			case Common::KEYCODE_KP5:	// Center controls
 				// TODO
 				break;
-			case Common::KEYCODE_KP5:
-				// Center controls
+			case Common::KEYCODE_n:	// Main star navigational map
 				// TODO
 				break;
-			case Common::KEYCODE_n:
-				// Main star navigational map
+			case Common::KEYCODE_k:	// Kirk's options
+				handleBridgeMenu(kBridgeKirkOptions);
+				break;
+			case Common::KEYCODE_t:	// Ask Mr. Spock for advice
+				// TODO
+				handleBridgeMenu(kBridgeSpockNothingToReport);
+				break;
+			case Common::KEYCODE_c:	// Spock's library computer
+				handleBridgeMenu(kBridgeSpockConsultComputer);
+				break;
+			case Common::KEYCODE_h:	// Uhura's communication icon
+				handleBridgeMenu(kBridgeUhuraCommunications);
+				break;
+			case Common::KEYCODE_p:	// Pause game
 				// TODO
 				break;
-			case Common::KEYCODE_k:
-				// Kirk's options
-				// TODO
-				break;
-			case Common::KEYCODE_t:
-				// Ask Mr. Spock for advice
-				// TODO
-				break;
-			case Common::KEYCODE_c:
-				// Spock's library computer
-				handleBridgeComputer();
-				break;
-			case Common::KEYCODE_h:
-				// Uhura's communication icon
-				// TODO
-				break;
-			case Common::KEYCODE_p:
-				// Pause game
-				// TODO
-				break;
-
-			case Common::KEYCODE_e:
-				if (event.kbd.flags && Common::KBD_CTRL) {
+			case Common::KEYCODE_e:	// Toggle SFX / emergency power
+				if (event.kbd.flags && Common::KBD_CTRL)
 					_sound->toggleSfx();
-				} else {
-					// Emergency power
-					// TODO
-				}
+				else
+					handleBridgeMenu(kBridgeScottyEmergencyPower);
 				break;
-
 			case Common::KEYCODE_m:
-				if (event.kbd.flags && Common::KBD_CTRL) {
+				if (event.kbd.flags && Common::KBD_CTRL)
 					_sound->toggleMusic();
-				}
 				break;
-
 			case Common::KEYCODE_q:
-				if (event.kbd.flags && Common::KBD_CTRL) {
+				if (event.kbd.flags && Common::KBD_CTRL)
 					showQuitGamePrompt(20, 20);
-				}
 				break;
-			case Common::KEYCODE_TILDE:
-				// Ship speed: reverse
+			case Common::KEYCODE_TILDE:	// Ship speed: reverse
 				// TODO
 				break;
-			case Common::KEYCODE_1:
-				// Ship speed: stop
+			case Common::KEYCODE_1:	// Ship speed: stop
 				// TODO
 				break;
 			case Common::KEYCODE_2:
@@ -292,6 +294,135 @@ void StarTrekEngine::handleBridgeEvents() {
 			break;
 		}
 	}
+}
+
+void StarTrekEngine::handleBridgeMenu(int menuEvent) {
+	// TODO: Move these
+	const char *kirkHeader = "KIRK";
+	const char *spockHeader = "MR. SPOCK";
+	const char *scottyHeader = "MR. SCOTT";
+	const char *uhuraHeader = "LIEUTENANT UHURA";
+	const char *suluHeader = "MR. SULU";
+	const char *chekovHeader = "MR. CHEKOV";
+	const char *shieldsUpText = "#BRID\\B_332#Captain, the shields are up.";
+	const char *notInOrbitText = "#BRID\\B_350#We're not in orbit, Captain.";
+	const char *transporterText = "#BRID\\C_060#Spock, come with me. Mr Scott, you have the conn.";
+	const char *nothingToReportText = "#BRID\\B_155#Nothing to report, Captain.";
+	const char *raiseShieldsText = "#BRID\\B_340#Raising shields.";
+	const char *lowerShieldsText = "#BRID\\B_337#Lowering shields, Captain.";
+	const char *armWeaponsText = "#BRID\\B_351#Arming weapons.";
+	const char *disarmWeaponsText = "#BRID\\B_354#Disarming weapons.";
+	const char *emergencyPowerText = "#BRID\\BRID_S32#I don't know how long she can take it, Captain.";
+	const char *noEmergencyPowerText = "#BRID\\BRID_S41#She can't take it, Captain.";
+	const char *underAttackText = "#BRID\\B_348#Unable to comply, Captain.  We're under attack.";
+	const char *missionNotOverText = "#BRID\\B_338#May I respectfully remind the Captain that we haven't accomplished our mission, Sir.";
+	const char *leaveOrbitText = "#BRID\\B_349#We must first leave orbit, Sir.";
+	const char *targetAnalysisOnText = "#BRID\\B_344#Target Analysis On.";
+	const char *targetAnalysisOffText = "#BRID\\B_343#Target Analysis Off.";
+	const char *ayeSirText = "#BRID\\BRID_S22#Aye Sir.";
+
+	switch (menuEvent) {
+	case kBridgeSpockTalk:
+		// TODO
+		break;
+	case kBridgeUnk1:
+		// TODO
+		break;
+	case kBridgeUnk2:
+		// TODO
+		break;
+	case kBridgeUnk3:
+		// TODO
+		break;
+	case kBridgeKirkCaptainsLog: // Kirk, captain's log
+		captainsLog();
+		break;
+	case kBridgeKirkTransporter: // Kirk, transporter
+		if (_enterpriseState.shields) {
+			showTextbox(suluHeader, shieldsUpText, 122, 116, 161, 0);
+		} else {
+			if (!_enterpriseState.inOrbit) {
+				showTextbox(suluHeader, notInOrbitText, 122, 116, 161, 0);
+			} else {
+				// TODO: Check if the destination is correct
+				// TODO: Check for veng or feather missions and show extra text
+				showTextbox(kirkHeader, transporterText, 160, 130, 176, 0);
+				runGameMode(GAMEMODE_BEAMDOWN, false);
+			}
+		}
+		break;
+	case kBridgeKirkOptions: // Kirk, options
+		showOptionsMenu(65, 60);
+		break;
+	case kBridgeSpockNothingToReport: // Spock, nothing to report
+		showTextbox(spockHeader, nothingToReportText, 294, 106, 44, 0);
+		break;
+	case kBridgeSpockConsultComputer: // Spock, consult computer
+		handleBridgeComputer();
+		break;
+	case kBridgeScottyDamageControl: // Scotty, damage control
+		showBridgeMenu("repair", 30, 30);
+		break;
+	case kBridgeScottyEmergencyPower: // Scotty, emergency power
+		// TODO: check for emergency power
+		showTextbox(scottyHeader, noEmergencyPowerText, 64, 100, 161, 0);
+		break;
+	case kBridgeUhuraCommunications: // Uhura, communications
+		// TODO: text
+		showTextbox(uhuraHeader, _resource->getLoadedText(16), 298, 150, 161, 0);
+		break;
+	case kBridgeSuluOrbit: // Sulu, orbit
+		if (_enterpriseState.underAttack) {
+			showTextbox(suluHeader, underAttackText, 122, 116, 176, 0);
+		} else {
+			// TODO: Check if mission is over
+			//showTextbox(suluHeader, missionNotOverText, 122, 116, 44, 0);
+
+			if (_enterpriseState.inOrbit) {
+				showTextbox(suluHeader, leaveOrbitText, 122, 116, 176, 0);
+			} else {
+				// TODO: Finish this
+				_enterpriseState.inOrbit = true;
+			}
+		}
+		break;
+	case kBridgeSuluShields: // Sulu, shields
+		_enterpriseState.shields = !_enterpriseState.shields;
+		showTextbox(suluHeader, _enterpriseState.shields ? raiseShieldsText : lowerShieldsText, 122, 116, 176, 0);
+		break;
+	case kBridgeChekovNavigation: // Chekov, navigation
+		// TODO
+		break;
+	case kBridgeChekovWeapons: // Chekov, weapons
+		_enterpriseState.weapons = !_enterpriseState.weapons;
+		showTextbox(chekovHeader, _enterpriseState.weapons ? armWeaponsText : disarmWeaponsText, 196, 116, 176, 0);
+		// TODO: weapons
+		break;
+	case kBridgeChekovRepairShields:
+	case kBridgeChekovRepairPhasers:
+	case kBridgeChekovRepairPhotonTorpedoes:
+	case kBridgeChekovRepairSensors:
+	case kBridgeChekovRepairBridge:
+	case kBridgeChekovRepairHull:
+	case kBridgeChekovRepairWarpDrives:
+		// TODO: Repair ship part (-1, 4, 2, 6, 1, 0, 7)
+		showTextbox(scottyHeader, ayeSirText, 64, 100, 161, 0);
+		break;
+	case kBridgeSuluTargetAnalysis: // Chekov, target analysis
+		_enterpriseState.targetAnalysis = !_enterpriseState.targetAnalysis;
+		showTextbox(suluHeader, _enterpriseState.targetAnalysis ? targetAnalysisOnText : targetAnalysisOffText, 122, 116, 176, 0);
+		// TODO: Target analysis
+		break;
+	default:
+		break;
+	}
+}
+
+void StarTrekEngine::captainsLog() {
+	// TODO: Show points for recently completed missions
+	const char *captainsLogHeader = "Captain's Log";
+	const char *noRecentMissions = "#BRID\\C_007#No recent missions have been completed.";
+	showTextbox(captainsLogHeader, noRecentMissions, 160, 130, 176, 0);
 }
 
 void StarTrekEngine::loadBridgeComputerTopics() {

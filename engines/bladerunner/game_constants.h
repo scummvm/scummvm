@@ -504,7 +504,7 @@ enum Flags {
 	kFlagMA04toMA05                           =  62,
 	kFlagMA05toMA04                           =  63,
 	kFlagGaffApproachedMcCoyAboutZuben        =  64,
-	// 65 is never used
+	kFlagMcCoyCommentsOnTB05Monitors          =  65, // Re-purposed. Original: 65 is never used
 	// 66 is never used
 	// 67 is never used
 	kFlagCT02toCT01                           =  68,
@@ -1286,8 +1286,8 @@ enum AnimationModes {
 	// 27 - 28 not used
 	// 29 stand up
 	// 30 - 37 not used
-	// 38 ???
-	// 39 not used
+	// 38 McCoy searches inside big dumpster
+	// 39 McCoy agonizing death animation - not used
 	// 40 McCoy throws body
 	kAnimationModeSpinnerGetIn    = 41,
 	kAnimationModeSpinnerGetOut   = 42,
@@ -1301,7 +1301,7 @@ enum AnimationModes {
 	// 50 Luther, Tyrell Guard ???
 	// 51 Steele, Maggie ???
 	kAnimationModeFeeding         = 52,
-	kAnimationModeSit             = 53, // more like sitting than sitting down
+	kAnimationModeSit             = 53, // sitting (eg. for McCoy used in NR04, NR05 rotating couch) (McCoy, Clovis, Dektora, Guzza, Gordo)
 	// 54 Clovis, Maggie ???
 	// 55 transient, Tyrell Guard, Maggie
 	// 56 Maggie ???
@@ -1314,14 +1314,14 @@ enum AnimationModes {
 	kAnimationModeClimbDown       = 65,
 	kAnimationModeCombatClimbUp   = 66,
 	kAnimationModeCombatClimbDown = 67
-	// 68 McCoy getting kicked
+	// 68 McCoy getting kicked (while down)
 	// 69 not used
 	// 70 Dektora ???
 	// 71 Dektora ???
 	// 72 Desk Clerk, Leon ???
 	// 73 EarlyQ ???
 	// 74 EarlyQ ???
-	// 75 McCoy drinking ???
+	// 75 McCoy drinking
 	// 76 EarlyQ ???
 	// 77 not used
 	// 78 Hanoi ???
@@ -1692,62 +1692,142 @@ enum GameItems {
 
 enum GameModelAnimations {
 	//   0 -  53: McCoy animations
-	kModelAnimationMcCoyWithGunIdle              =   0,
-	kModelAnimationMcCoyWithGunGotHitRight       =   1,
-	kModelAnimationMcCoyWithGunGotHitLeft        =   2,
-	kModelAnimationMcCoyWithGunWalking           =   3,
-	kModelAnimationMcCoyWithGunRunning           =   4,
-	kModelAnimationMcCoyWithGunShotDead          =   5,
-	kModelAnimationMcCoyWithGunClimbStairsUp     =   6,
-	kModelAnimationMcCoyWithGunClimbStairsDown   =   7,
-	kModelAnimationMcCoyWithGunUnholsterGun      =   8,
-	kModelAnimationMcCoyWithGunHolsterGun        =   9,
-	kModelAnimationMcCoyWithGunAiming            =  10,
-	kModelAnimationMcCoyWithGunStopAimResumeIdle =  11,
-	kModelAnimationMcCoyWithGunShooting          =  12,
-	kModelAnimationMcCoyWalking                  =  13,
-	kModelAnimationMcCoyRunning                  =  14,
-	kModelAnimationMcCoyClimbStairsUp            =  15,
-	kModelAnimationMcCoyClimbStairsDown          =  16,
-	kModelAnimationMcCoyGotHitRight              =  17,
-	kModelAnimationMcCoyFallsOnHisBack           =  18,
-	kModelAnimationMcCoyIdle                     =  19,
-	kModelAnimationMcCoyProtestingTalk           =  20,
-	kModelAnimationMcCoyScratchHeadTalk          =  21,
-	kModelAnimationMcCoyPointingTalk             =  22,
-	kModelAnimationMcCoyUpsetTalk                =  23,
-	kModelAnimationMcCoyDismissiveTalk           =  24,
-	kModelAnimationMcCoyScratchEarTalk           =  25,
-	kModelAnimationMcCoyHandsOnWaistTalk         =  26,
-	kModelAnimationMcCoyScratchEarLongerTalk     =  27,
-	kModelAnimationMcCoyDodgeAndDrawGun          =  28,
-	kModelAnimationMcCoyLeaningOver              =  29,
-	kModelAnimationMcCoyThrowsBeggarInTrash      =  30,
-	kModelAnimationMcCoyDiesInAgony              =  31,
-	kModelAnimationMcCoyGivesFromPocket          =  32,
-	kModelAnimationMcCoyLeaningOverSearching     =  33,
-	kModelAnimationMcCoyLeaningOverResumeIdle    =  34,
-	kModelAnimationMcCoyEntersSpinner            =  35,
-	kModelAnimationMcCoyExitsSpinner             =  36,
-	kModelAnimationMcCoyClimbsLadderUp           =  37,
-	kModelAnimationMcCoyClimbsLadderDown         =  38,
-	kModelAnimationMcCoyRecoversFromPassingOut   =  39,
-	kModelAnimationMcCoyGiveMovement             =  40,
-	kModelAnimationMcCoySittingToUseConsole      =  41,
-	kModelAnimationMcCoyWithGunGrabbedByArm0     =  42,
-	kModelAnimationMcCoyWithGunGrabbedByArm1     =  43,
-	kModelAnimationMcCoyWithGunGrabbedByArmHurt  =  44,
-	kModelAnimationMcCoyWithGunGrabbedByArmFreed =  45,
-	kModelAnimationMcCoyTiedInChairIdle          =  46,
-	kModelAnimationMcCoyTiedInChairMoving        =  47,
-	kModelAnimationMcCoyTiedInChairFreed         =  48,
-	kModelAnimationMcCoyStartled                 =  49,
-	kModelAnimationMcCoyCrouchingDown            =  50,
-	kModelAnimationMcCoyCrouchedIdle             =  51,
-	kModelAnimationMcCoyCrouchedGetsUp           =  52,
-	kModelAnimationMcCoyDrinkingBooze            =  53,
+	kModelAnimationMcCoyWithGunIdle               =   0,
+	kModelAnimationMcCoyWithGunGotHitRight        =   1,
+	kModelAnimationMcCoyWithGunGotHitLeft         =   2,
+	kModelAnimationMcCoyWithGunWalking            =   3,
+	kModelAnimationMcCoyWithGunRunning            =   4,
+	kModelAnimationMcCoyWithGunShotDead           =   5,
+	kModelAnimationMcCoyWithGunClimbStairsUp      =   6,
+	kModelAnimationMcCoyWithGunClimbStairsDown    =   7,
+	kModelAnimationMcCoyWithGunUnholsterGun       =   8,
+	kModelAnimationMcCoyWithGunHolsterGun         =   9,
+	kModelAnimationMcCoyWithGunAiming             =  10,
+	kModelAnimationMcCoyWithGunStopAimResumeIdle  =  11,
+	kModelAnimationMcCoyWithGunShooting           =  12,
+	kModelAnimationMcCoyWalking                   =  13,
+	kModelAnimationMcCoyRunning                   =  14,
+	kModelAnimationMcCoyClimbStairsUp             =  15,
+	kModelAnimationMcCoyClimbStairsDown           =  16,
+	kModelAnimationMcCoyGotHitRight               =  17,
+	kModelAnimationMcCoyFallsOnHisBack            =  18,
+	kModelAnimationMcCoyIdle                      =  19,
+	kModelAnimationMcCoyProtestingTalk            =  20,
+	kModelAnimationMcCoyScratchHeadTalk           =  21,
+	kModelAnimationMcCoyPointingTalk              =  22,
+	kModelAnimationMcCoyUpsetTalk                 =  23,
+	kModelAnimationMcCoyDismissiveTalk            =  24,
+	kModelAnimationMcCoyScratchEarTalk            =  25,
+	kModelAnimationMcCoyHandsOnWaistTalk          =  26,
+	kModelAnimationMcCoyScratchEarLongerTalk      =  27,
+	kModelAnimationMcCoyDodgeAndDrawGun           =  28,
+	kModelAnimationMcCoyLeaningOver               =  29,
+	kModelAnimationMcCoyThrowsBeggarInTrash       =  30,
+	kModelAnimationMcCoyDiesInAgony               =  31,
+	kModelAnimationMcCoyGivesFromPocket           =  32,
+	kModelAnimationMcCoyLeaningOverSearching      =  33,
+	kModelAnimationMcCoyLeaningOverResumeIdle     =  34,
+	kModelAnimationMcCoyEntersSpinner             =  35,
+	kModelAnimationMcCoyExitsSpinner              =  36,
+	kModelAnimationMcCoyClimbsLadderUp            =  37,
+	kModelAnimationMcCoyClimbsLadderDown          =  38,
+	kModelAnimationMcCoyRecoversFromPassingOut    =  39,
+	kModelAnimationMcCoyGiveMovement              =  40,
+	kModelAnimationMcCoySittingToUseConsole       =  41,
+	kModelAnimationMcCoyWithGunGrabbedByArm0      =  42,
+	kModelAnimationMcCoyWithGunGrabbedByArm1      =  43,
+	kModelAnimationMcCoyWithGunGrabbedByArmHurt   =  44,
+	kModelAnimationMcCoyWithGunGrabbedByArmFreed  =  45,
+	kModelAnimationMcCoyTiedInChairIdle           =  46,
+	kModelAnimationMcCoyTiedInChairMoving         =  47,
+	kModelAnimationMcCoyTiedInChairFreed          =  48,
+	kModelAnimationMcCoyStartled                  =  49,
+	kModelAnimationMcCoyCrouchingDown             =  50,
+	kModelAnimationMcCoyCrouchedIdle              =  51,
+	kModelAnimationMcCoyCrouchedGetsUp            =  52,
+	kModelAnimationMcCoyDrinkingBooze             =  53,
 	//  54 -  92: Steele animations
+	kModelAnimationSteeleWithGunIdle                 =  54,
+	kModelAnimationSteeleWithGunHopASideways         =  55, // ??? untriggered
+	kModelAnimationSteeleWithGunHopBSideways         =  56, // ??? untriggered
+	kModelAnimationSteeleWithGunGotHitRight          =  57,
+	kModelAnimationSteeleWithGunGotHitLeft           =  58,
+	kModelAnimationSteeleWithGunWalking              =  59,
+	kModelAnimationSteeleWithGunRunning              =  60,
+	kModelAnimationSteeleWithGunShotDead             =  61,
+	kModelAnimationSteeleWithGunClimbStairsUp        =  62,
+	kModelAnimationSteeleWithGunClimbStairsDown      =  63,
+	kModelAnimationSteeleWithGunUnholsterGun         =  64,
+	kModelAnimationSteeleWithGunHolsterGun           =  65,
+	kModelAnimationSteeleWithGunShooting             =  66,
+	kModelAnimationSteeleWalking                     =  67,
+	kModelAnimationSteeleRunning                     =  68,
+	kModelAnimationSteeleClimbStairsUp               =  69,
+	kModelAnimationSteeleClimbStairsDown             =  70,
+	kModelAnimationSteeleGotHitRight                 =  71,
+	kModelAnimationSteeleGotHitLeft                  =  72,
+	kModelAnimationSteeleShotDead                    =  73,
+	kModelAnimationSteeleIdle                        =  74,
+	kModelAnimationSteeleTakeCigPuff                 =  75,
+	kModelAnimationSteeleThrowCigAndStepOnIt         =  76,
+	kModelAnimationSteeleATalk                       =  77,
+	kModelAnimationSteeleBTalk                       =  78,
+	kModelAnimationSteeleSmallLeftHandMoveTalk       =  79,
+	kModelAnimationSteeleProtestTalk                 =  80,
+	kModelAnimationSteeleDismissTalk                 =  81,
+	kModelAnimationSteeleWithGunAimingTalk           =  82,
+	kModelAnimationSteeleClimbUpTrapDoor             =  83,
+	kModelAnimationSteeleClimbLadderUp               =  84, // untriggered
+	kModelAnimationSteeleClimbLadderDown             =  85, // untriggered
+	kModelAnimationSteeleHopOffLadderDown            =  86, // untriggered
+	kModelAnimationSteeleLookRightThenDropDead       =  87, // UNUSED
+	kModelAnimationSteeleWithGunAimingToRightIdle    =  88, // Aiming at Gordo
+	kModelAnimationSteeleWithGunAimingToRightTalk    =  89,
+	kModelAnimationSteeleWithGunAimingToRightHandHit =  90,
+	kModelAnimationSteeleWithGunAimingToRightHolster =  91,
+	kModelAnimationSteeleWithGunAimingToRightShoot   =  92, // Shooting at Gordo
 	//  93 - 133: Gordo animations
+	kModelAnimationGordoWithGunIdle                =  93,
+	kModelAnimationGordoHopASideways               =  94, // UNUSED
+	kModelAnimationGordoHopBSideways               =  95, // UNUSED
+	kModelAnimationGordoWithGunGotHitRight         =  96,
+	kModelAnimationGordoWithGunGotHitLeft          =  97,
+	kModelAnimationGordoWithGunWalking             =  98,
+	kModelAnimationGordoWithGunRunning             =  99,
+	kModelAnimationGordoWithGunShotDead            = 100,
+	kModelAnimationGordoWithGunClimbStairsUp       = 101,
+	kModelAnimationGordoWithGunClimbStairsDown     = 102,
+	kModelAnimationGordoWithGunUnholsterGun        = 103,
+	kModelAnimationGordoWithGunHolsterGun          = 104,
+	kModelAnimationGordoWithGunShooting            = 105,
+	kModelAnimationGordoWithGunJumpingDown         = 106,
+	kModelAnimationGordoWalking                    = 107,
+	kModelAnimationGordoRunning                    = 108,
+	kModelAnimationGordoClimbStairsUp              = 109,
+	kModelAnimationGordoClimbStairsDown            = 110,
+	kModelAnimationGordoGotHitRight                = 111,
+	kModelAnimationGordoGotHitLeft                 = 112,
+	kModelAnimationGordoShotDead                   = 113,
+	kModelAnimationGordoSitting                    = 114,
+	kModelAnimationGordoWavesGetsUpAndPays         = 115,
+	kModelAnimationGordoIdle                       = 116,
+	kModelAnimationGordoBrushOffShoulder           = 117, // talks too?
+	kModelAnimationGordoChecksHand                 = 118, // talks too?
+	kModelAnimationGordoLeavesSomethingOnCounter   = 119,
+	kModelAnimationGordoIdleTalk                   = 120,
+	kModelAnimationGordoSuggestingTalk             = 121,
+	kModelAnimationGordoSuggestAndPointTalk        = 122,
+	kModelAnimationGordoSuggestAndDismissTalk      = 123,
+	kModelAnimationGordoDismissiveTalk             = 124,
+	kModelAnimationGordoUpsetTalk                  = 125,
+	kModelAnimationGordoExplainAndPointTalk        = 126,
+	kModelAnimationGordoAdjustBowtieTalk           = 127,
+	kModelAnimationGordoWithGunWithHostageATalk    = 128,
+	kModelAnimationGordoWithGunWithHostageBTalk    = 129, // hostage pushes his gun-holding hand upwards
+	kModelAnimationGordoWithGunWithHostageCTalk    = 130, // shooting hostage?
+	kModelAnimationGordoWithGunWithHostageLetsGo   = 131, // hits hostage?
+	kModelAnimationGordoWithGunWithHostageGetsShot = 132, // hits hostage?
+	kModelAnimationGordoSitsLookingAtSomething     = 133, // UNUSED
 	// 134 - 171: Dektora animations
 	kModelAnimationDektoraCombatIdle             = 134,
 	kModelAnimationDektoraCombatWalkingA         = 135,
@@ -1864,7 +1944,27 @@ enum GameModelAnimations {
 	// 838 - 845: Mama Isabella animations
 	// 846 - 856: Leon animations
 	// 857 - 862: Rat (Free Slot A/B) animations
+	kModelAnimationRatJumpAttack                   = 857,
+	kModelAnimationRatRunning                      = 858,
+	kModelAnimationRatDying                        = 859,
+	kModelAnimationRatHurt                         = 860,
+	kModelAnimationRatIdle                         = 861,
+	kModelAnimationRatSlowWalk                     = 862,
 	// 863 - 876: Maggie animations
+	kModelAnimationMaggieWalking                   = 863,
+	kModelAnimationMaggieStandingIdle              = 864,
+	kModelAnimationMaggieBarking                   = 865,
+	kModelAnimationMaggieLayingDown                = 866,
+	kModelAnimationMaggieLayingIdleTailWagging     = 867,
+	kModelAnimationMaggieLayingStandingUp          = 868,
+	kModelAnimationMaggieStandingOnTwoFeet         = 869,
+	kModelAnimationMaggieBarkingOrHeadUp           = 870,
+	kModelAnimationMaggieLayingDead                = 871,
+	kModelAnimationMaggieWalkingTrapped            = 872,
+	kModelAnimationMaggieStandingOnTwoFeetTrapped  = 873,
+	kModelAnimationMaggieExploding                 = 874,
+	kModelAnimationMaggieStandingIdleTrapped       = 875,
+	kModelAnimationMaggieToggleLaySleepingWakeUp   = 876,
 	// 877 - 884: Hysteria Patron1 (dancer) animations
 	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp = 877,
 	kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion   = 878,

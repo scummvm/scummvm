@@ -1381,13 +1381,17 @@ unsigned int Item::countNearby(uint32 shape, uint16 range) {
 uint32 Item::callUsecodeEvent(uint32 event, const uint8 *args, int argsize) {
 	uint32  class_id = _shape;
 
-	// Non-monster NPCs use _objId/_npcNum + 1024
+	// Non-monster NPCs use _objId/_npcNum + 1024 (2048 in crusader)
 	// Note: in the original, a non-monster NPC is specified with
 	// the FAST_ONLY flag. However, this causes some summoned monster which
 	// do not receive the FAST_ONLY flag to behave strangely. (Confirmed that
 	// happens in the original as well.) -wjp 20050128
-	if (_objId < 256 && (_extendedFlags & EXT_PERMANENT_NPC))
-		class_id = _objId + 1024;
+	if (_objId < 256 && (_extendedFlags & EXT_PERMANENT_NPC)) {
+		if (GAME_IS_U8)
+			class_id = _objId + 1024;
+		else
+			class_id = _objId + 2048;
+	}
 
 	// CHECKME: to make Pentagram behave as much like the original as possible,
 	// don't call any usecode if the original would call the wrong class
@@ -1893,13 +1897,17 @@ GravityProcess *Item::ensureGravityProcess() {
 }
 
 void Item::fall() {
-	if (_flags & FLG_HANGING || getShapeInfo()->is_fixed()) {
+	const ShapeInfo *info = getShapeInfo();
+	if (_flags & FLG_HANGING || info->is_fixed() ||
+		(info->_weight == 0 && GAME_IS_CRUSADER)) {
 		// can't fall
 		return;
 	}
 
+	int gravity = GAME_IS_CRUSADER ? 2 : 4; //!! constants
+
 	GravityProcess *p = ensureGravityProcess();
-	p->setGravity(4); //!! constant
+	p->setGravity(gravity);
 }
 
 void Item::grab() {
@@ -2849,9 +2857,9 @@ uint32 Item::I_avatarStoleSomething(const uint8 *args, unsigned int /*argsize*/)
 	ARG_ITEM_FROM_PTR(item);
 	if (!item) return 0;
 
-	// Check if dead to match original game behavior here..
+	// Abort if npc && dead to match original game behavior
 	Actor *actor = dynamic_cast<Actor *>(item);
-	if (!actor || actor->isDead())
+	if (actor && actor->isDead())
 		return 0;
 
 	ARG_UINT16(arg);

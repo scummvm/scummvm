@@ -39,7 +39,7 @@ public:
 
     bool hasFeature(MetaEngineFeature f) const override;
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
@@ -153,11 +153,9 @@ SaveStateDescriptor CGEMetaEngine::querySaveMetaInfos(const char *target, int sl
 	return SaveStateDescriptor();
 }
 
-bool CGEMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	if (desc) {
-		*engine = new CGE::CGEEngine(syst, desc);
-	}
-	return desc != 0;
+Common::Error CGEMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new CGE::CGEEngine(syst, desc);
+	return Common::kNoError;
 }
 
 } // End of namespace CGE

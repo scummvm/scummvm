@@ -414,11 +414,11 @@ private:
 
 class SegaCDFont : public Font {
 public:
-	SegaCDFont(const uint16 *convTable1, const uint16 *convTable2, const uint8 *widthTable1, const uint8 *widthTable2, const uint8 *widthTable3);
+	SegaCDFont(Common::Language lang, const uint16 *convTable1, const uint16 *convTable2, const uint8 *widthTable1, const uint8 *widthTable2, const uint8 *widthTable3);
 	~SegaCDFont() override;
 
 	bool load(Common::SeekableReadStream &file) override;
-	Type getType() const override { return kSJIS; }
+	Type getType() const override { return _forceOneByte ? kASCII : kSJIS; }
 	int getHeight() const override { return _height; }
 	int getWidth() const override { return _width; }
 	int getCharWidth(uint16 c) const override;
@@ -434,7 +434,8 @@ private:
 	const uint8 *_data;
 	const uint8 *_buffer;
 	bool _forceTwoByte;
-	bool _fixedWidth;
+	bool _forceOneByte;
+	Common::Language _lang;
 	uint8 _style;
 
 	const uint8 *_colorMap;

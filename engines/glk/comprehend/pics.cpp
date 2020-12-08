@@ -61,6 +61,46 @@ enum SpecialOpcode {
 
 /*-------------------------------------------------------*/
 
+uint32 Pics::ImageContext::getFillColor() const {
+	uint color = _fillColor;
+
+	// FIXME: Properly display text color in Crimson Crown
+	if (g_vm->getGameID() == "crimsoncrown" && color == 0x000000ff)
+		color = G_COLOR_WHITE;
+
+	return color;
+}
+
+void Pics::ImageContext::lineFixes() {
+	// WORKAROUND: Fix lines on title screens so floodfill works correctly
+	if (g_vm->getGameID() == "transylvania" && _picIndex == 9999) {
+		_drawSurface->drawLine(191, 31, 192, 31, G_COLOR_BLACK); // v
+		_drawSurface->drawLine(196, 50, 197, 50, G_COLOR_BLACK); // a
+		_drawSurface->drawLine(203, 49, 204, 49, G_COLOR_BLACK);
+		_drawSurface->drawLine(197, 53, 202, 53, G_COLOR_BLACK);
+		_drawSurface->drawLine(215, 51, 220, 51, G_COLOR_BLACK); // n
+		_drawSurface->drawLine(221, 51, 222, 51, G_COLOR_BLACK);
+		_drawSurface->drawLine(228, 50, 229, 50, G_COLOR_BLACK);
+		_drawSurface->drawLine(217, 59, 220, 59, G_COLOR_BLACK);
+		_drawSurface->drawLine(212, 49, 212, 50, G_COLOR_BLACK);
+		_drawSurface->drawLine(213, 49, 213, 52, G_COLOR_WHITE);
+		_drawSurface->drawLine(235, 52, 236, 61, G_COLOR_BLACK); // i
+		_drawSurface->drawLine(237, 61, 238, 61, G_COLOR_BLACK);
+	}
+
+	if (g_vm->getGameID() == "crimsoncrown" && _picIndex == 9999 && _x == 67 && _y == 55) {
+		_drawSurface->drawLine(78, 28, 77, 29, G_COLOR_WHITE);
+		_drawSurface->drawLine(71, 43, 69, 47, G_COLOR_WHITE);
+		_drawSurface->drawLine(67, 57, 68, 56, G_COLOR_WHITE);
+		_drawSurface->drawLine(79, 101, 80, 101, G_COLOR_WHITE);
+		_drawSurface->drawLine(183, 101, 184, 100, G_COLOR_WHITE);
+		_drawSurface->drawLine(193, 47, 193, 48, G_COLOR_WHITE);
+		_drawSurface->drawLine(68, 48, 71, 48, G_COLOR_BLACK);
+	}
+}
+
+/*-------------------------------------------------------*/
+
 Pics::ImageFile::ImageFile(const Common::String &filename) {
 	Common::File f;
 	uint16 version;
@@ -154,7 +194,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		}
 
 		debugC(kDebugGraphics, "draw_char(%c)", a);
-		ctx->_font->drawChar(ctx->_drawSurface, a, ctx->_textX, ctx->_textY, ctx->_fillColor);
+		ctx->_font->drawChar(ctx->_drawSurface, a, ctx->_textX, ctx->_textY, ctx->getFillColor());
 		ctx->_textX += ctx->_font->getCharWidth(a);
 		break;
 
@@ -234,11 +274,11 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 	case OPCODE_PAINT:
 		a = imageGetOperand(ctx) + (param & 1 ? 256 : 0);
 		b = imageGetOperand(ctx);
-
 		if (opcode & 0x1)
 			a += 255;
 
 		debugC(kDebugGraphics, "paint(%d, %d)", a, b);
+		ctx->lineFixes();
 		if (!(ctx->_drawFlags & IMAGEF_NO_FILL))
 			ctx->_drawSurface->floodFill(a, b, ctx->_fillColor);
 		break;
@@ -248,6 +288,8 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 		doResetOp(ctx, a);
 		break;
 	}
+
+	//ctx->_drawSurface->dumpToScreen();
 
 	return false;
 }
@@ -368,7 +410,7 @@ Common::SeekableReadStream *Pics::createReadStreamForMember(const Common::String
 }
 
 void Pics::drawPicture(int pictureNum) const {
-	ImageContext ctx(g_comprehend->_drawSurface, _font, g_comprehend->_drawFlags);
+	ImageContext ctx(g_comprehend->_drawSurface, _font, g_comprehend->_drawFlags, pictureNum);
 
 	if (pictureNum == DARK_ROOM) {
 		ctx._drawSurface->clearScreen(G_COLOR_BLACK);

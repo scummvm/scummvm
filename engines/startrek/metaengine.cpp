@@ -61,7 +61,7 @@ public:
 	}
 
     bool hasFeature(MetaEngineFeature f) const override;
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -81,12 +81,9 @@ bool StarTrekMetaEngine::hasFeature(MetaEngineFeature f) const {
 	    (f == kSimpleSavesNames);
 }
 
-bool StarTrekMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const StarTrek::StarTrekGameDescription *gd = (const StarTrek::StarTrekGameDescription *)desc;
-
-	*engine = new StarTrek::StarTrekEngine(syst, gd);
-
-	return (gd != 0);
+Common::Error StarTrekMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new StarTrek::StarTrekEngine(syst, (const StarTrek::StarTrekGameDescription *)desc);
+	return Common::kNoError;
 }
 
 SaveStateList StarTrekMetaEngine::listSaves(const char *target) const {

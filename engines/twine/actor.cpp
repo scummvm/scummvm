@@ -56,107 +56,110 @@ Actor::~Actor() {
 }
 
 void Actor::restartHeroScene() {
-	_engine->_scene->sceneHero->controlMode = ControlMode::kManual;
-	memset(&_engine->_scene->sceneHero->dynamicFlags, 0, sizeof(_engine->_scene->sceneHero->dynamicFlags));
-	memset(&_engine->_scene->sceneHero->staticFlags, 0, sizeof(_engine->_scene->sceneHero->staticFlags));
+	ActorStruct *sceneHero = _engine->_scene->sceneHero;
+	sceneHero->controlMode = ControlMode::kManual;
+	memset(&sceneHero->dynamicFlags, 0, sizeof(sceneHero->dynamicFlags));
+	memset(&sceneHero->staticFlags, 0, sizeof(sceneHero->staticFlags));
 
-	_engine->_scene->sceneHero->staticFlags.bComputeCollisionWithObj = 1;
-	_engine->_scene->sceneHero->staticFlags.bComputeCollisionWithBricks = 1;
-	_engine->_scene->sceneHero->staticFlags.bIsZonable = 1;
-	_engine->_scene->sceneHero->staticFlags.bCanDrown = 1;
-	_engine->_scene->sceneHero->staticFlags.bCanFall = 1;
+	sceneHero->staticFlags.bComputeCollisionWithObj = 1;
+	sceneHero->staticFlags.bComputeCollisionWithBricks = 1;
+	sceneHero->staticFlags.bIsZonable = 1;
+	sceneHero->staticFlags.bCanDrown = 1;
+	sceneHero->staticFlags.bCanFall = 1;
 
-	_engine->_scene->sceneHero->armor = 1;
-	_engine->_scene->sceneHero->positionInMoveScript = -1;
-	_engine->_scene->sceneHero->labelIdx = -1;
-	_engine->_scene->sceneHero->positionInLifeScript = 0;
-	_engine->_scene->sceneHero->zone = -1;
-	_engine->_scene->sceneHero->angle = previousHeroAngle;
+	sceneHero->armor = 1;
+	sceneHero->positionInMoveScript = -1;
+	sceneHero->labelIdx = -1;
+	sceneHero->positionInLifeScript = 0;
+	sceneHero->zone = -1;
+	sceneHero->angle = previousHeroAngle;
 
-	_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle, 0, &_engine->_scene->sceneHero->move);
+	_engine->_movements->setActorAngleSafe(sceneHero->angle, sceneHero->angle, 0, &sceneHero->move);
 	setBehaviour(previousHeroBehaviour);
 
 	cropBottomScreen = 0;
 }
 
 void Actor::loadHeroEntities() {
+	ActorStruct *sceneHero = _engine->_scene->sceneHero;
 	heroEntityATHLETICSize = HQR::getAllocEntry(&heroEntityATHLETIC, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROATHLETIC);
 	if (heroEntityATHLETICSize == 0) {
 		error("Failed to load actor athletic 3d data");
 	}
-	_engine->_scene->sceneHero->entityDataPtr = heroEntityATHLETIC;
+	sceneHero->entityDataPtr = heroEntityATHLETIC;
 	heroAnimIdxATHLETIC = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
 	heroEntityAGGRESSIVESize = HQR::getAllocEntry(&heroEntityAGGRESSIVE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROAGGRESSIVE);
 	if (heroEntityAGGRESSIVESize == 0) {
 		error("Failed to load actor aggressive 3d data");
 	}
-	_engine->_scene->sceneHero->entityDataPtr = heroEntityAGGRESSIVE;
+	sceneHero->entityDataPtr = heroEntityAGGRESSIVE;
 	heroAnimIdxAGGRESSIVE = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
 	heroEntityDISCRETESize = HQR::getAllocEntry(&heroEntityDISCRETE, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERODISCRETE);
 	if (heroEntityDISCRETESize == 0) {
 		error("Failed to load actor discrete 3d data");
 	}
-	_engine->_scene->sceneHero->entityDataPtr = heroEntityDISCRETE;
+	sceneHero->entityDataPtr = heroEntityDISCRETE;
 	heroAnimIdxDISCRETE = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
 	heroEntityPROTOPACKSize = HQR::getAllocEntry(&heroEntityPROTOPACK, Resources::HQR_FILE3D_FILE, FILE3DHQR_HEROPROTOPACK);
 	if (heroEntityPROTOPACKSize == 0) {
 		error("Failed to load actor protopack 3d data");
 	}
-	_engine->_scene->sceneHero->entityDataPtr = heroEntityPROTOPACK;
+	sceneHero->entityDataPtr = heroEntityPROTOPACK;
 	heroAnimIdxPROTOPACK = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
 	heroEntityNORMALSize = HQR::getAllocEntry(&heroEntityNORMAL, Resources::HQR_FILE3D_FILE, FILE3DHQR_HERONORMAL);
 	if (heroEntityNORMALSize == 0) {
 		error("Failed to load actor normal 3d data");
 	}
-	_engine->_scene->sceneHero->entityDataPtr = heroEntityNORMAL;
-	_engine->_scene->sceneHero->entityDataSize = heroEntityNORMALSize;
+	sceneHero->entityDataPtr = heroEntityNORMAL;
+	sceneHero->entityDataSize = heroEntityNORMALSize;
 	heroAnimIdxNORMAL = _engine->_animations->getBodyAnimIndex(AnimationTypes::kStanding);
 
-	_engine->_scene->sceneHero->animExtraPtr = _engine->_animations->currentActorAnimExtraPtr;
+	sceneHero->animExtraPtr = _engine->_animations->currentActorAnimExtraPtr;
 }
 
 void Actor::setBehaviour(HeroBehaviourType behaviour) {
+	ActorStruct *sceneHero = _engine->_scene->sceneHero;
 	switch (behaviour) {
 	case HeroBehaviourType::kNormal:
 		heroBehaviour = behaviour;
-		_engine->_scene->sceneHero->entityDataPtr = heroEntityNORMAL;
-		_engine->_scene->sceneHero->entityDataSize = heroEntityNORMALSize;
+		sceneHero->entityDataPtr = heroEntityNORMAL;
+		sceneHero->entityDataSize = heroEntityNORMALSize;
 		break;
 	case HeroBehaviourType::kAthletic:
 		heroBehaviour = behaviour;
-		_engine->_scene->sceneHero->entityDataPtr = heroEntityATHLETIC;
-		_engine->_scene->sceneHero->entityDataSize = heroEntityATHLETICSize;
+		sceneHero->entityDataPtr = heroEntityATHLETIC;
+		sceneHero->entityDataSize = heroEntityATHLETICSize;
 		break;
 	case HeroBehaviourType::kAggressive:
 		heroBehaviour = behaviour;
-		_engine->_scene->sceneHero->entityDataPtr = heroEntityAGGRESSIVE;
-		_engine->_scene->sceneHero->entityDataSize = heroEntityAGGRESSIVESize;
+		sceneHero->entityDataPtr = heroEntityAGGRESSIVE;
+		sceneHero->entityDataSize = heroEntityAGGRESSIVESize;
 		break;
 	case HeroBehaviourType::kDiscrete:
 		heroBehaviour = behaviour;
-		_engine->_scene->sceneHero->entityDataPtr = heroEntityDISCRETE;
-		_engine->_scene->sceneHero->entityDataSize = heroEntityDISCRETESize;
+		sceneHero->entityDataPtr = heroEntityDISCRETE;
+		sceneHero->entityDataSize = heroEntityDISCRETESize;
 		break;
 	case HeroBehaviourType::kProtoPack:
 		heroBehaviour = behaviour;
-		_engine->_scene->sceneHero->entityDataPtr = heroEntityPROTOPACK;
-		_engine->_scene->sceneHero->entityDataSize = heroEntityPROTOPACKSize;
+		sceneHero->entityDataPtr = heroEntityPROTOPACK;
+		sceneHero->entityDataSize = heroEntityPROTOPACKSize;
 		break;
 	};
 
-	const int32 bodyIdx = _engine->_scene->sceneHero->body;
+	const int32 bodyIdx = sceneHero->body;
 
-	_engine->_scene->sceneHero->entity = -1;
-	_engine->_scene->sceneHero->body = -1;
+	sceneHero->entity = -1;
+	sceneHero->body = -1;
 
 	initModelActor(bodyIdx, 0);
 
-	_engine->_scene->sceneHero->anim = AnimationTypes::kAnimNone;
-	_engine->_scene->sceneHero->animType = 0;
+	sceneHero->anim = AnimationTypes::kAnimNone;
+	sceneHero->animType = 0;
 
 	_engine->_animations->initAnim(AnimationTypes::kStanding, 0, AnimationTypes::kAnimInvalid, 0);
 }
@@ -170,12 +173,13 @@ void Actor::initSpriteActor(int32 actorIdx) {
 		stream.skip(4);
 
 		localActor->entity = localActor->sprite;
-		localActor->boudingBox.x.bottomLeft = stream.readSint16LE();
-		localActor->boudingBox.x.topRight = stream.readSint16LE();
-		localActor->boudingBox.y.bottomLeft = stream.readSint16LE();
-		localActor->boudingBox.y.topRight = stream.readSint16LE();
-		localActor->boudingBox.z.bottomLeft = stream.readSint16LE();
-		localActor->boudingBox.z.topRight = stream.readSint16LE();
+		ZVBox &bbox = localActor->boudingBox;
+		bbox.x.bottomLeft = stream.readSint16LE();
+		bbox.x.topRight = stream.readSint16LE();
+		bbox.y.bottomLeft = stream.readSint16LE();
+		bbox.y.topRight = stream.readSint16LE();
+		bbox.z.bottomLeft = stream.readSint16LE();
+		bbox.z.topRight = stream.readSint16LE();
 	}
 }
 
@@ -187,6 +191,7 @@ int32 Actor::getTextIdForBehaviour() const {
 	return (int32)_engine->_actor->heroBehaviour;
 }
 
+// see Animations::getBodyAnimIndex
 int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox) {
 	if (bodyIdx == -1) {
 		return -1;
@@ -227,7 +232,7 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoun
 					return index;
 				}
 
-				if (stream.readByte() != 14) {
+				if (stream.readByte() != ActionType::ACTION_ZV) {
 					return index;
 				}
 
@@ -262,12 +267,13 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		localActor->body = -1;
 		localActor->entity = -1;
 
-		localActor->boudingBox.x.bottomLeft = 0;
-		localActor->boudingBox.x.topRight = 0;
-		localActor->boudingBox.y.bottomLeft = 0;
-		localActor->boudingBox.y.topRight = 0;
-		localActor->boudingBox.z.bottomLeft = 0;
-		localActor->boudingBox.z.topRight = 0;
+		ZVBox &bbox = localActor->boudingBox;
+		bbox.x.bottomLeft = 0;
+		bbox.x.topRight = 0;
+		bbox.y.bottomLeft = 0;
+		bbox.y.topRight = 0;
+		bbox.z.bottomLeft = 0;
+		bbox.z.topRight = 0;
 		return;
 	}
 
@@ -280,19 +286,21 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 	int currentIndex = localActor->entity;
 
 	if (actorBoundingBox.hasBoundingBox) {
-		localActor->boudingBox.x.bottomLeft = actorBoundingBox.bottomLeftX;
-		localActor->boudingBox.x.topRight = actorBoundingBox.topRightX;
-		localActor->boudingBox.y.bottomLeft = actorBoundingBox.bottomLeftY;
-		localActor->boudingBox.y.topRight = actorBoundingBox.topRightY;
-		localActor->boudingBox.z.bottomLeft = actorBoundingBox.bottomLeftZ;
-		localActor->boudingBox.z.topRight = actorBoundingBox.topRightZ;
+		ZVBox &bbox = localActor->boudingBox;
+		bbox.x.bottomLeft = actorBoundingBox.bottomLeftX;
+		bbox.x.topRight = actorBoundingBox.topRightX;
+		bbox.y.bottomLeft = actorBoundingBox.bottomLeftY;
+		bbox.y.topRight = actorBoundingBox.topRightY;
+		bbox.z.bottomLeft = actorBoundingBox.bottomLeftZ;
+		bbox.z.topRight = actorBoundingBox.topRightZ;
 	} else {
+		ZVBox &bbox = localActor->boudingBox;
 		Common::MemoryReadStream stream(bodyTable[localActor->entity], bodyTableSize[localActor->entity]);
 		stream.skip(2);
 		const int16 var1 = stream.readSint16LE();
 		const int16 var2 = stream.readSint16LE();
-		localActor->boudingBox.y.bottomLeft = stream.readSint16LE();
-		localActor->boudingBox.y.topRight = stream.readSint16LE();
+		bbox.y.bottomLeft = stream.readSint16LE();
+		bbox.y.topRight = stream.readSint16LE();
 		const int16 var3 = stream.readSint16LE();
 		const int16 var4 = stream.readSint16LE();
 
@@ -312,10 +320,10 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 			result >>= 2;
 		}
 
-		localActor->boudingBox.x.bottomLeft = -result;
-		localActor->boudingBox.x.topRight = result;
-		localActor->boudingBox.z.bottomLeft = -result;
-		localActor->boudingBox.z.topRight = result;
+		bbox.x.bottomLeft = -result;
+		bbox.x.topRight = result;
+		bbox.z.bottomLeft = -result;
+		bbox.z.topRight = result;
 	}
 
 	if (currentIndex == -1) {
@@ -377,12 +385,13 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->y = -1;
 	actor->z = 0;
 
-	actor->boudingBox.x.bottomLeft = 0;
-	actor->boudingBox.x.topRight = 0;
-	actor->boudingBox.y.bottomLeft = 0;
-	actor->boudingBox.y.topRight = 0;
-	actor->boudingBox.z.bottomLeft = 0;
-	actor->boudingBox.z.topRight = 0;
+	ZVBox &bbox = actor->boudingBox;
+	bbox.x.bottomLeft = 0;
+	bbox.x.topRight = 0;
+	bbox.y.bottomLeft = 0;
+	bbox.y.topRight = 0;
+	bbox.z.bottomLeft = 0;
+	bbox.z.topRight = 0;
 
 	actor->angle = 0;
 	actor->speed = 40;
@@ -484,13 +493,12 @@ void Actor::processActorExtraBonus(int32 actorIdx) { // GiveExtraBonus
 		return;
 	}
 	if (actor->dynamicFlags.bIsDead) {
-		_engine->_extra->addExtraBonus(actor->x, actor->y, actor->z, ANGLE_90, 0, bonusSprite, actor->bonusAmount);
-		// FIXME add constant for sample index
+		_engine->_extra->addExtraBonus(actor->x, actor->y, actor->z, ANGLE_90, ANGLE_0, bonusSprite, actor->bonusAmount);
 		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->x, actor->y, actor->z, actorIdx);
 	} else {
-		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->z);
-		_engine->_extra->addExtraBonus(actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, 200, angle, bonusSprite, actor->bonusAmount);
-		// FIXME add constant for sample index
+		ActorStruct *sceneHero = _engine->_scene->sceneHero;
+		const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(actor->x, actor->z, sceneHero->x, sceneHero->z);
+		_engine->_extra->addExtraBonus(actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, ANGLE_70, angle, bonusSprite, actor->bonusAmount);
 		_engine->_sound->playSample(Samples::ItemPopup, 1, actor->x, actor->y + actor->boudingBox.y.topRight, actor->z, actorIdx);
 	}
 }

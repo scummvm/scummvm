@@ -77,11 +77,9 @@ public:
 		}
 	}
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
-		if (desc) {
-			*engine = new TsAGE::TSageEngine(syst, (const TsAGE::tSageGameDescription *)desc);
-		}
-		return desc != 0;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {
+		*engine = new TsAGE::TSageEngine(syst, (const TsAGE::tSageGameDescription *)desc);
+		return Common::kNoError;
 	}
 
 	static Common::String generateGameStateFileName(const char *target, int slot) {

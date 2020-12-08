@@ -45,6 +45,15 @@
 
 namespace Graphics {
 
+/**
+ * @defgroup graphics_transparent_surface Transparent surface
+ * @ingroup graphics
+ *
+ * @brief TransparentSurface class.
+ *
+ * @{
+ */
+
 // Enums
 /**
  @brief The possible flipping parameters for the blit method.
@@ -185,7 +194,7 @@ private:
         delete ptr;
     }
 };*/
-
+/** @} */
 } // End of namespace Graphics
 
 

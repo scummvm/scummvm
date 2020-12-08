@@ -30,6 +30,13 @@
 
 class MidiDriver_BASE;
 
+/**
+ * @defgroup audio_midiparser MIDI parser
+ * @ingroup audio
+ *
+ * @brief A framework and common functionality for parsing event-based music streams.
+ * @{
+ */
 
 
 //////////////////////////////////////////////////
@@ -488,5 +495,5 @@ public:
 	static MidiParser *createParser_QT();
 	static void timerCallback(void *data) { ((MidiParser *) data)->onTimer(); }
 };
-
+/** @} */
 #endif

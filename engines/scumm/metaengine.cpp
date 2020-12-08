@@ -333,13 +333,6 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		return Common::kUnsupportedGameidError;
 	}
 
-	// We don't support yet the
-	// the full game.
-	if (!strcmp(res.game.gameid, "pajama2") && !strcmp(res.extra, "Russobit")) {
-		GUIErrorMessage(_("The Russian version of Pajama Sam 2 is not supported yet due to incomplete code."));
-		return Common::kUnsupportedGameidError;
-	}
-
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
 	Common::updateGameGUIOptions(res.game.guioptions, getGameGUIOptionsDescriptionLanguage(res.language));

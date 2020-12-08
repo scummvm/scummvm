@@ -143,7 +143,11 @@ static const MadeGameDescription gameDescriptions[] = {
 		{
 			"rtz",
 			"V1.2, 9/29/94, CD",
-			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 276584),
+			{
+				{ "rtzcd.red", 0, "946997d8b0aa6cb4e848bad02a1fc3d2", 276584 },
+				{ "rtzcd.prj", 0, "974d74410c3c29d50e857863e8bf40e2", 43016792 },
+				AD_LISTEND
+			},
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
@@ -253,6 +257,29 @@ static const MadeGameDescription gameDescriptions[] = {
 			"V1.2, 3/31/95, CD",
 			AD_ENTRY1s("rtzcd.red", "946997d8b0aa6cb4e848bad02a1fc3d2", 354614),
 			Common::FR_FRA,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_RTZ,
+		0,
+		GF_CD_COMPRESSED,
+		3,
+	},
+
+	{
+		// Return to Zork - Korean CD version 1.2 9/29/94
+		// Dub only. No text was translated, even in menus, so there are no font issues.
+		// submitted by trembyle
+		{
+			"rtz",
+			"V1.2, 9/29/94, CD",
+			{
+				{ "rtzcd.red", 0, "946997d8b0aa6cb4e848bad02a1fc3d2", 276584 },
+				{ "rtzcd.prj", 0, "3c8644f7ce77b74968637c035c3532d8", 48083511 },
+				AD_LISTEND
+			},
+			Common::KO_KOR,
 			Common::kPlatformDOS,
 			ADGF_CD,
 			GUIO0()

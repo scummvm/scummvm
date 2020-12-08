@@ -72,6 +72,7 @@
 #include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
 #include "scumm/imuse/sysex.h"
+#include "scumm/he/localizer.h"
 #include "scumm/he/sprite_he.h"
 #include "scumm/he/cup_player_he.h"
 #include "scumm/util.h"
@@ -123,6 +124,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _messageDialog(0), _pauseDialog(0), _versionDialog(0),
 	  _rnd("scumm")
 	  {
+
+	_localizer = nullptr;
 
 #ifdef USE_RGB_COLOR
 	if (_game.features & GF_16BIT_COLOR) {
@@ -1336,6 +1339,14 @@ Common::Error ScummEngine::init() {
 				_system->fillScreen(0x1d);
 			}
 	}
+
+#ifdef ENABLE_HE
+	Localizer *loc = new Localizer();
+	if (!loc->isValid())
+		delete loc;
+	else
+		_localizer = loc;
+#endif
 
 	_outputPixelFormat = _system->getScreenFormat();
 

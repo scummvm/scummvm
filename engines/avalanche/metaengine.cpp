@@ -60,7 +60,7 @@ public:
 		return "avalanche";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	int getMaximumSaveSlot() const override { return 99; }
@@ -69,10 +69,9 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 };
 
-bool AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	if (gd)
-		*engine = new AvalancheEngine(syst, (const AvalancheGameDescription *)gd);
-	return gd != 0;
+Common::Error AvalancheMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
+	*engine = new AvalancheEngine(syst, (const AvalancheGameDescription *)gd);
+	return Common::kNoError;
 }
 
 bool AvalancheMetaEngine::hasFeature(MetaEngineFeature f) const {

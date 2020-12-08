@@ -303,7 +303,7 @@ public:
 		return "sci";
 	}
 
-    bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	SaveStateList listSaves(const char *target) const override;
@@ -316,23 +316,22 @@ public:
 	virtual ADDetectedGame fallbackDetectExtern(uint md5Bytes, const FileMap &allFiles, const Common::FSList &fslist) const override;
 };
 
-bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const GameIdStrToEnum *g = s_gameIdStrToEnum;
 	for (; g->gameidStr; ++g) {
 		if (0 == strcmp(desc->gameId, g->gameidStr)) {
 #ifndef ENABLE_SCI32
 			if (g->isSci32) {
-				Engine::errorUnsupportedGame(_("SCI32 support not compiled in"));
-				return false;
+				return Common::Error(Common::kUnsupportedGameidError, _s("SCI32 support not compiled in"));
 			}
 #endif
 
 			*engine = new SciEngine(syst, desc, g->gameidEnum);
-			return true;
+			return Common::kNoError;
 		}
 	}
 
-	return false;
+	return Common::kUnsupportedGameidError;
 }
 
 bool SciMetaEngine::hasFeature(MetaEngineFeature f) const {

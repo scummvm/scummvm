@@ -29,7 +29,7 @@ namespace Glk {
 namespace Comprehend {
 
 enum OOToposRoomFlag {
-	OO_ROOM_FLAG_FUEL = 1,
+	OO_ROOM_IN_SHIP = 1,
 	OO_ROOM_FLAG_DARK = 2
 };
 
@@ -44,7 +44,7 @@ enum OOToposFlag {
 	OO_FLAG_44 = 44,
 	OO_FLAG_SUFFICIENT_FUEL = 51,
 	OO_FLAG_REVERSE_VIDEO = 53,	// Effect of wearing goggles
-	OO_FLAG_55 = 55,
+	OO_FLAG_TOO_DARK = 55,
 	OO_FLAG_TOO_BRIGHT = 56,
 	OO_FLAG_58 = 58,
 	OO_FLAG_59 = 59,
@@ -62,7 +62,7 @@ static const GameStrings OO_STRINGS = {
 
 OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE),
 		_noFloodfill(UNSET), _lightOn(UNSET), _stringVal1(0), _stringVal2(0),
-		_printComputerMsg(true), _shipNotWorking(false), _currentRoomCopy(-1) {
+		_printComputerMsg(true), _shipNotWorking(false) {
 	_gameDataFile = "g0";
 
 	// Extra strings are (annoyingly) stored in the game binary
@@ -123,10 +123,8 @@ int OOToposGame::roomIsSpecial(unsigned room_index, unsigned *roomDescString) {
 void OOToposGame::beforeTurn() {
 	ComprehendGameV2::beforeTurn();
 
-	// Make  a copy of the current room
-	_currentRoomCopy = _currentRoom;
-
-	if (_flags[OO_FLAG_55]) {
+	if (_flags[OO_FLAG_TOO_DARK]) {
+		// Show placeholder room if room is too dark
 		_currentRoom = 55;
 		_updateFlags |= UPDATE_GRAPHICS;
 	} else if (_flags[OO_FLAG_TOO_BRIGHT]) {
@@ -156,6 +154,10 @@ void OOToposGame::beforePrompt() {
 void OOToposGame::afterPrompt() {
 	ComprehendGameV2::afterPrompt();
 
+	// WORKAROUND: Allow for the Apple 2 password in the DOS version
+	if (!scumm_stricmp(_inputLine, "vug957a"))
+		strcpy(_inputLine, "tse957x");
+
 	if (_currentRoom != _currentRoomCopy)
 		_updateFlags |= UPDATE_GRAPHICS;
 	_currentRoom = _currentRoomCopy;
@@ -184,8 +186,8 @@ void OOToposGame::handleSpecialOpcode(uint8 operand) {
 		break;
 
 	case 5:
-		// Won the game, or fall-through from case 3
-		game_restart();
+		// Won the game
+		g_comprehend->quitGame();
 		break;
 
 	case 6:
@@ -329,7 +331,7 @@ void OOToposGame::checkShipFuel() {
 	for (int idx = 168; idx < 175; ++idx, ++_stringVal1, ++_stringVal2) {
 		if (_flags[idx]) {
 			Item *item = get_item(ITEMS[_stringVal2] - 1);
-			if (item->_room == ROOM_INVENTORY || (get_room(item->_room)->_flags & OO_ROOM_FLAG_FUEL) != 0) {
+			if (item->_room == ROOM_INVENTORY || (get_room(item->_room)->_flags & OO_ROOM_IN_SHIP) != 0) {
 				Instruction varAdd(0x86, 0x4B, _stringVal1);
 				execute_opcode(&varAdd, nullptr, nullptr);
 			}
@@ -362,7 +364,7 @@ void OOToposGame::checkShipDepart() {
 
 	if (!_shipNotWorking && _flags[OO_FLAG_SUFFICIENT_FUEL]) {
 		Item *item = get_item(ITEM_SERUM_VIAL - 1);
-		if (item->_room == ROOM_INVENTORY || (get_room(item->_room)->_flags & OO_ROOM_FLAG_FUEL) != 0) {
+		if (item->_room == ROOM_INVENTORY || (get_room(item->_room)->_flags & OO_ROOM_IN_SHIP) != 0) {
 			if (!_flags[OO_TRACTOR_BEAM]) {
 				// I detect a tractor beam
 				console_println(_strings2[77].c_str());

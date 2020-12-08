@@ -139,6 +139,9 @@ public:
 	//! Check if we can absorb a hit with the shield. Returns the modified damage value.
 	int receiveShieldHit(int damage, uint16 damage_type) override;
 
+	//! Detonate used bomb
+	void detonateBomb();
+
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 

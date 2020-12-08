@@ -38,7 +38,7 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const override;
-	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	virtual Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	virtual int getMaximumSaveSlot() const override;
 	virtual SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
@@ -113,23 +113,21 @@ SaveStateDescriptor DragonsMetaEngine::querySaveMetaInfos(const char *target, in
 	return SaveStateDescriptor();
 }
 
-bool DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+Common::Error DragonsMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 	const Dragons::DragonsGameDescription *gd = (const Dragons::DragonsGameDescription *)desc;
-	if (gd) {
-		switch (gd->gameId) {
-		case Dragons::kGameIdDragons:
-			*engine = new Dragons::DragonsEngine(syst, desc);
-			break;
-		case Dragons::kGameIdDragonsBadExtraction:
-			GUIErrorMessageWithURL(_("Error: It appears that the game data files were extracted incorrectly.\n\nYou should only extract STR and XA files using the special method. The rest should be copied normally from your game CD.\n\n See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"),
-								   "https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons");
-			break;
-		default:
-			error("Unknown game id");
-			break;
-		}
+
+	switch (gd->gameId) {
+	case Dragons::kGameIdDragons:
+		*engine = new Dragons::DragonsEngine(syst, desc);
+		break;
+	case Dragons::kGameIdDragonsBadExtraction:
+		GUIErrorMessageWithURL(_("Error: It appears that the game data files were extracted incorrectly.\n\nYou should only extract STR and XA files using the special method. The rest should be copied normally from your game CD.\n\n See https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons"),
+		                       "https://wiki.scummvm.org/index.php?title=Datafiles#Blazing_Dragons");
+		break;
+	default:
+		return Common::kUnsupportedGameidError;
 	}
-	return desc != 0;
+	return Common::kNoError;
 }
 
 Common::KeymapArray DragonsMetaEngine::initKeymaps(const char *target) const {

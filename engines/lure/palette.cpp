@@ -195,6 +195,18 @@ PaletteCollection::PaletteCollection(uint16 resourceId) {
 		_palettes = (Palette **) Memory::alloc(_numPalettes * sizeof(Palette *));
 		for (uint8 paletteCtr = 0; paletteCtr < _numPalettes; ++paletteCtr, data += palSize)
 			_palettes[paletteCtr] = new Palette(SUB_PALETTE_SIZE, data, RGB64);
+
+		// WORKAROUND Intro animation 1 VGA palette has bad entries,
+		// causing the text to be all white instead of shades of grey.
+		// Updating it here with the color values of the other intro
+		// text screens.
+		if (resourceId == 0x32 && _palettes[0]->getEntry(0x22) == 0x00FFFFFF) {
+			_palettes[0]->setEntry(0x22, 0x00E3E3E3); // 38 38 38
+			_palettes[0]->setEntry(0x24, 0x00C3C3C3); // 30 30 30
+			_palettes[0]->setEntry(0x26, 0x00929292); // 24 24 24
+			_palettes[0]->setEntry(0x27, 0x00717171); // 1C 1C 1C
+			_palettes[0]->setEntry(0x28, 0x00000000); // 00 00 00
+		}
 	}
 
 	delete resource;

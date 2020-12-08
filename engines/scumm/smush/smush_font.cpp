@@ -199,12 +199,6 @@ int SmushFont::draw2byte(byte *buffer, int dst_width, int x, int y, int idx) {
 }
 
 void SmushFont::drawSubstring(const char *str, uint numBytesMax, byte *buffer, int dst_width, int x, int y) {
-	// This happens in the Full Throttle intro. I don't know if our
-	// text-drawing functions are buggy, or if this function is supposed
-	// to have to check for it.
-	if (x < 0)
-		x = 0;
-
 	if (_vm->_language == Common::HE_ISR) {
 		for (int i = strlen(str); i >= 0 && numBytesMax; i--) {
 			x += drawChar(buffer, dst_width, x, y, str[i]);
@@ -361,6 +355,8 @@ void SmushFont::drawStringWrap(const char *str, byte *buffer, Common::Rect &clip
 	} else {
 		if (x > clipRect.right - maxWidth)
 			x = clipRect.right - maxWidth;
+		if (x < clipRect.left)
+			x = clipRect.left;
 	}
 
 	for (int i = 0; i < numSubstrings; i++) {

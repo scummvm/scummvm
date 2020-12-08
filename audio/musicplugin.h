@@ -34,6 +34,14 @@ class Error;
 class MusicPluginObject;
 
 /**
+ * @defgroup audio_musicplugin Music devices and plugins
+ * @ingroup audio
+ *
+ * @brief API for managing music devices and music plugins.
+ * @{
+ */
+
+/**
  * Description of a Music device. Used to list the devices a Music driver
  * can manage and their capabilities.
  * A device with an empty name means the default device.
@@ -125,5 +133,5 @@ public:
 
 /** Convenience shortcut for accessing the Music manager. */
 #define MusicMan MusicManager::instance()
-
+/** @} */
 #endif

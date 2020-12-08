@@ -355,9 +355,10 @@ void Scene::changeScene() {
 	heroPositionType = ScenePositionType::kNoPosition;
 	_sampleAmbienceTime = 0;
 
-	_engine->_grid->newCameraX = _sceneActors[currentlyFollowedActor].x >> 9;
-	_engine->_grid->newCameraY = _sceneActors[currentlyFollowedActor].y >> 8;
-	_engine->_grid->newCameraZ = _sceneActors[currentlyFollowedActor].z >> 9;
+	ActorStruct *followedActor = getActor(currentlyFollowedActor);
+	_engine->_grid->newCameraX = followedActor->x >> 9;
+	_engine->_grid->newCameraY = followedActor->y >> 8;
+	_engine->_grid->newCameraZ = followedActor->z >> 9;
 
 	_engine->_gameState->magicBallIdx = -1;
 	_engine->_movements->heroMoved = true;
@@ -367,8 +368,7 @@ void Scene::changeScene() {
 	_engine->_screens->lockPalette = false;
 
 	needChangeScene = -1;
-	changeRoomVar10 = 1;
-	changeRoomVar11 = 14;
+	changeRoomVar10 = true;
 
 	_engine->_renderer->setLightVector(alphaLight, betaLight, 0);
 
@@ -447,7 +447,7 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 
 	const int16 amount = zone->infoData.Bonus.amount;
 	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, sceneHero->x, sceneHero->z);
-	const int32 index = _engine->_extra->addExtraBonus(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, zone->topRight.y, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, 180, angle, bonusSprite, amount);
+	const int32 index = _engine->_extra->addExtraBonus(ABS(zone->topRight.x + zone->bottomLeft.x) / 2, zone->topRight.y, ABS(zone->topRight.z + zone->bottomLeft.z) / 2, ANGLE_63, angle, bonusSprite, amount);
 
 	if (index != -1) {
 		_engine->_extra->extraList[index].type |= 0x400;

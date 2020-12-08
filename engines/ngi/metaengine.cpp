@@ -68,7 +68,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
-	bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool NGIMetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -154,13 +154,9 @@ SaveStateDescriptor NGIMetaEngine::querySaveMetaInfos(const char *target, int sl
 	return SaveStateDescriptor();
 }
 
-bool NGIMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
-	const NGI::NGIGameDescription *gd = (const NGI::NGIGameDescription *)desc;
-
-	if (gd) {
-		*engine = new NGI::NGIEngine(syst, gd);
-	}
-	return desc != 0;
+Common::Error NGIMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	*engine = new NGI::NGIEngine(syst, (const NGI::NGIGameDescription *)desc);
+	return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(NGI)

@@ -42,13 +42,12 @@ private:
 	 * Verify animation at keyframe
 	 * @param animIdx Animation index
 	 * @param animPtr Animation pointer
-	 * @param bodyPtr Body model poitner
 	 * @param animTimerDataPtr Animation time data
 	 */
-	int32 verifyAnimAtKeyframe(int32 animPos, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	bool verifyAnimAtKeyframe(int32 animPos, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr);
 
-	uint8 *animBuffer1 = nullptr;
-	uint8 *animBuffer2 = nullptr;
+	uint8 *const animBuffer;
+	uint8 *animBufferPos = nullptr;
 
 	/** Rotation by anim and not by engine */
 	int16 processRotationByAnim = 0; // processActorVar5
@@ -78,7 +77,7 @@ public:
 	 * @param bodyPtr Body model poitner
 	 * @param animTimerDataPtr Animation time data
 	 */
-	int32 setAnimAtKeyframe(int32 keyframeIdx, uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	int32 setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Get total number of keyframes in animation
@@ -113,7 +112,7 @@ public:
 	 * @param bodyPtr Body model poitner
 	 * @param animTimerDataPtr Animation time data
 	 */
-	int32 stockAnimation(uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	int32 stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Initialize animation

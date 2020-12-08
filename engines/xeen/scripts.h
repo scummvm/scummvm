@@ -488,7 +488,7 @@ private:
 	bool cmdGotoRandom(ParamsIterator &params);
 
 	/**
-	 * Plays the Dark Side of Xeen ending
+	 * Plays the Darkside of Xeen ending
 	 */
 	bool cmdCutsceneEndDarkside(ParamsIterator &params);
 
@@ -515,7 +515,7 @@ private:
 	void doCloudsEnding();
 
 	/**
-	 * Do the Dark Side of Xeen ending
+	 * Do the Darkside of Xeen ending
 	 */
 	void doDarkSideEnding();
 

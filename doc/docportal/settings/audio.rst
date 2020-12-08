@@ -2,19 +2,28 @@
 Audio
 ===============
 
-
-Audio settings are found in four tabs:
+Audio settings are found on four tabs:
 
 :ref:`Audio <audiotab>` | :ref:`Volume <volumetab>` | :ref:`MIDI <miditab>` | :ref:`MT-32 <mt32tab>` 
 
-For a comprehensive look at how to use ScummVM's extensive audio settings, check out our :doc:`../guides/understand_audio` guide. 
+**To change settings globally:**
+ 
+ 	From the Launcher, select **Options**, then select the applicable tab. 
+	 
+**To change settings for a specific game:**
+	
+	From the Launcher, highlight the game in the games list, select **Edit Game**, and then select the applicable tab. 
+
+For a comprehensive look at how to use ScummVM's extensive audio settings, check out our :doc:`../advanced_topics/understand_audio` guide. 
+
+All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description. 
 
 .. _audiotab:
 
 The Audio tab 
 -----------------
 
-Use the audio tab to change the sound output for games.
+Use the Audio tab to change the sound output for games.
 
 .. figure:: ../images/settings/audio.png
 
@@ -30,22 +39,22 @@ Use the audio tab to change the sound output for games.
 
 .. _device:
 
-**Preferred device (global settings)** or **Music device (game-specific settings)**
-	Specifies the device ScummVM uses to output audio. When set to <default>, ScummVM will automatically choose the most appropriate option for the played game. If set to an MT-32 or a MIDI device, or if ScummVM chooses one of these automatically, the settings on the MT-32 or MIDI tabs also apply.
+Preferred device (global settings) or Music device (game-specific settings)
+	Specifies the device ScummVM uses to output audio. When set to **<default>**, ScummVM automatically chooses the most appropriate option for the played game. If set to an MT-32 or a MIDI device, or if ScummVM chooses one of these automatically, the settings on the MT-32 or MIDI tabs also apply.
 
 	*music_driver* 
 
 .. _opl:
 
 AdLib Emulator 
-	Chooses which emulator is used by ScummVM when the AdLib emulator is chosen as the preferred device.
+	Chooses which emulator is used by ScummVM when the AdLib emulator is chosen as the **Preferred device**.
 
 	*opl_driver* 
 
 .. _speechmute:
 
-**Text and Speech**
-	For games with digitized speech, this setting allows the user to decide whether to play the game with speech only, subtitles only, or both. 
+Text and Speech
+	For games with digitized speech, this setting lets the user decide whether to play the game with speech only, subtitles only, or both. 
 
 	*speech_mute* 
 
@@ -53,7 +62,7 @@ AdLib Emulator
 
 .. _talkspeed:
 
-**Subtitle speed**
+Subtitle speed
 	Adjusts the length of time that the subtitles are displayed on screen. The lower the speed is set, the longer the subtitles are displayed.
 
 	*talkspeed* 
@@ -65,40 +74,40 @@ AdLib Emulator
 The Volume tab
 -----------------
 
-Use the volume tab to set the relative volumes for various sounds.
+Use the Volume tab to set the relative volumes for various in-game sounds.
 
 
 .. figure:: ../images/settings/volume_game.png
 
-    The Audio tab in the game-specific settings.
+    The Volume tab in the game-specific settings.
 
 ,,,,,,,,,,,,,
 
 
 .. _music:
 
-**Music volume**
-	Adjusts the volume of the music played back in the game. 
+Music volume
+	Adjusts the volume of the music in the game. 
 
 	*music_volume* 
 
 .. _sfx:
 
-**SFX volume**
-	Adjusts the volume of the sound effects within the game.
+SFX volume
+	Adjusts the volume of the sound effects in the game.
 
 	*sfx_volume* 
 
 .. _speechvol:
 
-**Speech volume**
+Speech volume
 	Adjusts the volume of the digitized speech in the game, if it has any.
 
 	*speech_volume* 
 
 .. _mute:
 
-**Mute All**
+Mute All
 	Mutes all game audio. 
 
 	*mute* 
@@ -111,7 +120,7 @@ Use the volume tab to set the relative volumes for various sounds.
 The MIDI tab 
 ------------------------------
 
-Use the MIDI tab to change the settings of General MIDI devices.
+Use the MIDI tab to change the settings of General MIDI (GM) devices. 
 
 
 .. figure:: ../images/settings/MIDI.png
@@ -122,14 +131,14 @@ Use the MIDI tab to change the settings of General MIDI devices.
 
 .. _gm:
 
-**GM Device**
-	Specifies a preferred General MIDI (GM) device, which ScummVM uses if the **Preferred device** is set to **<default>** and General MIDI playback is required.   
+GM Device
+	Specifies a preferred General MIDI device, which ScummVM uses if the **Preferred device** is set to **<default>** and General MIDI playback is required.   
 
 	*gm_device* 
 
 .. _soundfont:
 
-**Soundfont**
+Soundfont
 	Specifies the path to a soundfont file, if this is required by the GM device. 
 
 	*soundfont* 
@@ -143,7 +152,7 @@ Mixed AdLib/MIDI mode
 
 .. _gain:
 
-**MIDI gain**
+MIDI gain
 	Adjusts the relative volume of the MIDI music. This is only supported by some music devices.
 	 
 	*midi_gain* 
@@ -152,18 +161,19 @@ Mixed AdLib/MIDI mode
 
 
 FluidSynth 
-************************************************************************
+****************
 
 Opens a new dialog, with three further tabs:
-`Reverb`_ | `Chorus`_ | `Misc`_
+:ref:`fsreverb` | `Chorus`_ | `Misc`_
 
 
 .. figure:: ../images/settings/fluidsynth.png
 
-    The FluidSynth dialog, from the MIDI tab.
+    The FluidSynth dialog, reached from the MIDI tab.
 
+.. _fsreverb:
 
-_`Reverb`
+Reverb
 ^^^^^^^^^^^^^^^^^
 
 Reverberation, or reverb, describes the pattern of echoes and reflections that occur when a sound is heard in an enclosed closed space, such as a room or a concert hall. 
@@ -269,9 +279,9 @@ Interpolation
 .. _mt32tab:
 
 The MT-32 tab 
-----------------------------------------------------
+-----------------
 
-Use the MT-32 tab to change the settings of MT-32 devices.
+Use the MT-32 tab to change the settings of Roland MT-32 devices.
 
 
 .. figure:: ../images/settings/MT32.png
@@ -290,14 +300,16 @@ MT-32 Device
 .. _nativemt32:
 
 **True Roland MT-32 (disable GM emulation)**
-	Enable this option only if you are using an actual Roland MT-32, LAPC-I, CM-64, CM-32L, CM-500 or other MT-32 compatible device. Note that this cannot be used in conjuntion with the Roland GS device option. 
+	Tells ScummVM that the MIDI device is an actual Roland MT-32, LAPC-I, CM-64, CM-32L, CM-500 or other MT-32 device. Note that this cannot be used in conjuntion with the Roland GS device option. 
 
 	*native_mt32*
 
 .. _gs:
 
 **Roland GS device (enable MT-32 mappings)**
-	 Enable this option if you are using a GS device that has an MT-32 map, such as an SC-55, SC-88 or SC-8820. Note that this cannot be used in conjunction with the True Roland MT-32 option. 
+	Tells ScummVM that the MIDI device is a GS device that has an MT-32 map, such as an SC-55, SC-88 or SC-8820. Note that this cannot be used in conjunction with the True Roland MT-32 option. 
 
+	*enable_gs*
 
+	
 

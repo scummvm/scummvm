@@ -31,6 +31,7 @@
 #include "kyra/sound/sound.h"
 
 #include "common/system.h"
+#include "common/substream.h"
 
 #include "base/version.h"
 
@@ -407,8 +408,10 @@ void EoBIntroPlayer::start(int part) {
 	if (part != kOnlyIntro) {
 		openingCredits();
 
-		if (part == kOnlyCredits)
+		if (part == kOnlyCredits) {
+			_vm->_allowSkip = false;
 			return;
+		}
 
 		if (!_vm->shouldQuit() && !_vm->skipFlag()) {
 			_vm->snd_playSong(2);
@@ -2173,8 +2176,13 @@ int EoBEngine::mainMenu() {
 				_screen->sega_getRenderer()->fillRectWithTiles(1, 7, 25, 25, 1, 0x4E3, true);
 				_screen->sega_getRenderer()->fillRectWithTiles(1, 6, 21, 1, 5, 0);
 				_screen->setFontStyles(_screen->_currentFont, Font::kStyleNarrow1);
+				// Apparently the Japanese version does not have halfwidth versions of the Latin small characters.
+				// We can't use the fullwidth characters either, since their height is too large. So we just use
+				// capital letters...
+				if (_flags.lang == Common::JA_JPN)
+					versionString.toUppercase();
 				_txt->printShadedText(versionString.c_str(), 200 - versionString.size() * 8, _ttlCfg->versionStrYOffs, 0x88);
-				_screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat);
+				_screen->setFontStyles(_screen->_currentFont, Font::kStyleFullWidth);
 			} else {
 				_screen->_curPage = 2;
 				of = _screen->setFont(Screen::FID_6_FNT);
@@ -2194,8 +2202,8 @@ int EoBEngine::mainMenu() {
 			menuChoice = mainMenuLoop();
 			_allowImport = false;
 
-			if (_flags.platform == Common::kPlatformSegaCD && _flags.lang != Common::JA_JPN)
-				_screen->setFontStyles(_screen->_currentFont, Font::kStyleFat);
+			if (_flags.platform == Common::kPlatformSegaCD)
+				_screen->setFontStyles(_screen->_currentFont, Font::kStyleNone);
 
 			}
 			break;
@@ -2255,9 +2263,20 @@ int EoBEngine::mainMenu() {
 
 int EoBEngine::mainMenuLoop() {
 	int sel = -1;
+
+	int col1 = (_configRenderMode == Common::kRenderCGA) ? 1 : guiSettings()->colors.guiColorWhite;
+	int col2 = guiSettings()->colors.guiColorLightRed;
+	int col3 = guiSettings()->colors.guiColorBlack;
+
+	if (_flags.platform == Common::kPlatformSegaCD) {
+		col1 = 0xff;
+		col2 = 0x55;
+		col3 = _flags.lang == Common::JA_JPN ? 0 : 0x11;
+	}
+
 	do {
 		_screen->setScreenDim(28);
-		_gui->simpleMenu_setup(8, 0, _mainMenuStrings, -1, 0, 0);
+		_gui->simpleMenu_setup(8, 0, _mainMenuStrings, -1, 0, 0, col1, col2, col3);
 		if (_flags.platform == Common::kPlatformSegaCD)
 			_screen->sega_getRenderer()->render(0);
 		_screen->updateScreen();
@@ -2454,9 +2473,9 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	updateScrollState(scrollTable, 320);
 	r->loadToVRAM(scrollTable, 0x400, 0xD800);
 
-	_sres->loadContainer("CREDIT");
-	Common::SeekableReadStreamEndian *in = _sres->resStreamEndian(1);
-	r->loadStreamToVRAM(in, 32, true);
+	Common::SeekableReadStreamEndian *containerAlt = _sres->loadContainer("CREDIT") ? 0 : _res->createEndianAwareReadStream("CREDIT");
+	Common::SeekableReadStreamEndian *in = containerAlt ? new Common::SeekableSubReadStreamEndian(containerAlt, 0, 35840, true) : _sres->resStreamEndian(1);
+	r->loadStreamToVRAM(in, 32, !containerAlt);
 	delete in;
 
 	_screen->sega_selectPalette(50, 0, 0);
@@ -2468,13 +2487,14 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	if (!jumpToTitle)
 		_screen->sega_fadeToNeutral(3);
 
-	for (int i = jumpToTitle ? 8 : 0; i < 8 && !(shouldQuit() || skipFlag()); ++i) {
+	int last = (_flags.lang == Common::JA_JPN ? 6 : 8);
+	for (int i = jumpToTitle ? last : 0; i < last && !(shouldQuit() || skipFlag()); ++i) {
 		updateScrollState(scrollTable, 320);
 		r->loadToVRAM(scrollTable, 0x400, 0xD800);
-		_screen->sega_selectPalette(i == 3 ? 59 : 50, 0, true);
+		_screen->sega_selectPalette(i == 3 && _flags.lang == Common::EN_ANY ? 59 : 50, 0, true);
 
-		in = _sres->resStreamEndian(i);
-		r->loadStreamToVRAM(in, 32, true);
+		in = containerAlt ? new Common::SeekableSubReadStreamEndian(containerAlt, i * 35840, (i + 1) * 35840, true) : _sres->resStreamEndian(i);
+		r->loadStreamToVRAM(in, 32, !containerAlt);
 		delete in;
 
 		r->render(0);
@@ -2495,7 +2515,7 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 
 		delay(3000);
 
-		if (i == 7)
+		if (i == last - 1)
 			r->fillRectWithTiles(1, 40, 0, 88, 28, 0, false);
 
 		mod = -1;
@@ -2521,9 +2541,10 @@ void EoBEngine::seq_segaOpeningCredits(bool jumpToTitle) {
 	r->setPitch(64);
 	_screen->sega_selectPalette(0, 0);
 
-	in = _sres->resStreamEndian(8);
-	r->loadStreamToVRAM(in, 32, true);
+	in = containerAlt ? new Common::SeekableSubReadStreamEndian(containerAlt, last * 35840, (last + 1) * 35840, true) : _sres->resStreamEndian(last);
+	r->loadStreamToVRAM(in, 32, !containerAlt);
 	delete in;
+	delete containerAlt;
 
 	r->memsetVRAM(0x8C20, 0xCC, 0x700);
 
@@ -2607,19 +2628,23 @@ void EoBEngine::seq_segaFinalCredits() {
 				curStr++;
 			} else {
 
-				int styles = _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat;
-				//int extraSpacing = 6;
+				int styles = /*_flags.lang == Common::JA_JPN ? Font::kStyleNone :*/ Font::kStyleFullWidth;
+				int charSpacing1 = _flags.lang == Common::JA_JPN ? 2 : 0;
+				int charSpacing2 = 6;
 
 				if (c == '<') {
 					styles |= Font::kStyleNarrow1;
-					//extraSpacing = 4;
-					pos++;
+					charSpacing2 = 4;
+					c = *pos++;
 				}
-				if (c == ';')
+				if (c == ';') {
 					pos++;
+					charSpacing1 = 0;
+				}
 
 				_screen->setFontStyles(_screen->_currentFont, styles);
-				_txt->printShadedText(pos, 120 - (_screen->getTextWidth(pos) >> 1), 0, 0xFF, 0xCC, -1, -1, 0, false);
+				int x = 120 - (_flags.lang == Common::JA_JPN ? _screen->getNumberOfCharacters(pos) * ((charSpacing1 >> 1) + charSpacing2) : (_screen->getTextWidth(pos) >> 1));
+				_txt->printShadedText(pos, x, 0, 0xFF, 0xCC, -1, -1, 0, false);
 				curStr++;
 			}
 		} else {
@@ -2635,7 +2660,7 @@ void EoBEngine::seq_segaFinalCredits() {
 
 	_screen->sega_fadeToBlack(1);
 
-	_screen->setFontStyles(_screen->_currentFont, _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleFat);
+	_screen->setFontStyles(_screen->_currentFont, Font::kStyleNone);
 	r->setupPlaneAB(512, 512);
 	scrMan->setVScrollTimers(0, 1, 0, 0, 1, 0);
 	scrMan->updateScrollTimers();
@@ -2664,12 +2689,13 @@ void EoBEngine::seq_segaShowStats() {
 	SegaRenderer *r = _screen->sega_getRenderer();
 	_txt->clearDim(5);
 
-	int styles = _flags.lang == Common::JA_JPN ? Font::kStyleFixedWidth : Font::kStyleForceTwoByte | Font::kStyleFat;
+	int styles = Font::kStyleFullWidth;
 	int cs = _screen->setFontStyles(_screen->_currentFont, styles);
 
-	_txt->printShadedText(_finBonusStrings[2], 90, 8, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadedText(_finBonusStrings[2], 199 - _screen->getTextWidth(_finBonusStrings[2]), 8, 0xFF, 0x00, -1, -1, 0, false);
 
-	styles |= Font::kStyleNarrow2;
+	if (_flags.lang != Common::JA_JPN)
+		styles |= Font::kStyleNarrow2;
 	_screen->setFontStyles(_screen->_currentFont, styles);
 
 	_txt->printShadedText(_finBonusStrings[3], 48, 28, 0xFF, 0x00, -1, -1, 0, false);
@@ -2690,7 +2716,7 @@ void EoBEngine::seq_segaShowStats() {
 			++specialSearches;
 	}
 
-	_txt->printShadedText(Common::String::format("%u:%02u:%02u", _totalPlaySecs / 3600, (_totalPlaySecs % 3600) / 60, (_totalPlaySecs % 3600) % 60).c_str(), 148, 28, 0xFF, 0x00, -1, -1, 0, false);
+	_txt->printShadedText(Common::String::format("%u%s%02u%s%02u%s", _totalPlaySecs / 3600, _finBonusStrings[9], (_totalPlaySecs % 3600) / 60, _finBonusStrings[10], (_totalPlaySecs % 3600) % 60, _finBonusStrings[11]).c_str(), 148, 28, 0xFF, 0x00, -1, -1, 0, false);
 	_txt->printShadedText(Common::String::format("%u", _totalEnemiesKilled).c_str(), 148, 40, 0xFF, 0x00, -1, -1, 0, false);
 	_txt->printShadedText(Common::String::format("%u", _totalSteps).c_str(), 148, 52, 0xFF, 0x00, -1, -1, 0, false);
 	_txt->printShadedText(Common::String::format("%u(%u%%)", partyArrows, partyArrows * 100 / 26).c_str(), 148, 64, 0xFF, 0x00, -1, -1, 0, false);
@@ -2709,9 +2735,18 @@ void EoBEngine::seq_segaShowStats() {
 		}
 		password[5] = pwgen[v];
 
-		_txt->printShadedText(_finBonusStrings[0], 30, 108, 0x22, 0x00, -1, -1, 0, false);
-		_txt->printShadedText(_finBonusStrings[1], 30, 132, 0x22, 0x00, -1, -1, 0, false);
-		_txt->printShadedText(password, 140, 156, 0xFF, 0x00, -1, -1, 0, false);
+		static const int16 bnXJp[] = { 124, 10, 44, 188 };
+		static const int16 bnXEn[] = { 30, 30, 100, 140 };
+		const int16 *bnX = (_flags.lang == Common::JA_JPN) ? bnXJp : bnXEn;
+		const int16 bnLineHeight = (_flags.lang == Common::JA_JPN) ? 20 : 24;
+		int bnY = 108;
+
+		_txt->printShadedText(_finBonusStrings[0], bnX[0], bnY, 0x22, 0x00, -1, -1, 0, false);
+		bnY += bnLineHeight;
+		_txt->printShadedText(_finBonusStrings[1], bnX[1], bnY, 0x22, 0x00, -1, -1, 0, false);
+		bnY += bnLineHeight;
+		_txt->printShadedText(_finBonusStrings[12], bnX[2], bnY, 0x22, 0x00, -1, -1, 0, false);
+		_txt->printShadedText(password, bnX[3], bnY, 0xFF, 0x00, -1, -1, 0, false);
 	}
 
 	_screen->sega_loadTextBufferToVRAM(0, 32, 28160);
@@ -2793,15 +2828,17 @@ bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool setupScreen) {
 	_allowSkip = false;
 	resetSkipFlag();
 
-	if (!_seqPlayer->play(sequenceId))
-		return false;
+	bool res = _seqPlayer->play(sequenceId);
 
 	if (setupScreen)
 		seq_segaRestoreAfterSequence();
 
 	_totalPlaySecs += ((_system->getMillis() - startTime) / 1000);
 
-	return true;
+	if (!res)
+		error("EoBEngine::seq_segaPlaySequence(): Failed to play cutscene no. %d", sequenceId);
+
+	return res;
 }
 
 void EoBEngine::seq_segaPausePlayer(bool pause) {

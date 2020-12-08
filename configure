@@ -248,6 +248,7 @@ _pandocformat="default"
 _pandocext="default"
 # Detection features to be linked into executable or not
 _detection_features_static=yes
+_detection_features_full=yes
 # The following variables are automatically detected, and should not
 # be modified otherwise. Consider them read-only.
 _posix=no
@@ -1241,6 +1242,8 @@ for ac_option in $@; do
 	--enable-static)              _static_build=yes      ;;
 	--enable-detection-static)    _detection_features_static=yes;;
 	--enable-detection-dynamic)   _detection_features_static=no;;
+	--enable-detection-full)      _detection_features_full=yes;;
+	--disable-detection-full)     _detection_features_full=no;;
 	--disable-16bit)              _16bit=no              ;;
 	--enable-highres)             _highres=yes           ;;
 	--disable-highres)            _highres=no            ;;
@@ -2702,19 +2705,27 @@ case $_host_os in
 		append_var LIBS "-lcitro3d"
 		;;
 	amigaos*)
+		# On building dynamic, everything (possible) should be built as plugin.
+		if test "$_dynamic_modules" = yes ; then
+			_detection_features_static=no
+			_plugins_default=dynamic
+		fi
+		# We have to use 'long' for our 4 byte typedef, because AmigaOS
+		# already typedefs (u)int32 as (unsigned) long  and consequently we'd
+		# get a compiler error otherwise.
+		type_4_byte='long'
+		# Supress format warnings as the long 4 byte causes noisy warnings.
+		append_var CXXFLAGS "-Wno-format"
+		# Enable optimizations for non-debug builds
 		if test "$_debug_build" = no; then
 			_optimization_level=-O2
 		fi
 		append_var LDFLAGS "-Wl,--export-dynamic"
 		append_var LDFLAGS "-L/sdk/local/newlib/lib"
-		# We have to use 'long' for our 4 byte typedef because AmigaOS already typedefs (u)int32
-		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
-		type_4_byte='long'
-		# Supress format warnings as the long 4 byte causes noisy warnings.
-		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'AMIGAOS = 1'
 		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
-		_nuked_opl=no
+		# Leave out resources by default, save binary size.
+		_builtin_resources=no
 		;;
 	android)
 		case $_host in
@@ -3080,9 +3091,8 @@ EOF
 		append_var CXXFLAGS "-Wno-format"
 		add_line_to_config_mk 'MORPHOS = 1'
 		_port_mk="backends/platform/sdl/morphos/morphos.mk"
-		# for use SDL2
+		# use SDL2
 		_sdlconfig=sdl2-config
-		_nuked_opl=no
 		;;
 	msys)
 		echo ERROR: Using the MSYS shell in msys mode is not supported. Please use the MSYS shell in mingw mode instead.
@@ -3100,6 +3110,7 @@ EOF
 		append_var DEFINES "-DDISABLE_SID"
 		append_var DEFINES "-DREDUCE_MEMORY_USAGE"
 		add_line_to_config_mk 'N64 = 1'
+		_detection_features_full=no
 		_nuked_opl=no
 		;;
 	ps3)
@@ -4269,6 +4280,13 @@ fi
 define_in_config_if_yes "$_detection_features_static" "DETECTION_STATIC"
 echo_n "Checking if detection features building statically... "
 echo "$_detection_features_static"
+
+#
+# Set up a define for detection to be used as static or not
+#
+define_in_config_if_yes "$_detection_features_full" "DETECTION_FULL"
+echo_n "Checking if building detection features for all engines... "
+echo "$_detection_features_full"
 
 #
 # Check whether integrated MT-32 emulator support is requested
@@ -6366,7 +6384,9 @@ for engine in $_sorted_engines; do
 		j=`echo $engine | tr '[:lower:]' '[:upper:]'`
 		detectEngine="${j}${detectId}"
 		cat >> engines/detection_table.h << EOF
+#if defined(ENABLE_$j) || defined(DETECTION_FULL)
 LINK_PLUGIN($detectEngine)
+#endif
 EOF
 	fi
 done
