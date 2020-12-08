@@ -565,6 +565,8 @@ public:
 	void showOptionsMenu(int x, int y);
 	void showBridgeMenu(Common::String menu, int x, int y);
 	void handleBridgeMenu(int menuEvent);
+	void showStarMap();
+	void orbitPlanet();
 	void captainsLog();
 
 	/**
