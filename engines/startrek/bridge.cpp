@@ -45,10 +45,10 @@ BridgeActorAndMenu bridgeActorsAndMenus[] = {
 };
 
 enum BridgeMenuEvent {
-	kBridgeSpockTalk = 0,
+	kBridgeKirkCommand = 0,
 	kBridgeUnk1 = 1,
 	kBridgeUnk2 = 2,
-	kBridgeUnk3 = 3,
+	kBridgeStarfieldFullScreen = 3,
 	kBridgeKirkCaptainsLog = 16,
 	kBridgeKirkTransporter = 17,
 	kBridgeKirkOptions = 18,
@@ -235,7 +235,7 @@ void StarTrekEngine::handleBridgeEvents() {
 				// TODO
 				break;
 			case Common::KEYCODE_n:	// Main star navigational map
-				// TODO
+				handleBridgeMenu(kBridgeChekovNavigation);
 				break;
 			case Common::KEYCODE_k:	// Kirk's options
 				handleBridgeMenu(kBridgeKirkOptions);
@@ -298,15 +298,17 @@ void StarTrekEngine::handleBridgeEvents() {
 
 void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 	// TODO: Move these
-	const char *kirkHeader = "KIRK";
-	const char *spockHeader = "MR. SPOCK";
-	const char *scottyHeader = "MR. SCOTT";
-	const char *uhuraHeader = "LIEUTENANT UHURA";
-	const char *suluHeader = "MR. SULU";
-	const char *chekovHeader = "MR. CHEKOV";
+	const char *kirkHeader = "Captain Kirk";
+	const char *spockHeader = "Mr. Spock";
+	const char *scottyHeader = "Mr. Scott";
+	const char *uhuraHeader = "Lieutenant Uhura";
+	const char *suluHeader = "Mr. Sulu";
+	const char *chekovHeader = "Mr. Chekov";
 	const char *shieldsUpText = "#BRID\\B_332#Captain, the shields are up.";
 	const char *notInOrbitText = "#BRID\\B_350#We're not in orbit, Captain.";
+	const char *wrongDestinationText = "#BRID\\B_346#This isn't our destination.";
 	const char *transporterText = "#BRID\\C_060#Spock, come with me. Mr Scott, you have the conn.";
+	const char *transporterTextFeather = "#BRID\\C_006#Assemble a landing party. Unless we find this so-called criminal, we're going to war.";
 	const char *nothingToReportText = "#BRID\\B_155#Nothing to report, Captain.";
 	const char *raiseShieldsText = "#BRID\\B_340#Raising shields.";
 	const char *lowerShieldsText = "#BRID\\B_337#Lowering shields, Captain.";
@@ -322,8 +324,8 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 	const char *ayeSirText = "#BRID\\BRID_S22#Aye Sir.";
 
 	switch (menuEvent) {
-	case kBridgeSpockTalk:
-		// TODO
+	case kBridgeKirkCommand:
+		showBridgeMenu("command", 60, 100);
 		break;
 	case kBridgeUnk1:
 		// TODO
@@ -331,7 +333,7 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 	case kBridgeUnk2:
 		// TODO
 		break;
-	case kBridgeUnk3:
+	case kBridgeStarfieldFullScreen:
 		// TODO
 		break;
 	case kBridgeKirkCaptainsLog: // Kirk, captain's log
@@ -340,15 +342,17 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 	case kBridgeKirkTransporter: // Kirk, transporter
 		if (_enterpriseState.shields) {
 			showTextbox(suluHeader, shieldsUpText, 122, 116, 161, 0);
+		} else if (!_enterpriseState.inOrbit) {
+			showTextbox(suluHeader, notInOrbitText, 122, 116, 161, 0);
+		//} else if (false) {
+		//	// TODO: Check if the destination is correct
+		//	showTextbox(suluHeader, wrongDestinationText, 122, 116, 176, 0);
 		} else {
-			if (!_enterpriseState.inOrbit) {
-				showTextbox(suluHeader, notInOrbitText, 122, 116, 161, 0);
-			} else {
-				// TODO: Check if the destination is correct
-				// TODO: Check for veng or feather missions and show extra text
+			if (_missionToLoad != "FEATHER")
 				showTextbox(kirkHeader, transporterText, 160, 130, 176, 0);
-				runGameMode(GAMEMODE_BEAMDOWN, false);
-			}
+			else
+				showTextbox(kirkHeader, transporterTextFeather, 160, 130, 176, 0);
+			runGameMode(GAMEMODE_BEAMDOWN, false);
 		}
 		break;
 	case kBridgeKirkOptions: // Kirk, options
@@ -374,16 +378,11 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 	case kBridgeSuluOrbit: // Sulu, orbit
 		if (_enterpriseState.underAttack) {
 			showTextbox(suluHeader, underAttackText, 122, 116, 176, 0);
+		//} else if (false) {
+		//	// TODO: Check if mission is over
+		//	showTextbox(suluHeader, missionNotOverText, 122, 116, 44, 0);
 		} else {
-			// TODO: Check if mission is over
-			//showTextbox(suluHeader, missionNotOverText, 122, 116, 44, 0);
-
-			if (_enterpriseState.inOrbit) {
-				showTextbox(suluHeader, leaveOrbitText, 122, 116, 176, 0);
-			} else {
-				// TODO: Finish this
-				_enterpriseState.inOrbit = true;
-			}
+			orbitPlanet();
 		}
 		break;
 	case kBridgeSuluShields: // Sulu, shields
@@ -391,7 +390,18 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 		showTextbox(suluHeader, _enterpriseState.shields ? raiseShieldsText : lowerShieldsText, 122, 116, 176, 0);
 		break;
 	case kBridgeChekovNavigation: // Chekov, navigation
-		// TODO
+		if (_enterpriseState.underAttack) {
+			showTextbox(suluHeader, underAttackText, 122, 116, 176, 0);
+		//} else if (false) {
+		//	// TODO: Check if mission is over
+		//	showTextbox(suluHeader, missionNotOverText, 122, 116, 44, 0);
+		} else if (_enterpriseState.inOrbit) {
+			showTextbox(suluHeader, leaveOrbitText, 122, 116, 176, 0);
+		} else {
+			showStarMap();
+			// TODO: Check if destination is correct, and start a random encounter if it isn't
+			// TODO: Redraw sprites
+		}
 		break;
 	case kBridgeChekovWeapons: // Chekov, weapons
 		_enterpriseState.weapons = !_enterpriseState.weapons;
@@ -416,6 +426,23 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 	default:
 		break;
 	}
+}
+
+void StarTrekEngine::showStarMap() {
+	// TODO
+}
+
+void StarTrekEngine::orbitPlanet() {
+	const char *suluHeader = "Mr. Sulu";
+	const char *enteringOrbitText = "#BRID\\B_333#Entering standard orbit.";
+	const char *leavingOrbitText = "#BRID\\B_335#Leaving orbit.";
+
+	// TODO: Show starfield
+	// TODO: Warp to planet, if needed
+	// TODO: Update sprites
+
+	_enterpriseState.inOrbit = !_enterpriseState.inOrbit;
+	showTextbox(suluHeader, _enterpriseState.inOrbit ? enteringOrbitText : leavingOrbitText, 122, 116, 176, 0);
 }
 
 void StarTrekEngine::captainsLog() {
