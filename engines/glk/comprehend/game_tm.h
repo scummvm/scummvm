@@ -32,6 +32,8 @@ class TalismanGame : public ComprehendGameV2 {
 public:
 	TalismanGame();
 	~TalismanGame() override {}
+
+	void beforeGame() override;
 };
 
 } // namespace Comprehend
