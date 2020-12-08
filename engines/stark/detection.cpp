@@ -36,7 +36,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// English DVD
 	{
 		"tlj", "DVD",
-		AD_ENTRY2s("x.xarc",		"de8327850d7bba90b690b141eaa23f61", 3032,
+		AD_ENTRY2s("x.arc",			"de8327850d7bba90b690b141eaa23f61", 3032,
 				   "chapters.ini",	"5b5a1f1dd2297d9ce0d3d12216d5d2c5", 485),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
@@ -48,7 +48,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// GOG edition
 	{
 		"tlj", "GOG",
-		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
+		AD_ENTRY2s("x.arc",			"a0559457126caadab0cadac02d35f26f", 3032,
 				   "chapters.ini",	"5b5a1f1dd2297d9ce0d3d12216d5d2c5", 485),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
@@ -60,7 +60,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// English Old Demo
 	{
 		"tlj", "Old Demo",
-		AD_ENTRY2s("x.xarc",		"97abc1bb9239dee4c208e533f3c97e1c", 98,
+		AD_ENTRY2s("x.arc",			"97abc1bb9239dee4c208e533f3c97e1c", 98,
 				   "chapters.ini",	"5b5a1f1dd2297d9ce0d3d12216d5d2c5", 485),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
@@ -72,7 +72,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// English v1.61 Demo
 	{
 		"tlj", "v1.61 Demo",
-		AD_ENTRY2s("x.xarc",		"61093bcd499b386ed5c0345c52f48909", 98,
+		AD_ENTRY2s("x.arc",			"61093bcd499b386ed5c0345c52f48909", 98,
 				   "chapters.ini",	"5b5a1f1dd2297d9ce0d3d12216d5d2c5", 485),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
@@ -84,7 +84,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// French Demo
 	{
 		"tlj", "Demo",
-		AD_ENTRY2s("x.xarc",		"97abc1bb9239dee4c208e533f3c97e1c", 98,
+		AD_ENTRY2s("x.arc",			"97abc1bb9239dee4c208e533f3c97e1c", 98,
 				   "chapters.ini",	"e54f6370dca06496069790840409cf95", 506),
 		Common::FR_FRA,
 		Common::kPlatformWindows,
@@ -96,7 +96,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Norwegian Demo
 	{
 		"tlj", "Demo",
-		AD_ENTRY2s("x.xarc",		"97abc1bb9239dee4c208e533f3c97e1c", 98,
+		AD_ENTRY2s("x.arc",			"97abc1bb9239dee4c208e533f3c97e1c", 98,
 				   "chapters.ini",	"f358f604abd1aa1476ed05d6d271ac70", 473),
 		Common::NB_NOR,
 		Common::kPlatformWindows,
@@ -108,7 +108,7 @@ static const ADGameDescription gameDescriptions[] = {
 	// Norwegian 4 CD version - supplied by L0ngcat
 	{
 		"tlj", "4 CD",
-		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
+		AD_ENTRY2s("x.arc",			"a0559457126caadab0cadac02d35f26f", 3032,
 				   "chapters.ini",	"f358f604abd1aa1476ed05d6d271ac70", 473),
 		Common::NB_NOR,
 		Common::kPlatformWindows,
