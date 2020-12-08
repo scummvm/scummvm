@@ -5699,6 +5699,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	AD_LISTEND },
 	Common::RU_RUS, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_TORIN },
 
+	// Torin's Passage - Russian Windows CD (Dyadushka Research + City)
+	// VERSION file "1.0"
+	{ "torin", "",{
+		  {"resource.aud", 0, "142a523ee8b79cbe5ef8be7e557ddd55", 181100846},
+		  {"ressci.000", 0, "693a259d346c9360f4a0c11fdaae430a", 56974537},
+		  {"resmap.000", 0, "bb3b0b22ff08df54fbe2d06263409be6", 9799},
+	AD_LISTEND },
+	Common::RU_RUS, Common::kPlatformWindows, ADGF_DROPPLATFORM, GUIO_TORIN },
+
 	// Torin's Passage - English Macintosh
 	{"torin", "", {
 		{"Data1", 0, "63887e33cc282c92dc1f916f54aea8eb", 700786},
