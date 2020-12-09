@@ -101,6 +101,10 @@ HadeschEngine::~HadeschEngine() {
 		delete _macCursors[i];
 		_macCursors[i] = nullptr;
 	}
+
+#ifdef USE_TRANSLATION
+	delete _transMan;
+#endif
 }
 
 void HadeschEngine::setVideoRoom(Common::SharedPtr<VideoRoom> room,
@@ -461,8 +465,21 @@ void HadeschEngine::exitOptions() {
 	_sceneVideoRoom->unpause();
 }
 
+Common::U32String HadeschEngine::translate(const Common::String &str) {
+#ifdef USE_TRANSLATION
+	return _transMan->getTranslation(str);
+#else
+	return str.decode();
+#endif
+}
+
 Common::Error HadeschEngine::run() {
 	debug("HadeschEngine::run");
+
+#ifdef USE_TRANSLATION
+	_transMan = new Common::TranslationManager("hadesch_translations.dat");
+	_transMan->setLanguage(TransMan.getCurrentLanguage());
+#endif
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "WIN9x");
