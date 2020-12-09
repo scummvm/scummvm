@@ -272,7 +272,7 @@ public:
 
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 
-	void prepareIsoModel(uint8 *bodyPtr); // loadGfxSub
+	static void prepareIsoModel(uint8 *bodyPtr);
 	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices);
 
 	int32 projectPositionOnScreen(int32 cX, int32 cY, int32 cZ);

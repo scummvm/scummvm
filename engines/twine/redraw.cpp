@@ -653,7 +653,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 				_engine->_interface->drawSplittedBox(rect, 0);
 				_engine->_interface->setClip(rect);
 
-				_engine->_renderer->prepareIsoModel(_engine->_resources->inventoryTable[item]);
+				Renderer::prepareIsoModel(_engine->_resources->inventoryTable[item]);
 				_engine->_renderer->setCameraPosition(40, 40, 128, 200, 200);
 				_engine->_renderer->setCameraAngle(0, 0, 0, 60, 0, 0, 16000);
 
