@@ -20,42 +20,36 @@
  *
  */
 
-#include "common/gui_options.h"
-#include "common/language.h"
-#include "engines/game.h"
+#ifndef GLK_COMPREHEND_GAME_TR1_H
+#define GLK_COMPREHEND_GAME_TR1_H
+
+#include "glk/comprehend/game_opcodes.h"
 
 namespace Glk {
 namespace Comprehend {
 
-const PlainGameDescriptor COMPREHEND_GAME_LIST[] = {
-	{"crimsoncrown", "Crimson Crown"},
-	{"ootopos", "OO-Topos"},
-#ifndef RELEASE_BUILD
-	{"talisman", "Talisman: Challenging the Sands of Time"},
-#endif
-	{"transylvania", "Transylvania"},
-	{nullptr, nullptr}
+struct TransylvaniaMonster;
+
+class TransylvaniaGame1 : public ComprehendGameV1 {
+private:
+	static const TransylvaniaMonster WEREWOLF;
+	static const TransylvaniaMonster VAMPIRE;
+	bool _miceReleased;
+
+	bool updateMonster(const TransylvaniaMonster *monsterInfo);
+	bool isMonsterInRoom(const TransylvaniaMonster *monsterInfo);
+public:
+	TransylvaniaGame1();
+	~TransylvaniaGame1() override {}
+
+	void beforeGame() override;
+	void beforeTurn() override;
+	void synchronizeSave(Common::Serializer &s) override;
+	int roomIsSpecial(unsigned room_index, unsigned *roomDescString) override;
+	void handleSpecialOpcode(uint8 operand) override;
 };
 
-struct ComprehendDetectionEntry {
-	const char *const _gameId;
-	const char *const _filename;
-	const char *const _md5;
-};
+} // namespace Comprehend
+} // namespace Glk
 
-const ComprehendDetectionEntry COMPREHEND_GAMES[] = {
-	{"crimsoncrown", "cc1.gda", "f2abf019675ac5c9bcfd81032bc7787b"},
-	{"ootopos", "g0", "56460c1ee669c253607534155d7e9db4"},
-#ifndef RELEASE_BUILD
-	{"talisman", "g0", "35770d4815e610b5252e3fcd9f11def3"},
 #endif
-	{"transylvania", "tr.gda", "22e08633eea02ceee49b909dfd982d22"},
-#ifndef RELEASE_BUILD
-	{"transylvania", "g0", "384cbf0cd50888310fd33574e6baf880"},
-#endif
-
-	{nullptr, nullptr, nullptr}
-};
-
-} // End of namespace Comprehend
-} // End of namespace Glk
