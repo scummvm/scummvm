@@ -266,6 +266,11 @@ void TransylvaniaGame::beforeGame() {
 	// Draw the title
 	g_comprehend->drawPicture(TITLE_IMAGE);
 
+	// Print game information
+	console_println("Story and graphics by Antonio Antiochia.");
+	console_println("IBM version by Jeffrey A. Jay. Copyright 1987  POLARWARE, Inc.");
+	g_comprehend->readChar();
+
 	// Welcome to Transylvania - sign your name
 	console_println(_strings[0x20].c_str());
 	READ_LINE;
