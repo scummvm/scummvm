@@ -1097,7 +1097,7 @@ void VideoRoom::playSubtitles(const char *text, int subID) {
 	int delay = g_vm->getSubtitleDelayPerChar();
 	if (delay <= 0)
 		return;
-	Common::U32String s = _(text);
+	Common::U32String s = g_vm->translate(text);
 	Common::Array<Common::U32String> lines;
 	int32 countTime = g_vm->getCurrentTime();
 	g_vm->wrapSubtitles(s, lines);
