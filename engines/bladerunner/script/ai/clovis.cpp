@@ -568,19 +568,19 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		if (_var1 == 1) {
-			*animation = kModelAnimationGlovisIdle;
+			*animation = kModelAnimationClovisIdle;
 			if (_var2) {
 				--_var2;
 			} else if (++_animationFrame == 7) {
 				_var2 = Random_Query(5, 15);
 			} else {
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisIdle)) {
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisIdle)) {
 					_animationFrame = 0;
 					_var1 = 0;
 				}
 			}
 		} else if (_var1 == 0) {
-			*animation = kModelAnimationGlovisLookingUpAndAbout;
+			*animation = kModelAnimationClovisLookingUpAndAbout;
 			if (_var2) {
 				_animationFrame += _var3;
 				if (_animationFrame > _var5) {
@@ -610,11 +610,11 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 						}
 					}
 				}
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLookingUpAndAbout)) {
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLookingUpAndAbout)) {
 					_animationFrame = 0;
 				} else {
 					if (_animationFrame < 0) {
-						_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLookingUpAndAbout) - 1;
+						_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLookingUpAndAbout) - 1;
 					}
 				}
 				if (!_animationFrame) {
@@ -635,10 +635,10 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		if (_var1 == 0) {
-			*animation = kModelAnimationGlovisLookingUpAndAbout;
+			*animation = kModelAnimationClovisLookingUpAndAbout;
 		}
 		if (_var1 == 1) {
-			*animation = kModelAnimationGlovisIdle;
+			*animation = kModelAnimationClovisIdle;
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 			_animationFrame += 3;
@@ -658,26 +658,26 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
-		*animation = kModelAnimationGlovisKneelingChecking;
+		*animation = kModelAnimationClovisKneelingChecking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisKneelingChecking)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisKneelingChecking)) {
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisKneelingChecking) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisKneelingChecking) - 1;
 			}
 		}
 		break;
 
 	case 3:
-		*animation = kModelAnimationGlovisStandingToKneeling;
+		*animation = kModelAnimationClovisStandingToKneeling;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisStandingToKneeling)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisStandingToKneeling)) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisStandingToKneeling) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisStandingToKneeling) - 1;
 				flag = true;
 			} else {
 				flag = false;
@@ -686,7 +686,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		if (flag) {
 			_animationState = 2;
 			_animationFrame = 0;
-			*animation = kModelAnimationGlovisKneelingChecking;
+			*animation = kModelAnimationClovisKneelingChecking;
 			if (Actor_Query_Goal_Number(kActorClovis) == kGoalClovisBB11TalkWithSadik) {
 				Actor_Set_Goal_Number(kActorClovis, kGoalClovisBB11PrepareTalkToMcCoy);
 			}
@@ -694,166 +694,166 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 4:
-		*animation = kModelAnimationGlovisKneelingToStanding;
+		*animation = kModelAnimationClovisKneelingToStanding;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisKneelingToStanding)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisKneelingToStanding)) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisKneelingToStanding) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisKneelingToStanding) - 1;
 				flag = true;
 			} else {
 				flag = false;
 			}
 		}
 		if (flag) {
-			*animation = kModelAnimationGlovisIdle;
+			*animation = kModelAnimationClovisIdle;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeIdle);
 		}
 		break;
 
 	case 5:
-		*animation = kModelAnimationGlovisCalmTalk;
+		*animation = kModelAnimationClovisCalmTalk;
 		if (!_animationFrame && _flag) {
 			_animationState = 0;
 		} else {
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCalmTalk)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCalmTalk)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 6:
-		*animation = kModelAnimationGlovisSuggestingTalk;
+		*animation = kModelAnimationClovisSuggestingTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisSuggestingTalk)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisSuggestingTalk)) {
 			_animationFrame = 0;
 			_animationState = 5;
-			*animation = kModelAnimationGlovisCalmTalk;
+			*animation = kModelAnimationClovisCalmTalk;
 		}
 		break;
 
 	case 7:
-		*animation = kModelAnimationGlovisSuggestingAndBeardScratchTalk;
+		*animation = kModelAnimationClovisSuggestingAndBeardScratchTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisSuggestingAndBeardScratchTalk)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisSuggestingAndBeardScratchTalk)) {
 			_animationFrame = 0;
 			_animationState = 5;
-			*animation = kModelAnimationGlovisCalmTalk;
+			*animation = kModelAnimationClovisCalmTalk;
 		}
 		break;
 
 	case 8:
-		*animation = kModelAnimationGlovisAffirmingTalk;
+		*animation = kModelAnimationClovisAffirmingTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisAffirmingTalk)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisAffirmingTalk)) {
 			_animationFrame = 0;
 			_animationState = 5;
-			*animation = kModelAnimationGlovisCalmTalk;
+			*animation = kModelAnimationClovisCalmTalk;
 		}
 		break;
 
 	case 9:
-		*animation = kModelAnimationGlovisHandCircularMoveTalk;
+		*animation = kModelAnimationClovisHandCircularMoveTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisHandCircularMoveTalk)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisHandCircularMoveTalk)) {
 			_animationFrame = 0;
 			_animationState = 5;
-			*animation = kModelAnimationGlovisCalmTalk;
+			*animation = kModelAnimationClovisCalmTalk;
 		}
 		break;
 
 	case 10:
-		*animation = kModelAnimationGlovisPointingTalk;
+		*animation = kModelAnimationClovisPointingTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisPointingTalk)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisPointingTalk)) {
 			_animationFrame = 0;
 			_animationState = 5;
-			*animation = kModelAnimationGlovisCalmTalk;
+			*animation = kModelAnimationClovisCalmTalk;
 		}
 		break;
 
 	case 11:
-		*animation = kModelAnimationGlovisNegotiatingTalk;
+		*animation = kModelAnimationClovisNegotiatingTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisNegotiatingTalk)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisNegotiatingTalk)) {
 			_animationFrame = 0;
 			_animationState = 5;
-			*animation = kModelAnimationGlovisCalmTalk;
+			*animation = kModelAnimationClovisCalmTalk;
 		}
 		break;
 
 	case 12:
-		*animation = kModelAnimationGlovisKneelingTalking;
+		*animation = kModelAnimationClovisKneelingTalking;
 		if (!_animationFrame && _flag) {
 			_animationState = 2;
 			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeSit);
 		} else {
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisKneelingTalking)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisKneelingTalking)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 13:
-		*animation = kModelAnimationGlovisCombatIdle;
+		*animation = kModelAnimationClovisCombatIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatIdle)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatIdle)) {
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatIdle) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatIdle) - 1;
 			}
 		}
 		break;
 
 	case 14:
-		*animation = kModelAnimationGlovisCombatAssumePosition;
+		*animation = kModelAnimationClovisCombatAssumePosition;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatAssumePosition)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatAssumePosition)) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatAssumePosition) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatAssumePosition) - 1;
 				flag = true;
 			} else {
 				flag = false;
 			}
 		}
 		if (flag) {
-			*animation = kModelAnimationGlovisCombatIdle;
+			*animation = kModelAnimationClovisCombatIdle;
 			_animationState = 13;
 		}
 		break;
 
 	case 15:
-		*animation = kModelAnimationGlovisCombatResumeNonCombat;
+		*animation = kModelAnimationClovisCombatResumeNonCombat;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatResumeNonCombat)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatResumeNonCombat)) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatResumeNonCombat) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatResumeNonCombat) - 1;
 				flag = true;
 			} else {
 				flag = false;
 			}
 		}
 		if (flag) {
-			*animation = kModelAnimationGlovisIdle;
+			*animation = kModelAnimationClovisIdle;
 			_animationState = 0;
 		}
 		break;
 
 	case 16:
-		*animation = kModelAnimationGlovisCombatPunchAttack;
+		*animation = kModelAnimationClovisCombatPunchAttack;
 		++_animationFrame;
 		if (_animationFrame == 2) {
 			int snd;
@@ -881,20 +881,20 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		}
 		if (flag) {
 			_animationState = 13;
-			*animation = kModelAnimationGlovisCombatIdle;
+			*animation = kModelAnimationClovisCombatIdle;
 			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 17:
-		*animation = kModelAnimationGlovisCombatGotHitRight;
+		*animation = kModelAnimationClovisCombatGotHitRight;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatGotHitRight)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatGotHitRight)) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatGotHitRight) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatGotHitRight) - 1;
 				flag = true;
 			} else {
 				flag = false;
@@ -902,20 +902,20 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		}
 		if (flag) {
 			_animationState = 13;
-			*animation = kModelAnimationGlovisCombatIdle;
+			*animation = kModelAnimationClovisCombatIdle;
 			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 18:
-		*animation = kModelAnimationGlovisCombatGotHitLeft;
+		*animation = kModelAnimationClovisCombatGotHitLeft;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatGotHitLeft)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatGotHitLeft)) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatGotHitLeft) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatGotHitLeft) - 1;
 				flag = true;
 			} else {
 				flag = false;
@@ -923,158 +923,158 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		}
 		if (flag) {
 			_animationState = 13;
-			*animation = kModelAnimationGlovisCombatIdle;
+			*animation = kModelAnimationClovisCombatIdle;
 			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 19:
-		*animation = kModelAnimationGlovisGotHitRight;
+		*animation = kModelAnimationClovisGotHitRight;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisGotHitRight)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisGotHitRight)) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisGotHitRight) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisGotHitRight) - 1;
 				flag = true;
 			} else {
 				flag = false;
 			}
 		}
 		if (flag) {
-			*animation = kModelAnimationGlovisIdle;
+			*animation = kModelAnimationClovisIdle;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeIdle);
 		}
 		break;
 
 	case 20:
-		*animation = kModelAnimationGlovisGotHitLeft;
+		*animation = kModelAnimationClovisGotHitLeft;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisGotHitLeft)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisGotHitLeft)) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisGotHitLeft) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisGotHitLeft) - 1;
 				flag = true;
 			} else {
 				flag = false;
 			}
 		}
 		if (flag) {
-			*animation = kModelAnimationGlovisIdle;
+			*animation = kModelAnimationClovisIdle;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeIdle);
 		}
 		break;
 
 	case 21:
-		*animation = kModelAnimationGlovisWalking;
+		*animation = kModelAnimationClovisWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisWalking)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisWalking)) {
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisWalking) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisWalking) - 1;
 			}
 		}
 		break;
 
 	case 22:
-		*animation = kModelAnimationGlovisRunning;
+		*animation = kModelAnimationClovisRunning;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisRunning)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisRunning)) {
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisRunning) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisRunning) - 1;
 			}
 		}
 		break;
 
 	case 23:
-		*animation = kModelAnimationGlovisCombatWalking;
+		*animation = kModelAnimationClovisCombatWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatWalking)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatWalking)) {
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatWalking) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatWalking) - 1;
 			}
 		}
 		break;
 
 	case 24:
-		*animation = kModelAnimationGlovisCombatAssumePosition;
+		*animation = kModelAnimationClovisCombatAssumePosition;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatAssumePosition)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatAssumePosition)) {
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatAssumePosition) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatAssumePosition) - 1;
 			}
 		}
 		break;
 
 	case 25:
-		*animation = kModelAnimationGlovisClimbStairsUp;
+		*animation = kModelAnimationClovisClimbStairsUp;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisClimbStairsUp)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisClimbStairsUp)) {
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisClimbStairsUp) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisClimbStairsUp) - 1;
 			}
 		}
 		break;
 
 	case 26:
-		*animation = kModelAnimationGlovisClimbStairsDown;
+		*animation = kModelAnimationClovisClimbStairsDown;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisClimbStairsDown)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisClimbStairsDown)) {
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisClimbStairsDown) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisClimbStairsDown) - 1;
 			}
 		}
 		break;
 
 	case 27:
-		*animation = kModelAnimationGlovisCombatClimbStairsUp;
+		*animation = kModelAnimationClovisCombatClimbStairsUp;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatClimbStairsUp)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatClimbStairsUp)) {
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatClimbStairsUp) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatClimbStairsUp) - 1;
 			}
 		}
 		break;
 
 	case 28:
-		*animation = kModelAnimationGlovisCombatClimbStairsDown;
+		*animation = kModelAnimationClovisCombatClimbStairsDown;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatClimbStairsDown)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatClimbStairsDown)) {
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatClimbStairsDown) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatClimbStairsDown) - 1;
 			}
 		}
 		break;
 
 	case 29:
-		*animation = kModelAnimationGlovisCombatStrafeSlow;
+		*animation = kModelAnimationClovisCombatStrafeSlow;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatStrafeSlow)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatStrafeSlow)) {
 			flag = true;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatStrafeSlow) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatStrafeSlow) - 1;
 				flag = true;
 			} else {
 				flag = false;
@@ -1082,20 +1082,20 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		}
 		if (flag) {
 			_animationState = 13;
-			*animation = kModelAnimationGlovisCombatIdle;
+			*animation = kModelAnimationClovisCombatIdle;
 			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 30:
-		*animation = kModelAnimationGlovisCombatStrafeFast;
+		*animation = kModelAnimationClovisCombatStrafeFast;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatStrafeFast)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatStrafeFast)) {
 			flag = 1;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisCombatStrafeFast) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisCombatStrafeFast) - 1;
 				flag = 1;
 			} else {
 				flag = 0;
@@ -1103,46 +1103,46 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		}
 		if (flag) {
 			_animationState = 13;
-			*animation = kModelAnimationGlovisCombatIdle;
+			*animation = kModelAnimationClovisCombatIdle;
 			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeCombatIdle);
 		}
 		break;
 
 	case 31:
-		*animation = kModelAnimationGlovisJumpingDodging;
+		*animation = kModelAnimationClovisJumpingDodging;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisJumpingDodging)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisJumpingDodging)) {
 			flag = 1;
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisJumpingDodging) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisJumpingDodging) - 1;
 				flag = 1;
 			} else {
 				flag = 0;
 			}
 		}
 		if (flag) {
-			*animation = kModelAnimationGlovisIdle;
+			*animation = kModelAnimationClovisIdle;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeIdle);
 		}
 		break;
 
 	case 32:
-		*animation = kModelAnimationGlovisLayingWithBookIdle;
+		*animation = kModelAnimationClovisLayingWithBookIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLayingWithBookIdle)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLayingWithBookIdle)) {
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLayingWithBookIdle) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLayingWithBookIdle) - 1;
 			}
 		}
 		break;
 
 	case 33:
-		*animation = kModelAnimationGlovisLayingWithBookStopsReadingTalk;
+		*animation = kModelAnimationClovisLayingWithBookStopsReadingTalk;
 		if (_animationFrame == 0
 		 && _flag
 		) {
@@ -1151,97 +1151,97 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 			Actor_Change_Animation_Mode(kActorClovis, 54);
 		} else {
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLayingWithBookStopsReadingTalk)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLayingWithBookStopsReadingTalk)) {
 				_animationFrame = 0;
 			} else {
 				if (_animationFrame < 0) {
-					_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLayingWithBookStopsReadingTalk) - 1;
+					_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLayingWithBookStopsReadingTalk) - 1;
 				}
 			}
 		}
 		break;
 
 	case 34:
-		*animation = kModelAnimationGlovisLayingWithBookStillReadingTalk;
+		*animation = kModelAnimationClovisLayingWithBookStillReadingTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLayingWithBookStillReadingTalk)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLayingWithBookStillReadingTalk)) {
 			_animationState = 33;
 			_animationFrame = 0;
-			*animation = kModelAnimationGlovisLayingWithBookStopsReadingTalk;
+			*animation = kModelAnimationClovisLayingWithBookStopsReadingTalk;
 			Actor_Change_Animation_Mode(kActorClovis, 54);
 		}
 		break;
 
 	case 35:
 		++_animationFrame;
-		*animation = kModelAnimationGlovisLayingWithBookReadingOutLoud;
+		*animation = kModelAnimationClovisLayingWithBookReadingOutLoud;
 		Actor_Change_Animation_Mode(kActorClovis, 54);
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLayingWithBookReadingOutLoud)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLayingWithBookReadingOutLoud)) {
 			_animationFrame = 0;
 			_animationState = 33;
-			*animation = kModelAnimationGlovisLayingWithBookStopsReadingTalk;
+			*animation = kModelAnimationClovisLayingWithBookStopsReadingTalk;
 		}
 		break;
 
 	case 36:
-		*animation = kModelAnimationGlovisLayingWithBookGotHitOrViolentCough;
+		*animation = kModelAnimationClovisLayingWithBookGotHitOrViolentCough;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLayingWithBookGotHitOrViolentCough)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLayingWithBookGotHitOrViolentCough)) {
 			_animationFrame = 0;
 			_animationState = 37;
-			*animation = kModelAnimationGlovisLayingWithBookDyingDropBook;
+			*animation = kModelAnimationClovisLayingWithBookDyingDropBook;
 		}
 		break;
 
 	case 37:
-		*animation = kModelAnimationGlovisLayingWithBookDyingDropBook;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLayingWithBookDyingDropBook) - 1) {
+		*animation = kModelAnimationClovisLayingWithBookDyingDropBook;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLayingWithBookDyingDropBook) - 1) {
 			++_animationFrame;
 		}
 		break;
 
 	case 38:
-		*animation = kModelAnimationGlovisLayingWithBookUnholsterGun;
+		*animation = kModelAnimationClovisLayingWithBookUnholsterGun;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLayingWithBookUnholsterGun)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLayingWithBookUnholsterGun)) {
 			_animationFrame = 0;
 			_animationState = 39;
-			*animation = kModelAnimationGlovisLayingWithBookPointingGun;
+			*animation = kModelAnimationClovisLayingWithBookPointingGun;
 		}
 		break;
 
 	case 39:
-		*animation = kModelAnimationGlovisLayingWithBookPointingGun;
+		*animation = kModelAnimationClovisLayingWithBookPointingGun;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLayingWithBookPointingGun)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLayingWithBookPointingGun)) {
 			_animationFrame = 0;
 		} else {
 			if (_animationFrame < 0) {
-				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLayingWithBookPointingGun) - 1;
+				_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLayingWithBookPointingGun) - 1;
 			}
 		}
 		break;
 
 	case 40:
-		*animation = kModelAnimationGlovisLayingWithBookDyingDropGun;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisLayingWithBookDyingDropGun) - 1) {
+		*animation = kModelAnimationClovisLayingWithBookDyingDropGun;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLayingWithBookDyingDropGun) - 1) {
 			++_animationFrame;
 		}
 		break;
 
 	case 41:
-		*animation = kModelAnimationGlovisShotDead;
+		*animation = kModelAnimationClovisShotDead;
 		++_animationFrame;
-		if (_animationFrame == Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisShotDead) - 1) {
+		if (_animationFrame == Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisShotDead) - 1) {
 			Actor_Change_Animation_Mode(kActorClovis, 88);
 			_animationState = 42;
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisShotDead) - 1;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisShotDead) - 1;
 		}
 		break;
 
 	case 42:
-		*animation = kModelAnimationGlovisShotDead;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisShotDead) - 1;
+		*animation = kModelAnimationClovisShotDead;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisShotDead) - 1;
 		break;
 
 	default:
@@ -1310,7 +1310,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 			if (_animationState < 5 || _animationState > 11) {
 				_animationState = 1;
 				_animationStateNext = 5;
-				_animationNext = kModelAnimationGlovisCalmTalk;
+				_animationNext = kModelAnimationClovisCalmTalk;
 				_flag = 0;
 			}
 		}
@@ -1331,7 +1331,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		default:
 			_animationState = 1;
 			_animationStateNext = 14;
-			_animationNext = kModelAnimationGlovisCombatAssumePosition;
+			_animationNext = kModelAnimationClovisCombatAssumePosition;
 			break;
 		}
 		break;
@@ -1356,7 +1356,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		if (_animationState < 5 || _animationState > 11) {
 			_animationState = 1;
 			_animationStateNext = 6;
-			_animationNext = kModelAnimationGlovisSuggestingTalk;
+			_animationNext = kModelAnimationClovisSuggestingTalk;
 			_flag = 0;
 		}
 		break;
@@ -1366,7 +1366,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		if (_animationState < 5 || _animationState > 11) {
 			_animationState = 1;
 			_animationStateNext = 8;
-			_animationNext = kModelAnimationGlovisAffirmingTalk;
+			_animationNext = kModelAnimationClovisAffirmingTalk;
 			_flag = 0;
 		}
 		break;
@@ -1375,7 +1375,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		if (_animationState < 5 || _animationState > 11) {
 			_animationState = 1;
 			_animationStateNext = 7;
-			_animationNext = kModelAnimationGlovisSuggestingAndBeardScratchTalk;
+			_animationNext = kModelAnimationClovisSuggestingAndBeardScratchTalk;
 			_flag = 0;
 		}
 		break;
@@ -1384,7 +1384,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		if (_animationState < 5 || _animationState > 11) {
 			_animationState = 1;
 			_animationStateNext = 9;
-			_animationNext = kModelAnimationGlovisHandCircularMoveTalk;
+			_animationNext = kModelAnimationClovisHandCircularMoveTalk;
 			_flag = 0;
 		}
 		break;
@@ -1393,7 +1393,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		if (_animationState < 5 || _animationState > 11) {
 			_animationState = 1;
 			_animationStateNext = 10;
-			_animationNext = kModelAnimationGlovisPointingTalk;
+			_animationNext = kModelAnimationClovisPointingTalk;
 			_flag = 0;
 		}
 		break;
@@ -1402,7 +1402,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		if (_animationState < 5 || _animationState > 11) {
 			_animationState = 1;
 			_animationStateNext = 11;
-			_animationNext = kModelAnimationGlovisNegotiatingTalk;
+			_animationNext = kModelAnimationClovisNegotiatingTalk;
 			_flag = 0;
 		}
 		break;
@@ -1457,7 +1457,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 
 	case 88:
 		_animationState = 42;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationGlovisShotDead) - 1;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisShotDead) - 1;
 		break;
 
 	case kAnimationModeDie:
