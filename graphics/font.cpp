@@ -176,9 +176,11 @@ int wordWrapTextImpl(const Font &font, const StringType &str, int maxWidth, Comm
 	// When EvenWidthLines mode is enabled then we require an early loop over the entire string
 	// in order to get the full width of the text
 	//
-	// "Wrap On Explicit New Lines" and "Even Width Lines" modes are mutually exclusive,
-	// If both are set to true and there are new line characters in the text,
-	// then "Even Width Lines" mode is disabled.
+	// If both "Wrap On Explicit New Lines" and "Even Width Lines" modes are set,
+	// and there are new line characters in the text,
+	// then "Wrap On Explicit New Lines" takes precedence and "Even Width Lines" is ignored for that text.
+	// However, if both are set, but there are no new lines in the text,
+	// then the "Even Width Lines" auto-wrapping is applied.
 	//
 	if (mode & kWordWrapEvenWidthLines) {
 		// Early loop to get the full width of the text

@@ -59,7 +59,7 @@ enum TextAlign {
 enum WordWrapMode {
 	kWordWrapDefault			= 0,		///< Default wrapping mode.
 	kWordWrapEvenWidthLines 	= 1 << 0,	///< Make the resulting line segments close to the same width.
-	kWordWrapOnExplicitNewLines	= 1 << 1	///< Text is wrapped on new lines. Otherwise, treats them as single whitespace. Disables kWordWrapEvenWidthLines.
+	kWordWrapOnExplicitNewLines	= 1 << 1	///< Text is wrapped on new lines. Otherwise, treats them as single whitespace.
 };
 
 /**
