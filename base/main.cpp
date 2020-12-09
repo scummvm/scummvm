@@ -620,11 +620,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			}
 
 			// Quit unless an error occurred, or Return to launcher was requested
-#ifndef FORCE_RETURN_TO_LAUNCHER
 			if (result.getCode() == Common::kNoError && !g_system->getEventManager()->shouldReturnToLauncher() &&
 			    !g_system->hasFeature(OSystem::kFeatureNoQuit) && !ConfMan.getBool("gui_return_to_launcher_at_exit"))
 				break;
-#endif
+
 			// Reset the return to launcher and quit flags in case we want to load another engine
 			g_system->getEventManager()->resetReturnToLauncher();
 			g_system->getEventManager()->resetQuit();
