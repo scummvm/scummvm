@@ -18,6 +18,9 @@ Programmcodes finden Sie auf Englisch unter:
    - Die ScummVM-Benutzeroberfläche unterstützt nun UTF-32.
    - Code der Roland MT-32-Emulation auf Munt 2.4.1 aktualisiert.
 
+ Dreamweb:
+   - Darstellungsfehler in der russischen Fan-Übersetzung behoben.
+
  Glk:
    - Probleme mit Spielständen in mehreren Sub-Engines behoben.
    - Speicherüberlauf im Erkennungsmechanismus für Level9-Spiele behoben.
@@ -61,6 +64,7 @@ Programmcodes finden Sie auf Englisch unter:
    - Darstellung des Pause- und Neustart-Dialogs in der chinesischen, japanischen und koreanischen Version
      der Benutzeroberfläche korrigiert.
    - Unterstützung für zahlreiche koreanische Übersetzungen des scummkor-Projektes hinzugefügt.
+   - Unterstützung für die Russobit-M-Versionen von Pajama2 und SpyOzone hinzugefügt.
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
