@@ -279,7 +279,7 @@ bool Pics::ImageFile::doImageOp(Pics::ImageContext *ctx) const {
 			ctx->_drawSurface->floodFill(a, b, ctx->_fillColor);
 		break;
 
-	case OPCODE_SPECIAL:
+	case OPCODE_RESET:
 		a = imageGetOperand(ctx);
 		doResetOp(ctx, a);
 		break;
