@@ -84,7 +84,7 @@ class Pics : public Common::Archive {
 		void doResetOp(ImageContext *ctx, byte param) const;
 	public:
 		ImageFile() {}
-		ImageFile(const Common::String &filename);
+		ImageFile(const Common::String &filename, bool isSingleImage = false);
 
 		void draw(uint index, ImageContext *ctx) const;
 	};
