@@ -28,7 +28,8 @@
 #include "glk/comprehend/game_data.h"
 #include "glk/comprehend/game_oo.h"
 #include "glk/comprehend/game_tm.h"
-#include "glk/comprehend/game_tr.h"
+#include "glk/comprehend/game_tr1.h"
+#include "glk/comprehend/game_tr2.h"
 #include "glk/comprehend/pics.h"
 #include "glk/quetzal.h"
 #include "common/config-manager.h"
@@ -113,8 +114,10 @@ void Comprehend::createGame() {
 		_game = new OOToposGame();
 	else if (_gameDescription._gameId == "talisman")
 		_game = new TalismanGame();
-	else if (_gameDescription._gameId == "transylvania")
-		_game = new TransylvaniaGame();
+	else if (_gameDescription._gameId == "transylvania" && _gameDescription._filename.equalsIgnoreCase("tr.gda"))
+		_game = new TransylvaniaGame1();
+	else if (_gameDescription._gameId == "transylvania" && _gameDescription._filename.equalsIgnoreCase("g0"))
+		_game = new TransylvaniaGame2();
 	else
 		error("Unknown game");
 }

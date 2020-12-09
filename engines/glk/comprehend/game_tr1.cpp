@@ -22,7 +22,7 @@
 
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/game_data.h"
-#include "glk/comprehend/game_tr.h"
+#include "glk/comprehend/game_tr1.h"
 #include "glk/comprehend/pics.h"
 
 namespace Glk {
@@ -56,11 +56,11 @@ struct TransylvaniaMonster {
 };
 
 
-const TransylvaniaMonster TransylvaniaGame::WEREWOLF = {
+const TransylvaniaMonster TransylvaniaGame1::WEREWOLF = {
 	ITEM_WEREWOLF, 7, ROOMFLAG_WEREWOLF, 10, 190
 };
 
-const TransylvaniaMonster TransylvaniaGame::VAMPIRE = {
+const TransylvaniaMonster TransylvaniaGame1::VAMPIRE = {
 	ITEM_VAMPIRE, 5, ROOMFLAG_VAMPIRE, 0, 200
 };
 
@@ -69,7 +69,7 @@ static const GameStrings TR_STRINGS = {
 };
 
 
-TransylvaniaGame::TransylvaniaGame() : ComprehendGameV1(),
+TransylvaniaGame1::TransylvaniaGame1() : ComprehendGameV1(),
 		_miceReleased(false) {
 	_gameDataFile = "tr.gda";
 
@@ -91,7 +91,7 @@ TransylvaniaGame::TransylvaniaGame() : ComprehendGameV1(),
 	_gameStrings = &TR_STRINGS;
 }
 
-bool TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
+bool TransylvaniaGame1::updateMonster(const TransylvaniaMonster *monsterInfo) {
 	Item *monster;
 	Room *room;
 	uint16 turn_count;
@@ -126,12 +126,12 @@ bool TransylvaniaGame::updateMonster(const TransylvaniaMonster *monsterInfo) {
 	return true;
 }
 
-bool TransylvaniaGame::isMonsterInRoom(const TransylvaniaMonster *monsterInfo) {
+bool TransylvaniaGame1::isMonsterInRoom(const TransylvaniaMonster *monsterInfo) {
 	Item *monster = get_item(monsterInfo->_object);
 	return monster->_room == _currentRoom;
 }
 
-int TransylvaniaGame::roomIsSpecial(unsigned room_index,
+int TransylvaniaGame1::roomIsSpecial(unsigned room_index,
                                     unsigned *roomDescString) {
 	Room *room = &_rooms[room_index];
 
@@ -144,7 +144,7 @@ int TransylvaniaGame::roomIsSpecial(unsigned room_index,
 	return ROOM_IS_NORMAL;
 }
 
-void TransylvaniaGame::beforeTurn() {
+void TransylvaniaGame1::beforeTurn() {
 	Room *room;
 
 	if (!isMonsterInRoom(&WEREWOLF) && !isMonsterInRoom(&VAMPIRE)) {
@@ -191,7 +191,7 @@ done:
 	ComprehendGameV1::beforeTurn();
 }
 
-void TransylvaniaGame::synchronizeSave(Common::Serializer &s) {
+void TransylvaniaGame1::synchronizeSave(Common::Serializer &s) {
 	ComprehendGame::synchronizeSave(s);
 	s.syncAsByte(_miceReleased);
 
@@ -200,7 +200,7 @@ void TransylvaniaGame::synchronizeSave(Common::Serializer &s) {
 	get_item(ITEM_VAMPIRE)->_room = 0xff;
 }
 
-void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
+void TransylvaniaGame1::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
 	case 1:
 		// Mice have been released
@@ -259,7 +259,7 @@ void TransylvaniaGame::handleSpecialOpcode(uint8 operand) {
 	if (g_comprehend->shouldQuit()) return; \
 	} while (strlen(buffer) == 0)
 
-void TransylvaniaGame::beforeGame() {
+void TransylvaniaGame1::beforeGame() {
 	char buffer[128];
 	g_comprehend->setDisableSaves(true);
 

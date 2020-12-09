@@ -551,6 +551,7 @@ void GameData::parse_header(FileBuffer *fb) {
 		_magicWord = (uint16)(-0x5a00 + 0x4);
 		break;
 
+	case 0x8bc3: /* Transylvania v2 */
 	case 0x93f0: /* OO-Topos */
 	case 0xa429: /* Talisman */
 		_comprehendVersion = 2;

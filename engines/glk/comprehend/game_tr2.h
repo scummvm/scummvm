@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef GLK_COMPREHEND_GAME_TR_H
-#define GLK_COMPREHEND_GAME_TR_H
+#ifndef GLK_COMPREHEND_GAME_TR2_H
+#define GLK_COMPREHEND_GAME_TR2_H
 
 #include "glk/comprehend/game_opcodes.h"
 
@@ -30,7 +30,7 @@ namespace Comprehend {
 
 struct TransylvaniaMonster;
 
-class TransylvaniaGame : public ComprehendGameV1 {
+class TransylvaniaGame2 : public ComprehendGameV2 {
 private:
 	static const TransylvaniaMonster WEREWOLF;
 	static const TransylvaniaMonster VAMPIRE;
@@ -39,8 +39,8 @@ private:
 	bool updateMonster(const TransylvaniaMonster *monsterInfo);
 	bool isMonsterInRoom(const TransylvaniaMonster *monsterInfo);
 public:
-	TransylvaniaGame();
-	~TransylvaniaGame() override {}
+	TransylvaniaGame2();
+	~TransylvaniaGame2() override {}
 
 	void beforeGame() override;
 	void beforeTurn() override;
