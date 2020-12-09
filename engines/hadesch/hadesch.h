@@ -173,6 +173,9 @@ public:
 
 	Common::Array<HadeschSaveDescriptor> getHadeschSavesList();
 	void deleteSave(int slot);
+	int genSubtitleID();
+	uint32 getSubtitleDelayPerChar() const;
+	void wrapSubtitles(const Common::U32String &str, Common::Array<Common::U32String> &lines);
 
 private:
 	void addTimer(EventHandlerWrapper event, int32 start_time, int period,
@@ -219,6 +222,8 @@ private:
 	Common::Array<RoomId> _nextRoom;
 	bool _isRestoring;
   	bool _isQuitting;
+	int _subtitleID;
+	int _subtitleDelayPerChar;
 
 	// For freeing purposes
 	Common::Array <Graphics::MacCursor *> _macCursors;
