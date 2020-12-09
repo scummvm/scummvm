@@ -24,6 +24,7 @@
 #include "glk/comprehend/comprehend.h"
 #include "glk/comprehend/draw_surface.h"
 #include "glk/comprehend/pics.h"
+#include "common/md5.h"
 
 namespace Glk {
 namespace Comprehend {
@@ -66,11 +67,31 @@ OOToposGame::OOToposGame() : ComprehendGameV2(), _restartMode(RESTART_IMMEDIATE)
 	_gameDataFile = "g0";
 
 	// Extra strings are (annoyingly) stored in the game binary
-	_stringFiles.push_back(StringFile("NOVEL.EXE", 0x16564, 0x17640));
-	_stringFiles.push_back(StringFile("NOVEL.EXE", 0x17702, 0x18600));
-	_stringFiles.push_back(StringFile("NOVEL.EXE", 0x186b2, 0x19b80));
-	_stringFiles.push_back(StringFile("NOVEL.EXE", 0x19c62, 0x1a590));
-	_stringFiles.push_back(StringFile("NOVEL.EXE", 0x1a634, 0x1b080));
+	Common::File f;
+	if (!f.open("novel.exe"))
+		error("novel.exe is a required file");
+
+	Common::String md5 = Common::computeStreamMD5AsString(f, 1024);
+	f.close();
+
+	if (md5 == "3fc2072f6996b17d2f21f0a92e53cdcc") {
+		// DOS version from if-archive
+		_stringFiles.push_back(StringFile("NOVEL.EXE", 0x16564, 0x17640));
+		_stringFiles.push_back(StringFile("NOVEL.EXE", 0x17702, 0x18600));
+		_stringFiles.push_back(StringFile("NOVEL.EXE", 0x186b2, 0x19b80));
+		_stringFiles.push_back(StringFile("NOVEL.EXE", 0x19c62, 0x1a590));
+		_stringFiles.push_back(StringFile("NOVEL.EXE", 0x1a634, 0x1b080));
+	} else if (md5 == "e26858f2aaa9dcc28f468b07902813c5") {
+		// DOS version from graphicsmagician.com
+		_stringFiles.push_back(StringFile("NOVEL.EXE", 0x164c4, 0x175a0));
+		_stringFiles.push_back(StringFile("NOVEL.EXE", 0x17662, 0x18560));
+		_stringFiles.push_back(StringFile("NOVEL.EXE", 0x18612, 0x19ae0));
+		_stringFiles.push_back(StringFile("NOVEL.EXE", 0x19bc2, 0x1a4f0));
+		_stringFiles.push_back(StringFile("NOVEL.EXE", 0x1a594, 0x1afe0));
+	} else {
+		error("Unrecognised novel.exe encountered");
+	}
+
 	_locationGraphicFiles.push_back("RA");
 	_locationGraphicFiles.push_back("RB");
 	_locationGraphicFiles.push_back("RC");
