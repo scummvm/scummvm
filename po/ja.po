@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-07 22:01+0000\n"
-"PO-Revision-Date: 2020-12-09 16:56+0000\n"
+"PO-Revision-Date: 2020-12-09 19:35+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -5968,9 +5968,8 @@ msgid "Save game 1-10"
 msgstr "ゲームをセーブ："
 
 #: engines/scumm/help.cpp:87
-#, fuzzy
 msgid "Music volume up / down"
-msgstr "音楽の音量： "
+msgstr "BGMの音量アップ/ダウン"
 
 #: engines/scumm/help.cpp:88
 msgid "Text speed slower / faster"
@@ -6451,9 +6450,8 @@ msgid "Music volume: "
 msgstr "音楽の音量： "
 
 #: engines/scumm/input.cpp:595
-#, fuzzy
 msgid "Subtitle speed: "
-msgstr "字幕の速度："
+msgstr "字幕の速度： "
 
 #: engines/scumm/metaengine.cpp:331
 msgid ""
@@ -7454,39 +7452,32 @@ msgid "Select next music record"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:758
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "1P：上"
+msgstr "音の再生：A"
 
 #: engines/wintermute/keymapper_tables.h:763
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "2P：上"
+msgstr "音の再生：F#"
 
 #: engines/wintermute/keymapper_tables.h:768
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "再生時間： "
+msgstr "音の再生：D#"
 
 #: engines/wintermute/keymapper_tables.h:773
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "再生時間： "
+msgstr "音の再生：C#"
 
 #: engines/wintermute/keymapper_tables.h:778
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "再生時間： "
+msgstr "音の再生：E"
 
 #: engines/wintermute/keymapper_tables.h:783
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "再生時間： "
+msgstr "音の再生：G#"
 
 #: engines/wintermute/keymapper_tables.h:788
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "再生時間： "
+msgstr "音の再生：B"
 
 #: engines/wintermute/keymapper_tables.h:801
 msgid "Ability: Telekinesis"
