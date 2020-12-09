@@ -96,7 +96,9 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	bool forwardEvent = true;
 
 	// If the backend has the kFeatureNoQuit or the "Return to Launcher at Exit" option is enabled,
-	// replace "Quit" event with "Return to Launcher"
+	// replace "Quit" event with "Return to Launcher". This is also handled in scummvm_main, but
+	// doing it here allows getting the correct confirmation dialog if the "confirm_exit" setting
+	// is set to true.
 	if (event.type == Common::EVENT_QUIT && (g_system->hasFeature(OSystem::kFeatureNoQuit) || (ConfMan.getBool("gui_return_to_launcher_at_exit") && g_engine)))
 		event.type = Common::EVENT_RETURN_TO_LAUNCHER;
 
