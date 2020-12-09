@@ -1805,7 +1805,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 27:
-		*animation = kModelAnimationSteeleWithGunHopASideways;
+		*animation = kModelAnimationSteeleWithGunStrafeFast;
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
@@ -1816,7 +1816,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 28:
-		*animation = kModelAnimationSteeleWithGunHopBSideways;
+		*animation = kModelAnimationSteeleWithGunStrafeSlow;
 		++_animationFrame;
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 			_animationFrame = 0;
