@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
 	PoMessageList messageIds;
 	std::vector<PoMessageEntryList *> translations;
 	int numLangs = 0;
-	for (int i = 1; i < argc; ++i) {
+	for (int i = 2; i < argc; ++i) {
 		// Check file extension
 		int len = strlen(argv[i]);
 		if (scumm_stricmp(argv[i] + len - 2, "po") == 0) {
@@ -124,7 +124,7 @@ int main(int argc, char *argv[]) {
 
 	if (!numLangs) {
 		fprintf(stderr, "ERROR: No valid translation files\n");
-		fprintf(stderr, "usage: create_translations lang1.po [lang2.po ...]\n");
+		fprintf(stderr, "usage: create_translations OUTPUT lang1.po [lang2.po ...]\n");
 		return -1;
 	}
 
@@ -147,7 +147,7 @@ int main(int argc, char *argv[]) {
 	// for (i = 0; i < DATAALIGNMENT; i++)
 	//	padBuf[i] = 0;
 
-	outFile = fopen("translations.dat", "wb");
+	outFile = fopen(argv[1], "wb");
 
 	// Write header
 	fwrite("TRANSLATIONS", 12, 1, outFile);
