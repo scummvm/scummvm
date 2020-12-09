@@ -345,15 +345,11 @@ void DreamWebEngine::printCurs() {
 	} else
 		height = 8;
 
-	int w = 6;
-	if (getLanguage() == Common::RU_RUS)
-		w = 7;
-
-	multiGet(_textUnder, x, y, w, height);
+	multiGet(_textUnder, x, y, 6, height);
 	++_mainTimer;
 	if ((_mainTimer & 16) == 0)
 		showFrame(_monitorCharset, x, y, '/' - 32, 0);
-	multiDump(x - 6, y, 12, height);
+	multiDump(x - (getLanguage() == Common::RU_RUS ? 7 : 6), y, 12, height);
 }
 
 void DreamWebEngine::delCurs() {
