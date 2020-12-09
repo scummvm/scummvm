@@ -26,6 +26,9 @@
 #include "hadesch/baptr.h"
 #include "common/system.h"
 #include "graphics/palette.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+#include "hadesch/hadesch.h"
 
 namespace Hadesch {
 
@@ -48,8 +51,8 @@ void blendVideo8To8(byte *targetPixels, int targetPitch, int targetW, int target
 void GfxContext8Bit::blitPodImage(byte *sourcePixels, int sourcePitch, int sourceW, int sourceH,
 				  byte *sourcePalette, size_t ncolours, Common::Point offset) {
 	
-	blendVideo8To8(_pixels.get(), _pitch,
-		       _w, _h, sourcePixels, sourceW, sourceH,
+	blendVideo8To8((byte *) surf.getPixels(), surf.pitch,
+		       surf.w, surf.h, sourcePixels, sourceW, sourceH,
 		       offset);
 	for (unsigned i = 0; i < ncolours; i++) {
 		int col = sourcePalette[4 * i] & 0xff;
@@ -63,7 +66,7 @@ void GfxContext8Bit::blitPodImage(byte *sourcePixels, int sourcePitch, int sourc
 
 void GfxContext8Bit::blitVideo(byte *sourcePixels, int sourcePitch, int sourceW, int sourceH,
 			       byte *sourcePalette, Common::Point offset) {
-	blendVideo8To8(_pixels.get(), _pitch, _w, _h, sourcePixels, sourceW, sourceH, offset);
+	blendVideo8To8((byte *) surf.getPixels(), surf.pitch, surf.w, surf.h, sourcePixels, sourceW, sourceH, offset);
 	for (int i = 0; i < 256; i++)
 		if (!_paletteUsed[i]) {
 			_palette[3 * i] = sourcePalette[3 * i];
@@ -81,18 +84,14 @@ void GfxContext8Bit::fade(int val) {
 }
 
 void GfxContext8Bit::clear() {
-	memset(_pixels.get(), 0, _w * _h);
+	surf.clearPalette();
+	surf.clear();
 	memset(_palette, 0, sizeof(_palette));
 	memset(_paletteUsed, 0, sizeof(_paletteUsed));
 }
 
-GfxContext8Bit::GfxContext8Bit(int canvasW, int canvasH) {
-	_w = canvasW;
-	_h = canvasH;
-	_pitch = _w;
-	_pixels = sharedPtrByteAlloc(_w * _h);
-	memset(_palette, 0, sizeof(_palette));
-	memset(_paletteUsed, 0, sizeof(_paletteUsed));
+GfxContext8Bit::GfxContext8Bit(int canvasW, int canvasH) : surf(canvasW, canvasH, Graphics::PixelFormat::createFormatCLUT8()) {
+	clear();
 }
 
 void GfxContext8Bit::renderToScreen(Common::Point viewPoint) {
@@ -100,8 +99,48 @@ void GfxContext8Bit::renderToScreen(Common::Point viewPoint) {
 		g_system->getPaletteManager()->setPalette(_palette, 0, 256);
 	}
 
-	g_system->copyRectToScreen(_pixels.get() + viewPoint.x + _pitch * viewPoint.y, _w, 0, 0,
+	g_system->copyRectToScreen(surf.getBasePtr(viewPoint.x, viewPoint.y), surf.w, 0, 0,
 				   kVideoWidth, kVideoHeight);
 }
 
+byte GfxContext8Bit::findColor(byte r, byte g, byte b) {
+	for (uint i = 1; i < 256; i++)
+		if (_paletteUsed[i] && _palette[3 * i] == r && _palette[3 * i + 1] == g && _palette[3 * i + 2] == b) {
+			return i;
+		}
+	for (uint i = 1; i < 256; i++)
+		if (!_paletteUsed[i]) {
+			_palette[3 * i] = r;
+			_palette[3 * i + 1] = g;
+			_palette[3 * i + 2] = b;
+			_paletteUsed[i] = true;
+			return i;
+		}
+	int diff = 0x40000; int c = 0;
+	for (uint i = 1; i < 256; i++) {
+		int cDiff = (_palette[3 * i] - r) * (_palette[3 * i] - r) + (_palette[3 * i + 1] - g) * (_palette[3 * i + 1] - g)
+			+ (_palette[3 * i + 2] - b) * (_palette[3 * i + 2] - b);
+		if (cDiff < diff) {
+			diff = cDiff;
+			c = i;
+		}
+	}
+
+	return c;
+}
+
+void GfxContext8Bit::renderSubtitle(Common::U32String const& line, Common::Point viewPoint) {
+	int fgColor = findColor(0xff, 0xff, 0xff);
+	int bgColor = findColor(0, 0, 0);
+	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kLocalizedFont));
+	Common::Rect rect(70 + viewPoint.x, 420 + viewPoint.y, 570 + viewPoint.x, 420 + viewPoint.y + font.getFontHeight());
+	surf.fillRect(rect, bgColor);
+	font.drawString(&surf, line, rect.left, rect.top, rect.width() - 10,
+			fgColor, Graphics::kTextAlignCenter);
+}
+
+void HadeschEngine::wrapSubtitles(const Common::U32String &str, Common::Array<Common::U32String> &lines) {
+	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont));
+	font.wordWrapText(str, 500, lines);
+}
 }
