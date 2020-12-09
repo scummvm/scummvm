@@ -85,6 +85,8 @@ HadeschEngine::HadeschEngine(OSystem *system, const ADGameDescription *desc)
 	_isQuitting = false;
 	_isRestoring = false;
 
+	_subtitleID = 0;
+
 	debug("HadeschEngine::ctor");
 }
 
@@ -516,6 +518,22 @@ Common::Error HadeschEngine::run() {
 	_gfxContext = Common::SharedPtr<GfxContext8Bit>(new GfxContext8Bit(2 * kVideoWidth + 10, kVideoHeight + 50));
 	_isInOptions = false;
 
+	ConfMan.registerDefault("subtitles", "false");
+	ConfMan.registerDefault("sfx_volume", 192);
+	ConfMan.registerDefault("music_volume", 192);
+	ConfMan.registerDefault("speech_volume", 192);
+	ConfMan.registerDefault("mute", "false");
+	ConfMan.registerDefault("speech_mute", "false");
+	ConfMan.registerDefault("talkspeed", 60);
+	_mixer->setVolumeForSoundType(_mixer->kMusicSoundType, ConfMan.getInt("music_volume"));
+	_mixer->setVolumeForSoundType(_mixer->kSFXSoundType, ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(_mixer->kSpeechSoundType, ConfMan.getInt("speech_volume"));
+
+	if (!ConfMan.getBool("subtitles"))
+		_subtitleDelayPerChar = -1;
+	else
+		_subtitleDelayPerChar = 4500 / ConfMan.getInt("talkspeed");
+
 	debug("HadeschEngine: moving to main loop");
 	_nextRoom.clear();
 	int loadSlot = ConfMan.getInt("save_slot");
@@ -855,6 +873,10 @@ void HadeschEngine::moveToRoomReal(RoomId id) {
 	_persistent._roomVisited[id] = true;
 }
 
+int HadeschEngine::genSubtitleID() {
+	return _subtitleID++;
+}
+
 int HadeschEngine::firstAvailableSlot() {
 	for (unsigned slot = 3; ; slot++) {
 		SaveStateDescriptor desc = getMetaEngine().querySaveMetaInfos(_targetName.c_str(), slot);
@@ -924,6 +946,10 @@ void EventHandlerWrapper::operator()() const {
 
 bool EventHandlerWrapper::operator==(int b) const {
 	return _eventId == b;
+}
+
+uint32 HadeschEngine::getSubtitleDelayPerChar() const {
+	return _subtitleDelayPerChar;
 }
 
 } // End of namespace Hadesch

@@ -39,6 +39,7 @@
 #include "hadesch/event.h"
 #include "hadesch/hotzone.h"
 #include "hadesch/table.h"
+#include "common/queue.h"
 
 namespace Video {
 class SmackerDecoder;
@@ -118,6 +119,7 @@ struct Animation {
 	bool _finished;
 	bool _keepLastFrame;
 	bool _skippable;
+	int _subtitleID;
 };
 
 class PlayAnimParams {
@@ -305,6 +307,7 @@ public:
 	void pause();
 	void unpause();
 	void finish();
+	void cancelAllSubtitles();
 	void setViewportOffset(Common::Point vp) {
 		_viewportOffset = vp;
 	}
@@ -322,13 +325,21 @@ private:
 		int scale; // From 0 to 100
 	};
 
+	struct SubtitleLine {
+		Common::U32String line;
+		int32 maxTime;
+		int ID;
+	};
+
 	void playAnimWithSoundInternal(const LayerId &animName,
 				       const Common::String &soundName,
 				       Audio::Mixer::SoundType soundType,
 				       int zValue,
 				       PlayAnimParams params,
-				       EventHandlerWrapper callbackEvent = EventHandlerWrapper(),
-				       Common::Point offset = Common::Point(0, 0));
+				       EventHandlerWrapper callbackEvent,
+				       Common::Point offset,
+				       int subID = -1);
+	void playSubtitles(const char *text, int subID);
 	void addLayer(Renderable *renderable, const LayerId &name,
 		      int zValue,
 		      bool isEnabled = true, Common::Point offset = Common::Point(0, 0));
@@ -339,7 +350,7 @@ private:
 	Common::String mapAsset(const LayerId &name);
 	void addAnimLayerInternal(const LayerId &name, int zValue, Common::Point offset = Common::Point(0, 0));
 	void playSoundInternal(const Common::String &soundName, EventHandlerWrapper callbackEvent, bool loop,
-			       bool skippable, Audio::Mixer::SoundType soundType);
+			       bool skippable, Audio::Mixer::SoundType soundType, int subtitleID = -1);
 	static int layerComparator (const Layer &a, const Layer &b);
 	void loadFontWidth(const Common::String &font);
 
@@ -383,6 +394,8 @@ private:
 	int _videoZ;
 	Common::SharedPtr<PodFile> _podFile;
 	Common::HashMap<Common::String, Common::Array<int> > _fontWidths;
+	Common::Queue<SubtitleLine> _subtitles;
+	Common::HashMap<int, int> _countQueuedSubtitles;
 	TextTable _assetMap;
 	bool _mouseEnabled;
 
