@@ -74,9 +74,7 @@ public:
 	virtual int shouldQuit() const override { return _shouldQuit; }
 	virtual int shouldReturnToLauncher() const override { return _shouldReturnToLauncher; }
 	virtual void resetReturnToLauncher() override { _shouldReturnToLauncher = false; }
-#ifdef FORCE_RETURN_TO_LAUNCHER
 	virtual void resetQuit() override { _shouldQuit = false; }
-#endif
 
 	Common::Keymapper *getKeymapper() override { return _keymapper; }
 	Common::Keymap *getGlobalKeymap() override;
