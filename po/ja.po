@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-07 22:01+0000\n"
-"PO-Revision-Date: 2020-12-07 15:08+0000\n"
+"PO-Revision-Date: 2020-12-09 16:56+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3064,9 +3064,8 @@ msgid "The parent directory doesn't exist!"
 msgstr ""
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:71
-#, fuzzy
 msgid "Can't upload into a file!"
-msgstr "ファイルではありません"
+msgstr "アップロード先にはディレクトリーを指定してください!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:198
 msgid "Back to the files manager"
@@ -4346,9 +4345,8 @@ msgid "Your light has run out. "
 msgstr ""
 
 #: engines/glk/scott/scott.cpp:130
-#, fuzzy
 msgid "Light runs out in "
-msgstr "マウスの右ボタン"
+msgstr "燃料が足りません "
 
 #: engines/glk/scott/scott.cpp:132
 msgid " turns. "
@@ -5845,9 +5843,8 @@ msgid "The game was NOT saved (disk full?)"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:190
-#, fuzzy
 msgid "The game was NOT loaded"
-msgstr "テーマを読み込みできませんでした！"
+msgstr "ゲームがロードできませんでした"
 
 #: engines/scumm/dialogs.cpp:191
 #, c-format
