@@ -328,7 +328,7 @@ void GameState::processFoundItem(int32 item) {
 
 	int32 currentAnimState = 0;
 
-	_engine->_renderer->prepareIsoModel(_engine->_resources->inventoryTable[item]);
+	Renderer::prepareIsoModel(_engine->_resources->inventoryTable[item]);
 	_engine->_redraw->numOfRedrawBox = 0;
 
 	while (!quitItem) {
@@ -452,7 +452,7 @@ void GameState::processGameoverAnimation() {
 	const int32 right = 519;
 	const int32 bottom = 359;
 	const Common::Rect rect(left, top, right, bottom);
-	_engine->_renderer->prepareIsoModel(gameOverPtr);
+	Renderer::prepareIsoModel(gameOverPtr);
 	_engine->_sound->stopSamples();
 	_engine->_music->stopMidiMusic(); // stop fade music
 	_engine->_renderer->setCameraPosition(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 128, 200, 200);

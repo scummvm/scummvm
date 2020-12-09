@@ -245,7 +245,7 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoun
 					if (bodyTableSize[index] == 0) {
 						error("HQR ERROR: Loading body entities");
 					}
-					_engine->_renderer->prepareIsoModel(bodyTable[index]);
+					Renderer::prepareIsoModel(bodyTable[index]);
 					stream.seek(stream.pos() - sizeof(uint16));
 					stream.writeUint16LE(index + 0x8000);
 				} else {
