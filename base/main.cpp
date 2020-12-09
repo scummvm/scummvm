@@ -697,7 +697,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 #endif
 	Common::SearchManager::destroy();
 #ifdef USE_TRANSLATION
-	Common::TranslationManager::destroy();
+	Common::MainTranslationManager::destroy();
 #endif
 	MusicManager::destroy();
 	Graphics::CursorManager::destroy();
