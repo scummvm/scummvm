@@ -17,6 +17,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Switched ScummVM GUI output to UTF-32.
    - Updated the Roland MT-32 emulation code to Munt 2.4.1.
 
+ Dreamweb:
+   - Rendering fixes for Russian fan translation.
+
  Glk:
    - Fixed savegame issues with several subengines.
    - Fixed memory overrun in Level9 game detector.
