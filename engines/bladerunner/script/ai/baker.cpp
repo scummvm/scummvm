@@ -91,7 +91,7 @@ bool AIScriptBaker::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 }
 
 bool AIScriptBaker::UpdateAnimation(int *animation, int *frame) {
-	*animation = 451;
+	*animation = kModelAnimationBakerTpose;
 	*frame = 0;
 
 	return true;
