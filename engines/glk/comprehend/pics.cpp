@@ -319,6 +319,8 @@ uint16 Pics::ImageFile::imageGetOperand(ImageContext *ctx) const {
 Pics::Pics() : _font(nullptr) {
 	if (Common::File::exists("charset.gda"))
 		_font = new CharSet();
+	else if (g_comprehend->getGameID() == "talisman")
+		_font = new TalismanFont();
 }
 
 Pics::~Pics() {
