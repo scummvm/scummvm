@@ -34,7 +34,7 @@ class DebugScene {
 private:
 	TwinEEngine *_engine;
 
-	void drawBoundingBoxProjectPoints(ScenePoint *pPoint3d, ScenePoint *pPoint3dProjected);
+	void drawBoundingBoxProjectPoints(ScenePoint *point3d, ScenePoint *point3dProjected);
 	int32 checkZoneType(int32 type);
 public:
 	DebugScene(TwinEEngine *engine);

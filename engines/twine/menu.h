@@ -193,10 +193,6 @@ public:
 	Menu(TwinEEngine *engine);
 	~Menu();
 
-	int32 currMenuTextIndex = -1;
-	int32 currMenuTextBank = TextBankId::None;
-	char currMenuTextBuffer[256];
-
 	int16 itemAngle[255]; // objectRotation
 
 	/** Behaviour menu move pointer */
