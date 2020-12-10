@@ -1993,8 +1993,27 @@ enum GameModelAnimations {
 	kModelAnimationFemaleTargetWithBabyDead      = 448, // 447+1
 	kModelAnimationFemaleTargetWithGunActive     = 449,
 	kModelAnimationFemaleTargetWithGunDead       = 450, // 449+1
-	//       451: T-Pose Security Guard (unused?)
+	//       451: Baker animations (probably for debug purposes or leftover from a removed character)
+	kModelAnimationBakerTpose                    = 451, // This is a security guard T-pose (1 frame) model
 	// 452 - 469: CrazyLegs animations
+	kModelAnimationCrazylegsRollSlow             = 452,
+	kModelAnimationCrazylegsRollFast             = 453, // untriggered
+	kModelAnimationCrazylegsIdle                 = 454,
+	kModelAnimationCrazylegsHandsUpIdle          = 455, // Is this triggered for Crazylegs?
+	kModelAnimationCrazylegsMobileIdle           = 456, // Is this triggered for Crazylegs?
+	kModelAnimationCrazylegsGestureGive          = 457, // animationMode 23. Is this triggered for Crazylegs?
+	kModelAnimationCrazylegsCalmTalk             = 458,
+	kModelAnimationCrazylegsSmallHandMoveTalk    = 459,
+	kModelAnimationCrazylegsPointingAtSelfTalk   = 460,
+	kModelAnimationCrazylegsDisagreeTalk         = 461,
+	kModelAnimationCrazylegsFastTalk             = 462,
+	kModelAnimationCrazylegsProtestTalk          = 463,
+	kModelAnimationCrazylegsMobileCalmTalk       = 464, // last frame (11) seems bugged (hand snaps to bit lower and without mobile)
+	kModelAnimationCrazylegsMobileIntenseTalk    = 465,
+	kModelAnimationCrazylegsHandsUpTalk          = 466,
+	kModelAnimationCrazylegsHandsUpRaisesHands   = 467, // untriggered
+	kModelAnimationCrazylegsHandsUpLowersHands   = 468,
+	kModelAnimationCrazylegsHangsUpMobile        = 469,
 	// 470 - 486: Grigorian animations
 	// 487 - 505: Transient/Homeless animations
 	// 506 - 525: Bullet Bob animations
