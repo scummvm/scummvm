@@ -89,6 +89,8 @@ private:
 	void initGameStateVars();
 	void initHeroVars();
 
+	MenuSettings gameChoicesSettings;
+
 public:
 	GameState(TwinEEngine *engine);
 
@@ -195,7 +197,6 @@ public:
 
 	int32 gameChoices[10];         // inGameMenuData
 	int32 numChoices = 0;          // numOfOptionsInChoice
-	MenuSettings gameChoicesSettings; // choiceTab -  same structure as menu settings
 	int32 choiceAnswer = 0;        // inGameMenuAnswer
 
 	/** Initialize all engine variables */

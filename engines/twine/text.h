@@ -184,6 +184,10 @@ private:
 	/** Current dialogue text size */
 	int32 _currDialTextSize = 0;
 
+	char currMenuTextBuffer[256];
+	int32 currMenuTextBank = TextBankId::None;
+	int32 currMenuTextIndex = -1;
+
 	/** Pixel size between dialogue text */
 	int32 _dialSpaceBetween = 0;
 	/** Pixel size of the space character */
@@ -209,7 +213,7 @@ private:
 	int32 _dialTextBoxLines = 0; // dialogueBoxParam1
 	int32 _dialTextBoxParam2 = 0; // dialogueBoxParam2
 public:
-	Text(TwinEEngine *engine) : _engine(engine) {}
+	Text(TwinEEngine *engine);
 	~Text();
 
 	// TODO: refactor all this variables and related functions

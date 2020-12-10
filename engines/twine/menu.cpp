@@ -166,7 +166,6 @@ Menu::Menu(TwinEEngine *engine) {
 
 	Common::fill(&behaviourAnimState[0], &behaviourAnimState[4], 0);
 	Common::fill(&itemAngle[0], &itemAngle[255], 0);
-	Common::fill(&currMenuTextBuffer[0], &currMenuTextBuffer[256], 0);
 }
 
 Menu::~Menu() {

@@ -46,6 +46,10 @@ namespace TwinE {
 #define INDEXOFFSET 0
 #define DIALOGSOFFSET 1
 
+Text::Text(TwinEEngine *engine) : _engine(engine) {
+	Common::fill(&currMenuTextBuffer[0], &currMenuTextBuffer[256], 0);
+}
+
 Text::~Text() {
 	free(dialTextPtr);
 	free(dialOrderPtr);
@@ -715,9 +719,9 @@ void Text::copyText(const char *src, char *dst, int32 size) {
 }
 
 bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
-	if (index == _engine->_menu->currMenuTextIndex) {
-		if (_engine->_menu->currMenuTextBank == _engine->_scene->sceneTextBank) {
-			Common::strlcpy(text, _engine->_menu->currMenuTextBuffer, textSize);
+	if (index == currMenuTextIndex) {
+		if (currMenuTextBank == _engine->_scene->sceneTextBank) {
+			Common::strlcpy(text, currMenuTextBuffer, textSize);
 			return true;
 		}
 	}
@@ -733,10 +737,10 @@ bool Text::getMenuText(int32 index, char *text, uint32 textSize) {
 
 	copyText(_currDialTextPtr, text, _currDialTextSize);
 	_currDialTextSize++;
-	copyText(text, _engine->_menu->currMenuTextBuffer, _currDialTextSize);
+	copyText(text, currMenuTextBuffer, _currDialTextSize);
 
-	_engine->_menu->currMenuTextIndex = index;
-	_engine->_menu->currMenuTextBank = _engine->_scene->sceneTextBank;
+	currMenuTextIndex = index;
+	currMenuTextBank = _engine->_scene->sceneTextBank;
 	return true;
 }
 
