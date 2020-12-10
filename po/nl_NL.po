@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-12-07 22:01+0000\n"
+"POT-Creation-Date: 2020-12-09 22:25+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -66,8 +66,8 @@ msgstr "Ga omhoog"
 #: gui/saveload-dialog.cpp:1165 gui/themebrowser.cpp:55
 #: gui/unknown-game-dialog.cpp:54 engines/engine.cpp:652
 #: backends/dialogs/gtk/gtk-dialogs.cpp:46
-#: backends/events/default/default-events.cpp:183
-#: backends/events/default/default-events.cpp:207
+#: backends/events/default/default-events.cpp:185
+#: backends/events/default/default-events.cpp:209
 #: backends/platform/wii/options.cpp:48 engines/cine/saveload.cpp:864
 #: engines/drascula/saveload.cpp:49 engines/mohawk/myst_stacks/menu.cpp:284
 #: engines/mohawk/myst_stacks/menu.cpp:301
@@ -127,7 +127,7 @@ msgstr "Uw verbinding lijkt beperkt. Wilt u echt bestanden ermee downloaden?"
 #: gui/filebrowser-dialog.cpp:133 gui/fluidsynth-dialog.cpp:218
 #: gui/launcher.cpp:398 gui/launcher.cpp:419 gui/launcher.cpp:462
 #: gui/options.cpp:2708 gui/options.cpp:2746
-#: backends/events/default/default-events.cpp:183
+#: backends/events/default/default-events.cpp:185
 #: backends/events/symbiansdl/symbiansdl-events.cpp:191
 #: engines/grim/grim.cpp:353 engines/kyra/gui/saveload_eob.cpp:596
 #: engines/kyra/gui/saveload_eob.cpp:629
@@ -1957,7 +1957,7 @@ msgstr "Veld leegmaken"
 msgid "Error running game:"
 msgstr "Fout tijdens het starten van spel:"
 
-#: base/main.cpp:667
+#: base/main.cpp:666
 msgid "Could not find any engine capable of running the selected game"
 msgstr ""
 "Kon geen engine vinden die in staat was het geselecteerde spel te spelen"
@@ -2561,7 +2561,7 @@ msgstr "Download klaar."
 msgid "Download failed."
 msgstr "Download mislukt."
 
-#: backends/events/default/default-events.cpp:183
+#: backends/events/default/default-events.cpp:185
 #, fuzzy
 #| msgid ""
 #| "Are you sure you want to start a new game? All unsaved progress will be "
@@ -2573,7 +2573,7 @@ msgstr ""
 "Weet u zeker dat u een nieuw spel wilt starten? Alle onbewaarde voortgang "
 "zal verloren gaan."
 
-#: backends/events/default/default-events.cpp:207
+#: backends/events/default/default-events.cpp:209
 #, fuzzy
 #| msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgid ""
@@ -2582,8 +2582,8 @@ msgid ""
 msgstr ""
 "Weet u zeker dat u wilt stoppen? Alle onbewaarde voortgang zal verloren gaan."
 
-#: backends/events/default/default-events.cpp:207
-#: backends/events/default/default-events.cpp:324
+#: backends/events/default/default-events.cpp:209
+#: backends/events/default/default-events.cpp:326
 #: backends/platform/symbian/src/SymbianActions.cpp:54
 #: engines/hdb/metaengine.cpp:255 engines/mohawk/myst_stacks/menu.cpp:318
 #: engines/mohawk/riven_stacks/aspit.cpp:455 engines/scumm/dialogs.cpp:185
@@ -2592,23 +2592,23 @@ msgstr ""
 msgid "Quit"
 msgstr "Stoppen"
 
-#: backends/events/default/default-events.cpp:301
+#: backends/events/default/default-events.cpp:303
 msgid "Global"
 msgstr "Algemeen"
 
-#: backends/events/default/default-events.cpp:304
+#: backends/events/default/default-events.cpp:306
 msgid "Global Main Menu"
 msgstr "Algemene Hoofd Menu"
 
-#: backends/events/default/default-events.cpp:311
+#: backends/events/default/default-events.cpp:313
 msgid "Display keyboard"
 msgstr "Toon toetsenbord"
 
-#: backends/events/default/default-events.cpp:318
+#: backends/events/default/default-events.cpp:320
 msgid "Toggle mute"
 msgstr "Dempen aan-/uitzetten"
 
-#: backends/events/default/default-events.cpp:346
+#: backends/events/default/default-events.cpp:348
 msgid "Open Debugger"
 msgstr "Open Debugger"
 
