@@ -113,7 +113,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 			if (_animationFrame < 0) {
 				_animationFrame = Slice_Animation_Query_Number_Of_Frames(839) - 1;
 			}
-			if (!_animationFrame) {
+			if (_animationFrame == 0) {
 				_var3 = 0;
 				_var4 = 2 * Random_Query(0, 1) - 1;
 			}
@@ -147,7 +147,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 						_var2 = Random_Query(4, 8);
 					}
 				}
-				if (!_animationFrame) {
+				if (_animationFrame == 0) {
 					if (!Random_Query(0, 2)) {
 						_var3 = 1;
 					}
@@ -190,7 +190,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 					_animationFrame = Slice_Animation_Query_Number_Of_Frames(841) - 1;
 				}
 			}
-			if (!_animationFrame) {
+			if (_animationFrame == 0) {
 				_animationState = Random_Query(2, 3);
 			}
 		}
@@ -210,7 +210,7 @@ bool AIScriptIsabella::UpdateAnimation(int *animation, int *frame) {
 					_animationFrame = Slice_Animation_Query_Number_Of_Frames(842) - 1;
 				}
 			}
-			if (!_animationFrame) {
+			if (_animationFrame == 0) {
 				*animation = 841;
 				_animationState = 2;
 			}

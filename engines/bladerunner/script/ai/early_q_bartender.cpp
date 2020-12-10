@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptEarlyQBartender::AIScriptEarlyQBartender(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var1 = 0;
 	_var2 = 1;
 }
@@ -36,7 +36,7 @@ void AIScriptEarlyQBartender::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var1 = 0;
 	_var2 = 1;
 
@@ -133,7 +133,7 @@ bool AIScriptEarlyQBartender::UpdateAnimation(int *animation, int *frame) {
 	case 1:
 		*animation = 755;
 
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			_animationState = 0;
 			_var1 = 0;
 		} else {
@@ -195,19 +195,19 @@ bool AIScriptEarlyQBartender::ChangeAnimationMode(int mode) {
 	case 3:
 		_animationState = 1;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 12:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 23:

@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptDektora::AIScriptDektora(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_x = _y = _z = 0.0f;
 }
 
@@ -35,7 +35,7 @@ void AIScriptDektora::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_x = _y = _z = 0.0f;
 
 	Actor_Set_Goal_Number(kActorDektora, kGoalDektoraDefault);
@@ -612,9 +612,7 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = kModelAnimationDektoraStandingNodShort;
-		if (_animationFrame == 0
-		 && _flag
-		) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = kModelAnimationDektoraStandingIdle;
 			_animationState = 0;
 		} else {
@@ -898,7 +896,7 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 
 	case 27:
 		*animation = kModelAnimationDektoraSittingSubtleTalking;
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = kModelAnimationDektoraSittingIdle;
 			_animationState = 25;
 		} else {
@@ -1158,7 +1156,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		case 8:
 		case 27:
 		case 28:
-			_flag = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 		case 9:
 		case 10:
@@ -1215,7 +1213,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		) {
 			_animationState = 2;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1275,7 +1273,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		) {
 			_animationState = 3;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1285,7 +1283,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		) {
 			_animationState = 4;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1295,7 +1293,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		) {
 			_animationState = 5;
 			_animationFrame = 0;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1305,7 +1303,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		) {
 			_animationState = 6;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1315,7 +1313,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		) {
 			_animationState = 7;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1325,7 +1323,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		) {
 			_animationState = 8;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1374,7 +1372,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		) {
 			_animationState = 27;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1384,7 +1382,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 		) {
 			_animationState = 28;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1418,7 +1416,7 @@ bool AIScriptDektora::ChangeAnimationMode(int mode) {
 			break;
 		case 27:
 		case 28:
-			_flag = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 		default:
 			_animationState = 25;

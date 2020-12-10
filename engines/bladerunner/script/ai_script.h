@@ -117,7 +117,7 @@ DECLARE_SCRIPT(McCoy)
 END_SCRIPT
 
 DECLARE_SCRIPT(Steele)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 	int _var1;
 	int _var2;
 
@@ -125,7 +125,7 @@ DECLARE_SCRIPT(Steele)
 END_SCRIPT
 
 DECLARE_SCRIPT(Gordo)
-	int var_45B078;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 	int _counter;
 	int _counterTarget;
 	int _frameMin;
@@ -141,7 +141,7 @@ DECLARE_SCRIPT(Gordo)
 END_SCRIPT
 
 DECLARE_SCRIPT(Dektora)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 	float _x, _y, _z;
 
 	double comp_distance(int actorId, float x1, float y1, float z1);
@@ -152,7 +152,7 @@ DECLARE_SCRIPT(Guzza)
 	int _frameDelta;
 	int _counter;
 	int _state;
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(Clovis)
@@ -161,14 +161,14 @@ DECLARE_SCRIPT(Clovis)
 	int _var3;
 	int _var4;
 	int _var5;
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 
 	void shotAnim();
 	void someAnim();
 END_SCRIPT
 
 DECLARE_SCRIPT(Lucy)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 
 	void voightKampffTest();
 	void checkCombat();
@@ -179,7 +179,7 @@ DECLARE_SCRIPT(Izo)
 	int _var2;
 	int _var3;
 	int _var4;
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 
 	void dialogueWithIzo();
 	void modifyWaypoints();
@@ -190,15 +190,15 @@ DECLARE_SCRIPT(Sadik)
 	int _var2;
 	int _var3;
 	int _var4;
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(Crazylegs)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(Luther)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(Grigorian)
@@ -228,7 +228,7 @@ DECLARE_SCRIPT(Runciter)
 END_SCRIPT
 
 DECLARE_SCRIPT(InsectDealer)
-	bool _flag1;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 	int _state;
 	int _frameDelta;
 	int _var2;
@@ -237,14 +237,14 @@ END_SCRIPT
 
 DECLARE_SCRIPT(TyrellGuard)
 	int _frameDelta;
-	bool _flag1;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(EarlyQ)
 	int _var1;
 	int _var2;
 	int _var3;
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(Zuben)
@@ -270,7 +270,7 @@ DECLARE_SCRIPT(Marcus)
 END_SCRIPT
 
 DECLARE_SCRIPT(Mia)
-	bool _flag1;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(OfficerLeary)
@@ -280,12 +280,12 @@ END_SCRIPT
 
 DECLARE_SCRIPT(OfficerGrayford)
 	int _var1;
-	int _var2;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 	int _var3;
 END_SCRIPT
 
 DECLARE_SCRIPT(Hanoi)
-	int _var1;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 	bool _flag1;
 	int _var3;
 	int _var4;
@@ -296,7 +296,7 @@ END_SCRIPT
 
 DECLARE_SCRIPT(DeskClerk)
 	bool _flag1;
-	bool _flag2;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 	int _var3;
 END_SCRIPT
 
@@ -305,25 +305,25 @@ DECLARE_SCRIPT(HowieLee)
 END_SCRIPT
 
 DECLARE_SCRIPT(FishDealer)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(Klein)
 END_SCRIPT
 
 DECLARE_SCRIPT(Murray)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(HawkersBarkeep)
 	int _var1;
 	int _var2;
 	int _var3;
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(Holloway)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(SergeantWalls)
@@ -340,7 +340,7 @@ END_SCRIPT
 DECLARE_SCRIPT(Photographer)
 	int _var1;
 	int _var2;
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(Dispatcher)
@@ -358,7 +358,7 @@ END_SCRIPT
 DECLARE_SCRIPT(EarlyQBartender)
 	int _var1;
 	int _var2;
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(HawkersParrot)
@@ -387,7 +387,7 @@ DECLARE_SCRIPT(ShoeshineMan)
 END_SCRIPT
 
 DECLARE_SCRIPT(Tyrell)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 	int _var;
 END_SCRIPT
 
@@ -395,7 +395,7 @@ DECLARE_SCRIPT(Chew)
 	int _var1;
 	int _var2;
 	int _var3;
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(Gaff)
@@ -408,14 +408,14 @@ DECLARE_SCRIPT(Taffy)
 END_SCRIPT
 
 DECLARE_SCRIPT(Sebastian)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 
 	void dialogue();
 	void setMcCoyIsABladeRunner();
 END_SCRIPT
 
 DECLARE_SCRIPT(Rachael)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 
 	void dialogue_start();
 	void dialogue_agenda1();
@@ -424,7 +424,7 @@ DECLARE_SCRIPT(Rachael)
 END_SCRIPT
 
 DECLARE_SCRIPT(GeneralDoll)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(Isabella)
@@ -441,7 +441,7 @@ DECLARE_SCRIPT(Newscaster)
 END_SCRIPT
 
 DECLARE_SCRIPT(Leon)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 	float _mcCoyPositionX;
 	float _mcCoyPositionY;
 	float _mcCoyPositionZ;
@@ -515,17 +515,17 @@ DECLARE_SCRIPT(GenericWalkerC)
 END_SCRIPT
 
 DECLARE_SCRIPT(Mutant1)
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(Mutant2)
 	int _var1;
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 DECLARE_SCRIPT(Mutant3)
 	int _var1;
-	bool _flag;
+	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
 
 #undef DECLARE_SCRIPT

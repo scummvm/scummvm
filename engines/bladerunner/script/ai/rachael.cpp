@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptRachael::AIScriptRachael(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = true;
+	_resumeIdleAfterFramesetCompletesFlag = true;
 }
 
 void AIScriptRachael::Initialize() {
@@ -34,7 +34,7 @@ void AIScriptRachael::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = true;
+	_resumeIdleAfterFramesetCompletesFlag = true;
 
 	Actor_Set_Goal_Number(kActorRachael, kGoalRachaelDefault);
 }
@@ -222,7 +222,7 @@ bool AIScriptRachael::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = kModelAnimationRachaelIdle;
 			_animationState = 0;
 		} else {
@@ -316,7 +316,7 @@ bool AIScriptRachael::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
 		if (_animationState >= 2 && _animationState <= 9) { // talking states
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		} else {
 			_animationState = 0; // idle state
 			_animationFrame = 0;
@@ -329,42 +329,42 @@ bool AIScriptRachael::ChangeAnimationMode(int mode) {
 	case kAnimationModeTalk:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 12:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 13:
 		_animationState = 4;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 14:
 		_animationState = 5;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 15:
 		_animationState = 6;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 16:
 		_animationState = 7;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 17:
 		_animationState = 8;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 18:
 		_animationState = 9;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	default:
 		break;

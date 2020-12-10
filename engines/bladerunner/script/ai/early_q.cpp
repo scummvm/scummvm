@@ -28,7 +28,7 @@ AIScriptEarlyQ::AIScriptEarlyQ(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_var1 = 0;
 	_var2 = 0;
 	_var3 = 1;
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptEarlyQ::Initialize() {
@@ -40,7 +40,7 @@ void AIScriptEarlyQ::Initialize() {
 	_var1 = 0;
 	_var2 = 0;
 	_var3 = 1;
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 bool AIScriptEarlyQ::Update() {
@@ -521,12 +521,12 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 					_animationFrame = Slice_Animation_Query_Number_Of_Frames(369) - 1;
 				}
 				_var1 = Random_Query(0, 1);
-				if (!_animationFrame) {
+				if (_animationFrame == 0) {
 					if (!Random_Query(0, 3)) {
 						_var2 = 1;
 					}
 				}
-				if (!_animationFrame || _animationFrame == 5) {
+				if (_animationFrame == 0 || _animationFrame == 5) {
 					if (Random_Query(0, 1)) {
 						_var1 = Random_Query(2, 8);
 					}
@@ -621,8 +621,8 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 10:
 		*animation = 385;
-		if (!_animationFrame && _flag) {
-			_flag = 0;
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			_resumeIdleAfterFramesetCompletesFlag = false;
 			_animationState = 9;
 			_var2 = 0;
 			*animation = 384;
@@ -742,10 +742,10 @@ bool AIScriptEarlyQ::UpdateAnimation(int *animation, int *frame) {
 
 	case 20:
 		*animation = 372;
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 369;
 			_animationFrame = 0;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 			_animationState = 0;
 		} else {
 			++_animationFrame;
@@ -869,7 +869,7 @@ bool AIScriptEarlyQ::ChangeAnimationMode(int mode) {
 		case 26:
 		case 27:
 		case 28:
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 
 		case 12:
@@ -897,7 +897,7 @@ bool AIScriptEarlyQ::ChangeAnimationMode(int mode) {
 	case kAnimationModeTalk:
 		_animationState = 20;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case kAnimationModeCombatIdle:
@@ -925,49 +925,49 @@ bool AIScriptEarlyQ::ChangeAnimationMode(int mode) {
 	case 12:
 		_animationState = 21;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
 		_animationState = 22;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 14:
 		_animationState = 23;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 15:
 		_animationState = 24;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 16:
 		_animationState = 25;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 17:
 		_animationState = 26;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 18:
 		_animationState = 27;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 19:
 		_animationState = 28;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case kAnimationModeHit:
@@ -1006,7 +1006,7 @@ bool AIScriptEarlyQ::ChangeAnimationMode(int mode) {
 	case 30:
 		_animationState = 10;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case kAnimationModeDie:

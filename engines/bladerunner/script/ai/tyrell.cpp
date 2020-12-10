@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptTyrell::AIScriptTyrell(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = true;
+	_resumeIdleAfterFramesetCompletesFlag = true;
 	_var = 0;
 }
 
@@ -35,7 +35,7 @@ void AIScriptTyrell::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = true;
+	_resumeIdleAfterFramesetCompletesFlag = true;
 	_var = 0;
 
 	Actor_Set_Goal_Number(kActorTyrell, 0);
@@ -137,7 +137,7 @@ bool AIScriptTyrell::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 766;
 			_animationState = 0;
 		} else {
@@ -199,42 +199,42 @@ bool AIScriptTyrell::UpdateAnimation(int *animation, int *frame) {
 
 bool AIScriptTyrell::ChangeAnimationMode(int mode) {
 	switch (mode) {
-	case 0:
+	case kAnimationModeIdle:
 		if (_animationState >= 2 && _animationState <= 6) {
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		} else {
 			_animationState = 0;
 			_animationFrame = 0;
 		}
 		break;
-	case 1:
+	case kAnimationModeWalk:
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
-	case 3:
+	case kAnimationModeTalk:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 12:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 13:
 		_animationState = 4;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 14:
 		_animationState = 5;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 15:
 		_animationState = 6;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	default:
 		break;

@@ -28,7 +28,7 @@ AIScriptHawkersBarkeep::AIScriptHawkersBarkeep(BladeRunnerEngine *vm) : AIScript
 	_var1 = 0;
 	_var2 = 0;
 	_var3 = 1;
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptHawkersBarkeep::Initialize() {
@@ -40,7 +40,7 @@ void AIScriptHawkersBarkeep::Initialize() {
 	_var1 = 0;
 	_var2 = 0;
 	_var3 = 1;
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 
 	Actor_Put_In_Set(kActorHawkersBarkeep, kSetHC01_HC02_HC03_HC04);
 	Actor_Set_At_XYZ(kActorHawkersBarkeep, -225.0f, 0.14f, 39.0f, 284);
@@ -144,7 +144,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 					_var2 = Random_Query(2, 8);
 
 				if (!Random_Query(0, 5)) {
-					if (!_animationFrame || _animationFrame == 11) {
+					if (_animationFrame == 0 || _animationFrame == 11) {
 						_animationFrame = 0;
 
 						if (Random_Query(0, 1)) {
@@ -237,7 +237,7 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 	case 2:
 		*animation = 710;
 
-		if (_animationFrame == 0 && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			_animationState = 0;
 			_var1 = 0;
 		} else {
@@ -339,7 +339,7 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case 0:
 		if (_animationState >= 2 && _animationState <= 7) {
-			_flag = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		} else {
 			_animationState = 0;
 			_animationFrame = 0;
@@ -347,7 +347,7 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 		break;
 
 	case 3:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -355,11 +355,11 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 			_animationStateNext = 2;
 			_animationNext = 710;
 		}
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 12:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -367,11 +367,11 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 			_animationStateNext = 3;
 			_animationNext = 711;
 		}
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -379,11 +379,11 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 			_animationStateNext = 4;
 			_animationNext = 712;
 		}
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 14:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -391,11 +391,11 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 			_animationStateNext = 5;
 			_animationNext = 713;
 		}
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 15:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -403,11 +403,11 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 			_animationStateNext = 6;
 			_animationNext = 714;
 		}
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 16:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 2;
 			_animationFrame = 0;
 		} else {
@@ -415,7 +415,7 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 			_animationStateNext = 7;
 			_animationNext = 715;
 		}
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	default:

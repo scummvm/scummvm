@@ -279,7 +279,7 @@ bool AIScriptHasan::UpdateAnimation(int *animation, int *frame) {
 					_var1 = Random_Query(6, 14);
 					_var3 = Random_Query(0, 4);
 				}
-				if (!_animationFrame) {
+				if (_animationFrame == 0) {
 					_var6 = Random_Query(0, 2);
 				}
 				if (_var6 == 1 && _var4) {

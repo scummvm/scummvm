@@ -26,7 +26,7 @@ namespace BladeRunner {
 
 AIScriptMutant3::AIScriptMutant3(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_var1 = 1;
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptMutant3::Initialize() {
@@ -36,7 +36,7 @@ void AIScriptMutant3::Initialize() {
 	_animationNext = 0;
 
 	_var1 = 1;
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 
 	Actor_Put_In_Set(kActorMutant3, kSetFreeSlotG);
 	Actor_Set_At_Waypoint(kActorMutant3, 39, 0);
@@ -404,7 +404,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 3:
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 910;
 			_animationState = 0;
 		} else {
@@ -494,7 +494,7 @@ bool AIScriptMutant3::UpdateAnimation(int *animation, int *frame) {
 			Sound_Play(kSfxHURT1M3, 100, 0, 0, 50);
 			_var1 = -1;
 		} else {
-			if (!_animationFrame) {
+			if (_animationFrame == 0) {
 				Actor_Change_Animation_Mode(kActorMutant3, kAnimationModeIdle);
 			}
 		}
@@ -515,7 +515,7 @@ bool AIScriptMutant3::ChangeAnimationMode(int mode) {
 		switch (_animationState) {
 		case 3:
 		case 4:
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 
 		case 8:
@@ -550,12 +550,12 @@ bool AIScriptMutant3::ChangeAnimationMode(int mode) {
 	case 12:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 4:
 		if (_animationState >= 3 && _animationState <= 4) {
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		} else {
 			_animationState = 0;
 			_animationFrame = 0;

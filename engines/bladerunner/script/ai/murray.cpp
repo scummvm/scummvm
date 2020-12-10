@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptMurray::AIScriptMurray(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptMurray::Initialize() {
@@ -34,7 +34,7 @@ void AIScriptMurray::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	Actor_Put_In_Set(kActorMurray, kSetHF01);
 	Actor_Set_At_XYZ(kActorMurray, 566.07f, -0.01f, -205.43f, 271);
 	Actor_Set_Goal_Number(kActorMurray, 0);
@@ -131,7 +131,7 @@ bool AIScriptMurray::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 700;
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			_animationState = 0;
 		} else {
 			++_animationFrame;
@@ -203,7 +203,7 @@ bool AIScriptMurray::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
 		if (_animationState > 0 && _animationState <= 5) {
-			_flag = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		} else {
 			_animationState = 0;
 			_animationFrame = 0;
@@ -213,31 +213,31 @@ bool AIScriptMurray::ChangeAnimationMode(int mode) {
 	case kAnimationModeTalk:
 		_animationState = 1;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 12:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 14:
 		_animationState = 4;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 15:
 		_animationState = 5;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	}
 

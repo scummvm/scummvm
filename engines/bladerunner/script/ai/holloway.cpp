@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptHolloway::AIScriptHolloway(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptHolloway::Initialize() {
@@ -34,7 +34,7 @@ void AIScriptHolloway::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 
 	Actor_Set_Goal_Number(kActorHolloway, kGoalHollowayDefault);
 }
@@ -235,9 +235,7 @@ bool AIScriptHolloway::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
-		if (_animationFrame == 0
-		 && _flag
-		) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 717;
 			_animationState = 0;
 		} else {
@@ -312,7 +310,7 @@ bool AIScriptHolloway::ChangeAnimationMode(int mode) {
 			_animationState = 0;
 			_animationFrame = 0;
 		} else {
-			_flag = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		}
 		break;
 
@@ -324,7 +322,7 @@ bool AIScriptHolloway::ChangeAnimationMode(int mode) {
 	case kAnimationModeTalk:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case kAnimationModeCombatAttack:
@@ -335,25 +333,25 @@ bool AIScriptHolloway::ChangeAnimationMode(int mode) {
 	case 12:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
 		_animationState = 4;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 14:
 		_animationState = 5;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 15:
 		_animationState = 6;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	default:
