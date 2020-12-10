@@ -32,6 +32,7 @@
 #include "twine/renderer.h"
 #include "twine/resources.h"
 #include "twine/scene.h"
+#include "twine/shared.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -248,16 +249,16 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 								actorTest->lastY = 0;
 
 								if (actorTest->staticFlags.bUseMiniZv) {
-									if (newAngle >= 0x80 && newAngle < 0x180 && actor->angle > 0x80 && actor->angle < 0x180) {
+									if (newAngle >= ANGLE_45 && newAngle < ANGLE_135 && actor->angle > ANGLE_45 && actor->angle < ANGLE_135) {
 										actorTest->lastX = 192;
 									}
-									if (newAngle >= 0x180 && newAngle < 0x280 && actor->angle > 0x180 && actor->angle < 0x280) {
+									if (newAngle >= ANGLE_135 && newAngle < ANGLE_225 && actor->angle > ANGLE_135 && actor->angle < ANGLE_225) {
 										actorTest->lastZ = -64;
 									}
-									if (newAngle >= 0x280 && newAngle < 0x380 && actor->angle > 0x280 && actor->angle < 0x380) {
+									if (newAngle >= ANGLE_225 && newAngle < ANGLE_315 && actor->angle > ANGLE_225 && actor->angle < ANGLE_315) {
 										actorTest->lastX = -64;
 									}
-									if ((newAngle >= 0x380 || newAngle < 0x80) && (actor->angle > 0x380 || actor->angle < 0x80)) {
+									if ((newAngle >= ANGLE_315 || newAngle < ANGLE_45) && (actor->angle > ANGLE_315 || actor->angle < ANGLE_45)) {
 										actorTest->lastX = 192;
 									}
 								} else {
@@ -268,16 +269,16 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 
 							if ((actorTest->boudingBox.x.topRight - actorTest->boudingBox.x.bottomLeft == actorTest->boudingBox.z.topRight - actorTest->boudingBox.z.bottomLeft) &&
 							    (actor->boudingBox.x.topRight - actor->boudingBox.x.bottomLeft == actor->boudingBox.z.topRight - actor->boudingBox.z.bottomLeft)) {
-								if (newAngle < 0x180) {
+								if (newAngle < ANGLE_135) {
 									_engine->_movements->processActorX = xLeftTest - actor->boudingBox.x.topRight;
 								}
-								if (newAngle >= 0x180 && newAngle < 0x280) {
+								if (newAngle >= ANGLE_135 && newAngle < ANGLE_225) {
 									_engine->_movements->processActorZ = zRightTest - actor->boudingBox.z.bottomLeft;
 								}
-								if (newAngle >= 0x280 && newAngle < 0x380) {
+								if (newAngle >= ANGLE_225 && newAngle < ANGLE_315) {
 									_engine->_movements->processActorX = xRightTest - actor->boudingBox.x.bottomLeft;
 								}
-								if (newAngle >= 0x380 || (newAngle < 0x380 && newAngle < 0x80)) {
+								if (newAngle >= ANGLE_315 || (newAngle < ANGLE_315 && newAngle < ANGLE_45)) {
 									_engine->_movements->processActorZ = zLeftTest - actor->boudingBox.z.topRight;
 								}
 							} else {
@@ -300,16 +301,16 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 						actorTest->lastY = 0;
 
 						if (actorTest->staticFlags.bUseMiniZv) {
-							if (newAngle >= 0x80 && newAngle < 0x180 && actor->angle > 0x80 && actor->angle < 0x180) {
+							if (newAngle >= ANGLE_45 && newAngle < ANGLE_135 && actor->angle > ANGLE_45 && actor->angle < ANGLE_135) {
 								actorTest->lastX = 192;
 							}
-							if (newAngle >= 0x180 && newAngle < 0x280 && actor->angle > 0x180 && actor->angle < 0x280) {
+							if (newAngle >= ANGLE_135 && newAngle < ANGLE_225 && actor->angle > ANGLE_135 && actor->angle < ANGLE_225) {
 								actorTest->lastZ = -64;
 							}
-							if (newAngle >= 0x280 && newAngle < 0x380 && actor->angle > 0x280 && actor->angle < 0x380) {
+							if (newAngle >= ANGLE_225 && newAngle < ANGLE_315 && actor->angle > ANGLE_225 && actor->angle < ANGLE_315) {
 								actorTest->lastX = -64;
 							}
-							if ((newAngle >= 0x380 || newAngle < 0x80) && (actor->angle > 0x380 || actor->angle < 0x80)) {
+							if ((newAngle >= ANGLE_315 || newAngle < ANGLE_45) && (actor->angle > ANGLE_315 || actor->angle < ANGLE_45)) {
 								actorTest->lastX = 192;
 							}
 						} else {
@@ -320,16 +321,16 @@ int32 Collision::checkCollisionWithActors(int32 actorIdx) {
 
 					if ((actorTest->boudingBox.x.topRight - actorTest->boudingBox.x.bottomLeft == actorTest->boudingBox.z.topRight - actorTest->boudingBox.z.bottomLeft) &&
 					    (actor->boudingBox.x.topRight - actor->boudingBox.x.bottomLeft == actor->boudingBox.z.topRight - actor->boudingBox.z.bottomLeft)) {
-						if (newAngle < 0x180) {
+						if (newAngle < ANGLE_135) {
 							_engine->_movements->processActorX = xLeftTest - actor->boudingBox.x.topRight;
 						}
-						if (newAngle >= 0x180 && newAngle < 0x280) {
+						if (newAngle >= ANGLE_135 && newAngle < ANGLE_225) {
 							_engine->_movements->processActorZ = zRightTest - actor->boudingBox.z.bottomLeft;
 						}
-						if (newAngle >= 0x280 && newAngle < 0x380) {
+						if (newAngle >= ANGLE_225 && newAngle < ANGLE_315) {
 							_engine->_movements->processActorX = xRightTest - actor->boudingBox.x.bottomLeft;
 						}
-						if (newAngle >= 0x380 || (newAngle < 0x380 && newAngle < 0x80)) {
+						if (newAngle >= ANGLE_315 || (newAngle < ANGLE_315 && newAngle < ANGLE_45)) {
 							_engine->_movements->processActorZ = zLeftTest - actor->boudingBox.z.topRight;
 						}
 					} else {
@@ -527,7 +528,7 @@ bool Collision::checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, int32 o
 	return false;
 }
 
-int32 Collision::checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extraIdx) {
+int32 Collision::checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extraIdx) const {
 	Common::MemoryReadStream stream(_engine->_resources->spriteBoundingBoxPtr, _engine->_resources->spriteBoundingBoxSize);
 	stream.seek(extra->info0 * 16);
 	stream.skip(4);

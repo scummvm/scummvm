@@ -109,7 +109,7 @@ public:
 	 * @param extra to process
 	 * @param extraIdx extra index to check collision
 	 */
-	int32 checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extraIdx);
+	int32 checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extraIdx) const;
 };
 
 } // namespace TwinE
