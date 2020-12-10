@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptFishDealer::AIScriptFishDealer(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptFishDealer::Initialize() {
@@ -34,7 +34,7 @@ void AIScriptFishDealer::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	Actor_Put_In_Set(kActorFishDealer, kSetAR01_AR02);
 	Actor_Set_At_Waypoint(kActorFishDealer, 120, 424);
 	Actor_Set_Goal_Number(kActorFishDealer, 0);
@@ -202,10 +202,10 @@ bool AIScriptFishDealer::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 1:
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 683;
 			_animationState = 0;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			*animation = 685;
 			++_animationFrame;
@@ -271,7 +271,7 @@ bool AIScriptFishDealer::ChangeAnimationMode(int mode) {
 			_animationState = 0;
 			_animationFrame = 0;
 		} else {
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		}
 		break;
 

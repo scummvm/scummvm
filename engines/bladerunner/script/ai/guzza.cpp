@@ -28,7 +28,7 @@ AIScriptGuzza::AIScriptGuzza(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_frameDelta = 0;
 	_counter = 0;
 	_state = 0;
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptGuzza::Initialize() {
@@ -39,7 +39,7 @@ void AIScriptGuzza::Initialize() {
 	_frameDelta = 1;
 	_counter = 0;
 	_state = 0;
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 #if BLADERUNNER_ORIGINAL_BUGS
 	// Guzza begins with -1 as a goal number in the original, it is unset until Act 2
 #else
@@ -510,10 +510,10 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 11:
-		if (_animationFrame == 0 && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = kModelAnimationGuzzaStandIdle;
 			_animationState = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 			_state = 0;
 			_counter = 0;
 			_frameDelta = 1;
@@ -577,10 +577,10 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 17:
-		if (_animationFrame == 0 && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = kModelAnimationGuzzaSitAndTalkOrChew;
 			_animationState = 1;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 			Actor_Change_Animation_Mode(kActorGuzza, 53);
 			_state = 0;
 			_counter = 0;
@@ -635,10 +635,10 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 22:
-		if (_animationFrame == 0 && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = kModelAnimationGuzzaWithGunIdle;
 			_animationState = 24;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 			Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatIdle);
 			_state = 0;
 			_counter = 0;
@@ -653,10 +653,10 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 23:
-		if (_animationFrame == 0 && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = kModelAnimationGuzzaWithGunIdle;
 			_animationState = 24;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 			Actor_Change_Animation_Mode(kActorGuzza, kAnimationModeCombatIdle);
 			_state = 0;
 			_counter = 0;
@@ -809,7 +809,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		case 21:
 		case 22:
 		case 23:
-			_flag = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 		case 24:
 		case 31:
@@ -837,10 +837,10 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeTalk:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 11;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -877,10 +877,10 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		break;
 
 	case 12:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 12;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -890,10 +890,10 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		break;
 
 	case 13:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 13;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -903,10 +903,10 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		break;
 
 	case 14:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 14;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -916,10 +916,10 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		break;
 
 	case 15:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 15;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -929,10 +929,10 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		break;
 
 	case 16:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 16;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			_animationState = 2;
 			_animationFrame = 0;
@@ -963,7 +963,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 17;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -975,7 +975,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 18;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -987,7 +987,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 19;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -999,7 +999,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 20;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1011,7 +1011,7 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 21;
 			_animationFrame = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1038,13 +1038,13 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 	case 58:
 		_animationState = 22;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 59:
 		_animationState = 23;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 61:

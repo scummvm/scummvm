@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptHanoi::AIScriptHanoi(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_var1 = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_flag1 = 0;
 	_var3 = 0;
 	_var4 = 1;
@@ -37,7 +37,7 @@ void AIScriptHanoi::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_var1 = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_flag1 = 0;
 	_var3 = 0;
 	_var4 = 1;
@@ -571,9 +571,8 @@ bool AIScriptHanoi::UpdateAnimation(int *animation, int *frame) {
 
 	case 14:
 		*animation = 650;
-		if (_animationFrame == 0
-		 && _var1 // this is never set so it's always 0
-		) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			// _resumeIdleAfterFramesetCompletesFlag is never set so it's always false, thus this does not evaluate true
 			_animationState = 0;
 		} else {
 			++_animationFrame;

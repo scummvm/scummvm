@@ -240,7 +240,7 @@ bool AIScriptBulletBob::UpdateAnimation(int *animation, int *frame) {
 					_var2 = Random_Query(3, 7);
 					_var4 = Random_Query(0, 4);
 				}
-				if (!_animationFrame) {
+				if (_animationFrame == 0) {
 					_var1 = Random_Query(0, 1);
 				}
 			}
@@ -438,6 +438,7 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
 		if (_animationState > 4 || _animationState) {
+			// TODO "|| _animationState" part of the clause does not make sense (makes the first part redundant). A bug?
 			_animationState = 0;
 			_animationFrame = 0;
 		}
@@ -454,7 +455,7 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeCombatIdle:
-		if (_animationState <= 4 && !_animationState) {
+		if (_animationState <= 4 && _animationState == 0) {
 			_animationState = 14;
 			_animationFrame = 0;
 		}

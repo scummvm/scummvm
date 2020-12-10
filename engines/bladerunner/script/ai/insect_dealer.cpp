@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptInsectDealer::AIScriptInsectDealer(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag1 = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_state = 0;
 	_frameDelta = 0;
 	_var2 = 0;
@@ -38,7 +38,7 @@ void AIScriptInsectDealer::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag1 = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_state = 0;
 	_frameDelta = 1;
 	_var2 = 6;
@@ -174,7 +174,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 		}
 		break;
 	case 1:
-		if (_animationFrame == 0 && _flag1) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 545;
 			_animationState = 0;
 		} else {
@@ -259,7 +259,7 @@ bool AIScriptInsectDealer::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case 0:
 		if (_animationState > 0 && _animationState <= 7) {
-			_flag1 = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		} else {
 			_animationState = 0;
 			_animationFrame = 0;
@@ -270,37 +270,37 @@ bool AIScriptInsectDealer::ChangeAnimationMode(int mode) {
 	case 19:
 		_animationState = 1;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 12:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 13:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 14:
 		_animationState = 4;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 15:
 		_animationState = 5;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 16:
 		_animationState = 6;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 17:
 		_animationState = 7;
 		_animationFrame = 0;
-		_flag1 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 23:
 		_animationState = 8;

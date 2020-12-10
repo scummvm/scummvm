@@ -24,7 +24,7 @@
 namespace BladeRunner {
 
 AIScriptGordo::AIScriptGordo(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	var_45B078 = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_counter = 0;
 	_counterTarget = 0;
 	_frameMin = 0;
@@ -37,7 +37,7 @@ void AIScriptGordo::Initialize() {
 	_animationState = 0;
 	_animationFrame = 0;
 	_animationStateNext = 0;
-	var_45B078 = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_counter = 0;
 	_counterTarget = 0;
 	_frameMin = 0;
@@ -863,7 +863,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 
 	case 4:
 		*animation = kModelAnimationGordoIdleTalk;
-		if (_animationFrame == 0 && var_45B078) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = kModelAnimationGordoIdle;
 			_animationState = 0;
 		} else {
@@ -1177,7 +1177,8 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 36:
-		if (_animationFrame == 0 && var_45B078) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			// TODO use of _resumeIdleAfterFramesetCompletesFlag here, means change to another animation after this one completed)
 			Actor_Change_Animation_Mode(kActorGordo, 80);
 			*animation = kModelAnimationGordoWithGunWithHostageATalk;
 			_animationState = 35;
@@ -1191,7 +1192,8 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 37:
-		if (_animationFrame == 0 && var_45B078) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			// TODO use of _resumeIdleAfterFramesetCompletesFlag here, means change to another animation after this one completed)
 			Actor_Change_Animation_Mode(kActorGordo, 80);
 			*animation = kModelAnimationGordoWithGunWithHostageATalk;
 			_animationState = 35;
@@ -1259,7 +1261,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		case 12:
 		case 36:
 		case 37:
-			var_45B078 = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 		default:
 			_animationState = 0;
@@ -1281,7 +1283,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeTalk:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 4;
 			_animationFrame = 0;
 		} else {
@@ -1289,7 +1291,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			_animationStateNext = 4;
 			_animationNext = kModelAnimationGordoIdleTalk;
 		}
-		var_45B078 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case kAnimationModeCombatIdle:
@@ -1332,7 +1334,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		break;
 
 	case 12:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 5;
 			_animationFrame = 0;
 		} else {
@@ -1340,11 +1342,11 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			_animationStateNext = 5;
 			_animationNext = kModelAnimationGordoSuggestingTalk;
 		}
-		var_45B078 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 6;
 			_animationFrame = 0;
 		} else {
@@ -1352,11 +1354,11 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			_animationStateNext = 6;
 			_animationNext = kModelAnimationGordoSuggestAndPointTalk;
 		}
-		var_45B078 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 14:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 7;
 			_animationFrame = 0;
 		} else {
@@ -1364,11 +1366,11 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			_animationStateNext = 7;
 			_animationNext = kModelAnimationGordoSuggestAndDismissTalk;
 		}
-		var_45B078 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 15:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 8;
 			_animationFrame = 0;
 		} else {
@@ -1376,11 +1378,11 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			_animationStateNext = 8;
 			_animationNext = kModelAnimationGordoDismissiveTalk;
 		}
-		var_45B078 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 16:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 9;
 			_animationFrame = 0;
 		} else {
@@ -1388,11 +1390,11 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			_animationStateNext = 9;
 			_animationNext = kModelAnimationGordoUpsetTalk;
 		}
-		var_45B078 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 17:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 10;
 			_animationFrame = 0;
 		} else {
@@ -1400,11 +1402,11 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			_animationStateNext = 10;
 			_animationNext = kModelAnimationGordoExplainAndPointTalk;
 		}
-		var_45B078 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 18:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 11;
 			_animationFrame = 0;
 		} else {
@@ -1412,11 +1414,11 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			_animationStateNext = 11;
 			_animationNext = kModelAnimationGordoAdjustBowtieTalk;
 		}
-		var_45B078 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 19:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 12;
 			_animationFrame = 0;
 		} else {
@@ -1424,7 +1426,7 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			_animationStateNext = 12;
 			_animationNext = kModelAnimationGordoAdjustBowtieTalk;
 		}
-		var_45B078 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case kAnimationModeHit:
@@ -1543,13 +1545,13 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 	case 81:
 		_animationState = 36;
 		_animationFrame = 0;
-		var_45B078 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 82:
 		_animationState = 37;
 		_animationFrame = 0;
-		var_45B078 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 83:
@@ -1895,7 +1897,7 @@ void AIScriptGordo::unknown() {
 		Actor_Change_Animation_Mode(kActorGordo, 53);
 		break;
 	default:
-		var_45B078 = 1;
+		_resumeIdleAfterFramesetCompletesFlag = true;
 		break;
 	}
 }

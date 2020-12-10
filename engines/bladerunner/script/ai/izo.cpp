@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptIzo::AIScriptIzo(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var1 = 6;
 	_var2 = 1;
 	_var3 = 0;
@@ -38,7 +38,7 @@ void AIScriptIzo::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var1 = 6;
 	_var2 = 1;
 	_var3 = 0;
@@ -557,11 +557,11 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 1:
-		if (_animationFrame <= 2 && _flag) {
+		if (_animationFrame <= 2 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 297;
 			_animationFrame = 0;
 			_animationState = 0;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			*animation = 299;
 			++_animationFrame;
@@ -780,16 +780,16 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 33:
-		*animation = 310;
-		if (_animationFrame || !_flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
+			_resumeIdleAfterFramesetCompletesFlag = false;
+			_animationState = 31;
+			*animation = 308;
+		} else {
+			*animation = 310;
 			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(310)) {
 				_animationFrame = 0;
 			}
-		} else {
-			_flag = 0;
-			_animationState = 31;
-			*animation = 308;
 		}
 		break;
 
@@ -858,7 +858,7 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 		case 6:
 		case 7:
 		case 33:
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 
 		case 8:
@@ -905,12 +905,12 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 				_animationStateNext = 1;
 				_animationNext = 299;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		return true;
 
 	case 4:
-		if (_animationState) {
+		if (_animationState > 0) {
 			if (_animationState != 8 || _animationState > 8) {
 				_animationState = 8;
 				_animationFrame = 0;
@@ -950,7 +950,7 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 				_animationStateNext = 1;
 				_animationNext = 300;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -962,7 +962,7 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 				_animationStateNext = 1;
 				_animationNext = 302;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -973,7 +973,7 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 				_animationStateNext = 1;
 				_animationNext = 301;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -984,7 +984,7 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 				_animationStateNext = 1;
 				_animationNext = 303;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -995,7 +995,7 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 				_animationStateNext = 1;
 				_animationNext = 304;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1006,7 +1006,7 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 				_animationStateNext = 1;
 				_animationNext = 305;
 			}
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 

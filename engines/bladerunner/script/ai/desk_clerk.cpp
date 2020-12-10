@@ -26,7 +26,7 @@ namespace BladeRunner {
 
 AIScriptDeskClerk::AIScriptDeskClerk(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_flag1 = false;
-	_flag2 = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var3 = 75;
 }
 
@@ -37,7 +37,7 @@ void AIScriptDeskClerk::Initialize() {
 	_animationNext = 0;
 
 	_flag1 = false;
-	_flag2 = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var3 = 75;
 	Actor_Set_Goal_Number(kActorDeskClerk, kGoalDeskClerkDefault);
 }
@@ -199,9 +199,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	case 1:
 		*animation = 663;
 
-		if (_animationFrame == 0
-		 && _flag2
-		) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 661;
 			_animationState = 0;
 			_flag1 = false;
@@ -264,9 +262,7 @@ bool AIScriptDeskClerk::UpdateAnimation(int *animation, int *frame) {
 	case 7:
 		*animation = 669;
 
-		if (_animationFrame == 0
-		 && _flag2
-		) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			Actor_Change_Animation_Mode(kActorDeskClerk, 72);
 			*animation = 668;
 			_animationState = 6;
@@ -310,7 +306,7 @@ bool AIScriptDeskClerk::ChangeAnimationMode(int mode) {
 		case 3:
 		case 4:
 		case 5:
-			_flag2 = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 
 		case 6:
@@ -329,31 +325,31 @@ bool AIScriptDeskClerk::ChangeAnimationMode(int mode) {
 	case kAnimationModeTalk:
 		_animationState = 1;
 		_animationFrame = 0;
-		_flag2 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 12:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag2 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag2 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 14:
 		_animationState = 4;
 		_animationFrame = 0;
-		_flag2 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 15:
 		_animationState = 5;
 		_animationFrame = 0;
-		_flag2 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 26:
@@ -364,7 +360,7 @@ bool AIScriptDeskClerk::ChangeAnimationMode(int mode) {
 	case 58:
 		_animationState = 7;
 		_animationFrame = 0;
-		_flag2 = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 72:

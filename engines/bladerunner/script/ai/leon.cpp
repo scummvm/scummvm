@@ -28,14 +28,14 @@ AIScriptLeon::AIScriptLeon(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_mcCoyPositionX = 0.0f;
 	_mcCoyPositionY = 0.0f;
 	_mcCoyPositionZ = 0.0f;
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptLeon::Initialize() {
 	_mcCoyPositionX = 0.0f;
 	_mcCoyPositionY = 0.0f;
 	_mcCoyPositionZ = 0.0f;
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_animationStateNext = 0;
 	_animationNext = 0;
 	_animationFrame = 0;
@@ -287,9 +287,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
-		if (_animationFrame == 0
-		 && _flag
-		) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 847;
 			_animationState = 0;
 		} else {
@@ -332,9 +330,7 @@ bool AIScriptLeon::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 6:
-		if (_animationFrame == 0
-		 && _flag
-		) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			Actor_Change_Animation_Mode(kActorLeon, 72);
 			*animation = 848;
 		} else {
@@ -407,7 +403,7 @@ bool AIScriptLeon::ChangeAnimationMode(int mode) {
 		case 5:
 		case 6:
 		case 7:
-			_flag = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 		case 8:
 			Actor_Change_Animation_Mode(kActorLeon, 72);
@@ -427,7 +423,7 @@ bool AIScriptLeon::ChangeAnimationMode(int mode) {
 	case kAnimationModeTalk:
 		_animationState = 2;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case kAnimationModeCombatAttack:
@@ -438,31 +434,31 @@ bool AIScriptLeon::ChangeAnimationMode(int mode) {
 	case 12:
 		_animationState = 3;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
 		_animationState = 4;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 14:
 		_animationState = 5;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 15:
 		_animationState = 6;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 16:
 		_animationState = 7;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 26:

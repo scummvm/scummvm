@@ -27,7 +27,7 @@ namespace BladeRunner {
 AIScriptPhotographer::AIScriptPhotographer(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_var1 = 0;
 	_var2 = 0;
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptPhotographer::Initialize() {
@@ -38,7 +38,7 @@ void AIScriptPhotographer::Initialize() {
 
 	_var1 = 0;
 	_var2 = 0;
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 bool AIScriptPhotographer::Update() {
@@ -216,13 +216,11 @@ bool AIScriptPhotographer::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 747;
-		if (_animationFrame == 0
-		 && _flag
-		) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 745;
 			_animationState = 0;
 			_var2 = 0;
-			_flag = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(747)) {
@@ -298,7 +296,7 @@ bool AIScriptPhotographer::ChangeAnimationMode(int mode) {
 			_var2 = 0;
 			_animationFrame = 0;
 		} else {
-			_flag = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		}
 		break;
 
@@ -312,28 +310,28 @@ bool AIScriptPhotographer::ChangeAnimationMode(int mode) {
 		_animationState = 2;
 		_var2 = 0;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 12:
 		_animationState = 3;
 		_var2 = 0;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
 		_animationState = 4;
 		_var2 = 0;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 14:
 		_animationState = 5;
 		_var2 = 0;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 43:

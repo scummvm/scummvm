@@ -26,7 +26,7 @@ namespace BladeRunner {
 
 AIScriptOfficerGrayford::AIScriptOfficerGrayford(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_var1 = 0;
-	_var2 = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var3 = 0;
 }
 
@@ -37,7 +37,7 @@ void AIScriptOfficerGrayford::Initialize() {
 	_animationNext = 0;
 
 	_var1 = 0;
-	_var2 = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var3 = 0;
 
 	Actor_Put_In_Set(kActorOfficerGrayford, kSetFreeSlotG);
@@ -971,11 +971,11 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 9:
-		if (!_animationFrame && _var2) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 625;
 			_animationState = 0;
 			_var1 = 0;
-			_var2 = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			*animation = 629;
 			++_animationFrame;
@@ -1298,7 +1298,7 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 		case 15:
 		case 16:
 		case 17:
-			_var2 = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 
 		case 18:
@@ -1354,7 +1354,7 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 		if (_animationState != 36 && _animationState != 34) {
 			_animationState = 9;
 			_animationFrame = 0;
-			_var2 = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1408,49 +1408,49 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 	case 12:
 		_animationState = 10;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
 		_animationState = 11;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 14:
 		_animationState = 12;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 15:
 		_animationState = 13;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 16:
 		_animationState = 14;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 17:
 		_animationState = 15;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 18:
 		_animationState = 16;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 19:
 		_animationState = 17;
 		_animationFrame = 0;
-		_var2 = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case kAnimationModeHit:

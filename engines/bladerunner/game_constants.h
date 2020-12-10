@@ -1748,8 +1748,8 @@ enum GameModelAnimations {
 	kModelAnimationMcCoyDrinkingBooze             =  53,
 	//  54 -  92: Steele animations
 	kModelAnimationSteeleWithGunIdle                 =  54,
-	kModelAnimationSteeleWithGunStrafeFast           =  55, // ??? untriggered
-	kModelAnimationSteeleWithGunStrafeSlow           =  56, // ??? untriggered
+	kModelAnimationSteeleWithGunStrafeFast           =  55, // untriggered
+	kModelAnimationSteeleWithGunStrafeSlow           =  56, // untriggered
 	kModelAnimationSteeleWithGunGotHitRight          =  57,
 	kModelAnimationSteeleWithGunGotHitLeft           =  58,
 	kModelAnimationSteeleWithGunWalking              =  59,
@@ -1940,7 +1940,7 @@ enum GameModelAnimations {
 	kModelAnimationClovisKneelingToStanding                 = 240,
 	kModelAnimationClovisKneelingTalking                    = 241,
 	kModelAnimationClovisJumpingDodging                     = 242, // animation mode 20 (TODO: Where is this used in game? In the Moonbus massacre scenario?)
-	kModelAnimationClovisLayingWithBookIdle                 = 243, //
+	kModelAnimationClovisLayingWithBookIdle                 = 243,
 	kModelAnimationClovisLayingWithBookStopsReadingTalk     = 244,
 	kModelAnimationClovisLayingWithBookStillReadingTalk     = 245,
 	kModelAnimationClovisLayingWithBookGotHitOrSmallCough   = 246, // UNUSED
@@ -1951,6 +1951,30 @@ enum GameModelAnimations {
 	kModelAnimationClovisLayingWithBookPointingGun          = 251, // maybe also firing? // linked with untriggered kModelAnimationClovisLayingWithBookUnholsterGun
 	kModelAnimationClovisLayingWithBookDyingDropGun         = 252, // This is the one used for Clovis laying down death (A bug?)
 	// 253 - 276: Lucy animations
+	kModelAnimationLucyWalking                              = 253,
+	kModelAnimationLucyRunning                              = 254,
+	kModelAnimationLucyClimbStairsUp                        = 255,
+	kModelAnimationLucyClimbStairsDown                      = 256,
+	kModelAnimationLucyGotHitBendsForward                   = 257,
+	kModelAnimationLucyGotHitBendsBackward                  = 258,
+	kModelAnimationLucyShotDead                             = 259,
+	kModelAnimationLucyIdle                                 = 260,
+	kModelAnimationLucyPlayingArcade                        = 261, // UNUSED
+	kModelAnimationLucyGestureGive                          = 262, // UNUSED
+	kModelAnimationLucyCalmShortRightwardsNodTalk           = 263,
+	kModelAnimationLucyComplainingTalk                      = 264,
+	kModelAnimationLucyIntenseTalk                          = 265,
+	kModelAnimationLucyPointingTalk                         = 266,
+	kModelAnimationLucySelfPointingTalk                     = 267,
+	kModelAnimationLucyVeryUpsetTalk                        = 268,
+	kModelAnimationLucyCalmLongRightwardsNodTalk            = 269,
+	kModelAnimationLucySubtleThrowKissTalk                  = 270,
+	kModelAnimationLucyHappyHopTalk                         = 271,
+	kModelAnimationLucyCombatIdle                           = 272,
+	kModelAnimationLucyCombatBlocksUp                       = 273, // Untriggered. Could potentially be used as "attacks up" too
+	kModelAnimationLucyCombatResumeNonCombat                = 274, // Untriggered
+	kModelAnimationLucyCombatDropsDead                      = 275, // Untriggered. Somewhat faster than kModelAnimationLucyShotDead (259)
+	kModelAnimationLucyRemovesNeckletDiesFromExplosion      = 276, // Untriggered
 	// 277 - 311: Izo animations
 	// 312 - 345: Sadik animations
 	// 316 - 359: Twins/Luther animations

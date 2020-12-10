@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptChew::AIScriptChew(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var1 = 0;
 	_var2 = 0;
 	_var3 = 1;
@@ -37,7 +37,7 @@ void AIScriptChew::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var1 = 0;
 	_var2 = 0;
 	_var3 = 1;
@@ -183,7 +183,7 @@ bool AIScriptChew::UpdateAnimation(int *animation, int *frame) {
 
 	case 2:
 		*animation = 780;
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 777;
 			_animationState = 0;
 			_var2 = 0;
@@ -323,7 +323,7 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 		case 7:
 		case 8:
 		case 9:
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 		default:
 			_animationState = 0;
@@ -340,10 +340,10 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 3:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 2;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 2;
 				_animationNext = 780;
@@ -354,10 +354,10 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 12:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 3;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 3;
 				_animationNext = 781;
@@ -368,10 +368,10 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 13:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 4;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 4;
 				_animationNext = 782;
@@ -382,10 +382,10 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 14:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 5;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 5;
 				_animationNext = 783;
@@ -396,10 +396,10 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 15:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 6;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 6;
 				_animationNext = 784;
@@ -410,10 +410,10 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 16:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 7;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 7;
 				_animationNext = 785;
@@ -424,10 +424,10 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 17:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 8;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 8;
 				_animationNext = 786;
@@ -438,10 +438,10 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 
 	case 18:
 		if (_animationState < 2 || _animationState > 9) {
-			if (_animationState) {
+			if (_animationState > 0) {
 				_animationState = 9;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
 				_animationStateNext = 9;
 				_animationNext = 787;
@@ -451,7 +451,7 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 		break;
 
 	case 43:
-		if (_animationState || (!_animationState && _var2 != 1 && _var2 != 2)) {
+		if (_animationState > 0 || (_animationState == 0 && _var2 != 1 && _var2 != 2)) {
 			Actor_Change_Animation_Mode(kActorChew, kAnimationModeIdle);
 			_var2 = Random_Query(1, 2);
 		}

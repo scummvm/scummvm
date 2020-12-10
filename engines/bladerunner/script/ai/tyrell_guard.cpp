@@ -26,7 +26,7 @@ namespace BladeRunner {
 
 AIScriptTyrellGuard::AIScriptTyrellGuard(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_frameDelta = 1;
-	_flag1 = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptTyrellGuard::Initialize() {
@@ -36,7 +36,7 @@ void AIScriptTyrellGuard::Initialize() {
 	_animationNext = 0;
 
 	_frameDelta = 1;
-	_flag1 = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	Actor_Set_Goal_Number(kActorTyrellGuard, 0);
 }
 
@@ -176,9 +176,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 
 	case 3:
 		*animation = 558;
-		if (_animationFrame == 0
-		 && _flag1
-		) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 555;
 			_animationState = 0;
 		} else {
@@ -288,7 +286,7 @@ bool AIScriptTyrellGuard::ChangeAnimationMode(int mode) {
 		case 5:
 		case 6:
 		case 7:
-			_flag1 = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 		case 8:
 			break;
@@ -305,7 +303,7 @@ bool AIScriptTyrellGuard::ChangeAnimationMode(int mode) {
 		} else if ((_animationState - 1 != 7 && _animationState - 1 != 10) || _animationState - 1 > 10) {
 			_animationState = 3;
 			_animationFrame = 0;
-			_flag1 = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -315,7 +313,7 @@ bool AIScriptTyrellGuard::ChangeAnimationMode(int mode) {
 		} else if ((_animationState - 1 != 7 && _animationState - 1 != 10) || _animationState - 1 > 10) {
 			_animationState = 4;
 			_animationFrame = 0;
-			_flag1 = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -325,7 +323,7 @@ bool AIScriptTyrellGuard::ChangeAnimationMode(int mode) {
 		} else if ((_animationState - 1 != 7 && _animationState - 1 != 10) || _animationState - 1 > 10) {
 			_animationState = 5;
 			_animationFrame = 0;
-			_flag1 = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -335,7 +333,7 @@ bool AIScriptTyrellGuard::ChangeAnimationMode(int mode) {
 		} else if ((_animationState - 1 != 7 && _animationState - 1 != 10) || _animationState - 1 > 10) {
 			_animationState = 6;
 			_animationFrame = 0;
-			_flag1 = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -345,7 +343,7 @@ bool AIScriptTyrellGuard::ChangeAnimationMode(int mode) {
 		} else if ((_animationState - 1 != 7 && _animationState - 1 != 10) || _animationState - 1 > 10) {
 			_animationState = 7;
 			_animationFrame = 0;
-			_flag1 = false;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 

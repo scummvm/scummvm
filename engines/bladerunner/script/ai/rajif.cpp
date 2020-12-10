@@ -112,7 +112,7 @@ bool AIScriptRajif::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 
 bool AIScriptRajif::UpdateAnimation(int *animation, int *frame) {
 	if (_animationState <= 1) {
-		if (_animationState) {
+		if (_animationState > 0) {
 			*animation = 751;
 			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(751)) {

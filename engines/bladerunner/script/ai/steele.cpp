@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptSteele::AIScriptSteele(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var1 = 0;
 	_var2 = 0;
 }
@@ -36,7 +36,7 @@ void AIScriptSteele::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_var1 = 0;
 	_var2 = 0;
 
@@ -1642,13 +1642,12 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 
 	case 14:
 		*animation = kModelAnimationSteeleATalk;
-		if (_animationFrame == 0
-		 && _flag
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag
 		) {
 			*animation = kModelAnimationSteeleIdle;
 			_animationFrame = 0;
 			_animationState = 0;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
@@ -1709,14 +1708,13 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 
 	case 20:
 		*animation = kModelAnimationSteeleWithGunAimingTalk;
-		if (_animationFrame == 0
-		 && _flag
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag
 		) {
 			_animationFrame = 0;
 			_animationState = 23;
 			*animation = kModelAnimationSteeleWithGunShooting;
 			Actor_Change_Animation_Mode(kActorSteele, kAnimationModeCombatIdle);
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
@@ -1897,13 +1895,12 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 37:
-		if (_animationFrame == 0
-		 && _flag
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag
 		) {
 			_animationFrame = 0;
 			_animationState = 0;
 			_var1 = 3;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 			*animation = kModelAnimationSteeleWithGunAimingToRightTalk;
 		} else {
 			*animation = kModelAnimationSteeleWithGunAimingToRightTalk;
@@ -2038,13 +2035,13 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 		case 17:
 		case 18:
 		case 19:
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 		case 20:
 		case 21:
 		case 22:
 		case 37:
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			_animationState = 23;
 			_animationFrame = 0;
 			break;
@@ -2106,9 +2103,9 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 			if (Game_Flag_Query(kFlagSteeleAimingAtGordo)) {
 				_animationState = 37;
 				_animationFrame = 0;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			} else {
-				if (_animationState) {
+				if (_animationState > 0) {
 					_animationState = 14;
 					_animationFrame = 0;
 				} else {
@@ -2117,13 +2114,13 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 					_animationStateNext = 14;
 					_animationNext = kModelAnimationSteeleATalk;
 				}
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			}
 		}
 		break;
 
 	case kAnimationModeCombatIdle:
-		if (_animationState) {
+		if (_animationState > 0) {
 			if (_animationState > 25
 			 || (_animationState != 23
 			  && _animationState != 25)
@@ -2157,7 +2154,7 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 		break;
 
 	case 12:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 15;
 			_animationFrame = 0;
 		} else {
@@ -2166,11 +2163,11 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 			_animationStateNext = 15;
 			_animationNext = kModelAnimationSteeleBTalk;
 		}
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 13:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 16;
 			_animationFrame = 0;
 		} else {
@@ -2179,11 +2176,11 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 			_animationStateNext = 16;
 			_animationNext = kModelAnimationSteeleSmallLeftHandMoveTalk;
 		}
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 14:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 17;
 			_animationFrame = 0;
 		} else {
@@ -2192,11 +2189,11 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 			_animationStateNext = 17;
 			_animationNext = kModelAnimationSteeleProtestTalk;
 		}
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 15:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 18;
 			_animationFrame = 0;
 		} else {
@@ -2205,11 +2202,11 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 			_animationStateNext = 18;
 			_animationNext = kModelAnimationSteeleDismissTalk;
 		}
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 16:
-		if (_animationState) {
+		if (_animationState > 0) {
 			_animationState = 19;
 			_animationFrame = 0;
 		} else {
@@ -2218,7 +2215,7 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 			_animationStateNext = 19;
 			_animationNext = kModelAnimationSteeleDismissTalk;
 		}
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case kAnimationModeHit:
@@ -2307,19 +2304,19 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 	case 58:
 		_animationState = 20;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 59:
 		_animationState = 21;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 60:
 		_animationState = 22;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 86:

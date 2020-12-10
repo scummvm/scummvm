@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptGeneralDoll::AIScriptGeneralDoll(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptGeneralDoll::Initialize() {
@@ -34,7 +34,7 @@ void AIScriptGeneralDoll::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 
 	Actor_Put_In_Set(kActorGeneralDoll, kSetFreeSlotG);
 	Actor_Set_At_Waypoint(kActorGeneralDoll, 39, 0);
@@ -295,7 +295,7 @@ bool AIScriptGeneralDoll::UpdateAnimation(int *animation, int *frame) {
 
 	case 1:
 		*animation = 835;
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 834;
 			_animationFrame = 0;
 			_animationState = 0;
@@ -344,7 +344,7 @@ bool AIScriptGeneralDoll::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case 0:
 		if (_animationState == 1) {
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 		} else {
 			_animationState = 0;
 			_animationFrame = 0;
@@ -358,7 +358,7 @@ bool AIScriptGeneralDoll::ChangeAnimationMode(int mode) {
 	case 3:
 		_animationState = 1;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 43:

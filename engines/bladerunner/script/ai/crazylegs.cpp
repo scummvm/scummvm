@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptCrazylegs::AIScriptCrazylegs(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptCrazylegs::Initialize() {
@@ -34,7 +34,7 @@ void AIScriptCrazylegs::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = false;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 
 	World_Waypoint_Set(360, kSetHF05, -103.0f, 40.63f, -53.0f);
 	Actor_Put_In_Set(kActorCrazylegs, kSetHF05);
@@ -186,10 +186,10 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 6:
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 454;
 			_animationState = 0;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			*animation = 458;
 			++_animationFrame;
@@ -279,10 +279,10 @@ bool AIScriptCrazylegs::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 15:
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			Actor_Change_Animation_Mode(kActorCrazylegs, 43);
 			_animationState = 2;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 			*animation = 456;
 		} else {
 			*animation = 456;
@@ -373,7 +373,7 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 		case 13:
 		case 14:
 		case 15:
-			_flag = true;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 		default:
 			break;
@@ -390,47 +390,47 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 			_animationState = 6;
 		}
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 12:
 		_animationState = 7;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 13:
 		_animationState = 8;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 14:
 		_animationState = 9;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 15:
 		_animationState = 10;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 16:
 		_animationState = 11;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 17:
 		_animationState = 12;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 18:
 		_animationState = 13;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 19:
 		_animationState = 14;
 		_animationFrame = 0;
-		_flag = false;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 	case 23:
 		_animationState = 3;

@@ -30,7 +30,7 @@ AIScriptClovis::AIScriptClovis(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_var3 = 1;
 	_var4 = 0;
 	_var5 = 0;
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 }
 
 void AIScriptClovis::Initialize() {
@@ -44,7 +44,7 @@ void AIScriptClovis::Initialize() {
 	_var3 = 1;
 	_var4 = 0;
 	_var5 = 0;
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 
 	Actor_Set_Goal_Number(kActorClovis, kGoalClovisDefault);
 }
@@ -617,7 +617,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 						_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisLookingUpAndAbout) - 1;
 					}
 				}
-				if (!_animationFrame) {
+				if (_animationFrame == 0) {
 					if (Random_Query(0, 1) > 0) {
 						_var1 = 1;
 					} else {
@@ -716,7 +716,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 5:
 		*animation = kModelAnimationClovisCalmTalk;
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			_animationState = 0;
 		} else {
 			++_animationFrame;
@@ -788,7 +788,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 12:
 		*animation = kModelAnimationClovisKneelingTalking;
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			_animationState = 2;
 			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeSit);
@@ -1143,9 +1143,7 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	case 33:
 		*animation = kModelAnimationClovisLayingWithBookStopsReadingTalk;
-		if (_animationFrame == 0
-		 && _flag
-		) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			_animationState = 32;
 			_animationFrame = 0;
 			Actor_Change_Animation_Mode(kActorClovis, 54);
@@ -1274,10 +1272,10 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		case 9:
 		case 10:
 		case 11:
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 		case 12:
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 		case 13:
 			_animationState = 15;
@@ -1311,7 +1309,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 				_animationState = 1;
 				_animationStateNext = 5;
 				_animationNext = kModelAnimationClovisCalmTalk;
-				_flag = 0;
+				_resumeIdleAfterFramesetCompletesFlag = false;
 			}
 		}
 		break;
@@ -1357,7 +1355,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 			_animationState = 1;
 			_animationStateNext = 6;
 			_animationNext = kModelAnimationClovisSuggestingTalk;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1367,7 +1365,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 			_animationState = 1;
 			_animationStateNext = 8;
 			_animationNext = kModelAnimationClovisAffirmingTalk;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1376,7 +1374,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 			_animationState = 1;
 			_animationStateNext = 7;
 			_animationNext = kModelAnimationClovisSuggestingAndBeardScratchTalk;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1385,7 +1383,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 			_animationState = 1;
 			_animationStateNext = 9;
 			_animationNext = kModelAnimationClovisHandCircularMoveTalk;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1394,7 +1392,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 			_animationState = 1;
 			_animationStateNext = 10;
 			_animationNext = kModelAnimationClovisPointingTalk;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1403,7 +1401,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 			_animationState = 1;
 			_animationStateNext = 11;
 			_animationNext = kModelAnimationClovisNegotiatingTalk;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		}
 		break;
 
@@ -1452,7 +1450,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 	case 30:
 		_animationState = 12;
 		_animationFrame = 0;
-		_flag = 0;
+		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
 
 	case 88:
@@ -1575,10 +1573,10 @@ void AIScriptClovis::someAnim() {
 	case 9:
 	case 10:
 	case 11:
-		_flag = 1;
+		_resumeIdleAfterFramesetCompletesFlag = true;
 		break;
 	case 12:
-		_flag = 1;
+		_resumeIdleAfterFramesetCompletesFlag = true;
 		break;
 	case 13:
 		_animationState = 15;

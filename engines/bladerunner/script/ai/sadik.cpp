@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptSadik::AIScriptSadik(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_nextSoundId = -1; // changed from original (0) to be more clear that this is an invalid sfx id
 	_var2 = 0;
 	_var3 = 0;
@@ -38,7 +38,7 @@ void AIScriptSadik::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_flag = 0;
+	_resumeIdleAfterFramesetCompletesFlag = false;
 	_nextSoundId = -1; // changed from original (0) to be more clear that this is an invalid sfx id
 	_var2 = 0;
 	_var3 = 0;
@@ -519,11 +519,11 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 				if (!Random_Query(0, 4)) {
 					_var3 = 1;
 				}
-				if (!_animationFrame || _animationFrame == 8) {
+				if (_animationFrame == 0 || _animationFrame == 8) {
 					_var3 = Random_Query(2, 8);
 				}
 				if (!Random_Query(0, 2)) {
-					if (!_animationFrame) {
+					if (_animationFrame == 0) {
 						_var2 = 1;
 						_var3 = 0;
 						*animation = 329;
@@ -698,10 +698,10 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 
 	case 19:
 		*animation = 331;
-		if (!_animationFrame && _flag) {
+		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 328;
 			_animationState = 0;
-			_flag = 0;
+			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
 			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(331)) {
@@ -893,7 +893,7 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 		case 24:
 		case 25:
 		case 26:
-			_flag = 1;
+			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 		case 30:
 		case 31:
