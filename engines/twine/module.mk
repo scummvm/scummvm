@@ -2,6 +2,7 @@ MODULE := engines/twine
 
 MODULE_OBJS := \
 	parser/body.o \
+	parser/entity.o \
 	actor.o \
 	animations.o \
 	collision.o \
@@ -10,7 +11,6 @@ MODULE_OBJS := \
 	debug_grid.o \
 	debug_scene.o \
 	detection.o \
-	entity.o \
 	extra.o \
 	flamovies.o \
 	gamestate.o \
