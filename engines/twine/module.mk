@@ -1,6 +1,7 @@
 MODULE := engines/twine
 
 MODULE_OBJS := \
+	parser/body.o \
 	actor.o \
 	animations.o \
 	collision.o \
