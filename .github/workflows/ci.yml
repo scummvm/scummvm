@@ -39,10 +39,10 @@ jobs:
       - uses: ilammy/setup-nasm@v1
         if: ${{ matrix.useNasm }} == 'true'
       - name: Install vcpkg and packages
-        uses: lukka/run-vcpkg@v2
+        uses: lukka/run-vcpkg@v6
         id: runvcpkg
         with:
-          vcpkgGitCommitId: 2f7a104d4d6f1f3790db929f85a4086aa6973d7f
+          vcpkgGitCommitId: 0bf3923f9fab4001c00f0f429682a0853b5749e0
           vcpkgTriplet: '${{ matrix.triplet }}'
           vcpkgArguments: '${{ matrix.vcpkgPackages }}'
 #      - name: Upload libs
