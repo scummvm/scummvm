@@ -65,9 +65,9 @@ jobs:
           ls
       - name: set SCUMMVM_LIBS env variable
         run: |
-          echo "::set-env name=SCUMMVM_LIBS::${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}"
+          echo "SCUMMVM_LIBS=${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
       - name: Add msbuild to PATH
-        uses: microsoft/setup-msbuild@v1.0.0
+        uses: microsoft/setup-msbuild@v1.0.2
       - name: Build scummvm
         run: |
           cd build-scummvm
