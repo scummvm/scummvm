@@ -445,7 +445,9 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeTalk:
+		// fall through
 	case 9:
+		// fall through
 	case 30:
 		if (_animationState < 6 || _animationState > 13) {
 			_animationState = 15;
@@ -467,6 +469,7 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		break;
 
 	case 10:
+		// fall through
 	case 31:
 		if (_animationState < 6 || _animationState > 13) {
 			_animationState = 15;
@@ -476,6 +479,7 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		break;
 
 	case 11:
+		// fall through
 	case 33:
 		if (_animationState < 6 || _animationState > 13) {
 			_animationState = 15;
@@ -485,6 +489,7 @@ bool AIScriptBulletBob::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeHit:
+		// fall through
 	case kAnimationModeCombatHit:
 		_animationState = 3;
 		_animationFrame = 0;

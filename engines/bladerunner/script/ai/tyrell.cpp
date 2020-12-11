@@ -207,35 +207,42 @@ bool AIScriptTyrell::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case kAnimationModeWalk:
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeTalk:
 		_animationState = 2;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 12:
 		_animationState = 3;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 13:
 		_animationState = 4;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 14:
 		_animationState = 5;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 15:
 		_animationState = 6;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	default:
 		break;
 	}

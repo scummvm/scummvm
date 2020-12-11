@@ -226,6 +226,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 3;
 		}
 		break;
+
 	case 8:
 		*animation = 557;
 		++_animationFrame;
@@ -235,6 +236,7 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 0;
 		}
 		break;
+
 	case 9:
 		*animation = 563;
 		++_animationFrame;
@@ -278,18 +280,26 @@ bool AIScriptTyrellGuard::ChangeAnimationMode(int mode) {
 			_animationState = 8;
 			_animationFrame = 0;
 			break;
+
 		case 1:
 			_animationState = 2;
 			break;
+
 		case 3:
+			// fall through
 		case 4:
+			// fall through
 		case 5:
+			// fall through
 		case 6:
+			// fall through
 		case 7:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
+
 		case 8:
 			break;
+
 		default:
 			_animationState = 0;
 			_animationFrame = 0;
@@ -358,6 +368,7 @@ bool AIScriptTyrellGuard::ChangeAnimationMode(int mode) {
 		break;
 
 	case 43:
+		// fall through
 	case 55:
 		if (_animationState != 1) {
 			_animationState = 1;

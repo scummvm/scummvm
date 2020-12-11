@@ -398,16 +398,23 @@ bool AIScriptLeon::ChangeAnimationMode(int mode) {
 	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 2:
+			// fall through
 		case 3:
+			// fall through
 		case 4:
+			// fall through
 		case 5:
+			// fall through
 		case 6:
+			// fall through
 		case 7:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
+
 		case 8:
 			Actor_Change_Animation_Mode(kActorLeon, 72);
 			break;
+
 		default:
 			_animationState = 0;
 			_animationFrame = 0;

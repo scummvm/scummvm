@@ -338,7 +338,9 @@ bool AIScriptMutant1::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 
 		case kSetUG04:
+			// fall through
 		case kSetUG05:
+			// fall through
 		case kSetUG06:
 			Non_Player_Actor_Combat_Mode_On(kActorMutant1, kActorCombatStateIdle, false, kActorMcCoy, 10, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			break;
@@ -348,7 +350,9 @@ bool AIScriptMutant1::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			break;
 
 		case kSetUG10:
+			// fall through
 		case kSetUG12:
+			// fall through
 		case kSetUG14:
 			Non_Player_Actor_Combat_Mode_On(kActorMutant1, kActorCombatStateIdle, false, kActorMcCoy, 14, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			break;
@@ -408,6 +412,7 @@ bool AIScriptMutant1::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 1:
+		// fall through
 	case 2:
 		*animation = 893;
 		++_animationFrame;
@@ -528,6 +533,7 @@ bool AIScriptMutant1::ChangeAnimationMode(int mode) {
 		break;
 
 	case 1:
+		// fall through
 	case 7:
 		_animationState = 1;
 		_animationFrame = 0;
@@ -574,7 +580,9 @@ bool AIScriptMutant1::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 21:
+		// fall through
 	case 22:
 		_animationState = 10;
 		_animationFrame = 0;

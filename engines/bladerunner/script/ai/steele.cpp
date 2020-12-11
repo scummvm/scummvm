@@ -912,7 +912,9 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalSteeleNR11Entered:
+		// fall through
 	case 216:
+		// fall through
 	case kGoalSteeleNR01PrepareShotByMcCoy:
 		return true;
 
@@ -1359,7 +1361,9 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalSteeleStartChapter5:
+		// fall through
 	case 401:
+		// fall through
 	case kGoalSteeleKP01Left:
 		return true;
 
@@ -2019,36 +2023,54 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 
 		switch (_animationState) {
 		case 0:
+			// fall through
 		case 24:
+			// fall through
 		case 34:
+			// fall through
 		case 35:
+			// fall through
 		case 41:
 			return true;
+
 		case 4:
 			_animationState = 23;
 			_animationFrame = 0;
 			break;
+
 		case 14:
+			// fall through
 		case 15:
+			// fall through
 		case 16:
+			// fall through
 		case 17:
+			// fall through
 		case 18:
+			// fall through
 		case 19:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
+
 		case 20:
+			// fall through
 		case 21:
+			// fall through
 		case 22:
+			// fall through
 		case 37:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			_animationState = 23;
 			_animationFrame = 0;
 			break;
+
 		case 23:
+			// fall through
 		case 26:
 			_animationState = 24;
 			_animationFrame = 0;
 			break;
+
 		default:
 			_animationFrame = 0;
 			if (Game_Flag_Query(kFlagSteeleSmoking)) {

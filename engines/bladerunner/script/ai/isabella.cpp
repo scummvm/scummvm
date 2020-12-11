@@ -369,6 +369,7 @@ bool AIScriptIsabella::ChangeAnimationMode(int mode) {
 		break;
 
 	case 3:
+		// fall through
 	case 9:
 		if (_animationState < 2 || _animationState > 8) {
 			_animationState = 9;
@@ -379,6 +380,7 @@ bool AIScriptIsabella::ChangeAnimationMode(int mode) {
 		break;
 
 	case 10:
+		// fall through
 	case 12:
 		if (_animationState < 2 || _animationState > 8) {
 			_animationState = 9;
@@ -389,6 +391,7 @@ bool AIScriptIsabella::ChangeAnimationMode(int mode) {
 		break;
 
 	case 11:
+		// fall through
 	case 14:
 		if (_animationState < 2 || _animationState > 8) {
 			_animationState = 9;

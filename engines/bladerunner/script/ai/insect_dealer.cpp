@@ -156,6 +156,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 				}
 			}
 			break;
+
 		case 1:
 			*animation = 546;
 			++_animationFrame;
@@ -168,11 +169,13 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 				_frameDelta = 2 * Random_Query(0, 1) - 1;
 			}
 			break;
+
 		case 2:
 			// TODO: test... actor will be stuck
 			break;
 		}
 		break;
+
 	case 1:
 		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			*animation = 545;
@@ -186,6 +189,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 2:
 		*animation = 549;
 		++_animationFrame;
@@ -195,6 +199,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 1;
 		}
 		break;
+
 	case 3:
 		*animation = 550;
 		++_animationFrame;
@@ -204,6 +209,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 1;
 		}
 		break;
+
 	case 4:
 		*animation = 551;
 		++_animationFrame;
@@ -213,6 +219,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 1;
 		}
 		break;
+
 	case 5:
 		*animation = 552;
 		++_animationFrame;
@@ -222,6 +229,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 1;
 		}
 		break;
+
 	case 6:
 		*animation = 553;
 		++_animationFrame;
@@ -231,6 +239,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 1;
 		}
 		break;
+
 	case 7:
 		*animation = 554;
 		++_animationFrame;
@@ -240,6 +249,7 @@ bool AIScriptInsectDealer::UpdateAnimation(int *animation, int *frame) {
 			_animationState = 1;
 		}
 		break;
+
 	case 8:
 		*animation = 547;
 		++_animationFrame;
@@ -265,47 +275,58 @@ bool AIScriptInsectDealer::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 3:
+		// fall through
 	case 18:
+		// fall through
 	case 19:
 		_animationState = 1;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 12:
 		_animationState = 2;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 13:
 		_animationState = 3;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 14:
 		_animationState = 4;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 15:
 		_animationState = 5;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 16:
 		_animationState = 6;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 17:
 		_animationState = 7;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 23:
 		_animationState = 8;
 		_animationFrame = 0;
 		break;
+
 	default:
 		break;
 	}

@@ -572,10 +572,15 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
+		// fall through
 	case 3:
+		// fall through
 	case 4:
+		// fall through
 	case 5:
+		// fall through
 	case 6:
+		// fall through
 	case 7:
 		*animation = _animationState + 298;
 		++_animationFrame;
@@ -645,8 +650,11 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 12:
+		// fall through
 	case 13:
+		// fall through
 	case 16:
+		// fall through
 	case 17:
 		if (_animationState == 12) {
 			*animation = 278;
@@ -670,6 +678,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 14:
+		// fall through
 	case 15:
 		*animation = _animationFrame + 280;
 		++_animationFrame;
@@ -696,6 +705,7 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 18:
+		// fall through
 	case 19:
 		if (_animationState == 18) {
 			*animation = 284;
@@ -711,14 +721,23 @@ bool AIScriptIzo::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 20:
+		// fall through
 	case 21:
+		// fall through
 	case 22:
+		// fall through
 	case 23:
+		// fall through
 	case 24:
+		// fall through
 	case 25:
+		// fall through
 	case 26:
+		// fall through
 	case 27:
+		// fall through
 	case 28:
+		// fall through
 	case 29:
 		if (_animationState == 20) {
 			*animation = 290;
@@ -851,25 +870,36 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 	case 0:
 		switch (_animationState) {
 		case 1:
+			// fall through
 		case 2:
+			// fall through
 		case 3:
+			// fall through
 		case 4:
+			// fall through
 		case 5:
+			// fall through
 		case 6:
+			// fall through
 		case 7:
+			// fall through
 		case 33:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 
 		case 8:
+			// fall through
 		case 22:
+			// fall through
 		case 23:
 			_animationState = 10;
 			_animationFrame = 0;
 			break;
 
 		case 31:
+			// fall through
 		case 32:
+			// fall through
 		case 34:
 			return true;
 
@@ -895,6 +925,7 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 		return true;
 
 	case 3:
+		// fall through
 	case 9:
 		if (_animationState != 32) {
 			if (Actor_Query_Goal_Number(kActorIzo) == 1) {
@@ -922,8 +953,11 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 		break;
 
 	case 5:
+		// fall through
 	case 18:
+		// fall through
 	case 19:
+		// fall through
 	case 20:
 		return true;
 
@@ -943,6 +977,7 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 		break;
 
 	case 10:
+		// fall through
 	case 12:
 		if (_animationState != 32) {
 			if (_animationState <= 0 || _animationState > 7) {
@@ -955,6 +990,7 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 		break;
 
 	case 11:
+		// fall through
 	case 14:
 		if (_animationState != 32) {
 			if (_animationState <= 0 || _animationState > 7) {
@@ -1013,10 +1049,15 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 	case 21:
 		switch (_animationState) {
 		case 8:
+			// fall through
 		case 9:
+			// fall through
 		case 10:
+			// fall through
 		case 11:
+			// fall through
 		case 12:
+			// fall through
 		case 13:
 			if (Random_Query(0, 1)) {
 				_animationState = 17;
@@ -1027,8 +1068,11 @@ bool AIScriptIzo::ChangeAnimationMode(int mode) {
 			break;
 
 		case 14:
+			// fall through
 		case 15:
+			// fall through
 		case 16:
+			// fall through
 		case 17:
 			return true;
 

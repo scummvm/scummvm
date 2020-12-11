@@ -74,13 +74,17 @@ void AIScriptRunciter::CompletedMovementTrack() {
 		if (Player_Query_Current_Scene() == kSceneRC02) {
 			switch (Random_Query(1, 5)) {
 			case 2:
+				// fall through
 			case 3:
 				ADQ_Add(kActorRunciter, 530, -1);
 				break;
+
 			case 1:
+				// fall through
 			case 5:
 				ADQ_Add(kActorRunciter, 80, -1);
 				break;
+
 			case 4:
 				ADQ_Add(kActorRunciter, 930, -1);
 				break;
@@ -410,6 +414,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		}
 		*frame = _animationFrame;
 		break;
+
 	case 10:
 		*animation = 540;
 		++_animationFrame;
@@ -672,15 +677,19 @@ bool AIScriptRunciter::ReachedMovementTrackWaypoint(int waypointId) {
 	case 89:
 		Actor_Face_Heading(kActorRunciter, 567, true);
 		break;
+
 	case 90:
 		Actor_Face_Heading(kActorRunciter, 170, true);
 		break;
+
 	case 91:
 		Actor_Face_Heading(kActorRunciter, 120, true);
 		break;
+
 	case 92:
 		Actor_Face_Heading(kActorRunciter, 664, true);
 		break;
+
 	case 93:
 		Actor_Face_Heading(kActorRunciter, 1002, true);
 		break;

@@ -114,6 +114,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 1:
 		*animation = 725;
 		++_animationFrame;
@@ -121,6 +122,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 3:
 		*animation = 726;
 		++_animationFrame;
@@ -130,6 +132,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 			*animation = 725;
 		}
 		break;
+
 	case 4:
 		*animation = 727;
 		++_animationFrame;
@@ -139,6 +142,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 			*animation = 725;
 		}
 		break;
+
 	case 5:
 		*animation = 728;
 		++_animationFrame;
@@ -148,6 +152,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 			*animation = 725;
 		}
 		break;
+
 	case 6:
 		*animation = 729;
 		++_animationFrame;
@@ -157,6 +162,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 			*animation = 725;
 		}
 		break;
+
 	case 7:
 		*animation = 730;
 		++_animationFrame;
@@ -166,6 +172,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 			*animation = 725;
 		}
 		break;
+
 	case 8:
 		*animation = 731;
 		++_animationFrame;
@@ -175,6 +182,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 			*animation = 725;
 		}
 		break;
+
 	case 9:
 		*animation = 724;
 		++_animationFrame;
@@ -184,6 +192,7 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 			*animation = 724;
 		}
 		break;
+
 	default:
 		// TODO: A bug? 399 is a Zuben animation
 		*animation = 399;
@@ -199,34 +208,42 @@ bool AIScriptSergeantWalls::ChangeAnimationMode(int mode) {
 		_animationState = 0;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeTalk:
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
+
 	case 12:
 		_animationState = 3;
 		_animationFrame = 0;
 		break;
+
 	case 13:
 		_animationState = 4;
 		_animationFrame = 0;
 		break;
+
 	case 14:
 		_animationState = 5;
 		_animationFrame = 0;
 		break;
+
 	case 15:
 		_animationState = 6;
 		_animationFrame = 0;
 		break;
+
 	case 16:
 		_animationState = 7;
 		_animationFrame = 0;
 		break;
+
 	case 17:
 		_animationState = 8;
 		_animationFrame = 0;
 		break;
+
 	case 23:
 		_animationState = 9;
 		_animationFrame = 0;

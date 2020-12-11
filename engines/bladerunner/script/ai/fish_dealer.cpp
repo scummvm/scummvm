@@ -281,11 +281,17 @@ bool AIScriptFishDealer::ChangeAnimationMode(int mode) {
 		break;
 
 	case 3:
+		// fall through
 	case 14:
+		// fall through
 	case 15:
+		// fall through
 	case 16:
+		// fall through
 	case 17:
+		// fall through
 	case 18:
+		// fall through
 	case 19:
 		_animationState = Random_Query(0, 2) + 1;
 		_animationFrame = 0;
