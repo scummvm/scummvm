@@ -259,8 +259,7 @@ void Renderer::processRotatedElement(Matrix *targetMatrix, const pointTab *point
 		destZ = 0;
 	} else {
 		const int32 pointIdx = elemPtr->basePoint / sizeof(pointTab);
-		assert(elemPtr->baseElement % 36 == 0);
-		const int32 matrixIndex = elemPtr->baseElement / 36;
+		const int32 matrixIndex = elemPtr->baseElement;
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(matricesTable));
 		currentMatrix = &matricesTable[matrixIndex];
 
@@ -312,8 +311,7 @@ void Renderer::processTranslatedElement(Matrix *targetMatrix, const pointTab *po
 		destY = modelData->computedPoints[pointsIdx].y;
 		destZ = modelData->computedPoints[pointsIdx].z;
 
-		assert(elemPtr->baseElement % 36 == 0);
-		const int32 matrixIndex = elemPtr->baseElement / 36;
+		const int32 matrixIndex = elemPtr->baseElement;
 		assert(matrixIndex >= 0 && matrixIndex < ARRAYSIZE(matricesTable));
 		*targetMatrix = matricesTable[matrixIndex];
 	}
@@ -1457,9 +1455,6 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 }
 
 void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
-	int32 bp = 36;
-	int32 bx = sizeof(elementEntry);
-
 	Model *bodyHeader = (Model *)bodyPtr;
 
 	// This function should only be called ONCE, otherwise it corrupts the model data.
@@ -1474,20 +1469,20 @@ void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
 		return;
 	}
 
-	int16 offsetToData = bodyHeader->offsetToData;
+	uint8 *bodyDataPtr = bodyPtr + 0x1A;
 
-	uint8 *bodyDataPtr = bodyPtr + offsetToData + 16; // headersize
+	int16 numVertices = *((const int16 *)bodyDataPtr);
+	uint8 *bonesBase = bodyDataPtr + 2 + numVertices * sizeof(pointTab);
 
-	int16 numOfElement1 = *((const int16 *)bodyDataPtr);
-	uint8 *ptr2 = bodyDataPtr + 2 + numOfElement1 * sizeof(pointTab);
+	int16 numBones = *((const int16 *)bonesBase);
 
-	int16 numOfPoint = *((const int16 *)ptr2);
+	uint8 *elementEntryBasePointer = bonesBase + 2;
 
-	uint8 *ptrToKeyData = ptr2 + 2;
-
-	for (int32 i = 0; i < numOfPoint; i++) {
-		ptrToKeyData += sizeof(elementEntry);
-		*((int16 *)(ptrToKeyData + 6)) = (*((const int16 *)(ptrToKeyData + 6)) * bp) / bx;
+	// set up bone indices
+	for (int32 i = 0; i < numBones; i++) {
+		elementEntryBasePointer += sizeof(elementEntry);
+		elementEntry *ee = (elementEntry*)elementEntryBasePointer;
+		ee->baseElement = ee->baseElement / sizeof(elementEntry);
 	}
 }
 
@@ -1517,7 +1512,7 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 	Model *bodyHeader = (Model *)bodyPtr;
 	if (bodyHeader->bodyFlag.animated) {
 		// jump after the header
-		uint8 *ptr = bodyPtr + 16 + *((const uint16 *)(bodyPtr + 14));
+		uint8 *ptr = bodyPtr + 0x1A;
 		// the mostly used renderer code
 		// restart at the beginning of the renderTable
 		return renderAnimatedModel(&_modelData, ptr, _renderCmds);
