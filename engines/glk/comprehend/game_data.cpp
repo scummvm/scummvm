@@ -699,9 +699,8 @@ void GameData::loadGameData() {
 	parse_items(&fb);
 	parse_dictionary(&fb);
 	parse_word_map(&fb);
-	parse_string_table(&fb, _header.addr_strings,
-	                   _header.addr_strings_end,
-	                   &_strings);
+	if (g_comprehend->getGameID() != "talisman")
+		parse_string_table(&fb, _header.addr_strings, _header.addr_strings_end, &_strings);
 	load_extra_string_files();
 	parse_vm(&fb);
 	parse_action_tables(&fb);

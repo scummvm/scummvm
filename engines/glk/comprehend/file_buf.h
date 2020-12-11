@@ -39,6 +39,7 @@ private:
 public:
 	FileBuffer() : _pos(0) {}
 	FileBuffer(const Common::String &filename);
+	FileBuffer(Common::ReadStream *stream, size_t size);
 	static bool exists(const Common::String &filename);
 	void close();
 
