@@ -29,6 +29,11 @@ namespace Glk {
 namespace Comprehend {
 
 class TalismanGame : public ComprehendGameV2 {
+private:
+	/**
+	 * Load strings from the executable
+	 */
+	void loadStrings();
 public:
 	TalismanGame();
 	~TalismanGame() override {}
