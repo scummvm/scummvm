@@ -97,6 +97,26 @@ struct Model {
 	}
 };
 
+#include "common/pack-start.h"
+struct elementEntry {
+	int16 firstPoint = 0;  // data1
+	int16 numOfPoints = 0; // data2
+	int16 basePoint = 0;   // data3
+	int16 baseElement = 0; // param
+	int16 flag = 0;
+	int16 rotateZ = 0;
+	int16 rotateY = 0;
+	int16 rotateX = 0;
+	int32 numOfShades = 0; // field_10
+	int32 field_14 = 0;
+	int32 field_18 = 0;
+	int32 y = 0;
+	int32 field_20 = 0;
+	int16 field_24 = 0;
+};
+#include "common/pack-end.h"
+static_assert(sizeof(elementEntry) == 38, "Unexpected elementEntry size");
+
 class Renderer {
 private:
 	TwinEEngine *_engine;
@@ -133,26 +153,6 @@ private:
 	};
 	#include "common/pack-end.h"
 	static_assert(sizeof(pointTab) == 6, "Unexpected pointTab size");
-
-	#include "common/pack-start.h"
-	struct elementEntry {
-		int16 firstPoint = 0;  // data1
-		int16 numOfPoints = 0; // data2
-		int16 basePoint = 0;   // data3
-		int16 baseElement = 0; // param
-		int16 flag = 0;
-		int16 rotateZ = 0;
-		int16 rotateY = 0;
-		int16 rotateX = 0;
-		int32 numOfShades = 0; // field_10
-		int32 field_14 = 0;
-		int32 field_18 = 0;
-		int32 y = 0;
-		int32 field_20 = 0;
-		int16 field_24 = 0;
-	};
-	#include "common/pack-end.h"
-	static_assert(sizeof(elementEntry) == 38, "Unexpected elementEntry size");
 
 	struct lineData {
 		uint8 colorIndex = 0;
