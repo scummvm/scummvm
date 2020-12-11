@@ -20,7 +20,7 @@
  *
  */
 
-#include "twine/entity.h"
+#include "twine/parser/entity.h"
 #include "common/stream.h"
 
 namespace TwinE {

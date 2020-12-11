@@ -28,7 +28,7 @@
 #include "common/util.h"
 #include "twine/actor.h"
 #include "twine/collision.h"
-#include "twine/entity.h"
+#include "twine/parser/entity.h"
 #include "twine/gamestate.h"
 #include "twine/grid.h"
 #include "twine/movements.h"
