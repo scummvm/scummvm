@@ -129,6 +129,7 @@ bool AIScriptDeskClerk::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		_animationState = 0;
 #endif // BLADERUNNER_ORIGINAL_BUGS
 		break;
+
 	case kGoalDeskClerkKnockedOut:
 		// fall through
 	case kGoalDeskClerkGone:
@@ -302,9 +303,13 @@ bool AIScriptDeskClerk::ChangeAnimationMode(int mode) {
 			break;
 
 		case 1:
+			// fall through
 		case 2:
+			// fall through
 		case 3:
+			// fall through
 		case 4:
+			// fall through
 		case 5:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;

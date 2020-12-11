@@ -315,16 +315,25 @@ bool AIScriptChew::ChangeAnimationMode(int mode) {
 		switch (_animationState) {
 		case 0:
 			return true;
+
 		case 2:
+			// fall through
 		case 3:
+			// fall through
 		case 4:
+			// fall through
 		case 5:
+			// fall through
 		case 6:
+			// fall through
 		case 7:
+			// fall through
 		case 8:
+			// fall through
 		case 9:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
+
 		default:
 			_animationState = 0;
 			_var2 = 0;

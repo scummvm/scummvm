@@ -131,6 +131,7 @@ void AIScriptEarlyQ::CompletedMovementTrack() {
 		break;
 
 	case 1:
+		// fall through
 	case 2:
 		Actor_Set_Goal_Number(kActorEarlyQ, 0);
 		break;
@@ -860,20 +861,31 @@ bool AIScriptEarlyQ::ChangeAnimationMode(int mode) {
 			break;
 
 		case 10:
+			// fall through
 		case 20:
+			// fall through
 		case 21:
+			// fall through
 		case 22:
+			// fall through
 		case 23:
+			// fall through
 		case 24:
+			// fall through
 		case 25:
+			// fall through
 		case 26:
+			// fall through
 		case 27:
+			// fall through
 		case 28:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
 
 		case 12:
+			// fall through
 		case 13:
+			// fall through
 		case 15:
 			_animationState = 14;
 			_animationFrame = 0;

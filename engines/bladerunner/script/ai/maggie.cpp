@@ -604,21 +604,28 @@ bool AIScriptMaggie::ChangeAnimationMode(int mode) {
 		} else {
 			switch (_animationState) {
 			case kMaggieStateGoingToSleep:
+				// fall through
 			case kMaggieStateSleeping:
 				_animationState = kMaggieStateWakingUp;
 				break;
+
 			case kMaggieStateIdle:
 				_animationState = kMaggieStateStandingUp;
 				_animationFrame = 0;
 				break;
+
 			case kMaggieStateLayingDown:
 				_animationState = kMaggieStateStandingUp;
 				_animationFrame = 0;
 				break;
+
 			case kMaggieStateJumping:
+				// fall through
 			case kMaggieStateStandingUp:
+				// fall through
 			case kMaggieStateWakingUp:
 				break;
+
 			default:
 				_animationState = kMaggieStateIdle;
 				_animationFrame = 0;

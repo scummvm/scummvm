@@ -181,6 +181,7 @@ void AIScriptLucy::CompletedMovementTrack() {
 		break;
 
 	case kGoalLucyGoToFreeSlotGAG:
+		// fall through
 	case kGoalLucyGoToFreeSlotGAHJ:
 		Actor_Set_Goal_Number(kActorLucy, kGoalLucyMoveAround);
 		break;
@@ -638,7 +639,7 @@ bool AIScriptLucy::UpdateAnimation(int *animation, int *frame) {
 	case 14:
 		// fall through
 	case 15:
-
+		// fall through
 	case 16:
 		if (_animationState == 9) {
 			*animation = kModelAnimationLucyComplainingTalk;

@@ -151,6 +151,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 1:
 		*animation = kModelAnimationGrigorianStandAnnoyedTalk;
 		++_animationFrame;
@@ -158,6 +159,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 2:
 		*animation = kModelAnimationGrigorianStandProtestTalk;
 		++_animationFrame;
@@ -165,6 +167,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 3:
 		*animation = kModelAnimationGrigorianStandProtestMoreTalk;
 		++_animationFrame;
@@ -174,6 +177,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 			*animation = kModelAnimationGrigorianStandProtestTalk;
 		}
 		break;
+
 	case 4:
 		*animation = kModelAnimationGrigorianStandProtestEvenMoreTalk;
 		++_animationFrame;
@@ -183,6 +187,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 			*animation = kModelAnimationGrigorianStandProtestTalk;
 		}
 		break;
+
 	case 5:
 		*animation = kModelAnimationGrigorianStandInsistentTalk;
 		++_animationFrame;
@@ -192,6 +197,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 			*animation = kModelAnimationGrigorianStandProtestTalk;
 		}
 		break;
+
 	case 6:
 		*animation = kModelAnimationGrigorianStandDismissOrAccuseTalk;
 		++_animationFrame;
@@ -201,6 +207,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 			*animation = kModelAnimationGrigorianStandProtestTalk;
 		}
 		break;
+
 	case 7:
 		*animation = kModelAnimationGrigorianStandBegOrMockingTalk;
 		++_animationFrame;
@@ -210,6 +217,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 			*animation = kModelAnimationGrigorianStandProtestTalk;
 		}
 		break;
+
 	default:
 		*animation = 399;
 		break;
@@ -224,6 +232,7 @@ bool AIScriptGrigorian::ChangeAnimationMode(int mode) {
 		_animationState = 0;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeWalk:
 		// TODO A bug? This animation state is not for walking. It is for kModelAnimationGrigorianStandAnnoyedTalk.
 		if (_animationState != 1) {
@@ -231,26 +240,32 @@ bool AIScriptGrigorian::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case kAnimationModeTalk:
 		_animationState = 2;
 		_animationFrame = 0;
 		break;
+
 	case 12:
 		_animationState = 3;
 		_animationFrame = 0;
 		break;
+
 	case 13:
 		_animationState = 4;
 		_animationFrame = 0;
 		break;
+
 	case 14:
 		_animationState = 5;
 		_animationFrame = 0;
 		break;
+
 	case 15:
 		_animationState = 6;
 		_animationFrame = 0;
 		break;
+
 	case 16:
 		_animationState = 7;
 		_animationFrame = 0;

@@ -175,15 +175,18 @@ void AIScriptGuzza::ClickedByPlayer() {
 				Actor_Says(kActorGuzza, 780, -1);
 				AI_Movement_Track_Unpause(kActorGuzza);
 				break;
+
 			case 2:
 				AI_Movement_Track_Pause(kActorGuzza);
 				Actor_Says(kActorMcCoy, 3970, 14);
 				Actor_Says(kActorGuzza, 780, -1);
 				AI_Movement_Track_Unpause(kActorGuzza);
 				break;
+
 			case 3:
 				Actor_Says(kActorMcCoy, 3970, 16);
 				break;
+
 			case 4:
 				// fall through
 			default:
@@ -308,14 +311,19 @@ bool AIScriptGuzza::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case kGoalGuzzaUG18WillGetShotBySadik:
+		// fall through
 	case kGoalGuzzaUG18HitByMcCoy:
+		// fall through
 	case kGoalGuzzaUG18MissedByMcCoy:
 		Actor_Set_Targetable(kActorGuzza, false);
 		return true;
 
 	case kGoalGuzzaUG18ShotByMcCoy:
+		// fall through
 	case kGoalGuzzaUG18ShootMcCoy:
+		// fall through
 	case kGoalGuzzaUG18FallDown:
+		// fall through
 	case kGoalGuzzaUG18ShotBySadik:
 		return true;
 	}
@@ -336,6 +344,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 				}
 			}
 			break;
+
 		case 1:
 			*animation = kModelAnimationGuzzaStandAndWipeNose;
 			++_animationFrame;
@@ -345,6 +354,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 				_state = 0;
 			}
 			break;
+
 		case 2:
 			*animation = kModelAnimationGuzzaStandAndScratchBelly;
 			++_animationFrame;
@@ -386,6 +396,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 				}
 			}
 			break;
+
 		case 1:
 			*animation = kModelAnimationGuzzaSitAndEat;
 			++_animationFrame;
@@ -395,6 +406,7 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 				_state = 0;
 			}
 			break;
+
 		case 2:
 			*animation = kModelAnimationGuzzaSitAndLookAtFood;
 			++_animationFrame;
@@ -438,9 +450,11 @@ bool AIScriptGuzza::UpdateAnimation(int *animation, int *frame) {
 		case 0:
 			*animation = kModelAnimationGuzzaSitAndTalkOrChew;
 			break;
+
 		case 1:
 			*animation = kModelAnimationGuzzaSitAndEat;
 			break;
+
 		case 2:
 			*animation = kModelAnimationGuzzaSitAndLookAtFood;
 			break;
@@ -787,35 +801,56 @@ bool AIScriptGuzza::ChangeAnimationMode(int mode) {
 	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 0:
+			// fall through
 		case 30:
+			// fall through
 		case 32:
+			// fall through
 		case 33:
 			break;
+
 		case 6:
+			// fall through
 		case 7:
 			_animationState = 24;
 			_animationFrame = 0;
 			break;
+
 		case 11:
+			// fall through
 		case 12:
+			// fall through
 		case 13:
+			// fall through
 		case 14:
+			// fall through
 		case 15:
+			// fall through
 		case 16:
+			// fall through
 		case 17:
+			// fall through
 		case 18:
+			// fall through
 		case 19:
+			// fall through
 		case 20:
+			// fall through
 		case 21:
+			// fall through
 		case 22:
+			// fall through
 		case 23:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
+
 		case 24:
+			// fall through
 		case 31:
 			_animationState = 30;
 			_animationFrame = 0;
 			break;
+
 		default:
 			_animationState = 0;
 			_animationFrame = 0;

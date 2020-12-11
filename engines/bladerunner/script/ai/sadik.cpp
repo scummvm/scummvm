@@ -353,7 +353,9 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 305:
+		// fall through
 	case kGoalSadikUG18WillShootMcCoy:
+		// fall through
 	case kGoalSadikUG18Leave:
 		return true;
 
@@ -484,6 +486,7 @@ bool AIScriptSadik::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		return true;
 
 	case 420:
+		// fall through
 	case 450:
 		return true;
 	}
@@ -534,27 +537,37 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 1:
+		// fall through
 	case 2:
+		// fall through
 	case 3:
+		// fall through
 	case 4:
+		// fall through
 	case 5:
+		// fall through
 	case 6:
 		switch (_animationState) {
 		case 1:
 			*animation = 323;
 			break;
+
 		case 2:
 			*animation = 324;
 			break;
+
 		case 3:
 			*animation = 317;
 			break;
+
 		case 4:
 			*animation = 318;
 			break;
+
 		case 6:
 			*animation = 340;
 			break;
+
 		case 5:
 			*animation = 339;
 			break;
@@ -711,31 +724,43 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 20:
+		// fall through
 	case 21:
+		// fall through
 	case 22:
+		// fall through
 	case 23:
+		// fall through
 	case 24:
+		// fall through
 	case 25:
+		// fall through
 	case 26:
 		switch (_animationState) {
 		case 20:
 			*animation = 332;
 			break;
+
 		case 21:
 			*animation = 333;
 			break;
+
 		case 22:
 			*animation = 334;
 			break;
+
 		case 23:
 			*animation = 335;
 			break;
+
 		case 24:
 			*animation = 336;
 			break;
+
 		case 25:
 			*animation = 337;
 			break;
+
 		default:
 			*animation = 338;
 			break;
@@ -886,18 +911,28 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 19:
+			// fall through
 		case 20:
+			// fall through
 		case 21:
+			// fall through
 		case 22:
+			// fall through
 		case 23:
+			// fall through
 		case 24:
+			// fall through
 		case 25:
+			// fall through
 		case 26:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
+
 		case 30:
+			// fall through
 		case 31:
 			return 1;
+
 		default:
 			_animationState = 0;
 			_animationFrame = 0;
@@ -927,15 +962,21 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 			_animationState = 16;
 			break;
+
 		case 3:
+			// fall through
 		case 4:
 			_animationState = 7;
 			_animationFrame = 0;
 			break;
+
 		case 7:
+			// fall through
 		case 16:
+			// fall through
 		case 18:
 			return true;
+
 		case 17:
 			_animationFrame = 0;
 			_animationState = 7;
@@ -948,10 +989,15 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 		break;
 
 	case 5:
+		// fall through
 	case 9:
+		// fall through
 	case 10:
+		// fall through
 	case 11:
+		// fall through
 	case 19:
+		// fall through
 	case 20:
 		return true;
 
@@ -1008,10 +1054,15 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 	case kAnimationModeHit:
 		switch (_animationState) {
 		case 7:
+			// fall through
 		case 8:
+			// fall through
 		case 9:
+			// fall through
 		case 16:
+			// fall through
 		case 17:
+			// fall through
 		case 18:
 			if (Random_Query(0, 1)) {
 				_animationState = 13;
@@ -1019,11 +1070,17 @@ bool AIScriptSadik::ChangeAnimationMode(int mode) {
 				_animationState = 12;
 			}
 			break;
+
 		case 10:
+			// fall through
 		case 11:
+			// fall through
 		case 12:
+			// fall through
 		case 13:
+			// fall through
 		case 14:
+			// fall through
 		case 15:
 			if (Random_Query(0, 1)) {
 				_animationState = 11;

@@ -411,15 +411,19 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		switch (rnd) {
 		case 1:
+			// fall through
 		case 2:
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoGoToDNARow);
 			break;
+
 		case 3:
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoGoToChinaTown);
 			break;
+
 		case 4:
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoGoToFreeSlotHAGJ);
 			break;
+
 		case 5:
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoGoToFreeSlotAH);
 			break;
@@ -523,14 +527,17 @@ bool AIScriptGordo::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Global_Variable_Increment(kVariableGordosJoke, 1);
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02TellJoke1);
 			break;
+
 		case 1:
 			Global_Variable_Increment(kVariableGordosJoke, 1);
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02TellJoke2);
 			break;
+
 		case 2:
 			Global_Variable_Increment(kVariableGordosJoke, 1);
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02TellJoke3);
 			break;
+
 		case 3:
 			Global_Variable_Increment(kVariableGordosJoke, 1);
 			Actor_Set_Goal_Number(kActorGordo, kGoalGordoNR02TalkAboutMcCoy);
@@ -782,6 +789,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 				}
 			}
 			break;
+
 		case 1:
 			*animation = kModelAnimationGordoBrushOffShoulder;
 			++_animationFrame;
@@ -791,6 +799,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 				_state = 0;
 			}
 			break;
+
 		case 2:
 			*animation = kModelAnimationGordoChecksHand;
 			++_animationFrame;
@@ -818,6 +827,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 				_animationState = _animationStateNext;
 			}
 			break;
+
 		case 1:
 			*animation = kModelAnimationGordoBrushOffShoulder;
 			_animationFrame += 2;
@@ -827,6 +837,7 @@ bool AIScriptGordo::UpdateAnimation(int *animation, int *frame) {
 				_animationState = _animationStateNext;
 			}
 			break;
+
 		case 2:
 			*animation = kModelAnimationGordoChecksHand;
 			_animationFrame += 2;
@@ -1246,23 +1257,37 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 		switch (_animationState) {
 		case 0:
 			break;
+
 		case 2:
+			// fall through
 		case 13:
 			Actor_Change_Animation_Mode(kActorGordo, kAnimationModeSit);
 			break;
+
 		case 4:
+			// fall through
 		case 5:
+			// fall through
 		case 6:
+			// fall through
 		case 7:
+			// fall through
 		case 8:
+			// fall through
 		case 9:
+			// fall through
 		case 10:
+			// fall through
 		case 11:
+			// fall through
 		case 12:
+			// fall through
 		case 36:
+			// fall through
 		case 37:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
+
 		default:
 			_animationState = 0;
 			_animationFrame = 0;
@@ -1297,20 +1322,31 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 	case kAnimationModeCombatIdle:
 		switch (_animationState) {
 		case 14:
+			// fall through
 		case 16:
+			// fall through
 		case 17:
+			// fall through
 		case 18:
+			// fall through
 		case 21:
+			// fall through
 		case 22:
 			break;
+
 		case 15:
+			// fall through
 		case 27:
+			// fall through
 		case 28:
+			// fall through
 		case 31:
+			// fall through
 		case 32:
 			_animationState = 16;
 			_animationFrame = 0;
 			break;
+
 		default:
 			_animationState = 14;
 			_animationFrame = 0;
@@ -1432,8 +1468,11 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 	case kAnimationModeHit:
 		switch (_animationState) {
 		case 14:
+			// fall through
 		case 16:
+			// fall through
 		case 17:
+			// fall through
 		case 18:
 			if (Random_Query(0, 1)) {
 				_animationState = 21;
@@ -1442,11 +1481,16 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 			}
 			_animationFrame = 0;
 			break;
+
 		case 19:
+			// fall through
 		case 20:
+			// fall through
 		case 21:
+			// fall through
 		case 22:
 			return true;
+
 		default:
 			if (Random_Query(0, 1)) {
 				_animationState = 19;
@@ -1510,16 +1554,24 @@ bool AIScriptGordo::ChangeAnimationMode(int mode) {
 	case kAnimationModeDie:
 		switch (_animationState) {
 		case 14:
+			// fall through
 		case 16:
+			// fall through
 		case 17:
+			// fall through
 		case 18:
+			// fall through
 		case 19:
+			// fall through
 		case 20:
+			// fall through
 		case 21:
+			// fall through
 		case 22:
 			_animationState = 24;
 			_animationFrame = 0;
 			break;
+
 		default:
 			_animationState = 23;
 			_animationFrame = 0;
@@ -1692,12 +1744,15 @@ void AIScriptGordo::talkToMcCoyInCity() {
 			case 1:
 				Actor_Says(kActorMcCoy, 6460, 13);
 				break;
+
 			case 2:
 				Actor_Says(kActorMcCoy, 6550, 14);
 				break;
+
 			case 3:
 				Actor_Says(kActorMcCoy, 365, 12);
 				break;
+
 			case 4:
 				Actor_Says(kActorMcCoy, 525, 12);
 				break;
@@ -1883,19 +1938,26 @@ void AIScriptGordo::unknown() {
 	switch (_animationState) {
 	case 0:
 		break;
+
 	case 1:
+		// fall through
 	case 3:
+		// fall through
 	case 38:
+		// fall through
 	case 39:
 		_animationState = 0;
 		_animationFrame = 0;
 		_state = 0;
 		_counterTarget = 0;
 		break;
+
 	case 2:
+		// fall through
 	case 13:
 		Actor_Change_Animation_Mode(kActorGordo, 53);
 		break;
+
 	default:
 		_resumeIdleAfterFramesetCompletesFlag = true;
 		break;

@@ -275,6 +275,7 @@ bool AIScriptHowieLee::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		AI_Movement_Track_Repeat(kActorHowieLee);
 		return true;
+
 	case kGoalHowieLeeMovesInDiner02:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		if (Random_Query(1, 2) == 1) {
@@ -284,6 +285,7 @@ bool AIScriptHowieLee::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		AI_Movement_Track_Repeat(kActorHowieLee);
 		return true;
+
 	case kGoalHowieLeeMovesInDiner03:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		if (Random_Query(1, 2) == 1) {
@@ -293,24 +295,29 @@ bool AIScriptHowieLee::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		AI_Movement_Track_Repeat(kActorHowieLee);
 		return true;
+
 	case kGoalHowieLeeGoesToCT04GarbageBin:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		AI_Movement_Track_Append(kActorHowieLee, 66, 30);  // in kSetCT03_CT04
 		AI_Movement_Track_Repeat(kActorHowieLee);
 		return true;
+
 	case kGoalHowieLeeGoesToFreeSlotH:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		AI_Movement_Track_Append(kActorHowieLee, 40, 60);  // in kSetFreeSlotH
 		AI_Movement_Track_Repeat(kActorHowieLee);
 		return true;
+
 	case kGoalHowieLeeMovesInDiner06: // Unused goal?
 		AI_Movement_Track_Flush(kActorHowieLee);
 		AI_Movement_Track_Append(kActorHowieLee, 67, 90); // in kSetCT01_CT12
 		AI_Movement_Track_Repeat(kActorHowieLee);
 		return true;
+
 	case kGoalHowieLeeStopMoving:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		return false;
+
 	case kGoalHowieLeeGoesToFreeSlotC:
 		AI_Movement_Track_Flush(kActorHowieLee);
 		Actor_Put_In_Set(kActorHowieLee, kSetFreeSlotC);
@@ -342,6 +349,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 			}
 		}
 		break;
+
 	case 1:
 		*animation = 674;
 		++_animationFrame;
@@ -357,6 +365,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 			*animation = 673;
 		}
 		break;
+
 	case 2:
 		*animation = 672;
 		++_animationFrame;
@@ -364,6 +373,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 			_animationFrame = 0;
 		}
 		break;
+
 	case 3:
 		if (Game_Flag_Query(kFlagHowieLeeAnimation1)) {
 			Game_Flag_Reset(kFlagHowieLeeAnimation1);
@@ -379,6 +389,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 			*animation = 676;
 		}
 		break;
+
 	case 4:
 		*animation = 677;
 		++_animationFrame;
@@ -388,6 +399,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 			*animation = 676;
 		}
 		break;
+
 	case 5:
 		*animation = 678;
 		++_animationFrame;
@@ -397,6 +409,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 			*animation = 676;
 		}
 		break;
+
 	case 6:
 		*animation = 679;
 		++_animationFrame;
@@ -406,6 +419,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 			*animation = 676;
 		}
 		break;
+
 	case 7:
 		*animation = 680;
 		++_animationFrame;
@@ -415,6 +429,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 			*animation = 676;
 		}
 		break;
+
 	case 8:
 		*animation = 681;
 		++_animationFrame;
@@ -424,6 +439,7 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 			*animation = 676;
 		}
 		break;
+
 	default:
 		*animation = 399;
 		break;
@@ -443,36 +459,44 @@ bool AIScriptHowieLee::ChangeAnimationMode(int mode) {
 			Game_Flag_Set(kFlagHowieLeeAnimation1);
 		}
 		break;
+
 	case kAnimationModeWalk:
 		if (_animationState != 2) {
 			_animationState = 2;
 			_animationFrame = 0;
 		}
 		break;
+
 	case kAnimationModeTalk:
 		_animationState = 3;
 		_animationFrame = 0;
 		break;
+
 	case 12:
 		_animationState = 4;
 		_animationFrame = 0;
 		break;
+
 	case 13:
 		_animationState = 5;
 		_animationFrame = 0;
 		break;
+
 	case 14:
 		_animationState = 6;
 		_animationFrame = 0;
 		break;
+
 	case 15:
 		_animationState = 7;
 		_animationFrame = 0;
 		break;
+
 	case 16:
 		_animationState = 8;
 		_animationFrame = 0;
 		break;
+
 	case 43:
 		_animationState = 1;
 		_animationFrame = 0;

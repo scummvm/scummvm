@@ -540,6 +540,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			}
 			return false;
 		}
+
 	case 106:
 		Actor_Set_Goal_Number(kActorZuben, 105);
 		return true;
@@ -564,6 +565,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			AI_Movement_Track_Append(kActorZuben, 39, 10); // kSetFreeSlotG
 			AI_Movement_Track_Repeat(kActorZuben);
 			break;
+
 		case 2:
 			AI_Movement_Track_Flush(kActorZuben);
 			AI_Movement_Track_Append(kActorZuben, 495, 0); // kSetNR02
@@ -571,6 +573,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			AI_Movement_Track_Append(kActorZuben, 33, Random_Query(15, 45));
 			AI_Movement_Track_Repeat(kActorZuben);
 			break;
+
 		case 3:
 			AI_Movement_Track_Append(kActorZuben, 498, 0); // kSetNR03
 			AI_Movement_Track_Append(kActorZuben, 497, 0);
@@ -579,6 +582,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
 			AI_Movement_Track_Repeat(kActorZuben);
 			break;
+
 		case 4:
 			AI_Movement_Track_Flush(kActorZuben);
 			AI_Movement_Track_Append(kActorZuben, 499, 2); // kSetNR05_NR08
@@ -589,6 +593,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
 			AI_Movement_Track_Repeat(kActorZuben);
 			break;
+
 		case 5:
 			AI_Movement_Track_Flush(kActorZuben);
 			AI_Movement_Track_Append(kActorZuben, 503, 0); // kSetNR05_NR08
@@ -599,6 +604,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
 			AI_Movement_Track_Repeat(kActorZuben);
 			break;
+
 		case 6:
 			AI_Movement_Track_Flush(kActorZuben);
 			AI_Movement_Track_Append(kActorZuben, 508, 0); // kSetHF01
@@ -608,6 +614,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
 			AI_Movement_Track_Repeat(kActorZuben);
 			break;
+
 		case 7:
 			AI_Movement_Track_Flush(kActorZuben);
 			AI_Movement_Track_Append(kActorZuben, 514, 0); // kSetHF03
@@ -617,6 +624,7 @@ bool AIScriptZuben::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			AI_Movement_Track_Append(kActorZuben, 39, 10);
 			AI_Movement_Track_Repeat(kActorZuben);
 			break;
+
 		case 8:
 			AI_Movement_Track_Flush(kActorZuben);
 			AI_Movement_Track_Append(kActorZuben, 510, 0); // kSetHF01
@@ -1062,84 +1070,108 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 		_animationState = 0;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeWalk:
 		_animationState = 1;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeRun:
 		_animationState = 3;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeTalk:
 		_animationState = 17;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeCombatIdle:
 		switch (_animationState) {
 		case 2:
+			// fall through
 		case 4:
 			_animationState = 7;
 			_animationFrame = 0;
 			break;
+
 		case 5:
+			// fall through
 		case 7:
 			break;
+
 		default:
 			_animationState = 5;
 			_animationFrame = 0;
 			break;
 		}
 		break;
+
 	case kAnimationModeCombatAttack:
 		_animationState = 8;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeCombatWalk:
 		_animationState = 2;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeCombatRun:
 		_animationState = 4;
 		_animationFrame = 0;
 		break;
+
 	case 12:
 		_animationState = 18;
 		_animationFrame = 0;
 		break;
+
 	case 13:
 		_animationState = 19;
 		_animationFrame = 0;
 		break;
+
 	case 14:
 		_animationState = 20;
 		_animationFrame = 0;
 		break;
+
 	case 15:
 		_animationState = 21;
 		_animationFrame = 0;
 		break;
+
 	case 16:
 		_animationState = 22;
 		_animationFrame = 0;
 		break;
+
 	case 17:
 		_animationState = 23;
 		_animationFrame = 0;
 		break;
+
 	case 18:
 		_animationState = 24;
 		_animationFrame = 0;
 		break;
+
 	case 19:
 		_animationState = 25;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeHit:
 		switch (_animationState) {
 		case 2:
+			// fall through
 		case 4:
+			// fall through
 		case 5:
+			// fall through
 		case 7:
+			// fall through
 		case 8:
 			if (Random_Query(0, 1)) {
 				_animationState = 11;
@@ -1148,6 +1180,7 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 			}
 			_animationFrame = 0;
 			break;
+
 		default:
 			if (Random_Query(0, 1)) {
 				_animationState = 9;
@@ -1158,6 +1191,7 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 			break;
 		}
 		break;
+
 	case kAnimationModeCombatHit:
 		if (Random_Query(0, 1)) {
 			_animationState = 11;
@@ -1166,18 +1200,22 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 		}
 		_animationFrame = 0;
 		break;
+
 	case 24:
 		_animationState = 26;
 		_animationFrame = 0;
 		break;
+
 	case 25:
 		_animationState = 27;
 		_animationFrame = 0;
 		break;
+
 	case 26:
 		_animationState = 28;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeDie:
 		Actor_Set_Targetable(kActorZuben, false);
 		if (_vm->_cutContent) {
@@ -1186,21 +1224,29 @@ bool AIScriptZuben::ChangeAnimationMode(int mode) {
 		}
 		switch (_animationState) {
 			case 2:
+				// fall through
 			case 4:
+				// fall through
 			case 5:
+				// fall through
 			case 7:
+				// fall through
 			case 8:
+				// fall through
 			case 11:
+				// fall through
 			case 12:
 				_animationState = 14;
 				_animationFrame = 0;
 				break;
+
 			default:
 				_animationState = 13;
 				_animationFrame = 0;
 				break;
 		}
 		break;
+
 	case kAnimationModeCombatDie:
 		Actor_Set_Targetable(kActorZuben, false);
 		_animationState = 14;

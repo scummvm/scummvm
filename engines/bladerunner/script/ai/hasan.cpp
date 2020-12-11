@@ -180,10 +180,12 @@ bool AIScriptHasan::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Put_In_Set(kActorHasan, kSetAR01_AR02);
 			Actor_Set_At_XYZ(kActorHasan, -214.0f, 0.0f, -1379.0f, 371);
 			break;
+
 		case kGoalHasanIsAway:
 			Actor_Put_In_Set(kActorHasan, kSetFreeSlotH);
 			Actor_Set_At_Waypoint(kActorHasan, 40, 0); // kSetFreeSlotH
 			break;
+
 		case kGoalHasanIsWalkingAroundIsAtAR02:
 			AI_Movement_Track_Flush(kActorHasan);
 			World_Waypoint_Set(554, kSetAR01_AR02, -214.0f, 0.0f, -1379.0f);
@@ -191,14 +193,17 @@ bool AIScriptHasan::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Face_Heading(kActorHasan, 371, false);
 			AI_Movement_Track_Repeat(kActorHasan);
 			break;
+
 		case kGoalHasanIsWalkingAroundIsAway:
 			AI_Movement_Track_Flush(kActorHasan);
 			AI_Movement_Track_Append(kActorHasan, 40, Random_Query(10, 40)); // kSetFreeSlotH
 			AI_Movement_Track_Repeat(kActorHasan);
 			break;
+
 		case kGoalHasanIsWalkingAroundStayAwayFromAR02:
 			Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAway);
 			break;
+
 		case kGoalHasanIsWalkingAroundStaysAtAR02:
 			Actor_Set_Goal_Number(kActorHasan, kGoalHasanIsWalkingAroundIsAtAR02);
 			break;
@@ -373,9 +378,13 @@ bool AIScriptHasan::ChangeAnimationMode(int mode) {
 		break;
 
 	case 12:
+		// fall through
 	case 13:
+		// fall through
 	case 14:
+		// fall through
 	case 15:
+		// fall through
 	case 16:
 		_animationState = 6;
 		_var6 = 0;

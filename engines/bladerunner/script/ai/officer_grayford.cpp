@@ -135,13 +135,16 @@ bool AIScriptOfficerGrayford::Update() {
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 10, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 // TODO missing UG07 case - would be a type 10 combat, 12 flee?
+
 		case kSetUG08:
 			if (Actor_Query_Which_Set_In(kActorOfficerGrayford) == Player_Query_Current_Set()) {
 				Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordAttackMcCoyAct4);
 				Non_Player_Actor_Combat_Mode_On(kActorOfficerGrayford, kActorCombatStateIdle, true, kActorMcCoy, 13, kAnimationModeCombatIdle, kAnimationModeCombatWalk, kAnimationModeCombatRun, -1, -1, -1, 10, 300, false);
 			}
 			break;
+
 // TODO missing UG09 case - would be a type ?? //
 
 		case kSetUG10:
@@ -358,7 +361,9 @@ void AIScriptOfficerGrayford::ClickedByPlayer() {
 		Actor_Says(kActorOfficerGrayford, 330, 13);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordWalksInPS09b);
 		break;
+
 // TODO goals 6 and 9?
+
 	case kGoalOfficerGrayfordWalksInPS09c:
 		AI_Movement_Track_Flush(kActorOfficerGrayford);
 		Actor_Set_Goal_Number(kActorOfficerGrayford, kGoalOfficerGrayfordStopAndTalk1);
@@ -1067,6 +1072,7 @@ bool AIScriptOfficerGrayford::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 18:
+		// fall through
 	case 19:
 		*animation = 605;
 		++_animationFrame;
@@ -1290,13 +1296,21 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 	case kAnimationModeIdle:
 		switch (_animationState) {
 		case 9:
+			// fall through
 		case 10:
+			// fall through
 		case 11:
+			// fall through
 		case 12:
+			// fall through
 		case 13:
+			// fall through
 		case 14:
+			// fall through
 		case 15:
+			// fall through
 		case 16:
+			// fall through
 		case 17:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
@@ -1316,10 +1330,15 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 			break;
 
 		case 20:
+			// fall through
 		case 21:
+			// fall through
 		case 34:
+			// fall through
 		case 35:
+			// fall through
 		case 36:
+			// fall through
 		case 37:
 			return true;
 
@@ -1361,16 +1380,22 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 	case kAnimationModeCombatIdle:
 		switch (_animationState) {
 		case 5:
+			// fall through
 		case 6:
+			// fall through
 		case 7:
+			// fall through
 		case 8:
 			_animationState = 19;
 			_animationFrame = 0;
 			break;
 
 		case 19:
+			// fall through
 		case 20:
+			// fall through
 		case 22:
+			// fall through
 		case 24:
 			return true;
 
@@ -1456,11 +1481,17 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 	case kAnimationModeHit:
 		switch (_animationState) {
 		case 19:
+			// fall through
 		case 20:
+			// fall through
 		case 22:
+			// fall through
 		case 23:
+			// fall through
 		case 24:
+			// fall through
 		case 25:
+			// fall through
 		case 26:
 			if (Random_Query(0, 1)) {
 				_animationState = 27;
@@ -1518,16 +1549,22 @@ bool AIScriptOfficerGrayford::ChangeAnimationMode(int mode) {
 	case kAnimationModeDie:
 		switch (_animationState) {
 		case 0:
+			// fall through
 		case 1:
+			// fall through
 		case 2:
+			// fall through
 		case 3:
+			// fall through
 		case 4:
+			// fall through
 		case 7:
 			_animationState = 20;
 			_animationFrame = 0;
 			break;
 
 		case 5:
+			// fall through
 		case 6:
 			return true;
 

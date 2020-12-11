@@ -510,6 +510,7 @@ bool AIScriptFreeSlotA::UpdateAnimation(int *animation, int *frame) {
 		*animation = kModelAnimationRatDying;
 		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationRatDying) - 1;
 		break;
+
 	default:
 		break;
 	}

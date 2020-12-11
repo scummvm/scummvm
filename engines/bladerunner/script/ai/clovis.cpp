@@ -215,32 +215,52 @@ int AIScriptClovis::GetFriendlinessModifierIfGetsClue(int otherActorId, int clue
 
 	switch (clueId) {
 	case kClueMcCoyKilledRunciter1:
+		// fall through
 	case kClueMcCoyKilledRunciter2:
 		return 6;
+
 	case kClueMcCoyIsABladeRunner:
+		// fall through
 	case kClueMcCoyIsStupid:
+		// fall through
 	case kClueMcCoyIsAnnoying:
 		return -2;
+
 	case kClueMcCoyLetZubenEscape:
+		// fall through
 	case kClueMcCoyHelpedIzoIzoIsAReplicant:
+		// fall through
 	case kClueMcCoyHelpedDektora:
+		// fall through
 	case kClueMcCoyHelpedLucy:
+		// fall through
 	case kClueMcCoyHelpedGordo:
+		// fall through
 	case kClueMcCoyShotGuzza:
+		// fall through
 	case kClueMcCoyIsKind:
 		return 4;
+
 	case kClueMcCoyWarnedIzo:
 		return 2;
+
 	case kClueMcCoyRetiredZuben:
 		return -3;
+
 	case kClueMcCoyRetiredLucy:
+		// fall through
 	case kClueMcCoyRetiredDektora:
 		return -10;
+
 	case kClueMcCoyRetiredSadik:
+		// fall through
 	case kClueMcCoyShotZubenInTheBack:
+		// fall through
 	case kClueMcCoyRetiredLutherLance:
+		// fall through
 	case kClueMcCoyIsInsane:
 		return -5;
+
 	default:
 		break;
 	}
@@ -1263,24 +1283,35 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		case 2:
 			Actor_Change_Animation_Mode(kActorClovis, kAnimationModeSit);
 			break;
+
 		case 4:
 			break;
+
 		case 5:
+			// fall through
 		case 6:
+			// fall through
 		case 7:
+			// fall through
 		case 8:
+			// fall through
 		case 9:
+			// fall through
 		case 10:
+			// fall through
 		case 11:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
+
 		case 12:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
+
 		case 13:
 			_animationState = 15;
 			_animationFrame = 0;
 			break;
+
 		default:
 			_animationState = 0;
 			_animationFrame = 0;
@@ -1300,6 +1331,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeTalk:
+		// fall through
 	case 9:
 		if (Game_Flag_Query(kFlagClovisLyingDown)) {
 			_animationFrame = 0;
@@ -1317,15 +1349,21 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 	case kAnimationModeCombatIdle:
 		switch (_animationState) {
 		case 13:
+			// fall through
 		case 14:
 			break;
+
 		case 23:
+			// fall through
 		case 24:
+			// fall through
 		case 27:
+			// fall through
 		case 28:
 			_animationState = 13;
 			_animationFrame = 0;
 			break;
+
 		default:
 			_animationState = 1;
 			_animationStateNext = 14;
@@ -1350,6 +1388,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		break;
 
 	case 10:
+		// fall through
 	case 12:
 		if (_animationState < 5 || _animationState > 11) {
 			_animationState = 1;
@@ -1360,6 +1399,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		break;
 
 	case 11:
+		// fall through
 	case 14:
 		if (_animationState < 5 || _animationState > 11) {
 			_animationState = 1;
@@ -1491,6 +1531,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 			_animationState = 3;
 			_animationFrame = 0;
 			break;
+
 		default:
 			break;
 		}
@@ -1564,24 +1605,35 @@ void AIScriptClovis::someAnim() {
 	case 2:
 		Actor_Change_Animation_Mode(kActorClovis, kAnimationModeSit);
 		break;
+
 	case 4:
 		break;
+
 	case 5:
+		// fall through
 	case 6:
+		// fall through
 	case 7:
+		// fall through
 	case 8:
+		// fall through
 	case 9:
+		// fall through
 	case 10:
+		// fall through
 	case 11:
 		_resumeIdleAfterFramesetCompletesFlag = true;
 		break;
+
 	case 12:
 		_resumeIdleAfterFramesetCompletesFlag = true;
 		break;
+
 	case 13:
 		_animationState = 15;
 		_animationFrame = 0;
 		break;
+
 	default:
 		_animationState = 0;
 		_animationFrame = 0;

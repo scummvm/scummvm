@@ -369,20 +369,24 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 			// fall through
 		case 3:
 			return true;
+
 		case kCrazylegsStateHandsUp:
 			_animationState = 17;
 			_animationFrame = 0;
 			break;
+
 		case kCrazylegsStateMobileCall:
 			_animationState = 19;
 			_animationFrame = 0;
 			break;
+
 		case 4:
 			// fall through
 		case 5:
 			_animationState = kCrazylegsStateIdle;
 			_animationFrame = 0;
 			break;
+
 		case 6:
 			// fall through
 		case 7:
@@ -404,14 +408,17 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 		case 15:
 			_resumeIdleAfterFramesetCompletesFlag = true;
 			break;
+
 		default:
 			break;
 		}
 		break;
+
 	case kAnimationModeWalk:
 		_animationState = 4;
 		_animationFrame = 0;
 		break;
+
 	case kAnimationModeTalk:
 		if (_animationState == kCrazylegsStateMobileCall) {
 			_animationState = 15;
@@ -421,50 +428,60 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 12:
 		_animationState = 7;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 13:
 		_animationState = 8;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 14:
 		_animationState = 9;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 15:
 		_animationState = 10;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 16:
 		_animationState = 11;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 17:
 		_animationState = 12;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 18:
 		_animationState = 13;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 19:
 		_animationState = 14;
 		_animationFrame = 0;
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
+
 	case 23:
 		_animationState = 3;
 		_animationFrame = 0;
 		break;
+
 	case 43:
 		// picks up mobile phone call
 		if (_animationState != kCrazylegsStateMobileCall) {
@@ -472,6 +489,7 @@ bool AIScriptCrazylegs::ChangeAnimationMode(int mode) {
 			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationCrazylegsHangsUpMobile) - 1;
 		}
 		break;
+
 	default:
 		break;
 	}
