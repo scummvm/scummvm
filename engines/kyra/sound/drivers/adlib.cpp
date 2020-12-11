@@ -547,11 +547,11 @@ void AdLibDriver::callback() {
 }
 
 void AdLibDriver::setupPrograms() {
-	// If there is no program queued, we skip this.
-	if (_programQueueStart == _programQueueEnd)
-		return;
-
 	uint8 *ptr = _programQueue[_programQueueStart].data;
+
+	// If there is no program queued, we skip this.
+	if (_programQueueStart == _programQueueEnd && !ptr)
+		return;
 
 	// The AdLib driver (in its old versions used for EOB) is not suitable for modern (fast) CPUs.
 	// The stop sound track (track 0 which has a priority of 50) will often still be busy when the
