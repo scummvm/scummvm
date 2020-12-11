@@ -63,7 +63,7 @@ void BodyData::loadBones(Common::SeekableReadStream &stream) {
 		bone.parent = baseElementOffset == -1 ? 0xffff : baseElementOffset / 38;
 		bone.vertex = basePoint;
 
-		// assign the vertices to the bones
+		// assign the bone index to the vertices
 		for (int j = 0; j < numPoints; ++j) {
 			_vertices[firstPoint + j].bone = i;
 		}
