@@ -25,7 +25,7 @@
 #include "common/system.h"
 #include "common/textconsole.h"
 #include "twine/animations.h"
-#include "twine/entity.h"
+#include "twine/parser/entity.h"
 #include "twine/extra.h"
 #include "twine/gamestate.h"
 #include "twine/grid.h"
