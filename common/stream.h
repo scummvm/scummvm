@@ -638,6 +638,15 @@ public:
 	SeekableReadStream *readStream(uint32 dataSize);
 
 	/**
+	 * Reads in a terminated string. Upon successful completion,
+	 * return a string with the content of the line, *without*
+	 * the terminating character.
+	 *
+	 * @param terminator	The terminating character to use.
+	 */
+	String readString(char terminator = 0);
+
+	/**
 	 * Read a string in Pascal format, that is, one byte is
 	 * string length, followed by string data.
 	 *
