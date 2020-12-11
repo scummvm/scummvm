@@ -123,7 +123,7 @@ void ListWidget::setSelected(int item) {
 	// HACK/FIXME: If our _listIndex has a non zero size,
 	// we will need to look up, whether the user selected
 	// item is present in that list
-	if (_listIndex.size()) {
+	if (!_filter.empty()) {
 		int filteredItem = -1;
 
 		for (uint i = 0; i < _listIndex.size(); ++i) {
