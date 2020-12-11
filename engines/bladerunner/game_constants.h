@@ -2015,7 +2015,43 @@ enum GameModelAnimations {
 	kModelAnimationCrazylegsHandsUpLowersHands   = 468,
 	kModelAnimationCrazylegsHangsUpMobile        = 469,
 	// 470 - 486: Grigorian animations
+	kModelAnimationGrigorianWalking                  = 470, // UNUSED
+	kModelAnimationGrigorianSitIdle                  = 471, // UNUSED
+	kModelAnimationGrigorianSitIdleNailBiting        = 472, // UNUSED
+	kModelAnimationGrigorianSitDismissTalk           = 473, // UNUSED
+	kModelAnimationGrigorianSitHeadacheTalk          = 474, // UNUSED
+	kModelAnimationGrigorianSitProtestTalk           = 475, // UNUSED
+	kModelAnimationGrigorianSitToStandingUp          = 476, // UNUSED
+	kModelAnimationGrigorianSitFromStandingUp        = 477, // UNUSED
+	kModelAnimationGrigorianStandIdle                = 478, // maybe calm talk too?
+	kModelAnimationGrigorianStandAnnoyedTalk         = 479,
+	kModelAnimationGrigorianStandArmsCrossedTalk     = 480,
+	kModelAnimationGrigorianStandProtestTalk         = 481,
+	kModelAnimationGrigorianStandProtestMoreTalk     = 482,
+	kModelAnimationGrigorianStandProtestEvenMoreTalk = 483,
+	kModelAnimationGrigorianStandInsistentTalk       = 484,
+	kModelAnimationGrigorianStandDismissOrAccuseTalk = 485,
+	kModelAnimationGrigorianStandBegOrMockingTalk    = 486,
 	// 487 - 505: Transient/Homeless animations
+	kModelAnimationTransientWalking                  = 487,
+	kModelAnimationTransientRunning                  = 488, // UNUSED
+	kModelAnimationTransientShotDeadCollapseInPlace  = 489,
+	kModelAnimationTransientShotInTheBackDropsDead   = 490, // UNUSED
+	kModelAnimationTransientLayingIdle               = 491,
+	kModelAnimationTransientLayingCalmTalk           = 492,
+	kModelAnimationTransientLayingMoreCalmTalk       = 493,
+	kModelAnimationTransientLayingThisAndThatTalk    = 494,
+	kModelAnimationTransientLayingShotDead           = 495,
+	kModelAnimationTransientLayingGestureGiveOrTake  = 496,
+	kModelAnimationTransientIdle                     = 497,
+	kModelAnimationTransientIdleToSearchingTrash     = 498, // UNUSED
+	kModelAnimationTransientPickingNodeAndWiping     = 499,
+	kModelAnimationTransientGestureGive              = 500, // or probably idle, but it doesn't look like idle
+	kModelAnimationTransientScratchBackOfHeadTalk    = 501,
+	kModelAnimationTransientDescriptiveTalk          = 502,
+	kModelAnimationTransientPointingAtTalk           = 503, // Could be used when he points to where Zuben ran to
+	kModelAnimationTransientSearchingTrash           = 504,
+	kModelAnimationTransientSearchingTrashToIdle     = 505,
 	// 506 - 525: Bullet Bob animations
 	// 526 - 544: Runciter animations
 	// 545 - 554: Insect Dealer animations

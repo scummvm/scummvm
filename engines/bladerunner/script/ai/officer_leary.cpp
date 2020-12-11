@@ -1063,6 +1063,7 @@ bool AIScriptOfficerLeary::UpdateAnimation(int *animation, int *frame) {
 		*frame = _animationFrame;
 		return true;
 	default:
+		// TODO A bug? This is an animation of Zuben
 		*animation = 399;
 		*frame = _animationFrame;
 		return true;

@@ -225,137 +225,137 @@ bool AIScriptTransient::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 499;
+		*animation = kModelAnimationTransientPickingNodeAndWiping;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(499)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientPickingNodeAndWiping)) {
 			_animationFrame = 0;
 		} else {
-			*animation = 497;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(497)) {
+			*animation = kModelAnimationTransientIdle;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientIdle)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 	case 1:
-		*animation = 487;
+		*animation = kModelAnimationTransientWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(487)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientWalking)) {
 			_animationFrame = 0;
 		}
 		break;
 	case 2:
-		*animation = 500;
+		*animation = kModelAnimationTransientGestureGive;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(500)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientGestureGive)) {
 			_animationFrame = 0;
 		}
 		break;
 	case 3:
-		*animation = 501;
+		*animation = kModelAnimationTransientScratchBackOfHeadTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(501)) {
-			*animation = 500;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientScratchBackOfHeadTalk)) {
+			*animation = kModelAnimationTransientGestureGive;
 			_animationState = 2;
 			_animationFrame = 0;
 		}
 		break;
 	case 4:
-		*animation = 502;
+		*animation = kModelAnimationTransientDescriptiveTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(502)) {
-			*animation = 500;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientDescriptiveTalk)) {
+			*animation = kModelAnimationTransientGestureGive;
 			_animationState = 2;
 			_animationFrame = 0;
 		}
 		break;
 	case 5:
-		*animation = 503;
+		*animation = kModelAnimationTransientPointingAtTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(503)) {
-			*animation = 500;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientPointingAtTalk)) {
+			*animation = kModelAnimationTransientGestureGive;
 			_animationState = 2;
 			_animationFrame = 0;
 		}
 		break;
 	case 6:
-		*animation = 491;
+		*animation = kModelAnimationTransientLayingIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(491)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientLayingIdle)) {
 			_animationFrame = 0;
 		}
 		break;
 	case 7:
-		*animation = 492;
+		*animation = kModelAnimationTransientLayingCalmTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(492)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientLayingCalmTalk)) {
 			_animationState = 6;
 			_animationFrame = 0;
 		}
 		break;
 	case 8:
-		*animation = 493;
+		*animation = kModelAnimationTransientLayingMoreCalmTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(493)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientLayingMoreCalmTalk)) {
 			_animationState = 6;
 			_animationFrame = 0;
 		}
 		break;
 	case 9:
-		*animation = 494;
+		*animation = kModelAnimationTransientLayingThisAndThatTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(494)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientLayingThisAndThatTalk)) {
 			_animationState = 6;
 			_animationFrame = 0;
 		}
 		break;
 	case 10:
-		*animation = 496;
+		*animation = kModelAnimationTransientLayingGestureGiveOrTake;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(496)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientLayingGestureGiveOrTake)) {
 			_animationState = 6;
 			_animationFrame = 0;
 		}
 		break;
 	case 11:
-		*animation = 495;
+		*animation = kModelAnimationTransientLayingShotDead;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(495)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientLayingShotDead)) {
 			Actor_Set_Frame_Rate_FPS(kActorTransient, 8);
 			_animationState = 12;
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(495) - 1;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientLayingShotDead) - 1;
 		}
 		break;
 	case 12:
-		*animation = 495;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(495) - 1;
+		*animation = kModelAnimationTransientLayingShotDead;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientLayingShotDead) - 1;
 		break;
 	case 14:
-		*animation = 489;
+		*animation = kModelAnimationTransientShotDeadCollapseInPlace;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(489)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientShotDeadCollapseInPlace)) {
 			Actor_Set_Goal_Number(kActorTransient, 3);
 			_animationState = 15;
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(489) - 1;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientShotDeadCollapseInPlace) - 1;
 			Actor_Set_Targetable(kActorTransient, false);
 			Actor_Retired_Here(kActorTransient, 120, 24, 1, -1);
 		}
 		break;
 	case 15:
-		*animation = 489;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(489) - 1;
+		*animation = kModelAnimationTransientShotDeadCollapseInPlace;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientShotDeadCollapseInPlace) - 1;
 		break;
 	case 16:
-		*animation = 504;
+		*animation = kModelAnimationTransientSearchingTrash;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(504) - 1) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientSearchingTrash) - 1) {
 			_animationFrame = 0;
 		}
 		break;
 	case 17:
-		*animation = 505;
+		*animation = kModelAnimationTransientSearchingTrashToIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(505) - 1) {
-			*animation = 497;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientSearchingTrashToIdle) - 1) {
+			*animation = kModelAnimationTransientIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 			Actor_Change_Animation_Mode(kActorTransient, kAnimationModeIdle);
@@ -366,20 +366,21 @@ bool AIScriptTransient::UpdateAnimation(int *animation, int *frame) {
 		}
 		break;
 	case 18:
-		*animation = 491;
+		*animation = kModelAnimationTransientLayingIdle;
 		++_animationFrame;
 		if (_animationFrame - 1 == 4) {
 			_animationState = 19;
 		}
 		break;
 	case 19:
-		*animation = 491;
+		*animation = kModelAnimationTransientLayingIdle;
 		--_animationFrame;
 		if (_animationFrame + 1 == 4) {
 			_animationState = 18;
 		}
 		break;
 	default:
+		// TODO: A bug? 399 is a Zuben animation
 		*animation = 399;
 		break;
 	}
@@ -489,7 +490,7 @@ bool AIScriptTransient::ChangeAnimationMode(int mode) {
 		break;
 	case 89:
 		_animationState = 12;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(495) - 1;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationTransientLayingShotDead) - 1;
 		break;
 	}
 

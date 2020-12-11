@@ -470,7 +470,8 @@ bool AIScriptKlein::UpdateAnimation(int *animation, int *frame) {
 		_animationState = _animationStateNext;
 		break;
 	default:
-		*animation = 399; // TODO: A bug? This belongs to Zuben
+		// TODO: A bug? 399 is a Zuben animation
+		*animation = 399;
 		break;
 	}
 	*frame = _animationFrame;
