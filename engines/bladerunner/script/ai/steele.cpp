@@ -1998,8 +1998,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
-		// TODO is this an error?
-		//      406 is a Zuben animation
+		// TODO A bug? 406 is a Zuben animation
 		*animation = 406;
 		_animationFrame = 0;
 		break;

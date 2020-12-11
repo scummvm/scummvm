@@ -826,6 +826,9 @@ void KIAScript::SCRIPT_KIA_DLL_Play_Clue_Asset_Script(int notUsed, int clueId) {
 		KIA_Play_Actor_Dialogue(kActorSteele, 3390);
 		KIA_Play_Actor_Dialogue(kActorSteele, 3400);
 		KIA_Play_Actor_Dialogue(kActorSteele, 3410);
+		// TODO this line of Grigorian is supposedly interrupted by Steele's following line
+		//      maybe implement a way to not wait before the next line is played, similar to Actor_Says_With_Pause()
+		//       (look into tick() for kia.cpp)
 		KIA_Play_Actor_Dialogue(kActorGrigorian, 1260);
 		KIA_Play_Actor_Dialogue(kActorSteele, 3420);
 		KIA_Play_Actor_Dialogue(kActorSteele, 3430);

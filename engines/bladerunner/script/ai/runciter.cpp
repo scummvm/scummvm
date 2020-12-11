@@ -498,6 +498,7 @@ bool AIScriptRunciter::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
+		// TODO: A bug? 399 is a Zuben animation
 		*animation = 399;
 		_animationFrame = 0;
 		*frame = _animationFrame;
