@@ -1920,7 +1920,7 @@ enum GameModelAnimations {
 	kModelAnimationClovisWalking                            = 220,
 	kModelAnimationClovisRunning                            = 221,
 	kModelAnimationClovisClimbStairsUp                      = 222, // Untriggered
-	kModelAnimationClovisClimbStairsDown                    = 223, // Untrigered
+	kModelAnimationClovisClimbStairsDown                    = 223, // Untriggered
 	kModelAnimationClovisGotHitRight                        = 224,
 	kModelAnimationClovisGotHitLeft                         = 225,
 	kModelAnimationClovisShotDead                           = 226,
@@ -1976,13 +1976,71 @@ enum GameModelAnimations {
 	kModelAnimationLucyCombatDropsDead                      = 275, // Untriggered. Somewhat faster than kModelAnimationLucyShotDead (259)
 	kModelAnimationLucyRemovesNeckletDiesFromExplosion      = 276, // Untriggered
 	// 277 - 311: Izo animations
+		// TODO
 	// 312 - 345: Sadik animations
+		// TODO
 	// 316 - 359: Twins/Luther animations
+		// TODO
 	// 360 - 387: EarlyQ animations
+		// TODO
 	// 388 - 421: Zuben animations
+	kModelAnimationZubenCombatIdle               = 388,
+	kModelAnimationZubenCombatHitFront           = 389,
+	kModelAnimationZubenCombatHitBack            = 390,
+	kModelAnimationZubenCombatWalking            = 391,
+	kModelAnimationZubenCombatRunning            = 392,
+	kModelAnimationZubenCombatShotDead           = 393,
+	kModelAnimationZubenCombatClimbStairsUp      = 394, // UNUSED
+	kModelAnimationZubenCombatClimbStairsDown    = 395, // UNUSED
+	kModelAnimationZubenCombatUnholsterCleaver   = 396,
+	kModelAnimationZubenCombatHolsterCleaver     = 397, // TODO check if properly triggered
+	kModelAnimationZubenCleaverAttack            = 398,
+	kModelAnimationZubenWalking                  = 399,
+	kModelAnimationZubenRunning                  = 400,
+	kModelAnimationZubenClimbStairsUp            = 401, // UNUSED
+	kModelAnimationZubenClimbStairsDown          = 402, // UNUSED
+	kModelAnimationZubenClimbShotFront           = 403,
+	kModelAnimationZubenClimbShotBack            = 404,
+	kModelAnimationZubenShotDead                 = 405,
+	kModelAnimationZubenIdle                     = 406,
+	kModelAnimationZubenQuickLookLeftRight       = 407, // UNUSED
+	kModelAnimationZubenLooksAtSomeone           = 408,
+	kModelAnimationZubenCalmTalk                 = 409,
+	kModelAnimationZubenProtestTalk              = 410,
+	kModelAnimationZubenQuestionTalk             = 411,
+	kModelAnimationZubenMoreQuestionTalk         = 412,
+	kModelAnimationZubenPointingTalk             = 413,
+	kModelAnimationZubenYetMoreQuestiongTalk     = 414,
+	kModelAnimationZubenScratchEarTalk           = 415,
+	kModelAnimationZubenDontKnowTalk             = 416,
+	kModelAnimationZubenThreatenTalk             = 417,
+	kModelAnimationZubenPlayWithHands            = 418, // TODO partially used?
+	kModelAnimationZubenToppleSoupCauldron       = 419,
+	kModelAnimationZubenBashOnDoor               = 420,
+	kModelAnimationZubenJumpDownFromCeiling      = 421,
 	// 422 - 437: Generic walker A/B/C animations (with/without umbrella, walking/still)
-	// 438 - 439: Dancer model animations (unused?)
+	kModelGenWalkerHattedPersonFastPace                     = 422, // Walking  - Frame 1 used for standing still
+	kModelGenWalkerHattedPersonLoweredFace                  = 423, // Walking  - Frame 6 used for standing still
+	kModelGenWalkerHattedPersonWithUmbrella                 = 424, // Walking  - Same model as 426
+	kModelGenWalkerHattedPersonNoUmbrellaSmallSteps         = 425, // Walking  - Same model as 427
+	kModelGenWalkerHattedPersonWithUmbrellaStandsStill      = 426, // Standing - Same model as 424
+	kModelGenWalkerHattedPersonNoUmbrellaStandsStill        = 427, // Standing - Same model as 425
+	kModelGenWalkerHoodedPersonWithUmbrella                 = 428, // Walking  - Same model as 430
+	kModelGenWalkerPunkPersonWithGlassesAndBeard            = 429, // Walking  - Same model as 431
+	kModelGenWalkerHoodedPersonWithUmbrellaStandsStill      = 430, // Standing - Same model as 428
+	kModelGenWalkerPunkPersonWithGlassesAndBeardStandsStill = 431, // Standing - Same model as 429
+	kModelGenWalkerPunkPersonWithGlasses                    = 432, // Walking  - Same model as 433
+	kModelGenWalkerPunkPersonWithGlassesStandsStill         = 433, // Standing - Same model as 432
+	kModelGenWalkerHattedChild                              = 434, // Walking  - Frame 11 used for standing still
+	kModelGenWalkerChild                                    = 435, // Walking  - Frame 0 (or 5) used for standing still
+	kModelGenWalkerHattedPersonWithWoodenUmbrella           = 436, // Walking  - Frame 4 used for standing still 
+	kModelGenWalkerHattedLadyWithWoodenUmbrellaStandsStill  = 437, // Standing - *Not the same model with 436* - Just single frame
+	// 438 - 439: Dancer model animations (UNUSED)
+	kModelAnimationHysteriaPatron3DanceBendBackAndForward = 438, // UNUSED
+	kModelAnimationHysteriaPatron3DanceCrouchAndRaiseUp   = 439, // UNUSED
+	//       440: Tracking Gun (At Bullet Bob's shop)
 	kModelAnimationBulletBobsTrackingGun         = 440,
+	// 441 - 450: Shooting range targets
 	kModelAnimationMaleTargetEmptyHandsActive    = 441,
 	kModelAnimationMaleTargetEmptyHandsDead      = 442, // 441+1
 	kModelAnimationMaleTargetWithGunActive       = 443,
@@ -2053,16 +2111,27 @@ enum GameModelAnimations {
 	kModelAnimationTransientSearchingTrash           = 504,
 	kModelAnimationTransientSearchingTrashToIdle     = 505,
 	// 506 - 525: Bullet Bob animations
+		// TODO
 	// 526 - 544: Runciter animations
+		// TODO
 	// 545 - 554: Insect Dealer animations
+		// TODO
 	// 555 - 565: Tyrell Guard animations
+		// TODO
 	// 566 - 570: Mia animations
+		// TODO
 	// 571 - 604: Officer Leary animations
+		// TODO
 	// 605 - 641: Officer Grayford animations
+		// TODO
 	// 642 - 660: Hanoi animations
+		// TODO
 	// 661 - 670: Desk Clerk (Yukon) animations
+		// TODO
 	// 671 - 681: Howie Lee animations
+		// TODO
 	// 682 - 687: Fish Dealer animations
+		// TODO
 	// 688 - 697: Dino Klein animations
 	kModelAnimationKleinWalking                    = 688,
 	kModelAnimationKleinStandingIdle               = 689,
@@ -2075,19 +2144,36 @@ enum GameModelAnimations {
 	kModelAnimationKleinTalkDismissive             = 696,
 	kModelAnimationKleinTalkRaisingBothHands       = 697,
 	// 698 - 704: Murray animations
+		// TODO
 	// 705 - 715: Hawker's Barkeep animations
+		// TODO
 	// 716 - 721: Holloway animations
+		// TODO
 	// 722 - 731: Sergeant Walls animations
+		// TODO
 	// 732 - 743: Moraji animations
+		// TODO
 	// 744 - 750: Photographer animations
+		// TODO
 	//       751: Rajif animations
+		// TODO
 	// 752 - 757: EarlyQ Bartender animations
+		// TODO
 	// 758 - 764: Shoeshine Man animations (UNUSED)
+		// TODO
 	// 765 - 772: Tyrell animations
+		// TODO
 	// 773 - 787: Chew animations
+		// TODO
 	// 788 - 804: Gaff animations
+		// TODO
 	// 805 - 808: Bear "Bryant" (Sebastian's toy) animations
+	kModelAnimationBearToyWalking         = 805,
+	kModelAnimationBearToyOscillatingIdle = 806, // untriggered?
+	kModelAnimationBearToyGotHit          = 807, // UNUSED
+	kModelAnimationBearToyShotDead        = 808, // untriggered
 	// 809 - 821: Sebastian animations
+		// TODO
 	// 822 - 832: Rachael animations
 	kModelAnimationRachaelWalking                  = 822,
 	kModelAnimationRachaelIdle                     = 823,
@@ -2101,8 +2187,15 @@ enum GameModelAnimations {
 	kModelAnimationRachaelTalkHandOnChest          = 831,
 	kModelAnimationRachaelTalkHandWaveToRight      = 832,
 	// 833 - 837: "General" (Sebastian's toy) animations
+	kModelGeneralDollWalking    = 833,
+	kModelGeneralDollIdle       = 834,
+	kModelGeneralDollHaltSalute = 835,
+	kModelGeneralDollShotDead   = 836, // untriggered
+	kModelGeneralDollGotHit     = 837, // untriggered
 	// 838 - 845: Mama Isabella animations
+		// TODO
 	// 846 - 856: Leon animations
+		// TODO
 	// 857 - 862: Rat (Free Slot A/B) animations
 	kModelAnimationRatJumpAttack                   = 857,
 	kModelAnimationRatRunning                      = 858,
@@ -2128,7 +2221,7 @@ enum GameModelAnimations {
 	// 877 - 884: Hysteria Patron1 (dancer) animations
 	kModelAnimationHysteriaPatron1DanceStandingUpSemiSitAndUp = 877,
 	kModelAnimationHysteriaPatron1DanceStandingUpLeftMotion   = 878,
-	kModelAnimationHysteriaPatron1DanceStandingUpStowingMoney = 879, // original UNUSED
+	kModelAnimationHysteriaPatron1DanceStandingUpStowingMoney = 879, // original UNUSED (restored)
 	kModelAnimationHysteriaPatron1DanceSplitsDuckAndDown      = 880,
 	kModelAnimationHysteriaPatron1DanceSplitsSemiUpAndDown    = 881,
 	kModelAnimationHysteriaPatron1DanceSplitsBackAndForth     = 882,
@@ -2143,10 +2236,37 @@ enum GameModelAnimations {
 	kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth = 890,
 	kModelAnimationHysteriaPatron2DanceHandsUpToHandsDown     = 891,
 	kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp     = 892,
-	// 893 - 900: Mutant 1 animations
-	// 901 - 907: Mutant 2 animations
-	// 908 - 917: Mutant 3 animations
+	// 893 - 900: Mutant 1 animations - Special with pipe
+	kModelAnimationMutant1Walking              = 893,
+	kModelAnimationMutant1Idle                 = 894,
+	kModelAnimationMutant1CalmTalk             = 895, // UNUSED
+	kModelAnimationMutant1MoreCalmTalk         = 896, // untriggered?
+	kModelAnimationMutant1YellOrHurt           = 897, // untriggered
+	kModelAnimationMutant1MeleeAttack          = 898,
+	kModelAnimationMutant1Jump                 = 899, // untriggered?
+	kModelAnimationMutant1ShotDead             = 900,
+	// 901 - 907: Mutant 2 animations - Special with tiny hand, no weapon
+	kModelAnimationMutant2Walking              = 901,
+	kModelAnimationMutant2Running              = 902,
+	kModelAnimationMutant2Idle                 = 903,
+	kModelAnimationMutant2CalmTalk             = 904, // untriggered?
+	kModelAnimationMutant2YellOrHurt           = 905, // untriggered
+	kModelAnimationMutant2MeleeAttack          = 906,
+	kModelAnimationMutant2ShotDead             = 907,
+	// 908 - 917: Mutant 3 animations - Throws rocks, ranged attack
+	kModelAnimationMutant3Walking              = 908,
+	kModelAnimationMutant3Running              = 909,
+	kModelAnimationMutant3Idle                 = 910,
+	kModelAnimationMutant3CalmTalk             = 911, // untriggered
+	kModelAnimationMutant3YellOrHurt           = 912, // untriggered?
+	kModelAnimationMutant3PicksUpAndThrowsRock = 913,
+	kModelAnimationMutant3CrouchedWaiting      = 914, // untriggered?
+	kModelAnimationMutant3CrouchedToStanding   = 915, // untriggered?
+	kModelAnimationMutant3CrouchedFromStanding = 916, // untriggered?
+	kModelAnimationMutant3ShotDead             = 917,
 	// 918 - 919: Taffy Patron (Gordo's hostage) animations
+	kModelAnimationTaffyPatronRunning          = 918,
+	kModelAnimationTaffyPatronShotDead         = 919,
 	// 920 - 930: Hasan animations
 	kModelAnimationHasanTalkWipeFaceLeftHand01    = 920, // UNUSED
 	kModelAnimationHasanIdleSlightMovement        = 921,

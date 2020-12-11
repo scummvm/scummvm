@@ -194,8 +194,8 @@ bool AIScriptSergeantWalls::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
-		// TODO: A bug? 399 is a Zuben animation
-		*animation = 399;
+		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
+		*animation = kModelAnimationZubenWalking;
 		break;
 	}
 	*frame = _animationFrame;
