@@ -520,6 +520,10 @@ void AdLibDriver::stopAllChannels() {
 			noteOff(chan);
 	}
 	_retrySounds = false;
+
+	_programQueueStart = _programQueueEnd = 0;
+	_programQueue[0] = QueueEntry();
+	_programStartTimeout = 0;
 }
 
 // timer callback
