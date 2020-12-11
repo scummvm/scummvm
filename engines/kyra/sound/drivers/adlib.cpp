@@ -496,7 +496,7 @@ void AdLibDriver::startSound(int track, int volume) {
 	}
 
 	_programQueue[_programQueueEnd] = QueueEntry(trackData, track, volume);
-	_programQueueEnd = (_programQueueEnd + 1) & 15;
+	++_programQueueEnd &= 15;
 }
 
 bool AdLibDriver::isChannelPlaying(int channel) const {
@@ -547,7 +547,8 @@ void AdLibDriver::callback() {
 }
 
 void AdLibDriver::setupPrograms() {
-	uint8 *ptr = _programQueue[_programQueueStart].data;
+	QueueEntry &entry = _programQueue[_programQueueStart];
+	uint8 *ptr = entry.data;
 
 	// If there is no program queued, we skip this.
 	if (_programQueueStart == _programQueueEnd && !ptr)
@@ -557,20 +558,20 @@ void AdLibDriver::setupPrograms() {
 	// The stop sound track (track 0 which has a priority of 50) will often still be busy when the
 	// next sound (with a lower priority) starts which will cause that sound to be skipped. We simply
 	// restart incoming sounds during stop sound execution.
-	// UPDATE: This stilly applies after introduction of the _programQueue.
+	// UPDATE: This still applies after introduction of the _programQueue.
 	// UPDATE: This can also happen with the HOF main menu, so I commented out the version < 3 limitation.
 	QueueEntry retrySound;
-	if (/*_version < 3 &&*/ _programQueue[_programQueueStart].id == 0)
+	if (/*_version < 3 &&*/ entry.id == 0)
 		_retrySounds = true;
 	else if (_retrySounds)
-		retrySound = _programQueue[_programQueueStart];
+		retrySound = entry;
 
 	// Adjust data in case we hit a sound effect.
-	adjustSfxData(ptr, _programQueue[_programQueueStart].volume);
+	adjustSfxData(ptr, entry.volume);
 
 	// Clear the queue entry
-	_programQueue[_programQueueStart].data = 0;
-	_programQueueStart = (_programQueueStart + 1) & 15;
+	entry.data = 0;
+	++_programQueueStart &= 15;
 
 	const int chan = *ptr++;
 	const int priority = *ptr++;
