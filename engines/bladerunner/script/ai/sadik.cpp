@@ -894,7 +894,8 @@ bool AIScriptSadik::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
-		*animation = 406;
+		// Dummy placeholder, kModelAnimationZubenIdle (406) is a Zuben animation
+		*animation = kModelAnimationZubenIdle;
 		_animationFrame = 0;
 		break;
 	}

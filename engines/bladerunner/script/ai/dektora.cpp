@@ -608,7 +608,8 @@ bool AIScriptDektora::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 1:
-		*animation = 19;
+		// Dummy placeholder, kModelAnimationMcCoyIdle (19) is a McCoy animation
+		*animation = kModelAnimationMcCoyIdle;
 		_animationFrame = 0;
 		break;
 
