@@ -87,6 +87,9 @@ void TalismanGame::beforeGame() {
 	g_comprehend->drawPicture(TITLE_IMAGE);
 
 	// Print game information
+	console_println("Story by Bruce X.Hoffman. Graphics by Ray Redlich and Brian Poff");
+	console_println("Project managed and IBM version by Jeffrey A. Jay. "
+		"Copyright 1987 POLARWARE Inc.");
 	g_comprehend->readChar();
 
 	g_comprehend->glk_window_clear(g_comprehend->_bottomWindow);
