@@ -159,6 +159,7 @@ public:
 	void move_to(uint8 room);
 	Room *get_room(uint16 index);
 	Item *get_item(uint16 index);
+	void updateRoomDesc();
 	void update();
 	void update_graphics();
 

@@ -448,6 +448,15 @@ void ComprehendGame::describe_objects_in_current_room() {
 	}
 }
 
+void ComprehendGame::updateRoomDesc() {
+	Room *room = get_room(_currentRoom);
+	uint room_desc_string = room->_stringDesc;
+	roomIsSpecial(_currentRoom, &room_desc_string);
+
+	Common::String desc = stringLookup(room_desc_string);
+	g_comprehend->printRoomDesc(desc);
+}
+
 void ComprehendGame::update() {
 	Room *room = get_room(_currentRoom);
 	unsigned room_type, room_desc_string;
@@ -459,8 +468,11 @@ void ComprehendGame::update() {
 	room_type = roomIsSpecial(_currentRoom,
 	                                &room_desc_string);
 
-	if (_updateFlags & UPDATE_ROOM_DESC)
-		console_println(stringLookup(room_desc_string).c_str());
+	if (_updateFlags & UPDATE_ROOM_DESC) {
+		Common::String desc = stringLookup(room_desc_string);
+		console_println(desc.c_str());
+		g_comprehend->printRoomDesc(desc.c_str());
+	}
 
 	if ((_updateFlags & UPDATE_ITEM_LIST) && room_type == ROOM_IS_NORMAL)
 		describe_objects_in_current_room();
@@ -834,7 +846,8 @@ void ComprehendGame::read_input() {
 			break;
 
 		// Empty line, so toggle picture window visibility
-		g_comprehend->toggleGraphics();
+		if (!g_comprehend->toggleGraphics())
+			updateRoomDesc();
 		g_comprehend->print(_("Picture window toggled\n"));
 
 		_updateFlags |= UPDATE_GRAPHICS;
