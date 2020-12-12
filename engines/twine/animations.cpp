@@ -206,31 +206,32 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 
 	bonesPtr += 38;
 
-	if (numOfBonesInAnim > 0) {
-		int16 tmpNumOfPoints = numOfBonesInAnim - 1;
-
-		do {
-			const int16 animOpcode = getAnimMode(&bonesPtr, &keyFramePtr, &lastKeyFramePtr);
-
-			switch (animOpcode) {
-			case 0: // allow global rotate
-				applyAnimStepRotation(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStepRotation(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStepRotation(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				break;
-			case 1: // dissallow global rotate
-			case 2: // dissallow global rotate + hide
-				applyAnimStep(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStep(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStep(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				break;
-			default:
-				error("Unsupported animation rotation mode %d", animOpcode);
-			}
-
-			bonesPtr += 30;
-		} while (--tmpNumOfPoints);
+	if (numOfBonesInAnim <= 1) {
+		return false;
 	}
+
+	int16 tmpNumOfPoints = numOfBonesInAnim - 1;
+	do {
+		const int16 animOpcode = getAnimMode(&bonesPtr, &keyFramePtr, &lastKeyFramePtr);
+
+		switch (animOpcode) {
+		case 0: // allow global rotate
+			applyAnimStepRotation(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+			applyAnimStepRotation(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+			applyAnimStepRotation(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+			break;
+		case 1: // dissallow global rotate
+		case 2: // dissallow global rotate + hide
+			applyAnimStep(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+			applyAnimStep(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+			applyAnimStep(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+			break;
+		default:
+			error("Unsupported animation rotation mode %d", animOpcode);
+		}
+
+		bonesPtr += 30;
+	} while (--tmpNumOfPoints);
 
 	return false;
 }
