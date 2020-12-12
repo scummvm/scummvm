@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-12 06:06+0000\n"
-"PO-Revision-Date: 2020-12-12 14:54+0000\n"
+"PO-Revision-Date: 2020-12-12 18:32+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -3793,12 +3793,12 @@ msgstr "MT-32エミュレーター起動中"
 
 #: backends/platform/wii/options.cpp:182
 msgid "Timeout while initializing network"
-msgstr ""
+msgstr "ネットワークの初期化中にタイムアウトしました"
 
 #: backends/platform/wii/options.cpp:186
 #, c-format
 msgid "Network not initialized (%d)"
-msgstr ""
+msgstr "ネットワークは初期化されていません(%d)"
 
 #: backends/presence/discord/discord.cpp:46
 msgid "Launcher"
@@ -3806,7 +3806,7 @@ msgstr "ロンチャー"
 
 #: backends/updates/macosx/macosx-updates.mm:74
 msgid "Check for Updates..."
-msgstr ""
+msgstr "アップデートを確認中..."
 
 #: engines/access/resources.cpp:44 engines/drascula/drascula.cpp:931
 #: engines/hugo/hugo.cpp:436 engines/lure/lure.cpp:64
@@ -3823,7 +3823,7 @@ msgstr ""
 #: engines/tony/tony.cpp:209 engines/toon/toon.cpp:4969
 #, c-format
 msgid "The '%s' engine data file is corrupt."
-msgstr ""
+msgstr "エンジンデータファイル'%s'は壊れています。"
 
 #: engines/access/resources.cpp:61 engines/drascula/drascula.cpp:958
 #: engines/hugo/hugo.cpp:458 engines/lure/lure.cpp:76
@@ -3842,7 +3842,7 @@ msgstr "MT-32エミュレーター"
 
 #: engines/adl/detection.cpp:49
 msgid "Emulate composite output to an NTSC TV"
-msgstr ""
+msgstr "コンポジット出力(NTSC)を再現する"
 
 #: engines/adl/detection.cpp:58 engines/adl/detection.cpp:68
 #, fuzzy
@@ -3851,11 +3851,11 @@ msgstr "画像フィルター"
 
 #: engines/adl/detection.cpp:59 engines/adl/detection.cpp:69
 msgid "Use color graphics instead of monochrome"
-msgstr ""
+msgstr "モノクロの代わりにカラー映像を使用する"
 
 #: engines/adl/detection.cpp:78
 msgid "Show scanlines"
-msgstr ""
+msgstr "スキャンラインを表示"
 
 #: engines/adl/detection.cpp:79
 msgid "Darken every other scanline to mimic the look of a CRT"
@@ -3897,7 +3897,7 @@ msgstr ""
 
 #: engines/agi/detection.cpp:92
 msgid "Mouse support"
-msgstr ""
+msgstr "マウスをサポートする"
 
 #: engines/agi/detection.cpp:93
 msgid ""
@@ -3968,9 +3968,8 @@ msgstr "ゲームを復元する:"
 #: engines/sherlock/tattoo/widget_files.cpp:94 engines/startrek/saveload.cpp:68
 #: engines/toltecs/menu.cpp:267 engines/toon/toon.cpp:3456
 #: engines/zvision/file/save_manager.cpp:62 engines/zvision/metaengine.cpp:199
-#, fuzzy
 msgid "Restore"
-msgstr "休む"
+msgstr "復元"
 
 #: engines/agos/saveload.cpp:137
 msgid "Quick load or save game isn't supported in this location"
@@ -4003,7 +4002,7 @@ msgstr ""
 #: engines/agos/animation.cpp:558
 #, c-format
 msgid "Cutscene file '%s' not found!"
-msgstr ""
+msgstr "カットシーンファイル'%s'が見つかりません!"
 
 #: engines/agos/metaengine.cpp:104
 #, fuzzy
