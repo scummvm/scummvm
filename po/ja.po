@@ -3072,7 +3072,8 @@ msgid ""
 "Check whether selected port is not used by another application and try again."
 msgstr ""
 "ローカルサーバーの起動に失敗しました。\n"
-"選択されたポートが他のアプリケーションで使用されていない事を確認して、起動をやり直してください。"
+"選択されたポートが他のアプリケーションで使用されていない事を確認して、起動を"
+"やり直してください。"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
