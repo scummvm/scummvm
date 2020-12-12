@@ -223,14 +223,14 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	return false;
 }
 
-int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+void Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	const int16 numOfKeyframeInAnim = getNumKeyframes(animPtr);
-	if (keyframeIdx >= numOfKeyframeInAnim) {
-		return numOfKeyframeInAnim;
+	if (keyframeIdx < 0 || keyframeIdx >= numOfKeyframeInAnim) {
+		return;
 	}
 
 	if (!Model::isAnimated(bodyPtr)) {
-		return 0;
+		return;
 	}
 
 	int16 numOfBonesInAnim = getNumBoneframes(animPtr);
@@ -267,7 +267,7 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uin
 		bonesPtr += 30;
 	}
 
-	return 1;
+	return;
 }
 
 void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
