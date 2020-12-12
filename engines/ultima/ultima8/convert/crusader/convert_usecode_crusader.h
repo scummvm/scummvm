@@ -265,7 +265,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"int16 Item::I_use(Item *)", // same coff as 080, 0D5
 	"void AudioProcess:I_stopAllSFX(void)", // based on disasm.
 	"void I_playMovieCutscene(int *item,char *flicname,word sizex,word sizey)", // play flic
-	"void Intrinsic0D3(void)", // clears some globals and calls a kernel function.. TODO: work out what those globals do?
+	"void I_clearKeyboardState(void)", // clears some globals and calls a keyboard reset function.. TODO: work out what those globals do?
 	"void I_playSFX(2 bytes)", // same coff as 0AA.  Based on disasm.
 	"int16 Item::I_use(Item *)", // same coff as 080, 0D0
 	"byte CameraProcess::I_getCameraZ(void)",
@@ -368,7 +368,7 @@ const char* const ConvertUsecodeCrusader::_intrinsics[] = {
 	"void Actor::I_setActivity(Actor *, int)", // part of same coff set 055, 07D, 0CD, 0DB, 0F2, 131
 	"void Item::I_andStatus(Item *, int16 status)", // part of same coff set 01A, 031, 069, 06E, 099, 0B2, 0BF, 0C1, 0C3, 0E9, 0FC, 101, 104, 106, 108, 10A, 10C, 10E, 110, 114, 117, 11A, 128, 132
 	"int16 Item::I_getQHi(Item *)", // same as 026 based on same coff set 026, 045, 047, 049, 04B, 04D, 04F, 0AF, 0BE, 0C9, 0F0, 0F3, 0FB, 133
-	"void Intrinsic134(2 bytes)", // something to do with Wezzy/Weasel? Only called from WEA_BOOT::func0A
+	"void WeaselGump::I_showGump(uint16 param)",
 	"void Actor::I_setDead(Actor *)", // part of same coff set 021, 060, 073, 0A0, 0A8, 0D8, 0E7, 135
 	"void UNUSEDInt136()",
 	"void UNUSEDInt137()"
