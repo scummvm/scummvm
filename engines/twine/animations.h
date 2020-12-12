@@ -79,17 +79,21 @@ public:
 	 */
 	int32 setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
 
+	int16 getNumBoneframes(const uint8 *animPtr);
+	const uint8* getKeyFrameData(int32 frameIdx, const uint8 *animPtr);
+	int16 getKeyFrameLength(int32 frameIdx, const uint8 *animPtr);
+
 	/**
 	 * Get total number of keyframes in animation
 	 * @param animPtr Pointer to animation
 	 */
-	int32 getNumKeyframes(const uint8 *animPtr);
+	int16 getNumKeyframes(const uint8 *animPtr);
 
 	/**
 	 * Get first keyframes in animation
 	 * @param animPtr Pointer to animation
 	 */
-	int32 getStartKeyframe(const uint8 *animPtr);
+	int16 getStartKeyframe(const uint8 *animPtr);
 
 	/**
 	 * Set new body animation
