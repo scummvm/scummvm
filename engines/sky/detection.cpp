@@ -30,8 +30,6 @@
 #include "common/textconsole.h"
 #include "common/translation.h"
 
-#include "engines/metaengine.h"
-
 static const PlainGameDescriptor skySetting =
 	{"sky", "Beneath a Steel Sky" };
 
