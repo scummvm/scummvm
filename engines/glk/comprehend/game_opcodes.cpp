@@ -45,6 +45,9 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 	byte opcode = getOpcode(instr);
 	switch (_opcodeMap[opcode]) {
 	case OPCODE_CALL_FUNC:
+	case OPCODE_CALL_FUNC2:
+		// Note: CALL_FUNC2 in the original did some extra backing of data which is
+		// redundant in the ScummVM version, so it can be handled the same as CALL_FUNC.
 		index = instr->_operand[0];
 		if (instr->_operand[1] == 0x81)
 			index += 256;
@@ -707,6 +710,7 @@ ComprehendGameV2::ComprehendGameV2() {
 	_opcodeMap[0x90] = OPCODE_WAIT_KEY;
 	_opcodeMap[0x92] = OPCODE_CALL_FUNC;
 	_opcodeMap[0x95] = OPCODE_CLEAR_WORD;
+	_opcodeMap[0x96] = OPCODE_CALL_FUNC2;
 	_opcodeMap[0x98] = OPCODE_TURN_TICK;
 	_opcodeMap[0x99] = OPCODE_SET_FLAG;
 	_opcodeMap[0x9a] = OPCODE_SET_WORD;
