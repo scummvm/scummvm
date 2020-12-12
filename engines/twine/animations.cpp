@@ -259,27 +259,23 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uin
 
 	uint8 *verticesBase = bodyPtr + 0x1A;
 	int32 numVertices = READ_LE_INT16(verticesBase);
-
 	uint8 *bonesBase = verticesBase + numVertices * 6 + 2;
 	const int16 numBones = READ_LE_INT16(bonesBase);
-
-	uint8 *bonesPtr = bonesBase + 2;
-	bonesPtr += 8;
+	uint8 *bonesPtr = bonesBase + 2 + 8;
 
 	if (numOfBonesInAnim > numBones) {
 		numOfBonesInAnim = numBones;
 	}
 
-	ptrToData += 2;
 
-	currentStepX = READ_LE_INT16(ptrToData + 0);
-	currentStepY = READ_LE_INT16(ptrToData + 2);
-	currentStepZ = READ_LE_INT16(ptrToData + 4);
+	currentStepX = READ_LE_INT16(ptrToData + 2);
+	currentStepY = READ_LE_INT16(ptrToData + 4);
+	currentStepZ = READ_LE_INT16(ptrToData + 6);
 
-	processRotationByAnim = READ_LE_INT16(ptrToData + 6);
-	processLastRotationAngle = ToAngle(READ_LE_INT16(ptrToData + 10));
+	processRotationByAnim = READ_LE_INT16(ptrToData + 8);
+	processLastRotationAngle = ToAngle(READ_LE_INT16(ptrToData + 12));
 
-	ptrToData += 6;
+	ptrToData += 8;
 
 	do {
 		for (int32 i = 0; i < 8; i++) {
