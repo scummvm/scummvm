@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-12 06:06+0000\n"
-"PO-Revision-Date: 2020-12-12 11:01+0000\n"
+"PO-Revision-Date: 2020-12-12 14:54+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -2745,15 +2745,15 @@ msgstr "Super2xSaiに切り替える"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:441
 msgid "Switch to SuperEagle scaling"
-msgstr ""
+msgstr "SuperEagleに切り替える"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:442
 msgid "Switch to TV 2x scaling"
-msgstr ""
+msgstr "TV 2xに切り替える"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:443
 msgid "Switch to DotMatrix scaling"
-msgstr ""
+msgstr "DotMatrixに切り替える"
 
 #: backends/keymapper/hardware-input.cpp:245
 msgid "Left Mouse Button"
@@ -2769,50 +2769,47 @@ msgstr "マウスの中ボタン"
 
 #: backends/keymapper/hardware-input.cpp:248
 msgid "Mouse Wheel Up"
-msgstr ""
+msgstr "マウスホイール(上)"
 
 #: backends/keymapper/hardware-input.cpp:249
 msgid "Mouse Wheel Down"
-msgstr ""
+msgstr "マウスホイール(下)"
 
 #: backends/keymapper/hardware-input.cpp:250
-#, fuzzy
 msgid "X1 Mouse Button"
-msgstr "マウスの左ボタン"
+msgstr "マウスの追加ボタン1"
 
 #: backends/keymapper/hardware-input.cpp:251
-#, fuzzy
 msgid "X2 Mouse Button"
-msgstr "マウスの左ボタン"
+msgstr "マウスの追加ボタン2"
 
 #: backends/keymapper/hardware-input.cpp:256
 msgid "Joy A"
-msgstr "ジョイA"
+msgstr "Aボタン"
 
 #: backends/keymapper/hardware-input.cpp:257
 msgid "Joy B"
-msgstr "ジョイB"
+msgstr "Bボタン"
 
 #: backends/keymapper/hardware-input.cpp:258
 msgid "Joy X"
-msgstr "ジョイ横"
+msgstr "Xボタン"
 
 #: backends/keymapper/hardware-input.cpp:259
 msgid "Joy Y"
-msgstr "ジョイ縦"
+msgstr "Yボタン"
 
 #: backends/keymapper/hardware-input.cpp:260
-#, fuzzy
 msgid "Joy Back"
-msgstr "ジョイB"
+msgstr "戻るボタン"
 
 #: backends/keymapper/hardware-input.cpp:261
 msgid "Joy Guide"
-msgstr ""
+msgstr "ガイドボタン"
 
 #: backends/keymapper/hardware-input.cpp:262
 msgid "Joy Start"
-msgstr "ジョイスタート"
+msgstr "スタートボタン"
 
 #: backends/keymapper/hardware-input.cpp:263
 msgid "Left Stick"
@@ -2824,40 +2821,39 @@ msgstr "右スティック"
 
 #: backends/keymapper/hardware-input.cpp:265 engines/dragons/metaengine.cpp:211
 msgid "Left Shoulder"
-msgstr ""
+msgstr "LBボタン"
 
 #: backends/keymapper/hardware-input.cpp:266 engines/dragons/metaengine.cpp:217
 msgid "Right Shoulder"
-msgstr ""
+msgstr "RBボタン"
 
 #: backends/keymapper/hardware-input.cpp:267
 #: backends/platform/3ds/osystem-events.cpp:58
 #: backends/platform/sdl/ps3/ps3.cpp:52 backends/platform/sdl/psp2/psp2.cpp:53
 #: backends/platform/sdl/switch/switch.cpp:49
 msgid "D-pad Up"
-msgstr ""
+msgstr "十字キー(上)"
 
 #: backends/keymapper/hardware-input.cpp:268
 #: backends/platform/3ds/osystem-events.cpp:59
 #: backends/platform/sdl/ps3/ps3.cpp:53 backends/platform/sdl/psp2/psp2.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:50
 msgid "D-pad Down"
-msgstr ""
+msgstr "十字キー(下)"
 
 #: backends/keymapper/hardware-input.cpp:269
 #: backends/platform/3ds/osystem-events.cpp:60
 #: backends/platform/sdl/ps3/ps3.cpp:54 backends/platform/sdl/psp2/psp2.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:51
 msgid "D-pad Left"
-msgstr ""
+msgstr "十字キー(左)"
 
 #: backends/keymapper/hardware-input.cpp:270
 #: backends/platform/3ds/osystem-events.cpp:61
 #: backends/platform/sdl/ps3/ps3.cpp:55 backends/platform/sdl/psp2/psp2.cpp:56
 #: backends/platform/sdl/switch/switch.cpp:52
-#, fuzzy
 msgid "D-pad Right"
-msgstr "右"
+msgstr "十字キー(右)"
 
 #: backends/keymapper/hardware-input.cpp:275
 msgid "Left Trigger"
@@ -3023,12 +3019,12 @@ msgstr ""
 
 #: backends/networking/sdl_net/handlers/filesajaxpagehandler.cpp:76
 msgid "Error occurred"
-msgstr ""
+msgstr "エラーが発生しました"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:81
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:45
 msgid "File system root"
-msgstr ""
+msgstr "ルートディレクトリー"
 
 #: backends/networking/sdl_net/handlers/filespagehandler.cpp:82
 #: backends/networking/sdl_net/handlers/listajaxhandler.cpp:46
@@ -3051,7 +3047,7 @@ msgstr ""
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:42
 msgid "This is a local webserver index page."
-msgstr ""
+msgstr "これはローカルサーバーのインデックスページです。"
 
 #: backends/networking/sdl_net/handlers/indexpagehandler.cpp:43
 #, fuzzy
@@ -3060,7 +3056,7 @@ msgstr "ダウンロード管理のダイアログを開く"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:67
 msgid "The parent directory doesn't exist!"
-msgstr ""
+msgstr "これより上のディレクトリーは存在しません!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:71
 msgid "Can't upload into a file!"
@@ -3068,18 +3064,20 @@ msgstr "アップロード先にはディレクトリーを指定してくださ
 
 #: backends/networking/sdl_net/handlerutils.cpp:198
 msgid "Back to the files manager"
-msgstr ""
+msgstr "ファイルマネージャーへ戻る"
 
 #: backends/networking/sdl_net/localwebserver.cpp:123
 msgid ""
 "Failed to start local webserver.\n"
 "Check whether selected port is not used by another application and try again."
 msgstr ""
+"ローカルサーバーの起動に失敗しました。\n"
+"選択されたポートが他のアプリケーションで使用されていない事を確認して、起動をやり直してください。"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:69
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:111
 msgid "Invalid request: headers are too long!"
-msgstr ""
+msgstr "不正なリクエスト：ヘッダーが長すぎます!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:155
 msgid "Failed to upload the file!"
@@ -3087,7 +3085,7 @@ msgstr "ファイルのアップロードに失敗しました!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:184
 msgid "No file was passed!"
-msgstr ""
+msgstr "ファイルは転送されませんでした!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:202
 msgid "Uploaded successfully!"
@@ -3136,71 +3134,70 @@ msgstr "両面"
 #: backends/platform/3ds/osystem-events.cpp:48
 #: backends/platform/sdl/switch/switch.cpp:39
 msgid "A"
-msgstr ""
+msgstr "A"
 
 #: backends/platform/3ds/osystem-events.cpp:49
 #: backends/platform/sdl/switch/switch.cpp:38
 msgid "B"
-msgstr ""
+msgstr "B"
 
 #: backends/platform/3ds/osystem-events.cpp:50
 #: backends/platform/sdl/switch/switch.cpp:41
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #: backends/platform/3ds/osystem-events.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:40
 msgid "Y"
-msgstr ""
+msgstr "Y"
 
 #: backends/platform/3ds/osystem-events.cpp:52
 #: backends/platform/ds/arm9/source/scummhelp.cpp:47
 #: backends/platform/ds/arm9/source/scummhelp.cpp:64
 #: backends/platform/sdl/ps3/ps3.cpp:45 backends/platform/sdl/psp2/psp2.cpp:49
-#, fuzzy
 msgid "Select"
-msgstr "テーマを選ぶ"
+msgstr "セレクト"
 
 #: backends/platform/3ds/osystem-events.cpp:53
 #: backends/platform/ds/arm9/source/scummhelp.cpp:46
 #: backends/platform/ds/arm9/source/scummhelp.cpp:63
 #: backends/platform/sdl/ps3/ps3.cpp:47 backends/platform/sdl/psp2/psp2.cpp:50
 msgid "Start"
-msgstr "開始"
+msgstr "スタート"
 
 #: backends/platform/3ds/osystem-events.cpp:54
 #: backends/platform/sdl/switch/switch.cpp:57
 msgid "ZL"
-msgstr ""
+msgstr "ZL"
 
 #: backends/platform/3ds/osystem-events.cpp:55
 #: backends/platform/sdl/switch/switch.cpp:58
 msgid "ZR"
-msgstr ""
+msgstr "ZR"
 
 #: backends/platform/3ds/osystem-events.cpp:56
 #: backends/platform/sdl/psp2/psp2.cpp:51
 #: backends/platform/sdl/switch/switch.cpp:47
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #: backends/platform/3ds/osystem-events.cpp:57
 #: backends/platform/sdl/psp2/psp2.cpp:52
 #: backends/platform/sdl/switch/switch.cpp:48
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #: backends/platform/3ds/osystem-events.cpp:66
 msgid "C-Pad X"
-msgstr ""
+msgstr "スライドパッド(X軸)"
 
 #: backends/platform/3ds/osystem-events.cpp:67
 msgid "C-Pad Y"
-msgstr ""
+msgstr "スライドパッド(Y軸)"
 
 #: backends/platform/3ds/osystem-events.cpp:72
 msgid "Touch"
-msgstr ""
+msgstr "タッチ"
 
 #: backends/platform/3ds/osystem-events.cpp:312
 #, fuzzy
@@ -3708,11 +3705,11 @@ msgstr ""
 
 #: backends/platform/wii/options.cpp:86
 msgid "DVD"
-msgstr ""
+msgstr "DVD"
 
 #: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
 msgid "Status:"
-msgstr ""
+msgstr "ステータス："
 
 #: backends/platform/wii/options.cpp:90 backends/platform/wii/options.cpp:102
 #, fuzzy
