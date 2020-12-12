@@ -4720,13 +4720,13 @@ msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:367 engines/kyra/engine/lol.cpp:469
 #: engines/ultima/ultima4/meta_engine.cpp:233
-#: engines/ultima/ultima8/meta_engine.cpp:131
+#: engines/ultima/ultima8/meta_engine.cpp:136
 msgid "Interact via Left Click"
 msgstr ""
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:470
 #: engines/ultima/ultima4/meta_engine.cpp:239
-#: engines/ultima/ultima8/meta_engine.cpp:137
+#: engines/ultima/ultima8/meta_engine.cpp:142
 msgid "Interact via Right Click"
 msgstr ""
 
@@ -6810,19 +6810,19 @@ msgstr ""
 msgid "Transfer Character"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:124
+#: engines/ultima/ultima8/meta_engine.cpp:129
 msgid "Ultima VIII"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:124
+#: engines/ultima/ultima8/meta_engine.cpp:129
 msgid "Crusader"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:170
+#: engines/ultima/ultima8/meta_engine.cpp:176
 msgid "Ultima VIII Cheats"
 msgstr ""
 
-#: engines/ultima/ultima8/meta_engine.cpp:185
+#: engines/ultima/ultima8/meta_engine.cpp:193
 msgid "Ultima VIII Debug"
 msgstr ""
 
