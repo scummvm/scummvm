@@ -83,9 +83,7 @@ public:
 	 */
 	void setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
 
-	int16 getNumBoneframes(const uint8 *animPtr);
 	const uint8* getKeyFrameData(int32 frameIdx, const uint8 *animPtr);
-	int16 getKeyFrameLength(int32 frameIdx, const uint8 *animPtr);
 
 	/**
 	 * Get total number of keyframes in animation

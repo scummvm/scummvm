@@ -71,7 +71,7 @@ int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
 }
 
 const uint8* Animations::getKeyFrameData(int32 frameIdx, const uint8 *animPtr) {
-	const int16 numOfBonesInAnim = getNumBoneframes(animPtr);
+	const int16 numOfBonesInAnim = READ_LE_INT16(animPtr + 2);
 	return (const uint8 *)((numOfBonesInAnim * 8 + 8) * frameIdx + animPtr + 8);
 }
 
@@ -94,14 +94,6 @@ int16 Animations::getNumBones(const uint8 *bodyPtr) const {
 	const int16 numVertices = READ_LE_INT16(verticesBase);
 	const uint8 *bonesBase = verticesBase + 2 + numVertices * 6;
 	return READ_LE_INT16(bonesBase);
-}
-
-int16 Animations::getKeyFrameLength(int32 frameIdx, const uint8 *animPtr) {
-	return READ_LE_INT16(getKeyFrameData(frameIdx, animPtr));
-}
-
-int16 Animations::getNumBoneframes(const uint8 *animPtr) {
-	return READ_LE_INT16(animPtr + 2);
 }
 
 int16 Animations::getNumKeyframes(const uint8 *animPtr) {
@@ -243,17 +235,17 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint
 }
 
 void Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	const int16 numOfKeyframeInAnim = getNumKeyframes(animPtr);
-	if (keyframeIdx < 0 || keyframeIdx >= numOfKeyframeInAnim) {
-		return;
-	}
-
 	if (!Model::isAnimated(bodyPtr)) {
 		return;
 	}
 
 	AnimData animData;
 	animData.loadFromBuffer(animPtr, 100000);
+	const int32 numOfKeyframeInAnim = animData.getKeyframes().size();
+	if (keyframeIdx < 0 || keyframeIdx >= numOfKeyframeInAnim) {
+		return;
+	}
+
 	const KeyFrame* keyFrame = animData.getKeyframe(keyframeIdx);
 
 	currentStepX = keyFrame->x;
@@ -316,28 +308,28 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 }
 
 bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	const uint8 *keyFramePtr = getKeyFrameData(keyframeIdx, animPtr);
-	const int32 keyFrameLength = getKeyFrameLength(keyframeIdx, animPtr);
+	AnimData animData;
+	animData.loadFromBuffer(animPtr, 100000);
+	const KeyFrame* keyFrame = animData.getKeyframe(keyframeIdx);
+	const int32 keyFrameLength = keyFrame->length;
 
-	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
 	int32 remainingFrameTime = animTimerDataPtr->time;
-
-	if (lastKeyFramePtr == nullptr) {
-		lastKeyFramePtr = keyFramePtr;
+	if (animTimerDataPtr->ptr == nullptr) {
 		remainingFrameTime = keyFrameLength;
 	}
 
 	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
 
-	currentStepX = READ_LE_INT16(keyFramePtr + 2);
-	currentStepY = READ_LE_INT16(keyFramePtr + 4);
-	currentStepZ = READ_LE_INT16(keyFramePtr + 6);
+	currentStepX = keyFrame->x;
+	currentStepY = keyFrame->y;
+	currentStepZ = keyFrame->z;
 
-	processRotationByAnim = READ_LE_INT16(keyFramePtr + 8);
-	processLastRotationAngle = ToAngle(READ_LE_INT16(keyFramePtr + 12));
+	const BoneFrame& boneFrame = keyFrame->boneframes[0];
+	processRotationByAnim = boneFrame.type;
+	processLastRotationAngle = ToAngle(boneFrame.y);
 
 	if (deltaTime >= keyFrameLength) {
-		animTimerDataPtr->ptr = keyFramePtr;
+		animTimerDataPtr->ptr = getKeyFrameData(keyframeIdx, animPtr);;
 		animTimerDataPtr->time = _engine->lbaTime;
 		return true;
 	}
