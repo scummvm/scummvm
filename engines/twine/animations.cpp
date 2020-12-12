@@ -297,34 +297,27 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 	if (!Model::isAnimated(bodyPtr)) {
 		return;
 	}
-	uint8 *animPtr = animBufferPos;
-
-	const uint8 *verticesBase = bodyPtr + 0x1A;
 
 	animTimerDataPtr->time = _engine->lbaTime;
-	animTimerDataPtr->ptr = animPtr;
+	animTimerDataPtr->ptr = animBufferPos;
 
+	const uint8 *verticesBase = bodyPtr + 0x1A;
 	int32 numVertices = READ_LE_INT16(verticesBase);
-	const uint8 *ptr = verticesBase + numVertices * 6 + 2;
+	const uint8 *bonesBase = verticesBase + numVertices * 6 + 2;
+	int32 numBones = READ_LE_INT16(bonesBase);
 
-	int32 numBones = READ_LE_INT16(ptr);
-	ptr += 2;
+	int32 *edi = (int32 *)(animBufferPos + 8);
+	const int32 *esi = (const int32 *)(bonesBase + 10);
 
-	int32 counter = numBones;
-	// 8 = 4xint16 - firstpoint, numpoints, basepoint, baseelement - see elementEntry
-	int32 var2 = (numBones * 8) + 8;
-
-	int32 *edi = (int32 *)(animPtr + 8);
-	const int32 *esi = (const int32 *)(ptr + 8);
-
-	do {
+	for (int32 i = 0; i < numBones; ++i) {
 		*(edi++) = *(esi++);
 		*(edi++) = *(esi++);
 
 		esi = (const int32 *)(((const int8 *)esi) + 30);
-	} while (counter--);
+	}
 
-	animBufferPos += var2;
+	// 8 = 4xint16 - firstpoint, numpoints, basepoint, baseelement - see elementEntry
+	animBufferPos += (numBones * 8) + 8;
 
 	if (animBuffer + (560 * 8) + 8 < animBufferPos) {
 		animBufferPos = animBuffer;
