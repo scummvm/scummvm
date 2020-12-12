@@ -21,6 +21,7 @@
  */
 
 #include "twine/animations.h"
+#include "common/endian.h"
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "common/system.h"
@@ -67,11 +68,8 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uin
 		return 0;
 	}
 
-	int16 numOfBonesInAnim = READ_LE_INT16(animPtr + 2);
-
-	// A bones is 8 bytes - length uint16, x, y and z as sint16
-	// additional 8 bytes for the animation header numkeyframes, numboneframes, loopframe and unkown uint16 fields
-	const uint8 *ptrToData = (const uint8 *)((numOfBonesInAnim * 8 + 8) * keyframeIdx + animPtr + 8);
+	int16 numOfBonesInAnim = getNumBoneframes(animPtr);
+	const uint8 *ptrToData = getKeyFrameData(keyframeIdx, animPtr);
 
 	animTimerDataPtr->ptr = ptrToData;
 	animTimerDataPtr->time = _engine->lbaTime;
@@ -89,9 +87,16 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uin
 		numOfBonesInAnim = numBones;
 	}
 
-	const uint8 *ptrToDataBackup = ptrToData;
+	ptrToData += 2;
 
-	ptrToData += 8;
+	currentStepX = READ_LE_INT16(ptrToData + 0);
+	currentStepY = READ_LE_INT16(ptrToData + 2);
+	currentStepZ = READ_LE_INT16(ptrToData + 4);
+
+	processRotationByAnim = READ_LE_INT16(ptrToData + 6);
+	processLastRotationAngle = ToAngle(READ_LE_INT16(ptrToData + 10));
+
+	ptrToData += 6;
 
 	do {
 		for (int32 i = 0; i < 8; i++) {
@@ -101,23 +106,28 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uin
 		bonesPtr += 30;
 	} while (--numOfBonesInAnim);
 
-	ptrToData = ptrToDataBackup + 2;
-
-	currentStepX = READ_LE_INT16(ptrToData + 0);
-	currentStepY = READ_LE_INT16(ptrToData + 2);
-	currentStepZ = READ_LE_INT16(ptrToData + 4);
-
-	processRotationByAnim = READ_LE_INT16(ptrToData + 6);
-	processLastRotationAngle = ToAngle(READ_LE_INT16(ptrToData + 10));
 
 	return 1;
 }
 
-int32 Animations::getNumKeyframes(const uint8 *animPtr) {
-	return READ_LE_INT16(animPtr);
+const uint8* Animations::getKeyFrameData(int32 frameIdx, const uint8 *animPtr) {
+	const int16 numOfBonesInAnim = getNumBoneframes(animPtr);
+	return (const uint8 *)((numOfBonesInAnim * 8 + 8) * frameIdx + animPtr + 8);
 }
 
-int32 Animations::getStartKeyframe(const uint8 *animPtr) {
+int16 Animations::getKeyFrameLength(int32 frameIdx, const uint8 *animPtr) {
+	return READ_LE_INT16(getKeyFrameData(frameIdx, animPtr));
+}
+
+int16 Animations::getNumBoneframes(const uint8 *animPtr) {
+	return READ_LE_INT16(animPtr + 2);
+}
+
+int16 Animations::getNumKeyframes(const uint8 *animPtr) {
+	return READ_LE_INT16(animPtr + 0);
+}
+
+int16 Animations::getStartKeyframe(const uint8 *animPtr) {
 	return READ_LE_INT16(animPtr + 4);
 }
 
@@ -185,9 +195,9 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	if (!Model::isAnimated(bodyPtr)) {
 		return false;
 	}
-	int32 numOfPointInAnim = READ_LE_INT16(animPtr + 2);
-	const uint8 *keyFramePtr = ((numOfPointInAnim * 8 + 8) * animState) + animPtr + 8;
-	const int32 keyFrameLength = READ_LE_INT16(keyFramePtr);
+	int32 numOfPointInAnim = getNumBoneframes(animPtr);
+	const uint8 *keyFramePtr = getKeyFrameData(animState, animPtr);
+	const int32 keyFrameLength = getKeyFrameLength(animState, animPtr);
 
 	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
 	int32 remainingFrameTime = animTimerDataPtr->time;
@@ -212,6 +222,13 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 
 	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
 
+	currentStepX = READ_LE_INT16(keyFramePtr + 2);
+	currentStepY = READ_LE_INT16(keyFramePtr + 4);
+	currentStepZ = READ_LE_INT16(keyFramePtr + 6);
+
+	processRotationByAnim = READ_LE_INT16(keyFramePtr + 8);
+	processLastRotationAngle = ToAngle(READ_LE_INT16(keyFramePtr + 12));
+
 	uint8 *edi = bonesBase + 8;
 	if (deltaTime >= keyFrameLength) {
 		const int32 *sourcePtr = (const int32 *)(keyFramePtr + 8);
@@ -226,25 +243,13 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 		animTimerDataPtr->ptr = keyFramePtr;
 		animTimerDataPtr->time = _engine->lbaTime;
 
-		currentStepX = READ_LE_INT16(keyFramePtr + 2);
-		currentStepY = READ_LE_INT16(keyFramePtr + 4);
-		currentStepZ = READ_LE_INT16(keyFramePtr + 6);
-
-		processRotationByAnim = READ_LE_INT16(keyFramePtr + 8);
-		processLastRotationAngle = ToAngle(READ_LE_INT16(keyFramePtr + 12));
-
 		return true;
 	}
-	const uint8 *keyFramePtrOld = keyFramePtr;
 
-	lastKeyFramePtr += 8;
-	keyFramePtr += 8;
+	processLastRotationAngle = (processLastRotationAngle * deltaTime) / keyFrameLength;
 
-	processRotationByAnim = READ_LE_INT16(keyFramePtr);
-	processLastRotationAngle = ToAngle((READ_LE_INT16(keyFramePtr + 4) * deltaTime) / keyFrameLength);
-
-	lastKeyFramePtr += 8;
-	keyFramePtr += 8;
+	lastKeyFramePtr += 16;
+	keyFramePtr += 16;
 
 	edi += 38;
 
@@ -273,10 +278,6 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 			edi += 30;
 		} while (--tmpNumOfPoints);
 	}
-
-	currentStepX = (READ_LE_INT16(keyFramePtrOld + 2) * deltaTime) / keyFrameLength;
-	currentStepY = (READ_LE_INT16(keyFramePtrOld + 4) * deltaTime) / keyFrameLength;
-	currentStepZ = (READ_LE_INT16(keyFramePtrOld + 6) * deltaTime) / keyFrameLength;
 
 	return false;
 }
@@ -325,7 +326,7 @@ int32 Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *anim
 
 	animBufferPos += var2;
 
-	if (animBuffer + 4488 < animBufferPos) {
+	if (animBuffer + (560 * 8) + 8 < animBufferPos) {
 		animBufferPos = animBuffer;
 	}
 
@@ -333,9 +334,8 @@ int32 Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *anim
 }
 
 bool Animations::verifyAnimAtKeyframe(int32 animIdx, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	const int32 numOfPointInAnim = READ_LE_INT16(animPtr + 2);
-	const uint8 *keyFramePtr = ((numOfPointInAnim * 8 + 8) * animIdx) + animPtr + 8;
-	const int32 keyFrameLength = READ_LE_INT16(keyFramePtr);
+	const uint8 *keyFramePtr = getKeyFrameData(animIdx, animPtr);
+	const int32 keyFrameLength = getKeyFrameLength(animIdx, animPtr);
 
 	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
 	int32 remainingFrameTime = animTimerDataPtr->time;
@@ -347,33 +347,23 @@ bool Animations::verifyAnimAtKeyframe(int32 animIdx, const uint8 *animPtr, AnimT
 
 	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
 
+	currentStepX = READ_LE_INT16(keyFramePtr + 2);
+	currentStepY = READ_LE_INT16(keyFramePtr + 4);
+	currentStepZ = READ_LE_INT16(keyFramePtr + 6);
+
+	processRotationByAnim = READ_LE_INT16(keyFramePtr + 8);
+	processLastRotationAngle = ToAngle(READ_LE_INT16(keyFramePtr + 12));
+
 	if (deltaTime >= keyFrameLength) {
 		animTimerDataPtr->ptr = keyFramePtr;
 		animTimerDataPtr->time = _engine->lbaTime;
-
-		currentStepX = READ_LE_INT16(keyFramePtr + 2);
-		currentStepY = READ_LE_INT16(keyFramePtr + 4);
-		currentStepZ = READ_LE_INT16(keyFramePtr + 6);
-
-		processRotationByAnim = READ_LE_INT16(keyFramePtr + 8);
-		processLastRotationAngle = ToAngle(READ_LE_INT16(keyFramePtr + 12));
-
 		return true;
 	}
-	const uint8 *keyFramePtrOld = keyFramePtr;
 
-	lastKeyFramePtr += 8;
-	keyFramePtr += 8;
-
-	processRotationByAnim = READ_LE_INT16(keyFramePtr);
-	processLastRotationAngle = ToAngle((READ_LE_INT16(keyFramePtr + 4) * deltaTime) / keyFrameLength);
-
-	lastKeyFramePtr += 8;
-	keyFramePtr += 8;
-
-	currentStepX = (READ_LE_INT16(keyFramePtrOld + 2) * deltaTime) / keyFrameLength;
-	currentStepY = (READ_LE_INT16(keyFramePtrOld + 4) * deltaTime) / keyFrameLength;
-	currentStepZ = (READ_LE_INT16(keyFramePtrOld + 6) * deltaTime) / keyFrameLength;
+	processLastRotationAngle = (processLastRotationAngle * deltaTime) / keyFrameLength;
+	currentStepX = (currentStepX * deltaTime) / keyFrameLength;
+	currentStepY = (currentStepY * deltaTime) / keyFrameLength;
+	currentStepZ = (currentStepZ * deltaTime) / keyFrameLength;
 
 	return false;
 }
@@ -536,7 +526,7 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 	} else {
 		// interpolation between animations
 		animBufferPos += stockAnimation(_engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
-		if (animBuffer + 4488 < animBufferPos) {
+		if (animBuffer + (560 * 8) + 8 < animBufferPos) {
 			animBufferPos = animBuffer;
 		}
 	}
