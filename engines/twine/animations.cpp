@@ -90,7 +90,7 @@ int16 Animations::getStartKeyframe(const uint8 *animPtr) {
 	return READ_LE_INT16(animPtr + 4);
 }
 
-void Animations::applyAnimStepRotation(uint8 *ptr, int32 bp, int32 bx, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr) {
+void Animations::applyAnimStepRotation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr) {
 	const int16 lastAngle = ClampAngle(READ_LE_INT16(lastKeyFramePtr));
 	const int16 newAngle = ClampAngle(READ_LE_INT16(keyFramePtr));
 
@@ -104,7 +104,7 @@ void Animations::applyAnimStepRotation(uint8 *ptr, int32 bp, int32 bx, const uin
 			angleDiff -= ANGLE_360;
 		}
 
-		computedAngle = lastAngle + (angleDiff * bp) / bx;
+		computedAngle = lastAngle + (angleDiff * deltaTime) / keyFrameLength;
 	} else {
 		computedAngle = lastAngle;
 	}
@@ -112,7 +112,7 @@ void Animations::applyAnimStepRotation(uint8 *ptr, int32 bp, int32 bx, const uin
 	*(int16 *)ptr = ClampAngle(computedAngle);
 }
 
-void Animations::applyAnimStep(uint8 *ptr, int32 bp, int32 bx, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr) {
+void Animations::applyAnimStep(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr) {
 	int16 lastAngle = READ_LE_INT16(lastKeyFramePtr);
 	int16 newAngle = READ_LE_INT16(keyFramePtr);
 
@@ -120,7 +120,7 @@ void Animations::applyAnimStep(uint8 *ptr, int32 bp, int32 bx, const uint8 *keyF
 
 	int16 computedAngle;
 	if (angleDif) {
-		computedAngle = lastAngle + (angleDif * bp) / bx;
+		computedAngle = lastAngle + (angleDif * deltaTime) / keyFrameLength;
 	} else {
 		computedAngle = lastAngle;
 	}
@@ -134,13 +134,13 @@ int32 Animations::getAnimMode(uint8 *ptr, const uint8 *keyFramePtr, const uint8 
 	return opcode;
 }
 
-bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+bool Animations::setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	if (!Model::isAnimated(bodyPtr)) {
 		return false;
 	}
 	int32 numOfBonesInAnim = getNumBoneframes(animPtr);
-	const uint8 *keyFramePtr = getKeyFrameData(animState, animPtr);
-	const int32 keyFrameLength = getKeyFrameLength(animState, animPtr);
+	const uint8 *keyFramePtr = getKeyFrameData(keyframeIdx, animPtr);
+	const int32 keyFrameLength = getKeyFrameLength(keyframeIdx, animPtr);
 
 	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
 	int32 remainingFrameTime = animTimerDataPtr->time;
@@ -302,9 +302,9 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 	}
 }
 
-bool Animations::verifyAnimAtKeyframe(int32 animIdx, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	const uint8 *keyFramePtr = getKeyFrameData(animIdx, animPtr);
-	const int32 keyFrameLength = getKeyFrameLength(animIdx, animPtr);
+bool Animations::verifyAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr) {
+	const uint8 *keyFramePtr = getKeyFrameData(keyframeIdx, animPtr);
+	const int32 keyFrameLength = getKeyFrameLength(keyframeIdx, animPtr);
 
 	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
 	int32 remainingFrameTime = animTimerDataPtr->time;
