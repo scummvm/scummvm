@@ -58,56 +58,15 @@ Animations::~Animations() {
 	free(animBuffer);
 }
 
-int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	const int16 numOfKeyframeInAnim = READ_LE_INT16(animPtr);
-	if (keyframeIdx >= numOfKeyframeInAnim) {
-		return numOfKeyframeInAnim;
+int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	EntityData entityData;
+	entityData.loadFromBuffer(actor->entityDataPtr, actor->entityDataSize);
+	const int32 bodyAnimIndex = entityData.getAnimIndex(animIdx);
+	if (bodyAnimIndex != -1) {
+		currentActorAnimExtraPtr = animIdx;
 	}
-
-	if (!Model::isAnimated(bodyPtr)) {
-		return 0;
-	}
-
-	int16 numOfBonesInAnim = getNumBoneframes(animPtr);
-	const uint8 *ptrToData = getKeyFrameData(keyframeIdx, animPtr);
-
-	animTimerDataPtr->ptr = ptrToData;
-	animTimerDataPtr->time = _engine->lbaTime;
-
-	uint8 *verticesBase = bodyPtr + 0x1A;
-	int32 numVertices = READ_LE_INT16(verticesBase);
-
-	uint8 *bonesBase = verticesBase + numVertices * 6 + 2;
-	const int16 numBones = READ_LE_INT16(bonesBase);
-
-	uint8 *bonesPtr = bonesBase + 2;
-	bonesPtr += 8;
-
-	if (numOfBonesInAnim > numBones) {
-		numOfBonesInAnim = numBones;
-	}
-
-	ptrToData += 2;
-
-	currentStepX = READ_LE_INT16(ptrToData + 0);
-	currentStepY = READ_LE_INT16(ptrToData + 2);
-	currentStepZ = READ_LE_INT16(ptrToData + 4);
-
-	processRotationByAnim = READ_LE_INT16(ptrToData + 6);
-	processLastRotationAngle = ToAngle(READ_LE_INT16(ptrToData + 10));
-
-	ptrToData += 6;
-
-	do {
-		for (int32 i = 0; i < 8; i++) {
-			*bonesPtr++ = *ptrToData++;
-		}
-
-		bonesPtr += 30;
-	} while (--numOfBonesInAnim);
-
-
-	return 1;
+	return bodyAnimIndex;
 }
 
 const uint8* Animations::getKeyFrameData(int32 frameIdx, const uint8 *animPtr) {
@@ -282,15 +241,56 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	return false;
 }
 
-int32 Animations::getBodyAnimIndex(AnimationTypes animIdx, int32 actorIdx) {
-	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	EntityData entityData;
-	entityData.loadFromBuffer(actor->entityDataPtr, actor->entityDataSize);
-	const int32 bodyAnimIndex = entityData.getAnimIndex(animIdx);
-	if (bodyAnimIndex != -1) {
-		currentActorAnimExtraPtr = animIdx;
+int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+	const int16 numOfKeyframeInAnim = READ_LE_INT16(animPtr);
+	if (keyframeIdx >= numOfKeyframeInAnim) {
+		return numOfKeyframeInAnim;
 	}
-	return bodyAnimIndex;
+
+	if (!Model::isAnimated(bodyPtr)) {
+		return 0;
+	}
+
+	int16 numOfBonesInAnim = getNumBoneframes(animPtr);
+	const uint8 *ptrToData = getKeyFrameData(keyframeIdx, animPtr);
+
+	animTimerDataPtr->ptr = ptrToData;
+	animTimerDataPtr->time = _engine->lbaTime;
+
+	uint8 *verticesBase = bodyPtr + 0x1A;
+	int32 numVertices = READ_LE_INT16(verticesBase);
+
+	uint8 *bonesBase = verticesBase + numVertices * 6 + 2;
+	const int16 numBones = READ_LE_INT16(bonesBase);
+
+	uint8 *bonesPtr = bonesBase + 2;
+	bonesPtr += 8;
+
+	if (numOfBonesInAnim > numBones) {
+		numOfBonesInAnim = numBones;
+	}
+
+	ptrToData += 2;
+
+	currentStepX = READ_LE_INT16(ptrToData + 0);
+	currentStepY = READ_LE_INT16(ptrToData + 2);
+	currentStepZ = READ_LE_INT16(ptrToData + 4);
+
+	processRotationByAnim = READ_LE_INT16(ptrToData + 6);
+	processLastRotationAngle = ToAngle(READ_LE_INT16(ptrToData + 10));
+
+	ptrToData += 6;
+
+	do {
+		for (int32 i = 0; i < 8; i++) {
+			*bonesPtr++ = *ptrToData++;
+		}
+
+		bonesPtr += 30;
+	} while (--numOfBonesInAnim);
+
+
+	return 1;
 }
 
 int32 Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
