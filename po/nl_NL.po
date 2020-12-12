@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-12-12 06:00+0000\n"
+"POT-Creation-Date: 2020-12-12 06:06+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -4386,7 +4386,7 @@ msgstr "Dit is geen geldig Alan2 bestand."
 msgid "Savegame"
 msgstr "opgeslagen spel"
 
-#: engines/glk/comprehend/game.cpp:851
+#: engines/glk/comprehend/game.cpp:848
 msgid "Picture window toggled\n"
 msgstr "Foto window geschakeld\n"
 
