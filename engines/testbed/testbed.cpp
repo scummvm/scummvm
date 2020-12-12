@@ -62,12 +62,12 @@ void TestbedExitDialog::init() {
 	GUI::ListWidget::ColorList colors;
 
 	for (Common::Array<Testsuite *>::const_iterator i = _testsuiteList.begin(); i != _testsuiteList.end(); ++i) {
-		strArray.push_back(Common::String::format("%s :", (*i)->getDescription()));
+		strArray.push_back(Common::U32String::format("%s :", (*i)->getDescription()));
 		colors.push_back(GUI::ThemeEngine::kFontColorNormal);
 		if ((*i)->isEnabled()) {
-			strArray.push_back(Common::String::format("Passed: %d  Failed: %d Skipped: %d", (*i)->getNumTestsPassed(), (*i)->getNumTestsFailed(), (*i)->getNumTestsSkipped()));
+			strArray.push_back(Common::U32String::format("Passed: %d  Failed: %d Skipped: %d", (*i)->getNumTestsPassed(), (*i)->getNumTestsFailed(), (*i)->getNumTestsSkipped()));
 		} else {
-			strArray.push_back(Common::U32String("Skipped"));
+			strArray.push_back(USTR("Skipped"));
 		}
 		colors.push_back(GUI::ThemeEngine::kFontColorAlternate);
 	}

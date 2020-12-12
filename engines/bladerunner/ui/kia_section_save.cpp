@@ -112,7 +112,7 @@ void KIASectionSave::open() {
 		}
 
 		for (uint i = 0; i < _saveList.size(); ++i) {
-			_scrollBox->addLine(_saveList[i].getDescription(), i, 0);
+			_scrollBox->addLine(_saveList[i].getDescription().legacyEncode(), i, 0);
 		}
 
 		if (ableToSaveGame) {
@@ -122,7 +122,7 @@ void KIASectionSave::open() {
 		} else {
 			// Overwrite first save
 			_selectedLineId = 0;
-			_inputBox->setText(_saveList[_selectedLineId].getDescription());
+			_inputBox->setText(_saveList[_selectedLineId].getDescription().legacyEncode());
 		}
 
 		_scrollBox->setFlags(_selectedLineId, 8);
@@ -162,7 +162,7 @@ void KIASectionSave::draw(Graphics::Surface &surface) {
 	} else if (_state == kStateOverwrite) {
 		surface.fillRect(Common::Rect(155, 230, 462, 239), surface.format.RGBToColor(80, 56, 32));
 
-		const Common::String &saveName = _saveList[_selectedLineId].getDescription();
+		const Common::U32String &saveName = _saveList[_selectedLineId].getDescription();
 		int saveNameWidth = _vm->_mainFont->getStringWidth(saveName);
 		_vm->_mainFont->drawString(&surface, saveName, 308 - saveNameWidth / 2, 230, surface.w, surface.format.RGBToColor(232, 208, 136));
 
@@ -172,7 +172,7 @@ void KIASectionSave::draw(Graphics::Surface &surface) {
 	} else if (_state == kStateDelete) {
 		surface.fillRect(Common::Rect(155, 230, 462, 239), surface.format.RGBToColor(80, 56, 32));
 
-		const Common::String &saveName = _saveList[_selectedLineId].getDescription();
+		const Common::U32String &saveName = _saveList[_selectedLineId].getDescription();
 		int saveNameWidth = _vm->_mainFont->getStringWidth(saveName); // Delete this game?
 		_vm->_mainFont->drawString(&surface, saveName, 308 - saveNameWidth / 2, 230, surface.w, surface.format.RGBToColor(232, 208, 136));
 
@@ -296,7 +296,7 @@ void KIASectionSave::scrollBoxCallback(void *callbackData, void *source, int lin
 		if (self->_selectedLineId == self->_newSaveLineId) {
 			self->_inputBox->setText("");
 		} else {
-			self->_inputBox->setText(self->_saveList[self->_selectedLineId].getDescription());
+			self->_inputBox->setText(self->_saveList[self->_selectedLineId].getDescription().legacyEncode());
 		}
 
 		self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxSPNBEEP3), 40, 0, 0, 50, 0);

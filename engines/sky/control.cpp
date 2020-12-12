@@ -1129,7 +1129,8 @@ int Control::displayMessage(const char *altButton, const char *message, ...) {
 	vsnprintf(buf, STRINGBUFLEN, message, va);
 	va_end(va);
 
-	GUI::MessageDialog dialog(buf, "OK", altButton);
+	GUI::MessageDialog dialog(Common::U32String(buf, Common::kLatin1),
+				  USTR("OK"), Common::U32String(altButton, Common::kLatin1));
 	int result = dialog.runModal();
 	_skyMouse->spriteMouse(MOUSE_NORMAL, 0, 0);
 	return result;

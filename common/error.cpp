@@ -79,11 +79,15 @@ static String errorToString(ErrorCode errorCode) {
 }
 
 Error::Error(ErrorCode code)
-	: _code(code), _desc(errorToString(code)) {
+	: _code(code), _desc(_(errorToString(code))) {
 }
 
 Error::Error(ErrorCode code, const String &desc)
-	: _code(code), _desc(errorToString(code) + " (" + desc + ")") {
+	: _code(code), _desc(_(errorToString(code)) + USTR(" (") + desc.decode(Common::kLatin1) + USTR(")")) {
+}
+
+Error::Error(ErrorCode code, const U32String &desc)
+	: _code(code), _desc(_(errorToString(code)) + USTR(" (") + desc + USTR(")")) {
 }
 
 

@@ -205,7 +205,7 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 
 				delete in;
 
-				saveList.push_back(SaveStateDescriptor(slotNr, description));
+				saveList.push_back(SaveStateDescriptor(slotNr, Common::U32String(description, Common::kLatin1)));
 			}
 		}
 	}
@@ -248,11 +248,11 @@ SaveStateDescriptor AgiMetaEngine::querySaveMetaInfos(const char *target, int sl
 			// broken description, ignore it
 			delete in;
 
-			SaveStateDescriptor descriptor(slotNr, "[broken saved game]");
+			SaveStateDescriptor descriptor(slotNr, USTR("[broken saved game]"));
 			return descriptor;
 		}
 
-		SaveStateDescriptor descriptor(slotNr, description);
+		SaveStateDescriptor descriptor(slotNr, Common::U32String(description, Common::kLatin1));
 
 		// Do not allow save slot 0 (used for auto-saving) to be deleted or
 		// overwritten.

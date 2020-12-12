@@ -422,12 +422,12 @@ private:
 			saveDescs[persistent->_currentRoomId],
 			heroNameUTF8.c_str());
 		// UTF-8
-		Common::String desc = _typedSlotName.empty() ? descPos
-		    : _typedSlotName + " (" + descPos + ")";
+		Common::String desc = (_typedSlotName.empty() ? descPos
+				       : _typedSlotName.encode(Common::kUtf8)) + " (" + descPos + ")";
 
 		persistent->_slotDescription = _typedSlotName;
 		Common::Error res = g_vm->saveGameState(slot, desc);
-		debug("%d, %s->[%d, %s]", slot, desc.c_str(), res.getCode(), res.getDesc().c_str());
+		debug("%d, %s->[%d, %s]", slot, desc.c_str(), res.getCode(), res.getDesc().encode(Common::kUtf8).c_str());
 		_savesLoaded = false; // Invalidate cache
 		switch (_saveVariant) {
 		case kSaveFromMainMenu:
@@ -517,7 +517,7 @@ private:
 		for (int i = 0; i < 6 && _showPos + i < (int) _userNames.size(); i++) {
 			Common::U32String name = _userNames[_showPos + i];
 			if (name == "")
-				name = "No name";
+				name = USTR("No name");
 			room->renderString("largeascii", name,
 					   Common::Point(150, 134 + 36 * i), 4000, 0,
 					   Common::String::format("username%d", i));
@@ -625,7 +625,7 @@ private:
 		_selectedSave = -1;
 		_showPos = 0;
 
-		_typedSlotName = "";
+		_typedSlotName = USTR("");
 
 		room->selectFrame("saveas", kTitleZ, 0);
 		room->selectFrame(LayerId("thumbnails", 0, "save"), 5000,

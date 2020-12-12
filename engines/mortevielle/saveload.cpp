@@ -274,7 +274,7 @@ SaveStateList SavegameManager::listSaves(const Common::String &target) {
 
 			if (validFlag)
 				// Got a valid savegame
-				saveList.push_back(SaveStateDescriptor(slotNumber, saveDescription));
+				saveList.push_back(SaveStateDescriptor(slotNumber, Common::U32String(saveDescription, Common::kLatin1)));
 
 			delete in;
 		}
@@ -303,7 +303,7 @@ SaveStateDescriptor SavegameManager::querySaveMetaInfos(const Common::String &fi
 			// Original savegame perhaps?
 			delete f;
 
-			SaveStateDescriptor desc(slot, Common::String::format("Savegame - %03d", slot));
+			SaveStateDescriptor desc(slot, Common::String::format("Savegame - %03d", slot).decode(Common::kLatin1));
 			desc.setDeletableFlag(slot != 0);
 			desc.setWriteProtectedFlag(slot == 0);
 			return desc;
@@ -317,7 +317,7 @@ SaveStateDescriptor SavegameManager::querySaveMetaInfos(const Common::String &fi
 			delete f;
 
 			// Create the return descriptor
-			SaveStateDescriptor desc(slot, header.saveName);
+			SaveStateDescriptor desc(slot, Common::U32String(header.saveName, Common::kLatin1));
 			desc.setDeletableFlag(true);
 			desc.setWriteProtectedFlag(false);
 			desc.setThumbnail(header.thumbnail);

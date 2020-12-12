@@ -502,7 +502,7 @@ void Script::savegame(uint slot) {
 			save[i] = newchar;
 		}
 	}
-	_saveNames[slot] = save;
+	_saveNames[slot] = Common::U32String(save, Common::kLatin1);
 }
 
 void Script::printString(Graphics::Surface *surface, const char *str) {
@@ -1453,7 +1453,7 @@ void Script::o_hotspot_slot() {
 		// Clear the top bar
 		gamescreen->fillRect(topbar, 0);
 
-		printString(gamescreen, _saveNames[slot].c_str());
+		printString(gamescreen, _saveNames[slot].legacyEncode().c_str());
 
 		_vm->_system->unlockScreen();
 
@@ -1482,7 +1482,7 @@ void Script::o_checkvalidsaves() {
 	// Reset the array of valid saves and the savegame names cache
 	for (int i = 0; i < MAX_SAVES; i++) {
 		setVariable(i, 0);
-		_saveNames[i] = "E M P T Y";
+		_saveNames[i] = USTR("E M P T Y");
 	}
 
 	// Get the list of savefiles

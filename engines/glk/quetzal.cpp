@@ -145,7 +145,7 @@ bool QuetzalReader::getSavegameDescription(Common::SeekableReadStream *rs, Commo
 		}
 	}
 
-	saveName = _("Untitled Savegame");
+	saveName = _("Untitled Savegame").encode(Common::kUtf8);
 	return true;
 }
 
@@ -159,7 +159,7 @@ bool QuetzalReader::getSavegameMetaInfo(Common::SeekableReadStream *rs, SaveStat
 	for (Iterator it = r.begin(); it != r.end(); ++it) {
 		if ((*it)._id == ID_ANNO) {
 			Common::SeekableReadStream *s = it.getStream();
-			ssd.setDescription(readString(s));
+			ssd.setDescription(readString(s).decode(Common::kUtf8));
 			delete s;
 
 		} else if ((*it)._id == ID_SCVM) {

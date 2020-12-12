@@ -172,7 +172,6 @@ public:
 	bool hasTooltip() const { return !_tooltip.empty(); }
 	const Common::U32String &getTooltip() const { return _tooltip; }
 	void setTooltip(const Common::U32String &tooltip) { _tooltip = tooltip; }
-	void setTooltip(const Common::String &tooltip) { _tooltip = Common::U32String(tooltip); }
 
 	virtual bool containsWidget(Widget *) const { return false; }
 
@@ -233,7 +232,6 @@ public:
 	uint32 getCmd() const				{ return _cmd; }
 
 	void setLabel(const Common::U32String &label);
-	void setLabel(const Common::String &label);
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;

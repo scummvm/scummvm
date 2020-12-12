@@ -87,7 +87,7 @@ SaveStateList BbvsMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
 				if (Bbvs::BbvsEngine::readSaveHeader(in, header) == Bbvs::BbvsEngine::kRSHENoError) {
-					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
+					saveList.push_back(SaveStateDescriptor(slotNum, Common::U32String(header.description, Common::kLatin1)));
 				}
 				delete in;
 			}
@@ -107,7 +107,7 @@ SaveStateDescriptor BbvsMetaEngine::querySaveMetaInfos(const char *target, int s
 		error = Bbvs::BbvsEngine::readSaveHeader(in, header, false);
 		delete in;
 		if (error == Bbvs::BbvsEngine::kRSHENoError) {
-			SaveStateDescriptor desc(slot, header.description);
+			SaveStateDescriptor desc(slot, Common::U32String(header.description, Common::kLatin1));
 			// Slot 0 is used for the "Continue" save
 			desc.setDeletableFlag(slot != 0);
 			desc.setWriteProtectedFlag(slot == 0);

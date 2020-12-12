@@ -276,7 +276,7 @@ bool SavesManager::saveGame() {
 	} else {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 		int slotNum = dialog->runModalWithCurrentTarget();
-		Common::String saveName = dialog->getResultString();
+		Common::String saveName = dialog->getResultString().legacyEncode();
 		delete dialog;
 
 		if (slotNum != -1)
@@ -287,7 +287,7 @@ bool SavesManager::saveGame() {
 }
 
 void SavesManager::doAutosave() {
-	if (saveGameState(kAutoSaveSlot, _("Autosave")).getCode() != Common::kNoError)
+	if (saveGameState(kAutoSaveSlot, _("Autosave").legacyEncode()).getCode() != Common::kNoError)
 		g_vm->GUIError(_("Failed to autosave"));
 }
 

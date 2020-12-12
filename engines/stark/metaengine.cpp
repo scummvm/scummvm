@@ -66,7 +66,7 @@ public:
 				description = stream.readString();
 			}
 
-			saveList.push_back(SaveStateDescriptor(slot, description));
+			saveList.push_back(SaveStateDescriptor(slot, Common::U32String(description, Common::kLatin1)));
 		}
 
 		Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
@@ -90,7 +90,7 @@ public:
 			return descriptor;
 		}
 
-		descriptor.setDescription(metadata.description);
+		descriptor.setDescription(metadata.description.decode(Common::kUtf8));
 
 		if (metadata.version >= 9) {
 			Graphics::Surface *thumb = metadata.readGameScreenThumbnail(save);

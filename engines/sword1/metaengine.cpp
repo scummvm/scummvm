@@ -88,7 +88,7 @@ SaveStateList SwordMetaEngine::listSaves(const char *target) const {
 			if (in) {
 				in->readUint32LE(); // header
 				in->read(saveName, 40);
-				saveList.push_back(SaveStateDescriptor(slotNum, saveName));
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::U32String(saveName, Common::kLatin1)));
 				delete in;
 			}
 		}
@@ -118,7 +118,7 @@ SaveStateDescriptor SwordMetaEngine::querySaveMetaInfos(const char *target, int 
 		in->read(name, sizeof(name));
 		in->read(&versionSave, 1);      // version
 
-		SaveStateDescriptor desc(slot, name);
+		SaveStateDescriptor desc(slot, Common::U32String(name, Common::kLatin1));
 
 		if (versionSave < 2) // These older version of the savegames used a flag to signal presence of thumbnail
 			in->skip(1);

@@ -69,7 +69,7 @@ public:
 	 * @param slot The slot number (must be >= 0).
 	 * @return The slot description.
 	 */
-	Common::String createDefaultSaveDescription(const int slot) const;
+	Common::U32String createDefaultSaveDescription(const int slot) const;
 };
 
 } // End of namespace GUI

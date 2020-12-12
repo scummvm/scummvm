@@ -85,7 +85,7 @@ bool Alan2::initialize() {
 	// Open up the text file
 	txtfil = new Common::File();
 	if (!txtfil->open(Common::String::format("%s.dat", _advName.c_str()))) {
-		GUIErrorMessage("Could not open adventure text data file");
+		GUIErrorMessage(USTR("Could not open adventure text data file"));
 		delete txtfil;
 		return false;
 	}

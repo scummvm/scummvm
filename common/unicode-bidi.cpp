@@ -34,7 +34,7 @@ UnicodeBiDiText::UnicodeBiDiText(const Common::U32String &str) : logical(str), _
 	initWithU32String(str);
 }
 
-UnicodeBiDiText::UnicodeBiDiText(const Common::String &str, const Common::CodePage page) : logical(str), _log_to_vis_index(NULL), _vis_to_log_index(NULL) {
+UnicodeBiDiText::UnicodeBiDiText(const Common::String &str, const Common::CodePage page) : logical(str.decode(page)), _log_to_vis_index(NULL), _vis_to_log_index(NULL) {
 	initWithU32String(str.decode(page));
 }
 

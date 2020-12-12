@@ -145,14 +145,14 @@ EditGameDialog::EditGameDialog(const String &domain)
 		new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"), _("Short game identifier used for referring to saved games and running the game from the command line"));
 	else
 		new StaticTextWidget(tab, "GameOptions_Game.Id", _c("ID:", "lowres"), _("Short game identifier used for referring to saved games and running the game from the command line"));
-	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain, _("Short game identifier used for referring to saved games and running the game from the command line"));
+	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain.decode(Common::kLatin1), _("Short game identifier used for referring to saved games and running the game from the command line"));
 
 	// GUI:  Label & edit widget for the description
 	if (g_system->getOverlayWidth() > 320)
 		new StaticTextWidget(tab, "GameOptions_Game.Name", _("Name:"), _("Full title of the game"));
 	else
 		new StaticTextWidget(tab, "GameOptions_Game.Name", _c("Name:", "lowres"), _("Full title of the game"));
-	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description, _("Full title of the game"));
+	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description.decode(Common::kLatin1), _("Full title of the game"));
 
 	// Language popup
 	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", _("Language:"), _("Language of the game. This will not turn your Spanish game version into English"));
@@ -330,14 +330,14 @@ EditGameDialog::EditGameDialog(const String &domain)
 		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), Common::U32String(), kCmdGameBrowser);
 	else
 		new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _c("Game Path:", "lowres"), Common::U32String(), kCmdGameBrowser);
-	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
+	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath.decode(Common::kLatin1));
 
 	// GUI:  Button + Label for the additional path
 	if (g_system->getOverlayWidth() > 320)
 		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), _("Specifies path to additional data used by the game"), kCmdExtraBrowser);
 	else
 		new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _c("Extra Path:", "lowres"), _("Specifies path to additional data used by the game"), kCmdExtraBrowser);
-	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath, _("Specifies path to additional data used by the game"));
+	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath.decode(Common::kLatin1), _("Specifies path to additional data used by the game"));
 
 	_extraPathClearButton = addClearButton(tab, "GameOptions_Paths.ExtraPathClearButton", kCmdExtraPathClear);
 
@@ -346,7 +346,7 @@ EditGameDialog::EditGameDialog(const String &domain)
 		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _("Save Path:"), _("Specifies where your saved games are put"), kCmdSaveBrowser);
 	else
 		new ButtonWidget(tab, "GameOptions_Paths.Savepath", _c("Save Path:", "lowres"), _("Specifies where your saved games are put"), kCmdSaveBrowser);
-	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath, _("Specifies where your saved games are put"));
+	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath.decode(Common::kLatin1), _("Specifies where your saved games are put"));
 
 	_savePathClearButton = addClearButton(tab, "GameOptions_Paths.SavePathClearButton", kCmdSavePathClear);
 
@@ -463,7 +463,7 @@ void EditGameDialog::open() {
 }
 
 void EditGameDialog::apply() {
-	ConfMan.set("description", _descriptionWidget->getEditString(), _domain);
+	ConfMan.set("description", _descriptionWidget->getEditString().legacyEncode(), _domain);
 
 	Common::Language lang = (Common::Language)_langPopUp->getSelectedTag();
 	if (lang < 0)
@@ -473,17 +473,17 @@ void EditGameDialog::apply() {
 
 	U32String gamePath(_gamePathWidget->getLabel());
 	if (!gamePath.empty())
-		ConfMan.set("path", gamePath, _domain);
+		ConfMan.set("path", gamePath.legacyEncode(), _domain);
 
 	U32String extraPath(_extraPathWidget->getLabel());
 	if (!extraPath.empty() && (extraPath != _c("None", "path")))
-		ConfMan.set("extrapath", extraPath, _domain);
+		ConfMan.set("extrapath", extraPath.legacyEncode(), _domain);
 	else
 		ConfMan.removeKey("extrapath", _domain);
 
 	U32String savePath(_savePathWidget->getLabel());
 	if (!savePath.empty() && (savePath != _("Default")))
-		ConfMan.set("savepath", savePath, _domain);
+		ConfMan.set("savepath", savePath.legacyEncode(), _domain);
 	else
 		ConfMan.removeKey("savepath", _domain);
 
@@ -536,7 +536,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		if (browser.runModal() > 0) {
 			// User made this choice...
 			Common::FSNode file(browser.getResult());
-			_soundFont->setLabel(file.getPath());
+			_soundFont->setLabel(file.getPath().decode(Common::kLatin1));
 
 			if (!file.getPath().empty() && (file.getPath() != Common::convertFromU32String(_c("None", "path"))))
 				_soundFontClearButton->setEnabled(true);
@@ -560,7 +560,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 			// done with optional specific gameid to pluginmgr detectgames?
 			// FSList files = dir.listDir(FSNode::kListFilesOnly);
 
-			_gamePathWidget->setLabel(dir.getPath());
+			_gamePathWidget->setLabel(dir.getPath().decode(Common::kLatin1));
 			g_gui.scheduleTopDialogRedraw();
 		}
 		g_gui.scheduleTopDialogRedraw();
@@ -574,7 +574,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
-			_extraPathWidget->setLabel(dir.getPath());
+			_extraPathWidget->setLabel(dir.getPath().decode(Common::kLatin1));
 			g_gui.scheduleTopDialogRedraw();
 		}
 		g_gui.scheduleTopDialogRedraw();
@@ -587,7 +587,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
-			_savePathWidget->setLabel(dir.getPath());
+			_savePathWidget->setLabel(dir.getPath().decode(Common::kLatin1));
 #if defined(USE_CLOUD) && defined(USE_LIBCURL)
 			MessageDialog warningMessage(_("Saved games sync feature doesn't work with non-default directories. If you want your saved games to sync, use default directory."));
 			warningMessage.runModal();

@@ -56,7 +56,7 @@ public:
 
 		SaveStateList saveList;
 		for (uint32 i = 0; i < filenames.size(); i++)
-			saveList.push_back(SaveStateDescriptor(i, filenames[i]));
+			saveList.push_back(SaveStateDescriptor(i, filenames[i].decode(Common::kLatin1)));
 
 		return saveList;
 	}
@@ -83,7 +83,7 @@ public:
 		}
 
 		// Open save
-		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(saveInfos.getDescription());
+		Common::InSaveFile *saveFile = g_system->getSavefileManager()->openForLoading(saveInfos.getDescription().encode(Common::kUtf8));
 		if (!saveFile) {
 			warning("Unable to open file %s for reading, slot %d", saveInfos.getDescription().encode().c_str(), slot);
 			return SaveStateDescriptor();
@@ -110,7 +110,7 @@ public:
 		}
 
 		if (data.saveDescription != "") {
-			saveInfos.setDescription(data.saveDescription);
+			saveInfos.setDescription(data.saveDescription.decode(Common::kUtf8));
 		}
 
 		if (s.getVersion() >= 150) {
@@ -124,7 +124,7 @@ public:
 
 	void removeSaveState(const char *target, int slot) const override {
 		SaveStateDescriptor saveInfos = getSaveDescription(target, slot);
-		g_system->getSavefileManager()->removeSavefile(saveInfos.getDescription());
+		g_system->getSavefileManager()->removeSavefile(saveInfos.getDescription().encode(Common::kUtf8));
 	}
 
 	int getMaximumSaveSlot() const override {

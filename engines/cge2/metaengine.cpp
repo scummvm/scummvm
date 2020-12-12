@@ -94,11 +94,11 @@ SaveStateList CGE2MetaEngine::listSaves(const char *target) const {
 				if (!strncmp(buffer, kSavegameStr, kSavegameStrSize + 1)) {
 					// Valid savegame
 					if (CGE2::CGE2Engine::readSavegameHeader(file, header)) {
-						saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
+						saveList.push_back(SaveStateDescriptor(slotNum, Common::U32String(header.saveName, Common::kLatin1)));
 					}
 				} else {
 					// Must be an original format savegame
-					saveList.push_back(SaveStateDescriptor(slotNum, "Unknown"));
+					saveList.push_back(SaveStateDescriptor(slotNum, USTR("Unknown")));
 				}
 
 				delete file;
@@ -128,11 +128,11 @@ SaveStateDescriptor CGE2MetaEngine::querySaveMetaInfos(const char *target, int s
 
 		if (!hasHeader) {
 			// Original savegame perhaps?
-			SaveStateDescriptor desc(slot, "Unknown");
+			SaveStateDescriptor desc(slot, USTR("Unknown"));
 			return desc;
 		} else {
 			// Create the return descriptor
-			SaveStateDescriptor desc(slot, header.saveName);
+			SaveStateDescriptor desc(slot, Common::U32String(header.saveName, Common::kLatin1));
 			desc.setThumbnail(header.thumbnail);
 			desc.setSaveDate(header.saveYear, header.saveMonth, header.saveDay);
 			desc.setSaveTime(header.saveHour, header.saveMinutes);

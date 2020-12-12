@@ -759,15 +759,15 @@ int AgiEngine::scummVMSaveLoadDialog(bool isSave) {
 		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 
 		slot = dialog->runModalWithCurrentTarget();
-		desc = dialog->getResultString();
+		desc = dialog->getResultString().legacyEncode();
 
 		if (desc.empty()) {
 			// create our own description for the saved game, the user didnt enter it
-			desc = dialog->createDefaultSaveDescription(slot);
+			desc = dialog->createDefaultSaveDescription(slot).legacyEncode();
 		}
 
 		if (desc.size() > 28)
-			desc = Common::String(desc.c_str(), 28);
+			desc = desc.substr(0, 28);
 	} else {
 		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		slot = dialog->runModalWithCurrentTarget();

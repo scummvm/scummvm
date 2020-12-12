@@ -431,7 +431,7 @@ const Common::U32String InfoDialog::queryResString(int stringno) {
 	const byte *result;
 
 	if (stringno == 0)
-		return String();
+		return Common::U32String();
 
 	if (_vm->_game.heversion >= 80)
 		return _(string_map_table_v6[stringno - 1].string);
@@ -635,7 +635,7 @@ void SubtitleSettingsDialog::cycleValue() {
 }
 
 Indy3IQPointsDialog::Indy3IQPointsDialog(ScummEngine *scumm, char* text)
-	: InfoDialog(scumm, Common::U32String(text)) {
+	: InfoDialog(scumm, Common::U32String(text, Common::kLatin1)) {
 }
 
 void Indy3IQPointsDialog::handleKeyDown(Common::KeyState state) {
@@ -646,7 +646,7 @@ void Indy3IQPointsDialog::handleKeyDown(Common::KeyState state) {
 }
 
 DebugInputDialog::DebugInputDialog(ScummEngine *scumm, char* text)
-	: InfoDialog(scumm, U32String(text)) {
+	: InfoDialog(scumm, U32String(text, Common::kLatin1)) {
 	mainText = text;
 	done = 0;
 }
@@ -655,7 +655,7 @@ void DebugInputDialog::handleKeyDown(Common::KeyState state) {
 	if (state.keycode == Common::KEYCODE_BACKSPACE && buffer.size() > 0) {
 		buffer.deleteLastChar();
 		Common::String total = mainText + ' ' + buffer;
-		setInfoText(total);
+		setInfoText(total.decode(Common::kLatin1));
 		g_gui.scheduleTopDialogRedraw();
 		reflowLayout();
 	} else if (state.keycode == Common::KEYCODE_RETURN) {
@@ -667,7 +667,7 @@ void DebugInputDialog::handleKeyDown(Common::KeyState state) {
 		Common::String total = mainText + ' ' + buffer;
 		g_gui.scheduleTopDialogRedraw();
 		reflowLayout();
-		setInfoText(total);
+		setInfoText(total.decode(Common::kLatin1));
 	}
 }
 

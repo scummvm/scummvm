@@ -409,7 +409,7 @@ protected:
 	void versionDialog();
 
 public:
-	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
+	char displayMessage(const Common::U32String &altButton, const Common::U32String &message);
 
 protected:
 	byte _fastMode;

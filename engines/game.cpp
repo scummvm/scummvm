@@ -175,11 +175,11 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 	const char *reportEngineHeader = _s("Matched game IDs for the %s engine:");
 
 	Common::U32String report = Common::U32String::format(
-			translate ? _(reportStart) : Common::U32String(reportStart),
+			translate ? _(reportStart) : Common::U32String(reportStart, Common::kLatin1),
 			fullPath ? detectedGames[0].path.c_str() : detectedGames[0].shortPath.c_str(),
 			"https://bugs.scummvm.org/"
 	);
-	report += Common::U32String("\n");
+	report += USTR("\n");
 
 	FilePropertiesMap matchedFiles;
 
@@ -193,21 +193,21 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 			currentEngineId = game.engineId;
 
 			// If the engine is not the same as for the previous entry, print an engine line header
-			report += Common::U32String("\n");
+			report += USTR("\n");
 			report += Common::U32String::format(
-					translate ? _(reportEngineHeader) : Common::U32String(reportEngineHeader),
+				translate ? _(reportEngineHeader) : Common::U32String(reportEngineHeader, Common::kLatin1),
 					game.engineId.c_str()
 			);
-			report += Common::U32String(" ");
+			report += USTR(" ");
 
 		} else {
-			report += Common::U32String(", ");
+			report += USTR(", ");
 		}
 
 		// Add the gameId to the list of matched games for the engine
 		// TODO: Use the gameId here instead of the preferred target.
 		// This is currently impossible due to the AD singleId feature losing the information.
-		report += game.preferredTarget;
+		report += game.preferredTarget.decode(Common::kLatin1);
 
 		// Consolidate matched files across all engines and detection entries
 		for (FilePropertiesMap::const_iterator it = game.matchedFiles.begin(); it != game.matchedFiles.end(); it++) {
@@ -219,12 +219,12 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 		report.wordWrap(wordwrapAt);
 	}
 
-	report += Common::U32String("\n\n");
+	report += USTR("\n\n");
 
 	for (FilePropertiesMap::const_iterator file = matchedFiles.begin(); file != matchedFiles.end(); ++file)
-		report += Common::String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
+		report += Common::U32String::format("  {\"%s\", 0, \"%s\", %d},\n", file->_key.c_str(), file->_value.md5.c_str(), file->_value.size);
 
-	report += Common::U32String("\n");
+	report += USTR("\n");
 
 	return report;
 }

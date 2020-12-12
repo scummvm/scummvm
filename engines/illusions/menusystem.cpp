@@ -697,7 +697,7 @@ MenuActionSaveGame::MenuActionSaveGame(BaseMenuSystem *menuSystem, uint choiceIn
 
 void MenuActionSaveGame::execute() {
 	GUI::SaveLoadChooser *dialog;
-	Common::String desc;
+	Common::U32String desc;
 	int slot;
 
 	dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
@@ -708,7 +708,7 @@ void MenuActionSaveGame::execute() {
 
 	if (slot >= 0) {
 		_menuSystem->setSavegameSlotNum(slot);
-		_menuSystem->setSavegameDescription(desc);
+		_menuSystem->setSavegameDescription(desc.encode(Common::kUtf8));
 		_menuSystem->selectMenuChoiceIndex(_choiceIndex);
 	}
 }

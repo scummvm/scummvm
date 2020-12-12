@@ -92,7 +92,7 @@ SaveStateList DreamWebMetaEngine::listSaves(const char *target) const {
 		delete stream;
 
 		int slotNum = atoi(file.c_str() + file.size() - 2);
-		SaveStateDescriptor sd(slotNum, name);
+		SaveStateDescriptor sd(slotNum, Common::U32String(name, Common::kLatin1));
 		saveList.push_back(sd);
 	}
 
@@ -123,7 +123,7 @@ SaveStateDescriptor DreamWebMetaEngine::querySaveMetaInfos(const char *target, i
 		for (i = 0; i < descSize; i++)
 			saveName += (char)in->readByte();
 
-		SaveStateDescriptor desc(slot, saveName);
+		SaveStateDescriptor desc(slot, Common::U32String(saveName, Common::kLatin1));
 
 		// Check if there is a ScummVM data block
 		if (header.len(6) == SCUMMVM_BLOCK_MAGIC_SIZE) {

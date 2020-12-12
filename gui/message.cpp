@@ -107,12 +107,6 @@ MessageDialog::MessageDialog(const Common::U32String &message, const Common::U32
 	init(message, defaultButton, altButton, alignment, url);
 }
 
-MessageDialog::MessageDialog(const Common::String &message, const Common::String &defaultButton, const Common::String &altButton, Graphics::TextAlign alignment, const char *url)
-	: Dialog(30, 20, 260, 124) {
-
-	init(Common::U32String(message), Common::U32String(defaultButton), Common::U32String(altButton), alignment, url);
-}
-
 void MessageDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	// FIXME: It's a really bad thing that we use two arbitrary constants
 	if (cmd == kOkCmd) {
@@ -146,10 +140,6 @@ void TimedMessageDialog::handleTickle() {
 
 MessageDialogWithURL::MessageDialogWithURL(const Common::U32String &message, const char *url, const Common::U32String &defaultButton, Graphics::TextAlign alignment)
 	: MessageDialog(message, defaultButton, _("Open URL"), alignment, url) {
-}
-
-MessageDialogWithURL::MessageDialogWithURL(const Common::String &message, const char *url, const char *defaultButton, Graphics::TextAlign alignment)
-		: MessageDialog(Common::U32String(message), Common::U32String(defaultButton), _("Open URL"), alignment, url) {
 }
 
 

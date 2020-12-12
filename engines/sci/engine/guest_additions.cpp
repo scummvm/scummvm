@@ -705,9 +705,9 @@ int GuestAdditions::runSaveRestore(const bool isSave, Common::String &outDescrip
 		GUI::SaveLoadChooser dialog(title, action, isSave);
 		saveId = dialog.runModalWithCurrentTarget();
 		if (saveId != -1) {
-			outDescription = dialog.getResultString();
+			outDescription = dialog.getResultString().legacyEncode();
 			if (outDescription.empty()) {
-				outDescription = dialog.createDefaultSaveDescription(saveId - 1);
+				outDescription = dialog.createDefaultSaveDescription(saveId - 1).legacyEncode();
 			}
 		}
 	}

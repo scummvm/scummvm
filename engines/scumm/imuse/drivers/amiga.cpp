@@ -654,7 +654,7 @@ int IMuseDriver_Amiga::open() {
 		Common::U32String message = _("This AMIGA version is missing (at least) the following file(s):\n\n");
 		for (int i = 0; i < 11; ++i) {
 			if (_missingFiles & (1 << i))
-				message += Common::String::format("AMIGA%d.IMS\n", i + 1);
+				message += Common::U32String::format("AMIGA%d.IMS\n", i + 1);
 		}
 		message += _("\nPlease copy these file(s) into the game data directory.\n\n");
 		::GUI::displayErrorDialog(message);

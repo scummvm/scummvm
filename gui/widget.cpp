@@ -268,7 +268,7 @@ uint8 Widget::parseHotkey(const Common::U32String &label) {
 }
 
 Common::U32String Widget::cleanupHotkey(const Common::U32String &label) {
-	Common::U32String res("");
+	Common::U32String res;
 
 	for (Common::U32String::const_iterator itr = label.begin(); itr != label.end(); itr++) {
 		if (*itr != '~') {
@@ -312,7 +312,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, 
 }
 
 void StaticTextWidget::setValue(int value) {
-	_label = Common::String::format("%d", value);
+	_label = Common::U32String::format("%d", value);
 }
 
 void StaticTextWidget::setLabel(const Common::U32String &label) {
@@ -400,10 +400,6 @@ void ButtonWidget::setLabel(const Common::U32String &label) {
 	StaticTextWidget::setLabel(cleanupHotkey(label));
 }
 
-void ButtonWidget::setLabel(const Common::String &label) {
-	ButtonWidget::setLabel(Common::U32String(label));
-}
-
 ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x, int y, int w, int h) {
 	ButtonWidget *button;
 
@@ -418,9 +414,9 @@ ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32
 	} else
 #endif
 		if (!name.empty())
-			button = new ButtonWidget(boss, name, Common::U32String("C"), _("Clear value"), cmd);
+			button = new ButtonWidget(boss, name, USTR("C"), _("Clear value"), cmd);
 		else
-			button = new ButtonWidget(boss, x, y, w, h, Common::U32String("C"), _("Clear value"), cmd);
+			button = new ButtonWidget(boss, x, y, w, h, USTR("C"), _("Clear value"), cmd);
 
 	return button;
 }

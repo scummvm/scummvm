@@ -68,7 +68,7 @@ public:
 				Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 				if (in) {
 					if (Tucker::TuckerEngine::readSavegameHeader(in, header) == Tucker::TuckerEngine::kSavegameNoError) {
-						saveList.push_back(SaveStateDescriptor(slot, header.description));
+						saveList.push_back(SaveStateDescriptor(slot, Common::U32String(header.description, Common::kLatin1)));
 					}
 
 					delete in;
@@ -109,7 +109,7 @@ public:
 			return SaveStateDescriptor();
 		}
 
-		SaveStateDescriptor desc(slot, header.description);
+		SaveStateDescriptor desc(slot, Common::U32String(header.description, Common::kLatin1));
 
 		if (slot == Tucker::kAutoSaveSlot) {
 			bool autosaveAllowed = Tucker::TuckerEngine::isAutosaveAllowed(target);

@@ -95,7 +95,7 @@ WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeade
 	char ch;
 	while ((ch = (char)in->readByte()) != '\0')
 		saveName += ch;
-	header._descr.setDescription(saveName);
+	header._descr.setDescription(saveName.decode(Common::kUtf8));
 
 	// Get the thumbnail
 	Graphics::Surface *thumbnail = nullptr;
@@ -243,14 +243,14 @@ bool LabEngine::saveRestoreGame() {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 		int slot = dialog->runModalWithCurrentTarget();
 		if (slot >= 0) {
-			Common::String desc = dialog->getResultString();
+			Common::U32String desc = dialog->getResultString();
 
 			if (desc.empty()) {
 				// create our own description for the saved game, the user didn't enter it
 				desc = dialog->createDefaultSaveDescription(slot);
 			}
 
-			isOK = saveGame(slot, desc);
+			isOK = saveGame(slot, desc.encode(Common::kUtf8));
 		}
 		delete dialog;
 	} else {

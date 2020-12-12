@@ -126,7 +126,7 @@ SaveStateList AvalancheMetaEngine::listSaves(const char *target) const {
 				file->read(name, nameSize);
 				name[nameSize] = 0;
 
-				saveList.push_back(SaveStateDescriptor(slotNum, name));
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::U32String(name, Common::kLatin1)));
 				delete[] name;
 				delete file;
 			}
@@ -172,7 +172,7 @@ SaveStateDescriptor AvalancheMetaEngine::querySaveMetaInfos(const char *target, 
 			description += actChar;
 		}
 
-		SaveStateDescriptor desc(slot, description);
+		SaveStateDescriptor desc(slot, description.decode(Common::kLatin1));
 
 		Graphics::Surface *thumbnail;
 		if (!Graphics::loadThumbnail(*f, thumbnail)) {

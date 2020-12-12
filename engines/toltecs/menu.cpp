@@ -291,10 +291,10 @@ void MenuSystem::initMenu(MenuID menuID) {
 		} else {
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 			int slot = dialog->runModalWithCurrentTarget();
-			Common::String desc = dialog->getResultString();
+			Common::String desc = dialog->getResultString().legacyEncode();
 			if (desc.empty()) {
 				// Create our own description for the saved game, the user didn't enter one
-				desc = dialog->createDefaultSaveDescription(slot);
+				desc = dialog->createDefaultSaveDescription(slot).legacyEncode();
 			}
 
 			if (slot >= 0)

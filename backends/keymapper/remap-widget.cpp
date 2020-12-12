@@ -224,8 +224,8 @@ void RemapWidget::startRemapping(uint actionIndex) {
 	_remapTimeout = g_system->getMillis() + remapTimeoutDelay;
 	_remapInputWatcher->startWatching();
 
-	_actions[actionIndex].keyButton->setLabel("...");
-	_actions[actionIndex].keyButton->setTooltip("");
+	_actions[actionIndex].keyButton->setLabel(USTR("..."));
+	_actions[actionIndex].keyButton->setTooltip(USTR(""));
 	_actions[actionIndex].keyButton->markAsDirty();
 
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
@@ -296,7 +296,7 @@ void RemapWidget::refreshKeymap() {
 		U32String keysLabel;
 		for (uint j = 0; j < mappedInputs.size(); j++) {
 			if (!keysLabel.empty()) {
-				keysLabel += Common::U32String(", ");
+				keysLabel += USTR(", ");
 			}
 
 			keysLabel += mappedInputs[j].description;
@@ -306,8 +306,8 @@ void RemapWidget::refreshKeymap() {
 			row.keyButton->setLabel(keysLabel);
 			row.keyButton->setTooltip(keysLabel);
 		} else {
-			row.keyButton->setLabel("-");
-			row.keyButton->setTooltip("");
+			row.keyButton->setLabel(USTR("-"));
+			row.keyButton->setTooltip(USTR(""));
 		}
 
 		KeymapTitleRow &keymapTitle = _keymapSeparators[row.keymap];

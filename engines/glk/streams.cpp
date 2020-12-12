@@ -1434,8 +1434,8 @@ frefid_t Streams::createByPrompt(uint usage, FileMode fmode, uint rock) {
 
 			int slot = dialog->runModalWithCurrentTarget();
 			if (slot >= 0) {
-				Common::String desc = dialog->getResultString();
-				return createRef(slot, desc, usage, rock);
+				Common::U32String desc = dialog->getResultString();
+				return createRef(slot, desc.encode(Common::kUtf8), usage, rock);
 			}
 		} else if (fmode == filemode_Read) {
 			// Load a savegame slot

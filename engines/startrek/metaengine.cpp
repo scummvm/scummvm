@@ -118,7 +118,7 @@ SaveStateList StarTrekMetaEngine::listSaves(const char *target) const {
 					strcpy(meta.description, "[broken saved game]");
 				}
 
-				saveList.push_back(SaveStateDescriptor(slotNr, meta.description));
+				saveList.push_back(SaveStateDescriptor(slotNr, Common::U32String(meta.description, Common::kLatin1)));
 			}
 		}
 	}
@@ -157,11 +157,11 @@ SaveStateDescriptor StarTrekMetaEngine::querySaveMetaInfos(const char *target, i
 		}
 		if (descriptionPos >= sizeof(meta.description)) {
 			// broken meta.description, ignore it
-			SaveStateDescriptor descriptor(slotNr, "[broken saved game]");
+			SaveStateDescriptor descriptor(slotNr, USTR("[broken saved game]"));
 			return descriptor;
 		}
 
-		SaveStateDescriptor descriptor(slotNr, meta.description);
+		SaveStateDescriptor descriptor(slotNr, Common::U32String(meta.description, Common::kLatin1));
 
 		// Do not allow save slot 0 (used for auto-saving) to be deleted or
 		// overwritten.

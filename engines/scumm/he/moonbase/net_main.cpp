@@ -61,12 +61,12 @@ int Net::hostGame(char *sessionName, char *userName) {
 		if (addUser(userName, userName)) {
 			return 1;
 		} else {
-			_vm->displayMessage(0, "Error Adding User \"%s\" to Session \"%s\"", userName, sessionName);
+			_vm->displayMessage(Common::U32String(), Common::U32String::format("Error Adding User \"%s\" to Session \"%s\"", userName, sessionName));
 			endSession();
 			closeProvider();
 		}
 	} else {
-		_vm->displayMessage(0, "Error creating session \"%s\"", userName );
+		_vm->displayMessage(Common::U32String(), Common::U32String::format("Error creating session \"%s\"", userName) );
 
 		closeProvider();
 	}

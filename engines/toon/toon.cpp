@@ -3361,7 +3361,7 @@ bool ToonEngine::saveGame(int32 slot, const Common::String &saveGameDesc) {
 	if (slot == -1) {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 		savegameId = dialog->runModalWithCurrentTarget();
-		savegameDescription = dialog->getResultString();
+		savegameDescription = dialog->getResultString().legacyEncode();
 		delete dialog;
 	} else {
 		savegameId = slot;

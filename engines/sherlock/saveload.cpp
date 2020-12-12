@@ -69,7 +69,7 @@ void SaveManager::createSavegameList() {
 	for (uint idx = 0; idx < saveList.size(); ++idx) {
 		int slot = saveList[idx].getSaveSlot();
 		if (slot >= 0 && slot < MAX_SAVEGAME_SLOTS)
-			_savegames[slot] = saveList[idx].getDescription();
+			_savegames[slot] = saveList[idx].getDescription().legacyEncode();
 	}
 
 	// Ensure the names will fit on the screen
@@ -104,7 +104,7 @@ SaveStateList SaveManager::getSavegameList(const Common::String &target) {
 
 			if (in) {
 				if (readSavegameHeader(in, header))
-					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+					saveList.push_back(SaveStateDescriptor(slot, Common::U32String(header._saveName, Common::kLatin1)));
 
 				delete in;
 			}

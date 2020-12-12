@@ -160,7 +160,7 @@ void SciMusic::init() {
 				Common::U32String message = _(
 					"The selected audio driver requires the following file(s):\n\n"
 				);
-				message += Common::U32String(missingFiles);
+				message += Common::U32String(missingFiles, Common::kUtf8);
 				message += _("\n\n"
 					"Some audio drivers (at least for some games) were made\n"
 					"available by Sierra as aftermarket patches and thus might not\n"

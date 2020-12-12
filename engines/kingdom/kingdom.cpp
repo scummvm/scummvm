@@ -738,11 +738,11 @@ Common::String KingdomGame::getSavegameFilename(int slot) {
 void KingdomGame::saveGame() {
 	GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 	int16 savegameId = dialog->runModalWithCurrentTarget();
-	Common::String savegameDescription = dialog->getResultString();
+	Common::U32String savegameDescription = dialog->getResultString();
 	delete dialog;
 	if (savegameId < 0)
 		return; // dialog aborted
-	saveGameState(savegameId, savegameDescription);
+	saveGameState(savegameId, savegameDescription.encode(Common::kUtf8));
 }
 
 void KingdomGame::restoreGame() {

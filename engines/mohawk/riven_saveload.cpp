@@ -136,7 +136,7 @@ SaveStateDescriptor RivenSaveLoad::querySaveMetaInfos(const int slot) {
 	}
 
 	descriptor.setSaveSlot(slot);
-	descriptor.setDescription(metadata.saveDescription);
+	descriptor.setDescription(metadata.saveDescription.decode(Common::kUtf8));
 	descriptor.setPlayTime(metadata.totalPlayTime);
 	descriptor.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
 	descriptor.setSaveTime(metadata.saveHour, metadata.saveMinute);

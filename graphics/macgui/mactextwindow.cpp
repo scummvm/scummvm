@@ -102,10 +102,6 @@ void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macF
 	}
 }
 
-void MacTextWindow::appendText(const Common::String &str, const MacFont *macFont, bool skipAdd) {
-	appendText(Common::U32String(str), macFont, skipAdd);
-}
-
 void MacTextWindow::clearText() {
 	_mactext->clearText();
 
@@ -466,7 +462,7 @@ void MacTextWindow::undrawInput() {
 		_mactext->removeLastLine();
 
 	if (_inputTextHeight)
-		appendText("\n", _font, true);
+		appendText(USTR("\n"), _font, true);
 
 	_inputTextHeight = 0;
 }
@@ -501,10 +497,6 @@ void MacTextWindow::appendInput(const Common::U32String &str) {
 	_inputText += str;
 
 	drawInput();
-}
-
-void MacTextWindow::appendInput(const Common::String &str) {
-	appendInput(Common::U32String(str));
 }
 
 //////////////////

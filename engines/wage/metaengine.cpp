@@ -101,7 +101,7 @@ SaveStateList WageMetaEngine::listSaves(const char *target) const {
 						in->read(saveDesc, 127);
 					}
 				}
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::U32String(saveDesc, Common::kLatin1)));
 				delete in;
 			}
 		}

@@ -59,15 +59,15 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(GUI::ThemeEngine::kImageLogoSmall));
 	} else {
-		GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", Common::U32String("ScummVM"));
+		GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", USTR("ScummVM"));
 		title->setAlign(Graphics::kTextAlignCenter);
 	}
 #else
-	GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", Common::U32String("ScummVM"));
+	GUI::StaticTextWidget *title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", USTR("ScummVM"));
 	title->setAlign(Graphics::kTextAlignCenter);
 #endif
 
-	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", Common::U32String(gScummVMVersionDate));
+	GUI::StaticTextWidget *version = new GUI::StaticTextWidget(this, "GlobalMenu.Version", Common::U32String(gScummVMVersionDate, Common::kLatin1));
 	version->setAlign(Graphics::kTextAlignCenter);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Resume", _("~R~esume"), Common::U32String(), kPlayCmd, 'P');
@@ -186,7 +186,7 @@ void MainMenuDialog::reflowLayout() {
 	} else {
 		GUI::StaticTextWidget *title = (GUI::StaticTextWidget *)findWidget("GlobalMenu.Title");
 		if (!title) {
-			title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", Common::U32String("ScummVM"));
+			title = new GUI::StaticTextWidget(this, "GlobalMenu.Title", USTR("ScummVM"));
 			title->setAlign(Graphics::kTextAlignCenter);
 		}
 
@@ -206,13 +206,13 @@ void MainMenuDialog::save() {
 	int slot = _saveDialog->runModalWithCurrentTarget();
 
 	if (slot >= 0) {
-		Common::String result(_saveDialog->getResultString());
+		Common::U32String result(_saveDialog->getResultString());
 		if (result.empty()) {
 			// If the user was lazy and entered no save name, come up with a default name.
 			result = _saveDialog->createDefaultSaveDescription(slot);
 		}
 
-		Common::Error status = _engine->saveGameState(slot, result);
+		Common::Error status = _engine->saveGameState(slot, result.legacyEncode());
 		if (status.getCode() != Common::kNoError) {
 			Common::U32String failMessage = Common::U32String::format(_("Failed to save game (%s)! "
 				  "Please consult the README for basic information, and for "

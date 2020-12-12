@@ -1622,7 +1622,7 @@ void SceneItem::doAction(int action) {
 			break;
 		}
 
-		GUIErrorMessage(msg);
+		GUIErrorMessage(Common::U32String(msg, Common::kLatin1));
 	}
 }
 
@@ -4436,7 +4436,7 @@ void SceneHandler::dispatch() {
 		// FIXME: Make use of the description string in err to enhance
 		// the error reported to the user.
 		if (err.getCode() != Common::kNoError)
-			GUIErrorMessage(SAVE_ERROR_MSG);
+			GUIErrorMessage(Common::U32String(SAVE_ERROR_MSG, Common::kLatin1));
 	}
 	if (_loadGameSlot != -1) {
 		int priorSceneBeforeLoad = GLOBALS._sceneManager._previousScene;

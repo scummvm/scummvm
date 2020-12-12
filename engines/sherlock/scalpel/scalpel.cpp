@@ -1251,9 +1251,9 @@ void ScalpelEngine::showScummVMSaveDialog() {
 
 	int slot = dialog->runModalWithCurrentTarget();
 	if (slot >= 0) {
-		Common::String desc = dialog->getResultString();
+		Common::U32String desc = dialog->getResultString();
 
-		saveGameState(slot, desc);
+		saveGameState(slot, desc.legacyEncode());
 	}
 
 	delete dialog;

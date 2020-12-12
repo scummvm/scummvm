@@ -300,7 +300,7 @@ SaveStateDescriptor MystGameState::querySaveMetaInfos(int slot) {
 	}
 
 	// Set the save description
-	desc.setDescription(metadata.saveDescription);
+	desc.setDescription(metadata.saveDescription.decode(Common::kUtf8));
 	desc.setSaveDate(metadata.saveYear, metadata.saveMonth, metadata.saveDay);
 	desc.setSaveTime(metadata.saveHour, metadata.saveMinute);
 	desc.setPlayTime(metadata.totalPlayTime);

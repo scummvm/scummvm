@@ -97,12 +97,12 @@ void UnknownGameDialog::rebuild() {
 
 	// Check if we have clipboard functionality and expand the reportTranslated message if needed...
 	if (g_system->hasFeature(OSystem::kFeatureClipboardSupport)) {
-		reportTranslated += Common::U32String("\n");
+		reportTranslated += USTR("\n");
 		reportTranslated += _("Use the button below to copy the required game information into your clipboard.");
 	}
 	// Check if we have support for opening URLs and expand the reportTranslated message if needed...
 	if (g_system->hasFeature(OSystem::kFeatureOpenUrl)) {
-		reportTranslated += Common::U32String("\n");
+		reportTranslated += USTR("\n");
 		reportTranslated += _("You can also directly report your game to the Bug Tracker.");
 	}
 
@@ -133,7 +133,7 @@ Common::String UnknownGameDialog::encodeUrlString(const Common::String &string) 
 }
 
 Common::String UnknownGameDialog::generateBugtrackerURL() {
-	Common::String report = generateUnknownGameReport(_detectedGame, false, false);
+	Common::String report = generateUnknownGameReport(_detectedGame, false, false).legacyEncode();
 	report = encodeUrlString(report);
 
 	Common::String engineId = encodeUrlString(_detectedGame.engineId);

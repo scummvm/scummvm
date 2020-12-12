@@ -76,14 +76,14 @@ void WidgetFiles::showScummVMSaveDialog() {
 
 	int slot = dialog->runModalWithCurrentTarget();
 	if (slot >= 0) {
-		Common::String desc = dialog->getResultString();
+		Common::U32String desc = dialog->getResultString();
 
 		if (desc.empty()) {
 			// create our own description for the saved game, the user didn't enter it
 			desc = dialog->createDefaultSaveDescription(slot);
 		}
 
-		_vm->saveGameState(slot, desc);
+		_vm->saveGameState(slot, desc.legacyEncode());
 	}
 
 	close();

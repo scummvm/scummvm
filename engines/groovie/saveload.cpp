@@ -142,7 +142,7 @@ Common::InSaveFile *SaveLoad::openForLoading(const Common::String &target, int s
 				description += c;
 			}
 		}
-		descriptor->setDescription(description);
+		descriptor->setDescription(description.decode(Common::kUtf8));
 	}
 
 	// Return a substream, skipping the metadata

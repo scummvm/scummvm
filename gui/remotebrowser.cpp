@@ -47,7 +47,7 @@ RemoteBrowserDialog::RemoteBrowserDialog(const Common::U32String &title):
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	new StaticTextWidget(this, "Browser.Headline", title);
-	_currentPath = new StaticTextWidget(this, "Browser.Path", Common::U32String("DUMMY"));
+	_currentPath = new StaticTextWidget(this, "Browser.Path", USTR("DUMMY"));
 
 	_fileList = new ListWidget(this, "Browser.List");
 	_fileList->setNumberingMode(kListNumberingOff);
@@ -140,7 +140,7 @@ void RemoteBrowserDialog::updateListing() {
 		path = "/"; //root
 	if (_navigationLocked)
 		path = "Loading... " + path;
-	_currentPath->setLabel(path);
+	_currentPath->setLabel(path.decode(Common::kLatin1));
 
 	if (!_navigationLocked) {
 		// Populate the ListWidget
@@ -148,10 +148,10 @@ void RemoteBrowserDialog::updateListing() {
 		ListWidget::ColorList colors;
 		for (Common::Array<Cloud::StorageFile>::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 			if (i->isDirectory()) {
-				list.push_back(i->name() + "/");
+				list.push_back(i->name().decode(Common::kLatin1) + USTR("/"));
 				colors.push_back(ThemeEngine::kFontColorNormal);
 			} else {
-				list.push_back(i->name());
+				list.push_back(i->name().decode(Common::kLatin1));
 				colors.push_back(ThemeEngine::kFontColorAlternate);
 			}
 		}

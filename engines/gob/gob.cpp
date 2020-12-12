@@ -81,14 +81,14 @@ public:
 	void handleKeyDown(Common::KeyState state) override;
 
 private:
-	Common::String _message;
+	Common::U32String _message;
 	GUI::StaticTextWidget *_text;
 };
 
 PauseDialog::PauseDialog() : GUI::Dialog(0, 0, 0, 0) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
 
-	_message = "Game paused. Press Ctrl+p again to continue.";
+	_message = USTR("Game paused. Press Ctrl+p again to continue.");
 	_text = new GUI::StaticTextWidget(this, 4, 0, 10, 10,
 			_message, Graphics::kTextAlignCenter);
 }

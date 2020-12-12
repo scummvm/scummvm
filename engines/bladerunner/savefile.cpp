@@ -50,7 +50,7 @@ SaveStateList SaveFileManager::list(const Common::String &target) {
 		readHeader(*saveFile, header);
 
 		int slotNum = atoi(fileName->c_str() + fileName->size() - 3);
-		saveList.push_back(SaveStateDescriptor(slotNum, header._name));
+		saveList.push_back(SaveStateDescriptor(slotNum, Common::U32String(header._name, Common::kLatin1)));
 
 		delete saveFile;
 	}
@@ -75,7 +75,7 @@ SaveStateDescriptor SaveFileManager::queryMetaInfos(const Common::String &target
 	}
 	delete saveFile;
 
-	SaveStateDescriptor desc(slot, header._name);
+	SaveStateDescriptor desc(slot, Common::U32String(header._name, Common::kLatin1));
 	desc.setThumbnail(header._thumbnail);
 	desc.setSaveDate(header._year, header._month, header._day);
 	desc.setSaveTime(header._hour, header._minute);

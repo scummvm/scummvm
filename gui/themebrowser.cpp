@@ -104,7 +104,7 @@ void ThemeBrowser::updateListing() {
 
 	ListWidget::U32StringArray list;
 	for (ThemeDescList::const_iterator i = _themes.begin(); i != _themes.end(); ++i, ++index) {
-		list.push_back(i->name);
+		list.push_back(i->name.decode(Common::kLatin1));
 
 		if (i->id == currentThemeId)
 			currentThemeIndex = index;

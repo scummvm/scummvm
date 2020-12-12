@@ -79,7 +79,7 @@ private:
 	Common::String _savedScriptFile;
 
 	// Save names
-	Common::String _saveNames[MAX_SAVES];
+	Common::U32String _saveNames[MAX_SAVES];
 
 	// Code
 	byte *_code;

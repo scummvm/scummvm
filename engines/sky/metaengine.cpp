@@ -173,7 +173,7 @@ SaveStateList SkyMetaEngine::listSaves(const char *target) const {
 		Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 		if (in) {
 			saveList.push_back(SaveStateDescriptor(slotNum,
-				(slotNum == 0) ? _("Autosave") : Common::U32String(savenames[slotNum - 1])));
+							       (slotNum == 0) ? _("Autosave") : Common::U32String(savenames[slotNum - 1], Common::kLatin1)));
 			delete in;
 		}
 	}

@@ -45,9 +45,9 @@ InputDialog::InputDialog(const Common::String &message, const Common::String &st
 	// down the string into lines, and taking the maximum of their widths.
 	// Using this, and accounting for the space the button(s) need, we can set
 	// the real size of the dialog
-	Common::Array<Common::String> lines;
+	Common::Array<Common::U32String> lines;
 	int lineCount;
-	int maxlineWidth = g_gui.getFont().wordWrapText(message, screenW - 2 * 20, lines);
+	int maxlineWidth = g_gui.getFont().wordWrapText(message.decode(Common::kLatin1), screenW - 2 * 20, lines);
 
 	// Calculate the desired dialog size (maxing out at 300*180 for now)
 	_w = MAX(maxlineWidth, (2 * buttonWidth) + 10) + 20;
@@ -76,16 +76,16 @@ InputDialog::InputDialog(const Common::String &message, const Common::String &st
 	}
 	height += 10;
 	if (_hasTextField) {
-		m_text = new GUI::EditTextWidget(this, 10, height, _w - 20, kLineHeight, Common::U32String(string), Common::U32String("input"));
+		m_text = new GUI::EditTextWidget(this, 10, height, _w - 20, kLineHeight, Common::U32String(string, Common::kLatin1), USTR("input"));
 		height += kLineHeight + 10;
 	}
 
-	new GUI::ButtonWidget(this, 10, height, buttonWidth, buttonHeight, Common::U32String("Ok"), Common::U32String(), GUI::kOKCmd, Common::ASCII_RETURN); // Confirm dialog
-	new GUI::ButtonWidget(this, _w - buttonWidth - 10, height, buttonWidth, buttonHeight, Common::U32String("Cancel"), Common::U32String(), GUI::kCloseCmd, Common::ASCII_ESCAPE);   // Cancel dialog
+	new GUI::ButtonWidget(this, 10, height, buttonWidth, buttonHeight, USTR("Ok"), Common::U32String(), GUI::kOKCmd, Common::ASCII_RETURN); // Confirm dialog
+	new GUI::ButtonWidget(this, _w - buttonWidth - 10, height, buttonWidth, buttonHeight, USTR("Cancel"), Common::U32String(), GUI::kCloseCmd, Common::ASCII_ESCAPE);   // Cancel dialog
 }
 
 Common::String InputDialog::getString() {
-	return m_text->getEditString();
+	return m_text->getEditString().legacyEncode();
 }
 
 void InputDialog::handleKeyDown(Common::KeyState state) {

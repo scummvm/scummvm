@@ -211,8 +211,6 @@ bool ScummEngine::openResourceFile(const Common::String &filename, byte encByte)
 }
 
 void ScummEngine::askForDisk(const char *filename, int disknum) {
-	char buf[128];
-
 	if (_game.version == 8) {
 #ifdef ENABLE_SCUMM_7_8
 		char result;
@@ -220,19 +218,18 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 		_imuseDigital->stopAllSounds();
 
 #ifdef MACOSX
-		sprintf(buf, "Cannot find file: '%s'\nPlease insert disc %d.\nPress OK to retry, Quit to exit", filename, disknum);
+		Common::U32String buf = Common::U32String::format("Cannot find file: '%s'\nPlease insert disc %d.\nPress OK to retry, Quit to exit", filename, disknum);
 #else
-		sprintf(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nPress OK to retry, Quit to exit", filename, disknum, ConfMan.get("path").c_str());
+		Common::U32String buf = Common::U32String::format("Cannot find file: '%s'\nInsert disc %d into drive %s\nPress OK to retry, Quit to exit", filename, disknum, ConfMan.get("path").c_str());
 #endif
 
-		result = displayMessage("Quit", "%s", buf);
+		result = displayMessage(USTR("Quit"), buf);
 		if (!result) {
 			error("Cannot find file: '%s'", filename);
 		}
 #endif
 	} else {
-		sprintf(buf, "Cannot find file: '%s'", filename);
-		InfoDialog dialog(this, Common::U32String(buf));
+		InfoDialog dialog(this, Common::U32String::format("Cannot find file: '%s'", filename));
 		runDialog(dialog);
 		error("Cannot find file: '%s'", filename);
 	}
@@ -288,7 +285,7 @@ void ScummEngine::readIndexFile() {
 	}
 
 	if (checkTryMedia(_fileHandle)) {
-		displayMessage(NULL, "You're trying to run game encrypted by ActiveMark. This is not supported.");
+		displayMessage(Common::U32String(), USTR("You're trying to run game encrypted by ActiveMark. This is not supported."));
 		quitGame();
 
 		return;

@@ -601,7 +601,7 @@ void Game::handleSaveLoad(bool saveFlag, int &saveSlot, Common::String &saveName
 		dialog = new GUI::SaveLoadChooser(_("Load game:"), _("Load"), saveFlag);
 
 	saveSlot = dialog->runModalWithCurrentTarget();
-	saveName = dialog->getResultString();
+	saveName = dialog->getResultString().legacyEncode();
 
 	delete dialog;
 }

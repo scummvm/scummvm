@@ -117,7 +117,7 @@ SaveStateList LilliputMetaEngine::listSaves(const char *target) const {
 				file->read(name, nameSize);
 				name[nameSize] = 0;
 
-				saveList.push_back(SaveStateDescriptor(slotNum, name));
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::U32String(name, Common::kLatin1)));
 				delete file;
 			}
 		}
@@ -147,7 +147,7 @@ SaveStateDescriptor LilliputMetaEngine::querySaveMetaInfos(const char *target, i
 			saveName += curChr;
 		}
 
-		SaveStateDescriptor desc(slot, saveName);
+		SaveStateDescriptor desc(slot, Common::U32String(saveName, Common::kLatin1));
 
 		Graphics::Surface *thumbnail;
 		if (!Graphics::loadThumbnail(*file, thumbnail)) {

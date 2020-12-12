@@ -1243,9 +1243,9 @@ bool MinigameBbAirGuitar::querySaveModifiedDialog() {
 		Original ok button caption: "Yeah, heh, heh, save it!"
 		Original discard button caption: "Who cares?  It sucked!"
 	*/
-	GUI::MessageDialog query("Hey Beavis - you didn't save that last Jam!",
-		"Save it!",
-		"It sucked!");
+	GUI::MessageDialog query(USTR("Hey Beavis - you didn't save that last Jam!"),
+				 USTR("Save it!"),
+				 USTR("It sucked!"));
 	return query.runModal() == GUI::kMessageOK;
 }
 
@@ -1271,7 +1271,7 @@ bool MinigameBbAirGuitar::loadTracks() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::InSaveFile *stream = saveFileMan->openForLoading(filename);
 	if (!loadFromStream(stream)) {
-		Common::String msg = Common::String::format("%s is not a valid Air Guitar file", filename.c_str());
+		Common::U32String msg = Common::U32String::format("%s is not a valid Air Guitar file", filename.c_str());
 		GUI::MessageDialog dialog(msg);
 		dialog.runModal();
 	}

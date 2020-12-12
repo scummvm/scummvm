@@ -3920,7 +3920,7 @@ bool LBMiniGameItem::togglePlaying(bool playing, bool restart) {
 	else
 		error("Unknown minigame '%s'", _desc.c_str());
 
-	GUI::MessageDialog dialog(Common::String::format("The '%s' minigame is not supported yet.", _desc.c_str()));
+	GUI::MessageDialog dialog(Common::U32String::format("The '%s' minigame is not supported yet.", _desc.c_str()));
 	dialog.runModal();
 
 	// Go back to the menu if requested, otherwise go to the requested page

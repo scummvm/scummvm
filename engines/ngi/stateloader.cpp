@@ -182,7 +182,7 @@ void parseSavegameHeader(NGI::FullpipeSavegameHeader &header, SaveStateDescripto
 	desc.setSaveTime(hour, minutes);
 	desc.setPlayTime(header.playtime * 1000);
 
-	desc.setDescription(header.description);
+	desc.setDescription(header.description.decode(Common::kUtf8));
 }
 
 void fillDummyHeader(NGI::FullpipeSavegameHeader &header) {

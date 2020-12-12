@@ -1496,7 +1496,7 @@ void LB::b_alert(int nargs) {
 	warning("b_alert(%s)", alert.c_str());
 
 	if (!debugChannelSet(-1, kDebugFewFramesOnly)) {
-		GUI::MessageDialog dialog(alert.c_str(), "OK");
+		GUI::MessageDialog dialog(alert.decode(Common::kLatin1), USTR("OK"));
 		dialog.runModal();
 	}
 }

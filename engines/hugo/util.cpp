@@ -87,7 +87,7 @@ void reverseByte(byte *data) {
 }
 
 void notifyBox(const Common::String &msg) {
-	notifyBox(Common::U32String(msg));
+	notifyBox(msg.decode(Common::kLatin1));
 }
 
 void notifyBox(const Common::U32String &msg) {
@@ -106,18 +106,18 @@ Common::String promptBox(const Common::String &msg) {
 
 	dialog.runModal();
 
-	return dialog.getEditString();
+	return dialog.getEditString().legacyEncode();
 }
 
 bool yesNoBox(const Common::String &msg) {
-	return yesNoBox(Common::U32String(msg));
+    return yesNoBox(msg.decode(Common::kLatin1));
 }
 
 bool yesNoBox(const Common::U32String &msg) {
 	if (msg.empty())
 		return 0;
 
-	GUI::MessageDialog dialog(msg, Common::U32String("YES"), Common::U32String("NO"));
+	GUI::MessageDialog dialog(msg, USTR("YES"), USTR("NO"));
 	return (dialog.runModal() == GUI::kMessageOK);
 }
 

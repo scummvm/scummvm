@@ -63,15 +63,15 @@ void SaveLoadChooser::selectChooser(const MetaEngine &engine) {
 #endif // !DISABLE_SAVELOADCHOOSER_GRID
 }
 
-Common::String SaveLoadChooser::createDefaultSaveDescription(const int slot) const {
+Common::U32String SaveLoadChooser::createDefaultSaveDescription(const int slot) const {
 #if defined(USE_SAVEGAME_TIMESTAMP)
 	TimeDate curTime;
 	g_system->getTimeAndDate(curTime);
 	curTime.tm_year += 1900; // fixup year
 	curTime.tm_mon++; // fixup month
-	return Common::String::format("%04d-%02d-%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
+	return Common::U32String::format("%04d-%02d-%02d / %02d:%02d:%02d", curTime.tm_year, curTime.tm_mon, curTime.tm_mday, curTime.tm_hour, curTime.tm_min, curTime.tm_sec);
 #else
-	return Common::String::format("Save %d", slot + 1);
+	return Common::U32String::format("Save %d", slot + 1);
 #endif
 }
 

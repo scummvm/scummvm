@@ -112,7 +112,7 @@ SaveStateList NeverhoodMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
 				if (Neverhood::NeverhoodEngine::readSaveHeader(in, header) == Neverhood::NeverhoodEngine::kRSHENoError) {
-					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
+					saveList.push_back(SaveStateDescriptor(slotNum, Common::U32String(header.description, Common::kLatin1)));
 				}
 				delete in;
 			}
@@ -146,7 +146,7 @@ SaveStateDescriptor NeverhoodMetaEngine::querySaveMetaInfos(const char *target, 
 		delete in;
 
 		if (error == Neverhood::NeverhoodEngine::kRSHENoError) {
-			SaveStateDescriptor desc(slot, header.description);
+			SaveStateDescriptor desc(slot, Common::U32String(header.description, Common::kLatin1));
 
 			desc.setDeletableFlag(false);
 			desc.setWriteProtectedFlag(false);

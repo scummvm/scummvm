@@ -167,7 +167,7 @@ SaveStateList MohawkMetaEngine::listSavesForPrefix(const char *prefix, const cha
 
 		int slotNum = atoi(slot);
 
-		saveList.push_back(SaveStateDescriptor(slotNum, ""));
+		saveList.push_back(SaveStateDescriptor(slotNum, USTR("")));
 	}
 
 	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
@@ -187,7 +187,7 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 		for (SaveStateList::iterator save = saveList.begin(); save != saveList.end(); ++save) {
 			// Read the description from the save
 			int slot = save->getSaveSlot();
-			Common::String description = Mohawk::MystGameState::querySaveDescription(slot);
+			Common::U32String description = Mohawk::MystGameState::querySaveDescription(slot).decode(Common::kUtf8);
 			save->setDescription(description);
 		}
 	}
@@ -199,7 +199,7 @@ SaveStateList MohawkMetaEngine::listSaves(const char *target) const {
 		for (SaveStateList::iterator save = saveList.begin(); save != saveList.end(); ++save) {
 			// Read the description from the save
 			int slot = save->getSaveSlot();
-			Common::String description = Mohawk::RivenSaveLoad::querySaveDescription(slot);
+			Common::U32String description = Mohawk::RivenSaveLoad::querySaveDescription(slot).decode(Common::kUtf8);
 			save->setDescription(description);
 		}
 	}

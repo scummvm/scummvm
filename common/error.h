@@ -85,7 +85,7 @@ enum ErrorCode {
 class Error {
 protected:
 	ErrorCode _code; /*!< Error code. */
-	String _desc;    /*!< Error description. */
+	U32String _desc;    /*!< Error description. */
 public:
 	/**
 	 * Construct a new Error with the specified error code and the default
@@ -96,14 +96,21 @@ public:
 	/**
 	 * Construct a new Error with the specified error code and an augmented
 	 * error message. Specifically, the provided extra text is suitably
-	 * appended to the default message.
+	 * appended to the default message, used for English messages.
 	 */
 	Error(ErrorCode code, const String &extra);
 
 	/**
+	 * Construct a new Error with the specified error code and an augmented
+	 * error message. Specifically, the provided extra text is suitably
+	 * appended to the default message, used for localized messages.
+	 */
+	Error(ErrorCode code, const U32String &extra);
+
+	/**
 	 * Get the description of this error.
 	 */
-	const String &getDesc() const { return _desc; }
+	const U32String &getDesc() const { return _desc; }
 
 	/**
 	 * Get the error code of this error.

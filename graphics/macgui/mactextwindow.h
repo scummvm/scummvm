@@ -45,7 +45,6 @@ public:
 	const MacFont *getTextWindowFont();
 
 	void appendText(const Common::U32String &str, const MacFont *macFont, bool skipAdd = false);
-	void appendText(const Common::String &str, const MacFont *macFont, bool skipAdd = false);
 	void clearText();
 
 	void setEditable(bool editable) { _editable = editable; }
@@ -56,7 +55,6 @@ public:
 	const Common::U32String &getInput() { return _inputText; }
 	void clearInput();
 	void appendInput(const Common::U32String &str);
-	void appendInput(const Common::String &str);
 
 	Common::U32String getSelection(bool formatted = false, bool newlines = true);
 	void clearSelection();

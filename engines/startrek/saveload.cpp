@@ -43,11 +43,11 @@ bool StarTrekEngine::showSaveMenu() {
 	dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 
 	slot = dialog->runModalWithCurrentTarget();
-	desc = dialog->getResultString();
+	desc = dialog->getResultString().legacyEncode();
 
 	if (desc.empty()) {
 		// create our own description for the saved game, the user didnt enter it
-		desc = dialog->createDefaultSaveDescription(slot);
+		desc = dialog->createDefaultSaveDescription(slot).legacyEncode();
 	}
 
 	if (desc.size() > 28)

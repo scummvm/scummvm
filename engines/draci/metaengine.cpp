@@ -70,7 +70,7 @@ SaveStateList DraciMetaEngine::listSaves(const char *target) const {
 			if (in) {
 				Draci::DraciSavegameHeader header;
 				if (Draci::readSavegameHeader(in, header)) {
-					saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
+					saveList.push_back(SaveStateDescriptor(slotNum, Common::U32String(header.saveName, Common::kLatin1)));
 				}
 				delete in;
 			}
@@ -100,7 +100,7 @@ SaveStateDescriptor DraciMetaEngine::querySaveMetaInfos(const char *target, int 
 		delete f;
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, header.saveName);
+		SaveStateDescriptor desc(slot, Common::U32String(header.saveName, Common::kLatin1));
 		desc.setThumbnail(header.thumbnail);
 
 		int day = (header.date >> 24) & 0xFF;

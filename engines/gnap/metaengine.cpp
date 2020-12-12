@@ -88,7 +88,7 @@ SaveStateList GnapMetaEngine::listSaves(const char *target) const {
 
 			if (in) {
 				if (Gnap::GnapEngine::readSavegameHeader(in, header))
-					saveList.push_back(SaveStateDescriptor(slot, header._saveName));
+					saveList.push_back(SaveStateDescriptor(slot, Common::U32String(header._saveName, Common::kLatin1)));
 				delete in;
 			}
 		}
@@ -117,7 +117,7 @@ SaveStateDescriptor GnapMetaEngine::querySaveMetaInfos(const char *target, int s
 		while ((ch = (char)file->readByte()) != '\0')
 			saveName += ch;
 
-		SaveStateDescriptor desc(slot, saveName);
+		SaveStateDescriptor desc(slot, Common::U32String(saveName, Common::kLatin1));
 
 		if (version != 1) {
 			Graphics::Surface *thumbnail;

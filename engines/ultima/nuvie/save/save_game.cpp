@@ -216,7 +216,7 @@ bool SaveGame::transfer_character() {
 	Common::FSNode folder = dialog.getResult();
 
 	// TODO: Load in character data from given folder and start new game
-	g_engine->GUIError(Common::String::format("Load party file from folder - %s", folder.getPath().c_str()));
+	g_engine->GUIError(Common::U32String::format("Load party file from folder - %s", folder.getPath().c_str()));
 
 	return false;
 }

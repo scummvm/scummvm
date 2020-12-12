@@ -883,7 +883,7 @@ void SavegameListBox::pageDown() {
 
 int GameStateMenu::scummVMSaveLoadDialog(bool isSave, Common::String &saveDesc) {
 	GUI::SaveLoadChooser *dialog;
-	Common::String desc;
+	Common::U32String desc;
 	int slot;
 
 	if (isSave) {
@@ -896,9 +896,9 @@ int GameStateMenu::scummVMSaveLoadDialog(bool isSave, Common::String &saveDesc) 
 			desc = dialog->createDefaultSaveDescription(slot);
 
 		if (desc.size() > 29)
-			desc = Common::String(desc.c_str(), 29);
+			desc = desc.substr(0, 29);
 
-		saveDesc = desc;
+		saveDesc = desc.encode(Common::kUtf8);
 	} else {
 		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		slot = dialog->runModalWithCurrentTarget();

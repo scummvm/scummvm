@@ -833,6 +833,14 @@ void String::encodeOneByte(const U32String &src, CodePage page, bool translitera
 	}
 }
 
+void String::encodeLegacy(const U32String &src) {
+	ensureCapacity(src.size(), false);
+
+	for (uint i = 0; i < src.size(); ++i) {
+		operator+=((char)src[i]);
+	}
+}
+
 void String::encodeInternal(const U32String &src, CodePage page) {
 	switch(page) {
 	case kUtf8:
@@ -913,6 +921,12 @@ String U32String::encode(CodePage page) const {
 
 	String string;
 	string.encodeInternal(*this, page);
+	return string;
+}
+
+String U32String::legacyEncode() const {
+	String string;
+	string.encodeLegacy(*this);
 	return string;
 }
 

@@ -2872,15 +2872,8 @@ void ScummEngine::confirmRestartDialog() {
 	}
 }
 
-char ScummEngine::displayMessage(const char *altButton, const char *message, ...) {
-	char buf[STRINGBUFLEN];
-	va_list va;
-
-	va_start(va, message);
-	vsnprintf(buf, STRINGBUFLEN, message, va);
-	va_end(va);
-
-	GUI::MessageDialog dialog(buf, "OK", altButton);
+char ScummEngine::displayMessage(const Common::U32String &altButton, const Common::U32String &message) {
+	GUI::MessageDialog dialog(message, USTR("OK"), altButton);
 	return runDialog(dialog);
 }
 

@@ -2153,7 +2153,7 @@ bool ModalSaveGame::getFileInfo(int slot, FileInfo *fileinfo) {
 		return false;
 
 	// Create the return descriptor
-	SaveStateDescriptor desc(slot, header.saveName);
+	SaveStateDescriptor desc(slot, Common::U32String(header.saveName, Common::kLatin1));
 	char res[17];
 
 	NGI::parseSavegameHeader(header, desc);

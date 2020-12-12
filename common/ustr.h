@@ -84,28 +84,22 @@ public:
 	U32String(const U32String &str) : BaseString<u32char_type_t>(str) {}
 
 	/** Construct a new string from the given null-terminated C string that uses the given @p page encoding. */
-	explicit U32String(const char *str, CodePage page = kUtf8);
+	explicit U32String(const char *str, CodePage page);
 
 	/** Construct a new string containing exactly @p len characters read from address @p str. */
-	U32String(const char *str, uint32 len, CodePage page = kUtf8);
+	U32String(const char *str, uint32 len, CodePage page);
 
 	/** Construct a new string containing the characters between @p beginP (including) and @p endP (excluding). */
-	U32String(const char *beginP, const char *endP, CodePage page = kUtf8);
+	U32String(const char *beginP, const char *endP, CodePage page);
 
 	/** Construct a copy of the given string. */
-	U32String(const String &str, CodePage page = kUtf8);
+	U32String(const String &str, CodePage page);
 
 	/** Assign a given string to this string. */
 	U32String &operator=(const U32String &str);
 
 	/** @overload */
-	U32String &operator=(const String &str);
-
-	/** @overload */
 	U32String &operator=(const value_type *str);
-
-	/** @overload */
-	U32String &operator=(const char *str);
 
 	/** Append the given string to this string. */
 	U32String &operator+=(const U32String &str);
@@ -131,6 +125,12 @@ public:
 	/** Convert the string to the given @p page encoding and return the result as a new String. */
 	String encode(CodePage page = kUtf8) const;
 
+	/** Convert to String while dropping high bits. Shouldn't be used for new code, only for migration.
+	    As this is not a meaningful operation most likely every single call to it is either a bug
+	    that was never noticed or should be replaced with encode to latin1 or ascii
+	 */
+	String legacyEncode() const;
+
 	/**
 	 * Print formatted data into a U32String object.
 	 *
@@ -155,8 +155,8 @@ public:
 	static char* itoa(int num, char* str, int base);
 
 	using BaseString<value_type>::insertString;
-	void insertString(const char *s, uint32 p, CodePage page = kUtf8);   /*!< Insert string @p s into this string at position @p p. */
-	void insertString(const String &s, uint32 p, CodePage page = kUtf8); /*!< @overload */
+	void insertString(const char *s, uint32 p, CodePage page);   /*!< Insert string @p s into this string at position @p p. */
+	void insertString(const String &s, uint32 p, CodePage page); /*!< @overload */
 
 	/** Return a substring of this string */
 	U32String substr(size_t pos = 0, size_t len = npos) const;
@@ -193,6 +193,13 @@ private:
 		
 	friend class String;
 };
+
+#ifdef USE_CXX11
+#define USTR(x) Common::U32String(U ## x)
+#else
+#define USTR(x) Common::U32String(x, Common::kUtf8)
+#endif
+    
 
 /** Concatenate strings @p x and @p y. */
 U32String operator+(const U32String &x, const U32String &y);

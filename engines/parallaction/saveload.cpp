@@ -183,7 +183,7 @@ int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const 
 
 	int idx = slc.runModalWithCurrentTarget();
 	if (idx >= 0) {
-		selectedName = slc.getResultString();
+		selectedName = slc.getResultString().legacyEncode();
 	}
 
 	return idx;

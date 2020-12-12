@@ -48,7 +48,7 @@ class Interpreter;
 
 bool PrinceEngine::scummVMSaveLoadDialog(bool isSave) {
 	GUI::SaveLoadChooser *dialog;
-	Common::String desc;
+	Common::U32String desc;
 	int slot;
 
 	if (isSave) {
@@ -71,7 +71,7 @@ bool PrinceEngine::scummVMSaveLoadDialog(bool isSave) {
 		return false;
 
 	if (isSave) {
-		return saveGameState(slot, desc).getCode() == Common::kNoError;
+		return saveGameState(slot, desc.legacyEncode()).getCode() == Common::kNoError;
 	} else {
 		return loadGameState(slot).getCode() == Common::kNoError;
 	}

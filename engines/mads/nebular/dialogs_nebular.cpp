@@ -351,7 +351,7 @@ void DialogsNebular::showScummVMSaveDialog() {
 
 	int slot = dialog->runModalWithCurrentTarget();
 	if (slot >= 0) {
-		Common::String desc = dialog->getResultString();
+		Common::U32String desc = dialog->getResultString();
 
 		if (desc.empty()) {
 			// create our own description for the saved game, the user didn't enter it
@@ -363,7 +363,7 @@ void DialogsNebular::showScummVMSaveDialog() {
 		scene._userInterface.noInventoryAnim();
 		game._scene.drawElements(kTransitionFadeIn, false);
 
-		game.saveGame(slot, desc);
+		game.saveGame(slot, desc.encode(Common::kUtf8));
 	}
 
 	// Flag for scene loading that we're returning from a dialog

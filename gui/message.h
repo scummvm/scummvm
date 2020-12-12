@@ -41,8 +41,7 @@ enum {
  */
 class MessageDialog : public Dialog {
 public:
-	MessageDialog(const Common::U32String &message, const Common::U32String &defaultButton = Common::U32String("OK"), const Common::U32String &altButton = Common::U32String(), Graphics::TextAlign alignment = Graphics::kTextAlignCenter, const char *url = nullptr);
-	MessageDialog(const Common::String &message, const Common::String &defaultButton = "OK", const Common::String &altButton = "", Graphics::TextAlign alignment = Graphics::kTextAlignCenter, const char *url = nullptr);
+	MessageDialog(const Common::U32String &message, const Common::U32String &defaultButton = USTR("OK"), const Common::U32String &altButton = Common::U32String(), Graphics::TextAlign alignment = Graphics::kTextAlignCenter, const char *url = nullptr);
 
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 private:
@@ -68,8 +67,7 @@ protected:
  */
 class MessageDialogWithURL : public MessageDialog {
 public:
-	MessageDialogWithURL(const Common::U32String &message, const char *url, const Common::U32String &defaultButton = Common::U32String("OK"), Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
-	MessageDialogWithURL(const Common::String &message, const char *url, const char *defaultButton = "OK", Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
+	MessageDialogWithURL(const Common::U32String &message, const char *url, const Common::U32String &defaultButton = USTR("OK"), Graphics::TextAlign alignment = Graphics::kTextAlignCenter);
 };
 
 

@@ -34,6 +34,7 @@
 #include "common/util.h"
 #include "common/zlib.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -694,11 +695,11 @@ Common::Error HadeschEngine::loadGameStream(Common::SeekableReadStream *stream) 
 Common::Error HadeschEngine::saveGameStream(Common::WriteStream *stream, bool isAutosave) {
 	Common::Serializer s(nullptr, stream);
 	if (isAutosave)
-		_persistent._slotDescription = "Autosave";
+		_persistent._slotDescription = _("Autosave");
 	if(_persistent._currentRoomId == 0)
 		return Common::kUnknownError;
 	bool res = _persistent.syncGameStream(s);
-	_persistent._slotDescription = "";
+	_persistent._slotDescription = USTR("");
 	return res ? Common::kNoError
 		: Common::kUnknownError;
 }

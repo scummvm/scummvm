@@ -92,7 +92,7 @@ SaveStateList SupernovaMetaEngine::listSaves(const char *target) const {
 						int saveFileDescSize = savefile->readSint16LE();
 						char* saveFileDesc = new char[saveFileDescSize];
 						savefile->read(saveFileDesc, saveFileDescSize);
-						saveFileList.push_back(SaveStateDescriptor(saveSlot, saveFileDesc));
+						saveFileList.push_back(SaveStateDescriptor(saveSlot, Common::U32String(saveFileDesc, Common::kLatin1)));
 						delete [] saveFileDesc;
 					}
 				}
@@ -138,7 +138,7 @@ SaveStateDescriptor SupernovaMetaEngine::querySaveMetaInfos(const char *target, 
 		int descriptionSize = savefile->readSint16LE();
 		char* description = new char[descriptionSize];
 		savefile->read(description, descriptionSize);
-		SaveStateDescriptor desc(slot, description);
+		SaveStateDescriptor desc(slot, Common::U32String(description, Common::kLatin1));
 		delete [] description;
 
 		uint32 saveDate = savefile->readUint32LE();

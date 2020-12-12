@@ -107,7 +107,7 @@ SaveStateList TonyMetaEngine::listSaves(const char *target) const {
 
 			if (Tony::RMOptionScreen::loadThumbnailFromSaveState(slotNum, thumbnailData, saveName, difficulty)) {
 				// Add the save name to the savegame list
-				saveList.push_back(SaveStateDescriptor(slotNum, saveName));
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::U32String(saveName, Common::kLatin1)));
 			}
 		}
 	}
@@ -141,7 +141,7 @@ SaveStateDescriptor TonyMetaEngine::querySaveMetaInfos(const char *target, int s
 			pixels[i] = READ_LE_UINT16(pixels + i);
 #endif
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, saveName);
+		SaveStateDescriptor desc(slot, saveName.decode(Common::kLatin1));
 		desc.setDeletableFlag(true);
 		desc.setWriteProtectedFlag(false);
 		desc.setThumbnail(to);

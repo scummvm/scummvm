@@ -218,7 +218,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		failedDevStr = selDevStr;
 		Common::U32String warningMsg = Common::U32String::format(
 			_("The selected audio device '%s' was not found (e.g. might be turned off or disconnected)."), failedDevStr.c_str())
-			+ Common::U32String(" ") + _("Attempting to fall back to the next available device...");
+			+ USTR(" ") + _("Attempting to fall back to the next available device...");
 		GUI::MessageDialog dialog(warningMsg);
 		dialog.runModal();
 	}
@@ -232,7 +232,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			failedDevStr = getDeviceString(hdl, MidiDriver::kDeviceName);
 			Common::U32String warningMsg = Common::U32String::format(
 				_("The selected audio device '%s' cannot be used. See log file for more information."), failedDevStr.c_str())
-				+ Common::U32String(" ") + _("Attempting to fall back to the next available device...");
+				+ USTR(" ") + _("Attempting to fall back to the next available device...");
 			GUI::MessageDialog dialog(warningMsg);
 			dialog.runModal();
 		}
@@ -270,7 +270,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 					if (failedDevStr != devStr) {
 						Common::U32String warningMsg = Common::U32String::format(
 							_("The preferred audio device '%s' was not found (e.g. might be turned off or disconnected)."), devStr.c_str())
-							+ Common::U32String(" ") + _("Attempting to fall back to the next available device...");
+							+ USTR(" ") + _("Attempting to fall back to the next available device...");
 						GUI::MessageDialog dialog(warningMsg);
 						dialog.runModal();
 					}
@@ -287,7 +287,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 						if (failedDevStr != getDeviceString(hdl, MidiDriver::kDeviceName)) {
 							Common::U32String warningMsg = Common::U32String::format(
 								_("The preferred audio device '%s' cannot be used. See log file for more information."), getDeviceString(hdl, MidiDriver::kDeviceName).c_str())
-								+ Common::U32String(" ") + _("Attempting to fall back to the next available device...");
+								+ USTR(" ") + _("Attempting to fall back to the next available device...");
 							GUI::MessageDialog dialog(warningMsg);
 							dialog.runModal();
 						}

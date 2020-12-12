@@ -34,8 +34,8 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 		GUI::Dialog("TestbedOptions"),
 		_testbedConfMan(tsConfMan) {
 
-	new GUI::StaticTextWidget(this, "TestbedOptions.Headline", Common::U32String("Select Testsuites to Execute"));
-	new GUI::StaticTextWidget(this, "TestbedOptions.Info", Common::U32String("Use Doubleclick to select/deselect"));
+	new GUI::StaticTextWidget(this, "TestbedOptions.Headline", USTR("Select Testsuites to Execute"));
+	new GUI::StaticTextWidget(this, "TestbedOptions.Info", USTR("Use Doubleclick to select/deselect"));
 
 	// Construct a String Array
 	Common::Array<Testsuite *>::const_iterator iter;
@@ -46,11 +46,11 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 		_testSuiteArray.push_back(*iter);
 		description = (*iter)->getDescription();
 		if ((*iter)->isEnabled()) {
-			_testSuiteDescArray.push_back(description + "(selected)");
+			_testSuiteDescArray.push_back((description + "(selected)").decode(Common::kLatin1));
 			selected++;
 			_colors.push_back(GUI::ThemeEngine::kFontColorNormal);
 		} else {
-			_testSuiteDescArray.push_back(description);
+			_testSuiteDescArray.push_back(description.decode(Common::kLatin1));
 			_colors.push_back(GUI::ThemeEngine::kFontColorAlternate);
 		}
 	}
@@ -63,12 +63,12 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 	_testListDisplay->setEditable(false);
 
 	if (selected > (tsList.size() - selected)) {
-		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", Common::U32String("Deselect All"), Common::U32String(), kTestbedDeselectAll, 0);
+		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", USTR("Deselect All"), Common::U32String(), kTestbedDeselectAll, 0);
 	} else {
-		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", Common::U32String("Select All"), Common::U32String(), kTestbedSelectAll, 0);
+		_selectButton = new GUI::ButtonWidget(this, "TestbedOptions.SelectAll", USTR("Select All"), Common::U32String(), kTestbedSelectAll, 0);
 	}
-	new GUI::ButtonWidget(this, "TestbedOptions.RunTests", Common::U32String("Run tests"), Common::U32String(), GUI::kCloseCmd);
-	new GUI::ButtonWidget(this, "TestbedOptions.Quit", Common::U32String("Exit Testbed"), Common::U32String(), kTestbedQuitCmd);
+	new GUI::ButtonWidget(this, "TestbedOptions.RunTests", USTR("Run tests"), Common::U32String(), GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, "TestbedOptions.Quit", USTR("Exit Testbed"), Common::U32String(), kTestbedQuitCmd);
 }
 
 TestbedOptionsDialog::~TestbedOptionsDialog() {}
@@ -102,7 +102,7 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 		break;
 
 	case kTestbedDeselectAll:
-		_selectButton->setLabel("Select All");
+		_selectButton->setLabel(USTR("Select All"));
 		_selectButton->setCmd(kTestbedSelectAll);
 		for (uint i = 0; i < _testSuiteArray.size(); i++) {
 			_testListDisplay->markAsDeselected(i);
@@ -114,7 +114,7 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 		break;
 
 	case kTestbedSelectAll:
-		_selectButton->setLabel("Deselect All");
+		_selectButton->setLabel(USTR("Deselect All"));
 		_selectButton->setCmd(kTestbedDeselectAll);
 		for (uint i = 0; i < _testSuiteArray.size(); i++) {
 			_testListDisplay->markAsSelected(i);
@@ -143,7 +143,7 @@ void TestbedInteractionDialog::addText(uint w, uint h, const Common::String text
 		xOffset = _xOffset;
 	}
 	_yOffset += yPadding;
-	new GUI::StaticTextWidget(this, xOffset, _yOffset, w, h, text, textAlign);
+	new GUI::StaticTextWidget(this, xOffset, _yOffset, w, h, text.decode(Common::kLatin1), textAlign);
 	_yOffset += h;
 }
 
@@ -152,7 +152,7 @@ void TestbedInteractionDialog::addButton(uint w, uint h, const Common::String na
 		xOffset = _xOffset;
 	}
 	_yOffset += yPadding;
-	_buttonArray.push_back(new GUI::ButtonWidget(this, xOffset, _yOffset, w, h, name, Common::U32String(), cmd));
+	_buttonArray.push_back(new GUI::ButtonWidget(this, xOffset, _yOffset, w, h, name.decode(Common::kLatin1), Common::U32String(), cmd));
 	_yOffset += h;
 }
 
@@ -166,7 +166,7 @@ void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, const Com
 }
 
 void TestbedInteractionDialog::addButtonXY(uint x, uint /* y */, uint w, uint h, const Common::String name, uint32 cmd) {
-	_buttonArray.push_back(new GUI::ButtonWidget(this, x, _yOffset, w, h, name, Common::U32String(), cmd));
+	_buttonArray.push_back(new GUI::ButtonWidget(this, x, _yOffset, w, h, name.decode(Common::kLatin1), Common::U32String(), cmd));
 }
 
 void TestbedInteractionDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {

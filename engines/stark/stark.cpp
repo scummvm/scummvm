@@ -288,7 +288,7 @@ void StarkEngine::checkRecommendedDatafiles() {
 		return;
 	}
 
-	Common::String message = _("You are missing recommended data files:");
+	Common::U32String message = _("You are missing recommended data files:");
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	Common::FSNode fontsDir = gameDataDir.getChild("fonts");
@@ -301,26 +301,26 @@ void StarkEngine::checkRecommendedDatafiles() {
 
 	bool missingFiles = false;
 	if (!fontsDir.isDirectory()) {
-		message += "\n\n";
+		message += USTR("\n\n");
 		message += _("The 'fonts' folder is required to experience the text style as it was designed. "
 				"The Steam release is known to be missing it. You can get the fonts from the demo version of the game.");
 		missingFiles = true;
 	}
 
 	if (!SearchMan.hasFile("gui.ini")) {
-		message += "\n\n";
+		message += USTR("\n\n");
 		message += _("'gui.ini' is recommended to get proper font settings for the game localization.");
 		missingFiles = true;
 	}
 
 	if (!SearchMan.hasFile("language.ini")) {
-		message += "\n\n";
+		message += USTR("\n\n");
 		message += _("'language.ini' is recommended to get localized confirmation dialogs.");
 		missingFiles = true;
 	}
 
 	if (!SearchMan.hasFile("game.exe") && !SearchMan.hasFile("game.dll")) {
-		message += "\n\n";
+		message += USTR("\n\n");
 		message += _("'game.exe' is recommended to get styled confirmation dialogs.");
 		missingFiles = true;
 	}

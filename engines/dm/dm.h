@@ -164,7 +164,7 @@ private:
 	void initConstants();
 	Common::String getSavefileName(uint16 slot);
 	void writeSaveGameHeader(Common::OutSaveFile *out, const Common::String &saveName);
-	bool writeCompleteSaveFile(int16 slot, Common::String &desc, int16 saveAndPlayChoice);
+	bool writeCompleteSaveFile(int16 slot, const Common::String &desc, int16 saveAndPlayChoice);
 	void drawEntrance(); // @ F0439_STARTEND_DrawEntrance
 	void fuseSequenceUpdate(); // @ F0445_STARTEND_FuseSequenceUpdate
 	void processEntrance(); // @ F0441_STARTEND_ProcessEntrance

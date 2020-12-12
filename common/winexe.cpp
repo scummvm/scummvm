@@ -227,8 +227,8 @@ WinResources::VersionHash *WinResources::parseVersionInfo(SeekableReadStream *re
 				uint16 prodD = res->readUint16LE();
 				uint16 prodC = res->readUint16LE();
 
-				versionMap->setVal("File:", Common::String::format("%d.%d.%d.%d", fileA, fileB, fileC, fileD));
-				versionMap->setVal("Prod:", Common::String::format("%d.%d.%d.%d", prodA, prodB, prodC, prodD));
+				versionMap->setVal("File:", Common::U32String::format("%d.%d.%d.%d", fileA, fileB, fileC, fileD));
+				versionMap->setVal("Prod:", Common::U32String::format("%d.%d.%d.%d", prodA, prodB, prodC, prodD));
 
 				while (res->pos() != pos2 && !res->eos())
 					res->readByte();

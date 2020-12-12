@@ -85,7 +85,7 @@ public:
 	explicit String(char c);
 
 	/** Construct a new string from the given u32 string. */
-	String(const U32String &str, CodePage page = kUtf8);
+	String(const U32String &str, CodePage page);
 
 	String &operator=(const char *str);
 	String &operator=(const String &str);
@@ -243,7 +243,7 @@ public:
 	String substr(size_t pos = 0, size_t len = npos) const;
 
 	/** Python-like method **/
-	U32String decode(CodePage page = kUtf8) const;
+	U32String decode(CodePage page) const;
 
 protected:
 	void encodeUTF8(const U32String &src);
@@ -251,6 +251,7 @@ protected:
     	void encodeWindows949(const U32String &src);
 	void encodeWindows950(const U32String &src, bool translit = true);
 	void encodeOneByte(const U32String &src, CodePage page, bool translit = true);
+    	void encodeLegacy(const U32String &src);
 	void encodeInternal(const U32String &src, CodePage page);
 	void translitChar(U32String::value_type point);
 

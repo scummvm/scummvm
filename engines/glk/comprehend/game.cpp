@@ -316,7 +316,7 @@ void ComprehendGame::game_save() {
 		return;
 	}
 
-	g_comprehend->saveGameState(c - '0', _("Savegame"));
+	g_comprehend->saveGameState(c - '0', _("Savegame").encode(Common::kUtf8));
 }
 
 void ComprehendGame::game_restore() {

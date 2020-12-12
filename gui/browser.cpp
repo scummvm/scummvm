@@ -186,7 +186,7 @@ void BrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 
 void BrowserDialog::updateListing() {
 	// Update the path display
-	_currentPath->setEditString(_node.getPath());
+	_currentPath->setEditString(_node.getPath().decode(Common::kLatin1));
 
 	// We memorize the last visited path.
 	// Don't memorize a path that is not a directory
@@ -205,9 +205,9 @@ void BrowserDialog::updateListing() {
 	ListWidget::ColorList colors;
 	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 		if (i->isDirectory())
-			list.push_back(i->getDisplayName() + "/");
+			list.push_back(i->getDisplayName().decode(Common::kLatin1) + USTR("/"));
 		else
-			list.push_back(i->getDisplayName());
+			list.push_back(i->getDisplayName().decode(Common::kLatin1));
 
 		if (_isDirBrowser) {
 			if (i->isDirectory())

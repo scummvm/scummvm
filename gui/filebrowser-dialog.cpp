@@ -107,12 +107,12 @@ void FileBrowserDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 
 }
 
 void FileBrowserDialog::normalieFileName() {
-	Common::String filename = Common::convertFromU32String(_fileName->getEditString());
+	Common::String filename = _fileName->getEditString().encode(Common::kUtf8);
 
 	if (filename.matchString(_fileMask, true))
 		return;
 
-	_fileName->setEditString(filename + "." + _fileExt);
+	_fileName->setEditString((filename + "." + _fileExt).decode(Common::kUtf8));
 }
 
 
@@ -148,7 +148,7 @@ void FileBrowserDialog::updateListing() {
 	Common::sort(filenames.begin(), filenames.end());
 
 	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		list.push_back(Common::U32String(*file));
+		list.push_back(Common::U32String(*file, Common::kLatin1));
 	}
 
 	_fileList->setList(list);

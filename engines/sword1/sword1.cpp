@@ -432,7 +432,7 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 				}
 		}
 	}
-	GUI::MessageDialog dialog(msg);
+	GUI::MessageDialog dialog(Common::U32String(msg, Common::kLatin1));
 	dialog.runModal();
 	if (type == TYPE_IMMED) // we can't start without this file, so error() out.
 		error("%s", msg);

@@ -367,11 +367,11 @@ OptionsWidget::OptionsWidget(GuiObject *boss, const Common::String &name, const 
 
 	for (const ADExtraGuiOptionsMap *entry = optionsList; entry->guioFlag; ++entry)
 		if (checkGameGUIOption(entry->guioFlag, _guiOptions))
-			_checkboxes[entry->option.configOption] = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + "." + entry->option.configOption, Common::U32String(entry->option.label), Common::U32String(entry->option.tooltip));
+			_checkboxes[entry->option.configOption] = new GUI::CheckboxWidget(widgetsBoss(), _dialogLayout + "." + entry->option.configOption, Common::U32String(entry->option.label, Common::kLatin1), Common::U32String(entry->option.tooltip, Common::kLatin1));
 
 	for (const PopUpOptionsMap *entry = popUpOptionsList; entry->guioFlag; ++entry)
 		if (checkGameGUIOption(entry->guioFlag, _guiOptions)) {
-			GUI::StaticTextWidget *textWidget = new GUI::StaticTextWidget(widgetsBoss(), _dialogLayout + "." + entry->configOption + "_desc", Common::U32String(entry->label), Common::U32String(entry->tooltip));
+			GUI::StaticTextWidget *textWidget = new GUI::StaticTextWidget(widgetsBoss(), _dialogLayout + "." + entry->configOption + "_desc", Common::U32String(entry->label, Common::kLatin1), Common::U32String(entry->tooltip, Common::kLatin1));
 			textWidget->setAlign(Graphics::kTextAlignRight);
 
 			_popUps[entry->configOption] = new GUI::PopUpWidget(widgetsBoss(), _dialogLayout + "." + entry->configOption);

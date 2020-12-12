@@ -167,9 +167,9 @@ HadeschSaveDescriptor::HadeschSaveDescriptor(Common::Serializer &s, int slot) {
 	if (s.getVersion() < 2) {
 		Common::String str;
 		s.syncString(str);
-		_heroName = str;
+		_heroName = str.decode(Common::kUtf8);
 		s.syncString(str);
-		_slotName = str;
+		_slotName = str.decode(Common::kUtf8);
 	} else {
 		s.syncString32(_heroName);
 		s.syncString32(_slotName);
@@ -187,9 +187,9 @@ bool Persistent::syncGameStream(Common::Serializer &s) {
 	if (s.getVersion() < 2) {
 		Common::String str;
 		s.syncString(str);
-		_heroName = str;
+		_heroName = str.decode(Common::kUtf8);
 		s.syncString(str);
-		_slotDescription = str;
+		_slotDescription = str.decode(Common::kUtf8);
 	} else {
 		s.syncString32(_heroName);
 		s.syncString32(_slotDescription);

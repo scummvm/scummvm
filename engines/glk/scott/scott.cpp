@@ -400,7 +400,7 @@ void Scott::output(const Common::String &a) {
 
 void Scott::output(const Common::U32String &a) {
 	if (_saveSlot == -1)
-		display(_bottomWindow, Common::U32String("%S"), a.c_str());
+		display(_bottomWindow, USTR("%S"), a.c_str());
 }
 
 void Scott::outputNumber(int a) {
@@ -447,7 +447,7 @@ void Scott::look(void) {
 				f = 1;
 			else
 				display(_topWindow, ", ");
-			display(_topWindow, Common::U32String("%S"), _(ExitNames[ct]).c_str());
+			display(_topWindow, USTR("%S"), _(ExitNames[ct]).c_str());
 		}
 		ct++;
 	}

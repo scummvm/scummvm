@@ -242,7 +242,7 @@ void Subtitles::loadInGameSubsText(int actorId, int speech_id)  {
 
 	// Search in the first TextResource of the _vqaSubsTextResourceEntries table, which is the TextResource for in-game dialogue (i.e. not VQA dialogue)
 	const char *text = _vqaSubsTextResourceEntries[0]->getText((uint32)id);
-	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(text) : Common::U32String(text);
+	_currentText = Common::U32String(text, _useUTF8 ? Common::kUtf8 : Common::kLatin1);
 }
 
 /**
@@ -262,7 +262,7 @@ void Subtitles::loadOuttakeSubsText(const Common::String &outtakesName, int fram
 	// Search in the requested TextResource at the fileIdx index of the _vqaSubsTextResourceEntries table for a quote that corresponds to the specified video frame
 	// debug("Number of resource quotes to search: %d, requested frame: %u", _vqaSubsTextResourceEntries[fileIdx]->getCount(), (uint32)frame );
 	const char *text = _vqaSubsTextResourceEntries[fileIdx]->getOuttakeTextByFrame((uint32)frame);
-	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(text) : Common::U32String(text);
+	_currentText = Common::U32String(text, _useUTF8 ? Common::kUtf8 : Common::kLatin1);
 }
 
 /**
@@ -270,7 +270,7 @@ void Subtitles::loadOuttakeSubsText(const Common::String &outtakesName, int fram
  * Used for debug purposes mainly.
  */
 void Subtitles::setGameSubsText(Common::String dbgQuote, bool forceShowWhenNoSpeech) {
-	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(dbgQuote) : Common::U32String(dbgQuote);
+	_currentText = dbgQuote.decode(_useUTF8 ? Common::kUtf8 : Common::kLatin1);
 	_forceShowWhenNoSpeech = forceShowWhenNoSpeech; // overrides not showing subtitles when no one is speaking
 }
 

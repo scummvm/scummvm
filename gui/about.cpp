@@ -97,24 +97,24 @@ AboutDialog::AboutDialog()
 
 	Common::String version("C0""ScummVM ");
 	version += gScummVMVersion;
-	_lines.push_back(version);
+	_lines.push_back(version.decode(Common::kLatin1));
 
 	Common::U32String date = Common::U32String::format(_("(built on %s)"), gScummVMBuildDate);
-	_lines.push_back(U32String("C2") + date);
+	_lines.push_back(USTR("C2") + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
-		addLine(U32String(copyright_text[i]));
+		addLine(U32String(copyright_text[i], Common::kLatin1));
 
-	Common::U32String features("C1");
+	Common::U32String features = USTR("C1");
 	features += _("Features compiled in:");
 	addLine(features);
 	Common::String featureList("C0");
 	featureList += gScummVMFeatures;
-	addLine(featureList);
+	addLine(featureList.decode(Common::kLatin1));
 
 	_lines.push_back(U32String());
 
-	Common::U32String engines("C1");
+	Common::U32String engines = USTR("C1");
 	engines += _("Available engines:");
 	addLine(engines);
 
@@ -124,22 +124,22 @@ AboutDialog::AboutDialog()
 		Common::String str;
 		str = "C0";
 		str += (*iter)->getName();
-		addLine(str);
+		addLine(str.decode(Common::kLatin1));
 
 		str = "C2";
 		str += (*iter)->get<MetaEngineDetection>().getOriginalCopyright();
-		addLine(str);
+		addLine(str.decode(Common::kLatin1));
 
 		//addLine("");
 	}
 
 	for (i = 0; i < ARRAYSIZE(gpl_text); i++)
-		addLine(U32String(gpl_text[i]));
+		addLine(U32String(gpl_text[i], Common::kLatin1));
 
 	_lines.push_back(U32String());
 
 	for (i = 0; i < ARRAYSIZE(credits); i++)
-		addLine(U32String(credits[i]));
+	    addLine(U32String(credits[i], Common::kLatin1));
 }
 
 void AboutDialog::addLine(const U32String &str) {
@@ -312,7 +312,7 @@ void AboutDialog::reflowLayout() {
 	int maxW = _w - 2*_xOff;
 	_w = 0;
 	for (i = 0; i < ARRAYSIZE(credits); i++) {
-		int tmp = g_gui.getStringWidth(credits[i]) + 5;
+		int tmp = g_gui.getStringWidth(U32String(credits[i], Common::kLatin1)) + 5;
 		if (_w < tmp && tmp <= maxW) {
 			_w = tmp;
 		}

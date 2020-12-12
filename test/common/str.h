@@ -601,7 +601,7 @@ class StringTestSuite : public CxxTest::TestSuite
 	}
 
 	void test_ustr_comparison() {
-		Common::U32String a("abc"), b("abd");
+		Common::U32String a(USTR("abc")), b(USTR("abd"));
 
 		TS_ASSERT_EQUALS(a, a);
 		TS_ASSERT_EQUALS(b, b);

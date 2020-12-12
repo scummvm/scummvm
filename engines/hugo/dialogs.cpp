@@ -56,15 +56,15 @@ void TopMenu::init() {
 	int x = kMenuX;
 	int y = kMenuY;
 
-	_whatButton    =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("What is it?"),              kCmdWhat);
-	_musicButton   =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Music"),                    kCmdMusic);
-	_soundFXButton =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Sound FX"),                 kCmdSoundFX);
-	_saveButton    =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Save game"),                kCmdSave);
-	_loadButton    =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Load game"),                kCmdLoad);
-	_recallButton  =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Recall last command"),      kCmdRecall);
-	_turboButton   =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Turbo"),                    kCmdTurbo);
-	_lookButton    =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Description of the scene"), kCmdLook);
-	_inventButton  =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	Common::U32String("Inventory"),                kCmdInvent);
+	_whatButton    =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	USTR("What is it?"),              kCmdWhat);
+	_musicButton   =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	USTR("Music"),                    kCmdMusic);
+	_soundFXButton =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	USTR("Sound FX"),                 kCmdSoundFX);
+	_saveButton    =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	USTR("Save game"),                kCmdSave);
+	_loadButton    =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	USTR("Load game"),                kCmdLoad);
+	_recallButton  =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	USTR("Recall last command"),      kCmdRecall);
+	_turboButton   =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	USTR("Turbo"),                    kCmdTurbo);
+	_lookButton    =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	USTR("Description of the scene"), kCmdLook);
+	_inventButton  =  new GUI::PicButtonWidget(this, x, y, kButtonWidth, kButtonHeight,	USTR("Inventory"),                kCmdInvent);
 }
 
 void TopMenu::reflowLayout() {
@@ -249,9 +249,9 @@ EntryDialog::EntryDialog(const Common::String &title, const Common::String &butt
 	// down the string into lines, and taking the maximum of their widths.
 	// Using this, and accounting for the space the button(s) need, we can set
 	// the real size of the dialog
-	Common::Array<Common::String> lines;
+	Common::Array<Common::U32String> lines;
 	int lineCount, buttonPos;
-	int maxlineWidth = g_gui.getFont().wordWrapText(title, screenW - 2 * 30, lines);
+	int maxlineWidth = g_gui.getFont().wordWrapText(title.decode(Common::kLatin1), screenW - 2 * 30, lines);
 
 	// Calculate the desired dialog size (maxing out at 300*180 for now)
 	_w = MAX(maxlineWidth, buttonWidth) + 20;
@@ -277,13 +277,13 @@ EntryDialog::EntryDialog(const Common::String &title, const Common::String &butt
 	}
 
 	_text = new GUI::EditTextWidget(this, 10, 10 + lineCount * (kLineHeight + 1), _w - 20, kLineHeight, Common::U32String(), Common::U32String(), 0, kCmdFinishEdit);
-	_text->setEditString(defaultValue);
+	_text->setEditString(defaultValue.decode(Common::kLatin1));
 
 	_h += kLineHeight + 5;
 
 	buttonPos = (_w - buttonWidth) / 2;
 
-	new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, buttonLabel, Common::U32String(), kCmdButton, Common::ASCII_RETURN);	// Confirm dialog
+	new GUI::ButtonWidget(this, buttonPos, _h - buttonHeight - 8, buttonWidth, buttonHeight, buttonLabel.decode(Common::kLatin1), Common::U32String(), kCmdButton, Common::ASCII_RETURN);	// Confirm dialog
 
 }
 

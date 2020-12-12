@@ -67,17 +67,17 @@ public:
 
 	// Callbacks for reporting various errors and information
 	void onErrorControlROM() {
-		GUI::MessageDialog dialog("MT32Emu: Init Error - Missing or invalid Control ROM image", "OK");
+		GUI::MessageDialog dialog(USTR("MT32Emu: Init Error - Missing or invalid Control ROM image"), USTR("OK"));
 		dialog.runModal();
 		error("MT32emu: Init Error - Missing or invalid Control ROM image");
 	}
 	void onErrorPCMROM() {
-		GUI::MessageDialog dialog("MT32Emu: Init Error - Missing PCM ROM image", "OK");
+		GUI::MessageDialog dialog(USTR("MT32Emu: Init Error - Missing PCM ROM image"), USTR("OK"));
 		dialog.runModal();
 		error("MT32emu: Init Error - Missing PCM ROM image");
 	}
 	void showLCDMessage(const char *message) {
-		Common::OSDMessageQueue::instance().addMessage(Common::U32String(message));
+		Common::OSDMessageQueue::instance().addMessage(Common::U32String(message, Common::kLatin1));
 	}
 
 	// Unused callbacks

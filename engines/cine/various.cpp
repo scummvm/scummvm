@@ -343,7 +343,7 @@ void CineEngine::resetEngine() {
 
 int CineEngine::scummVMSaveLoadDialog(bool isSave) {
 	GUI::SaveLoadChooser *dialog;
-	Common::String desc;
+	Common::U32String desc;
 	int slot;
 
 	if (isSave) {
@@ -378,12 +378,12 @@ int CineEngine::scummVMSaveLoadDialog(bool isSave) {
 			return false;
 		}
 
-		Common::strlcpy(currentSaveName[slot], desc.c_str(), sizeof(CommandeType));
+		Common::strlcpy(currentSaveName[slot], desc.legacyEncode().c_str(), sizeof(CommandeType));
 
 		fHandle->write(currentSaveName, sizeof(currentSaveName));
 		delete fHandle;
 
-		makeSave(saveFileName, getTotalPlayTime() / 1000, desc, false);
+		makeSave(saveFileName, getTotalPlayTime() / 1000, desc.legacyEncode(), false);
 
 		return true;
 	} else {

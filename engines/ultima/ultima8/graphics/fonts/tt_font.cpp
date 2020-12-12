@@ -84,7 +84,7 @@ int TTFont::getBaselineSkip() {
 template<class T>
 static Common::U32String toUnicode(const Std::string &text, uint16 bullet) {
 	Std::string::size_type len = T::length(text);
-	Common::U32String result = Common::U32String(text.c_str(), len);
+	Common::U32String result = Common::U32String(text.c_str(), len, Common::kLatin1);
 
 	for (uint idx = 0; idx < result.size(); ++idx) {
 		if (result[idx] == '@')

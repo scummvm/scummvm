@@ -96,7 +96,7 @@ SaveStateList PegasusMetaEngine::listSaves(const char *target) const {
 		for (int j = 0; j < 4; j++)
 			desc.deleteLastChar();
 
-		saveList.push_back(SaveStateDescriptor(i, desc));
+		saveList.push_back(SaveStateDescriptor(i, Common::U32String(desc, Common::kLatin1)));
 	}
 
 	return saveList;

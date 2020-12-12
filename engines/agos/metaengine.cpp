@@ -128,7 +128,7 @@ SaveStateList AgosMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				saveDesc = file->c_str();
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::U32String(saveDesc, Common::kLatin1)));
 				delete in;
 			}
 		}

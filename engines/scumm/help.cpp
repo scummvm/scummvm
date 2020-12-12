@@ -60,8 +60,8 @@ int ScummHelp::numPages(byte gameId) {
 }
 
 #define ADD_BIND(k,d) do { key[i] = k; dsc[i] = d; i++; } while (0)
-#define ADD_TEXT(d) ADD_BIND("",d)
-#define ADD_LINE ADD_BIND("","")
+#define ADD_TEXT(d) ADD_BIND(USTR(""),d)
+#define ADD_LINE ADD_BIND(USTR(""),USTR(""))
 
 void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platform,
 				int page, U32String &title, U32String *&key, U32String *&dsc) {
@@ -71,35 +71,35 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 	switch (page) {
 	case 1:
 		title = _("Common keyboard commands:");
-		ADD_BIND("F5", _("Save / Load dialog"));
+		ADD_BIND(USTR("F5"), _("Save / Load dialog"));
 		if (version >= 5)
-			ADD_BIND(".", _("Skip line of text"));
+			ADD_BIND(USTR("."), _("Skip line of text"));
 		ADD_BIND(_("Esc"), _("Skip cutscene"));
 		ADD_BIND(_("Space"), _("Pause game"));
-		ADD_BIND(_("Ctrl") + U32String(" 0-9"), _("Load saved game 1-10"));
-		ADD_BIND(_("Alt") + U32String(" 0-9"), _("Save game 1-10"));
+		ADD_BIND(_("Ctrl") + USTR(" 0-9"), _("Load saved game 1-10"));
+		ADD_BIND(_("Alt") + USTR(" 0-9"), _("Save game 1-10"));
 #ifdef MACOSX
-		ADD_BIND("Cmd q", _("Quit"));
+		ADD_BIND(USTR("Cmd q"), _("Quit"));
 #else
-		ADD_BIND(_("Alt") + U32String(" x, ") + _("Ctrl") + U32String(" z"), _("Quit"));
+		ADD_BIND(_("Alt") + USTR(" x, ") + _("Ctrl") + USTR(" z"), _("Quit"));
 #endif
-		ADD_BIND(_("Alt") + U32String(" ") + _("Enter"), _("Toggle fullscreen"));
-		ADD_BIND("[, ]", _("Music volume up / down"));
-		ADD_BIND("-, +", _("Text speed slower / faster"));
+		ADD_BIND(_("Alt") + USTR(" ") + _("Enter"), _("Toggle fullscreen"));
+		ADD_BIND(USTR("[, ]"), _("Music volume up / down"));
+		ADD_BIND(USTR("-, +"), _("Text speed slower / faster"));
 		ADD_BIND(_("Enter"), _("Simulate left mouse button"));
 		ADD_BIND(_("Tab"), _("Simulate right mouse button"));
 		break;
 	case 2:
 		title = _("Special keyboard commands:");
-		ADD_BIND("~, #", _("Show / Hide console"));
-		ADD_BIND(_("Ctrl") + U32String(" d"), _("Start the debugger"));
-		ADD_BIND(_("Ctrl") + U32String(" s"), _("Show memory consumption"));
-		ADD_BIND(_("Ctrl") + U32String(" f"), _("Run in fast mode (*)"));
-		ADD_BIND(_("Ctrl") + U32String(" g"), _("Run in really fast mode (*)"));
-		ADD_BIND(_("Ctrl") + U32String(" m"), _("Toggle mouse capture"));
-		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" 1-8"), _("Switch between graphics filters"));
-		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" +, -"), _("Increase / Decrease scale factor"));
-		ADD_BIND(_("Ctrl") + U32String(" ") + _("Alt") + U32String(" a"), _("Toggle aspect-ratio correction"));
+		ADD_BIND(USTR("~, #"), _("Show / Hide console"));
+		ADD_BIND(_("Ctrl") + USTR(" d"), _("Start the debugger"));
+		ADD_BIND(_("Ctrl") + USTR(" s"), _("Show memory consumption"));
+		ADD_BIND(_("Ctrl") + USTR(" f"), _("Run in fast mode (*)"));
+		ADD_BIND(_("Ctrl") + USTR(" g"), _("Run in really fast mode (*)"));
+		ADD_BIND(_("Ctrl") + USTR(" m"), _("Toggle mouse capture"));
+		ADD_BIND(_("Ctrl") + USTR(" ") + _("Alt") + USTR(" 1-8"), _("Switch between graphics filters"));
+		ADD_BIND(_("Ctrl") + USTR(" ") + _("Alt") + USTR(" +, -"), _("Increase / Decrease scale factor"));
+		ADD_BIND(_("Ctrl") + USTR(" ") + _("Alt") + USTR(" a"), _("Toggle aspect-ratio correction"));
 		ADD_LINE;
 		ADD_LINE;
 		// FIXME: This should use word-wrapping, and should not assume
@@ -118,136 +118,136 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 		case GID_ZAK:
 		case GID_MANIAC:
 			if (platform == Common::kPlatformNES) {
-				ADD_BIND("q", _("Push"));
-				ADD_BIND("a", _("Pull"));
-				ADD_BIND("z", _("Give"));
-				ADD_BIND("w", _("Open"));
-				ADD_BIND("s", _("Close"));
-				ADD_BIND("x", _("Go to"));
-				ADD_BIND("e", _("Get"));
-				ADD_BIND("d", _("Use"));
-				ADD_BIND("c", _("Read"));
-				ADD_BIND("r", _("New kid"));
-				ADD_BIND("f", _("Turn on"));
-				ADD_BIND("v", _("Turn off"));
+				ADD_BIND(USTR("q"), _("Push"));
+				ADD_BIND(USTR("a"), _("Pull"));
+				ADD_BIND(USTR("z"), _("Give"));
+				ADD_BIND(USTR("w"), _("Open"));
+				ADD_BIND(USTR("s"), _("Close"));
+				ADD_BIND(USTR("x"), _("Go to"));
+				ADD_BIND(USTR("e"), _("Get"));
+				ADD_BIND(USTR("d"), _("Use"));
+				ADD_BIND(USTR("c"), _("Read"));
+				ADD_BIND(USTR("r"), _("New kid"));
+				ADD_BIND(USTR("f"), _("Turn on"));
+				ADD_BIND(USTR("v"), _("Turn off"));
 				break;
 			}
 
-			ADD_BIND("q", _("Push"));
-			ADD_BIND("a", _("Pull"));
-			ADD_BIND("z", _("Give"));
-			ADD_BIND("w", _("Open"));
-			ADD_BIND("s", _("Close"));
-			ADD_BIND("x", _("Read"));
-			ADD_BIND("e", _("Walk to"));
-			ADD_BIND("d", _("Pick up"));
-			ADD_BIND("c", _("What is"));
+			ADD_BIND(USTR("q"), _("Push"));
+			ADD_BIND(USTR("a"), _("Pull"));
+			ADD_BIND(USTR("z"), _("Give"));
+			ADD_BIND(USTR("w"), _("Open"));
+			ADD_BIND(USTR("s"), _("Close"));
+			ADD_BIND(USTR("x"), _("Read"));
+			ADD_BIND(USTR("e"), _("Walk to"));
+			ADD_BIND(USTR("d"), _("Pick up"));
+			ADD_BIND(USTR("c"), _("What is"));
 			if (gameId == GID_MANIAC) {
-				ADD_BIND("r", _("Unlock"));
-				ADD_BIND("f", _("New kid"));
+				ADD_BIND(USTR("r"), _("Unlock"));
+				ADD_BIND(USTR("f"), _("New kid"));
 			} else {
-				ADD_BIND("r", _("Put on"));
-				ADD_BIND("f", _("Take off"));
+				ADD_BIND(USTR("r"), _("Put on"));
+				ADD_BIND(USTR("f"), _("Take off"));
 			}
-			ADD_BIND("v", _("Use"));
-			ADD_BIND("t", _("Turn on"));
-			ADD_BIND("g", _("Turn off"));
+			ADD_BIND(USTR("v"), _("Use"));
+			ADD_BIND(USTR("t"), _("Turn on"));
+			ADD_BIND(USTR("g"), _("Turn off"));
 			if (gameId == GID_MANIAC)
-				ADD_BIND("b", _("Fix"));
+				ADD_BIND(USTR("b"), _("Fix"));
 			else
-				ADD_BIND("b", _("Switch"));
+				ADD_BIND(USTR("b"), _("Switch"));
 			break;
 		case GID_INDY3:
-			ADD_BIND("q", _("Push"));
-			ADD_BIND("a", _("Pull"));
-			ADD_BIND("z", _("Give"));
-			ADD_BIND("w", _("Open"));
-			ADD_BIND("s", _("Close"));
-			ADD_BIND("x", _("Look"));
-			ADD_BIND("e", _("Walk to"));
-			ADD_BIND("d", _("Pick up"));
-			ADD_BIND("c", _("What is"));
-			ADD_BIND("r", _("Use"));
-			ADD_BIND("f", _("Turn on"));
-			ADD_BIND("v", _("Turn off"));
-			ADD_BIND("t", _("Talk"));
-			ADD_BIND("g", _("Travel"));
-			ADD_BIND("b", _("To Henry / To Indy"));
+			ADD_BIND(USTR("q"), _("Push"));
+			ADD_BIND(USTR("a"), _("Pull"));
+			ADD_BIND(USTR("z"), _("Give"));
+			ADD_BIND(USTR("w"), _("Open"));
+			ADD_BIND(USTR("s"), _("Close"));
+			ADD_BIND(USTR("x"), _("Look"));
+			ADD_BIND(USTR("e"), _("Walk to"));
+			ADD_BIND(USTR("d"), _("Pick up"));
+			ADD_BIND(USTR("c"), _("What is"));
+			ADD_BIND(USTR("r"), _("Use"));
+			ADD_BIND(USTR("f"), _("Turn on"));
+			ADD_BIND(USTR("v"), _("Turn off"));
+			ADD_BIND(USTR("t"), _("Talk"));
+			ADD_BIND(USTR("g"), _("Travel"));
+			ADD_BIND(USTR("b"), _("To Henry / To Indy"));
 			break;
 		case GID_LOOM:
 			// I18N: These are different musical notes
-			ADD_BIND("q, c", _("play C minor on distaff"));
-			ADD_BIND("w, d", _("play D on distaff"));
-			ADD_BIND("e, e", _("play E on distaff"));
-			ADD_BIND("r, f", _("play F on distaff"));
-			ADD_BIND("t, g", _("play G on distaff"));
-			ADD_BIND("y, a", _("play A on distaff"));
-			ADD_BIND("u, b", _("play B on distaff"));
-			ADD_BIND("i, C", _("play C major on distaff"));
+			ADD_BIND(USTR("q, c"), _("play C minor on distaff"));
+			ADD_BIND(USTR("w, d"), _("play D on distaff"));
+			ADD_BIND(USTR("e, e"), _("play E on distaff"));
+			ADD_BIND(USTR("r, f"), _("play F on distaff"));
+			ADD_BIND(USTR("t, g"), _("play G on distaff"));
+			ADD_BIND(USTR("y, a"), _("play A on distaff"));
+			ADD_BIND(USTR("u, b"), _("play B on distaff"));
+			ADD_BIND(USTR("i, C"), _("play C major on distaff"));
 			break;
 		case GID_MONKEY_EGA:
 		case GID_MONKEY_VGA:
-			ADD_BIND("o", _("Open"));
-			ADD_BIND("c", _("Close"));
-			ADD_BIND("s", _("puSh"));
-			ADD_BIND("y", _("pull (Yank)"));
-			ADD_BIND("w", _("Walk to"));
-			ADD_BIND("p", _("Pick up"));
-			ADD_BIND("t", _("Talk to"));
-			ADD_BIND("g", _("Give"));
-			ADD_BIND("u", _("Use"));
-			ADD_BIND("l", _("Look at"));
-			ADD_BIND("n", _("turn oN"));
-			ADD_BIND("f", _("turn oFf"));
+			ADD_BIND(USTR("o"), _("Open"));
+			ADD_BIND(USTR("c"), _("Close"));
+			ADD_BIND(USTR("s"), _("puSh"));
+			ADD_BIND(USTR("y"), _("pull (Yank)"));
+			ADD_BIND(USTR("w"), _("Walk to"));
+			ADD_BIND(USTR("p"), _("Pick up"));
+			ADD_BIND(USTR("t"), _("Talk to"));
+			ADD_BIND(USTR("g"), _("Give"));
+			ADD_BIND(USTR("u"), _("Use"));
+			ADD_BIND(USTR("l"), _("Look at"));
+			ADD_BIND(USTR("n"), _("turn oN"));
+			ADD_BIND(USTR("f"), _("turn oFf"));
 			break;
 		case GID_MONKEY:
 		case GID_MONKEY2:
 		case GID_INDY4:
 		case GID_TENTACLE:
-			ADD_BIND("g", _("Give"));
-			ADD_BIND("o", _("Open"));
-			ADD_BIND("c", _("Close"));
-			ADD_BIND("p", _("Pick up"));
-			ADD_BIND("l", _("Look at"));
-			ADD_BIND("t", _("Talk to"));
-			ADD_BIND("u", _("Use"));
-			ADD_BIND("s", _("puSh"));
-			ADD_BIND("y", _("pull (Yank)"));
+			ADD_BIND(USTR("g"), _("Give"));
+			ADD_BIND(USTR("o"), _("Open"));
+			ADD_BIND(USTR("c"), _("Close"));
+			ADD_BIND(USTR("p"), _("Pick up"));
+			ADD_BIND(USTR("l"), _("Look at"));
+			ADD_BIND(USTR("t"), _("Talk to"));
+			ADD_BIND(USTR("u"), _("Use"));
+			ADD_BIND(USTR("s"), _("puSh"));
+			ADD_BIND(USTR("y"), _("pull (Yank)"));
 			if (platform == Common::kPlatformSegaCD) {
 				ADD_BIND(_("KeyUp"), _("Highlight prev dialogue"));
 				ADD_BIND(_("KeyDown"), _("Highlight next dialogue"));
 			}
 			break;
 		case GID_SAMNMAX:
-			ADD_BIND("w", _("Walk"));
-			ADD_BIND("t", _("Talk"));
-			ADD_BIND("u", _("Use"));
-			ADD_BIND("i", _("Inventory"));
-			ADD_BIND("o", _("Object"));
-			ADD_BIND("p", _("Pick up"));
-			ADD_BIND("l", _("Look"));
-			ADD_BIND("b", _("Black and White / Color"));
+			ADD_BIND(USTR("w"), _("Walk"));
+			ADD_BIND(USTR("t"), _("Talk"));
+			ADD_BIND(USTR("u"), _("Use"));
+			ADD_BIND(USTR("i"), _("Inventory"));
+			ADD_BIND(USTR("o"), _("Object"));
+			ADD_BIND(USTR("p"), _("Pick up"));
+			ADD_BIND(USTR("l"), _("Look"));
+			ADD_BIND(USTR("b"), _("Black and White / Color"));
 			break;
 		case GID_FT:
-			ADD_BIND("e", _("Eyes"));
-			ADD_BIND("t", _("Tongue"));
-			ADD_BIND("i", _("Inventory"));
-			ADD_BIND("p", _("Punch"));
-			ADD_BIND("k", _("Kick"));
+			ADD_BIND(USTR("e"), _("Eyes"));
+			ADD_BIND(USTR("t"), _("Tongue"));
+			ADD_BIND(USTR("i"), _("Inventory"));
+			ADD_BIND(USTR("p"), _("Punch"));
+			ADD_BIND(USTR("k"), _("Kick"));
 			break;
 		case GID_DIG:
-			ADD_BIND("e", _("Examine"));
-			ADD_BIND("t", _("Regular cursor"));
-			ADD_BIND("i", _("Inventory"));
+			ADD_BIND(USTR("e"), _("Examine"));
+			ADD_BIND(USTR("t"), _("Regular cursor"));
+			ADD_BIND(USTR("i"), _("Inventory"));
 			// I18N: Comm is a communication device
-			ADD_BIND("c", _("Comm"));
+			ADD_BIND(USTR("c"), _("Comm"));
 			break;
 		case GID_CMI:
-			ADD_BIND("F1", _("Save / Load / Options"));
-			ADD_BIND("e", _("Examine"));
-			ADD_BIND("t", _("Talk to"));
-			ADD_BIND("i", _("Inventory"));
-			ADD_BIND("u", _("Use"));
+			ADD_BIND(USTR("F1"), _("Save / Load / Options"));
+			ADD_BIND(USTR("e"), _("Examine"));
+			ADD_BIND(USTR("t"), _("Talk to"));
+			ADD_BIND(USTR("i"), _("Inventory"));
+			ADD_BIND(USTR("u"), _("Use"));
 			break;
 		default:
 			break;
@@ -257,41 +257,41 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 		title = _("Other game controls:");
 		if (version <= 2) {
 			ADD_TEXT(_("Inventory:"));
-			ADD_BIND("u", _("Scroll list up"));
-			ADD_BIND("j", _("Scroll list down"));
-			ADD_BIND("i", _("Upper left item"));
-			ADD_BIND("k", _("Lower left item"));
-			ADD_BIND("o", _("Upper right item"));
-			ADD_BIND("l", _("Lower right item"));
+			ADD_BIND(USTR("u"), _("Scroll list up"));
+			ADD_BIND(USTR("j"), _("Scroll list down"));
+			ADD_BIND(USTR("i"), _("Upper left item"));
+			ADD_BIND(USTR("k"), _("Lower left item"));
+			ADD_BIND(USTR("o"), _("Upper right item"));
+			ADD_BIND(USTR("l"), _("Lower right item"));
 			ADD_LINE;
 		} else if (gameId == GID_INDY3 || gameId == GID_ZAK) {
 			// Indy3, or FM-TOWNS Zak
 			ADD_TEXT(_("Inventory:"));
-			ADD_BIND("y", _("Upper left item"));
-			ADD_BIND("h", _("Middle left item"));
-			ADD_BIND("n", _("Lower left item"));
-			ADD_BIND("u", _("Upper right item"));
-			ADD_BIND("j", _("Middle right item"));
-			ADD_BIND("m", _("Lower right item"));
-			ADD_BIND("o", _("Scroll list up"));
-			ADD_BIND("l", _("Scroll list down"));
+			ADD_BIND(USTR("y"), _("Upper left item"));
+			ADD_BIND(USTR("h"), _("Middle left item"));
+			ADD_BIND(USTR("n"), _("Lower left item"));
+			ADD_BIND(USTR("u"), _("Upper right item"));
+			ADD_BIND(USTR("j"), _("Middle right item"));
+			ADD_BIND(USTR("m"), _("Lower right item"));
+			ADD_BIND(USTR("o"), _("Scroll list up"));
+			ADD_BIND(USTR("l"), _("Scroll list down"));
 			ADD_LINE;
 		}
 		if (gameId == GID_MANIAC) {
 			ADD_TEXT(_("Switching characters:"));
-			ADD_BIND("F1", "Dave");
-			ADD_BIND("F2", _("Second kid"));
-			ADD_BIND("F3", _("Third kid"));
+			ADD_BIND(USTR("F1"), USTR("Dave"));
+			ADD_BIND(USTR("F2"), _("Second kid"));
+			ADD_BIND(USTR("F3"), _("Third kid"));
 		} else if (gameId == GID_ZAK) {
 			ADD_TEXT(_("Switching characters:"));
-			ADD_BIND("F1", "Zak");
-			ADD_BIND("F2", "Annie");
-			ADD_BIND("F3", "Melissa");
-			ADD_BIND("F4", "Leslie");
+			ADD_BIND(USTR("F1"), USTR("Zak"));
+			ADD_BIND(USTR("F2"), USTR("Annie"));
+			ADD_BIND(USTR("F3"), USTR("Melissa"));
+			ADD_BIND(USTR("F4"), USTR("Leslie"));
 		}
 		if (gameId == GID_INDY4) {
-			ADD_BIND("i", _("Toggle Inventory/IQ Points display"));
-			ADD_BIND("f", _("Toggle Keyboard/Mouse Fighting (*)"));
+			ADD_BIND(USTR("i"), _("Toggle Inventory/IQ Points display"));
+			ADD_BIND(USTR("f"), _("Toggle Keyboard/Mouse Fighting (*)"));
 			ADD_LINE;
 			ADD_TEXT(_("* Keyboard Fighting is always on,"));
 			ADD_TEXT(_("  so despite the in-game message this"));
@@ -303,17 +303,17 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 		case GID_INDY3:
 		case GID_INDY4:
 			title = _("Fighting controls (numpad):");
-			ADD_BIND("7", _("Step back"));
-			ADD_BIND("4", _("Step back"));
-			ADD_BIND("1", _("Step back"));
-			ADD_BIND("8", _("Block high"));
-			ADD_BIND("5", _("Block middle"));
-			ADD_BIND("2", _("Block low"));
-			ADD_BIND("9", _("Punch high"));
-			ADD_BIND("6", _("Punch middle"));
-			ADD_BIND("3", _("Punch low"));
+			ADD_BIND(USTR("7"), _("Step back"));
+			ADD_BIND(USTR("4"), _("Step back"));
+			ADD_BIND(USTR("1"), _("Step back"));
+			ADD_BIND(USTR("8"), _("Block high"));
+			ADD_BIND(USTR("5"), _("Block middle"));
+			ADD_BIND(USTR("2"), _("Block low"));
+			ADD_BIND(USTR("9"), _("Punch high"));
+			ADD_BIND(USTR("6"), _("Punch middle"));
+			ADD_BIND(USTR("3"), _("Punch low"));
 			if (gameId == GID_INDY4) {
-				ADD_BIND("0", _("Sucker punch"));
+				ADD_BIND(USTR("0"), _("Sucker punch"));
 			}
 			ADD_LINE;
 			ADD_TEXT(_("These are for Indy on left."));
@@ -329,15 +329,15 @@ void ScummHelp::updateStrings(byte gameId, byte version, Common::Platform platfo
 		switch (gameId) {
 		case GID_INDY3:
 			title = _("Biplane controls (numpad):");
-			ADD_BIND("7", _("Fly to upper left"));
-			ADD_BIND("4", _("Fly to left"));
-			ADD_BIND("1", _("Fly to lower left"));
-			ADD_BIND("8", _("Fly upwards"));
-			ADD_BIND("5", _("Fly straight"));
-			ADD_BIND("2", _("Fly down"));
-			ADD_BIND("9", _("Fly to upper right"));
-			ADD_BIND("6", _("Fly to right"));
-			ADD_BIND("3", _("Fly to lower right"));
+			ADD_BIND(USTR("7"), _("Fly to upper left"));
+			ADD_BIND(USTR("4"), _("Fly to left"));
+			ADD_BIND(USTR("1"), _("Fly to lower left"));
+			ADD_BIND(USTR("8"), _("Fly upwards"));
+			ADD_BIND(USTR("5"), _("Fly straight"));
+			ADD_BIND(USTR("2"), _("Fly down"));
+			ADD_BIND(USTR("9"), _("Fly to upper right"));
+			ADD_BIND(USTR("6"), _("Fly to right"));
+			ADD_BIND(USTR("3"), _("Fly to lower right"));
 			break;
 		default:
 			break;

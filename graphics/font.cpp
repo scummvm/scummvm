@@ -335,7 +335,8 @@ StringType handleEllipsis(const Font &font, const StringType &input, int w) {
 
 	if (width > w) {
 		StringType str;
-		StringType ellipsis("...");
+		typename StringType::value_type vt[] = { '.', '.', '.', '\0' };
+		StringType ellipsis(vt);
 
 		// String is too wide. So we shorten it "intelligently" by
 		// replacing parts of the string by an ellipsis. There are

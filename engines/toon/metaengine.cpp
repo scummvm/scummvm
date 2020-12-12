@@ -94,7 +94,7 @@ SaveStateList ToonMetaEngine::listSaves(const char *target) const {
 				file->read(name, nameSize);
 				name[nameSize] = 0;
 
-				saveList.push_back(SaveStateDescriptor(slotNum, name));
+				saveList.push_back(SaveStateDescriptor(slotNum, Common::U32String(name, Common::kLatin1)));
 				delete file;
 			}
 		}
@@ -122,7 +122,7 @@ SaveStateDescriptor ToonMetaEngine::querySaveMetaInfos(const char *target, int s
 		file->read(saveName, saveNameLength);
 		saveName[saveNameLength] = 0;
 
-		SaveStateDescriptor desc(slot, saveName);
+		SaveStateDescriptor desc(slot, Common::U32String(saveName, Common::kLatin1));
 
 		Graphics::Surface *thumbnail = nullptr;
 		if (!Graphics::loadThumbnail(*file, thumbnail, false)) {

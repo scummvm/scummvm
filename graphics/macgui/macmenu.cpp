@@ -360,7 +360,7 @@ int MacMenu::addMenuItem(MacMenuSubMenu *submenu, const Common::String &text, in
 int MacMenu::addMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int action, int style, char shortcut, bool enabled) {
 	_dimensionsDirty = true;
 
-	Common::U32String amp("&");
+	Common::U32String amp(USTR("&"));
 	Common::U32String res;
 	int shortcutPos = -1;
 
@@ -596,7 +596,7 @@ void MacMenu::processSubmenuTabs(MacMenuSubMenu *submenu) {
 	int maxWidth = 0;
 	bool haveTabs = false;
 
-	Common::U32String tabSymbol("\t");
+	Common::U32String tabSymbol(USTR("\t"));
 
 	// First, we replace \t with two spaces, and thus, obtain
 	// the widest string
@@ -623,7 +623,7 @@ void MacMenu::processSubmenuTabs(MacMenuSubMenu *submenu) {
 			Common::U32String end = item->unicodeText.substr(pos + 1);
 
 			res = start;
-			res += Common::U32String("  ");
+			res += USTR("  ");
 			res += end;
 		}
 
@@ -651,7 +651,7 @@ void MacMenu::processSubmenuTabs(MacMenuSubMenu *submenu) {
 		Common::U32String start = item->unicodeText.substr(0, pos);
 		Common::U32String end = item->unicodeText.substr(pos + 1);
 		Common::U32String res;
-		Common::U32String spaces(" ");
+		Common::U32String spaces(USTR(" "));
 		int width;
 
 		do {
@@ -693,7 +693,7 @@ int MacMenu::calcSubMenuWidth(MacMenuSubMenu *submenu) {
 			Common::U32String text(item->unicodeText);
 
 			if (item->submenu != nullptr) // If we're drawing triangle
-				text += Common::U32String("  ");
+				text += USTR("  ");
 
 			int width = _font->getStringWidth(text);
 			if (width > maxWidth) {

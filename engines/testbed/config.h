@@ -73,7 +73,7 @@ public:
 
 	void markAsSelected(int i) {
 		if (!_list[i].encode().contains("selected")) {
-			_list[i] += Common::U32String(" (selected)");
+			_list[i] += USTR(" (selected)");
 		}
 		_listColors[i] = GUI::ThemeEngine::kFontColorNormal;
 		draw();
@@ -81,7 +81,7 @@ public:
 
 	void markAsDeselected(int i) {
 		if (_list[i].encode().contains("selected")) {
-			_list[i] = _testSuiteArray[i]->getDescription();
+			_list[i] = Common::U32String(_testSuiteArray[i]->getDescription(), Common::kLatin1);
 		}
 		_listColors[i] = GUI::ThemeEngine::kFontColorAlternate;
 		draw();

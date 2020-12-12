@@ -111,12 +111,13 @@ void Testsuite::genReport() const {
 }
 
 bool Testsuite::handleInteractiveInput(const Common::String &textToDisplay, const char *opt1, const char *opt2, OptionSelected result) {
-	GUI::MessageDialog prompt(textToDisplay.c_str(), opt1, opt2);
+	GUI::MessageDialog prompt(textToDisplay.decode(Common::kLatin1), Common::U32String(opt1, Common::kLatin1),
+				  Common::U32String(opt2, Common::kLatin1));
 	return prompt.runModal() == result ? true : false;
 }
 
 void Testsuite::displayMessage(const Common::String &textToDisplay, const char *defaultButton) {
-	GUI::MessageDialog prompt(textToDisplay.c_str(), defaultButton);
+	GUI::MessageDialog prompt(textToDisplay.decode(Common::kLatin1), Common::U32String(defaultButton, Common::kLatin1));
 	prompt.runModal();
 }
 

@@ -80,7 +80,7 @@ SaveStateList DragonsMetaEngine::listSaves(const char *target) const {
 			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
 			if (in) {
 				if (Dragons::DragonsEngine::readSaveHeader(in, header) == Dragons::kRSHENoError) {
-					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
+					saveList.push_back(SaveStateDescriptor(slotNum, Common::U32String(header.description, Common::kLatin1)));
 				}
 				delete in;
 			}
@@ -99,7 +99,7 @@ SaveStateDescriptor DragonsMetaEngine::querySaveMetaInfos(const char *target, in
 		error = Dragons::DragonsEngine::readSaveHeader(in, header, false);
 		delete in;
 		if (error == Dragons::kRSHENoError) {
-			SaveStateDescriptor desc(slot, header.description);
+			SaveStateDescriptor desc(slot, Common::U32String(header.description, Common::kLatin1));
 			// Slot 0 is used for the "Continue" save
 			desc.setDeletableFlag(slot != 0);
 			desc.setWriteProtectedFlag(slot == 0);

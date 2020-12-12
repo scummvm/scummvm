@@ -143,7 +143,7 @@ SaveStateDescriptor MacVentureMetaEngine::querySaveMetaInfos(const char *target,
 		delete in;
 		return desc;
 	}
-	return SaveStateDescriptor(-1, "");
+	return SaveStateDescriptor(-1, USTR(""));
 }
 
 } // End of namespace MacVenture

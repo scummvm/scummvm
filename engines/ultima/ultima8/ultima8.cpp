@@ -846,7 +846,7 @@ void Ultima8Engine::handleEvent(const Common::Event &event) {
 					if (!g_system->hasTextInClipboard())
 						return;
 
-					Common::String text = g_system->getTextFromClipboard();
+					Common::String text = g_system->getTextFromClipboard().legacyEncode();
 
 					// Only read the first line of text
 					while (!text.empty() && text.firstChar() >= ' ')

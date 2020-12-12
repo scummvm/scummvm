@@ -504,7 +504,7 @@ bool MohawkEngine_Riven::checkDatafiles() {
 	}
 
 	const char *msg = _s("You are missing the following required Riven data files:\n");
-	Common::U32String message = _(msg) + Common::U32String(missingFiles);
+	Common::U32String message = _(msg) + missingFiles.decode(Common::kUtf8);
 
 	warning("%s%s", msg, missingFiles.c_str());
 	GUIErrorMessage(message);

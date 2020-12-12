@@ -898,7 +898,7 @@ reg_t kWinDLL(EngineState *s, int argc, reg_t *argv) {
 reg_t kKawaHacks(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case 0: { // DoAlert
-		showScummVMDialog(s->_segMan->getString(argv[1]));
+		showScummVMDialog(s->_segMan->getString(argv[1]).decode(Common::kLatin1));
 		return NULL_REG;
 	}
 	case 1: { // ZaWarudo

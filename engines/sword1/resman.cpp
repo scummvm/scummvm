@@ -36,7 +36,7 @@ void guiFatalError(char *msg) {
 	// TODO: We really need to setup a special palette for cases when
 	// the engine is erroring before setting one... otherwise invisible cursor :)
 
-	GUI::MessageDialog dialog(msg);
+	GUI::MessageDialog dialog(Common::U32String(msg, Common::kLatin1));
 	dialog.runModal();
 	error("%s", msg);
 }

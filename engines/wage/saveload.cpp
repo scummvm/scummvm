@@ -751,15 +751,15 @@ bool WageEngine::scummVMSaveLoadDialog(bool isSave) {
 	// do saving
 	GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 	int slot = dialog.runModalWithCurrentTarget();
-	Common::String desc = dialog.getResultString();
+	Common::String desc = dialog.getResultString().legacyEncode();
 
 	if (desc.empty()) {
 		// create our own description for the saved game, the user didnt enter it
-		desc = dialog.createDefaultSaveDescription(slot);
+		desc = dialog.createDefaultSaveDescription(slot).legacyEncode();
 	}
 
 	if (desc.size() > 28)
-		desc = Common::String(desc.c_str(), 28);
+	    desc = desc.substr(0, 28);
 
 	if (slot < 0)
 		return true;

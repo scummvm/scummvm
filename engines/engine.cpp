@@ -408,14 +408,6 @@ void GUIErrorMessageWithURL(const Common::U32String &msg, const char *url) {
 	GUIErrorMessage(msg, url);
 }
 
-void GUIErrorMessageWithURL(const Common::String &msg, const char *url) {
-	GUIErrorMessage(Common::U32String(msg), url);
-}
-
-void GUIErrorMessage(const Common::String &msg, const char *url) {
-	GUIErrorMessage(Common::U32String(msg), url);
-}
-
 void GUIErrorMessage(const Common::U32String &msg, const char *url) {
 	g_system->setWindowCaption(_("Error"));
 	g_system->beginGFXTransaction();
@@ -442,11 +434,11 @@ void GUIErrorMessageFormat(const char *fmt, ...) {
 	msg = Common::String::vformat(fmt, va);
 	va_end(va);
 
-	GUIErrorMessage(msg);
+	GUIErrorMessage(Common::U32String(msg, Common::kLatin1));
 }
 
 void GUIErrorMessageFormat(Common::U32String fmt, ...) {
-	Common::U32String msg("");
+	Common::U32String msg = USTR("");
 
 	va_list va;
 	va_start(va, fmt);
@@ -656,9 +648,9 @@ bool Engine::warnUserAboutUnsupportedGame() {
 }
 
 void Engine::errorUnsupportedGame(Common::String extraMsg) {
-	Common::String message = extraMsg.empty() ? _("This game is not supported.") : _("This game is not supported for the following reason:\n\n");
+	Common::U32String message = extraMsg.empty() ? _("This game is not supported.") : _("This game is not supported for the following reason:\n\n");
 	message += _(extraMsg);
-	message += "\n\n";
+	message += USTR("\n\n");
 	GUI::MessageDialog(message).runModal();
 }
 
@@ -835,7 +827,7 @@ bool Engine::saveGameDialog() {
 		slotNum = dialog->runModalWithCurrentTarget();
 	}
 
-	Common::String desc = dialog->getResultString();
+	Common::U32String desc = dialog->getResultString();
 	if (desc.empty())
 		desc = dialog->createDefaultSaveDescription(slotNum);
 
@@ -844,7 +836,7 @@ bool Engine::saveGameDialog() {
 	if (slotNum < 0)
 		return false;
 
-	Common::Error saveError = saveGameState(slotNum, desc);
+	Common::Error saveError = saveGameState(slotNum, desc.legacyEncode());
 	if (saveError.getCode() != Common::kNoError) {
 		GUI::MessageDialog errorDialog(saveError.getDesc());
 		errorDialog.runModal();

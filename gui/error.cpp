@@ -35,8 +35,8 @@ void displayErrorDialog(const Common::U32String &text) {
 
 void displayErrorDialog(const Common::Error &error, const Common::U32String &extraText) {
 	Common::U32String errorText(extraText);
-	errorText += Common::U32String(" ");
-	errorText += _(error.getDesc());
+	errorText += USTR(" ");
+	errorText += error.getDesc();
 	GUI::MessageDialog alert(errorText);
 	alert.runModal();
 }

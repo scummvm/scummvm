@@ -105,7 +105,7 @@ SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTi
 	uint32 sig = s->readUint32BE();
 	byte version = s->readByte();
 
-	SaveStateDescriptor desc(-1, "");	// init to an invalid save slot
+	SaveStateDescriptor desc(-1, USTR(""));	// init to an invalid save slot
 
 	if (sig != MAGIC_HEADER || version > SAVEGAME_VERSION)
 		return desc;
@@ -117,7 +117,7 @@ SaveStateDescriptor loadMetaData(Common::ReadStream *s, int slot, bool setPlayTi
 	byte size = s->readByte();
 	for (int i = 0; i < size; ++i)
 		name += s->readByte();
-	desc.setDescription(name);
+	desc.setDescription(name.decode(Common::kUtf8));
 
 	uint32 saveDate = s->readUint32LE();
 	int day = (saveDate >> 24) & 0xFF;
@@ -219,7 +219,7 @@ void DrasculaEngine::loadSaveNames() {
 		saveFileName = Common::String::format("%s.%03d", _targetName.c_str(), n + 1);
 		if ((in = _saveFileMan->openForLoading(saveFileName))) {
 			SaveStateDescriptor desc = loadMetaData(in, n + 1, false);
-			_saveNames[n] = desc.getDescription();
+			_saveNames[n] = desc.getDescription().legacyEncode();
 			delete in;
 		}
 	}
@@ -383,15 +383,15 @@ bool DrasculaEngine::scummVMSaveLoadDialog(bool isSave) {
 		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 
 		slot = dialog->runModalWithCurrentTarget();
-		desc = dialog->getResultString();
+		desc = dialog->getResultString().legacyEncode();
 
 		if (desc.empty()) {
 			// create our own description for the saved game, the user didnt enter it
-			desc = dialog->createDefaultSaveDescription(slot);
+			desc = dialog->createDefaultSaveDescription(slot).legacyEncode();
 		}
 
 		if (desc.size() > 28)
-			desc = Common::String(desc.c_str(), 28);
+			desc = desc.substr(0, 28);
 	} else {
 		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 		slot = dialog->runModalWithCurrentTarget();

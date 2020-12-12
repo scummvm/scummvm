@@ -353,7 +353,8 @@ const Graphics::Font *Gui::getConsoleFont() {
 }
 
 void Gui::appendText(const char *s) {
-	_consoleWindow->appendText(s, getConsoleMacFont());
+	_consoleWindow->appendText(Common::U32String(s, Common::kLatin1),
+				   getConsoleMacFont());
 }
 
 void Gui::clearOutput() {
@@ -361,7 +362,7 @@ void Gui::clearOutput() {
 }
 
 void Gui::actionCopy() {
-	g_system->setTextInClipboard(Common::convertUtf32ToUtf8(_consoleWindow->getSelection()));
+	g_system->setTextInClipboard(_consoleWindow->getSelection());
 
 	_menu->enableCommand(kMenuEdit, kMenuActionPaste, true);
 }
@@ -378,7 +379,7 @@ void Gui::actionPaste() {
 
 void Gui::actionUndo() {
 	_consoleWindow->clearInput();
-	_consoleWindow->appendInput(_undobuffer);
+	_consoleWindow->appendInput(_undobuffer.decode(Common::kLatin1));
 
 	_menu->enableCommand(kMenuEdit, kMenuActionUndo, false);
 }

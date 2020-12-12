@@ -482,7 +482,7 @@ reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
 				if (out) {
 					Common::String saveName;
 					if (saveNo == kAutoSaveId) {
-						saveName = _("(Autosave)");
+						saveName = _("(Autosave)").legacyEncode();
 					} else {
 						saveName = getRamaSaveName(s, saveNo - kSaveIdShift);
 					}
@@ -1074,10 +1074,10 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		g_sci->_soundCmd->pauseAll(true); // pause music
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 		savegameId = dialog->runModalWithCurrentTarget();
-		game_description = dialog->getResultString();
+		game_description = dialog->getResultString().legacyEncode();
 		if (game_description.empty()) {
 			// create our own description for the saved game, the user didn't enter it
-			game_description = dialog->createDefaultSaveDescription(savegameId);
+			game_description = dialog->createDefaultSaveDescription(savegameId).legacyEncode();
 		}
 		delete dialog;
 		g_sci->_soundCmd->pauseAll(false); // unpause music (we can't have it paused during save)

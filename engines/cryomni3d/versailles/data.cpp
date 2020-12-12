@@ -106,8 +106,8 @@ void CryOmni3DEngine_Versailles::loadStaticData() {
 		_bombAlphabet = data->readString16().decode(Common::kWindows932);
 		_bombPassword = data->readString16().decode(Common::kWindows932);
 	} else {
-		_bombAlphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ '";
-		_bombPassword = data->readString16();
+		_bombAlphabet = USTR("ABCDEFGHIJKLMNOPQRSTUVWXYZ '");
+		_bombPassword = data->readString16().decode(Common::kLatin1);
 	}
 
 	// messages, paintings titles

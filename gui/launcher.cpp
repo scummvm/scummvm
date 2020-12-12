@@ -129,9 +129,9 @@ void LauncherDialog::build() {
 		_logo->useThemeTransparency(true);
 		_logo->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageLogo));
 
-		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMVersionDate));
+		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMVersionDate, Common::kLatin1));
 	} else
-		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMFullVersion));
+		new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMFullVersion, Common::kLatin1));
 #else
 	// Show ScummVM version
 	new StaticTextWidget(this, "Launcher.Version", Common::U32String(gScummVMFullVersion));
@@ -184,7 +184,7 @@ void LauncherDialog::build() {
 #endif
 		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
 
-	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, Common::U32String(), kSearchCmd);
+	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search.decode(Common::kLatin1), Common::U32String(), kSearchCmd);
 	_searchClearButton = addClearButton(this, "Launcher.SearchClearButton", kSearchClearCmd);
 
 	// Add list with game titles
@@ -331,7 +331,7 @@ void LauncherDialog::updateListing() {
 			}
 		}
 
-		l.push_back(iter->description);
+		l.push_back(iter->description.decode(Common::kLatin1));
 		colors.push_back(color);
 		_domains.push_back(iter->key);
 	}
@@ -594,10 +594,10 @@ bool LauncherDialog::doGameDetection(const Common::String &path) {
 		// Display the candidates to the user and let her/him pick one
 		U32StringArray list;
 		for (idx = 0; idx < (int)candidates.size(); idx++) {
-			Common::U32String description = candidates[idx].description;
+			Common::U32String description = candidates[idx].description.decode(Common::kLatin1);
 
 			if (candidates[idx].hasUnknownFiles) {
-				description += Common::U32String(" - ");
+				description += USTR(" - ");
 				description += _("Unknown variant");
 			}
 
@@ -748,7 +748,7 @@ void LauncherDialog::reflowLayout() {
 		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
 			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign("Launcher.Version"));
-			ver->setLabel(Common::U32String(gScummVMVersionDate));
+			ver->setLabel(Common::U32String(gScummVMVersionDate, Common::kLatin1));
 		}
 
 		if (!_logo)
@@ -759,7 +759,7 @@ void LauncherDialog::reflowLayout() {
 		StaticTextWidget *ver = (StaticTextWidget *)findWidget("Launcher.Version");
 		if (ver) {
 			ver->setAlign(g_gui.xmlEval()->getWidgetTextHAlign("Launcher.Version"));
-			ver->setLabel(Common::U32String(gScummVMFullVersion));
+			ver->setLabel(Common::U32String(gScummVMFullVersion, Common::kLatin1));
 		}
 
 		if (_logo) {

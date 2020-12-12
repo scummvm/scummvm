@@ -127,7 +127,7 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 				strncpy(saveDesc, saveNames[slotNum], SAVEGAME_NAME_LEN);
 				saveDesc[sizeof(CommandeType) - 1] = 0;
 
-				SaveStateDescriptor saveStateDesc(slotNum, saveDesc);
+				SaveStateDescriptor saveStateDesc(slotNum, Common::U32String(saveDesc, Common::kLatin1));
 				saveStateDesc.setAutosave(slotNum == getAutosaveSlot());
 				saveStateDesc.setWriteProtectedFlag(saveStateDesc.isAutosave());
 
@@ -205,7 +205,7 @@ SaveStateDescriptor CineMetaEngine::querySaveMetaInfos(const char *target, int s
 			}
 
 			saveNames[slot][SAVEGAME_NAME_LEN - 1] = 0;
-			Common::String saveNameStr((const char *)saveNames[slot]);
+			Common::U32String saveNameStr((const char *)saveNames[slot], Common::kUtf8);
 			desc.setDescription(saveNameStr);
 		}
 

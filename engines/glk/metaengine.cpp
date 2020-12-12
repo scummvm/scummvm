@@ -249,7 +249,7 @@ SaveStateList GlkMetaEngine::listSaves(const char *target) const {
 			if (in) {
 				Common::String saveName;
 				if (Glk::QuetzalReader::getSavegameDescription(in, saveName))
-					saveList.push_back(SaveStateDescriptor(slot, saveName));
+					saveList.push_back(SaveStateDescriptor(slot, Common::U32String(saveName, Common::kLatin1)));
 
 				delete in;
 			}

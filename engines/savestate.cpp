@@ -38,12 +38,6 @@ SaveStateDescriptor::SaveStateDescriptor(int s, const Common::U32String &d)
 	_thumbnail(), _saveType(kSaveTypeUndetermined) {
 }
 
-SaveStateDescriptor::SaveStateDescriptor(int s, const Common::String &d)
-	: _slot(s), _description(Common::U32String(d)), _isDeletable(true), _isWriteProtected(false),
-	_isLocked(false), _saveDate(), _saveTime(), _playTime(), _playTimeMSecs(0),
-	_thumbnail(), _saveType(kSaveTypeUndetermined) {
-}
-
 void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
 	if (_thumbnail.get() == t)
 		return;

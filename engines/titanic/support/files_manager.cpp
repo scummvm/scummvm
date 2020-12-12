@@ -39,19 +39,19 @@ CFilesManager::~CFilesManager() {
 
 bool CFilesManager::loadResourceIndex() {
 	if (!_datFile.open("titanic.dat")) {
-		GUIErrorMessage("Could not find titanic.dat data file");
+		GUIErrorMessage(USTR("Could not find titanic.dat data file"));
 		return false;
 	}
 
 	uint headerId = _datFile.readUint32BE();
 	_version = _datFile.readUint16LE();
 	if (headerId != MKTAG('S', 'V', 'T', 'N')) {
-		GUIErrorMessage("titanic.dat has invalid contents");
+		GUIErrorMessage(USTR("titanic.dat has invalid contents"));
 		return false;
 	}
 
 	if (_version != 5) {
-		GUIErrorMessage("titanic.dat is out of date");
+		GUIErrorMessage(USTR("titanic.dat is out of date"));
 		return false;
 	}
 

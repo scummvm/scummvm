@@ -297,7 +297,7 @@ bool FileManager::saveGame(const int16 slot, const Common::String &descrip) {
 	if (slot == -1) {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 		savegameId = dialog->runModalWithCurrentTarget();
-		savegameDescription = dialog->getResultString();
+		savegameDescription = dialog->getResultString().encode(Common::kUtf8);
 		delete dialog;
 	} else {
 		savegameId = slot;

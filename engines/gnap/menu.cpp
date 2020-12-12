@@ -465,7 +465,7 @@ void GnapEngine::updateMenuStatusMainMenu() {
 		if (_sceneClickedHotspot == 1) {
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 			int16 savegameId = dialog->runModalWithCurrentTarget();
-			Common::String savegameDescription = dialog->getResultString();
+			Common::String savegameDescription = dialog->getResultString().legacyEncode();
 			delete dialog;
 
 			if (savegameId != -1) {

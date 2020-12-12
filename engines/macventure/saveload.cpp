@@ -52,7 +52,7 @@ SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool s
 	uint32 sig = s->readUint32BE();
 	byte version = s->readByte();
 
-	SaveStateDescriptor desc(-1, "");	// init to an invalid save slot
+	SaveStateDescriptor desc(-1, USTR(""));	// init to an invalid save slot
 
 	if (sig != MACVENTURE_SAVE_HEADER || version > MACVENTURE_SAVE_VERSION)
 		return desc;
@@ -77,7 +77,7 @@ SaveStateDescriptor loadMetaData(Common::SeekableReadStream *s, int slot, bool s
 	for (uint32 i = 0; i < descSize; ++i) {
 		name += s->readByte();
 	}
-	desc.setDescription(name);
+	desc.setDescription(name.decode(Common::kUtf8));
 
 	// Load date
 	uint32 saveDate = s->readUint32LE();
@@ -168,7 +168,7 @@ Common::Error MacVentureEngine::saveGameState(int slot, const Common::String &de
 bool MacVentureEngine::scummVMSaveLoadDialog(bool isSave) {
 	if (!isSave) {
 		// do loading
-		GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(Common::String("Load game:"), Common::String("Load"), false);
+		GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(USTR("Load game:"), USTR("Load"), false);
 		int slot = dialog.runModalWithCurrentTarget();
 
 		if (slot < 0)
@@ -178,9 +178,9 @@ bool MacVentureEngine::scummVMSaveLoadDialog(bool isSave) {
 	}
 
 	// do saving
-	GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(Common::String("Save game:"), Common::String("Save"), true);
+	GUI::SaveLoadChooser dialog = GUI::SaveLoadChooser(USTR("Save game:"), USTR("Save"), true);
 	int slot = dialog.runModalWithCurrentTarget();
-	Common::String desc = dialog.getResultString();
+	Common::U32String desc = dialog.getResultString();
 
 	if (desc.empty()) {
 		// create our own description for the saved game, the user didnt enter it
@@ -194,7 +194,7 @@ bool MacVentureEngine::scummVMSaveLoadDialog(bool isSave) {
 	if (slot < 0)
 		return true;
 
-	return saveGameState(slot, desc).getCode() == Common::kNoError;
+	return saveGameState(slot, desc.encode(Common::kUtf8)).getCode() == Common::kNoError;
 }
 
 bool MacVentureEngine::canLoadGameStateCurrently() {

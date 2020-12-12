@@ -62,7 +62,6 @@ private:
 public:
 	SaveStateDescriptor();
 	SaveStateDescriptor(int s, const Common::U32String &d);
-	SaveStateDescriptor(int s, const Common::String &d);
 
 	/**
 	 * @param slot The saveslot id, as it would be passed to the "-x" command line switch.
@@ -77,7 +76,6 @@ public:
 	/**
 	 * @param desc A human readable description of the save state.
 	 */
-	void setDescription(const Common::String &desc) { _description = desc.decode(); }
 	void setDescription(const Common::U32String &desc) { _description = desc; }
 
 	/**

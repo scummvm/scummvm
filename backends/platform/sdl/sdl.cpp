@@ -600,8 +600,7 @@ Common::U32String OSystem_SDL::getTextFromClipboard() {
 
 	char *text = SDL_GetClipboardText();
 
-	Common::String utf8Text(text);
-	Common::U32String strText = utf8Text.decode();
+	Common::U32String strText(text, Common::kUtf8);
 	SDL_free(text);
 
 	return strText;

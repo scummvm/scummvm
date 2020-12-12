@@ -70,7 +70,7 @@ void KIASectionLoad::open() {
 	if (!_saveList.empty()) {
 		_scrollBox->addLine(_vm->_textOptions->getText(36), -1, 4); // Load game:
 		for (uint i = 0; i < _saveList.size(); ++i) {
-			_scrollBox->addLine(_saveList[i].getDescription(), i, 0);
+			_scrollBox->addLine(_saveList[i].getDescription().legacyEncode(), i, 0);
 		}
 		_scrollBox->addLine("", -1, 4);
 	}

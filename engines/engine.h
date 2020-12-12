@@ -67,15 +67,7 @@ void GUIErrorMessage(const Common::U32String &msg, const char *url = nullptr);
 /**
  * Initialize graphics and show an error message.
  */
-void GUIErrorMessage(const Common::String &msg, const char *url = nullptr);
-/**
- * Initialize graphics and show an error message.
- */
 void GUIErrorMessageWithURL(const Common::U32String &msg, const char *url);
-/**
- * Initialize graphics and show an error message.
- */
-void GUIErrorMessageWithURL(const Common::String &msg, const char *url);
 /**
  * Initialize graphics and show an error message.
  */

@@ -133,7 +133,7 @@ bool readSaveHeader(Common::InSaveFile &in, SaveStateDescriptor &desc, bool skip
 	desc.setSaveDate(year, month, day);
 	desc.setSaveTime(hour, minutes);
 	desc.setPlayTime(playTime * 1000);
-	desc.setDescription(description);
+	desc.setDescription(description.decode(Common::kUtf8));
 	desc.setThumbnail(thumbnail);
 
 	return true;

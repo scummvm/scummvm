@@ -57,7 +57,7 @@ DownloadDialog::DownloadDialog(uint32 storageId, LauncherDialog *launcher) :
 	_progressBar->setMaxValue(100);
 	_progressBar->setValue(progress);
 	_progressBar->setEnabled(false);
-	_percentLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.PercentText", Common::String::format("%u %%", progress));
+	_percentLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.PercentText", Common::U32String::format("%u %%", progress));
 	_downloadSizeLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSize", Common::U32String());
 	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_Cloud_DownloadDialog.DownloadSpeed", Common::U32String());
 	if (g_system->getOverlayWidth() > 320)
@@ -224,10 +224,10 @@ Common::U32String DownloadDialog::getSpeedLabelText() {
 
 void DownloadDialog::refreshWidgets() {
 	_localDirectory = CloudMan.getDownloadLocalDirectory();
-	_remoteDirectoryLabel->setLabel(_("From: ") + Common::U32String(CloudMan.getDownloadRemoteDirectory()));
-	_localDirectoryLabel->setLabel(_("To: ") + Common::U32String(_localDirectory));
+	_remoteDirectoryLabel->setLabel(_("From: ") + CloudMan.getDownloadRemoteDirectory().decode(Common::kLatin1));
+	_localDirectoryLabel->setLabel(_("To: ") + _localDirectory.decode(Common::kLatin1));
 	uint32 progress = (uint32)(100 * CloudMan.getDownloadingProgress());
-	_percentLabel->setLabel(Common::String::format("%u %%", progress));
+	_percentLabel->setLabel(Common::U32String::format("%u %%", progress));
 	_downloadSizeLabel->setLabel(getSizeLabelText());
 	_downloadSpeedLabel->setLabel(getSpeedLabelText());
 	_progressBar->setValue(progress);

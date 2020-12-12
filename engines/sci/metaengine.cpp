@@ -383,7 +383,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 					delete in;
 					continue;
 				}
-				SaveStateDescriptor descriptor(slotNr, meta.name);
+				SaveStateDescriptor descriptor(slotNr, Common::U32String(meta.name, Common::kLatin1));
 
 				if (slotNr == 0) {
 					// ScummVM auto-save slot
@@ -413,7 +413,7 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int slotNr) const {
 	Common::String fileName = Common::String::format("%s.%03d", target, slotNr);
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
-	SaveStateDescriptor descriptor(slotNr, "");
+	SaveStateDescriptor descriptor(slotNr, USTR(""));
 
 	if (slotNr == 0) {
 		// ScummVM auto-save slot
@@ -431,18 +431,18 @@ SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int sl
 			// invalid
 			delete in;
 
-			descriptor.setDescription("*Invalid*");
+			descriptor.setDescription(USTR("*Invalid*"));
 			return descriptor;
 		}
 
-		descriptor.setDescription(meta.name);
+		descriptor.setDescription(meta.name.decode(Common::kLatin1));
 
 		Graphics::Surface *thumbnail;
 		if (!Graphics::loadThumbnail(*in, thumbnail)) {
 			// invalid
 			delete in;
 
-			descriptor.setDescription("*Invalid*");
+			descriptor.setDescription(USTR("*Invalid*"));
 			return descriptor;
 		}
 		descriptor.setThumbnail(thumbnail);

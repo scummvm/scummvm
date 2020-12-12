@@ -151,7 +151,7 @@ Common::Error PegasusEngine::run() {
 		message += "Be sure to rename \"Opening/Closing\" to \"Opening_Closing\".";
 #endif
 
-		GUIErrorMessage(message);
+		GUIErrorMessage(message.decode(Common::kLatin1));
 		warning("%s", message.c_str());
 		return Common::kNoGameDataFoundError;
 	}
@@ -376,7 +376,7 @@ Common::Error PegasusEngine::showSaveDialog() {
 	int slot = slc.runModalWithCurrentTarget();
 
 	if (slot >= 0)
-		return saveGameState(slot, slc.getResultString());
+		return saveGameState(slot, slc.getResultString().encode(Common::kUtf8));
 
 	return Common::kUserCanceled;
 }

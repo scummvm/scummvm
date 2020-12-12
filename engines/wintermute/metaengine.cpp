@@ -126,7 +126,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override {
 		Wintermute::BasePersistenceManager pm(target, true);
 		SaveStateDescriptor retVal;
-		retVal.setDescription("Invalid savegame");
+		retVal.setDescription(USTR("Invalid savegame"));
 		pm.getSaveStateDesc(slot, retVal);
 		return retVal;
 	}

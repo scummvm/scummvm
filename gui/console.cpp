@@ -538,7 +538,7 @@ void ConsoleDialog::specialKeys(Common::KeyCode keycode) {
 		{
 			Common::String userInput = getUserInput();
 			if (!userInput.empty())
-				g_system->setTextInClipboard(userInput);
+				g_system->setTextInClipboard(userInput.decode(Common::kLatin1));
 		}
 		break;
 	default:

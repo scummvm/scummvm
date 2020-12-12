@@ -125,7 +125,7 @@ SaveStateDescriptor AdlMetaEngine::querySaveMetaInfos(const char *target, int sl
 		return SaveStateDescriptor();
 	}
 
-	SaveStateDescriptor sd(slot, name);
+	SaveStateDescriptor sd(slot, Common::U32String(name, Common::kLatin1));
 
 	int year = inFile->readUint16BE();
 	int month = inFile->readByte();
@@ -187,7 +187,7 @@ SaveStateList AdlMetaEngine::listSaves(const char *target) const {
 		delete inFile;
 
 		int slotNum = atoi(fileName.c_str() + fileName.size() - 2);
-		SaveStateDescriptor sd(slotNum, name);
+		SaveStateDescriptor sd(slotNum, Common::U32String(name, Common::kLatin1));
 		saveList.push_back(sd);
 	}
 

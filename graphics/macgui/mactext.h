@@ -173,7 +173,6 @@ public:
 	void appendText(const Common::U32String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
 	void appendText(const Common::String &str, int fontId = kMacFontChicago, int fontSize = 12, int fontSlant = kMacFontRegular, bool skipAdd = false);
 	void appendTextDefault(const Common::U32String &str, bool skipAdd = false);
-	void appendTextDefault(const Common::String &str, bool skipAdd = false);
 	void clearText();
 	void removeLastLine();
 	int getLineCount() { return _textLines.size(); }

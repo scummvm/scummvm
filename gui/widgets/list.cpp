@@ -204,8 +204,8 @@ void ListWidget::append(const String &s, ThemeEngine::FontColor color) {
 		_listColors.push_back(color);
 	}
 
-	_dataList.push_back(s);
-	_list.push_back(s);
+	_dataList.push_back(s.decode(Common::kLatin1));
+	_list.push_back(s.decode(Common::kLatin1));
 
 	setFilter(_filter, false);
 
@@ -556,7 +556,7 @@ void ListWidget::drawWidget() {
 
 		// If in numbering mode & not in RTL based GUI, we first print a number prefix
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL() == false) {
-			buffer = Common::String::format("%2d. ", (pos + _numberingMode));
+			buffer = Common::String::format("%2d. ", (pos + _numberingMode)).decode(Common::kLatin1);
 			g_gui.theme()->drawText(Common::Rect(_x + _hlLeftPadding, y, _x + r.left + _leftPadding, y + fontHeight - 2),
 									buffer, _state, _drawAlign, inverted, _leftPadding, true);
 			pad = 0;
@@ -595,7 +595,7 @@ void ListWidget::drawWidget() {
 
 		// If in numbering mode & using RTL layout in GUI, we print a number suffix after drawing the text
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL()) {
-			buffer = Common::String::format(" .%2d", (pos + _numberingMode));
+			buffer = Common::String::format(" .%2d", (pos + _numberingMode)).decode(Common::kLatin1);
 
 			Common::Rect r2 = r1;
 
@@ -617,7 +617,7 @@ Common::Rect ListWidget::getEditRect() const {
 	if (_numberingMode != kListNumberingOff) {
 		// FIXME: Assumes that all digits have the same width.
 		Common::String temp = Common::String::format("%2d. ", (_list.size() - 1 + _numberingMode));
-		r.left += g_gui.getStringWidth(temp) + _leftPadding;
+		r.left += g_gui.getStringWidth(temp.decode(Common::kLatin1)) + _leftPadding;
 	}
 
 	return r;

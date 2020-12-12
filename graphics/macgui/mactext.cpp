@@ -126,7 +126,7 @@ MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager
 MacText::MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::String &s, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear, uint16 border, uint16 gutter, uint16 boxShadow, uint16 textShadow) :
 	MacWidget(parent, x, y, w + 2, h, wm, true, border, gutter, boxShadow) {
 
-	_str = Common::U32String(s);
+	_str = s.decode(Common::kLatin1);
 	_fullRefresh = true;
 
 	_wm = wm;
@@ -184,7 +184,7 @@ MacText::MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont
 MacText::MacText(const Common::String &s, MacWindowManager *wm, const MacFont *macFont, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear) :
 	MacWidget(nullptr, 0, 0, 0, 0, wm, false, 0, 0, 0) {
 
-	_str = Common::U32String(s);
+	_str = s.decode(Common::kLatin1);
 	_fullRefresh = true;
 
 	_wm = wm;
@@ -774,7 +774,7 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 	_currentFormatting = fontRun;
 
 	if (!skipAdd) {
-		_str += fontRun.toString();
+		_str += fontRun.toString().decode(Common::kLatin1);
 		_str += str;
 	}
 
@@ -795,17 +795,13 @@ void MacText::appendText(const Common::U32String &str, int fontId, int fontSize,
 	}
 }
 
-void MacText::appendText(const Common::String &str, int fontId, int fontSize, int fontSlant, bool skipAdd) {
-	appendText(Common::U32String(str), fontId, fontSize, fontSlant, skipAdd);
-}
-
 void MacText::appendTextDefault(const Common::U32String &str, bool skipAdd) {
 	uint oldLen = _textLines.size();
 
 	_currentFormatting = _defaultFormatting;
 
 	if (!skipAdd) {
-		_str += _defaultFormatting.toString();
+		_str += _defaultFormatting.toString().decode(Common::kLatin1);
 		_str += str;
 	}
 
@@ -813,10 +809,6 @@ void MacText::appendTextDefault(const Common::U32String &str, bool skipAdd) {
 	recalcDims();
 
 	render(oldLen - 1, _textLines.size());
-}
-
-void MacText::appendTextDefault(const Common::String &str, bool skipAdd) {
-	appendTextDefault(Common::U32String(str), skipAdd);
 }
 
 void MacText::clearText() {
@@ -1401,7 +1393,7 @@ void MacText::getRowCol(int x, int y, int *sx, int *sy, int *row, int *col) {
 // This happens when a long paragraph is split into several lines
 #define ADDFORMATTING() \
 	if (formatted) { \
-		formatting = _textLines[i].chunks[chunk].toString(); \
+		formatting = _textLines[i].chunks[chunk].toString().decode(Common::kLatin1); \
 		if (formatting != prevformatting) { \
 			res += formatting; \
 			prevformatting = formatting; \
@@ -1513,7 +1505,8 @@ Common::U32String MacText::getTextChunk(int startRow, int startCol, int endRow, 
 // Text editing
 void MacText::insertChar(byte c, int *row, int *col) {
 	if (_textLines.empty()) {
-		appendTextDefault(Common::String(c));
+		Common::U32String::value_type vt[2] = { c, 0 };
+		appendTextDefault(Common::U32String(vt));
 		(*col)++;
 
 		return;
@@ -1593,7 +1586,7 @@ void MacText::deletePreviousChar(int *row, int *col) {
 
 void MacText::addNewLine(int *row, int *col) {
 	if (_textLines.empty()) {
-		appendTextDefault(Common::String("\n"));
+		appendTextDefault(USTR("\n"));
 		(*row)++;
 
 		return;

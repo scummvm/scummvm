@@ -163,7 +163,7 @@ bool StaticResource::loadStaticResourceFile() {
 
 	if (!foundWorkingKyraDat) {
 		Common::String errorMessage = "You're missing the '" + StaticResource::staticDataFilename() + "' engine data file or it got corrupted.";
-		GUIErrorMessage(errorMessage);
+		GUIErrorMessage(errorMessage.decode(Common::kLatin1));
 		error("%s", errorMessage.c_str());
 	}
 

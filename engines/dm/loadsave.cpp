@@ -198,9 +198,9 @@ void DMEngine::saveGame() {
 	if (saveAndPlayChoice == kSaveAndQuit || saveAndPlayChoice == kSaveAndPlay) {
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 		int16 saveSlot = dialog->runModalWithCurrentTarget();
-		Common::String saveDescription = dialog->getResultString();
+		Common::U32String saveDescription = dialog->getResultString();
 		if (saveDescription.empty())
-			saveDescription = "Nice save ^^";
+			saveDescription = USTR("Nice save ^^");
 		delete dialog;
 
 		if (saveSlot >= 0) {
@@ -223,7 +223,7 @@ void DMEngine::saveGame() {
 				_championMan->_champions[_championMan->_leaderIndex]._load -= champHandObjWeight;
 			}
 
-			if (!writeCompleteSaveFile(saveSlot, saveDescription, saveAndPlayChoice)) {
+			if (!writeCompleteSaveFile(saveSlot, saveDescription.legacyEncode(), saveAndPlayChoice)) {
 				_dialog->dialogDraw(nullptr, "Unable to open file for saving", "OK", nullptr, nullptr, nullptr, false, false, false);
 				_dialog->getChoice(1, kDMDialogCommandSetViewport, 0, kDMDialogChoiceNone);
 			}
@@ -282,7 +282,7 @@ void DMEngine::writeSaveGameHeader(Common::OutSaveFile *out, const Common::Strin
 	out->writeUint32BE(playTime);
 }
 
-bool DMEngine::writeCompleteSaveFile(int16 saveSlot, Common::String& saveDescription, int16 saveAndPlayChoice) {
+bool DMEngine::writeCompleteSaveFile(int16 saveSlot, const Common::String& saveDescription, int16 saveAndPlayChoice) {
 	Common::String savefileName = getSavefileName(saveSlot);
 	Common::SaveFileManager *saveFileManager = _system->getSavefileManager();
 	Common::OutSaveFile *file = saveFileManager->openForSaving(savefileName);
@@ -419,7 +419,7 @@ WARN_UNUSED_RESULT bool readSaveGameHeader(Common::InSaveFile *in, SaveGameHeade
 	char ch;
 	while ((ch = (char)in->readByte()) != '\0')
 		saveName += ch;
-	header->_descr.setDescription(saveName);
+	header->_descr.setDescription(saveName.decode(Common::kUtf8));
 
 	// Get the thumbnail
 	Graphics::Surface *thumbnail;

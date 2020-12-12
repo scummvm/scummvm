@@ -148,7 +148,7 @@ SaveStateDescriptor SherlockMetaEngine::querySaveMetaInfos(const char *target, i
 		delete f;
 
 		// Create the return descriptor
-		SaveStateDescriptor desc(slot, header._saveName);
+		SaveStateDescriptor desc(slot, Common::U32String(header._saveName, Common::kLatin1));
 		desc.setThumbnail(header._thumbnail);
 		desc.setSaveDate(header._year, header._month, header._day);
 		desc.setSaveTime(header._hour, header._minute);

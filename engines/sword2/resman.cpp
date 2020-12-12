@@ -104,7 +104,7 @@ bool ResourceManager::init() {
 	Common::File file;
 
 	if (!file.open("resource.inf")) {
-		GUIErrorMessage("Broken Sword II: Cannot open resource.inf");
+		GUIErrorMessage(USTR("Broken Sword II: Cannot open resource.inf"));
 		return false;
 	}
 
@@ -125,7 +125,7 @@ bool ResourceManager::init() {
 		_resFiles[_totalClusters].numEntries = -1;
 		_resFiles[_totalClusters].entryTab = NULL;
 		if (++_totalClusters >= MAX_res_files) {
-			GUIErrorMessage("Broken Sword II: Too many entries in resource.inf");
+			GUIErrorMessage(USTR("Broken Sword II: Too many entries in resource.inf"));
 			return false;
 		}
 	}
@@ -134,7 +134,7 @@ bool ResourceManager::init() {
 
 	// Now load in the binary id to res conversion table
 	if (!file.open("resource.tab")) {
-		GUIErrorMessage("Broken Sword II: Cannot open resource.tab");
+		GUIErrorMessage(USTR("Broken Sword II: Cannot open resource.tab"));
 		return false;
 	}
 
@@ -151,7 +151,7 @@ bool ResourceManager::init() {
 
 	if (file.eos() || file.err()) {
 		file.close();
-		GUIErrorMessage("Broken Sword II: Cannot read resource.tab");
+		GUIErrorMessage(USTR("Broken Sword II: Cannot read resource.tab"));
 		return false;
 	}
 
@@ -161,7 +161,7 @@ bool ResourceManager::init() {
 	// version, which has all files on one disc.
 
 	if (!file.open("cd.inf") && !Sword2Engine::isPsx()) {
-		GUIErrorMessage("Broken Sword II: Cannot open cd.inf");
+		GUIErrorMessage(USTR("Broken Sword II: Cannot open cd.inf"));
 		return false;
 	}
 
@@ -179,7 +179,7 @@ bool ResourceManager::init() {
 			if (file.eos() || file.err()) {
 				delete[] cdInf;
 				file.close();
-				GUIErrorMessage("Broken Sword II: Cannot read cd.inf");
+				GUIErrorMessage(USTR("Broken Sword II: Cannot read cd.inf"));
 				return false;
 			}
 
@@ -207,7 +207,7 @@ bool ResourceManager::init() {
 		// the resource manager will print a fatal error.
 
 		if (cdInf[i].cd == 0 && !Common::File::exists((char *)cdInf[i].clusterName)) {
-			GUIErrorMessage("Broken Sword II: Cannot find " + Common::String((char *)cdInf[i].clusterName));
+			GUIErrorMessage(USTR("Broken Sword II: Cannot find ") + Common::U32String((char *)cdInf[i].clusterName, Common::kLatin1));
 			delete[] cdInf;
 			return false;
 		}
@@ -227,7 +227,7 @@ bool ResourceManager::init() {
 
 			if (j == _totalClusters) {
 				delete[] cdInf;
-				GUIErrorMessage(Common::String(_resFiles[i].fileName) + " is not in cd.inf");
+				GUIErrorMessage(Common::U32String(_resFiles[i].fileName, Common::kLatin1) + USTR(" is not in cd.inf"));
 				return false;
 			}
 

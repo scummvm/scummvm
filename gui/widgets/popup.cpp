@@ -504,7 +504,7 @@ void PopUpWidget::appendEntry(const U32String &entry, uint32 tag) {
 }
 
 void PopUpWidget::appendEntry(const String &entry, uint32 tag) {
-	appendEntry(U32String(entry), tag);
+	appendEntry(U32String(entry, Common::kLatin1), tag);
 }
 
 void PopUpWidget::clearEntries() {

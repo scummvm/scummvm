@@ -115,7 +115,7 @@ U32String TranslationManager::getTranslation(const char *message) const {
 U32String TranslationManager::getTranslation(const char *message, const char *context) const {
 	// If no language is set or message is empty, return msgid as is
 	if (_currentTranslationMessages.empty() || *message == '\0')
-		return U32String(message);
+		return U32String(message, Common::kLatin1);
 
 	// Binary-search for the msgid
 	int leftIndex = 0;
@@ -161,7 +161,7 @@ U32String TranslationManager::getTranslation(const char *message, const char *co
 			leftIndex = midIndex + 1;
 	}
 
-	return U32String(message);
+	return U32String(message, Common::kLatin1);
 }
 
 String TranslationManager::getCurrentCharset() const {
@@ -306,7 +306,7 @@ void TranslationManager::loadTranslationsInfoDat() {
 		_langs[i] = String(buf, len - 1);
 		len = in.readUint16BE();
 		in.read(buf, len);
-		_langNames[i] = String(buf, len - 1).decode();
+		_langNames[i] = String(buf, len - 1).decode(Common::kUtf8);
 	}
 
 	// Read messages
@@ -378,7 +378,7 @@ void TranslationManager::loadLanguageDat(int index) {
 			msg += String(buf, len > 256 ? 256 : len - 1);
 			len -= 256;
 		}
-		_currentTranslationMessages[i].msgstr = msg.decode();
+		_currentTranslationMessages[i].msgstr = msg.decode(Common::kUtf8);
 		len = in.readUint16BE();
 		if (len > 0) {
 			in.read(buf, len);

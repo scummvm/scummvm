@@ -261,10 +261,11 @@ void DreamWebEngine::saveGame() {
 
 		GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
 		int savegameId = dialog->runModalWithCurrentTarget();
-		Common::String game_description = dialog->getResultString();
-		if (game_description.empty())
-			game_description = "Untitled";
+		Common::U32String game_description32 = dialog->getResultString();
+		if (game_description32.empty())
+			game_description32 = USTR("Untitled");
 		delete dialog;
+		Common::String game_description = game_description32.legacyEncode();
 
 		if (savegameId < 0) {
 			_getBack = 0;
@@ -728,7 +729,7 @@ uint DreamWebEngine::scanForNames() {
 		delete stream;
 
 		int slotNum = atoi(file.c_str() + file.size() - 2);
-		SaveStateDescriptor sd(slotNum, name);
+		SaveStateDescriptor sd(slotNum, Common::U32String(name, Common::kLatin1));
 		saveList.push_back(sd);
 		if (slotNum < 21)
 			Common::strlcpy(&_saveNames[17 * slotNum + 1], name, 16);	// the first character is unused

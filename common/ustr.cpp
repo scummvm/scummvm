@@ -54,20 +54,8 @@ U32String &U32String::operator=(const U32String &str) {
 	return *this;
 }
 
-U32String &U32String::operator=(const String &str) {
-	clear();
-	decodeInternal(str.c_str(), str.size(), Common::kUtf8);
-	return *this;
-}
-
 U32String &U32String::operator=(const value_type *str) {
 	return U32String::operator=(U32String(str));
-}
-
-U32String &U32String::operator=(const char *str) {
-	clear();
-	decodeInternal(str, strlen(str), Common::kUtf8);
-	return *this;
 }
 
 U32String &U32String::operator+=(const U32String &str) {
@@ -153,7 +141,7 @@ U32String U32String::format(U32String fmt, ...) {
 U32String U32String::format(const char *fmt, ...) {
 	U32String output;
 
-	Common::U32String fmtU32(fmt);
+	Common::U32String fmtU32(fmt, Common::kUtf8);
 	va_list va;
 	va_start(va, fmt);
 	U32String::vformat(fmtU32.c_str(), fmtU32.c_str() + fmtU32.size(),
@@ -193,7 +181,7 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 			case 's':
 				string_temp = va_arg(args, char *);
 				tempPos = output.size();
-				output.insertString(string_temp, pos);
+				output.insertString(string_temp, pos, Common::kUtf8);
 				len = output.size() - tempPos;
 				length += len;
 				pos += len - 1;
@@ -206,7 +194,7 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 				len = strlen(buffer);
 				length += len;
 
-				output.insertString(buffer, pos);
+				output.insertString(buffer, pos, Common::kUtf8);
 				pos += len - 1;
 				break;
 			case 'u':
@@ -215,7 +203,7 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 				len = strlen(buffer);
 				length += len;
 
-				output.insertString(buffer, pos);
+				output.insertString(buffer, pos, Common::kUtf8);
 				pos += len - 1;
 				break;
 			case 'c':
@@ -224,6 +212,10 @@ int U32String::vformat(const value_type *fmt, const value_type *fmtEnd, U32Strin
 				output.insertChar(int_temp, pos);
 				++length;
 				break;
+			case '%':
+				output.insertChar('%', pos);
+				++length;
+				break;				
 			default:
 				warning("Unexpected formatting type for U32String::Format.");
 				break;

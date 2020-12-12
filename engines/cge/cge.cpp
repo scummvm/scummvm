@@ -225,7 +225,8 @@ Common::Error CGEEngine::run() {
 
 	// If game is finished, display ending message
 	if (_flag[3]) {
-		Common::String msg = Common::String(_text->getText(kSayTheEnd));
+		Common::U32String msg(
+		    _text->getText(kSayTheEnd), Common::kLatin1);
 		if (!msg.empty()) {
 			g_system->delayMillis(10);
 			GUI::MessageDialog dialog(msg);
