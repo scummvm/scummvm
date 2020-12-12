@@ -34,17 +34,17 @@ class TwinEEngine;
 class Animations {
 private:
 	TwinEEngine *_engine;
-	void applyAnimStepRotation(uint8 *ptr, int32 bp, int32 bx, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr);
+	void applyAnimStepRotation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr);
 	int32 getAnimMode(uint8 *ptr, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr);
-	void applyAnimStep(uint8 *ptr, int32 bp, int32 bx, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr);
+	void applyAnimStep(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr);
 
 	/**
 	 * Verify animation at keyframe
-	 * @param animIdx Animation index
+	 * @param keyframeIdx Animation key frame index
 	 * @param animPtr Animation pointer
 	 * @param animTimerDataPtr Animation time data
 	 */
-	bool verifyAnimAtKeyframe(int32 animPos, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr);
+	bool verifyAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr);
 
 	uint8 *const animBuffer;
 	uint8 *animBufferPos = nullptr;
@@ -97,12 +97,12 @@ public:
 
 	/**
 	 * Set new body animation
-	 * @param animIdx Animation index
+	 * @param keyframeIdx Animation key frame index
 	 * @param animPtr Animation pointer
 	 * @param bodyPtr Body model poitner
 	 * @param animTimerDataPtr Animation time data
 	 */
-	bool setModelAnimation(int32 animIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	bool setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Get entity anim index (This is taken from File3D entities)
