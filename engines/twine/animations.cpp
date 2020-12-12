@@ -112,20 +112,20 @@ void Animations::applyAnimStepRotation(uint8 *ptr, int32 deltaTime, int32 keyFra
 	*(int16 *)ptr = ClampAngle(computedAngle);
 }
 
-void Animations::applyAnimStep(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr) {
-	int16 lastAngle = READ_LE_INT16(lastKeyFramePtr);
-	int16 newAngle = READ_LE_INT16(keyFramePtr);
+void Animations::applyAnimStepTranslation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr) {
+	int16 lastPos = READ_LE_INT16(lastKeyFramePtr);
+	int16 newPos = READ_LE_INT16(keyFramePtr);
 
-	int16 angleDif = newAngle - lastAngle;
+	int16 distance = newPos - lastPos;
 
-	int16 computedAngle;
-	if (angleDif) {
-		computedAngle = lastAngle + (angleDif * deltaTime) / keyFrameLength;
+	int16 computedPos;
+	if (distance) {
+		computedPos = lastPos + (distance * deltaTime) / keyFrameLength;
 	} else {
-		computedAngle = lastAngle;
+		computedPos = lastPos;
 	}
 
-	*(int16 *)ptr = computedAngle;
+	*(int16 *)ptr = computedPos;
 }
 
 int32 Animations::getAnimMode(uint8 *ptr, const uint8 *keyFramePtr) {
@@ -207,9 +207,9 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint
 			break;
 		case 1: // disallow global rotate
 		case 2: // disallow global rotate + hide
-			applyAnimStep(bonesPtr + 2, deltaTime, keyFrameLength, keyFramePtr + 2, lastKeyFramePtr + 2);
-			applyAnimStep(bonesPtr + 4, deltaTime, keyFrameLength, keyFramePtr + 4, lastKeyFramePtr + 4);
-			applyAnimStep(bonesPtr + 6, deltaTime, keyFrameLength, keyFramePtr + 6, lastKeyFramePtr + 6);
+			applyAnimStepTranslation(bonesPtr + 2, deltaTime, keyFrameLength, keyFramePtr + 2, lastKeyFramePtr + 2);
+			applyAnimStepTranslation(bonesPtr + 4, deltaTime, keyFrameLength, keyFramePtr + 4, lastKeyFramePtr + 4);
+			applyAnimStepTranslation(bonesPtr + 6, deltaTime, keyFrameLength, keyFramePtr + 6, lastKeyFramePtr + 6);
 			break;
 		default:
 			error("Unsupported animation rotation mode %d", animOpcode);
