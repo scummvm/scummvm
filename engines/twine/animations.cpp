@@ -167,13 +167,9 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	}
 
 	uint8 *verticesBase = bodyPtr + 0x1A;
-
 	const int16 numVertices = READ_LE_INT16(verticesBase);
-	verticesBase += 2;
-	uint8 *bonesBase = verticesBase + numVertices * 6;
-
+	uint8 *bonesBase = verticesBase + 2 + numVertices * 6;
 	const int32 numBones = READ_LE_INT16(bonesBase);
-	bonesBase += 2;
 
 	if (numOfPointInAnim > numBones) {
 		numOfPointInAnim = numBones;
@@ -188,10 +184,10 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	processRotationByAnim = READ_LE_INT16(keyFramePtr + 8);
 	processLastRotationAngle = ToAngle(READ_LE_INT16(keyFramePtr + 12));
 
-	uint8 *edi = bonesBase + 8;
+	uint8 *bonesPtr = bonesBase + 8 + 2;
 	if (deltaTime >= keyFrameLength) {
 		const int32 *sourcePtr = (const int32 *)(keyFramePtr + 8);
-		int32 *destPtr = (int32 *)edi; // keyframe
+		int32 *destPtr = (int32 *)bonesPtr; // keyframe
 
 		do {
 			*(destPtr++) = *(sourcePtr++);
@@ -210,31 +206,31 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	lastKeyFramePtr += 16;
 	keyFramePtr += 16;
 
-	edi += 38;
+	bonesPtr += 38;
 
 	if (--numOfPointInAnim) {
 		int16 tmpNumOfPoints = numOfPointInAnim;
 
 		do {
-			const int16 animOpcode = getAnimMode(&edi, &keyFramePtr, &lastKeyFramePtr);
+			const int16 animOpcode = getAnimMode(&bonesPtr, &keyFramePtr, &lastKeyFramePtr);
 
 			switch (animOpcode) {
 			case 0: // allow global rotate
-				applyAnimStepRotation(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStepRotation(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStepRotation(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStepRotation(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStepRotation(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStepRotation(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				break;
 			case 1: // dissallow global rotate
 			case 2: // dissallow global rotate + hide
-				applyAnimStep(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStep(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
-				applyAnimStep(&edi, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStep(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStep(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
+				applyAnimStep(&bonesPtr, deltaTime, keyFrameLength, &keyFramePtr, &lastKeyFramePtr);
 				break;
 			default:
 				error("Unsupported animation rotation mode %d", animOpcode);
 			}
 
-			edi += 30;
+			bonesPtr += 30;
 		} while (--tmpNumOfPoints);
 	}
 
@@ -242,7 +238,7 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 }
 
 int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
-	const int16 numOfKeyframeInAnim = READ_LE_INT16(animPtr);
+	const int16 numOfKeyframeInAnim = getNumKeyframes(animPtr);
 	if (keyframeIdx >= numOfKeyframeInAnim) {
 		return numOfKeyframeInAnim;
 	}
@@ -267,7 +263,6 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uin
 		numOfBonesInAnim = numBones;
 	}
 
-
 	currentStepX = READ_LE_INT16(ptrToData + 2);
 	currentStepY = READ_LE_INT16(ptrToData + 4);
 	currentStepZ = READ_LE_INT16(ptrToData + 6);
@@ -277,14 +272,13 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uin
 
 	ptrToData += 8;
 
-	do {
-		for (int32 i = 0; i < 8; i++) {
+	for (int32 i = 0; i < numOfBonesInAnim; ++i) {
+		for (int32 j = 0; j < 8; j++) {
 			*bonesPtr++ = *ptrToData++;
 		}
 
 		bonesPtr += 30;
-	} while (--numOfBonesInAnim);
-
+	}
 
 	return 1;
 }
