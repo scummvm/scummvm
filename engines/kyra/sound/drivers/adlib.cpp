@@ -574,12 +574,15 @@ void AdLibDriver::setupPrograms() {
 	++_programQueueStart &= 15;
 
 	const int chan = *ptr++;
+	// Safety check: ignore request for invalid channel
+	if (chan > 9)
+		return;
+	Channel &channel = _channels[chan];
+
 	const int priority = *ptr++;
 
 	// Only start this sound if its priority is higher than the one
 	// already playing.
-
-	Channel &channel = _channels[chan];
 
 	if (priority >= channel.priority) {
 		initChannel(channel);
@@ -932,11 +935,12 @@ void AdLibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 	// adjust the note and octave.
 
 	if (note >= 12) {
-		note -= 12;
-		octave++;
+		octave += note / 12;
+		note %= 12;
 	} else if (note < 0) {
-		note += 12;
-		octave--;
+		int8 octaves = -(note + 1) / 12 + 1;
+		octave -= octaves;
+		note += 12 * octaves;
 	}
 
 	// The calculation of frequency looks quite different from the original
@@ -956,13 +960,15 @@ void AdLibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 
 	if (channel.pitchBend || flag) {
 		const uint8 *table;
+		// For safety, limit the values used to index the tables.
+		uint8 baseNote = CLIP(rawNote & 0x0F, 0, 11);
 
 		if (channel.pitchBend >= 0) {
-			table = _pitchBendTables[(channel.rawNote & 0x0F) + 2];
-			freq += table[channel.pitchBend];
+			table = _pitchBendTables[baseNote + 2];
+			freq += table[CLIP(+channel.pitchBend, 0, 31)];
 		} else {
-			table = _pitchBendTables[channel.rawNote & 0x0F];
-			freq -= table[-channel.pitchBend];
+			table = _pitchBendTables[baseNote];
+			freq -= table[CLIP(-channel.pitchBend, 0, 31)];
 		}
 	}
 
@@ -1104,6 +1110,11 @@ void AdLibDriver::primaryEffect1(Channel &channel) {
 		}
 	} else {
 		unk1 += unk3;
+		// Safety check: a negative frequency triggers undefined
+		// behavior for the left shift operator below.
+		if (unk1 < 0)
+			unk1 = 0;
+
 		if (unk1 < 388) {
 			// The new frequency is too low. Shift it up and go
 			// down one octave.
@@ -1307,7 +1318,12 @@ int AdLibDriver::update_checkRepeat(const uint8 *&dataptr, Channel &channel, uin
 	++dataptr;
 	if (--channel.repeatCounter) {
 		int16 add = READ_LE_UINT16(dataptr - 2);
-		dataptr += add;
+
+		// Safety check: ignore jump to invalid address
+		if (add < -(dataptr - _soundData) || _soundData + _soundDataSize - dataptr <= add)
+			warning("AdlibDriver::update_checkRepeat: Ignoring invalid offset %i", add);
+		else
+			dataptr += add;
 	}
 	return 0;
 }
@@ -1331,6 +1347,12 @@ int AdLibDriver::update_setupProgram(const uint8 *&dataptr, Channel &channel, ui
 
 	uint8 chan = *ptr++;
 	uint8 priority = *ptr++;
+
+	// Safety check: ignore programs with invalid channel number.
+	if (chan > 9) {
+		warning("AdLibDriver::update_setupProgram: Invalid channel %d", chan);
+		return 0;
+	}
 
 	Channel &channel2 = _channels[chan];
 
@@ -1365,10 +1387,22 @@ int AdLibDriver::update_setNoteSpacing(const uint8 *&dataptr, Channel &channel, 
 int AdLibDriver::update_jump(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
 	int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
-	if (_version == 1)
-		dataptr = _soundData + add - 191;
-	else
-		dataptr += add;
+	if (_version == 1) {
+		// Safety check: ignore jump to invalid address
+		if (add < 191 || add - 191 >= _soundDataSize)
+			dataptr = nullptr;
+		else
+			dataptr = _soundData + add - 191;
+	} else {
+		if (add < -(dataptr - _soundData) || _soundData + _soundDataSize - dataptr <= add)
+			dataptr = nullptr;
+		else
+			dataptr += add;
+	}
+	if (!dataptr) {
+		warning("AdlibDriver::update_jump: Invalid offset %i, stopping channel", add);
+		return update_stopChannel(dataptr, channel, 0);
+	}
 	if (_syncJumpMask & (1 << (&channel - _channels)))
 		channel.lock = true;
 	return 0;
@@ -1377,15 +1411,35 @@ int AdLibDriver::update_jump(const uint8 *&dataptr, Channel &channel, uint8 valu
 int AdLibDriver::update_jumpToSubroutine(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
 	int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
+
+	// Safety checks: ignore jumps when stack is full or address is invalid.
+	if (channel.dataptrStackPos >= ARRAYSIZE(channel.dataptrStack)) {
+		warning("AdLibDriver::update_jumpToSubroutine: Stack overlow");
+		return 0;
+	}
 	channel.dataptrStack[channel.dataptrStackPos++] = dataptr;
-	if (_version < 3)
-		dataptr = _soundData + add - 191;
-	else
-		dataptr += add;
+	if (_version < 3) {
+		if (add < 191 || add - 191 >= _soundDataSize)
+			dataptr = nullptr;
+		else
+			dataptr = _soundData + add - 191;
+	} else {
+		if (add < -(dataptr - _soundData) || _soundData + _soundDataSize - dataptr <= add)
+			dataptr = nullptr;
+		else
+			dataptr += add;
+	}
+	if (!dataptr)
+		dataptr = channel.dataptrStack[--channel.dataptrStackPos];
 	return 0;
 }
 
 int AdLibDriver::update_returnFromSubroutine(const uint8 *&dataptr, Channel &channel, uint8 value) {
+	// Safety check: stop track when stack is empty.
+	if (!channel.dataptrStackPos) {
+		warning("AdLibDriver::update_returnFromSubroutine: Stack underflow");
+		return update_stopChannel(dataptr, channel, 0);
+	}
 	dataptr = channel.dataptrStack[--channel.dataptrStackPos];
 	return 0;
 }
@@ -1447,10 +1501,23 @@ int AdLibDriver::update_setupSecondaryEffect1(const uint8 *&dataptr, Channel &ch
 	// data offsets.
 	channel.offset = READ_LE_UINT16(dataptr) - 191; dataptr += 2;
 	channel.secondaryEffect = &AdLibDriver::secondaryEffect1;
+
+	// Safety check: don't enable effect when table location is invalid.
+	int start = channel.offset + channel.unk20;
+	if (start < 0 || start >= _soundDataSize) {
+		warning("AdLibDriver::update_setupSecondaryEffect1: Ignoring due to invalid table location");
+		channel.secondaryEffect = nullptr;
+	}
 	return 0;
 }
 
 int AdLibDriver::update_stopOtherChannel(const uint8 *&dataptr, Channel &channel, uint8 value) {
+	// Safety check
+	if (value > 9) {
+		warning("AdLibDriver::update_stopOtherChannel: Ignoring invalid channel %d", value);
+		return 0;
+	}
+
 	Channel &channel2 = _channels[value];
 	channel2.duration = 0;
 	channel2.priority = 0;
@@ -1470,7 +1537,7 @@ int AdLibDriver::update_waitForEndOfProgram(const uint8 *&dataptr, Channel &chan
 
 	uint8 chan = *ptr;
 
-	if (!_channels[chan].dataptr)
+	if (chan > 9 || !_channels[chan].dataptr)
 		return 0;
 
 	dataptr -= 2;
@@ -1600,6 +1667,13 @@ int AdLibDriver::update_setExtraLevel3(const uint8 *&dataptr, Channel &channel, 
 }
 
 int AdLibDriver::update_setExtraLevel2(const uint8 *&dataptr, Channel &channel, uint8 value) {
+	// Safety check
+	if (value > 9) {
+		warning("AdLibDriver::update_setExtraLevel2: Ignore invalid channel %d", value);
+		dataptr++;
+		return 0;
+	}
+
 	int channelBackUp = _curChannel;
 
 	_curChannel = value;
@@ -1612,6 +1686,13 @@ int AdLibDriver::update_setExtraLevel2(const uint8 *&dataptr, Channel &channel, 
 }
 
 int AdLibDriver::update_changeExtraLevel2(const uint8 *&dataptr, Channel &channel, uint8 value) {
+	// Safety check
+	if (value > 9) {
+		warning("AdLibDriver::update_changeExtraLevel2: Ignore invalid channel %d", value);
+		dataptr++;
+		return 0;
+	}
+
 	int channelBackUp = _curChannel;
 
 	_curChannel = value;
@@ -1653,6 +1734,12 @@ int AdLibDriver::update_changeExtraLevel1(const uint8 *&dataptr, Channel &channe
 }
 
 int AdLibDriver::updateCallback38(const uint8 *&dataptr, Channel &channel, uint8 value) {
+	// Safety check
+	if (value > 9) {
+		warning("AdLibDriver::updateCallback38: Ignore invalid channel %d", value);
+		return 0;
+	}
+
 	int channelBackUp = _curChannel;
 
 	_curChannel = value;
@@ -1709,7 +1796,7 @@ int AdLibDriver::update_removePrimaryEffect2(const uint8 *&dataptr, Channel &cha
 }
 
 int AdLibDriver::update_pitchBend(const uint8 *&dataptr, Channel &channel, uint8 value) {
-	channel.pitchBend = value;
+	channel.pitchBend = (int8)value;
 	setupNote(channel.rawNote, channel, true);
 	return 0;
 }
@@ -1744,6 +1831,11 @@ int AdLibDriver::update_changeChannelTempo(const uint8 *&dataptr, Channel &chann
 
 int AdLibDriver::updateCallback46(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	uint8 entry = *dataptr++;
+
+	// Safety check: prevent illegal table access
+	if (entry + 2 > 6 /*ARRAYSIZE(_unkTable2)*/)
+		return 0;
+
 	_tablePtr1 = _unkTable2[entry++];
 	_tablePtr2 = _unkTable2[entry];
 	if (value == 2) {
@@ -1772,7 +1864,7 @@ int AdLibDriver::update_setupRhythmSection(const uint8 *&dataptr, Channel &chann
 	_curChannel = 7;
 	_curRegOffset = _regOffset[7];
 
-	instrument = getInstrument(*dataptr++);
+	instrument = getInstrument(value = *dataptr++);
 	if (instrument) {
 		setupInstrument(_curRegOffset, instrument, channel);
 	} else {
@@ -1784,7 +1876,7 @@ int AdLibDriver::update_setupRhythmSection(const uint8 *&dataptr, Channel &chann
 	_curChannel = 8;
 	_curRegOffset = _regOffset[8];
 
-	instrument = getInstrument(*dataptr++);
+	instrument = getInstrument(value = *dataptr++);
 	if (instrument) {
 		setupInstrument(_curRegOffset, instrument, channel);
 	} else {
@@ -2117,7 +2209,7 @@ const uint8 AdLibDriver::_regOffset[] = {
 	0x12
 };
 
-//These are the F-Numbers (10 bits) for the notes of the 12-tone scale.
+// These are the F-Numbers (10 bits) for the notes of the 12-tone scale.
 // However, it does not match the table in the AdLib documentation I've seen.
 
 const uint16 AdLibDriver::_freqTable[] = {
