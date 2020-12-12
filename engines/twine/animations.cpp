@@ -154,7 +154,7 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	if (!Model::isAnimated(bodyPtr)) {
 		return false;
 	}
-	int32 numOfPointInAnim = getNumBoneframes(animPtr);
+	int32 numOfBonesInAnim = getNumBoneframes(animPtr);
 	const uint8 *keyFramePtr = getKeyFrameData(animState, animPtr);
 	const int32 keyFrameLength = getKeyFrameLength(animState, animPtr);
 
@@ -171,8 +171,8 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 	uint8 *bonesBase = verticesBase + 2 + numVertices * 6;
 	const int32 numBones = READ_LE_INT16(bonesBase);
 
-	if (numOfPointInAnim > numBones) {
-		numOfPointInAnim = numBones;
+	if (numOfBonesInAnim > numBones) {
+		numOfBonesInAnim = numBones;
 	}
 
 	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
@@ -186,18 +186,16 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 
 	uint8 *bonesPtr = bonesBase + 8 + 2;
 	if (deltaTime >= keyFrameLength) {
-		const int32 *sourcePtr = (const int32 *)(keyFramePtr + 8);
-		int32 *destPtr = (int32 *)bonesPtr; // keyframe
-
-		do {
-			*(destPtr++) = *(sourcePtr++);
-			*(destPtr++) = *(sourcePtr++);
-			destPtr = (int32 *)(((int8 *)destPtr) + 30);
-		} while (--numOfPointInAnim);
+		const uint8 *ptrToData = keyFramePtr + 8;
+		for (int32 i = 0; i < numOfBonesInAnim; ++i) {
+			for (int32 j = 0; j < 8; j++) {
+				*bonesPtr++ = *ptrToData++;
+			}
+			bonesPtr += 30;
+		}
 
 		animTimerDataPtr->ptr = keyFramePtr;
 		animTimerDataPtr->time = _engine->lbaTime;
-
 		return true;
 	}
 
@@ -208,8 +206,8 @@ bool Animations::setModelAnimation(int32 animState, const uint8 *animPtr, uint8 
 
 	bonesPtr += 38;
 
-	if (--numOfPointInAnim) {
-		int16 tmpNumOfPoints = numOfPointInAnim;
+	if (numOfBonesInAnim > 0) {
+		int16 tmpNumOfPoints = numOfBonesInAnim - 1;
 
 		do {
 			const int16 animOpcode = getAnimMode(&bonesPtr, &keyFramePtr, &lastKeyFramePtr);
