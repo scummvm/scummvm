@@ -57,7 +57,7 @@ struct Track {
 	int32 gainRedFadeDest;   // target of fade for gain reduction
 	bool gainRedFadeUsed;    // flag if fading is in progress
 	bool alreadyCrossfading; // used by COMI to check if this track is already running a crossfade
-	bool comiLoopShifted;    // used by COMI to check if the loop point for this track has to be shifted forward
+	int loopShiftType;       // currently used by COMI to check if the loop point for this track has to be shifted
 	int32 soundId;		     // sound id used by scumm script
 	char soundName[15];      // sound name but also filename of sound in bundle data
 	bool used;			     // flag mean that track is used
@@ -95,7 +95,7 @@ struct Track {
 		gainRedFadeDest = 127 * 290; // About 4 dB of gain reduction
 		gainRedFadeUsed = false;
 		alreadyCrossfading = false;
-		comiLoopShifted = false; 
+		loopShiftType = 0; 
 		soundId = 0;
 		memset(soundName, 0, sizeof(soundName));
 		used = false;

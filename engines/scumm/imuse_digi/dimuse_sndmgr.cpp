@@ -654,8 +654,8 @@ int32 ImuseDigiSndMgr::getDataFromRegion(SoundDesc *soundDesc, int region, byte 
 	debug(6, "getDataFromRegion() region:%d, offset:%d, size:%d, numRegions:%d", region, offset, size, soundDesc->numRegions);
 	assert(checkForProperHandle(soundDesc));
 
-	// We allow at least -8820*2 as offset since music tracks
-	// need that in order to be realigned after crossfades
+	// In COMI we allow at least -size*2 as offset, since music
+	// tracks need that in order to be realigned after crossfades
 	if (_vm->_game.id == GID_CMI)
 		assert(buf && offset >= -(size * 2) && size >= 0);
 	else

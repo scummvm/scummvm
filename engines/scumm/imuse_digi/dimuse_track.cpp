@@ -110,14 +110,14 @@ int IMuseDigital::startSound(int soundId, const char *soundName, int soundType, 
 		if (track->soundId / 1000 == 1) { // State
 			for (l = 0; _comiStateMusicTable[l].soundId != -1; l++) {
 				if ((_comiStateMusicTable[l].soundId == track->soundId)) {
-					track->comiLoopShifted = _comiStateMusicTable[l].shiftLoop;
+					track->loopShiftType = _comiStateMusicTable[l].shiftLoop;
 					break;
 				}
 			}
 		} else if (track->soundId / 1000 == 2) { // Sequence
 			for (l = 0; _comiSeqMusicTable[l].soundId != -1; l++) {
 				if ((_comiSeqMusicTable[l].soundId == track->soundId)) {
-					track->comiLoopShifted = _comiSeqMusicTable[l].shiftLoop;
+					track->loopShiftType = _comiSeqMusicTable[l].shiftLoop;
 					break;
 				}
 			}

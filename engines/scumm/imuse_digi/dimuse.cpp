@@ -104,8 +104,10 @@ void IMuseDigital::resetState() {
 	_radioChatterSFX = 0;
 	_triggerUsed = false;
 	_speechIsPlaying = false;
-	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++)
+	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		_scheduledCrossfades[l].scheduled = false;
+		_scheduledCrossfades[l].isJumpToLoop = false;
+	}
 }
 
 static void syncWithSerializer(Common::Serializer &s, Track &t) {
@@ -184,14 +186,14 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 				if (track->soundId / 1000 == 1) { // State
 					for (l = 0; _comiStateMusicTable[l].soundId != -1; l++) {
 						if ((_comiStateMusicTable[l].soundId == track->soundId)) {
-							track->comiLoopShifted = _comiStateMusicTable[l].shiftLoop;
+							track->loopShiftType = _comiStateMusicTable[l].shiftLoop;
 							break;
 						}
 					}
 				} else if (track->soundId / 1000 == 2) { // Sequence
 					for (l = 0; _comiSeqMusicTable[l].soundId != -1; l++) {
 						if ((_comiSeqMusicTable[l].soundId == track->soundId)) {
-							track->comiLoopShifted = _comiSeqMusicTable[l].shiftLoop;
+							track->loopShiftType = _comiSeqMusicTable[l].shiftLoop;
 							break; 
 						}
 					}
@@ -248,19 +250,30 @@ void IMuseDigital::runScheduledCrossfades() {
 			Track *newTrack = _track[newTrackId];
 			newTrack->curRegion = _scheduledCrossfades[l].destRegion;
 
-			// WORKAROUND for some files having a little bit earlier loop point set
-			// in their iMUSE map (0 means shifted forward, default is -8820)
-			if (newTrack->volGroupId == IMUSE_VOLGRP_SFX || newTrack->comiLoopShifted) {
+			// WORKAROUND for some files having a little bit earlier 
+			// loop point set in their iMUSE map; keep in mind we're considering
+			// regionOffset -= (oldTrack->feedSize / _callbackFps) as NO SHIFT.
+			// In COMI we're currently using 4 shift types.
+			if (newTrack->volGroupId == IMUSE_VOLGRP_SFX || !_scheduledCrossfades[l].isJumpToLoop) {
 				newTrack->regionOffset = 0;
-			} else if (!scumm_stricmp(newTrack->soundName, "2311-S~1.IMX")) {
-				// Special cases for the song in Part 3
-				newTrack->regionOffset = newTrack->regionOffset - ((oldTrack->feedSize / _callbackFps));
-				if (newTrack->soundId == 2317)
-					newTrack->regionOffset += (oldTrack->feedSize / _callbackFps) / 2;
-				else
-					newTrack->regionOffset -= (oldTrack->feedSize / _callbackFps) / 2;
-			} else {
-				newTrack->regionOffset -= (oldTrack->feedSize / _callbackFps);
+			} else if (_scheduledCrossfades[l].isJumpToLoop) {
+				switch (newTrack->loopShiftType) {
+				case 0:
+					newTrack->regionOffset -= (oldTrack->feedSize / _callbackFps);
+					break;
+				case 1:
+					newTrack->regionOffset = 0;
+					break;
+				case 2:
+					newTrack->regionOffset -= (oldTrack->feedSize / _callbackFps) + (oldTrack->feedSize / _callbackFps) / 2 + 2;
+					break;
+				case 3:
+					newTrack->regionOffset -= (oldTrack->feedSize / _callbackFps) - (oldTrack->feedSize / _callbackFps) / 2 + 2;
+					break;
+				case 4:
+					newTrack->regionOffset -= ((oldTrack->feedSize / _callbackFps) / 3) * 2;
+					break;
+				}
 			}
 
 			newTrack->dataOffset = _scheduledCrossfades[l].destDataOffset;
@@ -581,7 +594,21 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 		assert(region != -1);
 		int sampleHookId = _sound->getJumpHookId(soundDesc, jumpId);
 		assert(sampleHookId != -1);
+
 		bool isJumpToStart = (soundDesc->jump[jumpId].dest == soundDesc->marker[2].pos && !scumm_stricmp(soundDesc->marker[2].ptr, "start"));
+		bool isJumpToLoop = false;
+		if (!isJumpToStart) {
+			for (int m = 0; m < soundDesc->numMarkers; m++) {
+				if (soundDesc->jump[jumpId].dest == soundDesc->marker[m].pos) {
+					Common::String markerDesc = soundDesc->marker[m].ptr;
+					if (markerDesc.contains("loop")) {
+						isJumpToLoop = true;
+					}
+					break;
+				}
+			}
+		}
+
 		debug(5, "SwToNeReg(trackId:%d) - JUMP found - sound:%d, track hookId:%d, data hookId:%d", track->trackId, track->soundId, track->curHookId, sampleHookId);
 		if (track->curHookId == sampleHookId) {
 			int fadeDelay = (60 * _sound->getJumpFade(soundDesc, jumpId)) / 1000;
@@ -604,6 +631,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 						_scheduledCrossfades[track->trackId].fadeDelay = fadeDelay;
 						_scheduledCrossfades[track->trackId].destHookId = track->curHookId;
 						_scheduledCrossfades[track->trackId].volumeBefJump = track->vol / 1000;
+						_scheduledCrossfades[track->trackId].isJumpToLoop = isJumpToLoop;
 					}
 				} else {
 					debug(5, "SwToNeReg(trackId:%d) - call cloneToFadeOutTrack(delay:%d)", track->trackId, fadeDelay);

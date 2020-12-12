@@ -76,6 +76,7 @@ private:
 		int fadeDelay;
 		int destHookId;
 		int volumeBefJump;
+		bool isJumpToLoop;
 	};
 
 	ScheduledCrossfade _scheduledCrossfades[MAX_DIGITAL_TRACKS];
