@@ -46,13 +46,14 @@ TalismanGame::TalismanGame() : ComprehendGameV2() {
 	_titleGraphicFile = "t0";
 }
 
-#define STRINGS_SEGMENT 0x16490
+#define STRINGS_SEGMENT1 0x16490
+#define STRINGS_SEGMENT2 0x22fa0
 #define BANKS_COUNT 15
 #define STRINGS_PER_BANK 64
 
 void TalismanGame::loadStrings() {
-	uint16 bankOffsets[BANKS_COUNT];
-	uint16 stringOffsets[STRINGS_PER_BANK + 1];
+	int bankOffsets[BANKS_COUNT];
+	int stringOffsets[STRINGS_PER_BANK + 1];
 
 	Common::File f;
 	if (!f.open("novel.exe"))
@@ -62,19 +63,25 @@ void TalismanGame::loadStrings() {
 	if (md5 != "0e7f002971acdb055f439020363512ce")
 		error("Unrecognised novel.exe encountered");
 
-	f.seek(STRINGS_SEGMENT);
+	f.seek(STRINGS_SEGMENT1);
 	for (int bank = 0; bank < BANKS_COUNT; ++bank)
 		bankOffsets[bank] = f.readUint16LE();
 
 	// Iterate through the banks loading the strings
 	for (int bank = 0; bank < BANKS_COUNT; ++bank) {
-		f.seek(STRINGS_SEGMENT + bankOffsets[bank]);
+		if (!bankOffsets[bank])
+			continue;
+
+		f.seek(STRINGS_SEGMENT1 + bankOffsets[bank]);
 		for (int strNum = 0; strNum <= STRINGS_PER_BANK; ++strNum)
 			stringOffsets[strNum] = f.readUint16LE();
 
 		for (int strNum = 0; strNum < STRINGS_PER_BANK; ++strNum) {
-			f.seek(STRINGS_SEGMENT + bankOffsets[bank] + stringOffsets[strNum]);
-			FileBuffer fb(&f, stringOffsets[strNum + 1] - stringOffsets[strNum]);
+			int size = stringOffsets[strNum + 1] - stringOffsets[strNum];
+			assert(size > 0);
+
+			f.seek(STRINGS_SEGMENT1 + bankOffsets[bank] + stringOffsets[strNum]);
+			FileBuffer fb(&f, size);
 			_strings.push_back(parseString(&fb));
 		}
 	}
