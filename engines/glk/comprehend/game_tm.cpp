@@ -55,6 +55,9 @@ void TalismanGame::loadStrings() {
 	int bankOffsets[BANKS_COUNT];
 	int stringOffsets[STRINGS_PER_BANK + 1];
 
+	_strings.clear();
+	_strings2.clear();
+
 	Common::File f;
 	if (!f.open("novel.exe"))
 		error("novel.exe is a required file");
@@ -63,26 +66,37 @@ void TalismanGame::loadStrings() {
 	if (md5 != "0e7f002971acdb055f439020363512ce")
 		error("Unrecognised novel.exe encountered");
 
-	f.seek(STRINGS_SEGMENT1);
-	for (int bank = 0; bank < BANKS_COUNT; ++bank)
-		bankOffsets[bank] = f.readUint16LE();
+	const int STRING_SEGMENTS[2] = { STRINGS_SEGMENT1, STRINGS_SEGMENT2 };
 
-	// Iterate through the banks loading the strings
-	for (int bank = 0; bank < BANKS_COUNT; ++bank) {
-		if (!bankOffsets[bank])
-			continue;
+	// TODO: Figure out use of string segment 2
+	for (int strings = 0; strings < 1; ++strings) {
+		f.seek(STRING_SEGMENTS[strings]);
+		for (int bank = 0; bank < BANKS_COUNT; ++bank)
+			bankOffsets[bank] = f.readUint16LE();
 
-		f.seek(STRINGS_SEGMENT1 + bankOffsets[bank]);
-		for (int strNum = 0; strNum <= STRINGS_PER_BANK; ++strNum)
-			stringOffsets[strNum] = f.readUint16LE();
+		// Iterate through the banks loading the strings
+		for (int bank = 0; bank < BANKS_COUNT; ++bank) {
+			if (!bankOffsets[bank])
+				continue;
 
-		for (int strNum = 0; strNum < STRINGS_PER_BANK; ++strNum) {
-			int size = stringOffsets[strNum + 1] - stringOffsets[strNum];
-			assert(size > 0);
+			f.seek(STRING_SEGMENTS[strings] + bankOffsets[bank]);
+			for (int strNum = 0; strNum <= STRINGS_PER_BANK; ++strNum)
+				stringOffsets[strNum] = f.readUint16LE();
 
-			f.seek(STRINGS_SEGMENT1 + bankOffsets[bank] + stringOffsets[strNum]);
-			FileBuffer fb(&f, size);
-			_strings.push_back(parseString(&fb));
+			for (int strNum = 0; strNum < STRINGS_PER_BANK; ++strNum) {
+				int size = stringOffsets[strNum + 1] - stringOffsets[strNum];
+				if (size < 0)
+					size = 0xfff;
+
+				f.seek(STRING_SEGMENTS[strings] + bankOffsets[bank] + stringOffsets[strNum]);
+				FileBuffer fb(&f, size);
+				Common::String str = parseString(&fb);
+
+				if (bank < 8)
+					_strings.push_back(str);
+				else
+					_strings2.push_back(str);
+			}
 		}
 	}
 }
