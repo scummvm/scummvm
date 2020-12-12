@@ -619,9 +619,6 @@ void ComprehendGame::skip_non_whitespace(const char **p) {
 }
 
 bool ComprehendGame::handle_sentence(Sentence *sentence) {
-	if (sentence->empty())
-		return false;
-
 	if (sentence->_nr_words == 1 && !strcmp(sentence->_words[0]._word, "quit")) {
 		g_comprehend->quitGame();
 		return true;
