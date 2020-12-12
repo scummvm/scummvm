@@ -45,7 +45,8 @@ namespace Comprehend {
 
 Comprehend *g_comprehend;
 
-Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc), _topWindow(nullptr), _bottomWindow(nullptr),
+Comprehend::Comprehend(OSystem *syst, const GlkGameDescription &gameDesc) : GlkAPI(syst, gameDesc),
+	_topWindow(nullptr), _bottomWindow(nullptr), _roomDescWindow(nullptr),
 	_drawSurface(nullptr), _game(nullptr), _pics(nullptr), _saveSlot(-1),
 	_graphicsEnabled(true), _drawFlags(0), _disableSaves(false) {
 	g_comprehend = this;
@@ -101,6 +102,7 @@ void Comprehend::initialize() {
 void Comprehend::deinitialize() {
 	glk_window_close(_topWindow);
 	glk_window_close(_bottomWindow);
+	glk_window_close(_roomDescWindow);
 }
 
 void Comprehend::createDebugger() {
@@ -128,8 +130,7 @@ void Comprehend::print(const char *fmt, ...) {
 	Common::String msg = Common::String::vformat(fmt, argp);
 	va_end(argp);
 
-	glk_put_string_stream(glk_window_get_stream(_bottomWindow),
-	                      msg.c_str());
+	glk_put_string_stream(glk_window_get_stream(_bottomWindow), msg.c_str());
 }
 
 void Comprehend::print(const Common::U32String fmt, ...) {
@@ -140,8 +141,29 @@ void Comprehend::print(const Common::U32String fmt, ...) {
 	Common::U32String::vformat(fmt.begin(), fmt.end(), outputMsg, argp);
 	va_end(argp);
 
-	glk_put_string_stream_uni(glk_window_get_stream(_bottomWindow),
-	                          outputMsg.u32_str());
+	glk_put_string_stream_uni(glk_window_get_stream(_bottomWindow), outputMsg.u32_str());
+}
+
+void Comprehend::printRoomDesc(const Common::String &desc) {
+	if (_roomDescWindow) {
+		glk_window_clear(_roomDescWindow);
+
+		// Get the grid width and do a word wrap
+		uint width;
+		glk_window_get_size(_roomDescWindow, &width, nullptr);
+		Common::String str = desc;
+		str.wordWrap(width - 2);
+		str += '\n';
+
+		// Display the room description
+		while (!str.empty()) {
+			size_t idx = str.findFirstOf('\n');
+			Common::String line = Common::String::format(" %s", Common::String(str.c_str(), str.c_str() + idx + 1).c_str());
+			glk_put_string_stream(glk_window_get_stream(_roomDescWindow), line.c_str());
+
+			str = Common::String(str.c_str() + idx + 1);
+		}
+	}
 }
 
 void Comprehend::readLine(char *buffer, size_t maxLen) {
@@ -236,15 +258,25 @@ void Comprehend::clearScreen(bool isBright) {
 	drawPicture(isBright ? BRIGHT_ROOM : DARK_ROOM);
 }
 
-void Comprehend::toggleGraphics() {
+bool Comprehend::toggleGraphics() {
 	if (_topWindow) {
 		// Remove the picture window
 		glk_window_close(_topWindow);
 		_topWindow = nullptr;
 		_graphicsEnabled = false;
+
+		// Add the room description window
+		_roomDescWindow = (TextGridWindow *)glk_window_open(_bottomWindow,
+			winmethod_Above | winmethod_Fixed, 5, wintype_TextGrid, 1);
+		return false;
+
 	} else {
+		glk_window_close(_roomDescWindow);
+		_roomDescWindow = nullptr;
+
 		// Create the window again
 		showGraphics();
+		return true;
 	}
 }
 
