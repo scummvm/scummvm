@@ -293,9 +293,9 @@ int32 Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uin
 	return 1;
 }
 
-int32 Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
+void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr) {
 	if (!Model::isAnimated(bodyPtr)) {
-		return 0;
+		return;
 	}
 	uint8 *animPtr = animBufferPos;
 
@@ -329,8 +329,6 @@ int32 Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *anim
 	if (animBuffer + (560 * 8) + 8 < animBufferPos) {
 		animBufferPos = animBuffer;
 	}
-
-	return var2;
 }
 
 bool Animations::verifyAnimAtKeyframe(int32 animIdx, const uint8 *animPtr, AnimTimerDataStruct *animTimerDataPtr) {
@@ -525,10 +523,7 @@ bool Animations::initAnim(AnimationTypes newAnim, int16 animType, AnimationTypes
 		setAnimAtKeyframe(0, _engine->_resources->animTable[animIndex], _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 	} else {
 		// interpolation between animations
-		animBufferPos += stockAnimation(_engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
-		if (animBuffer + (560 * 8) + 8 < animBufferPos) {
-			animBufferPos = animBuffer;
-		}
+		stockAnimation(_engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 	}
 
 	actor->previousAnimIdx = animIndex;

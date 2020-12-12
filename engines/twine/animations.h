@@ -116,7 +116,7 @@ public:
 	 * @param bodyPtr Body model poitner
 	 * @param animTimerDataPtr Animation time data
 	 */
-	int32 stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	void stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
 
 	/**
 	 * Initialize animation
