@@ -36,13 +36,14 @@ private:
 	uint32	_mouseLimitHeight;
 	int32	_x, _y;
 	Palette _screenPalette;			// separate palette for screen. default 'palette' is cursor palette.
+	bool _fakeAlpha;			// true if treating e.g. 555 as 5551, false if there's a genuine alpha channel
 
 	void updateRendererOffset();
 
 public:
 	Cursor() : _hotspotX(0), _hotspotY(0), _keyColor(0), _cursorTargetScale(0),
 			_useCursorPalette(false), _hasCursorPalette(false), _mouseLimitWidth(0),
-			_mouseLimitHeight(0), _x(0), _y(0) { }
+			_mouseLimitHeight(0), _x(0), _y(0), _fakeAlpha(false) { }
 	virtual ~Cursor() { deallocate(); }
 
 	void setKeyColor(uint32 color);
