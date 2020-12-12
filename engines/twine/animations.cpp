@@ -128,7 +128,7 @@ void Animations::applyAnimStep(uint8 *ptr, int32 deltaTime, int32 keyFrameLength
 	*(int16 *)ptr = computedAngle;
 }
 
-int32 Animations::getAnimMode(uint8 *ptr, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr) {
+int32 Animations::getAnimMode(uint8 *ptr, const uint8 *keyFramePtr) {
 	const int16 opcode = READ_LE_INT16(keyFramePtr);
 	*(int16 *)ptr = opcode;
 	return opcode;
@@ -197,7 +197,7 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint
 
 	int16 tmpNumOfPoints = numOfBonesInAnim - 1;
 	do {
-		const int16 animOpcode = getAnimMode(bonesPtr + 0, keyFramePtr + 0, lastKeyFramePtr + 0);
+		const int16 animOpcode = getAnimMode(bonesPtr + 0, keyFramePtr + 0);
 
 		switch (animOpcode) {
 		case 0: // allow global rotate
