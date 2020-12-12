@@ -189,13 +189,13 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint
 	}
 	const int32 deltaTime = _engine->lbaTime - remainingFrameTime;
 	if (deltaTime >= keyFrameLength) {
-		const uint8 *ptrToData = keyFramePtr + 8;
 		for (int32 i = 0; i < numOfBonesInAnim; ++i) {
-			// these are 4 int16 values
-			for (int32 j = 0; j < 8; j++) {
-				*bonesPtr++ = *ptrToData++;
-			}
-			bonesPtr += 30;
+			const BoneFrame &boneframe = keyFrame->boneframes[i];
+			WRITE_LE_UINT16(bonesPtr + 0, boneframe.type);
+			WRITE_LE_INT16(bonesPtr + 2, boneframe.x);
+			WRITE_LE_INT16(bonesPtr + 4, boneframe.y);
+			WRITE_LE_INT16(bonesPtr + 6, boneframe.z);
+			bonesPtr += 38;
 		}
 
 		animTimerDataPtr->ptr = keyFramePtr;
@@ -252,33 +252,35 @@ void Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint
 		return;
 	}
 
-	const uint8 *ptrToData = getKeyFrameData(keyframeIdx, animPtr);
-	currentStepX = READ_LE_INT16(ptrToData + 2);
-	currentStepY = READ_LE_INT16(ptrToData + 4);
-	currentStepZ = READ_LE_INT16(ptrToData + 6);
+	AnimData animData;
+	animData.loadFromBuffer(animPtr, 100000);
+	const KeyFrame* keyFrame = animData.getKeyframe(keyframeIdx);
 
-	processRotationByAnim = READ_LE_INT16(ptrToData + 8);
-	processLastRotationAngle = ToAngle(READ_LE_INT16(ptrToData + 12));
+	currentStepX = keyFrame->x;
+	currentStepY = keyFrame->y;
+	currentStepZ = keyFrame->z;
 
-	animTimerDataPtr->ptr = ptrToData;
+	processRotationByAnim = keyFrame->boneframes[0].type;
+	processLastRotationAngle = ToAngle(keyFrame->boneframes[0].y);
+
+	animTimerDataPtr->ptr = getKeyFrameData(keyframeIdx, animPtr);
 	animTimerDataPtr->time = _engine->lbaTime;
 
 	const int16 numBones = getNumBones(bodyPtr);
 	uint8 *bonesPtr = getBonesData(bodyPtr);
 
-	int16 numOfBonesInAnim = getNumBoneframes(animPtr);
+	int16 numOfBonesInAnim = animData.getNumBoneframes();
 	if (numOfBonesInAnim > numBones) {
 		numOfBonesInAnim = numBones;
 	}
-	ptrToData += 8;
 
 	for (int32 i = 0; i < numOfBonesInAnim; ++i) {
-		// these are 4 int16 values
-		for (int32 j = 0; j < 8; j++) {
-			*bonesPtr++ = *ptrToData++;
-		}
-
-		bonesPtr += 30;
+		const BoneFrame &boneframe = keyFrame->boneframes[i];
+		WRITE_LE_UINT16(bonesPtr + 0, boneframe.type);
+		WRITE_LE_INT16(bonesPtr + 2, boneframe.x);
+		WRITE_LE_INT16(bonesPtr + 4, boneframe.y);
+		WRITE_LE_INT16(bonesPtr + 6, boneframe.z);
+		bonesPtr += 38;
 	}
 
 	return;
