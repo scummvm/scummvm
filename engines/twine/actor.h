@@ -150,8 +150,6 @@ private:
 public:
 	~ActorStruct();
 
-	EntityData entityData;
-
 	StaticFlagsStruct staticFlags;
 	DynamicFlagsStruct dynamicFlags;
 
