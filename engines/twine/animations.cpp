@@ -704,13 +704,14 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 
 	// actor standing on another actor
 	if (actor->standOn != -1) {
-		_engine->_movements->processActorX -= _engine->_scene->getActor(actor->standOn)->collisionX;
-		_engine->_movements->processActorY -= _engine->_scene->getActor(actor->standOn)->collisionY;
-		_engine->_movements->processActorZ -= _engine->_scene->getActor(actor->standOn)->collisionZ;
+		const ActorStruct* standOnActor = _engine->_scene->getActor(actor->standOn);
+		_engine->_movements->processActorX -= standOnActor->collisionX;
+		_engine->_movements->processActorY -= standOnActor->collisionY;
+		_engine->_movements->processActorZ -= standOnActor->collisionZ;
 
-		_engine->_movements->processActorX += _engine->_scene->getActor(actor->standOn)->x;
-		_engine->_movements->processActorY += _engine->_scene->getActor(actor->standOn)->y;
-		_engine->_movements->processActorZ += _engine->_scene->getActor(actor->standOn)->z;
+		_engine->_movements->processActorX += standOnActor->x;
+		_engine->_movements->processActorY += standOnActor->y;
+		_engine->_movements->processActorZ += standOnActor->z;
 
 		if (!_engine->_collision->standingOnActor(actorIdx, actor->standOn)) {
 			actor->standOn = -1; // no longer standing on other actor
