@@ -306,14 +306,14 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 	const uint8 *bonesBase = verticesBase + numVertices * 6 + 2;
 	int32 numBones = READ_LE_INT16(bonesBase);
 
-	int32 *edi = (int32 *)(animBufferPos + 8);
-	const int32 *esi = (const int32 *)(bonesBase + 10);
+	uint8 *bonesPtr = animBufferPos + 8;
+	const uint8 *ptrToData = bonesBase + 10;
 
 	for (int32 i = 0; i < numBones; ++i) {
-		*(edi++) = *(esi++);
-		*(edi++) = *(esi++);
-
-		esi = (const int32 *)(((const int8 *)esi) + 30);
+		for (int32 j = 0; j < 8; j++) {
+			*bonesPtr++ = *ptrToData++;
+		}
+		ptrToData += 30;
 	}
 
 	// 8 = 4xint16 - firstpoint, numpoints, basepoint, baseelement - see elementEntry
