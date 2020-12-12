@@ -27,20 +27,13 @@
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_frame.h"
 #include "ultima/ultima8/ultima8.h"
-#include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/widgets/button_widget.h"
-#include "ultima/ultima8/gumps/widgets/text_widget.h"
 #include "ultima/ultima8/gumps/quit_gump.h"
-#include "ultima/ultima8/gumps/paged_gump.h"
 #include "ultima/ultima8/games/game.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
-#include "ultima/ultima8/graphics/fonts/font.h"
 #include "ultima/ultima8/graphics/fonts/rendered_text.h"
-#include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/graphics/palette_manager.h"
-#include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/audio/music_process.h"
-#include "ultima/ultima8/gumps/widgets/edit_widget.h"
 #include "ultima/ultima8/gumps/u8_save_gump.h"
 #include "ultima/ultima8/world/get_object.h"
 #include "ultima/ultima8/meta_engine.h"
@@ -76,7 +69,6 @@ RemorseMenuGump::RemorseMenuGump()
 RemorseMenuGump::~RemorseMenuGump() {
 	MetaEngine::setGameMenuActive(false);
 }
-
 
 void RemorseMenuGump::Close(bool no_del) {
 	// Restore old music state and palette.
@@ -172,7 +164,6 @@ void RemorseMenuGump::InitGump(Gump *newparent, bool take_focus) {
 	}
 }
 
-
 void RemorseMenuGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	Gump::PaintThis(surf, lerp_factor, scaled);
 }
@@ -200,11 +191,6 @@ void RemorseMenuGump::ChildNotify(Gump *child, uint32 message) {
 }
 
 void RemorseMenuGump::selectEntry(int entry) {
-	SettingManager *settingman = SettingManager::get_instance();
-	bool endgame, quotes;
-	settingman->get("endgame", endgame);
-	settingman->get("quotes", quotes);
-
 	switch (entry) {
 	case 1: // New Game
 		Game::get_instance()->playIntroMovie(true);
@@ -233,7 +219,6 @@ void RemorseMenuGump::selectEntry(int entry) {
 
 bool RemorseMenuGump::OnTextInput(int unicode) {
 	if (Gump::OnTextInput(unicode)) return true;
-
 	return true;
 }
 
