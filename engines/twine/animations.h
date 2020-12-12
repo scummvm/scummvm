@@ -77,7 +77,7 @@ public:
 	 * @param bodyPtr Body model poitner
 	 * @param animTimerDataPtr Animation time data
 	 */
-	int32 setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
+	void setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint8 *bodyPtr, AnimTimerDataStruct *animTimerDataPtr);
 
 	int16 getNumBoneframes(const uint8 *animPtr);
 	const uint8* getKeyFrameData(int32 frameIdx, const uint8 *animPtr);
