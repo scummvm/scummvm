@@ -63,6 +63,7 @@
 #include "ultima/ultima8/gumps/menu_gump.h"
 #include "ultima/ultima8/gumps/cru_status_gump.h"
 #include "ultima/ultima8/gumps/movie_gump.h"
+#include "ultima/ultima8/gumps/weasel_gump.h"
 
 // For gump positioning... perhaps shouldn't do it this way....
 #include "ultima/ultima8/gumps/bark_gump.h"

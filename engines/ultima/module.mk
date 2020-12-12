@@ -498,6 +498,8 @@ MODULE_OBJS := \
 	ultima8/gumps/target_gump.o \
 	ultima8/gumps/translucent_gump.o \
 	ultima8/gumps/u8_save_gump.o \
+	ultima8/gumps/weasel_dat.o \
+	ultima8/gumps/weasel_gump.o \
 	ultima8/gumps/widgets/button_widget.o \
 	ultima8/gumps/widgets/edit_widget.o \
 	ultima8/gumps/widgets/sliding_widget.o \

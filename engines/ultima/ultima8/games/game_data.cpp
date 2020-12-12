@@ -41,6 +41,7 @@
 #include "ultima/ultima8/conf/config_file_manager.h"
 #include "ultima/ultima8/graphics/fonts/font_manager.h"
 #include "ultima/ultima8/games/game_info.h"
+#include "ultima/ultima8/gumps/weasel_dat.h"
 #include "ultima/ultima8/conf/setting_manager.h"
 #include "ultima/ultima8/convert/crusader/convert_shape_crusader.h"
 #include "ultima/ultima8/audio/music_flex.h"
@@ -504,6 +505,13 @@ const CombatDat *GameData::getCombatDat(uint16 entry) const {
 	return nullptr;
 }
 
+const WeaselDat *GameData::getWeaselDat(uint16 entry) const {
+	if (entry < _weaselData.size()) {
+		return _weaselData[entry];
+	}
+	return nullptr;
+}
+
 const FireType *GameData::getFireType(uint16 type) const {
 	return FireTypeTable::get(type);
 }
@@ -671,6 +679,10 @@ void GameData::loadRemorseData() {
 	// 14 blocks of 323 bytes, references like W01 and I07
 	// (presumably weapon and inventory)
 	// shop data?
+	while (!stuffds->eos()) {
+		WeaselDat *data = new WeaselDat(stuffds);
+		_weaselData.push_back(data);
+	}
 
 	delete stuffds;
 
