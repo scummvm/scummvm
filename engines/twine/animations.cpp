@@ -29,6 +29,7 @@
 #include "common/util.h"
 #include "twine/actor.h"
 #include "twine/collision.h"
+#include "twine/parser/anim.h"
 #include "twine/parser/entity.h"
 #include "twine/gamestate.h"
 #include "twine/grid.h"
@@ -159,24 +160,27 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint
 	if (!Model::isAnimated(bodyPtr)) {
 		return false;
 	}
-	const uint8 *keyFramePtr = getKeyFrameData(keyframeIdx, animPtr);
+	AnimData animData;
+	animData.loadFromBuffer(animPtr, 100000);
+	const KeyFrame* keyFrame = animData.getKeyframe(keyframeIdx);
 
-	currentStepX = READ_LE_INT16(keyFramePtr + 2);
-	currentStepY = READ_LE_INT16(keyFramePtr + 4);
-	currentStepZ = READ_LE_INT16(keyFramePtr + 6);
+	currentStepX = keyFrame->x;
+	currentStepY = keyFrame->y;
+	currentStepZ = keyFrame->z;
 
-	processRotationByAnim = READ_LE_INT16(keyFramePtr + 8);
-	processLastRotationAngle = ToAngle(READ_LE_INT16(keyFramePtr + 12));
+	processRotationByAnim = keyFrame->boneframes[0].type;
+	processLastRotationAngle = ToAngle(keyFrame->boneframes[0].y);
 
 	const int16 numBones = getNumBones(bodyPtr);
 	uint8 *bonesPtr = getBonesData(bodyPtr);
 
-	int32 numOfBonesInAnim = getNumBoneframes(animPtr);
+	int32 numOfBonesInAnim = animData.getNumBoneframes();
 	if (numOfBonesInAnim > numBones) {
 		numOfBonesInAnim = numBones;
 	}
-	const int32 keyFrameLength = getKeyFrameLength(keyframeIdx, animPtr);
+	const int32 keyFrameLength = keyFrame->length;
 
+	const uint8 *keyFramePtr = getKeyFrameData(keyframeIdx, animPtr);
 	const uint8 *lastKeyFramePtr = animTimerDataPtr->ptr;
 	int32 remainingFrameTime = animTimerDataPtr->time;
 	if (lastKeyFramePtr == nullptr) {
