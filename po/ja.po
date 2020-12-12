@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-12 06:00+0000\n"
-"PO-Revision-Date: 2020-12-12 05:58+0000\n"
+"PO-Revision-Date: 2020-12-12 11:01+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -2741,7 +2741,7 @@ msgstr "2xSaiに切り替える"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:440
 msgid "Switch to Super2xSai scaling"
-msgstr ""
+msgstr "Super2xSaiに切り替える"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:441
 msgid "Switch to SuperEagle scaling"
