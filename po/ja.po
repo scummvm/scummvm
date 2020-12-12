@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-12-12 06:06+0000\n"
+"POT-Creation-Date: 2020-12-12 14:54+0000\n"
 "PO-Revision-Date: 2020-12-12 18:32+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -6551,11 +6551,11 @@ msgstr ""
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
 msgstr ""
 
-#: engines/sky/detection.cpp:39
+#: engines/sky/detection.cpp:37
 msgid "Floppy intro"
 msgstr ""
 
-#: engines/sky/detection.cpp:40
+#: engines/sky/detection.cpp:38
 msgid "Use the floppy version's intro (CD version only)"
 msgstr ""
 

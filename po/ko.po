@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-12-12 06:06+0000\n"
+"POT-Creation-Date: 2020-12-12 14:54+0000\n"
 "PO-Revision-Date: 2020-11-14 10:56+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -6689,11 +6689,11 @@ msgstr "창의 배경을 조금 투명하게 합니다."
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
 msgstr "\"sky.cpt\" 엔진 데이터 파일의 크기가 잘못 되었습니다."
 
-#: engines/sky/detection.cpp:39
+#: engines/sky/detection.cpp:37
 msgid "Floppy intro"
 msgstr "플로피 버전 인트로"
 
-#: engines/sky/detection.cpp:40
+#: engines/sky/detection.cpp:38
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "플로피 버전의 인트로를 사용합니다 (CD 버전에서만)"
 

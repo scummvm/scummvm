@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-12-12 06:06+0000\n"
+"POT-Creation-Date: 2020-12-12 14:54+0000\n"
 "PO-Revision-Date: 2020-12-05 11:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -6762,11 +6762,11 @@ msgstr "Показывать окна с частично прозрачным �
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
 msgstr "Файл данных движка sky.cpt имеет неверный размер."
 
-#: engines/sky/detection.cpp:39
+#: engines/sky/detection.cpp:37
 msgid "Floppy intro"
 msgstr "Вступление с дискет"
 
-#: engines/sky/detection.cpp:40
+#: engines/sky/detection.cpp:38
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Использовать вступление с гибких дисков (только для CD-версии игры)"
 

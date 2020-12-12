@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-12-12 06:06+0000\n"
+"POT-Creation-Date: 2020-12-12 14:54+0000\n"
 "PO-Revision-Date: 2020-11-29 17:10+0000\n"
 "Last-Translator: Ben Castricum <github@bencastricum.nl>\n"
 "Language-Team: Dutch <https://translations.scummvm.org/projects/scummvm/"
@@ -6795,11 +6795,11 @@ msgstr "Toon vensters met een gedeeltelijk transparante achtergrond"
 msgid "The \"sky.cpt\" engine data file has an incorrect size."
 msgstr "De \"sky.cpt\" engine data file heeft de verkeerde groote."
 
-#: engines/sky/detection.cpp:39
+#: engines/sky/detection.cpp:37
 msgid "Floppy intro"
 msgstr "Floppy intro"
 
-#: engines/sky/detection.cpp:40
+#: engines/sky/detection.cpp:38
 msgid "Use the floppy version's intro (CD version only)"
 msgstr "Gebruik de floppy versie van de intro (alleen voor de CD versie)"
 
