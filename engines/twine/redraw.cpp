@@ -204,7 +204,7 @@ void Redraw::updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2) {
 	}
 }
 
-int32 Redraw::processActorDrawingList(bool bgRedraw) {
+int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 	int32 drawListPos = 0;
 	for (int32 modelActorPos = 0; modelActorPos < _engine->_scene->sceneNumActors; modelActorPos++) {
 		ActorStruct *actor = _engine->_scene->getActor(modelActorPos);
@@ -282,7 +282,7 @@ int32 Redraw::processActorDrawingList(bool bgRedraw) {
 	return drawListPos;
 }
 
-int32 Redraw::processExtraDrawingList(int32 drawListPos) {
+int32 Redraw::fillExtraDrawingList(int32 drawListPos) {
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		ExtraListStruct *extra = &_engine->_extra->extraList[i];
 		if (extra->info0 == -1) {
@@ -720,8 +720,8 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 		blitBackgroundAreas();
 	}
 
-	int32 drawListPos = processActorDrawingList(bgRedraw);
-	drawListPos = processExtraDrawingList(drawListPos);
+	int32 drawListPos = fillActorDrawingList(bgRedraw);
+	drawListPos = fillExtraDrawingList(drawListPos);
 	sortDrawingList(drawList, drawListPos);
 
 	currNumOfRedrawBox = 0;
