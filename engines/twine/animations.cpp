@@ -264,16 +264,15 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 	animTimerDataPtr->ptr = animBufferPos;
 
 	const int32 numBones = Model::getNumBones(bodyPtr);
-	const uint8 *ptrToData = Model::getBonesStateData(bodyPtr, 0);
 
 	uint8 *bonesPtr = animBufferPos + 8;
 
 	for (int32 i = 0; i < numBones; ++i) {
+		const uint8 *ptrToData = Model::getBonesStateData(bodyPtr, i);
 		// these are 4 int16 values, type, x, y and z
 		for (int32 j = 0; j < 8; j++) {
 			*bonesPtr++ = *ptrToData++;
 		}
-		ptrToData += 30;
 	}
 
 	// 8 = 4xint16 - firstpoint, numpoints, basepoint, baseelement - see elementEntry
