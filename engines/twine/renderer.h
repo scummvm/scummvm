@@ -96,25 +96,82 @@ struct Model {
 		return (bodyHeader & 2) != 0;
 	}
 
-	static const uint8* getBonesData(const uint8 *bodyPtr) {
-		const uint8 *verticesBase = bodyPtr + 0x1A;
-		const int16 numVertices = READ_LE_INT16(verticesBase);
-		const uint8 *bonesBase = verticesBase + 2 + numVertices * 6;
-		return bonesBase + 2 + 8;
+	static uint8* getData(uint8 *bodyPtr) {
+		return bodyPtr + 0x1A;
+	}
+
+	static const uint8* getData(const uint8 *bodyPtr) {
+		return bodyPtr + 0x1A;
+	}
+
+	static const uint8* getVerticesBaseData(const uint8 *bodyPtr) {
+		return getData(bodyPtr) + 2;
 	}
 
 	static uint8* getBonesData(uint8 *bodyPtr) {
-		uint8 *verticesBase = bodyPtr + 0x1A;
+		uint8 *verticesBase = getData(bodyPtr);
 		const int16 numVertices = READ_LE_INT16(verticesBase);
-		uint8 *bonesBase = verticesBase + 2 + numVertices * 6;
-		return bonesBase + 2 + 8;
+		return verticesBase + 2 + numVertices * 6;
+	}
+
+	static const uint8* getBonesData(const uint8 *bodyPtr) {
+		const uint8 *verticesBase = getData(bodyPtr);
+		const int16 numVertices = READ_LE_INT16(verticesBase);
+		return verticesBase + 2 + numVertices * 6;
+	}
+
+	static const uint8* getBonesStateData(const uint8 *bodyPtr) {
+		return getBonesBaseData(bodyPtr) + 8;
+	}
+
+	static uint8* getBonesStateData(uint8 *bodyPtr) {
+		return getBonesBaseData(bodyPtr) + 8;
+	}
+
+	static uint8* getBonesBaseData(uint8 *bodyPtr) {
+		return getBonesData(bodyPtr) + 2;
+	}
+
+	static const uint8* getBonesBaseData(const uint8 *bodyPtr) {
+		return getBonesData(bodyPtr) + 2;
 	}
 
 	static int16 getNumBones(const uint8 *bodyPtr) {
-		const uint8 *verticesBase = bodyPtr + 0x1A;
+		const uint8 *verticesBase = getData(bodyPtr);
 		const int16 numVertices = READ_LE_INT16(verticesBase);
 		const uint8 *bonesBase = verticesBase + 2 + numVertices * 6;
 		return READ_LE_INT16(bonesBase);
+	}
+
+	static int16 getNumVertices(const uint8 *bodyPtr) {
+		const uint8 *verticesBase = getData(bodyPtr);
+		return READ_LE_INT16(verticesBase);
+	}
+
+	static uint8* getShadesData(uint8 *bodyPtr) {
+		uint8 *bonesBase = getBonesBaseData(bodyPtr);
+		const int16 numBones = getNumBones(bodyPtr);
+		return bonesBase + numBones * 38;
+	}
+
+	static uint8* getShadesBaseData(uint8 *bodyPtr) {
+		return getShadesData(bodyPtr) + 2;
+	}
+
+	static const uint8* getShadesData(const uint8 *bodyPtr) {
+		const uint8 *bonesBase = getBonesBaseData(bodyPtr);
+		const int16 numBones = getNumBones(bodyPtr);
+		return bonesBase + numBones * 38;
+	}
+
+	static int16 getNumShades(const uint8 *bodyPtr) {
+		const uint8 *shadesBase = getShadesData(bodyPtr);
+		return READ_LE_INT16(shadesBase);
+	}
+
+	static int16 getNumShadesBone(const uint8 *bodyPtr, int boneIdx) {
+		const uint8 *bonesBase = getBonesBaseData(bodyPtr);
+		return READ_LE_INT16(bonesBase + (boneIdx * 38) + 18);
 	}
 };
 
