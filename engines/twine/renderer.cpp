@@ -1255,6 +1255,9 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, RenderCom
 }
 
 int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, RenderCommand *renderCmds) {
+	// jump after the header
+	bodyPtr += 0x1A;
+
 	const int32 numOfPoints = *((const uint16 *)bodyPtr);
 	bodyPtr += 2;
 	const pointTab *pointsPtr = (const pointTab *)bodyPtr;
@@ -1465,7 +1468,7 @@ void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
 	bodyHeader->bodyFlag.alreadyPrepared = 1;
 
 	// no animation applicable
-	if (!bodyHeader->bodyFlag.animated) {
+	if (!Model::isAnimated(bodyPtr)) {
 		return;
 	}
 
@@ -1509,13 +1512,9 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 		renderZ = destZ - baseRotPosZ;
 	}
 
-	Model *bodyHeader = (Model *)bodyPtr;
-	if (bodyHeader->bodyFlag.animated) {
-		// jump after the header
-		uint8 *ptr = bodyPtr + 0x1A;
-		// the mostly used renderer code
+	if (Model::isAnimated(bodyPtr)) {
 		// restart at the beginning of the renderTable
-		return renderAnimatedModel(&_modelData, ptr, _renderCmds);
+		return renderAnimatedModel(&_modelData, bodyPtr, _renderCmds);
 	}
 	error("Unsupported unanimated model render!");
 	return 0;
@@ -1525,7 +1524,7 @@ void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 ang
 	renderBehaviourModel(rect.left, rect.top, rect.right, rect.bottom, y, angle, entityPtr);
 }
 
-void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, uint8 *entityPtr) {
+void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, uint8 *bodyPtr) {
 	int32 tmpBoxRight = boxRight;
 
 	int32 ypos = boxBottom + boxTop;
@@ -1543,9 +1542,9 @@ void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight,
 		if (move.numOfStep == 0) {
 			_engine->_movements->setActorAngleSafe(newAngle, newAngle - ANGLE_90, 50, &move);
 		}
-		renderIsoModel(0, y, 0, 0, newAngle, 0, entityPtr);
+		renderIsoModel(0, y, 0, 0, newAngle, 0, bodyPtr);
 	} else {
-		renderIsoModel(0, y, 0, 0, angle, 0, entityPtr);
+		renderIsoModel(0, y, 0, 0, angle, 0, bodyPtr);
 	}
 }
 

@@ -24,10 +24,11 @@
 #define TWINE_SHADEANGLETAB_H
 
 #include "common/scummsys.h"
+#include "twine/shared.h"
 
 namespace TwinE {
 
-const int16 shadeAngleTable[1024] = {
+const int16 shadeAngleTable[ANGLE_360] = {
     0, // tab1
     101,
     201,
