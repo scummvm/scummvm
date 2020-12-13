@@ -353,9 +353,9 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 	if (_flags.lang != Common::HE_ISR) {
 		_text->printText(sentence, 8, 143, 0xFF, _flags.platform == Common::kPlatformAmiga ? 19 : 12, 0);
 	} else {
-		_screen->_charWidth = -2;
+		_screen->_charSpacing = -2;
 		_text->printText(sentence, 311 - _screen->getTextWidth(sentence), 143, 0xFF, _flags.platform == Common::kPlatformAmiga ? 19 : 12, 0);
-		_screen->_charWidth = 0;
+		_screen->_charSpacing = 0;
 	}
 	setTextFadeTimerCountdown(15);
 	_fadeText = false;
