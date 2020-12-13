@@ -31,6 +31,7 @@
 #include "twine/movements.h"
 #include "twine/redraw.h"
 #include "twine/shadeangletab.h"
+#include "twine/shared.h"
 #include "twine/twine.h"
 
 namespace TwinE {
@@ -1358,7 +1359,6 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, 
 		} while (--numOfPrimitives);
 	}
 
-	const uint8 *shadePtr = Model::getShadesBaseData(bodyPtr);
 	int32 numOfShades = Model::getNumShades(bodyPtr);
 
 	if (numOfShades) { // process normal data
@@ -1367,6 +1367,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, 
 
 		numOfPrimitives = numBones;
 
+		int shadeIndex = 0;
 		int boneIdx = 0;
 		do { // for each element
 			numOfShades = Model::getNumShadesBone(bodyPtr, boneIdx);
@@ -1387,6 +1388,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, 
 				shadeMatrix.row3[2] = lightMatrix->row3[2] * lightZ;
 
 				do { // for each normal
+					const uint8 *shadePtr = Model::getShadesBaseData(bodyPtr, shadeIndex);
 					const int16 *colPtr = (const int16 *)shadePtr;
 
 					int16 col1 = *((const int16 *)colPtr++);
@@ -1409,7 +1411,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, 
 
 					*currentShadeDestination = shade;
 					currentShadeDestination++;
-					shadePtr += 8;
+					++shadeIndex;
 				} while (--numShades);
 			}
 
@@ -1418,7 +1420,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, 
 		} while (--numOfPrimitives);
 	}
 
-	return renderModelElements(numOfPrimitives, shadePtr, &renderCmds, modelData);
+	return renderModelElements(numOfPrimitives, Model::getPolygonData(bodyPtr), &renderCmds, modelData);
 }
 
 void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
