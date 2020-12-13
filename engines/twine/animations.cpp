@@ -143,7 +143,7 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint
 	processLastRotationAngle = ToAngle(keyFrame->boneframes[0].y);
 
 	const int16 numBones = Model::getNumBones(bodyPtr);
-	uint8 *bonesPtr = Model::getBonesData(bodyPtr);
+	uint8 *bonesPtr = Model::getBonesStateData(bodyPtr);
 
 	int32 numOfBonesInAnim = animData.getNumBoneframes();
 	if (numOfBonesInAnim > numBones) {
@@ -238,7 +238,7 @@ void Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint
 	animTimerDataPtr->time = _engine->lbaTime;
 
 	const int16 numBones = Model::getNumBones(bodyPtr);
-	uint8 *bonesPtr = Model::getBonesData(bodyPtr);
+	uint8 *bonesPtr = Model::getBonesStateData(bodyPtr);
 
 	int16 numOfBonesInAnim = animData.getNumBoneframes();
 	if (numOfBonesInAnim > numBones) {
@@ -266,7 +266,7 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 	animTimerDataPtr->ptr = animBufferPos;
 
 	const int32 numBones = Model::getNumBones(bodyPtr);
-	const uint8 *ptrToData = Model::getBonesData(bodyPtr);
+	const uint8 *ptrToData = Model::getBonesStateData(bodyPtr);
 
 	uint8 *bonesPtr = animBufferPos + 8;
 
