@@ -103,6 +103,7 @@ void BodyData::loadPolygons(Common::SeekableReadStream &stream) {
 			poly.intensity = stream.readSint16LE();
 		}
 
+		// TODO: this is not yet correct
 		poly.indices.reserve(numVertex);
 		for (int k = 0; k < numVertex; ++k) {
 			if (poly.renderType >= 9) {

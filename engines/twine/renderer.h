@@ -113,6 +113,10 @@ struct Model {
 		return getData(bodyPtr) + 2;
 	}
 
+	static const Common::Array<BodyVertex>& getVerticesBaseData(const BodyData &bodyPtr) {
+		return bodyPtr.getVertices();
+	}
+
 	static uint8* getBonesData(uint8 *bodyPtr) {
 		uint8 *verticesBase = getData(bodyPtr);
 		const int16 numVertices = READ_LE_INT16(verticesBase);
@@ -147,6 +151,10 @@ struct Model {
 
 	static const uint8* getBonesBaseData(const uint8 *bodyPtr, int boneIdx = 0) {
 		return getBonesData(bodyPtr) + 2 + (boneIdx * 38);
+	}
+
+	static const BoneFrame* getBonesBaseData(const BodyData &bodyPtr, int boneIdx = 0) {
+		return bodyPtr.getBoneState(boneIdx);
 	}
 
 	static int16 getNumBones(const uint8 *bodyPtr) {
