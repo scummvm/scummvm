@@ -48,11 +48,12 @@ void BodyData::loadBones(Common::SeekableReadStream &stream) {
 		const int16 numPoints = stream.readSint16LE();
 		const int16 basePoint = stream.readSint16LE() / 6;
 		const int16 baseElementOffset = stream.readSint16LE();
-		/*int16 type =*/ stream.readSint16LE();
-		/*int16 rotateX =*/ stream.readSint16LE();
-		/*int16 rotateY =*/ stream.readSint16LE();
-		/*int16 rotateZ =*/ stream.readSint16LE();
-		/*int32 numOfShades =*/stream.readSint32LE();
+		BoneFrame boneframe;
+		boneframe.type = stream.readSint16LE();
+		boneframe.x = stream.readSint16LE();
+		boneframe.y = stream.readSint16LE();
+		boneframe.z = stream.readSint16LE();
+		const int32 numOfShades = stream.readSint32LE();
 		/*int32 field_14 =*/ stream.readSint32LE();
 		/*int32 field_18 =*/ stream.readSint32LE();
 		/*int32 y =*/ stream.readSint32LE();
@@ -62,6 +63,8 @@ void BodyData::loadBones(Common::SeekableReadStream &stream) {
 		BodyBone bone;
 		bone.parent = baseElementOffset == -1 ? 0xffff : baseElementOffset / 38;
 		bone.vertex = basePoint;
+		bone.initalBoneState = boneframe;
+		bone.numOfShades = numOfShades;
 
 		// assign the bone index to the vertices
 		for (int j = 0; j < numPoints; ++j) {
