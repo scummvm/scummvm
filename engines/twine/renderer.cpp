@@ -39,6 +39,9 @@ namespace TwinE {
 #define RENDERTYPE_DRAWPOLYGON 1
 #define RENDERTYPE_DRAWSPHERE 2
 
+Renderer::Renderer(TwinEEngine *engine) : _engine(engine), shadeAngleTab3(&shadeAngleTable[384]) {
+}
+
 int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 	if (!isUsingOrhoProjection) {
 		cX -= baseRotPosX;
@@ -101,8 +104,6 @@ void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
 }
 
 void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
-	shadeAngleTab3 = &shadeAngleTable[384];
-
 	double Xradians = (double)((ANGLE_90 - x) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 	double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 	double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
