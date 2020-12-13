@@ -239,16 +239,12 @@ void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, p
 }
 
 void Renderer::processRotatedElement(Matrix *targetMatrix, const pointTab *pointsPtr, int32 rotZ, int32 rotY, int32 rotX, const elementEntry *elemPtr, ModelData *modelData) {
-	int32 firstPoint = elemPtr->firstPoint;
+	int32 firstPoint = elemPtr->firstPoint / sizeof(pointTab);
 	int32 numOfPoints2 = elemPtr->numOfPoints;
 
 	renderAngleX = rotX;
 	renderAngleY = rotY;
 	renderAngleZ = rotZ;
-
-	if (firstPoint % sizeof(pointTab)) {
-		error("RENDER ERROR: invalid firstPoint in process_rotated_element func");
-	}
 
 	const Matrix *currentMatrix;
 	// if its the first point
@@ -275,7 +271,7 @@ void Renderer::processRotatedElement(Matrix *targetMatrix, const pointTab *point
 		warning("RENDER WARNING: No points in this model!");
 	}
 
-	applyPointsRotation(&pointsPtr[firstPoint / sizeof(pointTab)], numOfPoints2, &modelData->computedPoints[firstPoint / sizeof(pointTab)], targetMatrix);
+	applyPointsRotation(&pointsPtr[firstPoint], numOfPoints2, &modelData->computedPoints[firstPoint], targetMatrix);
 }
 
 void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints, pointTab *destPoints, const Matrix *translationMatrix) {
@@ -563,11 +559,7 @@ void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color
 
 void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color) const {
 	const int16 *ptr1 = &polyTab[vtop];
-	int ax;
-	int bx;
-	unsigned short int dx;
-	unsigned short int temp;
-	bx = (unsigned short)color << 0x10;
+	int bx = (uint16)color << 16;
 	int32 renderLoop = vsize;
 	do {
 		int16 start;
@@ -601,7 +593,7 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 			bx = (unsigned short)(color >> 0x10);
 			uint8 *out2 = start + out;
 
-			ax = (bx & 0xF0) << 8;
+			int ax = (bx & 0xF0) << 8;
 			bx = bx << 8;
 			ax += (bx & 0x0F);
 			ax -= bx;
@@ -609,12 +601,12 @@ void Renderer::renderPolygonsTele(uint8 *out, int vtop, int32 vsize, int32 color
 			ax = ax >> 16;
 
 			ax = ax / hsize;
-			temp = (ax & 0xF0);
+			uint16 temp = (ax & 0xF0);
 			temp = temp >> 8;
 			temp += (ax & 0x0F);
 			ax = temp;
 
-			dx = ax;
+			uint16 dx = ax;
 
 			ax = (ax & 0x0F) + (bx & 0xF0);
 			hsize++;
