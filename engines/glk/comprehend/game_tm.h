@@ -30,6 +30,8 @@ namespace Comprehend {
 
 class TalismanGame : public ComprehendGameV2 {
 private:
+	Common::String _savedAction;
+private:
 	/**
 	 * Load strings from the executable
 	 */
@@ -39,6 +41,10 @@ public:
 	~TalismanGame() override {}
 
 	void beforeGame() override;
+	void beforeTurn() override;
+	void beforePrompt() override;
+	bool afterPrompt() override;
+	void handleSpecialOpcode(uint8 operand) override;
 };
 
 } // namespace Comprehend

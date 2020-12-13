@@ -836,20 +836,20 @@ void ComprehendGame::read_input() {
 		if (g_comprehend->shouldQuit())
 			return;
 
-		afterPrompt();
-
 		_inputLineIndex = 0;
-		if (strlen(_inputLine) != 0)
+		if (strlen(_inputLine) == 0) {
+			// Empty line, so toggle picture window visibility
+			if (!g_comprehend->toggleGraphics())
+				updateRoomDesc();
+			g_comprehend->print(_("Picture window toggled\n"));
+
+			_updateFlags |= UPDATE_GRAPHICS;
+			update_graphics();
+			continue;
+		}
+
+		if (afterPrompt())
 			break;
-
-		// Empty line, so toggle picture window visibility
-		if (!g_comprehend->toggleGraphics())
-			updateRoomDesc();
-		g_comprehend->print(_("Picture window toggled\n"));
-
-		_updateFlags |= UPDATE_GRAPHICS;
-		update_graphics();
-		continue;
 	}
 
 	for (;;) {

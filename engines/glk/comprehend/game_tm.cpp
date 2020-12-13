@@ -116,5 +116,46 @@ void TalismanGame::beforeGame() {
 	g_comprehend->glk_window_clear(g_comprehend->_bottomWindow);
 }
 
+void TalismanGame::beforeTurn() {
+	ComprehendGameV2::beforeTurn();
+
+	_variables[0x62] = g_vm->getRandomNumber(255);
+
+	eval_function(17, nullptr);
+}
+
+void TalismanGame::beforePrompt() {
+	if (_nounState == NOUNSTATE_INITIAL)
+		eval_function(14, nullptr);
+}
+
+bool TalismanGame::afterPrompt() {
+	if (_savedAction.empty()) {
+		eval_function(19, nullptr);
+		return !_flags[3];
+	} else {
+		strcpy(_inputLine, _savedAction.c_str());
+		_savedAction.clear();
+		return true;
+	}
+}
+
+void TalismanGame::handleSpecialOpcode(uint8 operand) {
+	switch (operand) {
+	case 15:
+		// Switch to text screen mode
+		if (g_comprehend->isGraphicsEnabled()) {
+			g_comprehend->toggleGraphics();
+			updateRoomDesc();
+		}
+
+		eval_function(19, nullptr);
+		break;
+
+	default:
+		break;
+	}
+}
+
 } // namespace Comprehend
 } // namespace Glk
