@@ -58,6 +58,12 @@ class TwinEEngine;
 class Redraw {
 private:
 	TwinEEngine *_engine;
+	enum DrawListType {
+		DrawActorSprites = 0x1000,
+		DrawExtras = 0x1800,
+		DrawShadows = 0xC00
+	};
+
 	struct DrawListStruct {
 		int16 posValue = 0;
 		uint32 type = 0;
