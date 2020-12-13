@@ -61,7 +61,7 @@ private:
 	struct DrawListStruct {
 		int16 posValue = 0;
 		uint32 type = 0;
-		uint16 index = 0; // field_2
+		uint16 actorIdx = 0;
 		uint16 x = 0;
 		uint16 y = 0;
 		uint16 z = 0;
