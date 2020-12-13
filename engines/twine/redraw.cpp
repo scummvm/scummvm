@@ -236,11 +236,9 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 
 	int32 modelActorPos = 0;
 	int32 drawListPos = 0;
-	const int32 spriteActorPos = 0x1000;
-	int32 shadowActorPos = 0x0C00;
 
 	// Process actors drawing list
-	for (modelActorPos = 0; modelActorPos < _engine->_scene->sceneNumActors; modelActorPos++, spriteActorPos++, shadowActorPos++) {
+	for (modelActorPos = 0; modelActorPos < _engine->_scene->sceneNumActors; modelActorPos++) {
 		ActorStruct *actor = _engine->_scene->getActor(modelActorPos);
 		actor->dynamicFlags.bIsVisible = 0; // reset visible state
 
@@ -277,11 +275,13 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 			}
 
 			if (actor->staticFlags.bIsSpriteActor) {
-				drawList[drawListPos].index = spriteActorPos; // > 0x1000
+				drawList[drawListPos].type = 0x1000;
+				drawList[drawListPos].index = 0x1000 + modelActorPos;
 				if (actor->staticFlags.bUsesClipping) {
 					tmpVal = actor->lastX - _engine->_grid->cameraX + actor->lastZ - _engine->_grid->cameraZ;
 				}
 			} else {
+				drawList[drawListPos].type = 0;
 				drawList[drawListPos].index = modelActorPos;
 			}
 
@@ -301,7 +301,8 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 
 				tmpVal--;
 				drawList[drawListPos].posValue = tmpVal; // save the shadow entry in the drawList
-				drawList[drawListPos].index = 0xC00;     // shadowActorPos
+				drawList[drawListPos].type = 0xC00;     // shadowActorPos
+				drawList[drawListPos].index = 0xC00;
 				drawList[drawListPos].x = _engine->_actor->shadowX;
 				drawList[drawListPos].y = _engine->_actor->shadowY;
 				drawList[drawListPos].z = _engine->_actor->shadowZ;
@@ -331,6 +332,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 			if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < 680 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < 580) {
 				drawList[drawListPos].posValue = extra->x - _engine->_grid->cameraX + extra->z - _engine->_grid->cameraZ;
 				drawList[drawListPos].index = 0x1800 + i;
+				drawList[drawListPos].type = 0x1800;
 				drawListPos++;
 
 				if (_engine->cfgfile.ShadowMode == 2 && !(extra->info0 & 0x8000)) {
@@ -338,6 +340,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 
 					drawList[drawListPos].posValue = extra->x - _engine->_grid->cameraX + extra->z - _engine->_grid->cameraZ - 1;
 					drawList[drawListPos].index = 0xC00;
+					drawList[drawListPos].type = 0xC00;
 					drawList[drawListPos].x = _engine->_actor->shadowX;
 					drawList[drawListPos].y = _engine->_actor->shadowY;
 					drawList[drawListPos].z = _engine->_actor->shadowZ;
@@ -358,7 +361,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 		do {
 			int32 actorIdx = drawList[pos].index & 0x3FF;
 			ActorStruct *actor2 = _engine->_scene->getActor(actorIdx);
-			uint32 flags = ((uint32)drawList[pos].index) & 0xFC00;
+			const uint32 flags = drawList[pos].type;
 
 			// Drawing actors
 			if (flags < 0xC00) {
