@@ -64,7 +64,7 @@ struct BodyLine {
 };
 
 struct BodySphere {
-	uint16 unk1;
+	uint16 radius;
 	uint16 color;
 	uint16 size;
 	uint16 vertex;

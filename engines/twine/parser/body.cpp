@@ -132,7 +132,7 @@ void BodyData::loadSpheres(Common::SeekableReadStream &stream) {
 	_spheres.reserve(numSpheres);
 	for (uint16 i = 0; i < numSpheres; ++i) {
 		BodySphere sphere;
-		sphere.unk1 = stream.readUint16LE();
+		sphere.radius = stream.readUint16LE();
 		sphere.color = stream.readUint16LE();
 		sphere.size = stream.readUint16LE();
 		sphere.vertex = stream.readUint16LE() / 6;
