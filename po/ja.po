@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-12-12 14:54+0000\n"
-"PO-Revision-Date: 2020-12-12 18:32+0000\n"
+"POT-Creation-Date: 2020-12-09 22:25+0000\n"
+"PO-Revision-Date: 2020-12-13 14:39+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.0.4\n"
+"X-Generator: Weblate 4.3.2\n"
 "X-Language-name: Japanese\n"
 
 #: gui/about.cpp:102
@@ -4496,19 +4496,19 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:1099 engines/glk/scott/scott.cpp:1121
 msgid "I've too much to carry. "
-msgstr ""
+msgstr "持って行くには多すぎます。 "
 
 #: engines/glk/scott/scott.cpp:1104 engines/glk/scott/scott.cpp:1152
 msgid ": O.K.\n"
-msgstr ""
+msgstr ": O.K.\n"
 
 #: engines/glk/scott/scott.cpp:1110
 msgid "Nothing taken."
-msgstr ""
+msgstr "何も見つからなかった。"
 
 #: engines/glk/scott/scott.cpp:1114 engines/glk/scott/scott.cpp:1162
 msgid "What ? "
-msgstr ""
+msgstr "何を? "
 
 #: engines/glk/scott/scott.cpp:1127
 msgid "It is beyond your power to do that. "
@@ -4520,11 +4520,11 @@ msgstr ""
 
 #: engines/glk/scott/scott.cpp:1133
 msgid "O.K. "
-msgstr ""
+msgstr "O.K. "
 
 #: engines/glk/scott/scott.cpp:1158
 msgid "Nothing dropped.\n"
-msgstr ""
+msgstr "何も落ちていなかった。\n"
 
 #: engines/glk/scott/scott.cpp:1168
 msgid "It's beyond your power to do that.\n"
@@ -4540,16 +4540,16 @@ msgstr "セーブファイルの出力エラー\n"
 
 #: engines/glk/hugo/hugo.cpp:183
 msgid "Incorrect rs file."
-msgstr ""
+msgstr "正しくないrsファイルです。"
 
 #: engines/glk/hugo/hugo.cpp:190
 msgid "Save file created by different version."
-msgstr ""
+msgstr "異なるバージョンで作成されたセーブファイルです。"
 
 #: engines/gob/inter_playtoons.cpp:258 engines/gob/inter_v2.cpp:1479
 #: engines/gob/inter_geisha.cpp:232 engines/tinsel/saveload.cpp:554
 msgid "Failed to load saved game from file."
-msgstr ""
+msgstr "セーブファイルのロードに失敗しました。"
 
 #: engines/gob/inter_v2.cpp:1549 engines/gob/inter_geisha.cpp:263
 #: engines/tinsel/saveload.cpp:567
@@ -4563,12 +4563,11 @@ msgstr "ストレージの接続に失敗しました。"
 
 #: engines/griffon/metaengine.cpp:84
 msgid "Menu / Skip"
-msgstr ""
+msgstr "メニュー/スキップ"
 
 #: engines/griffon/metaengine.cpp:120
-#, fuzzy
 msgid "Attack"
-msgstr "攻撃１"
+msgstr "攻撃"
 
 #: engines/griffon/metaengine.cpp:134
 msgid "Speed Up Cutscene"
@@ -4576,22 +4575,21 @@ msgstr ""
 
 #: engines/grim/detection.cpp:45
 msgid "Load user patch (unsupported)"
-msgstr ""
+msgstr "ユーザー製パッチをロード(非サポート)"
 
 #: engines/grim/detection.cpp:46
 msgid ""
 "Load an user patch. Please note that the ScummVM team doesn't provide "
 "support for using such patches."
-msgstr ""
+msgstr "ユーザー製パッチをロードしました。これに対して、ScummVMチームはサポートしない事をご了承ください。"
 
 #: engines/grim/detection.cpp:54 engines/zvision/metaengine.cpp:153
-#, fuzzy
 msgid "Show FPS"
-msgstr "地図を表示"
+msgstr "FPSを表示"
 
 #: engines/grim/detection.cpp:55
 msgid "Show the current FPS-rate, while you play."
-msgstr ""
+msgstr "プレイ中はFPSレートを表示します。"
 
 #: engines/grim/grim.cpp:348
 #, c-format
