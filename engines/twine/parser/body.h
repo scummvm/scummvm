@@ -43,9 +43,9 @@ struct BodyBone {
 };
 
 struct BodyShade {
-	int16 unk1;
-	int16 unk2;
-	int16 unk3;
+	int16 col1;
+	int16 col2;
+	int16 col3;
 	int16 unk4;
 };
 
