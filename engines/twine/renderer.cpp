@@ -1237,13 +1237,11 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, 
 	const int32 numBones = Model::getNumBones(bodyPtr);
 
 	const pointTab *pointsPtr = (const pointTab *)Model::getVerticesBaseData(bodyPtr);
-	const elementEntry *bonesPtr = (const elementEntry *)Model::getBonesBaseData(bodyPtr);
 
 	Matrix *modelMatrix = &matricesTable[0];
 
-	processRotatedElement(modelMatrix, pointsPtr, renderAngleX, renderAngleY, renderAngleZ, bonesPtr, modelData);
-
-	++bonesPtr;
+	const elementEntry *bonesPtr0 = (const elementEntry *)Model::getBonesBaseData(bodyPtr, 0);
+	processRotatedElement(modelMatrix, pointsPtr, renderAngleX, renderAngleY, renderAngleZ, bonesPtr0, modelData);
 
 	int32 numOfPrimitives = 0;
 
@@ -1251,7 +1249,9 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, 
 		numOfPrimitives = numBones - 1;
 		modelMatrix = &matricesTable[1];
 
+		int boneIdx = 1;
 		do {
+			const elementEntry *bonesPtr = (const elementEntry *)Model::getBonesBaseData(bodyPtr, boneIdx);
 			int16 boneType = bonesPtr->flag;
 
 			if (boneType == 0) {
@@ -1261,7 +1261,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, 
 			}
 
 			++modelMatrix;
-			++bonesPtr;
+			++boneIdx;
 		} while (--numOfPrimitives);
 	}
 
