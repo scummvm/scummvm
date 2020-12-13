@@ -341,6 +341,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_CD_FLAGS
 	},
+
 	{ // HEBREW FAN TRANSLATION
 		{
 			"kyra1",
@@ -353,6 +354,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_CD_FLAGS
 	},
+
 	{
 		{
 			"kyra1",
