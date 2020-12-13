@@ -246,7 +246,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 			continue;
 		}
 		// no redraw required
-		if (actor->staticFlags.bIsBackgrounded && bgRedraw == 0) {
+		if (actor->staticFlags.bIsBackgrounded && !bgRedraw) {
 			// get actor position on screen
 			_engine->_renderer->projectPositionOnScreen(actor->x - _engine->_grid->cameraX, actor->y - _engine->_grid->cameraY, actor->z - _engine->_grid->cameraZ);
 
@@ -275,7 +275,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 			}
 
 			if (actor->staticFlags.bIsSpriteActor) {
-				drawList[drawListPos].type = 0x1000;
+				drawList[drawListPos].type = DrawListType::DrawActorSprites;
 				drawList[drawListPos].actorIdx = modelActorPos;
 				if (actor->staticFlags.bUsesClipping) {
 					tmpVal = actor->lastX - _engine->_grid->cameraX + actor->lastZ - _engine->_grid->cameraZ;
@@ -301,7 +301,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 
 				tmpVal--;
 				drawList[drawListPos].posValue = tmpVal; // save the shadow entry in the drawList
-				drawList[drawListPos].type = 0xC00;     // shadowActorPos
+				drawList[drawListPos].type = DrawListType::DrawShadows;     // shadowActorPos
 				drawList[drawListPos].actorIdx = 0;
 				drawList[drawListPos].x = _engine->_actor->shadowX;
 				drawList[drawListPos].y = _engine->_actor->shadowY;
@@ -332,7 +332,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 			if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < 680 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < 580) {
 				drawList[drawListPos].posValue = extra->x - _engine->_grid->cameraX + extra->z - _engine->_grid->cameraZ;
 				drawList[drawListPos].actorIdx = i;
-				drawList[drawListPos].type = 0x1800;
+				drawList[drawListPos].type = DrawListType::DrawExtras;
 				drawListPos++;
 
 				if (_engine->cfgfile.ShadowMode == 2 && !(extra->info0 & 0x8000)) {
@@ -340,7 +340,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 
 					drawList[drawListPos].posValue = extra->x - _engine->_grid->cameraX + extra->z - _engine->_grid->cameraZ - 1;
 					drawList[drawListPos].actorIdx = 0;
-					drawList[drawListPos].type = 0xC00;
+					drawList[drawListPos].type = DrawListType::DrawShadows;
 					drawList[drawListPos].x = _engine->_actor->shadowX;
 					drawList[drawListPos].y = _engine->_actor->shadowY;
 					drawList[drawListPos].z = _engine->_actor->shadowZ;
@@ -364,8 +364,8 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 			const uint32 flags = drawList[pos].type;
 
 			// Drawing actors
-			if (flags < 0xC00) {
-				if (!flags) {
+			if (flags < DrawListType::DrawShadows) {
+				if (flags == 0) {
 					_engine->_animations->setModelAnimation(actor2->animPosition, _engine->_resources->animTable[actor2->previousAnimIdx], _engine->_actor->bodyTable[actor2->entity], &actor2->animTimerData);
 
 					if (!_engine->_renderer->renderIsoModel(actor2->x - _engine->_grid->cameraX, actor2->y - _engine->_grid->cameraY, actor2->z - _engine->_grid->cameraZ, 0, actor2->angle, 0, _engine->_actor->bodyTable[actor2->entity])) {
@@ -415,7 +415,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 				}
 			}
 			// Drawing shadows
-			else if (flags == 0xC00 && !_engine->_actor->cropBottomScreen) {
+			else if (flags == DrawListType::DrawShadows && !_engine->_actor->cropBottomScreen) {
 				const DrawListStruct& shadow = drawList[pos];
 
 				// get actor position on screen
@@ -448,12 +448,12 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 				//drawBox(_engine->_renderer->renderRect.left, _engine->_renderer->renderRect.top, _engine->_renderer->renderRect.right, _engine->_renderer->renderRect.bottom);
 			}
 			// Drawing unknown
-			else if (flags < 0x1000) {
+			else if (flags < DrawListType::DrawActorSprites) {
 				// TODO reverse this part of the code
 				warning("Not yet reversed part of the rendering code");
 			}
 			// Drawing sprite actors, doors and entities
-			else if (flags == 0x1000) {
+			else if (flags == DrawListType::DrawActorSprites) {
 				const uint8 *spritePtr = _engine->_resources->spriteTable[actor2->entity];
 
 				// get actor position on screen
@@ -497,7 +497,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 
 					addRedrawArea(_engine->_interface->textWindow);
 
-					if (actor2->staticFlags.bIsBackgrounded && bgRedraw == 1) {
+					if (actor2->staticFlags.bIsBackgrounded && bgRedraw) {
 						_engine->_interface->blitBox(_engine->_interface->textWindow, _engine->frontVideoBuffer, _engine->workVideoBuffer);
 					}
 
@@ -506,7 +506,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 				}
 			}
 			// Drawing extras
-			else if (flags == 0x1800) {
+			else if (flags == DrawListType::DrawExtras) {
 				ExtraListStruct *extra = &_engine->_extra->extraList[actorIdx];
 
 				_engine->_renderer->projectPositionOnScreen(extra->x - _engine->_grid->cameraX, extra->y - _engine->_grid->cameraY, extra->z - _engine->_grid->cameraZ);
