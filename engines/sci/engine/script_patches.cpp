@@ -7162,6 +7162,34 @@ static const SciScriptPatcherEntry larry2Signatures[] = {
 // ===========================================================================
 // Leisure Suit Larry 3
 
+// Disable the LSL3 speed test by always setting the machine speed to 40 (PC AT)
+//  so that all graphics are enabled and the weight room behaves reasonably.
+//  40 is the minimum value that enables everything such as incrementing the
+//  score and the lighting effects in rooms 390, 430, and 431. The weight room
+//  (room 380) uses the machine speed to calculate how many exercises are
+//  required and the results would be much too high (in the thousands) if the
+//  speed test were to run unthrottled at modern speeds.
+//
+// Applies to: All versions
+// Responsible method: rm290:doit
+// Fixes bug: #11967
+static const uint16 larry3SignatureSpeedTest[] = {
+	SIG_MAGICDWORD,
+	0x8b, 0x00,                      // lsl 00
+	0x76,                            // push0
+	0x43, SIG_ADDTOOFFSET(+1), 0x00, // callk GetTime 00
+	0x22,                            // lt? [ is speed test complete? ]
+	0x30,                            // bnt
+	SIG_END
+};
+
+static const uint16 larry3PatchSpeedTest[] = {
+	0x35, 0x28,                      // ldi 28
+	0xa1, 0x7b,                      // sag 7b [ machine speed = 40 ]
+	0x33, 0x04,                      // jmp 04 [ complete speed test ]
+	PATCH_END
+};
+
 // The LSL3 volume dialog initialize its slider to the current volume by calling
 //  kDoSoundMasterVolume, but it passes an uninitialized variable as an extra
 //  parameter. This changes the volume instead of just querying it, leaving the
@@ -7195,6 +7223,7 @@ static const uint16 larry3PatchVolumeSlider[] = {
 
 //          script, description,                                      signature                     patch
 static const SciScriptPatcherEntry larry3Signatures[] = {
+	{  true,   290, "disable speed test",                          1, larry3SignatureSpeedTest,     larry3PatchSpeedTest },
 	{  true,   997, "fix volume slider",                           1, larry3SignatureVolumeSlider,  larry3PatchVolumeSlider },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
