@@ -47,7 +47,7 @@
 #include "resources/lok_dos_cd_italian.h"
 #include "resources/lok_dos_cd_spanish.h"
 #include "resources/lok_dos_cd_russian.h"
-
+#include "resources/lok_dos_cd_hebrew.h"
 #include "resources/lok_dos_cddemo.h"
 #include "resources/lok_dos_cddemo_english.h"
 
@@ -693,7 +693,30 @@ static const ResourceProvider resourceProviders[] = {
 	{ k1NewGameString, kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS, &k1NewGameStringDOSCDRussianProvider },
 	{ k1ConfigStrings, kKyra1, kPlatformDOS, kTalkieVersion, RU_RUS, &k1ConfigStringsDOSCDRussianProvider },*/
 
+	{ k1IntroStrings, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1IntroStringsDOSCDHebrewProvider },
+	{ k1ItemNames, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1ItemNamesDOSCDHebrewProvider },
+	{ k1TakenStrings, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1TakenStringsDOSCDHebrewProvider },
+	{ k1PlacedStrings, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1PlacedStringsDOSCDHebrewProvider },
+	{ k1DroppedStrings, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1DroppedStringsDOSCDHebrewProvider },
+	{ k1NoDropStrings, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1NoDropStringsDOSCDHebrewProvider },
+	{ k1PutDownString, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1PutDownStringDOSCDHebrewProvider },
+	{ k1WaitAmuletString, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1WaitAmuletStringDOSCDHebrewProvider },
+	{ k1BlackJewelString, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1BlackJewelStringDOSCDHebrewProvider },
+	{ k1HealingTipString, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1HealingTipStringDOSCDHebrewProvider },
+	{ k1PoisonGoneString, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1PoisonGoneStringDOSCDHebrewProvider },
+	{ k1ThePoisonStrings, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1ThePoisonStringsDOSCDHebrewProvider },
+	{ k1FluteStrings, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1FluteStringsDOSCDHebrewProvider },
+	{ k1WispJewelStrings, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1WispJewelStringsDOSCDHebrewProvider },
+	{ k1MagicJewelStrings, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1MagicJewelStringsDOSCDHebrewProvider },
+	{ k1FlaskFullString, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1FlaskFullStringDOSCDHebrewProvider },
+	{ k1FullFlaskString, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1FullFlaskStringDOSCDHebrewProvider },
+	{ k1OutroHomeString, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1OutroHomeStringDOSCDHebrewProvider },
+	{ k1VeryCleverString, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1VeryCleverStringDOSCDHebrewProvider },
+	{ k1GUIStrings, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1GUIStringsDOSCDHebrewProvider },
+	{ k1NewGameString, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1NewGameStringDOSCDHebrewProvider },
+	{ k1ConfigStrings, kKyra1, kPlatformDOS, kTalkieVersion, HE_ISR, &k1ConfigStringsDOSCDHebrewProvider },
 	{ k1KallakWritingSeq, kKyra1, kPlatformFMTowns, kNoSpecial, UNK_LANG, &k1KallakWritingSeqFMTownsProvider },
+
 	{ k1MalcolmTreeSeq, kKyra1, kPlatformFMTowns, kNoSpecial, UNK_LANG, &k1MalcolmTreeSeqFMTownsProvider },
 	{ k1WestwoodLogoSeq, kKyra1, kPlatformFMTowns, kNoSpecial, UNK_LANG, &k1WestwoodLogoSeqFMTownsProvider },
 	{ k1KyrandiaLogoSeq, kKyra1, kPlatformFMTowns, kNoSpecial, UNK_LANG, &k1KyrandiaLogoSeqFMTownsProvider },

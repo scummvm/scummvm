@@ -357,7 +357,7 @@ void GUI_LoK::setGUILabels() {
 	int menuLabelGarbageOffset = 0;
 
 	if (_vm->gameFlags().isTalkie) {
-		if (_vm->gameFlags().lang == Common::EN_ANY)
+		if (_vm->gameFlags().lang == Common::EN_ANY || _vm->gameFlags().lang == Common::HE_ISR)
 			offset = 52;
 		else if (_vm->gameFlags().lang == Common::DE_DEU)
 			offset = 30;
