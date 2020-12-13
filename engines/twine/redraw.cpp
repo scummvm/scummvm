@@ -276,13 +276,13 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 
 			if (actor->staticFlags.bIsSpriteActor) {
 				drawList[drawListPos].type = 0x1000;
-				drawList[drawListPos].index = 0x1000 + modelActorPos;
+				drawList[drawListPos].actorIdx = modelActorPos;
 				if (actor->staticFlags.bUsesClipping) {
 					tmpVal = actor->lastX - _engine->_grid->cameraX + actor->lastZ - _engine->_grid->cameraZ;
 				}
 			} else {
 				drawList[drawListPos].type = 0;
-				drawList[drawListPos].index = modelActorPos;
+				drawList[drawListPos].actorIdx = modelActorPos;
 			}
 
 			drawList[drawListPos].posValue = tmpVal;
@@ -302,7 +302,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 				tmpVal--;
 				drawList[drawListPos].posValue = tmpVal; // save the shadow entry in the drawList
 				drawList[drawListPos].type = 0xC00;     // shadowActorPos
-				drawList[drawListPos].index = 0xC00;
+				drawList[drawListPos].actorIdx = 0;
 				drawList[drawListPos].x = _engine->_actor->shadowX;
 				drawList[drawListPos].y = _engine->_actor->shadowY;
 				drawList[drawListPos].z = _engine->_actor->shadowZ;
@@ -331,7 +331,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 
 			if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < 680 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < 580) {
 				drawList[drawListPos].posValue = extra->x - _engine->_grid->cameraX + extra->z - _engine->_grid->cameraZ;
-				drawList[drawListPos].index = 0x1800 + i;
+				drawList[drawListPos].actorIdx = i;
 				drawList[drawListPos].type = 0x1800;
 				drawListPos++;
 
@@ -339,7 +339,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 					_engine->_movements->getShadowPosition(extra->x, extra->y, extra->z);
 
 					drawList[drawListPos].posValue = extra->x - _engine->_grid->cameraX + extra->z - _engine->_grid->cameraZ - 1;
-					drawList[drawListPos].index = 0xC00;
+					drawList[drawListPos].actorIdx = 0;
 					drawList[drawListPos].type = 0xC00;
 					drawList[drawListPos].x = _engine->_actor->shadowX;
 					drawList[drawListPos].y = _engine->_actor->shadowY;
@@ -359,7 +359,7 @@ void Redraw::redrawEngineActions(bool bgRedraw) { // fullRedraw
 		int32 pos = 0;
 
 		do {
-			int32 actorIdx = drawList[pos].index & 0x3FF;
+			int32 actorIdx = drawList[pos].actorIdx;
 			ActorStruct *actor2 = _engine->_scene->getActor(actorIdx);
 			const uint32 flags = drawList[pos].type;
 
