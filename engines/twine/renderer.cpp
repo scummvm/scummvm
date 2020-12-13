@@ -51,8 +51,9 @@ int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 		if (cZ >= 0) {
 			int32 posZ = cZ + cameraPosX;
 
-			if (posZ < 0)
+			if (posZ < 0) {
 				posZ = 0x7FFF;
+			}
 
 			projPosX = (cX * cameraPosY) / posZ + orthoProjX;
 			projPosY = (-cY * cameraPosZ) / posZ + orthoProjY;
@@ -321,9 +322,9 @@ void Renderer::processTranslatedElement(Matrix *targetMatrix, const pointTab *po
 }
 
 void Renderer::translateGroup(int16 ax, int16 bx, int16 cx) {
-	int32 ebp = ax;
-	int32 ebx = bx;
-	int32 ecx = cx;
+	const int32 ebp = ax;
+	const int32 ebx = bx;
+	const int32 ecx = cx;
 
 	int32 edi = shadeMatrix.row1[0];
 	int32 eax = shadeMatrix.row1[1];
@@ -347,13 +348,6 @@ void Renderer::translateGroup(int16 ax, int16 bx, int16 cx) {
 	eax += edi;
 	eax >>= 14;
 	destY = eax;
-
-	ebp *= shadeMatrix.row3[0];
-	ebx *= shadeMatrix.row3[1];
-	ecx *= shadeMatrix.row3[2];
-	ebx += ebp;
-	ebx += ecx;
-	ebx >>= 14;
 	destZ = eax;
 }
 
