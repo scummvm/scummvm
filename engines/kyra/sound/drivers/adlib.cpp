@@ -190,6 +190,7 @@ private:
 		typedef int (AdLibDriver::*POpcode)(const uint8 *&dataptr, Channel &channel, uint8 value);
 		POpcode function;
 		const char *name;
+		int values;
 	};
 
 	void setupParserOpcodeTable();
@@ -709,15 +710,15 @@ void AdLibDriver::executePrograms() {
 	}
 
 	for (_curChannel = 9; _curChannel >= 0; --_curChannel) {
+		Channel &channel = _channels[_curChannel];
 		int result = 1;
 
-		if (!_channels[_curChannel].dataptr)
+		if (!channel.dataptr)
 			continue;
 
-		if (_channels[_curChannel].lock && (_syncJumpMask & (1 << _curChannel)))
+		if (channel.lock && (_syncJumpMask & (1 << _curChannel)))
 			continue;
 
-		Channel &channel = _channels[_curChannel];
 		if (_curChannel == 9)
 			_curRegOffset = 0;
 		else
@@ -745,19 +746,35 @@ void AdLibDriver::executePrograms() {
 				// quill in Kyra 1.
 				const uint8 *dataptr = channel.dataptr;
 				while (dataptr) {
-					uint8 opcode = *dataptr++;
-					uint8 param = *dataptr++;
+					uint8 opcode, param;
+					// Safety check to avoid illegal access.
+					// Stop channel if not enough data.
+					if (dataptr - _soundData < _soundDataSize)
+						opcode = *dataptr++;
+					else
+						opcode = 0xFF;
+					if (opcode < 0x80 && dataptr - _soundData == _soundDataSize)
+						opcode = 0xFF;
 
 					if (opcode & 0x80) {
 						opcode &= 0x7F;
 						if (opcode >= _parserOpcodeTableSize)
 							opcode = _parserOpcodeTableSize - 1;
-						debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d) (channel: %d)", _parserOpcodeTable[opcode].name, opcode, _curChannel);
-						result = (this->*(_parserOpcodeTable[opcode].function))(dataptr, channel, param);
+						// Safety check for end of data.
+						if (dataptr - _soundData + _parserOpcodeTable[opcode].values > _soundDataSize)
+							opcode = _parserOpcodeTableSize - 1;
+
+						const ParserOpcode &op = _parserOpcodeTable[opcode];
+						param = op.values ? *dataptr : 0;
+						dataptr++;
+
+						debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d) (channel: %d)", op.name, opcode, _curChannel);
+						result = (this->*(op.function))(dataptr, channel, param);
 						channel.dataptr = dataptr;
 						if (result)
 							break;
 					} else {
+						param = *dataptr++;
 						debugC(9, kDebugLevelSound, "Note on opcode 0x%02X (duration: %d) (channel: %d)", opcode, param, _curChannel);
 						setupNote(opcode, channel);
 						noteOn(channel);
@@ -2078,122 +2095,122 @@ int AdLibDriver::updateCallback56(const uint8 *&dataptr, Channel &channel, uint8
 
 // static res
 
-#define COMMAND(x) { &AdLibDriver::x, #x }
+#define COMMAND(x, n) { &AdLibDriver::x, #x, n }
 
 void AdLibDriver::setupParserOpcodeTable() {
 	static const ParserOpcode parserOpcodeTable[] = {
 		// 0
-		COMMAND(update_setRepeat),
-		COMMAND(update_checkRepeat),
-		COMMAND(update_setupProgram),
-		COMMAND(update_setNoteSpacing),
+		COMMAND(update_setRepeat, 1),
+		COMMAND(update_checkRepeat, 2),
+		COMMAND(update_setupProgram, 1),
+		COMMAND(update_setNoteSpacing, 1),
 
 		// 4
-		COMMAND(update_jump),
-		COMMAND(update_jumpToSubroutine),
-		COMMAND(update_returnFromSubroutine),
-		COMMAND(update_setBaseOctave),
+		COMMAND(update_jump, 2),
+		COMMAND(update_jumpToSubroutine, 2),
+		COMMAND(update_returnFromSubroutine, 0),
+		COMMAND(update_setBaseOctave, 1),
 
 		// 8
-		COMMAND(update_stopChannel),
-		COMMAND(update_playRest),
-		COMMAND(update_writeAdLib),
-		COMMAND(update_setupNoteAndDuration),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(update_playRest, 1),
+		COMMAND(update_writeAdLib, 2),
+		COMMAND(update_setupNoteAndDuration, 2),
 
 		// 12
-		COMMAND(update_setBaseNote),
-		COMMAND(update_setupSecondaryEffect1),
-		COMMAND(update_stopOtherChannel),
-		COMMAND(update_waitForEndOfProgram),
+		COMMAND(update_setBaseNote, 1),
+		COMMAND(update_setupSecondaryEffect1, 5),
+		COMMAND(update_stopOtherChannel, 1),
+		COMMAND(update_waitForEndOfProgram, 1),
 
 		// 16
-		COMMAND(update_setupInstrument),
-		COMMAND(update_setupPrimaryEffect1),
-		COMMAND(update_removePrimaryEffect1),
-		COMMAND(update_setBaseFreq),
+		COMMAND(update_setupInstrument, 1),
+		COMMAND(update_setupPrimaryEffect1, 3),
+		COMMAND(update_removePrimaryEffect1, 0),
+		COMMAND(update_setBaseFreq, 1),
 
 		// 20
-		COMMAND(update_stopChannel),
-		COMMAND(update_setupPrimaryEffect2),
-		COMMAND(update_stopChannel),
-		COMMAND(update_stopChannel),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(update_setupPrimaryEffect2, 4),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(update_stopChannel, 0),
 
 		// 24
-		COMMAND(update_stopChannel),
-		COMMAND(update_stopChannel),
-		COMMAND(update_setPriority),
-		COMMAND(update_stopChannel),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(update_setPriority, 1),
+		COMMAND(update_stopChannel, 0),
 
 		// 28
-		COMMAND(updateCallback23),
-		COMMAND(updateCallback24),
-		COMMAND(update_setExtraLevel1),
-		COMMAND(update_stopChannel),
+		COMMAND(updateCallback23, 1),
+		COMMAND(updateCallback24, 1),
+		COMMAND(update_setExtraLevel1, 1),
+		COMMAND(update_stopChannel, 0),
 
 		// 32
-		COMMAND(update_setupDuration),
-		COMMAND(update_playNote),
-		COMMAND(update_stopChannel),
-		COMMAND(update_stopChannel),
+		COMMAND(update_setupDuration, 1),
+		COMMAND(update_playNote, 1),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(update_stopChannel, 0),
 
 		// 36
-		COMMAND(update_setFractionalNoteSpacing),
-		COMMAND(update_stopChannel),
-		COMMAND(update_setTempo),
-		COMMAND(update_removeSecondaryEffect1),
+		COMMAND(update_setFractionalNoteSpacing, 1),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(update_setTempo, 1),
+		COMMAND(update_removeSecondaryEffect1, 0),
 
 		// 40
-		COMMAND(update_stopChannel),
-		COMMAND(update_setChannelTempo),
-		COMMAND(update_stopChannel),
-		COMMAND(update_setExtraLevel3),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(update_setChannelTempo, 1),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(update_setExtraLevel3, 1),
 
 		// 44
-		COMMAND(update_setExtraLevel2),
-		COMMAND(update_changeExtraLevel2),
-		COMMAND(update_setAMDepth),
-		COMMAND(update_setVibratoDepth),
+		COMMAND(update_setExtraLevel2, 2),
+		COMMAND(update_changeExtraLevel2, 2),
+		COMMAND(update_setAMDepth, 1),
+		COMMAND(update_setVibratoDepth, 1),
 
 		// 48
-		COMMAND(update_changeExtraLevel1),
-		COMMAND(update_stopChannel),
-		COMMAND(update_stopChannel),
-		COMMAND(updateCallback38),
+		COMMAND(update_changeExtraLevel1, 1),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(updateCallback38, 1),
 
 		// 52
-		COMMAND(update_stopChannel),
-		COMMAND(updateCallback39),
-		COMMAND(update_removePrimaryEffect2),
-		COMMAND(update_stopChannel),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(updateCallback39, 2),
+		COMMAND(update_removePrimaryEffect2, 0),
+		COMMAND(update_stopChannel, 0),
 
 		// 56
-		COMMAND(update_stopChannel),
-		COMMAND(update_pitchBend),
-		COMMAND(update_resetToGlobalTempo),
-		COMMAND(update_nop),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(update_pitchBend, 1),
+		COMMAND(update_resetToGlobalTempo, 0),
+		COMMAND(update_nop, 0),
 
 		// 60
-		COMMAND(update_setDurationRandomness),
-		COMMAND(update_changeChannelTempo),
-		COMMAND(update_stopChannel),
-		COMMAND(updateCallback46),
+		COMMAND(update_setDurationRandomness, 1),
+		COMMAND(update_changeChannelTempo, 1),
+		COMMAND(update_stopChannel, 0),
+		COMMAND(updateCallback46, 2),
 
 		// 64
-		COMMAND(update_nop),
-		COMMAND(update_setupRhythmSection),
-		COMMAND(update_playRhythmSection),
-		COMMAND(update_removeRhythmSection),
+		COMMAND(update_nop, 0),
+		COMMAND(update_setupRhythmSection, 9),
+		COMMAND(update_playRhythmSection, 1),
+		COMMAND(update_removeRhythmSection, 0),
 
 		// 68
-		COMMAND(updateCallback51),
-		COMMAND(updateCallback52),
-		COMMAND(updateCallback53),
-		COMMAND(update_setSoundTrigger),
+		COMMAND(updateCallback51, 2),
+		COMMAND(updateCallback52, 2),
+		COMMAND(updateCallback53, 2),
+		COMMAND(update_setSoundTrigger, 1),
 
 		// 72
-		COMMAND(update_setTempoReset),
-		COMMAND(updateCallback56),
-		COMMAND(update_stopChannel)
+		COMMAND(update_setTempoReset, 1),
+		COMMAND(updateCallback56, 2),
+		COMMAND(update_stopChannel, 0)
 	};
 
 	_parserOpcodeTable = parserOpcodeTable;
