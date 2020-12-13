@@ -180,6 +180,9 @@ void SceneScriptNR05::SceneFrameAdvanced(int frame) {
 	}
 
 	rotateActorOnGround(kActorHysteriaPatron2);
+	if (_vm->_cutContent) {
+		rotateActorOnGround(kActorHysteriaPatron3);
+	}
 	rotateActorOnGround(kActorMcCoy);
 
 	if (Actor_Query_Goal_Number(kActorEarlyQ) == kGoalEarlyQNR05UnlockNR08) {
