@@ -123,68 +123,68 @@ bool AIScriptMurray::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptMurray::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 698;
+		*animation = kModelAnimationMurrayIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(698))
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMurrayIdle))
 			_animationFrame = 0;
 		break;
 
 	case 1:
-		*animation = 700;
+		*animation = kModelAnimationMurrayCalmTalk;
 		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			_animationState = 0;
 		} else {
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(700))
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMurrayCalmTalk))
 				_animationFrame = 0;
 		}
 		break;
 
 	case 2:
-		*animation = 701;
+		*animation = kModelAnimationMurrayMoreCalmTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(701)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMurrayMoreCalmTalk)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 700;
+			*animation = kModelAnimationMurrayCalmTalk;
 		}
 		break;
 
 	case 3:
-		*animation = 702;
+		*animation = kModelAnimationMurrayExplainTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(702)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMurrayExplainTalk)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 700;
+			*animation = kModelAnimationMurrayCalmTalk;
 		}
 		break;
 
 	case 4:
-		*animation = 703;
+		*animation = kModelAnimationMurrayMoreExplainTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(703)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMurrayMoreExplainTalk)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 700;
+			*animation = kModelAnimationMurrayCalmTalk;
 		}
 		break;
 
 	case 5:
-		*animation = 704;
+		*animation = kModelAnimationMurrayCautionTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(704)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMurrayCautionTalk)) {
 			_animationFrame = 0;
 			_animationState = 1;
-			*animation = 700;
+			*animation = kModelAnimationMurrayCalmTalk;
 		}
 		break;
 
 	case 6:
-		*animation = 699;
+		*animation = kModelAnimationMurrayGestureGive;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(699)) {
-			*animation = 698;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMurrayGestureGive)) {
+			*animation = kModelAnimationMurrayIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
