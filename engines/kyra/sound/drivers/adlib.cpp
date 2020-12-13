@@ -567,18 +567,25 @@ void AdLibDriver::setupPrograms() {
 	else if (_retrySounds)
 		retrySound = entry;
 
-	// Adjust data in case we hit a sound effect.
-	adjustSfxData(ptr, entry.volume);
-
 	// Clear the queue entry
 	entry.data = 0;
 	++_programQueueStart &= 15;
 
-	const int chan = *ptr++;
-	// Safety check: ignore request for invalid channel
-	if (chan > 9)
+	// Safety check: 2 bytes (channel, priority) are required for each
+	// program, plus 2 more bytes (opcode, _sfxVelocity) for sound effects.
+	// More data is needed, but executePrograms() checks for that.
+	// Also ignore request for invalid channel number.
+	if (!ptr || ptr - _soundData + 2 > _soundDataSize)
 		return;
+
+	const int chan = *ptr;
+	if (chan > 9 || (chan < 9 && ptr - _soundData + 4 > _soundDataSize))
+		return;
+
 	Channel &channel = _channels[chan];
+
+	// Adjust data in case we hit a sound effect.
+	adjustSfxData(ptr++, entry.volume);
 
 	const int priority = *ptr++;
 
@@ -1001,6 +1008,10 @@ void AdLibDriver::setupInstrument(uint8 regOffset, const uint8 *dataptr, Channel
 	debugC(9, kDebugLevelSound, "setupInstrument(%d, %p, %lu)", regOffset, (const void *)dataptr, (long)(&channel - _channels));
 
 	if (_curChannel >= 9)
+		return;
+
+	// Safety check: need 11 bytes of data.
+	if (dataptr - _soundData + 11 > _soundDataSize)
 		return;
 
 	// Amplitude Modulation / Vibrato / Envelope Generator Type /
