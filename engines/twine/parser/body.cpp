@@ -78,9 +78,9 @@ void BodyData::loadShades(Common::SeekableReadStream &stream) {
 	_shades.reserve(numShades);
 	for (uint16 i = 0; i < numShades; ++i) {
 		BodyShade shape;
-		shape.unk1 = stream.readSint16LE();
-		shape.unk2 = stream.readSint16LE();
-		shape.unk3 = stream.readSint16LE();
+		shape.col1 = stream.readSint16LE();
+		shape.col2 = stream.readSint16LE();
+		shape.col3 = stream.readSint16LE();
 		shape.unk4 = stream.readSint16LE();
 		_shades.push_back(shape);
 	}
