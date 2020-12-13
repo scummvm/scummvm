@@ -172,7 +172,7 @@ void OOToposGame::beforePrompt() {
 	computerConsole();
 }
 
-void OOToposGame::afterPrompt() {
+bool OOToposGame::afterPrompt() {
 	ComprehendGameV2::afterPrompt();
 
 	// WORKAROUND: Allow for the Apple 2 password in the DOS version
@@ -182,6 +182,8 @@ void OOToposGame::afterPrompt() {
 	if (_currentRoom != _currentRoomCopy)
 		_updateFlags |= UPDATE_GRAPHICS;
 	_currentRoom = _currentRoomCopy;
+
+	return true;
 }
 
 void OOToposGame::handleSpecialOpcode(uint8 operand) {

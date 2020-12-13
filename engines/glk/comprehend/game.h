@@ -137,11 +137,32 @@ public:
 	ComprehendGame();
 	virtual ~ComprehendGame();
 
+	/**
+	 * Called before the game starts
+	 */
 	virtual void beforeGame() {}
+
+	/**
+	 * Called just before the prompt for user input
+	 */
 	virtual void beforePrompt() {}
-	virtual void afterPrompt() {}
+
+	/**
+	 * Called after input has been entered.
+	 * @returns		If false, causes input to be repeated
+	 */
+	virtual bool afterPrompt() { return true; }
+
+	/**
+	 * Called before the start of a game turn
+	 */
 	virtual void beforeTurn();
+
+	/**
+	 * Called at the end of a game turn
+	 */
 	virtual void afterTurn() {}
+
 	virtual int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) {
 		return ROOM_IS_NORMAL;
 	}

@@ -81,7 +81,7 @@ public:
 	void beforeGame() override;
 	void beforeTurn() override;
 	void beforePrompt() override;
-	void afterPrompt() override;
+	bool afterPrompt() override;
 	int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) override;
 	void handleSpecialOpcode(uint8 operand) override;
 	bool handle_restart() override;
