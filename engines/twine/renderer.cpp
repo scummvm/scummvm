@@ -1249,18 +1249,11 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, RenderCom
 }
 
 int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, RenderCommand *renderCmds) {
-	// jump after the header
-	bodyPtr += 0x1A;
+	const int32 numVertices = Model::getNumVertices(bodyPtr);
+	const int32 numBones = Model::getNumBones(bodyPtr);
 
-	const int32 numVertices = *((const uint16 *)bodyPtr);
-	bodyPtr += 2;
-	const pointTab *pointsPtr = (const pointTab *)bodyPtr;
-
-	bodyPtr += numVertices * sizeof(pointTab);
-
-	const int32 numBones = *((const uint16 *)bodyPtr);
-	bodyPtr += 2;
-	const elementEntry *bonesPtr = (const elementEntry *)bodyPtr;
+	const pointTab *pointsPtr = (const pointTab *)Model::getVerticesBaseData(bodyPtr);
+	const elementEntry *bonesPtr = (const elementEntry *)Model::getBonesBaseData(bodyPtr);
 
 	Matrix *modelMatrix = &matricesTable[0];
 
@@ -1382,23 +1375,18 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 		} while (--numOfPrimitives);
 	}
 
-	int32 *shadePtr = (int32 *)(bodyPtr + numBones * sizeof(elementEntry));
-
-	int32 numOfShades = *((const uint16 *)shadePtr);
-
-	shadePtr = (int32 *)(((uint8 *)shadePtr) + 2);
+	const uint8 *shadePtr = Model::getShadesBaseData(bodyPtr);
+	int32 numOfShades = Model::getNumShades(bodyPtr);
 
 	if (numOfShades) { // process normal data
-		uint8 *currentShadeDestination = (uint8 *)modelData->shadeTable;
+		uint16 *currentShadeDestination = (uint16 *)modelData->shadeTable;
 		Matrix *lightMatrix = &matricesTable[0];
 
 		numOfPrimitives = numBones;
 
-		const uint8 *tmpElemPtr = bodyPtr + 18;
-		const uint8 *pri2Ptr3 = tmpElemPtr;
-
+		int boneIdx = 0;
 		do { // for each element
-			numOfShades = *((const uint16 *)tmpElemPtr);
+			numOfShades = Model::getNumShadesBone(bodyPtr, boneIdx);
 
 			if (numOfShades) {
 				int32 numShades = numOfShades;
@@ -1436,14 +1424,13 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 						shade = (uint16)color;
 					}
 
-					*((uint16 *)currentShadeDestination) = shade;
-					currentShadeDestination += 2;
-					shadePtr += 2;
+					*currentShadeDestination = shade;
+					currentShadeDestination++;
+					shadePtr += 8;
 				} while (--numShades);
 			}
 
-			tmpElemPtr = pri2Ptr3 = pri2Ptr3 + sizeof(elementEntry); // next element
-
+			++boneIdx;
 			++lightMatrix;
 		} while (--numOfPrimitives);
 	}
@@ -1466,19 +1453,13 @@ void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
 		return;
 	}
 
-	uint8 *bodyDataPtr = bodyPtr + 0x1A;
-
-	int16 numVertices = *((const int16 *)bodyDataPtr);
-	uint8 *bonesBase = bodyDataPtr + 2 + numVertices * sizeof(pointTab);
-
-	int16 numBones = *((const int16 *)bonesBase);
-
-	uint8 *elementEntryBasePointer = bonesBase + 2;
+	uint8 *bonesBase = Model::getBonesBaseData(bodyPtr);
+	int16 numBones = Model::getNumBones(bodyPtr);
 
 	// set up bone indices
 	for (int32 i = 0; i < numBones; i++) {
-		elementEntryBasePointer += sizeof(elementEntry);
-		elementEntry *ee = (elementEntry*)elementEntryBasePointer;
+		bonesBase += sizeof(elementEntry);
+		elementEntry *ee = (elementEntry*)bonesBase;
 		ee->baseElement = ee->baseElement / sizeof(elementEntry);
 	}
 }
