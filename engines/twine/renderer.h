@@ -256,7 +256,7 @@ private:
 
 	int32 renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, RenderCommand *renderCmds);
 	void circleFill(int32 x, int32 y, int32 radius, uint8 color);
-	int32 renderModelElements(int32 numOfPrimitives, uint8 *pointer, RenderCommand** renderCmds, ModelData *modelData);
+	int32 renderModelElements(int32 numOfPrimitives, const uint8 *polygonPtr, RenderCommand** renderCmds, ModelData *modelData);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
 	void getCameraAnglePositions(int32 x, int32 y, int32 z);
 	void applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix);

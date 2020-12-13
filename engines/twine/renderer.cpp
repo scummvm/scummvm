@@ -1166,9 +1166,9 @@ const Renderer::RenderCommand *Renderer::depthSortRenderCommands(int32 numOfPrim
 	return _renderCmdsSortedByDepth;
 }
 
-int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, RenderCommand **renderCmds, ModelData *modelData) {
+int32 Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPtr, RenderCommand **renderCmds, ModelData *modelData) {
 	// TODO: proper size
-	Common::MemoryReadStream stream(ptr, 100000);
+	Common::MemoryReadStream stream(polygonPtr, 100000);
 
 	uint8 *renderBufferPtr = renderCoordinatesBuffer;
 	renderBufferPtr = preparePolygons(stream, numOfPrimitives, renderCmds, renderBufferPtr, modelData);
@@ -1435,7 +1435,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 		} while (--numOfPrimitives);
 	}
 
-	return renderModelElements(numOfPrimitives, (uint8 *)shadePtr, &renderCmds, modelData);
+	return renderModelElements(numOfPrimitives, shadePtr, &renderCmds, modelData);
 }
 
 void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
