@@ -120,12 +120,12 @@ struct Model {
 		return verticesBase + 2 + numVertices * 6;
 	}
 
-	static const uint8* getBonesStateData(const uint8 *bodyPtr) {
-		return getBonesBaseData(bodyPtr) + 8;
+	static const uint8* getBonesStateData(const uint8 *bodyPtr, int boneIdx) {
+		return getBonesBaseData(bodyPtr) + 8 + (boneIdx * 38);
 	}
 
-	static uint8* getBonesStateData(uint8 *bodyPtr) {
-		return getBonesBaseData(bodyPtr) + 8;
+	static uint8* getBonesStateData(uint8 *bodyPtr, int boneIdx) {
+		return getBonesBaseData(bodyPtr) + 8 + (boneIdx * 38);
 	}
 
 	static uint8* getBonesBaseData(uint8 *bodyPtr) {

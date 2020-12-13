@@ -143,7 +143,6 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint
 	processLastRotationAngle = ToAngle(keyFrame->boneframes[0].y);
 
 	const int16 numBones = Model::getNumBones(bodyPtr);
-	uint8 *bonesPtr = Model::getBonesStateData(bodyPtr);
 
 	int32 numOfBonesInAnim = animData.getNumBoneframes();
 	if (numOfBonesInAnim > numBones) {
@@ -162,6 +161,7 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint
 	if (deltaTime >= keyFrameLength) {
 		for (int32 i = 0; i < numOfBonesInAnim; ++i) {
 			const BoneFrame &boneframe = keyFrame->boneframes[i];
+			uint8 *bonesPtr = Model::getBonesStateData(bodyPtr, 0);
 			WRITE_LE_UINT16(bonesPtr + 0, boneframe.type);
 			WRITE_LE_INT16(bonesPtr + 2, boneframe.x);
 			WRITE_LE_INT16(bonesPtr + 4, boneframe.y);
@@ -179,14 +179,14 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint
 	lastKeyFramePtr += 16;
 	keyFramePtr += 16;
 
-	bonesPtr += 38;
-
 	if (numOfBonesInAnim <= 1) {
 		return false;
 	}
 
 	int16 tmpNumOfPoints = numOfBonesInAnim - 1;
+	int boneIdx = 1;
 	do {
+		uint8* const bonesPtr = Model::getBonesStateData(bodyPtr, boneIdx);
 		const int16 animOpcode = getAnimMode(bonesPtr + 0, keyFramePtr + 0);
 
 		switch (animOpcode) {
@@ -207,7 +207,7 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint
 
 		lastKeyFramePtr += 8;
 		keyFramePtr += 8;
-		bonesPtr += 38;
+		++boneIdx;
 	} while (--tmpNumOfPoints);
 
 	return false;
@@ -238,7 +238,7 @@ void Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint
 	animTimerDataPtr->time = _engine->lbaTime;
 
 	const int16 numBones = Model::getNumBones(bodyPtr);
-	uint8 *bonesPtr = Model::getBonesStateData(bodyPtr);
+	uint8 *bonesPtr = Model::getBonesStateData(bodyPtr, 0);
 
 	int16 numOfBonesInAnim = animData.getNumBoneframes();
 	if (numOfBonesInAnim > numBones) {
@@ -266,7 +266,7 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 	animTimerDataPtr->ptr = animBufferPos;
 
 	const int32 numBones = Model::getNumBones(bodyPtr);
-	const uint8 *ptrToData = Model::getBonesStateData(bodyPtr);
+	const uint8 *ptrToData = Model::getBonesStateData(bodyPtr, 0);
 
 	uint8 *bonesPtr = animBufferPos + 8;
 
