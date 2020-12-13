@@ -264,7 +264,7 @@ void Interface::drawSplittedBox(const Common::Rect &rect, uint8 colorIndex) {
 
 	for (int32 x = top; x < bottom; x++) {
 		for (int32 y = left; y < right; y++) {
-			*(ptr++) = colorIndex;
+			*ptr++ = colorIndex;
 		}
 		ptr += offset;
 	}

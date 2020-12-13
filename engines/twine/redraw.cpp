@@ -219,7 +219,7 @@ int32 Redraw::processActorDrawingList(bool bgRedraw) {
 			_engine->_renderer->projectPositionOnScreen(actor->x - _engine->_grid->cameraX, actor->y - _engine->_grid->cameraY, actor->z - _engine->_grid->cameraZ);
 
 			// check if actor is visible on screen, otherwise don't display it
-			if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < 680 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < 580) {
+			if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < SCREEN_WIDTH + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < SCREEN_HEIGHT + 100) {
 				actor->dynamicFlags.bIsVisible = 1;
 			}
 			continue;
@@ -231,8 +231,8 @@ int32 Redraw::processActorDrawingList(bool bgRedraw) {
 		// get actor position on screen
 		_engine->_renderer->projectPositionOnScreen(actor->x - _engine->_grid->cameraX, actor->y - _engine->_grid->cameraY, actor->z - _engine->_grid->cameraZ);
 
-		if ((actor->staticFlags.bUsesClipping && _engine->_renderer->projPosX > -112 && _engine->_renderer->projPosX < 752 && _engine->_renderer->projPosY > -50 && _engine->_renderer->projPosY < 651) ||
-			((!actor->staticFlags.bUsesClipping) && _engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < 680 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < 580)) {
+		if ((actor->staticFlags.bUsesClipping && _engine->_renderer->projPosX > -112 && _engine->_renderer->projPosX < SCREEN_WIDTH + 112 && _engine->_renderer->projPosY > -50 && _engine->_renderer->projPosY < SCREEN_HEIGHT + 171) ||
+			((!actor->staticFlags.bUsesClipping) && _engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < SCREEN_WIDTH + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < SCREEN_HEIGHT + 100)) {
 
 			int32 tmpVal = actor->z + actor->x - _engine->_grid->cameraX - _engine->_grid->cameraZ;
 
@@ -299,7 +299,7 @@ int32 Redraw::processExtraDrawingList(int32 drawListPos) {
 		if ((extra->type & ExtraType::TIME_OUT) || (extra->type & ExtraType::FLASH) || (extra->payload.lifeTime + extra->spawnTime - 150 < _engine->lbaTime) || (!((_engine->lbaTime + extra->spawnTime) & 8))) {
 			_engine->_renderer->projectPositionOnScreen(extra->x - _engine->_grid->cameraX, extra->y - _engine->_grid->cameraY, extra->z - _engine->_grid->cameraZ);
 
-			if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < 680 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < 580) {
+			if (_engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < SCREEN_WIDTH + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < SCREEN_HEIGHT + 100) {
 				drawList[drawListPos].posValue = extra->x - _engine->_grid->cameraX + extra->z - _engine->_grid->cameraZ;
 				drawList[drawListPos].actorIdx = i;
 				drawList[drawListPos].type = DrawListType::DrawExtras;
@@ -364,11 +364,10 @@ void Redraw::processDrawList(int32 drawListPos, bool bgRedraw) {
 
 						const int32 tempX = (actor2->x + 0x100) >> 9;
 						int32 tempY = actor2->y >> 8;
+						const int32 tempZ = (actor2->z + 0x100) >> 9;
 						if (actor2->brickShape() != ShapeType::kNone) {
 							tempY++;
 						}
-
-						const int32 tempZ = (actor2->z + 0x100) >> 9;
 
 						_engine->_grid->drawOverModelActor(tempX, tempY, tempZ);
 
@@ -455,14 +454,17 @@ void Redraw::processDrawList(int32 drawListPos, bool bgRedraw) {
 				actor2->dynamicFlags.bIsVisible = 1;
 
 				if (actor2->staticFlags.bUsesClipping) {
-					_engine->_grid->drawOverSpriteActor((actor2->lastX + 0x100) >> 9, actor2->lastY >> 8, (actor2->lastZ + 0x100) >> 9);
+					const int32 tmpX = (actor2->lastX + 0x100) >> 9;
+					const int32 tmpY = actor2->lastY >> 8;
+					const int32 tmpZ = (actor2->lastZ + 0x100) >> 9;
+					_engine->_grid->drawOverSpriteActor(tmpX, tmpY, tmpZ);
 				} else {
 					const int32 tmpX = (actor2->x + actor2->boudingBox.x.topRight + 0x100) >> 9;
 					int32 tmpY = actor2->y >> 8;
+					const int32 tmpZ = (actor2->z + actor2->boudingBox.z.topRight + 0x100) >> 9;
 					if (actor2->brickShape() != ShapeType::kNone) {
 						tmpY++;
 					}
-					const int32 tmpZ = (actor2->z + actor2->boudingBox.z.topRight + 0x100) >> 9;
 
 					_engine->_grid->drawOverSpriteActor(tmpX, tmpY, tmpZ);
 				}
