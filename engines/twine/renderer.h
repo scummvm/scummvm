@@ -175,8 +175,8 @@ struct Model {
 		return bonesBase + numBones * 38;
 	}
 
-	static const uint8* getShadesBaseData(const uint8 *bodyPtr) {
-		return getShadesData(bodyPtr) + 2;
+	static const uint8* getShadesBaseData(const uint8 *bodyPtr, int16 shadeIdx = 0) {
+		return getShadesData(bodyPtr) + 2 + (shadeIdx * 8);
 	}
 
 	static const uint8* getShadesData(const uint8 *bodyPtr) {
@@ -201,6 +201,20 @@ struct Model {
 
 	static int16 getNumShadesBone(const BodyData& bodyPtr, int boneIdx) {
 		return bodyPtr.getBone(boneIdx)->numOfShades;
+	}
+
+	static const uint8* getPolygonData(const uint8 *bodyPtr) {
+		const uint8* shades = getShadesBaseData(bodyPtr);
+		const int16 numShades = getNumShades(bodyPtr);
+		if (numShades <= 0) {
+			return shades;
+		}
+		const int16 bones = getNumBones(bodyPtr);
+		for (int16 boneIdx = 0; boneIdx < bones; ++boneIdx) {
+			int16 numOfShades = Model::getNumShadesBone(bodyPtr, boneIdx);
+			shades += numOfShades * 8;
+		}
+		return shades;
 	}
 };
 
