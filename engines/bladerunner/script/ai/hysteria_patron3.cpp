@@ -34,7 +34,7 @@ void AIScriptHysteriaPatron3::Initialize() {
 	_animationNext = 0;
 	if (_vm->_cutContent) {
 		Actor_Put_In_Set(kActorHysteriaPatron3, kSetNR05_NR08);
-		Actor_Set_At_XYZ(kActorHysteriaPatron3, -490.0f, 0.0f, -210.0f, 252);
+		Actor_Set_At_XYZ(kActorHysteriaPatron3, -600.0f, 0.0f, -245.0f, 880);
 	}
 }
 
