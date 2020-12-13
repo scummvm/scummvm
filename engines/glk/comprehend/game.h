@@ -163,6 +163,11 @@ public:
 	 */
 	virtual void afterTurn() {}
 
+	/**
+	 * Called when an action function has been selected
+	 */
+	virtual void actionSelected(uint16 &function) {}
+
 	virtual int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) {
 		return ROOM_IS_NORMAL;
 	}
