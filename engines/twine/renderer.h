@@ -232,15 +232,6 @@ private:
 	#include "common/pack-end.h"
 	static_assert(sizeof(pointTab) == 6, "Unexpected pointTab size");
 
-	struct lineData {
-		uint8 colorIndex = 0;
-		uint8 unk1 = 0;
-		uint8 unk2 = 0;
-		uint8 unk3 = 0;
-		int16 firstPointOffset = 0;  /**< byte offsets */
-		int16 secondPointOffset = 0; /**< byte offsets */
-	};
-
 	struct polyVertexHeader {
 		int16 shadeEntry = 0;
 		int16 dataOffset = 0;

@@ -1033,20 +1033,11 @@ uint8 *Renderer::prepareLines(Common::MemoryReadStream &stream, int32 &numOfPrim
 	numOfPrimitives += numLines;
 
 	do {
-		lineData line;
-		line.colorIndex = stream.readByte();
-		stream.skip(3);
-		line.firstPointOffset = stream.readSint16LE();
-		line.secondPointOffset = stream.readSint16LE();
 		CmdRenderLine *lineCoordinatesPtr = (CmdRenderLine *)renderBufferPtr;
-
-		if (line.firstPointOffset % 6 != 0 || line.secondPointOffset % 6 != 0) {
-			error("RENDER ERROR: lineDataPtr reference is malformed!");
-		}
-
-		const int32 point1Index = line.firstPointOffset / 6;
-		const int32 point2Index = line.secondPointOffset / 6;
-		lineCoordinatesPtr->colorIndex = line.colorIndex;
+		lineCoordinatesPtr->colorIndex = stream.readByte();
+		stream.skip(3);
+		const int32 point1Index = stream.readSint16LE() / 6;
+		const int32 point2Index = stream.readSint16LE()/ 6;
 		lineCoordinatesPtr->x1 = modelData->flattenPoints[point1Index].x;
 		lineCoordinatesPtr->y1 = modelData->flattenPoints[point1Index].y;
 		lineCoordinatesPtr->x2 = modelData->flattenPoints[point2Index].x;
