@@ -2142,9 +2142,9 @@ enum GameModelAnimations {
 	kModelGenWalkerChild                                    = 435, // Walking  - Frame 0 (or 5) used for standing still
 	kModelGenWalkerHattedPersonWithWoodenUmbrella           = 436, // Walking  - Frame 4 used for standing still 
 	kModelGenWalkerHattedLadyWithWoodenUmbrellaStandsStill  = 437, // Standing - *Not the same model with 436* - Just single frame
-	// 438 - 439: Dancer model animations (UNUSED)
-	kModelAnimationHysteriaPatron3DanceBendBackAndForward = 438, // UNUSED
-	kModelAnimationHysteriaPatron3DanceCrouchAndRaiseUp   = 439, // UNUSED
+	// 438 - 439: Dancer model animations (UNUSED - RESTORED)
+	kModelAnimationHysteriaPatron3DanceHandsDownLeanBackForth = 438, // UNUSED - 27 frames - RESTORED
+	kModelAnimationHysteriaPatron3DanceHandsDownToHandsUp     = 439, // UNUSED - 24 frames - RESTORED (not looping, needs to be subsequently reversed to loop)
 	//       440: Tracking Gun (At Bullet Bob's shop)
 	kModelAnimationBulletBobsTrackingGun         = 440,
 	// 441 - 450: Shooting range targets
@@ -2490,9 +2490,9 @@ enum GameModelAnimations {
 	kModelAnimationHysteriaPatron2DanceHandsUpSitAndUp        = 887,
 	kModelAnimationHysteriaPatron2DanceHandsDownHipsSwirl     = 888,
 	kModelAnimationHysteriaPatron2DanceHandsDownLegSwirl      = 889,
-	kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth = 890,
+	kModelAnimationHysteriaPatron2DanceHandsDownLeanBackForth = 890, // 27 frames - same motion as 438 for Patron3Dance
 	kModelAnimationHysteriaPatron2DanceHandsUpToHandsDown     = 891,
-	kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp     = 892,
+	kModelAnimationHysteriaPatron2DanceHandsDownToHandsUp     = 892, // 24 frames - same motion as 439 for Patron3Dance
 	// 893 - 900: Mutant 1 animations - Special with pipe
 	kModelAnimationMutant1Walking              = 893,
 	kModelAnimationMutant1Idle                 = 894,
