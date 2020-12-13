@@ -350,16 +350,28 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 		_startSentencePalIndex = color;
 	}
 
-	_text->printText(sentence, 8, 143, 0xFF, _flags.platform == Common::kPlatformAmiga ? 19 : 12, 0);
+	if (_flags.lang != Common::HE_ISR) {
+		_text->printText(sentence, 8, 143, 0xFF, _flags.platform == Common::kPlatformAmiga ? 19 : 12, 0);
+	} else {
+		_screen->_charSpacing = -2;
+		_text->printText(sentence, 311 - _screen->getTextWidth(sentence), 143, 0xFF, _flags.platform == Common::kPlatformAmiga ? 19 : 12, 0);
+		_screen->_charSpacing = 0;
+	}
 	setTextFadeTimerCountdown(15);
 	_fadeText = false;
 }
 
 void KyraEngine_LoK::updateSentenceCommand(const char *str1, const char *str2, int color) {
 	char sentenceCommand[500];
-	Common::strlcpy(sentenceCommand, str1, sizeof(sentenceCommand));
-	if (str2)
-		Common::strlcat(sentenceCommand, str2, sizeof(sentenceCommand));
+	if (_flags.lang != Common::HE_ISR) {
+		Common::strlcpy(sentenceCommand, str1, sizeof(sentenceCommand));
+		if (str2)
+			Common::strlcat(sentenceCommand, str2, sizeof(sentenceCommand));
+	} else {
+		if (str2)
+			Common::strlcpy(sentenceCommand, str2, sizeof(sentenceCommand));
+		Common::strlcat(sentenceCommand, str1, sizeof(sentenceCommand));
+	}
 
 	drawSentenceCommand(sentenceCommand, color);
 	_screen->updateScreen();

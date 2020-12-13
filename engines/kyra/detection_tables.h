@@ -341,6 +341,20 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_CD_FLAGS
 	},
+
+	{ // HEBREW FAN TRANSLATION
+		{
+			"kyra1",
+			"CD",
+			AD_ENTRY1("GEMCUT.PAK", "20c141be61ed01bfda09197e0452bcf7"),
+			Common::HE_ISR,
+			Common::kPlatformDOS,
+			ADGF_CD,
+			GUIO4(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIPCSPK, GUIO_RENDERVGA)
+		},
+		KYRA1_CD_FLAGS
+	},
+
 	{
 		{
 			"kyra1",

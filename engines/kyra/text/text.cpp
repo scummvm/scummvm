@@ -204,6 +204,15 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 }
 
 void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
+	char revBuffer[384];
+	memset(revBuffer, 0, sizeof(revBuffer));
+	if (_vm->gameFlags().lang == Common::HE_ISR) {
+		int len = strlen(str);
+		for (int i = 0; i < len; i++) {
+			revBuffer[i] = str[len - i - 1];
+		}
+		str = revBuffer;
+	}
 	uint8 colorMap[] = { 0, 15, 12, 12 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
