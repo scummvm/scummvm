@@ -107,8 +107,8 @@ private:
 	void processDrawListActorSprites(const DrawListStruct& drawCmd, bool bgRedraw);
 	void processDrawListExtras(const DrawListStruct& drawCmd);
 
-	int32 processActorDrawingList(bool bgRedraw);
-	int32 processExtraDrawingList(int32 drawListPos);
+	int32 fillActorDrawingList(bool bgRedraw);
+	int32 fillExtraDrawingList(int32 drawListPos);
 	void processDrawList(int32 drawListPos, bool bgRedraw);
 	void renderOverlays();
 
