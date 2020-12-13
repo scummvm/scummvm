@@ -102,6 +102,11 @@ private:
 	void sortDrawingList(DrawListStruct *list, int32 listSize);
 	void updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2);
 
+	void processDrawListShadows(const DrawListStruct& drawCmd);
+	void processDrawListActors(const DrawListStruct& drawCmd, bool bgRedraw);
+	void processDrawListActorSprites(const DrawListStruct& drawCmd, bool bgRedraw);
+	void processDrawListExtras(const DrawListStruct& drawCmd);
+
 	int32 processActorDrawingList(bool bgRedraw);
 	int32 processExtraDrawingList(int32 drawListPos);
 	void processDrawList(int32 drawListPos, bool bgRedraw);
