@@ -140,6 +140,13 @@ bool TalismanGame::afterPrompt() {
 	}
 }
 
+void TalismanGame::actionSelected(uint16 &function) {
+	if (_flags[62] && function != _variables[125]) {
+		_variables[124] = function;
+		function = _variables[126];
+	}
+}
+
 void TalismanGame::handleSpecialOpcode(uint8 operand) {
 	switch (operand) {
 	case 15:

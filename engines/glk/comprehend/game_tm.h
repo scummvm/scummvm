@@ -44,6 +44,7 @@ public:
 	void beforeTurn() override;
 	void beforePrompt() override;
 	bool afterPrompt() override;
+	void actionSelected(uint16 &function) override;
 	void handleSpecialOpcode(uint8 operand) override;
 };
 

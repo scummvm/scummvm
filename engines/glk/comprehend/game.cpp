@@ -717,7 +717,11 @@ bool ComprehendGame::handle_sentence(uint tableNum, Sentence *sentence, Common::
 
 		if (isMatch) {
 			// Match
-			eval_function(action._function, sentence);
+			uint16 function = action._function;
+			actionSelected(function);
+
+			// Execute action
+			eval_function(function, sentence);
 			return true;
 		}
 	}
