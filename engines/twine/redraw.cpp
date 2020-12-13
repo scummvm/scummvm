@@ -155,11 +155,8 @@ void Redraw::flipRedrawAreas() {
 }
 
 void Redraw::blitBackgroundAreas() {
-	const Common::Rect *currentArea = currentRedrawList;
-
 	for (int32 i = 0; i < numOfRedrawBox; i++) {
-		_engine->_interface->blitBox(*currentArea, _engine->workVideoBuffer, _engine->frontVideoBuffer);
-		currentArea++;
+		_engine->_interface->blitBox(currentRedrawList[i], _engine->workVideoBuffer, _engine->frontVideoBuffer);
 	}
 }
 
@@ -523,41 +520,7 @@ void Redraw::processDrawList(int32 drawListPos, bool bgRedraw) {
 	} while (pos < drawListPos);
 }
 
-void Redraw::redrawEngineActions(bool bgRedraw) {
-	int16 tmp_projPosX = _engine->_renderer->projPosXScreen;
-	int16 tmp_projPosY = _engine->_renderer->projPosYScreen;
-
-	_engine->_interface->resetClip();
-
-	if (bgRedraw) {
-		_engine->freezeTime();
-		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2) {
-			_engine->_screens->fadeOut(_engine->_screens->paletteRGBA);
-		}
-		_engine->_screens->clearScreen();
-		_engine->_grid->redrawGrid();
-		updateOverlayTypePosition(tmp_projPosX, tmp_projPosY, _engine->_renderer->projPosXScreen, _engine->_renderer->projPosYScreen);
-		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
-
-		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2) {
-			_engine->_screens->fadeIn(_engine->_screens->paletteRGBA);
-			_engine->setPalette(_engine->_screens->paletteRGBA);
-		}
-	} else {
-		blitBackgroundAreas();
-	}
-
-	int32 drawListPos = processActorDrawingList(bgRedraw);
-	drawListPos = processExtraDrawingList(drawListPos);
-	sortDrawingList(drawList, drawListPos);
-
-	currNumOfRedrawBox = 0;
-	processDrawList(drawListPos, bgRedraw);
-
-	if (_engine->cfgfile.Debug) {
-		_engine->_debugScene->displayZones();
-	}
-
+void Redraw::renderOverlays() {
 	for (int32 i = 0; i < OVERLAY_MAX_ENTRIES; i++) {
 		OverlayListStruct *overlay = &overlayList[i];
 		if (overlay->info0 != -1) {
@@ -719,6 +682,44 @@ void Redraw::redrawEngineActions(bool bgRedraw) {
 			}
 		}
 	}
+}
+
+void Redraw::redrawEngineActions(bool bgRedraw) {
+	int16 tmp_projPosX = _engine->_renderer->projPosXScreen;
+	int16 tmp_projPosY = _engine->_renderer->projPosYScreen;
+
+	_engine->_interface->resetClip();
+
+	if (bgRedraw) {
+		_engine->freezeTime();
+		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2) {
+			_engine->_screens->fadeOut(_engine->_screens->paletteRGBA);
+		}
+		_engine->_screens->clearScreen();
+		_engine->_grid->redrawGrid();
+		updateOverlayTypePosition(tmp_projPosX, tmp_projPosY, _engine->_renderer->projPosXScreen, _engine->_renderer->projPosYScreen);
+		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
+
+		if (_engine->_scene->needChangeScene != -1 && _engine->_scene->needChangeScene != -2) {
+			_engine->_screens->fadeIn(_engine->_screens->paletteRGBA);
+			_engine->setPalette(_engine->_screens->paletteRGBA);
+		}
+	} else {
+		blitBackgroundAreas();
+	}
+
+	int32 drawListPos = processActorDrawingList(bgRedraw);
+	drawListPos = processExtraDrawingList(drawListPos);
+	sortDrawingList(drawList, drawListPos);
+
+	currNumOfRedrawBox = 0;
+	processDrawList(drawListPos, bgRedraw);
+
+	if (_engine->cfgfile.Debug) {
+		_engine->_debugScene->displayZones();
+	}
+
+	renderOverlays();
 
 	_engine->_interface->resetClip();
 
