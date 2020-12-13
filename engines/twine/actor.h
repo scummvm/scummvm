@@ -24,6 +24,7 @@
 #define TWINE_ACTOR_H
 
 #include "common/scummsys.h"
+#include "twine/parser/body.h"
 #include "twine/parser/entity.h"
 #include "twine/shared.h"
 
@@ -307,6 +308,7 @@ public:
 	/** Actors 3D body table - size of NUM_BODIES */
 	uint8 *bodyTable[NUM_BODIES]{nullptr};
 	int32 bodyTableSize[NUM_BODIES]{0};
+	BodyData bodyData[NUM_BODIES];
 
 	/** Current position in body table */
 	int32 currentPositionInBodyPtrTab;
