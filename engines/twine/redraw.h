@@ -102,6 +102,10 @@ private:
 	void sortDrawingList(DrawListStruct *list, int32 listSize);
 	void updateOverlayTypePosition(int16 x1, int16 y1, int16 x2, int16 y2);
 
+	int32 processActorDrawingList(bool bgRedraw);
+	int32 processExtraDrawingList(int32 drawListPos);
+	void processDrawList(int32 drawListPos, bool bgRedraw);
+
 public:
 	Redraw(TwinEEngine *engine) : _engine(engine) {}
 
