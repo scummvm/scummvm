@@ -26,6 +26,7 @@
 #include "common/endian.h"
 #include "common/scummsys.h"
 #include "common/rect.h"
+#include "twine/parser/body.h"
 
 #define POLYGONTYPE_FLAT 0
 #define POLYGONTYPE_COPPER 1
@@ -96,6 +97,10 @@ struct Model {
 		return (bodyHeader & 2) != 0;
 	}
 
+	static inline bool isAnimated(const BodyData& bodyPtr) {
+		return bodyPtr.isAnimated();
+	}
+
 	static uint8* getData(uint8 *bodyPtr) {
 		return bodyPtr + 0x1A;
 	}
@@ -128,6 +133,14 @@ struct Model {
 		return getBonesBaseData(bodyPtr) + 8 + (boneIdx * 38);
 	}
 
+	static BoneFrame* getBonesStateData(BodyData &bodyPtr, int boneIdx) {
+		return bodyPtr.getBoneState(boneIdx);
+	}
+
+	static const BoneFrame* getBonesStateData(const BodyData &bodyPtr, int boneIdx) {
+		return bodyPtr.getBoneState(boneIdx);
+	}
+
 	static uint8* getBonesBaseData(uint8 *bodyPtr) {
 		return getBonesData(bodyPtr) + 2;
 	}
@@ -143,9 +156,17 @@ struct Model {
 		return READ_LE_INT16(bonesBase);
 	}
 
+	static int16 getNumBones(const BodyData &bodyPtr) {
+		return bodyPtr.getNumBones();
+	}
+
 	static int16 getNumVertices(const uint8 *bodyPtr) {
 		const uint8 *verticesBase = getData(bodyPtr);
 		return READ_LE_INT16(verticesBase);
+	}
+
+	static int16 getNumVertices(const BodyData &bodyPtr) {
+		return bodyPtr.getNumVertices();
 	}
 
 	static uint8* getShadesData(uint8 *bodyPtr) {
@@ -169,9 +190,17 @@ struct Model {
 		return READ_LE_INT16(shadesBase);
 	}
 
+	static int16 getNumShades(const BodyData &bodyPtr) {
+		return bodyPtr.getShades().size();
+	}
+
 	static int16 getNumShadesBone(const uint8 *bodyPtr, int boneIdx) {
 		const uint8 *bonesBase = getBonesBaseData(bodyPtr);
 		return READ_LE_INT16(bonesBase + (boneIdx * 38) + 18);
+	}
+
+	static int16 getNumShadesBone(const BodyData& bodyPtr, int boneIdx) {
+		return bodyPtr.getBone(boneIdx)->numOfShades;
 	}
 };
 
