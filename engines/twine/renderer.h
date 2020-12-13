@@ -95,6 +95,27 @@ struct Model {
 		const int16 bodyHeader = READ_LE_INT16(bodyPtr);
 		return (bodyHeader & 2) != 0;
 	}
+
+	static const uint8* getBonesData(const uint8 *bodyPtr) {
+		const uint8 *verticesBase = bodyPtr + 0x1A;
+		const int16 numVertices = READ_LE_INT16(verticesBase);
+		const uint8 *bonesBase = verticesBase + 2 + numVertices * 6;
+		return bonesBase + 2 + 8;
+	}
+
+	static uint8* getBonesData(uint8 *bodyPtr) {
+		uint8 *verticesBase = bodyPtr + 0x1A;
+		const int16 numVertices = READ_LE_INT16(verticesBase);
+		uint8 *bonesBase = verticesBase + 2 + numVertices * 6;
+		return bonesBase + 2 + 8;
+	}
+
+	static int16 getNumBones(const uint8 *bodyPtr) {
+		const uint8 *verticesBase = bodyPtr + 0x1A;
+		const int16 numVertices = READ_LE_INT16(verticesBase);
+		const uint8 *bonesBase = verticesBase + 2 + numVertices * 6;
+		return READ_LE_INT16(bonesBase);
+	}
 };
 
 #include "common/pack-start.h"
