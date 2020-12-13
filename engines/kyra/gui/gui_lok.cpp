@@ -974,7 +974,7 @@ void GUI_LoK::setupControls(Menu &menu) {
 			break;
 		default:
 			menu.item[3].itemString = "ERROR";
-		break;
+			break;
 		}
 	} else {
 		if (_vm->gameFlags().platform == Common::kPlatformAmiga)

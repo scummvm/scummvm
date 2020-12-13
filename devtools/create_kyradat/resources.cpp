@@ -45,9 +45,11 @@
 #include "resources/lok_dos_cd_french.h"
 #include "resources/lok_dos_cd_german.h"
 #include "resources/lok_dos_cd_italian.h"
+#include "resources/lok_dos_cd_spanish.h"
 #include "resources/lok_dos_cd_russian.h"
 #include "resources/lok_dos_cd_hebrew.h"
 #include "resources/lok_dos_cddemo.h"
+#include "resources/lok_dos_cddemo_english.h"
 
 #include "resources/lok_fmtowns.h"
 #include "resources/lok_fmtowns_english.h"
