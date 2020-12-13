@@ -43,34 +43,33 @@ Renderer::Renderer(TwinEEngine *engine) : _engine(engine), shadeAngleTab3(&shade
 }
 
 int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
-	if (!isUsingOrhoProjection) {
-		cX -= baseRotPosX;
-		cY -= baseRotPosY;
-		cZ -= baseRotPosZ;
+	if (isUsingOrhoProjection) {
+		projPosX = ((cX - cZ) * 24) / 512 + orthoProjX;
+		projPosY = (((cX + cZ) * 12) - cY * 30) / 512 + orthoProjY;
+		projPosZ = cZ - cY - cX;
+		return 1;
+	}
 
-		if (cZ >= 0) {
-			int32 posZ = cZ + cameraPosX;
+	cX -= baseRotPosX;
+	cY -= baseRotPosY;
+	cZ -= baseRotPosZ;
 
-			if (posZ < 0) {
-				posZ = 0x7FFF;
-			}
-
-			projPosX = (cX * cameraPosY) / posZ + orthoProjX;
-			projPosY = (-cY * cameraPosZ) / posZ + orthoProjY;
-			projPosZ = posZ;
-			return -1;
-		}
-
+	if (cZ < 0) {
 		projPosX = 0;
 		projPosY = 0;
 		projPosZ = 0;
 		return 0;
 	}
-	projPosX = ((cX - cZ) * 24) / 512 + orthoProjX;
-	projPosY = (((cX + cZ) * 12) - cY * 30) / 512 + orthoProjY;
-	projPosZ = cZ - cY - cX;
 
-	return 1;
+	int32 posZ = cZ + cameraPosX;
+	if (posZ < 0) {
+		posZ = 0x7FFF;
+	}
+
+	projPosX = (cX * cameraPosY) / posZ + orthoProjX;
+	projPosY = (-cY * cameraPosZ) / posZ + orthoProjY;
+	projPosZ = posZ;
+	return -1;
 }
 
 void Renderer::setCameraPosition(int32 x, int32 y, int32 cX, int32 cY, int32 cZ) {
