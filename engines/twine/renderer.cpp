@@ -1252,43 +1252,43 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 	// jump after the header
 	bodyPtr += 0x1A;
 
-	const int32 numOfPoints = *((const uint16 *)bodyPtr);
+	const int32 numVertices = *((const uint16 *)bodyPtr);
 	bodyPtr += 2;
 	const pointTab *pointsPtr = (const pointTab *)bodyPtr;
 
-	bodyPtr += numOfPoints * sizeof(pointTab);
+	bodyPtr += numVertices * sizeof(pointTab);
 
-	const int32 numOfElements = *((const uint16 *)bodyPtr);
+	const int32 numBones = *((const uint16 *)bodyPtr);
 	bodyPtr += 2;
-	const elementEntry *elemEntryPtr = (const elementEntry *)bodyPtr;
+	const elementEntry *bonesPtr = (const elementEntry *)bodyPtr;
 
 	Matrix *modelMatrix = &matricesTable[0];
 
-	processRotatedElement(modelMatrix, pointsPtr, renderAngleX, renderAngleY, renderAngleZ, elemEntryPtr, modelData);
+	processRotatedElement(modelMatrix, pointsPtr, renderAngleX, renderAngleY, renderAngleZ, bonesPtr, modelData);
 
-	++elemEntryPtr;
+	++bonesPtr;
 
 	int32 numOfPrimitives = 0;
 
-	if (numOfElements - 1 != 0) {
-		numOfPrimitives = numOfElements - 1;
+	if (numBones - 1 != 0) {
+		numOfPrimitives = numBones - 1;
 		modelMatrix = &matricesTable[1];
 
 		do {
-			int16 boneType = elemEntryPtr->flag;
+			int16 boneType = bonesPtr->flag;
 
 			if (boneType == 0) {
-				processRotatedElement(modelMatrix, pointsPtr, elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr, modelData);
+				processRotatedElement(modelMatrix, pointsPtr, bonesPtr->rotateX, bonesPtr->rotateY, bonesPtr->rotateZ, bonesPtr, modelData);
 			} else if (boneType == 1) {
-				processTranslatedElement(modelMatrix, pointsPtr, elemEntryPtr->rotateX, elemEntryPtr->rotateY, elemEntryPtr->rotateZ, elemEntryPtr, modelData);
+				processTranslatedElement(modelMatrix, pointsPtr, bonesPtr->rotateX, bonesPtr->rotateY, bonesPtr->rotateZ, bonesPtr, modelData);
 			}
 
 			++modelMatrix;
-			++elemEntryPtr;
+			++bonesPtr;
 		} while (--numOfPrimitives);
 	}
 
-	numOfPrimitives = numOfPoints;
+	numOfPrimitives = numVertices;
 
 	const pointTab *pointPtr = &modelData->computedPoints[0];
 	pointTab *pointPtrDest = &modelData->flattenPoints[0];
@@ -1382,7 +1382,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 		} while (--numOfPrimitives);
 	}
 
-	int32 *shadePtr = (int32 *)(bodyPtr + numOfElements * sizeof(elementEntry));
+	int32 *shadePtr = (int32 *)(bodyPtr + numBones * sizeof(elementEntry));
 
 	int32 numOfShades = *((const uint16 *)shadePtr);
 
@@ -1392,7 +1392,7 @@ int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, Render
 		uint8 *currentShadeDestination = (uint8 *)modelData->shadeTable;
 		Matrix *lightMatrix = &matricesTable[0];
 
-		numOfPrimitives = numOfElements;
+		numOfPrimitives = numBones;
 
 		const uint8 *tmpElemPtr = bodyPtr + 18;
 		const uint8 *pri2Ptr3 = tmpElemPtr;
