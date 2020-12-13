@@ -105,6 +105,7 @@ private:
 	int32 processActorDrawingList(bool bgRedraw);
 	int32 processExtraDrawingList(int32 drawListPos);
 	void processDrawList(int32 drawListPos, bool bgRedraw);
+	void renderOverlays();
 
 public:
 	Redraw(TwinEEngine *engine) : _engine(engine) {}
