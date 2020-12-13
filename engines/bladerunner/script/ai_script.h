@@ -118,8 +118,8 @@ END_SCRIPT
 
 DECLARE_SCRIPT(Steele)
 	bool _resumeIdleAfterFramesetCompletesFlag;
-	int _var1;
-	int _var2;
+	int _varChooseIdleAnimation;
+	int _varNumOfTimesToHoldCurrentFrame;
 
 	double comp_distance(int actorId, float a5, float a6, int a1, float a2, float a3, float a4);
 END_SCRIPT
@@ -156,8 +156,8 @@ DECLARE_SCRIPT(Guzza)
 END_SCRIPT
 
 DECLARE_SCRIPT(Clovis)
-	int _var1;
-	int _var2;
+	int _varChooseIdleAnimation;
+	int _varNumOfTimesToHoldCurrentFrame;
 	int _var3;
 	int _var4;
 	int _var5;
@@ -177,8 +177,8 @@ END_SCRIPT
 DECLARE_SCRIPT(Izo)
 	int _var1;
 	int _var2;
-	int _var3;
-	int _var4;
+	int _varNumOfTimesToHoldCurrentFrame;
+	int _varChooseIdleAnimation;
 	bool _resumeIdleAfterFramesetCompletesFlag;
 
 	void dialogueWithIzo();
@@ -187,8 +187,8 @@ END_SCRIPT
 
 DECLARE_SCRIPT(Sadik)
 	int _nextSoundId;
-	int _var2;
-	int _var3;
+	int _varChooseIdleAnimation;
+	int _varNumOfTimesToHoldCurrentFrame;
 	int _var4;
 	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
@@ -202,8 +202,8 @@ DECLARE_SCRIPT(Luther)
 END_SCRIPT
 
 DECLARE_SCRIPT(Grigorian)
-	int var_45CA10;
-	int var_45CA14;
+	int _varChooseIdleAnimation;
+	int _varNumOfTimesToHoldCurrentFrame;
 END_SCRIPT
 
 DECLARE_SCRIPT(Transient)
@@ -241,8 +241,8 @@ DECLARE_SCRIPT(TyrellGuard)
 END_SCRIPT
 
 DECLARE_SCRIPT(EarlyQ)
-	int _var1;
-	int _var2;
+	int _varNumOfTimesToHoldCurrentFrame;
+	int _varChooseIdleAnimation;
 	int _var3;
 	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
@@ -260,10 +260,10 @@ END_SCRIPT
 DECLARE_SCRIPT(Hasan)
 	int _var1;
 	int _var2;
-	int _var3;
+	int _varNumOfTimesToHoldCurrentFrame;
 	int _var4;
 	int _var5;
-	int _var6;
+	int _varChooseIdleAnimation;
 END_SCRIPT
 
 DECLARE_SCRIPT(Marcus)
@@ -274,20 +274,20 @@ DECLARE_SCRIPT(Mia)
 END_SCRIPT
 
 DECLARE_SCRIPT(OfficerLeary)
-	int var_45D5B8;
-	int var_45D5BC;
+	int _varChooseIdleAnimation;
+	bool _idleModeRequestedWhileInTalkingState;
 END_SCRIPT
 
 DECLARE_SCRIPT(OfficerGrayford)
-	int _var1;
+	int _varChooseIdleAnimation;
 	bool _resumeIdleAfterFramesetCompletesFlag;
-	int _var3;
+	int _varNumOfTimesToHoldCurrentFrame;
 END_SCRIPT
 
 DECLARE_SCRIPT(Hanoi)
 	bool _resumeIdleAfterFramesetCompletesFlag;
-	bool _flag1;
-	int _var3;
+	int _varChooseIdleAnimation;
+	int _varNumOfTimesToHoldCurrentFrame;
 	int _var4;
 END_SCRIPT
 
@@ -295,13 +295,13 @@ DECLARE_SCRIPT(Baker)
 END_SCRIPT
 
 DECLARE_SCRIPT(DeskClerk)
-	bool _flag1;
+	int  _varChooseIdleAnimation;
 	bool _resumeIdleAfterFramesetCompletesFlag;
-	int _var3;
+	int _varNumOfTimesToHoldCurrentFrame;
 END_SCRIPT
 
 DECLARE_SCRIPT(HowieLee)
-	bool var_45DFB8;
+	int _varIdleStatesToggle;
 END_SCRIPT
 
 DECLARE_SCRIPT(FishDealer)
@@ -429,8 +429,8 @@ END_SCRIPT
 
 DECLARE_SCRIPT(Isabella)
 	int _var1;
-	int _var2;
-	int _var3;
+	int _varNumOfTimesToHoldCurrentFrame;
+	int _varChooseIdleAnimation;
 	int _var4;
 END_SCRIPT
 
@@ -473,9 +473,9 @@ END_SCRIPT
 DECLARE_SCRIPT(Maggie)
 	int var_45F3F8;
 	int var_45F3FC;
-	int var_45F400;
-	int var_45F404;
-	int var_45F408;
+	int var_45F400; // only set to 0. unused
+	int var_45F404; // only set to 0. unused
+	int var_45F408; // only set to 0. unused
 
 	int randomWaypointMA02();
 	float distanceToActor(int actorId, float x, float y, float z);

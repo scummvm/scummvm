@@ -419,7 +419,8 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
-		*animation = 399;
+		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
+		*animation = kModelAnimationZubenWalking;
 		break;
 	}
 	*frame = _animationFrame;

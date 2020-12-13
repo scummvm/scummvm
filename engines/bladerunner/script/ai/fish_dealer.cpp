@@ -193,64 +193,64 @@ bool AIScriptFishDealer::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptFishDealer::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 683;
+		*animation = kModelAnimationFishDealerIdle;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(683))
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationFishDealerIdle))
 			_animationFrame = 0;
 
 		break;
 
 	case 1:
 		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
-			*animation = 683;
+			*animation = kModelAnimationFishDealerIdle;
 			_animationState = 0;
 			_resumeIdleAfterFramesetCompletesFlag = false;
 		} else {
-			*animation = 685;
+			*animation = kModelAnimationFishDealerCalmTalk;
 			++_animationFrame;
 
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(685))
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationFishDealerCalmTalk))
 				_animationFrame = 0;
 		}
 		break;
 
 	case 2:
-		*animation = 686;
+		*animation = kModelAnimationFishDealerExplainTalk;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(686)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationFishDealerExplainTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
 		}
 		break;
 
 	case 3:
-		*animation = 687;
+		*animation = kModelAnimationFishDealerNoTroubleTalk;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(687)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationFishDealerNoTroubleTalk)) {
 			_animationFrame = 0;
 			_animationState = 3;
 		}
 		break;
 
 	case 4:
-		*animation = 684;
+		*animation = kModelAnimationFishDealerGestureGive;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(684)) {
-			*animation = 683;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationFishDealerGestureGive)) {
+			*animation = kModelAnimationFishDealerIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 5:
-		*animation = 682;
+		*animation = kModelAnimationFishDealerWalking;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(682))
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationFishDealerWalking))
 			_animationFrame = 0;
 
 		break;

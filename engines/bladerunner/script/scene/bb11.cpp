@@ -45,17 +45,17 @@ void SceneScriptBB11::InitializeScene() {
 
 	if (Game_Flag_Query(kFlagBB11SadikFight)) {
 		Preload(kModelAnimationMcCoyIdle);
-		Preload(220);
-		Preload(227);
-		Preload(328);
-		Preload(343);
-		Preload(344);
+		Preload(kModelAnimationClovisWalking);
+		Preload(kModelAnimationClovisIdle);
+		Preload(kModelAnimationSadikIdle);
+		Preload(kModelAnimationSadikKicksSomeoneWhoIsDown);
+		Preload(kModelAnimationSadikHoldsSomeoneAndPunches);
 		Preload(kModelAnimationMcCoyGotHitRight);
 		Preload(kModelAnimationMcCoyRunning);
-		Preload(324);
-		Preload(323);
+		Preload(kModelAnimationSadikRunning);
+		Preload(kModelAnimationSadikWalking);
 		Preload(kModelAnimationMcCoyFallsOnHisBack);
-		Preload(345);
+		Preload(kModelAnimationSadikPicksUpAndThrowsMcCoy);
 	}
 }
 
