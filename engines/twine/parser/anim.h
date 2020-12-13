@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef TWINE_BODY_H
-#define TWINE_BODY_H
+#ifndef TWINE_ANIM_H
+#define TWINE_ANIM_H
 
 #include "common/array.h"
 #include "common/stream.h"

@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/memstream.h"
 #include "common/stream.h"
+#include "twine/parser/anim.h"
 #include "twine/shared.h"
 
 namespace TwinE {
@@ -40,6 +41,8 @@ struct BodyVertex {
 struct BodyBone {
 	uint16 parent;
 	uint16 vertex;
+	int32 numOfShades;
+	BoneFrame initalBoneState;
 };
 
 struct BodyShade {
@@ -86,6 +89,8 @@ private:
 	Common::Array<BodyLine> _lines;
 	Common::Array<BodyBone> _bones;
 
+	BoneFrame _boneStates[560];
+
 public:
 	struct BodyFlags {
 		uint16 unk1 : 1;            // 1 << 0
@@ -118,18 +123,57 @@ public:
 		return bodyFlag.animated;
 	}
 
-	inline uint numBones() const {
+	inline uint getNumBones() const {
 		return _bones.size();
+	}
+
+	inline uint getNumVertices() const {
+		return _vertices.size();
+	}
+
+	BoneFrame* getBoneState(int16 boneIdx) {
+		return &_boneStates[boneIdx];
+	}
+
+	const BoneFrame* getBoneState(int16 boneIdx) const {
+		return &_boneStates[boneIdx];
+	}
+
+	const Common::Array<BodyPolygon>& getPolygons() const {
+		return _polygons;
+	}
+
+	const Common::Array<BodyVertex>& getVertices() const {
+		return _vertices;
+	}
+
+	const Common::Array<BodySphere>& getSpheres() const {
+		return _spheres;
+	}
+
+	const Common::Array<BodyShade>& getShades() const {
+		return _shades;
+	}
+
+	const BodyShade* getShade(int16 shadeIdx) const {
+		return &_shades[shadeIdx];
+	}
+
+	const Common::Array<BodyLine>& getLines() const {
+		return _lines;
+	}
+
+	const Common::Array<BodyBone>& getBones() const {
+		return _bones;
+	}
+
+	const BodyBone* getBone(int16 boneIdx) const {
+		return &_bones[boneIdx];
 	}
 
 	bool loadFromStream(Common::SeekableReadStream &stream);
 
 	bool loadFromBuffer(const uint8 *buf, uint32 size);
-
-	static inline bool isAnimated(const uint8* bodyPtr) {
-		const int16 bodyHeader = READ_LE_INT16(bodyPtr);
-		return (bodyHeader & 2) != 0;
-	}
 };
 
 } // End of namespace TwinE
