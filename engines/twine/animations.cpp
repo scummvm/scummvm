@@ -75,27 +75,6 @@ const uint8* Animations::getKeyFrameData(int32 frameIdx, const uint8 *animPtr) {
 	return (const uint8 *)((numOfBonesInAnim * 8 + 8) * frameIdx + animPtr + 8);
 }
 
-const uint8* Animations::getBonesData(const uint8 *bodyPtr) const {
-	const uint8 *verticesBase = bodyPtr + 0x1A;
-	const int16 numVertices = READ_LE_INT16(verticesBase);
-	const uint8 *bonesBase = verticesBase + 2 + numVertices * 6;
-	return bonesBase + 2 + 8;
-}
-
-uint8* Animations::getBonesData(uint8 *bodyPtr) const {
-	uint8 *verticesBase = bodyPtr + 0x1A;
-	const int16 numVertices = READ_LE_INT16(verticesBase);
-	uint8 *bonesBase = verticesBase + 2 + numVertices * 6;
-	return bonesBase + 2 + 8;
-}
-
-int16 Animations::getNumBones(const uint8 *bodyPtr) const {
-	const uint8 *verticesBase = bodyPtr + 0x1A;
-	const int16 numVertices = READ_LE_INT16(verticesBase);
-	const uint8 *bonesBase = verticesBase + 2 + numVertices * 6;
-	return READ_LE_INT16(bonesBase);
-}
-
 int16 Animations::getNumKeyframes(const uint8 *animPtr) {
 	return READ_LE_INT16(animPtr + 0);
 }
@@ -163,8 +142,8 @@ bool Animations::setModelAnimation(int32 keyframeIdx, const uint8 *animPtr, uint
 	processRotationByAnim = keyFrame->boneframes[0].type;
 	processLastRotationAngle = ToAngle(keyFrame->boneframes[0].y);
 
-	const int16 numBones = getNumBones(bodyPtr);
-	uint8 *bonesPtr = getBonesData(bodyPtr);
+	const int16 numBones = Model::getNumBones(bodyPtr);
+	uint8 *bonesPtr = Model::getBonesData(bodyPtr);
 
 	int32 numOfBonesInAnim = animData.getNumBoneframes();
 	if (numOfBonesInAnim > numBones) {
@@ -258,8 +237,8 @@ void Animations::setAnimAtKeyframe(int32 keyframeIdx, const uint8 *animPtr, uint
 	animTimerDataPtr->ptr = getKeyFrameData(keyframeIdx, animPtr);
 	animTimerDataPtr->time = _engine->lbaTime;
 
-	const int16 numBones = getNumBones(bodyPtr);
-	uint8 *bonesPtr = getBonesData(bodyPtr);
+	const int16 numBones = Model::getNumBones(bodyPtr);
+	uint8 *bonesPtr = Model::getBonesData(bodyPtr);
 
 	int16 numOfBonesInAnim = animData.getNumBoneframes();
 	if (numOfBonesInAnim > numBones) {
@@ -286,8 +265,8 @@ void Animations::stockAnimation(const uint8 *bodyPtr, AnimTimerDataStruct *animT
 	animTimerDataPtr->time = _engine->lbaTime;
 	animTimerDataPtr->ptr = animBufferPos;
 
-	const int32 numBones = getNumBones(bodyPtr);
-	const uint8 *ptrToData = getBonesData(bodyPtr);
+	const int32 numBones = Model::getNumBones(bodyPtr);
+	const uint8 *ptrToData = Model::getBonesData(bodyPtr);
 
 	uint8 *bonesPtr = animBufferPos + 8;
 

@@ -38,10 +38,6 @@ private:
 	void applyAnimStepTranslation(uint8 *ptr, int32 deltaTime, int32 keyFrameLength, const uint8 *keyFramePtr, const uint8 *lastKeyFramePtr);
 	int32 getAnimMode(uint8 *ptr, const uint8 *keyFramePtr);
 
-	const uint8* getBonesData(const uint8 *bodyPtr) const;
-	uint8* getBonesData(uint8 *bodyPtr) const;
-	int16 getNumBones(const uint8 *bodyPtr) const;
-
 	/**
 	 * Verify animation at keyframe
 	 * @param keyframeIdx Animation key frame index
