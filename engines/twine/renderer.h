@@ -145,8 +145,8 @@ struct Model {
 		return getBonesData(bodyPtr) + 2;
 	}
 
-	static const uint8* getBonesBaseData(const uint8 *bodyPtr) {
-		return getBonesData(bodyPtr) + 2;
+	static const uint8* getBonesBaseData(const uint8 *bodyPtr, int boneIdx = 0) {
+		return getBonesData(bodyPtr) + 2 + (boneIdx * 38);
 	}
 
 	static int16 getNumBones(const uint8 *bodyPtr) {
@@ -177,6 +177,10 @@ struct Model {
 
 	static const uint8* getShadesBaseData(const uint8 *bodyPtr, int16 shadeIdx = 0) {
 		return getShadesData(bodyPtr) + 2 + (shadeIdx * 8);
+	}
+
+	static const BodyShade* getShadesBaseData(const BodyData &bodyPtr, int16 shadeIdx = 0) {
+		return bodyPtr.getShade(shadeIdx);
 	}
 
 	static const uint8* getShadesData(const uint8 *bodyPtr) {
