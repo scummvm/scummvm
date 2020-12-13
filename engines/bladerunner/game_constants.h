@@ -2226,7 +2226,11 @@ enum GameModelAnimations {
 	// 555 - 565: Tyrell Guard animations
 		// TODO
 	// 566 - 570: Mia animations
-		// TODO
+	kModelAnimationMiaIdle             = 566,
+	kModelAnimationMiaGestureGive      = 567, // TODO when is this used? animationMode 23
+	kModelAnimationMiaHeadNodTalk      = 568,
+	kModelAnimationMiaMoreCalmTalk     = 569,
+	kModelAnimationMiaHandsOnWaistTalk = 570,
 	// 571 - 604: Officer Leary animations
 	kModelAnimationOfficerLearyCombatIdle             = 571,
 	kModelAnimationOfficerLearyCombatGotHitRight      = 572,
@@ -2362,7 +2366,13 @@ enum GameModelAnimations {
 	kModelAnimationKleinTalkDismissive             = 696,
 	kModelAnimationKleinTalkRaisingBothHands       = 697,
 	// 698 - 704: Murray animations
-		// TODO
+	kModelAnimationMurrayIdle            = 698,
+	kModelAnimationMurrayGestureGive     = 699, // untriggered
+	kModelAnimationMurrayCalmTalk        = 700,
+	kModelAnimationMurrayMoreCalmTalk    = 701,
+	kModelAnimationMurrayExplainTalk     = 702,
+	kModelAnimationMurrayMoreExplainTalk = 703,
+	kModelAnimationMurrayCautionTalk     = 704,
 	// 705 - 715: Hawker's Barkeep animations
 		// TODO
 	// 716 - 721: Holloway animations

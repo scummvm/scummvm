@@ -110,30 +110,30 @@ bool AIScriptMia::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 566;
+		*animation = kModelAnimationMiaIdle;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(566))
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMiaIdle))
 			_animationFrame = 0;
 
 		break;
 
 	case 1:
-		*animation = 567;
+		*animation = kModelAnimationMiaGestureGive;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(567)) {
-			*animation = 566;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMiaGestureGive)) {
+			*animation = kModelAnimationMiaIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 2:
-		*animation = 568;
+		*animation = kModelAnimationMiaHeadNodTalk;
 
 		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
-			*animation = 566;
+			*animation = kModelAnimationMiaIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		} else {
@@ -146,22 +146,22 @@ bool AIScriptMia::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 3:
-		*animation = 569;
+		*animation = kModelAnimationMiaMoreCalmTalk;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(569)) {
-			*animation = 568;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMiaMoreCalmTalk)) {
+			*animation = kModelAnimationMiaHeadNodTalk;
 			_animationFrame = 0;
 			_animationState = 2;
 		}
 		break;
 
 	case 4:
-		*animation = 570;
+		*animation = kModelAnimationMiaHandsOnWaistTalk;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(570)) {
-			*animation = 568;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMiaHandsOnWaistTalk)) {
+			*animation = kModelAnimationMiaHeadNodTalk;
 			_animationFrame = 0;
 			_animationState = 2;
 		}
