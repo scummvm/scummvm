@@ -1150,7 +1150,7 @@ const Renderer::RenderCommand *Renderer::depthSortRenderCommands(int32 numOfPrim
 	return _renderCmdsSortedByDepth;
 }
 
-int32 Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPtr, RenderCommand **renderCmds, ModelData *modelData) {
+bool Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPtr, RenderCommand **renderCmds, ModelData *modelData) {
 	// TODO: proper size
 	Common::MemoryReadStream stream(polygonPtr, 100000);
 
@@ -1164,7 +1164,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonP
 		_engine->_redraw->renderRect.bottom = -1;
 		_engine->_redraw->renderRect.left = -1;
 		_engine->_redraw->renderRect.top = -1;
-		return -1;
+		return false;
 	}
 	const RenderCommand *cmds = depthSortRenderCommands(numOfPrimitives);
 
@@ -1229,10 +1229,10 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonP
 
 		cmds++;
 	} while (--primitiveCounter);
-	return 0;
+	return true;
 }
 
-int32 Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, RenderCommand *renderCmds) {
+bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, RenderCommand *renderCmds) {
 	const int32 numVertices = Model::getNumVertices(bodyPtr);
 	const int32 numBones = Model::getNumBones(bodyPtr);
 
@@ -1449,7 +1449,7 @@ void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
 	}
 }
 
-int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const uint8 *bodyPtr) {
+bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const uint8 *bodyPtr) {
 	renderAngleX = angleX;
 	renderAngleY = angleY;
 	renderAngleZ = angleZ;
@@ -1472,12 +1472,11 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 		renderZ = destZ - baseRotPosZ;
 	}
 
-	if (Model::isAnimated(bodyPtr)) {
-		// restart at the beginning of the renderTable
-		return renderAnimatedModel(&_modelData, bodyPtr, _renderCmds);
+	if (!Model::isAnimated(bodyPtr)) {
+		error("Unsupported unanimated model render!");
 	}
-	error("Unsupported unanimated model render!");
-	return 0;
+	// restart at the beginning of the renderTable
+	return renderAnimatedModel(&_modelData, bodyPtr, _renderCmds);
 }
 
 void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, const uint8 *bodyPtr) {

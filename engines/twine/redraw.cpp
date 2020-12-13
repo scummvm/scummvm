@@ -232,7 +232,7 @@ int32 Redraw::fillActorDrawingList(bool bgRedraw) {
 		_engine->_renderer->projectPositionOnScreen(actor->x - _engine->_grid->cameraX, actor->y - _engine->_grid->cameraY, actor->z - _engine->_grid->cameraZ);
 
 		if ((actor->staticFlags.bUsesClipping && _engine->_renderer->projPosX > -112 && _engine->_renderer->projPosX < SCREEN_WIDTH + 112 && _engine->_renderer->projPosY > -50 && _engine->_renderer->projPosY < SCREEN_HEIGHT + 171) ||
-			((!actor->staticFlags.bUsesClipping) && _engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < SCREEN_WIDTH + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < SCREEN_HEIGHT + 100)) {
+		    ((!actor->staticFlags.bUsesClipping) && _engine->_renderer->projPosX > -50 && _engine->_renderer->projPosX < SCREEN_WIDTH + 40 && _engine->_renderer->projPosY > -30 && _engine->_renderer->projPosY < SCREEN_HEIGHT + 100)) {
 
 			int32 tmpVal = actor->z + actor->x - _engine->_grid->cameraX - _engine->_grid->cameraZ;
 
@@ -323,7 +323,7 @@ int32 Redraw::fillExtraDrawingList(int32 drawListPos) {
 	return drawListPos;
 }
 
-void Redraw::processDrawListShadows(const DrawListStruct& drawCmd) {
+void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 	// get actor position on screen
 	_engine->_renderer->projectPositionOnScreen(drawCmd.x - _engine->_grid->cameraX, drawCmd.y - _engine->_grid->cameraY, drawCmd.z - _engine->_grid->cameraZ);
 
@@ -354,57 +354,62 @@ void Redraw::processDrawListShadows(const DrawListStruct& drawCmd) {
 	//drawBox(_engine->_renderer->renderRect.left, _engine->_renderer->renderRect.top, _engine->_renderer->renderRect.right, _engine->_renderer->renderRect.bottom);
 }
 
-void Redraw::processDrawListActors(const DrawListStruct& drawCmd, bool bgRedraw) {
+void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw) {
 	int32 actorIdx = drawCmd.actorIdx;
 	ActorStruct *actor2 = _engine->_scene->getActor(actorIdx);
 	_engine->_animations->setModelAnimation(actor2->animPosition, _engine->_resources->animTable[actor2->previousAnimIdx], _engine->_actor->bodyTable[actor2->entity], &actor2->animTimerData);
 
-	if (!_engine->_renderer->renderIsoModel(actor2->x - _engine->_grid->cameraX, actor2->y - _engine->_grid->cameraY, actor2->z - _engine->_grid->cameraZ, 0, actor2->angle, 0, _engine->_actor->bodyTable[actor2->entity])) {
-		if (renderRect.left < SCREEN_TEXTLIMIT_LEFT) {
-			renderRect.left = SCREEN_TEXTLIMIT_LEFT;
+	const int32 x = actor2->x - _engine->_grid->cameraX;
+	const int32 y = actor2->y - _engine->_grid->cameraY;
+	const int32 z = actor2->z - _engine->_grid->cameraZ;
+	if (!_engine->_renderer->renderIsoModel(x, y, z, 0, actor2->angle, 0, _engine->_actor->bodyTable[actor2->entity])) {
+		return;
+	}
+
+	if (renderRect.left < SCREEN_TEXTLIMIT_LEFT) {
+		renderRect.left = SCREEN_TEXTLIMIT_LEFT;
+	}
+
+	if (renderRect.top < SCREEN_TEXTLIMIT_TOP) {
+		renderRect.top = SCREEN_TEXTLIMIT_TOP;
+	}
+
+	if (renderRect.right >= SCREEN_WIDTH) {
+		renderRect.right = SCREEN_TEXTLIMIT_RIGHT;
+	}
+
+	if (renderRect.bottom >= SCREEN_HEIGHT) {
+		renderRect.bottom = SCREEN_TEXTLIMIT_BOTTOM;
+	}
+
+	_engine->_interface->setClip(renderRect);
+
+	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
+		actor2->dynamicFlags.bIsVisible = 1;
+
+		const int32 tempX = (actor2->x + 0x100) >> 9;
+		int32 tempY = actor2->y >> 8;
+		const int32 tempZ = (actor2->z + 0x100) >> 9;
+		if (actor2->brickShape() != ShapeType::kNone) {
+			tempY++;
 		}
 
-		if (renderRect.top < SCREEN_TEXTLIMIT_TOP) {
-			renderRect.top = SCREEN_TEXTLIMIT_TOP;
+		_engine->_grid->drawOverModelActor(tempX, tempY, tempZ);
+
+		if (_engine->_actor->cropBottomScreen) {
+			renderRect.bottom = _engine->_interface->textWindow.bottom = _engine->_actor->cropBottomScreen + 10;
 		}
 
-		if (renderRect.right >= SCREEN_WIDTH) {
-			renderRect.right = SCREEN_TEXTLIMIT_RIGHT;
-		}
+		const Common::Rect rect(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
+		addRedrawArea(rect);
 
-		if (renderRect.bottom >= SCREEN_HEIGHT) {
-			renderRect.bottom = SCREEN_TEXTLIMIT_BOTTOM;
-		}
-
-		_engine->_interface->setClip(renderRect);
-
-		if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-			actor2->dynamicFlags.bIsVisible = 1;
-
-			const int32 tempX = (actor2->x + 0x100) >> 9;
-			int32 tempY = actor2->y >> 8;
-			const int32 tempZ = (actor2->z + 0x100) >> 9;
-			if (actor2->brickShape() != ShapeType::kNone) {
-				tempY++;
-			}
-
-			_engine->_grid->drawOverModelActor(tempX, tempY, tempZ);
-
-			if (_engine->_actor->cropBottomScreen) {
-				renderRect.bottom = _engine->_interface->textWindow.bottom = _engine->_actor->cropBottomScreen + 10;
-			}
-
-			const Common::Rect rect(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
-			addRedrawArea(rect);
-
-			if (actor2->staticFlags.bIsBackgrounded && bgRedraw) {
-				_engine->_interface->blitBox(rect, _engine->frontVideoBuffer, _engine->workVideoBuffer);
-			}
+		if (actor2->staticFlags.bIsBackgrounded && bgRedraw) {
+			_engine->_interface->blitBox(rect, _engine->frontVideoBuffer, _engine->workVideoBuffer);
 		}
 	}
 }
 
-void Redraw::processDrawListActorSprites(const DrawListStruct& drawCmd, bool bgRedraw) {
+void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgRedraw) {
 	int32 actorIdx = drawCmd.actorIdx;
 	ActorStruct *actor2 = _engine->_scene->getActor(actorIdx);
 	const uint8 *spritePtr = _engine->_resources->spriteTable[actor2->entity];
@@ -462,7 +467,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct& drawCmd, bool bgR
 	}
 }
 
-void Redraw::processDrawListExtras(const DrawListStruct& drawCmd) {
+void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 	int32 actorIdx = drawCmd.actorIdx;
 	ExtraListStruct *extra = &_engine->_extra->extraList[actorIdx];
 
@@ -502,7 +507,7 @@ void Redraw::processDrawListExtras(const DrawListStruct& drawCmd) {
 
 void Redraw::processDrawList(int32 drawListPos, bool bgRedraw) {
 	for (int32 pos = 0; pos < drawListPos; ++pos) {
-		const DrawListStruct& drawCmd = drawList[pos];
+		const DrawListStruct &drawCmd = drawList[pos];
 		const uint32 flags = drawCmd.type;
 		// Drawing actors
 		if (flags < DrawListType::DrawShadows) {
