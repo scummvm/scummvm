@@ -240,6 +240,7 @@ int32 Actor::initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoun
 					if (bodyTableSize[index] == 0) {
 						error("HQR ERROR: Loading body entities");
 					}
+					bodyData[index].loadFromBuffer(bodyTable[index], bodyTableSize[index]);
 					Renderer::prepareIsoModel(bodyTable[index]);
 					stream.seek(stream.pos() - sizeof(uint16));
 					stream.writeUint16LE(index + 0x8000);
@@ -317,27 +318,22 @@ void Actor::initModelActor(int32 bodyIdx, int16 actorIdx) {
 		bbox.z.topRight = actorBoundingBox.topRightZ;
 	} else {
 		ZVBox &bbox = localActor->boudingBox;
-		Common::MemoryReadStream stream(bodyTable[localActor->entity], bodyTableSize[localActor->entity]);
-		stream.skip(2);
-		const int16 var1 = stream.readSint16LE();
-		const int16 var2 = stream.readSint16LE();
-		bbox.y.bottomLeft = stream.readSint16LE();
-		bbox.y.topRight = stream.readSint16LE();
-		const int16 var3 = stream.readSint16LE();
-		const int16 var4 = stream.readSint16LE();
+		const BodyData& bd = bodyData[localActor->entity];
+		bbox.y.bottomLeft = bd.minsy;
+		bbox.y.topRight = bd.maxsy;
 
 		int32 result = 0;
-		const int32 result1 = var2 - var1;
-		const int32 result2 = var4 - var3;
+		const int32 distX = bd.maxsx - bd.minsx;
+		const int32 distZ = bd.maxsz - bd.minsz;
 		if (localActor->staticFlags.bUseMiniZv) {
 			// take smaller for bound
-			result = MIN(result1, result2);
+			result = MIN(distX, distZ);
 
 			result = ABS(result);
 			result >>= 1;
 		} else {
 			// take average for bound
-			result = result2 + result1;
+			result = distZ + distX;
 			result = ABS(result);
 			result >>= 2;
 		}
