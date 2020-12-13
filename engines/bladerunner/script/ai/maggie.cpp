@@ -60,9 +60,9 @@ void AIScriptMaggie::Initialize() {
 	_animationNext = 0;
 	var_45F3F8 = 0;
 	var_45F3FC = 0;
-	var_45F400 = 0;
-	var_45F404 = 0;
-	var_45F408 = 0;
+	var_45F400 = 0; // only assigned to 0. Never checked. Unused.
+	var_45F404 = 0; // only assigned to 0. Never checked. Unused.
+	var_45F408 = 0; // only assigned to 0. Never checked. Unused.
 	Actor_Set_Goal_Number(kActorMaggie, kGoalMaggieMA02Default);
 }
 

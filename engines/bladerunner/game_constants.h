@@ -1939,7 +1939,7 @@ enum GameModelAnimations {
 	kModelAnimationClovisStandingToKneeling                 = 239,
 	kModelAnimationClovisKneelingToStanding                 = 240,
 	kModelAnimationClovisKneelingTalking                    = 241,
-	kModelAnimationClovisJumpingDodging                     = 242, // animation mode 20 (TODO: Where is this used in game? In the Moonbus massacre scenario?)
+	kModelAnimationClovisJumpingDodging                     = 242, // animation mode 20 (TODO Where is this used in game? In the Moonbus massacre scenario?)
 	kModelAnimationClovisLayingWithBookIdle                 = 243,
 	kModelAnimationClovisLayingWithBookStopsReadingTalk     = 244,
 	kModelAnimationClovisLayingWithBookStillReadingTalk     = 245,
@@ -1976,13 +1976,120 @@ enum GameModelAnimations {
 	kModelAnimationLucyCombatDropsDead                      = 275, // Untriggered. Somewhat faster than kModelAnimationLucyShotDead (259)
 	kModelAnimationLucyRemovesNeckletDiesFromExplosion      = 276, // Untriggered
 	// 277 - 311: Izo animations
-		// TODO
+	kModelAnimationIzoCombatIdle              = 277,
+	kModelAnimationIzoCombatTurnRight         = 278, // untriggered
+	kModelAnimationIzoCombatTurnLeft          = 279, // untriggered
+	kModelAnimationIzoCombatGotHitRight       = 280,
+	kModelAnimationIzoCombatGotHitLeft        = 281,
+	kModelAnimationIzoCombatWalking           = 282,
+	kModelAnimationIzoCombatRunning           = 283,
+	kModelAnimationIzoCombatShotDead          = 284,
+	kModelAnimationIzoCombatClimbStairsUp     = 285, // untriggered
+	kModelAnimationIzoCombatClimbStairsDown   = 286, // untriggered
+	kModelAnimationIzoCombatUnseatheSword     = 287,
+	kModelAnimationIzoCombatSeatheSword       = 288,
+	kModelAnimationIzoCombatSwordAttack       = 289,
+	kModelAnimationIzoWalking                 = 290,
+	kModelAnimationIzoRunning                 = 291,
+	kModelAnimationIzoClimbStairsUp           = 292, // untriggered
+	kModelAnimationIzoClimbStairsDown         = 293, // untriggered
+	kModelAnimationIzoGotHitRight             = 294, // UNUSED
+	kModelAnimationIzoGotHitLeft              = 295, // UNUSED
+	kModelAnimationIzoShotDead                = 296,
+	kModelAnimationIzoIdle                    = 297,
+	kModelAnimationIzoAwkwardPlayWithHands    = 298,
+	kModelAnimationIzoCalmTalk                = 299,
+	kModelAnimationIzoMoreCalmTalk            = 300,
+	kModelAnimationIzoExplainingTalk          = 301,
+	kModelAnimationIzoHeadNodsAgreeingTalk    = 302,
+	kModelAnimationIzoOffensiveTalk           = 303,
+	kModelAnimationIzoHeadNodsDisagreeingTalk = 304,
+	kModelAnimationIzoUnderstandingTalk       = 305,
+	kModelAnimationIzoClimbLadderDown         = 306, // untriggered
+	kModelAnimationIzoClimbLadderUp           = 307, // untriggered
+	kModelAnimationIzoHoldingCameraIdle       = 308,
+	kModelAnimationIzoPicksCameraFromShop     = 309,
+	kModelAnimationIzoHoldingCameraTalk       = 310,
+	kModelAnimationIzoHoldingCameraUsesFlash  = 311,
 	// 312 - 345: Sadik animations
-		// TODO
-	// 316 - 359: Twins/Luther animations
-		// TODO
+	kModelAnimationSadikCombatIdle                       = 312,
+	kModelAnimationSadikCombatTurnRight                  = 313, // untriggered
+	kModelAnimationSadikCombatTurnLeft                   = 314, // untriggered
+	kModelAnimationSadikCombatGotHitFront                = 315,
+	kModelAnimationSadikCombatGotHitMore                 = 316,
+	kModelAnimationSadikCombatWalking                    = 317,
+	kModelAnimationSadikCombatRunning                    = 318,
+	kModelAnimationSadikCombatShotDead                   = 319, // UNUSED
+	kModelAnimationSadikCombatUnholsterGun               = 320,
+	kModelAnimationSadikCombatHolsterGun                 = 321, // untriggered
+	kModelAnimationSadikCombatFireGunAndReturnToPoseIdle = 322, // A bit bugged. Sadik has all dark/black clothes suddenly here.
+	kModelAnimationSadikWalking                          = 323,
+	kModelAnimationSadikRunning                          = 324,
+	kModelAnimationSadikGotHitFront                      = 325,
+	kModelAnimationSadikGotHitMore                       = 326,
+	kModelAnimationSadikShotDead                         = 327,
+	kModelAnimationSadikIdle                             = 328,
+	kModelAnimationSadikShiftsShoulders                  = 329,
+	kModelAnimationSadikGesturePointOrGive               = 330,
+	kModelAnimationSadikCalmTalk                         = 331,
+	kModelAnimationSadikMoreCalmTalk                     = 332,
+	kModelAnimationSadikSuggestTalk                      = 333,
+	kModelAnimationSadikUrgeTalk                         = 334,
+	kModelAnimationSadikAccuseTalk                       = 335,
+	kModelAnimationSadikProtestTalk                      = 336,
+	kModelAnimationSadikMockTalk                         = 337,
+	kModelAnimationSadikThisAndThatTalk                  = 338,
+	kModelAnimationSadikClimbLadderDown                  = 339, // untriggered
+	kModelAnimationSadikClimbLadderUp                    = 340, // untriggered
+	kModelAnimationSadikJumpAcross                       = 341, // untriggered
+	kModelAnimationSadikHangingDropsDown                 = 342, // untriggered
+	kModelAnimationSadikKicksSomeoneWhoIsDown            = 343,
+	kModelAnimationSadikHoldsSomeoneAndPunches           = 344,
+	kModelAnimationSadikPicksUpAndThrowsMcCoy            = 345, // A bit bugged. Last frames 27-30 are empty and Sadik's model looks rough/wrong-ish.
+	// 346 - 359: Twins/Luther animations
+	kModelAnimationTwinsSitIdle                          = 346,
+	kModelAnimationTwinsSitTyping                        = 347, // UNUSED
+	kModelAnimationTwinsSitLancePutsSomethingToTheLeft   = 348,
+	kModelAnimationTwinsSitLanceShortCalmTalk            = 349, // Mostly looks like Lance is talking. Probably could be used for both. 
+	kModelAnimationTwinsSitLanceLongerCalmTalk           = 350, // Mostly looks like Lance is talking. Probably could be used for both.
+	kModelAnimationTwinsSitLutherCalmTalk                = 351, // Mostly looks like Luther is talking. Probably could be used for both.
+	kModelAnimationTwinsSitLutherMoreCalmTalk            = 352, // Mostly looks like Luther is talking. Probably could be used for both.
+	kModelAnimationTwinsSitLanceMoreCalmTalk             = 353, // Mostly looks like Lance is talking. Probably could be used for both.
+	kModelAnimationTwinsSitLutherProtestTalk             = 354, // Mostly looks like Luther is talking. Probably could be used for both.
+	kModelAnimationTwinsSitLutherGoAheadTalk             = 355, // Mostly looks like Luther is talking. Probably could be used for both.
+	kModelAnimationTwinsSitLutherHitsOrFeedsLance        = 356, // TODO Check when this happens (animationMode: 6)
+	kModelAnimationTwinsSitDropForwards                  = 357,
+	kModelAnimationTwinsSitAlmostDeadLutherPushesButton  = 358,
+	kModelAnimationTwinsSitDieCompletely                 = 359,
 	// 360 - 387: EarlyQ animations
-		// TODO
+	kModelAnimationEarlyQCombatIdle                  = 360,
+	kModelAnimationEarlyQCombatWalking               = 361,
+	kModelAnimationEarlyQCombatUnholsterGun          = 362,
+	kModelAnimationEarlyQCombatHolsterGun            = 363,
+	kModelAnimationEarlyQCombatFiresGun              = 364,
+	kModelAnimationEarlyQWalking                     = 365,
+	kModelAnimationEarlyQGotHitRight                 = 366,
+	kModelAnimationEarlyQGotHitLeft                  = 367,
+	kModelAnimationEarlyQDropsDead                   = 368,
+	kModelAnimationEarlyQIdle                        = 369,
+	kModelAnimationEarlyQHandOnFace                  = 370, // maybe cigarrette?
+	kModelAnimationEarlyQGivesSomething              = 371, // maybe the photo? // TODO check when this happens (animationMode 23)
+	kModelAnimationEarlyQCalmTalk                    = 372,
+	kModelAnimationEarlyQCalmExplainTalk             = 373,
+	kModelAnimationEarlyQVulgarTalk                  = 374,
+	kModelAnimationEarlyQDismissTalk                 = 375,
+	kModelAnimationEarlyQMoreDismissTalk             = 376,
+	kModelAnimationEarlyQIntenseExplainTalk          = 377,
+	kModelAnimationEarlyQSubtleExplainTalk           = 378,
+	kModelAnimationEarlyQExcitedTalk                 = 379,
+	kModelAnimationEarlyQAnnounceTalk                = 380,
+	kModelAnimationEarlyQSPicksUpBottleAndPoursDrink = 381,
+	kModelAnimationEarlyQSHoldsDrinkIdle             = 382,
+	kModelAnimationEarlyQSitsAndCrossesLegs          = 383,
+	kModelAnimationEarlyQSitIdle                     = 384,
+	kModelAnimationEarlyQSitTalk                     = 385,
+	kModelAnimationEarlyQSitScorpionAgonyDeath       = 386,
+	kModelAnimationEarlyQSitToStandingUp             = 387,
 	// 388 - 421: Zuben animations
 	kModelAnimationZubenCombatIdle               = 388,
 	kModelAnimationZubenCombatHitFront           = 389,
@@ -2121,17 +2228,128 @@ enum GameModelAnimations {
 	// 566 - 570: Mia animations
 		// TODO
 	// 571 - 604: Officer Leary animations
-		// TODO
+	kModelAnimationOfficerLearyCombatIdle             = 571,
+	kModelAnimationOfficerLearyCombatGotHitRight      = 572,
+	kModelAnimationOfficerLearyCombatGotHitLeft       = 573,
+	kModelAnimationOfficerLearyCombatWalking          = 574,
+	kModelAnimationOfficerLearyCombatRunning          = 575,
+	kModelAnimationOfficerLearyCombatShotDead         = 576,
+	kModelAnimationOfficerLearyCombatClimbStairsUp    = 577, // untriggered?
+	kModelAnimationOfficerLearyCombatClimbStairsDown  = 578, // untriggered?
+	kModelAnimationOfficerLearyCombatUnholsterGun     = 579,
+	kModelAnimationOfficerLearyCombatHolsterGun       = 580,
+	kModelAnimationOfficerLearyCombatFireGun          = 581,
+	kModelAnimationOfficerLearyWalking                = 582,
+	kModelAnimationOfficerLearyRunning                = 583,
+	kModelAnimationOfficerLearyClimbStairsUp          = 584, // untriggered?
+	kModelAnimationOfficerLearyClimbStairsDown        = 585, // untriggered?
+	kModelAnimationOfficerLearyGotHitFront            = 586,
+	kModelAnimationOfficerLearyGotHitBack             = 587,
+	kModelAnimationOfficerLearyShotDead               = 588,
+	kModelAnimationOfficerLearyOscillateIdle          = 589,
+	kModelAnimationOfficerLearyLookAroundIdle         = 590,
+	kModelAnimationOfficerLearyRockBackForthIdle      = 591,
+	kModelAnimationOfficerLearyCalmExplainTalk        = 592,
+	kModelAnimationOfficerLearyIndicateTalk           = 593,
+	kModelAnimationOfficerLearyLongerExplainTalk      = 594,
+	kModelAnimationOfficerLearyWarnOrThreatenTalk     = 595,
+	kModelAnimationOfficerLearyUpsetOrCommandTalk     = 596,
+	kModelAnimationOfficerLearyMoreUpsetTalk          = 597,
+	kModelAnimationOfficerLearyUrgeOrQuestionTalk     = 598,
+	kModelAnimationOfficerLearyHandsOnWaistTalk       = 599,
+	kModelAnimationOfficerLearyScratchHeadApologyTalk = 600,
+	kModelAnimationOfficerLearyTakingNotes            = 601,
+	kModelAnimationOfficerLearyIntenseTakingNotes     = 602, // UNUSED
+	kModelAnimationOfficerLearyPutNotepadAway         = 603,
+	kModelAnimationOfficerLearyTakeOutNotepad         = 604,
 	// 605 - 641: Officer Grayford animations
-		// TODO
+	kModelAnimationOfficerGrayfordCombatIdle              = 605,
+	kModelAnimationOfficerGrayfordCombatSlowStrafe        = 606, // UNUSED
+	kModelAnimationOfficerGrayfordCombatFastStrafe        = 607, // UNUSED
+	kModelAnimationOfficerGrayfordCombatGotHitRight       = 608,
+	kModelAnimationOfficerGrayfordCombatGotHitLeft        = 609,
+	kModelAnimationOfficerGrayfordCombatWalking           = 610,
+	kModelAnimationOfficerGrayfordCombatRunning           = 611,
+	kModelAnimationOfficerGrayfordCombatShotDead          = 612,
+	kModelAnimationOfficerGrayfordCombatClimbStairsUp     = 613, // UNUSED
+	kModelAnimationOfficerGrayfordCombatClimbStairsDown   = 614, // UNUSED
+	kModelAnimationOfficerGrayfordCombatUnholsterGun      = 615,
+	kModelAnimationOfficerGrayfordCombatHolsterGun        = 616,
+	kModelAnimationOfficerGrayfordCombatFireGun           = 617,
+	kModelAnimationOfficerGrayfordWalking                 = 618,
+	kModelAnimationOfficerGrayfordRunning                 = 619,
+	kModelAnimationOfficerGrayfordClimbStairsUp           = 620, // UNUSED
+	kModelAnimationOfficerGrayfordClimbStairsDown         = 621, // UNUSED
+	kModelAnimationOfficerGrayfordGotHitFront             = 622,
+	kModelAnimationOfficerGrayfordGotHitBack              = 623,
+	kModelAnimationOfficerGrayfordShotDead                = 624,
+	kModelAnimationOfficerGrayfordOscillateIdle           = 625,
+	kModelAnimationOfficerGrayfordLookAroundDownwardsIdle = 626,
+	kModelAnimationOfficerGrayfordLookAroundSidewaysIdle  = 627,
+	kModelAnimationOfficerGrayfordGestureGive             = 628, // UNUSED
+	kModelAnimationOfficerGrayfordCalmExplainTalk         = 629,
+	kModelAnimationOfficerGrayfordCalmRightHandMoveTalk   = 630,
+	kModelAnimationOfficerGrayfordScratchHeadTalk         = 631,
+	kModelAnimationOfficerGrayfordQuickHandMoveTalk       = 632,
+	kModelAnimationOfficerGrayfordSevereTalk              = 633,
+	kModelAnimationOfficerGrayfordMockTalk                = 634,
+	kModelAnimationOfficerGrayfordPointingTalk            = 635,
+	kModelAnimationOfficerGrayfordQuestionTalk            = 636,
+	kModelAnimationOfficerGrayfordDismissTalk             = 637,
+	kModelAnimationOfficerGrayfordPlaceRadioToEar         = 638,
+	kModelAnimationOfficerGrayfordTalkToAndLowerRadio     = 639,
+	kModelAnimationOfficerGrayfordTakeOutRadioFromPocket  = 640,
+	kModelAnimationOfficerGrayfordPutAwayRadioInPocket    = 641,
 	// 642 - 660: Hanoi animations
-		// TODO
+	kModelAnimationHanoiCombatIdle             = 642,
+	kModelAnimationHanoiCombatKicksDoorIn      = 643, // TODO check when this happens (animationMode 71)
+	kModelAnimationHanoiCombatFiresGun         = 644,
+	kModelAnimationHanoiWalking                = 645,
+	kModelAnimationHanoiGotHitOrViolentHeadNod = 646,
+	kModelAnimationHanoiShotDead               = 647,
+	kModelAnimationHanoiLooksAroundIdle        = 648,
+	kModelAnimationHanoiScratchesBackIdle      = 649,
+	kModelAnimationHanoiCalmTalk               = 650,
+	kModelAnimationHanoiExplainTalk            = 651,
+	kModelAnimationHanoiDownwardsNodTalk       = 652,
+	kModelAnimationHanoiDenyTalk               = 653,
+	kModelAnimationHanoiSlightBowingTalk       = 654,
+	kModelAnimationHanoiLaughTalk              = 655, // untriggered. Restored.
+	kModelAnimationHanoiMockTalk               = 656,
+	kModelAnimationHanoiGrabsMcCoy             = 657, // TODO check when this happens (animationMode 23)
+	kModelAnimationHanoiHoldsMcCoyUp           = 658,
+	kModelAnimationHanoiHoldsMcCoyUpAndTalks   = 659,
+	kModelAnimationHanoiPunchUpAttack          = 660, // untriggered
 	// 661 - 670: Desk Clerk (Yukon) animations
-		// TODO
+	kModelAnimationDeskClerkReadPaperIdle                 = 661,
+	kModelAnimationDeskClerkReadPaperChangePageIdle       = 662,
+	kModelAnimationDeskClerkReadPaperCalmTalk             = 663,
+	kModelAnimationDeskClerkReadPaperMoreCalmTalk         = 664,
+	kModelAnimationDeskClerkReadPaperMoveLeftTalk         = 665,
+	kModelAnimationDeskClerkReadPaperSlightClosePaperTalk = 666,
+	kModelAnimationDeskClerkReadPaperMoreClosePaperTalk   = 667,
+	kModelAnimationDeskClerkIsHeldUpByLeonIdle            = 668,
+	kModelAnimationDeskClerkFallingAfterLeonLetsGo        = 669,
+	kModelAnimationDeskClerkHeadSmashedOnCounter          = 670,
 	// 671 - 681: Howie Lee animations
-		// TODO
+	kModelAnimationHowieLeeGathersOfTidiesUp              = 671,
+	kModelAnimationHowieLeeWalking                        = 672,
+	kModelAnimationHowieLeePutsIngredientsCooking         = 673,
+	kModelAnimationHowieLeeLongGestureGive                = 674,
+	kModelAnimationHowieLeeQuickGestureGive               = 675, // UNUSED
+	kModelAnimationHowieLeeCalmTalk                       = 676,
+	kModelAnimationHowieLeeExplainTalk                    = 677,
+	kModelAnimationHowieLeeUpsetTalk                      = 678,
+	kModelAnimationHowieLeeAngryTalk                      = 679,
+	kModelAnimationHowieLeeNoTimeTalk                     = 680,
+	kModelAnimationHowieLeeElaborateMovementTalk          = 681, // Sushi throwing?
 	// 682 - 687: Fish Dealer animations
-		// TODO
+	kModelAnimationFishDealerWalking       = 682,
+	kModelAnimationFishDealerIdle          = 683,
+	kModelAnimationFishDealerGestureGive   = 684, // TODO check when this happens (animationMode 23)
+	kModelAnimationFishDealerCalmTalk      = 685,
+	kModelAnimationFishDealerExplainTalk   = 686,
+	kModelAnimationFishDealerNoTroubleTalk = 687,
 	// 688 - 697: Dino Klein animations
 	kModelAnimationKleinWalking                    = 688,
 	kModelAnimationKleinStandingIdle               = 689,
@@ -2173,7 +2391,19 @@ enum GameModelAnimations {
 	kModelAnimationBearToyGotHit          = 807, // UNUSED
 	kModelAnimationBearToyShotDead        = 808, // untriggered
 	// 809 - 821: Sebastian animations
-		// TODO
+	kModelAnimationSebastianWalking                    = 809, // TODO check if Sebastian ever walks (probably not)
+	kModelAnimationSebastianStepsBack                  = 810, // TODO check when this happens (animationMode 20)
+	kModelAnimationSebastianIdle                       = 811,
+	kModelAnimationSebastianAwkwardPlayWithHands       = 812, // UNUSED
+	kModelAnimationSebastianCalmHeadNodLeftTalk        = 813,
+	kModelAnimationSebastianCalmHeadNodRightTalk       = 814,
+	kModelAnimationSebastianSuggestTalk                = 815,
+	kModelAnimationSebastianWonderingTalk              = 816,
+	kModelAnimationSebastianPointingToSelfTalk         = 817,
+	kModelAnimationSebastianScratchEarTalk             = 818,
+	kModelAnimationSebastianAnnoyedTalk                = 819,
+	kModelAnimationSebastianWaitTalk                   = 820, // last frame 13 is bugged (empty)
+	kModelAnimationSebastianTriesToRunHitsHeadAndFalls = 821, // untriggered -- related to animationMode 48 "kAnimationModeDie"
 	// 822 - 832: Rachael animations
 	kModelAnimationRachaelWalking                  = 822,
 	kModelAnimationRachaelIdle                     = 823,
@@ -2193,9 +2423,26 @@ enum GameModelAnimations {
 	kModelGeneralDollShotDead   = 836, // untriggered
 	kModelGeneralDollGotHit     = 837, // untriggered
 	// 838 - 845: Mama Isabella animations
-		// TODO
+	kModelIsabellaIdle              = 838,
+	kModelIsabellaPutsSpicesInSoup  = 839,
+	kModelIsabellaGestureGiveOrTake = 840, // untriggered
+	kModelIsabellaCalmTalk          = 841,
+	kModelIsabellaSuggestTalk       = 842,
+	kModelIsabellaProtestTalk       = 843,
+	kModelIsabellaMoreCalmTalk      = 844,
+	kModelIsabellaLaughTalk         = 845,
 	// 846 - 856: Leon animations
-		// TODO
+	kModelLeonWalking              = 846,
+	kModelLeonIdle                 = 847,
+	kModelLeonGrabHoldHigh         = 848,
+	kModelLeonGrabLetsGo           = 849,
+	kModelLeonCalmTalk             = 850,
+	kModelLeonComplainTalk         = 851,
+	kModelLeonAwkwardTalk          = 852,
+	kModelLeonDenyTalk             = 853,
+	kModelLeonGrabTalk             = 854,
+	kModelLeonGrabAndGutPunchTalk  = 855,
+	kModelLeonPunchAttack          = 856,
 	// 857 - 862: Rat (Free Slot A/B) animations
 	kModelAnimationRatJumpAttack                   = 857,
 	kModelAnimationRatRunning                      = 858,
@@ -2270,7 +2517,7 @@ enum GameModelAnimations {
 	// 920 - 930: Hasan animations
 	kModelAnimationHasanTalkWipeFaceLeftHand01    = 920, // UNUSED
 	kModelAnimationHasanIdleSlightMovement        = 921,
-	kModelAnimationHasanTalkSuggest               = 922,
+	kModelAnimationHasanGestureSuggest            = 922,
 	kModelAnimationHasanTakingABiteSnakeMove      = 923,
 	kModelAnimationHasanTalkPointingRightHand     = 924, // UNUSED
 	kModelAnimationHasanTalkMovingBothHands       = 925,

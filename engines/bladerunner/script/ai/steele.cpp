@@ -26,8 +26,9 @@ namespace BladeRunner {
 
 AIScriptSteele::AIScriptSteele(BladeRunnerEngine *vm) : AIScriptBase(vm) {
 	_resumeIdleAfterFramesetCompletesFlag = false;
-	_var1 = 0;
-	_var2 = 0;
+	// _varChooseIdleAnimation can have valid values: 0, 1, 3 (value 2 is skipped)
+	_varChooseIdleAnimation = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 }
 
 void AIScriptSteele::Initialize() {
@@ -37,8 +38,8 @@ void AIScriptSteele::Initialize() {
 	_animationNext = 0;
 
 	_resumeIdleAfterFramesetCompletesFlag = false;
-	_var1 = 0;
-	_var2 = 0;
+	_varChooseIdleAnimation = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 
 	Actor_Put_In_Set(kActorSteele, kSetFreeSlotG);
 	Actor_Set_At_Waypoint(kActorSteele, 39, 0);
@@ -1139,7 +1140,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		}
 		Game_Flag_Set(kFlagSteeleAimingAtGordo);
 		Actor_Change_Animation_Mode(kActorSteele, kAnimationModeIdle);
-		_var1 = 3;
+		_varChooseIdleAnimation = 3;
 		return true;
 
 	case kGoalSteeleNR01TalkToGordo:
@@ -1504,7 +1505,7 @@ bool AIScriptSteele::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		switch (_var1) {
+		switch (_varChooseIdleAnimation) {
 		case 0:
 			*animation = kModelAnimationSteeleIdle;
 			++_animationFrame;
@@ -1512,8 +1513,8 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 				_animationFrame = 0;
 				if (Game_Flag_Query(kFlagSteeleSmoking)) {
 					_animationState = 41;
-					_var1 = 1;
-					_var2 = 0;
+					_varChooseIdleAnimation = 1;
+					_varNumOfTimesToHoldCurrentFrame = 0;
 				}
 			}
 			break;
@@ -1521,8 +1522,8 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 		case 1:
 			Game_Flag_Set(kFlagSteeleSmoking);
 			_animationState = 41;
-			_var1 = 1;
-			_var2 = 0;
+			_varChooseIdleAnimation = 1;
+			_varNumOfTimesToHoldCurrentFrame = 0;
 			break;
 
 		case 3:
@@ -1903,7 +1904,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 		) {
 			_animationFrame = 0;
 			_animationState = 0;
-			_var1 = 3;
+			_varChooseIdleAnimation = 3;
 			_resumeIdleAfterFramesetCompletesFlag = false;
 			*animation = kModelAnimationSteeleWithGunAimingToRightTalk;
 		} else {
@@ -1944,44 +1945,44 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 			*animation = kModelAnimationSteeleIdle;
 			_animationFrame = 0;
 			_animationState = 0;
-			_var1 = 0;
+			_varChooseIdleAnimation = 0;
 		}
 		break;
 
 	case 41:
-		switch (_var1) {
+		switch (_varChooseIdleAnimation) {
 		case 0:
 			*animation = kModelAnimationSteeleIdle;
 			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationSteeleIdle)) {
 				_animationFrame = 0;
 				if (!Game_Flag_Query(kFlagSteeleSmoking)) {
-					_var1 = 3;
+					_varChooseIdleAnimation = 3;
 				} else if (Random_Query(1, 3) == 1) {
-					_var1 = 1;
+					_varChooseIdleAnimation = 1;
 				}
 			}
 			break;
 
 		case 1:
 			*animation = kModelAnimationSteeleTakeCigPuff;
-			if (_var2 != 0) {
-				--_var2;
+			if (_varNumOfTimesToHoldCurrentFrame != 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else {
 				++_animationFrame;
 				if (_animationFrame >= 6
 				 && _animationFrame <= 9
 				) {
-					_var2 = Random_Query(1, 3);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(1, 3);
 					break;
 				}
 
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
 					_animationFrame = 0;
 					if (Game_Flag_Query(kFlagSteeleSmoking)) {
-						_var1 = 0;
+						_varChooseIdleAnimation = 0;
 					} else {
-						_var1 = 3;
+						_varChooseIdleAnimation = 3;
 					}
 				}
 			}
@@ -1993,7 +1994,7 @@ bool AIScriptSteele::UpdateAnimation(int *animation, int *frame) {
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation) - 1) {
 				_animationState = 0;
 				_animationFrame = 0;
-				_var1 = 0;
+				_varChooseIdleAnimation = 0;
 				Game_Flag_Reset(kFlagSteeleSmoking);
 			}
 			break;
@@ -2016,9 +2017,9 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 	switch (mode) {
 	case kAnimationModeIdle:
 		if (Game_Flag_Query(kFlagSteeleAimingAtGordo)) {
-			_var1 = 3;
+			_varChooseIdleAnimation = 3;
 		} else {
-			_var1 = 0;
+			_varChooseIdleAnimation = 0;
 		}
 
 		switch (_animationState) {
@@ -2075,7 +2076,7 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 			_animationFrame = 0;
 			if (Game_Flag_Query(kFlagSteeleSmoking)) {
 				_animationState = 41;
-				_var1 = 1;
+				_varChooseIdleAnimation = 1;
 			} else {
 				_animationState = 0;
 			}
@@ -2267,8 +2268,8 @@ bool AIScriptSteele::ChangeAnimationMode(int mode) {
 		Game_Flag_Set(kFlagSteeleSmoking);
 		_animationState = 41;
 		_animationFrame = 0;
-		_var2 = 0;
-		_var1 = 1;
+		_varNumOfTimesToHoldCurrentFrame = 0;
+		_varChooseIdleAnimation = 1;
 		break;
 
 	case kAnimationModeWalkUp:

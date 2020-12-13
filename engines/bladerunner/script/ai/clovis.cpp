@@ -25,8 +25,9 @@
 namespace BladeRunner {
 
 AIScriptClovis::AIScriptClovis(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_var1 = 0;
-	_var2 = 0;
+	// _varChooseIdleAnimation can have valid values: 0, 1
+	_varChooseIdleAnimation = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 	_var3 = 1;
 	_var4 = 0;
 	_var5 = 0;
@@ -39,8 +40,8 @@ void AIScriptClovis::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_var1 = 0;
-	_var2 = 0;
+	_varChooseIdleAnimation = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 	_var3 = 1;
 	_var4 = 0;
 	_var5 = 0;
@@ -587,21 +588,21 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 
 	switch (_animationState) {
 	case 0:
-		if (_var1 == 1) {
+		if (_varChooseIdleAnimation == 1) {
 			*animation = kModelAnimationClovisIdle;
-			if (_var2) {
-				--_var2;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else if (++_animationFrame == 7) {
-				_var2 = Random_Query(5, 15);
+				_varNumOfTimesToHoldCurrentFrame = Random_Query(5, 15);
 			} else {
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationClovisIdle)) {
 					_animationFrame = 0;
-					_var1 = 0;
+					_varChooseIdleAnimation = 0;
 				}
 			}
-		} else if (_var1 == 0) {
+		} else if (_varChooseIdleAnimation == 0) {
 			*animation = kModelAnimationClovisLookingUpAndAbout;
-			if (_var2) {
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
 				_animationFrame += _var3;
 				if (_animationFrame > _var5) {
 					_animationFrame = _var5;
@@ -612,21 +613,21 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 						_var3 = 1;
 					}
 				}
-				--_var2;
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else {
 				_animationFrame += _var3;
 				if (_animationFrame == 13 && Random_Query(0, 1)) {
 					_var3 = -1;
 					_var4 = 9;
 					_var5 = 13;
-					_var2 = Random_Query(4, 15);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(4, 15);
 				} else {
 					if (_animationFrame == 6) {
 						if (Random_Query(0, 1)) {
 							_var3 = -1;
 							_var4 = 3;
 							_var5 = 6;
-							_var2 = Random_Query(4, 15);
+							_varNumOfTimesToHoldCurrentFrame = Random_Query(4, 15);
 						}
 					}
 				}
@@ -639,13 +640,13 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 				}
 				if (_animationFrame == 0) {
 					if (Random_Query(0, 1) > 0) {
-						_var1 = 1;
+						_varChooseIdleAnimation = 1;
 					} else {
 						if (Random_Query(0, 2) > 0) {
 							_var3 = 1;
 							_var4 = 0;
 							_var5 = 0;
-							_var2 = Random_Query(5, 15);
+							_varNumOfTimesToHoldCurrentFrame = Random_Query(5, 15);
 						}
 					}
 				}
@@ -654,10 +655,10 @@ bool AIScriptClovis::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 1:
-		if (_var1 == 0) {
+		if (_varChooseIdleAnimation == 0) {
 			*animation = kModelAnimationClovisLookingUpAndAbout;
 		}
-		if (_var1 == 1) {
+		if (_varChooseIdleAnimation == 1) {
 			*animation = kModelAnimationClovisIdle;
 		}
 		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(*animation)) {
@@ -1315,7 +1316,7 @@ bool AIScriptClovis::ChangeAnimationMode(int mode) {
 		default:
 			_animationState = 0;
 			_animationFrame = 0;
-			_var1 = 0;
+			_varChooseIdleAnimation = 0;
 			break;
 		}
 		break;
@@ -1637,7 +1638,7 @@ void AIScriptClovis::someAnim() {
 	default:
 		_animationState = 0;
 		_animationFrame = 0;
-		_var1 = 0;
+		_varChooseIdleAnimation = 0;
 		break;
 	}
 }

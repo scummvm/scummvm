@@ -28,7 +28,7 @@ AIScriptInsectDealer::AIScriptInsectDealer(BladeRunnerEngine *vm) : AIScriptBase
 	_resumeIdleAfterFramesetCompletesFlag = false;
 	_state = 0;
 	_frameDelta = 0;
-	_var2 = 0;
+	_var2 = 0; // is set on some occasions but is never checked. Unused.
 	_counter = 0;
 }
 

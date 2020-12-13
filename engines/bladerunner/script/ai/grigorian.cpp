@@ -25,13 +25,14 @@
 namespace BladeRunner {
 
 AIScriptGrigorian::AIScriptGrigorian(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	var_45CA10 = 0;
-	var_45CA14 = 0;
+	// _varChooseIdleAnimation can have valid values: 0, 1, 2
+	_varChooseIdleAnimation = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 }
 
 void AIScriptGrigorian::Initialize() {
-	var_45CA10 = 0;
-	var_45CA14 = 0;
+	_varChooseIdleAnimation = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 	_animationStateNext = 0;
 	_animationFrame = 0;
 	_animationState = 0;
@@ -102,42 +103,42 @@ bool AIScriptGrigorian::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		if (var_45CA10 == 0) {
+		if (_varChooseIdleAnimation == 0) {
 			*animation = kModelAnimationGrigorianStandIdle;
-			if (var_45CA14 > 0) {
-				--var_45CA14;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else {
 				++_animationFrame;
 				if (_animationFrame == 5 || _animationFrame == 13) {
-					var_45CA14 = Random_Query(2, 4);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(2, 4);
 				}
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGrigorianStandIdle)) {
 					_animationFrame = 0;
-					var_45CA10 = Random_Query(0, 2);
+					_varChooseIdleAnimation = Random_Query(0, 2);
 				}
 			}
-		} else if (var_45CA10 == 1) {
+		} else if (_varChooseIdleAnimation == 1) {
 			*animation = kModelAnimationGrigorianStandAnnoyedTalk;
 			++_animationFrame;
 			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGrigorianStandAnnoyedTalk)) {
 				*animation = kModelAnimationGrigorianStandIdle;
 				_animationFrame = 0;
-				var_45CA10 = 0;
+				_varChooseIdleAnimation = 0;
 			}
-		} else if (var_45CA10 == 2) {
+		} else if (_varChooseIdleAnimation == 2) {
 			*animation = kModelAnimationGrigorianStandArmsCrossedTalk;
-			if (var_45CA14 > 0) {
-				--var_45CA14;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 			} else {
 				++_animationFrame;
 				if (_animationFrame >= 8 && _animationFrame <= 10) {
-					var_45CA14 = Random_Query(2, 4);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(2, 4);
 				}
 #if BLADERUNNER_ORIGINAL_BUGS
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGrigorianStandIdle)) {
 					*animation = kModelAnimationGrigorianStandIdle;
 					_animationFrame = 0;
-					var_45CA10 = 0;
+					_varChooseIdleAnimation = 0;
 				}
 #else
 				// bugfix set proper current animation here to get frameset number of frames
@@ -145,7 +146,7 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationGrigorianStandArmsCrossedTalk)) {
 					*animation = kModelAnimationGrigorianStandIdle;
 					_animationFrame = 0;
-					var_45CA10 = 0;
+					_varChooseIdleAnimation = 0;
 				}
 #endif // BLADERUNNER_ORIGINAL_BUGS
 			}
@@ -219,7 +220,8 @@ bool AIScriptGrigorian::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	default:
-		*animation = 399;
+		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
+		*animation = kModelAnimationZubenWalking;
 		break;
 	}
 	*frame = _animationFrame;

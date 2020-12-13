@@ -25,7 +25,7 @@
 namespace BladeRunner {
 
 AIScriptHowieLee::AIScriptHowieLee(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	var_45DFB8 = 0;
+	_varIdleStatesToggle = 0;
 }
 
 void AIScriptHowieLee::Initialize() {
@@ -33,7 +33,7 @@ void AIScriptHowieLee::Initialize() {
 	_animationState = 0;
 	_animationStateNext = 0;
 	_animationNext = 0;
-	var_45DFB8 = false;
+	_varIdleStatesToggle = 0;
 
 	Actor_Put_In_Set(kActorHowieLee, kSetCT01_CT12);
 	Actor_Set_At_Waypoint(kActorHowieLee, 67, 605); // in kSetCT01_CT12
@@ -331,45 +331,47 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
 		++_animationFrame;
-		if (var_45DFB8) {
-			*animation = 673;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(673)) {
+		// _varIdleStatesToggle can be 0 or 1.
+		// Determines whether kModelAnimationHowieLeePutsIngredientsCooking or kModelAnimationHowieLeeGathersOfTidiesUp is used.
+		if (_varIdleStatesToggle > 0) {
+			*animation = kModelAnimationHowieLeePutsIngredientsCooking;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHowieLeePutsIngredientsCooking)) {
 				_animationFrame = 0;
 				if (Random_Query(0, 2) > 0) {
-					var_45DFB8 ^= 1;
+					_varIdleStatesToggle ^= 1;
 				}
 			}
 		} else {
-			*animation = 671;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(671)) {
+			*animation = kModelAnimationHowieLeeGathersOfTidiesUp;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHowieLeeGathersOfTidiesUp)) {
 				_animationFrame = 0;
 				if (Random_Query(0, 1) > 0) {
-					var_45DFB8 ^= 1;
+					_varIdleStatesToggle ^= 1;
 				}
 			}
 		}
 		break;
 
 	case 1:
-		*animation = 674;
+		*animation = kModelAnimationHowieLeeLongGestureGive;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(674)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHowieLeeLongGestureGive)) {
 			_animationFrame = 0;
 			if (_animationState < 3 || _animationState > 8) {
 				_animationState = 0;
 				_animationFrame = 0;
-				var_45DFB8 = Random_Query(0, 1);
+				_varIdleStatesToggle = Random_Query(0, 1);
 			} else {
 				Game_Flag_Set(kFlagHowieLeeAnimation1);
 			}
-			*animation = 673;
+			*animation = kModelAnimationHowieLeePutsIngredientsCooking;
 		}
 		break;
 
 	case 2:
-		*animation = 672;
+		*animation = kModelAnimationHowieLeeWalking;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(672)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHowieLeeWalking)) {
 			_animationFrame = 0;
 		}
 		break;
@@ -379,69 +381,70 @@ bool AIScriptHowieLee::UpdateAnimation(int *animation, int *frame) {
 			Game_Flag_Reset(kFlagHowieLeeAnimation1);
 			_animationState = 0;
 			_animationFrame = 0;
-			var_45DFB8 = Random_Query(0, 1);
-			*animation = 671;
+			_varIdleStatesToggle = Random_Query(0, 1);
+			*animation = kModelAnimationHowieLeeGathersOfTidiesUp;
 		} else {
 			++_animationFrame;
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(676)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHowieLeeCalmTalk)) {
 				_animationFrame = 0;
 			}
-			*animation = 676;
+			*animation = kModelAnimationHowieLeeCalmTalk;
 		}
 		break;
 
 	case 4:
-		*animation = 677;
+		*animation = kModelAnimationHowieLeeExplainTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(677)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHowieLeeExplainTalk)) {
 			_animationState = 3;
 			_animationFrame = 0;
-			*animation = 676;
+			*animation = kModelAnimationHowieLeeCalmTalk;
 		}
 		break;
 
 	case 5:
-		*animation = 678;
+		*animation = kModelAnimationHowieLeeUpsetTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(678)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHowieLeeUpsetTalk)) {
 			_animationState = 3;
 			_animationFrame = 0;
-			*animation = 676;
+			*animation = kModelAnimationHowieLeeCalmTalk;
 		}
 		break;
 
 	case 6:
-		*animation = 679;
+		*animation = kModelAnimationHowieLeeAngryTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(679)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHowieLeeAngryTalk)) {
 			_animationState = 3;
 			_animationFrame = 0;
-			*animation = 676;
+			*animation = kModelAnimationHowieLeeCalmTalk;
 		}
 		break;
 
 	case 7:
-		*animation = 680;
+		*animation = kModelAnimationHowieLeeNoTimeTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(680)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHowieLeeNoTimeTalk)) {
 			_animationState = 3;
 			_animationFrame = 0;
-			*animation = 676;
+			*animation = kModelAnimationHowieLeeCalmTalk;
 		}
 		break;
 
 	case 8:
-		*animation = 681;
+		*animation = kModelAnimationHowieLeeElaborateMovementTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(681)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHowieLeeElaborateMovementTalk)) {
 			_animationState = 3;
 			_animationFrame = 0;
-			*animation = 676;
+			*animation = kModelAnimationHowieLeeCalmTalk;
 		}
 		break;
 
 	default:
-		*animation = 399;
+		// Dummy placeholder, kModelAnimationZubenWalking (399) is a Zuben animation
+		*animation = kModelAnimationZubenWalking;
 		break;
 	}
 	*frame = _animationFrame;
@@ -454,7 +457,7 @@ bool AIScriptHowieLee::ChangeAnimationMode(int mode) {
 		if (_animationState < 3 || _animationState > 8) {
 			_animationState = 0;
 			_animationFrame = 0;
-			var_45DFB8 = Random_Query(0, 1);
+			_varIdleStatesToggle = Random_Query(0, 1);
 		} else {
 			Game_Flag_Set(kFlagHowieLeeAnimation1);
 		}

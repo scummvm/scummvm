@@ -146,35 +146,35 @@ bool AIScriptSebastian::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 811;
+		*animation = kModelAnimationSebastianIdle;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(811) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationSebastianIdle) - 1) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 1:
-		*animation = 809;
+		*animation = kModelAnimationSebastianWalking;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(809) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationSebastianWalking) - 1) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 2:
-		*animation = 810;
+		*animation = kModelAnimationSebastianStepsBack;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(810) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationSebastianStepsBack) - 1) {
 			Actor_Change_Animation_Mode(kActorSebastian, kAnimationModeIdle);
-			*animation = 811;
+			*animation = kModelAnimationSebastianIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 3:
-		*animation = 821;
-		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(821) - 1) {
+		*animation = kModelAnimationSebastianTriesToRunHitsHeadAndFalls;
+		if (_animationFrame < Slice_Animation_Query_Number_Of_Frames(kModelAnimationSebastianTriesToRunHitsHeadAndFalls) - 1) {
 			++_animationFrame;
 		}
 		break;
@@ -182,85 +182,85 @@ bool AIScriptSebastian::UpdateAnimation(int *animation, int *frame) {
 	case 4:
 		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			Actor_Change_Animation_Mode(kActorSebastian, kAnimationModeIdle);
-			*animation = 811;
+			*animation = kModelAnimationSebastianIdle;
 			_animationState = 0;
 			_animationFrame = 0;
 		} else {
-			*animation = 813;
+			*animation = kModelAnimationSebastianCalmHeadNodLeftTalk;
 			++_animationFrame;
-			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(813) - 1) {
+			if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationSebastianCalmHeadNodLeftTalk) - 1) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 5:
-		*animation = 814;
+		*animation = kModelAnimationSebastianCalmHeadNodRightTalk;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(814) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationSebastianCalmHeadNodRightTalk) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;
-			*animation = 813;
+			*animation = kModelAnimationSebastianCalmHeadNodLeftTalk;
 		}
 		break;
 
 	case 6:
-		*animation = 815;
+		*animation = kModelAnimationSebastianSuggestTalk;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(815) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationSebastianSuggestTalk) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;
-			*animation = 813;
+			*animation = kModelAnimationSebastianCalmHeadNodLeftTalk;
 		}
 		break;
 
 	case 7:
-		*animation = 816;
+		*animation = kModelAnimationSebastianWonderingTalk;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(816) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationSebastianWonderingTalk) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;
-			*animation = 813;
+			*animation = kModelAnimationSebastianCalmHeadNodLeftTalk;
 		}
 		break;
 
 	case 8:
-		*animation = 817;
+		*animation = kModelAnimationSebastianPointingToSelfTalk;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(817) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationSebastianPointingToSelfTalk) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;
-			*animation = 813;
+			*animation = kModelAnimationSebastianCalmHeadNodLeftTalk;
 		}
 		break;
 
 	case 9:
-		*animation = 818;
+		*animation = kModelAnimationSebastianScratchEarTalk;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(818) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationSebastianScratchEarTalk) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;
-			*animation = 813;
+			*animation = kModelAnimationSebastianCalmHeadNodLeftTalk;
 		}
 		break;
 
 	case 10:
-		*animation = 819;
+		*animation = kModelAnimationSebastianAnnoyedTalk;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(819) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationSebastianAnnoyedTalk) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;
-			*animation = 813;
+			*animation = kModelAnimationSebastianCalmHeadNodLeftTalk;
 		}
 		break;
 
 	case 11:
-		*animation = 820;
+		*animation = kModelAnimationSebastianWaitTalk;
 		++_animationFrame;
-		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(820) - 1) {
+		if (_animationFrame > Slice_Animation_Query_Number_Of_Frames(kModelAnimationSebastianWaitTalk) - 1) {
 			_animationFrame = 0;
 			_animationState = 4;
-			*animation = 813;
+			*animation = kModelAnimationSebastianCalmHeadNodLeftTalk;
 		}
 		break;
 
