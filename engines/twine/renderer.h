@@ -154,7 +154,7 @@ struct Model {
 		return bonesBase + numBones * 38;
 	}
 
-	static uint8* getShadesBaseData(uint8 *bodyPtr) {
+	static const uint8* getShadesBaseData(const uint8 *bodyPtr) {
 		return getShadesData(bodyPtr) + 2;
 	}
 
@@ -254,7 +254,7 @@ private:
 
 	ModelData _modelData;
 
-	int32 renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, RenderCommand *renderCmds);
+	int32 renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, RenderCommand *renderCmds);
 	void circleFill(int32 x, int32 y, int32 radius, uint8 color);
 	int32 renderModelElements(int32 numOfPrimitives, const uint8 *polygonPtr, RenderCommand** renderCmds, ModelData *modelData);
 	void getBaseRotationPosition(int32 x, int32 y, int32 z);
@@ -360,12 +360,12 @@ public:
 	void setBaseRotation(int32 x, int32 y, int32 z);
 	void setOrthoProjection(int32 x, int32 y, int32 z);
 
-	int32 renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, uint8 *bodyPtr);
+	int32 renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const uint8 *bodyPtr);
 
-	void renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, uint8 *bodyPtr);
-	void renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, uint8 *entityPtr);
+	void renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, const uint8 *bodyPtr);
+	void renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, const uint8 *bodyPtr);
 
-	void renderInventoryItem(int32 x, int32 y, uint8 *itemBodyPtr, int32 angle, int32 param);
+	void renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32 angle, int32 param);
 };
 
 } // namespace TwinE
