@@ -1248,7 +1248,7 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonP
 	return 0;
 }
 
-int32 Renderer::renderAnimatedModel(ModelData *modelData, uint8 *bodyPtr, RenderCommand *renderCmds) {
+int32 Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, RenderCommand *renderCmds) {
 	const int32 numVertices = Model::getNumVertices(bodyPtr);
 	const int32 numBones = Model::getNumBones(bodyPtr);
 
@@ -1464,7 +1464,7 @@ void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
 	}
 }
 
-int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, uint8 *bodyPtr) {
+int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 angleY, int32 angleZ, const uint8 *bodyPtr) {
 	renderAngleX = angleX;
 	renderAngleY = angleY;
 	renderAngleZ = angleZ;
@@ -1495,11 +1495,11 @@ int32 Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 an
 	return 0;
 }
 
-void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, uint8 *entityPtr) {
-	renderBehaviourModel(rect.left, rect.top, rect.right, rect.bottom, y, angle, entityPtr);
+void Renderer::renderBehaviourModel(const Common::Rect &rect, int32 y, int32 angle, const uint8 *bodyPtr) {
+	renderBehaviourModel(rect.left, rect.top, rect.right, rect.bottom, y, angle, bodyPtr);
 }
 
-void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, uint8 *bodyPtr) {
+void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight, int32 boxBottom, int32 y, int32 angle, const uint8 *bodyPtr) {
 	int32 tmpBoxRight = boxRight;
 
 	int32 ypos = boxBottom + boxTop;
@@ -1523,11 +1523,11 @@ void Renderer::renderBehaviourModel(int32 boxLeft, int32 boxTop, int32 boxRight,
 	}
 }
 
-void Renderer::renderInventoryItem(int32 x, int32 y, uint8 *itemBodyPtr, int32 angle, int32 param) {
+void Renderer::renderInventoryItem(int32 x, int32 y, const uint8 *bodyPtr, int32 angle, int32 param) {
 	setCameraPosition(x, y, 128, 200, 200);
 	setCameraAngle(0, 0, 0, 60, 0, 0, param);
 
-	renderIsoModel(0, 0, 0, 0, angle, 0, itemBodyPtr);
+	renderIsoModel(0, 0, 0, 0, angle, 0, bodyPtr);
 }
 
 } // namespace TwinE
