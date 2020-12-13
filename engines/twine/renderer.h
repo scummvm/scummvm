@@ -270,7 +270,7 @@ private:
 	uint8* prepareLines(Common::MemoryReadStream &stream, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);
 
 public:
-	Renderer(TwinEEngine *engine) : _engine(engine) {}
+	Renderer(TwinEEngine *engine);
 
 	int16 projPosXScreen = 0; // fullRedrawVar1
 	int16 projPosYScreen = 0; // fullRedrawVar2
@@ -287,7 +287,7 @@ public:
 	int32 destY = 0;
 	int32 destZ = 0;
 
-	const int16 *shadeAngleTab3 = nullptr; // tab3
+	const int16 * const shadeAngleTab3;
 
 	int16 vertexCoordinates[193] {0};
 
