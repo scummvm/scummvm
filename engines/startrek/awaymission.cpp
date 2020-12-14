@@ -100,7 +100,7 @@ void StarTrekEngine::loadRoom(const Common::String &missionName, int roomIndex) 
 
 	_awayMission.activeAction = ACTION_WALK;
 
-	actorFunc1();
+	removeDrawnActorsFromScreen();
 	initActors();
 
 	Fixed8 num = _room->getMaxScale() - _room->getMinScale();
@@ -498,7 +498,7 @@ void StarTrekEngine::awayMissionGetLookOrTalk(int16 clickedObject) {
 void StarTrekEngine::unloadRoom() {
 	_gfx->fadeoutScreen();
 	// sub_2394b(); // TODO
-	actorFunc1();
+	removeDrawnActorsFromScreen();
 	delete _room;
 	_room = nullptr;
 	delete _mapFile;

@@ -49,21 +49,32 @@ int StarTrekEngine::loadActorAnim(int actorIndex, const Common::String &animName
 	debugC(6, kDebugGraphics, "Load animation '%s' on actor %d", animName.c_str(), actorIndex);
 
 	if (actorIndex == -1) {
-		// TODO
-		warning("loadActorAnim: actor == -1");
-	} else {
-		Actor *actor = &_actorList[actorIndex];
+		bool foundSlot = false;
 
-		if (actor->spriteDrawn) {
-			releaseAnim(actor);
-			drawActorToScreen(actor, animName, x, y, scale, false);
-		} else {
-			drawActorToScreen(actor, animName, x, y, scale, true);
+		for (int i = 8; i < NUM_ACTORS; i++) {
+			if (_actorList[i].spriteDrawn == 0) {
+				actorIndex = i;
+				foundSlot = true;
+				break;
+			}
 		}
 
-		actor->triggerActionWhenAnimFinished = false;
-		actor->finishedAnimActionParam = 0;
+		if (!foundSlot) {
+			error("All animations are in use");
+		}
 	}
+
+	Actor *actor = &_actorList[actorIndex];
+
+	if (actor->spriteDrawn) {
+		releaseAnim(actor);
+		drawActorToScreen(actor, animName, x, y, scale, false);
+	} else {
+		drawActorToScreen(actor, animName, x, y, scale, true);
+	}
+
+	actor->triggerActionWhenAnimFinished = false;
+	actor->finishedAnimActionParam = 0;
 
 	return actorIndex;
 }
@@ -430,7 +441,7 @@ void StarTrekEngine::removeActorFromScreen(int actorIndex) {
 	releaseAnim(actor);
 }
 
-void StarTrekEngine::actorFunc1() {
+void StarTrekEngine::removeDrawnActorsFromScreen() {
 	for (int i = 0; i < NUM_ACTORS; i++) {
 		if (_actorList[i].spriteDrawn == 1) {
 			removeActorFromScreen(i);
