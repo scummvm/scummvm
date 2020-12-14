@@ -115,7 +115,8 @@ Room::Room(StarTrekEngine *vm, const Common::String &name) : _vm(vm), _awayMissi
 	}
 
 	bool isDemo = _vm->getFeatures() & GF_DEMO;
-	if (!isDemo) {
+	bool isFloppy = !(_vm->getFeatures() & GF_CDROM);
+	if (!isDemo && !isFloppy) {
 		loadRoomMessages();
 		loadOtherRoomMessages();
 	}
