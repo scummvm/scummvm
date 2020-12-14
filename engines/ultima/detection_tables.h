@@ -239,6 +239,21 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 		GF_VGA_ENHANCED
 	},
 
+	// Ultima VIII - CD (provided by ddeluca1com, bug #11944)
+	{
+		{
+			"ultima8",
+			"",
+			AD_ENTRY1s("eusecode.flx", "5494165cbf4b07be04a465e28350e086", 1209018),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOMIDI)
+		},
+		GAME_ULTIMA8,
+		0
+	},
+
 	// Ultima VIII - Ultima Collection 1998
 	{
 		{
