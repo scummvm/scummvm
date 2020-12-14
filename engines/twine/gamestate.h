@@ -116,6 +116,7 @@ public:
 
 	inline void setFlag(uint8 index, uint8 value) {
 		gameFlags[index] = value;
+		debug(2, "Set gameflag[%u]=%u", index, value);
 	}
 
 	/**
