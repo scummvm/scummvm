@@ -1070,7 +1070,7 @@ void AdLibDriver::noteOn(Channel &channel) {
 	channel.regBx |= 0x20;
 	writeOPL(0xB0 + _curChannel, channel.regBx);
 
-	int8 shift = 9 - channel.unk33;
+	int8 shift = 9 - CLIP<int8>(channel.unk33, 0, 9);
 	uint16 temp = channel.regAx | (channel.regBx << 8);
 	channel.unk37 = ((temp & 0x3FF) >> shift) & 0xFF;
 	channel.unk38 = channel.unk36;
