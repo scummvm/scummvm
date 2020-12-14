@@ -257,6 +257,9 @@ public:
 	void loadBridgeActors();
 	void cleanupBridge();
 	void runBridge();
+	void setBridgeMouseCursor();
+	void playBridgeSequence(int sequenceId);
+	void showBridgeScreenTalkerWithMessage(int textId, Common::String talkerHeader, Common::String talkerId);
 	void handleBridgeEvents();
 	void handleBridgeComputer();
 
