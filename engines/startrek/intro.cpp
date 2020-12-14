@@ -33,8 +33,7 @@ void StarTrekEngine::playIntro() {
 	initStarfieldPosition();
 	initStarfield(10, 20, 309, 169, 128);
 
-	Bitmap *fakeStarfieldBitmap = new StubBitmap(0, 0);
-	initStarfieldSprite(&_starfieldSprite, fakeStarfieldBitmap, _starfieldRect);
+	initStarfieldSprite(&_starfieldSprite, new StubBitmap(0, 0), _starfieldRect);
 
 	//delR3(&_enterpriseR3); // TODO: uncomment
 
@@ -278,7 +277,8 @@ void StarTrekEngine::playIntro() {
 			break;
 
 		case 366:
-			delR3(&planetR3);
+			if (getFeatures() & GF_CDROM)
+				delR3(&planetR3);
 			break;
 
 		case 378:
@@ -313,9 +313,13 @@ void StarTrekEngine::playIntro() {
 }
 
 void StarTrekEngine::showCreditsScreen(R3 *creditsBuffer, int index, bool deletePrevious) {
+	if (!(getFeatures() & GF_CDROM) && index > 0)
+		return;
+
 	if (deletePrevious) {
 		delR3(creditsBuffer);
 	}
+
 	creditsBuffer->bitmap = new Bitmap(_resource->loadFile(Common::String::format("credit%02d.shp", index)));
 	creditsBuffer->field1e = 3;
 	creditsBuffer->field22 = 1;
