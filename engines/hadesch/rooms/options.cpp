@@ -427,7 +427,7 @@ private:
 
 		persistent->_slotDescription = _typedSlotName;
 		Common::Error res = g_vm->saveGameState(slot, desc);
-		debug("%d, %s->[%d, %s]", slot, desc.c_str(), res.getCode(), res.getDesc().encode(Common::kUtf8).c_str());
+		debug("%d, %s->[%d, %s]", slot, desc.c_str(), res.getCode(), res.getDesc().c_str());
 		_savesLoaded = false; // Invalidate cache
 		switch (_saveVariant) {
 		case kSaveFromMainMenu:

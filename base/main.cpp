@@ -210,7 +210,7 @@ static Common::Error runGame(const Plugin *plugin, OSystem &system, const Common
 		// display an error dialog, so we don't have to do this here.
 		warning("%s failed to instantiate engine: %s (target '%s', path '%s')",
 			plugin->getName(),
-			err.getDesc().encode(Common::kUtf8).c_str(),
+			err.getDesc().c_str(),
 			target.c_str(),
 			dir.getPath().c_str()
 			);
@@ -463,7 +463,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// TODO: deal with settings that require plugins to be loaded
 	if (Base::processSettings(command, settings, res)) {
 		if (res.getCode() != Common::kNoError)
-			warning("%s", res.getDesc().encode(Common::kUtf8).c_str());
+			warning("%s", res.getDesc().c_str());
 		return res.getCode();
 	}
 

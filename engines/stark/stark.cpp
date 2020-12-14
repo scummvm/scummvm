@@ -326,7 +326,7 @@ void StarkEngine::checkRecommendedDatafiles() {
 	}
 
 	if (missingFiles) {
-		warning("%s", message.c_str());
+		warning("%s", message.encode(Common::kUtf8).c_str());
 
 		GUI::MessageDialog dialog(message);
 		dialog.runModal();

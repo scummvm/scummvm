@@ -806,7 +806,7 @@ bool Engine::loadGameDialog() {
 
 	Common::Error loadError = loadGameState(slotNum);
 	if (loadError.getCode() != Common::kNoError) {
-		GUI::MessageDialog errorDialog(loadError.getDesc());
+		GUI::MessageDialog errorDialog(_(loadError.getDesc()));
 		errorDialog.runModal();
 		return false;
 	}
@@ -838,7 +838,7 @@ bool Engine::saveGameDialog() {
 
 	Common::Error saveError = saveGameState(slotNum, desc.legacyEncode());
 	if (saveError.getCode() != Common::kNoError) {
-		GUI::MessageDialog errorDialog(saveError.getDesc());
+		GUI::MessageDialog errorDialog(_(saveError.getDesc()));
 		errorDialog.runModal();
 		return false;
 	}

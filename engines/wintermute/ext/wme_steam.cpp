@@ -100,7 +100,7 @@ bool SXSteamAPI::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSta
 			}
 		}
 
-		stack->pushBool(AchMan.setAchievement(id, msg));
+		stack->pushBool(AchMan.setAchievement(id, msg.decode(Common::kLatin1)));
 		return STATUS_OK;
 	}
 	//////////////////////////////////////////////////////////////////////////

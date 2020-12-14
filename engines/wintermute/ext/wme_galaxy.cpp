@@ -103,7 +103,7 @@ bool SXWMEGalaxyAPI::scCallMethod(ScScript *script, ScStack *stack, ScStack *thi
 			}
 		}
 
-		stack->pushBool(AchMan.setAchievement(id, msg));
+		stack->pushBool(AchMan.setAchievement(id, msg.decode(Common::kLatin1)));
 		return STATUS_OK;
 	}
 

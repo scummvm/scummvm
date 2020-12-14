@@ -194,6 +194,7 @@ private:
 	friend class String;
 };
 
+/** Declare a unicode string. Should be limited to ASCII subset */
 #ifdef USE_CXX11
 #define USTR(x) Common::U32String(U ## x)
 #else

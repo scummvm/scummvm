@@ -104,7 +104,7 @@ public:
      * @param[in] displayedMessage Message displayed when the achievement is achieved.
      */
 
-	bool setAchievement(const String &id, const String &displayedMessage);
+	bool setAchievement(const String &id, const U32String &displayedMessage);
 	
     /**
      * Set an achievement as achieved.

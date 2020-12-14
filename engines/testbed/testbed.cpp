@@ -199,7 +199,7 @@ void TestbedEngine::invokeTestsuites(TestbedConfigManager &cfMan) {
 			(*iter)->execute();
 		}
 		if ((*iter)->getNumTests() == (*iter)->getNumTestsPassed()) {
-			AchMan.setAchievement((*iter)->getName(), (*iter)->getDescription());
+			AchMan.setAchievement((*iter)->getName(), Common::U32String((*iter)->getDescription(), Common::kLatin1));
 			checkForAllAchievements();
 		}
 	}
@@ -212,7 +212,7 @@ void TestbedEngine::checkForAllAchievements() {
 			return;
 		}
 	}
-	AchMan.setAchievement("EVERYTHINGWORKS", "Everything works!");
+	AchMan.setAchievement("EVERYTHINGWORKS", USTR("Everything works!"));
 }
 
 Common::Error TestbedEngine::run() {

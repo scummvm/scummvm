@@ -41,6 +41,7 @@
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 #include "gui/message.h"
 
@@ -147,7 +148,7 @@ void SaveLoadMenuScreen::backHandler() {
 
 void SaveLoadMenuScreen::checkError(Common::Error error) {
 	if (error.getCode() != Common::kNoError) {
-		GUI::MessageDialog dialog(error.getDesc());
+		GUI::MessageDialog dialog(_(error.getDesc()));
 		dialog.runModal();
 	}
 }

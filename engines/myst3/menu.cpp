@@ -31,6 +31,7 @@
 #include "engines/myst3/state.h"
 
 #include "common/events.h"
+#include "common/translation.h"
 
 #include "graphics/colormasks.h"
 
@@ -588,7 +589,7 @@ void PagingMenu::loadMenuLoad() {
 
 	Common::Error loadError = _vm->loadGameState(_saveLoadFiles[index], kTransitionFade);
 	if (loadError.getCode() != Common::kNoError) {
-		GUI::MessageDialog dialog(loadError.getDesc());
+		GUI::MessageDialog dialog(_(loadError.getDesc()));
 		dialog.runModal();
 	}
 }
@@ -648,7 +649,7 @@ void PagingMenu::saveMenuSave() {
 
 	Common::Error saveError = _vm->saveGameState(_saveName, _saveThumbnail.get(), false);
 	if (saveError.getCode() != Common::kNoError) {
-		GUI::MessageDialog dialog(saveError.getDesc());
+		GUI::MessageDialog dialog(_(saveError.getDesc()));
 		dialog.runModal();
 	}
 
@@ -971,7 +972,7 @@ void AlbumMenu::loadMenuLoad() {
 
 	Common::Error loadError = _vm->loadGameState(saveFiles[selectedSave], kTransitionFade);
 	if (loadError.getCode() != Common::kNoError) {
-		GUI::MessageDialog dialog(loadError.getDesc());
+		GUI::MessageDialog dialog(_(loadError.getDesc()));
 		dialog.runModal();
 	}
 }
@@ -1000,7 +1001,7 @@ void AlbumMenu::saveMenuSave() {
 
 	Common::Error saveError = _vm->saveGameState(saveName, _saveThumbnail.get(), false);
 	if (saveError.getCode() != Common::kNoError) {
-		GUI::MessageDialog dialog(saveError.getDesc());
+		GUI::MessageDialog dialog(_(saveError.getDesc()));
 		dialog.runModal();
 	}
 

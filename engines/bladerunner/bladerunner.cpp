@@ -360,7 +360,7 @@ Common::Error BladeRunnerEngine::run() {
 
 	if (!startup(hasSavegames)) {
 		// shutting down
-		return Common::Error(Common::kUnknownError, _("Failed to initialize resources"));
+		return Common::Error(Common::kUnknownError, _s("Failed to initialize resources"));
 	}
 
 	// improvement: Use a do-while() loop to handle the normal end-game state
@@ -1064,8 +1064,8 @@ void BladeRunnerEngine::gameTick() {
 
 	if (!_kia->isOpen() && !_sceneScript->isInsideScript() && !_aiScripts->isInsideScript()) {
 		if (!_settings->openNewScene()) {
-			Common::Error runtimeError = Common::Error(Common::kUnknownError, _("A required game resource was not found"));
-			GUI::MessageDialog dialog(runtimeError.getDesc());
+			Common::Error runtimeError = Common::Error(Common::kUnknownError, _s("A required game resource was not found"));
+			GUI::MessageDialog dialog(_(runtimeError.getDesc()));
 			dialog.runModal();
 			return;
 		}

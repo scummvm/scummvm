@@ -74,7 +74,7 @@ bool AchievementsManager::unsetActiveDomain() {
 }
 
 
-bool AchievementsManager::setAchievement(const String &id, const String &displayedMessage) {
+bool AchievementsManager::setAchievement(const String &id, const U32String &displayedMessage) {
 	if (!isReady()) {
 		return false;
 	}
@@ -92,7 +92,7 @@ bool AchievementsManager::setAchievement(const String &id, const String &display
 		msg = Common::U32String::format(
 		    "%S\n%S",
 		    _("Achievement unlocked!").c_str(),
-		    displayedMessage.decode(Common::kLatin1).c_str()
+		    displayedMessage.c_str()
 		);
 		g_system->displayMessageOnOSD(msg);
 	}
