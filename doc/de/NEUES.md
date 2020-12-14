@@ -37,6 +37,7 @@ Programmcodes finden Sie auf Englisch unter:
 
  Kyra:
    - Unterstützung für die japanische Sega-CD-Version von Eye of the Beholder hinzugefügt.
+   - Unterstützung für die hebräische Fan-Übersetzung von Legend of Kyrandia hinzugefügt.
 
  Lure:
    - Die Feuer-Animation im ersten Raum wird nun auch nach dem Laden eines Spielstands abgespielt.
