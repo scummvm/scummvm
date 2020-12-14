@@ -366,7 +366,7 @@ public:
 	void renderBan(byte *screenPixels, byte *bgPixels, int banFileIndex);
 	void renderBanAboveSprites();
 	void removeActorFromScreen(int actorIndex);
-	void actorFunc1();
+	void removeDrawnActorsFromScreen();
 	void drawActorToScreen(Actor *actor, const Common::String &animName, int16 x, int16 y, Fixed8 scale, bool addSprite);
 	void releaseAnim(Actor *actor);
 	void initStandAnim(int actorIndex);

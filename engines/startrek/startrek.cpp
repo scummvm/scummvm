@@ -269,7 +269,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 
 	_sound->stopAllVocSounds();
 	_gfx->fadeoutScreen();
-	actorFunc1();
+	removeDrawnActorsFromScreen();
 	initActors();
 
 	_gfx->setBackgroundImage("transprt");
@@ -330,7 +330,7 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 
 	_gfx->drawAllSprites();
 	_gfx->fadeoutScreen();
-	actorFunc1();
+	removeDrawnActorsFromScreen();
 	initActors();
 }
 
