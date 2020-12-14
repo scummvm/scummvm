@@ -36,12 +36,18 @@ private:
 	 * Load strings from the executable
 	 */
 	void loadStrings();
+
+	/**
+	 * Executes a designated function and then function zero
+	 */
+	void evalFunction0(int function);
 public:
 	TalismanGame();
 	~TalismanGame() override {}
 
 	void beforeGame() override;
 	void beforeTurn() override;
+	void afterTurn() override;
 	void beforePrompt() override;
 	bool afterPrompt() override;
 	void actionSelected(uint16 &function) override;

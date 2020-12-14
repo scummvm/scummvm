@@ -117,21 +117,24 @@ void TalismanGame::beforeGame() {
 }
 
 void TalismanGame::beforeTurn() {
-	ComprehendGameV2::beforeTurn();
-
 	_variables[0x62] = g_vm->getRandomNumber(255);
 
-	eval_function(17, nullptr);
+	evalFunction0(17);
+}
+
+void TalismanGame::afterTurn() {
+	eval_function(0, nullptr);
 }
 
 void TalismanGame::beforePrompt() {
-	if (_nounState == NOUNSTATE_INITIAL)
-		eval_function(14, nullptr);
+	if (_nounState == NOUNSTATE_INITIAL) {
+		evalFunction0(14);
+	}
 }
 
 bool TalismanGame::afterPrompt() {
 	if (_savedAction.empty()) {
-		eval_function(19, nullptr);
+		evalFunction0(19);
 		return !_flags[3];
 	} else {
 		strcpy(_inputLine, _savedAction.c_str());
@@ -163,6 +166,16 @@ void TalismanGame::handleSpecialOpcode(uint8 operand) {
 		break;
 	}
 }
+
+void TalismanGame::evalFunction0(int function) {
+	if (function) {
+		eval_function(function, nullptr);
+		eval_function(0, nullptr);
+	} else {
+		console_println(stringLookup(STRING_DONT_UNDERSTAND).c_str());
+	}
+}
+
 
 } // namespace Comprehend
 } // namespace Glk
