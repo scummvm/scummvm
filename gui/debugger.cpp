@@ -23,6 +23,7 @@
 // NB: This is really only necessary if USE_READLINE is defined
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
+#include "common/file.h"
 #include "common/debug.h"
 #include "common/debug-channels.h"
 #include "common/system.h"
@@ -72,6 +73,7 @@ Debugger::Debugger() {
 	registerCmd("md5",				WRAP_METHOD(Debugger, cmdMd5));
 	registerCmd("md5mac",			WRAP_METHOD(Debugger, cmdMd5Mac));
 #endif
+	registerCmd("exec",				WRAP_METHOD(Debugger, cmdExecFile));
 
 	registerCmd("debuglevel",		WRAP_METHOD(Debugger, cmdDebugLevel));
 	registerCmd("debugflag_list",		WRAP_METHOD(Debugger, cmdDebugFlagsList));
@@ -761,6 +763,28 @@ bool Debugger::cmdDebugFlagEnable(int argc, const char **argv) {
 			debugPrintf("Failed to enable debug flag '%s'\n", argv[1]);
 		}
 	}
+	return true;
+}
+
+bool Debugger::cmdExecFile(int argc, const char **argv) {
+	if (argc <= 1) {
+		debugPrintf("Expected to get the file with debug commands\n");
+		return false;
+	}
+	const Common::String filename(argv[1]);
+	Common::File file;
+	if (!file.open(filename)) {
+		debugPrintf("Can't open file %s\n", filename.c_str());
+		return false;
+	}
+	for (;;) {
+		const Common::String &line = file.readLine();
+		if (line.empty()) {
+			break;
+		}
+		parseCommand(line.c_str());
+	}
+
 	return true;
 }
 
