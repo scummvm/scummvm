@@ -21,6 +21,7 @@
  */
 
 #include "twine/console.h"
+#include "common/scummsys.h"
 #include "twine/twine.h"
 #include "twine/gamestate.h"
 #include "twine/scene.h"
@@ -40,7 +41,9 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 	registerCmd("toggle_freecamera", WRAP_METHOD(TwinEConsole, doToggleFreeCamera));
 	registerCmd("toggle_scenechanges", WRAP_METHOD(TwinEConsole, doToggleSceneChanges));
 	registerCmd("scene_actor", WRAP_METHOD(TwinEConsole, doSkipSceneActorsBut));
-	registerCmd("game_flag", WRAP_METHOD(TwinEConsole, doSetGameFlag));
+	registerCmd("hero_pos", WRAP_METHOD(TwinEConsole, doSetHeroPosition));
+	registerCmd("set_game_flag", WRAP_METHOD(TwinEConsole, doSetGameFlag));
+	registerCmd("show_game_flag", WRAP_METHOD(TwinEConsole, doPrintGameFlag));
 	registerCmd("inventory_flag", WRAP_METHOD(TwinEConsole, doSetInventoryFlag));
 }
 
@@ -49,10 +52,10 @@ TwinEConsole::~TwinEConsole() {
 
 #define TOGGLE_DEBUG(var, description) \
 	if ((var)) { \
-		debug("Disabling " description); \
+		debugPrintf("Disabling " description); \
 		(var) = false; \
 	} else { \
-		debug("Enabling " description); \
+		debugPrintf("Enabling " description); \
 		(var) = true; \
 	} \
 	if ((var) && !_engine->cfgfile.Debug) { \
@@ -66,11 +69,11 @@ bool TwinEConsole::doToggleZoneRendering(int argc, const char **argv) {
 
 bool TwinEConsole::doSkipSceneActorsBut(int argc, const char **argv) {
 	if (argc < 2) {
-		debug("Usage: give actor id of scene or -1 to disable");
+		debugPrintf("Usage: give actor id of scene or -1 to disable");
 		return false;
 	}
 	const int16 actorIdx = atoi(argv[1]);
-	debug("Only load actor %d in the next scene", actorIdx);
+	debugPrintf("Only load actor %d in the next scene", actorIdx);
 	_engine->_debugScene->onlyLoadActor = actorIdx;
 	return true;
 }
@@ -87,13 +90,13 @@ bool TwinEConsole::doToggleSceneChanges(int argc, const char **argv) {
 
 bool TwinEConsole::doSetInventoryFlag(int argc, const char **argv) {
 	if (argc <= 1) {
-		warning("Expected to get a inventory flag index as first parameter");
+		debugPrintf("Expected to get a inventory flag index as first parameter");
 		return false;
 	}
 
 	const uint8 idx = atoi(argv[1]);
 	if (idx >= NUM_INVENTORY_ITEMS) {
-		warning("given index exceeds the max allowed value of %i", NUM_INVENTORY_ITEMS - 1);
+		debugPrintf("given index exceeds the max allowed value of %i", NUM_INVENTORY_ITEMS - 1);
 		return false;
 	}
 	const uint8 val = argc == 3 ? atoi(argv[2]) : 0;
@@ -104,13 +107,27 @@ bool TwinEConsole::doSetInventoryFlag(int argc, const char **argv) {
 
 bool TwinEConsole::doSetGameFlag(int argc, const char **argv) {
 	if (argc <= 1) {
-		warning("Expected to get a game flag index as first parameter");
+		debugPrintf("Expected to get a game flag index as first parameter");
 		return false;
 	}
 
 	const uint8 idx = atoi(argv[1]);
 	const uint8 val = argc == 3 ? atoi(argv[2]) : 0;
 	_engine->_gameState->gameFlags[idx] = val;
+
+	return true;
+}
+
+bool TwinEConsole::doPrintGameFlag(int argc, const char **argv) {
+	if (argc <= 1) {
+		for (int i = 0; i < NUM_GAME_FLAGS; ++i) {
+			debugPrintf("[%03d] = %d", i, _engine->_gameState->gameFlags[i]);
+		}
+		return true;
+	}
+
+	const uint8 idx = atoi(argv[1]);
+	debugPrintf("[%03d] = %d", idx, _engine->_gameState->gameFlags[idx]);
 
 	return true;
 }
@@ -126,10 +143,10 @@ bool TwinEConsole::doGiveKey(int argc, const char **argv) {
 
 bool TwinEConsole::doToggleDebug(int argc, const char **argv) {
 	if (_engine->cfgfile.Debug) {
-		debug("Disabling debug mode");
+		debugPrintf("Disabling debug mode");
 		_engine->cfgfile.Debug = false;
 	} else {
-		debug("Enabling debug mode");
+		debugPrintf("Enabling debug mode");
 		_engine->cfgfile.Debug = true;
 	}
 	return true;
@@ -140,20 +157,34 @@ bool TwinEConsole::doListMenuText(int argc, const char **argv) {
 	for (int32 i = 0; i < 1000; ++i) {
 		char buf[256];
 		if (_engine->_text->getMenuText(i, buf, sizeof(buf))) {
-			debug("%4i: %s", i, buf);
+			debugPrintf("%4i: %s", i, buf);
 		}
 	}
 	return true;
 }
 
+bool TwinEConsole::doSetHeroPosition(int argc, const char **argv) {
+	if (argc < 4) {
+		debugPrintf("Current hero position: %i:%i:%i", _engine->_scene->sceneHero->x, _engine->_scene->sceneHero->y, _engine->_scene->sceneHero->z);
+		return true;
+	}
+	const int16 x = atoi(argv[1]);
+	const int16 y = atoi(argv[2]);
+	const int16 z = atoi(argv[3]);
+	_engine->_scene->sceneHero->x = x;
+	_engine->_scene->sceneHero->y = y;
+	_engine->_scene->sceneHero->z = z;
+	return true;
+}
+
 bool TwinEConsole::doChangeScene(int argc, const char **argv) {
 	if (argc <= 1) {
-		warning("Expected to get a scene index as first parameter");
+		debugPrintf("Expected to get a scene index as first parameter");
 		return false;
 	}
 	byte newSceneIndex = atoi(argv[1]);
 	if (newSceneIndex >= LBA1SceneId::SceneIdMax) {
-		warning("Scene index out of bounds");
+		debugPrintf("Scene index out of bounds");
 		return false;
 	}
 	_engine->_scene->needChangeScene = atoi(argv[1]);
