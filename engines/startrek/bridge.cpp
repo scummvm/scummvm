@@ -103,7 +103,7 @@ enum BridgeSequence {
 	kStartMissionVeng,
 	kSeqUnk29,
 	kStartMissionSins,
-	kSeqUnk31,
+	kSeqUnk31
 };
 
 void StarTrekEngine::initBridge(bool b) {
