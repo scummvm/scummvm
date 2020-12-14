@@ -54,7 +54,7 @@ struct BodyShade {
 
 struct BodyPolygon {
 	Common::Array<uint16> indices;
-	int16 intensity = 0;
+	Common::Array<uint16> intensities;
 	int8 renderType = 0;
 	uint16 color = 0;
 };

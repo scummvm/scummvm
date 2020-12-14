@@ -59,11 +59,33 @@ struct CmdRenderPolygon {
 	// followed by Vertex array
 };
 
+struct Vec3 {
+	int32 x = 0;
+	int32 y = 0;
+	int32 z = 0;
+};
+
 struct Matrix {
 	int32 row1[3]{0, 0, 0};
 	int32 row2[3]{0, 0, 0};
 	int32 row3[3]{0, 0, 0};
 };
+
+inline Matrix operator*(const Matrix &matrix, const Vec3 &vec) {
+	Matrix out;
+	out.row1[0] = matrix.row1[0] * vec.x;
+	out.row1[1] = matrix.row1[1] * vec.x;
+	out.row1[2] = matrix.row1[2] * vec.x;
+
+	out.row2[0] = matrix.row2[0] * vec.y;
+	out.row2[1] = matrix.row2[1] * vec.y;
+	out.row2[2] = matrix.row2[2] * vec.y;
+
+	out.row3[0] = matrix.row3[0] * vec.z;
+	out.row3[1] = matrix.row3[1] * vec.z;
+	out.row3[2] = matrix.row3[2] * vec.z;
+	return out;
+}
 
 struct Model {
 	struct BodyFlags {
@@ -341,9 +363,7 @@ private:
 	Matrix baseMatrix;
 	Matrix matricesTable[30 + 1];
 	Matrix shadeMatrix;
-	int32 lightX = 0;
-	int32 lightY = 0;
-	int32 lightZ = 0;
+	Vec3 lightPos;
 
 	RenderCommand _renderCmds[1000];
 	RenderCommand _renderCmdsSortedByDepth[1000];

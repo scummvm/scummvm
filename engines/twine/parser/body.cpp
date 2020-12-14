@@ -99,17 +99,20 @@ void BodyData::loadPolygons(Common::SeekableReadStream &stream) {
 		const int8 numVertex = stream.readSByte();
 
 		poly.color = stream.readUint16LE();
+		int16 intensity = -1;
 		if (poly.renderType >= 7 && poly.renderType < 9) {
-			poly.intensity = stream.readSint16LE();
+			intensity = stream.readSint16LE();
 		}
 
-		// TODO: this is not yet correct
 		poly.indices.reserve(numVertex);
+		poly.intensities.reserve(numVertex);
 		for (int k = 0; k < numVertex; ++k) {
 			if (poly.renderType >= 9) {
-				poly.intensity = stream.readSint16LE();
+				intensity = stream.readSint16LE();
 			}
-			poly.indices.push_back(stream.readUint16LE() / 6);
+			const uint16 vertexIndex = stream.readUint16LE() / 6;
+			poly.indices.push_back(vertexIndex);
+			poly.intensities.push_back(intensity);
 		}
 
 		_polygons.push_back(poly);
