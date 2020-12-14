@@ -360,9 +360,9 @@ void Renderer::setLightVector(int32 angleX, int32 angleY, int32 angleZ) {
 	applyRotation(&shadeMatrix, &baseMatrix);
 	translateGroup(0, 0, 59);
 
-	lightX = destX;
-	lightY = destY;
-	lightZ = destZ;
+	lightPos.x = destX;
+	lightPos.y = destY;
+	lightPos.z = destZ;
 }
 
 FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
@@ -1375,17 +1375,7 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 			if (numOfShades) {
 				int32 numShades = numOfShades;
 
-				shadeMatrix.row1[0] = lightMatrix->row1[0] * lightX;
-				shadeMatrix.row1[1] = lightMatrix->row1[1] * lightX;
-				shadeMatrix.row1[2] = lightMatrix->row1[2] * lightX;
-
-				shadeMatrix.row2[0] = lightMatrix->row2[0] * lightY;
-				shadeMatrix.row2[1] = lightMatrix->row2[1] * lightY;
-				shadeMatrix.row2[2] = lightMatrix->row2[2] * lightY;
-
-				shadeMatrix.row3[0] = lightMatrix->row3[0] * lightZ;
-				shadeMatrix.row3[1] = lightMatrix->row3[1] * lightZ;
-				shadeMatrix.row3[2] = lightMatrix->row3[2] * lightZ;
+				shadeMatrix = *lightMatrix * lightPos;
 
 				do { // for each normal
 					const uint8 *shadePtr = Model::getShadesBaseData(bodyPtr, shadeIndex);
