@@ -24,6 +24,7 @@
 #include "backends/graphics/opengl/texture.h"
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
+#include "common/trace.h"
 #include "graphics/scaler/aspect.h"
 
 #include "common/textconsole.h"
@@ -341,6 +342,7 @@ void OpenGLSdlGraphicsManager::refreshScreen() {
 #else
 	SDL_GL_SwapBuffers();
 #endif
+	traceEndFrame(refreshScreen);
 }
 
 void *OpenGLSdlGraphicsManager::getProcAddress(const char *name) const {

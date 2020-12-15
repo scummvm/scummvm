@@ -21,6 +21,7 @@
  */
 
 #include "common/scummsys.h"
+#include "common/trace.h"
 
 #if defined(SDL_BACKEND)
 #include "backends/graphics/surfacesdl/surfacesdl-graphics.h"
@@ -1396,6 +1397,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 	_numDirtyRects = 0;
 	_forceRedraw = false;
 	_cursorNeedsRedraw = false;
+	traceEndFrame(updateScreen);
 }
 
 bool SurfaceSdlGraphicsManager::saveScreenshot(const Common::String &filename) const {

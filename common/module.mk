@@ -60,6 +60,11 @@ MODULE_OBJS += \
 	rdft.o \
 	sinetables.o
 
+ifdef ENABLE_TRACY
+MODULE_OBJS += \
+	tracy/TracyClient.o
+endif
+
 ifdef ENABLE_EVENTRECORDER
 MODULE_OBJS += \
 	recorderfile.o

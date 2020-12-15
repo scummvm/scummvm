@@ -199,6 +199,8 @@ _pandoc=no
 # Default vkeybd/eventrec options
 _vkeybd=no
 _eventrec=no
+# Tracy Profiler support
+_tracy=no
 # GUI translation options
 _translation=yes
 # Default platform settings
@@ -1063,6 +1065,7 @@ Optional Features:
   --enable-vkeybd          build virtual keyboard support
   --enable-eventrecorder   enable event recording functionality
   --disable-eventrecorder  disable event recording functionality
+  --enable-tracy           enable tracy profiler support
   --enable-updates         build support for updates
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build
@@ -1346,6 +1349,7 @@ for ac_option in $@; do
 	--disable-vkeybd)            _vkeybd=no              ;;
 	--enable-eventrecorder)      _eventrec=yes           ;;
 	--disable-eventrecorder)     _eventrec=no            ;;
+	--enable-tracy)              _tracy=yes              ;;
 	--enable-text-console)       _text_console=yes       ;;
 	--disable-text-console)      _text_console=no        ;;
 	--with-fluidsynth-prefix=*)
@@ -5689,6 +5693,18 @@ echo "$_discord"
 define_in_config_if_yes $_vkeybd 'ENABLE_VKEYBD'
 define_in_config_if_yes $_eventrec 'ENABLE_EVENTRECORDER'
 
+#
+# Check whether to enable tracy profiler support
+#
+
+if test "$_tracy" = yes ; then
+	append_var DEFINES "-DTRACY_ENABLE"
+	append_var LIBS "-ldl -lpthread"
+	define_in_config_if_yes $_tracy 'FORBIDDEN_SYMBOL_ALLOW_ALL'
+fi
+define_in_config_if_yes $_tracy 'ENABLE_TRACY'
+define_in_config_if_yes $_tracy 'TRACY_ON_DEMAND'
+
 # Check whether to build translation support
 #
 echo_n "Building translation support... "
@@ -5979,6 +5995,10 @@ fi
 
 if test "$_eventrec" = yes ; then
 	echo_n ", event recorder"
+fi
+
+if test "$_tracy" = yes ; then
+	echo_n ", tracy profiler"
 fi
 
 if test "$_cloud" = yes ; then

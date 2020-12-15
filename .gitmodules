@@ -2,3 +2,6 @@
 	path = devtools/create_prince
 	url = https://github.com/scummvm/game-translations
 	branch = prince-and-the-coward
+[submodule "common/tracy"]
+	path = common/tracy
+	url = https://github.com/wolfpld/tracy.git

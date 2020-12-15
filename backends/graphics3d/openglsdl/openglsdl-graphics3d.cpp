@@ -29,6 +29,7 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "common/config-manager.h"
 #include "common/file.h"
+#include "common/trace.h"
 #include "engines/engine.h"
 #include "graphics/pixelbuffer.h"
 #include "graphics/opengl/context.h"
@@ -572,6 +573,8 @@ void OpenGLSdlGraphics3dManager::updateScreen() {
 #else
 	SDL_GL_SwapBuffers();
 #endif
+
+	traceEndFrame(updateScreen);
 
 	if (_frameBuffer) {
 		_frameBuffer->attach();
