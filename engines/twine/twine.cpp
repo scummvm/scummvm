@@ -605,26 +605,31 @@ void TwinEEngine::processOptionsMenu() {
 }
 
 void TwinEEngine::centerScreenOnActor() {
-	if (!disableScreenRecenter && !_debugGrid->useFreeCamera) {
-		ActorStruct *actor = _scene->getActor(_scene->currentlyFollowedActor);
-		_renderer->projectPositionOnScreen(actor->x - (_grid->newCameraX << 9),
-		                                   actor->y - (_grid->newCameraY << 8),
-		                                   actor->z - (_grid->newCameraZ << 9));
-		if (_renderer->projPosX < 80 || _renderer->projPosX >= SCREEN_WIDTH - 60 || _renderer->projPosY < 80 || _renderer->projPosY >= SCREEN_HEIGHT - 50) {
-			_grid->newCameraX = ((actor->x + 0x100) >> 9) + (((actor->x + 0x100) >> 9) - _grid->newCameraX) / 2;
-			_grid->newCameraY = actor->y >> 8;
-			_grid->newCameraZ = ((actor->z + 0x100) >> 9) + (((actor->z + 0x100) >> 9) - _grid->newCameraZ) / 2;
+	if (disableScreenRecenter) {
+		return;
+	}
+	if (_debugGrid->useFreeCamera) {
+		return;
+	}
 
-			if (_grid->newCameraX >= GRID_SIZE_X) {
-				_grid->newCameraX = GRID_SIZE_X - 1;
-			}
+	ActorStruct *actor = _scene->getActor(_scene->currentlyFollowedActor);
+	_renderer->projectPositionOnScreen(actor->x - (_grid->newCameraX << 9),
+	                                   actor->y - (_grid->newCameraY << 8),
+	                                   actor->z - (_grid->newCameraZ << 9));
+	if (_renderer->projPosX < 80 || _renderer->projPosX >= SCREEN_WIDTH - 60 || _renderer->projPosY < 80 || _renderer->projPosY >= SCREEN_HEIGHT - 50) {
+		_grid->newCameraX = ((actor->x + 0x100) >> 9) + (((actor->x + 0x100) >> 9) - _grid->newCameraX) / 2;
+		_grid->newCameraY = actor->y >> 8;
+		_grid->newCameraZ = ((actor->z + 0x100) >> 9) + (((actor->z + 0x100) >> 9) - _grid->newCameraZ) / 2;
 
-			if (_grid->newCameraZ >= GRID_SIZE_Z) {
-				_grid->newCameraZ = GRID_SIZE_Z - 1;
-			}
-
-			_redraw->reqBgRedraw = true;
+		if (_grid->newCameraX >= GRID_SIZE_X) {
+			_grid->newCameraX = GRID_SIZE_X - 1;
 		}
+
+		if (_grid->newCameraZ >= GRID_SIZE_Z) {
+			_grid->newCameraZ = GRID_SIZE_Z - 1;
+		}
+
+		_redraw->reqBgRedraw = true;
 	}
 }
 
