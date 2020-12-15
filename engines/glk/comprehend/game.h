@@ -80,6 +80,8 @@ protected:
 	char _inputLine[INPUT_LINE_SIZE];
 	int _inputLineIndex;
 	int _currentRoomCopy;
+	int _functionNum;
+	int _specialOpcode;
 public:
 	const GameStrings *_gameStrings;
 
@@ -166,12 +168,12 @@ public:
 	/**
 	 * Called when an action function has been selected
 	 */
-	virtual void actionSelected(uint16 &function) {}
+	virtual void handleAction(Sentence *sentence);
 
 	virtual int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) {
 		return ROOM_IS_NORMAL;
 	}
-	virtual void handleSpecialOpcode(uint8 operand) {}
+	virtual void handleSpecialOpcode() {}
 
 	virtual void synchronizeSave(Common::Serializer &s);
 

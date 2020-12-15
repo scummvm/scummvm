@@ -80,8 +80,8 @@ void CrimsonCrownGame::synchronizeSave(Common::Serializer &s) {
 	ComprehendGame::synchronizeSave(s);
 }
 
-void CrimsonCrownGame::handleSpecialOpcode(uint8 operand) {
-	switch (operand) {
+void CrimsonCrownGame::handleSpecialOpcode() {
+	switch (_specialOpcode) {
 	case 1:
 		// Crystyal ball cutscene
 		if (_diskNum == 1) {
