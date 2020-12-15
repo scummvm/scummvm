@@ -26,8 +26,8 @@
 #include "common/savefile.h"
 #include "common/scummsys.h"
 #include "twine/actor.h"
-#include "twine/menu.h"
 #include "twine/holomap.h"
+#include "twine/menu.h"
 
 namespace TwinE {
 
@@ -65,7 +65,7 @@ enum InventoryItems {
 	kEmptyBottle = 22,
 	kFerryTicket = 23,
 	kKeypad = 24,
-	kCoffeeCan  = 25,
+	kCoffeeCan = 25,
 	kiBonusList = 26,
 	kiCloverLeaf = 27,
 	MaxInventoryItems = 28
@@ -196,9 +196,9 @@ public:
 
 	char playerName[30];
 
-	int32 gameChoices[10];         // inGameMenuData
-	int32 numChoices = 0;          // numOfOptionsInChoice
-	int32 choiceAnswer = 0;        // inGameMenuAnswer
+	int32 gameChoices[10];  // inGameMenuData
+	int32 numChoices = 0;   // numOfOptionsInChoice
+	int32 choiceAnswer = 0; // inGameMenuAnswer
 
 	/** Initialize all engine variables */
 	void initEngineVars();
