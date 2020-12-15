@@ -63,7 +63,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed display of Chinese, Japanese and Korean pause and restart dialogs.
    - Added support for numerous Korean translations from scummkor project.
    - Added support for Russobit-M versions of Pajama2 and SpyOzone.
-   - Fixed speech playback is Akella version of COMI.
+   - Fixed speech playback in Akella version of COMI.
 
  Tinsel:
    - Enabled the Return to Launcher feature.
