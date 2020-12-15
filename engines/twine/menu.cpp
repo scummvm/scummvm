@@ -1108,7 +1108,7 @@ void Menu::processInventoryMenu() {
 	_engine->_text->setFontCrossColor(4);
 	_engine->_text->initDialogueBox();
 
-	ProgressiveTestState bx = ProgressiveTestState::UNK0;
+	ProgressiveTextState bx = ProgressiveTextState::End;
 
 #if 0
 	ScopedCursor scopedCursor(_engine);
@@ -1167,19 +1167,19 @@ void Menu::processInventoryMenu() {
 			updateItemText = false;
 		}
 
-		if (updateItemText || bx != ProgressiveTestState::UNK2) {
+		if (updateItemText || bx != ProgressiveTextState::UNK2) {
 			bx = _engine->_text->updateProgressiveText();
 		}
 
 		// TRICKY: 3D model rotation delay - only apply when no text is drawing
-		if (bx == ProgressiveTestState::UNK0 || bx == ProgressiveTestState::UNK2) {
+		if (bx == ProgressiveTextState::End || bx == ProgressiveTextState::UNK2) {
 			_engine->_system->delayMillis(15);
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
-			if (bx == ProgressiveTestState::UNK2) {
+			if (bx == ProgressiveTextState::UNK2) {
 				_engine->_text->initInventoryDialogueBox();
-				bx = ProgressiveTestState::UNK0;
+				bx = ProgressiveTextState::End;
 			} else {
 				if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
 					_engine->_text->initInventoryDialogueBox();
