@@ -105,18 +105,18 @@ endif
 ifneq ($(findstring $(MAKEFLAGS),s),s)
 ifneq ($(VERBOSE_BUILD),1)
 ifneq ($(VERBOSE_BUILD),yes)
-QUIET_CC      = @echo '   ' C '      ' $@;
-QUIET_CXX     = @echo '   ' C++ '    ' $@;
-QUIET_AS      = @echo '   ' AS '     ' $@;
-QUIET_NASM    = @echo '   ' NASM '   ' $@;
-QUIET_PANDOC  = @echo '   ' PANDOC ' ' $@;
-QUIET_AR      = @echo '   ' AR '     ' $@;
-QUIET_RANLIB  = @echo '   ' RANLIB ' ' $@;
-QUIET_PLUGIN  = @echo '   ' PLUGIN ' ' $@;
-QUIET_LINK    = @echo '   ' LINK '   ' $@;
-QUIET_DWP     = @echo '   ' DWP '    ' $@;
-QUIET_WINDRES = @echo '   ' WINDRES '' $@;
-QUIET         = @
+QUIET_CC      ?= @echo '   ' C '      ' $@;
+QUIET_CXX     ?= @echo '   ' C++ '    ' $@;
+QUIET_AS      ?= @echo '   ' AS '     ' $@;
+QUIET_NASM    ?= @echo '   ' NASM '   ' $@;
+QUIET_PANDOC  ?= @echo '   ' PANDOC ' ' $@;
+QUIET_AR      ?= @echo '   ' AR '     ' $@;
+QUIET_RANLIB  ?= @echo '   ' RANLIB ' ' $@;
+QUIET_PLUGIN  ?= @echo '   ' PLUGIN ' ' $@;
+QUIET_LINK    ?= @echo '   ' LINK '   ' $@;
+QUIET_DWP     ?= @echo '   ' DWP '    ' $@;
+QUIET_WINDRES ?= @echo '   ' WINDRES '' $@;
+QUIET         ?= @
 endif
 endif
 endif
