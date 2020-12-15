@@ -25,8 +25,9 @@
 namespace BladeRunner {
 
 AIScriptHawkersBarkeep::AIScriptHawkersBarkeep(BladeRunnerEngine *vm) : AIScriptBase(vm) {
-	_var1 = 0;
-	_var2 = 0;
+	// _varChooseIdleAnimation can have valid values: 0, 1, 2s
+	_varChooseIdleAnimation = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 	_var3 = 1;
 	_resumeIdleAfterFramesetCompletesFlag = false;
 }
@@ -37,8 +38,8 @@ void AIScriptHawkersBarkeep::Initialize() {
 	_animationStateNext = 0;
 	_animationNext = 0;
 
-	_var1 = 0;
-	_var2 = 0;
+	_varChooseIdleAnimation = 0;
+	_varNumOfTimesToHoldCurrentFrame = 0;
 	_var3 = 1;
 	_resumeIdleAfterFramesetCompletesFlag = false;
 
@@ -119,11 +120,11 @@ bool AIScriptHawkersBarkeep::GoalChanged(int currentGoalNumber, int newGoalNumbe
 bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		if (_var1 == 0) {
-			*animation = 705;
+		if (_varChooseIdleAnimation == 0) {
+			*animation = kModelAnimationHawkersBarkeepIdle;
 
-			if (_var2) {
-				--_var2;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 
 				if (Random_Query(0, 6) == 0) {
 					_var3 = -_var3;
@@ -131,34 +132,34 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 			} else {
 				_animationFrame += _var3;
 
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(705))
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepIdle))
 					_animationFrame = 0;
 
 				if (_animationFrame < 0)
-					_animationFrame = Slice_Animation_Query_Number_Of_Frames(705) - 1;
+					_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepIdle) - 1;
 
 				if (!Random_Query(0, 4))
-					_var2 = 1;
+					_varNumOfTimesToHoldCurrentFrame = 1;
 
 				if (_animationFrame == 13 || _animationFrame == 5 || _animationFrame == 9)
-					_var2 = Random_Query(2, 8);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(2, 8);
 
 				if (!Random_Query(0, 5)) {
 					if (_animationFrame == 0 || _animationFrame == 11) {
 						_animationFrame = 0;
 
 						if (Random_Query(0, 1)) {
-							*animation = 706;
-							_var1 = 1;
+							*animation = kModelAnimationHawkersBarkeepCleaningBar;
+							_varChooseIdleAnimation = 1;
 						} else {
-							*animation = 707;
-							_var1 = 2;
+							*animation = kModelAnimationHawkersBarkeepWipingGlasses;
+							_varChooseIdleAnimation = 2;
 						}
 					}
 				}
 			}
-		} else if (_var1 == 1) {
-			*animation = 706;
+		} else if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationHawkersBarkeepCleaningBar;
 			if (_animationFrame <= 3)
 				_var3 = 1;
 
@@ -169,18 +170,18 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 
 			_animationFrame += _var3;
 
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(706)) {
-				*animation = 705;
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepCleaningBar)) {
+				*animation = kModelAnimationHawkersBarkeepIdle;
 				_animationFrame = 0;
-				_var1 = 0;
+				_varChooseIdleAnimation = 0;
 			}
-		} else if (_var1 == 2) {
-			*animation = 707;
+		} else if (_varChooseIdleAnimation == 2) {
+			*animation = kModelAnimationHawkersBarkeepWipingGlasses;
 
-			if (_var2) {
-				--_var2;
+			if (_varNumOfTimesToHoldCurrentFrame > 0) {
+				--_varNumOfTimesToHoldCurrentFrame;
 
-				if (_var2 == 0)
+				if (_varNumOfTimesToHoldCurrentFrame == 0)
 					_var3 = 2 * Random_Query(0, 1) - 1;
 			} else {
 				if (_animationFrame <= 11)
@@ -193,39 +194,39 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 				}
 
 				if (_animationFrame == 18) {
-					_var2 = Random_Query(5, 15);
+					_varNumOfTimesToHoldCurrentFrame = Random_Query(5, 15);
 				}
 
 				++_animationFrame;
-				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(707)) {
-					*animation = 705;
+				if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepWipingGlasses)) {
+					*animation = kModelAnimationHawkersBarkeepIdle;
 					_animationFrame = 0;
-					_var1 = 0;
-					_var2 = 0;
+					_varChooseIdleAnimation = 0;
+					_varNumOfTimesToHoldCurrentFrame = 0;
 				}
 			}
 		}
 		break;
 
 	case 1:
-		if (_var1 == 0) {
+		if (_varChooseIdleAnimation == 0) {
 			_animationFrame = 0;
 			_animationState = _animationStateNext;
 			*animation = _animationNext;
-		} else if (_var1 == 1) {
-			*animation = 706;
+		} else if (_varChooseIdleAnimation == 1) {
+			*animation = kModelAnimationHawkersBarkeepCleaningBar;
 			++_animationFrame;
 
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(706)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepCleaningBar)) {
 				_animationFrame = 0;
 				_animationState = _animationStateNext;
 				*animation = _animationNext;
 			}
-		} else if (_var1 == 2) {
-			*animation = 707;
+		} else if (_varChooseIdleAnimation == 2) {
+			*animation = kModelAnimationHawkersBarkeepWipingGlasses;
 			_animationFrame += 2;
 
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(707)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepWipingGlasses)) {
 				_animationFrame = 0;
 				_animationState = _animationStateNext;
 				*animation = _animationNext;
@@ -235,92 +236,92 @@ bool AIScriptHawkersBarkeep::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
-		*animation = 710;
+		*animation = kModelAnimationHawkersBarkeepCalmTalk;
 
 		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
 			_animationState = 0;
-			_var1 = 0;
+			_varChooseIdleAnimation = 0;
 		} else {
 			++_animationFrame;
 
-			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(710)) {
+			if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepCalmTalk)) {
 				_animationFrame = 0;
 			}
 		}
 		break;
 
 	case 3:
-		*animation = 711;
+		*animation = kModelAnimationHawkersBarkeepExplainTalk;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(711)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepExplainTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 710;
+			*animation = kModelAnimationHawkersBarkeepCalmTalk;
 		}
 		break;
 
 	case 4:
-		*animation = 712;
+		*animation = kModelAnimationHawkersBarkeepBentsAndWipesTalk;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(712)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepBentsAndWipesTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 710;
+			*animation = kModelAnimationHawkersBarkeepCalmTalk;
 		}
 		break;
 
 	case 5:
-		*animation = 713;
+		*animation = kModelAnimationHawkersBarkeepAltGestureGiveTalk;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(713)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepAltGestureGiveTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 710;
+			*animation = kModelAnimationHawkersBarkeepCalmTalk;
 		}
 		break;
 
 	case 6:
-		*animation = 714;
+		*animation = kModelAnimationHawkersBarkeepBentingTalk;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(714)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepBentingTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 710;
+			*animation = kModelAnimationHawkersBarkeepCalmTalk;
 		}
 		break;
 
 	case 7:
-		*animation = 715;
+		*animation = kModelAnimationHawkersBarkeepBentingAndDismissTalk;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(715)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepBentingAndDismissTalk)) {
 			_animationFrame = 0;
 			_animationState = 2;
-			*animation = 710;
+			*animation = kModelAnimationHawkersBarkeepCalmTalk;
 		}
 		break;
 
 	case 8:
-		*animation = 708;
+		*animation = kModelAnimationHawkersBarkeepGestureGive;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(708)) {
-			*animation = 705;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepGestureGive)) {
+			*animation = kModelAnimationHawkersBarkeepIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 9:
-		*animation = 709;
+		*animation = kModelAnimationHawkersBarkeepGiveMoonshine;
 		++_animationFrame;
 
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(709)) {
-			*animation = 705;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationHawkersBarkeepGiveMoonshine)) {
+			*animation = kModelAnimationHawkersBarkeepIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
@@ -353,7 +354,7 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 2;
-			_animationNext = 710;
+			_animationNext = kModelAnimationHawkersBarkeepCalmTalk;
 		}
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
@@ -365,7 +366,7 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 3;
-			_animationNext = 711;
+			_animationNext = kModelAnimationHawkersBarkeepExplainTalk;
 		}
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
@@ -377,7 +378,7 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 4;
-			_animationNext = 712;
+			_animationNext = kModelAnimationHawkersBarkeepBentsAndWipesTalk;
 		}
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
@@ -389,7 +390,7 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 5;
-			_animationNext = 713;
+			_animationNext = kModelAnimationHawkersBarkeepAltGestureGiveTalk;
 		}
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
@@ -401,7 +402,7 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 6;
-			_animationNext = 714;
+			_animationNext = kModelAnimationHawkersBarkeepBentingTalk;
 		}
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;
@@ -413,7 +414,7 @@ bool AIScriptHawkersBarkeep::ChangeAnimationMode(int mode) {
 		} else {
 			_animationState = 1;
 			_animationStateNext = 7;
-			_animationNext = 715;
+			_animationNext = kModelAnimationHawkersBarkeepBentingAndDismissTalk;
 		}
 		_resumeIdleAfterFramesetCompletesFlag = false;
 		break;

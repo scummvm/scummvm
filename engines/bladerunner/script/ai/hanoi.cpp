@@ -715,6 +715,8 @@ bool AIScriptHanoi::ChangeAnimationMode(int mode) {
 		break;
 
 	case 16:
+		// Used when Hanoi says "You're real cute" to McCoy (in NR03), 
+		// when McCoy first tries to sit on the rotating couch
 #if BLADERUNNER_ORIGINAL_BUGS
 		// TODO a bug? uses kModelAnimationHanoiSlightBowingTalk (654) again like case 15
 		_animationStateNext = 18;
@@ -733,6 +735,7 @@ bool AIScriptHanoi::ChangeAnimationMode(int mode) {
 		break;
 
 	case kAnimationModeHit:
+		// fall through
 	case kAnimationModeCombatHit:
 		_animationState = 12;
 		_animationFrame = 0;

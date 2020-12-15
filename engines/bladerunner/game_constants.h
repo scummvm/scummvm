@@ -2374,23 +2374,83 @@ enum GameModelAnimations {
 	kModelAnimationMurrayMoreExplainTalk = 703,
 	kModelAnimationMurrayCautionTalk     = 704,
 	// 705 - 715: Hawker's Barkeep animations
-		// TODO
+	kModelAnimationHawkersBarkeepIdle                   = 705,
+	kModelAnimationHawkersBarkeepCleaningBar            = 706,
+	kModelAnimationHawkersBarkeepWipingGlasses          = 707,
+	kModelAnimationHawkersBarkeepGestureGive            = 708,
+	kModelAnimationHawkersBarkeepGiveMoonshine          = 709,
+	kModelAnimationHawkersBarkeepCalmTalk               = 710,
+	kModelAnimationHawkersBarkeepExplainTalk            = 711,
+	kModelAnimationHawkersBarkeepBentsAndWipesTalk      = 712,
+	kModelAnimationHawkersBarkeepAltGestureGiveTalk     = 713, // similar to 708, kind of bents more
+	kModelAnimationHawkersBarkeepBentingTalk            = 714,
+	kModelAnimationHawkersBarkeepBentingAndDismissTalk  = 715,
 	// 716 - 721: Holloway animations
-		// TODO
+	kModelAnimationHollowayWalking                     = 716,
+	kModelAnimationHollowayIdle                        = 717,
+	kModelAnimationHollowaySlightHeadMove              = 718, // UNUSED
+	kModelAnimationHollowayGlobAttack                  = 719,
+	kModelAnimationHollowayCalmTalk                    = 720,
+	kModelAnimationHollowayExplainTalk                 = 721,
 	// 722 - 731: Sergeant Walls animations
-		// TODO
+	kModelAnimationSergeantWallsIdle             = 722,
+	kModelAnimationSergeantWallsScratchHead      = 723, // UNUSED
+	kModelAnimationSergeantWallsGestureGive      = 724,
+	kModelAnimationSergeantWallsCalmTalk         = 725,
+	kModelAnimationSergeantWallsMoreHeadMoveTalk = 726,
+	kModelAnimationSergeantWallsExplainTalk      = 727,
+	kModelAnimationSergeantWallsLaughTalk        = 728,
+	kModelAnimationSergeantWallsHarderLaughTalk  = 729,
+	kModelAnimationSergeantWallsDefendTalk       = 730,
+	kModelAnimationSergeantWallsHitsBuzzerTalk   = 731,
 	// 732 - 743: Moraji animations
-		// TODO
+	// In all Moraji's animations except 742, 743, he still has the cuff on his left hand
+	kModelAnimationMorajiRunning                           = 732,
+	kModelAnimationMorajiCuffedIdle                        = 733,
+	kModelAnimationMorajiCuffedFastTalk                    = 734,
+	kModelAnimationMorajiCuffedMoreFastTalk                = 735,
+	kModelAnimationMorajiCuffedPointingTalk                = 736,
+	kModelAnimationMorajiCuffedSomethingExplodingToHisLeft = 737, // McCoy shooting at cuffs
+	kModelAnimationMorajiCuffedShotDead                    = 738,
+	kModelAnimationMorajiRunningDivesForward               = 739,
+	kModelAnimationMorajiLayingForwardTalk                 = 740,
+	kModelAnimationMorajiLayingForwardDies                 = 741,
+	kModelAnimationMorajiSittingGetsUp                     = 742, // no cuff here
+	kModelAnimationMorajiStandingUpUrgentTalk              = 743, // UNUSED - no cuff here either
 	// 744 - 750: Photographer animations
-		// TODO
+	kModelAnimationPhotographerWalking          = 744,
+	kModelAnimationPhotographerIdle             = 745,
+	kModelAnimationPhotographerTakingAPhoto     = 746,
+	kModelAnimationPhotographerCalmTalk         = 747,
+	kModelAnimationPhotographerMoreHeadMoveTalk = 748, // UNUSED - RESTORED
+	kModelAnimationPhotographerExplainTalk      = 749,
+	kModelAnimationPhotographerSuggestTalk      = 750,
 	//       751: Rajif animations
-		// TODO
+	kModelAnimationRajifWithGunIdle             = 751,
 	// 752 - 757: EarlyQ Bartender animations
-		// TODO
+	kModelAnimationEarlyQBartenderWipingGlassIdle      = 752,
+	kModelAnimationEarlyQBartenderWipingTable          = 753,
+	kModelAnimationEarlyQBartenderPuttingAGlassOnTable = 754,
+	kModelAnimationEarlyQBartenderCalmTalk             = 755,
+	kModelAnimationEarlyQBartenderExplainTalk          = 756, // UNUSED - RESTORED
+	kModelAnimationEarlyQBartenderDescribeTalk         = 757,
 	// 758 - 764: Shoeshine Man animations (UNUSED)
-		// TODO
-	// 765 - 772: Tyrell animations
-		// TODO
+	kModelAnimationShoeshineManWalking              = 758, // UNUSED
+	kModelAnimationShoeshineManSitsIdle             = 759, // UNUSED
+	kModelAnimationShoeshineManSitsGestureGive      = 760, // UNUSED
+	kModelAnimationShoeshineManSitsCalmTalk         = 761, // UNUSED
+	kModelAnimationShoeshineManSitsMoreHeadMoveTalk = 762, // UNUSED
+	kModelAnimationShoeshineManSitsViolentHeadMove  = 763, // UNUSED - Coughs? Spits? Talks?
+	kModelAnimationShoeshineManSitsGetsUp           = 764, // UNUSED
+	// 765 - 772: Tyrell animations // TODO
+	kModelAnimationTyrellWalking             = 765,
+	kModelAnimationTyrellIdle                = 766,
+	kModelAnimationTyrellHeadMoveIdle        = 767,
+	kModelAnimationTyrellFastNodTalk         = 768,
+	kModelAnimationTyrellSuggestTalk         = 769,
+	kModelAnimationTyrellConsideringTalk     = 770,
+	kModelAnimationTyrellBowsAndSuggestsTalk = 771,
+	kModelAnimationTyrellDismissTalk         = 772,
 	// 773 - 787: Chew animations
 		// TODO
 	// 788 - 804: Gaff animations
