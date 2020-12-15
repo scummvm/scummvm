@@ -1115,6 +1115,7 @@ void Menu::processInventoryMenu() {
 #endif
 	ScopedKeyMap scopedKeyMap(_engine, uiKeyMapId);
 	for (;;) {
+		ScopedFPS fps(1000 / 15);
 		_engine->readKeys();
 		int32 prevSelectedItem = inventorySelectedItem;
 
@@ -1169,11 +1170,6 @@ void Menu::processInventoryMenu() {
 
 		if (updateItemText || bx != ProgressiveTextState::NextPage) {
 			bx = _engine->_text->updateProgressiveText();
-		}
-
-		// TRICKY: 3D model rotation delay - only apply when no text is drawing
-		if (bx == ProgressiveTextState::End || bx == ProgressiveTextState::NextPage) {
-			_engine->_system->delayMillis(15);
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
