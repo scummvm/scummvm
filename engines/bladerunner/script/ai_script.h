@@ -392,8 +392,8 @@ DECLARE_SCRIPT(Tyrell)
 END_SCRIPT
 
 DECLARE_SCRIPT(Chew)
-	int _var1;
-	int _var2;
+	int _varNumOfTimesToHoldCurrentFrame;
+	int _varChooseIdleAnimation;
 	int _var3;
 	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
