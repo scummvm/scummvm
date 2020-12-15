@@ -83,7 +83,7 @@ public:
 	void beforePrompt() override;
 	bool afterPrompt() override;
 	int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) override;
-	void handleSpecialOpcode(uint8 operand) override;
+	void handleSpecialOpcode() override;
 	bool handle_restart() override;
 	void synchronizeSave(Common::Serializer &s) override;
 };

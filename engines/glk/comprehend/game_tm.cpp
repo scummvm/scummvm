@@ -119,22 +119,21 @@ void TalismanGame::beforeGame() {
 void TalismanGame::beforeTurn() {
 	_variables[0x62] = g_vm->getRandomNumber(255);
 
-	evalFunction0(17);
-}
-
-void TalismanGame::afterTurn() {
-	eval_function(0, nullptr);
+	_functionNum = 17;
+	handleAction(nullptr);
 }
 
 void TalismanGame::beforePrompt() {
 	if (_nounState == NOUNSTATE_INITIAL) {
-		evalFunction0(14);
+		_functionNum = 14;
+		handleAction(nullptr);
 	}
 }
 
 bool TalismanGame::afterPrompt() {
 	if (_savedAction.empty()) {
-		evalFunction0(19);
+		_functionNum = 19;
+		handleAction(nullptr);
 		return !_flags[3];
 	} else {
 		strcpy(_inputLine, _savedAction.c_str());
@@ -143,15 +142,17 @@ bool TalismanGame::afterPrompt() {
 	}
 }
 
-void TalismanGame::actionSelected(uint16 &function) {
-	if (_flags[62] && function != _variables[125]) {
-		_variables[124] = function;
-		function = _variables[126];
+void TalismanGame::handleAction(Sentence *sentence) {
+	if (_flags[62] && _functionNum != _variables[125]) {
+		_variables[124] = _functionNum;
+		_functionNum = _variables[126];
 	}
+
+	ComprehendGameV2::handleAction(sentence);
 }
 
-void TalismanGame::handleSpecialOpcode(uint8 operand) {
-	switch (operand) {
+void TalismanGame::handleSpecialOpcode() {
+	switch (_specialOpcode) {
 	case 15:
 		// Switch to text screen mode
 		if (g_comprehend->isGraphicsEnabled()) {
@@ -159,23 +160,14 @@ void TalismanGame::handleSpecialOpcode(uint8 operand) {
 			updateRoomDesc();
 		}
 
-		eval_function(19, nullptr);
+		_functionNum = 19;
+		handleAction(nullptr);
 		break;
 
 	default:
 		break;
 	}
 }
-
-void TalismanGame::evalFunction0(int function) {
-	if (function) {
-		eval_function(function, nullptr);
-		eval_function(0, nullptr);
-	} else {
-		console_println(stringLookup(STRING_DONT_UNDERSTAND).c_str());
-	}
-}
-
 
 } // namespace Comprehend
 } // namespace Glk

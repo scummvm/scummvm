@@ -186,8 +186,8 @@ bool OOToposGame::afterPrompt() {
 	return true;
 }
 
-void OOToposGame::handleSpecialOpcode(uint8 operand) {
-	switch (operand) {
+void OOToposGame::handleSpecialOpcode() {
+	switch (_specialOpcode) {
 	case 1:
 		// Update guard location
 		randomizeGuardLocation();

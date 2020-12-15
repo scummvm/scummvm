@@ -200,8 +200,8 @@ void TransylvaniaGame1::synchronizeSave(Common::Serializer &s) {
 	get_item(ITEM_VAMPIRE)->_room = 0xff;
 }
 
-void TransylvaniaGame1::handleSpecialOpcode(uint8 operand) {
-	switch (operand) {
+void TransylvaniaGame1::handleSpecialOpcode() {
+	switch (_specialOpcode) {
 	case 1:
 		// Mice have been released
 		_miceReleased = true;

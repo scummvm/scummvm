@@ -267,7 +267,7 @@ void ComprehendGameOpcodes::execute_opcode(const Instruction *instr, const Sente
 
 	case OPCODE_SPECIAL:
 		// Game specific opcode
-		handleSpecialOpcode(instr->_operand[0]);
+		_specialOpcode = instr->_operand[0];
 		break;
 
 	case OPCODE_TAKE_CURRENT_OBJECT:

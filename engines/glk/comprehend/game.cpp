@@ -116,7 +116,8 @@ void Sentence::format() {
 
 
 ComprehendGame::ComprehendGame() : _gameStrings(nullptr), _ended(false),
-		_nounState(NOUNSTATE_INITIAL), _inputLineIndex(0), _currentRoomCopy(-1) {
+		_functionNum(0), _specialOpcode(0), _nounState(NOUNSTATE_INITIAL),
+		_inputLineIndex(0), _currentRoomCopy(-1) {
 	Common::fill(&_inputLine[0], &_inputLine[INPUT_LINE_SIZE], 0);
 }
 
@@ -700,7 +701,6 @@ bool ComprehendGame::handle_sentence(Sentence *sentence) {
 			return true;
 	}
 
-	console_println(stringLookup(STRING_DONT_UNDERSTAND).c_str());
 	return false;
 }
 
@@ -717,17 +717,27 @@ bool ComprehendGame::handle_sentence(uint tableNum, Sentence *sentence, Common::
 
 		if (isMatch) {
 			// Match
-			uint16 function = action._function;
-			actionSelected(function);
-
-			// Execute action
-			eval_function(function, sentence);
+			_functionNum = action._function;
 			return true;
 		}
 	}
 
 	// No matching action
 	return false;
+}
+
+void ComprehendGame::handleAction(Sentence *sentence) {
+	_specialOpcode = 0;
+
+	if (_functionNum == 0) {
+		console_println(stringLookup(STRING_DONT_UNDERSTAND).c_str());
+	} else {
+		eval_function(_functionNum, nullptr);
+		_functionNum = 0;
+		eval_function(0, nullptr);
+	}
+
+	handleSpecialOpcode();
 }
 
 void ComprehendGame::read_sentence(Sentence *sentence) {
@@ -864,6 +874,8 @@ void ComprehendGame::read_input() {
 		_sentence.copyFrom(tempSentence, tempSentence._formattedWords[0] || prevNounState != NOUNSTATE_STANDARD);
 
 		handled = handle_sentence(&_sentence);
+		handleAction(&_sentence);
+
 		if (!handled)
 			return;
 

@@ -46,7 +46,7 @@ public:
 	void beforeTurn() override;
 	void synchronizeSave(Common::Serializer &s) override;
 	int roomIsSpecial(unsigned room_index, unsigned *roomDescString) override;
-	void handleSpecialOpcode(uint8 operand) override;
+	void handleSpecialOpcode() override;
 };
 
 } // namespace Comprehend
