@@ -30,43 +30,11 @@
 
 #include "engines/icb/common/px_rccommon.h" // This should be included in every file before anything else
 
-#include <limits.h>
+#include "common/scummsys.h"
 
 namespace ICB {
 
 typedef const char *cstr;
-
-typedef unsigned int uint; // Short hand for unsigned int
-
-#if CHAR_MAX == 255
-typedef signed char int8;
-typedef unsigned char uint8;
-#else
-typedef char int8;
-typedef unsigned char uint8;
-#endif
-
-typedef unsigned int word;
-
-#if USHRT_MAX == 0xffff
-typedef short int int16;
-typedef unsigned short int uint16;
-#elif UINT_MAX == 0xffff
-typedef short int int16;
-typedef unsigned short int uint16;
-#else
-#error Cannot define types: int16, uint16
-#endif
-
-#if UINT_MAX == 0xffffffff
-typedef int int32;
-typedef unsigned int uint32;
-#elif ULONG_MAX == 0xffffffff
-typedef int int32;
-typedef unsigned int uint32;
-#else
-#error Cannot define types: int32, uint32
-#endif
 
 // Definition of a boolean value that can be used across the PC and PSX.  I stopped true being 0xff because
 // C++ weak typing allows you to assign a bool8 to an int8 without warning, whereupon '==' fails for TRUE8 because

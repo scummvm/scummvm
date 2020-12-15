@@ -55,7 +55,6 @@ namespace ICB {
 #define SYSTEM 0x00000000 // Surface is in system
 #define VIDEO 0x00000001  // Surface must be in vram
 
-typedef unsigned int uint32;
 extern uint32 effect_time; // Time spent doing postprocessing effects (fades ect)
 extern uint32 working_buffer_id;
 extern uint32 bg_buffer_id;

@@ -101,22 +101,22 @@ public: /* Drawing Functions */
 	const char *GetSetName() const { return set_name; }
 
 private:                       /* Member variables .... Move this to private section */
-	char set_name[_MAX_PATH];    // the camera name (no url)
-	char set_url[_MAX_PATH];     // the full url of the camera
+	char set_name[MAXPATHLEN];    // the camera name (no url)
+	char set_url[MAXPATHLEN];     // the full url of the camera
 	uint32 set_url_hash;         // the hashed url of the camera
-	char set_cluster[_MAX_PATH]; // cluster file name
+	char set_cluster[MAXPATHLEN]; // cluster file name
 	uint32 set_cluster_hash;     // hashed cluster file name
 	/* Waiting for removal */
-	char h_set_name[_MAX_PATH]; // just the hash camera name - not full url
-	char rvpcm_file_name[_MAX_PATH]; // Props & Construction Matrix
+	char h_set_name[MAXPATHLEN]; // just the hash camera name - not full url
+	char rvpcm_file_name[MAXPATHLEN]; // Props & Construction Matrix
 	uint32 rvpcm_file_hash;          // Props & Construction Matrix hash value
-	char rvcam_file_name[_MAX_PATH]; // Camera
+	char rvcam_file_name[MAXPATHLEN]; // Camera
 	uint32 rvcam_file_hash;          // Camera hash value
-	char rvsl_file_name[_MAX_PATH];  // Static Layers
+	char rvsl_file_name[MAXPATHLEN];  // Static Layers
 	uint32 rvsl_file_hash;           // Static Layers hash value
-	char rvbg_file_name[_MAX_PATH];  // Background
+	char rvbg_file_name[MAXPATHLEN];  // Background
 	uint32 rvbg_file_hash;           // Background hash value
-	char rlx_file_name[_MAX_PATH];   // Poly Lighting rig
+	char rlx_file_name[MAXPATHLEN];   // Poly Lighting rig
 	uint32 rlx_file_hash;            // Poly Lighting rig hash
 	void SettleCamera();
 	/* Waiting for removal */
