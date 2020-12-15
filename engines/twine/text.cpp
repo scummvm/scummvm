@@ -398,7 +398,7 @@ void Text::processTextLine() {
 		printText8Var8 = buffer;
 		char wordBuf[256] = "";
 		WordSize wordSize = getWordSize(buffer, wordBuf, sizeof(wordBuf));
-		if (lineBreakX + _dialCharSpace + wordSize.inPixel >= _dialTextBoxParam2) {
+		if (lineBreakX + _dialCharSpace + wordSize.inPixel >= _dialTextBoxMaxX) {
 			break;
 		}
 
@@ -437,15 +437,15 @@ void Text::processTextLine() {
 		break;
 	}
 
-	if (printText8PrepareBufferVar2 != 0) {
+	if (printText8PrepareBufferVar2 > 0) {
 		printText8PrepareBufferVar2--;
 	}
 
 	if (*printText8Var8 != '\0' && var4) {
-		if (printText8PrepareBufferVar2 == 0) {
+		if (printText8PrepareBufferVar2 <= 0) {
 			printText8PrepareBufferVar2 = 1;
 		}
-		_dialCharSpace += (_dialTextBoxParam2 - lineBreakX) / printText8PrepareBufferVar2;
+		_dialCharSpace += (_dialTextBoxMaxX - lineBreakX) / printText8PrepareBufferVar2;
 		printText10Var1 = -2 * lineBreakX;
 	}
 
@@ -752,18 +752,18 @@ void Text::textClipFull() {
 	_dialTextBox.bottom = SCREEN_HEIGHT - padding;
 
 	_dialTextBoxLines = 11;
-	_dialTextBoxParam2 = 607;
+	_dialTextBoxMaxX = SCREEN_WIDTH - 33;
 }
 
 void Text::textClipSmall() {
 	const int padding = 17;
 	_dialTextBox.left = padding - 1;
-	_dialTextBox.top = 334;
+	_dialTextBox.top = SCREEN_HEIGHT - 146;
 	_dialTextBox.right = SCREEN_WIDTH - padding;
 	_dialTextBox.bottom = SCREEN_HEIGHT - padding;
 
 	_dialTextBoxLines = 3;
-	_dialTextBoxParam2 = 591;
+	_dialTextBoxMaxX = SCREEN_WIDTH - 49;
 }
 
 void Text::drawAskQuestion(int32 index) {

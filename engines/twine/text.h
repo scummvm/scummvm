@@ -217,7 +217,7 @@ private:
 	Common::Rect _dialTextBox { 0, 0, 0, 0};
 
 	int32 _dialTextBoxLines = 0; // dialogueBoxParam1
-	int32 _dialTextBoxParam2 = 0; // dialogueBoxParam2
+	int32 _dialTextBoxMaxX = 0; // dialogueBoxParam2
 public:
 	Text(TwinEEngine *engine);
 	~Text();
