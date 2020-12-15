@@ -394,17 +394,16 @@ void Text::processTextLine() {
 		if (*buffer == '\0') {
 			break;
 		}
+		if (*buffer == '\1') {
+			var4 = false;
+			buffer++;
+			break;
+		}
 
 		_progressiveTextNextWord = buffer;
 		char wordBuf[256] = "";
 		WordSize wordSize = getWordSize(buffer, wordBuf, sizeof(wordBuf));
 		if (lineBreakX + _dialCharSpace + wordSize.inPixel >= _dialTextBoxMaxX) {
-			break;
-		}
-
-		if (*buffer == '\1') {
-			var4 = false;
-			buffer++;
 			break;
 		}
 
