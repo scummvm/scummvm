@@ -297,7 +297,7 @@ END_SCRIPT
 DECLARE_SCRIPT(DeskClerk)
 	int  _varChooseIdleAnimation;
 	bool _resumeIdleAfterFramesetCompletesFlag;
-	int _varNumOfTimesToHoldCurrentFrame;
+	int  _varNumOfTimesToHoldCurrentFrame;
 END_SCRIPT
 
 DECLARE_SCRIPT(HowieLee)
@@ -316,8 +316,8 @@ DECLARE_SCRIPT(Murray)
 END_SCRIPT
 
 DECLARE_SCRIPT(HawkersBarkeep)
-	int _var1;
-	int _var2;
+	int _varChooseIdleAnimation;
+	int _varNumOfTimesToHoldCurrentFrame;
 	int _var3;
 	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
@@ -331,14 +331,14 @@ END_SCRIPT
 
 DECLARE_SCRIPT(Moraji)
 	int _var1;
-	int _var2;
+	int _varNumOfTimesToHoldCurrentFrame;
 END_SCRIPT
 
 DECLARE_SCRIPT(TheBard)
 END_SCRIPT
 
 DECLARE_SCRIPT(Photographer)
-	int _var1;
+	int _varNumOfTimesToHoldCurrentFrame;
 	int _var2;
 	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
@@ -356,7 +356,7 @@ DECLARE_SCRIPT(GovernorKolvig)
 END_SCRIPT
 
 DECLARE_SCRIPT(EarlyQBartender)
-	int _var1;
+	int _varChooseIdleAnimation;
 	int _var2;
 	bool _resumeIdleAfterFramesetCompletesFlag;
 END_SCRIPT
@@ -388,7 +388,7 @@ END_SCRIPT
 
 DECLARE_SCRIPT(Tyrell)
 	bool _resumeIdleAfterFramesetCompletesFlag;
-	int _var;
+	int _varChooseIdleAnimation;
 END_SCRIPT
 
 DECLARE_SCRIPT(Chew)

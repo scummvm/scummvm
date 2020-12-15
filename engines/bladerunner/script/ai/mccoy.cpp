@@ -379,7 +379,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 	case kGoalMcCoyBB11GetUp:
 		Actor_Set_At_Waypoint(kActorMcCoy, 315, 263);
 		_animationState = 53;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMcCoyFallsOnHisBack) - 1;
 		Actor_Set_Invisible(kActorMcCoy, false);
 		return true;
 
@@ -404,7 +404,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 			Actor_Set_Goal_Number(kActorMcCoy, kGoalMcCoyNR01LayDrugged);
 		} else {
 			_animationState = 53;
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMcCoyFallsOnHisBack) - 1;
 			// redundant?
 			Actor_Set_Invisible(kActorMcCoy, false);
 		}
@@ -430,7 +430,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Player_Gains_Control();
 		Scene_Exits_Disable();
 		_animationState = 68;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMcCoyFallsOnHisBack) - 1;
 		return true;
 
 	case kGoalMcCoyNR04Drink:
@@ -526,7 +526,7 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		 && _animationState != 50
 		) {
 			_animationState = 50;
-			_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+			_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMcCoyFallsOnHisBack) - 1;
 		}
 		return true;
 
@@ -1927,7 +1927,7 @@ bool AIScriptMcCoy::ChangeAnimationMode(int mode) {
 
 	case 68:
 		_animationState = 29;
-		_animationFrame = Slice_Animation_Query_Number_Of_Frames(18) - 1;
+		_animationFrame = Slice_Animation_Query_Number_Of_Frames(kModelAnimationMcCoyFallsOnHisBack) - 1;
 		_animationLoopDirection = -1;
 		break;
 
