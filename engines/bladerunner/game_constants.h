@@ -2442,19 +2442,49 @@ enum GameModelAnimations {
 	kModelAnimationShoeshineManSitsMoreHeadMoveTalk = 762, // UNUSED
 	kModelAnimationShoeshineManSitsViolentHeadMove  = 763, // UNUSED - Coughs? Spits? Talks?
 	kModelAnimationShoeshineManSitsGetsUp           = 764, // UNUSED
-	// 765 - 772: Tyrell animations // TODO
+	// 765 - 772: Tyrell animations
 	kModelAnimationTyrellWalking             = 765,
 	kModelAnimationTyrellIdle                = 766,
 	kModelAnimationTyrellHeadMoveIdle        = 767,
 	kModelAnimationTyrellFastNodTalk         = 768,
 	kModelAnimationTyrellSuggestTalk         = 769,
 	kModelAnimationTyrellConsideringTalk     = 770,
-	kModelAnimationTyrellBowsAndSuggestsTalk = 771,
+	kModelAnimationTyrellBowsAndSuggestsTalk = 771, // TODO check if triggered
 	kModelAnimationTyrellDismissTalk         = 772,
 	// 773 - 787: Chew animations
-		// TODO
+	kModelAnimationChewWalking                 = 773, // untriggered
+	kModelAnimationChewTakesAStepBackwards     = 774, // untriggered
+	kModelAnimationChewGotHit                  = 775, // untriggered
+	kModelAnimationChewShotDead                = 776, // untriggered
+	kModelAnimationChewIdle                    = 777,
+	kModelAnimationChewFiddlingWithInstruments = 778,
+	kModelAnimationChewAdjustingInstrument     = 779,
+	kModelAnimationChewProtestTalk             = 780,
+	kModelAnimationChewAngryTalk               = 781,
+	kModelAnimationChewExplainTalk             = 782,
+	kModelAnimationChewGoAwayTalk              = 783, // frame 6 is a bit bugged (a slice is missing at head height)
+	kModelAnimationChewDismissiveTalk          = 784,
+	kModelAnimationChewPointingSomewhereTalk   = 785, // TODO check if triggered
+	kModelAnimationChewDescribePulledTalk      = 786, // TODO check if triggered
+	kModelAnimationChewDescribePushedTalk      = 787, // TODO check if triggered
 	// 788 - 804: Gaff animations
-		// TODO
+	kModelAnimationGaffWalking                   = 788,
+	kModelAnimationGaffClimbStairsUp             = 789, // UNUSED
+	kModelAnimationGaffClimbStairsDown           = 790, // UNUSED
+	kModelAnimationGaffGotHitRight               = 791, // UNUSED
+	kModelAnimationGaffGotHitLeft                = 792, // UNUSED
+	kModelAnimationGaffShotDown                  = 793, // UNUSED // probably not dead, for continuity reasons
+	kModelAnimationGaffIdle                      = 794,
+	kModelAnimationGaffLooksAroundAndDown        = 795, // UNUSED
+	kModelAnimationGaffMakesOrigamiMaybe         = 796, // UNUSED
+	kModelAnimationGaffGestureGive               = 797, // UNUSED
+	kModelAnimationGaffCalmPointingWithStickTalk = 798,
+	kModelAnimationGaffExplainTalk               = 799,
+	kModelAnimationGaffDescribeTalk              = 800,
+	kModelAnimationGaffLaughHeadBackTalk         = 801,
+	kModelAnimationGaffEntersSpinner             = 802,
+	kModelAnimationGaffExitsSpinner              = 803, // UNUSED
+	kModelAnimationGaffReachesOver               = 804, // UNUSED
 	// 805 - 808: Bear "Bryant" (Sebastian's toy) animations
 	kModelAnimationBearToyWalking         = 805,
 	kModelAnimationBearToyOscillatingIdle = 806, // untriggered?
