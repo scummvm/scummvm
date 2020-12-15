@@ -164,6 +164,15 @@ void TalismanGame::handleSpecialOpcode() {
 		handleAction(nullptr);
 		break;
 
+	case 17:
+		// Switch to graphics mode
+		if (!g_comprehend->isGraphicsEnabled())
+			g_comprehend->toggleGraphics();
+
+		_updateFlags |= UPDATE_ALL;
+		update();
+		break;
+
 	default:
 		break;
 	}
