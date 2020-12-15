@@ -332,6 +332,7 @@ void GameState::processFoundItem(int32 item) {
 	_engine->_redraw->numOfRedrawBox = 0;
 
 	while (!quitItem) {
+		ScopedFPS fps(1000 / 15);
 		_engine->_interface->resetClip();
 		_engine->_redraw->currNumOfRedrawBox = 0;
 		_engine->_redraw->blitBackgroundAreas();
@@ -363,10 +364,6 @@ void GameState::processFoundItem(int32 item) {
 		if (textState != ProgressiveTextState::End) {
 			_engine->_interface->resetClip();
 			textState = _engine->_text->updateProgressiveText();
-		}
-
-		if (textState == ProgressiveTextState::End || textState == ProgressiveTextState::UNK2) {
-			_engine->_system->delayMillis(15);
 		}
 
 		_engine->_redraw->flipRedrawAreas();
