@@ -169,6 +169,15 @@ struct ScopedCursor {
 	~ScopedCursor();
 };
 
+class ScopedFPS {
+private:
+	uint32 _fps;
+	uint32 _start;
+public:
+	ScopedFPS(uint32 fps);
+	~ScopedFPS();
+};
+
 class TwinEEngine : public Engine {
 private:
 	int32 isTimeFreezed = 0;
@@ -204,8 +213,8 @@ public:
 	void pushMouseCursorVisible();
 	void popMouseCursorVisible();
 
-	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; };
-	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; };
+	bool isLBA1() const { return _gameType == TwineGameType::GType_LBA; }
+	bool isLBA2() const { return _gameType == TwineGameType::GType_LBA2; }
 
 	Actor *_actor;
 	Animations *_animations;
