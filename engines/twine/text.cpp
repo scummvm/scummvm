@@ -380,10 +380,10 @@ Text::WordSize Text::getWordSize(const char *completeText, char *wordBuf, int32 
 void Text::processTextLine() {
 	const char *buffer = _progressiveTextNextWord;
 	_dialCharSpace = 7;
-	bool var4 = true;
+	bool moreWordsFollowing = true;
 
 	int32 lineBreakX = 0;
-	int32 printText8PrepareBufferVar2 = 0;
+	int32 spaceCharCount = 0;
 	_progressiveTextBuffer[0] = '\0';
 
 	for (;;) {
@@ -395,7 +395,7 @@ void Text::processTextLine() {
 			break;
 		}
 		if (*buffer == '\1') {
-			var4 = false;
+			moreWordsFollowing = false;
 			buffer++;
 			break;
 		}
@@ -408,7 +408,7 @@ void Text::processTextLine() {
 		}
 
 		if (*wordBuf == '@') {
-			var4 = false;
+			moreWordsFollowing = false;
 			buffer++;
 			if (lineBreakX == 0) {
 				lineBreakX = 7;
@@ -426,7 +426,7 @@ void Text::processTextLine() {
 		_progressiveTextNextWord = buffer;
 		strncat(_progressiveTextBuffer, wordBuf, sizeof(_progressiveTextBuffer) - strlen(_progressiveTextBuffer) - 1);
 		strncat(_progressiveTextBuffer, " ", sizeof(_progressiveTextBuffer) - strlen(_progressiveTextBuffer) - 1); // not 100% accurate
-		printText8PrepareBufferVar2++;
+		spaceCharCount++;
 
 		lineBreakX += wordSize.inPixel + _dialCharSpace;
 		if (*_progressiveTextNextWord != '\0') {
@@ -436,15 +436,16 @@ void Text::processTextLine() {
 		break;
 	}
 
-	if (printText8PrepareBufferVar2 > 0) {
-		printText8PrepareBufferVar2--;
+	if (spaceCharCount > 0) {
+		spaceCharCount--;
 	}
 
-	if (*_progressiveTextNextWord != '\0' && var4) {
-		if (printText8PrepareBufferVar2 <= 0) {
-			printText8PrepareBufferVar2 = 1;
+	if (*_progressiveTextNextWord != '\0' && moreWordsFollowing) {
+		if (spaceCharCount <= 0) {
+			spaceCharCount = 1;
 		}
-		_dialCharSpace += (_dialTextBoxMaxX - lineBreakX) / printText8PrepareBufferVar2;
+		// split the remaining space between the words
+		_dialCharSpace += (_dialTextBoxMaxX - lineBreakX) / spaceCharCount;
 		printText10Var1 = -2 * lineBreakX;
 	}
 

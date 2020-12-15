@@ -196,7 +196,7 @@ private:
 
 	/** Pixel size between dialogue text */
 	int32 _dialSpaceBetween = 0;
-	/** Pixel size of the space character */
+	/** Pixel size of the space character - recalculated per per line */
 	int32 _dialCharSpace = 0;
 	/** Dialogue text color */
 	int32 _dialTextColor = 0;
