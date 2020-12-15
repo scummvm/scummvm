@@ -66,6 +66,7 @@ Programmcodes finden Sie auf Englisch unter:
      der Benutzeroberfläche korrigiert.
    - Unterstützung für zahlreiche koreanische Übersetzungen des scummkor-Projektes hinzugefügt.
    - Unterstützung für die Russobit-M-Versionen von Pajama2 und SpyOzone hinzugefügt.
+   - Sprachausgabe in der Akella-Version von COMI korrigiert.
 
  Tinsel:
    - Unterstützung für die Rückkehr zur ScummVM-Benutzeroberfläche hinzugefügt.
