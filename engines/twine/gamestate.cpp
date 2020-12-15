@@ -314,8 +314,8 @@ void GameState::processFoundItem(int32 item) {
 	_engine->_text->initText(item);
 	_engine->_text->initDialogueBox();
 
-	int32 textState = 1;
-	int32 quitItem = 0;
+	ProgressiveTestState textState = ProgressiveTestState::UNK1;
+	bool quitItem = false;
 
 	_engine->_text->initVoxToPlay(item);
 
@@ -360,12 +360,12 @@ void GameState::processFoundItem(int32 item) {
 		_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 		_engine->_redraw->addRedrawArea(_engine->_redraw->renderRect);
 
-		if (textState) {
+		if (textState != ProgressiveTestState::UNK0) {
 			_engine->_interface->resetClip();
 			textState = _engine->_text->updateProgressiveText();
 		}
 
-		if (textState == 0 || textState == 2) {
+		if (textState == ProgressiveTestState::UNK0 || textState == ProgressiveTestState::UNK2) {
 			_engine->_system->delayMillis(15);
 		}
 
@@ -373,12 +373,12 @@ void GameState::processFoundItem(int32 item) {
 
 		_engine->readKeys();
 		if (_engine->_input->toggleAbortAction()) {
-			if (!textState) {
-				quitItem = 1;
+			if (textState == ProgressiveTestState::UNK0) {
+				quitItem = true;
 			}
 
-			if (textState == 2) {
-				textState = 1;
+			if (textState == ProgressiveTestState::UNK2) {
+				textState = ProgressiveTestState::UNK1;
 			}
 		}
 

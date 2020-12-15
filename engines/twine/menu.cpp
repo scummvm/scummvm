@@ -1103,10 +1103,12 @@ void Menu::processInventoryMenu() {
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 
-	int32 bx = 3;
+	bool updateItemText = true;
 
 	_engine->_text->setFontCrossColor(4);
 	_engine->_text->initDialogueBox();
+
+	ProgressiveTestState bx = ProgressiveTestState::UNK0;
 
 #if 0
 	ScopedCursor scopedCursor(_engine);
@@ -1130,56 +1132,54 @@ void Menu::processInventoryMenu() {
 				inventorySelectedItem = 0;
 			}
 			drawItem(prevSelectedItem);
-			bx = 3;
+			updateItemText = true;
 		} else if (cursorUp) {
 			inventorySelectedItem--;
 			if (inventorySelectedItem < 0) {
 				inventorySelectedItem = NUM_INVENTORY_ITEMS - 1;
 			}
 			drawItem(prevSelectedItem);
-			bx = 3;
-		}
-
-		if (cursorLeft) {
+			updateItemText = true;
+		} else if (cursorLeft) {
 			inventorySelectedItem -= 4;
 			if (inventorySelectedItem < 0) {
 				inventorySelectedItem += NUM_INVENTORY_ITEMS;
 			}
 			drawItem(prevSelectedItem);
-			bx = 3;
+			updateItemText = true;
 		} else if (cursorRight) {
 			inventorySelectedItem += 4;
 			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
 				inventorySelectedItem -= NUM_INVENTORY_ITEMS;
 			}
 			drawItem(prevSelectedItem);
-			bx = 3;
+			updateItemText = true;
 		}
 
-		if (bx == 3) {
+		if (updateItemText) {
 			_engine->_text->initInventoryDialogueBox();
 
 			if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
 				_engine->_text->initText(inventorySelectedItem + 100);
 			} else {
-				_engine->_text->initText(128);
+				_engine->_text->initText(NUM_INVENTORY_ITEMS + 100);
 			}
-			bx = 0;
+			updateItemText = false;
 		}
 
-		if (bx != 2) {
+		if (updateItemText || bx != ProgressiveTestState::UNK2) {
 			bx = _engine->_text->updateProgressiveText();
 		}
 
 		// TRICKY: 3D model rotation delay - only apply when no text is drawing
-		if (bx == 0 || bx == 2) {
+		if (bx == ProgressiveTestState::UNK0 || bx == ProgressiveTestState::UNK2) {
 			_engine->_system->delayMillis(15);
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
-			if (bx == 2) {
+			if (bx == ProgressiveTestState::UNK2) {
 				_engine->_text->initInventoryDialogueBox();
-				bx = 0;
+				bx = ProgressiveTestState::UNK0;
 			} else {
 				if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
 					_engine->_text->initInventoryDialogueBox();

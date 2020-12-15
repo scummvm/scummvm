@@ -511,9 +511,9 @@ int32 Text::getCharHeight(uint8 chr) const {
 }
 
 // TODO: refactor this code
-int Text::updateProgressiveText() {
+ProgressiveTestState Text::updateProgressiveText() {
 	if (!_hasValidTextHandle) {
-		return 0;
+		return ProgressiveTestState::UNK0;
 	}
 
 	if (*_progressiveTextBufferPtr == '\0') {
@@ -522,7 +522,7 @@ int Text::updateProgressiveText() {
 				renderContinueReadingTriangle();
 			}
 			_hasValidTextHandle = false;
-			return 0;
+			return ProgressiveTestState::UNK0;
 		}
 		if (_progressiveTextNextPage) {
 			_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _engine->frontVideoBuffer);
@@ -535,14 +535,14 @@ int Text::updateProgressiveText() {
 		if (*printText8Var8 == '\0') {
 			initProgressiveTextBuffer();
 			_progressiveTextEnd = true;
-			return 1;
+			return ProgressiveTestState::UNK1;
 		}
 		processTextLine();
 	}
 
 	// RECHECK this later
 	if (*_progressiveTextBufferPtr == '\0') {
-		return 1;
+		return ProgressiveTestState::UNK1;
 	}
 
 	fillFadeInBuffer(_dialTextYPos, _dialTextXPos, *_progressiveTextBufferPtr);
@@ -563,7 +563,7 @@ int Text::updateProgressiveText() {
 	_progressiveTextBufferPtr++;
 
 	if (*_progressiveTextBufferPtr != '\0') {
-		return 1;
+		return ProgressiveTestState::UNK1;
 	}
 
 	const int32 lineHeight = 38;
@@ -572,12 +572,12 @@ int Text::updateProgressiveText() {
 
 	if (_progressiveTextNextPage && !_progressiveTextEnd) {
 		renderContinueReadingTriangle();
-		return 2;
+		return ProgressiveTestState::UNK2;
 	}
 
 	_dialTextBoxCurrentLine++;
 	if (_dialTextBoxCurrentLine < _dialTextBoxLines) {
-		return 1;
+		return ProgressiveTestState::UNK1;
 	}
 
 	initProgressiveTextBuffer();
@@ -587,7 +587,7 @@ int Text::updateProgressiveText() {
 		_progressiveTextEnd = true;
 	}
 
-	return 1;
+	return ProgressiveTestState::UNK1;
 }
 
 // TODO: refactor this code
@@ -607,13 +607,13 @@ bool Text::drawTextFullscreen(int32 index) {
 		initText(index);
 		initDialogueBox();
 
-		int32 printedText;
+		ProgressiveTestState printedText;
 		for (;;) {
 			_engine->readKeys();
 			printedText = updateProgressiveText();
 			playVox(currDialTextEntry);
 
-			if (!printedText && !_engine->_sound->isSamplePlaying(currDialTextEntry)) {
+			if (printedText == ProgressiveTestState::UNK0 && !_engine->_sound->isSamplePlaying(currDialTextEntry)) {
 				break;
 			}
 
@@ -627,7 +627,7 @@ bool Text::drawTextFullscreen(int32 index) {
 
 		_hasValidTextHandle = false;
 
-		if (printedText == 0) {
+		if (printedText == ProgressiveTestState::UNK0) {
 			stopVox(currDialTextEntry);
 			// wait displaying text
 			for (;;) {
@@ -773,12 +773,12 @@ void Text::drawAskQuestion(int32 index) {
 	initText(index);
 	initDialogueBox();
 
-	int32 textStatus = 1;
+	ProgressiveTestState textStatus = ProgressiveTestState::UNK1;
 	do {
 		_engine->readKeys();
 		textStatus = updateProgressiveText();
 
-		if (textStatus == 2) {
+		if (textStatus == ProgressiveTestState::UNK2) {
 			do {
 				_engine->readKeys();
 				if (_engine->shouldQuit()) {
@@ -792,7 +792,7 @@ void Text::drawAskQuestion(int32 index) {
 		}
 
 		_engine->_system->delayMillis(1);
-	} while (textStatus);
+	} while (textStatus != ProgressiveTestState::UNK0);
 
 	while (playVoxSimple(currDialTextEntry)) {
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
