@@ -90,6 +90,21 @@ ScopedCursor::~ScopedCursor() {
 	_engine->popMouseCursorVisible();
 }
 
+ScopedFPS::ScopedFPS(uint32 fps) : _fps(fps) {
+	_start = g_system->getMillis();
+}
+
+ScopedFPS::~ScopedFPS() {
+	const uint32 end = g_system->getMillis();
+	const uint32 frameTime = end - _start;
+	const uint32 maxDelay = 1000 / _fps;
+	if (frameTime > maxDelay) {
+		return;
+	}
+	const uint32 waitMillis = maxDelay - frameTime;
+	g_system->delayMillis(waitMillis);
+}
+
 TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flags, TwineGameType gameType)
     : Engine(system), _gameType(gameType), _gameLang(language), _gameFlags(flags), _rnd("twine") {
 	// Add default file directories
