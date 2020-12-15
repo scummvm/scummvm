@@ -370,6 +370,11 @@ void GameState::processFoundItem(int32 item) {
 
 		_engine->readKeys();
 		if (_engine->_input->toggleAbortAction()) {
+			quitItem = true;
+			_engine->_text->stopVox(_engine->_text->currDialTextEntry);
+		}
+
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
 			if (textState == ProgressiveTextState::End) {
 				quitItem = true;
 			}
