@@ -101,6 +101,12 @@ enum _TextId {
 
 #define TEXT_MAX_FADE_IN_CHR 32
 
+enum class ProgressiveTestState {
+	UNK0 = 0,
+	UNK1 = 1,
+	UNK2 = 2
+};
+
 class TwinEEngine;
 class Text {
 private:
@@ -259,7 +265,7 @@ public:
 	void initInventoryDialogueBox();
 
 	void initText(int32 index);
-	int updateProgressiveText();
+	ProgressiveTestState updateProgressiveText();
 
 	/**
 	 * Set font type parameters
