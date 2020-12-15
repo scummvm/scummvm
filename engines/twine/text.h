@@ -172,9 +172,9 @@ private:
 	int32 printText10Var1 = 0;
 
 	int32 _dialTextXPos = 0;
+	int32 _dialTextYPos = 0;
 	char *_progressiveTextBufferPtr = nullptr;
 	int32 _dialTextBoxCurrentLine = 0;
-	int32 _dialTextYPos = 0;
 	bool _progressiveTextEnd = false;
 	bool _progressiveTextNextPage = false;
 	struct BlendInCharacter {
