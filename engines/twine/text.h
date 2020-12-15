@@ -104,7 +104,7 @@ enum _TextId {
 enum class ProgressiveTextState {
 	End = 0,
 	UNK1 = 1,
-	UNK2 = 2
+	NextPage = 2
 };
 
 class TwinEEngine;

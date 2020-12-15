@@ -378,8 +378,7 @@ void GameState::processFoundItem(int32 item) {
 			if (textState == ProgressiveTextState::End) {
 				quitItem = true;
 			}
-
-			if (textState == ProgressiveTextState::UNK2) {
+			if (textState == ProgressiveTextState::NextPage) {
 				textState = ProgressiveTextState::UNK1;
 			}
 		}

@@ -572,7 +572,7 @@ ProgressiveTextState Text::updateProgressiveText() {
 
 	if (_progressiveTextNextPage && !_progressiveTextEnd) {
 		renderContinueReadingTriangle();
-		return ProgressiveTextState::UNK2;
+		return ProgressiveTextState::NextPage;
 	}
 
 	_dialTextBoxCurrentLine++;
@@ -778,7 +778,7 @@ void Text::drawAskQuestion(int32 index) {
 		_engine->readKeys();
 		textStatus = updateProgressiveText();
 
-		if (textStatus == ProgressiveTextState::UNK2) {
+		if (textStatus == ProgressiveTextState::NextPage) {
 			do {
 				_engine->readKeys();
 				if (_engine->shouldQuit()) {

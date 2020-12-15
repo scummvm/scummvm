@@ -1167,17 +1167,17 @@ void Menu::processInventoryMenu() {
 			updateItemText = false;
 		}
 
-		if (updateItemText || bx != ProgressiveTextState::UNK2) {
+		if (updateItemText || bx != ProgressiveTextState::NextPage) {
 			bx = _engine->_text->updateProgressiveText();
 		}
 
 		// TRICKY: 3D model rotation delay - only apply when no text is drawing
-		if (bx == ProgressiveTextState::End || bx == ProgressiveTextState::UNK2) {
+		if (bx == ProgressiveTextState::End || bx == ProgressiveTextState::NextPage) {
 			_engine->_system->delayMillis(15);
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
-			if (bx == ProgressiveTextState::UNK2) {
+			if (bx == ProgressiveTextState::NextPage) {
 				_engine->_text->initInventoryDialogueBox();
 				bx = ProgressiveTextState::End;
 			} else {
