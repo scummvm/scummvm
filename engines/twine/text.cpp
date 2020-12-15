@@ -325,7 +325,7 @@ void Text::initText(int32 index) {
 	_progressiveTextEnd = false;
 	_progressiveTextNextPage = false;
 	_dialTextXPos = _dialTextBox.top + 8;
-	printText8Var8 = _currDialTextPtr;
+	_progressiveTextNextWord = _currDialTextPtr;
 
 	// lba font is get while engine start
 	setFontParameters(2, 7);
@@ -378,7 +378,7 @@ Text::WordSize Text::getWordSize(const char *completeText, char *wordBuf, int32 
 }
 
 void Text::processTextLine() {
-	char *buffer = printText8Var8;
+	const char *buffer = _progressiveTextNextWord;
 	_dialCharSpace = 7;
 	bool var4 = true;
 
@@ -395,7 +395,7 @@ void Text::processTextLine() {
 			break;
 		}
 
-		printText8Var8 = buffer;
+		_progressiveTextNextWord = buffer;
 		char wordBuf[256] = "";
 		WordSize wordSize = getWordSize(buffer, wordBuf, sizeof(wordBuf));
 		if (lineBreakX + _dialCharSpace + wordSize.inPixel >= _dialTextBoxMaxX) {
@@ -424,14 +424,14 @@ void Text::processTextLine() {
 		}
 
 		buffer += wordSize.inChar;
-		printText8Var8 = buffer;
+		_progressiveTextNextWord = buffer;
 		strncat(_progressiveTextBuffer, wordBuf, sizeof(_progressiveTextBuffer) - strlen(_progressiveTextBuffer) - 1);
 		strncat(_progressiveTextBuffer, " ", sizeof(_progressiveTextBuffer) - strlen(_progressiveTextBuffer) - 1); // not 100% accurate
 		printText8PrepareBufferVar2++;
 
 		lineBreakX += wordSize.inPixel + _dialCharSpace;
-		if (*printText8Var8 != '\0') {
-			printText8Var8++;
+		if (*_progressiveTextNextWord != '\0') {
+			_progressiveTextNextWord++;
 			continue;
 		}
 		break;
@@ -441,7 +441,7 @@ void Text::processTextLine() {
 		printText8PrepareBufferVar2--;
 	}
 
-	if (*printText8Var8 != '\0' && var4) {
+	if (*_progressiveTextNextWord != '\0' && var4) {
 		if (printText8PrepareBufferVar2 <= 0) {
 			printText8PrepareBufferVar2 = 1;
 		}
@@ -449,7 +449,7 @@ void Text::processTextLine() {
 		printText10Var1 = -2 * lineBreakX;
 	}
 
-	printText8Var8 = buffer;
+	_progressiveTextNextWord = buffer;
 
 	_progressiveTextBufferPtr = _progressiveTextBuffer;
 }
@@ -532,7 +532,7 @@ ProgressiveTestState Text::updateProgressiveText() {
 			_dialTextYPos = _dialTextBox.left + 8;
 			_dialTextXPos = _dialTextBox.top + 8;
 		}
-		if (*printText8Var8 == '\0') {
+		if (*_progressiveTextNextWord == '\0') {
 			initProgressiveTextBuffer();
 			_progressiveTextEnd = true;
 			return ProgressiveTestState::UNK1;
@@ -583,7 +583,7 @@ ProgressiveTestState Text::updateProgressiveText() {
 	initProgressiveTextBuffer();
 	_progressiveTextNextPage = true;
 
-	if (*printText8Var8 == '\0') {
+	if (*_progressiveTextNextWord == '\0') {
 		_progressiveTextEnd = true;
 	}
 
