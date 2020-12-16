@@ -973,21 +973,24 @@ void AdLibDriver::setupNote(uint8 rawNote, Channel &channel, bool flag) {
 	if (channel.pitchBend || flag) {
 		const uint8 *table;
 		// For safety, limit the values used to index the tables.
-		uint8 baseNote = CLIP(rawNote & 0x0F, 0, 11);
+		uint8 indexNote = CLIP(rawNote & 0x0F, 0, 11);
 
 		if (channel.pitchBend >= 0) {
-			table = _pitchBendTables[baseNote + 2];
+			table = _pitchBendTables[indexNote + 2];
 			freq += table[CLIP(+channel.pitchBend, 0, 31)];
 		} else {
-			table = _pitchBendTables[baseNote];
+			table = _pitchBendTables[indexNote];
 			freq -= table[CLIP(-channel.pitchBend, 0, 31)];
 		}
 	}
 
-	channel.regAx = freq & 0xFF;
-	channel.regBx = (channel.regBx & 0x20) | (octave << 2) | ((freq >> 8) & 0x03);
+	// Shift octave to correct bit position and limit to valid range.
+	octave = CLIP<int8>(octave, 0, 7) << 2;
 
-	// Keep the note on or off
+	// Update octave & frequency, but keep on/off state.
+	channel.regAx = freq & 0xFF;
+	channel.regBx = (channel.regBx & 0x20) | octave | ((freq >> 8) & 0x03);
+
 	writeOPL(0xA0 + _curChannel, channel.regAx);
 	writeOPL(0xB0 + _curChannel, channel.regBx);
 }
