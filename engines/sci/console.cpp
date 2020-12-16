@@ -179,6 +179,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	// Script
 	registerCmd("addresses",			WRAP_METHOD(Console, cmdAddresses));
 	registerCmd("registers",			WRAP_METHOD(Console, cmdRegisters));
+	registerCmd("reg",					WRAP_METHOD(Console, cmdRegisters));
 	registerCmd("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
 	registerCmd("backtrace",			WRAP_METHOD(Console, cmdBacktrace));
 	registerCmd("bt",					WRAP_METHOD(Console, cmdBacktrace));	// alias
@@ -405,7 +406,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("\n");
 	debugPrintf("Script:\n");
 	debugPrintf(" addresses - Provides information on how to pass addresses\n");
-	debugPrintf(" registers - Shows the current register values\n");
+	debugPrintf(" registers / reg - Shows the current register values\n");
 	debugPrintf(" dissect_script - Examines a script\n");
 	debugPrintf(" backtrace / bt - Dumps the send/self/super/call/calle/callb stack\n");
 	debugPrintf(" trace / t / s - Executes one operation (no parameters) or several operations (specified as a parameter) \n");
