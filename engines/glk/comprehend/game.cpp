@@ -117,7 +117,7 @@ void Sentence::format() {
 
 ComprehendGame::ComprehendGame() : _gameStrings(nullptr), _ended(false),
 		_functionNum(0), _specialOpcode(0), _nounState(NOUNSTATE_INITIAL),
-		_inputLineIndex(0), _currentRoomCopy(-1) {
+		_inputLineIndex(0), _currentRoomCopy(-1), _redoLine(REDO_NONE) {
 	Common::fill(&_inputLine[0], &_inputLine[INPUT_LINE_SIZE], 0);
 }
 
@@ -159,6 +159,8 @@ void ComprehendGame::synchronizeSave(Common::Serializer &s) {
 
 	for (i = 0; i < _items.size(); ++i)
 		_items[i].synchronize(s);
+
+	_redoLine = REDO_NONE;
 }
 
 Common::String ComprehendGame::stringLookup(uint16 index) {
@@ -833,6 +835,7 @@ void ComprehendGame::read_input() {
 	Sentence tempSentence;
 	bool handled;
 
+turn:
 	doBeforeTurn();
 	if (_ended)
 		return;
@@ -842,9 +845,10 @@ void ComprehendGame::read_input() {
 	if (!g_comprehend->isGraphicsEnabled())
 		g_comprehend->print("\n");
 
-	for (;;) {
-		beforePrompt();
+	beforePrompt();
 
+	for (;;) {
+		_redoLine = REDO_NONE;
 		g_comprehend->print("> ");
 		g_comprehend->readLine(_inputLine, INPUT_LINE_SIZE);
 		if (g_comprehend->shouldQuit())
@@ -862,8 +866,12 @@ void ComprehendGame::read_input() {
 			continue;
 		}
 
-		if (afterPrompt())
+		afterPrompt();
+
+		if (_redoLine == REDO_NONE)
 			break;
+		else if (_redoLine == REDO_TURN)
+			goto turn;
 	}
 
 	for (;;) {

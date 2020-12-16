@@ -37,6 +37,8 @@ namespace Comprehend {
 
 enum NounState { NOUNSTATE_STANDARD = 0, NOUNSTATE_QUERY = 1, NOUNSTATE_INITIAL = 2 };
 
+enum RedoLine { REDO_NONE, REDO_PROMPT, REDO_TURN };
+
 struct GameStrings;
 struct Sentence;
 
@@ -82,6 +84,7 @@ protected:
 	int _currentRoomCopy;
 	int _functionNum;
 	int _specialOpcode;
+	RedoLine _redoLine;
 public:
 	const GameStrings *_gameStrings;
 
@@ -151,9 +154,8 @@ public:
 
 	/**
 	 * Called after input has been entered.
-	 * @returns		If false, causes input to be repeated
 	 */
-	virtual bool afterPrompt() { return true; }
+	virtual void afterPrompt() {}
 
 	/**
 	 * Called before the start of a game turn

@@ -130,15 +130,15 @@ void TalismanGame::beforePrompt() {
 	}
 }
 
-bool TalismanGame::afterPrompt() {
+void TalismanGame::afterPrompt() {
 	if (_savedAction.empty()) {
 		_functionNum = 19;
 		handleAction(nullptr);
-		return !_flags[3];
+		if (_flags[3])
+			_redoLine = REDO_PROMPT;
 	} else {
 		strcpy(_inputLine, _savedAction.c_str());
 		_savedAction.clear();
-		return true;
 	}
 }
 
@@ -162,6 +162,7 @@ void TalismanGame::handleSpecialOpcode() {
 
 		_functionNum = 19;
 		handleAction(nullptr);
+		_redoLine = REDO_TURN;
 		break;
 
 	case 17:
@@ -171,6 +172,7 @@ void TalismanGame::handleSpecialOpcode() {
 
 		_updateFlags |= UPDATE_ALL;
 		update();
+		_redoLine = REDO_TURN;
 		break;
 
 	default:
