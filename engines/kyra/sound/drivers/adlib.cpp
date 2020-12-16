@@ -1347,7 +1347,7 @@ int AdLibDriver::update_setupProgram(const uint8 *&dataptr, Channel &channel, ui
 	// them.
 	// This, for example, happens in the Lands of Lore intro when Scotia gets
 	// the ring in the intro.
-	if (!ptr) {
+	if (!ptr || ptr - _soundData + 2 > _soundDataSize) {
 		debugC(3, kDebugLevelSound, "AdLibDriver::update_setupProgram: Invalid program %d specified", value);
 		return 0;
 	}
