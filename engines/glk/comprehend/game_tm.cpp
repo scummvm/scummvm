@@ -124,17 +124,15 @@ void TalismanGame::beforeTurn() {
 }
 
 void TalismanGame::beforePrompt() {
-	if (_nounState == NOUNSTATE_INITIAL) {
-		_functionNum = 14;
-		handleAction(nullptr);
-	}
+	_functionNum = 14;
+	handleAction(nullptr);
 }
 
 void TalismanGame::afterPrompt() {
 	if (_savedAction.empty()) {
 		_functionNum = 19;
 		handleAction(nullptr);
-		if (_flags[3])
+		if (_redoLine == REDO_NONE && _flags[3])
 			_redoLine = REDO_PROMPT;
 	} else {
 		strcpy(_inputLine, _savedAction.c_str());
