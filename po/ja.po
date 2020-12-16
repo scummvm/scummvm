@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-09 22:25+0000\n"
-"PO-Revision-Date: 2020-12-13 14:39+0000\n"
+"PO-Revision-Date: 2020-12-16 17:29+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -240,7 +240,7 @@ msgstr "言語："
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
-msgstr "ゲームの言語。英語のゲームを日本語に変身することではありません"
+msgstr "ゲームの言語です。スペイン語版を英語版に変換はしません"
 
 #: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:174 gui/options.cpp:1260
 #: gui/options.cpp:1280 gui/options.cpp:1293 gui/options.cpp:1307
@@ -7507,7 +7507,7 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:841
 msgid "Skip minigame"
-msgstr ""
+msgstr "ミニゲームをスキップ"
 
 #: engines/wintermute/keymapper_tables.h:949
 msgid "Show hints / Dance move"
@@ -7548,15 +7548,13 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1234
 #: engines/wintermute/keymapper_tables.h:1639
-#, fuzzy
 msgid "Next action"
-msgstr "次のページ"
+msgstr "次の行動"
 
 #: engines/wintermute/keymapper_tables.h:1242
 #: engines/wintermute/keymapper_tables.h:1647
-#, fuzzy
 msgid "Previous action"
-msgstr "前のページ"
+msgstr "前の行動"
 
 #: engines/wintermute/keymapper_tables.h:1261
 #: engines/wintermute/keymapper_tables.h:1424
@@ -7565,27 +7563,27 @@ msgstr "設定"
 
 #: engines/wintermute/keymapper_tables.h:1266
 msgid "Dialogue answer 1"
-msgstr ""
+msgstr "回答ダイアログ1"
 
 #: engines/wintermute/keymapper_tables.h:1271
 msgid "Dialogue answer 2"
-msgstr ""
+msgstr "回答ダイアログ2"
 
 #: engines/wintermute/keymapper_tables.h:1276
 msgid "Dialogue answer 3"
-msgstr ""
+msgstr "回答ダイアログ3"
 
 #: engines/wintermute/keymapper_tables.h:1281
 msgid "Dialogue answer 4"
-msgstr ""
+msgstr "回答ダイアログ4"
 
 #: engines/wintermute/keymapper_tables.h:1291
 msgid "Spin slower"
-msgstr ""
+msgstr "回転速度を下げる"
 
 #: engines/wintermute/keymapper_tables.h:1298
 msgid "Spin faster"
-msgstr ""
+msgstr "回転速度を上げる"
 
 #: engines/wintermute/keymapper_tables.h:1376
 msgid "Zoom out"
@@ -7603,16 +7601,15 @@ msgstr "地図を表示"
 
 #: engines/wintermute/keymapper_tables.h:1439
 msgid "Bezier window"
-msgstr ""
+msgstr "ベジエウィンドウ"
 
 #: engines/wintermute/keymapper_tables.h:1455
 msgid "Droid action"
-msgstr ""
+msgstr "ドロイドアクション"
 
 #: engines/wintermute/keymapper_tables.h:1517
-#, fuzzy
 msgid "Music menu"
-msgstr "音楽の音量："
+msgstr "ミュージックメニュー"
 
 #: engines/wintermute/keymapper_tables.h:1561
 msgid "Rotate"
@@ -7656,15 +7653,15 @@ msgstr "2P：右"
 
 #: engines/wintermute/keymapper_tables.h:1634
 msgid "Debug FPS"
-msgstr ""
+msgstr "FPSを表示"
 
 #: engines/wintermute/keymapper_tables.h:1731
 msgid "F1"
-msgstr ""
+msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:1736
 msgid "Key i"
-msgstr ""
+msgstr "iキー"
 
 #: engines/xeen/detection.cpp:47
 msgid "Show item costs in standard inventory mode"
@@ -7678,7 +7675,7 @@ msgstr ""
 
 #: engines/xeen/detection.cpp:57
 msgid "More durable armor"
-msgstr ""
+msgstr "アーマーの耐久力を増加"
 
 #: engines/xeen/detection.cpp:58
 msgid "Armor won't break until character is at -80HP, rather than merely -10HP"
@@ -7708,11 +7705,11 @@ msgstr "ゲーム音声を有効にする"
 
 #: engines/zvision/detection_tables.h:80
 msgid "Disable animation while turning"
-msgstr ""
+msgstr "回転中はアニメーション無効"
 
 #: engines/zvision/detection_tables.h:81
 msgid "Disable animation while turning in panorama mode"
-msgstr ""
+msgstr "パノラマモードで回転中はアニメーション無効"
 
 #: engines/zvision/detection_tables.h:90
 msgid "Use high resolution MPEG video"
@@ -7741,7 +7738,7 @@ msgstr "下を見る"
 
 #: engines/zvision/metaengine.cpp:170
 msgid "Spellbook"
-msgstr ""
+msgstr "スペルブック"
 
 #: engines/zvision/metaengine.cpp:176
 msgid "Score"
@@ -7749,11 +7746,11 @@ msgstr "スコア"
 
 #: engines/zvision/metaengine.cpp:182
 msgid "Put away object"
-msgstr ""
+msgstr "オブジェクトを片付ける"
 
 #: engines/zvision/metaengine.cpp:188
 msgid "Extract coin"
-msgstr ""
+msgstr "コインを抽出"
 
 #: engines/zvision/metaengine.cpp:209
 #, fuzzy
