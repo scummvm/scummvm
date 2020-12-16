@@ -43,7 +43,7 @@ public:
 	void beforeGame() override;
 	void beforeTurn() override;
 	void beforePrompt() override;
-	bool afterPrompt() override;
+	void afterPrompt() override;
 	void handleAction(Sentence *sentence) override;
 	void handleSpecialOpcode() override;
 };
