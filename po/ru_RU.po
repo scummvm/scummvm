@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2020-12-12 14:54+0000\n"
+"POT-Creation-Date: 2020-12-16 05:05+0000\n"
 "PO-Revision-Date: 2020-12-05 11:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian <https://translations.scummvm.org/projects/scummvm/"
@@ -4166,7 +4166,7 @@ msgstr "Автор перевода не желает, чтобы его пер�
 
 #: engines/cge/detection.cpp:48 engines/cge/detection.cpp:54
 #: engines/kyra/detection_tables.h:224 engines/kyra/detection_tables.h:237
-#: engines/kyra/detection_tables.h:579 engines/kyra/detection_tables.h:1763
+#: engines/kyra/detection_tables.h:593 engines/kyra/detection_tables.h:1777
 #: engines/saga/detection_tables.h:187 engines/saga/detection_tables.h:608
 #: engines/saga/detection_tables.h:936 engines/sci/detection_tables.h:4824
 #: engines/sci/detection_tables.h:4832
@@ -4370,11 +4370,11 @@ msgstr "Это слишком мало, чтобы быть действител
 msgid "This is not a valid Alan2 file."
 msgstr "Это не правильный файл Alan2."
 
-#: engines/glk/comprehend/game.cpp:319
+#: engines/glk/comprehend/game.cpp:322
 msgid "Savegame"
 msgstr "Сохранение игры"
 
-#: engines/glk/comprehend/game.cpp:848
+#: engines/glk/comprehend/game.cpp:862
 msgid "Picture window toggled\n"
 msgstr "Окно и с иллюстрацией переключено\n"
 
@@ -5823,7 +5823,7 @@ msgstr ""
 "Пожалуйста, воспользуйтесь другой программой для просмотра файла помощи "
 "игры: %s"
 
-#: engines/sci/engine/kmisc.cpp:874
+#: engines/sci/engine/kmisc.cpp:865
 msgid ""
 "The Poker logic is hardcoded in an external DLL, and is not implemented yet. "
 "There exists some dummy logic for now, where opponent actions are chosen "
