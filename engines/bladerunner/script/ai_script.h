@@ -213,17 +213,17 @@ DECLARE_SCRIPT(Lance)
 END_SCRIPT
 
 DECLARE_SCRIPT(BulletBob)
-	int _var1;
+	int _varChooseIdleAnimation;
 	int _var2;
 	int _var3;
-	int _var4;
+	int _varNumOfTimesToHoldCurrentFrame;
 END_SCRIPT
 
 DECLARE_SCRIPT(Runciter)
-	int var_45CD78;
+	int _varChooseIdleAnimation;
 	int var_45CD7C;
 	int var_45CD80;
-	int var_45CD84;
+	int _varNumOfTimesToHoldCurrentFrame;
 	int var_45CD88;
 END_SCRIPT
 
