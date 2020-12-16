@@ -2218,13 +2218,69 @@ enum GameModelAnimations {
 	kModelAnimationTransientSearchingTrash           = 504,
 	kModelAnimationTransientSearchingTrashToIdle     = 505,
 	// 506 - 525: Bullet Bob animations
-		// TODO
+	kModelAnimationBulletBobSittingCombatIdle         = 506,
+	kModelAnimationBulletBobSittingCombatGotHit       = 507, // UNUSED
+	kModelAnimationBulletBobSittingCombatStrafeSlow   = 508, // UNUSED
+	kModelAnimationBulletBobSittingCombatStrafeFast   = 509, // UNUSED
+	kModelAnimationBulletBobSittingCombatShotDead     = 510,
+	kModelAnimationBulletBobSittingCombatTalk         = 511, // UNUSED
+	kModelAnimationBulletBobSittingCombatRetrievesGun = 512,
+	kModelAnimationBulletBobSittingCombatFiresGun     = 513,
+	kModelAnimationBulletBobSittingIdle               = 514,
+	kModelAnimationBulletBobSittingHeadMoveAround     = 515, // UNUSED - RESTORED
+	kModelAnimationBulletBobSittingHeadMoveDownThink  = 516,
+	kModelAnimationBulletBobSittingCalmTalk           = 517,
+	kModelAnimationBulletBobSittingDismissiveTalk     = 518,
+	kModelAnimationBulletBobSittingSuggestTalk        = 519,
+	kModelAnimationBulletBobSittingQuickSuggestTalk   = 520,
+	kModelAnimationBulletBobSittingExplainTalk        = 521,
+	kModelAnimationBulletBobSittingGossipTalk         = 522,
+	kModelAnimationBulletBobSittingHeadNodLeftTalk    = 523,
+	kModelAnimationBulletBobSittingPersistentTalk     = 524,
+	kModelAnimationBulletBobSittingThumbsUp           = 525, // TODO when is this used? animationMode 23
 	// 526 - 544: Runciter animations
-		// TODO
+	kModelAnimationRunciterWalking              = 526,
+	kModelAnimationRunciterGotHit               = 527, // UNUSED
+	kModelAnimationRunciterShotDead             = 528,
+	kModelAnimationRunciterIdle                 = 529,
+	kModelAnimationRunciterScratchesWoundIdle   = 530,
+	kModelAnimationRunciterPicksNose            = 531,
+	kModelAnimationRunciterGestureGive          = 532,
+	kModelAnimationRunciterCalmTalk             = 533,
+	kModelAnimationRunciterSuggestOnTipToesTalk = 534, // TODO why does he seem on tip-toes? Is someone holding him up?
+	kModelAnimationRunciterExplainTalk          = 535,
+	kModelAnimationRunciterAngryTalk            = 536,
+	kModelAnimationRunciterQuestionTalk         = 537,
+	kModelAnimationRunciterOffensiveTalk        = 538,
+	kModelAnimationRunciterComplainCryTalk      = 539,
+	kModelAnimationRunciterDespairTalk          = 540,
+	kModelAnimationRunciterCannotBelieveTalk    = 541,
+	kModelAnimationRunciterAttack               = 542, // UNUSED - TODO What is he supposed to be doing?
+	kModelAnimationRunciterDefendOrPourMove     = 543, // UNUSED - TODO What is he supposed to be doing?
+	kModelAnimationRunciterProtectSelfMove      = 544, // UNUSED - TODO What is he supposed to be doing?
 	// 545 - 554: Insect Dealer animations
-		// TODO
+	kModelAnimationInsectDealerSittingIdle            = 545,
+	kModelAnimationInsectDealerSittingScratchEarIdle  = 546,
+	kModelAnimationInsectDealerSittingGestureGive     = 547, // TODO is this used? animationMode: 23
+	kModelAnimationInsectDealerSittingCalmTalk        = 548,
+	kModelAnimationInsectDealerSittingExplainTalk     = 549,
+	kModelAnimationInsectDealerSittingPointingTalk    = 550,
+	kModelAnimationInsectDealerSittingHeadMoveTalk    = 551,
+	kModelAnimationInsectDealerSittingSuggestTalk     = 552,
+	kModelAnimationInsectDealerSittingGossipTalk      = 553,
+	kModelAnimationInsectDealerSittingDescriptiveTalk = 554,
 	// 555 - 565: Tyrell Guard animations
-		// TODO
+	kModelAnimationTyrellGuardSittingIdle                 = 555,
+	kModelAnimationTyrellGuardSittingLookingAtMonitorIdle = 556, // UNUSED
+	kModelAnimationTyrellGuardSittingGestureGive          = 557,
+	kModelAnimationTyrellGuardSittingCalmTalk             = 558,
+	kModelAnimationTyrellGuardSittingExplainTalk          = 559,
+	kModelAnimationTyrellGuardSittingHandOverHeadTalk     = 560,
+	kModelAnimationTyrellGuardSittingSuggestTalk          = 561,
+	kModelAnimationTyrellGuardSittingUpsetTalk            = 562,
+	kModelAnimationTyrellGuardSittingMaybeHugsMonitors    = 563, // ??? untriggered
+	kModelAnimationTyrellGuardSittingSleepingWakingUp     = 564, // Triggered to play partially (states 1, 2)
+	kModelAnimationTyrellGuardSittingPressingAlertButton  = 565, // TODO check - does this actually get triggered? animationMode 50
 	// 566 - 570: Mia animations
 	kModelAnimationMiaIdle             = 566,
 	kModelAnimationMiaGestureGive      = 567, // TODO when is this used? animationMode 23

@@ -411,11 +411,15 @@ bool AIScriptGaff::UpdateAnimation(int *animation, int *frame) {
 	case 8:
 		*animation = kModelAnimationGaffEntersSpinner;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMcCoyEntersSpinner) - 1) { // Bug in the game?
+		// TODO Bug in the game? Why check against McCoy's animation's frameset number of frames?
+		// kModelAnimationMcCoyEntersSpinner: 25 frames
+		// kModelAnimationGaffEntersSpinner:  31 frames
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationMcCoyEntersSpinner) - 1) {
 			Actor_Set_Invisible(kActorGaff, true);
 			*animation = kModelAnimationGaffIdle;
 			_animationFrame = 0;
-			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle); // TODO: check this, it was set directly by calling actor script
+			// TODO: check this, it was set directly by calling actor script
+			Actor_Change_Animation_Mode(kActorMcCoy, kAnimationModeIdle);
 			Actor_Set_Goal_Number(kActorGaff, kGoalGaffCT12Leave);
 		}
 		break;

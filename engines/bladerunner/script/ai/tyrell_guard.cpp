@@ -148,15 +148,15 @@ bool AIScriptTyrellGuard::GoalChanged(int currentGoalNumber, int newGoalNumber) 
 bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 	switch (_animationState) {
 	case 0:
-		*animation = 555;
+		*animation = kModelAnimationTyrellGuardSittingIdle;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(555)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellGuardSittingIdle)) {
 			_animationFrame = 0;
 		}
 		break;
 
 	case 1:
-		*animation = 564;
+		*animation = kModelAnimationTyrellGuardSittingSleepingWakingUp;
 		if (_animationFrame <= 5) {
 			_frameDelta = 1;
 		} else if (_animationFrame >= 12) {
@@ -166,18 +166,18 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 2:
-		*animation = 564;
+		*animation = kModelAnimationTyrellGuardSittingSleepingWakingUp;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(564)) {
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellGuardSittingSleepingWakingUp)) {
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 3:
-		*animation = 558;
+		*animation = kModelAnimationTyrellGuardSittingCalmTalk;
 		if (_animationFrame == 0 && _resumeIdleAfterFramesetCompletesFlag) {
-			*animation = 555;
+			*animation = kModelAnimationTyrellGuardSittingIdle;
 			_animationState = 0;
 		} else {
 			++_animationFrame;
@@ -188,80 +188,80 @@ bool AIScriptTyrellGuard::UpdateAnimation(int *animation, int *frame) {
 		break;
 
 	case 4:
-		*animation = 559;
+		*animation = kModelAnimationTyrellGuardSittingExplainTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(559)) {
-			*animation = 558;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellGuardSittingExplainTalk)) {
+			*animation = kModelAnimationTyrellGuardSittingCalmTalk;
 			_animationFrame = 0;
 			_animationState = 3;
 		}
 		break;
 
 	case 5:
-		*animation = 560;
+		*animation = kModelAnimationTyrellGuardSittingHandOverHeadTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(560)) {
-			*animation = 558;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellGuardSittingHandOverHeadTalk)) {
+			*animation = kModelAnimationTyrellGuardSittingCalmTalk;
 			_animationFrame = 0;
 			_animationState = 3;
 		}
 		break;
 
 	case 6:
-		*animation = 561;
+		*animation = kModelAnimationTyrellGuardSittingSuggestTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(561)) {
-			*animation = 558;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellGuardSittingSuggestTalk)) {
+			*animation = kModelAnimationTyrellGuardSittingCalmTalk;
 			_animationFrame = 0;
 			_animationState = 3;
 		}
 		break;
 
 	case 7:
-		*animation = 562;
+		*animation = kModelAnimationTyrellGuardSittingUpsetTalk;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(562)) {
-			*animation = 558;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellGuardSittingUpsetTalk)) {
+			*animation = kModelAnimationTyrellGuardSittingCalmTalk;
 			_animationFrame = 0;
 			_animationState = 3;
 		}
 		break;
 
 	case 8:
-		*animation = 557;
+		*animation = kModelAnimationTyrellGuardSittingGestureGive;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(557)) {
-			*animation = 555;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellGuardSittingGestureGive)) {
+			*animation = kModelAnimationTyrellGuardSittingIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 9:
-		*animation = 563;
+		*animation = kModelAnimationTyrellGuardSittingMaybeHugsMonitors;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(563)) {
-			*animation = 555;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellGuardSittingMaybeHugsMonitors)) {
+			*animation = kModelAnimationTyrellGuardSittingIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 10:
-		*animation = 564;
+		*animation = kModelAnimationTyrellGuardSittingSleepingWakingUp;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(564)) {
-			*animation = 555;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellGuardSittingSleepingWakingUp)) {
+			*animation = kModelAnimationTyrellGuardSittingIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
 		break;
 
 	case 11:
-		*animation = 565;
+		*animation = kModelAnimationTyrellGuardSittingPressingAlertButton;
 		++_animationFrame;
-		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(565)) {
-			*animation = 555;
+		if (_animationFrame >= Slice_Animation_Query_Number_Of_Frames(kModelAnimationTyrellGuardSittingPressingAlertButton)) {
+			*animation = kModelAnimationTyrellGuardSittingIdle;
 			_animationFrame = 0;
 			_animationState = 0;
 		}
