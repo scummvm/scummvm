@@ -63,7 +63,7 @@ void TalismanGame::loadStrings() {
 		error("novel.exe is a required file");
 
 	Common::String md5 = Common::computeStreamMD5AsString(f, 1024);
-	if (md5 != "0e7f002971acdb055f439020363512ce")
+	if (md5 != "0e7f002971acdb055f439020363512ce" && md5 != "2e18c88ce352ebea3e14177703a0485f")
 		error("Unrecognised novel.exe encountered");
 
 	const int STRING_SEGMENTS[2] = { STRINGS_SEGMENT1, STRINGS_SEGMENT2 };

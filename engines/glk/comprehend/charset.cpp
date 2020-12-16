@@ -74,7 +74,7 @@ TalismanFont::TalismanFont() : FixedFont() {
 
 	Common::String md5 = Common::computeStreamMD5AsString(f, 1024);
 
-	if (md5 == "0e7f002971acdb055f439020363512ce") {
+	if (md5 == "0e7f002971acdb055f439020363512ce" || md5 == "2e18c88ce352ebea3e14177703a0485f") {
 		for (int idx = 0; idx < 128 - 32; ++idx)
 			f.read(&_data[idx][0], 8);
 	} else {
