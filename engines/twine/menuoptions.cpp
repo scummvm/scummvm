@@ -111,6 +111,8 @@ void MenuOptions::showCredits() {
 
 	_engine->_screens->clearScreen();
 	_engine->flip();
+
+	_engine->_input->enableKeyMap(uiKeyMapId);
 }
 
 void MenuOptions::showEndSequence() {
