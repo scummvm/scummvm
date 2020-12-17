@@ -675,10 +675,13 @@ int ConsoleDialog::printFormat(int dummy, const char *format, ...) {
 
 int ConsoleDialog::vprintFormat(int dummy, const char *format, va_list argptr) {
 	Common::String buf = Common::String::vformat(format, argptr);
+	const int size = buf.size();
 
 	print(buf.c_str());
+	buf.trim();
+	debug("%s", buf.c_str());
 
-	return buf.size();
+	return size;
 }
 
 void ConsoleDialog::printChar(int c) {
