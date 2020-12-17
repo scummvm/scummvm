@@ -101,9 +101,12 @@ void TalismanGame::loadStrings() {
 	}
 }
 
-void TalismanGame::beforeGame() {
+void TalismanGame::playGame() {
 	loadStrings();
+	ComprehendGameV2::playGame();
+}
 
+void TalismanGame::beforeGame() {
 	// Draw the title
 	g_comprehend->drawPicture(TITLE_IMAGE);
 
