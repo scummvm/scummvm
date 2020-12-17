@@ -169,7 +169,6 @@ private:
 	// TODO: refactor all this variables and related functions
 	char _progressiveTextBuffer[256] {'\0'};
 	const char *_progressiveTextNextWord = nullptr;
-	int32 printText10Var1 = 0;
 
 	int32 _dialTextXPos = 0;
 	int32 _dialTextYPos = 0;
