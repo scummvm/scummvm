@@ -76,16 +76,8 @@ private:
 	// unk20 - Sound-effect. Used for secondaryEffect1()
 	// unk21 - Sound-effect. Used for secondaryEffect1()
 	// unk22 - Sound-effect. Used for secondaryEffect1()
-	// unk32 - Sound-effect. Used for primaryEffect2()
-	// unk33 - Sound-effect. Used for primaryEffect2()
-	// unk34 - Sound-effect. Used for primaryEffect2()
-	// unk35 - Sound-effect. Used for primaryEffect2()
-	// unk36 - Sound-effect. Used for primaryEffect2()
-	// unk37 - Sound-effect. Used for primaryEffect2()
-	// unk38 - Sound-effect. Used for primaryEffect2()
 	// unk39 - Currently unused, except for updateCallback56()
 	// unk40 - Currently unused, except for updateCallback56()
-	// unk41 - Sound-effect. Used for primaryEffect2()
 
 	struct Channel {
 		bool lock;	// New to ScummVM
@@ -101,14 +93,14 @@ private:
 		uint8 slideTempo;
 		uint8 slideTimer;
 		int16 slideStep;
-		int16 unk37;
-		uint8 unk33;
-		uint8 unk34;
-		uint8 unk35;
-		uint8 unk36;
-		uint8 unk32;
-		uint8 unk41;
-		uint8 unk38;
+		int16 vibratoStep;
+		uint8 vibratoStepRange;
+		uint8 vibratoStepsCountdown;
+		uint8 vibratoNumSteps;
+		uint8 vibratoDelay;
+		uint8 vibratoTempo;
+		uint8 vibratoTimer;
+		uint8 vibratoDelayCountdown;
 		uint8 opExtraLevel1;
 		uint8 spacing2;
 		uint8 baseFreq;
@@ -141,7 +133,7 @@ private:
 	};
 
 	void primaryEffectSlide(Channel &channel);
-	void primaryEffect2(Channel &channel);
+	void primaryEffectVibrato(Channel &channel);
 	void secondaryEffect1(Channel &channel);
 
 	void resetAdLibState();
@@ -206,7 +198,7 @@ private:
 	int update_setupPrimaryEffectSlide(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_removePrimaryEffectSlide(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setBaseFreq(const uint8 *&dataptr, Channel &channel, uint8 value);
-	int update_setupPrimaryEffect2(const uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_setupPrimaryEffectVibrato(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setPriority(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback23(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback24(const uint8 *&dataptr, Channel &channel, uint8 value);
@@ -225,7 +217,7 @@ private:
 	int update_changeExtraLevel1(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback38(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback39(const uint8 *&dataptr, Channel &channel, uint8 value);
-	int update_removePrimaryEffect2(const uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_removePrimaryEffectVibrato(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_pitchBend(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_resetToGlobalTempo(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_nop(const uint8 *&dataptr, Channel &channel, uint8 value);
@@ -1044,7 +1036,7 @@ void AdLibDriver::setupInstrument(uint8 regOffset, const uint8 *dataptr, Channel
 }
 
 // Apart from playing the note, this function also updates the variables for
-// primary effect 2.
+// the vibrato primary effect.
 
 void AdLibDriver::noteOn(Channel &channel) {
 	debugC(9, kDebugLevelSound, "noteOn(%lu)", (long)(&channel - _channels));
@@ -1057,10 +1049,13 @@ void AdLibDriver::noteOn(Channel &channel) {
 	channel.regBx |= 0x20;
 	writeOPL(0xB0 + _curChannel, channel.regBx);
 
-	int8 shift = 9 - CLIP<int8>(channel.unk33, 0, 9);
-	uint16 temp = channel.regAx | (channel.regBx << 8);
-	channel.unk37 = ((temp & 0x3FF) >> shift) & 0xFF;
-	channel.unk38 = channel.unk36;
+	// Update vibrato effect variables: vibratoStep is set to a
+	// vibratoStepRange+1-bit value proportional to the note's f-number.
+	// Reinitalize delay countdown; vibratoStepsCountdown reinitialization omitted.
+	int8 shift = 9 - CLIP<int8>(channel.vibratoStepRange, 0, 9);
+	uint16 freq = ((channel.regBx << 8) | channel.regAx) & 0x3FF;
+	channel.vibratoStep = (freq >> shift) & 0xFF;
+	channel.vibratoDelayCountdown = channel.vibratoDelay;
 }
 
 void AdLibDriver::adjustVolume(Channel &channel) {
@@ -1145,55 +1140,62 @@ void AdLibDriver::primaryEffectSlide(Channel &channel) {
 // This is presumably only used for some sound effects, e.g. Malcolm entering
 // and leaving Kallak's hut. Related functions and variables:
 //
-// update_setupPrimaryEffect2()
-//    - Initializes unk32, unk33, unk34, unk35 and unk36
-//    - unk32 is not further modified
-//    - unk33 is not further modified
-//    - unk34 is a countdown that gets reinitialized to unk35 on zero
-//    - unk35 is based on unk34 and not further modified
-//    - unk36 is not further modified
+// update_setupPrimaryEffectVibrato()
+//    - Initializes vibratoTempo, vibratoStepRange, vibratoStepsCountdown,
+//      vibratoNumSteps, and vibratoDelay
+//    - vibratoTempo is not further modified
+//    - vibratoStepRange is not further modified
+//    - vibratoStepsCountdown is a countdown that gets reinitialized to
+//      vibratoNumSteps on zero, but is initially only half as much
+//    - vibratoNumSteps is not further modified
+//    - vibratoDelay is not further modified
 //
 // noteOn()
 //    - Plays the current note
-//    - Updates unk37 with a new (lower?) frequency
-//    - Copies unk36 to unk38. The unk38 variable is a countdown.
+//    - Sets vibratoStep depending on vibratoStepRange and the note's f-number
+//    - Initializes vibratoDelayCountdown with vibratoDelay
 //
-// unk32 - determines how often the notes are played
-// unk33 - modifies the frequency
-// unk34 - countdown, updates frequency on zero
-// unk35 - initializer for unk34 countdown
-// unk36 - initializer for unk38 countdown
-// unk37 - frequency
-// unk38 - countdown, begins playing on zero
-// unk41 - determines how often the notes are played
+// vibratoTempo          - determines how often the frequency is updated
+// vibratoStepRange      - determines frequency step size depending on f-number
+// vibratoStepsCountdown - reverses slide direction on zero
+// vibratoNumSteps       - initializer for vibratoStepsCountdown countdown
+// vibratoDelay          - initializer for vibratoDelayCountdown
+// vibratoStep           - amount the frequency changes each update
+// vibratoDelayCountdown - effect starts when it reaches zero
+// vibratoTimer          - keeps track of time
 //
-// Note that unk41 is never initialized. Not that it should matter much, but it
-// is a bit sloppy.
+// Note that vibratoTimer is never initialized. Not that it should matter much,
+// but it is a bit sloppy. Also vibratoStepsCountdown should be reset to its
+// initial value in noteOn() but isn't.
 
-void AdLibDriver::primaryEffect2(Channel &channel) {
-	debugC(9, kDebugLevelSound, "Calling primaryEffect2 (channel: %d)", _curChannel);
+void AdLibDriver::primaryEffectVibrato(Channel &channel) {
+	debugC(9, kDebugLevelSound, "Calling primaryEffectVibrato (channel: %d)", _curChannel);
 
 	if (_curChannel >= 9)
 		return;
 
-	if (channel.unk38) {
-		--channel.unk38;
+	// When a new note is played the effect doesn't start immediately.
+	if (channel.vibratoDelayCountdown) {
+		--channel.vibratoDelayCountdown;
 		return;
 	}
 
-	uint8 temp = channel.unk41;
-	channel.unk41 += channel.unk32;
-	if (channel.unk41 < temp) {
-		if (!(--channel.unk34)) {
-			channel.unk37 = -channel.unk37;
-			channel.unk34 = channel.unk35;
+	// Next update is due when vibratoTimer overflows.
+	uint8 temp = channel.vibratoTimer;
+	channel.vibratoTimer += channel.vibratoTempo;
+	if (channel.vibratoTimer < temp) {
+		// Reverse direction every vibratoNumSteps updates
+		if (!(--channel.vibratoStepsCountdown)) {
+			channel.vibratoStep = -channel.vibratoStep;
+			channel.vibratoStepsCountdown = channel.vibratoNumSteps;
 		}
 
-		uint16 unk2 = (channel.regAx | (channel.regBx << 8)) & 0x3FF;
-		unk2 += channel.unk37;
+		// Update frequency.
+		uint16 freq = ((channel.regBx << 8) | channel.regAx) & 0x3FF;
+		freq += channel.vibratoStep;
 
-		channel.regAx = unk2 & 0xFF;
-		channel.regBx = (channel.regBx & 0xFC) | (unk2 >> 8);
+		channel.regAx = freq & 0xFF;
+		channel.regBx = (channel.regBx & 0xFC) | (freq >> 8);
 
 		// Octave / F-Number / Key-On
 		writeOPL(0xA0 + _curChannel, channel.regAx);
@@ -1581,14 +1583,14 @@ int AdLibDriver::update_setBaseFreq(const uint8 *&dataptr, Channel &channel, uin
 	return 0;
 }
 
-int AdLibDriver::update_setupPrimaryEffect2(const uint8 *&dataptr, Channel &channel, uint8 value) {
-	channel.unk32 = value;
-	channel.unk33 = *dataptr++;
+int AdLibDriver::update_setupPrimaryEffectVibrato(const uint8 *&dataptr, Channel &channel, uint8 value) {
+	channel.vibratoTempo = value;
+	channel.vibratoStepRange = *dataptr++;
 	uint8 temp = *dataptr++;
-	channel.unk34 = temp + 1;
-	channel.unk35 = temp << 1;
-	channel.unk36 = *dataptr++;
-	channel.primaryEffect = &AdLibDriver::primaryEffect2;
+	channel.vibratoStepsCountdown = temp + 1;
+	channel.vibratoNumSteps = temp << 1;
+	channel.vibratoDelay = *dataptr++;
+	channel.primaryEffect = &AdLibDriver::primaryEffectVibrato;
 	return 0;
 }
 
@@ -1785,7 +1787,7 @@ int AdLibDriver::updateCallback39(const uint8 *&dataptr, Channel &channel, uint8
 	return 0;
 }
 
-int AdLibDriver::update_removePrimaryEffect2(const uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdLibDriver::update_removePrimaryEffectVibrato(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
 	channel.primaryEffect = nullptr;
 	return 0;
@@ -2102,7 +2104,7 @@ const AdLibDriver::ParserOpcode AdLibDriver::_parserOpcodeTable[] = {
 
 	// 20
 	COMMAND(update_stopChannel, 0),
-	COMMAND(update_setupPrimaryEffect2, 4),
+	COMMAND(update_setupPrimaryEffectVibrato, 4),
 	COMMAND(update_stopChannel, 0),
 	COMMAND(update_stopChannel, 0),
 
@@ -2151,7 +2153,7 @@ const AdLibDriver::ParserOpcode AdLibDriver::_parserOpcodeTable[] = {
 	// 52
 	COMMAND(update_stopChannel, 0),
 	COMMAND(updateCallback39, 2),
-	COMMAND(update_removePrimaryEffect2, 0),
+	COMMAND(update_removePrimaryEffectVibrato, 0),
 	COMMAND(update_stopChannel, 0),
 
 	// 56
