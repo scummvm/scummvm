@@ -315,7 +315,6 @@ void GameState::processFoundItem(int32 item) {
 	_engine->_text->initDialogueBox();
 
 	ProgressiveTextState textState = ProgressiveTextState::UNK1;
-	bool quitItem = false;
 
 	_engine->_text->initVoxToPlay(item);
 
@@ -331,7 +330,8 @@ void GameState::processFoundItem(int32 item) {
 	Renderer::prepareIsoModel(_engine->_resources->inventoryTable[item]);
 	_engine->_redraw->numOfRedrawBox = 0;
 
-	while (!quitItem) {
+	ScopedKeyMap uiKeyMap(_engine, uiKeyMapId);
+	for (;;) {
 		ScopedFPS fps(1000 / 15);
 		_engine->_interface->resetClip();
 		_engine->_redraw->currNumOfRedrawBox = 0;
@@ -370,13 +370,13 @@ void GameState::processFoundItem(int32 item) {
 
 		_engine->readKeys();
 		if (_engine->_input->toggleAbortAction()) {
-			quitItem = true;
 			_engine->_text->stopVox(_engine->_text->currDialTextEntry);
+			break;
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
 			if (textState == ProgressiveTextState::End) {
-				quitItem = true;
+				break;
 			}
 			if (textState == ProgressiveTextState::NextPage) {
 				textState = ProgressiveTextState::UNK1;
