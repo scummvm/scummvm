@@ -184,7 +184,7 @@ public:
 	Common::String stringLookup(uint16 index);
 	Common::String instrStringLookup(uint8 index, uint8 table);
 
-	void playGame();
+	virtual void playGame();
 
 	void move_to(uint8 room);
 	Room *get_room(uint16 index);

@@ -40,6 +40,7 @@ public:
 	TalismanGame();
 	~TalismanGame() override {}
 
+	void playGame() override;
 	void beforeGame() override;
 	void beforeTurn() override;
 	void beforePrompt() override;
