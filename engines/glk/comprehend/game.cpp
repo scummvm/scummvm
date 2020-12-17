@@ -734,7 +734,7 @@ void ComprehendGame::handleAction(Sentence *sentence) {
 	if (_functionNum == 0) {
 		console_println(stringLookup(STRING_DONT_UNDERSTAND).c_str());
 	} else {
-		eval_function(_functionNum, nullptr);
+		eval_function(_functionNum, sentence);
 		_functionNum = 0;
 		eval_function(0, nullptr);
 	}
