@@ -540,16 +540,17 @@ ProgressiveTextState Text::updateProgressiveText() {
 		processTextLine();
 	}
 
+	const char currentChar = *_progressiveTextBufferPtr;
 	// RECHECK this later
-	if (*_progressiveTextBufferPtr == '\0') {
+	if (currentChar == '\0') {
 		return ProgressiveTextState::UNK1;
 	}
 
-	fillFadeInBuffer(_dialTextXPos, _dialTextYPos, *_progressiveTextBufferPtr);
+	fillFadeInBuffer(_dialTextXPos, _dialTextYPos, currentChar);
 	fadeInCharacters(_fadeInCharactersPos, _dialTextStartColor);
-	int8 charWidth = getCharWidth(*_progressiveTextBufferPtr);
+	int8 charWidth = getCharWidth(currentChar);
 
-	if (*_progressiveTextBufferPtr != ' ') {
+	if (currentChar != ' ') {
 		_dialTextXPos += charWidth + 2;
 	} else {
 		if (printText10Var1 != 0) {
