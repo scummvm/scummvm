@@ -71,15 +71,11 @@ private:
 	// These variables have not yet been named, but some of them are partly
 	// known nevertheless:
 	//
-	// pitchBend - Sound-related. Possibly some sort of pitch bend.
 	// unk18 - Sound-effect. Used for secondaryEffect1()
 	// unk19 - Sound-effect. Used for secondaryEffect1()
 	// unk20 - Sound-effect. Used for secondaryEffect1()
 	// unk21 - Sound-effect. Used for secondaryEffect1()
 	// unk22 - Sound-effect. Used for secondaryEffect1()
-	// unk29 - Sound-effect. Used for primaryEffect1()
-	// unk30 - Sound-effect. Used for primaryEffect1()
-	// unk31 - Sound-effect. Used for primaryEffect1()
 	// unk32 - Sound-effect. Used for primaryEffect2()
 	// unk33 - Sound-effect. Used for primaryEffect2()
 	// unk34 - Sound-effect. Used for primaryEffect2()
@@ -102,9 +98,9 @@ private:
 		uint8 dataptrStackPos;
 		const uint8 *dataptrStack[4];
 		int8 baseNote;
-		uint8 unk29;
-		uint8 unk31;
-		int16 unk30;
+		uint8 slideTempo;
+		uint8 slideTimer;
+		int16 slideStep;
 		int16 unk37;
 		uint8 unk33;
 		uint8 unk34;
@@ -144,7 +140,7 @@ private:
 		uint8 volumeModifier;
 	};
 
-	void primaryEffect1(Channel &channel);
+	void primaryEffectSlide(Channel &channel);
 	void primaryEffect2(Channel &channel);
 	void secondaryEffect1(Channel &channel);
 
@@ -207,8 +203,8 @@ private:
 	int update_stopOtherChannel(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_waitForEndOfProgram(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setupInstrument(const uint8 *&dataptr, Channel &channel, uint8 value);
-	int update_setupPrimaryEffect1(const uint8 *&dataptr, Channel &channel, uint8 value);
-	int update_removePrimaryEffect1(const uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_setupPrimaryEffectSlide(const uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_removePrimaryEffectSlide(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setBaseFreq(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setupPrimaryEffect2(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setPriority(const uint8 *&dataptr, Channel &channel, uint8 value);
@@ -1084,74 +1080,66 @@ void AdLibDriver::adjustVolume(Channel &channel) {
 // the trees in the intro (but not the effect where he "booby-traps" the big
 // tree) and turning Kallak to stone. Related functions and variables:
 //
-// update_setupPrimaryEffect1()
-//    - Initializes unk29, unk30 and unk31
-//    - unk29 is not further modified
-//    - unk30 is not further modified, except by update_removePrimaryEffect1()
+// update_setupPrimaryEffectSlide()
+//    - Initializes slideTempo, slideStep and slideTimer
+//    - slideTempo is not further modified
+//    - slideStep is not further modified, except by update_removePrimaryEffectSlide()
 //
-// update_removePrimaryEffect1()
-//    - Deinitializes unk30
+// update_removePrimaryEffectSlide()
+//    - Deinitializes slideStep
 //
-// unk29 - determines how often the notes are played
-// unk30 - modifies the frequency
-// unk31 - determines how often the notes are played
+// slideTempo - determines how often the frequency is updated
+// slideStep  - amount the frequency changes each update
+// slideTimer - keeps track of time
 
-void AdLibDriver::primaryEffect1(Channel &channel) {
-	debugC(9, kDebugLevelSound, "Calling primaryEffect1 (channel: %d)", _curChannel);
+void AdLibDriver::primaryEffectSlide(Channel &channel) {
+	debugC(9, kDebugLevelSound, "Calling primaryEffectSlide (channel: %d)", _curChannel);
 
 	if (_curChannel >= 9)
 		return;
 
-	uint8 temp = channel.unk31;
-	channel.unk31 += channel.unk29;
-	if (channel.unk31 >= temp)
+	// Next update is due when slideTimer overflows.
+	uint8 temp = channel.slideTimer;
+	channel.slideTimer += channel.slideTempo;
+	if (channel.slideTimer >= temp)
 		return;
 
-	// Initialize unk1 to the current frequency
-	int16 unk1 = ((channel.regBx & 3) << 8) | channel.regAx;
+	// Extract current frequency, (shifted) octave, and "note on" bit into
+	// separate variable so calculations can't overflow into other fields.
+	int16 freq = ((channel.regBx & 0x03) << 8) | channel.regAx;
+	uint8 octave = channel.regBx & 0x1C;
+	uint8 note_on = channel.regBx & 0x20;
 
-	// This is presumably to shift the "note on" bit so far to the left
-	// that it won't be affected by any of the calculations below.
-	int16 unk2 = ((channel.regBx & 0x20) << 8) | (channel.regBx & 0x1C);
+	// Limit slideStep to prevent integer overflow.
+	freq += CLIP<int16>(channel.slideStep, -0x3FF, 0x3FF);
 
-	unk1 += channel.unk30;
-
-	if (channel.unk30 >= 0 && unk1 >= 734) {
+	if (channel.slideStep >= 0 && freq >= 734) {
 		// The new frequency is too high. Shift it down and go
 		// up one octave.
-		unk1 >>= 1;
-		if (!(unk1 & 0x3FF))
-			++unk1;
-		unk2 = (unk2 & 0xFF00) | ((unk2 + 4) & 0xFF);
-		unk2 &= 0xFF1C;
-	} else if (channel.unk30 < 0 && unk1 < 388) {
+		freq >>= 1;
+		if (!(freq & 0x3FF))
+			++freq;
+		octave += 4;
+	} else if (channel.slideStep < 0 && freq < 388) {
 		// Safety check: a negative frequency triggers undefined
 		// behavior for the left shift operator below.
-		if (unk1 < 0)
-			unk1 = 0;
+		if (freq < 0)
+			freq = 0;
 
 		// The new frequency is too low. Shift it up and go
 		// down one octave.
-		unk1 <<= 1;
-		if (!(unk1 & 0x3FF))
-			--unk1;
-		unk2 = (unk2 & 0xFF00) | ((unk2 - 4) & 0xFF);
-		unk2 &= 0xFF1C;
+		freq <<= 1;
+		if (!(freq & 0x3FF))
+			--freq;
+		octave -= 4;
 	}
 
-	// Make sure that the new frequency is still a 10-bit value.
-	unk1 &= 0x3FF;
+	// Set new frequency and octave.
+	channel.regAx = freq & 0xFF;
+	channel.regBx = note_on | (octave & 0x1C) | ((freq >> 8) & 0x03);
 
-	writeOPL(0xA0 + _curChannel, unk1 & 0xFF);
-	channel.regAx = unk1 & 0xFF;
-
-	// Shift down the "note on" bit again.
-	uint8 value = unk1 >> 8;
-	value |= (unk2 >> 8) & 0xFF;
-	value |= unk2 & 0xFF;
-
-	writeOPL(0xB0 + _curChannel, value);
-	channel.regBx = value;
+	writeOPL(0xA0 + _curChannel, channel.regAx);
+	writeOPL(0xB0 + _curChannel, channel.regBx);
 }
 
 // This is presumably only used for some sound effects, e.g. Malcolm entering
@@ -1572,19 +1560,19 @@ int AdLibDriver::update_setupInstrument(const uint8 *&dataptr, Channel &channel,
 	return 0;
 }
 
-int AdLibDriver::update_setupPrimaryEffect1(const uint8 *&dataptr, Channel &channel, uint8 value) {
-	channel.unk29 = value;
-	channel.unk30 = READ_BE_UINT16(dataptr);
+int AdLibDriver::update_setupPrimaryEffectSlide(const uint8 *&dataptr, Channel &channel, uint8 value) {
+	channel.slideTempo = value;
+	channel.slideStep = READ_BE_UINT16(dataptr);
 	dataptr += 2;
-	channel.primaryEffect = &AdLibDriver::primaryEffect1;
-	channel.unk31 = 0xFF;
+	channel.primaryEffect = &AdLibDriver::primaryEffectSlide;
+	channel.slideTimer = 0xFF;
 	return 0;
 }
 
-int AdLibDriver::update_removePrimaryEffect1(const uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdLibDriver::update_removePrimaryEffectSlide(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	--dataptr;
 	channel.primaryEffect = nullptr;
-	channel.unk30 = 0;
+	channel.slideStep = 0;
 	return 0;
 }
 
@@ -2108,8 +2096,8 @@ const AdLibDriver::ParserOpcode AdLibDriver::_parserOpcodeTable[] = {
 
 	// 16
 	COMMAND(update_setupInstrument, 1),
-	COMMAND(update_setupPrimaryEffect1, 3),
-	COMMAND(update_removePrimaryEffect1, 0),
+	COMMAND(update_setupPrimaryEffectSlide, 3),
+	COMMAND(update_removePrimaryEffectSlide, 0),
 	COMMAND(update_setBaseFreq, 1),
 
 	// 20
