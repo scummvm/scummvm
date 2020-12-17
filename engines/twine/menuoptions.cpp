@@ -96,21 +96,24 @@ void MenuOptions::newGame() {
 }
 
 void MenuOptions::showCredits() {
-	canShowCredits = true;
-	int32 tmpShadowMode = _engine->cfgfile.ShadowMode;
+	const int32 tmpShadowMode = _engine->cfgfile.ShadowMode;
 	_engine->cfgfile.ShadowMode = 0;
 	_engine->_gameState->initEngineVars();
 	_engine->_scene->currentSceneIdx = LBA1SceneId::Credits_List_Sequence;
 	_engine->_scene->needChangeScene = LBA1SceneId::Credits_List_Sequence;
 
+	canShowCredits = true;
 	_engine->gameEngineLoop();
-
+	_engine->_scene->stopRunningGame();
 	canShowCredits = false;
+
 	_engine->cfgfile.ShadowMode = tmpShadowMode;
 
 	_engine->_screens->clearScreen();
 	_engine->flip();
+}
 
+void MenuOptions::showEndSequence() {
 	_engine->_flaMovies->playFlaMovie(FLA_THEEND);
 
 	_engine->_screens->clearScreen();

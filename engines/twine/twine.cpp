@@ -236,6 +236,7 @@ Common::Error TwinEEngine::run() {
 		case EngineState::GameLoop:
 			if (gameEngineLoop()) {
 				_menuOptions->showCredits();
+				_menuOptions->showEndSequence();
 			}
 			_state = EngineState::Menu;
 			break;
@@ -643,7 +644,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 	if (_menuOptions->canShowCredits) {
 		// TODO: if current music playing != 8, than play_track(8);
 		if (_input->toggleAbortAction()) {
-			return 0;
+			return 1;
 		}
 	} else {
 		// Process give up menu - Press ESC

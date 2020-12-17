@@ -264,6 +264,8 @@ public:
 	void initInventoryDialogueBox();
 
 	void initText(int32 index);
+	void initInventoryText(int index);
+	void initItemFoundText(int index);
 	ProgressiveTextState updateProgressiveText();
 
 	/**

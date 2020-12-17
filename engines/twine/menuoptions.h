@@ -52,6 +52,7 @@ private:
 public:
 	MenuOptions(TwinEEngine *engine) : _engine(engine) {}
 
+	void showEndSequence();
 	void showCredits();
 	bool canShowCredits = false;
 
