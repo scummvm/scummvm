@@ -38,28 +38,36 @@ struct AnimFrame {
 	int _sfx;
 	uint32 _flags;
 
+	/** Frame level flags */
 	enum AnimFrameFlags {
-		AFF_UNK1     = 0x00000001,
 		AFF_ONGROUND = 0x00000002,
 		AFF_FLIPPED  = 0x00000020,
-		AFF_CRUFLIP  = 0x00000080,
 		AFF_SPECIAL  = 0x00000800, // U8 only
 		AFF_HURTY    = 0x00001000, // Crusader only - TODO: find a better name for this.
 		AFF_USECODE  = 0x00004000,
-		AFF_NOSTOP   = 0x00008000  // Crusader only - Probably - applied to most death animations
+		AFF_CRUFLIP  = 0x00008000  // Crusader only
 		//AFF_UNKNOWN  = 0xF0E0B01C,
 		//AFF_FIRE     = 0x0F1F00C0
 	};
 
+	inline bool is_onground() const {
+		return (_flags & AFF_ONGROUND) != 0;
+	}
+
 	inline bool is_flipped() const {
 		return (_flags & AFF_FLIPPED) != 0;
-	}
-	inline int attack_range() const {
-		return ((_flags >> 2) & 0x07);
 	}
 
 	inline bool is_callusecode() const {
 		return (_flags & AFF_USECODE) != 0;
+	}
+
+	inline bool is_cruflipped() const {
+		return (_flags & AFF_CRUFLIP) != 0;
+	}
+
+	inline int attack_range() const {
+		return ((_flags >> 2) & 0x07);
 	}
 };
 
@@ -93,47 +101,59 @@ public:
 	unsigned int getSize() const {
 		return _size;
 	}
-	
+
 	int getFrameRepeat() const {
 		return _frameRepeat;
 	}
-	
+
 	uint32 getShapeNum() const {
 		return _shapeNum;
 	}
-	
+
 	uint32 getAction() const {
 		return _action;
 	}
-	
+
 	bool hasFlags(uint32 mask) const {
 		return (_flags & mask) != 0;
 	}
-	
+
 	const AnimFrame &getFrame(Direction dir, unsigned int frameno) const;
 
+	/**
+	 * Animation level flags
+	 *
+	 * Note: Although these match the original values in the dat files, there is cleanup
+	 * at load time to avoid having to check game type in many places in the code.
+	 * See loadAnimActionFlags in anim_action.cpp
+	 */
 	enum AnimActionFlags {
+		AAF_NONE		 = 0x0000,
 		AAF_TWOSTEP      = 0x0001,
-		AAF_ATTACK       = 0x0002,
+		AAF_ATTACK       = 0x0002, // U8 only
 		AAF_LOOPING      = 0x0004,
 		AAF_UNSTOPPABLE  = 0x0008,
-		AAF_LOOPING2     = 0x0010, // CHECKME: guessing at this flag
-		AAF_LOOPING3     = 0x0040, // CHECKME: Crusader triggers a new anim in the terminate if this flag is set and the start point was null
+		AAF_LOOPING2_U8  = 0x0010,
+		AAF_ENDLOOP_U8   = 0x0020, // TODO: This starts a new anim at the end if pathfinding
+		AAF_ENDLOOP_CRU  = 0x0040, // TODO: This starts a new anim at the end if pathfinding
 		AAF_HANGING      = 0x0080,
-		AAF_CRUS_ROTATED = 0x1000,
-		AAF_CRUS_16DIRS  = 0x4000, // Crusader
+		AAF_ROTATED      = 0x1000, // Cru only
+		AAF_16DIRS       = 0x4000, // Cru only
 		AAF_DESTROYACTOR = 0x8000, // destroy actor after animation finishes
-		AAF_UNKFLAGS     = 0x3F20
+		AAF_COMMONFLAGS  = (AAF_TWOSTEP | AAF_LOOPING | AAF_UNSTOPPABLE | AAF_HANGING | AAF_DESTROYACTOR)
 	};
 
+
 private:
+	static AnimActionFlags loadAnimActionFlags(uint16 rawflags);
+
 	uint32 _shapeNum;
 	uint32 _action;
 
 	Std::vector<AnimFrame> _frames[16]; // 8 or 16 directions
 	unsigned int _size;
 	int _frameRepeat;
-	uint32 _flags;
+	AnimActionFlags _flags;
 
 	unsigned int _dirCount;
 };

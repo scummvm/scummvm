@@ -221,10 +221,9 @@ void ActorAnimProcess::run() {
 				return;
 			}
 
-
 			if (_tracker->isBlocked() &&
-			        !(_tracker->getAnimAction()->hasFlags(AnimAction::AAF_UNSTOPPABLE))) {
-				// FIXME: For blocked large _steps we may still want to do
+				!_tracker->getAnimAction()->hasFlags(AnimAction::AAF_UNSTOPPABLE)) {
+				// FIXME: For blocked large steps we may still want to do
 				//        a partial move. (But how would that work with
 				//        repeated frames?)
 
@@ -255,18 +254,18 @@ void ActorAnimProcess::run() {
 		}
 
 		const AnimFrame *curframe = _tracker->getAnimFrame();
-		if (curframe && curframe->_sfx) {
-			AudioProcess *audioproc = AudioProcess::get_instance();
-			if (audioproc) audioproc->playSFX(curframe->_sfx, 0x60, _itemNum, 0);
-		}
-
 		if (curframe) {
+			if (curframe->_sfx) {
+				AudioProcess *audioproc = AudioProcess::get_instance();
+				if (audioproc) audioproc->playSFX(curframe->_sfx, 0x60, _itemNum, 0);
+			}
+
 			if (curframe->_flags & AnimFrame::AFF_SPECIAL) {
 				// Flag to trigger a special action
 				// E.g.: play draw/sheathe SFX for avatar when weapon equipped,
 				// throw skull-fireball when ghost attacks, ...
 				doSpecial();
-			} else if (curframe->_flags & AnimFrame::AFF_HURTY) {
+			} else if (curframe->_flags & AnimFrame::AFF_HURTY && GAME_IS_CRUSADER) {
 				a->tookHitCru();
 			}
 		}

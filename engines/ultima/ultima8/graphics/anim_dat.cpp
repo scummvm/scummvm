@@ -188,15 +188,16 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 			uint32 actionsize = rs->readByte();
 			a->_actions[action]->_size = actionsize;
 			// byte 1: flags low byte
-			a->_actions[action]->_flags = rs->readByte();
+			uint32 rawflags = rs->readByte();
 			// byte 2: frame repeat
 			a->_actions[action]->_frameRepeat = rs->readByte();
 			// byte 3: flags high byte
-			a->_actions[action]->_flags |= rs->readByte() << 8;
+			rawflags |= rs->readByte() << 8;
+
+			a->_actions[action]->_flags = AnimAction::loadAnimActionFlags(rawflags);
 
 			unsigned int dirCount = 8;
-			if (GAME_IS_CRUSADER &&
-			        (a->_actions[action]->_flags & AnimAction::AAF_CRUS_16DIRS)) {
+			if (a->_actions[action]->hasFlags(AnimAction::AAF_16DIRS)) {
 				dirCount = 16;
 			}
 
@@ -234,7 +235,7 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 						f._sfx = rs->readByte();
 						// byte 4: deltadir (signed) - convert to pixels
 						f._deltaDir = rs->readSByte();
-						// byte 5: flags TODO: Ensure "flipped" flag is mapped correctly
+						// byte 5: flags
 						f._flags = rs->readByte();
 						f._flags += (x & 0xF0) << 8;
 						// bytes 6, 7: more flags
