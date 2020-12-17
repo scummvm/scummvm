@@ -74,10 +74,14 @@ void Process::waitFor(ProcId pid) {
 	if (pid) {
 		Kernel *kernel = Kernel::get_instance();
 
-		// add this process to waiting list of process pid_
+		// add this process to waiting list of other process
 		Process *p = kernel->getProcess(pid);
 		assert(p);
 		p->_waiting.push_back(_pid);
+
+		// Note: The original games sync itemnum between processes
+		// here if either one is zero, but that seems to break things
+		// for us so we don't do it.
 	}
 
 	_flags |= PROC_SUSPENDED;

@@ -74,8 +74,8 @@ public:
 		_flags |= PROC_RUNPAUSED;
 	};
 
-	//! suspend until process '_pid' returns. If _pid is 0, suspend indefinitely
-	void waitFor(ProcId _pid);
+	//! suspend until process 'pid' returns. If pid is 0, suspend indefinitely
+	void waitFor(ProcId pid);
 
 	//! suspend until process returns. If proc is 0, suspend indefinitely
 	void waitFor(Process *proc);
