@@ -240,10 +240,6 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 						// bytes 6, 7: more flags
 						f._flags += rs->readUint16LE() << 16;
 
-						// Map the "flipped" flag to match U8.. is this right?
-						//if (f._flags & AnimFrame::AFF_CRUFLIP)
-						//	f._flags |= AnimFrame::AFF_FLIPPED;
-
 						/*if (f._flags & AnimFrame::AFF_UNKNOWN) {
 							warning("AnimFlags: shape %d action %d dir %d frame %d has unknown flags %08X", shape, action, dir, j,
 									f._flags & AnimFrame::AFF_UNKNOWN);
