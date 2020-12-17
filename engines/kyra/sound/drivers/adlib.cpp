@@ -451,7 +451,7 @@ void AdLibDriver::setSoundData(uint8 *data, uint32 size) {
 	// Drop all tracks that are still queued. These would point to the old
 	// sound data.
 	_programQueueStart = _programQueueEnd = 0;
-	memset(_programQueue, 0, sizeof(_programQueue));
+	_programQueue[0] = QueueEntry();
 
 	_sfxPointer = nullptr;
 
