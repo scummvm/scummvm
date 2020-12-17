@@ -4286,7 +4286,8 @@ msgstr "Φόρτωση όπως και να 'χει"
 
 #: engines/cryomni3d/metaengine.cpp:142
 msgid "Versailles 1685 support is not compiled in"
-msgstr "Η υποστήριξη για το Versailles 1685 δεν έχει ενσωματωθεί στο εκτελέσιμο"
+msgstr ""
+"Η υποστήριξη για το Versailles 1685 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
 #: engines/dragons/dragons.cpp:1803
 #, c-format
