@@ -311,7 +311,7 @@ void GameState::processFoundItem(int32 item) {
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 
 	_engine->_interface->resetClip();
-	_engine->_text->initText(item);
+	_engine->_text->initItemFoundText(item);
 	_engine->_text->initDialogueBox();
 
 	ProgressiveTextState textState = ProgressiveTextState::UNK1;

@@ -404,7 +404,9 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 		_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
 		_engine->flip();
 	}
+	uint32 startMillis = _engine->_system->getMillis();
 	do {
+		const uint32 loopMillis = _engine->_system->getMillis();
 		_engine->readKeys();
 
 		Common::Point newmousepos = _engine->_input->getMousePositions();
@@ -420,6 +422,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 			}
 			useMouse = false;
 			buttonsNeedRedraw = true;
+			startMillis = loopMillis;
 		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::UIUp)) {
 			currentButton--;
 			if (currentButton < 0) { // if current button is the first, than previous button is the last
@@ -427,6 +430,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 			}
 			useMouse = false;
 			buttonsNeedRedraw = true;
+			startMillis = loopMillis;
 		}
 
 		const int16 id = menuSettings->getActiveButtonState();
@@ -550,6 +554,12 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 					return textId;
 				}
 			}
+			startMillis = loopMillis;
+		}
+		if (loopMillis - startMillis > 15000) {
+			_engine->_menuOptions->showCredits();
+			startMillis = _engine->_system->getMillis();
+			_engine->_screens->loadMenuImage(false);
 		}
 		_engine->_system->delayMillis(10);
 	} while (!_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter));
@@ -715,7 +725,6 @@ bool Menu::init() {
 	return HQR::getEntry(plasmaEffectPtr, Resources::HQR_RESS_FILE, RESSHQR_PLASMAEFFECT) > 0;
 }
 
-// TODO: if you stay long enough in the main menu without actions, the credits-scene is started
 EngineState Menu::run() {
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
@@ -1108,7 +1117,7 @@ void Menu::processInventoryMenu() {
 	_engine->_text->setFontCrossColor(4);
 	_engine->_text->initDialogueBox();
 
-	ProgressiveTextState bx = ProgressiveTextState::End;
+	ProgressiveTextState textStatus = ProgressiveTextState::End;
 
 #if 0
 	ScopedCursor scopedCursor(_engine);
@@ -1161,25 +1170,25 @@ void Menu::processInventoryMenu() {
 			_engine->_text->initInventoryDialogueBox();
 
 			if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
-				_engine->_text->initText(inventorySelectedItem + 100);
+				_engine->_text->initInventoryText(inventorySelectedItem);
 			} else {
-				_engine->_text->initText(NUM_INVENTORY_ITEMS + 100);
+				_engine->_text->initInventoryText(NUM_INVENTORY_ITEMS);
 			}
+		}
+
+		if (updateItemText || textStatus != ProgressiveTextState::NextPage) {
+			textStatus = _engine->_text->updateProgressiveText();
 			updateItemText = false;
 		}
 
-		if (updateItemText || bx != ProgressiveTextState::NextPage) {
-			bx = _engine->_text->updateProgressiveText();
-		}
-
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
-			if (bx == ProgressiveTextState::NextPage) {
+			if (textStatus == ProgressiveTextState::NextPage) {
 				_engine->_text->initInventoryDialogueBox();
-				bx = ProgressiveTextState::End;
+				textStatus = ProgressiveTextState::End;
 			} else {
 				if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
 					_engine->_text->initInventoryDialogueBox();
-					_engine->_text->initText(inventorySelectedItem + 100);
+					_engine->_text->initInventoryText(inventorySelectedItem);
 				}
 			}
 		}

@@ -56,7 +56,7 @@ Text::~Text() {
 }
 
 void Text::initVoxBank(int32 bankIdx) {
-	static const char *LanguageSufixTypes[] = {
+	static const char *LanguageSuffixTypes[] = {
 	    "sys",
 	    "cre",
 	    "gam", // global game voices (e.g. inventory descriptions)
@@ -73,11 +73,11 @@ void Text::initVoxBank(int32 bankIdx) {
 	    "010", // Polar Island voices
 	    "011"  //
 	};
-	if (bankIdx < 0 || bankIdx >= ARRAYSIZE(LanguageSufixTypes)) {
+	if (bankIdx < 0 || bankIdx >= ARRAYSIZE(LanguageSuffixTypes)) {
 		error("bankIdx is out of bounds: %i", bankIdx);
 	}
 	// get the correct vox hqr file
-	currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[_engine->cfgfile.LanguageId].id, LanguageSufixTypes[bankIdx]);
+	currentVoxBankFile = Common::String::format("%s%s" VOX_EXT, LanguageTypes[_engine->cfgfile.LanguageId].id, LanguageSuffixTypes[bankIdx]);
 	// TODO: loop through other languages and take the scummvm settings regarding voices into account...
 
 	// TODO check the rest to reverse
@@ -305,6 +305,16 @@ void Text::initInventoryDialogueBox() { // SecondInitDialWindow
 	_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _engine->frontVideoBuffer);
 	_engine->copyBlockPhys(_dialTextBox);
 	_fadeInCharactersPos = 0;
+}
+
+void Text::initInventoryText(int index) {
+	// 100 if the offset for the inventory item descriptions
+	//
+	initText(100 + index);
+}
+
+void Text::initItemFoundText(int index) {
+	initText(100 + index);
 }
 
 // TODO: refactor this code
@@ -687,11 +697,12 @@ bool Text::getText(int32 index) {
 	int32 currIdx = 0;
 	// choose right text from order index
 	do {
-		const int32 orderIdx = *(localOrderBuf++);
+		const int16 orderIdx = READ_LE_UINT16(localOrderBuf);
 		if (orderIdx == index) {
 			break;
 		}
 		currIdx++;
+		localOrderBuf++;
 	} while (currIdx < numEntries);
 
 	if (currIdx >= numEntries) {
