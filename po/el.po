@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-16 05:05+0000\n"
-"PO-Revision-Date: 2020-11-29 19:29+0000\n"
+"PO-Revision-Date: 2020-12-17 17:00+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.0.4\n"
+"X-Generator: Weblate 4.4\n"
 "X-Language-name: Ελληνικά\n"
 
 #: gui/about.cpp:102
@@ -1344,20 +1344,24 @@ msgstr "Αυτόμ. αποθ.:"
 
 #: gui/options.cpp:2102
 msgid "Always return to the launcher when leaving a game"
-msgstr ""
+msgstr "Επιστροφή πάντα στο launcher κατά την έξοδο από παιχνίδι"
 
 #: gui/options.cpp:2103
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
 msgstr ""
+"Να γίνεται πάντα επιστροφή στο launcher κατά την έξοδο από ένα παιχνίδι, "
+"αντί να κλείνει η εφαρμογή του ScummVM."
 
 #: gui/options.cpp:2110
 msgid "Ask for confirmation on exit"
-msgstr ""
+msgstr "Να ζητείται επιβεβαίωση κατά την έξοδο"
 
 #: gui/options.cpp:2111
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr ""
+"Να ζητείται επιβεβαίωση από τον χρήστη κατά το κλείσιμο του ScummVM ή την "
+"έξοδο από ένα παιχνίδι."
 
 #: gui/options.cpp:2117
 msgid "Keys"
@@ -2607,26 +2611,20 @@ msgid "Download failed."
 msgstr "Η μεταφόρτωση απέτυχε."
 
 #: backends/events/default/default-events.cpp:185
-#, fuzzy
-#| msgid ""
-#| "Are you sure you want to start a new game? All unsaved progress will be "
-#| "lost."
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Είστε σίγουροι ότι θέλετε να ξεκινήσετε ένα νέο παιχνίδι; Όλη η μη "
-"αποθηκευμένη πρόοδός σας θα χαθεί."
+"Θέλετε σίγουρα να επιστρέψετε στο Launcher;\n"
+"Όλη η μη αποθηκευμένη πρόοδός σας θα χαθεί."
 
 #: backends/events/default/default-events.cpp:209
-#, fuzzy
-#| msgid "Are you sure you want to quit? All unsaved progress will be lost."
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Είστε σίγουροι ότι θέλετε να βγείτε από το παιχνίδι; Όλη η μη αποθηκευμένη "
-"πρόοδός σας θα χαθεί."
+"Επιθυμείτε σίγουρα έξοδο από το παιχνίδι;\n"
+"Όλη η μη αποθηκευμένη πρόοδός σας θα χαθεί."
 
 #: backends/events/default/default-events.cpp:209
 #: backends/events/default/default-events.cpp:326
@@ -3320,9 +3318,8 @@ msgid ""
 "Magnify Mode Off. Reactivating Drag Mode.\n"
 "Returning to Launcher..."
 msgstr ""
-"Η Λειτουργία Μεγέθυνσης Απενεργοποιήθηκε. Επανενεργοποίηση Λειτουργίας "
-"Drag.\n"
-"Επιστροφή στο Launcher..."
+"Η Λειτουργία Μεγέθυνσης Απενεργοποιήθηκε. Επανενεργοποίηση\n"
+"Λειτουργίας Drag. Επιστροφή στο Launcher..."
 
 #: backends/platform/3ds/osystem-events.cpp:362
 msgid "Magnify Mode Off. Returning to Launcher..."
@@ -4114,10 +4111,8 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Δεν βρέθηκε το αρχείο ενδιάμεσης σκηνής (cutscene) '%s' !"
 
 #: engines/agos/metaengine.cpp:104
-#, fuzzy
-#| msgid "SAGA2 support not compiled in"
 msgid "AGOS 2 support is not compiled in"
-msgstr "Η υποστήριξη για το SAGA2 δεν έχει ενσωματωθεί στο εκτελέσιμο"
+msgstr "Η υποστήριξη για το AGOS 2 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
 #: engines/agos/midi.cpp:144 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -4290,10 +4285,8 @@ msgid "Load anyway"
 msgstr "Φόρτωση όπως και να 'χει"
 
 #: engines/cryomni3d/metaengine.cpp:142
-#, fuzzy
-#| msgid "FoxTail support is not compiled in"
 msgid "Versailles 1685 support is not compiled in"
-msgstr "Η υποστήριξη για το FoxTail δεν έχει ενσωματωθεί στο εκτελέσιμο"
+msgstr "Η υποστήριξη για το Versailles 1685 δεν έχει ενσωματωθεί στο εκτελέσιμο"
 
 #: engines/dragons/dragons.cpp:1803
 #, c-format
@@ -4849,10 +4842,10 @@ msgstr ""
 "Στις επόμενες εκτελέσεις δεν θα επαναληφθεί αυτός ο έλεγχος."
 
 #: engines/grim/metaengine.cpp:63
-#, fuzzy
-#| msgid "Eye of Beholder support is not compiled in"
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr "Η υποστήριξη του Eye of Beholder δεν έχει ενσωματωθεί στο εκτελέσιμο"
+msgstr ""
+"Η υποστήριξη του Escape from Monkey Island δεν έχει ενσωματωθεί στο "
+"εκτελέσιμο"
 
 #: engines/grim/resource.cpp:100
 msgid ""
