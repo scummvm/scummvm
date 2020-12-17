@@ -549,8 +549,11 @@ void OptionsDialog::apply() {
 					gm++;
 				}
 			}
-			if (!isSet)
+			if (!isSet) {
 				ConfMan.removeKey("gfx_mode", _domain);
+				if (g_system->getGraphicsMode() != g_system->getDefaultGraphicsMode())
+					graphicsModeChanged = true;
+			}
 
 			if ((int32)_renderModePopUp->getSelectedTag() >= 0)
 				ConfMan.set("render_mode", Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()), _domain);
@@ -569,8 +572,11 @@ void OptionsDialog::apply() {
 					sm++;
 				}
 			}
-			if (!isSet)
+			if (!isSet) {
 				ConfMan.removeKey("stretch_mode", _domain);
+				if (g_system->getStretchMode() != g_system->getDefaultStretchMode())
+					graphicsModeChanged = true;
+			}				
 
 			if (_rendererTypePopUp->getSelectedTag() > 0) {
 				Graphics::RendererType selected = (Graphics::RendererType) _rendererTypePopUp->getSelectedTag();
@@ -628,9 +634,8 @@ void OptionsDialog::apply() {
 	if (_domain == Common::ConfigManager::kApplicationDomain && graphicsModeChanged) {
 		g_system->beginGFXTransaction();
 		g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
-
-		if (ConfMan.hasKey("stretch_mode"))
-			g_system->setStretchMode(ConfMan.get("stretch_mode", _domain).c_str());
+		g_system->setStretchMode(ConfMan.get("stretch_mode", _domain).c_str());
+		
 		if (ConfMan.hasKey("aspect_ratio"))
 			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
 		if (ConfMan.hasKey("fullscreen"))
