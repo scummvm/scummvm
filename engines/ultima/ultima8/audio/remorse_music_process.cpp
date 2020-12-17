@@ -108,7 +108,7 @@ void RemorseMusicProcess::playMusic(int track) {
 }
 
 void RemorseMusicProcess::playCombatMusic(int track) {
-	playMusic_internal(track);
+	// Only U8 has combat music.. ignore it.
 }
 
 void RemorseMusicProcess::queueMusic(int track) {
@@ -149,7 +149,7 @@ void RemorseMusicProcess::playMusic_internal(int track) {
 	Audio::Mixer *mixer = Ultima8Engine::get_instance()->_mixer;
 	assert(mixer);
 
-	if (track == _currentTrack && mixer->isSoundHandleActive(_soundHandle))
+	if (track == _currentTrack && (track == 0 || mixer->isSoundHandleActive(_soundHandle)))
 		// Already playing what we want.
 		return;
 
