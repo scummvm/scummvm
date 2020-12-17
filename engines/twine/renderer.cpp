@@ -1011,8 +1011,9 @@ uint8 *Renderer::prepareSpheres(Common::MemoryReadStream &stream, int32 &numOfPr
 	numOfPrimitives += numSpheres;
 	do {
 		CmdRenderSphere *sphere = (CmdRenderSphere *)renderBufferPtr;
+		stream.skip(1);
+		sphere->colorIndex = stream.readByte();
 		stream.skip(2);
-		sphere->colorIndex = stream.readUint16LE();
 		sphere->radius = stream.readUint16LE();
 		const int16 centerOffset = stream.readUint16LE();
 		const int16 centerIndex = centerOffset / 6;
