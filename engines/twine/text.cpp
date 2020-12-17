@@ -446,7 +446,6 @@ void Text::processTextLine() {
 		}
 		// split the remaining space between the words
 		_dialCharSpace += (_dialTextBoxMaxX - lineBreakX) / spaceCharCount;
-		printText10Var1 = -2 * lineBreakX;
 	}
 
 	_progressiveTextNextWord = buffer;
@@ -550,14 +549,10 @@ ProgressiveTextState Text::updateProgressiveText() {
 	fadeInCharacters(_fadeInCharactersPos, _dialTextStartColor);
 	int8 charWidth = getCharWidth(currentChar);
 
-	if (currentChar != ' ') {
-		_dialTextXPos += charWidth + 2;
+	if (currentChar == ' ') {
+		_dialTextXPos += _dialCharSpace + 1;
 	} else {
-		if (printText10Var1 != 0) {
-			_dialTextXPos++;
-			printText10Var1--;
-		}
-		_dialTextXPos += _dialCharSpace;
+		_dialTextXPos += charWidth + 2;
 	}
 
 	// next character
