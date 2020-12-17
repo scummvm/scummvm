@@ -483,7 +483,6 @@ void Text::renderContinueReadingTriangle() {
 }
 
 void Text::fadeInCharacters(int32 counter, int32 fontColor) {
-	_engine->_system->delayMillis(15);
 	while (--counter >= 0) {
 		const BlendInCharacter *ptr = &_fadeInCharacters[counter];
 		setFontColor(fontColor);
