@@ -1011,9 +1011,8 @@ uint8 *Renderer::prepareSpheres(Common::MemoryReadStream &stream, int32 &numOfPr
 	numOfPrimitives += numSpheres;
 	do {
 		CmdRenderSphere *sphere = (CmdRenderSphere *)renderBufferPtr;
-		stream.skip(1);
-		sphere->colorIndex = stream.readByte();
 		stream.skip(2);
+		sphere->colorIndex = stream.readUint16LE();
 		sphere->radius = stream.readUint16LE();
 		const int16 centerOffset = stream.readUint16LE();
 		const int16 centerIndex = centerOffset / 6;
@@ -1216,10 +1215,10 @@ int32 Renderer::renderModelElements(int32 numOfPrimitives, uint8 *ptr, RenderCom
 			CmdRenderSphere *sphere = (CmdRenderSphere *)pointer;
 			int32 radius = sphere->radius;
 
-			if (!isUsingOrhoProjection) {
-				radius = (radius * cameraPosY) / (cameraPosX + *(const int16 *)pointer); // TODO: this does not make sense.
-			} else {
+			if (isUsingOrhoProjection) {
 				radius = (radius * 34) >> 9;
+			} else {
+				radius = (radius * cameraPosY) / (cameraPosX + *(const int16 *)pointer); // TODO: this does not make sense.
 			}
 
 			radius += 3;
