@@ -283,19 +283,19 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 }
 
 Common::String StarTrekEngine::getSpeechSampleForNumber(int number) {
-	Common::String speechTemplate = ",BRID\\B_%03d";
+	const char *speechTemplate = ",BRID\\B_%03d";
 	Common::String result;
 
 	if (number <= 19) {
 		// Speech samples 228 ("zero") - 247 ("nineteen")
-		result = Common::String::format(speechTemplate.c_str(), number + 228);
+		result = Common::String::format(speechTemplate, number + 228);
 	} else if (number >= 20 && number <= 99) {
 		// Speech samples 248 ("twenty") - 255 ("ninety")
-		result = Common::String::format(speechTemplate.c_str(), number / 10 - 2 + 248);
+		result = Common::String::format(speechTemplate, number / 10 - 2 + 248);
 		if (number % 10 > 0)
-			result += Common::String::format(speechTemplate.c_str(), number % 10 + 228);
+			result += Common::String::format(speechTemplate, number % 10 + 228);
 	} else if (number == 100) {
-		result = Common::String::format(speechTemplate.c_str(), 256);
+		result = Common::String::format(speechTemplate, 256);
 	}
 
 	return result;
@@ -329,7 +329,8 @@ void StarTrekEngine::showMissionPerformance(int score, int missionScoreTextId) {
 	Common::String speechIdPerformance = getSpeechSampleForNumber(score);
 	Common::String speechIdCommendationPoints = getSpeechSampleForNumber(commendationPoints);
 
-	Common::String missionPerformanceText = Common::String::format(_resource->getLoadedText(missionScoreTextId).c_str(),
+	Common::String missionPerformanceText = Common::String::format(
+		_resource->getLoadedText(missionScoreTextId).c_str(),
 		speechIdPerformance.c_str(),
 		speechIdCommendationPoints.c_str(),
 		score,
