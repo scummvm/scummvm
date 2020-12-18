@@ -222,9 +222,9 @@ private:
 	int update_setupRhythmSection(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_playRhythmSection(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_removeRhythmSection(const uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback51(const uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback52(const uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback53(const uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_setRhythmLevel2(const uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_changeRhythmLevel1(const uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_setRhythmLevel1(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setSoundTrigger(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setTempoReset(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback56(const uint8 *&dataptr, Channel &channel, uint8 value);
@@ -232,22 +232,6 @@ private:
 	// These variables have not yet been named, but some of them are partly
 	// known nevertheless:
 	//
-	// _unkValue6      - Unknown. Rhythm section volume?
-	// _unkValue7      - Unknown. Rhythm section volume?
-	// _unkValue8      - Unknown. Rhythm section volume?
-	// _unkValue9      - Unknown. Rhythm section volume?
-	// _unkValue10     - Unknown. Rhythm section volume?
-	// _unkValue11     - Unknown. Rhythm section volume?
-	// _unkValue12     - Unknown. Rhythm section volume?
-	// _unkValue13     - Unknown. Rhythm section volume?
-	// _unkValue14     - Unknown. Rhythm section volume?
-	// _unkValue15     - Unknown. Rhythm section volume?
-	// _unkValue16     - Unknown. Rhythm section volume?
-	// _unkValue17     - Unknown. Rhythm section volume?
-	// _unkValue18     - Unknown. Rhythm section volume?
-	// _unkValue19     - Unknown. Rhythm section volume?
-	// _unkValue20     - Unknown. Rhythm section volume?
-	// _freqTable[]     - Probably frequences for the 12-tone scale.
 	// _unkTable2[]    - Unknown. Currently only used by updateCallback46()
 	// _unkTable2_1[]  - One of the tables in _unkTable2[]
 	// _unkTable2_2[]  - One of the tables in _unkTable2[]
@@ -263,21 +247,21 @@ private:
 	uint8 _callbackTimer;
 	uint8 _beatCounter;
 	uint8 _beatWaiting;
-	uint8 _unkValue6;
-	uint8 _unkValue7;
-	uint8 _unkValue8;
-	uint8 _unkValue9;
-	uint8 _unkValue10;
-	uint8 _unkValue11;
-	uint8 _unkValue12;
-	uint8 _unkValue13;
-	uint8 _unkValue14;
-	uint8 _unkValue15;
-	uint8 _unkValue16;
-	uint8 _unkValue17;
-	uint8 _unkValue18;
-	uint8 _unkValue19;
-	uint8 _unkValue20;
+	uint8 _opLevelBD;
+	uint8 _opLevelHH;
+	uint8 _opLevelSD;
+	uint8 _opLevelTT;
+	uint8 _opLevelCY;
+	uint8 _opExtraLevel1HH;
+	uint8 _opExtraLevel2HH;
+	uint8 _opExtraLevel1CY;
+	uint8 _opExtraLevel2CY;
+	uint8 _opExtraLevel2TT;
+	uint8 _opExtraLevel1TT;
+	uint8 _opExtraLevel1SD;
+	uint8 _opExtraLevel2SD;
+	uint8 _opExtraLevel1BD;
+	uint8 _opExtraLevel2BD;
 
 	OPL::OPL *_adlib;
 
@@ -353,9 +337,12 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) : PCSoundDriver() {
 
 	_callbackTimer = 0xFF;
 	_beatDivider = _beatDivCnt = _beatCounter = _beatWaiting = 0;
-	_unkValue6 = _unkValue7 = _unkValue8 = _unkValue9 = _unkValue10 = 0;
-	_unkValue11 = _unkValue12 = _unkValue13 = _unkValue14 = _unkValue15 =
-	_unkValue16 = _unkValue17 = _unkValue18 = _unkValue19 = _unkValue20 = 0;
+	_opLevelBD = _opLevelHH = _opLevelSD = _opLevelTT = _opLevelCY = 0;
+	_opExtraLevel1HH = _opExtraLevel2HH =
+	_opExtraLevel1CY = _opExtraLevel2CY =
+	_opExtraLevel2TT = _opExtraLevel1TT =
+	_opExtraLevel1SD = _opExtraLevel2SD =
+	_opExtraLevel1BD = _opExtraLevel2BD = 0;
 
 	_tablePtr1 = _tablePtr2 = nullptr;
 
@@ -1878,7 +1865,7 @@ int AdLibDriver::update_setupRhythmSection(const uint8 *&dataptr, Channel &chann
 	} else {
 		debugC(3, kDebugLevelSound, "AdLibDriver::update_setupRhythmSection: Invalid instrument %d for channel 6 specified", value);
 	}
-	_unkValue6 = channel.opLevel2;
+	_opLevelBD = channel.opLevel2;
 
 	_curChannel = 7;
 	_curRegOffset = _regOffset[7];
@@ -1889,8 +1876,8 @@ int AdLibDriver::update_setupRhythmSection(const uint8 *&dataptr, Channel &chann
 	} else {
 		debugC(3, kDebugLevelSound, "AdLibDriver::update_setupRhythmSection: Invalid instrument %d for channel 7 specified", value);
 	}
-	_unkValue7 = channel.opLevel1;
-	_unkValue8 = channel.opLevel2;
+	_opLevelHH = channel.opLevel1;
+	_opLevelSD = channel.opLevel2;
 
 	_curChannel = 8;
 	_curRegOffset = _regOffset[8];
@@ -1901,8 +1888,8 @@ int AdLibDriver::update_setupRhythmSection(const uint8 *&dataptr, Channel &chann
 	} else {
 		debugC(3, kDebugLevelSound, "AdLibDriver::update_setupRhythmSection: Invalid instrument %d for channel 8 specified", value);
 	}
-	_unkValue9 = channel.opLevel1;
-	_unkValue10 = channel.opLevel2;
+	_opLevelTT = channel.opLevel1;
+	_opLevelCY = channel.opLevel2;
 
 	// Octave / F-Number / Key-On for channels 6, 7 and 8
 
@@ -1956,124 +1943,124 @@ int AdLibDriver::update_removeRhythmSection(const uint8 *&dataptr, Channel &chan
 	return 0;
 }
 
-int AdLibDriver::updateCallback51(const uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdLibDriver::update_setRhythmLevel2(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	uint8 value2 = *dataptr++;
 
 	if (value & 1) {
-		_unkValue12 = value2;
+		_opExtraLevel2HH = value2;
 
 		// Channel 7, op1: Level Key Scaling / Total Level
-		writeOPL(0x51, checkValue(value2 + _unkValue7 + _unkValue11 + _unkValue12));
+		writeOPL(0x51, checkValue(value2 + _opLevelHH + _opExtraLevel1HH + _opExtraLevel2HH));
 	}
 
 	if (value & 2) {
-		_unkValue14 = value2;
+		_opExtraLevel2CY = value2;
 
 		// Channel 8, op2: Level Key Scaling / Total Level
-		writeOPL(0x55, checkValue(value2 + _unkValue10 + _unkValue13 + _unkValue14));
+		writeOPL(0x55, checkValue(value2 + _opLevelCY + _opExtraLevel1CY + _opExtraLevel2CY));
 	}
 
 	if (value & 4) {
-		_unkValue15 = value2;
+		_opExtraLevel2TT = value2;
 
 		// Channel 8, op1: Level Key Scaling / Total Level
-		writeOPL(0x52, checkValue(value2 + _unkValue9 + _unkValue16 + _unkValue15));
+		writeOPL(0x52, checkValue(value2 + _opLevelTT + _opExtraLevel1TT + _opExtraLevel2TT));
 	}
 
 	if (value & 8) {
-		_unkValue18 = value2;
+		_opExtraLevel2SD = value2;
 
 		// Channel 7, op2: Level Key Scaling / Total Level
-		writeOPL(0x54, checkValue(value2 + _unkValue8 + _unkValue17 + _unkValue18));
+		writeOPL(0x54, checkValue(value2 + _opLevelSD + _opExtraLevel1SD + _opExtraLevel2SD));
 	}
 
 	if (value & 16) {
-		_unkValue20 = value2;
+		_opExtraLevel2BD = value2;
 
 		// Channel 6, op2: Level Key Scaling / Total Level
-		writeOPL(0x53, checkValue(value2 + _unkValue6 + _unkValue19 + _unkValue20));
+		writeOPL(0x53, checkValue(value2 + _opLevelBD + _opExtraLevel1BD + _opExtraLevel2BD));
 	}
 
 	return 0;
 }
 
-int AdLibDriver::updateCallback52(const uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdLibDriver::update_changeRhythmLevel1(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	uint8 value2 = *dataptr++;
 
 	if (value & 1) {
-		_unkValue11 = checkValue(value2 + _unkValue7 + _unkValue11 + _unkValue12);
+		_opExtraLevel1HH = checkValue(value2 + _opLevelHH + _opExtraLevel1HH + _opExtraLevel2HH);
 
 		// Channel 7, op1: Level Key Scaling / Total Level
-		writeOPL(0x51, _unkValue11);
+		writeOPL(0x51, _opExtraLevel1HH);
 	}
 
 	if (value & 2) {
-		_unkValue13 = checkValue(value2 + _unkValue10 + _unkValue13 + _unkValue14);
+		_opExtraLevel1CY = checkValue(value2 + _opLevelCY + _opExtraLevel1CY + _opExtraLevel2CY);
 
 		// Channel 8, op2: Level Key Scaling / Total Level
-		writeOPL(0x55, _unkValue13);
+		writeOPL(0x55, _opExtraLevel1CY);
 	}
 
 	if (value & 4) {
-		_unkValue16 = checkValue(value2 + _unkValue9 + _unkValue16 + _unkValue15);
+		_opExtraLevel1TT = checkValue(value2 + _opLevelTT + _opExtraLevel1TT + _opExtraLevel2TT);
 
 		// Channel 8, op1: Level Key Scaling / Total Level
-		writeOPL(0x52, _unkValue16);
+		writeOPL(0x52, _opExtraLevel1TT);
 	}
 
 	if (value & 8) {
-		_unkValue17 = checkValue(value2 + _unkValue8 + _unkValue17 + _unkValue18);
+		_opExtraLevel1SD = checkValue(value2 + _opLevelSD + _opExtraLevel1SD + _opExtraLevel2SD);
 
 		// Channel 7, op2: Level Key Scaling / Total Level
-		writeOPL(0x54, _unkValue17);
+		writeOPL(0x54, _opExtraLevel1SD);
 	}
 
 	if (value & 16) {
-		_unkValue19 = checkValue(value2 + _unkValue6 + _unkValue19 + _unkValue20);
+		_opExtraLevel1BD = checkValue(value2 + _opLevelBD + _opExtraLevel1BD + _opExtraLevel2BD);
 
 		// Channel 6, op2: Level Key Scaling / Total Level
-		writeOPL(0x53, _unkValue19);
+		writeOPL(0x53, _opExtraLevel1BD);
 	}
 
 	return 0;
 }
 
-int AdLibDriver::updateCallback53(const uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdLibDriver::update_setRhythmLevel1(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	uint8 value2 = *dataptr++;
 
 	if (value & 1) {
-		_unkValue11 = value2;
+		_opExtraLevel1HH = value2;
 
 		// Channel 7, op1: Level Key Scaling / Total Level
-		writeOPL(0x51, checkValue(value2 + _unkValue7 + _unkValue12));
+		writeOPL(0x51, checkValue(value2 + _opLevelHH + _opExtraLevel2HH));
 	}
 
 	if (value & 2) {
-		_unkValue13 = value2;
+		_opExtraLevel1CY = value2;
 
 		// Channel 8, op2: Level Key Scaling / Total Level
-		writeOPL(0x55, checkValue(value2 + _unkValue10 + _unkValue14));
+		writeOPL(0x55, checkValue(value2 + _opLevelCY + _opExtraLevel2CY));
 	}
 
 	if (value & 4) {
-		_unkValue16 = value2;
+		_opExtraLevel1TT = value2;
 
 		// Channel 8, op1: Level Key Scaling / Total Level
-		writeOPL(0x52, checkValue(value2 + _unkValue9 + _unkValue15));
+		writeOPL(0x52, checkValue(value2 + _opLevelTT + _opExtraLevel2TT));
 	}
 
 	if (value & 8) {
-		_unkValue17 = value2;
+		_opExtraLevel1SD = value2;
 
 		// Channel 7, op2: Level Key Scaling / Total Level
-		writeOPL(0x54, checkValue(value2 + _unkValue8 + _unkValue18));
+		writeOPL(0x54, checkValue(value2 + _opLevelSD + _opExtraLevel2SD));
 	}
 
 	if (value & 16) {
-		_unkValue19 = value2;
+		_opExtraLevel1BD = value2;
 
 		// Channel 6, op2: Level Key Scaling / Total Level
-		writeOPL(0x53, checkValue(value2 + _unkValue6 + _unkValue20));
+		writeOPL(0x53, checkValue(value2 + _opLevelBD + _opExtraLevel2BD));
 	}
 
 	return 0;
@@ -2203,9 +2190,9 @@ const AdLibDriver::ParserOpcode AdLibDriver::_parserOpcodeTable[] = {
 	COMMAND(update_removeRhythmSection, 0),
 
 	// 68
-	COMMAND(updateCallback51, 2),
-	COMMAND(updateCallback52, 2),
-	COMMAND(updateCallback53, 2),
+	COMMAND(update_setRhythmLevel2, 2),
+	COMMAND(update_changeRhythmLevel1, 2),
+	COMMAND(update_setRhythmLevel1, 2),
 	COMMAND(update_setSoundTrigger, 1),
 
 	// 72
