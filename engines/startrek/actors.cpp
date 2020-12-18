@@ -182,6 +182,8 @@ void StarTrekEngine::updateActorAnimations() {
 					actor->animFile->read(animFrameFilename, 16);
 					actor->bitmapFilename = animFrameFilename;
 					actor->bitmapFilename.trim();
+					if (actor->bitmapFilename.contains(' '))
+						actor->bitmapFilename = actor->bitmapFilename.substr(0, actor->bitmapFilename.find(' '));
 
 					sprite->setBitmap(loadAnimationFrame(actor->bitmapFilename, actor->scale));
 
