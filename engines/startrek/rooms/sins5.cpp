@@ -127,10 +127,8 @@ extern const RoomAction sins5ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK,    0}, &Room::sins5UseMTricorderOnCrewman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY,    0}, &Room::sins5UseMTricorderOnCrewman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::sins5UseMTricorderOnCrewman },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int sins5NumActions = ARRAYSIZE(sins5ActionList);
-
 
 void Room::sins5Tick1() {
 	playVoc("SIN5LOOP");

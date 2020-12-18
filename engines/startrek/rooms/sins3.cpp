@@ -120,10 +120,8 @@ extern const RoomAction sins3ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK,    0}, &Room::sins3UseMTricorderOnCrewman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY,    0}, &Room::sins3UseMTricorderOnCrewman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::sins3UseMTricorderOnCrewman },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int sins3NumActions = ARRAYSIZE(sins3ActionList);
-
 
 void Room::sins3Tick1() {
 	playVoc("SIN3LOOP");

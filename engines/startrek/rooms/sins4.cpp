@@ -90,10 +90,8 @@ extern const RoomAction sins4ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_SPOCK,    0}, &Room::sins4UseMTricorderOnCrewman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_MCCOY,    0}, &Room::sins4UseMTricorderOnCrewman },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_REDSHIRT, 0}, &Room::sins4UseMTricorderOnCrewman },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int sins4NumActions = ARRAYSIZE(sins4ActionList);
-
 
 void Room::sins4Tick1() {
 	playVoc("SIN4LOOP");

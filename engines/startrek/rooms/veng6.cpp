@@ -129,10 +129,8 @@ extern const RoomAction veng6ActionList[] = {
 
 	// ENHANCEMENT
 	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_IMPULSE_ENGINES, 0}, &Room::veng6UseSTricorderOnImpulseEngines },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int veng6NumActions = ARRAYSIZE(veng6ActionList);
-
 
 #define DOOR_X 0x13e
 #define DOOR_Y 0xa8

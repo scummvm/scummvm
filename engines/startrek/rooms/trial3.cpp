@@ -89,10 +89,8 @@ extern const RoomAction trial3ActionList[] = {
 	{ {ACTION_USE, OBJECT_REDSHIRT, HOTSPOT_WALL, 0},     &Room::trial3UseRedshirtOnWall },
 	{ {ACTION_WALK, HOTSPOT_EXIT, 0, 0},                  &Room::trial3WalkToExit },
 	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0},              &Room::trial3UseMedkitAnywhere },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int trial3NumActions = ARRAYSIZE(trial3ActionList);
-
 
 void Room::trial3Tick1() {
 	playVoc("TRI3LOOP");

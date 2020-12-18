@@ -96,10 +96,8 @@ extern const RoomAction veng4ActionList[] = {
 
 	// ENHANCEMENT (let object count for the "look" action, not just the hotspot)
 	{ {ACTION_LOOK, OBJECT_LEFT_READINGS, 0, 0}, &Room::veng4LookAtLeftBedReadings },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int veng4NumActions = ARRAYSIZE(veng4ActionList);
-
 
 #define DOOR_X 0x13f
 #define DOOR_Y 0xab

@@ -104,10 +104,8 @@ extern const RoomAction veng0ActionList[] = {
 	{ {ACTION_USE, OBJECT_IPHASERK, 0xff,     0}, &Room::vengaUsePhaserAnywhere },
 	{ {ACTION_LOOK, OBJECT_IHYPO,          0, 0}, &Room::vengaLookAtHypo },
 	{ {ACTION_USE, OBJECT_ICOMM, OBJECT_KIRK, 0}, &Room::vengaUseCommunicator },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int veng0NumActions = ARRAYSIZE(veng0ActionList);
-
 
 void Room::veng0Tick1() {
 	playVoc("VEN0LOOP");

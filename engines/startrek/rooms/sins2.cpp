@@ -82,10 +82,8 @@ extern const RoomAction sins2ActionList[] = {
 
 	{ {ACTION_WALK, HOTSPOT_DOOR, 0, 0}, &Room::sins2WalkToDoor },
 	{ {ACTION_WALK, OBJECT_DOOR,  0, 0}, &Room::sins2WalkToDoor },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int sins2NumActions = ARRAYSIZE(sins2ActionList);
-
 
 void Room::sins2Tick1() {
 	playVoc("SIN2LOOP");
