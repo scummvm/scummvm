@@ -535,7 +535,7 @@ void StarTrekEngine::addAction(const Action &action) {
 	_actionQueue.push(action);
 }
 
-void StarTrekEngine::addAction(byte type, byte b1, byte b2, byte b3) {
+void StarTrekEngine::addAction(char type, byte b1, byte b2, byte b3) {
 	const Action a = {type, b1, b2, b3};
 	addAction(a);
 }
