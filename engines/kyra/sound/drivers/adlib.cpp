@@ -210,7 +210,7 @@ private:
 	int update_setAMDepth(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setVibratoDepth(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_changeExtraLevel1(const uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback38(const uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_clearChannel(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int updateCallback39(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_removePrimaryEffectVibrato(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_pitchBend(const uint8 *&dataptr, Channel &channel, uint8 value);
@@ -1758,32 +1758,34 @@ int AdLibDriver::update_changeExtraLevel1(const uint8 *&dataptr, Channel &channe
 	return 0;
 }
 
-int AdLibDriver::updateCallback38(const uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdLibDriver::update_clearChannel(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	// Safety check
 	if (value > 9) {
-		warning("AdLibDriver::updateCallback38: Ignore invalid channel %d", value);
+		warning("AdLibDriver::update_clearChannel: Ignore invalid channel %d", value);
 		return 0;
 	}
 
 	int channelBackUp = _curChannel;
-
 	_curChannel = value;
+
+	// Stop channel
 	Channel &channel2 = _channels[value];
 	channel2.duration = channel2.priority = 0;
 	channel2.dataptr = 0;
 	channel2.opExtraLevel2 = 0;
 
 	if (value != 9) {
-		uint8 outValue = _regOffset[value];
+		// Silence channel
+		uint8 regOff = _regOffset[value];
 
 		// Feedback strength / Connection type
 		writeOPL(0xC0 + _curChannel, 0x00);
 
 		// Key scaling level / Operator output level
-		writeOPL(0x43 + outValue, 0x3F);
+		writeOPL(0x43 + regOff, 0x3F);
 
 		// Sustain Level / Release Rate
-		writeOPL(0x83 + outValue, 0xFF);
+		writeOPL(0x83 + regOff, 0xFF);
 
 		// Key On / Octave / Frequency
 		writeOPL(0xB0 + _curChannel, 0x00);
@@ -2175,7 +2177,7 @@ const AdLibDriver::ParserOpcode AdLibDriver::_parserOpcodeTable[] = {
 	COMMAND(update_changeExtraLevel1, 1),
 	COMMAND(update_stopChannel, 0),
 	COMMAND(update_stopChannel, 0),
-	COMMAND(updateCallback38, 1),
+	COMMAND(update_clearChannel, 1),
 
 	// 52
 	COMMAND(update_stopChannel, 0),
