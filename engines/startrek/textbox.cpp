@@ -227,7 +227,7 @@ String StarTrekEngine::skipTextAudioPrompt(const String &str) {
 
 String StarTrekEngine::playTextAudio(const String &str) {
 	const char *text = str.c_str();
-	char soundFile[0x100];
+	Common::String soundFile;
 
 	if (*text != '#')
 		return str;
@@ -237,10 +237,9 @@ String StarTrekEngine::playTextAudio(const String &str) {
 	while (*text != '#') {
 		if (*text == '\0' || len > 0xfa)
 			return str;
-		soundFile[len++] = *text++;
+		soundFile += *text++;
 	}
 
-	soundFile[len] = '\0';
 	_sound->playSpeech(soundFile);
 
 	return String(text + 1);
