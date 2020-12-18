@@ -121,6 +121,7 @@ static const char *const selectorNameTable[] = {
 	"startText",    // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"startAudio",   // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
 	"modNum",       // King's Quest 6 CD / Laura Bow 2 CD for audio+text support
+	"handle",       // King's Quest 6 / Laura Bow 2 / RAMA
 	"add",          // King's Quest 6
 	"givePoints",   // King's Quest 6
 	"has",          // King's Quest 6, GK1
@@ -177,7 +178,6 @@ static const char *const selectorNameTable[] = {
 	"points",       // PQ4
 	"select",       // PQ4
 	"addObstacle",  // QFG4
-	"handle",       // RAMA
 	"saveFilePtr",  // RAMA
 	"priority",     // RAMA
 	"plane",        // RAMA
@@ -244,6 +244,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_startText,
 	SELECTOR_startAudio,
 	SELECTOR_modNum,
+	SELECTOR_handle,
 	SELECTOR_add,
 	SELECTOR_givePoints,
 	SELECTOR_has,
@@ -301,7 +302,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_points,
 	SELECTOR_select,
 	SELECTOR_addObstacle,
-	SELECTOR_handle,
 	SELECTOR_saveFilePtr,
 	SELECTOR_priority,
 	SELECTOR_plane,
@@ -5998,9 +5998,47 @@ static const uint16 kq6CDPatchAudioTextMenuSupport[] = {
 	PATCH_END
 };
 
+// When caught by guard dogs in the castle, sometimes their music doesn't stop.
+//  Sound 710 continues playing in the dungeon and afterwards, drowning out the
+//  real room music. This script bug also occurs in the original. It's a
+//  regression in the CD version and subsequent localized floppy versions.
+//
+// When changing rooms, CastleRoom:newRoom fades out sound 710 if it's already
+//  playing, which it detects by testing if globalSound2:prevSignal != -1.
+//  This worked in the original floppy versions but the CD version introduced a
+//  newer Sound class with different behavior. prevSignal is no longer reset to
+//  0 by every Sound:play. This prevents CastleRoom:newRoom from detecting and
+//  stopping the music when globalSound2:prevSignal is -1 from an earlier sound.
+//
+// We fix this by testing globalSound2:handle instead of prevSignal. handle is
+//  always set while a sound is being played and always cleared afterwards. This
+//  is the same bug as in LB2CD's Act 5 finale music, and the same fix.
+//
+// Applies to: PC CD, Italian PC Floppy, Spanish PC Floppy
+// Responsible method: CastleRoom:newRoom
+// Fixes bug: #11746
+static const uint16 kq6SignatureGuardDogMusic[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x00ac),           // pushi prevSignal [ hard-coded for affected versions ]
+	0x76,                               // push0
+	0x81, 0x67,                         // lag 67  [ globalSound2 ]
+	0x4a, 0x04,                         // send 04 [ globalSound2 prevSignal? ]
+	0x36,                               // push
+	0x35, 0xff,                         // ldi ff
+	SIG_END
+};
+
+static const uint16 kq6PatchGuardDogMusic[] = {
+	0x38, PATCH_SELECTOR16(handle),     // pushi handle
+	PATCH_ADDTOOFFSET(+6),
+	0x35, 0x00,                         // ldi 00
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,    52, "CD: Girl In The Tower playback",                 1, kq6CDSignatureGirlInTheTowerPlayback,     kq6CDPatchGirlInTheTowerPlayback },
+	{  true,    80, "fix guard dog music",                            1, kq6SignatureGuardDogMusic,                kq6PatchGuardDogMusic },
 	{  true,    87, "fix Drink Me bottle",                            1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	{ false,    87, "Mac: Drink Me pic",                              1, kq6SignatureMacDrinkMePic,                kq6PatchMacDrinkMePic },
 	{  true,   281, "fix pawnshop genie eye",                         1, kq6SignaturePawnshopGenieEye,             kq6PatchPawnshopGenieEye },
@@ -8818,7 +8856,7 @@ static const uint16 laurabow2CDSignatureFixAct5FinaleMusic[] = {
 };
 
 static const uint16 laurabow2CDPatchFixAct5FinaleMusic[] = {
-	0x38, PATCH_UINT16(0x005a),         // pushi 005a [ handle ]
+	0x38, PATCH_SELECTOR16(handle),     // pushi handle
 	PATCH_ADDTOOFFSET(+7),
 	0x35, 0x00,                         // ldi 00
 	PATCH_END
