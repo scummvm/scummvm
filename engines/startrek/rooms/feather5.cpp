@@ -109,10 +109,8 @@ extern const RoomAction feather5ActionList[] = {
 	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_WATER, 0},     &Room::feather5UseSTricorderOnWater },
 	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_FERN, 0},      &Room::feather5UseSTricorderOnFern },
 	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0},               &Room::feather5UseMedkitAnywhere },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int feather5NumActions = ARRAYSIZE(feather5ActionList);
-
 
 void Room::feather5Tick1() {
 	playVoc("FEA5LOOP");

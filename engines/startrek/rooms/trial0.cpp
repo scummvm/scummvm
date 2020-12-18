@@ -78,10 +78,8 @@ extern const RoomAction trial0ActionList[] = {
 	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_VLICT, 0}, &Room::trial0UseMccoyOnVlict },
 	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_GUARD, 0}, &Room::trial0UseMccoyOnGuard },
 	{ {ACTION_USE, OBJECT_IMEDKIT,  0xff, 0}, &Room::trial0UseMedkitAnywhere },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int trial0NumActions = ARRAYSIZE(trial0ActionList);
-
 
 void Room::trial0Tick1() {
 	playVoc("TRI0LOOP");

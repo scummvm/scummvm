@@ -62,10 +62,8 @@ extern const RoomAction feather4ActionList[] = {
 	{ {ACTION_LOOK, OBJECT_SPOCK, 0, 0},     &Room::feather4LookAtSpock },
 	{ {ACTION_LOOK, OBJECT_MCCOY, 0, 0},     &Room::feather4LookAtMccoy },
 	{ {ACTION_LOOK, OBJECT_REDSHIRT, 0, 0},  &Room::feather4LookAtRedshirt },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int feather4NumActions = ARRAYSIZE(feather4ActionList);
-
 
 void Room::feather4Tick1() {
 	playVoc("FEA4LOOP");

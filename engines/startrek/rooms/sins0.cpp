@@ -72,11 +72,8 @@ extern const RoomAction sins0ActionList[] = {
 	{ {ACTION_USE, OBJECT_ICOMM, 0xff, 0}, &Room::sins0UseCommunicator },
 	{ {ACTION_WALK, HOTSPOT_DOOR,   0, 0}, &Room::sins0WalkToDoor },
 	{ {ACTION_WALK, OBJECT_DOOR,    0, 0}, &Room::sins0WalkToDoor },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-
-extern const int sins0NumActions = ARRAYSIZE(sins0ActionList);
-
 
 void Room::sins0Tick1() {
 	playVoc("SIN0LOOP");

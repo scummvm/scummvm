@@ -125,10 +125,8 @@ extern const RoomAction veng1ActionList[] = {
 	{ {ACTION_USE, OBJECT_IMEDKIT,  OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_IMTRICOR, OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
 	{ {ACTION_USE, OBJECT_MCCOY,    OBJECT_DEAD_GUY, 0}, &Room::vengaUseMccoyOnDeadGuy },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int veng1NumActions = ARRAYSIZE(veng1ActionList);
-
 
 void Room::veng1Tick1() {
 	playVoc("VEN1LOOP");

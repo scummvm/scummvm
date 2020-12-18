@@ -158,10 +158,8 @@ extern const RoomAction trial5ActionList[] = {
 	{ {ACTION_USE, OBJECT_IBLUGEM3, HOTSPOT_HOLE3, 0}, &Room::trial5UseBlueGem3OnHole3 },
 
 	{ {ACTION_USE, OBJECT_IMEDKIT, 0xff, 0}, &Room::trial5UseMedkitAnywhere },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int trial5NumActions = ARRAYSIZE(trial5ActionList);
-
 
 void Room::trial5Tick1() {
 	playVoc("TRI5LOOP");

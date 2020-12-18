@@ -179,10 +179,8 @@ extern const RoomAction veng2ActionList[] = {
 	{ {ACTION_USE, OBJECT_KIRK, HOTSPOT_TORPEDO_CONTROL,     0}, &Room::veng2UseKirkOnTorpedoButton },
 	// TODO: uncomment
 //	{ {ACTION_USE, OBJECT_ISTRICOR, HOTSPOT_DECK_IO_CONSOLE, 0}, &Room::veng2UseSTricorderOnDeckIOConsole },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int veng2NumActions = ARRAYSIZE(veng2ActionList);
-
 
 #define STRICORDER_POS_X 0x45
 #define STRICORDER_POS_Y 0x71

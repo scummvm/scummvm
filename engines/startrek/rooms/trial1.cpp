@@ -164,10 +164,8 @@ extern const RoomAction trial1ActionList[] = {
 	{ {ACTION_USE, OBJECT_IPHASERK, OBJECT_DOOR, 0}, &Room::trial1UsePhaserOnDoor },
 	{ {ACTION_USE, OBJECT_ISTRICOR, OBJECT_DOOR, 0}, &Room::trial1UseSTricorderOnDoor },
 	{ {ACTION_WALK, OBJECT_DOOR, 0, 0},              &Room::trial1WalkToDoor },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int trial1NumActions = ARRAYSIZE(trial1ActionList);
-
 
 void Room::trial1Tick1() {
 	if (!_awayMission->trial.doorOpen) {

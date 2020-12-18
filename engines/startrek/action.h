@@ -50,11 +50,13 @@ enum ActionTypes {
 	ACTION_FINISHED_ANIMATION = 10,
 	ACTION_FINISHED_WALKING = 12,
 
-	ACTION_OPTIONS = 13 // Not really an action, but selectable from action menu
+	ACTION_OPTIONS = 13, // Not really an action, but selectable from action menu
+
+	ACTION_LIST_END = -1
 };
 
 struct Action {
-	byte type;
+	char type;
 	byte b1;
 	byte b2;
 	byte b3;

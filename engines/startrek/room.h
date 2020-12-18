@@ -169,7 +169,6 @@ private:
 	AwayMission *_awayMission;
 
 	const RoomAction *_roomActionList;
-	int _numRoomActions;
 
 	Common::HashMap<int, Common::String> _lookMessages;
 	Common::HashMap<int, Common::String> _lookWithTalkerMessages;

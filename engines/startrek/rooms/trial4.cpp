@@ -31,10 +31,8 @@ namespace StarTrek {
 extern const RoomAction trial4ActionList[] = {
 	{ {ACTION_TICK, 1,  0, 0}, &Room::trial4Tick1 },
 	{ {ACTION_TICK, 60, 0, 0}, &Room::trial4Tick60 },
+	{ {ACTION_LIST_END, 0, 0, 0}, nullptr }
 };
-
-extern const int trial4NumActions = ARRAYSIZE(trial4ActionList);
-
 
 void Room::trial4Tick1() {
 	playVoc("TRI4LOOP");
