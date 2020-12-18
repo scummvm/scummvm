@@ -140,7 +140,7 @@ private:
 	void writeOPL(byte reg, byte val);
 	void initChannel(Channel &channel);
 	void noteOff(Channel &channel);
-	void unkOutput2(uint8 num);
+	void initAdlibChannel(uint8 num);
 
 	uint16 getRandomNr();
 	void setupDuration(uint8 duration, Channel &channel);
@@ -583,7 +583,7 @@ void AdLibDriver::setupPrograms() {
 		else
 			channel.volumeModifier = _sfxVolume;
 
-		unkOutput2(chan);
+		initAdlibChannel(chan);
 
 		// We need to wait two callback calls till we can start another track.
 		// This is (probably) required to assure that the sfx are started with
@@ -852,8 +852,8 @@ void AdLibDriver::noteOff(Channel &channel) {
 	writeOPL(0xB0 + _curChannel, channel.regBx);
 }
 
-void AdLibDriver::unkOutput2(uint8 chan) {
-	debugC(9, kDebugLevelSound, "unkOutput2(%d)", chan);
+void AdLibDriver::initAdlibChannel(uint8 chan) {
+	debugC(9, kDebugLevelSound, "initAdlibChannel(%d)", chan);
 
 	// The control channel has no corresponding AdLib channel
 
@@ -1373,7 +1373,7 @@ int AdLibDriver::update_setupProgram(const uint8 *&dataptr, Channel &channel, ui
 		else
 			channel2.volumeModifier = _sfxVolume;
 
-		unkOutput2(chan);
+		initAdlibChannel(chan);
 	}
 
 	return 0;
