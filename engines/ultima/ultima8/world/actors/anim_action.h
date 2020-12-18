@@ -69,6 +69,28 @@ struct AnimFrame {
 	inline int attack_range() const {
 		return ((_flags >> 2) & 0x07);
 	}
+
+	// Note: The next 3 functions each have a 4-bit
+	// signed value to unpack from the flags.
+	inline int cru_attackx() const {
+		uint32 rawx = (_flags & 0x00000780) << 5;
+		int16  signedx = static_cast<int16>(rawx) >> 12;
+		return signedx * 16;
+	}
+
+	inline int cru_attacky() const {
+		uint32 rawy = (_flags & 0x00F00000) >> 16;
+		return static_cast<int8>(rawy);
+	}
+
+	inline int cru_attackz() const {
+		uint32 rawz = (_flags & 0x0F000000) >> 20;
+		return static_cast<int8>(rawz) / 2;
+	}
+
+	inline bool is_cruattack() const {
+		return (cru_attackx() || cru_attacky() || cru_attackz());
+	}
 };
 
 class AnimAction {

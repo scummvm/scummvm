@@ -267,6 +267,8 @@ void ActorAnimProcess::run() {
 				doSpecial();
 			} else if (curframe->_flags & AnimFrame::AFF_HURTY && GAME_IS_CRUSADER) {
 				a->tookHitCru();
+			} else if (curframe->is_cruattack() && GAME_IS_CRUSADER) {
+				doFireWeaponCru(a, curframe);
 			}
 		}
 
@@ -496,6 +498,30 @@ void ActorAnimProcess::doSpecial() {
 	}
 
 }
+
+void ActorAnimProcess::doFireWeaponCru(Actor *a, const AnimFrame *f) {
+	assert(a);
+	assert(f);
+	if (!f->is_cruattack())
+		return;
+
+	// TODO: there is some special casing in the game for larger weapons here..
+	const Item *wpn = getItem(a->getActiveWeapon());
+	if (!wpn)
+		return;
+	const ShapeInfo *wpninfo = wpn->getShapeInfo();
+	if (!wpninfo || !wpninfo->_weaponInfo)
+		return;
+
+	a->fireWeapon(f->cru_attackx(), f->cru_attacky(), f->cru_attackz(),
+				  dir_current, wpninfo->_weaponInfo->_damageType, 1);
+
+	AudioProcess *audioproc = AudioProcess::get_instance();
+	if (audioproc)
+		audioproc->playSFX(wpninfo->_weaponInfo->_sound, 0x80, a->getObjId(), 0, false);
+
+}
+
 
 
 void ActorAnimProcess::doHitSpecial(Item *hit) {

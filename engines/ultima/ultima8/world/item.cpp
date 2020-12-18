@@ -1176,7 +1176,9 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 	int damage = firetypedat->getRandomDamage();
 
 	const Item *blocker = nullptr;
-	bool isvalid = currentmap->isValidPosition(ix, iy, iz, BULLET_SPLASH_SHAPE, 0, nullptr, nullptr, &blocker);
+	// CHECKME: the original doesn't exclude the source like this,
+	// but it seems obvious we have to or NPCs shoot themselves?
+	bool isvalid = currentmap->isValidPosition(ix, iy, iz, BULLET_SPLASH_SHAPE, _objId, nullptr, nullptr, &blocker);
 	if (!isvalid && blocker) {
 		Item *block = getItem(blocker->getObjId());
 		Point3 blockpt;
