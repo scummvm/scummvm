@@ -111,6 +111,9 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	for (int i = 0; i < MAX_BAN_FILES; i++)
 		_banFiles[i] = nullptr;
 
+	_targetPlanet = -1;
+	_currentPlanet = -1;
+
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patches");
 }

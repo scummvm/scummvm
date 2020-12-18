@@ -82,28 +82,51 @@ enum BridgeSequence {
 	kSeqUnk7,
 	kSeqUnk8,
 	kSeqUnk9,
-	kStartMissionLove,
+	kSeqStartMissionLove,
 	kSeqUnk11,
 	kSeqUnk12,
 	kSeqUnk13,
 	kSeqUnk14,
 	kSeqUnk15,
-	kStartMissionMudd,
+	kSeqStartMissionMudd,
 	kSeqUnk17,
 	kSeqUnk18,
-	kStartMissionFeather,
+	kSeqStartMissionFeather,
 	kSeqUnk20,
 	kSeqUnk21,
-	kStartMissionTrial,
+	kSeqStartMissionTrial,
 	kSeqUnk23,
 	kSeqUnk24,
 	kSeqUnk25,
 	kSeqUnk26,
 	kSeqUnk27,
-	kStartMissionVeng,
+	kSeqStartMissionVeng,
 	kSeqUnk29,
-	kStartMissionSins,
+	kSeqStartMissionSins,
 	kSeqUnk31
+};
+
+enum Planet {
+	kPlanetCenturius = 0,
+	kPlanetCameronsStar = 1,
+	kPlanetArk7 = 2,      // Chapter 3: Love's Labor Jeopardized (love)
+	kPlanetHarlequin = 3, // Chapter 4: Another Fine Mess (mudd)
+	kPlanetHarrapa = 4,
+	kPlanetElasiPrime = 5,
+	kPlanetDigifal = 6, // Chapter 5A: The Feathered Serpent (feather)
+	kPlanetStrahkeer = 7,
+	kPlanetHrakkour = 8, // Chapter 5B: The Feathered Serpent (trial)
+	kPlanetTriRhoNautica = 9,
+	kPlanetShivaOmicron = 10,
+	kPlanetAlphaProxima = 11, // Chapter 6: The Old Devil Moon (sins)
+	kPlanetOmegaMaelstrom = 12,
+	kPlanetArgosIV = 13,
+	kPlanetBetaMyamid = 14, // Chapter 2: Hijacked (tug)
+	kPlanetSirius = 15,
+	kPlanetSigmaZhukova = 16,
+	kPlanetCastor = 17,
+	kPlanetPollux = 18, // Chapter 1: Demon world (demon)
+	kPlanetChristgen = 19
 };
 
 void StarTrekEngine::initBridge(bool b) {
@@ -142,6 +165,11 @@ void StarTrekEngine::loadBridge() {
 	playBridgeSequence(kSeqStartMissionDemon);
 	playBridgeSequence(kSeqEndMockBattle);
 	playBridgeSequence(kSeqShowDebriefDemon);
+	// End mission sequence
+	//_missionName = _missionToLoad = "DEMON";
+	//_resource->setTxtFileName(_missionName);
+	//_awayMission.demon.missionScore = 100;
+	//playBridgeSequence(kSeqEndMissionDemon);
 }
 
 void StarTrekEngine::loadBridgeActors() {
@@ -159,12 +187,14 @@ void StarTrekEngine::setBridgeMouseCursor() {
 void StarTrekEngine::playBridgeSequence(int sequenceId) {
 	const char *captainsLogHeader = "Captain's Log";
 	const char *uhuraHeader = "Lieutenant Uhura";
+	const char *kirkHeader = "Captain Kirk";
 	const char *spockHeader = "Mr. Spock";
+	const char *mcCoyHeader = "Dr. McCoy";
 	const char *suluHeader = "Mr. Sulu";
 	const char *lowerShieldsText = "#BRID\\B_336#Lowering shields and disarming weapons.";
 
 	switch (sequenceId) {
-	case kSeqStartMissionDemon:
+	case kSeqStartMissionDemon: // Chapter 1: Demon world (demon)
 		_missionName = _missionToLoad = "DEMON";
 		_resource->setTxtFileName(_missionName);
 		_sound->loadMusicFile("bridgew");
@@ -196,7 +226,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		setBridgeMouseCursor();	// 0, 0
 		// TODO: Delete 3D object
 		showBridgeScreenTalkerWithMessage(12, "Admiral", "woman");
-		// TODO: _targetPlanet = 18;
+		_targetPlanet = kPlanetPollux;
 		break;
 	case kSeqTalkWithPolluxPriest:
 		/*
@@ -220,9 +250,30 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		*/
 		break;
 	case kSeqEndMissionDemon:
+		loadActorAnim(1, "xstndsp", 0, 0, 1.0);	// Standing Spock
+		loadActorAnim(2, "xstndmc", 0, 0, 1.0);	// Standing McCoy
+		_sound->playSoundEffectIndex(34);
+		showTextbox(uhuraHeader, _resource->getLoadedText(23), 298, 150, 161, 0);	// Message from Starfleet
+		showTextbox(kirkHeader, _resource->getLoadedText(24), 160, 130, 176, 0);
+		showMissionPerformance(_awayMission.demon.missionScore, 29);
+		showTextbox(mcCoyHeader, _resource->getLoadedText(25), 160, 100, 44, 0);
+		showTextbox(kirkHeader, _resource->getLoadedText(26), 160, 130, 176, 0);
+		showTextbox(spockHeader, _resource->getLoadedText(27), 294, 106, 44, 0);
+		showTextbox(mcCoyHeader, _resource->getLoadedText(28), 160, 100, 44, 0);
+		loadActorAnim(1, "bstndsp", 0, 0, 1.0); // Sitting Spock
+		removeActorFromScreen(2);
+		// TODO: Proceed to tug
+		break;
+	case kSeqStartMissionTug: // Chapter 2: Hijacked (tug)
+		_targetPlanet = kPlanetBetaMyamid;
 		// TODO
 		break;
-	case kSeqStartMissionTug:
+	case kSeqStartMissionLove:	// Chapter 3: Love's Labor Jeopardized (love)
+		_targetPlanet = kPlanetArk7;
+		// TODO
+		break;
+	case kSeqStartMissionMudd: // Chapter 4: Another Fine Mess (mudd)
+		_targetPlanet = kPlanetHarlequin;
 		// TODO
 		break;
 	// TODO: The rest
@@ -231,7 +282,76 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 	}
 }
 
+Common::String StarTrekEngine::getSpeechSampleForNumber(int number) {
+	Common::String speechTemplate = ",BRID\\B_%03d";
+	Common::String result;
+
+	if (number <= 19) {
+		// Speech samples 228 ("zero") - 247 ("nineteen")
+		result = Common::String::format(speechTemplate.c_str(), number + 228);
+	} else if (number >= 20 && number <= 99) {
+		// Speech samples 248 ("twenty") - 255 ("ninety")
+		result = Common::String::format(speechTemplate.c_str(), number / 10 - 2 + 248);
+		if (number % 10 > 0)
+			result += Common::String::format(speechTemplate.c_str(), number % 10 + 228);
+	} else if (number == 100) {
+		result = Common::String::format(speechTemplate.c_str(), 256);
+	}
+
+	return result;
+}
+
+// TODO: two more parameters
+void StarTrekEngine::showMissionPerformance(int score, int missionScoreTextId) {
+	Common::String performanceDescription;
+	int midiTrack = 0;
+
+	if (score >= 0 && score <= 50) {
+		performanceDescription = "#BRID\\B_199#I'll be frank, Kirk. Starfleet expects more of you than that. Try to do better on your next assignment.";
+		midiTrack = 13;
+	} else if (score >= 60 && score <= 70) {
+		performanceDescription = "#BRID\\B_197#A satisfactory performance, Captain, but there's still room for improvement.";
+		midiTrack = 13;
+	} else if (score >= 71 && score <= 85) {
+		performanceDescription = "#BRID\\B_214#Well done, Captain. Keep up the good work.";
+		midiTrack = 11;
+	} else if (score >= 86 && score <= 99) {
+		performanceDescription = "#BRID\\B_414#The top brass at Starfleet are impressed. Outstanding work, Jim.";
+		midiTrack = 12;
+	} else if (score == 100) {
+		performanceDescription = "#BRID\\B_195#A perfect mission, Jim! You are a model for all Starfleet!";
+		midiTrack = 14;
+	}
+
+	_sound->playMidiMusicTracks(midiTrack, -1);
+
+	int commendationPoints = 0;	// TODO
+	Common::String speechIdPerformance = getSpeechSampleForNumber(score);
+	Common::String speechIdCommendationPoints = getSpeechSampleForNumber(commendationPoints);
+
+	Common::String missionPerformanceText = Common::String::format(_resource->getLoadedText(missionScoreTextId).c_str(),
+		speechIdPerformance.c_str(),
+		speechIdCommendationPoints.c_str(),
+		score,
+		commendationPoints
+	);
+
+	const char *textIds[] = {
+		missionPerformanceText.c_str(),
+		performanceDescription.c_str(),
+		NULL
+	};
+
+	showBridgeScreenTalkerWithMessages(textIds, "Admiral", "woman");
+}
+
 void StarTrekEngine::showBridgeScreenTalkerWithMessage(int textId, Common::String talkerHeader, Common::String talkerId) {
+	const char *text = _resource->getLoadedText(textId).c_str();
+	const char *texts[] = { text, NULL };
+	showBridgeScreenTalkerWithMessages(texts, talkerHeader, talkerId);
+}
+
+void StarTrekEngine::showBridgeScreenTalkerWithMessages(const char *texts[], Common::String talkerHeader, Common::String talkerId) {
 	if (talkerId == "romula" || talkerId == "pira" || talkerId == "klg1" || talkerId == "klg2" || talkerId == "maddoc")
 		_sound->playMidiMusicTracks(15, -1);
 	else if (talkerId == "mudd")
@@ -241,7 +361,13 @@ void StarTrekEngine::showBridgeScreenTalkerWithMessage(int textId, Common::Strin
 	_starfieldSprite.drawMode = 0;
 	// TODO: Check why we need the coord adjustments below
 	int actorId = loadActorAnim(-1, talkerId, 72 - 2, 30 + 1, 1.0);
-	showTextbox(talkerHeader, _resource->getLoadedText(textId), 160, 190, 44, 0);
+	int i = 0;
+	const char *text = texts[i];
+	while (text != NULL) {
+		showTextbox(talkerHeader, Common::String(text), 160, 190, 44, 0);
+		text = texts[++i];
+	}
+	
 	removeActorFromScreen(actorId);
 	initStarfieldSprite(&_starfieldSprite, new StubBitmap(0, 0), _starfieldRect);
 }

@@ -260,9 +260,18 @@ public:
 	void setBridgeMouseCursor();
 	void playBridgeSequence(int sequenceId);
 	void showBridgeScreenTalkerWithMessage(int textId, Common::String talkerHeader, Common::String talkerId);
+	void showBridgeScreenTalkerWithMessages(const char *texts[], Common::String talkerHeader, Common::String talkerId);
 	void handleBridgeEvents();
 	void handleBridgeComputer();
+	void showMissionPerformance(int score, int missionScoreTextId);
 
+private:
+	Common::String getSpeechSampleForNumber(int number);
+
+	int _targetPlanet;
+	int _currentPlanet;
+
+public:
 	void playMovie(Common::String filename);
 	void playMovieMac(Common::String filename);
 
