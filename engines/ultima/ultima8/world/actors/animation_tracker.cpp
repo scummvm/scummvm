@@ -209,8 +209,13 @@ bool AnimationTracker::step() {
 			|| (is_crusader && f.is_cruflipped());
 
 	// determine movement for this frame
-	int32 dx = 4 * Direction_XFactor(_dir) * f._deltaDir;
-	int32 dy = 4 * Direction_YFactor(_dir) * f._deltaDir;
+	Direction movedir = _dir;
+	if (_animAction->hasFlags(AnimAction::AAF_ROTATED)) {
+		movedir = Direction_TurnByDelta(movedir, 4, dirmode_16dirs);
+	}
+
+	int32 dx = 4 * Direction_XFactor(movedir) * f._deltaDir;
+	int32 dy = 4 * Direction_YFactor(movedir) * f._deltaDir;
 	int32 dz = f._deltaZ;
 
 	if (_mode == TargetMode && !f.is_onground()) {
