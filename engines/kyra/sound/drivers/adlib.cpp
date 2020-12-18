@@ -195,8 +195,8 @@ private:
 	int update_setBaseFreq(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setupPrimaryEffectVibrato(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setPriority(const uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback23(const uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback24(const uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_setBeat(const uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_waitForNextBeat(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setExtraLevel1(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_setupDuration(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_playNote(const uint8 *&dataptr, Channel &channel, uint8 value);
@@ -232,10 +232,6 @@ private:
 	// These variables have not yet been named, but some of them are partly
 	// known nevertheless:
 	//
-	// _unkValue1      - Unknown. Used for updating _unkValue2
-	// _unkValue2      - Unknown. Used for updating _unkValue4
-	// _unkValue4      - Unknown. Used for updating _unkValue5
-	// _unkValue5      - Unknown. Used for controlling updateCallback24().
 	// _unkValue6      - Unknown. Rhythm section volume?
 	// _unkValue7      - Unknown. Rhythm section volume?
 	// _unkValue8      - Unknown. Rhythm section volume?
@@ -262,11 +258,11 @@ private:
 
 	uint16 _rnd;
 
-	uint8 _unkValue1;
-	uint8 _unkValue2;
+	uint8 _beatDivider;
+	uint8 _beatDivCnt;
 	uint8 _callbackTimer;
-	uint8 _unkValue4;
-	uint8 _unkValue5;
+	uint8 _beatCounter;
+	uint8 _beatWaiting;
 	uint8 _unkValue6;
 	uint8 _unkValue7;
 	uint8 _unkValue8;
@@ -356,7 +352,7 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) : PCSoundDriver() {
 	_programStartTimeout = 0;
 
 	_callbackTimer = 0xFF;
-	_unkValue1 = _unkValue2 = _unkValue4 = _unkValue5 = 0;
+	_beatDivider = _beatDivCnt = _beatCounter = _beatWaiting = 0;
 	_unkValue6 = _unkValue7 = _unkValue8 = _unkValue9 = _unkValue10 = 0;
 	_unkValue11 = _unkValue12 = _unkValue13 = _unkValue14 = _unkValue15 =
 	_unkValue16 = _unkValue17 = _unkValue18 = _unkValue19 = _unkValue20 = 0;
@@ -501,6 +497,9 @@ void AdLibDriver::stopAllChannels() {
 }
 
 // timer callback
+//
+// Starts and executes programs and maintains a global beat that channels
+// can synchronize on.
 
 void AdLibDriver::callback() {
 	Common::StackLock lock(_mutex);
@@ -513,9 +512,9 @@ void AdLibDriver::callback() {
 	uint8 temp = _callbackTimer;
 	_callbackTimer += _tempo;
 	if (_callbackTimer < temp) {
-		if (!(--_unkValue2)) {
-			_unkValue2 = _unkValue1;
-			++_unkValue4;
+		if (!(--_beatDivCnt)) {
+			_beatDivCnt = _beatDivider;
+			++_beatCounter;
 		}
 	}
 }
@@ -1599,22 +1598,50 @@ int AdLibDriver::update_setPriority(const uint8 *&dataptr, Channel &channel, uin
 	return 0;
 }
 
-int AdLibDriver::updateCallback23(const uint8 *&dataptr, Channel &channel, uint8 value) {
+// This provides a way to synchronize channels with a global beat:
+//
+// update_setBeat()
+//    - Initializes _beatDivider, _beatDivCnt, _beatCounter, and _beatWaiting;
+//      resets _callbackTimer
+//    - _beatDivider is not further modified
+//
+// callback()
+//    - _beatDivCnt is a countdown, gets reinitialized to _beatDivider on zero 
+//    - _beatCounter is incremented when _beatDivCnt is reset, i.e., it's a
+//      counter which updates with the global _tempo divided by _beatDivider.
+//
+// update_waitForNextBeat()
+//    - _beatWaiting is updated if some bits are 0 in _beatCounter (off beat)
+//    - the program is stopped until some of the masked bits in _beatCounter
+//      become 1 and _beatWaiting is non-zero (on beat), then _beatWaiting is
+//      cleared
+//
+// _beatDivider - determines how fast _beatCounter is incremented
+// _beatDivCnt - countdown for the divider
+// _beatCounter - counter updated with global _tempo divided by _beatDivider
+// _beatWaiting - flags that waiting started before watched counter bit got 1
+//
+// Note that in theory _beatWaiting could wrap around to zero while waiting,
+// then the rising edge wouldn't trigger. That's probably not a big issue
+// in practice sice it can only happen for long delays (big _beatDivider and
+// waiting on one of the higher bits) but could have been prevented easily.
+
+int AdLibDriver::update_setBeat(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	value >>= 1;
-	_unkValue1 = _unkValue2 = value;
+	_beatDivider = _beatDivCnt = value;
 	_callbackTimer = 0xFF;
-	_unkValue4 = _unkValue5 = 0;
+	_beatCounter = _beatWaiting = 0;
 	return 0;
 }
 
-int AdLibDriver::updateCallback24(const uint8 *&dataptr, Channel &channel, uint8 value) {
-	if ((_unkValue4 & value) && _unkValue5) {
-		_unkValue5 = 0;
+int AdLibDriver::update_waitForNextBeat(const uint8 *&dataptr, Channel &channel, uint8 value) {
+	if ((_beatCounter & value) && _beatWaiting) {
+		_beatWaiting = 0;
 		return 0;
 	}
 
-	if (!(_unkValue4 & value))
-		++_unkValue5;
+	if (!(_beatCounter & value))
+		++_beatWaiting;
 
 	dataptr -= 2;
 	channel.duration = 1;
@@ -2115,8 +2142,8 @@ const AdLibDriver::ParserOpcode AdLibDriver::_parserOpcodeTable[] = {
 	COMMAND(update_stopChannel, 0),
 
 	// 28
-	COMMAND(updateCallback23, 1),
-	COMMAND(updateCallback24, 1),
+	COMMAND(update_setBeat, 1),
+	COMMAND(update_waitForNextBeat, 1),
 	COMMAND(update_setExtraLevel1, 1),
 	COMMAND(update_stopChannel, 0),
 
