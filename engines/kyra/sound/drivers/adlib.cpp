@@ -71,11 +71,6 @@ private:
 	// These variables have not yet been named, but some of them are partly
 	// known nevertheless:
 	//
-	// unk18 - Sound-effect. Used for secondaryEffect1()
-	// unk19 - Sound-effect. Used for secondaryEffect1()
-	// unk20 - Sound-effect. Used for secondaryEffect1()
-	// unk21 - Sound-effect. Used for secondaryEffect1()
-	// unk22 - Sound-effect. Used for secondaryEffect1()
 	// unk39 - Currently unused, except for updateCallback56()
 	// unk40 - Currently unused, except for updateCallback56()
 
@@ -120,12 +115,12 @@ private:
 		uint8 unk40;
 		uint8 spacing1;
 		uint8 durationRandomness;
-		uint8 unk19;
-		uint8 unk18;
-		int8 unk20;
-		int8 unk21;
-		uint8 unk22;
-		uint16 offset;
+		uint8 secondaryEffectTempo;
+		uint8 secondaryEffectTimer;
+		int8 secondaryEffectSize;
+		int8 secondaryEffectPos;
+		uint8 secondaryEffectRegbase;
+		uint16 secondaryEffectData;
 		uint8 tempoReset;
 		uint8 rawNote;
 		int8 pitchBend;
@@ -1203,9 +1198,10 @@ void AdLibDriver::primaryEffectVibrato(Channel &channel) {
 	}
 }
 
-// I don't know where this is used. The same operation is performed several
-// times on the current channel, using a chunk of the _soundData[] buffer for
-// parameters. The parameters are used starting at the end of the chunk.
+// I don't know where this is used. An OPL register is regularly updated
+// with data from a chunk of the _soundData[] buffer, i.e., one instrument
+// parameter register is modulated with data from the chunk. The data is
+// reused repeatedly starting from the end of the chunk.
 //
 // Since we use _curRegOffset to specify the final register, it's quite
 // unlikely that this function is ever used to play notes. It's probably only
@@ -1215,18 +1211,20 @@ void AdLibDriver::primaryEffectVibrato(Channel &channel) {
 // Related functions and variables:
 //
 // update_setupSecondaryEffect1()
-//    - Initialies unk18, unk19, unk20, unk21, unk22 and offset
-//    - unk19 is not further modified
-//    - unk20 is not further modified
-//    - unk22 is not further modified
-//    - offset is not further modified
+//    - Initialies secondaryEffectTimer, secondaryEffectTempo,
+//      secondaryEffectSize, secondaryEffectPos, secondaryEffectRegbase,
+//      and secondaryEffectData
+//    - secondaryEffectTempo is not further modified
+//    - secondaryEffectSize is not further modified
+//    - secondaryEffectRegbase is not further modified
+//    - secondaryEffectData is not further modified
 //
-// unk18 -  determines how often the operation is performed
-// unk19 -  determines how often the operation is performed
-// unk20 -  the start index into the data chunk
-// unk21 -  the current index into the data chunk
-// unk22 -  the operation to perform
-// offset - the offset to the data chunk
+// secondaryEffectTimer   - keeps track of time
+// secondaryEffectTempo   - determines how often the operation is performed
+// secondaryEffectSize    - the size of the data chunk
+// secondaryEffectPos     - the current index into the data chunk
+// secondaryEffectRegbase - the operation to perform
+// secondaryEffectData    - the offset of the data chunk
 
 void AdLibDriver::secondaryEffect1(Channel &channel) {
 	debugC(9, kDebugLevelSound, "Calling secondaryEffect1 (channel: %d)", _curChannel);
@@ -1234,12 +1232,13 @@ void AdLibDriver::secondaryEffect1(Channel &channel) {
 	if (_curChannel >= 9)
 		return;
 
-	uint8 temp = channel.unk18;
-	channel.unk18 += channel.unk19;
-	if (channel.unk18 < temp) {
-		if (--channel.unk21 < 0)
-			channel.unk21 = channel.unk20;
-		writeOPL(channel.unk22 + _curRegOffset, _soundData[channel.offset + channel.unk21]);
+	uint8 temp = channel.secondaryEffectTimer;
+	channel.secondaryEffectTimer += channel.secondaryEffectTempo;
+	if (channel.secondaryEffectTimer < temp) {
+		if (--channel.secondaryEffectPos < 0)
+			channel.secondaryEffectPos = channel.secondaryEffectSize;
+		writeOPL(channel.secondaryEffectRegbase + _curRegOffset,
+			_soundData[channel.secondaryEffectData + channel.secondaryEffectPos]);
 	}
 }
 
@@ -1481,10 +1480,10 @@ int AdLibDriver::update_setBaseNote(const uint8 *&dataptr, Channel &channel, uin
 }
 
 int AdLibDriver::update_setupSecondaryEffect1(const uint8 *&dataptr, Channel &channel, uint8 value) {
-	channel.unk18 = value;
-	channel.unk19 = value;
-	channel.unk20 = channel.unk21 = *dataptr++;
-	channel.unk22 = *dataptr++;
+	channel.secondaryEffectTimer = value;
+	channel.secondaryEffectTempo = value;
+	channel.secondaryEffectSize = channel.secondaryEffectPos = *dataptr++;
+	channel.secondaryEffectRegbase = *dataptr++;
 	// WORKAROUND: The original code reads a true offset which later gets translated via xlat (in
 	// the current segment). This means that the outcome depends on the sound data offset.
 	// Unfortunately this offset is different in most implementations of the audio driver and
@@ -1499,11 +1498,12 @@ int AdLibDriver::update_setupSecondaryEffect1(const uint8 *&dataptr, Channel &ch
 	// since the sound data is exactly the same.
 	// In DOSBox the teleporters will sound different in EOB I and II, due to different sound
 	// data offsets.
-	channel.offset = READ_LE_UINT16(dataptr) - 191; dataptr += 2;
+	channel.secondaryEffectData = READ_LE_UINT16(dataptr) - 191;
+	dataptr += 2;
 	channel.secondaryEffect = &AdLibDriver::secondaryEffect1;
 
 	// Safety check: don't enable effect when table location is invalid.
-	int start = channel.offset + channel.unk20;
+	int start = channel.secondaryEffectData + channel.secondaryEffectSize;
 	if (start < 0 || start >= _soundDataSize) {
 		warning("AdLibDriver::update_setupSecondaryEffect1: Ignoring due to invalid table location");
 		channel.secondaryEffect = nullptr;
