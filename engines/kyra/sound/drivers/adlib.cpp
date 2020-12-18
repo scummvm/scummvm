@@ -211,7 +211,7 @@ private:
 	int update_setVibratoDepth(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_changeExtraLevel1(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_clearChannel(const uint8 *&dataptr, Channel &channel, uint8 value);
-	int updateCallback39(const uint8 *&dataptr, Channel &channel, uint8 value);
+	int update_changeNoteRandomly(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_removePrimaryEffectVibrato(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_pitchBend(const uint8 *&dataptr, Channel &channel, uint8 value);
 	int update_resetToGlobalTempo(const uint8 *&dataptr, Channel &channel, uint8 value);
@@ -1795,23 +1795,22 @@ int AdLibDriver::update_clearChannel(const uint8 *&dataptr, Channel &channel, ui
 	return 0;
 }
 
-int AdLibDriver::updateCallback39(const uint8 *&dataptr, Channel &channel, uint8 value) {
+int AdLibDriver::update_changeNoteRandomly(const uint8 *&dataptr, Channel &channel, uint8 value) {
 	if (_curChannel >= 9)
 		return 0;
 
-	uint16 unk = *dataptr++;
-	unk |= value << 8;
-	unk &= getRandomNr();
+	uint16 mask = READ_BE_UINT16(++dataptr - 2);
 
-	uint16 unk2 = ((channel.regBx & 0x1F) << 8) | channel.regAx;
-	unk2 += unk;
-	unk2 |= ((channel.regBx & 0x20) << 8);
+	uint16 note = ((channel.regBx & 0x1F) << 8) | channel.regAx;
+
+	note += mask & getRandomNr();
+	note |= ((channel.regBx & 0x20) << 8);
 
 	// Frequency
-	writeOPL(0xA0 + _curChannel, unk2 & 0xFF);
+	writeOPL(0xA0 + _curChannel, note & 0xFF);
 
 	// Key On / Octave / Frequency
-	writeOPL(0xB0 + _curChannel, (unk2 & 0xFF00) >> 8);
+	writeOPL(0xB0 + _curChannel, (note & 0xFF00) >> 8);
 
 	return 0;
 }
@@ -2181,7 +2180,7 @@ const AdLibDriver::ParserOpcode AdLibDriver::_parserOpcodeTable[] = {
 
 	// 52
 	COMMAND(update_stopChannel, 0),
-	COMMAND(updateCallback39, 2),
+	COMMAND(update_changeNoteRandomly, 2),
 	COMMAND(update_removePrimaryEffectVibrato, 0),
 	COMMAND(update_stopChannel, 0),
 
