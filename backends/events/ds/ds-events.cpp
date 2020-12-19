@@ -71,11 +71,12 @@ void DSEventSource::addEventsToQueue() {
 		touchRead(&touchPos);
 		event.mouse = dynamic_cast<OSystem_DS *>(g_system)->transformPoint(touchPos.px, touchPos.py);
 
+		if (event.mouse.x != _lastTouch.x || event.mouse.y != _lastTouch.y) {
+			event.type = Common::EVENT_MOUSEMOVE;
+			_eventQueue.push(event);
+		}
 		if (keysPressed & KEY_TOUCH) {
 			event.type = Common::EVENT_LBUTTONDOWN;
-			_eventQueue.push(event);
-		} else if (event.mouse.x != _lastTouch.x || event.mouse.y != _lastTouch.y) {
-			event.type = Common::EVENT_MOUSEMOVE;
 			_eventQueue.push(event);
 		}
 
