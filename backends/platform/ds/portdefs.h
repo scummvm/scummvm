@@ -42,6 +42,10 @@ typedef unsigned int uint;
 #include <math.h>
 #include <new>
 
+#include <nds/arm9/sassert.h>
+#undef assert
+#define assert(e) sassert(e, " ")
+
 #define double float
 
 #ifndef DISABLE_COMMAND_LINE
