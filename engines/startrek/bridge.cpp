@@ -52,8 +52,8 @@ enum BridgeMenuEvent {
 	kBridgeKirkCaptainsLog = 16,
 	kBridgeKirkTransporter = 17,
 	kBridgeKirkOptions = 18,
-	kBridgeSpockNothingToReport = 32,
-	kBridgeSpockConsultComputer = 33,
+	kBridgeSpockConsult = 32,
+	kBridgeSpockComputer = 33,
 	kBridgeScottyDamageControl = 48,
 	kBridgeScottyEmergencyPower = 49,
 	kBridgeUhuraCommunications = 64,
@@ -72,16 +72,17 @@ enum BridgeMenuEvent {
 };
 
 enum BridgeSequence {
+	kSeqNone = -1,
 	kSeqStartMissionDemon = 0,
 	kSeqEndMockBattle,
 	kSeqShowDebriefDemon,
-	kSeqTalkWithPolluxPriest,
+	kSeqArrivedAtPolluxV,
 	kSeqEndMissionDemon,
 	kSeqStartMissionTug,
-	kSeqUnk6,
-	kSeqUnk7,
-	kSeqUnk8,
-	kSeqUnk9,
+	kSeqStartElasiPirateBattle,
+	kSeqApproachMasada,
+	kSeqTalkWithMasadaElasiCereth,
+	kSeqEndMissionTug,
 	kSeqStartMissionLove,
 	kSeqUnk11,
 	kSeqUnk12,
@@ -129,6 +130,17 @@ enum Planet {
 	kPlanetChristgen = 19
 };
 
+enum BridgeTalkers {
+	kBridgeTalkerKirk = 0,
+	kBridgeTalkerSpock,
+	kBridgeTalkerSulu,
+	kBridgeTalkerChekov,
+	kBridgeTalkerUhura,
+	kBridgeTalkerScotty,
+	kBridgeTalkerMcCoy,
+	kBridgeTalkerCaptainsLog
+};
+
 void StarTrekEngine::initBridge(bool b) {
 	_gfx->loadPalette("bridge");
 	_sound->loadMusicFile("bridge");
@@ -159,17 +171,6 @@ void StarTrekEngine::loadBridge() {
 	//initStarfieldSprite();
 	//initStarfieldSprite();
 	//initStarfieldSprite();
-
-	// Play bridge sequences for Demon World, for now
-	// TODO
-	playBridgeSequence(kSeqStartMissionDemon);
-	playBridgeSequence(kSeqEndMockBattle);
-	playBridgeSequence(kSeqShowDebriefDemon);
-	// End mission sequence
-	//_missionName = _missionToLoad = "DEMON";
-	//_resource->setTxtFileName(_missionName);
-	//_awayMission.demon.missionScore = 100;
-	//playBridgeSequence(kSeqEndMissionDemon);
 }
 
 void StarTrekEngine::loadBridgeActors() {
@@ -184,13 +185,40 @@ void StarTrekEngine::setBridgeMouseCursor() {
 	_gfx->setMouseBitmap("pushbtn"/*_mouseControllingShip ? "entcur" : "cursor"*/);
 }
 
+void StarTrekEngine::showTextboxBridge(int talker, int textId) {
+	showTextboxBridge(talker, _resource->getLoadedText(textId));
+}
+
+void StarTrekEngine::showTextboxBridge(int talker, Common::String text) {
+	switch (talker) {
+	case kBridgeTalkerKirk:
+		showTextbox("Captain Kirk", text, 160, 130, 176, 0);
+		break;
+	case kBridgeTalkerSpock:
+		showTextbox("Mr. Spock", text, 294, 106, 44, 0);
+		break;
+	case kBridgeTalkerSulu:
+		showTextbox("Mr. Sulu", text, 122, 116, 176, 0);
+		break;
+	case kBridgeTalkerChekov:
+		showTextbox("Mr. Chekov", text, 196, 116, 176, 0);
+		break;
+	case kBridgeTalkerUhura:
+		showTextbox("Lieutenant Uhura", text, 298, 150, 161, 0);
+		break;
+	case kBridgeTalkerScotty:
+		showTextbox("Mr. Scott", text, 64, 100, 161, 0);
+		break;
+	case kBridgeTalkerMcCoy:
+		showTextbox("Dr. McCoy", text, 160, 100, 44, 0);
+		break;
+	case kBridgeTalkerCaptainsLog:
+		showTextbox("Captain's Log", text, 160, 130, 176, 0);
+		break;
+	}
+}
+
 void StarTrekEngine::playBridgeSequence(int sequenceId) {
-	const char *captainsLogHeader = "Captain's Log";
-	const char *uhuraHeader = "Lieutenant Uhura";
-	const char *kirkHeader = "Captain Kirk";
-	const char *spockHeader = "Mr. Spock";
-	const char *mcCoyHeader = "Dr. McCoy";
-	const char *suluHeader = "Mr. Sulu";
 	const char *lowerShieldsText = "#BRID\\B_336#Lowering shields and disarming weapons.";
 
 	switch (sequenceId) {
@@ -198,29 +226,34 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_missionName = _missionToLoad = "DEMON";
 		_resource->setTxtFileName(_missionName);
 		_sound->loadMusicFile("bridgew");
-		// TODO: showMissionStartEnterpriseFlyby "DEM0\\FLYBY", "demon"
-		showTextbox(captainsLogHeader, _resource->getLoadedText(0), 160, 130, 176, 0);
-		showTextbox(uhuraHeader, _resource->getLoadedText(1), 298, 150, 161, 0);
-		showTextbox(spockHeader, _resource->getLoadedText(2), 294, 106, 44, 0);
+		showMissionStartEnterpriseFlyby("DEM0\\FLYBY", "demon");
+		showTextboxBridge(kBridgeTalkerCaptainsLog, 0);
+		showTextboxBridge(kBridgeTalkerUhura, 1);
+		showTextboxBridge(kBridgeTalkerSpock, 2);
 		// TODO: sub_2FF19("enterpri") // random number generation
 		// TODO: changeBridgeMode 1
 		_sound->playMidiMusicTracks(2, -1);
 		_sound->playSoundEffectIndex(40);
+
+		// HACK: Play the end of the mock battle sequence, until the 3D code is implemented
+		_bridgeSequenceToLoad = kSeqEndMockBattle;
 		break;
 	case kSeqEndMockBattle:
 		if (true) {	// TODO: Check for Enterprise damage
 			// Mock battle won
 			_sound->playMidiMusicTracks(3, -1);
-			showTextbox(spockHeader, _resource->getLoadedText(4), 294, 106, 44, 0);
-			showTextbox(uhuraHeader, _resource->getLoadedText(5), 298, 150, 161, 0);
+			showTextboxBridge(kBridgeTalkerSpock, 4);
+			showTextboxBridge(kBridgeTalkerUhura, 5);
 			// TODO: sub_2f4c3()
 			// TODO: sub_321f9()
-			showTextbox(suluHeader, lowerShieldsText, 122, 116, 176, 0);
+			showTextboxBridge(kBridgeTalkerSulu, lowerShieldsText);
 			// TODO: Check variable
 		} else {
 			// Mock battle lost
 			// TODO
 		}
+
+		_bridgeSequenceToLoad = kSeqShowDebriefDemon;
 		break;
 	case kSeqShowDebriefDemon:
 		setBridgeMouseCursor();	// 0, 0
@@ -228,45 +261,99 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		showBridgeScreenTalkerWithMessage(12, "Admiral", "woman");
 		_targetPlanet = kPlanetPollux;
 		break;
-	case kSeqTalkWithPolluxPriest:
-		/*
-		// TODO: Check target planet
-		showTextbox(spockHeader, _resource->getLoadedText(15), 294, 106, 44, 0);
-		// TODO: Check if under attack
-		showTextbox(uhuraHeader, _resource->getLoadedText(16), 298, 150, 161, 0);
-		*/
-		_sound->playSoundEffectIndex(34);
-		showTextbox(uhuraHeader, _resource->getLoadedText(17), 298, 150, 161, 0);
-		showBridgeScreenTalkerWithMessage(18, "Priest", "prst");
-		/*
-		showTextbox(uhuraHeader, _resource->getLoadedText(19), 298, 150, 161, 0);
-		// TODO: Check if under attack
-		// TODO: Check target planet
-		showTextbox(spockHeader, _resource->getLoadedText(20), 294, 106, 44, 0);
-		// TODO: Check if in orbit
-		showTextbox(spockHeader, _resource->getLoadedText(21), 294, 106, 44, 0);
-		showTextbox(spockHeader, _resource->getLoadedText(22), 294, 106, 44, 0);
-		// TODO: Check against 32, 64, 96, 1, 6
-		*/
+	case kSeqArrivedAtPolluxV:
+		// In the original, this is actually a handler for Spock, Uhura and Chekov.
+		// We moved their actions in separate functions instead.
+		if (_currentPlanet == _targetPlanet) {
+			showTextboxBridge(kBridgeTalkerSpock, 15); // We have arrived at Pollux V
+		}
 		break;
 	case kSeqEndMissionDemon:
+		_resource->setTxtFileName("DEMON");
 		loadActorAnim(1, "xstndsp", 0, 0, 1.0);	// Standing Spock
 		loadActorAnim(2, "xstndmc", 0, 0, 1.0);	// Standing McCoy
 		_sound->playSoundEffectIndex(34);
-		showTextbox(uhuraHeader, _resource->getLoadedText(23), 298, 150, 161, 0);	// Message from Starfleet
-		showTextbox(kirkHeader, _resource->getLoadedText(24), 160, 130, 176, 0);
-		showMissionPerformance(_awayMission.demon.missionScore, 29);
-		showTextbox(mcCoyHeader, _resource->getLoadedText(25), 160, 100, 44, 0);
-		showTextbox(kirkHeader, _resource->getLoadedText(26), 160, 130, 176, 0);
-		showTextbox(spockHeader, _resource->getLoadedText(27), 294, 106, 44, 0);
-		showTextbox(mcCoyHeader, _resource->getLoadedText(28), 160, 100, 44, 0);
+		showTextboxBridge(kBridgeTalkerUhura, 23); // Message from Starfleet
+		showTextboxBridge(kBridgeTalkerKirk, 24);
+		showMissionPerformance(_awayMission.demon.missionScore * 100 / 32, 29);
+		showTextboxBridge(kBridgeTalkerMcCoy, 25);
+		showTextboxBridge(kBridgeTalkerKirk, 26);
+		showTextboxBridge(kBridgeTalkerSpock, 27);
+		showTextboxBridge(kBridgeTalkerMcCoy, 28);
 		loadActorAnim(1, "bstndsp", 0, 0, 1.0); // Sitting Spock
 		removeActorFromScreen(2);
-		// TODO: Proceed to tug
+		_bridgeSequenceToLoad = kSeqStartMissionTug;
 		break;
 	case kSeqStartMissionTug: // Chapter 2: Hijacked (tug)
 		_targetPlanet = kPlanetBetaMyamid;
-		// TODO
+		_missionName = _missionToLoad = "TUG";
+		_resource->setTxtFileName(_missionName);
+		_sound->loadMusicFile("bridge");
+		showMissionStartEnterpriseFlyby("TUG0\\FLYBY", "hijacked");
+		_sound->playMidiMusicTracks(0, -1);
+		_sound->playSoundEffectIndex(34);
+		showTextboxBridge(kBridgeTalkerUhura, 0);
+		showTextboxBridge(kBridgeTalkerKirk, 1);
+		showBridgeScreenTalkerWithMessage(2, "Admiral", "woman");
+		showTextboxBridge(kBridgeTalkerChekov, 3);
+		showTextboxBridge(kBridgeTalkerUhura, 4);
+		showTextboxBridge(kBridgeTalkerSpock, 5);
+		break;
+	case kSeqStartElasiPirateBattle:
+		showTextboxBridge(kBridgeTalkerSpock, 6);
+		_sound->playSoundEffectIndex(34);
+		showTextboxBridge(kBridgeTalkerUhura, 7);
+		showTextboxBridge(kBridgeTalkerKirk, 8);
+		showBridgeScreenTalkerWithMessage(9, "Elasi Captain", "pira", false);
+		showTextboxBridge(kBridgeTalkerKirk, 10);
+		showTextbox("Elasi Captain", _resource->getLoadedText(11), 160, 190, 44, 0);
+		removeActorFromScreen(_currentScreenTalker);
+		initStarfieldSprite(&_starfieldSprite, new StubBitmap(0, 0), _starfieldRect);
+		_sound->playSoundEffectIndex(40);
+		startBattle("orion");	// Elasi Pirate battle
+		_enterpriseState.underAttack = true;
+		_sound->playMidiMusicTracks(2, -1);
+		showTextboxBridge(kBridgeTalkerUhura, 12);
+		showTextboxBridge(kBridgeTalkerSpock, 13);
+		_enterpriseState.underAttack = false;
+		_sound->playMidiMusicTracks(3, -1);
+		showTextboxBridge(kBridgeTalkerChekov, 14);
+		showTextboxBridge(kBridgeTalkerSpock, 15);
+		_bridgeSequenceToLoad = kSeqApproachMasada;
+		break;
+	case kSeqApproachMasada:
+		// TODO: 3D code to approach and show the Masada
+		showTextboxBridge(kBridgeTalkerUhura, 16);
+		showTextboxBridge(kBridgeTalkerSpock, 17);
+		_bridgeSequenceToLoad = kSeqTalkWithMasadaElasiCereth;
+		break;
+	case kSeqTalkWithMasadaElasiCereth:
+		showTextboxBridge(kBridgeTalkerSpock, 20);
+		// TODO: showText2
+		showTextboxBridge(kBridgeTalkerUhura, 21);
+		showBridgeScreenTalkerWithMessage(22, "Elasi Cereth", "pira", false);
+		showTextboxBridge(kBridgeTalkerKirk, 23);
+		removeActorFromScreen(_currentScreenTalker);
+		initStarfieldSprite(&_starfieldSprite, new StubBitmap(0, 0), _starfieldRect);
+		break;
+	case kSeqEndMissionTug:
+		_resource->setTxtFileName("TUG");
+		loadActorAnim(1, "xstndsp", 0, 0, 1.0); // Standing Spock
+		loadActorAnim(2, "xstndmc", 0, 0, 1.0); // Standing McCoy
+		// TODO: 3 possible outcomes depending on mission actions
+		_sound->playSoundEffectIndex(34);
+		showTextboxBridge(kBridgeTalkerUhura, 29); // Message from Starfleet
+		showTextboxBridge(kBridgeTalkerKirk, 30);
+		showMissionPerformance(_awayMission.tug.missionScore * 100 / 32, 31);
+		showTextboxBridge(kBridgeTalkerMcCoy, 32);
+		showTextboxBridge(kBridgeTalkerSpock, 33);
+		showTextboxBridge(kBridgeTalkerMcCoy, 34);
+		showTextboxBridge(kBridgeTalkerKirk, 35);
+		showTextboxBridge(kBridgeTalkerSpock, 36);
+		showTextboxBridge(kBridgeTalkerKirk, 37);
+		loadActorAnim(1, "bstndsp", 0, 0, 1.0); // Sitting Spock
+		removeActorFromScreen(2);
+		_bridgeSequenceToLoad = kSeqStartMissionLove;
 		break;
 	case kSeqStartMissionLove:	// Chapter 3: Love's Labor Jeopardized (love)
 		_targetPlanet = kPlanetArk7;
@@ -278,6 +365,89 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		break;
 	// TODO: The rest
 	default:
+		break;
+	}
+}
+
+// This is slightly different than the original: the original sets a pointer to a function that
+// handles actions for McCoy, Uhura and Chekov per chapter. We handle them separately.
+void StarTrekEngine::bridgeActionSpock() {
+	const char *nothingToReportText = "#BRID\\B_155#Nothing to report, Captain.";
+	if (_enterpriseState.underAttack)
+		return;
+
+	//showTextboxBridge(kBridgeTalkerSpock, nothingToReportText);
+
+	switch (_targetPlanet) {
+	case kPlanetPollux: // Chapter 1: Demon world (demon)
+		if (_currentPlanet != _targetPlanet) {
+			showTextboxBridge(kBridgeTalkerSpock, 20); // I advise referring to the star map and setting a course for the Pollux system, Sir
+		} else {
+			if (!_enterpriseState.inOrbit)
+				showTextboxBridge(kBridgeTalkerSpock, 21); // We are too far from the planet for a sensor probe, Captain
+			else
+				showTextboxBridge(kBridgeTalkerSpock, 22); // Pollux V has recently emerged from an ice age, Sir...
+		}
+		break;
+	case kPlanetBetaMyamid: // Chapter 2: Hijacked (tug)
+		// TODO
+		break;
+	case kPlanetArk7: // Chapter 3: Love's Labor Jeopardized (love)
+		// TODO
+		break;
+	case kPlanetHarlequin: // Chapter 4: Another Fine Mess (mudd)
+		// TODO
+		break;
+	case kPlanetDigifal: // Chapter 5A: The Feathered Serpent (feather)
+		// TODO
+		break;
+	case kPlanetHrakkour: // Chapter 5B: The Feathered Serpent (trial)
+		// TODO
+		break;
+	case kPlanetAlphaProxima: // Chapter 6: The Old Devil Moon (sins)
+		// TODO
+		break;
+	}
+}
+
+// This is slightly different than the original: the original sets a pointer to a function that
+// handles actions for McCoy, Uhura and Chekov per chapter. We handle them separately.
+void StarTrekEngine::bridgeActionUhura() {
+	if (_enterpriseState.underAttack)
+		return;
+
+	switch (_targetPlanet) {
+	case kPlanetPollux:	// Chapter 1: Demon world (demon)
+		if (_currentPlanet != _targetPlanet) {
+			showTextboxBridge(kBridgeTalkerUhura, 16); // Orders are to proceed to the Pollux system
+		} else {
+			if (!_hailedPollux) {
+				_sound->playSoundEffectIndex(34);
+				showTextboxBridge(kBridgeTalkerUhura, 17);
+				showBridgeScreenTalkerWithMessage(18, "Priest", "prst");
+				_hailedPollux = true;
+			} else {
+				showTextboxBridge(kBridgeTalkerUhura, 19); // The High Prelate is waiting for you to beam down, Sir
+			}
+		}
+		break;
+	case kPlanetBetaMyamid:	// Chapter 2: Hijacked (tug)
+		// TODO
+		break;
+	case kPlanetArk7:	// Chapter 3: Love's Labor Jeopardized (love)
+		// TODO
+		break;
+	case kPlanetHarlequin:	// Chapter 4: Another Fine Mess (mudd)
+		// TODO
+		break;
+	case kPlanetDigifal: // Chapter 5A: The Feathered Serpent (feather)
+		// TODO
+		break;
+	case kPlanetHrakkour: // Chapter 5B: The Feathered Serpent (trial)
+		// TODO
+		break;
+	case kPlanetAlphaProxima: // Chapter 6: The Old Devil Moon (sins)
+		// TODO
 		break;
 	}
 }
@@ -337,22 +507,25 @@ void StarTrekEngine::showMissionPerformance(int score, int missionScoreTextId) {
 		commendationPoints
 	);
 
-	const char *textIds[] = {
-		missionPerformanceText.c_str(),
-		performanceDescription.c_str(),
-		NULL
+	Common::String texts[] = {
+		missionPerformanceText,
+		performanceDescription,
+		""
 	};
 
-	showBridgeScreenTalkerWithMessages(textIds, "Admiral", "woman");
+	showBridgeScreenTalkerWithMessages(texts, "Admiral", "woman");
 }
 
-void StarTrekEngine::showBridgeScreenTalkerWithMessage(int textId, Common::String talkerHeader, Common::String talkerId) {
-	const char *text = _resource->getLoadedText(textId).c_str();
-	const char *texts[] = { text, NULL };
-	showBridgeScreenTalkerWithMessages(texts, talkerHeader, talkerId);
+void StarTrekEngine::showBridgeScreenTalkerWithMessage(int textId, Common::String talkerHeader, Common::String talkerId, bool removeTalker) {
+	Common::String text = _resource->getLoadedText(textId);
+	Common::String texts[] = {
+		text,
+		""
+	};
+	showBridgeScreenTalkerWithMessages(texts, talkerHeader, talkerId, removeTalker);
 }
 
-void StarTrekEngine::showBridgeScreenTalkerWithMessages(const char *texts[], Common::String talkerHeader, Common::String talkerId) {
+void StarTrekEngine::showBridgeScreenTalkerWithMessages(Common::String texts[], Common::String talkerHeader, Common::String talkerId, bool removeTalker) {
 	if (talkerId == "romula" || talkerId == "pira" || talkerId == "klg1" || talkerId == "klg2" || talkerId == "maddoc")
 		_sound->playMidiMusicTracks(15, -1);
 	else if (talkerId == "mudd")
@@ -361,16 +534,18 @@ void StarTrekEngine::showBridgeScreenTalkerWithMessages(const char *texts[], Com
 	initStarfieldSprite(&_starfieldSprite, new Bitmap(_resource->loadBitmapFile(talkerId)), _starfieldRect);
 	_starfieldSprite.drawMode = 0;
 	// TODO: Check why we need the coord adjustments below
-	int actorId = loadActorAnim(-1, talkerId, 72 - 2, 30 + 1, 1.0);
+	_currentScreenTalker = loadActorAnim(-1, talkerId, 72 - 2, 30 + 1, 1.0);
 	int i = 0;
-	const char *text = texts[i];
-	while (text != NULL) {
-		showTextbox(talkerHeader, Common::String(text), 160, 190, 44, 0);
+	Common::String text = texts[i];
+	while (text != "") {
+		showTextbox(talkerHeader, text, 160, 190, 44, 0);
 		text = texts[++i];
 	}
-	
-	removeActorFromScreen(actorId);
-	initStarfieldSprite(&_starfieldSprite, new StubBitmap(0, 0), _starfieldRect);
+
+	if (removeTalker) {
+		removeActorFromScreen(_currentScreenTalker);
+		initStarfieldSprite(&_starfieldSprite, new StubBitmap(0, 0), _starfieldRect);
+	}
 }
 
 void StarTrekEngine::bridgeLeftClick() {
@@ -415,6 +590,12 @@ void StarTrekEngine::runBridge() {
 		handleBridgeEvents();
 
 		// TODO: pseudo-3D related functionality
+
+		if (_bridgeSequenceToLoad != kSeqNone) {
+			int bridgeSequence = _bridgeSequenceToLoad;
+			_bridgeSequenceToLoad = kSeqNone;
+			playBridgeSequence(bridgeSequence);
+		}
 	}
 }
 
@@ -422,6 +603,13 @@ void StarTrekEngine::handleBridgeEvents() {
 	TrekEvent event;
 
 	if (popNextEvent(&event)) {
+		if (_gameIsPaused) {
+			if (event.type == TREKEVENT_LBUTTONDOWN || event.type == TREKEVENT_KEYDOWN) {
+				_gameIsPaused = false;
+			}
+			return;
+		}
+
 		switch (event.type) {
 		case TREKEVENT_TICK:
 			updateActorAnimations();
@@ -500,17 +688,16 @@ void StarTrekEngine::handleBridgeEvents() {
 				handleBridgeMenu(kBridgeKirkOptions);
 				break;
 			case Common::KEYCODE_t:	// Ask Mr. Spock for advice
-				// TODO
-				handleBridgeMenu(kBridgeSpockNothingToReport);
+				handleBridgeMenu(kBridgeSpockConsult);
 				break;
 			case Common::KEYCODE_c:	// Spock's library computer
-				handleBridgeMenu(kBridgeSpockConsultComputer);
+				handleBridgeMenu(kBridgeSpockComputer);
 				break;
 			case Common::KEYCODE_h:	// Uhura's communication icon
 				handleBridgeMenu(kBridgeUhuraCommunications);
 				break;
 			case Common::KEYCODE_p:	// Pause game
-				// TODO
+				_gameIsPaused = true;
 				break;
 			case Common::KEYCODE_e:	// Toggle SFX / emergency power
 				if (event.kbd.flags && Common::KBD_CTRL)
@@ -557,18 +744,11 @@ void StarTrekEngine::handleBridgeEvents() {
 
 void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 	// TODO: Move these
-	const char *kirkHeader = "Captain Kirk";
-	const char *spockHeader = "Mr. Spock";
-	const char *scottyHeader = "Mr. Scott";
-	const char *uhuraHeader = "Lieutenant Uhura";
-	const char *suluHeader = "Mr. Sulu";
-	const char *chekovHeader = "Mr. Chekov";
 	const char *shieldsUpText = "#BRID\\B_332#Captain, the shields are up.";
 	const char *notInOrbitText = "#BRID\\B_350#We're not in orbit, Captain.";
 	const char *wrongDestinationText = "#BRID\\B_346#This isn't our destination.";
 	const char *transporterText = "#BRID\\C_060#Spock, come with me. Mr Scott, you have the conn.";
 	const char *transporterTextFeather = "#BRID\\C_006#Assemble a landing party. Unless we find this so-called criminal, we're going to war.";
-	const char *nothingToReportText = "#BRID\\B_155#Nothing to report, Captain.";
 	const char *raiseShieldsText = "#BRID\\B_340#Raising shields.";
 	const char *lowerShieldsText = "#BRID\\B_337#Lowering shields, Captain.";
 	const char *armWeaponsText = "#BRID\\B_351#Arming weapons.";
@@ -600,27 +780,26 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 		break;
 	case kBridgeKirkTransporter: // Kirk, transporter
 		if (_enterpriseState.shields) {
-			showTextbox(suluHeader, shieldsUpText, 122, 116, 161, 0);
+			showTextboxBridge(kBridgeTalkerSulu, shieldsUpText);
 		} else if (!_enterpriseState.inOrbit) {
-			showTextbox(suluHeader, notInOrbitText, 122, 116, 161, 0);
-		//} else if (false) {
-		//	// TODO: Check if the destination is correct
-		//	showTextbox(suluHeader, wrongDestinationText, 122, 116, 176, 0);
+			showTextboxBridge(kBridgeTalkerSulu, notInOrbitText);
+		} else if (_currentPlanet != _targetPlanet) {
+			showTextboxBridge(kBridgeTalkerSulu, wrongDestinationText);
 		} else {
 			if (_missionToLoad != "FEATHER")
-				showTextbox(kirkHeader, transporterText, 160, 130, 176, 0);
+				showTextboxBridge(kBridgeTalkerKirk, transporterText);
 			else
-				showTextbox(kirkHeader, transporterTextFeather, 160, 130, 176, 0);
+				showTextboxBridge(kBridgeTalkerKirk, transporterTextFeather);
 			runGameMode(GAMEMODE_BEAMDOWN, false);
 		}
 		break;
 	case kBridgeKirkOptions: // Kirk, options
 		showOptionsMenu(65, 60);
 		break;
-	case kBridgeSpockNothingToReport: // Spock, nothing to report
-		showTextbox(spockHeader, nothingToReportText, 294, 106, 44, 0);
+	case kBridgeSpockConsult: // Spock, nothing to report
+		bridgeActionSpock();
 		break;
-	case kBridgeSpockConsultComputer: // Spock, consult computer
+	case kBridgeSpockComputer: // Spock, consult computer
 		handleBridgeComputer();
 		break;
 	case kBridgeScottyDamageControl: // Scotty, damage control
@@ -628,44 +807,44 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 		break;
 	case kBridgeScottyEmergencyPower: // Scotty, emergency power
 		// TODO: check for emergency power
-		showTextbox(scottyHeader, noEmergencyPowerText, 64, 100, 161, 0);
+		showTextboxBridge(kBridgeTalkerScotty, noEmergencyPowerText);
 		break;
 	case kBridgeUhuraCommunications: // Uhura, communications
-		// TODO: text
-		//showTextbox(uhuraHeader, _resource->getLoadedText(16), 298, 150, 161, 0);
-		playBridgeSequence(kSeqTalkWithPolluxPriest);
+		bridgeActionUhura();
 		break;
 	case kBridgeSuluOrbit: // Sulu, orbit
 		if (_enterpriseState.underAttack) {
-			showTextbox(suluHeader, underAttackText, 122, 116, 176, 0);
+			showTextboxBridge(kBridgeTalkerSulu, underAttackText);
 		//} else if (false) {
 		//	// TODO: Check if mission is over
-		//	showTextbox(suluHeader, missionNotOverText, 122, 116, 44, 0);
+		//	showTextboxBridge(kBridgeTalkerSulu, missionNotOverText);
 		} else {
 			orbitPlanet();
 		}
 		break;
 	case kBridgeSuluShields: // Sulu, shields
 		_enterpriseState.shields = !_enterpriseState.shields;
-		showTextbox(suluHeader, _enterpriseState.shields ? raiseShieldsText : lowerShieldsText, 122, 116, 176, 0);
+		showTextboxBridge(kBridgeTalkerSulu, _enterpriseState.shields ? raiseShieldsText : lowerShieldsText);
 		break;
 	case kBridgeChekovNavigation: // Chekov, navigation
 		if (_enterpriseState.underAttack) {
-			showTextbox(suluHeader, underAttackText, 122, 116, 176, 0);
+			showTextboxBridge(kBridgeTalkerSulu, underAttackText);
 		//} else if (false) {
 		//	// TODO: Check if mission is over
-		//	showTextbox(suluHeader, missionNotOverText, 122, 116, 44, 0);
+		//	showTextboxBridge(kBridgeTalkerSulu, missionNotOverText);
 		} else if (_enterpriseState.inOrbit) {
-			showTextbox(suluHeader, leaveOrbitText, 122, 116, 176, 0);
+			showTextboxBridge(kBridgeTalkerSulu, leaveOrbitText);
 		} else {
 			showStarMap();
-			// TODO: Check if destination is correct, and start a random encounter if it isn't
-			// TODO: Redraw sprites
+			if (_currentPlanet != _targetPlanet) {
+				wrongDestinationRandomEncounter();
+				// TODO: Redraw sprites
+			}
 		}
 		break;
 	case kBridgeChekovWeapons: // Chekov, weapons
 		_enterpriseState.weapons = !_enterpriseState.weapons;
-		showTextbox(chekovHeader, _enterpriseState.weapons ? armWeaponsText : disarmWeaponsText, 196, 116, 176, 0);
+		showTextboxBridge(kBridgeTalkerChekov, _enterpriseState.weapons ? armWeaponsText : disarmWeaponsText);
 		setBridgeMouseCursor();
 		break;
 	case kBridgeChekovRepairShields:
@@ -676,11 +855,11 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 	case kBridgeChekovRepairHull:
 	case kBridgeChekovRepairWarpDrives:
 		// TODO: Repair ship part (-1, 4, 2, 6, 1, 0, 7)
-		showTextbox(scottyHeader, ayeSirText, 64, 100, 161, 0);
+		showTextboxBridge(kBridgeTalkerScotty, ayeSirText);
 		break;
 	case kBridgeSuluTargetAnalysis: // Chekov, target analysis
 		_enterpriseState.targetAnalysis = !_enterpriseState.targetAnalysis;
-		showTextbox(suluHeader, _enterpriseState.targetAnalysis ? targetAnalysisOnText : targetAnalysisOffText, 122, 116, 176, 0);
+		showTextboxBridge(kBridgeTalkerSulu, _enterpriseState.targetAnalysis ? targetAnalysisOnText : targetAnalysisOffText);
 		// TODO: Target analysis
 		break;
 	default:
@@ -689,11 +868,30 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 }
 
 void StarTrekEngine::showStarMap() {
+	// HACK: Move to the target planet and play its associated sequence, until the starmap code is implemented
+	_currentPlanet = _targetPlanet;
+
+	if (_targetPlanet == kPlanetPollux)
+		_bridgeSequenceToLoad = kSeqArrivedAtPolluxV;
+	else if (_targetPlanet == kPlanetBetaMyamid)
+		_bridgeSequenceToLoad = kSeqStartElasiPirateBattle;
+
+	// TODO
+}
+
+void StarTrekEngine::showMissionStartEnterpriseFlyby(Common::String sequence, Common::String name) {
+	// TODO
+}
+
+void StarTrekEngine::startBattle(Common::String enemyShip) {
+	// TODO
+}
+
+void StarTrekEngine::wrongDestinationRandomEncounter() {
 	// TODO
 }
 
 void StarTrekEngine::orbitPlanet() {
-	const char *suluHeader = "Mr. Sulu";
 	const char *enteringOrbitText = "#BRID\\B_333#Entering standard orbit.";
 	const char *leavingOrbitText = "#BRID\\B_335#Leaving orbit.";
 
@@ -702,14 +900,13 @@ void StarTrekEngine::orbitPlanet() {
 	// TODO: Update sprites
 
 	_enterpriseState.inOrbit = !_enterpriseState.inOrbit;
-	showTextbox(suluHeader, _enterpriseState.inOrbit ? enteringOrbitText : leavingOrbitText, 122, 116, 176, 0);
+	showTextboxBridge(kBridgeTalkerSulu, _enterpriseState.inOrbit ? enteringOrbitText : leavingOrbitText);
 }
 
 void StarTrekEngine::captainsLog() {
 	// TODO: Show points for recently completed missions
-	const char *captainsLogHeader = "Captain's Log";
 	const char *noRecentMissions = "#BRID\\C_007#No recent missions have been completed.";
-	showTextbox(captainsLogHeader, noRecentMissions, 160, 130, 176, 0);
+	showTextboxBridge(kBridgeTalkerCaptainsLog, noRecentMissions);
 }
 
 void StarTrekEngine::loadBridgeComputerTopics() {

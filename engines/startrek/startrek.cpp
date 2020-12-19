@@ -113,6 +113,8 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 
 	_targetPlanet = -1;
 	_currentPlanet = -1;
+	_gameIsPaused = false;
+	_hailedPollux = false;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patches");
@@ -152,13 +154,16 @@ Common::Error StarTrekEngine::run() {
 		if (!isDemo) {
 			playIntro();
 			_missionToLoad = "DEMON";
+			_bridgeSequenceToLoad = 0;
 			runGameMode(GAMEMODE_BRIDGE, false);
 		} else {
 			_missionToLoad = "DEMO";
+			_bridgeSequenceToLoad = -1;
 			runGameMode(GAMEMODE_AWAYMISSION, false);
 		}
 	} else {
 		_roomIndexToLoad = -1;
+		_bridgeSequenceToLoad = -1;
 		runGameMode(_gameMode, true);
 	}
 	
