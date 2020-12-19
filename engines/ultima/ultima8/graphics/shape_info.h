@@ -47,16 +47,17 @@ public:
 		SI_ROOF    = 0x0400,
 		SI_TRANSL  = 0x0800,
 		SI_EDITOR  = 0x1000,
-		SI_EXPLODE = 0x2000,
-		SI_UNKNOWN46 = 0x4000,
-		SI_UNKNOWN47 = 0x8000,
-		SI_SELECTABLE= 0x2000,
-		SI_CRUSUNK62 = 0x4000,
-		SI_CRUSUNK63 = 0x8000,
-		SI_TARGETABLE= 0x10000,
-		SI_CRUS_NPC  = 0x20000,
-		SI_CRUSUNK66 = 0x40000,
-		SI_CRUSUNK67 = 0x80000
+		// Note: overlapping names for the rest of the bits depending on U8 or Cru.
+		SI_U8_EXPLODE  = 0x2000,
+		SI_CRU_SELECTABLE = 0x2000,
+		SI_UNKNOWN46      = 0x4000,
+		SI_CRU_PRELOAD    = 0x4000, // we don't need this flag, we preload everything.
+		SI_UNKNOWN47      = 0x8000,
+		SI_CRU_SOUND      = 0x8000, // TODO: how is this used?
+		SI_CRU_TARGETABLE = 0x10000,
+		SI_CRU_NPC        = 0x20000,
+		SI_CRU_UNK66      = 0x40000,
+		SI_CRU_UNK67      = 0x80000
 	};
 
 	enum SFamily {
@@ -93,8 +94,7 @@ public:
 	uint32 _x, _y, _z;
 	uint32 _family;
 	uint32 _equipType;
-	uint32 _animType, _animData;
-	uint32 _unknown;
+	uint32 _animType, _animData, _animSpeed;
 	uint32 _weight, _volume;
 
 	WeaponInfo *_weaponInfo;
@@ -141,8 +141,8 @@ public:
 	inline bool is_editor() const {
 		return (_flags & SI_EDITOR) != 0;
 	}
-	inline bool is_explode() const {
-		return (_flags & SI_EXPLODE) != 0;
+	inline bool is_u8_explode() const {
+		return (_flags & SI_U8_EXPLODE) != 0;
 	}
 
 	bool hasQuantity() const {
@@ -162,7 +162,7 @@ public:
 	ShapeInfo() :
 		_flags(0), _x(0), _y(0), _z(0),
 		_family(0), _equipType(0), _animType(0), _animData(0),
-		_unknown(0), _weight(0), _volume(0),
+		_animSpeed(0), _weight(0), _volume(0),
 		_weaponInfo(nullptr), _armourInfo(nullptr),
 		_monsterInfo(nullptr), _damageInfo(nullptr) { }
 

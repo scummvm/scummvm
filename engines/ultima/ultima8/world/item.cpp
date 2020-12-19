@@ -1585,7 +1585,7 @@ void Item::destroy(bool delnow) {
 //
 // Item::setupLerp()
 //
-// Desc: Setup the lerped info for this _frame
+// Desc: Setup the lerped info for this frame
 //
 void Item::setupLerp(int32 gametick) {
 	// Don't need to set us up
@@ -1609,7 +1609,10 @@ void Item::setupLerp(int32 gametick) {
 	_extendedFlags &= ~EXT_LERP_NOPREV;
 
 	// Animate it, if needed
-	if ((gametick % 3) == (_objId % 3)) animateItem();
+	const ShapeInfo *info = getShapeInfo();
+	if (info->_animType &&
+			((gametick % info->_animSpeed) == (_objId % info->_animSpeed)))
+		animateItem();
 
 	// Setup the prev values for lerping
 	if (!no_lerp) _lPrev = _lNext;
@@ -1634,15 +1637,17 @@ void Item::setupLerp(int32 gametick) {
 // Animate the item
 void Item::animateItem() {
 	const ShapeInfo *info = getShapeInfo();
-	const Shape *shp = getShapeObject();
 
-	if (!info->_animType) return;
+	if (!info->_animType)
+		return;
 
 	int anim_data = info->_animData;
-	//bool dirty = false;
+	int speed = info->_animSpeed;
 
-	if ((static_cast<int>(_lastSetup) % 6) != (_objId % 6) && info->_animType != 1)
+	if ((static_cast<int>(_lastSetup) % speed * 2) != (_objId % speed * 2) && info->_animType != 1)
 		return;
+
+	const Shape *shp = getShapeObject();
 
 	switch (info->_animType) {
 	case 2:
@@ -1658,23 +1663,21 @@ void Item::animateItem() {
 		if (anim_data < 2) {
 			if (shp && _frame == shp->frameCount()) _frame = 0;
 		} else {
+			// Data represents frame count for the loop
 			unsigned int num = (_frame - 1) / anim_data;
 			if (_frame == ((num + 1)*anim_data)) _frame = num * anim_data;
 		}
-		//dirty = true;
 		break;
 
 	case 4:
 		if (!(getRandom() % anim_data)) break;
 		_frame ++;
 		if (shp && _frame == shp->frameCount()) _frame = 0;
-		//dirty = true;
 		break;
 
 
 	case 5:
 		callUsecodeEvent_anim();
-		//dirty = true;
 		break;
 
 	case 6:
@@ -1688,14 +1691,12 @@ void Item::animateItem() {
 			unsigned int num = (_frame - 1) / anim_data;
 			if (_frame == ((num + 1)*anim_data)) _frame = num * anim_data + 1;
 		}
-		//dirty = true;
 		break;
 
 	default:
 		pout << "type " << info->_animType << " data " << anim_data << Std::endl;
 		break;
 	}
-	//return dirty;
 }
 
 
@@ -1724,7 +1725,7 @@ void Item::enterFastArea() {
 
 	if (!hasFlags(FLG_BROKEN) && GAME_IS_CRUSADER) {
 		const ShapeInfo *si = getShapeInfo();
-		if ((si->_flags & ShapeInfo::SI_TARGETABLE) || (si->_flags & ShapeInfo::SI_OCCL)) {
+		if ((si->_flags & ShapeInfo::SI_CRU_TARGETABLE) || (si->_flags & ShapeInfo::SI_OCCL)) {
 			World::get_instance()->getCurrentMap()->addTargetItem(this);
 		}
 		if (_shape == SNAP_EGG_SHAPE) {
@@ -2044,7 +2045,7 @@ void Item::receiveHitU8(uint16 other, Direction dir, int damage, uint16 type) {
 		return;
 
 	// explosive?
-	if (getShapeInfo()->is_explode()) {
+	if (getShapeInfo()->is_u8_explode()) {
 		explode(0, true); // warning: deletes this
 		return;
 	}
@@ -3572,8 +3573,9 @@ uint32 Item::I_getSurfaceWeight(const uint8 *args, unsigned int /*argsize*/) {
 
 uint32 Item::I_isExplosive(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
+	assert(GAME_IS_U8); // explode bit has different meaning in Cru.
 	if (!item) return 0;
-	return item->getShapeInfo()->is_explode() ? 1 : 0;
+	return item->getShapeInfo()->is_u8_explode() ? 1 : 0;
 }
 
 uint32 Item::I_receiveHit(const uint8 *args, unsigned int /*argsize*/) {
@@ -3680,7 +3682,7 @@ uint32 Item::I_isCrusTypeNPC(const uint8 *args, unsigned int /*argsize*/) {
 	info = GameData::get_instance()->getMainShapes()->getShapeInfo(sh);
 	if (!info) return 0;
 
-	if (info->_flags & ShapeInfo::SI_CRUS_NPC)
+	if (info->_flags & ShapeInfo::SI_CRU_NPC)
 		return 1;
 	else
 		return 0;

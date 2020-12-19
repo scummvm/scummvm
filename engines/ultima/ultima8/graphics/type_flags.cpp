@@ -94,10 +94,10 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 
 			si._animType = data[4] & 0x0F;
 			si._animData = data[4] >> 4;
+			si._animSpeed = data[5] & 0x0F;
 
-			si._unknown = data[5] & 0x0F;
 			if (data[5] & 0x10) si._flags |= ShapeInfo::SI_EDITOR;
-			if (data[5] & 0x20) si._flags |= ShapeInfo::SI_EXPLODE;
+			if (data[5] & 0x20) si._flags |= ShapeInfo::SI_U8_EXPLODE;
 			if (data[5] & 0x40) si._flags |= ShapeInfo::SI_UNKNOWN46;
 			if (data[5] & 0x80) si._flags |= ShapeInfo::SI_UNKNOWN47;
 
@@ -105,10 +105,13 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			si._volume = data[7];
 
 		} else if (GAME_IS_CRUSADER) {
+			// Changes from U8 to Crusader:
+			// * SI_OCCL seems to be used more like "target" in Cru
+			// * SI_BAG bit seems to have a different meaning in Cru
+			//   (multi-panel?), but we don't use it anyway
+			// * Family/x/y/z are all now 5 bits
+			// * There are more and different flags in the last byte
 
-			// might have to split up remorse/regret at some point
-
-			// unchecked
 			if (data[0] & 0x01) si._flags |= ShapeInfo::SI_FIXED;
 			if (data[0] & 0x02) si._flags |= ShapeInfo::SI_SOLID;
 			if (data[0] & 0x04) si._flags |= ShapeInfo::SI_SEA;
@@ -118,7 +121,6 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			if (data[0] & 0x40) si._flags |= ShapeInfo::SI_DAMAGING;
 			if (data[0] & 0x80) si._flags |= ShapeInfo::SI_NOISY;
 
-			// unchecked
 			if (data[1] & 0x01) si._flags |= ShapeInfo::SI_DRAW;
 			if (data[1] & 0x02) si._flags |= ShapeInfo::SI_IGNORE;
 			if (data[1] & 0x04) si._flags |= ShapeInfo::SI_ROOF;
@@ -126,36 +128,27 @@ void TypeFlags::load(Common::SeekableReadStream *rs) {
 			si._family = data[1] >> 4;
 			si._family += (data[2] & 1) << 4;
 
-			uint32 unk2data = (data[2] >> 1) & 0xF;
+			si._equipType = (data[2] >> 1) & 0xF;
 
 			si._x = ((data[3] << 3) | (data[2] >> 5)) & 0x1F;
 			si._y = (data[3] >> 2) & 0x1F;
 			si._z = ((data[4] << 1) | (data[3] >> 7)) & 0x1F;
 
-			// Left over bits we're not sure what to do with yet..
-			si._unknown = (unk2data << 16) | (((data[4] & 0xF0) << 8) | data[5]);
+			si._animType = data[4] >> 4;
+			si._animData = data[5] & 0x0F;
+			si._animSpeed = data[5] >> 4;
 
 			if (data[6] & 0x01) si._flags |= ShapeInfo::SI_EDITOR;
-			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_SELECTABLE;
-			if (data[6] & 0x04) si._flags |= ShapeInfo::SI_CRUSUNK62;
-			if (data[6] & 0x08) si._flags |= ShapeInfo::SI_CRUSUNK63;
-			if (data[6] & 0x10) si._flags |= ShapeInfo::SI_TARGETABLE;
-			if (data[6] & 0x20) si._flags |= ShapeInfo::SI_CRUS_NPC;
-			if (data[6] & 0x40) si._flags |= ShapeInfo::SI_CRUSUNK66;
-			if (data[6] & 0x80) si._flags |= ShapeInfo::SI_CRUSUNK67;
+			if (data[6] & 0x02) si._flags |= ShapeInfo::SI_CRU_SELECTABLE;
+			if (data[6] & 0x04) si._flags |= ShapeInfo::SI_CRU_PRELOAD;
+			if (data[6] & 0x08) si._flags |= ShapeInfo::SI_CRU_SOUND;
+			if (data[6] & 0x10) si._flags |= ShapeInfo::SI_CRU_TARGETABLE;
+			if (data[6] & 0x20) si._flags |= ShapeInfo::SI_CRU_NPC;
+			if (data[6] & 0x40) si._flags |= ShapeInfo::SI_CRU_UNK66;
+			if (data[6] & 0x80) si._flags |= ShapeInfo::SI_CRU_UNK67;
 
 			si._weight = data[7];
 			si._volume = data[8];
-
-			// FIXME: this is not exactly right, but it is close and at
-			// least it animates the main items that need
-			// continuously animating
-			si._animType = (data[4] & 0xF0) >> 4;
-			if (si._animType == 4) {
-				// FIXME: Only one object (Shape 360, a small glowing
-				// reactor) has this type what should it do?
-				si._animType = 1;
-			}
 		} else {
 			error("unknown game type in type flags");
 		}
