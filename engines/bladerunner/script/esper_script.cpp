@@ -404,7 +404,11 @@ bool ESPERScript::SCRIPT_ESPER_DLL_Special_Region_Selected(int photo, int region
 			break;
 
 		case 23:
-			Actor_Voice_Over(4240, kActorVoiceOver);
+			if (_vm->_cutContent && Actor_Clue_Query(kActorMcCoy, kClueMoonbusReflection)) {
+				Actor_Voice_Over(4250, kActorVoiceOver);
+			} else {
+				Actor_Voice_Over(4240, kActorVoiceOver);
+			}
 			if (!Actor_Clue_Query(kActorMcCoy, kClueMcCoyAtMoonbus)) {
 				Actor_Says(kActorMcCoy, 6945, 3);
 				Sound_Play(kSfxBR034_1A, 50, 0, 0, 50);
