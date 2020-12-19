@@ -1374,7 +1374,7 @@ int AdLibDriver::update_jump(const uint8 *&dataptr, Channel &channel, uint8 valu
 	int16 add = READ_LE_UINT16(dataptr); dataptr += 2;
 	if (_version == 1) {
 		// Safety check: ignore jump to invalid address
-		if (add < 191 || add - 191 >= _soundDataSize)
+		if (add < 191 || add - 191 >= (int32)_soundDataSize)
 			dataptr = nullptr;
 		else
 			dataptr = _soundData + add - 191;
@@ -1404,7 +1404,7 @@ int AdLibDriver::update_jumpToSubroutine(const uint8 *&dataptr, Channel &channel
 	}
 	channel.dataptrStack[channel.dataptrStackPos++] = dataptr;
 	if (_version < 3) {
-		if (add < 191 || add - 191 >= _soundDataSize)
+		if (add < 191 || add - 191 >= (int32)_soundDataSize)
 			dataptr = nullptr;
 		else
 			dataptr = _soundData + add - 191;
@@ -1490,7 +1490,7 @@ int AdLibDriver::update_setupSecondaryEffect1(const uint8 *&dataptr, Channel &ch
 
 	// Safety check: don't enable effect when table location is invalid.
 	int start = channel.secondaryEffectData + channel.secondaryEffectSize;
-	if (start < 0 || start >= _soundDataSize) {
+	if (start < 0 || start >= (int)_soundDataSize) {
 		warning("AdLibDriver::update_setupSecondaryEffect1: Ignoring due to invalid table location");
 		channel.secondaryEffect = nullptr;
 	}

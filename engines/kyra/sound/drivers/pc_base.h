@@ -55,7 +55,7 @@ public:
 protected:
 	uint8 *getProgram(int progId) {
 		// Safety check: invalid progId would crash.
-		if (progId < 0 || progId >= _soundDataSize / 2)
+		if (progId < 0 || progId >= (int32)_soundDataSize / 2)
 			return nullptr;
 
 		const uint16 offset = READ_LE_UINT16(_soundData + 2 * progId);
