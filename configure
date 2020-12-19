@@ -3399,6 +3399,12 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
 		ds)
+			if test "$_dynamic_modules" = yes ; then
+				_detection_features_static=no
+				_plugins_default=dynamic
+			else
+				_detection_features_full=no
+			fi
 			if test "$_debug_build" != yes; then
 				append_var DEFINES "-DDISABLE_TEXT_CONSOLE"
 			fi
@@ -3417,6 +3423,8 @@ if test -n "$_host"; then
 			_tinygl=no
 			_bink=no
 			_lua=no
+			_png=no
+			_freetype2=no
 			_port_mk="backends/platform/ds/ds.mk"
 			;;
 		gamecube)
