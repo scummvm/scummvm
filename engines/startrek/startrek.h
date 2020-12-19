@@ -259,17 +259,29 @@ public:
 	void runBridge();
 	void setBridgeMouseCursor();
 	void playBridgeSequence(int sequenceId);
-	void showBridgeScreenTalkerWithMessage(int textId, Common::String talkerHeader, Common::String talkerId);
-	void showBridgeScreenTalkerWithMessages(const char *texts[], Common::String talkerHeader, Common::String talkerId);
 	void handleBridgeEvents();
 	void handleBridgeComputer();
 	void showMissionPerformance(int score, int missionScoreTextId);
 
+	int _bridgeSequenceToLoad;
+
 private:
 	Common::String getSpeechSampleForNumber(int number);
+	void showTextboxBridge(int talker, int textId);
+	void showTextboxBridge(int talker, Common::String text);
+	void showBridgeScreenTalkerWithMessage(int textId, Common::String talkerHeader, Common::String talkerId, bool removeTalker = true);
+	void showBridgeScreenTalkerWithMessages(Common::String texts[], Common::String talkerHeader, Common::String talkerId, bool removeTalker = true);
+	void showMissionStartEnterpriseFlyby(Common::String sequence, Common::String name);
+	void startBattle(Common::String enemyShip);
+	void wrongDestinationRandomEncounter();
+	void bridgeActionSpock();
+	void bridgeActionUhura();
 
 	int _targetPlanet;
 	int _currentPlanet;
+	int _currentScreenTalker;
+	bool _gameIsPaused;
+	bool _hailedPollux;
 
 public:
 	void playMovie(Common::String filename);

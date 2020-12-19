@@ -668,26 +668,31 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 
 	_vm->_awayMission.disableInput = false;
 
-	// TODO: This is a stopgap measure (loading the next away mission immediately).
-	// Replace this with the proper code later.
-	_vm->_gameMode = GAMEMODE_BEAMDOWN;
-	_vm->_roomIndexToLoad = 0;
+	if (_vm->_missionName == "DEMON") {
+		_vm->_gameMode = GAMEMODE_BEAMUP;
+		_vm->_roomIndexToLoad = 0;
+		_vm->_bridgeSequenceToLoad = 4;	// kSeqEndMissionDemon
+	} else {
+		// TODO: This is a stopgap measure (loading the next away mission immediately).
+		// Replace this with the proper code later.
+		_vm->_gameMode = GAMEMODE_BEAMDOWN;
+		_vm->_roomIndexToLoad = 0;
 
-	const char *missionNames[] = {
-		"DEMON",
-		"TUG",
-		"LOVE",
-		"MUDD",
-		"FEATHER",
-		"TRIAL",
-		"SINS",
-		"VENG"
-	};
+		const char *missionNames[] = {
+		    //"DEMON",
+		    "TUG",
+		    "LOVE",
+		    "MUDD",
+		    "FEATHER",
+		    "TRIAL",
+		    "SINS",
+		    "VENG"};
 
-	for (int i = 0; i < ARRAYSIZE(missionNames)-1; i++) {
-		if (_vm->_missionName == missionNames[i]) {
-			_vm->_missionToLoad = missionNames[i + 1];
-			break;
+		for (int i = 0; i < ARRAYSIZE(missionNames) - 1; i++) {
+			if (_vm->_missionName == missionNames[i]) {
+				_vm->_missionToLoad = missionNames[i + 1];
+				break;
+			}
 		}
 	}
 }
