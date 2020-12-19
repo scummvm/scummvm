@@ -56,7 +56,7 @@ enum ActionTypes {
 };
 
 struct Action {
-	char type;
+	signed char type;
 	byte b1;
 	byte b2;
 	byte b3;
