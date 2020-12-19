@@ -1082,6 +1082,8 @@ TestExitStatus GFXtests::overlayGraphics() {
 		return kTestSkipped;
 	}
 
+	int16 w = g_system->getOverlayWidth();
+	int16 h = g_system->getOverlayHeight();
 	Graphics::PixelFormat pf = g_system->getOverlayFormat();
 
 	byte *buffer = new byte[50 * 100 * pf.bytesPerPixel];
@@ -1102,7 +1104,7 @@ TestExitStatus GFXtests::overlayGraphics() {
 	}
 
 	g_system->showOverlay();
-	g_system->copyRectToOverlay(buffer, 100 * pf.bytesPerPixel, 270, 175, 100, 50);
+	g_system->copyRectToOverlay(buffer, 100 * pf.bytesPerPixel, (w - 100) / 2, (h - 50) / 2, 100, 50);
 	g_system->updateScreen();
 
 	delete[] buffer;
