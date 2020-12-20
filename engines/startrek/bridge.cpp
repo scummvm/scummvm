@@ -45,6 +45,7 @@ BridgeActorAndMenu bridgeActorsAndMenus[] = {
 };
 
 enum BridgeMenuEvent {
+	kBridgeNone = -1,
 	kBridgeKirkCommand = 0,
 	kBridgeUnk1 = 1,
 	kBridgeUnk2 = 2,
@@ -52,11 +53,11 @@ enum BridgeMenuEvent {
 	kBridgeKirkCaptainsLog = 16,
 	kBridgeKirkTransporter = 17,
 	kBridgeKirkOptions = 18,
-	kBridgeSpockConsult = 32,
+	kBridgeSpock = 32,
 	kBridgeSpockComputer = 33,
 	kBridgeScottyDamageControl = 48,
 	kBridgeScottyEmergencyPower = 49,
-	kBridgeUhuraCommunications = 64,
+	kBridgeUhura = 64,
 	kBridgeSuluOrbit = 80,
 	kBridgeSuluShields = 81,
 	kBridgeChekovNavigation = 96,
@@ -73,25 +74,30 @@ enum BridgeMenuEvent {
 
 enum BridgeSequence {
 	kSeqNone = -1,
+	// -- Chapter 1 ----
 	kSeqStartMissionDemon = 0,
 	kSeqEndMockBattle,
 	kSeqShowDebriefDemon,
 	kSeqArrivedAtPolluxV,
 	kSeqEndMissionDemon,
+	// -- Chapter 2 ----
 	kSeqStartMissionTug,
 	kSeqStartElasiPirateBattle,
-	kSeqApproachMasada,
-	kSeqTalkWithMasadaElasiCereth,
+	kSeqArrivedAtBetaMyamid,
+	kSeqApproachedTheMasada,
 	kSeqEndMissionTug,
+	// -- Chapter 3 ----
 	kSeqStartMissionLove,
 	kSeqUnk11,
 	kSeqUnk12,
 	kSeqUnk13,
 	kSeqUnk14,
 	kSeqUnk15,
+	// -- Chapter 4 ----
 	kSeqStartMissionMudd,
 	kSeqUnk17,
 	kSeqUnk18,
+	// -- Chapter 5 ----
 	kSeqStartMissionFeather,
 	kSeqUnk20,
 	kSeqUnk21,
@@ -101,13 +107,16 @@ enum BridgeSequence {
 	kSeqUnk25,
 	kSeqUnk26,
 	kSeqUnk27,
+	// -- Chapter 6 ----
 	kSeqStartMissionVeng,
 	kSeqUnk29,
+	// -- Chapter 7 ----
 	kSeqStartMissionSins,
 	kSeqUnk31
 };
 
 enum Planet {
+	kPlanetNone = -1,
 	kPlanetCenturius = 0,
 	kPlanetCameronsStar = 1,
 	kPlanetArk7 = 2,      // Chapter 3: Love's Labor Jeopardized (love)
@@ -131,6 +140,7 @@ enum Planet {
 };
 
 enum BridgeTalkers {
+	kBridgeTalkerNone = -1,
 	kBridgeTalkerKirk = 0,
 	kBridgeTalkerSpock,
 	kBridgeTalkerSulu,
@@ -223,6 +233,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 
 	switch (sequenceId) {
 	case kSeqStartMissionDemon: // Chapter 1: Demon world (demon)
+		_targetPlanet = kPlanetPollux;	// We set it earlier for uniformity
 		_missionName = _missionToLoad = "DEMON";
 		_resource->setTxtFileName(_missionName);
 		_sound->loadMusicFile("bridgew");
@@ -259,7 +270,6 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		setBridgeMouseCursor();	// 0, 0
 		// TODO: Delete 3D object
 		showBridgeScreenTalkerWithMessage(12, "Admiral", "woman");
-		_targetPlanet = kPlanetPollux;
 		break;
 	case kSeqArrivedAtPolluxV:
 		// In the original, this is actually a handler for Spock, Uhura and Chekov.
@@ -296,8 +306,6 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		showTextboxBridge(kBridgeTalkerKirk, 1);
 		showBridgeScreenTalkerWithMessage(2, "Admiral", "woman");
 		showTextboxBridge(kBridgeTalkerChekov, 3);
-		showTextboxBridge(kBridgeTalkerUhura, 4);
-		showTextboxBridge(kBridgeTalkerSpock, 5);
 		break;
 	case kSeqStartElasiPirateBattle:
 		showTextboxBridge(kBridgeTalkerSpock, 6);
@@ -310,24 +318,18 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		removeActorFromScreen(_currentScreenTalker);
 		initStarfieldSprite(&_starfieldSprite, new StubBitmap(0, 0), _starfieldRect);
 		_sound->playSoundEffectIndex(40);
-		startBattle("orion");	// Elasi Pirate battle
 		_enterpriseState.underAttack = true;
 		_sound->playMidiMusicTracks(2, -1);
-		showTextboxBridge(kBridgeTalkerUhura, 12);
-		showTextboxBridge(kBridgeTalkerSpock, 13);
+		startBattle("orion"); // Elasi Pirate battle
 		_enterpriseState.underAttack = false;
 		_sound->playMidiMusicTracks(3, -1);
-		showTextboxBridge(kBridgeTalkerChekov, 14);
-		showTextboxBridge(kBridgeTalkerSpock, 15);
-		_bridgeSequenceToLoad = kSeqApproachMasada;
+		showTextboxBridge(kBridgeTalkerChekov, 14);	// Captain they are fleeing!
+		showTextboxBridge(kBridgeTalkerSpock, 15);	// The enemy ship's initial intercept course...
+		_bridgeSequenceToLoad = kSeqArrivedAtBetaMyamid;
 		break;
-	case kSeqApproachMasada:
-		// TODO: 3D code to approach and show the Masada
-		showTextboxBridge(kBridgeTalkerUhura, 16);
-		showTextboxBridge(kBridgeTalkerSpock, 17);
-		_bridgeSequenceToLoad = kSeqTalkWithMasadaElasiCereth;
+	case kSeqArrivedAtBetaMyamid:
 		break;
-	case kSeqTalkWithMasadaElasiCereth:
+	case kSeqApproachedTheMasada:
 		showTextboxBridge(kBridgeTalkerSpock, 20);
 		// TODO: showText2
 		showTextboxBridge(kBridgeTalkerUhura, 21);
@@ -369,86 +371,66 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 	}
 }
 
-// This is slightly different than the original: the original sets a pointer to a function that
-// handles actions for McCoy, Uhura and Chekov per chapter. We handle them separately.
-void StarTrekEngine::bridgeActionSpock() {
-	const char *nothingToReportText = "#BRID\\B_155#Nothing to report, Captain.";
-	if (_enterpriseState.underAttack)
-		return;
+struct CrewTextsForChapter {
+	int targetPlanet;
+	int talker;
+	int underAttackTextId;
+	int notReachedPlanetTextId;
+	int notInOrbitTextId;
+	int inOrbitTextId;
+};
 
-	//showTextboxBridge(kBridgeTalkerSpock, nothingToReportText);
+CrewTextsForChapter crewTexts[] = {
+    { kPlanetPollux,     kBridgeTalkerSpock, 10, 20, 21, 22 },
+	{ kPlanetPollux,     kBridgeTalkerUhura,  9, 16, 19, 19 },
+	{ kPlanetBetaMyamid, kBridgeTalkerSpock, 13,  5, 17, 27 },
+    { kPlanetBetaMyamid, kBridgeTalkerUhura, 12,  4, 16, -1 },
+	// TODO: The rest
+	{ kPlanetNone,       kBridgeTalkerNone,   0,  0,  0,  0 }
+};
 
-	switch (_targetPlanet) {
-	case kPlanetPollux: // Chapter 1: Demon world (demon)
-		if (_currentPlanet != _targetPlanet) {
-			showTextboxBridge(kBridgeTalkerSpock, 20); // I advise referring to the star map and setting a course for the Pollux system, Sir
-		} else {
-			if (!_enterpriseState.inOrbit)
-				showTextboxBridge(kBridgeTalkerSpock, 21); // We are too far from the planet for a sensor probe, Captain
-			else
-				showTextboxBridge(kBridgeTalkerSpock, 22); // Pollux V has recently emerged from an ice age, Sir...
+void StarTrekEngine::bridgeCrewAction(int crewId) {
+	CrewTextsForChapter *curCrewTexts = crewTexts;
+	int textId = -1;
+
+	while (curCrewTexts->targetPlanet != kPlanetNone) {
+		if (_targetPlanet == curCrewTexts->targetPlanet && curCrewTexts->talker == crewId) {
+			if (_enterpriseState.underAttack) {
+				textId = curCrewTexts->underAttackTextId;
+			} else if (_currentPlanet != _targetPlanet) {
+				textId = curCrewTexts->notReachedPlanetTextId;
+			} else if (!_enterpriseState.inOrbit) {
+				textId = curCrewTexts->notInOrbitTextId;
+			} else {
+				textId = curCrewTexts->inOrbitTextId;
+			}
+			break;
 		}
-		break;
-	case kPlanetBetaMyamid: // Chapter 2: Hijacked (tug)
-		// TODO
-		break;
-	case kPlanetArk7: // Chapter 3: Love's Labor Jeopardized (love)
-		// TODO
-		break;
-	case kPlanetHarlequin: // Chapter 4: Another Fine Mess (mudd)
-		// TODO
-		break;
-	case kPlanetDigifal: // Chapter 5A: The Feathered Serpent (feather)
-		// TODO
-		break;
-	case kPlanetHrakkour: // Chapter 5B: The Feathered Serpent (trial)
-		// TODO
-		break;
-	case kPlanetAlphaProxima: // Chapter 6: The Old Devil Moon (sins)
-		// TODO
-		break;
+
+		curCrewTexts++;
 	}
+
+	// Uhura's hailing sequences
+	if (crewId == kBridgeTalkerUhura && _currentPlanet == _targetPlanet && !_hailedTarget) {
+		contactTargetAction();
+		_hailedTarget = true;
+		return;
+	}
+
+	if (textId >= 0)
+		showTextboxBridge(crewId, textId);
 }
 
-// This is slightly different than the original: the original sets a pointer to a function that
-// handles actions for McCoy, Uhura and Chekov per chapter. We handle them separately.
-void StarTrekEngine::bridgeActionUhura() {
-	if (_enterpriseState.underAttack)
-		return;
-
+void StarTrekEngine::contactTargetAction() {
 	switch (_targetPlanet) {
 	case kPlanetPollux:	// Chapter 1: Demon world (demon)
-		if (_currentPlanet != _targetPlanet) {
-			showTextboxBridge(kBridgeTalkerUhura, 16); // Orders are to proceed to the Pollux system
-		} else {
-			if (!_hailedPollux) {
-				_sound->playSoundEffectIndex(34);
-				showTextboxBridge(kBridgeTalkerUhura, 17);
-				showBridgeScreenTalkerWithMessage(18, "Priest", "prst");
-				_hailedPollux = true;
-			} else {
-				showTextboxBridge(kBridgeTalkerUhura, 19); // The High Prelate is waiting for you to beam down, Sir
-			}
-		}
+		_sound->playSoundEffectIndex(34);
+		showTextboxBridge(kBridgeTalkerUhura, 17);
+		showBridgeScreenTalkerWithMessage(18, "Priest", "prst");
 		break;
-	case kPlanetBetaMyamid:	// Chapter 2: Hijacked (tug)
-		// TODO
+	case kPlanetBetaMyamid: // Chapter 2: Hijacked (tug)
 		break;
-	case kPlanetArk7:	// Chapter 3: Love's Labor Jeopardized (love)
-		// TODO
-		break;
-	case kPlanetHarlequin:	// Chapter 4: Another Fine Mess (mudd)
-		// TODO
-		break;
-	case kPlanetDigifal: // Chapter 5A: The Feathered Serpent (feather)
-		// TODO
-		break;
-	case kPlanetHrakkour: // Chapter 5B: The Feathered Serpent (trial)
-		// TODO
-		break;
-	case kPlanetAlphaProxima: // Chapter 6: The Old Devil Moon (sins)
-		// TODO
-		break;
+	// TODO: The rest
 	}
 }
 
@@ -688,13 +670,13 @@ void StarTrekEngine::handleBridgeEvents() {
 				handleBridgeMenu(kBridgeKirkOptions);
 				break;
 			case Common::KEYCODE_t:	// Ask Mr. Spock for advice
-				handleBridgeMenu(kBridgeSpockConsult);
+				handleBridgeMenu(kBridgeSpock);
 				break;
 			case Common::KEYCODE_c:	// Spock's library computer
 				handleBridgeMenu(kBridgeSpockComputer);
 				break;
 			case Common::KEYCODE_h:	// Uhura's communication icon
-				handleBridgeMenu(kBridgeUhuraCommunications);
+				handleBridgeMenu(kBridgeUhura);
 				break;
 			case Common::KEYCODE_p:	// Pause game
 				_gameIsPaused = true;
@@ -796,8 +778,8 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 	case kBridgeKirkOptions: // Kirk, options
 		showOptionsMenu(65, 60);
 		break;
-	case kBridgeSpockConsult: // Spock, nothing to report
-		bridgeActionSpock();
+	case kBridgeSpock: // Spock, consult
+		bridgeCrewAction(kBridgeTalkerSpock);
 		break;
 	case kBridgeSpockComputer: // Spock, consult computer
 		handleBridgeComputer();
@@ -809,8 +791,8 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 		// TODO: check for emergency power
 		showTextboxBridge(kBridgeTalkerScotty, noEmergencyPowerText);
 		break;
-	case kBridgeUhuraCommunications: // Uhura, communications
-		bridgeActionUhura();
+	case kBridgeUhura: // Uhura, communications
+		bridgeCrewAction(kBridgeTalkerUhura);
 		break;
 	case kBridgeSuluOrbit: // Sulu, orbit
 		if (_enterpriseState.underAttack) {
