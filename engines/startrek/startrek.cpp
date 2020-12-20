@@ -114,7 +114,7 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_targetPlanet = -1;
 	_currentPlanet = -1;
 	_gameIsPaused = false;
-	_hailedPollux = false;
+	_hailedTarget = false;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patches");
