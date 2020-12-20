@@ -119,6 +119,23 @@ bool Items::addToSet(int setId) {
 	return true;
 }
 
+#if !BLADERUNNER_ORIGINAL_BUGS
+bool Items::removeFromCurrentSceneOnly(int itemId) {
+	if (_items.size() == 0) {
+		return false;
+	}
+	int itemIndex = findItem(itemId);
+	if (itemIndex == -1) {
+		return false;
+	}
+
+	if (_items[itemIndex]->_setId == _vm->_scene->getSetId()) {
+		_vm->_sceneObjects->remove(itemId + kSceneObjectOffsetItems);
+	}
+	return true;
+}
+#endif // !BLADERUNNER_ORIGINAL_BUGS
+
 bool Items::remove(int itemId) {
 	if (_items.size() == 0) {
 		return false;

@@ -52,6 +52,9 @@ public:
 	void tick();
 	bool addToWorld(int itemId, int animationId, int setId, Vector3 position, int facing, int height, int width, bool isTargetFlag, bool isVisibleFlag, bool isPoliceMazeEnemyFlag, bool addToSetFlag);
 	bool addToSet(int itemId);
+#if !BLADERUNNER_ORIGINAL_BUGS
+	bool removeFromCurrentSceneOnly(int itemId);
+#endif // !BLADERUNNER_ORIGINAL_BUGS
 	bool remove(int itemId);
 
 	void setIsTarget(int itemId, bool val);
