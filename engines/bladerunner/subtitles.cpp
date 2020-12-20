@@ -242,7 +242,9 @@ void Subtitles::loadInGameSubsText(int actorId, int speech_id)  {
 
 	// Search in the first TextResource of the _vqaSubsTextResourceEntries table, which is the TextResource for in-game dialogue (i.e. not VQA dialogue)
 	const char *text = _vqaSubsTextResourceEntries[0]->getText((uint32)id);
-	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(text) : Common::U32String(text);
+	// TODO maybe the codepage here should be determined based on some subtitles property per language
+	//      especially for non-latin languages that still use a FON font rather than a TTF font (eg. Greek would need Common::kWindows1253)
+	_currentText = _useUTF8 ? Common::convertUtf8ToUtf32(text) : Common::U32String(text, Common::kWindows1252);
 }
 
 /**
