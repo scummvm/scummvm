@@ -516,7 +516,7 @@ bool Console::cmdOpcodes(int argc, const char **argv) {
 
 	// If the resource couldn't be loaded, leave
 	if (!r) {
-		debugPrintf("unable to load vocab.998");
+		debugPrintf("unable to load vocab.998\n");
 		return true;
 	}
 
@@ -2682,7 +2682,7 @@ bool Console::cmdToggleSound(int argc, const char **argv) {
 	} else if (newState == "stop")
 		g_sci->_soundCmd->processStopSound(id, false);
 	else
-		debugPrintf("New state can either be 'play' or 'stop'");
+		debugPrintf("New state can either be 'play' or 'stop'\n");
 
 	return true;
 }
@@ -2961,7 +2961,7 @@ bool Console::cmdStack(int argc, const char **argv) {
 	}
 
 	if (_engine->_gamestate->_executionStack.empty()) {
-		debugPrintf("No exec stack!");
+		debugPrintf("No exec stack!\n");
 		return true;
 	}
 
@@ -3000,19 +3000,19 @@ bool Console::cmdValueType(int argc, const char **argv) {
 
 	switch (t) {
 	case SIG_TYPE_LIST:
-		debugPrintf("List");
+		debugPrintf("List\n");
 		break;
 	case SIG_TYPE_OBJECT:
-		debugPrintf("Object");
+		debugPrintf("Object\n");
 		break;
 	case SIG_TYPE_REFERENCE:
-		debugPrintf("Reference");
+		debugPrintf("Reference\n");
 		break;
 	case SIG_TYPE_INTEGER:
-		debugPrintf("Integer");
+		debugPrintf("Integer\n");
 		break;
 	case SIG_TYPE_INTEGER | SIG_TYPE_NULL:
-		debugPrintf("Null");
+		debugPrintf("Null\n");
 		break;
 	default:
 		debugPrintf("Erroneous unknown type 0x%02x (%d decimal)\n", t, t);
