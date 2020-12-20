@@ -593,6 +593,8 @@ int StarTrekEngine::leftClickEvent() {
 			return MENUEVENT_LCLICK_OFFBUTTON;
 		}
 	}
+
+	return MENUEVENT_LCLICK_OFFBUTTON;
 }
 
 int StarTrekEngine::rightClickEvent() {
