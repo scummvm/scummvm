@@ -294,7 +294,7 @@ protected:
 	void KIA_Play_Slice_Model(int sliceModelId);
 	void KIA_Play_Photograph(int photographId);
 
-	void VK_Play_Speech_Line(int actorId, int sentenceId, float duration);
+	void VK_Play_Speech_Line(int actorId, int sentenceId, float pauseDuration);
 	void VK_Add_Question(int intensity, int sentenceId, int relatedSentenceId);
 	void VK_Subject_Reacts(int intensity, int humanResponse, int replicantResponse, int anxiety);
 	void VK_Eye_Animates(int loopId);

@@ -139,7 +139,7 @@ public:
 	void handleMouseDown(int mouseX, int mouseY, bool mainButton);
 	void handleMouseUp(int mouseX, int mouseY, bool mainButton);
 
-	void playSpeechLine(int actorId, int sentenceId, float duration);
+	void playSpeechLine(int actorId, int sentenceId, float pauseDuration);
 	void addQuestion(int intensity, int sentenceId, int relatedSentenceId);
 	void subjectReacts(int intensity, int humanResponse, int replicantResponse, int anxiety);
 	void eyeAnimates(int loopId);

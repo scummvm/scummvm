@@ -102,7 +102,12 @@ bool SceneScriptDR05::ClickedOnItem(int itemId, bool a2) {
 		) {
 			if (!Actor_Query_Goal_Number(kActorMoraji)) {
 				Actor_Says_With_Pause(kActorMcCoy, 1015, 0.1f, 12);
+#if BLADERUNNER_ORIGINAL_BUGS
 				Actor_Says(kActorMoraji, 70, 13);
+#else
+				// Moraji speaks and the place blows up immediately after
+				Actor_Says_With_Pause(kActorMoraji, 70, 0.0f, 13);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			}
 			Actor_Set_Goal_Number(kActorMoraji, kGoalMorajiChooseFate);
 		}

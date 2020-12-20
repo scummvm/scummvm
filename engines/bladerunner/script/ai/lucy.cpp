@@ -889,7 +889,12 @@ void AIScriptLucy::voightKampffTest() {
 	Actor_Says(kActorLucy, 1070, 17);
 	Delay(1000);
 	Actor_Says(kActorLucy, 1080, 14);
+#if BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 6820, 16);
+#else
+	// McCoy is interrupted here
+	Actor_Says_With_Pause(kActorMcCoy, 6820, 0.0f, 16);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorLucy, 1090, 13);
 	if (!Game_Flag_Query(kFlagDirectorsCut)) {
 		Actor_Says(kActorMcCoy, 6825, 13);
@@ -898,7 +903,13 @@ void AIScriptLucy::voightKampffTest() {
 	Actor_Says(kActorLucy, 1100, 14);
 	Actor_Says(kActorMcCoy, 6835, 14);
 	Actor_Says(kActorLucy, 1110, 15);
+#if BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 6840, 13);
+#else
+	// McCoy cuts his sentence short here.
+	// He is not interrupted, but still we should use Actor_Says_With_Pause 0.0f
+	Actor_Says_With_Pause(kActorMcCoy, 6840, 0.0f, 13);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Delay(1000);
 	Actor_Says(kActorMcCoy, 6845, 12);
 	Delay(500);
@@ -938,7 +949,12 @@ void AIScriptLucy::voightKampffTest() {
 		Actor_Says(kActorLucy, 1210, 17);
 	}
 	Actor_Says(kActorMcCoy, 6895, 15);
+#if BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 6900, 11);
+#else
+	// McCoy is interrupted here
+	Actor_Says_With_Pause(kActorMcCoy, 6900, 0.0f, 11);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorLucy, 1220, 16);
 	Actor_Says(kActorMcCoy, 6905, 13);
 	Actor_Says(kActorLucy, 1230, 17);

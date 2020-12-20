@@ -445,6 +445,7 @@ void SceneScriptHF05::dialogueWithCrazylegs1() {
 		Actor_Says(kActorCrazylegs, 550, 16);
 		Actor_Says(kActorMcCoy, 1940, 15);
 		Actor_Says(kActorMcCoy, 1945, -1);
+		// CrazyLegs cuts his sentence short here. He is not interrupted. 
 		Actor_Says(kActorCrazylegs, 560, 15);
 		Actor_Says(kActorCrazylegs, 570, 16);
 		Actor_Says(kActorMcCoy, 1950, 17);
@@ -608,7 +609,12 @@ void SceneScriptHF05::talkWithDektora() {
 	Actor_Says(kActorDektora, 2660, 12);
 	Actor_Says(kActorMcCoy, 8990, kAnimationModeTalk);
 	Actor_Says(kActorDektora, 2670, 13);
+#if BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorDektora, 2680, 17);
+#else
+	// Dektora is interrupted here
+	Actor_Says_With_Pause(kActorDektora, 2680, 0.0f, 17);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 8995, 14);
 	Actor_Says(kActorDektora, 2690, 15);
 	Actor_Says_With_Pause(kActorMcCoy, 9000, 1.0f, 16);
@@ -657,6 +663,7 @@ void SceneScriptHF05::talkWithCrazylegs3(int affectionTowardsActor) {
 		Actor_Says(kActorMcCoy, 1725, kAnimationModeTalk);
 		Actor_Says(kActorCrazylegs, 40, 16);
 		Actor_Says(kActorCrazylegs, 50, kAnimationModeTalk);
+		// CrazyLegs cuts his sentence short here. He is not interrupted. 
 		Actor_Says(kActorCrazylegs, 60, 12);
 		Actor_Says(kActorCrazylegs, 70, 13);
 		Actor_Says(kActorMcCoy, 1730, kAnimationModeTalk);
@@ -697,6 +704,7 @@ void SceneScriptHF05::talkWithCrazyLegs1() {
 		ADQ_Flush();
 		ADQ_Add(kActorCrazylegs, 130, 18);
 		ADQ_Add(kActorCrazylegs, 140, 18);
+		// CrazyLegs cuts his sentence short here. He is not interrupted. 
 		ADQ_Add(kActorCrazylegs, 150, 18);
 		ADQ_Add(kActorCrazylegs, 160, 17);
 	}

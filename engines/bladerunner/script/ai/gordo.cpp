@@ -1894,7 +1894,12 @@ void AIScriptGordo::dialogue1() {
 		Actor_Says(kActorGordo, 500, 13);
 		Actor_Says(kActorMcCoy, 3290, 16);
 		Actor_Says(kActorGordo, 510, 15);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 3295, 14);
+#else
+		// McCoy is kind of interrupted here
+		Actor_Says_With_Pause(kActorMcCoy, 3295, 0.0f, 14);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorGordo, 520, 12);
 		Actor_Modify_Friendliness_To_Other(kActorGordo, kActorMcCoy, -4);
 		break;
@@ -1908,7 +1913,12 @@ void AIScriptGordo::dialogue1() {
 		Actor_Says(kActorGordo, 500, 13);
 		Actor_Says(kActorMcCoy, 3290, 16);
 		Actor_Says(kActorGordo, 510, 15);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 3295, 14);
+#else
+		// McCoy is kind of interrupted here
+		Actor_Says_With_Pause(kActorMcCoy, 3295, 0.0f, 14);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorGordo, 520, 12);
 		Actor_Modify_Friendliness_To_Other(kActorGordo, kActorMcCoy, -1);
 		break;

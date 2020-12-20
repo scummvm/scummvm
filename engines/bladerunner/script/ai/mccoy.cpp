@@ -510,7 +510,12 @@ bool AIScriptMcCoy::GoalChanged(int currentGoalNumber, int newGoalNumber) {
 		Actor_Says(kActorMcCoy, 6685, 13);
 		Delay(500);
 		Actor_Says(kActorMcCoy, 6695, 16);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 6700, 17);
+#else
+		// McCoy is interrupted here
+		Actor_Says_With_Pause(kActorMcCoy, 6700, 0.0f, 17);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorGuzza, 1480, kAnimationModeTalk);
 		Actor_Says(kActorMcCoy, 6705, 11);
 		Sound_Play(kSfxSPNBEEP9, 50, 0, 0, 50);

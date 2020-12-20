@@ -124,7 +124,12 @@ void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatM
 			Actor_Says(kActorMcCoy, 4770, -1);
 			Actor_Says(kActorRunciter, 590, 13);
 			Actor_Says(kActorMcCoy, 4775, -1);
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorRunciter, 600, 17);
+#else
+			// Runciter is interrupted here
+			Actor_Says_With_Pause(kActorRunciter, 600, 0.0f, 17);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Sound_Play(kSfxSHOTCOK1, 100, 0, 100, 50);
 			Actor_Says(kActorMcCoy, 4780, -1);
 			Actor_Says(kActorRunciter, 610, 18);
@@ -138,19 +143,34 @@ void AIScriptRunciter::OtherAgentEnteredCombatMode(int otherActorId, int combatM
 				Actor_Says(kActorRunciter, 660, 19);
 				Actor_Clue_Acquire(kActorMcCoy, kClueRuncitersConfession1, true, kActorRunciter);
 			} else {
+#if BLADERUNNER_ORIGINAL_BUGS
 				Actor_Says(kActorRunciter, 670, 18);
+#else
+				// Runciter is interrupted here
+				Actor_Says_With_Pause(kActorRunciter, 670, 0.0f, 18);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 				Actor_Says(kActorMcCoy, 4795, -1);
 				Actor_Says(kActorRunciter, 730, 17);
 			}
 		} else if (Actor_Clue_Query(kActorMcCoy, kClueEnvelope)) {
 			Actor_Says(kActorMcCoy, 4730, -1);
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorRunciter, 480, 17);
+#else
+			// Runciter is kind of interrupted here
+			Actor_Says_With_Pause(kActorRunciter, 480, 0.0f, 17);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorMcCoy, 4735, -1);
 			Actor_Says(kActorRunciter, 490, 16);
 			Sound_Play(kSfxSHOTCOK1, 100, 0, 100, 50);
 			Actor_Says(kActorMcCoy, 4740, -1);
 			Actor_Says(kActorRunciter, 500, 18);
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorRunciter, 510, 19);
+#else
+			// Runciter is kind of interrupted here
+			Actor_Says_With_Pause(kActorRunciter, 510, 0.0f, 19);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorMcCoy, 4745, -1);
 			Actor_Says(kActorMcCoy, 4750, -1);
 			Actor_Says(kActorRunciter, 520, 17);
