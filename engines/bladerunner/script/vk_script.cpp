@@ -685,6 +685,8 @@ void VKScript::askLucy(int questionId) {
 		VK_Play_Speech_Line(kActorLucy, 1410, 0.5f);
 		break;
 	case 7430:                          // Low 07
+		// Lucy cuts her sentence short here.
+		// She is not interrupted.
 		VK_Play_Speech_Line(kActorLucy, 1420, 0.5f);
 		if (Game_Flag_Query(kFlagLucyIsReplicant)) {
 			VK_Subject_Reacts(20, -1, 9, -3);
@@ -705,6 +707,8 @@ void VKScript::askLucy(int questionId) {
 		}
 		break;
 	case 7440:                          // Low 09
+		// Lucy cuts her sentence short here.
+		// She is not interrupted.
 		VK_Play_Speech_Line(kActorLucy, 1460, 0.5f);
 		if (Game_Flag_Query(kFlagLucyIsReplicant)) {
 			VK_Subject_Reacts(40, 5, 10, 2);
@@ -723,7 +727,12 @@ void VKScript::askLucy(int questionId) {
 		} else {
 			VK_Subject_Reacts(30, 9, -1, -2);
 			VK_Play_Speech_Line(kActorLucy, 1510, 0.5f);
+#if BLADERUNNER_ORIGINAL_BUGS
 			VK_Play_Speech_Line(kActorMcCoy, 7945, 0.5f);
+#else
+			// McCoy is interrupted here
+			VK_Play_Speech_Line(kActorMcCoy, 7945, 0.0f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			VK_Play_Speech_Line(kActorLucy, 1520, 0.5f);
 		}
 		break;
@@ -917,7 +926,12 @@ void VKScript::askLucy(int questionId) {
 		break;
 	case 7585:                          // Medium 13
 		VK_Play_Speech_Line(kActorLucy, 1950, 0.5f);
+#if BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 8030, 0.5f);
+#else
+		// McCoy is interrupted here
+		VK_Play_Speech_Line(kActorMcCoy, 8030, 0.0f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorLucy, 1960, 0.5f);
 		VK_Play_Speech_Line(kActorMcCoy, 8035, 0.5f);
 		VK_Eye_Animates(3);
@@ -954,7 +968,12 @@ void VKScript::askLucy(int questionId) {
 		}
 		VK_Eye_Animates(3);
 		VK_Play_Speech_Line(kActorLucy, 2050, 0.5f);
+#if BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 8050, 0.5f);
+#else
+		// McCoy is interrupted here
+		VK_Play_Speech_Line(kActorMcCoy, 8050, 0.0f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		VK_Subject_Reacts(90, 0, 0, 0);
 		VK_Play_Speech_Line(kActorLucy, 2060, 0.5f);
 		break;
@@ -974,7 +993,12 @@ void VKScript::askLucy(int questionId) {
 			VK_Subject_Reacts(70, 9, -1, 10);
 		}
 		VK_Play_Speech_Line(kActorLucy, 2090, 0.5f);
+#if BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 8055, 0.5f);
+#else
+		// McCoy is interrupted here
+		VK_Play_Speech_Line(kActorMcCoy, 8055, 0.0f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		VK_Eye_Animates(2);
 		VK_Play_Speech_Line(kActorLucy, 2100, 0.5f);
 		break;
@@ -1077,7 +1101,12 @@ void VKScript::askLucy(int questionId) {
 			VK_Subject_Reacts(80, 12, -3, 18);
 		}
 		VK_Play_Speech_Line(kActorLucy, 2330, 0.5f);
+#if BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 8095, 0.5f);
+#else
+		// McCoy is interrupted here
+		VK_Play_Speech_Line(kActorMcCoy, 8095, 0.0f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorLucy, 2340, 0.5f);
 		break;
 	case 7770:                          // High 10
@@ -1159,7 +1188,12 @@ void VKScript::askGrigorian(int questionId) {
 		VK_Eye_Animates(2);
 		VK_Subject_Reacts(45, 8, 7, 15);
 		VK_Play_Speech_Line(kActorGrigorian, 600, 0.5f);
+#if BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 8130, 0.5f);
+#else
+		// McCoy is interrupted here
+		VK_Play_Speech_Line(kActorMcCoy, 8130, 0.0f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		VK_Eye_Animates(2);
 		VK_Play_Speech_Line(kActorGrigorian, 610, 0.5f);
 		VK_Play_Speech_Line(kActorMcCoy, 8135, 0.5f);
@@ -1230,7 +1264,12 @@ void VKScript::askGrigorian(int questionId) {
 		VK_Play_Speech_Line(kActorMcCoy, 8150, 0.5f);
 		VK_Play_Speech_Line(kActorMcCoy, 8155, 0.5f);
 		VK_Subject_Reacts(30, 9, -5, 12);
+#if BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorGrigorian, 810, 0.5f);
+#else
+		// Grigorian is interrupted here
+		VK_Play_Speech_Line(kActorGrigorian, 810, 0.0f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 8160, 0.5f);
 		break;
 	case 7525:                          // Medium 07
@@ -1341,7 +1380,12 @@ void VKScript::askGrigorian(int questionId) {
 		VK_Play_Speech_Line(kActorMcCoy, 7735, 0.5f);
 		VK_Subject_Reacts(60, 14, 3, 20);
 		VK_Play_Speech_Line(kActorGrigorian, 1080, 0.5f);
+#if BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 8195, 0.5f);
+#else
+		// McCoy is interrupted here
+		VK_Play_Speech_Line(kActorMcCoy, 8195, 0.0f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		VK_Eye_Animates(3);
 		VK_Play_Speech_Line(kActorGrigorian, 1090, 0.5f);
 		VK_Play_Speech_Line(kActorMcCoy, 8200, 0.5f);
@@ -1683,11 +1727,22 @@ void VKScript::askDektora(int questionId) {
 			if (_vm->_cutContent) {
 				VK_Play_Speech_Line(kActorDektora, 2400, 0.5f); // D: You want to kidnap me, don't you.
 			}
+#if BLADERUNNER_ORIGINAL_BUGS
 			VK_Play_Speech_Line(kActorMcCoy, 7895, 0.5f);
+#else
+			// McCoy cuts his sentence short here.
+			// He is not interrupted. Yet let's still put a pause of 0.0f for consistency
+			VK_Play_Speech_Line(kActorMcCoy, 7895, 0.0f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		} else {
 			VK_Subject_Reacts(80, 18, -3, 10);
 			VK_Play_Speech_Line(kActorDektora, 2410, 0.5f);
+#if BLADERUNNER_ORIGINAL_BUGS
 			VK_Play_Speech_Line(kActorMcCoy, 8534, 0.5f);
+#else
+			// McCoy is interrupted here
+			VK_Play_Speech_Line(kActorMcCoy, 8534, 0.0f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			VK_Play_Speech_Line(kActorDektora, 2430, 0.5f);
 		}
 		break;
@@ -1791,7 +1846,12 @@ void VKScript::askRunciter(int questionId) {
 			break;
 		case 7410:                          // Low 03
 			VK_Subject_Reacts(25, 8, 12, 0);
+#if BLADERUNNER_ORIGINAL_BUGS
 			VK_Play_Speech_Line(kActorRunciter, 940, 0.5f); // R: Capture it
+#else
+			// Runciter is interrupted here
+			VK_Play_Speech_Line(kActorRunciter, 940, 0.0f); // R: Capture it
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			VK_Play_Speech_Line(kActorMcCoy, 8340, 0.5f);
 			VK_Subject_Reacts(11, 8, 8, 0);
 			VK_Play_Speech_Line(kActorRunciter, 950, 0.5f); // R: Oh I do that first
@@ -1962,7 +2022,12 @@ void VKScript::askRunciter(int questionId) {
 		case 7620:                          // High 02
 			VK_Subject_Reacts(9, 5, 7, 0);
 			VK_Play_Speech_Line(kActorRunciter, 1370, 0.5f); // R: What do you expect me to say?
-			VK_Play_Speech_Line(kActorMcCoy, 8390, 0.5f);    // M: You don't have to say anything
+#if BLADERUNNER_ORIGINAL_BUGS
+			VK_Play_Speech_Line(kActorMcCoy, 8390, 0.5f);  // M: You don't have to say anything
+#else
+			// McCoy is interrupted here
+			VK_Play_Speech_Line(kActorMcCoy, 8390, 0.0f);  // M: You don't have to say anything
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			VK_Subject_Reacts(15, 6, 4, 2);
 			VK_Play_Speech_Line(kActorRunciter, 1380, 0.5f); // R: I understand how it works
 			break;
@@ -2008,7 +2073,12 @@ void VKScript::askRunciter(int questionId) {
 			VK_Play_Speech_Line(kActorMcCoy, 7735, 0.5f);
 			VK_Subject_Reacts(50, 15, 6, 4);
 			VK_Play_Speech_Line(kActorRunciter, 1490, 0.5f); // R: You're disgusting
-			VK_Play_Speech_Line(kActorMcCoy, 8410, 0.5f);    // M: Hey I didn't
+#if BLADERUNNER_ORIGINAL_BUGS
+			VK_Play_Speech_Line(kActorMcCoy, 8410, 0.5f);  // M: Hey I didn't
+#else
+			// McCoy is interrupted here
+			VK_Play_Speech_Line(kActorMcCoy, 8410, 0.0f);  // M: Hey I didn't
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			VK_Play_Speech_Line(kActorRunciter, 1500, 0.5f); // R: I've always loved animals...
 			VK_Play_Speech_Line(kActorMcCoy, 8415, 0.5f);    // M: No one is saying otherwise...
 			VK_Subject_Reacts(60, 18, -3, 1);

@@ -1801,8 +1801,8 @@ void ScriptBase::ESPER_Define_Special_Region(int regionId, int innerLeft, int in
 	_vm->_esper->defineRegion(regionId, Common::Rect(innerLeft, innerTop, innerRight, innerBottom), Common::Rect(outerLeft, outerTop, outerRight, outerBottom), Common::Rect(selectionLeft, selectionTop, selectionRight, selectionBottom), name);
 }
 
-void ScriptBase::VK_Play_Speech_Line(int actorId, int sentenceId, float duration) {
-	_vm->_vk->playSpeechLine(actorId, sentenceId, duration);
+void ScriptBase::VK_Play_Speech_Line(int actorId, int sentenceId, float pauseDuration) {
+	_vm->_vk->playSpeechLine(actorId, sentenceId, pauseDuration);
 }
 
 void ScriptBase::VK_Add_Question(int intensity, int sentenceId, int relatedSentenceId) {

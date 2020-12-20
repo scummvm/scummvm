@@ -449,7 +449,12 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 			Actor_Face_Actor(kActorCrazylegs, kActorGrigorian, true);
 			Actor_Says(kActorCrazylegs, 1010, kAnimationModeTalk);
 			Actor_Face_Actor(kActorGrigorian, kActorCrazylegs, true);
+#if BLADERUNNER_ORIGINAL_BUGS
 			Actor_Says(kActorGrigorian, 310, 16);
+#else
+			// Grigorian is interrupted here
+			Actor_Says_With_Pause(kActorGrigorian, 310, 0.0f, 16);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 			Actor_Face_Actor(kActorMcCoy, kActorCrazylegs, true);
 			Actor_Says(kActorMcCoy, 4345, 14);
 			Actor_Face_Actor(kActorCrazylegs, kActorMcCoy, true);
@@ -518,7 +523,12 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 		Actor_Says(kActorMcCoy, 4265, 14);
 		Actor_Says(kActorGrigorian, 400, 13);
 		Actor_Says(kActorMcCoy, 4400, 13);
+#if BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorGrigorian, 410, 16);
+#else
+		// Grigorian is interrupted here, so pause has to be 0.0f
+		Actor_Says_With_Pause(kActorGrigorian, 410, 0.0f, 16);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		Actor_Says(kActorMcCoy, 4405, 14);
 		Actor_Says(kActorMcCoy, 4410, 15);
 		Voight_Kampff_Activate(kActorGrigorian, 20);
