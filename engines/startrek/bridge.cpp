@@ -381,10 +381,10 @@ struct CrewTextsForChapter {
 };
 
 CrewTextsForChapter crewTexts[] = {
-    { kPlanetPollux,     kBridgeTalkerSpock, 10, 20, 21, 22 },
-	{ kPlanetPollux,     kBridgeTalkerUhura,  9, 16, 19, 19 },
+	{ kPlanetPollux,     kBridgeTalkerSpock, 10, 20, 21, 22 },
+	{ kPlanetPollux,     kBridgeTalkerUhura,  9, 16, 19, 19},
 	{ kPlanetBetaMyamid, kBridgeTalkerSpock, 13,  5, 17, 27 },
-    { kPlanetBetaMyamid, kBridgeTalkerUhura, 12,  4, 16, -1 },
+	{ kPlanetBetaMyamid, kBridgeTalkerUhura, 12,  4, 16, -1 },
 	// TODO: The rest
 	{ kPlanetNone,       kBridgeTalkerNone,   0,  0,  0,  0 }
 };
