@@ -312,7 +312,7 @@ public:
 	int loadActorAnimWithRoomScaling(int actorIndex, const Common::String &animName, int16 x, int16 y);
 	Fixed8 getActorScaleAtPosition(int16 y);
 	void addAction(const Action &action);
-	void addAction(char type, byte b1, byte b2, byte b3);
+	void addAction(int8 type, byte b1, byte b2, byte b3);
 	void handleAwayMissionAction();
 
 	void checkTouchedLoadingZone(int16 x, int16 y);
