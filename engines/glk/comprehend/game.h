@@ -43,7 +43,7 @@ struct GameStrings;
 struct Sentence;
 
 struct Sentence {
-	Word _words[4];
+	Word _words[20];
 	size_t _nr_words;
 	byte _formattedWords[6];
 	byte _specialOpcodeVal2;
