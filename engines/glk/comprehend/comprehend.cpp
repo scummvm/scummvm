@@ -116,9 +116,9 @@ void Comprehend::createGame() {
 		_game = new OOToposGame();
 	else if (_gameDescription._gameId == "talisman")
 		_game = new TalismanGame();
-	else if (_gameDescription._gameId == "transylvania" && _gameDescription._filename.equalsIgnoreCase("tr.gda"))
+	else if (_gameDescription._gameId == "transylvania")
 		_game = new TransylvaniaGame1();
-	else if (_gameDescription._gameId == "transylvania" && _gameDescription._filename.equalsIgnoreCase("g0"))
+	else if (_gameDescription._gameId == "transylvaniav2")
 		_game = new TransylvaniaGame2();
 	else
 		error("Unknown game");
