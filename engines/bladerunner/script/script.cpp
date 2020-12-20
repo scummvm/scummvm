@@ -844,6 +844,13 @@ void ScriptBase::Item_Add_To_World(int itemId, int animationId, int setId, float
 	_vm->_items->addToWorld(itemId, animationId, setId, Vector3(x, y, z), facing, height, width, isTargetable, isObstacle, isPoliceMazeEnemy, updateOnly == 0);
 }
 
+#if !BLADERUNNER_ORIGINAL_BUGS
+void ScriptBase::Item_Remove_From_Current_Scene(int itemId) {
+	debugC(kDebugScript, "Item_Remove_From_Current_Scene(%d)", itemId);
+	_vm->_items->removeFromCurrentSceneOnly(itemId);
+}
+#endif // !BLADERUNNER_ORIGINAL_BUGS
+
 void ScriptBase::Item_Remove_From_World(int itemId) {
 	debugC(kDebugScript, "Item_Remove_From_World(%d)", itemId);
 	_vm->_items->remove(itemId);
