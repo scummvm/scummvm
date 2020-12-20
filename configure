@@ -2638,7 +2638,7 @@ case $_host_cpu in
 			openpandora)
 				define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 				;;
-			androidsdl-armeabi | arm-*riscos | caanoo | ds | gp2x | gp2xwiz | maemo )
+			androidsdl-armeabi | arm-*riscos | caanoo | gp2x | gp2xwiz | maemo )
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
 				# FIXME: The following feature exhibits a bug. It produces distorted
 				# sound since 9003ce517ff9906b0288f9f7c02197fd091d4554. The ARM
