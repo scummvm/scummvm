@@ -281,7 +281,11 @@ void VKScript::SCRIPT_VK_DLL_McCoy_Asks_Question(int actorId, int questionId) {
 		break;
 	case 7495:                          // Medium 05
 		VK_Play_Speech_Line(kActorMcCoy, 7495, 0.5f);
+#if BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 7500, 0.5f);
+#else
+		VK_Play_Speech_Line(kActorMcCoy, 7500, 0.1f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 7505, 0.5f);
 		VK_Play_Speech_Line(kActorMcCoy, 7510, 0.5f);
 		break;
@@ -363,7 +367,11 @@ void VKScript::SCRIPT_VK_DLL_McCoy_Asks_Question(int actorId, int questionId) {
 		break;
 	case 7605:                          // High 01
 		VK_Play_Speech_Line(kActorMcCoy, 7605, 0.5f);
+#if BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 7610, 0.5f);
+#else
+		VK_Play_Speech_Line(kActorMcCoy, 7610, 0.1f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 7615, 0.5f);
 		break;
 	case 7620:                          // High 02
@@ -388,13 +396,21 @@ void VKScript::SCRIPT_VK_DLL_McCoy_Asks_Question(int actorId, int questionId) {
 					&& actorId != kActorRunciter
 				) {
 					VK_Play_Speech_Line(kActorMcCoy, 7655, 0.5f);
+#if BLADERUNNER_ORIGINAL_BUGS
 					VK_Play_Speech_Line(kActorMcCoy, 7660, 0.5f);
+#else
+					VK_Play_Speech_Line(kActorMcCoy, 7660, 0.2f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 					VK_Play_Speech_Line(kActorMcCoy, 7665, 0.5f);
 				}
 			} else {
 				if (actorId != kActorLucy) {
 					VK_Play_Speech_Line(kActorMcCoy, 7655, 0.5f);
+#if BLADERUNNER_ORIGINAL_BUGS
 					VK_Play_Speech_Line(kActorMcCoy, 7660, 0.5f);
+#else
+					VK_Play_Speech_Line(kActorMcCoy, 7660, 0.2f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 					VK_Play_Speech_Line(kActorMcCoy, 7665, 0.5f);
 				}
 			}
@@ -405,7 +421,11 @@ void VKScript::SCRIPT_VK_DLL_McCoy_Asks_Question(int actorId, int questionId) {
 		VK_Play_Speech_Line(kActorMcCoy, 7675, 0.5f);
 		break;
 	case 7680:                          // High 05
+#if BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 7680, 0.5f);
+#else
+		VK_Play_Speech_Line(kActorMcCoy, 7680, 0.1f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 7685, 0.5f);
 		break;
 	case 7690:                          // High 06
@@ -416,7 +436,11 @@ void VKScript::SCRIPT_VK_DLL_McCoy_Asks_Question(int actorId, int questionId) {
 		}
 		break;
 	case 7705:                          // High 07
+#if BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 7705, 0.5f);
+#else
+		VK_Play_Speech_Line(kActorMcCoy, 7705, 0.1f);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 		VK_Play_Speech_Line(kActorMcCoy, 7710, 0.5f);
 		VK_Play_Speech_Line(kActorMcCoy, 7715, 0.5f);
 		if (_vm->_cutContent) {
