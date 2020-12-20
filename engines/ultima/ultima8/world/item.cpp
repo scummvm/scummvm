@@ -1216,7 +1216,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		// is clean for both Item and Actor.
 		const Actor *thisactor = dynamic_cast<Actor *>(this);
 		if (thisactor) {
-			// TODO: Get damage for active inventory item, and do something with
+			// TODO: Get damage for active inventory item, and dirmode of last
 			// animation here (lines 185~208 of disasm)
 		}
 
@@ -1225,6 +1225,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 			if (this != getControlledActor()) {
 				target = getControlledActor();
 			} else {
+				// TODO: this should be dirmode of last animation (above)
 				target = currentmap->findBestTargetItem(ix, iy, dir, dirmode_8dirs);
 			}
 		}
@@ -1263,6 +1264,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		// handle differently.
 
 		int numshots = firetypedat->getNumShots();
+		uint16 spriteprocpid = 0;
 		for (int i = 0; i < numshots; i++) {
 			SuperSpriteProcess *ssp;
 			CrosshairProcess *chp = CrosshairProcess::get_instance();
@@ -1292,10 +1294,10 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 										 ix, iy, iz, ssx, ssy, ssz, firetype,
 										 damage, _objId, targetid, someflag);
 			Kernel::get_instance()->addProcess(ssp);
+			spriteprocpid = ssp->getPid();
 		}
+		return spriteprocpid;
 	}
-
-	return 0;
 }
 
 uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, int16 zoff) {
