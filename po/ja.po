@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-16 05:05+0000\n"
-"PO-Revision-Date: 2020-12-16 17:29+0000\n"
+"PO-Revision-Date: 2020-12-20 22:00+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.3.2\n"
+"X-Generator: Weblate 4.4\n"
 "X-Language-name: Japanese\n"
 
 #: gui/about.cpp:102
@@ -2260,6 +2260,9 @@ msgid ""
 "Please report the following data to the ScummVM team at %s along with the "
 "name of the game you tried to add and its version, language, etc.:"
 msgstr ""
+"このゲームは'%s'の未知のバージョンである可能性があります。\n"
+"\n"
+"ゲーム名(%s)、バージョン、言語等の情報をScummVMチームまでお寄せください。"
 
 #: engines/game.cpp:175
 #, c-format
@@ -2268,7 +2271,7 @@ msgstr ""
 
 #: engines/metaengine.cpp:55
 msgid "Default game keymap"
-msgstr ""
+msgstr "キーマッピング(デフォルト)"
 
 #: engines/metaengine.cpp:59 backends/platform/maemo/maemo.cpp:162
 #: backends/platform/symbian/src/SymbianActions.cpp:44
@@ -2431,12 +2434,12 @@ msgstr "Creative Music System エミュレーター"
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
-msgstr ""
+msgstr "FluidSynthを使う場合、SoundFontの設定が必要です。ScummVMのMIDIタブで指定してください。音声はオフになります。"
 
 #: audio/softsynth/fluidsynth.cpp:279
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
-msgstr ""
+msgstr "FluidSynth：カスタムSoundFont'%s'のロードに失敗しました。音声はオフになります。"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
@@ -4064,23 +4067,23 @@ msgstr ""
 
 #: engines/bladerunner/detection.cpp:66
 msgid "Frame limiter high performance mode"
-msgstr ""
+msgstr "高パフォーマンスモードでのフレーム上限"
 
 #: engines/bladerunner/detection.cpp:67
 msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
-msgstr ""
+msgstr "このモードはCPUに高い負荷が生じます! delayMillis関数の使用を控えてください。"
 
 #: engines/bladerunner/detection.cpp:75
 msgid "Max frames per second limit"
-msgstr ""
+msgstr "fpsの上限"
 
 #: engines/bladerunner/detection.cpp:76
 msgid ""
 "This mode targets a maximum of 120 fps. When disabled, the game targets 60 "
 "fps"
-msgstr ""
+msgstr "このモードでは最大120fpsで動作します。無効にすると、60fpsで動作します"
 
 #: engines/bladerunner/detection.cpp:84
 msgid "Disable McCoy's quick stamina drain"
@@ -5058,20 +5061,21 @@ msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
+"このバージョンはWindows体験版です。完全版をプレイする場合、Wyrmkeepからライセンスキーを購入のうえ、必要な部分を自身で翻訳してください"
 
 #: engines/lab/processroom.cpp:330
 msgid ""
 "This is the end of the trial version. You can play the full game using the "
 "original interpreter from Wyrmkeep"
-msgstr ""
+msgstr "体験版はここまでです。Wyrmkeepが提供している完全版をプレイできます"
 
 #: engines/lab/savegame.cpp:238
 msgid "Would you like to save or restore a game?"
-msgstr ""
+msgstr "ゲームをセーブまたは復元してもよろしいですか?"
 
 #: engines/lab/speciallocks.cpp:149
 msgid "This puzzle is not available in the trial version of the game"
-msgstr ""
+msgstr "このパズルを体験版でプレイする事はできません"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:106
 #: engines/sherlock/detection.cpp:111
