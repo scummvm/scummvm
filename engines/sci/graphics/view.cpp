@@ -868,11 +868,6 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 	_screen->setCurPaletteMapValue(oldpalvalue);
 }
 
-/**
- * We don't fully follow sierra sci here, I did the scaling algo myself and it
- * is definitely not pixel-perfect with the one sierra is using. It shouldn't
- * matter because the scaled cel rect is definitely the same as in sierra sci.
- */
 void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated,
 			int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY, uint16 scaleSignal) {
 	const Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
@@ -882,64 +877,21 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	const int16 celWidth = celInfo->width;
 	const byte clearKey = celInfo->clearKey;
 	const byte drawMask = priority > 15 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
-	uint16 scalingX[640];
-	uint16 scalingY[480];
-	int16 scaledWidth, scaledHeight;
-	int pixelNo, scaledPixel, scaledPixelNo, prevScaledPixelNo;
 
 	if (_embeddedPal)
 		// Merge view palette in...
 		_palette->set(&_viewPalette, false);
 
-	scaledWidth = (celInfo->width * scaleX) >> 7;
-	scaledHeight = (celInfo->height * scaleY) >> 7;
-	scaledWidth = CLIP<int16>(scaledWidth, 0, _screen->getWidth());
-	scaledHeight = CLIP<int16>(scaledHeight, 0, _screen->getHeight());
+	Common::Array<uint16> scalingX, scalingY;
+	createScalingTable(scalingX, celWidth, _screen->getWidth(), scaleX);
+	createScalingTable(scalingY, celHeight, _screen->getHeight(), scaleY);
 
-	// Do we really need to do this?!
-	//memset(scalingX, 0, sizeof(scalingX));
-	//memset(scalingY, 0, sizeof(scalingY));
-
-	// Create height scaling table
-	pixelNo = 0;
-	scaledPixel = scaledPixelNo = prevScaledPixelNo = 0;
-	while (pixelNo < celHeight) {
-		scaledPixelNo = scaledPixel >> 7;
-		assert(scaledPixelNo < ARRAYSIZE(scalingY));
-		for (; prevScaledPixelNo <= scaledPixelNo; prevScaledPixelNo++)
-			scalingY[prevScaledPixelNo] = pixelNo;
-		pixelNo++;
-		scaledPixel += scaleY;
-	}
-	pixelNo--;
-	scaledPixelNo++;
-	for (; scaledPixelNo < scaledHeight; scaledPixelNo++)
-		scalingY[scaledPixelNo] = pixelNo;
-
-	// Create width scaling table
-	pixelNo = 0;
-	scaledPixel = scaledPixelNo = prevScaledPixelNo = 0;
-	while (pixelNo < celWidth) {
-		scaledPixelNo = scaledPixel >> 7;
-		assert(scaledPixelNo < ARRAYSIZE(scalingX));
-		for (; prevScaledPixelNo <= scaledPixelNo; prevScaledPixelNo++)
-			scalingX[prevScaledPixelNo] = pixelNo;
-		pixelNo++;
-		scaledPixel += scaleX;
-	}
-	pixelNo--;
-	scaledPixelNo++;
-	for (; scaledPixelNo < scaledWidth; scaledPixelNo++)
-		scalingX[scaledPixelNo] = pixelNo;
-
-	scaledWidth = MIN(clipRect.width(), scaledWidth);
-	scaledHeight = MIN(clipRect.height(), scaledHeight);
+	int16 scaledWidth = MIN(clipRect.width(), (int16)scalingX.size());
+	int16 scaledHeight = MIN(clipRect.height(), (int16)scalingY.size());
 
 	const int16 offsetY = clipRect.top - rect.top;
 	const int16 offsetX = clipRect.left - rect.left;
 
-	assert(scaledHeight + offsetY <= ARRAYSIZE(scalingY));
-	assert(scaledWidth + offsetX <= ARRAYSIZE(scalingX));
 	const byte *bitmapData = bitmap.getUnsafeDataAt(0, celWidth * celHeight);
 	for (int y = 0; y < scaledHeight; y++) {
 		for (int x = 0; x < scaledWidth; x++) {
@@ -950,6 +902,31 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 				_screen->putPixel(x2, y2, drawMask, getMappedColor(color, scaleSignal, palette, x2, y2), priority, 0);
 			}
 		}
+	}
+}
+
+void GfxView::createScalingTable(Common::Array<uint16> &table, int16 celSize, uint16 maxSize, int16 scale) {
+	const int16 scaledSize = (celSize * scale) >> 7;
+	const int16 clippedScaledSize = CLIP<int16>(scaledSize, 0, maxSize);
+	const int16 stepCount = scaledSize - 1;
+
+	if (stepCount <= 0) {
+		table.clear();
+		return;
+	}
+
+	uint32 acc;
+	uint32 inc = ((celSize - 1) << 16) / stepCount;
+	if ((inc & 0xffff8000) == 0) {
+		acc = 0x8000;
+	} else {
+		acc = inc & 0xffff;
+	}
+
+	table.resize(clippedScaledSize);
+	for (uint16 i = 0; i < clippedScaledSize; ++i) {
+		table[i] = acc >> 16;
+		acc += inc;
 	}
 }
 
