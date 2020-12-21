@@ -20,27 +20,18 @@
  *
  */
 
-#include "twine/parser/sprite.h"
+#include "twine/parser/parser.h"
 #include "common/stream.h"
 #include "twine/shared.h"
 
 namespace TwinE {
 
-bool SpriteBoundingBoxData::loadFromStream(Common::SeekableReadStream &stream) {
-	const int32 size = stream.size();
-	const int32 amount = size / 16;
-	for (int32 i = 0; i < amount; ++i) {
-		stream.skip(4);
-		BoundingBox bbox;
-		bbox.mins.x = stream.readSint16LE();
-		bbox.maxs.x = stream.readSint16LE();
-		bbox.mins.y = stream.readSint16LE();
-		bbox.maxs.y = stream.readSint16LE();
-		bbox.mins.z = stream.readSint16LE();
-		bbox.maxs.z = stream.readSint16LE();
-		_boundingBoxes.push_back(bbox);
+bool Parser::loadFromBuffer(const uint8 *buf, uint32 size) {
+	if (size == 0) {
+		return false;
 	}
-	return !stream.err();
+	Common::MemoryReadStream stream(buf, size);
+	return loadFromStream(stream);
 }
 
 } // End of namespace TwinE

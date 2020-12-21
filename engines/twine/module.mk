@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	parser/anim.o \
 	parser/body.o \
 	parser/entity.o \
+	parser/parser.o \
 	parser/sprite.o \
 	\
 	renderer/redraw.o \

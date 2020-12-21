@@ -22,9 +22,9 @@
 
 #include "twine/resources.h"
 #include "common/util.h"
-#include "twine/scene/animations.h"
 #include "twine/audio/sound.h"
 #include "twine/renderer/screens.h"
+#include "twine/scene/animations.h"
 #include "twine/scene/scene.h"
 #include "twine/text.h"
 

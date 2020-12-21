@@ -25,6 +25,7 @@
 
 #include "common/array.h"
 #include "common/stream.h"
+#include "twine/parser/parser.h"
 #include "twine/shared.h"
 
 namespace TwinE {
@@ -44,7 +45,7 @@ struct KeyFrame {
 	Common::Array<BoneFrame> boneframes;
 };
 
-class AnimData {
+class AnimData : public Parser {
 private:
 	Common::Array<KeyFrame> _keyframes;
 
@@ -56,9 +57,7 @@ private:
 	uint16 _loopFrame;
 
 public:
-	bool loadFromStream(Common::SeekableReadStream &stream);
-
-	bool loadFromBuffer(const uint8 *buf, uint32 size);
+	bool loadFromStream(Common::SeekableReadStream &stream) override;
 
 	const KeyFrame* getKeyframe(uint index) const;
 	const Common::Array<KeyFrame>& getKeyframes() const;

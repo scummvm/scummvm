@@ -27,6 +27,7 @@
 #include "common/memstream.h"
 #include "common/stream.h"
 #include "twine/parser/anim.h"
+#include "twine/parser/parser.h"
 #include "twine/shared.h"
 
 namespace TwinE {
@@ -73,7 +74,7 @@ struct BodySphere {
 	uint16 vertex;
 };
 
-class BodyData {
+class BodyData : public Parser {
 private:
 	void loadVertices(Common::SeekableReadStream &stream);
 	void loadBones(Common::SeekableReadStream &stream);
@@ -171,9 +172,7 @@ public:
 		return &_bones[boneIdx];
 	}
 
-	bool loadFromStream(Common::SeekableReadStream &stream);
-
-	bool loadFromBuffer(const uint8 *buf, uint32 size);
+	bool loadFromStream(Common::SeekableReadStream &stream) override;
 };
 
 } // End of namespace TwinE

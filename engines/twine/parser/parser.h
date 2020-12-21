@@ -1,4 +1,4 @@
-/* ScummVM - Graphic Adventure Engine
+ /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -20,27 +20,24 @@
  *
  */
 
-#include "twine/parser/sprite.h"
+#ifndef TWINE_PARSER_H
+#define TWINE_PARSER_H
+
+#include "common/array.h"
+#include "common/memstream.h"
 #include "common/stream.h"
 #include "twine/shared.h"
 
 namespace TwinE {
 
-bool SpriteBoundingBoxData::loadFromStream(Common::SeekableReadStream &stream) {
-	const int32 size = stream.size();
-	const int32 amount = size / 16;
-	for (int32 i = 0; i < amount; ++i) {
-		stream.skip(4);
-		BoundingBox bbox;
-		bbox.mins.x = stream.readSint16LE();
-		bbox.maxs.x = stream.readSint16LE();
-		bbox.mins.y = stream.readSint16LE();
-		bbox.maxs.y = stream.readSint16LE();
-		bbox.mins.z = stream.readSint16LE();
-		bbox.maxs.z = stream.readSint16LE();
-		_boundingBoxes.push_back(bbox);
-	}
-	return !stream.err();
-}
+class Parser {
+public:
+	virtual ~Parser() {}
+	virtual bool loadFromStream(Common::SeekableReadStream &stream) = 0;
+
+	bool loadFromBuffer(const uint8 *buf, uint32 size);
+};
 
 } // End of namespace TwinE
+
+#endif
