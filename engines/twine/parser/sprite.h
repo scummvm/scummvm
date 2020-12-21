@@ -31,14 +31,23 @@
 
 namespace TwinE {
 
+struct SpriteDim {
+	int16 x = 0;
+	int16 y = 0;
+	int16 w = 0;
+	int16 h = 0;
+};
+
 class SpriteBoundingBoxData : public Parser {
 private:
 	Common::Array<BoundingBox> _boundingBoxes;
+	Common::Array<SpriteDim> _dimensions;
 
 public:
 	bool loadFromStream(Common::SeekableReadStream &stream) override;
 
 	const BoundingBox *bbox(int index) const;
+	const SpriteDim *dim(int index) const;
 };
 
 inline const BoundingBox *SpriteBoundingBoxData::bbox(int index) const {
@@ -46,6 +55,13 @@ inline const BoundingBox *SpriteBoundingBoxData::bbox(int index) const {
 		return nullptr;
 	}
 	return &_boundingBoxes[index];
+}
+
+inline const SpriteDim *SpriteBoundingBoxData::dim(int index) const {
+	if (index < 0) {
+		return nullptr;
+	}
+	return &_dimensions[index];
 }
 
 } // End of namespace TwinE

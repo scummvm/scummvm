@@ -30,15 +30,18 @@ bool SpriteBoundingBoxData::loadFromStream(Common::SeekableReadStream &stream) {
 	const int32 size = stream.size();
 	const int32 amount = size / 16;
 	for (int32 i = 0; i < amount; ++i) {
-		stream.skip(4);
-		BoundingBox bbox;
-		bbox.mins.x = stream.readSint16LE();
-		bbox.maxs.x = stream.readSint16LE();
-		bbox.mins.y = stream.readSint16LE();
-		bbox.maxs.y = stream.readSint16LE();
-		bbox.mins.z = stream.readSint16LE();
-		bbox.maxs.z = stream.readSint16LE();
-		_boundingBoxes.push_back(bbox);
+		SpriteDim spriteDim;
+		spriteDim.x = stream.readSint16LE();
+		spriteDim.y = stream.readSint16LE();
+		BoundingBox boundingBox;
+		boundingBox.mins.x = stream.readSint16LE();
+		boundingBox.maxs.x = stream.readSint16LE();
+		boundingBox.mins.y = stream.readSint16LE();
+		boundingBox.maxs.y = stream.readSint16LE();
+		boundingBox.mins.z = stream.readSint16LE();
+		boundingBox.maxs.z = stream.readSint16LE();
+		_boundingBoxes.push_back(boundingBox);
+		_dimensions.push_back(spriteDim);
 	}
 	return !stream.err();
 }

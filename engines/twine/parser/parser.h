@@ -36,6 +36,7 @@ public:
 	virtual bool loadFromStream(Common::SeekableReadStream &stream) = 0;
 
 	bool loadFromBuffer(const uint8 *buf, uint32 size);
+	bool loadFromHQR(const char *name, int index);
 };
 
 } // End of namespace TwinE
