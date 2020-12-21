@@ -276,12 +276,15 @@ private:
 	void wrongDestinationRandomEncounter();
 	void bridgeCrewAction(int crewId);
 	void contactTargetAction();
+	void negotiateWithElasiCereth();
+	void hailTheMasada();
 
 	int _targetPlanet;
 	int _currentPlanet;
 	int _currentScreenTalker;
 	bool _gameIsPaused;
 	bool _hailedTarget;
+	bool _beamDownAllowed;
 
 public:
 	void playMovie(Common::String filename);
@@ -493,26 +496,26 @@ public:
 	 */
 	void drawTextLineToBitmap(const char *text, int textLen, int x, int y, Bitmap *bitmap);
 
-	String centerTextboxHeader(String headerText);
-	void getTextboxHeader(String *headerTextOutput, String speakerText, int choiceIndex);
+	Common::String centerTextboxHeader(Common::String headerText);
+	void getTextboxHeader(Common::String *headerTextOutput, Common::String speakerText, int choiceIndex);
 	/**
 	 * Text getter for showText which reads from an rdf file.
 	 * Not really used, since it would require hardcoding text locations in RDF files.
 	 * "readTextFromArrayWithChoices" replaces this.
 	 */
-	String readTextFromRdf(int choiceIndex, uintptr data, String *headerTextOutput);
+	Common::String readTextFromRdf(int choiceIndex, uintptr data, Common::String *headerTextOutput);
 
 	/**
 	 * Shows text with the given header and main text.
 	 */
-	void showTextbox(String headerText, const String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines); // TODO: better name. (return type?)
+	void showTextbox(Common::String headerText, const Common::String &mainText, int xoffset, int yoffset, byte textColor, int maxTextLines); // TODO: better name. (return type?)
 
-	String skipTextAudioPrompt(const String &str);
+	Common::String skipTextAudioPrompt(const Common::String &str);
 	/**
 	 * Plays an audio prompt, if it exists, and returns the string starting at the end of the
 	 * prompt.
 	 */
-	String playTextAudio(const String &str);
+	Common::String playTextAudio(const Common::String &str);
 
 	/**
 	 * @param rclickCancelsChoice   If true, right-clicks return "-1" as choice instead of
@@ -523,8 +526,8 @@ public:
 	/**
 	 * Returns the number of lines this string will take up in a textbox.
 	 */
-	int getNumTextboxLines(const String &str);
-	String putTextIntoLines(const String &text);
+	int getNumTextboxLines(const Common::String &str);
+	Common::String putTextIntoLines(const Common::String &text);
 
 	/**
 	 * Creates a blank textbox in a TextBitmap, and initializes a sprite to use it.
@@ -533,21 +536,21 @@ public:
 	/**
 	 * Draws the "main" text (everything but the header at the top) to a TextBitmap.
 	 */
-	void drawMainText(TextBitmap *bitmap, int numTextLines, int numTextboxLines, const String &text, bool withHeader);
+	void drawMainText(TextBitmap *bitmap, int numTextLines, int numTextboxLines, const Common::String &text, bool withHeader);
 
-	String readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, TextBitmap *textBitmap, int numTextboxLines, int *numLines);
+	Common::String readLineFormattedText(TextGetterFunc textGetter, uintptr var, int choiceIndex, TextBitmap *textBitmap, int numTextboxLines, int *numLines);
 
 	/**
 	 * Text getter for showText which reads choices from an array of pointers.
 	 * Last element in the array must be an empty string.
 	 */
-	String readTextFromArray(int choiceIndex, uintptr data, String *headerTextOutput);
+	Common::String readTextFromArray(int choiceIndex, uintptr data, Common::String *headerTextOutput);
 	/**
 	 * Similar to above, but shows the choice index when multiple choices are present.
 	 * Effectively replaces the "readTextFromRdf" function.
 	 */
-	String readTextFromArrayWithChoices(int choiceIndex, uintptr data, String *headerTextOutput);
-	Common::String readTextFromFoundComputerTopics(int choiceIndex, uintptr data, String *headerTextOutput);
+	String readTextFromArrayWithChoices(int choiceIndex, uintptr data, Common::String *headerTextOutput);
+	Common::String readTextFromFoundComputerTopics(int choiceIndex, uintptr data, Common::String *headerTextOutput);
 
 	Common::String showCodeInputBox();
 	Common::String showComputerInputBox();
