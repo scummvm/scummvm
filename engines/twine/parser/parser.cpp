@@ -22,6 +22,7 @@
 
 #include "twine/parser/parser.h"
 #include "common/stream.h"
+#include "twine/hqr.h"
 #include "twine/shared.h"
 
 namespace TwinE {
@@ -32,6 +33,21 @@ bool Parser::loadFromBuffer(const uint8 *buf, uint32 size) {
 	}
 	Common::MemoryReadStream stream(buf, size);
 	return loadFromStream(stream);
+}
+
+bool Parser::loadFromHQR(const char *name, int index) {
+	uint8 *buf = nullptr;
+	const int32 size = HQR::getAllocEntry(&buf, name, index);
+	if (size == 0) {
+		warning("Failed to load %s with index %i", name, index);
+		return false;
+	}
+	if (!loadFromBuffer(buf, size)) {
+		free(buf);
+		return false;
+	}
+	free(buf);
+	return true;
 }
 
 } // End of namespace TwinE
