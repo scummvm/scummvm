@@ -566,6 +566,7 @@ MODULE_OBJS := \
 	ultima8/world/actors/avatar_mover_process.o \
 	ultima8/world/actors/battery_charger_process.o \
 	ultima8/world/actors/clear_feign_death_process.o \
+	ultima8/world/actors/cru_avatar_mover_process.o \
 	ultima8/world/actors/cru_healer_process.o \
 	ultima8/world/actors/combat_dat.o \
 	ultima8/world/actors/combat_process.o \
@@ -583,7 +584,8 @@ MODULE_OBJS := \
 	ultima8/world/actors/scheduler_process.o \
 	ultima8/world/actors/surrender_process.o \
 	ultima8/world/actors/targeted_anim_process.o \
-	ultima8/world/actors/teleport_to_egg_process.o
+	ultima8/world/actors/teleport_to_egg_process.o \
+	ultima8/world/actors/u8_avatar_mover_process.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ULTIMA), DYNAMIC_PLUGIN)
