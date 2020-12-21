@@ -36,45 +36,45 @@
 #include "engines/util.h"
 #include "graphics/colormasks.h"
 #include "graphics/cursorman.h"
-#include "graphics/fontman.h"
 #include "graphics/font.h"
+#include "graphics/fontman.h"
 #include "graphics/managed_surface.h"
 #include "graphics/palette.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "gui/debugger.h"
-#include "twine/actor.h"
-#include "twine/animations.h"
-#include "twine/collision.h"
-#include "twine/console.h"
-#include "twine/debug.h"
-#include "twine/debug_grid.h"
-#include "twine/debug_scene.h"
-#include "twine/extra.h"
+#include "twine/scene/actor.h"
+#include "twine/scene/animations.h"
+#include "twine/audio/music.h"
+#include "twine/audio/sound.h"
+#include "twine/scene/collision.h"
+#include "twine/debugger/console.h"
+#include "twine/debugger/debug.h"
+#include "twine/debugger/debug_grid.h"
+#include "twine/debugger/debug_scene.h"
+#include "twine/scene/extra.h"
 #include "twine/flamovies.h"
-#include "twine/gamestate.h"
-#include "twine/grid.h"
+#include "twine/scene/gamestate.h"
+#include "twine/scene/grid.h"
 #include "twine/holomap.h"
 #include "twine/hqr.h"
 #include "twine/input.h"
-#include "twine/interface.h"
-#include "twine/menu.h"
-#include "twine/menuoptions.h"
-#include "twine/movements.h"
-#include "twine/music.h"
-#include "twine/redraw.h"
-#include "twine/renderer.h"
+#include "twine/menu/interface.h"
+#include "twine/menu/menu.h"
+#include "twine/menu/menuoptions.h"
+#include "twine/scene/movements.h"
+#include "twine/renderer/redraw.h"
+#include "twine/renderer/renderer.h"
+#include "twine/renderer/screens.h"
 #include "twine/resources.h"
-#include "twine/scene.h"
-#include "twine/screens.h"
-#include "twine/script_life_v1.h"
-#include "twine/script_move_v1.h"
-#include "twine/sound.h"
+#include "twine/scene/scene.h"
+#include "twine/script/script_life_v1.h"
+#include "twine/script/script_move_v1.h"
 #include "twine/text.h"
 
 namespace TwinE {
 
-ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine* engine) : _engine(engine) {
+ScopedEngineFreeze::ScopedEngineFreeze(TwinEEngine *engine) : _engine(engine) {
 	_engine->freezeTime();
 }
 
@@ -82,7 +82,7 @@ ScopedEngineFreeze::~ScopedEngineFreeze() {
 	_engine->unfreezeTime();
 }
 
-ScopedCursor::ScopedCursor(TwinEEngine* engine) : _engine(engine) {
+ScopedCursor::ScopedCursor(TwinEEngine *engine) : _engine(engine) {
 	_engine->pushMouseCursorVisible();
 }
 

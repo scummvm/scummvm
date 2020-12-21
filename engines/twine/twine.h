@@ -32,7 +32,7 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 #include "metaengine.h"
-#include "twine/actor.h"
+#include "twine/scene/actor.h"
 #include "twine/input.h"
 #include "twine/detection.h"
 
