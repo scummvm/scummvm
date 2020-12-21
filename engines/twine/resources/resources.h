@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "twine/parser/sprite.h"
 #include "twine/scene/gamestate.h"
-#include "twine/hqr.h"
+#include "twine/resources/hqr.h"
 
 namespace TwinE {
 

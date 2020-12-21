@@ -35,14 +35,15 @@ MODULE_OBJS := \
 	script/script_life_v1.o \
 	script/script_move_v1.o \
 	\
+	resources/hqr.o \
+	resources/lzss.o \
+	resources/resources.o \
+	\
 	detection.o \
 	flamovies.o \
 	holomap.o \
-	hqr.o \
 	input.o \
-	lzss.o \
 	metaengine.o \
-	resources.o \
 	text.o \
 	twine.o
 

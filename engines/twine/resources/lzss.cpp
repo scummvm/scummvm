@@ -21,8 +21,7 @@
  */
 
 #include "common/textconsole.h"
-
-#include "engines/twine/lzss.h"
+#include "twine/resources/lzss.h"
 
 namespace TwinE {
 

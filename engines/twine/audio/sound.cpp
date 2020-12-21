@@ -30,9 +30,9 @@
 #include "twine/scene/collision.h"
 #include "twine/flamovies.h"
 #include "twine/scene/grid.h"
-#include "twine/hqr.h"
+#include "twine/resources/hqr.h"
 #include "twine/scene/movements.h"
-#include "twine/resources.h"
+#include "twine/resources/resources.h"
 #include "twine/text.h"
 #include "twine/twine.h"
 

@@ -27,8 +27,8 @@
 #include "common/debug.h"
 #include "common/system.h"
 #include "common/textconsole.h"
-#include "twine/hqr.h"
-#include "twine/resources.h"
+#include "twine/resources/hqr.h"
+#include "twine/resources/resources.h"
 #include "twine/twine.h"
 
 namespace TwinE {

@@ -20,8 +20,8 @@
  *
  */
 
-#include "twine/hqr.h"
-#include "twine/lzss.h"
+#include "twine/resources/hqr.h"
+#include "twine/resources/lzss.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"

@@ -22,7 +22,7 @@
 
 #include "twine/parser/parser.h"
 #include "common/stream.h"
-#include "twine/hqr.h"
+#include "twine/resources/hqr.h"
 #include "twine/shared.h"
 
 namespace TwinE {
