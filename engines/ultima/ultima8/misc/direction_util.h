@@ -37,7 +37,7 @@ namespace Ultima8 {
 inline int Direction_XFactor(Direction dir) {
 	static const int _x_fact[] = {  0, +1, +1, +1,  0, -1, -1, -1 };
 	//static const int _x_fact16[] = {  0, +1, +2, +2, +2, +2, +2, +1, 0, -1, -2, -2, -2, -2, -2, -1 };
-	// TODO: AnimPrimativeProcess uses the below table.. what's the other table for?
+	// TODO: AnimPrimitiveProcess uses the below table.. what's the other table for?
 	// (same for y)
 	static const int _x_fact16[] = {  0, +1, +1, +2, +1, +2, +1, +1, 0, -1, -1, -2, -1, -2, -1, -1 };
 

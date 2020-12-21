@@ -20,42 +20,49 @@
  *
  */
 
-#include "ultima/ultima8/misc/pent_include.h"
+#ifndef WORLD_ACTORS_U8AVATARMOVERPROCESS_H
+#define WORLD_ACTORS_U8AVATARMOVERPROCESS_H
+
+#include "ultima/ultima8/kernel/process.h"
 #include "ultima/ultima8/world/actors/animation.h"
+#include "ultima/ultima8/world/actors/avatar_mover_process.h"
 
 namespace Ultima {
 namespace Ultima8 {
-namespace Animation {
 
-bool isCombatAnim(const Sequence anim) {
-	switch (anim) {
-	case combatStand:
-	case readyWeapon:
-	case advance:
-	case retreat:
-	case attack:
-	case kick:
-	case startBlock:
-	case stopBlock:
-	case fire2:
-		return true;
-	default:
-		return false;
-	}
-}
+/**
+ * Mover process that replicates the feel of U8 - moving, combat, jumps, etc.
+ * Tries turning one quarter turn if movement is blocked.  Running temporarily
+ * stops combat and plays some special movement.
+ */
+class U8AvatarMoverProcess : public AvatarMoverProcess {
+public:
+	U8AvatarMoverProcess();
+	~U8AvatarMoverProcess();
 
-/** determines if we need to ready or unready our weapon */
-Sequence checkWeapon(const Sequence nextanim,
-                     const Sequence lastanim) {
-	Sequence anim = nextanim;
-	if (isCombatAnim(nextanim) && ! isCombatAnim(lastanim)) {
-		anim = readyWeapon;
-	} else if (!isCombatAnim(nextanim) && isCombatAnim(lastanim)) {
-		anim = unreadyWeapon;
-	}
-	return anim;
-}
+	// p_dynamic_cast stuff
+	ENABLE_RUNTIME_CLASSTYPE()
 
-} // End of namespace Animation
+	bool loadData(Common::ReadStream *rs, uint32 version);
+	void saveData(Common::WriteStream *ws) override;
+
+	void tryAttack() override;
+
+protected:
+	void handleHangingMode() override;
+	void handleCombatMode() override;
+	void handleNormalMode() override;
+	bool canAttack() override;
+
+	void step(Animation::Sequence action, Direction direction, bool adjusted = false);
+	void jump(Animation::Sequence action, Direction direction);
+
+private:
+	Animation::Sequence _lastHeadShakeAnim;
+
+};
+
 } // End of namespace Ultima8
 } // End of namespace Ultima
+
+#endif

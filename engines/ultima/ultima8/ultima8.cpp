@@ -100,7 +100,8 @@
 #include "ultima/ultima8/world/snap_process.h"
 #include "ultima/ultima8/world/crosshair_process.h"
 #include "ultima/ultima8/world/actors/pathfinder_process.h"
-#include "ultima/ultima8/world/actors/avatar_mover_process.h"
+#include "ultima/ultima8/world/actors/u8_avatar_mover_process.h"
+#include "ultima/ultima8/world/actors/cru_avatar_mover_process.h"
 #include "ultima/ultima8/world/actors/resurrection_process.h"
 #include "ultima/ultima8/world/actors/clear_feign_death_process.h"
 #include "ultima/ultima8/world/actors/loiter_process.h"
@@ -237,8 +238,12 @@ bool Ultima8Engine::startup() {
 		ProcessLoader<ActorAnimProcess>::load);
 	_kernel->addProcessLoader("TargetedAnimProcess",
 		ProcessLoader<TargetedAnimProcess>::load);
-	_kernel->addProcessLoader("AvatarMoverProcess",
-		ProcessLoader<AvatarMoverProcess>::load);
+	_kernel->addProcessLoader("AvatarMoverProcess", // parent class for backward compatibility
+		ProcessLoader<U8AvatarMoverProcess>::load);
+	_kernel->addProcessLoader("U8AvatarMoverProcess",
+		ProcessLoader<U8AvatarMoverProcess>::load);
+	_kernel->addProcessLoader("CruAvatarMoverProcess",
+		ProcessLoader<CruAvatarMoverProcess>::load);
 	_kernel->addProcessLoader("QuickAvatarMoverProcess",
 		ProcessLoader<QuickAvatarMoverProcess>::load);
 	_kernel->addProcessLoader("PathfinderProcess",
@@ -1142,7 +1147,10 @@ bool Ultima8Engine::newGame(int saveSlot) {
 	CameraProcess::SetCameraProcess(new CameraProcess(1)); // Follow Avatar
 
 	debugN(MM_INFO, "Create persistent Processes...\n");
-	_avatarMoverProcess = new AvatarMoverProcess();
+	if (GAME_IS_U8)
+		_avatarMoverProcess = new U8AvatarMoverProcess();
+	else
+		_avatarMoverProcess = new CruAvatarMoverProcess();
 	_kernel->addProcess(_avatarMoverProcess);
 
 	_kernel->addProcess(new HealProcess());
