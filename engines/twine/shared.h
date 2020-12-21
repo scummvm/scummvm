@@ -27,6 +27,17 @@
 
 namespace TwinE {
 
+struct Vec3 {
+	int32 x = 0;
+	int32 y = 0;
+	int32 z = 0;
+};
+
+struct BoundingBox {
+	Vec3 mins;
+	Vec3 maxs;
+};
+
 struct ActorBoundingBox {
 	/** Bottom left X coordinate */
 	int16 bottomLeftX = 0;
