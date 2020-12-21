@@ -10774,6 +10774,46 @@ static const uint16 pq4CdSpeechAndSubtitlesPatch[] = {
 	PATCH_END
 };
 
+// Applies to: PC CD, Mac CD
+// Responsible methods: signTalker:init, signTalker:dispose,
+//                      computerTalker:init, computerTalker:dispose
+// Fixes bug: #11660
+static const uint16 pq4CdSpeechAndSubtitlesTalkerSignature1[] = {
+	0x89, 0x5a,                     // lsg 5a
+	0x35, 0x02,                     // ldi 02
+	0x12,                           // and
+	SIG_MAGICDWORD,
+	0x31, 0x04,                     // bnt 04
+	0x35, 0x03,                     // ldi 03
+	0xa1, 0x5a,                     // sag 5a
+	SIG_END
+};
+
+static const uint16 pq4CdSpeechAndSubtitlesTalkerPatch1[] = {
+	0x80, PATCH_UINT16(0x005a),     // lag 005a
+	0xa0, PATCH_UINT16(0x00c0),     // sag 00c0 [ save message mode ]
+	0x39, 0x01,                     // pushi 01
+	0x14,                           // or [ enable text ]
+	PATCH_END
+};
+
+static const uint16 pq4CdSpeechAndSubtitlesTalkerSignature2[] = {
+	0x89, 0x5a,                     // lsg 5a
+	0x35, 0x02,                     // ldi 02
+	0x12,                           // and
+	SIG_MAGICDWORD,
+	0x31, 0x04,                     // bnt 04
+	0x35, 0x02,                     // ldi 02
+	0xa1, 0x5a,                     // sag 5a
+	SIG_END
+};
+
+static const uint16 pq4CdSpeechAndSubtitlesTalkerPatch2[] = {
+	0x81, 0xc0,                     // lag c0
+	0x33, 0x05,                     // jmp 05 [ restore message mode ]
+	PATCH_END
+};
+
 // When showing the red shoe to Barbie, after showing the police badge but
 // before exhausting the normal dialogue tree, the game plays the expected
 // dialogue but fails to award points or set an internal flag indicating this
@@ -10915,6 +10955,10 @@ static const uint16 pq4LastActionHeroTimerPatch[] = {
 static const SciScriptPatcherEntry pq4Signatures[] = {
 	{  true,     6, "disable video benchmarking",                      1, sci2BenchmarkSignature,                             sci2BenchmarkPatch },
 	{  true,     9, "add speech+subtitles to in-game UI",              1, pq4CdSpeechAndSubtitlesSignature,                   pq4CdSpeechAndSubtitlesPatch },
+	{  true,    42, "speech+subtitles talker compatibility (1/2)",     1, pq4CdSpeechAndSubtitlesTalkerSignature1,            pq4CdSpeechAndSubtitlesTalkerPatch1 },
+	{  true,    42, "speech+subtitles talker compatibility (2/2)",     1, pq4CdSpeechAndSubtitlesTalkerSignature2,            pq4CdSpeechAndSubtitlesTalkerPatch2 },
+	{  true,    43, "speech+subtitles talker compatibility (1/2)",     1, pq4CdSpeechAndSubtitlesTalkerSignature1,            pq4CdSpeechAndSubtitlesTalkerPatch1 },
+	{  true,    43, "speech+subtitles talker compatibility (2/2)",     1, pq4CdSpeechAndSubtitlesTalkerSignature2,            pq4CdSpeechAndSubtitlesTalkerPatch2 },
 	{  true,   315, "fix missing points showing barbie the red shoe",  1, pq4BittyKittyShowBarieRedShoeSignature,             pq4BittyKittyShowBarbieRedShoePatch },
 	{  true,   390, "change floppy city hall use gun timer",           1, pq4FloppyCityHallDrawGunTimerSignature,             pq4FloppyCityHallDrawGunTimerPatch },
 	{  true,   390, "change floppy city hall say 'drop weapon' timer", 1, pq4FloppyCityHallTellEnemyDropWeaponTimerSignature, pq4FloppyCityHallTellEnemyDropWeaponTimerPatch },
