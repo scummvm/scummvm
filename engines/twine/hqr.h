@@ -24,6 +24,7 @@
 #define TWINE_HQR_H
 
 #include "common/scummsys.h"
+#include "common/stream.h"
 
 namespace TwinE {
 
@@ -87,6 +88,9 @@ int32 getVoxEntry(uint8 *ptr, const char *filename, int32 index, int32 hiddenInd
  * @return entry real size
  */
 int32 getAllocVoxEntry(uint8 **ptr, const char *filename, int32 index, int32 hiddenIndex);
+
+Common::SeekableReadStream *makeReadStream(const char *filename, int index);
+
 } // namespace HQR
 
 } // namespace TwinE
