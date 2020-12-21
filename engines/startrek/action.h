@@ -75,7 +75,7 @@ struct Action {
 
 	uint32 getBitmask() const {
 		uint32 ret = 0;
-		if (type != 0xff)
+		if (type != -1)
 			ret |= (0xff << 24);
 		if (b1 != 0xff)
 			ret |= (0xff << 16);
