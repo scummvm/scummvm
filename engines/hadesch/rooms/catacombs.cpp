@@ -212,7 +212,7 @@ public:
 			room->playSFX("SndGuardTrapDoorOpen", 22017);
 			break;
 		case 22017:
-			room->playSpeech(TranscribedSound("SndGuardLaugh", "[laughter]"), 22018);
+			room->playSpeech(TranscribedSound::make("SndGuardLaugh", "[laughter]"), 22018);
 			break;
 		case 22018:
 			room->playSpeech(

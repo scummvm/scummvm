@@ -607,21 +607,21 @@ public:
 			break;
 		}
 		case k24801_arg1:
-			playCharonSoundSMK(TranscribedSound("V9090NH0", "When you click on a shade you can see and I'll tell you what they think of one another"), k24801_arg2);
+			playCharonSoundSMK(TranscribedSound::make("V9090NH0", "When you click on a shade you can see and I'll tell you what they think of one another"), k24801_arg2);
 			_count24006 = 0;
 			g_vm->addTimer(24006, 1200);
 			break;
 		case k24801_arg2:
-			playCharonSoundSMK(TranscribedSound("V9090ND0", "If you click on a shade you can drag it into a seat"), k24801_arg3);
+			playCharonSoundSMK(TranscribedSound::make("V9090ND0", "If you click on a shade you can drag it into a seat"), k24801_arg3);
 			break;
 		case k24801_arg3:
-			playCharonSoundSMK(TranscribedSound("V9090NE0", "If they find a neighbour offensive, they'll return to the dark"), k24801_arg4);
+			playCharonSoundSMK(TranscribedSound::make("V9090NE0", "If they find a neighbour offensive, they'll return to the dark"), k24801_arg4);
 			break;
 		case k24801_arg4:
-			playCharonSoundSMK(TranscribedSound("V9090NI0", "To remove the shade from the boat click and drag it to the dark"), k24801_arg5);
+			playCharonSoundSMK(TranscribedSound::make("V9090NI0", "To remove the shade from the boat click and drag it to the dark"), k24801_arg5);
 			break;
 		case k24801_arg5:
-			playCharonSoundSMK(TranscribedSound("V9130NA0", "Do try and discover what is bothering each of them"), k24801_arg6);
+			playCharonSoundSMK(TranscribedSound::make("V9130NA0", "Do try and discover what is bothering each of them"), k24801_arg6);
 			break;
 		case k24801_arg6:
 			room->enableMouse();
@@ -668,7 +668,7 @@ public:
 		if (persistent->_quest == kRescuePhilQuest) {
 			room->disableMouse();
 			// originally 24800
-			playCharonSoundSMK(TranscribedSound("V9090NA0", "Oh, the dead are a tiresome lot. Charon can't bear to weed through their assorted woes. If you assist Charon by loading the shades onto the boat, Charon will squeeze you in for the ride across"), k24801_arg1);
+			playCharonSoundSMK(TranscribedSound::make("V9090NA0", "Oh, the dead are a tiresome lot. Charon can't bear to weed through their assorted woes. If you assist Charon by loading the shades onto the boat, Charon will squeeze you in for the ride across"), k24801_arg1);
 		}
 	}
 
@@ -770,7 +770,7 @@ private:
 			if (thoughtId >= 0)
 				playCharonSound(thoughts[thoughtId].sound);
 			else if (thoughtId == -1)
-				playCharonSound(TranscribedSound("V9150nA0", "He won't move from that seat"));
+				playCharonSound(TranscribedSound::make("V9150nA0", "He won't move from that seat"));
 		}
 		room->selectFrame("V9090oA0", 112, 0, bubblePos);
 		room->selectFrame(shadows[_shades[id].shadowId].nameImage, 111, 0, bubblePos);
