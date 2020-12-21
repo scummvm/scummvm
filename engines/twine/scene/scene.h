@@ -80,8 +80,8 @@ struct ZoneStruct {
 
 		/** show a text (e.g. when reading a sign) */
 		struct {
-			int16 textIdx;		/*!< text index in the current active text bank */
-			int16 textColor;	/*!< text color (see @c ActorStruct::talkColor) */
+			int16 textIdx;   /*!< text index in the current active text bank */
+			int16 textColor; /*!< text color (see @c ActorStruct::talkColor) */
 		} DisplayText;
 		struct {
 			int16 info0;
@@ -266,8 +266,8 @@ private:
 
 	/** Process zone extra bonus */
 	void processZoneExtraBonus(ZoneStruct *zone);
-	void setActorStaticFlags(ActorStruct* act, uint16 staticFlags);
-	void setBonusParameterFlags(ActorStruct* act, uint16 bonusFlags);
+	void setActorStaticFlags(ActorStruct *act, uint16 staticFlags);
+	void setBonusParameterFlags(ActorStruct *act, uint16 bonusFlags);
 	bool loadSceneLBA1();
 	/** Initialize new scene */
 	bool initScene(int32 index);
@@ -280,9 +280,9 @@ private:
 
 	/** Timer for the next sample ambience in scene */
 	int32 _sampleAmbienceTime = 0;
-	int16 _sampleAmbiance[4] {0};
-	int16 _sampleRepeat[4] {0};
-	int16 _sampleRound[4] {0};
+	int16 _sampleAmbiance[4]{0};
+	int16 _sampleRepeat[4]{0};
+	int16 _sampleRound[4]{0};
 	int16 _sampleMinDelay = 0;
 	int16 _sampleMinDelayRnd = 0;
 
@@ -326,7 +326,7 @@ public:
 	// ACTORS
 	int32 sceneNumActors = 0;
 	ActorStruct *sceneHero = nullptr;
-	ActorStruct* getActor(int32 actorIdx);
+	ActorStruct *getActor(int32 actorIdx);
 
 	/** Meca pinguin actor index */
 	int16 mecaPinguinIdx = 0; // currentPingouin
@@ -348,7 +348,7 @@ public:
 	// TODO: check what is this
 	bool changeRoomVar10 = false;
 
-	uint8 sceneFlags[NUM_SCENES_FLAGS] {0}; // cubeFlags
+	uint8 sceneFlags[NUM_SCENES_FLAGS]{0}; // cubeFlags
 
 	int32 sceneNumZones = 0;
 	ZoneStruct sceneZones[NUM_MAX_ZONES];
