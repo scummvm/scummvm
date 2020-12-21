@@ -24,8 +24,8 @@
 #include "common/system.h"
 #include "graphics/surface.h"
 #include "twine/audio/music.h"
-#include "twine/hqr.h"
-#include "twine/resources.h"
+#include "twine/resources/hqr.h"
+#include "twine/resources/resources.h"
 #include "twine/twine.h"
 
 namespace TwinE {

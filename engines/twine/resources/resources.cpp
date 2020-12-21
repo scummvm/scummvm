@@ -20,7 +20,7 @@
  *
  */
 
-#include "twine/resources.h"
+#include "twine/resources/resources.h"
 #include "common/util.h"
 #include "twine/audio/sound.h"
 #include "twine/renderer/screens.h"

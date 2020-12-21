@@ -35,7 +35,7 @@
 #include "twine/menu/interface.h"
 #include "twine/menu/menu.h"
 #include "twine/renderer/screens.h"
-#include "twine/resources.h"
+#include "twine/resources/resources.h"
 #include "twine/scene/scene.h"
 #include "twine/text.h"
 #include "twine/twine.h"

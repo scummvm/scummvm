@@ -31,7 +31,7 @@
 #include "twine/parser/anim.h"
 #include "twine/parser/entity.h"
 #include "twine/renderer/renderer.h"
-#include "twine/resources.h"
+#include "twine/resources/resources.h"
 #include "twine/scene/actor.h"
 #include "twine/scene/collision.h"
 #include "twine/scene/gamestate.h"
