@@ -23,8 +23,8 @@
 #include "twine/renderer/screens.h"
 #include "common/system.h"
 #include "graphics/surface.h"
-#include "twine/hqr.h"
 #include "twine/audio/music.h"
+#include "twine/hqr.h"
 #include "twine/resources.h"
 #include "twine/twine.h"
 
