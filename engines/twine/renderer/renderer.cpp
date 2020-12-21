@@ -414,11 +414,11 @@ void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 num
 			continue;
 		}
 
-		int8 up = currentVertexY < oldVertexY;
+		const int8 up = currentVertexY < oldVertexY;
 		int8 direction = up ? -1 : 1;
 
-		int16 vsize = ABS(currentVertexY - oldVertexY);
-		int16 hsize = ABS(currentVertexX - oldVertexX);
+		const int16 vsize = ABS(currentVertexY - oldVertexY);
+		const int16 hsize = ABS(currentVertexX - oldVertexX);
 
 		int16 cvalue;
 		int16 cdelta;
@@ -480,14 +480,12 @@ void Renderer::renderPolygonsCopper(uint8 *out, int vtop, int32 vsize, int32 col
 
 			if (hsize >= 0) {
 				uint16 mask = 0x43DB;
-				uint16 dx;
-				int32 startCopy;
 
-				dx = (uint8)color;
+				uint16 dx = (uint8)color;
 				dx |= 0x300;
 
 				hsize++;
-				startCopy = start;
+				const int32 startCopy = start;
 
 				for (int32 j = startCopy; j < hsize + startCopy; j++) {
 					start += mask;
@@ -537,15 +535,13 @@ void Renderer::renderPolygonsFlat(uint8 *out, int vtop, int32 vsize, int32 color
 	int32 currentLine = vtop;
 	do {
 		if (currentLine >= 0 && currentLine < SCREEN_HEIGHT) {
-			int16 stop = ptr1[SCREEN_HEIGHT];
 			int16 start = ptr1[0];
-
+			int16 stop = ptr1[SCREEN_HEIGHT];
 			ptr1++;
 			int32 hsize = stop - start;
 
 			if (hsize >= 0) {
 				hsize++;
-
 				for (int32 j = start; j < hsize + start; j++) {
 					if (j >= 0 && j < SCREEN_WIDTH) {
 						out[j] = color;
