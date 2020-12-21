@@ -21,9 +21,11 @@
  */
 
 #include "twine/hqr.h"
+#include "twine/lzss.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/memstream.h"
+#include "common/substream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
 
@@ -195,6 +197,43 @@ int32 numEntries(const char *filename) {
 
 	uint32 headerSize = file.readUint32LE();
 	return ((int)headerSize / 4) - 1;
+}
+
+Common::SeekableReadStream *makeReadStream(const char *filename, int index) {
+	Common::File *file = new Common::File();
+	if (!file->open(filename)) {
+		delete file;
+		return nullptr;
+	}
+
+	const uint32 headerSize = file->readUint32LE();
+	if ((uint32)index >= headerSize / 4) {
+		warning("HQR: Invalid entry index");
+		delete file;
+		return nullptr;
+	}
+
+	file->seek(index * 4);
+	const uint32 offsetToData = file->readUint32LE();
+	file->seek(offsetToData);
+
+	const uint32 realSize = file->readUint32LE();
+	const uint32 compressedSize = file->readUint32LE();
+	const uint16 mode = file->readUint16LE();
+
+	const uint32 begin = offsetToData + 10;
+	uint32 end = 0;
+	if (mode == 0) {
+		end = begin + realSize;
+	} else {
+		end = begin + compressedSize;
+	}
+	Common::SeekableReadStream *stream = new Common::SeekableSubReadStream(file, begin, end, DisposeAfterUse::YES);
+	if (mode != 0) {
+		stream = new LzssReadStream(stream, mode, realSize);
+	}
+
+	return stream;
 }
 
 int32 getAllocEntry(uint8 **ptr, const char *filename, int32 index) {
