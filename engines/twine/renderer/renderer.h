@@ -59,12 +59,6 @@ struct CmdRenderPolygon {
 	// followed by Vertex array
 };
 
-struct Vec3 {
-	int32 x = 0;
-	int32 y = 0;
-	int32 z = 0;
-};
-
 struct Matrix {
 	int32 row1[3]{0, 0, 0};
 	int32 row2[3]{0, 0, 0};
