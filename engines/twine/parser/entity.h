@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/memstream.h"
 #include "common/stream.h"
+#include "twine/parser/parser.h"
 #include "twine/shared.h"
 
 namespace TwinE {
@@ -63,7 +64,7 @@ struct EntityAnim {
 	Common::Array<Action> _actions;
 };
 
-class EntityData {
+class EntityData : public Parser {
 private:
 	Common::Array<EntityBody> _bodies;
 	Common::Array<EntityAnim> _animations;
@@ -72,9 +73,7 @@ private:
 	bool loadAnim(Common::SeekableReadStream &stream);
 
 public:
-	bool loadFromStream(Common::SeekableReadStream &stream);
-
-	bool loadFromBuffer(const uint8 *buf, uint32 size);
+	bool loadFromStream(Common::SeekableReadStream &stream) override;
 
 	const Common::Array<EntityAnim::Action> *getActions(AnimationTypes animation) const;
 	const EntityBody *getBody(const int index) const;
