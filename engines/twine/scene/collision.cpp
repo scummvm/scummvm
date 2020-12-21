@@ -469,16 +469,13 @@ void Collision::stopFalling() { // ReceptionObj()
 }
 
 int32 Collision::checkExtraCollisionWithActors(ExtraListStruct *extra, int32 actorIdx) {
-	Common::MemoryReadStream stream(_engine->_resources->spriteBoundingBoxPtr, _engine->_resources->spriteBoundingBoxSize);
-	stream.seek(extra->info0 * 16);
-	stream.skip(4);
-
-	const int32 xLeft = stream.readSint16LE() + extra->x;
-	const int32 xRight = stream.readSint16LE() + extra->x;
-	const int32 yLeft = stream.readSint16LE() + extra->y;
-	const int32 yRight = stream.readSint16LE() + extra->y;
-	const int32 zLeft = stream.readSint16LE() + extra->z;
-	const int32 zRight = stream.readSint16LE() + extra->z;
+	const BoundingBox *bbox = _engine->_resources->spriteBoundingBox.bbox(extra->info0);
+	const int32 xLeft = bbox->mins.x + extra->x;
+	const int32 xRight = bbox->maxs.x + extra->x;
+	const int32 yLeft = bbox->mins.y + extra->y;
+	const int32 yRight = bbox->maxs.y + extra->y;
+	const int32 zLeft = bbox->mins.z + extra->z;
+	const int32 zRight = bbox->maxs.z + extra->z;
 
 	for (int32 a = 0; a < _engine->_scene->sceneNumActors; a++) {
 		const ActorStruct *actorTest = _engine->_scene->getActor(a);
@@ -529,28 +526,26 @@ bool Collision::checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, int32 o
 }
 
 int32 Collision::checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extraIdx) const {
-	Common::MemoryReadStream stream(_engine->_resources->spriteBoundingBoxPtr, _engine->_resources->spriteBoundingBoxSize);
-	stream.seek(extra->info0 * 16);
-	stream.skip(4);
-
-	const int32 xLeft = stream.readSint16LE() + extra->x;
-	const int32 xRight = stream.readSint16LE() + extra->x;
-	const int32 yLeft = stream.readSint16LE() + extra->y;
-	const int32 yRight = stream.readSint16LE() + extra->y;
-	const int32 zLeft = stream.readSint16LE() + extra->z;
-	const int32 zRight = stream.readSint16LE() + extra->z;
+	int32 index = extra->info0;
+	const BoundingBox *bbox = _engine->_resources->spriteBoundingBox.bbox(index);
+	const int32 xLeft = bbox->mins.x + extra->x;
+	const int32 xRight = bbox->maxs.x + extra->x;
+	const int32 yLeft = bbox->mins.y + extra->y;
+	const int32 yRight = bbox->maxs.y + extra->y;
+	const int32 zLeft = bbox->mins.z + extra->z;
+	const int32 zRight = bbox->maxs.z + extra->z;
 
 	for (int32 i = 0; i < EXTRA_MAX_ENTRIES; i++) {
 		const ExtraListStruct *extraTest = &_engine->_extra->extraList[i];
 		if (i != extraIdx && extraTest->info0 != -1) {
-			// const int16 * spriteBoundingTest;
-			// spriteBoundingTest = (const int16*)(_engine->_resources->spriteBoundingBoxPtr + extraTest->info0 * 16 + 4);
-			const int32 xLeftTest = stream.readSint16LE() + extraTest->x;
-			const int32 xRightTest = stream.readSint16LE() + extraTest->x;
-			const int32 yLeftTest = stream.readSint16LE() + extraTest->y;
-			const int32 yRightTest = stream.readSint16LE() + extraTest->y;
-			const int32 zLeftTest = stream.readSint16LE() + extraTest->z;
-			const int32 zRightTest = stream.readSint16LE() + extraTest->z;
+			// TODO: shouldn't this be extraTest->info0 as index?
+			const BoundingBox *testbbox = _engine->_resources->spriteBoundingBox.bbox(++index);
+			const int32 xLeftTest = testbbox->mins.x + extraTest->x;
+			const int32 xRightTest = testbbox->maxs.x + extraTest->x;
+			const int32 yLeftTest = testbbox->mins.y + extraTest->y;
+			const int32 yRightTest = testbbox->maxs.y + extraTest->y;
+			const int32 zLeftTest = testbbox->mins.z + extraTest->z;
+			const int32 zRightTest = testbbox->maxs.z + extraTest->z;
 
 			if (xLeft < xLeftTest) {
 				if (xLeft < xRightTest && xRight > xLeftTest && yLeft < yRightTest && yRight > yLeftTest && zLeft < zRightTest && zRight > zLeftTest) {

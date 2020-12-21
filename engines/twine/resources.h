@@ -24,6 +24,7 @@
 #define TWINE_RESOURCES_H
 
 #include "common/scummsys.h"
+#include "twine/parser/sprite.h"
 #include "twine/scene/gamestate.h"
 #include "twine/hqr.h"
 
@@ -171,8 +172,7 @@ public:
 
 	uint32 spriteShadowSize = 0;
 	uint8 *spriteShadowPtr = nullptr;
-	uint32 spriteBoundingBoxSize = 0;
-	uint8 *spriteBoundingBoxPtr = nullptr;
+	SpriteBoundingBoxData spriteBoundingBox;
 
 	uint32 holomapSurfaceSize = 0;
 	uint8 *holomapSurfacePtr = nullptr;

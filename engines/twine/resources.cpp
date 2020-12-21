@@ -45,7 +45,6 @@ Resources::~Resources() {
 	}
 	free(fontPtr);
 	free(spriteShadowPtr);
-	free(spriteBoundingBoxPtr);
 	free(holomapSurfacePtr);
 	free(holomapImagePtr);
 	free(holomapTwinsenModelPtr);
@@ -141,9 +140,8 @@ void Resources::initResources() {
 		error("Failed to load sprite shadow");
 	}
 
-	spriteBoundingBoxSize = HQR::getAllocEntry(&spriteBoundingBoxPtr, Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA);
-	if (spriteBoundingBoxSize == 0) {
-		error("Failed to load actors bounding box data");
+	if (!spriteBoundingBox.loadFromHQR(Resources::HQR_RESS_FILE, RESSHQR_SPRITEBOXDATA)) {
+		error("Failed to load sprite bounding box data");
 	}
 
 	holomapSurfaceSize = HQR::getAllocEntry(&holomapSurfacePtr, Resources::HQR_RESS_FILE, RESSHQR_HOLOSURFACE);
