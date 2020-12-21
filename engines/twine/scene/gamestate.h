@@ -25,9 +25,9 @@
 
 #include "common/savefile.h"
 #include "common/scummsys.h"
-#include "twine/scene/actor.h"
 #include "twine/holomap.h"
 #include "twine/menu/menu.h"
+#include "twine/scene/actor.h"
 
 namespace TwinE {
 

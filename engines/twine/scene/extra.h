@@ -20,8 +20,8 @@
  *
  */
 
-#include "twine/scene/actor.h"
 #include "common/scummsys.h"
+#include "twine/scene/actor.h"
 
 #ifndef TWINE_EXTRA_H
 #define TWINE_EXTRA_H
@@ -64,7 +64,7 @@ struct ExtraListStruct {
 	int16 destX = 0; // field_E
 	int16 destY = 0; // field_10
 	int16 destZ = 0; // field_12
-	uint16 type = 0;  /**< ExtraType bitmask */
+	uint16 type = 0; /**< ExtraType bitmask */
 	int16 angle = 0; // field_16
 	int32 spawnTime = 0;
 	union payload { // field_ 1C

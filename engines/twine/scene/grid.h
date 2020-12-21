@@ -132,7 +132,7 @@ private:
 	 * @param y grid Y coordinate
 	 * @param buffer work video buffer
 	 */
-	void copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurface& buffer);
+	void copyGridMask(int32 index, int32 x, int32 y, const Graphics::ManagedSurface &buffer);
 
 	/** Table with all loaded bricks */
 	uint8 *brickTable[NUM_BRICKS]{nullptr};
@@ -172,11 +172,11 @@ public:
 	/** Grid block entry types */
 	typedef struct BlockEntry blockMap[GRID_SIZE_X][GRID_SIZE_Z][GRID_SIZE_Y];
 
-	uint8* getBlockBuffer(int32 x, int32 y, int32 z);
+	uint8 *getBlockBuffer(int32 x, int32 y, int32 z);
 	/**
 	 * search down until either ground is found or lower border of the cube is reached
 	 */
-	const uint8* getBlockBufferGround(int32 x, int32 y, int32 z, int16 &ground) const;
+	const uint8 *getBlockBufferGround(int32 x, int32 y, int32 z, int16 &ground) const;
 
 	void updateCollisionCoordinates(int32 x, int32 y, int32 z);
 

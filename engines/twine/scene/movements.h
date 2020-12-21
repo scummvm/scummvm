@@ -23,8 +23,8 @@
 #ifndef TWINE_MOVEMENTS_H
 #define TWINE_MOVEMENTS_H
 
-#include "twine/scene/actor.h"
 #include "common/scummsys.h"
+#include "twine/scene/actor.h"
 
 namespace TwinE {
 
@@ -44,17 +44,17 @@ private:
 		uint8 leftDown = 0;
 		uint8 rightDown = 0;
 
-		void update(TwinEEngine* engine);
+		void update(TwinEEngine *engine);
 
-		inline bool operator==(const ChangedCursorKeys& rhs) const {
+		inline bool operator==(const ChangedCursorKeys &rhs) const {
 			return forwardChange == rhs.forwardChange && backwardChange == rhs.backwardChange && leftChange == rhs.leftChange && rightChange == rhs.rightChange;
 		}
 
-		inline operator bool () const {
+		inline operator bool() const {
 			return forwardChange && backwardChange && leftChange && rightChange;
 		}
 
-		inline bool operator!=(const ChangedCursorKeys& rhs) const {
+		inline bool operator!=(const ChangedCursorKeys &rhs) const {
 			return forwardChange != rhs.forwardChange || backwardChange != rhs.backwardChange || leftChange != rhs.leftChange || rightChange != rhs.rightChange;
 		}
 	};
