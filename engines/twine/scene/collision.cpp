@@ -25,7 +25,7 @@
 #include "common/memstream.h"
 #include "common/util.h"
 #include "twine/renderer/renderer.h"
-#include "twine/resources.h"
+#include "twine/resources/resources.h"
 #include "twine/scene/actor.h"
 #include "twine/scene/animations.h"
 #include "twine/scene/extra.h"
