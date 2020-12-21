@@ -276,7 +276,7 @@ TEMPLATE bool BASESTRING::equalsC(const char *ptr) const {
 	uint i = 0;
 
 	for (; i < _size && *ptr; i++, ptr++) {
-		if (_str[i] != *ptr)
+		if (_str[i] != (T)*ptr)
 			return false;
 	}
 
