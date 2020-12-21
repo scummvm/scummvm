@@ -200,7 +200,7 @@ public:
 			break;
 
 		case kHadesFirstLaugh:
-			hadesAndZeus(TranscribedSound("ZeusNotFair", "Hold on, Hades. That's not fair. You've never explained the rules. That doesn't count"),
+			hadesAndZeus(TranscribedSound::make("ZeusNotFair", "Hold on, Hades. That's not fair. You've never explained the rules. That doesn't count"),
 				     kHadesInstructions);
 			_hadesIsFree = false;
 			break;

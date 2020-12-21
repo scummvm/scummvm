@@ -148,14 +148,11 @@ struct TranscribedSound {
 	const char *soundName;
 	const char *transcript;
 
-	TranscribedSound(const char *s, const char *t) {
-		soundName = s;
-		transcript = t;
-	}
-
-	TranscribedSound() {
-		soundName = nullptr;
-		transcript = nullptr;
+	static TranscribedSound make(const char *s, const char *t) {
+		TranscribedSound res;
+		res.soundName = s;
+		res.transcript = t;
+		return res;
 	}
 };
 

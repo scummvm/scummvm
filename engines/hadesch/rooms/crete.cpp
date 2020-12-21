@@ -665,7 +665,7 @@ TODO:
 			persistent->_cretePlayedZeusCheckOutThatBox = true;
 			room->disableMouse();
 			room->playAnimWithSpeech("r2230ba0",
-						TranscribedSound("r2230wa0",
+						TranscribedSound::make("r2230wa0",
 								 "Hey, why don't you check out that box? Maybe it has something that can help"),
 						4000,
 						PlayAnimParams::keepLastFrame(),
@@ -747,7 +747,7 @@ TODO:
 		case 12403:
 			room->disableMouse();
 			room->playAnimWithSpeech("r2230ba0",
-						 TranscribedSound("r2230wb0", "I think those buttons control the symbols"),
+						 TranscribedSound::make("r2230wb0", "I think those buttons control the symbols"),
 						 4000,
 						 PlayAnimParams::keepLastFrame(), 12404,
 						 kOffsetRightRoom);
@@ -769,7 +769,7 @@ TODO:
 				break;
 			room->disableMouse();
 			room->playAnimWithSpeech("r2230ba0",
-						 TranscribedSound("r2230wc0", "Try to spell my name"),
+						 TranscribedSound::make("r2230wc0", "Try to spell my name"),
 						 4000,
 						 PlayAnimParams::keepLastFrame(), 12407,
 						 kOffsetRightRoom);
@@ -852,7 +852,7 @@ TODO:
 			room->selectFrame("r2035ba0", 1200, 0);
 
 			// Originally event 12123
-			room->playSpeech(TranscribedSound(
+			room->playSpeech(TranscribedSound::make(
 						      "r2035wa0",
 						      "Seems the only thing I can count on you two for is target practice"), 12124);
 			persistent->_creteHadesPusnishesPainAndPanic = false;
