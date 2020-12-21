@@ -21,7 +21,7 @@
  */
 
 #include "twine/parser/body.h"
-#include "twine/renderer.h"
+#include "twine/renderer/renderer.h"
 #include "common/memstream.h"
 
 namespace TwinE {

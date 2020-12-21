@@ -25,7 +25,7 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/system.h"
-#include "twine/actor.h"
+#include "twine/scene/actor.h"
 #include "twine/twine.h"
 
 namespace TwinE {

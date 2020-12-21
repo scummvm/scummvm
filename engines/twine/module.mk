@@ -1,38 +1,45 @@
 MODULE := engines/twine
 
 MODULE_OBJS := \
+	audio/music.o \
+	audio/sound.o \
+	\
+	debugger/console.o \
+	debugger/debug.o \
+	debugger/debug_grid.o \
+	debugger/debug_scene.o \
+	\
+	menu/interface.o \
+	menu/menu.o \
+	menu/menuoptions.o \
+	\
 	parser/anim.o \
 	parser/body.o \
 	parser/entity.o \
-	actor.o \
-	animations.o \
-	collision.o \
-	console.o \
-	debug.o \
-	debug_grid.o \
-	debug_scene.o \
+	\
+	renderer/redraw.o \
+	renderer/renderer.o \
+	renderer/screens.o \
+	\
+	scene/actor.o \
+	scene/animations.o \
+	scene/collision.o \
+	scene/extra.o \
+	scene/gamestate.o \
+	scene/grid.o \
+	scene/movements.o \
+	scene/scene.o \
+	\
+	script/script_life_v1.o \
+	script/script_move_v1.o \
+	\
 	detection.o \
-	extra.o \
 	flamovies.o \
-	gamestate.o \
-	grid.o \
 	holomap.o \
 	hqr.o \
-	interface.o \
 	input.o \
-	menu.o \
-	menuoptions.o \
 	metaengine.o \
-	movements.o \
-	music.o \
-	redraw.o \
-	renderer.o \
 	resources.o \
-	scene.o \
-	screens.o \
-	script_life_v1.o \
-	script_move_v1.o \
-	sound.o \
 	text.o \
 	twine.o
 
