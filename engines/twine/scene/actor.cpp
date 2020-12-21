@@ -153,18 +153,15 @@ void Actor::initSpriteActor(int32 actorIdx) {
 	ActorStruct *localActor = _engine->_scene->getActor(actorIdx);
 
 	if (localActor->staticFlags.bIsSpriteActor && localActor->sprite != -1 && localActor->entity != localActor->sprite) {
-		Common::MemoryReadStream stream(_engine->_resources->spriteBoundingBoxPtr, _engine->_resources->spriteBoundingBoxSize);
-		stream.seek(localActor->sprite * 16);
-		stream.skip(4);
-
+		const BoundingBox *spritebbox = _engine->_resources->spriteBoundingBox.bbox(localActor->sprite);
 		localActor->entity = localActor->sprite;
 		ZVBox &bbox = localActor->boudingBox;
-		bbox.x.bottomLeft = stream.readSint16LE();
-		bbox.x.topRight = stream.readSint16LE();
-		bbox.y.bottomLeft = stream.readSint16LE();
-		bbox.y.topRight = stream.readSint16LE();
-		bbox.z.bottomLeft = stream.readSint16LE();
-		bbox.z.topRight = stream.readSint16LE();
+		bbox.x.bottomLeft = spritebbox->mins.x;
+		bbox.x.topRight = spritebbox->maxs.x;
+		bbox.y.bottomLeft = spritebbox->mins.y;
+		bbox.y.topRight = spritebbox->maxs.y;
+		bbox.z.bottomLeft = spritebbox->mins.z;
+		bbox.z.topRight = spritebbox->maxs.z;
 	}
 }
 
