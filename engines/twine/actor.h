@@ -266,6 +266,8 @@ private:
 	 */
 	int32 initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox);
 
+	int32 loadBehaviourEntity(ActorStruct *sceneHero, uint8 **ptr, int16& bodyAnimIndex, int32 index);
+
 public:
 	Actor(TwinEEngine* engine);
 	~Actor();
