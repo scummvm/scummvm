@@ -93,7 +93,7 @@ struct StaticFlagsStruct {
 	uint16 bIsBackgrounded : 1;             // 0x2000
 	uint16 bIsCarrierActor : 1;             // 0x4000
 	// take smaller value for bound, or if not set take average for bound
-	uint16 bUseMiniZv : 1;                  // 0x8000
+	uint16 bUseMiniZv : 1; // 0x8000
 };
 
 /** Actors dynamic flags structure */
@@ -148,6 +148,7 @@ class ActorStruct {
 private:
 	ShapeType _brickShape = ShapeType::kNone; // field_3
 	bool _brickCausesDamage = false;
+
 public:
 	~ActorStruct();
 
@@ -155,7 +156,10 @@ public:
 	DynamicFlagsStruct dynamicFlags;
 
 	inline ShapeType brickShape() const { return _brickShape; }
-	inline void setBrickShape(ShapeType shapeType) { _brickShape = shapeType; _brickCausesDamage = false; }
+	inline void setBrickShape(ShapeType shapeType) {
+		_brickShape = shapeType;
+		_brickCausesDamage = false;
+	}
 	inline void setBrickCausesDamage() { _brickCausesDamage = true; }
 	inline bool brickCausesDamage() { return _brickCausesDamage; }
 	void loadModel(int32 modelIndex);
@@ -172,7 +176,7 @@ public:
 	 */
 	int32 body = 0;
 	AnimationTypes anim = AnimationTypes::kAnimNone;
-	AnimationTypes animExtra = AnimationTypes::kStanding;  //field_2
+	AnimationTypes animExtra = AnimationTypes::kStanding; //field_2
 	AnimationTypes animExtraPtr = AnimationTypes::kAnimNone;
 	int32 sprite = 0; // field_8
 	uint8 *entityDataPtr = nullptr;
@@ -239,7 +243,7 @@ class TwinEEngine;
 
 class Actor {
 private:
-	TwinEEngine* _engine;
+	TwinEEngine *_engine;
 
 	/** Hero 3D entity for normal behaviour */
 	uint8 *heroEntityNORMAL = nullptr; // file3D0
@@ -266,10 +270,10 @@ private:
 	 */
 	int32 initBody(int32 bodyIdx, int32 actorIdx, ActorBoundingBox &actorBoundingBox);
 
-	int32 loadBehaviourEntity(ActorStruct *sceneHero, uint8 **ptr, int16& bodyAnimIndex, int32 index);
+	int32 loadBehaviourEntity(ActorStruct *sceneHero, uint8 **ptr, int16 &bodyAnimIndex, int32 index);
 
 public:
-	Actor(TwinEEngine* engine);
+	Actor(TwinEEngine *engine);
 	~Actor();
 
 	ActorStruct *processActorPtr = nullptr; // processActorVar1

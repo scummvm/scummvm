@@ -33,6 +33,7 @@ class TwinEEngine;
 class Collision {
 private:
 	TwinEEngine *_engine;
+
 public:
 	Collision(TwinEEngine *engine);
 	/** Actor collition X coordinate */
