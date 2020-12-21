@@ -2434,12 +2434,16 @@ msgstr "Creative Music System エミュレーター"
 msgid ""
 "FluidSynth requires a 'soundfont' setting. Please specify it in ScummVM GUI "
 "on MIDI tab. Music is off."
-msgstr "FluidSynthを使う場合、SoundFontの設定が必要です。ScummVMのMIDIタブで指定してください。音声はオフになります。"
+msgstr ""
+"FluidSynthを使う場合、SoundFontの設定が必要です。ScummVMのMIDIタブで指定して"
+"ください。音声はオフになります。"
 
 #: audio/softsynth/fluidsynth.cpp:279
 #, c-format
 msgid "FluidSynth: Failed loading custom SoundFont '%s'. Music is off."
-msgstr "FluidSynth：カスタムSoundFont'%s'のロードに失敗しました。音声はオフになります。"
+msgstr ""
+"FluidSynth：カスタムSoundFont'%s'のロードに失敗しました。音声はオフになりま"
+"す。"
 
 #: audio/softsynth/fmtowns_pc98/towns_pc98_plugins.cpp:32
 msgid "FM-Towns Audio"
@@ -4073,7 +4077,8 @@ msgstr "高パフォーマンスモードでのフレーム上限"
 msgid ""
 "This mode may result in high CPU usage! It avoids use of delayMillis() "
 "function."
-msgstr "このモードはCPUに高い負荷が生じます! delayMillis関数の使用を控えてください。"
+msgstr ""
+"このモードはCPUに高い負荷が生じます! delayMillis関数の使用を控えてください。"
 
 #: engines/bladerunner/detection.cpp:75
 msgid "Max frames per second limit"
@@ -5061,7 +5066,8 @@ msgid ""
 "This is a trial Windows version of the game. To play the full version, you "
 "will need to use the original interpreter and purchase a key from Wyrmkeep"
 msgstr ""
-"このバージョンはWindows体験版です。完全版をプレイする場合、Wyrmkeepからライセンスキーを購入のうえ、必要な部分を自身で翻訳してください"
+"このバージョンはWindows体験版です。完全版をプレイする場合、Wyrmkeepからライセ"
+"ンスキーを購入のうえ、必要な部分を自身で翻訳してください"
 
 #: engines/lab/processroom.cpp:330
 msgid ""
