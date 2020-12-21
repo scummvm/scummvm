@@ -40,6 +40,7 @@ MODULE_OBJS := \
 	holomap.o \
 	hqr.o \
 	input.o \
+	lzss.o \
 	metaengine.o \
 	resources.o \
 	text.o \
