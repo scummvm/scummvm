@@ -36,17 +36,16 @@ bool Parser::loadFromBuffer(const uint8 *buf, uint32 size) {
 }
 
 bool Parser::loadFromHQR(const char *name, int index) {
-	uint8 *buf = nullptr;
-	const int32 size = HQR::getAllocEntry(&buf, name, index);
-	if (size == 0) {
+	Common::SeekableReadStream *stream = HQR::makeReadStream(name, index);
+	if (stream == nullptr) {
 		warning("Failed to load %s with index %i", name, index);
 		return false;
 	}
-	if (!loadFromBuffer(buf, size)) {
-		free(buf);
+	if (!loadFromStream(*stream)) {
+		delete stream;
 		return false;
 	}
-	free(buf);
+	delete stream;
 	return true;
 }
 
