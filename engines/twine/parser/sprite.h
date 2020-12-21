@@ -26,18 +26,17 @@
 #include "common/array.h"
 #include "common/memstream.h"
 #include "common/stream.h"
+#include "twine/parser/parser.h"
 #include "twine/shared.h"
 
 namespace TwinE {
 
-class SpriteBoundingBoxData {
+class SpriteBoundingBoxData : public Parser {
 private:
 	Common::Array<BoundingBox> _boundingBoxes;
 
 public:
-	bool loadFromStream(Common::SeekableReadStream &stream);
-
-	bool loadFromBuffer(const uint8 *buf, uint32 size);
+	bool loadFromStream(Common::SeekableReadStream &stream) override;
 
 	const BoundingBox *bbox(int index) const;
 };

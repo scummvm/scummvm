@@ -166,12 +166,4 @@ bool BodyData::loadFromStream(Common::SeekableReadStream &stream) {
 	return !stream.err();
 }
 
-bool BodyData::loadFromBuffer(const uint8 *buf, uint32 size) {
-	if (size == 0) {
-		return false;
-	}
-	Common::MemoryReadStream stream(buf, size);
-	return loadFromStream(stream);
-}
-
 } // namespace TwinE
