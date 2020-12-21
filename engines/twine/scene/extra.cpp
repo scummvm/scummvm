@@ -861,10 +861,8 @@ void Extra::processExtras() {
 			}
 
 			if (process) {
-				Common::MemoryReadStream stream(_engine->_resources->spriteBoundingBoxPtr, _engine->_resources->spriteBoundingBoxSize);
-				stream.seek(extra->info0 * 16);
-				stream.skip(8);
-				extra->y = (_engine->_collision->collisionY << 8) + 0x100 - stream.readSint16LE();
+				const BoundingBox *bbox = _engine->_resources->spriteBoundingBox.bbox(extra->info0);
+				extra->y = (_engine->_collision->collisionY << 8) + 0x100 - bbox->mins.y;
 				extra->type &= ~(ExtraType::STOP_COL | ExtraType::FLY);
 				continue;
 			}
