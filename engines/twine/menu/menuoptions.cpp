@@ -52,7 +52,7 @@ void MenuOptions::newGame() {
 	_engine->cfgfile.FlagDisplayText = true;
 
 	// intro screen 1 - twinsun
-	_engine->_screens->loadImage(RESSHQR_INTROSCREEN1IMG);
+	_engine->_screens->loadImage(RESSHQR_INTROSCREEN1IMG, RESSHQR_INTROSCREEN1PAL);
 
 	_engine->_text->drawTextBoxBackground = false;
 	_engine->_text->renderTextTriangle = true;
@@ -65,11 +65,11 @@ void MenuOptions::newGame() {
 
 	// intro screen 2
 	if (!aborted) {
-		_engine->_screens->loadImage(RESSHQR_INTROSCREEN2IMG);
+		_engine->_screens->loadImage(RESSHQR_INTROSCREEN2IMG, RESSHQR_INTROSCREEN2PAL);
 		aborted |= _engine->_text->drawTextFullscreen(151);
 
 		if (!aborted) {
-			_engine->_screens->loadImage(RESSHQR_INTROSCREEN3IMG);
+			_engine->_screens->loadImage(RESSHQR_INTROSCREEN3IMG, RESSHQR_INTROSCREEN3PAL);
 			aborted |= _engine->_text->drawTextFullscreen(152);
 		}
 	}

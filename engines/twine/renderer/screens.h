@@ -82,16 +82,18 @@ public:
 	/**
 	 * Load and display a particulary image on \a RESS.HQR file with cross fade effect
 	 * @param index \a RESS.HQR entry index (starting from 0)
+	 * @param paletteIndex \a RESS.HQR entry index of the palette for the given image. This is often the @c index + 1
 	 * @param fade_in if we fade in before using the palette
 	 */
-	void loadImage(int32 index, bool fade_in = true);
+	void loadImage(int32 index, int32 paletteIndex, bool fade_in = true);
 
 	/**
 	 * Load and display a particulary image on \a RESS.HQR file with cross fade effect and delay
 	 * @param index \a RESS.HQR entry index (starting from 0)
+	 * @param paletteIndex \a RESS.HQR entry index of the palette for the given image. This is often the @c index + 1
 	 * @param seconds number of seconds to delay
 	 */
-	bool loadImageDelay(int32 index, int32 seconds);
+	bool loadImageDelay(int32 index, int32 paletteIndex, int32 seconds);
 
 	/**
 	 * Fade image in

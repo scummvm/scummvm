@@ -407,21 +407,21 @@ void TwinEEngine::initEngine() {
 	// verify game version screens
 	if (!abort && cfgfile.Version == EUROPE_VERSION) {
 		// Little Big Adventure screen
-		abort |= _screens->loadImageDelay(RESSHQR_LBAIMG, 3);
+		abort |= _screens->loadImageDelay(RESSHQR_LBAIMG, RESSHQR_LBAPAL, 3);
 		if (!abort) {
 			// Electronic Arts Logo
-			abort |= _screens->loadImageDelay(RESSHQR_EAIMG, 2);
+			abort |= _screens->loadImageDelay(RESSHQR_EAIMG, RESSHQR_EAPAL, 2);
 		}
 	} else if (!abort && cfgfile.Version == USA_VERSION) {
 		// Relentless screen
-		abort |= _screens->loadImageDelay(RESSHQR_RELLENTIMG, 3);
+		abort |= _screens->loadImageDelay(RESSHQR_RELLENTIMG, RESSHQR_RELLENTPAL, 3);
 		if (!abort) {
 			// Electronic Arts Logo
-			abort |= _screens->loadImageDelay(RESSHQR_EAIMG, 2);
+			abort |= _screens->loadImageDelay(RESSHQR_EAIMG, RESSHQR_EAPAL, 2);
 		}
 	} else if (!abort && cfgfile.Version == MODIFICATION_VERSION) {
 		// Modification screen
-		abort |= _screens->loadImageDelay(RESSHQR_RELLENTIMG, 2);
+		abort |= _screens->loadImageDelay(RESSHQR_RELLENTIMG, RESSHQR_RELLENTPAL, 2);
 	}
 
 	if (!abort) {
@@ -514,7 +514,7 @@ void TwinEEngine::processInventoryAction() {
 		break;
 	case kiBookOfBu: {
 		_screens->fadeToBlack(_screens->paletteRGBA);
-		_screens->loadImage(RESSHQR_INTROSCREEN1IMG);
+		_screens->loadImage(RESSHQR_INTROSCREEN1IMG, RESSHQR_INTROSCREEN1PAL);
 		_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 		_text->drawTextBoxBackground = false;
 		_text->textClipFull();
