@@ -25,6 +25,7 @@
 
 #include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/ultima8.h"
+#include "common/math.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -69,23 +70,46 @@ inline int Direction_YFactor(Direction dir) {
 inline Direction Direction_Get(int deltay, int deltax, DirectionMode dirmode) {
 	if (deltax == 0)
 		return deltay > 0 ? dir_northwest : dir_southeast;
-	int dydx = (1024 * deltay) / deltax; // Figure 1024*tan.
-	if (dydx >= 0)
-		if (deltax > 0) // Top-right
-			return dydx <= 424 ? dir_northeast : dydx <= 2472 ? dir_north
-				   : dir_northwest;
-		else			// Bottom-left.
-			return dydx <= 424 ? dir_southwest : dydx <= 2472 ? dir_south
+
+	if (dirmode == dirmode_8dirs) {
+		int dydx = (1024 * deltay) / deltax; // Figure 1024*tan.
+		if (dydx >= 0)
+			if (deltax > 0) // Top-right
+				return dydx <= 424 ? dir_northeast : dydx <= 2472 ? dir_north
+					   : dir_northwest;
+			else			// Bottom-left.
+				return dydx <= 424 ? dir_southwest : dydx <= 2472 ? dir_south
+					   : dir_southeast;
+		else if (deltax > 0) // Bottom-right.
+			return dydx >= -424 ? dir_northeast : dydx >= -2472 ? dir_east
 				   : dir_southeast;
-	else if (deltax > 0) // Bottom-right.
-		return dydx >= -424 ? dir_northeast : dydx >= -2472 ? dir_east
-			   : dir_southeast;
-	else			// Top-left
-		return dydx >= -424 ? dir_southwest : dydx >= -2472 ? dir_west
-			   : dir_northwest;
+		else			// Top-left
+			return dydx >= -424 ? dir_southwest : dydx >= -2472 ? dir_west
+				   : dir_northwest;
+	} else {
+		double angle = Common::rad2deg(atan2(deltay, deltax));
+		if (angle < 11.25)		 return dir_northwest;
+		else if (angle < 33.75)  return dir_nnw;
+		else if (angle < 56.25)  return dir_north;
+		else if (angle < 78.75)  return dir_nne;
+		else if (angle < 101.25) return dir_northeast;
+		else if (angle < 123.75) return dir_ene;
+		else if (angle < 146.25) return dir_east;
+		else if (angle < 168.75) return dir_ese;
+		else if (angle < 191.25) return dir_southeast;
+		else if (angle < 213.75) return dir_sse;
+		else if (angle < 236.25) return dir_south;
+		else if (angle < 258.75) return dir_ssw;
+		else if (angle < 281.25) return dir_southwest;
+		else if (angle < 303.75) return dir_wsw;
+		else if (angle < 326.25) return dir_west;
+		else if (angle < 348.75) return dir_wnw;
+		return dir_northwest;
+	}
 }
 
 inline Direction Direction_GetWorldDir(int deltay, int deltax, DirectionMode dirmode) {
+	// TODO: Implement 16 directions here.
 	if (deltax == 0) {
 		if (deltay == 0) return dir_northeast; // for better compatibility with U8
 		return deltay > 0 ? dir_south : dir_north;
