@@ -23,6 +23,7 @@
 #ifndef TWINE_DEBUG_SCENE_H
 #define TWINE_DEBUG_SCENE_H
 
+#include "common/rect.h"
 #include "common/scummsys.h"
 
 namespace TwinE {
@@ -39,10 +40,13 @@ private:
 public:
 	DebugScene(TwinEEngine *engine);
 	bool showingZones = false;
+	bool showingClips = false;
 	int32 typeZones = 127; // all zones on as default
 	int16 onlyLoadActor = -1;
 
 	void displayZones();
+
+	void drawClip(const Common::Rect& rect);
 };
 
 } // namespace TwinE
