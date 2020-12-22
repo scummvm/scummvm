@@ -137,11 +137,6 @@ void PCSpeakerDriver::setSoundData(uint8 *data, uint32 size) {
 	if (!_ready)
 		return;
 
-	if (_soundData) {
-		delete[] _soundData;
-		_soundData = 0;
-	}
-
 	_soundData = data;
 	_soundDataSize = size;
 }
