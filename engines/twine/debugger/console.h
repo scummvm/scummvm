@@ -42,6 +42,7 @@ private:
 	bool doToggleDebug(int argc, const char **argv);
 	bool doGiveKey(int argc, const char **argv);
 	bool doToggleZoneRendering(int argc, const char **argv);
+	bool doToggleClipRendering(int argc, const char **argv);
 	bool doToggleFreeCamera(int argc, const char **argv);
 	bool doToggleSceneChanges(int argc, const char **argv);
 	bool doSkipSceneActorsBut(int argc, const char **argv);

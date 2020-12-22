@@ -21,16 +21,24 @@
  */
 
 #include "twine/debugger/debug_scene.h"
-#include "twine/scene/grid.h"
 #include "twine/menu/interface.h"
+#include "twine/menu/menu.h"
 #include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
+#include "twine/scene/grid.h"
 #include "twine/scene/scene.h"
 #include "twine/twine.h"
 
 namespace TwinE {
 
 DebugScene::DebugScene(TwinEEngine *engine) : _engine(engine) {}
+
+void DebugScene::drawClip(const Common::Rect& rect) {
+	if (!showingClips) {
+		return;
+	}
+	_engine->_menu->drawBox(rect);
+}
 
 void DebugScene::drawBoundingBoxProjectPoints(ScenePoint *pPoint3d, ScenePoint *pPoint3dProjected) {
 	_engine->_renderer->projectPositionOnScreen(pPoint3d->x, pPoint3d->y, pPoint3d->z);
