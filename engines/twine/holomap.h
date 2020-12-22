@@ -72,7 +72,7 @@ public:
 	void clearHolomapPosition(int32 locationIdx);
 
 	/** Draw Holomap Title */
-	void drawHolomapTitle(int32 width, int32 height);
+	void drawHolomapTitle(int32 centerx, int32 top);
 
 	/** Draw Holomap Trajectory */
 	void drawHolomapTrajectory(int32 trajectoryIndex);

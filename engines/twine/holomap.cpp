@@ -128,7 +128,10 @@ void Holomap::loadHolomapGFX() {
 	needToLoadHolomapGFX = 0;
 }
 
-void Holomap::drawHolomapTitle(int32 width, int32 height) {
+void Holomap::drawHolomapTitle(int32 centerx, int32 top) {
+	const char *title = "TODO";
+	_engine->_text->drawText(centerx - _engine->_text->getTextSize(title) / 2, top, title);
+
 	// TODO
 }
 
