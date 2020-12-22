@@ -188,7 +188,8 @@ void Holomap::processHolomap() {
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
 	_engine->_scene->alphaLight = alphaLightTmp;
 	_engine->_scene->betaLight = betaLightTmp;
-	_engine->_gameState->initEngineVars();
+
+	_engine->_gameState->initEngineProjections();
 
 	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
 
