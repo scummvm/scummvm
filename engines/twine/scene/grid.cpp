@@ -469,15 +469,12 @@ void Grid::drawBrick(int32 index, int32 posX, int32 posY) {
 }
 
 void Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) {
+	ptr = ptr + READ_LE_INT32(ptr + index * 4);
 	drawBrickSprite(index, posX, posY, ptr, true);
 }
 
 // WARNING: Rewrite this function to have better performance
 void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
-	if (isSprite) {
-		ptr = ptr + READ_LE_INT32(ptr + index * 4);
-	}
-
 	int32 left = posX + *(ptr + 2);
 	int32 top = posY + *(ptr + 3);
 	int32 right = *ptr + left - 1;
