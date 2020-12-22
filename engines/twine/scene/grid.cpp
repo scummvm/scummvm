@@ -338,18 +338,18 @@ void Grid::createGridColumn(const uint8 *gridEntry, uint32 gridEntrySize, uint8 
 
 	do {
 		const int32 flag = stream.readByte();
-		const int32 blockCount = (flag & 0x3F) + 1;
-
-		if (!(flag & 0xC0)) {
+		const int32 blockCount = bits(flag, 0, 6) + 1;
+		const int32 type = bits(flag, 6, 2);
+		if (type == 0) {
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.writeUint16LE(0);
 			}
-		} else if (flag & 0x40) {
+		} else if (type == 1) {
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.writeUint16LE(stream.readUint16LE());
 			}
 		} else {
-			int32 gridIdx = stream.readUint16LE();
+			const int32 gridIdx = stream.readUint16LE();
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.writeUint16LE(gridIdx);
 			}
@@ -366,18 +366,19 @@ void Grid::createCellingGridColumn(const uint8 *gridEntry, uint32 gridEntrySize,
 
 	do {
 		const int32 flag = stream.readByte();
-		const int32 blockCount = (flag & 0x3F) + 1;
+		const int32 blockCount = bits(flag, 0, 6) + 1;
+		const int32 type = bits(flag, 6, 2);
 
-		if (!(flag & 0xC0)) {
+		if (type == 0) {
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.seek(outstream.pos() + 2);
 			}
-		} else if (flag & 0x40) {
+		} else if (type == 1) {
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.writeUint16LE(stream.readUint16LE());
 			}
 		} else {
-			int32 gridIdx = stream.readUint16LE();
+			const int32 gridIdx = stream.readUint16LE();
 			for (int32 i = 0; i < blockCount; i++) {
 				outstream.writeUint16LE(gridIdx);
 			}
