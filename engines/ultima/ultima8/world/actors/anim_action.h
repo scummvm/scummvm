@@ -71,7 +71,7 @@ struct AnimFrame {
 	}
 
 	// Note: The next 3 functions each have a 4-bit
-	// signed value to unpack from the flags.
+	// value to unpack from the flags. x/y are signed, z is unsigned.
 	inline int cru_attackx() const {
 		uint32 rawx = (_flags & 0x00000780) << 5;
 		int16  signedx = static_cast<int16>(rawx) >> 12;
@@ -84,8 +84,7 @@ struct AnimFrame {
 	}
 
 	inline int cru_attackz() const {
-		uint32 rawz = (_flags & 0x0F000000) >> 20;
-		return static_cast<int8>(rawz) / 2;
+		return (_flags & 0x0F000000) >> 21;
 	}
 
 	inline bool is_cruattack() const {

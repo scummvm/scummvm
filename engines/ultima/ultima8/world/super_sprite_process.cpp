@@ -57,7 +57,7 @@ SuperSpriteProcess::SuperSpriteProcess() : Process(),
 SuperSpriteProcess::SuperSpriteProcess(int shape, int frame, int sx, int sy, int sz,
 									   int dx, int dy, int dz,
 									   uint16 firetype, uint16 damage, uint16 source,
-									   uint16 target, uint8 spread) :
+									   uint16 target, bool inexact) :
 		_shape(shape), _frame(frame), _startpt(sx, sy, sz), _destpt(dx, dy, dz),
 		_nextpt(sx, sy, sz), _fireType(firetype), _damage(damage), _source(source),
 		_target(target), _counter(1), _item0x77(0), _spriteNo(0),
@@ -67,9 +67,9 @@ SuperSpriteProcess::SuperSpriteProcess(int shape, int frame, int sx, int sy, int
 	const FireType *firetypedat = GameData::get_instance()->getFireType(firetype);
 	assert(firetypedat);
 	if (firetypedat->getAccurate()) {
-		spread = 0;
+		inexact = false;
 	}
-	if (spread) {
+	if (inexact) {
 		int rng = _startpt.maxDistXYZ(_destpt);
 		Item *srcitem = getItem(source);
 		if (srcitem == getControlledActor()) {
