@@ -52,8 +52,6 @@
 
 namespace TwinE {
 
-/** Main menu background image number
-	Used when returning from credit sequence to redraw the main menu background image */
 static const uint32 kPlasmaEffectFilesize = 262176;
 
 namespace MenuButtonTypes {
