@@ -36,6 +36,7 @@ class TwinEEngine;
 extern const char *mainKeyMapId;
 extern const char *uiKeyMapId;
 extern const char *cutsceneKeyMapId;
+extern const char *holomapKeyMapId;
 
 enum TwinEActionType {
 	Pause,
@@ -83,6 +84,12 @@ enum TwinEActionType {
 	UINextPage,
 
 	CutsceneAbort,
+
+	HolomapAbort,
+	HolomapLeft,
+	HolomapRight,
+	HolomapUp,
+	HolomapDown,
 
 	Max
 };
