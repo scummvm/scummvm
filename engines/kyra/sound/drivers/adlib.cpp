@@ -433,7 +433,6 @@ void AdLibDriver::setSoundData(uint8 *data, uint32 size) {
 
 	_sfxPointer = nullptr;
 
-	delete[] _soundData;
 	_soundData = data;
 	_soundDataSize = size;
 }
