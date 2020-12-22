@@ -12,6 +12,10 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for Little Big Adventure.
    - Added support for Red Comrades 1: Save the Galaxy.
    - Added support for Red Comrades 2: For the Great Justice.
+   - Added support for Transylvania
+   - Added support for Crimson Crown
+   - Added support for OO-Topos
+   - Added support for Glulx interactive fiction games
 
  General:
    - Switched ScummVM GUI output to UTF-32.
