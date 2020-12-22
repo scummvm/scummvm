@@ -356,14 +356,14 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 }
 
 void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw) {
-	int32 actorIdx = drawCmd.actorIdx;
-	ActorStruct *actor2 = _engine->_scene->getActor(actorIdx);
-	_engine->_animations->setModelAnimation(actor2->animPosition, _engine->_resources->animTable[actor2->previousAnimIdx], _engine->_actor->bodyTable[actor2->entity], &actor2->animTimerData);
+	const int32 actorIdx = drawCmd.actorIdx;
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	_engine->_animations->setModelAnimation(actor->animPosition, _engine->_resources->animTable[actor->previousAnimIdx], _engine->_actor->bodyTable[actor->entity], &actor->animTimerData);
 
-	const int32 x = actor2->x - _engine->_grid->cameraX;
-	const int32 y = actor2->y - _engine->_grid->cameraY;
-	const int32 z = actor2->z - _engine->_grid->cameraZ;
-	if (!_engine->_renderer->renderIsoModel(x, y, z, 0, actor2->angle, 0, _engine->_actor->bodyTable[actor2->entity])) {
+	const int32 x = actor->x - _engine->_grid->cameraX;
+	const int32 y = actor->y - _engine->_grid->cameraY;
+	const int32 z = actor->z - _engine->_grid->cameraZ;
+	if (!_engine->_renderer->renderIsoModel(x, y, z, 0, actor->angle, 0, _engine->_actor->bodyTable[actor->entity])) {
 		return;
 	}
 
@@ -386,12 +386,12 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	_engine->_interface->setClip(renderRect);
 
 	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-		actor2->dynamicFlags.bIsVisible = 1;
+		actor->dynamicFlags.bIsVisible = 1;
 
-		const int32 tempX = (actor2->x + 0x100) >> 9;
-		int32 tempY = actor2->y >> 8;
-		const int32 tempZ = (actor2->z + 0x100) >> 9;
-		if (actor2->brickShape() != ShapeType::kNone) {
+		const int32 tempX = (actor->x + 0x100) >> 9;
+		int32 tempY = actor->y >> 8;
+		const int32 tempZ = (actor->z + 0x100) >> 9;
+		if (actor->brickShape() != ShapeType::kNone) {
 			tempY++;
 		}
 
@@ -404,7 +404,7 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 		const Common::Rect rect(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
 		addRedrawArea(rect);
 
-		if (actor2->staticFlags.bIsBackgrounded && bgRedraw) {
+		if (actor->staticFlags.bIsBackgrounded && bgRedraw) {
 			_engine->_interface->blitBox(rect, _engine->frontVideoBuffer, _engine->workVideoBuffer);
 		}
 	}
@@ -412,24 +412,24 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 
 void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgRedraw) {
 	int32 actorIdx = drawCmd.actorIdx;
-	ActorStruct *actor2 = _engine->_scene->getActor(actorIdx);
-	const uint8 *spritePtr = _engine->_resources->spriteTable[actor2->entity];
+	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
+	const uint8 *spritePtr = _engine->_resources->spriteTable[actor->entity];
 
 	// get actor position on screen
-	_engine->_renderer->projectPositionOnScreen(actor2->x - _engine->_grid->cameraX, actor2->y - _engine->_grid->cameraY, actor2->z - _engine->_grid->cameraZ);
+	_engine->_renderer->projectPositionOnScreen(actor->x - _engine->_grid->cameraX, actor->y - _engine->_grid->cameraY, actor->z - _engine->_grid->cameraZ);
 
 	int32 spriteWidth, spriteHeight;
 	_engine->_grid->getSpriteSize(0, &spriteWidth, &spriteHeight, spritePtr);
 
 	// calculate sprite position on screen
-	const SpriteDim* dim = _engine->_resources->spriteBoundingBox.dim(actor2->entity);
+	const SpriteDim* dim = _engine->_resources->spriteBoundingBox.dim(actor->entity);
 	renderRect.left = _engine->_renderer->projPosX + dim->x;
 	renderRect.top = _engine->_renderer->projPosY + dim->y;
 	renderRect.right = renderRect.left + spriteWidth;
 	renderRect.bottom = renderRect.top + spriteHeight;
 
-	if (actor2->staticFlags.bUsesClipping) {
-		const Common::Rect rect(_engine->_renderer->projPosXScreen + actor2->cropLeft, _engine->_renderer->projPosYScreen + actor2->cropTop, _engine->_renderer->projPosXScreen + actor2->cropRight, _engine->_renderer->projPosYScreen + actor2->cropBottom);
+	if (actor->staticFlags.bUsesClipping) {
+		const Common::Rect rect(_engine->_renderer->projPosXScreen + actor->cropLeft, _engine->_renderer->projPosYScreen + actor->cropTop, _engine->_renderer->projPosXScreen + actor->cropRight, _engine->_renderer->projPosYScreen + actor->cropBottom);
 		_engine->_interface->setClip(rect);
 	} else {
 		_engine->_interface->setClip(renderRect);
@@ -438,18 +438,18 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
 		_engine->_grid->drawSprite(0, renderRect.left, renderRect.top, spritePtr);
 
-		actor2->dynamicFlags.bIsVisible = 1;
+		actor->dynamicFlags.bIsVisible = 1;
 
-		if (actor2->staticFlags.bUsesClipping) {
-			const int32 tmpX = (actor2->lastX + 0x100) >> 9;
-			const int32 tmpY = actor2->lastY >> 8;
-			const int32 tmpZ = (actor2->lastZ + 0x100) >> 9;
+		if (actor->staticFlags.bUsesClipping) {
+			const int32 tmpX = (actor->lastX + 0x100) >> 9;
+			const int32 tmpY = actor->lastY >> 8;
+			const int32 tmpZ = (actor->lastZ + 0x100) >> 9;
 			_engine->_grid->drawOverSpriteActor(tmpX, tmpY, tmpZ);
 		} else {
-			const int32 tmpX = (actor2->x + actor2->boudingBox.x.topRight + 0x100) >> 9;
-			int32 tmpY = actor2->y >> 8;
-			const int32 tmpZ = (actor2->z + actor2->boudingBox.z.topRight + 0x100) >> 9;
-			if (actor2->brickShape() != ShapeType::kNone) {
+			const int32 tmpX = (actor->x + actor->boudingBox.x.topRight + 0x100) >> 9;
+			int32 tmpY = actor->y >> 8;
+			const int32 tmpZ = (actor->z + actor->boudingBox.z.topRight + 0x100) >> 9;
+			if (actor->brickShape() != ShapeType::kNone) {
 				tmpY++;
 			}
 
@@ -458,7 +458,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 
 		addRedrawArea(_engine->_interface->textWindow);
 
-		if (actor2->staticFlags.bIsBackgrounded && bgRedraw) {
+		if (actor->staticFlags.bIsBackgrounded && bgRedraw) {
 			_engine->_interface->blitBox(_engine->_interface->textWindow, _engine->frontVideoBuffer, _engine->workVideoBuffer);
 		}
 
