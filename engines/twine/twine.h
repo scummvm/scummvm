@@ -174,7 +174,7 @@ private:
 	uint32 _fps;
 	uint32 _start;
 public:
-	ScopedFPS(uint32 fps);
+	ScopedFPS(uint32 fps = DEFAULT_FRAMES_PER_SECOND);
 	~ScopedFPS();
 };
 
