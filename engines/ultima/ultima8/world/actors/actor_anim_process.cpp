@@ -514,7 +514,7 @@ void ActorAnimProcess::doFireWeaponCru(Actor *a, const AnimFrame *f) {
 		return;
 
 	a->fireWeapon(f->cru_attackx(), f->cru_attacky(), f->cru_attackz(),
-				  dir_current, wpninfo->_weaponInfo->_damageType, 1);
+				  a->getDir(), wpninfo->_weaponInfo->_damageType, 1);
 
 	AudioProcess *audioproc = AudioProcess::get_instance();
 	if (audioproc)

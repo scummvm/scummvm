@@ -73,10 +73,11 @@ public:
 	//! \param dx Dest X coord of the sprite in the world
 	//! \param dy Dest Y coord of the sprite in the world
 	//! \param dz Dest Z coord of the sprite in the world
+	//! \param inexact true if the destination is not exactly chosen
 	//!
 	SuperSpriteProcess(int shape, int frame, int sx, int sy, int sz,
 					   int dx, int dy, int dz, uint16 firetype,
-					   uint16 damage, uint16 source, uint16 target, uint8 flag);
+					   uint16 damage, uint16 source, uint16 target, bool inexact);
 
 	//! The SuperSpriteProcess destructor
 	~SuperSpriteProcess(void) override;

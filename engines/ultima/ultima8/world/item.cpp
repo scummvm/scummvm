@@ -36,6 +36,7 @@
 #include "ultima/ultima8/gumps/game_map_gump.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/gump_shape_archive.h"
+#include "ultima/ultima8/graphics/anim_dat.h"
 #include "ultima/ultima8/graphics/shape.h"
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/world/item_factory.h"
@@ -67,6 +68,7 @@
 #include "ultima/ultima8/world/actors/main_actor.h"
 #include "ultima/ultima8/world/missile_tracker.h"
 #include "ultima/ultima8/world/crosshair_process.h"
+#include "ultima/ultima8/world/actors/anim_action.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -1153,7 +1155,7 @@ int32 Item::collideMove(int32 dx, int32 dy, int32 dz, bool teleport, bool force,
 	return 0;
 }
 
-uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, char someflag) {
+uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, char findtarget) {
 	int32 ix, iy, iz;
 	getLocation(ix, iy, iz);
 
@@ -1214,6 +1216,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 
 		// HACK: this should be fixed to use inheritence so the behavior
 		// is clean for both Item and Actor.
+		DirectionMode dirmode = dirmode_8dirs;
 		const Actor *thisactor = dynamic_cast<Actor *>(this);
 		if (thisactor) {
 			// TODO: Get damage for active inventory item, and dirmode of last
@@ -1221,12 +1224,15 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		}
 
 		Item *target = nullptr;
-		if (someflag) {
+		if (findtarget) {
 			if (this != getControlledActor()) {
 				target = getControlledActor();
 			} else {
 				// TODO: this should be dirmode of last animation (above)
-				target = currentmap->findBestTargetItem(ix, iy, dir, dirmode_8dirs);
+				// for now, hack for avatar
+				if (thisactor->getShape() == 1 && thisactor->isInCombat())
+					dirmode = dirmode_16dirs;
+				target = currentmap->findBestTargetItem(ix, iy, dir, dirmode);
 			}
 		}
 
@@ -1234,29 +1240,8 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		int32 ty = 0;
 		int32 tz = 0;
 		if (target) {
-			int32 tsx, tsy, tsz;
 			target->getCentre(tx, ty, tz);
-			target->getFootpadData(tsx, tsy, tsz);
-
-			tz = target->getZ() + tsz * 8;
-
-			if (tsz < 3) {
-				if (tsz)
-					tz -= 8;
-			} else {
-				int32 targetz = tz;
-				int32 thisz = getZ();
-				tz -= 16;
-				if (thisz - targetz < -0x2f) {
-					tz += 8;
-				} else if (thisz - targetz > 0x2f) {
-					if (tsz == 6) {
-						tz -= 16;
-					} else if (tsz >= 7) {
-						tz -= 24;
-					}
-				}
-			}
+			tz = target->getTargetZRelativeToAttackerZ(getZ());
 		}
 
 		// TODO: check if we need the equivalent of FUN_1130_0299 here..
@@ -1292,7 +1277,7 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 			uint16 targetid = (target ? target->getObjId() : 0);
 			ssp = new SuperSpriteProcess(BULLET_SPLASH_SHAPE, spriteframe,
 										 ix, iy, iz, ssx, ssy, ssz, firetype,
-										 damage, _objId, targetid, someflag);
+										 damage, _objId, targetid, findtarget);
 			Kernel::get_instance()->addProcess(ssp);
 			spriteprocpid = ssp->getPid();
 		}
@@ -1304,6 +1289,20 @@ uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, in
 	if (!other)
 		return 0;
 
+	//
+	// We pick what animation the actor would do to fire, then
+	// pick the frame(s) where they fire in that anim.
+	//
+	// Then, check if the target can be hit using the attackx/attacky/attackz offsets.
+	// The offsets are checked in priority order:
+	// * First fire frame in anim
+	// * Second fire frame
+	// * if there are no fire frames, use the parameter offsets
+	//
+	int16 xoff2 = 0;
+	int16 yoff2 = 0;
+	int16 zoff2 = 0;
+	bool other_offsets = false;
 	Actor *a = dynamic_cast<Actor *>(this);
 	if (a) {
 		Animation::Sequence anim;
@@ -1327,11 +1326,29 @@ uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, in
 				anim = Animation::fire2;
 		}
 
-		// TODO: Get midpoint of frames in anim.  For now we ignore it and get the centre below.
+		bool first_offsets = false;
+		const AnimAction *action = GameData::get_instance()->getMainShapes()->getAnim(_shape, static_cast<int32>(anim));
+		for (unsigned int i = 0; i < action->getSize(); i++) {
+			const AnimFrame &frame = action->getFrame(dir, i);
+			if (frame.is_cruattack()) {
+				if (!first_offsets) {
+					xoff = frame.cru_attackx();
+					yoff = frame.cru_attacky();
+					zoff = frame.cru_attackz();
+					first_offsets = true;
+				} else {
+					xoff2 = frame.cru_attackx();
+					yoff2 = frame.cru_attacky();
+					zoff2 = frame.cru_attackz();
+					other_offsets = true;
+					break;
+				}
+			}
+		}
 	}
 
-	int32 cx, cy, cz;
-	getCentre(cx, cy, cz);
+	int32 x, y, z;
+	getLocation(x, y, z);
 
 	int32 ox, oy, oz;
 	other->getLocation(ox, oy, oz);
@@ -1341,36 +1358,69 @@ uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, in
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
 	if (!cm)
 		return 0;
-	const Item *blocker = nullptr;
-	bool valid = cm->isValidPosition(cx, cy, cz, BULLET_SPLASH_SHAPE,
-									 getObjId(), nullptr, nullptr, &blocker);
-	if (!valid) {
-		if (blocker->getObjId() == other->getObjId())
-			dist = MAX(abs(_x - ox), abs(_y - oy));
-	} else {
-		int32 ocx, ocy, ocz;
-		other->getCentre(ocx, ocy, ocz);
-		const int32 start[3] = {cx, cy, cz};
-		const int32 end[3] = {ocx, ocy, cz};
-		const int32 dims[3] = { 2, 2, 2 };
 
-		Std::list<CurrentMap::SweepItem> collisions;
-		Std::list<CurrentMap::SweepItem>::iterator it;
-		cm->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
-					   _objId, false, &collisions);
-		for (it = collisions.begin(); it != collisions.end(); it++) {
-			if (it->_item == getObjId())
-				continue;
-			if (it->_item != other->getObjId())
+	for (int i = 0; i < (other_offsets ? 2 : 1) && dist == 0; i++) {
+		int32 cx = x + (i == 0 ? xoff : xoff2);
+		int32 cy = y + (i == 0 ? yoff : yoff2);
+		int32 cz = z + (i == 0 ? zoff : zoff2);
+		const Item *blocker = nullptr;
+		bool valid = cm->isValidPosition(cx, cy, cz, BULLET_SPLASH_SHAPE,
+										 getObjId(), nullptr, nullptr, &blocker);
+		if (!valid) {
+			if (blocker->getObjId() == other->getObjId())
+				dist = MAX(abs(_x - ox), abs(_y - oy));
+		} else {
+			int32 ocx, ocy, ocz;
+			other->getCentre(ocx, ocy, ocz);
+			ocz = other->getTargetZRelativeToAttackerZ(getZ());
+			const int32 start[3] = {cx, cy, cz};
+			const int32 end[3] = {ocx, ocy, ocz};
+			const int32 dims[3] = {2, 2, 2};
+
+			Std::list<CurrentMap::SweepItem> collisions;
+			Std::list<CurrentMap::SweepItem>::iterator it;
+			cm->sweepTest(start, end, dims, ShapeInfo::SI_SOLID,
+						   _objId, false, &collisions);
+			for (it = collisions.begin(); it != collisions.end(); it++) {
+				if (it->_item == getObjId())
+					continue;
+				if (it->_item != other->getObjId())
+					break;
+				int32 out[3];
+				it->GetInterpolatedCoords(out, start, end);
+				dist = MAX(abs(_x - out[0]), abs(_y - out[1]));
 				break;
-			int32 out[3];
-			it->GetInterpolatedCoords(out, start, end);
-			dist = MAX(abs(_x - out[0]), abs(_y - out[1]));
-			break;
+			}
 		}
 	}
 	return dist / 32;
 }
+
+int32 Item::getTargetZRelativeToAttackerZ(int32 otherz) {
+	int32 tsx, tsy, tsz;
+	getFootpadData(tsx, tsy, tsz);
+
+	int32 tz = getZ() + tsz * 8;
+
+	if (tsz < 3) {
+		if (tsz)
+			tz -= 8;
+	} else {
+		int32 targetz = tz;
+		tz -= 16;
+		if (otherz - targetz < -0x2f) {
+			tz += 8;
+		} else if (otherz - targetz > 0x2f) {
+			if (tsz == 6) {
+				tz -= 16;
+			} else if (tsz >= 7) {
+				tz -= 24;
+			}
+		}
+	}
+	return tz;
+}
+
 
 unsigned int Item::countNearby(uint32 shape, uint16 range) {
 	CurrentMap *currentmap = World::get_instance()->getCurrentMap();

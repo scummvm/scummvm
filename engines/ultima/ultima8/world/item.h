@@ -388,9 +388,10 @@ public:
 	virtual void receiveHit(ObjId other, Direction dir, int damage, uint16 type);
 
 	//! fire the given weapon type in the given direction from location x, y, z.
-	uint16 fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, char someflag);
+	uint16 fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, char findtarget);
 
-	//! get the distance (in map tiles) if we were to fire in this direction
+	//! get the distance (in map tiles) if we were to fire in this direction to "other"
+	//! and could hit, otherwise return 0.
 	uint16 fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, int16 zoff);
 
 	//! get damage points, used in Crusader for item damage.
@@ -655,6 +656,10 @@ private:
 
 	//! The Crusader version of receiveHit
 	void receiveHitCru(ObjId other, Direction dir, int damage, uint16 type);
+
+	//! Get the right Z which an attacker should aim for, given the attacker's z.
+	//! (Crusader only)
+	int32 getTargetZRelativeToAttackerZ(int32 attackerz);
 
 public:
 	enum statusflags {

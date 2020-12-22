@@ -428,11 +428,8 @@ void CruAvatarMoverProcess::tryAttack() {
 		waitFor(avatar->doAnim(Animation::readyWeapon, dir));
 	} else {
 		if (canAttack()) {
+			// Fire event happens from animation
 			waitFor(avatar->doAnim(Animation::attack, dir));
-			// FIXME: put some real values in here.
-			int32 xs, ys, zs;
-			avatar->getFootpadWorld(xs, ys, zs);
-			avatar->fireWeapon(xs / 2, ys / 2, zs / 2, dir, 1, 1);
 		}
 	}
 }
