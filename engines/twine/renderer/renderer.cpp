@@ -1377,9 +1377,9 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 					const uint8 *shadePtr = Model::getShadesBaseData(bodyPtr, shadeIndex);
 					const int16 *colPtr = (const int16 *)shadePtr;
 
-					int16 col1 = *((const int16 *)colPtr++);
-					int16 col2 = *((const int16 *)colPtr++);
-					int16 col3 = *((const int16 *)colPtr++);
+					const int16 col1 = *((const int16 *)colPtr++);
+					const int16 col2 = *((const int16 *)colPtr++);
+					const int16 col3 = *((const int16 *)colPtr++);
 
 					int32 color = 0;
 					color += shadeMatrix.row1[0] * col1 + shadeMatrix.row1[1] * col2 + shadeMatrix.row1[2] * col3;
@@ -1425,7 +1425,7 @@ void Renderer::prepareIsoModel(uint8 *bodyPtr) { // loadGfxSub
 	}
 
 	uint8 *bonesBase = Model::getBonesBaseData(bodyPtr);
-	int16 numBones = Model::getNumBones(bodyPtr);
+	const int16 numBones = Model::getNumBones(bodyPtr);
 
 	// set up bone indices
 	for (int32 i = 0; i < numBones; i++) {
