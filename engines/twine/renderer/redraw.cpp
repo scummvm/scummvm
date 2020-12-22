@@ -407,6 +407,8 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 		if (actor->staticFlags.bIsBackgrounded && bgRedraw) {
 			_engine->_interface->blitBox(rect, _engine->frontVideoBuffer, _engine->workVideoBuffer);
 		}
+
+		_engine->_debugScene->drawClip(renderRect);
 	}
 }
 
