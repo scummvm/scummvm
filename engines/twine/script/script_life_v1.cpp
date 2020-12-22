@@ -1330,10 +1330,6 @@ static int32 lINIT_PINGOUIN(TwinEEngine *engine, LifeScriptContext &ctx) {
 static int32 lSET_HOLO_POS(TwinEEngine *engine, LifeScriptContext &ctx) {
 	static int32 location = ctx.stream.readByte();
 	engine->_holomap->setHolomapPosition(location);
-	if (engine->_gameState->hasItem(InventoryItems::kiHolomap)) {
-		engine->_redraw->addOverlay(OverlayType::koInventoryItem, InventoryItems::kiHolomap, 0, 0, 0, OverlayPosType::koNormal, 3);
-	}
-
 	return 0;
 }
 

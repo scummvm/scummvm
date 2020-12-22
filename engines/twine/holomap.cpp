@@ -27,6 +27,7 @@
 #include "twine/scene/gamestate.h"
 #include "twine/resources/hqr.h"
 #include "twine/menu/interface.h"
+#include "twine/renderer/redraw.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
 #include "twine/resources/resources.h"
@@ -65,6 +66,9 @@ bool Holomap::loadLocations() {
 void Holomap::setHolomapPosition(int32 locationIdx) {
 	assert(locationIdx >= 0 && locationIdx <= ARRAYSIZE(_engine->_gameState->holomapFlags));
 	_engine->_gameState->holomapFlags[locationIdx] = 0x81;
+	if (_engine->_gameState->hasItem(InventoryItems::kiHolomap)) {
+		_engine->_redraw->addOverlay(OverlayType::koInventoryItem, InventoryItems::kiHolomap, 0, 0, 0, OverlayPosType::koNormal, 3);
+	}
 }
 
 void Holomap::clearHolomapPosition(int32 locationIdx) {
