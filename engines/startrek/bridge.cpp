@@ -27,6 +27,10 @@
 
 namespace StarTrek {
 
+#define ACTOR_STANDING_SPOCK "xstndsp"
+#define ACTOR_STANDING_MCCOY "xstndmc"
+#define ACTOR_SITTING_SPOCK "bstndsp"
+
 struct BridgeActorAndMenu {
 	int id;
 	const char *anim;
@@ -76,43 +80,43 @@ enum BridgeSequence {
 	kSeqNone = -1,
 	// -- Chapter 1 ----
 	kSeqStartMissionDemon = 0,
-	kSeqEndMockBattle,
-	kSeqShowDebriefDemon,
-	kSeqArrivedAtPolluxV,
-	kSeqEndMissionDemon,
+	kSeqEndMockBattle = 1,
+	kSeqShowDebriefDemon = 2,
+	kSeqArrivedAtPolluxV = 3,
+	kSeqEndMissionDemon = 4,
 	// -- Chapter 2 ----
-	kSeqStartMissionTug,
-	kSeqStartElasiPirateBattle,
-	kSeqArrivedAtBetaMyamid,
-	kSeqApproachedTheMasada,
-	kSeqEndMissionTug,
+	kSeqStartMissionTug = 5,
+	kSeqStartElasiPirateBattle = 6,
+	kSeqArrivedAtBetaMyamid = 7,
+	kSeqApproachedTheMasada = 8,
+	kSeqEndMissionTug = 9,
 	// -- Chapter 3 ----
-	kSeqStartMissionLove,
-	kSeqAfterLoveDebrief,
-	kSeqStartRomulanBattle,
-	kSeqAfterRomulanBattle,
-	kSeqArrivedAtArk7,
-	kSeqEndMissionLove,
+	kSeqStartMissionLove = 10,
+	kSeqAfterLoveDebrief = 11,
+	kSeqStartRomulanBattle = 12,
+	kSeqAfterRomulanBattle = 13,
+	kSeqArrivedAtArk7 = 14,
+	kSeqEndMissionLove = 15,
 	// -- Chapter 4 ----
-	kSeqStartMissionMudd,
-	kSeqUnk17,
-	kSeqUnk18,
+	kSeqStartMissionMudd = 16,
+	kSeqFightElasiShipsAndContactMudd = 17,
+	kSeqEndMissionMudd = 18,
 	// -- Chapter 5 ----
-	kSeqStartMissionFeather,
-	kSeqUnk20,
-	kSeqUnk21,
-	kSeqStartMissionTrial,
-	kSeqUnk23,
-	kSeqUnk24,
-	kSeqUnk25,
-	kSeqUnk26,
-	kSeqUnk27,
+	kSeqStartMissionFeather = 19,
+	kSeqUnk20 = 20,
+	kSeqUnk21 = 21,
+	kSeqStartMissionTrial = 22,
+	kSeqUnk23 = 23,
+	kSeqUnk24 = 24,
+	kSeqUnk25 = 25,
+	kSeqUnk26 = 26,
+	kSeqUnk27 = 27,
 	// -- Chapter 6 ----
-	kSeqStartMissionVeng,
-	kSeqUnk29,
+	kSeqStartMissionVeng = 28,
+	kSeqUnk29 = 29,
 	// -- Chapter 7 ----
-	kSeqStartMissionSins,
-	kSeqUnk31
+	kSeqStartMissionSins = 30,
+	kSeqUnk31 = 31
 };
 
 enum Planet {
@@ -150,7 +154,8 @@ enum BridgeTalkers {
 	kBridgeTalkerMcCoy,
 	kBridgeTalkerCaptainsLog,
 	kBridgeTalkerElasiCaptain,
-	kBridgeTalkerElasiCereth
+	kBridgeTalkerElasiCereth,
+	kBridgeTalkerAutobeacon
 };
 
 void StarTrekEngine::initBridge(bool b) {
@@ -165,7 +170,7 @@ void StarTrekEngine::initBridge(bool b) {
 
 void StarTrekEngine::loadBridge() {
 	// TODO: Check why the +1 is needed here
-	initStarfield(72 + 1, 30 + 1, 247 + 1, 102 + 1, 0);
+	initStarfield(72 + 1, 30, 247 + 1, 102, 0);
 
 	_gfx->setBackgroundImage("bridge");
 	_gfx->loadPri("bridge");
@@ -232,6 +237,9 @@ void StarTrekEngine::showTextboxBridge(int talker, Common::String text) {
 	case kBridgeTalkerElasiCereth:
 		showTextbox("Elasi Cereth", text, 160, 190, 44, 0);
 		break;
+	case kBridgeTalkerAutobeacon:
+		showTextbox("Autobeacon", text, 160, 130, 161, 0);
+		break;
 	}
 }
 
@@ -280,13 +288,14 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		break;
 	case kSeqArrivedAtPolluxV:
 		showTextboxBridge(kBridgeTalkerSpock, 15); // We have arrived at Pollux V
+		_hailedTarget = false;
 		// In the original, this is actually a handler for Spock, Uhura and Chekov.
 		// We moved their actions in separate functions instead.
 		break;
 	case kSeqEndMissionDemon:
 		_resource->setTxtFileName("DEMON");
-		loadActorAnim(1, "xstndsp", 0, 0, 1.0);	// Standing Spock
-		loadActorAnim(2, "xstndmc", 0, 0, 1.0);	// Standing McCoy
+		loadActorAnim(1, ACTOR_STANDING_SPOCK, 0, 0, 1.0);
+		loadActorAnim(2, ACTOR_STANDING_MCCOY, 0, 0, 1.0);
 		_sound->playSoundEffectIndex(34);
 		showTextboxBridge(kBridgeTalkerUhura, 23); // Message from Starfleet
 		showTextboxBridge(kBridgeTalkerKirk, 24);
@@ -295,7 +304,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		showTextboxBridge(kBridgeTalkerKirk, 26);
 		showTextboxBridge(kBridgeTalkerSpock, 27);
 		showTextboxBridge(kBridgeTalkerMcCoy, 28);
-		loadActorAnim(1, "bstndsp", 0, 0, 1.0); // Sitting Spock
+		loadActorAnim(1, ACTOR_SITTING_SPOCK, 0, 0, 1.0);
 		removeActorFromScreen(2);
 		_bridgeSequenceToLoad = kSeqStartMissionTug;
 		break;
@@ -339,24 +348,38 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 	case kSeqApproachedTheMasada:
 		// TODO: approach the Masada 3D animation
 		showTextboxBridge(kBridgeTalkerSpock, 20); // There she is, Captain. She does not appear to be seriously damaged
+		_hailedTarget = false;
 		_beamDownAllowed = false;
 		break;
 	case kSeqEndMissionTug:
 		_resource->setTxtFileName("TUG");
-		loadActorAnim(1, "xstndsp", 0, 0, 1.0); // Standing Spock
-		loadActorAnim(2, "xstndmc", 0, 0, 1.0); // Standing McCoy
-		// TODO: 3 possible outcomes depending on mission actions
-		_sound->playSoundEffectIndex(34);
-		showTextboxBridge(kBridgeTalkerUhura, 29); // Message from Starfleet
-		showTextboxBridge(kBridgeTalkerKirk, 30);
-		showMissionPerformance(_awayMission.tug.missionScore * 100 / 32, 31);
-		showTextboxBridge(kBridgeTalkerMcCoy, 32);
-		showTextboxBridge(kBridgeTalkerSpock, 33);
-		showTextboxBridge(kBridgeTalkerMcCoy, 34);
-		showTextboxBridge(kBridgeTalkerKirk, 35);
-		showTextboxBridge(kBridgeTalkerSpock, 36);
-		showTextboxBridge(kBridgeTalkerKirk, 37);
-		loadActorAnim(1, "bstndsp", 0, 0, 1.0); // Sitting Spock
+		loadActorAnim(1, ACTOR_STANDING_SPOCK, 0, 0, 1.0); // Standing Spock
+		loadActorAnim(2, ACTOR_STANDING_MCCOY, 0, 0, 1.0); // Standing McCoy
+		if (_missionEndFlag == 0) {
+			// Good ending
+			_sound->playSoundEffectIndex(34);
+			showTextboxBridge(kBridgeTalkerUhura, 29);
+			showTextboxBridge(kBridgeTalkerKirk, 30);
+			showMissionPerformance(_awayMission.tug.missionScore * 100 / 32, 31);
+			showTextboxBridge(kBridgeTalkerMcCoy, 32); // Trying to hold a Federation starship captive. Can you believe it?
+			showTextboxBridge(kBridgeTalkerSpock, 33); // Since we just witnessed that very event, Doctor, I'm surprised you ask.
+			showTextboxBridge(kBridgeTalkerMcCoy, 34);
+			showTextboxBridge(kBridgeTalkerKirk, 35);
+			showTextboxBridge(kBridgeTalkerSpock, 36);
+			showTextboxBridge(kBridgeTalkerKirk, 37);
+		} else if (_missionEndFlag == 1) {
+			// Bad ending 1 (0 score): the Masada got destroyed, everyone died
+			_sound->playSoundEffectIndex(34);
+			showTextboxBridge(kBridgeTalkerUhura, 39);
+			showTextboxBridge(kBridgeTalkerKirk, 40);
+			showMissionPerformance(0, 41);
+		} else if (_missionEndFlag == 2) {
+			// Bad ending 2 (0 score): bad handling of the situation, some prisoners died
+			_sound->playSoundEffectIndex(34);
+			showTextboxBridge(kBridgeTalkerUhura, 42);
+			showMissionPerformance(0, 43);
+		}
+		loadActorAnim(1, ACTOR_SITTING_SPOCK, 0, 0, 1.0);
 		removeActorFromScreen(2);
 		_bridgeSequenceToLoad = kSeqStartMissionLove;
 		break;
@@ -373,22 +396,98 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_mouseControllingShip = true;
 		break;
 	case kSeqAfterLoveDebrief:
-		// TODO
+		// In the original, this is actually a handler for Spock, Uhura and Chekov.
+		// We moved their actions in separate functions instead.
 		break;
 	case kSeqStartRomulanBattle:
-		// TODO
+		showTextboxBridge(kBridgeTalkerSpock, "#BRID\\B_160#Romulan ship decloaking, Captain.");
+		_sound->playSoundEffectIndex(34);
+		showTextboxBridge(kBridgeTalkerUhura, 6);	// Message from the Romulan ship, Sir
+		showBridgeScreenTalkerWithMessage(9, "Romulan Captain", "romula");
+		showTextboxBridge(kBridgeTalkerSpock, 10);
+		_sound->playMidiMusicTracks(2, -1);
+		_enterpriseState.underAttack = true;
+		// HACK: Play the end of the Romulan battle sequence, until the 3D code is implemented
+		_bridgeSequenceToLoad = kSeqAfterRomulanBattle;
 		break;
 	case kSeqAfterRomulanBattle:
-		// TODO
+		_enterpriseState.underAttack = false;
+		showTextboxBridge(kBridgeTalkerSpock, 11);	// They activated a self-destruct device...
+		showTextboxBridge(kBridgeTalkerSulu, 12);	// Resuming course to ARK7, Captain
+		orbitPlanetSequence();
+		_bridgeSequenceToLoad = kSeqArrivedAtArk7;
 		break;
 	case kSeqArrivedAtArk7:
-		// TODO
+		_hailedTarget = false;
+		_sound->playSoundEffectIndex(34);
+		showTextboxBridge(kBridgeTalkerUhura, 17);
+		showTextboxBridge(kBridgeTalkerAutobeacon, 16);
 		break;
 	case kSeqEndMissionLove:
-		// TODO
+		_resource->setTxtFileName("LOVE");
+		loadActorAnim(1, ACTOR_STANDING_SPOCK, 0, 0, 1.0); // Standing Spock
+		loadActorAnim(2, ACTOR_STANDING_MCCOY, 0, 0, 1.0); // Standing McCoy
+		_sound->playSoundEffectIndex(34);
+		showTextboxBridge(kBridgeTalkerUhura, 18);
+		showTextboxBridge(kBridgeTalkerKirk, 19);
+		showMissionPerformance(_awayMission.love.missionScore * 100 / 32, 26);
+		showTextboxBridge(kBridgeTalkerKirk, 20);
+		showTextboxBridge(kBridgeTalkerMcCoy, 21);
+		showTextboxBridge(kBridgeTalkerKirk, 22);
+		showTextboxBridge(kBridgeTalkerMcCoy, 23);
+		showTextboxBridge(kBridgeTalkerScotty, 24);
+		showTextboxBridge(kBridgeTalkerKirk, 25);
+		loadActorAnim(1, ACTOR_SITTING_SPOCK, 0, 0, 1.0);
+		removeActorFromScreen(2);
+		_bridgeSequenceToLoad = kSeqStartMissionMudd;
 		break;
 	case kSeqStartMissionMudd: // Chapter 4: Another Fine Mess (mudd)
-		_targetPlanet = kPlanetHarlequin;
+		_targetPlanet = kPlanetHarlequin;	// We set it earlier for uniformity
+		_missionName = _missionToLoad = "MUDD";
+		_resource->setTxtFileName(_missionName);
+		_sound->loadMusicFile("bridge");
+		// TODO: sub_321F9()
+		showMissionStartEnterpriseFlyby("MUD0\\FLYBY", "another");
+		_sound->playSoundEffectIndex(34);
+		showTextboxBridge(kBridgeTalkerUhura, 0);
+		showTextboxBridge(kBridgeTalkerKirk, 1);
+		showBridgeScreenTalkerWithMessage(2, "Admiral", "woman");
+		// TODO: changeBridgeMode 1
+		// Spock's planet arrival quote has been moved to kSeqFightElasiShipsAndContactMudd
+		break;
+	case kSeqFightElasiShipsAndContactMudd:
+		showTextboxBridge(kBridgeTalkerSpock, 5);	// We have arrived at Harlequin
+		// TODO
+		break;
+	case kSeqEndMissionMudd:
+		_resource->setTxtFileName("MUDD");
+		loadActorAnim(1, ACTOR_STANDING_SPOCK, 0, 0, 1.0); // Standing Spock
+		loadActorAnim(2, ACTOR_STANDING_MCCOY, 0, 0, 1.0); // Standing McCoy
+		showMissionPerformance(_awayMission.mudd.missionScore * 100 / 32, 35);
+		if (_missionEndFlag != 0) {
+			// Obtained alien contraption
+			showTextboxBridge(kBridgeTalkerScotty, 36);
+			showTextboxBridge(kBridgeTalkerKirk, 37);
+		} else {
+			// Did not obtain alien contraption
+			showTextboxBridge(kBridgeTalkerKirk, 38);
+		}
+		showTextboxBridge(kBridgeTalkerUhura, 41);
+		showTextboxBridge(kBridgeTalkerKirk, 42);
+		showTextboxBridge(kBridgeTalkerUhura, 43);
+		showTextboxBridge(kBridgeTalkerKirk, 44);
+		loadActorAnim(1, ACTOR_SITTING_SPOCK, 0, 0, 1.0);
+		removeActorFromScreen(2);
+		_bridgeSequenceToLoad = kSeqStartMissionFeather;
+		break;
+	case kSeqStartMissionFeather:
+		_targetPlanet = kPlanetDigifal; // We set it earlier for uniformity
+		_missionName = _missionToLoad = "FEATHER";
+		_resource->setTxtFileName(_missionName);
+		_sound->loadMusicFile("bridgeb");
+		// TODO: sub_321F9()
+		showMissionStartEnterpriseFlyby("FEA0\\FLYBY", "feather");
+		showTextboxBridge(kBridgeTalkerKirk, 5);
 		// TODO
 		break;
 	// TODO: The rest
@@ -411,6 +510,10 @@ CrewTextsForChapter crewTexts[] = {
 	{ kPlanetPollux,     kBridgeTalkerUhura,  9, 16, 19, 19},
 	{ kPlanetBetaMyamid, kBridgeTalkerSpock, 13,  5, 17, 27 },
 	{ kPlanetBetaMyamid, kBridgeTalkerUhura, 12,  4, 16, -1 },
+	{ kPlanetArk7,       kBridgeTalkerSpock,  8,  4, -1, 13 },
+	{ kPlanetArk7,       kBridgeTalkerUhura,  7,  5, -1, -1 },
+	{ kPlanetHarlequin,  kBridgeTalkerSpock, -1,  4, -1, -1 },
+	{ kPlanetHarlequin,  kBridgeTalkerUhura, -1,  3, -1, -1 },
 	// TODO: The rest
 	{ kPlanetNone,       kBridgeTalkerNone,   0,  0,  0,  0 }
 };
@@ -450,6 +553,10 @@ void StarTrekEngine::bridgeCrewAction(int crewId) {
 
 	if (textId >= 0) {
 		showTextboxBridge(crewId, textId);
+	} else if (crewId == kBridgeTalkerSpock) {
+		showTextboxBridge(crewId, "#BRID\\B_155 #Nothing to report, Captain.");
+	} else if (crewId == kBridgeTalkerUhura) {
+		showTextboxBridge(crewId, "#BRID\\BRIDU016#Hailing frequencies open.");
 	}
 }
 
@@ -471,6 +578,11 @@ void StarTrekEngine::contactTargetAction() {
 			hailTheMasada();
 		}	
 		break;
+	case kPlanetArk7:	// Chapter 3: Love's Labor Jeopardized (love)
+		_sound->playSoundEffectIndex(34);
+		showTextboxBridge(kBridgeTalkerUhura, 14);
+		showBridgeScreenTalkerWithMessage(15, "Centurion Preax", "romula");
+		break;
 		// TODO: The rest
 	}
 }
@@ -484,16 +596,64 @@ void StarTrekEngine::negotiateWithElasiCereth() {
 		""
 	};
 
-	/*int choice = */showText(&StarTrekEngine::readTextFromArrayWithChoices, (uintptr)options1, 160, 130, 176, true, false, false);
-	// TODO: The rest
+	const char *options2[] = {
+	    "Captain Kirk",
+		"#BRID\\C_026#Freeing the prisoners you requested will take time. We have to track down their current locations, and Starfleet will have to grant permission to move them here. I will get that started - you should tender a show of good faith on your part. Will you beam over so we can discuss negotiations face to face?",
+		"#BRID\\C_091#We can work together on this, Elasi. How about beaming some of the hostages over as a show of good faith?",
+		""
+	};
+
+	const char *options3[] = {
+	    "Captain Kirk",
+		"#BRID\\C_077#Very well, we'll do it your way. I will put together the data packet.  Kirk out.",
+		"#BRID\\C_102#Your fellow Elasi have been tried in Federation courts of law, and found guilty of their crimes. We'll listen to your complaints if you discuss them reasonably.",
+	    "#BRID\\C_014#Forget it. Elasi Cereth, you'll be the next one languishing on a Federation penal planet unless you drop your shields and surrender to me immediately.",
+		""
+	};
+
+	int choice = showText(&StarTrekEngine::readTextFromArrayWithChoices, (uintptr)options1, 160, 130, 176, true, false, false);
+	if (choice == 0) {
+		showTextboxBridge(kBridgeTalkerElasiCereth, 44);	// Ah, the infamous captain Kirk...
+		showTextboxBridge(kBridgeTalkerUhura, 45);
+	} else if (choice == 1) {
+		showTextboxBridge(kBridgeTalkerElasiCereth, 46);	// Well, Kirk, someone is about to pay the price for your insolence
+		showTextboxBridge(kBridgeTalkerSpock, 60);
+		_deadMasadaPrisoners++;
+	} else if (choice == 2) {
+		showTextboxBridge(kBridgeTalkerElasiCereth, 47);
+		showTextboxBridge(kBridgeTalkerElasiCereth, 44); // Ah, the infamous captain Kirk...
+		showTextboxBridge(kBridgeTalkerUhura, 45);
+	}
+
+	showText(&StarTrekEngine::readTextFromArrayWithChoices, (uintptr)options2, 160, 130, 176, true, false, false);
+	// The choice here makes no difference
+	showTextboxBridge(kBridgeTalkerElasiCereth, 51);
+	showTextboxBridge(kBridgeTalkerScotty, 52);
+	showTextboxBridge(kBridgeTalkerSulu, 53);
+	showTextboxBridge(kBridgeTalkerElasiCereth, 54);
+
+	choice = showText(&StarTrekEngine::readTextFromArrayWithChoices, (uintptr)options3, 160, 130, 176, true, false, false);
+	if (choice == 0) {
+		// End of dialog
+	} else if (choice == 1) {
+		showTextboxBridge(kBridgeTalkerElasiCereth, 69);
+	} else if (choice == 2) {
+		showTextboxBridge(kBridgeTalkerElasiCereth, 70);
+		showTextboxBridge(kBridgeTalkerSpock, 60);
+		_deadMasadaPrisoners++;
+		showTextboxBridge(kBridgeTalkerElasiCereth, 71);
+		// The original checks for 4 dead prisoners here, but that is impossible at this point
+	}
+
+	// There are some more checks for dialog choices here, but all seem to be dead code
 }
 
 void StarTrekEngine::hailTheMasada() {
 	const char *options[] = {
-	    "Captain Kirk",
-		"Hail the masada.",
+		"Captain Kirk",
+	    "Hail the Masada.",
 	    "Send prefix code.",
-		""
+	    ""
 	};
 
 	int choice = showText(&StarTrekEngine::readTextFromArrayWithChoices, (uintptr)options, 160, 130, 176, true, false, false);
@@ -503,7 +663,12 @@ void StarTrekEngine::hailTheMasada() {
 		showTextboxBridge(kBridgeTalkerKirk, 23);
 		removeActorFromScreen(_currentScreenTalker);
 		initStarfieldSprite(&_starfieldSprite, new StubBitmap(0, 0), _starfieldRect);
-		// TODO: Kill 1 crew member
+		showTextboxBridge(kBridgeTalkerSpock, 60);
+		_deadMasadaPrisoners++;
+		if (_deadMasadaPrisoners > 4) {
+			_missionEndFlag = 2;
+			_bridgeSequenceToLoad = kSeqEndMissionTug;
+		}
 	} else {
 		Common::String code = showCodeInputBox();
 		if (code == "293391-197736-3829") {
@@ -596,8 +761,7 @@ void StarTrekEngine::showBridgeScreenTalkerWithMessages(Common::String texts[], 
 
 	initStarfieldSprite(&_starfieldSprite, new Bitmap(_resource->loadBitmapFile(talkerId)), _starfieldRect);
 	_starfieldSprite.drawMode = 0;
-	// TODO: Check why we need the coord adjustments below
-	_currentScreenTalker = loadActorAnim(-1, talkerId, 72 - 2, 30 + 1, 1.0);
+	_currentScreenTalker = loadActorAnim(-1, talkerId, 72 + _starfieldSprite.bitmap->xoffset - 2, 30 + _starfieldSprite.bitmap->yoffset, 1.0);
 	int i = 0;
 	Common::String text = texts[i];
 	while (text != "") {
@@ -883,15 +1047,15 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 	case kBridgeSuluOrbit: // Sulu, orbit
 		if (_enterpriseState.underAttack) {
 			showTextboxBridge(kBridgeTalkerSulu, underAttackText);
-		//} else if (false) {
-		//	// TODO: Check if mission is over
-		//	showTextboxBridge(kBridgeTalkerSulu, missionNotOverText);
+		} else if (_currentPlanet == _targetPlanet && _enterpriseState.inOrbit) {
+			showTextboxBridge(kBridgeTalkerSulu, missionNotOverText);
 		} else {
-			orbitPlanet();
-
 			if (_targetPlanet == kPlanetBetaMyamid) {
+				orbitPlanetSequence();
 				_bridgeSequenceToLoad = kSeqApproachedTheMasada;
 			}
+
+			orbitPlanet();
 		}
 		break;
 	case kBridgeSuluShields: // Sulu, shields
@@ -901,9 +1065,8 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 	case kBridgeChekovNavigation: // Chekov, navigation
 		if (_enterpriseState.underAttack) {
 			showTextboxBridge(kBridgeTalkerSulu, underAttackText);
-		//} else if (false) {
-		//	// TODO: Check if mission is over
-		//	showTextboxBridge(kBridgeTalkerSulu, missionNotOverText);
+		} else if (_currentPlanet == _targetPlanet) {
+			showTextboxBridge(kBridgeTalkerSulu, missionNotOverText);
 		} else if (_enterpriseState.inOrbit) {
 			showTextboxBridge(kBridgeTalkerSulu, leaveOrbitText);
 		} else {
@@ -947,7 +1110,10 @@ void StarTrekEngine::showStarMap() {
 		_bridgeSequenceToLoad = kSeqArrivedAtPolluxV;
 	else if (_targetPlanet == kPlanetBetaMyamid)
 		_bridgeSequenceToLoad = kSeqStartElasiPirateBattle;
-
+	else if (_targetPlanet == kPlanetArk7)
+		_bridgeSequenceToLoad = kSeqStartRomulanBattle;
+	else if (_targetPlanet == kPlanetHarlequin)
+		_bridgeSequenceToLoad = kSeqFightElasiShipsAndContactMudd;
 	// TODO
 }
 
@@ -960,6 +1126,11 @@ void StarTrekEngine::startBattle(Common::String enemyShip) {
 }
 
 void StarTrekEngine::wrongDestinationRandomEncounter() {
+	// TODO
+}
+
+// Used when approaching Beta Myamid / Masada in chapter 2, and Ark 7 in chapter 3
+void StarTrekEngine::orbitPlanetSequence() {
 	// TODO
 }
 

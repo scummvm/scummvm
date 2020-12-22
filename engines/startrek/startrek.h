@@ -276,6 +276,7 @@ private:
 	void wrongDestinationRandomEncounter();
 	void bridgeCrewAction(int crewId);
 	void contactTargetAction();
+	void orbitPlanetSequence();
 	void negotiateWithElasiCereth();
 	void hailTheMasada();
 
@@ -284,7 +285,9 @@ private:
 	int _currentScreenTalker;
 	bool _gameIsPaused;
 	bool _hailedTarget;
+	int _deadMasadaPrisoners;
 	bool _beamDownAllowed;
+	int _missionEndFlag;
 
 public:
 	void playMovie(Common::String filename);

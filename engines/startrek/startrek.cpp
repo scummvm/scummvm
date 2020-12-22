@@ -115,7 +115,18 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_currentPlanet = -1;
 	_gameIsPaused = false;
 	_hailedTarget = false;
+	_deadMasadaPrisoners = 0;
 	_beamDownAllowed = true;
+	_missionEndFlag = 0;
+
+	_awayMission.demon.missionScore = 0;
+	_awayMission.tug.missionScore = 0;
+	_awayMission.love.missionScore = 0;
+	_awayMission.mudd.missionScore = 0;
+	_awayMission.feather.missionScore = 0;
+	_awayMission.trial.missionScore = 0;
+	_awayMission.sins.missionScore = 0;
+	_awayMission.veng.missionScore = 0;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "patches");
@@ -301,12 +312,9 @@ void StarTrekEngine::runTransportSequence(const Common::String &name) {
 	} else if (_missionToLoad.equalsIgnoreCase("trial")) {
 		if (name[4] == 'd') {
 			loadActorAnim(9, "qteled", 0x61, 0x79, 1.0);
-		}
-		/* TODO
-		else if (word_51156 >= 3) {
+		} else if (_missionEndFlag >= 3) {
 			loadActorAnim(9, "qteleb", 0x61, 0x79, 1.0);
 		}
-		*/
 	}
 
 	loadActorAnim(8, "transc", 0, 0, 1.0);
