@@ -477,7 +477,10 @@ void Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) {
 void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
 	const int32 left = posX + *(ptr + 2);
 	const int32 top = posY + *(ptr + 3);
-	const int32 bottom = *(ptr + 1) + top;
+	const int32 bottom = MIN((int32)*(ptr + 1) + top, (int32)_engine->_interface->textWindow.bottom);
+	if (top > bottom) {
+		return;
+	}
 
 	ptr += 4;
 
@@ -497,7 +500,7 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 				}
 				if (type == 1) {
 					for (uint8 i = 0; i < iterations; i++) {
-						if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top && y < _engine->_interface->textWindow.bottom) {
+						if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top) {
 							*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = *ptr;
 						}
 
@@ -507,7 +510,7 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 				} else {
 					const uint8 pixel = *ptr++;
 					for (uint8 i = 0; i < iterations; i++) {
-						if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top && y < _engine->_interface->textWindow.bottom) {
+						if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top) {
 							*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = pixel;
 						}
 
