@@ -37,6 +37,7 @@ Console::Console(StarTrekEngine *vm) : GUI::Debugger(), _vm(vm) {
 	registerCmd("filedump",		WRAP_METHOD(Console, Cmd_DumpFile));
 	registerCmd("filesearch",	WRAP_METHOD(Console, Cmd_SearchFile));
 	registerCmd("score",		WRAP_METHOD(Console, Cmd_Score));
+	registerCmd("bridgeseq",    WRAP_METHOD(Console, Cmd_BridgeSequence));
 }
 
 Console::~Console() {
@@ -199,6 +200,16 @@ bool Console::Cmd_Score(int argc, const char **argv) {
 	debugPrintf("Chapter 6: The Old Devil Moon (sins): %d\n", _vm->_awayMission.sins.missionScore);
 	debugPrintf("Chapter 7: Vengeance (veng): %d\n", _vm->_awayMission.veng.missionScore);
 	return true;
+}
+
+bool Console::Cmd_BridgeSequence(int argc, const char **argv) {
+	if (argc < 2) {
+		debugPrintf("Usage: %s <sequence ID> to start a bridge sequence\n", argv[0]);
+		return true;
+	} else {
+		_vm->_bridgeSequenceToLoad = atoi(argv[1]);
+		return false;
+	}
 }
 
 Common::String Console::EventToString(uint32 action) {
