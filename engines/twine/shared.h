@@ -215,6 +215,11 @@ inline constexpr int32 ClampAngle(int32 angle) {
 	return angle & (ANGLE_360 - 1);
 }
 
+template<typename T>
+inline constexpr T bits(T value, uint8 offset, uint8 bits) {
+	return (((1 << bits) - 1) & (value >> offset));
+}
+
 }
 
 #endif
