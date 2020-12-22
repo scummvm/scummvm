@@ -475,26 +475,17 @@ void Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) {
 
 // WARNING: Rewrite this function to have better performance
 void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
-	int32 left = posX + *(ptr + 2);
-	int32 top = posY + *(ptr + 3);
-	int32 right = *ptr + left - 1;
-	int32 bottom = *(ptr + 1) + top - 1;
+	const int32 left = posX + *(ptr + 2);
+	const int32 top = posY + *(ptr + 3);
+	const int32 bottom = *(ptr + 1) + top;
 
 	ptr += 4;
 
 	int32 x = left;
-	int32 y = top;
 
 	//if (left >= textWindowLeft-2 && top >= textWindowTop-2 && right <= textWindowRight-2 && bottom <= textWindowBottom-2) // crop
 	{
-		right++;
-		bottom++;
-
-		uint8 *outPtr = (uint8 *)_engine->frontVideoBuffer.getBasePtr(left, top);
-
-		int32 offset = -((right - left) - SCREEN_WIDTH);
-
-		for (int32 c1 = 0; c1 < bottom - top; c1++) {
+		for (int32 y = top; y < bottom; y++) {
 			int32 vc3 = *(ptr++);
 			for (int32 c2 = 0; c2 < vc3; c2++) {
 				int32 temp = *(ptr++);
@@ -509,7 +500,6 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 							}
 
 							x++;
-							outPtr++;
 						}
 					} else {
 						for (int32 i = 0; i < iteration; i++) {
@@ -519,17 +509,13 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 
 							x++;
 							ptr++;
-							outPtr++;
 						}
 					}
 				} else {
-					outPtr += iteration + 1;
 					x += iteration + 1;
 				}
 			}
-			outPtr += offset;
 			x = left;
-			y++;
 		}
 	}
 }
