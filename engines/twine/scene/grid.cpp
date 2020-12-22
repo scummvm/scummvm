@@ -172,11 +172,11 @@ void Grid::drawOverSpriteActor(int32 x, int32 y, int32 z) {
 			BrickEntry *currBrickEntry = &bricksDataBuffer[j][i];
 
 			if (currBrickEntry->posY + 38 > _engine->_interface->textWindow.top && currBrickEntry->posY <= _engine->_interface->textWindow.bottom && currBrickEntry->y >= y) {
-				if ((currBrickEntry->x == x) && (currBrickEntry->z == z)) {
+				if (currBrickEntry->x == x && currBrickEntry->z == z) {
 					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, _engine->workVideoBuffer);
 				}
 
-				if ((currBrickEntry->x > x) || (currBrickEntry->z > z)) {
+				if (currBrickEntry->x > x || currBrickEntry->z > z) {
 					copyGridMask(currBrickEntry->index, (j * 24) - 24, currBrickEntry->posY, _engine->workVideoBuffer);
 				}
 			}
