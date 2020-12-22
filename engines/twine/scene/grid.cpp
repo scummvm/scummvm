@@ -476,11 +476,22 @@ void Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) {
 // WARNING: Rewrite this function to have better performance
 void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
 	const int32 left = posX + *(ptr + 2);
-	const int32 top = posY + *(ptr + 3);
-	const int32 bottom = MIN((int32)*(ptr + 1) + top, (int32)_engine->_interface->textWindow.bottom);
-	if (top > bottom) {
+	if (left > _engine->_interface->textWindow.right) {
 		return;
 	}
+	const int32 right = *ptr + left;
+	if (right < _engine->_interface->textWindow.left) {
+		return;
+	}
+	const int32 top = posY + *(ptr + 3);
+	if (top > _engine->_interface->textWindow.bottom) {
+		return;
+	}
+	const int32 bottom = (int32)*(ptr + 1) + top;
+	if (bottom < _engine->_interface->textWindow.top) {
+		return;
+	}
+	const int32 maxY = MIN(bottom, (int32)_engine->_interface->textWindow.bottom);
 
 	ptr += 4;
 
@@ -488,7 +499,7 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 
 	//if (left >= textWindowLeft-2 && top >= textWindowTop-2 && right <= textWindowRight-2 && bottom <= textWindowBottom-2) // crop
 	{
-		for (int32 y = top; y < bottom; y++) {
+		for (int32 y = top; y < maxY; y++) {
 			uint8 vc3 = *(ptr++);
 			for (int32 c2 = 0; c2 < vc3; c2++) {
 				const uint8 temp = *ptr++;
