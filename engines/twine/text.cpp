@@ -160,7 +160,6 @@ void Text::initTextBank(int32 bankIdx) {
 }
 
 void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
-	const uint8 sizeX = getCharWidth(character);
 	uint8 sizeY = getCharHeight(character);
 	Common::MemoryReadStream stream(_engine->_resources->fontPtr, _engine->_resources->fontBufSize);
 	stream.seek(character * 4);
@@ -171,21 +170,14 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 
 	const uint8 usedColor = _dialTextColor;
 
-	uint8 *screen2 = (uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y);
-
 	int32 tempX = x;
 	int32 tempY = y;
-
-	const int32 toNextLine = SCREEN_WIDTH - sizeX;
 
 	do {
 		uint8 index = stream.readByte();
 		do {
 			const uint8 jump = stream.readByte();
-			screen2 += jump;
-			tempX += jump;
 			if (--index == 0) {
-				screen2 += toNextLine;
 				tempY++;
 				tempX = x;
 				sizeY--;
@@ -195,17 +187,16 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 				break;
 			}
 			uint8 number = stream.readByte();
+			tempX += jump;
 			for (uint8 i = 0; i < number; i++) {
 				if (tempX >= SCREEN_TEXTLIMIT_LEFT && tempX < SCREEN_TEXTLIMIT_RIGHT && tempY >= SCREEN_TEXTLIMIT_TOP && tempY < SCREEN_TEXTLIMIT_BOTTOM) {
 					*((uint8 *)_engine->frontVideoBuffer.getBasePtr(tempX, tempY)) = usedColor;
 				}
 
-				screen2++;
 				tempX++;
 			}
 
 			if (--index == 0) {
-				screen2 += toNextLine;
 				tempY++;
 				tempX = x;
 
@@ -247,8 +238,7 @@ void Text::drawText(int32 x, int32 y, const char *dialogue) {
 	}
 
 	do {
-		const uint8 currChar = (uint8) * (dialogue++); // read the next char from the string
-
+		const uint8 currChar = (uint8) *dialogue++; // read the next char from the string
 		if (currChar == '\0') {
 			break;
 		}
