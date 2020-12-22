@@ -33,7 +33,7 @@ namespace TwinE {
 bool Screens::adelineLogo() {
 	_engine->_music->playMidiMusic(31);
 
-	if (loadImageDelay(RESSHQR_ADELINEIMG, 7)) {
+	if (loadImageDelay(RESSHQR_ADELINEIMG, RESSHQR_ADELINEPAL, 7)) {
 		return true;
 	}
 	palCustom = true;
@@ -74,14 +74,14 @@ void Screens::convertPalToRGBA(const uint8 *in, uint32 *out) {
 	}
 }
 
-void Screens::loadImage(int32 index, bool fade_in) {
+void Screens::loadImage(int32 index, int32 paletteIndex, bool fade_in) {
 	if (HQR::getEntry((uint8 *)_engine->workVideoBuffer.getPixels(), Resources::HQR_RESS_FILE, index) == 0) {
 		warning("Failed to load image with index %i", index);
 		return;
 	}
 	debug(0, "Load image: %i", index);
 	copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-	loadCustomPalette(index + 1);
+	loadCustomPalette(paletteIndex);
 	if (fade_in) {
 		fadeToPal(paletteRGBACustom);
 	} else {
@@ -91,8 +91,8 @@ void Screens::loadImage(int32 index, bool fade_in) {
 	palCustom = true;
 }
 
-bool Screens::loadImageDelay(int32 index, int32 seconds) {
-	loadImage(index);
+bool Screens::loadImageDelay(int32 index, int32 paletteIndex, int32 seconds) {
+	loadImage(index, paletteIndex);
 	if (_engine->delaySkip(1000 * seconds)) {
 		adjustPalette(0, 0, 0, paletteRGBACustom, 100);
 		return true;
