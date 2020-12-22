@@ -20,8 +20,8 @@
  *
  */
 
-#include "common/textconsole.h"
 #include "twine/resources/lzss.h"
+#include "common/textconsole.h"
 
 namespace TwinE {
 
@@ -46,18 +46,20 @@ void LzssReadStream::decodeLZSS(Common::ReadStream *in, uint32 mode, uint32 data
 		for (int32 d = 0; d < 8; d++) {
 			int32 length;
 			if (!(b & (1 << d))) {
-				uint16 offset = in->readUint16LE();
+				const uint16 offset = in->readUint16LE();
 				length = (offset & 0x0F) + (mode + 1);
-				uint8 *ptr = dst - (offset >> 4) - 1;
-				for (int32 i = 0; i < length; i++)
-					*(dst++) = *(ptr++);
+				const uint8 *ptr = dst - (offset >> 4) - 1;
+				for (int32 i = 0; i < length; i++) {
+					*dst++ = *ptr++;
+				}
 			} else {
 				length = 1;
-				*(dst++) = in->readByte();
+				*dst++ = in->readByte();
 			}
 			dataSize -= length;
-			if (dataSize <= 0)
+			if (dataSize <= 0) {
 				return;
+			}
 		}
 	} while (dataSize);
 }
@@ -67,8 +69,9 @@ bool LzssReadStream::eos() const {
 }
 
 uint32 LzssReadStream::read(void *buf, uint32 dataSize) {
-	if (dataSize > _size - _pos)
+	if (dataSize > _size - _pos) {
 		error("LzssReadStream::read past end of buffer");
+	}
 
 	memcpy(buf, &_outLzssBufData[_pos], dataSize);
 	_pos += dataSize;
