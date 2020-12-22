@@ -671,7 +671,19 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 	if (_vm->_missionName == "DEMON") {
 		_vm->_gameMode = GAMEMODE_BEAMUP;
 		_vm->_roomIndexToLoad = 0;
-		_vm->_bridgeSequenceToLoad = 4;	// kSeqEndMissionDemon
+		_vm->_bridgeSequenceToLoad = 4; // kSeqEndMissionDemon
+	} else if (_vm->_missionName == "TUG") {
+		_vm->_gameMode = GAMEMODE_BEAMUP;
+		_vm->_roomIndexToLoad = 0;
+		_vm->_bridgeSequenceToLoad = 9; // kSeqEndMissionTug
+	} else if (_vm->_missionName == "LOVE") {
+		_vm->_gameMode = GAMEMODE_BEAMUP;
+		_vm->_roomIndexToLoad = 0;
+		_vm->_bridgeSequenceToLoad = 15; // kSeqEndMissionLove
+	} else if (_vm->_missionName == "MUDD") {
+		_vm->_gameMode = GAMEMODE_BEAMUP;
+		_vm->_roomIndexToLoad = 0;
+		_vm->_bridgeSequenceToLoad = 18; // kSeqEndMissionMudd
 	} else {
 		// TODO: This is a stopgap measure (loading the next away mission immediately).
 		// Replace this with the proper code later.
@@ -680,9 +692,9 @@ void Room::endMission(int16 score, int16 arg1, int16 arg2) {
 
 		const char *missionNames[] = {
 		    //"DEMON",
-		    "TUG",
-		    "LOVE",
-		    "MUDD",
+		    //"TUG",
+		    //"LOVE",
+		    //"MUDD",
 		    "FEATHER",
 		    "TRIAL",
 		    "SINS",
