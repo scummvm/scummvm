@@ -162,7 +162,27 @@ void Holomap::processHolomap() {
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->setFontCrossColor(9);
 
-	// TODO
+	ScopedKeyMap holomapKeymap(_engine, holomapKeyMapId);
+	for (;;) {
+		ScopedFPS scopedFps;
+		_engine->_input->readKeys();
+		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
+			break;
+		}
+
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapLeft)) {
+		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapRight)) {
+		}
+
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapUp)) {
+		} else if (_engine->_input->toggleActionIfActive(TwinEActionType::HolomapDown)) {
+		}
+
+		// TODO
+
+		//_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+		//_engine->flip();
+	}
 
 	_engine->_text->drawTextBoxBackground = true;
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
