@@ -13,6 +13,10 @@ Programmcodes finden Sie auf Englisch unter:
    - Unterstützung für Little Big Adventure hinzugefügt.
    - Unterstützung für Red Comrades 1: Save the Galaxy hinzugefügt.
    - Unterstützung für Red Comrades 2: For the Great Justice hinzugefügt.
+   - Unterstützung für Transylvania hinzugefügt.
+   - Unterstützung für Crimson Crown hinzugefügt.
+   - Unterstützung für OO-Topos hinzugefügt.
+   - Unterstptzung für die Glulx interactive fiction-Spiele hinzugefügt.
 
  Allgemein:
    - Die ScummVM-Benutzeroberfläche unterstützt nun UTF-32.
