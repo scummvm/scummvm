@@ -54,6 +54,9 @@ private:
 	int32 needToLoadHolomapGFX = 0;
 	uint8 paletteHolomap[NUMOFCOLORS * 3]{0};
 
+	void drawHolomapText(int32 centerx, int32 top, const char *title);
+	void drawHolomapLocation();
+
 public:
 	Holomap(TwinEEngine *engine);
 
@@ -71,10 +74,6 @@ public:
 	 */
 	void clearHolomapPosition(int32 locationIdx);
 
-	/** Draw Holomap Title */
-	void drawHolomapTitle(int32 centerx, int32 top);
-
-	/** Draw Holomap Trajectory */
 	void drawHolomapTrajectory(int32 trajectoryIndex);
 
 	void loadGfxSub1();

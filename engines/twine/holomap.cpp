@@ -21,6 +21,7 @@
  */
 
 #include "twine/holomap.h"
+#include "common/debug.h"
 #include "common/memstream.h"
 #include "common/types.h"
 #include "twine/audio/sound.h"
@@ -132,11 +133,13 @@ void Holomap::loadHolomapGFX() {
 	needToLoadHolomapGFX = 0;
 }
 
-void Holomap::drawHolomapTitle(int32 centerx, int32 top) {
-	const char *title = "TODO";
-	_engine->_text->drawText(centerx - _engine->_text->getTextSize(title) / 2, top, title);
-
-	// TODO
+void Holomap::drawHolomapText(int32 centerx, int32 top, const char *title) {
+	const int32 size = _engine->_text->getTextSize(title);
+	const int32 x = centerx - size / 2;
+	const int32 y = top;
+	_engine->_text->setFontColor(15);
+	_engine->_text->drawText(x, y, title);
+	_engine->copyBlockPhys(x, y, x + 400, y + 100);
 }
 
 void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
@@ -144,27 +147,50 @@ void Holomap::drawHolomapTrajectory(int32 trajectoryIndex) {
 	// TODO
 }
 
+void Holomap::drawHolomapLocation() {
+	char title[256] = "";
+	for (int i = 0; i < NUM_LOCATIONS; ++i) {
+		if (!(_engine->_gameState->holomapFlags[i] & 0x81)) {
+			continue;
+		}
+		_engine->_text->getMenuText(200 + _locations[i].textIndex, title, sizeof(title));
+		break;
+	}
+	const int padding = 17;
+	Common::Rect rect;
+	rect.left = padding - 1;
+	rect.top = SCREEN_HEIGHT - 146;
+	rect.right = SCREEN_WIDTH - padding;
+	rect.bottom = SCREEN_HEIGHT - padding;
+	_engine->_menu->drawBox(rect);
+	rect.grow(-1);
+	_engine->_interface->drawTransparentBox(rect, 3);
+	const int32 height = _engine->_text->getCharWidth(title[0]);
+	drawHolomapText(rect.left + (rect.right - rect.left) / 2, rect.top + (rect.bottom - rect.top) / 2 - height / 2, title);
+}
+
 void Holomap::processHolomap() {
 	ScopedEngineFreeze freeze(_engine);
-
-	// TODO memcopy palette
 
 	const int32 alphaLightTmp = _engine->_scene->alphaLight;
 	const int32 betaLightTmp = _engine->_scene->betaLight;
 
 	_engine->_screens->fadeToBlack(_engine->_screens->paletteRGBA);
 	_engine->_sound->stopSamples();
+	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
 	_engine->_screens->clearScreen();
-	_engine->flip();
-	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
+	_engine->setPalette(_engine->_screens->paletteRGBA);
 
 	loadHolomapGFX();
-	drawHolomapTitle(SCREEN_WIDTH / 2, 25);
 	_engine->_renderer->setCameraPosition(SCREEN_WIDTH / 2, 190, 128, 1024, 1024);
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 	_engine->_text->setFontCrossColor(9);
+
+	drawHolomapText(SCREEN_WIDTH / 2, 25, "Holomap"); // TODO: fix the index
+	drawHolomapLocation();
+	_engine->flip();
 
 	ScopedKeyMap holomapKeymap(_engine, holomapKeyMapId);
 	for (;;) {
@@ -194,10 +220,9 @@ void Holomap::processHolomap() {
 	_engine->_scene->betaLight = betaLightTmp;
 
 	_engine->_gameState->initEngineProjections();
+	_engine->_interface->loadClip();
 
 	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
-
-	// TODO memcopy reset palette
 }
 
 } // namespace TwinE
