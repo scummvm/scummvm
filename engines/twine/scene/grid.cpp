@@ -486,23 +486,22 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 	//if (left >= textWindowLeft-2 && top >= textWindowTop-2 && right <= textWindowRight-2 && bottom <= textWindowBottom-2) // crop
 	{
 		for (int32 y = top; y < bottom; y++) {
-			int32 vc3 = *(ptr++);
+			uint8 vc3 = *(ptr++);
 			for (int32 c2 = 0; c2 < vc3; c2++) {
-				int32 temp = *(ptr++);
-				int32 iteration = temp & 0x3F;
+				const uint8 temp = *(ptr++);
+				const uint8 iteration = (temp & 0x3F) + 1;
 				if (temp & 0xC0) {
-					iteration++;
 					if (!(temp & 0x40)) {
-						temp = *(ptr++);
-						for (int32 i = 0; i < iteration; i++) {
+						const uint8 pixel = *ptr++;
+						for (uint8 i = 0; i < iteration; i++) {
 							if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top && y < _engine->_interface->textWindow.bottom) {
-								*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = temp;
+								*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = pixel;
 							}
 
 							x++;
 						}
 					} else {
-						for (int32 i = 0; i < iteration; i++) {
+						for (uint8 i = 0; i < iteration; i++) {
 							if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top && y < _engine->_interface->textWindow.bottom) {
 								*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = *ptr;
 							}
@@ -512,7 +511,7 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 						}
 					}
 				} else {
-					x += iteration + 1;
+					x += iteration;
 				}
 			}
 			x = left;
