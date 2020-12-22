@@ -257,7 +257,7 @@ void Screens::copyScreen(const Graphics::ManagedSurface &source, Graphics::Manag
 }
 
 void Screens::clearScreen() {
-	memset(_engine->frontVideoBuffer.getPixels(), 0, SCREEN_WIDTH * SCREEN_HEIGHT);
+	_engine->frontVideoBuffer.clear(0);
 }
 
 } // namespace TwinE
