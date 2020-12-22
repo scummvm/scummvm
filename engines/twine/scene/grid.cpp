@@ -488,30 +488,31 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 		for (int32 y = top; y < bottom; y++) {
 			uint8 vc3 = *(ptr++);
 			for (int32 c2 = 0; c2 < vc3; c2++) {
-				const uint8 temp = *(ptr++);
-				const uint8 iteration = (temp & 0x3F) + 1;
-				if (temp & 0xC0) {
-					if (!(temp & 0x40)) {
-						const uint8 pixel = *ptr++;
-						for (uint8 i = 0; i < iteration; i++) {
-							if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top && y < _engine->_interface->textWindow.bottom) {
-								*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = pixel;
-							}
-
-							x++;
+				const uint8 temp = *ptr++;
+				const uint8 iterations = bits(temp, 0, 6) + 1;
+				const uint8 type = bits(temp, 6, 2);
+				if (type == 0) {
+					x += iterations;
+					continue;
+				}
+				if (type == 1) {
+					for (uint8 i = 0; i < iterations; i++) {
+						if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top && y < _engine->_interface->textWindow.bottom) {
+							*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = *ptr;
 						}
-					} else {
-						for (uint8 i = 0; i < iteration; i++) {
-							if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top && y < _engine->_interface->textWindow.bottom) {
-								*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = *ptr;
-							}
 
-							x++;
-							ptr++;
-						}
+						x++;
+						ptr++;
 					}
 				} else {
-					x += iteration;
+					const uint8 pixel = *ptr++;
+					for (uint8 i = 0; i < iterations; i++) {
+						if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top && y < _engine->_interface->textWindow.bottom) {
+							*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = pixel;
+						}
+
+						x++;
+					}
 				}
 			}
 			x = left;
