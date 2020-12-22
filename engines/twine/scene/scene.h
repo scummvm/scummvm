@@ -345,7 +345,7 @@ public:
 	int32 sceneNumTracks = 0;
 	ScenePoint sceneTracks[NUM_MAX_TRACKS];
 
-	// TODO: check what is this
+	// TODO: check what is this - disables rendering of the grid tiles - used for credits only?
 	bool changeRoomVar10 = false;
 
 	uint8 sceneFlags[NUM_SCENES_FLAGS]{0}; // cubeFlags
