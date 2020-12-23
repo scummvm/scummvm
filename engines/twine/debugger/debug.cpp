@@ -106,7 +106,7 @@ int32 Debug::debugTypeUseMenu(int32 type) {
 			if (btn.type != type) {
 				continue;
 			}
-			int submenu = btn.submenu;
+			const int submenu = btn.submenu;
 			if (submenu > 0) {
 				debugWindows[submenu].isActive = !debugWindows[submenu].isActive;
 			}
@@ -182,7 +182,7 @@ void Debug::debugResetButton(int32 type) {
 			if (btn.type != type) {
 				continue;
 			}
-			int submenu = btn.submenu;
+			const int submenu = btn.submenu;
 			btn.isActive = 0;
 			if (submenu > 0) {
 				debugWindows[submenu].debugButtons[b].isActive = !debugWindows[submenu].debugButtons[b].isActive;
@@ -405,7 +405,7 @@ void Debug::debugPlasmaWindow(const char *text, int32 color) {
 	if (!(_engine->getRandomNumber() % 5)) {
 		_engine->_menu->plasmaEffectPtr[_engine->getRandomNumber() % PLASMA_WIDTH * 10 + 6400] = 255;
 	}
-	int32 textSize = _engine->_text->getTextSize(text);
+	const int32 textSize = _engine->_text->getTextSize(text);
 	_engine->_text->drawText((SCREEN_WIDTH / 2) - (textSize / 2), 10, text);
 	const Common::Rect rect(5, 5, 634, 50);
 	_engine->_menu->drawBox(rect);
@@ -413,61 +413,61 @@ void Debug::debugPlasmaWindow(const char *text, int32 color) {
 }
 
 void Debug::debugProcessWindow() {
-	if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugMenu)) {
-		const char *text = "Game Debug Window";
-		int32 colorIdx = 4;
-		int32 count = 0;
-
-		_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
-
-		debugResetButtonsState();
-		if (numDebugWindows == 0) {
-			debugLeftMenu();
-		}
-		debugDrawWindows();
-
-		for (;;) {
-			ScopedFPS scopedFps(25);
-			_engine->readKeys();
-			if (_engine->shouldQuit()) {
-				break;
-			}
-			const Common::Point &point = _engine->_input->getMousePositions();
-
-			if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugMenuActivate)) {
-				int type = 0;
-				if ((type = debugProcessButton(point.x, point.y)) != NO_ACTION) { // process menu item
-					if (debugTypeUseMenu(type)) {
-						_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
-						_engine->copyBlockPhys(205, 55, 634, 474);
-					}
-
-					debugRefreshButtons(type);
-					debugSetActions(type);
-				}
-			}
-
-			// draw window plasma effect
-			if (count == 256) {
-				colorIdx++;
-				count = 0;
-			}
-			int32 color = colorIdx * 16;
-			if (color >= 240) {
-				color = 64;
-				colorIdx = 4;
-			}
-			debugPlasmaWindow(text, color);
-
-			// quit
-			if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugMenu)) {
-				break;
-			}
-
-			count++;
-		}
-		_engine->_redraw->reqBgRedraw = true;
+	if (!_engine->_input->toggleActionIfActive(TwinEActionType::DebugMenu)) {
+		return;
 	}
+	const char *text = "Game Debug Window";
+	int32 colorIdx = 4;
+	int32 count = 0;
+
+	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
+
+	debugResetButtonsState();
+	if (numDebugWindows == 0) {
+		debugLeftMenu();
+	}
+	debugDrawWindows();
+
+	for (;;) {
+		ScopedFPS scopedFps(25);
+		_engine->readKeys();
+		if (_engine->shouldQuit()) {
+			break;
+		}
+		const Common::Point &point = _engine->_input->getMousePositions();
+
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugMenuActivate)) {
+			int type = 0;
+			if ((type = debugProcessButton(point.x, point.y)) != NO_ACTION) { // process menu item
+				if (debugTypeUseMenu(type)) {
+					_engine->_screens->copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+					_engine->copyBlockPhys(205, 55, 634, 474);
+				}
+
+				debugRefreshButtons(type);
+				debugSetActions(type);
+			}
+		}
+
+		// draw window plasma effect
+		if (count == 256) {
+			colorIdx++;
+			count = 0;
+		}
+		int32 color = colorIdx * 16;
+		if (color >= 240) {
+			color = 64;
+			colorIdx = 4;
+		}
+		debugPlasmaWindow(text, color);
+
+		if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugMenu)) {
+			break;
+		}
+
+		count++;
+	}
+	_engine->_redraw->reqBgRedraw = true;
 }
 
 void Debug::processDebug() {
