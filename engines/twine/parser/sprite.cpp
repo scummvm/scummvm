@@ -46,4 +46,36 @@ bool SpriteBoundingBoxData::loadFromStream(Common::SeekableReadStream &stream) {
 	return !stream.err();
 }
 
-} // End of namespace TwinE
+bool SpriteData::loadFromStream(Common::SeekableReadStream &stream) {
+	stream.skip(8);
+	int width = stream.readByte();
+	int height = stream.readByte();
+	_offsetX = stream.readByte();
+	_offsetY = stream.readByte();
+	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	_surface.create(width, height, format);
+	const int maxY = _offsetY + height;
+	for (int y = _offsetY; y < maxY; ++y) {
+		const uint8 numRuns = stream.readByte();
+		int x = _offsetX;
+		for (uint8 run = 0; run < numRuns; ++run) {
+			const uint8 runSpec = stream.readByte();
+			const uint8 runLength = bits(runSpec, 0, 6) + 1;
+			const uint8 type = bits(runSpec, 6, 2);
+			if (type == 2) {
+				uint8 *start = (uint8 *)_surface.getBasePtr(x, y);
+				uint8 *end = (uint8 *)_surface.getBasePtr(x + runLength, y);
+				Common::fill(start, end, stream.readByte());
+			} else if (type == 1 || type == 3) {
+				uint8 *start = (uint8 *)_surface.getBasePtr(x, y);
+				for (uint8 i = 0; i < runLength; ++i) {
+					*start++ = stream.readByte();
+				}
+			}
+			x += runLength;
+		}
+	}
+	return !stream.err();
+}
+
+} // namespace TwinE
