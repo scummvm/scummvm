@@ -231,31 +231,24 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 }
 
 void Interface::drawSplittedBox(const Common::Rect &rect, uint8 colorIndex) {
-	const int32 left = rect.left;
-	const int32 top = rect.top;
-	const int32 right = rect.right;
-	const int32 bottom = rect.bottom;
-
-	if (left > SCREEN_TEXTLIMIT_RIGHT) {
+	if (rect.left > SCREEN_TEXTLIMIT_RIGHT) {
 		return;
 	}
-	if (right < SCREEN_TEXTLIMIT_LEFT) {
+	if (rect.right < SCREEN_TEXTLIMIT_LEFT) {
 		return;
 	}
-	if (top > SCREEN_TEXTLIMIT_BOTTOM) {
+	if (rect.top > SCREEN_TEXTLIMIT_BOTTOM) {
 		return;
 	}
-	if (bottom < SCREEN_TEXTLIMIT_TOP) {
+	if (rect.bottom < SCREEN_TEXTLIMIT_TOP) {
 		return;
 	}
 
-	// cropping
-	int32 offset = -((right - left) - SCREEN_WIDTH);
+	const int32 offset = -((rect.right - rect.left) - SCREEN_WIDTH);
 
-	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getBasePtr(left, top);
-
-	for (int32 x = top; x < bottom; x++) {
-		for (int32 y = left; y < right; y++) {
+	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getBasePtr(rect.left, rect.top);
+	for (int32 y = rect.top; y < rect.bottom; y++) {
+		for (int32 x = rect.left; x < rect.right; x++) {
 			*ptr++ = colorIndex;
 		}
 		ptr += offset;
