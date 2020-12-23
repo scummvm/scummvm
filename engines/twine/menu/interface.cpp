@@ -74,7 +74,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		}
 
 		// At least one endpoint is outside the clip rectangle; pick it.
-		int32 outcodeOut = outcode0 ? outcode0 : outcode1;
+		const int32 outcodeOut = outcode0 ? outcode0 : outcode1;
 
 		int32 x = 0;
 		int32 y = 0;
@@ -114,13 +114,12 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 
 	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(startWidth, startHeight);
 
-	uint8 color = currentLineColor;
+	const uint8 color = currentLineColor;
 	if (endWidth < endHeight) { // significant slope
-		int16 xchg = endWidth;
+		const int16 xchg = endWidth;
 		endWidth = endHeight;
 		endHeight = xchg;
-		int16 var2 = endWidth;
-		var2 <<= 1;
+		const int16 var2 = endWidth << 1;
 		startHeight = endWidth;
 		endHeight <<= 1;
 		endWidth++;
@@ -135,14 +134,12 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 			}
 		} while (--endWidth);
 	} else { // reduced slope
-		int16 var2 = endWidth;
-		var2 <<= 1;
+		const int16 var2 = endWidth << 1;
 		startHeight = endWidth;
 		endHeight <<= 1;
 		endWidth++;
 		do {
-			*out = color;
-			out++;
+			*out++ = color;
 			startHeight -= endHeight;
 			if (startHeight < 0) {
 				startHeight += var2;
