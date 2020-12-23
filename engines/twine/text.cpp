@@ -616,7 +616,7 @@ bool Text::drawTextFullscreen(int32 index) {
 
 		ProgressiveTextState printedText;
 		for (;;) {
-			ScopedFPS scopedFps;
+			ScopedFPS scopedFps(66);
 			_engine->readKeys();
 			printedText = updateProgressiveText();
 			playVox(currDialTextEntry);
@@ -783,7 +783,7 @@ void Text::drawAskQuestion(int32 index) {
 
 	ProgressiveTextState textStatus = ProgressiveTextState::UNK1;
 	do {
-		ScopedFPS scopedFps;
+		ScopedFPS scopedFps(66);
 		_engine->readKeys();
 		textStatus = updateProgressiveText();
 
