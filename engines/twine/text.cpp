@@ -159,6 +159,10 @@ void Text::initTextBank(int32 bankIdx) {
 	initVoxBank(bankIdx);
 }
 
+void Text::initSceneTextBank() {
+	initTextBank(_engine->_scene->sceneTextBank + TextBankId::Citadel_Island);
+}
+
 void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 	uint8 sizeY = getCharHeight(character);
 	Common::MemoryReadStream stream(_engine->_resources->fontPtr, _engine->_resources->fontBufSize);

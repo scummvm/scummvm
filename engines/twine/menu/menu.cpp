@@ -649,7 +649,7 @@ void Menu::inGameOptionsMenu() {
 	optionsMenuState.setButtonTextId(0, TextId::kReturnGame);
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 	optionsMenu();
-	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
+	_engine->_text->initSceneTextBank();
 	optionsMenuState.setButtonTextId(0, TextId::kReturnMenu);
 }
 
@@ -788,7 +788,7 @@ int32 Menu::giveupMenu() {
 		default:
 			warning("Unknown menu button handled: %i", menuId);
 		}
-		_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
+		_engine->_text->initSceneTextBank();
 	} while (menuId != TextId::kGiveUp && menuId != TextId::kContinue && menuId != TextId::kCreateSaveGame);
 
 	return 0;
@@ -1036,7 +1036,7 @@ void Menu::processBehaviourMenu() {
 	_engine->_gameState->initEngineProjections();
 
 	_engine->_scene->sceneTextBank = tmpTextBank;
-	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
+	_engine->_text->initSceneTextBank();
 }
 
 void Menu::drawMagicItemsBox(int32 left, int32 top, int32 right, int32 bottom, int32 color) { // Rect
@@ -1203,7 +1203,7 @@ void Menu::processInventoryMenu() {
 
 	_engine->_gameState->initEngineProjections();
 
-	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
+	_engine->_text->initSceneTextBank();
 }
 
 } // namespace TwinE
