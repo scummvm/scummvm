@@ -360,7 +360,6 @@ private:
 	Vec3 lightPos;
 
 	RenderCommand _renderCmds[1000];
-	RenderCommand _renderCmdsSortedByDepth[1000];
 	uint8 renderCoordinatesBuffer[10000]{0};
 
 	int16 polyTab[960]{0};
