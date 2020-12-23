@@ -263,40 +263,20 @@ void Interface::drawSplittedBox(const Common::Rect &rect, uint8 colorIndex) {
 }
 
 void Interface::setClip(const Common::Rect &rect) {
-	int32 left = rect.left;
-	int32 top = rect.top;
-	int32 right = rect.right;
-	int32 bottom = rect.bottom;
-
-	if (left < 0) {
-		left = 0;
-	}
-	textWindow.left = left;
-
-	if (top < 0) {
-		top = 0;
-	}
-	textWindow.top = top;
-
-	if (right >= SCREEN_WIDTH) {
-		right = SCREEN_TEXTLIMIT_RIGHT;
-	}
-	textWindow.right = right;
-
-	if (bottom >= SCREEN_HEIGHT) {
-		bottom = SCREEN_TEXTLIMIT_BOTTOM;
-	}
-	textWindow.bottom = bottom;
+	textWindow.left = MAX(SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
+	textWindow.top = MAX(SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
+	textWindow.right = MIN(SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
+	textWindow.bottom = MIN(SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
 }
 
-void Interface::saveClip() { // saveTextWindow
+void Interface::saveClip() {
 	textWindowLeftSave = textWindow.left;
 	textWindowTopSave = textWindow.top;
 	textWindowRightSave = textWindow.right;
 	textWindowBottomSave = textWindow.bottom;
 }
 
-void Interface::loadClip() { // loadSavedTextWindow
+void Interface::loadClip() {
 	textWindow.left = textWindowLeftSave;
 	textWindow.top = textWindowTopSave;
 	textWindow.right = textWindowRightSave;
@@ -304,7 +284,8 @@ void Interface::loadClip() { // loadSavedTextWindow
 }
 
 void Interface::resetClip() {
-	textWindow.top = textWindow.left = SCREEN_TEXTLIMIT_TOP;
+	textWindow.top = SCREEN_TEXTLIMIT_TOP;
+	textWindow.left = SCREEN_TEXTLIMIT_LEFT;
 	textWindow.right = SCREEN_TEXTLIMIT_RIGHT;
 	textWindow.bottom = SCREEN_TEXTLIMIT_BOTTOM;
 }
