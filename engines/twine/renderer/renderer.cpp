@@ -396,12 +396,12 @@ void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 num
 	int16 currentVertexY = vertices[numVertices - 1].y;
 
 	for (int32 nVertex = 0; nVertex < numVertices; nVertex++) {
-		int16 oldVertexY = currentVertexY;
-		int16 oldVertexX = currentVertexX;
-		uint8 oldVertexParam = vertexParam1;
+		const int16 oldVertexY = currentVertexY;
+		const int16 oldVertexX = currentVertexX;
+		const uint8 oldVertexParam = vertexParam1;
 
 		vertexParam1 = vertices[nVertex].colorIndex;
-		uint8 vertexParam2 = vertexParam1;
+		const uint8 vertexParam2 = vertexParam1;
 		currentVertexX = vertices[nVertex].x;
 		currentVertexY = vertices[nVertex].y;
 
