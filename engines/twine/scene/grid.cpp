@@ -531,23 +531,36 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 					x += iterations;
 					continue;
 				}
+				if (y < _engine->_interface->textWindow.top || x >= _engine->_interface->textWindow.right || x + iterations < _engine->_interface->textWindow.left) {
+					if (type == 1) {
+						ptr += iterations;
+					} else {
+						++ptr;
+					}
+					x += iterations;
+					continue;
+				}
 				if (type == 1) {
+					uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y);
 					for (uint8 i = 0; i < iterations; i++) {
-						if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top) {
-							*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = *ptr;
+						if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right) {
+							*out = *ptr;
 						}
 
-						x++;
-						ptr++;
+						++out;
+						++x;
+						++ptr;
 					}
 				} else {
 					const uint8 pixel = *ptr++;
+					uint8 *out = (uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y);
 					for (uint8 i = 0; i < iterations; i++) {
-						if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right && y >= _engine->_interface->textWindow.top) {
-							*(uint8 *)_engine->frontVideoBuffer.getBasePtr(x, y) = pixel;
+						if (x >= _engine->_interface->textWindow.left && x < _engine->_interface->textWindow.right) {
+							*out = pixel;
 						}
 
-						x++;
+						++out;
+						++x;
 					}
 				}
 			}
