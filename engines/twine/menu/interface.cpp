@@ -154,7 +154,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 
 // TODO: this should get replaced by the surface blitting functions
 void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, Graphics::ManagedSurface &dest) {
-	int32 left = rect.left;
+	const int32 left = rect.left;
 	const int32 top = rect.top;
 	const int32 right = rect.right;
 	const int32 bottom = rect.bottom;
@@ -162,22 +162,13 @@ void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface
 	const int8 *s = (const int8 *)source.getBasePtr(left, top);
 	int8 *d = (int8 *)dest.getBasePtr(left, top);
 
-	int32 width = right - left + 1;
-	int32 height = bottom - top + 1;
-
-	int32 insideLine = SCREEN_WIDTH - width;
-	int32 temp3 = left;
-
-	left >>= 2;
-	temp3 &= 3;
+	const int32 width = right - left + 1;
+	const int32 height = bottom - top + 1;
 
 	for (int32 j = 0; j < height; j++) {
-		for (int32 i = 0; i < width; i++) {
-			*(d++) = *(s++);
-		}
-
-		d += insideLine;
-		s += insideLine;
+		memcpy(d, s, width);
+		d += SCREEN_WIDTH;
+		s += SCREEN_WIDTH;
 	}
 }
 
