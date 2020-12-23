@@ -521,12 +521,12 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 
 	//if (left >= textWindowLeft-2 && top >= textWindowTop-2 && right <= textWindowRight-2 && bottom <= textWindowBottom-2) // crop
 	{
-		for (int32 y = top; y < maxY; y++) {
-			uint8 vc3 = *(ptr++);
-			for (int32 c2 = 0; c2 < vc3; c2++) {
-				const uint8 temp = *ptr++;
-				const uint8 iterations = bits(temp, 0, 6) + 1;
-				const uint8 type = bits(temp, 6, 2);
+		for (int32 y = top; y < maxY; ++y) {
+			const uint8 rleAmount = *ptr++;
+			for (int32 run = 0; run < rleAmount; ++run) {
+				const uint8 rleMask = *ptr++;
+				const uint8 iterations = bits(rleMask, 0, 6) + 1;
+				const uint8 type = bits(rleMask, 6, 2);
 				if (type == 0) {
 					x += iterations;
 					continue;
