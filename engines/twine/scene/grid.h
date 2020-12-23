@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "twine/shared.h"
+#include "twine/twine.h"
 
 namespace Graphics {
 class ManagedSurface;
@@ -71,6 +72,8 @@ struct BrickEntry {
 #define GRID_SIZE_Y 25
 /** Grip Z size */
 #define GRID_SIZE_Z GRID_SIZE_X
+
+#define NUMBRICKENTRIES (1 + (SCREEN_WIDTH + 24) / 24)
 
 class TwinEEngine;
 
@@ -152,9 +155,9 @@ private:
 	int32 numberOfBll = 0;
 
 	/** Brick data buffer */
-	BrickEntry bricksDataBuffer[28][150];
+	BrickEntry bricksDataBuffer[NUMBRICKENTRIES][150];
 	/** Brick info buffer */
-	int16 brickInfoBuffer[28]{0};
+	int16 brickInfoBuffer[NUMBRICKENTRIES]{0};
 
 	/** Current brick pixel X position */
 	int32 brickPixelPosX = 0;
