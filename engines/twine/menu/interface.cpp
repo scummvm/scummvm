@@ -51,7 +51,6 @@ int32 Interface::checkClipping(int32 x, int32 y) {
 
 // TODO: check if Graphics::drawLine() works here
 void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, uint8 lineColor) {
-
 	// draw line from left to right
 	if (startWidth > endWidth) {
 		SWAP(endWidth, startWidth);
@@ -98,11 +97,11 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		}
 	}
 
-	int32 flag2 = SCREEN_WIDTH;
+	int32 pitch = SCREEN_WIDTH;
 	endWidth -= startWidth;
 	endHeight -= startHeight;
 	if (endHeight < 0) {
-		flag2 = -flag2;
+		pitch = -pitch;
 		endHeight = -endHeight;
 	}
 
@@ -118,10 +117,10 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 			*out = lineColor;
 			startHeight -= endHeight;
 			if (startHeight > 0) {
-				out += flag2;
+				out += pitch;
 			} else {
 				startHeight += var2;
-				out += flag2 + 1;
+				out += pitch + 1;
 			}
 		} while (--endWidth);
 	} else { // reduced slope
@@ -134,7 +133,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 			startHeight -= endHeight;
 			if (startHeight < 0) {
 				startHeight += var2;
-				out += flag2;
+				out += pitch;
 			}
 		} while (--endWidth);
 	}
