@@ -395,7 +395,7 @@ void GameState::processFoundItem(int32 item) {
 	}
 
 	initEngineProjections();
-	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
+	_engine->_text->initSceneTextBank();
 	_engine->_text->stopVox(_engine->_text->currDialTextEntry);
 
 	_engine->_scene->sceneHero->animTimerData = tmpAnimTimer;
@@ -405,7 +405,7 @@ void GameState::processGameChoices(int32 choiceIdx) {
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
 	gameChoicesSettings.reset();
-	gameChoicesSettings.setTextBankId(_engine->_scene->sceneTextBank + 3);
+	gameChoicesSettings.setTextBankId(_engine->_scene->sceneTextBank + TextBankId::Citadel_Island);
 
 	// filled via script
 	for (int32 i = 0; i < numChoices; i++) {

@@ -317,7 +317,7 @@ void Scene::changeScene() {
 		sceneTextBank = TextBankId::Tippet_Island;
 	}
 
-	_engine->_text->initTextBank(sceneTextBank + 3);
+	_engine->_text->initSceneTextBank();
 	_engine->_grid->initGrid(needChangeScene);
 
 	if (heroPositionType == ScenePositionType::kZone) {

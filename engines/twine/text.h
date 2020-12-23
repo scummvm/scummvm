@@ -241,6 +241,7 @@ public:
 	 * @param bankIdx Text bank index
 	 */
 	void initTextBank(int32 bankIdx);
+	void initSceneTextBank();
 
 	/**
 	 * Display a certain dialogue text in the screen

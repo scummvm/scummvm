@@ -526,7 +526,7 @@ void TwinEEngine::processInventoryAction() {
 		cfgfile.FlagDisplayText = tmpFlagDisplayText;
 		_text->textClipSmall();
 		_text->drawTextBoxBackground = true;
-		_text->initTextBank(_scene->sceneTextBank + 3);
+		_text->initSceneTextBank();
 		_screens->fadeToBlack(_screens->paletteRGBACustom);
 		_screens->clearScreen();
 		flip();
@@ -578,7 +578,7 @@ void TwinEEngine::processInventoryAction() {
 		_text->setFontCrossColor(15);
 		_text->drawTextFullscreen(162);
 		_text->textClipSmall();
-		_text->initTextBank(_scene->sceneTextBank + 3);
+		_text->initSceneTextBank();
 		break;
 	}
 	case kiCloverLeaf:

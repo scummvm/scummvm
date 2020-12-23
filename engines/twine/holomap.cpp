@@ -222,7 +222,7 @@ void Holomap::processHolomap() {
 	_engine->_gameState->initEngineProjections();
 	_engine->_interface->loadClip();
 
-	_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
+	_engine->_text->initSceneTextBank();
 }
 
 } // namespace TwinE
