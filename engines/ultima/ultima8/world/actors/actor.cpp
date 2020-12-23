@@ -1128,20 +1128,22 @@ ProcId Actor::die(uint16 damageType) {
 			MusicProcess::get_instance()->queueMusic(98);
 		}
 	} else if (GAME_IS_CRUSADER) {
-		uint16 sfxno;
-		static const uint16 FADING_SCREAM_SFX[] = { 0xD9, 0xDA };
-		static const uint16 MALE_DEATH_SFX[] = { 0x88, 0x8C, 0x8F };
-		static const uint16 FEMALE_DEATH_SFX[] = { 0xD8, 0x10 };
-		if (damageType == 0xf) {
-			sfxno = FADING_SCREAM_SFX[getRandom() % 2];
-		} else {
-			if (hasExtFlags(EXT_FEMALE)) {
-				sfxno = FEMALE_DEATH_SFX[getRandom() % 2];
+		if (!isRobotCru()) {
+			uint16 sfxno;
+			static const uint16 FADING_SCREAM_SFX[] = { 0xD9, 0xDA };
+			static const uint16 MALE_DEATH_SFX[] = { 0x88, 0x8C, 0x8F };
+			static const uint16 FEMALE_DEATH_SFX[] = { 0xD8, 0x10 };
+			if (damageType == 0xf) {
+				sfxno = FADING_SCREAM_SFX[getRandom() % 2];
 			} else {
-				sfxno = MALE_DEATH_SFX[getRandom() % 3];
+				if (hasExtFlags(EXT_FEMALE)) {
+					sfxno = FEMALE_DEATH_SFX[getRandom() % 2];
+				} else {
+					sfxno = MALE_DEATH_SFX[getRandom() % 3];
+				}
 			}
+			AudioProcess::get_instance()->playSFX(sfxno, 0x10, _objId, 0, true);
 		}
-		AudioProcess::get_instance()->playSFX(sfxno, 0x10, _objId, 0, true);
 	}
 
 	destroyContents();
@@ -1680,11 +1682,11 @@ uint32 Actor::I_doAnim(const uint8 *args, unsigned int /*argsize*/) {
 
 	//
 	// HACK: In Crusader, we do translation on the animations so we want to remap
-	// most of them, but for direct commands from the usecode we add 0x1000 for
+	// most of them, but for direct commands from the usecode we add a bitflag for
 	// no remapping
 	//
 	if (GAME_IS_CRUSADER) {
-		anim += 0x1000;
+		anim |= Animation::crusaderAbsoluteAnimFlag;
 	}
 
 	return actor->doAnim(static_cast<Animation::Sequence>(anim), Direction_FromUsecodeDir(dir));

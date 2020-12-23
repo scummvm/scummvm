@@ -83,12 +83,12 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 		//
 		// We also translate based on weapon.  See the function at 1128:2104
 		//
-		// First, if the animation is >= 0x1000 then it's from the usecode -
-		// use directly and don't translate.
+		// First, if the animation includes the Animation::crusaderAbsoluteAnimFlag
+		// bitmask then it's from the usecode - use directly and don't translate.
 		//
 		const uint32 action_int = static_cast<uint32>(action);
-		if (action_int >= 0x1000)
-			return action_int - 0x1000;
+		if (action_int & Animation::crusaderAbsoluteAnimFlag)
+			return action_int - Animation::crusaderAbsoluteAnimFlag;
 
 		switch (action) {
 		case Animation::stand:
@@ -119,7 +119,7 @@ uint32 AnimDat::getActionNumberForSequence(Animation::Sequence action, const Act
 		case Animation::fallBackwards:
 			return 18;
 		case Animation::die:
-			return 20; // maybe? falls over forwards
+			return 18; // by default fall over backwards. TODO: randomly use 20 for some deaths - fall forwards.
 		case Animation::advance:
 			return (smallwpn ? 36 : 44);
 		case Animation::startKneeling:
