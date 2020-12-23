@@ -27,6 +27,7 @@
 #include "common/rect.h"
 #include "common/scummsys.h"
 #include "twine/parser/body.h"
+#include "twine/twine.h"
 
 #define POLYGONTYPE_FLAT 0
 #define POLYGONTYPE_COPPER 1
@@ -37,6 +38,8 @@
 #define POLYGONTYPE_TRAME 6
 #define POLYGONTYPE_GOURAUD 7
 #define POLYGONTYPE_DITHER 8
+
+#define POLYTABSIZE (SCREEN_HEIGHT + (SCREEN_HEIGHT / 2))
 
 namespace Common {
 class MemoryReadStream;
@@ -362,8 +365,8 @@ private:
 	RenderCommand _renderCmds[1000];
 	uint8 renderCoordinatesBuffer[10000]{0};
 
-	int16 polyTab[960]{0};
-	int16 polyTab2[960]{0};
+	int16 polyTab[POLYTABSIZE]{0};
+	int16 polyTab2[POLYTABSIZE]{0};
 	// end render polygon vars
 
 	bool isUsingOrhoProjection = false;
