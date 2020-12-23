@@ -369,33 +369,29 @@ FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 	return x < a ? a : (x > b ? b : x);
 }
 
-void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) {
+void Renderer::computeBoundingBox(Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) const {
 	vleft = vtop = 32767;
 	vright = vbottom = -32768;
 
 	for (int32 i = 0; i < numVertices; i++) {
 		vertices[i].x = clamp(vertices[i].x, 0, SCREEN_WIDTH - 1);
-		int16 vertexX = vertices[i].x;
-
-		if (vertexX < vleft) {
-			vleft = vertexX;
-		}
-		if (vertexX > vright) {
-			vright = vertexX;
-		}
-
 		vertices[i].y = clamp(vertices[i].y, 0, SCREEN_HEIGHT - 1);
-		int16 vertexY = vertices[i].y;
-		if (vertexY < vtop) {
-			vtop = vertexY;
-		}
-		if (vertexY > vbottom) {
-			vbottom = vertexY;
-		}
+		const int vertexX = vertices[i].x;
+		vleft = MIN(vleft, vertexX);
+		vright = MAX(vright, vertexX);
+		const int vertexY = vertices[i].y;
+		vtop = MIN(vtop, vertexY);
+		vbottom = MAX(vbottom, vertexY);
 	}
+}
+
+void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) {
+	if (numVertices <= 0) {
+		return;
+	}
+	computeBoundingBox(vertices, numVertices, vleft, vright, vtop, vbottom);
 
 	uint8 vertexParam1 = vertices[numVertices - 1].colorIndex;
-	uint8 vertexParam2 = vertexParam1;
 	int16 currentVertexX = vertices[numVertices - 1].x;
 	int16 currentVertexY = vertices[numVertices - 1].y;
 
@@ -404,7 +400,8 @@ void Renderer::computePolygons(int16 polyRenderType, Vertex *vertices, int32 num
 		int16 oldVertexX = currentVertexX;
 		uint8 oldVertexParam = vertexParam1;
 
-		vertexParam1 = vertexParam2 = vertices[nVertex].colorIndex;
+		vertexParam1 = vertices[nVertex].colorIndex;
+		uint8 vertexParam2 = vertexParam1;
 		currentVertexX = vertices[nVertex].x;
 		currentVertexY = vertices[nVertex].y;
 
