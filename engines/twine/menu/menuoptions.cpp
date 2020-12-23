@@ -253,6 +253,7 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 	Common::fill(&_onScreenKeyboardDirty[0], &_onScreenKeyboardDirty[ARRAYSIZE(_onScreenKeyboardDirty)], 1);
 	ScopedFeatureState scopedVirtualKeyboard(OSystem::kFeatureVirtualKeyboard, true);
 	for (;;) {
+		ScopedFPS scopedFps;
 		Common::Event event;
 		while (g_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
@@ -337,7 +338,6 @@ bool MenuOptions::enterPlayerName(int32 textIdx) {
 		}
 		drawPlayerName(halfScreenWidth, 100, 1);
 		drawSelectableCharacters();
-		_engine->_system->delayMillis(1);
 	}
 	return false;
 }

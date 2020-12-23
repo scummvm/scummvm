@@ -304,6 +304,7 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 		ScopedKeyMap scopedKeyMap(_engine, cutsceneKeyMapId);
 
 		do {
+			ScopedFPS scopedFps(flaHeaderData.speed);
 			_engine->readKeys();
 			if (_engine->shouldQuit()) {
 				break;
@@ -334,8 +335,6 @@ void FlaMovies::playFlaMovie(const char *flaName) {
 			}
 
 			currentFrame++;
-
-			_engine->_system->delayMillis(1000 / flaHeaderData.speed + 1);
 		} while (!_engine->_input->toggleAbortAction());
 	}
 

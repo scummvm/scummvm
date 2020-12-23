@@ -1617,12 +1617,6 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_screens->clearScreen();
 	engine->setPalette(engine->_screens->paletteRGBA);
 	engine->cfgfile.FlagDisplayText = tmpFlagDisplayText;
-
-	do {
-		engine->readKeys();
-		engine->_system->delayMillis(1);
-	} while (engine->_input->toggleAbortAction());
-
 	return 0;
 }
 
