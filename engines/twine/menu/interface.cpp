@@ -191,27 +191,21 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 		return;
 	}
 
-	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getBasePtr(left, top);
-	const int32 height = bottom - top;
-	const int32 width = right - left + 1;
-	const int32 pitch = SCREEN_WIDTH - width;
-	const int32 localMode = colorAdj;
+	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getBasePtr(0, top);
 
-	for (int32 y = 0; y < height; ++y) {
-		int32 var1 = width;
-		do {
-			int8 color = *pos & 0x0F;
-			const int8 color2 = *pos & 0xF0;
-			color -= localMode;
+	for (int32 y = top; y < bottom; ++y) {
+		for (int32 x = left; x < right; ++x) {
+			int8 color = pos[x] & 0x0F;
+			const int8 color2 = pos[x] & 0xF0;
+			color -= colorAdj;
 			if (color < 0) {
 				color = color2;
 			} else {
 				color += color2;
 			}
-			*pos++ = color;
-			var1--;
-		} while (var1 > 0);
-		pos += pitch;
+			pos[x] = color;
+		}
+		pos += SCREEN_WIDTH;
 	}
 }
 
