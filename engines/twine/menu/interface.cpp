@@ -142,10 +142,23 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 
 // TODO: this should get replaced by the surface blitting functions
 void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, Graphics::ManagedSurface &dest) {
-	const int32 left = rect.left;
-	const int32 top = rect.top;
-	const int32 right = rect.right;
-	const int32 bottom = rect.bottom;
+	const int32 left = MAX(SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
+	const int32 top = MAX(SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
+	const int32 right = MIN(SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
+	const int32 bottom = MIN(SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
+
+	if (left > SCREEN_TEXTLIMIT_RIGHT) {
+		return;
+	}
+	if (right < SCREEN_TEXTLIMIT_LEFT) {
+		return;
+	}
+	if (top > SCREEN_TEXTLIMIT_BOTTOM) {
+		return;
+	}
+	if (bottom < SCREEN_TEXTLIMIT_TOP) {
+		return;
+	}
 
 	const int8 *s = (const int8 *)source.getBasePtr(left, top);
 	int8 *d = (int8 *)dest.getBasePtr(left, top);
