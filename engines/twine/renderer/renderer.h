@@ -39,7 +39,7 @@
 #define POLYGONTYPE_GOURAUD 7
 #define POLYGONTYPE_DITHER 8
 
-#define POLYTABSIZE (SCREEN_HEIGHT + (SCREEN_HEIGHT / 2))
+#define POLYTABSIZE (SCREEN_HEIGHT * 2)
 
 namespace Common {
 class MemoryReadStream;
