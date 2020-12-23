@@ -173,10 +173,10 @@ void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface
 }
 
 void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
-	int32 left = rect.left;
-	int32 top = rect.top;
-	int32 right = rect.right;
-	int32 bottom = rect.bottom;
+	const int32 left = MAX(SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
+	const int32 top = MAX(SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
+	const int32 right = MIN(SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
+	const int32 bottom = MIN(SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
 
 	if (left > SCREEN_TEXTLIMIT_RIGHT) {
 		return;
@@ -189,19 +189,6 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 	}
 	if (bottom < SCREEN_TEXTLIMIT_TOP) {
 		return;
-	}
-
-	if (left < SCREEN_TEXTLIMIT_LEFT) {
-		left = SCREEN_TEXTLIMIT_LEFT;
-	}
-	if (right > SCREEN_TEXTLIMIT_RIGHT) {
-		right = SCREEN_TEXTLIMIT_RIGHT;
-	}
-	if (top < SCREEN_TEXTLIMIT_TOP) {
-		top = SCREEN_TEXTLIMIT_TOP;
-	}
-	if (bottom > SCREEN_TEXTLIMIT_BOTTOM) {
-		bottom = SCREEN_TEXTLIMIT_BOTTOM;
 	}
 
 	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getBasePtr(left, top);
