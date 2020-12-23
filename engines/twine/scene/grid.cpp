@@ -637,7 +637,7 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 
 	int32 brickBuffIdx = (brickPixelPosX + 24) / 24;
 
-	if (brickInfoBuffer[brickBuffIdx] >= 150) {
+	if (brickInfoBuffer[brickBuffIdx] >= MAXBRICKS) {
 		warning("GRID: brick buffer exceeded");
 		return;
 	}

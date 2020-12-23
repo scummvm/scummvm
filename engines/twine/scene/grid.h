@@ -75,6 +75,7 @@ struct BrickEntry {
 #define GRID_SIZE_Z GRID_SIZE_X
 
 #define NUMBRICKENTRIES (1 + (SCREEN_WIDTH + 24) / 24)
+#define MAXBRICKS 150
 
 class TwinEEngine;
 
@@ -156,7 +157,7 @@ private:
 	int32 numberOfBll = 0;
 
 	/** Brick data buffer */
-	BrickEntry bricksDataBuffer[NUMBRICKENTRIES][150];
+	BrickEntry bricksDataBuffer[NUMBRICKENTRIES][MAXBRICKS];
 	/** Brick info buffer */
 	int16 brickInfoBuffer[NUMBRICKENTRIES]{0};
 
