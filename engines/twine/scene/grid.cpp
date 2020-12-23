@@ -393,14 +393,14 @@ void Grid::createGridMap() {
 
 	for (int32 z = 0; z < GRID_SIZE_Z; z++) {
 		int32 blockOffset = currOffset;
-		int32 gridIdx = z << 6;
+		const int32 gridIdx = z << 6;
 
 		for (int32 x = 0; x < GRID_SIZE_X; x++) {
-			int32 gridOffset = READ_LE_UINT16(currentGrid + 2 * (x + gridIdx));
+			const int32 gridOffset = READ_LE_UINT16(currentGrid + 2 * (x + gridIdx));
 			createGridColumn(currentGrid + gridOffset, currentGridSize - gridOffset, blockBuffer + blockOffset, blockBufferSize - blockOffset);
 			blockOffset += 50;
 		}
-		currOffset += 3200;
+		currOffset += GRID_SIZE_X * 50;
 	}
 }
 
@@ -413,13 +413,13 @@ void Grid::createCellingGridMap(const uint8 *gridPtr, int32 gridPtrSize) {
 		const uint8 *tempGridPtr = gridPtr + currGridOffset;
 
 		for (int32 x = 0; x < GRID_SIZE_X; x++) {
-			int gridOffset = READ_LE_UINT16(tempGridPtr);
+			const int gridOffset = READ_LE_UINT16(tempGridPtr);
 			tempGridPtr += 2;
 			createCellingGridColumn(gridPtr + gridOffset, gridPtrSize - gridOffset, blockBuffer + blockOffset, blockBufferSize - blockOffset);
 			blockOffset += 50;
 		}
 		currGridOffset += 128;
-		currOffset += 3200;
+		currOffset += GRID_SIZE_X * 50;
 	}
 }
 
