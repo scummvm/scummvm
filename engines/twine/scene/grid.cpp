@@ -474,6 +474,27 @@ void Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) {
 	drawBrickSprite(index, posX, posY, ptr, true);
 }
 
+void Grid::drawSprite(int32 /*index*/, int32 posX, int32 posY, const SpriteData &ptr) {
+	const int32 left = posX + ptr.offsetX();
+	if (left > _engine->_interface->textWindow.right) {
+		return;
+	}
+	const int32 right = ptr.surface().w + left;
+	if (right < _engine->_interface->textWindow.left) {
+		return;
+	}
+	const int32 top = posY + ptr.offsetY();
+	if (top > _engine->_interface->textWindow.bottom) {
+		return;
+	}
+	const int32 bottom = ptr.surface().h + top;
+	if (bottom < _engine->_interface->textWindow.top) {
+		return;
+	}
+
+	_engine->frontVideoBuffer.transBlitFrom(ptr.surface(), Common::Point(left, top));
+}
+
 // WARNING: Rewrite this function to have better performance
 void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr, bool isSprite) {
 	const int32 left = posX + *(ptr + 2);

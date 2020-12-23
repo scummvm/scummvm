@@ -77,6 +77,9 @@ void Resources::preloadSprites() {
 	debug("preload %i sprites", numEntries);
 	for (int32 i = 0; i < numEntries; i++) {
 		spriteSizeTable[i] = HQR::getAllocEntry(&spriteTable[i], Resources::HQR_SPRITES_FILE, i);
+		if (!spriteData[i].loadFromBuffer(spriteTable[i], spriteSizeTable[i])) {
+			error("Failed to load sprite %i", i);
+		}
 	}
 }
 
