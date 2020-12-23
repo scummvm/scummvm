@@ -193,12 +193,11 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 
 	uint8 *pos = (uint8*)_engine->frontVideoBuffer.getBasePtr(left, top);
 	const int32 height = bottom - top;
-	int32 height2 = height + 1;
 	const int32 width = right - left + 1;
 	const int32 pitch = SCREEN_WIDTH - width;
 	const int32 localMode = colorAdj;
 
-	do {
+	for (int32 y = 0; y < height; ++y) {
 		int32 var1 = width;
 		do {
 			int8 color = *pos & 0x0F;
@@ -213,8 +212,7 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 			var1--;
 		} while (var1 > 0);
 		pos += pitch;
-		height2--;
-	} while (height2 > 0);
+	}
 }
 
 void Interface::drawSplittedBox(const Common::Rect &rect, uint8 colorIndex) {
