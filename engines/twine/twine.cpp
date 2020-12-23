@@ -754,11 +754,11 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 			_text->drawText(5, 446, "Pause"); // no key for pause in Text Bank
 			copyBlockPhys(5, 446, 100, 479);
 			do {
+				ScopedFPS scopedFps;
 				readKeys();
 				if (shouldQuit()) {
 					break;
 				}
-				g_system->delayMillis(10);
 			} while (!_input->toggleActionIfActive(TwinEActionType::Pause));
 			unfreezeTime();
 			_redraw->redrawEngineActions(true);
@@ -964,6 +964,7 @@ bool TwinEEngine::delaySkip(uint32 time) {
 	uint32 startTicks = _system->getMillis();
 	uint32 stopTicks = 0;
 	do {
+		ScopedFPS scopedFps;
 		readKeys();
 		if (_input->toggleAbortAction()) {
 			return true;
@@ -972,7 +973,6 @@ bool TwinEEngine::delaySkip(uint32 time) {
 			return true;
 		}
 		stopTicks = _system->getMillis() - startTicks;
-		_system->delayMillis(1);
 		//lbaTime++;
 	} while (stopTicks <= time);
 	return false;

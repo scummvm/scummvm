@@ -404,6 +404,7 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 	}
 	uint32 startMillis = _engine->_system->getMillis();
 	do {
+		ScopedFPS scopedFps;
 		const uint32 loopMillis = _engine->_system->getMillis();
 		_engine->readKeys();
 
@@ -559,7 +560,6 @@ int32 Menu::processMenu(MenuSettings *menuSettings) {
 			startMillis = _engine->_system->getMillis();
 			_engine->_screens->loadMenuImage(false);
 		}
-		_engine->_system->delayMillis(10);
 	} while (!_engine->_input->toggleActionIfActive(TwinEActionType::UIEnter));
 
 	return menuSettings->getActiveButtonTextId();
@@ -719,6 +719,7 @@ bool Menu::init() {
 }
 
 EngineState Menu::run() {
+	ScopedFPS scopedFps;
 	_engine->_text->initTextBank(TextBankId::Options_and_menus);
 
 	_engine->_music->playTrackMusic(9); // LBA's Theme
@@ -751,7 +752,6 @@ EngineState Menu::run() {
 		debug("quit the game");
 		return EngineState::QuitGame;
 	}
-	_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
 	return EngineState::Menu;
 }
 
@@ -770,6 +770,7 @@ int32 Menu::giveupMenu() {
 
 	int32 menuId;
 	do {
+		ScopedFPS scopedFps;
 		_engine->_text->initTextBank(TextBankId::Options_and_menus);
 		menuId = processMenu(localMenu);
 		switch (menuId) {
@@ -788,7 +789,6 @@ int32 Menu::giveupMenu() {
 			warning("Unknown menu button handled: %i", menuId);
 		}
 		_engine->_text->initTextBank(_engine->_scene->sceneTextBank + 3);
-		_engine->_system->delayMillis(1000 / _engine->cfgfile.Fps);
 	} while (menuId != TextId::kGiveUp && menuId != TextId::kContinue && menuId != TextId::kCreateSaveGame);
 
 	return 0;
@@ -988,6 +988,7 @@ void Menu::processBehaviourMenu() {
 #endif
 	ScopedKeyMap scopedKeyMap(_engine, uiKeyMapId);
 	while (_engine->_input->isActionActive(TwinEActionType::BehaviourMenu) || _engine->_input->isQuickBehaviourActionActive()) {
+		ScopedFPS scopedFps(50);
 		_engine->readKeys();
 
 #if 0
@@ -1026,7 +1027,6 @@ void Menu::processBehaviourMenu() {
 
 		drawBehaviour(_engine->_actor->heroBehaviour, -1, true);
 
-		_engine->_system->delayMillis(1000 / 50);
 		_engine->lbaTime++;
 	}
 
@@ -1117,7 +1117,7 @@ void Menu::processInventoryMenu() {
 #endif
 	ScopedKeyMap scopedKeyMap(_engine, uiKeyMapId);
 	for (;;) {
-		ScopedFPS fps(1000 / 15);
+		ScopedFPS fps(66);
 		_engine->readKeys();
 		int32 prevSelectedItem = inventorySelectedItem;
 
@@ -1194,8 +1194,6 @@ void Menu::processInventoryMenu() {
 			drawItem(inventorySelectedItem);
 			break;
 		}
-
-		_engine->_system->delayMillis(1);
 	}
 
 	_engine->_text->_hasValidTextHandle = false;

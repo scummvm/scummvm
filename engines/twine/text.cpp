@@ -634,22 +634,22 @@ bool Text::drawTextFullscreen(int32 index) {
 			stopVox(currDialTextEntry);
 			// wait displaying text
 			for (;;) {
+				ScopedFPS scopedFps;
 				_engine->readKeys();
 				if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
 					aborted = true;
 					break;
 				}
-				_engine->_system->delayMillis(1);
 			}
 		}
 	} else { // RECHECK THIS
 		while (playVox(currDialTextEntry)) {
+			ScopedFPS scopedFps;
 			_engine->readKeys();
 			if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
 				aborted = true;
 				break;
 			}
-			_engine->_system->delayMillis(1);
 		}
 		hasHiddenVox = false;
 		voxHiddenIndex = 0;
@@ -779,11 +779,13 @@ void Text::drawAskQuestion(int32 index) {
 
 	ProgressiveTextState textStatus = ProgressiveTextState::UNK1;
 	do {
+		ScopedFPS scopedFps;
 		_engine->readKeys();
 		textStatus = updateProgressiveText();
 
 		if (textStatus == ProgressiveTextState::NextPage) {
 			do {
+				ScopedFPS scopedFpsNextPage;
 				_engine->readKeys();
 				if (_engine->shouldQuit()) {
 					break;
@@ -791,19 +793,16 @@ void Text::drawAskQuestion(int32 index) {
 				if (!playVoxSimple(currDialTextEntry)) {
 					break;
 				}
-				_engine->_system->delayMillis(1);
 			} while (!_engine->_input->toggleAbortAction());
 		}
-
-		_engine->_system->delayMillis(1);
 	} while (textStatus != ProgressiveTextState::End);
 
 	while (playVoxSimple(currDialTextEntry)) {
+		ScopedFPS scopedFps;
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
 			stopVox(currDialTextEntry);
 			break;
 		}
-		_engine->_system->delayMillis(1);
 	}
 
 	hasHiddenVox = false;

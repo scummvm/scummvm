@@ -427,6 +427,7 @@ void Debug::debugProcessWindow() {
 		debugDrawWindows();
 
 		for (;;) {
+			ScopedFPS scopedFps(25);
 			_engine->readKeys();
 			if (_engine->shouldQuit()) {
 				break;
@@ -462,8 +463,6 @@ void Debug::debugProcessWindow() {
 			if (_engine->_input->toggleActionIfActive(TwinEActionType::DebugMenu)) {
 				break;
 			}
-
-			_engine->_system->delayMillis(1000 / 25); // rest
 
 			count++;
 		}

@@ -387,11 +387,11 @@ void GameState::processFoundItem(int32 item) {
 	}
 
 	while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
+		ScopedFPS scopedFps;
 		_engine->readKeys();
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
 			break;
 		}
-		_engine->_system->delayMillis(1);
 	}
 
 	initEngineProjections();
@@ -421,6 +421,7 @@ void GameState::processGameChoices(int32 choiceIdx) {
 	// get right VOX entry index
 	if (_engine->_text->initVoxToPlay(choiceAnswer)) {
 		while (_engine->_text->playVoxSimple(_engine->_text->currDialTextEntry)) {
+			ScopedFPS scopedFps;
 			if (_engine->shouldQuit()) {
 				break;
 			}
@@ -461,6 +462,7 @@ void GameState::processGameoverAnimation() {
 	_engine->_interface->setClip(rect);
 
 	while (!_engine->_input->toggleAbortAction() && (_engine->lbaTime - startLbaTime) <= 500) {
+		ScopedFPS scopedFps(66);
 		_engine->readKeys();
 		if (_engine->shouldQuit()) {
 			free(gameOverPtr);
@@ -476,7 +478,6 @@ void GameState::processGameoverAnimation() {
 		_engine->copyBlockPhys(rect);
 
 		_engine->lbaTime++;
-		_engine->_system->delayMillis(15);
 	}
 
 	_engine->_sound->playSample(Samples::Explode);
