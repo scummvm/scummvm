@@ -378,6 +378,7 @@ private:
 	void renderPolygonsDither(uint8 *out, int vtop, int32 vsize, int32 color) const;
 	void renderPolygonsMarble(uint8 *out, int vtop, int32 vsize, int32 color) const;
 
+	void computeBoundingBox(Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) const;
 	void computePolygons(int16 polyRenderType, Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom);
 
 	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
