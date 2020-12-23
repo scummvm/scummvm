@@ -438,7 +438,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	}
 
 	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-		_engine->_grid->drawSprite(0, renderRect.left, renderRect.top, spritePtr);
+		_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 
 		actor->dynamicFlags.bIsVisible = 1;
 
@@ -489,7 +489,7 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 		renderRect.right = renderRect.left + spriteWidth;
 		renderRect.bottom = renderRect.top + spriteHeight;
 
-		_engine->_grid->drawSprite(0, renderRect.left, renderRect.top, spritePtr);
+		_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 	}
 
 	_engine->_interface->setClip(renderRect);
@@ -580,7 +580,7 @@ void Redraw::renderOverlays() {
 				renderRect.right = renderRect.left + spriteWidth;
 				renderRect.bottom = renderRect.top + spriteHeight;
 
-				_engine->_grid->drawSprite(0, renderRect.left, renderRect.top, spritePtr);
+				_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 
 				if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
 					addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
@@ -793,7 +793,7 @@ void Redraw::drawBubble(int32 actorIdx) {
 
 	_engine->_interface->setClip(renderRect);
 
-	_engine->_grid->drawSprite(0, renderRect.left, renderRect.top, spritePtr);
+	_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
 		_engine->copyBlockPhys(renderRect);
 	}
