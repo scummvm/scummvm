@@ -1125,25 +1125,8 @@ uint8 *Renderer::preparePolygons(Common::MemoryReadStream &stream, int32 &numOfP
 }
 
 const Renderer::RenderCommand *Renderer::depthSortRenderCommands(int32 numOfPrimitives) {
-	RenderCommand *sortedCmd = _renderCmdsSortedByDepth;
-	int32 bestPoly = 0;
-	const int16 minDepth = -32767;
-	for (int32 i = 0; i < numOfPrimitives; i++) { // then we sort the polygones | WARNING: very slow | TODO: improve this
-		const RenderCommand *cmd = _renderCmds;
-		int16 bestZ = minDepth;
-		for (int32 j = 0; j < numOfPrimitives; j++) {
-			if (cmd->depth > bestZ) {
-				bestZ = cmd->depth;
-				bestPoly = j;
-			}
-			cmd++;
-		}
-		*sortedCmd = _renderCmds[bestPoly];
-		sortedCmd++;
-		_renderCmds[bestPoly].depth = minDepth;
-	}
-
-	return _renderCmdsSortedByDepth;
+	Common::sort(&_renderCmds[0], &_renderCmds[numOfPrimitives], [] (const RenderCommand &lhs, const RenderCommand &rhs) {return lhs.depth > rhs.depth;});
+	return _renderCmds;
 }
 
 bool Renderer::renderModelElements(int32 numOfPrimitives, const uint8 *polygonPtr, RenderCommand **renderCmds, ModelData *modelData) {
