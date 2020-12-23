@@ -26,6 +26,7 @@
 #include "common/array.h"
 #include "common/memstream.h"
 #include "common/stream.h"
+#include "graphics/managed_surface.h"
 #include "twine/parser/parser.h"
 #include "twine/shared.h"
 
@@ -63,6 +64,28 @@ inline const SpriteDim *SpriteBoundingBoxData::dim(int index) const {
 	}
 	return &_dimensions[index];
 }
+
+class SpriteData : public Parser {
+private:
+	Graphics::ManagedSurface _surface;
+	int _offsetX = 0;
+	int _offsetY = 0;
+
+public:
+	bool loadFromStream(Common::SeekableReadStream &stream) override;
+
+	inline const Graphics::ManagedSurface &surface() const {
+		return _surface;
+	}
+
+	inline int offsetX() const {
+		return _offsetX;
+	}
+
+	inline int offsetY() const {
+		return _offsetY;
+	}
+};
 
 } // End of namespace TwinE
 
