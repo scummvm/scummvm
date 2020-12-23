@@ -270,6 +270,7 @@ public:
 	int32 quitGame = 0;
 	int32 lbaTime = 0;
 
+	Graphics::ManagedSurface imageBuffer;
 	/** Work video buffer */
 	Graphics::ManagedSurface workVideoBuffer;
 	/** Main game video buffer */

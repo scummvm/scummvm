@@ -22,6 +22,7 @@
 
 #include "twine/renderer/screens.h"
 #include "common/system.h"
+#include "graphics/managed_surface.h"
 #include "graphics/surface.h"
 #include "twine/audio/music.h"
 #include "twine/resources/hqr.h"
@@ -41,11 +42,13 @@ bool Screens::adelineLogo() {
 }
 
 void Screens::loadMenuImage(bool fade_in) {
-	if (HQR::getEntry((uint8 *)_engine->workVideoBuffer.getPixels(), Resources::HQR_RESS_FILE, RESSHQR_MENUIMG) == 0) {
+	Graphics::ManagedSurface& src = _engine->imageBuffer;
+	if (HQR::getEntry((uint8 *)src.getPixels(), Resources::HQR_RESS_FILE, RESSHQR_MENUIMG) == 0) {
 		warning("Failed to load menu image");
 		return;
 	}
-	copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	Graphics::ManagedSurface& target = _engine->frontVideoBuffer;
+	target.transBlitFrom(src, src.getBounds(), target.getBounds());
 	if (fade_in) {
 		fadeToPal(paletteRGBA);
 	} else {
@@ -75,12 +78,14 @@ void Screens::convertPalToRGBA(const uint8 *in, uint32 *out) {
 }
 
 void Screens::loadImage(int32 index, int32 paletteIndex, bool fade_in) {
-	if (HQR::getEntry((uint8 *)_engine->workVideoBuffer.getPixels(), Resources::HQR_RESS_FILE, index) == 0) {
+	Graphics::ManagedSurface& src = _engine->imageBuffer;
+	if (HQR::getEntry((uint8 *)src.getPixels(), Resources::HQR_RESS_FILE, index) == 0) {
 		warning("Failed to load image with index %i", index);
 		return;
 	}
 	debug(0, "Load image: %i", index);
-	copyScreen(_engine->workVideoBuffer, _engine->frontVideoBuffer);
+	Graphics::ManagedSurface& target = _engine->frontVideoBuffer;
+	target.transBlitFrom(src, src.getBounds(), target.getBounds());
 	loadCustomPalette(paletteIndex);
 	if (fade_in) {
 		fadeToPal(paletteRGBACustom);

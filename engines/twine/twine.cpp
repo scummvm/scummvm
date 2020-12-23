@@ -305,10 +305,11 @@ void TwinEEngine::autoSave() {
 
 void TwinEEngine::allocVideoMemory() {
 	const Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+
+	imageBuffer.create(640, 480, format); // original lba1 resolution for a lot of images.
+
 	workVideoBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, format);
 	frontVideoBuffer.create(SCREEN_WIDTH, SCREEN_HEIGHT, format);
-
-	// initVideoVar1 = -1;
 }
 
 static int getLanguageTypeIndex(const char *languageName) {
