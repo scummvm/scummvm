@@ -226,9 +226,9 @@ void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, p
 	int32 numOfPoints2 = numPoints;
 
 	do {
-		const int16 tmpX = pointsPtr->x;
-		const int16 tmpY = pointsPtr->y;
-		const int16 tmpZ = pointsPtr->z;
+		const int32 tmpX = pointsPtr->x;
+		const int32 tmpY = pointsPtr->y;
+		const int32 tmpZ = pointsPtr->z;
 
 		destPoints->x = ((rotationMatrix->row1[0] * tmpX + rotationMatrix->row1[1] * tmpY + rotationMatrix->row1[2] * tmpZ) >> 14) + destX;
 		destPoints->y = ((rotationMatrix->row2[0] * tmpX + rotationMatrix->row2[1] * tmpY + rotationMatrix->row2[2] * tmpZ) >> 14) + destY;
@@ -279,9 +279,9 @@ void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints
 	int32 numOfPoints2 = numPoints;
 
 	do {
-		const int16 tmpX = pointsPtr->x + renderAngleZ;
-		const int16 tmpY = pointsPtr->y + renderAngleY;
-		const int16 tmpZ = pointsPtr->z + renderAngleX;
+		const int32 tmpX = pointsPtr->x + renderAngleZ;
+		const int32 tmpY = pointsPtr->y + renderAngleY;
+		const int32 tmpZ = pointsPtr->z + renderAngleX;
 
 		destPoints->x = ((translationMatrix->row1[0] * tmpX + translationMatrix->row1[1] * tmpY + translationMatrix->row1[2] * tmpZ) >> 14) + destX;
 		destPoints->y = ((translationMatrix->row2[0] * tmpX + translationMatrix->row2[1] * tmpY + translationMatrix->row2[2] * tmpZ) >> 14) + destY;
