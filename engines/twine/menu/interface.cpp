@@ -232,27 +232,28 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 }
 
 void Interface::drawSplittedBox(const Common::Rect &rect, uint8 colorIndex) {
-	if (rect.left > SCREEN_TEXTLIMIT_RIGHT) {
+	const int32 left = MAX(SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
+	const int32 top = MAX(SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
+	const int32 right = MIN(SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
+	const int32 bottom = MIN(SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
+
+	if (left > SCREEN_TEXTLIMIT_RIGHT) {
 		return;
 	}
-	if (rect.right < SCREEN_TEXTLIMIT_LEFT) {
+	if (right < SCREEN_TEXTLIMIT_LEFT) {
 		return;
 	}
-	if (rect.top > SCREEN_TEXTLIMIT_BOTTOM) {
+	if (top > SCREEN_TEXTLIMIT_BOTTOM) {
 		return;
 	}
-	if (rect.bottom < SCREEN_TEXTLIMIT_TOP) {
+	if (bottom < SCREEN_TEXTLIMIT_TOP) {
 		return;
 	}
 
-	const int32 offset = -((rect.right - rect.left) - SCREEN_WIDTH);
-
-	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getBasePtr(rect.left, rect.top);
-	for (int32 y = rect.top; y < rect.bottom; y++) {
-		for (int32 x = rect.left; x < rect.right; x++) {
-			*ptr++ = colorIndex;
-		}
-		ptr += offset;
+	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getBasePtr(left, top);
+	for (int32 y = top; y < bottom; y++) {
+		memset(ptr, colorIndex, right - left);
+		ptr += SCREEN_WIDTH;
 	}
 }
 
