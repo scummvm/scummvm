@@ -195,15 +195,13 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 
 	for (int32 y = top; y < bottom; ++y) {
 		for (int32 x = left; x < right; ++x) {
-			int8 color = pos[x] & 0x0F;
+			const int8 color = (pos[x] & 0x0F) - colorAdj;
 			const int8 color2 = pos[x] & 0xF0;
-			color -= colorAdj;
 			if (color < 0) {
-				color = color2;
+				pos[x] = color2;
 			} else {
-				color += color2;
+				pos[x] = color + color2;
 			}
-			pos[x] = color;
 		}
 		pos += SCREEN_WIDTH;
 	}
