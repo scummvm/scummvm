@@ -205,11 +205,8 @@ void Menu::plasmaEffectRenderFrame() {
 	}
 
 	// flip the double-buffer while scrolling the effect vertically:
-	uint8 *dest = plasmaEffectPtr;
 	const uint8 *src = plasmaEffectPtr + (PLASMA_HEIGHT + 1) * PLASMA_WIDTH;
-	for (int32 i = 0; i < PLASMA_HEIGHT * PLASMA_WIDTH; i++) {
-		*(dest++) = *(src++);
-	}
+	memcpy(plasmaEffectPtr, src, PLASMA_HEIGHT * PLASMA_WIDTH);
 }
 
 void Menu::processPlasmaEffect(int32 left, int32 top, int32 color) {
