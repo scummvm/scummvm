@@ -51,17 +51,11 @@ int32 Interface::checkClipping(int32 x, int32 y) {
 
 // TODO: check if Graphics::drawLine() works here
 void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, int32 endHeight, uint8 lineColor) {
-	uint8 currentLineColor = lineColor;
 
 	// draw line from left to right
 	if (startWidth > endWidth) {
-		int32 temp = endWidth;
-		endWidth = startWidth;
-		startWidth = temp;
-
-		temp = endHeight;
-		endHeight = startHeight;
-		startHeight = temp;
+		SWAP(endWidth, startWidth);
+		SWAP(endHeight, startHeight);
 	}
 
 	// Perform proper clipping (CohenSutherland algorithm)
@@ -114,17 +108,14 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 
 	uint8 *out = (uint8*)_engine->frontVideoBuffer.getBasePtr(startWidth, startHeight);
 
-	const uint8 color = currentLineColor;
 	if (endWidth < endHeight) { // significant slope
-		const int16 xchg = endWidth;
-		endWidth = endHeight;
-		endHeight = xchg;
+		SWAP(endWidth, endHeight);
 		const int16 var2 = endWidth << 1;
 		startHeight = endWidth;
 		endHeight <<= 1;
 		endWidth++;
 		do {
-			*out = color;
+			*out = lineColor;
 			startHeight -= endHeight;
 			if (startHeight > 0) {
 				out += flag2;
@@ -139,7 +130,7 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 		endHeight <<= 1;
 		endWidth++;
 		do {
-			*out++ = color;
+			*out++ = lineColor;
 			startHeight -= endHeight;
 			if (startHeight < 0) {
 				startHeight += var2;
