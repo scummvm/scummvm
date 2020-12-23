@@ -244,7 +244,7 @@ public:
 	 * @param ptr sprite buffer pointer to draw
 	 */
 	void drawSprite(int32 index, int32 posX, int32 posY, const uint8 *spritePtr);
-	void drawSprite(int32 index, int32 posX, int32 posY, const SpriteData &ptr);
+	void drawSprite(int32 posX, int32 posY, const SpriteData &ptr);
 
 	/**
 	 * Draw sprite or bricks in the screen according with the type

@@ -474,7 +474,7 @@ void Grid::drawSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr) {
 	drawBrickSprite(index, posX, posY, ptr, true);
 }
 
-void Grid::drawSprite(int32 /*index*/, int32 posX, int32 posY, const SpriteData &ptr) {
+void Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr) {
 	const int32 left = posX + ptr.offsetX();
 	if (left > _engine->_interface->textWindow.right) {
 		return;
