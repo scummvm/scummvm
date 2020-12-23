@@ -422,6 +422,9 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 	{
 		Keymap *holomapKeyMap = new Keymap(Keymap::kKeymapTypeGame, holomapKeyMapId, "Little Big Adventure Holomap");
 
+		// TODO: CTRL + cursor rotates the globe
+		// just cursor keys switch the quest locations and print the text for the current selected location.
+
 		act = new Action("ABORT", _("Abort"));
 		act->setCustomEngineActionEvent(TwinEActionType::HolomapAbort);
 		act->addDefaultInputMapping("ESCAPE");
