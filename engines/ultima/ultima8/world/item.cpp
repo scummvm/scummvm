@@ -1219,8 +1219,8 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 		DirectionMode dirmode = dirmode_8dirs;
 		const Actor *thisactor = dynamic_cast<Actor *>(this);
 		if (thisactor) {
-			// TODO: Get damage for active inventory item, and dirmode of last
-			// animation here (lines 185~208 of disasm)
+			// TODO: Get damage for active inventory item
+			dirmode = thisactor->animDirMode(thisactor->getLastAnim());
 		}
 
 		Item *target = nullptr;
@@ -1228,10 +1228,6 @@ uint16 Item::fireWeapon(int32 x, int32 y, int32 z, Direction dir, int firetype, 
 			if (this != getControlledActor()) {
 				target = getControlledActor();
 			} else {
-				// TODO: this should be dirmode of last animation (above)
-				// for now, hack for avatar
-				if (thisactor->getShape() == 1 && thisactor->isInCombat())
-					dirmode = dirmode_16dirs;
 				target = currentmap->findBestTargetItem(ix, iy, dir, dirmode);
 			}
 		}
