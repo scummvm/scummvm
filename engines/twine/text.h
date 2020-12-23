@@ -126,7 +126,7 @@ private:
 	 * @param character ascii character to display
 	 * @param color character color
 	 */
-	void drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color);
+	void drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, Common::Rect& dirtyRect);
 	void initProgressiveTextBuffer();
 	struct WordSize {
 		int32 inChar = 0;

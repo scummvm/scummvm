@@ -210,7 +210,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 	} while (1);
 }
 
-void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color) { // drawDoubleLetter
+void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, Common::Rect& dirtyRect) { // drawDoubleLetter
 	if (character == ' ') {
 		return;
 	}
@@ -222,13 +222,13 @@ void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color) {
 	setFontColor(color);
 	drawCharacter(x, y, character);
 
-	int32 left = x;
-	int32 top = y;
-	// FIXME: get right font size
-	int32 right = x + 32;
-	int32 bottom = y + 38;
-
-	_engine->copyBlockPhys(left, top, right, bottom);
+	// TODO: get font size
+	const Common::Rect rect(x, y, x + 32, y + 38);
+	if (dirtyRect.isEmpty()) {
+		dirtyRect = rect;
+	} else {
+		dirtyRect.extend(rect);
+	}
 }
 
 void Text::drawText(int32 x, int32 y, const char *dialogue) {
@@ -486,15 +486,20 @@ void Text::renderContinueReadingTriangle() {
 }
 
 void Text::fadeInCharacters(int32 counter, int32 fontColor) {
+	Common::Rect dirtyRect;
 	while (--counter >= 0) {
 		const BlendInCharacter *ptr = &_fadeInCharacters[counter];
 		setFontColor(fontColor);
-		drawCharacterShadow(ptr->x, ptr->y, ptr->chr, fontColor);
+		drawCharacterShadow(ptr->x, ptr->y, ptr->chr, fontColor, dirtyRect);
 		fontColor -= _dialTextStepSize;
 		if (fontColor > _dialTextStopColor) {
 			fontColor = _dialTextStopColor;
 		}
 	}
+	if (dirtyRect.isEmpty()) {
+		return;
+	}
+	_engine->copyBlockPhys(dirtyRect);
 }
 
 int32 Text::getCharWidth(uint8 chr) const {
@@ -607,6 +612,7 @@ bool Text::drawTextFullscreen(int32 index) {
 
 		ProgressiveTextState printedText;
 		for (;;) {
+			ScopedFPS scopedFps;
 			_engine->readKeys();
 			printedText = updateProgressiveText();
 			playVox(currDialTextEntry);
@@ -619,7 +625,6 @@ bool Text::drawTextFullscreen(int32 index) {
 				aborted = true;
 				break;
 			}
-			_engine->_system->delayMillis(1);
 		}
 		hasHiddenVox = false;
 
