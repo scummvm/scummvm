@@ -305,8 +305,11 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 			int32 x = origpt.x + Direction_XFactor(testdir) * ADJUSTMENTS[i];
 			int32 y = origpt.y + Direction_YFactor(testdir) * ADJUSTMENTS[i];
 			int32 z = origpt.z;
+			// Note: we don't actually need the blocker output, just add the parameter
+			// for compilers that can't tell nullptr from 0..
+			const Item *blocker;
 			if (currentmap->isValidPosition(x, y, z, avatar->getShape(), avatar->getObjId(),
-											nullptr, nullptr, nullptr)) {
+											nullptr, nullptr, &blocker)) {
 				avatar->setLocation(x, y, z);
 				res = avatar->tryAnim(action, direction);
 				if (res == Animation::SUCCESS)
