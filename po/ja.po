@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-23 11:08+0000\n"
-"PO-Revision-Date: 2020-12-20 22:00+0000\n"
+"PO-Revision-Date: 2020-12-24 23:23+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6389,27 +6389,27 @@ msgstr ""
 
 #: engines/scumm/help.cpp:319
 msgid "These are for Indy on left."
-msgstr ""
+msgstr "これらはIndyからみて左側にあります。"
 
 #: engines/scumm/help.cpp:320
 msgid "When Indy is on the right,"
-msgstr ""
+msgstr "Indyが向かって右側にいる場合、"
 
 #: engines/scumm/help.cpp:321
 msgid "7, 4, and 1 are switched with"
-msgstr ""
+msgstr "7, 4, 1キーと"
 
 #: engines/scumm/help.cpp:322
 msgid "9, 6, and 3, respectively."
-msgstr ""
+msgstr "9, 6, 3キーで、それぞれスイッチできます。"
 
 #: engines/scumm/help.cpp:331
 msgid "Biplane controls (numpad):"
-msgstr ""
+msgstr "機体制御(テンキー)："
 
 #: engines/scumm/help.cpp:332
 msgid "Fly to upper left"
-msgstr ""
+msgstr "左へ上昇"
 
 #: engines/scumm/help.cpp:333
 #, fuzzy
@@ -6418,23 +6418,23 @@ msgstr "左に行く"
 
 #: engines/scumm/help.cpp:334
 msgid "Fly to lower left"
-msgstr ""
+msgstr "左へ降下"
 
 #: engines/scumm/help.cpp:335
 msgid "Fly upwards"
-msgstr ""
+msgstr "上昇"
 
 #: engines/scumm/help.cpp:336
 msgid "Fly straight"
-msgstr ""
+msgstr "直進"
 
 #: engines/scumm/help.cpp:337
 msgid "Fly down"
-msgstr ""
+msgstr "降下"
 
 #: engines/scumm/help.cpp:338
 msgid "Fly to upper right"
-msgstr ""
+msgstr "右へ上昇"
 
 #: engines/scumm/help.cpp:339
 #, fuzzy
@@ -6443,15 +6443,15 @@ msgstr "右に行く"
 
 #: engines/scumm/help.cpp:340
 msgid "Fly to lower right"
-msgstr ""
+msgstr "右へ降下"
 
 #: engines/scumm/input.cpp:563
 msgid "Snap scroll on"
-msgstr ""
+msgstr "スナップスクロールをオン"
 
 #: engines/scumm/input.cpp:565
 msgid "Snap scroll off"
-msgstr ""
+msgstr "スナップスクロールをオフ"
 
 #: engines/scumm/input.cpp:578
 msgid "Music volume: "
