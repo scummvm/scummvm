@@ -570,9 +570,9 @@ void Grid::drawBrickSprite(int32 index, int32 posX, int32 posY, const uint8 *ptr
 }
 
 uint8 *Grid::getBlockBuffer(int32 x, int32 y, int32 z) {
-	const int32 tempX = (x + 0x100) >> 9;
-	const int32 tempY = y >> 8;
-	const int32 tempZ = (z + 0x100) >> 9;
+	const int32 tempX = (x + 256) / 512;
+	const int32 tempY = y / 256;
+	const int32 tempZ = (z + 256) / 512;
 	return blockBuffer + tempY * 2 + tempX * GRID_SIZE_Y * 2 + (tempZ * GRID_SIZE_X) * GRID_SIZE_Y * 2;
 }
 
@@ -592,7 +592,7 @@ const uint8 *Grid::getBlockBufferGround(int32 x, int32 y, int32 z, int16 &ground
 	}
 
 	_engine->_collision->collisionY = tempY;
-	ground = (int16)((tempY + 1) << 8);
+	ground = (int16)((tempY + 1) * 256);
 
 	return ptr;
 }
@@ -659,9 +659,9 @@ void Grid::drawColumnGrid(int32 blockIdx, int32 brickBlockIdx, int32 x, int32 y,
 void Grid::redrawGrid() {
 	blockMap *map = (blockMap *)blockBuffer;
 
-	cameraX = newCameraX << 9;
-	cameraY = newCameraY << 8;
-	cameraZ = newCameraZ << 9;
+	cameraX = newCameraX * 512;
+	cameraY = newCameraY * 256;
+	cameraZ = newCameraZ * 512;
 
 	_engine->_renderer->projectPositionOnScreen(-cameraX, -cameraY, -cameraZ);
 
@@ -723,9 +723,9 @@ ShapeType Grid::getBrickShape(int32 x, int32 y, int32 z) {
 }
 
 void Grid::updateCollisionCoordinates(int32 x, int32 y, int32 z) {
-	_engine->_collision->collisionX = (x + 0x100) >> 9;
-	_engine->_collision->collisionY = y >> 8;
-	_engine->_collision->collisionZ = (z + 0x100) >> 9;
+	_engine->_collision->collisionX = (x + 256) / 512;
+	_engine->_collision->collisionY = y / 256;
+	_engine->_collision->collisionZ = (z + 256) / 512;
 }
 
 ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
@@ -761,7 +761,7 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 
 		const ShapeType brickShape = (ShapeType)*blockPtr;
 
-		const int32 newY = (y2 + 255) >> 8;
+		const int32 newY = (y2 + 255) / 256;
 		int32 currY = _engine->_collision->collisionY;
 
 		for (int32 i = 0; i < newY; i++) {
@@ -781,7 +781,7 @@ ShapeType Grid::getBrickShapeFull(int32 x, int32 y, int32 z, int32 y2) {
 	}
 	const ShapeType brickShape = (ShapeType) * (blockBufferPtr + 1);
 
-	const int32 newY = (y2 + 255) >> 8;
+	const int32 newY = (y2 + 255) / 256;
 	int32 currY = _engine->_collision->collisionY;
 
 	for (int32 i = 0; i < newY; i++) {

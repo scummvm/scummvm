@@ -862,7 +862,7 @@ void Extra::processExtras() {
 
 			if (process) {
 				const BoundingBox *bbox = _engine->_resources->spriteBoundingBox.bbox(extra->info0);
-				extra->y = (_engine->_collision->collisionY << 8) + 0x100 - bbox->mins.y;
+				extra->y = (_engine->_collision->collisionY * 256) + 256 - bbox->mins.y;
 				extra->type &= ~(ExtraType::STOP_COL | ExtraType::FLY);
 				continue;
 			}

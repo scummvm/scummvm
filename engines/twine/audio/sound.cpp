@@ -49,9 +49,9 @@ void Sound::setSamplePosition(int32 channelIdx, int32 x, int32 y, int32 z) {
 	if (channelIdx < 0 || channelIdx >= NUM_CHANNELS) {
 		return;
 	}
-	const int32 camX = _engine->_grid->newCameraX << 9;
-	const int32 camY = _engine->_grid->newCameraY << 8;
-	const int32 camZ = _engine->_grid->newCameraZ << 9;
+	const int32 camX = _engine->_grid->newCameraX * 512;
+	const int32 camY = _engine->_grid->newCameraY * 256;
+	const int32 camZ = _engine->_grid->newCameraZ * 512;
 	int32 distance = _engine->_movements->getDistance3D(camX, camY, camZ, x, y, z);
 	distance = _engine->_collision->getAverageValue(0, distance, 10000, 255);
 	const byte targetVolume = CLIP<byte>(255 - distance, 0, 255);

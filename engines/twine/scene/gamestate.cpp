@@ -268,9 +268,9 @@ bool GameState::saveGame(Common::WriteStream *file) {
 }
 
 void GameState::processFoundItem(int32 item) {
-	_engine->_grid->newCameraX = (_engine->_scene->sceneHero->x + 0x100) >> 9;
-	_engine->_grid->newCameraY = (_engine->_scene->sceneHero->y + 0x100) >> 8;
-	_engine->_grid->newCameraZ = (_engine->_scene->sceneHero->z + 0x100) >> 9;
+	_engine->_grid->newCameraX = (_engine->_scene->sceneHero->x + 256) / 512;
+	_engine->_grid->newCameraY = (_engine->_scene->sceneHero->y + 256) / 256;
+	_engine->_grid->newCameraZ = (_engine->_scene->sceneHero->z + 256) / 512;
 
 	// Hide hero in scene
 	_engine->_scene->sceneHero->staticFlags.bIsHidden = 1;
@@ -279,19 +279,19 @@ void GameState::processFoundItem(int32 item) {
 
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
 
-	const int32 itemCameraX = _engine->_grid->newCameraX << 9;
-	const int32 itemCameraY = _engine->_grid->newCameraY << 8;
-	const int32 itemCameraZ = _engine->_grid->newCameraZ << 9;
+	const int32 itemCameraX = _engine->_grid->newCameraX * 512;
+	const int32 itemCameraY = _engine->_grid->newCameraY * 256;
+	const int32 itemCameraZ = _engine->_grid->newCameraZ * 512;
 
 	_engine->_renderer->renderIsoModel(_engine->_scene->sceneHero->x - itemCameraX, _engine->_scene->sceneHero->y - itemCameraY, _engine->_scene->sceneHero->z - itemCameraZ, 0, 0x80, 0, _engine->_actor->bodyTable[_engine->_scene->sceneHero->entity]);
 	_engine->_interface->setClip(_engine->_redraw->renderRect);
 
-	const int32 itemX = (_engine->_scene->sceneHero->x + 0x100) >> 9;
-	int32 itemY = _engine->_scene->sceneHero->y >> 8;
+	const int32 itemX = (_engine->_scene->sceneHero->x + 256) / 512;
+	int32 itemY = _engine->_scene->sceneHero->y / 256;
 	if (_engine->_scene->sceneHero->brickShape() != ShapeType::kNone) {
 		itemY++;
 	}
-	const int32 itemZ = (_engine->_scene->sceneHero->z + 0x100) >> 9;
+	const int32 itemZ = (_engine->_scene->sceneHero->z + 256) / 512;
 
 	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 	_engine->flip();

@@ -74,6 +74,9 @@ struct BrickEntry {
 /** Grip Z size */
 #define GRID_SIZE_Z GRID_SIZE_X
 
+#define BRICK_SIZE 512
+#define BRICK_HEIGHT 256
+
 #define NUMBRICKENTRIES (1 + (SCREEN_WIDTH + 24) / 24)
 #define MAXBRICKS 150
 
