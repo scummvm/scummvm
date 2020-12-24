@@ -157,6 +157,7 @@ void PrivateEngine::playVideo(const Common::String &name) {
 	if (!_videoDecoder->loadStream(file))
 	        error("unable to load video %s", name.c_str());
 	_videoDecoder->start();
+	g_system->getPaletteManager()->setPalette(_videoDecoder->getPalette(), 0, 256);	
 
 }
 
@@ -184,6 +185,7 @@ void PrivateEngine::drawScreen() {
 		screen->copyRectToSurface(*surface, 0, 0, Common::Rect(0, 0, w, h));
 
 		g_system->unlockScreen();
+		//if (_image->getPalette() != nullptr)
 		g_system->updateScreen();
 	}
 }
