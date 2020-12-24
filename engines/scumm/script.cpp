@@ -1524,8 +1524,16 @@ void ScummEngine::endCutscene() {
 	vm.cutSceneScript[vm.cutSceneStackPointer] = 0;
 	vm.cutScenePtr[vm.cutSceneStackPointer] = 0;
 
-	if (0 == vm.cutSceneStackPointer)
+	if (0 == vm.cutSceneStackPointer) {
+		// WORKAROUND bug #5624: Due to poor translation of the v2 script to
+		// v5 an if statement jumps in the middle of a cutscene causing a
+		// endCutscene() without a begin cutscene()
+		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns &&
+			vm.slot[_currentScript].number == 205 && _currentRoom == 185) {
+			return;
+		}
 		error("Cutscene stack underflow");
+	}
 	vm.cutSceneStackPointer--;
 
 	if (VAR(VAR_CUTSCENE_END_SCRIPT))
