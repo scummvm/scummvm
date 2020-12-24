@@ -6,6 +6,9 @@
 #include "engines/engine.h"
 #include "gui/debugger.h"
 
+#include "audio/mixer.h"
+#include "video/smk_decoder.h"
+
 namespace Private {
 
 class Console;
@@ -22,9 +25,14 @@ class PrivateEngine : public Engine {
 private:
 	// We need random numbers
 	Common::RandomSource *_rnd;
+	int _screenW, _screenH;
+
 public:
 	PrivateEngine(OSystem *syst);
 	~PrivateEngine();
+
+	Audio::SoundHandle _soundHandle;
+	Video::SmackerDecoder *_videoDecoder;
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;
@@ -33,6 +41,14 @@ public:
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
 	void syncGameStream(Common::Serializer &s);
+
+	void playSound(const Common::String &name);
+	void playVideo(const Common::String &name);
+	
+	void stopSound();
+	void drawScreen();
+
+
 };
 
 // Example console class
