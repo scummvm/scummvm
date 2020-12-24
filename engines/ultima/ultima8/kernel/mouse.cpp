@@ -139,7 +139,7 @@ bool Mouse::isMouseDownEvent(Shared::MouseButton button) const {
 	return _mouseButton[button].isState(MBS_DOWN);
 }
 
-int Mouse::getMouseLength(int mx, int my) {
+int Mouse::getMouseLength(int mx, int my) const {
 	Rect dims;
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
@@ -171,7 +171,7 @@ int Mouse::getMouseLength(int mx, int my) {
 	}
 }
 
-Direction Mouse::getMouseDirectionWorld(int mx, int my) {
+Direction Mouse::getMouseDirectionWorld(int mx, int my) const {
 	Rect dims;
 	RenderSurface *screen = Ultima8Engine::get_instance()->getRenderScreen();
 	screen->GetSurfaceDims(dims);
@@ -183,7 +183,7 @@ Direction Mouse::getMouseDirectionWorld(int mx, int my) {
 	return Direction_Get(dy * 2, dx, dirmode_8dirs);
 }
 
-Direction Mouse::getMouseDirectionScreen(int mx, int my) {
+Direction Mouse::getMouseDirectionScreen(int mx, int my) const {
 	return Direction_OneRight(getMouseDirectionWorld(mx, my), dirmode_8dirs);
 }
 
@@ -222,7 +222,7 @@ int Mouse::getMouseFrame() {
 		}
 
 		// Calculate frame based on direction
-		Direction mousedir = getMouseDirectionScreen(_mousePos.x, _mousePos.y);
+		Direction mousedir = getMouseDirectionScreen();
 		int frame = mouseFrameForDir(mousedir);
 
 		/** length --- frame offset
@@ -231,7 +231,7 @@ int Mouse::getMouseFrame() {
 		 *    2             16
 		 *  combat          25
 		 **/
-		int offset = getMouseLength(_mousePos.x, _mousePos.y) * 8;
+		int offset = getMouseLength() * 8;
 		if (combat && offset != 16) //combat mouse is off if running
 			offset = 25;
 		return frame + offset;
