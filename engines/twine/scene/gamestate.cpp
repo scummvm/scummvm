@@ -332,7 +332,7 @@ void GameState::processFoundItem(int32 item) {
 
 	ScopedKeyMap uiKeyMap(_engine, uiKeyMapId);
 	for (;;) {
-		ScopedFPS fps(1000 / 15);
+		ScopedFPS fps(66);
 		_engine->_interface->resetClip();
 		_engine->_redraw->currNumOfRedrawBox = 0;
 		_engine->_redraw->blitBackgroundAreas();
