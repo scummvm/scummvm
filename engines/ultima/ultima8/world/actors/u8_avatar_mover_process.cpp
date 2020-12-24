@@ -94,21 +94,15 @@ void U8AvatarMoverProcess::handleCombatMode() {
 	Direction direction = avatar->getDir();
 	bool stasis = Ultima8Engine::get_instance()->isAvatarInStasis();
 
-	int32 mx, my;
-	mouse->getMouseCoords(mx, my);
-	unsigned int mouselength = mouse->getMouseLength(mx, my);
-
-	Direction mousedir = mouse->getMouseDirectionWorld(mx, my);
+	unsigned int mouselength = mouse->getMouseLength();
+	Direction mousedir = mouse->getMouseDirectionWorld();
 
 	// never idle when in combat
 	_idleTime = 0;
 
 	// If Avatar has fallen down, stand up.
-	if (lastanim == Animation::die || lastanim == Animation::fallBackwards) {
-		if (!stasis)
-			waitFor(avatar->doAnim(Animation::standUp, mousedir));
+	if (standUpIfNeeded(direction))
 		return;
-	}
 
 	// if we were blocking, and no longer holding the mouse, stop
 	if (lastanim == Animation::startBlock &&
@@ -182,6 +176,8 @@ void U8AvatarMoverProcess::handleCombatMode() {
 		_mouseButton[1]._lastDown = 0;
 
 		Gump *desktopgump = Ultima8Engine::get_instance()->getDesktopGump();
+		int32 mx, my;
+		mouse->getMouseCoords(mx, my);
 		if (desktopgump->TraceObjId(mx, my) == 1) {
 			// double right click on avatar = toggle combat mode
 			avatar->toggleInCombat();
@@ -218,7 +214,6 @@ void U8AvatarMoverProcess::handleCombatMode() {
 		//!! TODO: check if you can actually take this step
 		Direction nextdir = mousedir;
 		Animation::Sequence nextanim;
-
 		if (lastanim == Animation::run) {
 			// want to run while in combat mode?
 			// first sheath weapon
@@ -250,17 +245,9 @@ void U8AvatarMoverProcess::handleCombatMode() {
 
 	bool moving = (lastanim == Animation::advance || lastanim == Animation::retreat);
 
-	DirectionMode dirmode = avatar->animDirMode(Animation::combatStand);
-
 	//  if we are trying to move, allow change direction only after move occurs to avoid spinning
 	if (moving || !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
-		if (hasMovementFlags(MOVE_TURN_LEFT)) {
-			direction = Direction_OneLeft(direction, dirmode);
-		}
-
-		if (hasMovementFlags(MOVE_TURN_RIGHT)) {
-			direction = Direction_OneRight(direction, dirmode);
-		}
+		direction = getTurnDirForTurnFlags(direction, avatar->animDirMode(Animation::combatStand));
 	}
 
 	if (hasMovementFlags(MOVE_FORWARD)) {
@@ -290,20 +277,8 @@ void U8AvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
-	int y = 0;
-	int x = 0;
-	if (hasMovementFlags(MOVE_UP)) {
-		y++;
-	}
-	if (hasMovementFlags(MOVE_DOWN)) {
-		y--;
-	}
-	if (hasMovementFlags(MOVE_LEFT)) {
-		x--;
-	}
-	if (hasMovementFlags(MOVE_RIGHT)) {
-		x++;
-	}
+	int x, y;
+	getMovementFlagAxes(x, y);
 
 	if (x != 0 || y != 0) {
 		Direction nextdir = Direction_Get(y, x, dirmode_8dirs);
@@ -342,25 +317,21 @@ void U8AvatarMoverProcess::handleCombatMode() {
 	// not doing anything in particular? stand
 	// TODO: make sure falling works properly.
 	if (lastanim != Animation::combatStand) {
-		Animation::Sequence nextanim = Animation::combatStand;
-		nextanim = Animation::checkWeapon(nextanim, lastanim);
+		Animation::Sequence nextanim = Animation::checkWeapon(Animation::combatStand, lastanim);
 		waitFor(avatar->doAnim(nextanim, direction));
 	}
 }
 
 void U8AvatarMoverProcess::handleNormalMode() {
-	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
-	Mouse *mouse = Mouse::get_instance();
+	const Mouse *mouse = Mouse::get_instance();
 	MainActor *avatar = getMainActor();
 	Animation::Sequence lastanim = avatar->getLastAnim();
 	Direction direction = avatar->getDir();
-	bool stasis = guiapp->isAvatarInStasis();
+	bool stasis = Ultima8Engine::get_instance()->isAvatarInStasis();
 	bool combatRun = avatar->hasActorFlags(Actor::ACT_COMBATRUN);
 
-	int32 mx, my;
-	mouse->getMouseCoords(mx, my);
-	unsigned int mouselength = mouse->getMouseLength(mx, my);
-	Direction mousedir = mouse->getMouseDirectionWorld(mx, my);
+	unsigned int mouselength = mouse->getMouseLength();
+	Direction mousedir = mouse->getMouseDirectionWorld();
 
 	// Store current idle time. (Also see end of function.)
 	uint32 currentIdleTime = _idleTime;
@@ -373,21 +344,12 @@ void U8AvatarMoverProcess::handleNormalMode() {
 	}
 
 	// If Avatar has fallen down, stand up.
-	if (lastanim == Animation::die || lastanim == Animation::fallBackwards) {
-		if (!stasis) {
-			waitFor(avatar->doAnim(Animation::standUp, direction));
-		}
+	if (standUpIfNeeded(direction))
 		return;
-	}
 
 	// If still in combat stance, sheathe weapon
 	if (!stasis && Animation::isCombatAnim(lastanim)) {
-		ProcId anim1 = avatar->doAnim(Animation::unreadyWeapon, direction);
-		ProcId anim2 = avatar->doAnim(Animation::stand, direction);
-		Process *anim2p = Kernel::get_instance()->getProcess(anim2);
-		anim2p->waitFor(anim1);
-		waitFor(anim2);
-
+		putAwayWeapon(direction);
 		return;
 	}
 
@@ -443,11 +405,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 		// if we were running, slow to a walk before stopping
 		// (even in stasis)
 		if (lastanim == Animation::run) {
-			ProcId walkpid = avatar->doAnim(Animation::walk, direction);
-			ProcId standpid = avatar->doAnim(Animation::stand, direction);
-			Process *standproc = Kernel::get_instance()->getProcess(standpid);
-			standproc->waitFor(walkpid);
-			waitFor(standpid);
+			slowFromRun(direction);
 			return;
 		}
 
@@ -487,6 +445,8 @@ void U8AvatarMoverProcess::handleNormalMode() {
 
 	if (_mouseButton[1].isUnhandledDoubleClick()) {
 		Gump *desktopgump = Ultima8Engine::get_instance()->getDesktopGump();
+		int32 mx, my;
+		mouse->getMouseCoords(mx, my);
 		if (desktopgump->TraceObjId(mx, my) == 1) {
 			// double right click on avatar = toggle combat mode
 			_mouseButton[1].setState(MBS_HANDLED);
@@ -583,17 +543,9 @@ void U8AvatarMoverProcess::handleNormalMode() {
 
 	bool moving = (lastanim == Animation::step || lastanim == Animation::run || lastanim == Animation::walk);
 
-	DirectionMode dirmode = avatar->animDirMode(Animation::step);
-
 	//  if we are trying to move, allow change direction only after move occurs to avoid spinning
 	if (moving || !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
-		if (hasMovementFlags(MOVE_TURN_LEFT)) {
-			direction = Direction_OneLeft(direction, dirmode);
-		}
-
-		if (hasMovementFlags(MOVE_TURN_RIGHT)) {
-			direction = Direction_OneRight(direction, dirmode);
-		}
+		direction = getTurnDirForTurnFlags(direction, avatar->animDirMode(Animation::step));
 	}
 
 	Animation::Sequence nextanim = Animation::walk;
@@ -622,20 +574,8 @@ void U8AvatarMoverProcess::handleNormalMode() {
 		return;
 	}
 
-	int y = 0;
-	int x = 0;
-	if (hasMovementFlags(MOVE_UP)) {
-		y++;
-	}
-	if (hasMovementFlags(MOVE_DOWN)) {
-		y--;
-	}
-	if (hasMovementFlags(MOVE_LEFT)) {
-		x--;
-	}
-	if (hasMovementFlags(MOVE_RIGHT)) {
-		x++;
-	}
+	int x, y;
+	getMovementFlagAxes(x, y);
 
 	if (x != 0 || y != 0) {
 		direction = Direction_Get(y, x, dirmode_8dirs);
@@ -695,9 +635,7 @@ void U8AvatarMoverProcess::step(Animation::Sequence action, Direction direction,
 
 	MainActor *avatar = getMainActor();
 	Animation::Sequence lastanim = avatar->getLastAnim();
-
 	Animation::Result res = avatar->tryAnim(action, direction);
-
 	Direction stepdir = direction;
 
 	if (res == Animation::FAILURE ||
@@ -753,7 +691,7 @@ void U8AvatarMoverProcess::step(Animation::Sequence action, Direction direction,
 	if (checkTurn(stepdir, moving))
 		return;
 
-	debug(6, "Step: step ok: action %d dir %d", action, stepdir);
+	//debug(6, "Step: step ok: action %d dir %d", action, stepdir);
 	action = Animation::checkWeapon(action, lastanim);
 	waitFor(avatar->doAnim(action, stepdir));
 }

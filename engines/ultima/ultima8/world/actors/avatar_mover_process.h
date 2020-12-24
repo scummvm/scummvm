@@ -94,6 +94,22 @@ protected:
 	void turnToDirection(Direction direction);
 	bool checkTurn(Direction direction, bool moving);
 
+	// Walk and then stop in the given direction
+	void slowFromRun(Direction direction);
+
+	// Stow weapon and stand
+	void putAwayWeapon(Direction direction);
+
+	// If the last animation was falling or die but we're not dead, stand up!
+	// return true if we are waiting to get up
+	bool standUpIfNeeded(Direction direction);
+
+	// Get directions based on what movement flags are set, eg y=+1 for up, x=-1 for left.
+	void getMovementFlagAxes(int &x, int &y);
+
+	// Adjust the direction based on the current turn flags
+	Direction getTurnDirForTurnFlags(Direction direction, DirectionMode dirmode);
+
 	uint32 _lastFrame;
 
 	// attack speed limiting
