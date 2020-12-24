@@ -141,10 +141,10 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 
 // TODO: this should get replaced by the surface blitting functions
 void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, Graphics::ManagedSurface &dest) {
-	const int32 left = MAX(SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
-	const int32 top = MAX(SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
-	const int32 right = MIN(SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
-	const int32 bottom = MIN(SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
+	const int32 left = MAX((int32)SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
+	const int32 top = MAX((int32)SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
+	const int32 right = MIN((int32)SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
+	const int32 bottom = MIN((int32)SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
 
 	if (left > SCREEN_TEXTLIMIT_RIGHT) {
 		return;
@@ -173,10 +173,10 @@ void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface
 }
 
 void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
-	const int32 left = MAX(SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
-	const int32 top = MAX(SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
-	const int32 right = MIN(SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
-	const int32 bottom = MIN(SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
+	const int32 left = MAX((int32)SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
+	const int32 top = MAX((int32)SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
+	const int32 right = MIN((int32)SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
+	const int32 bottom = MIN((int32)SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
 
 	if (left > SCREEN_TEXTLIMIT_RIGHT) {
 		return;
@@ -208,10 +208,10 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 }
 
 void Interface::drawSplittedBox(const Common::Rect &rect, uint8 colorIndex) {
-	const int32 left = MAX(SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
-	const int32 top = MAX(SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
-	const int32 right = MIN(SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
-	const int32 bottom = MIN(SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
+	const int32 left = MAX((int32)SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
+	const int32 top = MAX((int32)SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
+	const int32 right = MIN((int32)SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
+	const int32 bottom = MIN((int32)SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
 
 	if (left > SCREEN_TEXTLIMIT_RIGHT) {
 		return;
@@ -234,10 +234,10 @@ void Interface::drawSplittedBox(const Common::Rect &rect, uint8 colorIndex) {
 }
 
 void Interface::setClip(const Common::Rect &rect) {
-	textWindow.left = MAX(SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
-	textWindow.top = MAX(SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
-	textWindow.right = MIN(SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
-	textWindow.bottom = MIN(SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
+	textWindow.left = MAX((int32)SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
+	textWindow.top = MAX((int32)SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
+	textWindow.right = MIN((int32)SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
+	textWindow.bottom = MIN((int32)SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
 }
 
 void Interface::saveClip() {
