@@ -8,6 +8,7 @@
 
 #include "audio/mixer.h"
 #include "video/smk_decoder.h"
+#include "graphics/palette.h"
 
 namespace Private {
 
