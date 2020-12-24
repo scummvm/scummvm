@@ -56,20 +56,16 @@ void CruAvatarMoverProcess::handleHangingMode() {
 
 void CruAvatarMoverProcess::handleCombatMode() {
 	MainActor *avatar = getMainActor();
-	Animation::Sequence lastanim = avatar->getLastAnim();
+	const Animation::Sequence lastanim = avatar->getLastAnim();
 	Direction direction = avatar->getDir();
-	bool stasis = Ultima8Engine::get_instance()->isAvatarInStasis();
+	const bool stasis = Ultima8Engine::get_instance()->isAvatarInStasis();
 
 	// never idle when in combat
 	_idleTime = 0;
 
 	// If Avatar has fallen down, stand up
-	if (lastanim == Animation::die || lastanim == Animation::fallBackwards) {
-		if (!stasis) {
-			waitFor(avatar->doAnim(Animation::standUp, direction));
-		}
+	if (standUpIfNeeded(direction))
 		return;
-	}
 
 	// can't do any new actions if in stasis
 	if (stasis)
@@ -77,17 +73,9 @@ void CruAvatarMoverProcess::handleCombatMode() {
 
 	bool moving = (lastanim == Animation::advance || lastanim == Animation::retreat);
 
-	DirectionMode dirmode = avatar->animDirMode(Animation::combatStand);
-
 	//  if we are trying to move, allow change direction only after move occurs to avoid spinning
 	if (moving || !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
-		if (hasMovementFlags(MOVE_TURN_LEFT)) {
-			direction = Direction_OneLeft(direction, dirmode);
-		}
-
-		if (hasMovementFlags(MOVE_TURN_RIGHT)) {
-			direction = Direction_OneRight(direction, dirmode);
-		}
+		direction = getTurnDirForTurnFlags(direction, avatar->animDirMode(Animation::combatStand));
 	}
 
 	if (hasMovementFlags(MOVE_FORWARD)) {
@@ -117,20 +105,8 @@ void CruAvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
-	int y = 0;
-	int x = 0;
-	if (hasMovementFlags(MOVE_UP)) {
-		y++;
-	}
-	if (hasMovementFlags(MOVE_DOWN)) {
-		y--;
-	}
-	if (hasMovementFlags(MOVE_LEFT)) {
-		x--;
-	}
-	if (hasMovementFlags(MOVE_RIGHT)) {
-		x++;
-	}
+	int x, y;
+	getMovementFlagAxes(x, y);
 
 	if (x != 0 || y != 0) {
 		Direction nextdir = Direction_Get(y, x, dirmode_8dirs);
@@ -138,7 +114,7 @@ void CruAvatarMoverProcess::handleCombatMode() {
 		if (checkTurn(nextdir, true))
 			return;
 
-		Animation::Sequence nextanim;
+		Animation::Sequence nextanim = Animation::combatStand;
 		if (lastanim == Animation::run) {
 			// want to run while in combat mode?
 			// first sheath weapon
@@ -164,18 +140,16 @@ void CruAvatarMoverProcess::handleCombatMode() {
 
 	// not doing anything in particular? stand
 	if (lastanim != Animation::combatStand) {
-		Animation::Sequence nextanim = Animation::combatStand;
-		nextanim = Animation::checkWeapon(nextanim, lastanim);
+		Animation::Sequence nextanim = Animation::checkWeapon(Animation::combatStand, lastanim);
 		waitFor(avatar->doAnim(nextanim, direction));
 	}
 }
 
 void CruAvatarMoverProcess::handleNormalMode() {
-	Ultima8Engine *guiapp = Ultima8Engine::get_instance();
 	MainActor *avatar = getMainActor();
-	Animation::Sequence lastanim = avatar->getLastAnim();
+	const Animation::Sequence lastanim = avatar->getLastAnim();
 	Direction direction = avatar->getDir();
-	bool stasis = guiapp->isAvatarInStasis();
+	const bool stasis = Ultima8Engine::get_instance()->isAvatarInStasis();
 
 	// Store current idle time. (Also see end of function.)
 	uint32 currentIdleTime = _idleTime;
@@ -187,36 +161,21 @@ void CruAvatarMoverProcess::handleNormalMode() {
 		avatar->toggleInCombat();
 	}
 
-	// If Avatar has fallen down do nothing
-	if (lastanim == Animation::die || lastanim == Animation::fallBackwards) {
-		if (!stasis) {
-			waitFor(avatar->doAnim(Animation::standUp, direction));
-		}
+	// If Avatar has fallen down and not dead, get up!
+	if (standUpIfNeeded(direction))
 		return;
-	}
 
 	// If still in combat stance, sheathe weapon
 	if (!stasis && Animation::isCombatAnim(lastanim)) {
-		ProcId anim1 = avatar->doAnim(Animation::unreadyWeapon, direction);
-		ProcId anim2 = avatar->doAnim(Animation::stand, direction);
-		Process *anim2p = Kernel::get_instance()->getProcess(anim2);
-		anim2p->waitFor(anim1);
-		waitFor(anim2);
-
+		putAwayWeapon(direction);
 		return;
 	}
 
-	if (!hasMovementFlags(MOVE_ANY_DIRECTION)) {
+	if (!hasMovementFlags(MOVE_ANY_DIRECTION) && lastanim == Animation::run) {
 		// if we were running, slow to a walk before stopping
 		// (even in stasis)
-		if (lastanim == Animation::run) {
-			ProcId walkpid = avatar->doAnim(Animation::walk, direction);
-			ProcId standpid = avatar->doAnim(Animation::stand, direction);
-			Process *standproc = Kernel::get_instance()->getProcess(standpid);
-			standproc->waitFor(walkpid);
-			waitFor(standpid);
-			return;
-		}
+		slowFromRun(direction);
+		return;
 	}
 
 	// can't do any new actions if in stasis
@@ -260,13 +219,7 @@ void CruAvatarMoverProcess::handleNormalMode() {
 
 	//  if we are trying to move, allow change direction only after move occurs to avoid spinning
 	if (moving || !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
-		if (hasMovementFlags(MOVE_TURN_LEFT)) {
-			direction = Direction_OneLeft(direction, dirmode);
-		}
-
-		if (hasMovementFlags(MOVE_TURN_RIGHT)) {
-			direction = Direction_OneRight(direction, dirmode);
-		}
+		direction = getTurnDirForTurnFlags(direction, dirmode);
 	}
 
 	Animation::Sequence nextanim = Animation::walk;
@@ -295,20 +248,8 @@ void CruAvatarMoverProcess::handleNormalMode() {
 		return;
 	}
 
-	int y = 0;
-	int x = 0;
-	if (hasMovementFlags(MOVE_UP)) {
-		y++;
-	}
-	if (hasMovementFlags(MOVE_DOWN)) {
-		y--;
-	}
-	if (hasMovementFlags(MOVE_LEFT)) {
-		x--;
-	}
-	if (hasMovementFlags(MOVE_RIGHT)) {
-		x++;
-	}
+	int x, y;
+	getMovementFlagAxes(x, y);
 
 	if (x != 0 || y != 0) {
 		direction = Direction_Get(y, x, dirmode_8dirs);
