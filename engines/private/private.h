@@ -6,6 +6,8 @@
 #include "engines/engine.h"
 #include "gui/debugger.h"
 
+//#include "engines/mohawk/installer_archive.h"
+
 #include "audio/mixer.h"
 #include "video/smk_decoder.h"
 #include "graphics/palette.h"
@@ -34,6 +36,7 @@ public:
 
 	Audio::SoundHandle _soundHandle;
 	Video::SmackerDecoder *_videoDecoder;
+	//Mohawk::InstallerArchive _installerArchive;
 
 	Common::Error run() override;
 	bool hasFeature(EngineFeature f) const override;

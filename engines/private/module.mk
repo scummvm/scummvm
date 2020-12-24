@@ -8,7 +8,7 @@ MODULE_DIRS += \
 	engines/private
  
 # This module can be built as a plugin
-ifeq ($(ENABLE_QUUX), DYNAMIC_PLUGIN)
+ifeq ($(ENABLE_PRIVATE), DYNAMIC_PLUGIN)
 PLUGIN := 1
 endif
  
