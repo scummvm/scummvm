@@ -105,9 +105,9 @@ void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
 }
 
 void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
-	double Xradians = (double)((ANGLE_90 - x) % ANGLE_360) * 2 * M_PI / ANGLE_360;
-	double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
-	double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
+	const double Xradians = (double)((ANGLE_90 - x) % ANGLE_360) * 2 * M_PI / ANGLE_360;
+	const double Yradians = (double)((ANGLE_90 - y) % ANGLE_360) * 2 * M_PI / ANGLE_360;
+	const double Zradians = (double)((ANGLE_90 - z) % ANGLE_360) * 2 * M_PI / ANGLE_360;
 
 	baseMatrix.row1[0] = (int32)(sin(Zradians) * sin(Yradians) * 16384);
 	baseMatrix.row1[1] = (int32)(-cos(Zradians) * 16384);

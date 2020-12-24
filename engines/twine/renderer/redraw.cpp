@@ -24,21 +24,21 @@
 #include "common/memstream.h"
 #include "common/textconsole.h"
 #include "graphics/surface.h"
-#include "twine/parser/sprite.h"
-#include "twine/scene/actor.h"
-#include "twine/scene/animations.h"
 #include "twine/audio/sound.h"
-#include "twine/scene/collision.h"
 #include "twine/debugger/debug_scene.h"
-#include "twine/scene/grid.h"
-#include "twine/resources/hqr.h"
 #include "twine/input.h"
 #include "twine/menu/interface.h"
 #include "twine/menu/menu.h"
-#include "twine/scene/movements.h"
+#include "twine/parser/sprite.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
+#include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
+#include "twine/scene/actor.h"
+#include "twine/scene/animations.h"
+#include "twine/scene/collision.h"
+#include "twine/scene/grid.h"
+#include "twine/scene/movements.h"
 #include "twine/scene/scene.h"
 #include "twine/text.h"
 
@@ -424,7 +424,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	const int32 spriteHeight = spritePtr.surface().h;
 
 	// calculate sprite position on screen
-	const SpriteDim* dim = _engine->_resources->spriteBoundingBox.dim(actor->entity);
+	const SpriteDim *dim = _engine->_resources->spriteBoundingBox.dim(actor->entity);
 	renderRect.left = _engine->_renderer->projPosX + dim->x;
 	renderRect.top = _engine->_renderer->projPosY + dim->y;
 	renderRect.right = renderRect.left + spriteWidth;
@@ -483,7 +483,7 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 		const int32 spriteHeight = spritePtr.surface().h;
 
 		// calculate sprite position on screen
-		const SpriteDim* dim = _engine->_resources->spriteBoundingBox.dim(extra->info0);
+		const SpriteDim *dim = _engine->_resources->spriteBoundingBox.dim(extra->info0);
 		renderRect.left = _engine->_renderer->projPosX + dim->x;
 		renderRect.top = _engine->_renderer->projPosY + dim->y;
 		renderRect.right = renderRect.left + spriteWidth;
@@ -574,7 +574,7 @@ void Redraw::renderOverlays() {
 				const int32 spriteWidth = spritePtr.surface().w;
 				const int32 spriteHeight = spritePtr.surface().h;
 
-				const SpriteDim* dim = _engine->_resources->spriteBoundingBox.dim(overlay->info0);
+				const SpriteDim *dim = _engine->_resources->spriteBoundingBox.dim(overlay->info0);
 				renderRect.left = dim->x + overlay->x;
 				renderRect.top = dim->y + overlay->y;
 				renderRect.right = renderRect.left + spriteWidth;
