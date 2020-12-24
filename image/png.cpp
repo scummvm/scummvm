@@ -151,6 +151,9 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	// No handling for unknown chunks yet.
 	int bitDepth, colorType, width, height, interlaceType;
 	png_uint_32 w, h;
+	uint32 rgbaPalette[256];
+	bool hasRgbaPalette = false;
+
 	png_get_IHDR(pngPtr, infoPtr, &w, &h, &bitDepth, &colorType, &interlaceType, NULL, NULL);
 	width = w;
 	height = h;
@@ -164,6 +167,9 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	if (colorType == PNG_COLOR_TYPE_PALETTE && (_keepTransparencyPaletted || !png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS))) {
 		int numPalette = 0;
 		png_colorp palette = NULL;
+		png_bytep trans = nullptr;
+		int numTrans = 0;
+
 		uint32 success = png_get_PLTE(pngPtr, infoPtr, &palette, &numPalette);
 		if (success != PNG_INFO_PLTE) {
 			png_destroy_read_struct(&pngPtr, &infoPtr, NULL);
@@ -175,20 +181,42 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 			_palette[(i * 3)] = palette[i].red;
 			_palette[(i * 3) + 1] = palette[i].green;
 			_palette[(i * 3) + 2] = palette[i].blue;
-
 		}
 
 		if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
-			png_bytep trans;
-			int numTrans;
 			png_color_16p transColor;
 			png_get_tRNS(pngPtr, infoPtr, &trans, &numTrans, &transColor);
-			assert(numTrans == 1);
-			_transparentColor = *trans;
+
+			if (numTrans == 1) {
+				// For a single transparency color, the alpha should be fully transparent
+				assert(*trans == 0);
+				_transparentColor = 0;
+			} else {
+				// Multiple alphas are being specified for the palette, so we can't use
+				// _transparentColor, and will instead need to build an RGBA surface
+				assert(numTrans > 1);
+				hasRgbaPalette = true;
+			}
 		}
 
-		_outputSurface->create(width, height, Graphics::PixelFormat::createFormatCLUT8());
+		_outputSurface->create(width, height,
+			hasRgbaPalette ? getByteOrderRgbaPixelFormat() : Graphics::PixelFormat::createFormatCLUT8());
 		png_set_packing(pngPtr);
+
+		if (hasRgbaPalette) {
+			// Build up the RGBA palette using the transparency alphas
+			Common::fill(&rgbaPalette[0], &rgbaPalette[256], 0);
+			for (int i = 0; i < _paletteColorCount; ++i) {
+				byte a = (i < numTrans) ? trans[i] : 0xff;
+				rgbaPalette[i] = _outputSurface->format.ARGBToColor(
+					a, palette[i].red, palette[i].green, palette[i].blue);
+			}
+
+			// We won't be needing a separate palette
+			_paletteColorCount = 0;
+			delete[] _palette;
+			_palette = nullptr;
+		}
 	} else {
 		if (png_get_valid(pngPtr, infoPtr, PNG_INFO_tRNS)) {
 			png_set_expand(pngPtr);
@@ -217,7 +245,22 @@ bool PNGDecoder::loadStream(Common::SeekableReadStream &stream) {
 	width = w;
 	height = h;
 
-	if (interlaceType == PNG_INTERLACE_NONE) {
+	if (hasRgbaPalette) {
+		// Build up the RGBA surface from paletted rows
+		png_bytep rowPtr = new byte[width];
+		if (!rowPtr)
+			error("Could not allocate memory for row.");
+
+		for (int yp = 0; yp < height; ++yp) {
+			png_read_row(pngPtr, rowPtr, nullptr);
+			uint32 *destRowP = (uint32 *)_outputSurface->getBasePtr(0, yp);
+
+			for (int xp = 0; xp < width; ++xp)
+				destRowP[xp] = rgbaPalette[rowPtr[xp]];
+		}
+
+		delete[] rowPtr;
+	} else  if (interlaceType == PNG_INTERLACE_NONE) {
 		// PNGs without interlacing can simply be read row by row.
 		for (int i = 0; i < height; i++) {
 			png_read_row(pngPtr, (png_bytep)_outputSurface->getBasePtr(0, i), NULL);
