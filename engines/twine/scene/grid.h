@@ -74,6 +74,11 @@ struct BrickEntry {
 /** Grip Z size */
 #define GRID_SIZE_Z GRID_SIZE_X
 
+// short max
+#define SCENE_SIZE_MAX (BRICK_SIZE * GRID_SIZE_X - 1)
+// short min
+#define SCENE_SIZE_MIN (-BRICK_SIZE * GRID_SIZE_X)
+
 #define BRICK_SIZE 512
 #define BRICK_HEIGHT 256
 

@@ -31,6 +31,7 @@
 #include "twine/renderer/shadeangletab.h"
 #include "twine/scene/actor.h"
 #include "twine/scene/movements.h"
+#include "twine/scene/grid.h"
 #include "twine/shared.h"
 #include "twine/twine.h"
 
@@ -370,8 +371,8 @@ FORCEINLINE int16 clamp(int16 x, int16 a, int16 b) {
 }
 
 void Renderer::computeBoundingBox(Vertex *vertices, int32 numVertices, int &vleft, int &vright, int &vtop, int &vbottom) const {
-	vleft = vtop = 32767;
-	vright = vbottom = -32768;
+	vleft = vtop = SCENE_SIZE_MAX;
+	vright = vbottom = SCENE_SIZE_MIN;
 
 	for (int32 i = 0; i < numVertices; i++) {
 		vertices[i].x = clamp(vertices[i].x, 0, SCREEN_WIDTH - 1);
@@ -1421,10 +1422,10 @@ bool Renderer::renderIsoModel(int32 x, int32 y, int32 z, int32 angleX, int32 ang
 	renderAngleZ = angleZ;
 
 	// model render size reset
-	_engine->_redraw->renderRect.left = 32767;
-	_engine->_redraw->renderRect.top = 32767;
-	_engine->_redraw->renderRect.right = -32767;
-	_engine->_redraw->renderRect.bottom = -32767;
+	_engine->_redraw->renderRect.left = SCENE_SIZE_MAX;
+	_engine->_redraw->renderRect.top = SCENE_SIZE_MAX;
+	_engine->_redraw->renderRect.right = SCENE_SIZE_MIN;
+	_engine->_redraw->renderRect.bottom = SCENE_SIZE_MIN;
 
 	if (isUsingOrhoProjection) {
 		renderX = x;
