@@ -614,13 +614,13 @@ void TwinEEngine::centerScreenOnActor() {
 	}
 
 	ActorStruct *actor = _scene->getActor(_scene->currentlyFollowedActor);
-	_renderer->projectPositionOnScreen(actor->x - (_grid->newCameraX * 512),
-	                                   actor->y - (_grid->newCameraY * 256),
-	                                   actor->z - (_grid->newCameraZ * 512));
+	_renderer->projectPositionOnScreen(actor->x - (_grid->newCameraX * BRICK_SIZE),
+	                                   actor->y - (_grid->newCameraY * BRICK_HEIGHT),
+	                                   actor->z - (_grid->newCameraZ * BRICK_SIZE));
 	if (_renderer->projPosX < 80 || _renderer->projPosX >= SCREEN_WIDTH - 60 || _renderer->projPosY < 80 || _renderer->projPosY >= SCREEN_HEIGHT - 50) {
-		_grid->newCameraX = ((actor->x + 256) / 512) + (((actor->x + 256) / 512) - _grid->newCameraX) / 2;
-		_grid->newCameraY = actor->y / 256;
-		_grid->newCameraZ = ((actor->z + 256) / 512) + (((actor->z + 256) / 512) - _grid->newCameraZ) / 2;
+		_grid->newCameraX = ((actor->x + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->x + BRICK_HEIGHT) / BRICK_SIZE) - _grid->newCameraX) / 2;
+		_grid->newCameraY = actor->y / BRICK_HEIGHT;
+		_grid->newCameraZ = ((actor->z + BRICK_HEIGHT) / BRICK_SIZE) + (((actor->z + BRICK_HEIGHT) / BRICK_SIZE) - _grid->newCameraZ) / 2;
 
 		if (_grid->newCameraX >= GRID_SIZE_X) {
 			_grid->newCameraX = GRID_SIZE_X - 1;
@@ -732,9 +732,9 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		// Recenter Screen
 		if (_input->isActionActive(TwinEActionType::RecenterScreenOnTwinsen) && !disableScreenRecenter) {
 			const ActorStruct *currentlyFollowedActor = _scene->getActor(_scene->currentlyFollowedActor);
-			_grid->newCameraX = currentlyFollowedActor->x / 512;
-			_grid->newCameraY = currentlyFollowedActor->y / 256;
-			_grid->newCameraZ = currentlyFollowedActor->z / 512;
+			_grid->newCameraX = currentlyFollowedActor->x / BRICK_SIZE;
+			_grid->newCameraY = currentlyFollowedActor->y / BRICK_HEIGHT;
+			_grid->newCameraZ = currentlyFollowedActor->z / BRICK_SIZE;
 			_redraw->reqBgRedraw = true;
 		}
 
@@ -876,9 +876,9 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 						_scene->needChangeScene = _scene->currentSceneIdx;
 						_gameState->inventoryMagicPoints = _gameState->magicLevelIdx * 20;
 
-						_grid->newCameraX = (_scene->sceneHero->x / 512);
-						_grid->newCameraY = (_scene->sceneHero->y / 256);
-						_grid->newCameraZ = (_scene->sceneHero->z / 512);
+						_grid->newCameraX = (_scene->sceneHero->x / BRICK_SIZE);
+						_grid->newCameraY = (_scene->sceneHero->y / BRICK_HEIGHT);
+						_grid->newCameraZ = (_scene->sceneHero->z / BRICK_SIZE);
 
 						_scene->heroPositionType = ScenePositionType::kReborn;
 
@@ -990,7 +990,7 @@ void TwinEEngine::setPalette(const uint32 *palette) {
 		out += 3;
 		in += 4;
 	}
-	g_system->getPaletteManager()->setPalette(pal, 0, 256);
+	g_system->getPaletteManager()->setPalette(pal, 0, NUMOFCOLORS);
 	flip();
 }
 

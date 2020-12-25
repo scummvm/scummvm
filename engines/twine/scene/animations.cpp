@@ -717,7 +717,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			if (brickShape != ShapeType::kSolid) {
 				_engine->_collision->reajustActorPosition(brickShape);
 			} /*else { // this shouldn't happen (collision should avoid it)
-				actor->y = processActorY = (processActorY / 256) * 256 + 256; // go upper
+				actor->y = processActorY = (processActorY / BRICK_HEIGHT) * BRICK_HEIGHT + BRICK_HEIGHT; // go upper
 			}*/
 		}
 
@@ -777,7 +777,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 			if (brickShape == ShapeType::kSolid) {
 				if (actor->dynamicFlags.bIsFalling) {
 					_engine->_collision->stopFalling();
-					_engine->_movements->processActorY = (_engine->_collision->collisionY * 256) + 256;
+					_engine->_movements->processActorY = (_engine->_collision->collisionY * BRICK_HEIGHT) + BRICK_HEIGHT;
 				} else {
 					if (IS_HERO(actorIdx) && _engine->_actor->heroBehaviour == HeroBehaviourType::kAthletic && actor->anim == AnimationTypes::kForward && _engine->cfgfile.WallCollision) { // avoid wall hit damage
 						_engine->_extra->addExtraSpecial(actor->x, actor->y + 1000, actor->z, ExtraSpecialType::kHitStars);

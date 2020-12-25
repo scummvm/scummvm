@@ -112,9 +112,9 @@ void Collision::reajustActorPosition(ShapeType brickShape) {
 		return;
 	}
 
-	const int32 brkX = (collisionX * 512) - 256;
-	const int32 brkY = collisionY * 256;
-	const int32 brkZ = (collisionZ * 512) - 256;
+	const int32 brkX = (collisionX * BRICK_SIZE) - BRICK_HEIGHT;
+	const int32 brkY = collisionY * BRICK_HEIGHT;
+	const int32 brkZ = (collisionZ * BRICK_SIZE) - BRICK_HEIGHT;
 
 	// double-side stairs
 	if (brickShape >= ShapeType::kDoubleSideStairsTop1 && brickShape <= ShapeType::kDoubleSideStairsRight2) {

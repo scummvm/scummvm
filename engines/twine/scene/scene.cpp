@@ -356,9 +356,9 @@ void Scene::changeScene() {
 	_sampleAmbienceTime = 0;
 
 	ActorStruct *followedActor = getActor(currentlyFollowedActor);
-	_engine->_grid->newCameraX = followedActor->x / 512;
-	_engine->_grid->newCameraY = followedActor->y / 256;
-	_engine->_grid->newCameraZ = followedActor->z / 512;
+	_engine->_grid->newCameraX = followedActor->x / BRICK_SIZE;
+	_engine->_grid->newCameraY = followedActor->y / BRICK_HEIGHT;
+	_engine->_grid->newCameraZ = followedActor->z / BRICK_SIZE;
 
 	_engine->_gameState->magicBallIdx = -1;
 	_engine->_movements->heroMoved = true;
