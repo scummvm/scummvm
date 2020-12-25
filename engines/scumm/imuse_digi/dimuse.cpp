@@ -52,6 +52,8 @@ IMuseDigital::IMuseDigital(ScummEngine_v7 *scumm, Audio::Mixer *mixer, int fps)
 	_sound = new ImuseDigiSndMgr(_vm);
 	assert(_sound);
 	_callbackFps = fps;
+	if (_vm->_game.id == GID_FT)
+		_callbackFps *= 2;
 	resetState();
 	for (int l = 0; l < MAX_DIGITAL_TRACKS + MAX_DIGITAL_FADETRACKS; l++) {
 		_track[l] = new Track;
@@ -183,6 +185,8 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 			}
 
 			if (_vm->_game.id == GID_CMI) {
+				track->gainRedFadeDest = 127 * 290;
+
 				if (track->soundId / 1000 == 1) { // State
 					for (int ll = 0; _comiStateMusicTable[ll].soundId != -1; ll++) {
 						if ((_comiStateMusicTable[ll].soundId == track->soundId)) {
@@ -198,6 +202,10 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 						}
 					}
 				}
+			}
+
+			if (_vm->_game.id == GID_FT) {
+				track->gainRedFadeDest = 127 * 180;
 			}
 
 			track->sndDataExtComp = _sound->isSndDataExtComp(track->soundDesc);
@@ -278,7 +286,7 @@ void IMuseDigital::runScheduledCrossfades() {
 
 			newTrack->dataOffset = _scheduledCrossfades[l].destDataOffset;
 			oldTrack->alreadyCrossfading = true; // We set this so to avoid duplicate crossfades
-			handleComiFadeOut(oldTrack, _scheduledCrossfades[l].fadeDelay);
+			handleFadeOut(oldTrack, _scheduledCrossfades[l].fadeDelay);
 		}
 	}
 }
@@ -288,7 +296,7 @@ void IMuseDigital::callback() {
 	runScheduledCrossfades();
 	_speechIsPlaying = false;
 	// Check for any track playing a speech line
-	if (_vm->_game.id == GID_CMI) {
+	if (_vm->_game.id != GID_DIG) {
 		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 			if (_track[l]->used && _track[l]->soundId == kTalkSoundID) {
 				// Set flag and break
@@ -312,69 +320,64 @@ void IMuseDigital::callback() {
 			if (_pause)
 				return;
 
+			// Fades and crossfades handling
 			if (track->volFadeUsed) {
-				if (_vm->_game.id == GID_CMI) {
-					if (track->vol == track->volFadeDest) // Sanity check
-						track->volFadeUsed = false;
-
-					if (track->volFadeStep < 0) { // Fade out
-						if (track->vol > track->volFadeDest) {
+				if (track->vol == track->volFadeDest) // Sanity check (needed for some edge cases in COMI, FT and DIG)
+					track->volFadeUsed = false;
+				if (track->volFadeStep < 0) { // Fade out
+					if (track->vol > track->volFadeDest) {
+						// COMI uses non-linear fade curves
+						if (_vm->_game.id == GID_CMI) {
 							int tempVolume = transformVolumeEqualPowToLinear(track->vol, 1); // Equal power to linear...
 							tempVolume += track->volFadeStep; // Remove step...
 							track->vol = transformVolumeLinearToEqualPow(tempVolume, 1); // Linear to equal power...
-
-							if (track->vol <= track->volFadeDest) {
-								track->vol = track->volFadeDest;
-								track->volFadeUsed = false;
-								flushTrack(track);
-								continue;
-							}
-							if (track->vol == 0) {
-								// Fade out complete -> remove this track
+						} else {
+							track->vol += track->volFadeStep; // Remove step...
+						}
+						if (track->vol <= track->volFadeDest) {
+							track->vol = track->volFadeDest;
+							track->volFadeUsed = false;
+							// In COMI we flush the track if we've faded out to the destination volume;
+							// this is because there are no situations in which there is a fade out to a
+							// non-zero volume, so this will always mean that we can free the track.
+							// This is not true in Full Throttle, for example, so we have to make this distinction.
+							if (_vm->_game.id == GID_CMI) {
 								flushTrack(track);
 								continue;
 							}
 						}
-					} else if (track->volFadeStep > 0) { // Fade in
-						if (track->vol < track->volFadeDest) {
+						if (track->vol == 0) {
+							// Fade out complete -> remove this track
+							flushTrack(track);
+							continue;
+						}
+					}
+				} else if (track->volFadeStep > 0) { // Fade in
+					if (track->vol < track->volFadeDest) {
+						// Again, COMI uses non-linear fade curves
+						// Curiously, FT uses a different curve for fade-ins
+						if (_vm->_game.id == GID_CMI) {
 							int tempVolume = transformVolumeEqualPowToLinear(track->vol, 1); // Equal power to linear...
 							tempVolume += track->volFadeStep; // Add step...
 							track->vol = transformVolumeLinearToEqualPow(tempVolume, 1); // Linear to equal power...
-							if (track->vol >= track->volFadeDest) {
-								track->vol = track->volFadeDest;
-								track->volFadeUsed = false;
-							}
+						} else if (_vm->_game.id == GID_FT) {
+							int tempVolume = transformVolumeEqualPowToLinear(track->vol, 6); // Equal power to linear...
+							tempVolume += (track->volFadeStep); // Add step...
+							track->vol = transformVolumeLinearToEqualPow(tempVolume, 6); // Linear to equal power...
+						} else {
+							track->vol += track->volFadeStep; // Add step...
 						}
-					}
-				} else {
-					if (track->volFadeStep < 0) {
-						if (track->vol > track->volFadeDest) {
-							track->vol += track->volFadeStep; 
-							if (track->vol < track->volFadeDest) {
-								track->vol = track->volFadeDest;
-								track->volFadeUsed = false;
-							}
-							if (track->vol == 0) {
-								// Fade out complete -> remove this track
-								flushTrack(track);
-								continue;
-							}
-						}
-					} else if (track->volFadeStep > 0) {
-						if (track->vol < track->volFadeDest) {
-							track->vol += track->volFadeStep;
-							if (track->vol > track->volFadeDest) {
-								track->vol = track->volFadeDest;
-								track->volFadeUsed = false;
-							}
+						if (track->vol >= track->volFadeDest) {
+							track->vol = track->volFadeDest;
+							track->volFadeUsed = false;
 						}
 					}
 				}
  				debug(5, "Fade: sound(%d), Vol(%d) in track(%d)", track->soundId, track->vol / 1000, track->trackId);
 			}
 
-			// Music gain reduction during speech
-			if (_vm->_game.id == GID_CMI && track->volGroupId == IMUSE_VOLGRP_MUSIC) {
+			// Music gain reduction during speech (used, at the moment, on FT and COMI)
+			if (_vm->_game.id != GID_DIG && track->volGroupId == IMUSE_VOLGRP_MUSIC) {
 				if (_speechIsPlaying) {
 					// Check if we have to fade down or the reduction volume is already at the right value
 					if (track->gainReduction >= track->gainRedFadeDest) {
@@ -510,23 +513,40 @@ void IMuseDigital::callback() {
 			if (_mixer->isReady()) {
 				int effVol = track->getVol();
 				int effPan = track->getPan();
-				if (_vm->_game.id == GID_CMI && track->volGroupId == IMUSE_VOLGRP_MUSIC) {
-					effVol -= track->gainReduction / 1000;
-					if (effVol < 0) // In case a music crossfading happens during gain reduction...
-						effVol = 0;
-					effVol = int(round(effVol * 1.9)); // Adjust default music mix for COMI
-				} else if (_vm->_game.id == GID_CMI && track->volGroupId == IMUSE_VOLGRP_VOICE) {
-					// Just in case the speakingActor is not being set...
-					// This allows for a fallback to pan = 64 (center) and volume = 127 (full)
-					if (track->speakingActor != nullptr) {
-						effVol = track->speakingActor->_talkVolume;
-						// Even though we fixed this in IMuseDigital::setVolume(),
-						// some sounds might be started without even calling that function
-						if (effVol > 127)
-							effVol /= 2;
-						effVol = int(round(effVol * 1.04));
-						effPan = (track->speakingActor->_talkPan != 64) ? 2 * track->speakingActor->_talkPan - 127 : 0;
+				if (_vm->_game.id == GID_CMI) {
+					// Adjust audio mix for The Curse of Monkey Island
+					if (track->volGroupId == IMUSE_VOLGRP_MUSIC) {
+						effVol -= track->gainReduction / 1000;
+						if (effVol < 0) // In case a music crossfading happens during gain reduction...
+							effVol = 0;
+						effVol = int(round(effVol * 1.9)); // Adjust default music mix for COMI
+					} else if (track->volGroupId == IMUSE_VOLGRP_VOICE) {
+						// Just in case the speakingActor is not being set...
+						// This allows for a fallback to pan = 64 (center) and volume = 127 (full)
+						if (track->speakingActor != nullptr) {
+							effVol = track->speakingActor->_talkVolume;
+							// Even though we fixed this in IMuseDigital::setVolume(),
+							// some sounds might be started without even calling that function
+							if (effVol > 127)
+								effVol /= 2;
+							effVol = int(round(effVol * 1.04));
+							effPan = (track->speakingActor->_talkPan != 64) ? 2 * track->speakingActor->_talkPan - 127 : 0;
+						}
 					}
+				} else if (_vm->_game.id == GID_FT) {
+					// Adjust audio mix for Full Throttle
+					// (this affects music and sfx only, speech volume mix
+					// is changed accordingly in IMuseDigital::startSound()
+					// since that's the only handle we have for speech)
+					if (track->volGroupId == IMUSE_VOLGRP_MUSIC) {
+						// Gain reduction
+						effVol -= track->gainReduction / 1000;
+						if (effVol < 0) // In case a music crossfading happens during gain reduction...
+							effVol = 0;
+						effVol = int(round(effVol * 1.5));
+					} else {
+						effVol = int(round(effVol * 1.1));
+					}					
 				}
 				_mixer->setChannelVolume(track->mixChanHandle, effVol);
 				_mixer->setChannelBalance(track->mixChanHandle, effPan);
@@ -575,7 +595,7 @@ void IMuseDigital::switchToNextRegion(Track *track) {
 				debug(5, "SwToNeReg(trackId:%d) - trigger %s reached", track->trackId, _triggerParams.marker);
 				debug(5, "SwToNeReg(trackId:%d) - exit current region %d", track->trackId, track->curRegion);
 				debug(5, "SwToNeReg(trackId:%d) - call handleComiFadeOut(delay:%d)", track->trackId, _triggerParams.fadeOutDelay);
-				handleComiFadeOut(track, _triggerParams.fadeOutDelay);
+				handleFadeOut(track, _triggerParams.fadeOutDelay);
 				track->dataOffset = _sound->getRegionOffset(track->soundDesc, track->curRegion);
 				track->regionOffset = 0;
 				debug(5, "SwToNeReg(trackId:%d)-sound(%d) select region %d, curHookId: %d", track->trackId, track->soundId, track->curRegion, track->curHookId);

@@ -84,6 +84,39 @@ int IMuseDigital::startSound(int soundId, const char *soundName, int soundType, 
 	Common::StackLock lock(_mutex, "IMuseDigital::startSound()");
 	debug(5, "IMuseDigital::startSound(%d) - begin func", soundId);
 
+	bool forceFadeIn = false;
+	if (_vm->_game.id == GID_FT && volGroupId == IMUSE_VOLGRP_MUSIC) {
+		// First of all we check if there's another track playing the target soundId
+		int alreadyPlayingTrackId = -1;
+		for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
+			if (_track[l]->volGroupId == IMUSE_VOLGRP_MUSIC && _track[l]->used) {
+				forceFadeIn = true;
+				if (_track[l]->soundId == soundId) {
+					alreadyPlayingTrackId = l;
+					break;
+				}
+			}
+		}
+		// If the current music state corresponds to the same soundId 
+		// we're trying to play, we just adjust its volume to the new one.
+		// Otherwise... just flush the old track and start the new one
+		if (alreadyPlayingTrackId != -1) {
+			if (getSoundIdByName(_ftStateMusicTable[_curMusicState].audioName) == soundId) {
+				Track *alreadyPlayingTrack = _track[alreadyPlayingTrackId];
+				alreadyPlayingTrack->volFadeDelay = 60;
+				alreadyPlayingTrack->volFadeDest = volume * 1000;
+				alreadyPlayingTrack->volFadeStep = (alreadyPlayingTrack->volFadeDest - alreadyPlayingTrack->vol) * 60 * (1000 / _callbackFps) / (1000 * alreadyPlayingTrack->volFadeDelay);
+				alreadyPlayingTrack->volFadeUsed = true;
+				alreadyPlayingTrack->toBeRemoved = false;
+				return alreadyPlayingTrackId;
+			} else {
+				flushTrack(_track[alreadyPlayingTrackId]);
+			}
+		}
+	} else if (_vm->_game.id == GID_CMI) {
+		forceFadeIn = true;
+	}
+
 	int l = allocSlot(priority);
 	if (l == -1) {
 		warning("IMuseDigital::startSound() Can't start sound - no free slots");
@@ -106,7 +139,12 @@ int IMuseDigital::startSound(int soundId, const char *soundName, int soundType, 
 	track->soundType = soundType;
 	track->trackId = l;
 
-	if (_vm->_game.id == GID_CMI) {
+	if (_vm->_game.id == GID_FT) {
+		// Tweak the default gain reduction to about 2 dB
+		track->gainRedFadeDest = 127 * 180;
+	} else if (_vm->_game.id == GID_CMI) {
+		// Tweak the default gain reduction to about 4 dB
+		track->gainRedFadeDest = 127 * 290;
 		if (track->soundId / 1000 == 1) { // State
 			for (l = 0; _comiStateMusicTable[l].soundId != -1; l++) {
 				if ((_comiStateMusicTable[l].soundId == track->soundId)) {
@@ -129,7 +167,11 @@ int IMuseDigital::startSound(int soundId, const char *soundName, int soundType, 
 	track->souStreamUsed = (input != 0);
 
 	if (track->souStreamUsed) {
-		_mixer->playStream(track->getType(), &track->mixChanHandle, input, -1, track->getVol(), track->getPan());
+		int effVol = track->getVol();
+		if (_vm->_game.id == GID_FT) {
+			effVol = int(round(effVol * 1.3));
+		}
+		_mixer->playStream(track->getType(), &track->mixChanHandle, input, -1, effVol, track->getPan());
 	} else {
 		strcpy(track->soundName, soundName);
 		track->soundDesc = _sound->openSound(soundId, soundName, soundType, volGroupId, -1);
@@ -198,7 +240,7 @@ int IMuseDigital::startSound(int soundId, const char *soundName, int soundType, 
 				track->regionOffset -= track->regionOffset >= (track->feedSize / _callbackFps) ? (track->feedSize / _callbackFps) : 0;
 			}
 		}
-		if (_vm->_game.id == GID_CMI && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
+		if (_vm->_game.id != GID_DIG && (track->volGroupId == IMUSE_VOLGRP_MUSIC) && forceFadeIn) {
 			// Fade in the new track
 			track->vol = 0;
 			track->volFadeDelay = fadeDelay;
@@ -341,7 +383,7 @@ void IMuseDigital::fadeOutMusicAndStartNew(int fadeDelay, const char *filename, 
 			if (_vm->_game.id == GID_CMI) {
 				track->volFadeDelay = fadeDelay;
 				startMusicWithOtherPos(filename, soundId, 0, 127, track);
-				handleComiFadeOut(track, fadeDelay);
+				handleFadeOut(track, fadeDelay);
 			} else {
 				startMusicWithOtherPos(filename, soundId, 0, 127, track);
 				cloneToFadeOutTrack(track, fadeDelay);
@@ -360,8 +402,8 @@ void IMuseDigital::fadeOutMusic(int fadeDelay) {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			debug(5, "IMuseDigital::fadeOutMusic(fade:%d, sound:%d)", fadeDelay, track->soundId);
-			if (_vm->_game.id == GID_CMI) {
-				handleComiFadeOut(track, fadeDelay);
+			if (_vm->_game.id == GID_CMI || _vm->_game.id == GID_FT) {
+				handleFadeOut(track, fadeDelay);
 			} else {
 				cloneToFadeOutTrack(track, fadeDelay);
 				flushTrack(track);
@@ -393,7 +435,7 @@ void IMuseDigital::setTrigger(TriggerParams *trigger) {
 	_triggerUsed = true;
 }
 
-Track *IMuseDigital::handleComiFadeOut(Track *track, int fadeDelay) {
+Track *IMuseDigital::handleFadeOut(Track *track, int fadeDelay) {
 	track->volFadeDelay = fadeDelay != 0 ? fadeDelay : 60;
 	track->volFadeDest = 0;
 	track->volFadeStep = (track->volFadeDest - track->vol) * 60 * (1000 / _callbackFps) / (1000 * track->volFadeDelay);
@@ -480,6 +522,9 @@ int IMuseDigital::transformVolumeLinearToEqualPow(int volume, int mode) {
 		case 5:  // Logarithmic 3
 			eqPowValue = 1 + 0.7 * log10(mappedValue);
 			break;
+		case 6:  // Quadratic
+			eqPowValue = mappedValue * mappedValue;
+			break;
 		default: // Fallback to linear
 			eqPowValue = mappedValue;
 			break;
@@ -521,6 +566,9 @@ int IMuseDigital::transformVolumeEqualPowToLinear(int volume, int mode) {
 			break;
 		case 5:  // Logarithmic 3
 			linearValue = 0.0372759 * pow(M_E, 3.28941 * mappedValue);
+			break;
+		case 6:  // Quadratic
+			linearValue = sqrt(mappedValue);
 			break;
 		default: // Fallback to linear
 			linearValue = mappedValue;

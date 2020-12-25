@@ -92,7 +92,7 @@ struct Track {
 		volFadeDelay = 0;
 		volFadeUsed = false;
 		gainReduction = 0;
-		gainRedFadeDest = 127 * 290; // About 4 dB of gain reduction
+		gainRedFadeDest = 0;
 		gainRedFadeUsed = false;
 		alreadyCrossfading = false;
 		loopShiftType = 0; 
