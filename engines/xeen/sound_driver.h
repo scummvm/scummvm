@@ -91,7 +91,6 @@ private:
 	bool command(const byte *&srcP);
 protected:
 	Common::Array<Channel> _channels;
-	bool _exclude7;
 	bool _musicPlaying;
 	bool _fxPlaying;
 protected:

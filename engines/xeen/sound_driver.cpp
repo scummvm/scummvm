@@ -31,7 +31,7 @@ namespace Xeen {
 SoundDriver::SoundDriver() : _musicPlaying(false), _fxPlaying(false),
 		_musCountdownTimer(0), _fxCountdownTimer(0), _musDataPtr(nullptr),
 		_fxDataPtr(nullptr), _fxStartPtr(nullptr), _musStartPtr(nullptr),
-		_exclude7(false), _frameCtr(0) {
+		_frameCtr(0) {
 	_channels.resize(CHANNEL_COUNT);
 }
 
@@ -129,15 +129,11 @@ bool SoundDriver::cmdFreezeFrequency(const byte *&srcP, byte param) {
 bool SoundDriver::cmdChangeFrequency(const byte *&srcP, byte param) {
 	debugC(3, kDebugSound, "cmdChangeFrequency %d", param);
 
-	if (param != 7 || !_exclude7) {
-		_channels[param]._freqCtrChange = (int8)*srcP++;
-		_channels[param]._freqCtr = 0xFF;
-		_channels[param]._changeFrequency = true;
-		_channels[param]._freqChange = (int16)READ_BE_UINT16(srcP);
-		srcP += 2;
-	} else {
-		srcP += 3;
-	}
+	_channels[param]._freqCtrChange = (int8)*srcP++;
+	_channels[param]._freqCtr = 0xFF;
+	_channels[param]._changeFrequency = true;
+	_channels[param]._freqChange = (int16)READ_BE_UINT16(srcP);
+	srcP += 2;
 
 	return false;
 }
