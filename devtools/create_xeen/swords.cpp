@@ -37,17 +37,22 @@
 void writeSwordsData(CCArchive &cc, const char *swordsDatName) {
 	Common::File f;
 	Common::MemFile monsters;
-	byte buffer[MONSTERS_COUNT * 60];
+	const size_t size = MONSTERS_COUNT * 60;
+	const int32 offset = 0x44200;
+	byte buffer[size];
 
 	if (!f.open(swordsDatName, Common::kFileReadMode))
-		error("Could not open Swords xeen.dat");
+		error("Could not open '%s'", swordsDatName);
 
-	f.seek(0x44200);
-	f.read(buffer, MONSTERS_COUNT * 60);
+	if (f.seek(offset) != 0)
+		error("Failed to seek to 0x%x for '%s'", offset, swordsDatName);
+
+	if (f.read(buffer, size) != size)
+		error("Failed to read %zu bytes from '%s'", size, swordsDatName);
 
 	if (strcmp((const char *)buffer + 0x33, "Slime"))
-		error("Invalid Swords xeen.dat");
+		error("Invalid '%s'", swordsDatName);
 
-	monsters.write(buffer, MONSTERS_COUNT * 60);
+	monsters.write(buffer, size);
 	cc.add("monsters.swd", monsters);
 }
