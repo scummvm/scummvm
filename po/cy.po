@@ -6229,19 +6229,19 @@ msgstr ""
 msgid "Fly to lower right"
 msgstr ""
 
-#: engines/scumm/input.cpp:563
+#: engines/scumm/input.cpp:574
 msgid "Snap scroll on"
 msgstr ""
 
-#: engines/scumm/input.cpp:565
+#: engines/scumm/input.cpp:576
 msgid "Snap scroll off"
 msgstr ""
 
-#: engines/scumm/input.cpp:578
+#: engines/scumm/input.cpp:589
 msgid "Music volume: "
 msgstr ""
 
-#: engines/scumm/input.cpp:595
+#: engines/scumm/input.cpp:606
 msgid "Subtitle speed: "
 msgstr ""
 
