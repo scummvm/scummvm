@@ -46,8 +46,8 @@ Renderer::Renderer(TwinEEngine *engine) : _engine(engine), shadeAngleTab3(&shade
 
 int32 Renderer::projectPositionOnScreen(int32 cX, int32 cY, int32 cZ) {
 	if (isUsingOrhoProjection) {
-		projPosX = ((cX - cZ) * 24) / 512 + orthoProjX;
-		projPosY = (((cX + cZ) * 12) - cY * 30) / 512 + orthoProjY;
+		projPosX = ((cX - cZ) * 24) / BRICK_SIZE + orthoProjX;
+		projPosY = (((cX + cZ) * 12) - cY * 30) / BRICK_SIZE + orthoProjY;
 		projPosZ = cZ - cY - cX;
 		return 1;
 	}
@@ -1253,8 +1253,8 @@ bool Renderer::renderAnimatedModel(ModelData *modelData, const uint8 *bodyPtr, R
 			const int32 coY = pointPtr->y + renderY;
 			const int32 coZ = -(pointPtr->z + renderZ);
 
-			pointPtrDest->x = (coX + coZ) * 24 / 512 + orthoProjX;
-			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / 512 + orthoProjY;
+			pointPtrDest->x = (coX + coZ) * 24 / BRICK_SIZE + orthoProjX;
+			pointPtrDest->y = (((coX - coZ) * 12) - coY * 30) / BRICK_SIZE + orthoProjY;
 			pointPtrDest->z = coZ - coX - coY;
 
 			if (pointPtrDest->x < _engine->_redraw->renderRect.left) {

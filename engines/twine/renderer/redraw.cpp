@@ -343,9 +343,9 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 		_engine->_grid->drawSprite(drawCmd.offset, renderRect.left, renderRect.top, _engine->_resources->spriteShadowPtr);
 	}
 
-	const int32 tmpX = (drawCmd.x + 256) / 512;
-	const int32 tmpY = drawCmd.y / 256;
-	const int32 tmpZ = (drawCmd.z + 256) / 512;
+	const int32 tmpX = (drawCmd.x + BRICK_HEIGHT) / BRICK_SIZE;
+	const int32 tmpY = drawCmd.y / BRICK_HEIGHT;
+	const int32 tmpZ = (drawCmd.z + BRICK_HEIGHT) / BRICK_SIZE;
 
 	_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
 
@@ -388,9 +388,9 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
 		actor->dynamicFlags.bIsVisible = 1;
 
-		const int32 tempX = (actor->x + 256) / 512;
-		int32 tempY = actor->y / 256;
-		const int32 tempZ = (actor->z + 256) / 512;
+		const int32 tempX = (actor->x + BRICK_HEIGHT) / BRICK_SIZE;
+		int32 tempY = actor->y / BRICK_HEIGHT;
+		const int32 tempZ = (actor->z + BRICK_HEIGHT) / BRICK_SIZE;
 		if (actor->brickShape() != ShapeType::kNone) {
 			tempY++;
 		}
@@ -443,14 +443,14 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 		actor->dynamicFlags.bIsVisible = 1;
 
 		if (actor->staticFlags.bUsesClipping) {
-			const int32 tmpX = (actor->lastX + 256) / 512;
-			const int32 tmpY = actor->lastY / 256;
-			const int32 tmpZ = (actor->lastZ + 256) / 512;
+			const int32 tmpX = (actor->lastX + BRICK_HEIGHT) / BRICK_SIZE;
+			const int32 tmpY = actor->lastY / BRICK_HEIGHT;
+			const int32 tmpZ = (actor->lastZ + BRICK_HEIGHT) / BRICK_SIZE;
 			_engine->_grid->drawOverSpriteActor(tmpX, tmpY, tmpZ);
 		} else {
-			const int32 tmpX = (actor->x + actor->boudingBox.x.topRight + 256) / 512;
-			int32 tmpY = actor->y / 256;
-			const int32 tmpZ = (actor->z + actor->boudingBox.z.topRight + 256) / 512;
+			const int32 tmpX = (actor->x + actor->boudingBox.x.topRight + BRICK_HEIGHT) / BRICK_SIZE;
+			int32 tmpY = actor->y / BRICK_HEIGHT;
+			const int32 tmpZ = (actor->z + actor->boudingBox.z.topRight + BRICK_HEIGHT) / BRICK_SIZE;
 			if (actor->brickShape() != ShapeType::kNone) {
 				tmpY++;
 			}
@@ -495,9 +495,9 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 	_engine->_interface->setClip(renderRect);
 
 	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-		const int32 tmpX = (drawCmd.x + 256) / 512;
-		const int32 tmpY = drawCmd.y / 256;
-		const int32 tmpZ = (drawCmd.z + 256) / 512;
+		const int32 tmpX = (drawCmd.x + BRICK_HEIGHT) / BRICK_SIZE;
+		const int32 tmpY = drawCmd.y / BRICK_HEIGHT;
+		const int32 tmpZ = (drawCmd.z + BRICK_HEIGHT) / BRICK_SIZE;
 
 		_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
 		addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);

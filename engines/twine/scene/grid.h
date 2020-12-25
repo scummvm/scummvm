@@ -178,6 +178,9 @@ private:
 	int32 blockBufferSize = 0;
 	uint8 *blockBuffer = nullptr;
 
+	uint8 *getBlockBuffer(int32 x, int32 y, int32 z);
+
+	void updateCollisionCoordinates(int32 x, int32 y, int32 z);
 public:
 	Grid(TwinEEngine *engine);
 	~Grid();
@@ -185,13 +188,10 @@ public:
 	/** Grid block entry types */
 	typedef struct BlockEntry blockMap[GRID_SIZE_X][GRID_SIZE_Z][GRID_SIZE_Y];
 
-	uint8 *getBlockBuffer(int32 x, int32 y, int32 z);
 	/**
 	 * search down until either ground is found or lower border of the cube is reached
 	 */
 	const uint8 *getBlockBufferGround(int32 x, int32 y, int32 z, int16 &ground) const;
-
-	void updateCollisionCoordinates(int32 x, int32 y, int32 z);
 
 	/** New grid camera X coordinates */
 	int32 newCameraX = 0;

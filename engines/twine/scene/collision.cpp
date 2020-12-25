@@ -186,16 +186,16 @@ void Collision::reajustActorPosition(ShapeType brickShape) {
 	if (brickShape >= ShapeType::kStairsTopLeft && brickShape <= ShapeType::kStairsBottomRight) {
 		switch (brickShape) {
 		case ShapeType::kStairsTopLeft:
-			_engine->_movements->processActorY = brkY + getAverageValue(0, 256, 512, _engine->_movements->processActorX - brkX);
+			_engine->_movements->processActorY = brkY + getAverageValue(0, BRICK_HEIGHT, BRICK_SIZE, _engine->_movements->processActorX - brkX);
 			break;
 		case ShapeType::kStairsTopRight:
-			_engine->_movements->processActorY = brkY + getAverageValue(0, 256, 512, _engine->_movements->processActorZ - brkZ);
+			_engine->_movements->processActorY = brkY + getAverageValue(0, BRICK_HEIGHT, BRICK_SIZE, _engine->_movements->processActorZ - brkZ);
 			break;
 		case ShapeType::kStairsBottomLeft:
-			_engine->_movements->processActorY = brkY + getAverageValue(256, 0, 512, _engine->_movements->processActorZ - brkZ);
+			_engine->_movements->processActorY = brkY + getAverageValue(BRICK_HEIGHT, 0, BRICK_SIZE, _engine->_movements->processActorZ - brkZ);
 			break;
 		case ShapeType::kStairsBottomRight:
-			_engine->_movements->processActorY = brkY + getAverageValue(256, 0, 512, _engine->_movements->processActorX - brkX);
+			_engine->_movements->processActorY = brkY + getAverageValue(BRICK_HEIGHT, 0, BRICK_SIZE, _engine->_movements->processActorX - brkX);
 			break;
 		default:
 			break;
@@ -450,7 +450,7 @@ void Collision::stopFalling() { // ReceptionObj()
 	if (IS_HERO(_engine->_animations->currentlyProcessedActorIdx)) {
 		const int32 fall = _engine->_scene->heroYBeforeFall - _engine->_movements->processActorY;
 
-		if (fall >= 2048) {
+		if (fall >= BRICK_HEIGHT * 8) {
 			_engine->_extra->addExtraSpecial(_engine->_actor->processActorPtr->x, _engine->_actor->processActorPtr->y + 1000, _engine->_actor->processActorPtr->z, ExtraSpecialType::kHitStars);
 			_engine->_actor->processActorPtr->life--;
 			_engine->_animations->initAnim(AnimationTypes::kLandingHit, 2, AnimationTypes::kStanding, _engine->_animations->currentlyProcessedActorIdx);
