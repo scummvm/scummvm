@@ -29,6 +29,7 @@
 #include "scumm/imuse_digi/dimuse.h"
 #include "scumm/imuse_digi/dimuse_bndmgr.h"
 #include "scumm/imuse_digi/dimuse_track.h"
+#include "scumm/imuse_digi/dimuse_tables.h"
 
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
@@ -79,14 +80,14 @@ int IMuseDigital::allocSlot(int priority) {
 	return trackId;
 }
 
-void IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority, Track *otherTrack) {
+int IMuseDigital::startSound(int soundId, const char *soundName, int soundType, int volGroupId, Audio::AudioStream *input, int hookId, int volume, int priority, Track *otherTrack) {
 	Common::StackLock lock(_mutex, "IMuseDigital::startSound()");
 	debug(5, "IMuseDigital::startSound(%d) - begin func", soundId);
 
 	int l = allocSlot(priority);
 	if (l == -1) {
 		warning("IMuseDigital::startSound() Can't start sound - no free slots");
-		return;
+		return -1;
 	}
 	debug(5, "IMuseDigital::startSound(%d, trackId:%d)", soundId, l);
 
@@ -105,6 +106,24 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	track->soundType = soundType;
 	track->trackId = l;
 
+	if (_vm->_game.id == GID_CMI) {
+		if (track->soundId / 1000 == 1) { // State
+			for (l = 0; _comiStateMusicTable[l].soundId != -1; l++) {
+				if ((_comiStateMusicTable[l].soundId == track->soundId)) {
+					track->loopShiftType = _comiStateMusicTable[l].shiftLoop;
+					break;
+				}
+			}
+		} else if (track->soundId / 1000 == 2) { // Sequence
+			for (l = 0; _comiSeqMusicTable[l].soundId != -1; l++) {
+				if ((_comiSeqMusicTable[l].soundId == track->soundId)) {
+					track->loopShiftType = _comiSeqMusicTable[l].shiftLoop;
+					break;
+				}
+			}
+		}
+	}
+
 	int bits = 0, freq = 0, channels = 0;
 
 	track->souStreamUsed = (input != 0);
@@ -120,7 +139,7 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 			track->soundDesc = _sound->openSound(soundId, soundName, soundType, volGroupId, 2);
 
 		if (!track->soundDesc)
-			return;
+			return -1;
 
 		track->sndDataExtComp = _sound->isSndDataExtComp(track->soundDesc);
 
@@ -193,6 +212,8 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 	}
 
 	track->used = true;
+
+	return track->trackId;
 }
 
 void IMuseDigital::setPriority(int soundId, int priority) {
@@ -212,6 +233,9 @@ void IMuseDigital::setPriority(int soundId, int priority) {
 void IMuseDigital::setVolume(int soundId, int volume) {
 	Common::StackLock lock(_mutex, "IMuseDigital::setVolume()");
 	debug(5, "IMuseDigital::setVolume(%d, %d)", soundId, volume);
+
+	if (_vm->_game.id == GID_CMI && volume > 127)
+		volume = volume / 2;
 
 	for (int l = 0; l < MAX_DIGITAL_TRACKS; l++) {
 		Track *track = _track[l];
