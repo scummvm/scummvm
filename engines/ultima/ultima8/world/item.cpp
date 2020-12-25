@@ -1316,6 +1316,7 @@ uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, in
 			else
 				anim = Animation::kneelAndFireLargeWeapon;
 		} else {
+			// TODO: fire2 seems to be different in Regret, check me.
 			if (ma || smallwpn)
 				anim = Animation::attack;
 			else
@@ -1324,7 +1325,8 @@ uint16 Item::fireDistance(Item *other, Direction dir, int16 xoff, int16 yoff, in
 
 		bool first_offsets = false;
 		const AnimAction *action = GameData::get_instance()->getMainShapes()->getAnim(_shape, static_cast<int32>(anim));
-		for (unsigned int i = 0; i < action->getSize(); i++) {
+		unsigned int nframes = action ? action->getSize() : 0;
+		for (unsigned int i = 0; i < nframes; i++) {
 			const AnimFrame &frame = action->getFrame(dir, i);
 			if (frame.is_cruattack()) {
 				if (!first_offsets) {
