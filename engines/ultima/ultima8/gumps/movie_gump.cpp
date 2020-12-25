@@ -161,6 +161,22 @@ static Std::string _fixCrusaderMovieName(const Std::string &s) {
 	return s;
 }
 
+static Common::SeekableReadStream *_tryLoadCruMovie(const Std::string &filename) {
+	const Std::string path = Std::string::format("@game/flics/%s.avi", filename.c_str());
+	FileSystem *filesys = FileSystem::get_instance();
+	Common::SeekableReadStream *rs = filesys->ReadFile(path);
+	if (!rs) {
+		// Try with a "0" in the name
+		const Std::string adjustedfn = Std::string::format("@game/flics/0%s.avi", filename.c_str());
+		rs = filesys->ReadFile(adjustedfn);
+		if (!rs) {
+			warning("movie %s not found", filename.c_str());
+			return 0;
+		}
+	}
+	return rs;
+}
+
 uint32 MovieGump::I_playMovieOverlay(const uint8 *args,
         unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_PTR(item);
@@ -178,16 +194,12 @@ uint32 MovieGump::I_playMovieOverlay(const uint8 *args,
 		const Palette *pal = palman->getPalette(PaletteManager::Pal_Game);
 		assert(pal);
 
-		const Std::string filename = Std::string::format("@game/flics/%s.avi", name.c_str());
-		FileSystem *filesys = FileSystem::get_instance();
-		Common::SeekableReadStream *rs = filesys->ReadFile(filename);
-		if (!rs) {
-			warning("couldn't create gump for unknown movie %s", name.c_str());
-			return 0;
+		Common::SeekableReadStream *rs = _tryLoadCruMovie(name);
+		if (rs) {
+			Gump *gump = new MovieGump(x, y, rs, false, pal->_palette);
+			gump->InitGump(nullptr, true);
+			gump->setRelativePosition(CENTER);
 		}
-		Gump *gump = new MovieGump(x, y, rs, false, pal->_palette);
-		gump->InitGump(nullptr, true);
-		gump->setRelativePosition(CENTER);
 	}
 
 	return 0;
@@ -199,24 +211,14 @@ uint32 MovieGump::I_playMovieCutscene(const uint8 *args, unsigned int /*argsize*
 	ARG_UINT16(x);
 	ARG_UINT16(y);
 
-	FileSystem *filesys = FileSystem::get_instance();
 	if (item) {
-		const Std::string filename = Std::string::format("@game/flics/%s.avi", name.c_str());
-		Common::SeekableReadStream *rs = filesys->ReadFile(filename);
-		if (!rs) {
-			// Try with a "0" in the name
-			const Std::string adjustedfn = Std::string::format("@game/flics/0%s.avi", name.c_str());
-			rs = filesys->ReadFile(adjustedfn);
-			if (!rs) {
-				warning("I_playMovieCutscene: movie %s not found", name.c_str());
-				return 0;
-			}
+		Common::SeekableReadStream *rs = _tryLoadCruMovie(name);
+		if (rs) {
+			// TODO: Support playback with gap lines for the CRT effect
+			Gump *gump = new MovieGump(x * 3, y * 3, rs, false);
+			gump->InitGump(nullptr, true);
+			gump->setRelativePosition(CENTER);
 		}
-
-		// TODO: Support playback with gap lines for the CRT effect
-		Gump *gump = new MovieGump(x * 3, y * 3, rs, false);
-		gump->InitGump(nullptr, true);
-		gump->setRelativePosition(CENTER);
 	}
 
 	return 0;
