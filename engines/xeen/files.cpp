@@ -58,10 +58,15 @@ uint16 BaseCCArchive::convertNameToId(const Common::String &resourceName) {
 
 void BaseCCArchive::loadIndex(Common::SeekableReadStream &stream) {
 	int count = stream.readUint16LE();
+	size_t size = count * 8;
 
 	// Read in the data for the archive's index
-	byte *rawIndex = new byte[count * 8];
-	stream.read(rawIndex, count * 8);
+	byte *rawIndex = new byte[size];
+
+	if (stream.read(rawIndex, size) != size) {
+		delete[] rawIndex;
+		error("Failed to read %zu bytes from CC file", size);
+	}
 
 	// Decrypt the index
 	int seed = 0xac;
@@ -198,9 +203,15 @@ Common::SeekableReadStream *CCArchive::createReadStreamForMember(const Common::S
 			error("Could not open CC file");
 
 		// Read in the data for the specific resource
-		f.seek(ccEntry._offset);
+		if (!f.seek(ccEntry._offset))
+			error("Failed to seek to %d bytes in CC file", ccEntry._offset);
+
 		byte *data = (byte *)malloc(ccEntry._size);
-		f.read(data, ccEntry._size);
+
+		if (f.read(data, ccEntry._size) != ccEntry._size) {
+			free(data);
+			error("Failed to read %hu bytes in CC file", ccEntry._size);
+		}
 
 		if (_encoded) {
 			// Decrypt the data
@@ -448,7 +459,7 @@ SaveArchive::SaveArchive(Party *party) : BaseCCArchive(), _party(party), _data(n
 }
 
 SaveArchive::~SaveArchive() {
-	for (Common::HashMap<uint16, Common::MemoryWriteStreamDynamic *>::iterator it = _newData.begin(); it != _newData.end(); it++) {
+	for (Common::HashMap<uint16, Common::MemoryWriteStreamDynamic *>::iterator it = _newData.begin(); it != _newData.end(); ++it) {
 		delete (*it)._value;
 	}
 	delete[] _data;
@@ -485,8 +496,12 @@ void SaveArchive::load(Common::SeekableReadStream &stream) {
 	delete[] _data;
 	_dataSize = stream.size();
 	_data = new byte[_dataSize];
-	stream.seek(0);
-	stream.read(_data, _dataSize);
+
+	if (!stream.seek(0))
+		error("Failed to seek to 0 in the save archive");
+
+	if (!stream.read(_data, _dataSize))
+		error("Failed to read %u bytes from save archive", _dataSize);
 }
 
 void SaveArchive::loadParty() {
@@ -514,11 +529,17 @@ void SaveArchive::reset(CCArchive *src) {
 		if (src->hasFile(filename)) {
 			// Read in the next resource
 			fIn.open(filename, *src);
-			byte *data = new byte[fIn.size()];
-			fIn.read(data, fIn.size());
+
+			size_t size = fIn.size();
+			byte *data = new byte[size];
+
+			if (fIn.read(data, size) != size) {
+				delete[] data;
+				error("Failed to read %zu bytes from resource '%s' in save archive", size, filename.c_str());
+			}
 
 			// Copy it to the combined savefile resource
-			saveFile.write(data, fIn.size());
+			saveFile.write(data, size);
 			delete[] data;
 			fIn.close();
 		}
@@ -559,12 +580,19 @@ void SaveArchive::save(Common::WriteStream &s) {
 	for (uint idx = 0; idx < _index.size(); ++idx) {
 		// Get the entry
 		Common::SeekableReadStream *entry = createReadStreamForMember(_index[idx]._id);
-		byte *data = new byte[entry->size()];
-		entry->read(data, entry->size());
+
+		size_t size = entry->size();
+		byte *data = new byte[size];
+
+		if (entry->read(data, size) != size) {
+			delete[] data;
+			delete entry;
+			error("Failed to read %zu bytes from entry %hu", size, _index[idx]._id);
+		}
 
 		// Write it out to the savegame
 		assert(dataStream.pos() == _index[idx]._writeOffset);
-		dataStream.write(data, entry->size());
+		dataStream.write(data, size);
 		delete[] data;
 		delete entry;
 	}
