@@ -38,8 +38,8 @@ class Item;
 class GumpNotifyProcess;
 
 class Gump;
-typedef bool (*FindGumpPredicate)(Gump *g);
-template<class T> inline bool IsOfType(Gump *g) { return dynamic_cast<T*>(g) != nullptr; }
+typedef bool (*FindGumpPredicate)(const Gump *g);
+template<class T> inline bool IsOfType(const Gump *g) { return dynamic_cast<const T*>(g) != nullptr; }
 
 /**
  * A Gump is a single GUI element within the game, like the backpack window, menu,
@@ -445,6 +445,12 @@ public:
 	virtual void UnhideGump() {
 		_flags &= ~FLAG_HIDDEN;
 	}
+	void SetVisibility(bool visible) {
+		if (visible)
+			UnhideGump();
+		else
+			HideGump();
+	}
 
 	bool mustSave(bool toplevel) const;
 
@@ -458,6 +464,10 @@ public:
 		LAYER_ABOVE_NORMAL  = 8,        // Layer for Always on top Gumps
 		LAYER_MODAL         = 12,       // Layer for Modal Gumps
 		LAYER_CONSOLE       = 16        // Layer for the console
+	};
+
+	enum Message {
+		GUMP_CLOSING = 0x100
 	};
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
