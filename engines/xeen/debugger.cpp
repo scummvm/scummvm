@@ -27,10 +27,13 @@
 namespace Xeen {
 
 static int strToInt(const char *s) {
-	if (!*s)
+	size_t size = strlen(s);
+
+	if (size == 0)
 		// No string at all
 		return 0;
-	else if (toupper(s[strlen(s) - 1]) != 'H')
+
+	if (toupper(s[size - 1]) != 'H')
 		// Standard decimal string
 		return atoi(s);
 
