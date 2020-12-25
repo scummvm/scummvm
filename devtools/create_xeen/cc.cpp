@@ -59,10 +59,15 @@ uint16 CCArchive::convertNameToId(const Common::String &resourceName) {
 
 void CCArchive::loadIndex() {
 	int count = _file.readUint16LE();
+	size_t size = count * 8;
 
 	// Read in the data for the archive's index
-	byte *rawIndex = new byte[count * 8];
-	_file.read(rawIndex, count * 8);
+	byte *rawIndex = new byte[size];
+
+	if (_file.read(rawIndex, size) != size) {
+		delete[] rawIndex;
+		error("Failed to read %zu bytes from CC archive", size);
+	}
 
 	// Decrypt the index
 	int seed = 0xac;
@@ -151,8 +156,11 @@ Common::MemFile CCArchive::getMember(const Common::String &name) {
 	for (uint idx = 0; idx < _index.size(); ++idx) {
 		CCEntry &entry = _index[idx];
 		if (entry._id == id) {
-			_file.seek(entry._offset);
-			_file.read(entry._data, entry._size);
+			if (_file.seek(entry._offset) != 0)
+				error("Failed to seek to %d for CC archive", entry._offset);
+
+			if (_file.read(entry._data, entry._size) != entry._size)
+				error("Failed to read %hu bytes from CC archive", entry._size);
 
 			// Decrypt the entry
 			for (int i = 0; i < entry._size; ++i)
