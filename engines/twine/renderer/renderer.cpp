@@ -100,9 +100,9 @@ void Renderer::setOrthoProjection(int32 x, int32 y, int32 z) {
 }
 
 void Renderer::getBaseRotationPosition(int32 x, int32 y, int32 z) {
-	destX = (baseMatrix.row1[0] * x + baseMatrix.row1[1] * y + baseMatrix.row1[2] * z) >> 14;
-	destY = (baseMatrix.row2[0] * x + baseMatrix.row2[1] * y + baseMatrix.row2[2] * z) >> 14;
-	destZ = (baseMatrix.row3[0] * x + baseMatrix.row3[1] * y + baseMatrix.row3[2] * z) >> 14;
+	destX = (baseMatrix.row1[0] * x + baseMatrix.row1[1] * y + baseMatrix.row1[2] * z) / 16384;
+	destY = (baseMatrix.row2[0] * x + baseMatrix.row2[1] * y + baseMatrix.row2[2] * z) / 16384;
+	destZ = (baseMatrix.row3[0] * x + baseMatrix.row3[1] * y + baseMatrix.row3[2] * z) / 16384;
 }
 
 void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
@@ -136,9 +136,9 @@ void Renderer::setBaseRotation(int32 x, int32 y, int32 z) {
 }
 
 void Renderer::getCameraAnglePositions(int32 x, int32 y, int32 z) {
-	destX = (baseMatrix.row1[0] * x + baseMatrix.row2[0] * y + baseMatrix.row3[0] * z) >> 14;
-	destY = (baseMatrix.row1[1] * x + baseMatrix.row2[1] * y + baseMatrix.row3[1] * z) >> 14;
-	destZ = (baseMatrix.row1[2] * x + baseMatrix.row2[2] * y + baseMatrix.row3[2] * z) >> 14;
+	destX = (baseMatrix.row1[0] * x + baseMatrix.row2[0] * y + baseMatrix.row3[0] * z) / 16384;
+	destY = (baseMatrix.row1[1] * x + baseMatrix.row2[1] * y + baseMatrix.row3[1] * z) / 16384;
+	destZ = (baseMatrix.row1[2] * x + baseMatrix.row2[2] * y + baseMatrix.row3[2] * z) / 16384;
 }
 
 void Renderer::setCameraAngle(int32 transPosX, int32 transPosY, int32 transPosZ, int32 rotPosX, int32 rotPosY, int32 rotPosZ, int32 param6) {
@@ -171,12 +171,12 @@ void Renderer::applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix) 
 		matrix1.row2[0] = currentMatrix->row2[0];
 		matrix1.row3[0] = currentMatrix->row3[0];
 
-		matrix1.row1[1] = (currentMatrix->row1[2] * angleVar2 + currentMatrix->row1[1] * angleVar1) >> 14;
-		matrix1.row1[2] = (currentMatrix->row1[2] * angleVar1 - currentMatrix->row1[1] * angleVar2) >> 14;
-		matrix1.row2[1] = (currentMatrix->row2[2] * angleVar2 + currentMatrix->row2[1] * angleVar1) >> 14;
-		matrix1.row2[2] = (currentMatrix->row2[2] * angleVar1 - currentMatrix->row2[1] * angleVar2) >> 14;
-		matrix1.row3[1] = (currentMatrix->row3[2] * angleVar2 + currentMatrix->row3[1] * angleVar1) >> 14;
-		matrix1.row3[2] = (currentMatrix->row3[2] * angleVar1 - currentMatrix->row3[1] * angleVar2) >> 14;
+		matrix1.row1[1] = (currentMatrix->row1[2] * angleVar2 + currentMatrix->row1[1] * angleVar1) / 16384;
+		matrix1.row1[2] = (currentMatrix->row1[2] * angleVar1 - currentMatrix->row1[1] * angleVar2) / 16384;
+		matrix1.row2[1] = (currentMatrix->row2[2] * angleVar2 + currentMatrix->row2[1] * angleVar1) / 16384;
+		matrix1.row2[2] = (currentMatrix->row2[2] * angleVar1 - currentMatrix->row2[1] * angleVar2) / 16384;
+		matrix1.row3[1] = (currentMatrix->row3[2] * angleVar2 + currentMatrix->row3[1] * angleVar1) / 16384;
+		matrix1.row3[2] = (currentMatrix->row3[2] * angleVar1 - currentMatrix->row3[1] * angleVar2) / 16384;
 	} else {
 		matrix1 = *currentMatrix;
 	}
@@ -191,12 +191,12 @@ void Renderer::applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix) 
 		matrix2.row2[2] = matrix1.row2[2];
 		matrix2.row3[2] = matrix1.row3[2];
 
-		matrix2.row1[0] = (matrix1.row1[1] * angleVar2 + matrix1.row1[0] * angleVar1) >> 14;
-		matrix2.row1[1] = (matrix1.row1[1] * angleVar1 - matrix1.row1[0] * angleVar2) >> 14;
-		matrix2.row2[0] = (matrix1.row2[1] * angleVar2 + matrix1.row2[0] * angleVar1) >> 14;
-		matrix2.row2[1] = (matrix1.row2[1] * angleVar1 - matrix1.row2[0] * angleVar2) >> 14;
-		matrix2.row3[0] = (matrix1.row3[1] * angleVar2 + matrix1.row3[0] * angleVar1) >> 14;
-		matrix2.row3[1] = (matrix1.row3[1] * angleVar1 - matrix1.row3[0] * angleVar2) >> 14;
+		matrix2.row1[0] = (matrix1.row1[1] * angleVar2 + matrix1.row1[0] * angleVar1) / 16384;
+		matrix2.row1[1] = (matrix1.row1[1] * angleVar1 - matrix1.row1[0] * angleVar2) / 16384;
+		matrix2.row2[0] = (matrix1.row2[1] * angleVar2 + matrix1.row2[0] * angleVar1) / 16384;
+		matrix2.row2[1] = (matrix1.row2[1] * angleVar1 - matrix1.row2[0] * angleVar2) / 16384;
+		matrix2.row3[0] = (matrix1.row3[1] * angleVar2 + matrix1.row3[0] * angleVar1) / 16384;
+		matrix2.row3[1] = (matrix1.row3[1] * angleVar1 - matrix1.row3[0] * angleVar2) / 16384;
 	} else {
 		matrix2 = matrix1;
 	}
@@ -211,13 +211,13 @@ void Renderer::applyRotation(Matrix *targetMatrix, const Matrix *currentMatrix) 
 		targetMatrix->row2[1] = matrix2.row2[1];
 		targetMatrix->row3[1] = matrix2.row3[1];
 
-		targetMatrix->row1[0] = (matrix2.row1[0] * angleVar1 - matrix2.row1[2] * angleVar2) >> 14;
-		targetMatrix->row1[2] = (matrix2.row1[0] * angleVar2 + matrix2.row1[2] * angleVar1) >> 14;
-		targetMatrix->row2[0] = (matrix2.row2[0] * angleVar1 - matrix2.row2[2] * angleVar2) >> 14;
-		targetMatrix->row2[2] = (matrix2.row2[0] * angleVar2 + matrix2.row2[2] * angleVar1) >> 14;
+		targetMatrix->row1[0] = (matrix2.row1[0] * angleVar1 - matrix2.row1[2] * angleVar2) / 16384;
+		targetMatrix->row1[2] = (matrix2.row1[0] * angleVar2 + matrix2.row1[2] * angleVar1) / 16384;
+		targetMatrix->row2[0] = (matrix2.row2[0] * angleVar1 - matrix2.row2[2] * angleVar2) / 16384;
+		targetMatrix->row2[2] = (matrix2.row2[0] * angleVar2 + matrix2.row2[2] * angleVar1) / 16384;
 
-		targetMatrix->row3[0] = (matrix2.row3[0] * angleVar1 - matrix2.row3[2] * angleVar2) >> 14;
-		targetMatrix->row3[2] = (matrix2.row3[0] * angleVar2 + matrix2.row3[2] * angleVar1) >> 14;
+		targetMatrix->row3[0] = (matrix2.row3[0] * angleVar1 - matrix2.row3[2] * angleVar2) / 16384;
+		targetMatrix->row3[2] = (matrix2.row3[0] * angleVar2 + matrix2.row3[2] * angleVar1) / 16384;
 	} else {
 		*targetMatrix = matrix2;
 	}
@@ -231,9 +231,9 @@ void Renderer::applyPointsRotation(const pointTab *pointsPtr, int32 numPoints, p
 		const int32 tmpY = pointsPtr->y;
 		const int32 tmpZ = pointsPtr->z;
 
-		destPoints->x = ((rotationMatrix->row1[0] * tmpX + rotationMatrix->row1[1] * tmpY + rotationMatrix->row1[2] * tmpZ) >> 14) + destX;
-		destPoints->y = ((rotationMatrix->row2[0] * tmpX + rotationMatrix->row2[1] * tmpY + rotationMatrix->row2[2] * tmpZ) >> 14) + destY;
-		destPoints->z = ((rotationMatrix->row3[0] * tmpX + rotationMatrix->row3[1] * tmpY + rotationMatrix->row3[2] * tmpZ) >> 14) + destZ;
+		destPoints->x = ((rotationMatrix->row1[0] * tmpX + rotationMatrix->row1[1] * tmpY + rotationMatrix->row1[2] * tmpZ) / 16384) + destX;
+		destPoints->y = ((rotationMatrix->row2[0] * tmpX + rotationMatrix->row2[1] * tmpY + rotationMatrix->row2[2] * tmpZ) / 16384) + destY;
+		destPoints->z = ((rotationMatrix->row3[0] * tmpX + rotationMatrix->row3[1] * tmpY + rotationMatrix->row3[2] * tmpZ) / 16384) + destZ;
 
 		destPoints++;
 		pointsPtr++;
@@ -284,9 +284,9 @@ void Renderer::applyPointsTranslation(const pointTab *pointsPtr, int32 numPoints
 		const int32 tmpY = pointsPtr->y + renderAngleY;
 		const int32 tmpZ = pointsPtr->z + renderAngleX;
 
-		destPoints->x = ((translationMatrix->row1[0] * tmpX + translationMatrix->row1[1] * tmpY + translationMatrix->row1[2] * tmpZ) >> 14) + destX;
-		destPoints->y = ((translationMatrix->row2[0] * tmpX + translationMatrix->row2[1] * tmpY + translationMatrix->row2[2] * tmpZ) >> 14) + destY;
-		destPoints->z = ((translationMatrix->row3[0] * tmpX + translationMatrix->row3[1] * tmpY + translationMatrix->row3[2] * tmpZ) >> 14) + destZ;
+		destPoints->x = ((translationMatrix->row1[0] * tmpX + translationMatrix->row1[1] * tmpY + translationMatrix->row1[2] * tmpZ) / 16384) + destX;
+		destPoints->y = ((translationMatrix->row2[0] * tmpX + translationMatrix->row2[1] * tmpY + translationMatrix->row2[2] * tmpZ) / 16384) + destY;
+		destPoints->z = ((translationMatrix->row3[0] * tmpX + translationMatrix->row3[1] * tmpY + translationMatrix->row3[2] * tmpZ) / 16384) + destZ;
 
 		destPoints++;
 		pointsPtr++;
@@ -331,7 +331,7 @@ void Renderer::translateGroup(int16 ax, int16 bx, int16 cx) {
 	eax = shadeMatrix.row1[2];
 	eax *= ecx;
 	eax += edi;
-	eax >>= 14;
+	eax /= 16384;
 
 	destX = eax;
 
@@ -343,7 +343,7 @@ void Renderer::translateGroup(int16 ax, int16 bx, int16 cx) {
 	eax = shadeMatrix.row2[2];
 	eax *= ecx;
 	eax += edi;
-	eax >>= 14;
+	eax /= 16384;
 	destY = eax;
 	destZ = eax;
 }

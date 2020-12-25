@@ -152,7 +152,7 @@ void Grid::drawOverModelActor(int32 x, int32 y, int32 z) {
 
 	for (int32 j = copyBlockPhysLeft; j <= copyBlockPhysRight; j++) {
 		for (int32 i = 0; i < brickInfoBuffer[j]; i++) {
-			BrickEntry *currBrickEntry = &bricksDataBuffer[j][i];
+			const BrickEntry *currBrickEntry = &bricksDataBuffer[j][i];
 
 			if (currBrickEntry->posY + 38 > _engine->_interface->textWindow.top && currBrickEntry->posY <= _engine->_interface->textWindow.bottom && currBrickEntry->y >= y) {
 				if (currBrickEntry->x + currBrickEntry->z > z + x) {
