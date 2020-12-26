@@ -201,9 +201,6 @@ public:
 	//! check if NPCs are near which are in combat mode and hostile
 	bool areEnemiesNear();
 
-	//! check if NPCs are near which are in combat mode and hostile
-	void notifyNearbyItems();
-
 	//! starts an activity
 	//! \return processID of process handling the activity or zero
 	uint16 setActivity(int activity);

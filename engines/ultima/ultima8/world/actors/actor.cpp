@@ -462,8 +462,6 @@ void Actor::teleport(int newmap, int32 newx, int32 newy, int32 newz) {
 		_y = newy;
 		_z = newz;
 	}
-	if (GAME_IS_CRUSADER)
-		notifyNearbyItems();
 }
 
 uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps) {
@@ -1467,37 +1465,11 @@ void Actor::clearInCombat() {
 int32 Actor::collideMove(int32 x, int32 y, int32 z, bool teleports, bool force,
 						 ObjId *hititem, uint8 *dirs) {
 	int32 result = Item::collideMove(x, y, z, teleports, force, hititem, dirs);
-	if (_objId == 1 && GAME_IS_CRUSADER) {
-		notifyNearbyItems();
+	if (this == getControlledActor() && GAME_IS_CRUSADER) {
 		TargetReticleProcess::get_instance()->avatarMoved();
 		ItemSelectionProcess::get_instance()->avatarMoved();
 	}
 	return result;
-}
-
-static Std::set<uint16> _notifiedItems;
-
-void Actor::notifyNearbyItems() {
-	/*
-	TODO: This is not right - maybe we want to trigger each item only when it gets close,
-	then reset the status after it moves away?  Need to dig into the assembly more.
-
-	For now this is a temporary hack to trigger some usecode events so we can
-	debug more of the game.
-	 */
-	/*
-	UCList uclist(2);
-	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
-	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
-	currentmap->areaSearch(&uclist, script, sizeof(script), this, 0x80, false);
-
-	for (unsigned int i = 0; i < uclist.getSize(); ++i) {
-		Item *item = getItem(uclist.getuint16(i));
-		if (_notifiedItems.find(item->getObjId()) != _notifiedItems.end())
-			continue;
-		item->callUsecodeEvent_equipWithParam(_objId);
-		_notifiedItems.insert(item->getObjId());
-	}*/
 }
 
 bool Actor::activeWeaponIsSmall() const {
