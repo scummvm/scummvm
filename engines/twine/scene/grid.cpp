@@ -492,7 +492,7 @@ void Grid::drawSprite(int32 posX, int32 posY, const SpriteData &ptr) {
 		return;
 	}
 
-	_engine->frontVideoBuffer.transBlitFrom(ptr.surface(), Common::Point(left, top), 0);
+	_engine->frontVideoBuffer.transBlitFrom(ptr.surface(), Common::Point(left, top));
 }
 
 // WARNING: Rewrite this function to have better performance
