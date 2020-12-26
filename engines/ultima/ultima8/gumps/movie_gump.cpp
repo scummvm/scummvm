@@ -36,6 +36,7 @@
 #include "ultima/ultima8/world/item.h"
 #include "ultima/ultima8/gumps/desktop_gump.h"
 #include "ultima/ultima8/gumps/gump_notify_process.h"
+#include "ultima/ultima8/gumps/cru_status_gump.h"
 
 #include "ultima/ultima8/filesys/file_system.h"
 
@@ -72,10 +73,20 @@ void MovieGump::InitGump(Gump *newparent, bool take_focus) {
 
 	Mouse::get_instance()->pushMouseCursor();
 	Mouse::get_instance()->setMouseCursor(Mouse::MOUSE_NONE);
+
+	CruStatusGump *statusgump = CruStatusGump::get_instance();
+	if (statusgump) {
+		statusgump->HideGump();
+	}
 }
 
 void MovieGump::Close(bool no_del) {
 	Mouse::get_instance()->popMouseCursor();
+
+	CruStatusGump *statusgump = CruStatusGump::get_instance();
+	if (statusgump) {
+		statusgump->UnhideGump();
+	}
 
 	_player->stop();
 
