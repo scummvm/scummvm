@@ -415,13 +415,15 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgRedraw) {
 	int32 actorIdx = drawCmd.actorIdx;
 	ActorStruct *actor = _engine->_scene->getActor(actorIdx);
-	const SpriteData &spritePtr = _engine->_resources->spriteData[actor->entity];
+	const SpriteData &spriteData = _engine->_resources->spriteData[actor->entity];
+	// TODO: using the raw pointer and not the SpriteData surface here is a workaround for issue https://bugs.scummvm.org/ticket/12024
+	const uint8 *spritePtr = _engine->_resources->spriteTable[actor->entity];
 
 	// get actor position on screen
 	_engine->_renderer->projectPositionOnScreen(actor->x - _engine->_grid->cameraX, actor->y - _engine->_grid->cameraY, actor->z - _engine->_grid->cameraZ);
 
-	const int32 spriteWidth = spritePtr.surface().w;
-	const int32 spriteHeight = spritePtr.surface().h;
+	const int32 spriteWidth = spriteData.surface().w;
+	const int32 spriteHeight = spriteData.surface().h;
 
 	// calculate sprite position on screen
 	const SpriteDim *dim = _engine->_resources->spriteBoundingBox.dim(actor->entity);
@@ -438,7 +440,7 @@ void Redraw::processDrawListActorSprites(const DrawListStruct &drawCmd, bool bgR
 	}
 
 	if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-		_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
+		_engine->_grid->drawSprite(0, renderRect.left, renderRect.top, spritePtr);
 
 		actor->dynamicFlags.bIsVisible = 1;
 
