@@ -189,10 +189,18 @@ void AnimDat::load(Common::SeekableReadStream *rs) {
 			a->_actions[action]->_size = actionsize;
 			// byte 1: flags low byte
 			uint32 rawflags = rs->readByte();
-			// byte 2: frame repeat
-			a->_actions[action]->_frameRepeat = rs->readByte();
+			// byte 2: frame repeat and rotated flag
+			byte repeatAndRotateFlag = rs->readByte();
+			a->_actions[action]->_frameRepeat = repeatAndRotateFlag & 0xf;
+			if (GAME_IS_U8 && (repeatAndRotateFlag & 0xf0)) {
+				// This should never happen..
+				error("Anim data: frame repeat byte should never be > 0xf");
+			}
 			// byte 3: flags high byte
 			rawflags |= rs->readByte() << 8;
+
+			// Only one flag in this byte in crusader.. the "rotate" flag.
+			rawflags |= (repeatAndRotateFlag & 0xf0) << 12;
 
 			a->_actions[action]->_flags = AnimAction::loadAnimActionFlags(rawflags);
 

@@ -158,9 +158,9 @@ public:
 		AAF_ENDLOOP_U8   = 0x0020, // TODO: This starts a new anim at the end if pathfinding
 		AAF_ENDLOOP_CRU  = 0x0040, // TODO: This starts a new anim at the end if pathfinding
 		AAF_HANGING      = 0x0080,
-		AAF_ROTATED      = 0x1000, // Cru only
 		AAF_16DIRS       = 0x4000, // Cru only
 		AAF_DESTROYACTOR = 0x8000, // destroy actor after animation finishes
+		AAF_ROTATED    = 0x100000, // Cru only
 		AAF_COMMONFLAGS  = (AAF_TWOSTEP | AAF_LOOPING | AAF_UNSTOPPABLE | AAF_HANGING | AAF_DESTROYACTOR)
 	};
 
