@@ -33,7 +33,7 @@ TranslucentGump::TranslucentGump() : Gump() {
 
 TranslucentGump::TranslucentGump(int x, int y, int width, int height,
 								 uint16 owner, uint32 flags, int32 layer) :
-	Gump(x, y, width, height, owner, flags ,layer) {
+	Gump(x, y, width, height, owner, flags, layer) {
 }
 
 TranslucentGump::~TranslucentGump() {
