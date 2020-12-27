@@ -47,9 +47,6 @@ public:
 	/** converted custom palette */
 	uint32 paletteRGBACustom[NUMOFCOLORS]{0};
 
-	/** flag to check if a custom palette is in use */
-	bool palCustom = false;
-
 	/** flag to check in the game palette was changed */
 	bool palResetted = false;
 

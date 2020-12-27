@@ -34,11 +34,7 @@ namespace TwinE {
 bool Screens::adelineLogo() {
 	_engine->_music->playMidiMusic(31);
 
-	if (loadImageDelay(RESSHQR_ADELINEIMG, RESSHQR_ADELINEPAL, 7)) {
-		return true;
-	}
-	palCustom = true;
-	return false;
+	return loadImageDelay(RESSHQR_ADELINEIMG, RESSHQR_ADELINEPAL, 7);
 }
 
 void Screens::loadMenuImage(bool fade_in) {
@@ -54,8 +50,6 @@ void Screens::loadMenuImage(bool fade_in) {
 	} else {
 		_engine->setPalette(paletteRGBA);
 	}
-
-	palCustom = false;
 }
 
 void Screens::loadCustomPalette(int32 index) {
@@ -92,8 +86,6 @@ void Screens::loadImage(int32 index, int32 paletteIndex, bool fade_in) {
 	} else {
 		_engine->setPalette(paletteRGBACustom);
 	}
-
-	palCustom = true;
 }
 
 bool Screens::loadImageDelay(int32 index, int32 paletteIndex, int32 seconds) {
