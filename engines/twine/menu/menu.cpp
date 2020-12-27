@@ -1129,6 +1129,7 @@ void Menu::processInventoryMenu() {
 		const bool cursorUp = _engine->_input->toggleActionIfActive(TwinEActionType::UIUp);
 		const bool cursorLeft = _engine->_input->toggleActionIfActive(TwinEActionType::UILeft);
 		const bool cursorRight = _engine->_input->toggleActionIfActive(TwinEActionType::UIRight);
+
 		if (cursorDown) {
 			inventorySelectedItem++;
 			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
@@ -1161,7 +1162,6 @@ void Menu::processInventoryMenu() {
 
 		if (updateItemText) {
 			_engine->_text->initInventoryDialogueBox();
-
 			if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
 				_engine->_text->initInventoryText(inventorySelectedItem);
 			} else {

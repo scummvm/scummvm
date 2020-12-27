@@ -329,7 +329,7 @@ void Text::initText(int32 index) {
 	_progressiveTextEnd = false;
 	_progressiveTextNextPage = false;
 	_dialTextYPos = _dialTextBox.top + 8;
-	_progressiveTextNextWord = _currDialTextPtr;
+	_currentTextPosition = _currDialTextPtr;
 
 	// lba font is get while engine start
 	setFontParameters(2, 7);
@@ -385,7 +385,7 @@ Text::WordSize Text::getWordSize(const char *completeText, char *wordBuf, int32 
 }
 
 void Text::processTextLine() {
-	const char *buffer = _progressiveTextNextWord;
+	const char *buffer = _currentTextPosition;
 	_dialCharSpace = 7;
 	bool moreWordsFollowing = true;
 
@@ -407,7 +407,7 @@ void Text::processTextLine() {
 			break;
 		}
 
-		_progressiveTextNextWord = buffer;
+		_currentTextPosition = buffer;
 		char wordBuf[256] = "";
 		WordSize wordSize = getWordSize(buffer, wordBuf, sizeof(wordBuf));
 		if (lineBreakX + _dialCharSpace + wordSize.inPixel >= _dialTextBoxMaxX) {
@@ -432,14 +432,14 @@ void Text::processTextLine() {
 		}
 
 		buffer += wordSize.inChar;
-		_progressiveTextNextWord = buffer;
+		_currentTextPosition = buffer;
 		strncat(_progressiveTextBuffer, wordBuf, sizeof(_progressiveTextBuffer) - strlen(_progressiveTextBuffer) - 1);
 		strncat(_progressiveTextBuffer, " ", sizeof(_progressiveTextBuffer) - strlen(_progressiveTextBuffer) - 1); // not 100% accurate
 		spaceCharCount++;
 
 		lineBreakX += wordSize.inPixel + _dialCharSpace;
-		if (*_progressiveTextNextWord != '\0') {
-			_progressiveTextNextWord++;
+		if (*_currentTextPosition != '\0') {
+			_currentTextPosition++;
 			continue;
 		}
 		break;
@@ -449,7 +449,7 @@ void Text::processTextLine() {
 		spaceCharCount--;
 	}
 
-	if (*_progressiveTextNextWord != '\0' && moreWordsFollowing) {
+	if (*_currentTextPosition != '\0' && moreWordsFollowing) {
 		if (spaceCharCount <= 0) {
 			spaceCharCount = 1;
 		}
@@ -457,7 +457,7 @@ void Text::processTextLine() {
 		_dialCharSpace += (_dialTextBoxMaxX - lineBreakX) / spaceCharCount;
 	}
 
-	_progressiveTextNextWord = buffer;
+	_currentTextPosition = buffer;
 
 	_progressiveTextBufferPtr = _progressiveTextBuffer;
 }
@@ -544,14 +544,13 @@ ProgressiveTextState Text::updateProgressiveText() {
 			_dialTextXPos = _dialTextBox.left + 8;
 			_dialTextYPos = _dialTextBox.top + 8;
 		}
-		if (*_progressiveTextNextWord == '\0') {
+		if (*_currentTextPosition == '\0') {
 			initProgressiveTextBuffer();
 			_progressiveTextEnd = true;
 			return ProgressiveTextState::UNK1;
 		}
 		processTextLine();
 	}
-
 	const char currentChar = *_progressiveTextBufferPtr;
 	// RECHECK this later
 	if (currentChar == '\0') {
@@ -560,7 +559,7 @@ ProgressiveTextState Text::updateProgressiveText() {
 
 	fillFadeInBuffer(_dialTextXPos, _dialTextYPos, currentChar);
 	fadeInCharacters(_fadeInCharactersPos, _dialTextStartColor);
-	int8 charWidth = getCharWidth(currentChar);
+	const int8 charWidth = getCharWidth(currentChar);
 
 	if (currentChar == ' ') {
 		_dialTextXPos += _dialCharSpace + 1;
@@ -571,6 +570,7 @@ ProgressiveTextState Text::updateProgressiveText() {
 	// next character
 	_progressiveTextBufferPtr++;
 
+	// reaching 0-byte means a new line - as we are fading in per line
 	if (*_progressiveTextBufferPtr != '\0') {
 		return ProgressiveTextState::UNK1;
 	}
@@ -592,7 +592,7 @@ ProgressiveTextState Text::updateProgressiveText() {
 	initProgressiveTextBuffer();
 	_progressiveTextNextPage = true;
 
-	if (*_progressiveTextNextWord == '\0') {
+	if (*_currentTextPosition == '\0') {
 		_progressiveTextEnd = true;
 	}
 

@@ -168,11 +168,14 @@ private:
 
 	// TODO: refactor all this variables and related functions
 	char _progressiveTextBuffer[256] {'\0'};
-	const char *_progressiveTextNextWord = nullptr;
+	const char *_currentTextPosition = nullptr;
 
 	int32 _dialTextXPos = 0;
 	int32 _dialTextYPos = 0;
+
+	/** Current position of in the buffer of characters that are currently faded in */
 	char *_progressiveTextBufferPtr = nullptr;
+
 	int32 _dialTextBoxCurrentLine = 0;
 	bool _progressiveTextEnd = false;
 	bool _progressiveTextNextPage = false;
