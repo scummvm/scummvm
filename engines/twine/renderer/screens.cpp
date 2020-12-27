@@ -55,6 +55,7 @@ void Screens::convertPalToRGBA(const uint8 *in, uint32 *out) {
 		paletteOut[0] = in[0];
 		paletteOut[1] = in[1];
 		paletteOut[2] = in[2];
+		paletteOut[3] = 0xFF;
 		paletteOut += 4;
 		in += 3;
 	}
@@ -68,7 +69,7 @@ void Screens::loadImage(int32 index, int32 paletteIndex, bool fadeIn) {
 	}
 	debug(0, "Load image: %i", index);
 	Graphics::ManagedSurface& target = _engine->frontVideoBuffer;
-	target.transBlitFrom(src, src.getBounds(), target.getBounds());
+	target.transBlitFrom(src, src.getBounds(), target.getBounds(), 0, false, 0, 0xff, nullptr, true);
 	const uint32 *pal = paletteRGBA;
 	if (paletteIndex != -1) {
 		loadCustomPalette(paletteIndex);
@@ -134,7 +135,7 @@ void Screens::adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, in
 		*newR = crossDot(r, paletteIn[counter], 100, intensity);
 		*newG = crossDot(g, paletteIn[counter + 1], 100, intensity);
 		*newB = crossDot(b, paletteIn[counter + 2], 100, intensity);
-		*newA = 0;
+		*newA = 0xFF;
 
 		newR += 4;
 		newG += 4;
@@ -169,7 +170,7 @@ void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 			*newR = crossDot(pal1p[counter + 0], pal2p[counter + 0], 100, intensity);
 			*newG = crossDot(pal1p[counter + 1], pal2p[counter + 1], 100, intensity);
 			*newB = crossDot(pal1p[counter + 2], pal2p[counter + 2], 100, intensity);
-			*newA = 0;
+			*newA = 0xFF;
 
 			newR += 4;
 			newG += 4;
