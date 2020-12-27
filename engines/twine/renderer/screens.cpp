@@ -38,18 +38,7 @@ bool Screens::adelineLogo() {
 }
 
 void Screens::loadMenuImage(bool fadeIn) {
-	Graphics::ManagedSurface& src = _engine->imageBuffer;
-	if (HQR::getEntry((uint8 *)src.getPixels(), Resources::HQR_RESS_FILE, RESSHQR_MENUIMG) == 0) {
-		warning("Failed to load menu image");
-		return;
-	}
-	Graphics::ManagedSurface& target = _engine->frontVideoBuffer;
-	target.transBlitFrom(src, src.getBounds(), target.getBounds());
-	if (fadeIn) {
-		fadeToPal(paletteRGBA);
-	} else {
-		_engine->setPalette(paletteRGBA);
-	}
+	loadImage(RESSHQR_MENUIMG, -1, fadeIn);
 }
 
 void Screens::loadCustomPalette(int32 index) {
@@ -80,11 +69,15 @@ void Screens::loadImage(int32 index, int32 paletteIndex, bool fadeIn) {
 	debug(0, "Load image: %i", index);
 	Graphics::ManagedSurface& target = _engine->frontVideoBuffer;
 	target.transBlitFrom(src, src.getBounds(), target.getBounds());
-	loadCustomPalette(paletteIndex);
+	const uint32 *pal = paletteRGBA;
+	if (paletteIndex != -1) {
+		loadCustomPalette(paletteIndex);
+		pal = paletteRGBACustom;
+	}
 	if (fadeIn) {
-		fadeToPal(paletteRGBACustom);
+		fadeToPal(pal);
 	} else {
-		_engine->setPalette(paletteRGBACustom);
+		_engine->setPalette(pal);
 	}
 }
 
