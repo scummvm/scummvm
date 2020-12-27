@@ -49,6 +49,7 @@
 #include "twine/debugger/debug.h"
 #include "twine/debugger/debug_grid.h"
 #include "twine/debugger/debug_scene.h"
+#include "twine/detection.h"
 #include "twine/flamovies.h"
 #include "twine/holomap.h"
 #include "twine/input.h"
@@ -139,6 +140,14 @@ TwinEEngine::TwinEEngine(OSystem *system, Common::Language language, uint32 flag
 	_input = new Input(this);
 	_debug = new Debug(this);
 	_debugScene = new DebugScene(this);
+
+	if (_gameFlags & TwineFeatureFlags::TF_VERSION_EUROPE) {
+		cfgfile.Version = EUROPE_VERSION;
+	} else if (_gameFlags & TwineFeatureFlags::TF_VERSION_USA) {
+		cfgfile.Version = USA_VERSION;
+	} else if (_gameFlags & TwineFeatureFlags::TF_VERSION_CUSTOM) {
+		cfgfile.Version = MODIFICATION_VERSION;
+	}
 }
 
 TwinEEngine::~TwinEEngine() {
