@@ -368,7 +368,7 @@ bool8 _icon_menu::IsAdding() const {
 // Scroll the icons smoothly left or right
 // This returns the x-position to start drawing the icons from (nX)
 // it also sets the first icon to start drawing (nIconIndex)
-int _icon_menu::GetScrollingPosition(const int nInputX, uint &nIconIndex) {
+int _icon_menu::GetScrollingPosition(const int nInputX, uint32 &nIconIndex) {
 	int nX = nInputX;
 
 	// OK are we scrolling

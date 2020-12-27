@@ -165,7 +165,7 @@ DataPacker::ReturnCodes DataPacker::put(const int value, Common::WriteStream *st
 }
 
 // Get a value from the bit-stream
-DataPacker::ReturnCodes DataPacker::Get(int &value, Common::SeekableReadStream *stream) {
+DataPacker::ReturnCodes DataPacker::Get(int32 &value, Common::SeekableReadStream *stream) {
 	if (iMode != READ) {
 		return BAD_MODE;
 	}
@@ -209,7 +209,7 @@ DataPacker::ReturnCodes DataPacker::Get(int &value, Common::SeekableReadStream *
 		pos = 0;
 	}
 
-	int v = 0;
+	int32 v = 0;
 	// Get the value out of the buffer
 	if (pos == 0) {
 		v = (buffer[0] << 6);  // v's top 8-bits

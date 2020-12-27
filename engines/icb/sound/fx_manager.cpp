@@ -296,7 +296,7 @@ int FxManager::GetDefaultRateByName(const char * /*name*/, uint32 byteOffsetInCl
 
 bool8 FxManager::Load(int id, const char * /*name*/, uint32 byteOffsetInCluster) { // TODO: Verify that we are not leaking
 	_wavHeader header;
-	unsigned int length;
+	uint32 length;
 	int lengthInCycles;
 
 	// Open the cluster file and seek to the start of the sample

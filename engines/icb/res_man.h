@@ -169,7 +169,7 @@ public:
 	// is computed and stored in hash/cluster_hash
 	uint8 *Res_open(const char *url, uint32 &url_hash, const char *cluster_url, uint32 &cluster_hash,
 	                int compressed = 0, // non zero if the resource is compressed
-	                int *ret_len = NULL);
+	                int32 *ret_len = NULL);
 	// If hash or cluster_hash == NULL_HASH then the hash of url/cluster_url
 	// is computed and stored in hash/cluster_hash
 	uint8 *Res_async_open(const char *url,
@@ -231,7 +231,7 @@ public:
 
 	void Initialise(uint32 memory_tot, uint32 threadFlag);
 
-	uint8 *Internal_open(RMParams *params, int *ret_len = NULL);
+	uint8 *Internal_open(RMParams *params, int32 *ret_len = NULL);
 
 	uint8 *LoadFile(int32 &cluster_search, RMParams *params);
 

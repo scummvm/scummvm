@@ -61,7 +61,7 @@ public:
 	ReturnCodes put(const int value, Common::WriteStream *fh);
 
 	// Get a value from the bit-stream
-	ReturnCodes Get(int &value, Common::SeekableReadStream *stream);
+	ReturnCodes Get(int32 &value, Common::SeekableReadStream *stream);
 
 	// Stop the bit-packing process : will output any remaining data
 	ReturnCodes close(Common::WriteStream *stream);

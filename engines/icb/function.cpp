@@ -793,7 +793,7 @@ mcodeFunctionReturnCodes _game_session::fn_call_socket(int32 &result, int32 *par
 	//	params   0       ascii name of target object
 	//				1     ascii name of socket script
 
-	int32 retval;
+	int retval;
 	uint32 script_hash;
 
 	const char *target_object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
@@ -895,8 +895,12 @@ bool8 _game_session::Call_socket(uint32 id, const char *script, int32 *retval) {
 			// get the address of the script we want to run
 			const char *pc = (const char *)scripts->Try_fetch_item_by_hash(socket_object->GetScriptNameFullHash(k));
 
+			int result = static_cast<int>(*retval);
+
 			// run the script - pass its object so vars can be accessed
-			RunScript(pc, socket_object, retval);
+			RunScript(pc, socket_object, &result);
+
+			*retval = result;
 
 			return (TRUE8);
 		}

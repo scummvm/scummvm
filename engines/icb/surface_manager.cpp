@@ -188,7 +188,7 @@ _surface_manager::~_surface_manager() {
 	Zdebug("*SURFACE_MANAGER* Surface Manager Destroyed");
 }
 
-unsigned int _surface_manager::Init_direct_draw() {
+uint32 _surface_manager::Init_direct_draw() {
 	// Debug info
 	Zdebug("*SURFACE_MANAGER* Initalizing the SDL video interface");
 
