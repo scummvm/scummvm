@@ -1110,7 +1110,7 @@ void Menu::processInventoryMenu() {
 	_engine->_text->setFontCrossColor(4);
 	_engine->_text->initDialogueBox();
 
-	ProgressiveTextState textStatus = ProgressiveTextState::End;
+	ProgressiveTextState textState = ProgressiveTextState::End;
 
 #if 0
 	ScopedCursor scopedCursor(_engine);
@@ -1169,15 +1169,15 @@ void Menu::processInventoryMenu() {
 			}
 		}
 
-		if (updateItemText || textStatus != ProgressiveTextState::NextPage) {
-			textStatus = _engine->_text->updateProgressiveText();
+		if (updateItemText || textState != ProgressiveTextState::NextPage) {
+			textState = _engine->_text->updateProgressiveText();
 			updateItemText = false;
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
-			if (textStatus == ProgressiveTextState::NextPage) {
+			if (textState == ProgressiveTextState::NextPage) {
 				_engine->_text->initInventoryDialogueBox();
-				textStatus = ProgressiveTextState::End;
+				textState = ProgressiveTextState::End;
 			} else {
 				if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
 					_engine->_text->initInventoryDialogueBox();

@@ -614,14 +614,14 @@ bool Text::drawTextFullscreen(int32 index) {
 		initText(index);
 		initDialogueBox();
 
-		ProgressiveTextState printedText;
+		ProgressiveTextState textState;
 		for (;;) {
 			ScopedFPS scopedFps(66);
 			_engine->readKeys();
-			printedText = updateProgressiveText();
+			textState = updateProgressiveText();
 			playVox(currDialTextEntry);
 
-			if (printedText == ProgressiveTextState::End && !_engine->_sound->isSamplePlaying(currDialTextEntry)) {
+			if (textState == ProgressiveTextState::End && !_engine->_sound->isSamplePlaying(currDialTextEntry)) {
 				break;
 			}
 
@@ -634,7 +634,7 @@ bool Text::drawTextFullscreen(int32 index) {
 
 		_hasValidTextHandle = false;
 
-		if (printedText == ProgressiveTextState::End) {
+		if (textState == ProgressiveTextState::End) {
 			stopVox(currDialTextEntry);
 			// wait displaying text
 			for (;;) {
@@ -781,13 +781,13 @@ void Text::drawAskQuestion(int32 index) {
 	initText(index);
 	initDialogueBox();
 
-	ProgressiveTextState textStatus = ProgressiveTextState::UNK1;
+	ProgressiveTextState textState = ProgressiveTextState::UNK1;
 	do {
 		ScopedFPS scopedFps(66);
 		_engine->readKeys();
-		textStatus = updateProgressiveText();
+		textState = updateProgressiveText();
 
-		if (textStatus == ProgressiveTextState::NextPage) {
+		if (textState == ProgressiveTextState::NextPage) {
 			do {
 				ScopedFPS scopedFpsNextPage;
 				_engine->readKeys();
@@ -799,7 +799,7 @@ void Text::drawAskQuestion(int32 index) {
 				}
 			} while (!_engine->_input->toggleAbortAction());
 		}
-	} while (textStatus != ProgressiveTextState::End);
+	} while (textState != ProgressiveTextState::End);
 
 	while (playVoxSimple(currDialTextEntry)) {
 		ScopedFPS scopedFps;
