@@ -41,7 +41,7 @@ public:
 	CruPickupGump();
 	//! Create a new gump for an item pickup. CurrentQ is the value of an existing gump
 	//! so they can be combined (eg, pick up one medikit then another -> show medikit 2)
-	CruPickupGump(Item *item, int y, uint16 currentq);
+	CruPickupGump(const Item *item, int y, uint16 currentq);
 	~CruPickupGump() override;
 
 	// Init the gump, call after construction

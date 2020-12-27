@@ -47,7 +47,7 @@ CruPickupGump::CruPickupGump() : Gump(), _startFrame(0), _itemShapeNo(0), _q(0),
 	_gumpShapeNo(0), _gumpFrameNo(0) {
 }
 
-CruPickupGump::CruPickupGump(Item *item, int y, uint16 currentq) : Gump(0, y, 5, 5, 0), _startFrame(0) {
+CruPickupGump::CruPickupGump(const Item *item, int y, uint16 currentq) : Gump(0, y, 5, 5, 0), _startFrame(0) {
 	const WeaponInfo *weaponInfo = item->getShapeInfo()->_weaponInfo;
 	if (weaponInfo) {
 		_itemShapeNo = item->getShape();
