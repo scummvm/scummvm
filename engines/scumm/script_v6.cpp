@@ -736,6 +736,25 @@ void ScummEngine_v6::o6_startScript() {
 	script = pop();
 	flags = pop();
 
+	// WORKAROUND for a bug also present in the original EXE: After greasing (or oiling?)
+	// the cannonballs in the Plunder Town Theater, during the juggling show, the game
+	// cuts from room 18 (backstage) to room 19 (stage).
+	//
+	// Usually, when loading a room script 29 handles the change of background music, 
+	// based on which room we've just loaded.
+	// Unfortunately, during this particular cutscene, script 29 is not executing,
+	// therefore the music is unchanged from room 18 to 19 (the muffled backstage 
+	// version is played), and is not coherent with the drums fill played afterwards 
+	// (sequence 2225), which is unmuffled.
+	//
+	// This fix checks for this situation happening (and only this one), and makes a call
+	// to a soundKludge operation like script 29 would have done.
+	if (_game.id == GID_CMI && _currentRoom == 19 &&
+		vm.slot[_currentScript].number == 168 && script == 118) {
+		int list[16] = { 4096, 1278, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+		_sound->soundKludge(list, 2);
+	}
+
 	// WORKAROUND bug #556558: At Dino Bungee National Memorial, the buttons for
 	// the Wally and Rex dinosaurs will always restart their speech, instead of
 	// stopping and starting their speech. This was a script bug in the original
