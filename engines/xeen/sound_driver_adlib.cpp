@@ -95,9 +95,9 @@ int SoundDriverAdlib::songCommand(uint commandId, byte musicVolume, byte sfxVolu
 		resetFrequencies();
 	} else if (commandId == RESTART_SONG) {
 		_field180 = 0;
-		_musicPlaying = true;
+		_streams[MUSIC]._playing = true;
 	} else if (commandId < 0x100) {
-		if (_musicPlaying) {
+		if (_streams[MUSIC]._playing) {
 			_field180 = commandId;
 			_field182 = 63;
 		}
@@ -128,7 +128,7 @@ void SoundDriverAdlib::flush() {
 void SoundDriverAdlib::pausePostProcess() {
 	if (_field180 && ((_field181 += _field180) < 0)) {
 		if (--_field182 < 0) {
-			_musicPlaying = false;
+			_streams[MUSIC]._playing = false;
 			_field180 = 0;
 			resetFrequencies();
 		} else {
