@@ -254,8 +254,26 @@ int16 MainActor::addItemCru(Item *item, bool showtoast) {
 			Item *existing = getFirstItemWithShape(shapeno, true);
 			if (!existing) {
 				if ((shapeno == 0x52e) || (shapeno == 0x52f) || (shapeno == 0x530)) {
-					warning("TODO: Properly handle giving avatar a shield 0x%x", shapeno);
-					return 0;
+					int shieldtype;
+					switch (shapeno) {
+						default:
+						case 0x52e:
+							shieldtype = 1;
+							break;
+						case 0x52f:
+							shieldtype = 2;
+							break;
+						case 0x530:
+							shieldtype = 3;
+							break;
+					}
+					if (_shieldType < shieldtype) {
+						_shieldType = shieldtype;
+					}
+					if (showtoast)
+						pickupArea->addPickup(item);
+					item->destroy();
+					return 1;
 				} else {
 					item->setFrame(0);
 					item->setQuality(1);
