@@ -37,7 +37,7 @@ bool Screens::adelineLogo() {
 	return loadImageDelay(RESSHQR_ADELINEIMG, RESSHQR_ADELINEPAL, 7);
 }
 
-void Screens::loadMenuImage(bool fade_in) {
+void Screens::loadMenuImage(bool fadeIn) {
 	Graphics::ManagedSurface& src = _engine->imageBuffer;
 	if (HQR::getEntry((uint8 *)src.getPixels(), Resources::HQR_RESS_FILE, RESSHQR_MENUIMG) == 0) {
 		warning("Failed to load menu image");
@@ -45,7 +45,7 @@ void Screens::loadMenuImage(bool fade_in) {
 	}
 	Graphics::ManagedSurface& target = _engine->frontVideoBuffer;
 	target.transBlitFrom(src, src.getBounds(), target.getBounds());
-	if (fade_in) {
+	if (fadeIn) {
 		fadeToPal(paletteRGBA);
 	} else {
 		_engine->setPalette(paletteRGBA);
@@ -71,7 +71,7 @@ void Screens::convertPalToRGBA(const uint8 *in, uint32 *out) {
 	}
 }
 
-void Screens::loadImage(int32 index, int32 paletteIndex, bool fade_in) {
+void Screens::loadImage(int32 index, int32 paletteIndex, bool fadeIn) {
 	Graphics::ManagedSurface& src = _engine->imageBuffer;
 	if (HQR::getEntry((uint8 *)src.getPixels(), Resources::HQR_RESS_FILE, index) == 0) {
 		warning("Failed to load image with index %i", index);
@@ -81,7 +81,7 @@ void Screens::loadImage(int32 index, int32 paletteIndex, bool fade_in) {
 	Graphics::ManagedSurface& target = _engine->frontVideoBuffer;
 	target.transBlitFrom(src, src.getBounds(), target.getBounds());
 	loadCustomPalette(paletteIndex);
-	if (fade_in) {
+	if (fadeIn) {
 		fadeToPal(paletteRGBACustom);
 	} else {
 		_engine->setPalette(paletteRGBACustom);

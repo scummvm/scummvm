@@ -74,15 +74,15 @@ public:
 	void loadCustomPalette(int32 index);
 
 	/** Load and display Main Menu image */
-	void loadMenuImage(bool fade_in = true);
+	void loadMenuImage(bool fadeIn = true);
 
 	/**
 	 * Load and display a particulary image on \a RESS.HQR file with cross fade effect
 	 * @param index \a RESS.HQR entry index (starting from 0)
 	 * @param paletteIndex \a RESS.HQR entry index of the palette for the given image. This is often the @c index + 1
-	 * @param fade_in if we fade in before using the palette
+	 * @param fadeIn if we fade in before using the palette
 	 */
-	void loadImage(int32 index, int32 paletteIndex, bool fade_in = true);
+	void loadImage(int32 index, int32 paletteIndex, bool fadeIn = true);
 
 	/**
 	 * Load and display a particulary image on \a RESS.HQR file with cross fade effect and delay
