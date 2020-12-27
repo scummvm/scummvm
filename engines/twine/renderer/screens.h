@@ -116,13 +116,13 @@ public:
 
 	/**
 	 * Adjust palette intensity
-	 * @param R red component of color
-	 * @param G green component of color
-	 * @param B blue component of color
+	 * @param r red component of color
+	 * @param g green component of color
+	 * @param b blue component of color
 	 * @param palette palette to adjust
 	 * @param intensity intensity value to adjust
 	 */
-	void adjustPalette(uint8 R, uint8 G, uint8 B, const uint32 *palette, int32 intensity);
+	void adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *palette, int32 intensity);
 
 	/**
 	 * Adjust between two palettes

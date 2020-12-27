@@ -125,7 +125,7 @@ int32 Screens::crossDot(int32 modifier, int32 color, int32 param, int32 intensit
 	return (((color - modifier) * intensity) / param) + modifier;
 }
 
-void Screens::adjustPalette(uint8 R, uint8 G, uint8 B, const uint32 *rgbaPal, int32 intensity) {
+void Screens::adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, int32 intensity) {
 	uint32 pal[NUMOFCOLORS];
 
 	int32 counter = 0;
@@ -138,9 +138,9 @@ void Screens::adjustPalette(uint8 R, uint8 G, uint8 B, const uint32 *rgbaPal, in
 	uint8 *newA = &paletteOut[3];
 
 	for (int32 i = 0; i < NUMOFCOLORS; i++) {
-		*newR = crossDot(R, paletteIn[counter], 100, intensity);
-		*newG = crossDot(G, paletteIn[counter + 1], 100, intensity);
-		*newB = crossDot(B, paletteIn[counter + 2], 100, intensity);
+		*newR = crossDot(r, paletteIn[counter], 100, intensity);
+		*newG = crossDot(g, paletteIn[counter + 1], 100, intensity);
+		*newB = crossDot(b, paletteIn[counter + 2], 100, intensity);
 		*newA = 0;
 
 		newR += 4;
