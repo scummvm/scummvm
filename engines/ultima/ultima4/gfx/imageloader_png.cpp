@@ -24,7 +24,6 @@
 #include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imageloader_png.h"
 #include "common/stream.h"
-#include "common/memstream.h"
 #include "image/png.h"
 
 namespace Ultima {
@@ -35,13 +34,8 @@ Image *PngImageLoader::load(Common::SeekableReadStream &stream, int width, int h
 		warning("dimensions set for PNG image, will be ignored");
 	}
 
-	size_t fileSize = stream.size();
-	byte *buffer = (byte *)malloc(fileSize);
-	stream.read(buffer, fileSize);
-	Common::MemoryReadStream src(buffer, fileSize, DisposeAfterUse::YES);
-
 	::Image::PNGDecoder decoder;
-	if (!decoder.loadStream(src))
+	if (!decoder.loadStream(stream))
 		return nullptr;
 
 	const Graphics::Surface *img = decoder.getSurface();
