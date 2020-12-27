@@ -414,6 +414,7 @@ void Text::processTextLine() {
 			break;
 		}
 
+		// @ is a line break
 		if (*wordBuf == '@') {
 			moreWordsFollowing = false;
 			buffer++;
@@ -422,6 +423,7 @@ void Text::processTextLine() {
 				*(_progressiveTextBuffer + 0) = ' ';
 				*(_progressiveTextBuffer + 1) = ' ';
 			}
+			// new page?
 			if (wordBuf[1] == 'P') {
 				_dialTextBoxCurrentLine = _dialTextBoxLines;
 				buffer++;
