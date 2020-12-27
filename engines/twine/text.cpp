@@ -463,27 +463,30 @@ void Text::processTextLine() {
 }
 
 void Text::renderContinueReadingTriangle() {
-	const int32 right = _dialTextBox.right - 3;
-	const int32 left = _dialTextBox.right - 24;
-	const int32 top = _dialTextBox.bottom - 24;
-	const int32 bottom = _dialTextBox.bottom - 3;
+	const int32 border = 3;
+	const int32 size = 21;
+	const int16 color = 136;
+	const int32 right = _dialTextBox.right - border;
+	const int32 left = _dialTextBox.right - (size + border);
+	const int32 top = _dialTextBox.bottom - (size + border);
+	const int32 bottom = _dialTextBox.bottom - border;
 
 	Vertex vertices[3];
 
-	vertices[0].colorIndex = 136;
+	vertices[0].colorIndex = color;
 	vertices[0].x = right;
 	vertices[0].y = top;
 
-	vertices[1].colorIndex = 136;
+	vertices[1].colorIndex = color;
 	vertices[1].x = left;
 	vertices[1].y = bottom;
 
-	vertices[2].colorIndex = 136;
+	vertices[2].colorIndex = color;
 	vertices[2].x = right;
 	vertices[2].y = bottom;
 
 	CmdRenderPolygon polygon;
-	polygon.numVertices = 3;
+	polygon.numVertices = ARRAYSIZE(vertices);
 	polygon.colorIndex = _dialTextStopColor;
 	polygon.renderType = POLYGONTYPE_FLAT;
 	_engine->_renderer->renderPolygons(polygon, vertices);
