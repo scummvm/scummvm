@@ -192,7 +192,7 @@ void KeypadGump::updateDigitDisplay() {
 	while (digits.size()) {
 		Gump *digit = digits.back();
 		digits.pop_back();
-		digit->setRelativePosition(Position::TOP_LEFT, xoff);
+		digit->setRelativePosition(TOP_LEFT, xoff);
 		xoff += 6;
 	}
 }
