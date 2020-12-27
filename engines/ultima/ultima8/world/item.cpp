@@ -2055,21 +2055,29 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 	if (!cause_damage)
 		return;
 
-	UCList itemlist(2);
-	LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
-	CurrentMap *currentmap = World::get_instance()->getCurrentMap();
-	currentmap->areaSearch(&itemlist, script, sizeof(script), 0,
-	                       160, false, xv, yv); //! CHECKME: 128?
+	if (GAME_IS_U8) {
+		UCList itemlist(2);
+		LOOPSCRIPT(script, LS_TOKEN_TRUE); // we want all items
+		CurrentMap *currentmap = World::get_instance()->getCurrentMap();
+		currentmap->areaSearch(&itemlist, script, sizeof(script), 0,
+							   160, false, xv, yv); //! CHECKME: 128?
 
-	for (unsigned int i = 0; i < itemlist.getSize(); ++i) {
-		Item *item = getItem(itemlist.getuint16(i));
-		if (!item) continue;
-		if (getRange(*item, true) > 160) continue; // check vertical distance
+		for (unsigned int i = 0; i < itemlist.getSize(); ++i) {
+			Item *item = getItem(itemlist.getuint16(i));
+			if (!item) continue;
+			if (getRange(*item, true) > 160) continue; // check vertical distance
 
-		item->getLocation(xv, yv, zv);
-		Direction dir = Direction_GetWorldDir(xv - xv, yv - yv, dirmode_8dirs); //!! CHECKME
-		item->receiveHit(0, dir, 6 + (getRandom() % 6),
-		                 WeaponInfo::DMG_BLUNT | WeaponInfo::DMG_FIRE);
+			item->getLocation(xv, yv, zv);
+			Direction dir = Direction_GetWorldDir(xv - xv, yv - yv, dirmode_8dirs); //!! CHECKME
+			item->receiveHit(0, dir, 6 + (getRandom() % 6),
+							 WeaponInfo::DMG_BLUNT | WeaponInfo::DMG_FIRE);
+		}
+	} else {
+		Point3 pt;
+		getLocation(pt);
+		const FireType *firetypedat = GameData::get_instance()->getFireType(4);
+		int damage = firetypedat->getRandomDamage();
+		firetypedat->applySplashDamageAround(pt, damage, this, this);
 	}
 }
 
