@@ -36,11 +36,16 @@ namespace Ultima8 {
 
 AudioMixer *AudioMixer::_audioMixer = nullptr;
 
+static const uint32 SAMPLE_RATE = 22050;
+static const int BASE_CHANNEL_COUNT = 16;
+static const int AMBIENT_CHANNEL_COUNT = 4;
+static const int TOTAL_CHANNEL_COUNT = BASE_CHANNEL_COUNT + AMBIENT_CHANNEL_COUNT;
+
 AudioMixer::AudioMixer(Audio::Mixer *mixer) : _mixer(mixer), _midiPlayer(nullptr) {
 	_audioMixer = this;
 	
-	_channels.resize(CHANNEL_COUNT);
-	for (int idx = 0; idx < CHANNEL_COUNT; ++idx)
+	_channels.resize(TOTAL_CHANNEL_COUNT);
+	for (int idx = 0; idx < TOTAL_CHANNEL_COUNT; ++idx)
 		_channels[idx] = new AudioChannel(_mixer, SAMPLE_RATE, true);
 
 	debugN(MM_INFO, "Creating AudioMixer...\n");
@@ -67,7 +72,7 @@ AudioMixer::~AudioMixer(void) {
 
 	closeMidiOutput();
 
-	for (int idx = 0; idx < CHANNEL_COUNT; ++idx)
+	for (int idx = 0; idx < TOTAL_CHANNEL_COUNT; ++idx)
 		delete _channels[idx];
 }
 
@@ -84,7 +89,7 @@ void AudioMixer::reset() {
 	Unlock();
 }
 
-int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool paused, uint32 pitch_shift, int lvol, int rvol) {
+int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool paused, uint32 pitch_shift, int lvol, int rvol, bool ambient) {
 	int lowest = -1;
 	int lowprior = 65536;
 
@@ -92,7 +97,9 @@ int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool pau
 	Lock();
 
 	int i;
-	for (i = 0; i < CHANNEL_COUNT; i++) {
+	const int minchan = (ambient ? BASE_CHANNEL_COUNT : 0);
+	const int maxchan = (ambient ? TOTAL_CHANNEL_COUNT : BASE_CHANNEL_COUNT);
+	for (i = minchan; i < maxchan; i++) {
 		if (!_channels[i]->isPlaying()) {
 			lowest = i;
 			break;
@@ -103,7 +110,7 @@ int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool pau
 		}
 	}
 
-	if (i != CHANNEL_COUNT || lowprior < priority)
+	if (i != maxchan || lowprior < priority)
 		_channels[lowest]->playSample(sample, loop, priority, paused, pitch_shift, lvol, rvol);
 	else
 		lowest = -1;
@@ -115,7 +122,7 @@ int AudioMixer::playSample(AudioSample *sample, int loop, int priority, bool pau
 }
 
 bool AudioMixer::isPlaying(int chan) {
-	if (chan >= CHANNEL_COUNT || chan < 0)
+	if (chan >= TOTAL_CHANNEL_COUNT || chan < 0)
 		return false;
 
 	Lock();
@@ -128,7 +135,7 @@ bool AudioMixer::isPlaying(int chan) {
 }
 
 void AudioMixer::stopSample(int chan) {
-	if (chan >= CHANNEL_COUNT || chan < 0)
+	if (chan >= TOTAL_CHANNEL_COUNT || chan < 0)
 		return;
 
 	Lock();
@@ -139,7 +146,7 @@ void AudioMixer::stopSample(int chan) {
 }
 
 void AudioMixer::setPaused(int chan, bool paused) {
-	if (chan >= CHANNEL_COUNT || chan < 0)
+	if (chan >= TOTAL_CHANNEL_COUNT || chan < 0)
 		return;
 
 	Lock();
@@ -150,7 +157,7 @@ void AudioMixer::setPaused(int chan, bool paused) {
 }
 
 bool AudioMixer::isPaused(int chan) {
-	if (chan >= CHANNEL_COUNT|| chan < 0)
+	if (chan >= TOTAL_CHANNEL_COUNT|| chan < 0)
 		return false;
 
 	Lock();
@@ -163,7 +170,8 @@ bool AudioMixer::isPaused(int chan) {
 }
 
 void AudioMixer::setVolume(int chan, int lvol, int rvol) {
-	if (chan >= CHANNEL_COUNT || chan < 0) return;
+	if (chan >= TOTAL_CHANNEL_COUNT || chan < 0)
+		return;
 
 	Lock();
 
@@ -173,7 +181,8 @@ void AudioMixer::setVolume(int chan, int lvol, int rvol) {
 }
 
 void AudioMixer::getVolume(int chan, int &lvol, int &rvol) {
-	if (chan >= CHANNEL_COUNT || chan < 0) return;
+	if (chan >= TOTAL_CHANNEL_COUNT || chan < 0)
+		return;
 
 	Lock();
 
