@@ -134,7 +134,7 @@ private:
 	TwinEEngine *_engine;
 
 	void preloadInventoryItems();
-	/** Init palettes */
+	/** Init standard menu and in-game palette */
 	void initPalettes();
 	/** Preload all sprites */
 	void preloadSprites();

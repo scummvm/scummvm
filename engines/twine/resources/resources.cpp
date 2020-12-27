@@ -54,8 +54,8 @@ Resources::~Resources() {
 }
 
 void Resources::initPalettes() {
-	// Init standard palette
-	if (HQR::getAllocEntry(&_engine->_screens->mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL) == 0) {
+	const int32 size = HQR::getAllocEntry(&_engine->_screens->mainPalette, Resources::HQR_RESS_FILE, RESSHQR_MAINPAL);
+	if (size == 0) {
 		error("Failed to load main palette");
 	}
 	_engine->_screens->convertPalToRGBA(_engine->_screens->mainPalette, _engine->_screens->mainPaletteRGBA);
@@ -126,7 +126,6 @@ void Resources::preloadInventoryItems() {
 }
 
 void Resources::initResources() {
-	// Menu and in-game palette
 	initPalettes();
 
 	fontBufSize = HQR::getAllocEntry(&fontPtr, Resources::HQR_RESS_FILE, RESSHQR_LBAFONT);

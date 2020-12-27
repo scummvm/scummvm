@@ -118,9 +118,9 @@ void Screens::fadeIn(uint32 *pal) {
 
 void Screens::fadeOut(uint32 *pal) {
 	/*if(cfgfile.CrossFade)
-		crossFade(frontVideoBuffer, palette);
+		crossFade(frontVideoBuffer, pal);
 	else
-		fadeToBlack(palette);*/
+		fadeToBlack(pal);*/
 	if (!_engine->cfgfile.CrossFade) {
 		fadeToBlack(pal);
 	}
