@@ -38,7 +38,7 @@ public:
 	enum WeaselType {
 		kUnknown,
 		kWeapon,
-		kItem,
+		kItem
 	};
 
 	/** A single item in the shop */
