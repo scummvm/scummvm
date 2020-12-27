@@ -526,7 +526,7 @@ void WeaselGump::updateItemDisplay() {
 	Gump *icon = new Gump(105 - frame->_xoff, 120 - frame->_yoff, 200, 200);
 	icon->SetShape(shape, shapeinfo->_weaponInfo->_displayGumpFrame);
 	icon->UpdateDimsFromShape();
-	icon->setRelativePosition(Position::CENTER);
+	icon->setRelativePosition(CENTER);
 	icon->InitGump(_ui, false);
 	icon->SetIndex(kIconItem);
 
