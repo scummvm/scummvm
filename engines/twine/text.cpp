@@ -91,7 +91,7 @@ bool Text::initVoxToPlay(int32 index) { // setVoxFileAtDigit
 	Common::MemoryReadStream stream((const byte *)dialOrderPtr, dialOrderSize);
 	// choose right text from order index
 	for (int32 i = 0; i < numDialTextEntries; i++) {
-		int32 orderIdx = stream.readSint16LE();
+		const int32 orderIdx = stream.readSint16LE();
 		if (orderIdx == index) {
 			currDialTextEntry = i;
 			break;
@@ -470,17 +470,17 @@ void Text::renderContinueReadingTriangle() {
 
 	Vertex vertices[3];
 
-	vertices[0].colorIndex = _dialTextStopColor;
+	vertices[0].colorIndex = 136;
 	vertices[0].x = right;
 	vertices[0].y = top;
 
-	vertices[1].colorIndex = _dialTextStopColor;
+	vertices[1].colorIndex = 136;
 	vertices[1].x = left;
 	vertices[1].y = bottom;
 
-	vertices[2].colorIndex = _dialTextStartColor;
-	vertices[2].x = _engine->_renderer->vertexCoordinates[1];
-	vertices[2].y = _engine->_renderer->vertexCoordinates[5];
+	vertices[2].colorIndex = 136;
+	vertices[2].x = right;
+	vertices[2].y = bottom;
 
 	CmdRenderPolygon polygon;
 	polygon.numVertices = 3;
