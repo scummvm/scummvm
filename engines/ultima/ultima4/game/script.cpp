@@ -30,7 +30,6 @@
 #include "ultima/ultima4/events/event_handler.h"
 #include "ultima/ultima4/filesys/filesystem.h"
 #include "ultima/ultima4/filesys/savegame.h"
-#include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/game/game.h"
 #include "ultima/ultima4/game/player.h"
 #include "ultima/ultima4/game/weapon.h"

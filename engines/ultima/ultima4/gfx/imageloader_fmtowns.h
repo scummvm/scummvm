@@ -38,7 +38,7 @@ public:
 	/**
 	 * Loads in an FM TOWNS files, which we assume is 16 bits.
 	 */
-	Image *load(Common::File *file, int width, int height, int bpp) override;
+	Image *load(Common::SeekableReadStream &stream, int width, int height, int bpp) override;
 };
 
 } // End of namespace Ultima4

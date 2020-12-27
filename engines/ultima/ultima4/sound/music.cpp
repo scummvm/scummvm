@@ -26,7 +26,6 @@
 #include "ultima/ultima4/core/settings.h"
 #include "ultima/ultima4/core/utils.h"
 #include "ultima/ultima4/events/event_handler.h"
-#include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/game/context.h"
 #include "ultima/ultima4/map/location.h"
 #include "ultima/ultima4/ultima4.h"

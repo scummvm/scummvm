@@ -26,7 +26,6 @@
 #include "graphics/screen.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/types.h"
-#include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/gfx/scale.h"
 #include "ultima/ultima4/map/direction.h"
 #include "ultima/ultima4/map/map_tile.h"

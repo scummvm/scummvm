@@ -27,6 +27,7 @@
 #include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imageloader_u4.h"
 #include "ultima/ultima4/filesys/rle.h"
+#include "common/file.h"
 
 namespace Ultima {
 namespace Ultima4 {
@@ -35,16 +36,16 @@ RGBA *U4PaletteLoader::_bwPalette = nullptr;
 RGBA *U4PaletteLoader::_egaPalette = nullptr;
 RGBA *U4PaletteLoader::_vgaPalette = nullptr;
 
-Image *U4RawImageLoader::load(Common::File *file, int width, int height, int bpp) {
+Image *U4RawImageLoader::load(Common::SeekableReadStream &stream, int width, int height, int bpp) {
 	if (width == -1 || height == -1 || bpp == -1) {
 		error("dimensions not set for u4raw image");
 	}
 
 	assertMsg(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
-	long rawLen = file->size();
+	long rawLen = stream.size();
 	byte *raw = (byte *)malloc(rawLen);
-	file->read(raw, rawLen);
+	stream.read(raw, rawLen);
 
 	long requiredLength = (width * height * bpp / 8);
 	if (rawLen < requiredLength) {
@@ -80,16 +81,16 @@ Image *U4RawImageLoader::load(Common::File *file, int width, int height, int bpp
  * Loads in the rle-compressed image and apply the standard U4 16 or
  * 256 color palette.
  */
-Image *U4RleImageLoader::load(Common::File *file, int width, int height, int bpp) {
+Image *U4RleImageLoader::load(Common::SeekableReadStream &stream, int width, int height, int bpp) {
 	if (width == -1 || height == -1 || bpp == -1) {
 		error("dimensions not set for u4rle image");
 	}
 
 	assertMsg(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
-	long compressedLen = file->size();
+	long compressedLen = stream.size();
 	byte *compressed = (byte *) malloc(compressedLen);
-	file->read(compressed, compressedLen);
+	stream.read(compressed, compressedLen);
 
 	byte *raw = nullptr;
 	long rawLen = rleDecompressMemory(compressed, compressedLen, (void **) &raw);
@@ -127,16 +128,16 @@ Image *U4RleImageLoader::load(Common::File *file, int width, int height, int bpp
  * Loads in the lzw-compressed image and apply the standard U4 16 or
  * 256 color palette.
  */
-Image *U4LzwImageLoader::load(Common::File *file, int width, int height, int bpp) {
+Image *U4LzwImageLoader::load(Common::SeekableReadStream &stream, int width, int height, int bpp) {
 	if (width == -1 || height == -1 || bpp == -1) {
 		error("dimensions not set for u4lzw image");
 	}
 
 	assertMsg(bpp == 1 || bpp == 4 || bpp == 8 || bpp == 24 || bpp == 32, "invalid bpp: %d", bpp);
 
-	long compressedLen = file->size();
+	long compressedLen = stream.size();
 	byte *compressed = (byte *) malloc(compressedLen);
-	file->read(compressed, compressedLen);
+	stream.read(compressed, compressedLen);
 
 	byte *raw = nullptr;
 	long rawLen = LZW::decompress_u4_memory(compressed, compressedLen, (void **) &raw);
@@ -220,19 +221,17 @@ RGBA *U4PaletteLoader::loadEgaPalette() {
  */
 RGBA *U4PaletteLoader::loadVgaPalette() {
 	if (_vgaPalette == nullptr) {
-		Common::File *pal = u4fopen("u4vga.pal");
-		if (!pal)
+		Common::File pal;
+		if (!pal.open("u4vga.pal"))
 			return nullptr;
 
 		_vgaPalette = new RGBA[256];
 
 		for (int i = 0; i < 256; i++) {
-			_vgaPalette[i].r = u4fgetc(pal) * 255 / 63;
-			_vgaPalette[i].g = u4fgetc(pal) * 255 / 63;
-			_vgaPalette[i].b = u4fgetc(pal) * 255 / 63;
+			_vgaPalette[i].r = pal.readByte() * 255 / 63;
+			_vgaPalette[i].g = pal.readByte() * 255 / 63;
+			_vgaPalette[i].b = pal.readByte() * 255 / 63;
 		}
-		u4fclose(pal);
-
 	}
 
 	return _vgaPalette;
