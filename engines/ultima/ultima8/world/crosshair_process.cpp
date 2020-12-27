@@ -59,7 +59,7 @@ void CrosshairProcess::run() {
 		cz += az / 4;
 		// TODO: Get the fine angle of the avatar once that is implemented.
 		uint16 dir = (mainactor->getDir() + 4) % 16;
-		// Dir is 0~7, convert to 0~15/8*pi
+		// Dir is 0~15, convert to 0~15/8*pi
 		float angle = (3.14 * dir / 8.0);
 		float xoff = CROSSHAIR_DIST * cos(angle);
 		float yoff = CROSSHAIR_DIST * sin(angle);
