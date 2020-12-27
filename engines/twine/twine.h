@@ -93,7 +93,7 @@ struct ConfigFile {
 	/** Type of music file to be used */
 	MidiFileType MidiType = MIDIFILE_NONE;
 	/** *Game version */
-	int32 Version = 0;
+	int32 Version = EUROPE_VERSION;
 	/** If you want to use the LBA CD or not */
 	int32 UseCD = 0;
 	/** Allow various sound types */
