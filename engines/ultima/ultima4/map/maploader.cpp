@@ -28,7 +28,6 @@
 #include "ultima/ultima4/conversation/conversation.h"
 #include "ultima/ultima4/conversation/dialogueloader.h"
 #include "ultima/ultima4/map/dungeon.h"
-#include "ultima/ultima4/filesys/filesystem.h"
 #include "ultima/ultima4/map/map.h"
 #include "ultima/ultima4/map/maploader.h"
 #include "ultima/ultima4/map/mapmgr.h"
