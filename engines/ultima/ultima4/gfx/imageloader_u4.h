@@ -41,7 +41,7 @@ public:
 	/**
 	 * Loads in the raw image and apply the standard U4 16 or 256 color palette.
 	 */
-	Image *load(Common::File *file, int width, int height, int bpp) override;
+	Image *load(Common::SeekableReadStream &stream, int width, int height, int bpp) override;
 };
 
 /**
@@ -52,7 +52,7 @@ public:
  */
 class U4RleImageLoader : public ImageLoader {
 public:
-	Image *load(Common::File *file, int width, int height, int bpp) override;
+	Image *load(Common::SeekableReadStream &stream, int width, int height, int bpp) override;
 };
 
 /**
@@ -63,7 +63,7 @@ public:
  */
 class U4LzwImageLoader : public ImageLoader {
 public:
-	Image *load(Common::File *file, int width, int height, int bpp) override;
+	Image *load(Common::SeekableReadStream &stream, int width, int height, int bpp) override;
 };
 
 class U4PaletteLoader {

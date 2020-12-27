@@ -26,6 +26,10 @@
 #include "ultima/shared/std/containers.h"
 #include "common/str.h"
 
+namespace Common {
+class SeekableReadStream;
+}
+
 namespace Ultima {
 namespace Ultima4 {
 
@@ -69,7 +73,7 @@ protected:
 public:
 	ImageLoader() {}
 	virtual ~ImageLoader() {}
-	virtual Image *load(Common::File *file, int width, int height, int bpp) = 0;
+	virtual Image *load(Common::SeekableReadStream &stream, int width, int height, int bpp) = 0;
 };
 
 } // End of namespace Ultima4

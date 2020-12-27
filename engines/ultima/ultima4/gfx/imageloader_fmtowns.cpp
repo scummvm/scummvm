@@ -26,21 +26,22 @@
 #include "ultima/ultima4/gfx/imageloader.h"
 #include "ultima/ultima4/gfx/imageloader_fmtowns.h"
 #include "ultima/ultima4/gfx/imageloader_u4.h"
+#include "common/stream.h"
 
 namespace Ultima {
 namespace Ultima4 {
 
-Image *FMTOWNSImageLoader::load(Common::File *file, int width, int height, int bpp) {
+Image *FMTOWNSImageLoader::load(Common::SeekableReadStream &stream, int width, int height, int bpp) {
 	if (width == -1 || height == -1 || bpp == -1) {
 		error("dimensions not set for fmtowns image");
 	}
 
 	assertMsg((bpp == 16) | (bpp == 4), "invalid bpp: %d", bpp);
 
-	int rawLen = file->size() - _offset;
-	file->seek(_offset, 0);
+	int rawLen = stream.size() - _offset;
+	stream.seek(_offset, 0);
 	byte *raw = (byte *) malloc(rawLen);
-	file->read(raw, rawLen);
+	stream.read(raw, rawLen);
 
 	int requiredLength = (width * height * bpp / 8);
 	if (rawLen < requiredLength) {

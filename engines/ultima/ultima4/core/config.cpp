@@ -22,7 +22,6 @@
 
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/filesys/u4file.h"
 
 namespace Ultima {
 namespace Ultima4 {

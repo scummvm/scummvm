@@ -26,7 +26,6 @@
 #include "ultima/ultima4/controllers/intro_controller.h"
 #include "ultima/ultima4/core/config.h"
 #include "ultima/ultima4/core/settings.h"
-#include "ultima/ultima4/filesys/u4file.h"
 #include "ultima/ultima4/ultima4.h"
 
 namespace Ultima {
@@ -511,7 +510,7 @@ bool ImageMgr::imageExists(ImageInfo *info) {
 		return true;
 	Common::File *file = getImageFile(info);
 	if (file) {
-		u4fclose(file);
+		delete file;
 		return true;
 	}
 	return false;
@@ -524,18 +523,18 @@ Common::File *ImageMgr::getImageFile(ImageInfo *info) {
 	if (filename.empty())
 		return nullptr;
 
-	Common::File *file = nullptr;
+	Common::File *file = new Common::File();
 	if (!info->_xu4Graphic) {
 		// It's a file in the game folder
-		file = u4fopen(filename);
-		if (file)
+		if (file->open(filename))
 			return file;
 	}
 
-	Common::String pathname = u4find_graphics(filename);
-	file = u4fopen(pathname);
+	if (file->open("data/graphics/" + filename))
+		return file;
 
-	return file;
+	delete file;
+	return nullptr;
 }
 
 ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
@@ -557,7 +556,7 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 		if (loader == nullptr) {
 			warning("can't find loader to load image \"%s\" with type \"%s\"", info->_filename.c_str(), filetype.c_str());
 		} else {
-			unscaled = loader->load(file, info->_width, info->_height, info->_depth);
+			unscaled = loader->load(*file, info->_width, info->_height, info->_depth);
 			if (info->_width == -1) {
 				// Write in the values for later use.
 				info->_width = unscaled->width();
@@ -566,7 +565,7 @@ ImageInfo *ImageMgr::get(const Common::String &name, bool returnUnscaled) {
 			}
 		}
 
-		u4fclose(file);
+		delete file;
 	} else {
 		warning("Failed to open file %s for reading.", info->_filename.c_str());
 		return nullptr;
