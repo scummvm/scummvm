@@ -31,9 +31,6 @@
 class AmigaOSDialogManager : public Common::DialogManager {
 public:
 	virtual DialogResult showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser);
-
-private:
-	char *utf8ToLocal(const char *in);
 };
 
 #endif

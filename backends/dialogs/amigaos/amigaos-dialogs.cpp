@@ -21,7 +21,6 @@
  */
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_FILE
-#define FORBIDDEN_SYMBOL_EXCEPTION_strdup
 #define FORBIDDEN_SYMBOL_EXCEPTION_time_h
 #define FORBIDDEN_SYMBOL_EXCEPTION_unistd_h
 
@@ -34,51 +33,8 @@
 #include "common/config-manager.h"
 
 #include <proto/asl.h>
-#include <proto/codesets.h>
 #include <proto/dos.h>
 #include <proto/exec.h>
-
-#include <cstdlib>
-#include <cstring>
-
-struct CodesetsIFace *ICodesets = nullptr;
-struct Library *CodesetsBase = nullptr;
-
-char *AmigaOSDialogManager::utf8ToLocal(const char *in) {
-
-	if (!in) {
-		return strdup("");
-	}
-
-	CodesetsBase = IExec->OpenLibrary("codesets.library", 6);
-
-	if (CodesetsBase) {
-
-		ICodesets = (CodesetsIFace *)IExec->GetInterface(CodesetsBase, "main", 1L, nullptr);
-
-		struct codeset *dstmib = ICodesets->CodesetsFind("UTF-8", CSA_FallbackToDefault, FALSE, TAG_DONE);
-		struct codeset *srcmib = ICodesets->CodesetsFind("ISO-8859-1", CSA_FallbackToDefault, FALSE, TAG_DONE);
-
-		if (dstmib != nullptr) {
-			ULONG dstlen = 0;
-			STRPTR dst_str = ICodesets->CodesetsConvertStr(CSA_SourceCodeset, srcmib, CSA_DestCodeset, dstmib, CSA_Source, in, CSA_DestLenPtr, &dstlen, TAG_DONE);
-			if (dst_str!= nullptr) {
-				char *out = (char *)malloc(dstlen + 1);
-				if (out) {
-					strcpy(out, dst_str);
-					CodesetsBase = nullptr;
-					ICodesets->CodesetsFreeA(dst_str, nullptr);
-					ICodesets = nullptr;
-					IExec->CloseLibrary(CodesetsBase);
-					IExec->DropInterface((struct Interface *)ICodesets);
-					return out;
-				}
-				free(out);
-			}
-		}
-	}
-	return strdup(in);
-}
 
 struct AslIFace *IAsl;
 struct Library *AslBase;
@@ -87,7 +43,7 @@ Common::DialogManager::DialogResult AmigaOSDialogManager::showFileBrowser(const 
 
 	char pathBuffer[MAXPATHLEN];
 
-	Common::String utf8Title = title.encode();
+	Common::String newTitle = title.encode(Common::kISO8859_1);
 
 	DialogResult result = kDialogCancel;
 
@@ -107,9 +63,7 @@ Common::DialogManager::DialogResult AmigaOSDialogManager::showFileBrowser(const 
 		if (!fr)
 			return result;
 
-		char *newTitle = utf8ToLocal(utf8Title.c_str());
-
-		if (IAsl->AslRequestTags(fr, ASLFR_TitleText, newTitle, ASLFR_RejectIcons, TRUE, ASLFR_InitialDrawer, pathBuffer, (isDirBrowser ? TRUE : FALSE), TAG_DONE)) {
+		if (IAsl->AslRequestTags(fr, ASLFR_TitleText, newTitle.c_str(), ASLFR_RejectIcons, TRUE, ASLFR_InitialDrawer, pathBuffer, (isDirBrowser ? TRUE : FALSE), TAG_DONE)) {
 
 			if (strlen(fr->fr_Drawer) < sizeof(pathBuffer)) {
 				strncpy(pathBuffer, fr->fr_Drawer, sizeof(pathBuffer));
@@ -120,7 +74,6 @@ Common::DialogManager::DialogResult AmigaOSDialogManager::showFileBrowser(const 
 				ConfMan.set("browser_lastpath", pathBuffer);
 				result = kDialogOk;
 			}
-			free(newTitle);
 			IAsl->FreeAslRequest((APTR)fr);
 		}
 		AslBase = nullptr;
