@@ -793,7 +793,7 @@ mcodeFunctionReturnCodes _game_session::fn_call_socket(int32 &result, int32 *par
 	//	params   0       ascii name of target object
 	//				1     ascii name of socket script
 
-	int retval;
+	int32 retval;
 	uint32 script_hash;
 
 	const char *target_object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
