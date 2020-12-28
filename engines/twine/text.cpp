@@ -602,9 +602,11 @@ ProgressiveTextState Text::updateProgressiveText() {
 	return ProgressiveTextState::UNK1;
 }
 
-void Text::displayText(int32 index) {
-	// get right VOX entry index
-	initVoxToPlay(index);
+bool Text::displayText(int32 index, bool showText, bool playVox) {
+	if (playVox) {
+		// get right VOX entry index
+		initVoxToPlay(index);
+	}
 
 	initText(index);
 	initDialogueBox();
@@ -629,7 +631,7 @@ void Text::displayText(int32 index) {
 		}
 	} while (textState != ProgressiveTextState::End);
 
-	while (playVoxSimple(currDialTextEntry)) {
+	while (playVox && playVoxSimple(currDialTextEntry)) {
 		ScopedFPS scopedFps;
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
 			stopVox(currDialTextEntry);
@@ -640,6 +642,8 @@ void Text::displayText(int32 index) {
 	hasHiddenVox = false;
 	voxHiddenIndex = 0;
 	_hasValidTextHandle = false;
+
+	return false;
 }
 
 // TODO: refactor this code
@@ -820,7 +824,7 @@ void Text::textClipSmall() {
 }
 
 void Text::drawAskQuestion(int32 index) {
-	displayText(index);
+	displayText(index, true, true);
 }
 
 } // namespace TwinE

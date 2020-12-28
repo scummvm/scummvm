@@ -227,7 +227,7 @@ private:
 	int32 _dialTextBoxLines = 0; // dialogueBoxParam1
 	int32 _dialTextBoxMaxX = 0; // dialogueBoxParam2
 
-	bool displayText(int32 index);
+	bool displayText(int32 index, bool showText, bool playVox);
 public:
 	Text(TwinEEngine *engine);
 	~Text();
