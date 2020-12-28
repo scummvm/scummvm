@@ -42,39 +42,32 @@ CruPickupAreaGump::CruPickupAreaGump() : Gump(PICKUP_GUMP_GAP, PICKUP_GUMP_GAP, 
     _instance = this;
 }
 
-CruPickupAreaGump::~CruPickupAreaGump() {
-}
-
-void CruPickupAreaGump::addPickup(Item *item) {
+void CruPickupAreaGump::addPickup(const Item *item) {
 	if (!item)
 		return;
 
 	uint32 shapeno = item->getShape();
 
 	Std::list<Gump *>::iterator it;
-	int32 yoff = 0;
-	uint16 qval = 0;
+
 	for (it = _children.begin(); it != _children.end(); it++) {
 		CruPickupGump *pug = dynamic_cast<CruPickupGump *>(*it);
 		if (!pug)
 			return;
-		int32 x;
-		pug->getLocation(x, yoff);
 		if (pug->getShapeNo() == shapeno) {
-			// Already a notification for this object, close it
-			// and make a new one in the same spot.
-			qval = pug->getQ();
-			pug->Close();
+			// Already a notification for this object, update it
+			pug->updateForNewItem(item);
 			break;
 		}
 	}
 	if (it == _children.end()) {
-		yoff += PICKUP_GUMP_GAP;
+		int32 yoff = PICKUP_GUMP_GAP;
 		if (_children.size() > 0)
 			yoff += PICKUP_GUMP_HEIGHT;
+
+		Gump *newgump = new CruPickupGump(item, yoff);
+		newgump->InitGump(this, false);
 	}
-	Gump *newgump = new CruPickupGump(item, yoff, qval);
-	newgump->InitGump(this, false);
 }
 
 CruPickupAreaGump *CruPickupAreaGump::get_instance() {

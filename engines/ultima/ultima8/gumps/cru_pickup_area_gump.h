@@ -40,10 +40,8 @@ public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
 	CruPickupAreaGump();
-	CruPickupAreaGump(Item *item, int y);
-	~CruPickupAreaGump() override;
 
-	void addPickup(Item *item);
+	void addPickup(const Item *item);
 
 	static CruPickupAreaGump *get_instance();
 private:
