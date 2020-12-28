@@ -244,7 +244,7 @@ void Text::drawText(int32 x, int32 y, const char *dialogue) {
 		if (currChar == ' ') {
 			x += _dialCharSpace;
 		} else {
-			int32 dialTextSize = getCharWidth(currChar);
+			const int32 dialTextSize = getCharWidth(currChar);
 			drawCharacter(x, y, currChar); // draw the character on screen
 			// add the length of the space between 2 characters
 			x += _dialSpaceBetween;
@@ -259,7 +259,7 @@ int32 Text::getTextSize(const char *dialogue) { // SizeFont
 
 	do {
 		const uint8 currChar = (uint8) * (dialogue++);
-		if (currChar == 0) {
+		if (currChar == '\0') {
 			break;
 		}
 
