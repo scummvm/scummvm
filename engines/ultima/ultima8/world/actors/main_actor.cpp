@@ -332,6 +332,12 @@ void MainActor::teleport(int mapNum, int32 x, int32 y, int32 z) {
 	}
 
 	Actor::teleport(mapNum, x, y, z);
+
+	if (GAME_IS_CRUSADER) {
+		// Keep the camera on the avatar (the snap process will update on next move)
+		CameraProcess::SetCameraProcess(new CameraProcess(x, y, z));
+	}
+
 	_justTeleported = true;
 }
 
@@ -373,6 +379,12 @@ void MainActor::teleport(int mapNum, int teleport_id) {
 	egg->dumpInfo();
 
 	Actor::teleport(mapNum, xv, yv, zv);
+
+	if (GAME_IS_CRUSADER) {
+		// Keep the camera on the avatar (the snap process will update on next move)
+		CameraProcess::SetCameraProcess(new CameraProcess(xv, yv, zv));
+	}
+
 	_justTeleported = true;
 }
 
