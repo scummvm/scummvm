@@ -905,9 +905,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
 
-	if (behaviour != _engine->_actor->heroBehaviour) { // unselected
-		_engine->_interface->drawSplittedBox(boxRect, 0);
-	} else { // selected
+	if (behaviour == _engine->_actor->heroBehaviour) {
 		_engine->_interface->drawSplittedBox(boxRect, 69);
 
 		// behaviour menu title
@@ -920,6 +918,8 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 		_engine->_text->getMenuText(_engine->_actor->getTextIdForBehaviour(), dialText, sizeof(dialText));
 
 		_engine->_text->drawText(SCREEN_WIDTH / 2 - _engine->_text->getTextSize(dialText) / 2, titleBoxTop + 1, dialText);
+	} else {
+		_engine->_interface->drawSplittedBox(boxRect, 0);
 	}
 
 	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, behaviourEntity);
