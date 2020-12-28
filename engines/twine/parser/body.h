@@ -44,6 +44,10 @@ struct BodyBone {
 	uint16 vertex;
 	int32 numOfShades;
 	BoneFrame initalBoneState;
+
+	inline bool isRoot() const {
+		return parent == 0xffff;
+	}
 };
 
 struct BodyShade {
