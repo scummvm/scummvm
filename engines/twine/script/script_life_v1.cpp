@@ -1610,7 +1610,7 @@ static int32 lMESSAGE_SENDELL(TwinEEngine *engine, LifeScriptContext &ctx) {
 	engine->_text->drawTextBoxBackground = false;
 	const bool tmpFlagDisplayText = engine->cfgfile.FlagDisplayText;
 	engine->cfgfile.FlagDisplayText = true;
-	engine->_text->drawTextFullscreen(6);
+	engine->_text->drawTextFullscreen(TextId::kSendell);
 	engine->_text->drawTextBoxBackground = true;
 	engine->_text->textClipSmall();
 	engine->_screens->fadeToBlack(engine->_screens->paletteRGBACustom);
