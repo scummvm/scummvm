@@ -165,12 +165,11 @@ void Text::initSceneTextBank() {
 }
 
 void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
-	uint8 sizeY = getCharHeight(character);
 	Common::MemoryReadStream stream(_engine->_resources->fontPtr, _engine->_resources->fontBufSize);
 	stream.seek(character * 4);
 	stream.seek(stream.readSint16LE());
 	/*uint8 charWidth =*/ stream.readByte();
-	/*uint8 charHeight =*/ stream.readByte();
+	const uint8 sizeY = stream.readByte();
 	x += stream.readByte();
 	y += stream.readByte();
 
@@ -179,17 +178,13 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 	int32 tempX = x;
 	int32 tempY = y;
 
-	do {
+	for (uint8 fontY = 0; fontY < sizeY; ++fontY) {
 		uint8 index = stream.readByte();
 		do {
 			const uint8 jump = stream.readByte();
 			if (--index == 0) {
 				tempY++;
 				tempX = x;
-				sizeY--;
-				if (sizeY <= 0) {
-					return;
-				}
 				break;
 			}
 			const uint8 number = stream.readByte();
@@ -205,15 +200,10 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 			if (--index == 0) {
 				tempY++;
 				tempX = x;
-
-				sizeY--;
-				if (sizeY <= 0) {
-					return;
-				}
 				break;
 			}
 		} while (1);
-	} while (1);
+	}
 }
 
 void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, Common::Rect &dirtyRect) { // drawDoubleLetter
