@@ -27,13 +27,14 @@
 #include "common/scummsys.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "common/util.h"
 #include "twine/audio/sound.h"
-#include "twine/resources/hqr.h"
 #include "twine/input.h"
 #include "twine/menu/interface.h"
 #include "twine/menu/menu.h"
 #include "twine/renderer/renderer.h"
 #include "twine/renderer/screens.h"
+#include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
 #include "twine/scene/scene.h"
 #include "twine/twine.h"
@@ -214,7 +215,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 	} while (1);
 }
 
-void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, Common::Rect& dirtyRect) { // drawDoubleLetter
+void Text::drawCharacterShadow(int32 x, int32 y, uint8 character, int32 color, Common::Rect &dirtyRect) { // drawDoubleLetter
 	if (character == ' ') {
 		return;
 	}
@@ -242,7 +243,7 @@ void Text::drawText(int32 x, int32 y, const char *dialogue) {
 	}
 
 	do {
-		const uint8 currChar = (uint8) *dialogue++; // read the next char from the string
+		const uint8 currChar = (uint8)*dialogue++; // read the next char from the string
 		if (currChar == '\0') {
 			break;
 		}
