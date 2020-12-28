@@ -239,7 +239,7 @@ private:
 
 	//! Items that are "targetable" in Crusader. It might be faster to store
 	//! this in a more fancy data structure, but this works fine.
-	ObjId _targets[200];
+	ObjId _targets[MAP_NUM_TARGET_ITEMS];
 
 	void setChunkFast(int32 cx, int32 cy);
 	void unsetChunkFast(int32 cx, int32 cy);
