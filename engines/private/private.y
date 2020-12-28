@@ -27,21 +27,19 @@ int main()
    int i;
 }
 
-%token<s> NAME
-%token<s> STRING
+%token<s> NAME STRING
 %token<i> NUM
 %token LTE GTE NEQ EQ IFTOK ELSETOK GOTOTOK DEBUGTOK DEFINETOK SETTINGTOK RANDOMTOK 
 
 %%
 
-lines:   lines '\r' line
+lines:   line lines
        | line
        ;
 
-line:     /* nothing */
-        | line DEBUGTOK '{' debug '}'             { printf("debug\n"); }
-        | line DEFINETOK NAME '{' define '}'      { printf("define %s\n", $NAME); }
-        | line SETTINGTOK NAME '{' statements '}' { printf("setting %s\n", $NAME); }
+line:     DEBUGTOK '{' debug '}'             { printf("debug\n"); }
+        | DEFINETOK NAME '{' define '}'      { printf("define %s\n", $NAME); }
+        | SETTINGTOK NAME '{' statements '}' { printf("setting %s\n", $NAME); }
         ;
 
 debug: /* nothing */

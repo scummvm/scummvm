@@ -20,7 +20,7 @@ Random                  return RANDOMTOK;
 [A-Za-z_][A-Za-z_0-9]*  yylval.s=strdup(yytext); return NAME;
 [\-]?[0-9]+             yylval.i=atoi(yytext); return NUM;
 \"[^\"\r\n]*\"          yylval.s=strdup(yytext); return STRING;
-[\r|\n]                 /* ignore EOL */;
+[\r|\n]+                /* ignore return */;
 [ \t]+                  /* ignore whitespace */;
 .                       return *yytext;
 %%
