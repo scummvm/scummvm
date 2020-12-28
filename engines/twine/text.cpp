@@ -169,7 +169,8 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 	Common::MemoryReadStream stream(_engine->_resources->fontPtr, _engine->_resources->fontBufSize);
 	stream.seek(character * 4);
 	stream.seek(stream.readSint16LE());
-	stream.skip(2);
+	/*uint8 charWidth =*/ stream.readByte();
+	/*uint8 charHeight =*/ stream.readByte();
 	x += stream.readByte();
 	y += stream.readByte();
 
@@ -191,7 +192,7 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 				}
 				break;
 			}
-			uint8 number = stream.readByte();
+			const uint8 number = stream.readByte();
 			tempX += jump;
 			for (uint8 i = 0; i < number; i++) {
 				if (tempX >= SCREEN_TEXTLIMIT_LEFT && tempX < SCREEN_TEXTLIMIT_RIGHT && tempY >= SCREEN_TEXTLIMIT_TOP && tempY < SCREEN_TEXTLIMIT_BOTTOM) {
@@ -634,7 +635,6 @@ bool Text::displayText(int32 index, bool showText, bool playVox) {
 	return aborted;
 }
 
-// TODO: refactor this code
 bool Text::drawTextFullscreen(int32 index) {
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
