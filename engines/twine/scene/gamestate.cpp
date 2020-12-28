@@ -314,7 +314,7 @@ void GameState::processFoundItem(int32 item) {
 	_engine->_text->initItemFoundText(item);
 	_engine->_text->initDialogueBox();
 
-	ProgressiveTextState textState = ProgressiveTextState::UNK1;
+	ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
 
 	_engine->_text->initVoxToPlay(item);
 
@@ -361,7 +361,7 @@ void GameState::processFoundItem(int32 item) {
 		_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 		_engine->_redraw->addRedrawArea(_engine->_redraw->renderRect);
 
-		if (textState != ProgressiveTextState::End) {
+		if (textState == ProgressiveTextState::ContinueRunning) {
 			_engine->_interface->resetClip();
 			textState = _engine->_text->updateProgressiveText();
 		}
@@ -376,10 +376,11 @@ void GameState::processFoundItem(int32 item) {
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
 			if (textState == ProgressiveTextState::End) {
+				_engine->_text->stopVox(_engine->_text->currDialTextEntry);
 				break;
 			}
 			if (textState == ProgressiveTextState::NextPage) {
-				textState = ProgressiveTextState::UNK1;
+				textState = ProgressiveTextState::ContinueRunning;
 			}
 		}
 

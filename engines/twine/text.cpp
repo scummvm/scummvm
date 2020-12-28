@@ -327,13 +327,14 @@ void Text::initText(int32 index) {
 	_progressiveTextBuffer[0] = '\0';
 	_fadeInCharactersPos = 0;
 	_dialTextXPos = _dialTextBox.left + 8;
-	_progressiveTextEnd = false;
-	_progressiveTextNextPage = false;
 	_dialTextYPos = _dialTextBox.top + 8;
 	_currentTextPosition = _currDialTextPtr;
 
 	// lba font is get while engine start
 	setFontParameters(2, 7);
+
+	// fetch the first line
+	processTextLine();
 }
 
 void Text::initProgressiveTextBuffer() {
@@ -435,7 +436,7 @@ void Text::processTextLine() {
 		buffer += wordSize.inChar;
 		_currentTextPosition = buffer;
 		strncat(_progressiveTextBuffer, wordBuf, sizeof(_progressiveTextBuffer) - strlen(_progressiveTextBuffer) - 1);
-		strncat(_progressiveTextBuffer, " ", sizeof(_progressiveTextBuffer) - strlen(_progressiveTextBuffer) - 1); // not 100% accurate
+		strncat(_progressiveTextBuffer, " ", sizeof(_progressiveTextBuffer) - strlen(_progressiveTextBuffer) - 1);
 		spaceCharCount++;
 
 		lineBreakX += wordSize.inPixel + _dialCharSpace;
@@ -526,41 +527,20 @@ int32 Text::getCharHeight(uint8 chr) const {
 	return stream.readByte();
 }
 
-// TODO: refactor this code
 ProgressiveTextState Text::updateProgressiveText() {
 	if (!_hasValidTextHandle) {
 		return ProgressiveTextState::End;
 	}
 
 	if (*_progressiveTextBufferPtr == '\0') {
-		if (_progressiveTextEnd) {
-			if (renderTextTriangle) {
-				renderContinueReadingTriangle();
-			}
-			_hasValidTextHandle = false;
-			return ProgressiveTextState::End;
-		}
-		if (_progressiveTextNextPage) {
-			_engine->_interface->blitBox(_dialTextBox, _engine->workVideoBuffer, _engine->frontVideoBuffer);
-			_engine->copyBlockPhys(_dialTextBox);
-			_fadeInCharactersPos = 0;
-			_progressiveTextNextPage = false;
-			_dialTextXPos = _dialTextBox.left + 8;
-			_dialTextYPos = _dialTextBox.top + 8;
-		}
-		if (*_currentTextPosition == '\0') {
-			initProgressiveTextBuffer();
-			_progressiveTextEnd = true;
-			return ProgressiveTextState::UNK1;
-		}
+		initProgressiveTextBuffer();
 		processTextLine();
+		initDialogueBox();
+		_dialTextXPos = _dialTextBox.left + 8;
+		_dialTextYPos = _dialTextBox.top + 8;
 	}
 	const char currentChar = *_progressiveTextBufferPtr;
-	// RECHECK this later
-	if (currentChar == '\0') {
-		return ProgressiveTextState::UNK1;
-	}
-
+	assert(currentChar != '\0');
 	fillFadeInBuffer(_dialTextXPos, _dialTextYPos, currentChar);
 	fadeInCharacters(_fadeInCharactersPos, _dialTextStartColor);
 	const int8 charWidth = getCharWidth(currentChar);
@@ -576,31 +556,30 @@ ProgressiveTextState Text::updateProgressiveText() {
 
 	// reaching 0-byte means a new line - as we are fading in per line
 	if (*_progressiveTextBufferPtr != '\0') {
-		return ProgressiveTextState::UNK1;
+		return ProgressiveTextState::ContinueRunning;
 	}
+
+	if (*_currentTextPosition == '\0') {
+		_hasValidTextHandle = false;
+		renderContinueReadingTriangle();
+		return ProgressiveTextState::End;
+	}
+
+	// reached a new line that is about get faded in
+	_dialTextBoxCurrentLine++;
 
 	const int32 lineHeight = 38;
 	_dialTextYPos += lineHeight;
 	_dialTextXPos = _dialTextBox.left + 8;
 
-	if (_progressiveTextNextPage && !_progressiveTextEnd) {
+	if (_dialTextBoxCurrentLine > _dialTextBoxLines) {
 		renderContinueReadingTriangle();
 		return ProgressiveTextState::NextPage;
 	}
 
-	_dialTextBoxCurrentLine++;
-	if (_dialTextBoxCurrentLine < _dialTextBoxLines) {
-		return ProgressiveTextState::UNK1;
-	}
+	processTextLine();
 
-	initProgressiveTextBuffer();
-	_progressiveTextNextPage = true;
-
-	if (*_currentTextPosition == '\0') {
-		_progressiveTextEnd = true;
-	}
-
-	return ProgressiveTextState::UNK1;
+	return ProgressiveTextState::ContinueRunning;
 }
 
 bool Text::displayText(int32 index, bool showText, bool playVox) {
@@ -609,108 +588,58 @@ bool Text::displayText(int32 index, bool showText, bool playVox) {
 		initVoxToPlay(index);
 	}
 
-	initText(index);
-	initDialogueBox();
+	bool aborted = false;
 
-	ProgressiveTextState textState = ProgressiveTextState::UNK1;
-	do {
-		ScopedFPS scopedFps(66);
-		_engine->readKeys();
-		textState = updateProgressiveText();
+	// if we don't display text, than still plays vox file
+	if (showText) {
+		initText(index);
+		initDialogueBox();
 
-		if (textState == ProgressiveTextState::NextPage) {
-			do {
-				ScopedFPS scopedFpsNextPage;
-				_engine->readKeys();
-				if (_engine->shouldQuit()) {
+		ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
+		for (;;) {
+			ScopedFPS scopedFps(66);
+			_engine->readKeys();
+			if (textState == ProgressiveTextState::ContinueRunning) {
+				textState = updateProgressiveText();
+			}
+			if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
+				if (textState == ProgressiveTextState::End) {
+					stopVox(currDialTextEntry);
 					break;
 				}
-				if (!playVoxSimple(currDialTextEntry)) {
-					break;
+				if (textState == ProgressiveTextState::NextPage) {
+					textState = ProgressiveTextState::ContinueRunning;
 				}
-			} while (!_engine->_input->toggleAbortAction());
+			}
+			if (_engine->_input->toggleAbortAction() || _engine->shouldQuit()) {
+				stopVox(currDialTextEntry);
+				aborted = true;
+				break;
+			}
 		}
-	} while (textState != ProgressiveTextState::End);
-
-	while (playVox && playVoxSimple(currDialTextEntry)) {
+	}
+	while (_engine->_sound->isSamplePlaying(currDialTextEntry)) {
 		ScopedFPS scopedFps;
+		_engine->readKeys();
 		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
 			stopVox(currDialTextEntry);
+			aborted = true;
 			break;
 		}
 	}
-
-	hasHiddenVox = false;
 	voxHiddenIndex = 0;
+	hasHiddenVox = false;
 	_hasValidTextHandle = false;
 
-	return false;
+	return aborted;
 }
 
 // TODO: refactor this code
 bool Text::drawTextFullscreen(int32 index) {
-	ScopedKeyMap scoped(_engine, cutsceneKeyMapId);
 	_engine->_interface->saveClip();
 	_engine->_interface->resetClip();
 	_engine->_screens->copyScreen(_engine->frontVideoBuffer, _engine->workVideoBuffer);
-
-	// get right VOX entry index
-	initVoxToPlay(index);
-
-	bool aborted = false;
-
-	// if we don't display text, than still plays vox file
-	if (_engine->cfgfile.FlagDisplayText) {
-		initText(index);
-		initDialogueBox();
-
-		ProgressiveTextState textState;
-		for (;;) {
-			ScopedFPS scopedFps(66);
-			_engine->readKeys();
-			textState = updateProgressiveText();
-			playVox(currDialTextEntry);
-
-			if (textState == ProgressiveTextState::End && !_engine->_sound->isSamplePlaying(currDialTextEntry)) {
-				break;
-			}
-
-			if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
-				aborted = true;
-				break;
-			}
-		}
-		hasHiddenVox = false;
-
-		_hasValidTextHandle = false;
-
-		if (textState == ProgressiveTextState::End) {
-			stopVox(currDialTextEntry);
-			// wait displaying text
-			for (;;) {
-				ScopedFPS scopedFps;
-				_engine->readKeys();
-				if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
-					aborted = true;
-					break;
-				}
-			}
-		}
-	} else { // RECHECK THIS
-		while (playVox(currDialTextEntry)) {
-			ScopedFPS scopedFps;
-			_engine->readKeys();
-			if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
-				aborted = true;
-				break;
-			}
-		}
-		hasHiddenVox = false;
-		voxHiddenIndex = 0;
-	}
-
-	stopVox(currDialTextEntry);
-
+	const bool aborted = displayText(index, _engine->cfgfile.FlagDisplayText, true);
 	_engine->_interface->loadClip();
 	return aborted;
 }

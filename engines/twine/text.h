@@ -109,7 +109,7 @@ enum _TextId {
 
 enum class ProgressiveTextState {
 	End = 0,				/**< Text has reached its end and we are waiting for user input */
-	UNK1 = 1,
+	ContinueRunning = 1,	/**< Text is fading in */
 	NextPage = 2			/**< Waiting for user input to abort or start the next page to fade in */
 };
 
@@ -183,8 +183,6 @@ private:
 	char *_progressiveTextBufferPtr = nullptr;
 
 	int32 _dialTextBoxCurrentLine = 0;
-	bool _progressiveTextEnd = false;
-	bool _progressiveTextNextPage = false;
 	struct BlendInCharacter {
 		int16 chr = 0;
 		int16 x = 0;

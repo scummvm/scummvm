@@ -1105,12 +1105,11 @@ void Menu::processInventoryMenu() {
 
 	_engine->_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
 
-	bool updateItemText = true;
-
 	_engine->_text->setFontCrossColor(4);
 	_engine->_text->initDialogueBox();
 
-	ProgressiveTextState textState = ProgressiveTextState::End;
+	ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
+	bool updateItemText = true;
 
 #if 0
 	ScopedCursor scopedCursor(_engine);
@@ -1167,22 +1166,22 @@ void Menu::processInventoryMenu() {
 			} else {
 				_engine->_text->initInventoryText(NUM_INVENTORY_ITEMS);
 			}
-		}
-
-		if (updateItemText || textState != ProgressiveTextState::NextPage) {
-			textState = _engine->_text->updateProgressiveText();
+			textState = ProgressiveTextState::ContinueRunning;
 			updateItemText = false;
 		}
 
+		if (textState == ProgressiveTextState::ContinueRunning) {
+			textState = _engine->_text->updateProgressiveText();
+		}
+
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
+			// restart the item description to appear from the beginning
+			if (textState == ProgressiveTextState::End) {
+				updateItemText = true;
+			}
 			if (textState == ProgressiveTextState::NextPage) {
 				_engine->_text->initInventoryDialogueBox();
-				textState = ProgressiveTextState::End;
-			} else {
-				if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
-					_engine->_text->initInventoryDialogueBox();
-					_engine->_text->initInventoryText(inventorySelectedItem);
-				}
+				textState = ProgressiveTextState::ContinueRunning;
 			}
 		}
 
