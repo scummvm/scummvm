@@ -108,9 +108,9 @@ enum _TextId {
 #define TEXT_MAX_FADE_IN_CHR 32
 
 enum class ProgressiveTextState {
-	End = 0,
+	End = 0,				/**< Text has reached its end and we are waiting for user input */
 	UNK1 = 1,
-	NextPage = 2
+	NextPage = 2			/**< Waiting for user input to abort or start the next page to fade in */
 };
 
 class TwinEEngine;
