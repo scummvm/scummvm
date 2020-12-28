@@ -45,5 +45,13 @@ void TranslucentGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool sca
 	}
 }
 
+void TranslucentGump::saveData(Common::WriteStream *ws) {
+	Gump::saveData(ws);
+}
+
+bool TranslucentGump::loadData(Common::ReadStream *rs, uint32 version) {
+	return Gump::loadData(rs, version);
+}
+
 } // End of namespace Ultima8
 } // End of namespace Ultima

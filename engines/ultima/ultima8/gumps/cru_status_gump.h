@@ -38,7 +38,12 @@ class CruStatusGump : public Gump {
 public:
 	ENABLE_RUNTIME_CLASSTYPE()
 
+	// default constructor for save game loading
 	CruStatusGump();
+
+	// need a parameter to differentiate the non-default constructor..
+	CruStatusGump(bool unused);
+
 	~CruStatusGump() override;
 
 	// Init the gump, call after construction
@@ -49,6 +54,8 @@ public:
 
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
+
+	void createStatusItems();
 
 	static CruStatusGump *get_instance() {
 		return _instance;

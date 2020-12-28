@@ -51,7 +51,6 @@ public:
 
 private:
 	Shape *_weaponShape;
-	Gump *_weaponGump;
 };
 
 } // End of namespace Ultima8

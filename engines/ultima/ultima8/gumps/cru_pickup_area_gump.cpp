@@ -34,12 +34,23 @@ namespace Ultima8 {
 static const int PICKUP_GUMP_GAP = 5;
 static const int PICKUP_GUMP_HEIGHT = 30;
 
-CruPickupAreaGump *CruPickupAreaGump::_instance;
+CruPickupAreaGump *CruPickupAreaGump::_instance = nullptr;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruPickupAreaGump)
 
-CruPickupAreaGump::CruPickupAreaGump() : Gump(PICKUP_GUMP_GAP, PICKUP_GUMP_GAP, 200, 500, 0) {
-    _instance = this;
+CruPickupAreaGump::CruPickupAreaGump() : Gump() { }
+
+CruPickupAreaGump::CruPickupAreaGump(bool unused) : Gump(PICKUP_GUMP_GAP, PICKUP_GUMP_GAP, 200, 500, 0, 0, LAYER_ABOVE_NORMAL) {
+}
+
+CruPickupAreaGump::~CruPickupAreaGump() {
+	_instance = nullptr;
+}
+
+void CruPickupAreaGump::InitGump(Gump *newparent, bool take_focus) {
+	Gump::InitGump(newparent, take_focus);
+	assert(!_instance || _instance == this);
+	_instance = this;
 }
 
 void CruPickupAreaGump::addPickup(const Item *item) {
@@ -69,6 +80,21 @@ void CruPickupAreaGump::addPickup(const Item *item) {
 		newgump->InitGump(this, false);
 	}
 }
+
+void CruPickupAreaGump::saveData(Common::WriteStream *ws) {
+	Gump::saveData(ws);
+}
+
+bool CruPickupAreaGump::loadData(Common::ReadStream *rs, uint32 version) {
+	if (!Gump::loadData(rs, version))
+		return false;
+
+	if (_instance && _instance != this)
+		delete _instance;
+	_instance = this;
+	return true;
+}
+
 
 CruPickupAreaGump *CruPickupAreaGump::get_instance() {
 	return _instance;

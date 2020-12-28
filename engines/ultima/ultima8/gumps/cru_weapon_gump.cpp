@@ -38,21 +38,12 @@ static const int WEAPON_GUMP_SHAPE = 3;
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruWeaponGump)
 
-CruWeaponGump::CruWeaponGump() : CruStatGump(), _weaponShape(nullptr),
-	_weaponGump(nullptr) {
-
+CruWeaponGump::CruWeaponGump() : CruStatGump(), _weaponShape(nullptr) {
 }
 
 CruWeaponGump::CruWeaponGump(Shape *shape, int x)
-	: CruStatGump(shape, x), _weaponShape(nullptr), _weaponGump(nullptr) {
+	: CruStatGump(shape, x), _weaponShape(nullptr) {
 	_frameNum = 0;
-}
-
-CruWeaponGump::~CruWeaponGump() {
-}
-
-void CruWeaponGump::InitGump(Gump *newparent, bool take_focus) {
-	CruStatGump::InitGump(newparent, take_focus);
 
 	GumpShapeArchive *gumpshapes = GameData::get_instance()->getGumps();
 	if (!gumpshapes) {
@@ -65,11 +56,18 @@ void CruWeaponGump::InitGump(Gump *newparent, bool take_focus) {
 		warning("failed to init stat gump: no weapon shape");
 		return;
 	}
+}
 
-	_weaponGump = new Gump();
+CruWeaponGump::~CruWeaponGump() {
+}
+
+void CruWeaponGump::InitGump(Gump *newparent, bool take_focus) {
+	CruStatGump::InitGump(newparent, take_focus);
+
 	// We will fill out the shape to paint for this later.
-	_weaponGump->InitGump(this, false);
-
+	Gump *weaponGump = new Gump();
+	weaponGump->InitGump(this, false);
+	weaponGump->SetIndex(1);
 }
 
 void CruWeaponGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
@@ -79,13 +77,15 @@ void CruWeaponGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 		return;
 	}
 
+	Gump *weaponGump = _children.front();
+	assert(weaponGump);
 	uint16 active = a->getActiveWeapon();
 	if (!active) {
-		_weaponGump->SetShape(0, 0);
+		weaponGump->SetShape(0, 0);
 	} else {
 		Item *item = getItem(active);
 		if (!item) {
-			_weaponGump->SetShape(0, 0);
+			weaponGump->SetShape(0, 0);
 		} else {
 			WeaponInfo *weaponinfo = item->getShapeInfo()->_weaponInfo;
 			uint16 frameno = 0;
@@ -94,9 +94,9 @@ void CruWeaponGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 				assert(WEAPON_GUMP_SHAPE == weaponinfo->_displayGumpShape);
 				frameno = weaponinfo->_displayGumpFrame;
 			}
-			_weaponGump->SetShape(_weaponShape, frameno);
-			_weaponGump->UpdateDimsFromShape();
-			_weaponGump->setRelativePosition(CENTER);
+			weaponGump->SetShape(_weaponShape, frameno);
+			weaponGump->UpdateDimsFromShape();
+			weaponGump->setRelativePosition(CENTER);
 		}
 	}
 

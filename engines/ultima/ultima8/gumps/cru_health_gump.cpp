@@ -72,11 +72,11 @@ void CruHealthGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scale
 }
 
 void CruHealthGump::saveData(Common::WriteStream *ws) {
-	Gump::saveData(ws);
+	CruStatGump::saveData(ws);
 }
 
 bool CruHealthGump::loadData(Common::ReadStream *rs, uint32 version) {
-	return Gump::loadData(rs, version);
+	return CruStatGump::loadData(rs, version);
 }
 
 } // End of namespace Ultima8

@@ -49,17 +49,27 @@ static const int FRAME_GUMP_SHAPE = 1;
 
 CruStatusGump *CruStatusGump::_instance = nullptr;
 
-CruStatusGump::CruStatusGump() : Gump() {
+CruStatusGump::CruStatusGump() : Gump() { }
+
+// Start with an approximate width/height which we will adjust later..
+CruStatusGump::CruStatusGump(bool unused) : Gump(PX_FROM_LEFT, PX_FROM_BOTTOM, 500, 100, 0, 0, LAYER_ABOVE_NORMAL) {
 	assert(!_instance);
 	_instance = this;
 }
 
 CruStatusGump::~CruStatusGump() {
+	assert(_instance == this);
+	_instance = nullptr;
 }
 
 void CruStatusGump::InitGump(Gump *newparent, bool take_focus) {
 	Gump::InitGump(newparent, take_focus);
 
+	createStatusItems();
+}
+
+void CruStatusGump::createStatusItems() {
+	assert(_children.size() == 0);
 	GumpShapeArchive *gumpshapes = GameData::get_instance()->getGumps();
 	if (!gumpshapes) {
 		warning("failed to init stats gump: no gump shape archive");
@@ -103,7 +113,12 @@ void CruStatusGump::saveData(Common::WriteStream *ws) {
 }
 
 bool CruStatusGump::loadData(Common::ReadStream *rs, uint32 version) {
-	return Gump::loadData(rs, version);
+	if (Gump::loadData(rs, version)) {
+		createStatusItems();
+		return true;
+	} else {
+		return false;
+	}
 }
 
 uint32 CruStatusGump::I_hideStatusGump(const uint8 * /*args*/,

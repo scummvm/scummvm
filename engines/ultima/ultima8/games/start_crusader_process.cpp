@@ -74,10 +74,10 @@ void StartCrusaderProcess::run() {
 		}
 	}
 
-	Gump *statusGump = new CruStatusGump();
+	Gump *statusGump = new CruStatusGump(true);
 	statusGump->InitGump(nullptr, false);
 
-	Gump *cruPickupAreaGump = new CruPickupAreaGump();
+	Gump *cruPickupAreaGump = new CruPickupAreaGump(true);
 	cruPickupAreaGump->InitGump(nullptr, false);
 
 	// Try to load the save game, if succeeded this pointer will no longer be valid

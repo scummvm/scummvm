@@ -113,11 +113,11 @@ void CruAmmoGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 }
 
 void CruAmmoGump::saveData(Common::WriteStream *ws) {
-	Gump::saveData(ws);
+	CruStatGump::saveData(ws);
 }
 
 bool CruAmmoGump::loadData(Common::ReadStream *rs, uint32 version) {
-	return Gump::loadData(rs, version);
+	return CruStatGump::loadData(rs, version);
 }
 
 } // End of namespace Ultima8

@@ -977,6 +977,7 @@ bool AttackProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	_target = rs->readUint16LE();
 	setTacticNo(rs->readUint16LE());
 	setBlockNo(rs->readUint16LE());
+	_tacticDatStartOffset = rs->readUint16LE();
 
 	_soundNo = rs->readUint16LE();
 	_playedStartSound = rs->readByte();
