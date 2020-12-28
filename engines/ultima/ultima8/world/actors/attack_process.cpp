@@ -213,14 +213,14 @@ void AttackProcess::run() {
 		case 0x88:
 		{
 			// Turn 90 degrees left
-			Direction newdir = Direction_OneLeft(Direction_OneLeft(curdir, dirmode_8dirs), dirmode_8dirs);
+			Direction newdir = Direction_TurnByDelta(curdir, -2, dirmode_8dirs);
 			a->turnTowardDir(newdir);
 			return;
 		}
 		case 0x89:
 		{
 			// Turn 90 degrees right
-			Direction newdir = Direction_OneRight(Direction_OneLeft(curdir, dirmode_8dirs), dirmode_8dirs);
+			Direction newdir = Direction_TurnByDelta(curdir, 2, dirmode_8dirs);
 			a->turnTowardDir(newdir);
 			return;
 		}
@@ -563,15 +563,13 @@ void AttackProcess::genericAttack() {
 			return;
 		}
 	} else {
-		// TODO: Get directions anim has (8 or 16)
-		DirectionMode standDirMode = dirmode_8dirs;
-		/*
 		Animation::Sequence anim;
 		if (a->isInCombat()) {
 			anim = Animation::combatStand;
 		} else {
 			anim = Animation::stand;
-		}*/
+		}
+		DirectionMode standDirMode = a->animDirMode(anim);
 		if (_timer3set) {
 			if (_timer3 >= now) {
 				if (a->isInCombat()) {
