@@ -421,7 +421,7 @@ void Text::processTextLine() {
 			if (lineBreakX == 0) {
 				lineBreakX = 7;
 				*(_progressiveTextBuffer + 0) = ' ';
-				*(_progressiveTextBuffer + 1) = ' ';
+				*(_progressiveTextBuffer + 1) = '\0';
 			}
 			// new page?
 			if (wordBuf[1] == 'P') {
