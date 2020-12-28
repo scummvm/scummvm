@@ -409,8 +409,6 @@ public:
 
 	const int16 *const shadeAngleTab3;
 
-	int16 vertexCoordinates[193]{0};
-
 	void setLightVector(int32 angleX, int32 angleY, int32 angleZ);
 
 	static void prepareIsoModel(uint8 *bodyPtr);
