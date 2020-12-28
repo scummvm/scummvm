@@ -12,7 +12,7 @@ static const ADGameDescription gameDescriptions[] = {
 	{
 		"private-eye",
 		0,
-		AD_ENTRY1s("game.dat", "7a3eb7d9dedf40680ac3d088524f976e", 190735),
+		AD_ENTRY1s("GAME.DAT", "7a3eb7d9dedf40680ac3d088524f976e", 190735),
 		Common::EN_ANY,
 		Common::kPlatformWindows,
 		ADGF_NO_FLAGS,
@@ -22,9 +22,16 @@ static const ADGameDescription gameDescriptions[] = {
 };
 } // End of namespace Private
 
+static const char *const directoryGlobs[] = {
+        "support", // english CD
+        0
+};
+
 class PrivateMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	PrivateMetaEngineDetection() : AdvancedMetaEngineDetection(Private::gameDescriptions, sizeof(ADGameDescription), Private::privateGames) {
+		_maxScanDepth = 2;
+		_directoryGlobs = directoryGlobs;
 	}	
 
 	const char *getEngineId() const override {
