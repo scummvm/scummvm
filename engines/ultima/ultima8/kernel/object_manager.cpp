@@ -290,7 +290,6 @@ bool ObjectManager::load(Common::ReadStream *rs, uint32 version) {
 	}
 	pout << "Reclaimed " << count << " _objIDs on load." << Std::endl;
 
-	objectTypes();
 	return true;
 }
 

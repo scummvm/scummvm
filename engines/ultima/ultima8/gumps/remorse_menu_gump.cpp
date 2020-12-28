@@ -39,6 +39,10 @@
 #include "ultima/ultima8/meta_engine.h"
 #include "engines/dialogs.h"
 
+#include "engines/dialogs.h"
+#include "common/translation.h"
+#include "gui/saveload.h"
+
 namespace Ultima {
 namespace Ultima8 {
 
@@ -190,6 +194,37 @@ void RemorseMenuGump::ChildNotify(Gump *child, uint32 message) {
 	}
 }
 
+static void _openScummVmSaveLoad(bool isSave) {
+	GUI::SaveLoadChooser *dialog;
+	Common::String desc;
+	int slot;
+
+	if (isSave) {
+		dialog = new GUI::SaveLoadChooser(_("Save game:"), _("Save"), true);
+
+		slot = dialog->runModalWithCurrentTarget();
+		desc = dialog->getResultString();
+
+		if (desc.empty()) {
+			// create our own description for the saved game, the user didnt enter it
+			desc = dialog->createDefaultSaveDescription(slot);
+		}
+
+		if (desc.size() > 28)
+			desc = Common::String(desc.c_str(), 28);
+	} else {
+		dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
+		slot = dialog->runModalWithCurrentTarget();
+	}
+
+	delete dialog;
+
+	if (isSave)
+		Ultima8Engine::get_instance()->saveGame(slot, desc, true);
+	else
+		Ultima8Engine::get_instance()->loadGameState(slot);
+}
+
 void RemorseMenuGump::selectEntry(int entry) {
 	switch (entry) {
 	case 1: // New Game
@@ -197,8 +232,7 @@ void RemorseMenuGump::selectEntry(int entry) {
 		break;
 	case 2:
 	case 3: // Load/Save Game
-		// FIXME: Need a different save/load gump for crusader
-		U8SaveGump::showLoadSaveGump(this, entry == 3);
+		_openScummVmSaveLoad(entry == 3);
 		break;
 	case 4: {
 		// Options - show the ScummVM options dialog
