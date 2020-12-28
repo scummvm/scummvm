@@ -187,9 +187,6 @@ void CameraProcess::ItemMoved() {
 }
 
 void CameraProcess::GetLerped(int32 &x, int32 &y, int32 &z, int32 factor, bool noupdate) {
-	// TODO: For Crusader, only update the camera position if the
-	// distance to the target object passes a threshold.
-
 	if (_time == 0) {
 		if (!noupdate) {
 
