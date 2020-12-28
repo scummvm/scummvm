@@ -189,11 +189,13 @@ void Text::drawCharacter(int32 x, int32 y, uint8 character) { // drawCharacter
 			}
 			const uint8 number = stream.readByte();
 			tempX += jump;
+			uint8* basePtr = (uint8 *)_engine->frontVideoBuffer.getBasePtr(tempX, tempY);
 			for (uint8 i = 0; i < number; i++) {
 				if (tempX >= SCREEN_TEXTLIMIT_LEFT && tempX < SCREEN_TEXTLIMIT_RIGHT && tempY >= SCREEN_TEXTLIMIT_TOP && tempY < SCREEN_TEXTLIMIT_BOTTOM) {
-					*((uint8 *)_engine->frontVideoBuffer.getBasePtr(tempX, tempY)) = usedColor;
+					*basePtr = usedColor;
 				}
 
+				++basePtr;
 				tempX++;
 			}
 
