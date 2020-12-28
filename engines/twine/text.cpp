@@ -602,6 +602,46 @@ ProgressiveTextState Text::updateProgressiveText() {
 	return ProgressiveTextState::UNK1;
 }
 
+void Text::displayText(int32 index) {
+	// get right VOX entry index
+	initVoxToPlay(index);
+
+	initText(index);
+	initDialogueBox();
+
+	ProgressiveTextState textState = ProgressiveTextState::UNK1;
+	do {
+		ScopedFPS scopedFps(66);
+		_engine->readKeys();
+		textState = updateProgressiveText();
+
+		if (textState == ProgressiveTextState::NextPage) {
+			do {
+				ScopedFPS scopedFpsNextPage;
+				_engine->readKeys();
+				if (_engine->shouldQuit()) {
+					break;
+				}
+				if (!playVoxSimple(currDialTextEntry)) {
+					break;
+				}
+			} while (!_engine->_input->toggleAbortAction());
+		}
+	} while (textState != ProgressiveTextState::End);
+
+	while (playVoxSimple(currDialTextEntry)) {
+		ScopedFPS scopedFps;
+		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
+			stopVox(currDialTextEntry);
+			break;
+		}
+	}
+
+	hasHiddenVox = false;
+	voxHiddenIndex = 0;
+	_hasValidTextHandle = false;
+}
+
 // TODO: refactor this code
 bool Text::drawTextFullscreen(int32 index) {
 	ScopedKeyMap scoped(_engine, cutsceneKeyMapId);
@@ -780,43 +820,7 @@ void Text::textClipSmall() {
 }
 
 void Text::drawAskQuestion(int32 index) {
-	// get right VOX entry index
-	initVoxToPlay(index);
-
-	initText(index);
-	initDialogueBox();
-
-	ProgressiveTextState textState = ProgressiveTextState::UNK1;
-	do {
-		ScopedFPS scopedFps(66);
-		_engine->readKeys();
-		textState = updateProgressiveText();
-
-		if (textState == ProgressiveTextState::NextPage) {
-			do {
-				ScopedFPS scopedFpsNextPage;
-				_engine->readKeys();
-				if (_engine->shouldQuit()) {
-					break;
-				}
-				if (!playVoxSimple(currDialTextEntry)) {
-					break;
-				}
-			} while (!_engine->_input->toggleAbortAction());
-		}
-	} while (textState != ProgressiveTextState::End);
-
-	while (playVoxSimple(currDialTextEntry)) {
-		ScopedFPS scopedFps;
-		if (_engine->shouldQuit() || _engine->_input->toggleAbortAction()) {
-			stopVox(currDialTextEntry);
-			break;
-		}
-	}
-
-	hasHiddenVox = false;
-	voxHiddenIndex = 0;
-	_hasValidTextHandle = false;
+	displayText(index);
 }
 
 } // namespace TwinE
