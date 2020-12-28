@@ -124,6 +124,9 @@ public:
 		return FindGump(&IsOfType<T>, recursive);
 	}
 
+	//! A predicate to find a ui element by its index
+	template<int T> static bool FindByIndex(const Gump *g) { return g->GetIndex() == T; }
+
 	//! Find gump (this, child or NULL) at parent coordinates (mx,my)
 	//! \return the Gump at these coordinates, or NULL if none
 	virtual Gump       *FindGump(int mx, int my);

@@ -40,8 +40,6 @@ namespace Ultima8 {
 
 DEFINE_RUNTIME_CLASSTYPE_CODE(KeypadGump)
 
-template<int T> bool FindUiElem(const Gump *g) { return g->GetIndex() == T; }
-
 static const int TXT_CONTAINER_IDX = 0x100;
 // Actually the max val where we will allow another digit to be entered
 static const int MAX_CODE_VAL = 9999999;
@@ -167,7 +165,7 @@ void KeypadGump::ChildNotify(Gump *child, uint32 message) {
 }
 
 void KeypadGump::updateDigitDisplay() {
-	Gump *txt = Gump::FindGump(&FindUiElem<TXT_CONTAINER_IDX>);
+	Gump *txt = Gump::FindGump(&FindByIndex<TXT_CONTAINER_IDX>);
 	if (txt)
 		txt->Close();
 	txt = new Gump(25, 12, 200, 12);

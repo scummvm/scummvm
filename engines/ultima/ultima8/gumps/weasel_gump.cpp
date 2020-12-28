@@ -84,7 +84,6 @@ static const char *CANCELLED_PURCHASE_MOVIES[] = {"19C", "19D"};
 static const char *COMPLETED_PURCHASE_MOVIES[] = {"21C", "21D"};
 static const char *INSUFFICIENT_FUND_MOVIES[] = {"20C", "20D"};
 
-template<int T> bool FindUiElem(const Gump *g) { return g->GetIndex() == T; }
 
 namespace {
 // A small container gump that doesn't do anything except pass notifications to the parent
@@ -342,8 +341,8 @@ void WeaselGump::onButtonClick(int entry) {
 
 void WeaselGump::updateAmmoButtons() {
 	_ammoMode = !_ammoMode;
-	Gump *ammobtn = _ui->FindGump(&FindUiElem<kBtnAmmo>);
-	Gump *wpnbtn = _ui->FindGump(&FindUiElem<kBtnWeapons>);
+	Gump *ammobtn = _ui->FindGump(&FindByIndex<kBtnAmmo>);
+	Gump *wpnbtn = _ui->FindGump(&FindByIndex<kBtnWeapons>);
 	assert(ammobtn && wpnbtn);
 	ammobtn->SetVisibility(_ammoMode);
 	wpnbtn->SetVisibility(!_ammoMode);
@@ -415,7 +414,7 @@ void WeaselGump::checkBuyMore() {
 
 void WeaselGump::setYesNoQuestion(const Std::string &msg) {
 	browsingMode(false);
-	_closeIfExists(_ui->FindGump(&FindUiElem<kTxtQuestion>));
+	_closeIfExists(_ui->FindGump(&FindByIndex<kTxtQuestion>));
 	TextWidget *textWidget = new TextWidget(30, 100, msg, true, WEASEL_FONT, 150);
 	textWidget->InitGump(_ui);
 	textWidget->SetIndex(kTxtQuestion);
@@ -429,23 +428,23 @@ void WeaselGump::browsingMode(bool browsing) {
 
 	// Note: all these searches are not super effieient but it's
 	// not a time-sensitive function and the search is relatively short
-	Gump *yesbtn = _ui->FindGump(&FindUiElem<kBtnYes>);
-	Gump *nobtn = _ui->FindGump(&FindUiElem<kBtnNo>);
-	Gump *qtxt = _ui->FindGump(&FindUiElem<kTxtQuestion>);
+	Gump *yesbtn = _ui->FindGump(&FindByIndex<kBtnYes>);
+	Gump *nobtn = _ui->FindGump(&FindByIndex<kBtnNo>);
+	Gump *qtxt = _ui->FindGump(&FindByIndex<kTxtQuestion>);
 
-	Gump *buybtn = _ui->FindGump(&FindUiElem<kBtnBuy>);
-	Gump *wpnbtn = _ui->FindGump(&FindUiElem<kBtnWeapons>);
-	Gump *ammobtn = _ui->FindGump(&FindUiElem<kBtnAmmo>);
-	Gump *exitbtn = _ui->FindGump(&FindUiElem<kBtnExit>);
-	Gump *blankbtn = _ui->FindGump(&FindUiElem<kBtnBlank>);
-	Gump *leftbtn = _ui->FindGump(&FindUiElem<kBtnLeft>);
-	Gump *rightbtn = _ui->FindGump(&FindUiElem<kBtnRight>);
-	Gump *credtxt = _ui->FindGump(&FindUiElem<kTxtCredits>);
-	Gump *nametxt = _ui->FindGump(&FindUiElem<kTxtItemName>);
-	Gump *costtxt = _ui->FindGump(&FindUiElem<kTxtItemCost>);
-	Gump *purchtxt = _ui->FindGump(&FindUiElem<kTxtItemPurch>);
-	Gump *ownedtxt = _ui->FindGump(&FindUiElem<kTxtItemOwned>);
-	Gump *icon = _ui->FindGump(&FindUiElem<kIconItem>);
+	Gump *buybtn = _ui->FindGump(&FindByIndex<kBtnBuy>);
+	Gump *wpnbtn = _ui->FindGump(&FindByIndex<kBtnWeapons>);
+	Gump *ammobtn = _ui->FindGump(&FindByIndex<kBtnAmmo>);
+	Gump *exitbtn = _ui->FindGump(&FindByIndex<kBtnExit>);
+	Gump *blankbtn = _ui->FindGump(&FindByIndex<kBtnBlank>);
+	Gump *leftbtn = _ui->FindGump(&FindByIndex<kBtnLeft>);
+	Gump *rightbtn = _ui->FindGump(&FindByIndex<kBtnRight>);
+	Gump *credtxt = _ui->FindGump(&FindByIndex<kTxtCredits>);
+	Gump *nametxt = _ui->FindGump(&FindByIndex<kTxtItemName>);
+	Gump *costtxt = _ui->FindGump(&FindByIndex<kTxtItemCost>);
+	Gump *purchtxt = _ui->FindGump(&FindByIndex<kTxtItemPurch>);
+	Gump *ownedtxt = _ui->FindGump(&FindByIndex<kTxtItemOwned>);
+	Gump *icon = _ui->FindGump(&FindByIndex<kIconItem>);
 
 	yesbtn->SetVisibility(!browsing);
 	nobtn->SetVisibility(!browsing);
@@ -510,12 +509,12 @@ void WeaselGump::updateItemDisplay() {
 	}
 	Shape *shape = GameData::get_instance()->getGumps()->getShape(shapeinfo->_weaponInfo->_displayGumpShape);
 
-	_closeIfExists(_ui->FindGump(&FindUiElem<kTxtCredits>));
-	_closeIfExists(_ui->FindGump(&FindUiElem<kTxtItemName>));
-	_closeIfExists(_ui->FindGump(&FindUiElem<kTxtItemCost>));
-	_closeIfExists(_ui->FindGump(&FindUiElem<kTxtItemPurch>));
-	_closeIfExists(_ui->FindGump(&FindUiElem<kTxtItemOwned>));
-	_closeIfExists(_ui->FindGump(&FindUiElem<kIconItem>));
+	_closeIfExists(_ui->FindGump(&FindByIndex<kTxtCredits>));
+	_closeIfExists(_ui->FindGump(&FindByIndex<kTxtItemName>));
+	_closeIfExists(_ui->FindGump(&FindByIndex<kTxtItemCost>));
+	_closeIfExists(_ui->FindGump(&FindByIndex<kTxtItemPurch>));
+	_closeIfExists(_ui->FindGump(&FindByIndex<kTxtItemOwned>));
+	_closeIfExists(_ui->FindGump(&FindByIndex<kIconItem>));
 
 	Std::string credstr = Std::string::format("Credits:%d", _credits);
 	TextWidget *textWidget = new TextWidget(30, 57, credstr, true, WEASEL_FONT);
