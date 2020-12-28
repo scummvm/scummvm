@@ -120,11 +120,13 @@ Pathfinder::Pathfinder() : _actor(nullptr), _targetItem(nullptr),
 		_hitMode(false), _expandTime(0), _targetX(0), _targetY(0),
 		_targetZ(0), _actorXd(0), _actorYd(0), _actorZd(0) {
 	expandednodes = 0;
+	_visited.reserve(1800);
 }
 
 Pathfinder::~Pathfinder() {
-#if 1
-	pout << "~Pathfinder: " << _cleanupNodes.size() << " nodes to clean up, "
+#if 0
+	pout << "~Pathfinder: " << _cleanupNodes.size() << " nodes to clean up, visited "
+		 << _visited.size() << " and "
 	     << expandednodes << " expanded nodes in " << _expandTime << "ms." << Std::endl;
 #endif
 
@@ -180,8 +182,7 @@ bool Pathfinder::canReach() {
 bool Pathfinder::alreadyVisited(int32 x, int32 y, int32 z) const {
 	//! this may need optimization
 
-	Std::list<PathfindingState>::const_iterator iter;
-
+	Std::vector<PathfindingState>::const_iterator iter;
 	for (iter = _visited.begin(); iter != _visited.end(); ++iter)
 		if (iter->checkPoint(x, y, z, 8))
 			return true;
@@ -204,7 +205,7 @@ bool Pathfinder::checkTarget(const PathNode *node) const {
 	}
 }
 
-unsigned int Pathfinder::costHeuristic(PathNode *node) {
+unsigned int Pathfinder::costHeuristic(PathNode *node) const {
 	unsigned int cost = node->cost;
 
 #if 0
@@ -441,12 +442,6 @@ void Pathfinder::expandNode(PathNode *node) {
 		state._lastAnim = walkanim;
 		state._direction = dir;
 		state._combat = _actor->isInCombat();
-		uint32 steps = 0, beststeps = 0;
-		int bestsqdist;
-		bestsqdist = (_targetX - node->state._x + _actorXd / 2) *
-		             (_targetX - node->state._x + _actorXd / 2);
-		bestsqdist += (_targetY - node->state._y + _actorYd / 2) *
-		              (_targetY - node->state._y + _actorYd / 2);
 
 		if (!tracker.init(_actor, walkanim, dir, &state)) continue;
 
@@ -454,21 +449,28 @@ void Pathfinder::expandNode(PathNode *node) {
 		int32 max_endx, max_endy;
 		tracker.evaluateMaxAnimTravel(max_endx, max_endy, dir);
 		if (alreadyVisited(max_endx, max_endy, state._z)) continue;
-		int sqrddist;
-		const int x_travel = ABS(max_endx - state._x);
-		int xy_maxtravel = x_travel;    // don't have the max(a,b) macro...
-		const int y_travel = ABS(max_endy - state._y);
-		if (y_travel > xy_maxtravel) xy_maxtravel = y_travel;
 
-		sqrddist = x_travel * x_travel + y_travel * y_travel;
+		const int x_travel = ABS(max_endx - state._x);
+		const int y_travel = ABS(max_endy - state._y);
+		const int xy_maxtravel = MAX(x_travel, y_travel);
+
+		int sqrddist = x_travel * x_travel + y_travel * y_travel;
 		if (sqrddist > 400) {
-			// range is greater than 20; see if a node has been _visited at range 10
+			// range is greater than 20; see if a node has been visited at range 10
 			if (alreadyVisited(state._x + x_travel * 10 / xy_maxtravel,
 			                   state._y + y_travel * 10 / xy_maxtravel,
 			                   state._z)) {
 				continue;
 			}
 		}
+
+		uint32 steps = 0, beststeps = 0;
+		int bestsqdist;
+		bestsqdist = (_targetX - node->state._x + _actorXd / 2) *
+					 (_targetX - node->state._x + _actorXd / 2);
+		bestsqdist += (_targetY - node->state._y + _actorYd / 2) *
+					  (_targetY - node->state._y + _actorYd / 2);
+
 		while (tracker.step()) {
 			steps++;
 			tracker.updateState(state);
@@ -492,7 +494,7 @@ void Pathfinder::expandNode(PathNode *node) {
 				_visited.push_back(state);
 			}
 		} else {
-			// an obstruction was encountered, so generate a _visited node to block
+			// an obstruction was encountered, so generate a visited node to block
 			// future evaluation at the endpoint.
 			_visited.push_back(state);
 		}
