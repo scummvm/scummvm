@@ -496,6 +496,36 @@ void TwinEEngine::processActorSamplePosition(int32 actorIdx) {
 	_sound->setSamplePosition(channelIdx, actor->x, actor->y, actor->z);
 }
 
+void TwinEEngine::processBookOfBu() {
+	_screens->fadeToBlack(_screens->paletteRGBA);
+	_screens->loadImage(RESSHQR_INTROSCREEN1IMG, RESSHQR_INTROSCREEN1PAL);
+	_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
+	_text->drawTextBoxBackground = false;
+	_text->textClipFull();
+	_text->setFontCrossColor(15);
+	const bool tmpFlagDisplayText = cfgfile.FlagDisplayText;
+	cfgfile.FlagDisplayText = true;
+	_text->drawTextFullscreen(TextId::kBookOfBu);
+	cfgfile.FlagDisplayText = tmpFlagDisplayText;
+	_text->textClipSmall();
+	_text->drawTextBoxBackground = true;
+	_text->initSceneTextBank();
+	_screens->fadeToBlack(_screens->paletteRGBACustom);
+	_screens->clearScreen();
+	flip();
+	setPalette(_screens->paletteRGBA);
+	_screens->lockPalette = true;
+}
+
+void TwinEEngine::processBonusList() {
+	_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
+	_text->textClipFull();
+	_text->setFontCrossColor(15);
+	_text->drawTextFullscreen(TextId::kBonusList);
+	_text->textClipSmall();
+	_text->initSceneTextBank();
+}
+
 void TwinEEngine::processInventoryAction() {
 	ScopedEngineFreeze scoped(this);
 	_menu->processInventoryMenu();
@@ -523,24 +553,7 @@ void TwinEEngine::processInventoryAction() {
 		}
 		break;
 	case kiBookOfBu: {
-		_screens->fadeToBlack(_screens->paletteRGBA);
-		_screens->loadImage(RESSHQR_INTROSCREEN1IMG, RESSHQR_INTROSCREEN1PAL);
-		_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
-		_text->drawTextBoxBackground = false;
-		_text->textClipFull();
-		_text->setFontCrossColor(15);
-		const bool tmpFlagDisplayText = cfgfile.FlagDisplayText;
-		cfgfile.FlagDisplayText = true;
-		_text->drawTextFullscreen(161);
-		cfgfile.FlagDisplayText = tmpFlagDisplayText;
-		_text->textClipSmall();
-		_text->drawTextBoxBackground = true;
-		_text->initSceneTextBank();
-		_screens->fadeToBlack(_screens->paletteRGBACustom);
-		_screens->clearScreen();
-		flip();
-		setPalette(_screens->paletteRGBA);
-		_screens->lockPalette = true;
+		processBookOfBu();
 		break;
 	}
 	case kiProtoPack:
@@ -582,12 +595,7 @@ void TwinEEngine::processInventoryAction() {
 		unfreezeTime();
 		_redraw->redrawEngineActions(true);
 		freezeTime();
-		_text->initTextBank(TextBankId::Inventory_Intro_and_Holomap);
-		_text->textClipFull();
-		_text->setFontCrossColor(15);
-		_text->drawTextFullscreen(162);
-		_text->textClipSmall();
-		_text->initSceneTextBank();
+		processBonusList();
 		break;
 	}
 	case kiCloverLeaf:

@@ -188,6 +188,8 @@ private:
 	TwineGameType _gameType;
 	EngineState _state = EngineState::Menu;
 
+	void processBookOfBu();
+	void processBonusList();
 	void processInventoryAction();
 	void processOptionsMenu();
 	/** recenter screen on followed actor automatically */
