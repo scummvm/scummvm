@@ -369,7 +369,8 @@ void CruAvatarMoverProcess::tryAttack() {
 	Direction dir = avatar->getDir();
 	if (!avatar->isInCombat()) {
 		avatar->setInCombat(0);
-		waitFor(avatar->doAnim(Animation::readyWeapon, dir));
+		if (!avatar->hasActorFlags(Actor::ACT_WEAPONREADY))
+			waitFor(avatar->doAnim(Animation::readyWeapon, dir));
 	} else {
 		if (canAttack()) {
 			// Fire event happens from animation
