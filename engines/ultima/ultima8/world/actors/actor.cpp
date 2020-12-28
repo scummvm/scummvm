@@ -30,6 +30,7 @@
 #include "ultima/ultima8/misc/direction.h"
 #include "ultima/ultima8/misc/direction_util.h"
 #include "ultima/ultima8/games/game_data.h"
+#include "ultima/ultima8/graphics/anim_dat.h"
 #include "ultima/ultima8/graphics/main_shape_archive.h"
 #include "ultima/ultima8/graphics/shape_info.h"
 #include "ultima/ultima8/graphics/shape.h"
@@ -470,6 +471,9 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 		return 0;
 	}
 
+	if (dir == dir_current)
+		dir = getDir();
+
 #if 0
 	if (tryAnim(anim, dir)) {
 		perr << "Actor::doAnim: tryAnim = Ok!" << Std::endl;
@@ -480,9 +484,8 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 
 	if (GAME_IS_CRUSADER) {
 		// Crusader sets some flags on animation start
-		// HACK: When switching from 16-dir combat to 8-dir walking,
-		// fix the direction to only 8 dirs
-		if (anim == Animation::stand)
+		// Small hack: When switching from 16-dir to 8-dir, fix the direction
+		if (animDirMode(anim) == dirmode_8dirs)
 			dir = static_cast<Direction>(dir - (static_cast<uint32>(dir) % 2));
 		else if (anim == Animation::readyWeapon)
 			setActorFlag(ACT_WEAPONREADY);
@@ -566,8 +569,9 @@ Animation::Result Actor::tryAnim(Animation::Sequence anim, Direction dir,
 }
 
 DirectionMode Actor::animDirMode(Animation::Sequence anim) const {
-	const AnimAction *action = GameData::get_instance()->getMainShapes()->
-	getAnim(getShape(), anim);
+	int32 actionno = AnimDat::getActionNumberForSequence(anim, this);
+	const AnimAction *action = GameData::get_instance()->getMainShapes()->getAnim(getShape(), actionno);
+
 	if (!action)
 		return dirmode_8dirs;
 	return action->getDirCount() == 8 ? dirmode_8dirs : dirmode_16dirs;
