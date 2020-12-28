@@ -499,6 +499,16 @@ uint16 Actor::doAnim(Animation::Sequence anim, Direction dir, unsigned int steps
 			clearActorFlag(ACT_KNEELING);
 	}
 
+#if 0
+	if (_objId == 1) {
+		int32 x, y, z;
+		getLocation(x, y, z);
+		int32 actionno = AnimDat::getActionNumberForSequence(anim, this);
+		const AnimAction *action = GameData::get_instance()->getMainShapes()->getAnim(getShape(), actionno);
+		debug(6, "Actir::doAnim(%d, %d, %d) from (%d, %d, %d) frame repeat %d", anim, dir, steps, x, y, z, action->getFrameRepeat());
+	}
+#endif
+
 	Process *p = new ActorAnimProcess(this, anim, dir, steps);
 
 	return Kernel::get_instance()->addProcess(p);
@@ -585,11 +595,13 @@ uint16 Actor::turnTowardDir(Direction targetdir) {
 	bool surrendered = hasActorFlags(Actor::ACT_SURRENDERED);
 
 	int stepDelta = Direction_GetShorterTurnDelta(curdir, targetdir);
-	Animation::Sequence turnanim;
-	if (stepDelta == -1) {
-		turnanim = Animation::lookLeft;
-	} else {
-		turnanim = Animation::lookRight;
+	Animation::Sequence turnanim = Animation::stand;
+	if (GAME_IS_U8) {
+		if (stepDelta == -1) {
+			turnanim = Animation::lookLeft;
+		} else {
+			turnanim = Animation::lookRight;
+		}
 	}
 
 	if (combat) {
@@ -1642,6 +1654,11 @@ uint32 Actor::I_teleport(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(newz);
 	ARG_UINT16(newmap);
 	if (!actor) return 0;
+
+	if (GAME_IS_CRUSADER) {
+		newx *= 2;
+		newy *= 2;
+	}
 
 	actor->teleport(newmap, newx, newy, newz);
 	return 0;

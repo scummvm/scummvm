@@ -1324,13 +1324,17 @@ uint32 CurrentMap::I_canExistAtPoint(const uint8 *args, unsigned int /*argsize*/
 	if (shape > 0x800)
 		return 0;
 
+	int32 x = pt.getX();
+	int32 y = pt.getY();
+	int32 z = pt.getZ();
+
 	if (GAME_IS_CRUSADER) {
-		pt.setX(pt.getX() * 2);
-		pt.setY(pt.getY() * 2);
+		x *= 2;
+		y *= 2;
 	}
 
 	const CurrentMap *cm = World::get_instance()->getCurrentMap();
-	bool valid = cm->isValidPosition(pt.getX(), pt.getY(), pt.getZ(), shape, 0, 0, 0);
+	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);
 
 	if (valid)
 		return 1;

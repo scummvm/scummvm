@@ -1802,6 +1802,10 @@ void Item::leaveFastArea() {
 		if (g) g->Close();
 	}
 
+	if (_objId == 1) {
+		debug(6, "avatar leaving fast area");
+	}
+
 	// Unset the flag
 	_flags &= ~FLG_FASTAREA;
 
@@ -2075,9 +2079,14 @@ void Item::explode(int explosion_type, bool destroy_item, bool cause_damage) {
 	} else {
 		Point3 pt;
 		getLocation(pt);
+		// Note: same FireType number used in both Remorse and Regret
 		const FireType *firetypedat = GameData::get_instance()->getFireType(4);
-		int damage = firetypedat->getRandomDamage();
-		firetypedat->applySplashDamageAround(pt, damage, this, this);
+		if (firetypedat) {
+			int damage = firetypedat->getRandomDamage();
+			firetypedat->applySplashDamageAround(pt, damage, this, this);
+		} else {
+			warning("couldn't explode properly - no firetype 4 data");
+		}
 	}
 }
 
@@ -2513,7 +2522,11 @@ uint32 Item::I_getCX(const uint8 *args, unsigned int /*argsize*/) {
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
 
-	int mul = ((GAME_IS_CRUSADER) ? 8 : 16);
+	int mul = 16;
+	if (GAME_IS_CRUSADER) {
+		x /= 2;
+		mul /= 2;
+	}
 
 	if (item->_flags & FLG_FLIPPED)
 		return x - item->getShapeInfo()->_y * mul;
@@ -2528,7 +2541,11 @@ uint32 Item::I_getCY(const uint8 *args, unsigned int /*argsize*/) {
 	int32 x, y, z;
 	item->getLocationAbsolute(x, y, z);
 
-	int mul = ((GAME_IS_CRUSADER) ? 8 : 16);
+	int mul = 16;
+	if (GAME_IS_CRUSADER) {
+		y /= 2;
+		mul /= 2;
+	}
 
 	if (item->_flags & FLG_FLIPPED)
 		return y - item->getShapeInfo()->_x * mul;
@@ -2946,10 +2963,18 @@ uint32 Item::I_legalCreateAtPoint(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(frame);
 	ARG_WORLDPOINT(point);
 
+	int32 x = point.getX();
+	int32 y = point.getY();
+	int32 z = point.getZ();
+
+	if (GAME_IS_CRUSADER) {
+		x *= 2;
+		y *= 2;
+	}
+
 	// check if item can exist
 	CurrentMap *cm = World::get_instance()->getCurrentMap();
-	bool valid = cm->isValidPosition(point.getX(), point.getY(), point.getZ(),
-	                                 shape, 0, 0, 0);
+	bool valid = cm->isValidPosition(x, y, z, shape, 0, 0, 0);
 	if (!valid)
 		return 0;
 
@@ -2960,7 +2985,7 @@ uint32 Item::I_legalCreateAtPoint(const uint8 *args, unsigned int /*argsize*/) {
 		return 0;
 	}
 	uint16 objID = newitem->getObjId();
-	newitem->move(point.getX(), point.getY(), point.getZ());
+	newitem->move(x, y, z);
 
 	uint8 buf[2];
 	buf[0] = static_cast<uint8>(objID);
@@ -3357,21 +3382,21 @@ uint32 Item::I_legalMoveToPoint(const uint8 *args, unsigned int argsize) {
 	ARG_UINT16(force); // 0/1
 	ARG_UINT16(unknown2); // always 0
 
+	int32 x = point.getX();
+	int32 y = point.getY();
+	int32 z = point.getZ();
+
 	if (GAME_IS_CRUSADER) {
-		point.setX(point.getX() * 2);
-		point.setY(point.getY() * 2);
+		x *= 2;
+		y *= 2;
 	}
 
 	if (!item)
 		return 0;
 	//! What should this do to ethereal items?
-
-//	if (item->canExistAt(point.getX(), point.getY(), point.getZ())) {
-//		item->move(point.getX(), point.getY(), point.getZ());
-//		return 1;
-//	} else {
-	return item->collideMove(point.getX(), point.getY(), point.getZ(), false, force == 1) == 0x4000;
-//	}
+	if (item->collideMove(x, y, z, false, force == 1) == 0x4000)
+		return 1;
+	return 0;
 }
 
 uint32 Item::I_legalMoveToContainer(const uint8 *args, unsigned int /*argsize*/) {
@@ -3537,6 +3562,7 @@ uint32 Item::I_shoot(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_UINT16(gravity); // either 2 (fish) or 1 (death disk, dart)
 	if (!item) return 0;
 
+	assert(GAME_IS_U8);
 	MissileTracker tracker(item, point.getX(), point.getY(), point.getZ(),
 	                       speed, gravity);
 	tracker.launchItem();
@@ -3707,6 +3733,8 @@ uint32 Item::I_getRange(const uint8 *args, unsigned int /*argsize*/) {
 	ARG_ITEM_FROM_ID(other);
 	if (!item) return 0;
 	if (!other) return 0;
+
+	assert(GAME_IS_U8);
 
 	return item->getRange(*other);
 }
