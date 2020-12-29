@@ -170,7 +170,7 @@ void Room::love4WalkToDoor() {
 void Room::love4TouchedHotspot0() {
 	if (_roomVar.love.walkingToDoor) {
 		loadActorAnimC(OBJECT_DOOR, "s3r5d1", 0x90, 0x99, &Room::love4DoorOpenedOrReached);
-		playSoundEffectIndex(SND_DOOR1);
+		playSoundEffectIndex(kSfxDoor);
 	}
 }
 

@@ -245,7 +245,7 @@ void Room::trial2DrewPhaserToShootGlob() {
 	int index = _roomVar.trial.globBeingShot - OBJECT_GLOB;
 
 	_awayMission->crewDirectionsAfterWalk[OBJECT_KIRK] = DIR_W;
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	if (_roomVar.trial.phaserOnKill)
 		showBitmapFor5Ticks(killPhaserAnims[index], 5);
 	else
@@ -277,7 +277,6 @@ void Room::trial2DrewPhaserToShootGlob() {
 		playVoc("GLOBEDIV");
 		loadActorAnimC(_roomVar.trial.globBeingShot, "globsp", globPositions[index].x, globPositions[index].y, &Room::trial2GlobDoneSplitting);
 	} else if (_awayMission->trial.globEnergyLevels[index] >= 4) {
-		playSoundEffectIndex(SND_BLANK_14);
 		playVoc("REDBALL");
 		loadActorAnimC(_roomVar.trial.globBeingShot, "globex", globPositions[index].x, globPositions[index].y, &Room::trial2GlobDoneExploding);
 	}

@@ -765,7 +765,7 @@ void Room::spockScan(int direction, TextRef text, bool changeDirection, bool fro
 		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_SPOCK] = direction;
 
 	loadActorAnim2(OBJECT_SPOCK, anim, -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 
 	if (text != -1)
 		showText(TX_SPEAKER_SPOCK, text, fromRDF);
@@ -780,7 +780,7 @@ void Room::mccoyScan(int direction, TextRef text, bool changeDirection, bool fro
 		_vm->_awayMission.crewDirectionsAfterWalk[OBJECT_MCCOY] = direction;
 
 	loadActorAnim2(OBJECT_MCCOY, anim, -1, -1, 0);
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 
 	if (text != -1)
 		showText(TX_SPEAKER_MCCOY, text, fromRDF);

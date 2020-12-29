@@ -148,7 +148,7 @@ void Room::veng0Tick50() {
 }
 
 void Room::veng0TouchedDoor() {
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	showRepublicMap(0, 0);
 }
 
@@ -231,7 +231,7 @@ void Room::veng0Timer0Expired() {
 	playVoc("MUR3E2");
 	loadActorAnim2(OBJECT_9, "s7r0s1", 0, 0xc7);
 	loadActorAnim2(OBJECT_10, "s7r0b1", 0, 0xc7);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 }
 
 void Room::veng0DoneCuttingBeam() {

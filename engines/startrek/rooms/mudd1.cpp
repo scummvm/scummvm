@@ -123,7 +123,7 @@ void Room::mudd1Tick1() {
 }
 
 void Room::mudd1Timer1Expired() {
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 }
 
 void Room::mudd1UseCommunicator() {

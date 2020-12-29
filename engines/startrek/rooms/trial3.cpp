@@ -134,12 +134,12 @@ void Room::trial3Klingon3BeamedIn() {
 void Room::trial3KlingonShootsSomeone1() {
 	_awayMission->trial.klingonShootIndex++;
 	if (_awayMission->trial.klingonShootIndex == 1) {
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t3phas04", 5);
 		loadActorAnimC(OBJECT_REDSHIRT, "rkillw", -1, -1, &Room::trial3RedshirtDoneDying);
 		_awayMission->redshirtDead = true;
 	} else if (_awayMission->trial.klingonShootIndex == 2) {
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t3phas05", 5);
 		playMidiMusicTracks(MIDITRACK_2, -1);
 		loadActorAnimC(OBJECT_KIRK, "kkillw", -1, -1, &Room::trial3KirkDoneDying);
@@ -166,12 +166,12 @@ void Room::trial3KlingonShootsSomeone2() {
 	// one line differs...
 	_awayMission->trial.klingonShootIndex++;
 	if (_awayMission->trial.klingonShootIndex == 1) {
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t3phas04", 5);
 		loadActorAnimC(OBJECT_REDSHIRT, "rkillw", -1, -1, &Room::trial3RedshirtDoneDying);
 		_awayMission->redshirtDead = true;
 	} else if (_awayMission->trial.klingonShootIndex == 2) {
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t3phas05", 5);
 		// NOTE: Only difference to "trial3KlingonShootsSomeone1" is this doesn't play a midi track?
 		loadActorAnimC(OBJECT_KIRK, "kkillw", -1, -1, &Room::trial3KirkDoneDying);
@@ -239,7 +239,7 @@ void Room::trial3CrewmanBeamedOut() {
 
 void Room::trial3Tick90() {
 	if ((!(_awayMission->trial.shotKlingons & 8) && _awayMission->trial.shotKlingonState != 20)) {
-		playSoundEffectIndex(SND_TRANSMAT);
+		playSoundEffectIndex(kSfxTransporterMaterialize);
 		playMidiMusicTracks(MIDITRACK_32, -1);
 		loadActorAnimC(OBJECT_KLINGON_1, "t3ktel", 0x57, 0xb1, &Room::trial3Klingon1BeamedIn);
 		_awayMission->trial.shotKlingonState = 21;
@@ -247,7 +247,6 @@ void Room::trial3Tick90() {
 }
 
 void Room::trial3TouchedHotspot3() { // Activated the explosive
-	playSoundEffectIndex(SND_BLANK_14);
 	playMidiMusicTracks(MIDITRACK_2, -1);
 	playVoc("BITOKIRK");
 	loadActorAnimC(OBJECT_EXPLOSION, "t3expl", 0, 0xc7, &Room::trial3KirkExploded);
@@ -314,7 +313,7 @@ void Room::trial3UseStunPhaserOnKlingon1() {
 
 void Room::trial3ReadyToShootKlingon1OnStun() {
 	if (_awayMission->trial.shotKlingonState == 21) {
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t3phas00", 5);
 		loadActorAnimC(OBJECT_KLINGON_1, "t3kstn", -1, -1, &Room::trial3Klingon1Shot);
 		_awayMission->disableInput = false;
@@ -334,7 +333,7 @@ void Room::trial3UseKillPhaserOnKlingon1() {
 
 void Room::trial3ReadyToShootKlingon1OnKill() {
 	if (_awayMission->trial.shotKlingonState == 21) {
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t3phas02", 5);
 		loadActorAnimC(OBJECT_KLINGON_1, "t3kdie", -1, -1, &Room::trial3Klingon1Shot);
 		_awayMission->disableInput = false;
@@ -413,7 +412,7 @@ void Room::trial3BeamToVlict() {
 	showText(TX_SPEAKER_UHURA, TX_TRI1U080);
 
 	_awayMission->disableInput = true;
-	playSoundEffectIndex(SND_TRANSDEM);
+	playSoundEffectIndex(kSfxTransporterDematerialize);
 
 	loadActorAnimC(OBJECT_KIRK,  "kteled", -1, -1, &Room::trial3CrewmanBeamedOut);
 	loadActorAnimC(OBJECT_SPOCK, "steled", -1, -1, &Room::trial3CrewmanBeamedOut);

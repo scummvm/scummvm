@@ -309,7 +309,7 @@ void Room::veng2Timer2Expired() { // Elasi hail the Enterprise if they haven't a
 }
 
 void Room::veng2TouchedDoor() {
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	_awayMission->rdfStillDoDefaultAction = true;
 }
 

@@ -132,7 +132,7 @@ void Room::veng8WalkToDoor() {
 
 void Room::veng8ReachedDoor() {
 	_awayMission->disableInput = true;
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	loadActorAnimC(OBJECT_DOOR, "s7r8d1", 0x12c, 0xac, &Room::veng8DoorOpened);
 }
 
@@ -342,12 +342,12 @@ void Room::veng8SpockReachedSlider() {
 void Room::veng8RedshirtReachedTransporter() {
 	showText(TX_SPEAKER_KIRK,  9, true);
 	loadActorAnimC(OBJECT_SPOCK, "susehn", -1, -1, &Room::veng8SpockPulledSliderToBeamOut);
-	playSoundEffectIndex(SND_TRANSENE);
+	playSoundEffectIndex(kSfxTransporterEnergize);
 }
 
 void Room::veng8SpockPulledSliderToBeamOut() {
 	loadActorAnimC(OBJECT_REDSHIRT, "rteled", -1, -1, &Room::veng8RedshirtBeamedOut);
-	playSoundEffectIndex(SND_TRANSDEM);
+	playSoundEffectIndex(kSfxTransporterDematerialize);
 	_awayMission->redshirtDead = true;
 }
 
@@ -360,13 +360,13 @@ void Room::veng8RedshirtBeamedOut() {
 	showText(TX_SPEAKER_KIJE, 38, true);
 	showText(TX_SPEAKER_KIRK,  7, true);
 	loadActorAnimC(OBJECT_SPOCK, "susehn", -1, -1, &Room::veng8SpockPulledSliderToBeamIn);
-	playSoundEffectIndex(SND_TRANSENE);
+	playSoundEffectIndex(kSfxTransporterEnergize);
 }
 
 void Room::veng8SpockPulledSliderToBeamIn() {
 	_awayMission->redshirtDead = false;
 	loadActorAnimC(OBJECT_REDSHIRT, "rtele", 0xc8, 0x81, &Room::veng8RedshirtBeamedIn);
-	playSoundEffectIndex(SND_TRANSMAT);
+	playSoundEffectIndex(kSfxTransporterMaterialize);
 }
 
 void Room::veng8RedshirtBeamedIn() {

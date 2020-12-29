@@ -380,7 +380,7 @@ void Room::tug2KirkGotWires() {
 		loadActorAnim2(OBJECT_BRIG, "zap", 0, 0, 1);
 		playVoc("NM8EXPLO");
 		loadActorAnim2(OBJECT_BOMB, "t2bbo", -3, 1, 0);
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		playSoundEffectIndex(SND_BLANK_16);
 		_awayMission->tug.field35 = 6;
 		loadActorStandAnim(OBJECT_WIRE);
@@ -407,7 +407,7 @@ void Room::tug2UseKirkOnButton() {
 
 void Room::tug2KirkReachedButton() {
 	loadActorAnim2(OBJECT_KIRK, "kusehe", -1, -1, 15);
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 }
 
 void Room::tug2UseSpockOnButton() {
@@ -420,7 +420,7 @@ void Room::tug2UseSpockOnButton() {
 
 void Room::tug2SpockReachedButton() {
 	loadActorAnim2(OBJECT_SPOCK, "susehe", -1, -1, 17);
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 }
 
 void Room::tug2UseMccoyOnButton() {
@@ -433,7 +433,7 @@ void Room::tug2UseMccoyOnButton() {
 
 void Room::tug2MccoyReachedButton() {
 	loadActorAnim2(OBJECT_MCCOY, "musehe", -1, -1, 19);
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 }
 
 void Room::tug2UseRedshirtOnButton() {
@@ -446,7 +446,7 @@ void Room::tug2UseRedshirtOnButton() {
 
 void Room::tug2RedshirtReachedButton() {
 	loadActorAnim2(OBJECT_REDSHIRT, "rusehe", -1, -1, 21);
-	playSoundEffectIndex(SND_07);
+	playSoundEffectIndex(kSfxButton);
 }
 
 void Room::tug2TurnedOffForceField() {
@@ -524,7 +524,7 @@ void Room::tug2KirkShootGuard1() {
 	if (_awayMission->tug.guard1Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_1, "p5stun", -1, -1, 0);
 		_awayMission->tug.guard1Status = GUARDSTAT_STUNNED;
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t2beem03", 5);
 		tug2CheckEndFirefight();
 	}
@@ -551,7 +551,7 @@ void Room::tug2KirkShootGuard2() {
 	if (_awayMission->tug.guard2Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_2, "p6stun", -1, -1, 0);
 		_awayMission->tug.guard2Status = GUARDSTAT_STUNNED;
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t2beem02", 5);
 		tug2CheckEndFirefight();
 	}
@@ -579,7 +579,7 @@ void Room::tug2KirkKillGuard1() {
 	if (_awayMission->tug.guard1Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_1, "p5kill", -1, -1, 0);
 		_awayMission->tug.guard1Status = GUARDSTAT_DEAD;
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t2beem05", 5);
 		tug2CheckEndFirefight();
 	}
@@ -607,7 +607,7 @@ void Room::tug2KirkKillGuard2() {
 	if (_awayMission->tug.guard2Status == GUARDSTAT_UP) {
 		loadActorAnim2(OBJECT_GUARD_2, "p6kill", -1, -1, 0);
 		_awayMission->tug.guard2Status = GUARDSTAT_DEAD;
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		showBitmapFor5Ticks("t2beem04", 5);
 		tug2CheckEndFirefight();
 	}
@@ -728,7 +728,7 @@ void Room::tug2Timer0Expired() {
 		// Guard misses and shoots wall
 		loadActorAnim2(OBJECT_13, "wallht", 0, 0, 0);
 		showBitmapFor5Ticks("t2beem00", 5);
-		playSoundEffectIndex(SND_PHASSHOT);
+		playSoundEffectIndex(kSfxPhaser);
 		loadActorAnim2(OBJECT_GUARD_2, "p6fire", -1, -1, 0);
 		_awayMission->tug.field4e = _roomVar.tug.elasiPhaserOnKill;
 		_awayMission->timers[0] = 60;
@@ -848,7 +848,7 @@ void Room::tug2GuardShootsCrewman() {
 		loadActorAnim2(_roomVar.tug.shootingTarget, anim, -1, -1, 26);
 
 	showBitmapFor5Ticks(bitmapArray[_roomVar.tug.shootingTarget], 5);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 
 	if (_roomVar.tug.shootingObject == OBJECT_GUARD_1)
 		loadActorAnim2(OBJECT_GUARD_1, "p5fire", -1, -1, 0);

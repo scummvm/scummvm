@@ -113,7 +113,7 @@ void Room::veng5WalkToDoor() {
 
 void Room::veng5ReachedDoor() {
 	_awayMission->disableInput = true;
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	loadActorAnimC(OBJECT_DOOR, "s7r5d1", 0x6b, 0x8c, &Room::veng5DoorOpened);
 	walkCrewman(OBJECT_KIRK, 0x64, 0x8e);
 }
@@ -123,7 +123,7 @@ void Room::veng5DoorOpened() {
 }
 
 void Room::veng5TouchedTurboliftDoor() {
-	playSoundEffectIndex(SND_DOOR1);
+	playSoundEffectIndex(kSfxDoor);
 	showRepublicMap(5, 1);
 }
 
@@ -186,7 +186,7 @@ void Room::veng5ReachedPositionToShootDebris() {
 
 void Room::veng5DrewPhaser() {
 	loadActorAnimC(OBJECT_POWER_PACK, "s7r5p1", 0xb1, 0x89, &Room::veng5VaporizedDebris);
-	playSoundEffectIndex(SND_PHASSHOT);
+	playSoundEffectIndex(kSfxPhaser);
 	loadActorStandAnim(OBJECT_DEBRIS);
 }
 

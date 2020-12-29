@@ -277,7 +277,7 @@ void Room::mudd3ReadyToHookUpTricorders() {
 	_awayMission->timers[1] = 50;
 
 	loadActorAnim2(OBJECT_SPOCK, "sscans");
-	playSoundEffectIndex(SND_TRICORDER);
+	playSoundEffectIndex(kSfxTricorder);
 }
 
 void Room::mudd3Timer1Expired() { // Tricorders ready for use again
