@@ -139,37 +139,8 @@ void Interface::drawLine(int32 startWidth, int32 startHeight, int32 endWidth, in
 	}
 }
 
-// TODO: this should get replaced by the surface blitting functions
 void Interface::blitBox(const Common::Rect &rect, const Graphics::ManagedSurface &source, Graphics::ManagedSurface &dest) {
-	const int32 left = MAX((int32)SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
-	const int32 top = MAX((int32)SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
-	const int32 right = MIN((int32)SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
-	const int32 bottom = MIN((int32)SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
-
-	if (left > SCREEN_TEXTLIMIT_RIGHT) {
-		return;
-	}
-	if (right < SCREEN_TEXTLIMIT_LEFT) {
-		return;
-	}
-	if (top > SCREEN_TEXTLIMIT_BOTTOM) {
-		return;
-	}
-	if (bottom < SCREEN_TEXTLIMIT_TOP) {
-		return;
-	}
-
-	const int8 *s = (const int8 *)source.getBasePtr(left, top);
-	int8 *d = (int8 *)dest.getBasePtr(left, top);
-
-	const int32 width = right - left + 1;
-	const int32 height = bottom - top + 1;
-
-	for (int32 j = 0; j < height; j++) {
-		memcpy(d, s, width);
-		d += SCREEN_WIDTH;
-		s += SCREEN_WIDTH;
-	}
+	dest.blitFrom(source, rect, Common::Point(rect.left, rect.top));
 }
 
 void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
@@ -203,7 +174,7 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 				pos[x] = color + color2;
 			}
 		}
-		pos += SCREEN_WIDTH;
+		pos += _engine->frontVideoBuffer.pitch;
 	}
 }
 
