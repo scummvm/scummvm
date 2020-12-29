@@ -34,7 +34,7 @@ const int32 RIGHT = 2;  // 0010
 const int32 TOP = 4;    // 0100
 const int32 BOTTOM = 8; // 1000
 
-int32 Interface::checkClipping(int32 x, int32 y) {
+int32 Interface::checkClipping(int32 x, int32 y) const {
 	int32 code = INSIDE;
 	if (x < textWindow.left) {
 		code |= LEFT;
