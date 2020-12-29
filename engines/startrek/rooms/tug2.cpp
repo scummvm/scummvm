@@ -381,7 +381,6 @@ void Room::tug2KirkGotWires() {
 		playVoc("NM8EXPLO");
 		loadActorAnim2(OBJECT_BOMB, "t2bbo", -3, 1, 0);
 		playSoundEffectIndex(kSfxPhaser);
-		playSoundEffectIndex(SND_BLANK_16);
 		_awayMission->tug.field35 = 6;
 		loadActorStandAnim(OBJECT_WIRE);
 		giveItem(OBJECT_IWIRING);

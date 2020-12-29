@@ -305,7 +305,6 @@ void Room::tug3TalkToElasi1() {
 void Room::tug3Elasi1DrewPhaser() {
 	playSoundEffectIndex(kSfxPhaser);
 	showBitmapFor5Ticks("t3beem41", 13);
-	playSoundEffectIndex(SND_BLANK_16);
 	loadActorAnim2(OBJECT_12, "sparks", 0xa0, 0xad, 4);
 }
 
