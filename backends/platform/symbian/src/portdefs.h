@@ -171,6 +171,7 @@ namespace std
 extern "C" float roundf (float x); // ultima engine
 extern "C" double nearbyint(double x); // ultima engine
 extern "C" double round(double x); // ultima engine
+extern "C" double fmax (double x, double y);
 
 
 #ifndef signbit
@@ -184,6 +185,8 @@ extern "C" int __signbit(double);
 extern "C" int __signbitf(float);
 extern "C" int __signbitl(long double);
 extern "C" float truncf(float);
+extern "C"  float fminf (float x, float y);
+extern "C" float fmaxf (float x, float y);
 
 #ifndef __WINS__
 #define USE_ARM_GFX_ASM
