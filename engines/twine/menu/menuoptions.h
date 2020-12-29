@@ -23,6 +23,7 @@
 #ifndef TWINE_MENUOPTIONS_H
 #define TWINE_MENUOPTIONS_H
 
+#include "common/rect.h"
 #define ONSCREENKEYBOARD_WIDTH 14
 #define ONSCREENKEYBOARD_HEIGHT 5
 
@@ -46,7 +47,7 @@ private:
 	bool enterPlayerName(int32 textIdx);
 	void drawSelectableCharacters();
 	void drawPlayerName(int32 centerx, int32 top, int32 type);
-	void drawSelectableCharacter(int32 x, int32 y);
+	void drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyRect);
 	int chooseSave(int textIdx, bool showEmptySlots = false);
 
 public:

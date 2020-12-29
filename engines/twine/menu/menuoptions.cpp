@@ -124,7 +124,7 @@ void MenuOptions::showEndSequence() {
 	_engine->setPalette(_engine->_screens->paletteRGBA);
 }
 
-void MenuOptions::drawSelectableCharacter(int32 x, int32 y) {
+void MenuOptions::drawSelectableCharacter(int32 x, int32 y, Common::Rect &dirtyRect) {
 	const int32 borderTop = 200;
 	const int32 borderLeft = 25;
 	const int32 halfButtonHeight = 25;
@@ -164,7 +164,11 @@ void MenuOptions::drawSelectableCharacter(int32 x, int32 y) {
 	const int32 textY = centerY - _engine->_text->getCharHeight(character) / 2;
 	_engine->_text->drawText(textX, textY, buffer);
 
-	_engine->copyBlockPhys(rect);
+	if (dirtyRect.isEmpty()) {
+		dirtyRect = rect;
+	} else {
+		dirtyRect.extend(rect);
+	}
 }
 
 void MenuOptions::setOnScreenKeyboard(int x, int y) {
@@ -194,11 +198,16 @@ void MenuOptions::setOnScreenKeyboard(int x, int y) {
 }
 
 void MenuOptions::drawSelectableCharacters() {
+	Common::Rect dirtyRect;
 	for (int8 x = 0; x < ONSCREENKEYBOARD_WIDTH; x++) {
 		for (int8 y = 0; y < ONSCREENKEYBOARD_HEIGHT; y++) {
-			drawSelectableCharacter(x, y);
+			drawSelectableCharacter(x, y, dirtyRect);
 		}
 	}
+	if (dirtyRect.isEmpty()) {
+		return;
+	}
+	_engine->copyBlockPhys(dirtyRect);
 }
 
 void MenuOptions::drawPlayerName(int32 centerx, int32 top, int32 type) {
