@@ -138,10 +138,9 @@ mmp_template = """
 
 // *** Definitions
 
-#include "Symbian_release_config.h"
 
 TARGET          ScummVM%s.exe
-TARGETPATH      sys\bin
+TARGETPATH      sys\\bin
 TARGETTYPE      exe
 OPTION			GCCE -Wno-multichar -Wno-reorder -Wno-unused -Wno-format -fsigned-char \
  -fno-asynchronous-unwind-tables -std=c++11 // -ffreestanding -fno-sized-deallocation //--verbose //-flto -fuse-linker-plugin //-Wl, -v  -fbuiltin 
@@ -160,7 +159,7 @@ LANG                    SC
 END
 
 START RESOURCE  ScummVM%s_reg.rss
-TARGETPATH              \private\10003a3f\apps
+TARGETPATH              \private\\10003a3f\\apps
 END
 
 START RESOURCE  ScummVM%s_loc.rss
@@ -173,10 +172,10 @@ EPOCHEAPSIZE	5000000 64000000
 
 
 #define SCUMMVM_PT_%s
-#include "../mmps/macros.mmh"
+#include "../mmp/macros.mmh"
 #include "ScummVM_common.mmh" // must be above engines.mmh
 
-#include "../mmps/engines.mmh"
+#include "../mmp/engines.mmh"
 
 """
 # ---------------------------
