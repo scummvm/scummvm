@@ -28,9 +28,9 @@ build_err = "build.err"
 build = 'full'
 # build = 'release'
 
-uids = ("0xA0000657", "0xA0000658", "0x2006FE7C", "0x2006FE7D", "0x2006FE7E", "0x2006FE7F")
+uids = ("0xA0000657", "0xA0000658", "0x2006FE7C", "0x2006FE7D", "0x2006FE7E", "0x2006FE7F", "0x2006FE80")
 # Test uids 3
-uids_tests = ("0xAA000657", "0xAA000658", "0xA006FE7C", "0xA006FE7D", "0xA006FE7E", "0xA006FE7F")
+uids_tests = ("0xAA000657", "0xAA000658", "0xA006FE7C", "0xA006FE7D", "0xA006FE7E", "0xA006FE7F", "0xA006FE80")
 
 def get_UIDs(build):
    if build == 'full':

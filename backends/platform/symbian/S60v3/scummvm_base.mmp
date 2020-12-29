@@ -1,8 +1,5 @@
 /* ScummVM - Graphic Adventure Engine
- * Copyright (C) 2003-2005 Andreas 'Sprawl' Karlsson - Original EPOC port, ESDL
- * Copyright (C) 2003-2005 Lars 'AnotherGuest' Persson - Original EPOC port, Audio System
- * Copyright (C) 2005 Jurgen 'SumthinWicked' Braam - EPOC/CVS maintainer
- * Copyright (C) 2005-2015 The ScummVM Team
+ * Copyright (C) 2020 Stryzhniou Fiodar
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -32,7 +29,7 @@
 
 TARGET          scummvm_base.lib
 TARGETTYPE      lib
-#include "config.mmh"
+#include "build_config.mmh"
 
 // compiler must use png.h from libpng.lib instead ScummVM's
 OPTION			GCCE -I'/Symbian/S60_5th_Edition_SDK_v1.0/epoc32/include/png' -fstack-usage -fdump-ipa-cgraph
@@ -64,7 +61,7 @@ MACRO		USE_A52
 #define SCUMMVM_PT_2
 #define SCUMMVM_PT_3
 #define SCUMMVM_PT_4
-#include "../mmps/macros.mmh"
+#include "../mmp/macros.mmh"
 //STOP_AUTO_MACROS_MASTER//
 
 // *** Include paths
@@ -77,8 +74,8 @@ USERINCLUDE		\epoc32\include\mpeg2dec
 
 
 SOURCEPATH ..\..\..\..\common
-//START_AUTO_OBJECTS_COMMON_// Updated @ Thu Dec 10 22:42:12 2015
 SOURCE archive.cpp
+SOURCE base-str.cpp
 SOURCE config-manager.cpp
 SOURCE coroutines.cpp
 SOURCE dcl.cpp
@@ -142,7 +139,6 @@ SOURCE pixelformat.cpp
 SOURCE primitives.cpp
 SOURCE scaler.cpp
 SOURCE scaler\thumbnail_intern.cpp
-SOURCE sjis.cpp
 SOURCE surface.cpp
 SOURCE transform_struct.cpp
 SOURCE transform_tools.cpp
@@ -297,6 +293,7 @@ SOURCE softsynth\fmtowns_pc98\towns_pc98_fmsynth.cpp // Included since its exclu
 //#if defined (WINS)
 SOURCE rate.cpp			// WINS emulator version: add regular .cpp
 //#else
+//ARM version is broken. Do not use.
 //SOURCE rate_arm.cpp		// ARM version: add ASM .cpp wrapper
 //SOURCE rate_arm_asm.s	// ARM version: add ASM routines
 //#endif
@@ -312,6 +309,7 @@ SOURCE psx_decoder.cpp
 SOURCE qt_decoder.cpp
 SOURCE smk_decoder.cpp
 SOURCE video_decoder.cpp
+SOURCE mve_decoder.cpp
 //STOP_AUTO_OBJECTS_VIDEO_//
 
 // add a few files manually, since they are not parsed from modules.mk files
@@ -400,7 +398,7 @@ SOURCE input-watcher.cpp remap-widget.cpp standard-actions.cpp virtual-mouse.cpp
 SOURCEPATH ..\..\..\..\base
 SOURCE test_new_standards.cpp
 SOURCEPATH ..\..\..\..\common
-SOURCE achievements.cpp encoding.cpp events.cpp str-enc.cpp text-to-speech.cpp unicode-bidi.cpp
+SOURCE achievements.cpp events.cpp str-enc.cpp text-to-speech.cpp unicode-bidi.cpp
 SOURCEPATH ..\..\..\..\engines
 SOURCE metaengine.cpp
 SOURCEPATH ..\..\..\..\graphics
@@ -411,15 +409,12 @@ SOURCEPATH ..\..\..\..\gui
 SOURCE unknown-game-dialog.cpp
 SOURCEPATH ..\..\..\..\image\codecs
 SOURCE jyv1.cpp
-SOURCEPATH ..\..\..\..\video
-SOURCE mve_decoder.cpp
 SOURCEPATH ..\..\..\keymapper
 SOURCE hardware-input.cpp
 SOURCEPATH ..\..\..\..\audio\soundfont
 SOURCE rawfile.cpp rifffile.cpp sf2file.cpp synthfile.cpp
+SOURCE vgmcoll.cpp vgminstrset.cpp vgmitem.cpp vgmsamp.cpp
 SOURCEPATH ..\..\..\..\audio\soundfont\vab
 SOURCE psxspu.cpp vab.cpp
-SOURCEPATH ..\..\..\..\audio\soundfont
-SOURCE vgmcoll.cpp vgminstrset.cpp vgmitem.cpp vgmsamp.cpp
 SOURCEPATH ..\..\..\audiocd
 SOURCE audiocd-stream.cpp
