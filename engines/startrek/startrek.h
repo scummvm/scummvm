@@ -276,7 +276,7 @@ private:
 	void wrongDestinationRandomEncounter();
 	void bridgeCrewAction(int crewId);
 	void contactTargetAction();
-	void orbitPlanetSequence();
+	void orbitPlanetSequence(int sequenceId);
 	void negotiateWithElasiCereth();
 	void hailTheMasada();
 
