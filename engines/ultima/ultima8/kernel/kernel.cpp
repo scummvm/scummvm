@@ -325,6 +325,7 @@ void Kernel::save(Common::WriteStream *ws) {
 	ws->writeUint32LE(_processes.size());
 	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		const Std::string & classname = (*it)->GetClassType()._className; // virtual
+		assert(classname.size());
 
 		Std::map<Common::String, ProcessLoadFunc>::iterator iter;
 		iter = _processLoaders.find(classname);
@@ -357,6 +358,7 @@ bool Kernel::load(Common::ReadStream *rs, uint32 version) {
 
 Process *Kernel::loadProcess(Common::ReadStream *rs, uint32 version) {
 	const uint16 classlen = rs->readUint16LE();
+	assert(classlen > 0);
 	char *buf = new char[classlen + 1];
 	rs->read(buf, classlen);
 	buf[classlen] = 0;
@@ -371,7 +373,6 @@ Process *Kernel::loadProcess(Common::ReadStream *rs, uint32 version) {
 		perr << "Unknown Process class: " << classname << Std::endl;
 		return nullptr;
 	}
-
 
 	_loading = true;
 
