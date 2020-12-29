@@ -34,15 +34,15 @@ def run(build, pkgs):
    SafeWriteFile("build.log", log)
    SafeWriteFile("build.err", '')
    create_mmps(build, pkgs)
-   # create_engine_mmps(build)
+   create_engine_mmps(build)
    
-   # log = "Build engines started at: %s\n" %datetime.now()
-   # SafeWriteFile("build.log", log, 'a')
-   # build_mmp()
-   # log = "Build engines ended at: %s\n" %datetime.now()
-   # SafeWriteFile("build.log", log, 'a')
+   log = "Build engines started at: %s\n" %datetime.now()
+   SafeWriteFile("build.log", log, 'a')
+   build_mmp()
+   log = "Build engines ended at: %s\n" %datetime.now()
+   SafeWriteFile("build.log", log, 'a')
    
-   # build_apps(pkgs)
-   # create_installers(pkgs)
+   build_apps(pkgs)
+   create_installers(pkgs)
 
    
