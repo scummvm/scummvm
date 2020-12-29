@@ -623,8 +623,11 @@ void OptionsDialog::apply() {
 					sm++;
 				}
 			}
-			if (!isSet)
+			if (!isSet) {
 				ConfMan.removeKey("shader", _domain);
+				if (g_system->getShader() != g_system->getDefaultShader())
+					graphicsModeChanged = true;
+			}
 		} else {
 			ConfMan.removeKey("shader", _domain);
 		}
@@ -642,8 +645,8 @@ void OptionsDialog::apply() {
 			g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen", _domain));
 		if (ConfMan.hasKey("filtering"))
 			g_system->setFeatureState(OSystem::kFeatureFilteringMode, ConfMan.getBool("filtering", _domain));
-		if (ConfMan.hasKey("shader"))
-			g_system->setShader(ConfMan.get("shader", _domain).c_str());
+
+		g_system->setShader(ConfMan.get("shader", _domain).c_str());
 
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
