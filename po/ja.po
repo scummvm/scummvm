@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-25 22:12+0000\n"
-"PO-Revision-Date: 2020-12-24 23:23+0000\n"
+"PO-Revision-Date: 2020-12-29 16:23+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -306,7 +306,7 @@ msgstr "キーマップ"
 
 #: gui/editgamedialog.cpp:246 gui/options.cpp:1835 engines/dialogs.cpp:333
 msgid "Backend"
-msgstr ""
+msgstr "バックエンド"
 
 #: gui/editgamedialog.cpp:260 gui/options.cpp:1849 engines/dialogs.cpp:301
 msgid "Audio"
@@ -6008,15 +6008,15 @@ msgstr "隠しファイルを表示する"
 
 #: engines/scumm/help.cpp:95
 msgid "Start the debugger"
-msgstr ""
+msgstr "デバッガーを起動"
 
 #: engines/scumm/help.cpp:96
 msgid "Show memory consumption"
-msgstr ""
+msgstr "メモリー消費量を表示"
 
 #: engines/scumm/help.cpp:97
 msgid "Run in fast mode (*)"
-msgstr ""
+msgstr "高速モードで実行(*)"
 
 #: engines/scumm/help.cpp:98
 msgid "Run in really fast mode (*)"
@@ -6509,6 +6509,8 @@ msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
 msgstr ""
+"このAMIGA版は(少なくとも)以下のファイルが存在しません：\n"
+"\n"
 
 #: engines/scumm/imuse/drivers/amiga.cpp:659
 msgid ""
@@ -6516,6 +6518,9 @@ msgid ""
 "Please copy these file(s) into the game data directory.\n"
 "\n"
 msgstr ""
+"\n"
+"これらのファイルを、ゲームデータが存在するディレクトリーにコピーしてください。\n"
+"\n"
 
 #: engines/sherlock/detection.cpp:60
 msgid "Pixellated scene transitions"
