@@ -41,8 +41,7 @@ namespace Ultima {
 namespace Ultima8 {
 
 AvatarMoverProcess::AvatarMoverProcess() : Process(),
-		_lastFrame(0), _lastAttack(0), _idleTime(0),
-		_movementFlags(0) {
+		_lastAttack(0), _idleTime(0), _movementFlags(0) {
 	_type = 1; // CONSTANT! (type 1 = persistent)
 }
 
@@ -52,12 +51,6 @@ AvatarMoverProcess::~AvatarMoverProcess() {
 
 void AvatarMoverProcess::run() {
 	Kernel *kernel = Kernel::get_instance();
-	uint32 framenum = kernel->getFrameNum();
-
-	// only run once per frame
-	if (framenum == _lastFrame)
-		return;
-	_lastFrame = framenum;
 
 	// busy, so don't move
 	if (kernel->getNumProcesses(1, ActorAnimProcess::ACTOR_ANIM_PROC_TYPE) > 0) {
@@ -66,6 +59,7 @@ void AvatarMoverProcess::run() {
 	}
 
 	MainActor *avatar = getMainActor();
+	assert(avatar);
 
 	if (avatar->getLastAnim() == Animation::hang) {
 		handleHangingMode();

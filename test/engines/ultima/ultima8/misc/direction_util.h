@@ -48,4 +48,16 @@ class U8DirectionTestSuite : public CxxTest::TestSuite {
 		_test_direction_get_worlddir(dirmode16);
 	}
 
+	void test_direction_conversions() {
+		TS_ASSERT_EQUALS(Ultima::Ultima8::Direction_ToCentidegrees(Ultima::Ultima8::dir_north), 0);
+		TS_ASSERT_EQUALS(Ultima::Ultima8::Direction_ToCentidegrees(Ultima::Ultima8::dir_nne), 2250);
+		TS_ASSERT_EQUALS(Ultima::Ultima8::Direction_ToCentidegrees(Ultima::Ultima8::dir_east), 9000);
+		TS_ASSERT_EQUALS(Ultima::Ultima8::Direction_ToCentidegrees(Ultima::Ultima8::dir_west), 27000);
+
+		TS_ASSERT_EQUALS(Ultima::Ultima8::Direction_FromCentidegrees(2250), Ultima::Ultima8::dir_nne);
+		TS_ASSERT_EQUALS(Ultima::Ultima8::Direction_FromCentidegrees(2249), Ultima::Ultima8::dir_nne);
+		TS_ASSERT_EQUALS(Ultima::Ultima8::Direction_FromCentidegrees(2251), Ultima::Ultima8::dir_nne);
+		TS_ASSERT_EQUALS(Ultima::Ultima8::Direction_FromCentidegrees(4500), Ultima::Ultima8::dir_northeast);
+	}
+
 };

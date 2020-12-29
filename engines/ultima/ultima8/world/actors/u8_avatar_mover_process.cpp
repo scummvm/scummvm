@@ -161,7 +161,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 				return;
 
 			waitFor(avatar->doAnim(Animation::attack, mousedir));
-			_lastAttack = _lastFrame;
+			_lastAttack = Kernel::get_instance()->getFrameNum();
 
 			// attacking gives str/dex
 			avatar->accumulateStr(1 + (getRandom() % 2));
@@ -193,7 +193,7 @@ void U8AvatarMoverProcess::handleCombatMode() {
 				return;
 
 			waitFor(avatar->doAnim(Animation::kick, mousedir));
-			_lastAttack = _lastFrame;
+			_lastAttack = Kernel::get_instance()->getFrameNum();
 
 			// kicking gives str/dex
 			avatar->accumulateStr(1 + (getRandom() % 2));
@@ -750,7 +750,7 @@ void U8AvatarMoverProcess::jump(Animation::Sequence action, Direction direction)
 
 bool U8AvatarMoverProcess::canAttack() {
 	MainActor *avatar = getMainActor();
-	return (_lastFrame > _lastAttack + (25 - avatar->getDex()));
+	return (Kernel::get_instance()->getFrameNum() > _lastAttack + (25 - avatar->getDex()));
 }
 
 void U8AvatarMoverProcess::tryAttack() {

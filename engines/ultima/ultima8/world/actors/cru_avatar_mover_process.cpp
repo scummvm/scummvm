@@ -41,11 +41,45 @@ namespace Ultima8 {
 // p_dynamic_cast stuff
 DEFINE_RUNTIME_CLASSTYPE_CODE(CruAvatarMoverProcess)
 
-CruAvatarMoverProcess::CruAvatarMoverProcess() : AvatarMoverProcess() {
+CruAvatarMoverProcess::CruAvatarMoverProcess() : AvatarMoverProcess(), _avatarAngle(0) {
 }
 
 
 CruAvatarMoverProcess::~CruAvatarMoverProcess() {
+}
+
+
+void CruAvatarMoverProcess::run() {
+
+	// Even when we are not doing anything (because we're waiting for an anim)
+	// we check if the combat angle needs updating - this keeps it smooth.
+
+	MainActor *avatar = getMainActor();
+	assert(avatar);
+
+	if (avatar->isInCombat() && !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
+		// See comment on _avatarAngle in header about these constants
+		if (hasMovementFlags(MOVE_TURN_LEFT)) {
+			if (hasMovementFlags(MOVE_RUN))
+				_avatarAngle -= 375;
+			else
+				_avatarAngle -= 150;
+
+			if (_avatarAngle < 0)
+				_avatarAngle += 36000;
+		}
+		if (hasMovementFlags(MOVE_TURN_RIGHT)) {
+			if (hasMovementFlags(MOVE_RUN))
+				_avatarAngle += 375;
+			else
+				_avatarAngle += 150;
+
+			_avatarAngle = _avatarAngle % 36000;
+		}
+	}
+
+	// Now do the regular process
+	AvatarMoverProcess::run();
 }
 
 
@@ -57,7 +91,8 @@ void CruAvatarMoverProcess::handleHangingMode() {
 void CruAvatarMoverProcess::handleCombatMode() {
 	MainActor *avatar = getMainActor();
 	const Animation::Sequence lastanim = avatar->getLastAnim();
-	Direction direction = avatar->getDir();
+	Direction direction = Direction_FromCentidegrees(_avatarAngle);
+	const Direction curdir = avatar->getDir();
 	const bool stasis = Ultima8Engine::get_instance()->isAvatarInStasis();
 
 	// never idle when in combat
@@ -70,13 +105,6 @@ void CruAvatarMoverProcess::handleCombatMode() {
 	// can't do any new actions if in stasis
 	if (stasis)
 		return;
-
-	bool moving = (lastanim == Animation::advance || lastanim == Animation::retreat);
-
-	//  if we are trying to move, allow change direction only after move occurs to avoid spinning
-	if (moving || !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
-		direction = getTurnDirForTurnFlags(direction, avatar->animDirMode(Animation::combatStand));
-	}
 
 	if (hasMovementFlags(MOVE_FORWARD)) {
 		Animation::Sequence nextanim;
@@ -107,9 +135,8 @@ void CruAvatarMoverProcess::handleCombatMode() {
 
 	int x, y;
 	getMovementFlagAxes(x, y);
-
 	if (x != 0 || y != 0) {
-		Direction nextdir = Direction_Get(y, x, dirmode_8dirs);
+		Direction nextdir = Direction_FromCentidegrees(_avatarAngle);
 
 		if (checkTurn(nextdir, true))
 			return;
@@ -135,8 +162,13 @@ void CruAvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
-	if (checkTurn(direction, false))
+	if (curdir != direction) {
+		// Slight hack: don't "wait" for this - we want to keep turning smooth,
+		// and the process will not do anything else if an anim is active, so
+		// it's safe.
+		avatar->doAnim(Animation::combatStand, direction);
 		return;
+	}
 
 	// not doing anything in particular? stand
 	if (lastanim != Animation::combatStand) {
@@ -160,6 +192,9 @@ void CruAvatarMoverProcess::handleNormalMode() {
 		avatar->clearActorFlag(Actor::ACT_COMBATRUN);
 		avatar->toggleInCombat();
 	}
+
+	// In normal mode the internal angle is set based on the avatar direction
+	_avatarAngle = Direction_ToCentidegrees(direction);
 
 	// If Avatar has fallen down and not dead, get up!
 	if (standUpIfNeeded(direction))

@@ -66,8 +66,8 @@ public:
 	enum MovementFlags {
 		MOVE_MOUSE_DIRECTION = 0x001,
 		MOVE_RUN = 0x002,
-		MOVE_STEP = 0x0004,
-		MOVE_JUMP = 0x0008,
+		MOVE_STEP = 0x0004, // also side-steps in crusader
+		MOVE_JUMP = 0x0008, // used for roll in crusader (when combined with left/right), and crouch (when combined with back)
 
 		// Tank controls 
 		MOVE_TURN_LEFT = 0x0010,
@@ -109,8 +109,6 @@ protected:
 
 	// Adjust the direction based on the current turn flags
 	Direction getTurnDirForTurnFlags(Direction direction, DirectionMode dirmode);
-
-	uint32 _lastFrame;
 
 	// attack speed limiting
 	uint32 _lastAttack;

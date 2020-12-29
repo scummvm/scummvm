@@ -43,12 +43,27 @@ public:
 	// p_dynamic_cast stuff
 	ENABLE_RUNTIME_CLASSTYPE()
 
+	void run() override;
+
 	bool loadData(Common::ReadStream *rs, uint32 version);
 	void saveData(Common::WriteStream *ws) override;
 
 	void tryAttack() override;
 
+	double getAvatarAngleDegrees() const {
+		return static_cast<double>(_avatarAngle) / 100.0;
+	}
+
 private:
+
+	/**
+	* Angle of avatar in centidegrees (1/100deg).  The original game runs the keyboard
+	* process 45 times per second and rotates the crosshair by 2 (regular) or
+	* 5 ('run') degrees each time. This process runs 60 times per second, so we choose a
+	* multiplier that can use integers - rotating 3.75 or 1.5 degrees each time.
+	*/
+	int32 _avatarAngle;
+
 	void handleHangingMode() override;
 	void handleCombatMode() override;
 	void handleNormalMode() override;

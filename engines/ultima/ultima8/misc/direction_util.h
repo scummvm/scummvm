@@ -59,6 +59,17 @@ inline int Direction_YFactor(Direction dir) {
 		return _y_fact16[(int)dir];
 }
 
+//! Convert a direction to hundreths of degrees (rotated by 90 degrees)
+inline int32 Direction_ToCentidegrees(Direction dir) {
+	return static_cast<int>(dir) * 2250;
+}
+
+//! Convert from centidegrees to a direction.
+inline Direction Direction_FromCentidegrees(int32 cds) {
+	return static_cast<Direction>(((cds + 1125) / 2250) % 16);
+}
+
+
 /**
  *  Return the direction for a given slope (0-7).
  *  NOTE:  Assumes cartesian coords, NOT screen coords. (which have y
