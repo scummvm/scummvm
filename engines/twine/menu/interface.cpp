@@ -208,29 +208,7 @@ void Interface::drawTransparentBox(const Common::Rect &rect, int32 colorAdj) {
 }
 
 void Interface::drawSplittedBox(const Common::Rect &rect, uint8 colorIndex) {
-	const int32 left = MAX((int32)SCREEN_TEXTLIMIT_LEFT, (int32)rect.left);
-	const int32 top = MAX((int32)SCREEN_TEXTLIMIT_TOP, (int32)rect.top);
-	const int32 right = MIN((int32)SCREEN_TEXTLIMIT_RIGHT, (int32)rect.right);
-	const int32 bottom = MIN((int32)SCREEN_TEXTLIMIT_BOTTOM, (int32)rect.bottom);
-
-	if (left > SCREEN_TEXTLIMIT_RIGHT) {
-		return;
-	}
-	if (right < SCREEN_TEXTLIMIT_LEFT) {
-		return;
-	}
-	if (top > SCREEN_TEXTLIMIT_BOTTOM) {
-		return;
-	}
-	if (bottom < SCREEN_TEXTLIMIT_TOP) {
-		return;
-	}
-
-	uint8 *ptr = (uint8*)_engine->frontVideoBuffer.getBasePtr(left, top);
-	for (int32 y = top; y < bottom; y++) {
-		memset(ptr, colorIndex, right - left);
-		ptr += SCREEN_WIDTH;
-	}
+	_engine->frontVideoBuffer.fillRect(rect, colorIndex);
 }
 
 void Interface::setClip(const Common::Rect &rect) {
