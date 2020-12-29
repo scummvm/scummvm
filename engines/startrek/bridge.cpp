@@ -274,7 +274,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		// TODO: sub_2FF19("enterpri") // random number generation
 		// TODO: changeBridgeMode 1
 		_sound->playMidiMusicTracks(2, -1);
-		_sound->playSoundEffectIndex(40);
+		_sound->playSoundEffectIndex(kSfxRedAlert);
 
 		// HACK: Play the end of the mock battle sequence, until the 3D code is implemented
 		_bridgeSequenceToLoad = kSeqEndMockBattle;
@@ -311,7 +311,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_resource->setTxtFileName("DEMON");
 		loadActorAnim(1, ACTOR_STANDING_SPOCK, 0, 0, 1.0);
 		loadActorAnim(2, ACTOR_STANDING_MCCOY, 0, 0, 1.0);
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 23); // Message from Starfleet
 		showTextboxBridge(kBridgeTalkerKirk, 24);
 		showMissionPerformance(_awayMission.demon.missionScore * 100 / 32, 29, 0);
@@ -330,7 +330,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_sound->loadMusicFile("bridge");
 		showMissionStartEnterpriseFlyby("TUG0\\FLYBY", "hijacked");
 		_sound->playMidiMusicTracks(0, -1);
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 0);
 		showTextboxBridge(kBridgeTalkerKirk, 1);
 		showBridgeScreenTalkerWithMessage(2, "Admiral", "woman");
@@ -338,7 +338,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		break;
 	case kSeqStartElasiPirateBattle:
 		showTextboxBridge(kBridgeTalkerSpock, 6);
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 7);
 		showTextboxBridge(kBridgeTalkerKirk, 8);
 		showBridgeScreenTalkerWithMessage(9, "Elasi Captain", "pira", false);
@@ -346,7 +346,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		showTextboxBridge(kBridgeTalkerElasiCaptain, 11);
 		removeActorFromScreen(_currentScreenTalker);
 		initStarfieldSprite(&_starfieldSprite, new StubBitmap(0, 0), _starfieldRect);
-		_sound->playSoundEffectIndex(40);
+		_sound->playSoundEffectIndex(kSfxRedAlert);
 		_enterpriseState.underAttack = true;
 		_sound->playMidiMusicTracks(2, -1);
 		startBattle("orion"); // Elasi Pirate battle
@@ -372,7 +372,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		loadActorAnim(2, ACTOR_STANDING_MCCOY, 0, 0, 1.0); // Standing McCoy
 		if (_missionEndFlag == 0) {
 			// Good ending
-			_sound->playSoundEffectIndex(34);
+			_sound->playSoundEffectIndex(kSfxHailing);
 			showTextboxBridge(kBridgeTalkerUhura, 29);
 			showTextboxBridge(kBridgeTalkerKirk, 30);
 			showMissionPerformance(_awayMission.tug.missionScore * 100 / 32, 31, 1);
@@ -384,13 +384,13 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 			showTextboxBridge(kBridgeTalkerKirk, 37);
 		} else if (_missionEndFlag == 1) {
 			// Bad ending 1 (0 score): the Masada got destroyed, everyone died
-			_sound->playSoundEffectIndex(34);
+			_sound->playSoundEffectIndex(kSfxHailing);
 			showTextboxBridge(kBridgeTalkerUhura, 39);
 			showTextboxBridge(kBridgeTalkerKirk, 40);
 			showMissionPerformance(0, 41, 1);
 		} else if (_missionEndFlag == 2) {
 			// Bad ending 2 (0 score): bad handling of the situation, some prisoners died
-			_sound->playSoundEffectIndex(34);
+			_sound->playSoundEffectIndex(kSfxHailing);
 			showTextboxBridge(kBridgeTalkerUhura, 42);
 			showMissionPerformance(0, 43, 1);
 		}
@@ -404,7 +404,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_resource->setTxtFileName(_missionName);
 		_sound->loadMusicFile("bridge");
 		showMissionStartEnterpriseFlyby("LOV0\\FLYBY", "tlove");
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 0);
 		showTextboxBridge(kBridgeTalkerKirk, 1);
 		showBridgeScreenTalkerWithMessage(2, "Admiral", "woman");
@@ -416,7 +416,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		break;
 	case kSeqStartRomulanBattle:
 		showTextboxBridge(kBridgeTalkerSpock, "#BRID\\B_160#Romulan ship decloaking, Captain.");
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 6);	// Message from the Romulan ship, Sir
 		showBridgeScreenTalkerWithMessage(9, "Romulan Captain", "romula");
 		showTextboxBridge(kBridgeTalkerSpock, 10);
@@ -434,7 +434,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		break;
 	case kSeqArrivedAtArk7:
 		_hailedTarget = false;
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 17);
 		showTextboxBridge(kBridgeTalkerAutobeacon, 16);
 		break;
@@ -442,7 +442,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_resource->setTxtFileName("LOVE");
 		loadActorAnim(1, ACTOR_STANDING_SPOCK, 0, 0, 1.0); // Standing Spock
 		loadActorAnim(2, ACTOR_STANDING_MCCOY, 0, 0, 1.0); // Standing McCoy
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 18);
 		showTextboxBridge(kBridgeTalkerKirk, 19);
 		showMissionPerformance(_awayMission.love.missionScore * 100 / 32, 26, 2);
@@ -463,7 +463,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_sound->loadMusicFile("bridge");
 		// TODO: sub_321F9()
 		showMissionStartEnterpriseFlyby("MUD0\\FLYBY", "another");
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 0);
 		showTextboxBridge(kBridgeTalkerKirk, 1);
 		showBridgeScreenTalkerWithMessage(2, "Admiral", "woman");
@@ -474,7 +474,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		showTextboxBridge(kBridgeTalkerSpock, 5);	// We have arrived at Harlequin
 		//_beamDownAllowed = false;	// TODO: unused, since the player jumps straight into a battle?
 		showTextboxBridge(kBridgeTalkerSpock, 6);
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 7);
 		showBridgeScreenTalkerWithMessage(14, "Elasi Pirate", "pira");
 		_enterpriseState.underAttack = true;
@@ -665,7 +665,7 @@ void StarTrekEngine::bridgeCrewAction(int crewId) {
 void StarTrekEngine::contactTargetAction() {
 	switch (_targetPlanet) {
 	case kPlanetPollux:	// Chapter 1: Demon world (demon)
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 17);
 		showBridgeScreenTalkerWithMessage(18, "Priest", "prst");
 		break;
@@ -681,7 +681,7 @@ void StarTrekEngine::contactTargetAction() {
 		}	
 		break;
 	case kPlanetArk7:	// Chapter 3: Love's Labor Jeopardized (love)
-		_sound->playSoundEffectIndex(34);
+		_sound->playSoundEffectIndex(kSfxHailing);
 		showTextboxBridge(kBridgeTalkerUhura, 14);
 		showBridgeScreenTalkerWithMessage(15, "Centurion Preax", "romula");
 		break;
