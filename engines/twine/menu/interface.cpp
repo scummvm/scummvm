@@ -241,17 +241,11 @@ void Interface::setClip(const Common::Rect &rect) {
 }
 
 void Interface::saveClip() {
-	textWindowLeftSave = textWindow.left;
-	textWindowTopSave = textWindow.top;
-	textWindowRightSave = textWindow.right;
-	textWindowBottomSave = textWindow.bottom;
+	textWindowSave = textWindow;
 }
 
 void Interface::loadClip() {
-	textWindow.left = textWindowLeftSave;
-	textWindow.top = textWindowTopSave;
-	textWindow.right = textWindowRightSave;
-	textWindow.bottom = textWindowBottomSave;
+	textWindow = textWindowSave;
 }
 
 void Interface::resetClip() {

@@ -47,10 +47,7 @@ class Interface {
 private:
 	TwinEEngine *_engine;
 	int32 checkClipping(int32 x, int32 y);
-	int32 textWindowTopSave = 0;
-	int32 textWindowLeftSave = 0;
-	int32 textWindowRightSave = 0;
-	int32 textWindowBottomSave = 0;
+	Common::Rect textWindowSave;
 
 public:
 	Interface(TwinEEngine *engine);
