@@ -39,6 +39,7 @@ bool Screens::adelineLogo() {
 
 void Screens::loadMenuImage(bool fadeIn) {
 	loadImage(RESSHQR_MENUIMG, -1, fadeIn);
+	_engine->workVideoBuffer.blitFrom(_engine->frontVideoBuffer);
 }
 
 void Screens::loadCustomPalette(int32 index) {
