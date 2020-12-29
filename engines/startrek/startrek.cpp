@@ -118,6 +118,9 @@ StarTrekEngine::StarTrekEngine(OSystem *syst, const StarTrekGameDescription *gam
 	_deadMasadaPrisoners = 0;
 	_beamDownAllowed = true;
 	_missionEndFlag = 0;
+	_randomEncounterType = 0;
+	_lastMissionId = -1;
+	Common::fill(_missionPoints, _missionPoints + 7, 0);
 
 	_awayMission.demon.missionScore = 0;
 	_awayMission.tug.missionScore = 0;
@@ -245,6 +248,7 @@ Common::Error StarTrekEngine::runGameMode(int mode, bool resume) {
 			case GAMEMODE_BEAMUP:
 				runTransportSequence("teleb");
 				_gameMode = GAMEMODE_BRIDGE;
+				delete _room;
 				//sub_15c61();
 				_sound->stopAllVocSounds();
 				_sound->playVoc("bridloop");

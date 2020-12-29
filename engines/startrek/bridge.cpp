@@ -158,6 +158,13 @@ enum BridgeTalkers {
 	kBridgeTalkerAutobeacon
 };
 
+enum RandomEncounterType {
+	kRandomEncounterNone = 0,
+	kRandomEncounterKlingon = 1,
+	kRandomEncounterRomulan = 2,
+	kRandomEncounterElasi = 3
+};
+
 void StarTrekEngine::initBridge(bool b) {
 	_gfx->loadPalette("bridge");
 	_sound->loadMusicFile("bridge");
@@ -299,7 +306,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_sound->playSoundEffectIndex(34);
 		showTextboxBridge(kBridgeTalkerUhura, 23); // Message from Starfleet
 		showTextboxBridge(kBridgeTalkerKirk, 24);
-		showMissionPerformance(_awayMission.demon.missionScore * 100 / 32, 29);
+		showMissionPerformance(_awayMission.demon.missionScore * 100 / 32, 29, 0);
 		showTextboxBridge(kBridgeTalkerMcCoy, 25);
 		showTextboxBridge(kBridgeTalkerKirk, 26);
 		showTextboxBridge(kBridgeTalkerSpock, 27);
@@ -360,7 +367,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 			_sound->playSoundEffectIndex(34);
 			showTextboxBridge(kBridgeTalkerUhura, 29);
 			showTextboxBridge(kBridgeTalkerKirk, 30);
-			showMissionPerformance(_awayMission.tug.missionScore * 100 / 32, 31);
+			showMissionPerformance(_awayMission.tug.missionScore * 100 / 32, 31, 1);
 			showTextboxBridge(kBridgeTalkerMcCoy, 32); // Trying to hold a Federation starship captive. Can you believe it?
 			showTextboxBridge(kBridgeTalkerSpock, 33); // Since we just witnessed that very event, Doctor, I'm surprised you ask.
 			showTextboxBridge(kBridgeTalkerMcCoy, 34);
@@ -372,12 +379,12 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 			_sound->playSoundEffectIndex(34);
 			showTextboxBridge(kBridgeTalkerUhura, 39);
 			showTextboxBridge(kBridgeTalkerKirk, 40);
-			showMissionPerformance(0, 41);
+			showMissionPerformance(0, 41, 1);
 		} else if (_missionEndFlag == 2) {
 			// Bad ending 2 (0 score): bad handling of the situation, some prisoners died
 			_sound->playSoundEffectIndex(34);
 			showTextboxBridge(kBridgeTalkerUhura, 42);
-			showMissionPerformance(0, 43);
+			showMissionPerformance(0, 43, 1);
 		}
 		loadActorAnim(1, ACTOR_SITTING_SPOCK, 0, 0, 1.0);
 		removeActorFromScreen(2);
@@ -430,7 +437,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_sound->playSoundEffectIndex(34);
 		showTextboxBridge(kBridgeTalkerUhura, 18);
 		showTextboxBridge(kBridgeTalkerKirk, 19);
-		showMissionPerformance(_awayMission.love.missionScore * 100 / 32, 26);
+		showMissionPerformance(_awayMission.love.missionScore * 100 / 32, 26, 2);
 		showTextboxBridge(kBridgeTalkerKirk, 20);
 		showTextboxBridge(kBridgeTalkerMcCoy, 21);
 		showTextboxBridge(kBridgeTalkerKirk, 22);
@@ -463,7 +470,7 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_resource->setTxtFileName("MUDD");
 		loadActorAnim(1, ACTOR_STANDING_SPOCK, 0, 0, 1.0); // Standing Spock
 		loadActorAnim(2, ACTOR_STANDING_MCCOY, 0, 0, 1.0); // Standing McCoy
-		showMissionPerformance(_awayMission.mudd.missionScore * 100 / 32, 35);
+		showMissionPerformance(_awayMission.mudd.missionScore * 100 / 32, 35, 3);
 		if (_missionEndFlag != 0) {
 			// Obtained alien contraption
 			showTextboxBridge(kBridgeTalkerScotty, 36);
@@ -699,31 +706,36 @@ Common::String StarTrekEngine::getSpeechSampleForNumber(int number) {
 	return result;
 }
 
-// TODO: two more parameters
-void StarTrekEngine::showMissionPerformance(int score, int missionScoreTextId) {
+// TODO: one more parameter
+void StarTrekEngine::showMissionPerformance(int score, int missionScoreTextId, int missionId) {
 	Common::String performanceDescription;
 	int midiTrack = 0;
+	int commendationPoints = 0;
 
 	if (score >= 0 && score <= 50) {
 		performanceDescription = "#BRID\\B_199#I'll be frank, Kirk. Starfleet expects more of you than that. Try to do better on your next assignment.";
+		commendationPoints = 0;
 		midiTrack = 13;
 	} else if (score >= 60 && score <= 70) {
 		performanceDescription = "#BRID\\B_197#A satisfactory performance, Captain, but there's still room for improvement.";
+		commendationPoints = 1;
 		midiTrack = 13;
 	} else if (score >= 71 && score <= 85) {
 		performanceDescription = "#BRID\\B_214#Well done, Captain. Keep up the good work.";
+		commendationPoints = 2;
 		midiTrack = 11;
 	} else if (score >= 86 && score <= 99) {
 		performanceDescription = "#BRID\\B_414#The top brass at Starfleet are impressed. Outstanding work, Jim.";
+		commendationPoints = 3;
 		midiTrack = 12;
 	} else if (score == 100) {
 		performanceDescription = "#BRID\\B_195#A perfect mission, Jim! You are a model for all Starfleet!";
+		commendationPoints = 4;
 		midiTrack = 14;
 	}
 
 	_sound->playMidiMusicTracks(midiTrack, -1);
 
-	int commendationPoints = 0;	// TODO
 	Common::String speechIdPerformance = getSpeechSampleForNumber(score);
 	Common::String speechIdCommendationPoints = getSpeechSampleForNumber(commendationPoints);
 
@@ -742,6 +754,9 @@ void StarTrekEngine::showMissionPerformance(int score, int missionScoreTextId) {
 	};
 
 	showBridgeScreenTalkerWithMessages(texts, "Admiral", "woman");
+
+	_lastMissionId = missionId;
+	_missionPoints[missionId] = commendationPoints;
 }
 
 void StarTrekEngine::showBridgeScreenTalkerWithMessage(int textId, Common::String talkerHeader, Common::String talkerId, bool removeTalker) {
@@ -1021,7 +1036,7 @@ void StarTrekEngine::handleBridgeMenu(int menuEvent) {
 					showTextboxBridge(kBridgeTalkerKirk, transporterText);
 				else
 					showTextboxBridge(kBridgeTalkerKirk, transporterTextFeather);
-				runGameMode(GAMEMODE_BEAMDOWN, false);
+				_gameMode = GAMEMODE_BEAMDOWN;
 			}
 		}
 		break;
@@ -1126,7 +1141,26 @@ void StarTrekEngine::startBattle(Common::String enemyShip) {
 }
 
 void StarTrekEngine::wrongDestinationRandomEncounter() {
-	// TODO
+	_randomEncounterType = _randomSource.getRandomNumberRng(1, 3);
+
+	switch (_randomEncounterType) {
+	case kRandomEncounterKlingon:
+		_resource->setTxtFileName("klingon");
+		break;
+	case kRandomEncounterRomulan:
+		_resource->setTxtFileName("romulan");
+		break;
+	case kRandomEncounterElasi:
+		_resource->setTxtFileName("elasi");
+		break;
+	default:
+		break;
+	}
+
+	// TODO: The rest
+
+	_enterpriseState.underAttack = true;
+	_sound->loadMusicFile("bridge");	// TODO: check for bridgeb
 }
 
 // Used when approaching Beta Myamid / Masada in chapter 2, and Ark 7 in chapter 3
@@ -1147,9 +1181,44 @@ void StarTrekEngine::orbitPlanet() {
 }
 
 void StarTrekEngine::captainsLog() {
-	// TODO: Show points for recently completed missions
-	const char *noRecentMissions = "#BRID\\C_007#No recent missions have been completed.";
-	showTextboxBridge(kBridgeTalkerCaptainsLog, noRecentMissions);
+	const char *missionNames[] = {
+		"Demon World",
+		"Hijacked",
+		"Love's Labor Jeopardized",
+		"Another Fine Mess",
+		"Feathered Serpent",
+		"That Old Devil Moon",
+		"Vengeance"
+	};
+
+	int totalPoints = 0;
+	for (int i = 0; i < 7; i++)
+		totalPoints += _missionPoints[i];
+
+	Common::String captainsLogMessage = "";
+
+	if (_lastMissionId > -1) {
+		captainsLogMessage = Common::String::format(
+			"#BRID\\C_007#We have earned %d point",
+			totalPoints
+		);
+
+		if (totalPoints > 1)
+			captainsLogMessage += "s";
+
+		captainsLogMessage += " for the following recently completed missions:\n";
+
+		for (int i = 6; i >= 0; i--) {
+			captainsLogMessage += missionNames[i] + Common::String::format(":   %d point", _missionPoints[i]);
+			if (_missionPoints[i] > 1)
+				captainsLogMessage += "s";
+			captainsLogMessage + ".\n\n";
+		}
+	} else {
+		captainsLogMessage = "#BRID\\C_007#No recent missions have been completed.";
+	}
+
+	showTextboxBridge(kBridgeTalkerCaptainsLog, captainsLogMessage);
 }
 
 void StarTrekEngine::loadBridgeComputerTopics() {
