@@ -523,7 +523,37 @@ void StarTrekEngine::playBridgeSequence(int sequenceId) {
 		_sound->loadMusicFile("bridgeb");
 		// TODO: sub_321F9()
 		showMissionStartEnterpriseFlyby("FEA0\\FLYBY", "feather");
-		showTextboxBridge(kBridgeTalkerKirk, 5);
+		showTextboxBridge(kBridgeTalkerKirk, 5);	// Captain's log, Stardate 5097.3. Starfleet reports major military activity...
+		// TODO
+		break;
+	case kSeqStartMissionTrial:
+		_currentPlanet = _targetPlanet = kPlanetHrakkour;
+		_missionName = _missionToLoad = "TRIAL";
+		_resource->setTxtFileName(_missionName);
+		orbitPlanet();
+		showTextboxBridge(kBridgeTalkerKirk, 0);	// Captain's Log. We have come to the ruined Klingon planet of Hrakkour...
+		// TODO
+		break;
+	case kSeqStartMissionSins:
+		_targetPlanet = kPlanetAlphaProxima; // We set it earlier for uniformity
+		_missionName = _missionToLoad = "SINS";
+		_resource->setTxtFileName(_missionName);
+		_sound->loadMusicFile("bridge");
+		showMissionStartEnterpriseFlyby("SIN0\\FLYBY", "devilmon");
+		_sound->playSoundEffectIndex(kSfxHailing);
+		showTextboxBridge(kBridgeTalkerUhura, 0);
+		showTextboxBridge(kBridgeTalkerKirk, 1);
+		showBridgeScreenTalkerWithMessage(2, "Admiral", "woman");
+		showTextboxBridge(kBridgeTalkerSpock, 3);
+		showTextboxBridge(kBridgeTalkerKirk, 4);
+		showTextboxBridge(kBridgeTalkerSpock, 5);
+		showTextboxBridge(kBridgeTalkerChekov, 6);
+		showTextboxBridge(kBridgeTalkerSpock, 7);
+		showTextboxBridge(kBridgeTalkerKirk, 8);
+		showTextboxBridge(kBridgeTalkerSpock, 9);
+		// TODO
+		break;
+	case kSeqStartMissionVeng:
 		// TODO
 		break;
 	// TODO: The rest
@@ -542,14 +572,21 @@ struct CrewTextsForChapter {
 };
 
 CrewTextsForChapter crewTexts[] = {
-	{ kPlanetPollux,     kBridgeTalkerSpock, 10, 20, 21, 22 },
-	{ kPlanetPollux,     kBridgeTalkerUhura,  9, 16, 19, 19 },
-	{ kPlanetBetaMyamid, kBridgeTalkerSpock, 13,  5, 17, 27 },
-	{ kPlanetBetaMyamid, kBridgeTalkerUhura, 12,  4, 16, -1 },
-	{ kPlanetArk7,       kBridgeTalkerSpock,  8,  4, -1, 13 },
-	{ kPlanetArk7,       kBridgeTalkerUhura,  7,  5, -1, -1 },
-	{ kPlanetHarlequin,  kBridgeTalkerSpock, 21,  4, 22, -1 },
-	{ kPlanetHarlequin,  kBridgeTalkerUhura, 19,  3, 20, -1 },
+    // -- Chapter 1 ----
+	{ kPlanetPollux,       kBridgeTalkerSpock, 10, 20, 21, 22 },
+	{ kPlanetPollux,       kBridgeTalkerUhura,  9, 16, 19, 19 },
+    // -- Chapter 2 ----
+	{ kPlanetBetaMyamid,   kBridgeTalkerSpock, 13,  5, 17, 27 },
+	{ kPlanetBetaMyamid,   kBridgeTalkerUhura, 12,  4, 16, -1 },
+    // -- Chapter 3 ----
+	{ kPlanetArk7,         kBridgeTalkerSpock,  8,  4, -1, 13 },
+	{ kPlanetArk7,         kBridgeTalkerUhura,  7,  5, -1, -1 },
+    // -- Chapter 4 ----
+	{ kPlanetHarlequin,    kBridgeTalkerSpock, 21,  4, 22, -1 },
+	{ kPlanetHarlequin,    kBridgeTalkerUhura, 19,  3, 20, -1 },
+    // -- Chapter 6 ----
+	{ kPlanetAlphaProxima, kBridgeTalkerSpock, -1, 11, -1, -1 },
+	{ kPlanetAlphaProxima, kBridgeTalkerUhura, -1, 10, -1, -1 },
 	// TODO: The rest
 	{ kPlanetNone,       kBridgeTalkerNone,   0,  0,  0,  0 }
 };
