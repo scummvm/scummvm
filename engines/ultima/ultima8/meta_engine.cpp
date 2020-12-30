@@ -63,7 +63,6 @@ static const KeybindingRecord COMMON_KEYS[] = {
 	{ ACTION_MOVE_LEFT, "MOVE_LEFT", "Move Left", "AvatarMoverProcess::startMoveLeft", "AvatarMoverProcess::stopMoveLeft", nullptr, "JOY_LEFT", FLAG_MENU_ENABLED },
 	{ ACTION_MOVE_RIGHT, "MOVE_RIGHT", "Move Right", "AvatarMoverProcess::startMoveRight", "AvatarMoverProcess::stopMoveRight", nullptr, "JOY_RIGHT", FLAG_MENU_ENABLED },
 	{ ACTION_MOVE_RUN, "MOVE_RUN", "Run", "AvatarMoverProcess::startMoveRun", "AvatarMoverProcess::stopMoveRun", "LSHIFT", "JOY_RIGHT_TRIGGER", FLAG_MENU_ENABLED },
-	{ ACTION_MOVE_STEP, "MOVE_STEP", "Step", "AvatarMoverProcess::startMoveStep", "AvatarMoverProcess::stopMoveStep", "LCTRL", "JOY_RIGHT_SHOULDER", FLAG_MENU_ENABLED },
 
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, 0 }
 };
@@ -77,6 +76,8 @@ static const KeybindingRecord U8_KEYS[] = {
 	{ ACTION_INVENTORY, "INVENTORY", "Inventory", "MainActor::useInventory", nullptr, "z", "JOY_LEFT_SHOULDER", 0 },
 	{ ACTION_CLOSE_GUMPS, "CLOSE_GUMPS", "Close Gumps", "GUIApp::closeItemGumps", nullptr, "BACKSPACE", nullptr, 0 },
 	{ ACTION_JUMP, "JUMP", "Jump (fake both-button-click)", "AvatarMoverProcess::startJump", "AvatarMoverProcess::stopJump", "SPACE", nullptr, FLAG_MENU_ENABLED },
+	{ ACTION_MOVE_STEP, "MOVE_STEP", "Step", "AvatarMoverProcess::startMoveStep", "AvatarMoverProcess::stopMoveStep", "LCTRL", "JOY_RIGHT_SHOULDER", FLAG_MENU_ENABLED },
+
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, 0 }
 };
 
@@ -90,6 +91,8 @@ static const KeybindingRecord CRUSADER_KEYS[] = {
 	{ ACTION_USE_SELECTION, "USE_SELECTION", "Use Selection", "ItemSelectionProcess::useSelectedItem", nullptr, "RETURN", nullptr, 0 },
 	{ ACTION_ATTACK, "ATTACK", "Attack", "AvatarMoverProcess::tryAttack", nullptr, "SPACE", nullptr, 0 },
 	{ ACTION_CAMERA_AVATAR, "CAMERA_AVATAR", "Focus Camera on Silencer", "CameraProcess::moveToAvatar", nullptr, "z", nullptr, 0 },
+	{ ACTION_JUMP, "JUMP", "Jump / Roll / Crouch", "AvatarMoverProcess::startJump", "AvatarMoverProcess::stopJump", "LCTRL", nullptr, FLAG_MENU_ENABLED },
+	{ ACTION_MOVE_STEP, "MOVE_STEP", "Side Step / Advance / Retreat", "AvatarMoverProcess::startMoveStep", "AvatarMoverProcess::stopMoveStep", "LALT", "JOY_RIGHT_SHOULDER", FLAG_MENU_ENABLED },
 	{ ACTION_NONE, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, 0 }
 };
 
