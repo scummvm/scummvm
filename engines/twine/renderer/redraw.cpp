@@ -44,66 +44,46 @@
 
 namespace TwinE {
 
-void Redraw::addRedrawCurrentArea(int32 left, int32 top, int32 right, int32 bottom) {
-	int32 i = 0;
+void Redraw::addRedrawCurrentArea(const Common::Rect &redrawArea) {
+	const int32 area = (redrawArea.right - redrawArea.left) * (redrawArea.bottom - redrawArea.top);
 
-	const int32 area = (right - left) * (bottom - top);
+	for (int32 i = 0; i < numOfRedrawBox; ++i) {
+		Common::Rect &rect = currentRedrawList[i];
+		const int32 leftValue = MIN<int32>(redrawArea.left, rect.left);
+		const int32 rightValue = MAX<int32>(redrawArea.right, rect.right);
+		const int32 topValue = MIN<int32>(redrawArea.top, rect.top);
+		const int32 bottomValue = MAX<int32>(redrawArea.bottom, rect.bottom);
 
-	while (i < numOfRedrawBox) {
-		int32 leftValue;
-		if (currentRedrawList[i].left >= left) {
-			leftValue = left;
-		} else {
-			leftValue = currentRedrawList[i].left;
-		}
+		const int32 areaValue = (rightValue - leftValue) * (bottomValue - topValue);
+		const int32 areaValueDiff = ((rect.right - rect.left) * (rect.bottom - rect.top) + area);
+		if (areaValue < areaValueDiff) {
+			rect.left = leftValue;
+			rect.top = topValue;
+			rect.right = rightValue;
+			rect.bottom = MIN<int32>(SCREEN_TEXTLIMIT_BOTTOM, bottomValue);
 
-		int32 rightValue;
-		if (currentRedrawList[i].right <= right) {
-			rightValue = right;
-		} else {
-			rightValue = currentRedrawList[i].right;
-		}
-
-		int32 topValue;
-		if (currentRedrawList[i].top >= top) {
-			topValue = top;
-		} else {
-			topValue = currentRedrawList[i].top;
-		}
-
-		int32 bottomValue;
-		if (currentRedrawList[i].bottom <= bottom) {
-			bottomValue = bottom;
-		} else {
-			bottomValue = currentRedrawList[i].bottom;
-		}
-
-		if ((rightValue - leftValue) * (bottomValue - topValue) < ((currentRedrawList[i].bottom - currentRedrawList[i].top) * (currentRedrawList[i].right - currentRedrawList[i].left) + area)) {
-			currentRedrawList[i].left = leftValue;
-			currentRedrawList[i].top = topValue;
-			currentRedrawList[i].right = rightValue;
-			currentRedrawList[i].bottom = MIN<int32>(SCREEN_TEXTLIMIT_BOTTOM, bottomValue);
-
-			assert(currentRedrawList[i].left <= currentRedrawList[i].right);
-			assert(currentRedrawList[i].top <= currentRedrawList[i].bottom);
+			assert(rect.left <= rect.right);
+			assert(rect.top <= rect.bottom);
 			return;
 		}
-
-		i++;
 	}
 
-	currentRedrawList[i].left = left;
-	currentRedrawList[i].top = top;
-	currentRedrawList[i].right = right;
-	currentRedrawList[i].bottom = MIN<int32>(SCREEN_TEXTLIMIT_BOTTOM, bottom);
+	Common::Rect &rect = currentRedrawList[numOfRedrawBox];
+	rect.left = redrawArea.left;
+	rect.top = redrawArea.top;
+	rect.right = redrawArea.right;
+	rect.bottom = MIN<int32>(SCREEN_TEXTLIMIT_BOTTOM, redrawArea.bottom);
 
-	assert(currentRedrawList[i].left <= currentRedrawList[i].right);
-	assert(currentRedrawList[i].top <= currentRedrawList[i].bottom);
+	assert(rect.left <= rect.right);
+	assert(rect.top <= rect.bottom);
 
 	numOfRedrawBox++;
 }
 
 void Redraw::addRedrawArea(const Common::Rect &rect) {
+	if (!rect.isValidRect()) {
+		return;
+	}
 	addRedrawArea(rect.left, rect.top, rect.right, rect.bottom);
 }
 
@@ -125,21 +105,22 @@ void Redraw::addRedrawArea(int32 left, int32 top, int32 right, int32 bottom) {
 		return;
 	}
 
-	nextRedrawList[currNumOfRedrawBox].left = left;
-	nextRedrawList[currNumOfRedrawBox].top = top;
-	nextRedrawList[currNumOfRedrawBox].right = right;
-	nextRedrawList[currNumOfRedrawBox].bottom = bottom;
+	Common::Rect &rect = nextRedrawList[currNumOfRedrawBox];
+	rect.left = left;
+	rect.top = top;
+	rect.right = right;
+	rect.bottom = bottom;
 
 	currNumOfRedrawBox++;
 
-	addRedrawCurrentArea(left, top, right, bottom);
+	addRedrawCurrentArea(rect);
 }
 
 void Redraw::moveNextAreas() {
 	numOfRedrawBox = 0;
 
 	for (int32 i = 0; i < currNumOfRedrawBox; i++) {
-		addRedrawCurrentArea(nextRedrawList[i].left, nextRedrawList[i].top, nextRedrawList[i].right, nextRedrawList[i].bottom);
+		addRedrawCurrentArea(nextRedrawList[i]);
 	}
 }
 
@@ -151,7 +132,7 @@ void Redraw::flipRedrawAreas() {
 	numOfRedrawBox = 0;
 
 	for (int32 i = 0; i < currNumOfRedrawBox; i++) { //setup the redraw areas for next display
-		addRedrawCurrentArea(nextRedrawList[i].left, nextRedrawList[i].top, nextRedrawList[i].right, nextRedrawList[i].bottom);
+		addRedrawCurrentArea(nextRedrawList[i]);
 	}
 }
 
@@ -349,7 +330,7 @@ void Redraw::processDrawListShadows(const DrawListStruct &drawCmd) {
 
 	_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
 
-	addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
+	addRedrawArea(_engine->_interface->textWindow);
 
 	// show clipping area
 	//drawBox(_engine->_renderer->renderRect.left, _engine->_renderer->renderRect.top, _engine->_renderer->renderRect.right, _engine->_renderer->renderRect.bottom);
@@ -401,11 +382,10 @@ void Redraw::processDrawListActors(const DrawListStruct &drawCmd, bool bgRedraw)
 			renderRect.bottom = _engine->_interface->textWindow.bottom = _engine->_actor->cropBottomScreen + 10;
 		}
 
-		const Common::Rect rect(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
-		addRedrawArea(rect);
+		addRedrawArea(_engine->_interface->textWindow);
 
 		if (actor->staticFlags.bIsBackgrounded && bgRedraw) {
-			_engine->_interface->blitBox(rect, _engine->frontVideoBuffer, _engine->workVideoBuffer);
+			_engine->_interface->blitBox(_engine->_interface->textWindow, _engine->frontVideoBuffer, _engine->workVideoBuffer);
 		}
 
 		_engine->_debugScene->drawClip(renderRect);
@@ -502,7 +482,7 @@ void Redraw::processDrawListExtras(const DrawListStruct &drawCmd) {
 		const int32 tmpZ = (drawCmd.z + BRICK_HEIGHT) / BRICK_SIZE;
 
 		_engine->_grid->drawOverModelActor(tmpX, tmpY, tmpZ);
-		addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
+		addRedrawArea(_engine->_interface->textWindow);
 
 		// show clipping area
 		//drawBox(renderRect);
@@ -584,9 +564,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_grid->drawSprite(renderRect.left, renderRect.top, spritePtr);
 
-				if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-					addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
-				}
+				addRedrawArea(_engine->_interface->textWindow);
 				break;
 			}
 			case OverlayType::koNumber: {
@@ -607,9 +585,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-					addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
-				}
+				addRedrawArea(_engine->_interface->textWindow);
 				break;
 			}
 			case OverlayType::koNumberRange: {
@@ -632,9 +608,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-					addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
-				}
+				addRedrawArea(_engine->_interface->textWindow);
 				break;
 			}
 			case OverlayType::koInventoryItem: {
@@ -690,9 +664,7 @@ void Redraw::renderOverlays() {
 
 				_engine->_text->drawText(renderRect.left, renderRect.top, text);
 
-				if (_engine->_interface->textWindow.left <= _engine->_interface->textWindow.right && _engine->_interface->textWindow.top <= _engine->_interface->textWindow.bottom) {
-					addRedrawArea(_engine->_interface->textWindow.left, _engine->_interface->textWindow.top, renderRect.right, renderRect.bottom);
-				}
+				addRedrawArea(_engine->_interface->textWindow);
 				break;
 			}
 			}

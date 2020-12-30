@@ -86,12 +86,9 @@ private:
 	int16 overlayRotation = 0;
 	/**
 	 * Add a certain region to the current redraw list array
-	 * @param left start width to redraw the region
-	 * @param top start height to redraw the region
-	 * @param right end width to redraw the region
-	 * @param bottom end height to redraw the region
+	 * @param redrawArea redraw the region
 	 */
-	void addRedrawCurrentArea(int32 left, int32 top, int32 right, int32 bottom);
+	void addRedrawCurrentArea(const Common::Rect &redrawArea);
 	/** Move next regions to the current redraw list */
 	void moveNextAreas();
 	/**
