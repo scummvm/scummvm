@@ -22,6 +22,7 @@
 
 #include "ags/shared/util/stdio_compat.h"
 #include "ags/shared/core/platform.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/textconsole.h"
@@ -46,24 +47,50 @@ file_off_t ags_ftell(Common::Stream *stream) {
 	return rs->pos();
 }
 
+Common::FSNode getFSNOde(const char *path) {
+	Common::FSNode node(ConfMan.get("path"));
+	Common::String filePath(path);
+
+	// If it's the root game folder, return the node for it
+	if (filePath.empty() || filePath == "." || filePath == "./")
+		return node;
+
+	assert(filePath.hasPrefix("./"));
+	filePath = Common::String(filePath.c_str() + 2);
+
+	// Iterate through any further subfolders or filename
+	size_t separator;
+	while ((separator = filePath.find('/')) != Common::String::npos) {
+		node = node.getChild(filePath.substr(0, separator));
+		filePath = Common::String(filePath.c_str() + separator + 1);
+	}
+
+	if (!filePath.empty())
+		node = node.getChild(filePath);
+
+	return node;
+}
+
 int  ags_file_exists(const char *path) {
-	Common::FSNode fs(path);
-	return fs.exists() && !fs.isDirectory()  ? 0 : -1;
+	Common::FSNode node = getFSNOde(path);
+	return node.exists() && !node.isDirectory()  ? 1 : 0;
 }
 
 int ags_directory_exists(const char *path) {
-	Common::FSNode fs(path);
-	return fs.exists() && fs.isDirectory() ? 0 : -1;
+	Common::FSNode node = getFSNOde(path);
+	return node.exists() && node.isDirectory() ? 1 : 0;
 }
 
 int ags_path_exists(const char *path) {
-	return Common::FSNode(path).exists() ? 0 : -1;
+	Common::FSNode node = getFSNOde(path);
+	return node.exists() && node.isDirectory() ? 1 : 0;
 }
 
 file_off_t ags_file_size(const char *path) {
+	Common::FSNode node = getFSNOde(path);
 	Common::File f;
 
-	return f.open(path) ? f.size() : (file_off_t )-1;
+	return f.open(node) ? f.size() : (file_off_t )-1;
 }
 
 } // namespace AGS3
