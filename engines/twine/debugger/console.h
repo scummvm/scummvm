@@ -48,6 +48,7 @@ private:
 	bool doSkipSceneActorsBut(int argc, const char **argv);
 	bool doSetGameFlag(int argc, const char **argv);
 	bool doSetInventoryFlag(int argc, const char **argv);
+	bool doAddMagicPoints(int argc, const char **argv);
 public:
 	TwinEConsole(TwinEEngine *engine);
 	~TwinEConsole() override;
