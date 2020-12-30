@@ -101,7 +101,7 @@ private:
 	uint32 _queuedEventTime;
 	Common::Mutex *_event_queue_lock;
 
-	Common::Point _touch_pt_down, _touch_pt_scroll, _touch_pt_dt;
+	Common::Point _touch_pt_down, _touch_pt_scroll, _touch_pt_dt, _touch_pt_multi;
 	int _eventScaleX;
 	int _eventScaleY;
 	bool _touchpad_mode;
@@ -109,7 +109,11 @@ private:
 	int _trackball_scale;
 	int _dpad_scale;
 	int _joystick_scale;
-	int _fingersDown;
+//	int _fingersDown;
+	int _firstPointerId;
+	int _secondPointerId;
+	int _thirdPointerId;
+
 
 	void pushEvent(const Common::Event &event);
 

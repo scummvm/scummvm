@@ -378,14 +378,17 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 	switch (type) {
 	case JE_SYS_KEY:
+		// fall through
 	case JE_KEY:
 		switch (arg1) {
 		case AKEY_EVENT_ACTION_DOWN:
 			e.type = Common::EVENT_KEYDOWN;
 			break;
+
 		case AKEY_EVENT_ACTION_UP:
 			e.type = Common::EVENT_KEYUP;
 			break;
+
 		default:
 			LOGE("unhandled jaction on key: %d", arg1);
 			return;
@@ -403,63 +406,81 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			e.kbd.keycode = jkeymap[arg2];
 		}
 
-		if (arg5 > 0)
+		if (arg5 > 0) {
 			e.kbdRepeat = true;
+		}
 
 		// map special keys to 'our' ascii codes
 		switch (e.kbd.keycode) {
 		case Common::KEYCODE_BACKSPACE:
-			LOGD("received BACKSPACE");
+//			LOGD("received BACKSPACE");
 			e.kbd.ascii = Common::ASCII_BACKSPACE;
 			break;
+
 		case Common::KEYCODE_TAB:
 			e.kbd.ascii = Common::ASCII_TAB;
 			break;
+
 		case Common::KEYCODE_RETURN:
 			e.kbd.ascii = Common::ASCII_RETURN;
 			break;
+
 		case Common::KEYCODE_ESCAPE:
 			e.kbd.ascii = Common::ASCII_ESCAPE;
 			break;
+
 		case Common::KEYCODE_SPACE:
 			e.kbd.ascii = Common::ASCII_SPACE;
 			break;
+
 		case Common::KEYCODE_F1:
 			e.kbd.ascii = Common::ASCII_F1;
 			break;
+
 		case Common::KEYCODE_F2:
 			e.kbd.ascii = Common::ASCII_F2;
 			break;
+
 		case Common::KEYCODE_F3:
 			e.kbd.ascii = Common::ASCII_F3;
 			break;
+
 		case Common::KEYCODE_F4:
 			e.kbd.ascii = Common::ASCII_F4;
 			break;
+
 		case Common::KEYCODE_F5:
 			e.kbd.ascii = Common::ASCII_F5;
 			break;
+
 		case Common::KEYCODE_F6:
 			e.kbd.ascii = Common::ASCII_F6;
 			break;
+
 		case Common::KEYCODE_F7:
 			e.kbd.ascii = Common::ASCII_F7;
 			break;
+
 		case Common::KEYCODE_F8:
 			e.kbd.ascii = Common::ASCII_F8;
 			break;
+
 		case Common::KEYCODE_F9:
 			e.kbd.ascii = Common::ASCII_F9;
 			break;
+
 		case Common::KEYCODE_F10:
 			e.kbd.ascii = Common::ASCII_F10;
 			break;
+
 		case Common::KEYCODE_F11:
 			e.kbd.ascii = Common::ASCII_F11;
 			break;
+
 		case Common::KEYCODE_F12:
 			e.kbd.ascii = Common::ASCII_F12;
 			break;
+
 		default:
 			e.kbd.ascii = arg3;
 			break;
@@ -467,8 +488,9 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 		// arg4 is the metastate of the key press event
 		// check for "Shift" key modifier
-		if (arg4 & AMETA_SHIFT_MASK)
+		if (arg4 & AMETA_SHIFT_MASK) {
 			e.kbd.flags |= Common::KBD_SHIFT;
+		}
 
 		// We revert the commit to disable the Alt modifier
 		// TODO revisit this old comment from commit https://github.com/scummvm/scummvm/commit/bfecb37501b6fdc35f2802216db5fb2b0e54b8ee
@@ -523,8 +545,11 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 	case JE_DPAD:
 		switch (arg2) {
 		case AKEYCODE_DPAD_UP:
+		// fall through
 		case AKEYCODE_DPAD_DOWN:
+		// fall through
 		case AKEYCODE_DPAD_LEFT:
+		// fall through
 		case AKEYCODE_DPAD_RIGHT:
 			if (arg1 != AKEY_EVENT_ACTION_DOWN)
 				return;
@@ -549,10 +574,11 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				// TODO put these values in some option dlg?
 				int f = CLIP(arg5, 1, 8) * _dpad_scale * 100 / s;
 
-				if (arg2 == AKEYCODE_DPAD_UP || arg2 == AKEYCODE_DPAD_LEFT)
+				if (arg2 == AKEYCODE_DPAD_UP || arg2 == AKEYCODE_DPAD_LEFT) {
 					*c -= f;
-				else
+				} else {
 					*c += f;
+				}
 			}
 
 			pushEvent(e);
@@ -564,9 +590,11 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			case AKEY_EVENT_ACTION_DOWN:
 				e.type = Common::EVENT_LBUTTONDOWN;
 				break;
+
 			case AKEY_EVENT_ACTION_UP:
 				e.type = Common::EVENT_LBUTTONUP;
 				break;
+
 			default:
 				LOGE("unhandled jaction on dpad key: %d", arg1);
 				return;
@@ -580,12 +608,14 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		}
 
 	case JE_DOWN:
+//		LOGD("JE_DOWN");
 		_touch_pt_down = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
 		_touch_pt_scroll.x = -1;
 		_touch_pt_scroll.y = -1;
 		break;
 
 	case JE_SCROLL:
+//		LOGD("JE_SCROLL");
 		e.type = Common::EVENT_MOUSEMOVE;
 
 		if (_touchpad_mode) {
@@ -609,10 +639,10 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		return;
 
 	case JE_TAP:
-		if (_fingersDown > 0) {
-			_fingersDown = 0;
-			return;
-		}
+		// arg1 = mouse x
+		// arg2 = mouse y
+		// arg3 is (int)(e.getEventTime() - e.getDownTime())
+//		LOGD("JE_TAP - arg3 %d", arg3);
 
 		e.type = Common::EVENT_MOUSEMOVE;
 
@@ -626,25 +656,47 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		{
 			Common::EventType down, up;
 
-			// TODO put these values in some option dlg?
+			// Based on this check, we check how long the tap finger was held down
+			// and distinguish cases for:
+			//  > 1.0 seconds: Middle Mouse Button
+			//  > 0.5 seconds: Right Mouse Button
+			//  < 0.5 seconds: Left Mouse Button
+			// Due to how these are detected we cannot have hold and move detection for any of them
+			// They only act as clicks
+			// Note: for hold one finger and move gesture, this is the "move cursor around" action.
+			//       Thus, the simple tap and hold cannot be used for "hold left mouse button and drag" behavior.
+			//       This is the reason we use "double tap and move" to emulate that specific behavior.
+			// TODO This might be unwanted "alternate" behavior (better to have it as optional?)
+			// TODO put these time (in milliseconds) values in some option dlg?
 			if (arg3 > 1000) {
+//				LOGD("JE_TAP - arg3 %d --> Middle Mouse Button", arg3);
 				down = Common::EVENT_MBUTTONDOWN;
 				up = Common::EVENT_MBUTTONUP;
 			} else if (arg3 > 500) {
+//				LOGD("JE_TAP - arg3 %d --> Right Mouse Button", arg3);
 				down = Common::EVENT_RBUTTONDOWN;
 				up = Common::EVENT_RBUTTONUP;
 			} else {
+//				LOGD("JE_TAP - arg3 %d --> Left Mouse Button", arg3);
 				down = Common::EVENT_LBUTTONDOWN;
 				up = Common::EVENT_LBUTTONUP;
 			}
 
 			_event_queue_lock->lock();
 
-			if (_queuedEventTime)
+//			LOGD("JE_TAP - _queuedEventTime %d ", _queuedEventTime);
+			if (_queuedEventTime) {
+				// if another event is queued to be served by PollEvent (but not in _event_queue)
+				// at the time of this JE_TAP event
+				// then push that pending _queuedEvent event to the queue for direct service
+				// This is done because we will replace the _queuedEvent below
+//				LOGD("JE_TAP -pushing old _queuedEvent to event queue");
 				_event_queue.push(_queuedEvent);
+			}
 
-			if (!_touchpad_mode)
+			if (!_touchpad_mode) {
 				_event_queue.push(e);
+			}
 
 			e.type = down;
 			_event_queue.push(e);
@@ -659,6 +711,11 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		return;
 
 	case JE_DOUBLE_TAP:
+		// arg1 = mouse x
+		// arg2 = mouse y
+		// arg3 = AMOTION_EVENT_ACTION_DOWN, AMOTION_EVENT_ACTION_UP, AMOTION_EVENT_ACTION_MOVE
+//		LOGD("JE_DOUBLE_TAP - arg3 %d", arg3);
+
 		e.type = Common::EVENT_MOUSEMOVE;
 
 		if (_touchpad_mode) {
@@ -677,11 +734,13 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				_touch_pt_dt.x = -1;
 				_touch_pt_dt.y = -1;
 				break;
+
 			case AMOTION_EVENT_ACTION_UP:
 				dptype = Common::EVENT_LBUTTONUP;
 				break;
-			// held and moved
+
 			case AMOTION_EVENT_ACTION_MOVE:
+				// held and moved
 				if (_touch_pt_dt.x == -1 && _touch_pt_dt.y == -1) {
 					_touch_pt_dt.x = arg1;
 					_touch_pt_dt.y = arg2;
@@ -697,8 +756,9 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				}
 
 				break;
+
 			default:
-				LOGE("unhandled jaction on double tap: %d", arg3);
+				LOGE("JE_DOUBLE_TAP - unhandled jaction on double tap: %d", arg3);
 				return;
 			}
 
@@ -712,54 +772,200 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		return;
 
 	case JE_MULTI:
-		switch (arg2) {
-		case AMOTION_EVENT_ACTION_POINTER_DOWN:
-			if (arg1 > _fingersDown)
-				_fingersDown = arg1;
+		// Documentation: https://developer.android.com/training/gestures/multi
+		// TODO also look into: https://developer.android.com/training/gestures/movement
+		//      for possible tweaks to gesture detection
+		// arg1 = fingers down
+		// arg2 = AMOTION_EVENT_ACTION_POINTER_DOWN, AMOTION_EVENT_ACTION_POINTER_UP, CANCEL, OUTSIDE, MOVE
+		//        we handle CANCEL and OUTSIDE externally
+		//
+		// TODO Other related events for Android multitouch gestures events are:
+		// - ACTION_DOWN — For the first pointer that touches the screen. This starts the gesture. The pointer data for this pointer is always at index 0 in the MotionEvent.
+		// - ACTION_MOVE — A change has happened during a press gesture
+		// - ACTION_UP   — Sent when the last pointer leaves the screen.
+//		LOGD("JE_MULTI - fingersDown=%d arg2=%d", arg1, arg2);
 
-			return;
+		e.type = Common::EVENT_MOUSEMOVE;
 
-		case AMOTION_EVENT_ACTION_POINTER_UP:
-			if (arg1 != _fingersDown)
-				return;
+		if (_touchpad_mode) {
+			e.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
+		} else {
+			e.mouse.x = arg3;
+			e.mouse.y = arg4;
+		}
 
-			{
-				Common::EventType up;
+		{
+			Common::EventType multitype = Common::EVENT_INVALID;
 
-				switch (_fingersDown) {
-				case 1:
-					e.type = Common::EVENT_RBUTTONDOWN;
-					up = Common::EVENT_RBUTTONUP;
-					break;
+			switch (arg2 & AMOTION_EVENT_ACTION_MASK) {
+			case AMOTION_EVENT_ACTION_POINTER_DOWN:
+				// (From Android Developers documentation)
+				// [This event is fired] For extra pointers that enter the screen beyond the first.
+				// The pointer data for this pointer is at the index returned by getActionIndex()
+//				LOGD("AMOTION_EVENT_ACTION_POINTER_DOWN fingersDown: %d", arg1);
+//				if (arg1 > _fingersDown) {
+//					LOGD("AMOTION_EVENT_ACTION_POINTER_DOWN changing  _fingersDown to arg1: %d", arg1);
+//					_fingersDown = arg1;
+//				}
+
+				_touch_pt_multi.x = -1;
+				_touch_pt_multi.y = -1;
+
+				// TODO also handle Cancel event
+				// TODO also handle going from 3 to 2 fingers
+				// TODO also handle case of receiving a new ACTION_DOWN without first having received an ACTION_UP
+				switch (arg1) {
 				case 2:
-					e.type = Common::EVENT_MBUTTONDOWN;
-					up = Common::EVENT_MBUTTONUP;
+//					LOGD("AMOTION_EVENT_ACTION_POINTER_DOWN arg1: %d --> Right Mouse Button", arg1);
+					multitype = Common::EVENT_RBUTTONDOWN;
+					//up = Common::EVENT_RBUTTONUP;
+//					// Don't add immediately in case it is superseded by a third finger --> middle mouse button
 					break;
+
+				case 3:
+//					if (_queuedEventTime && _queuedEvent.type == Common::EVENT_RBUTTONDOWN) {
+//						_queuedEventTime = 0; // cancel right mouse button down
+//						LOGD("AMOTION_EVENT_ACTION_POINTER_DOWN arg1: %d --> Middle Mouse Button", arg1);
+//						multitype = Common::EVENT_MBUTTONDOWN;
+//					}
+					multitype = Common::EVENT_MBUTTONDOWN;
+					//up = Common::EVENT_MBUTTONUP;
+					break;
+
 				default:
-					LOGD("unmapped multi tap: %d", _fingersDown);
+					LOGE("AMOTION_EVENT_ACTION_POINTER_DOWN - unmapped multi tap (arg1): %d", arg1);
 					return;
 				}
 
-				e.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
+				break;
 
-				_event_queue_lock->lock();
+ 			case AMOTION_EVENT_ACTION_CANCEL:
+//				LOGD("AMOTION_EVENT_ACTION_CANCEL - (arg1): %d", arg1);
+ 				return;
 
-				if (_queuedEventTime)
-					_event_queue.push(_queuedEvent);
+  			case AMOTION_EVENT_ACTION_OUTSIDE:
+//				LOGD("AMOTION_EVENT_ACTION_OUTSIDE - (arg1): %d", arg1);
+ 				return;
 
-				_event_queue.push(e);
+			case AMOTION_EVENT_ACTION_POINTER_UP:
+				// (From Android Developers documentation)
+				// Sent when a non-primary pointer goes up.
+//				LOGD("AMOTION_EVENT_ACTION_POINTER_UP arg1: %d", arg1);
+//				if (arg1 != _fingersDown) {
+//					LOGD("returning as AMOTION_EVENT_ACTION_POINTER_UP arg1 != _fingersDown");
+//					_fingersDown = 0;
+//					return;
+//				}
 
-				e.type = up;
-				_queuedEvent = e;
-				_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+				//Common::EventType up;
 
-				_event_queue_lock->unlock();
-				return;
+				switch (arg1) {
+				case 2:
+//					LOGD("AMOTION_EVENT_ACTION_POINTER_UP arg1: %d --> Right Mouse Button", arg1);
+					//e.type = Common::EVENT_RBUTTONDOWN;
+					//up = Common::EVENT_RBUTTONUP;
+					multitype = Common::EVENT_RBUTTONUP;
+					break;
+
+				case 3:
+//					LOGD("AMOTION_EVENT_ACTION_POINTER_UP arg1: %d --> Middle Mouse Button", arg1);
+					//e.type = Common::EVENT_MBUTTONDOWN;
+					//up = Common::EVENT_MBUTTONUP;
+					multitype = Common::EVENT_MBUTTONUP;
+					break;
+
+				default:
+					LOGE("AMOTION_EVENT_ACTION_POINTER_UP - unmapped multi tap (arg1): %d", arg1);
+					return;
+				}
+
+//				e.mouse = dynamic_cast<AndroidGraphicsManager *>(_graphicsManager)->getMousePosition();
+//
+//				_event_queue_lock->lock();
+//
+//				LOGD("AMOTION_EVENT_ACTION_POINTER_UP - _queuedEventTime %d ", _queuedEventTime);
+//				if (_queuedEventTime) {
+//					LOGD("AMOTION_EVENT_ACTION_POINTER_UP -pushing _queuedEvent (up) to event queue");
+//					_event_queue.push(_queuedEvent);
+//				}
+//
+//				_event_queue.push(e);
+//
+//				e.type = up;
+//				_queuedEvent = e;
+//				_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+//
+//				_event_queue_lock->unlock();
+				break;
+
+			case AMOTION_EVENT_ACTION_MOVE:
+				// TODO wrong event?
+				// https://developer.android.com/training/gestures/movement
+				// https://developer.android.com/training/gestures/multi
+				//
+//				LOGD("AMOTION_EVENT_ACTION_MOVE arg1: %d", arg1);
+				// held and moved
+				if (_touch_pt_multi.x == -1 && _touch_pt_multi.y == -1) {
+					_touch_pt_multi.x = arg3;
+					_touch_pt_multi.y = arg4;
+					return;
+				}
+
+				multitype = Common::EVENT_MOUSEMOVE;
+
+				// TODO TO TEST for non-touchpad mode too!
+				if (_touchpad_mode) {
+					e.mouse.x = (arg3 - _touch_pt_multi.x) * 100 / _touchpad_scale;
+					e.mouse.y = (arg4 - _touch_pt_multi.y) * 100 / _touchpad_scale;
+					e.mouse += _touch_pt_down; // TODO maybe we need another reference point???
+				}
+				break;
 
 			default:
-				LOGE("unhandled jaction on multi tap: %d", arg2);
+				LOGE("JE_MULTI - unhandled jaction on multi tap: %d", arg2);
 				return;
 			}
+
+			_event_queue_lock->lock();
+			if (_queuedEventTime) {
+//				// if another event is queued to be served by PollEvent (but not in _event_queue)
+//				// at the time of this JE_MULTI event
+//				// then push that pending _queuedEvent event to the queue for direct service
+//				// This is done because we will push a new event to the queue and also might replace the _queuedEvent below
+//				LOGD("JE_MULTI -pushing old _queuedEvent to event queue");
+				_event_queue.push(_queuedEvent);
+			}
+//			if (_queuedEventTime && _queuedEvent.type != Common::EVENT_RBUTTONDOWN) {
+//				// if another event is queued to be served by PollEvent (but not in _event_queue)
+//				// and it is not Common::EVENT_RBUTTONDOWN (which is only created by the JE_MULTI event as a _queuedEvent)
+//				// at the time of this JE_MULTI event
+//				// then push that pending _queuedEvent event to the queue for direct service
+//				// This is done because we will push a new event to the queue and also might replace the _queuedEvent below
+//				LOGD("JE_MULTI -pushing old _queuedEvent to event queue");
+//				_event_queue.push(_queuedEvent);
+//			}
+
+			// push the default move event
+			_event_queue.push(e);
+			e.type = multitype;
+
+			if (e.type != Common::EVENT_INVALID) {
+//				if (e.type == Common::EVENT_RBUTTONDOWN) {
+//					_queuedEvent = e; // enqueue the Right Button DOWN    event with a 200 ms delay
+//					_queuedEventTime = getMillis() + 200; // TODO add to constants like kQueuedInputEventDelay is
+//				} else {
+//					// TODO what if this is a quick Common::EVENT_RBUTTONUP?
+//					if (_queuedEventTime && _queuedEvent.type == Common::EVENT_RBUTTONDOWN && e.type == Common::EVENT_RBUTTONUP) {
+//						_event_queue.push(_queuedEvent);
+//						_queuedEvent = e; // enqueue the Right Button UP event with a kQueuedInputEventDelay
+//						_queuedEventTime = getMillis() + kQueuedInputEventDelay;
+//					} else {
+						_event_queue.push(e);
+//					}
+//				}
+			}
+
+			_event_queue_lock->unlock();
 		}
 
 		return;
@@ -771,9 +977,11 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 		case AMOTION_EVENT_ACTION_DOWN:
 			e.type = Common::EVENT_LBUTTONDOWN;
 			break;
+
 		case AMOTION_EVENT_ACTION_UP:
 			e.type = Common::EVENT_LBUTTONUP;
 			break;
+
 		case AMOTION_EVENT_ACTION_MOVE:
 			e.type = Common::EVENT_MOUSEMOVE;
 
@@ -782,8 +990,9 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 			e.mouse.y += arg3 * _trackball_scale / _eventScaleY;
 
 			break;
+
 		default:
-			LOGE("unhandled jaction on system key: %d", arg1);
+			LOGE("unhandled JE_BALL jaction on system key: %d", arg1);
 			return;
 		}
 
@@ -1050,6 +1259,11 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 	_event_queue_lock->lock();
 
 	if (_queuedEventTime && (getMillis() > _queuedEventTime)) {
+//		if (_queuedEvent.type == Common::EVENT_RBUTTONDOWN) {
+//			LOGD("Executing delayed RIGHT MOUSE DOWN!!!!");
+//		} else if (_queuedEvent.type == Common::EVENT_RBUTTONUP) {
+//			LOGD("Executing delayed RIGHT MOUSE UP!!!!");
+//		}
 		event = _queuedEvent;
 		_queuedEventTime = 0;
 		// _event_queue_lock->unlock();
@@ -1057,10 +1271,10 @@ bool OSystem_Android::pollEvent(Common::Event &event) {
 	} else if (_event_queue.empty()) {
 		_event_queue_lock->unlock();
 		return false;
+
 	} else {
 		event = _event_queue.pop();
 	}
-
 	_event_queue_lock->unlock();
 
 	if (Common::isMouseEvent(event)) {

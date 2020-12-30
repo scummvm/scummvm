@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.content.Context;
 //import android.util.Log;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.KeyCharacterMap;
 import android.view.MotionEvent;
@@ -51,8 +52,9 @@ public class ScummVMEventsBase implements
 	final protected Context _context;
 	final protected ScummVM _scummvm;
 	final protected GestureDetector _gd;
-	final protected int _longPress;
+	final protected int _longPressTimeout;
 	final protected MouseHelper _mouseHelper;
+	final protected MultitouchHelper _multitouchHelper;
 
 	// Custom handler code (to avoid mem leaks, see warning "This Handler Class Should Be Static Or Leaks Might Occur”) based on:
 	// https://stackoverflow.com/a/27826094
@@ -92,14 +94,16 @@ public class ScummVMEventsBase implements
 	public ScummVMEventsBase(Context context, ScummVM scummvm, MouseHelper mouseHelper) {
 		_context = context;
 		_scummvm = scummvm;
+		// Careful, _mouseHelper can be null (if HoverListener is not available for the device API -- old devices, API < 9)
 		_mouseHelper = mouseHelper;
+
+		_multitouchHelper = new MultitouchHelper(_scummvm);
 
 		_gd = new GestureDetector(context, this);
 		_gd.setOnDoubleTapListener(this);
 		_gd.setIsLongpressEnabled(false);
 
-		_longPress = ViewConfiguration.getLongPressTimeout();
-
+		_longPressTimeout = ViewConfiguration.getLongPressTimeout();
 	}
 
 	private void handleEVHMessage(final Message msg) {
@@ -132,6 +136,7 @@ public class ScummVMEventsBase implements
 
 	public void clearEventHandler() {
 		_skeyHandler.clear();
+		_multitouchHelper.clearEventHandler();
 	}
 
 	final public void sendQuitEvent() {
@@ -139,14 +144,16 @@ public class ScummVMEventsBase implements
 	}
 
 	public boolean onTrackballEvent(MotionEvent e) {
+		//Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onTrackballEvent");
 		_scummvm.pushEvent(JE_BALL, e.getAction(),
-							(int)(e.getX() * e.getXPrecision() * 100),
-							(int)(e.getY() * e.getYPrecision() * 100),
-							0, 0, 0);
+			(int)(e.getX() * e.getXPrecision() * 100),
+			(int)(e.getY() * e.getYPrecision() * 100),
+			0, 0, 0);
 		return true;
 	}
 
 	public boolean onGenericMotionEvent(MotionEvent e) {
+		// we don't manage the GenericMotionEvent
 		return false;
 	}
 
@@ -233,7 +240,7 @@ public class ScummVMEventsBase implements
 				// Upon pressing the system menu or system back key:
 				// (The example below assumes that system Back key was pressed)
 				// 1. keyHandler.hasMessages(MSG_SBACK_LONG_PRESS) = false, and thus: fired = true
-				// 2. Action will be KeyEvent.ACTION_DOWN, so a delayed message "MSG_SBACK_LONG_PRESS" will be sent to keyHandler after _longPress time
+				// 2. Action will be KeyEvent.ACTION_DOWN, so a delayed message "MSG_SBACK_LONG_PRESS" will be sent to keyHandler after _longPressTimeout time
 				//    The "MSG_SBACK_LONG_PRESS" will be handled (and removed) in the keyHandler.
 				//    For the Back button, the keyHandler should forward a ACTION_UP for MENU (the alternate func of Back key!) to native)
 				//    But if the code enters this section before the "MSG_SBACK_LONG_PRESS" was handled in keyHandler (probably due to a ACTION_UP)
@@ -250,7 +257,7 @@ public class ScummVMEventsBase implements
 				_skeyHandler.removeMessages(typeOfLongPressMessage);
 
 				if (action == KeyEvent.ACTION_DOWN) {
-					_skeyHandler.sendMessageDelayed(_skeyHandler.obtainMessage(typeOfLongPressMessage), _longPress);
+					_skeyHandler.sendMessageDelayed(_skeyHandler.obtainMessage(typeOfLongPressMessage), _longPressTimeout);
 					return true;
 				} else if (action != KeyEvent.ACTION_UP) {
 					return true;
@@ -261,6 +268,7 @@ public class ScummVMEventsBase implements
 				}
 
 				// It's still necessary to send a key down event to the backend.
+//				Log.d(ScummVM.LOG_TAG, "JE_SYS_KEY");
 				_scummvm.pushEvent(JE_SYS_KEY,
 				                   KeyEvent.ACTION_DOWN,
 				                   keyCode,
@@ -370,21 +378,67 @@ public class ScummVMEventsBase implements
 		return true;
 	}
 
+
+	/** Aux method to provide a description for a MotionEvent action
+	 *  Given an action int, returns a string description
+	 *  Use for debug purposes
+	 * @param action the id of the action (as returned by getAction()
+	 * @return the action description
+	 */
+	public static String motionEventActionToString(int action) {
+		switch (action) {
+
+			case MotionEvent.ACTION_DOWN: return "Down";
+			case MotionEvent.ACTION_MOVE: return "Move";
+			case MotionEvent.ACTION_POINTER_DOWN: return "Pointer Down";
+			case MotionEvent.ACTION_UP: return "Up";
+			case MotionEvent.ACTION_POINTER_UP: return "Pointer Up";
+			case MotionEvent.ACTION_OUTSIDE: return "Outside";
+			case MotionEvent.ACTION_CANCEL: return "Cancel";
+//			case MotionEvent.ACTION_POINTER_2_DOWN: return "Pointer 2 Down"; // 261 - deprecated (but still fired for Android 9, Mi device)
+//			case MotionEvent.ACTION_POINTER_2_UP: return "Pointer 2 Up"; // 262 - deprecated (but still fired for Android 9, Mi device)
+//			case MotionEvent.ACTION_POINTER_3_DOWN: return "Pointer 3 Down"; // 517 - deprecated (but still fired for Android 9, Mi device)
+//			case MotionEvent.ACTION_POINTER_3_UP: return "Pointer 3 Up"; // 518 - deprecated (but still fired for Android 9, Mi device)
+			default:
+				if ((action &  MotionEvent.ACTION_POINTER_DOWN) == MotionEvent.ACTION_POINTER_DOWN) {
+					return "Pointer Down ***";
+				} else if ((action &  MotionEvent.ACTION_POINTER_UP) == MotionEvent.ACTION_POINTER_UP) {
+					return "Pointer Up ***";
+				}
+				return "Unknown:: " + action;
+		}
+	}
+
 	// OnTouchListener
 	@Override
 	final public boolean onTouch(View v, final MotionEvent event) {
-//		String actionStr = "";
-//		switch (event.getAction()) {
-//			case MotionEvent.ACTION_UP:
-//				actionStr = "MotionEvent.ACTION_UP";
-//				break;
-//			case MotionEvent.ACTION_DOWN:
-//				actionStr = "MotionEvent.ACTION_DOWN";
-//				break;
-//			default:
-//				actionStr = event.toString();
+
+		// Note: In this article https://developer.android.com/training/gestures/multi
+		//       it is recommended to use MotionEventCompat helper methods, instead of directly using MotionEvent getAction() etc.
+		//       However, getActionMasked() and MotionEventCompat *are deprecated*, and now direct use of MotionEvent methods is recommended.
+		//       https://developer.android.com/reference/androidx/core/view/MotionEventCompat
+
+		// Note 2: Do not return intentionally false for the onTouch function because then getPointerCount() won't work as intended
+		//         ie. it will always return 1,
+		//         as noted here:
+		//         https://stackoverflow.com/a/11709964
+
+		final int action = event.getAction();
+
+		// Get the index of the pointer associated with the action.
+//		int index = event.getActionIndex();
+//		int xPos = (int)event.getX(index);
+//		int yPos = (int)event.getY(index);
+
+//		String prefixDBGMsg = "SPECIAL DBG action is " + motionEventActionToString(action) + " ";
+//		if (event.getPointerCount() > 1) {
+//			// The coordinates of the current screen contact, relative to
+//			// the responding View or Activity.
+//			Log.d(ScummVM.LOG_TAG,prefixDBGMsg + "Multitouch event (" + event.getPointerCount() + "):: x:" + xPos + " y: " + yPos);
+//		} else {
+//			// Single touch event
+//			Log.d(ScummVM.LOG_TAG,prefixDBGMsg + "Single touch event:: x: " + xPos + " y: " + yPos);
 //		}
-//		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onTOUCH event" + actionStr);
 
 		if (ScummVMActivity.keyboardWithoutTextInputShown
 		    && ((ScummVMActivity) _context).isScreenKeyboardShown()
@@ -404,10 +458,8 @@ public class ScummVMEventsBase implements
 			}
 		}
 
-		final int action = event.getAction();
-
 		// Deal with LINT warning "ScummVMEvents#onTouch should call View#performClick when a click is detected"
-		switch (event.getAction()) {
+		switch (action) {
 			case MotionEvent.ACTION_UP:
 				v.performClick();
 				break;
@@ -416,13 +468,9 @@ public class ScummVMEventsBase implements
 			default:
 				break;
 		}
-		// constants from APIv5:
-		// (action & ACTION_POINTER_INDEX_MASK) >> ACTION_POINTER_INDEX_SHIFT
-		final int pointer = (action & 0xff00) >> 8;
 
-		if (pointer > 0) {
-			_scummvm.pushEvent(JE_MULTI, pointer, action & 0xff, // ACTION_MASK
-								(int)event.getX(), (int)event.getY(), 0, 0);
+		// check if the event can be handled as a multitouch event
+		if (_multitouchHelper.handleMotionEvent(event)) {
 			return true;
 		}
 
@@ -432,7 +480,7 @@ public class ScummVMEventsBase implements
 	// OnGestureListener
 	@Override
 	final public boolean onDown(MotionEvent e) {
-		//Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onDOWN MotionEvent");
+//		Log.d(ScummVM.LOG_TAG, "SCUMMV-EVENTS-BASE - onDOWN MotionEvent");
 		_scummvm.pushEvent(JE_DOWN, (int)e.getX(), (int)e.getY(), 0, 0, 0, 0);
 		return true;
 	}
@@ -455,6 +503,7 @@ public class ScummVMEventsBase implements
 	@Override
 	final public boolean onScroll(MotionEvent e1, MotionEvent e2,
 									float distanceX, float distanceY) {
+//		Log.d(ScummVM.LOG_TAG, "onScroll");
 		_scummvm.pushEvent(JE_SCROLL, (int)e1.getX(), (int)e1.getY(),
 							(int)e2.getX(), (int)e2.getY(), 0, 0);
 
@@ -467,6 +516,7 @@ public class ScummVMEventsBase implements
 
 	@Override
 	final public boolean onSingleTapUp(MotionEvent e) {
+//		Log.d(ScummVM.LOG_TAG, "onSingleTapUp");
 		_scummvm.pushEvent(JE_TAP, (int)e.getX(), (int)e.getY(),
 							(int)(e.getEventTime() - e.getDownTime()), 0, 0, 0);
 
@@ -476,19 +526,33 @@ public class ScummVMEventsBase implements
 	// OnDoubleTapListener
 	@Override
 	final public boolean onDoubleTap(MotionEvent e) {
+//		Log.d(ScummVM.LOG_TAG, "onDoubleTap");
 		return true;
 	}
 
 	@Override
 	final public boolean onDoubleTapEvent(MotionEvent e) {
-		_scummvm.pushEvent(JE_DOUBLE_TAP, (int)e.getX(), (int)e.getY(),
-							e.getAction(), 0, 0, 0);
 
+		//if the second tap hadn't been released and it's being moved
+//		if (e.getAction() == MotionEvent.ACTION_MOVE)  {
+//			Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent Moving X: " + Float.toString(e.getRawX()) + " Y: " + Float.toString(e.getRawY()));
+//		} else if(e.getAction() == MotionEvent.ACTION_UP) {
+//			//user released the screen
+//			Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent Release");
+//		} else if(e.getAction() == MotionEvent.ACTION_DOWN) {
+//			Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent DOWN");
+//		} else {
+//			Log.d(ScummVM.LOG_TAG, "onDoubleTapEvent UNKNOWN!!!!");
+//		}
+		_scummvm.pushEvent(JE_DOUBLE_TAP, (int)e.getX(), (int)e.getY(), e.getAction(), 0, 0, 0);
 		return true;
 	}
 
 	@Override
 	final public boolean onSingleTapConfirmed(MotionEvent e) {
+		// Note, timing thresholds for double tap detection seem to be hardcoded in the frameworl
+		// as ViewConfiguration.getDoubleTapTimeout()
+//		Log.d(ScummVM.LOG_TAG, "onSingleTapConfirmed - double tap failed");
 		return true;
 	}
 }
