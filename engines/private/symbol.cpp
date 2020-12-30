@@ -4,6 +4,8 @@
 #include "grammar.h"
 #include "grammar.tab.h"
 
+namespace Private {
+
 static Symbol *symlist = 0;  /* symbol table: linked list */
 
 char *emalloc(unsigned n)	/* check return from malloc */
@@ -45,3 +47,5 @@ Symbol *install(char *n, int t, int d, char *s)  /* install s in symbol table */
 	symlist = sp;
 	return sp;
 }
+
+} 

@@ -4,6 +4,8 @@
 #include "grammar.h"
 #include "grammar.tab.h"
 
+namespace Private {
+
 #define	NSTACK	256
 static	Datum	stack[NSTACK];	/* the stack */
 static	Datum	*stackp;	/* next free spot on stack */
@@ -131,4 +133,6 @@ void execute(Inst *p)	/* run the machine */
 {
 	for (pc = p; *pc != STOP; )
 		(*(*pc++))();
+}
+
 }

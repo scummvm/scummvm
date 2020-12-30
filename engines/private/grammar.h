@@ -7,13 +7,17 @@ typedef struct Symbol {	/* symbol table entry */
 	} u;
 	struct Symbol	*next;	/* to link to another */
 } Symbol;
-Symbol	*install(char *, int, int, char *), *lookup(char *);
 
 typedef union Datum {	/* interpreter stack type */
 	int	 val;
 	char    *str;
 	Symbol	*sym;
 } Datum;
+
+
+namespace Private {
+
+Symbol	*install(char *, int, int, char *), *lookup(char *);
 extern	Datum pop();
 
 typedef int (*Inst)();	/* machine instruction */
@@ -34,3 +38,5 @@ extern  int print();
 
 extern void initcode();
 extern void execute(Inst *);
+
+}
