@@ -156,6 +156,17 @@ const ExtraGuiOptions TwinEMetaEngine::getExtraGuiOptions(const Common::String &
 	return options;
 }
 
+//
+// unused:
+// JOY_LEFT_TRIGGER
+// JOY_RIGHT_TRIGGER
+// JOY_RIGHT_SHOULDER
+//
+// JOY_RIGHT_STICK_X
+// JOY_RIGHT_STICK_Y
+// JOY_LEFT_STICK_X
+// JOY_LEFT_STICK_Y
+//
 Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 	using namespace Common;
 	Action *act;
@@ -275,6 +286,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->setCustomEngineActionEvent(TwinEActionType::BehaviourMenu);
 		act->addDefaultInputMapping("LCTRL");
 		act->addDefaultInputMapping("RCTRL");
+		act->addDefaultInputMapping("JOY_X");
 		gameKeyMap->addAction(act);
 
 		act = new Action("OPTIONSMENU", _("Options Menu"));
@@ -286,6 +298,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->setCustomEngineActionEvent(TwinEActionType::RecenterScreenOnTwinsen);
 		act->addDefaultInputMapping("RETURN");
 		act->addDefaultInputMapping("KP_ENTER");
+		act->addDefaultInputMapping("JOY_RIGHT_STICK");
 		gameKeyMap->addAction(act);
 
 		act = new Action("USESELECTEDOBJECT", _("Use Selected Object"));
@@ -298,30 +311,35 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->setCustomEngineActionEvent(TwinEActionType::ThrowMagicBall);
 		act->addDefaultInputMapping("LALT");
 		act->addDefaultInputMapping("RALT");
+		act->addDefaultInputMapping("JOY_LEFT_STICK");
 		gameKeyMap->addAction(act);
 
 		act = new Action("MOVEFORWARD", _("Move Forward"));
 		act->setCustomEngineActionEvent(TwinEActionType::MoveForward);
 		act->addDefaultInputMapping("UP");
 		act->addDefaultInputMapping("KP8");
+		act->addDefaultInputMapping("JOY_UP");
 		gameKeyMap->addAction(act);
 
 		act = new Action("MOVEBACKWARD", _("Move Backward"));
 		act->setCustomEngineActionEvent(TwinEActionType::MoveBackward);
 		act->addDefaultInputMapping("DOWN");
 		act->addDefaultInputMapping("KP2");
+		act->addDefaultInputMapping("JOY_DOWN");
 		gameKeyMap->addAction(act);
 
 		act = new Action("TURNRIGHT", _("Turn Right"));
 		act->setCustomEngineActionEvent(TwinEActionType::TurnRight);
 		act->addDefaultInputMapping("RIGHT");
 		act->addDefaultInputMapping("KP6");
+		act->addDefaultInputMapping("JOY_RIGHT");
 		gameKeyMap->addAction(act);
 
 		act = new Action("TURNLEFT", _("Turn Left"));
 		act->setCustomEngineActionEvent(TwinEActionType::TurnLeft);
 		act->addDefaultInputMapping("LEFT");
 		act->addDefaultInputMapping("KP4");
+		act->addDefaultInputMapping("JOY_LEFT");
 		gameKeyMap->addAction(act);
 
 		act = new Action("USEPROTOPACK", _("Use Protopack"));
@@ -338,17 +356,21 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->setCustomEngineActionEvent(TwinEActionType::InventoryMenu);
 		act->addDefaultInputMapping("LSHIFT");
 		act->addDefaultInputMapping("RSHIFT");
+		act->addDefaultInputMapping("JOY_Y");
 		act->addDefaultInputMapping("i");
 		gameKeyMap->addAction(act);
 
 		act = new Action("SPECIALACTION", _("Special Action"));
 		act->setCustomEngineActionEvent(TwinEActionType::SpecialAction);
 		act->addDefaultInputMapping("w");
+		act->addDefaultInputMapping("JOY_LEFT_SHOULDER");
 		gameKeyMap->addAction(act);
 
 		act = new Action("ESCAPE", _("Escape"));
 		act->setCustomEngineActionEvent(TwinEActionType::Escape);
 		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_B");
+		act->addDefaultInputMapping("JOY_BACK");
 		gameKeyMap->addAction(act);
 
 		array[0] = gameKeyMap;
@@ -362,24 +384,29 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("RETURN");
 		act->addDefaultInputMapping("KP_ENTER");
 		act->addDefaultInputMapping("MOUSE_LEFT");
+		act->addDefaultInputMapping("JOY_A");
 		uiKeyMap->addAction(act);
 
 		act = new Action("ABORT", _("Abort"));
 		act->setCustomEngineActionEvent(TwinEActionType::UIAbort);
 		act->addDefaultInputMapping("ESCAPE");
 		act->addDefaultInputMapping("MOUSE_RIGHT");
+		act->addDefaultInputMapping("JOY_BACK");
+		act->addDefaultInputMapping("JOY_B");
 		uiKeyMap->addAction(act);
 
 		act = new Action("UP", _("Up"));
 		act->setCustomEngineActionEvent(TwinEActionType::UIUp);
 		act->addDefaultInputMapping("UP");
 		act->addDefaultInputMapping("KP8");
+		act->addDefaultInputMapping("JOY_UP");
 		uiKeyMap->addAction(act);
 
 		act = new Action("DOWN", _("Down"));
 		act->setCustomEngineActionEvent(TwinEActionType::UIDown);
 		act->addDefaultInputMapping("DOWN");
 		act->addDefaultInputMapping("KP2");
+		act->addDefaultInputMapping("JOY_DOWN");
 		uiKeyMap->addAction(act);
 
 		act = new Action("RIGHT", _("Right"));
@@ -387,6 +414,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("RIGHT");
 		act->addDefaultInputMapping("KP6");
 		act->addDefaultInputMapping("MOUSE_WHEEL_UP");
+		act->addDefaultInputMapping("JOY_RIGHT");
 		uiKeyMap->addAction(act);
 
 		act = new Action("LEFT", _("Left"));
@@ -394,12 +422,15 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("LEFT");
 		act->addDefaultInputMapping("KP4");
 		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN");
+		act->addDefaultInputMapping("JOY_LEFT");
 		uiKeyMap->addAction(act);
 
 		act = new Action("NEXTPAGE", _("Next Page"));
 		act->setCustomEngineActionEvent(TwinEActionType::UINextPage);
 		act->addDefaultInputMapping("SPACE");
 		act->addDefaultInputMapping("PAGEDOWN");
+		act->addDefaultInputMapping("JOY_B");
+		act->addDefaultInputMapping("JOY_BACK");
 		uiKeyMap->addAction(act);
 
 		array[1] = uiKeyMap;
@@ -414,6 +445,8 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("KP_ENTER");
 		act->addDefaultInputMapping("ESCAPE");
 		act->addDefaultInputMapping("SPACE");
+		act->addDefaultInputMapping("JOY_B");
+		act->addDefaultInputMapping("JOY_BACK");
 		cutsceneKeyMap->addAction(act);
 
 		array[2] = cutsceneKeyMap;
@@ -428,6 +461,8 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act = new Action("ABORT", _("Abort"));
 		act->setCustomEngineActionEvent(TwinEActionType::HolomapAbort);
 		act->addDefaultInputMapping("ESCAPE");
+		act->addDefaultInputMapping("JOY_B");
+		act->addDefaultInputMapping("JOY_BACK");
 		holomapKeyMap->addAction(act);
 
 		act = new Action("UP", _("Up"));
@@ -435,6 +470,7 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("UP");
 		act->addDefaultInputMapping("KP8");
 		act->addDefaultInputMapping("MOUSE_WHEEL_UP");
+		act->addDefaultInputMapping("JOY_UP");
 		holomapKeyMap->addAction(act);
 
 		act = new Action("DOWN", _("Down"));
@@ -442,18 +478,21 @@ Common::KeymapArray TwinEMetaEngine::initKeymaps(const char *target) const {
 		act->addDefaultInputMapping("DOWN");
 		act->addDefaultInputMapping("KP2");
 		act->addDefaultInputMapping("MOUSE_WHEEL_DOWN");
+		act->addDefaultInputMapping("JOY_DOWN");
 		holomapKeyMap->addAction(act);
 
 		act = new Action("RIGHT", _("Right"));
 		act->setCustomEngineActionEvent(TwinEActionType::HolomapRight);
 		act->addDefaultInputMapping("RIGHT");
 		act->addDefaultInputMapping("KP6");
+		act->addDefaultInputMapping("JOY_RIGHT");
 		holomapKeyMap->addAction(act);
 
 		act = new Action("LEFT", _("Left"));
 		act->setCustomEngineActionEvent(TwinEActionType::HolomapLeft);
 		act->addDefaultInputMapping("LEFT");
 		act->addDefaultInputMapping("KP4");
+		act->addDefaultInputMapping("JOY_LEFT");
 		holomapKeyMap->addAction(act);
 
 		array[3] = holomapKeyMap;
