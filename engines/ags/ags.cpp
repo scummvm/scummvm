@@ -258,7 +258,7 @@ static int main_process_cmdline(ConfigTree &cfg, int argc, const char *argv[]) {
 	}
 
 	if (datafile_argv > 0) {
-		cmdGameDataPath = "./";
+		cmdGameDataPath = argv[datafile_argv];
 	} else {
 		// assign standard path for mobile/consoles (defined in their own platform implementation)
 		cmdGameDataPath = psp_game_file_name;
