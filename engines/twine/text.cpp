@@ -565,7 +565,7 @@ ProgressiveTextState Text::updateProgressiveText() {
 	_dialTextYPos += lineHeight;
 	_dialTextXPos = _dialTextBox.left + 8;
 
-	if (_dialTextBoxCurrentLine > _dialTextBoxLines) {
+	if (_dialTextBoxCurrentLine >= _dialTextBoxLines) {
 		renderContinueReadingTriangle();
 		return ProgressiveTextState::NextPage;
 	}
@@ -588,6 +588,7 @@ bool Text::displayText(int32 index, bool showText, bool playVox) {
 		initText(index);
 		initDialogueBox();
 
+		ScopedKeyMap uiKeyMap(_engine, uiKeyMapId);
 		ProgressiveTextState textState = ProgressiveTextState::ContinueRunning;
 		for (;;) {
 			ScopedFPS scopedFps(66);
