@@ -29,7 +29,7 @@ from common_names import *
 def makesis(pkg, path):
    t = "makesis -d%EPOCROOT% %s" %pkg
    cmd = subprocess.Popen(t, stdout=subprocess.PIPE, stderr=subprocess.PIPE, cwd=path, shell=True)
-   out, err = cmd1.communicate()
+   out, err = cmd.communicate()
    SafeWriteFile(build_log, out)
    SafeWriteFile(build_err, err)
 

@@ -31,16 +31,16 @@ from common_names import *
 
 def run(build, pkgs):
    log = "Build started at: %s\n" %datetime.now()
-   SafeWriteFile("build.log", log)
-   SafeWriteFile("build.err", '')
+   SafeWriteFile(build_log, log)
+   SafeWriteFile(build_err, '')
    create_mmps(build, pkgs)
    create_engine_mmps(build)
    
    log = "Build engines started at: %s\n" %datetime.now()
-   SafeWriteFile("build.log", log, 'a')
+   SafeWriteFile(build_log, log, 'a')
    build_mmp()
    log = "Build engines ended at: %s\n" %datetime.now()
-   SafeWriteFile("build.log", log, 'a')
+   SafeWriteFile(build_log, log, 'a')
    
    build_apps(pkgs)
    create_installers(pkgs)

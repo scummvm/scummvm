@@ -24,7 +24,6 @@ from __future__ import with_statement
 import os, subprocess, Queue, threading, errno
 import multiprocessing as mp
 from prj_generator import SafeWriteFile
-from collections import defaultdict as defdict
 
 from common_names import *
 
