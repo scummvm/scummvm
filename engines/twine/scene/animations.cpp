@@ -542,7 +542,7 @@ void Animations::processActorAnimations(int32 actorIdx) { // DoAnim
 				_engine->_movements->processActorX = actor->x + _engine->_renderer->destX;
 				_engine->_movements->processActorZ = actor->z + _engine->_renderer->destZ;
 
-				_engine->_movements->setActorAngle(ANGLE_0, actor->speed, 50, &actor->move);
+				_engine->_movements->setActorAngle(ANGLE_0, actor->speed, ANGLE_17, &actor->move);
 
 				if (actor->dynamicFlags.bIsSpriteMoving) {
 					if (actor->doorStatus) { // open door

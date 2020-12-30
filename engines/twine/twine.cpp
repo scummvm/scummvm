@@ -788,7 +788,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 		loopActorStep = 1;
 	}
 
-	_movements->setActorAngle(ANGLE_0, -ANGLE_90, 5, &loopMovePtr);
+	_movements->setActorAngle(ANGLE_0, -ANGLE_90, ANGLE_1, &loopMovePtr);
 	disableScreenRecenter = false;
 
 	_scene->processEnvironmentSound();
@@ -959,7 +959,7 @@ int32 TwinEEngine::runGameEngine() { // mainLoopInteration
 bool TwinEEngine::gameEngineLoop() {
 	_redraw->reqBgRedraw = true;
 	_screens->lockPalette = true;
-	_movements->setActorAngle(ANGLE_0, -ANGLE_90, 5, &loopMovePtr);
+	_movements->setActorAngle(ANGLE_0, -ANGLE_90, ANGLE_1, &loopMovePtr);
 
 	while (quitGame == -1) {
 		uint32 start = g_system->getMillis();

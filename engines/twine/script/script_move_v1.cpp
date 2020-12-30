@@ -343,7 +343,7 @@ static int32 mSPEED(TwinEEngine *engine, MoveScriptContext &ctx) {
 	ctx.actor->speed = ctx.stream.readSint16LE();
 
 	if (ctx.actor->staticFlags.bIsSpriteActor) {
-		engine->_movements->setActorAngle(0, ctx.actor->speed, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, ctx.actor->speed, ANGLE_17, &ctx.actor->move);
 	}
 
 	return 0;
@@ -434,7 +434,7 @@ static int32 mOPEN_LEFT(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->doorStatus = doorStatus;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
-		engine->_movements->setActorAngle(ANGLE_0, 1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
 	return 0;
 }
@@ -450,7 +450,7 @@ static int32 mOPEN_RIGHT(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->doorStatus = doorStatus;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
-		engine->_movements->setActorAngle(ANGLE_0, 1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
 	return 0;
 }
@@ -466,7 +466,7 @@ static int32 mOPEN_UP(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->doorStatus = doorStatus;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
-		engine->_movements->setActorAngle(ANGLE_0, 1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
 	return 0;
 }
@@ -482,7 +482,7 @@ static int32 mOPEN_DOWN(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->doorStatus = doorStatus;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = 1000;
-		engine->_movements->setActorAngle(ANGLE_0, 1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
 	return 0;
 }
@@ -496,7 +496,7 @@ static int32 mCLOSE(TwinEEngine *engine, MoveScriptContext &ctx) {
 		ctx.actor->doorStatus = 0;
 		ctx.actor->dynamicFlags.bIsSpriteMoving = 1;
 		ctx.actor->speed = -1000;
-		engine->_movements->setActorAngle(ANGLE_0, -1000, 50, &ctx.actor->move);
+		engine->_movements->setActorAngle(ANGLE_0, -ANGLE_351, ANGLE_17, &ctx.actor->move);
 	}
 	return 0;
 }

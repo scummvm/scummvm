@@ -171,15 +171,20 @@ enum class ExtraSpecialType {
 };
 
 #define ANGLE_360 1024
+#define ANGLE_351 1000
 #define ANGLE_315 896
 #define ANGLE_270 768
 #define ANGLE_225 640
+#define ANGLE_210 600
 #define ANGLE_180 512
+#define ANGLE_140 400
 #define ANGLE_135 384
 #define ANGLE_90 256
 #define ANGLE_70 200
 #define ANGLE_63 180
 #define ANGLE_45 128
+#define ANGLE_17 50
+#define ANGLE_1 5 // 1.75
 #define ANGLE_0 0
 
 inline int32 NormalizeAngle(int32 angle) {

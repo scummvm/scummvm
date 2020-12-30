@@ -75,7 +75,7 @@ void Actor::restartHeroScene() {
 	sceneHero->zone = -1;
 	sceneHero->angle = previousHeroAngle;
 
-	_engine->_movements->setActorAngleSafe(sceneHero->angle, sceneHero->angle, 0, &sceneHero->move);
+	_engine->_movements->setActorAngleSafe(sceneHero->angle, sceneHero->angle, ANGLE_0, &sceneHero->move);
 	setBehaviour(previousHeroBehaviour);
 
 	cropBottomScreen = 0;
@@ -319,7 +319,7 @@ void Actor::initActor(int16 actorIdx) {
 
 		initSpriteActor(actorIdx);
 
-		_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, 0, &actor->move);
+		_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, ANGLE_0, &actor->move);
 
 		if (actor->staticFlags.bUsesClipping) {
 			actor->lastX = actor->x;
@@ -339,7 +339,7 @@ void Actor::initActor(int16 actorIdx) {
 			_engine->_animations->initAnim(actor->anim, 0, AnimationTypes::kAnimInvalid, actorIdx);
 		}
 
-		_engine->_movements->setActorAngleSafe(actor->angle, actor->angle, 0, &actor->move);
+		_engine->_movements->setActorAngleSafe(actor->angle, actor->angle, ANGLE_0, &actor->move);
 	}
 
 	actor->positionInMoveScript = -1;
@@ -394,7 +394,7 @@ void Actor::resetActor(int16 actorIdx) {
 	actor->animType = 0;
 	actor->animPosition = 0;
 
-	_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, 0, &actor->move);
+	_engine->_movements->setActorAngleSafe(ANGLE_0, ANGLE_0, ANGLE_0, &actor->move);
 
 	actor->positionInMoveScript = -1;
 	actor->positionInLifeScript = 0;
@@ -418,7 +418,7 @@ void Actor::hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit
 			actor->animPosition = tmpAnimPos;
 		} else {
 			if (angle != -1) {
-				_engine->_movements->setActorAngleSafe(angle, angle, 0, &actor->move);
+				_engine->_movements->setActorAngleSafe(angle, angle, ANGLE_0, &actor->move);
 			}
 
 			if (_engine->getRandomNumber() & 1) {
