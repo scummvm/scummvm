@@ -54,7 +54,7 @@ namespace TwinE {
 GameState::GameState(TwinEEngine *engine) : _engine(engine) {
 	Common::fill(&gameFlags[0], &gameFlags[256], 0);
 	Common::fill(&inventoryFlags[0], &inventoryFlags[NUM_INVENTORY_ITEMS], 0);
-	Common::fill(&holomapFlags[0], &holomapFlags[150], 0);
+	Common::fill(&holomapFlags[0], &holomapFlags[NUM_LOCATIONS], 0);
 	playerName[0] = '\0';
 	Common::fill(&gameChoices[0], &gameChoices[10], 0);
 }

@@ -165,7 +165,7 @@ void Holomap::drawHolomapLocation() {
 	_engine->_menu->drawBox(rect);
 	rect.grow(-1);
 	_engine->_interface->drawTransparentBox(rect, 3);
-	const int32 height = _engine->_text->getCharWidth(title[0]);
+	const int32 height = _engine->_text->getCharHeight(title[0]);
 	drawHolomapText(rect.left + (rect.right - rect.left) / 2, rect.top + (rect.bottom - rect.top) / 2 - height / 2, title);
 }
 
