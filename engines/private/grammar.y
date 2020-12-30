@@ -6,14 +6,17 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "private/grammar.h"
-#define	code2(c1,c2)	code(c1); code(c2)
-#define	code3(c1,c2,c3)	code(c1); code(c2); code(c3)
+#define	code1(c1)	Private::code(c1);
+#define	code2(c1,c2)	Private::code(c1); Private::code(c2)
+#define	code3(c1,c2,c3)	Private::code(c1); Private::code(c2); Private::code(c3)
 
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 
 int yydebug=1;
+
+using namespace Private;
 
 extern FILE *yyin;
 extern int yylex();
@@ -28,23 +31,6 @@ int yywrap()
 {
 	return 1;
 }
-
-/*
-int parse(char *filename)
-{
-        yyin = fopen(filename, "r");
-        yyparse();
-        return 0;
-}
-
-int main() {
-	initcode();
-        yyparse();
-        execute(prog);
-        return 0;
-}*/
-
-typedef int (*Inst)();
 
 %}
 
@@ -90,11 +76,11 @@ statement: GOTOTOK expr ';' statements
 define:  /* nothing */
         | NAME ',' fcall ',' define  { }
         | NAME ',' fcall             { }
-        | NAME ',' define            { install($NAME, NAME, 0, NULL); }
-        | NAME                       { install($NAME, NAME, 0, NULL); }  
+        | NAME ',' define            { Private::install($NAME, NAME, 0, NULL); }
+        | NAME                       { Private::install($NAME, NAME, 0, NULL); }  
         ;
 
-fcall:    GOTOTOK '(' params ')'
+fcall:    GOTOTOK '(' NAME ')'
         | NAME '(' params ')'
         ;
 
@@ -105,16 +91,16 @@ params:  /* nothing */
         | fcall 
         ;
 
-value:    NUM    { code2(constpush, (Inst)$NUM); }
-        | STRING { code2(strpush, (Inst)$STRING); }
-        | NAME   { code3(varpush, (Inst)lookup($1), eval); }
+value:    NUM    { code2(Private::constpush, (Private::Inst)$NUM); }
+        | STRING { code2(Private::strpush, (Private::Inst)$STRING); }
+        | NAME   { code3(Private::varpush, (Private::Inst)Private::lookup($1), Private::eval); }
         ;
 
 expr:     value          
-        | '!' value       { code(negate); }
+        | '!' value       { code1(Private::negate); }
         | value EQ value
         | value NEQ value
-        | value '+' value { code(add); }
+        | value '+' value { code1(Private::add); }
         | value '<' value
         | value '>' value
         | value LTE value
