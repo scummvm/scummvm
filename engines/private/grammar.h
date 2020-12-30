@@ -34,5 +34,3 @@ extern  int print();
 
 extern void initcode();
 extern void execute(Inst *);
-
-extern int parse(char*);

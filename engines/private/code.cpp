@@ -64,14 +64,6 @@ int varpush()	/* push variable onto stack */
 	return 0;
 }
 
-int bltin()		/* evaluate built-in on top of stack */
-{
-	Datum d;
-	d = pop();
-	d.val = (*(double (*)())(*pc++))(d.val);
-	push(d);
-	return 0;
-}
 
 int eval()		/* evaluate variable on stack */
 {
@@ -122,7 +114,7 @@ int print()		/* pop top value from stack, print it */
 {
 	Datum d;
 	d = pop();
-	printf("\t%.8g\n", d.val);
+	printf("\t%d\n", d.val);
 	return 0;
 }
 

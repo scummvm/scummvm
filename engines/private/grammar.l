@@ -35,9 +35,9 @@ Random                  return RANDOMTOK;
 
 extern int yydebug;
 
-namespace Private {
+//namespace Private {
 
-int parse_assets(const char *code) {
+int parse(const char *code) {
 	//inputbuffer = code;
 	//inputlen = strlen(code);
 
@@ -60,4 +60,4 @@ int parse_assets(const char *code) {
 	return 0;
 }
 
-} // End of namespace Private
+//} // End of namespace Private
