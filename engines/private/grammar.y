@@ -1,6 +1,11 @@
-%{
+%require "3.6"
+%defines "engines/private/grammar.tab.h"
+%output "engines/private/grammar.tab.cpp"
 
-#include "grammar.h"
+%{
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
+#include "private/grammar.h"
 #define	code2(c1,c2)	code(c1); code(c2)
 #define	code3(c1,c2,c3)	code(c1); code(c2); code(c3)
 
@@ -9,7 +14,9 @@
 #include <stdlib.h>
 
 int yydebug=1;
+
 extern FILE *yyin;
+extern int yylex();
 extern int yyparse();
 
 void yyerror(const char *str)
@@ -22,6 +29,7 @@ int yywrap()
 	return 1;
 }
 
+/*
 int parse(char *filename)
 {
         yyin = fopen(filename, "r");
@@ -34,19 +42,20 @@ int main() {
         yyparse();
         execute(prog);
         return 0;
-}
+}*/
+
+typedef int (*Inst)();
 
 %}
 
 %union {
-	Symbol	*sym;	/* symbol table pointer */
-	Inst	*inst;	/* machine instruction */
+	struct Symbol	*sym;	/* symbol table pointer */
         char *s;
         int *i;
 }
 
-%token<s> NAME STRING
-%token<sym> NUM
+%token<s> NAME
+%token<sym> STRING NUM
 %token LTE GTE NEQ EQ IFTOK ELSETOK GOTOTOK DEBUGTOK DEFINETOK SETTINGTOK RANDOMTOK 
 
 %%
@@ -81,8 +90,8 @@ statement: GOTOTOK expr ';' statements
 define:  /* nothing */
         | NAME ',' fcall ',' define  { }
         | NAME ',' fcall             { }
-        | NAME ',' define            { install($NAME, NAME, 0); }
-        | NAME                       { install($NAME, NAME, 0); }  
+        | NAME ',' define            { install($NAME, NAME, 0, NULL); }
+        | NAME                       { install($NAME, NAME, 0, NULL); }  
         ;
 
 fcall:    GOTOTOK '(' params ')'
@@ -97,7 +106,7 @@ params:  /* nothing */
         ;
 
 value:    NUM    { code2(constpush, (Inst)$NUM); }
-        | STRING { }
+        | STRING { code2(strpush, (Inst)$STRING); }
         | NAME   { code3(varpush, (Inst)lookup($1), eval); }
         ;
 

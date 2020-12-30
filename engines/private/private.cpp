@@ -15,6 +15,10 @@
 #include "engines/util.h"
 
 #include "private/private.h"
+#include "private/grammar.tab.h"
+#include "private/grammar.h"
+
+extern int yyparse();
 
 namespace Private {
 
@@ -52,6 +56,9 @@ PrivateEngine::~PrivateEngine() {
 }
 
 Common::Error PrivateEngine::run() {
+        //parse("support/GAME.DAT");
+	yyparse();
+
 	// Initialize graphics using following:
 	_screenW = 640;
 	_screenH = 480;

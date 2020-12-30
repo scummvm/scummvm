@@ -7,10 +7,11 @@ typedef struct Symbol {	/* symbol table entry */
 	} u;
 	struct Symbol	*next;	/* to link to another */
 } Symbol;
-Symbol	*install(), *lookup();
+Symbol	*install(char *, int, int, char *), *lookup(char *);
 
 typedef union Datum {	/* interpreter stack type */
-	int	val;
+	int	 val;
+	char    *str;
 	Symbol	*sym;
 } Datum;
 extern	Datum pop();
@@ -28,7 +29,10 @@ extern	int assign();
 extern  int bltin();
 extern  int varpush(); 
 extern  int constpush();
+extern  int strpush();
 extern  int print();
 
 extern void initcode();
-extern void execute();
+extern void execute(Inst *);
+
+extern int parse(char*);
