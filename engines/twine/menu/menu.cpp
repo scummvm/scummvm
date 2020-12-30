@@ -877,13 +877,6 @@ bool Menu::isBehaviourHovered(HeroBehaviourType behaviour) const {
 
 void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDrawBox) {
 	const Common::Rect &boxRect = calcBehaviourRect(behaviour);
-	const int titleOffset = 10;
-	const int titleHeight = 40;
-	const int32 titleBoxLeft = 110;
-	const int32 titleBoxRight = 540;
-	const int32 titleBoxTop = boxRect.bottom + titleOffset;
-	const int32 titleBoxBottom = titleBoxTop + titleHeight;
-	const Common::Rect titleRect(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom);
 
 	const uint8 *currentAnim = _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)behaviour]];
 	int16 currentAnimState = behaviourAnimState[(byte)behaviour];
@@ -906,9 +899,17 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 	_engine->_interface->resetClip();
 
 	if (behaviour == _engine->_actor->heroBehaviour) {
+		const int titleOffset = 10;
+		const int titleHeight = 40;
+		const int32 titleBoxLeft = 110;
+		const int32 titleBoxRight = 540;
+		const int32 titleBoxTop = boxRect.bottom + titleOffset;
+		const int32 titleBoxBottom = titleBoxTop + titleHeight;
+
 		_engine->_interface->drawSplittedBox(boxRect, 69);
 
 		// behaviour menu title
+		const Common::Rect titleRect(titleBoxLeft, titleBoxTop, titleBoxRight, titleBoxBottom);
 		_engine->_interface->drawSplittedBox(titleRect, 0);
 		drawBox(titleRect);
 
@@ -918,6 +919,7 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 		_engine->_text->getMenuText(_engine->_actor->getTextIdForBehaviour(), dialText, sizeof(dialText));
 
 		_engine->_text->drawText(SCREEN_WIDTH / 2 - _engine->_text->getTextSize(dialText) / 2, titleBoxTop + 1, dialText);
+		_engine->copyBlockPhys(titleRect);
 	} else {
 		_engine->_interface->drawSplittedBox(boxRect, 0);
 	}
@@ -925,7 +927,6 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, behaviourEntity);
 
 	_engine->copyBlockPhys(boxRect);
-	_engine->copyBlockPhys(titleRect);
 
 	_engine->_interface->loadClip();
 }
