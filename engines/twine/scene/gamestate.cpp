@@ -364,6 +364,8 @@ void GameState::processFoundItem(int32 item) {
 		if (textState == ProgressiveTextState::ContinueRunning) {
 			_engine->_interface->resetClip();
 			textState = _engine->_text->updateProgressiveText();
+		} else {
+			_engine->_text->fadeInRemainingChars();
 		}
 
 		_engine->_redraw->flipRedrawAreas();

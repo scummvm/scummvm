@@ -520,6 +520,14 @@ int32 Text::getCharHeight(uint8 chr) const {
 	return stream.readByte();
 }
 
+void Text::fadeInRemainingChars() {
+	if (_fadeInCharactersPos <= 0) {
+		return;
+	}
+	fadeInCharacters(_fadeInCharactersPos, _dialTextStopColor);
+	--_fadeInCharactersPos;
+}
+
 ProgressiveTextState Text::updateProgressiveText() {
 	if (!_hasValidTextHandle) {
 		return ProgressiveTextState::End;
@@ -595,6 +603,8 @@ bool Text::displayText(int32 index, bool showText, bool playVox) {
 			_engine->readKeys();
 			if (textState == ProgressiveTextState::ContinueRunning) {
 				textState = updateProgressiveText();
+			} else {
+				fadeInRemainingChars();
 			}
 			if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {
 				if (textState == ProgressiveTextState::End) {

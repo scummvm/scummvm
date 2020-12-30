@@ -1192,6 +1192,8 @@ void Menu::processInventoryMenu() {
 
 		if (textState == ProgressiveTextState::ContinueRunning) {
 			textState = _engine->_text->updateProgressiveText();
+		} else {
+			_engine->_text->fadeInRemainingChars();
 		}
 
 		if (_engine->_input->toggleActionIfActive(TwinEActionType::UINextPage)) {

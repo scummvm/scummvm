@@ -114,6 +114,7 @@ enum class ProgressiveTextState {
 };
 
 class TwinEEngine;
+
 class Text {
 private:
 	TwinEEngine *_engine;
@@ -276,6 +277,7 @@ public:
 	void initText(int32 index);
 	void initInventoryText(int index);
 	void initItemFoundText(int index);
+	void fadeInRemainingChars();
 	ProgressiveTextState updateProgressiveText();
 
 	/**
