@@ -164,7 +164,7 @@ private:
 	int32 volumeMenu();
 	/** Used to run the save game management menu */
 	int32 savemanageMenu();
-	void drawInfoMenu(int16 left, int16 top);
+	void drawInfoMenu(int16 left, int16 top, int16 width);
 	Common::Rect calcBehaviourRect(HeroBehaviourType behaviour) const;
 	bool isBehaviourHovered(HeroBehaviourType behaviour) const;
 	void drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDrawBox, Common::Rect &dirtyRect);

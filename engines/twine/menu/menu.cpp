@@ -794,26 +794,25 @@ int32 Menu::giveupMenu() {
 	return 0;
 }
 
-void Menu::drawInfoMenu(int16 left, int16 top) {
+void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
 	_engine->_interface->resetClip();
-	const int32 width = 450;
-	const int32 height = 80;
+	const int16 height = 80;
 	const Common::Rect rect(left, top, left + width, top + height);
 	drawBox(rect);
 	Common::Rect splittedBoxRect(rect);
 	splittedBoxRect.grow(-1);
 	_engine->_interface->drawSplittedBox(splittedBoxRect, 0);
 
-	int32 newBoxLeft2 = left + 9;
+	const int32 newBoxLeft2 = left + 9;
 
 	_engine->_grid->drawSprite(newBoxLeft2, top + 13, _engine->_resources->spriteData[SPRITEHQR_LIFEPOINTS]);
 
-	int32 boxRight = left + 325;
-	int32 newBoxLeft = left + 25;
+	const int32 boxRight = left + 325;
+	const int32 newBoxLeft = left + 25;
 	int32 boxLeft = _engine->_screens->crossDot(newBoxLeft, boxRight, 50, _engine->_scene->sceneHero->life);
 
-	int32 boxTop = top + 10;
-	int32 boxBottom = top + 25;
+	const int32 boxTop = top + 10;
+	const int32 boxBottom = top + 25;
 	_engine->_interface->drawSplittedBox(Common::Rect(newBoxLeft, boxTop, boxLeft, boxBottom), 91);
 	drawBox(newBoxLeft, boxTop, left + 324, boxTop + 14);
 
@@ -822,7 +821,9 @@ void Menu::drawInfoMenu(int16 left, int16 top) {
 		if (_engine->_gameState->magicLevelIdx > 0) {
 			_engine->_interface->drawSplittedBox(Common::Rect(newBoxLeft, top + 35, _engine->_screens->crossDot(newBoxLeft, boxRight, 80, _engine->_gameState->inventoryMagicPoints), top + 50), 75);
 		}
-		drawBox(newBoxLeft, top + 35, left + _engine->_gameState->magicLevelIdx * 80 + 20, top + 35 + 15);
+		if (_engine->_gameState->magicLevelIdx > 0) {
+			drawBox(newBoxLeft, top + 35, left + _engine->_gameState->magicLevelIdx * 80 + 20, top + 35 + 15);
+		}
 	}
 
 	boxLeft = left + 340;
@@ -956,7 +957,7 @@ void Menu::drawBehaviourMenu(int32 angle) {
 
 	_engine->copyBlockPhys(titleRect);
 
-	drawInfoMenu(titleRect.left, titleRect.bottom + 10);
+	drawInfoMenu(titleRect.left, titleRect.bottom + 10, titleRect.width());
 }
 
 void Menu::processBehaviourMenu() {
