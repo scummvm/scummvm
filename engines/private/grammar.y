@@ -52,7 +52,7 @@ lines:   line lines
 
 line:     DEBUGTOK '{' debug '}'             { printf("debug\n"); }
         | DEFINETOK NAME '{' define '}'      { printf("define %s\n", $NAME); }
-        | SETTINGTOK NAME '{' statements '}' { printf("setting %s\n", $NAME); }
+        | SETTINGTOK NAME '{' statements '}' { initcode($NAME); }
         ;
 
 debug: /* nothing */

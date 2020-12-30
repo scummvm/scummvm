@@ -24,7 +24,7 @@ typedef int (*Inst)();	/* machine instruction */
 #define	STOP	(Inst) 0
 
 extern  Inst *code(Inst);
-extern	Inst prog[];
+extern	Inst *prog;
 extern	int eval();
 extern  int add();
 extern  int negate(); 
@@ -36,7 +36,7 @@ extern  int constpush();
 extern  int strpush();
 extern  int print();
 
-extern void initcode();
+extern void initcode(char *);
 extern void execute(Inst *);
 
 }

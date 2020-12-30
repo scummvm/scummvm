@@ -1,22 +1,42 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <cstring>
 
 #include "grammar.h"
 #include "grammar.tab.h"
 
+#define	NSTACK	256
+#define	NPROG	2000
+
 namespace Private {
 
-#define	NSTACK	256
-static	Datum	stack[NSTACK];	/* the stack */
-static	Datum	*stackp;	/* next free spot on stack */
+typedef struct Setting {
 
-#define	NPROG	2000
-Inst	prog[NPROG];	/* the machine */
-Inst	*progp;		/* next free spot for code generation */
-Inst	*pc;		/* program counter during execution */
+    Datum	stack[NSTACK];	/* the stack */
+    Datum	*stackp;	/* next free spot on stack */
 
-void initcode()	/* initialize for code generation */
+    Inst	prog[NPROG];	/* the machine */
+    Inst	*progp;		/* next free spot for code generation */
+    Inst	*pc;		/* program counter during execution */
+
+} Setting;
+
+Datum	*stack       = NULL;	/* the stack */
+Datum	*stackp      = NULL;	/* next free spot on stack */
+
+Inst	*prog        = NULL;	/* the machine */
+Inst	*progp       = NULL;	/* next free spot for code generation */
+Inst	*pc          = NULL;	/* program counter during execution */
+
+void initcode(char *name)	/* initialize for code generation */
 {
+        printf("setting %s\n", name);
+        Setting *s = (Setting*) malloc(sizeof(Setting));
+        memset((void *) s, 0, sizeof(Setting));
+
+        prog = (Inst *) &s->prog;
+        stack = (Datum *) &s->stack;
+
 	stackp = stack;
 	progp = prog;
 }
@@ -122,7 +142,7 @@ int print()		/* pop top value from stack, print it */
 
 Inst *code(Inst f)	/* install one instruction or operand */
 {
-	Inst *oprogp = progp;
+ 	Inst *oprogp = progp;
 	if (progp >= &prog[NPROG])
 		abort();
 	*progp++ = f;
