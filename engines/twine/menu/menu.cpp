@@ -875,7 +875,7 @@ bool Menu::isBehaviourHovered(HeroBehaviourType behaviour) const {
 	return _engine->_input->isMouseHovering(boxRect);
 }
 
-void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDrawBox) {
+void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDrawBox, Common::Rect &dirtyRect) {
 	const Common::Rect &boxRect = calcBehaviourRect(behaviour);
 
 	const uint8 *currentAnim = _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)behaviour]];
@@ -926,14 +926,18 @@ void Menu::drawBehaviour(HeroBehaviourType behaviour, int32 angle, bool cantDraw
 
 	_engine->_renderer->renderBehaviourModel(boxRect, -600, angle, behaviourEntity);
 
-	_engine->copyBlockPhys(boxRect);
+	if (dirtyRect.isEmpty()) {
+		dirtyRect = boxRect;
+	} else {
+		dirtyRect.extend(boxRect);
+	}
 
 	_engine->_interface->loadClip();
 }
 
-void Menu::prepareAndDrawBehaviour(int32 angle, HeroBehaviourType behaviour) {
+void Menu::prepareAndDrawBehaviour(int32 angle, HeroBehaviourType behaviour, Common::Rect &dirtyRect) {
 	_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)behaviour], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)behaviour]], behaviourEntity, &behaviourAnimData[(byte)behaviour]);
-	drawBehaviour(behaviour, angle, false);
+	drawBehaviour(behaviour, angle, false, dirtyRect);
 }
 
 void Menu::drawBehaviourMenu(int32 angle) {
@@ -944,14 +948,15 @@ void Menu::drawBehaviourMenu(int32 angle) {
 	boxRect.grow(-1);
 	_engine->_interface->drawTransparentBox(boxRect, 2);
 
-	prepareAndDrawBehaviour(angle, HeroBehaviourType::kNormal);
-	prepareAndDrawBehaviour(angle, HeroBehaviourType::kAthletic);
-	prepareAndDrawBehaviour(angle, HeroBehaviourType::kAggressive);
-	prepareAndDrawBehaviour(angle, HeroBehaviourType::kDiscrete);
-
-	drawInfoMenu(titleRect.left, titleRect.bottom + 10);
+	Common::Rect ignoreRect;
+	prepareAndDrawBehaviour(angle, HeroBehaviourType::kNormal, ignoreRect);
+	prepareAndDrawBehaviour(angle, HeroBehaviourType::kAthletic, ignoreRect);
+	prepareAndDrawBehaviour(angle, HeroBehaviourType::kAggressive, ignoreRect);
+	prepareAndDrawBehaviour(angle, HeroBehaviourType::kDiscrete, ignoreRect);
 
 	_engine->copyBlockPhys(titleRect);
+
+	drawInfoMenu(titleRect.left, titleRect.bottom + 10);
 }
 
 void Menu::processBehaviourMenu() {
@@ -1019,14 +1024,18 @@ void Menu::processBehaviourMenu() {
 
 		_engine->_actor->heroBehaviour = (HeroBehaviourType)heroBehaviour;
 
+		Common::Rect dirtyRect;
 		if (tmpHeroBehaviour != _engine->_actor->heroBehaviour) {
-			drawBehaviour(tmpHeroBehaviour, _engine->_scene->sceneHero->angle, true);
+			drawBehaviour(tmpHeroBehaviour, _engine->_scene->sceneHero->angle, true, dirtyRect);
 			tmpHeroBehaviour = _engine->_actor->heroBehaviour;
 			_engine->_movements->setActorAngleSafe(_engine->_scene->sceneHero->angle, _engine->_scene->sceneHero->angle - ANGLE_90, 50, &moveMenu);
 			_engine->_animations->setAnimAtKeyframe(behaviourAnimState[(byte)_engine->_actor->heroBehaviour], _engine->_resources->animTable[_engine->_actor->heroAnimIdx[(byte)_engine->_actor->heroBehaviour]], behaviourEntity, &behaviourAnimData[(byte)_engine->_actor->heroBehaviour]);
 		}
 
-		drawBehaviour(_engine->_actor->heroBehaviour, -1, true);
+		drawBehaviour(_engine->_actor->heroBehaviour, -1, true, dirtyRect);
+		if (!dirtyRect.isEmpty()) {
+			_engine->copyBlockPhys(dirtyRect);
+		}
 
 		_engine->lbaTime++;
 	}
