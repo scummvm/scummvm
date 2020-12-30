@@ -45,6 +45,16 @@ int constpush()	/* push constant onto stack */
 	return 0;
 }
 
+int strpush()	/* push constant onto stack */
+{
+	Datum d;
+	d.str = ((Symbol *)*pc++)->u.str;
+	printf("pushing %s\n", d.str);
+	push(d);
+	return 0;
+}
+
+
 int varpush()	/* push variable onto stack */
 {
 	Datum d;

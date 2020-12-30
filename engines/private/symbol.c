@@ -16,16 +16,22 @@ Symbol *lookup(char *s)	/* find s in symbol table */
 	return 0;	/* 0 ==> not found */	
 }
 
-Symbol *install(char *s, int t, int d)  /* install s in symbol table */
+Symbol *install(char *n, int t, int d, char *s)  /* install s in symbol table */
 {
 	Symbol *sp;
 	char *emalloc();
 
 	sp = (Symbol *) emalloc(sizeof(Symbol));
-	sp->name = emalloc(strlen(s)+1); /* +1 for '\0' */
-	strcpy(sp->name, s);
+	sp->name = emalloc(strlen(n)+1); /* +1 for '\0' */
+	strcpy(sp->name, n);
 	sp->type = t;
-	sp->u.val = d;
+	if (t == NUM || t == NAME)
+	   sp->u.val = d;
+	else if (t == STRING)
+	   sp->u.str = s;
+        else
+	   abort();
+
 	sp->next = symlist; /* put at front of list */
 	symlist = sp;
 	return sp;

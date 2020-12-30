@@ -1,8 +1,12 @@
 MODULE := engines/private
  
 MODULE_OBJS := \
+	private.o \
 	metaengine.o \
-	private.o
+        code.o \
+	symbol.o \
+        grammar.tab.o \
+	lex.yy.o
  
 MODULE_DIRS += \
 	engines/private
