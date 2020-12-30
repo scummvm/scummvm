@@ -178,7 +178,7 @@ EPOCHEAPSIZE	5000000 64000000
 #include "../mmp/engines.mmh"
 
 // implicitly compiled if links with engines kyra, sci, scumm and saga
-SOURCEPATH ..\..\..\..\graphics
+SOURCEPATH ..\\..\\..\\..\\graphics
 SOURCE sjis.cpp
 """
 # ---------------------------
@@ -189,7 +189,7 @@ GCCE WINSCW
 PRJ_MMPFILES
 
 gnumakefile icons.mk
-gnumakefile ..\help\build_help.mk
+gnumakefile ..\\help\\build_help.mk
 
 """
 # ---------------------------
@@ -205,8 +205,8 @@ def SafeWriteFile(path, data, mode = 'w'):
  
 def create_mmps(build, path = ''):
    uids = get_UIDs(build)
-   bld_inf = os.path.join(path, bld_inf_template)
-   SafeWriteFile(bld_inf, "PRJ_MMPFILES\n")
+   bld_inf = os.path.join(path, "bld.inf")
+   SafeWriteFile(bld_inf, bld_inf_template)
    for i in range(len(uids)):
       UID3 = uids[i]
       idx = i + 1
