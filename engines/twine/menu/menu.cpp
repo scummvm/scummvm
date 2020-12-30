@@ -819,10 +819,10 @@ void Menu::drawInfoMenu(int16 left, int16 top, int16 width) {
 	if (!_engine->_gameState->inventoryDisabled() && _engine->_gameState->hasItem(InventoryItems::kiTunic)) {
 		_engine->_grid->drawSprite(newBoxLeft2, top + 36, _engine->_resources->spriteData[SPRITEHQR_MAGICPOINTS]);
 		if (_engine->_gameState->magicLevelIdx > 0) {
-			_engine->_interface->drawSplittedBox(Common::Rect(newBoxLeft, top + 35, _engine->_screens->crossDot(newBoxLeft, boxRight, 80, _engine->_gameState->inventoryMagicPoints), top + 50), 75);
-		}
-		if (_engine->_gameState->magicLevelIdx > 0) {
-			drawBox(newBoxLeft, top + 35, left + _engine->_gameState->magicLevelIdx * 80 + 20, top + 35 + 15);
+			const int32 pointBoxRight = _engine->_screens->crossDot(newBoxLeft, boxRight, 80, _engine->_gameState->inventoryMagicPoints);
+			const Common::Rect pointsRect(newBoxLeft, top + 35, pointBoxRight, top + 50);
+			_engine->_interface->drawSplittedBox(pointsRect, 75);
+			drawBox(newBoxLeft, top + 35, newBoxLeft + _engine->_gameState->magicLevelIdx * 80, top + 35 + 15);
 		}
 	}
 
