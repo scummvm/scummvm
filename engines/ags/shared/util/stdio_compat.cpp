@@ -55,8 +55,8 @@ Common::FSNode getFSNOde(const char *path) {
 	if (filePath.empty() || filePath == "." || filePath == "./")
 		return node;
 
-	assert(filePath.hasPrefix("./"));
-	filePath = Common::String(filePath.c_str() + 2);
+	if (filePath.hasPrefix("./"))
+		filePath = Common::String(filePath.c_str() + 2);
 
 	// Iterate through any further subfolders or filename
 	size_t separator;
@@ -83,7 +83,7 @@ int ags_directory_exists(const char *path) {
 
 int ags_path_exists(const char *path) {
 	Common::FSNode node = getFSNOde(path);
-	return node.exists() && node.isDirectory() ? 1 : 0;
+	return node.exists() ? 1 : 0;
 }
 
 file_off_t ags_file_size(const char *path) {
