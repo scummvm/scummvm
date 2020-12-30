@@ -39,7 +39,7 @@ namespace Private {
 
 int parse(char *code) {
 	
-	initcode();
+	initcode("init");
 	//_lines[0] = _lines[1] = _lines[2] = code;
 
 	YY_BUFFER_STATE bp;
