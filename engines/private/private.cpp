@@ -19,6 +19,7 @@
 #include "private/grammar.h"
 
 extern int yyparse();
+extern int parse(char*);
 
 namespace Private {
 
@@ -56,8 +57,11 @@ PrivateEngine::~PrivateEngine() {
 }
 
 Common::Error PrivateEngine::run() {
-        //parse("support/GAME.DAT");
-	yyparse();
+	Common::File *file = new Common::File();
+	assert(!file->open("support/GAME.DAT"));
+	void *buf = malloc(1024); 
+	file->read(buf, 1024);
+	parse((char *) buf);
 
 	// Initialize graphics using following:
 	_screenW = 640;

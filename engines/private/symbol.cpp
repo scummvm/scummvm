@@ -6,6 +6,16 @@
 
 static Symbol *symlist = 0;  /* symbol table: linked list */
 
+char *emalloc(unsigned n)	/* check return from malloc */
+{
+	char *p;
+
+	p = (char*) malloc(n);
+	if (p == 0)
+		abort(); //execerror("out of memory", (char *) 0);
+	return p;
+}
+
 Symbol *lookup(char *s)	/* find s in symbol table */
 {
 	Symbol *sp;
@@ -19,7 +29,6 @@ Symbol *lookup(char *s)	/* find s in symbol table */
 Symbol *install(char *n, int t, int d, char *s)  /* install s in symbol table */
 {
 	Symbol *sp;
-	char *emalloc();
 
 	sp = (Symbol *) emalloc(sizeof(Symbol));
 	sp->name = emalloc(strlen(n)+1); /* +1 for '\0' */
@@ -35,14 +44,4 @@ Symbol *install(char *n, int t, int d, char *s)  /* install s in symbol table */
 	sp->next = symlist; /* put at front of list */
 	symlist = sp;
 	return sp;
-}
-
-char *emalloc(unsigned n)	/* check return from malloc */
-{
-	char *p;
-
-	p = (char*) malloc(n);
-	if (p == 0)
-		abort(); //execerror("out of memory", (char *) 0);
-	return p;
 }
