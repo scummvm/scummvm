@@ -1046,7 +1046,7 @@ void Menu::drawMagicItemsBox(int32 left, int32 top, int32 right, int32 bottom, i
 	_engine->_interface->drawLine(++left, bottom, right, bottom, color);                      // bottom line
 }
 
-void Menu::drawItem(int32 item) {
+void Menu::drawItem(int32 item, Common::Rect &dirtyRect) {
 	const int32 itemX = (item / 4) * 85 + 64;
 	const int32 itemY = (item & 3) * 75 + 52;
 
@@ -1070,7 +1070,11 @@ void Menu::drawItem(int32 item) {
 	}
 
 	drawBox(rect);
-	_engine->copyBlockPhys(rect);
+	if (dirtyRect.isEmpty()) {
+		dirtyRect = rect;
+	} else {
+		dirtyRect.extend(rect);
+	}
 }
 
 void Menu::drawInventoryItems() {
@@ -1080,8 +1084,12 @@ void Menu::drawInventoryItems() {
 	drawMagicItemsBox(110, 18, 188, 311, 75);
 	_engine->copyBlockPhys(rect);
 
+	Common::Rect dirtyRect;
 	for (int32 item = 0; item < NUM_INVENTORY_ITEMS; item++) {
-		drawItem(item);
+		drawItem(item, dirtyRect);
+	}
+	if (!dirtyRect.isEmpty()) {
+		_engine->copyBlockPhys(dirtyRect);
 	}
 }
 
@@ -1129,33 +1137,34 @@ void Menu::processInventoryMenu() {
 		const bool cursorLeft = _engine->_input->toggleActionIfActive(TwinEActionType::UILeft);
 		const bool cursorRight = _engine->_input->toggleActionIfActive(TwinEActionType::UIRight);
 
+		Common::Rect dirtyRect;
 		if (cursorDown) {
 			inventorySelectedItem++;
 			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
 				inventorySelectedItem = 0;
 			}
-			drawItem(prevSelectedItem);
+			drawItem(prevSelectedItem, dirtyRect);
 			updateItemText = true;
 		} else if (cursorUp) {
 			inventorySelectedItem--;
 			if (inventorySelectedItem < 0) {
 				inventorySelectedItem = NUM_INVENTORY_ITEMS - 1;
 			}
-			drawItem(prevSelectedItem);
+			drawItem(prevSelectedItem, dirtyRect);
 			updateItemText = true;
 		} else if (cursorLeft) {
 			inventorySelectedItem -= 4;
 			if (inventorySelectedItem < 0) {
 				inventorySelectedItem += NUM_INVENTORY_ITEMS;
 			}
-			drawItem(prevSelectedItem);
+			drawItem(prevSelectedItem, dirtyRect);
 			updateItemText = true;
 		} else if (cursorRight) {
 			inventorySelectedItem += 4;
 			if (inventorySelectedItem >= NUM_INVENTORY_ITEMS) {
 				inventorySelectedItem -= NUM_INVENTORY_ITEMS;
 			}
-			drawItem(prevSelectedItem);
+			drawItem(prevSelectedItem, dirtyRect);
 			updateItemText = true;
 		}
 
@@ -1185,13 +1194,20 @@ void Menu::processInventoryMenu() {
 			}
 		}
 
-		drawItem(inventorySelectedItem);
+		drawItem(inventorySelectedItem, dirtyRect);
 
 		if (inventorySelectedItem < NUM_INVENTORY_ITEMS && _engine->_input->toggleActionIfActive(TwinEActionType::UIEnter) && _engine->_gameState->hasItem((InventoryItems)inventorySelectedItem) && !_engine->_gameState->inventoryDisabled()) {
 			_engine->loopInventoryItem = inventorySelectedItem;
 			inventorySelectedColor = 91;
-			drawItem(inventorySelectedItem);
+			drawItem(inventorySelectedItem, dirtyRect);
+			if (!dirtyRect.isEmpty()) {
+				_engine->copyBlockPhys(dirtyRect);
+			}
 			break;
+		}
+
+		if (!dirtyRect.isEmpty()) {
+			_engine->copyBlockPhys(dirtyRect);
 		}
 	}
 

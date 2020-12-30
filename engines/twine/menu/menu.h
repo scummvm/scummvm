@@ -171,7 +171,7 @@ private:
 	void drawInventoryItems();
 	void prepareAndDrawBehaviour(int32 angle, HeroBehaviourType behaviour);
 	void drawBehaviourMenu(int32 angle);
-	void drawItem(int32 item);
+	void drawItem(int32 item, Common::Rect &dirtyRect);
 	/**
 	 * Draw the entire button box
 	 * @param left start width to draw the button
