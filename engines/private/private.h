@@ -52,7 +52,6 @@ public:
 	void stopSound();
 	void drawScreen();
 
-
 };
 
 // Example console class

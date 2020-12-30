@@ -35,12 +35,11 @@ Random                  return RANDOMTOK;
 
 extern int yydebug;
 
-//namespace Private {
+namespace Private {
 
-int parse(const char *code) {
-	//inputbuffer = code;
-	//inputlen = strlen(code);
-
+int parse(char *code) {
+	
+	initcode();
 	//_lines[0] = _lines[1] = _lines[2] = code;
 
 	YY_BUFFER_STATE bp;
@@ -55,9 +54,10 @@ int parse(const char *code) {
 	bp = yy_scan_string(code);
 	yy_switch_to_buffer(bp);
 	yyparse();
+        execute(prog);
 	yy_delete_buffer(bp);
 
 	return 0;
 }
 
-//} // End of namespace Private
+} // End of namespace Private

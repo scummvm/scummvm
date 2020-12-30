@@ -19,9 +19,10 @@
 #include "private/grammar.h"
 
 extern int yyparse();
-extern int parse(char*);
 
 namespace Private {
+
+extern int parse(char*);
 
 PrivateEngine::PrivateEngine(OSystem *syst)
 	: Engine(syst) {
@@ -58,9 +59,9 @@ PrivateEngine::~PrivateEngine() {
 
 Common::Error PrivateEngine::run() {
 	Common::File *file = new Common::File();
-	assert(!file->open("support/GAME.DAT"));
-	void *buf = malloc(1024); 
-	file->read(buf, 1024);
+	assert(file->open("GAME.DAT"));
+	void *buf = malloc(191000); 
+	file->read(buf, 191000);
 	parse((char *) buf);
 
 	// Initialize graphics using following:
