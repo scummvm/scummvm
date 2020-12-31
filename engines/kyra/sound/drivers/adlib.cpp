@@ -659,21 +659,17 @@ void AdLibDriver::executePrograms() {
 	// each AdLib channel (0-8), plus one "control channel" (9) which is
 	// the one that tells the other channels what to do.
 
-	// This is where we ensure that channels that are made to jump "in
-	// sync" do so.
-
 	if (_syncJumpMask) {
-		bool forceUnlock = true;
+		// This is where we ensure that channels that are made to jump
+		// "in sync" do so.
 
 		for (_curChannel = 9; _curChannel >= 0; --_curChannel) {
-			if ((_syncJumpMask & (1 << _curChannel)) == 0)
-				continue;
-
-			if (_channels[_curChannel].dataptr && !_channels[_curChannel].lock)
-				forceUnlock = false;
+			if ((_syncJumpMask & (1 << _curChannel)) && _channels[_curChannel].dataptr && !_channels[_curChannel].lock)
+				break; // don't unlock
 		}
 
-		if (forceUnlock) {
+		if (_curChannel < 0) {
+			// force unlock
 			for (_curChannel = 9; _curChannel >= 0; --_curChannel)
 				if (_syncJumpMask & (1 << _curChannel))
 					_channels[_curChannel].lock = false;
@@ -682,7 +678,6 @@ void AdLibDriver::executePrograms() {
 
 	for (_curChannel = 9; _curChannel >= 0; --_curChannel) {
 		Channel &channel = _channels[_curChannel];
-		int result = 1;
 
 		if (!channel.dataptr)
 			continue;
@@ -698,6 +693,7 @@ void AdLibDriver::executePrograms() {
 		if (channel.tempoReset)
 			channel.tempo = _tempo;
 
+		int result = 1;
 		if (advance(channel.timer, channel.tempo)) {
 			if (--channel.duration) {
 				if (channel.duration == channel.spacing2)
@@ -705,60 +701,50 @@ void AdLibDriver::executePrograms() {
 				if (channel.duration == channel.spacing1 && _curChannel != 9)
 					noteOff(channel);
 			} else {
-				// An opcode is not allowed to modify its own
-				// data pointer except through the 'dataptr'
-				// parameter. To enforce that, we have to work
-				// on a copy of the data pointer.
-				//
-				// This fixes a subtle music bug where the
-				// wrong music would play when getting the
-				// quill in Kyra 1.
-				const uint8 *dataptr = channel.dataptr;
-				while (dataptr) {
-					uint8 opcode, param;
-					// Safety check to avoid illegal access.
-					// Stop channel if not enough data.
-					if (dataptr - _soundData < _soundDataSize)
-						opcode = *dataptr++;
-					else
-						opcode = 0xFF;
-					if (opcode < 0x80 && dataptr - _soundData == _soundDataSize)
-						opcode = 0xFF;
+				// Process some opcodes.
+				result = 0;
+			}
+		}
 
-					if (opcode & 0x80) {
-						opcode &= 0x7F;
-						if (opcode >= _parserOpcodeTableSize)
-							opcode = _parserOpcodeTableSize - 1;
-						// Safety check for end of data.
-						if (dataptr - _soundData + _parserOpcodeTable[opcode].values > _soundDataSize)
-							opcode = _parserOpcodeTableSize - 1;
+		// An opcode is not allowed to modify its own data pointer
+		// except through the 'dataptr' parameter. To enforce that,
+		// we have to work on a copy of the data pointer.
+		//
+		// This fixes a subtle music bug where the wrong music would
+		// play when getting the quill in Kyra 1.
 
-						const ParserOpcode &op = _parserOpcodeTable[opcode];
-						param = op.values ? *dataptr : 0;
-						dataptr++;
+		for (const uint8 *dataptr = channel.dataptr; dataptr && !result; channel.dataptr = dataptr) {
+			uint8 opcode = 0xFF;
+			// Safety check to avoid illegal access.
+			// Stop channel if not enough data.
+			if (dataptr - _soundData < _soundDataSize)
+				opcode = *dataptr++;
+			if (opcode < 0x80 && dataptr - _soundData == _soundDataSize)
+				opcode = 0xFF;
 
-						debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d) (channel: %d)", op.name, opcode, _curChannel);
-						result = (this->*(op.function))(dataptr, channel, param);
-						channel.dataptr = dataptr;
-						if (result)
-							break;
-					} else {
-						param = *dataptr++;
-						debugC(9, kDebugLevelSound, "Note on opcode 0x%02X (duration: %d) (channel: %d)", opcode, param, _curChannel);
-						setupNote(opcode, channel);
-						noteOn(channel);
-						setupDuration(param, channel);
-						if (param) {
-							// We need to make sure we are always running the
-							// effects after this. Otherwise some sounds are
-							// wrong. Like the sfx when bumping into a wall in
-							// LoL.
-							result = 1;
-							channel.dataptr = dataptr;
-							break;
-						}
-					}
-				}
+			if (opcode & 0x80) {
+				opcode = CLIP(opcode & 0x7F, 0, _parserOpcodeTableSize - 1);
+				// Safety check for end of data.
+				if (dataptr - _soundData + _parserOpcodeTable[opcode].values > _soundDataSize)
+					opcode = _parserOpcodeTableSize - 1;
+
+				const ParserOpcode &op = _parserOpcodeTable[opcode];
+				uint8 param = op.values ? *dataptr : 0;
+				dataptr++;
+
+				debugC(9, kDebugLevelSound, "Calling opcode '%s' (%d) (channel: %d)", op.name, opcode, _curChannel);
+				result = (this->*(op.function))(dataptr, channel, param);
+			} else {
+				uint8 param = *dataptr++;
+				debugC(9, kDebugLevelSound, "Note on opcode 0x%02X (duration: %d) (channel: %d)", opcode, param, _curChannel);
+				setupNote(opcode, channel);
+				noteOn(channel);
+				setupDuration(param, channel);
+				// We need to make sure we are always running the
+				// effects after this. Otherwise some sounds are
+				// wrong. Like the sfx when bumping into a wall in
+				// LoL.
+				result = param > 0;
 			}
 		}
 
