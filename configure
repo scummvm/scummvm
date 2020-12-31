@@ -2905,7 +2905,7 @@ case $_host_os in
 		# Building with SDK 10.14+ causes blurry display on Retina screens.
 		# A workaround is to set the LC_VERSION_MIN_MACOSX load command's sdk value
 		# to n/a (i.e. 0.0). See bug #11430 for details.
-		echocheck "macOS deployement target"
+		echocheck "macOS deployment target"
 		cat > $TMPC << EOF
 #include "AvailabilityMacros.h"
 
