@@ -161,10 +161,9 @@ private:
 		return timer < old;
 	}
 
-	// The sound data has at least two lookup tables:
-	//
+	// The sound data has two lookup tables:
 	// * One for programs, starting at offset 0.
-	// * One for instruments, starting at offset 500.
+	// * One for instruments, starting at offset 300, 500, or 1000.
 
 	const uint8 *getInstrument(int instrumentId) {
 		return getProgram(_numPrograms + instrumentId);
