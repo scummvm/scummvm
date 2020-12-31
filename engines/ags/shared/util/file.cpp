@@ -120,7 +120,7 @@ Stream *File::OpenFile(const String &filename, FileOpenMode open_mode, FileWorkM
 			fs = new BufferedStream(filename, open_mode, work_mode);
 		else
 			fs = new FileStream(filename, open_mode, work_mode);
-		if (fs != nullptr && !fs->IsValid()) {
+ 		if (fs != nullptr && !fs->IsValid()) {
 			delete fs;
 			fs = nullptr;
 		}

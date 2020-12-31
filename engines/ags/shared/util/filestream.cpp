@@ -185,9 +185,6 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 			_file = f;
 		}
 	}
-
-	if (_file == nullptr)
-		error("Error opening file.");
 }
 
 } // namespace Shared

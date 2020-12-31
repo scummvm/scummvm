@@ -32,17 +32,8 @@ namespace AGS {
 namespace Shared {
 
 BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess)
-	: FileStream(file_name, open_mode, work_mode, stream_endianess), _buffer(BufferStreamSize), _bufferPosition(0), _position(0) {
-	if (FileStream::Seek(0, kSeekEnd) == false)
-		error("Error determining stream end.");
-
-	_end = FileStream::GetPosition();
-	if (_end == -1)
-		error("Error determining stream end.");
-
-	if (FileStream::Seek(0, kSeekBegin) == false)
-		error("Error determining stream end.");
-
+		: FileStream(file_name, open_mode, work_mode, stream_endianess), _buffer(BufferStreamSize), _bufferPosition(0), _position(0) {
+	_end = GetLength();
 	_buffer.resize(0);
 }
 

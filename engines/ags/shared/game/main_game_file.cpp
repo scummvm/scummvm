@@ -607,6 +607,7 @@ void SetDefaultGlobalMessages(GameSetupStruct &game) {
 }
 
 void FixupSaveDirectory(GameSetupStruct &game) {
+#ifdef DEPRECATED
 	// If the save game folder was not specified by game author, create one of
 	// the game name, game GUID, or uniqueid, as a last resort
 	if (!game.saveGameFolderName[0]) {
@@ -620,6 +621,9 @@ void FixupSaveDirectory(GameSetupStruct &game) {
 	// Lastly, fixup folder name by removing any illegal characters
 	String s = Path::FixupSharedFilename(game.saveGameFolderName);
 	snprintf(game.saveGameFolderName, MAX_SG_FOLDER_LEN, "%s", s.GetCStr());
+#else
+	sprintf(game.saveGameFolderName, "");
+#endif
 }
 
 HGameFileError ReadSpriteFlags(LoadedGameEntities &ents, Stream *in, GameDataVersion data_ver) {
