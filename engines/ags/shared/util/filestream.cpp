@@ -169,7 +169,7 @@ bool FileStream::Seek(soff_t offset, StreamSeek origin) {
 void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode) {
 	if (open_mode == kFile_Open) {
 		Common::File *f = new Common::File();
-		if (!f->open(file_name.GetNullableCStr())) {
+		if (!f->open(getFSNode(file_name.GetNullableCStr()))) {
 			delete f;
 			_file = nullptr;
 		} else {

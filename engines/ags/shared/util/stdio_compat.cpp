@@ -34,9 +34,9 @@ int ags_fseek(Common::Stream *stream, file_off_t offset, int whence) {
 	Common::SeekableWriteStream *ws = dynamic_cast<Common::SeekableWriteStream *>(stream);
 
 	if (rs)
-		return rs->seek(offset, whence);
+		return rs->seek(offset, whence) ? 0 : 1;
 	else if (ws)
-		return ws->seek(offset, whence);
+		return ws->seek(offset, whence) ? 0 : 1;
 	else
 		error("Seek on null stream");
 }
@@ -47,7 +47,7 @@ file_off_t ags_ftell(Common::Stream *stream) {
 	return rs->pos();
 }
 
-Common::FSNode getFSNOde(const char *path) {
+Common::FSNode getFSNode(const char *path) {
 	Common::FSNode node(ConfMan.get("path"));
 	Common::String filePath(path);
 
@@ -72,22 +72,22 @@ Common::FSNode getFSNOde(const char *path) {
 }
 
 int  ags_file_exists(const char *path) {
-	Common::FSNode node = getFSNOde(path);
+	Common::FSNode node = getFSNode(path);
 	return node.exists() && !node.isDirectory()  ? 1 : 0;
 }
 
 int ags_directory_exists(const char *path) {
-	Common::FSNode node = getFSNOde(path);
+	Common::FSNode node = getFSNode(path);
 	return node.exists() && node.isDirectory() ? 1 : 0;
 }
 
 int ags_path_exists(const char *path) {
-	Common::FSNode node = getFSNOde(path);
+	Common::FSNode node = getFSNode(path);
 	return node.exists() ? 1 : 0;
 }
 
 file_off_t ags_file_size(const char *path) {
-	Common::FSNode node = getFSNOde(path);
+	Common::FSNode node = getFSNode(path);
 	Common::File f;
 
 	return f.open(node) ? f.size() : (file_off_t )-1;
