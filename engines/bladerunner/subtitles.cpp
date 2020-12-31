@@ -125,12 +125,14 @@ void Subtitles::init(void) {
 	// Loading subtitles versioning info if available
 	TextResource versionTxtResource(_vm);
 	if ( versionTxtResource.open(SUBTITLES_VERSION_TRENAME, false)) {
-		_subtitlesInfo.credits = versionTxtResource.getText((uint32)0);
-		_subtitlesInfo.versionStr = versionTxtResource.getText((uint32)1);
+		_subtitlesInfo.credits       = versionTxtResource.getText((uint32)0);
+		_subtitlesInfo.versionStr    = versionTxtResource.getText((uint32)1);
 		_subtitlesInfo.dateOfCompile = versionTxtResource.getText((uint32)2);
-		_subtitlesInfo.languageMode = versionTxtResource.getText((uint32)3);
-		Common::String fontType = versionTxtResource.getText((uint32)4);
-		_subtitlesInfo.fontName = versionTxtResource.getText((uint32)5);
+		_subtitlesInfo.languageMode  = versionTxtResource.getText((uint32)3);
+		Common::String fontType      = versionTxtResource.getText((uint32)4);
+		_subtitlesInfo.fontName      = versionTxtResource.getText((uint32)5);
+		Common::String license       = versionTxtResource.getText((uint32)6);
+		Common::String licenseLink   = versionTxtResource.getText((uint32)7);
 
 		if (fontType.equalsIgnoreCase("ttf")) {
 			_subtitlesInfo.fontType = Subtitles::kSubtitlesFontTypeTTF;
