@@ -527,7 +527,6 @@ void SegaRenderer::loadStreamToVRAM(Common::SeekableReadStream *in, uint16 addr,
 void SegaRenderer::memsetVRAM(int addr, uint8 val, int len) {
 	assert(addr + len <= 0x10000);
 	memset(_vram + addr, val, len);
-	void checkUpdateDirtyRects(int addr, int len);
 }
 
 void SegaRenderer::fillRectWithTiles(int vramArea, int x, int y, int w, int h, uint16 nameTblEntry, bool incr, bool topToBottom, const uint16 *patternTable) {
