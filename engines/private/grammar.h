@@ -36,6 +36,10 @@ extern  int constpush();
 extern  int strpush();
 extern  int print();
 
+extern  int lt();
+extern  int gt();
+
+
 extern void initcode(char *);
 extern void execute(Inst *);
 

@@ -132,6 +132,66 @@ int assign()	/* assign top value to next value */
 	return 0;
 }
 
+int gt()
+{
+	Datum d1, d2;
+	d2 = pop();
+	d1 = pop();
+	d1.val = (int)(d1.val > d2.val);
+	push(d1);
+	return 0;
+}
+
+int lt()
+{
+	Datum d1, d2;
+	d2 = pop();
+	d1 = pop();
+	d1.val = (int)(d1.val < d2.val);
+	push(d1);
+	return 0;
+}
+
+int ge()
+{
+	Datum d1, d2;
+	d2 = pop();
+	d1 = pop();
+	d1.val = (int)(d1.val >= d2.val);
+	push(d1);
+	return 0;
+}
+
+int le()
+{
+	Datum d1, d2;
+	d2 = pop();
+	d1 = pop();
+	d1.val = (int)(d1.val <= d2.val);
+	push(d1);
+	return 0;
+}
+
+int eq()
+{
+	Datum d1, d2;
+	d2 = pop();
+	d1 = pop();
+	d1.val = (int)(d1.val == d2.val);
+	push(d1);
+	return 0;
+}
+
+int ne()
+{
+	Datum d1, d2;
+	d2 = pop();
+	d1 = pop();
+	d1.val = (int)(d1.val  !=  d2.val);
+	push(d1);
+	return 0;
+}
+
 int print()		/* pop top value from stack, print it */
 {
 	Datum d;
