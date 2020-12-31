@@ -198,11 +198,11 @@ void TwinEEngine::popMouseCursorVisible() {
 
 Common::Error TwinEEngine::run() {
 	debug("Based on TwinEngine v0.2.2");
-	debug("(c)2002 The TwinEngine team.");
-	debug("(c)2020 The ScummVM team.");
+	debug("(c) 2002 The TwinEngine team.");
+	debug("(c) 2020, 2021 The ScummVM team.");
 	debug("Refer to the credits for further details.");
 	debug("The original Little Big Adventure game is:");
-	debug("(c)1994 by Adeline Software International, All Rights Reserved.");
+	debug("(c) 1994 by Adeline Software International, All Rights Reserved.");
 
 	syncSoundSettings();
 	initGraphics(SCREEN_WIDTH, SCREEN_HEIGHT);
