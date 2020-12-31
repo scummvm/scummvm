@@ -64,6 +64,22 @@ Common::Error PrivateEngine::run() {
 	file->read(buf, 191000);
 	parse((char *) buf);
 
+	for (Symbol *s = symlist; s != NULL; s = s->next) {
+                if (s->type == 260) { 
+		    //debug("int");
+	            //debug("%d", s->u.val);
+		}
+
+		if (s->type == 259) { 
+		    //debug("str");
+	            //debug("%s", s->u.str);
+		}
+                if (s->type == 258) { 
+		    //debug(s->name);
+	            //debug("%d", s->u.val);
+		}
+        }
+	       
 	// Initialize graphics using following:
 	_screenW = 640;
 	_screenH = 480;
@@ -103,7 +119,7 @@ Common::Error PrivateEngine::run() {
 	// Simple main event loop
 	Common::Event evt;
         _videoDecoder = new Video::SmackerDecoder();
-  	playVideo("intro/intro.smk");
+  	//playVideo("intro/intro.smk");
 	while (!shouldQuit()) {
 		g_system->getEventManager()->pollEvent(evt);
 		g_system->delayMillis(10);

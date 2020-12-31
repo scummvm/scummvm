@@ -1,25 +1,12 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <cstring>
+#include "common/str.h"
 
 #include "grammar.h"
 #include "grammar.tab.h"
 
-#define	NSTACK	256
-#define	NPROG	2000
-
 namespace Private {
 
-typedef struct Setting {
-
-    Datum	stack[NSTACK];	/* the stack */
-    Datum	*stackp;	/* next free spot on stack */
-
-    Inst	prog[NPROG];	/* the machine */
-    Inst	*progp;		/* next free spot for code generation */
-    Inst	*pc;		/* program counter during execution */
-
-} Setting;
+Setting *psetting;
+SettingMap settings;
 
 Datum	*stack       = NULL;	/* the stack */
 Datum	*stackp      = NULL;	/* next free spot on stack */
@@ -28,33 +15,35 @@ Inst	*prog        = NULL;	/* the machine */
 Inst	*progp       = NULL;	/* next free spot for code generation */
 Inst	*pc          = NULL;	/* program counter during execution */
 
-void initcode(char *name)	/* initialize for code generation */
+void initsetting()	/* initialize for code generation */
 {
-        printf("setting %s\n", name);
-        Setting *s = (Setting*) malloc(sizeof(Setting));
-        memset((void *) s, 0, sizeof(Setting));
+	psetting = (Setting*) malloc(sizeof(Setting));
+        memset((void *) psetting, 0, sizeof(Setting));
 
-        prog = (Inst *) &s->prog;
-        stack = (Datum *) &s->stack;
+        prog = (Inst *) &psetting->prog;
+        stack = (Datum *) &psetting->stack;
 
 	stackp = stack;
 	progp = prog;
 }
 
+void savesetting(char *name)
+{
+        //printf("saving setting %s\n", name);
+	Common::String s(name);
+	settings.setVal(s, psetting);
+}
+
 int push(Datum d)		/* push d onto stack */
 {
-	if (stackp >= &stack[NSTACK])
-		abort();
- 	//	execerror("stack overflow", (char *) 0);
+	assert (!(stackp >= &stack[NSTACK]));
 	*stackp++ = d;
 	return 0;
 }
 
 Datum pop()	/* pop and return top elem from stack */
 {
-	if (stackp <= stack)
-	       abort();
-	//	execerror("stack underflow", (char *) 0);
+	assert (!(stackp <= stack));
 	return *--stackp;
 }
 
@@ -62,7 +51,7 @@ int constpush()	/* push constant onto stack */
 {
 	Datum d;
 	d.val = ((Symbol *)*pc++)->u.val;
-	printf("pushing %d\n", d.val);
+	//printf("pushing %d\n", d.val);
 	push(d);
 	return 0;
 }
@@ -71,7 +60,7 @@ int strpush()	/* push constant onto stack */
 {
 	Datum d;
 	d.str = ((Symbol *)*pc++)->u.str;
-	printf("pushing %s\n", d.str);
+	//printf("pushing %s\n", d.str);
 	push(d);
 	return 0;
 }
@@ -81,7 +70,7 @@ int varpush()	/* push variable onto stack */
 {
 	Datum d;
 	d.sym = (Symbol *)(*pc++);
-	printf("var pushing %s", d.sym->name);
+	//printf("var pushing %s", d.sym->name);
 	push(d);
 	return 0;
 }
@@ -103,7 +92,7 @@ int add()		/* add top two elems on stack */
 	Datum d1, d2;
 	d2 = pop();
 	d1 = pop();
-	printf("adding %d %d\n",d1.val, d2.val);
+	//printf("adding %d %d\n",d1.val, d2.val);
 	d1.val += d2.val;
 	push(d1);
 	return 0;
@@ -196,15 +185,14 @@ int print()		/* pop top value from stack, print it */
 {
 	Datum d;
 	d = pop();
-	printf("\t%d\n", d.val);
+	//printf("\t%d\n", d.val);
 	return 0;
 }
 
 Inst *code(Inst f)	/* install one instruction or operand */
 {
  	Inst *oprogp = progp;
-	if (progp >= &prog[NPROG])
-		abort();
+	assert (!(progp >= &prog[NPROG]));
 	*progp++ = f;
 	return oprogp;
 }

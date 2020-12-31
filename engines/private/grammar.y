@@ -3,9 +3,11 @@
 %output "engines/private/grammar.tab.cpp"
 
 %{
+
+#include "grammar.h"
+
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "private/grammar.h"
 #define	code1(c1)	Private::code(c1);
 #define	code2(c1,c2)	Private::code(c1); Private::code(c2)
 #define	code3(c1,c2,c3)	Private::code(c1); Private::code(c2); Private::code(c3)
@@ -18,13 +20,12 @@ int yydebug=1;
 
 using namespace Private;
 
-extern FILE *yyin;
 extern int yylex();
 extern int yyparse();
 
 void yyerror(const char *str)
 {
-	fprintf(stderr,"error: %s\n",str);
+	//fprintf(stderr,"error: %s\n",str);
 }
 
 int yywrap()
@@ -38,11 +39,13 @@ int yywrap()
 	struct Symbol	*sym;	/* symbol table pointer */
         char *s;
         int *i;
+        int narg;
 }
 
 %token<s> NAME
 %token<sym> STRING NUM
 %token LTE GTE NEQ EQ IFTOK ELSETOK GOTOTOK DEBUGTOK DEFINETOK SETTINGTOK RANDOMTOK 
+%type<narg> params
 
 %%
 
@@ -50,9 +53,9 @@ lines:   line lines
        | line
        ;
 
-line:     DEBUGTOK '{' debug '}'             { printf("debug\n"); }
-        | DEFINETOK NAME '{' define '}'      { printf("define %s\n", $NAME); }
-        | SETTINGTOK NAME '{' statements '}' { initcode($NAME); }
+line:     DEBUGTOK '{' debug '}'             { /*printf("debug\n");*/ }
+        | DEFINETOK NAME '{' define '}'      { /*printf("define %s\n", $NAME);*/ }
+        | SETTINGTOK NAME '{' statements '}' { savesetting($NAME); initsetting(); }
         ;
 
 debug: /* nothing */
@@ -74,21 +77,21 @@ statement: GOTOTOK expr ';' statements
         ;
 
 define:  /* nothing */
-        | NAME ',' fcall ',' define  { }
-        | NAME ',' fcall             { }
+        | NAME ',' fcall ',' define  { Private::install($NAME, NAME, 0, NULL);  }
+        | NAME ',' fcall             { Private::install($NAME, NAME, 0, NULL);   }
         | NAME ',' define            { Private::install($NAME, NAME, 0, NULL); }
         | NAME                       { Private::install($NAME, NAME, 0, NULL); }  
         ;
 
-fcall:    GOTOTOK '(' NAME ')'
-        | NAME '(' params ')'
+fcall:    GOTOTOK '(' params ')'
+        | NAME '(' params ')'  { /*printf("%s( .. %d)\n", $NAME, $params);*/ }
         ;
 
-params:  /* nothing */ 
-        | params ',' fcall
-        | params ',' expr
-        | expr
-        | fcall 
+params:  /* nothing */      { $$ = 0; }
+        | fcall ',' params  { $$ = $3 + 1; }
+        | expr ',' params   { $$ = $3 + 1; }
+        | expr              { $$ = 1; }
+        | fcall             { $$ = 1; }
         ;
 
 value:    NUM    { code2(Private::constpush, (Private::Inst)$NUM); }
