@@ -151,7 +151,7 @@ public:
 	enum AnimActionFlags {
 		AAF_NONE		 = 0x0000,
 		AAF_TWOSTEP      = 0x0001,
-		AAF_ATTACK       = 0x0002, // U8 only
+		AAF_ATTACK       = 0x0002, // U8 only? also present in crusader, but ignored.
 		AAF_LOOPING      = 0x0004,
 		AAF_UNSTOPPABLE  = 0x0008,
 		AAF_LOOPING2_U8  = 0x0010,
@@ -160,13 +160,13 @@ public:
 		AAF_HANGING      = 0x0080,
 		AAF_16DIRS       = 0x4000, // Cru only
 		AAF_DESTROYACTOR = 0x8000, // destroy actor after animation finishes
-		AAF_ROTATED    = 0x100000, // Cru only
+		AAF_ROTATED     = 0x10000, // Cru only
 		AAF_COMMONFLAGS  = (AAF_TWOSTEP | AAF_LOOPING | AAF_UNSTOPPABLE | AAF_HANGING | AAF_DESTROYACTOR)
 	};
 
 
 private:
-	static AnimActionFlags loadAnimActionFlags(uint16 rawflags);
+	static AnimActionFlags loadAnimActionFlags(uint32 rawflags);
 
 	uint32 _shapeNum;
 	uint32 _action;
