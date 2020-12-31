@@ -100,7 +100,7 @@ private:
 		uint8 spacing2;
 		uint8 baseFreq;
 		uint8 tempo;
-		uint8 position;
+		uint8 timer;
 		uint8 regAx;
 		uint8 regBx;
 		typedef void (AdLibDriver::*Callback)(Channel&);
@@ -149,7 +149,17 @@ private:
 	uint8 calculateOpLevel1(Channel &channel);
 	uint8 calculateOpLevel2(Channel &channel);
 
-	uint16 checkValue(int16 val) { return CLIP<int16>(val, 0, 0x3F); }
+	static uint16 checkValue(int16 val) { return CLIP<int16>(val, 0, 0x3F); }
+
+	// The driver uses timer/tempo pairs in several places. On every
+	// callback, the tempo is added to the timer. This will frequently
+	// cause the timer to "wrap around", which is the signal to go ahead
+	// and do more stuff.
+	static bool advance(uint8 &timer, uint8 tempo) {
+		uint8 old = timer;
+		timer += tempo;
+		return timer < old;
+	}
 
 	// The sound data has at least two lookup tables:
 	//
@@ -495,9 +505,7 @@ void AdLibDriver::callback() {
 		setupPrograms();
 	executePrograms();
 
-	uint8 temp = _callbackTimer;
-	_callbackTimer += _tempo;
-	if (_callbackTimer < temp) {
+	if (advance(_callbackTimer, _tempo)) {
 		if (!(--_beatDivCnt)) {
 			_beatDivCnt = _beatDivider;
 			++_beatCounter;
@@ -555,7 +563,7 @@ void AdLibDriver::setupPrograms() {
 		channel.priority = priority;
 		channel.dataptr = ptr;
 		channel.tempo = 0xFF;
-		channel.position = 0xFF;
+		channel.timer = 0xFF;
 		channel.duration = 1;
 
 		if (chan <= 5)
@@ -616,16 +624,15 @@ void AdLibDriver::adjustSfxData(uint8 *ptr, int volume) {
 
 // A few words on opcode parsing and timing:
 //
-// First of all, We simulate a timer callback 72 times per second. Each timeout
+// First of all, we simulate a timer callback 72 times per second. Each timeout
 // we update each channel that has something to play.
 //
-// Each channel has its own individual tempo, which is added to its position.
-// This will frequently cause the position to "wrap around" but that is
-// intentional. In fact, it's the signal to go ahead and do more stuff with
-// that channel.
+// Each channel has its own individual tempo and timer. The timer is updated,
+// and when it wraps around, we go ahead and do more stuff with that channel.
+// Otherwise we skip straiht to the effect callbacks.
 //
-// Each channel also has a duration, indicating how much time is left on the
-// its current task. This duration is decreased by one. As long as it still has
+// Each channel also has a duration, indicating how much time is left on its
+// current task. This duration is decreased by one. As long as it still has
 // not reached zero, the only thing that can happen is that the note is turned
 // off depending on manual or automatic note spacing. Once the duration reaches
 // zero, a new set of musical opcodes are executed.
@@ -692,9 +699,7 @@ void AdLibDriver::executePrograms() {
 		if (channel.tempoReset)
 			channel.tempo = _tempo;
 
-		uint8 backup = channel.position;
-		channel.position += channel.tempo;
-		if (channel.position < backup) {
+		if (advance(channel.timer, channel.tempo)) {
 			if (--channel.duration) {
 				if (channel.duration == channel.spacing2)
 					noteOff(channel);
@@ -1073,10 +1078,8 @@ void AdLibDriver::primaryEffectSlide(Channel &channel) {
 	if (_curChannel >= 9)
 		return;
 
-	// Next update is due when slideTimer overflows.
-	uint8 temp = channel.slideTimer;
-	channel.slideTimer += channel.slideTempo;
-	if (channel.slideTimer >= temp)
+	// Time for next frequency update?
+	if (!advance(channel.slideTimer, channel.slideTempo))
 		return;
 
 	// Extract current frequency, (shifted) octave, and "note on" bit into
@@ -1160,10 +1163,8 @@ void AdLibDriver::primaryEffectVibrato(Channel &channel) {
 		return;
 	}
 
-	// Next update is due when vibratoTimer overflows.
-	uint8 temp = channel.vibratoTimer;
-	channel.vibratoTimer += channel.vibratoTempo;
-	if (channel.vibratoTimer < temp) {
+	// Time for an update?
+	if (advance(channel.vibratoTimer, channel.vibratoTempo)) {
 		// Reverse direction every vibratoNumSteps updates
 		if (!(--channel.vibratoStepsCountdown)) {
 			channel.vibratoStep = -channel.vibratoStep;
@@ -1217,9 +1218,7 @@ void AdLibDriver::secondaryEffect1(Channel &channel) {
 	if (_curChannel >= 9)
 		return;
 
-	uint8 temp = channel.secondaryEffectTimer;
-	channel.secondaryEffectTimer += channel.secondaryEffectTempo;
-	if (channel.secondaryEffectTimer < temp) {
+	if (advance(channel.secondaryEffectTimer, channel.secondaryEffectTempo)) {
 		if (--channel.secondaryEffectPos < 0)
 			channel.secondaryEffectPos = channel.secondaryEffectSize;
 		writeOPL(channel.secondaryEffectRegbase + _curRegOffset,
@@ -1349,7 +1348,7 @@ int AdLibDriver::update_setupProgram(const uint8 *&dataptr, Channel &channel, ui
 		channel2.priority = priority;
 		channel2.dataptr = ptr;
 		channel2.tempo = 0xFF;
-		channel2.position = 0xFF;
+		channel2.timer = 0xFF;
 		channel2.duration = 1;
 
 		if (chan <= 5)
