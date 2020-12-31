@@ -995,6 +995,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	REMOVE_DEFINE(scummvm_defines, "IPHONE_IOS7");
 	REMOVE_DEFINE(scummvm_defines, "IPHONE_SANDBOXED");
 	REMOVE_DEFINE(scummvm_defines, "SDL_BACKEND");
+	ADD_DEFINE(scummvm_defines, "DEBUG");
 	ADD_SETTING_LIST(scummvm_Debug, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_defines, kSettingsNoQuote | kSettingsAsList, 5);
 	ADD_SETTING(scummvm_Debug, "GCC_WARN_ABOUT_RETURN_TYPE", "YES");
 	ADD_SETTING(scummvm_Debug, "GCC_WARN_UNUSED_VARIABLE", "YES");
@@ -1022,6 +1023,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	REMOVE_SETTING(scummvm_Release, "ENABLE_TESTABILITY");
 	REMOVE_SETTING(scummvm_Release, "GCC_PREPROCESSOR_DEFINITIONS");
 	ValueList scummvm_Release_defines(scummvm_defines);
+	REMOVE_DEFINE(scummvm_defines, "DEBUG");
 	ADD_DEFINE(scummvm_Release_defines, "RELEASE_BUILD");
 	ADD_SETTING_LIST(scummvm_Release, "GCC_PREPROCESSOR_DEFINITIONS", scummvm_Release_defines, kSettingsNoQuote | kSettingsAsList, 5);
 
@@ -1183,6 +1185,7 @@ void XcodeProvider::setupBuildConfiguration(const BuildSetup &setup) {
 	ADD_SETTING(scummvmOSX_Release, "COPY_PHASE_STRIP", "YES");
 	REMOVE_SETTING(scummvmOSX_Release, "GCC_DYNAMIC_NO_PIC");
 	REMOVE_SETTING(scummvmOSX_Release, "GCC_OPTIMIZATION_LEVEL");
+	ADD_SETTING(scummvmOSX_Release, "GCC_OPTIMIZATION_LEVEL", "3");
 	ADD_SETTING(scummvmOSX_Release, "WRAPPER_EXTENSION", "app");
 	REMOVE_SETTING(scummvmOSX_Release, "DEBUG_INFORMATION_FORMAT");
 	ADD_SETTING_QUOTE(scummvmOSX_Release, "DEBUG_INFORMATION_FORMAT", "dwarf-with-dsym");
