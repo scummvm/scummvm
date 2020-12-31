@@ -101,8 +101,8 @@ expr:     value
         | value EQ value
         | value NEQ value
         | value '+' value { code1(Private::add); }
-        | value '<' value
-        | value '>' value
+        | value '<' value { code1(Private::lt); }
+        | value '>' value { code1(Private::gt); }
         | value LTE value
         | value GTE value 
         | value '+'
