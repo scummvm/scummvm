@@ -44,7 +44,6 @@ BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, 
 		error("Error determining stream end.");
 
 	_buffer.resize(0);
-
 }
 
 void BufferedStream::FillBufferFromPosition(soff_t position) {

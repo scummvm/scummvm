@@ -24,18 +24,21 @@
 #define AGS_SHARED_UTIL_STDIO_COMPAT_H
 
 #include "common/stream.h"
+#include "common/fs.h"
 
 namespace AGS3 {
 
 typedef int64 file_off_t;
 
-int  ags_fseek(Common::Stream *stream, file_off_t offset, int whence);
-file_off_t ags_ftell(Common::Stream *stream);
+extern Common::FSNode getFSNode(const char *path);
 
-int ags_file_exists(const char *path);
-int ags_directory_exists(const char *path);
-int ags_path_exists(const char *path);
-file_off_t ags_file_size(const char *path);
+extern int  ags_fseek(Common::Stream *stream, file_off_t offset, int whence);
+extern file_off_t ags_ftell(Common::Stream *stream);
+
+extern int ags_file_exists(const char *path);
+extern int ags_directory_exists(const char *path);
+extern int ags_path_exists(const char *path);
+extern file_off_t ags_file_size(const char *path);
 
 } // namespace AGS3
 
