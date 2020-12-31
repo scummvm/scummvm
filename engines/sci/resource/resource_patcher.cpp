@@ -472,6 +472,19 @@ static const byte qfg1vgaPalette904[] = {
 };
 
 #pragma mark -
+#pragma mark Torin passage Russian
+
+// Picture 61101 is truncated in Russian version by city is truncated by
+// 7 bytes. Just put black. Other Russian versions also get patched as we don't
+// have a way to specify only one version but it ends up in appending few bytes
+// with no effect
+static const byte torinPassageRussianPic61101[] = {
+	SKIP(199705),
+	INSERT_FILL(0, 7),
+	END
+};
+
+#pragma mark -
 #pragma mark Patch table
 
 static const GameResourcePatch resourcePatches[] = {
@@ -482,7 +495,8 @@ static const GameResourcePatch resourcePatches[] = {
 	{ GID_LSL3,           Common::PL_POL,   ResourceId(kResourceTypeFont,      9), lsl2Lsl3PolishFont,         false },
 	{ GID_PHANTASMAGORIA, Common::UNK_LANG, ResourceId(kResourceTypeView,  64001), phant1View64001Palette,     false },
 	{ GID_PQ4,            Common::EN_ANY,   ResourceId(kResourceTypeView,  10988), pq4EnhancedAudioToggleView, true  },
-	{ GID_QFG1VGA,        Common::UNK_LANG, ResourceId(kResourceTypePalette, 904), qfg1vgaPalette904,          false }
+	{ GID_QFG1VGA,        Common::UNK_LANG, ResourceId(kResourceTypePalette, 904), qfg1vgaPalette904,          false },
+	{ GID_TORIN,          Common::RU_RUS,   ResourceId(kResourceTypePic,   61101), torinPassageRussianPic61101,false }
 };
 
 #pragma mark -
