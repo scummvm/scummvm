@@ -222,7 +222,7 @@ protected:
 		getDisplayDpiFromSdl(&dpi, &defaultDpi);
 		debug(4, "dpi: %g default: %g", dpi, defaultDpi);
 		ratio = dpi / defaultDpi;
-		if (ratio >= 2.0f) {
+		if (ratio >= 1.5f) {
 			*scale = 2;
 		} else {
 			*scale = 1;
