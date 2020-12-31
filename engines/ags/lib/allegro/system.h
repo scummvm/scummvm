@@ -34,6 +34,7 @@ namespace AGS3 {
 #endif
 
 #define SYSTEM_AUTODETECT  0
+#define SYSTEM_SCUMMVM     AL_ID('S','C','V','M')
 #define SYSTEM_NONE        AL_ID('N','O','N','E')
 
 #define SWITCH_NONE           0
@@ -56,9 +57,9 @@ struct GFX_MODE_LIST {
 
 struct SYSTEM_DRIVER {
 	int  id;
-	char *name;
-	char *desc;
-	char *ascii_name;
+	const char *name;
+	const char *desc;
+	const char *ascii_name;
 	AL_METHOD(int, init, (void));
 	AL_METHOD(void, exit, (void));
 	AL_METHOD(void, get_executable_name, (char *output, int size));

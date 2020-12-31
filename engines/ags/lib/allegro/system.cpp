@@ -27,12 +27,56 @@
 namespace AGS3 {
 
 SYSTEM_DRIVER system_none;
-SYSTEM_DRIVER *system_driver;
+
+SYSTEM_DRIVER system_scummvm = {
+	SYSTEM_SCUMMVM,
+	nullptr,
+	nullptr,
+	"ScummVM Device",
+	nullptr, // TODO: ios_sys_init,
+	nullptr, // TODO: ios_sys_exit,
+	nullptr,  /* AL_METHOD(void, get_executable_name, (char *output, int size)); */
+	nullptr,  /* AL_METHOD(int, find_resource, (char *dest, AL_CONST char *resource, int size)); */
+	nullptr,  /* AL_METHOD(void, set_window_title, (AL_CONST char *name)); */
+	nullptr,  /* AL_METHOD(int, set_close_button_callback, (AL_METHOD(void, proc, (void)))); */
+	nullptr,  /* AL_METHOD(void, message, (AL_CONST char *msg)); */
+	nullptr,  /* AL_METHOD(void, assert, (AL_CONST char *msg)); */
+	nullptr,  /* AL_METHOD(void, save_console_state, (void)); */
+	nullptr,  /* AL_METHOD(void, restore_console_state, (void)); */
+	nullptr,  /* AL_METHOD(struct BITMAP *, create_bitmap, (int color_depth, int width, int height)); */
+	nullptr,  /* AL_METHOD(void, created_bitmap, (struct BITMAP *bmp)); */
+	nullptr,  /* AL_METHOD(struct BITMAP *, create_sub_bitmap, (struct BITMAP *parent, int x, int y, int width, int height)); */
+	nullptr,  /* AL_METHOD(void, created_sub_bitmap, (struct BITMAP *bmp, struct BITMAP *parent)); */
+	nullptr,  /* AL_METHOD(int, destroy_bitmap, (struct BITMAP *bitmap)); */
+	nullptr,  /* AL_METHOD(void, read_hardware_palette, (void)); */
+	nullptr,  /* AL_METHOD(void, set_palette_range, (AL_CONST struct RGB *p, int from, int to, int retracesync)); */
+	nullptr,  /* AL_METHOD(struct GFX_VTABLE *, get_vtable, (int color_depth)); */
+	nullptr,  /* AL_METHOD(int, set_display_switch_mode, (int mode)); */
+	nullptr,  /* AL_METHOD(void, display_switch_lock, (int lock, int foreground)); */
+	nullptr,  /* AL_METHOD(int, desktop_color_depth, (void)); */
+	nullptr,  /* AL_METHOD(int, get_desktop_resolution, (int *width, int *height)); */
+	nullptr, // TODO: ios_get_gfx_safe_mode,  /*AL_METHOD(void, get_gfx_safe_mode, (int *driver, struct GFX_MODE *mode));*/
+	nullptr,  /* AL_METHOD(void, yield_timeslice, (void)); */
+	nullptr, // TODO: _ios_create_mutex,  /* AL_METHOD(void *, create_mutex, (void)); */
+	nullptr, // TODO: _ios_destroy_mutex,  /* AL_METHOD(void, destroy_mutex, (void *handle)); */
+	nullptr, // TODO: _ios_lock_mutex,  /* AL_METHOD(void, lock_mutex, (void *handle)); */
+	nullptr, // TODO: _ios_unlock_mutex,  /* AL_METHOD(void, unlock_mutex, (void *handle)); */
+	nullptr,  /* AL_METHOD(_DRIVER_INFO *, gfx_drivers, (void)); */
+	nullptr,  /* AL_METHOD(_DRIVER_INFO *, digi_drivers, (void)); */
+	nullptr,  /* AL_METHOD(_DRIVER_INFO *, midi_drivers, (void)); */
+	nullptr,  /* AL_METHOD(_DRIVER_INFO *, keyboard_drivers, (void)); */
+	nullptr,  /* AL_METHOD(_DRIVER_INFO *, mouse_drivers, (void)); */
+	nullptr,  /* AL_METHOD(_DRIVER_INFO *, joystick_drivers, (void)); */
+	nullptr   /* AL_METHOD(_DRIVER_INFO *, timer_drivers, (void)); */
+};
 
 _DRIVER_INFO _system_driver_list[] = {
+	{ SYSTEM_SCUMMVM, &system_scummvm, true },
 	{ SYSTEM_NONE, &system_none, false },
 	{ 0, nullptr , 0     }
 };
+
+SYSTEM_DRIVER *system_driver = &system_scummvm;
 
 
 GFX_MODE_LIST *get_gfx_mode_list(int card) {
