@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2020-12-30 21:22+0000\n"
-"PO-Revision-Date: 2020-12-29 16:23+0000\n"
+"PO-Revision-Date: 2020-12-31 23:23+0000\n"
 "Last-Translator: VAN-Gluon <masuda20100701@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -6533,21 +6533,21 @@ msgstr ""
 
 #: engines/sherlock/detection.cpp:70
 msgid "Don't show hotspots when moving mouse"
-msgstr ""
+msgstr "マウスを動かしている間はホットスポットが表示されません"
 
 #: engines/sherlock/detection.cpp:71
 msgid ""
 "Only show hotspot names after you actually click on a hotspot or action "
 "button"
-msgstr ""
+msgstr "ホットスポット、もしくはボタンを押した場合のみ表示されます"
 
 #: engines/sherlock/detection.cpp:80
 msgid "Show character portraits"
-msgstr ""
+msgstr "キャラクターのポートレートを表示する"
 
 #: engines/sherlock/detection.cpp:81
 msgid "Show portraits for the characters when conversing"
-msgstr ""
+msgstr "キャラクターのポートレートを表示する(会話中のみ)"
 
 #: engines/sherlock/detection.cpp:90
 msgid "Slide dialogs into view"
@@ -6623,37 +6623,37 @@ msgstr "3Dアンチエイリアス："
 
 #: engines/stark/detection.cpp:341
 msgid "When font anti-aliasing is enabled, the text is smoother."
-msgstr ""
+msgstr "フォントにアンチエイリアスが有効である場合、テキストはより滑らかに表示されます。"
 
 #: engines/stark/stark.cpp:291
 msgid "You are missing recommended data files:"
-msgstr ""
+msgstr "推奨されたデータファイルが見つかりません："
 
 #: engines/stark/stark.cpp:305
 msgid ""
 "The 'fonts' folder is required to experience the text style as it was "
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
-msgstr ""
+msgstr "テキストスタイルを使用するには、fontsフォルダーが必要です。これはSteam版に存在しません。デモ版から取得してください。"
 
 #: engines/stark/stark.cpp:312
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
-msgstr ""
+msgstr "ローカライズ用に適切なフォントを設定する場合、gui.iniが必要です。"
 
 #: engines/stark/stark.cpp:318
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
-msgstr ""
+msgstr "ローカライズされた確認ダイアログを使用するには、language.iniが必要です。"
 
 #: engines/stark/stark.cpp:324
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
-msgstr ""
+msgstr "スタイルが適用された確認ダイアログを使用するには、game.exeが必要です。"
 
 #: engines/supernova/supernova.cpp:187
 #, c-format
 msgid "Unable to locate the text for %s language in engine data file."
-msgstr ""
+msgstr "%s語用のテキストがエンジンデータファイル内に存在しません。"
 
 #: engines/supernova/supernova.cpp:470
 #, c-format
@@ -6678,14 +6678,12 @@ msgid ""
 msgstr ""
 
 #: engines/supernova/supernova.cpp:828
-#, fuzzy
 msgid "Failed to load temporary game state."
-msgstr "ストレージの接続に失敗しました。"
+msgstr "一時保存データのロードに失敗しました。"
 
 #: engines/supernova/detection.cpp:35
-#, fuzzy
 msgid "Improved mode"
-msgstr "ウインドーモード"
+msgstr "改善モード"
 
 #: engines/supernova/detection.cpp:36
 msgid ""
@@ -6695,21 +6693,21 @@ msgstr ""
 #: engines/sword1/animation.cpp:532
 #, c-format
 msgid "PSX stream cutscene '%s' cannot be played in paletted mode"
-msgstr ""
+msgstr "PSXストリーム形式のムービー'%s'は、パレットモードで再生できません"
 
 #: engines/sword1/animation.cpp:553 engines/sword2/animation.cpp:449
 msgid "DXA cutscenes found but ScummVM has been built without zlib"
-msgstr ""
+msgstr "DXA形式のムービーが見つかりましたが、ScummVMはzlibを同梱していません"
 
 #: engines/sword1/animation.cpp:569 engines/sword2/animation.cpp:465
 msgid ""
 "MPEG-2 cutscenes found but ScummVM has been built without MPEG-2 support"
-msgstr ""
+msgstr "MPEG-2形式のムービーが見つかりましたが、ScummVMはMPEG-2をサポートしていません"
 
 #: engines/sword1/animation.cpp:576 engines/sword2/animation.cpp:474
 #, c-format
 msgid "Cutscene '%s' not found"
-msgstr ""
+msgstr "ムービー'%s'が見つかりませんでした"
 
 #: engines/sword1/control.cpp:887
 msgid ""
@@ -6755,20 +6753,19 @@ msgid "Show labels for objects on mouse hover"
 msgstr ""
 
 #: engines/sword25/detection.cpp:41
-#, fuzzy
 msgid "Use English speech"
-msgstr "テキストの読み上げ機能を使用する"
+msgstr "テキストを英語で読み上げる"
 
 #: engines/sword25/detection.cpp:42
 msgid ""
 "Use English speech instead of German for every language other than German"
-msgstr ""
+msgstr "他国語版も英語で読み上げる(ドイツ語版を除く)"
 
 #: engines/teenagent/resources.cpp:121
 msgid ""
 "The teenagent.dat file is compressed and zlib hasn't been included in this "
 "executable. Please decompress it"
-msgstr ""
+msgstr "teenagent.datは圧縮されていますが、zlibは実行可能なファイルに含まれません。解凍してください"
 
 #: engines/tinsel/detection_tables.h:466
 msgid "Saturn CD version is not yet supported"
@@ -6777,32 +6774,32 @@ msgstr "セガサターン版はまだサポートされていません"
 #: engines/tony/tony.cpp:257
 #, c-format
 msgid "Font variant not present in '%s' engine data file."
-msgstr ""
+msgstr "異なるフォントはエンジンデータファイル'%s'に存在しません。"
 
 #: engines/toon/toon.cpp:225
 #, c-format
 msgid "Saved game in slot #%d "
-msgstr ""
+msgstr "スロット#%dにセーブしました "
 
 #: engines/toon/toon.cpp:229
 #, c-format
 msgid "Could not quick save into slot #%d"
-msgstr ""
+msgstr "スロット#%dにクイックセーブできませんでした"
 
 #: engines/toon/toon.cpp:242
 #, c-format
 msgid "Saved game #%d quick loaded"
-msgstr ""
+msgstr "スロット#%dからクイックロードしました"
 
 #: engines/toon/toon.cpp:246
 #, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "保存されたゲーム#%dのクイックセーブがロードできませんでした"
+msgstr "スロット#%dからクイックロードできませんでした"
 
 #: engines/toon/toon.cpp:1528
 #, c-format
 msgid "Unable to locate the '%s' data file."
-msgstr ""
+msgstr "データファイル'%s'の場所が特定できません。"
 
 #: engines/tsage/detection_tables.h:150
 msgid "Spanish CD version is not yet supported"
@@ -6810,11 +6807,11 @@ msgstr "スペイン版(CDバージョン)はまだサポートされていま�
 
 #: engines/twine/metaengine.cpp:66
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "壁の衝突判定を有効にする"
 
 #: engines/twine/metaengine.cpp:67
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "壁衝突時のダメージを有効にする"
 
 #: engines/twine/metaengine.cpp:73
 msgid "Enable cross fade"
@@ -6834,23 +6831,20 @@ msgid ""
 msgstr ""
 
 #: engines/twine/metaengine.cpp:88
-#, fuzzy
 msgid "Enable debug mode"
-msgstr "マウス操作を有効にする"
+msgstr "デバッグモードを有効にする"
 
 #: engines/twine/metaengine.cpp:89
-#, fuzzy
 msgid "Enable the debug mode"
-msgstr "ゲームの音声を有効にする"
+msgstr "デバッグモードを有効にする"
 
 #: engines/twine/metaengine.cpp:95
-#, fuzzy
 msgid "Enable audio CD"
-msgstr "音声を有効にする"
+msgstr "オーディオCDを有効にする"
 
 #: engines/twine/metaengine.cpp:96
 msgid "Enable the original audio cd track"
-msgstr ""
+msgstr "オリジナルオーディオCDトラックを有効にする"
 
 #: engines/twine/metaengine.cpp:102
 msgid "Enable sound"
@@ -6869,23 +6863,20 @@ msgid "Enable the voices for the game"
 msgstr "ゲーム音声を有効にする"
 
 #: engines/twine/metaengine.cpp:116
-#, fuzzy
 msgid "Enable text"
-msgstr "有効にする"
+msgstr "テキスト表示を有効にする"
 
 #: engines/twine/metaengine.cpp:117
-#, fuzzy
 msgid "Enable the text for the game"
-msgstr "ゲームのフルネーム"
+msgstr "ゲームテキストの表示を有効にする"
 
 #: engines/twine/metaengine.cpp:123
 msgid "Enable movies"
 msgstr "ムービーを有効にする"
 
 #: engines/twine/metaengine.cpp:124
-#, fuzzy
 msgid "Enable the cutscenes for the game"
-msgstr "ゲーム音声を有効にする"
+msgstr "ゲーム内ムービーを有効にする"
 
 #: engines/twine/metaengine.cpp:130
 msgid "Enable mouse"
