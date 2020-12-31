@@ -1199,7 +1199,8 @@ void engine_read_config(const String &exe_path, ConfigTree &cfg) {
 	// Disabled on Windows because people were afraid that this config could be mistakenly
 	// created by some installer and screw up their games. Until any kind of solution is found.
 	String user_global_cfg_file;
-#if ! AGS_PLATFORM_OS_WINDOWS
+#if !AGS_PLATFORM_SCUMMVM
+#if !AGS_PLATFORM_OS_WINDOWS
 	// Read user global configuration file
 	user_global_cfg_file = find_user_global_cfg_file();
 	if (Path::ComparePaths(user_global_cfg_file, def_cfg_file) != 0)
@@ -1211,6 +1212,7 @@ void engine_read_config(const String &exe_path, ConfigTree &cfg) {
 	if (Path::ComparePaths(user_cfg_file, def_cfg_file) != 0 &&
 	        Path::ComparePaths(user_cfg_file, user_global_cfg_file) != 0)
 		IniUtil::Read(user_cfg_file, cfg);
+#endif
 
 	// Apply overriding options from mobile port settings
 	// TODO: normally, those should be instead stored in the same config file in a uniform way
