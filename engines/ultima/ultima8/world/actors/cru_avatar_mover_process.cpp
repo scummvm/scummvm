@@ -54,10 +54,10 @@ void CruAvatarMoverProcess::run() {
 	// Even when we are not doing anything (because we're waiting for an anim)
 	// we check if the combat angle needs updating - this keeps it smooth.
 
-	MainActor *avatar = getMainActor();
+	const MainActor *avatar = getMainActor();
 	assert(avatar);
 
-	if (avatar->isInCombat() && !hasMovementFlags(MOVE_FORWARD | MOVE_BACK)) {
+	if (avatar->isInCombat() && !hasMovementFlags(MOVE_FORWARD | MOVE_BACK | MOVE_JUMP | MOVE_STEP)) {
 		// See comment on _avatarAngle in header about these constants
 		if (hasMovementFlags(MOVE_TURN_LEFT)) {
 			if (hasMovementFlags(MOVE_RUN))
@@ -99,17 +99,15 @@ void CruAvatarMoverProcess::handleCombatMode() {
 	_idleTime = 0;
 
 	// If Avatar has fallen down, stand up
-	if (standUpIfNeeded(direction))
+	if (standUpIfNeeded(direction)) {
 		return;
-
-	// can't do any new actions if in stasis
-	if (stasis)
+	} else if (stasis) {
 		return;
-
-	if (hasMovementFlags(MOVE_FORWARD)) {
+	} else if (hasMovementFlags(MOVE_FORWARD)) {
 		Animation::Sequence nextanim;
 		if (hasMovementFlags(MOVE_STEP)) {
-			nextanim = Animation::advance;
+			nextanim = avatar->hasActorFlags(Actor::ACT_KNEELING) ?
+							Animation::kneelingAdvance : Animation::advance;
 		} else if (hasMovementFlags(MOVE_RUN)) {
 			// Take a step before running
 			avatar->toggleInCombat();
@@ -117,6 +115,12 @@ void CruAvatarMoverProcess::handleCombatMode() {
 				nextanim = Animation::startRun;
 			else
 				nextanim = Animation::run;
+		} else if (hasMovementFlags(MOVE_JUMP)) {
+			avatar->toggleInCombat();
+			nextanim = Animation::jumpForward;
+		} else if (avatar->hasActorFlags(Actor::ACT_KNEELING)) {
+			nextanim = Animation::stopKneeling;
+			avatar->clearActorFlag(Actor::ACT_KNEELING);
 		} else {
 			// moving from combat stows weapon
 			nextanim = Animation::walk;
@@ -126,11 +130,35 @@ void CruAvatarMoverProcess::handleCombatMode() {
 		nextanim = Animation::checkWeapon(nextanim, lastanim);
 		step(nextanim, direction);
 		return;
-	}
-
-	if (hasMovementFlags(MOVE_BACK)) {
-		waitFor(avatar->doAnim(Animation::retreat, direction));
+	} else if (hasMovementFlags(MOVE_BACK)) {
+		Animation::Sequence nextanim;
+		if (hasMovementFlags(MOVE_JUMP)) {
+			nextanim = Animation::startKneeling;
+			avatar->setActorFlag(Actor::ACT_KNEELING);
+		} else {
+			nextanim = avatar->hasActorFlags(Actor::ACT_KNEELING) ?
+							Animation::kneelingRetreat : Animation::retreat;
+		}
+		waitFor(avatar->doAnim(nextanim, direction));
 		return;
+	} else if (hasMovementFlags(MOVE_STEP)) {
+		if (hasMovementFlags(MOVE_TURN_LEFT)) {
+			avatar->doAnim(Animation::slideLeft, direction);
+			return;
+		} else if (hasMovementFlags(MOVE_TURN_RIGHT)) {
+			avatar->doAnim(Animation::slideRight, direction);
+			return;
+		}
+	} else if (hasMovementFlags(MOVE_JUMP)) {
+		if (hasMovementFlags(MOVE_TURN_LEFT)) {
+			//direction = Direction_TurnByDelta(direction, 4, dirmode_16dirs);
+			avatar->doAnim(Animation::combatRollLeft, direction);
+			return;
+		} else if (hasMovementFlags(MOVE_TURN_RIGHT)) {
+			//direction = Direction_TurnByDelta(direction, -4, dirmode_16dirs);
+			avatar->doAnim(Animation::combatRollRight, direction);
+			return;
+		}
 	}
 
 	int x, y;
@@ -162,17 +190,20 @@ void CruAvatarMoverProcess::handleCombatMode() {
 		return;
 	}
 
+	Animation::Sequence idleanim = avatar->hasActorFlags(Actor::ACT_KNEELING) ?
+						Animation::kneel : Animation::combatStand;
+
 	if (curdir != direction) {
 		// Slight hack: don't "wait" for this - we want to keep turning smooth,
 		// and the process will not do anything else if an anim is active, so
 		// it's safe.
-		avatar->doAnim(Animation::combatStand, direction);
+		avatar->doAnim(idleanim, direction);
 		return;
 	}
 
 	// not doing anything in particular? stand
-	if (lastanim != Animation::combatStand) {
-		Animation::Sequence nextanim = Animation::checkWeapon(Animation::combatStand, lastanim);
+	if (lastanim != idleanim) {
+		Animation::Sequence nextanim = Animation::checkWeapon(idleanim, lastanim);
 		waitFor(avatar->doAnim(nextanim, direction));
 	}
 }
@@ -201,7 +232,7 @@ void CruAvatarMoverProcess::handleNormalMode() {
 		return;
 
 	// If still in combat stance, sheathe weapon
-	if (!stasis && Animation::isCombatAnim(lastanim)) {
+	if (!stasis && Animation::isCombatAnimU8(lastanim)) {
 		putAwayWeapon(direction);
 		return;
 	}
@@ -217,34 +248,10 @@ void CruAvatarMoverProcess::handleNormalMode() {
 	if (stasis)
 		return;
 
-	if (hasMovementFlags(MOVE_JUMP) && hasMovementFlags(MOVE_ANY_DIRECTION)) {
-		clearMovementFlag(MOVE_JUMP);
-
+	if (hasMovementFlags(MOVE_JUMP) && hasMovementFlags(MOVE_FORWARD)) {
 		Animation::Sequence nextanim = Animation::jump;
-		// check if we need to do a running jump
-		if (lastanim == Animation::run || lastanim == Animation::runningJump) {
-			nextanim = Animation::runningJump;
-		}
-		else if (avatar->hasActorFlags(Actor::ACT_AIRWALK)) {
-			nextanim = Animation::airwalkJump;
-		}
-
 		nextanim = Animation::checkWeapon(nextanim, lastanim);
 		waitFor(avatar->doAnim(nextanim, direction));
-		return;
-	}
-
-	if (hasMovementFlags(MOVE_JUMP)) {
-		clearMovementFlag(MOVE_JUMP);
-
-		Animation::Sequence nextanim = Animation::jumpUp;
-
-		if (nextanim == Animation::jump) {
-			jump(Animation::jump, direction);
-		} else {
-			nextanim = Animation::checkWeapon(nextanim, lastanim);
-			waitFor(avatar->doAnim(nextanim, direction));
-		}
 		return;
 	}
 
@@ -373,25 +380,6 @@ void CruAvatarMoverProcess::step(Animation::Sequence action, Direction direction
 	debug(6, "Cru avatar step: picked action %d dir %d (test result %d)", action, direction, res);
 	action = Animation::checkWeapon(action, lastanim);
 	waitFor(avatar->doAnim(action, direction));
-}
-
-void CruAvatarMoverProcess::jump(Animation::Sequence action, Direction direction) {
-	MainActor *avatar = getMainActor();
-
-	// running jump
-	if (action == Animation::runningJump) {
-		waitFor(avatar->doAnim(action, direction));
-		return;
-	}
-
-	// airwalk
-	if (avatar->hasActorFlags(Actor::ACT_AIRWALK) &&
-	        action == Animation::jump) {
-		waitFor(avatar->doAnim(Animation::airwalkJump, direction));
-		return;
-	}
-
-	waitFor(avatar->doAnim(Animation::jump, direction));
 }
 
 bool CruAvatarMoverProcess::canAttack() {

@@ -348,7 +348,7 @@ void U8AvatarMoverProcess::handleNormalMode() {
 		return;
 
 	// If still in combat stance, sheathe weapon
-	if (!stasis && Animation::isCombatAnim(lastanim)) {
+	if (!stasis && Animation::isCombatAnimU8(lastanim)) {
 		putAwayWeapon(direction);
 		return;
 	}

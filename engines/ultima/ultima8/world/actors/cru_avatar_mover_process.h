@@ -70,7 +70,6 @@ private:
 	bool canAttack() override;
 
 	void step(Animation::Sequence action, Direction direction, bool adjusted = false);
-	void jump(Animation::Sequence action, Direction direction);
 
 };
 
