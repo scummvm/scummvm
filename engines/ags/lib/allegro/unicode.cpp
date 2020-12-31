@@ -30,7 +30,7 @@ void set_uformat(int format) {
 }
 
 size_t ustrsize(const char *s) {
-	error("TODO: ustrsize");
+	return strlen(s);
 }
 
 
