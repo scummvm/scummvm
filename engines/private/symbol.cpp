@@ -6,15 +6,15 @@
 
 namespace Private {
 
-static Symbol *symlist = 0;  /* symbol table: linked list */
+Symbol *symlist;  /* symbol table: linked list */
 
 char *emalloc(unsigned n)	/* check return from malloc */
 {
 	char *p;
 
 	p = (char*) malloc(n);
-	if (p == 0)
-		abort(); //execerror("out of memory", (char *) 0);
+	assert(p != NULL);
+	//	abort(); //execerror("out of memory", (char *) 0);
 	return p;
 }
 
@@ -41,7 +41,7 @@ Symbol *install(char *n, int t, int d, char *s)  /* install s in symbol table */
 	else if (t == STRING)
 	   sp->u.str = s;
         else
-	   abort();
+	   assert(0); //abort();
 
 	sp->next = symlist; /* put at front of list */
 	symlist = sp;

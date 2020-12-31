@@ -5,6 +5,8 @@
 %option outfile="engines/private/lex.yy.cpp"
 
 %{
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
+
 #include <stdio.h>
 #include <string.h>
 #include "grammar.h"
@@ -39,7 +41,7 @@ namespace Private {
 
 int parse(char *code) {
 	
-	initcode("init");
+	initsetting();
 	//_lines[0] = _lines[1] = _lines[2] = code;
 
 	YY_BUFFER_STATE bp;

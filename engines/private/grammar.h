@@ -1,3 +1,12 @@
+#include "common/str.h"
+#include "common/hash-str.h"
+
+#define	NSTACK	256
+#define	NPROG	2000
+
+#ifndef PRIVATE_GRAMMAR_H
+#define PRIVATE_GRAMMAR_H
+
 typedef struct Symbol {	/* symbol table entry */
 	char	*name;
 	short	type;	/* NAME, NUM or STRING  */
@@ -14,14 +23,32 @@ typedef union Datum {	/* interpreter stack type */
 	Symbol	*sym;
 } Datum;
 
-
 namespace Private {
-
-Symbol	*install(char *, int, int, char *), *lookup(char *);
-extern	Datum pop();
 
 typedef int (*Inst)();	/* machine instruction */
 #define	STOP	(Inst) 0
+
+typedef struct Setting {
+
+    Datum	stack[NSTACK];	/* the stack */
+    Datum	*stackp;	/* next free spot on stack */
+
+    Inst	prog[NPROG];	/* the machine */
+    Inst	*progp;		/* next free spot for code generation */
+    Inst	*pc;		/* program counter during execution */
+
+} Setting;
+
+extern Setting *psetting;
+
+typedef Common::HashMap<Common::String, Setting*> SettingMap;
+
+extern SettingMap settings;
+
+Symbol	*install(char *, int, int, char *), *lookup(char *);
+extern Symbol  *symlist;
+
+extern	Datum pop();
 
 extern  Inst *code(Inst);
 extern	Inst *prog;
@@ -40,7 +67,11 @@ extern  int lt();
 extern  int gt();
 
 
-extern void initcode(char *);
+extern void initsetting();
+extern void savesetting(char *);
+
 extern void execute(Inst *);
 
 }
+
+#endif
