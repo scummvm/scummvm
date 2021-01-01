@@ -83,111 +83,16 @@ template<class uintX> SoftRenderSurface<uintX>::SoftRenderSurface(int w, int h)
 
 
 //
-// SoftRenderSurface::Fill8(uint8 index, int32 sx, int32 sy, int32 w, int32 h)
-//
-// Desc: Fill buffer (using a palette index) - Remove????
-//
-template<class uintX> void SoftRenderSurface<uintX>::Fill8(uint8 /*index*/, int32 /*sx*/, int32 /*sy*/, int32 /*w*/, int32 /*h*/) {
-}
-
-
-//
 // SoftRenderSurface::Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h)
 //
 // Desc: Fill buffer (using a RGB colour)
 //
-
 template<class uintX> void SoftRenderSurface<uintX>::Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
 	Rect rect(sx, sy, sx + w, sy + h);
 	rect.clip(_clipWindow);
-	sx = rect.left;
-	sy = rect.top;
-	w = rect.width();
-	h = rect.height();
-
-	if (!w || !h) return;
-
-	// An optimization.
-	if ((w * sizeof(uintX)) == _pitch) {
-		w *= h;
-		h = 1;
-	}
-
-	uint8 *pixel = _pixels + sy * _pitch + sx * sizeof(uintX);
-	uint8 *end = pixel + h * _pitch;
-
 	rgb = PACK_RGB8((rgb >> 16) & 0xFF , (rgb >> 8) & 0xFF , rgb & 0xFF);
-
-	uint8 *line_end = pixel + w * sizeof(uintX);
-	int diff = _pitch - w * sizeof(uintX);
-
-	while (pixel != end) {
-		while (pixel != line_end) {
-			*(reinterpret_cast<uintX *>(pixel)) = rgb;
-			pixel += sizeof(uintX);
-		}
-
-		line_end += _pitch;
-		pixel += diff;
-	}
+	_surface->fillRect(Common::Rect(rect.left + _ox, rect.top + _oy, rect.right + _ox, rect.bottom + _oy), rgb);
 }
-
-// 16 bit version
-template<> void SoftRenderSurface<uint16>::Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
-	Rect rect(sx, sy, sx + w, sy + h);
-	rect.clip(_clipWindow);
-	sx = rect.left;
-	sy = rect.top;
-	w = rect.width();
-	h = rect.height();
-
-	if (!w || !h) return;
-
-	// An optimization.
-	if (2 * w == _pitch) {
-		w *= h;
-		h = 1;
-	}
-
-	uint8 *pixel = _pixels + sy * _pitch + sx * sizeof(uint16);
-	uint8 *end = pixel + h * _pitch;
-
-	rgb = PACK_RGB8((rgb >> 16) & 0xFF , (rgb >> 8) & 0xFF , rgb & 0xFF);
-
-	while (pixel != end) {
-		memset_16(pixel, rgb, w);
-		pixel += _pitch;
-	}
-}
-
-// 32 bit version
-template<> void SoftRenderSurface<uint32>::Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) {
-	Rect rect(sx, sy, sx + w, sy + h);
-	rect.clip(_clipWindow);
-	sx = rect.left;
-	sy = rect.top;
-	w = rect.width();
-	h = rect.height();
-
-	if (!w || !h) return;
-
-	// An optimization.
-	if (4 * w == _pitch) {
-		w *= h;
-		h = 1;
-	}
-
-	uint8 *pixel = _pixels + sy * _pitch + sx * sizeof(uint32);
-	uint8 *end = pixel + h * _pitch;
-
-	rgb = PACK_RGB8((rgb >> 16) & 0xFF , (rgb >> 8) & 0xFF , rgb & 0xFF);
-
-	while (pixel != end) {
-		memset_32(pixel, rgb, w);
-		pixel += _pitch;
-	}
-}
-
 
 //
 // SoftRenderSurface::FillAlpha(uint8 alpha, int32 sx, int32 sy, int32 w, int32 h)
@@ -737,61 +642,6 @@ template<class uintX> bool SoftRenderSurface<uintX>::ScalerBlit(const Texture *t
 
 	return scaler->Scale(texture, sx, sy, sw, sh, pixel, dw, dh, _pitch, clampedges);
 }
-
-//
-// SoftRenderSurface::PrintCharFixed(FixedWidthFont *, char character, int x, int y)
-//
-// Desc: Draw a fixed width character from a Texture buffer
-//
-template<class uintX> void SoftRenderSurface<uintX>::PrintCharFixed(const FixedWidthFont *font, int character, int x, int y) {
-	if (character == ' ') return;   // Don't paint spaces
-
-	int align_x = font->_alignX;
-	int align_y = font->_alignY;
-	int char_width = font->_width;
-	int char_height = font->_height;
-	Texture *texture = font->_tex;
-
-	if (align_x == 16 && align_y == 16) {
-		SoftRenderSurface::Blit(texture, (character & 0x0F) << 4, character & 0xF0, char_width, char_height, x, y);
-	} else if (align_x == 8 && align_y == 8) {
-		SoftRenderSurface::Blit(texture, (character & 0x0F) << 3, (character >> 1) & 0x78, char_width, char_height, x, y);
-	} else {
-		SoftRenderSurface::Blit(texture, (character & 0x0F) * align_x, (character & 0xF0 >> 4) * align_y, char_width, char_height, x, y);
-	}
-}
-
-
-//
-// SoftRenderSurface::PrintTextFixed(FixedWidthFont *, const char *text, int x, int y)
-//
-// Desc: Draw fixed width from a Texture buffer (16x16 characters fixed width and height)
-//
-template<class uintX> void SoftRenderSurface<uintX>::PrintTextFixed(const FixedWidthFont *font, const char *text, int x, int y) {
-	int align_x = font->_alignX;
-	int align_y = font->_alignY;
-	int char_width = font->_width;
-	int char_height = font->_height;
-	Texture *texture = font->_tex;
-
-	int character;
-	if (align_x == 16 && align_y == 16) while (0 != (character = *text)) {
-			SoftRenderSurface::Blit(texture, (character & 0x0F) << 4, character & 0xF0, char_width, char_height, x, y);
-			++text;
-			x += char_width;
-		}
-	else if (align_x == 8 && align_y == 8) while (0 != (character = *text)) {
-			SoftRenderSurface::Blit(texture, (character & 0x0F) << 3, (character >> 1) & 0x78, char_width, char_height, x, y);
-			++text;
-			x += char_width;
-		}
-	else while (0 != (character = *text)) {
-			SoftRenderSurface::Blit(texture, (character & 0x0F) * align_x, (character & 0xF0 >> 4) * align_y, char_width, char_height, x, y);
-			++text;
-			x += char_width;
-		}
-}
-
 
 //
 // void SoftRenderSurface::Paint(Shape*s, uint32 framenum, int32 x, int32 y)

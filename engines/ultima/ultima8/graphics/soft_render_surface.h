@@ -54,9 +54,6 @@ public:
 	// Surface Filling
 	//
 
-	// Fill buffer (using a palette index)
-	void Fill8(uint8 index, int32 sx, int32 sy, int32 w, int32 h) override;
-
 	// Fill buffer (using a RGB colour)
 	void Fill32(uint32 rgb, int32 sx, int32 sy, int32 w, int32 h) override;
 
@@ -79,52 +76,32 @@ public:
 	//
 
 	// Paint a Shape
-	// TODO: virtual void Paint(CachedShape* s, uint32 frame, int32 x, int32 y);
 	void Paint(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) override;
 
 	// Paint an Shape without clipping
-	// TODO: virtual void PaintNoClip(CachedShape*s, uint32 frame, int32 x, int32 y);
 	void PaintNoClip(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) override;
 
 	// Paint a Translucent Shape.
-	// TODO: virtual void PaintTranslucent(CachedShape* s, uint32 frame, int32 x, int32 y);
 	void PaintTranslucent(const Shape *s, uint32 frame, int32 x, int32 y, bool untformed_pal = false) override;
 
 	// Paint a Mirrored Shape
-	// TODO: virtual void PaintMirrored(CachedShape* s, uint32 frame, int32 x, int32 y, bool trans = false);
 	void PaintMirrored(const Shape *s, uint32 frame, int32 x, int32 y, bool trans = false, bool untformed_pal = false) override;
 
 	// Paint a Invisible Shape
-	// TODO: virtual void PaintInvisible(CachedShape* s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored);
 	void PaintInvisible(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, bool untformed_pal = false) override;
 
 	// Paint a Highlighted Shape of using the 32 Bit Colour col32 (0xAARRGGBB Alpha is blend level)
-	// TODO: virtual void PaintHighlight(CachedShape* s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32);
 	void PaintHighlight(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false) override;
 
 	// Paint a Invisible Highlighted Shape of using the 32 Bit Colour col32 (0xAARRGGBB Alpha is blend level)
-	// TODO: virtual void PaintHighlightInvis(CachedShape* s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32);
 	void PaintHighlightInvis(const Shape *s, uint32 frame, int32 x, int32 y, bool trans, bool mirrored, uint32 col32, bool untformed_pal = false) override;
 
 	//
 	// Basic Line Drawing
 	//
 
-	// Draw a Line (using a palette index)
-	// TODO: virtual void DrawLine8(uint8 index, int32 sx, int32 sy, int32 ex, int32 ey);
-
 	// Draw a RGB Line
 	void DrawLine32(uint32 rgb, int32 sx, int32 sy, int32 ex, int32 ey) override;
-
-
-	//
-	// Basic Font Drawing
-	//
-	// Draw FixedWidthFont
-	void PrintTextFixed(const FixedWidthFont *, const char *text, int x, int y) override;
-
-	// Draw a fixed width character from a FixedWidthFont
-	void PrintCharFixed(const FixedWidthFont *, int character, int x, int y) override;
 
 
 	//
